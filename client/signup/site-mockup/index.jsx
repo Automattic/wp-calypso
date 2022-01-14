@@ -12,7 +12,6 @@ import { getLocaleSlug, getLanguage } from 'calypso/lib/i18n-utils';
 import { getThemeCssUri, DEFAULT_FONT_URI as defaultFontUri } from 'calypso/lib/signup/site-theme';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import {
@@ -48,7 +47,6 @@ function SiteMockupHelpTipBottom( { siteType } ) {
 
 class SiteMockups extends Component {
 	static propTypes = {
-		siteStyle: PropTypes.string,
 		siteType: PropTypes.string,
 		stepName: PropTypes.string,
 		title: PropTypes.string,
@@ -59,7 +57,6 @@ class SiteMockups extends Component {
 	};
 
 	static defaultProps = {
-		siteStyle: '',
 		siteType: '',
 		stepName: '',
 		title: '',
@@ -88,7 +85,6 @@ class SiteMockups extends Component {
 			this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_rendered', {
 				site_type: this.props.siteType,
 				vertical_slug: this.props.verticalSlug,
-				site_style: this.props.siteStyle || 'default',
 			} );
 		}
 	}, 777 );
@@ -129,7 +125,6 @@ class SiteMockups extends Component {
 		this.props.recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
 			size,
 			vertical_slug: this.props.verticalSlug,
-			site_style: this.props.siteStyle || 'default',
 		} );
 
 	render() {
@@ -137,7 +132,6 @@ class SiteMockups extends Component {
 			fontUrl,
 			shouldFetchVerticalData,
 			shouldShowHelpTip,
-			siteStyle,
 			siteType,
 			siteVerticalName,
 			title,
@@ -166,7 +160,6 @@ class SiteMockups extends Component {
 			langSlug,
 			isRtl,
 			onPreviewClick: this.handlePreviewClick,
-			className: siteStyle,
 		};
 
 		return (
@@ -191,8 +184,7 @@ class SiteMockups extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const siteStyle = getSiteStyle( state );
+	( state ) => {
 		const siteType = getSiteType( state );
 		const themeSlug = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 		const titleFallback = getSiteTypePropertyValue( 'slug', siteType, 'siteMockupTitleFallback' );
@@ -200,7 +192,6 @@ export default connect(
 		const shouldFetchVerticalData = ! verticalPreviewContent;
 		return {
 			title: getSiteTitle( state ) || titleFallback,
-			siteStyle,
 			siteType,
 			verticalPreviewContent,
 			// Used to determine whether content has changed, choose any screenshot
@@ -208,9 +199,6 @@ export default connect(
 			verticalPreviewStyles: getSiteVerticalPreviewStyles( state ),
 			siteVerticalName: getSiteVerticalName( state ),
 			verticalSlug: getSiteVerticalSlug( state ),
-			shouldShowHelpTip:
-				'site-topic-with-preview' === ownProps.stepName ||
-				'site-title-with-preview' === ownProps.stepName,
 			themeSlug: themeSlug,
 			fontUrl: defaultFontUri,
 			shouldFetchVerticalData,

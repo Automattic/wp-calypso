@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
@@ -6,6 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackHeader from 'calypso/components/jetpack-header';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
+import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 
@@ -13,8 +15,10 @@ import './style.scss';
 
 export default function StoreHeader(): React.ReactElement {
 	const translate = useTranslate();
-	const partnerSlug = useSelector( ( state ) => getPartnerSlugFromQuery( state ) );
-	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
+	const partnerSlug = useSelector( getPartnerSlugFromQuery );
+	const currentRoute = useSelector( getCurrentRoute );
+	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
+
 	const isStoreLanding =
 		currentRoute === '/jetpack/connect/store' ||
 		currentRoute.match( new RegExp( '^/jetpack/connect/plans/[^/]+/?(monthly|annual)?$' ) );
@@ -22,6 +26,8 @@ export default function StoreHeader(): React.ReactElement {
 	const headerClass = classNames( 'jetpack-connect__main-logo', {
 		'add-bottom-margin': ! isStoreLanding,
 	} );
+
+	const useV2Banner = config.isEnabled( 'jetpack/pricing-page-v2-banner' );
 
 	return (
 		<>
@@ -41,8 +47,7 @@ export default function StoreHeader(): React.ReactElement {
 					brandFont
 				/>
 			) }
-
-			<IntroPricingBanner />
+			{ useV2Banner || jetpackSaleCoupon !== null ? null : <IntroPricingBanner /> }
 		</>
 	);
 }

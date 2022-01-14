@@ -1,4 +1,4 @@
-export type Importer = 'wix' | 'medium';
+export type Importer = 'wix' | 'medium' | 'wordpress';
 export type QueryObject = {
 	from: string;
 	to: string;
@@ -7,6 +7,7 @@ export type QueryObject = {
 export interface ImportJob {
 	importerId: string;
 	importerState: string;
+	statusMessage?: string;
 	type: string;
 	site: { ID: number };
 	customData: { [ key: string ]: any };

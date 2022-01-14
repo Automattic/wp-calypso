@@ -9,9 +9,9 @@ import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { isRequestingSiteSettings, getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import JetpackSearchDetails from './details';
+import JetpackSearchUpsell from './jetpack-search-upsell';
 import JetpackSearchPlaceholder from './placeholder';
 import { hasJetpackSearchPurchaseOrPlan } from './purchases';
-import JetpackSearchUpsell from './upsell';
 
 interface Props {
 	siteId: number;
@@ -35,7 +35,7 @@ export default function JetpackSearchMainWpcomSimple( { siteId }: Props ): React
 
 	// On WPCOM Simple sites, we need to look for the jetpack_search_enabled flag.
 	const isJetpackSearchSettingEnabled = useSelector( ( state ) =>
-		getSiteSetting( state, siteId, 'jetpack_search_enabled' )
+		Boolean( getSiteSetting( state, siteId, 'jetpack_search_enabled' ) )
 	);
 
 	// Have we loaded the necessary purchases and site settings? If not, show the placeholder.

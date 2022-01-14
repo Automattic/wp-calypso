@@ -197,7 +197,7 @@ class AutoRenewToggle extends Component {
 			return translate( 'Auto-renew (…)' );
 		}
 
-		return isEnabled ? translate( 'Auto-renew (on)' ) : translate( 'Auto-renew (off)' );
+		return isEnabled ? translate( 'Auto-renew on' ) : translate( 'Auto-renew off' );
 	}
 
 	shouldRender( purchase ) {

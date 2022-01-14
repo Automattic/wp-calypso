@@ -9,7 +9,14 @@ export const cancellationOptionsForPurchase = ( purchase ) => {
 		return [ 'noLongerWantToTransfer', 'couldNotCompleteTransfer', 'useDomainWithoutTransferring' ];
 	}
 
-	return [ 'couldNotInstall', 'tooHard', 'didNotInclude', 'onlyNeedFree' ];
+	return [
+		'couldNotInstall',
+		'tooHard',
+		'didNotInclude',
+		'onlyNeedFree',
+		'noTime',
+		'siteIsNotReady',
+	];
 };
 
 export const nextAdventureOptionsForPurchase = ( purchase ) => {

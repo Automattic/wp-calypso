@@ -1,6 +1,7 @@
 import assert from 'assert';
-import { Page, Frame, ElementHandle } from 'playwright';
+import { Page, Frame, ElementHandle, Response } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
+import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import { NavbarComponent } from '../components';
 
@@ -37,11 +38,6 @@ const selectors = {
 
 	// Publish panel (including post-publish)
 	publishPanel: '.editor-post-publish-panel',
-	// With the selector below, we're targeting both "View Post" buttons: the one
-	// in the post-publish pane, and the one that pops up in the bottom-left
-	// corner. This addresses the bug where the post-publish panel is immediately
-	// closed when publishing with certain blocks on the editor canvas.
-	// See https://github.com/Automattic/wp-calypso/issues/54421.
 	viewButton: 'text=/View (Post|Page)/',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
@@ -75,55 +71,59 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Opens the "new post/page" page. By default it will open the "new post" page.
+	 *
+	 * Example "new post": {@link https://wordpress.com/post}
+	 * Example "new page": {@link https://wordpress.com/page}
+	 */
+	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
+		const request = await this.page.goto( getCalypsoURL( type ) );
+		await this.waitUntilLoaded();
+
+		return request;
+	}
+
+	/**
 	 * Initialization steps to ensure the page is fully loaded.
 	 *
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		// `page.on` construct is used here instead of the more common `page.waitForResponse`.
-		// Using the latter causes this method to hang until the timeout is reached, since
-		// the `waitForResponse` method begins observing the network requests after the
-		// `nux?_envelope=1` request has been completed.
-		// On the other hand, `page.on` is able to monitor every request, including the
-		// one to the `nux` endpoint.
-		this.page.on( 'requestfinished', async ( request ) => {
-			const response = await request.response();
-			if ( ! response ) {
-				return;
-			}
-
-			if ( ! response.url().includes( 'nux?_envelope=1' ) ) {
-				return;
-			}
-
-			interface NuxPayload {
-				body: {
-					show_welcome_guide: boolean;
-				};
-			}
-
-			const body = ( await response.json() ) as NuxPayload;
-			if ( body?.body?.show_welcome_guide === true ) {
-				await this.dismissWelcomeTour();
-			}
-		} );
-
 		const frame = await this.getEditorFrame();
-		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
-		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
+		// Traditionally we try to avoid waits not related to the current flow.
+		// However, we need a stable way to identify loading being done. NetworkIdle
+		// takes too long here, so the most reliable alternative is the title being
+		// visible.
 		await frame.waitForSelector( selectors.editorTitle );
+		// Once https://github.com/Automattic/wp-calypso/issues/57660 is resolved,
+		// the next line should be removed.
+		await this.forceDismissWelcomeTour();
 
 		return frame;
 	}
 
 	/**
-	 * Dismisses the Welcome Tour (card) if it is present.
+	 * Forcefully dismisses the Welcome Tour via action dispatch.
+	 *
+	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
 	 */
-	async dismissWelcomeTour(): Promise< void > {
+	async forceDismissWelcomeTour(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		const locator = frame.locator( selectors.welcomeTourCloseButton );
 
-		await locator.click( { timeout: 10 * 1000 } );
+		await frame.waitForFunction(
+			async () =>
+				await ( window as any ).wp.data
+					.select( 'automattic/wpcom-welcome-guide' )
+					.isWelcomeGuideStatusLoaded()
+		);
+
+		await frame.waitForFunction( async () => {
+			const actionPayload = await ( window as any ).wp.data
+				.dispatch( 'automattic/wpcom-welcome-guide' )
+				.setShowWelcomeGuide( false );
+
+			return actionPayload.show === false;
+		} );
 	}
 
 	/**
@@ -273,13 +273,8 @@ export class GutenbergEditorPage {
 	 */
 	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
-
-		// Click on the editor title. This has the effect of dismissing the block inserter
-		// if open, and restores focus back to the editor root container, allowing insertion
-		// of blocks.
-		await frame.click( selectors.editorTitle );
 		await this.openBlockInserter();
-		await frame.fill( selectors.blockSearch, blockName );
+		await this.searchBlockInserter( blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
 		return await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
@@ -298,15 +293,47 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Adds a pattern from the block inserter panel.
+	 *
+	 * The name is expected to be formatted in the same manner as it
+	 * appears on the label when visible in the block inserter panel.
+	 *
+	 * Example:
+	 * 		- Two images side by side
+	 *
+	 * @param {string} patternName Name of the pattern to insert.
+	 */
+	async addPattern( patternName: string ): Promise< ElementHandle > {
+		const frame = await this.getEditorFrame();
+		await this.openBlockInserter();
+		await this.searchBlockInserter( patternName );
+		await frame.click( `div[aria-label="${ patternName }"]` );
+		return await frame.waitForSelector( `:text('Block pattern "${ patternName }" inserted.')` );
+	}
+
+	/**
 	 * Open the block inserter panel.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openBlockInserter(): Promise< void > {
 		const frame = await this.getEditorFrame();
-
+		// Click on the editor title. This has the effect of dismissing the block inserter
+		// if open, and restores focus back to the editor root container, allowing insertion
+		// of blocks.
+		await frame.click( selectors.editorTitle );
 		await frame.click( selectors.blockInserterToggle );
 		await frame.waitForSelector( selectors.blockInserterPanel );
+	}
+
+	/**
+	 * Given a string, enters the said string to the block inserter search bar.
+	 *
+	 * @param {string} text Text to search.
+	 */
+	async searchBlockInserter( text: string ): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.fill( selectors.blockSearch, text );
 	}
 
 	/**
@@ -408,10 +435,23 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	private async visitPublishedPost( url: string ): Promise< void > {
+		// Some blocks, like "Click To Tweet" or "Logos" cause the post-publish
+		// panel to close immediately and leave the post in the unsaved state for
+		// some reason. Since the post state is unsaved, the warning dialog will be
+		// displayed on the published post link click. By default, Playwright will
+		// dismiss the dialog so we need this listener to accept it and open the
+		// published post.
+		//
+		// Once https://github.com/Automattic/wp-calypso/issues/54421 is resolved,
+		// this listener can be removed.
+		this.page.once( 'dialog', async ( dialog ) => {
+			await dialog.accept();
+		} );
+
 		const frame = await this.getEditorFrame();
 
 		await Promise.all( [
-			this.page.waitForNavigation( { waitUntil: 'networkidle', url: url } ),
+			this.page.waitForNavigation( { url } ),
 			frame.click( selectors.viewButton ),
 		] );
 

@@ -8,15 +8,13 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import version_compare from 'calypso/lib/version-compare';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
-import {
-	getProductDisplayCost,
-	isProductsListFetching as getIsProductsListFetching,
-} from 'calypso/state/products-list/selectors';
+import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
@@ -45,6 +43,9 @@ const PluginsBrowserListElement = ( props ) => {
 		isJetpack && currentSites
 			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
 			: []
+	);
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, plugin.slug || '' )
 	);
 
 	const dateFromNow = useMemo(
@@ -95,6 +96,8 @@ const PluginsBrowserListElement = ( props ) => {
 
 		return version_compare( wpVersion, pluginTestedVersion, '>' );
 	} );
+
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
 
 	if ( isPlaceholder ) {
 		return <Placeholder iconSize={ iconSize } />;
@@ -147,10 +150,11 @@ const PluginsBrowserListElement = ( props ) => {
 							isWpcomPreinstalled={ isWpcomPreinstalled }
 							plugin={ plugin }
 							billingPeriod={ billingPeriod }
+							shouldUpgrade={ shouldUpgrade }
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
-						{ !! plugin.rating && (
+						{ !! plugin.rating && ! isMarketplaceProduct && (
 							<div className="plugins-browser-item__ratings">
 								<PluginRatings
 									rating={ plugin.rating }
@@ -180,23 +184,9 @@ const InstalledInOrPricing = ( {
 	isWpcomPreinstalled,
 	plugin,
 	billingPeriod,
+	shouldUpgrade,
 } ) => {
 	const translate = useTranslate();
-	const variationPeriod = getPeriodVariationValue( billingPeriod );
-	const priceSlug = plugin?.variations?.[ variationPeriod ]?.product_slug;
-	const price = useSelector( ( state ) => getProductDisplayCost( state, priceSlug ) );
-	const isProductsListFetching = useSelector( getIsProductsListFetching );
-
-	const getPeriodText = ( periodValue ) => {
-		switch ( periodValue ) {
-			case 'monthly':
-				return translate( 'monthly' );
-			case 'yearly':
-				return translate( 'per year' );
-			default:
-				return '';
-		}
-	};
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		return (
@@ -211,20 +201,29 @@ const InstalledInOrPricing = ( {
 
 	return (
 		<div className="plugins-browser-item__pricing">
-			{ ! isProductsListFetching && (
-				<>
-					{ price ? (
+			<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
+				{ ( { isFetching, price, period } ) =>
+					! isFetching && (
 						<>
-							{ price + ' ' }
-							<span className="plugins-browser-item__period">
-								{ getPeriodText( variationPeriod ) }
-							</span>
+							{ price ? (
+								<>
+									{ price + ' ' }
+									<span className="plugins-browser-item__period">{ period }</span>
+								</>
+							) : (
+								<>
+									{ translate( 'Free' ) }
+									{ shouldUpgrade && (
+										<span className="plugins-browser-item__requires-plan-upgrade">
+											{ translate( 'Requires a plan upgrade' ) }
+										</span>
+									) }
+								</>
+							) }
 						</>
-					) : (
-						translate( 'Free' )
-					) }
-				</>
-			) }
+					)
+				}
+			</PluginPrice>
 		</div>
 	);
 };
@@ -243,17 +242,5 @@ const Placeholder = ( { iconSize } ) => {
 		</li>
 	);
 };
-
-function getPeriodVariationValue( billingPeriod ) {
-	switch ( billingPeriod ) {
-		case IntervalLength.MONTHLY:
-			return 'monthly';
-		case IntervalLength.ANNUALLY:
-			return 'yearly';
-
-		default:
-			return '';
-	}
-}
 
 export default PluginsBrowserListElement;

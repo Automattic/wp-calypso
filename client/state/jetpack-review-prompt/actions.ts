@@ -1,8 +1,9 @@
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { AppState } from 'calypso/types';
 import { PREFERENCE_NAME, PreferenceType } from './constants';
 import { getExistingPreference } from './selectors';
+import type { CalypsoDispatch } from '../types';
+import type { AppState } from 'calypso/types';
 
 const combineDismissPreference = (
 	state: AppState,
@@ -41,7 +42,7 @@ const dismiss = (
 	type: 'restore' | 'scan',
 	dismissedAt: number = Date.now(),
 	reviewed = false
-) => ( dispatch, getState ) =>
+) => ( dispatch: CalypsoDispatch, getState: () => AppState ) =>
 	dispatch(
 		savePreference(
 			PREFERENCE_NAME,
@@ -78,8 +79,8 @@ const combineValidPreference = (
 };
 
 const setValidFrom = ( type: 'restore' | 'scan', validFrom: number | null = null ) => (
-	dispatch,
-	getState
+	dispatch: CalypsoDispatch,
+	getState: () => AppState
 ) =>
 	dispatch(
 		savePreference( PREFERENCE_NAME, combineValidPreference( getState(), type, validFrom ) )

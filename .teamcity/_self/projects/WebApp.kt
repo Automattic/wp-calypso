@@ -49,6 +49,28 @@ object BuildDockerImage : BuildType({
 	}
 
 	steps {
+
+		script {
+			name = "Webhook Start"
+			scriptContent = """
+				#!/usr/bin/env bash
+
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					exit 0
+				fi
+
+				payload=${'$'}(jq -n \
+					--arg action "start" \
+					--arg commit "${Settings.WpCalypso.paramRefs.buildVcsNumber}" \
+					--arg branch "%teamcity.build.branch%" \
+					'{action: ${'$'}action, commit: ${'$'}commit, branch: ${'$'}branch}' \
+				)
+				signature=`echo -n "%teamcity.build.id%" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
+
+				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY_SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
+			"""
+		}
+
 		script {
 			name = "Post PR comment"
 			scriptContent = """
@@ -115,6 +137,34 @@ object BuildDockerImage : BuildType({
 		}
 
 		script {
+			name = "Webhook fail OR webhook done and push trunk tag for deploy"
+			executionMode = BuildStep.ExecutionMode.ALWAYS
+			scriptContent = """
+				#!/usr/bin/env bash
+
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					exit 0
+				fi
+
+				ACTION="done";
+				FAILURES=$(curl --silent -X GET -H "Content-Type: text/plain" https://teamcity.a8c.com/guestAuth/app/rest/builds/?locator=id:%teamcity.build.id% | grep -c "FAILURE")
+				if [ ${'$'}FAILURES -ne 0 ]; then
+					ACTION="fail"
+				fi
+
+				payload=${'$'}(jq -n \
+					--arg action "${'$'}ACTION" \
+					--arg commit "${Settings.WpCalypso.paramRefs.buildVcsNumber}" \
+					--arg branch "%teamcity.build.branch%" \
+					'{action: ${'$'}action, commit: ${'$'}commit, branch: ${'$'}branch}' \
+				)
+				signature=`echo -n "%teamcity.build.id%" | openssl sha256 -hmac "%mc_auth_secret%" | sed 's/^.* //'`
+
+				curl -s -X POST -d "${'$'}payload" -H "TEAMCITY_SIGNATURE: ${'$'}signature" "%mc_teamcity_webhook%calypso/?build_id=%teamcity.build.id%"
+			"""
+		}
+
+		script {
 			name = "Post PR comment with link"
 			scriptContent = """
 				#!/usr/bin/env bash
@@ -125,8 +175,32 @@ object BuildDockerImage : BuildType({
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				Link to Calypso live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%
-				Link to Jetpack Cloud live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack
+				<details>
+					<summary>Calypso Live <a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%">(direct link)</a></summary>
+					<table>
+						<tr>
+							<td>
+								<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Abuild-%build.number%%26flags%3Doauth&choe=UTF-8" />
+							</td>
+							<td>
+								<a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%">https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%</a>
+							</td>
+						</tr>
+					</table>
+				</details>
+				<details>
+					<summary>Jetpack Cloud live <a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack">(direct link)</a></summary>
+					<table>
+						<tr>
+							<td>
+								<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Abuild-%build.number%%26env%3Djetpack%26flags%3Doauth&choe=UTF-8" />
+							</td>
+							<td>
+								<a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack">https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack</a>
+							</td>
+						</tr>
+					</table>
+				</details>
 				EOF
 			"""
 		}
@@ -322,6 +396,17 @@ object RunAllUnitTests : BuildType({
 				yarn workspaces foreach --verbose --parallel run storybook --ci --smoke-test
 			"""
 		}
+		bashNodeScript {
+			name = "Tag build"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			scriptContent = """
+				set -x
+
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]] ; then
+					curl -s -X POST -H "Content-Type: text/plain" --data "release-candidate" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" "%teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/"
+				fi
+			""".trimIndent()
+		}
 	}
 
 	triggers {
@@ -340,8 +425,11 @@ object RunAllUnitTests : BuildType({
 			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
 			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
 			comparison = BuildFailureOnMetric.MetricComparison.MORE
+			threshold = 0
 			compareTo = build {
-				buildRule = lastSuccessful()
+				buildRule = buildWithTag {
+					tag = "release-candidate"
+				}
 			}
 			stopBuildOnFailure = true
 		}

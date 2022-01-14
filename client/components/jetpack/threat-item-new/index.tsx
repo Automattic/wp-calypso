@@ -5,12 +5,13 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header-new';
-import { Threat } from 'calypso/components/jetpack/threat-item-new-new/types';
 import { getThreatFix } from 'calypso/components/jetpack/threat-item-new/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description-new';
+import type { Threat } from 'calypso/components/jetpack/threat-item-new/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 interface Props {
@@ -36,7 +37,6 @@ const ThreatItem: React.FC< Props > = ( {
 	onFixThreat,
 	onIgnoreThreat,
 	isFixing,
-	contactSupportUrl,
 } ) => {
 	const dispatch = useDispatch();
 
@@ -69,7 +69,7 @@ const ThreatItem: React.FC< Props > = ( {
 		[ isFixing, onFixThreat, threat ]
 	);
 
-	const getFix = React.useCallback( (): i18nCalypso.TranslateResult | undefined => {
+	const getFix = React.useCallback( (): TranslateResult | undefined => {
 		if ( threat.status === 'fixed' ) {
 			return;
 		}
@@ -116,9 +116,14 @@ const ThreatItem: React.FC< Props > = ( {
 		return (
 			<p className="threat-item-new threat-description__section-text">
 				{ getThreatFix( threat.fixable ) }
+				<p>
+					{ translate(
+						'Jetpack Scan is able to automatically fix this threat for you. Since it will replace the affected file or directory the site’s look-and-feel or features can be compromised. We recommend that you check if your latest backup was performed successfully in case a restore is needed.'
+					) }
+				</p>
 			</p>
 		);
-	}, [ contactSupportUrl, threat ] );
+	}, [ threat ] );
 
 	const isFixable = React.useMemo(
 		() => threat.fixable && ( threat.status === 'current' || threat.status === 'ignored' ),

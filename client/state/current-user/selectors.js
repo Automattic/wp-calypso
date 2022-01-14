@@ -24,10 +24,10 @@ export function isUserLoggedIn( state ) {
  * Returns the user object for the current user.
  *
  * @param  {object}  state  Global state tree
- * @returns {?object}        Current user
+ * @returns {import('calypso/lib/user/user').UserData|null}        Current user
  */
 export function getCurrentUser( state ) {
-	return get( state, [ 'currentUser', 'user' ], null );
+	return state?.currentUser?.user ?? null;
 }
 
 /**

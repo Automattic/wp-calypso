@@ -16,7 +16,7 @@ export default ( router ) => {
 		// Only do the basics for layout on the server-side
 		router(
 			[ `/log-in/link/use/${ lang }`, `/log-in/link/jetpack/use/${ lang }` ],
-			setLocaleMiddleware,
+			setLocaleMiddleware(),
 			redirectLoggedIn,
 			makeLayout
 		);

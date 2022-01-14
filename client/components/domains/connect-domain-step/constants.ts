@@ -80,6 +80,7 @@ export const useMyDomainInputMode = {
 	transferOrConnect: 'transfer-or-connect',
 	ownershipVerification: 'ownership-verification',
 	transferDomain: 'transfer-domain',
+	startPendingTransfer: 'start-pending-transfer',
 } as const;
 
 export const transferDomainError = {

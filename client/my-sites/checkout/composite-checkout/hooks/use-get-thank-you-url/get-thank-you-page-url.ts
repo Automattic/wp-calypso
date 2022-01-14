@@ -10,6 +10,9 @@ import {
 	getPlan,
 	isPlan,
 	isWpComPremiumPlan,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import {
@@ -28,7 +31,9 @@ import {
 	hasTitanMail,
 	hasTrafficGuide,
 	hasDIFMProduct,
+	hasMonthlyCartItem,
 } from 'calypso/lib/cart-values/cart-items';
+import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
@@ -65,16 +70,16 @@ export default function getThankYouPageUrl( {
 	adminPageRedirect,
 	domains,
 }: {
-	siteSlug: string | undefined;
-	adminUrl: string | undefined;
-	redirectTo?: string | undefined;
-	receiptId: number | undefined;
-	orderId: number | undefined;
-	purchaseId: number | undefined;
-	feature: string | undefined;
-	cart: ResponseCart | undefined;
+	siteSlug?: string;
+	adminUrl?: string;
+	redirectTo?: string;
+	receiptId?: number;
+	orderId?: number;
+	purchaseId?: number;
+	feature?: string;
+	cart?: ResponseCart;
 	isJetpackNotAtomic?: boolean;
-	productAliasFromUrl: string | undefined;
+	productAliasFromUrl?: string;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult?: boolean;
@@ -83,14 +88,14 @@ export default function getThankYouPageUrl( {
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
-	domains: SiteDomain[] | undefined;
+	domains?: SiteDomain[];
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
-	// (i.e. on WordPress.com), the same site as the cart's site, or a Jetpack or WP.com
-	// site's block editor (in wp-admin). This is required for Jetpack's (and WP.com's)
-	// paid blocks Upgrade Nudge.
+	// (i.e. on WordPress.com), the same site as the cart's site, a Jetpack cloud URL,
+	// or a Jetpack or WP.com site's block editor (in wp-admin). This is required for Jetpack's
+	// (and WP.com's) paid blocks Upgrade Nudge.
 	if ( redirectTo ) {
 		const { protocol, hostname, port, pathname, query } = parseUrl( redirectTo, true, true );
 
@@ -119,6 +124,12 @@ export default function getThankYouPageUrl( {
 			debug( 'returning sanitized internal redirectTo', redirectTo );
 			return sanitizedRedirectTo;
 		}
+
+		if ( hostname === 'cloud.jetpack.com' ) {
+			debug( 'returning Jetpack cloud redirectTo', redirectTo );
+			return redirectTo;
+		}
+
 		debug( 'ignorning redirectTo', redirectTo );
 	}
 
@@ -397,6 +408,49 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 	return;
 }
 
+function getMonthlyToAnnualUpsellUrl( {
+	pendingOrReceiptId,
+	cart,
+	siteSlug,
+	orderId,
+}: {
+	pendingOrReceiptId: string;
+	orderId: number | undefined;
+	cart: ResponseCart | undefined;
+	siteSlug: string | undefined;
+} ): string | undefined {
+	if ( orderId ) {
+		return;
+	}
+
+	const monthlyPlansDefaultExperiment = dangerouslyGetExperimentAssignment(
+		'calypso_signup_monthly_plans_default_202201_v1'
+	);
+	if ( monthlyPlansDefaultExperiment?.variationName === null ) {
+		return;
+	}
+
+	if ( cart && hasMonthlyCartItem( cart ) ) {
+		let planType;
+		if ( hasPersonalPlan( cart ) ) {
+			planType = PLAN_PERSONAL;
+		} else if ( hasPremiumPlan( cart ) ) {
+			planType = PLAN_PREMIUM;
+		} else if ( hasBusinessPlan( cart ) ) {
+			planType = PLAN_BUSINESS;
+		} else if ( hasEcommercePlan( cart ) ) {
+			planType = PLAN_ECOMMERCE;
+		}
+
+		if ( ! planType ) {
+			return;
+		}
+
+		return `/checkout/${ siteSlug }/offer-annual-upgrade/${ planType }/${ pendingOrReceiptId }`;
+	}
+
+	return;
+}
 function getPlanUpgradeUpsellUrl( {
 	pendingOrReceiptId,
 	cart,
@@ -440,6 +494,17 @@ function getRedirectUrlForPostCheckoutUpsell( {
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
+	}
+
+	const monthlyToAnnualUpsellExperimentUrl = getMonthlyToAnnualUpsellUrl( {
+		pendingOrReceiptId,
+		cart,
+		orderId,
+		siteSlug,
+	} );
+
+	if ( monthlyToAnnualUpsellExperimentUrl ) {
+		return monthlyToAnnualUpsellExperimentUrl;
 	}
 
 	const professionalEmailUpsellUrl = getProfessionalEmailUpsellUrl( {

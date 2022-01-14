@@ -2,22 +2,19 @@
  * @group calypso-pr
  */
 
-import { DataHelper, LoginPage, setupHooks, StartImportFlow } from '@automattic/calypso-e2e';
+import { DataHelper, TestAccount, setupHooks, StartImportFlow } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 	let page: Page;
 	let startImportFlow: StartImportFlow;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
 		startImportFlow = new StartImportFlow( page );
-	} );
 
-	// Login in default page.
-	it( 'Log in', async () => {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'defaultUser' } );
+		const testAccount = new TestAccount( 'defaultUser' );
+		await testAccount.authenticate( page );
 	} );
 
 	/**

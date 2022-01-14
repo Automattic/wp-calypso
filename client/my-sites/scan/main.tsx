@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button, ProgressBar, Gridicon, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
@@ -32,6 +31,7 @@ import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpa
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ScanNavigation from './navigation';
+import type { TranslateResult } from 'i18n-calypso';
 import type { utc } from 'moment';
 
 import './style.scss';
@@ -50,7 +50,7 @@ interface Props {
 	moment: {
 		utc: typeof utc;
 	};
-	applySiteOffset: applySiteOffsetType;
+	applySiteOffset: applySiteOffsetType | null;
 	dispatchRecordTracksEvent: ( arg0: string, arg1: Record< string, unknown > ) => null;
 	dispatchScanRun: ( arg0: number ) => null;
 	isAdmin: boolean;
@@ -74,7 +74,7 @@ class ScanPage extends Component< Props > {
 		);
 	}
 
-	renderHeader( text: i18nCalypso.TranslateResult ) {
+	renderHeader( text: TranslateResult ) {
 		return <h1 className="scan__header">{ text }</h1>;
 	}
 
@@ -351,14 +351,19 @@ class ScanPage extends Component< Props > {
 	render() {
 		const { siteId, siteSettingsUrl } = this.props;
 		const isJetpackPlatform = isJetpackCloud();
+		let mainClass = 'scan';
 
 		if ( ! siteId ) {
 			return;
 		}
 
+		if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
+			mainClass = 'scan-new';
+		}
+
 		return (
 			<Main
-				className={ classNames( 'scan', {
+				className={ classNames( mainClass, {
 					is_jetpackcom: isJetpackPlatform,
 				} ) }
 			>
@@ -418,4 +423,4 @@ export default connect(
 		dispatchRecordTracksEvent: recordTracksEvent,
 		dispatchScanRun: triggerScanRun,
 	}
-)( compose( withLocalizedMoment, withApplySiteOffset )( ScanPage ) );
+)( withLocalizedMoment( withApplySiteOffset( ScanPage ) ) );

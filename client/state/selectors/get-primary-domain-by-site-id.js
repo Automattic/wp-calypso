@@ -6,7 +6,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
  *
  * @param {object} state - current state object
  * @param {?number} siteId - site ID
- * @returns {object} primary domain
+ * @returns {import('calypso/state/sites/domains/types').SiteDomain|null|undefined} primary domain
  */
 export default function getPrimaryDomainBySiteId( state, siteId ) {
 	const domains = getDomainsBySiteId( state, siteId );

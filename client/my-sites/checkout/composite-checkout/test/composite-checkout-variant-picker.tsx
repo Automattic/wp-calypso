@@ -3,11 +3,13 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, fireEvent, screen, within } from '@testing-library/react';
+import { render, screen, within, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
+import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import CompositeCheckout from '../composite-checkout';
@@ -27,13 +29,14 @@ import {
 	countryList,
 } from './util';
 
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/sites/domains/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
+jest.mock( 'calypso/state/selectors/get-intro-offer-price' );
+jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
+jest.mock( 'calypso/state/sites/domains/selectors' );
+jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+jest.mock( 'calypso/state/sites/selectors' );
 
 /* eslint-disable jest/no-conditional-expect */
 
@@ -48,6 +51,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		hasLoadedSiteDomains.mockImplementation( () => true );
 		getDomainsBySiteId.mockImplementation( () => [] );
 		isMarketplaceProduct.mockImplementation( () => false );
+		getIntroOfferPrice.mockImplementation( () => null );
 
 		const initialCart = {
 			coupon: '',
@@ -76,6 +80,20 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		};
 
 		const store = createTestReduxStore();
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+		Object.defineProperty( window, 'matchMedia', {
+			writable: true,
+			value: jest.fn().mockImplementation( ( query ) => ( {
+				matches: false,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(), // deprecated
+				removeListener: jest.fn(), // deprecated
+				addEventListener: jest.fn(),
+				removeEventListener: jest.fn(),
+				dispatchEvent: jest.fn(),
+			} ) ),
+		} );
 
 		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
 			const managerClient = createShoppingCartManagerClient( {
@@ -130,12 +148,12 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			} ) );
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
-			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-			fireEvent.click( editOrderButton );
 
-			expect(
-				screen.getByText( getVariantItemTextForInterval( expectedVariant ) )
-			).toBeInTheDocument();
+			const getVariantItemText = await screen.findByText(
+				getVariantItemTextForInterval( expectedVariant )
+			);
+
+			expect( getVariantItemText ).toBeInTheDocument();
 		}
 	);
 
@@ -151,13 +169,13 @@ describe( 'CompositeCheckout with a variant picker', () => {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
-			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-			fireEvent.click( editOrderButton );
 
-			expect(
+			const renderedVariant = await waitFor( () =>
 				screen.queryByText( getVariantItemTextForInterval( expectedVariant ) )
-			).not.toBeInTheDocument();
+			);
+			expect( renderedVariant ).not.toBeInTheDocument();
 		}
 	);
 
@@ -172,12 +190,10 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			} ) );
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
-			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-			fireEvent.click( editOrderButton );
 
-			const variantItem = screen
-				.getByText( getVariantItemTextForInterval( expectedVariant ) )
-				.closest( 'label' );
+			const variantItem = (
+				await screen.findByText( getVariantItemTextForInterval( expectedVariant ) )
+			 ).closest( 'label' );
 			const lowestVariantItem = variantItem.closest( 'ul' ).querySelector( 'label:first-of-type' );
 			const lowestVariantSlug = lowestVariantItem.closest( 'div' ).querySelector( 'input' ).value;
 			const variantSlug = variantItem.closest( 'div' ).querySelector( 'input' ).value;
@@ -195,7 +211,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			const intervalsInVariant = Math.round( variantInterval / lowestVariantInterval );
 			const priceBeforeDiscount = lowestVariantPrice * intervalsInVariant;
 
-			const discountPercentage = Math.round( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
+			const discountPercentage = Math.floor( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
 			expect(
 				within( variantItem ).getByText( `Save ${ discountPercentage }%` )
 			).toBeInTheDocument();
@@ -210,21 +226,17 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			} ) );
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
-			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-			fireEvent.click( editOrderButton );
 
-			const variantItem = screen
-				.getByText( getVariantItemTextForInterval( expectedVariant ) )
-				.closest( 'label' );
+			const variantItem = (
+				await screen.findByText( getVariantItemTextForInterval( expectedVariant ) )
+			 ).closest( 'label' );
 			expect( within( variantItem ).queryByText( /Save \d+%/ ) ).not.toBeInTheDocument();
 		}
 	);
 
-	it( 'does not render the variant picker if there are no variants after clicking into edit mode', async () => {
+	it( 'does not render the variant picker if there are no variants', async () => {
 		const cartChanges = { products: [ domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
 
 		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
@@ -242,8 +254,6 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			} ) );
 			const cartChanges = { products: [ getPersonalPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
-			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-			fireEvent.click( editOrderButton );
 
 			expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
@@ -255,8 +265,6 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		const currentPlanRenewal = { ...planWithoutDomain, extra: { purchaseType: 'renewal' } };
 		const cartChanges = { products: [ currentPlanRenewal ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
 
 		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();

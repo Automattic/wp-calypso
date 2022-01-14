@@ -1,3 +1,4 @@
+export { arePremiumThemesEnabled } from 'calypso/state/themes/selectors/are-premium-themes-enabled';
 export { areRecommendedThemesLoading } from 'calypso/state/themes/selectors/are-recommended-themes-loading';
 export { areTrendingThemesLoading } from 'calypso/state/themes/selectors/are-trending-themes-loading';
 export { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';

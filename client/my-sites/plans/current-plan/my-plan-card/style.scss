@@ -175,6 +175,13 @@
 	.button ~ .button {
 		margin-inline-start: 8px;
 	}
+	.button {
+		line-height: inherit;
+	}
+	.owner-info__pop-over {
+		font-size: inherit;
+		vertical-align: inherit;
+	}
 }
 
 .my-plan-card__header .backup-storage-space.card {

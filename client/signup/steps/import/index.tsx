@@ -10,7 +10,7 @@ import { isAnalyzing, getUrlData } from 'calypso/state/imports/url-analyzer/sele
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep, ReadyAlreadyOnWPCOMStep } from './ready';
-import { GoToStep, GoToNextStep, UrlData, RecordTracksEvent } from './types';
+import { GoToStep, GoToNextStep, UrlData, RecordTracksEvent, ImporterPlatform } from './types';
 import { getImporterUrl, getWpComOnboardingUrl } from './util';
 import './style.scss';
 
@@ -67,9 +67,13 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 		page( getStepWithQueryParamUrl( stepName, stepSectionName, flowName, dependency ) );
 	};
 
-	const goToImporterPage = ( platform: string ): void => {
+	const goToImporterPage = ( platform: ImporterPlatform ): void => {
 		let importerUrl;
-		if ( platform === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
+		if (
+			( platform === 'wordpress' && isEnabled( 'gutenboarding/import-from-wordpress' ) ) ||
+			( platform === 'medium' && isEnabled( 'gutenboarding/import-from-medium' ) ) ||
+			( platform === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) )
+		) {
 			importerUrl = getWpComOnboardingUrl( signupDependencies.siteSlug, platform, urlData.url );
 		} else {
 			importerUrl = getImporterUrl( signupDependencies.siteSlug, platform, urlData.url );

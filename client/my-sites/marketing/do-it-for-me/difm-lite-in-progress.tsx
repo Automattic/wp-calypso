@@ -20,13 +20,9 @@ type DIFMLiteInProgressProps = {
 	siteId: number;
 };
 
-type DomainName = {
-	name?: string;
-};
-
 function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactElement {
 	const slug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
-	const primaryDomain: DomainName = useSelector( ( state: AppState ) =>
+	const primaryDomain = useSelector( ( state: AppState ) =>
 		getPrimaryDomainBySiteId( state, siteId )
 	);
 	const translate = useTranslate();
@@ -74,7 +70,7 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactE
 					<Button
 						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 						className="empty-content__action button"
-						href={ emailManagement( slug, domainName ) }
+						href={ emailManagement( slug, null ) }
 						onClick={ recordEmailClick }
 					>
 						{ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }

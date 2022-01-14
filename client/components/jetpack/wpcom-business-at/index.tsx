@@ -46,14 +46,16 @@ interface BlockingHoldNoticeProps {
 	siteId: number;
 }
 
+// This gets the values of the object transferStates.
+export type TransferStatus = typeof transferStates[ keyof typeof transferStates ];
+
 interface TransferFailureNoticeProps {
-	// This gets the values of the object transferStates.
-	transferStatus: typeof transferStates[ keyof typeof transferStates ];
+	transferStatus: TransferStatus | null;
 }
 
 const content = {
 	documentHeadTitle: 'Activate Jetpack Backup now',
-	header: translate( 'Jetpack Backup' ),
+	header: String( translate( 'Jetpack Backup' ) ),
 	primaryPromo: {
 		title: translate( 'Get time travel for your site with Jetpack Backup' ),
 		image: { path: JetpackBackupSVG },
@@ -75,9 +77,11 @@ function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ): ReactElement
 
 	// Get messages and override for the Jetpack product name.
 	const blockingMessages = getBlockingMessages( translate );
-	blockingMessages.BLOCKED_ATOMIC_TRANSFER.message = translate(
-		'This site is currently not eligible for %s. Please contact our support team for help.',
-		{ args: [ content.header ] }
+	blockingMessages.BLOCKED_ATOMIC_TRANSFER.message = String(
+		translate(
+			'This site is currently not eligible for %s. Please contact our support team for help.',
+			{ args: [ content.header ] }
+		)
 	);
 
 	return (
@@ -214,7 +218,7 @@ export default function WPCOMBusinessAT(): ReactElement {
 				brandFont
 			/>
 			<BlockingHoldNotice siteId={ siteId } />
-			<TransferFailureNotice transferStatus={ automatedTransferStatus } />
+			<TransferFailureNotice transferStatus={ automatedTransferStatus as TransferStatus } />
 			<PromoCard
 				title={ content.primaryPromo.title }
 				image={ content.primaryPromo.image }

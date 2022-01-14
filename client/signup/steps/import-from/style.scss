@@ -1,6 +1,10 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '../import/style';
 
+.signup__step.is-importing .step-wrapper {
+	padding: 0 20px;
+}
+
 .import__onboarding-page {
 	.onboarding-progress {
 		margin: auto;

@@ -1,8 +1,8 @@
-import { Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { TranslateResult } from 'i18n-calypso';
+import type { MouseEventHandler, ReactElement } from 'react';
 
 import './style.scss';
 
@@ -10,10 +10,9 @@ export interface EmailProviderStackedFeatureProps {
 	title: TranslateResult;
 }
 
-const EmailProviderStackedFeature: FunctionComponent< EmailProviderStackedFeatureProps > = (
-	props
-) => {
-	const { title } = props;
+const EmailProviderStackedFeature = ( {
+	title,
+}: EmailProviderStackedFeatureProps ): ReactElement => {
 	const size = 18;
 	return (
 		<div className="email-provider-stacked-features__feature">
@@ -28,10 +27,9 @@ export interface EmailProviderStackedFeaturesProps {
 	features: TranslateResult[];
 }
 
-const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeaturesProps > = (
-	props
-) => {
-	const { features } = props;
+export const EmailProviderStackedFeatures = ( {
+	features,
+}: EmailProviderStackedFeaturesProps ): ReactElement | null => {
 	const translate = useTranslate();
 
 	if ( ! features ) {
@@ -50,4 +48,28 @@ const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeatu
 	);
 };
 
-export default EmailProviderStackedFeatures;
+interface EmailProviderStackedFeaturesToggleButtonProps {
+	handleClick: MouseEventHandler< HTMLButtonElement >;
+	isRelatedContentExpanded: boolean;
+}
+
+export const EmailProviderStackedFeaturesToggleButton = ( {
+	handleClick,
+	isRelatedContentExpanded,
+}: EmailProviderStackedFeaturesToggleButtonProps ): ReactElement => {
+	const translate = useTranslate();
+
+	return (
+		<Button
+			borderless
+			className="email-provider-stacked-features__toggle-button"
+			onClick={ handleClick }
+		>
+			<span className="email-provider-stacked-features__toggle-text">
+				{ translate( 'Show all features' ) }
+			</span>
+
+			<Gridicon icon={ isRelatedContentExpanded ? 'chevron-up' : 'chevron-down' } />
+		</Button>
+	);
+};

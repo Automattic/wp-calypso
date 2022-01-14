@@ -14,13 +14,9 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 jest.mock( '../domain-registration-details', () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => 'component--jetpack-plan-details' );
-jest.mock( '../rebrand-cities-thank-you', () => 'component--RebrandCitiesThankYou' );
 jest.mock( '../atomic-store-thank-you-card', () => 'component--AtomicStoreThankYouCard' );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( 'calypso/components/happiness-support', () => 'HappinessSupport' );
-jest.mock( 'calypso/lib/rebrand-cities', () => ( {
-	isRebrandCitiesSiteUrl: jest.fn( () => false ),
-} ) );
 
 const translate = ( x ) => x;
 

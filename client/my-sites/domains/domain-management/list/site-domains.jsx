@@ -20,7 +20,6 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type } from 'calypso/lib/domains/constants';
-import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
@@ -290,21 +289,11 @@ export class SiteDomains extends Component {
 		const buttons = [
 			this.renderDomainTableFilterButton( false ),
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<HeaderCart
-				key="breadcrumb_button_cart"
-				selectedSite={ this.props.selectedSite }
-				currentRoute={ this.props.currentRoute }
-			/>,
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 
 		const mobileButtons = [
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<HeaderCart
-				key="breadcrumb_button_cart"
-				selectedSite={ this.props.selectedSite }
-				currentRoute={ this.props.currentRoute }
-			/>,
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 

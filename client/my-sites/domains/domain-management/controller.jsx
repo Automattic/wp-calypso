@@ -31,15 +31,11 @@ import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
-		let listComponent = DomainManagement.List;
-		if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
-			listComponent = DomainManagement.SiteDomains;
-		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementList( ':site' ) }
 				analyticsTitle="Domain Management"
-				component={ listComponent }
+				component={ DomainManagement.SiteDomains }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
@@ -51,15 +47,11 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
-		let listAllComponent = DomainManagement.ListAll;
-		if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
-			listAllComponent = DomainManagement.AllDomains;
-		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementRoot() }
 				analyticsTitle="Domain Management > All Domains"
-				component={ listAllComponent }
+				component={ DomainManagement.AllDomains }
 				context={ pageContext }
 			/>
 		);
@@ -119,11 +111,15 @@ export default {
 	},
 
 	domainManagementTransferIn( pageContext, next ) {
+		let component = DomainManagement.TransferIn;
+		if ( config.isEnabled( 'domains/settings-page-redesign' ) ) {
+			component = DomainManagement.Settings;
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferIn( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ DomainManagement.TransferIn }
+				component={ component }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains

@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import DomainProductPrice from 'calypso/components/domains/domain-product-price';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { hasProduct, siteRedirect } from 'calypso/lib/cart-values/cart-items';
 import { canRedirect } from 'calypso/lib/domains';
 import { withoutHttp } from 'calypso/lib/url';
@@ -124,13 +123,9 @@ class SiteRedirectStep extends Component {
 	};
 
 	addSiteRedirectToCart = ( domain ) => {
-		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes( siteRedirect( { domain } ), this.props.products ),
-			] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + this.props.selectedSite.slug );
-			} );
+		this.props.shoppingCartManager.addProductsToCart( [ siteRedirect( { domain } ) ] ).then( () => {
+			this.isMounted && page( '/checkout/' + this.props.selectedSite.slug );
+		} );
 	};
 
 	getValidationErrorMessage = ( domain, error ) => {

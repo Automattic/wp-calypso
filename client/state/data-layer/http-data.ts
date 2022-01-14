@@ -1,5 +1,6 @@
 import { Reducer, AnyAction, Dispatch, Action, StoreEnhancerStoreCreator } from 'redux';
 import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { Lazy, TimestampMS, TimerHandle } from 'calypso/types';
 
@@ -131,7 +132,7 @@ const onSuccess = ( action: HttpDataAction, apiData: unknown ) => {
 	}
 };
 
-export default {
+registerHandlers( 'declarative resource loader', {
 	[ HTTP_DATA_REQUEST ]: [
 		dispatchRequest( {
 			fetch,
@@ -139,7 +140,7 @@ export default {
 			onError,
 		} ),
 	],
-};
+} );
 
 export const reducer: Reducer< number, Action< typeof HTTP_DATA_TICK > > = (
 	state = 0,
@@ -253,7 +254,6 @@ interface QueryResults {
  *         ? res.send( renderToStaticMarkup( <LocalSplines geo={ geo.data } splines={ splines.data } /> ) )
  *         : res.send( renderToStaticMarkup( <UnvailableData /> ) );
  * }
- *
  * @param query - function that returns key/value pairs of data name and request state
  * @param options - options object
  * @param options.timeout - how many ms to wait until giving up on requests
@@ -300,6 +300,18 @@ export const waitForHttpData = (
 		unsubscribe = subscribe( listener );
 		listener();
 	} );
+
+declare global {
+	interface Window {
+		app?: {
+			isDebug?: boolean;
+		};
+		getHttpData?: typeof getHttpData;
+		httpData?: typeof httpData;
+		requestHttpData?: typeof requestHttpData;
+		waitForHttpData?: typeof waitForHttpData;
+	}
+}
 
 if ( 'object' === typeof window && window.app && window.app.isDebug ) {
 	window.getHttpData = getHttpData;

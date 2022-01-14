@@ -76,7 +76,6 @@ class TitanManageMailboxes extends Component {
 
 	render() {
 		const {
-			currentRoute,
 			domain,
 			hasSubscription,
 			isLoadingPurchase,
@@ -99,7 +98,7 @@ class TitanManageMailboxes extends Component {
 				<Main wideLayout={ true }>
 					<DocumentHead title={ titleCase( translate( 'Manage all mailboxes' ) ) } />
 
-					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+					<EmailHeader />
 
 					<HeaderCake onClick={ this.handleBack }>
 						{ translate( 'Manage all mailboxes' ) }

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import './style.scss';
 
 export default function Main( {
-	className,
+	className = '',
 	children,
 	wideLayout = false,
 	fullWidthLayout = false,

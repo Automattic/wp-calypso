@@ -172,6 +172,88 @@ module.exports = {
 				'prettier/prettier': [ 'error', { parser: 'babel' } ],
 			},
 		},
+		{
+			files: [ '*.json' ],
+			extends: [ 'plugin:@automattic/json/recommended' ],
+			rules: {
+				// JSON doesn't allow dangle comma or comments
+				'comma-dangle': 'off',
+				'json-es/no-comments': 'error',
+			},
+			overrides: [
+				{
+					// Default settings for all package.json files
+					files: [ 'package.json' ],
+					rules: {
+						'@automattic/json/prefer-property-order': 'off',
+						'@automattic/json/require-keywords': 'off',
+						'@automattic/json/require-repository-directory': 'error',
+						'@automattic/json/valid-values-author': [ 'error', [ 'Automattic Inc.' ] ],
+						'@automattic/json/valid-values-license': [ 'error', [ 'GPL-2.0-or-later' ] ],
+						'@automattic/json/valid-values-name-scope': [ 'error', [ '@automattic' ] ],
+						'@automattic/json/valid-values-publishConfig': [ 'error', [ { access: 'public' } ] ],
+					},
+				},
+				{
+					// These files don't have the `@automattic` prefix in the name
+					files: [
+						'./package.json',
+						'./client/package.json',
+						'./desktop/package.json',
+						'./test/e2e/package.json',
+						'./packages/calypso-codemods/package.json',
+						'./packages/wpcom-proxy-request/package.json',
+						'./packages/wpcom-xhr-request/package.json',
+						'./packages/wpcom.js/package.json',
+						'./packages/eslint-plugin-wpcalypso/package.json',
+						'./packages/i18n-calypso-cli/package.json',
+						'./packages/i18n-calypso/package.json',
+						'./packages/i18n-utils/package.json',
+						'./packages/photon/package.json',
+						'./packages/spec-junit-reporter/package.json',
+						'./packages/spec-xunit-reporter/package.json',
+					],
+					rules: {
+						'@automattic/json/valid-values-name-scope': 'off',
+					},
+				},
+				{
+					// These files don't have GPL license
+					files: [
+						'./desktop/package.json',
+						'./packages/magellan-mocha-plugin/package.json',
+						'./packages/material-design-icons/package.json',
+						'./packages/wpcom-proxy-request/package.json',
+						'./packages/wpcom-xhr-request/package.json',
+						'./packages/wpcom.js/package.json',
+					],
+					rules: {
+						'@automattic/json/valid-values-license': 'off',
+					},
+				},
+				{
+					// These files are "fake" package.json files, only there to configure webpack bundling
+					files: [ './client/**/package.json' ],
+					excludedFiles: './client/package.json',
+					rules: {
+						'@automattic/json/require-repository-directory': 'off',
+						'@automattic/json/valid-values-name-scope': 'off',
+						'@automattic/json/require-author': 'off',
+						'@automattic/json/require-description': 'off',
+						'@automattic/json/require-license': 'off',
+						'@automattic/json/require-name': 'off',
+						'@automattic/json/require-version': 'off',
+					},
+				},
+				{
+					// These files are parsed as jsonc (JSON With Comments)
+					files: [ 'tsconfig.json' ],
+					rules: {
+						'json-es/no-comments': 'off',
+					},
+				},
+			],
+		},
 	],
 	env: {
 		jest: true,

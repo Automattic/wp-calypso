@@ -18,7 +18,13 @@ import { filter, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
-import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
+import {
+	inIframe,
+	isEditorReady,
+	isEditorReadyWithBlocks,
+	sendMessage,
+	getPages,
+} from '../../utils';
 import FeedbackForm from './fse-beta/feedback-form';
 /**
  * Conditional dependency.  We cannot use the standard 'import' since this package is
@@ -963,7 +969,7 @@ function getCalypsoUrlInfo( calypsoPort ) {
 }
 
 async function handleEditorLoaded( calypsoPort ) {
-	await isEditorReadyWithBlocks();
+	await isEditorReady();
 	const isNew = select( 'core/editor' ).isCleanNewPost();
 	const blocks = select( 'core/block-editor' ).getBlocks();
 

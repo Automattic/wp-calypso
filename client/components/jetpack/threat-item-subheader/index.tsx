@@ -27,7 +27,7 @@ const formatDate = ( date: Date ) => {
 	return moment( date ).format( 'LL' );
 };
 
-const getThreatStatusMessage = ( translate, threat: Threat ) => {
+const getThreatStatusMessage = ( translate: ReturnType< typeof useTranslate >, threat: Threat ) => {
 	const { status, fixedOn } = threat;
 
 	const date = fixedOn && formatDate( fixedOn );
@@ -57,7 +57,11 @@ const getThreatStatusMessage = ( translate, threat: Threat ) => {
 	return null;
 };
 
-const getAutoFixBadge = ( translate, threat: Threat, isFixable ) => {
+const getAutoFixBadge = (
+	translate: ReturnType< typeof useTranslate >,
+	threat: Threat,
+	isFixable: boolean
+) => {
 	if ( isFixable && threat.status !== 'fixed' ) {
 		return (
 			<Badge className={ classnames( 'threat-item-subheader__badge', 'is-auto-fix' ) }>

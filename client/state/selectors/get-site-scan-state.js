@@ -6,7 +6,7 @@ import 'calypso/state/data-layer/wpcom/sites/scan';
  *
  * @param {import('calypso/types').AppState} state	Global state tree
  * @param {number} siteId	The ID of the site we're querying
- * @returns {undefined|{state?: string; threats?: string[]; mostRecent?: {timestamp: string}}}		An object describing the current scan state
+ * @returns {undefined|import('calypso/my-sites/scan/types').Scan}		An object describing the current scan state
  */
 export default function getSiteScanState( state, siteId ) {
 	return state.jetpackScan.scan?.[ siteId ];

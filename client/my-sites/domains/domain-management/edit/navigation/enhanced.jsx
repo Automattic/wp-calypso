@@ -200,9 +200,9 @@ class DomainManagementNavigationEnhanced extends Component {
 
 	getTransferDomain() {
 		const { moment, selectedSite, translate, domain, currentRoute } = this.props;
-		const { expired, isLocked, transferAwayEligibleAt } = domain;
+		const { currentUserIsOwner, expired, isLocked, transferAwayEligibleAt } = domain;
 
-		if ( expired && ! isDomainInGracePeriod( domain ) ) {
+		if ( ! currentUserIsOwner || ( expired && ! isDomainInGracePeriod( domain ) ) ) {
 			return null;
 		}
 

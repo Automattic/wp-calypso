@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { Icon, home, moreVertical, redo, plus } from '@wordpress/icons';
+import { Icon, home, info, moreVertical, redo, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -26,9 +27,12 @@ import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-tog
 import {
 	domainManagementList,
 	createSiteFromDomainOnly,
-	domainTransferIn,
+	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import {
+	emailManagement,
+	emailManagementPurchaseNewEmailAccount,
+} from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './domain-row.scss';
@@ -144,29 +148,36 @@ class DomainRow extends PureComponent {
 	}
 
 	renderExpiryDate( expiryDate ) {
+		const { domain } = this.props;
 		return (
 			<div className="domain-row__registered-until-cell">
-				{ expiryDate ? expiryDate.format( 'LL' ) : '-' }
+				{ expiryDate && domain.type !== domainTypes.MAPPED ? expiryDate.format( 'LL' ) : '-' }
 			</div>
 		);
 	}
 
 	renderMobileExtraInfo( expiryDate, domainTypeText ) {
-		const { domain } = this.props;
+		const { domain, translate } = this.props;
 
 		let extraInfo = '';
 		if ( domainTypeText ) {
 			extraInfo = domainTypeText;
 		} else if ( domain.expired ) {
 			if ( expiryDate ) {
-				extraInfo = 'Expired on ' + expiryDate.format( 'LL' );
+				extraInfo = translate( 'Expired on %(expiryDate)s', {
+					args: { expiryDate: expiryDate.format( 'LL' ) },
+				} );
 			} else {
-				extraInfo = 'Expired';
+				extraInfo = translate( 'Expired' );
 			}
 		} else if ( domain.isAutoRenewing && domain.autoRenewalDate ) {
-			extraInfo = 'Renews on ' + moment.utc( domain.autoRenewalDate ).format( 'LL' );
+			extraInfo = translate( 'Renews on %(renewalDate)s', {
+				args: { renewalDate: moment.utc( domain.autoRenewalDate ).format( 'LL' ) },
+			} );
 		} else if ( expiryDate ) {
-			extraInfo = 'Expires on ' + expiryDate.format( 'LL' );
+			extraInfo = translate( 'Expires on %(expiryDate)s', {
+				args: { expiryDate: expiryDate.format( 'LL' ) },
+			} );
 		}
 
 		return <div className="domain-row__mobile-extra-info">{ extraInfo }</div>;
@@ -291,21 +302,31 @@ class DomainRow extends PureComponent {
 	/* eslint-enable jsx-a11y/anchor-is-valid */
 
 	addEmailClick = ( event ) => {
-		const { trackAddEmailClick, domain } = this.props;
+		const { currentRoute, domain, site, trackAddEmailClick } = this.props;
 		event.stopPropagation();
 
 		trackAddEmailClick( domain ); // analytics/tracks
-		this.goToEmailPage( event );
+
+		this.goToEmailPage(
+			event,
+			emailManagementPurchaseNewEmailAccount( site.slug, domain.domain, currentRoute )
+		);
 	};
 
-	goToEmailPage = ( event ) => {
+	goToEmailPage = ( event, targetPath ) => {
 		const { currentRoute, disabled, domain, site } = this.props;
 		event.stopPropagation();
+		event.preventDefault();
 
 		if ( disabled ) {
 			return;
 		}
-		page( emailManagement( site.slug, domain.domain, currentRoute ) );
+
+		const emailPath = targetPath
+			? targetPath
+			: emailManagement( site.slug, domain.domain, currentRoute );
+
+		page( emailPath );
 	};
 
 	renderEllipsisMenu() {
@@ -354,7 +375,13 @@ class DomainRow extends PureComponent {
 						</PopoverMenuItem>
 					) }
 					{ domain.type === domainTypes.MAPPED && domain.isEligibleForInboundTransfer && (
-						<PopoverMenuItem href={ domainTransferIn( site.slug, domain.name, true ) }>
+						<PopoverMenuItem
+							href={ domainUseMyDomain(
+								site.slug,
+								domain.name,
+								useMyDomainInputMode.transferDomain
+							) }
+						>
 							<Icon icon={ redo } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ translate( 'Transfer to WordPress.com' ) }
 						</PopoverMenuItem>
@@ -428,9 +455,13 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, isManagingAllSites, showCheckbox, translate } = this.props;
+		const { domain, isManagingAllSites, site, showCheckbox, purchase, translate } = this.props;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
+		const { noticeText, statusClass } = resolveDomainStatus( domain, purchase, {
+			siteSlug: site?.slug,
+			getMappingErrors: true,
+		} );
 
 		return (
 			<div className="domain-row">
@@ -451,6 +482,20 @@ class DomainRow extends PureComponent {
 					{ this.renderDomainStatus() }
 					{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
 				</div>
+				{ noticeText && (
+					<div className="domain-row__domain-notice">
+						<Icon
+							icon={ info }
+							size={ 18 }
+							className={ classnames( 'domain-row__domain-notice-icon gridicon', {
+								'gridicon--error': 'status-success' !== statusClass,
+								'gridicon--success': 'status-success' === statusClass,
+							} ) }
+							viewBox="2 2 20 20"
+						/>
+						<div className="domain-row__domain-notice-message">{ noticeText }</div>
+					</div>
+				) }
 				{ this.renderOverlay() }
 			</div>
 		);

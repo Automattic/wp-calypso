@@ -36,7 +36,7 @@ function WelcomeTourCard( {
 	isGutenboarding,
 	setInitialFocusedElement,
 } ) {
-	const { description, heading, imgSrc } = cardContent;
+	const { descriptions, heading, imgSrc } = cardContent;
 	const isLastStep = currentStepIndex === lastStepIndex;
 
 	// Ensure tracking is recorded once per slide view
@@ -55,11 +55,13 @@ function WelcomeTourCard( {
 		} );
 	} );
 
+	const description = descriptions[ isMobile() ? 'mobile' : 'desktop' ] ?? descriptions.desktop;
+
 	return (
 		<Card className="welcome-tour-card" isElevated>
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			{ /* TODO: Update selector for images in @wordpress/components/src/card/styles/card-styles.js */ }
-			<CardMedia className="welcome-tour-card__media">
+			<CardMedia className={ 'welcome-tour-card__media' }>
 				<picture>
 					{ imgSrc.mobile && (
 						<source
@@ -155,12 +157,8 @@ function CardNavigation( {
 }
 
 function CardOverlayControls( { onMinimize, onDismiss } ) {
-	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls', {
-		'welcome-tour-card__overlay-controls__absolute': ! isMobile(),
-	} );
-
 	return (
-		<div className={ buttonClasses }>
+		<div className="welcome-tour-card__overlay-controls">
 			<Flex>
 				<Button
 					label={ __( 'Minimize Tour', 'full-site-editing' ) }

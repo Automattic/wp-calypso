@@ -1,8 +1,9 @@
-import { TranslateResult } from 'i18n-calypso';
-import { get } from 'lodash';
-import { FunctionComponent } from 'react';
-import PromoCard, { Props as PromoCardProps } from './promo-card';
-import PromoCardCta, { Props as PromoCardCtaProps } from './promo-card/cta';
+import PromoCard from './promo-card';
+import PromoCardCta from './promo-card/cta';
+import type { Props as PromoCardProps } from './promo-card';
+import type { Props as PromoCardCtaProps } from './promo-card/cta';
+import type { TranslateResult } from 'i18n-calypso';
+import type { FunctionComponent } from 'react';
 
 interface PromoSectionCardProps extends PromoCardProps {
 	body: string | TranslateResult;
@@ -25,8 +26,18 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	badge,
 	actions,
 } ) => {
-	const cta = get( actions, 'cta', null );
-	const learnMoreLink = get( actions, 'learnMoreLink', null );
+	const cta = actions?.cta;
+	const learnMoreLink = actions?.learnMoreLink;
+	const getCtaComponent = () => {
+		if ( ! cta ) {
+			return null;
+		}
+		if ( 'component' in cta && cta.component ) {
+			return cta.component;
+		}
+		return <PromoCardCta cta={ cta } learnMoreLink={ learnMoreLink } />;
+	};
+	const ctaComponent = getCtaComponent();
 	return (
 		<PromoCard
 			isPrimary={ !! isPrimary }
@@ -36,7 +47,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 			icon={ icon }
 		>
 			<p>{ body }</p>
-			{ cta && ( cta.component || <PromoCardCta cta={ cta } learnMoreLink={ learnMoreLink } /> ) }
+			{ ctaComponent }
 		</PromoCard>
 	);
 };

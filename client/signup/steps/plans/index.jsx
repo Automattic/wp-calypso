@@ -30,12 +30,19 @@ export class PlansStep extends Component {
 	state = {
 		isDesktop: isDesktop(),
 		experiment: null,
+		experimentLoaded: false,
 	};
 
 	componentWillMount() {
-		loadExperimentAssignment( 'disabled_monthly_personal_premium_v2' ).then( ( experimentName ) => {
-			this.setState( { experiment: experimentName } );
-		} );
+		if ( this.props.flowName === 'onboarding' || this.props.flowName === 'launch-site' ) {
+			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v1' ).then(
+				( experiment ) => {
+					this.setState( { experiment, experimentLoaded: true } );
+				}
+			);
+		} else {
+			this.setState( { experimentLoaded: true } );
+		}
 	}
 
 	componentDidMount() {
@@ -120,6 +127,13 @@ export class PlansStep extends Component {
 			return intervalType;
 		}
 
+		if (
+			'calypso_signup_monthly_plans_default_202201_v1' === this.state.experiment?.experimentName &&
+			this.state.experiment?.variationName !== null
+		) {
+			return 'monthly';
+		}
+
 		// Default value
 		return 'yearly';
 	}
@@ -171,7 +185,7 @@ export class PlansStep extends Component {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
-					disableMonthlyExperiment={ this.state.experiment?.variationName !== null }
+					disableMonthlyExperiment={ false }
 				/>
 			</div>
 		);
@@ -253,6 +267,10 @@ export class PlansStep extends Component {
 					initialQuery: previousStep?.siteUrl,
 				};
 			}
+		}
+
+		if ( ! this.state.experimentLoaded ) {
+			return null;
 		}
 
 		return (

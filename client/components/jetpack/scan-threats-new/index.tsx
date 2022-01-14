@@ -67,34 +67,40 @@ const getThreatCountMessage = (
 ) => {
 	let lowThreatsSummary = '';
 	if ( countLowSeverity ) {
-		lowThreatsSummary = translate( '%(lowCount)s low risk item', '%(lowCount)s low risk items', {
-			args: {
-				lowCount: numberFormat( countLowSeverity, 0 ),
-			},
-			comment: '$(lowCount)s is the number of low severity items found.',
-			count: countLowSeverity,
-		} );
+		lowThreatsSummary = String(
+			translate( '%(lowCount)s low risk item', '%(lowCount)s low risk items', {
+				args: {
+					lowCount: numberFormat( countLowSeverity, 0 ),
+				},
+				comment: '$(lowCount)s is the number of low severity items found.',
+				count: countLowSeverity,
+			} )
+		);
 	}
 
 	let highThreatsSummary = '';
 	if ( countHighSeverity ) {
-		highThreatsSummary = translate( '%(threatCount)s threat', '%(threatCount)s threats', {
-			args: {
-				threatCount: numberFormat( countHighSeverity, 0 ),
-			},
-			comment: '%(threatCount)s represents the number of higher severity threats found.',
-			count: countHighSeverity,
-		} );
+		highThreatsSummary = String(
+			translate( '%(threatCount)s threat', '%(threatCount)s threats', {
+				args: {
+					threatCount: numberFormat( countHighSeverity, 0 ),
+				},
+				comment: '%(threatCount)s represents the number of higher severity threats found.',
+				count: countHighSeverity,
+			} )
+		);
 	}
 
 	let headerSummary = '';
 	if ( highThreatsSummary && lowThreatsSummary ) {
-		headerSummary = translate( '%(highThreatsSummary)s and %(lowThreatsSummary)s', {
-			args: {
-				highThreatsSummary: highThreatsSummary,
-				lowThreatsSummary: lowThreatsSummary,
-			},
-		} );
+		headerSummary = String(
+			translate( '%(highThreatsSummary)s and %(lowThreatsSummary)s', {
+				args: {
+					highThreatsSummary: highThreatsSummary,
+					lowThreatsSummary: lowThreatsSummary,
+				},
+			} )
+		);
 	} else if ( highThreatsSummary ) {
 		headerSummary = highThreatsSummary;
 	} else if ( lowThreatsSummary ) {
@@ -202,12 +208,12 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 		countMap.high,
 		countMap.low,
 		null,
-		translate( 'found' )
+		String( translate( 'found' ) )
 	);
 	const fixSummary = getThreatCountMessage(
 		countMapFixable.high,
 		countMapFixable.low,
-		translate( 'Jetpack can auto fix' ),
+		String( translate( 'Jetpack can auto fix' ) ),
 		null
 	);
 
@@ -226,8 +232,8 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 
 	return (
 		<>
-			<Card>
-				<SecurityIcon icon={ securityIcon } />
+			<Card className="scan-threats-new__card-header">
+				<SecurityIcon icon={ securityIcon } className="scan-threats-new security-icon-new" />
 				<h1 className="scan-threats-new scan__header">{ headerMessage }</h1>
 				<p className="scan-threats-new__header-message">
 					{ headerSummary }{ ' ' }
@@ -283,23 +289,28 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 							isPlaceholder={ false }
 						/>
 					) ) }
-				<div className="scan-threats-new__low-risk">
-					<FoldableCard header={ <ThreatLowRiskItemHeader threatCount={ countMap.low } /> }>
-						{ highSeverityThreats &&
-							lowSeverityThreats &&
-							lowSeverityThreats.map( ( threat ) => (
-								<ThreatItem
-									key={ threat.id }
-									threat={ threat }
-									onFixThreat={ () => openDialog( 'fix', threat ) }
-									onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
-									isFixing={ isFixing( threat ) }
-									contactSupportUrl={ contactSupportUrl( site.URL ) }
-									isPlaceholder={ false }
-								/>
-							) ) }
-					</FoldableCard>
-				</div>
+				{ lowSeverityThreats.length > 0 && (
+					<div className="scan-threats-new__low-risk">
+						<FoldableCard
+							clickableHeader={ true }
+							header={ <ThreatLowRiskItemHeader threatCount={ countMap.low } /> }
+						>
+							{ highSeverityThreats &&
+								lowSeverityThreats &&
+								lowSeverityThreats.map( ( threat ) => (
+									<ThreatItem
+										key={ threat.id }
+										threat={ threat }
+										onFixThreat={ () => openDialog( 'fix', threat ) }
+										onIgnoreThreat={ () => openDialog( 'ignore', threat ) }
+										isFixing={ isFixing( threat ) }
+										contactSupportUrl={ contactSupportUrl( site.URL ) }
+										isPlaceholder={ false }
+									/>
+								) ) }
+						</FoldableCard>
+					</div>
+				) }
 			</div>
 
 			{ ! error && (

@@ -79,10 +79,9 @@ function isValidSerializedState( schema, reducer, state ) {
  * expect( deserialize( age, -5 ) ).toBe( 0 ); // schema check failed, return initial state
  * expect( deserialize( age,  23 ) ).toBe( 23 ); // schema check passed
  * ```
- *
  * @param {object} schema JSON-schema description of state
  * @param {Function} reducer normal reducer from ( state, action ) to new state
- * @returns {Function} wrapped reducer handling validation on `.deserialize()`
+ * @returns {import('redux').Reducer} wrapped reducer handling validation on `.deserialize()`
  */
 export const withSchemaValidation = ( schema, reducer ) => {
 	if ( process.env.NODE_ENV !== 'production' && ! schema ) {

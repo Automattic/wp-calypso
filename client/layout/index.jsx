@@ -274,7 +274,7 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/lib/keyboard-shortcuts/menu" placeholder={ null } />
 				) }
 				{ this.renderMasterbar() }
-				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
+				<SupportUser />
 				<LayoutLoader />
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
@@ -316,10 +316,8 @@ class Layout extends Component {
 						placeholder={ null }
 						allowMobileRedirect
 						borderless={ false }
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						className={ classnames( 'floating-happychat-button', {
-							offset: loadInlineHelp,
-						} ) }
+						floating
+						withOffset={ loadInlineHelp }
 					/>
 				) }
 

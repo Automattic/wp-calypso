@@ -1,9 +1,4 @@
-import {
-	DomainSuggestions,
-	Site,
-	VerticalsTemplates,
-	WPCOMFeatures,
-} from '@automattic/data-stores';
+import { DomainSuggestions, Site, WPCOMFeatures } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
@@ -12,12 +7,10 @@ import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { SITE_STORE } from '../site';
 import { STORE_KEY as ONBOARD_STORE } from './constants';
 import type { State } from '.';
-import type { SiteVertical } from './types';
 import type { Design, FontPair } from '@automattic/design-picker';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
-type Template = VerticalsTemplates.Template;
 type Language = {
 	value: number;
 };
@@ -52,7 +45,6 @@ export function* createSite( {
 		selectedDesign,
 		selectedFonts,
 		siteTitle,
-		siteVertical,
 		selectedFeatures,
 		isEnrollingInFseBeta,
 	}: State = yield select( ONBOARD_STORE, 'getState' );
@@ -67,13 +59,6 @@ export function* createSite( {
 		blog_title: blogTitle,
 		public: visibility,
 		options: {
-			site_vertical: siteVertical?.id,
-			site_vertical_name: siteVertical?.label,
-			// untranslated vertical slug
-			// so we can match directories in
-			// https://github.com/Automattic/wp-calypso/tree/HEAD/static/page-templates/verticals
-			// TODO: determine default vertical should user input match no official vertical
-			site_vertical_slug: siteVertical?.slug,
 			site_information: {
 				title: blogTitle,
 			},
@@ -123,10 +108,6 @@ export const resetFonts = () => ( {
 
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
-} );
-
-export const resetSiteVertical = () => ( {
-	type: 'RESET_SITE_VERTICAL' as const,
 } );
 
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
@@ -201,20 +182,6 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
-export const setSiteVertical = ( siteVertical: SiteVertical ) => ( {
-	type: 'SET_SITE_VERTICAL' as const,
-	siteVertical,
-} );
-
-export const skipSiteVertical = () => ( {
-	type: 'SKIP_SITE_VERTICAL' as const,
-} );
-
-export const togglePageLayout = ( pageLayout: Template ) => ( {
-	type: 'TOGGLE_PAGE_LAYOUT' as const,
-	pageLayout,
-} );
-
 export function updatePlan( planProductId: number ) {
 	// keep updatePlan for backwards compat
 	return setPlanProductId( planProductId );
@@ -234,7 +201,6 @@ export type OnboardAction = ReturnType<
 	| typeof removeFeature
 	| typeof resetFonts
 	| typeof resetOnboardStore
-	| typeof resetSiteVertical
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch
@@ -249,9 +215,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
-	| typeof setSiteVertical
-	| typeof skipSiteVertical
-	| typeof togglePageLayout
 	| typeof startOnboarding
 	| typeof enrollInFseBeta
 >;

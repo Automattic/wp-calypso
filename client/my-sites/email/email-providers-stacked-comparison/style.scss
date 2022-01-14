@@ -1,32 +1,32 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@automattic/typography/styles/variables';
+
+.email-providers-stacked-comparison__main {
+	padding: 0 20px 20px;
+
+	@include break-mobile {
+		padding: 0 24px 24px;
+	}
+}
+
 .email-providers-stacked-comparison__header {
-	font-size: 2rem;
+	font-size: $font-title-large;
+	text-align: center;
+
+	@extend .wp-brand-font;
+}
+
+.email-providers-stacked-comparison__sub-header {
+	font-size: $font-body-small;
 	text-align: center;
 }
 
-.mail-providers-stacked-comparison__provider-card.promo-card {
-	.action-panel__figure {
-		float: right;
-		max-width: 208px;
-		margin-bottom: 0.5em;
-		margin-top: 0;
+.email-providers-stacked-comparison__email-forward-section {
+	margin-top: 1.5em;
+	text-align: center;
 
-		img {
-			max-width: 36px;
-		}
+	a {
+		text-decoration: underline;
 	}
 }
-
-.email-provider-stacked-card__title-price-badge {
-	.promo-card__price {
-		.price__cost {
-			.provider-cards__price-with-interval-price-discounted {
-				text-decoration: line-through;
-			}
-
-			.provider-cards__price-with-interval-sale-price {
-				color: var( --studio-green-50 );
-			}
-		}
-	}
-}
-

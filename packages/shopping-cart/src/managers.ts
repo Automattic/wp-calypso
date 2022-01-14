@@ -125,6 +125,7 @@ const noopActions: ShoppingCartManagerActions = {
 	replaceProductInCart: noopCartAction,
 	replaceProductsInCart: noopCartAction,
 	reloadFromServer: () => Promise.resolve( emptyCart ),
+	clearMessages: () => Promise.resolve( emptyCart ),
 };
 export const noopManager: ShoppingCartManager = {
 	actions: noopActions,

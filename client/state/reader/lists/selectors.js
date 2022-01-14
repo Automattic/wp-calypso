@@ -117,6 +117,10 @@ export function getListItems( state, listId ) {
 	return state.reader.lists.listItems[ listId ];
 }
 
+/**
+ * @param {import('calypso/state/types').AppState} state
+ * @param {{feedUrl?: string|null, feedId?: string|number|null, listId?: string|number, siteId?: string|number|null, tagId?: string|number|null}} args
+ */
 export function getMatchingItem( state, { feedUrl, feedId, listId, siteId, tagId } ) {
 	// Find associated feed ID if feed URL is provided.
 	if ( feedUrl ) {

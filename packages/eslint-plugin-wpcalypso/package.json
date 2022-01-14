@@ -1,12 +1,14 @@
 {
 	"name": "eslint-plugin-wpcalypso",
 	"version": "5.1.0",
-	"description": "Custom ESLint rules for the WordPress.com Calypso project",
+	"description": "Custom ESLint rules for the WordPress.com Calypso project.",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/eslint-plugin-wpcalypso"
 	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"license": "GPL-2.0-or-later",
 	"keywords": [
 		"eslint",
@@ -22,17 +24,17 @@
 		"node": ">=10"
 	},
 	"peerDependencies": {
-		"@babel/core": ">=7.16.5",
-		"eslint": ">=8.4.1",
+		"@babel/core": ">=7.16.7",
+		"eslint": ">=8.6.0",
 		"eslint-plugin-inclusive-language": "^2.2.0",
-		"eslint-plugin-jsdoc": "^37.2.0",
+		"eslint-plugin-jsdoc": "^37.5.1",
 		"eslint-plugin-react-hooks": "^4.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@babel/core": "^7.16.5",
+		"@babel/core": "^7.16.7",
 		"@babel/eslint-parser": "^7.16.5",
-		"@babel/parser": "^7.16.6",
-		"eslint": ">=8.4.1"
+		"@babel/parser": "^7.16.7",
+		"eslint": ">=8.6.0"
 	}
 }

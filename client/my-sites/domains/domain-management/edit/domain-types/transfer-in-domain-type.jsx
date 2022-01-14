@@ -27,7 +27,7 @@ class TransferInDomainType extends Component {
 	goToInboundTransferPage() {
 		const { domain, selectedSite } = this.props;
 		page(
-			domainUseMyDomain( selectedSite.slug, domain.name, useMyDomainInputMode.transferDomain )
+			domainUseMyDomain( selectedSite.slug, domain.name, useMyDomainInputMode.startPendingTransfer )
 		);
 	}
 

@@ -199,12 +199,11 @@ describe( 'payPalExpressProcessor', () => {
 		expect( createAccountEndpoint ).toHaveBeenCalledWith( expectedCreateAccountRequest );
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedRequest,
-			site_id: 1234567,
 			cancel_url: 'https://example.com/?cart=no-user',
 			cart: {
 				...basicExpectedRequest.cart,
-				blog_id: 1234567,
-				cart_key: 1234567,
+				blog_id: '1234567',
+				cart_key: '1234567',
 				coupon: '',
 				create_new_blog: false,
 			},
@@ -267,11 +266,10 @@ describe( 'payPalExpressProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedRequest,
 			cancel_url: 'https://example.com/?cart=no-user',
-			site_id: 1234567,
 			cart: {
 				...basicExpectedRequest.cart,
-				blog_id: 1234567,
-				cart_key: 1234567,
+				blog_id: '1234567',
+				cart_key: '1234567',
 				coupon: '',
 				create_new_blog: false,
 			},

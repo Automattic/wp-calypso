@@ -35,7 +35,7 @@ export const useWPCOMPlugins = (
 	searchTerm?: string,
 	{ enabled = true, staleTime = 1000 * 60 * 60 * 24, refetchOnMount = false }: UseQueryOptions = {}
 ): UseQueryResult => {
-	return useQuery( getCacheKey( type ), () => fetchWPCOMPlugins( type, searchTerm ), {
+	return useQuery( getCacheKey( type + searchTerm ), () => fetchWPCOMPlugins( type, searchTerm ), {
 		select: ( data ) => normalizePluginsList( data.results ),
 		enabled: enabled,
 		staleTime: staleTime,

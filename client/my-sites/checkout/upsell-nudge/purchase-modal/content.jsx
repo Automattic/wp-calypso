@@ -19,8 +19,15 @@ function PurchaseModalStep( { children } ) {
 	);
 }
 
-function OrderStep( { siteSlug, product } ) {
+function OrderStep( { siteSlug, product, discountRateCopy } ) {
 	const translate = useTranslate();
+	const originalAmountDisplay = product.item_original_subtotal_display;
+	const originalAmountInteger = product.item_original_subtotal_integer;
+
+	const actualAmountDisplay = product.item_subtotal_display;
+	const isDiscounted = Boolean(
+		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
+	);
 	return (
 		<PurchaseModalStep>
 			<div className="purchase-modal__step-title">{ translate( 'Your order' ) }</div>
@@ -28,8 +35,17 @@ function OrderStep( { siteSlug, product } ) {
 				<div>{ translate( 'Site: %(siteSlug)s', { args: { siteSlug } } ) }</div>
 				<div className="purchase-modal__product">
 					<span className="purchase-modal__product-name">{ product?.product_name }</span>
-					<span className="purchase-modal__cost">{ product?.product_cost_display }</span>
+					<span className="purchase-modal__cost">
+						{ isDiscounted && originalAmountDisplay ? (
+							<>
+								<s>{ originalAmountDisplay }</s> { actualAmountDisplay }
+							</>
+						) : (
+							actualAmountDisplay
+						) }
+					</span>
 				</div>
+				<div className="purchase-modal__annual-savings">{ discountRateCopy }</div>
 			</div>
 		</PurchaseModalStep>
 	);
@@ -104,6 +120,7 @@ export default function PurchaseModalContent( {
 	siteSlug,
 	step,
 	submitTransaction,
+	discountRateCopy,
 } ) {
 	const translate = useTranslate();
 
@@ -117,7 +134,11 @@ export default function PurchaseModalContent( {
 			>
 				<Gridicon icon="cross-small" />
 			</Button>
-			<OrderStep siteSlug={ siteSlug } product={ cart.products?.[ 0 ] } />
+			<OrderStep
+				siteSlug={ siteSlug }
+				product={ cart.products?.[ 0 ] }
+				discountRateCopy={ discountRateCopy }
+			/>
 			<PaymentMethodStep siteSlug={ siteSlug } card={ cards?.[ 0 ] } />
 			<CheckoutTerms cart={ cart } />
 			<hr />

@@ -1,6 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
 import { translate } from 'i18n-calypso';
-import { intersection } from 'lodash';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
@@ -452,7 +451,7 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 			partialMatches.push( item );
 		} else if (
 			'en' === getLocaleSlug() &&
-			intersection( item.synonyms, searchTermWords ).length > 0
+			item.synonyms?.some( ( s ) => searchTermWords.includes( s ) )
 		) {
 			synonymMatches.push( item );
 		}

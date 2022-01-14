@@ -416,14 +416,6 @@ export function calculateMonthlyPrice( term: string, termPrice: number ): number
 	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
 }
 
-export function getBillingMonthsForPlan( planSlug: string ): number {
-	const plan = getPlan( planSlug );
-	if ( ! plan ) {
-		throw new Error( `Unknown plan: ${ planSlug }` );
-	}
-	return getBillingMonthsForTerm( plan.term );
-}
-
 export function getBillingMonthsForTerm( term: string ): number {
 	if ( term === TERM_MONTHLY ) {
 		return 1;
@@ -437,7 +429,7 @@ export function getBillingMonthsForTerm( term: string ): number {
 
 export function plansLink(
 	urlString: string,
-	siteSlug: string,
+	siteSlug: string | undefined | null,
 	intervalType: string,
 	forceIntervalType = false
 ): string {

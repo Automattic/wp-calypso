@@ -5,8 +5,14 @@
 		margin: 0;
 	}
 
+	&__card-header {
+		flex: none;
+		padding: 32px;
+	}
+
 	&__header-message {
 		display: flex;
+		padding-bottom: 8px;
 	}
 
 	&__low-risk {
@@ -25,6 +31,11 @@
 		.foldable-card.is-expanded .foldable-card__content {
 				padding: 0;
 		}
+	}
+
+	&.scan__header {
+		margin-top: 24px;
+		margin-bottom: 16px;
 	}
 
 	&__error {
@@ -101,7 +112,6 @@
 
 	&__buttons {
 		display: flex;
-		margin-bottom: 8px;
 		border-top: 1px solid var( --studio-gray-5 );
 		padding-top: 32px;
 		flex-direction: space-between;

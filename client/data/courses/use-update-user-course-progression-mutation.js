@@ -18,9 +18,9 @@ function useUpdateUserCourseProgressionMutation( queryOptions = {} ) {
 			),
 		{
 			...queryOptions,
-			onSuccess( ...args ) {
-				queryClient.invalidateQueries( [ 'course-progression', args.courseSlug ] );
-				queryOptions.onSuccess?.( ...args );
+			onSuccess( data, variables, context ) {
+				queryClient.invalidateQueries( [ 'courses', variables.courseSlug ] );
+				queryOptions.onSuccess?.( data, variables, context );
 			},
 		}
 	);

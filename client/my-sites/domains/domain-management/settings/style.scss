@@ -10,7 +10,6 @@
 
 .settings-header {
 	&__container {
-
 		&-title {
 			display: flex;
 			flex-wrap: wrap;
@@ -21,11 +20,11 @@
 			// Higher specificity needed to override .formatted-header.is-left-align media-query styles
 			header.settings-header__title {
 				margin: 8px 0;
-	
+
 				&::first-letter {
 					text-transform: uppercase;
 				}
-	
+
 				.formatted-header__title {
 					font-weight: 400;
 					margin: 0;
@@ -77,11 +76,11 @@
 				&--success {
 					background: rgba( 184, 230, 191, 0.6 );
 					color: var( --studio-green-80 );
-					
+
 					svg {
 						fill: var( --studio-green-80 );
 					}
-					
+
 					.settings-header__badge-indicator svg {
 						fill: var( --studio-green-50 );
 					}
@@ -90,7 +89,7 @@
 				&--warning {
 					background: var( --studio-orange-0 );
 					color: var( --studio-yellow-80 );
-					
+
 					svg {
 						fill: var( --studio-orange-40 );
 					}
@@ -99,7 +98,7 @@
 				&--premium {
 					background: var( --studio-yellow-10 );
 					color: var( --studio-yellow-80 );
-					
+
 					svg {
 						fill: var( --studio-yellow-80 );
 						margin-right: 0;
@@ -110,12 +109,63 @@
 				&--neutral {
 					background: rgba( 220, 220, 222, 0.6 );
 					color: var( --studio-gray-80 );
-					
+
 					svg {
 						fill: var( --studio-gray-80 );
 					}
 				}
 			}
 		}
+	}
+	&__domain-notice {
+		flex-basis: 100%;
+		background-color: var( --studio-gray-0 );
+		display: flex;
+		align-items: center;
+		padding: 5px;
+		margin: 12px 0 24px;
+		gap: 8px;
+		border-radius: 2px;
+	}
+
+	&__domain-notice-icon.gridicon {
+		align-self: flex-start;
+		min-width: 18px;
+		position: relative;
+		top: 2px;
+		fill: var( --studio-green-50 );
+
+		&--error {
+			fill: var( --studio-orange-40 );
+		}
+	}
+
+	&__domain-notice-icon--rotated {
+		transform: rotate( 180deg );
+	}
+
+	&__domain-notice-message {
+		font-weight: 400;
+		font-size: $font-body-small;
+		color: var( --studio-gray-80 );
+
+		button.button-plain {
+			cursor: pointer;
+			color: var( --color-link );
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: var( --color-link-dark );
+			}
+		}
+	}
+}
+
+.domain-settings-page {
+	.name-servers-card__loading {
+		@include placeholder();
+		margin-top: 4px;
+		margin-bottom: 0;
 	}
 }

@@ -15,17 +15,27 @@ import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connecte
 
 import './style.scss';
 
-const PluginSiteList = ( props ) => {
+const PluginSiteList = ( {
+	sites,
+	plugin,
+	className,
+	titlePrimary,
+	title,
+	wporg,
+	showAdditionalHeaders,
+	...props
+} ) => {
 	const translate = useTranslate();
-	const siteIds = siteObjectsToSiteIds( props.sites );
+	const siteIds = siteObjectsToSiteIds( sites );
 	const sitesWithPlugin = useSelector( ( state ) =>
-		getSiteObjectsWithPlugin( state, siteIds, props.plugin.slug )
+		getSiteObjectsWithPlugin( state, siteIds, plugin.slug )
 	);
 	const sitesWithSecondarySites = useSelector( ( state ) =>
-		getSitesWithSecondarySites( state, props.sites )
+		getSitesWithSecondarySites( state, sites )
 	);
+
 	const pluginsOnSites = useSelector( ( state ) =>
-		getPluginOnSites( state, siteIds, props.plugin.slug )
+		getPluginOnSites( state, siteIds, plugin.slug )
 	);
 
 	const getSecondaryPluginSites = useCallback(
@@ -42,18 +52,18 @@ const PluginSiteList = ( props ) => {
 		[ pluginsOnSites, sitesWithPlugin ]
 	);
 
-	if ( ! props.sites || props.sites.length === 0 ) {
+	if ( ! sites || sites.length === 0 ) {
 		return null;
 	}
 	return (
-		<div className={ classNames( 'plugin-site-list', props.className ) }>
-			<div className={ classNames( 'plugin-site-list__title', { primary: props.titlePrimary } ) }>
-				{ props.title }
+		<div className={ classNames( 'plugin-site-list', className ) }>
+			<div className={ classNames( 'plugin-site-list__title', { primary: titlePrimary } ) }>
+				{ title }
 			</div>
 			<div className="plugin-site-list__content">
 				<div className="plugin-site-list__header">
 					<div className="plugin-site-list__header-title domain">{ translate( 'Domain' ) }</div>
-					{ props.showAdditionalHeaders && (
+					{ showAdditionalHeaders && (
 						<>
 							<div className="plugin-site-list__header-title">{ translate( 'Active' ) }</div>
 							<div className="plugin-site-list__header-title">{ translate( 'Autoupdates' ) }</div>
@@ -67,8 +77,9 @@ const PluginSiteList = ( props ) => {
 						key={ 'pluginSite' + site.ID }
 						site={ site }
 						secondarySites={ getSecondaryPluginSites( site, secondarySites ) }
-						plugin={ props.plugin }
-						wporg={ props.wporg }
+						plugin={ plugin }
+						wporg={ wporg }
+						{ ...props }
 					/>
 				) ) }
 			</div>

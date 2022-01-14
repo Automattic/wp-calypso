@@ -73,6 +73,13 @@
 	}
 }
 
+@mixin onboarding-block-margin-wide {
+	@include break-medium {
+		margin-left: $onboarding-block-margin-small;
+		margin-right: $onboarding-block-margin-small;
+	}
+}
+
 @mixin onboarding-heading-padding {
 	margin: $onboarding-heading-margin-mobile;
 

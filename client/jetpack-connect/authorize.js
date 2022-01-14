@@ -6,7 +6,6 @@ import { flowRight, get, includes, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import QueryJetpackUserLicensesCounts from 'calypso/components/data/query-jetpack-user-licenses-counts';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -46,7 +45,6 @@ import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-q
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import { userHasDetachedLicenses } from 'calypso/state/user-licensing/selectors';
 import AuthFormHeader from './auth-form-header';
 import {
 	ALREADY_CONNECTED,
@@ -109,7 +107,6 @@ export class JetpackAuthorize extends Component {
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
 		userAlreadyConnected: PropTypes.bool.isRequired,
-		userHasDetachedLicenses: PropTypes.bool,
 	};
 
 	redirecting = false;
@@ -699,12 +696,7 @@ export class JetpackAuthorize extends Component {
 
 	getRedirectionTarget() {
 		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
-		const {
-			partnerSlug,
-			selectedPlanSlug,
-			siteHasJetpackPaidProduct,
-			userHasUnattachedLicenses,
-		} = this.props;
+		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if ( 'pressable' === partnerSlug ) {
 			return `/start/pressable-nux?blogid=${ clientId }`;
@@ -721,9 +713,8 @@ export class JetpackAuthorize extends Component {
 			return `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
 		}
 
-		// If the site has a Jetpack paid product or the user has an available unattached product
-		// license key, send the user back to wp-admin rather than to the Plans page.
-		if ( siteHasJetpackPaidProduct || userHasUnattachedLicenses ) {
+		// If the site has a Jetpack paid product send the user back to wp-admin rather than to the Plans page.
+		if ( siteHasJetpackPaidProduct ) {
 			return redirectAfterAuth;
 		}
 
@@ -877,7 +868,6 @@ export class JetpackAuthorize extends Component {
 							siteId={ authSiteId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						<QueryJetpackUserLicensesCounts />
 						<AuthFormHeader
 							authQuery={ this.props.authQuery }
 							isWoo={ this.isWooOnboarding() }
@@ -926,7 +916,6 @@ const connectComponent = connect(
 			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
-			userHasUnattachedLicenses: userHasDetachedLicenses( state ),
 		};
 	},
 	{

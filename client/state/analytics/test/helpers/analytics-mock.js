@@ -15,7 +15,7 @@ const adTrackingMocks = [
 
 const mcMocks = [ 'bumpStat', 'bumpStatWithPageView' ];
 
-const gaMocks = [ 'gaRecordEvent', 'gaRecordPageView', 'gaRecordTiming' ];
+const gaMocks = [ 'gaRecordEvent', 'gaRecordPageView' ];
 
 const pageViewMocks = [ 'recordPageView' ];
 

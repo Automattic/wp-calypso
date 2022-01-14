@@ -34,7 +34,7 @@ const SiteOffsetProvider: FunctionComponent< Props > = ( { children, site } ) =>
 
 	return (
 		<>
-			<QuerySiteSettings siteId={ siteId } />
+			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 			<SiteOffsetContext.Provider value={ gmtOffset !== null || timezone !== null ? value : null }>
 				{ children }
 			</SiteOffsetContext.Provider>

@@ -1,4 +1,3 @@
-import { createSelector } from '@automattic/state-utils';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 import 'calypso/state/happychat/init';
@@ -8,9 +7,8 @@ import 'calypso/state/happychat/init';
  * The docked UI should not be displayed when viewing the happychat section
  *
  * @param {object} state - global redux state
- * @returns {boolean}
+ * @returns {boolean} Whether the Happychat UI should be displayed
  */
-export default createSelector(
-	( state ) => state.happychat.ui.isOpen && getSectionName( state ) !== 'happychat',
-	( state ) => [ state.happychat.ui.isOpen, getSectionName( state ) ]
-);
+export default function isHappychatOpen( state ) {
+	return state.happychat.ui.isOpen && getSectionName( state ) !== 'happychat';
+}

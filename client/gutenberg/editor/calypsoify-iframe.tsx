@@ -59,6 +59,7 @@ import './style.scss';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
 	duplicatePostId: T.PostId;
+	creatingNewHomepage?: boolean;
 	postId: T.PostId;
 	postType: T.PostType;
 	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
@@ -435,7 +436,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.ToggleInlineHelpButton === action ) {
-			const inlineHelp = window.top.document.querySelector( '#wpcom > .layout > .inline-help' );
+			const inlineHelp: HTMLElement | null | undefined = window?.top?.document.querySelector(
+				'#wpcom > .layout > .inline-help'
+			);
 
 			if ( inlineHelp ) {
 				inlineHelp.hidden = payload.hidden;
@@ -500,7 +503,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			this.setFrontPage();
 		}
 
-		if ( isSiteWPForTeams && editedPostId && siteUrl && 'publish' === status ) {
+		if ( isSiteWPForTeams && editedPostId && siteUrl && 'publish' === status && top ) {
 			top.location.href = addQueryArgs( { p: editedPostId }, siteUrl );
 		}
 	};
@@ -809,7 +812,7 @@ const mapStateToProps = (
 	}
 
 	// Pass through to iframed editor if user is in editor deprecation group.
-	if ( 'classic' === getSelectedEditor( state, siteId ) ) {
+	if ( 'classic' === getSelectedEditor( state, siteId ?? 0 ) ) {
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
@@ -818,10 +821,10 @@ const mapStateToProps = (
 			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
-	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
+	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl ?? '' );
 
 	// Prevents the iframe from loading using a cached frame nonce.
-	const shouldLoadIframe = ! isRequestingSite( state, siteId );
+	const shouldLoadIframe = ! isRequestingSite( state, siteId ?? 0 );
 
 	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
 		state,
@@ -838,21 +841,21 @@ const mapStateToProps = (
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		iframeUrl,
-		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ?? 0 ),
 		postTypeTrashUrl,
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
 		siteSlug,
-		siteUrl: getSiteUrl( state, siteId ),
+		siteUrl: getSiteUrl( state, siteId ?? 0 ),
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		getTemplateEditorUrl: ( templateId ) =>
+		getTemplateEditorUrl: ( templateId: string ) =>
 			getEditorUrl( state, siteId, templateId, 'wp_template_part' ),
 		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
-		site: getSite( state, siteId ),
+		site: getSite( state, siteId ?? 0 ),
 		parentPostId,
 	};
 };

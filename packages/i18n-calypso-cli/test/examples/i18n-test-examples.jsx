@@ -93,7 +93,7 @@ corners.` );
 			},
 			components: {
 				href: <a href={ post.URL } target="_blank" rel="noopener noreferrer" />,
-				postTitle: <Emojify>{ postTitle }</Emojify>,
+				postTitle: <b>{ postTitle }</b>,
 			},
 			context:
 				'Stats: Sentence showing how much time has passed since the last post, and how the stats are',

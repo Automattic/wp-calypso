@@ -4,6 +4,7 @@ import DesignPicker, {
 	isBlankCanvasDesign,
 	getDesignUrl,
 	useCategorization,
+	useThemeDesignsQuery,
 } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -21,18 +22,20 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
-import { getRecommendedThemes } from 'calypso/state/themes/selectors';
 import DIFMThemes from '../difm-design-picker/themes';
+import LetUsChoose from './let-us-choose';
 import PreviewToolbar from './preview-toolbar';
 import './style.scss';
 
-// Ideally this data should come from the themes API, maybe by a tag that's applied to
-// themes? e.g. `link-in-bio` or `no-fold`
-const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
-
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned, queryParams, showDesignPickerCategories } = props;
+	const {
+		flowName,
+		stepName,
+		isReskinned,
+		queryParams,
+		showDesignPickerCategories,
+		showLetUsChoose,
+	} = props;
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
@@ -44,20 +47,18 @@ export default function DesignPickerStep( props ) {
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 
-	const apiThemes = useSelector( ( state ) =>
-		getRecommendedThemes( state, 'auto-loading-homepage' )
+	const { data: apiThemes = [] } = useThemeDesignsQuery(
+		{ tier: 'free' },
+		{ enabled: ! props.useDIFMThemes }
 	);
 
-	const themesToBeTransformed = props.useDIFMThemes ? DIFMThemes : apiThemes;
+	const allThemes = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
 	useEffect(
 		() => {
 			dispatch( saveSignupStep( { stepName: props.stepName } ) );
-			if ( ! themesToBeTransformed.length ) {
-				dispatch( fetchRecommendedThemes( 'auto-loading-homepage' ) );
-			}
 		},
-		// Ignoring dependencies because we only want these actions to run on first mount
+		// Ignoring dependencies because we only want to save the step on first mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
@@ -82,37 +83,11 @@ export default function DesignPickerStep( props ) {
 	const userLoggedIn = useSelector( isUserLoggedIn );
 
 	const { designs, featuredPicksDesigns } = useMemo( () => {
-		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
-		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
-		// component itself. The `/new` environment needs helpers for making authenticated requests to
-		// the theme API before we can do this.
-		const allThemes = themesToBeTransformed.map( ( { id, name, taxonomies } ) => {
-			// Designs use a "featured" term in the theme_picks taxonomy. For example: Blank Canvas
-			const isFeaturedPicks = !! taxonomies?.theme_picks?.find(
-				( { slug } ) => slug === 'featured'
-			);
-
-			return {
-				categories: taxonomies?.theme_subject ?? [],
-				// Designs in order to appear prominently in theme galleries.
-				showFirst: isFeaturedPicks,
-				features: [],
-				is_premium: false,
-				// Designs in order to appear at the below of the theme categories.
-				is_featured_picks: isFeaturedPicks,
-				slug: id,
-				template: id,
-				theme: id,
-				title: name,
-				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-			};
-		} );
-
 		return {
 			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
 			featuredPicksDesigns: allThemes.filter( ( theme ) => theme.is_featured_picks ),
 		};
-	}, [ themesToBeTransformed ] );
+	}, [ allThemes ] );
 
 	// Update the selected design when the section changes
 	useEffect( () => {
@@ -125,7 +100,7 @@ export default function DesignPickerStep( props ) {
 		sort: sortBlogToTop,
 	} );
 
-	function pickDesign( _selectedDesign ) {
+	function pickDesign( _selectedDesign, additionalDependencies = {} ) {
 		// Design picker preview will submit the defaultDependencies via next button,
 		// So only do this when the user picks the design directly
 		dispatch(
@@ -136,6 +111,7 @@ export default function DesignPickerStep( props ) {
 				{
 					selectedDesign: _selectedDesign,
 					selectedSiteCategory: categorization.selection,
+					...additionalDependencies,
 				}
 			)
 		);
@@ -189,12 +165,21 @@ export default function DesignPickerStep( props ) {
 						align="left"
 					/>
 				}
-				categoriesFooter={
-					useFeaturedPicksButtons && (
-						<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
-					)
-				}
+				categoriesFooter={ renderCategoriesFooter() }
 			/>
+		);
+	}
+
+	function renderCategoriesFooter() {
+		return (
+			<>
+				{ useFeaturedPicksButtons && (
+					<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
+				) }
+				{ showLetUsChoose && (
+					<LetUsChoose flowName={ props.flowName } designs={ designs } onSelect={ pickDesign } />
+				) }
+			</>
 		);
 	}
 

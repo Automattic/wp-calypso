@@ -174,6 +174,16 @@ describe( 'CheckoutProvider', () => {
 			expect( getByText( 'Form Complete' ) ).toBeInTheDocument();
 			expect( onPaymentComplete ).toBeCalled();
 		} );
+
+		it( 'does not call onPaymentComplete twice when form status is complete even if callback changes', () => {
+			const onPaymentComplete = jest.fn();
+			const { getByText, rerender } = render(
+				<MyCheckout onPaymentComplete={ () => onPaymentComplete() } />
+			);
+			fireEvent.click( getByText( 'Complete' ) );
+			rerender( <MyCheckout onPaymentComplete={ () => onPaymentComplete() } /> );
+			expect( onPaymentComplete.mock.calls.length ).toBe( 1 );
+		} );
 	} );
 
 	describe( 'with transactionStatus directly', () => {
@@ -261,6 +271,16 @@ describe( 'CheckoutProvider', () => {
 			expect( onPaymentRedirect ).not.toBeCalled();
 		} );
 
+		it( 'does not call onPaymentRedirect twice when transaction status is redirecting even if callback changes', () => {
+			const onPaymentRedirect = jest.fn();
+			const { getByText, rerender } = render(
+				<MyCheckout onPaymentRedirect={ () => onPaymentRedirect() } />
+			);
+			fireEvent.click( getByText( 'Redirect' ) );
+			rerender( <MyCheckout onPaymentRedirect={ () => onPaymentRedirect() } /> );
+			expect( onPaymentRedirect.mock.calls.length ).toBe( 1 );
+		} );
+
 		it( 'calls onPaymentRedirect when transaction status is redirecting', () => {
 			const onPaymentRedirect = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentRedirect={ onPaymentRedirect } /> );
@@ -284,12 +304,22 @@ describe( 'CheckoutProvider', () => {
 			expect( onPaymentError ).not.toBeCalled();
 		} );
 
-		it( 'calls onPaymentError when transaction status is redirecting', () => {
+		it( 'calls onPaymentError when transaction status is error', () => {
 			const onPaymentError = jest.fn();
 			const { getByText } = render( <MyCheckout onPaymentError={ onPaymentError } /> );
 			fireEvent.click( getByText( 'Cause Error' ) );
 			expect( getByText( 'Showing Error' ) ).toBeInTheDocument();
 			expect( onPaymentError ).toBeCalled();
+		} );
+
+		it( 'does not call onPaymentError twice when transaction status is error even if callback changes', () => {
+			const onPaymentError = jest.fn();
+			const { getByText, rerender } = render(
+				<MyCheckout onPaymentError={ () => onPaymentError() } />
+			);
+			fireEvent.click( getByText( 'Cause Error' ) );
+			rerender( <MyCheckout onPaymentError={ () => onPaymentError() } /> );
+			expect( onPaymentError.mock.calls.length ).toBe( 1 );
 		} );
 	} );
 } );

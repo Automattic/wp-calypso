@@ -1,18 +1,20 @@
-import { createSelector } from '@automattic/state-utils';
-import { get, last } from 'lodash';
-import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
-import getLostFocusTimestamp from 'calypso/state/happychat/selectors/get-lostfocus-timestamp';
+import getHappychatTimeline from './get-happychat-timeline';
+import getLostFocusTimestamp from './get-lostfocus-timestamp';
 
-export default createSelector(
-	( state ) => {
-		const lastMessageTimestamp = get( last( getHappychatTimeline( state ) ), 'timestamp' );
-		const lostFocusAt = getLostFocusTimestamp( state );
+import 'calypso/state/happychat/init';
 
-		return (
-			typeof lastMessageTimestamp === 'number' &&
-			typeof lostFocusAt === 'number' &&
-			lastMessageTimestamp >= lostFocusAt
-		);
-	},
-	[ getHappychatTimeline, getLostFocusTimestamp ]
-);
+export default function hasUnreadMessages( state ) {
+	const timeline = getHappychatTimeline( state );
+	if ( timeline.length === 0 ) {
+		return false;
+	}
+
+	const lastMessageTimestamp = timeline[ timeline.length - 1 ].timestamp;
+	const lostFocusAt = getLostFocusTimestamp( state );
+
+	return (
+		typeof lastMessageTimestamp === 'number' &&
+		typeof lostFocusAt === 'number' &&
+		lastMessageTimestamp >= lostFocusAt
+	);
+}

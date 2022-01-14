@@ -62,6 +62,8 @@ export type ReplaceProductInCart = (
 
 export type ReloadCartFromServer = () => Promise< ResponseCart >;
 
+export type ClearCartMessages = () => Promise< ResponseCart >;
+
 export type ReplaceProductsInCart = (
 	products: MinimalRequestCartProduct[]
 ) => Promise< ResponseCart >;
@@ -103,6 +105,7 @@ export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'rejected';
 
 export type ShoppingCartAction =
 	| { type: 'CLEAR_QUEUED_ACTIONS' }
+	| { type: 'CLEAR_MESSAGES' }
 	| { type: 'UPDATE_LAST_VALID_CART' }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'CART_PRODUCTS_ADD'; products: RequestCartProduct[] }
@@ -131,6 +134,7 @@ export interface ShoppingCartManagerActions {
 	replaceProductInCart: ReplaceProductInCart;
 	replaceProductsInCart: ReplaceProductsInCart;
 	reloadFromServer: ReloadCartFromServer;
+	clearMessages: ClearCartMessages;
 }
 
 export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
@@ -202,7 +206,7 @@ export type RequestCartTaxData = null | {
 
 export interface RequestCartProduct {
 	product_slug: string;
-	product_id: number;
+	product_id?: number;
 	meta: string;
 	volume: number;
 	quantity: number | null;
@@ -210,7 +214,7 @@ export interface RequestCartProduct {
 }
 
 export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
-	Pick< RequestCartProduct, 'product_slug' | 'product_id' >;
+	Pick< RequestCartProduct, 'product_slug' >;
 
 export interface ResponseCart< P = ResponseCartProduct > {
 	blog_id: number | string;
@@ -371,6 +375,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	auth_code?: string;
+	privacy_available?: boolean;
 }
 
 export interface GSuiteProductUser {

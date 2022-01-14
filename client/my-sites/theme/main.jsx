@@ -45,6 +45,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -94,6 +96,8 @@ class ThemeSheet extends Component {
 		isActive: PropTypes.bool,
 		isPurchased: PropTypes.bool,
 		isJetpack: PropTypes.bool,
+		isAtomic: PropTypes.bool,
+		isStandaloneJetpack: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
@@ -238,7 +242,8 @@ class ThemeSheet extends Component {
 	};
 
 	shouldRenderPreviewButton() {
-		return this.isThemeAvailable() && ! this.isThemeCurrentOne();
+		const { isWPForTeamsSite } = this.props;
+		return this.isThemeAvailable() && ! this.isThemeCurrentOne() && ! isWPForTeamsSite;
 	}
 
 	isThemeCurrentOne() {
@@ -497,7 +502,7 @@ class ThemeSheet extends Component {
 	renderSupportTab = () => {
 		const {
 			isCurrentUserPaid,
-			isJetpack,
+			isStandaloneJetpack,
 			forumUrl,
 			isWpcomTheme,
 			isLoggedIn,
@@ -509,7 +514,9 @@ class ThemeSheet extends Component {
 		if ( isLoggedIn ) {
 			renderedTab = (
 				<div>
-					{ isCurrentUserPaid && ! isJetpack && this.renderSupportContactUsCard( buttonCount++ ) }
+					{ isCurrentUserPaid &&
+						! isStandaloneJetpack &&
+						this.renderSupportContactUsCard( buttonCount++ ) }
 					{ forumUrl && this.renderSupportThemeForumCard( buttonCount++ ) }
 					{ isWpcomTheme && this.renderSupportCssCard( buttonCount++ ) }
 				</div>
@@ -587,6 +594,7 @@ class ThemeSheet extends Component {
 					<div className="theme__retired-theme-message-details">
 						<div className="theme__retired-theme-message-details-title">
 							{ this.props.translate( 'This theme is retired' ) }
+							<InlineSupportLink supportContext="themes-retired" showText={ false } />
 						</div>
 						<div>
 							{ this.props.translate(
@@ -670,6 +678,7 @@ class ThemeSheet extends Component {
 			translate,
 			canUserUploadThemes,
 			previousRoute,
+			isWPForTeamsSite,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
@@ -789,7 +798,7 @@ class ThemeSheet extends Component {
 					backText={ previousRoute ? translate( 'Back' ) : translate( 'All Themes' ) }
 					onClick={ this.goBack }
 				>
-					{ ! retired && ! hasWpOrgThemeUpsellBanner && this.renderButton() }
+					{ ! retired && ! hasWpOrgThemeUpsellBanner && ! isWPForTeamsSite && this.renderButton() }
 				</HeaderCake>
 				<div className="theme__sheet-columns">
 					<div className="theme__sheet-column-left">
@@ -863,6 +872,10 @@ export default connect(
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, id );
 
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isStandaloneJetpack = isJetpack && ! isAtomic;
+
 		return {
 			...theme,
 			id,
@@ -875,7 +888,9 @@ export default connect(
 			isWpcomTheme,
 			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, id, siteId ),
-			isJetpack: isJetpackSite( state, siteId ),
+			isJetpack,
+			isAtomic,
+			isStandaloneJetpack,
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
@@ -886,6 +901,7 @@ export default connect(
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			previousRoute: getPreviousRoute( state ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		};
 	},
 	{

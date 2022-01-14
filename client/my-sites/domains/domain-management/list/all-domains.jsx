@@ -260,13 +260,13 @@ class AllDomains extends Component {
 		} ) );
 	}
 
-	renderQuerySiteDomainsOnce( blogId ) {
+	renderQuerySiteDomainsOnce = ( blogId ) => {
 		if ( this.renderedQuerySiteDomains[ blogId ] ) {
 			return null;
 		}
 		this.renderedQuerySiteDomains[ blogId ] = true;
 		return <QuerySiteDomains siteId={ blogId } />;
-	}
+	};
 
 	getActionResult( domain ) {
 		if ( this.props.isContactEmailEditContext ) {

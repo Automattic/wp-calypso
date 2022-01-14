@@ -30,6 +30,7 @@ export interface Activity {
 	actorRole?: string;
 	actorType?: string;
 
+	activityIsRewindable: boolean;
 	rewindId?: string;
 	streams?: Activity[];
 }

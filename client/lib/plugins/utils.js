@@ -84,6 +84,7 @@ export function getAllowedPluginData( plugin ) {
 		'network',
 		'num_ratings',
 		'plugin_url',
+		'product_video',
 		'rating',
 		'ratings',
 		'sections',
@@ -210,6 +211,9 @@ export function normalizePluginData( plugin, pluginData ) {
 				break;
 			case 'compatibility':
 				returnData[ key ] = normalizeCompatibilityList( item );
+				break;
+			case 'product_video':
+				returnData.banner_video_src = item;
 				break;
 			default:
 				returnData[ key ] = item;

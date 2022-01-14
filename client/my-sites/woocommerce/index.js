@@ -1,10 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import { createElement } from 'react';
 import { makeLayout } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	getSelectedSiteWithFallback,
 	getSiteOption,
@@ -28,12 +26,6 @@ function setup( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site ? site.ID : null;
-
-	// Only allow AT sites to access, unless the woop feature flag is enabled.
-	// todo: remove redirect and rely on plan eligibility checks in the landing page component
-	if ( ! isEnabled( 'woop' ) && ! isAtomicSite( state, siteId ) ) {
-		return page.redirect( `/home/${ site.slug }` );
-	}
 
 	// WooCommerce plugin is already installed, redirect to Woo.
 	// todo: replace with a plugin check that replaces the cta with a link to wc-admin

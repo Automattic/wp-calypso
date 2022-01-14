@@ -310,7 +310,7 @@ class NameServers extends Component {
 			return false;
 		}
 
-		return getSelectedDomain( this.props ).isPendingIcannVerification;
+		return getSelectedDomain( this.props )?.isPendingIcannVerification;
 	}
 
 	handleChange = ( nameservers ) => {
@@ -359,6 +359,11 @@ const customNameServersLearnMoreClick = ( domainName ) =>
 		)
 	);
 
-export default connect( ( state ) => ( { currentRoute: getCurrentRoute( state ) } ), {
-	customNameServersLearnMoreClick,
-} )( localize( withDomainNameservers( NameServers ) ) );
+export default connect(
+	( state ) => ( {
+		currentRoute: getCurrentRoute( state ),
+	} ),
+	{
+		customNameServersLearnMoreClick,
+	}
+)( localize( withDomainNameservers( NameServers ) ) );

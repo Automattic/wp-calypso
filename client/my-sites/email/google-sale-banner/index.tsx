@@ -1,7 +1,6 @@
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import { Banner } from 'calypso/components/banner';
@@ -16,6 +15,7 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -23,7 +23,7 @@ type GoogleSaleBannerProps = {
 	domains: Array< ResponseDomain >;
 };
 
-const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains } ) => {
+const GoogleSaleBanner = ( { domains }: GoogleSaleBannerProps ): ReactElement | null => {
 	const translate = useTranslate();
 
 	const canCurrentUserPurchaseGSuite = useSelector( canUserPurchaseGSuite );
@@ -98,16 +98,16 @@ const GoogleSaleBanner: FunctionComponent< GoogleSaleBannerProps > = ( { domains
 			event="claim-now"
 			iconPath={ googleWorkspaceIcon }
 			href={ emailManagementPurchaseNewEmailAccount(
-				siteForSale?.slug,
+				siteForSale?.slug ?? '',
 				domainForSale.name,
 				currentRoute,
 				'google-sale'
 			) }
-			title={ translate( 'Get %(discount)d% off Google Workspace for a limited time!', {
+			title={ translate( 'Get %(discount)d%% off Google Workspace for a limited time!', {
 				args: {
 					discount: googleWorkspaceProduct.sale_coupon.discount,
 				},
-				comment: '%(discount)d is a percentage discount, e.g. 50',
+				comment: "%(discount)d is a numeric percentage discount (e.g. '50')",
 			} ) }
 			tracksClickName="calypso_email_google_workspace_sale_banner_cta_click"
 			tracksImpressionName="calypso_email_google_workspace_sale_banner_impression"

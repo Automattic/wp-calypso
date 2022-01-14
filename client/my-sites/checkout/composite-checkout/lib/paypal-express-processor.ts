@@ -3,11 +3,10 @@ import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils
 import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import wp from 'calypso/lib/wp';
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
-import { createAccount } from '../payment-method-helpers';
+import { createWpcomAccountBeforeTransaction } from './create-wpcom-account-before-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { ResponseCart, DomainContactDetails } from '@automattic/shopping-cart';
@@ -66,57 +65,35 @@ export default async function payPalProcessor(
 		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
+/**
+ * Submit a transaction to the WPCOM PayPal transactions endpoint.
+ *
+ * This is one of two transactions endpoint functions; also see
+ * `submitWpcomTransaction`.
+ *
+ * Note that the payload property is (mostly) in camelCase but the actual
+ * submitted data will be converted (mostly) to snake_case.
+ *
+ * Please do not alter payload inside this function if possible to retain type
+ * safety. Instead, alter
+ * `createPayPalExpressEndpointRequestPayloadFromLineItems` or add a new type
+ * safe function that works similarly (see
+ * `createWpcomAccountBeforeTransaction`).
+ */
 async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ) {
-	const path = '/me/paypal-express-url';
-	const apiVersion = '1.2';
-
 	const isJetpackUserLessCheckout =
 		payload.cart.is_jetpack_checkout && payload.cart.cart_key === 'no-user';
 
 	if ( transactionOptions.createUserAndSiteBeforeTransaction || isJetpackUserLessCheckout ) {
-		return createAccount( {
-			signupFlowName: isJetpackUserLessCheckout
-				? 'jetpack-userless-checkout'
-				: 'onboarding-registrationless',
-			email: transactionOptions.contactDetails?.email?.value,
-			siteId: transactionOptions.siteId,
-			recaptchaClientId: transactionOptions.recaptchaClientId,
-		} ).then( ( response ) => {
-			const siteIdFromResponse = response?.blog_details?.blogid;
-
-			// We need to store the created site ID so that if the transaction fails,
-			// we can retry safely. createUserAndSiteBeforeTransaction will still be
-			// set and createAccount is idempotent for site site creation so long as
-			// siteId is set (although it will update the email address if that
-			// changes).
-			if ( siteIdFromResponse ) {
-				transactionOptions.reduxDispatch( setSelectedSiteId( Number( siteIdFromResponse ) ) );
-			}
-
-			// If the account is already created (as happens when we are reprocessing
-			// after a transaction error), then the create account response will not
-			// have a site ID, so we fetch from state.
-			const siteId = siteIdFromResponse || transactionOptions.siteId;
-			const newPayload = {
-				...payload,
-				siteId,
-				cart: {
-					...payload.cart,
-					blog_id: siteId || '0',
-					cart_key: siteId || 'no-site',
-					create_new_blog: siteId ? false : true,
-				},
-			};
-
-			const body = mapRecordKeysRecursively( newPayload, camelToSnakeCase );
-			return wp.req.post( { path }, { apiVersion }, body );
-		} );
+		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 
 	const body = mapRecordKeysRecursively( payload, camelToSnakeCase );
+	const path = '/me/paypal-express-url';
+	const apiVersion = '1.2';
 	return wp.req.post( { path }, { apiVersion }, body );
 }
 

@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 /**
  * Does a domain have pending G Suite Users
  *
@@ -7,5 +5,5 @@ import { get } from 'lodash';
  * @returns {boolean} - Does domain have pending G Suite users
  */
 export function hasPendingGSuiteUsers( domain ) {
-	return get( domain, 'googleAppsSubscription.pendingUsers.length', 0 ) !== 0;
+	return 0 !== ( domain?.googleAppsSubscription?.pendingUsers?.length ?? 0 );
 }

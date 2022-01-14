@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import {
+	StripeHookProvider,
+	StripeSetupIntentIdProvider,
+	useStripe,
+} from '@automattic/calypso-stripe';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -15,6 +19,7 @@ import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
@@ -59,22 +64,24 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 			<MySitesSidebarNavigation />
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
-			<FormattedHeader
-				brandFont
-				className="payment-methods__page-heading"
-				headerText={ titles.sectionTitle }
-				subHeaderText={ translate(
-					'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: (
-								<InlineSupportLink supportContext="payment_methods" showIcon={ false } />
-							),
-						},
-					}
-				) }
-				align="left"
-			/>
+			{ ! isJetpackCloud() && (
+				<FormattedHeader
+					brandFont
+					className="payment-methods__page-heading"
+					headerText={ titles.sectionTitle }
+					subHeaderText={ translate(
+						'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink supportContext="payment_methods" showIcon={ false } />
+								),
+							},
+						}
+					) }
+					align="left"
+				/>
+			) }
 			<PurchasesNavigation sectionTitle={ 'Payment Methods' } siteSlug={ siteSlug } />
 
 			<CheckoutErrorBoundary
@@ -128,12 +135,14 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 				title={ String( titles.addPaymentMethod ) }
 			/>
 			<DocumentHead title={ titles.addPaymentMethod } />
-			<FormattedHeader
-				brandFont
-				className="payment-methods__page-heading"
-				headerText={ titles.sectionTitle }
-				align="left"
-			/>
+			{ ! isJetpackCloud() && (
+				<FormattedHeader
+					brandFont
+					className="payment-methods__page-heading"
+					headerText={ titles.sectionTitle }
+					align="left"
+				/>
+			) }
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
@@ -163,12 +172,10 @@ export function SiteLevelAddNewPaymentMethod(
 ): JSX.Element {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
-		<StripeHookProvider
-			locale={ locale }
-			configurationArgs={ { needs_intent: true } }
-			fetchStripeConfiguration={ getStripeConfiguration }
-		>
-			<SiteLevelAddNewPaymentMethodForm { ...props } />
+		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
+			<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ getStripeConfiguration }>
+				<SiteLevelAddNewPaymentMethodForm { ...props } />
+			</StripeSetupIntentIdProvider>
 		</StripeHookProvider>
 	);
 }

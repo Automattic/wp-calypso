@@ -4,15 +4,15 @@
 .two-columns-layout {
 	@include break-xlarge {
 		display: grid;
-		grid-template-columns: 1fr 315px;
+		grid-template-columns: minmax( 0, 1fr ) 315px;
 		column-gap: 48px;
 	}
 
 	&__content {
-		grid-column: 1 2;
+		grid-column: 1 / 2;
 	}
 
 	&__sidebar {
-		grid-column: 2 3;
+		grid-column: 2 / 3;
 	}
 }

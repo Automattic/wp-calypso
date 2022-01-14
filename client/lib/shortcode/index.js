@@ -14,9 +14,8 @@ const REGEXP_SHORTCODE = /\[(\[?)([^[\]/\s\u00a0\u200b]+)(?![\w-])([^\]/]*(?:\/(
  * Numeric attributes can be formatted as `"value"` or just `value`.
  *
  * @see https://github.com/WordPress/WordPress/blob/HEAD/wp-includes/js/shortcode.js
- *
  * @param  {string} text A shortcode attribute string
- * @returns {object}      An object of attributes, split as named and numeric
+ * @returns {{named: Object.<string, string>, numeric: string[]}} An object of attributes, split as named and numeric
  */
 export const parseAttributes = memoize( function ( text ) {
 	const named = {};
@@ -52,7 +51,6 @@ export const parseAttributes = memoize( function ( text ) {
  * numeric attributes.
  *
  * @see parseAttributes
- *
  * @param  {*}      attributes An object to normalize
  * @returns {object}            An object of attributes, split as named and numeric
  */
@@ -125,7 +123,7 @@ export const stringify = function ( shortcode ) {
  * Given a shortcode string, returns the object value of that shortcode.
  *
  * @param  {string} shortcode A shortcode string
- * @returns {object}           The object value of the shortcode
+ * @returns {null|{tag: string, type: string, attrs?: {named: Object.<string, string>, numeric: string[]}, content?: string}} The object value of the shortcode
  */
 export const parse = function ( shortcode ) {
 	const match = shortcode.match( REGEXP_SHORTCODE );
@@ -199,7 +197,6 @@ export const regexp = memoize( function ( tag ) {
  * @param {string} tag - shortcode tagName (e.g. gallery)
  * @param {string} text - text to search for next shortcode
  * @param {number} index - last index
- *
  * @returns {object|void} next match
  */
 export const next = function ( tag, text, index = 0 ) {

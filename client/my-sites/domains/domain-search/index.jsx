@@ -15,7 +15,6 @@ import EmailVerificationGate from 'calypso/components/email-verification/email-v
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	hasPlan,
 	hasDomainInCart,
@@ -24,7 +23,6 @@ import {
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
@@ -93,9 +91,7 @@ class DomainSearch extends Component {
 
 	handleAddTransfer = ( domain ) => {
 		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes( domainTransfer( { domain } ), this.props.productsList ),
-			] )
+			.addProductsToCart( [ domainTransfer( { domain } ) ] )
 			.then( () => {
 				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
 			} );
@@ -148,9 +144,7 @@ class DomainSearch extends Component {
 		}
 
 		this.props.shoppingCartManager
-			.addProductsToCart( [
-				fillInSingleCartItemAttributes( registration, this.props.productsList ),
-			] )
+			.addProductsToCart( [ registration ] )
 			.then( () => page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) ) );
 	}
 
@@ -238,14 +232,6 @@ class DomainSearch extends Component {
 								}
 								align="left"
 							/>
-							{ ! isManagingAllDomains /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ && (
-								<div className="domains__header-buttons">
-									<HeaderCart
-										selectedSite={ this.props.selectedSite }
-										currentRoute={ this.props.currentRoute }
-									/>
-								</div>
-							) }
 						</div>
 
 						<EmailVerificationGate

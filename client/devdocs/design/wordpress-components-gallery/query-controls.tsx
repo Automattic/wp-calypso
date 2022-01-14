@@ -1,6 +1,13 @@
 import { QueryControls } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
 
+interface StateProps {
+	category: number;
+	order: string;
+	orderBy: string;
+	numberOfItems: number;
+}
+
 const QueryControlsExample = withState( {
 	orderBy: 'title',
 	order: 'asc',
@@ -23,18 +30,30 @@ const QueryControlsExample = withState( {
 		},
 	],
 	numberOfItems: 10,
-} )( ( { orderBy, order, category, categories, numberOfItems, setState } ) => (
-	<QueryControls
-		{ ...{ orderBy, order, numberOfItems } }
-		onOrderByChange={ ( nextOrderBy ) => setState( { orderBy: nextOrderBy } ) }
-		onOrderChange={ ( nextOrder ) => setState( { order: nextOrder } ) }
-		categoriesList={ categories }
-		selectedCategoryId={ category }
-		onCategoryChange={ ( nextCategory ) => setState( { category: nextCategory } ) }
-		onNumberOfItemsChange={ ( nextNumberOfItems ) =>
-			setState( { numberOfItems: nextNumberOfItems } )
-		}
-	/>
-) );
+} )(
+	( {
+		orderBy,
+		order,
+		category,
+		categories,
+		numberOfItems,
+		setState,
+	}: StateProps & {
+		categories: { id: number; name: string; parent: number }[];
+		setState: ( { category, order, orderBy }: Partial< StateProps > ) => void;
+	} ) => (
+		<QueryControls
+			{ ...{ orderBy, order, numberOfItems } }
+			onOrderByChange={ ( nextOrderBy ) => setState( { orderBy: nextOrderBy } ) }
+			onOrderChange={ ( nextOrder ) => setState( { order: nextOrder } ) }
+			categoriesList={ categories }
+			selectedCategoryId={ category }
+			onCategoryChange={ ( nextCategory ) => setState( { category: nextCategory } ) }
+			onNumberOfItemsChange={ ( nextNumberOfItems ) =>
+				setState( { numberOfItems: nextNumberOfItems } )
+			}
+		/>
+	)
+);
 
 export default QueryControlsExample;

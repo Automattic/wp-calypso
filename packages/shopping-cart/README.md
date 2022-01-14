@@ -46,6 +46,7 @@ Regardless, it's a good idea to always check `responseCart.messages.errors` and 
 - `replaceProductInCart: ( uuidToReplace: string, productPropertiesToChange: Partial< RequestCartProduct > ) => Promise<ResponseCart>`. A function that can replace one product in the cart with another, retaining the same UUID; useful for changing product variants.
 - `replaceProductsInCart: ( products: RequestCartProduct[] ) => Promise<ResponseCart>`. A function that replaces all the products in the cart with a new set of products. Can also be used to clear the cart.
 - `reloadFromServer: () => Promise<ResponseCart>`. A function to throw away the current cart cache and fetch it fresh from the shopping cart API.
+- `clearMessages: () => Promise<ResponseCart>`. A function to throw away the current `responseCart.messages`. This can be used to clear messages once they have been displayed.
 
 ## withShoppingCart
 

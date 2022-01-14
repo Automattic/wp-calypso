@@ -75,6 +75,8 @@ import {
 	FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 	FEATURE_JETPACK_SEARCH,
 	FEATURE_JETPACK_SEARCH_MONTHLY,
+	FEATURE_JETPACK_VIDEOPRESS,
+	FEATURE_JETPACK_VIDEOPRESS_MONTHLY,
 	FEATURE_LIVE_CHAT_SUPPORT,
 	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 	FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
@@ -198,7 +200,7 @@ function isValueTruthy< T >( value: T ): value is Exclude< T, null | undefined |
 	return !! value;
 }
 
-function compact( elements: ( string | false | undefined | false )[] ): string[] {
+function compact( elements: ( string | false | undefined | null )[] ): string[] {
 	return elements.filter( isValueTruthy );
 }
 
@@ -387,6 +389,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_200GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -490,6 +493,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ESSENTIAL,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -575,6 +579,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_200GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -966,6 +971,8 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_JETPACK_CRM_MONTHLY,
 		FEATURE_BACKUP_ARCHIVE_UNLIMITED,
 		FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		FEATURE_JETPACK_VIDEOPRESS,
+		FEATURE_JETPACK_VIDEOPRESS_MONTHLY,
 		FEATURE_REPUBLICIZE,
 		FEATURE_ADVANCED_SEO,
 		FEATURE_SEO_PREVIEW_TOOLS,

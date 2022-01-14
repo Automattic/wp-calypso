@@ -3,19 +3,19 @@ import { translate } from 'i18n-calypso';
 import { useMemo, useState, useEffect } from 'react';
 import ServerCredentialsWizardDialog from 'calypso/components/jetpack/server-credentials-wizard-dialog';
 import ThreatFixHeader from 'calypso/components/jetpack/threat-fix-header';
-import { FixableThreat } from 'calypso/components/jetpack/threat-item/types';
+import { FixableThreat, Threat } from 'calypso/components/jetpack/threat-item/types';
 
 import './style.scss';
 
 interface Props {
-	onCloseDialog: React.MouseEventHandler;
-	onConfirmation: React.MouseEventHandler;
+	onCloseDialog: ( action?: string | undefined ) => void;
+	onConfirmation: ( threats: Threat[] ) => void;
 	showDialog: boolean;
 	threats: Array< FixableThreat >;
 }
 
 const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threats }: Props ) => {
-	const [ selectedThreats, setSelectedThreats ] = useState( threats );
+	const [ selectedThreats, setSelectedThreats ] = useState< Threat[] >( threats );
 	const [ submit, setSubmit ] = useState( false );
 
 	const onSelectCheckbox = ( checked: boolean, threat: Threat ) => {
@@ -40,7 +40,7 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 
 	const buttons = useMemo(
 		() => [
-			<Button className="fix-all-threats-dialog-new__btn" onClick={ onCloseDialog }>
+			<Button className="fix-all-threats-dialog-new__btn" onClick={ () => onCloseDialog() }>
 				{ translate( 'Go back' ) }
 			</Button>,
 			<Button primary className="fix-all-threats-dialog-new__btn" onClick={ fixAll }>
@@ -70,6 +70,7 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 								threat={ threat }
 								fixAllDialog={ true }
 								onCheckFix={ onSelectCheckbox }
+								action="fix"
 							/>
 						</div>
 					) ) }

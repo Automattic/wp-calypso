@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
+import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -128,16 +129,40 @@ export class UserStep extends Component {
 			this.props.fetchOAuth2ClientData( clientId );
 		}
 
-		if ( this.props.flowName === 'onboarding' ) {
+		const signupFlows = [
+			'onboarding',
+			'free',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+			'with-theme',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+			'with-design-picker',
+		];
+		if ( signupFlows.includes( this.props.flowName ) ) {
 			const experimentCheck = this.state.isDesktop
-				? 'registration_email_only_desktop_relaunch'
-				: 'registration_email_only_mobile_relaunch';
+				? 'registration_email_only_desktop_v3'
+				: 'registration_email_only_mobile_v3';
 
 			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
 				this.setState( { experiment: experimentName } );
+				experimentName.variationName === 'treatment'
+					? this.persistExperimentName( experimentName.experimentName )
+					: null;
 			} );
 		}
 	}
+
+	persistExperimentName = ( experimentName ) => {
+		const DAY_IN_SECONDS = 3600 * 24;
+		const expirationDate = new Date( new Date().getTime() + DAY_IN_SECONDS * 1000 );
+		const options = { path: '/', expires: expirationDate, sameSite: 'strict' };
+		document.cookie = cookie.serialize( 'wpcom_signup_experiment_name', experimentName, options );
+	};
 
 	getSubHeaderText() {
 		const {
@@ -206,32 +231,28 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
 		}
 
-		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
-			subHeaderText = translate( 'First, create your WordPress.com account.' );
+		if ( isReskinned && 0 === positionInFlow ) {
+			const loginUrl = login( {
+				isJetpack: 'jetpack-connect' === sectionName,
+				from,
+				redirectTo: getRedirectToAfterLoginUrl( this.props ),
+				locale,
+				oauth2ClientId: oauth2Client?.id,
+				wccomFrom,
+				isWhiteLogin: isReskinned,
+				signupUrl: window.location.pathname + window.location.search,
+			} );
 
-			if ( isReskinned ) {
-				const loginUrl = login( {
-					isJetpack: 'jetpack-connect' === sectionName,
-					from,
-					redirectTo: getRedirectToAfterLoginUrl( this.props ),
-					locale,
-					oauth2ClientId: oauth2Client?.id,
-					wccomFrom,
-					isWhiteLogin: isReskinned,
-					signupUrl: window.location.pathname + window.location.search,
-				} );
+			subHeaderText = translate(
+				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+				{
+					components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+				}
+			);
+		}
 
-				subHeaderText = translate(
-					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
-					{
-						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-					}
-				);
-			}
-
-			if ( this.props.userLoggedIn ) {
-				subHeaderText = '';
-			}
+		if ( this.props.userLoggedIn ) {
+			subHeaderText = '';
 		}
 
 		return subHeaderText;

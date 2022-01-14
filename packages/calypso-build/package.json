@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/calypso-build",
 	"version": "10.0.0",
-	"description": "Shared Calypso build configuration files",
+	"description": "Shared Calypso build configuration files.",
 	"keywords": [
 		"babel",
 		"build",
@@ -22,9 +22,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"bin": {
 		"calypso-build": "./bin/calypso-build.js",
 		"copy-assets": "./bin/copy-assets.js",
@@ -38,7 +36,7 @@
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/webpack-rtl-plugin": "workspace:^",
 		"@babel/compat-data": "^7.16.4",
-		"@babel/core": "^7.16.5",
+		"@babel/core": "^7.16.7",
 		"@types/webpack-env": "^1.16.3",
 		"@wordpress/browserslist-config": "^4.1.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^3.2.1",

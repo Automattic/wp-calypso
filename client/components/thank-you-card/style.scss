@@ -3,7 +3,7 @@
 	width: 100%;
 	max-width: 500px;
 	background-color: var( --color-success-40 );
-	border-radius: 8px 8px 6px 6px;
+	border-radius: 4px;
 	overflow: hidden;
 	margin: 12px auto 24px;
 	color: var( --color-text-inverted );
@@ -20,7 +20,7 @@
 	padding: 12px 0;
 	position: relative;
 	line-height: 1.2;
-	border-radius: 6px 6px 0 0;
+	border-radius: 4px 4px 0 0;
 	overflow: hidden;
 	z-index: z-index( 'root', '.thank-you-card__header' );
 
@@ -67,21 +67,6 @@
 		margin-left: auto;
 		margin-right: auto;
 		width: 35%;
-	}
-}
-
-.thank-you-card__price {
-	font-size: $font-body;
-	font-weight: 600;
-	color: var( --color-success-5 );
-
-	&.is-placeholder {
-		@include placeholder();
-
-		background-color: var( --color-success-5 );
-		margin-left: auto;
-		margin-right: auto;
-		width: 10%;
 	}
 }
 

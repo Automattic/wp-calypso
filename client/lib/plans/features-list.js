@@ -33,7 +33,6 @@ import {
 	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
-	FEATURE_BUSINESS_ONBOARDING,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
@@ -303,10 +302,10 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
+		getTitle: () => i18n.translate( 'Premium themes' ),
 		getDescription: () =>
 			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
 			),
 	},
 
@@ -603,15 +602,6 @@ export const FEATURES_LIST = {
 				"Keep the focus on your site's brand by removing the WordPress.com footer branding."
 			),
 		getStoreSlug: () => 'no-adverts/no-adverts.php',
-	},
-
-	[ FEATURE_BUSINESS_ONBOARDING ]: {
-		getSlug: () => FEATURE_BUSINESS_ONBOARDING,
-		getTitle: () => i18n.translate( 'Get personalized help' ),
-		getDescription: () =>
-			i18n.translate(
-				"Meet one-on-one with a WordPress.com expert who'll help you set up your site exactly as you need it."
-			),
 	},
 
 	[ FEATURE_ADVANCED_SEO ]: {

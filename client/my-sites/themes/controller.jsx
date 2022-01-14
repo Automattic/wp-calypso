@@ -78,7 +78,7 @@ export function fetchThemeFilters( context, next ) {
 			return next();
 		}
 	} );
-	store.dispatch( requestThemeFilters() );
+	store.dispatch( requestThemeFilters( context.lang ) );
 }
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects
@@ -114,11 +114,17 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 	res.redirect( '/theme/' + [ theme, redirectedSection, site ].filter( Boolean ).join( '/' ) );
 }
 
-export function redirectTiers( { res, originalUrl }, next ) {
-	const redirectUrl = originalUrl.replace( /\/(free|premium|type)/g, '' );
-	if ( redirectUrl === originalUrl ) {
+export function redirectTiers( { res, originalUrl, params: { tier } }, next ) {
+	if ( tier === undefined ) {
 		return next();
 	}
+
+	const typeTierRegex = new RegExp( `/type/${ tier }$` );
+	const inlineOrPostfixTierRegex = new RegExp( `(?<=/)${ tier }/|/${ tier }$` );
+
+	const redirectUrl = originalUrl
+		.replace( typeTierRegex, '' )
+		.replace( inlineOrPostfixTierRegex, '' );
 
 	res.redirect( 301, redirectUrl );
 }
