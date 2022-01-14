@@ -1,5 +1,3 @@
-import config from '@automattic/calypso-config';
-import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -23,7 +21,6 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 	const isAnchorFmSignup = useIsAnchorFm();
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const [ isTouched, setIsTouched ] = React.useState( false );
-	const showVerticalInput = config.isEnabled( 'gutenboarding/show-vertical-input' );
 	const siteTitleExamples = [
 		/* translators: This is an example of a site name,
 		   feel free to create your own but please keep it under 22 characters */
@@ -80,18 +77,6 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 		setIsTouched( true );
 	};
 
-	const isMobile = useViewportMatch( 'small', '<' );
-
-	// translators: label for site title input in Gutenboarding
-	let inputLabel;
-	if ( showVerticalInput && ! isMobile ) {
-		inputLabel = __( "It's called" );
-	} else if ( isAnchorFmSignup ) {
-		inputLabel = __( 'My podcast is called' );
-	} else {
-		inputLabel = __( 'My site is called' );
-	}
-
 	const placeHolder = useTyper( siteTitleExamples, ! siteTitle, {
 		delayBetweenCharacters: 70,
 	} );
@@ -106,7 +91,8 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 				className="site-title__input-label"
 				data-e2e-string="My site is called"
 			>
-				{ inputLabel }
+				{ /* translators: label for site title input in Gutenboarding */ }
+				{ isAnchorFmSignup ? __( 'My podcast is called' ) : __( 'My site is called' ) }
 			</label>
 			<div className="site-title__input-wrapper">
 				{ /* Adding key makes it more performant

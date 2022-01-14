@@ -63,7 +63,6 @@
 		"google-my-business": true,
 		"google-drive": true,
 		"gutenboarding/alpha-templates": false,
-		"gutenboarding/show-vertical-input": false,
 		"gutenboarding/import": true,
 		"gutenboarding/import-from-medium": true,
 		"gutenboarding/import-from-wix": true,
