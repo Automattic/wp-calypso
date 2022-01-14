@@ -20,13 +20,14 @@ describe( 'isJetpackProductSite', () => {
 		expect( isJetpackProductSite( getSiteState(), siteId + 1 ) ).toEqual( null );
 	} );
 
-	test( 'should return false if the site is hosted on WordPress.com', () => {
+	test( 'should return false if the site is hosted on WordPress.com, even if a product plugin is installed', () => {
 		expect( isJetpackProductSite( getSiteState( { jetpack: false } ), siteId ) ).toEqual( false );
 		expect(
 			isJetpackProductSite(
 				getSiteState( {
 					options: {
 						is_automated_transfer: true,
+						jetpack_connection_active_plugins: [ 'jetpack-backup' ],
 					},
 				} ),
 				siteId
@@ -53,6 +54,20 @@ describe( 'isJetpackProductSite', () => {
 			isJetpackProductSite(
 				getSiteState( {
 					jetpack: true,
+					options: {
+						jetpack_connection_active_plugins: [ 'jetpack-backup' ],
+					},
+				} ),
+				siteId
+			)
+		).toEqual( true );
+	} );
+
+	test( 'should return true if the site has a standalone Jetpack plugin installed, but not the full plugin', () => {
+		expect(
+			isJetpackProductSite(
+				getSiteState( {
+					jetpack: false,
 					options: {
 						jetpack_connection_active_plugins: [ 'jetpack-backup' ],
 					},
