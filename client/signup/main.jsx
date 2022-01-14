@@ -134,7 +134,6 @@ class Signup extends Component {
 		pageTitle: PropTypes.string,
 		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
-		shouldShowMockups: PropTypes.bool,
 	};
 
 	state = {
