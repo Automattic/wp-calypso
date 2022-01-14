@@ -175,7 +175,7 @@ const Settings = ( {
 	const getNameServerSectionSubtitle = () => {
 		if ( isLoadingNameservers ) {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			return <p className="name-servers-card__loading" />;
+			return <span className="name-servers-card__loading" />;
 		}
 
 		if ( loadingNameserversError ) {

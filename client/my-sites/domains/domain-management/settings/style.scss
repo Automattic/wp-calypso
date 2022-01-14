@@ -165,6 +165,7 @@
 .domain-settings-page {
 	.name-servers-card__loading {
 		@include placeholder();
+		display: block;
 		margin-top: 4px;
 		margin-bottom: 0;
 	}
