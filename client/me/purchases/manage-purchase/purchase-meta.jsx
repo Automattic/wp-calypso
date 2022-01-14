@@ -41,7 +41,7 @@ import {
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getByPurchaseId, isPurchaseManagementLocked } from 'calypso/state/purchases/selectors';
+import { getByPurchaseId, isInAppPurchase } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { managePurchase } from '../paths';
@@ -415,11 +415,11 @@ function PurchaseMetaExpiration( {
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
 
-	const purchaseManagementIsLocked = useSelector( ( state ) =>
-		isPurchaseManagementLocked( state, purchase?.id )
+	const purchaseIsInAppPurchase = useSelector( ( state ) =>
+		isInAppPurchase( state, purchase?.id )
 	);
 
-	if ( ! purchase || isDomainTransfer( purchase ) ) {
+	if ( ! purchase || isDomainTransfer( purchase ) || purchaseIsInAppPurchase ) {
 		return null;
 	}
 
@@ -478,7 +478,7 @@ function PurchaseMetaExpiration( {
 				>
 					{ subsBillingText }
 				</span>
-				{ site && ! hideAutoRenew && isProductOwner && ! purchaseManagementIsLocked && (
+				{ site && ! hideAutoRenew && isProductOwner && (
 					<span className="manage-purchase__detail">
 						<AutoRenewToggle
 							planName={ site.plan.product_name_short }
