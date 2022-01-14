@@ -49,8 +49,10 @@ class TransferConfirmationDialog extends PureComponent {
 	}
 
 	renderTargetSiteOnFreePlanWarnings() {
+		const { isMapping } = this.props;
+
 		if ( this.props.primaryWithPlansOnly ) {
-			return (
+			return isMapping ? (
 				<p>
 					{ this.props.translate(
 						"The target site doesn't have a paid plan, so you'll have to pay the full price for a " +
@@ -58,15 +60,29 @@ class TransferConfirmationDialog extends PureComponent {
 							'If you upgrade the target site to a paid plan, these features are included in the plan.'
 					) }
 				</p>
+			) : (
+				<p>
+					{ this.props.translate(
+						"The target site doesn't have a paid plan, so you'll have to pay the full price for a " +
+							'domain connection subscription when the domain connection next renews. You will not be able to set it as primary either. '
+					) }
+				</p>
 			);
 		}
 
-		return (
+		return isMapping ? (
 			<p>
 				{ this.props.translate(
 					"The target site doesn't have a paid plan, so you'll have to pay the full price for a " +
 						'domain mapping subscription when the domain mapping next renews. ' +
 						'If you upgrade the target site to a paid plan, domain mappings (and many more features!) are included in our plans.'
+				) }
+			</p>
+		) : (
+			<p>
+				{ this.props.translate(
+					"The target site doesn't have a paid plan, so you'll have to pay the full price for a " +
+						'domain connection subscription when the domain connection next renews.'
 				) }
 			</p>
 		);
