@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -49,20 +48,16 @@ class SiteTools extends Component {
 			showClone,
 			showDeleteContent,
 			showDeleteSite,
-			showThemeSetup,
 			showManageConnection,
 			siteId,
 		} = this.props;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
-		const themeSetupLink = `/settings/theme-setup/${ siteSlug }`;
 		const startOverLink = `/settings/start-over/${ siteSlug }`;
 		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
 		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }`;
 
-		const themeSetupText = translate( "Automatically make your site look like your theme's demo." );
 		const changeSiteAddress = translate( 'Change your site address' );
-		const themeSetup = translate( 'Theme setup' );
 		const startOver = translate( 'Delete your content' );
 		const startOverText = translate(
 			"Keep your site's address and current theme, but remove all posts, " +
@@ -95,14 +90,6 @@ class SiteTools extends Component {
 				{ showClone && (
 					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
 				) }
-				{ showThemeSetup && (
-					<SiteToolsLink
-						href={ themeSetupLink }
-						onClick={ this.trackThemeSetup }
-						title={ themeSetup }
-						description={ themeSetupText }
-					/>
-				) }
 				{ showDeleteContent && (
 					<SiteToolsLink
 						href={ startOverLink }
@@ -134,10 +121,6 @@ class SiteTools extends Component {
 
 	trackChangeAddress() {
 		trackDeleteSiteOption( 'change-address' );
-	}
-
-	trackThemeSetup() {
-		trackDeleteSiteOption( 'theme-setup' );
 	}
 
 	trackStartOver() {
@@ -182,8 +165,6 @@ export default connect(
 			cloneUrl,
 			showChangeAddress: ! isJetpack && ! isVip && ! isP2,
 			showClone: 'active' === rewindState.state && ! isAtomic,
-			showThemeSetup:
-				config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip && ! isP2,
 			showDeleteContent: ! isJetpack && ! isVip && ! isP2Hub,
 			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 			showManageConnection: isJetpack && ! isAtomic,
