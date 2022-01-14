@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, useRtl } from 'i18n-calypso';
 import { SectionProps } from './types';
 
 interface SectionWrapperProps extends SectionProps {
@@ -90,6 +90,8 @@ const NextButton = styled( Button )`
 
 export default function SectionWrapper( props: SectionWrapperProps ) {
 	const translate = useTranslate();
+	const isRTL = useRtl();
+
 	return (
 		<Section>
 			<SectionHeader
@@ -109,7 +111,7 @@ export default function SectionWrapper( props: SectionWrapperProps ) {
 					<ButtonsContainer>
 						<NextButton onClick={ props.onNext }>
 							{ translate( 'Next' ) }
-							<Gridicon icon="arrow-right" />
+							<Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } />
 						</NextButton>
 						{ props.showSkip && (
 							<SkipLink onClick={ props.onNext }>{ translate( 'Skip' ) }</SkipLink>
