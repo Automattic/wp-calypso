@@ -24,7 +24,7 @@ describe( 'ShoppingCartManager', () => {
 			expect( responseCart.cart_key ).toBe( mainCartKey );
 		} );
 
-		it( 'returns the same responseCart for a site ID that has already been cached by slug', async () => {
+		it( 'returns the same responseCart for a site ID (if the manager does not yet exist) that has already been cached by slug', async () => {
 			const cartManagerClient = createShoppingCartManagerClient( {
 				getCart,
 				setCart,
@@ -32,6 +32,33 @@ describe( 'ShoppingCartManager', () => {
 			const manager1 = cartManagerClient.forCartKey( mainSiteSlug );
 			await manager1.actions.addProductsToCart( [ planOne ] );
 			const manager2 = cartManagerClient.forCartKey( mainCartKey );
+			const { responseCart } = manager2.getState();
+			expect( responseCart.products.length ).toBe( 1 );
+			expect( responseCart.products[ 0 ].product_slug ).toBe( planOne.product_slug );
+		} );
+
+		it( 'returns the same responseCart for a site ID (if the manager already exists) that has already been cached by slug', async () => {
+			const cartManagerClient = createShoppingCartManagerClient( {
+				getCart,
+				setCart,
+			} );
+			const manager1 = cartManagerClient.forCartKey( mainSiteSlug );
+			const manager2 = cartManagerClient.forCartKey( mainCartKey );
+			await manager1.actions.addProductsToCart( [ planOne ] );
+			const { responseCart } = manager2.getState();
+			expect( responseCart.products.length ).toBe( 1 );
+			expect( responseCart.products[ 0 ].product_slug ).toBe( planOne.product_slug );
+		} );
+
+		it( 'returns the same responseCart for a site slug (after a fetch) that has already been cached by ID', async () => {
+			const cartManagerClient = createShoppingCartManagerClient( {
+				getCart,
+				setCart,
+			} );
+			const manager1 = cartManagerClient.forCartKey( mainCartKey );
+			const manager2 = cartManagerClient.forCartKey( mainSiteSlug );
+			await manager1.actions.addProductsToCart( [ planOne ] );
+			await manager2.fetchInitialCart();
 			const { responseCart } = manager2.getState();
 			expect( responseCart.products.length ).toBe( 1 );
 			expect( responseCart.products[ 0 ].product_slug ).toBe( planOne.product_slug );
@@ -47,6 +74,19 @@ describe( 'ShoppingCartManager', () => {
 			expect( responseCart.products.length ).toBe( 0 );
 			expect( responseCart.cart_key ).toBe( '' );
 		} );
+	} );
+
+	it( 'calls the subscribe callback for a cart slug aliased to a cart ID when the second cart changes', async () => {
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart,
+			setCart,
+		} );
+		const callback = jest.fn();
+		const manager1 = cartManagerClient.forCartKey( mainSiteSlug );
+		const manager2 = cartManagerClient.forCartKey( mainCartKey );
+		manager2.subscribe( callback );
+		await manager1.actions.addProductsToCart( [ planOne ] );
+		expect( callback ).toHaveBeenCalled();
 	} );
 
 	it( 'clearMessages removes messages from the cart', async () => {
