@@ -36,7 +36,7 @@ Header text of the card
 
 ### `mainText`
 
-- **Type:** `String`
+- **Type:** `Node`
 - **Required:** `yes`
 
 Text that describes the header
