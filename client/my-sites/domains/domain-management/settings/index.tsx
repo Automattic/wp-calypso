@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -62,6 +63,13 @@ const Settings = ( {
 	whoisData,
 }: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
+	const contactInformation = findRegistrantWhois( whoisData );
+
+	useEffect( () => {
+		if ( ! contactInformation ) {
+			requestWhois( selectedDomainName );
+		}
+	}, [ contactInformation, selectedDomainName ] );
 
 	const renderBreadcrumbs = () => {
 		const previousPath = domainManagementList( selectedSite?.slug, currentRoute );
@@ -175,7 +183,7 @@ const Settings = ( {
 	const getNameServerSectionSubtitle = () => {
 		if ( isLoadingNameservers ) {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			return <p className="name-servers-card__loading" />;
+			return <span className="name-servers-card__loading" />;
 		}
 
 		if ( loadingNameserversError ) {
@@ -268,8 +276,6 @@ const Settings = ( {
 			></ContactsPrivacyInfo>
 		);
 
-		const contactInformation = findRegistrantWhois( whoisData );
-
 		const { privateDomain } = domain;
 		const titleLabel = translate( 'Contact information', { textOnly: true } );
 		const privacyProtectionLabel = privateDomain
@@ -285,7 +291,6 @@ const Settings = ( {
 		}
 
 		if ( ! contactInformation ) {
-			requestWhois( selectedDomainName );
 			return getPlaceholderAccordion();
 		}
 
