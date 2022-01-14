@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { includes } from 'lodash';
 import moment from 'moment';
@@ -7,16 +6,13 @@ import AsyncLoad from 'calypso/components/async-load';
 import StatsPagePlaceholder from 'calypso/my-sites/stats/stats-page-placeholder';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { recordTrack } from '../../lib/analytics';
-import { getQueryDate, getQueries } from './utils';
+import { getQueryDate } from './utils';
 
 function isValidParameters( context ) {
 	const validParameters = {
 		type: [ 'orders', 'products', 'categories', 'coupons' ],
 		unit: [ 'day', 'week', 'month', 'year' ],
 	};
-	if ( config.isEnabled( 'woocommerce/extension-referrers' ) ) {
-		validParameters.type.push( 'referrers' );
-	}
 	return Object.keys( validParameters ).every( ( param ) =>
 		includes( validParameters[ param ], context.params[ param ] )
 	);
@@ -55,9 +51,6 @@ export default function StatsController( context, next ) {
 		case 'coupons':
 			tracksEvent = 'calypso_woocommerce_stats_coupons_page';
 			break;
-		case 'referrers':
-			tracksEvent = 'calypso_woocommerce_stats_referrers_page';
-			break;
 	}
 	if ( tracksEvent ) {
 		recordTrack( tracksEvent, {
@@ -82,18 +75,6 @@ export default function StatsController( context, next ) {
 				/>
 			);
 			break;
-		case 'referrers': {
-			const { referrerQuery } = getQueries( props.unit, props.queryDate );
-			asyncComponent = (
-				<AsyncLoad
-					placeholder={ placeholder }
-					require="../../../store/app/store-stats/referrers"
-					query={ referrerQuery }
-					{ ...props }
-				/>
-			);
-			break;
-		}
 		default:
 			asyncComponent = (
 				<AsyncLoad

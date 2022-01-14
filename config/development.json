@@ -142,7 +142,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"woocommerce/extension-referrers": true,
-		"woop": false,
+		"woop": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false
 	}
