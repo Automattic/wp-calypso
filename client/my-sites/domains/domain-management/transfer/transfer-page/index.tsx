@@ -14,6 +14,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
 import Spinner from 'calypso/components/spinner';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, getTopLevelOfTld, isMappedDomain } from 'calypso/lib/domains';
@@ -40,7 +41,9 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-by-site-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { AppState } from 'calypso/types';
 import type { TransferPageProps } from './types';
 
 import './style.scss';
@@ -62,6 +65,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		isDomainOnly,
 		isMapping,
 		isPrimaryDomain,
+		isSupportSession,
 		selectedDomainName,
 		selectedSite,
 	} = props;
@@ -322,6 +326,18 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			return null;
 		}
 
+		if ( isSupportSession ) {
+			return (
+				<Notice
+					text={ __(
+						'Transfers cannot be initiated in a support session - please ask the user to do it instead.'
+					) }
+					status="is-warning"
+					showDismiss={ false }
+				/>
+			);
+		}
+
 		if ( ! domain.currentUserIsOwner ) {
 			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
 		}
@@ -364,7 +380,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	);
 };
 
-const transferPageComponent = connect( ( state, ownProps: TransferPageProps ) => {
+const transferPageComponent = connect( ( state: AppState, ownProps: TransferPageProps ) => {
 	const domain = getSelectedDomain( ownProps );
 	const siteId = getSelectedSiteId( state );
 	const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
@@ -376,6 +392,7 @@ const transferPageComponent = connect( ( state, ownProps: TransferPageProps ) =>
 		isDomainOnly: isDomainOnlySite( state, siteId ) ?? false,
 		isMapping: Boolean( domain ) && isMappedDomain( domain ),
 		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
+		isSupportSession: isSupportSession( state ),
 	};
 } )( TransferPage );
 
