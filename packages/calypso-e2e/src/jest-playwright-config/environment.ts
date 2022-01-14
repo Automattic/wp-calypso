@@ -1,4 +1,3 @@
-/* eslint-disable require-jsdoc */
 import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
@@ -13,6 +12,13 @@ const sanitizeString = ( text: string ) => {
 	return text.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
 };
 
+/**
+ * This is the place where we make Playwright work with Jest (jest-circus): From
+ * setting up our global Browser instance to handling failure and teardown
+ * hooks.
+ *
+ * @see {@link https://github.com/facebook/jest/tree/main/packages/jest-circus}
+ */
 class JestEnvironmentPlaywright extends JestEnvironmentNode {
 	private testFilename: string;
 	private testArtifactsPath: string;
@@ -21,6 +27,9 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 		name: string;
 	};
 
+	/**
+	 * Constructs the instance of the JestEnvironmentNode.
+	 */
 	constructor( config: Config.ProjectConfig, context: Context ) {
 		super( config );
 
@@ -126,7 +135,10 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 				// Handling is different compared to test steps because Jest treats
 				// failed hooks differently from tests.
 				if ( this.failure?.type === 'hook' ) {
-					// event.test.mode = 'fail'; // THIS TYPE DOESN'T EXIST (TS ERROR)
+					// event.test.mode = 'fail';
+					// This is now commented out as it throws the "Type '"fail"' is not
+					// assignable to type 'BlockMode'" TS error. The accepted options are
+					// "skip", "todo", and "only".
 				}
 				break;
 			}

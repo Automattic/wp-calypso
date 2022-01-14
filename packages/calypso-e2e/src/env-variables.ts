@@ -58,6 +58,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {
 	let output: EnvVariableValue = value;
 
+	// Cast based on the default value type.
 	switch ( defaultEnvVariables[ name ].constructor.name ) {
 		case 'Number': {
 			output = Number( value );
@@ -84,6 +85,7 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 		}
 	}
 
+	// Validate specific variables
 	switch ( name ) {
 		case 'VIEWPORT_NAME': {
 			const supportedValues = VIEWPORT_NAMES as ReadonlyArray< string >;
@@ -118,5 +120,5 @@ supportedEnvVariableNames.forEach( ( name ) => {
 	}
 } );
 
-// TODO: Add proxy trap to return process.env values as well
+// TODO: Should we add proxy trap to fallback to process.env values?
 export default Object.freeze( currentEnvVariables );
