@@ -8,7 +8,7 @@ import {
 	getCurrentSection,
 } from 'calypso/blocks/app-banner/utils';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
 import { getSectionName, appBannerIsEnabled } from 'calypso/state/ui/selectors';
@@ -20,7 +20,7 @@ import { AppState } from 'calypso/types';
  * @param {object} state Global state tree
  * @returns {boolean} True if App Banner is visible
  */
-export const shouldDisplayAppBanner = ( state: AppState ): boolean | null => {
+export const shouldDisplayAppBanner = ( state: AppState ): boolean | undefined => {
 	// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
 	// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
 	// be displayed.
@@ -33,7 +33,7 @@ export const shouldDisplayAppBanner = ( state: AppState ): boolean | null => {
 		return false;
 	}
 
-	if ( isFetchingPreferences( state ) ) {
+	if ( ! hasReceivedRemotePreferences( state ) ) {
 		return false;
 	}
 
@@ -61,7 +61,7 @@ export const shouldDisplayAppBanner = ( state: AppState ): boolean | null => {
 export default createSelector( shouldDisplayAppBanner, [
 	shouldDisplayTosUpdateBanner,
 	appBannerIsEnabled,
-	isFetchingPreferences,
+	hasReceivedRemotePreferences,
 	getSectionName,
 	isNotificationsOpen,
 	( state: AppState ) => getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),

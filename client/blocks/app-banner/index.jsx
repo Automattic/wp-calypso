@@ -15,7 +15,7 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
@@ -48,7 +48,6 @@ export class AppBanner extends Component {
 		// connected
 		currentSection: PropTypes.string,
 		dismissedUntil: PropTypes.object,
-		hasReceivedPreferences: PropTypes.bool,
 		isVisible: PropTypes.bool,
 	};
 
@@ -130,11 +129,7 @@ export class AppBanner extends Component {
 	}
 
 	render() {
-		const { translate, currentSection, hasReceivedPreferences } = this.props;
-
-		if ( ! hasReceivedPreferences ) {
-			return null;
-		}
+		const { translate, currentSection } = this.props;
 
 		if ( ! this.props.shouldDisplayAppBanner ) {
 			return null;
@@ -224,8 +219,7 @@ const mapStateToProps = ( state ) => {
 	return {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
 		currentSection: getCurrentSection( sectionName, isNotesOpen ),
-		currentRoute,
-		hasReceivedPreferences: hasReceivedRemotePreferences( state ),
+		currentRoute: getCurrentRoute( state ),
 		shouldDisplayAppBanner: shouldDisplayAppBanner( state ),
 	};
 };
