@@ -13,6 +13,7 @@ export type TransferPageProps = {
 	isDomainOnly: boolean;
 	isMapping: boolean;
 	isPrimaryDomain: boolean;
+	isSupportSession: boolean;
 	selectedDomainName: string;
 	selectedSite: SiteData;
 	successNotice: ( notice: string, options: Record< string, unknown > ) => NoticeActionCreator;
