@@ -51,13 +51,13 @@ export const calculateProgress = ( progress ) => {
 	return ( 100 * percentages.reduce( sum, 0 ) ) / percentages.length;
 };
 
-const resourcesRemaining = ( progress ) =>
+export const resourcesRemaining = ( progress ) =>
 	Object.keys( progress )
 		.map( ( k ) => progress[ k ] )
 		.map( ( { completed, total } ) => total - completed )
 		.reduce( sum, 0 );
 
-const hasProgressInfo = ( progress ) => {
+export const hasProgressInfo = ( progress ) => {
 	if ( ! progress ) {
 		return false;
 	}
@@ -76,7 +76,7 @@ const hasProgressInfo = ( progress ) => {
 	return true;
 };
 
-class ImportingPane extends PureComponent {
+export class ImportingPane extends PureComponent {
 	static displayName = 'ImportingPane';
 
 	static propTypes = {

@@ -5,13 +5,13 @@ import { connect } from 'react-redux';
 import { ImporterConfig } from 'calypso/lib/importer/importer-config';
 import ErrorPane from 'calypso/my-sites/importer/error-pane';
 import ImporterHeader from 'calypso/my-sites/importer/importer-header';
-import ImportingPane from 'calypso/my-sites/importer/importing-pane';
-import UploadingPane from 'calypso/my-sites/importer/uploading-pane';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { ImportJob } from '../../types';
 import './style.scss';
+import ImportingPane from '../importing-pane/importing-pane';
+import UploadingPane from '../uploading-pane/uploading-pane';
 
 export interface Site {
 	ID: number;
