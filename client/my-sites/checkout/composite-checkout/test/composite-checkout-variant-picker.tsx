@@ -9,6 +9,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
+import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import CompositeCheckout from '../composite-checkout';
@@ -28,13 +29,14 @@ import {
 	countryList,
 } from './util';
 
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/sites/domains/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
+jest.mock( 'calypso/state/selectors/get-intro-offer-price' );
+jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
+jest.mock( 'calypso/state/sites/domains/selectors' );
+jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+jest.mock( 'calypso/state/sites/selectors' );
 
 /* eslint-disable jest/no-conditional-expect */
 
@@ -49,6 +51,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		hasLoadedSiteDomains.mockImplementation( () => true );
 		getDomainsBySiteId.mockImplementation( () => [] );
 		isMarketplaceProduct.mockImplementation( () => false );
+		getIntroOfferPrice.mockImplementation( () => null );
 
 		const initialCart = {
 			coupon: '',
@@ -211,7 +214,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			const intervalsInVariant = Math.round( variantInterval / lowestVariantInterval );
 			const priceBeforeDiscount = lowestVariantPrice * intervalsInVariant;
 
-			const discountPercentage = Math.round( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
+			const discountPercentage = Math.floor( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
 			expect(
 				within( variantItem ).getByText( `Save ${ discountPercentage }%` )
 			).toBeInTheDocument();
