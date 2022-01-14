@@ -322,7 +322,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			return null;
 		}
 
-		if ( ! domain.currentUserIsOwner ) {
+		if ( ! domain.currentUserCanManage ) {
 			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
 		}
 
