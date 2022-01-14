@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
 import DesignPicker, {
 	FeaturedPicksButtons,
 	PremiumBadge,
@@ -17,10 +17,12 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
 import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { planItem } from 'calypso/lib/cart-values/cart-items';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -84,6 +86,8 @@ export default function DesignPickerStep( props ) {
 	);
 
 	const allThemes = props.useDIFMThemes ? DIFMThemes : apiThemes;
+
+	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState( false );
 
 	useEffect(
 		() => {
@@ -192,38 +196,64 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function openCheckoutModal() {
-		// TODO
+		setIsCheckoutModalOpen( true );
+	}
+
+	function closeCheckoutModal() {
+		setIsCheckoutModalOpen( false );
+	}
+
+	function renderCheckoutModal() {
+		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
+			return null;
+		}
+
+		return (
+			<AsyncLoad
+				require="calypso/my-sites/checkout/modal"
+				placeholder={ null }
+				isOpen={ isCheckoutModalOpen }
+				cartProducts={ [ planItem( PLAN_PREMIUM ) ] }
+				redirectTo={ '' }
+				clearCartOnClose
+				checkoutOnSuccessCallback={ null }
+				onClose={ closeCheckoutModal }
+			/>
+		);
 	}
 
 	function renderDesignPicker() {
 		return (
-			<DesignPicker
-				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
-				theme={ isReskinned ? 'light' : 'dark' }
-				locale={ translate.localeSlug }
-				onSelect={ pickDesign }
-				onPreview={ previewDesign }
-				onUpgrade={ openCheckoutModal }
-				className={ classnames( {
-					'design-picker-step__has-categories': showDesignPickerCategories,
-				} ) }
-				highResThumbnails
-				premiumBadge={ <PremiumBadge /> }
-				categorization={ showDesignPickerCategories ? categorization : undefined }
-				recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
-				categoriesHeading={
-					<FormattedHeader
-						id={ 'step-header' }
-						headerText={ headerText() }
-						subHeaderText={ subHeaderText() }
-						align="left"
-					/>
-				}
-				categoriesFooter={ renderCategoriesFooter() }
-				hideFullScreenPreview={ hideFullScreenPreview }
-				hideDesignTitle={ hideDesignTitle }
-				isPremiumThemesAvailable={ isPremiumThemesAvailable }
-			/>
+			<>
+				<DesignPicker
+					designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+					theme={ isReskinned ? 'light' : 'dark' }
+					locale={ translate.localeSlug }
+					onSelect={ pickDesign }
+					onPreview={ previewDesign }
+					onUpgrade={ openCheckoutModal }
+					className={ classnames( {
+						'design-picker-step__has-categories': showDesignPickerCategories,
+					} ) }
+					highResThumbnails
+					premiumBadge={ <PremiumBadge /> }
+					categorization={ showDesignPickerCategories ? categorization : undefined }
+					recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
+					categoriesHeading={
+						<FormattedHeader
+							id={ 'step-header' }
+							headerText={ headerText() }
+							subHeaderText={ subHeaderText() }
+							align="left"
+						/>
+					}
+					categoriesFooter={ renderCategoriesFooter() }
+					hideFullScreenPreview={ hideFullScreenPreview }
+					hideDesignTitle={ hideDesignTitle }
+					isPremiumThemesAvailable={ isPremiumThemesAvailable }
+				/>
+				{ renderCheckoutModal() }
+			</>
 		);
 	}
 
@@ -254,20 +284,26 @@ export default function DesignPickerStep( props ) {
 		} );
 
 		return (
-			<WebPreview
-				className="design-picker__web-preview"
-				showPreview
-				isContentOnly
-				showClose={ false }
-				showEdit={ false }
-				externalUrl={ siteSlug }
-				showExternal={ ! hideExternalPreview }
-				previewUrl={ previewUrl }
-				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-					components: { strong: <strong /> },
-				} ) }
-				toolbarComponent={ PreviewToolbar }
-			/>
+			<>
+				<WebPreview
+					className="design-picker__web-preview"
+					showPreview
+					isContentOnly
+					showClose={ false }
+					showEdit={ false }
+					externalUrl={ siteSlug }
+					showExternal={ ! hideExternalPreview }
+					previewUrl={ previewUrl }
+					loadingMessage={ translate(
+						'{{strong}}One moment, please…{{/strong}} loading your site.',
+						{
+							components: { strong: <strong /> },
+						}
+					) }
+					toolbarComponent={ PreviewToolbar }
+				/>
+				{ renderCheckoutModal() }
+			</>
 		);
 	}
 
