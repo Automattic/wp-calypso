@@ -57,7 +57,8 @@ function getErrorFromState( state: ShoppingCartState ): undefined | CartActionEr
 function createShoppingCartManager(
 	cartKey: string,
 	getCart: GetCart,
-	setCart: SetCart
+	setCart: SetCart,
+	addCartKeyAlias: ( aliasKey: string, cartKey: string ) => void
 ): ShoppingCartManager {
 	let state = getInitialShoppingCartState();
 
@@ -72,6 +73,10 @@ function createShoppingCartManager(
 		const newState = shoppingCartReducer( state, action );
 		const isStateChanged = newState !== state;
 		state = newState;
+
+		if ( state.responseCart.cart_key && state.responseCart.cart_key !== cartKey ) {
+			addCartKeyAlias( state.responseCart.cart_key, cartKey );
+		}
 
 		if ( state.cacheStatus === 'error' ) {
 			actionPromises.reject(
@@ -146,15 +151,30 @@ export function createShoppingCartManagerClient( {
 	setCart: SetCart;
 } ): ShoppingCartManagerClient {
 	const managersByCartKey: Record< string, ShoppingCartManager > = {};
+	const cartKeyAliases: Record< string, string > = {};
+
+	function addCartKeyAlias( aliasKey: string, cartKey: string ): void {
+		debug( `adding cart manager alias from "${ aliasKey }" to "${ cartKey }"` );
+		cartKeyAliases[ aliasKey ] = cartKey;
+	}
 
 	function forCartKey( cartKey: string | undefined ): ShoppingCartManager {
 		if ( ! cartKey ) {
 			return noopManager;
 		}
 
+		if ( cartKeyAliases[ cartKey ] ) {
+			cartKey = cartKeyAliases[ cartKey ];
+		}
+
 		if ( ! managersByCartKey[ cartKey ] ) {
 			debug( `creating cart manager for "${ cartKey }"` );
-			managersByCartKey[ cartKey ] = createShoppingCartManager( cartKey, getCart, setCart );
+			managersByCartKey[ cartKey ] = createShoppingCartManager(
+				cartKey,
+				getCart,
+				setCart,
+				addCartKeyAlias
+			);
 		}
 
 		return managersByCartKey[ cartKey ];
