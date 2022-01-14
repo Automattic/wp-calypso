@@ -709,6 +709,8 @@ export function generateSteps( {
 				showDesignPickerCategories: true,
 				showDesignPickerCategoriesAllFilter: false,
 				showLetUsChoose: true,
+				hideFullScreenPreview: true,
+				hideDesignTitle: true,
 			},
 		},
 		'site-info-collection': {

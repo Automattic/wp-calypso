@@ -45,6 +45,8 @@ interface DesignButtonProps {
 	premiumBadge?: React.ReactNode;
 	highRes: boolean;
 	disabled?: boolean;
+	hideFullScreenPreview?: boolean;
+	hideDesignTitle?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -54,6 +56,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	premiumBadge,
 	highRes,
 	disabled,
+	hideFullScreenPreview,
+	hideDesignTitle,
 } ) => {
 	const { __ } = useI18n();
 
@@ -84,7 +88,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					'design-picker__image-frame',
 					'design-picker__image-frame-landscape',
 					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
-					{ 'design-picker__image-frame-blank': isBlankCanvas }
+					{ 'design-picker__image-frame-blank': isBlankCanvas },
+					{
+						'design-picker__image-frame-hide-preview': hideFullScreenPreview,
+					}
 				) }
 			>
 				{ isBlankCanvas ? (
@@ -99,7 +106,9 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			</span>
 			<span className="design-picker__option-overlay">
 				<span id={ makeOptionId( design ) } className="design-picker__option-meta">
-					<span className="design-picker__option-name">{ designTitle }</span>
+					{ ! hideDesignTitle && (
+						<span className="design-picker__option-name">{ designTitle }</span>
+					) }
 					{ design.is_premium && premiumBadge && (
 						<Tooltip
 							position="bottom center"
@@ -213,6 +222,8 @@ export interface DesignPickerProps {
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
 	categoriesFooter?: React.ReactNode;
+	hideFullScreenPreview?: boolean;
+	hideDesignTitle?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -230,6 +241,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	categoriesHeading,
 	categoriesFooter,
 	categorization,
+	hideFullScreenPreview,
+	hideDesignTitle,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -263,9 +276,11 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						design={ design }
 						locale={ locale }
 						onSelect={ onSelect }
-						onPreview={ onPreview }
+						onPreview={ hideFullScreenPreview ? undefined : onPreview }
 						premiumBadge={ premiumBadge }
 						highRes={ highResThumbnails }
+						hideFullScreenPreview={ hideFullScreenPreview }
+						hideDesignTitle={ hideDesignTitle }
 					/>
 				) ) }
 			</div>

@@ -146,6 +146,12 @@
 			background-color: transparent;
 			transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
 		}
+
+		&.design-picker__image-frame-hide-preview {
+			&::after {
+				display: none;
+			}
+		}
 	}
 
 	// The Aspect ratio trick: padding % is relative to width, so we use
