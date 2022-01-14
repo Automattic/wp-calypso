@@ -326,7 +326,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			return null;
 		}
 
-		if ( isSupportSession || true ) {
+		if ( isSupportSession ) {
 			return (
 				<Notice
 					text={ __(
