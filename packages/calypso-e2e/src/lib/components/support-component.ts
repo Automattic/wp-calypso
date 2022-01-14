@@ -68,10 +68,7 @@ export class SupportComponent {
 		await Promise.all( [
 			// Waits for all placeholder CSS elements to be removed from the DOM.
 			this.waitForQueryComplete(),
-			// Waits for one of the network request (triggered by the opening of the popover) to complete.
-			this.page.waitForResponse(
-				( response ) => response.status() === 200 && response.url().includes( 'kayako/mine?' )
-			),
+			this.page.waitForSelector( selectors.supportPopoverButton ),
 			this.page.click( selectors.supportPopoverButton ),
 		] );
 

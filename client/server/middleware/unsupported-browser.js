@@ -55,7 +55,9 @@ function allowPath( path ) {
 		? path.replace( new RegExp( `^/${ prefixedLocale }` ), '' )
 		: path;
 
-	const allowedPaths = [ '/browsehappy', '/themes', '/theme' ];
+	// '/calypso' is the static assets path, and should never be redirected. (Can
+	// cause CDN caching issues if an asset gets cached with a redirect.)
+	const allowedPaths = [ '/browsehappy', '/themes', '/theme', '/calypso' ];
 	// For example, match either exactly "/themes" or "/themes/*"
 	return allowedPaths.some( ( p ) => parsedPath === p || parsedPath.startsWith( p + '/' ) );
 }

@@ -39,23 +39,6 @@ export const getTwoFactorNotificationSent = ( state ) =>
 export const getTwoFactorPushToken = ( state ) => state.login.twoFactorAuth?.push_web_token ?? null;
 
 /**
- * Retrieve the progress status of polling for push authentication
- *
- * @param  {object}   state  Global state tree
- * @returns {boolean}         Whether the polling for push authentication is in progress
- */
-export const getTwoFactorPushPollInProgress = ( state ) =>
-	state.login.twoFactorAuthPushPoll.inProgress;
-
-/**
- * Get whether user logged in successfully via push auth
- *
- * @param  {object}   state  Global state tree
- * @returns {boolean}         Whether the polling for push authentication completed successfully
- */
-export const getTwoFactorPushPollSuccess = ( state ) => state.login.twoFactorAuthPushPoll.success;
-
-/**
  * Determines whether two factor authentication is enabled for the logging in user.
  *
  * @param  {object}   state  Global state tree

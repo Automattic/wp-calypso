@@ -14,7 +14,11 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
-import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import {
+	requestKeyringConnections,
+	requestP2KeyringConnections,
+} from 'calypso/state/sharing/keyring/actions';
 import {
 	getKeyringConnectionsByName,
 	getRefreshableKeyringConnections,
@@ -72,6 +76,7 @@ export class SharingService extends Component {
 		translate: PropTypes.func,
 		updateSiteConnection: PropTypes.func,
 		warningNotice: PropTypes.func,
+		isP2HubSite: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -91,6 +96,7 @@ export class SharingService extends Component {
 		siteUserConnections: [],
 		updateSiteConnection: () => {},
 		warningNotice: () => {},
+		isP2HubSite: false,
 	};
 
 	/**
@@ -166,9 +172,13 @@ export class SharingService extends Component {
 				// Attempt to create a new connection. If a Keyring connection ID
 				// is not provided, the user will need to authorize the app
 				requestExternalAccess( service.connect_URL, ( { keyring_id: newKeyringId } ) => {
-					// When the user has finished authorizing the connection
-					// (or otherwise closed the window), force a refresh
-					this.props.requestKeyringConnections();
+					if ( this.props.isP2HubSite ) {
+						this.props.requestP2KeyringConnections( this.props.siteId );
+					} else {
+						// When the user has finished authorizing the connection
+						// (or otherwise closed the window), force a refresh
+						this.props.requestKeyringConnections();
+					}
 
 					// In the case that a Keyring connection doesn't exist, wait for app
 					// authorization to occur, then display with the available connections
@@ -333,6 +343,7 @@ export class SharingService extends Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! isEqual( this.props.siteUserConnections, nextProps.siteUserConnections ) ) {
 			this.setState( {
@@ -639,6 +650,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 				userId,
 				isExpanded: isServiceExpanded( state, service ),
+				isP2HubSite: isSiteP2Hub( state, siteId ),
 			};
 			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},
@@ -651,6 +663,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			fetchConnection,
 			recordGoogleEvent,
 			recordTracksEvent,
+			requestP2KeyringConnections,
 			requestKeyringConnections,
 			updateSiteConnection,
 			warningNotice,

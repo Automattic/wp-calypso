@@ -1,17 +1,9 @@
 import wpcom from 'calypso/lib/wp';
 
-export function checkInboundTransferStatus( domainName, onComplete ) {
+export function checkInboundTransferStatus( domainName ) {
 	if ( ! domainName ) {
-		onComplete( null );
-		return;
+		return Promise.reject( new Error( 'missing domain parameter' ) );
 	}
 
-	wpcom.undocumented().getInboundTransferStatus( domainName, function ( serverError, result ) {
-		if ( serverError ) {
-			onComplete( serverError.error );
-			return;
-		}
-
-		onComplete( null, result );
-	} );
+	return wpcom.req.get( `/domains/${ encodeURIComponent( domainName ) }/inbound-transfer-status` );
 }

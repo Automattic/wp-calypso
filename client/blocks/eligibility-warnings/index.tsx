@@ -25,6 +25,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import HoldList, { hasBlockingHold } from './hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
+import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
 
 import './style.scss';
 
@@ -32,15 +33,12 @@ import './style.scss';
 const noop = () => {};
 
 interface ExternalProps {
+	isEligible?: boolean;
 	backUrl: string;
 	onProceed: () => void;
 	standaloneProceed: boolean;
 	className?: string;
-	eligibilityData?: {
-		eligibilityHolds: string[];
-		eligibilityWarnings: string[];
-		lastUpdated: string;
-	};
+	eligibilityData?: EligibilityData;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -221,7 +219,7 @@ const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalPr
 		siteId,
 		siteSlug,
 		siteIsLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
-		siteIsSavingSettings: isSavingSiteSettings( state, siteId ),
+		siteIsSavingSettings: isSavingSiteSettings( state, siteId ?? 0 ),
 	};
 };
 
@@ -239,7 +237,6 @@ const mapDispatchToProps = {
 		saveSiteSettings( selectedSiteId, {
 			blog_public: 1,
 			wpcom_coming_soon: 0,
-			apiVersion: '1.4',
 		} ),
 };
 

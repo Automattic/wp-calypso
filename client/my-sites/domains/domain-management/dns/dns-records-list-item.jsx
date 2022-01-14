@@ -16,12 +16,15 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 				/>
 			}
 			popoverClassName="dns-records-list-item__action-menu-popover"
-			position="top left"
-			disabled={ actions.length === 0 }
+			position="bottom left"
 		>
 			{ actions.map( ( action ) => {
 				return (
-					<PopoverMenuItem key={ key++ } onClick={ () => action.callback( record ) }>
+					<PopoverMenuItem
+						disabled={ action.disabled }
+						key={ key++ }
+						onClick={ () => action.callback( record ) }
+					>
 						{ action.icon }
 						{ action.title }
 					</PopoverMenuItem>

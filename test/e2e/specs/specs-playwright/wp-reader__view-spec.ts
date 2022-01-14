@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	LoginPage,
+	TestAccount,
 	setupHooks,
 	ReaderPage,
 	NotificationsComponent,
@@ -20,46 +20,55 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 
 	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
-	} );
-
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'commentingUser' }, { landingUrl: '**/read' } );
-	} );
-
-	it( 'View the Reader stream', async function () {
 		readerPage = new ReaderPage( page );
-		const testSiteForNotifications = DataHelper.config.get( 'testSiteForNotifications' );
-		const siteOfLatestPost = await readerPage.siteOfLatestPost();
-		expect( siteOfLatestPost ).toEqual( testSiteForNotifications );
 	} );
 
-	it( 'Visit latest post', async function () {
-		await readerPage.visitPost( { index: 1 } );
+	describe( 'As the commenting user', () => {
+		let testAccount: TestAccount;
+		beforeAll( async () => {
+			testAccount = new TestAccount( 'commentingUser' );
+			await testAccount.authenticate( page );
+		} );
+
+		it( 'Go to Reader page', async function () {
+			await readerPage.visit();
+		} );
+
+		it( 'View the Reader stream', async function () {
+			const testSiteForNotifications = DataHelper.config.get( 'testSiteForNotifications' );
+			const siteOfLatestPost = await readerPage.siteOfLatestPost();
+			expect( siteOfLatestPost ).toEqual( testSiteForNotifications );
+		} );
+
+		it( 'Visit latest post', async function () {
+			await readerPage.visitPost( { index: 1 } );
+		} );
+
+		it( 'Comment and confirm it is shown', async function () {
+			await readerPage.comment( comment );
+		} );
 	} );
 
-	it( 'Comment and confirm it is shown', async function () {
-		await readerPage.comment( comment );
-	} );
+	describe( 'As the site owner', () => {
+		beforeAll( async () => {
+			const testAccount = new TestAccount( 'notificationsUser' );
+			await testAccount.authenticate( page );
+		} );
 
-	it( 'Log in as test site owner', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'notificationsUser' } );
-	} );
+		it( 'Open Notifications panel', async function () {
+			const navBarComponent = new NavbarComponent( page );
+			await navBarComponent.openNotificationsPanel();
+		} );
 
-	it( 'Open Notifications panel', async function () {
-		const navBarComponent = new NavbarComponent( page );
-		await navBarComponent.openNotificationsPanel();
-	} );
+		it( 'Delete the new comment', async function () {
+			notificationsComponent = new NotificationsComponent( page );
+			await notificationsComponent.clickNotification( comment );
+			await notificationsComponent.clickNotificationAction( 'Trash' );
+		} );
 
-	it( 'Delete the new comment', async function () {
-		notificationsComponent = new NotificationsComponent( page );
-		await notificationsComponent.clickNotification( comment );
-		await notificationsComponent.clickNotificationAction( 'Trash' );
-	} );
-
-	it( 'Wait for Undo Message to display and then disappear', async function () {
-		await notificationsComponent.waitForUndoMessage();
-		await notificationsComponent.waitForUndoMessageToDisappear();
+		it( 'Wait for Undo Message to display and then disappear', async function () {
+			await notificationsComponent.waitForUndoMessage();
+			await notificationsComponent.waitForUndoMessageToDisappear();
+		} );
 	} );
 } );

@@ -1,6 +1,9 @@
 // Event Countdown Block
 // JavaScript that loads on front-end to update the block
 ( function () {
+	function isUnixTimestamp( dtstr ) {
+		return /^[0-9]+$/.test( dtstr );
+	}
 	// loop through all event countdown blocks on page
 	const intervalIds = [];
 	const cals = document.getElementsByClassName( 'wp-block-jetpack-event-countdown' );
@@ -13,9 +16,16 @@
 			continue;
 		}
 
-		// parse date into unix time
 		const dtstr = eventDateElem[ 0 ].innerHTML;
-		const eventTime = new Date( dtstr ).getTime();
+
+		let eventTime;
+		if ( isUnixTimestamp( dtstr ) ) {
+			eventTime = eventDateElem[ 0 ].innerHTML * 1000;
+		} else {
+			// backwards compatibility, event date was stored as YYYY-MM-DDTHH:mm:ss
+			// parse date into unix time (but in ms)
+			eventTime = new Date( dtstr ).getTime();
+		}
 		if ( isNaN( eventTime ) ) {
 			continue;
 		}

@@ -66,7 +66,12 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 			...defaultArgs,
 			...omit( additionalArgs, 'intervalType' ),
 		},
-		plansLink( props.basePlansPath || '/plans', props.siteSlug, intervalType, true )
+		plansLink(
+			props.basePlansPath || '/plans',
+			props.siteSlug,
+			intervalType ? String( intervalType ) : '',
+			true
+		)
 	);
 };
 
@@ -88,7 +93,12 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 		<>
 			{ [ 'right', 'bottom' ].map( ( pos ) => (
 				<CSSTransition key={ pos } in={ inProp } timeout={ timeout } classNames="popover">
-					<StyledPopover position={ pos } context={ context } isVisible={ true }>
+					<StyledPopover
+						position={ pos }
+						context={ context }
+						isVisible={ true }
+						autoPosition={ false }
+					>
 						{ children }
 					</StyledPopover>
 				</CSSTransition>

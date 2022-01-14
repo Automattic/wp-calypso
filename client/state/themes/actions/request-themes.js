@@ -41,9 +41,9 @@ export function requestThemes( siteId, query = {} ) {
 		if ( siteId === 'wporg' ) {
 			request = () => fetchWporgThemesList( query );
 		} else if ( siteId === 'wpcom' ) {
-			request = () => wpcom.undocumented().themes( null, { ...query, apiVersion: '1.2' } );
+			request = () => wpcom.req.get( '/themes', { ...query, apiVersion: '1.2' } );
 		} else {
-			request = () => wpcom.undocumented().themes( siteId, { ...query, apiVersion: '1' } );
+			request = () => wpcom.req.get( `/sites/${ siteId }/themes`, { ...query, apiVersion: '1' } );
 		}
 
 		// WP.com returns the number of results in a `found` attr, so we can use that right away.

@@ -1,9 +1,6 @@
-import { readFile, access } from 'fs/promises';
-import path from 'path';
 import config from 'config';
 import { BrowserType } from 'playwright';
 import { getHeadless, getLaunchConfiguration } from './browser-helper';
-import { COOKIES_PATH } from './environment';
 import type { Browser, BrowserContext, Logger, Page } from 'playwright';
 
 export let browser: Browser;
@@ -126,28 +123,6 @@ export async function closeBrowser(): Promise< void > {
 }
 
 /**
- * Given a page, this will clear all cookies, local storage and reset permissions for the
- * Browser Context to which the page belongs.
- *
- * @param {Page} page Object representing a page launched by Playwright.
- * @returns {Promise<void>} No return value.
- */
-export async function clearAuthenticationState( page: Page ): Promise< void > {
-	// Save references to the BrowserContext and the current URL the page is on.
-	const browserContext = page.context();
-	const currentURL = page.url();
-
-	// Navigate to the WordPress.com base URL.
-	await page.goto( 'https://r-login.wordpress.com/' );
-	// Clear local storage.
-	await page.evaluate( 'localStorage.clear();' );
-	// Lastly, clear the cookies using built-in method.
-	await browserContext.clearCookies();
-	// Previous steps navigated page away from target page. Return page to the original URL.
-	await page.goto( currentURL );
-}
-
-/**
  * Sets the store cookie, used for simulating payment processing.
  *
  * Optinally, set the `currency` parameter to specify the currency to be used in the checkout.
@@ -184,23 +159,4 @@ export async function setStoreCookie(
 			},
 		] );
 	}
-}
-
-/**
- *
- * @param page
- * @param accountType
- */
-export async function setLoginCookie( page: Page, accountType: string ): Promise< void > {
-	const browserContext = page.context();
-	const cookiePath = path.join( COOKIES_PATH, `${ accountType }.json` );
-	try {
-		await access( cookiePath );
-	} catch {
-		throw new Error( `Cookie file ${ cookiePath } not found on disk.` );
-	}
-
-	const cookie = JSON.parse( await readFile( cookiePath, 'utf8' ) );
-
-	await browserContext.addCookies( cookie.cookies );
 }

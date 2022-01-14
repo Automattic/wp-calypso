@@ -25,7 +25,6 @@ import {
 	isEnterprise,
 	isEcommerce,
 	isVipPlan,
-	isMarketplaceProduct,
 	getProductFromSlug,
 } from '.';
 import type {
@@ -149,6 +148,9 @@ export function getAllFeaturesForPlan( plan: Plan | string ): TranslateResult[] 
 			: [] ),
 		...( 'getSignupFeatures' in planObj && planObj.getSignupFeatures
 			? planObj.getSignupFeatures()
+			: [] ),
+		...( 'getSignupCompareAvailableFeatures' in planObj && planObj.getSignupCompareAvailableFeatures
+			? planObj.getSignupCompareAvailableFeatures()
 			: [] ),
 		...( 'getBlogSignupFeatures' in planObj && planObj.getBlogSignupFeatures
 			? planObj.getBlogSignupFeatures()
@@ -414,14 +416,6 @@ export function calculateMonthlyPrice( term: string, termPrice: number ): number
 	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
 }
 
-export function getBillingMonthsForPlan( planSlug: string ): number {
-	const plan = getPlan( planSlug );
-	if ( ! plan ) {
-		throw new Error( `Unknown plan: ${ planSlug }` );
-	}
-	return getBillingMonthsForTerm( plan.term );
-}
-
 export function getBillingMonthsForTerm( term: string ): number {
 	if ( term === TERM_MONTHLY ) {
 		return 1;
@@ -435,7 +429,7 @@ export function getBillingMonthsForTerm( term: string ): number {
 
 export function plansLink(
 	urlString: string,
-	siteSlug: string,
+	siteSlug: string | undefined | null,
 	intervalType: string,
 	forceIntervalType = false
 ): string {
@@ -653,11 +647,3 @@ export function planHasJetpackClassicSearch(
 			isVipPlan( plan ) )
 	);
 }
-
-/**
- * Determines if a product is supported by the Atomic sites infrastructure.
- */
-export const isAtomicSupportedProduct = ( productSlug: string ): boolean =>
-	isWpComBusinessPlan( productSlug ) ||
-	isWpComEcommercePlan( productSlug ) ||
-	isMarketplaceProduct( { productSlug } );

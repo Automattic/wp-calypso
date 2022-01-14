@@ -4,30 +4,30 @@
 
 import {
 	DataHelper,
-	LoginPage,
 	SidebarComponent,
 	SupportComponent,
 	setupHooks,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 	let page: Page;
+	let testAccount: TestAccount;
 
 	setupHooks( ( args: { page: Page } ) => {
 		page = args.page;
 	} );
 
 	describe.each( [
-		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'eCommerceUser' },
-	] )( 'Search and view a support article ($siteType)', function ( { user } ) {
+		{ siteType: 'Simple', accountName: 'defaultUser' },
+		{ siteType: 'Atomic', accountName: 'eCommerceUser' },
+	] )( 'Search and view a support article ($siteType)', function ( { accountName } ) {
 		let supportComponent: SupportComponent;
-		let supportArticlePage: Page;
 
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+		beforeAll( async () => {
+			testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
 		} );
 
 		it( 'Navigate to Tools > Marketing', async function () {
@@ -54,16 +54,13 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 			expect( results.length ).toBeGreaterThan( 0 );
 		} );
 
-		it( 'Click and visit first support article', async function () {
+		it( 'Click on first search result', async function () {
 			await supportComponent.clickResult( 'article', 1 );
 			await supportComponent.clickReadMore();
-			// Obtain handle to the popup page.
-			supportArticlePage = await supportComponent.visitArticle();
 		} );
 
-		it( 'Close article page and preview', async function () {
-			await supportArticlePage.close();
-			await supportComponent.closeArticle();
+		it( 'Close popover', async function () {
+			await supportComponent.closePopover;
 		} );
 	} );
 } );

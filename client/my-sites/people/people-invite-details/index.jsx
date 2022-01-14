@@ -32,8 +32,8 @@ export class PeopleInviteDetails extends PureComponent {
 		inviteKey: PropTypes.string.isRequired,
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.deleteSuccess && ! this.props.deleteSuccess ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.props.deleteSuccess && ! prevProps.deleteSuccess ) {
 			this.goBack();
 		}
 	}

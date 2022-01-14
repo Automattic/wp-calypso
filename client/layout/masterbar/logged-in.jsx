@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
@@ -7,12 +8,11 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { requestHttpData } from 'calypso/state/data-layer/http-data';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path.js';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
@@ -94,31 +94,23 @@ class MasterbarLoggedIn extends Component {
 		 *
 		 * This code makes it possible to reset the failed migration state when clicking My Sites too.
 		 */
-		if ( config.isEnabled( 'tools/migrate' ) ) {
-			const { migrationStatus, currentSelectedSiteId } = this.props;
+		const { migrationStatus, currentSelectedSiteId } = this.props;
 
-			if ( currentSelectedSiteId && migrationStatus === 'error' ) {
-				/**
-				 * Reset the in-memory site lock for the currently selected site
-				 */
-				this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null );
+		if ( currentSelectedSiteId && migrationStatus === 'error' ) {
+			/**
+			 * Reset the in-memory site lock for the currently selected site
+			 */
+			this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null );
 
-				/**
-				 * Reset the migration on the backend
-				 */
-				requestHttpData(
-					'site-migration',
-					http( {
-						apiNamespace: 'wpcom/v2',
-						method: 'POST',
-						path: `/sites/${ currentSelectedSiteId }/reset-migration`,
-						body: {},
-					} ),
-					{
-						freshness: 0,
-					}
-				);
-			}
+			/**
+			 * Reset the migration on the backend
+			 */
+			wpcom.req
+				.post( {
+					path: `/sites/${ currentSelectedSiteId }/reset-migration`,
+					apiNamespace: 'wpcom/v2',
+				} )
+				.catch( () => {} );
 		}
 	};
 
@@ -153,6 +145,10 @@ class MasterbarLoggedIn extends Component {
 
 	preloadMe = () => {
 		preload( 'me' );
+	};
+
+	goToCheckout = ( siteId ) => {
+		page( `/checkout/${ siteId }` );
 	};
 
 	isActive = ( section ) => {
@@ -213,6 +209,8 @@ class MasterbarLoggedIn extends Component {
 			siteSlug,
 			isJetpackNotAtomic,
 			title,
+			currentSelectedSiteSlug,
+			currentSelectedSiteId,
 		} = this.props;
 
 		const { isActionSearchVisible } = this.state;
@@ -281,6 +279,13 @@ class MasterbarLoggedIn extends Component {
 							{ translate( 'Write' ) }
 						</AsyncLoad>
 					) }
+					<AsyncLoad
+						require="./masterbar-cart/masterbar-cart-wrapper"
+						placeholder={ null }
+						goToCheckout={ this.goToCheckout }
+						selectedSiteSlug={ currentSelectedSiteSlug }
+						selectedSiteId={ currentSelectedSiteId }
+					/>
 					<Item
 						tipTarget="me"
 						url="/me"
@@ -336,6 +341,9 @@ export default connect(
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
+			currentSelectedSiteSlug: currentSelectedSiteId
+				? getSiteSlug( state, currentSelectedSiteId )
+				: undefined,
 			previousPath: getPreviousPath( state ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),

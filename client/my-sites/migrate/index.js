@@ -1,17 +1,11 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, redirectWithoutSite, sites, siteSelection } from 'calypso/my-sites/controller';
-import {
-	ensureFeatureFlag,
-	migrateSite,
-	setSiteSelectionHeader,
-	setStep,
-} from 'calypso/my-sites/migrate/controller';
+import { migrateSite, setSiteSelectionHeader, setStep } from 'calypso/my-sites/migrate/controller';
 
 export default function () {
 	page(
 		'/migrate',
-		ensureFeatureFlag,
 		setSiteSelectionHeader,
 		siteSelection,
 		navigation,
@@ -22,7 +16,6 @@ export default function () {
 
 	page(
 		'/migrate/:site_id',
-		ensureFeatureFlag,
 		setStep( 'input' ),
 		siteSelection,
 		navigation,
@@ -34,7 +27,6 @@ export default function () {
 
 	page(
 		'/migrate/from/:sourceSiteId/to/:site_id',
-		ensureFeatureFlag,
 		setStep( 'confirm' ),
 		siteSelection,
 		navigation,
@@ -46,7 +38,6 @@ export default function () {
 
 	page(
 		'/migrate/choose/:site_id',
-		ensureFeatureFlag,
 		setStep( 'migrateOrImport' ),
 		siteSelection,
 		navigation,
@@ -58,7 +49,6 @@ export default function () {
 
 	page(
 		'/migrate/upgrade/from/:sourceSiteId/to/:site_id',
-		ensureFeatureFlag,
 		setStep( 'upgrade' ),
 		siteSelection,
 		navigation,

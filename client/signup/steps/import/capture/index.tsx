@@ -1,9 +1,10 @@
 import { NextButton } from '@automattic/onboarding';
-import { Icon, chevronRight } from '@wordpress/icons';
+import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
 import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
@@ -12,6 +13,12 @@ import './style.scss';
 import type { ChangeEvent, FormEvent } from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+
+const trackEventName = 'calypso_signup_step_start';
+const trackEventParams = {
+	flow: 'importer',
+	step: 'capture',
+};
 
 const validateUrl = ( url: string ): boolean => {
 	const urlRgx = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
@@ -29,13 +36,21 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	resetError,
 	isAnalyzing,
 	analyzerError,
+	recordTracksEvent,
 } ) => {
-	const { __ } = useI18n();
+	const { __, isRTL } = useI18n();
 
-	const [ urlValue, setUrlValue ] = React.useState( '' );
-	const [ isValid, setIsValid ] = React.useState( true );
-	const [ showError, setShowError ] = React.useState( false );
+	/**
+	 ↓ Fields
+	 */
+	const [ urlValue, setUrlValue ] = useState( '' );
+	const [ isValid, setIsValid ] = useState( true );
+	const [ showError, setShowError ] = useState( false );
+	const showSubmitButton = isValid && urlValue && ! analyzerError;
 
+	/**
+	 ↓ Methods
+	 */
 	const runProcess = (): void => {
 		// Analyze the URL and when we receive the urlData, decide where to go next.
 		analyzeUrl( urlValue ).then( ( response: UrlData ) => {
@@ -45,6 +60,25 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 				stepSectionName = 'wpcom';
 			}
 			goToStep( 'ready', stepSectionName );
+		} );
+	};
+
+	const recordScanningEvent = () => {
+		if ( ! isAnalyzing ) return;
+
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'scanning',
+		} );
+	};
+
+	const recordScanningErrorEvent = () => {
+		if ( ! analyzerError ) return;
+
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'scanning-error',
+			error: JSON.stringify( analyzerError ),
 		} );
 	};
 
@@ -61,7 +95,11 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 		isValid && urlValue && runProcess();
 	};
 
-	const showSubmitButton = isValid && urlValue && ! analyzerError;
+	/**
+	 ↓ Effects
+	 */
+	useEffect( recordScanningEvent, [ isAnalyzing ] );
+	useEffect( recordScanningErrorEvent, [ analyzerError ] );
 
 	return (
 		<>
@@ -84,10 +122,11 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 								placeholder={ __( 'Enter your site address' ) }
 								onChange={ onInputChange }
 								value={ urlValue }
+								dir="ltr"
 							/>
 							{ showSubmitButton && (
 								<NextButton type={ 'submit' }>
-									<Icon icon={ chevronRight } />
+									<Icon icon={ isRTL() ? chevronLeft : chevronRight } />
 								</NextButton>
 							) }
 							{ ( ! isValid && showError ) ||
@@ -114,6 +153,7 @@ const connector = connect(
 	{
 		analyzeUrl,
 		resetError,
+		recordTracksEvent,
 	}
 );
 

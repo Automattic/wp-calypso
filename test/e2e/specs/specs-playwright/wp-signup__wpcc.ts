@@ -84,13 +84,22 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 
 	describe( 'Ensure account is no longer accessible', function () {
 		let loginPage: LoginPage;
-		it( 'Navigate to WordPress.com Login page', async function () {
+
+		beforeAll( async () => {
 			loginPage = new LoginPage( page );
+		} );
+
+		it( 'Go to WordPress.com Login page', async function () {
 			await loginPage.visit();
 		} );
 
 		it( 'Ensure user is unable to log in', async function () {
-			expect( loginPage.login( { username: email, password: signupPassword } ) ).rejects.toThrow();
+			await loginPage.fillUsername( email );
+			await loginPage.clickSubmit();
+			await loginPage.fillPassword( signupPassword );
+			await loginPage.clickSubmit();
+
+			await page.waitForSelector( 'text=This account has been closed' );
 		} );
 	} );
 } );

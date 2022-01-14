@@ -19,7 +19,7 @@ const stateImpliesJetpackIsDisconnected = ( productState?: {
 	return productState.state === 'unavailable' && productState.reason === 'unknown';
 };
 
-const isInitialized = ( productState: { state?: string } | null ) =>
+const isInitialized = ( productState: { state?: string } | null | undefined ) =>
 	productState && productState.state !== 'uninitialized';
 
 const IsJetpackDisconnectedSwitch: React.FC< Props > = ( {
@@ -29,7 +29,7 @@ const IsJetpackDisconnectedSwitch: React.FC< Props > = ( {
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) );
-	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
+	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ?? 0 ) );
 
 	const isJetpackDisconnected = useCallback(
 		() => [ rewindState, scanState ].some( stateImpliesJetpackIsDisconnected ),
@@ -51,7 +51,7 @@ const IsJetpackDisconnectedSwitch: React.FC< Props > = ( {
 			queryComponent={
 				<>
 					<QueryRewindState siteId={ siteId } />
-					<QueryJetpackScan siteId={ siteId } />
+					<QueryJetpackScan siteId={ siteId ?? 0 } />
 				</>
 			}
 			loadingComponent={ loadingComponent }

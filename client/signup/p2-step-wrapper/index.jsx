@@ -1,12 +1,15 @@
 import { Path, SVG } from '@wordpress/components';
+import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import './style.scss';
+import './style-p2new.scss';
 
 function P2StepWrapper( {
 	flowName,
 	stepName,
+	headerIcon,
 	headerText,
 	subHeaderText,
 	positionInFlow,
@@ -37,11 +40,17 @@ function P2StepWrapper( {
 						/>
 					</SVG>
 				</div>
+				{ headerIcon && (
+					<div className="p2-step-wrapper__header-icon">
+						<Icon icon={ headerIcon } />
+					</div>
+				) }
 				{ headerText && <h1 className="p2-step-wrapper__header-text">{ headerText }</h1> }
 				{ subHeaderText && <p className="p2-step-wrapper__subheader-text">{ subHeaderText }</p> }
 			</div>
 			<StepWrapper
 				hideFormattedHeader
+				shouldHideNavButtons={ true }
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }

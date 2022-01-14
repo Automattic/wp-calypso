@@ -9,7 +9,6 @@ import {
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isGuidedTransfer,
 	isJetpackPlan,
 	isPlan,
 	isBlogger,
@@ -20,9 +19,7 @@ import {
 	isTheme,
 	isTitanMail,
 	isJetpackBusinessPlan,
-	isWpComBusinessPlan,
 	shouldFetchSitePlans,
-	isMarketplaceProduct,
 	isDIFMProduct,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
@@ -33,7 +30,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
-import AsyncLoad from 'calypso/components/async-load';
 import HappinessSupport from 'calypso/components/happiness-support';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -43,7 +39,6 @@ import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
-import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 import { isExternal } from 'calypso/lib/url';
 import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
 import {
@@ -83,12 +78,10 @@ import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import GoogleAppsDetails from './google-apps-details';
-import GuidedTransferDetails from './guided-transfer-details';
 import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
-import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import TransferPending from './transfer-pending';
 
@@ -167,6 +160,7 @@ export class CheckoutThankYou extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
 		this.redirectIfDomainOnly( nextProps );
@@ -388,7 +382,6 @@ export class CheckoutThankYou extends Component {
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
-		let wasMarketplaceProduct = false;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainProduct = false;
@@ -405,7 +398,6 @@ export class CheckoutThankYou extends Component {
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
-			wasMarketplaceProduct = purchases.some( isMarketplaceProduct );
 			wasDomainProduct = purchases.some(
 				( purchase ) =>
 					isDomainMapping( purchase ) ||
@@ -437,25 +429,7 @@ export class CheckoutThankYou extends Component {
 			);
 		}
 
-		// Rebrand Cities thanks page
-		if (
-			this.props.selectedSite &&
-			isRebrandCitiesSiteUrl( this.props.selectedSite.slug ) &&
-			isWpComBusinessPlan( this.props.selectedSite.plan.product_slug )
-		) {
-			return (
-				<RebrandCitiesThankYou
-					receipt={ this.props.receipt }
-					analyticsProperties={ this.getAnalyticsProperties() }
-				/>
-			);
-		}
-
-		if ( wasMarketplaceProduct ) {
-			return (
-				<AsyncLoad require="calypso/my-sites/marketplace/pages/marketplace-plugin-setup-status" />
-			);
-		} else if ( wasEcommercePlanPurchased ) {
+		if ( wasEcommercePlanPurchased ) {
 			if ( ! this.props.transferComplete ) {
 				return (
 					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
@@ -626,8 +600,6 @@ export class CheckoutThankYou extends Component {
 				return [ false, ...findPurchaseAndDomain( purchases, isTitanMail ) ];
 			} else if ( purchases.some( isChargeback ) ) {
 				return [ ChargebackDetails, find( purchases, isChargeback ) ];
-			} else if ( purchases.some( isGuidedTransfer ) ) {
-				return [ GuidedTransferDetails, find( purchases, isGuidedTransfer ) ];
 			}
 		}
 

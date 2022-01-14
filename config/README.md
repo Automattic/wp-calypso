@@ -28,7 +28,7 @@ The config files contain a features object that can be used to determine whether
 If you want to temporarily enable/disable some feature flags for a given build, you can do so by setting the `ENABLE_FEATURES` and/or `DISABLE_FEATURES` environment variables. Set them to a comma separated list of features you want to enable/disable, respectively:
 
 ```bash
-ENABLE_FEATURES=manage/plugins/compatibility-warning DISABLE_FEATURES=reader yarn start
+ENABLE_FEATURES=some/flag-name DISABLE_FEATURES=reader yarn start
 ```
 
 ### Testing Feature Flags via URLs
@@ -41,4 +41,4 @@ If you want to temporarily enable/disable some feature flags you can add a `?fla
 - `?flags=-bar` disables feature _bar_.
 - `?flags=foo,-bar` enables feature _foo_ and disables feature _bar_.
 
-E.g. <http://calypso.localhost:3000/?flags=manage/plugins/compatibility-warning>
+E.g. <http://calypso.localhost:3000/?flags=some/flag-name>

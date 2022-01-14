@@ -12,8 +12,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import LogItem from '../log-item';
 import ThreatDescription from '../threat-description';
-
+import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
+
 interface Props {
 	threat: Threat;
 	isPlaceholder: boolean;
@@ -70,7 +71,8 @@ const ThreatItem: React.FC< Props > = ( {
 		[ isFixing, onFixThreat, threat ]
 	);
 
-	const getFix = React.useCallback( (): i18nCalypso.TranslateResult | undefined => {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	const getFix = React.useCallback( (): TranslateResult | undefined => {
 		if ( threat.status === 'fixed' ) {
 			return;
 		}
@@ -116,6 +118,7 @@ const ThreatItem: React.FC< Props > = ( {
 
 		return <p className="threat-description__section-text">{ getThreatFix( threat.fixable ) }</p>;
 	}, [ contactSupportUrl, threat ] );
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 	const isFixable = React.useMemo(
 		() => threat.fixable && ( threat.status === 'current' || threat.status === 'ignored' ),

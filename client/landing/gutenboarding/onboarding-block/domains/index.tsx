@@ -39,7 +39,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 
-	// using the selector will get the explicit domain search query with site title and vertical as fallbacks
+	// using the selector will get the explicit domain search query with site title as fallback
 	const domainSearch = useSelect( ( select ) => select( ONBOARD_STORE ).getDomainSearch() );
 
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );

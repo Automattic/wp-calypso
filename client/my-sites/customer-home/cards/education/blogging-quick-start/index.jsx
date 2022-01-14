@@ -1,24 +1,20 @@
-import config from '@automattic/calypso-config';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import playImage from 'calypso/assets/images/customer-home/plain-play.png';
+import startLearningPrompt from 'calypso/assets/images/customer-home/illustration--secondary-start-learning.svg';
 import { EDUCATION_BLOGGING_QUICK_START } from 'calypso/my-sites/customer-home/cards/constants';
 import EducationalContent from '../educational-content';
 import BloggingQuickStartModal from './blogging-quick-start-modal';
 
 const BloggingQuickStart = () => {
-	const { localeSlug } = useTranslate();
-	const isEnglish = config( 'english_locales' ).includes( localeSlug );
+	const translate = useTranslate();
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-
-	if ( ! isEnglish ) {
-		return null;
-	}
 
 	return (
 		<EducationalContent
-			title="Blog like an expert from day one"
-			description="Learn the fundamentals from our bite-sized video course &mdash; you'll be up and running in just nine minutes."
+			title={ translate( 'Blog like an expert from day one' ) }
+			description={ translate(
+				"Learn the fundamentals from our bite-sized video course — you'll be up and running in just nine minutes."
+			) }
 			modalLinks={ [
 				{
 					ModalComponent: BloggingQuickStartModal,
@@ -30,11 +26,13 @@ const BloggingQuickStart = () => {
 						},
 					},
 					onClick: () => setIsModalVisible( true ),
-					text: 'Start learning',
+					text: translate( 'Start learning' ),
 				},
 			] }
-			illustration={ playImage }
+			illustration={ startLearningPrompt }
 			cardName={ EDUCATION_BLOGGING_QUICK_START }
+			width="183"
+			height="120"
 		/>
 	);
 };

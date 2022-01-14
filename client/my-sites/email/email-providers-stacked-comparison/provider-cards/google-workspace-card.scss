@@ -1,0 +1,22 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.google-workspace-card__logo {
+	color: var( --color-wordpress-com );
+	height: 48px;
+	width: 48px;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		padding-right: 12px;
+	}
+}
+
+.google-workspace-icon {
+	max-width: 48px;
+	height: 48px;
+	padding-right: 12px;
+}
+
+.google-workspace-card__discount-with-renewal .gridicon {
+	vertical-align: bottom;
+}

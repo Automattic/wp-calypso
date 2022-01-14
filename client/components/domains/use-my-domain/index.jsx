@@ -131,12 +131,9 @@ function UseMyDomain( props ) {
 	const setDomainTransferData = useCallback( async () => {
 		// TODO: remove this try-catch when the next statuses get added on the API
 		setIsFetchingAvailability( true );
-		let inboundTransferStatusResult = {};
-		try {
-			inboundTransferStatusResult = await wpcom
-				.undocumented()
-				.getInboundTransferStatus( domainName );
-		} catch {}
+		const inboundTransferStatusResult = await wpcom.req
+			.get( `/domains/${ encodeURIComponent( domainName ) }/inbound-transfer-status` )
+			.catch( () => ( {} ) );
 
 		const inboundTransferStatusInfo = {
 			creationDate: inboundTransferStatusResult.creation_date,
@@ -302,6 +299,7 @@ function UseMyDomain( props ) {
 			case inputMode.ownershipVerification:
 				return renderOwnershipVerificationFlow();
 			case inputMode.transferDomain:
+			case inputMode.startPendingTransfer:
 				return renderTransferDomainFlow();
 		}
 	};

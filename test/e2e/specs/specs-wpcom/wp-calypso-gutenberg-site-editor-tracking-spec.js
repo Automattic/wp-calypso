@@ -986,6 +986,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 		} );
 
 		it( 'Tracks "wpcom_block_editor_convert_to_template_part"', async function () {
+			// Reload editor to start from consistent clean slate for tests.
+			await this.driver.navigate().refresh();
+			await driverHelper.acceptAlertIfPresent( this.driver );
+
 			const editor = await SiteEditorComponent.Expect( this.driver );
 
 			const threeColumnsEqualSplitVariationLocator = By.css(

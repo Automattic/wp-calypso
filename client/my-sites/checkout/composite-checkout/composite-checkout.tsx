@@ -14,7 +14,6 @@ import { ThemeProvider } from '@emotion/react';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { Fragment, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
@@ -25,16 +24,18 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
+import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
+import {
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateCheckoutPaymentMethodToTracksPaymentMethod,
+} from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -69,14 +70,16 @@ import payPalProcessor from './lib/paypal-express-processor';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import weChatProcessor from './lib/we-chat-processor';
 import webPayProcessor from './lib/web-pay-processor';
-import createAnalyticsEventHandler from './record-analytics';
 import { StoredCard } from './types/stored-cards';
 import { emptyManagedContactDetails } from './types/wpcom-store-state';
-import type { ReactStandardAction } from './types/analytics';
 import type { PaymentProcessorOptions } from './types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
-import type { ManagedContactDetails, CountryListItem } from '@automattic/wpcom-checkout';
+import type {
+	ManagedContactDetails,
+	CountryListItem,
+	CheckoutPaymentMethodSlug,
+} from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -139,11 +142,6 @@ export default function CompositeCheckout( {
 	const createUserAndSiteBeforeTransaction =
 		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackCheckout;
 	const reduxDispatch = useDispatch();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const recordEvent: ( action: ReactStandardAction ) => void = useCallback(
-		createAnalyticsEventHandler( reduxDispatch ),
-		[]
-	);
 	const isJetpackSitelessCheckout = isJetpackCheckout && ! jetpackSiteSlug;
 	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
@@ -251,12 +249,11 @@ export default function CompositeCheckout( {
 
 	const getThankYouUrl = useCallback( () => {
 		const url = getThankYouUrlBase();
-		recordEvent( {
-			type: 'THANK_YOU_URL_GENERATED',
-			payload: { url },
+		logStashEvent( 'thank you url generated', {
+			url,
 		} );
 		return url;
-	}, [ getThankYouUrlBase, recordEvent ] );
+	}, [ getThankYouUrlBase ] );
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
@@ -280,9 +277,18 @@ export default function CompositeCheckout( {
 	} );
 
 	useActOnceOnStrings( [ cartLoadingError ].filter( isValueTruthy ), ( messages ) => {
-		messages.forEach( ( message ) =>
-			recordEvent( { type: 'CART_ERROR', payload: { type: cartLoadingErrorType, message } } )
-		);
+		messages.forEach( ( message ) => {
+			logStashEvent( 'calypso_checkout_composite_cart_error', {
+				type: cartLoadingErrorType ?? '',
+				message,
+			} );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_cart_error', {
+					error_type: cartLoadingErrorType,
+					error_message: String( message ),
+				} )
+			);
+		} );
 	} );
 
 	// Display errors. Note that we display all errors if any of them change,
@@ -314,9 +320,13 @@ export default function CompositeCheckout( {
 	);
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
-		messages.forEach( ( message ) =>
-			recordEvent( { type: 'STORED_CARD_ERROR', payload: message } )
-		);
+		messages.forEach( ( message ) => {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_stored_card_error', {
+					error_message: String( message ),
+				} )
+			);
+		} );
 	} );
 
 	const {
@@ -383,31 +393,27 @@ export default function CompositeCheckout( {
 		checkoutFlow
 	);
 
-	const products = useSelector( ( state ) => getProductsList( state ) );
-
 	const changePlanLength = useCallback(
 		( uuidToReplace, newProductSlug, newProductId ) => {
-			recordEvent( {
-				type: 'CART_CHANGE_PLAN_LENGTH',
-				payload: { newProductSlug },
-			} );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
+					new_product_slug: newProductSlug,
+				} )
+			);
 			replaceProductInCart( uuidToReplace, {
 				product_slug: newProductSlug,
 				product_id: newProductId,
 			} );
 		},
-		[ replaceProductInCart, recordEvent ]
+		[ replaceProductInCart, reduxDispatch ]
 	);
 
-	// Often products are added using just the product_slug but missing the
-	// product_id; this adds it.
-	const addItemWithEssentialProperties = useCallback(
+	const addItemAndLog = useCallback(
 		( cartItem ) => {
-			const adjustedItem = fillInSingleCartItemAttributes( cartItem, products );
-			recordAddEvent( adjustedItem );
-			addProductsToCart( [ adjustedItem ] );
+			recordAddEvent( cartItem );
+			addProductsToCart( [ cartItem ] );
 		},
-		[ addProductsToCart, products ]
+		[ addProductsToCart ]
 	);
 
 	const includeDomainDetails = contactDetailsType === 'domain';
@@ -419,7 +425,6 @@ export default function CompositeCheckout( {
 			getThankYouUrl,
 			includeDomainDetails,
 			includeGSuiteDetails,
-			recordEvent,
 			reduxDispatch,
 			responseCart,
 			siteId: updatedSiteId,
@@ -434,7 +439,6 @@ export default function CompositeCheckout( {
 			getThankYouUrl,
 			includeDomainDetails,
 			includeGSuiteDetails,
-			recordEvent,
 			reduxDispatch,
 			responseCart,
 			updatedSiteId,
@@ -563,18 +567,92 @@ export default function CompositeCheckout( {
 		checkoutFlow,
 	} );
 
+	const handleStepChanged = useCallback(
+		( {
+			stepNumber,
+			previousStepNumber,
+			paymentMethodId,
+		}: {
+			stepNumber: number | null;
+			previousStepNumber: number;
+			paymentMethodId: string;
+		} ) => {
+			if ( stepNumber === 2 && previousStepNumber === 1 ) {
+				reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
+						payment_method:
+							translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
+					} )
+				);
+			}
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_step_changed', {
+					step: stepNumber,
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
+
+	const handlePaymentMethodChanged = useCallback(
+		( method: string ) => {
+			logStashEvent( 'payment_method_select', {
+				newMethodId: String( method ),
+			} );
+			// Need to convert to the slug format used in old checkout so events are comparable
+			const rawPaymentMethodSlug = String( method );
+			const legacyPaymentMethodSlug = translateCheckoutPaymentMethodToTracksPaymentMethod(
+				rawPaymentMethodSlug as CheckoutPaymentMethodSlug
+			);
+			reduxDispatch( recordTracksEvent( 'calypso_checkout_switch_to_' + legacyPaymentMethodSlug ) );
+		},
+		[ reduxDispatch ]
+	);
+
 	const handlePaymentComplete = useCallback(
 		( args ) => {
 			onPaymentComplete?.( args );
 			onAfterPaymentComplete?.();
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+					step: 2,
+					step_name: 'payment-method-step',
+				} )
+			);
 		},
-		[ onPaymentComplete, onAfterPaymentComplete ]
+		[ onPaymentComplete, onAfterPaymentComplete, reduxDispatch ]
 	);
 
 	const handlePaymentError = useCallback(
-		( { transactionError }: { transactionError: string | null } ) => {
+		( {
+			transactionError,
+			paymentMethodId,
+		}: {
+			transactionError: string | null;
+			paymentMethodId: string | null;
+		} ) => {
 			reduxDispatch(
 				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+			);
+
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_payment_error', {
+					error_code: null,
+					reason: String( transactionError ),
+				} )
+			);
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_payment_error', {
+					error_code: null,
+					payment_method:
+						translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ?? '' ) || '',
+					reason: String( transactionError ),
+				} )
+			);
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
+					error_message: String( transactionError ),
+				} )
 			);
 		},
 		[ reduxDispatch, translate ]
@@ -586,56 +664,15 @@ export default function CompositeCheckout( {
 
 	// The goToPreviousPage function and subsequent conditional statement controls the 'back' button functionality on the empty cart page
 
-	const checkoutBackUrl = useValidCheckoutBackUrl( updatedSiteSlug );
+	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( updatedSiteSlug );
 
-	const goToPreviousPage = useCallback( () => {
-		let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
-
-		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_empty_cart_clicked' ) );
-
-		if ( checkoutBackUrl ) {
-			window.location.href = checkoutBackUrl;
-			return;
-		}
-
-		if (
-			previousPath &&
-			'' !== previousPath &&
-			previousPath !== window.location.href &&
-			! previousPath.includes( '/checkout/' )
-		) {
-			closeUrl = previousPath;
-		}
-
-		try {
-			const searchParams = new URLSearchParams( window.location.search );
-
-			if ( searchParams.has( 'signup' ) ) {
-				clearSignupDestinationCookie();
-			}
-
-			// Some places that open checkout (eg: purchase page renewals) return the
-			// user there after checkout by putting the previous page's path in the
-			// `redirect_to` query param. When leaving checkout via the close button,
-			// we probably want to return to that location also.
-			if ( searchParams.has( 'redirect_to' ) ) {
-				const redirectPath = searchParams.get( 'redirect_to' ) ?? '';
-				// Only allow redirecting to relative paths.
-				if ( redirectPath.startsWith( '/' ) ) {
-					page( redirectPath );
-					return;
-				}
-			}
-		} catch ( error ) {
-			// Silently ignore query string errors (eg: which may occur in IE since it doesn't support URLSearchParams).
-			console.error( 'Error getting query string in close button' ); // eslint-disable-line no-console
-		}
-		if ( closeUrl.startsWith( '/' ) ) {
-			page( closeUrl );
-			return;
-		}
-		window.location.href = closeUrl;
-	}, [ siteSlug, checkoutBackUrl, previousPath, reduxDispatch ] );
+	const goToPreviousPage = () =>
+		leaveCheckout( {
+			siteSlug,
+			jetpackCheckoutBackUrl,
+			previousPath,
+			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
+		} );
 
 	if (
 		shouldShowEmptyCartPage( {
@@ -688,7 +725,8 @@ export default function CompositeCheckout( {
 				onPaymentError={ handlePaymentError }
 				onPaymentRedirect={ handlePaymentRedirect }
 				onPageLoadError={ onPageLoadError }
-				onEvent={ recordEvent }
+				onStepChanged={ handleStepChanged }
+				onPaymentMethodChanged={ handlePaymentMethodChanged }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }
 				isLoading={ isLoading }
@@ -702,11 +740,12 @@ export default function CompositeCheckout( {
 					siteId={ updatedSiteId }
 					siteUrl={ updatedSiteSlug }
 					countriesList={ countriesList }
-					addItemToCart={ addItemWithEssentialProperties }
+					addItemToCart={ addItemAndLog }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					isLoggedOutCart={ !! isLoggedOutCart }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
+					onPageLoadError={ onPageLoadError }
 				/>
 			</CheckoutProvider>
 		</Fragment>

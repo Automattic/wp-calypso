@@ -7,7 +7,7 @@ import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
+import { isDefaultLocale, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
@@ -189,9 +189,6 @@ export function attachI18n( context ) {
 
 	if ( context.store ) {
 		context.lang = getCurrentLocaleSlug( context.store.getState() ) || localeSlug;
-
-		const isLocaleRTL = isLocaleRtl( localeSlug );
-		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
 }
 

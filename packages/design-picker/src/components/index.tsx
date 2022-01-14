@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { MShotsImage } from '@automattic/onboarding';
 import { Button, Tooltip } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
@@ -15,11 +16,8 @@ import {
 	sortDesigns,
 } from '../utils';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
-import MShotsImage from './mshots-image';
 import type { Categorization } from '../hooks/use-categorization';
-export { default as MShotsImage } from './mshots-image';
 import type { Design } from '../types';
-
 import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
@@ -171,12 +169,20 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	const isBlankCanvas = isBlankCanvasDesign( props.design );
 
 	if ( ! onPreview ) {
-		return <DesignButton { ...props } />;
+		return (
+			<div className="design-button-container">
+				<DesignButton { ...props } />
+			</div>
+		);
 	}
 
 	// Show the preview directly when selecting the design if the device is not desktop
 	if ( ! isDesktop ) {
-		return <DesignButton { ...props } onSelect={ onPreview } />;
+		return (
+			<div className="design-button-container">
+				<DesignButton { ...props } onSelect={ onPreview } />
+			</div>
+		);
 	}
 
 	// We don't need preview for blank canvas
@@ -206,6 +212,7 @@ export interface DesignPickerProps {
 	highResThumbnails?: boolean;
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
+	categoriesFooter?: React.ReactNode;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -221,8 +228,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	className,
 	highResThumbnails = false,
 	categoriesHeading,
+	categoriesFooter,
 	categorization,
 } ) => {
+	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
 		const result = categorization?.selection
 			? filterDesignsByCategory( designs, categorization.selection )
@@ -233,13 +242,18 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	}, [ designs, categorization?.selection ] );
 
 	return (
-		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
-			{ !! categorization?.categories.length && (
+		<div
+			className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className, {
+				'design-picker--has-categories': hasCategories,
+			} ) }
+		>
+			{ categorization && hasCategories && (
 				<DesignPickerCategoryFilter
 					categories={ categorization.categories }
 					selectedCategory={ categorization.selection }
 					onSelect={ categorization.onSelect }
 					heading={ categoriesHeading }
+					footer={ categoriesFooter }
 				/>
 			) }
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>

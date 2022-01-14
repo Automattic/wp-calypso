@@ -27,6 +27,12 @@ import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { getStepComponent } from './config/step-components';
 import SignupComponent from './main';
 import {
+	retrieveSignupDestination,
+	clearSignupDestinationCookie,
+	getSignupCompleteFlowName,
+	wasSignupCheckoutPageUnloaded,
+} from './storageUtils';
+import {
 	getStepUrl,
 	canResumeFlow,
 	getFlowName,
@@ -275,7 +281,10 @@ export default {
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
-		const { providesDependenciesInQuery } = flows.getFlow( flowName, userLoggedIn );
+		const { providesDependenciesInQuery, excludeFromManageSiteFlows } = flows.getFlow(
+			flowName,
+			userLoggedIn
+		);
 
 		const { query } = initialContext;
 
@@ -289,10 +298,29 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
+		const searchParams = new URLSearchParams( window.location.search );
+		const isAddNewSiteFlow = searchParams.has( 'ref' );
+
+		if ( isAddNewSiteFlow ) {
+			clearSignupDestinationCookie();
+		}
+
+		// Checks if the user entered the signup flow via browser back from checkout page,
+		// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
+		// check pau2Xa-1Io-p2#comment-6759.
+		const signupDestinationCookieExists = retrieveSignupDestination();
+		const isReEnteringFlow = getSignupCompleteFlowName() === flowName;
+		const isReEnteringSignupViaBrowserBack =
+			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
+		const isManageSiteFlow =
+			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
+
 		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
 		if (
 			! providesDependenciesInQuery?.includes( 'siteId' ) &&
-			! providesDependenciesInQuery?.includes( 'siteSlug' )
+			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
+			! providesDependenciesInQuery?.includes( 'site' ) &&
+			! isManageSiteFlow
 		) {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
@@ -309,6 +337,7 @@ export default {
 			stepSectionName,
 			stepComponent,
 			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
+			isManageSiteFlow,
 		} );
 
 		next();
@@ -318,6 +347,8 @@ export default {
 		const signupDependencies = getSignupDependencyStore( getState() );
 
 		const siteIdOrSlug =
+			query?.site ||
+			signupDependencies?.site ||
 			signupDependencies?.siteSlug ||
 			query?.siteSlug ||
 			signupDependencies?.siteId ||

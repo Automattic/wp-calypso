@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isDomainMapping,
 	isDomainRegistration,
@@ -37,6 +36,7 @@ import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
+import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { purchasesRoot } from '../paths';
 import { isDataLoading } from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
@@ -58,6 +58,7 @@ class RemovePurchase extends Component {
 		useVerticalNavItem: PropTypes.bool,
 		onClickTracks: PropTypes.func,
 		purchaseListUrl: PropTypes.string,
+		activeSubscriptions: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -68,17 +69,20 @@ class RemovePurchase extends Component {
 		isDialogVisible: false,
 		isRemoving: false,
 		isShowingNonPrimaryDomainWarning: false,
+		isShowingMarketplaceSubscriptionsDialog: false,
 	};
 
 	closeDialog = () => {
 		this.setState( {
 			isDialogVisible: false,
 			isShowingNonPrimaryDomainWarning: false,
+			isShowingMarketplaceSubscriptionsDialog: false,
 		} );
 	};
 
 	showRemovePlanDialog = () => {
 		this.setState( {
+			isShowingMarketplaceSubscriptionsDialog: false,
 			isShowingNonPrimaryDomainWarning: false,
 			isDialogVisible: true,
 		} );
@@ -96,11 +100,22 @@ class RemovePurchase extends Component {
 		) {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: true,
+				isShowingMarketplaceSubscriptionsDialog: false,
+				isDialogVisible: false,
+			} );
+		} else if (
+			this.shouldHandleMarketplaceSubscriptions() &&
+			! this.state.isShowingMarketplaceSubscriptionsDialog
+		) {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: false,
+				isShowingMarketplaceSubscriptionsDialog: true,
 				isDialogVisible: false,
 			} );
 		} else {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
+				isShowingMarketplaceSubscriptionsDialog: false,
 				isDialogVisible: true,
 			} );
 		}
@@ -113,12 +128,27 @@ class RemovePurchase extends Component {
 	removePurchase = async () => {
 		this.setState( { isRemoving: true } );
 
-		const { isDomainOnlySite, purchase, translate } = this.props;
+		const { activeSubscriptions, purchaseListUrl, purchase } = this.props;
 
-		await this.props.removePurchase( purchase.id, this.props.userId );
+		// If the site has active Marketplace subscriptions, remove these as well
+		if ( this.shouldHandleMarketplaceSubscriptions() ) {
+			// no need to await here, as
+			// - the success/error messages are handled for each request separately
+			// - the plan removal is awaited below
+			activeSubscriptions.forEach( ( s ) => this.handlePurchaseRemoval( s ) );
+		}
+
+		await this.handlePurchaseRemoval( purchase );
+
+		page( purchaseListUrl );
+	};
+
+	handlePurchaseRemoval = async ( purchase ) => {
+		const { userId, isDomainOnlySite, translate, purchasesError } = this.props;
+
+		await this.props.removePurchase( purchase.id, userId );
 
 		const productName = getName( purchase );
-		const { purchasesError, purchaseListUrl } = this.props;
 		let successMessage;
 
 		if ( purchasesError ) {
@@ -145,7 +175,6 @@ class RemovePurchase extends Component {
 		}
 
 		this.props.successNotice( successMessage, { isPersistent: true } );
-		page( purchaseListUrl );
 	};
 
 	getChatButton = () => (
@@ -185,19 +214,13 @@ class RemovePurchase extends Component {
 	}
 
 	renderDomainDialog() {
-		let chatButton = null;
-
-		if ( config.isEnabled( 'upgrades/precancellation-chat' ) ) {
-			chatButton = this.getChatButton();
-		}
-
 		return (
 			<RemoveDomainDialog
 				isRemoving={ this.state.isRemoving }
 				isDialogVisible={ this.state.isDialogVisible }
 				removePurchase={ this.removePurchase }
 				closeDialog={ this.closeDialog }
-				chatButton={ chatButton }
+				chatButton={ this.getChatButton() }
 				purchase={ this.props.purchase }
 			/>
 		);
@@ -319,6 +342,25 @@ class RemovePurchase extends Component {
 		);
 	}
 
+	shouldHandleMarketplaceSubscriptions() {
+		const { activeSubscriptions } = this.props;
+
+		return activeSubscriptions?.length > 0;
+	}
+
+	renderMarketplaceSubscriptionsDialog() {
+		const { purchase, activeSubscriptions } = this.props;
+		return (
+			<MarketPlaceSubscriptionsDialog
+				isDialogVisible={ this.state.isShowingMarketplaceSubscriptionsDialog }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.showRemovePlanDialog }
+				planName={ getName( purchase ) }
+				activeSubscriptions={ activeSubscriptions }
+			/>
+		);
+	}
+
 	renderDialog() {
 		const { purchase } = this.props;
 
@@ -389,6 +431,8 @@ class RemovePurchase extends Component {
 					{ this.props.children ? this.props.children : defaultContent }
 				</Wrapper>
 				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
+				{ this.shouldHandleMarketplaceSubscriptions() &&
+					this.renderMarketplaceSubscriptionsDialog() }
 				{ this.renderDialog() }
 			</>
 		);

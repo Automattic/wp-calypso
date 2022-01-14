@@ -1,50 +1,29 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { fetchInstallInstructions } from 'calypso/state/plugins/premium/actions';
 import { hasRequested } from 'calypso/state/plugins/premium/selectors';
 
-class QueryPluginKeys extends Component {
-	UNSAFE_componentWillMount() {
-		if ( this.props.siteId && ! this.props.hasRequested ) {
-			this.props.fetchInstallInstructions( this.props.siteId );
-		}
+const request = ( siteId ) => ( dispatch, getState ) => {
+	if ( ! hasRequested( getState(), siteId ) ) {
+		dispatch( fetchInstallInstructions( siteId ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.siteId === this.props.siteId ) {
-			return;
-		}
-		this.refresh( nextProps.hasRequested, nextProps.siteId );
-	}
+function QueryPluginKeys( { siteId } ) {
+	const dispatch = useDispatch();
 
-	refresh( hasRequestedKeys, siteId ) {
-		if ( ! hasRequestedKeys ) {
-			this.props.fetchInstallInstructions( siteId );
+	useEffect( () => {
+		if ( siteId ) {
+			dispatch( request( siteId ) );
 		}
-	}
+	}, [ dispatch, siteId ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QueryPluginKeys.propTypes = {
 	siteId: PropTypes.number.isRequired,
-	hasRequested: PropTypes.bool,
-	fetchInstallInstructions: PropTypes.func,
 };
 
-QueryPluginKeys.defaultProps = {
-	fetchInstallInstructions: () => {},
-};
-
-export default connect(
-	( state, props ) => {
-		const siteId = props.siteId;
-		return {
-			hasRequested: hasRequested( state, siteId ),
-		};
-	},
-	{ fetchInstallInstructions }
-)( QueryPluginKeys );
+export default QueryPluginKeys;

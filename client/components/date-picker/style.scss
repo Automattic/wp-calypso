@@ -71,10 +71,14 @@ $date-picker_nav_button_size: 20px;
 	text-transform: capitalize;
 	cursor: pointer;
 	z-index: 2;
-	order-width: 1px;
+	border-width: 1px;
 
 	&:hover {
 		color: var( --color-accent );
+	}
+
+	&:focus {
+		border-width: 1px;
 	}
 }
 

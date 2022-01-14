@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/calypso-analytics",
 	"version": "1.0.0-alpha.1",
-	"description": "Automattic Analytics",
+	"description": "Automattic Analytics.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -22,19 +22,17 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/load-script": "workspace:^",
-		"cookie": "^0.4.0",
-		"debug": "^4.1.1",
+		"cookie": "^0.4.1",
+		"debug": "^4.3.3",
 		"hash.js": "^1.1.7",
 		"lodash": "^4.17.21",
 		"tslib": "^2.3.0",
@@ -42,6 +40,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.4.4"
+		"typescript": "^4.5.4"
 	}
 }

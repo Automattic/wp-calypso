@@ -8,15 +8,17 @@ import {
 	validateUsers,
 } from 'calypso/lib/gsuite/new-users';
 import GSuiteNewUser from './new-user';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
 import './style.scss';
 
 interface Props {
 	autoFocus?: boolean;
 	children?: ReactNode;
-	domains?: string[];
+	domains?: SiteDomain[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
+	showAddAnotherMailboxButton?: boolean;
 	onUsersChange: ( users: NewUser[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	users: NewUser[];
@@ -30,6 +32,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	onUsersChange,
 	onReturnKeyPress,
 	selectedDomainName,
+	showAddAnotherMailboxButton = true,
 	users,
 } ) => {
 	const translate = useTranslate();
@@ -72,7 +75,9 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 				<Fragment key={ user.uuid }>
 					<GSuiteNewUser
 						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-						domains={ domains ? domains.map( ( domain ) => domain.name ) : [ selectedDomainName ] }
+						domains={
+							domains ? domains.map( ( domain ) => domain.name ?? '' ) : [ selectedDomainName ]
+						}
 						user={ user }
 						onUserValueChange={ onUserValueChange( user.uuid ) }
 						onUserRemove={ onUserRemove( user.uuid ) }
@@ -86,10 +91,12 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 			) ) }
 
 			<div className="gsuite-new-user-list__actions">
-				<Button className="gsuite-new-user-list__add-another-user-button" onClick={ onUserAdd }>
-					<Gridicon icon="plus" />
-					<span>{ translate( 'Add another mailbox' ) }</span>
-				</Button>
+				{ showAddAnotherMailboxButton && (
+					<Button className="gsuite-new-user-list__add-another-user-button" onClick={ onUserAdd }>
+						<Gridicon icon="plus" />
+						<span>{ translate( 'Add another mailbox' ) }</span>
+					</Button>
+				) }
 
 				{ children }
 			</div>

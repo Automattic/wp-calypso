@@ -91,7 +91,7 @@ const object = {
 	stepName: 'theme-selection',
 	dependencies: [ 'siteSlug' ],
 	apiRequestFunction: function ( callback, dependencies ) {
-		wpcom.undocumented().someRequest( dependencies.siteSlug, function ( errors, response ) {
+		wpcom.req.post( '/some-endpoint', dependencies.siteSlug, function ( errors, response ) {
 			callback( errors, { userId: response.userId } );
 		} );
 	},

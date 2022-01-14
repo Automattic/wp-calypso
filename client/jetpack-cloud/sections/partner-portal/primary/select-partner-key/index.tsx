@@ -39,7 +39,7 @@ export default function SelectPartnerKey(): ReactElement | null {
 		<Main className="select-partner-key">
 			<QueryJetpackPartnerPortalPartner />
 
-			<CardHeading size={ 36 }>{ translate( 'Partner Portal' ) }</CardHeading>
+			<CardHeading size={ 36 }>{ translate( 'Licensing' ) }</CardHeading>
 
 			{ isFetching && <Spinner /> }
 

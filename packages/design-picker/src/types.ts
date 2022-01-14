@@ -13,7 +13,7 @@ export interface Category {
 	name: string;
 }
 
-export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
+export type DesignFeatures = 'anchorfm' | 'difm-lite-default'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
 export interface Design {
 	categories: Array< Category >;
@@ -37,6 +37,9 @@ export interface Design {
 	 * `@automattic/design-picker` package)
 	 */
 	hide?: boolean;
+
+	// designs with a "featured" term in the theme_picks taxonomy
+	is_featured_picks?: boolean;
 }
 
 export interface DesignUrlOptions {

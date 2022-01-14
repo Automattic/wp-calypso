@@ -18,6 +18,8 @@
 	}
 
 	.plugin-action__label {
+		display: flex;
+		align-items: center;
 		@include breakpoint-deprecated( '<480px' ) {
 			color: var( --color-neutral-70 );
 		}
@@ -42,13 +44,16 @@
 }
 
 .plugin-action__label {
-	display: flex;
 	flex-direction: row-reverse;
 	align-items: center;
-	font-size: $font-body-extra-small;
+	font-size: $font-body-small;
 	line-height: 16px;
 	margin-right: 8px;
 	cursor: pointer;
+
+	&.hide {
+		display: none;
+	}
 
 	.is-disabled & {
 		color: var( --color-neutral-20 );
@@ -78,4 +83,18 @@
 
 .plugin-action__disabled-info-list {
 	margin-left: 16px;
+}
+
+.plugin-activate-toggle,
+.plugin-autoupdate-toggle {
+	.components-toggle-control {
+		display: flex;
+		.components-base-control__field {
+			display: flex;
+
+			.components-form-toggle {
+				margin-right: 8px;
+			}
+		}
+	}
 }

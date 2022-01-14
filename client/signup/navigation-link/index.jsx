@@ -3,7 +3,6 @@ import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
@@ -93,15 +92,13 @@ export class NavigationLink extends Component {
 		);
 
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
-		const queryString = queryParams ? '?' + stringify( queryParams ) : '';
 
-		return (
-			getStepUrl(
-				previousStep.lastKnownFlow || this.props.flowName,
-				previousStep.stepName,
-				stepSectionName,
-				locale
-			) + queryString
+		return getStepUrl(
+			previousStep.lastKnownFlow || this.props.flowName,
+			previousStep.stepName,
+			stepSectionName,
+			locale,
+			queryParams
 		);
 	}
 

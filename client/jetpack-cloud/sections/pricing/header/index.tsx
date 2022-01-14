@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
@@ -10,7 +11,8 @@ import './style.scss';
 
 const Header: React.FC< Props > = () => {
 	const translate = useTranslate();
-	const hasJetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
+	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
+	const useV2Banner = config.isEnabled( 'jetpack/pricing-page-v2-banner' );
 
 	return (
 		<>
@@ -24,7 +26,7 @@ const Header: React.FC< Props > = () => {
 				/>
 			</div>
 
-			{ ! hasJetpackSaleCoupon && <IntroPricingBanner /> }
+			{ useV2Banner || jetpackSaleCoupon !== null ? null : <IntroPricingBanner /> }
 		</>
 	);
 };

@@ -7,12 +7,16 @@ import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import SidebarItem from 'calypso/layout/sidebar/item';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
+import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import ReaderSidebarFollowingItem from './item';
 import '../style.scss';
 
@@ -31,6 +35,8 @@ export class ReaderSidebarFollowedSites extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		sites: PropTypes.array,
+		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 		isFollowingOpen: PropTypes.bool,
 		sitesPerPage: PropTypes.number,
 	};
@@ -41,9 +47,15 @@ export class ReaderSidebarFollowedSites extends Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_followed_sites_clicked' );
 	};
 
+	isUnseen = () => {
+		const { teams, isWPForTeamsItem } = this.props;
+		return isEligibleForUnseen( { teams, isWPForTeamsItem } );
+	};
+
 	renderAll() {
 		const { path, translate, sites } = this.props;
 		const sum = sites.reduce( ( acc, { unseen_count } ) => acc + ( unseen_count | 0 ), 0 );
+
 		return (
 			<SidebarItem
 				className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
@@ -53,7 +65,7 @@ export class ReaderSidebarFollowedSites extends Component {
 				onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
 				link="/read"
 			>
-				{ sum > 0 && <Count count={ sum } compact /> }
+				{ this.isUnseen() && sum > 0 && <Count count={ sum } compact /> }
 			</SidebarItem>
 		);
 	}
@@ -76,7 +88,15 @@ export class ReaderSidebarFollowedSites extends Component {
 		const { path } = this.props;
 		return map(
 			sites,
-			( site ) => site && <ReaderSidebarFollowingItem key={ site.ID } path={ path } site={ site } />
+			( site ) =>
+				site && (
+					<ReaderSidebarFollowingItem
+						key={ site.ID }
+						path={ path }
+						site={ site }
+						isUnseen={ this.isUnseen() }
+					/>
+				)
 		);
 	};
 
@@ -126,6 +146,10 @@ export class ReaderSidebarFollowedSites extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
+			isWPForTeamsItem:
+				isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
+				isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),
+			teams: getReaderTeams( state ),
 			isFollowingOpen: isFollowingOpen( state, ownProps.path ),
 			sites: getReaderFollowedSites( state ),
 		};

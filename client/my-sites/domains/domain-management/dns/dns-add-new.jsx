@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { includes, find, flatMap } from 'lodash';
 import page from 'page';
@@ -116,6 +115,7 @@ class DnsAddNew extends React.Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.formStateController = formState.Controller( {
 			initialFields: this.getFieldsForType( this.state.type ),
@@ -183,9 +183,6 @@ class DnsAddNew extends React.Component {
 				formState.getAllFieldValues( this.state.fields ),
 				selectedDomainName
 			);
-			if ( ! config.isEnabled( 'domains/dns-records-redesign' ) ) {
-				this.formStateController.resetFields( this.getFieldsForType( this.state.type ) );
-			}
 
 			if ( recordToEdit ) {
 				this.props.updateDns( selectedDomainName, [ normalizedData ], [ recordToEdit ] ).then(
@@ -265,7 +262,7 @@ class DnsAddNew extends React.Component {
 		);
 		const buttonLabel = recordToEdit
 			? translate( 'Update DNS record' )
-			: translate( 'Add new DNS record' );
+			: translate( 'Add DNS record' );
 
 		return (
 			<form className="dns__form">
@@ -286,11 +283,9 @@ class DnsAddNew extends React.Component {
 						{ buttonLabel }
 					</FormButton>
 
-					{ config.isEnabled( 'domains/dns-records-redesign' ) && (
-						<FormButton isPrimary={ false } type="button" onClick={ this.props.goBack }>
-							{ translate( 'Cancel' ) }
-						</FormButton>
-					) }
+					<FormButton isPrimary={ false } type="button" onClick={ this.props.goBack }>
+						{ translate( 'Cancel' ) }
+					</FormButton>
 				</div>
 			</form>
 		);

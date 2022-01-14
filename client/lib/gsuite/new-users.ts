@@ -1,6 +1,5 @@
 import emailValidator from 'email-validator';
 import { translate, TranslateResult } from 'i18n-calypso';
-import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
 import {
@@ -10,6 +9,7 @@ import {
 	isGSuiteProductSlug,
 } from 'calypso/lib/gsuite';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -38,10 +38,13 @@ export interface GSuiteProductUser {
  *
  * @param {object} user - user with a list of fields
  */
-const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] =>
-	Object.keys( user )
-		.filter( ( key ) => 'uuid' !== key )
-		.map( ( key ) => user[ key ] );
+const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] => [
+	user.domain,
+	user.mailBox,
+	user.firstName,
+	user.lastName,
+	user.password,
+];
 
 /**
  * Retrieves the specified user after applying a callback to all of its fields.
@@ -49,14 +52,21 @@ const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] =>
  * @param {object} user - user with a list of fields
  * @param {Function} callback - function to call for each field
  */
-const mapFieldValues = ( user: GSuiteNewUser, callback ): GSuiteNewUser =>
-	mapValues( user, ( fieldValue, fieldName ) => {
-		if ( 'uuid' === fieldName ) {
-			return fieldValue;
-		}
-
-		return callback( fieldValue, fieldName, user );
-	} );
+const mapFieldValues = (
+	user: GSuiteNewUser,
+	callback: (
+		fieldValue: GSuiteNewUserField,
+		fieldName: string,
+		user: GSuiteNewUser
+	) => GSuiteNewUserField
+): GSuiteNewUser => ( {
+	uuid: user.uuid,
+	domain: callback( user.domain, 'domain', user ),
+	mailBox: callback( user.mailBox, 'mailBox', user ),
+	firstName: callback( user.firstName, 'firstName', user ),
+	lastName: callback( user.lastName, 'lastName', user ),
+	password: callback( user.password, 'password', user ),
+} );
 
 /*
  * Clears all previous errors from the specified field.
@@ -129,12 +139,14 @@ const validateOverallEmail = (
 const validateOverallEmailAgainstExistingEmails = (
 	{ value: mailBox, error: mailBoxError }: GSuiteNewUserField,
 	{ value: domain }: GSuiteNewUserField,
-	existingGSuiteUsers: [  ]
+	existingGSuiteUsers: GSuiteProductUser[]
 ): GSuiteNewUserField => ( {
 	value: mailBox,
 	error:
 		! mailBoxError &&
-		includes( mapValues( existingGSuiteUsers, 'email' ), `${ mailBox }@${ domain }` )
+		existingGSuiteUsers.some(
+			( existingGSuiteUser ) => existingGSuiteUser?.email === `${ mailBox }@${ domain }`
+		)
 			? translate( 'You already have this email address.' )
 			: mailBoxError,
 } );
@@ -166,16 +178,20 @@ const validateNewUserMailboxIsUnique = (
  * Adds a duplicate error to each mailBox with a duplicate mailbox
  */
 const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ): GSuiteNewUser[] => {
-	const mailboxesByCount: { [ mailbox: string ]: number } = countBy(
-		users.map( ( { mailBox: { value: mailBox } } ) => mailBox )
-	);
+	const mailBoxesByCount = users.reduce( ( result: Record< string, number >, user ) => {
+		const mailBoxName = user.mailBox.value;
+
+		result[ mailBoxName ] = 1 + ( result[ mailBoxName ] ?? 0 );
+
+		return result;
+	}, {} );
 
 	return users.map( ( { uuid, domain, mailBox, firstName, lastName, password } ) => ( {
 		uuid,
 		firstName,
 		lastName,
 		domain,
-		mailBox: validateNewUserMailboxIsUnique( mailBox, mailboxesByCount ),
+		mailBox: validateNewUserMailboxIsUnique( mailBox, mailBoxesByCount ),
 		password,
 	} ) );
 };
@@ -273,7 +289,7 @@ const validateUsers = (
 
 const validateAgainstExistingUsers = (
 	{ uuid, domain, mailBox, firstName, lastName, password }: GSuiteNewUser,
-	existingGSuiteUsers: [  ]
+	existingGSuiteUsers: GSuiteProductUser[]
 ): GSuiteNewUser => ( {
 	uuid,
 	firstName,
@@ -337,24 +353,35 @@ const transformUserForCart = ( {
 } );
 
 const getItemsForCart = (
-	domains: { name: string },
+	domains: SiteDomain[],
 	productSlug: string,
 	users: GSuiteNewUser[]
-): MinimalRequestCartProduct => {
-	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
-		groupBy( users, 'domain.value' ),
-		( groupedUsers ) => groupedUsers.map( transformUserForCart )
+): MinimalRequestCartProduct[] => {
+	const usersGroupedByDomain = users.reduce(
+		( result: Record< string, GSuiteProductUser[] >, user: GSuiteNewUser ) => {
+			if ( ! result[ user.domain.value ] ) {
+				result[ user.domain.value ] = [];
+			}
+
+			result[ user.domain.value ].push( transformUserForCart( user ) );
+
+			return result;
+		},
+		{}
 	);
 
-	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domainName: string ) => {
-		const properties = { domain: domainName, users: groupedUsers };
+	return Object.entries( usersGroupedByDomain ).map( ( [ domainName, groupedUsers ] ) => {
+		const properties: Record< string, unknown > = { domain: domainName, users: groupedUsers };
 
-		const domain = find( domains, [ 'name', domainName ] );
+		const domain = domains.find( ( domain ) => domain.name === domainName );
 
 		const isExtraLicense = domain && hasGSuiteWithUs( domain );
 
 		if ( isGSuiteProductSlug( productSlug ) && isExtraLicense ) {
-			return googleAppsExtraLicenses( properties );
+			return googleAppsExtraLicenses( {
+				domain: domainName,
+				users: groupedUsers,
+			} );
 		}
 
 		if ( isGoogleWorkspaceProductSlug( productSlug ) && isExtraLicense ) {

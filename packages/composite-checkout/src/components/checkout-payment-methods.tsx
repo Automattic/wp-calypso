@@ -12,7 +12,6 @@ import {
 	usePaymentMethodId,
 	useIsStepActive,
 	useIsStepComplete,
-	useEvents,
 	useFormStatus,
 } from '../public-api';
 import { FormStatus } from '../types';
@@ -36,8 +35,7 @@ export default function CheckoutPaymentMethods( {
 	className?: string;
 } ): JSX.Element | null {
 	const { __ } = useI18n();
-	const onEvent = useEvents();
-	const { onPageLoadError } = useContext( CheckoutContext );
+	const { onPageLoadError, onPaymentMethodChanged } = useContext( CheckoutContext );
 	const onError = useCallback( ( error ) => onPageLoadError?.( 'payment_method_load', error ), [
 		onPageLoadError,
 	] );
@@ -46,7 +44,7 @@ export default function CheckoutPaymentMethods( {
 	const [ , setPaymentMethod ] = usePaymentMethodId();
 	const onClickPaymentMethod = ( newMethod: string ) => {
 		debug( 'setting payment method to', newMethod );
-		onEvent( { type: 'PAYMENT_METHOD_SELECT', payload: newMethod } );
+		onPaymentMethodChanged?.( newMethod );
 		setPaymentMethod( newMethod );
 	};
 	const paymentMethods = useAllPaymentMethods();

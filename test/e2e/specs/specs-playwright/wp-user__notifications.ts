@@ -1,39 +1,40 @@
 /**
- * @group calypso-pr
+ * @group quarantined
  */
 
 import {
 	setupHooks,
-	BrowserManager,
 	DataHelper,
-	LoginPage,
 	PublishedPostsListPage,
 	CommentsComponent,
 	NavbarComponent,
 	NotificationsComponent,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
 describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
-	let page: Page;
-	let publishedPostsListPage: PublishedPostsListPage;
-	let notificationsComponent: NotificationsComponent;
-
 	const commentingUser = 'commentingUser';
 	const notificationsUser = 'notificationsUser';
 	const comment = DataHelper.getRandomPhrase() + ' notifications-trash-spec';
+
+	let page: Page;
+	let publishedPostsListPage: PublishedPostsListPage;
+	let notificationsComponent: NotificationsComponent;
 
 	setupHooks( ( args ) => {
 		page = args.page;
 	} );
 
 	describe( `Leave a comment as ${ commentingUser }`, function () {
-		it( `Log in as ${ commentingUser }`, async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: commentingUser }, { landingUrl: '**/read' } );
+		let testAccount: TestAccount;
+
+		beforeAll( async () => {
+			testAccount = new TestAccount( commentingUser );
+			await testAccount.authenticate( page );
 		} );
 
-		it( 'View site', async function () {
+		it( 'Visit published site', async function () {
 			// TODO make a utility to obtain a blog URL without string substitution.
 			const siteURL = `https://${ DataHelper.config.get( 'testSiteForNotifications' ) }`;
 			await page.goto( siteURL );
@@ -51,32 +52,18 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	} );
 
 	describe( `Trash comment as ${ notificationsUser }`, function () {
-		let notificationsPage: Page;
-
-		afterAll( async function () {
-			if ( notificationsPage ) {
-				await BrowserManager.closePage( notificationsPage, { closeContext: true } );
-			}
-		} );
-
-		it( 'Launch new context', async function () {
-			notificationsPage = await BrowserManager.newPage( {
-				context: await BrowserManager.newBrowserContext(),
-			} );
-		} );
-
-		it( `Log in as ${ notificationsUser }`, async function () {
-			const loginPage = new LoginPage( notificationsPage );
-			await loginPage.login( { account: notificationsUser } );
+		beforeAll( async () => {
+			const testAccount = new TestAccount( notificationsUser );
+			await testAccount.authenticate( page );
 		} );
 
 		it( 'Open notification using keyboard shortcut', async function () {
-			const navbarComponent = new NavbarComponent( notificationsPage );
+			const navbarComponent = new NavbarComponent( page );
 			await navbarComponent.openNotificationsPanel( { useKeyboard: true } );
 		} );
 
 		it( `See and click notification for the comment left by ${ commentingUser }`, async function () {
-			notificationsComponent = new NotificationsComponent( notificationsPage );
+			notificationsComponent = new NotificationsComponent( page );
 			await notificationsComponent.clickNotification( comment );
 		} );
 

@@ -26,8 +26,15 @@ function is_core_fse_active() {
 		return false;
 	}
 
-	// Now we just check for our own option.
-	return (bool) get_option( ACTIVATE_FSE_OPTION_NAME );
+	if ( is_universal_theme() ) {
+		return (bool) get_option( ACTIVATE_FSE_OPTION_NAME );
+	}
+
+	// Universal themes can use the customizer to customize the site, regardless of whether or
+	// not the full site editor is activated. Block themes, however, don't have access to the
+	// customizer. If the site editor is disabled for them, it will severely limit site
+	// customizability. Because of this we always activate FSE for block themes.
+	return true;
 }
 
 /**
@@ -39,6 +46,17 @@ function is_core_fse_active() {
  */
 function is_fse_theme() {
 	return function_exists( 'gutenberg_is_fse_theme' ) && gutenberg_is_fse_theme();
+}
+
+/**
+ * To identify universal themes, we assume that child themes will
+ * all use blockbase as their default theme template. This
+ * function checks if the current template is a blockbase template.
+ *
+ * @return boolean
+ */
+function is_universal_theme() {
+	return 'blockbase' === basename( get_template() );
 }
 
 /**
@@ -113,8 +131,13 @@ function load_helpers() {
 	if ( apply_filters( 'a8c_hide_core_fse_activation', false ) ) {
 		return;
 	}
+	// This menu toggles site editor visibility for universal themes.
+	// It's unnecessary for block themes because the site editor
+	// will always be visible.
+	if ( is_universal_theme() ) {
+		add_action( 'admin_menu', __NAMESPACE__ . '\add_submenu' );
+	}
 	add_action( 'admin_notices', __NAMESPACE__ . '\theme_nag' );
-	add_action( 'admin_menu', __NAMESPACE__ . '\add_submenu' );
 	add_action( 'admin_init', __NAMESPACE__ . '\init_settings' );
 }
 
@@ -135,14 +158,14 @@ function unload_helpers() {
  * @return void
  */
 function add_submenu() {
-	add_theme_page(
-		__( 'Site Editor (beta)', 'full-site-editing' ),
+	add_options_page(
+		__( 'Full Site Editing (beta)', 'full-site-editing' ),
 		sprintf(
 		/* translators: %s: "beta" label. */
-			__( 'Site Editor %s', 'full-site-editing' ),
+			__( 'Full Site Editing %s', 'full-site-editing' ),
 			'<span class="awaiting-mod">' . esc_html__( 'beta', 'full-site-editing' ) . '</span>'
 		),
-		'edit_theme_options',
+		'manage_options',
 		'site-editor-toggle',
 		__NAMESPACE__ . '\menu_page'
 	);
@@ -243,7 +266,7 @@ function menu_page() {
 		id="site-editor-toggle"
 		class="wrap"
 	>
-	<h1><?php esc_html_e( 'Site Editor (beta)', 'full-site-editing' ); ?></h1>
+	<h1><?php esc_html_e( 'Full Site Editing (beta)', 'full-site-editing' ); ?></h1>
 	<?php settings_errors(); ?>
 	<form method="post" action="options.php">
 		<?php settings_fields( 'site-editor-toggle' ); ?>

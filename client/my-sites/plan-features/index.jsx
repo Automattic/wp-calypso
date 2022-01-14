@@ -9,7 +9,6 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
-	FEATURE_BUSINESS_ONBOARDING,
 	TYPE_P2_PLUS,
 	TYPE_FREE,
 	planMatches,
@@ -18,7 +17,6 @@ import {
 	getPlanPath,
 	isFreePlan,
 	isWpComEcommercePlan,
-	isWpComBusinessPlan,
 	getPlanClass,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
@@ -37,7 +35,6 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import SpinnerLine from 'calypso/components/spinner-line';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
@@ -54,7 +51,6 @@ import {
 	getPlanSlug,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -593,7 +589,6 @@ export class PlanFeatures extends Component {
 			selectedSiteSlug,
 			shoppingCartManager,
 			redirectToAddDomainFlow,
-			productsList,
 		} = this.props;
 
 		const {
@@ -623,15 +618,12 @@ export class PlanFeatures extends Component {
 			// redirect to the "add a domain" page.
 			shoppingCartManager
 				.addProductsToCart( [
-					fillInSingleCartItemAttributes(
-						{
-							product_slug: productSlug,
-							extra: {
-								afterPurchaseUrl: redirectTo ?? undefined,
-							},
+					{
+						product_slug: productSlug,
+						extra: {
+							afterPurchaseUrl: redirectTo ?? undefined,
 						},
-						productsList
-					),
+					},
 				] )
 				.then( () => {
 					if ( withDiscount && this.isMounted ) {
@@ -828,6 +820,7 @@ export class PlanFeatures extends Component {
 		} );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -970,12 +963,7 @@ const ConnectedPlanFeatures = connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
-				let features = planConstantObj.getPlanCompareFeatures();
-
-				// TODO: remove this once Quick Start sessions have been removed from Business Plan
-				if ( isWpComBusinessPlan( plan ) ) {
-					features = features.filter( ( feature ) => feature !== FEATURE_BUSINESS_ONBOARDING );
-				}
+				const features = planConstantObj.getPlanCompareFeatures();
 
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
@@ -1081,7 +1069,6 @@ const ConnectedPlanFeatures = connect(
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
 
 		return {
-			productsList: getProductsList( state ),
 			canPurchase,
 			isJetpack,
 			planProperties,

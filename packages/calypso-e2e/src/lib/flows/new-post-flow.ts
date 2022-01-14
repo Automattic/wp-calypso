@@ -6,6 +6,7 @@ import { GutenbergEditorPage } from '../pages';
  * Handles all sorts of flows related to starting a new post.
  */
 export class NewPostFlow {
+	private isLoggedIn: boolean;
 	page: Page;
 
 	/**
@@ -15,6 +16,7 @@ export class NewPostFlow {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.isLoggedIn = false;
 	}
 
 	/**

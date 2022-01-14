@@ -1,5 +1,7 @@
+import { isPremium } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import {
+	canItemBeRemovedFromCart,
 	getCouponLineItemFromCart,
 	getCreditsLineItemFromCart,
 	isWpComProductRenewal,
@@ -10,6 +12,7 @@ import {
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import * as React from 'react';
+import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -54,6 +57,9 @@ export function WPOrderReviewLineItems( {
 	createUserAndSiteBeforeTransaction,
 	responseCart,
 	isPwpoUser,
+	onRemoveProduct,
+	onRemoveProductClick,
+	onRemoveProductCancel,
 }: {
 	className?: string;
 	siteId?: number | undefined;
@@ -64,6 +70,9 @@ export function WPOrderReviewLineItems( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 	isPwpoUser: boolean;
+	onRemoveProduct?: ( label: string ) => void;
+	onRemoveProductClick?: ( label: string ) => void;
+	onRemoveProductCancel?: ( label: string ) => void;
 } ): JSX.Element {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
@@ -74,17 +83,23 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => {
 				const isRenewal = isWpComProductRenewal( product );
-				const shouldShowVariantSelector = onChangePlanLength && ! isRenewal;
+				const shouldShowVariantSelector =
+					onChangePlanLength &&
+					! isRenewal &&
+					! isPremiumPlanWithDIFMInTheCart( product, responseCart );
 				return (
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
 							product={ product }
-							hasDeleteButton={ canItemBeDeleted( product ) }
+							hasDeleteButton={ canItemBeRemovedFromCart( product, responseCart ) }
 							removeProductFromCart={ removeProductFromCart }
 							isSummary={ isSummary }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 							responseCart={ responseCart }
 							isPwpoUser={ isPwpoUser }
+							onRemoveProduct={ onRemoveProduct }
+							onRemoveProductClick={ onRemoveProductClick }
+							onRemoveProductCancel={ onRemoveProductCancel }
 						>
 							{ shouldShowVariantSelector && (
 								<ItemVariationPicker
@@ -133,7 +148,9 @@ WPOrderReviewLineItems.propTypes = {
 	createUserAndSiteBeforeTransaction: PropTypes.bool,
 };
 
-function canItemBeDeleted( item: ResponseCartProduct ): boolean {
-	const itemTypesThatCannotBeDeleted = [ 'domain_redemption' ];
-	return ! itemTypesThatCannotBeDeleted.includes( item.product_slug );
+/**
+ * Checks if the given item is the premium plan product and the DIFM product exists in the provided shopping cart object
+ */
+function isPremiumPlanWithDIFMInTheCart( item: ResponseCartProduct, responseCart: ResponseCart ) {
+	return isPremium( item ) && hasDIFMProduct( responseCart );
 }

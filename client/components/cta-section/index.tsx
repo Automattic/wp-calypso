@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
+import { ReactElement } from 'react';
 
 const Container = styled.div`
 	display: grid;
@@ -45,18 +46,30 @@ interface Props {
 	title?: TranslateResult;
 	headline?: TranslateResult;
 	buttonText: TranslateResult;
+	buttonDisabled: boolean;
 	buttonAction: () => void;
+	notice: ReactElement | null;
 	ctaRef?: React.RefObject< HTMLButtonElement >;
 }
 
 const CtaSection: React.FunctionComponent< Props > = ( props ) => {
-	const { children, title, headline, buttonText, buttonAction, ctaRef } = props;
+	const {
+		children,
+		title,
+		headline,
+		buttonText,
+		buttonDisabled = false,
+		buttonAction,
+		notice = null,
+		ctaRef,
+	} = props;
 	return (
 		<Container>
 			<CtaContainer>
 				<Headline>{ title }</Headline>
 				<Title>{ headline }</Title>
-				<Button primary onClick={ buttonAction } ref={ ctaRef }>
+				{ notice }
+				<Button primary onClick={ buttonAction } ref={ ctaRef } disabled={ buttonDisabled }>
 					{ buttonText }
 				</Button>
 			</CtaContainer>

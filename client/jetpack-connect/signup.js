@@ -71,6 +71,7 @@ export class JetpackSignup extends Component {
 		wooDnaFormType: 'login',
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { from, clientId } = this.props.authQuery;
 		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view', {

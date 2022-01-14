@@ -40,7 +40,7 @@ type Props = {
 	siteState: SiteState | null;
 	atomicSite: boolean;
 	siteProducts: SiteProduct[] | null;
-	sitePlan: SitePlan | null;
+	sitePlan: SitePlan | null | undefined;
 };
 
 const UI_STATE_LOADING = Symbol();
@@ -80,8 +80,8 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 			const sitePlanDetails = getPlan( sitePlan.product_slug );
 			productsList = [
 				...productsList,
-				...sitePlanDetails.getIncludedFeatures(),
-				...( sitePlanDetails.getInferiorFeatures?.() ?? [] ),
+				...( sitePlanDetails?.getIncludedFeatures?.() ?? [] ),
+				...( sitePlanDetails?.getInferiorFeatures?.() ?? [] ),
 			];
 		}
 		return !! productsList.find( productSlugTest );

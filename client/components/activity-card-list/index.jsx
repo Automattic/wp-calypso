@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -181,7 +180,6 @@ class ActivityCardList extends Component {
 		const {
 			applySiteOffset,
 			moment,
-			displayRulesEnabled,
 			visibleDays,
 			filter,
 			isBreakpointActive: isMobile,
@@ -192,10 +190,10 @@ class ActivityCardList extends Component {
 			siteId,
 		} = this.props;
 
-		const visibleLimitCutoffDate = displayRulesEnabled
+		const visibleLimitCutoffDate = Number.isFinite( visibleDays )
 			? ( applySiteOffset ?? moment )().subtract( visibleDays, 'days' )
-			: null;
-		const visibleLogs = displayRulesEnabled
+			: undefined;
+		const visibleLogs = visibleLimitCutoffDate
 			? logs.filter( ( log ) =>
 					( applySiteOffset ?? moment )( log.activityDate ).isSameOrAfter(
 						visibleLimitCutoffDate,
@@ -209,8 +207,7 @@ class ActivityCardList extends Component {
 		const actualPage = Math.max( 1, Math.min( requestedPage, pageCount ) );
 
 		const pageLogs = this.splitLogsByDate( visibleLogs.slice( ( actualPage - 1 ) * pageSize ) );
-		const showLimitUpsell =
-			displayRulesEnabled && visibleLogs.length < logs.length && actualPage >= pageCount;
+		const showLimitUpsell = visibleLogs.length < logs.length && actualPage >= pageCount;
 
 		return (
 			<div className="activity-card-list">
@@ -313,26 +310,19 @@ class ActivityCardList extends Component {
 	}
 
 	render() {
-		const {
-			displayRulesEnabled,
-			requestingRewindPolicies,
-			rewindPoliciesRequestError,
-			siteId,
-			logs,
-		} = this.props;
+		const { requestingRewindPolicies, rewindPoliciesRequestError, siteId, logs } = this.props;
 
-		if ( displayRulesEnabled && rewindPoliciesRequestError ) {
+		if ( rewindPoliciesRequestError ) {
 			return this.renderLoading();
 		}
 
 		return (
 			<>
-				{ displayRulesEnabled && <QueryRewindPolicies siteId={ siteId } /> }
+				<QueryRewindPolicies siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
 
-				{ ( ! logs || ( displayRulesEnabled && requestingRewindPolicies ) ) &&
-					this.renderLoading() }
+				{ ( ! logs || requestingRewindPolicies ) && this.renderLoading() }
 				{ logs && this.renderData() }
 			</>
 		);
@@ -351,7 +341,6 @@ const mapStateToProps = ( state ) => {
 
 	return {
 		filter,
-		displayRulesEnabled: isEnabled( 'activity-log/display-rules' ),
 		requestingRewindPolicies: rewindPoliciesRequestStatus === 'pending',
 		rewindPoliciesRequestError: rewindPoliciesRequestStatus === 'failure',
 		visibleDays,

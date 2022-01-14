@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	findFirstSimilarPlanKey,
 	FEATURE_UPLOAD_PLUGINS,
@@ -10,7 +9,7 @@ import {
 import { Button, Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, includes, some } from 'lodash';
+import { get, includes } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -123,13 +122,6 @@ export class PluginMeta extends Component {
 			isEnterprise( this.props.selectedSite.plan ) ||
 			isEcommerce( this.props.selectedSite.plan )
 		);
-	}
-
-	getPlan() {
-		if ( ! this.props.selectedSite ) {
-			return false;
-		}
-		return this.props.selectedSite.plan();
 	}
 
 	isWpcomPreinstalled = () => {
@@ -341,20 +333,6 @@ export class PluginMeta extends Component {
 					showDismiss={ false }
 				/>
 			);
-		} else if (
-			config.isEnabled( 'manage/plugins/compatibility-warning' ) &&
-			! this.isVersionCompatible()
-		) {
-			return (
-				<Notice
-					className="plugin-meta__version-notice"
-					text={ this.props.translate(
-						'The new version of this plugin may not be compatible with your version of WordPress'
-					) }
-					status="is-warning"
-					showDismiss={ false }
-				/>
-			);
 		}
 	}
 
@@ -410,26 +388,6 @@ export class PluginMeta extends Component {
 				</Notice>
 			);
 		}
-	}
-
-	isVersionCompatible() {
-		if ( ! this.props.selectedSite ) {
-			return true;
-		}
-
-		// still not fetched
-		if ( ! this.props.plugin.compatibility ) {
-			return true;
-		}
-
-		if ( ! this.props.plugin.compatibility || this.props.plugin.compatibility.length === 0 ) {
-			return false;
-		}
-
-		const siteVersion = this.props.selectedSite.options.software_version.split( '-' )[ 0 ];
-		return some( this.props.plugin.compatibility, ( compatibleVersion ) => {
-			return compatibleVersion.indexOf( siteVersion ) === 0;
-		} );
 	}
 
 	hasOrgInstallButton() {

@@ -35,10 +35,9 @@ export interface StripeConfiguration {
 	js_url: string;
 	public_key: string;
 	processor_id: string;
-	setup_intent_id: null | string;
 }
 
-export type ReloadStripeConfiguration = () => void;
+export type ReloadSetupIntentId = () => void;
 
 export type StripeLoadingError = undefined | null | Error;
 
@@ -47,14 +46,22 @@ export interface StripeData {
 	stripeConfiguration: null | StripeConfiguration;
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	reloadStripeConfiguration: ReloadStripeConfiguration;
 }
+
+export interface StripeSetupIntentIdData {
+	setupIntentId: StripeSetupIntentId | undefined;
+	error: StripeLoadingError;
+	reload: ReloadSetupIntentId;
+}
+
+export type StripeSetupIntentId = string;
 
 export type StripeSetupIntent = SetupIntent;
 
 export type StripeAuthenticationResponse = { status?: string; redirect_url?: string };
 
 const StripeContext = createContext< StripeData | undefined >( undefined );
+const StripeSetupIntentContext = createContext< StripeSetupIntentIdData | undefined >( undefined );
 
 export interface UseStripeJs {
 	stripe: Stripe | null;
@@ -62,10 +69,13 @@ export interface UseStripeJs {
 	stripeLoadingError: StripeLoadingError;
 }
 
-export type GetStripeConfigurationArgs = { country?: string; needs_intent?: boolean };
+export type GetStripeConfigurationArgs = { country?: string };
+export type GetStripeSetupIntentId = ( requestArgs: {
+	needs_intent?: boolean;
+} ) => Promise< { setup_intent_id: StripeSetupIntentId | undefined } >;
 export type GetStripeConfiguration = (
-	requestArgs: GetStripeConfigurationArgs
-) => Promise< StripeConfiguration >;
+	requestArgs: GetStripeConfigurationArgs & { needs_intent?: boolean }
+) => Promise< StripeConfiguration & { setup_intent_id: StripeSetupIntentId | undefined } >;
 
 export type StripePaymentRequestHandler = ( event: StripePaymentRequestHandlerEvent ) => void;
 
@@ -205,19 +215,13 @@ export async function createStripePaymentMethod(
 export async function createStripeSetupIntent(
 	stripe: Stripe,
 	element: StripeCardNumberElement,
-	stripeConfiguration: StripeConfiguration,
+	setupIntentId: StripeSetupIntentId,
 	paymentDetails: PaymentDetails
 ): Promise< StripeSetupIntent > {
 	debug( 'creating setup intent...', paymentDetails );
-	if ( ! stripeConfiguration.setup_intent_id ) {
-		debug( 'Unable to create setup intent; missing intent ID' );
-		throw new StripeConfigurationError(
-			'There is a problem with the payment method system configuration.'
-		);
-	}
 	let stripeResponse;
 	try {
-		stripeResponse = await stripe.confirmCardSetup( stripeConfiguration.setup_intent_id, {
+		stripeResponse = await stripe.confirmCardSetup( setupIntentId, {
 			payment_method: {
 				card: element,
 				billing_details: paymentDetails,
@@ -366,21 +370,6 @@ function useStripeJs(
  * React custom Hook for loading the Stripe Configuration
  *
  * This is internal. You probably actually want the useStripe hook.
- *
- * Returns an object with two properties: `stripeConfiguration`, and
- * `reloadStripeConfiguration`.
- *
- * `stripeConfiguration` is an object as returned by the stripe configuration
- * endpoint, possibly including a Setup Intent if one was requested (via
- * `needs_intent`).
- *
- * If there is a stripe error, it may be necessary to reload the configuration
- * since (for example) a Setup Intent may need to be recreated. You can force
- * the configuration to reload by calling `reloadStripeConfiguration()`.
- *
- * @param {Function} fetchStripeConfiguration A function that will fetch the stripe configuration from the HTTP API
- * @param {object} [requestArgs] (optional) Can include `country` or `needs_intent`
- * @returns {object} See above
  */
 function useStripeConfiguration(
 	fetchStripeConfiguration: GetStripeConfiguration,
@@ -388,16 +377,10 @@ function useStripeConfiguration(
 ): {
 	stripeConfiguration: StripeConfiguration | null;
 	stripeConfigurationError: undefined | Error;
-	reloadStripeConfiguration: ReloadStripeConfiguration;
 } {
-	const [ stripeReloadCount, setReloadCount ] = useState< number >( 0 );
 	const [ stripeConfigurationError, setStripeConfigurationError ] = useState< undefined | Error >();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState< null | StripeConfiguration >(
 		null
-	);
-	const reloadStripeConfiguration = useCallback(
-		() => setReloadCount( ( count ) => count + 1 ),
-		[]
 	);
 	const memoizedRequestArgs = useMemoCompare( requestArgs, areRequestArgsEqual );
 
@@ -408,12 +391,6 @@ function useStripeConfiguration(
 			.then( ( configuration ) => {
 				if ( ! isSubscribed ) {
 					return;
-				}
-				if ( memoizedRequestArgs?.needs_intent && ! configuration.setup_intent_id ) {
-					debug( 'invalid stripe configuration; missing setup_intent_id', configuration );
-					throw new StripeConfigurationError(
-						'Error loading new payment method configuration. Received invalid data from the server.'
-					);
 				}
 				if (
 					! configuration.js_url ||
@@ -434,8 +411,58 @@ function useStripeConfiguration(
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ memoizedRequestArgs, stripeReloadCount, fetchStripeConfiguration ] );
-	return { stripeConfiguration, stripeConfigurationError, reloadStripeConfiguration };
+	}, [ memoizedRequestArgs, fetchStripeConfiguration ] );
+	return { stripeConfiguration, stripeConfigurationError };
+}
+
+const setupIntentRequestArgs = { needs_intent: true };
+
+/**
+ * React custom Hook for loading a Stripe setup intent id
+ *
+ * This is internal. You probably actually want the useStripeSetupIntentId hook.
+ *
+ * If there is a stripe error, it may be necessary to reload the configuration
+ * since a Setup Intent may need to be recreated. You can force the
+ * configuration to reload by calling `reload()`.
+ */
+function useFetchSetupIntentId(
+	fetchStripeConfiguration: GetStripeSetupIntentId
+): {
+	setupIntentId: StripeSetupIntentId | undefined;
+	error: undefined | Error;
+	reload: ReloadSetupIntentId;
+} {
+	const [ stripeReloadCount, setReloadCount ] = useState< number >( 0 );
+	const [ error, setError ] = useState< undefined | Error >();
+	const [ setupIntentId, setSetupIntentId ] = useState< undefined | StripeSetupIntentId >();
+	const reload = useCallback( () => setReloadCount( ( count ) => count + 1 ), [] );
+
+	useEffect( () => {
+		debug( 'loading stripe setup intent id' );
+		let isSubscribed = true;
+		fetchStripeConfiguration( setupIntentRequestArgs )
+			.then( ( configuration ) => {
+				if ( ! isSubscribed ) {
+					return;
+				}
+				if ( ! configuration?.setup_intent_id ) {
+					debug( 'invalid stripe configuration; missing setup_intent_id', configuration );
+					throw new StripeConfigurationError(
+						'Error loading new payment method configuration. Received invalid data from the server.'
+					);
+				}
+				debug( 'stripe configuration received', configuration );
+				setSetupIntentId( configuration.setup_intent_id );
+			} )
+			.catch( ( error ) => {
+				setError( error );
+			} );
+		return () => {
+			isSubscribed = false;
+		};
+	}, [ stripeReloadCount, fetchStripeConfiguration ] );
+	return { setupIntentId, error, reload };
 }
 
 function areRequestArgsEqual(
@@ -445,20 +472,23 @@ function areRequestArgsEqual(
 	if ( next?.country !== previous?.country ) {
 		return false;
 	}
-	if ( next?.needs_intent !== previous?.needs_intent ) {
-		return false;
-	}
 	return true;
 }
 
-function StripeHookProviderInnerWrapper( {
-	stripeData,
+export function StripeSetupIntentIdProvider( {
 	children,
+	fetchStipeSetupIntentId,
 }: {
-	stripeData: StripeData;
 	children: JSX.Element;
-} ): JSX.Element {
-	return <StripeContext.Provider value={ stripeData }>{ children }</StripeContext.Provider>;
+	fetchStipeSetupIntentId: GetStripeSetupIntentId;
+} ) {
+	const setupIntentData = useFetchSetupIntentId( fetchStipeSetupIntentId );
+
+	return (
+		<StripeSetupIntentContext.Provider value={ setupIntentData }>
+			{ children }
+		</StripeSetupIntentContext.Provider>
+	);
 }
 
 export function StripeHookProvider( {
@@ -472,11 +502,10 @@ export function StripeHookProvider( {
 	configurationArgs?: undefined | null | GetStripeConfigurationArgs;
 	locale?: undefined | string;
 } ): JSX.Element {
-	const {
-		stripeConfiguration,
-		stripeConfigurationError,
-		reloadStripeConfiguration,
-	} = useStripeConfiguration( fetchStripeConfiguration, configurationArgs );
+	const { stripeConfiguration, stripeConfigurationError } = useStripeConfiguration(
+		fetchStripeConfiguration,
+		configurationArgs
+	);
 	const { stripe, isStripeLoading, stripeLoadingError } = useStripeJs(
 		stripeConfiguration,
 		stripeConfigurationError,
@@ -488,14 +517,11 @@ export function StripeHookProvider( {
 		stripeConfiguration,
 		isStripeLoading,
 		stripeLoadingError,
-		reloadStripeConfiguration,
 	};
 
 	return (
 		<Elements stripe={ stripe }>
-			<StripeHookProviderInnerWrapper stripeData={ stripeData }>
-				{ children }
-			</StripeHookProviderInnerWrapper>
+			<StripeContext.Provider value={ stripeData }>{ children }</StripeContext.Provider>
 		</Elements>
 	);
 }
@@ -513,7 +539,6 @@ export function StripeHookProvider( {
  * - stripeConfiguration: the object containing the data returned by the wpcom stripe configuration endpoint
  * - isStripeLoading: a boolean that is true if stripe is currently being loaded
  * - stripeLoadingError: an optional object that will be set if there is an error loading stripe
- * - reloadStripeConfiguration: a function that can be called with a value to force the stripe configuration to reload
  *
  * @returns {StripeData} See above
  */
@@ -521,6 +546,23 @@ export function useStripe(): StripeData {
 	const stripeData = useContext( StripeContext );
 	if ( ! stripeData ) {
 		throw new Error( 'useStripe can only be used inside a StripeHookProvider' );
+	}
+	return stripeData;
+}
+
+/**
+ * Custom hook to access a Stripe setup intent ID
+ *
+ * First you must wrap a parent component in `StripeSetupIntentIdProvider`.
+ * Then you can call this hook in any sub-component to get access to the setup
+ * intent ID which can be passed to `createStripeSetupIntent`.
+ */
+export function useStripeSetupIntentId(): StripeSetupIntentIdData {
+	const stripeData = useContext( StripeSetupIntentContext );
+	if ( ! stripeData ) {
+		throw new Error(
+			'useStripeSetupIntentId can only be used inside a StripeSetupIntentIdProvider'
+		);
 	}
 	return stripeData;
 }

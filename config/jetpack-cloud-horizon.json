@@ -24,7 +24,6 @@
 		}
 	],
 	"features": {
-		"activity-log/display-rules": true,
 		"activity-log/v2": true,
 		"always_use_logout_url": false,
 		"current-site/domain-warning": false,
@@ -33,25 +32,24 @@
 		"checkout/google-pay": true,
 		"jetpack-cloud": true,
 		"jetpack/backups-date-picker": true,
-		"jetpack/only-realtime-products": true,
+		"jetpack/more-informative-scan": true,
 		"jetpack/search-product": true,
 		"jetpack/pricing-page": true,
+		"jetpack/pricing-page-annual-only": false,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
-		"jetpack/siteless-checkout": true,
-		"jetpack/userless-checkout": true,
+		"jetpack/user-licensing": true,
 		"jetpack/redirect-legacy-plans": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"marketplace-test": false,
-		"marketplace-v0.5": false,
+		"marketplace-v1": false,
 		"marketplace": false,
 		"oauth": false,
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,
-		"support-user": true,
 		"upgrades/redirect-payments": true
 	},
 	"enable_all_sections": false,
@@ -64,7 +62,8 @@
 		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud": true,
 		"jetpack-search": true,
-		"scan": true
+		"scan": true,
+		"site-purchases": true
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud"

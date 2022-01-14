@@ -1,5 +1,3 @@
-export const COOKIES_PATH = process.env.COOKIES_PATH ?? '';
-
 /**
  * List of locales, used in i18n testing.
  *

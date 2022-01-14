@@ -62,7 +62,7 @@
 	],
 	"statusCheckVerify": true,
 	"rangeStrategy": "bump",
-	"ignoreDeps": [ "jquery" ],
+	"ignoreDeps": [ "jquery", "electron-builder" ],
 	"labels": [ "Framework", "[Type] Task" ],
 	"lockFileMaintenance": {
 		"enabled": true,

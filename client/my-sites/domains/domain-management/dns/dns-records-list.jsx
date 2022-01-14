@@ -27,11 +27,12 @@ class DnsRecordsList extends Component {
 	};
 
 	disableRecordAction = {
+		disabled: false,
 		icon: (
 			<MaterialIcon
 				icon="do_not_disturb"
 				className="gridicon dns-records-list__action-menu-item"
-				viewBox="2 2 20 20"
+				viewBox="0 0 20 20"
 			/>
 		),
 		title: this.props.translate( 'Disable' ),
@@ -39,6 +40,7 @@ class DnsRecordsList extends Component {
 	};
 
 	enableRecordAction = {
+		disabled: false,
 		icon: (
 			<Icon
 				icon={ redo }
@@ -51,6 +53,7 @@ class DnsRecordsList extends Component {
 	};
 
 	recordInfoAction = {
+		disabled: false,
 		icon: (
 			<Icon
 				icon={ info }
@@ -63,6 +66,7 @@ class DnsRecordsList extends Component {
 	};
 
 	editRecordAction = {
+		disabled: false,
 		icon: (
 			<Icon
 				icon={ edit }
@@ -76,6 +80,7 @@ class DnsRecordsList extends Component {
 	};
 
 	deleteRecordAction = {
+		disabled: false,
 		icon: (
 			<Icon
 				icon={ trash }
@@ -184,10 +189,6 @@ class DnsRecordsList extends Component {
 	}
 
 	getActionsForDnsRecord( record ) {
-		if ( record.protected_field ) {
-			return [];
-		}
-
 		if ( this.isDomainConnectRecord( record ) ) {
 			return [
 				record.enabled ? this.disableRecordAction : this.enableRecordAction,
@@ -195,7 +196,10 @@ class DnsRecordsList extends Component {
 			];
 		}
 
-		return [ this.editRecordAction, this.deleteRecordAction ];
+		return [
+			{ ...this.editRecordAction, disabled: record.protected_field },
+			{ ...this.deleteRecordAction, disabled: record.protected_field && 'MX' !== record.type },
+		];
 	}
 
 	getDomainConnectDnsRecord( enabled ) {
@@ -211,7 +215,6 @@ class DnsRecordsList extends Component {
 			<DnsRecordData
 				key={ 'domain-connect-record' }
 				dnsRecord={ record }
-				onDeleteDns={ this.deleteDns }
 				selectedDomainName={ selectedDomainName }
 				selectedSite={ selectedSite }
 				enabled={ enabled }
@@ -239,7 +242,6 @@ class DnsRecordsList extends Component {
 				<DnsRecordData
 					key={ index }
 					dnsRecord={ dnsRecord }
-					onDeleteDns={ this.deleteDns }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 					enabled={ true }

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -20,6 +21,7 @@ import EmailListInactive from 'calypso/my-sites/email/email-management/home/emai
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
+import EmailProvidersComparisonStacked from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -82,7 +84,13 @@ class EmailManagementHome extends Component {
 			} );
 
 			if ( ! domainHasEmail( selectedDomain ) ) {
-				return (
+				return isEnabled( 'emails/new-email-comparison' ) ? (
+					<EmailProvidersComparisonStacked
+						comparisonContext="email-home-selected-domain"
+						selectedDomainName={ selectedDomainName }
+						source={ source }
+					/>
+				) : (
 					<EmailProvidersComparison
 						backPath={ domainManagementList( selectedSite.slug, null ) }
 						comparisonContext="email-home-selected-domain"
@@ -109,7 +117,13 @@ class EmailManagementHome extends Component {
 		const domainsWithNoEmail = nonWpcomDomains.filter( ( domain ) => ! domainHasEmail( domain ) );
 
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
-			return (
+			return isEnabled( 'emails/new-email-comparison' ) ? (
+				<EmailProvidersComparisonStacked
+					comparisonContext="email-home-single-domain"
+					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
+					source={ source }
+				/>
+			) : (
 				<EmailProvidersComparison
 					comparisonContext="email-home-single-domain"
 					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
@@ -176,7 +190,7 @@ class EmailManagementHome extends Component {
 	}
 
 	renderContentWithHeader( content ) {
-		const { translate, currentRoute, selectedSiteId, selectedSite } = this.props;
+		const { translate, selectedSiteId } = this.props;
 
 		return (
 			<Main wideLayout>
@@ -186,7 +200,7 @@ class EmailManagementHome extends Component {
 
 				<SidebarNavigation />
 
-				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+				<EmailHeader />
 
 				{ content }
 			</Main>

@@ -1,6 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
-import { write, design } from '../../icons';
+import { write, play, design } from '../../icons';
 import SelectItems, { SelectItem } from '../../select-items';
 import type { StartingPointFlag } from './types';
 
@@ -22,6 +23,15 @@ const useStartingPoints = ( { translate }: Pick< Props, 'translate' > ): Startin
 			actionText: translate( 'Start writing' ),
 		},
 		{
+			key: 'courses',
+			title: translate( 'Watch Blogging videos' ),
+			description: translate( ' Learn the blogging basics in minutes ' ),
+			icon: play,
+			value: 'courses',
+			actionText: translate( 'Start learning' ),
+			hidden: ! isEnabled( 'signup/starting-point-courses' ),
+		},
+		{
 			key: 'design',
 			title: translate( 'Choose a design' ),
 			description: translate( 'Make your blog feel like home' ),
@@ -35,7 +45,12 @@ const useStartingPoints = ( { translate }: Pick< Props, 'translate' > ): Startin
 const StartingPoint: React.FC< Props > = ( { onSelect, translate } ) => {
 	const startingPoints = useStartingPoints( { translate } );
 
-	return <SelectItems items={ startingPoints } onSelect={ onSelect } />;
+	return (
+		<SelectItems
+			items={ startingPoints.filter( ( { hidden } ) => ! hidden ) }
+			onSelect={ onSelect }
+		/>
+	);
 };
 
 export default localize( StartingPoint );

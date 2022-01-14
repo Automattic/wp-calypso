@@ -365,10 +365,6 @@
 		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 );
 	}
 
-	.thank-you-card__price {
-		color: var( --color-neutral-60 );
-	}
-
 	.thank-you-card__description {
 		width: 340px;
 	}
@@ -830,7 +826,7 @@
 		.jetpack-checkout-siteless-thank-you__card-main {
 			max-width: 744px;
 		}
-		
+
 		.jetpack-checkout-siteless-thank-you__step {
 			display: flex;
 			align-items: flex-start;
@@ -951,6 +947,11 @@
 }
 
 .licensing-thank-you-auto-activation__select {
+	.select-dropdown__header {
+		.select-dropdown__header-text {
+			padding-right: 10px;
+		}
+	}
 	.licensing-thank-you-auto-activation__dropdown-item-flex-container {
 		display: flex;
 		justify-content: space-between;
@@ -965,12 +966,24 @@
 		max-height: 220px;
 		overflow-y: scroll;
 	}
-	.select-dropdown__item {
-		padding-right: 110px;
+	a.select-dropdown__item {
+		padding: 0 16px;
+		text-decoration: none;
+		&:hover {
+			color: var( --studio-jetpack-green );
+		}
 		.select-dropdown__item-text {
+			display: block;
+			position: static;
 			.licensing-thank-you-auto-activation__dropdown-item-text {
 				padding-right: 10px;
 			}
+		}
+		&::before {
+			display: none;
+		}
+		&.is-selected {
+			background-color: var( --color-neutral-10 );
 		}
 	}
 }

@@ -1,4 +1,3 @@
-import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -9,7 +8,6 @@ class DnsRecordData extends Component {
 		actions: PropTypes.array.isRequired,
 		dnsRecord: PropTypes.object.isRequired,
 		enabled: PropTypes.bool,
-		onDeleteDns: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 	};
 
@@ -74,21 +72,6 @@ class DnsRecordData extends Component {
 		}
 
 		return name;
-	}
-
-	deleteDns = () => {
-		// Delegate to callback from parent
-		this.props.onDeleteDns( this.props.dnsRecord );
-	};
-
-	renderRemoveButton() {
-		return (
-			<div className="dns__list-remove">
-				<Button borderless onClick={ this.deleteDns }>
-					<Gridicon icon="trash" />
-				</Button>
-			</div>
-		);
 	}
 
 	render() {

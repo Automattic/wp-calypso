@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -8,7 +7,6 @@ import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getSelectedDomain, isRegisteredDomain } from 'calypso/lib/domains';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
@@ -56,10 +54,20 @@ class DnsRecords extends Component {
 		];
 
 		const mobileItem = {
-			label: translate( 'Back' ),
+			// translators: %(domain)s is the domain name (e.g. example.com) to which settings page the user will return to when pressing the link
+			label: translate( 'Back to %(domain)s', { args: { domain: selectedDomainName } } ),
 			href: domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
+
+		const optionsButton = (
+			<DnsMenuOptionsButton
+				key="menu-options-button"
+				domain={ selectedDomainName }
+				dns={ dns }
+				pointsToWpcom={ pointsToWpcom }
+			/>
+		);
 
 		const buttons = [
 			<DnsAddNewRecordButton
@@ -67,12 +75,17 @@ class DnsRecords extends Component {
 				site={ selectedSite.slug }
 				domain={ selectedDomainName }
 			/>,
-			<DnsMenuOptionsButton
-				key="menu-options-button"
+			optionsButton,
+		];
+
+		const mobileButtons = [
+			<DnsAddNewRecordButton
+				key="mobile-add-new-record-button"
+				site={ selectedSite.slug }
 				domain={ selectedDomainName }
-				dns={ dns }
-				pointsToWpcom={ pointsToWpcom }
+				isMobile={ true }
 			/>,
+			optionsButton,
 		];
 
 		return (
@@ -80,7 +93,7 @@ class DnsRecords extends Component {
 				items={ items }
 				mobileItem={ mobileItem }
 				buttons={ buttons }
-				mobileButtons={ buttons }
+				mobileButtons={ mobileButtons }
 			/>
 		);
 	};
@@ -120,19 +133,6 @@ class DnsRecords extends Component {
 			</Fragment>
 		);
 	}
-
-	goBack = () => {
-		const { domains, selectedSite, selectedDomainName, currentRoute } = this.props;
-		let path;
-
-		if ( isRegisteredDomain( getSelectedDomain( domains ) ) ) {
-			path = domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute );
-		} else {
-			path = domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute );
-		}
-
-		page( path );
-	};
 }
 
 export default connect(

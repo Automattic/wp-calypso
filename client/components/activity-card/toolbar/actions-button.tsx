@@ -139,14 +139,16 @@ const ActionsButton: React.FC< OwnProps > = ( { siteId, activity } ) => {
 
 	const isMultisite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	if ( isMultisite ) {
-		return <MultisiteActionsButton siteSlug={ siteSlug } rewindId={ actionableRewindId } />;
+		return (
+			<MultisiteActionsButton siteSlug={ siteSlug ?? '' } rewindId={ actionableRewindId ?? '' } />
+		);
 	}
 
 	return (
 		<SingleSiteActionsButton
 			siteId={ siteId }
-			siteSlug={ siteSlug }
-			rewindId={ actionableRewindId }
+			siteSlug={ siteSlug ?? '' }
+			rewindId={ actionableRewindId ?? '' }
 		/>
 	);
 };

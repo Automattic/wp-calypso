@@ -37,18 +37,28 @@ export function authorize( queryObject ) {
 			type: JETPACK_CONNECT_AUTHORIZE,
 			queryObject: queryObject,
 		} );
-		return wpcom
-			.undocumented()
-			.jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
+
+		return wpcom.req
+			.get( '/jetpack-blogs/' + client_id + '/jetpack-login', {
+				_wp_nonce,
+				redirect_uri,
+				scope,
+				state,
+			} )
 			.then( ( data ) => {
 				debug( 'Jetpack login complete. Trying Jetpack authorize.', data );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 					data,
 				} );
-				return wpcom
-					.undocumented()
-					.jetpackAuthorize( client_id, data.code, state, redirect_uri, secret, jp_version, from );
+				return wpcom.req.post( '/jetpack-blogs/' + client_id + '/authorize', {
+					code: data.code,
+					state,
+					redirect_uri,
+					secret,
+					jp_version,
+					from,
+				} );
 			} )
 			.then( ( data ) => {
 				debug( 'Jetpack authorize complete. Updating sites list.', data );

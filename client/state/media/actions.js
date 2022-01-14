@@ -14,9 +14,7 @@ import {
 	MEDIA_REQUEST_SUCCESS,
 	MEDIA_SET_NEXT_PAGE_HANDLE,
 	MEDIA_SOURCE_CHANGE,
-	MEDIA_ITEM_UPDATE,
 	MEDIA_ITEM_EDIT,
-	MEDIA_ITEM_DELETE,
 	MEDIA_SET_QUERY,
 	MEDIA_CLEAR_SITE,
 } from 'calypso/state/action-types';
@@ -181,21 +179,6 @@ export const editMediaItem = ( siteId, mediaItem, data, originalMediaItem ) => (
 } );
 
 /**
- * Returns an action object used in signalling that media item data for the site
- * are to be updated.
- *
- * @param {number} siteId site identifier
- * @param {object} item media item
- * @param {object} originalMediaItem media item without updated properties
- */
-export const updateMediaItem = ( siteId, item, originalMediaItem ) => ( {
-	type: MEDIA_ITEM_UPDATE,
-	siteId,
-	item,
-	originalMediaItem,
-} );
-
-/**
  * Returns an action object used in signalling that media item(s) for the site
  * are to be deleted.
  *
@@ -214,12 +197,6 @@ export function deleteMedia( siteId, mediaIds ) {
 		siteId,
 	};
 }
-
-export const deleteMediaItem = ( siteId, mediaId ) => ( {
-	type: MEDIA_ITEM_DELETE,
-	siteId,
-	mediaId,
-} );
 
 /**
  * Returns an action object used in signalling that the media source for the site has changed.

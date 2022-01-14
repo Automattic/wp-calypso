@@ -13,6 +13,7 @@ export const allDomainsSchema = {
 			name: { type: 'string' },
 			registrationDate: { type: 'string' },
 			type: { type: 'string' },
+			currentUserIsOwner: { type: 'boolean' },
 		},
 	},
 };

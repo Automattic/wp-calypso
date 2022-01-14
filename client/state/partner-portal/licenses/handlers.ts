@@ -50,7 +50,7 @@ interface APIItemFormatter< FormattedType, APIType > {
 	( items: APIType[] ): FormattedType[];
 }
 
-function http( options, action: HttpAction ): AnyAction {
+function http( options: any, action: HttpAction ): AnyAction {
 	return coreHttp(
 		{
 			...options,

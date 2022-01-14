@@ -108,7 +108,7 @@ const HostSelection: FunctionComponent = () => {
 								: 'host-selection__list-item'
 						}
 						key={ id }
-						href={ `${ settingsPath( siteSlug ) }?host=${ id }` }
+						href={ `${ settingsPath( siteSlug ?? undefined ) }?host=${ id }` }
 						onClick={ () => recordHostSelectionEvent( id ) }
 					>
 						<span>{ name }</span>
@@ -131,7 +131,7 @@ const HostSelection: FunctionComponent = () => {
 							: 'host-selection__list-item'
 					}
 					key={ 'generic' }
-					href={ `${ settingsPath( siteSlug ) }?host=generic` }
+					href={ `${ settingsPath( siteSlug ?? undefined ) }?host=generic` }
 					onClick={ () => recordHostSelectionEvent( 'generic' ) }
 				>
 					{ isMobile

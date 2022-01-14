@@ -1,6 +1,8 @@
 // TODO: complete this type
 export interface Purchase {
+	active?: boolean;
 	id: number;
+	userId: number;
 	saleAmount?: number;
 	amount: number;
 	meta?: string;
@@ -16,6 +18,7 @@ export interface Purchase {
 	subscribedDate: string;
 	payment: PurchasePayment;
 	subscriptionStatus: string;
+	domain: string;
 }
 
 export interface PurchasePayment {

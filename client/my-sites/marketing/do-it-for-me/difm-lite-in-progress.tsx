@@ -7,7 +7,7 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
@@ -20,13 +20,9 @@ type DIFMLiteInProgressProps = {
 	siteId: number;
 };
 
-type DomainName = {
-	name?: string;
-};
-
 function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactElement {
 	const slug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
-	const primaryDomain: DomainName = useSelector( ( state: AppState ) =>
+	const primaryDomain = useSelector( ( state: AppState ) =>
 		getPrimaryDomainBySiteId( state, siteId )
 	);
 	const translate = useTranslate();
@@ -66,7 +62,7 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactE
 						'We’ll be in touch when your site is ready to be launched.'
 				) }
 				secondaryAction={ translate( 'Manage domain' ) }
-				secondaryActionURL={ domainManagementEdit( slug, domainName ) }
+				secondaryActionURL={ domainManagementList( slug ) }
 				illustration={ Illustration }
 				illustrationWidth={ 225 }
 			>
@@ -74,7 +70,7 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactE
 					<Button
 						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 						className="empty-content__action button"
-						href={ emailManagement( slug, domainName ) }
+						href={ emailManagement( slug, null ) }
 						onClick={ recordEmailClick }
 					>
 						{ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }

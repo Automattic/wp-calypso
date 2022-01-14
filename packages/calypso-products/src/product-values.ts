@@ -40,7 +40,6 @@ export {
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
 } from './is-gsuite';
-export { isGuidedTransfer } from './is-guided-transfer';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackBackup } from './is-jetpack-backup';
@@ -78,7 +77,7 @@ export { isVideoPress } from './is-video-press';
 export { isVipPlan } from './is-vip-plan';
 export { isYearly } from './is-yearly';
 export { isTrafficGuide } from './is-traffic-guide';
-export { isMarketplaceProduct } from './is-marketplace-product';
+export { hasMarketplaceProduct } from './has-marketplace-product';
 export * from './is-p2-plus';
 export * from './products-list';
 export * from './translations';

@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
+import { Fragment, PureComponent } from 'react';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import DomainRow from './domain-row';
@@ -20,6 +20,7 @@ class DomainsTable extends PureComponent {
 		hasLoadedPurchases: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		isManagingAllSites: PropTypes.bool,
+		isSavingContactInfo: PropTypes.bool,
 		primaryDomainIndex: PropTypes.number,
 		purchases: PropTypes.array,
 		settingPrimaryDomain: PropTypes.bool,
@@ -100,6 +101,9 @@ class DomainsTable extends PureComponent {
 			shouldUpgradeToMakeDomainPrimary,
 			requestingSiteDomains,
 			sites,
+			isContactEmailEditContext,
+			isSavingContactInfo,
+			handleDomainItemToggle,
 			translate,
 		} = this.props;
 
@@ -139,7 +143,7 @@ class DomainsTable extends PureComponent {
 
 			// TODO: how can we optimize the data loading? Can we load the daomin data using `InView` component as in list-all.jsx?
 			return (
-				<>
+				<Fragment key={ `${ domain.name }-${ index }` }>
 					{ ! isManagingAllSites &&
 						domain.blogId &&
 						this.renderQuerySitePurchasesOnce( domain.blogId ) }
@@ -147,18 +151,21 @@ class DomainsTable extends PureComponent {
 						domain.blogId &&
 						this.renderQuerySiteDomainsOnce( domain.blogId ) }
 					<DomainRow
-						key={ `${ domain.name }-${ index }` }
 						currentRoute={ currentRoute }
+						showCheckbox={ isContactEmailEditContext }
+						isSavingContactInfo={ isSavingContactInfo }
 						domain={ domain }
 						site={ selectedSite }
 						isManagingAllSites={ isManagingAllSites }
 						isLoadingDomainDetails={ isLoadingDomainDetails }
+						handleDomainItemToggle={ handleDomainItemToggle }
 						onClick={ settingPrimaryDomain ? noop : goToEditDomainRoot }
 						isBusy={ settingPrimaryDomain && index === primaryDomainIndex }
 						busyMessage={ translate( 'Setting primary site address…', {
 							context: 'Shows up when the primary domain is changing and the user is waiting',
 						} ) }
-						disabled={ settingPrimaryDomain }
+						disabled={ settingPrimaryDomain || isContactEmailEditContext }
+						showDomainDetails={ ! isContactEmailEditContext }
 						selectionIndex={ index }
 						onMakePrimaryClick={ handleUpdatePrimaryDomainOptionClick }
 						shouldUpgradeToMakePrimary={
@@ -167,7 +174,7 @@ class DomainsTable extends PureComponent {
 						hasLoadedPurchases={ hasLoadedPurchases }
 						purchase={ purchase }
 					/>
-				</>
+				</Fragment>
 			);
 		} );
 

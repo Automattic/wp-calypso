@@ -427,11 +427,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.sanitize ).toEqual( app.getMocks().sanitize );
 	} );
 
-	it( 'sets the RTL', async () => {
-		const { request } = await app.run();
-		expect( request.context.isRTL ).toEqual( false );
-	} );
-
 	it( 'sets requestFrom', async () => {
 		const { request } = await app.run( { request: { query: { from: 'from' } } } );
 		expect( request.context.requestFrom ).toEqual( 'from' );
@@ -1001,61 +996,6 @@ describe( 'main app', () => {
 		it( 'detects if it is logged in based on a cookie', async () => {
 			const { request } = await app.run( { request: { cookies: { wordpress_logged_in: true } } } );
 			expect( request.context.isLoggedIn ).toBe( true );
-		} );
-	} );
-
-	describe( 'Middleware localSubdomains', () => {
-		describe( 'sets locale info in the request context', () => {
-			it( 'rtl language', async () => {
-				const { request } = await app.run( {
-					request: {
-						hostname: 'ar.valid.hostname',
-					},
-				} );
-
-				expect( request.context.lang ).toBe( 'ar' );
-			} );
-
-			it( 'ltr language', async () => {
-				const { request } = await app.run( {
-					request: {
-						hostname: 'es.valid.hostname',
-					},
-				} );
-
-				expect( request.context.lang ).toBe( 'es' );
-			} );
-		} );
-
-		describe( 'strips language from the hostname for logged in users', () => {
-			it( 'redirects to http', async () => {
-				const { response } = await app.run( {
-					request: {
-						url: '/my-path',
-						hostname: 'es.valid.hostname',
-						cookies: {
-							wordpress_logged_in: true,
-						},
-					},
-				} );
-
-				expect( response.redirect ).toHaveBeenCalledWith( 'http://valid.hostname:3000/my-path' );
-			} );
-
-			it( 'redirects to https', async () => {
-				const { response } = await app.run( {
-					request: {
-						url: '/my-path',
-						hostname: 'es.valid.hostname',
-						get: jest.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'https' : undefined ) ),
-						cookies: {
-							wordpress_logged_in: true,
-						},
-					},
-				} );
-
-				expect( response.redirect ).toHaveBeenCalledWith( 'https://valid.hostname:3000/my-path' );
-			} );
 		} );
 	} );
 

@@ -24,7 +24,7 @@ import './uploading-pane.scss';
 
 const noop = () => {};
 
-class UploadingPane extends PureComponent {
+export class UploadingPane extends PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
 
 	static propTypes = {

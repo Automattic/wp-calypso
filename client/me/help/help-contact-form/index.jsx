@@ -129,6 +129,7 @@ export class HelpContactForm extends PureComponent {
 		qanda: [],
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
 			return;
@@ -176,7 +177,7 @@ export class HelpContactForm extends PureComponent {
 			// The API would reject something like "https://wp.com/slug".
 			// It'd need to either be "http(s)://wp.com" or "wp.com".
 			const url = this.state.userDeclaredUrl;
-			const query = url.includes( '://' )
+			const queryUrl = url.includes( '://' )
 				? new URL( this.state.userDeclaredUrl ).hostname
 				: new URL( 'http://' + this.state.userDeclaredUrl ).hostname;
 
@@ -194,7 +195,7 @@ export class HelpContactForm extends PureComponent {
 						this.setState( { errorData: error.error, siteData: null, hasRetriedRequest: false } );
 					} );
 
-			return request( query );
+			return request( queryUrl );
 		}
 	};
 
@@ -215,9 +216,11 @@ export class HelpContactForm extends PureComponent {
 			newIDs.sort();
 			return existingIDs.toString() === newIDs.toString();
 		};
-		const site = this.props.helpSite.jetpack
-			? config( 'jetpack_support_blog' )
-			: config( 'wpcom_support_blog' );
+
+		const site =
+			! this.props.helpSite.jetpack || this.props.helpSite.is_wpcom_atomic
+				? config( 'wpcom_support_blog' )
+				: config( 'jetpack_support_blog' );
 
 		wpcom.req
 			.get( '/help/qanda', { query, site } )

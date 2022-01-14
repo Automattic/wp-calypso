@@ -5,11 +5,11 @@
 import {
 	DataHelper,
 	MediaHelper,
-	LoginPage,
 	MediaPage,
 	SidebarComponent,
 	setupHooks,
 	TestFile,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
@@ -27,15 +27,15 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	} );
 
 	describe.each`
-		siteType      | user
+		siteType      | accountName
 		${ 'Simple' } | ${ 'simpleSitePersonalPlanUser' }
 		${ 'Atomic' } | ${ 'eCommerceUser' }
-	`( 'Edit Image ($siteType)', function ( { user } ) {
+	`( 'Edit Image ($siteType)', function ( { accountName } ) {
 		let mediaPage: MediaPage;
 
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+		beforeAll( async () => {
+			const testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
 		} );
 
 		it( 'Navigate to Media', async function () {

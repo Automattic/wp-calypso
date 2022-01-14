@@ -1,6 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
-import config from '@automattic/calypso-config';
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -17,7 +15,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import { type } from 'calypso/lib/domains/constants';
-import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
@@ -137,11 +134,7 @@ export class List extends Component {
 						align="left"
 					/>
 					<div className="domains__header-buttons">
-						<HeaderCart
-							selectedSite={ this.props.selectedSite }
-							currentRoute={ this.props.currentRoute }
-						/>
-						{ this.optionsDomainButton() }
+						<OptionsDomainButton />
 					</div>
 				</div>
 
@@ -255,14 +248,6 @@ export class List extends Component {
 				.subtract( 30, 'minutes' )
 				.isBefore( this.props.moment( domain.registrationDate ) )
 		);
-	}
-
-	optionsDomainButton() {
-		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			return null;
-		}
-
-		return <OptionsDomainButton />;
 	}
 
 	setPrimaryDomain( domainName ) {

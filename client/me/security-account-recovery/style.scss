@@ -11,7 +11,7 @@
 	}
 }
 
-.security-account-recovery-contact__detail .form-fieldset__country {
+.security-account-recovery-contact__detail .form-phone-input__country {
 	padding-right: 0;
 
 	@include breakpoint-deprecated( '>480px' ) {
@@ -30,7 +30,7 @@
 	}
 }
 
-.security-account-recovery-contact__detail .form-fieldset__phone-number {
+.security-account-recovery-contact__detail .form-phone-input__phone-number {
 	margin-bottom: 0;
 
 	@include breakpoint-deprecated( '>480px' ) {

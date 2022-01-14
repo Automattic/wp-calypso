@@ -58,19 +58,22 @@ const debug = debugModule( 'calypso:my-sites:people:invite' );
 class InvitePeople extends Component {
 	static displayName = 'InvitePeople';
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			this.props.siteId !== nextProps.siteId ||
-			this.props.needsVerification !== nextProps.needsVerification ||
-			this.props.showSSONotice !== nextProps.showSSONotice ||
-			this.props.isJetpack !== nextProps.isJetpack
+			prevProps.needsVerification !== this.props.needsVerification ||
+			prevProps.showSSONotice !== this.props.showSSONotice ||
+			prevProps.isJetpack !== this.props.isJetpack
 		) {
-			this.setState( this.resetState( nextProps ) );
+			this.resetState();
 		}
 	}
 
-	resetState = ( props = this.props ) => {
-		const { isWPForTeamsSite } = props;
+	resetState = () => {
+		this.setState( this.getInitialState() );
+	};
+
+	getInitialState = () => {
+		const { isWPForTeamsSite } = this.props;
 
 		const defaultRole = isWPForTeamsSite ? 'editor' : 'follower';
 
@@ -109,7 +112,7 @@ class InvitePeople extends Component {
 		const errorKeys = Object.keys( errors );
 
 		if ( success.length && ! errorKeys.length ) {
-			this.setState( this.resetState() );
+			this.resetState();
 			this.props.recordTracksEvent( 'calypso_invite_people_form_refresh_initial' );
 			debug( 'Submit successful. Resetting form.' );
 			return;
@@ -530,7 +533,7 @@ class InvitePeople extends Component {
 			( accepted ) => {
 				if ( accepted ) {
 					this.props.disableInviteLinks( this.props.siteId );
-					this.setState( this.resetState() );
+					this.resetState();
 				}
 			},
 			this.props.translate( 'Disable' )
@@ -692,7 +695,7 @@ class InvitePeople extends Component {
 		return inviteLinkForm;
 	};
 
-	state = this.resetState();
+	state = this.getInitialState();
 
 	render() {
 		const { site, translate, isWPForTeamsSite, isJetpack } = this.props;

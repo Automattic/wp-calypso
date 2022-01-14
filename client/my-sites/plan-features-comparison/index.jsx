@@ -295,6 +295,7 @@ export class PlanFeaturesComparison extends Component {
 		} );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -435,6 +436,11 @@ export default connect(
 					);
 				}
 
+				const rawPriceAnnual =
+					null !== discountPrice
+						? discountPrice * 12
+						: getPlanRawPrice( state, planProductId, false );
+
 				return {
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
@@ -451,7 +457,7 @@ export default connect(
 					hideMonthly: false,
 					primaryUpgrade: popular || plans.length === 1,
 					rawPrice,
-					rawPriceAnnual: getPlanRawPrice( state, planProductId, false ),
+					rawPriceAnnual,
 					rawPriceForMonthlyPlan,
 					relatedMonthlyPlan,
 					annualPricePerMonth,

@@ -8,7 +8,6 @@ import {
 	CheckoutStepBody,
 	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	getDefaultPaymentMethodStep,
-	useEvents,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
@@ -31,6 +30,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -46,7 +46,8 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
-import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
+import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
+import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
@@ -123,17 +124,19 @@ export default function WPCheckout( {
 	isLoggedOutCart,
 	infoMessage,
 	createUserAndSiteBeforeTransaction,
+	onPageLoadError,
 }: {
 	removeProductFromCart: RemoveProductFromCart;
 	changePlanLength: OnChangeItemVariant;
 	siteId: number | undefined;
 	siteUrl: string | undefined;
 	countriesList: CountryListItem[];
-	addItemToCart: ( item: Partial< RequestCartProduct > ) => void;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	showErrorMessageBriefly: ( error: string ) => void;
 	isLoggedOutCart: boolean;
 	infoMessage?: JSX.Element;
 	createUserAndSiteBeforeTransaction: boolean;
+	onPageLoadError: CheckoutPageErrorCallback;
 } ): JSX.Element {
 	const cartKey = useCartKey();
 	const {
@@ -146,7 +149,6 @@ export default function WPCheckout( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
-	const onEvent = useEvents();
 	const reduxDispatch = useReduxDispatch();
 
 	const areThereDomainProductsInCart =
@@ -238,26 +240,18 @@ export default function WPCheckout( {
 
 	const onReviewError = useCallback(
 		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId: 'review',
-				},
+			onPageLoadError( 'step_load', String( error ), {
+				step_id: 'review',
 			} ),
-		[ onEvent ]
+		[ onPageLoadError ]
 	);
 
 	const onSummaryError = useCallback(
 		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId: 'summary',
-				},
+			onPageLoadError( 'step_load', String( error ), {
+				step_id: 'summary',
 			} ),
-		[ onEvent ]
+		[ onPageLoadError ]
 	);
 
 	const validatingButtonText = isCartPendingUpdate
@@ -309,7 +303,15 @@ export default function WPCheckout( {
 					isStepActive={ isOrderReviewActive }
 					isStepComplete={ true }
 					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
-					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
+					goToNextStep={ () => {
+						setIsOrderReviewActive( ! isOrderReviewActive );
+						reduxDispatch(
+							recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+								step: 0,
+								step_name: 'review-order-step',
+							} )
+						);
+					} }
 					activeStepContent={
 						<WPCheckoutOrderReview
 							removeProductFromCart={ removeProductFromCart }
@@ -349,16 +351,24 @@ export default function WPCheckout( {
 								return validateContactDetails(
 									contactInfo,
 									isLoggedOutCart,
-									activePaymentMethod,
 									responseCart,
-									onEvent,
 									showErrorMessageBriefly,
 									applyDomainContactValidationResults,
 									clearDomainContactErrorMessages,
 									reduxDispatch,
 									translate,
 									true
-								);
+								).then( ( response ) => {
+									if ( response ) {
+										reduxDispatch(
+											recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+												step: 1,
+												step_name: 'contact-form',
+											} )
+										);
+									}
+									return response;
+								} );
 							} }
 							activeStepContent={
 								<WPContactForm
@@ -370,9 +380,7 @@ export default function WPCheckout( {
 										validateContactDetails(
 											contactInfo,
 											isLoggedOutCart,
-											activePaymentMethod,
 											responseCart,
-											onEvent,
 											showErrorMessageBriefly,
 											applyDomainContactValidationResults,
 											clearDomainContactErrorMessages,

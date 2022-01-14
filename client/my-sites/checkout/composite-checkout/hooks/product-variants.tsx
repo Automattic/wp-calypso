@@ -164,8 +164,8 @@ function getLowestPriceTimesVariantInterval(
 	}
 
 	allVariants.sort( ( variantA, variantB ) => {
-		const variantAInterval = getTermDuration( variantA.plan.term );
-		const variantBInterval = getTermDuration( variantB.plan.term );
+		const variantAInterval = getTermDuration( variantA.plan.term ) ?? 0;
+		const variantBInterval = getTermDuration( variantB.plan.term ) ?? 0;
 		return variantAInterval - variantBInterval;
 	} );
 	const lowestVariant = allVariants[ 0 ];
@@ -187,7 +187,7 @@ function isVariantAllowed(
 	if ( ! activePlanRenewalInterval || activePlanRenewalInterval < 1 ) {
 		return true;
 	}
-	const variantRenewalInterval = getTermDuration( variant.plan.term );
+	const variantRenewalInterval = getTermDuration( variant.plan.term ) ?? 0;
 	if ( activePlanRenewalInterval <= variantRenewalInterval ) {
 		return true;
 	}
@@ -245,11 +245,11 @@ function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAn
 }
 
 function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	const chosenPlan = getPlan( productSlug )
-		? getPlan( productSlug )
-		: getProductFromSlug( productSlug );
+	const chosenPlan = getPlan( productSlug ?? '' )
+		? getPlan( productSlug ?? '' )
+		: getProductFromSlug( productSlug ?? '' );
 
-	if ( ! chosenPlan ) {
+	if ( ! chosenPlan || typeof chosenPlan === 'string' ) {
 		return [];
 	}
 

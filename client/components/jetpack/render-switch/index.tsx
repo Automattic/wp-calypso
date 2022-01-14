@@ -1,9 +1,9 @@
-import { ReactComponent, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 /**
- * @typedef RenderSwitchArgs
+ * @typedef RenderSwitchProps
  */
-type RenderSwitchArgs = {
+type RenderSwitchProps = {
 	loadingCondition?: () => boolean;
 	renderCondition: () => boolean;
 	queryComponent?: ReactNode;
@@ -16,7 +16,7 @@ type RenderSwitchArgs = {
  * Renders one option or another based on a boolean condition,
  * optionally after a query has completed.
  *
- * @param {RenderSwitchArgs} props - The component properties.
+ * @param {RenderSwitchProps} props - The component properties.
  * @param {Function}  props.loadingCondition - Returns true if more information is required to make a render decision; false, otherwise.
  * @param {Function}  props.renderCondition - Returns true if trueComponent should be rendered, and false if falseComponent should be rendered.
  * @param {ReactNode} [props.queryComponent] - The component responsible for loading data to make a render decision.
@@ -24,14 +24,14 @@ type RenderSwitchArgs = {
  * @param {ReactNode} [props.trueComponent] - The component to render when the renderCondition evaluates to true.
  * @param {ReactNode} [props.falseComponent] - The component to render when the renderCondition evaluates to false.
  */
-const RenderSwitch: ReactComponent = ( {
+const RenderSwitch = ( {
 	loadingCondition = () => false,
 	renderCondition,
 	queryComponent,
 	loadingComponent,
 	trueComponent,
 	falseComponent,
-}: RenderSwitchArgs ) => {
+}: RenderSwitchProps ): JSX.Element | null => {
 	if ( loadingCondition() ) {
 		return (
 			<>
@@ -41,7 +41,15 @@ const RenderSwitch: ReactComponent = ( {
 		);
 	}
 
-	return ( renderCondition() ? trueComponent : falseComponent ) || null;
+	const result = renderCondition();
+	if ( result && trueComponent ) {
+		return <>{ trueComponent }</>;
+	}
+	if ( ! result && falseComponent ) {
+		return <>{ falseComponent }</>;
+	}
+
+	return null;
 };
 
 export default RenderSwitch;

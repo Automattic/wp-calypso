@@ -1,8 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import SidebarItem from 'calypso/layout/sidebar/item';
-import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { settingsPath, purchasesPath, purchasesBasePath } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -27,6 +28,10 @@ export default ( { path } ) => {
 		canCurrentUser( state, siteId, 'manage_options' )
 	);
 
+	const shouldShowPurchases =
+		isSectionNameEnabled( 'site-purchases' ) &&
+		useSelector( ( state ) => canCurrentUser( state, siteId, 'own_site' ) );
+
 	return (
 		<>
 			<JetpackSidebarMenuItems
@@ -47,6 +52,17 @@ export default ( { path } ) => {
 					link={ settingsPath( siteSlug ) }
 					onNavigate={ onNavigate }
 					selected={ itemLinkMatches( [ settingsPath( siteSlug ) ], path ) }
+				/>
+			) }
+			{ shouldShowPurchases && (
+				<SidebarItem
+					customIcon={ <JetpackIcons icon="money" /> }
+					label={ translate( 'Purchases', {
+						comment: 'Jetpack sidebar navigation item',
+					} ) }
+					link={ purchasesPath( siteSlug ) }
+					onNavigate={ onNavigate }
+					selected={ itemLinkMatches( [ purchasesBasePath() ], path ) }
 				/>
 			) }
 		</>

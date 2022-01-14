@@ -10,6 +10,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
+	arePremiumThemesEnabled,
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
@@ -190,9 +191,20 @@ function bindGetPremiumThemePrice( state, siteId ) {
 export const ConnectedThemesSelection = connect(
 	(
 		state,
-		{ filter, page, search, vertical, siteId, source, isLoading: isCustomizedThemeListLoading }
+		{
+			filter,
+			page,
+			search,
+			tier,
+			vertical,
+			siteId,
+			source,
+			isLoading: isCustomizedThemeListLoading,
+		}
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
+		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
+
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {
 			sourceSiteId = source;
@@ -208,7 +220,7 @@ export const ConnectedThemesSelection = connect(
 		const query = {
 			search,
 			page,
-			tier: '',
+			tier: premiumThemesEnabled ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number,
 		};
@@ -246,6 +258,7 @@ class ThemesSelectionWithPage extends React.Component {
 		page: 1,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			nextProps.search !== this.props.search ||

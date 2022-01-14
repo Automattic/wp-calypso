@@ -98,6 +98,9 @@ const analyticsPageTitleByType = {
  *
  * @todo Should we dynamically fetch partners and presets?
  * @todo Should we make a coupon validation request? If the coupon is invalid, we leave the user on the plans page.
+ * @todo Accept partner coupon as a query parameter during the initial auth request (client/jetpack-connect/schema.js).
+ *       This should allow us to have more flexible return URLs as well.
+ * @todo Fetch the partner coupon with a selector instead (e.g. like: getPartnerIdFromQuery()).
  */
 export function partnerCouponRedirects( context, next ) {
 	const queryArgs = new URLSearchParams( context?.query?.redirect );
@@ -472,10 +475,7 @@ export function redirectToSiteLessCheckout( context, next ) {
 
 	const urlQueryArgs = context.query;
 
-	if (
-		config.isEnabled( 'jetpack/siteless-checkout' ) &&
-		! JETPACK_SEARCH_PRODUCTS.includes( planSlug )
-	) {
+	if ( ! JETPACK_SEARCH_PRODUCTS.includes( planSlug ) ) {
 		if ( ! urlQueryArgs?.checkoutBackUrl ) {
 			urlQueryArgs.checkoutBackUrl = 'https://jetpack.com';
 		}

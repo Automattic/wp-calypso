@@ -1,7 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { isATEnabled } from 'calypso/lib/automated-transfer';
 import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'calypso/state/happychat/constants';
-import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
 /**
@@ -12,24 +11,16 @@ import { getSectionName } from 'calypso/state/ui/selectors';
  * @returns {Array} of groups for site Id
  */
 export default ( state, siteId ) => {
-	const groups = [];
-
 	// For Jetpack Connect we need to direct chat users to the JPOP group, to account for cases
 	// when the user does not have a site yet, or their primary site is not a Jetpack site.
-	if ( isEnabled( 'jetpack/happychat' ) && getSectionName( state ) === 'jetpack-connect' ) {
-		groups.push( HAPPYCHAT_GROUP_JPOP );
-		return groups;
+	if ( getSectionName( state ) === 'jetpack-connect' ) {
+		return [ HAPPYCHAT_GROUP_JPOP ];
 	}
 
-	const siteDetails = getSite( state, siteId );
-
-	if ( isATEnabled( siteDetails ) ) {
-		// AT sites should go to WP.com even though they are jetpack also
-		groups.push( HAPPYCHAT_GROUP_WPCOM );
-	} else if ( isJetpackSite( state, siteId ) ) {
-		groups.push( HAPPYCHAT_GROUP_JPOP );
-	} else {
-		groups.push( HAPPYCHAT_GROUP_WPCOM );
+	// AT sites should go to WP.com even though they are jetpack also
+	if ( isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ) ) {
+		return [ HAPPYCHAT_GROUP_JPOP ];
 	}
-	return groups;
+
+	return [ HAPPYCHAT_GROUP_WPCOM ];
 };

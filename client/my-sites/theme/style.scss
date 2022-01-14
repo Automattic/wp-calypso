@@ -500,6 +500,12 @@
 	.theme__retired-theme-message-details-title {
 		font-size: $font-title-small;
 	}
+
+	.inline-support-link .gridicon {
+		height: 18px;
+		width: 18px;
+		color: inherit;
+	}
 }
 
 .theme__sheet-footer-line {

@@ -15,9 +15,9 @@ export default function getPlanFeatures(
 	translate: ReturnType< typeof useTranslate >,
 	hasDomainsInCart: boolean,
 	hasRenewalInCart: boolean,
-	planHasDomainCredit: boolean
+	nextDomainIsFree: boolean
 ): string[] {
-	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && planHasDomainCredit;
+	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && nextDomainIsFree;
 	const productSlug = plan?.product_slug;
 
 	if ( ! productSlug ) {
@@ -54,6 +54,9 @@ export default function getPlanFeatures(
 		return [
 			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
 			isMonthlyPlan ? annualPlanOnly( liveChatSupport ) : liveChatSupport,
+			isEnabled( 'themes/premium' )
+				? String( translate( 'Unlimited access to our library of Premium Themes' ) )
+				: null,
 			isEnabled( 'earn/pay-with-paypal' )
 				? String( translate( 'Subscriber-only content and Pay with PayPal buttons' ) )
 				: String( translate( 'Subscriber-only content and payment buttons' ) ),

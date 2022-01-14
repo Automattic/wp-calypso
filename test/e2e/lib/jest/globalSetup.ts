@@ -1,65 +1,58 @@
-import { mkdir } from 'fs/promises';
 import path from 'path';
-import config from 'config';
+// We need to import directly because otherwise Jest throws the "Do not import
+// `@jest/globals` outside of the Jest test environment" error. This happens
+// because the index file of the calypso-e2e package imports/exports some
+// modules that use the globals package, e.g. the lib/jest-conditionals.
+import { getLaunchConfiguration } from '@automattic/calypso-e2e/dist/esm/src/browser-helper';
+import { TestAccount } from '@automattic/calypso-e2e/dist/esm/src/lib/test-account';
 import { chromium } from 'playwright';
 
-// Save cookies for defaultUser.
-export default async (): Promise< void > => {
-	if ( process.env.SAVE_AUTH_COOKIES !== 'true' ) {
-		return;
+const DEFAULT_COOKIES_PATH = path.join( __dirname, '../../', 'cookies' );
+
+export default async function globalSetup(): Promise< void > {
+	const { SAVE_AUTH_COOKIES, COOKIES_PATH } = process.env;
+
+	if ( SAVE_AUTH_COOKIES && SAVE_AUTH_COOKIES !== 'false' ) {
+		if ( ! COOKIES_PATH ) {
+			process.env.COOKIES_PATH = DEFAULT_COOKIES_PATH;
+		}
+
+		/*
+		 * Instead of just passing 'true' with the SAVE_AUTH_COOKIES var, you can
+		 * also use it to define account(s) you want to pre-authenticate, e.g.:
+		 *
+		 * > SAVE_AUTH_COOKIES=p2User,i18nUser
+		 *
+		 * Otherwise, the default list of common test accounts will be used.
+		 */
+		const commonTestAccounts = [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ];
+		const testAccounts =
+			SAVE_AUTH_COOKIES !== 'true' ? SAVE_AUTH_COOKIES.split( ',' ) : commonTestAccounts;
+
+		if ( testAccounts.length === 0 ) {
+			throw new Error( 'Invalid SAVE_AUTH_COOKIES value' );
+		}
+
+		const browser = await chromium.launch();
+		const { userAgent } = getLaunchConfiguration( browser.version() );
+
+		await Promise.all(
+			testAccounts.map( async ( accountName ) => {
+				const testAccount = new TestAccount( accountName );
+				if ( await testAccount.hasFreshAuthCookies() ) {
+					return;
+				}
+
+				const context = await browser.newContext( { userAgent } );
+				const page = await context.newPage();
+
+				await testAccount.logInViaLoginPage( page );
+				await testAccount.saveAuthCookies( context );
+
+				await context.close();
+			} )
+		);
+
+		await browser.close();
 	}
-
-	// If configuration file is not found, log a message and exit this setup.
-	if ( config.util.equalsDeep( config.util.toObject(), {} ) ) {
-		console.error( 'No decrypted configuration file was found.' );
-		return;
-	}
-
-	const browser = await chromium.launch();
-	const calypsoBaseURL = config.get( 'calypsoBaseURL' );
-
-	// Create a directory to store the generated cookie file.
-	// The cookie file will be stored in the `test/e2e/cookies` directory.
-	const cookieBasePath = path.join( __dirname, '../../', 'cookies' );
-	await mkdir( cookieBasePath, { recursive: true } );
-	// This is important!
-	// Jest does not permit values created in globalSetup/globalTeardown to be read
-	// by the test suites themselves. See https://jestjs.io/docs/configuration#globalsetup-string.
-	// As such the only way to communicate the cookie path to the test suites is to
-	// set this environment variable and have the `@automattic/calypso-e2e` module check for
-	// its presence when running each test file.
-	process.env.COOKIES_PATH = cookieBasePath;
-
-	const userList = [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ];
-
-	for await ( const user of userList ) {
-		const [ username, password ] = config.get( 'testAccounts' )[ user ];
-
-		// This is important!
-		// If the e2e test user agent string is not set, log ins will fail to calypso.live
-		// and wpcalypso.wordpress.com environments.
-		const browserContext = await browser.newContext( {
-			userAgent: `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ browser.version() } Safari/537.36`,
-		} );
-
-		const page = await browserContext.newPage();
-		await page.goto( `${ calypsoBaseURL }/log-in` );
-		await page.fill( '#usernameOrEmail', username );
-		await page.keyboard.press( 'Enter' );
-		await page.fill( '#password', password );
-
-		// Wait for the home dashboard to load.
-		await Promise.all( [
-			page.waitForURL( `${ calypsoBaseURL }/home/**`, { waitUntil: 'load' } ),
-			page.click( 'button:has-text("Log In")' ),
-		] );
-
-		// Save signed-in state.
-		const cookiePath = path.join( cookieBasePath, `${ user }.json` );
-		await page.context().storageState( { path: cookiePath } );
-	}
-
-	// Close context.
-	await browser.close();
-	return;
-};
+}

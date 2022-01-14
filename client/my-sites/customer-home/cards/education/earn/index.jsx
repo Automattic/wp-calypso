@@ -24,6 +24,8 @@ const EducationEarn = ( { siteSlug } ) => {
 			] }
 			illustration={ earnCardPrompt }
 			cardName={ EDUCATION_EARN }
+			width="201"
+			height="114"
 		/>
 	);
 };

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
@@ -32,7 +33,6 @@ import {
 	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
-	FEATURE_BUSINESS_ONBOARDING,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
@@ -99,6 +99,7 @@ import {
 	FEATURE_PREMIUM_CONTENT_BLOCK,
 	FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
 	FEATURE_PREMIUM_SUPPORT,
+	FEATURE_PREMIUM_THEMES,
 	FEATURE_PRODUCT_BACKUP_DAILY_V2,
 	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 	FEATURE_PRODUCT_SCAN_DAILY_V2,
@@ -239,9 +240,13 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ALL_PREMIUM_FEATURES,
 		getTitle: () => i18n.translate( 'All Premium features' ),
 		getDescription: () => {
-			return i18n.translate(
-				'Including advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
-			);
+			return isEnabled( 'themes/premium' )
+				? i18n.translate(
+						'Including premium themes, advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+				  )
+				: i18n.translate(
+						'Including advanced design and monetization options, Pay with PayPal buttons, and a custom domain name for one year.'
+				  );
 		},
 	},
 
@@ -292,6 +297,15 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'Site hosting is included with your plan, eliminating additional cost and technical hassle.'
+			),
+	},
+
+	[ FEATURE_PREMIUM_THEMES ]: {
+		getSlug: () => FEATURE_PREMIUM_THEMES,
+		getTitle: () => i18n.translate( 'Premium themes' ),
+		getDescription: () =>
+			i18n.translate(
+				'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
 			),
 	},
 
@@ -588,15 +602,6 @@ export const FEATURES_LIST = {
 				"Keep the focus on your site's brand by removing the WordPress.com footer branding."
 			),
 		getStoreSlug: () => 'no-adverts/no-adverts.php',
-	},
-
-	[ FEATURE_BUSINESS_ONBOARDING ]: {
-		getSlug: () => FEATURE_BUSINESS_ONBOARDING,
-		getTitle: () => i18n.translate( 'Get personalized help' ),
-		getDescription: () =>
-			i18n.translate(
-				"Meet one-on-one with a WordPress.com expert who'll help you set up your site exactly as you need it."
-			),
 	},
 
 	[ FEATURE_ADVANCED_SEO ]: {

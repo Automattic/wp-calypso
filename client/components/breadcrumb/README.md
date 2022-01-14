@@ -21,3 +21,4 @@ function render() {
 ## Props
 
 - `items` (`{ label: string; href?: string }[]`) - The Navigations items to be shown
+- `compact` (`boolean`) - Displays only the previous item URL reading "Back" (optional)

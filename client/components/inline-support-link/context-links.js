@@ -3,6 +3,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
 		post_id: 111349,
 	},
+	backup_payment_methods: {
+		link: 'https://wordpress.com/support/payment/#backup-payment-methods',
+		post_id: 76237,
+	},
 	billing: {
 		link: 'https://wordpress.com/support/billing-history/',
 		post_id: 40792,
@@ -97,6 +101,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/payment/',
 		post_id: 76237,
 	},
+	payment_methods_manage: {
+		link: 'https://wordpress.com/support/payment/#manage-payment-methods',
+		post_id: 76237,
+	},
 	payment_method_all_subscriptions: {
 		link: 'https://wordpress.com/support/payment/#using-a-payment-method-for-all-subscriptions',
 		post_id: 76237,
@@ -148,6 +156,10 @@ const contextLinks = {
 	themes: {
 		link: 'https://wordpress.com/support/themes/',
 		post_id: 2278,
+	},
+	'themes-retired': {
+		link: 'https://wordpress.com/support/themes/retired-themes/',
+		post_id: 189792,
 	},
 	'themes-switch': {
 		link: 'https://wordpress.com/support/changing-themes/',

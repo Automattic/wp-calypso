@@ -2,7 +2,8 @@ import { Icon, arrowRight } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { times } from 'lodash';
-import { Children, useState, useEffect, useRef, useCallback } from 'react';
+import { Children, useState, useEffect } from 'react';
+import Swipeable from '../swipeable';
 
 import './style.scss';
 
@@ -83,61 +84,37 @@ export const DotPager = ( {
 	...props
 } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
-	const [ pagesStyle, setPagesStyle ] = useState();
-	const pagesRef = useRef();
+
 	const numPages = Children.count( children );
-	const updateLayout = useCallback( () => {
-		if ( ! hasDynamicHeight ) {
-			return;
-		}
-
-		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
-		setPagesStyle( targetHeight ? { height: targetHeight } : undefined );
-	}, [ hasDynamicHeight, setPagesStyle ] );
-
-	useEffect( () => {
-		updateLayout();
-	}, [ currentPage, updateLayout ] );
-
-	useEffect( () => {
-		window.addEventListener( 'resize', updateLayout );
-
-		return () => {
-			window.removeEventListener( 'resize', updateLayout );
-		};
-	}, [ updateLayout ] );
 
 	useEffect( () => {
 		if ( currentPage >= numPages ) {
 			setCurrentPage( numPages - 1 );
 		}
-	}, [ numPages ] );
+	}, [ numPages, currentPage ] );
+
+	const handleSelectPage = ( index ) => {
+		setCurrentPage( index );
+		onPageSelected?.( index );
+	};
 
 	return (
-		<div className={ className } { ...props }>
+		<div className={ classnames( 'dot-pager', className ) } { ...props }>
 			<Controls
 				showControlLabels={ showControlLabels }
 				currentPage={ currentPage }
 				numberOfPages={ numPages }
-				setCurrentPage={ ( index ) => {
-					onPageSelected && onPageSelected( index );
-					setCurrentPage( index );
-				} }
+				setCurrentPage={ handleSelectPage }
 			/>
-			<div className="dot-pager__pages" ref={ pagesRef } style={ pagesStyle }>
-				{ Children.map( children, ( child, index ) => (
-					<div
-						className={ classnames( 'dot-pager__page', {
-							'is-current': index === currentPage,
-							'is-prev': index < currentPage,
-							'is-next': index > currentPage,
-						} ) }
-						key={ `page-${ index }` }
-					>
-						{ child }
-					</div>
-				) ) }
-			</div>
+			<Swipeable
+				hasDynamicHeight={ hasDynamicHeight }
+				onPageSelect={ handleSelectPage }
+				currentPage={ currentPage }
+				pageClassName="dot-pager__page"
+				containerClassName="dot-pager__pages"
+			>
+				{ children }
+			</Swipeable>
 		</div>
 	);
 };

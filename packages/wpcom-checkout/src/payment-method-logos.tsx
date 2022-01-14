@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 export const PaymentMethodLogos = styled.span`
 	text-align: right;
 	transform: translateY( 3px );
-
 	.rtl & {
 		text-align: left;
 	}
@@ -40,9 +39,9 @@ export function PaymentLogo( {
 			break;
 		case 'mastercard':
 			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
+				<BrandLogo isSummary={ isSummary }>
 					<MastercardLogo />
-				</SmallBrandLogo>
+				</BrandLogo>
 			);
 			break;
 		case 'amex':
@@ -54,23 +53,23 @@ export function PaymentLogo( {
 			break;
 		case 'jcb':
 			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
+				<BrandLogo isSummary={ isSummary }>
 					<JcbLogo />
-				</SmallBrandLogo>
+				</BrandLogo>
 			);
 			break;
 		case 'diners':
 			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
+				<BrandLogo isSummary={ isSummary }>
 					<DinersLogo />
-				</SmallBrandLogo>
+				</BrandLogo>
 			);
 			break;
 		case 'unionpay':
 			cardFieldIcon = (
-				<SmallBrandLogo isSummary={ isSummary }>
+				<BrandLogo isSummary={ isSummary }>
 					<UnionpayLogo />
-				</SmallBrandLogo>
+				</BrandLogo>
 			);
 			break;
 		case 'discover':
@@ -111,14 +110,6 @@ const LockIconGraphic = styled( LockIcon )`
 	.rtl & {
 		right: auto;
 		left: 10px;
-	}
-`;
-
-const SmallBrandLogo = styled( BrandLogo )`
-	transform: translate( ${ ( props ) => ( props.isSummary ? '-10px, 4px' : '10px, 0' ) } );
-
-	.rtl & {
-		transform: translate( ${ ( props ) => ( props.isSummary ? '10px, 4px' : '-10px, 0' ) } );
 	}
 `;
 

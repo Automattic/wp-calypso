@@ -77,6 +77,7 @@ class PostSelectorPosts extends Component {
 		requestedPages: [ 1 ],
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
@@ -89,6 +90,7 @@ class PostSelectorPosts extends Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
 			! isEqual( this.props.queryWithVersion, nextProps.queryWithVersion ) ||

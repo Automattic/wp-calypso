@@ -3,17 +3,20 @@ import type {
 	ResponseCart,
 	ResponseCartMessages,
 	ResponseCartMessage,
+	ClearCartMessages,
 } from '@automattic/shopping-cart';
 
 export type ShowMessages = ( messages: ResponseCartMessage[] ) => void;
 
 export default function useDisplayCartMessages( {
 	cart,
+	clearMessages,
 	isLoadingCart,
 	showErrorMessages,
 	showSuccessMessages,
 }: {
 	cart: ResponseCart;
+	clearMessages: ClearCartMessages;
 	isLoadingCart: boolean;
 	showSuccessMessages: ShowMessages;
 	showErrorMessages: ShowMessages;
@@ -23,23 +26,26 @@ export default function useDisplayCartMessages( {
 	useEffect( () => {
 		displayCartMessages( {
 			cart,
+			clearMessages,
 			isLoadingCart,
 			previousCart: previousCart.current,
 			showErrorMessages,
 			showSuccessMessages,
 		} );
 		previousCart.current = cart;
-	}, [ cart, isLoadingCart, showErrorMessages, showSuccessMessages ] );
+	}, [ cart, clearMessages, isLoadingCart, showErrorMessages, showSuccessMessages ] );
 }
 
 function displayCartMessages( {
 	cart,
+	clearMessages,
 	isLoadingCart,
 	previousCart,
 	showErrorMessages,
 	showSuccessMessages,
 }: {
 	cart: ResponseCart;
+	clearMessages: ClearCartMessages;
 	isLoadingCart: boolean;
 	previousCart: ResponseCart | null;
 	showErrorMessages: ShowMessages;
@@ -50,20 +56,26 @@ function displayCartMessages( {
 		return;
 	}
 	const messages = getNewMessages( previousCart, newCart );
+	const areThereMessages = Boolean( messages.errors?.length || messages.success?.length );
+	if ( ! areThereMessages ) {
+		return;
+	}
 
 	const errorMessageCount = messages.errors?.length ?? 0;
 	const errorMessages = messages.errors;
 	if ( errorMessages && errorMessageCount > 0 ) {
 		showErrorMessages( errorMessages );
-		return;
 	}
 
 	const successMessageCount = messages.success?.length ?? 0;
 	const successMessages = messages.success;
 	if ( successMessages && successMessageCount > 0 ) {
 		showSuccessMessages( successMessages );
-		return;
 	}
+
+	// Clear messages from the cart so that other components that might call this
+	// function don't cause a message to be displayed more than once.
+	clearMessages();
 }
 
 // Compare two different cart objects and get the messages of newest one

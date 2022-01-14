@@ -52,18 +52,22 @@ export default function SignupSitePreviewScreenshot( {
 			{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */ }
 			<img
 				style={ isLoading ? { display: 'none' } : undefined }
-				src={ photon( screenshotUrl, { width } ) }
+				src={ photon( screenshotUrl, { width } ) ?? undefined }
 				srcSet={ photon( screenshotUrl, { width, zoom } ) + ` ${ zoom }x` }
 				onClick={ () => onPreviewClick( defaultViewportDevice ) }
 				onLoad={ onLoad }
 				alt={
 					isPhone
-						? translate( 'Preview of site with phone layout', {
-								comment: 'alt text of site preview',
-						  } )
-						: translate( 'Preview of site with desktop layout', {
-								comment: 'alt text of site preview',
-						  } )
+						? String(
+								translate( 'Preview of site with phone layout', {
+									comment: 'alt text of site preview',
+								} )
+						  )
+						: String(
+								translate( 'Preview of site with desktop layout', {
+									comment: 'alt text of site preview',
+								} )
+						  )
 				}
 			/>
 		</div>

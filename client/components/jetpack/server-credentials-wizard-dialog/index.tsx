@@ -1,12 +1,14 @@
 import { Dialog, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-import * as React from 'react';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials-form';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { TranslateResult } from 'i18n-calypso';
+import type { ReactElement, ReactNode } from 'react';
 
 import './style.scss';
 
@@ -15,10 +17,10 @@ interface Props {
 	showDialog: boolean;
 	skipServerCredentials?: boolean;
 	isSingular?: boolean;
-	children: React.ReactNode;
-	buttons?: React.ReactNode;
+	children: ReactNode;
+	buttons?: ReactElement[];
 	baseDialogClassName?: string;
-	title: i18nCalypso.TranslateResult;
+	title: TranslateResult;
 	titleClassName?: string;
 }
 
@@ -39,7 +41,7 @@ const ServerCredentialsWizardDialog = ( {
 		return ! creds || Object.keys( creds ).length === 0;
 	} );
 
-	const showServerCredentialsForm = React.useMemo(
+	const showServerCredentialsForm = useMemo(
 		() => userNeedsCredentials && ! skipServerCredentials,
 		[ skipServerCredentials, userNeedsCredentials ]
 	);
@@ -96,7 +98,6 @@ const ServerCredentialsWizardDialog = ( {
 						{ translate( 'Need help? Find your server credentials' ) }
 					</ExternalLink>
 					<ServerCredentialsForm
-						className="server-credentials-wizard-dialog__form"
 						onCancel={ onCloseDialog }
 						role="main"
 						siteId={ siteId }

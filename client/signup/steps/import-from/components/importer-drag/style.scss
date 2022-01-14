@@ -1,0 +1,23 @@
+.importer-drag {
+	.social-logo {
+		border-radius: 4px;
+	}
+
+	.importer-header {
+		margin-bottom: 40px;
+		padding-bottom: 20px;
+	}
+
+	.importer-header__service-info {
+		color: var( --studio-gray-40 );
+
+		.importer-header__service-title {
+			color: var( --studio-gray-100 );
+		}
+
+		p {
+			font-size: $font-body-small;
+			margin: 0;
+		}
+	}
+}

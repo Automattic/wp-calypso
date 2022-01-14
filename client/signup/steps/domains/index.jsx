@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { parse, stringify } from 'qs';
+import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -444,15 +444,32 @@ class DomainsStep extends Component {
 		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
+	shouldHideDomainExplainer = () => {
+		const { flowName } = this.props;
+		return [
+			'free',
+			'personal',
+			'personal-monthly',
+			'premium',
+			'premium-monthly',
+			'business',
+			'business-monthly',
+			'ecommerce',
+			'ecommerce-monthly',
+		].includes( flowName );
+	};
+
 	getSideContent = () => {
 		return (
 			<div className="domains__domain-side-content-container">
-				<div className="domains__domain-side-content">
-					<ReskinSideExplainer
-						onClick={ this.handleDomainExplainerClick }
-						type={ 'free-domain-explainer' }
-					/>
-				</div>
+				{ ! this.shouldHideDomainExplainer() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={ 'free-domain-explainer' }
+						/>
+					</div>
+				) }
 				<div className="domains__domain-side-content">
 					<ReskinSideExplainer
 						onClick={ this.handleUseYourDomainClick }
@@ -703,12 +720,7 @@ class DomainsStep extends Component {
 
 	getPreviousStepUrl() {
 		if ( 'use-your-domain' !== this.props.stepSectionName ) return null;
-		const basePath = getStepUrl(
-			this.props.flowName,
-			this.props.stepName,
-			'use-your-domain',
-			this.getLocale()
-		);
+
 		const { step, ...queryValues } = parse( window.location.search.replace( '?', '' ) );
 		const currentStep = step ?? this.state?.currentStep;
 
@@ -727,9 +739,15 @@ class DomainsStep extends Component {
 				mode = inputMode.transferOrConnect;
 				break;
 		}
-		return (
-			`${ basePath }?step=${ mode }` +
-			( Object.keys( queryValues ).length ? `&${ stringify( { ...queryValues } ) }` : '' )
+		return getStepUrl(
+			this.props.flowName,
+			this.props.stepName,
+			'use-your-domain',
+			this.getLocale(),
+			{
+				step: mode,
+				...queryValues,
+			}
 		);
 	}
 

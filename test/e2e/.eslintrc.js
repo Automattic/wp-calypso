@@ -49,6 +49,12 @@ module.exports = {
 				'jest/no-export': 'off',
 			},
 		},
+		{
+			files: [ 'docs/tests_local.md' ],
+			rules: {
+				'lint-no-multiple-toplevel-headings': 'off',
+			},
+		},
 	],
 	rules: {
 		...nodeConfig.rules,

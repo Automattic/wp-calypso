@@ -2,12 +2,13 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import i18nCalypso, { localize } from 'i18n-calypso';
+import i18n, { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
+import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
@@ -29,7 +30,7 @@ import {
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
-
+import OwnerInfo from './owner-info';
 import 'calypso/me/purchases/style.scss';
 
 const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
@@ -113,7 +114,7 @@ class PurchaseItem extends Component {
 			if (
 				isRenewing( purchase ) &&
 				( locale === 'en' ||
-					i18nCalypso.hasTranslation(
+					i18n.hasTranslation(
 						'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s'
 					) )
 			) {
@@ -133,7 +134,7 @@ class PurchaseItem extends Component {
 
 			if (
 				locale === 'en' ||
-				i18nCalypso.hasTranslation( 'Free trial ends on {{span}}%(date)s{{/span}}' )
+				i18n.hasTranslation( 'Free trial ends on {{span}}%(date)s{{/span}}' )
 			) {
 				const expiryClass =
 					expiry < moment().add( 7, 'days' )
@@ -387,8 +388,8 @@ class PurchaseItem extends Component {
 		return <SiteIcon site={ site } size={ 36 } />;
 	};
 
-	renderPurhaseItemContent = () => {
-		const { purchase, showSite } = this.props;
+	renderPurchaseItemContent = () => {
+		const { purchase, showSite, isBackupMethodAvailable } = this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
@@ -397,7 +398,12 @@ class PurchaseItem extends Component {
 				) }
 
 				<div className="purchase-item__information purchases-layout__information">
-					<div className="purchase-item__title">{ getDisplayName( purchase ) }</div>
+					<div className="purchase-item__title">
+						{ getDisplayName( purchase ) }
+						&nbsp;
+						<OwnerInfo purchaseId={ purchase?.id } />
+					</div>
+
 					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>
 				</div>
 
@@ -405,6 +411,7 @@ class PurchaseItem extends Component {
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
 					{ this.getPaymentMethod() }
+					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
 				</div>
 			</div>
 		);
@@ -456,10 +463,27 @@ class PurchaseItem extends Component {
 				href={ href }
 				onClick={ onClick }
 			>
-				{ this.renderPurhaseItemContent() }
+				{ this.renderPurchaseItemContent() }
 			</CompactCard>
 		);
 	}
+}
+
+function BackupPaymentMethodNotice() {
+	const translate = useTranslate();
+	const noticeText = translate(
+		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
+		{
+			components: {
+				link: <a href="/me/purchases/payment-methods" />,
+			},
+		}
+	);
+	return (
+		<span className="purchase-item__backup-payment-method-notice">
+			<InfoPopover position="bottom">{ noticeText }</InfoPopover>
+		</span>
+	);
 }
 
 PurchaseItem.propTypes = {
@@ -471,6 +495,7 @@ PurchaseItem.propTypes = {
 	purchase: PropTypes.object,
 	showSite: PropTypes.bool,
 	slug: PropTypes.string,
+	isBackupMethodAvailable: PropTypes.bool,
 };
 
 export default localize( withLocalizedMoment( PurchaseItem ) );

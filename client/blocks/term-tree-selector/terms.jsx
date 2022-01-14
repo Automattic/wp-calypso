@@ -80,6 +80,7 @@ class TermTreeSelectorList extends Component {
 
 	state = this.constructor.initialState;
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
@@ -93,6 +94,7 @@ class TermTreeSelectorList extends Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( this.constructor.initialState );

@@ -1,5 +1,5 @@
 import { ProgressBar } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Rating from 'calypso/components/rating';
@@ -90,7 +90,15 @@ class PluginRatings extends Component {
 	}
 
 	render() {
-		const { placeholder, ratings, rating, numRatings, downloaded } = this.props;
+		const {
+			placeholder,
+			ratings,
+			rating,
+			numRatings,
+			inlineNumRatings,
+			downloaded,
+			hideRatingNumber,
+		} = this.props;
 
 		if ( placeholder ) {
 			return this.renderPlaceholder();
@@ -105,9 +113,18 @@ class PluginRatings extends Component {
 			<div className="plugin-ratings">
 				<div className="plugin-ratings__rating-stars">
 					<Rating rating={ rating } />
-					<span className="plugin-ratings__number">{ rating / 20 }</span>
+					{ inlineNumRatings && numRatings && (
+						<span className="plugin-ratings__num-ratings">
+							(
+							{ Number.isInteger( numRatings )
+								? numRatings.toLocaleString( getLocaleSlug() )
+								: null }
+							)
+						</span>
+					) }
+					{ ! hideRatingNumber && <span className="plugin-ratings__number">{ rating / 20 }</span> }
 				</div>
-				{ numRatings && (
+				{ ! inlineNumRatings && numRatings && (
 					<div className="plugin-ratings__rating-text">
 						{ this.props.translate(
 							'Based on %(ratingsNumber)s rating',

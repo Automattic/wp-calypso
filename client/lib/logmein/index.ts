@@ -9,6 +9,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Store } from 'redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 // Used as default domain to detect when we're looking at a relative or invalid url
 const INVALID_URL = 'https://__domain__.invalid';
@@ -46,7 +47,9 @@ export function logmeinUrl( url: string, redirectTo = '' ): string {
 	// using INVALID_URL here to prevent the possibility of exceptions, if site.URL ever contains an invalid url
 	// the filtering will fail
 	const isValid = sites.some( ( site ) => {
-		return new URL( site.URL, INVALID_URL ).host === newurl.host && isValidLogmeinSite( site );
+		return (
+			new URL( site.URL ?? '', INVALID_URL ).host === newurl.host && isValidLogmeinSite( site )
+		);
 	} );
 	if ( ! isValid ) {
 		return url;
@@ -68,15 +71,15 @@ export function logmeinUrl( url: string, redirectTo = '' ): string {
  *
  * @param site Site object from redux state
  */
-function isValidLogmeinSite( site: any ): boolean {
-	return (
+function isValidLogmeinSite( site: SitesItem ): boolean {
+	return Boolean(
 		! site.is_vip &&
-		! site.jetpack &&
-		! site.options.is_automated_transfer &&
-		! site.options.is_domain_only &&
-		! site.options.is_redirect &&
-		! site.options.is_wpcom_store &&
-		site.options.is_mapped_domain
+			! site.jetpack &&
+			! site.options?.is_automated_transfer &&
+			! site.options?.is_domain_only &&
+			! site.options?.is_redirect &&
+			! site.options?.is_wpcom_store &&
+			site.options?.is_mapped_domain
 	);
 }
 

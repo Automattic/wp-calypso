@@ -1,7 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, {
+	FeaturedPicksButtons,
 	isBlankCanvasDesign,
 	getDesignUrl,
 	useCategorization,
+	useThemeDesignsQuery,
 } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -19,23 +22,24 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
-import { getRecommendedThemes } from 'calypso/state/themes/selectors';
 import DIFMThemes from '../difm-design-picker/themes';
+import LetUsChoose from './let-us-choose';
 import PreviewToolbar from './preview-toolbar';
 import './style.scss';
 
-// Ideally this data should come from the themes API, maybe by a tag that's applied to
-// themes? e.g. `link-in-bio` or `no-fold`
-const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
-
-const EXCLUDED_THEMES = [
-	// The Ryu theme doesn't currently have any annotations
-	'ryu',
-];
-
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned } = props;
+	const {
+		flowName,
+		stepName,
+		isReskinned,
+		queryParams,
+		showDesignPickerCategories,
+		showLetUsChoose,
+	} = props;
+
+	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
+	const useFeaturedPicksButtons =
+		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -43,20 +47,18 @@ export default function DesignPickerStep( props ) {
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 
-	const apiThemes = useSelector( ( state ) =>
-		getRecommendedThemes( state, 'auto-loading-homepage' )
+	const { data: apiThemes = [] } = useThemeDesignsQuery(
+		{ tier: 'free' },
+		{ enabled: ! props.useDIFMThemes }
 	);
 
-	const themesToBeTransformed = props.useDIFMThemes ? DIFMThemes : apiThemes;
+	const allThemes = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
 	useEffect(
 		() => {
 			dispatch( saveSignupStep( { stepName: props.stepName } ) );
-			if ( ! themesToBeTransformed.length ) {
-				dispatch( fetchRecommendedThemes( 'auto-loading-homepage' ) );
-			}
 		},
-		// Ignoring dependencies because we only want these actions to run on first mount
+		// Ignoring dependencies because we only want to save the step on first mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
@@ -80,33 +82,12 @@ export default function DesignPickerStep( props ) {
 
 	const userLoggedIn = useSelector( isUserLoggedIn );
 
-	const designs = useMemo( () => {
-		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
-		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
-		// component itself. The `/new` environment needs helpers for making authenticated requests to
-		// the theme API before we can do this.
-		const allThemes = themesToBeTransformed
-			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
-			.map( ( { id, name, taxonomies } ) => ( {
-				categories: taxonomies?.theme_subject ?? [],
-				// Blank Canvas uses the theme_picks taxonomy with a "featured" term in order to
-				// appear prominently in theme galleries.
-				showFirst: !! taxonomies?.theme_picks?.find( ( { slug } ) => slug === 'featured' ),
-				features: [],
-				is_premium: false,
-				slug: id,
-				template: id,
-				theme: id,
-				title: name,
-				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-			} ) );
-
-		if ( allThemes.length === 0 ) {
-			return [];
-		}
-
-		return [ allThemes[ 0 ], ...shuffle( allThemes.slice( 1 ) ) ];
-	}, [ themesToBeTransformed ] );
+	const { designs, featuredPicksDesigns } = useMemo( () => {
+		return {
+			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
+			featuredPicksDesigns: allThemes.filter( ( theme ) => theme.is_featured_picks ),
+		};
+	}, [ allThemes ] );
 
 	// Update the selected design when the section changes
 	useEffect( () => {
@@ -119,7 +100,7 @@ export default function DesignPickerStep( props ) {
 		sort: sortBlogToTop,
 	} );
 
-	function pickDesign( _selectedDesign ) {
+	function pickDesign( _selectedDesign, additionalDependencies = {} ) {
 		// Design picker preview will submit the defaultDependencies via next button,
 		// So only do this when the user picks the design directly
 		dispatch(
@@ -129,6 +110,8 @@ export default function DesignPickerStep( props ) {
 				},
 				{
 					selectedDesign: _selectedDesign,
+					selectedSiteCategory: categorization.selection,
+					...additionalDependencies,
 				}
 			)
 		);
@@ -145,8 +128,9 @@ export default function DesignPickerStep( props ) {
 			flow: props.flowName,
 			intent: props.signupDependencies.intent,
 		} );
-
-		page( getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale ) );
+		page(
+			getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale, queryParams )
+		);
 	}
 
 	function submitDesign( _selectedDesign = selectedDesign ) {
@@ -163,16 +147,16 @@ export default function DesignPickerStep( props ) {
 	function renderDesignPicker() {
 		return (
 			<DesignPicker
-				designs={ designs }
-				theme={ props.isReskinned ? 'light' : 'dark' }
+				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+				theme={ isReskinned ? 'light' : 'dark' }
 				locale={ translate.localeSlug }
 				onSelect={ pickDesign }
 				onPreview={ previewDesign }
 				className={ classnames( {
-					'design-picker-step__has-categories': props.showDesignPickerCategories,
+					'design-picker-step__has-categories': showDesignPickerCategories,
 				} ) }
 				highResThumbnails
-				categorization={ props.showDesignPickerCategories ? categorization : undefined }
+				categorization={ showDesignPickerCategories ? categorization : undefined }
 				categoriesHeading={
 					<FormattedHeader
 						id={ 'step-header' }
@@ -181,7 +165,21 @@ export default function DesignPickerStep( props ) {
 						align="left"
 					/>
 				}
+				categoriesFooter={ renderCategoriesFooter() }
 			/>
+		);
+	}
+
+	function renderCategoriesFooter() {
+		return (
+			<>
+				{ useFeaturedPicksButtons && (
+					<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
+				) }
+				{ showLetUsChoose && (
+					<LetUsChoose flowName={ props.flowName } designs={ designs } onSelect={ pickDesign } />
+				) }
+			</>
 		);
 	}
 
@@ -217,8 +215,6 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function headerText() {
-		const { showDesignPickerCategories } = props;
-
 		if ( showDesignPickerCategories ) {
 			return translate( 'Themes' );
 		}
@@ -227,8 +223,6 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function subHeaderText() {
-		const { showDesignPickerCategories } = props;
-
 		if ( ! showDesignPickerCategories ) {
 			return translate(
 				'Pick your favorite homepage layout. You can customize or change it later.'
@@ -282,14 +276,14 @@ export default function DesignPickerStep( props ) {
 					args: { designTitle },
 				} ) }
 				defaultDependencies={ defaultDependencies }
-				backUrl={ getStepUrl( flowName, stepName, '', locale ) }
+				backUrl={ getStepUrl( flowName, stepName, '', locale, queryParams ) }
 				goToNextStep={ submitDesign }
 				stepSectionName={ designTitle }
 			/>
 		);
 	}
 
-	const headerProps = props.showDesignPickerCategories
+	const headerProps = showDesignPickerCategories
 		? { hideFormattedHeader: true }
 		: {
 				fallbackHeaderText: headerText(),
@@ -302,7 +296,7 @@ export default function DesignPickerStep( props ) {
 		<StepWrapper
 			{ ...props }
 			className={ classnames( {
-				'design-picker__has-categories': props.showDesignPickerCategories,
+				'design-picker__has-categories': showDesignPickerCategories,
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }

@@ -6,9 +6,8 @@ import {
 	ChangeUILanguageFlow,
 	DataHelper,
 	GutenbergEditorPage,
-	LoginPage,
-	NewPostFlow,
 	setupHooks,
+	TestAccount,
 	TestEnvironment,
 } from '@automattic/calypso-e2e';
 import { Page, Frame } from 'playwright';
@@ -52,14 +51,12 @@ const translations: Translations = {
 
 			// Jetpack
 			{
-				// @todo: Update when Jetpack translations get fixed.
 				blockName: 'Contact Form',
 				blockEditorSelector: '[data-type="jetpack/contact-form"]',
 				blockEditorContent: [ ':text("Name")', ':text("Email")', ':text("Message")' ],
 				blockPanelTitle: 'Form',
 			},
 			{
-				// @todo: Update when Jetpack translations get fixed.
 				blockName: 'Business Hours',
 				blockEditorSelector: '[data-type="jetpack/business-hours"]',
 				blockEditorContent: [
@@ -95,7 +92,7 @@ const translations: Translations = {
 				blockEditorSelector: '[data-type="core/image"]',
 				blockEditorContent: [
 					'.components-placeholder__label:has-text("Image")',
-					'.jetpack-external-media-button-menu:text("Select Image")', // Jetpack extension
+					'.jetpack-external-media-button-menu:text("Sélectionner une image")', // Jetpack extension
 				],
 				blockPanelTitle: 'Image',
 			},
@@ -116,21 +113,19 @@ const translations: Translations = {
 
 			// Jetpack
 			{
-				// @todo: Update when Jetpack translations get fixed.
-				blockName: 'Contact Form',
+				blockName: 'Formulaire de contact',
 				blockEditorSelector: '[data-type="jetpack/contact-form"]',
-				blockEditorContent: [ ':text("Name")', ':text("Email")', ':text("Message")' ],
-				blockPanelTitle: 'Form',
+				blockEditorContent: [ ':text("Nom")', ':text("E-mail")', ':text("Message")' ],
+				blockPanelTitle: 'Formulaire',
 			},
 			{
-				// @todo: Update when Jetpack translations get fixed.
-				blockName: 'Business Hours',
+				blockName: 'Heures d’ouverture',
 				blockEditorSelector: '[data-type="jetpack/business-hours"]',
 				blockEditorContent: [
 					'.business-hours__day-name:text("lundi")',
-					'.business-hours__hours:has-text("Add Hours")',
+					'.business-hours__hours:has-text("Ajouter les heures")',
 				],
-				blockPanelTitle: 'Business Hours',
+				blockPanelTitle: 'Heures d’ouverture',
 			},
 
 			// Crowdsignal Forms
@@ -159,7 +154,7 @@ const translations: Translations = {
 				blockEditorSelector: '[data-type="core/image"]',
 				blockEditorContent: [
 					'.components-placeholder__label:has-text("תמונה")',
-					'.jetpack-external-media-button-menu:text("Select Image")', // Jetpack extension
+					'.jetpack-external-media-button-menu:text("לבחור תמונה")', // Jetpack extension
 				],
 				blockPanelTitle: 'תמונה',
 			},
@@ -178,21 +173,19 @@ const translations: Translations = {
 
 			// Jetpack
 			{
-				// @todo: Update when Jetpack translations get fixed.
-				blockName: 'Contact Form',
+				blockName: 'טופס יצירת קשר',
 				blockEditorSelector: '[data-type="jetpack/contact-form"]',
-				blockEditorContent: [ ':text("Name")', ':text("Email")', ':text("Message")' ],
-				blockPanelTitle: 'Form',
+				blockEditorContent: [ ':text("שם")', ':text("אימייל")', ':text("הודעה")' ],
+				blockPanelTitle: 'טופס',
 			},
 			{
-				// @todo: Update when Jetpack translations get fixed.
-				blockName: 'Business Hours',
+				blockName: 'שעות פעילות',
 				blockEditorSelector: '[data-type="jetpack/business-hours"]',
 				blockEditorContent: [
 					'.business-hours__day-name:text("יום שני")',
-					'.business-hours__hours:has-text("Add Hours")',
+					'.business-hours__hours:has-text("הוספת שעות")',
 				],
-				blockPanelTitle: 'Business Hours',
+				blockPanelTitle: 'שעות פעילות',
 			},
 
 			// Crowdsignal Forms
@@ -216,13 +209,14 @@ const translations: Translations = {
 };
 
 describe( 'I18N: Editor', function () {
-	let page: Page;
 	// Filter out the locales that do not have valid translation content defined above.
 	const locales = Object.keys( translations ).filter( ( locale ) =>
 		TestEnvironment.LOCALES().includes( locale )
 	);
+	let page: Page;
+	let gutenbergEditorPage: GutenbergEditorPage;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
 		// Confirm page leave with unsaved changes prompt.
 		page.on( 'dialog', async ( dialog ) => {
@@ -230,11 +224,9 @@ describe( 'I18N: Editor', function () {
 				await dialog.accept();
 			}
 		} );
-	} );
-
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'i18nUser' } );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+		const testAccount = new TestAccount( 'i18nUser' );
+		await testAccount.authenticate( page );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
@@ -254,15 +246,15 @@ describe( 'I18N: Editor', function () {
 				] );
 			} );
 
-			it( 'Start new post', async function () {
-				const newPostFlow = new NewPostFlow( page );
-				await newPostFlow.newPostFromNavbar();
+			it( 'Go to the new post page', async function () {
+				await gutenbergEditorPage.visit( 'post' );
 			} );
 		} );
 
 		describe.each( translations[ locale ].blocks )(
 			'Translations for block: $blockName',
-			function ( block ) {
+			( ...args ) => {
+				const block = args[ 0 ]; // Makes TS stop complaining about incompatible args type
 				let frame: Frame;
 				let gutenbergEditorPage: GutenbergEditorPage;
 

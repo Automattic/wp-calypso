@@ -65,16 +65,16 @@ export default function getThankYouPageUrl( {
 	adminPageRedirect,
 	domains,
 }: {
-	siteSlug: string | undefined;
-	adminUrl: string | undefined;
-	redirectTo?: string | undefined;
-	receiptId: number | undefined;
-	orderId: number | undefined;
-	purchaseId: number | undefined;
-	feature: string | undefined;
-	cart: ResponseCart | undefined;
+	siteSlug?: string;
+	adminUrl?: string;
+	redirectTo?: string;
+	receiptId?: number;
+	orderId?: number;
+	purchaseId?: number;
+	feature?: string;
+	cart?: ResponseCart;
 	isJetpackNotAtomic?: boolean;
-	productAliasFromUrl: string | undefined;
+	productAliasFromUrl?: string;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult?: boolean;
@@ -83,14 +83,14 @@ export default function getThankYouPageUrl( {
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
-	domains: SiteDomain[] | undefined;
+	domains?: SiteDomain[];
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
-	// (i.e. on WordPress.com), the same site as the cart's site, or a Jetpack or WP.com
-	// site's block editor (in wp-admin). This is required for Jetpack's (and WP.com's)
-	// paid blocks Upgrade Nudge.
+	// (i.e. on WordPress.com), the same site as the cart's site, a Jetpack cloud URL,
+	// or a Jetpack or WP.com site's block editor (in wp-admin). This is required for Jetpack's
+	// (and WP.com's) paid blocks Upgrade Nudge.
 	if ( redirectTo ) {
 		const { protocol, hostname, port, pathname, query } = parseUrl( redirectTo, true, true );
 
@@ -119,6 +119,12 @@ export default function getThankYouPageUrl( {
 			debug( 'returning sanitized internal redirectTo', redirectTo );
 			return sanitizedRedirectTo;
 		}
+
+		if ( hostname === 'cloud.jetpack.com' ) {
+			debug( 'returning Jetpack cloud redirectTo', redirectTo );
+			return redirectTo;
+		}
+
 		debug( 'ignorning redirectTo', redirectTo );
 	}
 
@@ -390,8 +396,8 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 	const currentPlan = getPlan( currentPlanSlug );
 
 	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
-		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan.term } );
-		return planKey ? getPlan( planKey )?.getPathSlug() : undefined;
+		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan?.term } );
+		return planKey ? getPlan( planKey )?.getPathSlug?.() : undefined;
 	}
 
 	return;

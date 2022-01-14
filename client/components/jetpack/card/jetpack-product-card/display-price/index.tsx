@@ -1,3 +1,5 @@
+import classNames from 'classnames';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import Deprecated from './deprecated';
 import Free from './free';
 import IncludedInPlan from './included-in-plan';
@@ -23,7 +25,7 @@ type OwnProps = {
 	isIncludedInPlan?: boolean;
 	isOwned?: boolean;
 	showAbovePriceText?: boolean;
-	originalPrice: number;
+	originalPrice?: number;
 	productName: TranslateResult;
 	tooltipText?: TranslateResult | ReactNode;
 };
@@ -76,15 +78,29 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 			displayFrom={ displayFrom }
 			tooltipText={ tooltipText }
 			expiryDate={ expiryDate }
-			hideSavingLabel={ hideSavingLabel }
 		/>
 	);
 };
 
-const Wrapper: React.FC< OwnProps > = ( props ) => (
-	<div className="display-price">
-		<DisplayPrice { ...props } />
-	</div>
-);
+const Wrapper: React.FC< OwnProps > = ( props ) => {
+	const priceTypes = {
+		'is-deprecated': Boolean( props.isDeprecated ),
+		'is-owned': Boolean( props.isOwned ),
+		'is-included-in-plan': Boolean( props.isIncludedInPlan ),
+		'is-free': Boolean( props.isFree ),
+	};
+
+	return (
+		<div
+			className={ classNames(
+				'display-price',
+				{ 'is-jetpack-cloud': isJetpackCloud() },
+				priceTypes
+			) }
+		>
+			<DisplayPrice { ...props } />
+		</div>
+	);
+};
 
 export default Wrapper;

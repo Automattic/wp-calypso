@@ -6,14 +6,14 @@ import assert from 'assert';
 import {
 	setupHooks,
 	DataHelper,
-	LoginPage,
 	MediaPage,
 	SidebarComponent,
 	MediaHelper,
 	TestFile,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
-import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, UNSUPPORTED_FILE_PATH } from '../constants';
+import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, TEST_UNSUPPORTED_FILE_PATH } from '../constants';
 
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	let testFiles: { image: TestFile; audio: TestFile; unsupported: TestFile };
@@ -27,21 +27,22 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		testFiles = {
 			image: await MediaHelper.createTestFile( TEST_IMAGE_PATH ),
 			audio: await MediaHelper.createTestFile( TEST_AUDIO_PATH ),
-			unsupported: await MediaHelper.createTestFile( UNSUPPORTED_FILE_PATH ),
+			unsupported: await MediaHelper.createTestFile( TEST_UNSUPPORTED_FILE_PATH ),
 		};
 	} );
 
 	// Parametrized test.
 	describe.each`
-		siteType      | user
+		siteType      | accountName
 		${ 'Simple' } | ${ 'defaultUser' }
 		${ 'Atomic' } | ${ 'eCommerceUser' }
-	`( 'Upload media files ($siteType)', ( { user } ) => {
+	`( 'Upload media files ($siteType)', ( { accountName } ) => {
 		let mediaPage: MediaPage;
+		let testAccount: TestAccount;
 
-		it( 'Log In', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+		beforeAll( async () => {
+			testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
 		} );
 
 		it( 'Navigate to Media', async function () {

@@ -6,7 +6,6 @@ import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
@@ -22,15 +21,11 @@ import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import {
-	getSelectedImportEngine,
-	getNuxUrlInputValue,
-} from 'calypso/state/importer-nux/temp-selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
-import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import {
@@ -50,8 +45,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const reduxState = reduxStore.getState();
 	const domainItem = dependencies.domainItem
 		? prepareItemForAddingToCart(
-				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState ),
-				reduxState
+				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState )
 		  )
 		: null;
 
@@ -69,7 +63,11 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			.forCartKey( cartKey )
 			.actions.replaceProductsInCart( domainChoiceCart )
 			.then( () => callback( undefined, providedDependencies ) )
-			.catch( ( error ) => callback( error, providedDependencies ) );
+			.catch( ( error ) => {
+				debug( 'product replace request had an error', error );
+				reduxStore.dispatch( errorNotice( error.message ) );
+				callback( error, providedDependencies );
+			} );
 	} else if ( designType === 'existing-site' ) {
 		const providedDependencies = {
 			siteId,
@@ -77,13 +75,17 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 		const products = [ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ]
 			.filter( Boolean )
-			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
+			.map( ( item ) => prepareItemForAddingToCart( item ) );
 
 		cartManagerClient
 			.forCartKey( siteId )
 			.actions.replaceProductsInCart( products )
 			.then( () => callback( undefined, providedDependencies ) )
-			.catch( ( error ) => callback( error, providedDependencies ) );
+			.catch( ( error ) => {
+				debug( 'product replace request had an error', error );
+				reduxStore.dispatch( errorNotice( error.message ) );
+				callback( error, providedDependencies );
+			} );
 	} else {
 		const newSiteData = {
 			cartItem,
@@ -117,7 +119,6 @@ function getNewSiteParams( {
 	dependencies,
 	flowToCheck,
 	isPurchasingDomainItem,
-	lastKnownFlow,
 	themeSlugWithRepo,
 	siteUrl,
 	state,
@@ -129,7 +130,6 @@ function getNewSiteParams( {
 	const siteVerticalName = getSiteVerticalName( state );
 	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
-	const siteStyle = getSiteStyle( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
 	const selectedDesign = get( signupDependencies, 'selectedDesign', false );
@@ -160,7 +160,6 @@ function getNewSiteParams( {
 			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
 			default_annotation_as_primary_fallback: shouldUseDefaultAnnotationAsFallback,
 			siteGoals: siteGoals || undefined,
-			site_style: siteStyle || undefined,
 			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
 			site_vertical_name: siteVerticalName || undefined,
@@ -185,14 +184,6 @@ function getNewSiteParams( {
 	} else {
 		newSiteParams.blog_name = siteUrl;
 		newSiteParams.find_available_url = !! isPurchasingDomainItem;
-	}
-
-	if ( 'import' === lastKnownFlow || 'import-onboarding' === lastKnownFlow ) {
-		// If `siteTitle` wasn't inferred by the site detection api, use
-		// the `siteUrl` until an import replaces it with an actual title.
-		newSiteParams.blog_title = siteTitle || siteUrl;
-		newSiteParams.options.nux_import_engine = getSelectedImportEngine( state );
-		newSiteParams.options.nux_import_from_url = getNuxUrlInputValue( state );
 	}
 
 	if ( selectedDesign ) {
@@ -258,6 +249,19 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
 
 	const isManageSiteFlow = get( getSignupDependencyStore( state ), 'isManageSiteFlow', false );
+
+	if ( 'do-it-for-me' === flowToCheck ) {
+		const newOrExistingSiteChoice = get(
+			getSignupDependencyStore( state ),
+			'newOrExistingSiteChoice',
+			'new-site'
+		);
+		// Do not create a new site if the user chose that they want DIFM Lite on an existing site
+		if ( 'existing-site' === newOrExistingSiteChoice ) {
+			defer( callback );
+			return;
+		}
+	}
 
 	if ( isManageSiteFlow ) {
 		const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', undefined );
@@ -330,9 +334,30 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 
 	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
 
-	wpcom.undocumented().changeTheme( siteSlug, { theme }, function ( errors ) {
-		callback( isEmpty( errors ) ? undefined : [ errors ] );
-	} );
+	wpcom.req
+		.post( `/sites/${ siteSlug }/themes/mine`, { theme } )
+		.then( () => callback() )
+		.catch( ( error ) => callback( [ error ] ) );
+}
+
+/**
+ * Call the `setDesignOnSite` function (see below) only if the user
+ * chose to buy DIFM Lite for a new site.
+ * Do nothing if the user chose an existing site since we do not want any changes
+ * to an existing site before checkout.
+ */
+export function setDesignIfNewSite( callback, dependencies, step, reduxStore ) {
+	const state = reduxStore.getState();
+	const newOrExistingSiteChoice = get(
+		getSignupDependencyStore( state ),
+		'newOrExistingSiteChoice',
+		'new-site'
+	);
+	if ( 'new-site' === newOrExistingSiteChoice ) {
+		setDesignOnSite( callback, dependencies );
+	} else {
+		defer( callback );
+	}
 }
 
 export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
@@ -343,10 +368,8 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 
 	const { theme } = selectedDesign;
 
-	Promise.resolve()
-		.then( () =>
-			wpcom.undocumented().changeTheme( siteSlug, { theme, dont_change_homepage: true } )
-		)
+	wpcom.req
+		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: true } )
 		.then( () =>
 			wpcom.req.post( {
 				path: `/sites/${ siteSlug }/theme-setup`,
@@ -368,15 +391,17 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 		return;
 	}
 
-	const settings = {
-		apiVersion: '1.4',
-		blogname: siteTitle,
-		blogdescription: tagline,
-	};
-
-	wpcom.undocumented().settings( siteSlug, 'post', settings, function ( errors ) {
-		callback( isEmpty( errors ) ? undefined : [ errors ] );
-	} );
+	wpcom.req.post(
+		`/sites/${ siteSlug }/settings`,
+		{ apiVersion: '1.4' },
+		{
+			blogname: siteTitle,
+			blogdescription: tagline,
+		},
+		function ( errors ) {
+			callback( isEmpty( errors ) ? undefined : [ errors ] );
+		}
+	);
 }
 
 export function setIntentOnSite( callback, { siteSlug, intent } ) {
@@ -442,19 +467,28 @@ function processItemCart(
 	themeSlugWithRepo
 ) {
 	const addToCartAndProceed = () => {
-		debug( 'adding cart items', newCartItems );
+		debug( 'preparing to add cart items (if any) from', newCartItems );
 		const reduxState = reduxStore.getState();
 		const newCartItemsToAdd = newCartItems
 			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
-			.map( ( item ) => prepareItemForAddingToCart( item, reduxState ) );
+			.map( ( item ) => prepareItemForAddingToCart( item ) );
 
 		if ( newCartItemsToAdd.length ) {
+			debug( 'adding products to cart', newCartItemsToAdd );
 			cartManagerClient
 				.forCartKey( siteSlug )
 				.actions.addProductsToCart( newCartItemsToAdd )
-				.then( () => callback( undefined, providedDependencies ) )
-				.catch( ( error ) => callback( error, providedDependencies ) );
+				.then( ( updatedCart ) => {
+					debug( 'product add request complete', updatedCart );
+					callback( undefined, providedDependencies );
+				} )
+				.catch( ( error ) => {
+					debug( 'product add request had an error', error );
+					reduxStore.dispatch( errorNotice( error.message ) );
+					callback( error, providedDependencies );
+				} );
 		} else {
+			debug( 'no cart items to add' );
 			callback( undefined, providedDependencies );
 		}
 	};
@@ -476,10 +510,9 @@ function processItemCart(
 	}
 }
 
-function prepareItemForAddingToCart( item, state ) {
-	const productsList = getProductsList( state );
+function prepareItemForAddingToCart( item ) {
 	return {
-		...fillInSingleCartItemAttributes( item, productsList ),
+		...item,
 		extra: {
 			...item.extra,
 			context: 'signup',
@@ -504,15 +537,10 @@ function addPrivacyProtectionIfSupported( item, state ) {
 export function launchSiteApi( callback, dependencies ) {
 	const { siteSlug } = dependencies;
 
-	wpcom.undocumented().launchSite( siteSlug, function ( error ) {
-		if ( error ) {
-			callback( error );
-
-			return;
-		}
-
-		callback();
-	} );
+	wpcom.req
+		.post( `/sites/${ siteSlug }/launch` )
+		.then( () => callback( null ) )
+		.catch( ( error ) => callback( error ) );
 }
 
 export function createAccount(
@@ -890,6 +918,29 @@ export function maybeRemoveStepForUserlessCheckout( stepName, defaultDependencie
 	}
 }
 
+export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextProps ) {
+	if ( includes( flows.excludedSteps, stepName ) ) {
+		return;
+	}
+
+	/* For the P2 signup flow, if we displayed the email verification step before,
+	   we need to display it again when the user comes back to the flow
+	   after verification. */
+	if (
+		nextProps.flowName === 'p2-new' &&
+		nextProps?.progress[ stepName ]?.status === 'in-progress'
+	) {
+		return;
+	}
+
+	if ( ! nextProps.isEmailVerified ) {
+		return;
+	}
+
+	nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+	flows.excludeStep( stepName );
+}
+
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
 	let fulfilledDependencies = [];
@@ -987,6 +1038,27 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	}
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+	}
+}
+
+/**
+ * Skip the step if the user does not have any existing sites
+ */
+export function isNewOrExistingSiteFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { existingSiteCount, submitSignupStep } = nextProps;
+	if ( ! existingSiteCount || 0 === existingSiteCount ) {
+		const stepProvidesDependency = steps[ stepName ].providesDependencies.includes(
+			'newOrExistingSiteChoice'
+		);
+		let dependency = undefined;
+		if ( stepProvidesDependency ) {
+			dependency = {
+				newOrExistingSiteChoice: 'new-site',
+			};
+		}
+		submitSignupStep( { stepName, wasSkipped: true }, dependency );
+		recordExcludeStepEvent( stepName );
 		flows.excludeStep( stepName );
 	}
 }

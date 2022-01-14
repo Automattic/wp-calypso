@@ -18,9 +18,7 @@
 		"directory": "packages/material-design-icons"
 	},
 	"private": true,
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"src",
 		"svg-sprite"
@@ -30,6 +28,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"svgstore-cli": "^1.3.1"
+		"svgstore-cli": "^1.3.2"
 	}
 }

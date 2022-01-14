@@ -113,6 +113,7 @@ export default function ContactDetailsContainer( {
 							type="email"
 							label={ String( translate( 'Email' ) ) }
 							disabled={ isDisabled }
+							value={ contactDetails.email ?? '' }
 							onChange={ ( value ) => {
 								updateEmail( value );
 							} }

@@ -1,9 +1,8 @@
-import config from '@automattic/calypso-config';
 import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import languages from '@automattic/languages';
 import classNames from 'classnames';
-import { flowRight, get, has } from 'lodash';
+import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
@@ -173,22 +172,25 @@ export class SiteSettingsFormGeneral extends Component {
 
 	blogAddress() {
 		const { site, siteIsJetpack, siteSlug, translate, isWPForTeamsSite } = this.props;
-		let customAddress = '';
-		let addressDescription = '';
-
 		if ( ! site || siteIsJetpack || isWPForTeamsSite ) {
 			return null;
 		}
 
-		if ( config.isEnabled( 'upgrades/domain-search' ) ) {
-			customAddress = (
-				<Button href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick }>
-					<Gridicon icon="plus" />{ ' ' }
-					{ translate( 'Add custom address', { context: 'Site address, domain' } ) }
-				</Button>
-			);
-
-			addressDescription = (
+		return (
+			<FormFieldset className="site-settings__has-divider">
+				<FormLabel htmlFor="blogaddress">{ translate( 'Site address' ) }</FormLabel>
+				<div className="site-settings__blogaddress-settings">
+					<FormInput
+						name="blogaddress"
+						id="blogaddress"
+						value={ site.domain }
+						disabled="disabled"
+					/>
+					<Button href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick }>
+						<Gridicon icon="plus" />{ ' ' }
+						{ translate( 'Add custom address', { context: 'Site address, domain' } ) }
+					</Button>
+				</div>
 				<FormSettingExplanation>
 					{ translate(
 						'Buy a {{domainSearchLink}}custom domain{{/domainSearchLink}}, ' +
@@ -221,22 +223,6 @@ export class SiteSettingsFormGeneral extends Component {
 						</a>
 					) }
 				</FormSettingExplanation>
-			);
-		}
-
-		return (
-			<FormFieldset className="site-settings__has-divider">
-				<FormLabel htmlFor="blogaddress">{ translate( 'Site address' ) }</FormLabel>
-				<div className="site-settings__blogaddress-settings">
-					<FormInput
-						name="blogaddress"
-						id="blogaddress"
-						value={ site.domain }
-						disabled="disabled"
-					/>
-					{ customAddress }
-				</div>
-				{ addressDescription }
 			</FormFieldset>
 		);
 	}
@@ -273,21 +259,20 @@ export class SiteSettingsFormGeneral extends Component {
 			},
 		};
 		const noticeContent = errors[ langId ];
+		if ( ! noticeContent ) {
+			return null;
+		}
 
 		return (
-			has( noticeContent, 'text' ) && (
-				<Notice
-					text={ noticeContent.text }
-					className="site-settings__language-picker-notice"
-					isCompact
-				>
-					{ has( noticeContent, 'link' ) && (
-						<NoticeAction href={ noticeContent.link } external>
-							{ noticeContent.linkText }
-						</NoticeAction>
-					) }
-				</Notice>
-			)
+			<Notice
+				text={ noticeContent.text }
+				className="site-settings__language-picker-notice"
+				isCompact
+			>
+				<NoticeAction href={ noticeContent.link } external>
+					{ noticeContent.linkText }
+				</NoticeAction>
+			</Notice>
 		);
 	};
 

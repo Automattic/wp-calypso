@@ -30,19 +30,28 @@ function SiteInformationCollection( {
 	submitSignupStep,
 	goToNextStep,
 } ) {
+	const {
+		username: signupUsername,
+		selectedSiteCategory,
+		selectedDesign,
+		newOrExistingSiteChoice,
+		isLetUsChooseSelected,
+	} = useSelector( getSignupDependencyStore );
 	const dispatch = useDispatch();
-
-	const { selectedDesign, username: signupUsername } = useSelector( getSignupDependencyStore );
 	const loggedInUsername = useSelector( getCurrentUserName );
-
-	const selectedVertical = selectedDesign?.categories[ 0 ]?.name;
-
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [ dispatch, stepName ] );
 
-	const nextStep = () => {
-		const cartItem = { product_slug: WPCOM_DIFM_LITE };
+	const onTypeformSubmission = ( typeformSubmissionId ) => {
+		const extra = {
+			difm_lite_selected_design: selectedDesign?.theme,
+			difm_lite_site_category: selectedSiteCategory,
+			difm_lite_typeform_response_id: typeformSubmissionId,
+			difm_lite_new_or_existing_site_choice: newOrExistingSiteChoice,
+			difm_lite_let_us_choose_selected: !! isLetUsChooseSelected,
+		};
+		const cartItem = { product_slug: WPCOM_DIFM_LITE, extra };
 		const step = {
 			stepName,
 			cartItem,
@@ -50,6 +59,7 @@ function SiteInformationCollection( {
 		};
 		submitSignupStep( step, {
 			cartItem,
+			typeformResponseId: typeformSubmissionId,
 		} );
 		goToNextStep();
 	};
@@ -59,7 +69,7 @@ function SiteInformationCollection( {
 			<Widget
 				hidden={ {
 					username: signupUsername || loggedInUsername,
-					vertical: selectedVertical,
+					vertical: selectedSiteCategory,
 				} }
 				id={ getTypeformId() }
 				style={ {
@@ -69,7 +79,7 @@ function SiteInformationCollection( {
 					padding: '0',
 					marginTop: '50px',
 				} }
-				onSubmit={ nextStep }
+				onSubmit={ ( { responseId } ) => onTypeformSubmission( responseId ) }
 				disableAutoFocus={ true }
 			/>
 		</Container>
@@ -81,9 +91,7 @@ export default function WrapperSiteInformationCollection( props ) {
 	const translate = useTranslate();
 
 	const headerText = translate( 'Tell us more about your site' );
-	const subHeaderText = translate(
-		'We need some basic details to build your site, you will also be able to get a glimpse of what your site will look like'
-	);
+	const subHeaderText = translate( 'We need some basic details to build your site.' );
 
 	return (
 		<StepWrapper

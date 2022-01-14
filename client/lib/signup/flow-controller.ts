@@ -41,21 +41,25 @@ import type { Flow, Dependencies } from '../../signup/types';
 
 const debug = debugModule( 'calypso:signup' );
 
-interface Step {
-	apiRequestFunction?: (
-		callback: ( errors: Record< string, string >[], providedDependencies: Dependencies ) => void,
-		dependenciesFound: Dependencies,
-		step: Step,
-		reduxStore: Store
-	) => void;
-	delayApiRequestUntilComplete?: boolean;
+interface StepDependendencies {
 	dependencies?: string[];
 	providedDependencies?: string[];
 	providesDependencies?: string[];
 	optionalDependencies?: string[];
+}
+
+interface Step extends StepDependendencies {
+	apiRequestFunction?: (
+		callback: ( errors: Record< string, string >[], providedDependencies: Dependencies ) => void,
+		dependenciesFound: Record< string, unknown >,
+		step: Step,
+		reduxStore: Store
+	) => void;
+	delayApiRequestUntilComplete?: boolean;
 	providesToken?: boolean;
 	stepName: string;
 	allowUnauthenticated?: boolean;
+	isPasswordlessSignupForm?: boolean;
 }
 
 const steps: Record< string, Step > = untypedSteps;
@@ -103,7 +107,7 @@ export default class SignupFlowController {
 		try {
 			this._assertFlowHasValidDependencies();
 		} catch ( ex ) {
-			debug( 'Invalid dependencies in flow : ' + ex.message );
+			debug( 'Invalid dependencies in flow : ' + ( ex as Error ).message );
 			if ( this._flowName !== flows.defaultFlowName ) {
 				// redirect to the default signup flow, hopefully it will be valid
 				page( getStepUrl() );
@@ -370,6 +374,22 @@ export default class SignupFlowController {
 			'optionalDependencies'
 		);
 
+		/*
+			AB Test: passwordlessSignup
+			`isPasswordlessSignupForm` is set by the PasswordlessSignupForm.
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow.
+			For passwordless signups, the API call has already occurred in the PasswordlessSignupForm, so here it is skipped.
+		*/
+		if ( step?.isPasswordlessSignupForm ) {
+			this._processingSteps.delete( step.stepName );
+			recordTracksEvent( 'calypso_signup_actions_complete_step', {
+				step: step.stepName,
+				flow: this._flowName,
+			} );
+			this._reduxStore.dispatch( completeSignupStep( step, dependenciesFound ) );
+			return;
+		}
+
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {
 			this._reduxStore.dispatch( processStep( step ) );
@@ -403,14 +423,13 @@ export default class SignupFlowController {
 		);
 	}
 
-	_findDependencies( stepName: string, dependencyKey = 'dependencies' ): Record< string, unknown > {
-		const dependencyStore = getSignupDependencyStore( this._reduxStore.getState() );
+	_findDependencies( stepName: string, dependencyKey: keyof StepDependendencies = 'dependencies' ) {
+		const dependencyStore: Record< string, unknown > = getSignupDependencyStore(
+			this._reduxStore.getState()
+		);
 		const stepConfig = steps[ stepName ];
-		if ( ! stepConfig || ! stepConfig[ dependencyKey ] ) {
-			return {};
-		}
-
-		return pick( dependencyStore, stepConfig[ dependencyKey ] );
+		const keysToSelect = stepConfig ? stepConfig[ dependencyKey ] : undefined;
+		return pick( dependencyStore, keysToSelect ?? [] );
 	}
 
 	_destination( dependencies: Dependencies ): string {

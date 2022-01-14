@@ -58,7 +58,7 @@ export default ( router ) => {
 		router(
 			[ `/log-in/link/use/${ lang }`, `/log-in/jetpack/link/use/${ lang }` ],
 			redirectLoggedIn,
-			setLocaleMiddleware,
+			setLocaleMiddleware(),
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			magicLoginUse,
 			makeLoggedOutLayout
@@ -67,7 +67,7 @@ export default ( router ) => {
 		router(
 			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }`, `/log-in/new/link/${ lang }` ],
 			redirectLoggedIn,
-			setLocaleMiddleware,
+			setLocaleMiddleware(),
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			magicLogin,
 			makeLoggedOutLayout
@@ -87,7 +87,7 @@ export default ( router ) => {
 		],
 		redirectJetpack,
 		redirectDefaultLocale,
-		setLocaleMiddleware,
+		setLocaleMiddleware(),
 		setHrefLangLinks,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		login,

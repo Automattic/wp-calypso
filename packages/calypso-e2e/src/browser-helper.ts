@@ -95,16 +95,16 @@ export function getLaunchConfiguration( chromeVersion: string ): BrowserContextO
  * @returns {boolean} True if should target Gutenberg edge. False otherwise.
  */
 export function targetGutenbergEdge(): boolean {
-	return !! process.env.GUTENBERG_EDGE;
+	return process.env.GUTENBERG_EDGE === 'true';
 }
 
 /**
  * Returns boolean indicating whether this test run should target a CoBlocks Edge user and site.
  *
- * @returns {boolean} True if should target Coblocks edge. False otherwise.
+ * @returns {boolean} True if should target CoBlocks edge. False otherwise.
  */
 export function targetCoBlocksEdge(): boolean {
-	return !! process.env.COBLOCKS_EDGE;
+	return process.env.COBLOCKS_EDGE === 'true';
 }
 
 /**

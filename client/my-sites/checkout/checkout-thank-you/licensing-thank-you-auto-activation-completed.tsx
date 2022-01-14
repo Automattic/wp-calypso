@@ -67,6 +67,9 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 				footerImage={ productConfirmationInfo.image }
 				isLoading={ isProductListFetching }
 				showContactUs
+				showProgressIndicator
+				progressIndicatorValue={ 3 }
+				progressIndicatorTotal={ 3 }
 			>
 				{ ! subscriptionTransferSucceeded && (
 					<p>

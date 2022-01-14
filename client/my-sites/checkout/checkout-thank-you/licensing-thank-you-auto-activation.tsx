@@ -35,11 +35,14 @@ type JetpackSite = {
 	ID: number;
 	URL: string;
 	is_wpcom_atomic: boolean;
+	products: Product[];
+	plan: Product;
 };
 
 type Product = {
 	product_id: number;
 	product_name: string;
+	product_slug: string;
 };
 
 interface ProductsList {
@@ -86,7 +89,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 				source,
 				jetpackTemporarySiteId,
 			},
-			`/checkout/jetpack/thank-you/licensing-manual-activate/${ productSlug }`
+			`/checkout/jetpack/thank-you/licensing-manual-activate-instructions/${ productSlug }`
 		);
 	}, [ jetpackTemporarySiteId, productSlug, source, receiptId ] );
 
@@ -199,9 +202,17 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	] );
 
 	const siteSelectOptions = useMemo( () => {
+		const isProductActivatedOnSite = ( product: Product ) =>
+			product && product.product_slug === productSlug;
+
 		return jetpackSites
-			.filter( ( site: JetpackSite ) => ! site.is_wpcom_atomic )
-			.map( ( site: JetpackSite ) => ( {
+			.filter( ( site ) => ! site.is_wpcom_atomic )
+			.filter(
+				( site ) =>
+					! site.products.some( isProductActivatedOnSite ) &&
+					! isProductActivatedOnSite( site.plan )
+			)
+			.map( ( site ) => ( {
 				value: site?.URL,
 				label: site.URL,
 				props: {
@@ -213,7 +224,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					},
 				},
 			} ) );
-	}, [ jetpackSites, selectedSite ] );
+	}, [ jetpackSites, selectedSite, productSlug ] );
 
 	const lastSelectOption = {
 		value: 'activate-license-manually',
@@ -250,7 +261,9 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					</>
 				}
 				footerImage={ footerCardImg }
-				showProgressIndicator={ false }
+				showProgressIndicator
+				progressIndicatorValue={ 1 }
+				progressIndicatorTotal={ 3 }
 				showContactUs
 			>
 				{ hasProductInfo && ( isProductListFetching || productName ) && (
@@ -289,7 +302,11 @@ const LicensingActivationThankYou: FC< Props > = ( {
 								) }
 							>
 								<span className="licensing-thank-you-auto-activation__dropdown-item-text">
-									{ option.label }
+									{ option.value === 'activate-license-manually' ? (
+										<strong>{ option.label }</strong>
+									) : (
+										option.label
+									) }
 								</span>
 								{ option.value !== 'activate-license-manually' && (
 									<span>

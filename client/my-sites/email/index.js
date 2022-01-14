@@ -57,6 +57,23 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
+			paths.emailManagementAddEmailForwards(
+				':site',
+				':domain',
+				paths.emailManagementAllSitesPrefix
+			),
+			paths.emailManagementAddEmailForwards( ':site', ':domain' ),
+		],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementAddEmailForwards,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [
 			paths.emailManagementAddGSuiteUsers(
 				':site',
 				':domain',
@@ -102,6 +119,16 @@ export default function () {
 		handlers: [
 			...commonHandlers,
 			controller.emailManagementManageTitanMailboxes,
+			makeLayout,
+			clientRender,
+		],
+	} );
+
+	registerMultiPage( {
+		paths: [ paths.emailManagementInDepthComparison( ':site', ':domain' ) ],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementInDepthComparison,
 			makeLayout,
 			clientRender,
 		],

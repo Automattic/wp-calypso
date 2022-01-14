@@ -1,10 +1,15 @@
+import { isEnabled as isConfigEnabled } from '@automattic/calypso-config';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
+import EmailForwardsAdd from 'calypso/my-sites/email/email-forwards-add';
 import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
+import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-providers-comparison/in-depth';
+import { castIntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
+import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
@@ -12,6 +17,19 @@ import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 
 export default {
+	emailManagementAddEmailForwards( pageContext, next ) {
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<EmailForwardsAdd
+					selectedDomainName={ pageContext.params.domain }
+					source={ pageContext.query.source }
+				/>
+			</CalypsoShoppingCartProvider>
+		);
+
+		next();
+	},
+
 	emailManagementAddGSuiteUsers( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
@@ -77,11 +95,38 @@ export default {
 	},
 
 	emailManagementPurchaseNewEmailAccount( pageContext, next ) {
+		const comparisonComponent = ! isConfigEnabled( 'emails/new-email-comparison' ) ? (
+			<EmailProvidersComparison
+				comparisonContext="email-purchase"
+				selectedDomainName={ pageContext.params.domain }
+				source={ pageContext.query.source }
+			/>
+		) : (
+			<EmailProvidersStackedComparison
+				comparisonContext="email-purchase"
+				selectedDomainName={ pageContext.params.domain }
+				selectedEmailProviderSlug={ pageContext.query.provider }
+				selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
+				siteName={ pageContext.params.site }
+				source={ pageContext.query.source }
+			/>
+		);
+
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>{ comparisonComponent }</CalypsoShoppingCartProvider>
+		);
+
+		next();
+	},
+
+	emailManagementInDepthComparison( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<EmailProvidersComparison
-					comparisonContext="email-purchase"
+				<EmailProvidersInDepthComparison
+					comparisonContext="email-in-depth-comparison"
 					selectedDomainName={ pageContext.params.domain }
+					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
+					siteName={ pageContext.params.site }
 					source={ pageContext.query.source }
 				/>
 			</CalypsoShoppingCartProvider>
