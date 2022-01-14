@@ -16,7 +16,7 @@ const QueryIntroOffers: React.FC< OwnProps > = ( { siteId } ) => {
 	);
 
 	useEffect( () => {
-		if ( introOfferRequestStatus === null && siteIdKey !== undefined ) {
+		if ( introOfferRequestStatus === null ) {
 			dispatch( fetchIntroOffers( siteIdKey ) );
 		}
 	}, [ dispatch, introOfferRequestStatus, siteIdKey ] );

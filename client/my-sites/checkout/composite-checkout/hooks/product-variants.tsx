@@ -203,7 +203,10 @@ function isVariantAllowed(
 }
 
 function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompared } ) {
-	const currentPrice = variant.introductoryOfferPrice ?? variant.priceFinal ?? variant.priceFull;
+	const currentPrice =
+		variant.introductoryOfferPrice !== null
+			? variant.introductoryOfferPrice
+			: variant.priceFinal || variant.priceFull;
 	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
 	return (
 		<Fragment>
@@ -220,7 +223,8 @@ function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompare
 
 function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAndCompared } ) {
 	const translate = useTranslate();
-	const maybeFinalPrice = variant.introductoryOfferPrice ?? variant.priceFinal;
+	const maybeFinalPrice =
+		variant.introductoryOfferPrice !== null ? variant.introductoryOfferPrice : variant.priceFinal;
 	const discountPercentage = Math.floor(
 		100 - ( maybeFinalPrice / variant.priceFullBeforeDiscount ) * 100
 	);
