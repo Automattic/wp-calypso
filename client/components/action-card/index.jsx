@@ -48,7 +48,7 @@ const ActionCard = ( {
 );
 
 ActionCard.propTypes = {
-	headerText: PropTypes.string.isRequired,
+	headerText: PropTypes.node.isRequired,
 	mainText: PropTypes.node.isRequired,
 	buttonPrimary: PropTypes.bool,
 	buttonText: PropTypes.string,

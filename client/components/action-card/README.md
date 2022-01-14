@@ -29,7 +29,7 @@ function render() {
 
 ### `headerText`
 
-- **Type:** `String`
+- **Type:** `Node`
 - **Required:** `yes`
 
 Header text of the card
