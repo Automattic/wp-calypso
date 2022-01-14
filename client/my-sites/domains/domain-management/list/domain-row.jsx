@@ -148,9 +148,10 @@ class DomainRow extends PureComponent {
 	}
 
 	renderExpiryDate( expiryDate ) {
+		const { domain } = this.props;
 		return (
 			<div className="domain-row__registered-until-cell">
-				{ expiryDate ? expiryDate.format( 'LL' ) : '-' }
+				{ expiryDate && domain.type !== domainTypes.MAPPED ? expiryDate.format( 'LL' ) : '-' }
 			</div>
 		);
 	}
