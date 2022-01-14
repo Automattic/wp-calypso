@@ -31,6 +31,7 @@ export type ShoppingCartManagerSubscribe = ( callback: SubscribeCallback ) => Un
 export interface SubscriptionManager {
 	subscribe: ShoppingCartManagerSubscribe;
 	notifySubscribers: () => void;
+	getSubscribers: () => SubscribeCallback[];
 }
 
 export interface ShoppingCartManagerState {
@@ -45,12 +46,14 @@ export interface ShoppingCartManagerState {
 type WaitForReady = () => Promise< ResponseCart >;
 
 export type ShoppingCartManagerGetState = () => ShoppingCartManagerState;
+export type ShoppingCartManagerGetSubscribers = () => SubscribeCallback[];
 
 export interface ShoppingCartManager {
 	getState: ShoppingCartManagerGetState;
 	subscribe: ShoppingCartManagerSubscribe;
 	actions: ShoppingCartManagerActions;
 	fetchInitialCart: WaitForReady;
+	getSubscribers: ShoppingCartManagerGetSubscribers;
 }
 
 export type UseShoppingCart = ShoppingCartManagerActions & ShoppingCartManagerState;

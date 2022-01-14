@@ -137,6 +137,7 @@ function createShoppingCartManager(
 
 	return {
 		subscribe: subscriptionManager.subscribe,
+		getSubscribers: subscriptionManager.getSubscribers,
 		actions,
 		getState: getCachedManagerState,
 		fetchInitialCart: initialFetch,

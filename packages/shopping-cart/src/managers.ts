@@ -73,8 +73,9 @@ export function createSubscriptionManager( cartKey: string | undefined ): Subscr
 		} );
 		debug( `completed notification of subscribers for cartKey ${ cartKey }` );
 	};
+	const getSubscribers = () => subscribedClients;
 
-	return { subscribe, notifySubscribers };
+	return { subscribe, notifySubscribers, getSubscribers };
 }
 
 export function createActionPromisesManager(): ActionPromises {
@@ -131,5 +132,6 @@ export const noopManager: ShoppingCartManager = {
 	actions: noopActions,
 	getState: noopGetState,
 	subscribe: () => () => null,
+	getSubscribers: () => [],
 	fetchInitialCart: () => Promise.resolve( emptyCart ),
 };
