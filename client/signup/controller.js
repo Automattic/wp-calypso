@@ -4,6 +4,7 @@ import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
@@ -323,6 +324,11 @@ export default {
 			! isManageSiteFlow
 		) {
 			context.store.dispatch( setSelectedSiteId( null ) );
+		}
+
+		// Pre-fetching the experiment
+		if ( flowName === 'onboarding' || flowName === 'launch-site' ) {
+			await loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v1' );
 		}
 
 		context.primary = createElement( SignupComponent, {
