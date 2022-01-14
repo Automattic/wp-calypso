@@ -13,8 +13,8 @@ const selectors = {
 	// Cart item
 	cartItem: ( itemName: string ) =>
 		`[data-testid="review-order-step--visible"] .checkout-line-item >> text=${ itemName.trim() }`,
-	removeCartItemButton: () =>
-		`[data-testid="review-order-step--visible"] button.checkout-button.checkout-line-item__remove-product`,
+	removeCartItemButton: ( itemName: string ) =>
+		`[data-testid="review-order-step--visible"] button[aria-label*="Remove ${ itemName.trim() } from cart"]`,
 
 	// Order Summary
 	editOrderButton: 'button[aria-label="Edit your order"]',
@@ -83,9 +83,9 @@ export class CartCheckoutPage {
 	/**
 	 * Navigates to checkout page of the specified blog.
 	 *
-	 * @param {{path: string}: string } param1 Key/value pair of the blogname for which checkout is to be loaded.
+	 * @param {string} blogName Blogname for which checkout is to be loaded.
 	 */
-	async visit( { blogName }: { blogName: string } = { blogName: '' } ): Promise< void > {
+	async visit( blogName: string ): Promise< void > {
 		await this.page.goto( getCalypsoURL( `checkout/${ blogName }` ), { waitUntil: 'networkidle' } );
 	}
 

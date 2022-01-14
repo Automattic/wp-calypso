@@ -38,7 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		page = args.page;
 	} );
 
-	describe( 'Signup', function () {
+	describe( 'ToS tracking screenshots', function () {
 		jest.setTimeout( 1800000 );
 		let cartCheckoutPage: CartCheckoutPage;
 		const magnificientNonEnLocales = [
@@ -60,7 +60,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			'sv',
 		];
 
-		it( 'Screenshot blue signup page in desktop viewport, en and Mag-16 locales', async function () {
+		it( 'Screenshot blue background signup page in desktop viewport, en and Mag-16 locales', async function () {
 			const userSignupPage = new UserSignupPage( page );
 			let domainSearchComponent: DomainSearchComponent;
 			const username = `e2eflowtestingdomainonly${ DataHelper.getTimestamp() }`;
@@ -101,7 +101,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			}
 		} );
 
-		it( 'Screenshot white signup page in desktop viewport, en and Mag-16 locales', async function () {
+		it( 'Screenshot white background signup page in desktop viewport, en and Mag-16 locales', async function () {
 			const userSignupPage = new UserSignupPage( page );
 			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
 				await userSignupPage.visit( { path: locale } );
@@ -130,7 +130,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			}
 		} );
 
-		it( 'Screenshot blue login page in desktop viewport, en and Mag-16 locales', async function () {
+		it( 'Screenshot blue background login page in desktop viewport, en and Mag-16 locales', async function () {
 			const loginPage = new LoginPage( page );
 			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
 				await loginPage.visit( { path: locale } );
@@ -159,7 +159,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			}
 		} );
 
-		it( 'Screenshot white login page in desktop viewport, en and Mag-16 locales', async function () {
+		it( 'Screenshot white background login page in desktop viewport, en and Mag-16 locales', async function () {
 			const loginPage = new LoginPage( page );
 			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
 				await loginPage.visit( { path: `new/${ locale }` } );
@@ -186,7 +186,8 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 				} );
 				page.setViewportSize( { width: 1280, height: 720 } );
 			}
-			await loginPage.login( { account: 'martechTosUser' } );
+			const credentials = DataHelper.getAccountCredential( 'martechTosUser' );
+			await loginPage.logInWithCredentials( ...credentials );
 		} );
 
 		it( 'Set store cookie', async function () {
@@ -194,6 +195,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		} );
 
 		it( 'Set interface language to en', async function () {
+			await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 			const changeUILanguageFlow = new ChangeUILanguageFlow( page );
 			await changeUILanguageFlow.changeUILanguage( 'en' as LanguageSlug );
 		} );
@@ -219,14 +221,14 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			await cartCheckoutPage.validateCartItem( cartItemForBusinessPlan );
 		} );
 
-		it( 'Close checkout and change UI language', async function () {
+		it( 'Screenshot checkout page for all en and non-en locales', async function () {
 			const changeUILanguageFlow = new ChangeUILanguageFlow( page );
 			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
 				page.setViewportSize( { width: 1280, height: 720 } );
 				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
 				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
-				await cartCheckoutPage.visit( { blogName } );
+				await cartCheckoutPage.visit( blogName );
 				const paymentDetails = DataHelper.getTestPaymentDetails();
 				await cartCheckoutPage.enterBillingDetails( paymentDetails );
 				await cartCheckoutPage.validatePaymentForm();
