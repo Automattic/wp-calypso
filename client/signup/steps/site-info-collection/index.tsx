@@ -14,7 +14,7 @@ import {
 } from 'calypso/state/signup/steps/site-info-collection/selectors';
 import { ContactInformation, TextInputField, SocialMediaProfiles } from './form-components';
 import SectionWrapper from './section-wrapper';
-import { SectionProps, ValidatorFunction } from './types';
+import { SectionProps, ValidationErrors, ValidatorFunction } from './types';
 
 import './style.scss';
 
@@ -54,7 +54,7 @@ function SiteInformationCollection( {
 		} );
 	};
 
-	const [ isFormValueValid, setIsFormValueValid ] = useState< Record< string, boolean > >( {} );
+	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 
 	const sections: SectionProps[] = [
 		{
@@ -68,7 +68,7 @@ function SiteInformationCollection( {
 						'Please enter the name of your business as you want it to appear on your new site.'
 					) }
 					value={ formValues.siteTitle }
-					isValid={ isFormValueValid.siteTitle }
+					error={ formErrors.siteTitle }
 					name="siteTitle"
 					onChange={ onChangeField }
 				/>
@@ -79,8 +79,8 @@ function SiteInformationCollection( {
 				const isValid = Boolean( siteTitle && siteTitle.length );
 				return {
 					result: isValid,
-					fields: {
-						siteTitle: isValid,
+					errors: {
+						siteTitle: isValid ? null : translate( 'Please enter a valid site title.' ),
 					},
 				};
 			},
@@ -168,9 +168,9 @@ function SiteInformationCollection( {
 
 	const runValidation = ( validator: ValidatorFunction ) => {
 		const validationResult = validator( formValues );
-		setIsFormValueValid( {
-			...isFormValueValid,
-			...validationResult.fields,
+		setFormErrors( {
+			...formErrors,
+			...validationResult.errors,
 		} );
 		return validationResult;
 	};

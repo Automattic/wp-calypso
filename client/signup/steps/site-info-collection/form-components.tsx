@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
@@ -63,7 +64,7 @@ interface TextInputFieldProps {
 	label?: TranslateResult;
 	placeholder?: TranslateResult;
 	value: string;
-	isValid?: boolean;
+	error?: TranslateResult | null;
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 }
 
@@ -71,7 +72,8 @@ export function TextInputField( props: TextInputFieldProps ) {
 	return (
 		<FormFieldset>
 			<Label htmlFor={ props.name }>{ props.label }</Label>
-			<TextInput { ...props } isError={ false === props.isValid } />
+			<TextInput { ...props } isError={ !! props.error } />
+			{ props.error && <FormInputValidation isError text={ props.error } /> }
 		</FormFieldset>
 	);
 }
@@ -82,7 +84,7 @@ export function TextAreaField( props: TextInputFieldProps ) {
 			<Label htmlFor={ props.name }>{ props.label }</Label>
 			<TextArea
 				{ ...props }
-				isError={ false === props.isValid }
+				isError={ !! props.error }
 				autoCapitalize="off"
 				autoCorrect="off"
 				spellCheck="false"
