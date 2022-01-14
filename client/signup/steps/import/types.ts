@@ -8,8 +8,8 @@ export type UrlData = {
 		is_wpcom: boolean;
 	};
 	meta: {
-		favicon: string;
-		title: string;
+		favicon: string | null;
+		title: string | null;
 	};
 };
 export type MShotParams = {
