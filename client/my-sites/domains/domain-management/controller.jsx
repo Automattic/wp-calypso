@@ -94,11 +94,15 @@ export default {
 	},
 
 	domainManagementSiteRedirect( pageContext, next ) {
+		let component = DomainManagement.SiteRedirect;
+		if ( config.isEnabled( 'domains/settings-page-redesign' ) ) {
+			component = DomainManagement.Settings;
+		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementSiteRedirect( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ DomainManagement.SiteRedirect }
+				component={ component }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
