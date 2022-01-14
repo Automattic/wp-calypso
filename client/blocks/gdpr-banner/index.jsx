@@ -4,11 +4,7 @@ import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-	getCountryCodeFromCookies,
-	refreshCountryCodeCookieGdpr,
-	shouldSeeGdprBanner,
-} from 'calypso/lib/analytics/utils';
+import { refreshCountryCodeCookieGdpr, shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -24,30 +20,44 @@ const STATUS = {
 
 const isServer = typeof document === 'undefined';
 
-export default function GdprBanner( { shouldRenderGdprBannerOnServer } ) {
-	const dispatch = useDispatch();
-	let country;
-	let cookies;
+function getGdprFromCookies() {
+	const cookies = cookie.parse( document.cookie );
+	return {
+		country: cookies.country_code,
+		pixel: cookies.sensitive_pixel_option,
+	};
+}
 
-	if ( ! isServer ) {
-		cookies = cookie.parse( document.cookie );
-		country = getCountryCodeFromCookies( cookies );
+const useShowGdprBanner = isServer
+	? ( serverShow ) => serverShow
+	: () => {
+			const [ { country, pixel }, setState ] = useState( getGdprFromCookies );
+
+			// If the country is unknown, try to determine it and then read status from cookies again.
+			// If the refresh request fails, it will set the `country_code` cookie to `unknown`.
+			useEffect( () => {
+				if ( ! country ) {
+					refreshCountryCodeCookieGdpr().then( () => setState( getGdprFromCookies ) );
+				}
+			}, [ country ] );
+
+			return country ? shouldSeeGdprBanner( country, pixel ) : null;
+	  };
+
+export default function GdprBanner( { shouldRenderGdprBannerOnServer = false } ) {
+	const show = useShowGdprBanner( shouldRenderGdprBannerOnServer );
+
+	// null value means that it hasn't been determined yet. Don't render the banner yet.
+	if ( show == null ) {
+		return null;
 	}
 
-	const shouldShow = isServer ? shouldRenderGdprBannerOnServer : shouldSeeGdprBanner( cookies );
-	const [ bannerStatus, setBannerStatus ] = useState( shouldShow ? STATUS.VISIBLE : STATUS.HIDDEN );
+	return <GdprBannerInner show={ show } />;
+}
 
-	const [ waitingForCountry, setWaitingForCountry ] = useState( ! isServer && ! country );
-	useEffect( () => {
-		if ( waitingForCountry ) {
-			refreshCountryCodeCookieGdpr().then( () => {
-				cookies = cookie.parse( document.cookie );
-				setBannerStatus( shouldSeeGdprBanner( cookies ) ? STATUS.VISIBLE : STATUS.HIDDEN );
-				setWaitingForCountry( false );
-			} );
-		}
-	}, [ waitingForCountry ] );
-
+function GdprBannerInner( { show } ) {
+	const [ bannerStatus, setBannerStatus ] = useState( show ? STATUS.VISIBLE : STATUS.HIDDEN );
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const acknowledgeClicked = () => {
@@ -68,10 +78,6 @@ export default function GdprBanner( { shouldRenderGdprBannerOnServer } ) {
 				)
 			);
 	}, [ bannerStatus, dispatch ] );
-
-	if ( waitingForCountry ) {
-		return null;
-	}
 
 	const copy = translate(
 		'Our websites and dashboards use cookies. By continuing, you agree to their use. ' +

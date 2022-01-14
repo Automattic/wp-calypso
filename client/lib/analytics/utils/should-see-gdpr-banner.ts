@@ -1,5 +1,4 @@
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import getCountryCodeFromCookies from './get-country-code-from-cookies';
 import isCountryInGdprZone from './is-country-in-gdpr-zone';
 
 /**
@@ -7,29 +6,26 @@ import isCountryInGdprZone from './is-country-in-gdpr-zone';
  *
  * Defaults to `false` if the country code is unknown.
  *
- * @param cookies The cookies to read user data from.
- * @param defaultCountryCode A default country code to fall back to.
+ * @param countryCode Country code determined either from cookie or from a special header
+ * @param sensitivePixelOption Value of the `sensitive_pixel_option` cookie
  *
  * @returns Whether the current user could be in the GDPR zone
  */
 export default function shouldSeeGdprBanner(
-	cookies: Record< string, string >,
-	defaultCountryCode?: string
-) {
-	cookies = cookies || {};
-
-	if ( cookies.sensitive_pixel_option === 'yes' || cookies.sensitive_pixel_option === 'no' ) {
-		return false;
-	}
-
+	countryCode: string,
+	sensitivePixelOption: string | undefined
+): boolean {
+	// the banner is not shown for pages embedded as web view inside the mobile app
 	if ( isWpMobileApp() ) {
 		return false;
 	}
 
-	const countryCode = getCountryCodeFromCookies( cookies, defaultCountryCode );
-	if ( countryCode && isCountryInGdprZone( countryCode ) ) {
-		return true;
+	// the request for consent has already been answered, we no longer need to ask
+	if ( sensitivePixelOption === 'yes' || sensitivePixelOption === 'no' ) {
+		return false;
 	}
 
-	return false;
+	// if the country code is unknown, even after trying to determine it, we fail safely
+	// and show the banner anyway.
+	return countryCode === 'unknown' || isCountryInGdprZone( countryCode );
 }

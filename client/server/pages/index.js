@@ -13,7 +13,7 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
-import { getCountryCodeFromCookies, shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
+import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import { filterLanguageRevisions } from 'calypso/lib/i18n-utils';
 import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -119,9 +119,12 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	setStore( reduxStore );
 
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
-	const shouldRenderGdprBannerOnServer = shouldSeeGdprBanner( request.cookies, geoIPCountryCode );
+	const shouldRenderGdprBannerOnServer = shouldSeeGdprBanner(
+		request.cookies.country_code || geoIPCountryCode || 'unknown',
+		request.cookies.sensitive_pixel_option
+	);
 
-	if ( ! getCountryCodeFromCookies( request.cookies ) && geoIPCountryCode ) {
+	if ( ! request.cookies.country_code && geoIPCountryCode ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
 
