@@ -24,6 +24,8 @@ const CHAT_STATUSES = [
  * @param {object} state - global redux state
  * @returns {boolean} Whether the user is able to send messages
  */
-export default ( state ) =>
+const canUserSendMessages = ( state ) =>
 	isHappychatClientConnected( state ) &&
 	! CHAT_STATUSES.includes( getHappychatChatStatus( state ) );
+
+export default canUserSendMessages;
