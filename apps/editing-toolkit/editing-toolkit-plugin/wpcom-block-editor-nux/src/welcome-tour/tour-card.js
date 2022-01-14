@@ -36,7 +36,7 @@ function WelcomeTourCard( {
 	isGutenboarding,
 	setInitialFocusedElement,
 } ) {
-	const { descriptions, heading, imgSrc, imgNeedsPadding } = cardContent;
+	const { descriptions, heading, imgSrc } = cardContent;
 	const isLastStep = currentStepIndex === lastStepIndex;
 
 	// Ensure tracking is recorded once per slide view
@@ -54,10 +54,6 @@ function WelcomeTourCard( {
 			is_gutenboarding: isGutenboarding,
 		} );
 	} );
-	// TODO CLK: welcome tour only mod for mobile fixes
-	const cardMediaClass = classNames( 'welcome-tour-card__media', {
-		'is-with-extra-padding': isMobile() && imgNeedsPadding,
-	} );
 
 	const description = descriptions[ isMobile() ? 'mobile' : 'desktop' ] ?? descriptions.desktop;
 
@@ -65,7 +61,7 @@ function WelcomeTourCard( {
 		<Card className="welcome-tour-card" isElevated>
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			{ /* TODO: Update selector for images in @wordpress/components/src/card/styles/card-styles.js */ }
-			<CardMedia className={ cardMediaClass }>
+			<CardMedia className={ 'welcome-tour-card__media' }>
 				<picture>
 					{ imgSrc.mobile && (
 						<source

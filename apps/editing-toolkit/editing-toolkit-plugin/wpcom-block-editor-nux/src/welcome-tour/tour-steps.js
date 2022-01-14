@@ -84,7 +84,9 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 				imgSrc: getTourAssets( 'welcome' ),
 				animation: null,
-				imgNeedsPadding: true,
+			},
+			options: {
+				className: 'is-with-extra-padding',
 			},
 		},
 		{
@@ -125,7 +127,9 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 				imgSrc: getTourAssets( 'addBlock' ),
 				animation: 'block-inserter',
-				imgNeedsPadding: true,
+			},
+			options: {
+				className: 'is-with-extra-padding',
 			},
 		},
 		{
@@ -157,7 +161,9 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 				imgSrc: getTourAssets( 'moreOptions' ),
 				animation: null,
-				imgNeedsPadding: true,
+			},
+			options: {
+				className: 'is-with-extra-padding',
 			},
 		},
 		{
@@ -187,7 +193,9 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 				imgSrc: getTourAssets( 'moveBlock' ),
 				animation: 'undo-button',
-				imgNeedsPadding: true,
+			},
+			options: {
+				className: 'is-with-extra-padding',
 			},
 		},
 		{
