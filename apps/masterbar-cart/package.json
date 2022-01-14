@@ -25,24 +25,23 @@
 		"sync": "yarn clean && yarn build && sh ./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
-		"@automattic/mini-cart": "^1.0.0",
+		"@automattic/mini-cart": "workspace:^",
 		"@emotion/react": "^11.4.1",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"react-query": "^3.9.8",
-		"wpcom": "^6.0.0",
-		"wpcom-proxy-request": "^6.0.0",
-		"wpcom-xhr-request": "^1.2.0"
+		"react-query": "^3.32.1",
+		"wpcom": "workspace:^",
+		"wpcom-proxy-request": "workspace:^",
+		"wpcom-xhr-request": "workspace:^"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^9.0.0",
+		"@automattic/calypso-build": "workspace:^",
 		"autoprefixer": "^10.2.5",
 		"enzyme": "^3.11.0",
 		"html-webpack-plugin": "^5.0.0-beta.4",
-		"jest": "^27.0.6",
-		"postcss": "^8.2.6",
-		"webpack": "^5.46.0",
-		"webpack-bundle-analyzer": "^4.4.2",
-		"webpack-dev-server": "^3.11.2"
+		"jest": "^27.3.1",
+		"postcss": "^8.4.5",
+		"webpack": "^5.65.0",
+		"webpack-dev-server": "^4.7.2"
 	}
 }
