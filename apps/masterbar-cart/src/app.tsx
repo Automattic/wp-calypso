@@ -30,11 +30,21 @@ function App( { siteId, wpcom }: { siteId: string; wpcom: any } ) {
 		window.location.href = `/checkout/${ siteSlug }`;
 	};
 
+	const closeCart = () => {
+		// eslint-disable-next-line no-console
+		console.log( 'TODO: implement closing' );
+	};
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient }>
 			<header id="masterbar" className="masterbar masterbar-cart-app">
-				<MiniCart selectedSiteSlug={ siteId } goToCheckout={ goToCheckout } />
+				<MiniCart
+					cartKey={ siteId }
+					selectedSiteSlug={ siteId }
+					goToCheckout={ goToCheckout }
+					closeCart={ closeCart }
+				/>
 			</header>
 		</ShoppingCartProvider>
 	);
