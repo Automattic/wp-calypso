@@ -155,7 +155,18 @@ export function createShoppingCartManagerClient( {
 
 	function addCartKeyAlias( aliasKey: string, cartKey: string ): void {
 		debug( `adding cart manager alias from "${ aliasKey }" to "${ cartKey }"` );
+		// Prevent accessing old manager and return new manager instead.
 		cartKeyAliases[ aliasKey ] = cartKey;
+		if ( managersByCartKey[ aliasKey ] && managersByCartKey[ cartKey ] ) {
+			// Resubscribe any existing subscribers to the new manager.
+			// FIXME: how do we do that?
+			// Mutate existing manager just in case any existing references still exist.
+			managersByCartKey[ aliasKey ].actions = managersByCartKey[ cartKey ].actions;
+			managersByCartKey[ aliasKey ].getState = managersByCartKey[ cartKey ].getState;
+			managersByCartKey[ aliasKey ].subscribe = managersByCartKey[ cartKey ].subscribe;
+			managersByCartKey[ aliasKey ].fetchInitialCart =
+				managersByCartKey[ cartKey ].fetchInitialCart;
+		}
 	}
 
 	function forCartKey( cartKey: string | undefined ): ShoppingCartManager {
