@@ -160,7 +160,9 @@ export function createShoppingCartManagerClient( {
 		cartKeyAliases[ aliasKey ] = cartKey;
 		if ( managersByCartKey[ aliasKey ] && managersByCartKey[ cartKey ] ) {
 			// Resubscribe any existing subscribers to the new manager.
-			// FIXME: how do we do that?
+			managersByCartKey[ aliasKey ]
+				.getSubscribers()
+				.forEach( managersByCartKey[ cartKey ].subscribe );
 			// Mutate existing manager just in case any existing references still exist.
 			managersByCartKey[ aliasKey ].actions = managersByCartKey[ cartKey ].actions;
 			managersByCartKey[ aliasKey ].getState = managersByCartKey[ cartKey ].getState;
