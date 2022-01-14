@@ -799,6 +799,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/mini-cart": "workspace:^"
+    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@emotion/react": ^11.4.1
     autoprefixer: ^10.2.5
     enzyme: ^3.11.0
