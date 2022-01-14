@@ -59,6 +59,7 @@ class Search extends Component {
 	renderLoadingPlaceholder() {
 		return (
 			<Banner
+				title=""
 				jetpack={ this.props.siteIsJetpack }
 				disableHref
 				description={ this.props.translate( 'Loading your purchases…' ) }
