@@ -1,3 +1,4 @@
+//import { isSiteRedirect } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -389,7 +390,7 @@ export default connect(
 		return {
 			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
 			currentRoute: getCurrentRoute( state ),
-			domain: getSelectedDomain( ownProps ),
+			domain: getSelectedDomain( { ...ownProps, isSiteRedirect: true } ),
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
