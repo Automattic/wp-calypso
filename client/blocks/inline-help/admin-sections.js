@@ -451,7 +451,7 @@ export function filterListBySearchTerm( searchTerm = '', collection = [], limit 
 			partialMatches.push( item );
 		} else if (
 			'en' === getLocaleSlug() &&
-			( item.synonyms ?? [] ).some( ( s ) => searchTermWords.includes( s ) )
+			item.synonyms?.some( ( s ) => searchTermWords.includes( s ) )
 		) {
 			synonymMatches.push( item );
 		}
