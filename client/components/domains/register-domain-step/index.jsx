@@ -1295,7 +1295,7 @@ class RegisterDomainStep extends Component {
 			<div className="register-domain-step__example-prompt">
 				<Icon icon={ tip } size={ 20 } />
 				{ isCopyExperiment
-					? 'You’ll see many choices below, including free options. And you can always change or upgrade it later.'
+					? 'You’ll see many options below. Or, you can choose a domain later and start with a free wordpress.com address.'
 					: translate( 'The best names are short and memorable' ) }
 			</div>
 		);
