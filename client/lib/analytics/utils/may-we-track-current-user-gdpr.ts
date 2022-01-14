@@ -1,6 +1,5 @@
 import cookie from 'cookie';
 import debug from './debug';
-import getCountryCodeFromCookies from './get-country-code-from-cookies';
 import isCountryInGdprZone from './is-country-in-gdpr-zone';
 
 /**
@@ -18,8 +17,11 @@ export default function mayWeTrackCurrentUserGdpr(): boolean {
 	} else if ( cookies.sensitive_pixel_option === 'no' ) {
 		result = false;
 	} else {
-		const countryCode = getCountryCodeFromCookies( cookies );
-		result = countryCode !== undefined && ! isCountryInGdprZone( countryCode );
+		const countryCode = cookies.country_code;
+		result =
+			countryCode !== undefined &&
+			countryCode !== 'unknown' &&
+			! isCountryInGdprZone( countryCode );
 	}
 	debug( `mayWeTrackCurrentUserGdpr: ${ result }` );
 	return result;
