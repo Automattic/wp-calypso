@@ -2,9 +2,8 @@ import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
 	getCountryCodeFromCookies,
 	refreshCountryCodeCookieGdpr,
@@ -16,7 +15,6 @@ import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
-const noop = () => {};
 const SIX_MONTHS = 6 * 30 * 24 * 60 * 60;
 const STATUS = {
 	VISIBLE: 'visible',
@@ -26,8 +24,8 @@ const STATUS = {
 
 const isServer = typeof document === 'undefined';
 
-function GdprBanner( props ) {
-	const { recordCookieBannerOk, recordCookieBannerView, shouldRenderGdprBannerOnServer } = props;
+export default function GdprBanner( { shouldRenderGdprBannerOnServer } ) {
+	const dispatch = useDispatch();
 	let country;
 	let cookies;
 
@@ -57,13 +55,19 @@ function GdprBanner( props ) {
 			path: '/',
 			maxAge: SIX_MONTHS,
 		} );
-		recordCookieBannerOk();
+		dispatch( recordTracksEvent( 'a8c_cookie_banner_ok', { site: 'Calypso' } ) );
 		setBannerStatus( STATUS.HIDING );
 	};
 
 	useEffect( () => {
-		bannerStatus === STATUS.VISIBLE && recordCookieBannerView();
-	}, [ bannerStatus, recordCookieBannerView ] );
+		bannerStatus === STATUS.VISIBLE &&
+			dispatch(
+				bumpStat(
+					'cookie-banner-view',
+					'total,' + document.location.host.replace( /[^a-zA-Z0-9]/g, '-' )
+				)
+			);
+	}, [ bannerStatus, dispatch ] );
 
 	if ( waitingForCountry ) {
 		return null;
@@ -95,24 +99,3 @@ function GdprBanner( props ) {
 		</Card>
 	);
 }
-
-GdprBanner.propTypes = {
-	recordCookieBannerOk: PropTypes.func,
-	recordCookieBannerView: PropTypes.func,
-};
-
-GdprBanner.defaultProps = {
-	recordCookieBannerOk: noop,
-	recordCookieBannerView: noop,
-};
-
-const mapDispatchToProps = {
-	recordCookieBannerOk: () => recordTracksEvent( 'a8c_cookie_banner_ok', { site: 'Calypso' } ),
-	recordCookieBannerView: () =>
-		bumpStat(
-			'cookie-banner-view',
-			'total,' + document.location.host.replace( /[^a-zA-Z0-9]/g, '-' )
-		),
-};
-
-export default connect( null, mapDispatchToProps )( GdprBanner );
