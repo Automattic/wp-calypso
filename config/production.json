@@ -98,7 +98,6 @@
 		"signup/starting-point-courses": false,
 		"site-indicator": true,
 		"ssr/sample-log-cache-misses": true,
-		"support-user": true,
 		"themes/premium": false,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,

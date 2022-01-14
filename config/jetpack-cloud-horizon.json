@@ -50,7 +50,6 @@
 		"oauth": false,
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,
-		"support-user": true,
 		"upgrades/redirect-payments": true
 	},
 	"enable_all_sections": false,
