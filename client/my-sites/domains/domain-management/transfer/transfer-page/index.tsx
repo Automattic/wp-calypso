@@ -20,6 +20,7 @@ import { getSelectedDomain, getTopLevelOfTld, isMappedDomain } from 'calypso/lib
 import { DESIGNATED_AGENT, TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import SelectIpsTag from 'calypso/my-sites/domains/domain-management/transfer/transfer-out/select-ips-tag';
 import {
 	domainManagementEdit,
@@ -54,6 +55,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	const dispatch = useDispatch();
 	const {
 		currentRoute,
+		domains,
 		isAtomic,
 		isDomainInfoLoading,
 		isDomainLocked,
@@ -66,6 +68,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	const { __ } = useI18n();
 	const [ isRequestingTransferCode, setIsRequestingTransferCode ] = useState( false );
 	const [ isLockingOrUnlockingDomain, setIsLockingOrUnlockingDomain ] = useState( false );
+	const domain = getSelectedDomain( props );
 
 	const renderBreadcrumbs = () => {
 		const items = [
@@ -226,7 +229,6 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			</span>
 		);
 
-		const domain = getSelectedDomain( props );
 		const disabled = Boolean(
 			! domain?.domainLockingAvailable ||
 				domain?.transferAwayEligibleAt ||
@@ -257,8 +259,6 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	};
 
 	const renderTransferMessage = () => {
-		const domain = getSelectedDomain( props );
-
 		const registrationDatePlus60Days = moment.utc( domain?.registrationDate ).add( 60, 'days' );
 		const supportLink = moment.utc().isAfter( registrationDatePlus60Days )
 			? DESIGNATED_AGENT
@@ -317,6 +317,23 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		);
 	};
 
+	const renderContent = (): JSX.Element | null => {
+		if ( ! domain ) {
+			return null;
+		}
+
+		if ( ! domain.currentUserIsOwner ) {
+			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
+		}
+
+		return (
+			<>
+				{ renderTransferOptions() }
+				{ renderAdvancedTransferOptions() }
+			</>
+		);
+	};
+
 	return (
 		<Main className="transfer-page" wideLayout>
 			<QueryDomainInfo domainName={ selectedDomainName } />
@@ -324,10 +341,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			{ renderBreadcrumbs() }
 			<FormattedHeader brandFont headerText={ __( 'Transfer' ) } align="left" />
 			<Layout>
-				<Column type="main">
-					{ renderTransferOptions() }
-					{ renderAdvancedTransferOptions() }
-				</Column>
+				<Column type="main">{ renderContent() }</Column>
 				<Column type="sidebar">
 					<Card className="transfer-page__help-section-card">
 						<p className="transfer-page__help-section-title">{ __( 'How do transfers work?' ) }</p>
