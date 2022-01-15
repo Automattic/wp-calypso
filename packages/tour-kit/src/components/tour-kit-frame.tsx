@@ -187,7 +187,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		'tour-kit-frame',
 		config.options?.className,
 		isMobile ? 'is-mobile' : 'is-desktop',
-		{ '--visible': tourReady }
+		{ 'is-visible': tourReady }
 	);
 
 	return (

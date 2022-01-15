@@ -11,7 +11,7 @@ const TourKitOverlay: React.FunctionComponent< Props > = ( { visible } ) => {
 	return (
 		<div
 			className={ classnames( 'tour-kit-overlay', {
-				'--visible': visible,
+				'is-visible': visible,
 			} ) }
 		/>
 	);

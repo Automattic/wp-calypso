@@ -131,7 +131,7 @@ The main API for configuring a tour is the config object. See example usage and 
   - `steps`: The steps defined for the tour.
   - `currentStepIndex`
   - `onDismiss`: Handler that dismissed/closes the tour.
-  - `onMiximize`: Handler that expands the tour (passes rendering to `tourStep`).
+  - `onMaximize`: Handler that expands the tour (passes rendering to `tourStep`).
 
 `config.options` (optional):
 

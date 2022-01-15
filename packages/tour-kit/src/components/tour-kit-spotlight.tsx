@@ -80,7 +80,7 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement,
 			<Overlay visible={ ! clipRepositionProps } />
 			<div
 				className={ classnames( 'tour-kit-spotlight', {
-					'--visible': !! clipRepositionProps,
+					'is-visible': !! clipRepositionProps,
 				} ) }
 				ref={ sePopperElement }
 				{ ...clipRepositionProps }
