@@ -336,6 +336,10 @@ export default {
 			await loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' );
 		}
 
+		if ( 'onboarding' === flowName ) {
+			await loadExperimentAssignment( 'calypso_mobile_plans_page_with_billing' );
+		}
+
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
