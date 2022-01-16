@@ -1,14 +1,15 @@
 import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
+import { addQueryArgs } from 'calypso/lib/route';
+import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ImportJob } from '../types';
-import ContentChooser from './content-chooser';
-import { ImportEverything } from './import-everything';
-import { WPImportType } from './types';
+import { ContentChooser } from './content-chooser';
+import MigrationScreen from './import-everything/migration-screen';
+import { MigrationStep } from './types';
 
 import './style.scss';
 
@@ -27,15 +28,18 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	/**
 	 ↓ Fields
 	 */
-	const [ chosenType, setChosenType ] = useState< WPImportType >();
+	const [ step, setStep ] = useState< MigrationStep >();
 	const { fromSite, siteSlug } = props;
 	const siteItem = useSelector( ( state ) => getSiteBySlug( state, siteSlug ) );
-	// const fromSiteItem = useSelector( ( state ) => getSiteBySlug( state, convertToFriendlyWebsiteName( fromSite ) ) );
+	const fromSiteItem = useSelector( ( state ) =>
+		getSiteBySlug( state, convertToFriendlyWebsiteName( fromSite ) )
+	);
 	const fromSiteAnalyzedData = useSelector( getUrlData );
 
 	/**
 	 ↓ Effects
 	 */
+	useEffect( checkStepQueryParam );
 	useEffect( () => {
 		dispatch( analyzeUrl( fromSite ) );
 	}, [ fromSiteAnalyzedData && fromSiteAnalyzedData.url ] );
@@ -48,15 +52,26 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	}
 
 	function switchToMigrationScreen() {
-		setChosenType( 'everything' );
+		const currentPath = window.location.pathname + window.location.search;
+		const queryParams = { step: MigrationStep.CONFIRM };
+
+		page( addQueryArgs( queryParams, currentPath ) );
 	}
 
 	function switchToContentUploadScreen() {
-		setChosenType( 'content_only' );
+		// switchToContentUploadScreen
 	}
 
-	function runImportMigrationProcess() {
-		// console.log( 'runImportMigrationProcess', fromSiteItem?.ID, siteItem?.ID );
+	function checkStepQueryParam() {
+		const urlSearchParams = new URLSearchParams( window.location.search );
+		const stepParam = urlSearchParams.get( 'step' );
+		const steps: string[] = Object.values( MigrationStep );
+
+		if ( stepParam && steps.indexOf( stepParam ) >= 0 ) {
+			setStep( stepParam as MigrationStep );
+		} else {
+			setStep( MigrationStep.MIGRATE_OR_IMPORT );
+		}
 	}
 
 	/**
@@ -64,7 +79,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 */
 	return (
 		<>
-			{ chosenType === undefined && (
+			{ MigrationStep.MIGRATE_OR_IMPORT === step && (
 				<ContentChooser
 					onJetpackSelection={ installJetpack }
 					onContentOnlySelection={ switchToContentUploadScreen }
@@ -72,16 +87,18 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 					{ ...props }
 				/>
 			) }
-			{ chosenType === 'everything' && (
-				<ImportEverything
-					fromSite={ fromSite }
+
+			{ MigrationStep.CONFIRM === step && (
+				<MigrationScreen
+					sourceSiteId={ fromSiteItem?.ID as number }
+					url={ fromSite }
+					step={ step }
+					targetSite={ siteItem }
+					targetSiteId={ siteItem?.ID as number }
+					targetSiteSlug={ siteSlug }
 					fromSiteAnalyzedData={ fromSiteAnalyzedData }
-					siteItem={ siteItem }
-					siteSlug={ siteSlug }
-					startImport={ runImportMigrationProcess }
 				/>
 			) }
-			{ chosenType === 'content_only' && <div>Import Content only</div> }
 		</>
 	);
 };

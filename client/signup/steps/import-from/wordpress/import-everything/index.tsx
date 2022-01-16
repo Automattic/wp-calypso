@@ -13,6 +13,7 @@ import './style.scss';
 
 interface Props {
 	fromSite: string;
+	fromSiteItem: SitesItem | null;
 	fromSiteAnalyzedData: UrlData;
 	siteItem: SitesItem | null;
 	siteSlug: string;

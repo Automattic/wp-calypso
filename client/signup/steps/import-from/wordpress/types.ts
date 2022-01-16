@@ -1,5 +1,3 @@
-export type WPImportType = 'everything' | 'content_only';
-
 export enum MigrationStatus {
 	UNKNOWN = 'unknown',
 	INACTIVE = 'inactive',
@@ -8,4 +6,11 @@ export enum MigrationStatus {
 	RESTORING = 'restoring',
 	DONE = 'done',
 	ERROR = 'error',
+}
+
+export enum MigrationStep {
+	INPUT = 'input',
+	UPGRADE = 'upgrade',
+	CONFIRM = 'confirm',
+	MIGRATE_OR_IMPORT = 'migrateOrImport',
 }
