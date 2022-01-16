@@ -2,16 +2,18 @@ import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title } from '@automattic/onboarding';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { addQueryArgs } from 'calypso/lib/route';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveSite, requestSite, updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
-import { MigrationStatus } from '../types';
+import { MigrationStatus, MigrationStep } from '../types';
 import { ImportEverything } from './index';
 
 interface Props {
@@ -20,6 +22,33 @@ interface Props {
 	targetSiteSlug: string;
 }
 export class MigrationScreen extends SectionMigrate {
+	getMigrationUrlPath = () => {
+		const { sourceSite, targetSiteSlug } = this.props;
+		const sourceSiteSlug = get( sourceSite, 'slug' );
+
+		const path = '/start/from/importing/wordpress';
+		const queryParams = {
+			from: sourceSiteSlug,
+			to: targetSiteSlug,
+			step: MigrationStep.CONFIRM,
+			run: true,
+		};
+
+		return addQueryArgs( queryParams, path );
+	};
+
+	getCheckoutUrlPath = ( redirectTo: string ) => {
+		const { targetSiteSlug } = this.props;
+		const path = `/checkout/${ targetSiteSlug }/business`;
+		const queryParams = { redirect_to: redirectTo };
+
+		return addQueryArgs( queryParams, path );
+	};
+
+	goToCart = () => {
+		page( this.getCheckoutUrlPath( this.getMigrationUrlPath() ) );
+	};
+
 	render() {
 		const { sourceSite, targetSite, targetSiteSlug, fromSiteAnalyzedData, translate } = this.props;
 
