@@ -1,5 +1,5 @@
 import { NextButton } from '@automattic/onboarding';
-import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
+import { Icon, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React, { useEffect, useState } from 'react';
@@ -38,7 +38,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	analyzerError,
 	recordTracksEvent,
 } ) => {
-	const { __, isRTL } = useI18n();
+	const { __ } = useI18n();
 
 	/**
 	 ↓ Fields
@@ -126,7 +126,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 							/>
 							{ showSubmitButton && (
 								<NextButton type={ 'submit' }>
-									<Icon icon={ isRTL() ? chevronLeft : chevronRight } />
+									<Icon className="capture__next-button-icon" icon={ chevronRight } />
 								</NextButton>
 							) }
 							{ ( ! isValid && showError ) ||
