@@ -146,12 +146,6 @@
 			background-color: transparent;
 			transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
 		}
-
-		&.design-picker__image-frame-hide-preview {
-			&::after {
-				display: none;
-			}
-		}
 	}
 
 	// The Aspect ratio trick: padding % is relative to width, so we use
@@ -385,6 +379,21 @@
 			@include break-large {
 				width: calc( 50% - 24px );
 			}
+		}
+	}
+}
+
+// layout without preview
+.design-button-container--without-preview {
+	.design-picker__image-frame::after {
+		pointer-events: none;
+	}
+
+	&:hover,
+	&:focus-within {
+		.design-picker__image-frame::after {
+			// `!important` is used because there is a default `background-color` with high specificity.
+			background-color: transparent !important; // to override 
 		}
 	}
 }

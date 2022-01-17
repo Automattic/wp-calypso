@@ -56,7 +56,6 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	premiumBadge,
 	highRes,
 	disabled,
-	hideFullScreenPreview,
 	hideDesignTitle,
 } ) => {
 	const { __ } = useI18n();
@@ -88,10 +87,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					'design-picker__image-frame',
 					'design-picker__image-frame-landscape',
 					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
-					{ 'design-picker__image-frame-blank': isBlankCanvas },
-					{
-						'design-picker__image-frame-hide-preview': hideFullScreenPreview,
-					}
+					{ 'design-picker__image-frame-blank': isBlankCanvas }
 				) }
 			>
 				{ isBlankCanvas ? (
@@ -179,7 +175,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 
 	if ( ! onPreview || props.hideFullScreenPreview ) {
 		return (
-			<div className="design-button-container">
+			<div className="design-button-container design-button-container--without-preview">
 				<DesignButton { ...props } />
 			</div>
 		);
