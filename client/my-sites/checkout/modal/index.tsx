@@ -20,16 +20,18 @@ interface Props {
 	cartProducts?: RequestCartProduct[];
 	redirectTo?: string;
 	clearCartOnClose?: boolean;
+	disabledRemoveProductFromCart?: boolean;
 	checkoutOnSuccessCallback?: () => void;
 	onClose?: () => void;
 }
 
 const removeHashFromUrl = () => {
-	try {
-		const newUrl = window.location.hash
-			? window.location.href.replace( window.location.hash, '' )
-			: window.location.href;
+	if ( window.location.hash ) {
+		return;
+	}
 
+	try {
+		const newUrl = window.location.href.replace( window.location.hash, '' );
 		window.history.replaceState( null, '', newUrl );
 	} catch {}
 };
@@ -39,6 +41,7 @@ const CheckoutModal: React.FunctionComponent< Props > = ( {
 	cartProducts,
 	redirectTo,
 	clearCartOnClose,
+	disabledRemoveProductFromCart,
 	checkoutOnSuccessCallback,
 	onClose,
 } ) => {
@@ -71,12 +74,10 @@ const CheckoutModal: React.FunctionComponent< Props > = ( {
 	};
 
 	useEffect( () => {
-		return () => {
-			// Remove the hash e.g. #step2 from the url
-			// when the component is going to unmount.
+		if ( ! isOpen ) {
 			removeHashFromUrl();
-		};
-	}, [] );
+		}
+	}, [ isOpen ] );
 
 	if ( ! isOpen ) {
 		return null;
@@ -97,12 +98,13 @@ const CheckoutModal: React.FunctionComponent< Props > = ( {
 				locale={ translate.localeSlug }
 			>
 				<CompositeCheckout
-					redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
 					siteId={ selectedSiteId ?? undefined }
 					siteSlug={ site?.slug }
 					productAliasFromUrl={ commaSeparatedProductSlugs }
+					redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
 					isInModal
 					disabledThankYouPage
+					disabledRemoveProductFromCart={ disabledRemoveProductFromCart }
 					onAfterPaymentComplete={ handleAfterPaymentComplete }
 				/>
 			</StripeHookProvider>

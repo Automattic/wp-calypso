@@ -105,6 +105,7 @@ export default function CompositeCheckout( {
 	isInModal,
 	onAfterPaymentComplete,
 	disabledThankYouPage,
+	disabledRemoveProductFromCart,
 	isJetpackCheckout = false,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
@@ -126,6 +127,7 @@ export default function CompositeCheckout( {
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
 	disabledThankYouPage?: boolean;
+	disabledRemoveProductFromCart?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
