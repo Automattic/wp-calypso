@@ -12444,7 +12444,7 @@ __metadata:
     lodash-es: ^4.17.21
     lru: ^3.1.0
     lunr: ^2.3.8
-    marked: ^0.8.2
+    marked: ^4.0.0
     mock-fs: ^5.0.0
     mockdate: ^2.0.5
     moment: ^2.26.0
@@ -12458,7 +12458,7 @@ __metadata:
     photon: "workspace:^"
     pkg-dir: ^5.0.0
     postcss: ^8.4.5
-    prismjs: ^1.17.1
+    prismjs: ^1.26.0
     prop-types: ^15.7.2
     qrcode.react: ^1.0.1
     qs: ^6.9.1
@@ -24973,12 +24973,12 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"marked@npm:^0.8.2":
-  version: 0.8.2
-  resolution: "marked@npm:0.8.2"
+"marked@npm:^4.0.0":
+  version: 4.0.10
+  resolution: "marked@npm:4.0.10"
   bin:
-    marked: bin/marked
-  checksum: afb59f634b161819815bd7df00db3d86b9e52973624a14c90b8584f9d72939233ced90893bc17a4e61211b5de94d22f9d59cb83ba480c6331f81e721b079a15b
+    marked: bin/marked.js
+  checksum: 137660cd1eca54cfcdcec9d9c7dea786fc57ba3663da9043b721aff4c1419fc869d21bc38f6d5907062b82d4ef354f4fcac6605cac5f4f9dc1595a743b856d91
   languageName: node
   linkType: hard
 
@@ -29424,7 +29424,14 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"prismjs@npm:^1.17.1, prismjs@npm:^1.21.0, prismjs@npm:~1.22.0":
+"prismjs@npm:^1.21.0, prismjs@npm:^1.26.0":
+  version: 1.26.0
+  resolution: "prismjs@npm:1.26.0"
+  checksum: 095cdf66b099da0526b26e2634a730643a5780775a0138892291e6786e0a8d3fbce2da394048998a58ccc9566e70ccd94ebd525ded82a1abf854a9407d77a8d1
+  languageName: node
+  linkType: hard
+
+"prismjs@npm:~1.22.0":
   version: 1.22.0
   resolution: "prismjs@npm:1.22.0"
   dependencies:
