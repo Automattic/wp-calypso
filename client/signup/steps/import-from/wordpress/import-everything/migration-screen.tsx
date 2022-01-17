@@ -14,6 +14,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveSite, requestSite, updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import DoneButton from '../../components/done-button';
 import { MigrationStatus, MigrationStep } from '../types';
 import { ImportEverything } from './index';
 
@@ -104,7 +105,7 @@ export class MigrationScreen extends SectionMigrate {
 						<SubTitle>
 							{ translate( 'Congratulations. Your content was successfully imported.' ) }
 						</SubTitle>
-						{ /*{ TODO: add missing "View site" -> DONE button }*/ }
+						<DoneButton siteSlug={ targetSiteSlug } />
 					</Hooray>
 				);
 
