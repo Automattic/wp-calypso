@@ -16,7 +16,7 @@ import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
 import { isKeyringServicesFetching } from 'calypso/state/sharing/services/selectors';
 
 class QueryKeyringServices extends Component {
-	componentWillMount() {
+	componentDidMount() {
 		if ( ! this.props.isRequesting ) {
 			this.props.requestKeyringServices();
 		}
