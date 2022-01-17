@@ -1,4 +1,4 @@
-import { filter, last } from 'lodash';
+import { last } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -34,7 +34,7 @@ function startCloseOnEscForComponent( component, onEscape ) {
 }
 
 function stopCloseOnEscForComponent( component ) {
-	components = filter( components, ( item ) => item.component !== component );
+	components = components.filter( ( item ) => item.component !== component );
 	if ( ! components.length ) {
 		removeKeydownListener();
 	}
