@@ -6,10 +6,9 @@ import { isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 
 function useMemoizedFields( fields ) {
 	const memoizedFields = useRef();
-	const joinedArray = fields.join();
 
-	if ( joinedArray !== memoizedFields.current ) {
-		memoizedFields.current = joinedArray;
+	if ( fields.join() !== memoizedFields.current?.join() ) {
+		memoizedFields.current = fields;
 	}
 
 	return memoizedFields.current;
@@ -27,7 +26,7 @@ function QueryPostStats( { siteId, postId, fields } ) {
 
 	useEffect( () => {
 		if ( siteId && postId ) {
-			dispatch( request( siteId, postId, memoizedFields.split( ',' ) ) );
+			dispatch( request( siteId, postId, memoizedFields ) );
 		}
 	}, [ dispatch, siteId, postId, memoizedFields ] );
 
