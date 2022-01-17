@@ -52,6 +52,7 @@
 
 	&.has-overflowing-placeholder {
 		flex-basis: 100%;
+		max-width: 100%;
 	}
 
 	@include break-small {
