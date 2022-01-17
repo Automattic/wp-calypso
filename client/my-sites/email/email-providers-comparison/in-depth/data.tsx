@@ -5,6 +5,7 @@ import { translate } from 'i18n-calypso';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { getTitanProductName } from 'calypso/lib/titan';
 import { ADDING_GSUITE_TO_YOUR_SITE, ADDING_TITAN_TO_YOUR_SITE } from 'calypso/lib/url/support';
 import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
@@ -30,7 +31,7 @@ export const professionalEmailFeatures: EmailProviderFeatures = {
 };
 
 export const googleWorkspaceFeatures: EmailProviderFeatures = {
-	slug: 'google-workspace',
+	slug: GOOGLE_WORKSPACE_PRODUCT_TYPE,
 	name: getGoogleMailServiceFamily(),
 	description: translate(
 		'Professional email integrated with Google Meet and other productivity tools from Google.'

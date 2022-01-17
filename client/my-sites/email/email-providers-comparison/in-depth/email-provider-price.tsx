@@ -4,6 +4,7 @@ import GoogleWorkspacePrice from 'calypso/my-sites/email/email-providers-compari
 import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-comparison/price/professional-email';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import type { EmailProviderPriceProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 import type { ReactElement } from 'react';
 
@@ -20,7 +21,7 @@ const EmailProviderPrice = ( {
 		selectedDomainName: selectedDomainName,
 	} );
 
-	if ( emailProviderSlug === 'google-workspace' ) {
+	if ( emailProviderSlug === GOOGLE_WORKSPACE_PRODUCT_TYPE ) {
 		return <GoogleWorkspacePrice intervalLength={ intervalLength } />;
 	}
 
