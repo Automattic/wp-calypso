@@ -115,10 +115,6 @@ export class MigrationScreen extends SectionMigrate {
 	}
 }
 
-const navigateToSelectedSourceSite = () => {
-	// navigateToSelectedSourceSite
-};
-
 export const connector = connect(
 	( state, ownProps: Partial< Props > ) => {
 		return {
@@ -135,7 +131,6 @@ export const connector = connect(
 		};
 	},
 	{
-		navigateToSelectedSourceSite,
 		receiveSite,
 		updateSiteMigrationMeta,
 		requestSite,
