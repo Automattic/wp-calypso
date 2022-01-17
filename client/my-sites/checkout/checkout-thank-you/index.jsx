@@ -174,11 +174,15 @@ export class CheckoutThankYou extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { receiptId, selectedSiteSlug } = this.props;
+		const { receiptId, selectedSiteSlug, domainOnlySiteFlow } = this.props;
 
 		// Update route when an ecommerce site goes Atomic and site slug changes
 		// from 'wordpress.com` to `wpcomstaging.com`.
-		if ( selectedSiteSlug && selectedSiteSlug !== prevProps.selectedSiteSlug ) {
+		if (
+			selectedSiteSlug &&
+			selectedSiteSlug !== prevProps.selectedSiteSlug &&
+			! domainOnlySiteFlow
+		) {
 			const receiptPath = receiptId ? `/${ receiptId }` : '';
 			page( `/checkout/thank-you/${ selectedSiteSlug }${ receiptPath }` );
 		}
