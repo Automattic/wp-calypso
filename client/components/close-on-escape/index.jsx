@@ -1,4 +1,3 @@
-import { last } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -8,7 +7,7 @@ let components = [];
 
 function onKeydown( event ) {
 	if ( components.length && event.keyCode === ESC_KEY_CODE && ! isInput( event.target ) ) {
-		const component = last( components );
+		const component = components[ components.length - 1 ];
 
 		component.onEscape();
 	}
