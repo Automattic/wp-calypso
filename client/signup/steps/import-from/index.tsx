@@ -18,6 +18,7 @@ import { Site } from './components/importer-drag';
 import NotAuthorized from './components/not-authorized';
 import NotFound from './components/not-found';
 import MediumImporter from './medium';
+import SquarespaceImporter from './squarespace';
 import './style.scss';
 import { Importer, ImportJob, QueryObject } from './types';
 import { getImporterTypeForEngine } from './util';
@@ -136,6 +137,23 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									 */
 									return (
 										<MediumImporter
+											job={ getImportJob( engine ) }
+											run={ runImportInitially }
+											siteId={ siteId }
+											site={ site }
+											siteSlug={ siteSlug }
+											fromSite={ fromSite }
+										/>
+									);
+								} else if (
+									engine === 'squarespace' &&
+									isEnabled( 'gutenboarding/import-from-squarespace' )
+								) {
+									/**
+									 * Squarespace importer
+									 */
+									return (
+										<SquarespaceImporter
 											job={ getImportJob( engine ) }
 											run={ runImportInitially }
 											siteId={ siteId }
