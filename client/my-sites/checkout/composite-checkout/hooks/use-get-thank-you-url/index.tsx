@@ -22,7 +22,7 @@ export default function useGetThankYouUrl( {
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	hideNudge,
-	isInEditor,
+	isInModal,
 	isJetpackCheckout = false,
 	domains,
 }: GetThankYouUrlProps ): GetThankYouUrl {
@@ -49,7 +49,7 @@ export default function useGetThankYouUrl( {
 			productAliasFromUrl,
 			isEligibleForSignupDestinationResult,
 			hideNudge,
-			isInEditor,
+			isInModal,
 			isJetpackCheckout,
 			domains,
 		};
@@ -60,7 +60,7 @@ export default function useGetThankYouUrl( {
 
 		return url;
 	}, [
-		isInEditor,
+		isInModal,
 		transactionResult,
 		isEligibleForSignupDestinationResult,
 		siteSlug,
@@ -88,7 +88,7 @@ export interface GetThankYouUrlProps {
 	isJetpackNotAtomic?: boolean;
 	productAliasFromUrl?: string | undefined;
 	hideNudge?: boolean;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	isJetpackCheckout?: boolean;
 	domains: SiteDomain[] | undefined;
 }

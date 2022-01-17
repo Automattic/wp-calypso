@@ -102,9 +102,9 @@ export default function CompositeCheckout( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	infoMessage,
-	isInEditor,
+	isInModal,
 	onAfterPaymentComplete,
-	isFocusedLaunch,
+	disabledThankYouPage,
 	isJetpackCheckout = false,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
@@ -122,10 +122,10 @@ export default function CompositeCheckout( {
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
-	isFocusedLaunch?: boolean;
+	disabledThankYouPage?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
@@ -180,7 +180,7 @@ export default function CompositeCheckout( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
-		isInEditor,
+		isInModal,
 		isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
@@ -247,7 +247,7 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
-		isInEditor,
+		isInModal,
 		isJetpackCheckout,
 		domains,
 	} );
@@ -566,9 +566,9 @@ export default function CompositeCheckout( {
 		redirectTo,
 		purchaseId,
 		feature,
-		isInEditor,
+		isInModal,
 		isComingFromUpsell,
-		isFocusedLaunch,
+		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
 		isJetpackCheckout,
 		checkoutFlow,

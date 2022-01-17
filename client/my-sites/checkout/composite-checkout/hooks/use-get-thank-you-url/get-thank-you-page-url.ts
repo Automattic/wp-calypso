@@ -64,7 +64,7 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
 	hideNudge,
-	isInEditor,
+	isInModal,
 	isJetpackCheckout = false,
 	jetpackTemporarySiteId,
 	adminPageRedirect,
@@ -84,7 +84,7 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult?: boolean;
 	hideNudge?: boolean;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
@@ -200,7 +200,7 @@ export default function getThankYouPageUrl( {
 
 	// If the user is making a purchase/upgrading within the editor,
 	// we want to return them back to the editor after the purchase is successful.
-	if ( isInEditor && cart && ! hasEcommercePlan( cart ) ) {
+	if ( isInModal && cart && ! hasEcommercePlan( cart ) ) {
 		saveUrlToCookie( window?.location.href );
 	}
 

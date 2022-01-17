@@ -101,6 +101,8 @@ const CheckoutModal: React.FunctionComponent< Props > = ( {
 					siteId={ selectedSiteId ?? undefined }
 					siteSlug={ site?.slug }
 					productAliasFromUrl={ commaSeparatedProductSlugs }
+					isInModal
+					disabledThankYouPage
 					onAfterPaymentComplete={ handleAfterPaymentComplete }
 				/>
 			</StripeHookProvider>
