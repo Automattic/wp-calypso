@@ -294,3 +294,19 @@ $width-left-panel-card: 55%;
 	}
 }
 
+.email-provider-stacked-features__logos {
+	column-gap: 5px;
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: 32px;
+
+	@include break-xlarge {
+		justify-content: space-between;
+		column-gap: 3px;
+	}
+
+	img {
+		width: 32px;
+	}
+}
+

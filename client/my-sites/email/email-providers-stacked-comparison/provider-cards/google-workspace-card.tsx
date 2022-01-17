@@ -19,6 +19,7 @@ import {
 	newUsers,
 } from 'calypso/lib/gsuite/new-users';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getGoogleAppLogos } from 'calypso/my-sites/email/email-provider-features/list';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import GoogleWorkspacePrice from 'calypso/my-sites/email/email-providers-comparison/price/google-workspace';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
@@ -68,6 +69,7 @@ const googleWorkspaceCardInformation: ProviderCard = {
 		'Professional email integrated with Google Meet and other productivity tools from Google.'
 	),
 	logo: { path: googleWorkspaceIcon, className: 'google-workspace-icon' },
+	appLogos: getGoogleAppLogos(),
 	productName: getGoogleMailServiceFamily(),
 	features: getGoogleFeatures(),
 };
