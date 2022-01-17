@@ -27,7 +27,7 @@
 	&__heading {
 		margin: -16px -16px 16px;
 		padding: 9px 16px;
-		font-size: 1.25rem;
+		font-size: 1.125rem; /* stylelint-disable */
 		font-weight: 600;
 		line-height: 20px;
 		color: var( --studio-red-60 );
@@ -41,7 +41,7 @@
 	}
 
 	&__warning {
-		font-weight: 600;
+		font-weight: 500;
 		color: var( --studio-red-60 );
 
 		.gridicon {
@@ -49,6 +49,10 @@
 			top: 2px;
 			margin-right: 7px;
 		}
+	}
+
+	&__learn-more {
+		text-decoration: underline;
 	}
 
 	ul {
