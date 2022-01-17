@@ -25,7 +25,3 @@ export type NameServersToggleProps = {
 	onToggle: () => void;
 	selectedDomainName: string;
 };
-
-export type SiteRedirectCardOwnProps = {
-	domain: ResponseDomain;
-};

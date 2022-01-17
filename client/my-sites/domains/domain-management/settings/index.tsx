@@ -1,4 +1,3 @@
-//import { isSiteRedirect } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
