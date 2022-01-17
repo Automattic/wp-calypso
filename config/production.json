@@ -96,7 +96,7 @@
 		"signup/design-picker-categories": true,
 		"signup/design-picker-use-featured-picks-buttons": true,
 		"signup/hero-flow-non-en": true,
-		"signup/starting-point-courses": false,
+		"signup/starting-point-courses": true,
 		"site-indicator": true,
 		"ssr/sample-log-cache-misses": true,
 		"themes/premium": false,

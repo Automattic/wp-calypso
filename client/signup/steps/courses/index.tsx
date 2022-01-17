@@ -41,6 +41,7 @@ export default function CoursesStep( props: Props ): React.ReactNode {
 			stepContent={
 				<VideosUi
 					courseSlug={ courseSlug }
+					areVideosTranslated={ false }
 					HeaderBar={ CoursesHeader }
 					FooterBar={ () => (
 						<CoursesFooter
