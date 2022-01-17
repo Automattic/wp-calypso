@@ -44,8 +44,8 @@ const useShowGdprBanner = isServer
 			return shouldSeeGdprBanner( country, pixel );
 	  };
 
-export default function GdprBanner( { shouldRenderGdprBannerOnServer = false } ) {
-	const show = useShowGdprBanner( shouldRenderGdprBannerOnServer );
+export default function GdprBanner( { showGdprBanner = false } ) {
+	const show = useShowGdprBanner( showGdprBanner );
 
 	// null value means that it hasn't been determined yet. Don't render the banner yet.
 	if ( show == null ) {

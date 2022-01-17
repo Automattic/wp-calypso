@@ -36,7 +36,7 @@ const LayoutLoggedOut = ( {
 	sectionTitle,
 	redirectUri,
 	useOAuth2Layout,
-	shouldRenderGdprBannerOnServer,
+	showGdprBanner,
 } ) => {
 	const isCheckout = sectionName === 'checkout';
 	const isJetpackCheckout =
@@ -108,9 +108,7 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
-			{ config.isEnabled( 'gdpr-banner' ) && (
-				<GdprBanner shouldRenderGdprBannerOnServer={ shouldRenderGdprBannerOnServer } />
-			) }
+			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner showGdprBanner={ showGdprBanner } /> }
 		</div>
 	);
 };

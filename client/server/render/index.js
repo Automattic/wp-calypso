@@ -221,7 +221,7 @@ export function serverRender( req, res ) {
 
 	if ( shouldServerSideRender( context ) ) {
 		cacheKey = `${ getNormalizedPath( context.pathname, context.query ) }:gdpr=${
-			context.shouldRenderGdprBannerOnServer
+			context.showGdprBanner
 		}`;
 		context.renderedLayout = render(
 			context.layout,

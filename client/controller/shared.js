@@ -15,7 +15,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 			query,
 			primary,
 			secondary,
-			shouldRenderGdprBannerOnServer,
+			showGdprBanner,
 		} = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
@@ -31,7 +31,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 					primary={ primary }
 					secondary={ secondary }
 					redirectUri={ context.originalUrl }
-					shouldRenderGdprBannerOnServer={ shouldRenderGdprBannerOnServer }
+					showGdprBanner={ showGdprBanner }
 				/>
 			);
 		}

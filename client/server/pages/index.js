@@ -119,7 +119,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	setStore( reduxStore );
 
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
-	const shouldRenderGdprBannerOnServer = shouldSeeGdprBanner(
+	const showGdprBanner = shouldSeeGdprBanner(
 		request.cookies.country_code || geoIPCountryCode,
 		request.cookies.sensitive_pixel_option
 	);
@@ -153,7 +153,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			flags.includes( 'use-translation-chunks' ) ||
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		useLoadingEllipsis: !! request.query.loading_ellipsis,
-		shouldRenderGdprBannerOnServer,
+		showGdprBanner,
 	} );
 
 	context.app = {
