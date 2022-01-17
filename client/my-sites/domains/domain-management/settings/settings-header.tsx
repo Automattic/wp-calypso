@@ -64,7 +64,11 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 		</Badge>
 	);
 
-	const renderTransferOrMappingBadge = ( type: string ) => {
+	const renderDomainTypeBadge = ( type: string ) => {
+		if ( type === DomainType.SITE_REDIRECT ) {
+			return renderNeutralBadge( __( 'Site Redirect' ) );
+		}
+
 		if ( type === DomainType.MAPPED ) {
 			return renderNeutralBadge( __( 'Registered with an external provider' ) );
 		}
@@ -86,8 +90,10 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 		const { domain } = props;
 		const badges = [];
 
-		if ( [ DomainType.MAPPED, DomainType.TRANSFER ].includes( domain.type ) ) {
-			badges.push( renderTransferOrMappingBadge( domain.type ) );
+		if (
+			[ DomainType.SITE_REDIRECT, DomainType.MAPPED, DomainType.TRANSFER ].includes( domain.type )
+		) {
+			badges.push( renderDomainTypeBadge( domain.type ) );
 		}
 
 		const statusBadge = renderStatusBadge( domain );
