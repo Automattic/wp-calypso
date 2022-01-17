@@ -10,12 +10,13 @@ const DomainTransferInfoCard = ( {
 	domain,
 	selectedSite,
 }: DomainInfoCardProps ): JSX.Element | null => {
+	const typesUnableToTransfer = [ domainType.TRANSFER, domainType.SITE_REDIRECT ] as const;
 	const translate = useTranslate();
 
 	if (
 		! domain.currentUserIsOwner ||
 		( domain.expired && ! isDomainInGracePeriod( domain ) ) ||
-		domain.type === domainType.TRANSFER
+		typesUnableToTransfer.includes( domain.type )
 	) {
 		return null;
 	}
