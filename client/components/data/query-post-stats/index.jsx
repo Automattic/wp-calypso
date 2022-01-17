@@ -1,59 +1,43 @@
-import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestPostStats } from 'calypso/state/stats/posts/actions';
 import { isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 
-class QueryPostStats extends Component {
-	static defaultProps = {
-		requestPostStats: () => {},
-	};
+function useMemoizedFields( fields ) {
+	const memoizedFields = useRef();
+	const joinedArray = fields.join();
 
-	static propTypes = {
-		siteId: PropTypes.number,
-		postId: PropTypes.number,
-		fields: PropTypes.array,
-		// connected props
-		requestingPostStats: PropTypes.bool,
-		requestPostStats: PropTypes.func,
-	};
-
-	componentDidMount() {
-		this.requestPostStats();
+	if ( joinedArray !== memoizedFields.current ) {
+		memoizedFields.current = joinedArray;
 	}
 
-	componentDidUpdate( prevProps ) {
-		const { siteId, postId, fields } = this.props;
-		if (
-			siteId === prevProps.siteId &&
-			postId === prevProps.postId &&
-			isEqual( fields, prevProps.fields )
-		) {
-			return;
-		}
-
-		this.requestPostStats();
-	}
-
-	requestPostStats() {
-		const { siteId, postId, fields, requestingPostStats } = this.props;
-
-		if ( ! requestingPostStats && siteId && typeof postId !== 'undefined' ) {
-			this.props.requestPostStats( siteId, postId, fields );
-		}
-	}
-
-	render() {
-		return null;
-	}
+	return memoizedFields.current;
 }
 
-export default connect(
-	( state, { siteId, postId, fields } ) => {
-		return {
-			requestingPostStats: isRequestingPostStats( state, siteId, postId, fields ),
-		};
-	},
-	{ requestPostStats }
-)( QueryPostStats );
+const request = ( siteId, postId, fields ) => ( dispatch, getState ) => {
+	if ( ! isRequestingPostStats( getState(), siteId, postId, fields ) ) {
+		dispatch( requestPostStats( siteId, postId, fields ) );
+	}
+};
+
+function QueryPostStats( { siteId, postId, fields } ) {
+	const dispatch = useDispatch();
+	const memoizedFields = useMemoizedFields( fields );
+
+	useEffect( () => {
+		if ( siteId && postId ) {
+			dispatch( request( siteId, postId, memoizedFields.split( ',' ) ) );
+		}
+	}, [ dispatch, siteId, postId, memoizedFields ] );
+
+	return null;
+}
+
+QueryPostStats.propTypes = {
+	siteId: PropTypes.number,
+	postId: PropTypes.number,
+	fields: PropTypes.array,
+};
+
+export default QueryPostStats;
