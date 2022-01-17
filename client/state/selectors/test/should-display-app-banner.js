@@ -1,5 +1,10 @@
 import { expect } from 'chai';
+import { isE2ETest } from 'calypso/lib/e2e';
 import { shouldDisplayAppBanner } from 'calypso/state/selectors/should-display-app-banner';
+
+jest.mock( 'calypso/lib/e2e', () => ( {
+	isE2ETest: jest.fn( () => false ),
+} ) );
 
 describe( 'shouldDisplayAppBanner()', () => {
 	test( 'should return false if ToS update banner is displayed', () => {
@@ -65,6 +70,26 @@ describe( 'shouldDisplayAppBanner()', () => {
 				},
 				section: {
 					name: 'not-allowed',
+				},
+			},
+			preferences: {
+				fetching: false,
+			},
+		};
+		const output = shouldDisplayAppBanner( state );
+		expect( output ).to.be.false;
+	} );
+
+	test( 'should return false if in e2e test', () => {
+		isE2ETest.mockReturnValueOnce( true );
+		const state = {
+			ui: {
+				appBannerVisibility: true,
+				layoutFocus: {
+					current: 'not-sidebar',
+				},
+				section: {
+					name: 'gutenberg-editor',
 				},
 			},
 			preferences: {
