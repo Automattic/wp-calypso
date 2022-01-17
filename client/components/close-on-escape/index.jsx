@@ -46,7 +46,7 @@ class CloseOnEscape extends Component {
 	}
 
 	componentWillUnmount() {
-		stopCloseOnEscForComponent( this, this.props.onEscape );
+		stopCloseOnEscForComponent( this );
 	}
 
 	render() {
