@@ -99,7 +99,7 @@ const VideosUi = ( {
 							'These videos are currently only available in English. Please {{supportLink}}let us know{{/supportLink}} if you would like them translated.',
 							{
 								components: {
-									supportLink: <a href="mailto:support@wordpress.com" />,
+									supportLink: <a href="/help/contact" />,
 								},
 							}
 						) }
