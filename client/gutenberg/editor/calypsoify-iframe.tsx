@@ -38,6 +38,7 @@ import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
 	getCustomizerUrl,
@@ -48,6 +49,7 @@ import {
 	getSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isAppBannerDismissed from 'calypso/state/ui/selectors/app-banner-is-dismissed';
 import * as T from 'calypso/types';
 import { sendSiteEditorBetaFeedback } from '../../lib/fse-beta/send-site-editor-beta-feedback';
 import Iframe from './iframe';
@@ -121,6 +123,7 @@ enum EditorActions {
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
 	SendSiteEditorBetaFeedback = 'sendSiteEditorBetaFeedback',
+	GetIsAppBannerVisible = 'getIsAppBannerVisible',
 }
 
 type ComponentProps = Props &
@@ -144,6 +147,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 	checkoutPort: MessagePort | null = null;
+	appBannerPort: MessagePort | null = null;
 
 	componentDidMount() {
 		window.addEventListener( 'message', this.onMessage, false );
@@ -167,6 +171,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		// not already triggered in componentDidMount
 		if ( ! this.editorRedirectTimer && ! shouldLoadIframe && this.props.shouldLoadIframe ) {
 			this.setEditorRedirectTimer( 25000 );
+		}
+
+		if ( this.props.appBannerDismissed ) {
+			this.handleAppBannerDismiss();
 		}
 	}
 
@@ -494,6 +502,19 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				() => ports[ 0 ].postMessage( 'error' )
 			);
 		}
+
+		if ( EditorActions.GetIsAppBannerVisible === action ) {
+			const isAppBannerVisible = this.props.shouldDisplayAppBanner;
+			ports[ 0 ].postMessage( {
+				isAppBannerVisible,
+				hasAppBannerBeenDismissed: false,
+			} );
+
+			// If App Banner is not visible, we won't need to notify the Welcome Tour after its dismission
+			if ( isAppBannerVisible ) {
+				this.appBannerPort = ports[ 0 ];
+			}
+		}
 	};
 
 	handlePostStatusChange = ( status: string ) => {
@@ -681,6 +702,18 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 	};
 
+	handleAppBannerDismiss = () => {
+		if ( this.appBannerPort ) {
+			this.appBannerPort.postMessage( {
+				isAppBannerVisible: false,
+				hasAppBannerBeenDismissed: true,
+			} );
+
+			this.appBannerPort.close();
+			this.appBannerPort = null;
+		}
+	};
+
 	render() {
 		const { iframeUrl, shouldLoadIframe } = this.props;
 		const {
@@ -857,6 +890,8 @@ const mapStateToProps = (
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ?? 0 ),
 		parentPostId,
+		shouldDisplayAppBanner: shouldDisplayAppBanner( state ),
+		appBannerDismissed: isAppBannerDismissed( state ),
 	};
 };
 
