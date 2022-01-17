@@ -1,5 +1,6 @@
 import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title } from '@automattic/onboarding';
+import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
@@ -75,8 +76,13 @@ export class MigrationScreen extends SectionMigrate {
 				return (
 					<Progress>
 						<Title>
-							{ /*{ TODO: switch title based on progress type }*/ }
-							{ translate( 'Importing' ) }...
+							{ ( MigrationStatus.BACKING_UP === this.state.migrationStatus ||
+								MigrationStatus.NEW === this.state.migrationStatus ) &&
+								sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) }
+							...
+							{ MigrationStatus.RESTORING === this.state.migrationStatus &&
+								sprintf( translate( 'Restoring to %(website)s' ), { website: targetSiteSlug } ) }
+							...
 						</Title>
 						<ProgressBar
 							color={ 'black' }
