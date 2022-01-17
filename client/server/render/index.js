@@ -220,10 +220,9 @@ export function serverRender( req, res ) {
 	attachI18n( context );
 
 	if ( shouldServerSideRender( context ) ) {
-		cacheKey = `${ getNormalizedPath(
-			context.pathname,
-			context.query
-		) }:gdpr=${ !! context.shouldRenderGdprBannerOnServer }`;
+		cacheKey = `${ getNormalizedPath( context.pathname, context.query ) }:gdpr=${
+			context.shouldRenderGdprBannerOnServer
+		}`;
 		context.renderedLayout = render(
 			context.layout,
 			req.error ? req.error.message : cacheKey,

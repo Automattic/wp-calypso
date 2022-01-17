@@ -41,7 +41,7 @@ const useShowGdprBanner = isServer
 				}
 			}, [ country ] );
 
-			return country ? shouldSeeGdprBanner( country, pixel ) : null;
+			return shouldSeeGdprBanner( country, pixel );
 	  };
 
 export default function GdprBanner( { shouldRenderGdprBannerOnServer = false } ) {

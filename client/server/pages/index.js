@@ -120,7 +120,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
 	const shouldRenderGdprBannerOnServer = shouldSeeGdprBanner(
-		request.cookies.country_code || geoIPCountryCode || 'unknown',
+		request.cookies.country_code || geoIPCountryCode,
 		request.cookies.sensitive_pixel_option
 	);
 
