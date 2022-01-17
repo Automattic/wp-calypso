@@ -7,7 +7,7 @@ import { isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 function useMemoizedFields( fields ) {
 	const memoizedFields = useRef();
 
-	if ( fields.join() !== memoizedFields.current?.join() ) {
+	if ( fields?.join() !== memoizedFields.current?.join() ) {
 		memoizedFields.current = fields;
 	}
 
