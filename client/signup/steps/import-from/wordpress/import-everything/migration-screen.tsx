@@ -1,6 +1,7 @@
 import { ProgressBar } from '@automattic/components';
-import { Hooray, Progress, SubTitle, Title } from '@automattic/onboarding';
+import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import page from 'page';
@@ -47,8 +48,37 @@ export class MigrationScreen extends SectionMigrate {
 		return addQueryArgs( queryParams, path );
 	};
 
+	getCaptureUrlPath = () => {
+		const { targetSiteSlug } = this.props;
+		const path = '/start/importer/capture';
+		const queryParams = { siteSlug: targetSiteSlug };
+
+		return addQueryArgs( queryParams, path );
+	};
+
 	goToCart = () => {
 		page( this.getCheckoutUrlPath( this.getMigrationUrlPath() ) );
+	};
+
+	goToCapture = () => {
+		page( this.getCaptureUrlPath() );
+	};
+
+	resetMigration = () => {
+		this.requestMigrationReset( this.props.targetSiteId ).finally( () => {
+			this.goToCapture();
+			/**
+			 * Note this migrationStatus is local, thus the setState vs setMigrationState.
+			 * Call to updateFromAPI will update both local and non-local state.
+			 */
+			this.setState(
+				{
+					migrationStatus: 'inactive',
+					errorMessage: '',
+				},
+				this.updateFromAPI
+			);
+		} );
 	};
 
 	render() {
@@ -107,6 +137,25 @@ export class MigrationScreen extends SectionMigrate {
 						</SubTitle>
 						<DoneButton siteSlug={ targetSiteSlug } />
 					</Hooray>
+				);
+
+			case MigrationStatus.ERROR:
+				return (
+					<div className={ classnames( 'import__header' ) }>
+						<div className={ classnames( 'import__heading import__heading-center' ) }>
+							<Title>{ translate( 'Import failed' ) }</Title>
+							<SubTitle>
+								{ translate( 'There was an error with your import.' ) }
+								<br />
+								{ translate( 'Please try again soon or contact support for help.' ) }
+							</SubTitle>
+							<div className={ classnames( 'import__buttons-group' ) }>
+								<NextButton onClick={ this.resetMigration }>
+									{ translate( 'Try again' ) }
+								</NextButton>
+							</div>
+						</div>
+					</div>
 				);
 
 			default:
