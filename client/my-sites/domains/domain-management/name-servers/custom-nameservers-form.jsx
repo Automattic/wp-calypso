@@ -21,14 +21,14 @@ const dropRightWhileEmpty = ( arr ) => {
 
 	for ( let i = arr.length - 1; i >= 0; i-- ) {
 		if ( found || arr[ i ] ) {
-			newArr.push( arr[ i ] );
+			newArr.unshift( arr[ i ] );
 		}
 		if ( arr[ i ] ) {
 			found = true;
 		}
 	}
 
-	return newArr.reverse();
+	return newArr;
 };
 
 class CustomNameserversForm extends PureComponent {
