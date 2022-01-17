@@ -3,12 +3,19 @@
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
+import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getTitanProductName } from 'calypso/lib/titan';
 import { ADDING_GSUITE_TO_YOUR_SITE, ADDING_TITAN_TO_YOUR_SITE } from 'calypso/lib/url/support';
 import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 
 export const professionalEmailFeatures: EmailProviderFeatures = {
+	badge: (
+		<img
+			alt={ translate( 'Powered by Titan icon', { textOnly: true } ) }
+			src={ poweredByTitanLogo }
+		/>
+	),
 	slug: 'professional-email',
 	name: getTitanProductName(),
 	description: translate( 'Integrated email solution for your WordPress.com site.' ),

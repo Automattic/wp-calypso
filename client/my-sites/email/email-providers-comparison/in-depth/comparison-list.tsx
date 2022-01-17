@@ -51,6 +51,12 @@ const ComparisonList = ( {
 							<LearnMoreLink url={ emailProviderFeatures.supportUrl } />
 						</div>
 
+						{ emailProviderFeatures.badge && (
+							<div className="email-providers-in-depth-comparison-list__badge">
+								{ emailProviderFeatures.badge }
+							</div>
+						) }
+
 						<Button
 							className="email-providers-in-depth-comparison-list__button"
 							onClick={ () => onSelectEmailProvider( emailProviderFeatures.slug ) }

@@ -110,6 +110,14 @@ const ComparisonTable = ( {
 					<td></td>
 
 					{ emailProviders.map( ( emailProviderFeatures ) => {
+						return <td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.badge }</td>;
+					} ) }
+				</tr>
+
+				<tr>
+					<td></td>
+
+					{ emailProviders.map( ( emailProviderFeatures ) => {
 						return (
 							<td key={ emailProviderFeatures.slug }>
 								<Button
