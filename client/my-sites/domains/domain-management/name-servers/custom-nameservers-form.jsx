@@ -69,10 +69,7 @@ class CustomNameserversForm extends PureComponent {
 		const { translate } = this.props;
 
 		// Remove the empty values from the end, and add one empty one
-		const nameservers = dropRightWhileEmpty(
-			this.props.nameservers,
-			( nameserver ) => ! nameserver
-		);
+		const nameservers = dropRightWhileEmpty( this.props.nameservers );
 
 		if ( nameservers.length < MAX_NAMESERVER_LENGTH ) {
 			nameservers.push( '' );
