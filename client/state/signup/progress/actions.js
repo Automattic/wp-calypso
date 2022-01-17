@@ -1,3 +1,4 @@
+import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { isEmpty, reduce, snakeCase } from 'lodash';
 import { assertValidDependencies } from 'calypso/lib/signup/asserts';
@@ -47,6 +48,11 @@ function recordSubmitStep( stepName, providedDependencies, optionalProps ) {
 			if ( propName === 'email' ) {
 				propName = `user_entered_${ propName }`;
 				propValue = !! propValue;
+			}
+
+			if ( propName === 'cart_item' && propValue?.product_slug === WPCOM_DIFM_LITE ) {
+				const { extra, ...otherProps } = propValue;
+				propValue = otherProps;
 			}
 
 			if ( [ 'cart_item', 'domain_item' ].includes( propName ) && typeof propValue !== 'string' ) {
