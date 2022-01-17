@@ -7,6 +7,7 @@ import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powe
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { getTitanProductName } from 'calypso/lib/titan';
+import { TITAN_PRODUCT_TYPE } from 'calypso/lib/titan/constants';
 import { ADDING_GSUITE_TO_YOUR_SITE, ADDING_TITAN_TO_YOUR_SITE } from 'calypso/lib/url/support';
 import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 
@@ -17,7 +18,7 @@ export const professionalEmailFeatures: EmailProviderFeatures = {
 			src={ poweredByTitanLogo }
 		/>
 	),
-	slug: 'professional-email',
+	slug: TITAN_PRODUCT_TYPE,
 	name: getTitanProductName(),
 	description: translate( 'Integrated email solution for your WordPress.com site.' ),
 	logo: <Gridicon className="professional-email-logo" icon="my-sites" />,
