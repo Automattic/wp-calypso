@@ -94,6 +94,7 @@ export class PlanFeaturesHeader extends Component {
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
+					{ this.getAnnualDiscount() }
 					{ this.getBillingTimeframe() }
 				</div>
 				{ ! isInSignup && isCurrent && (
@@ -222,6 +223,34 @@ export class PlanFeaturesHeader extends Component {
 		return translate(
 			"You'll receive a discount from the full price of %(price)s because you already have a plan.",
 			{ args: { price } }
+		);
+	}
+
+	getAnnualDiscount() {
+		const { isMonthlyPlan, discountPrice, translate, rawPrice, relatedMonthlyPlan } = this.props;
+
+		if ( isMonthlyPlan || ! relatedMonthlyPlan ) {
+			return;
+		}
+
+		const price = discountPrice || rawPrice;
+		const isLoading = typeof price !== 'number';
+		const discountRate = Math.round(
+			( 100 * ( relatedMonthlyPlan.raw_price - price ) ) / relatedMonthlyPlan.raw_price
+		);
+		const annualDiscountText = translate( `You're saving %(discountRate)s%% by paying annually`, {
+			args: { discountRate },
+		} );
+
+		return (
+			<div
+				className={ classNames( {
+					'plan-features__header-annual-discount': true,
+					'plan-features__header-annual-discount-is-loading': isLoading,
+				} ) }
+			>
+				<span>{ annualDiscountText }</span>
+			</div>
 		);
 	}
 
