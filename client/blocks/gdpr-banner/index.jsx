@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { refreshCountryCodeCookieGdpr, shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
-import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -96,7 +96,7 @@ function GdprBannerInner( { show } ) {
 				'gdpr-banner__hiding': bannerStatus === STATUS.HIDING,
 			} ) }
 		>
-			<div className="gdpr-banner__text-content">{ preventWidows( decodeEntities( copy ) ) }</div>
+			<div className="gdpr-banner__text-content">{ preventWidows( copy ) }</div>
 			<div className="gdpr-banner__buttons">
 				<Button className="gdpr-banner__acknowledge-button" onClick={ acknowledgeClicked }>
 					{ translate( 'Got it!' ) }
