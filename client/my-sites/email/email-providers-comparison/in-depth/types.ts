@@ -25,6 +25,7 @@ export type EmailProviderFeatures = {
 	logo: ReactNode;
 	name: TranslateResult;
 	slug: string;
+	supportUrl: string;
 };
 
 export type EmailProvidersInDepthComparisonProps = {
@@ -33,4 +34,8 @@ export type EmailProvidersInDepthComparisonProps = {
 	selectedIntervalLength: IntervalLength | undefined;
 	siteName: string;
 	source: string;
+};
+
+export type LearnMoreLinkProps = {
+	url: string;
 };

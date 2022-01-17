@@ -4,6 +4,7 @@ import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import EmailProviderFeatures from 'calypso/my-sites/email/email-provider-features';
 import EmailProviderPrice from 'calypso/my-sites/email/email-providers-comparison/in-depth/email-provider-price';
+import LearnMoreLink from 'calypso/my-sites/email/email-providers-comparison/in-depth/learn-more-link';
 import { ComparisonListOrTableProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 import type { ReactElement } from 'react';
 
@@ -44,6 +45,10 @@ const ComparisonList = ( {
 
 						<div className="email-providers-in-depth-comparison-list__features">
 							<EmailProviderFeatures features={ [ tools, storage, importing, support ] } />
+						</div>
+
+						<div className="email-providers-in-depth-comparison-list__support-link">
+							<LearnMoreLink url={ emailProviderFeatures.supportUrl } />
 						</div>
 
 						<Button
