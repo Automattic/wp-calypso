@@ -118,7 +118,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__item {
-	flex: 0 1 auto;
+	flex: 1;
 	display: flex;
 	align-items: center;
 	position: relative;
@@ -126,7 +126,7 @@ $autobar-height: 20px;
 	font-size: $font-body-small;
 	height: var( --masterbar-height );
 	line-height: var( --masterbar-height );
-	padding: 0 15px;
+	padding: 0;
 	text-decoration: none;
 	cursor: default;
 	transition: all 0.2s ease-in-out;
@@ -219,8 +219,6 @@ $autobar-height: 20px;
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		flex: 1 1 auto;
-
 		.gridicon {
 			margin: 0 auto;
 		}
@@ -674,8 +672,6 @@ $autobar-height: 20px;
 }
 
 .masterbar__notifications {
-	flex: 1 1 auto;
-
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-grow: 0;
 	}

@@ -48,7 +48,7 @@
 
 	// client/layout/masterbar/style.scss
 	.masterbar__item {
-		padding: 0 8px;
+		padding: 0;
 		font-size: $nav-unification-masterbar-font-size;
 	}
 
@@ -69,7 +69,6 @@
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item {
 			font-size: $nav-unification-masterbar-mobile-font-size;
-			padding: 0 15px;
 		}
 
 		.masterbar__item .gridicon + .masterbar__item-content {
@@ -164,9 +163,6 @@
 
 	// client/layout/masterbar/style.scss
 	.masterbar__item-me {
-		padding-right: 10px;
-		padding-left: 8px;
-
 		.gravatar {
 			top: 50%;
 			left: 50%;
@@ -176,8 +172,6 @@
 	// breakpoint used in wp-admin
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item-me {
-			padding: 0 13px 0 15px;
-
 			// fix for profile picture currently hidden in production
 			.masterbar__item-content {
 				display: block;
@@ -197,8 +191,6 @@
 
 	@include breakpoint-deprecated( '<480px' ) {
 		.masterbar__item-me {
-			padding: 0 11px;
-
 			.gravatar {
 				width: 19px;
 				height: 19px;
