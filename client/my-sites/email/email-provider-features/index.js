@@ -41,7 +41,7 @@ function EmailProviderFeatures( { features, logos } ) {
 }
 
 EmailProviderFeatures.propTypes = {
-	features: PropTypes.arrayOf( PropTypes.string ),
+	features: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
 	logos: PropTypes.arrayOf( PropTypes.object ),
 };
 
