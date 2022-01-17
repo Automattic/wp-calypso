@@ -7,6 +7,7 @@ import {
 	isDismissed,
 	getCurrentSection,
 } from 'calypso/blocks/app-banner/utils';
+import { isE2ETest } from 'calypso/lib/e2e';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -21,6 +22,10 @@ import { AppState } from 'calypso/types';
  * @returns {boolean} True if App Banner is visible
  */
 export const shouldDisplayAppBanner = ( state: AppState ): boolean | undefined => {
+	if ( isE2ETest() ) {
+		return false;
+	}
+
 	// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
 	// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
 	// be displayed.
