@@ -36,7 +36,7 @@ const initialPreparedProductsState = {
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
-	isInEditor,
+	isInModal,
 	isJetpackNotAtomic,
 	isPrivate,
 	siteSlug,
@@ -49,7 +49,7 @@ export default function usePrepareProductsForCart( {
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
@@ -118,7 +118,7 @@ export default function usePrepareProductsForCart( {
 	useNothingToAdd( { addHandler, dispatch } );
 
 	// Do not strip products from url until the URL has been parsed
-	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInEditor;
+	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInModal;
 	const doNotStripProducts = Boolean( ! areProductsRetrievedFromUrl || isJetpackCheckout );
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
 
