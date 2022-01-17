@@ -12,9 +12,9 @@ import {
 	getSiteInfoCollectionData,
 	getSiteInfoCollectionCurrentIndex,
 } from 'calypso/state/signup/steps/site-info-collection/selectors';
+import { AccordionForm } from './accordion-form';
 import { ContactInformation, TextInputField, SocialMediaProfiles } from './form-components';
-import SectionWrapper from './section-wrapper';
-import { SectionProps, ValidationErrors, ValidatorFunction } from './types';
+import { AccordionSectionProps, ValidationErrors, ValidatorFunction } from './types';
 
 import './style.scss';
 
@@ -56,7 +56,7 @@ function SiteInformationCollection( {
 
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 
-	const sections: SectionProps[] = [
+	const sections: AccordionSectionProps[] = [
 		{
 			title: translate( '%d. Name of your business', {
 				args: [ 1 ],
@@ -76,7 +76,7 @@ function SiteInformationCollection( {
 			showSkip: false,
 			summary: formValues.siteTitle,
 			validate: ( { siteTitle } ) => {
-				const isValid = Boolean( siteTitle && siteTitle.length );
+				const isValid = Boolean( siteTitle?.length );
 				return {
 					result: isValid,
 					errors: {
@@ -162,7 +162,7 @@ function SiteInformationCollection( {
 		isSectionAtIndexTouchedInitialState[ `${ i }` ] = true;
 	}
 
-	const [ isSectionAtIndexATouched, setIsSectionAtIndexATouched ] = useState<
+	const [ isSectionAtIndexTouched, setIsSectionAtIndexTouched ] = useState<
 		Record< string, boolean >
 	>( isSectionAtIndexTouchedInitialState );
 
@@ -176,6 +176,7 @@ function SiteInformationCollection( {
 	};
 
 	const submitStep = () => {
+		// Re-run validation on all sections before submitting
 		for ( let index = 0; index < sections.length; index++ ) {
 			const section = sections[ index ];
 			if ( section.validate ) {
@@ -200,7 +201,7 @@ function SiteInformationCollection( {
 	const onOpen = ( currentIndex: number ) => {
 		dispatch( updateSiteInfoCurrentIndex( currentIndex ) );
 		dispatch( updateSiteInfoValues( formValues ) );
-		setIsSectionAtIndexATouched( { ...isSectionAtIndexATouched, [ `${ currentIndex }` ]: true } );
+		setIsSectionAtIndexTouched( { ...isSectionAtIndexTouched, [ `${ currentIndex }` ]: true } );
 	};
 
 	const onNext = ( validator?: ValidatorFunction ) => {
@@ -215,8 +216,8 @@ function SiteInformationCollection( {
 
 		if ( currentIndex < sections.length - 1 ) {
 			dispatch( updateSiteInfoCurrentIndex( currentIndex + 1 ) );
-			setIsSectionAtIndexATouched( {
-				...isSectionAtIndexATouched,
+			setIsSectionAtIndexTouched( {
+				...isSectionAtIndexTouched,
 				[ `${ currentIndex + 1 }` ]: true,
 			} );
 		} else {
@@ -225,21 +226,13 @@ function SiteInformationCollection( {
 	};
 
 	return (
-		<>
-			{ sections.map( ( section, index ) => (
-				<SectionWrapper
-					key={ `${ index }` }
-					title={ section.title }
-					summary={ section.summary }
-					isExpanded={ index === currentIndex }
-					showSkip={ section.showSkip }
-					component={ section.component }
-					isTouched={ isSectionAtIndexATouched[ `${ index }` ] }
-					onNext={ () => onNext( section.validate ) }
-					onOpen={ () => onOpen( index ) }
-				/>
-			) ) }
-		</>
+		<AccordionForm
+			sections={ sections }
+			currentIndex={ currentIndex }
+			isSectionAtIndexTouched={ isSectionAtIndexTouched }
+			onNext={ onNext }
+			onOpen={ onOpen }
+		/>
 	);
 }
 

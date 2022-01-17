@@ -1,9 +1,9 @@
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate, useRtl } from 'i18n-calypso';
-import { SectionProps } from './types';
+import { AccordionSectionProps } from './types';
 
-interface SectionWrapperProps extends SectionProps {
+interface AccordionFormSectionProps extends AccordionSectionProps {
 	isExpanded: boolean;
 	isTouched: boolean;
 	onOpen: () => void;
@@ -88,7 +88,7 @@ const NextButton = styled( Button )`
 	}
 `;
 
-export default function SectionWrapper( props: SectionWrapperProps ) {
+export default function AccordionFormSection( props: AccordionFormSectionProps ) {
 	const translate = useTranslate();
 	const isRTL = useRtl();
 

@@ -11,7 +11,7 @@ export interface ValidationResult {
 
 export type ValidatorFunction = ( formValues: SiteInfoCollectionData ) => ValidationResult;
 
-export interface SectionProps {
+export interface AccordionSectionProps {
 	title: TranslateResult;
 	component: ReactNode;
 	showSkip: boolean;
