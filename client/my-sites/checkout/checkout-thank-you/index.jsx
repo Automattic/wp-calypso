@@ -121,7 +121,6 @@ export class CheckoutThankYou extends Component {
 
 	componentDidMount() {
 		this.redirectIfThemePurchased();
-		this.redirectIfDomainOnly( this.props );
 
 		const {
 			gsuiteReceipt,
@@ -163,7 +162,6 @@ export class CheckoutThankYou extends Component {
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
-		this.redirectIfDomainOnly( nextProps );
 
 		if (
 			! this.props.receipt.hasLoadedFromServer &&
@@ -271,17 +269,6 @@ export class CheckoutThankYou extends Component {
 				true
 			);
 			page.redirect( '/themes/' + this.props.selectedSite.slug );
-		}
-	};
-
-	redirectIfDomainOnly = ( props ) => {
-		if ( props.domainOnlySiteFlow && get( props, 'receipt.hasLoadedFromServer', false ) ) {
-			const purchases = getPurchases( props );
-			const failedPurchases = getFailedPurchases( props );
-			if ( purchases.length > 0 && ! failedPurchases.length ) {
-				const domainName = find( purchases, isDomainRegistration ).meta;
-				page.redirect( domainManagementList( domainName ) );
-			}
 		}
 	};
 
