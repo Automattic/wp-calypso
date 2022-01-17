@@ -35,6 +35,10 @@ const GoogleWorkspacePrice = ( { intervalLength }: GoogleWorkspacePriceProps ): 
 	const productSlug = getGoogleWorkspaceProductSlug( intervalLength );
 	const product = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
 
+	if ( intervalLength === IntervalLength.MONTHLY ) {
+		return <>{ translate( 'Only available with annual billing' ) }</>;
+	}
+
 	const productIsDiscounted = hasDiscount( product );
 
 	const standardPriceForIntervalLength = formatPrice( product?.cost ?? 0, currencyCode ?? '' );

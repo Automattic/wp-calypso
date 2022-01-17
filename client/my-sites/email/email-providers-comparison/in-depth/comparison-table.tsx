@@ -2,8 +2,10 @@
 
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import EmailProviderPrice from 'calypso/my-sites/email/email-providers-comparison/in-depth/email-provider-price';
 import LearnMoreLink from 'calypso/my-sites/email/email-providers-comparison/in-depth/learn-more-link';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import type { ComparisonListOrTableProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 import type { ReactElement } from 'react';
 
@@ -118,10 +120,15 @@ const ComparisonTable = ( {
 					<td></td>
 
 					{ emailProviders.map( ( emailProviderFeatures ) => {
+						const isDisabled =
+							emailProviderFeatures.slug === GOOGLE_WORKSPACE_PRODUCT_TYPE &&
+							intervalLength === IntervalLength.MONTHLY;
+
 						return (
 							<td key={ emailProviderFeatures.slug }>
 								<Button
 									className="email-providers-in-depth-comparison-table__button"
+									disabled={ isDisabled }
 									onClick={ () => onSelectEmailProvider( emailProviderFeatures.slug ) }
 									primary
 								>
