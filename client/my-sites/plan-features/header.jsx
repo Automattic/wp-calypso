@@ -401,12 +401,10 @@ export class PlanFeaturesHeader extends Component {
 					relatedMonthlyPlan.raw_price * 12,
 					discountPrice || rawPrice
 				);
-			} else if ( discountPrice ) {
-				return this.renderPriceGroup( rawPrice, discountPrice );
 			}
 		}
 
-		return this.renderPriceGroup( rawPrice );
+		return this.renderPriceGroup( rawPrice, discountPrice );
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
