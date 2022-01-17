@@ -177,7 +177,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	const isDesktop = useViewportMatch( 'large' );
 	const isBlankCanvas = isBlankCanvasDesign( props.design );
 
-	if ( ! onPreview ) {
+	if ( ! onPreview || props.hideFullScreenPreview ) {
 		return (
 			<div className="design-button-container">
 				<DesignButton { ...props } />
@@ -276,7 +276,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						design={ design }
 						locale={ locale }
 						onSelect={ onSelect }
-						onPreview={ hideFullScreenPreview ? undefined : onPreview }
+						onPreview={ onPreview }
 						premiumBadge={ premiumBadge }
 						highRes={ highResThumbnails }
 						hideFullScreenPreview={ hideFullScreenPreview }
