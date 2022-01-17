@@ -131,7 +131,7 @@ export function SocialMediaProfiles( {
 	const linkedinLabel = (
 		<SocialMediaLabel>
 			<SocialLogo size={ 16 } fill="#8C8F94" icon="linkedin" />
-			{ translate( 'Linkedin' ) }
+			{ translate( 'LinkedIn' ) }
 		</SocialMediaLabel>
 	);
 	return (
