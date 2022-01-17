@@ -17,6 +17,7 @@ import {
 	emailManagementInDepthComparison,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
+import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
@@ -93,6 +94,8 @@ const EmailProvidersInDepthComparison = ( {
 				onSelectEmailProvider={ selectEmailProvider }
 				selectedDomainName={ selectedDomainName }
 			/>
+
+			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
 		</>
 	);
 };
