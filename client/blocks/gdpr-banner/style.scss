@@ -7,10 +7,6 @@
 	color: var( --color-text-inverted );
 	z-index: z-index( 'root', '.gdpr-banner' );
 
-	animation-duration: 0.5s;
-	animation-name: gdpr-banner__slideup;
-	animation-timing-function: ease-in-out;
-
 	&.is-compact {
 		margin-bottom: 0;
 	}
@@ -37,18 +33,10 @@
 	}
 }
 
-@keyframes gdpr-banner__slideup {
-	0% {
-		opacity: 0;
-		pointer-events: none;
-		transform: translateY( 100% );
-	}
-
-	100% {
-		opacity: 1;
-		pointer-events: auto;
-		transform: translateY( 0 );
-	}
+.card.gdpr-banner__hidden {
+	pointer-events: none;
+	opacity: 0;
+	transform: translateY( 100% );
 }
 
 .card.gdpr-banner__hiding {
