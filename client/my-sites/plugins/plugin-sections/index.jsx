@@ -321,7 +321,7 @@ class PluginSections extends Component {
 						</SectionNav>
 					</div>
 				) }
-				<Card>
+				<Card className={ classNames( { 'no-header': hasOnlyDescriptionSection } ) }>
 					{ 'faq' === this.getSelected() && this.props.isWpcom && this.getWpcomSupportContent() }
 					{ this.renderSelectedSection() }
 					{ this.renderReadMore() }
