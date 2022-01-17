@@ -1,9 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import {
-	FEATURE_SET_PRIMARY_CUSTOM_DOMAIN,
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-} from '@automattic/calypso-products';
+import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -32,7 +29,6 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -40,11 +36,10 @@ import {
 	showUpdatePrimaryDomainErrorNotice,
 } from 'calypso/state/domains/management/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getPurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import getSites from 'calypso/state/selectors/get-sites';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -74,7 +69,6 @@ export class SiteDomains extends Component {
 		isRequestingDomains: PropTypes.bool,
 		context: PropTypes.object,
 		renderAllSites: PropTypes.bool,
-		hasSingleSite: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -505,21 +499,17 @@ export default connect(
 		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 		const selectedSite = ownProps?.selectedSite || null;
 		const isOnFreePlan = selectedSite?.plan?.is_free || false;
-		const siteCount = getSites( state )?.length || 0;
 		const purchases = getPurchases( state );
 
 		return {
-			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentRoute: getCurrentRoute( state ),
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			hasProductsList: 0 < ( getProductsList( state )?.length ?? 0 ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
-			googleWorkspaceProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			hasNonPrimaryDomainsFlag: getCurrentUser( state )
 				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 				: false,
-			hasSingleSite: siteCount === 1,
 			isOnFreePlan,
 			userCanManageOptions,
 			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
