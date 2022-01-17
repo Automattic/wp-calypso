@@ -1,4 +1,4 @@
-import { last, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
 import { deleteP2KeyringConnection } from 'calypso/state/sharing/keyring/actions';
@@ -22,12 +22,11 @@ export class P2Github extends SharingService {
 	/**
 	 * Deletes the passed connections.
 	 */
-	removeConnection = () => {
+	removeConnection = ( connections = this.props.removableConnections ) => {
 		this.setState( { isDisconnecting: true } );
-		this.props.deleteStoredKeyringConnection(
-			last( this.props.keyringConnections ),
-			this.props.siteId
-		);
+		connections.map( ( connectionId ) => {
+			this.props.deleteStoredKeyringConnection( connectionId, this.props.siteId );
+		} );
 	};
 
 	UNSAFE_componentWillReceiveProps( { availableExternalAccounts } ) {
