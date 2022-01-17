@@ -19426,9 +19426,9 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"globby@npm:^10.0.0, globby@npm:^10.0.1":
-  version: 10.0.1
-  resolution: "globby@npm:10.0.1"
+"globby@npm:^10.0.1, globby@npm:^10.0.2":
+  version: 10.0.2
+  resolution: "globby@npm:10.0.2"
   dependencies:
     "@types/glob": ^7.1.1
     array-union: ^2.1.0
@@ -19438,7 +19438,7 @@ fsevents@~2.1.2:
     ignore: ^5.1.1
     merge2: ^1.2.3
     slash: ^3.0.0
-  checksum: 048f8e19a5ff1b3d565372e66ac22050fcc9225ccf931ce7b0971bf264fd31ea19cdd8b8ba71e4af68d8264789c1534c23939bd56b3a5b0092c52d315ecc5f1b
+  checksum: 9c610ad47117b9dfbc5b0c6c2408c3b72f89c1b9f91ee14c4dc794794e35768ee0920e2a403b688cfa749f48617c6ba3f3a52df07677ed73d602d4349b68c810
   languageName: node
   linkType: hard
 
@@ -20551,7 +20551,7 @@ fsevents@~2.1.2:
     "@automattic/calypso-typescript-config": "workspace:^"
     commander: ^5.1.0
     debug: ^4.3.3
-    globby: ^10.0.0
+    globby: ^10.0.2
     xgettext-js: ^3.0.0
   bin:
     i18n-calypso: cli.js
@@ -38102,7 +38102,7 @@ testarmada-magellan@11.0.10:
     fsevents: ^2.3.2
     gettext-parser: ^4.0.3
     glob: ^7.1.6
-    globby: ^10.0.1
+    globby: ^10.0.2
     gzip-size: ^6.0.0
     html-loader: ^0.5.5
     husky: ^7.0.4
