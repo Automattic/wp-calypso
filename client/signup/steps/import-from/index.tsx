@@ -12,8 +12,10 @@ import {
 	getImporterStatusForSiteId,
 	isImporterStatusHydrated,
 } from 'calypso/state/imports/selectors';
+import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSite, getSiteId } from 'calypso/state/sites/selectors';
+import { UrlData } from '../import/types';
 import { Site } from './components/importer-drag';
 import NotAuthorized from './components/not-authorized';
 import NotFound from './components/not-found';
@@ -28,6 +30,7 @@ import WordpressImporter from './wordpress';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
+	urlData: UrlData;
 	path: string;
 	stepName: string;
 	stepSectionName: string;
@@ -43,6 +46,7 @@ interface Props {
 }
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const {
+		urlData,
 		stepSectionName,
 		siteId,
 		site,
@@ -143,6 +147,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 											site={ site }
 											siteSlug={ siteSlug }
 											fromSite={ fromSite }
+											urlData={ urlData }
 										/>
 									);
 								} else if (
@@ -160,6 +165,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 											site={ site }
 											siteSlug={ siteSlug }
 											fromSite={ fromSite }
+											urlData={ urlData }
 										/>
 									);
 								} else if ( engine === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
@@ -209,6 +215,7 @@ export default connect(
 		const siteId = getSiteId( state, siteSlug ) as number;
 
 		return {
+			urlData: getUrlData( state ),
 			siteId,
 			site: getSite( state, siteId ) as Site,
 			siteSlug,

@@ -16,7 +16,17 @@ import { getImporterTypeForEngine } from '../util';
 
 export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > = ( props ) => {
 	const importer: Importer = 'squarespace';
-	const { job, siteId, site, siteSlug, fromSite, importSite, startImport, resetImport } = props;
+	const {
+		job,
+		urlData,
+		siteId,
+		site,
+		siteSlug,
+		fromSite,
+		importSite,
+		startImport,
+		resetImport,
+	} = props;
 	const importerData = importerConfig().squarespace;
 
 	populateMessages();
@@ -119,7 +129,12 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 					 * Upload section
 					 */
 					return (
-						<ImporterDrag site={ site } importerData={ importerData } importerStatus={ job } />
+						<ImporterDrag
+							urlData={ urlData }
+							site={ site }
+							importerData={ importerData }
+							importerStatus={ job }
+						/>
 					);
 				} )() }
 
