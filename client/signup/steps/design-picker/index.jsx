@@ -214,8 +214,9 @@ export default function DesignPickerStep( props ) {
 				placeholder={ null }
 				isOpen={ isCheckoutModalOpen }
 				cartProducts={ [ planItem( PLAN_PREMIUM ) ] }
-				redirectTo={ '' }
+				redirectTo={ window.location.href }
 				clearCartOnClose
+				disabledRemoveProductFromCart
 				checkoutOnSuccessCallback={ null }
 				onClose={ closeCheckoutModal }
 			/>
