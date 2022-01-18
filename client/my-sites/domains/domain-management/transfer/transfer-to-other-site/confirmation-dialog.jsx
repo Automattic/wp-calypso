@@ -70,13 +70,13 @@ class TransferConfirmationDialog extends PureComponent {
 				</p>
 			);
 		}
-		return (
+		return this.props.primaryWithPlansOnly ? (
 			<p>
 				{ this.props.translate(
 					"The target site doesn't have a paid plan, so you won't be able to set this domain as primary on the site."
 				) }
 			</p>
-		);
+		) : null;
 	}
 
 	render() {
