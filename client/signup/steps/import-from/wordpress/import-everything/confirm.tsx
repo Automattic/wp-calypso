@@ -12,11 +12,11 @@ import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import './style.scss';
 
 interface Props {
-	fromSite: string;
-	fromSiteItem: SitesItem | null;
-	fromSiteAnalyzedData: UrlData;
-	siteItem: SitesItem | null;
-	siteSlug: string;
+	sourceSite: SitesItem | null;
+	sourceSiteUrl: string;
+	sourceUrlAnalyzedData: UrlData;
+	targetSite: SitesItem | null;
+	targetSiteSlug: string;
 	startImport: () => void;
 }
 
@@ -26,7 +26,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Fields
 	 */
-	const { fromSite, fromSiteAnalyzedData, siteItem, siteSlug, startImport } = props;
+	const { sourceSiteUrl, sourceUrlAnalyzedData, targetSite, targetSiteSlug, startImport } = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 
 	return (
@@ -43,14 +43,14 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 
 							<div
 								className={ classnames( 'import_site-mapper-name', {
-									'with-favicon': fromSiteAnalyzedData?.meta.favicon,
+									'with-favicon': sourceUrlAnalyzedData?.meta.favicon,
 								} ) }
 							>
-								{ fromSiteAnalyzedData?.meta.favicon && (
-									<img alt={ 'Icon' } src={ fromSiteAnalyzedData?.meta.favicon } />
+								{ sourceUrlAnalyzedData?.meta.favicon && (
+									<img alt={ 'Icon' } src={ sourceUrlAnalyzedData?.meta.favicon } />
 								) }
-								<span>{ fromSiteAnalyzedData?.meta.title }</span>
-								<small>{ convertToFriendlyWebsiteName( fromSite ) }</small>
+								<span>{ sourceUrlAnalyzedData?.meta.title }</span>
+								<small>{ convertToFriendlyWebsiteName( sourceSiteUrl ) }</small>
 							</div>
 						</div>
 						<div className={ classnames( 'import-layout__column' ) }>
@@ -61,8 +61,8 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 							</div>
 
 							<div className={ classnames( 'import_site-mapper-name' ) }>
-								<span>{ siteItem?.name }</span>
-								<small>{ convertToFriendlyWebsiteName( siteSlug ) }</small>
+								<span>{ targetSite?.name }</span>
+								<small>{ convertToFriendlyWebsiteName( targetSiteSlug ) }</small>
 							</div>
 						</div>
 					</div>
@@ -73,8 +73,8 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 						/* translators: the `from` and `to` fields could be any site URL (eg: "yourname.com") */
 						__( 'Import everything from %(from)s and overwrite everything on %(to)s?' ),
 						{
-							from: convertToFriendlyWebsiteName( fromSite ),
-							to: convertToFriendlyWebsiteName( siteSlug ),
+							from: convertToFriendlyWebsiteName( sourceSiteUrl ),
+							to: convertToFriendlyWebsiteName( targetSiteSlug ),
 						}
 					) }
 				</Title>
@@ -104,7 +104,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 
 			{ isModalDetailsOpen && (
 				<ConfirmModal
-					siteSlug={ siteSlug }
+					siteSlug={ targetSiteSlug }
 					onConfirm={ startImport }
 					onClose={ () => setIsModalDetailsOpen( false ) }
 				/>

@@ -101,15 +101,14 @@ export class ImportEverything extends SectionMigrate {
 	renderMigrationConfirm() {
 		const { sourceSite, targetSite, targetSiteSlug, sourceUrlAnalyzedData } = this.props;
 
-		// TODO: Rename field names. It should be consistent through the screens
 		return (
 			<Confirm
 				startImport={ this.startMigration }
-				siteItem={ targetSite }
-				siteSlug={ targetSiteSlug }
-				fromSite={ sourceSite.URL }
-				fromSiteItem={ sourceSite }
-				fromSiteAnalyzedData={ sourceUrlAnalyzedData }
+				targetSite={ targetSite }
+				targetSiteSlug={ targetSiteSlug }
+				sourceSite={ sourceSite }
+				sourceSiteUrl={ sourceSite.URL }
+				sourceUrlAnalyzedData={ sourceUrlAnalyzedData }
 			/>
 		);
 	}
