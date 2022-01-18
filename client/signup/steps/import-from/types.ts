@@ -1,4 +1,7 @@
-export type Importer = 'wix' | 'medium' | 'wordpress';
+import { UrlData } from '../import/types';
+import { Site } from './components/importer-drag';
+
+export type Importer = 'medium' | 'squarespace' | 'wix' | 'wordpress';
 export type QueryObject = {
 	from: string;
 	to: string;
@@ -31,4 +34,17 @@ export interface ImportJobParams {
 	targetSiteUrl: string;
 	supportedContent: string[];
 	unsupportedContent: string[];
+}
+
+export interface ImporterBaseProps {
+	job?: ImportJob;
+	run: boolean;
+	siteId: number;
+	site: Site;
+	siteSlug: string;
+	fromSite: string;
+	urlData: UrlData;
+	importSite: ( params: ImportJobParams ) => void;
+	startImport: ( siteId: number, type: string ) => void;
+	resetImport: ( siteId: number, importerId: string ) => void;
 }

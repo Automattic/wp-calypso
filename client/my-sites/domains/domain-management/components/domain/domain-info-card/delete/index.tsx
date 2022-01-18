@@ -27,6 +27,8 @@ const DomainDeleteInfoCard = ( {
 
 	const getDescription = () => {
 		switch ( domain.type ) {
+			case domainType.SITE_REDIRECT:
+				return translate( 'Remove this site redirect permanently' );
 			case domainType.MAPPED:
 				return translate( 'Remove this domain connection permanently' );
 			case domainType.TRANSFER:

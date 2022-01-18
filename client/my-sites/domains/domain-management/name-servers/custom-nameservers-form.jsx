@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { dropRightWhile } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -15,6 +14,22 @@ import CustomNameserversRow from './custom-nameservers-row';
 
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;
+
+const dropRightWhileEmpty = ( arr ) => {
+	const newArr = [];
+	let found = false;
+
+	for ( let i = arr.length - 1; i >= 0; i-- ) {
+		if ( found || arr[ i ] ) {
+			newArr.unshift( arr[ i ] );
+		}
+		if ( arr[ i ] ) {
+			found = true;
+		}
+	}
+
+	return newArr;
+};
 
 class CustomNameserversForm extends PureComponent {
 	static propTypes = {
@@ -51,9 +66,10 @@ class CustomNameserversForm extends PureComponent {
 	};
 
 	rows() {
-		// Remove the empty values from the end, and add one empty one
 		const { translate } = this.props;
-		const nameservers = dropRightWhile( this.props.nameservers, ( nameserver ) => ! nameserver );
+
+		// Remove the empty values from the end, and add one empty one
+		const nameservers = dropRightWhileEmpty( this.props.nameservers );
 
 		if ( nameservers.length < MAX_NAMESERVER_LENGTH ) {
 			nameservers.push( '' );

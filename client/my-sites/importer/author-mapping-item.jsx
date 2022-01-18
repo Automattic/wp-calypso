@@ -27,6 +27,7 @@ class ImporterAuthorMapping extends Component {
 		sourceAuthor: PropTypes.shape( {
 			id: PropTypes.string.isRequired,
 			name: PropTypes.string.isRequired,
+			icon: PropTypes.string,
 			// `currentUser` has `.display_name` and is used to map author on single author sites
 			// `users` endpoint returns `.name` and is used for multiple author sites
 			mappedTo: PropTypes.oneOfType( [ userShape( 'name' ), userShape( 'display_name' ) ] ),
@@ -60,6 +61,7 @@ class ImporterAuthorMapping extends Component {
 			siteId,
 			onSelect,
 			sourceAuthor: {
+				icon,
 				name,
 				mappedTo: selectedAuthor = { name: /* Don't translate yet */ 'Choose an author…' },
 			},
@@ -68,7 +70,21 @@ class ImporterAuthorMapping extends Component {
 
 		return (
 			<div className="importer__author-mapping">
-				<span className="importer__source-author">{ decodeEntities( name ) }</span>
+				<span className="importer__source-author">
+					{ icon ? (
+						<img
+							class="importer__icon"
+							alt={ name }
+							title={ name }
+							src={ icon }
+							width="26"
+							height="26"
+						/>
+					) : (
+						''
+					) }
+					<span>{ decodeEntities( name ) }</span>
+				</span>
 				<Gridicon className="importer__mapping-relation" icon="arrow-right" />
 				{ ! hasSingleAuthor ? (
 					<AuthorSelector siteId={ siteId } onSelect={ onSelect }>

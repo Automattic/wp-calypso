@@ -35,6 +35,8 @@ export default function DesignPickerStep( props ) {
 		queryParams,
 		showDesignPickerCategories,
 		showLetUsChoose,
+		hideFullScreenPreview,
+		hideDesignTitle,
 	} = props;
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
@@ -166,6 +168,8 @@ export default function DesignPickerStep( props ) {
 					/>
 				}
 				categoriesFooter={ renderCategoriesFooter() }
+				hideFullScreenPreview={ hideFullScreenPreview }
+				hideDesignTitle={ hideDesignTitle }
 			/>
 		);
 	}

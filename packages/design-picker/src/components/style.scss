@@ -382,3 +382,18 @@
 		}
 	}
 }
+
+// layout without preview
+.design-button-container--without-preview {
+	.design-picker__image-frame::after {
+		pointer-events: none;
+	}
+
+	&:hover,
+	&:focus-within {
+		.design-picker__image-frame::after {
+			// `!important` is used because there is a default `background-color` with high specificity.
+			background-color: transparent !important; // to override 
+		}
+	}
+}
