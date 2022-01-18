@@ -122,6 +122,101 @@
 			"features": []
 		},
 		{
+			"title": "Quadrat Black",
+			"slug": "quadrat-black",
+			"template": "quadrat",
+			"theme": "quadrat-black",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Quadrat Black",
+			"slug": "quadrat-black",
+			"template": "quadrat",
+			"theme": "quadrat-black",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Quadrat Green",
+			"slug": "quadrat-green",
+			"template": "quadrat",
+			"theme": "quadrat-green",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Quadrat Green",
+			"slug": "quadrat-green",
+			"template": "quadrat",
+			"theme": "quadrat-green",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Quadrat Red",
+			"slug": "quadrat-red",
+			"template": "quadrat",
+			"theme": "quadrat-red",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Quadrat Red",
+			"slug": "quadrat-red",
+			"template": "quadrat",
+			"theme": "quadrat-red",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Quadrat White",
+			"slug": "quadrat-white",
+			"template": "quadrat",
+			"theme": "quadrat-white",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Quadrat White",
+			"slug": "quadrat-white",
+			"template": "quadrat",
+			"theme": "quadrat-white",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Quadrat Yellow",
+			"slug": "quadrat-yellow",
+			"template": "quadrat",
+			"theme": "quadrat-yellow",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Quadrat Yellow",
+			"slug": "quadrat-yellow",
+			"template": "quadrat",
+			"theme": "quadrat-yellow",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
 			"title": "Geologist",
 			"slug": "geologist",
 			"template": "geologist",
@@ -136,6 +231,82 @@
 			"slug": "geologist",
 			"template": "geologist",
 			"theme": "geologist",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Geologist Blue",
+			"slug": "geologist-blue",
+			"template": "geologist",
+			"theme": "geologist-blue",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Geologist Blue",
+			"slug": "geologist-blue",
+			"template": "geologist",
+			"theme": "geologist-blue",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Geologist Cream",
+			"slug": "geologist-cream",
+			"template": "geologist",
+			"theme": "geologist-cream",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Geologist Cream",
+			"slug": "geologist-cream",
+			"template": "geologist",
+			"theme": "geologist-cream",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Geologist Slate",
+			"slug": "geologist-slate",
+			"template": "geologist",
+			"theme": "geologist-slate",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Geologist Slate",
+			"slug": "geologist-slate",
+			"template": "geologist",
+			"theme": "geologist-slate",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"features": []
+		},
+		{
+			"title": "Geologist Yellow",
+			"slug": "geologist-yellow",
+			"template": "geologist",
+			"theme": "geologist-yellow",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Geologist Yellow",
+			"slug": "geologist-yellow",
+			"template": "geologist",
+			"theme": "geologist-yellow",
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"features": []

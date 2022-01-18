@@ -26,7 +26,7 @@ import Notice from 'calypso/components/notice';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
+import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import {
 	canCurrentUserAddEmail,
 	getCurrentUserCannotAddEmailReason,
@@ -44,7 +44,11 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from 'calypso/lib/gsuite/constants';
 import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
-import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
+import {
+	getTitanProductName,
+	isDomainEligibleForTitanFreeTrial,
+	isTitanMonthlyProduct,
+} from 'calypso/lib/titan';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
@@ -68,7 +72,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
 	getDomainsWithForwards,
 	isAddingEmailForward,
@@ -96,10 +99,10 @@ class EmailProvidersComparison extends Component {
 		showSkipButton: PropTypes.bool,
 		skipButtonLabel: PropTypes.string,
 		source: PropTypes.string,
+		titanProductSlug: PropTypes.string,
 
 		// Props injected via connect()
 		currencyCode: PropTypes.string,
-		currentRoute: PropTypes.string,
 		domain: PropTypes.object,
 		domainName: PropTypes.string,
 		gSuiteProduct: PropTypes.object,
@@ -190,7 +193,14 @@ class EmailProvidersComparison extends Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const { comparisonContext, domain, domainName, hasCartDomain, source } = this.props;
+		const {
+			comparisonContext,
+			domain,
+			domainName,
+			hasCartDomain,
+			source,
+			titanMailProduct,
+		} = this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );
@@ -224,14 +234,18 @@ class EmailProvidersComparison extends Component {
 
 		const { selectedSite, shoppingCartManager } = this.props;
 
-		const cartItem = titanMailMonthly( {
+		const cartItemArgs = {
 			domain: domainName,
 			quantity: validatedTitanMailboxes.length,
 			extra: {
 				email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
 				new_quantity: validatedTitanMailboxes.length,
 			},
-		} );
+		};
+
+		const cartItem = isTitanMonthlyProduct( titanMailProduct )
+			? titanMailMonthly( cartItemArgs )
+			: titanMailYearly( cartItemArgs );
 
 		this.setState( { addingToCart: true } );
 
@@ -524,18 +538,51 @@ class EmailProvidersComparison extends Component {
 			'email-providers-comparison__keep-main-price': ! isEligibleForFreeTrial,
 		} );
 
-		const formattedPrice = translate( '{{price/}} /mailbox /month (billed monthly)', {
+		const titanIsMonthly = titanMailProduct && isTitanMonthlyProduct( titanMailProduct );
+
+		const titanMonthlyCost = titanIsMonthly
+			? titanMailProduct?.cost ?? 0
+			: ( titanMailProduct?.cost ?? 0 ) / 12;
+
+		const monthlyPrice = formatCurrency( titanMonthlyCost, currencyCode );
+
+		const priceComponents = {
 			components: {
-				price: (
-					<span className={ formattedPriceClassName }>
-						{ formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ) }
-					</span>
-				),
+				price: <span className={ formattedPriceClassName }>{ monthlyPrice }</span>,
 			},
 			comment: '{{price/}} is the formatted price, e.g. $20',
-		} );
+		};
 
-		const discount = isEligibleForFreeTrial ? translate( '3 months free' ) : null;
+		const formattedPrice = titanIsMonthly
+			? translate( '{{price/}} /mailbox /month (billed monthly)', priceComponents )
+			: translate( '{{price/}} /mailbox /month (billed annually)', priceComponents );
+
+		const discount = ! isEligibleForFreeTrial ? null : (
+			<>
+				{ translate( '3 months free' ) }
+				{ ! titanIsMonthly && (
+					<span className="email-providers-comparison__discount-with-renewal">
+						<span>
+							{ translate(
+								'%(firstRenewalPrice)s/mailbox billed in 3 months, renews at %(standardPrice)s/mailbox',
+								{
+									args: {
+										firstRenewalPrice: formatCurrency(
+											( titanMailProduct?.cost ?? 0 ) * 0.75,
+											currencyCode
+										),
+										standardPrice: formatCurrency( titanMailProduct?.cost ?? 0, currencyCode ),
+									},
+									comment:
+										"%(firstRenewalPrice)s is a formatted, reduced price that the user will pay in three months (e.g. '$3'), " +
+										"%(standardPrice)s is a formatted price (e.g. '$5')",
+								}
+							) }
+						</span>
+					</span>
+				) }
+			</>
+		);
 
 		const logo = (
 			<Gridicon
@@ -611,7 +658,7 @@ class EmailProvidersComparison extends Component {
 				formFields={ formFields }
 				showExpandButton={ this.isDomainEligibleForEmail( domain ) }
 				expandButtonLabel={ expandButtonLabel }
-				features={ getTitanFeatures() }
+				features={ getTitanFeatures( titanIsMonthly ) }
 			/>
 		);
 	}
@@ -624,12 +671,10 @@ class EmailProvidersComparison extends Component {
 
 	renderHeader() {
 		const {
-			currentRoute,
 			headerTitle,
 			hideEmailHeader,
 			promoHeaderTitle,
 			selectedDomainName,
-			selectedSite,
 			skipHeaderElement,
 			translate,
 		} = this.props;
@@ -664,9 +709,7 @@ class EmailProvidersComparison extends Component {
 			<>
 				<DocumentHead title={ titleCase( title ) } />
 
-				{ ! hideEmailHeader && (
-					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
-				) }
+				{ ! hideEmailHeader && <EmailHeader /> }
 
 				{ headerContent }
 
@@ -830,9 +873,10 @@ export default connect(
 			( hasCartDomain || ( domain && hasGSuiteSupportedDomain( [ domain ] ) ) );
 		const gSuiteProduct = getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY );
 
+		const titanProductSlug = ownProps.titanProductSlug ?? TITAN_MAIL_MONTHLY_SLUG;
+
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			currentRoute: getCurrentRoute( state ),
 			domain,
 			domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
@@ -844,7 +888,7 @@ export default connect(
 			selectedSite,
 			shouldPromoteGoogleWorkspace:
 				isGSuiteSupported && ( ownProps.source === 'google-sale' || hasDiscount( gSuiteProduct ) ),
-			titanMailProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
+			titanMailProduct: getProductBySlug( state, titanProductSlug ),
 		};
 	},
 	( dispatch ) => {

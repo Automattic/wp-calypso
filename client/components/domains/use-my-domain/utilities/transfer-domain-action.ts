@@ -82,7 +82,7 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 			}
 		};
 
-		if ( inputMode.transferDomain === mode ) {
+		if ( inputMode.startPendingTransfer === mode ) {
 			await startInboundTransferAndReload();
 		} else {
 			await addTransferToCartAndCheckout();

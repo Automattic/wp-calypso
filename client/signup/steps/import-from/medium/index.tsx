@@ -1,38 +1,32 @@
-import { Hooray, Progress, SubTitle, Title } from '@automattic/onboarding';
-import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { translate, TranslateOptions, TranslateOptionsText } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { ProgressBar } from 'calypso/devdocs/design/playground-scope';
 import importerConfig from 'calypso/lib/importer/importer-config';
-import { calculateProgress } from 'calypso/my-sites/importer/importing-pane';
 import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
-import DoneButton from '../components/done-button';
+import CompleteScreen from '../components/complete-screen';
 import GettingStartedVideo from '../components/getting-started-video';
-import ImporterDrag, { Site } from '../components/importer-drag';
-import { Importer, ImportJob, ImportJobParams } from '../types';
+import ImporterDrag from '../components/importer-drag';
+import ProgressScreen from '../components/progress-screen';
+import { Importer, ImporterBaseProps, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
-import './style.scss';
 
-interface Props {
-	job?: ImportJob;
-	run: boolean;
-	siteId: number;
-	site: Site;
-	siteSlug: string;
-	fromSite: string;
-	importSite: ( params: ImportJobParams ) => void;
-	startImport: ( siteId: number, type: string ) => void;
-	resetImport: ( siteId: number, importerId: string ) => void;
-}
-export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
+export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( props ) => {
 	const importer: Importer = 'medium';
-	const { __ } = useI18n();
-	const { job, siteId, site, siteSlug, fromSite, importSite, startImport, resetImport } = props;
+	const {
+		job,
+		urlData,
+		siteId,
+		site,
+		siteSlug,
+		fromSite,
+		importSite,
+		startImport,
+		resetImport,
+	} = props;
 	const importerData = importerConfig().medium;
 
 	populateMessages();
@@ -125,44 +119,30 @@ export const MediumImporter: React.FunctionComponent< Props > = ( props ) => {
 						 * Complete screen
 						 */
 						return (
-							<Hooray>
-								<Title>{ __( 'Hooray!' ) }</Title>
-								<SubTitle>
-									{ __( 'Congratulations. Your content was successfully imported.' ) }
-								</SubTitle>
-								<DoneButton
-									siteId={ siteId }
-									siteSlug={ siteSlug }
-									job={ job as ImportJob }
-									resetImport={ resetImport }
-								/>
-							</Hooray>
+							<CompleteScreen
+								siteId={ siteId }
+								siteSlug={ siteSlug }
+								job={ job as ImportJob }
+								resetImport={ resetImport }
+							/>
 						);
 					} else if ( checkProgress() ) {
 						/**
 						 * Progress screen
 						 */
-						const progress = calculateProgress( job?.progress );
-						return (
-							<Progress>
-								<Title>{ __( 'Importing' ) }...</Title>
-								<ProgressBar
-									color={ 'black' }
-									compact={ true }
-									value={ Number.isNaN( progress ) ? 0 : progress }
-								/>
-								<SubTitle>
-									{ __( "This may take a few minutes. We'll notify you by email when it's done." ) }
-								</SubTitle>
-							</Progress>
-						);
+						return <ProgressScreen job={ job } />;
 					}
 
 					/**
 					 * Upload section
 					 */
 					return (
-						<ImporterDrag site={ site } importerData={ importerData } importerStatus={ job } />
+						<ImporterDrag
+							urlData={ urlData }
+							site={ site }
+							importerData={ importerData }
+							importerStatus={ job }
+						/>
 					);
 				} )() }
 

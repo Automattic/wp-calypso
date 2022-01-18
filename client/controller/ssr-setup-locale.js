@@ -1,8 +1,7 @@
 // eslint-disable-next-line import/no-nodejs-modules
 import { readFile } from 'fs/promises';
-import i18n from 'i18n-calypso';
+import { I18N } from 'i18n-calypso';
 import getAssetFilePath from 'calypso/lib/get-asset-file-path';
-import { getLanguage } from 'calypso/lib/i18n-utils';
 import config from 'calypso/server/config';
 import { LOCALE_SET } from 'calypso/state/action-types';
 
@@ -11,12 +10,13 @@ export function ssrSetupLocaleMiddleware() {
 
 	return function ssrSetupLocale( context, next ) {
 		function setLocaleData( localeData ) {
+			const i18n = new I18N();
 			i18n.setLocale( localeData );
 			const localeSlug = i18n.getLocaleSlug();
 			const localeVariant = i18n.getLocaleVariant();
 			context.store.dispatch( { type: LOCALE_SET, localeSlug, localeVariant } );
 			context.lang = localeVariant || localeSlug;
-			context.isRTL = getLanguage( context.lang )?.rtl ?? false;
+			context.i18n = i18n;
 			next();
 		}
 
@@ -33,7 +33,7 @@ export function ssrSetupLocaleMiddleware() {
 		}
 
 		const cachedTranslations = translationsCache[ lang ];
-		if ( typeof cachedTranslations !== 'undefined' ) {
+		if ( cachedTranslations ) {
 			setLocaleData( cachedTranslations );
 		} else {
 			readFile( getAssetFilePath( `languages/${ lang }-v1.1.json` ), 'utf-8' )

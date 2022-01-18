@@ -5,7 +5,6 @@ import {
 	READER_SITE_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
-	READER_SITE_UPDATE,
 } from 'calypso/state/reader/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { items, queuedRequests, lastFetched } from '../reducer';
@@ -199,28 +198,6 @@ describe( 'reducer', () => {
 			).to.deep.equal( startingState );
 		} );
 
-		test( 'should accept updates', () => {
-			const startingState = deepFreeze( {
-				666: { ID: 666, name: 'valid' },
-				777: { ID: 777, name: 'second valid' },
-			} );
-			chaiExpect(
-				items( startingState, {
-					type: READER_SITE_UPDATE,
-					payload: [
-						{ ID: 1, name: 'first' },
-						{ ID: 2, name: 'second' },
-						{ ID: 666, name: 'valid but updated' },
-					],
-				} )
-			).to.deep.equal( {
-				1: { ID: 1, name: 'first', title: 'first' },
-				2: { ID: 2, name: 'second', title: 'second' },
-				666: { ID: 666, name: 'valid but updated', title: 'valid but updated' },
-				777: { ID: 777, name: 'second valid' },
-			} );
-		} );
-
 		test( 'should accept site details from site blocks', () => {
 			const startingState = deepFreeze( {
 				666: { ID: 666, name: 'valid' },
@@ -274,15 +251,6 @@ describe( 'reducer', () => {
 			const action = {
 				type: READER_SITE_REQUEST_SUCCESS,
 				payload: { ID: 1 },
-			};
-			chaiExpect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
-		} );
-
-		test( 'should update the last fetched time on site update', () => {
-			const original = deepFreeze( {} );
-			const action = {
-				type: READER_SITE_UPDATE,
-				payload: [ { ID: 1 } ],
 			};
 			chaiExpect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
 		} );

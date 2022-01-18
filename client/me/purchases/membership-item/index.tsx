@@ -81,7 +81,7 @@ const MembershipType = ( { subscription }: { subscription: MembershipSubscriptio
 
 const Icon = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const [ hasError, setErrors ] = useState( false );
-	const [ site, setSite ] = useState< null | { icon?: { ico: string } } >( null );
+	const [ site, setSite ] = useState< { icon?: { ico: string } } >();
 	const siteId = subscription.site_id;
 
 	useEffect( () => {

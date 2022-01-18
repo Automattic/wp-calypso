@@ -23,7 +23,6 @@ registerStore< State >( STORE_KEY, {
 		'hasUsedDomainsStep',
 		'hasUsedPlansStep',
 		'lastLocation',
-		'pageLayouts',
 		'planProductId',
 		'randomizedDesigns',
 		'selectedDesign',
@@ -31,8 +30,6 @@ registerStore< State >( STORE_KEY, {
 		'selectedFonts',
 		'selectedSite',
 		'siteTitle',
-		'siteVertical',
-		'wasVerticalSkipped',
 		'isEnrollingInFseBeta',
 	],
 } );

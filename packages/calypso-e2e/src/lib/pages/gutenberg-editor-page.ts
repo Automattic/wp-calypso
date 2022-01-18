@@ -1,6 +1,7 @@
 import assert from 'assert';
-import { Page, Frame, ElementHandle } from 'playwright';
+import { Page, Frame, ElementHandle, Response } from 'playwright';
 import { getTargetDeviceName } from '../../browser-helper';
+import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import { NavbarComponent } from '../components';
 
@@ -37,11 +38,6 @@ const selectors = {
 
 	// Publish panel (including post-publish)
 	publishPanel: '.editor-post-publish-panel',
-	// With the selector below, we're targeting both "View Post" buttons: the one
-	// in the post-publish pane, and the one that pops up in the bottom-left
-	// corner. This addresses the bug where the post-publish panel is immediately
-	// closed when publishing with certain blocks on the editor canvas.
-	// See https://github.com/Automattic/wp-calypso/issues/54421.
 	viewButton: 'text=/View (Post|Page)/',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
@@ -75,6 +71,19 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Opens the "new post/page" page. By default it will open the "new post" page.
+	 *
+	 * Example "new post": {@link https://wordpress.com/post}
+	 * Example "new page": {@link https://wordpress.com/page}
+	 */
+	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
+		const request = await this.page.goto( getCalypsoURL( type ) );
+		await this.waitUntilLoaded();
+
+		return request;
+	}
+
+	/**
 	 * Initialization steps to ensure the page is fully loaded.
 	 *
 	 * @returns {Promise<Frame>} iframe holding the editor.
@@ -86,6 +95,8 @@ export class GutenbergEditorPage {
 		// takes too long here, so the most reliable alternative is the title being
 		// visible.
 		await frame.waitForSelector( selectors.editorTitle );
+		// Once https://github.com/Automattic/wp-calypso/issues/57660 is resolved,
+		// the next line should be removed.
 		await this.forceDismissWelcomeTour();
 
 		return frame;
@@ -424,10 +435,23 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	private async visitPublishedPost( url: string ): Promise< void > {
+		// Some blocks, like "Click To Tweet" or "Logos" cause the post-publish
+		// panel to close immediately and leave the post in the unsaved state for
+		// some reason. Since the post state is unsaved, the warning dialog will be
+		// displayed on the published post link click. By default, Playwright will
+		// dismiss the dialog so we need this listener to accept it and open the
+		// published post.
+		//
+		// Once https://github.com/Automattic/wp-calypso/issues/54421 is resolved,
+		// this listener can be removed.
+		this.page.once( 'dialog', async ( dialog ) => {
+			await dialog.accept();
+		} );
+
 		const frame = await this.getEditorFrame();
 
 		await Promise.all( [
-			this.page.waitForNavigation( { waitUntil: 'networkidle', url: url } ),
+			this.page.waitForNavigation( { url } ),
 			frame.click( selectors.viewButton ),
 		] );
 

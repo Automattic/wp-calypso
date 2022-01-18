@@ -46,9 +46,11 @@ interface BlockingHoldNoticeProps {
 	siteId: number;
 }
 
+// This gets the values of the object transferStates.
+export type TransferStatus = typeof transferStates[ keyof typeof transferStates ];
+
 interface TransferFailureNoticeProps {
-	// This gets the values of the object transferStates.
-	transferStatus: typeof transferStates[ keyof typeof transferStates ];
+	transferStatus: TransferStatus | null;
 }
 
 const content = {
@@ -216,7 +218,7 @@ export default function WPCOMBusinessAT(): ReactElement {
 				brandFont
 			/>
 			<BlockingHoldNotice siteId={ siteId } />
-			<TransferFailureNotice transferStatus={ automatedTransferStatus } />
+			<TransferFailureNotice transferStatus={ automatedTransferStatus as TransferStatus } />
 			<PromoCard
 				title={ content.primaryPromo.title }
 				image={ content.primaryPromo.image }

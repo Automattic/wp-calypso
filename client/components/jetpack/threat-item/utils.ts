@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { Threat, ThreatFix, ThreatType } from './types';
+import type { TranslateResult } from 'i18n-calypso';
 
 export function getThreatType( threat: Threat ): ThreatType {
 	// We can't use `hasOwnProperty` here to test these conditions because
@@ -29,7 +30,7 @@ export function getThreatType( threat: Threat ): ThreatType {
 	return 'none';
 }
 
-export const getThreatVulnerability = ( threat: Threat ): string | i18nCalypso.TranslateResult => {
+export const getThreatVulnerability = ( threat: Threat ): string | TranslateResult => {
 	switch ( getThreatType( threat ) ) {
 		case 'core':
 			return translate( 'Vulnerability found in WordPress' );
@@ -56,7 +57,7 @@ export const getThreatVulnerability = ( threat: Threat ): string | i18nCalypso.T
 	}
 };
 
-export const getThreatFix = ( fixable: ThreatFix | false ): i18nCalypso.TranslateResult => {
+export const getThreatFix = ( fixable: ThreatFix | false ): TranslateResult => {
 	if ( ! fixable ) {
 		return translate( 'Jetpack Scan will resolve the threat.' );
 	}

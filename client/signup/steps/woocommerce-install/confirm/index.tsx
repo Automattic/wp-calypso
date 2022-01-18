@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -17,7 +18,7 @@ import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
 import './style.scss';
 
-const ActionSection = styled.div`
+export const ActionSection = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
@@ -38,7 +39,7 @@ const WarningsOrHoldsSection = styled.div`
 	margin-bottom: 40px;
 `;
 
-const StyledNextButton = styled( NextButton )`
+export const StyledNextButton = styled( NextButton )`
 	@media ( max-width: 320px ) {
 		width: 100%;
 		margin-bottom: 20px;
@@ -46,7 +47,7 @@ const StyledNextButton = styled( NextButton )`
 `;
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToStep, isReskinned, headerTitle, headerDescription } = props;
+	const { goToNextStep, isReskinned, headerTitle, headerDescription } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -68,9 +69,9 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		// Automatically start the transfer process when it's ready.
 		if ( isReadyToStart ) {
 			dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
-			goToStep( 'transfer' );
+			goToNextStep();
 		}
-	}, [ dispatch, goToStep, siteId, isDataReady, isReadyToStart ] );
+	}, [ dispatch, goToNextStep, siteId, isDataReady, isReadyToStart ] );
 
 	function getWPComSubdomainWarningContent() {
 		if ( ! wpcomSubdomainWarning ) {
@@ -133,7 +134,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 									page( siteUpgrading.checkoutUrl );
 									return;
 								}
-								goToStep( 'transfer' );
+								goToNextStep();
 							} }
 						>
 							{ __( 'Sounds good' ) }
@@ -157,8 +158,8 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			flowName="woocommerce-install"
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
-			allowBackFirstStep={ true }
-			backUrl={ `/woocommerce-installation/${ wpcomDomain }` }
+			allowBackFirstStep={ ! isEnabled( 'woop' ) }
+			backUrl={ isEnabled( 'woop' ) ? null : `/woocommerce-installation/${ wpcomDomain }` }
 			headerText={ headerTitle }
 			fallbackHeaderText={ headerTitle }
 			subHeaderText={ headerDescription }

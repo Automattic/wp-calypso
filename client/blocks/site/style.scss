@@ -176,12 +176,24 @@
 	margin-top: 6px;
 	margin-right: 3px;
 	padding: 1px 10px;
+
+	&.is-p2,
+	&.is-p2-workspace {
+		background: var( --p2-color-link );
+		color: var( --p2-color-white );
+	}
 }
 
 .current-site .site:hover .site__badge,
 .purchases-site .site:hover .site__badge {
 	background: var( --color-sidebar-menu-hover-background );
 	color: var( --color-sidebar-menu-hover-text );
+
+	&.is-p2,
+	&.is-p2-workspace {
+		background: var( --p2-color-link-dark );
+		color: var( --p2-color-white );
+	}
 }
 
 .layout__secondary {
@@ -193,5 +205,11 @@
 	.site__badge {
 		background: var( --color-sidebar-menu-hover-background );
 		color: var( --color-sidebar-menu-hover-text );
+
+		&.is-p2,
+		&.is-p2-workspace {
+			background: var( --p2-color-link );
+			color: var( --p2-color-white );
+		}
 	}
 }

@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { TranslateResult } from 'i18n-calypso';
-import type { FunctionComponent, MouseEventHandler } from 'react';
+import type { MouseEventHandler, ReactElement } from 'react';
 
 import './style.scss';
 
@@ -10,10 +10,9 @@ export interface EmailProviderStackedFeatureProps {
 	title: TranslateResult;
 }
 
-const EmailProviderStackedFeature: FunctionComponent< EmailProviderStackedFeatureProps > = (
-	props
-) => {
-	const { title } = props;
+const EmailProviderStackedFeature = ( {
+	title,
+}: EmailProviderStackedFeatureProps ): ReactElement => {
 	const size = 18;
 	return (
 		<div className="email-provider-stacked-features__feature">
@@ -24,14 +23,21 @@ const EmailProviderStackedFeature: FunctionComponent< EmailProviderStackedFeatur
 	);
 };
 
-export interface EmailProviderStackedFeaturesProps {
-	features: TranslateResult[];
+export interface AppLogo {
+	image: string;
+	imageAltText: string;
+	title: string;
 }
 
-export const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStackedFeaturesProps > = (
-	props
-) => {
-	const { features } = props;
+export interface EmailProviderStackedFeaturesProps {
+	features: TranslateResult[];
+	appLogos: AppLogo[];
+}
+
+export const EmailProviderStackedFeatures = ( {
+	features,
+	appLogos,
+}: EmailProviderStackedFeaturesProps ): ReactElement | null => {
 	const translate = useTranslate();
 
 	if ( ! features ) {
@@ -43,9 +49,18 @@ export const EmailProviderStackedFeatures: FunctionComponent< EmailProviderStack
 			<span className={ 'email-provider-stacked-features__whats-included' }>
 				{ translate( "What's included:" ) }
 			</span>
+
 			{ features.map( ( feature, index ) => (
 				<EmailProviderStackedFeature key={ index } title={ feature } />
 			) ) }
+
+			{ appLogos && (
+				<div className="email-provider-stacked-features__logos">
+					{ appLogos.map( ( { image, imageAltText, title }, index ) => (
+						<img alt={ imageAltText } key={ index } src={ image } title={ title } />
+					) ) }
+				</div>
+			) }
 		</>
 	);
 };
@@ -55,10 +70,10 @@ interface EmailProviderStackedFeaturesToggleButtonProps {
 	isRelatedContentExpanded: boolean;
 }
 
-export const EmailProviderStackedFeaturesToggleButton: FunctionComponent< EmailProviderStackedFeaturesToggleButtonProps > = ( {
+export const EmailProviderStackedFeaturesToggleButton = ( {
 	handleClick,
 	isRelatedContentExpanded,
-} ) => {
+}: EmailProviderStackedFeaturesToggleButtonProps ): ReactElement => {
 	const translate = useTranslate();
 
 	return (

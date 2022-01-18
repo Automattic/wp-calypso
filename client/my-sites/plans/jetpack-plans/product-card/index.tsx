@@ -16,9 +16,9 @@ import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
-import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-Info';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getUserOwnsPurchase } from 'calypso/state/purchases/selectors/get-user-owns-purchase';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -122,7 +122,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			: getPurchaseByProductSlug( purchases, item.productSlug );
 
 	const isNotPlanOwner = useSelector(
-		( state ) => ! ( purchase && purchase.userId === getCurrentUserId( state ) )
+		( state ) => ! ( purchase !== undefined ? getUserOwnsPurchase( state, purchase.id ) : false )
 	);
 
 	// Handles expiry.
@@ -180,7 +180,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		<>
 			{ buttonLabel }
 			&nbsp;
-			<OwnerInfo purchase={ purchase } />
+			<OwnerInfo purchaseId={ purchase?.id } />
 		</>
 	) : (
 		buttonLabel

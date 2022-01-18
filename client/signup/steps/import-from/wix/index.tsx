@@ -1,23 +1,18 @@
-import { ProgressBar } from '@automattic/components';
-import { Progress, Title, SubTitle, Hooray } from '@automattic/onboarding';
-import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import page from 'page';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { calculateProgress } from 'calypso/my-sites/importer/importing-pane';
 import { getStepUrl } from 'calypso/signup/utils';
-import { startImport, resetImport } from 'calypso/state/imports/actions';
+import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
-import DoneButton from '../components/done-button';
+import CompleteScreen from '../components/complete-screen';
 import ErrorMessage from '../components/error-message';
 import GettingStartedVideo from '../components/getting-started-video';
+import ProgressScreen from '../components/progress-screen';
 import { Importer, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
-
-import './style.scss';
 
 interface Props {
 	job?: ImportJob;
@@ -31,7 +26,6 @@ interface Props {
 }
 export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wix';
-	const { __ } = useI18n();
 	const { job, run, siteId, siteSlug, fromSite, importSite, startImport, resetImport } = props;
 
 	/**
@@ -123,37 +117,18 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 						/**
 						 * Progress screen
 						 */
-						const progress = job?.progress ? calculateProgress( job?.progress ) : 0;
-						return (
-							<Progress>
-								<Title>{ __( 'Importing' ) }...</Title>
-								<ProgressBar
-									color={ 'black' }
-									compact={ true }
-									value={ Number.isNaN( progress ) ? 0 : progress }
-								/>
-								<SubTitle>
-									{ __( "This may take a few minutes. We'll notify you by email when it's done." ) }
-								</SubTitle>
-							</Progress>
-						);
+						return <ProgressScreen job={ job } />;
 					} else if ( checkIsSuccess() ) {
 						/**
 						 * Complete screen
 						 */
 						return (
-							<Hooray>
-								<Title>{ __( 'Hooray!' ) }</Title>
-								<SubTitle>
-									{ __( 'Congratulations. Your content was successfully imported.' ) }
-								</SubTitle>
-								<DoneButton
-									siteId={ siteId }
-									siteSlug={ siteSlug }
-									job={ job as ImportJob }
-									resetImport={ resetImport }
-								/>
-							</Hooray>
+							<CompleteScreen
+								siteId={ siteId }
+								siteSlug={ siteSlug }
+								job={ job as ImportJob }
+								resetImport={ resetImport }
+							/>
 						);
 					} else if ( checkIsFailed() ) {
 						return <ErrorMessage siteSlug={ siteSlug } />;

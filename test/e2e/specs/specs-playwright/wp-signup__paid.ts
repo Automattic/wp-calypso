@@ -53,7 +53,8 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Navigate to Signup page', async function () {
 				const loginPage = new LoginPage( page );
-				await loginPage.signup();
+				await loginPage.visit();
+				await loginPage.clickSignUp();
 			} );
 
 			it( 'Set store cookie', async function () {

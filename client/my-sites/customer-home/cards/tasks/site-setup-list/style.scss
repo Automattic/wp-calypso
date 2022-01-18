@@ -20,6 +20,10 @@
 		display: block;
 	}
 
+	.site-setup-list__nav-item-email {
+		display: none;
+	}
+
 	.site-setup-list__nav {
 		border-left: 1px solid var( --color-border-subtle );
 
@@ -65,6 +69,28 @@
 				border-bottom: none;
 			}
 		}
+
+		.site-setup-list__nav-item-email {
+			color: var( --studio-gray-40 );
+			display: block;
+			@include break-mobile {
+				font-weight: 400;
+				color: var( --studio-gray-40 );
+			}
+		}
+
+		.site-setup-list__task-description-email {
+			font-weight: 600;
+			display: block;
+			padding-top: 30px;
+		}
+	}
+
+	.site-setup-list__list .nav-item.is-current .site-setup-list__nav-item-email {
+		display: none;
+		@include break-mobile {
+			display: block;
+		}
 	}
 
 	.card-heading {
@@ -80,7 +106,7 @@
 
 	button.nav-item {
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		padding: 16px;
 		transition: all 0.1s;
 		cursor: pointer;

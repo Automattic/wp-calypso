@@ -9,7 +9,6 @@ import {
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isGuidedTransfer,
 	isJetpackPlan,
 	isPlan,
 	isBlogger,
@@ -79,7 +78,6 @@ import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import GoogleAppsDetails from './google-apps-details';
-import GuidedTransferDetails from './guided-transfer-details';
 import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
@@ -123,7 +121,6 @@ export class CheckoutThankYou extends Component {
 
 	componentDidMount() {
 		this.redirectIfThemePurchased();
-		this.redirectIfDomainOnly( this.props );
 
 		const {
 			gsuiteReceipt,
@@ -165,7 +162,6 @@ export class CheckoutThankYou extends Component {
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
-		this.redirectIfDomainOnly( nextProps );
 
 		if (
 			! this.props.receipt.hasLoadedFromServer &&
@@ -178,11 +174,15 @@ export class CheckoutThankYou extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { receiptId, selectedSiteSlug } = this.props;
+		const { receiptId, selectedSiteSlug, domainOnlySiteFlow } = this.props;
 
 		// Update route when an ecommerce site goes Atomic and site slug changes
 		// from 'wordpress.com` to `wpcomstaging.com`.
-		if ( selectedSiteSlug && selectedSiteSlug !== prevProps.selectedSiteSlug ) {
+		if (
+			selectedSiteSlug &&
+			selectedSiteSlug !== prevProps.selectedSiteSlug &&
+			! domainOnlySiteFlow
+		) {
 			const receiptPath = receiptId ? `/${ receiptId }` : '';
 			page( `/checkout/thank-you/${ selectedSiteSlug }${ receiptPath }` );
 		}
@@ -273,17 +273,6 @@ export class CheckoutThankYou extends Component {
 				true
 			);
 			page.redirect( '/themes/' + this.props.selectedSite.slug );
-		}
-	};
-
-	redirectIfDomainOnly = ( props ) => {
-		if ( props.domainOnlySiteFlow && get( props, 'receipt.hasLoadedFromServer', false ) ) {
-			const purchases = getPurchases( props );
-			const failedPurchases = getFailedPurchases( props );
-			if ( purchases.length > 0 && ! failedPurchases.length ) {
-				const domainName = find( purchases, isDomainRegistration ).meta;
-				page.redirect( domainManagementList( domainName ) );
-			}
 		}
 	};
 
@@ -602,8 +591,6 @@ export class CheckoutThankYou extends Component {
 				return [ false, ...findPurchaseAndDomain( purchases, isTitanMail ) ];
 			} else if ( purchases.some( isChargeback ) ) {
 				return [ ChargebackDetails, find( purchases, isChargeback ) ];
-			} else if ( purchases.some( isGuidedTransfer ) ) {
-				return [ GuidedTransferDetails, find( purchases, isGuidedTransfer ) ];
 			}
 		}
 

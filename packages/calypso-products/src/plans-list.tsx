@@ -200,7 +200,7 @@ function isValueTruthy< T >( value: T ): value is Exclude< T, null | undefined |
 	return !! value;
 }
 
-function compact( elements: ( string | false | undefined | false )[] ): string[] {
+function compact( elements: ( string | false | undefined | null )[] ): string[] {
 	return elements.filter( isValueTruthy );
 }
 
@@ -389,6 +389,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_200GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -492,6 +493,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ESSENTIAL,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_13GB_STORAGE,
 			FEATURE_NO_ADS,
@@ -577,6 +579,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ADVANCED,
 			! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_ADVANCED_DESIGN,
 			FEATURE_200GB_STORAGE,
 			FEATURE_NO_ADS,

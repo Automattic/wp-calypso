@@ -6,14 +6,13 @@
 import {
 	setupHooks,
 	DataHelper,
-	LoginPage,
 	MediaHelper,
-	NewPostFlow,
 	GutenbergEditorPage,
 	ImageBlock,
 	AudioBlock,
 	FileBlock,
 	TestFile,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 import { TEST_IMAGE_PATH, TEST_AUDIO_PATH } from '../constants';
@@ -23,11 +22,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	let page: Page;
 	let testFiles: { image: TestFile; image_reserved_name: TestFile; audio: TestFile };
 
-	setupHooks( ( args: { page: Page } ) => {
+	setupHooks( async ( args: { page: Page } ) => {
 		page = args.page;
-	} );
-
-	beforeAll( async () => {
 		testFiles = {
 			image: await MediaHelper.createTestFile( TEST_IMAGE_PATH ),
 			image_reserved_name: await MediaHelper.createTestFile( TEST_IMAGE_PATH, {
@@ -35,17 +31,15 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 			} ),
 			audio: await MediaHelper.createTestFile( TEST_AUDIO_PATH ),
 		};
-	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'simpleSitePersonalPlanUser' } );
-	} );
+		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
+		await testAccount.authenticate( page );
 
-	it( 'Start new post', async function () {
-		const newPostFlow = new NewPostFlow( page );
-		await newPostFlow.newPostFromNavbar();
 		gutenbergEditorPage = new GutenbergEditorPage( page );
+	} );
+
+	it( 'Go to new post page', async function () {
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( 'Enter post title', async function () {

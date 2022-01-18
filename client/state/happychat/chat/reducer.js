@@ -1,13 +1,9 @@
-/* eslint-disable no-case-declarations */
-
-import { concat, filter, find, findIndex, map, get, sortBy } from 'lodash';
 import {
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
-	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 } from 'calypso/state/action-types';
 import {
@@ -53,7 +49,6 @@ export const lastActivityTimestamp = withSchemaValidation(
  * @param  {object} state  Current state
  * @param  {object} action Action payload
  * @returns {object}        Updated state
- *
  */
 export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
 	switch ( action.type ) {
@@ -69,13 +64,12 @@ export const status = ( state = HAPPYCHAT_CHAT_STATUS_DEFAULT, action ) => {
  * @param  {object} state  Current state
  * @param  {object} action Action payload
  * @returns {object}        Updated state
- *
  */
 const timelineEvent = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC:
-		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE:
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE: {
 			const { message } = action;
 			return {
 				id: message.id,
@@ -88,15 +82,17 @@ const timelineEvent = ( state = {}, action ) => {
 				files: message.files,
 				timestamp: maybeUpscaleTimePrecision( message.timestamp ),
 				user_id: message.user.id,
-				type: get( message, 'type', 'message' ),
-				links: get( message, 'meta.links' ),
+				type: message.type ?? 'message',
+				links: message.meta?.links,
 			};
+		}
 	}
 	return state;
 };
 
-const sortTimeline = ( timeline ) =>
-	sortBy( timeline, ( event ) => parseInt( event.timestamp, 10 ) );
+const getEventTimestamp = ( event ) => parseInt( event.timestamp, 10 );
+const timelineSortCmp = ( a, b ) => getEventTimestamp( a ) - getEventTimestamp( b );
+const sortTimeline = ( timeline ) => timeline.slice().sort( timelineSortCmp );
 
 /**
  * Adds timeline events for happychat
@@ -104,50 +100,49 @@ const sortTimeline = ( timeline ) =>
  * @param  {object} state  Current state
  * @param  {object} action Action payload
  * @returns {object}        Updated state
- *
  */
 const timelineReducer = ( state = [], action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
-		case HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC:
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC: {
 			// if meta.forOperator is set, skip so won't show to user
-			if ( get( action, 'message.meta.forOperator', false ) ) {
+			if ( action.message.meta?.forOperator ) {
 				return state;
 			}
 			const event = timelineEvent( {}, action );
 
 			// If the message already exists in the timeline, replace it
-			const idx = findIndex( state, ( { id } ) => event.id === id );
+			const idx = state.findIndex( ( { id } ) => event.id === id );
 			if ( idx >= 0 ) {
 				return [ ...state.slice( 0, idx ), event, ...state.slice( idx + 1 ) ];
 			}
 
 			// This is a new message — append it!
-			return concat( state, [ event ] );
-
-		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE:
-			const index = findIndex( state, ( { id } ) => action.message.id === id );
+			return state.concat( [ event ] );
+		}
+		case HAPPYCHAT_IO_RECEIVE_MESSAGE_UPDATE: {
+			const index = state.findIndex( ( { id } ) => action.message.id === id );
 			return index === -1
 				? state
 				: [ ...state.slice( 0, index ), timelineEvent( {}, action ), ...state.slice( index + 1 ) ];
-		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT:
-			return state;
-		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE:
-			const messages = filter( action.messages, ( message ) => {
-				if ( ! message.id ) {
-					return false;
-				}
+		}
+		case HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE: {
+			const messages =
+				action.messages?.filter( ( message ) => {
+					if ( ! message.id ) {
+						return false;
+					}
 
-				// if meta.forOperator is set, skip so won't show to user
-				if ( get( message, 'meta.forOperator', false ) ) {
-					return false;
-				}
+					// if meta.forOperator is set, skip so won't show to user
+					if ( message.meta?.forOperator ) {
+						return false;
+					}
 
-				return ! find( state, { id: message.id } );
-			} );
+					return ! state.some( ( event ) => event.id === message.id );
+				} ) ?? [];
 			return sortTimeline(
 				state.concat(
-					map( messages, ( message ) => ( {
+					messages.map( ( message ) => ( {
 						id: message.id,
 						source: message.source,
 						message: message.text,
@@ -157,11 +152,12 @@ const timelineReducer = ( state = [], action ) => {
 						files: message.files,
 						timestamp: maybeUpscaleTimePrecision( message.timestamp ),
 						user_id: message.user.id,
-						type: get( message, 'type', 'message' ),
-						links: get( message, 'meta.links' ),
+						type: message.type ?? 'message',
+						links: message.meta?.links,
 					} ) )
 				)
 			);
+		}
 	}
 	return state;
 };

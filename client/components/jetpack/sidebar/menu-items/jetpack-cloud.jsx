@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import SidebarItem from 'calypso/layout/sidebar/item';
-import { settingsPath, purchasesPath } from 'calypso/lib/jetpack/paths';
+import { settingsPath, purchasesPath, purchasesBasePath } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -62,7 +62,7 @@ export default ( { path } ) => {
 					} ) }
 					link={ purchasesPath( siteSlug ) }
 					onNavigate={ onNavigate }
-					selected={ itemLinkMatches( [ purchasesPath( siteSlug ) ], path ) }
+					selected={ itemLinkMatches( [ purchasesBasePath() ], path ) }
 				/>
 			) }
 		</>

@@ -10,7 +10,7 @@
 		padding-block-start: 24px;
 
 		@include break-medium {
-			min-height: 130px;
+			min-height: 80px;
 		}
 
 		// Adjust leading margin so that different UI fonts
@@ -192,5 +192,33 @@
 
 	&__expiration-date {
 		color: var( --studio-pink-50 );
+	}
+}
+
+.jetpack-product-card__heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	margin: 0.75rem 0;
+}
+
+.jetpack-product-card__discount-label {
+	display: inline-block;
+
+	padding: 0.125rem 0.5rem;
+	margin: 0.25rem 0;
+
+	background-color: var( --studio-yellow-10 );
+	border-radius: 4px;
+
+	font-size: $font-body-small;
+	font-weight: 700;
+
+	sup {
+		position: relative;
+		top: -0.5em;
+
+		font-size: 0.75em;
 	}
 }

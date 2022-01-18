@@ -23,11 +23,21 @@ import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import DIFMThemes from '../difm-design-picker/themes';
+import LetUsChoose from './let-us-choose';
 import PreviewToolbar from './preview-toolbar';
 import './style.scss';
 
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned, queryParams, showDesignPickerCategories } = props;
+	const {
+		flowName,
+		stepName,
+		isReskinned,
+		queryParams,
+		showDesignPickerCategories,
+		showLetUsChoose,
+		hideFullScreenPreview,
+		hideDesignTitle,
+	} = props;
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
@@ -92,7 +102,7 @@ export default function DesignPickerStep( props ) {
 		sort: sortBlogToTop,
 	} );
 
-	function pickDesign( _selectedDesign ) {
+	function pickDesign( _selectedDesign, additionalDependencies = {} ) {
 		// Design picker preview will submit the defaultDependencies via next button,
 		// So only do this when the user picks the design directly
 		dispatch(
@@ -103,6 +113,7 @@ export default function DesignPickerStep( props ) {
 				{
 					selectedDesign: _selectedDesign,
 					selectedSiteCategory: categorization.selection,
+					...additionalDependencies,
 				}
 			)
 		);
@@ -156,12 +167,23 @@ export default function DesignPickerStep( props ) {
 						align="left"
 					/>
 				}
-				categoriesFooter={
-					useFeaturedPicksButtons && (
-						<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
-					)
-				}
+				categoriesFooter={ renderCategoriesFooter() }
+				hideFullScreenPreview={ hideFullScreenPreview }
+				hideDesignTitle={ hideDesignTitle }
 			/>
+		);
+	}
+
+	function renderCategoriesFooter() {
+		return (
+			<>
+				{ useFeaturedPicksButtons && (
+					<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
+				) }
+				{ showLetUsChoose && (
+					<LetUsChoose flowName={ props.flowName } designs={ designs } onSelect={ pickDesign } />
+				) }
+			</>
 		);
 	}
 

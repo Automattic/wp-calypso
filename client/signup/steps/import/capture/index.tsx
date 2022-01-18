@@ -122,10 +122,11 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 								placeholder={ __( 'Enter your site address' ) }
 								onChange={ onInputChange }
 								value={ urlValue }
+								dir="ltr"
 							/>
 							{ showSubmitButton && (
 								<NextButton type={ 'submit' }>
-									<Icon icon={ chevronRight } />
+									<Icon className="capture__next-button-icon" icon={ chevronRight } />
 								</NextButton>
 							) }
 							{ ( ! isValid && showError ) ||

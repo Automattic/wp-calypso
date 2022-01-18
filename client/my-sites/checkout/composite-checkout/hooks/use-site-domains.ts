@@ -13,7 +13,7 @@ export default function useSiteDomains( siteId: number | undefined ): SiteDomain
 	const [ siteDomains, setSiteDomains ] = useState< SiteDomain[] >( [] );
 
 	const areDomainsLoaded = useSelector( ( state ) =>
-		hasLoadedSiteDomains( state, siteId ?? null )
+		siteId ? hasLoadedSiteDomains( state, siteId ) : false
 	);
 	const domains: SiteDomain[] = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 

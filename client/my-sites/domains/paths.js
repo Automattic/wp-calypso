@@ -48,7 +48,11 @@ export function isUnderDomainManagementAll( path ) {
 }
 
 export function domainAddNew( siteName, searchTerm ) {
-	const path = `/domains/add/${ siteName }`;
+	let path = `/domains/add`;
+
+	if ( siteName ) {
+		path = `${ path }/${ siteName }`;
+	}
 
 	if ( searchTerm ) {
 		return `${ path }?suggestion=${ searchTerm }`;

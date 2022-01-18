@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 import { Component, Fragment, useCallback, useEffect, useMemo, useRef } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { addSchemeIfMissing, setUrlScheme } from 'calypso/lib/url';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { sendEvent } from 'calypso/state/happychat/connection/actions';
 import { useAutoscroll } from './autoscroll';
 import ImageFile from './image-file';
 import { useScrollbleed } from './scrollbleed';
-import { addSchemeIfMissing, setUrlScheme } from './url';
 
 import './timeline.scss';
 

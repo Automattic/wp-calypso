@@ -33,7 +33,7 @@ import {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'calypso/lib/purchases';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-Info';
+import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
@@ -206,7 +206,9 @@ class PurchasesListing extends Component {
 		if ( purchase.autoRenew && ! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
 			label = translate( 'Renew now' );
 		}
-		const isProductOwner = Boolean( purchase && purchase.userId === currentUserId );
+
+		const userIsPurchaseOwner =
+			purchase?.userIsOwner || ( currentUserId !== null && currentUserId === purchase?.userId );
 
 		return (
 			<Button
@@ -214,14 +216,16 @@ class PurchasesListing extends Component {
 					// Reason for making it '#' is to ensure that it gets rendered as <a /> and not as <button />
 					// If it's rendered as <button />, `OwnerInfo` uses `InfoPopover` and that also renders a button
 					// we can't render <button /> inside another <button />
-					isProductOwner ? this.props.getManagePurchaseUrlFor( selectedSiteSlug, purchase.id ) : '#'
+					userIsPurchaseOwner
+						? this.props.getManagePurchaseUrlFor( selectedSiteSlug, purchase.id )
+						: '#'
 				}
-				disabled={ ! isProductOwner }
+				disabled={ ! userIsPurchaseOwner }
 				compact
 			>
 				{ label }
 				&nbsp;
-				<OwnerInfo purchase={ purchase } />
+				<OwnerInfo purchaseId={ purchase?.id } />
 			</Button>
 		);
 	}

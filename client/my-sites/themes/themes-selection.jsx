@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { compact, isEqual, property, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -11,6 +10,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
+	arePremiumThemesEnabled,
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
@@ -203,6 +203,8 @@ export const ConnectedThemesSelection = connect(
 		}
 	) => {
 		const isJetpack = isJetpackSite( state, siteId );
+		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
+
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {
 			sourceSiteId = source;
@@ -218,7 +220,7 @@ export const ConnectedThemesSelection = connect(
 		const query = {
 			search,
 			page,
-			tier: config.isEnabled( 'themes/premium' ) ? tier : 'free',
+			tier: premiumThemesEnabled ? tier : 'free',
 			filter: compact( [ filter, vertical ] ).join( ',' ),
 			number,
 		};

@@ -51,7 +51,7 @@ export const setupHooks = ( callback: ( { page }: { page: Page } ) => void ): vo
 
 		// Launch a new page within the context.
 		page = await context.newPage();
-		callback( { page } );
+		await callback( { page } );
 	} );
 
 	afterAll( async () => {

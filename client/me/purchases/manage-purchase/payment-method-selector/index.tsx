@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useStripe } from '@automattic/calypso-stripe';
+import { useStripe, useStripeSetupIntentId } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { Card, Gridicon } from '@automattic/components';
 import {
@@ -32,6 +32,7 @@ import {
 	useHandleRedirectChangeError,
 	useHandleRedirectChangeComplete,
 } from './url-event-handlers';
+import type { ReloadSetupIntentId } from '@automattic/calypso-stripe';
 import type { CheckoutPageErrorCallback, PaymentMethod } from '@automattic/composite-checkout';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -75,13 +76,18 @@ export default function PaymentMethodSelector( {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
+	const {
+		reload: reloadSetupIntentId,
+		setupIntentId: stripeSetupIntentId,
+		error: setupIntentError,
+	} = useStripeSetupIntentId();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
 	const showRedirectMessage = useCallback( () => {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
-	const showErrorMessage = useCallback(
+	const handleChangeError = useCallback(
 		( { transactionError }: { transactionError: string | null } ) => {
 			reduxDispatch(
 				errorNotice(
@@ -89,8 +95,10 @@ export default function PaymentMethodSelector( {
 						translate( 'There was a problem assigning that payment method. Please try again.' )
 				)
 			);
+			// We need to regenerate the setup intent if the form was submitted.
+			reloadSetupIntentId();
 		},
-		[ reduxDispatch, translate ]
+		[ reduxDispatch, translate, reloadSetupIntentId ]
 	);
 
 	const showSuccessMessage = useCallback(
@@ -111,9 +119,17 @@ export default function PaymentMethodSelector( {
 			'There was a problem assigning that payment method. Please try again.'
 		);
 		reduxDispatch( errorNotice( message ) );
+		// We need to regenerate the setup intent if the form was submitted.
+		reloadSetupIntentId();
 	} );
 	useHandleRedirectChangeComplete( () => {
-		onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } );
+		onPaymentSelectComplete( {
+			successCallback,
+			translate,
+			showSuccessMessage,
+			purchase,
+			reloadSetupIntentId,
+		} );
 	} );
 
 	useEffect( () => {
@@ -122,15 +138,27 @@ export default function PaymentMethodSelector( {
 		}
 	}, [ stripeLoadingError, reduxDispatch ] );
 
+	useEffect( () => {
+		if ( setupIntentError ) {
+			reduxDispatch( errorNotice( setupIntentError.message ) );
+		}
+	}, [ setupIntentError, reduxDispatch ] );
+
 	const elements = useElements();
 
 	return (
 		<CheckoutProvider
-			onPaymentComplete={ () =>
-				onPaymentSelectComplete( { successCallback, translate, showSuccessMessage, purchase } )
-			}
+			onPaymentComplete={ () => {
+				onPaymentSelectComplete( {
+					successCallback,
+					translate,
+					showSuccessMessage,
+					purchase,
+					reloadSetupIntentId,
+				} );
+			} }
 			onPaymentRedirect={ showRedirectMessage }
-			onPaymentError={ showErrorMessage }
+			onPaymentError={ handleChangeError }
 			onPageLoadError={ logError }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
@@ -144,6 +172,7 @@ export default function PaymentMethodSelector( {
 							translate,
 							stripe,
 							stripeConfiguration,
+							stripeSetupIntentId,
 							cardNumberElement: elements?.getElement( CardNumberElement ) ?? undefined,
 							reduxDispatch,
 							eventSource: eventContext,
@@ -202,17 +231,21 @@ function onPaymentSelectComplete( {
 	translate,
 	showSuccessMessage,
 	purchase,
+	reloadSetupIntentId,
 }: {
 	successCallback: () => void;
 	translate: ReturnType< typeof useTranslate >;
 	showSuccessMessage: ( message: string | TranslateResult ) => void;
 	purchase?: Purchase | undefined;
+	reloadSetupIntentId: ReloadSetupIntentId;
 } ) {
 	if ( purchase ) {
 		showSuccessMessage( translate( 'Your payment method has been set.' ) );
 	} else {
 		showSuccessMessage( translate( 'Your payment method has been added successfully.' ) );
 	}
+	// We need to regenerate the setup intent if the form was submitted.
+	reloadSetupIntentId();
 	successCallback();
 }
 

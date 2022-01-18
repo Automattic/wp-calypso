@@ -13,7 +13,6 @@ const ThankYouCard = ( {
 	descriptionWithHTML,
 	buttonUrl,
 	buttonText,
-	price,
 	name,
 	icon,
 	action,
@@ -45,9 +44,6 @@ const ThankYouCard = ( {
 				<div className="thank-you-card__header-detail">
 					<div className={ classnames( 'thank-you-card__name', { 'is-placeholder': ! name } ) }>
 						{ name }
-					</div>
-					<div className={ classnames( 'thank-you-card__price', { 'is-placeholder': ! price } ) }>
-						{ price }
 					</div>
 				</div>
 
@@ -87,7 +83,6 @@ ThankYouCard.propTypes = {
 	descriptionWithHTML: PropTypes.object,
 	heading: PropTypes.string,
 	name: PropTypes.string,
-	price: PropTypes.string,
 	icon: PropTypes.node,
 	action: PropTypes.node,
 };

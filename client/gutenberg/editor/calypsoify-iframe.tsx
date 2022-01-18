@@ -38,6 +38,7 @@ import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
 	getCustomizerUrl,
@@ -48,6 +49,7 @@ import {
 	getSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isAppBannerDismissed from 'calypso/state/ui/selectors/app-banner-is-dismissed';
 import * as T from 'calypso/types';
 import { sendSiteEditorBetaFeedback } from '../../lib/fse-beta/send-site-editor-beta-feedback';
 import Iframe from './iframe';
@@ -59,6 +61,7 @@ import './style.scss';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
 	duplicatePostId: T.PostId;
+	creatingNewHomepage?: boolean;
 	postId: T.PostId;
 	postType: T.PostType;
 	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
@@ -83,7 +86,6 @@ interface CheckoutModalOptions extends RequestCart {
 interface State {
 	allowedTypes?: any;
 	classicBlockEditorId?: any;
-	gallery?: any;
 	isIframeLoaded: boolean;
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
@@ -120,6 +122,7 @@ enum EditorActions {
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
 	SendSiteEditorBetaFeedback = 'sendSiteEditorBetaFeedback',
+	GetIsAppBannerVisible = 'getIsAppBannerVisible',
 }
 
 type ComponentProps = Props &
@@ -143,6 +146,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 	checkoutPort: MessagePort | null = null;
+	appBannerPort: MessagePort | null = null;
 
 	componentDidMount() {
 		window.addEventListener( 'message', this.onMessage, false );
@@ -166,6 +170,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		// not already triggered in componentDidMount
 		if ( ! this.editorRedirectTimer && ! shouldLoadIframe && this.props.shouldLoadIframe ) {
 			this.setEditorRedirectTimer( 25000 );
+		}
+
+		if ( this.props.appBannerDismissed ) {
+			this.handleAppBannerDismiss();
 		}
 	}
 
@@ -300,7 +308,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 		if ( EditorActions.OpenMediaModal === action && ports && ports[ 0 ] ) {
 			const { siteId } = this.props;
-			const { allowedTypes, gallery, multiple, value } = payload;
+			const { allowedTypes, multiple, value } = payload;
 
 			// set imperatively on the instance because this is not
 			// the kind of assignment which causes re-renders and we
@@ -328,7 +336,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				this.props.selectMediaItems( siteId, [] );
 			}
 
-			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
+			this.setState( { isMediaModalVisible: true, allowedTypes, multiple } );
 		}
 
 		if ( EditorActions.OpenCheckoutModal === action ) {
@@ -435,7 +443,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.ToggleInlineHelpButton === action ) {
-			const inlineHelp = window.top.document.querySelector( '#wpcom > .layout > .inline-help' );
+			const inlineHelp: HTMLElement | null | undefined = window?.top?.document.querySelector(
+				'#wpcom > .layout > .inline-help'
+			);
 
 			if ( inlineHelp ) {
 				inlineHelp.hidden = payload.hidden;
@@ -491,6 +501,19 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				() => ports[ 0 ].postMessage( 'error' )
 			);
 		}
+
+		if ( EditorActions.GetIsAppBannerVisible === action ) {
+			const isAppBannerVisible = this.props.shouldDisplayAppBanner;
+			ports[ 0 ].postMessage( {
+				isAppBannerVisible,
+				hasAppBannerBeenDismissed: false,
+			} );
+
+			// If App Banner is not visible, we won't need to notify the Welcome Tour after its dismission
+			if ( isAppBannerVisible ) {
+				this.appBannerPort = ports[ 0 ];
+			}
+		}
 	};
 
 	handlePostStatusChange = ( status: string ) => {
@@ -500,7 +523,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			this.setFrontPage();
 		}
 
-		if ( isSiteWPForTeams && editedPostId && siteUrl && 'publish' === status ) {
+		if ( isSiteWPForTeams && editedPostId && siteUrl && 'publish' === status && top ) {
 			top.location.href = addQueryArgs( { p: editedPostId }, siteUrl );
 		}
 	};
@@ -678,6 +701,18 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 	};
 
+	handleAppBannerDismiss = () => {
+		if ( this.appBannerPort ) {
+			this.appBannerPort.postMessage( {
+				isAppBannerVisible: false,
+				hasAppBannerBeenDismissed: true,
+			} );
+
+			this.appBannerPort.close();
+			this.appBannerPort = null;
+		}
+	};
+
 	render() {
 		const { iframeUrl, shouldLoadIframe } = this.props;
 		const {
@@ -809,7 +844,7 @@ const mapStateToProps = (
 	}
 
 	// Pass through to iframed editor if user is in editor deprecation group.
-	if ( 'classic' === getSelectedEditor( state, siteId ) ) {
+	if ( 'classic' === getSelectedEditor( state, siteId ?? 0 ) ) {
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
@@ -818,10 +853,10 @@ const mapStateToProps = (
 			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
-	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
+	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl ?? '' );
 
 	// Prevents the iframe from loading using a cached frame nonce.
-	const shouldLoadIframe = ! isRequestingSite( state, siteId );
+	const shouldLoadIframe = ! isRequestingSite( state, siteId ?? 0 );
 
 	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
 		state,
@@ -838,22 +873,24 @@ const mapStateToProps = (
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		iframeUrl,
-		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ?? 0 ),
 		postTypeTrashUrl,
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
 		siteSlug,
-		siteUrl: getSiteUrl( state, siteId ),
+		siteUrl: getSiteUrl( state, siteId ?? 0 ),
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		getTemplateEditorUrl: ( templateId ) =>
+		getTemplateEditorUrl: ( templateId: string ) =>
 			getEditorUrl( state, siteId, templateId, 'wp_template_part' ),
 		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
-		site: getSite( state, siteId ),
+		site: getSite( state, siteId ?? 0 ),
 		parentPostId,
+		shouldDisplayAppBanner: shouldDisplayAppBanner( state ),
+		appBannerDismissed: isAppBannerDismissed( state ),
 	};
 };
 

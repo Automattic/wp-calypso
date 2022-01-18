@@ -31,9 +31,7 @@ if ( config.isEnabled( 'oauth' ) ) {
 	);
 }
 
-if ( config.isEnabled( 'support-user' ) ) {
-	wpcom = wpcomSupport( wpcom );
-}
+wpcom = wpcomSupport( wpcom );
 
 if ( 'development' === process.env.NODE_ENV ) {
 	require( './offline-library' ).makeOffline( wpcom );

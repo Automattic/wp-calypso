@@ -1,11 +1,11 @@
 import { useSelect, useDispatch } from '@wordpress/data';
+import classnames from 'classnames';
 import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 import { isE2ETest } from 'calypso/lib/e2e';
 import useFseBetaOptInStep from '../hooks/use-fse-beta-opt-in-step';
 import { usePrevious } from '../hooks/use-previous';
 import {
-	GutenLocationStateType,
 	Step,
 	StepType,
 	useIsAnchorFm,
@@ -33,6 +33,8 @@ import type { BlockEditProps } from '@wordpress/blocks';
 
 import './colors.scss';
 import './style.scss';
+
+const WIDE_LAYOUT_STEPS: StepType[] = [ Step.DesignSelection ];
 
 const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
 	const {
@@ -74,7 +76,9 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const currentStep = useCurrentStep();
 	const previousStep = usePrevious( currentStep );
 
-	const { state: locationState = {} } = useLocation< GutenLocationStateType >();
+	const locationResult = useLocation();
+	const locationState =
+		'state' in locationResult ? ( locationResult.state as Record< string, string > ) : undefined;
 
 	React.useLayoutEffect( () => {
 		// Runs some navigation related side-effects when the step changes
@@ -97,7 +101,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		( path: StepType ) => {
 			return {
 				pathname: makePath( path ),
-				state: locationState,
+				state: locationState ?? {},
 			};
 		},
 		[ makePath, locationState ]
@@ -205,7 +209,11 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	}
 
 	return (
-		<div className="onboarding-block">
+		<div
+			className={ classnames( 'onboarding-block', {
+				'onboarding-block--is-wide': WIDE_LAYOUT_STEPS.includes( step ),
+			} ) }
+		>
 			{ isCreatingSite && (
 				<Redirect
 					push={ shouldTriggerCreate ? undefined : true }

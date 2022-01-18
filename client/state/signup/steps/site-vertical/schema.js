@@ -14,9 +14,6 @@ export const siteVerticalSchema = {
 		parentId: {
 			type: 'string',
 		},
-		preview: {
-			type: 'string',
-		},
 		slug: {
 			type: 'string',
 		},

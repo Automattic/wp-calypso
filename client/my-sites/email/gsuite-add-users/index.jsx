@@ -246,7 +246,7 @@ class GSuiteAddUsers extends Component {
 				<Main wideLayout={ true }>
 					<DocumentHead title={ translate( 'Add New Mailboxes' ) } />
 
-					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+					<EmailHeader />
 
 					<HeaderCake onClick={ this.goToEmail }>
 						{ googleMailServiceFamily + ': ' + selectedDomainName }

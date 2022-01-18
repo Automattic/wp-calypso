@@ -13,6 +13,7 @@ const platformMap: { [ key in ImporterPlatform ]: string } = {
 	livejournal: 'LiveJournal',
 	movabletype: 'Movable Type & TypePad',
 	xanga: 'Xanga',
+	unknown: 'Unknown',
 };
 
 export const platformImporterNameMap: { [ key: string ]: string } = {

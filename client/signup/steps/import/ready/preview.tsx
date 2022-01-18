@@ -71,7 +71,7 @@ const ImportPreview: FunctionComponent< Props > = ( { website } ) => {
 						<div role="presentation" className="import__preview-bar-dot" />
 						{ websiteMatch && (
 							<div className="import__preview-url-field">
-								<div>
+								<div dir="ltr">
 									<span>{ websiteMatch?.groups?.protocol }</span>
 									{ websiteMatch?.groups?.address }
 								</div>

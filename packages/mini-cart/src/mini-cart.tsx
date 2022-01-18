@@ -92,22 +92,28 @@ const emptyPaymentProcessors = {};
 
 export function MiniCart( {
 	selectedSiteSlug,
+	cartKey,
 	goToCheckout,
 	closeCart,
 }: {
 	selectedSiteSlug: string;
+	cartKey: string | number | undefined;
 	goToCheckout: ( siteSlug: string ) => void;
 	closeCart: () => void;
-} ): JSX.Element {
+} ): JSX.Element | null {
 	const {
 		responseCart,
 		removeCoupon,
 		removeProductFromCart,
 		isLoading,
 		isPendingUpdate,
-	} = useShoppingCart( selectedSiteSlug );
+	} = useShoppingCart( cartKey ? String( cartKey ) : undefined );
 	const { __ } = useI18n();
 	const isDisabled = isLoading || isPendingUpdate;
+
+	if ( ! cartKey ) {
+		return null;
+	}
 
 	return (
 		<CheckoutProvider

@@ -1,10 +1,8 @@
 import { getPlan, TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import {
-	getPlanDiscountedRawPrice,
-	isIntroductoryOfferAppliedToPlanPrice,
-} from 'calypso/state/sites/plans/selectors';
+import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
+import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import {
 	getProductDisplayCost,
 	isProductsListFetching,
@@ -13,6 +11,8 @@ import {
 	computeFullAndMonthlyPricesForPlan,
 	computeProductsWithPrices,
 } from '../selectors';
+
+jest.mock( 'calypso/state/selectors/get-intro-offer-price', () => jest.fn() );
 
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
@@ -123,8 +123,8 @@ describe( 'selectors', () => {
 
 	describe( '#computeFullAndMonthlyPricesForPlan()', () => {
 		beforeEach( () => {
-			isIntroductoryOfferAppliedToPlanPrice.mockReset();
-			isIntroductoryOfferAppliedToPlanPrice.mockImplementation( () => false );
+			getIntroOfferPrice.mockReset();
+			getIntroOfferPrice.mockImplementation( () => null );
 		} );
 		test( 'Should return shape { priceFull }', () => {
 			getPlanDiscountedRawPrice.mockImplementation( ( a, b, c, { isMonthly } ) =>
@@ -134,7 +134,7 @@ describe( 'selectors', () => {
 
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, {} ) ).toEqual( {
-				isIntroductoryOfferApplied: false,
+				introductoryOfferPrice: null,
 				priceFull: 120,
 				priceFinal: 120,
 			} );
@@ -143,7 +143,7 @@ describe( 'selectors', () => {
 		test( 'Should return proper priceFinal if couponDiscounts are provided', () => {
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, { def: 60 } ) ).toEqual( {
-				isIntroductoryOfferApplied: false,
+				introductoryOfferPrice: null,
 				priceFull: 120,
 				priceFinal: 60,
 			} );
@@ -151,9 +151,9 @@ describe( 'selectors', () => {
 
 		test( 'Should return the isIntroductoryOfferApplied value', () => {
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			isIntroductoryOfferAppliedToPlanPrice.mockImplementation( () => true );
+			getIntroOfferPrice.mockImplementation( () => 60 );
 			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, {} ) ).toEqual( {
-				isIntroductoryOfferApplied: true,
+				introductoryOfferPrice: 60,
 				priceFull: 120,
 				priceFinal: 120,
 			} );
@@ -189,8 +189,8 @@ describe( 'selectors', () => {
 
 			getPlan.mockImplementation( ( slug ) => testPlans[ slug ] );
 
-			isIntroductoryOfferAppliedToPlanPrice.mockReset();
-			isIntroductoryOfferAppliedToPlanPrice.mockImplementation( () => false );
+			getIntroOfferPrice.mockReset();
+			getIntroOfferPrice.mockImplementation( () => null );
 		} );
 
 		test( 'Should return list of shapes { isIntroductoryOfferApplied, priceFull, plan, product, planSlug }', () => {
@@ -210,7 +210,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFull: 120,
 					priceFinal: 120,
-					isIntroductoryOfferApplied: false,
+					introductoryOfferPrice: null,
 				},
 				{
 					planSlug: 'plan2',
@@ -218,7 +218,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan2,
 					priceFull: 240,
 					priceFinal: 240,
-					isIntroductoryOfferApplied: false,
+					introductoryOfferPrice: null,
 				},
 			] );
 		} );
@@ -242,7 +242,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFull: 120,
 					priceFinal: 60,
-					isIntroductoryOfferApplied: false,
+					introductoryOfferPrice: null,
 				},
 				{
 					planSlug: 'plan2',
@@ -250,7 +250,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan2,
 					priceFull: 240,
 					priceFinal: 120,
-					isIntroductoryOfferApplied: false,
+					introductoryOfferPrice: null,
 				},
 			] );
 		} );
@@ -272,7 +272,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFinal: 120,
 					priceFull: 120,
-					isIntroductoryOfferApplied: false,
+					introductoryOfferPrice: null,
 				},
 			] );
 		} );
@@ -293,7 +293,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFull: 120,
 					priceFinal: 120,
-					isIntroductoryOfferApplied: false,
+					introductoryOfferPrice: null,
 				},
 			] );
 		} );
@@ -326,7 +326,7 @@ describe( 'selectors', () => {
 					product: state.productsList.items.plan1,
 					priceFull: 120,
 					priceFinal: 120,
-					isIntroductoryOfferApplied: false,
+					introductoryOfferPrice: null,
 				},
 			] );
 		} );
@@ -336,21 +336,21 @@ describe( 'selectors', () => {
 		test( 'should return null when the products list has not been fetched', () => {
 			const state = deepFreeze( { productsList: { items: {} } } );
 
-			expect( getProductDisplayCost( state, 'guided_transfer' ) ).toBe( null );
+			expect( getProductDisplayCost( state, 'business-bundle' ) ).toBe( null );
 		} );
 
 		test( 'should return the display cost', () => {
 			const state = deepFreeze( {
 				productsList: {
 					items: {
-						guided_transfer: {
+						'business-bundle': {
 							cost_display: 'A$169.00',
 						},
 					},
 				},
 			} );
 
-			expect( getProductDisplayCost( state, 'guided_transfer' ) ).toBe( 'A$169.00' );
+			expect( getProductDisplayCost( state, 'business-bundle' ) ).toBe( 'A$169.00' );
 		} );
 	} );
 

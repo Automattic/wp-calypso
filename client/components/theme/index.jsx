@@ -157,7 +157,7 @@ export class Theme extends Component {
 		const showUpsell = hasPrice && upsellUrl;
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! hasPrice,
-			'theme__badge-price-test': showUpsell,
+			'theme__badge-price-upsell': showUpsell,
 		} );
 
 		const themeDescription = decodeEntities( description );

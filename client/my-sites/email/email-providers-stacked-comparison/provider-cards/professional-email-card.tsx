@@ -1,9 +1,8 @@
-import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
-import { FunctionComponent, useState } from 'react';
-import { connect } from 'react-redux';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import {
 	titanMailMonthly,
@@ -15,7 +14,7 @@ import {
 	canCurrentUserAddEmail,
 	getCurrentUserCannotAddEmailReason,
 } from 'calypso/lib/domains';
-import { getTitanProductName, isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
+import { getTitanProductName } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
@@ -23,22 +22,24 @@ import {
 	transformMailboxForCart,
 	validateMailboxes as validateTitanMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
-import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
+import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-comparison/price/professional-email';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
-import PriceBadge from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/price-badge';
-import PriceWithInterval from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/price-with-interval';
+import {
+	addToCartAndCheckout,
+	recordTracksEventAddToCartClick,
+} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import {
 	TITAN_PASSWORD_RESET_FIELD,
 	TITAN_FULL_NAME_FIELD,
 } from 'calypso/my-sites/email/titan-new-mailbox';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { addToCartAndCheckout, IntervalLength, recordTracksEventAddToCartClick } from './utils';
 import type { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
+import type { ReactElement } from 'react';
 
 import './professional-email-card.scss';
 
@@ -49,6 +50,7 @@ const logo = <Gridicon className="professional-email-card__logo" icon="my-sites"
 const badge = (
 	<img src={ poweredByTitanLogo } alt={ translate( 'Powered by Titan', { textOnly: true } ) } />
 );
+
 const getTitanFeatures = () => {
 	return [
 		translate( 'Inbox, calendars, and contacts' ),
@@ -58,6 +60,7 @@ const getTitanFeatures = () => {
 };
 
 const professionalEmailCardInformation: ProviderCard = {
+	className: 'professional-email-card',
 	detailsExpanded: true,
 	expandButtonLabel: translate( 'Select' ),
 	onExpandedChange: noop,
@@ -70,29 +73,28 @@ const professionalEmailCardInformation: ProviderCard = {
 	features: getTitanFeatures(),
 };
 
-const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps > = ( props ) => {
-	const {
-		currencyCode = '',
-		hasCartDomain,
-		detailsExpanded,
-		domain,
-		onExpandedChange,
-		selectedDomainName,
-		intervalLength,
-		titanMailMonthlyProduct,
-		titanMailYearlyProduct,
-		comparisonContext,
-		shoppingCartManager,
-		selectedSite,
-		source,
-	} = props;
+const ProfessionalEmailCard = ( {
+	cartDomainName,
+	detailsExpanded,
+	onExpandedChange,
+	selectedDomainName,
+	intervalLength,
+	comparisonContext,
+	source,
+}: EmailProvidersStackedCardProps ): ReactElement => {
+	const hasCartDomain = Boolean( cartDomainName );
+	const selectedSite = useSelector( getSelectedSite );
+	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
+	const domain = getSelectedDomain( {
+		domains,
+		selectedDomainName: selectedDomainName,
+	} );
+
+	const cartKey = useCartKey();
+	const shoppingCartManager = useShoppingCart( cartKey );
+
 	const professionalEmail: ProviderCard = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
-
-	const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForTitanFreeTrial( domain );
-
-	const titanMailProduct =
-		intervalLength === IntervalLength.MONTHLY ? titanMailMonthlyProduct : titanMailYearlyProduct;
 
 	const [ titanMailbox, setTitanMailbox ] = useState( [
 		buildNewTitanMailbox( selectedDomainName, false ),
@@ -152,25 +154,9 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 
 	const onTitanFormReturnKeyPress = noop;
 
-	const priceWithInterval = (
-		<PriceWithInterval
-			intervalLength={ intervalLength }
-			cost={ titanMailProduct?.cost ?? 0 }
-			currencyCode={ currencyCode ?? '' }
-			hasDiscount={ isEligibleForFreeTrial }
-		/>
-	);
-
 	professionalEmail.onExpandedChange = onExpandedChange;
 	professionalEmail.priceBadge = (
-		<>
-			{ isDomainEligibleForTitanFreeTrial( domain ) && (
-				<div className="professional-email-card__discount badge badge--info-green">
-					{ translate( '3 months free' ) }
-				</div>
-			) }
-			<PriceBadge priceComponent={ priceWithInterval } className={ 'professional-email-card' } />
-		</>
+		<ProfessionalEmailPrice domain={ domain } intervalLength={ intervalLength } />
 	);
 
 	professionalEmail.formFields = (
@@ -197,24 +183,4 @@ const ProfessionalEmailCard: FunctionComponent< EmailProvidersStackedCardProps >
 	return <EmailProvidersStackedCard { ...professionalEmail } />;
 };
 
-export default connect( ( state, ownProps: EmailProvidersStackedCardProps ) => {
-	const selectedSite = getSelectedSite( state );
-	const domains = getDomainsBySiteId( state, selectedSite?.ID );
-	const domain = getSelectedDomain( {
-		domains,
-		selectedDomainName: ownProps.selectedDomainName,
-	} );
-	const resolvedDomainName = domain ? domain.name : ownProps.selectedDomainName;
-
-	const hasCartDomain = Boolean( ownProps.cartDomainName );
-
-	return {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		domain,
-		selectedDomainName: resolvedDomainName ?? '',
-		hasCartDomain,
-		selectedSite,
-		titanMailMonthlyProduct: getProductBySlug( state, TITAN_MAIL_MONTHLY_SLUG ),
-		titanMailYearlyProduct: getProductBySlug( state, TITAN_MAIL_YEARLY_SLUG ),
-	};
-} )( withCartKey( withShoppingCart( ProfessionalEmailCard ) ) );
+export default ProfessionalEmailCard;

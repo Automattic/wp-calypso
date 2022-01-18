@@ -54,7 +54,7 @@ export function buildDomainStepForProfessionalEmail(
 			),
 			stepCta: (
 				<FullWidthButton
-					href={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain ) }
+					href={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug ?? domain, domain ) }
 					className={ `domain-${ domainType }__thank-you-button domain-thank-you__button` }
 					primary={ primary }
 					busy={ false }

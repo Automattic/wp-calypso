@@ -43,7 +43,7 @@
 			@include placeholder();
 		}
 
-		& .button {
+		& .button:not( .is-primary ) {
 			color: var( --studio-gray-80 );
 		}
 		& .button:not( :first-child ) {
@@ -110,5 +110,18 @@
 		font-weight: 400;
 		font-size: $font-body-small;
 		color: var( --studio-gray-80 );
+	}
+}
+
+.site-redirect-card__explanation {
+	display: block;
+	margin-top: 5px;
+	margin-bottom: 0;
+	font-size: $font-body-small;
+	font-style: italic;
+	color: var( --color-text-subtle );
+
+	a {
+		white-space: nowrap;
 	}
 }

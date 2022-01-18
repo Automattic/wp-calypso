@@ -40,7 +40,6 @@ export {
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
 } from './is-gsuite';
-export { isGuidedTransfer } from './is-guided-transfer';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackBackup } from './is-jetpack-backup';

@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/testarmada-magellan-mocha-plugin",
 	"version": "10.0.0",
-	"description": "Magellan plugin to provide Mocha support",
+	"description": "Magellan plugin to provide Mocha support.",
 	"main": "index.js",
 	"author": "Automattic Inc.",
 	"publishConfig": {
@@ -12,9 +12,8 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/magellan-mocha-plugin"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "MIT",
 	"dependencies": {
 		"chalk": "^4.1.2",

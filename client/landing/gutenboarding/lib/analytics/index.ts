@@ -115,19 +115,6 @@ export function recordEnterStep( stepName: StepNameType ) {
 }
 
 /**
- * Records selecting a site topic in tracks
- *
- * @param slug The slug of the selected topic. If undefined, the vertical input is free-form
- * @param label Translated label of vertical or free-form user input
- */
-export function recordVerticalSelection( slug?: string, label?: string ) {
-	trackEventWithFlow( 'calypso_newsite_vertical_selected', {
-		selected_vertical_slug: slug,
-		selected_vertical_label: label,
-	} );
-}
-
-/**
  * Records entering a site title in tracks
  *
  * @param hasValue The site title entered by the user is not empty
@@ -136,13 +123,6 @@ export function recordSiteTitleSelection( hasValue: boolean ) {
 	trackEventWithFlow( 'calypso_newsite_site_title_selected', {
 		has_selected_site_title: hasValue,
 	} );
-}
-
-/**
- * Records site topic input skip on Intent Gathering step
- */
-export function recordVerticalSkip() {
-	trackEventWithFlow( 'calypso_newsite_vertical_skipped' );
 }
 
 /**

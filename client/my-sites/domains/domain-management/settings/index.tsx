@@ -1,7 +1,10 @@
+import { Button } from '@automattic/components';
+import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
+import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -15,7 +18,12 @@ import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/c
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
-import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementList,
+	domainUseMyDomain,
+	isUnderDomainManagementAll,
+} from 'calypso/my-sites/domains/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import { requestWhois } from 'calypso/state/domains/management/actions';
@@ -26,12 +34,13 @@ import {
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import { isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
+import SiteRedirectCard from './cards/site-redirect-card';
+import TransferredDomainDetails from './cards/transferred-domain-details';
 import DnsRecords from './dns';
 import { getSslReadableStatus, isSecuredWithUs } from './helpers';
 import SetAsPrimary from './set-as-primary';
@@ -47,7 +56,6 @@ const Settings = ( {
 	loadingNameserversError,
 	nameservers,
 	dns,
-	isRequestingDomains,
 	purchase,
 	requestWhois,
 	selectedDomainName,
@@ -56,18 +64,23 @@ const Settings = ( {
 	whoisData,
 }: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
+	const contactInformation = findRegistrantWhois( whoisData );
+
+	useEffect( () => {
+		if ( ! contactInformation ) {
+			requestWhois( selectedDomainName );
+		}
+	}, [ contactInformation, selectedDomainName ] );
 
 	const renderBreadcrumbs = () => {
-		const previousPath = domainManagementEdit(
-			selectedSite?.slug,
-			selectedDomainName,
-			currentRoute
-		);
+		const previousPath = domainManagementList( selectedSite?.slug, currentRoute );
 
 		const items = [
 			{
-				label: translate( 'Domains' ),
-				href: domainManagementList( selectedSite?.slug, selectedDomainName ),
+				label: isUnderDomainManagementAll( currentRoute )
+					? translate( 'All Domains' )
+					: translate( 'Domains' ),
+				href: previousPath,
 			},
 			{ label: selectedDomainName },
 		];
@@ -139,6 +152,36 @@ const Settings = ( {
 					/>
 				</Accordion>
 			);
+		} else if ( domain.type === domainTypes.TRANSFER ) {
+			return (
+				<Accordion
+					title={ translate( 'Details', { textOnly: true } ) }
+					subtitle={ translate( 'Transfer details', { textOnly: true } ) }
+					key="main"
+					expanded
+				>
+					<TransferredDomainDetails
+						domain={ domain }
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				</Accordion>
+			);
+		} else if ( domain.type === domainTypes.SITE_REDIRECT ) {
+			return (
+				<Accordion
+					title={ translate( 'Redirect settings', { textOnly: true } ) }
+					subtitle={ 'Update your site redirect' }
+					key="main"
+					expanded
+				>
+					<SiteRedirectCard
+						selectedSite={ selectedSite }
+						selectedDomainName={ selectedDomainName }
+					/>
+				</Accordion>
+			);
 		}
 	};
 
@@ -155,7 +198,7 @@ const Settings = ( {
 	const getNameServerSectionSubtitle = () => {
 		if ( isLoadingNameservers ) {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			return <p className="name-servers-card__loading" />;
+			return <span className="name-servers-card__loading" />;
 		}
 
 		if ( loadingNameserversError ) {
@@ -196,6 +239,10 @@ const Settings = ( {
 	};
 
 	const renderDnsRecords = () => {
+		if ( ! domain || domain.type === domainTypes.SITE_REDIRECT ) {
+			return null;
+		}
+
 		return (
 			<Accordion
 				title={ translate( 'DNS records', { textOnly: true } ) }
@@ -203,7 +250,6 @@ const Settings = ( {
 			>
 				<DnsRecords
 					dns={ dns }
-					isRequestingDomains={ isRequestingDomains }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 					currentRoute={ currentRoute }
@@ -234,13 +280,10 @@ const Settings = ( {
 			return null;
 		}
 
-		const getPlaceholderAccordion = () => (
-			<Accordion
-				title="Contact information"
-				subtitle="Contact information"
-				isPlaceholder
-			></Accordion>
-		);
+		const getPlaceholderAccordion = () => {
+			const label = translate( 'Contact information', { textOnly: true } );
+			return <Accordion title={ label } subtitle={ label } isPlaceholder></Accordion>;
+		};
 
 		if ( ! domain || ! domains ) return getPlaceholderAccordion();
 
@@ -252,23 +295,21 @@ const Settings = ( {
 			></ContactsPrivacyInfo>
 		);
 
-		const contactInformation = findRegistrantWhois( whoisData );
-
 		const { privateDomain } = domain;
+		const titleLabel = translate( 'Contact information', { textOnly: true } );
 		const privacyProtectionLabel = privateDomain
 			? translate( 'Privacy protection on', { textOnly: true } )
 			: translate( 'Privacy protection off', { textOnly: true } );
 
 		if ( ! domain.currentUserCanManage ) {
 			return (
-				<Accordion title="Contact information" subtitle={ `${ privacyProtectionLabel }` }>
+				<Accordion title={ titleLabel } subtitle={ `${ privacyProtectionLabel }` }>
 					{ getContactsPrivacyInfo() }
 				</Accordion>
 			);
 		}
 
 		if ( ! contactInformation ) {
-			requestWhois( selectedDomainName );
 			return getPlaceholderAccordion();
 		}
 
@@ -276,10 +317,42 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				title="Contact information"
+				title={ titleLabel }
 				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel.toLowerCase() }` }
 			>
 				{ getContactsPrivacyInfo() }
+			</Accordion>
+		);
+	};
+
+	const handleTransferDomainClick = () => {
+		if ( ! domain ) return;
+		recordTracksEvent( 'calypso_domain_management_mapped_transfer_click', {
+			section: domain.type,
+			domain: domain.name,
+		} );
+	};
+
+	const renderTranferInMappedDomainSection = () => {
+		if ( ! ( domain?.isEligibleForInboundTransfer && domain?.type === domainTypes.MAPPED ) )
+			return null;
+
+		return (
+			<Accordion
+				title={ translate( 'Transfer your domain to WordPress.com', { textOnly: true } ) }
+				subtitle={ translate( 'Manage your site and domain all in one place', { textOnly: true } ) }
+			>
+				<Button
+					onClick={ handleTransferDomainClick }
+					href={ domainUseMyDomain(
+						selectedSite.slug,
+						domain.name,
+						useMyDomainInputMode.transferDomain
+					) }
+					primary={ true }
+				>
+					{ translate( 'Transfer' ) }
+				</Button>
 			</Accordion>
 		);
 	};
@@ -289,6 +362,7 @@ const Settings = ( {
 		return (
 			<>
 				{ renderDetailsSection() }
+				{ renderTranferInMappedDomainSection() }
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
@@ -322,7 +396,7 @@ const Settings = ( {
 			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
-			<SettingsHeader domain={ domain } />
+			<SettingsHeader domain={ domain } site={ selectedSite } />
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);
@@ -339,15 +413,15 @@ export default connect(
 		return {
 			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
 			currentRoute: getCurrentRoute( state ),
-			domain: getSelectedDomain( ownProps ),
+			domain: getSelectedDomain( { ...ownProps, isSiteRedirect: true } ),
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			dns: getDomainDns( state, ownProps.selectedDomainName ),
-			isRequestingDomains: isRequestingSiteDomains( state, ownProps.selectedSite.ID ),
 		};
 	},
 	{
 		requestWhois,
+		recordTracksEvent,
 	}
 )( withDomainNameservers( Settings ) );

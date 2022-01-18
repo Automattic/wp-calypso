@@ -10,35 +10,38 @@ import {
 	GutenbergEditorPage,
 	TestFile,
 	CoverBlock,
-	NewPostFlow,
+	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Frame, Page } from 'playwright';
+import { Page } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-let user: string;
+let accountName: string;
 if ( BrowserHelper.targetCoBlocksEdge() ) {
-	user = 'coBlocksSimpleSiteEdgeUser';
+	accountName = 'coBlocksSimpleSiteEdgeUser';
 } else if ( BrowserHelper.targetGutenbergEdge() ) {
-	user = 'gutenbergSimpleSiteEdgeUser';
+	accountName = 'gutenbergSimpleSiteEdgeUser';
 } else {
-	user = 'gutenbergSimpleSiteUser';
+	accountName = 'gutenbergSimpleSiteUser';
 }
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
 	let page: Page;
+	let testAccount: TestAccount;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let imageFile: TestFile;
 	let coverBlock: CoverBlock;
-	let editorFrame: Frame;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
+		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
+		testAccount = new TestAccount( accountName );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+
+		await testAccount.authenticate( page );
 	} );
 
-	beforeAll( async () => {
-		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
-		editorFrame = await gutenbergEditorPage.getEditorFrame();
+	it( 'Go to the new post page', async () => {
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( 'Insert Cover block', async () => {
@@ -53,6 +56,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 		await coverBlock.upload( imageFile.fullpath );
 		// After uploading the image the focus is switched to the inner
 		// paragraph block (Cover title), so we need to switch it back outside.
+		const editorFrame = await gutenbergEditorPage.getEditorFrame();
 		await editorFrame.click( '.wp-block-cover', { position: { x: 1, y: 1 } } );
 	} );
 
@@ -61,6 +65,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 	} );
 
 	it.each( CoverBlock.coverStyles )( 'Verify "%s" style is available', async ( style ) => {
+		const editorFrame = await gutenbergEditorPage.getEditorFrame();
 		await editorFrame.waitForSelector( `button[aria-label="${ style }"]` );
 	} );
 

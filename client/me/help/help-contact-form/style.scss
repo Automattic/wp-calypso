@@ -8,6 +8,18 @@
 		display: block;
 		margin-top: 11px;
 	}
+
+	.inline-help__results {
+		padding: 0;
+	}
+
+	.inline-help__results-item a {
+		padding-left: 0;
+
+		&:hover {
+			background: none;
+		}
+	}
 }
 
 .help-contact-form__subject,

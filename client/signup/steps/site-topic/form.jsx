@@ -33,7 +33,6 @@ class SiteTopicForm extends Component {
 		this.props.setSiteVertical( {
 			isUserInput: verticalData.isUserInputVertical,
 			name: verticalData.verticalName,
-			preview: verticalData.preview,
 			slug: verticalData.verticalSlug,
 			id: verticalData.verticalId,
 			parentId: verticalData.parent,

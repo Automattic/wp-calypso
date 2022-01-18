@@ -7,7 +7,7 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { ExperimentAssignment } from '@automattic/explat-client';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
-import { useViewportMatch } from '@wordpress/compose';
+import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useCallback } from 'react';
@@ -99,23 +99,32 @@ export default function WPCheckoutOrderReview( {
 	const cartKey = useCartKey();
 	const { responseCart, removeCoupon, couponStatus } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
-	const isDesktop = useViewportMatch( 'mobile', '>=' );
 	const reduxDispatch = useDispatch();
 
 	useEffect( () => {
-		const experimentCheck = isDesktop
-			? 'registration_email_only_desktop_random_usernames'
-			: 'registration_email_only_mobile_random_usernames';
-		let shouldCheck = true;
-		loadExperimentAssignment( experimentCheck ).then( ( experimentObject ) => {
-			if ( shouldCheck ) {
-				setExperiment( experimentObject );
+		function retrieveExperimentName(): string {
+			let experiment = '';
+			try {
+				const cookies = cookie.parse( document.cookie );
+				experiment = cookies.wpcom_signup_experiment_name;
+			} catch ( error ) {
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cookie_read_failed' ) );
 			}
-		} );
+			return experiment;
+		}
+
+		const experimentCheck = retrieveExperimentName();
+		let shouldCheck = true;
+		experimentCheck &&
+			loadExperimentAssignment( experimentCheck ).then( ( experimentObject ) => {
+				if ( shouldCheck ) {
+					setExperiment( experimentObject );
+				}
+			} );
 		return () => {
 			shouldCheck = false;
 		};
-	}, [ isDesktop ] );
+	}, [ reduxDispatch ] );
 
 	const onRemoveProductCancel = useCallback( () => {
 		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
@@ -159,7 +168,7 @@ export default function WPCheckoutOrderReview( {
 	};
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
-	const shouldShowDomainNote = experiment?.variationName && domainUrl?.includes( 'wordpress.com' );
+	const shouldShowDomainNote = experiment?.variationName && domainUrl?.includes( '.wordpress.com' );
 	const isPwpoUser = useSelector(
 		( state ) =>
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )

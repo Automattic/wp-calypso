@@ -1,0 +1,42 @@
+.inline-help__search .card.search-card {
+	border-radius: 2px 2px 0 0;
+	margin: 0;
+
+	.search {
+		border-radius: 2px 2px 0 0;
+		border: 6px solid var( --color-surface );
+
+		&.is-open {
+			width: auto;
+			max-width: 100%;
+		}
+
+		&.is-open.has-focus {
+			box-shadow: none;
+			border-color: var( --color-primary-light );
+
+			@include breakpoint-deprecated( '>660px' ) {
+				box-shadow: none;
+			}
+		}
+
+		@include breakpoint-deprecated( '>660px' ) {
+			border-width: 4px;
+		}
+
+		.search__input {
+			font-size: $font-body;
+			padding: 12px 0;
+			color: var( --color-text );
+
+			@include breakpoint-deprecated( '>660px' ) {
+				padding: 16px 0;
+			}
+		}
+
+		.search__icon-navigation:focus {
+			border-radius: 2px;
+			box-shadow: 0 0 0 3px var( --color-primary-light );
+		}
+	}
+}

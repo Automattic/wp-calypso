@@ -1,4 +1,4 @@
-import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
@@ -51,6 +51,7 @@ export const QuickLinks = ( {
 	trackAnchorPodcastAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
+	trackExplorePluginsAction,
 	isExpanded,
 	updateHomeQuickLinksToggleStatus,
 	isUnifiedNavEnabled,
@@ -177,13 +178,20 @@ export const QuickLinks = ( {
 			{ canManageSite && (
 				<>
 					<ActionBox
+						href={ `/plugins/${ siteSlug }` }
+						hideLinkIndicator
+						onClick={ trackExplorePluginsAction }
+						label={ translate( 'Explore Plugins' ) }
+						gridicon="plugins"
+					/>
+					<ActionBox
 						href="https://wp.me/logo-maker/?utm_campaign=my_home"
 						onClick={ trackDesignLogoAction }
 						target="_blank"
 						label={
 							getLocaleSlug() === 'en' ||
 							getLocaleSlug() === 'en-gb' ||
-							i18nCalypso.hasTranslation( 'Create a logo with Fiverr' )
+							i18n.hasTranslation( 'Create a logo with Fiverr' )
 								? translate( 'Create a logo with Fiverr' )
 								: translate( 'Create a logo' )
 						}
@@ -331,6 +339,17 @@ const trackAddEmailAction = ( isStaticHomePage ) => ( dispatch ) => {
 	);
 };
 
+const trackExplorePluginsAction = ( isStaticHomePage ) => ( dispatch ) => {
+	dispatch(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_customer_home_my_site_explore_plugins_click', {
+				is_static_home_page: isStaticHomePage,
+			} ),
+			bumpStat( 'calypso_customer_home', 'my_site_explore_plugins' )
+		)
+	);
+};
+
 const trackAddDomainAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
@@ -398,6 +417,7 @@ const mapDispatchToProps = {
 	trackAnchorPodcastAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
+	trackExplorePluginsAction,
 	updateHomeQuickLinksToggleStatus: ( status ) =>
 		savePreference( 'homeQuickLinksToggleStatus', status ),
 };
@@ -418,6 +438,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		trackAnchorPodcastAction: () => dispatchProps.trackAnchorPodcastAction( isStaticHomePage ),
 		trackAddEmailAction: () => dispatchProps.trackAddEmailAction( isStaticHomePage ),
 		trackAddDomainAction: () => dispatchProps.trackAddDomainAction( isStaticHomePage ),
+		trackExplorePluginsAction: () => dispatchProps.trackExplorePluginsAction( isStaticHomePage ),
 		...ownProps,
 	};
 };

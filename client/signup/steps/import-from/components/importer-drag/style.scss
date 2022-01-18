@@ -3,32 +3,21 @@
 		border-radius: 4px;
 	}
 
+	.importer-header {
+		margin-bottom: 40px;
+		padding-bottom: 20px;
+	}
+
 	.importer-header__service-info {
 		color: var( --studio-gray-40 );
 
 		.importer-header__service-title {
 			color: var( --studio-gray-100 );
 		}
-	}
 
-	.importer__uploading-pane-description {
-		color: var( --studio-gray-40 );
-
-		.inline-support-link {
-			&::before {
-				content: '\A';
-			}
-
-			white-space: pre;
-			text-decoration: underline;
-			color: var( --studio-gray-100 );
+		p {
+			font-size: $font-body-small;
+			margin: 0;
 		}
-	}
-
-	.importer__uploading-pane {
-		border-color: var( --studio-gray-10 );
-		background-color: transparent;
-		border-radius: 4px;
-		color: var( --studio-gray-80 );
 	}
 }

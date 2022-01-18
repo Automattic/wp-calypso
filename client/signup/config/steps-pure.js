@@ -559,13 +559,6 @@ export function generateSteps( {
 			providesDependencies: [],
 		},
 
-		/* Improved Onboarding */
-		'site-type': {
-			stepName: 'site-type',
-			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTypeFulfilled,
-		},
-
 		'site-type-with-theme': {
 			stepName: 'site-type',
 			providesDependencies: [ 'siteType' ],
@@ -583,69 +576,6 @@ export function generateSteps( {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
-		'site-title-without-domains': {
-			stepName: 'site-title-without-domains',
-			apiRequestFunction: createSiteWithCart,
-			delayApiRequestUntilComplete: true,
-			dependencies: [ 'themeSlugWithRepo' ],
-			providesDependencies: [ 'siteTitle', 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'site-style': {
-			stepName: 'site-style',
-			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
-		},
-
-		// Steps with preview
-		// These can be removed once we make the preview the default
-		'site-topic-with-preview': {
-			stepName: 'site-topic-with-preview',
-			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'site-style-with-preview': {
-			stepName: 'site-style-with-preview',
-			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'domains-with-preview': {
-			stepName: 'domains-with-preview',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
-			props: {
-				showSiteMockups: true,
-				isDomainOnly: false,
-			},
-			dependencies: [ 'themeSlugWithRepo' ],
-			delayApiRequestUntilComplete: true,
-		},
-
-		'site-title-with-preview': {
-			stepName: 'site-title-with-preview',
-			providesDependencies: [ 'siteTitle' ],
-			props: {
-				showSiteMockups: true,
-			},
 		},
 
 		launch: {
@@ -770,20 +700,18 @@ export function generateSteps( {
 			apiRequestFunction: setDesignIfNewSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug', 'newOrExistingSiteChoice' ],
-			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'selectedDesign' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory', 'isLetUsChooseSelected' ],
+			optionalDependencies: [ 'selectedDesign', 'isLetUsChooseSelected' ],
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
 				showDesignPickerCategoriesAllFilter: false,
+				showLetUsChoose: true,
+				hideFullScreenPreview: true,
+				hideDesignTitle: true,
 			},
-		},
-		'difm-design': {
-			// TODO: Temporary step to be deleted
-			stepName: 'difm-design',
-			providesDependencies: [ 'selectedDIFMDesign', 'selectedVertical' ],
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
@@ -791,6 +719,9 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem', 'typeformResponseId' ],
 			apiRequestFunction: addPlanToCart,
 			delayApiRequestUntilComplete: true,
+		},
+		courses: {
+			stepName: 'courses',
 		},
 
 		// ↓ importer steps
@@ -807,7 +738,21 @@ export function generateSteps( {
 			stepName: 'importing',
 		},
 
-		// Woocommerce Install steps
+		// Woocommerce Install steps.
+		'business-info': {
+			stepName: 'business-info',
+			dependencies: [ 'site' ],
+		},
+		'store-address': {
+			stepName: 'store-address',
+			props: {
+				headerTitle: i18n.translate( 'Add an address to accept payments' ),
+				headerDescription: i18n.translate(
+					'This will be used as your default business address. You can change it later if you need to.'
+				),
+			},
+			dependencies: [ 'site' ],
+		},
 		confirm: {
 			stepName: 'confirm',
 			props: {

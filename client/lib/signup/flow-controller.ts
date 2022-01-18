@@ -41,18 +41,21 @@ import type { Flow, Dependencies } from '../../signup/types';
 
 const debug = debugModule( 'calypso:signup' );
 
-interface Step {
-	apiRequestFunction?: (
-		callback: ( errors: Record< string, string >[], providedDependencies: Dependencies ) => void,
-		dependenciesFound: Dependencies,
-		step: Step,
-		reduxStore: Store
-	) => void;
-	delayApiRequestUntilComplete?: boolean;
+interface StepDependendencies {
 	dependencies?: string[];
 	providedDependencies?: string[];
 	providesDependencies?: string[];
 	optionalDependencies?: string[];
+}
+
+interface Step extends StepDependendencies {
+	apiRequestFunction?: (
+		callback: ( errors: Record< string, string >[], providedDependencies: Dependencies ) => void,
+		dependenciesFound: Record< string, unknown >,
+		step: Step,
+		reduxStore: Store
+	) => void;
+	delayApiRequestUntilComplete?: boolean;
 	providesToken?: boolean;
 	stepName: string;
 	allowUnauthenticated?: boolean;
@@ -104,7 +107,7 @@ export default class SignupFlowController {
 		try {
 			this._assertFlowHasValidDependencies();
 		} catch ( ex ) {
-			debug( 'Invalid dependencies in flow : ' + ex.message );
+			debug( 'Invalid dependencies in flow : ' + ( ex as Error ).message );
 			if ( this._flowName !== flows.defaultFlowName ) {
 				// redirect to the default signup flow, hopefully it will be valid
 				page( getStepUrl() );
@@ -420,14 +423,13 @@ export default class SignupFlowController {
 		);
 	}
 
-	_findDependencies( stepName: string, dependencyKey = 'dependencies' ): Record< string, unknown > {
-		const dependencyStore = getSignupDependencyStore( this._reduxStore.getState() );
+	_findDependencies( stepName: string, dependencyKey: keyof StepDependendencies = 'dependencies' ) {
+		const dependencyStore: Record< string, unknown > = getSignupDependencyStore(
+			this._reduxStore.getState()
+		);
 		const stepConfig = steps[ stepName ];
-		if ( ! stepConfig || ! stepConfig[ dependencyKey ] ) {
-			return {};
-		}
-
-		return pick( dependencyStore, stepConfig[ dependencyKey ] );
+		const keysToSelect = stepConfig ? stepConfig[ dependencyKey ] : undefined;
+		return pick( dependencyStore, keysToSelect ?? [] );
 	}
 
 	_destination( dependencies: Dependencies ): string {

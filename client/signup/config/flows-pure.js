@@ -86,21 +86,6 @@ export function generateFlows( {
 			lastModified: '2019-06-20',
 		},
 		{
-			name: 'onboarding-with-preview',
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
-			destination: getSignupDestination,
-			description: 'The improved onboarding flow.',
-			lastModified: '2020-03-03',
-			showRecaptcha: true,
-		},
-		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans' ]
@@ -395,7 +380,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'setup-site',
-			steps: [ 'intent', 'site-options', 'starting-point', 'design-setup-site' ],
+			steps: [ 'intent', 'site-options', 'starting-point', 'courses', 'design-setup-site' ],
 			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
@@ -423,11 +408,13 @@ export function generateFlows( {
 		{
 			name: 'woocommerce-install',
 			pageTitle: translate( 'Add WooCommerce to your site' ),
-			steps: [ 'confirm', 'transfer' ],
+			steps: isEnabled( 'woop' )
+				? [ 'business-info', 'store-address', 'confirm', 'transfer' ]
+				: [ 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
 			providesDependenciesInQuery: [ 'site' ],
-			lastModified: '2021-11-11',
+			lastModified: '2021-12-21',
 			disallowResume: false,
 		},
 	];

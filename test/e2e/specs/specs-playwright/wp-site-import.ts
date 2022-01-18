@@ -5,9 +5,9 @@
 import {
 	setupHooks,
 	DataHelper,
-	LoginPage,
 	SidebarComponent,
 	SiteImportPage,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
@@ -15,13 +15,11 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), function () {
 	let siteImportPage: SiteImportPage;
 	let page: Page;
 
-	setupHooks( ( args ) => {
+	setupHooks( async ( args ) => {
 		page = args.page;
-	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'defaultUser' } );
+		const testAccount = new TestAccount( 'defaultUser' );
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'Navigate to Tools > Import', async function () {

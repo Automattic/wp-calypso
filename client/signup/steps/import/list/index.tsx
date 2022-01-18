@@ -24,6 +24,10 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 		urlDataUpdate( {
 			url: '',
 			platform,
+			meta: {
+				favicon: null,
+				title: null,
+			},
 		} );
 		goToStep( `ready` );
 	};

@@ -28,15 +28,15 @@ describe( 'reducer', () => {
 		test( 'should store the product list received', () => {
 			const productsList = [
 				{
-					guided_transfer: {
+					'business-bundle': {
 						available: true,
-						product_id: 40,
-						product_name: 'Guided Transfer',
-						product_slug: 'guided_transfer',
+						product_id: 1008,
+						product_name: 'WordPress.com Business',
+						product_slug: 'business-bundle',
 						is_domain_registration: false,
-						description: 'Guided Transfer',
-						cost: 129,
-						cost_display: '$129',
+						description: '',
+						cost: 300,
+						cost_display: '$300',
 					},
 				},
 			];
@@ -55,15 +55,15 @@ describe( 'reducer', () => {
 		describe( 'persistence', () => {
 			test( 'persists state', () => {
 				const original = deepFreeze( {
-					guided_transfer: {
+					'business-bundle': {
 						available: true,
-						product_id: 40,
-						product_name: 'Guided Transfer',
-						product_slug: 'guided_transfer',
+						product_id: 1008,
+						product_name: 'WordPress.com Business',
+						product_slug: 'business-bundle',
 						is_domain_registration: false,
-						description: 'Guided Transfer',
-						cost: 129,
-						cost_display: '$129',
+						description: '',
+						cost: 300,
+						cost_display: '$300',
 					},
 				} );
 				const state = serialize( items, original );
@@ -72,15 +72,15 @@ describe( 'reducer', () => {
 
 			test( 'loads valid persisted state', () => {
 				const original = deepFreeze( {
-					guided_transfer: {
+					'business-bundle': {
 						available: true,
-						product_id: 40,
-						product_name: 'Guided Transfer',
-						product_slug: 'guided_transfer',
+						product_id: 1008,
+						product_name: 'WordPress.com Business',
+						product_slug: 'business-bundle',
 						is_domain_registration: false,
-						description: 'Guided Transfer',
-						cost: 129,
-						cost_display: '$129',
+						description: '',
+						cost: 300,
+						cost_display: '$300',
 					},
 				} );
 				const state = deserialize( items, original );
@@ -89,11 +89,11 @@ describe( 'reducer', () => {
 
 			test( 'loads default state when schema does not match', () => {
 				const original = deepFreeze( {
-					guided_transfer: {
+					'business-bundle': {
 						available: true,
-						id: 40,
-						name: 'Guided Transfer',
-						slug: 'guided_transfer',
+						id: 1008,
+						name: 'WordPress.com Business',
+						slug: 'business-bundle',
 					},
 				} );
 				const state = deserialize( items, original );

@@ -8,7 +8,7 @@ const Form: FunctionComponent = () => {
 	return (
 		<div className="credentials__form">
 			<h1>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h1>
-			<ServerCredentialsForm />
+			<ServerCredentialsForm role="form" />
 		</div>
 	);
 };

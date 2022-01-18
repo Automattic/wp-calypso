@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/interpolate-components",
 	"version": "1.2.0",
-	"description": "Convert strings into structured React components",
+	"description": "Convert strings into structured React components.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
@@ -16,9 +16,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/interpolate-components#readme",
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

@@ -8,6 +8,23 @@
 namespace A8C\FSE\ErrorReporting;
 
 /**
+ * Whether or not the site is eligible for Error Reporting, which is a feature that's
+ * specific to WPCOM.
+ *
+ * By default, sites should not be eligible.
+ *
+ * @return bool True if current site is eligible for error reporting, false otherwise.
+ */
+function is_site_eligible_for_error_reporting() {
+	/**
+	 * Can be used to toggle the Error Reporting functionality.
+	 *
+	 * @param bool true if Error Reporting should be enabled, false otherwise.
+	 */
+	return apply_filters( 'a8c_enable_error_reporting', false );
+}
+
+/**
  * Inline  error handler that will capture errors before
  * the main handler has a chance to. Errors are pushed
  * to a global array called `_jsErr` which is then verified
@@ -58,15 +75,6 @@ function user_in_sentry_test_segment( $user_id ) {
 	// segment the user is. i.e if current_segment is 10, then only ids that end in < 10
 	// will be considered part of the segment.
 	return $user_segment < $current_segment;
-}
-
-/**
- * Returns whether or not the site loading ETK is in the WoA env.
- *
- * @return bool
- */
-function is_atomic() {
-	return defined( 'IS_ATOMIC' ) && IS_ATOMIC;
 }
 
 /**
@@ -127,8 +135,6 @@ function setup_error_reporting() {
 	add_action( 'admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_script', 99 );
 }
 
-// We don't want to activate this module in AT just yet. See https://wp.me/p4TIVU-9DI#comment-10922.
-// @todo Remove once we have a version that works for WPCOM simple sites and WoA.
-if ( ! is_atomic() ) {
+if ( is_site_eligible_for_error_reporting() ) {
 	setup_error_reporting();
 }

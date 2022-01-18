@@ -1,3 +1,11 @@
+.tour-kit-frame {
+    visibility: hidden;
+
+    &.is-visible {
+        visibility: visible;
+    }
+}
+
 .tour-kit-frame__container {
 	border-radius: 2px;
 	bottom: 44px;
@@ -20,20 +28,17 @@
 	background: rgba( 0, 0, 0 );
 	opacity: 0;
 
-	&.--visible {
+	&.is-visible {
 		opacity: 0.5;
 	}
 }
 
 .tour-kit-spotlight {
-	&.--visible {
+	&.is-visible {
 		position: fixed;
-		width: 50px;
-		height: 50px;
 		overflow: hidden;
 		// box-shadow: 0 0 0 9999px rgba(0, 0, 255, 0.2);
 		outline: 99999px solid rgba( 0, 0, 0, 0.5 );
-		border-radius: 2px;
 		z-index: 1;
 	}
 }
@@ -74,13 +79,13 @@
 .tour-kit-frame__container[data-popper-placement^='left'] > .tour-kit-frame__arrow {
     right: -6px;
     &::before {
-        box-shadow: -1px 1px 2px -1px rgb( 0 0 0 / 25% );
+        box-shadow: 1px -1px 2px -1px rgb( 0 0 0 / 25% );
     }
 }
 
 .tour-kit-frame__container[data-popper-placement^='right'] > .tour-kit-frame__arrow {
     left: -6px;
     &::before {
-        box-shadow: 1px -1px 2px -1px rgb( 0 0 0 / 25% );
+        box-shadow: -1px 1px 2px -1px rgb( 0 0 0 / 25% );
     }
 }
