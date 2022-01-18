@@ -226,6 +226,7 @@ class MasterbarLoggedIn extends Component {
 					isJetpackNotAtomic={ isJetpackNotAtomic }
 					previousPath={ previousPath }
 					siteSlug={ siteSlug }
+					isLeavingAllowed={ ! isCheckoutPending }
 				/>
 			);
 		}
