@@ -85,7 +85,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 						value={ getProfileValue( 'product_count' ) }
 						options={ [
 							{ value: '', label: '' },
-							{ value: '0', label: __( "I don't have any products yet.", 'woocommerce-admin' ) },
+							{ value: '0', label: __( "I don't have any products yet." ) },
 							{ value: '1-10', label: __( '1-10', 'woocommerce-admin' ) },
 							{ value: '11-100', label: __( '11-101', 'woocommerce-admin' ) },
 							{ value: '101-1000', label: __( '101-1000', 'woocommerce-admin' ) },
