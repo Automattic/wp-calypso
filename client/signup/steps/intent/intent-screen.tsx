@@ -16,7 +16,7 @@ interface Props {
 }
 
 const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
-	return [
+	const intents: Intent[] = [
 		{
 			key: 'write',
 			title: translate( 'Write' ),
@@ -33,15 +33,20 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 			value: 'build',
 			actionText: translate( 'Start building' ),
 		},
-		{
+	];
+
+	if ( isEnabled( 'seller-experience' ) ) {
+		intents.push( {
 			key: 'sell',
 			title: translate( 'Sell' ),
 			description: translate( 'Sell your products' ),
 			icon: tip,
 			value: 'sell',
 			actionText: translate( 'Start selling' ),
-		},
-	];
+		} );
+	}
+
+	return intents;
 };
 
 const useIntentsAlt = ( {
