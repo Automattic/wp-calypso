@@ -66,13 +66,13 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 				<div className="step-business-info__info-section" />
 				<div className="step-business-info__instructions-container">
 					<SelectControl
-						label={ __( 'What type of products will be listed? (optional)', 'woocommerce-admin' ) }
+						label={ __( 'What type of products will be listed? (optional)' ) }
 						value={ getProfileValue( 'product_types' ) }
 						options={ [
 							{ value: '', label: '' },
-							{ value: 'physical', label: __( 'Physical Products', 'woocommerce-admin' ) },
-							{ value: 'downloads', label: __( 'Downloads', 'woocommerce-admin' ) },
-							{ value: 'subscriptions', label: __( 'Subscriptions', 'woocommerce-admin' ) },
+							{ value: 'physical', label: __( 'Physical Products' ) },
+							{ value: 'downloads', label: __( 'Downloads' ) },
+							{ value: 'subscriptions', label: __( 'Subscriptions' ) },
 						] }
 						onChange={ updateProductTypes }
 					/>
@@ -86,21 +86,21 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 						options={ [
 							{ value: '', label: '' },
 							{ value: '0', label: __( "I don't have any products yet." ) },
-							{ value: '1-10', label: __( '1-10', 'woocommerce-admin' ) },
-							{ value: '11-100', label: __( '11-101', 'woocommerce-admin' ) },
-							{ value: '101-1000', label: __( '101-1000', 'woocommerce-admin' ) },
-							{ value: '1000+', label: __( '1000+', 'woocommerce-admin' ) },
+							{ value: '1-10', label: __( '1-10' ) },
+							{ value: '11-100', label: __( '11-101' ) },
+							{ value: '101-1000', label: __( '101-1000' ) },
+							{ value: '1000+', label: __( '1000+' ) },
 						] }
 						onChange={ updateProductCount }
 					/>
 
 					<SelectControl
-						label={ __( 'Currently selling elsewhere? (optional)', 'woocommerce-admin' ) }
+						label={ __( 'Currently selling elsewhere? (optional)' ) }
 						value={ getProfileValue( 'selling_venues' ) }
 						options={ [
 							{ value: '', label: '' },
-							{ value: 'no', label: __( 'No', 'woocommerce-admin' ) },
-							{ value: 'other', label: __( 'Yes, on another platform', 'woocommerce-admin' ) },
+							{ value: 'no', label: __( 'No' ) },
+							{ value: 'other', label: __( 'Yes, on another platform' ) },
 							{
 								value: 'other-woocommerce',
 								label: __(
@@ -110,7 +110,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 							},
 							{
 								value: 'brick-mortar',
-								label: __( 'Yes, in person at physical stores and/or events', 'woocommerce-admin' ),
+								label: __( 'Yes, in person at physical stores and/or events' ),
 							},
 							{
 								value: 'brick-mortar-other',
@@ -126,45 +126,45 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 					{ [ 'other', 'brick-mortar-other' ].includes( getProfileValue( 'selling_venues' ) ) && (
 						<>
 							<SelectControl
-								label={ __( 'Which platform is the store using? (optional)', 'woocommerce-admin' ) }
+								label={ __( 'Which platform is the store using? (optional)' ) }
 								value={ getProfileValue( 'other_platform' ) }
 								options={ [
 									{ value: '', label: '' },
 									{
 										value: 'shopify',
-										label: __( 'Shopify', 'woocommerce-admin' ),
+										label: __( 'Shopify' ),
 									},
 									{
 										value: 'bigcommerce',
-										label: __( 'BigCommerce', 'woocommerce-admin' ),
+										label: __( 'BigCommerce' ),
 									},
 									{
 										value: 'magento',
-										label: __( 'Magento', 'woocommerce-admin' ),
+										label: __( 'Magento' ),
 									},
 									{
 										value: 'wix',
-										label: __( 'Wix', 'woocommerce-admin' ),
+										label: __( 'Wix' ),
 									},
 									{
 										value: 'amazon',
-										label: __( 'Amazon', 'woocommerce-admin' ),
+										label: __( 'Amazon' ),
 									},
 									{
 										value: 'ebay',
-										label: __( 'eBay', 'woocommerce-admin' ),
+										label: __( 'eBay' ),
 									},
 									{
 										value: 'etsy',
-										label: __( 'Etsy', 'woocommerce-admin' ),
+										label: __( 'Etsy' ),
 									},
 									{
 										value: 'squarespace',
-										label: __( 'Squarespace', 'woocommerce-admin' ),
+										label: __( 'Squarespace' ),
 									},
 									{
 										value: 'other',
-										label: __( 'Other', 'woocommerce-admin' ),
+										label: __( 'Other' ),
 									},
 								] }
 								onChange={ updateOtherPlatform }
@@ -173,7 +173,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 							{ getProfileValue( 'other_platform' ) === 'other' && (
 								<TextControl
-									label={ __( 'What is the platform name? (optional)', 'woocommerce-admin' ) }
+									label={ __( 'What is the platform name? (optional)' ) }
 									onChange={ updateOtherPlatformName }
 									value={ getProfileValue( 'other_platform_name' ) }
 								/>
