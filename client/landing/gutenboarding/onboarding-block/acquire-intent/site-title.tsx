@@ -80,16 +80,16 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 		[ siteTitleExamples, inputElement ]
 	);
 	const [ formWidth, setFormWidth ] = React.useState( 0 );
-	const labelRef = React.useRef< HTMLElement >();
+	const labelRef = React.useRef< HTMLLabelElement | null >( null );
 	const resizeRef = useWindowResizeCallback( ( formDomRect ) => {
 		if ( ! formDomRect ) {
 			return;
 		}
 
 		setFormWidth( formDomRect.width );
-	} );
+	} ) as React.MutableRefObject< HTMLFormElement >;
 	const hasOverflowingPlaceholder = React.useMemo( () => {
-		if ( formWidth === 0 || ! labelRef ) {
+		if ( formWidth === 0 || ! labelRef.current ) {
 			return false;
 		}
 
