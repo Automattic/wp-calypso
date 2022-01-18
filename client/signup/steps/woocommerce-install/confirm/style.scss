@@ -3,6 +3,7 @@
 @import '@wordpress/base-styles/mixins';
 
 body.is-section-signup .is-woocommerce-install {
+	.signup__step.is-business-info, // @todo: tidy all steps styles
 	.signup__step.is-store-address, // @todo: tidy all steps styles
 	.signup__step.is-confirm {
 		min-height: 95vh;
@@ -31,7 +32,7 @@ body.is-section-signup .is-woocommerce-install {
 						text-align: inherit;
 						@media ( max-width: 660px ) {
 							padding: 0 10px 0 0;
-							
+
 						}
 
 					}
@@ -68,6 +69,7 @@ body.is-section-signup .is-woocommerce-install {
 			display: flex;
 			margin: 0 24px;
 
+			.step-business-info__instructions-container, // @todo: tidy all steps styles
 			.step-store-address__instructions-container, // @todo: tidy all steps styles
 			.confirm__instructions-container {
 				font-size: 0.875rem;
@@ -81,7 +83,7 @@ body.is-section-signup .is-woocommerce-install {
 				@media ( max-width: 660px ) {
 					max-width: 90vw;
 				}
-			
+
 				p {
 					margin-top: 16px;
 				}

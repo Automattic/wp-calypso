@@ -738,7 +738,11 @@ export function generateSteps( {
 			stepName: 'importing',
 		},
 
-		// Woocommerce Install steps
+		// Woocommerce Install steps.
+		'business-info': {
+			stepName: 'business-info',
+			dependencies: [ 'site' ],
+		},
 		'store-address': {
 			stepName: 'store-address',
 			props: {
