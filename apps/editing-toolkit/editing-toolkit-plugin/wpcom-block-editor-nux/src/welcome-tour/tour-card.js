@@ -30,7 +30,7 @@ const config = {
 			// Desc: A function hook that takes a rating and returns an updated or same rating back
 			// @todo clk - Type polymorphically, we may have different types of ratings (boolean or discrete/point-based)
 			// @todo clk - Update Tracks event to just "rating" maybe (vs "thumbs_up") - but rethink. Ensure queryable in Tracks first.
-			useTourRatingx: ( rating ) => {
+			useTourRating: ( rating ) => {
 				const { setTourRating } = useDispatch( 'automattic/wpcom-welcome-guide' );
 				const tourRating = useSelect( ( select ) =>
 					select( 'automattic/wpcom-welcome-guide' ).getTourRating()
