@@ -8,7 +8,7 @@ textSizingCanvas.height = 100;
 const canvasContext = textSizingCanvas.getContext( '2d' ) as CanvasRenderingContext2D;
 
 /**
- * Gets the font info from an input field then measures the width of the text within
+ * Gets the font info from an input field then measures the width of the text within.
  *
  * @param text the string
  * @param element The input element
@@ -19,7 +19,7 @@ function getTextWidth( text: string, element: HTMLInputElement | undefined ) {
 	}
 	const computedCSS = window.getComputedStyle( element );
 
-	// FF returns an empty strong in font prop
+	// FF returns an empty string in font prop.
 	canvasContext.font = computedCSS.font || `${ computedCSS.fontSize } ${ computedCSS.fontFamily }`;
 	return canvasContext.measureText( text ).width;
 }
