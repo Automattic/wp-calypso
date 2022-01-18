@@ -72,6 +72,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 		if (
 			( platform === 'wordpress' && isEnabled( 'gutenboarding/import-from-wordpress' ) ) ||
 			( platform === 'medium' && isEnabled( 'gutenboarding/import-from-medium' ) ) ||
+			( platform === 'squarespace' && isEnabled( 'gutenboarding/import-from-squarespace' ) ) ||
 			( platform === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) )
 		) {
 			importerUrl = getWpComOnboardingUrl( signupDependencies.siteSlug, platform, urlData.url );
