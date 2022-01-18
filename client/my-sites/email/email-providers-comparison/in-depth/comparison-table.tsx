@@ -3,6 +3,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import EmailProviderPrice from 'calypso/my-sites/email/email-providers-comparison/in-depth/email-provider-price';
+import LearnMoreLink from 'calypso/my-sites/email/email-providers-comparison/in-depth/learn-more-link';
 import type { ComparisonListOrTableProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 import type { ReactElement } from 'react';
 
@@ -92,6 +93,16 @@ const ComparisonTable = ( {
 
 					{ emailProviders.map( ( emailProviderFeatures ) => (
 						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.list.support }</td>
+					) ) }
+				</tr>
+
+				<tr>
+					<td></td>
+
+					{ emailProviders.map( ( emailProviderFeatures ) => (
+						<td key={ emailProviderFeatures.slug }>
+							<LearnMoreLink url={ emailProviderFeatures.supportUrl } />
+						</td>
 					) ) }
 				</tr>
 

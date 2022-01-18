@@ -6,6 +6,7 @@ import page from 'page';
 import { useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
+import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import ComparisonList from 'calypso/my-sites/email/email-providers-comparison/in-depth/comparison-list';
 import ComparisonTable from 'calypso/my-sites/email/email-providers-comparison/in-depth/comparison-table';
 import {
@@ -93,6 +94,8 @@ const EmailProvidersInDepthComparison = ( {
 				onSelectEmailProvider={ selectEmailProvider }
 				selectedDomainName={ selectedDomainName }
 			/>
+
+			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
 		</>
 	);
 };

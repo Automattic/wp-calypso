@@ -13,11 +13,11 @@ import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
+import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import {
-	emailManagementAddEmailForwards,
 	emailManagementInDepthComparison,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
@@ -35,7 +35,6 @@ type EmailProvidersStackedComparisonProps = {
 	selectedDomainName: string;
 	selectedEmailProviderSlug: string;
 	selectedIntervalLength: IntervalLength | undefined;
-	showEmailForwardLink?: boolean;
 	siteName: string;
 	source: string;
 };
@@ -45,7 +44,6 @@ const EmailProvidersStackedComparison = ( {
 	selectedDomainName,
 	selectedEmailProviderSlug,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
-	showEmailForwardLink = true,
 	siteName,
 	source,
 }: EmailProvidersStackedComparisonProps ): ReactElement => {
@@ -188,25 +186,7 @@ const EmailProvidersStackedComparison = ( {
 				/>
 			) }
 
-			{ ! hasExistingEmailForwards && showEmailForwardLink && selectedSite && (
-				<div className="email-providers-stacked-comparison__email-forward-section">
-					{ translate( 'Looking for a free email solution?' ) }{ ' ' }
-					{ translate( 'Start with {{link}}Email Forwarding{{/link}}.', {
-						components: {
-							link: (
-								<a
-									href={ emailManagementAddEmailForwards(
-										selectedSite.slug,
-										selectedDomainName,
-										currentRoute,
-										'purchase'
-									) }
-								/>
-							),
-						},
-					} ) }
-				</div>
-			) }
+			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
 		</Main>
 	);
 };

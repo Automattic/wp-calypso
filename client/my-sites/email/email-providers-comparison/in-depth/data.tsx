@@ -5,6 +5,7 @@ import { translate } from 'i18n-calypso';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getTitanProductName } from 'calypso/lib/titan';
+import { ADDING_GSUITE_TO_YOUR_SITE, ADDING_TITAN_TO_YOUR_SITE } from 'calypso/lib/url/support';
 import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 
 export const professionalEmailFeatures: EmailProviderFeatures = {
@@ -18,6 +19,7 @@ export const professionalEmailFeatures: EmailProviderFeatures = {
 		support: translate( '24/7 support via email' ),
 		tools: translate( 'Integrated email management, Inbox, Calendar and Contacts' ),
 	},
+	supportUrl: ADDING_TITAN_TO_YOUR_SITE,
 };
 
 export const googleWorkspaceFeatures: EmailProviderFeatures = {
@@ -39,4 +41,5 @@ export const googleWorkspaceFeatures: EmailProviderFeatures = {
 		support: translate( '24/7 support via email' ),
 		tools: translate( 'Gmail, Calendar, Meet, Chat, Drive, Docs, Sheets, Slides and more' ),
 	},
+	supportUrl: ADDING_GSUITE_TO_YOUR_SITE,
 };
