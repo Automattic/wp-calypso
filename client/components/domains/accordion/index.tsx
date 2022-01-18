@@ -33,20 +33,16 @@ const Accordion = ( {
 				expanded={ expanded }
 				disabled={ isPlaceholder }
 				actionButton={
-					<>
-						<button className="foldable-card__action foldable-card__expand">
-							<span className="screen-reader-text">More</span>
-							<Icon icon={ chevronDown } viewBox="6 4 12 14" size={ 16 } />
-						</button>
-					</>
+					<button className="foldable-card__action foldable-card__expand">
+						<span className="screen-reader-text">More</span>
+						<Icon icon={ chevronDown } viewBox="6 4 12 14" size={ 16 } />
+					</button>
 				}
 				actionButtonExpanded={
-					<>
-						<button className="foldable-card__action foldable-card__expand">
-							<span className="screen-reader-text">More</span>
-							<Icon icon={ chevronUp } viewBox="6 4 12 14" size={ 16 } />
-						</button>
-					</>
+					<button className="foldable-card__action foldable-card__expand">
+						<span className="screen-reader-text">More</span>
+						<Icon icon={ chevronUp } viewBox="6 4 12 14" size={ 16 } />
+					</button>
 				}
 			>
 				{ children }
