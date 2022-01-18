@@ -9,7 +9,8 @@ import type { RemoveProductFromCart, ResponseCart } from '@automattic/shopping-c
 
 export default function useRemoveFromCartAndRedirect(
 	siteSlug: string | undefined,
-	createUserAndSiteBeforeTransaction: boolean
+	createUserAndSiteBeforeTransaction: boolean,
+	backUrl?: string
 ): {
 	isRemovingProductFromCart: boolean;
 	removeProductFromCartAndMaybeRedirect: RemoveProductFromCart;
@@ -26,7 +27,7 @@ export default function useRemoveFromCartAndRedirect(
 			siteSlug,
 			jetpackCheckoutBackUrl,
 			createUserAndSiteBeforeTransaction,
-			previousPath,
+			previousPath: backUrl || previousPath,
 			tracksEvent: 'calypso_empty_cart_redirect',
 		} );
 	}, [ createUserAndSiteBeforeTransaction, siteSlug, jetpackCheckoutBackUrl, previousPath ] );

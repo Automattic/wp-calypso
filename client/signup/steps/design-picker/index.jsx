@@ -206,9 +206,6 @@ export default function DesignPickerStep( props ) {
 			<AsyncLoad
 				require="calypso/my-sites/checkout/modal"
 				placeholder={ null }
-				redirectTo={ window.location.href }
-				clearCartOnClose
-				disabledRemoveProductFromCart
 				checkoutOnSuccessCallback={ null }
 			/>
 		);
