@@ -21,7 +21,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
-import { useDispatch as useReduxDispatch, useSelector as useReduxSelector } from 'react-redux';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
 	hasGoogleApps,
@@ -114,29 +114,31 @@ const OrderReviewTitle = () => {
 const paymentMethodStep = getDefaultPaymentMethodStep();
 
 export default function WPCheckout( {
-	removeProductFromCart,
+	addItemToCart,
 	changePlanLength,
+	countriesList,
+	createUserAndSiteBeforeTransaction,
+	infoMessage,
+	isJetpackNotAtomic,
+	isLoggedOutCart,
+	onPageLoadError,
+	removeProductFromCart,
+	showErrorMessageBriefly,
 	siteId,
 	siteUrl,
-	countriesList,
-	addItemToCart,
-	showErrorMessageBriefly,
-	isLoggedOutCart,
-	infoMessage,
-	createUserAndSiteBeforeTransaction,
-	onPageLoadError,
 }: {
-	removeProductFromCart: RemoveProductFromCart;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changePlanLength: OnChangeItemVariant;
+	countriesList: CountryListItem[];
+	createUserAndSiteBeforeTransaction: boolean;
+	infoMessage?: JSX.Element;
+	isJetpackNotAtomic: boolean;
+	isLoggedOutCart: boolean;
+	onPageLoadError: CheckoutPageErrorCallback;
+	removeProductFromCart: RemoveProductFromCart;
+	showErrorMessageBriefly: ( error: string ) => void;
 	siteId: number | undefined;
 	siteUrl: string | undefined;
-	countriesList: CountryListItem[];
-	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
-	showErrorMessageBriefly: ( error: string ) => void;
-	isLoggedOutCart: boolean;
-	infoMessage?: JSX.Element;
-	createUserAndSiteBeforeTransaction: boolean;
-	onPageLoadError: CheckoutPageErrorCallback;
 } ): JSX.Element {
 	const cartKey = useCartKey();
 	const {
@@ -161,9 +163,8 @@ export default function WPCheckout( {
 		sel( 'wpcom-checkout' ).getContactInfo()
 	);
 
-	// const isJetpackSite = useReduxSelector
-
-	const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
+	const isJetpackCheckout =
+		isJetpackNotAtomic || window.location.pathname.startsWith( '/checkout/jetpack' );
 
 	const {
 		touchContactFields,
@@ -361,8 +362,10 @@ export default function WPCheckout( {
 							/>
 						)
 					}
-					editButtonText={ String( translate( 'Edit' ) ) }
-					editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
+					editButtonText={ isJetpackCheckout ? undefined : String( translate( 'Edit' ) ) }
+					editButtonAriaLabel={
+						isJetpackCheckout ? undefined : String( translate( 'Edit your order' ) )
+					}
 					nextStepButtonText={ String( translate( 'Save order' ) ) }
 					nextStepButtonAriaLabel={ String( translate( 'Save your order' ) ) }
 					validatingButtonText={ validatingButtonText }
