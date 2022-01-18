@@ -291,7 +291,7 @@ export class SectionMigrate extends Component {
 					is_atomic: isBackendAtomic,
 				} = response;
 
-				if ( sourceSiteId && sourceSiteId !== this.props.sourceSiteId ) {
+				if ( sourceSiteId && sourceSiteId.toString() !== this.props.sourceSiteId.toString() ) {
 					this.setSourceSiteId( sourceSiteId );
 				}
 
