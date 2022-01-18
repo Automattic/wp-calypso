@@ -18,7 +18,7 @@ import { receiveSite, requestSite, updateSiteMigrationMeta } from 'calypso/state
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import DoneButton from '../../components/done-button';
 import { MigrationStatus, WPImportOption } from '../types';
-import { ImportEverything } from './index';
+import { Confirm } from './confirm';
 
 interface Props {
 	sourceSiteId: number | null;
@@ -103,7 +103,7 @@ export class MigrationScreen extends SectionMigrate {
 
 		// TODO: Rename field names. It should be consistent through the screens
 		return (
-			<ImportEverything
+			<Confirm
 				startImport={ this.startMigration }
 				siteItem={ targetSite }
 				siteSlug={ targetSiteSlug }

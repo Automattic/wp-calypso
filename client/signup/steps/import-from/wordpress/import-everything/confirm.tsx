@@ -20,7 +20,7 @@ interface Props {
 	startImport: () => void;
 }
 
-export const ImportEverything: React.FunctionComponent< Props > = ( props ) => {
+export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 
 	/**
