@@ -313,13 +313,11 @@ export default function WPCheckout( {
 					isStepActive={ isOrderReviewActive }
 					isStepComplete={ true }
 					goToThisStep={
-						isJetpackCheckout
-							? () => undefined
-							: () => setIsOrderReviewActive( ! isOrderReviewActive )
+						isJetpackCheckout ? undefined : () => setIsOrderReviewActive( ! isOrderReviewActive )
 					}
 					goToNextStep={
 						isJetpackCheckout
-							? () => undefined
+							? undefined
 							: () => {
 									setIsOrderReviewActive( ! isOrderReviewActive );
 									reduxDispatch(
@@ -362,10 +360,8 @@ export default function WPCheckout( {
 							/>
 						)
 					}
-					editButtonText={ isJetpackCheckout ? undefined : String( translate( 'Edit' ) ) }
-					editButtonAriaLabel={
-						isJetpackCheckout ? undefined : String( translate( 'Edit your order' ) )
-					}
+					editButtonText={ String( translate( 'Edit' ) ) }
+					editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
 					nextStepButtonText={ String( translate( 'Save order' ) ) }
 					nextStepButtonAriaLabel={ String( translate( 'Save your order' ) ) }
 					validatingButtonText={ validatingButtonText }

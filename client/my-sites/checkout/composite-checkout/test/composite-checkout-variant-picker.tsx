@@ -3,7 +3,7 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, screen, within, waitFor } from '@testing-library/react';
+import { render, fireEvent, screen, within, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
@@ -148,12 +148,12 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			} ) );
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
 
-			const getVariantItemText = await screen.findByText(
-				getVariantItemTextForInterval( expectedVariant )
-			);
-
-			expect( getVariantItemText ).toBeInTheDocument();
+			expect(
+				screen.getByText( getVariantItemTextForInterval( expectedVariant ) )
+			).toBeInTheDocument();
 		}
 	);
 

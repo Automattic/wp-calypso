@@ -575,7 +575,7 @@ describe( 'CompositeCheckout', () => {
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
-		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
+		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 2 );
 		fireEvent.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
