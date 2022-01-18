@@ -22,7 +22,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
 import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { planItem } from 'calypso/lib/cart-values/cart-items';
+import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -86,8 +86,6 @@ export default function DesignPickerStep( props ) {
 	);
 
 	const allThemes = props.useDIFMThemes ? DIFMThemes : apiThemes;
-
-	const [ isCheckoutModalOpen, setIsCheckoutModalOpen ] = useState( false );
 
 	useEffect(
 		() => {
@@ -184,6 +182,10 @@ export default function DesignPickerStep( props ) {
 		);
 	}
 
+	function upgradePlan() {
+		openCheckoutModal( [ PLAN_PREMIUM ] );
+	}
+
 	function submitDesign( _selectedDesign = selectedDesign ) {
 		recordTracksEvent( 'calypso_signup_select_design', {
 			theme: _selectedDesign?.stylesheet ?? `pub/${ _selectedDesign?.theme }`,
@@ -195,14 +197,6 @@ export default function DesignPickerStep( props ) {
 		props.goToNextStep();
 	}
 
-	function openCheckoutModal() {
-		setIsCheckoutModalOpen( true );
-	}
-
-	function closeCheckoutModal() {
-		setIsCheckoutModalOpen( false );
-	}
-
 	function renderCheckoutModal() {
 		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
 			return null;
@@ -212,13 +206,10 @@ export default function DesignPickerStep( props ) {
 			<AsyncLoad
 				require="calypso/my-sites/checkout/modal"
 				placeholder={ null }
-				isOpen={ isCheckoutModalOpen }
-				cartProducts={ [ planItem( PLAN_PREMIUM ) ] }
 				redirectTo={ window.location.href }
 				clearCartOnClose
 				disabledRemoveProductFromCart
 				checkoutOnSuccessCallback={ null }
-				onClose={ closeCheckoutModal }
 			/>
 		);
 	}
@@ -232,7 +223,7 @@ export default function DesignPickerStep( props ) {
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
 					onPreview={ previewDesign }
-					onUpgrade={ openCheckoutModal }
+					onUpgrade={ upgradePlan }
 					className={ classnames( {
 						'design-picker-step__has-categories': showDesignPickerCategories,
 					} ) }
