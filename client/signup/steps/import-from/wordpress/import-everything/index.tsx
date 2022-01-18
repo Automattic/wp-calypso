@@ -25,7 +25,7 @@ interface Props {
 	targetSiteId: number | null;
 	targetSiteSlug: string;
 }
-export class MigrationScreen extends SectionMigrate {
+export class ImportEverything extends SectionMigrate {
 	getMigrationUrlPath = () => {
 		const { sourceSite, targetSiteSlug } = this.props;
 		const sourceSiteSlug = get( sourceSite, 'slug' );
@@ -99,7 +99,7 @@ export class MigrationScreen extends SectionMigrate {
 	}
 
 	renderMigrationConfirm() {
-		const { sourceSite, targetSite, targetSiteSlug, fromSiteAnalyzedData } = this.props;
+		const { sourceSite, targetSite, targetSiteSlug, sourceUrlAnalyzedData } = this.props;
 
 		// TODO: Rename field names. It should be consistent through the screens
 		return (
@@ -109,7 +109,7 @@ export class MigrationScreen extends SectionMigrate {
 				siteSlug={ targetSiteSlug }
 				fromSite={ sourceSite.URL }
 				fromSiteItem={ sourceSite }
-				fromSiteAnalyzedData={ fromSiteAnalyzedData }
+				fromSiteAnalyzedData={ sourceUrlAnalyzedData }
 			/>
 		);
 	}
@@ -222,4 +222,4 @@ export const connector = connect(
 	}
 );
 
-export default connector( localize( MigrationScreen ) );
+export default connector( localize( ImportEverything ) );

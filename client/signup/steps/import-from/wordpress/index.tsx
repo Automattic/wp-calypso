@@ -8,7 +8,7 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ImportJob } from '../types';
 import { ContentChooser } from './content-chooser';
-import MigrationScreen from './import-everything/migration-screen';
+import ImportEverything from './import-everything';
 import { WPImportOption } from './types';
 
 import './style.scss';
@@ -95,13 +95,13 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 			) }
 
 			{ WPImportOption.EVERYTHING === option && (
-				<MigrationScreen
-					sourceSiteId={ fromSiteItem?.ID as number }
+				<ImportEverything
 					url={ fromSite }
+					sourceSiteId={ fromSiteItem?.ID as number }
+					sourceUrlAnalyzedData={ fromSiteAnalyzedData }
 					targetSite={ siteItem }
 					targetSiteId={ siteItem?.ID as number }
 					targetSiteSlug={ siteSlug }
-					fromSiteAnalyzedData={ fromSiteAnalyzedData }
 				/>
 			) }
 		</>
