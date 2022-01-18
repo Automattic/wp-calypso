@@ -182,6 +182,10 @@
 
 				.videos-ui__video-title {
 					margin-right: 10px;
+					display: -webkit-box;
+					-webkit-line-clamp: 2;
+					-webkit-box-orient: vertical;
+					overflow: hidden;
 				}
 
 				.videos-ui__chapter-accordion-toggle {
