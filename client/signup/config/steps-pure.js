@@ -29,6 +29,7 @@ export function generateSteps( {
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
+	setOptionsOnStore = noop,
 	setIntentOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
@@ -663,6 +664,14 @@ export function generateSteps( {
 			providesDependencies: [ 'intent' ],
 			optionalDependencies: [ 'intent' ],
 			apiRequestFunction: setIntentOnSite,
+			delayApiRequestUntilComplete: true,
+		},
+
+		'sell-details': {
+			stepName: 'sell-details',
+			dependencies: [ 'siteSlug', 'storeName', 'tagline' ],
+			providesDependencies: [ 'storeName', 'tagline' ],
+			apiRequestFunction: setOptionsOnStore,
 			delayApiRequestUntilComplete: true,
 		},
 
