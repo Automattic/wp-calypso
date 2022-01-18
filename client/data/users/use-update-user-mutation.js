@@ -9,10 +9,9 @@ function useUpdateUserMutation( siteId, queryOptions = {} ) {
 		( { userId, variables } ) => wp.req.post( `/sites/${ siteId }/users/${ userId }`, variables ),
 		{
 			...queryOptions,
-			onSuccess( ...args ) {
-				const [ { login } ] = args;
-				queryClient.invalidateQueries( getCacheKey( siteId, login ) );
-				queryOptions.onSuccess?.( ...args );
+			onSuccess( data, ...rest ) {
+				queryClient.setQueryData( getCacheKey( siteId, data.login ), data );
+				queryOptions.onSuccess?.( data, ...rest );
 			},
 		}
 	);
