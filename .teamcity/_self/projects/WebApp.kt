@@ -624,14 +624,6 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 					-:trunk
 				""".trimIndent()
 			}
-			schedule {
-				schedulingPolicy = cron {
-					minutes = "0/30"
-				}
-				branchFilter = "+:trunk"
-				triggerBuild = always()
-				withPendingChangesOnly = false
-			}
 		},
 		buildDependencies = {
 			snapshot(BuildDockerImage) {
