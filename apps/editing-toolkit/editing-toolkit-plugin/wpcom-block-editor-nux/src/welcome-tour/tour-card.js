@@ -5,7 +5,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getMediaQueryList, isMobile, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -21,6 +21,34 @@ import './style-tour.scss';
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
 const useEffectOnlyOnce = ( func ) => useEffect( func, [] );
+
+// @todo clk - Temp, move to tour config
+const config = {
+	options: {
+		tourRating: {
+			enabled: true,
+			// Desc: A function hook that takes a rating and returns an updated or same rating back
+			// @todo clk - Type polymorphically, we may have different types of ratings (boolean or discrete/point-based)
+			// @todo clk - Update Tracks event to just "rating" maybe (vs "thumbs_up") - but rethink. Ensure queryable in Tracks first.
+			useTourRatingx: ( rating ) => {
+				const { setTourRating } = useDispatch( 'automattic/wpcom-welcome-guide' );
+				const tourRating = useSelect( ( select ) =>
+					select( 'automattic/wpcom-welcome-guide' ).getTourRating()
+				);
+
+				if ( typeof rating !== 'undefined' ) {
+					setTourRating( rating );
+					recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
+						thumbs_up: rating === 'thumbs-up',
+						is_gutenboarding: false,
+					} );
+				}
+
+				return tourRating;
+			},
+		},
+	},
+};
 
 function WelcomeTourCard( {
 	cardContent,
@@ -93,8 +121,8 @@ function WelcomeTourCard( {
 				</p>
 			</CardBody>
 			<CardFooter>
-				{ isLastStep ? (
-					<TourRating isGutenboarding={ isGutenboarding }></TourRating>
+				{ isLastStep && config.options?.tourRating?.enabled ? (
+					<TourRating />
 				) : (
 					<CardNavigation
 						currentStepIndex={ currentStepIndex }
@@ -180,26 +208,24 @@ function CardOverlayControls( { onMinimize, onDismiss } ) {
 	);
 }
 
-function TourRating( { isGutenboarding } ) {
+function TourRating() {
 	let isDisabled = false;
-	const tourRating = useSelect( ( select ) =>
-		select( 'automattic/wpcom-welcome-guide' ).getTourRating()
-	);
-	const { setTourRating } = useDispatch( 'automattic/wpcom-welcome-guide' );
 
-	if ( ! isDisabled && tourRating ) {
+	const [ tempRating, setTempRating ] = useState();
+	const tourRating = config.options?.tourRating?.useTourRating?.( tempRating ) ?? tempRating;
+
+	// check is on tempRating to allow rerating in a restarted tour
+	if ( ! isDisabled && tempRating !== undefined ) {
 		isDisabled = true;
 	}
+
 	const rateTour = ( isThumbsUp ) => {
 		if ( isDisabled ) {
 			return;
 		}
+
 		isDisabled = true;
-		setTourRating( isThumbsUp ? 'thumbs-up' : 'thumbs-down' );
-		recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
-			thumbs_up: isThumbsUp,
-			is_gutenboarding: isGutenboarding,
-		} );
+		setTempRating( isThumbsUp ? 'thumbs-up' : 'thumbs-down' );
 	};
 
 	return (
