@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
-import { build, write } from '../../icons';
+import { build, write, tip } from '../../icons';
 import SelectItems, { SelectItem } from '../../select-items';
 import SelectItemsAlt, { SelectAltItem } from '../../select-items-alt';
 import type { IntentFlag } from './types';
@@ -32,6 +32,14 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 			icon: build,
 			value: 'build',
 			actionText: translate( 'Start building' ),
+		},
+		{
+			key: 'sell',
+			title: translate( 'Sell' ),
+			description: translate( 'Sell your products' ),
+			icon: tip,
+			value: 'sell',
+			actionText: translate( 'Start selling' ),
 		},
 	];
 };

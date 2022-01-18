@@ -666,6 +666,11 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
+		'sell-options': {
+			stepName: 'sell-options',
+			dependencies: [ 'siteSlug' ],
+		},
+
 		'design-setup-site': {
 			stepName: 'design-setup-site',
 			apiRequestFunction: setDesignOnSite,
