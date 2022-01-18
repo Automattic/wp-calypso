@@ -13,7 +13,6 @@ import { comment, wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
-import $ from 'jquery';
 import { filter, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
@@ -34,6 +33,17 @@ import FeedbackForm from './fse-beta/feedback-form';
 const editSitePackage = require( '@wordpress/edit-site' );
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
+
+// Replicates basic '$( el ).on( selector, cb )' with preventDefault
+// since we use that everywhere we call it.
+function addListenerToEach( selector, cb ) {
+	document.querySelectorAll( selector ).forEach( ( el ) => {
+		el.addEventListener( 'click', ( e ) => {
+			e.preventDefault();
+			cb( e );
+		} );
+	} );
+}
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
@@ -94,9 +104,7 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
-	$( '#editor' ).on( 'click', '[href*="revision.php"]', ( e ) => {
-		e.preventDefault();
-
+	addListenerToEach( '#editor [href*="revision.php"]', () => {
 		calypsoPort.postMessage( { action: 'openRevisions' } );
 
 		calypsoPort.addEventListener( 'message', onLoadRevision, false );
@@ -496,8 +504,6 @@ function handleCloseEditor( calypsoPort ) {
 		doAction( 'a8c.wpcom-block-editor.closeEditor' );
 	};
 
-	handleCloseInLegacyEditors( dispatchAction );
-
 	// Add back to dashboard fill for Site Editor when edit-site package is available.
 	if ( editSitePackage ) {
 		registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
@@ -568,22 +574,6 @@ function handleCloseEditor( calypsoPort ) {
 	} );
 }
 
-// The close button is generally overridden using the <MainDashboardButton> slot API
-// which was introduced in Gutenberg 8.2. In older editors we still need to override
-// the click handler so that the link will open in the parent frame instead of the
-// iframe. We try not to add the click handler if <MainDashboardButton> has been used.
-function handleCloseInLegacyEditors( handleClose ) {
-	// Selects close buttons in Gutenberg plugin < v7.7
-	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a';
-
-	// Selects the close button in modern Gutenberg versions, unless it itself is a close button override
-	const wpcomCloseSelector = '.wpcom-block-editor__close-button';
-	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
-	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
-
-	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, handleClose );
-}
-
 /**
  * Uses presence of data store to detect whether the nav sidebar has been loaded.
  * Could run into timing issues, but the nav sidebar's data store is currently
@@ -600,19 +590,19 @@ function isNavSidebarPresent() {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 async function openLinksInParentFrame( calypsoPort ) {
-	const viewPostLinkSelectors = [
-		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
-		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
-		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
-		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
+	const viewPostLinks = [
+		'#editor .components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
+		'#editor .components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
+		'#editor .post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
+		'#editor .components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 	].join( ',' );
-	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
+
+	addListenerToEach( viewPostLinks, ( e ) => {
 		// Ignore if the click has modifier
 		if ( e.shiftKey || e.ctrlKey || e.metaKey ) {
 			return;
 		}
 
-		e.preventDefault();
 		calypsoPort.postMessage( {
 			action: 'viewPost',
 			payload: { postUrl: e.target.href },
@@ -774,10 +764,7 @@ async function openLinksInParentFrame( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openCustomizer( calypsoPort ) {
-	const customizerLinkSelector = 'a.components-button[href*="customize.php"]';
-	$( '#editor' ).on( 'click', customizerLinkSelector, ( e ) => {
-		e.preventDefault();
-
+	addListenerToEach( '#editor [href*="customize.php"]', ( e ) => {
 		calypsoPort.postMessage( {
 			action: 'openCustomizer',
 			payload: {
@@ -795,8 +782,7 @@ function openCustomizer( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openTemplatePartLinks( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.template__block-container .template-block__overlay a', ( e ) => {
-		e.preventDefault();
+	addListenerToEach( '#editor .template__block-container .template-block__overlay a', ( e ) => {
 		e.stopPropagation(); // Otherwise it will port the message twice.
 
 		// Get the template part ID from the current href.
@@ -1231,9 +1217,9 @@ function initPort( message ) {
 	window.removeEventListener( 'message', initPort, false );
 }
 
-$( () => {
+( function () {
 	window.addEventListener( 'message', initPort, false );
 
 	//signal module loaded
 	sendMessage( { action: 'loaded' } );
-} );
+} )();
