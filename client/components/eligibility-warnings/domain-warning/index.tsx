@@ -12,7 +12,7 @@ const DomainEligibilityWarning = ( {
 	wpcomDomain,
 	stagingDomain,
 }: DomainEligibilityWarningProps ): ReactElement => (
-	<Card title={ __( 'New Store Domain' ) }>
+	<Card title={ __( 'Domain change required' ) }>
 		<InfoLabel label={ __( 'New' ) }>{ stagingDomain }</InfoLabel>
 		<p>
 			{ sprintf(

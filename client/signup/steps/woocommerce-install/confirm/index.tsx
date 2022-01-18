@@ -87,7 +87,9 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		}
 
 		return (
-			<PlanWarning title={ __( 'Upgrade your plan' ) }>{ siteUpgrading.description }</PlanWarning>
+			<PlanWarning title={ __( 'Plan upgrade required' ) }>
+				{ siteUpgrading.description }
+			</PlanWarning>
 		);
 	}
 
@@ -137,7 +139,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 								goToNextStep();
 							} }
 						>
-							{ __( 'Sounds good' ) }
+							{ __( 'Confirm' ) }
 						</StyledNextButton>
 					</ActionSection>
 				</div>
