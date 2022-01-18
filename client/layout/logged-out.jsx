@@ -39,6 +39,7 @@ const LayoutLoggedOut = ( {
 	showGdprBanner,
 } ) => {
 	const isCheckout = sectionName === 'checkout';
+	const isCheckoutPending = sectionName === 'checkout-pending';
 	const isJetpackCheckout =
 		sectionName === 'checkout' && window.location.pathname.startsWith( '/checkout/jetpack' );
 
@@ -87,6 +88,7 @@ const LayoutLoggedOut = ( {
 				title={ sectionTitle }
 				sectionName={ sectionName }
 				isCheckout={ isCheckout }
+				isCheckoutPending={ isCheckoutPending }
 				redirectUri={ redirectUri }
 			/>
 		);

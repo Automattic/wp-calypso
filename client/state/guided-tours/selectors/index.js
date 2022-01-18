@@ -16,6 +16,7 @@ import 'calypso/state/guided-tours/init';
 const SECTIONS_WITHOUT_TOURS = [
 	'signup',
 	'upgrades', // checkout
+	'checkout-pending', // checkout pending page
 	'checkout-thank-you', // thank you page
 ];
 
