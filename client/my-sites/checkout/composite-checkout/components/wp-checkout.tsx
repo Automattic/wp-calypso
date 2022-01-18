@@ -302,6 +302,7 @@ export default function WPCheckout( {
 			<CheckoutStepArea
 				submitButtonHeader={ <SubmitButtonHeader /> }
 				submitButtonFooter={ <SubmitButtonFooter /> }
+				disableSubmitButton={ isOrderReviewActive }
 			>
 				{ infoMessage }
 				<CheckoutStepBody
@@ -368,7 +369,7 @@ export default function WPCheckout( {
 					validatingButtonAriaLabel={ validatingButtonText }
 					formStatus={ formStatus }
 				/>
-				<CheckoutSteps>
+				<CheckoutSteps areStepsActive={ ! isOrderReviewActive }>
 					{ contactDetailsType !== 'none' && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
