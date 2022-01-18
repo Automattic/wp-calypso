@@ -364,8 +364,10 @@ export default function DesignPickerStep( props ) {
 				nextLabelText={ nextLabelText }
 				defaultDependencies={ defaultDependencies }
 				backUrl={ getStepUrl( flowName, stepName, '', locale, queryParams ) }
-				goToNextStep={ shouldUpgrade ? openCheckoutModal : submitDesign }
+				goToNextStep={ shouldUpgrade ? upgradePlan : submitDesign }
 				stepSectionName={ designTitle }
+				// Prevent from completing the flow when the user clicks on Upgrade Plan button
+				nextDisabledSubmitOnClick={ shouldUpgrade }
 			/>
 		);
 	}

@@ -24,6 +24,7 @@ class StepWrapper extends Component {
 		skipHeadingText: PropTypes.string,
 		skipButtonAlign: PropTypes.oneOf( [ 'top', 'bottom' ] ),
 		nextLabelText: PropTypes.string,
+		nextDisabledSubmitOnClick: PropTypes.bool,
 		// Displays an <hr> above the skip button and adds more white space
 		isLargeSkipLayout: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
@@ -100,9 +101,11 @@ class StepWrapper extends Component {
 		const {
 			shouldHideNavButtons,
 			nextLabelText,
+			nextDisabledSubmitOnClick,
 			defaultDependencies,
 			flowName,
 			stepName,
+			forwardUrl,
 			goToNextStep,
 			translate,
 		} = this.props;
@@ -115,7 +118,7 @@ class StepWrapper extends Component {
 			<NavigationLink
 				direction="forward"
 				goToNextStep={ goToNextStep }
-				forwardUrl={ this.props.forwardUrl }
+				forwardUrl={ forwardUrl }
 				defaultDependencies={ defaultDependencies }
 				flowName={ flowName }
 				stepName={ stepName }
@@ -124,7 +127,8 @@ class StepWrapper extends Component {
 				borderless={ false }
 				primary
 				forwardIcon={ null }
-				disabledTracks
+				disabledSubmitOnClick={ nextDisabledSubmitOnClick }
+				disabledTracksOnClick
 			/>
 		);
 	}
