@@ -118,6 +118,43 @@ $autobar-height: 20px;
 	}
 }
 
+.masterbar__section {
+	flex: 2;
+	display: flex;
+}
+
+.masterbar__section--left {
+	@include breakpoint-deprecated( '>480px' ) {
+		.masterbar__item {
+			flex-grow: 0;
+			min-width: 100px;
+		}
+	}
+}
+
+.masterbar__section--center {
+	flex: 1;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-grow: 0;
+	}
+}
+
+.masterbar__section--right {
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-grow: 0;
+
+		.masterbar__item {
+			min-width: 40px;
+		}
+	}
+}
+
+
+.masterbar__drafts {
+	white-space: nowrap;
+}
+
 .masterbar__item {
 	flex: 1;
 	display: flex;
@@ -131,6 +168,7 @@ $autobar-height: 20px;
 	text-decoration: none;
 	cursor: default;
 	transition: all 0.2s ease-in-out;
+	justify-content: center;
 
 	&:visited {
 		color: var( --color-masterbar-text );
