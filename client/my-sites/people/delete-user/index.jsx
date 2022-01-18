@@ -351,11 +351,9 @@ const withExternalContributor = createHigherOrderComponent(
 		const { siteId, user } = props;
 		const { data: externalContributors } = useExternalContributorsQuery( siteId );
 		const { removeExternalContributor } = useRemoveExternalContributorMutation();
-		const userId = user && user.ID;
-		const linkedUserId = user && user.linked_user_ID;
 		const contributorType = getContributorType(
 			externalContributors,
-			undefined !== linkedUserId ? linkedUserId : userId
+			user?.linked_user_ID ?? user?.ID
 		);
 
 		return (
