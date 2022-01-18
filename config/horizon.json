@@ -80,6 +80,7 @@
 		"reader": true,
 		"reader/list-management": true,
 		"safari-idb-mitigation": true,
+		"seller-experience": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
