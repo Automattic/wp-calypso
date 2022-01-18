@@ -14,7 +14,7 @@ const SharingServiceConnectedAccounts = ( { children, connect, service, translat
 			<ul className="connections__sharing-service-connected-accounts">{ children }</ul>
 			{ shouldShowConnectButton && (
 				<Button onClick={ connect }>
-					{ translate( 'Connect a different account', {
+					{ translate( 'Connect one more account', {
 						comment: 'Sharing: Publicize connections',
 					} ) }
 				</Button>
