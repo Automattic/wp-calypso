@@ -105,11 +105,11 @@ export default function CompositeCheckout( {
 	isInModal,
 	onAfterPaymentComplete,
 	disabledThankYouPage,
-	disabledRemoveProductFromCart,
 	isJetpackCheckout = false,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
+	backUrl,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -127,11 +127,11 @@ export default function CompositeCheckout( {
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
 	disabledThankYouPage?: boolean;
-	disabledRemoveProductFromCart?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
+	backUrl?: string;
 } ): JSX.Element {
 	const previousPath = useSelector( getPreviousPath );
 	const translate = useTranslate();
@@ -319,7 +319,7 @@ export default function CompositeCheckout( {
 	const {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
-	} = useRemoveFromCartAndRedirect( updatedSiteSlug, createUserAndSiteBeforeTransaction );
+	} = useRemoveFromCartAndRedirect( updatedSiteSlug, createUserAndSiteBeforeTransaction, backUrl );
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		wpcomGetStoredCards,
@@ -679,7 +679,7 @@ export default function CompositeCheckout( {
 		leaveCheckout( {
 			siteSlug,
 			jetpackCheckoutBackUrl,
-			previousPath,
+			previousPath: backUrl || previousPath,
 			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
 		} );
 
