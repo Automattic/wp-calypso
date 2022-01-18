@@ -710,12 +710,6 @@ $autobar-height: 20px;
 	margin-bottom: 35px;
 }
 
-.masterbar__notifications {
-	@include breakpoint-deprecated( '>480px' ) {
-		flex-grow: 0;
-	}
-}
-
 a.masterbar__quick-language-switcher {
 	cursor: pointer;
 }
