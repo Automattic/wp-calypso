@@ -81,6 +81,18 @@ export class MigrationScreen extends SectionMigrate {
 		} );
 	};
 
+	finishMigration = () => {
+		const { targetSiteId } = this.props;
+
+		/**
+		 * Request another update after the migration is finished to
+		 * update the site title and other info that may have changed.
+		 */
+		this.props.requestSite( targetSiteId );
+
+		this.requestMigrationReset( targetSiteId );
+	};
+
 	render() {
 		const { sourceSite, targetSite, targetSiteSlug, fromSiteAnalyzedData, translate } = this.props;
 
