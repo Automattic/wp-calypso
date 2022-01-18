@@ -45,6 +45,8 @@ interface DesignButtonProps {
 	premiumBadge?: React.ReactNode;
 	highRes: boolean;
 	disabled?: boolean;
+	hideFullScreenPreview?: boolean;
+	hideDesignTitle?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -54,6 +56,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	premiumBadge,
 	highRes,
 	disabled,
+	hideDesignTitle,
 } ) => {
 	const { __ } = useI18n();
 
@@ -99,7 +102,9 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			</span>
 			<span className="design-picker__option-overlay">
 				<span id={ makeOptionId( design ) } className="design-picker__option-meta">
-					<span className="design-picker__option-name">{ designTitle }</span>
+					{ ! hideDesignTitle && (
+						<span className="design-picker__option-name">{ designTitle }</span>
+					) }
 					{ design.is_premium && premiumBadge && (
 						<Tooltip
 							position="bottom center"
@@ -168,9 +173,9 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	const isDesktop = useViewportMatch( 'large' );
 	const isBlankCanvas = isBlankCanvasDesign( props.design );
 
-	if ( ! onPreview ) {
+	if ( ! onPreview || props.hideFullScreenPreview ) {
 		return (
-			<div className="design-button-container">
+			<div className="design-button-container design-button-container--without-preview">
 				<DesignButton { ...props } />
 			</div>
 		);
@@ -213,6 +218,8 @@ export interface DesignPickerProps {
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
 	categoriesFooter?: React.ReactNode;
+	hideFullScreenPreview?: boolean;
+	hideDesignTitle?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -230,6 +237,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	categoriesHeading,
 	categoriesFooter,
 	categorization,
+	hideFullScreenPreview,
+	hideDesignTitle,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -266,6 +275,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						onPreview={ onPreview }
 						premiumBadge={ premiumBadge }
 						highRes={ highResThumbnails }
+						hideFullScreenPreview={ hideFullScreenPreview }
+						hideDesignTitle={ hideDesignTitle }
 					/>
 				) ) }
 			</div>
