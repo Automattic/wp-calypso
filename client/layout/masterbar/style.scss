@@ -23,6 +23,7 @@ $autobar-height: 20px;
 	left: 0;
 	top: 0;
 	width: 100%;
+	max-width: 100vw;
 	z-index: z-index( 'root', '.masterbar' );
 	-webkit-font-smoothing: subpixel-antialiased;
 	transition: transform 0.2s ease-out;
