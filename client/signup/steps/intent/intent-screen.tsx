@@ -39,7 +39,7 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 		intents.push( {
 			key: 'sell',
 			title: translate( 'Sell' ),
-			description: translate( 'Setup an online store' ),
+			description: translate( 'Set up an online store' ),
 			icon: tip,
 			value: 'sell',
 			actionText: translate( 'Start selling' ),
