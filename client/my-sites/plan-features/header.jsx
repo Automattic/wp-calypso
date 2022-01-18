@@ -411,6 +411,7 @@ export class PlanFeaturesHeader extends Component {
 			discountPrice,
 			rawPrice,
 			relatedMonthlyPlan,
+			isFirstYearPromotionalDiscount,
 			isLoggedInMonthlyPricing,
 		} = this.props;
 
@@ -430,10 +431,15 @@ export class PlanFeaturesHeader extends Component {
 					relatedMonthlyPlan.raw_price * 12,
 					discountPrice || rawPrice
 				);
+			} else if ( discountPrice ) {
+				return this.renderPriceGroup( rawPrice, discountPrice );
 			}
 		}
 
-		return this.renderPriceGroup( rawPrice, discountPrice );
+		if ( isFirstYearPromotionalDiscount ) {
+			return this.renderPriceGroup( rawPrice, discountPrice );
+		}
+		return this.renderPriceGroup( rawPrice );
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
@@ -599,12 +605,19 @@ export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
 	const isYearly = !! relatedMonthlyPlan;
+	const relatedYearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( planType ) );
+
+	const isFirstYearPromotionalDiscount =
+		isYearly &&
+		relatedYearlyPlan &&
+		'first_year_promotional_discounts' === relatedYearlyPlan.overridden_price_reason;
 
 	return {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
 		isYearly,
-		relatedYearlyPlan: getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
+		isFirstYearPromotionalDiscount,
+		relatedYearlyPlan: isYearly ? null : relatedYearlyPlan,
 		siteSlug: getSiteSlug( state, selectedSiteId ),
 	};
 } )( localize( PlanFeaturesHeader ) );
