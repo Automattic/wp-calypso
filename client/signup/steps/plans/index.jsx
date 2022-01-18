@@ -33,23 +33,23 @@ export class PlansStep extends Component {
 		experimentLoaded: false,
 	};
 
-	componentWillMount() {
-		if ( this.props.flowName === 'onboarding' || this.props.flowName === 'launch-site' ) {
-			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' ).then(
-				( experiment ) => {
-					this.setState( { experiment, experimentLoaded: true } );
-				}
-			);
-		} else {
-			this.setState( { experimentLoaded: true } );
-		}
-	}
-
 	componentDidMount() {
 		this.unsubscribe = subscribeIsDesktop( ( matchesDesktop ) =>
 			this.setState( { isDesktop: matchesDesktop } )
 		);
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
+
+		if ( this.props.flowName === 'onboarding' || this.props.flowName === 'launch-site' ) {
+			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' ).then(
+				( experiment ) => {
+					// eslint-disable-next-line react/no-did-mount-set-state
+					this.setState( { experiment, experimentLoaded: true } );
+				}
+			);
+		} else {
+			// eslint-disable-next-line react/no-did-mount-set-state
+			this.setState( { experimentLoaded: true } );
+		}
 	}
 
 	componentWillUnmount() {
