@@ -196,7 +196,7 @@ export function checkoutPending( context, next ) {
 	const orderId = Number( context.params.orderId );
 	const siteSlug = context.params.site;
 
-	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
+	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
 		<CheckoutPendingComponent
