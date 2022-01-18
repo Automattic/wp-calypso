@@ -8,6 +8,7 @@ import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { addQueryArgs } from 'calypso/lib/route';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -118,6 +119,7 @@ export class MigrationScreen extends SectionMigrate {
 			case MigrationStatus.RESTORING:
 				return (
 					<Progress>
+						<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
 						<Title>
 							{ ( MigrationStatus.BACKING_UP === this.state.migrationStatus ||
 								MigrationStatus.NEW === this.state.migrationStatus ) &&
@@ -130,7 +132,7 @@ export class MigrationScreen extends SectionMigrate {
 						<ProgressBar
 							color={ 'black' }
 							compact={ true }
-							value={ Number.isNaN( this.state.percent ) ? 0 : this.state.percent }
+							value={ this.state.percent ? this.state.percent : 0 }
 						/>
 						<SubTitle>
 							{ translate(
