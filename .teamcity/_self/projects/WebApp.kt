@@ -639,7 +639,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export HEADLESS=false
 
 					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
 
 					# Run the test
 					export TARGET_DEVICE=$targetDevice
@@ -775,7 +775,7 @@ object PreReleaseE2ETests : BuildType({
 				export HEADLESS=false
 
 				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
 
 				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
 			""".trimIndent()
@@ -875,7 +875,7 @@ object QuarantinedE2ETests: BuildType( {
 				export HEADLESS=false
 
 				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
 
 				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=quarantined
 			""".trimIndent()

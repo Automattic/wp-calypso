@@ -752,29 +752,17 @@ export function generateSteps( {
 			stepName: 'importing',
 		},
 
-		// Woocommerce Install steps
+		// Woocommerce Install steps.
+		'business-info': {
+			stepName: 'business-info',
+			dependencies: [ 'site' ],
+		},
 		'store-address': {
 			stepName: 'store-address',
-			props: {
-				headerTitle: i18n.translate( 'Add an address to accept payments' ),
-				headerDescription: i18n.translate(
-					'This will be used as your default business address. You can change it later if you need to.'
-				),
-			},
 			dependencies: [ 'site' ],
 		},
 		confirm: {
 			stepName: 'confirm',
-			props: {
-				get headerTitle() {
-					return i18n.translate( 'One final step' );
-				},
-				get headerDescription() {
-					return i18n.translate(
-						'We’ve highlighted a few important details you should review before we create your store. '
-					);
-				},
-			},
 			dependencies: [ 'site' ],
 			providesDependencies: [ 'siteConfirmed' ],
 		},

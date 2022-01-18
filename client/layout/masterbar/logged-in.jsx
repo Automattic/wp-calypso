@@ -47,6 +47,7 @@ class MasterbarLoggedIn extends Component {
 		siteSlug: PropTypes.string,
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
+		isCheckoutPending: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -204,6 +205,7 @@ class MasterbarLoggedIn extends Component {
 			domainOnlySite,
 			translate,
 			isCheckout,
+			isCheckoutPending,
 			isMigrationInProgress,
 			previousPath,
 			siteSlug,
@@ -215,7 +217,7 @@ class MasterbarLoggedIn extends Component {
 
 		const { isActionSearchVisible } = this.state;
 
-		if ( isCheckout ) {
+		if ( isCheckout || isCheckoutPending ) {
 			return (
 				<AsyncLoad
 					require="calypso/layout/masterbar/checkout.tsx"
@@ -224,6 +226,7 @@ class MasterbarLoggedIn extends Component {
 					isJetpackNotAtomic={ isJetpackNotAtomic }
 					previousPath={ previousPath }
 					siteSlug={ siteSlug }
+					isLeavingAllowed={ ! isCheckoutPending }
 				/>
 			);
 		}

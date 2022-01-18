@@ -649,11 +649,13 @@
 	}
 }
 
+.is-section-checkout-pending .empty-content__title,
 .is-section-checkout-thank-you .empty-content__title {
 	font-size: $font-title-small;
 	font-weight: normal;
 }
 
+.is-section-checkout-pending .empty-content__line,
 .is-section-checkout-thank-you .empty-content__line {
 	font-size: $font-body;
 	font-weight: normal;
