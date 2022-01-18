@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
 import { connect, useDispatch } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
@@ -66,6 +67,15 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 				align="left"
 				hasScreenOptions
 			/>
+
+			<div className="customer-home__site-content">
+				<SiteIcon site={ site } size={ 64 } />
+				<div className="customer-home__site-info">
+					<div className="customer-home__site-title">{ site.name }</div>
+					<div className="customer-home__site-domain">{ site.domain }</div>
+				</div>
+			</div>
+
 			<div className="customer-home__view-site-button">
 				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 					{ translate( 'Visit site' ) }
