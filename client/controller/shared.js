@@ -6,7 +6,17 @@ const noop = () => {};
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
-		const { i18n, store, queryClient, section, pathname, query, primary, secondary } = context;
+		const {
+			i18n,
+			store,
+			queryClient,
+			section,
+			pathname,
+			query,
+			primary,
+			secondary,
+			showGdprBanner,
+		} = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! ( context.isServerSide && isUserLoggedIn( context.store.getState() ) ) ) {
@@ -21,6 +31,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 					primary={ primary }
 					secondary={ secondary }
 					redirectUri={ context.originalUrl }
+					showGdprBanner={ showGdprBanner }
 				/>
 			);
 		}

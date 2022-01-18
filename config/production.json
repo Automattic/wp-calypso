@@ -99,7 +99,7 @@
 		"signup/starting-point-courses": true,
 		"site-indicator": true,
 		"ssr/sample-log-cache-misses": true,
-		"themes/premium": false,
+		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,

@@ -201,6 +201,7 @@ body.dns__body-white {
 	.popover__menu-item.is-selected,
 	.popover__menu-item:hover,
 	.popover__menu-item:focus {
+		color: var( --studio-white );
 		svg {
 			fill: var( --studio-white );
 		}

@@ -1,29 +1,30 @@
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode } from 'react';
 
-export type ComparisonTableProps = {
+export type ComparisonListOrTableProps = {
 	emailProviders: EmailProviderFeatures[];
+	intervalLength: IntervalLength;
+	onSelectEmailProvider: ( emailProviderSlug: string ) => void;
+	selectedDomainName: string;
+};
+
+export type EmailProviderPriceProps = {
+	emailProviderSlug: string;
 	intervalLength: IntervalLength;
 	selectedDomainName: string;
 };
 
-export type ComparisonTablePriceProps = {
-	domain: SiteDomain | undefined;
-	emailProviderSlug: string;
-	intervalLength: IntervalLength;
-};
+const EMAIL_PROVIDER_FEATURES_TYPE = [ 'importing', 'storage', 'support', 'tools' ] as const;
+
+type EmailProviderFeature = typeof EMAIL_PROVIDER_FEATURES_TYPE[ number ];
 
 export type EmailProviderFeatures = {
-	slug: string;
-	name: TranslateResult;
+	description: TranslateResult;
+	list: Record< EmailProviderFeature, TranslateResult >;
 	logo: ReactNode;
-	tools: TranslateResult;
-	storage: TranslateResult;
-	importing: TranslateResult;
-	support: TranslateResult;
-	selectCallback: () => void;
+	name: TranslateResult;
+	slug: string;
 };
 
 export type EmailProvidersInDepthComparisonProps = {

@@ -26,7 +26,6 @@ function LaunchWpcomWelcomeTour() {
 			select( 'automattic/starter-page-layouts' ).isOpen(),
 		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
 	} ) );
-
 	const localeSlug = useLocale();
 
 	// Preload first card image (others preloaded after open state confirmed)

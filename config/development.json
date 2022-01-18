@@ -142,7 +142,7 @@
 		"signup/hero-flow-non-en": true,
 		"signup/starting-point-courses": true,
 		"site-indicator": true,
-		"themes/premium": false,
+		"themes/premium": true,
 		"titan/iframe-control-panel": false,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,

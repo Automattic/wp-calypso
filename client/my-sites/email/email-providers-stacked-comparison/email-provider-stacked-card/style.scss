@@ -1,3 +1,4 @@
+@import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
@@ -252,7 +253,7 @@ $width-left-panel-card: 55%;
 
 .email-provider-stacked-card__title {
 	margin-top: 4px;
-	font-size: 1.25rem;
+	font-size: $font-title-small;
 	line-height: 24px;
 	color: var( --color-neutral-70 );
 }
@@ -291,6 +292,22 @@ $width-left-panel-card: 55%;
 			border-left-width: 0;
 			border-top-width: 1px;
 		}
+	}
+}
+
+.email-provider-stacked-features__logos {
+	column-gap: 5px;
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: 32px;
+
+	@include break-xlarge {
+		justify-content: space-between;
+		column-gap: 3px;
+	}
+
+	img {
+		width: 32px;
 	}
 }
 

@@ -25,6 +25,7 @@ const EmailProvidersStackedCard = ( {
 	footerBadge,
 	formFields,
 	logo,
+	appLogos = [],
 	onExpandedChange = noop,
 	priceBadge = null,
 	productName,
@@ -92,7 +93,8 @@ const EmailProvidersStackedCard = ( {
 				<div className="email-provider-stacked-card__provider-right-panel">
 					{ ( ! showFeaturesToggleButton || areFeaturesExpanded ) && (
 						<>
-							<EmailProviderStackedFeatures features={ features } /> { footerBadge }
+							<EmailProviderStackedFeatures features={ features } appLogos={ appLogos } />
+							{ footerBadge }
 						</>
 					) }
 				</div>

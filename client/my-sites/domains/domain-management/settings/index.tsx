@@ -39,6 +39,7 @@ import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-in
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
+import SiteRedirectCard from './cards/site-redirect-card';
 import TransferredDomainDetails from './cards/transferred-domain-details';
 import DnsRecords from './dns';
 import { getSslReadableStatus, isSecuredWithUs } from './helpers';
@@ -167,6 +168,20 @@ const Settings = ( {
 					/>
 				</Accordion>
 			);
+		} else if ( domain.type === domainTypes.SITE_REDIRECT ) {
+			return (
+				<Accordion
+					title={ translate( 'Redirect settings', { textOnly: true } ) }
+					subtitle={ 'Update your site redirect' }
+					key="main"
+					expanded
+				>
+					<SiteRedirectCard
+						selectedSite={ selectedSite }
+						selectedDomainName={ selectedDomainName }
+					/>
+				</Accordion>
+			);
 		}
 	};
 
@@ -224,6 +239,10 @@ const Settings = ( {
 	};
 
 	const renderDnsRecords = () => {
+		if ( ! domain || domain.type === domainTypes.SITE_REDIRECT ) {
+			return null;
+		}
+
 		return (
 			<Accordion
 				title={ translate( 'DNS records', { textOnly: true } ) }
@@ -394,7 +413,7 @@ export default connect(
 		return {
 			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
 			currentRoute: getCurrentRoute( state ),
-			domain: getSelectedDomain( ownProps ),
+			domain: getSelectedDomain( { ...ownProps, isSiteRedirect: true } ),
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,

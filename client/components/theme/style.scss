@@ -64,6 +64,7 @@ $theme-info-height: 54px;
 	height: $theme-info-height;
 	display: flex;
 	background: var( --color-surface );
+	align-items: center;
 }
 
 .theme__info-title {
@@ -85,19 +86,15 @@ $theme-info-height: 54px;
 
 .theme__badge-price {
 	flex: 0 0 auto;
-	padding: 18px 10px 0;
+	padding: 0 10px;
 	color: var( --color-success );
 	font-size: $font-body-small;
 	font-weight: 600;
 }
 
-.theme__badge-price-test {
-	padding: 18px 5px;
-}
-
 .theme__upsell {
 	flex: 0 0 auto;
-	padding: 16px 10px 0 0;
+	padding: 5px 10px 0 0;
 	color: var( --color-neutral-light );
 }
 
@@ -132,7 +129,6 @@ $theme-info-height: 54px;
 
 .theme__badge-active {
 	flex: 0 0 auto;
-	padding: 18px 10px 0;
 	color: var( --color-primary-0 );
 	text-transform: uppercase;
 	font-size: $font-body-extra-small;
@@ -288,3 +284,4 @@ $theme-info-height: 54px;
 .theme__ribbon {
 	text-transfrom: capitalize;
 }
+
