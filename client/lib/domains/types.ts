@@ -101,6 +101,7 @@ export type ResponseDomain = {
 	registrar: string;
 	registrationDate: string;
 	renewableUntil: string;
+	showTransferConnectedDomainNudge: boolean | null;
 	sslStatus: string | null;
 	subscriptionId: string | null;
 	subdomainPart: string;
