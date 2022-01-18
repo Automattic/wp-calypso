@@ -14,8 +14,8 @@ import ProgressScreen from '../components/progress-screen';
 import { Importer, ImporterBaseProps, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
 
-export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( props ) => {
-	const importer: Importer = 'medium';
+export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > = ( props ) => {
+	const importer: Importer = 'squarespace';
 	const {
 		job,
 		urlData,
@@ -27,7 +27,7 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 		startImport,
 		resetImport,
 	} = props;
-	const importerData = importerConfig().medium;
+	const importerData = importerConfig().squarespace;
 
 	populateMessages();
 
@@ -40,8 +40,6 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 	 ↓ Methods
 	 */
 	function runImport() {
-		// if ( ! run ) return;
-
 		// If there is no existing import job, start a new
 		if ( job === undefined ) {
 			startImport( siteId, getImporterTypeForEngine( importer ) );
@@ -80,11 +78,11 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 	function populateMessages() {
 		const options: TranslateOptions = {
 			args: {
-				importerName: 'Medium',
+				importerName: 'Squarespace',
 			},
 			components: {
 				supportLink: (
-					<InlineSupportLink supportContext="importers-medium" showIcon={ false }>
+					<InlineSupportLink supportContext="importers-squarespace" showIcon={ false }>
 						{ translate( 'Need help exporting your content?' ) }
 					</InlineSupportLink>
 				),
@@ -97,13 +95,7 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 		} as TranslateOptionsText ) as string;
 
 		importerData.description = translate(
-			'Import your posts, tags, images, and videos from your %(importerName)s export file',
-			options
-		);
-
-		importerData.uploadDescription = translate(
-			'A %(importerName)s export file is a ZIP file containing several HTML files with your stories. ' +
-				'{{supportLink/}}',
+			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
 			options
 		);
 	}
@@ -156,4 +148,4 @@ export default connect( null, {
 	importSite,
 	startImport,
 	resetImport,
-} )( MediumImporter );
+} )( SquarespaceImporter );
