@@ -33,6 +33,8 @@ export class NavigationLink extends Component {
 		backIcon: PropTypes.string,
 		forwardIcon: PropTypes.string,
 		queryParams: PropTypes.object,
+		disabledSubmitOnClick: PropTypes.bool,
+		disabledTracksOnClick: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -105,15 +107,17 @@ export class NavigationLink extends Component {
 
 	handleClick = () => {
 		if ( this.props.direction === 'forward' ) {
-			this.props.submitSignupStep(
-				{ stepName: this.props.stepName },
-				this.props.defaultDependencies
-			);
+			if ( ! this.props.disabledSubmitOnClick ) {
+				this.props.submitSignupStep(
+					{ stepName: this.props.stepName },
+					this.props.defaultDependencies
+				);
+			}
 
 			this.props.goToNextStep();
 		}
 
-		if ( ! this.props.disabledTracks ) {
+		if ( ! this.props.disabledTracksOnClick ) {
 			this.recordClick();
 		}
 	};
