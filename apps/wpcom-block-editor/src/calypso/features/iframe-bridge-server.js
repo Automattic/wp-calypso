@@ -34,15 +34,32 @@ const editSitePackage = require( '@wordpress/edit-site' );
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
+const clickOverrides = {};
+let addedListener = false;
 // Replicates basic '$( el ).on( selector, cb )' with preventDefault
 // since we use that everywhere we call it.
 function addListenerToEach( selector, cb ) {
-	document.querySelectorAll( selector ).forEach( ( el ) => {
-		el.addEventListener( 'click', ( e ) => {
+	clickOverrides[ selector ] = cb;
+
+	if ( ! addedListener ) {
+		document.querySelector( '#editor' )?.addEventListener( 'click', handleClosestEvent );
+		addedListener = true;
+	}
+}
+
+// Calls a callback if the event occured on an element or parent thereof matching
+// the callback's selector. This is needed because elements are added and removed
+// from the DOM dynamically after the listeners are created. We need to handle
+// clicks anyways, so directly accessing the elements and adding listeners to them
+// is not viable.
+function handleClosestEvent( e ) {
+	// This loop will run on every click. Not ideal.
+	for ( const [ selector, cb ] of Object.entries( clickOverrides ) ) {
+		if ( e.target.closest( selector ) ) {
 			e.preventDefault();
 			cb( e );
-		} );
-	} );
+		}
+	}
 }
 
 /**
