@@ -78,10 +78,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 					/>
 
 					<SelectControl
-						label={ __(
-							'How many products do you plan to display? (optional)',
-							'woocommerce-admin'
-						) }
+						label={ __( 'How many products do you plan to display? (optional)' ) }
 						value={ getProfileValue( 'product_count' ) }
 						options={ [
 							{ value: '', label: '' },
@@ -103,10 +100,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 							{ value: 'other', label: __( 'Yes, on another platform' ) },
 							{
 								value: 'other-woocommerce',
-								label: __(
-									'Yes, I own a different store powered by WooCommerce',
-									'woocommerce-admin'
-								),
+								label: __( 'Yes, I own a different store powered by WooCommerce' ),
 							},
 							{
 								value: 'brick-mortar',
@@ -115,8 +109,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 							{
 								value: 'brick-mortar-other',
 								label: __(
-									'Yes, on another platform and in person at physical stores and/or events',
-									'woocommerce-admin'
+									'Yes, on another platform and in person at physical stores and/or events'
 								),
 							},
 						] }
