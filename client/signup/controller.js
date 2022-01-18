@@ -328,7 +328,7 @@ export default {
 
 		// Pre-fetching the experiment
 		if ( flowName === 'onboarding' || flowName === 'launch-site' ) {
-			await loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v1' );
+			await loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' );
 		}
 
 		context.primary = createElement( SignupComponent, {

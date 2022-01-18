@@ -35,7 +35,7 @@ export class PlansStep extends Component {
 
 	componentWillMount() {
 		if ( this.props.flowName === 'onboarding' || this.props.flowName === 'launch-site' ) {
-			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v1' ).then(
+			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' ).then(
 				( experiment ) => {
 					this.setState( { experiment, experimentLoaded: true } );
 				}
@@ -128,7 +128,7 @@ export class PlansStep extends Component {
 		}
 
 		if (
-			'calypso_signup_monthly_plans_default_202201_v1' === this.state.experiment?.experimentName &&
+			'calypso_signup_monthly_plans_default_202201_v2' === this.state.experiment?.experimentName &&
 			this.state.experiment?.variationName !== null
 		) {
 			return 'monthly';
