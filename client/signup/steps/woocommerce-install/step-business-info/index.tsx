@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
 import { ActionSection, StyledNextButton } from '../confirm';
@@ -19,7 +18,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) as string;
 
 	const { get, save, update } = useSiteSettings( siteId );
 
@@ -204,8 +202,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 		<StepWrapper
 			flowName="woocommerce-install"
 			hideSkip={ true }
-			allowBackFirstStep={ true }
-			backUrl={ `/woocommerce-installation/${ siteDomain }` }
 			headerText={ __( 'Tell us a bit about your business' ) }
 			fallbackHeaderText={ __( 'Tell us a bit about your business' ) }
 			subHeaderText={ __( 'We will guide you to get started based on your responses.' ) }

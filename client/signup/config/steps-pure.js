@@ -739,12 +739,12 @@ export function generateSteps( {
 		},
 
 		// Woocommerce Install steps.
-		'business-info': {
-			stepName: 'business-info',
-			dependencies: [ 'site' ],
-		},
 		'store-address': {
 			stepName: 'store-address',
+			dependencies: [ 'site' ],
+		},
+		'business-info': {
+			stepName: 'business-info',
 			dependencies: [ 'site' ],
 		},
 		confirm: {
