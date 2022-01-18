@@ -109,11 +109,11 @@ export class MigrationScreen extends SectionMigrate {
 						<Title>
 							{ ( MigrationStatus.BACKING_UP === this.state.migrationStatus ||
 								MigrationStatus.NEW === this.state.migrationStatus ) &&
-								sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) }
-							...
+								sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) +
+									'...' }
 							{ MigrationStatus.RESTORING === this.state.migrationStatus &&
-								sprintf( translate( 'Restoring to %(website)s' ), { website: targetSiteSlug } ) }
-							...
+								sprintf( translate( 'Restoring to %(website)s' ), { website: targetSiteSlug } ) +
+									'...' }
 						</Title>
 						<ProgressBar
 							color={ 'black' }
