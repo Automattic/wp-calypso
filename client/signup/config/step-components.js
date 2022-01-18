@@ -81,6 +81,7 @@ const stepNameToModuleName = {
 	'store-address': 'woocommerce-install/step-store-address',
 	confirm: 'woocommerce-install/confirm',
 	transfer: 'woocommerce-install/transfer',
+	'sell-details': 'sell-details',
 };
 
 export function getStepModuleName( stepName ) {
