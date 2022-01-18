@@ -9,7 +9,7 @@ const noop = () => {};
 
 interface MasterbarItemProps {
 	url?: string;
-	innerRef?: LegacyRef< HTMLButtonElement >;
+	innerRef?: LegacyRef< HTMLButtonElement | HTMLAnchorElement >;
 	tipTarget?: string;
 	onClick?: () => void;
 	tooltip?: string;
@@ -84,20 +84,24 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 
 		if ( this.props.url ) {
 			return (
-				<a { ...attributes } href={ this.props.url }>
+				<a
+					{ ...attributes }
+					href={ this.props.url }
+					ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
+				>
 					{ this.renderChildren() }
 				</a>
 			);
 		}
 
 		return (
-			<button { ...attributes } ref={ this.props.innerRef }>
+			<button { ...attributes } ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }>
 				{ this.renderChildren() }
 			</button>
 		);
 	}
 }
 
-export default forwardRef< HTMLButtonElement, MasterbarItemProps >( ( props, ref ) => (
-	<MasterbarItem innerRef={ ref } { ...props } />
-) );
+export default forwardRef< HTMLButtonElement | HTMLAnchorElement, MasterbarItemProps >(
+	( props, ref ) => <MasterbarItem innerRef={ ref } { ...props } />
+);
