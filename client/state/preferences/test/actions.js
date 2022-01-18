@@ -1,13 +1,10 @@
 import { expect } from 'chai';
-import sinon from 'sinon';
 import {
 	PREFERENCES_RECEIVE,
 	PREFERENCES_FETCH,
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_SET,
-	PREFERENCES_SAVE,
-	PREFERENCES_SAVE_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
@@ -130,15 +127,6 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch PREFERENCES_SAVE action when thunk triggered', () => {
-			savePreference( 'preferenceKey', 'preferenceValue' )( spy );
-			expect( spy ).to.have.been.calledWithMatch( {
-				type: PREFERENCES_SAVE,
-				key: 'preferenceKey',
-				value: 'preferenceValue',
-			} );
-		} );
-
 		test( 'should dispatch PREFERENCES_RECEIVE action when request completes', () => {
 			return savePreference(
 				'preferenceKey',
@@ -147,21 +135,6 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWithMatch( {
 					type: PREFERENCES_RECEIVE,
 					values: responseShape[ USER_SETTING_KEY ],
-				} );
-			} );
-		} );
-
-		test( 'should dispatch PREFERENCES_SAVE_FAILURE action when request fails', () => {
-			return savePreference(
-				'loggedOut',
-				true
-			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWithMatch( {
-					type: PREFERENCES_SAVE_FAILURE,
-					error: sinon.match( {
-						message:
-							'An active access token must be used to query information about the current user.',
-					} ),
 				} );
 			} );
 		} );
