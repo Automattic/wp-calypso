@@ -17,7 +17,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { receiveSite, requestSite, updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import DoneButton from '../../components/done-button';
-import { MigrationStatus, MigrationStep } from '../types';
+import { MigrationStatus, WPImportOption } from '../types';
 import { ImportEverything } from './index';
 
 interface Props {
@@ -34,7 +34,7 @@ export class MigrationScreen extends SectionMigrate {
 		const queryParams = {
 			from: sourceSiteSlug,
 			to: targetSiteSlug,
-			step: MigrationStep.CONFIRM,
+			option: WPImportOption.EVERYTHING,
 			run: true,
 		};
 
@@ -94,83 +94,104 @@ export class MigrationScreen extends SectionMigrate {
 		this.requestMigrationReset( targetSiteId );
 	};
 
-	render() {
-		const { sourceSite, targetSite, targetSiteSlug, fromSiteAnalyzedData, translate } = this.props;
+	renderLoading() {
+		return <LoadingEllipsis />;
+	}
 
+	renderMigrationConfirm() {
+		const { sourceSite, targetSite, targetSiteSlug, fromSiteAnalyzedData } = this.props;
+
+		// TODO: Rename field names. It should be consistent through the screens
+		return (
+			<ImportEverything
+				startImport={ this.startMigration }
+				siteItem={ targetSite }
+				siteSlug={ targetSiteSlug }
+				fromSite={ sourceSite.URL }
+				fromSiteItem={ sourceSite }
+				fromSiteAnalyzedData={ fromSiteAnalyzedData }
+			/>
+		);
+	}
+
+	renderMigrationProgress() {
+		const { translate, sourceSite, targetSiteSlug } = this.props;
+
+		return (
+			<Progress>
+				<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
+				<Title>
+					{ ( MigrationStatus.BACKING_UP === this.state.migrationStatus ||
+						MigrationStatus.NEW === this.state.migrationStatus ) &&
+						sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) + '...' }
+					{ MigrationStatus.RESTORING === this.state.migrationStatus &&
+						sprintf( translate( 'Restoring to %(website)s' ), { website: targetSiteSlug } ) +
+							'...' }
+				</Title>
+				<ProgressBar
+					color={ 'black' }
+					compact={ true }
+					value={ this.state.percent ? this.state.percent : 0 }
+				/>
+				<SubTitle>
+					{ translate( "This may take a few minutes. We'll notify you by email when it's done." ) }
+				</SubTitle>
+			</Progress>
+		);
+	}
+
+	renderMigrationComplete() {
+		const { translate, targetSiteSlug } = this.props;
+
+		return (
+			<Hooray>
+				<Title>{ translate( 'Hooray!' ) }</Title>
+				<SubTitle>
+					{ translate( 'Congratulations. Your content was successfully imported.' ) }
+				</SubTitle>
+				<DoneButton siteSlug={ targetSiteSlug } />
+			</Hooray>
+		);
+	}
+
+	renderMigrationError() {
+		const { translate } = this.props;
+
+		return (
+			<div className={ classnames( 'import__header' ) }>
+				<div className={ classnames( 'import__heading import__heading-center' ) }>
+					<Title>{ translate( 'Import failed' ) }</Title>
+					<SubTitle>
+						{ translate( 'There was an error with your import.' ) }
+						<br />
+						{ translate( 'Please try again soon or contact support for help.' ) }
+					</SubTitle>
+					<div className={ classnames( 'import__buttons-group' ) }>
+						<NextButton onClick={ this.resetMigration }>{ translate( 'Try again' ) }</NextButton>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	render() {
 		switch ( this.state.migrationStatus ) {
 			case MigrationStatus.UNKNOWN:
-				return <LoadingEllipsis />;
+				return this.renderLoading();
 
 			case MigrationStatus.INACTIVE:
-				// TODO: Rename field names. It should be consistent through the screens
-				return (
-					<ImportEverything
-						startImport={ this.startMigration }
-						siteItem={ targetSite }
-						siteSlug={ targetSiteSlug }
-						fromSite={ sourceSite.URL }
-						fromSiteItem={ sourceSite }
-						fromSiteAnalyzedData={ fromSiteAnalyzedData }
-					/>
-				);
+				return this.renderMigrationConfirm();
 
 			case MigrationStatus.NEW:
 			case MigrationStatus.BACKING_UP:
 			case MigrationStatus.RESTORING:
-				return (
-					<Progress>
-						<Interval onTick={ this.updateFromAPI } period={ EVERY_TEN_SECONDS } />
-						<Title>
-							{ ( MigrationStatus.BACKING_UP === this.state.migrationStatus ||
-								MigrationStatus.NEW === this.state.migrationStatus ) &&
-								sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) +
-									'...' }
-							{ MigrationStatus.RESTORING === this.state.migrationStatus &&
-								sprintf( translate( 'Restoring to %(website)s' ), { website: targetSiteSlug } ) +
-									'...' }
-						</Title>
-						<ProgressBar
-							color={ 'black' }
-							compact={ true }
-							value={ this.state.percent ? this.state.percent : 0 }
-						/>
-						<SubTitle>
-							{ translate(
-								"This may take a few minutes. We'll notify you by email when it's done."
-							) }
-						</SubTitle>
-					</Progress>
-				);
+				return this.renderMigrationProgress();
 
 			case MigrationStatus.DONE:
-				return (
-					<Hooray>
-						<Title>{ translate( 'Hooray!' ) }</Title>
-						<SubTitle>
-							{ translate( 'Congratulations. Your content was successfully imported.' ) }
-						</SubTitle>
-						<DoneButton siteSlug={ targetSiteSlug } />
-					</Hooray>
-				);
+				return this.renderMigrationComplete();
 
 			case MigrationStatus.ERROR:
-				return (
-					<div className={ classnames( 'import__header' ) }>
-						<div className={ classnames( 'import__heading import__heading-center' ) }>
-							<Title>{ translate( 'Import failed' ) }</Title>
-							<SubTitle>
-								{ translate( 'There was an error with your import.' ) }
-								<br />
-								{ translate( 'Please try again soon or contact support for help.' ) }
-							</SubTitle>
-							<div className={ classnames( 'import__buttons-group' ) }>
-								<NextButton onClick={ this.resetMigration }>
-									{ translate( 'Try again' ) }
-								</NextButton>
-							</div>
-						</div>
-					</div>
-				);
+				return this.renderMigrationError();
 
 			default:
 				return null;
