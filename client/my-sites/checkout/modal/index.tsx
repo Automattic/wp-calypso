@@ -1,7 +1,6 @@
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import CheckoutMasterbar from 'calypso/layout/masterbar/checkout';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
@@ -15,28 +14,22 @@ import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
-interface Props {
+export interface Props {
 	title?: string;
+	productAliasFromUrl?: string;
 	redirectTo?: string;
 	checkoutOnSuccessCallback?: () => void;
 	onClose?: () => void;
 }
 
-const useProducts = () => {
-	const { search } = window.location;
-	const products = useMemo( () => new URLSearchParams( search ).get( 'products' ), [ search ] );
-
-	return products;
-};
-
 const CheckoutModal: FunctionComponent< Props > = ( {
 	title = '',
+	productAliasFromUrl,
 	redirectTo,
 	checkoutOnSuccessCallback,
 	onClose,
 } ) => {
 	const translate = useTranslate();
-	const products = useProducts();
 	const { siteSlug, selectedSiteId, previousRoute, isJetpackNotAtomic } = useSelector(
 		( state ) => {
 			const site = getSelectedSite( state );
@@ -62,10 +55,6 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 		handleRequestClose();
 	};
 
-	if ( ! products ) {
-		return null;
-	}
-
 	return (
 		<Modal
 			open
@@ -89,7 +78,7 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 					<CompositeCheckout
 						siteId={ selectedSiteId ?? undefined }
 						siteSlug={ siteSlug }
-						productAliasFromUrl={ products }
+						productAliasFromUrl={ productAliasFromUrl }
 						// Custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
 						redirectTo={ redirectTo || previousRoute }
 						backUrl={ previousRoute }

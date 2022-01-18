@@ -17,10 +17,10 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
@@ -169,13 +169,7 @@ export default function DesignPickerStep( props ) {
 			return null;
 		}
 
-		return (
-			<AsyncLoad
-				require="calypso/my-sites/checkout/modal"
-				placeholder={ null }
-				checkoutOnSuccessCallback={ null }
-			/>
-		);
+		return <AsyncCheckoutModal checkoutOnSuccessCallback={ null } />;
 	}
 
 	function renderDesignPicker() {
