@@ -86,7 +86,6 @@ interface CheckoutModalOptions extends RequestCart {
 interface State {
 	allowedTypes?: any;
 	classicBlockEditorId?: any;
-	gallery?: any;
 	isIframeLoaded: boolean;
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
@@ -309,7 +308,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 		if ( EditorActions.OpenMediaModal === action && ports && ports[ 0 ] ) {
 			const { siteId } = this.props;
-			const { allowedTypes, gallery, multiple, value } = payload;
+			const { allowedTypes, multiple, value } = payload;
 
 			// set imperatively on the instance because this is not
 			// the kind of assignment which causes re-renders and we
@@ -337,7 +336,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				this.props.selectMediaItems( siteId, [] );
 			}
 
-			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
+			this.setState( { isMediaModalVisible: true, allowedTypes, multiple } );
 		}
 
 		if ( EditorActions.OpenCheckoutModal === action ) {
