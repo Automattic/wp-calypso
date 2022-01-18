@@ -89,7 +89,9 @@ const PluginDetailsCTA = ( {
 					<div className="plugin-details-CTA__price align-right">
 						<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 							{ ( { isFetching, price, period } ) =>
-								! isFetching && (
+								isFetching ? (
+									<div className="plugin-details-CTA__price-placeholder">...</div>
+								) : (
 									<>
 										{ price + ' ' }
 										<span className="plugin-details-CTA__period">{ period }</span>
@@ -119,7 +121,9 @@ const PluginDetailsCTA = ( {
 			<div className="plugin-details-CTA__price">
 				<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 					{ ( { isFetching, price, period } ) =>
-						! isFetching && (
+						isFetching ? (
+							<div className="plugin-details-CTA__price-placeholder">...</div>
+						) : (
 							<>
 								{ price ? (
 									<>

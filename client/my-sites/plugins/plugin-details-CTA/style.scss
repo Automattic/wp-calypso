@@ -20,6 +20,12 @@
 	}
 }
 
+.plugin-details-CTA__price-placeholder {
+	width: 100%;
+
+	@extend %placeholder;
+}
+
 .plugin-details-CTA__period {
 	font-family: $sans;
 	font-size: $font-body-extra-small;
