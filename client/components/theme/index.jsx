@@ -161,14 +161,14 @@ export class Theme extends Component {
 		} );
 
 		/*
-		 * Check the theme object for the true price.
+		 * Check the theme object (not the price prop) for the true price.
 		 * Sometimes it will be an object, other times it will be a string.
 		 * Check both cases to ensure we have a non-zero price.
 		 */
 		let isPremiumTheme = false;
 		if ( typeof theme.price === 'object' && 0 !== theme.price.value ) {
 			isPremiumTheme = true;
-		} else if ( typeof theme.price === 'string' && ! isEmpty( theme.price ) ) {
+		} else if ( typeof theme.price === 'string' && '' !== theme.price ) {
 			isPremiumTheme = true;
 		}
 
