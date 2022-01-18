@@ -93,6 +93,11 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 			...options,
 			textOnly: true,
 		} as TranslateOptionsText ) as string;
+
+		importerData.description = translate(
+			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
+			options
+		);
 	}
 
 	return (
