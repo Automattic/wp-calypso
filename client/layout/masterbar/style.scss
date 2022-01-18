@@ -122,13 +122,10 @@ $autobar-height: 20px;
 .masterbar__section {
 	flex: 2;
 	display: flex;
-}
 
-.masterbar__section--left {
 	@include breakpoint-deprecated( '>480px' ) {
 		.masterbar__item {
-			flex-grow: 0;
-			min-width: 100px;
+			flex: 0 0 auto;
 		}
 	}
 }
@@ -137,17 +134,13 @@ $autobar-height: 20px;
 	flex: 1;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		flex-grow: 0;
+		flex: 0 0 auto;
 	}
 }
 
 .masterbar__section--right {
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-grow: 0;
-
-		.masterbar__item {
-			min-width: 50px;
-		}
 	}
 }
 
@@ -165,7 +158,7 @@ $autobar-height: 20px;
 	font-size: $font-body-small;
 	height: var( --masterbar-height );
 	line-height: var( --masterbar-height );
-	padding: 0;
+	padding: 0 8px;
 	text-decoration: none;
 	cursor: default;
 	transition: all 0.2s ease-in-out;
