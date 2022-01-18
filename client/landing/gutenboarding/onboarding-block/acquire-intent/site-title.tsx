@@ -67,6 +67,9 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 		],
 		[ _x ]
 	);
+
+	// Calculate the width of the longest translated title in the examples array
+	// and apply additional class name based on whether it can fit next to the label.
 	const inputElement = inputRef.current;
 	const maxTitleWidth = React.useMemo(
 		() =>
@@ -76,13 +79,24 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 			),
 		[ siteTitleExamples, inputElement ]
 	);
-	const [ hasOverflowingPlaceholder, setHasOverflowingPlaceholder ] = React.useState( false );
-	const labelRef = React.useRef();
+	const [ formWidth, setFormWidth ] = React.useState( 0 );
+	const labelRef = React.useRef< HTMLElement >();
 	const resizeRef = useWindowResizeCallback( ( formDomRect ) => {
+		if ( ! formDomRect ) {
+			return;
+		}
+
+		setFormWidth( formDomRect.width );
+	} );
+	const hasOverflowingPlaceholder = React.useMemo( () => {
+		if ( formWidth === 0 || ! labelRef ) {
+			return false;
+		}
+
 		const labelDomRect = labelRef.current.getBoundingClientRect();
 
-		setHasOverflowingPlaceholder( maxTitleWidth > formDomRect.width - labelDomRect.width );
-	} );
+		return maxTitleWidth > formWidth - labelDomRect.width;
+	}, [ maxTitleWidth, formWidth, labelRef ] );
 
 	const handleFormSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
 		// hitting 'Enter' when focused on the input field should direct to next step.
