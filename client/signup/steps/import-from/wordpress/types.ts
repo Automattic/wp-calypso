@@ -8,6 +8,11 @@ export enum MigrationStatus {
 	ERROR = 'error',
 }
 
+export enum WPImportOption {
+	EVERYTHING = 'everything',
+	CONTENT_ONLY = 'content',
+}
+
 export enum MigrationStep {
 	INPUT = 'input',
 	UPGRADE = 'upgrade',

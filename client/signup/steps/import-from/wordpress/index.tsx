@@ -9,7 +9,7 @@ import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ImportJob } from '../types';
 import { ContentChooser } from './content-chooser';
 import MigrationScreen from './import-everything/migration-screen';
-import { MigrationStep } from './types';
+import { WPImportOption } from './types';
 
 import './style.scss';
 
@@ -28,7 +28,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	/**
 	 ↓ Fields
 	 */
-	const [ step, setStep ] = useState< MigrationStep >();
+	const [ option, setOption ] = useState< WPImportOption >();
 	const { fromSite, siteSlug } = props;
 	const siteItem = useSelector( ( state ) => getSiteBySlug( state, siteSlug ) );
 	const fromSiteItem = useSelector( ( state ) =>
@@ -39,7 +39,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	/**
 	 ↓ Effects
 	 */
-	useEffect( checkStepQueryParam );
+	useEffect( checkOptionQueryParam );
 	useEffect( () => {
 		dispatch( analyzeUrl( fromSite ) );
 	}, [ fromSiteAnalyzedData && fromSiteAnalyzedData.url ] );
@@ -52,26 +52,32 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	}
 
 	function switchToMigrationScreen() {
-		const currentPath = window.location.pathname + window.location.search;
-		const queryParams = { step: MigrationStep.CONFIRM };
-
-		page( addQueryArgs( queryParams, currentPath ) );
+		updateCurrentPageQueryParam( { option: WPImportOption.EVERYTHING } );
 	}
 
 	function switchToContentUploadScreen() {
-		// switchToContentUploadScreen
+		updateCurrentPageQueryParam( { option: WPImportOption.CONTENT_ONLY } );
 	}
 
-	function checkStepQueryParam() {
+	function checkOptionQueryParam() {
 		const urlSearchParams = new URLSearchParams( window.location.search );
-		const stepParam = urlSearchParams.get( 'step' );
-		const steps: string[] = Object.values( MigrationStep );
+		const optionParam = urlSearchParams.get( 'option' );
+		const options: string[] = Object.values( WPImportOption );
 
-		if ( stepParam && steps.indexOf( stepParam ) >= 0 ) {
-			setStep( stepParam as MigrationStep );
+		if ( optionParam && options.indexOf( optionParam ) >= 0 ) {
+			setOption( optionParam as WPImportOption );
 		} else {
-			setStep( MigrationStep.MIGRATE_OR_IMPORT );
+			setOption( undefined );
 		}
+	}
+
+	function updateCurrentPageQueryParam( params: {
+		option: WPImportOption;
+		[ key: string ]: string;
+	} ) {
+		const currentPath = window.location.pathname + window.location.search;
+
+		page( addQueryArgs( params, currentPath ) );
 	}
 
 	/**
@@ -79,7 +85,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 */
 	return (
 		<>
-			{ MigrationStep.MIGRATE_OR_IMPORT === step && (
+			{ undefined === option && (
 				<ContentChooser
 					onJetpackSelection={ installJetpack }
 					onContentOnlySelection={ switchToContentUploadScreen }
@@ -88,11 +94,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 				/>
 			) }
 
-			{ MigrationStep.CONFIRM === step && (
+			{ WPImportOption.EVERYTHING === option && (
 				<MigrationScreen
 					sourceSiteId={ fromSiteItem?.ID as number }
 					url={ fromSite }
-					step={ step }
 					targetSite={ siteItem }
 					targetSiteId={ siteItem?.ID as number }
 					targetSiteSlug={ siteSlug }
