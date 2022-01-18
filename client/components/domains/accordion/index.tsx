@@ -28,6 +28,7 @@ const Accordion = ( {
 	return (
 		<div className="accordion">
 			<FoldableCard
+				clickableHeader
 				header={ renderHeader() }
 				expanded={ expanded }
 				disabled={ isPlaceholder }
