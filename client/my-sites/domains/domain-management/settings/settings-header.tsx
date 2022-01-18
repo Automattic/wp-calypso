@@ -2,12 +2,18 @@ import { Circle, SVG } from '@wordpress/components';
 import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as DomainType } from 'calypso/lib/domains/constants';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
-import type { SettingsHeaderProps } from './types';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import type {
+	SettingsHeaderConnectedProps,
+	SettingsHeaderOwnProps,
+	SettingsHeaderProps,
+} from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
@@ -88,7 +94,7 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	};
 
 	const renderBadges = () => {
-		const { domain } = props;
+		const { domain, isDomainOnlySite } = props;
 		const badges = [];
 
 		if (
@@ -102,7 +108,7 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 			badges.push( statusBadge );
 		}
 
-		if ( domain.isPrimary ) {
+		if ( domain.isPrimary && ! isDomainOnlySite ) {
 			badges.push( renderSuccessBadge( __( 'Primary site address' ), home ) );
 		}
 
@@ -165,4 +171,10 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	);
 };
 
-export default SettingsHeader;
+export default connect(
+	( state, ownProps: SettingsHeaderOwnProps ): SettingsHeaderConnectedProps => {
+		return {
+			isDomainOnlySite: !! isDomainOnlySite( state, ownProps.site.ID ),
+		};
+	}
+)( SettingsHeader );
