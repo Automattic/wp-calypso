@@ -409,7 +409,7 @@ export function generateFlows( {
 			name: 'woocommerce-install',
 			pageTitle: translate( 'Add WooCommerce to your site' ),
 			steps: isEnabled( 'woop' )
-				? [ 'business-info', 'store-address', 'confirm', 'transfer' ]
+				? [ 'store-address', 'business-info', 'confirm', 'transfer' ]
 				: [ 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
