@@ -4,9 +4,10 @@ import { requestProductsList } from 'calypso/state/products-list/actions';
 import { isProductsListFetching, getProductsList } from 'calypso/state/products-list/selectors';
 
 const request = ( props ) => ( dispatch, getState ) => {
+	const productsList = getProductsList( getState() );
 	if (
 		isProductsListFetching( getState() ) ||
-		Object.keys( getProductsList( getState() ) ).length > 0
+		( productsList && Object.keys( productsList ).length > 0 )
 	) {
 		return;
 	}
