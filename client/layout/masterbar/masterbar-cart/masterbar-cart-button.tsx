@@ -4,6 +4,8 @@ import { MiniCart } from '@automattic/mini-cart';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MasterbarItem from '../item';
 
 import './masterbar-cart-button-style.scss';
@@ -25,6 +27,7 @@ export function MasterbarCartButton( {
 	const cartButtonRef = useRef( null );
 	const [ isActive, setIsActive ] = useState( false );
 	const translate = useTranslate();
+	const reduxDispatch = useDispatch();
 
 	if ( ! selectedSiteSlug || ! selectedSiteId || responseCart.products.length < 1 ) {
 		return null;
@@ -33,7 +36,8 @@ export function MasterbarCartButton( {
 	const onClick = () => {
 		setIsActive( ( active ) => {
 			if ( ! active ) {
-				reloadFromServer();
+				reloadFromServer(); // Refresh the cart whenever the popup is made visible.
+				reduxDispatch( recordTracksEvent( 'calypso_masterbar_cart_open' ) );
 			}
 			return ! active;
 		} );
