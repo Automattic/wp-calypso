@@ -71,9 +71,9 @@ project {
 		param("teamcity.git.fetchAllHeads", "true")
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
-		password("E2E_CONFIG_ENCRYPTION_KEY_JAN_18_22", "credentialsJSON:3464b9c0-ec54-430c-8b6e-41898eb1111c", display = ParameterDisplay.HIDDEN)
+		password("E2E_CONFIG_ENCRYPTION_KEY_JANUARY_22", "credentialsJSON:b06c1dcd-2188-45e2-b08b-dd97b06e2be6", display = ParameterDisplay.HIDDEN)
 		password("CONFIG_E2E_ENCRYPTION_KEY_LEGACY", "credentialsJSON:819c139c-90a1-4803-8367-00e5aa5fdb07", display = ParameterDisplay.HIDDEN)
-		param("E2E_CONFIG_ENCRYPTION_KEY", "%E2E_CONFIG_ENCRYPTION_KEY_JAN_18_22%")
+		param("E2E_CONFIG_ENCRYPTION_KEY", "%E2E_CONFIG_ENCRYPTION_KEY_JANUARY_22%")
 	}
 
 	features {
