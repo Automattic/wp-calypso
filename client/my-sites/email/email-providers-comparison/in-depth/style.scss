@@ -1,15 +1,33 @@
 @import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.email-providers-in-depth-comparison__header,
+.email-providers-in-depth-comparison__sub-header {
+	padding-left: 16px;
+	padding-right: 16px;
+	text-align: center;
+
+	@include break-medium {
+		padding: 0;
+	}
+}
 
 .email-providers-in-depth-comparison__header {
 	font-size: $font-title-large;
-	text-align: center;
+	padding-left: 16px;
+	padding-right: 16px;
+	padding-top: 16px;
 
 	@extend .wp-brand-font;
+
+	@include break-medium {
+		padding: 0;
+	}
 }
 
 .email-providers-in-depth-comparison__sub-header {
 	font-size: $font-body-small;
-	text-align: center;
 }
 
 .email-providers-in-depth-comparison-list,
