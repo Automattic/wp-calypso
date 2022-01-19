@@ -1,3 +1,7 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .edit-contact-info-page {
 	&__sidebar {
 		padding: 24px;
@@ -14,6 +18,19 @@
 			p {
 				margin-bottom: 0.5em;
 			}
+		}
+	}
+	.formatted-header__title {
+		font-weight: 400;
+		margin: 0;
+		line-height: 100%;
+
+		@include break-zoomed-in {
+			font-size: $font-title-medium;
+		}
+
+		@include break-small {
+			font-size: $font-title-large;
 		}
 	}
 }
