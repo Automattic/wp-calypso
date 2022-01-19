@@ -4,7 +4,7 @@
 
 .edit-contact-info-page {
 	.contact-details-form-fields {
-		padding: 0 24px 24px;
+		padding: 0 16px 24px;
 		@include breakpoint-deprecated( '>660px' ) {
 			padding: 0 0 24px;
 		}
