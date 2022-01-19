@@ -29,7 +29,6 @@ $autobar-height: 20px;
 	transition: transform 0.2s ease-out;
 	box-sizing: border-box;
 	justify-content: space-between;
-	white-space: nowrap;
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
@@ -174,6 +173,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__item-content {
+		white-space: nowrap;
 		color: var( --color-masterbar-text );
 	}
 
