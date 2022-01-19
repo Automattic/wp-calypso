@@ -134,8 +134,10 @@ const useItemPrice = (
 		};
 	}
 
-	let originalPrice = itemCost ?? 0;
-	let discountedPrice = introductoryOfferPrices.introOfferCost ?? undefined;
+	let originalPrice = itemCost ? itemCost / 12 : 0;
+	let discountedPrice = introductoryOfferPrices.introOfferCost
+		? introductoryOfferPrices.introOfferCost / 12
+		: undefined;
 
 	// Jetpack CRM price won't come from the API, so we need to hard-code it for now.
 	if ( item && [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( item.productSlug ) ) {
