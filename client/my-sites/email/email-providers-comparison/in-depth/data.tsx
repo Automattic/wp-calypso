@@ -12,7 +12,7 @@ import { ADDING_GSUITE_TO_YOUR_SITE, ADDING_TITAN_TO_YOUR_SITE } from 'calypso/l
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 
-export const isAvailable = (
+export const isBillingAvailable = (
 	emailProviderFeatures: EmailProviderFeatures,
 	intervalLength: IntervalLength
 ) => {

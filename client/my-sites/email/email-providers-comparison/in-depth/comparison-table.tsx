@@ -2,7 +2,7 @@
 
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { isAvailable } from 'calypso/my-sites/email/email-providers-comparison/in-depth/data';
+import { isBillingAvailable } from 'calypso/my-sites/email/email-providers-comparison/in-depth/data';
 import EmailProviderPrice from 'calypso/my-sites/email/email-providers-comparison/in-depth/email-provider-price';
 import LearnMoreLink from 'calypso/my-sites/email/email-providers-comparison/in-depth/learn-more-link';
 import type { ComparisonListOrTableProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
@@ -123,7 +123,7 @@ const ComparisonTable = ( {
 							<td key={ emailProviderFeatures.slug }>
 								<Button
 									className="email-providers-in-depth-comparison-table__button"
-									disabled={ ! isAvailable( emailProviderFeatures, intervalLength ) }
+									disabled={ ! isBillingAvailable( emailProviderFeatures, intervalLength ) }
 									onClick={ () => onSelectEmailProvider( emailProviderFeatures.slug ) }
 									primary
 								>
