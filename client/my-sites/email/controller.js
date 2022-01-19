@@ -107,7 +107,6 @@ export default {
 				selectedDomainName={ pageContext.params.domain }
 				selectedEmailProviderSlug={ pageContext.query.provider }
 				selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
-				siteName={ pageContext.params.site }
 				source={ pageContext.query.source }
 			/>
 		);
@@ -123,11 +122,8 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<EmailProvidersInDepthComparison
-					comparisonContext="email-in-depth-comparison"
 					selectedDomainName={ pageContext.params.domain }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
-					siteName={ pageContext.params.site }
-					source={ pageContext.query.source }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

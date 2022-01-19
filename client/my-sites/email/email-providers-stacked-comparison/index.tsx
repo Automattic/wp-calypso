@@ -36,7 +36,6 @@ type EmailProvidersStackedComparisonProps = {
 	selectedDomainName: string;
 	selectedEmailProviderSlug: string;
 	selectedIntervalLength: IntervalLength | undefined;
-	siteName: string;
 	source: string;
 };
 
@@ -45,7 +44,6 @@ const EmailProvidersStackedComparison = ( {
 	selectedDomainName,
 	selectedEmailProviderSlug,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
-	siteName,
 	source,
 }: EmailProvidersStackedComparisonProps ): ReactElement => {
 	const translate = useTranslate();
@@ -135,14 +133,14 @@ const EmailProvidersStackedComparison = ( {
 				{ translate( 'Pick an email solution' ) }
 			</h1>
 
-			{ isEnabled( 'emails/in-depth-comparison' ) && (
+			{ isEnabled( 'emails/in-depth-comparison' ) && selectedSite && (
 				<div className="email-providers-stacked-comparison__sub-header">
 					{ translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
 						components: {
 							a: (
 								<a
 									href={ emailManagementInDepthComparison(
-										siteName,
+										selectedSite.slug,
 										selectedDomainName,
 										currentRoute,
 										null,
