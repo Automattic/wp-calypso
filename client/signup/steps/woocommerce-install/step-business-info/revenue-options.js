@@ -62,10 +62,8 @@ const convertCurrency = ( value, country ) => {
 	}
 
 	const exchangeRate = exchangeRates[ region ] || exchangeRates.US;
-	const digits = exchangeRate.toString().split( '.' )[ 0 ].length;
-	const multiplier = Math.pow( 10, 2 + digits );
 
-	return Math.round( ( value * exchangeRate ) / multiplier ) * multiplier;
+	return Math.round( value * exchangeRate );
 };
 
 export const getRevenueOptions = ( currency, country ) => [
