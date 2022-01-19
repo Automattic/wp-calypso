@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
@@ -121,6 +122,7 @@ export class NavigationLink extends Component {
 		const tracksProps = {
 			flow: this.props.flowName,
 			step: this.props.stepName,
+			intent: this.props.intent,
 		};
 
 		if ( this.props.direction === 'back' ) {
@@ -190,9 +192,14 @@ export class NavigationLink extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		userLoggedIn: isUserLoggedIn( state ),
-		signupProgress: getSignupProgress( state ),
-	} ),
+	( state ) => {
+		const { intent } = getSignupDependencyStore( state );
+
+		return {
+			userLoggedIn: isUserLoggedIn( state ),
+			signupProgress: getSignupProgress( state ),
+			intent,
+		};
+	},
 	{ recordTracksEvent, submitSignupStep }
 )( localize( NavigationLink ) );
