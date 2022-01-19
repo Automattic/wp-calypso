@@ -7,6 +7,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SellDetails from './sell-details';
 import type { SellDetailsFormValues } from './types';
+import './index.scss';
 
 interface Props {
 	goToNextStep: () => void;
