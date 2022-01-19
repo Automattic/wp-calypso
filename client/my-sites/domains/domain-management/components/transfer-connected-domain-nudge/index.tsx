@@ -1,4 +1,4 @@
-import { Icon, info } from '@wordpress/icons';
+import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
@@ -29,7 +29,7 @@ const TransferConnectedDomainNudge = ( {
 
 	return (
 		<div className="transfer-connected-domain-nudge">
-			<Icon icon={ info } size={ 18 } viewBox="2 2 20 20" />
+			<Icon icon={ starFilled } size={ 18 } viewBox="2 2 20 20" />
 			<span>{ message }</span>
 		</div>
 	);
