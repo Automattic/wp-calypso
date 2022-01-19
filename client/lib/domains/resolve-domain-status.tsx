@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { Purchase } from '@automattic/wpcom-checkout';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
@@ -17,18 +18,47 @@ import {
 	domainMappingSetup,
 } from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
+import { ResponseDomain } from './types';
+import type { ReactChild } from 'react';
+
+export type ResolveDomainStatusReturn =
+	| {
+			statusText: ReactChild | Array< ReactChild >;
+			statusClass:
+				| 'status-error'
+				| 'status-warning'
+				| 'status-alert'
+				| 'status-success'
+				| 'status-neutral'
+				| 'status-premium';
+			status: ReactChild;
+			icon: 'info' | 'verifying' | 'check_circle' | 'cached' | 'cloud_upload' | 'download_done';
+			listStatusText?: ReactChild | Array< ReactChild >;
+			listStatusClass?: 'alert' | 'warning' | 'verifying' | 'info' | 'premium' | 'transfer-warning';
+			listStatusWeight?: number;
+			noticeText?: ReactChild | Array< ReactChild > | null;
+	  }
+	| Record< string, never >;
+
+export type ResolveDomainStatusOptionsBag = {
+	isJetpackSite?: boolean | null;
+	isSiteAutomatedTransfer?: boolean | null;
+	isDomainOnlySite?: boolean | null;
+	siteSlug?: string | null;
+	getMappingErrors?: boolean | null;
+};
 
 export function resolveDomainStatus(
-	domain,
-	purchase = null,
+	domain: ResponseDomain,
+	purchase: Purchase | null = null,
 	{
 		isJetpackSite = null,
 		isSiteAutomatedTransfer = null,
-		isDomainOnlySite = false,
+		isDomainOnlySite = null,
 		siteSlug = null,
 		getMappingErrors = false,
-	} = {}
-) {
+	}: ResolveDomainStatusOptionsBag = {}
+): ResolveDomainStatusReturn {
 	const transferOptions = {
 		components: {
 			strong: <strong />,
@@ -113,7 +143,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( getMappingErrors ) {
+			if ( getMappingErrors && siteSlug !== null ) {
 				const registrationDatePlus3Days = moment.utc( domain.registrationDate ).add( 3, 'days' );
 
 				const hasMappingError =
@@ -262,7 +292,11 @@ export function resolveDomainStatus(
 							'We sent you an email to verify your contact information. Please complete the verification or your domain will stop working. You can also {{a}}change your email address{{/a}} if you like.',
 							{
 								components: {
-									a: <a href={ domainManagementEditContactInfo( siteSlug, domain.name ) }></a>,
+									a: (
+										<a
+											href={ domainManagementEditContactInfo( siteSlug as string, domain.name ) }
+										></a>
+									),
 								},
 								args: {
 									domainName: domain.name,
@@ -291,51 +325,57 @@ export function resolveDomainStatus(
 				if ( daysSinceExpiration >= 1 && daysSinceExpiration <= 43 ) {
 					const renewableUntil = moment.utc( domain.renewableUntil ).format( 'LL' );
 
-					renewCta = domain.currentUserIsOwner
-						? translate(
-								'You can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}. {{a}}Renew now{{/a}}',
-								{
-									components: {
-										strong: <strong />,
-										a: <Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />,
-									},
-									args: { renewableUntil },
-								}
-						  )
-						: translate(
-								'The domain owner can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}.',
-								{
-									components: {
-										strong: <strong />,
-									},
-									args: { renewableUntil },
-								}
-						  );
+					renewCta =
+						purchase && siteSlug && domain.currentUserIsOwner
+							? translate(
+									'You can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}. {{a}}Renew now{{/a}}',
+									{
+										components: {
+											strong: <strong />,
+											a: (
+												<Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />
+											),
+										},
+										args: { renewableUntil },
+									}
+							  )
+							: translate(
+									'The domain owner can renew the domain at the regular rate until {{strong}}%(renewableUntil)s{{/strong}}.',
+									{
+										components: {
+											strong: <strong />,
+										},
+										args: { renewableUntil },
+									}
+							  );
 				}
 
 				if ( daysSinceExpiration > 43 ) {
 					const redeemableUntil = moment.utc( domain.redeemableUntil ).format( 'LL' );
 
-					renewCta = domain.currentUserIsOwner
-						? translate(
-								'You can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee. {{a}}Renew now{{/a}}',
-								{
-									components: {
-										strong: <strong />,
-										a: <Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />,
-									},
-									args: { redeemableUntil },
-								}
-						  )
-						: translate(
-								'The domain owner can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee.',
-								{
-									components: {
-										strong: <strong />,
-									},
-									args: { redeemableUntil },
-								}
-						  );
+					renewCta =
+						purchase && siteSlug && domain.currentUserIsOwner
+							? translate(
+									'You can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee. {{a}}Renew now{{/a}}',
+									{
+										components: {
+											strong: <strong />,
+											a: (
+												<Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />
+											),
+										},
+										args: { redeemableUntil },
+									}
+							  )
+							: translate(
+									'The domain owner can still renew the domain until {{strong}}%(redeemableUntil)s{{/strong}} by paying an additional redemption fee.',
+									{
+										components: {
+											strong: <strong />,
+										},
+										args: { redeemableUntil },
+									}
+							  );
 				}
 
 				const domainExpirationMessage = translate(
@@ -351,7 +391,10 @@ export function resolveDomainStatus(
 					}
 				);
 
-				const noticeText = [ domainExpirationMessage, renewCta ];
+				const noticeText = [ domainExpirationMessage ];
+				if ( renewCta ) {
+					noticeText.push( renewCta );
+				}
 
 				return {
 					statusText: translate( 'Action required' ),
@@ -372,13 +415,14 @@ export function resolveDomainStatus(
 			}
 
 			if ( isExpiringSoon( domain, 30 ) ) {
-				const renewCta = domain.currentUserIsOwner
-					? translate( '{{a}}Renew now{{/a}}', {
-							components: {
-								a: <Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />,
-							},
-					  } )
-					: translate( 'It can be renewed by the owner.' );
+				const renewCta =
+					purchase && siteSlug && domain.currentUserIsOwner
+						? translate( '{{a}}Renew now{{/a}}', {
+								components: {
+									a: <Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />,
+								},
+						  } )
+						: translate( 'It can be renewed by the owner.' );
 
 				const domainExpirationMessage = translate(
 					'This domain will expire on {{strong}}%(expiryDate)s{{/strong}}. ',
@@ -388,7 +432,10 @@ export function resolveDomainStatus(
 					}
 				);
 
-				const expiresMessage = [ domainExpirationMessage, renewCta ];
+				const expiresMessage = [ domainExpirationMessage ];
+				if ( renewCta ) {
+					expiresMessage.push( renewCta );
+				}
 
 				if ( isExpiringSoon( domain, 5 ) ) {
 					return {
@@ -495,7 +542,7 @@ export function resolveDomainStatus(
 								strong: <strong />,
 								a: (
 									<a
-										href={ domainManagementNameServers( siteSlug, domain.domain ) }
+										href={ domainManagementNameServers( siteSlug as string, domain.domain ) }
 										onClick={ ( e ) => e.stopPropagation() }
 									/>
 								),
@@ -507,7 +554,7 @@ export function resolveDomainStatus(
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ domainManagementNameServers( siteSlug, domain.domain ) } />,
+								a: <a href={ domainManagementNameServers( siteSlug as string, domain.domain ) } />,
 							},
 						}
 					),
