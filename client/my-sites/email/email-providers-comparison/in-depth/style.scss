@@ -66,6 +66,7 @@ $table-padding: 15px;
 	border-collapse: collapse;
 	font-size: $font-body-small;
 	margin-top: 40px;
+	table-layout: fixed;
 
 	td {
 		padding-bottom: $table-padding;
@@ -85,6 +86,10 @@ $table-padding: 15px;
 	}
 
 	tr:first-child {
+		td:first-child {
+			width: 10%;
+		}
+
 		td:nth-child( n + 1 ) {
 			padding-left: 0;
 		}
