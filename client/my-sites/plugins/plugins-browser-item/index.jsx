@@ -210,7 +210,9 @@ const InstalledInOrPricing = ( {
 		<div className="plugins-browser-item__pricing">
 			<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 				{ ( { isFetching, price, period } ) =>
-					! isFetching && (
+					isFetching ? (
+						<div className="plugins-browser-item__pricing-placeholder">...</div>
+					) : (
 						<>
 							{ price ? (
 								<>
