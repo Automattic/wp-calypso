@@ -143,7 +143,7 @@ const EmailProvidersStackedComparison = ( {
 	const hasExistingEmailForwards = hasEmailForwards( domain );
 
 	return (
-		<Main className="email-providers-stacked-comparison" wideLayout>
+		<Main wideLayout>
 			<PageViewTracker
 				path={ emailManagementPurchaseNewEmailAccount( ':site', ':domain' ) }
 				title="Email Comparison"
