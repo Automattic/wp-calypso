@@ -124,6 +124,10 @@ $width-left-panel-card: 55%;
 }
 
 .email-providers-stacked-comparison__provider-card {
+	&.action-panel {
+		padding-bottom: 24px;
+	}
+
 	@include break-medium {
 		padding-top: 36px;
 
