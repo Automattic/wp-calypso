@@ -7,6 +7,7 @@ import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
@@ -124,7 +125,13 @@ const EmailProvidersStackedComparison = ( {
 
 	return (
 		<Main className="email-providers-stacked-comparison__main" wideLayout>
+			<PageViewTracker
+				path={ emailManagementPurchaseNewEmailAccount( ':site', ':domain' ) }
+				title="Email Comparison"
+			/>
+
 			<QueryProductsList />
+
 			<QueryEmailForwards domainName={ selectedDomainName } />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
