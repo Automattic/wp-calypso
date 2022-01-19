@@ -261,12 +261,8 @@
 	font-size: $font-body;
 	line-height: 19px;
 	margin-bottom: 2px;
-
-	/* identical to box height */
 	letter-spacing: -0.154px;
-
-	/* Gray / Gray 80 */
-	color: #2c3338;
+	color: var( --studio-gray-80 );
 }
 
 .mobile-app-download__description {
@@ -274,13 +270,9 @@
 	font-weight: normal;
 	font-size: $font-body-small;
 	line-height: 17px;
-
-	/* identical to box height */
 	letter-spacing: -0.154px;
 	margin-bottom: 16px;
-
-	/* Gray / Gray 40 */
-	color: #787c82;
+	color: var( --studio-gray-40 );
 }
 
 .mobile-app-download__link {
@@ -288,9 +280,7 @@
 	font-size: $font-body;
 	line-height: 19px;
 	letter-spacing: -0.45px;
-
-	/* Blue / Blue 50 */
-	color: #0675c4;
+	color: var( -studio-blue-50 );
 }
 .site-setup-list .site-setup-list__list.is-mobile-app-completed li:last-child {
 	border-bottom: none;
