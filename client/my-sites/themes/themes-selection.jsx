@@ -19,9 +19,9 @@ import {
 	isThemeActive,
 	isInstallingTheme,
 	prependThemeFilterKeys,
+	shouldHideTryAndCustomize,
 } from 'calypso/state/themes/selectors';
 import { trackClick } from './helpers';
-
 import './themes-selection.scss';
 
 class ThemesSelection extends Component {
@@ -120,6 +120,11 @@ class ThemesSelection extends Component {
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
+
+			if ( this.props.hideTryAndCustomize( themeId ) ) {
+				secondaryOption = null;
+			}
+
 			return ( t ) => {
 				if ( ! this.props.isLoggedIn ) {
 					defaultOption = options.signup;
@@ -186,6 +191,10 @@ function bindGetPremiumThemePrice( state, siteId ) {
 	return ( themeId ) => getPremiumThemePrice( state, themeId, siteId );
 }
 
+function bindShouldHideTryAndCustomize( state, siteId ) {
+	return ( themeId ) => shouldHideTryAndCustomize( state, themeId, siteId );
+}
+
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
 // We do not want pagination triggered in that use of the component.
 export const ConnectedThemesSelection = connect(
@@ -234,6 +243,7 @@ export const ConnectedThemesSelection = connect(
 				isCustomizedThemeListLoading || isRequestingThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: isUserLoggedIn( state ),
+			hideTryAndCustomize: bindShouldHideTryAndCustomize( state, siteId ),
 			isThemeActive: bindIsThemeActive( state, siteId ),
 			isInstallingTheme: bindIsInstallingTheme( state, siteId ),
 			// Note: This component assumes that purchase and plans data is already present in the state tree

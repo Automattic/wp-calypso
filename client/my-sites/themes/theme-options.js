@@ -23,9 +23,9 @@ import {
 	getThemeSignupUrl,
 	isPremiumThemeAvailable,
 	isThemeActive,
-	isThemeGutenbergFirst,
 	isThemePremium,
 } from 'calypso/state/themes/selectors';
+import { shouldHideTryAndCustomize } from 'calypso/state/themes/selectors/should-hide-try-and-customize';
 
 const identity = ( theme ) => theme;
 
@@ -124,16 +124,7 @@ function getAllThemeOptions( { translate, blockEditorSettings } ) {
 			comment: 'label in the dialog for opening the Customizer with the theme in preview',
 		} ),
 		action: tryAndCustomizeAction,
-		hideForTheme: ( state, themeId, siteId ) =>
-			! isUserLoggedIn( state ) ||
-			( siteId &&
-				( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
-					( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
-			isThemeActive( state, themeId, siteId ) ||
-			( isThemePremium( state, themeId ) &&
-				isJetpackSite( state, siteId ) &&
-				! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-			isThemeGutenbergFirst( state, themeId ),
+		hideForTheme: ( state, themeId, siteId ) => shouldHideTryAndCustomize( state, themeId, siteId ),
 	};
 
 	const preview = {
