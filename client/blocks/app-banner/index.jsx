@@ -65,9 +65,9 @@ export class AppBanner extends Component {
 			typeof window !== 'undefined' &&
 			window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
 		) {
-			this.state = { isBloggerFlow: true };
+			this.state = { isDraftPostModalShown: true };
 		} else {
-			this.state = { isBloggerFlow: false };
+			this.state = { isDraftPostModalShown: false };
 		}
 	}
 
@@ -144,7 +144,7 @@ export class AppBanner extends Component {
 	render() {
 		const { translate, currentSection } = this.props;
 
-		if ( ! this.props.shouldDisplayAppBanner || this.state.isBloggerFlow ) {
+		if ( ! this.props.shouldDisplayAppBanner || this.state.isDraftPostModalShown ) {
 			return null;
 		}
 
