@@ -194,13 +194,6 @@ const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	return state;
 };
 
-const isEnrollingInFseBeta: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SET_ENROLL_IN_FSE_BETA' ) {
-		return action.enrollInFseBeta;
-	}
-	return state;
-};
-
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -218,7 +211,6 @@ const reducer = combineReducers( {
 	randomizedDesigns,
 	hasOnboardingStarted,
 	lastLocation,
-	isEnrollingInFseBeta,
 } );
 
 export type State = ReturnType< typeof reducer >;

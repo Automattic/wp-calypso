@@ -3,18 +3,16 @@ import { useSelect } from '@wordpress/data';
 import { Step, StepType, useIsAnchorFm } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
-import useFseBetaOptInStep from './use-fse-beta-opt-in-step';
 import { usePlanFromPath } from './use-selected-plan';
 
 export default function useSteps(): Array< StepType > {
 	const locale = useLocale();
-	const { hasSiteTitle, hasSelectedDesignWithoutFonts, isEnrollingInFse } = useSelect(
+	const { hasSiteTitle, hasSelectedDesignWithoutFonts } = useSelect(
 		( select ) => {
 			const onboardSelect = select( ONBOARD_STORE );
 			return {
 				hasSiteTitle: onboardSelect.hasSiteTitle(),
 				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
-				isEnrollingInFse: onboardSelect.isEnrollingInFseBeta(),
 			};
 		},
 		[ ONBOARD_STORE ]
@@ -47,17 +45,9 @@ export default function useSteps(): Array< StepType > {
 		];
 	}
 
-	// Remove the Style (fonts) step in the following cases:
-	// - Site Editor flow (feature flag)
-	// - the user has selected a design without fonts
-	// - the user is enrolled in Beta FSE
-	if ( hasSelectedDesignWithoutFonts || isEnrollingInFse ) {
+	// Remove the Style (fonts) step if the user has selected a design without fonts
+	if ( hasSelectedDesignWithoutFonts ) {
 		steps = steps.filter( ( step ) => step !== Step.Style );
-	}
-
-	// Add the FSE Beta Opt In step if the user is eligible
-	if ( useFseBetaOptInStep() ) {
-		steps = [ Step.FseBetaOptIn, Step.FseBetaIntentGathering, ...steps.slice( 1 ) ];
 	}
 
 	// Logic necessary to skip Domains or Plans steps

@@ -37,11 +37,8 @@ const Header: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const isAnchorFmSignup = useIsAnchorFm();
-	const isEnrollingInFseBeta = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).isEnrollingInFseBeta()
-	);
 	const isDesignPickerCategoriesEnabled =
-		! isAnchorFmSignup && ! isEnrollingInFseBeta && isEnabled( 'signup/design-picker-categories' );
+		! isAnchorFmSignup && isEnabled( 'signup/design-picker-categories' );
 
 	const { goBack } = useStepNavigation();
 	const title = isDesignPickerCategoriesEnabled ? __( 'Themes' ) : __( 'Choose a design' );
@@ -79,23 +76,20 @@ const Designs: React.FunctionComponent = () => {
 	const { setSelectedDesign, setFonts, resetFonts, setRandomizedDesigns } = useDispatch(
 		ONBOARD_STORE
 	);
-	const { selectedDesign, hasPaidDesign, randomizedDesigns, isEnrollingInFseBeta } = useSelect(
-		( select ) => {
-			const onboardSelect = select( ONBOARD_STORE );
+	const { selectedDesign, hasPaidDesign, randomizedDesigns } = useSelect( ( select ) => {
+		const onboardSelect = select( ONBOARD_STORE );
 
-			return {
-				selectedDesign: onboardSelect.getSelectedDesign(),
-				hasPaidDesign: onboardSelect.hasPaidDesign(),
-				randomizedDesigns: onboardSelect.getRandomizedDesigns(),
-				isEnrollingInFseBeta: onboardSelect.isEnrollingInFseBeta(),
-			};
-		}
-	);
+		return {
+			selectedDesign: onboardSelect.getSelectedDesign(),
+			hasPaidDesign: onboardSelect.hasPaidDesign(),
+			randomizedDesigns: onboardSelect.getRandomizedDesigns(),
+		};
+	} );
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	// As the amount of the anchorfm related designs is little, we don't need to enable categories filter
 	const isDesignPickerCategoriesEnabled =
-		! isAnchorFmSignup && ! isEnrollingInFseBeta && isEnabled( 'signup/design-picker-categories' );
+		! isAnchorFmSignup && isEnabled( 'signup/design-picker-categories' );
 
 	const useFeaturedPicksButtons =
 		isDesignPickerCategoriesEnabled &&
@@ -156,11 +150,11 @@ const Designs: React.FunctionComponent = () => {
 		// Make sure we're using the right designs since we can't rely on config variables
 		// any more and `getRandomizedDesigns` is auto-populated in a state-agnostic way.
 		const availableDesigns = getAvailableDesigns( {
-			useFseDesigns: isEnrollingInFseBeta,
+			useFseDesigns: true,
 			randomize: true,
 		} );
 		setRandomizedDesigns( availableDesigns );
-	}, [ isEnrollingInFseBeta, setRandomizedDesigns ] );
+	}, [ setRandomizedDesigns ] );
 
 	return (
 		<div className="gutenboarding-page designs">
