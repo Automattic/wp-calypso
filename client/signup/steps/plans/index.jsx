@@ -155,7 +155,7 @@ export class PlansStep extends Component {
 			>
 				{ ( isLoading, experimentAssignment ) => {
 					if ( isLoading ) {
-						return <PulsingDot active={ true } />;
+						return <PulsingDot active />;
 					}
 					const isTreatmentMonthlyDefault = experimentAssignment?.variationName !== null;
 
