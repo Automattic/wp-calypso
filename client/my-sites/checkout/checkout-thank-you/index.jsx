@@ -64,7 +64,7 @@ import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customiz
 import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getPlansBySite, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
-import { themeActivated } from 'calypso/state/themes/actions';
+import { activate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
@@ -266,12 +266,7 @@ export class CheckoutThankYou extends Component {
 			purchases.every( isTheme )
 		) {
 			const themeId = purchases[ 0 ].meta;
-			this.props.themeActivated(
-				'premium/' + themeId,
-				this.props.selectedSite.ID,
-				'calypstore',
-				true
-			);
+			this.props.activate( themeId, this.props.selectedSite.ID, 'calypstore', true );
 			page.redirect( '/themes/' + this.props.selectedSite.slug );
 		}
 	};
@@ -724,6 +719,6 @@ export default connect(
 		fetchSitePlans,
 		refreshSitePlans,
 		recordStartTransferClickInThankYou,
-		themeActivated,
+		activate,
 	}
 )( localize( CheckoutThankYou ) );
