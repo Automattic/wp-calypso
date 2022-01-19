@@ -120,7 +120,6 @@ class ThemesSelection extends Component {
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
-
 			if ( this.props.hideTryAndCustomize( themeId ) ) {
 				secondaryOption = null;
 			}
@@ -236,6 +235,7 @@ export const ConnectedThemesSelection = connect(
 		return {
 			query,
 			source: sourceSiteId,
+			siteId: siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),

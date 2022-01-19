@@ -24,8 +24,8 @@ import {
 	isPremiumThemeAvailable,
 	isThemeActive,
 	isThemePremium,
+	shouldHideTryAndCustomize,
 } from 'calypso/state/themes/selectors';
-import { shouldHideTryAndCustomize } from 'calypso/state/themes/selectors/should-hide-try-and-customize';
 
 const identity = ( theme ) => theme;
 
