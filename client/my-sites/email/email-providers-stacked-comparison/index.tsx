@@ -11,6 +11,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
+import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
@@ -50,7 +51,7 @@ const EmailProvidersStackedComparison = ( {
 	const translate = useTranslate();
 
 	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
-		if ( selectedEmailProviderSlug === 'google-workspace' ) {
+		if ( selectedEmailProviderSlug === GOOGLE_WORKSPACE_PRODUCT_TYPE ) {
 			return {
 				titan: false,
 				google: true,

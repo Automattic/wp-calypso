@@ -20,6 +20,7 @@ const EMAIL_PROVIDER_FEATURES_TYPE = [ 'importing', 'storage', 'support', 'tools
 type EmailProviderFeature = typeof EMAIL_PROVIDER_FEATURES_TYPE[ number ];
 
 export type EmailProviderFeatures = {
+	badge?: ReactNode;
 	description: TranslateResult;
 	list: Record< EmailProviderFeature, TranslateResult >;
 	logo: ReactNode;

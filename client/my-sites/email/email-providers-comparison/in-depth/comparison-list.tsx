@@ -3,6 +3,7 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import EmailProviderFeatures from 'calypso/my-sites/email/email-provider-features';
+import { isBillingAvailable } from 'calypso/my-sites/email/email-providers-comparison/in-depth/data';
 import EmailProviderPrice from 'calypso/my-sites/email/email-providers-comparison/in-depth/email-provider-price';
 import LearnMoreLink from 'calypso/my-sites/email/email-providers-comparison/in-depth/learn-more-link';
 import { ComparisonListOrTableProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
@@ -51,8 +52,15 @@ const ComparisonList = ( {
 							<LearnMoreLink url={ emailProviderFeatures.supportUrl } />
 						</div>
 
+						{ emailProviderFeatures.badge && (
+							<div className="email-providers-in-depth-comparison-list__badge">
+								{ emailProviderFeatures.badge }
+							</div>
+						) }
+
 						<Button
 							className="email-providers-in-depth-comparison-list__button"
+							disabled={ ! isBillingAvailable( emailProviderFeatures, intervalLength ) }
 							onClick={ () => onSelectEmailProvider( emailProviderFeatures.slug ) }
 							primary
 						>

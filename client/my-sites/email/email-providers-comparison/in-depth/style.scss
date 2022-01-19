@@ -51,7 +51,8 @@
 	}
 }
 
-.email-providers-in-depth-comparison-list__support-link {
+.email-providers-in-depth-comparison-list__support-link,
+.email-providers-in-depth-comparison-list__badge {
 	margin-top: 20px;
 }
 
@@ -65,6 +66,7 @@ $table-padding: 15px;
 	border-collapse: collapse;
 	font-size: $font-body-small;
 	margin-top: 40px;
+	table-layout: fixed;
 
 	td {
 		padding-bottom: $table-padding;
@@ -84,12 +86,22 @@ $table-padding: 15px;
 	}
 
 	tr:first-child {
+		td:first-child {
+			width: 10%;
+		}
+
 		td:nth-child( n + 1 ) {
 			padding-left: 0;
 		}
 	}
 
-	tr:nth-child( n + 2 ) {
+	tr:nth-child( 2 ) {
+		td {
+			vertical-align: bottom;
+		}
+	}
+
+	tr:nth-child( n + 3 ) {
 		td {
 			vertical-align: middle;
 		}
