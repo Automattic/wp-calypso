@@ -93,9 +93,10 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 			return false;
 		}
 
-		const labelDomRect = labelRef.current.getBoundingClientRect();
+		const labelMargin = parseFloat( window.getComputedStyle( labelRef.current ).marginRight ) || 0;
+		const { width: labelWidth } = labelRef.current.getBoundingClientRect();
 
-		return maxTitleWidth > formWidth - labelDomRect.width;
+		return maxTitleWidth > formWidth - ( labelWidth + labelMargin );
 	}, [ maxTitleWidth, formWidth, labelRef ] );
 
 	const handleFormSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
