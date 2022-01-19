@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, RootChild, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
@@ -8,7 +7,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { showInlineHelpPopover, hideInlineHelpPopover } from 'calypso/state/inline-help/actions';
@@ -19,10 +17,6 @@ import './style.scss';
 /**
  * Module variables
  */
-const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
-const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
-	? getGlobalKeyboardShortcuts()
-	: null;
 const debug = debugFactory( 'calypso:inline-help' );
 
 const InlineHelpPopover = ( props ) => (
@@ -44,18 +38,6 @@ class InlineHelp extends Component {
 	};
 
 	state = {};
-
-	componentDidMount() {
-		if ( globalKeyboardShortcuts ) {
-			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
-		}
-	}
-
-	componentWillUnmount() {
-		if ( globalKeyboardShortcuts ) {
-			globalKeyboardShortcuts.showInlineHelp = null;
-		}
-	}
 
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.isHappychatOpen && this.props.isHappychatOpen ) {
