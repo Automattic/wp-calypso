@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { requestProductsList } from 'calypso/state/products-list/actions';
-import { isProductsListFetching } from 'calypso/state/products-list/selectors';
+import { isProductsListFetching, getProductsList } from 'calypso/state/products-list/selectors';
 
 const request = ( props ) => ( dispatch, getState ) => {
-	if ( isProductsListFetching( getState() ) ) {
+	if (
+		isProductsListFetching( getState() ) ||
+		Object.keys( getProductsList( getState() ) ).length > 0
+	) {
 		return;
 	}
 
