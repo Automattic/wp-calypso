@@ -113,7 +113,7 @@ open class E2EBuildType(
 					mkdir temp
 
 					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
 
 					# As noted above, Calypso E2E build configurations export the URL
 					# environment variable within this step - therefore the export
