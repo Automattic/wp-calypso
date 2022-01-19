@@ -58,6 +58,13 @@ export class AppBanner extends Component {
 		userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			isBloggerFlow: false,
+		};
+	}
+
 	stopBubblingEvents = ( event ) => {
 		event.stopPropagation();
 	};
@@ -104,6 +111,15 @@ export class AppBanner extends Component {
 		this.props.recordAppBannerOpen( this.props.currentSection );
 	};
 
+	UNSAFE_componentWillMount() {
+		if (
+			typeof window !== 'undefined' &&
+			window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
+		) {
+			this.setState( { isBloggerFlow: true } );
+		}
+	}
+
 	getDeepLink() {
 		const { currentRoute, currentSection } = this.props;
 
@@ -131,7 +147,7 @@ export class AppBanner extends Component {
 	render() {
 		const { translate, currentSection } = this.props;
 
-		if ( ! this.props.shouldDisplayAppBanner ) {
+		if ( ! this.props.shouldDisplayAppBanner || this.state.isBloggerFlow ) {
 			return null;
 		}
 

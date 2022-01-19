@@ -865,6 +865,10 @@ const mapStateToProps = (
 		fseParentPageId
 	);
 
+	// We don't check if we're in Blogger Flow in shouldDisplayAppBanner for performance reasons.
+	// So we know that we are not showing the App Banner because of Blogger Flow if showDraftPostModal is true.
+	const displayAppBanner = shouldDisplayAppBanner( state ) && ! showDraftPostModal;
+
 	return {
 		closeUrl,
 		closeLabel,
@@ -889,7 +893,7 @@ const mapStateToProps = (
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ?? 0 ),
 		parentPostId,
-		shouldDisplayAppBanner: shouldDisplayAppBanner( state ),
+		shouldDisplayAppBanner: displayAppBanner,
 		appBannerDismissed: isAppBannerDismissed( state ),
 	};
 };
