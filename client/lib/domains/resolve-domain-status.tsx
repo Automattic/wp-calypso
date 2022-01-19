@@ -18,7 +18,7 @@ import {
 	domainMappingSetup,
 } from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
-import { ResponseDomain } from './types';
+import type { ResponseDomain } from './types';
 import type { ReactChild } from 'react';
 
 export type ResolveDomainStatusReturn =
