@@ -41,10 +41,10 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 
 	if ( isGoogleWorkspace( serverCartItem ) || isGSuiteOrExtraLicenseProductSlug( productSlug ) ) {
 		if ( isRenewalItem ) {
-			return String( translate( 'Productivity Tools and Mailboxes Renewal' ) );
+			return String( translate( 'Mailboxes and Productivity Tools Renewal' ) );
 		}
 
-		return String( translate( 'Productivity Tools and Mailboxes' ) );
+		return String( translate( 'Mailboxes and Productivity Tools' ) );
 	}
 
 	if ( isTitanMail( serverCartItem ) ) {
