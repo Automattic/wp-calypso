@@ -22,6 +22,7 @@ class MasterbarItemNotifications extends Component {
 	};
 
 	notificationLink = createRef();
+	notificationPanel = createRef();
 
 	state = {
 		animationState: 0,
@@ -40,15 +41,20 @@ class MasterbarItemNotifications extends Component {
 		// focus on main window if we just closed the notes panel
 		if ( this.props.isNotificationsOpen && ! nextProps.isNotificationsOpen ) {
 			this.notificationLink.current.blur();
+			this.notificationPanel.current.blur();
 			window.focus();
 		}
 	}
 
 	checkToggleNotes = ( event, forceToggle ) => {
 		const target = event ? event.target : false;
-		const notificationNode = this.notificationLink.current;
 
-		if ( target && notificationNode.contains( target ) ) {
+		// Ignore clicks or other events which occur inside of the notification panel.
+		if (
+			target &&
+			( this.notificationLink.current.contains( target ) ||
+				this.notificationPanel.current.contains( target ) )
+		) {
 			return;
 		}
 
@@ -96,14 +102,14 @@ class MasterbarItemNotifications extends Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, {
+		const classes = classNames( this.props.className, 'masterbar__notifications', {
 			'is-active': this.props.isNotificationsOpen,
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,
 		} );
 
 		return (
-			<div className="masterbar__notifications" ref={ this.notificationLink }>
+			<>
 				<MasterbarItem
 					url="/notifications"
 					icon="bell"
@@ -111,6 +117,7 @@ class MasterbarItemNotifications extends Component {
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
 					className={ classes }
+					ref={ this.notificationLink }
 				>
 					{ this.props.children }
 					<span
@@ -120,14 +127,16 @@ class MasterbarItemNotifications extends Component {
 						}
 					/>
 				</MasterbarItem>
-				<AsyncLoad
-					require="calypso/notifications"
-					isShowing={ this.props.isNotificationsOpen }
-					checkToggle={ this.checkToggleNotes }
-					setIndicator={ this.setNotesIndicator }
-					placeholder={ null }
-				/>
-			</div>
+				<div className="masterbar__notifications-panel" ref={ this.notificationPanel }>
+					<AsyncLoad
+						require="calypso/notifications"
+						isShowing={ this.props.isNotificationsOpen }
+						checkToggle={ this.checkToggleNotes }
+						setIndicator={ this.setNotesIndicator }
+						placeholder={ null }
+					/>
+				</div>
+			</>
 		);
 	}
 }
