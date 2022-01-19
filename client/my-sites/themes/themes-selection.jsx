@@ -119,7 +119,8 @@ class ThemesSelection extends Component {
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
-			if ( secondaryOption.hideForTheme( themeId, this.props.siteId ) ) {
+
+			if ( secondaryOption?.hideForTheme( themeId, this.props.siteId ) ) {
 				secondaryOption = null;
 			}
 

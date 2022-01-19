@@ -24,7 +24,7 @@ import {
 	isPremiumThemeAvailable,
 	isThemeActive,
 	isThemePremium,
-	shouldHideTryAndCustomize,
+	shouldShowTryAndCustomize,
 } from 'calypso/state/themes/selectors';
 
 const identity = ( theme ) => theme;
@@ -124,7 +124,8 @@ function getAllThemeOptions( { translate, blockEditorSettings } ) {
 			comment: 'label in the dialog for opening the Customizer with the theme in preview',
 		} ),
 		action: tryAndCustomizeAction,
-		hideForTheme: ( state, themeId, siteId ) => shouldHideTryAndCustomize( state, themeId, siteId ),
+		hideForTheme: ( state, themeId, siteId ) =>
+			! shouldShowTryAndCustomize( state, themeId, siteId ),
 	};
 
 	const preview = {

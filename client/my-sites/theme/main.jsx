@@ -62,7 +62,7 @@ import {
 	getThemeRequestErrors,
 	getThemeForumUrl,
 	getThemeDemoUrl,
-	shouldHideTryAndCustomize,
+	shouldShowTryAndCustomize,
 } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -833,7 +833,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isPurchased,
 		isJetpack,
 		demoUrl,
-		hideTryAndCustomize,
+		showTryAndCustomize,
 	} = props;
 
 	let defaultOption;
@@ -844,7 +844,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		secondaryOption = '';
 	}
 
-	if ( hideTryAndCustomize ) {
+	if ( ! showTryAndCustomize ) {
 		secondaryOption = '';
 	}
 
@@ -909,7 +909,7 @@ export default connect(
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
-			hideTryAndCustomize: shouldHideTryAndCustomize( state, id, siteId ),
+			showTryAndCustomize: shouldShowTryAndCustomize( state, id, siteId ),
 			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),

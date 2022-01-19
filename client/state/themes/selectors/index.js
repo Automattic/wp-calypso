@@ -55,7 +55,7 @@ export { isValidThemeFilterTerm } from 'calypso/state/themes/selectors/is-valid-
 export { isWpcomTheme } from 'calypso/state/themes/selectors/is-wpcom-theme';
 export { isWporgTheme } from 'calypso/state/themes/selectors/is-wporg-theme';
 export { prependThemeFilterKeys } from 'calypso/state/themes/selectors/prepend-theme-filter-keys';
-export { shouldHideTryAndCustomize } from 'calypso/state/themes/selectors/should-hide-try-and-customize';
+export { shouldShowTryAndCustomize } from 'calypso/state/themes/selectors/should-show-try-and-customize';
 export { shouldShowHomepageWarning } from 'calypso/state/themes/selectors/should-show-homepage-warning';
 export { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
 export { themePreviewVisibility } from 'calypso/state/themes/selectors/theme-preview-visibility';
