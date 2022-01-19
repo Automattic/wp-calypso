@@ -6,6 +6,7 @@ import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as DomainType } from 'calypso/lib/domains/constants';
+import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
 import type { SettingsHeaderProps } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -155,6 +156,7 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 				{ renderBadges() }
 			</div>
 			{ renderNotices() }
+			<TransferConnectedDomainNudge siteSlug={ props.site.slug } domain={ props.domain } />
 		</div>
 	);
 };
