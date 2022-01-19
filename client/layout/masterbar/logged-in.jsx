@@ -149,6 +149,7 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	goToCheckout = ( siteId ) => {
+		this.props.recordTracksEvent( 'calypso_masterbar_cart_go_to_checkout' );
 		page( `/checkout/${ siteId }` );
 	};
 
