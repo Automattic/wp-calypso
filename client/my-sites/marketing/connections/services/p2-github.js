@@ -46,6 +46,15 @@ export class P2Github extends SharingService {
 			isRefreshing: false,
 		} );
 
+		// Do not show a message if the connect window is closed.
+		if ( this.props.availableExternalAccounts.length === availableExternalAccounts.length ) {
+			this.setState( {
+				isConnecting: false,
+				isDisconnecting: false,
+			} );
+			return;
+		}
+
 		if ( this.didKeyringConnectionSucceed( availableExternalAccounts ) ) {
 			this.setState( { isConnecting: false } );
 			this.props.successNotice(
