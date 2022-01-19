@@ -1,5 +1,6 @@
-import { SelectControl, TextControl } from '@wordpress/components';
+import { CheckboxControl, SelectControl, TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { without } from 'lodash';
 import { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -22,7 +23,13 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 	const { get, save, update } = useSiteSettings( siteId );
 
 	function updateProductTypes( type: string ) {
-		updateOnboardingProfile( 'product_types', type );
+		const productTypes = getProfileValue( 'product_types' ) || [];
+
+		const newTypes = productTypes.includes( type )
+			? without( productTypes, type )
+			: [ ...productTypes, type ];
+
+		updateOnboardingProfile( 'product_types', newTypes );
 	}
 
 	function updateProductCount( count: string ) {
@@ -41,7 +48,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 		updateOnboardingProfile( 'other_platform_name', name );
 	}
 
-	function updateOnboardingProfile( key: string, value: string | boolean ) {
+	function updateOnboardingProfile( key: string, value: string | boolean | Array< string > ) {
 		const onboardingProfile = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
 
 		const updatedOnboardingProfile = {
@@ -59,21 +66,24 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 	}
 
 	function getContent() {
+		const productTypes = [
+			{ label: __( 'Physical Products' ), value: 'physical' },
+			{ label: __( 'Downloads' ), value: 'downloads' },
+		];
+
 		return (
 			<>
 				<div className="step-business-info__info-section" />
 				<div className="step-business-info__instructions-container">
-					<SelectControl
-						label={ __( 'What type of products will be listed? (optional)' ) }
-						value={ getProfileValue( 'product_types' ) }
-						options={ [
-							{ value: '', label: '' },
-							{ value: 'physical', label: __( 'Physical Products' ) },
-							{ value: 'downloads', label: __( 'Downloads' ) },
-							{ value: 'subscriptions', label: __( 'Subscriptions' ) },
-						] }
-						onChange={ updateProductTypes }
-					/>
+					{ __( 'What type of products will be listed? (optional)' ) }
+					{ productTypes.map( ( { label, value } ) => (
+						<CheckboxControl
+							label={ label }
+							value={ value }
+							onChange={ () => updateProductTypes( value ) }
+							checked={ getProfileValue( 'product_types' ).indexOf( value ) !== -1 }
+						/>
+					) ) }
 
 					<SelectControl
 						label={ __( 'How many products do you plan to display? (optional)' ) }
