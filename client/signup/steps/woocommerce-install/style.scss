@@ -3,7 +3,7 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/variables';
 
-body.is-section-signup .is-woocommerce-install .signup__step .signup__step {
+@mixin woocommerce-install-two-column-layout {
 	min-height: 95vh;
 	display: flex;
 	align-items: center;
@@ -121,14 +121,5 @@ body.is-section-signup .is-woocommerce-install .signup__step .signup__step {
 				box-sizing: border-box;
 			}
 		}
-	}
-}
-
-.confirm__info-section {
-	flex: 1;
-
-	.wpcom__loading-ellipsis {
-		display: block;
-		margin: 0 auto;
 	}
 }

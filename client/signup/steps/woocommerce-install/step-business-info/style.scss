@@ -1,1 +1,5 @@
 @import '../style';
+
+body.is-section-signup .is-woocommerce-install .signup__step.is-business-info {
+	@include woocommerce-install-two-column-layout;
+}
