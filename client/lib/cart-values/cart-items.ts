@@ -303,6 +303,7 @@ export function domainRegistration( properties: {
 } ): MinimalRequestCartProduct {
 	return {
 		...domainItem( properties.productSlug, properties.domain, properties.source ),
+		is_domain_registration: true,
 		...( properties.extra ? { extra: properties.extra } : {} ),
 	};
 }
