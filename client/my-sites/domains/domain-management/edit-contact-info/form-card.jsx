@@ -42,6 +42,7 @@ class EditContactInfoFormCard extends Component {
 		whoisSaveError: PropTypes.object,
 		whoisSaveSuccess: PropTypes.bool,
 		showContactInfoNote: PropTypes.bool,
+		backUrl: PropTypes.string.isRequired,
 	};
 
 	constructor( props ) {
@@ -414,6 +415,10 @@ class EditContactInfoFormCard extends Component {
 		);
 	};
 
+	handleCancelButtonClick = () => {
+		page( this.props.backUrl );
+	};
+
 	getIsFieldDisabled = ( name ) => {
 		const unmodifiableFields = get(
 			this.props,
@@ -462,6 +467,7 @@ class EditContactInfoFormCard extends Component {
 						getIsFieldDisabled={ this.getIsFieldDisabled }
 						onContactDetailsChange={ this.handleContactDetailsChange }
 						onSubmit={ this.handleSubmitButtonClick }
+						onCancel={ this.handleCancelButtonClick }
 						onValidate={ this.validate }
 						labelTexts={ { submitButton: translate( 'Save contact info' ) } }
 						disableSubmitButton={ this.shouldDisableSubmitButton() }
