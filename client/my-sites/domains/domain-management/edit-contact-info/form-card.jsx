@@ -1,4 +1,4 @@
-import { Card, Dialog } from '@automattic/components';
+import { Dialog } from '@automattic/components';
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
@@ -446,7 +446,7 @@ class EditContactInfoFormCard extends Component {
 		const updateWpcomEmailCheckboxDisabled = this.shouldDisableUpdateWpcomEmailCheckbox();
 
 		return (
-			<Card>
+			<>
 				{ showContactInfoNote && (
 					<p className="edit-contact-info__note">
 						<em>
@@ -473,7 +473,7 @@ class EditContactInfoFormCard extends Component {
 					</ContactDetailsFormFields>
 				</form>
 				{ this.renderDialog() }
-			</Card>
+			</>
 		);
 	}
 }
