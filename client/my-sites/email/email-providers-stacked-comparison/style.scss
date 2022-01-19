@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/mixins';
 @import '@automattic/typography/styles/variables';
 
-.email-providers-stacked-comparison__main {
+.email-providers-stacked-comparison {
 	padding: 0 20px 20px;
 
 	@include break-mobile {

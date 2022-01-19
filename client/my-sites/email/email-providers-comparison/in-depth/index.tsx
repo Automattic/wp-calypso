@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
@@ -89,7 +90,7 @@ const EmailProvidersInDepthComparison = ( {
 	const ComparisonComponent = isMobile ? ComparisonList : ComparisonTable;
 
 	return (
-		<>
+		<Main wideLayout>
 			<PageViewTracker
 				path={ emailManagementInDepthComparison( ':site', ':domain' ) }
 				title="Email Comparison > In-Depth Comparison"
@@ -118,7 +119,7 @@ const EmailProvidersInDepthComparison = ( {
 			/>
 
 			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
-		</>
+		</Main>
 	);
 };
 
