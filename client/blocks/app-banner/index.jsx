@@ -60,9 +60,15 @@ export class AppBanner extends Component {
 
 	constructor( props ) {
 		super( props );
-		this.state = {
-			isBloggerFlow: false,
-		};
+
+		if (
+			typeof window !== 'undefined' &&
+			window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
+		) {
+			this.state = { isBloggerFlow: true };
+		} else {
+			this.state = { isBloggerFlow: false };
+		}
 	}
 
 	stopBubblingEvents = ( event ) => {
@@ -110,15 +116,6 @@ export class AppBanner extends Component {
 	openApp = () => {
 		this.props.recordAppBannerOpen( this.props.currentSection );
 	};
-
-	UNSAFE_componentWillMount() {
-		if (
-			typeof window !== 'undefined' &&
-			window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
-		) {
-			this.setState( { isBloggerFlow: true } );
-		}
-	}
 
 	getDeepLink() {
 		const { currentRoute, currentSection } = this.props;
