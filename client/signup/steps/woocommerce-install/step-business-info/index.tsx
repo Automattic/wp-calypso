@@ -175,9 +175,11 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 					<ActionSection>
 						<SupportCard />
 						<StyledNextButton
+							onMouseDown={ () => {
+								updateOnboardingProfile( 'completed', true );
+							} }
 							onClick={ () => {
 								dispatch( submitSignupStep( { stepName: 'business-info' } ) );
-								updateOnboardingProfile( 'completed', true );
 								save();
 								goToNextStep();
 							} }
