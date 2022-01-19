@@ -62,6 +62,7 @@ describe( 'CompositeCheckout', () => {
 		hasLoadedSiteDomains.mockImplementation( () => true );
 		getDomainsBySiteId.mockImplementation( () => [] );
 		isMarketplaceProduct.mockImplementation( () => false );
+		isJetpackSite.mockImplementation( () => false );
 
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
@@ -790,7 +791,7 @@ describe( 'CompositeCheckout', () => {
 			screen
 				.getAllByLabelText( 'WordPress.com Personal' )
 				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
-			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
 			screen
 				.getAllByLabelText( 'bar.com' )
 				.map( ( element ) => expect( element ).toHaveTextContent( 'R$0' ) );
@@ -819,8 +820,8 @@ describe( 'CompositeCheckout', () => {
 			container
 		);
 		await waitFor( async () => {
-			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
 		} );
 	} );
 
@@ -832,8 +833,8 @@ describe( 'CompositeCheckout', () => {
 			container
 		);
 		await waitFor( async () => {
-			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 3 );
 		} );
 	} );
 
@@ -848,9 +849,9 @@ describe( 'CompositeCheckout', () => {
 			container
 		);
 		await waitFor( () => {
-			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 4 );
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 6 );
 		} );
 	} );
 
