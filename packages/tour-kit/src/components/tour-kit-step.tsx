@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import { useEffect } from '@wordpress/element';
 import classnames from 'classnames';
 /**
  * Internal Dependencies
@@ -10,8 +9,6 @@ import type { Config, TourStepRendererProps } from '../types';
 
 interface Props extends TourStepRendererProps {
 	config: Config;
-	stepsViewed: number[];
-	setStepsViewed: React.Dispatch< React.SetStateAction< number[] > >;
 }
 
 const TourKitStep: React.FunctionComponent< Props > = ( {
@@ -24,8 +21,6 @@ const TourKitStep: React.FunctionComponent< Props > = ( {
 	onPrevious,
 	setInitialFocusedElement,
 	onGoToStep,
-	stepsViewed,
-	setStepsViewed,
 } ) => {
 	const classNames = classnames(
 		'tour-kit-step',
@@ -33,19 +28,6 @@ const TourKitStep: React.FunctionComponent< Props > = ( {
 		config.options?.className ? `${ config.options?.className }__step` : '',
 		config.steps[ currentStepIndex ].options?.className
 	);
-
-	useEffect( () => {
-		if ( typeof config.options?.callbacks?.onStepViewOnce !== 'function' ) {
-			return;
-		}
-
-		if ( stepsViewed.includes( currentStepIndex ) ) {
-			return;
-		}
-
-		config.options?.callbacks?.onStepViewOnce( currentStepIndex );
-		setStepsViewed( ( prev ) => [ ...prev, currentStepIndex ] );
-	}, [ config.options?.callbacks, currentStepIndex, setStepsViewed, stepsViewed ] );
 
 	return (
 		<div className={ classNames }>

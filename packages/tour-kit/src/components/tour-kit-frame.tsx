@@ -8,6 +8,7 @@ import { usePopper } from 'react-popper';
 /**
  * Internal Dependencies
  */
+import useStepTracking from '../hooks/use-step-tracking';
 import KeyboardNavigation from './keyboard-navigation';
 import TourKitMinimized from './tour-kit-minimized';
 import Overlay from './tour-kit-overlay';
@@ -30,7 +31,8 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	);
 	const [ isMinimized, setIsMinimized ] = useState( false );
 
-	const [ stepsViewed, setStepsViewed ] = useState< number[] >( [] );
+	useStepTracking( currentStepIndex, config.options?.callbacks?.onStepViewOnce );
+
 	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );
 	const [ tourReady, setTourReady ] = useState( false );
 	const tourContainerRef = useRef( null );
@@ -229,8 +231,6 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 							onPrevious={ handlePreviousStepProgression }
 							onGoToStep={ handleGoToStep }
 							setInitialFocusedElement={ setInitialFocusedElement }
-							stepsViewed={ stepsViewed }
-							setStepsViewed={ setStepsViewed }
 						/>
 					) : (
 						<TourKitMinimized
