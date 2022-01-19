@@ -43,6 +43,7 @@ $width-left-panel-card: 55%;
 
 .email-provider-stacked-card__provider__action-panel.is-primary {
 	flex-direction: column;
+
 	@include break-mobile {
 		flex-direction: row;
 	}
@@ -109,7 +110,7 @@ $width-left-panel-card: 55%;
 
 .email-provider-stacked-card__title-price-badge {
 	font-size: $font-body-small;
-	margin-top: 0.5em;
+	margin-top: 10px;
 	width: 100%;
 
 	@include break-xlarge {
@@ -124,7 +125,9 @@ $width-left-panel-card: 55%;
 }
 
 .email-providers-stacked-comparison__provider-card {
-	padding-top: 36px;
+	@include break-medium {
+		padding-top: 36px;
+	}
 
 	&.card.action-panel.promo-card {
 		display: flex;
@@ -146,7 +149,7 @@ $width-left-panel-card: 55%;
 			display: flex;
 			flex-direction: row;
 			margin-bottom: 0;
-			margin-top: 3px;
+			margin-top: 0;
 			padding-right: 12px;
 			text-align: left;
 
@@ -252,25 +255,18 @@ $width-left-panel-card: 55%;
 }
 
 .email-provider-stacked-card__title {
-	margin-top: 4px;
 	font-size: $font-title-small;
-	line-height: 24px;
 	color: var( --color-neutral-70 );
 }
 
 .email-provider-stacked-card__title-container {
-	display: flex;
-	flex-direction: column;
-	font-size: $font-body-small;
-	max-width: 100%;
-
 	@include break-xlarge {
+		margin-right: 10px;
 		width: $width-left-panel-card;
 	}
 
 	p {
 		margin-bottom: 0;
-		margin-right: 10px;
 	}
 }
 
