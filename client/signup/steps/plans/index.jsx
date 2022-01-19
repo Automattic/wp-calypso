@@ -150,7 +150,7 @@ export class PlansStep extends Component {
 			<ProvideExperimentData
 				name="calypso_signup_monthly_plans_default_202201_v2"
 				options={ {
-					isEligible: 'onboarding' === this.props.flowName || 'launch-site' === this.props.flowName,
+					isEligible: [ 'onboarding', 'launch-site' ].includes( this.props.flowName ),
 				} }
 			>
 				{ ( isLoading, experimentAssignment ) => {
