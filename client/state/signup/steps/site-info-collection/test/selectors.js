@@ -1,10 +1,19 @@
 import { expect } from 'chai';
-import { initialState } from '../schema';
 import { getSiteInfoCollectionData, getSiteInfoCollectionCurrentIndex } from '../selectors';
 
 describe( 'selectors', () => {
 	test( 'should return the initial state as a default state', () => {
-		expect( getSiteInfoCollectionData( { signup: undefined } ) ).to.be.eql( initialState );
+		expect( getSiteInfoCollectionData( { signup: undefined } ) ).to.be.eql( {
+			siteTitle: '',
+			siteDescription: '',
+			twitterUrl: '',
+			facebookUrl: '',
+			linkedinUrl: '',
+			instagramUrl: '',
+			displayEmail: '',
+			displayPhone: '',
+			displayAddress: '',
+		} );
 	} );
 
 	test( 'should return the site info collection data from the state', () => {
