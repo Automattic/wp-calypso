@@ -26,13 +26,13 @@ const ComparisonList = ( {
 
 				return (
 					<Card key={ emailProviderFeatures.slug }>
-						<div className="email-providers-in-depth-comparison-table__provider">
+						<div className="email-providers-in-depth-comparison-list__provider">
 							{ emailProviderFeatures.logo }
 
-							<div className="email-providers-in-depth-comparison-table__provider-info">
+							<div className="email-providers-in-depth-comparison-list__provider-info">
 								<h2>{ emailProviderFeatures.name }</h2>
 
-								{ emailProviderFeatures.description }
+								<p>{ emailProviderFeatures.description }</p>
 							</div>
 						</div>
 

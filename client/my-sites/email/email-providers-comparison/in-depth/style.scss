@@ -32,6 +32,8 @@
 
 .email-providers-in-depth-comparison-list,
 .email-providers-in-depth-comparison-table {
+	font-size: $font-body-small;
+
 	.google-workspace-logo {
 		height: 48px;
 		width: 48px;
@@ -42,6 +44,27 @@
 		height: 48px;
 		min-width: 48px;
 		width: 48px;
+	}
+}
+
+.email-providers-in-depth-comparison-list__provider,
+.email-providers-in-depth-comparison-table__provider {
+	display: flex;
+}
+
+.email-providers-in-depth-comparison-list__provider-info,
+.email-providers-in-depth-comparison-table__provider-info {
+	margin-left: 12px;
+
+	h2 {
+		font-size: $font-title-small;
+
+		@extend .wp-brand-font;
+	}
+
+	p {
+		font-size: $font-body;
+		margin-bottom: 0;
 	}
 }
 
@@ -82,7 +105,6 @@ $table-padding: 15px;
 
 .email-providers-in-depth-comparison-table {
 	border-collapse: collapse;
-	font-size: $font-body-small;
 	margin-top: 40px;
 	table-layout: fixed;
 
@@ -132,19 +154,8 @@ $table-padding: 15px;
 	}
 }
 
-.email-providers-in-depth-comparison-table__provider {
-	display: flex;
-}
-
 .email-providers-in-depth-comparison-table__provider-info {
-	margin-left: 12px;
 	margin-right: $table-padding;
-
-	h2 {
-		font-size: $font-title-small;
-
-		@extend .wp-brand-font;
-	}
 }
 
 .email-providers-in-depth-comparison-table__feature {
