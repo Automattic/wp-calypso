@@ -166,7 +166,7 @@ function SiteInformationCollection( {
 		Record< string, boolean >
 	>( isSectionAtIndexTouchedInitialState );
 
-	const runValidation = ( validator: ValidatorFunction ) => {
+	const runValidatorAndSetFormErrors = ( validator: ValidatorFunction ) => {
 		const validationResult = validator( formValues );
 		setFormErrors( {
 			...formErrors,
@@ -180,7 +180,7 @@ function SiteInformationCollection( {
 		for ( let index = 0; index < sections.length; index++ ) {
 			const section = sections[ index ];
 			if ( section.validate ) {
-				const validationResult = runValidation( section.validate );
+				const validationResult = runValidatorAndSetFormErrors( section.validate );
 				if ( ! validationResult.result ) {
 					dispatch( updateSiteInfoCurrentIndex( index ) );
 					return;
@@ -208,7 +208,7 @@ function SiteInformationCollection( {
 		dispatch( updateSiteInfoValues( formValues ) );
 
 		if ( validator ) {
-			const validationResult = runValidation( validator );
+			const validationResult = runValidatorAndSetFormErrors( validator );
 			if ( ! validationResult.result ) {
 				return;
 			}
