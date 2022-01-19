@@ -213,11 +213,14 @@ const CTAButton = ( {
 	return (
 		<>
 			<Dialog
+				additionalClassNames={ 'plugin-details-CTA__dialog-content' }
+				additionalOverlayClassNames={ 'plugin-details-CTA__modal-overlay' }
 				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
 			>
 				<EligibilityWarnings
+					currentContext={ 'plugin-details' }
 					standaloneProceed
 					onProceed={ () =>
 						onClickInstallPlugin( {
