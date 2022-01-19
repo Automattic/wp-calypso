@@ -18,6 +18,7 @@ import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -33,6 +34,7 @@ import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
@@ -104,6 +106,7 @@ const PluginsBrowser = ( {
 	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 	const pluginsByCategory = useSelector( ( state ) => getPluginsListByCategory( state, category ) );
 	const pluginsByCategoryNew = useSelector( ( state ) => getPluginsListByCategory( state, 'new' ) );
 	const pluginsByCategoryFeatured = useSelector( ( state ) =>
@@ -217,6 +220,7 @@ const PluginsBrowser = ( {
 				</>
 			) }
 			{ isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic && <QueryProductsList /> }
+			<QueryJetpackPlugins siteIds={ siteIds } />
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }
