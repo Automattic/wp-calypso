@@ -150,11 +150,17 @@ const Designs: React.FunctionComponent = () => {
 		// Make sure we're using the right designs since we can't rely on config variables
 		// any more and `getRandomizedDesigns` is auto-populated in a state-agnostic way.
 		const availableDesigns = getAvailableDesigns( {
-			featuredDesignsFilter: ( design ) => !! design.is_fse,
+			featuredDesignsFilter: ( design ) => {
+				if ( isAnchorFmSignup ) {
+					return design.features.includes( 'anchorfm' );
+				}
+
+				return !! design.is_fse;
+			},
 			randomize: true,
 		} );
 		setRandomizedDesigns( availableDesigns );
-	}, [ setRandomizedDesigns ] );
+	}, [ setRandomizedDesigns, isAnchorFmSignup ] );
 
 	return (
 		<div className="gutenboarding-page designs">
