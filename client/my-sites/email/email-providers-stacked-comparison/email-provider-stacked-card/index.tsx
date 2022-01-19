@@ -79,14 +79,14 @@ const EmailProvidersStackedCard = ( {
 			}
 			icon={ '' }
 		>
-			<div className="email-provider-stacked-card__provider-price-and-button">
-				{ showFeaturesToggleButton && (
+			{ showFeaturesToggleButton && (
+				<div className="email-provider-stacked-card__provider-price-and-button">
 					<EmailProviderStackedFeaturesToggleButton
 						handleClick={ () => setFeaturesExpanded( ! areFeaturesExpanded ) }
 						isRelatedContentExpanded={ areFeaturesExpanded }
 					/>
-				) }
-			</div>
+				</div>
+			) }
 
 			<div className="email-provider-stacked-card__provider-form-and-right-panel">
 				<div className="email-provider-stacked-card__provider-form">{ formFields }</div>
