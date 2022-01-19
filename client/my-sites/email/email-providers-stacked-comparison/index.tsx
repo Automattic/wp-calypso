@@ -2,13 +2,12 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
@@ -23,6 +22,7 @@ import {
 	emailManagementInDepthComparison,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
@@ -47,6 +47,7 @@ const EmailProvidersStackedComparison = ( {
 	selectedIntervalLength = IntervalLength.ANNUALLY,
 	source,
 }: EmailProvidersStackedComparisonProps ): ReactElement => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
@@ -94,9 +95,11 @@ const EmailProvidersStackedComparison = ( {
 		} );
 
 		if ( isCurrentlyExpanded ) {
-			recordTracksEvent( 'calypso_email_providers_expand_section_click', {
-				provider: providerKey,
-			} );
+			dispatch(
+				recordTracksEvent( 'calypso_email_providers_expand_section_click', {
+					provider: providerKey,
+				} )
+			);
 		}
 
 		setDetailsExpanded( Object.fromEntries( expandedEntries ) );
@@ -107,6 +110,13 @@ const EmailProvidersStackedComparison = ( {
 			return;
 		}
 
+		dispatch(
+			recordTracksEvent( 'calypso_email_providers_billing_interval_toggle_click', {
+				domain_name: selectedDomainName,
+				new_interval: newIntervalLength,
+			} )
+		);
+
 		page(
 			emailManagementPurchaseNewEmailAccount(
 				selectedSite.slug,
@@ -116,6 +126,15 @@ const EmailProvidersStackedComparison = ( {
 				selectedEmailProviderSlug,
 				newIntervalLength
 			)
+		);
+	};
+
+	const handleCompareClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_email_providers_compare_link_click', {
+				domain_name: selectedDomainName,
+				interval: selectedIntervalLength,
+			} )
 		);
 	};
 
@@ -153,6 +172,7 @@ const EmailProvidersStackedComparison = ( {
 										null,
 										selectedIntervalLength
 									) }
+									onClick={ handleCompareClick }
 								/>
 							),
 						},
