@@ -15,16 +15,31 @@ const Label = styled( FormLabel )`
 `;
 
 const TextInput = styled( FormTextInput )`
-	//todo change this
-	border-radius: 5px !important;
-	font-size: 13px !important;
-	padding: 12px 16px;
+	input&.form-text-input {
+		border-radius: 4px;
+		line-height: 44px;
+		height: 44px;
+		font-size: 14px;
+		&:focus,
+		&:focus:hover {
+			border-color: #646970;
+			box-shadow: 0 0 0 2px #e2eaf1;
+		}
+	}
 `;
 
 const TextArea = styled( FormTextArea )`
-	border-radius: 5px !important;
-	font-size: 13px !important;
-	padding: 12px 16px;
+	input&.form-text-area {
+		border-radius: 4px;
+		line-height: 44px;
+		height: 44px;
+		font-size: 14px;
+		&:focus,
+		&:focus:hover {
+			border-color: #646970;
+			box-shadow: 0 0 0 2px #e2eaf1;
+		}
+	}
 `;
 
 const FlexContainer = styled.div`
