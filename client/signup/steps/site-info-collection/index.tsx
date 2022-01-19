@@ -150,6 +150,7 @@ function SiteInformationCollection( {
 	goToNextStep,
 }: SiteInformationCollectionProps ) {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
