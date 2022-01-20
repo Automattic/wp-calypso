@@ -46,17 +46,16 @@ function LicensingPromptDialog( { siteId }: Props ) {
 	}, [ dispatch ] );
 
 	const title = useMemo( () => {
-		/* translators: The 'product' is a fallback if the product name is unavailable. */
-		const productName = detachedUserLicense?.product || 'product';
-
 		if ( hasOneDetachedLicense ) {
-			return preventWidows(
-				translate( 'Your %(productName)s is pending activation', {
-					args: {
-						productName: productName,
-					},
-				} )
-			);
+			return detachedUserLicense?.product
+				? preventWidows(
+						translate( 'Your %(productName)s is pending activation', {
+							args: {
+								productName: detachedUserLicense.product,
+							},
+						} )
+				  )
+				: preventWidows( translate( 'Your product is pending activation' ) );
 		}
 		return preventWidows( translate( 'You have an available product license key' ) );
 	}, [ detachedUserLicense, hasOneDetachedLicense, translate ] );
