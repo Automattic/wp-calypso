@@ -14,12 +14,16 @@ export type MasterbarCartButtonProps = {
 	selectedSiteSlug: string | undefined;
 	selectedSiteId: string | number | undefined;
 	goToCheckout: ( siteSlug: string ) => void;
+	onRemoveProduct?: ( uuid: string ) => void;
+	onRemoveCoupon?: () => void;
 };
 
 export function MasterbarCartButton( {
 	selectedSiteSlug,
 	selectedSiteId,
 	goToCheckout,
+	onRemoveProduct,
+	onRemoveCoupon,
 }: MasterbarCartButtonProps ): JSX.Element | null {
 	const { responseCart, reloadFromServer } = useShoppingCart(
 		selectedSiteId ? String( selectedSiteId ) : undefined
@@ -70,6 +74,8 @@ export function MasterbarCartButton( {
 						cartKey={ selectedSiteId }
 						goToCheckout={ goToCheckout }
 						closeCart={ onClose }
+						onRemoveProduct={ onRemoveProduct }
+						onRemoveCoupon={ onRemoveCoupon }
 					/>
 				</CheckoutErrorBoundary>
 			</Popover>
