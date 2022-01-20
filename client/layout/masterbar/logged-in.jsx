@@ -149,7 +149,12 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	goToCheckout = ( siteId ) => {
+		this.props.recordTracksEvent( 'calypso_masterbar_cart_go_to_checkout' );
 		page( `/checkout/${ siteId }` );
+	};
+
+	onRemoveCartProduct = ( uuid = 'coupon' ) => {
+		this.props.recordTracksEvent( 'calypso_masterbar_cart_remove_product', { uuid } );
 	};
 
 	isActive = ( section ) => {
@@ -291,6 +296,8 @@ class MasterbarLoggedIn extends Component {
 							require="./masterbar-cart/masterbar-cart-wrapper"
 							placeholder={ null }
 							goToCheckout={ this.goToCheckout }
+							onRemoveProduct={ this.onRemoveCartProduct }
+							onRemoveCoupon={ this.onRemoveCartProduct }
 							selectedSiteSlug={ currentSelectedSiteSlug }
 							selectedSiteId={ currentSelectedSiteId }
 						/>
