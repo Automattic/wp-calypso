@@ -497,7 +497,7 @@ class DomainRow extends PureComponent {
 						<div className="domain-row__domain-notice-message">{ noticeText }</div>
 					</div>
 				) }
-				<TransferConnectedDomainNudge siteSlug={ site.slug } domain={ domain } />
+				{ site && <TransferConnectedDomainNudge siteSlug={ site.slug } domain={ domain } /> }
 				{ this.renderOverlay() }
 			</div>
 		);
