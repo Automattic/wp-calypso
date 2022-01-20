@@ -12,7 +12,7 @@ describe( DataHelper.createSuiteTitle( 'Reader: View' ), function () {
 	let readerPage: ReaderPage;
 	let testAccount: TestAccount;
 
-	beforeAll( async function {
+	beforeAll( async function () {
 		page = await browser.newPage();
 		testAccount = new TestAccount( 'commentingUser' );
 		await testAccount.authenticate( page );
