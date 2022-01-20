@@ -65,6 +65,11 @@
 		&:hover {
 			background-color: var( --color-accent-60 );
 		}
+
+		&:disabled {
+			background-color: var( --color-accent-50 );
+			opacity: 70%;
+		}
 	}
 }
 
