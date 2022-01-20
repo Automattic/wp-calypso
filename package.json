@@ -149,7 +149,6 @@
 		"@babel/register": "^7.16.7",
 		"@babel/runtime": "^7.16.7",
 		"@signal-noise/stylelint-scales": "^2.0.3",
-		"@typeform/embed-react": "^1.1.0",
 		"@types/cookie": "^0.4.1",
 		"@types/debug": "^4.1.7",
 		"@types/enzyme": "^3.10.11",
