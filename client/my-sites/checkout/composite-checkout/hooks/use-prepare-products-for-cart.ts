@@ -526,35 +526,16 @@ function createItemToAddToCart( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 } ): RequestCartProduct {
-	debug( 'creating product with', productSlug, productAlias );
 	const [ , meta ] = productAlias.split( ':' );
 	// Some meta values contain slashes, so we decode them
 	const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
-
-	if ( productAlias.startsWith( 'theme:' ) ) {
-		debug( 'creating theme product' );
-		return addContextToProduct(
-			createRequestCartProduct( {
-				product_slug: productSlug,
-				meta: cartMeta,
-			} )
-		);
-	}
-
-	if ( productAlias.startsWith( 'domain-mapping:' ) ) {
-		debug( 'creating domain mapping product' );
-		return addContextToProduct(
-			createRequestCartProduct( {
-				product_slug: productSlug,
-				meta: cartMeta,
-			} )
-		);
-	}
+	debug( 'creating product with', productSlug, productAlias, 'and meta', cartMeta );
 
 	return addContextToProduct(
 		createRequestCartProduct( {
 			product_slug: productSlug,
 			extra: { isJetpackCheckout, jetpackSiteSlug, jetpackPurchaseToken },
+			...( cartMeta ? { meta: cartMeta } : {} ),
 		} )
 	);
 }
