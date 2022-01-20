@@ -38,7 +38,7 @@ import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { EmailProvidersStackedCardProps, ProviderCard } from './provider-card-props';
+import type { EmailProvidersStackedCardProps, ProviderCardProps } from './provider-card-props';
 import type { ReactElement } from 'react';
 
 import './professional-email-card.scss';
@@ -59,11 +59,9 @@ const getTitanFeatures = () => {
 	];
 };
 
-const professionalEmailCardInformation: ProviderCard = {
+const professionalEmailCardInformation: ProviderCardProps = {
 	className: 'professional-email-card',
-	detailsExpanded: true,
 	expandButtonLabel: translate( 'Select' ),
-	onExpandedChange: noop,
 	providerKey: 'titan',
 	showExpandButton: true,
 	description: translate( 'Integrated email solution for your WordPress.com site.' ),
@@ -75,14 +73,13 @@ const professionalEmailCardInformation: ProviderCard = {
 
 const ProfessionalEmailCard = ( {
 	cartDomainName,
+	comparisonContext,
 	detailsExpanded,
+	intervalLength,
 	onExpandedChange,
 	selectedDomainName,
-	intervalLength,
-	comparisonContext,
 	source,
 }: EmailProvidersStackedCardProps ): ReactElement => {
-	const hasCartDomain = Boolean( cartDomainName );
 	const selectedSite = useSelector( getSelectedSite );
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const domain = getSelectedDomain( {
@@ -93,15 +90,17 @@ const ProfessionalEmailCard = ( {
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
 
-	const professionalEmail: ProviderCard = { ...professionalEmailCardInformation };
-	professionalEmail.detailsExpanded = detailsExpanded;
-
 	const [ titanMailbox, setTitanMailbox ] = useState( [
 		buildNewTitanMailbox( selectedDomainName, false ),
 	] );
 	const [ addingToCart, setAddingToCart ] = useState( false );
 	const [ validatedTitanMailboxUuids, setValidatedTitanMailboxUuids ] = useState( [ '' ] );
 	const optionalFields = [ TITAN_PASSWORD_RESET_FIELD, TITAN_FULL_NAME_FIELD ];
+
+	const professionalEmail: ProviderCardProps = { ...professionalEmailCardInformation };
+	professionalEmail.detailsExpanded = detailsExpanded;
+
+	const hasCartDomain = Boolean( cartDomainName );
 
 	const onTitanConfirmNewMailboxes = () => {
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
