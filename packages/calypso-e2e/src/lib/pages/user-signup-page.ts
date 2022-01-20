@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { getTargetDeviceName } from '../../browser-helper';
+import envVariables from '../../env-variables';
 
 const selectors = {
 	// Fields
@@ -68,10 +68,8 @@ export class UserSignupPage {
 	 * @param {string} password Password of the new user.
 	 */
 	async signupWPCC( email: string, password: string ): Promise< void > {
-		const target = getTargetDeviceName();
-
 		// On mobile devices, the signup form is not shown by default.
-		if ( target === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await this.page.click( selectors.createWPCOMAccountButton );
 		}
 

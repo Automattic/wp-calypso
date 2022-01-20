@@ -7,19 +7,19 @@ import {
 	DomainSearchComponent,
 	GutenbergEditorPage,
 	LoginPage,
-	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
 	CloseAccountFlow,
 	StartSiteFlow,
 	SidebarComponent,
 	GeneralSettingsPage,
-	BrowserManager,
 	ComingSoonPage,
 	MyHomePage,
 	skipDescribeIf,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 const isStagingOrProd = DataHelper.getCalypsoURL()
 	.toLowerCase()
@@ -45,8 +45,8 @@ skipDescribeIf( isStagingOrProd )(
 		let startSiteFlow: StartSiteFlow;
 		let generalSettingsPage: GeneralSettingsPage;
 
-		setupHooks( ( args ) => {
-			page = args.page;
+		beforeAll( async () => {
+			page = await browser.newPage();
 		} );
 
 		describe( 'Signup and select plan', function () {
@@ -139,16 +139,14 @@ skipDescribeIf( isStagingOrProd )(
 
 		describe( 'Launch site', function () {
 			it( 'Verify site is not yet launched', async function () {
-				// Obtain a new Page in a separate BrowserContext.
-				const testContext = await BrowserManager.newBrowserContext();
-				const testPage = await BrowserManager.newPage( { context: testContext } );
+				const tmpPage = await browser.newPage();
 				// TODO: make a utility to obtain the blog URL.
-				await testPage.goto( `https://${ blogName }.wordpress.com` );
+				await tmpPage.goto( `https://${ blogName }.wordpress.com` );
 				// View site without logging in.
-				const comingSoonPage = new ComingSoonPage( testPage );
+				const comingSoonPage = new ComingSoonPage( tmpPage );
 				await comingSoonPage.validateComingSoonState();
 				// Dispose the test page and context.
-				await BrowserManager.closePage( testPage, { closeContext: true } );
+				await tmpPage.close();
 			} );
 
 			it( 'Start site launch', async function () {

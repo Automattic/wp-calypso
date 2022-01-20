@@ -5,12 +5,13 @@
 import {
 	DataHelper,
 	TestAccount,
-	setupHooks,
 	ReaderPage,
 	NotificationsComponent,
 	NavbarComponent,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function () {
 	let page: Page;
@@ -18,8 +19,8 @@ describe( DataHelper.createSuiteTitle( 'Reader: View and Comment' ), function ()
 	let notificationsComponent: NotificationsComponent;
 	const comment = DataHelper.getRandomPhrase() + ' wp-reader__view-spec';
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 		readerPage = new ReaderPage( page );
 	} );
 

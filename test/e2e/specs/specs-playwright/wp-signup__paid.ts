@@ -6,7 +6,6 @@ import {
 	DataHelper,
 	DomainSearchComponent,
 	LoginPage,
-	setupHooks,
 	UserSignupPage,
 	SignupPickPlanPage,
 	BrowserManager,
@@ -19,7 +18,9 @@ import {
 	ThemesPage,
 	skipDescribeIf,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 const isStagingOrProd = DataHelper.getCalypsoURL()
 	.toLowerCase()
@@ -42,8 +43,8 @@ skipDescribeIf( isStagingOrProd )(
 		let startSiteFlow: StartSiteFlow;
 		let sidebarComponent: SidebarComponent;
 
-		setupHooks( ( args ) => {
-			page = args.page;
+		beforeAll( async () => {
+			page = await browser.newPage();
 		} );
 
 		describe( 'Signup and select plan', function () {

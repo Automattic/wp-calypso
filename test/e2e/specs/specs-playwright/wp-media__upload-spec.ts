@@ -4,7 +4,6 @@
 
 import assert from 'assert';
 import {
-	setupHooks,
 	DataHelper,
 	MediaPage,
 	SidebarComponent,
@@ -12,16 +11,14 @@ import {
 	TestFile,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, TEST_UNSUPPORTED_FILE_PATH } from '../constants';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	let testFiles: { image: TestFile; audio: TestFile; unsupported: TestFile };
 	let page: Page;
-
-	setupHooks( ( args ) => {
-		page = args.page;
-	} );
 
 	beforeAll( async () => {
 		testFiles = {
@@ -41,8 +38,14 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 		let testAccount: TestAccount;
 
 		beforeAll( async () => {
+			page = await browser.newPage();
+
 			testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await page.close();
 		} );
 
 		it( 'Navigate to Media', async function () {

@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { getTargetDeviceName } from './browser-helper';
+import envVariables from './env-variables';
 
 const selectors = {
 	// clickNavTab
@@ -49,10 +49,8 @@ export async function waitForElementEnabled(
  * @param {string} name Name of the tab to be clicked.
  */
 export async function clickNavTab( page: Page, name: string ): Promise< void > {
-	const targetDevice = getTargetDeviceName();
-
 	// Mobile view - navtabs become a dropdown.
-	if ( targetDevice === 'mobile' ) {
+	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 		await page.click( selectors.mobileNavTabsToggle );
 	}
 
@@ -64,7 +62,7 @@ export async function clickNavTab( page: Page, name: string ): Promise< void > {
 		.then( ( element ) => element.innerText() );
 
 	if ( currentTab === name ) {
-		if ( targetDevice === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await page.click( selectors.mobileNavTabsToggle );
 		}
 		return;

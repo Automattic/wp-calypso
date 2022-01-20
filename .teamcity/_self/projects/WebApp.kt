@@ -603,9 +603,9 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 
 		params {
 			checkbox(
-				name = "env.SAVE_AUTH_COOKIES",
-				value = "true",
-				label = "Save authentication cookies",
+				name = "env.AUTHENTICATE_ACCOUNTS",
+				value = "simpleSitePersonalPlanUser,eCommerceUser,defaultUser",
+				label = "List of accounts to pre-authenticate",
 				description = "Login once and reuse auth cookies for all specs",
 				checked = "true",
 				unchecked = "false"
