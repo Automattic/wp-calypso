@@ -2,7 +2,7 @@ import { Reducer, AnyAction, Dispatch, Action, StoreEnhancerStoreCreator } from 
 import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { Lazy, TimestampMS, TimerHandle } from 'calypso/types';
+import { Lazy, TimestampMS } from 'calypso/types';
 
 export enum DataState {
 	Failure = 'failure',
@@ -227,80 +227,6 @@ export const requestHttpData = (
 	return data;
 };
 
-interface WaitForHttpDataOptions {
-	timeout?: number;
-}
-
-interface QueryResults {
-	[ key: string ]: Resource;
-}
-
-/**
- * Blocks execution until requested data has been fulfilled
- *
- *  - May return without data if data hasn't been fulfilled or failed
- *  - Use for SSR contexts or when we _want_ to block rendering or execution
- *    until the requested data has been fulfilled, e.g. when URL routing
- *    depends on some data property
- *  - _DO NOT USE_ when normal synchronous/data interactions suffice such
- *    as is the case in 99.999% of React component contexts
- *
- * @example
- * waitForHttpData( () => ( {
- *     geo: requestGeoLocation(),
- *     splines: requestSplines( siteId ),
- * } ) ).then( ( { geo, splines } ) => {
- *     return ( geo.state === 'success' || splines.state === 'success' )
- *         ? res.send( renderToStaticMarkup( <LocalSplines geo={ geo.data } splines={ splines.data } /> ) )
- *         : res.send( renderToStaticMarkup( <UnvailableData /> ) );
- * }
- * @param query - function that returns key/value pairs of data name and request state
- * @param options - options object
- * @param options.timeout - how many ms to wait until giving up on requests
- * @returns fulfilled data of request (or partial if could not fulfill)
- */
-export const waitForHttpData = (
-	query: Lazy< QueryResults >,
-	options: WaitForHttpDataOptions = {}
-): Promise< QueryResults > =>
-	new Promise( ( resolve, reject ) => {
-		// eslint-disable-next-line @typescript-eslint/no-empty-function
-		let unsubscribe = () => {};
-		let timer: TimerHandle;
-
-		const getResults = () => {
-			const results = query();
-			const values = Object.values( results );
-			const allBad = values.every( ( value ) => value.state === DataState.Failure );
-			const allDone = values.every( ( value ) =>
-				[ DataState.Success, DataState.Failure ].includes( value.state )
-			);
-			return { results, allBad, allDone };
-		};
-
-		const listener = () => {
-			const { results, allBad, allDone } = getResults();
-
-			if ( allDone ) {
-				clearTimeout( timer );
-				unsubscribe();
-				allBad ? reject( results ) : resolve( results );
-			}
-		};
-
-		if ( options.timeout ) {
-			timer = setTimeout( () => {
-				const { results } = getResults();
-
-				unsubscribe();
-				reject( results );
-			}, options.timeout );
-		}
-
-		unsubscribe = subscribe( listener );
-		listener();
-	} );
-
 declare global {
 	interface Window {
 		app?: {
@@ -309,7 +235,6 @@ declare global {
 		getHttpData?: typeof getHttpData;
 		httpData?: typeof httpData;
 		requestHttpData?: typeof requestHttpData;
-		waitForHttpData?: typeof waitForHttpData;
 	}
 }
 
@@ -317,5 +242,4 @@ if ( 'object' === typeof window && window.app && window.app.isDebug ) {
 	window.getHttpData = getHttpData;
 	window.httpData = httpData;
 	window.requestHttpData = requestHttpData;
-	window.waitForHttpData = waitForHttpData;
 }
