@@ -612,11 +612,9 @@ class ManagePurchase extends Component {
 		if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
 			const description = isTitanMail( purchase )
 				? translate(
-						'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
+						'Integrated email solution with powerful features for your WordPress.com site.'
 				  )
-				: translate(
-						'Professional email integrated with Google Meet and other productivity tools from Google.'
-				  );
+				: translate( 'Business email with Gmail and other productivity tools from Google.' );
 
 			if ( purchase.purchaseRenewalQuantity ) {
 				return (

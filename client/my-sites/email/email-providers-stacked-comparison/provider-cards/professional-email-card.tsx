@@ -53,8 +53,9 @@ const badge = (
 
 const getTitanFeatures = () => {
 	return [
-		translate( 'Inbox, calendars, and contacts' ),
+		translate( 'Send and receive from your custom domain' ),
 		translate( '30GB storage' ),
+		translate( 'Email, calendars, and contacts' ),
 		translate( '24/7 support via email' ),
 	];
 };
@@ -64,7 +65,9 @@ const professionalEmailCardInformation: ProviderCardProps = {
 	expandButtonLabel: translate( 'Select' ),
 	providerKey: 'titan',
 	showExpandButton: true,
-	description: translate( 'Integrated email solution for your WordPress.com site.' ),
+	description: translate(
+		'Integrated email solution with powerful features for your WordPress.com site.'
+	),
 	logo,
 	productName: getTitanProductName(),
 	footerBadge: badge,

@@ -20,7 +20,9 @@ export const professionalEmailFeatures: EmailProviderFeatures = {
 	),
 	slug: TITAN_PRODUCT_TYPE,
 	name: getTitanProductName(),
-	description: translate( 'Integrated email solution for your WordPress.com site.' ),
+	description: translate(
+		'Integrated email solution with powerful features for your WordPress.com site.'
+	),
 	logo: <Gridicon className="professional-email-logo" icon="my-sites" />,
 	list: {
 		importing: translate( 'One-click import of existing emails and contacts' ),
@@ -29,14 +31,20 @@ export const professionalEmailFeatures: EmailProviderFeatures = {
 		tools: translate( 'Integrated email management, Inbox, Calendar and Contacts' ),
 	},
 	supportUrl: ADDING_TITAN_TO_YOUR_SITE,
+	table: {
+		access: translate( 'Online' ),
+		collaboration: translate( 'None' ),
+		importing: translate( 'One-click import of existing emails and contacts' ),
+		storage: translate( '30GB storage' ),
+		support: translate( '24/7 via email' ),
+		tools: translate( 'Integrated email management, Inbox, Calendar and Contacts' ),
+	},
 };
 
 export const googleWorkspaceFeatures: EmailProviderFeatures = {
 	slug: GOOGLE_WORKSPACE_PRODUCT_TYPE,
 	name: getGoogleMailServiceFamily(),
-	description: translate(
-		'Professional email integrated with Google Meet and other productivity tools from Google.'
-	),
+	description: translate( 'Business email with Gmail and other productivity tools from Google.' ),
 	logo: (
 		<img
 			alt={ translate( 'Google Workspace icon', { textOnly: true } ) }
@@ -45,10 +53,24 @@ export const googleWorkspaceFeatures: EmailProviderFeatures = {
 		/>
 	),
 	list: {
+		access: translate( 'Online & offline access' ),
+		collaboration: translate( 'Real-time collaboration' ),
 		importing: translate( 'Easy to import your existing emails and contacts' ),
-		storage: translate( '30GB storage' ),
+		storage: translate( '30GB storage with shared files' ),
 		support: translate( '24/7 support via email' ),
-		tools: translate( 'Gmail, Calendar, Meet, Chat, Drive, Docs, Sheets, Slides and more' ),
+		tools: translate(
+			'Gmail, Calendar, Contacts, Meet, Chat, Drive, Docs, Sheets, Slides and more'
+		),
 	},
 	supportUrl: ADDING_GSUITE_TO_YOUR_SITE,
+	table: {
+		access: translate( 'Online & offline' ),
+		collaboration: translate( 'Real-time' ),
+		importing: translate( 'Easy to import your existing emails and contacts' ),
+		storage: translate( '30GB storage with shared files' ),
+		support: translate( '24/7 via email' ),
+		tools: translate(
+			'Gmail, Calendar, Contacts, Meet, Chat, Drive, Docs, Sheets, Slides and more'
+		),
+	},
 };

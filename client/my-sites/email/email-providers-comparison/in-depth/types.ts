@@ -15,18 +15,26 @@ export type EmailProviderPriceProps = {
 	selectedDomainName: string;
 };
 
-const EMAIL_PROVIDER_FEATURES_TYPE = [ 'importing', 'storage', 'support', 'tools' ] as const;
+const EMAIL_PROVIDER_FEATURES_TYPE = [
+	'access',
+	'collaboration',
+	'importing',
+	'storage',
+	'support',
+	'tools',
+] as const;
 
 type EmailProviderFeature = typeof EMAIL_PROVIDER_FEATURES_TYPE[ number ];
 
 export type EmailProviderFeatures = {
 	badge?: ReactNode;
 	description: TranslateResult;
-	list: Record< EmailProviderFeature, TranslateResult >;
+	list: Partial< Record< EmailProviderFeature, TranslateResult > >;
 	logo: ReactNode;
 	name: TranslateResult;
 	slug: string;
 	supportUrl: string;
+	table: Record< EmailProviderFeature, TranslateResult >;
 };
 
 export type EmailProvidersInDepthComparisonProps = {
