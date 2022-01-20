@@ -865,8 +865,9 @@ const mapStateToProps = (
 		fseParentPageId
 	);
 
-	// We don't check if we're in Blogger Flow in shouldDisplayAppBanner for performance reasons.
-	// So we know that we are not showing the App Banner because of Blogger Flow if showDraftPostModal is true.
+	// 'shouldDisplayAppBanner' does not check if we're in Blogger Flow, because it is a selector reading from the Redux state, and
+	// the Blogger Flow information is not in the Redux state, but in the session storage value wpcom_signup_complete_show_draft_post_modal.
+	// So instead we get that information from 'showDraftPostModal'
 	const displayAppBanner = shouldDisplayAppBanner( state ) && ! showDraftPostModal;
 
 	return {
