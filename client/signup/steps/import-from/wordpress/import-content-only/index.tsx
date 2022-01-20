@@ -1,6 +1,8 @@
 import classnames from 'classnames';
+import { translate, TranslateOptions, TranslateOptionsText } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import importerConfig from 'calypso/lib/importer/importer-config';
 import { Importer, ImportJob, ImportJobParams } from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
@@ -32,7 +34,6 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Fields
 	 */
 	const { job, importer, siteItem, siteSlug, siteAnalyzedData, fromSite } = props;
-	const importerData = importerConfig().wordpress;
 
 	/**
 	 ↓ Effects
@@ -65,6 +66,35 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 			supportedContent: [],
 			unsupportedContent: [],
 		};
+	}
+
+	function getImportDragConfig() {
+		const importerData = importerConfig().wordpress;
+
+		const options: TranslateOptions = {
+			args: {
+				importerName: 'WordPress',
+			},
+			components: {
+				supportLink: (
+					<InlineSupportLink supportContext="importers-wordpress" showIcon={ false }>
+						{ translate( 'Need help exporting your content?' ) }
+					</InlineSupportLink>
+				),
+			},
+		};
+
+		importerData.title = translate( 'Import content from <strong>%(importerName)s</strong>', {
+			...options,
+			textOnly: true,
+		} as TranslateOptionsText ) as string;
+
+		importerData.description = translate(
+			'Import posts, pages, and media from your %(importerName)s export file.',
+			options
+		);
+
+		return importerData;
 	}
 
 	function checkProgress() {
@@ -105,7 +135,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				<ImporterDrag
 					site={ siteItem as Site }
 					urlData={ siteAnalyzedData }
-					importerData={ importerData }
+					importerData={ getImportDragConfig() }
 					importerStatus={ job }
 				/>
 			)
