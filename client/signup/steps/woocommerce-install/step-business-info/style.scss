@@ -1,4 +1,5 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import '../style';
 
+body.is-section-signup .is-woocommerce-install .signup__step.is-business-info {
+	@include woocommerce-install-two-column-layout;
+}

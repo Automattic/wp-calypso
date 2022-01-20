@@ -12,8 +12,8 @@ import getCountries from 'calypso/state/selectors/get-countries';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ActionSection, StyledNextButton } from '..';
 import SupportCard from '../components/support-card';
-import { ActionSection, StyledNextButton } from '../confirm';
 import {
 	useSiteSettings,
 	WOOCOMMERCE_STORE_ADDRESS_1,
