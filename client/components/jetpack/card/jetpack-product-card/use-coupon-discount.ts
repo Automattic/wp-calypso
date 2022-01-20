@@ -22,7 +22,7 @@ export default function useCouponDiscount(
 
 	const finalPrice =
 		Math.floor(
-			( originalPrice ?? discountedPrice ) *
+			( discountedPrice ?? originalPrice ) *
 				( 1 - jetpackSaleDiscountRatio ) *
 				( 1 - introDiscountRatio ) *
 				100
