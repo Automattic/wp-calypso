@@ -15,7 +15,7 @@ function useAddExternalContributorMutation() {
 			),
 		{
 			onSuccess( data, { siteId } ) {
-				queryClient.invalidateQueries( [ 'external-contributors', siteId ] );
+				queryClient.setQueryData( [ 'external-contributors', siteId ], data );
 			},
 		}
 	);
