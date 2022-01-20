@@ -318,7 +318,13 @@ class DeleteUser extends Component {
 	renderMultisite = () => {
 		return (
 			<CompactCard className="delete-user__multisite">
-				<Button borderless className="delete-user__remove-user" onClick={ this.removeUser }>
+				<Button
+					primary
+					borderless
+					className="delete-user__remove-user"
+					onClick={ this.removeUser }
+					disabled={ 'pending' === this.props.contributorType }
+				>
 					<Gridicon icon="trash" />
 					<span>{ this.getRemoveText() }</span>
 				</Button>
