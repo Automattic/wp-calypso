@@ -23,17 +23,17 @@
 
 			.formatted-header {
 				text-align: inherit;
+
 				@media ( min-width: 1024px ) {
 					margin-left: 24px;
 				}
 
 				.formatted-header__title {
 					text-align: inherit;
+
 					@media ( max-width: 660px ) {
 						padding: 0 10px 0 0;
-
 					}
-
 				}
 
 				.formatted-header__subtitle {
@@ -96,6 +96,10 @@
 					font-size: $editor-font-size;
 					margin-bottom: $grid-unit;
 					padding: 0;
+				}
+
+				.components-checkbox-control__label {
+					color: $black;
 				}
 
 				.components-combobox-control__suggestions-container,
