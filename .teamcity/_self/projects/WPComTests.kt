@@ -570,56 +570,6 @@ private object I18NTests : E2EBuildType(
 			withPendingChangesOnly = false
 		}
 	}
-<<<<<<< HEAD
-})
-
-object P2E2ETests : BuildType({
-	name = "P2 E2E Tests"
-	description = "Runs end-to-end tests against P2."
-
-	artifactRules = artifactRules()
-
-	wpCalypsoVCS()
-
-	params {
-		checkbox(
-			name = "env.AUTHENTICATE_ACCOUNTS",
-			value = "simpleSitePersonalPlanUser,eCommerceUser,defaultUser",
-			label = "List of accounts to pre-authenticate",
-			description = "Login once and reuse auth cookies for all specs",
-			checked = "true",
-			unchecked = "false"
-		)
-	}
-
-	steps {
-		prepareEnvironment()
-
-		runTests(
-			stepName = "Run P2 tests",
-			testGroup = "p2",
-			// envVars = mapOf(
-			// 	"URL" to "https://wpcalypso.wordpress.com",
-			// 	"TARGET_DEVICE" to "desktop",
-			// )
-		)
-
-		collectResults()
-	}
-
-	features {
-		perfmon {
-		}
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-=======
 )
 
 object P2E2ETests : E2EBuildType(
@@ -633,7 +583,6 @@ object P2E2ETests : E2EBuildType(
 		param("env.URL", "https://wpcalypso.wordpress.com")
 	},
 	buildFeatures = {
->>>>>>> c3d2b6b0b5 (Migrate all build configurations)
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
