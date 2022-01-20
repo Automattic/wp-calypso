@@ -840,10 +840,6 @@ const ThemeSheetWithOptions = ( props ) => {
 	let secondaryOption = 'tryandcustomize';
 	const needsJetpackPlanUpgrade = isJetpack && isPremium && ! isPurchased;
 
-	if ( needsJetpackPlanUpgrade ) {
-		secondaryOption = '';
-	}
-
 	if ( ! showTryAndCustomize ) {
 		secondaryOption = '';
 	}
