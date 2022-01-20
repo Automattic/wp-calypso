@@ -1,0 +1,40 @@
+@import '@wordpress/base-styles/mixins';
+
+.pagination-controls {
+	margin: 0;
+	display: flex;
+	justify-content: center;
+	
+	li {
+		display: inline-flex;
+		margin: 0 4px;
+		height: 18px;
+		align-items: center;
+		border: none;
+	}
+	
+	button {
+		border: none;
+		padding: 0;
+		width: 6px;
+		height: 6px;
+		/* stylelint-disable declaration-property-unit-allowed-list */
+		border-radius: 50%;
+		/* stylelint-enable declaration-property-unit-allowed-list */
+		cursor: pointer;
+		transition: all 0.2s ease-in-out;
+		background-color: var( --color-neutral-10 );
+
+		&:hover {
+			background-color: var( --color-neutral-light );
+		}
+
+		&:disabled {
+			cursor: default;
+		}
+
+		&.pagination-control__current {
+			background-color: var( --studio-gray-80 );
+		}
+	}
+}
