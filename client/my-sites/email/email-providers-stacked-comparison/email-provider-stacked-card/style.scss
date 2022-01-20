@@ -22,21 +22,10 @@ $width-left-panel-card: 55%;
 		margin-top: 0;
 	}
 
-	&::before {
-		content: '';
-		display: block;
-		height: 1px;
-		margin-bottom: 8px;
-	}
-
-	&:first-child::before {
-		display: none;
-	}
-
 	.gridicon {
 		fill: var( --studio-gray-20 );
 		margin-left: -28px;
-		margin-right: 10px;
+		margin-right: 5px;
 		min-width: 24px;
 	}
 }
@@ -298,15 +287,10 @@ $width-left-panel-card: 55%;
 }
 
 .email-provider-stacked-features__logos {
-	column-gap: 5px;
+	column-gap: 6px;
 	display: flex;
 	flex-wrap: wrap;
-	margin-left: 32px;
-
-	@include break-xlarge {
-		justify-content: space-between;
-		column-gap: 3px;
-	}
+	margin-left: 28px;
 
 	img {
 		width: 32px;
