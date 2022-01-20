@@ -216,7 +216,7 @@ function PluginDetails( props ) {
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
 			<SidebarNavigation />
 			<QueryEligibility siteId={ selectedSite?.ID } />
-			<QueryProductsList />
+			<QueryProductsList persist />
 			<FixedNavigationHeader
 				navigationItems={ getNavigationItems() }
 				compactBreadcrumb={ ! isWide }
