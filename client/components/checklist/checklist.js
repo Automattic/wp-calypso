@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Children, PureComponent, cloneElement } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';
 
@@ -26,13 +26,6 @@ class Checklist extends PureComponent {
 
 	componentDidMount() {
 		this.notifyCompletion();
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( { siteId } ) {
-		if ( siteId !== this.props.siteId ) {
-			this.setState( { expandedTaskIndex: undefined } );
-		}
 	}
 
 	componentDidUpdate() {
@@ -144,6 +137,9 @@ class Checklist extends PureComponent {
 	}
 }
 
-export default connect( ( state ) => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( localize( Checklist ) );
+const ChecklistForSite = ( props ) => {
+	const siteId = useSelector( getSelectedSiteId );
+	return <Checklist key={ siteId } siteId={ siteId } { ...props } />;
+};
+
+export default localize( ChecklistForSite );
