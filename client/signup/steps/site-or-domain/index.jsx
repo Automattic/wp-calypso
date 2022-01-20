@@ -2,6 +2,7 @@ import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import HeaderImage from 'calypso/assets/images/domains/domain.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug } from 'calypso/lib/domains';
@@ -144,7 +145,7 @@ class SiteOrDomain extends Component {
 	};
 
 	render() {
-		const { translate, productsLoaded } = this.props;
+		const { translate, productsLoaded, isReskinned } = this.props;
 
 		if ( productsLoaded && ! this.getDomainName() ) {
 			const headerText = translate( 'Unsupported domain.' );
@@ -168,6 +169,14 @@ class SiteOrDomain extends Component {
 			);
 		}
 
+		const additionalProps = {};
+
+		if ( isReskinned ) {
+			additionalProps.isHorizontalLayout = true;
+			additionalProps.align = 'left';
+			additionalProps.headerImageUrl = HeaderImage;
+		}
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -178,6 +187,7 @@ class SiteOrDomain extends Component {
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
 				stepContent={ this.renderScreen() }
+				{ ...additionalProps }
 			/>
 		);
 	}
