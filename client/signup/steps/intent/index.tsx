@@ -50,6 +50,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
 
 		if ( EXTERNAL_FLOW[ intent ] ) {
+			dispatch( submitSignupStep( { stepName }, { intent } ) );
 			page( getStepUrl( EXTERNAL_FLOW[ intent ], '', '', '', queryObject ) );
 		} else {
 			branchSteps( EXCLUDE_STEPS[ intent ] );
