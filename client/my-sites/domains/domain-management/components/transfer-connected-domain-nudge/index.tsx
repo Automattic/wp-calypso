@@ -10,6 +10,7 @@ const TransferConnectedDomainNudge = ( {
 	domain,
 }: TransferConnectedDomainNudgeProps ): JSX.Element | null => {
 	const translate = useTranslate();
+
 	const message = translate(
 		'Your domain is expiring soon. Consider {{a}}transferring it{{/a}} to WordPress.com to manage your site and domains all from one place.',
 		{
