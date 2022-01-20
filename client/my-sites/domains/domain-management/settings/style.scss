@@ -126,9 +126,13 @@
 		display: flex;
 		align-items: center;
 		padding: 5px;
-		margin: 8px 0 0;
+		margin: 12px 0 0;
 		gap: 8px;
 		border-radius: 2px;
+
+		@include break-mobile {
+			margin: 8px 0 0;
+		}
 	}
 
 	&__domain-notice-icon.gridicon {
