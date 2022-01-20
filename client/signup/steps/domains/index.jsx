@@ -441,7 +441,18 @@ class DomainsStep extends Component {
 			'business-monthly',
 			'ecommerce',
 			'ecommerce-monthly',
+			'domain',
 		].includes( flowName );
+	};
+
+	shouldHideUseYourDomain = () => {
+		const { flowName } = this.props;
+		return [ 'domain' ].includes( flowName );
+	};
+
+	shouldDisplayDomainOnlyExplainer = () => {
+		const { flowName } = this.props;
+		return [ 'domain' ].includes( flowName );
 	};
 
 	getSideContent = () => {
@@ -455,12 +466,22 @@ class DomainsStep extends Component {
 						/>
 					</div>
 				) }
-				<div className="domains__domain-side-content">
-					<ReskinSideExplainer
-						onClick={ this.handleUseYourDomainClick }
-						type={ 'use-your-domain' }
-					/>
-				</div>
+				{ ! this.shouldHideUseYourDomain() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleUseYourDomainClick }
+							type={ 'use-your-domain' }
+						/>
+					</div>
+				) }
+				{ this.shouldDisplayDomainOnlyExplainer() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={ 'free-domain-only-explainer' }
+						/>
+					</div>
+				) }
 			</div>
 		);
 	};

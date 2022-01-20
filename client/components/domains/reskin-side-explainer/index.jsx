@@ -32,6 +32,18 @@ class ReskinSideExplainer extends Component {
 				);
 				ctaText = translate( 'Use a domain I own' );
 				break;
+
+			case 'free-domain-only-explainer':
+				title = translate(
+					'Get a {{b}}free{{/b}} one-year domain registration with any paid annual plan.',
+					{
+						components: { b: <strong /> },
+					}
+				);
+				subtitle = translate(
+					'You can also choose to just start with a domain and add a site with a plan later on.'
+				);
+				break;
 		}
 
 		return { title, subtitle, ctaText };
@@ -39,22 +51,25 @@ class ReskinSideExplainer extends Component {
 
 	render() {
 		const { title, subtitle, ctaText } = this.getStrings();
+		const { type } = this.props;
 
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events */
 			<div className="reskin-side-explainer">
 				<div className="reskin-side-explainer__title">{ title }</div>
 				<div className="reskin-side-explainer__subtitle">{ subtitle }</div>
-				<div className="reskin-side-explainer__cta">
-					<span
-						className="reskin-side-explainer__cta-text"
-						role="button"
-						onClick={ this.props.onClick }
-						tabIndex="0"
-					>
-						{ ctaText }
-					</span>
-				</div>
+				{ type !== 'free-domain-only-explainer' && (
+					<div className="reskin-side-explainer__cta">
+						<span
+							className="reskin-side-explainer__cta-text"
+							role="button"
+							onClick={ this.props.onClick }
+							tabIndex="0"
+						>
+							{ ctaText }
+						</span>
+					</div>
+				) }
 			</div>
 			/* eslint-enable jsx-a11y/click-events-have-key-events */
 		);
