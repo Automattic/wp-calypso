@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -48,9 +48,11 @@ class RequestLoginEmailForm extends Component {
 		usernameOrEmail: this.props.userEmail || '',
 	};
 
+	usernameOrEmailRef = createRef();
+
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.requestError && this.props.requestError ) {
-			this.usernameOrEmail?.focus();
+			this.usernameOrEmailRef.current?.focus();
 		}
 	}
 
@@ -62,10 +64,6 @@ class RequestLoginEmailForm extends Component {
 		if ( this.props.requestError ) {
 			this.props.hideMagicLoginRequestNotice();
 		}
-	};
-
-	saveUsernameOrEmailRef = ( input ) => {
-		this.usernameOrEmail = input;
 	};
 
 	onNoticeDismiss = () => {
@@ -162,7 +160,7 @@ class RequestLoginEmailForm extends Component {
 							disabled={ isFetching || emailRequested }
 							value={ usernameOrEmail }
 							name="usernameOrEmail"
-							ref={ this.saveUsernameOrEmailRef }
+							ref={ this.usernameOrEmailRef }
 							onChange={ this.onUsernameOrEmailFieldChange }
 						/>
 
