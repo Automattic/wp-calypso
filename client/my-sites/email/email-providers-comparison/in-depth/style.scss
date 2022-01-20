@@ -1,19 +1,39 @@
 @import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.email-providers-in-depth-comparison__header,
+.email-providers-in-depth-comparison__sub-header {
+	padding-left: 16px;
+	padding-right: 16px;
+	text-align: center;
+
+	@include break-medium {
+		padding: 0;
+	}
+}
 
 .email-providers-in-depth-comparison__header {
 	font-size: $font-title-large;
-	text-align: center;
+	padding-left: 16px;
+	padding-right: 16px;
+	padding-top: 16px;
 
 	@extend .wp-brand-font;
+
+	@include break-medium {
+		padding: 0;
+	}
 }
 
 .email-providers-in-depth-comparison__sub-header {
 	font-size: $font-body-small;
-	text-align: center;
 }
 
 .email-providers-in-depth-comparison-list,
 .email-providers-in-depth-comparison-table {
+	font-size: $font-body-small;
+
 	.google-workspace-logo {
 		height: 48px;
 		width: 48px;
@@ -24,6 +44,27 @@
 		height: 48px;
 		min-width: 48px;
 		width: 48px;
+	}
+}
+
+.email-providers-in-depth-comparison-list__provider,
+.email-providers-in-depth-comparison-table__provider {
+	display: flex;
+}
+
+.email-providers-in-depth-comparison-list__provider-info,
+.email-providers-in-depth-comparison-table__provider-info {
+	margin-left: 12px;
+
+	h2 {
+		font-size: $font-title-small;
+
+		@extend .wp-brand-font;
+	}
+
+	p {
+		font-size: $font-body;
+		margin-bottom: 0;
 	}
 }
 
@@ -64,7 +105,6 @@ $table-padding: 15px;
 
 .email-providers-in-depth-comparison-table {
 	border-collapse: collapse;
-	font-size: $font-body-small;
 	margin-top: 40px;
 	table-layout: fixed;
 
@@ -114,19 +154,8 @@ $table-padding: 15px;
 	}
 }
 
-.email-providers-in-depth-comparison-table__provider {
-	display: flex;
-}
-
 .email-providers-in-depth-comparison-table__provider-info {
-	margin-left: 12px;
 	margin-right: $table-padding;
-
-	h2 {
-		font-size: $font-title-small;
-
-		@extend .wp-brand-font;
-	}
 }
 
 .email-providers-in-depth-comparison-table__feature {

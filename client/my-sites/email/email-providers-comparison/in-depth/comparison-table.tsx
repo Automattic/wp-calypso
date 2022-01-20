@@ -33,7 +33,7 @@ const ComparisonTable = ( {
 									<div className="email-providers-in-depth-comparison-table__provider-info">
 										<h2>{ emailProviderFeatures.name }</h2>
 
-										{ emailProviderFeatures.description }
+										<p>{ emailProviderFeatures.description }</p>
 									</div>
 								</div>
 							</td>
