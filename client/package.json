@@ -64,7 +64,6 @@
 		"@github/webauthn-json": "^0.4.1",
 		"@stripe/react-stripe-js": "^1.4.1",
 		"@stripe/stripe-js": "^1.17.1",
-		"@typeform/embed-react": "^1.1.0",
 		"@wordpress/a11y": "^3.2.4",
 		"@wordpress/api-fetch": "^5.2.6",
 		"@wordpress/base-styles": "^4.0.4",
