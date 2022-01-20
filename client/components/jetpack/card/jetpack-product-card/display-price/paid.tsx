@@ -27,7 +27,7 @@ const Paid: React.FC< OwnProps > = ( {
 	tooltipText,
 	expiryDate,
 } ) => {
-	const { price: finalPrice } = useCouponDiscount( billingTerm, originalPrice, discountedPrice );
+	const { price: finalPrice } = useCouponDiscount( originalPrice, discountedPrice );
 
 	if ( ! currencyCode || ! originalPrice ) {
 		return (

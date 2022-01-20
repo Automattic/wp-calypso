@@ -1,4 +1,3 @@
-import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react-hooks';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -19,21 +18,9 @@ describe( 'useCouponDiscount', () => {
 		expect( result.current ).toEqual( {} );
 	} );
 
-	test( 'should not apply the default discount for a monthly term', () => {
-		const originalPrice = 100;
-		const { result } = renderHook( () => useCouponDiscount( TERM_MONTHLY, originalPrice ), {
-			wrapper: wrapper(),
-		} );
-
-		expect( result.current ).toEqual( {
-			price: originalPrice,
-			discount: 0,
-		} );
-	} );
-
 	test( 'should apply the default discount if there is no coupon', () => {
 		const originalPrice = 100;
-		const { result } = renderHook( () => useCouponDiscount( TERM_ANNUALLY, originalPrice ), {
+		const { result } = renderHook( () => useCouponDiscount( originalPrice ), {
 			wrapper: wrapper(),
 		} );
 
@@ -47,12 +34,9 @@ describe( 'useCouponDiscount', () => {
 		const originalPrice = 100;
 		const discountedPrice = 50;
 		const couponPercentage = 50;
-		const { result } = renderHook(
-			() => useCouponDiscount( TERM_ANNUALLY, originalPrice, discountedPrice ),
-			{
-				wrapper: wrapper( couponPercentage ),
-			}
-		);
+		const { result } = renderHook( () => useCouponDiscount( originalPrice, discountedPrice ), {
+			wrapper: wrapper( couponPercentage ),
+		} );
 
 		expect( result.current ).toEqual( {
 			price: 25,

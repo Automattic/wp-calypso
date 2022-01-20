@@ -83,12 +83,11 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	scrollCardIntoView,
 	collapseFeaturesOnMobile,
 } ) => {
-	const billingTerm = item.displayTerm || item.term;
 	const isFree = item.isFree;
 
 	const translate = useTranslate();
 	const anchorRef = useRef< HTMLDivElement >( null );
-	const { discount } = useCouponDiscount( billingTerm, originalPrice, discountedPrice );
+	const { discount } = useCouponDiscount( originalPrice, discountedPrice );
 	const showDiscountLabel =
 		! hideSavingLabel &&
 		discount &&
