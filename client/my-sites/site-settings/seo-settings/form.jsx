@@ -5,11 +5,10 @@ import {
 	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
-import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import { get, isEqual, mapValues, pickBy } from 'lodash';
 import { Component, createRef } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -480,14 +479,7 @@ const mapDispatchToProps = {
 		recordTracksEvent( 'calypso_seo_tools_front_page_meta_updated', properties ),
 };
 
-const withCurrentSiteKey = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const siteId = useSelector( getSelectedSiteId );
-		return <Wrapped { ...props } key={ siteId } />;
-	},
-	'WithCurrentSiteKey'
-);
-
-export default withCurrentSiteKey(
-	connect( mapStateToProps, mapDispatchToProps )( protectForm( localize( SiteSettingsFormSEO ) ) )
-);
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( protectForm( localize( SiteSettingsFormSEO ) ) );
