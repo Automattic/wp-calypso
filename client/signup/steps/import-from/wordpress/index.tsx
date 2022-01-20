@@ -6,8 +6,9 @@ import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { ImportJob } from '../types';
+import { Importer, ImportJob } from '../types';
 import { ContentChooser } from './content-chooser';
+import ImportContentOnly from './import-content-only';
 import ImportEverything from './import-everything';
 import { WPImportOption } from './types';
 
@@ -23,13 +24,14 @@ interface Props {
 }
 
 export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => {
+	const importer: Importer = 'wordpress';
 	const dispatch = useDispatch();
 
 	/**
 	 ↓ Fields
 	 */
 	const [ option, setOption ] = useState< WPImportOption >();
-	const { fromSite, siteSlug } = props;
+	const { job, fromSite, siteSlug } = props;
 	const siteItem = useSelector( ( state ) => getSiteBySlug( state, siteSlug ) );
 	const fromSiteItem = useSelector( ( state ) =>
 		getSiteBySlug( state, convertToFriendlyWebsiteName( fromSite ) )
@@ -102,6 +104,17 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 					targetSite={ siteItem }
 					targetSiteId={ siteItem?.ID as number }
 					targetSiteSlug={ siteSlug }
+				/>
+			) }
+
+			{ WPImportOption.CONTENT_ONLY === option && (
+				<ImportContentOnly
+					job={ job }
+					fromSite={ fromSite }
+					importer={ importer }
+					siteItem={ siteItem }
+					siteSlug={ siteSlug }
+					siteAnalyzedData={ fromSiteAnalyzedData }
 				/>
 			) }
 		</>
