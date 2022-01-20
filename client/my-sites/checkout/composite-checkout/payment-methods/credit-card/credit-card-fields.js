@@ -172,6 +172,7 @@ export default function CreditCardFields( {
 					{ allowUseForAllSubscriptions && (
 						<AssignToAllPaymentMethods
 							isChecked={ useForAllSubscriptions }
+							isDisabled={ isDisabled }
 							onChange={ setUseForAllSubscriptions }
 						/>
 					) }
