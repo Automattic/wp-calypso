@@ -40,6 +40,7 @@ export function requestTheme( themeId, siteId ) {
 					if ( ! theme ) {
 						throw 'Theme not found'; // Will be caught by .catch() below
 					}
+					console.log( 'requestTheme: received theme mark 1' );
 					dispatch( receiveTheme( normalizeWporgTheme( theme ), siteId ) );
 					dispatch( {
 						type: THEME_REQUEST_SUCCESS,
@@ -61,6 +62,7 @@ export function requestTheme( themeId, siteId ) {
 			return wpcom.req
 				.get( `/themes/${ themeId }`, { apiVersion: '1.2' } )
 				.then( ( theme ) => {
+					console.log( 'requestTheme: received theme mark 2' );
 					dispatch( receiveTheme( normalizeWpcomTheme( theme ), siteId ) );
 					dispatch( {
 						type: THEME_REQUEST_SUCCESS,
@@ -86,6 +88,7 @@ export function requestTheme( themeId, siteId ) {
 		return wpcom.req
 			.post( `/sites/${ siteId }/themes`, { themes: themeId } )
 			.then( ( { themes } ) => {
+				console.log( 'requestTheme: received theme mark 3' );
 				dispatch( receiveThemes( map( themes, normalizeJetpackTheme ), siteId ) );
 				dispatch( {
 					type: THEME_REQUEST_SUCCESS,

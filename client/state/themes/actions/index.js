@@ -22,6 +22,7 @@ export {
 } from 'calypso/state/themes/actions/trending-themes';
 export { requestActiveTheme } from 'calypso/state/themes/actions/request-active-theme';
 export { requestTheme } from 'calypso/state/themes/actions/request-theme';
+export { requestThenActivate } from 'calypso/state/themes/actions/request-then-activate';
 export { requestThemeFilters } from 'calypso/state/themes/actions/request-theme-filters';
 export { requestThemes } from 'calypso/state/themes/actions/request-themes';
 export { setBackPath } from 'calypso/state/themes/actions/set-back-path';
