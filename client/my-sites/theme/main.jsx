@@ -841,7 +841,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	const needsJetpackPlanUpgrade = isJetpack && isPremium && ! isPurchased;
 
 	if ( ! showTryAndCustomize ) {
-		secondaryOption = '';
+		secondaryOption = null;
 	}
 
 	if ( ! isLoggedIn ) {
