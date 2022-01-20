@@ -36,16 +36,19 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
+import Notice from 'calypso/components/notice';
 import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
+import { isInAppPurchase } from 'calypso/state/purchases/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import {
 	getSitePlan,
 	getSiteSlug,
@@ -154,6 +157,7 @@ export class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
 		const {
 			basePlansPath,
+			currentPurchaseIsInAppPurchase,
 			customerType,
 			disableBloggerPlanWithNonBlogDomain,
 			domainName,
@@ -173,6 +177,7 @@ export class PlansFeaturesMain extends Component {
 			isInVerticalScrollingPlansExperiment,
 			redirectToAddDomainFlow,
 			disableMonthlyExperiment,
+			translate,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -190,6 +195,15 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans="wpcom"
 			>
+				{ currentPurchaseIsInAppPurchase && (
+					<Notice
+						showDismiss={ false }
+						status="is-info"
+						text={ translate(
+							'Your current plan is an in-app purchase. You can upgrade to a different plan from within the WordPress app.'
+						) }
+					></Notice>
+				) }
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
@@ -501,6 +515,7 @@ export default connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
 		const currentPlan = getSitePlan( state, siteId );
+		const currentPurchase = getCurrentPlan( state, siteId );
 		const sitePlanSlug = currentPlan?.product_slug;
 		const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
 
@@ -520,6 +535,7 @@ export default connect(
 		}
 
 		return {
+			currentPurchaseIsInAppPurchase: isInAppPurchase( state, currentPurchase?.id ),
 			customerType,
 			domains: getDomainsBySiteId( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
