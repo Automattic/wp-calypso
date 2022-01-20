@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -350,9 +349,8 @@ export default connect(
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 		query: getCurrentQueryArguments( state ),
-		isJetpackWooCommerceFlow:
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
+		wccomFrom: getCurrentQueryArguments( state )[ 'wccom-from' ],
 	} ),
 	{
 		recordTracksEvent,

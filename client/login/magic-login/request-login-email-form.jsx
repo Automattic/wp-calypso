@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import { defer, get } from 'lodash';
+import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -91,7 +91,7 @@ class RequestLoginEmailForm extends Component {
 	};
 
 	getUsernameOrEmailFromState() {
-		return get( this, 'state.usernameOrEmail', '' );
+		return this.state.usernameOrEmail;
 	}
 
 	render() {
