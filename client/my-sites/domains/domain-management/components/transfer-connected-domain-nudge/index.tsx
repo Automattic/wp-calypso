@@ -1,5 +1,6 @@
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import type { TransferConnectedDomainNudgeProps } from './types';
@@ -24,7 +25,10 @@ const TransferConnectedDomainNudge = ( {
 		}
 	);
 
-	if ( ! domain.showTransferConnectedDomainNudge ) {
+	if (
+		! domain.registryExpiryDate ||
+		moment( domain.registryExpiryDate ).isAfter( moment().add( 45, 'days' ) )
+	) {
 		return null;
 	}
 
