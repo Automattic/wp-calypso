@@ -6,7 +6,7 @@ import JestEnvironmentNode from 'jest-environment-node';
 import { Browser, BrowserContext, BrowserContextOptions, chromium, Page } from 'playwright';
 import env from '../env-variables';
 import config from './playwright-config';
-import type { Config, Circus } from 'jest-environment-node/node_modules/@jest/types';
+import type { Config, Circus } from '@jest/types';
 
 const sanitizeString = ( text: string ) => {
 	return text.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
@@ -126,19 +126,18 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 	 */
 	async handleTestEvent( event: Circus.Event ) {
 		switch ( event.name ) {
+			case 'run_describe_start': {
+				// If failure has been noted in a prior step/describe block, skip
+				// all subsequent describe blocks.
+				if ( this.failure ) {
+					event.describeBlock.mode = 'skip';
+				}
+				break;
+			}
 			case 'test_start': {
 				// If a test has failed, skip rest of the steps.
 				if ( this.failure?.type === 'test' ) {
 					event.test.mode = 'skip';
-				}
-				// If a hook has failed, mark all subsequent test steps as failed.
-				// Handling is different compared to test steps because Jest treats
-				// failed hooks differently from tests.
-				if ( this.failure?.type === 'hook' ) {
-					// event.test.mode = 'fail';
-					// This is now commented out as it throws the "Type '"fail"' is not
-					// assignable to type 'BlockMode'" TS error. The accepted options are
-					// "skip", "todo", and "only".
 				}
 				break;
 			}
