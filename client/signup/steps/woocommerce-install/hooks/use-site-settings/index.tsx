@@ -5,7 +5,10 @@ import {
 	saveSiteSettings,
 	updateSiteSettings,
 } from 'calypso/state/site-settings/actions';
-import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import {
+	getSiteSettings,
+	isSiteSettingsSaveSuccessful,
+} from 'calypso/state/site-settings/selectors';
 
 // WooCommerce enable options.
 export const WOOCOMMERCE_STORE_ADDRESS_1 = 'woocommerce_store_address';
@@ -36,6 +39,7 @@ export function useSiteSettings( siteId: number ) {
 	const dispatch = useDispatch();
 
 	const settings = useSelector( ( state ) => getSiteSettings( state, siteId ) );
+	const settingsSaved = useSelector( ( state ) => isSiteSettingsSaveSuccessful( state, siteId ) );
 
 	const [ updates, setUpdates ] = useState( {} as Record< optionNameType, OptionValueType > );
 
@@ -46,7 +50,7 @@ export function useSiteSettings( siteId: number ) {
 		}
 
 		dispatch( requestSiteSettings( siteId ) );
-	}, [ dispatch, siteId ] );
+	}, [ dispatch, siteId, settingsSaved ] );
 
 	// Simple getter helper.
 	function get( option: optionNameType ) {
