@@ -43,8 +43,8 @@ class GoogleLoginButton extends Component {
 		errorRef: null,
 		isDisabled: false,
 		isLoading: false,
-		isInitilized: false,
-		isClicked: false,
+		isInitialized: false,
+		clickEvent: undefined,
 	};
 
 	constructor( props ) {
@@ -100,9 +100,8 @@ class GoogleLoginButton extends Component {
 			.then( ( gapi ) =>
 				this.initializeAuth2( gapi ).then( () => {
 					this.setState( {
-						isLoading: false,
 						isDisabled: false,
-						isInitilized: true,
+						isInitialized: true,
 					} );
 
 					const googleAuth = gapi.auth2.getAuthInstance();
@@ -113,11 +112,11 @@ class GoogleLoginButton extends Component {
 						this.props.responseHandler( currentUser, false );
 					}
 
-					if ( this.state.isClicked ) {
+					if ( this.state.clickEvent ) {
 						// Make sure that handleClick Call happens on the next tick so that the popup always launches.
 						setTimeout( () => {
-							this.handleClick( this.state.isClicked );
-						}, 10 );
+							this.handleClick( this.state.clickEvent );
+						} );
 					}
 
 					return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
@@ -125,10 +124,6 @@ class GoogleLoginButton extends Component {
 			)
 			.catch( ( error ) => {
 				this.initialized = null;
-
-				this.setState( {
-					isLoading: false,
-				} );
 
 				if ( 'idpiframe_initialization_failed' === error.error ) {
 					// This error is caused by 3rd party cookies being blocked.
@@ -158,8 +153,8 @@ class GoogleLoginButton extends Component {
 	handleClick( event ) {
 		event.preventDefault();
 
-		if ( ! this.state.isInitilized && ! this.state.isClicked ) {
-			this.setState( { isClicked: event, isLoading: true } );
+		if ( ! this.state.isInitialized && ! this.state.clickEvent ) {
+			this.setState( { clickEvent: event } );
 			return;
 		}
 
@@ -176,11 +171,11 @@ class GoogleLoginButton extends Component {
 
 		const { responseHandler } = this.props;
 
-		this.setState( { isClicked: null } );
+		this.setState( { clickEvent: null } );
 
 		// Options are documented here:
 		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
-		window?.gapi.auth2
+		window.gapi?.auth2
 			.getAuthInstance()
 			.signIn( { prompt: 'select_account' } )
 			.then( responseHandler, ( error ) => {
@@ -210,7 +205,8 @@ class GoogleLoginButton extends Component {
 		const isDisabled = Boolean(
 			this.state.isDisabled || this.props.isFormDisabled || this.state.error
 		);
-		const { isLoading } = this.state;
+
+		const isLoading = this.state.isClicked && ! this.state.initialized && ! this.state.error;
 
 		const { children } = this.props;
 		let customButton = null;
