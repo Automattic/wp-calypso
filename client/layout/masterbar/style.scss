@@ -479,12 +479,6 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-notifications {
-	margin-right: 12px;
-
-	@include breakpoint-deprecated( '<480px' ) {
-		margin-right: 0;
-	}
-
 	.gridicon {
 		fill: var( --color-text-inverted );
 	}

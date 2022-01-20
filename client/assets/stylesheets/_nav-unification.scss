@@ -211,7 +211,6 @@
 	// breakpoint used in wp-admin
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item-notifications {
-			margin-right: 10px;
 			width: 26px;
 
 			.gridicon {
@@ -227,9 +226,6 @@
 
 	@include breakpoint-deprecated( '<480px' ) {
 		.masterbar__item-notifications {
-			margin-top: 0;
-			margin-left: auto;
-			margin-right: auto;
 			width: auto;
 		}
 	}
