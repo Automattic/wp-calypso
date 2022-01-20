@@ -7,6 +7,7 @@ import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
+import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
