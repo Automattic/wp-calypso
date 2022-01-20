@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
 import { Card, Button, CompactCard, Gridicon } from '@automattic/components';
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -15,15 +16,12 @@ import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Gravatar from 'calypso/components/gravatar';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import User from 'calypso/components/user';
+import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
+import useRemoveExternalContributorMutation from 'calypso/data/external-contributors/use-remove-external-contributor-mutation';
 import accept from 'calypso/lib/accept';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import {
-	requestExternalContributors,
-	requestExternalContributorsRemoval,
-} from 'calypso/state/data-getters';
-import { httpData } from 'calypso/state/data-layer/http-data';
 import { getSite } from 'calypso/state/sites/selectors';
 import withDeleteUser from './with-delete-user';
 
@@ -153,7 +151,7 @@ class DeleteUser extends Component {
 						'Clicked Confirm Remove User on Edit User Network Site'
 					);
 					if ( 'external' === contributorType ) {
-						requestExternalContributorsRemoval(
+						this.props.removeExternalContributor(
 							siteId,
 							user.linked_user_ID ? user.linked_user_ID : user.ID
 						);
@@ -188,7 +186,7 @@ class DeleteUser extends Component {
 		}
 
 		if ( 'external' === contributorType ) {
-			requestExternalContributorsRemoval(
+			this.props.removeExternalContributor(
 				siteId,
 				user.linked_user_ID ? user.linked_user_ID : user.ID
 			);
@@ -320,7 +318,13 @@ class DeleteUser extends Component {
 	renderMultisite = () => {
 		return (
 			<CompactCard className="delete-user__multisite">
-				<Button borderless className="delete-user__remove-user" onClick={ this.removeUser }>
+				<Button
+					primary
+					borderless
+					className="delete-user__remove-user"
+					onClick={ this.removeUser }
+					disabled={ 'pending' === this.props.contributorType }
+				>
 					<Gridicon icon="trash" />
 					<span>{ this.getRemoveText() }</span>
 				</Button>
@@ -342,29 +346,43 @@ class DeleteUser extends Component {
 }
 
 const getContributorType = ( externalContributors, userId ) => {
-	if ( externalContributors.data ) {
-		return externalContributors.data.includes( userId ) ? 'external' : 'standard';
+	if ( externalContributors ) {
+		return externalContributors.includes( userId ) ? 'external' : 'standard';
 	}
 	return 'pending';
 };
 
+const withExternalContributor = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const { siteId, user } = props;
+		const { data: externalContributors } = useExternalContributorsQuery( siteId );
+		const { removeExternalContributor } = useRemoveExternalContributorMutation();
+		const contributorType = getContributorType(
+			externalContributors,
+			user?.linked_user_ID ?? user?.ID
+		);
+
+		return (
+			<Wrapped
+				{ ...props }
+				contributorType={ contributorType }
+				removeExternalContributor={ removeExternalContributor }
+			/>
+		);
+	},
+	'WithExternalContributor'
+);
+
 export default localize(
 	connect(
-		( state, { siteId, user } ) => {
-			const userId = user && user.ID;
-			const linkedUserId = user && user.linked_user_ID;
-			const externalContributors = siteId ? requestExternalContributors( siteId ) : httpData.empty;
+		( state, { siteId } ) => {
 			const site = getSite( state, siteId );
 
 			return {
 				siteOwner: site?.site_owner,
 				currentUser: getCurrentUser( state ),
-				contributorType: getContributorType(
-					externalContributors,
-					undefined !== linkedUserId ? linkedUserId : userId
-				),
 			};
 		},
 		{ recordGoogleEvent }
-	)( withDeleteUser( DeleteUser ) )
+	)( withDeleteUser( withExternalContributor( DeleteUser ) ) )
 );
