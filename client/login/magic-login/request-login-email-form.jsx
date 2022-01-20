@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { defer } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -49,10 +48,9 @@ class RequestLoginEmailForm extends Component {
 		usernameOrEmail: this.props.userEmail || '',
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.requestError && nextProps.requestError ) {
-			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.requestError && this.props.requestError ) {
+			this.usernameOrEmail?.focus();
 		}
 	}
 
