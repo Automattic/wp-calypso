@@ -42,8 +42,14 @@
 		position: fixed;
 		top: var( --masterbar-height );
 		right: 0;
-		bottom: 0;
+		bottom: 1em;
 		background-color: var( --color-surface );
+	}
+}
+
+.masterbar-cart-button__popover .mini-cart-line-items {
+	@include breakpoint-deprecated( '<480px' ) {
+		max-height: none;
 	}
 }
 

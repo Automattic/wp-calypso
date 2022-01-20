@@ -89,7 +89,9 @@ const PluginDetailsCTA = ( {
 					<div className="plugin-details-CTA__price align-right">
 						<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 							{ ( { isFetching, price, period } ) =>
-								! isFetching && (
+								isFetching ? (
+									<div className="plugin-details-CTA__price-placeholder">...</div>
+								) : (
 									<>
 										{ price + ' ' }
 										<span className="plugin-details-CTA__period">{ period }</span>
@@ -119,7 +121,9 @@ const PluginDetailsCTA = ( {
 			<div className="plugin-details-CTA__price">
 				<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 					{ ( { isFetching, price, period } ) =>
-						! isFetching && (
+						isFetching ? (
+							<div className="plugin-details-CTA__price-placeholder">...</div>
+						) : (
 							<>
 								{ price ? (
 									<>
@@ -209,11 +213,14 @@ const CTAButton = ( {
 	return (
 		<>
 			<Dialog
+				additionalClassNames={ 'plugin-details-CTA__dialog-content' }
+				additionalOverlayClassNames={ 'plugin-details-CTA__modal-overlay' }
 				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
 			>
 				<EligibilityWarnings
+					currentContext={ 'plugin-details' }
 					standaloneProceed
 					onProceed={ () =>
 						onClickInstallPlugin( {

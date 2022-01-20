@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -38,6 +39,7 @@ import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-in
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
+import SiteRedirectCard from './cards/site-redirect-card';
 import TransferredDomainDetails from './cards/transferred-domain-details';
 import DnsRecords from './dns';
 import { getSslReadableStatus, isSecuredWithUs } from './helpers';
@@ -62,6 +64,13 @@ const Settings = ( {
 	whoisData,
 }: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
+	const contactInformation = findRegistrantWhois( whoisData );
+
+	useEffect( () => {
+		if ( ! contactInformation ) {
+			requestWhois( selectedDomainName );
+		}
+	}, [ contactInformation, selectedDomainName ] );
 
 	const renderBreadcrumbs = () => {
 		const previousPath = domainManagementList( selectedSite?.slug, currentRoute );
@@ -159,6 +168,20 @@ const Settings = ( {
 					/>
 				</Accordion>
 			);
+		} else if ( domain.type === domainTypes.SITE_REDIRECT ) {
+			return (
+				<Accordion
+					title={ translate( 'Redirect settings', { textOnly: true } ) }
+					subtitle={ 'Update your site redirect' }
+					key="main"
+					expanded
+				>
+					<SiteRedirectCard
+						selectedSite={ selectedSite }
+						selectedDomainName={ selectedDomainName }
+					/>
+				</Accordion>
+			);
 		}
 	};
 
@@ -175,7 +198,7 @@ const Settings = ( {
 	const getNameServerSectionSubtitle = () => {
 		if ( isLoadingNameservers ) {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			return <p className="name-servers-card__loading" />;
+			return <span className="name-servers-card__loading" />;
 		}
 
 		if ( loadingNameserversError ) {
@@ -216,6 +239,10 @@ const Settings = ( {
 	};
 
 	const renderDnsRecords = () => {
+		if ( ! domain || domain.type === domainTypes.SITE_REDIRECT ) {
+			return null;
+		}
+
 		return (
 			<Accordion
 				title={ translate( 'DNS records', { textOnly: true } ) }
@@ -268,8 +295,6 @@ const Settings = ( {
 			></ContactsPrivacyInfo>
 		);
 
-		const contactInformation = findRegistrantWhois( whoisData );
-
 		const { privateDomain } = domain;
 		const titleLabel = translate( 'Contact information', { textOnly: true } );
 		const privacyProtectionLabel = privateDomain
@@ -285,7 +310,6 @@ const Settings = ( {
 		}
 
 		if ( ! contactInformation ) {
-			requestWhois( selectedDomainName );
 			return getPlaceholderAccordion();
 		}
 
@@ -389,7 +413,7 @@ export default connect(
 		return {
 			whoisData: getWhoisData( state, ownProps.selectedDomainName ),
 			currentRoute: getCurrentRoute( state ),
-			domain: getSelectedDomain( ownProps ),
+			domain: getSelectedDomain( { ...ownProps, isSiteRedirect: true } ),
 			isLoadingPurchase:
 				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 			purchase: purchase && purchase.userId === currentUserId ? purchase : null,

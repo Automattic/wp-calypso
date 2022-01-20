@@ -40,6 +40,7 @@ import JetpackCheckoutSitelessThankYouCompleted from './checkout-thank-you/jetpa
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import UpsellNudge, {
+	ANNUAL_PLAN_UPGRADE,
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
@@ -195,7 +196,7 @@ export function checkoutPending( context, next ) {
 	const orderId = Number( context.params.orderId );
 	const siteSlug = context.params.site;
 
-	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
+	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
 		<CheckoutPendingComponent
@@ -265,6 +266,9 @@ export function upsellNudge( context, next ) {
 	} else if ( context.path.includes( 'offer-professional-email' ) ) {
 		upsellType = PROFESSIONAL_EMAIL_UPSELL;
 		upgradeItem = context.params.domain;
+	} else if ( context.path.includes( 'offer-annual-upgrade' ) ) {
+		upsellType = ANNUAL_PLAN_UPGRADE;
+		upgradeItem = context.params.upgradeItem;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );

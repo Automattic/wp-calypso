@@ -10,6 +10,8 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 
@@ -38,6 +40,9 @@ class Site extends Component {
 		// if homeLink is enabled
 		showHomeIcon: true,
 		compact: false,
+
+		isP2Hub: false,
+		isSiteP2: false,
 	};
 
 	static propTypes = {
@@ -54,6 +59,8 @@ class Site extends Component {
 		homeLink: PropTypes.bool,
 		showHomeIcon: PropTypes.bool,
 		compact: PropTypes.bool,
+		isP2Hub: PropTypes.bool,
+		isSiteP2: PropTypes.bool,
 	};
 
 	onSelect = ( event ) => {
@@ -158,6 +165,12 @@ class Site extends Component {
 								: site.domain }
 						</div>
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+						{ this.props.isSiteP2 && ! this.props.isP2Hub && (
+							<span className="site__badge is-p2">P2</span>
+						) }
+						{ this.props.isP2Hub && (
+							<span className="site__badge is-p2-workspace">P2 Workspace</span>
+						) }
 						{ this.props.site.is_private && (
 							<span className="site__badge site__badge-private">
 								{ shouldShowPrivateByDefaultComingSoonBadge
@@ -208,6 +221,8 @@ function mapStateToProps( state, ownProps ) {
 		siteSlug: getSiteSlug( state, siteId ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		isNavUnificationEnabled: isNavUnificationEnabled( state ),
+		isSiteP2: isSiteWPForTeams( state, siteId ),
+		isP2Hub: isSiteP2Hub( state, siteId ),
 	};
 }
 

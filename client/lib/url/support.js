@@ -3,6 +3,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
 
 export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-google-workspace-to-your-site/`;
+export const ADDING_TITAN_TO_YOUR_SITE = `${ root }/add-email/adding-professional-email-to-your-site/`;
 export const AUTO_RENEWAL = `${ root }/manage-purchases/#automatic-renewal`;
 export const CHANGE_NAME_SERVERS = `${ root }/domains/custom-dns/#changing-name-servers-to-point-to-wordpress-com`;
 export const CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS = `${ root }/domains/change-name-servers/#finding-out-your-new-name-server`;

@@ -9,6 +9,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import InfoPopover from 'calypso/components/info-popover';
+import { withUploadSiteIcon } from 'calypso/data/media/with-upload-site-icon';
 import accept from 'calypso/lib/accept';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -19,7 +20,7 @@ import {
 	getImageEditorCrop,
 	getImageEditorTransform,
 } from 'calypso/state/editor/image-editor/selectors';
-import { uploadSiteIcon } from 'calypso/state/media/thunks';
+import { errorNotice } from 'calypso/state/notices/actions';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
@@ -84,8 +85,10 @@ class SiteIconSetting extends Component {
 	}
 
 	uploadSiteIcon( blob, fileName ) {
-		const { siteId, translate, siteIconId, site } = this.props;
-		this.props.uploadSiteIcon( blob, fileName, siteId, translate, siteIconId, site );
+		const { siteId, siteIconId, site, translate } = this.props;
+		this.props.uploadSiteIcon( blob, fileName, siteId, siteIconId, site ).catch( () => {
+			this.props.errorNotice( translate( 'An error occurred while uploading the file.' ) );
+		} );
 	}
 
 	setSiteIcon = ( error, blob ) => {
@@ -292,6 +295,6 @@ export default connect(
 		setEditorMediaModalView,
 		resetAllImageEditorState,
 		saveSiteSettings,
-		uploadSiteIcon,
+		errorNotice,
 	}
-)( localize( SiteIconSetting ) );
+)( localize( withUploadSiteIcon( SiteIconSetting ) ) );

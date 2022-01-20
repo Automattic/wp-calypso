@@ -16,8 +16,6 @@ import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/c
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
-import { hideSitePreview } from 'calypso/state/signup/preview/actions';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 
 import './style.scss';
@@ -57,13 +55,6 @@ class DomainSearchResults extends Component {
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
 	};
-
-	componentDidUpdate() {
-		// If the signup site preview is showing, turn it off when domain search results are visible
-		if ( this.props.isSignupStep && this.props.isSitePreviewVisible ) {
-			this.props.hideSitePreview();
-		}
-	}
 
 	renderDomainAvailability() {
 		const {
@@ -366,8 +357,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	return {
 		// Set site design type only if we're in signup
 		siteDesignType: ownProps.isSignupStep && getDesignType( state ),
-		isSitePreviewVisible: ownProps.isSignupStep && isSitePreviewVisible( state ),
 	};
 };
 
-export default connect( mapStateToProps, { hideSitePreview } )( localize( DomainSearchResults ) );
+export default connect( mapStateToProps )( localize( DomainSearchResults ) );

@@ -16,7 +16,7 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	let badgeCounter = 0;
 
 	const renderCircle = () => (
-		<SVG viewBox="0 0 24 24">
+		<SVG viewBox="0 0 24 24" height={ 8 } width={ 8 }>
 			<Circle cx="12" cy="12" r="12" />
 		</SVG>
 	);
@@ -64,7 +64,11 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 		</Badge>
 	);
 
-	const renderTransferOrMappingBadge = ( type: string ) => {
+	const renderDomainTypeBadge = ( type: string ) => {
+		if ( type === DomainType.SITE_REDIRECT ) {
+			return renderNeutralBadge( __( 'Site Redirect' ) );
+		}
+
 		if ( type === DomainType.MAPPED ) {
 			return renderNeutralBadge( __( 'Registered with an external provider' ) );
 		}
@@ -86,8 +90,10 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 		const { domain } = props;
 		const badges = [];
 
-		if ( [ DomainType.MAPPED, DomainType.TRANSFER ].includes( domain.type ) ) {
-			badges.push( renderTransferOrMappingBadge( domain.type ) );
+		if (
+			[ DomainType.SITE_REDIRECT, DomainType.MAPPED, DomainType.TRANSFER ].includes( domain.type )
+		) {
+			badges.push( renderDomainTypeBadge( domain.type ) );
 		}
 
 		const statusBadge = renderStatusBadge( domain );

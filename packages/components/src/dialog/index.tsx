@@ -9,6 +9,7 @@ import './style.scss';
 
 type Props = {
 	additionalClassNames?: Parameters< typeof classnames >[ 0 ];
+	additionalOverlayClassNames?: Parameters< typeof classnames >[ 0 ];
 	baseClassName?: string;
 	buttons?: Button[];
 	className?: string;
@@ -24,6 +25,7 @@ type Props = {
 
 const Dialog = ( {
 	additionalClassNames,
+	additionalOverlayClassNames,
 	buttons,
 	baseClassName = 'dialog',
 	className,
@@ -51,7 +53,7 @@ const Dialog = ( {
 	// Previous implementation used a `<Card />`, styling still relies on the 'card' class being present
 	const dialogClassName = classnames( baseClassName, 'card', additionalClassNames );
 
-	const backdropClassName = classnames( baseClassName + '__backdrop', {
+	const backdropClassName = classnames( baseClassName + '__backdrop', additionalOverlayClassNames, {
 		'is-full-screen': isFullScreen,
 		'is-hidden': ! isBackdropVisible,
 	} );

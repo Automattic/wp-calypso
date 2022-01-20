@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from 'page';
 import DomainManagementData from 'calypso/components/data/domain-management';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
@@ -73,15 +72,11 @@ export default {
 	},
 
 	domainManagementEdit( pageContext, next ) {
-		let component = DomainManagement.Edit;
-		if ( config.isEnabled( 'domains/settings-page-redesign' ) ) {
-			component = DomainManagement.Settings;
-		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementEdit( ':site', ':domain', pageContext.canonicalPath ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ component }
+				component={ DomainManagement.Settings }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
@@ -98,7 +93,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementSiteRedirect( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ DomainManagement.SiteRedirect }
+				component={ DomainManagement.Settings }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
@@ -111,15 +106,11 @@ export default {
 	},
 
 	domainManagementTransferIn( pageContext, next ) {
-		let component = DomainManagement.TransferIn;
-		if ( config.isEnabled( 'domains/settings-page-redesign' ) ) {
-			component = DomainManagement.Settings;
-		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferIn( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ component }
+				component={ DomainManagement.Settings }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains

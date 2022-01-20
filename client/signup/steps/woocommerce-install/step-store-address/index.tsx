@@ -38,7 +38,7 @@ const CityZipRow = styled.div`
 `;
 
 export default function StepStoreAddress( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToNextStep, isReskinned, headerTitle, headerDescription } = props;
+	const { goToNextStep, isReskinned } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -202,10 +202,14 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 			hideSkip={ true }
 			allowBackFirstStep={ true }
 			backUrl={ `/woocommerce-installation/${ domain }` }
-			headerText={ headerTitle }
-			fallbackHeaderText={ headerTitle }
-			subHeaderText={ headerDescription }
-			fallbackSubHeaderText={ headerDescription }
+			headerText={ __( 'Add an address to accept payments' ) }
+			fallbackHeaderText={ __( 'Add an address to accept payments' ) }
+			subHeaderText={ __(
+				'This will be used as your default business address. You can change it later if you need to.'
+			) }
+			fallbackSubHeaderText={ __(
+				'This will be used as your default business address. You can change it later if you need to.'
+			) }
 			align={ isReskinned ? 'left' : 'center' }
 			stepContent={ getContent() }
 			isWideLayout={ isReskinned }

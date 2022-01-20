@@ -203,16 +203,6 @@
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 		margin-top: -0.1em;
 	}
-
-	.design-picker__premium-container {
-		margin-left: 6px;
-		/* stylelint-disable-next-line */
-		font-size: rem( 10px ); //typography-exception
-
-		.components-popover__content {
-			background-color: var( --studio-gray-80 );
-		}
-	}
 }
 
 // dark theme styles
@@ -379,6 +369,21 @@
 			@include break-large {
 				width: calc( 50% - 24px );
 			}
+		}
+	}
+}
+
+// layout without preview
+.design-button-container--without-preview {
+	.design-picker__image-frame::after {
+		pointer-events: none;
+	}
+
+	&:hover,
+	&:focus-within {
+		.design-picker__image-frame::after {
+			// `!important` is used because there is a default `background-color` with high specificity.
+			background-color: transparent !important; // to override 
 		}
 	}
 }

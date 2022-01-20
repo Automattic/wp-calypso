@@ -10,16 +10,3 @@
 		align-items: center;
 	}
 }
-
-.domains__header-buttons {
-	display: flex;
-
-	> div {
-		margin-top: auto;
-		margin-bottom: auto;
-	}
-
-	@include breakpoint-deprecated('<660px') {
-		margin: 16px;
-	}
-}

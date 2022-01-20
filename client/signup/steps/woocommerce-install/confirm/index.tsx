@@ -47,7 +47,7 @@ export const StyledNextButton = styled( NextButton )`
 `;
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToNextStep, isReskinned, headerTitle, headerDescription } = props;
+	const { goToNextStep, isReskinned } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -87,7 +87,9 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		}
 
 		return (
-			<PlanWarning title={ __( 'Upgrade your plan' ) }>{ siteUpgrading.description }</PlanWarning>
+			<PlanWarning title={ __( 'Plan upgrade required' ) }>
+				{ siteUpgrading.description }
+			</PlanWarning>
 		);
 	}
 
@@ -137,7 +139,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 								goToNextStep();
 							} }
 						>
-							{ __( 'Sounds good' ) }
+							{ __( 'Confirm' ) }
 						</StyledNextButton>
 					</ActionSection>
 				</div>
@@ -160,10 +162,14 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ ! isEnabled( 'woop' ) }
 			backUrl={ isEnabled( 'woop' ) ? null : `/woocommerce-installation/${ wpcomDomain }` }
-			headerText={ headerTitle }
-			fallbackHeaderText={ headerTitle }
-			subHeaderText={ headerDescription }
-			fallbackSubHeaderText={ headerDescription }
+			headerText={ __( 'One final step' ) }
+			fallbackHeaderText={ __( 'One final step' ) }
+			subHeaderText={ __(
+				'We’ve highlighted a few important details you should review before we create your store. '
+			) }
+			fallbackSubHeaderText={ __(
+				'We’ve highlighted a few important details you should review before we create your store. '
+			) }
 			align={ isReskinned ? 'left' : 'center' }
 			stepContent={ getContent() }
 			isWideLayout={ isReskinned }

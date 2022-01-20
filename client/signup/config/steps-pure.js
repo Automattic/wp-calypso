@@ -709,6 +709,8 @@ export function generateSteps( {
 				showDesignPickerCategories: true,
 				showDesignPickerCategoriesAllFilter: false,
 				showLetUsChoose: true,
+				hideFullScreenPreview: true,
+				hideDesignTitle: true,
 			},
 		},
 		'site-info-collection': {
@@ -736,29 +738,17 @@ export function generateSteps( {
 			stepName: 'importing',
 		},
 
-		// Woocommerce Install steps
+		// Woocommerce Install steps.
 		'store-address': {
 			stepName: 'store-address',
-			props: {
-				headerTitle: i18n.translate( 'Add an address to accept payments' ),
-				headerDescription: i18n.translate(
-					'This will be used as your default business address. You can change it later if you need to.'
-				),
-			},
+			dependencies: [ 'site' ],
+		},
+		'business-info': {
+			stepName: 'business-info',
 			dependencies: [ 'site' ],
 		},
 		confirm: {
 			stepName: 'confirm',
-			props: {
-				get headerTitle() {
-					return i18n.translate( 'One final step' );
-				},
-				get headerDescription() {
-					return i18n.translate(
-						'We’ve highlighted a few important details you should review before we create your store. '
-					);
-				},
-			},
 			dependencies: [ 'site' ],
 			providesDependencies: [ 'siteConfirmed' ],
 		},

@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import DesignPicker, {
 	FeaturedPicksButtons,
+	PremiumBadge,
 	getAvailableDesigns,
 	useCategorization,
 } from '@automattic/design-picker';
@@ -11,8 +12,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useMemo } from 'react';
 import * as React from 'react';
-import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
-import Badge from '../../components/badge';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { useIsAnchorFm } from '../../path';
@@ -75,7 +74,6 @@ const Header: React.FunctionComponent = () => {
 };
 
 const Designs: React.FunctionComponent = () => {
-	const { __ } = useI18n();
 	const locale = useLocale();
 	const { goNext } = useStepNavigation();
 	const { setSelectedDesign, setFonts, resetFonts, setRandomizedDesigns } = useDispatch(
@@ -175,12 +173,7 @@ const Designs: React.FunctionComponent = () => {
 				isGridMinimal={ isAnchorFmSignup }
 				locale={ locale }
 				onSelect={ onSelect }
-				premiumBadge={
-					<Badge className="designs__premium-badge">
-						<JetpackLogo className="designs__premium-badge-logo" size={ 20 } />
-						<span className="designs__premium-badge-text">{ __( 'Premium' ) }</span>
-					</Badge>
-				}
+				premiumBadge={ <PremiumBadge /> }
 				categorization={ isDesignPickerCategoriesEnabled ? categorization : undefined }
 				categoriesHeading={ isDesignPickerCategoriesEnabled && <Header /> }
 				categoriesFooter={

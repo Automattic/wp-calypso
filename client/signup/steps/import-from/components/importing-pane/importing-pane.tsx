@@ -10,6 +10,7 @@ import {
 	ImportingPane as ImportingPaneBase,
 	resourcesRemaining,
 } from 'calypso/my-sites/importer/importing-pane';
+import { UrlData } from 'calypso/signup/steps/import/types';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
 import './importing-pane.scss';
@@ -21,11 +22,17 @@ class ImportingPane extends ImportingPaneBase {
 			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
 			sourceType,
 			site,
+			urlData,
 		} = this.props;
 		const { customData } = importerStatus;
 		const progressClasses = classNames( 'importing-pane__progress', {
 			'is-complete': this.isFinished(),
 		} );
+
+		// Add the site favicon as author's icon
+		for ( const author of importerStatus.customData.sourceAuthors ) {
+			author.icon = ( urlData as UrlData ).meta?.favicon;
+		}
 
 		let { percentComplete, statusMessage } = this.props.importerStatus;
 		const { progress } = this.props.importerStatus;

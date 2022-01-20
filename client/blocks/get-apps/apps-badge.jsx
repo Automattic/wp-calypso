@@ -101,8 +101,10 @@ export class AppsBadge extends PureComponent {
 	};
 
 	onLinkClick = () => {
-		const { storeName } = this.props;
-		this.props.recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent );
+		const { storeName, utm_source } = this.props;
+		this.props.recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent, {
+			utm_source_string: utm_source,
+		} );
 	};
 
 	render() {

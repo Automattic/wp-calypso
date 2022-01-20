@@ -41,7 +41,7 @@
 			}
 
 			@include breakpoint-deprecated( '<660px' ) {
-				margin-left: 16px;
+				margin: 0 16px 24px;
 			}
 		}
 
@@ -165,6 +165,7 @@
 .domain-settings-page {
 	.name-servers-card__loading {
 		@include placeholder();
+		display: block;
 		margin-top: 4px;
 		margin-bottom: 0;
 	}

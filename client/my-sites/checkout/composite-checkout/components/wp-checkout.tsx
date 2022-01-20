@@ -18,7 +18,6 @@ import {
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
-import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
@@ -49,8 +48,6 @@ import type { OnChangeItemVariant } from '../components/item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
-
-const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -177,26 +174,6 @@ export default function WPCheckout( {
 	// always visible. It is not a step and its visibility is managed manually.
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
 
-	// The "Order review" step is not managed by Composite Checkout and is shown/hidden manually.
-	// If the page includes a 'order-review=true' query string, then start with
-	// the order review step visible.
-	const [ isOrderReviewActive, setIsOrderReviewActive ] = useState( () => {
-		try {
-			const shouldInitOrderReviewStepActive =
-				window?.location?.search.includes( 'order-review=true' ) ?? false;
-			if ( shouldInitOrderReviewStepActive ) {
-				return true;
-			}
-		} catch ( error ) {
-			// If there's a problem loading the query string, just default to false.
-			debug(
-				'Error loading query string to determine if we should see the order review step at load',
-				error
-			);
-		}
-		return false;
-	} );
-
 	const { formStatus } = useFormStatus();
 
 	const arePostalCodesSupported = getCountryPostalCodeSupport(
@@ -293,26 +270,16 @@ export default function WPCheckout( {
 			<CheckoutStepArea
 				submitButtonHeader={ <SubmitButtonHeader /> }
 				submitButtonFooter={ <SubmitButtonFooter /> }
-				disableSubmitButton={ isOrderReviewActive }
 			>
 				{ infoMessage }
 				<CheckoutStepBody
 					onError={ onReviewError }
 					className="wp-checkout__review-order-step"
 					stepId="review-order-step"
-					isStepActive={ isOrderReviewActive }
+					isStepActive={ false }
 					isStepComplete={ true }
-					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
-					goToNextStep={ () => {
-						setIsOrderReviewActive( ! isOrderReviewActive );
-						reduxDispatch(
-							recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-								step: 0,
-								step_name: 'review-order-step',
-							} )
-						);
-					} }
-					activeStepContent={
+					titleContent={ <OrderReviewTitle /> }
+					completeStepContent={
 						<WPCheckoutOrderReview
 							removeProductFromCart={ removeProductFromCart }
 							couponFieldStateProps={ couponFieldStateProps }
@@ -322,24 +289,11 @@ export default function WPCheckout( {
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
 					}
-					titleContent={ <OrderReviewTitle /> }
-					completeStepContent={
-						<WPCheckoutOrderReview
-							isSummary
-							removeProductFromCart={ removeProductFromCart }
-							couponFieldStateProps={ couponFieldStateProps }
-							siteUrl={ siteUrl }
-						/>
-					}
-					editButtonText={ String( translate( 'Edit' ) ) }
-					editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
-					nextStepButtonText={ String( translate( 'Save order' ) ) }
-					nextStepButtonAriaLabel={ String( translate( 'Save your order' ) ) }
 					validatingButtonText={ validatingButtonText }
 					validatingButtonAriaLabel={ validatingButtonText }
 					formStatus={ formStatus }
 				/>
-				<CheckoutSteps areStepsActive={ ! isOrderReviewActive }>
+				<CheckoutSteps>
 					{ contactDetailsType !== 'none' && (
 						<CheckoutStep
 							stepId={ 'contact-form' }

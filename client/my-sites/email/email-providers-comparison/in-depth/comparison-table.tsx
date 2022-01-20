@@ -2,91 +2,139 @@
 
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
-import { useSelector } from 'react-redux';
-import { getSelectedDomain } from 'calypso/lib/domains';
-import GoogleWorkspacePrice from 'calypso/my-sites/email/email-providers-comparison/price/google-workspace';
-import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-comparison/price/professional-email';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type {
-	ComparisonTableProps,
-	ComparisonTablePriceProps,
-	EmailProviderFeatures,
-} from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
+import { isBillingAvailable } from 'calypso/my-sites/email/email-providers-comparison/in-depth/data';
+import EmailProviderPrice from 'calypso/my-sites/email/email-providers-comparison/in-depth/email-provider-price';
+import LearnMoreLink from 'calypso/my-sites/email/email-providers-comparison/in-depth/learn-more-link';
+import type { ComparisonListOrTableProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 import type { ReactElement } from 'react';
 
-const ComparisonTablePrice = ( {
-	domain,
-	emailProviderSlug,
-	intervalLength,
-}: ComparisonTablePriceProps ): ReactElement => {
-	if ( emailProviderSlug === 'google-workspace' ) {
-		return <GoogleWorkspacePrice intervalLength={ intervalLength } />;
-	}
-
-	return <ProfessionalEmailPrice domain={ domain } intervalLength={ intervalLength } />;
-};
+import './style.scss';
 
 const ComparisonTable = ( {
 	emailProviders,
 	intervalLength,
+	onSelectEmailProvider,
 	selectedDomainName,
-}: ComparisonTableProps ): ReactElement => {
+}: ComparisonListOrTableProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const selectedSite = useSelector( getSelectedSite );
-	const currentRoute = useSelector( getCurrentRoute );
-
-	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
-	const domain = getSelectedDomain( {
-		domains,
-		selectedDomainName: selectedDomainName,
-	} );
-
-	const selectEmailProvider = ( emailProviderSlug: string ) => {
-		if ( selectedSite === null ) {
-			return;
-		}
-
-		page(
-			emailManagementPurchaseNewEmailAccount(
-				selectedSite.slug,
-				selectedDomainName,
-				currentRoute,
-				null,
-				emailProviderSlug,
-				intervalLength
-			)
-		);
-	};
-
 	return (
-		<div className="email-providers-in-depth-comparison-table">
-			{ emailProviders.map( ( emailProviderFeatures: EmailProviderFeatures ) => {
-				return (
-					<div key={ emailProviderFeatures.slug }>
-						<div className="email-providers-in-depth-comparison-table__provider-name">
-							{ emailProviderFeatures.logo }
+		<table className="email-providers-in-depth-comparison-table">
+			<tbody>
+				<tr>
+					<td></td>
 
-							<h2>{ emailProviderFeatures.name }</h2>
-						</div>
+					{ emailProviders.map( ( emailProviderFeatures ) => {
+						return (
+							<td key={ emailProviderFeatures.slug }>
+								<div className="email-providers-in-depth-comparison-table__provider">
+									{ emailProviderFeatures.logo }
 
-						<ComparisonTablePrice
-							domain={ domain }
-							emailProviderSlug={ emailProviderFeatures.slug }
-							intervalLength={ intervalLength }
-						/>
+									<div className="email-providers-in-depth-comparison-table__provider-info">
+										<h2>{ emailProviderFeatures.name }</h2>
 
-						<Button onClick={ () => selectEmailProvider( emailProviderFeatures.slug ) } primary>
-							{ translate( 'Select' ) }
-						</Button>
-					</div>
-				);
-			} ) }
-		</div>
+										{ emailProviderFeatures.description }
+									</div>
+								</div>
+							</td>
+						);
+					} ) }
+				</tr>
+
+				<tr>
+					<td></td>
+
+					{ emailProviders.map( ( emailProviderFeatures ) => {
+						return (
+							<td key={ emailProviderFeatures.slug }>
+								<EmailProviderPrice
+									emailProviderSlug={ emailProviderFeatures.slug }
+									intervalLength={ intervalLength }
+									selectedDomainName={ selectedDomainName }
+								/>
+							</td>
+						);
+					} ) }
+				</tr>
+
+				<tr>
+					<td className="email-providers-in-depth-comparison-table__feature">
+						{ translate( 'Tools' ) }
+					</td>
+
+					{ emailProviders.map( ( emailProviderFeatures ) => (
+						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.list.tools }</td>
+					) ) }
+				</tr>
+
+				<tr className="email-providers-in-depth-comparison-table__separator">
+					<td className="email-providers-in-depth-comparison-table__feature">
+						{ translate( 'Storage' ) }
+					</td>
+
+					{ emailProviders.map( ( emailProviderFeatures ) => (
+						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.list.storage }</td>
+					) ) }
+				</tr>
+
+				<tr className="email-providers-in-depth-comparison-table__separator">
+					<td className="email-providers-in-depth-comparison-table__feature">
+						{ translate( 'Importing' ) }
+					</td>
+
+					{ emailProviders.map( ( emailProviderFeatures ) => (
+						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.list.importing }</td>
+					) ) }
+				</tr>
+
+				<tr className="email-providers-in-depth-comparison-table__separator">
+					<td className="email-providers-in-depth-comparison-table__feature">
+						{ translate( 'Support' ) }
+					</td>
+
+					{ emailProviders.map( ( emailProviderFeatures ) => (
+						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.list.support }</td>
+					) ) }
+				</tr>
+
+				<tr>
+					<td></td>
+
+					{ emailProviders.map( ( emailProviderFeatures ) => (
+						<td key={ emailProviderFeatures.slug }>
+							<LearnMoreLink url={ emailProviderFeatures.supportUrl } />
+						</td>
+					) ) }
+				</tr>
+
+				<tr>
+					<td></td>
+
+					{ emailProviders.map( ( emailProviderFeatures ) => {
+						return <td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.badge }</td>;
+					} ) }
+				</tr>
+
+				<tr>
+					<td></td>
+
+					{ emailProviders.map( ( emailProviderFeatures ) => {
+						return (
+							<td key={ emailProviderFeatures.slug }>
+								<Button
+									className="email-providers-in-depth-comparison-table__button"
+									disabled={ ! isBillingAvailable( emailProviderFeatures, intervalLength ) }
+									onClick={ () => onSelectEmailProvider( emailProviderFeatures.slug ) }
+									primary
+								>
+									{ translate( 'Select' ) }
+								</Button>
+							</td>
+						);
+					} ) }
+				</tr>
+			</tbody>
+		</table>
 	);
 };
 

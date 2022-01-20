@@ -10,7 +10,7 @@ This module can be used outside of React, but this is a typical use within React
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 
 class MyComponent extends React.Component {
-	componentWillMount() {
+	componentDidMount() {
 		KeyboardShortcuts.on( 'open-selection', this.openSelectedPost );
 	}
 

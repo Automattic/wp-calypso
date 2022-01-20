@@ -639,7 +639,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					export HEADLESS=false
 
 					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
 
 					# Run the test
 					export TARGET_DEVICE=$targetDevice
@@ -700,14 +700,6 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					-:pull*
 					-:trunk
 				""".trimIndent()
-			}
-			schedule {
-				schedulingPolicy = cron {
-					minutes = "0/30"
-				}
-				branchFilter = "+:trunk"
-				triggerBuild = always()
-				withPendingChangesOnly = false
 			}
 		}
 
@@ -775,7 +767,7 @@ object PreReleaseE2ETests : BuildType({
 				export HEADLESS=false
 
 				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
 
 				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
 			""".trimIndent()
@@ -875,7 +867,7 @@ object QuarantinedE2ETests: BuildType( {
 				export HEADLESS=false
 
 				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
+				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
 
 				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=quarantined
 			""".trimIndent()
@@ -920,8 +912,7 @@ object QuarantinedE2ETests: BuildType( {
 	triggers {
 		schedule {
 			schedulingPolicy = cron {
-				hours = "*/3"
-				dayOfWeek = "2-6"
+				hours = "01"
 			}
 			branchFilter = "+:trunk"
 			triggerBuild = always()

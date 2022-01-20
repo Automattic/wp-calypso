@@ -1,3 +1,4 @@
+@use '../variables';
 @import '@automattic/color-studio/dist/color-variables';
 
 .plugins-browser-item {
@@ -138,6 +139,12 @@
 .plugins-browser-item__installed {
 	font-size: $font-body;
 	color: $studio-black;
+}
+
+.plugins-browser-item__pricing-placeholder {
+	width: 150px;
+
+	@extend %placeholder;
 }
 
 .plugins-browser-item__installed {

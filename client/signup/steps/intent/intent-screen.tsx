@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
-import { build, write } from '../../icons';
+import { build, write, tip } from '../../icons';
 import SelectItems, { SelectItem } from '../../select-items';
 import SelectItemsAlt, { SelectAltItem } from '../../select-items-alt';
 import type { IntentFlag } from './types';
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
-	return [
+	const intents: Intent[] = [
 		{
 			key: 'write',
 			title: translate( 'Write' ),
@@ -34,6 +34,19 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 			actionText: translate( 'Start building' ),
 		},
 	];
+
+	if ( isEnabled( 'seller-experience' ) ) {
+		intents.push( {
+			key: 'sell',
+			title: translate( 'Sell' ),
+			description: translate( 'Set up an online store' ),
+			icon: tip,
+			value: 'sell',
+			actionText: translate( 'Start selling' ),
+		} );
+	}
+
+	return intents;
 };
 
 const useIntentsAlt = ( {

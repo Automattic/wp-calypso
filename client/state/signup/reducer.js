@@ -3,7 +3,6 @@ import { combineReducers } from 'calypso/state/utils';
 import dependencyStore from './dependency-store/reducer';
 import flow from './flow/reducer';
 import optionalDependencies from './optional-dependencies/reducer';
-import preview from './preview/reducer';
 import progress from './progress/reducer';
 import steps from './steps/reducer';
 import verticals from './verticals/reducer';
@@ -17,6 +16,5 @@ export default withStorageKey(
 		steps,
 		flow,
 		verticals,
-		preview,
 	} )
 );

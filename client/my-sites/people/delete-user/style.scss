@@ -27,15 +27,6 @@
 }
 
 .delete-user__remove-user.button.is-borderless {
-	color: var( --color-primary );
-	font-weight: 400;
-
-	&:active,
-	&:focus,
-	&:hover {
-		color: var( --color-link-dark );
-	}
-
 	.gridicon {
 		top: 0;
 		margin: -2px 4px 0 0;
