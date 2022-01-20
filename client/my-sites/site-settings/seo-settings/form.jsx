@@ -8,7 +8,7 @@ import { Card, Button } from '@automattic/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import { get, isEqual, mapValues, pickBy } from 'lodash';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect, useSelector } from 'react-redux';
 import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -66,7 +66,7 @@ function getGeneralTabUrl( slug ) {
 }
 
 export class SiteSettingsFormSEO extends Component {
-	_mounted = false;
+	_mounted = createRef();
 
 	state = {
 		dirtyFields: new Set(),
@@ -103,11 +103,6 @@ export class SiteSettingsFormSEO extends Component {
 
 	componentDidMount() {
 		this.refreshCustomTitles();
-		this._mounted = true;
-	}
-
-	componentWillUnmount() {
-		this._mounted = false;
 	}
 
 	handleSubmitSuccess() {
@@ -282,7 +277,7 @@ export class SiteSettingsFormSEO extends Component {
 		const isPublicComingSoon = ! isSitePrivate && siteIsComingSoon;
 
 		return (
-			<div>
+			<div ref={ this._mounted }>
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
