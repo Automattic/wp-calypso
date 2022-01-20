@@ -69,6 +69,7 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 				siteSlug={ siteSlug }
 				previousPath={ previousRoute }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
+				isLeavingAllowed
 			/>
 			<CalypsoShoppingCartProvider>
 				<StripeHookProvider
@@ -81,7 +82,7 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 						productAliasFromUrl={ productAliasFromUrl }
 						// Custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
 						redirectTo={ redirectTo || previousRoute }
-						backUrl={ previousRoute }
+						customizedPreviousPath={ previousRoute }
 						isInModal
 						disabledThankYouPage
 						onAfterPaymentComplete={ handleAfterPaymentComplete }
