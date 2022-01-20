@@ -16,6 +16,7 @@ import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
 import useSignup from './hooks/use-signup';
 import useSiteTitle from './hooks/use-site-title';
 import useTrackOnboardingStart from './hooks/use-track-onboarding-start';
+import { trackEventWithFlow } from './lib/analytics';
 import { name, settings } from './onboarding-block';
 import './style.scss';
 import '@wordpress/components/build-style/style.css';
@@ -32,6 +33,10 @@ const Gutenboard: React.FunctionComponent = () => {
 	useSiteTitle();
 	const { showSignupDialog, onSignupDialogClose } = useSignup();
 	const effectiveFontPairings = useFontPairings();
+
+	React.useEffect( () => {
+		trackEventWithFlow( 'calypso_fse_enrolled' );
+	}, [] );
 
 	// Enable anti-aliasing font smoothing on Gutenboarding.
 	React.useEffect( () => {
