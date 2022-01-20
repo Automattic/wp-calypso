@@ -36,6 +36,7 @@ const selectors = {
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
+	updateButton: 'button:text("Update")',
 
 	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
@@ -408,13 +409,31 @@ export class GutenbergEditorPage {
 	 * Publishes the post or page.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
-	 * @returns {Promise<void} No return value.
+	 * @returns {Promise<string>} URL of the published post or page.
 	 */
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
 
 		await frame.click( selectors.publishButton( selectors.postToolbar ) );
 		await frame.click( selectors.publishButton( selectors.publishPanel ) );
+		const publishedURL = await this.getPublishedURL();
+
+		if ( visit ) {
+			await this.visitPublishedPost( publishedURL );
+		}
+		return publishedURL;
+	}
+
+	/**
+	 * Updates the post or page.
+	 *
+	 * @param {boolean} visit Whether to then visit the page.
+	 * @returns {Promise<string>} URL of the update post or page.
+	 */
+	async update( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
+		const frame = await this.getEditorFrame();
+
+		await frame.click( selectors.updateButton );
 		const publishedURL = await this.getPublishedURL();
 
 		if ( visit ) {
