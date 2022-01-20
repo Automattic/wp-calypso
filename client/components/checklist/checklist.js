@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Children, PureComponent, cloneElement } from 'react';
@@ -139,7 +139,9 @@ class Checklist extends PureComponent {
 
 const ChecklistForSite = ( props ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	return <Checklist key={ siteId } siteId={ siteId } { ...props } />;
+	const translate = useTranslate();
+
+	return <Checklist key={ siteId } siteId={ siteId } translate={ translate } { ...props } />;
 };
 
-export default localize( ChecklistForSite );
+export default ChecklistForSite;
