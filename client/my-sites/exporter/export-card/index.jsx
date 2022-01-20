@@ -20,16 +20,8 @@ import {
 import AdvancedSettings from './advanced-settings';
 
 class ExportCard extends Component {
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.props.advancedSettingsFetch( this.props.siteId );
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.props.advancedSettingsFetch( newProps.siteId );
-		}
 	}
 
 	render() {
