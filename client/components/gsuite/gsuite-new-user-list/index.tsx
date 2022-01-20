@@ -15,6 +15,7 @@ import './style.scss';
 interface Props {
 	autoFocus?: boolean;
 	children?: ReactNode;
+	dirty?: boolean;
 	domains?: SiteDomain[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
@@ -27,6 +28,7 @@ interface Props {
 const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	autoFocus = false,
 	children,
+	dirty = false,
 	domains,
 	extraValidation,
 	onUsersChange,
@@ -75,6 +77,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 				<Fragment key={ user.uuid }>
 					<GSuiteNewUser
 						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+						dirty={ dirty }
 						domains={
 							domains ? domains.map( ( domain ) => domain.name ?? '' ) : [ selectedDomainName ]
 						}

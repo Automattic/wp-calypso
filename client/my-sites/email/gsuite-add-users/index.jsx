@@ -46,6 +46,7 @@ import './style.scss';
 
 class GSuiteAddUsers extends Component {
 	state = {
+		dirty: false,
 		users: [],
 	};
 
@@ -72,6 +73,10 @@ class GSuiteAddUsers extends Component {
 		const { domains, productType, selectedSite } = this.props;
 		const { users } = this.state;
 		const canContinue = areAllUsersValid( users );
+
+		this.setState( {
+			dirty: true,
+		} );
 
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
 
@@ -180,13 +185,11 @@ class GSuiteAddUsers extends Component {
 			userCanPurchaseGSuite,
 		} = this.props;
 
-		const { users } = this.state;
+		const { users, dirty } = this.state;
 
 		const selectedDomainInfo = getGSuiteSupportedDomains( domains ).filter(
 			( { domainName } ) => selectedDomainName === domainName
 		);
-
-		const canContinue = areAllUsersValid( users );
 
 		return (
 			<>
@@ -201,6 +204,7 @@ class GSuiteAddUsers extends Component {
 						<GSuiteNewUserList
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							extraValidation={ ( user ) => validateAgainstExistingUsers( user, gsuiteUsers ) }
+							dirty={ dirty }
 							domains={ selectedDomainInfo }
 							onUsersChange={ this.handleUsersChange }
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
@@ -210,7 +214,7 @@ class GSuiteAddUsers extends Component {
 							<div className="gsuite-add-users__buttons">
 								<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
 
-								<Button primary disabled={ ! canContinue } onClick={ this.handleContinue }>
+								<Button primary onClick={ this.handleContinue }>
 									{ translate( 'Continue' ) }
 								</Button>
 							</div>

@@ -26,6 +26,7 @@ const LabelWrapper: FunctionComponent< LabelWrapperProps > = ( { label, children
 
 interface Props {
 	autoFocus: boolean;
+	dirty?: boolean;
 	domains: string[];
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string, mailBoxFieldTouched?: boolean ) => void;
@@ -37,6 +38,7 @@ interface Props {
 
 const GSuiteNewUser: FunctionComponent< Props > = ( {
 	autoFocus,
+	dirty = false,
 	domains,
 	onUserRemove,
 	onUserValueChange,
@@ -67,10 +69,10 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	const [ mailBoxFieldTouched, setMailBoxFieldTouched ] = useState( false );
 	const [ passwordFieldTouched, setPasswordFieldTouched ] = useState( false );
 
-	const hasMailBoxError = mailBoxFieldTouched && null !== mailBoxError;
-	const hasFirstNameError = firstNameFieldTouched && null !== firstNameError;
-	const hasLastNameError = lastNameFieldTouched && null !== lastNameError;
-	const hasPasswordError = passwordFieldTouched && null !== passwordError;
+	const hasMailBoxError = ( dirty || mailBoxFieldTouched ) && null !== mailBoxError;
+	const hasFirstNameError = ( dirty || firstNameFieldTouched ) && null !== firstNameError;
+	const hasLastNameError = ( dirty || lastNameFieldTouched ) && null !== lastNameError;
+	const hasPasswordError = ( dirty || passwordFieldTouched ) && null !== passwordError;
 
 	const emailAddressLabel = translate( 'Email address' );
 
