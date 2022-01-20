@@ -84,7 +84,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 			},
 		};
 
-		importerData.title = translate( 'Import content from <strong>%(importerName)s</strong>', {
+		importerData.title = translate( 'Import content from %(importerName)s', {
 			...options,
 			textOnly: true,
 		} as TranslateOptionsText ) as string;
