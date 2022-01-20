@@ -33,7 +33,7 @@ export default function useCouponDiscount(
 	const hasDiscount = jetpackSaleDiscountRatio > 0 || introDiscountRatio > 0;
 
 	return {
-		price: hasDiscount ? finalPrice : originalPrice ?? discountedPrice,
+		price: hasDiscount ? finalPrice : discountedPrice ?? originalPrice,
 		discount: hasDiscount ? finalDiscount : 0,
 	};
 }
