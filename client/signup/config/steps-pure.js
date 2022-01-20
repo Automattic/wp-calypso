@@ -29,7 +29,6 @@ export function generateSteps( {
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
-	setOptionsOnStore = noop,
 	setIntentOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
@@ -181,6 +180,14 @@ export function generateSteps( {
 
 		'site-options': {
 			stepName: 'site-options',
+			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
+			providesDependencies: [ 'siteTitle', 'tagline' ],
+			apiRequestFunction: setOptionsOnSite,
+			delayApiRequestUntilComplete: true,
+		},
+
+		'store-options': {
+			stepName: 'store-options',
 			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
 			providesDependencies: [ 'siteTitle', 'tagline' ],
 			apiRequestFunction: setOptionsOnSite,
@@ -664,14 +671,6 @@ export function generateSteps( {
 			providesDependencies: [ 'intent' ],
 			optionalDependencies: [ 'intent' ],
 			apiRequestFunction: setIntentOnSite,
-			delayApiRequestUntilComplete: true,
-		},
-
-		'sell-details': {
-			stepName: 'sell-details',
-			dependencies: [ 'siteSlug', 'storeName', 'tagline' ],
-			providesDependencies: [ 'storeName', 'tagline' ],
-			apiRequestFunction: setOptionsOnStore,
 			delayApiRequestUntilComplete: true,
 		},
 

@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
+import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import siteOptionsImage from 'calypso/assets/images/onboarding/site-options.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -20,9 +21,23 @@ interface Props {
 export default function SiteOptionsStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const headerText = translate( "First, let's give your blog a name" );
 	const { stepName, signupDependencies, goToNextStep } = props;
 	const { siteTitle, tagline } = signupDependencies;
+
+	const headerText =
+		'store-options' === stepName
+			? translate( "First, let's give your store a name" )
+			: translate( "First, let's give your blog a name" );
+
+	const headerImage = 'store-options' === stepName ? intentImageUrl : siteOptionsImage;
+
+	const siteTitleLabel =
+		'store-options' === stepName ? translate( 'Store name' ) : translate( 'Blog name' );
+
+	const taglineExplanation =
+		'store-options' === stepName
+			? translate( 'In a few words, explain what your store is about.' )
+			: translate( 'In a few words, explain what your blog is about.' );
 
 	const submitSiteOptions = ( { siteTitle, tagline }: SiteOptionsFormValues ) => {
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
@@ -44,11 +59,13 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 			fallbackHeaderText={ headerText }
 			subHeaderText={ '' }
 			fallbackSubHeaderText={ '' }
-			headerImageUrl={ siteOptionsImage }
+			headerImageUrl={ headerImage }
 			stepContent={
 				<SiteOptions
 					defaultSiteTitle={ siteTitle }
 					defaultTagline={ tagline }
+					siteTitleLabel={ siteTitleLabel }
+					taglineExplanation={ taglineExplanation }
 					onSubmit={ submitSiteOptions }
 				/>
 			}

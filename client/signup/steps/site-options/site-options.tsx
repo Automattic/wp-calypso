@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import React from 'react';
+import React, { ReactChild } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -13,6 +13,8 @@ import './site-options.scss';
 interface Props {
 	defaultSiteTitle: string;
 	defaultTagline: string;
+	siteTitleLabel: ReactChild;
+	taglineExplanation: ReactChild;
 	onSubmit: ( siteOptionsFormValues: SiteOptionsFormValues ) => void;
 	translate: LocalizeProps[ 'translate' ];
 }
@@ -20,6 +22,8 @@ interface Props {
 const SiteOptions: React.FC< Props > = ( {
 	defaultSiteTitle = '',
 	defaultTagline = '',
+	siteTitleLabel,
+	taglineExplanation,
 	onSubmit,
 	translate,
 } ) => {
@@ -44,7 +48,7 @@ const SiteOptions: React.FC< Props > = ( {
 		<form className="site-options__form" onSubmit={ handleSubmit }>
 			<FormFieldset className="site-options__form-fieldset">
 				<FormLabel htmlFor="siteTitle" optional>
-					{ translate( 'Blog name' ) }
+					{ siteTitleLabel }
 				</FormLabel>
 				<FormInput
 					name="siteTitle"
@@ -60,7 +64,7 @@ const SiteOptions: React.FC< Props > = ( {
 				<FormInput name="tagline" id="tagline" value={ formValues.tagline } onChange={ onChange } />
 				<FormSettingExplanation>
 					<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
-					{ translate( 'In a few words, explain what your blog is about.' ) }
+					{ taglineExplanation }
 				</FormSettingExplanation>
 			</FormFieldset>
 			<Button className="site-options__submit-button" type="submit" primary>
