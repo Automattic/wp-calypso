@@ -351,12 +351,7 @@ function useAddProductFromSlug( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 } ) {
-	const products: Record<
-		string,
-		{
-			product_slug: string;
-		}
-	> = useSelector( getProductsList );
+	const products = useSelector( getProductsList );
 	const translate = useTranslate();
 
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
@@ -401,6 +396,7 @@ function useAddProductFromSlug( {
 				isJetpackCheckout,
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
+				privacy: product.is_privacy_protection_product_purchase_allowed,
 			} )
 		);
 
@@ -519,22 +515,36 @@ function createItemToAddToCart( {
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	privacy,
 }: {
 	productSlug: string;
 	productAlias: string;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	privacy?: boolean;
 } ): RequestCartProduct {
+	// Allow setting meta (theme name or domain name) from products in the URL by
+	// using a colon between the product slug and the meta.
 	const [ , meta ] = productAlias.split( ':' );
 	// Some meta values contain slashes, so we decode them
 	const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
-	debug( 'creating product with', productSlug, productAlias, 'and meta', cartMeta );
+
+	debug(
+		'creating product with',
+		productSlug,
+		'from alias',
+		productAlias,
+		'with meta',
+		cartMeta,
+		'and privacy',
+		privacy
+	);
 
 	return addContextToProduct(
 		createRequestCartProduct( {
 			product_slug: productSlug,
-			extra: { isJetpackCheckout, jetpackSiteSlug, jetpackPurchaseToken },
+			extra: { isJetpackCheckout, jetpackSiteSlug, jetpackPurchaseToken, privacy },
 			...( cartMeta ? { meta: cartMeta } : {} ),
 		} )
 	);
