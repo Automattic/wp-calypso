@@ -23,7 +23,7 @@ type OwnProps = {
 	description?: ReactNode;
 	originalPrice?: number;
 	discountedPrice?: number;
-	pricesAreFetching: boolean | null;
+	pricesAreFetching?: boolean | null;
 	hidePrice?: boolean;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
@@ -62,7 +62,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	description,
 	originalPrice,
 	discountedPrice,
-	pricesAreFetching = null,
+	pricesAreFetching,
 	hidePrice,
 	buttonLabel,
 	buttonPrimary,

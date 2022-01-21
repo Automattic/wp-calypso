@@ -24,7 +24,7 @@ type OwnProps = {
 	isFree?: boolean;
 	isIncludedInPlan?: boolean;
 	isOwned?: boolean;
-	pricesAreFetching: boolean | null;
+	pricesAreFetching?: boolean | null;
 	showAbovePriceText?: boolean;
 	originalPrice?: number;
 	productName: TranslateResult;

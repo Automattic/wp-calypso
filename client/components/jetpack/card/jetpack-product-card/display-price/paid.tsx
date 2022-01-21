@@ -11,7 +11,7 @@ import type { ReactNode } from 'react';
 type OwnProps = {
 	discountedPrice?: number;
 	originalPrice?: number;
-	pricesAreFetching: boolean | null;
+	pricesAreFetching?: boolean | null;
 	billingTerm: Duration;
 	currencyCode?: string | null;
 	displayFrom?: boolean;
