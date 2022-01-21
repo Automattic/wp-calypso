@@ -29,7 +29,36 @@ export function getCountryCode( countryState ) {
 
 export function getCurrencyFromRegion( countryState ) {
 	let region = getCountryCode( countryState );
-	const euCountries = [];
+	// https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Country_codes
+	const euCountries = [
+		'BE',
+		'EL',
+		'LT',
+		'PT',
+		'BG',
+		'ES',
+		'LU',
+		'RO',
+		'CZ',
+		'FR',
+		'HU',
+		'SI',
+		'DK',
+		'HR',
+		'MT',
+		'SK',
+		'DE',
+		'IT',
+		'NL',
+		'FI',
+		'EE',
+		'CY',
+		'AT',
+		'SE',
+		'IE',
+		'LV',
+		'PL',
+	];
 	if ( euCountries.includes( region ) ) {
 		region = 'EU';
 	}
