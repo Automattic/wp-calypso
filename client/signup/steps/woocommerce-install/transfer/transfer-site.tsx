@@ -19,8 +19,10 @@ import './style.scss';
 
 export default function TransferSite( {
 	onFailure,
+	trackRedirect,
 }: {
 	onFailure: () => void;
+	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
 
@@ -111,6 +113,7 @@ export default function TransferSite( {
 		}
 
 		if ( softwareApplied ) {
+			trackRedirect();
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {

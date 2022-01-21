@@ -19,8 +19,10 @@ const TIMEOUT_LIMIT = 1000 * 15; // 15 seconds.
 
 export default function InstallPlugins( {
 	onFailure,
+	trackRedirect,
 }: {
 	onFailure: () => void;
+	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
@@ -94,6 +96,7 @@ export default function InstallPlugins( {
 		}
 
 		if ( softwareApplied ) {
+			trackRedirect();
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {

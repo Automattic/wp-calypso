@@ -27,6 +27,10 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 		setHasFailed( true );
 	};
 
+	const trackRedirect = () => {
+		dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
+	};
+
 	if ( siteConfirmed !== siteId ) {
 		goToStep( 'confirm' );
 		return null;
@@ -43,8 +47,12 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 			isWideLayout={ props.isReskinned }
 			stepContent={
 				<>
-					{ isAtomic && <InstallPlugins onFailure={ handleTransferFailure } /> }
-					{ ! isAtomic && <TransferSite onFailure={ handleTransferFailure } /> }
+					{ isAtomic && (
+						<InstallPlugins onFailure={ handleTransferFailure } trackRedirect={ trackRedirect } />
+					) }
+					{ ! isAtomic && (
+						<TransferSite onFailure={ handleTransferFailure } trackRedirect={ trackRedirect } />
+					) }
 				</>
 			}
 			{ ...props }
