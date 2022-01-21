@@ -192,7 +192,7 @@ export const getRevenueOptions = ( country ) => {
 		},
 		{
 			value: 'rather-not-say',
-			label: __( "I'd rather not say" ),
+			label: __( "I'd rather not answer" ),
 		},
 	];
 };
