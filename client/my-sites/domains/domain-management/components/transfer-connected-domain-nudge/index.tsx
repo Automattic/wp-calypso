@@ -2,6 +2,7 @@ import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import type { TransferConnectedDomainNudgeProps } from './types';
 import './style.scss';
@@ -12,9 +13,14 @@ const TransferConnectedDomainNudge = ( {
 }: TransferConnectedDomainNudgeProps ): JSX.Element | null => {
 	const translate = useTranslate();
 
+	const fiveDaysInThePast = moment().subtract( 5, 'days' );
+	const fortyFiveDaysInTheFuture = moment().add( 45, 'days' );
+
 	if (
+		domain.type !== domainTypes.MAPPED ||
+		! domain.isEligibleForInboundTransfer ||
 		! domain.registryExpiryDate ||
-		moment( domain.registryExpiryDate ).isAfter( moment().add( 45, 'days' ) )
+		! moment( domain.registryExpiryDate ).isBetween( fiveDaysInThePast, fortyFiveDaysInTheFuture )
 	) {
 		return null;
 	}
