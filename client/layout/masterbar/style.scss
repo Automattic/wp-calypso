@@ -132,6 +132,7 @@ $autobar-height: 20px;
 
 .masterbar__section--center {
 	flex: 1;
+	justify-content: center;
 
 	@include breakpoint-deprecated( '>480px' ) {
 		flex: 0 0 auto;
@@ -454,6 +455,10 @@ $autobar-height: 20px;
 	.is-group-editor &:hover {
 		background: var( --color-masterbar-item-new-editor-hover-background );
 	}
+}
+
+.masterbar-cart-button .gridicon + .masterbar__item-content {
+	padding: 0;
 }
 
 .masterbar__item-me {
