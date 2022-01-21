@@ -30,6 +30,7 @@ registerStore< State >( STORE_KEY, {
 		'selectedFonts',
 		'selectedSite',
 		'siteTitle',
+		'isEnrollingInFseBeta',
 	],
 } );
 
