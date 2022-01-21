@@ -42,7 +42,6 @@ class GoogleLoginButton extends Component {
 		showError: false,
 		errorRef: null,
 		isDisabled: false,
-		isLoading: false,
 		isInitialized: false,
 		clickEvent: undefined,
 	};
@@ -51,6 +50,8 @@ class GoogleLoginButton extends Component {
 		super( props );
 
 		this.initialized = null;
+
+		this.initialize = this.initialize.bind( this );
 
 		this.handleClick = this.handleClick.bind( this );
 		this.showError = this.showError.bind( this );
@@ -113,10 +114,7 @@ class GoogleLoginButton extends Component {
 					}
 
 					if ( this.state.clickEvent ) {
-						// Make sure that handleClick Call happens on the next tick so that the popup always launches.
-						setTimeout( () => {
-							this.handleClick( this.state.clickEvent );
-						} );
+						this.handleClick( this.state.clickEvent );
 					}
 
 					return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
@@ -152,7 +150,6 @@ class GoogleLoginButton extends Component {
 
 	handleClick( event ) {
 		event.preventDefault();
-
 		if ( ! this.state.isInitialized && ! this.state.clickEvent ) {
 			this.setState( { clickEvent: event } );
 			return;
@@ -206,7 +203,7 @@ class GoogleLoginButton extends Component {
 			this.state.isDisabled || this.props.isFormDisabled || this.state.error
 		);
 
-		const isLoading = this.state.isClicked && ! this.state.initialized && ! this.state.error;
+		const isLoading = !! this.state.clickEvent && ! this.state.initialized && ! this.state.error;
 
 		const { children } = this.props;
 		let customButton = null;
