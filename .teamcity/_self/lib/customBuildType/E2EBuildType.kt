@@ -2,6 +2,7 @@ package _self.lib.customBuildType
 
 import Settings
 import _self.bashNodeScript
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParametrizedWithType
@@ -105,7 +106,7 @@ open class E2EBuildType(
 					# Build packages
 					yarn workspace @automattic/calypso-e2e build
 				""".trimIndent()
-				dockerImage = "%docker_image_e2e%"s
+				dockerImage = "%docker_image_e2e%"
 			}
 
 			bashNodeScript {
@@ -161,7 +162,7 @@ open class E2EBuildType(
 			perfmon {
 			}
 			commitStatusPublisher {
-				vcsRootExtId = Settings.WpCalypso.id
+				vcsRootExtId = "${Settings.WpCalypso.id}"
 				publisher = github {
 					githubUrl = "https://api.github.com"
 					authType = personalToken {
