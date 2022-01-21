@@ -117,7 +117,8 @@ open class E2EBuildType(
 					set -x
 
 					# For Calypso E2E build configurations, the URL environment variable
-					# is computed and exported by a script.
+					# is computed and exported by a script that must be executed at runtime.
+					# This script ultimately sets the URL environment variable for Calypso E2E only.
 					$getCalypsoLiveURL
 
 					# Enter testing directory.
@@ -127,11 +128,11 @@ open class E2EBuildType(
 					# Decrypt config
 					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
 
-					# As noted above, Calypso E2E build configurations export the URL
-					# environment variable within this step - therefore the export
+					# As noted above, Calypso E2E build configuration exports the URL
+					# environment variable in the Run tests step. Therefore, the export
 					# for NODE_CONFIG variable has to be done here instead of
-					# within the Kotlin DSL.
-					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
+					# within the Kotlin DSL as a param() value.
+					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL/}\"}"
 
 					# Run suite.
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup

@@ -668,6 +668,7 @@ object QuarantinedE2ETests: E2EBuildType(
 	testGroup = "quarantined",
 	buildParams = {
 		param("env.TARGET_DEVICE", "desktop")
+		param("env.URL", "https://wpcalypso.wordpress.com")
 	},
 	buildFeatures = {
 		notifications {
