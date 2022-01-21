@@ -8,22 +8,24 @@ body.is-section-home.theme-default.color-scheme {
 
 .customer-home__heading {
 	display: block;
-	padding: 16px;
-	position: relative;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		padding: 0;
-	}
 
 	.customer-home__view-site-button,
 	.formatted-header__subtitle {
 		display: none;
 	}
 
+	@include breakpoint-deprecated( '<660px' ) {
+		padding-right: 16px;
+	}
+
 	.customer-home__site-content {
 		display: flex;
 		flex-wrap: wrap;
-		margin-bottom: 16px;
+		padding: 0 16px 16px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			padding:0 0 16px;
+		}
 	}
 
 	.site-icon {
@@ -33,47 +35,24 @@ body.is-section-home.theme-default.color-scheme {
 		border-radius: 4px;
 		width: 32px;
 		height: auto;
+		margin-bottom: 8px;
 
 		@include break-small {
-			width: 64px;
+			width: 58px;
 			height: auto;
 		}
-	}
-
-	.customer-home__site-info {
-		padding-top: 10px;
 	}
 
 	.customer-home__site-title {
 		font-family: $brand-serif;
 		font-style: normal;
 		font-weight: normal;
-		font-size: $font-title-medium;
-		line-height: 33px;
+		font-size: $font-title-small;
+		line-height: 27px;
 		letter-spacing: -0.32px;
 		color: var( --studio-black );
 	}
 
-	.customer-home__site-domain {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	@include break-medium {
-		.customer-home__heading {
-			display: flex;
-			flex: 0 0 auto;
-		}
-		.customer-home__site-content {
-			display: none;
-		}
-		.customer-home__view-site-button,
-		.formatted-header__subtitle {
-			display: block;
-		}
-	}
-	
 	.formatted-header {
 		margin-right: 12px;
 	}
@@ -83,25 +62,28 @@ body.is-section-home.theme-default.color-scheme {
 	}
 
 	.customer-home__view-site-button {
-		position: absolute;
-		top: 16px;
-		right: 16px;
 		margin: auto;
 		margin-right: 0;
-		flex-grow: 0;
-		flex-shrink: 0;
-
-		@include break-small {
-			position: relative;
-			top: auto;
-			right: auto;
-		}
 
 		.button {
 			text-align: center;
 			white-space: nowrap;
 		}
 	}
+	@include break-medium {
+		display: flex;
+		flex: 0 0 auto;
+	
+		.customer-home__site-content {
+			display: none;
+		}
+
+		.customer-home__view-site-button,
+		.formatted-header__subtitle {
+			display: block;
+		}
+	}
+	
 }
 
 .customer-home__layout {
