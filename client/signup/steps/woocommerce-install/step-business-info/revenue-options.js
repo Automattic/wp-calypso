@@ -29,8 +29,9 @@ export function getCountryCode( countryState ) {
 
 export function getCurrencyFromRegion( countryState ) {
 	let region = getCountryCode( countryState );
-	// https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Country_codes
+
 	const euCountries = [
+		// https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Country_codes
 		'BE',
 		'EL',
 		'LT',
@@ -58,6 +59,46 @@ export function getCurrencyFromRegion( countryState ) {
 		'IE',
 		'LV',
 		'PL',
+		// Euro countries don't all use EURO (e.g. poland), suggest we find a better list like below:
+
+		// https://www.iban.com/currency-codes
+
+		// todo: convert these to 2 letter iso codes
+		// ANDORRA
+		// AUSTRIA
+		// BELGIUM
+		// CYPRUS
+		// ESTONIA
+		// FINLAND
+		// FRANCE
+		// FRENCH GUIANA
+		// FRENCH SOUTHERN TERRITORIES (THE)
+		// GERMANY
+		// GREECE
+		// GUADELOUPE
+		// HOLY SEE (THE)
+		// IRELAND
+		// ITALY
+		// LATVIA
+		// LITHUANIA
+		// LUXEMBOURG
+		// MALTA
+		// MARTINIQUE
+		// MAYOTTE
+		// MONACO
+		// MONTENEGRO
+		// NETHERLANDS (THE)
+		// PORTUGAL
+		// RÉUNION
+		// SAINT BARTHÉLEMY
+		// SAINT MARTIN (FRENCH PART)
+		// SAINT PIERRE AND MIQUELON
+		// SAN MARINO
+		// SLOVAKIA
+		// SLOVENIA
+		// SPAIN
+		// SWITZERLAND 	WIR
+		// ÅLAND ISLANDS
 	];
 	if ( euCountries.includes( region ) ) {
 		region = 'EU';
