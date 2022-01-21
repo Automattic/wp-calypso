@@ -3,14 +3,15 @@
  */
 
 import {
-	setupHooks,
 	DataHelper,
 	P2Page,
 	IsolatedBlockEditorComponent,
 	ParagraphBlock,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { ElementHandle, Page } from 'playwright';
+import { ElementHandle, Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 	let page: Page;
@@ -21,8 +22,8 @@ describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 
 	const postContent = DataHelper.getTimestamp();
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 		testAccount = new TestAccount( 'p2User' );
 		await testAccount.authenticate( page );
 	} );

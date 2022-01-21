@@ -3,26 +3,27 @@
  */
 
 import {
-	BrowserHelper,
+	envVariables,
 	DataHelper,
 	SidebarComponent,
-	setupHooks,
 	TestAccount,
 	BlockWidgetEditorComponent,
 	skipDescribeIf,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Browser, Page } from 'playwright';
 
-const accountName = BrowserHelper.targetGutenbergEdge()
+const accountName = envVariables.GUTENBERG_EDGE
 	? 'gutenbergSimpleSiteEdgeUser'
 	: 'gutenbergSimpleSiteUser';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 	let sidebarComponent: SidebarComponent;
 	let page: Page;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
@@ -40,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Widgets' ), function () {
 
 	// @todo: Refactor/Abstract these steps into a WidgetsEditor component
 	// Skipped for mobile due to https://github.com/Automattic/wp-calypso/issues/59960
-	skipDescribeIf( BrowserHelper.getTargetDeviceName() === 'mobile' )(
+	skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 		'Regression: Verify that the visibility option is present',
 		function () {
 			it( 'Insert a Legacy Widget', async function () {

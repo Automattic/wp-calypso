@@ -75,15 +75,20 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 			<>
 				<div className="step-business-info__info-section" />
 				<div className="step-business-info__instructions-container">
-					{ __( 'What type of products will be listed? (optional)' ) }
-					{ productTypes.map( ( { label, value } ) => (
-						<CheckboxControl
-							label={ label }
-							value={ value }
-							onChange={ () => updateProductTypes( value ) }
-							checked={ getProfileValue( 'product_types' ).indexOf( value ) !== -1 }
-						/>
-					) ) }
+					<div className="step-business-info__components-group">
+						<label className="step-business-info__components-group-label">
+							{ __( 'What type of products will be listed? (optional)' ) }
+						</label>
+
+						{ productTypes.map( ( { label, value } ) => (
+							<CheckboxControl
+								label={ label }
+								value={ value }
+								onChange={ () => updateProductTypes( value ) }
+								checked={ getProfileValue( 'product_types' ).indexOf( value ) !== -1 }
+							/>
+						) ) }
+					</div>
 
 					<SelectControl
 						label={ __( 'How many products do you plan to display? (optional)' ) }

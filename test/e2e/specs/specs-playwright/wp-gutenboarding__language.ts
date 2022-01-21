@@ -3,15 +3,17 @@
  * @group gutenberg
  */
 
-import { setupHooks, DataHelper, GutenboardingFlow } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { DataHelper, GutenboardingFlow } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Gutenboarding: Language' ), function () {
 	let gutenboardingFlow: GutenboardingFlow;
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
 	it( 'Navigate to /new', async function () {

@@ -5,19 +5,15 @@
 import {
 	DataHelper,
 	SupportComponent,
-	setupHooks,
 	GutenboardingFlow,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 	let page: Page;
-	let testAccount: TestAccount;
-
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
-	} );
 
 	describe.each( [
 		{ siteType: 'Simple', accountName: 'defaultUser' },
@@ -27,8 +23,14 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 		let gutenboardingFlow: GutenboardingFlow;
 
 		beforeAll( async () => {
-			testAccount = new TestAccount( accountName );
+			page = await browser.newPage();
+
+			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await page.close();
 		} );
 
 		it( 'Search for help: Create a site', async function () {
