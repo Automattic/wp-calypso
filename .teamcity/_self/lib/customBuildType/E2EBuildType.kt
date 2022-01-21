@@ -1,8 +1,6 @@
 package _self.lib.customBuildType
 
 import Settings
-import _self.lib.e2e.prepareEnvironment
-import _self.lib.e2e.collectResults
 import _self.bashNodeScript
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
@@ -95,7 +93,20 @@ open class E2EBuildType(
 		}
 
 		steps {
-			prepareEnvironment()
+			bashNodeScript {
+				name = "Prepare environment"
+				scriptContent = """
+					export NODE_ENV="test"
+					export PLAYWRIGHT_BROWSERS_PATH=0
+
+					# Install deps
+					yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
+
+					# Build packages
+					yarn workspace @automattic/calypso-e2e build
+				""".trimIndent()
+				dockerImage = "%docker_image_e2e%"s
+			}
 
 			bashNodeScript {
 				name = "Run tests"
@@ -127,14 +138,30 @@ open class E2EBuildType(
 				dockerImage = "%docker_image_e2e%"
 			}
 
-			collectResults()
+			bashNodeScript {
+				name = "Collect results"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+				scriptContent = """
+					set -x
+
+					mkdir -p screenshots
+					find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+
+					mkdir -p logs
+					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+					mkdir -p trace
+					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+				""".trimIndent()
+				dockerImage = "%docker_image_e2e%"
+			}
 		}
 
 		features {
 			perfmon {
 			}
 			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
+				vcsRootExtId = Settings.WpCalypso.id
 				publisher = github {
 					githubUrl = "https://api.github.com"
 					authType = personalToken {
