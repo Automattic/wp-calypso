@@ -2,6 +2,8 @@
 	color: var( --color-primary );
 	text-align: left;
 	width: 100%;
+	margin: 1em auto;
+	font-size: 100%;
 
 	&:active,
 	&:focus,
@@ -16,7 +18,6 @@
 		vertical-align: middle;
 	}
 }
-
 
 .dialog__button--domains-remove {
 	> .dialog__button-label {
