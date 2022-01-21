@@ -42,16 +42,11 @@ export const mShotOptions = ( { preview }: Design, highRes: boolean ): MShotsOpt
 	};
 };
 
-type DesignFilter = ( design: Design ) => boolean;
-
 interface AvailableDesignsOptions {
 	includeAlphaDesigns?: boolean;
-	featuredDesignsFilter?: DesignFilter;
+	useFseDesigns?: boolean;
 	randomize?: boolean;
 }
-
-export const excludeFseDesigns: DesignFilter = ( design ) => ! design.is_fse;
-export const includeFseDesigns: DesignFilter = ( design ) => !! design.is_fse;
 
 /**
  * To prevent the accumulation of tech debt, make duplicate entries for all Universal
@@ -60,7 +55,7 @@ export const includeFseDesigns: DesignFilter = ( design ) => !! design.is_fse;
  */
 export function getAvailableDesigns( {
 	includeAlphaDesigns = isEnabled( 'gutenboarding/alpha-templates' ),
-	featuredDesignsFilter = excludeFseDesigns,
+	useFseDesigns = false,
 	randomize = false,
 }: AvailableDesignsOptions = {} ): AvailableDesigns {
 	let designs = { ...availableDesignsConfig };
@@ -78,7 +73,9 @@ export function getAvailableDesigns( {
 	// If we are opting into FSE, show only FSE designs.
 	designs = {
 		...designs,
-		featured: designs.featured.filter( featuredDesignsFilter ),
+		featured: designs.featured.filter( ( design ) =>
+			useFseDesigns ? design.is_fse : ! design.is_fse
+		),
 	};
 
 	if ( randomize ) {

@@ -218,9 +218,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
 	onSelect,
 	onPreview,
-	designs = getAvailableDesigns( {
-		featuredDesignsFilter: ( design ) => ! design.features.includes( 'anchorfm' ),
-	} ).featured,
+	designs = getAvailableDesigns().featured.filter(
+		// By default, exclude anchorfm-specific designs
+		( design ) => design.features.findIndex( ( f ) => f === 'anchorfm' ) < 0
+	),
 	premiumBadge,
 	isGridMinimal,
 	theme = 'light',
