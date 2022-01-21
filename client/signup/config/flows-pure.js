@@ -397,7 +397,6 @@ export function generateFlows( {
 				'new-or-existing-site',
 				'difm-site-picker',
 				'site-info-collection',
-				'website-content',
 				'difm-design-setup-site',
 				'domains',
 			],
@@ -405,6 +404,15 @@ export function generateFlows( {
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
 			lastModified: '2021-09-30',
+		},
+
+		{
+			name: 'site-content-collection',
+			steps: [ 'website-content' ],
+			destination: null,
+			description: 'A flow to collect DIFM lite site content',
+			excludeFromManageSiteFlows: true,
+			lastModified: '2022-01-21',
 		},
 		{
 			name: 'woocommerce-install',
