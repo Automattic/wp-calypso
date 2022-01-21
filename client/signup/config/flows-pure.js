@@ -12,6 +12,7 @@ export function generateFlows( {
 	getChecklistThemeDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
+	getDIFMSiteContentCollectionDestination = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -409,7 +410,7 @@ export function generateFlows( {
 		{
 			name: 'site-content-collection',
 			steps: [ 'website-content' ],
-			destination: null,
+			destination: getDIFMSiteContentCollectionDestination,
 			description: 'A flow to collect DIFM lite site content',
 			excludeFromManageSiteFlows: true,
 			lastModified: '2022-01-21',

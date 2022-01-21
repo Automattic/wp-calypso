@@ -1,30 +1,40 @@
 export const schema = {
 	type: 'object',
-	patternProperties: {
-		homePage: { content: 'string', imageUrl1: 'string', imageUrl2: 'string', imageUrl3: 'string' },
-		aboutUs: { content: 'string', imageUrl1: 'string', imageUrl2: 'string', imageUrl3: 'string' },
-		contactUs: {
-			content: 'string',
-			imageUrl1: 'string',
-			imageUrl2: 'string',
-			imageUrl3: 'string',
+	properties: {
+		currentIndex: 'number',
+		websiteContent: {
+			type: 'array',
+			items: { $ref: '#/$defs/pageData' },
+		},
+		$defs: {
+			pageData: {
+				type: 'object',
+				properties: {
+					title: {
+						type: 'string',
+					},
+					content: {
+						type: 'string',
+					},
+					images: {
+						type: 'array',
+						items: {
+							type: 'string',
+						},
+					},
+				},
+			},
 		},
 	},
 };
 
 export interface PageData {
+	title: string;
 	content: string;
-	imageUrl1: string;
-	imageUrl2: string;
-	imageUrl3: string;
+	images: Array< string >;
 }
 
-export interface WebsiteContent {
-	homePage: PageData;
-	aboutUs: PageData;
-	contactUs: PageData;
-}
-
+export type WebsiteContent = Array< PageData >;
 export interface WebsiteContentCollection {
 	currentIndex: 0;
 	websiteContent: WebsiteContent;
@@ -32,24 +42,21 @@ export interface WebsiteContentCollection {
 
 export const initialState: WebsiteContentCollection = {
 	currentIndex: 0,
-	websiteContent: {
-		homePage: {
+	websiteContent: [
+		{
+			title: 'Home',
 			content: '',
-			imageUrl1: '',
-			imageUrl2: '',
-			imageUrl3: '',
+			images: [],
 		},
-		aboutUs: {
+		{
+			title: 'About',
 			content: '',
-			imageUrl1: '',
-			imageUrl2: '',
-			imageUrl3: '',
+			images: [],
 		},
-		contactUs: {
+		{
+			title: 'Contact',
 			content: '',
-			imageUrl1: '',
-			imageUrl2: '',
-			imageUrl3: '',
+			images: [],
 		},
-	},
+	],
 };

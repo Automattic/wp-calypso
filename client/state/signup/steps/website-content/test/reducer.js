@@ -18,11 +18,43 @@ describe( 'reducer', () => {
 		expect(
 			websiteContentCollectionReducer(
 				initialState,
-				updateWebsiteContent( { homePage: { content: 'Home Page Content' } } )
+				updateWebsiteContent( [
+					{
+						titel: 'Home Page',
+						content: 'Home Page Content',
+						images: [ 'imgurl 1' ],
+					},
+					{
+						title: 'About',
+						content: '',
+						images: [],
+					},
+					{
+						title: 'Contact',
+						content: '',
+						images: [],
+					},
+				] )
 			)
 		).to.be.eql( {
 			...initialState,
-			websiteContent: { homePage: { content: 'Home Page Content' } },
+			websiteContent: [
+				{
+					titel: 'Home Page',
+					content: 'Home Page Content',
+					images: [ 'imgurl 1' ],
+				},
+				{
+					title: 'About',
+					content: '',
+					images: [],
+				},
+				{
+					title: 'Contact',
+					content: '',
+					images: [],
+				},
+			],
 		} );
 	} );
 

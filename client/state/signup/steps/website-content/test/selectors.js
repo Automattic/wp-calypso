@@ -3,26 +3,23 @@ import { getWebsiteContent, getWebsiteContentDataCollectionIndex } from '../sele
 
 describe( 'selectors', () => {
 	test( 'should return the initial state as a default state', () => {
-		expect( getWebsiteContent( { signup: undefined } ) ).to.be.eql( {
-			homePage: {
+		expect( getWebsiteContent( { signup: undefined } ) ).to.be.eql( [
+			{
+				title: 'Home',
 				content: '',
-				imageUrl1: '',
-				imageUrl2: '',
-				imageUrl3: '',
+				images: [],
 			},
-			aboutUs: {
+			{
+				title: 'About',
 				content: '',
-				imageUrl1: '',
-				imageUrl2: '',
-				imageUrl3: '',
+				images: [],
 			},
-			contactUs: {
+			{
+				title: 'Contact',
 				content: '',
-				imageUrl1: '',
-				imageUrl2: '',
-				imageUrl3: '',
+				images: [],
 			},
-		} );
+		] );
 	} );
 
 	test( 'should return the web site content collection current index from the state', () => {

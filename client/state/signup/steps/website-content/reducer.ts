@@ -14,9 +14,7 @@ export default withSchemaValidation(
 			case SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE:
 				return {
 					...state,
-					websiteContent: {
-						...action.payload,
-					},
+					websiteContent: [ ...action.payload ],
 				};
 			case SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX:
 				return {
