@@ -98,7 +98,7 @@ function getEditorDestination( dependencies ) {
 }
 
 function getDestinationFromIntent( dependencies ) {
-	const { intent, startingPoint, siteSlug } = dependencies;
+	const { intent, startingPoint, siteSlug, siteAndThemeSupportsFSE } = dependencies;
 
 	// If the user skips starting point, redirect them to My Home
 	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
@@ -107,6 +107,10 @@ function getDestinationFromIntent( dependencies ) {
 		}
 
 		return `/post/${ siteSlug }`;
+	}
+
+	if ( siteAndThemeSupportsFSE ) {
+		return `/site-editor/${ dependencies.siteSlug }`;
 	}
 
 	return getChecklistThemeDestination( dependencies );
