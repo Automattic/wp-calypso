@@ -20,7 +20,6 @@ import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
-import { isUserAssignedFSEBeta } from 'calypso/signup/utils';
 import {
 	getCurrentUserId,
 	getCurrentUserName,
@@ -43,6 +42,23 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
+
+const isUserAssignedFSEBeta = ( userId ) => {
+	const fse_beta_rollout_percentage_start_flow = 100;
+
+	// FSE Beta is only active for existing users.
+	if ( ! userId ) {
+		return false;
+	}
+
+	// Force the FSE Beta on development and Horizon environments.
+	if ( config.isEnabled( 'full-site-editing/beta-opt-in' ) ) {
+		return true;
+	}
+
+	// Check if the user ID is part of the eligible percentage.
+	return userId % 100 < fse_beta_rollout_percentage_start_flow;
+};
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
@@ -384,8 +400,14 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 				body: { trim_content: true },
 			} )
 		)
-		.then( () => {
-			callback();
+		.then( () =>
+			wpcom.req.get( {
+				path: `/sites/${ siteSlug }/block-editor`,
+				apiNamespace: 'wpcom/v2',
+			} )
+		)
+		.then( ( data ) => {
+			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
 		} )
 		.catch( ( errors ) => {
 			callback( [ errors ] );

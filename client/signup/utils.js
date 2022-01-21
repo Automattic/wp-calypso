@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/url';
-import { isEnabled } from 'calypso/server/config';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps-pure';
 const { defaultFlowName } = flows;
@@ -218,21 +217,4 @@ export const isReskinnedFlow = ( flowName ) => {
 
 export const isP2Flow = ( flowName ) => {
 	return flowName === 'p2' || flowName === 'p2-new';
-};
-
-export const isUserAssignedFSEBeta = ( userId ) => {
-	const fse_beta_rollout_percentage_start_flow = 100;
-
-	// FSE Beta is only active for existing users.
-	if ( ! userId ) {
-		return false;
-	}
-
-	// Force the FSE Beta on development and Horizon environments.
-	if ( isEnabled( 'full-site-editing/beta-opt-in' ) ) {
-		return true;
-	}
-
-	// Check if the user ID is part of the eligible percentage.
-	return userId % 100 < fse_beta_rollout_percentage_start_flow;
 };

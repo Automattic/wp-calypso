@@ -19,13 +19,11 @@ import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
-import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import DIFMThemes from '../difm-design-picker/themes';
 import LetUsChoose from './let-us-choose';
 import PreviewToolbar from './preview-toolbar';
@@ -42,7 +40,6 @@ export default function DesignPickerStep( props ) {
 		hideFullScreenPreview,
 		hideDesignTitle,
 		sitePlanSlug,
-		signupDependencies: { siteSlug },
 	} = props;
 
 	const isPremiumThemesAvailable = useMemo(
@@ -50,11 +47,7 @@ export default function DesignPickerStep( props ) {
 		[ sitePlanSlug ]
 	);
 
-	const site = useSelector( ( state ) => getSiteBySlug( state, siteSlug ) );
 	const userLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
-	const { data: blockEditorSettings } = useBlockEditorSettingsQuery( site?.ID, userLoggedIn );
-
-	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
@@ -117,12 +110,6 @@ export default function DesignPickerStep( props ) {
 		sort: sortBlogToTop,
 	} );
 
-	function themeSupportsFSE( themeSlug ) {
-		return !! apiThemes
-			.find( ( theme ) => theme.id === themeSlug )
-			?.taxonomies.theme_feature.find( ( term ) => term.slug === 'block-templates' );
-	}
-
 	function pickDesign( _selectedDesign, additionalDependencies = {} ) {
 		// Design picker preview will submit the defaultDependencies via next button,
 		// So only do this when the user picks the design directly
@@ -134,7 +121,6 @@ export default function DesignPickerStep( props ) {
 				{
 					selectedDesign: _selectedDesign,
 					selectedSiteCategory: categorization.selection,
-					siteAndThemeSupportsFSE: isFSEEligible && themeSupportsFSE( _selectedDesign ),
 					...additionalDependencies,
 				}
 			)
@@ -212,7 +198,7 @@ export default function DesignPickerStep( props ) {
 
 	function renderDesignPreview() {
 		const {
-			signupDependencies: { siteTitle, intent },
+			signupDependencies: { siteSlug, siteTitle, intent },
 			hideExternalPreview,
 		} = props;
 
