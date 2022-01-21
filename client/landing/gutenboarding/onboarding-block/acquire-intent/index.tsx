@@ -1,10 +1,9 @@
 import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
-import { ActionButtons, BackButton, NextButton, SkipButton } from '@automattic/onboarding';
+import { NextButton, SkipButton } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import useDetectMatchingAnchorSite from '../../hooks/use-detect-matching-anchor-site';
-import useFseBetaOptInStep from '../../hooks/use-fse-beta-opt-in-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { recordSiteTitleSkip } from '../../lib/analytics';
@@ -22,7 +21,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const { setDomainSearch, setSiteTitle } = useDispatch( STORE_KEY );
 
-	const { goBack, goNext } = useStepNavigation();
+	const { goNext } = useStepNavigation();
 
 	useTrackStep( 'IntentGathering', () => ( {
 		has_selected_site_title: hasSiteTitle(),
@@ -51,20 +50,6 @@ const AcquireIntent: React.FunctionComponent = () => {
 	) : (
 		<SkipButton onClick={ handleSiteTitleSkip }>{ __( 'Skip for now' ) }</SkipButton>
 	);
-
-	// In the FSE Beta flow, AcquireIntent becomes the second step, and it gains a BackButton.
-	if ( useFseBetaOptInStep() ) {
-		return (
-			<div className="gutenboarding-page acquire-intent">
-				<SiteTitle inputRef={ siteTitleRef } onSubmit={ handleSiteTitleSubmit } />
-
-				<ActionButtons className="acquire-intent__footer">
-					<BackButton onClick={ goBack } />
-					{ nextStepButton }
-				</ActionButtons>
-			</div>
-		);
-	}
 
 	// In the case of an Anchor signup, we ask the backend to see if they already
 	// have an anchor site. If we're still waiting for this response, don't show anything yet.

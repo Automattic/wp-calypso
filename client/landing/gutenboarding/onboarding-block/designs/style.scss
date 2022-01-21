@@ -19,38 +19,4 @@
 	.designs__heading {
 		flex-grow: 1;
 	}
-
-	.designs__has-categories {
-		@include onboarding-heading-padding;
-		margin-bottom: 0;
-
-		.designs__header {
-			flex-direction: column-reverse;
-			align-items: flex-start;
-			margin-top: 0;
-			margin-bottom: 48px;
-		}
-
-		.designs__heading-title {
-			margin-bottom: 12px;
-		}
-
-		.action-buttons {
-			margin-left: 0;
-
-			.components-button {
-				@include break-small {
-					padding: 0;
-				}
-			}
-		}
-	}
-
-	.designs__featured-picks-buttons {
-		button {
-			box-shadow: inset 0 0 0 1px #c3c4c7;
-			color: #101517;
-			font-size: 0.875rem;
-		}
-	}
 }
