@@ -730,6 +730,9 @@ export function generateSteps( {
 				'displayAddress',
 			],
 		},
+		'website-content': {
+			stepName: 'website-content',
+		},
 		courses: {
 			stepName: 'courses',
 		},

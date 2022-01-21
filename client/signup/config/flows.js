@@ -117,6 +117,10 @@ function getDestinationFromIntent( dependencies ) {
 }
 
 function getDIFMSignupDestination( { siteSlug } ) {
+	return addQueryArgs( { siteSlug }, '/start/site-content-collection' );
+}
+
+function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
@@ -130,6 +134,7 @@ const flows = generateFlows( {
 	getEditorDestination,
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
+	getDIFMSiteContentCollectionDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
