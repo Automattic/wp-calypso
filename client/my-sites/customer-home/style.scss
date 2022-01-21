@@ -7,8 +7,7 @@ body.is-section-home.theme-default.color-scheme {
 }
 
 .customer-home__heading {
-	display: flex;
-	flex: 0 0 auto;
+	display: block;
 	padding: 16px;
 	position: relative;
 
@@ -16,7 +15,8 @@ body.is-section-home.theme-default.color-scheme {
 		padding: 0;
 	}
 
-	.formatted-header {
+	.customer-home__view-site-button,
+	.formatted-header__subtitle {
 		display: none;
 	}
 
@@ -55,14 +55,21 @@ body.is-section-home.theme-default.color-scheme {
 	}
 
 	.customer-home__site-domain {
-		color: var( --studio-gray-40 );
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	@include break-medium {
+		.customer-home__heading {
+			display: flex;
+			flex: 0 0 auto;
+		}
 		.customer-home__site-content {
 			display: none;
 		}
-		.formatted-header {
+		.customer-home__view-site-button,
+		.formatted-header__subtitle {
 			display: block;
 		}
 	}

@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
@@ -72,7 +73,9 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 				<SiteIcon site={ site } size={ 64 } />
 				<div className="customer-home__site-info">
 					<div className="customer-home__site-title">{ site.name }</div>
-					<div className="customer-home__site-domain">{ site.domain }</div>
+					<ExternalLink href={ site.URL } className="customer-home__site-domain">
+						{ site.domain }
+					</ExternalLink>
 				</div>
 			</div>
 
