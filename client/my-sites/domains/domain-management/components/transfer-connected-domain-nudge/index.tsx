@@ -12,6 +12,13 @@ const TransferConnectedDomainNudge = ( {
 }: TransferConnectedDomainNudgeProps ): JSX.Element | null => {
 	const translate = useTranslate();
 
+	if (
+		! domain.registryExpiryDate ||
+		moment( domain.registryExpiryDate ).isAfter( moment().add( 45, 'days' ) )
+	) {
+		return null;
+	}
+
 	const message = translate(
 		'Your domain is expiring soon. Consider {{a}}transferring it{{/a}} to WordPress.com to manage your site and domains all from one place.',
 		{
@@ -24,13 +31,6 @@ const TransferConnectedDomainNudge = ( {
 			},
 		}
 	);
-
-	if (
-		! domain.registryExpiryDate ||
-		moment( domain.registryExpiryDate ).isAfter( moment().add( 45, 'days' ) )
-	) {
-		return null;
-	}
 
 	return (
 		<div className="transfer-connected-domain-nudge">
