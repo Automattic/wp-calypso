@@ -109,7 +109,7 @@ function getDestinationFromIntent( dependencies ) {
 		return `/post/${ siteSlug }`;
 	}
 
-	if ( isFSEActive ) {
+	if ( isFSEActive && intent !== 'write' ) {
 		return `/site-editor/${ dependencies.siteSlug }`;
 	}
 
