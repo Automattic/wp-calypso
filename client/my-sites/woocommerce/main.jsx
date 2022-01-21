@@ -5,15 +5,11 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RequiredPluginsInstallView from './dashboard/required-plugins-install-view';
 
 function WooCommerce() {
 	const siteId = useSelector( getSelectedSiteId );
-	const areInstalledPluginsLoadedIntoState = useSelector( ( state ) =>
-		arePluginsLoaded( state, siteId )
-	);
 
 	if ( ! siteId ) {
 		return null;
@@ -26,7 +22,7 @@ function WooCommerce() {
 				<PageViewTracker path="/woocommerce-installation/:site" title="WooCommerce Installation" />
 				<QuerySiteFeatures siteId={ siteId } />
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
-				{ areInstalledPluginsLoadedIntoState && <RequiredPluginsInstallView siteId={ siteId } /> }
+				<RequiredPluginsInstallView siteId={ siteId } />
 			</Main>
 		</div>
 	);
