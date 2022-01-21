@@ -71,8 +71,8 @@ export default function useOnSiteCreation(): void {
 					: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 
 				const redirectionUrl = shouldRedirectToEditorAfterCheckout
-					? `/checkout/${ newSite.site_slug }/${ joinedProducts }?redirect_to=%2F${ editorUrl }`
-					: `/checkout/${ newSite.site_slug }/${ joinedProducts }`;
+					? `/checkout/${ newSite.site_slug }/${ joinedProducts }?source=gutenboarding&redirect_to=%2F${ editorUrl }`
+					: `/checkout/${ newSite.site_slug }/${ joinedProducts }?source=gutenboarding`;
 				window.location.href = redirectionUrl;
 				return;
 			}
