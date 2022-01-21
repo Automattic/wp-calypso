@@ -1,5 +1,5 @@
 import formatCurrency from '@automattic/format-currency';
-import { __, _x, sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 // These are rough exchange rates from USD.  Precision is not paramount.
 // The keys here should match the keys in `getCurrencyData`.
@@ -71,14 +71,14 @@ const getNumberRangeString = ( currency, min, max = 0 ) => {
 	if ( ! max ) {
 		return sprintf(
 			/* translators: product count or revenue range, e.g. $100+ */
-			_x( '%s+' ),
+			__( '%s+' ),
 			formatCurrency( min, currency )
 		);
 	}
 
 	return sprintf(
 		/* translators: product count or revenue range, e.g. $100 - $1000 */
-		_x( '%1$s - %2$s' ),
+		__( '%1$s - %2$s' ),
 		formatCurrency( min, currency ),
 		formatCurrency( max, currency )
 	);
