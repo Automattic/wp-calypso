@@ -45,6 +45,7 @@ export default function usePrepareProductsForCart( {
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	source,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -57,6 +58,7 @@ export default function usePrepareProductsForCart( {
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	source?: string;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -105,6 +107,7 @@ export default function usePrepareProductsForCart( {
 		isJetpackCheckout,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
+		source,
 	} );
 	useAddRenewalItems( {
 		originalPurchaseId,
@@ -341,6 +344,7 @@ function useAddProductFromSlug( {
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	source,
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -350,6 +354,7 @@ function useAddProductFromSlug( {
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	source?: string;
 } ) {
 	const products = useSelector( getProductsList );
 	const translate = useTranslate();
@@ -397,6 +402,7 @@ function useAddProductFromSlug( {
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
 				privacy: product.is_privacy_protection_product_purchase_allowed,
+				source,
 			} )
 		);
 
@@ -436,6 +442,7 @@ function useAddProductFromSlug( {
 		dispatch,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
+		source,
 	] );
 }
 
@@ -516,6 +523,7 @@ function createItemToAddToCart( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	privacy,
+	source,
 }: {
 	productSlug: string;
 	productAlias: string;
@@ -523,6 +531,7 @@ function createItemToAddToCart( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	privacy?: boolean;
+	source?: string;
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
 	// using a colon between the product slug and the meta.
@@ -541,18 +550,16 @@ function createItemToAddToCart( {
 		privacy
 	);
 
-	return addContextToProduct(
-		createRequestCartProduct( {
-			product_slug: productSlug,
-			extra: { isJetpackCheckout, jetpackSiteSlug, jetpackPurchaseToken, privacy },
-			...( cartMeta ? { meta: cartMeta } : {} ),
-		} )
-	);
-}
-
-function addContextToProduct( product: RequestCartProduct ): RequestCartProduct {
-	return {
-		...product,
-		extra: { ...product.extra, context: 'calypstore' },
-	};
+	return createRequestCartProduct( {
+		product_slug: productSlug,
+		extra: {
+			isJetpackCheckout,
+			jetpackSiteSlug,
+			jetpackPurchaseToken,
+			privacy,
+			context: 'calypstore',
+			source: source ?? undefined,
+		},
+		...( cartMeta ? { meta: cartMeta } : {} ),
+	} );
 }

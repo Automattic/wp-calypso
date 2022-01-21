@@ -67,6 +67,7 @@ export function checkoutSiteless( context, next ) {
 	context.primary = (
 		<CheckoutSystemDecider
 			productAliasFromUrl={ product }
+			productSourceFromUrl={ context.query.source }
 			couponCode={ couponCode }
 			isComingFromUpsell={ !! context.query.upgrade }
 			redirectTo={ context.query.redirect_to }
@@ -153,6 +154,7 @@ export function checkout( context, next ) {
 	context.primary = (
 		<CheckoutSystemDecider
 			productAliasFromUrl={ product }
+			productSourceFromUrl={ context.query.source }
 			purchaseId={ purchaseId }
 			selectedFeature={ feature }
 			couponCode={ couponCode }

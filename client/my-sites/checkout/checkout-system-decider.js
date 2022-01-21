@@ -28,6 +28,7 @@ const logCheckoutError = ( error ) => {
 
 export default function CheckoutSystemDecider( {
 	productAliasFromUrl,
+	productSourceFromUrl,
 	purchaseId,
 	selectedFeature,
 	couponCode,
@@ -83,6 +84,7 @@ export default function CheckoutSystemDecider( {
 							siteSlug={ siteSlug }
 							siteId={ selectedSiteId }
 							productAliasFromUrl={ productAliasFromUrl }
+							productSourceFromUrl={ productSourceFromUrl }
 							purchaseId={ purchaseId }
 							couponCode={ couponCode }
 							redirectTo={ redirectTo }
