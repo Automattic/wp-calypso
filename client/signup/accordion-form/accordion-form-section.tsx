@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { AccordionSectionProps } from './types';
 
-interface AccordionFormSectionProps extends AccordionSectionProps {
+interface AccordionFormSectionProps< T > extends AccordionSectionProps< T > {
 	isExpanded: boolean;
 	isTouched: boolean;
 	onOpen: () => void;
@@ -88,7 +88,7 @@ const NextButton = styled( Button )`
 	}
 `;
 
-export default function AccordionFormSection( props: AccordionFormSectionProps ) {
+export default function AccordionFormSection< T >( props: AccordionFormSectionProps< T > ) {
 	const translate = useTranslate();
 	const isRTL = useRtl();
 
