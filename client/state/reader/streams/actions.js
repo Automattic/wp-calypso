@@ -4,7 +4,6 @@ import {
 	READER_STREAMS_PAGE_RECEIVE,
 	READER_STREAMS_SHOW_UPDATES,
 	READER_STREAMS_SELECT_ITEM,
-	READER_STREAMS_SELECT_FIRST_ITEM,
 	READER_STREAMS_SELECT_NEXT_ITEM,
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_UPDATES_RECEIVE,
@@ -71,13 +70,6 @@ export function selectItem( { streamKey, postKey } ) {
 	return {
 		type: READER_STREAMS_SELECT_ITEM,
 		payload: { streamKey, postKey },
-	};
-}
-
-export function selectFirstItem( { streamKey, items } ) {
-	return {
-		type: READER_STREAMS_SELECT_FIRST_ITEM,
-		payload: { streamKey, items },
 	};
 }
 

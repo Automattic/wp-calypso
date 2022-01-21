@@ -1,3 +1,4 @@
+@import '@automattic/onboarding/styles/mixins';
 
 .reader-landing {
 	margin: 0 20px;
@@ -58,7 +59,7 @@
 }
 
 .reader-landing__feature-image {
-	border: 2px solid var( --color-neutral-10 );
+	border: 1px solid var( --color-neutral-10 );
 	border-radius: 2px;
 	width: 100%;
 
@@ -74,8 +75,8 @@
 }
 
 .reader-landing__feature-heading {
+	@include onboarding-font-recoleta;
 	font-size: 1.2em;
-	font-weight: 600;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: 1.6em;

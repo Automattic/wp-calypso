@@ -11,9 +11,11 @@ const CheckboxWrapper = styled.div`
 
 export default function AssignToAllPaymentMethods( {
 	isChecked,
+	isDisabled,
 	onChange,
 }: {
 	isChecked: boolean;
+	isDisabled?: boolean;
 	onChange: ( isChecked: boolean ) => void;
 } ): JSX.Element {
 	const translate = useTranslate();
@@ -32,6 +34,7 @@ export default function AssignToAllPaymentMethods( {
 	return (
 		<CheckboxWrapper>
 			<CheckboxControl
+				disabled={ isDisabled }
 				checked={ isChecked }
 				onChange={ handleChangeEvent }
 				label={ translate(

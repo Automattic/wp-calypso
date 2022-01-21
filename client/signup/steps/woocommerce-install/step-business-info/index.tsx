@@ -1,14 +1,14 @@
-import { SelectControl, TextControl } from '@wordpress/components';
+import { CheckboxControl, SelectControl, TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { without } from 'lodash';
 import { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ActionSection, StyledNextButton } from '..';
 import SupportCard from '../components/support-card';
-import { ActionSection, StyledNextButton } from '../confirm';
 import { useSiteSettings, WOOCOMMERCE_ONBOARDING_PROFILE } from '../hooks/use-site-settings';
 import type { WooCommerceInstallProps } from '..';
 import './style.scss';
@@ -19,12 +19,17 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) as string;
 
 	const { get, save, update } = useSiteSettings( siteId );
 
 	function updateProductTypes( type: string ) {
-		updateOnboardingProfile( 'product_types', type );
+		const productTypes = getProfileValue( 'product_types' ) || [];
+
+		const newTypes = productTypes.includes( type )
+			? without( productTypes, type )
+			: [ ...productTypes, type ];
+
+		updateOnboardingProfile( 'product_types', newTypes );
 	}
 
 	function updateProductCount( count: string ) {
@@ -43,7 +48,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 		updateOnboardingProfile( 'other_platform_name', name );
 	}
 
-	function updateOnboardingProfile( key: string, value: string | boolean ) {
+	function updateOnboardingProfile( key: string, value: string | boolean | Array< string > ) {
 		const onboardingProfile = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
 
 		const updatedOnboardingProfile = {
@@ -61,21 +66,29 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 	}
 
 	function getContent() {
+		const productTypes = [
+			{ label: __( 'Physical Products' ), value: 'physical' },
+			{ label: __( 'Downloads' ), value: 'downloads' },
+		];
+
 		return (
 			<>
 				<div className="step-business-info__info-section" />
 				<div className="step-business-info__instructions-container">
-					<SelectControl
-						label={ __( 'What type of products will be listed? (optional)' ) }
-						value={ getProfileValue( 'product_types' ) }
-						options={ [
-							{ value: '', label: '' },
-							{ value: 'physical', label: __( 'Physical Products' ) },
-							{ value: 'downloads', label: __( 'Downloads' ) },
-							{ value: 'subscriptions', label: __( 'Subscriptions' ) },
-						] }
-						onChange={ updateProductTypes }
-					/>
+					<div className="step-business-info__components-group">
+						<label className="step-business-info__components-group-label">
+							{ __( 'What type of products will be listed? (optional)' ) }
+						</label>
+
+						{ productTypes.map( ( { label, value } ) => (
+							<CheckboxControl
+								label={ label }
+								value={ value }
+								onChange={ () => updateProductTypes( value ) }
+								checked={ getProfileValue( 'product_types' ).indexOf( value ) !== -1 }
+							/>
+						) ) }
+					</div>
 
 					<SelectControl
 						label={ __( 'How many products do you plan to display? (optional)' ) }
@@ -204,8 +217,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 		<StepWrapper
 			flowName="woocommerce-install"
 			hideSkip={ true }
-			allowBackFirstStep={ true }
-			backUrl={ `/woocommerce-installation/${ siteDomain }` }
 			headerText={ __( 'Tell us a bit about your business' ) }
 			fallbackHeaderText={ __( 'Tell us a bit about your business' ) }
 			subHeaderText={ __( 'We will guide you to get started based on your responses.' ) }

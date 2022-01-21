@@ -3,7 +3,6 @@
  */
 
 import {
-	setupHooks,
 	DataHelper,
 	PublishedPostsListPage,
 	CommentsComponent,
@@ -11,7 +10,9 @@ import {
 	NotificationsComponent,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	const commentingUser = 'commentingUser';
@@ -22,8 +23,8 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	let publishedPostsListPage: PublishedPostsListPage;
 	let notificationsComponent: NotificationsComponent;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
 	describe( `Leave a comment as ${ commentingUser }`, function () {

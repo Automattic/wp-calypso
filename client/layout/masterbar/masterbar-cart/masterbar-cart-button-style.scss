@@ -1,9 +1,5 @@
 .masterbar-cart-button {
 	cursor: pointer;
-	/* Hide at small widths until we can figure out how to improve the alignment: https://github.com/Automattic/wp-calypso/issues/60148 */
-	@include breakpoint-deprecated( '<480px' ) {
-		display: none;
-	}
 }
 
 .masterbar-cart-button__count-container {
@@ -46,8 +42,14 @@
 		position: fixed;
 		top: var( --masterbar-height );
 		right: 0;
-		bottom: 0;
+		bottom: 1em;
 		background-color: var( --color-surface );
+	}
+}
+
+.masterbar-cart-button__popover .mini-cart-line-items {
+	@include breakpoint-deprecated( '<480px' ) {
+		max-height: none;
 	}
 }
 

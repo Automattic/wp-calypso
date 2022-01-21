@@ -1,4 +1,22 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import '../style';
 
+body.is-section-signup .is-woocommerce-install .signup__step.is-business-info {
+	@include woocommerce-install-two-column-layout;
+
+	.step-business-info__components-group .components-checkbox-control:not( :last-child ) {
+		margin-bottom: $grid-unit;
+	}
+}
+
+.step-business-info__components-group-label {
+	box-sizing: border-box;
+	color: currentColor;
+	display: block;
+	max-width: 100%;
+	z-index: 1;
+	font-size: $editor-font-size;
+	margin-bottom: $grid-unit;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

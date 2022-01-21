@@ -23,10 +23,12 @@ $autobar-height: 20px;
 	left: 0;
 	top: 0;
 	width: 100%;
+	max-width: 100vw;
 	z-index: z-index( 'root', '.masterbar' );
 	-webkit-font-smoothing: subpixel-antialiased;
 	transition: transform 0.2s ease-out;
 	box-sizing: border-box;
+	justify-content: space-between;
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
@@ -117,8 +119,38 @@ $autobar-height: 20px;
 	}
 }
 
+.masterbar__section {
+	flex: 2;
+	display: flex;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		.masterbar__item {
+			flex: 0 0 auto;
+		}
+	}
+}
+
+.masterbar__section--center {
+	flex: 1;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		flex: 0 0 auto;
+	}
+}
+
+.masterbar__section--right {
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-grow: 0;
+	}
+}
+
+
+.masterbar__drafts {
+	white-space: nowrap;
+}
+
 .masterbar__item {
-	flex: 0 1 auto;
+	flex: 1;
 	display: flex;
 	align-items: center;
 	position: relative;
@@ -126,10 +158,11 @@ $autobar-height: 20px;
 	font-size: $font-body-small;
 	height: var( --masterbar-height );
 	line-height: var( --masterbar-height );
-	padding: 0 15px;
+	padding: 0 8px;
 	text-decoration: none;
 	cursor: default;
 	transition: all 0.2s ease-in-out;
+	justify-content: center;
 
 	&:visited {
 		color: var( --color-masterbar-text );
@@ -140,6 +173,7 @@ $autobar-height: 20px;
 	}
 
 	.masterbar__item-content {
+		white-space: nowrap;
 		color: var( --color-masterbar-text );
 	}
 
@@ -219,8 +253,6 @@ $autobar-height: 20px;
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		flex: 1 1 auto;
-
 		.gridicon {
 			margin: 0 auto;
 		}
@@ -671,14 +703,6 @@ $autobar-height: 20px;
 	overflow-y: auto;
 	max-height: 70vh;
 	margin-bottom: 35px;
-}
-
-.masterbar__notifications {
-	flex: 1 1 auto;
-
-	@include breakpoint-deprecated( '>480px' ) {
-		flex-grow: 0;
-	}
 }
 
 a.masterbar__quick-language-switcher {

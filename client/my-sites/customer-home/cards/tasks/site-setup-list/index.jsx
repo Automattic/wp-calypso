@@ -23,6 +23,7 @@ import { getSiteOption, getSiteSlug, getCustomizerUrl } from 'calypso/state/site
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
 import { getTask } from './get-task';
+import MobileAppDownload from './mobile-app-download';
 import NavItem from './nav-item';
 
 /**
@@ -223,6 +224,10 @@ const SiteSetupList = ( {
 		}
 	};
 
+	const isMobileAppTaskCompleted = tasks.some(
+		( task ) => task.id === CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED && task.isCompleted
+	);
+
 	return (
 		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
@@ -257,14 +262,18 @@ const SiteSetupList = ( {
 				<CardHeading>
 					{ isBlogger ? translate( 'Blog setup' ) : translate( 'Site setup' ) }
 				</CardHeading>
-				<ul className="site-setup-list__list">
+				<ul
+					className={ classnames( 'site-setup-list__list', {
+						'is-mobile-app-completed': isMobileAppTaskCompleted,
+					} ) }
+				>
 					{ tasks.map( ( task ) => {
 						const enhancedTask = getTask( task, { isBlogger, userEmail } );
 						const isCurrent = task.id === currentTask.id;
 						const isCompleted = task.isCompleted;
 
 						return (
-							<li key={ task.id }>
+							<li key={ task.id } className={ `site-setup-list__task-${ task.id }` }>
 								<NavItem
 									key={ task.id }
 									taskId={ task.id }
@@ -318,6 +327,7 @@ const SiteSetupList = ( {
 						);
 					} ) }
 				</ul>
+				{ ! isMobileAppTaskCompleted && <MobileAppDownload /> }
 			</div>
 		</Card>
 	);

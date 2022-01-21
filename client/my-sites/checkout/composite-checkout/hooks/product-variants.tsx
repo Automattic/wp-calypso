@@ -207,7 +207,10 @@ function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompare
 		variant.introductoryOfferPrice !== null
 			? variant.introductoryOfferPrice
 			: variant.priceFinal || variant.priceFull;
-	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
+	// extremely low "discounts" are possible if the price of the longer term has been rounded
+	// if they cannot be rounded to at least a percentage point we should not show them
+	const isDiscounted =
+		Math.floor( 100 - ( currentPrice / variant.priceFullBeforeDiscount ) * 100 ) > 0;
 	return (
 		<Fragment>
 			{ isDiscounted && <VariantPriceDiscount variant={ variant } /> }

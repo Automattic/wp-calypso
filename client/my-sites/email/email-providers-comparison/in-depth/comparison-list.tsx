@@ -3,6 +3,7 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import EmailProviderFeatures from 'calypso/my-sites/email/email-provider-features';
+import { isBillingAvailable } from 'calypso/my-sites/email/email-providers-comparison/in-depth/data';
 import EmailProviderPrice from 'calypso/my-sites/email/email-providers-comparison/in-depth/email-provider-price';
 import LearnMoreLink from 'calypso/my-sites/email/email-providers-comparison/in-depth/learn-more-link';
 import { ComparisonListOrTableProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
@@ -25,13 +26,13 @@ const ComparisonList = ( {
 
 				return (
 					<Card key={ emailProviderFeatures.slug }>
-						<div className="email-providers-in-depth-comparison-table__provider">
+						<div className="email-providers-in-depth-comparison-list__provider">
 							{ emailProviderFeatures.logo }
 
-							<div className="email-providers-in-depth-comparison-table__provider-info">
+							<div className="email-providers-in-depth-comparison-list__provider-info">
 								<h2>{ emailProviderFeatures.name }</h2>
 
-								{ emailProviderFeatures.description }
+								<p>{ emailProviderFeatures.description }</p>
 							</div>
 						</div>
 
@@ -51,8 +52,15 @@ const ComparisonList = ( {
 							<LearnMoreLink url={ emailProviderFeatures.supportUrl } />
 						</div>
 
+						{ emailProviderFeatures.badge && (
+							<div className="email-providers-in-depth-comparison-list__badge">
+								{ emailProviderFeatures.badge }
+							</div>
+						) }
+
 						<Button
 							className="email-providers-in-depth-comparison-list__button"
+							disabled={ ! isBillingAvailable( emailProviderFeatures, intervalLength ) }
 							onClick={ () => onSelectEmailProvider( emailProviderFeatures.slug ) }
 							primary
 						>

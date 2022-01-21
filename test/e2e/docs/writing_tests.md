@@ -30,15 +30,17 @@
  * @group gutenberg
  */
 
-import { setupHooks, DataHelper, LoginPage } from '@automattic/calypso-e2e';
+import { DataHelper, LoginPage } from '@automattic/calypso-e2e';
 
 const xyz = 'someconst';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
 	describe( 'Input valid search query', function () {
@@ -90,12 +92,12 @@ This is for multiple reasons:
 2. Import the basics
 
 ```typescript
-import { setupHooks, DataHelper, LoginPage } from '@automattic/calypso-e2e';
+import { DataHelper, LoginPage } from '@automattic/calypso-e2e';
 ```
 
 3. Assign a test group.
 
-Specs are grouped into suites using [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups). **Specs must be explicitly added to suites to be run as part of CI pipelines.**  
+Specs are grouped into suites using [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups). **Specs must be explicitly added to suites to be run as part of CI pipelines.**
 To add your spec file to suites, add a JSDoc block at the top of the file, and use the `@group` tag. Multiple suites are supported.
 
 ```typescript
@@ -130,6 +132,8 @@ As referenced in the [Style Guide](style-guide-playwright.md#Tests), there shoul
 Using the `DataHelper.createSuiteTitle` function, define a short, descriptive name for the overall suite:
 
 ```typescript
+declare const browser: Browser;
+
 describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
 	...
 } );
@@ -146,6 +150,8 @@ Unlike top-level blocks, there are no restrictions on the number of child-level 
 Using child-level `describe` blocks, group test cases for a feature:
 
 ```typescript
+declare const browser: Browser;
+
 describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
 	describe( 'Use Feature with valid string', function() {
 		// Valid string test
@@ -164,6 +170,8 @@ describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
 Another way to use child-level `describe` blocks is to group distinct steps:
 
 ```typescript
+declare const browser: Browser;
+
 describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
 	describe( 'Set up feature', function() {
 		// Steps to set up the feature under test

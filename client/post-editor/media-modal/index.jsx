@@ -7,6 +7,7 @@ import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
 import CloseOnEscape from 'calypso/components/close-on-escape';
 import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
+import { withAddExternalMedia } from 'calypso/data/media/with-add-external-media';
 import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
 import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
@@ -16,7 +17,6 @@ import { withAnalytics, bumpStat, recordGoogleEvent } from 'calypso/state/analyt
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { changeMediaSource, selectMediaItems, setQuery } from 'calypso/state/media/actions';
-import { addExternalMedia } from 'calypso/state/media/thunks';
 import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -595,7 +595,6 @@ export default connect(
 		recordEditorStat,
 		selectMediaItems,
 		setQuery,
-		addExternalMedia,
 		changeMediaSource,
 	}
-)( localize( withDeleteMedia( withEditMedia( EditorMediaModal ) ) ) );
+)( localize( withDeleteMedia( withEditMedia( withAddExternalMedia( EditorMediaModal ) ) ) ) );

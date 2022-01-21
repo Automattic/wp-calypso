@@ -2,15 +2,17 @@
  * @group calypso-pr
  */
 
-import { DataHelper, TestAccount, setupHooks, StartImportFlow } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { DataHelper, TestAccount, StartImportFlow } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 	let page: Page;
 	let startImportFlow: StartImportFlow;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 		startImportFlow = new StartImportFlow( page );
 
 		const testAccount = new TestAccount( 'defaultUser' );

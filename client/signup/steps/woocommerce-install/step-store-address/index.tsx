@@ -10,9 +10,10 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ActionSection, StyledNextButton } from '..';
 import SupportCard from '../components/support-card';
-import { ActionSection, StyledNextButton } from '../confirm';
 import {
 	useSiteSettings,
 	WOOCOMMERCE_STORE_ADDRESS_1,
@@ -53,6 +54,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	} );
 
 	const { get, save, update } = useSiteSettings( siteId );
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
 	const { validate, clearError, getError, errors } = useAddressFormValidation( siteId );
 
@@ -198,6 +200,8 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 		<StepWrapper
 			flowName="woocommerce-install"
 			hideSkip={ true }
+			allowBackFirstStep={ true }
+			backUrl={ `/woocommerce-installation/${ domain }` }
 			headerText={ __( 'Add an address to accept payments' ) }
 			fallbackHeaderText={ __( 'Add an address to accept payments' ) }
 			subHeaderText={ __(
@@ -232,16 +236,14 @@ function useAddressFormValidation( siteId: number ) {
 		errors[ WOOCOMMERCE_STORE_ADDRESS_1 ] = ! get( WOOCOMMERCE_STORE_ADDRESS_1 )
 			? __( 'Please add an address' )
 			: '';
-		errors[ WOOCOMMERCE_STORE_ADDRESS_2 ] = ''; // Optional field
+		errors[ WOOCOMMERCE_STORE_ADDRESS_2 ] = ''; // Optional field.
 		errors[ WOOCOMMERCE_DEFAULT_COUNTRY ] = ! get( WOOCOMMERCE_DEFAULT_COUNTRY )
 			? __( 'Please select a country / region' )
 			: '';
 		errors[ WOOCOMMERCE_STORE_CITY ] = ! get( WOOCOMMERCE_STORE_CITY )
 			? __( 'Please add a city' )
 			: '';
-		errors[ WOOCOMMERCE_STORE_POSTCODE ] = ! get( WOOCOMMERCE_STORE_POSTCODE )
-			? __( 'Please add a postcode' )
-			: '';
+		errors[ WOOCOMMERCE_STORE_POSTCODE ] = ''; // Optional field.
 		errors[ WOOCOMMERCE_ONBOARDING_PROFILE ] = ! emailValidator.validate(
 			get( WOOCOMMERCE_ONBOARDING_PROFILE )?.[ 'store_email' ]
 		)

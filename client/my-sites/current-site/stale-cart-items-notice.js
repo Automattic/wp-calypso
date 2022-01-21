@@ -52,7 +52,7 @@ function useShowStaleCartNotice() {
 				infoNotice( translate( 'Your cart is awaiting payment.' ), {
 					id: staleCartItemNoticeId,
 					button: translate( 'View your cart' ),
-					href: `/checkout/${ selectedSiteSlug }`,
+					href: `/checkout/${ selectedSiteSlug }?order-review=true`, // Redirect to the order-review step`,
 					onClick: () => {
 						reduxDispatch( recordTracksEvent( 'calypso_cart_abandonment_notice_click' ) );
 					},

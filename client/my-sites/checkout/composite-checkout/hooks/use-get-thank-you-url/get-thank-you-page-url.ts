@@ -424,7 +424,7 @@ function getMonthlyToAnnualUpsellUrl( {
 	}
 
 	const monthlyPlansDefaultExperiment = dangerouslyGetExperimentAssignment(
-		'calypso_signup_monthly_plans_default_202201_v1'
+		'calypso_signup_monthly_plans_default_202201_v2'
 	);
 	if ( monthlyPlansDefaultExperiment?.variationName === null ) {
 		return;

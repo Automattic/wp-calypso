@@ -68,7 +68,7 @@ function add_crossorigin_to_script_els( $tag ) {
  * @return bool
  */
 function user_in_sentry_test_segment( $user_id ) {
-	$current_segment = 1; // segment of existing users that will get this feature in %.
+	$current_segment = 10; // segment of existing users that will get this feature in %.
 	$user_segment    = $user_id % 100;
 
 	// We get the last two digits of the user id and that will be used to decide in what

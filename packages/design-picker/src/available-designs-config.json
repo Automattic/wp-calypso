@@ -796,6 +796,46 @@
 			"is_fse": false,
 			"is_featured_picks": true,
 			"features": []
+		},
+		{
+			"title": "Bennett",
+			"slug": "bennett",
+			"template": "bennett",
+			"theme": "bennett",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Calvin",
+			"slug": "calvin",
+			"template": "calvin",
+			"theme": "calvin",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Farrow",
+			"slug": "farrow",
+			"template": "farrow",
+			"theme": "farrow",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Barnett",
+			"slug": "barnett",
+			"template": "barnett",
+			"theme": "barnett",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
 		}
 	]
 }

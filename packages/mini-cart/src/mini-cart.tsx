@@ -95,11 +95,15 @@ export function MiniCart( {
 	cartKey,
 	goToCheckout,
 	closeCart,
+	onRemoveProduct,
+	onRemoveCoupon,
 }: {
 	selectedSiteSlug: string;
 	cartKey: string | number | undefined;
 	goToCheckout: ( siteSlug: string ) => void;
 	closeCart: () => void;
+	onRemoveProduct?: ( uuid: string ) => void;
+	onRemoveCoupon?: () => void;
 } ): JSX.Element | null {
 	const {
 		responseCart,
@@ -110,6 +114,16 @@ export function MiniCart( {
 	} = useShoppingCart( cartKey ? String( cartKey ) : undefined );
 	const { __ } = useI18n();
 	const isDisabled = isLoading || isPendingUpdate;
+
+	const handleRemoveCoupon = () => {
+		onRemoveCoupon?.();
+		return removeCoupon();
+	};
+
+	const handleRemoveProduct = ( uuid: string ) => {
+		onRemoveProduct?.( uuid );
+		return removeProductFromCart( uuid );
+	};
 
 	if ( ! cartKey ) {
 		return null;
@@ -136,8 +150,8 @@ export function MiniCart( {
 					</MiniCartSiteTitle>
 				</MiniCartHeader>
 				<MiniCartLineItems
-					removeCoupon={ removeCoupon }
-					removeProductFromCart={ removeProductFromCart }
+					removeCoupon={ handleRemoveCoupon }
+					removeProductFromCart={ handleRemoveProduct }
 					responseCart={ responseCart }
 				/>
 				<MiniCartTotal responseCart={ responseCart } />

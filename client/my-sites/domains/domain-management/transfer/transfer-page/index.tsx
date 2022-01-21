@@ -361,7 +361,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 				<Column type="sidebar">
 					<Card className="transfer-page__help-section-card">
 						<p className="transfer-page__help-section-title">{ __( 'How do transfers work?' ) }</p>
-						<span className="transfer-page__help-section-text">
+						<p className="transfer-page__help-section-text">
 							{ __( 'Transferring a domain within WordPress.com is immediate.' ) }
 							<br />
 							{ createInterpolateElement(
@@ -372,7 +372,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 									a: createElement( 'a', { href: TRANSFER_DOMAIN_REGISTRATION } ),
 								}
 							) }
-						</span>
+						</p>
 					</Card>
 				</Column>
 			</Layout>
