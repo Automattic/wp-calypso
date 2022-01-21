@@ -38,9 +38,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const isMobile = useMobileBreakpoint();
 	const lastStepIndex = config.steps.length - 1;
 	const referenceElementSelector =
-		( config.steps[ currentStepIndex ].meta as
-			| { referenceElements?: { mobile: string; desktop: string } }
-			| undefined )?.referenceElements?.[ isMobile ? 'mobile' : 'desktop' ] || null;
+		config.steps[ currentStepIndex ].referenceElements?.[ isMobile ? 'mobile' : 'desktop' ] || null;
 	const referenceElement = referenceElementSelector
 		? document.querySelector< HTMLElement >( referenceElementSelector )
 		: null;

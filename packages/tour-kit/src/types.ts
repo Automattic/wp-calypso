@@ -2,6 +2,10 @@ import React from 'react';
 import type { Modifier } from 'react-popper';
 
 export type Step = {
+	referenceElements?: {
+		desktop?: string;
+		mobile?: string;
+	};
 	meta: {
 		[ key: string ]: unknown;
 		// | React.FunctionComponent< Record< string, unknown > >

@@ -31,30 +31,39 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 	const config: Config = {
 		steps: [
 			{
+				referenceElements: {
+					desktop: '.storybook__tourkit-references-a',
+					mobile: '.storybook__tourkit-references-a',
+				},
 				meta: {
 					description: 'Lorem ipsum dolor sit amet.',
-					referenceElements: {
-						desktop: '.storybook-tour__references-a',
-						mobile: '.storybook-tour__references-a',
-					},
 				},
 			},
 			{
+				referenceElements: {
+					desktop: '.storybook__tourkit-references-b',
+					mobile: '.storybook__tourkit-references-b',
+				},
 				meta: {
-					description: 'Donec dui sapien, tincidunt eget.',
-					referenceElements: {
-						desktop: '.storybook-tour__references-b',
-						mobile: '.storybook-tour__references-b',
-					},
+					description: 'Lorem ipsum dolor sit amet.',
 				},
 			},
 			{
+				referenceElements: {
+					desktop: '.storybook__tourkit-references-c',
+					mobile: '.storybook__tourkit-references-c',
+				},
 				meta: {
-					description: 'Suspendisse auctor varius vulputate. Nulla.',
-					referenceElements: {
-						desktop: '.storybook-tour__references-c',
-						mobile: '.storybook-tour__references-c',
-					},
+					description: 'Lorem ipsum dolor sit amet.',
+				},
+			},
+			{
+				referenceElements: {
+					desktop: '.storybook__tourkit-references-d',
+					mobile: '.storybook__tourkit-references-d',
+				},
+				meta: {
+					description: 'Lorem ipsum dolor sit amet.',
 				},
 			},
 		],
