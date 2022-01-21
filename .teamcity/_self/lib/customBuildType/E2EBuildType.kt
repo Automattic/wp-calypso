@@ -132,7 +132,7 @@ open class E2EBuildType(
 					# environment variable in the Run tests step. Therefore, the export
 					# for NODE_CONFIG variable has to be done here instead of
 					# within the Kotlin DSL as a param() value.
-					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL/}\"}"
+					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL}\"}"
 
 					# Run suite.
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
