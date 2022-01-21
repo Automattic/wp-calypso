@@ -95,7 +95,8 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 				<div className="step-store-address__info-section" />
 				<div className="step-store-address__instructions-container">
 					<form
-						onSubmit={ () => {
+						onSubmit={ ( e ) => {
+							e.preventDefault();
 							setSubmitted( submitted + 1 );
 							if ( validate() ) {
 								save();

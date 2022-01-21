@@ -85,7 +85,8 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 				<div className="step-business-info__info-section" />
 				<div className="step-business-info__instructions-container">
 					<form
-						onSubmit={ () => {
+						onSubmit={ ( e ) => {
+							e.preventDefault();
 							dispatch( submitSignupStep( { stepName: 'business-info' } ) );
 							updateOnboardingProfile( 'completed', true );
 							save();
