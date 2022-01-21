@@ -36,7 +36,7 @@ export interface PageData {
 
 export type WebsiteContent = Array< PageData >;
 export interface WebsiteContentCollection {
-	currentIndex: 0;
+	currentIndex: number;
 	websiteContent: WebsiteContent;
 }
 

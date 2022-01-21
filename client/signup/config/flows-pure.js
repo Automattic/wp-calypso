@@ -399,7 +399,6 @@ export function generateFlows( {
 				'difm-site-picker',
 				'site-info-collection',
 				'difm-design-setup-site',
-				'domains',
 			],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
