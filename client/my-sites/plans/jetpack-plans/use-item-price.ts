@@ -146,7 +146,7 @@ const useItemPrice = (
 
 	// Introductory offer pricing is not yet supported for tiered plans, so we need to hard-code it for now.
 	if ( item && isJetpackSearch( item ) ) {
-		discountedPrice = originalPrice * ( INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 );
+		discountedPrice = originalPrice * ( 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 );
 	}
 
 	// Jetpack CRM price won't come from the API, so we need to hard-code it for now.
