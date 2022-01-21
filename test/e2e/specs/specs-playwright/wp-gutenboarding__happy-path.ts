@@ -42,8 +42,8 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			await gutenboardingFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Select Quadrat as the site design', async function () {
-			await gutenboardingFlow.selectDesign( 'Quadrat' );
+		it( 'Select Quadrat Black as the site design', async function () {
+			await gutenboardingFlow.selectDesign( 'Quadrat Black' );
 		} );
 
 		it( 'Select to add the Plugin feature', async function () {
@@ -67,9 +67,13 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		} );
 
 		it( 'Land in Home dashboard', async function () {
-			await page.waitForURL( '**/home/**' );
+			await page.waitForURL( '**/site-editor/**' );
 			const currentURL = page.url();
 			expect( currentURL ).toContain( siteTitle );
+		} );
+
+		it( 'Navigate to Home dashboard', async function () {
+			await page.goto( DataHelper.getCalypsoURL( 'home' ) );
 		} );
 	} );
 
