@@ -58,19 +58,13 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 
 		it( 'Create account', async function () {
 			await Promise.all( [
-				page.waitForNavigation(),
+				page.waitForNavigation( { waitUntil: 'networkidle' } ),
 				gutenboardingFlow.signup( email, signupPassword ),
 			] );
 		} );
 
-		it( 'Land in Home dashboard', async function () {
-			await page.waitForURL( '**/site-editor/**' );
-			const currentURL = page.url();
-			expect( currentURL ).toContain( siteTitle );
-		} );
-
 		it( 'Navigate to Home dashboard', async function () {
-			await page.goto( DataHelper.getCalypsoURL( 'home' ) );
+			await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'load' } );
 		} );
 	} );
 
