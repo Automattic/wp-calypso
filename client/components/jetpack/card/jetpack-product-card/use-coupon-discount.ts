@@ -20,7 +20,7 @@ export default function useCouponDiscount(
 
 	const finalDiscount = Math.floor( ( ( originalPrice - finalPrice ) / originalPrice ) * 100 );
 
-	const hasDiscount = jetpackSaleDiscountRatio > 0;
+	const hasDiscount = finalPrice < originalPrice;
 
 	return {
 		price: hasDiscount ? finalPrice : discountedPrice ?? originalPrice,
