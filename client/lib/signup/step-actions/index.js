@@ -46,7 +46,6 @@ const debug = debugFactory( 'calypso:signup:step-actions' );
 const isUserAssignedFSEBeta = ( userId ) => {
 	const fse_beta_rollout_percentage_start_flow = 10;
 
-	// FSE Beta is only active for existing users.
 	if ( ! userId ) {
 		return false;
 	}
