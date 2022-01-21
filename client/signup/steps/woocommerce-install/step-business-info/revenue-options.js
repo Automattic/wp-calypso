@@ -57,13 +57,16 @@ const getNumberRangeString = ( currency, min, max = 0 ) => {
 const convertCurrency = ( value, country ) => {
 	const region = getCurrencyRegion( country );
 
-	if ( region === 'US' ) {
+	const exchangeRate = exchangeRates[ region ] || exchangeRates.US;
+
+	if ( exchangeRate === 1 ) {
 		return value;
 	}
 
-	const exchangeRate = exchangeRates[ region ] || exchangeRates.US;
+	const digits = exchangeRate.toString().split( '.' )[ 0 ].length;
+	const multiplier = Math.pow( 10, 2 + digits );
 
-	return Math.round( value * exchangeRate );
+	return Math.round( ( value * exchangeRate ) / multiplier ) * multiplier;
 };
 
 export const getRevenueOptions = ( currency, country ) => [
