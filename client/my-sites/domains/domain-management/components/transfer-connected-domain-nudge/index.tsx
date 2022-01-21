@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -8,8 +9,9 @@ import type { TransferConnectedDomainNudgeProps } from './types';
 import './style.scss';
 
 const TransferConnectedDomainNudge = ( {
-	siteSlug,
 	domain,
+	location,
+	siteSlug,
 }: TransferConnectedDomainNudgeProps ): JSX.Element | null => {
 	const translate = useTranslate();
 
@@ -25,11 +27,19 @@ const TransferConnectedDomainNudge = ( {
 		return null;
 	}
 
+	const trackNudgeLinkClick = (): boolean => {
+		recordTracksEvent( 'calypso_domain_management_transfer_connected_domain_nudge_link_click', {
+			location,
+		} );
+		return true;
+	};
+
 	const messageOptions = {
 		components: {
 			a: (
 				<a
 					href={ domainUseMyDomain( siteSlug, domain.name, useMyDomainInputMode.transferDomain ) }
+					onClick={ trackNudgeLinkClick }
 				/>
 			),
 		},

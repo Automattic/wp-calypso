@@ -156,7 +156,11 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 				{ renderBadges() }
 			</div>
 			{ renderNotices() }
-			<TransferConnectedDomainNudge siteSlug={ props.site.slug } domain={ props.domain } />
+			<TransferConnectedDomainNudge
+				domain={ props.domain }
+				location="domain_settings"
+				siteSlug={ props.site.slug }
+			/>
 		</div>
 	);
 };
