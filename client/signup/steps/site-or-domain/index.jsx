@@ -10,6 +10,8 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { globe, newSite, site } from '../../icons';
+import SelectItems from '../../select-items';
 import SiteOrDomainChoice from './choice';
 import DomainImage from './domain-image';
 import ExistingSiteImage from './existing-site-image';
@@ -67,7 +69,67 @@ class SiteOrDomain extends Component {
 		return choices;
 	}
 
+	getDomainOnlyChoice() {
+		const { translate } = this.props;
+
+		return [
+			{
+				key: 'domain',
+				title: translate( 'Just buy a domain' ),
+				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
+				icon: globe,
+				value: 'domain',
+				actionText: translate( 'Select' ),
+			},
+		];
+	}
+
+	getAddSiteChoices() {
+		const { translate, isLoggedIn } = this.props;
+
+		const choices = [
+			{
+				key: 'page',
+				title: translate( 'New site' ),
+				description: translate( 'Choose a theme, customize and launch your site.' ),
+				icon: newSite,
+				value: 'page',
+				actionText: translate( 'Select' ),
+			},
+		];
+
+		if ( isLoggedIn ) {
+			choices.push( {
+				key: 'existing-site',
+				title: translate( 'Existing WordPress.com site' ),
+				description: translate( 'Use with a site you already started.' ),
+				icon: site,
+				value: 'existing-site',
+				actionText: translate( 'Select' ),
+			} );
+		}
+
+		return choices;
+	}
+
 	renderChoices() {
+		const { isReskinned, translate } = this.props;
+
+		if ( isReskinned )
+			return (
+				<div className="site-or-domain__choices">
+					<div>
+						<SelectItems items={ this.getDomainOnlyChoice() } onSelect={ this.handleClickChoice } />
+					</div>
+					<div>
+						<div className="site-or-domain__free-domain-badge">
+							{ translate( 'A free domain for one year is included with all paid annual plans.' ) }
+						</div>
+						<SelectItems items={ this.getAddSiteChoices() } onSelect={ this.handleClickChoice } />
+					</div>
+				</div>
+			);
+
 		return (
 			<div className="site-or-domain__choices">
 				{ this.getChoices().map( ( choice, index ) => (

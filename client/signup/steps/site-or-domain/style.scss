@@ -2,6 +2,12 @@
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: center;
+
+	.select-items {
+		border-radius: 4px;
+		border: solid 1px #eee;
+		padding-right: 20px;
+	}
 }
 
 .site-or-domain__choice {
@@ -85,4 +91,15 @@
 
 .site-or-domain__is-placeholder {
 	@include placeholder( --color-neutral-10 );
+}
+
+.site-or-domain__free-domain-badge {
+	display: flex;
+	background-color: var( --studio-green-0 );
+	color: var( --studio-green-70 );
+	margin-bottom: 10px;
+	padding: 8px 16px;
+	font-size: $font-body-small;
+	font-weight: 500;
+	border-radius: 4px 4px 0 0;
 }
