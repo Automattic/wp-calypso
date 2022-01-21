@@ -524,7 +524,7 @@ class ManagePurchase extends Component {
 		};
 
 		return (
-			<CompactCard href={ link } onClick={ onClick }>
+			<CompactCard href={ link } className={ `remove-purchase__card` } onClick={ onClick }>
 				{ text }
 			</CompactCard>
 		);
