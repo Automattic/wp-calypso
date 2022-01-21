@@ -46,11 +46,6 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			await gutenboardingFlow.selectDesign( 'Quadrat' );
 		} );
 
-		it( 'Pick the Playfair font pairing', async function () {
-			await gutenboardingFlow.selectFont( 'Playfair' );
-			await gutenboardingFlow.clickButton( 'Continue' );
-		} );
-
 		it( 'Select to add the Plugin feature', async function () {
 			await gutenboardingFlow.selectFeatures( [ 'Plugins' ] );
 			await gutenboardingFlow.clickButton( 'Continue' );
