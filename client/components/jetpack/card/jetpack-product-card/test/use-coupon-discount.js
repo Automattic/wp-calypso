@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import useCouponDiscount from '../use-coupon-discount';
 
 const mockStore = configureStore( [] );
@@ -16,18 +15,6 @@ describe( 'useCouponDiscount', () => {
 		const { result } = renderHook( () => useCouponDiscount(), { wrapper: wrapper() } );
 
 		expect( result.current ).toEqual( {} );
-	} );
-
-	test( 'should apply the default discount if there is no coupon', () => {
-		const originalPrice = 100;
-		const { result } = renderHook( () => useCouponDiscount( originalPrice ), {
-			wrapper: wrapper(),
-		} );
-
-		expect( result.current ).toEqual( {
-			price: originalPrice * ( 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 ),
-			discount: INTRO_PRICING_DISCOUNT_PERCENTAGE,
-		} );
 	} );
 
 	test( 'should take into account initial discounted price when computing total discount', () => {
