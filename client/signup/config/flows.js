@@ -113,7 +113,7 @@ function getDestinationFromIntent( dependencies ) {
 }
 
 function getDIFMSignupDestination( { siteSlug } ) {
-	return `/home/${ siteSlug }`;
+	return addQueryArgs( { siteSlug }, '/start/site-content-collection' );
 }
 
 const flows = generateFlows( {
