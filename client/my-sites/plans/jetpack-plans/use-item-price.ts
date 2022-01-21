@@ -1,6 +1,11 @@
-import { PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY } from '@automattic/calypso-products';
+import {
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
+	isJetpackSearch,
+} from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getProductPriceTierList } from 'calypso/state/products-list/selectors/get-product-price-tiers';
@@ -138,6 +143,11 @@ const useItemPrice = (
 	let discountedPrice = introductoryOfferPrices.introOfferCost
 		? introductoryOfferPrices.introOfferCost / 12
 		: undefined;
+
+	// Introductory offer pricing is not yet supported for tiered plans, so we need to hard-code it for now.
+	if ( item && isJetpackSearch( item ) ) {
+		discountedPrice = originalPrice * ( INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 );
+	}
 
 	// Jetpack CRM price won't come from the API, so we need to hard-code it for now.
 	if ( item && [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( item.productSlug ) ) {
