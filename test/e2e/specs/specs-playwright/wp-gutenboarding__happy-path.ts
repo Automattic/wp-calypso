@@ -42,7 +42,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			await gutenboardingFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Select Vesta as the site design', async function () {
+		it( 'Select Quadrat as the site design', async function () {
 			await gutenboardingFlow.selectDesign( 'Quadrat' );
 		} );
 
