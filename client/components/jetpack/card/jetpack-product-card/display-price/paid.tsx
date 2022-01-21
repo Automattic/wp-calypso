@@ -11,6 +11,7 @@ import type { ReactNode } from 'react';
 type OwnProps = {
 	discountedPrice?: number;
 	originalPrice?: number;
+	pricesAreFetching: boolean | null;
 	billingTerm: Duration;
 	currencyCode?: string | null;
 	displayFrom?: boolean;
@@ -21,6 +22,7 @@ type OwnProps = {
 const Paid: React.FC< OwnProps > = ( {
 	discountedPrice,
 	originalPrice,
+	pricesAreFetching,
 	billingTerm,
 	currencyCode,
 	displayFrom,
@@ -29,7 +31,7 @@ const Paid: React.FC< OwnProps > = ( {
 } ) => {
 	const { price: finalPrice } = useCouponDiscount( originalPrice, discountedPrice );
 
-	if ( ! currencyCode || ! originalPrice ) {
+	if ( ! currencyCode || ! originalPrice || pricesAreFetching ) {
 		return (
 			<>
 				<div className="display-price__price-placeholder" />

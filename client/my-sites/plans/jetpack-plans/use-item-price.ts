@@ -95,7 +95,7 @@ const useIntroductoryOfferPrices = (
 	);
 
 	const isFetching =
-		useSelector( ( state ) => siteId && !! isRequestingIntroOffers( state, siteId ) ) || null;
+		useSelector( ( state ) => !! isRequestingIntroOffers( state, siteId ?? undefined ) ) || null;
 	const introOfferCost =
 		useSelector(
 			( state ) => product && getIntroOfferPrice( state, product.product_id, siteId ?? 'none' )
@@ -118,7 +118,7 @@ const useItemPrice = (
 
 	const isFetching = siteId
 		? sitePrices.isFetching
-		: listPrices.isFetching && introductoryOfferPrices.isFetching;
+		: listPrices.isFetching || introductoryOfferPrices.isFetching;
 	const itemCost = siteId ? sitePrices.itemCost : listPrices.itemCost;
 
 	const priceTierList = useMemo(

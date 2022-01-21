@@ -23,6 +23,7 @@ type OwnProps = {
 	description?: ReactNode;
 	originalPrice?: number;
 	discountedPrice?: number;
+	pricesAreFetching: boolean | null;
 	hidePrice?: boolean;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
@@ -61,6 +62,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	description,
 	originalPrice,
 	discountedPrice,
+	pricesAreFetching = null,
 	hidePrice,
 	buttonLabel,
 	buttonPrimary,
@@ -163,6 +165,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						discountedPrice={ discountedPrice }
 						currencyCode={ item.displayCurrency }
 						originalPrice={ originalPrice ?? 0 }
+						pricesAreFetching={ pricesAreFetching }
 						displayFrom={ displayFrom }
 						showAbovePriceText={ showAbovePriceText }
 						belowPriceText={ item.belowPriceText }
