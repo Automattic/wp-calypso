@@ -24,20 +24,28 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 	const { stepName, signupDependencies, goToNextStep } = props;
 	const { siteTitle, tagline } = signupDependencies;
 
-	const headerText =
-		'store-options' === stepName
-			? translate( "First, let's give your store a name" )
-			: translate( "First, let's give your blog a name" );
+	const getStepText = ( stepName: string ) => {
+		switch ( stepName ) {
+			case 'store-options':
+				return {
+					headerText: translate( "First, let's give your store a name" ),
+					headerImage: intentImageUrl,
+					siteTitleLabel: translate( 'Store name' ),
+					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
+				};
 
-	const headerImage = 'store-options' === stepName ? intentImageUrl : siteOptionsImage;
+			// Regular blog
+			default:
+				return {
+					headerText: translate( "First, let's give your blog a name" ),
+					headerImage: siteOptionsImage,
+					siteTitleLabel: translate( 'Blog name' ),
+					taglineExplanation: translate( 'In a few words, explain what your blog is about.' ),
+				};
+		}
+	};
 
-	const siteTitleLabel =
-		'store-options' === stepName ? translate( 'Store name' ) : translate( 'Blog name' );
-
-	const taglineExplanation =
-		'store-options' === stepName
-			? translate( 'In a few words, explain what your store is about.' )
-			: translate( 'In a few words, explain what your blog is about.' );
+	const { headerText, headerImage, siteTitleLabel, taglineExplanation } = getStepText( stepName );
 
 	const submitSiteOptions = ( { siteTitle, tagline }: SiteOptionsFormValues ) => {
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
