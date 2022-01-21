@@ -1,5 +1,3 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 import { useState } from '@wordpress/element';
 import TourKit from '..';
 import type { Config } from '..';
