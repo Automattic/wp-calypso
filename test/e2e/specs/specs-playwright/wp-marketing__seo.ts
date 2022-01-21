@@ -3,7 +3,7 @@
  */
 
 import { DataHelper, SidebarComponent, MarketingPage, TestAccount } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
