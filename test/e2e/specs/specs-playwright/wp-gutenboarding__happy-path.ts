@@ -43,7 +43,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		} );
 
 		it( 'Select Vesta as the site design', async function () {
-			await gutenboardingFlow.selectDesign( 'Vesta' );
+			await gutenboardingFlow.selectDesign( 'Quadrat' );
 		} );
 
 		it( 'Pick the Playfair font pairing', async function () {
