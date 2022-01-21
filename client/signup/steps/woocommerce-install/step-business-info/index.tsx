@@ -45,8 +45,8 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 		updateOnboardingProfile( 'selling_venues', venue );
 	}
 
-	function updateRevenue( venue: string ) {
-		updateOnboardingProfile( 'revenue', venue );
+	function updateRevenue( revenue: string ) {
+		updateOnboardingProfile( 'revenue', revenue );
 	}
 
 	function updateOtherPlatform( platform: string ) {
