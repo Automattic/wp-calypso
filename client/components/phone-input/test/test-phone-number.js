@@ -213,6 +213,16 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '604655999', countries.US ), '(604) 655-999' );
 				equal( formatNumber( '6046559999', countries.US ), '(604) 655-9999' );
 
+				equal( formatNumber( '5', countries.FR ), '5' );
+				equal( formatNumber( '54', countries.FR ), '54' );
+				equal( formatNumber( '543', countries.FR ), '05 43' );
+				equal( formatNumber( '5432', countries.FR ), '05 43 2' );
+				equal( formatNumber( '54321', countries.FR ), '05 43 21' );
+				equal( formatNumber( '543212', countries.FR ), '05 43 21 2' );
+				equal( formatNumber( '5432123', countries.FR ), '05 43 21 23' );
+				equal( formatNumber( '54321234', countries.FR ), '05 43 21 23 4' );
+				equal( formatNumber( '543212345', countries.FR ), '05 43 21 23 45' );
+
 				equal( formatNumber( '5', countries.MX ), '5' );
 				equal( formatNumber( '54', countries.MX ), '54' );
 				equal( formatNumber( '543', countries.MX ), '543' );
