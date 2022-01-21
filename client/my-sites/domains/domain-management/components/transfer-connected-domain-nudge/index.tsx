@@ -25,23 +25,32 @@ const TransferConnectedDomainNudge = ( {
 		return null;
 	}
 
-	const message = translate(
+	const messageOptions = {
+		components: {
+			a: (
+				<a
+					href={ domainUseMyDomain( siteSlug, domain.name, useMyDomainInputMode.transferDomain ) }
+				/>
+			),
+		},
+	};
+	const messageExpiring = translate(
 		'Your domain is expiring soon. Consider {{a}}transferring it{{/a}} to WordPress.com to manage your site and domains all from one place.',
-		{
-			components: {
-				a: (
-					<a
-						href={ domainUseMyDomain( siteSlug, domain.name, useMyDomainInputMode.transferDomain ) }
-					/>
-				),
-			},
-		}
+		messageOptions
+	);
+	const messageExpired = translate(
+		'Your domain has recently expired. Consider {{a}}transferring it{{/a}} to WordPress.com to manage your site and domains all from one place.',
+		messageOptions
 	);
 
 	return (
 		<div className="transfer-connected-domain-nudge">
 			<Icon icon={ starFilled } size={ 18 } viewBox="2 2 20 20" />
-			<span>{ message }</span>
+			<span>
+				{ moment().isBefore( moment( domain.registryExpiryDate ) )
+					? messageExpiring
+					: messageExpired }
+			</span>
 		</div>
 	);
 };
