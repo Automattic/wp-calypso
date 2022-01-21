@@ -7,7 +7,6 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ActionSection, StyledNextButton } from '..';
 import SupportCard from '../components/support-card';
@@ -27,7 +26,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) as string;
-	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) as string;
 
 	const { get, save, update } = useSiteSettings( siteId );
 
@@ -146,7 +144,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 						getProfileValue( 'selling_venues' )
 					) && (
 						<SelectControl
-							label={ __( "What's your current annual revenue?", 'woocommerce-admin' ) }
+							label={ __( "What's your current annual revenue?" ) }
 							value={ getProfileValue( 'revenue' ) }
 							options={ getRevenueOptions( currencyCode, get( WOOCOMMERCE_DEFAULT_COUNTRY ) ) }
 							onChange={ updateRevenue }

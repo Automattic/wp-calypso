@@ -40,15 +40,15 @@ export function getCurrencyRegion( countryState ) {
 const getNumberRangeString = ( currency, min, max = 0 ) => {
 	if ( ! max ) {
 		return sprintf(
-			/* translators: store product count or revenue */
-			_x( '%s+', 'store product count or revenue', 'woocommerce-admin' ),
+			/* translators: product count or revenue range, e.g. $100+ */
+			_x( '%s+' ),
 			formatCurrency( min, currency )
 		);
 	}
 
 	return sprintf(
-		/* translators: store product count or revenue range */
-		_x( '%1$s - %2$s', 'store product count or revenue range', 'woocommerce-admin' ),
+		/* translators: product count or revenue range, e.g. $100 - $1000 */
+		_x( '%1$s - %2$s' ),
 		formatCurrency( min, currency ),
 		formatCurrency( max, currency )
 	);
@@ -71,7 +71,7 @@ export const getRevenueOptions = ( currency, country ) => [
 		value: 'none',
 		label: sprintf(
 			/* translators: %s: $0 revenue amount */
-			__( "%s (I'm just getting started)", 'woocommerce-admin' ),
+			__( "%s (I'm just getting started)" ),
 			formatCurrency( 0, currency )
 		),
 	},
@@ -79,7 +79,7 @@ export const getRevenueOptions = ( currency, country ) => [
 		value: 'up-to-2500',
 		label: sprintf(
 			/* translators: %s: A given revenue amount, e.g., $2500 */
-			__( 'Up to %s', 'woocommerce-admin' ),
+			__( 'Up to %s' ),
 			formatCurrency( convertCurrency( 2500, country ), currency )
 		),
 	},
@@ -111,12 +111,12 @@ export const getRevenueOptions = ( currency, country ) => [
 		value: 'more-than-250000',
 		label: sprintf(
 			/* translators: %s: A given revenue amount, e.g., $250000 */
-			__( 'More than %s', 'woocommerce-admin' ),
+			__( 'More than %s' ),
 			formatCurrency( convertCurrency( 250000, country ), currency )
 		),
 	},
 	{
 		value: 'rather-not-say',
-		label: __( "I'd rather not say", 'woocommerce-admin' ),
+		label: __( "I'd rather not say" ),
 	},
 ];
