@@ -31,74 +31,34 @@ export function getCurrencyFromRegion( countryState ) {
 	let region = getCountryCode( countryState );
 
 	const euCountries = [
-		// https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Country_codes
-		'BE',
-		'EL',
-		'LT',
-		'PT',
-		'BG',
-		'ES',
-		'LU',
-		'RO',
-		'CZ',
-		'FR',
-		'HU',
-		'SI',
-		'DK',
-		'HR',
-		'MT',
-		'SK',
-		'DE',
-		'IT',
-		'NL',
-		'FI',
-		'EE',
-		'CY',
+		// See https://github.com/woocommerce/woocommerce/blob/727ccd0dd351c4b7a66824b654275c396a7cdd77/plugins/woocommerce/includes/class-wc-countries.php#L368.
 		'AT',
-		'SE',
+		'BE',
+		'BG',
+		'CY',
+		'CZ',
+		'DE',
+		'DK',
+		'EE',
+		'ES',
+		'FI',
+		'FR',
+		'GR',
+		'HR',
+		'HU',
 		'IE',
+		'IT',
+		'LT',
+		'LU',
 		'LV',
+		'MT',
+		'NL',
 		'PL',
-		// Euro countries don't all use EURO (e.g. poland), suggest we find a better list like below:
-
-		// https://www.iban.com/currency-codes
-
-		// todo: convert these to 2 letter iso codes
-		// ANDORRA
-		// AUSTRIA
-		// BELGIUM
-		// CYPRUS
-		// ESTONIA
-		// FINLAND
-		// FRANCE
-		// FRENCH GUIANA
-		// FRENCH SOUTHERN TERRITORIES (THE)
-		// GERMANY
-		// GREECE
-		// GUADELOUPE
-		// HOLY SEE (THE)
-		// IRELAND
-		// ITALY
-		// LATVIA
-		// LITHUANIA
-		// LUXEMBOURG
-		// MALTA
-		// MARTINIQUE
-		// MAYOTTE
-		// MONACO
-		// MONTENEGRO
-		// NETHERLANDS (THE)
-		// PORTUGAL
-		// RÉUNION
-		// SAINT BARTHÉLEMY
-		// SAINT MARTIN (FRENCH PART)
-		// SAINT PIERRE AND MIQUELON
-		// SAN MARINO
-		// SLOVAKIA
-		// SLOVENIA
-		// SPAIN
-		// SWITZERLAND 	WIR
-		// ÅLAND ISLANDS
+		'PT',
+		'RO',
+		'SE',
+		'SI',
+		'SK',
 	];
 	if ( euCountries.includes( region ) ) {
 		region = 'EU';
