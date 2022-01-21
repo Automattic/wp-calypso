@@ -15,6 +15,7 @@ const TransferConnectedDomainNudge = ( {
 }: TransferConnectedDomainNudgeProps ): JSX.Element | null => {
 	const translate = useTranslate();
 
+	const domainRegistryExpiryDate = moment( domain.registryExpiryDate );
 	const fiveDaysInThePast = moment().subtract( 5, 'days' );
 	const fortyFiveDaysInTheFuture = moment().add( 45, 'days' );
 
@@ -22,7 +23,7 @@ const TransferConnectedDomainNudge = ( {
 		domain.type !== domainTypes.MAPPED ||
 		! domain.isEligibleForInboundTransfer ||
 		! domain.registryExpiryDate ||
-		! moment( domain.registryExpiryDate ).isBetween( fiveDaysInThePast, fortyFiveDaysInTheFuture )
+		! domainRegistryExpiryDate.isBetween( fiveDaysInThePast, fortyFiveDaysInTheFuture )
 	) {
 		return null;
 	}
@@ -57,9 +58,7 @@ const TransferConnectedDomainNudge = ( {
 		<div className="transfer-connected-domain-nudge">
 			<Icon icon={ starFilled } size={ 18 } viewBox="2 2 20 20" />
 			<span>
-				{ moment().isBefore( moment( domain.registryExpiryDate ) )
-					? messageExpiring
-					: messageExpired }
+				{ moment().isBefore( domainRegistryExpiryDate ) ? messageExpiring : messageExpired }
 			</span>
 		</div>
 	);
