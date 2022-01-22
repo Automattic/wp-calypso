@@ -6,16 +6,17 @@ import {
 	DataHelper,
 	TestAccount,
 	GutenbergEditorPage,
-	setupHooks,
 	EditorSettingsSidebarComponent,
 	PostVisibilityOptions,
 	PublishedPostPage,
-	BrowserHelper,
+	envVariables,
 } from '@automattic/calypso-e2e';
 import { Page } from 'playwright';
 
+declare const browser: Browser;
+
 describe( DataHelper.createSuiteTitle( `Editor: Post Privacy` ), function () {
-	const accountName = BrowserHelper.targetGutenbergEdge()
+	const accountName = envVariables.GUTENBERG_EDGE
 		? 'gutenbergSimpleSiteEdgeUser'
 		: 'simpleSitePersonalPlanUser';
 	const content = DataHelper.getRandomPhrase();
@@ -26,12 +27,10 @@ describe( DataHelper.createSuiteTitle( `Editor: Post Privacy` ), function () {
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
-	} );
-
 	describe( `Create a ${ visibility } post`, function () {
 		beforeAll( async function () {
+			page = await browser.newPage();
+
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
 		} );
@@ -70,21 +69,20 @@ describe( DataHelper.createSuiteTitle( `Editor: Post Privacy` ), function () {
 	} );
 
 	describe.each( [ 'defaultUser', 'public' ] )( 'View post as %s', function ( user ) {
+		let testPage: Page;
+
 		beforeAll( async function () {
-			// Clear logged in state to simulate the post being viewed by the public.
-			if ( user === 'public' ) {
-				const context = page.context();
-				await context.clearCookies();
-				await page.evaluate( 'localStorage.clear();' );
-			} else {
+			testPage = await browser.newPage();
+
+			if ( user !== 'public' ) {
 				const testAccount = new TestAccount( user );
 				await testAccount.authenticate( page );
 			}
 		} );
 
-		it( 'Post content is not visible', async function () {
-			await page.goto( url );
-			const publishedPostPage = new PublishedPostPage( page );
+		it( `Post content is not visible as ${ user }`, async function () {
+			await testPage.goto( url );
+			const publishedPostPage = new PublishedPostPage( testPage );
 			await publishedPostPage.validateTextInPost( 'Nothing here' );
 		} );
 	} );
