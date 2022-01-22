@@ -176,6 +176,10 @@ export function processNumber( inputNumber, numberRegion ) {
 		nationalNumber = nationalNumber.replace( /^0+/, '' );
 	}
 
+	if ( numberRegion.nationalPrefix === '01' ) {
+		nationalNumber = nationalNumber.replace( /^01+/, '' );
+	}
+
 	debug( `National Number: ${ nationalNumber } for ${ inputNumber } in ${ numberRegion.isoCode }` );
 
 	if ( inputNumber[ 0 ] === '+' ) {
