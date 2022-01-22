@@ -7,3 +7,7 @@ export function getRegisteredDomains( domains ) {
 export function isRegisteredDomain( domain ) {
 	return domain.type === domainTypes.REGISTERED;
 }
+
+export function isFreeUrlDomain( domain ) {
+	return domain.type === domainTypes.WPCOM;
+}

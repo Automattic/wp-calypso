@@ -29,7 +29,7 @@ export {
 	isMappedDomain,
 	isMappedDomainWithWpcomNameservers,
 } from './mapped-domains';
-export { getRegisteredDomains, isRegisteredDomain } from './registered-domains';
+export { getRegisteredDomains, isFreeUrlDomain, isRegisteredDomain } from './registered-domains';
 export { resendIcannVerification } from './resend-icann-verification';
 export { resolveDomainStatus } from './resolve-domain-status';
 export { startInboundTransfer } from './start-inbound-transfer';
