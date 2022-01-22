@@ -223,16 +223,16 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '54321234', countries.FR ), '05 43 21 23 4' );
 				equal( formatNumber( '543212345', countries.FR ), '05 43 21 23 45' );
 
-				equal( formatNumber( '5', countries.MX ), '5' );
-				equal( formatNumber( '54', countries.MX ), '54' );
-				equal( formatNumber( '543', countries.MX ), '543' );
-				equal( formatNumber( '5432', countries.MX ), '543 2' );
-				equal( formatNumber( '54321', countries.MX ), '543 21' );
-				equal( formatNumber( '543212', countries.MX ), '543 212' );
-				equal( formatNumber( '5432123', countries.MX ), '543 212 3' );
-				equal( formatNumber( '54321234', countries.MX ), '543 212 34' );
-				equal( formatNumber( '543212345', countries.MX ), '543 212 345' );
-				equal( formatNumber( '5432123456', countries.MX ), '543 212 3456' );
+				equal( formatNumber( '2', countries.MX ), '2' );
+				equal( formatNumber( '24', countries.MX ), '24' );
+				equal( formatNumber( '243', countries.MX ), '01243' );
+				equal( formatNumber( '2432', countries.MX ), '01243 2' );
+				equal( formatNumber( '24321', countries.MX ), '01243 21' );
+				equal( formatNumber( '243212', countries.MX ), '01243 212' );
+				equal( formatNumber( '2432123', countries.MX ), '01243 212 3' );
+				equal( formatNumber( '24321234', countries.MX ), '01243 212 34' );
+				equal( formatNumber( '243212345', countries.MX ), '01243 212 345' );
+				equal( formatNumber( '2432123456', countries.MX ), '01243 212 3456' );
 			} );
 
 			test( 'should not add a prefix when the country does not have national prefix', () => {
