@@ -72,33 +72,30 @@ export default {
 	},
 
 	domainManagementEdit( pageContext, next ) {
-		if ( decodeURIComponentIfValid ) {
-			const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
-
-			if (
-				selectedDomainName &&
-				( selectedDomainName.endsWith( '.wordpress.com' ) ||
-					selectedDomainName.endsWith( '.wpcomstaging.com' ) )
-			) {
-				const state = pageContext.store.getState();
-				const siteSlug = getSelectedSiteSlug( state );
-				page.redirect( domainManagementList( siteSlug ) );
-			}
-
-			pageContext.primary = (
-				<DomainManagementData
-					analyticsPath={ domainManagementEdit( ':site', ':domain', pageContext.canonicalPath ) }
-					analyticsTitle="Domain Management > Edit"
-					component={ DomainManagement.Settings }
-					context={ pageContext }
-					needsContactDetails
-					needsDomains
-					needsPlans
-					needsProductsList
-					selectedDomainName={ selectedDomainName }
-				/>
-			);
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+		if (
+			selectedDomainName &&
+			( selectedDomainName.endsWith( '.wordpress.com' ) ||
+				selectedDomainName.endsWith( '.wpcomstaging.com' ) )
+		) {
+			const state = pageContext.store.getState();
+			const siteSlug = getSelectedSiteSlug( state );
+			page.redirect( domainManagementList( siteSlug ) );
 		}
+
+		pageContext.primary = (
+			<DomainManagementData
+				analyticsPath={ domainManagementEdit( ':site', ':domain', pageContext.canonicalPath ) }
+				analyticsTitle="Domain Management > Edit"
+				component={ DomainManagement.Settings }
+				context={ pageContext }
+				needsContactDetails
+				needsDomains
+				needsPlans
+				needsProductsList
+				selectedDomainName={ selectedDomainName }
+			/>
+		);
 		next();
 	},
 
