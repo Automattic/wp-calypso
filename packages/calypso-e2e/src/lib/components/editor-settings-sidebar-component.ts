@@ -1,8 +1,8 @@
 import { Frame, Page } from 'playwright';
 
-export type EditorSidebarTab = 'Post' | 'Block';
+export type EditorSidebarTab = 'Post' | 'Block' | 'Page';
 export type EditorSidebarSection = 'Categories' | 'Tags' | 'Status & Visibility';
-export type PostVisibilityOptions = 'Public' | 'Private' | 'Password';
+export type PrivacyOptions = 'Public' | 'Private' | 'Password';
 
 const sidebarParentSelector = '[aria-label="Editor settings"]';
 
@@ -23,7 +23,7 @@ const selectors = {
 	// Status & Visibility
 	visibilityToggle: '.edit-post-post-visibility__toggle',
 	visibilityPopover: 'fieldset.editor-post-visibility__dialog-fieldset',
-	visibilityOption: ( option: PostVisibilityOptions ) => `input[value="${ option.toLowerCase() }"]`,
+	visibilityOption: ( option: PrivacyOptions ) => `input[value="${ option.toLowerCase() }"]`,
 	postPasswordInput: '.editor-post-visibility__dialog-password-input',
 
 	// Category
@@ -85,9 +85,9 @@ export class EditorSettingsSidebarComponent {
 	/**
 	 * Sets the post visibility to the provided visibility setting.
 	 *
-	 * @param {PostVisibilityOptions} visibility Desired post visibility setting.
+	 * @param {PrivacyOptions} visibility Desired post visibility setting.
 	 */
-	async setVisibility( visibility: PostVisibilityOptions ): Promise< void > {
+	async setVisibility( visibility: PrivacyOptions ): Promise< void > {
 		await this.expandSection( 'Status & Visibility' );
 		await this.frame.click( selectors.visibilityToggle );
 		// Important to wait for the popover element to finish its animation, as the radio buttons

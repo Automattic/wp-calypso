@@ -13,6 +13,10 @@ const selectors = {
 	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
 	editorTitle: '.editor-post-title__input',
 
+	// Editor: Page
+	blankPageButton: '.page-pattern-modal__blank-button',
+	pageDesign: ( name: string ) => `li:text(${ name })`,
+
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
 	blockInserterPanel: '.block-editor-inserter__content',
@@ -46,7 +50,6 @@ const selectors = {
 	viewButton: 'text=/View (Post|Page)/',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
-	snackbarViewButton: 'a.components-snackbar__action:has-text("View Post"):visible',
 
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
@@ -130,6 +133,27 @@ export class GutenbergEditorPage {
 
 			return actionPayload.show === false;
 		} );
+	}
+
+	/**
+	 * Choose a page design.
+	 *
+	 * If a non-default value is provided, this method will select from
+	 * a matching design from the list.
+	 *
+	 * If the value provided is `blank`, the button on the modal labeled
+	 * "Blank Page" will be selected instead.
+	 *
+	 * @param {string} name Name of the design.
+	 */
+	async selectPageDesign( name: string ): Promise< void > {
+		const frame = await this.getEditorFrame();
+
+		if ( name.toLowerCase() === 'blank' ) {
+			await frame.click( selectors.blankPageButton );
+		} else {
+			await frame.click( selectors.pageDesign( name ) );
+		}
 	}
 
 	/**
