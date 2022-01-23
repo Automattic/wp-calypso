@@ -187,19 +187,19 @@ const EmailProvidersStackedComparison = ( {
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
 				detailsExpanded={ detailsExpanded.titan }
-				selectedDomainName={ selectedDomainName }
-				source={ source }
 				intervalLength={ selectedIntervalLength }
 				onExpandedChange={ changeExpandedState }
+				selectedDomainName={ selectedDomainName }
+				source={ source }
 			/>
 
 			<GoogleWorkspaceCard
 				comparisonContext={ comparisonContext }
 				detailsExpanded={ detailsExpanded.google }
-				selectedDomainName={ selectedDomainName }
-				source={ source }
 				intervalLength={ selectedIntervalLength }
 				onExpandedChange={ changeExpandedState }
+				selectedDomainName={ selectedDomainName }
+				source={ source }
 			/>
 
 			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
