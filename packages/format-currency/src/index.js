@@ -58,11 +58,11 @@ export function getCurrencyObject( number, code, options = {} ) {
 	const sign = number < 0 ? '-' : '';
 	const absNumber = Math.abs( number );
 	const rawInteger = Math.floor( absNumber );
-	const integer = numberFormat( rawInteger, {
-		decimals: 0,
+	const integer = numberFormat( absNumber, {
+		decimals: precision,
 		thousandsSep: grouping,
 		decPoint: decimal,
-	} );
+	} ).split( decimal )[ 0 ];
 	const fraction =
 		precision > 0
 			? numberFormat( absNumber - rawInteger, {

@@ -119,6 +119,24 @@ describe( 'formatCurrency', () => {
 				sign: '-',
 			} );
 		} );
+		test( 'handles values that round up', () => {
+			const money = getCurrencyObject( 9.99876, 'USD' );
+			expect( money ).toEqual( {
+				symbol: '$',
+				integer: '10',
+				fraction: '.00',
+				sign: '',
+			} );
+		} );
+		test( 'handles values that round down', () => {
+			const money = getCurrencyObject( 9.99432, 'USD' );
+			expect( money ).toEqual( {
+				symbol: '$',
+				integer: '9',
+				fraction: '.99',
+				sign: '',
+			} );
+		} );
 		describe( 'supported currencies', () => {
 			test( 'USD', () => {
 				const money = getCurrencyObject( 9800900.32, 'USD' );
