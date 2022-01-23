@@ -22,7 +22,7 @@ const EmailProviderPrice = ( {
 	} );
 
 	if ( emailProviderSlug === GOOGLE_WORKSPACE_PRODUCT_TYPE ) {
-		return <GoogleWorkspacePrice intervalLength={ intervalLength } />;
+		return <GoogleWorkspacePrice domain={ domain } intervalLength={ intervalLength } />;
 	}
 
 	return <ProfessionalEmailPrice domain={ domain } intervalLength={ intervalLength } />;

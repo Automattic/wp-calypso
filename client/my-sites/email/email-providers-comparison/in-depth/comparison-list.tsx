@@ -1,11 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { Button, Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { Card } from '@automattic/components';
 import EmailProviderFeatures from 'calypso/my-sites/email/email-provider-features';
-import { isBillingAvailable } from 'calypso/my-sites/email/email-providers-comparison/in-depth/data';
 import EmailProviderPrice from 'calypso/my-sites/email/email-providers-comparison/in-depth/email-provider-price';
 import LearnMoreLink from 'calypso/my-sites/email/email-providers-comparison/in-depth/learn-more-link';
+import SelectButton from 'calypso/my-sites/email/email-providers-comparison/in-depth/select-button';
 import { ComparisonListOrTableProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 import type { ReactElement } from 'react';
 
@@ -17,8 +16,6 @@ const ComparisonList = ( {
 	onSelectEmailProvider,
 	selectedDomainName,
 }: ComparisonListOrTableProps ): ReactElement => {
-	const translate = useTranslate();
-
 	return (
 		<div className="email-providers-in-depth-comparison-list">
 			{ emailProviders.map( ( emailProviderFeatures ) => {
@@ -58,14 +55,13 @@ const ComparisonList = ( {
 							</div>
 						) }
 
-						<Button
+						<SelectButton
 							className="email-providers-in-depth-comparison-list__button"
-							disabled={ ! isBillingAvailable( emailProviderFeatures, intervalLength ) }
-							onClick={ () => onSelectEmailProvider( emailProviderFeatures.slug ) }
-							primary
-						>
-							{ translate( 'Select' ) }
-						</Button>
+							emailProviderSlug={ emailProviderFeatures.slug }
+							intervalLength={ intervalLength }
+							onSelectEmailProvider={ onSelectEmailProvider }
+							selectedDomainName={ selectedDomainName }
+						/>
 					</Card>
 				);
 			} ) }
