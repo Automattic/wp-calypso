@@ -17,6 +17,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { receiveSite, requestSite, updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import DoneButton from '../../components/done-button';
+import NotAuthorized from '../../components/not-authorized';
 import { MigrationStatus, WPImportOption } from '../types';
 import { Confirm } from './confirm';
 
@@ -101,16 +102,20 @@ export class ImportEverything extends SectionMigrate {
 	renderMigrationConfirm() {
 		const { sourceSite, targetSite, targetSiteSlug, sourceUrlAnalyzedData } = this.props;
 
-		return (
-			<Confirm
-				startImport={ this.startMigration }
-				targetSite={ targetSite }
-				targetSiteSlug={ targetSiteSlug }
-				sourceSite={ sourceSite }
-				sourceSiteUrl={ sourceSite.URL }
-				sourceUrlAnalyzedData={ sourceUrlAnalyzedData }
-			/>
-		);
+		if ( sourceSite ) {
+			return (
+				<Confirm
+					startImport={ this.startMigration }
+					targetSite={ targetSite }
+					targetSiteSlug={ targetSiteSlug }
+					sourceSite={ sourceSite }
+					sourceSiteUrl={ sourceSite.URL }
+					sourceUrlAnalyzedData={ sourceUrlAnalyzedData }
+				/>
+			);
+		}
+
+		return <NotAuthorized siteSlug={ targetSiteSlug } />;
 	}
 
 	renderMigrationProgress() {
