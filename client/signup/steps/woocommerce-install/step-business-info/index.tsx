@@ -100,9 +100,9 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 
 							{ productTypes.map( ( { label, value } ) => (
 								<CheckboxControl
-									key={ value }
 									label={ label }
 									value={ value }
+									key={ value }
 									onChange={ () => updateProductTypes( value ) }
 									checked={ getProfileValue( 'product_types' ).indexOf( value ) !== -1 }
 								/>
