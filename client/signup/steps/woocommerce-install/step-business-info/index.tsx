@@ -91,6 +91,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 							updateOnboardingProfile( 'completed', true );
 							save();
 							goToNextStep();
+							return false;
 						} }
 					>
 						<div className="step-business-info__components-group">

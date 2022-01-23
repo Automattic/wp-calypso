@@ -103,6 +103,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 								dispatch( submitSignupStep( { stepName: 'store-address' } ) );
 								goToNextStep();
 							}
+							return false;
 						} }
 					>
 						<TextControl
