@@ -56,7 +56,6 @@ const stepNameToModuleName = {
 	'user-new': 'user',
 	'oauth2-user': 'user',
 	'oauth2-name': 'user',
-	displayname: 'user',
 	'reader-landing': 'reader-landing',
 	passwordless: 'passwordless',
 	'p2-details': 'p2-details',

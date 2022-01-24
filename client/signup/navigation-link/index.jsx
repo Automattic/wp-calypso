@@ -125,7 +125,8 @@ export class NavigationLink extends Component {
 			intent: this.props.intent,
 		};
 
-		if ( this.props.direction === 'back' ) {
+		// We don't need to track if we are in the sub-steps since it's not really going back a step
+		if ( this.props.direction === 'back' && ! this.props.stepSectionName ) {
 			this.props.recordTracksEvent( 'calypso_signup_previous_step_button_click', tracksProps );
 		}
 
