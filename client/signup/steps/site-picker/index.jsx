@@ -23,7 +23,11 @@ class SitePicker extends Component {
 	renderScreen() {
 		return (
 			<Card className="site-picker__wrapper">
-				<SiteSelector filter={ this.filterSites } onSiteSelect={ this.handleSiteSelect } />
+				<SiteSelector
+					filter={ this.filterSites }
+					onSiteSelect={ this.handleSiteSelect }
+					isReskinned={ this.props.isReskinned }
+				/>
 			</Card>
 		);
 	}
