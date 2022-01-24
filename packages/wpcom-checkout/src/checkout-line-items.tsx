@@ -875,7 +875,7 @@ function WPLineItem( {
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product );
 
-	const hasPartnerCoupon = responseCart && responseCart.coupon.startsWith( 'IONOS_' );
+	const containsPartnerCoupon = hasPartnerCoupon( responseCart.coupon, [ product ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -938,7 +938,7 @@ function WPLineItem( {
 				</>
 			) }
 
-			{ product && ! hasPartnerCoupon && (
+			{ product && ! containsPartnerCoupon && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
 					<DomainDiscountCallout product={ product } />
@@ -948,7 +948,7 @@ function WPLineItem( {
 				</LineItemMeta>
 			) }
 
-			{ product && hasPartnerCoupon && (
+			{ product && containsPartnerCoupon && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
 					<CouponDiscountCallout product={ product } />
