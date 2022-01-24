@@ -117,6 +117,7 @@ export function WPOrderReviewLineItems( {
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
 					<NonProductLineItem
+						responseCart={ responseCart }
 						lineItem={ couponLineItem }
 						isSummary={ isSummary }
 						hasDeleteButton={ ! isSummary }
