@@ -22,19 +22,23 @@ $design-picker-category-filter-text-color-active: var( --studio-gray-100 );
 		&:active:not( :disabled ) {
 			box-shadow: none;
 			background: transparent;
-			text-decoration: underline;
-			color: $design-picker-category-filter-text-color-active;
+			.design-picker-category-filter__item-name {
+				text-decoration: underline;
+				color: $design-picker-category-filter-text-color-active;
+			}
 		}
 
 		&.is-pressed {
-			text-decoration: underline;
-			font-weight: 500; /* stylelint-disable-line scales/font-weights */
-			color: $design-picker-category-filter-text-color-active;
-			background: transparent;
-
-			&:hover:not( :disabled ) {
+			.design-picker-category-filter__item-name {
+				text-decoration: underline;
+				font-weight: 500; /* stylelint-disable-line scales/font-weights */
 				color: $design-picker-category-filter-text-color-active;
+
+				&:hover:not( :disabled ) {
+					color: $design-picker-category-filter-text-color-active;
+				}
 			}
+			background: transparent;
 
 			&:focus:not( :disabled ),
 			&:focus-visible:not( :disabled ) {
@@ -45,6 +49,17 @@ $design-picker-category-filter-text-color-active: var( --studio-gray-100 );
 			&:focus:not( :disabled ):not( :focus-visible ) {
 				box-shadow: none;
 			}
+		}
+
+		.design-picker-category-filter__recommended-badge {
+			display: inline-block;
+			font-size: 0.75rem;
+			padding: 0 10px;
+			line-height: 20px;
+			margin-left: 12px;
+			background-color: #b8e6bf;
+			color: #00450c;
+			border-radius: 4px;
 		}
 
 		.components-menu-item__item {

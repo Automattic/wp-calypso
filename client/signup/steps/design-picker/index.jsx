@@ -104,11 +104,29 @@ export default function DesignPickerStep( props ) {
 		setSelectedDesign( designs.find( ( { theme } ) => theme === props.stepSectionName ) );
 	}, [ designs, props.stepSectionName, setSelectedDesign ] );
 
-	const categorization = useCategorization( designs, {
-		showAllFilter: props.showDesignPickerCategoriesAllFilter,
-		defaultSelection: props.signupDependencies.intent === 'write' ? 'blog' : null,
-		sort: sortBlogToTop,
-	} );
+	const getCategorizationOptionsForStep = () => {
+		const result = {
+			showAllFilter: props.showDesignPickerCategoriesAllFilter,
+		};
+		const intent = props.signupDependencies.intent;
+		switch ( intent ) {
+			case 'write':
+				result.defaultSelection = 'blog';
+				result.sort = sortBlogToTop;
+				break;
+			case 'sell':
+				// @TODO: This should be 'ecommerce' once we have some themes with that slug.
+				result.defaultSelection = 'business';
+				result.sort = sortEcommerceToTop;
+				break;
+			default:
+				result.defaultSelection = null;
+				result.sort = sortBlogToTop;
+				break;
+		}
+		return result;
+	};
+	const categorization = useCategorization( designs, getCategorizationOptionsForStep() );
 
 	function pickDesign( _selectedDesign, additionalDependencies = {} ) {
 		// Design picker preview will submit the defaultDependencies via next button,
@@ -168,6 +186,7 @@ export default function DesignPickerStep( props ) {
 				highResThumbnails
 				premiumBadge={ <PremiumBadge /> }
 				categorization={ showDesignPickerCategories ? categorization : undefined }
+				recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
 				categoriesHeading={
 					<FormattedHeader
 						id={ 'step-header' }
@@ -334,6 +353,19 @@ function sortBlogToTop( a, b ) {
 	} else if ( a.slug === 'blog' ) {
 		return -1;
 	} else if ( b.slug === 'blog' ) {
+		return 1;
+	}
+	return 0;
+}
+// Ensures Ecommerce category appears at the top of the design category list
+// (directly below the All Themes category).
+// @TODO: This should be 'ecommerce' once we have some themes with that slug.
+function sortEcommerceToTop( a, b ) {
+	if ( a.slug === b.slug ) {
+		return 0;
+	} else if ( a.slug === 'business' ) {
+		return -1;
+	} else if ( b.slug === 'business' ) {
 		return 1;
 	}
 	return 0;
