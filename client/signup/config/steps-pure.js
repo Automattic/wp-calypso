@@ -186,6 +186,14 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
+		'store-options': {
+			stepName: 'store-options',
+			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
+			providesDependencies: [ 'siteTitle', 'tagline' ],
+			apiRequestFunction: setOptionsOnSite,
+			delayApiRequestUntilComplete: true,
+		},
+
 		'starting-point': {
 			stepName: 'starting-point',
 			providesDependencies: [ 'startingPoint' ],

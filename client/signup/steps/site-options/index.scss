@@ -14,3 +14,17 @@
 		}
 	}
 }
+
+.signup__step .is-store-options {
+	.step-wrapper__header {
+		@include break-small {
+			flex-basis: 40%;
+		}
+	}
+
+	.step-wrapper__content {
+		@include break-small {
+			flex-basis: 50%;
+		}
+	}
+}
