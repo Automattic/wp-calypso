@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -14,13 +13,11 @@ import SectionHeader from 'calypso/components/section-header';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
-import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import EmailProvidersComparisonStacked from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -84,15 +81,8 @@ class EmailManagementHome extends Component {
 			} );
 
 			if ( ! domainHasEmail( selectedDomain ) ) {
-				return isEnabled( 'emails/new-email-comparison' ) ? (
+				return (
 					<EmailProvidersComparisonStacked
-						comparisonContext="email-home-selected-domain"
-						selectedDomainName={ selectedDomainName }
-						source={ source }
-					/>
-				) : (
-					<EmailProvidersComparison
-						backPath={ domainManagementList( selectedSite.slug, null ) }
 						comparisonContext="email-home-selected-domain"
 						selectedDomainName={ selectedDomainName }
 						source={ source }
@@ -117,17 +107,10 @@ class EmailManagementHome extends Component {
 		const domainsWithNoEmail = nonWpcomDomains.filter( ( domain ) => ! domainHasEmail( domain ) );
 
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
-			return isEnabled( 'emails/new-email-comparison' ) ? (
+			return (
 				<EmailProvidersComparisonStacked
 					comparisonContext="email-home-single-domain"
 					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
-					source={ source }
-				/>
-			) : (
-				<EmailProvidersComparison
-					comparisonContext="email-home-single-domain"
-					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
-					skipHeaderElement={ true }
 					source={ source }
 				/>
 			);
