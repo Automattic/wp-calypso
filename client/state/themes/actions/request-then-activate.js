@@ -1,6 +1,6 @@
 import 'calypso/state/themes/init';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestTheme, activate } from 'calypso/state/themes/actions';
-import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 
 /**
  * requestThenActivate: Like activate(), which triggers a network request to
@@ -20,6 +20,7 @@ import { getTheme } from 'calypso/state/themes/selectors/get-theme';
  * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @returns {Function}          Action thunk
  */
+
 export function requestThenActivate(
 	themeId,
 	siteId,
@@ -28,16 +29,30 @@ export function requestThenActivate(
 	keepCurrentHomepage = false
 ) {
 	return ( dispatch, getState ) => {
-		// Improvement: Can be conditional and only requestTheme if theme is null
-		const state = getState();
-		const theme = getTheme( state, 'wpcom', themeId );
-		if ( theme ) {
-			console.log( 'TODO: requesting was not needed here' );
-		}
+		// Request the theme, then when that's done, activate it.
 
-		console.log( 'dispatching requestTheme...' );
-		return dispatch( requestTheme( themeId, siteId ) ).then( () => {
-			console.log( 'dispatching activate...' );
+		// We don't know where the theme is: It could be in the wpcom gallery,
+		// the wporg gallery, or directly on the jetpack site.
+		// Request the theme in all 2-3 locations, then activate after.
+
+		// This does seem messy. An alternative approach would be to use the
+		// isWpcomTheme() and isWporgTheme() selectors, however, those don't
+		// work unless we already have the full list of themes from each
+		// gallery. Since this action is designed to be used in places that
+		// might not have already loaded theme information (like the checkout
+		// thank you page), that means we'd have to requestThemes() on both
+		// galleries to load the entire list before using those selectors.
+		// Ultimately, it's less work to ask for the theme in 2-3 locations
+		// directly instead of loading the entire galleries of wpcom and wporg
+		// to know where to ask.
+		const requests = [
+			dispatch( requestTheme( themeId, 'wpcom' ) ),
+			dispatch( requestTheme( themeId, 'wporg' ) ),
+		];
+		if ( isJetpackSite( getState(), siteId ) ) {
+			requests.push( dispatch( requestTheme( themeId, siteId ) ) );
+		}
+		return Promise.all( requests ).then( () => {
 			dispatch( activate( themeId, siteId, source, purchased, keepCurrentHomepage ) );
 		} );
 	};
