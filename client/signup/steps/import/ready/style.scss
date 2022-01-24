@@ -143,36 +143,4 @@
 			color: var( --studio-gray-100 );
 		}
 	}
-
-	.import__details-list {
-		display: flex;
-		flex-wrap: wrap;
-		color: var( --studio-gray-70 );
-		font-size: $font-body-small;
-		margin: 1em 0;
-
-		li {
-			position: relative;
-			box-sizing: border-box;
-			display: flex;
-			flex: 100%;
-			margin-bottom: 12px;
-			padding-left: 34px;
-
-			@include break-small {
-				flex: 50%;
-			}
-		}
-
-		span {
-			margin-right: 0.5em;
-		}
-
-		svg {
-			position: absolute;
-			top: 1px;
-			left: 0;
-			fill: var( --studio-gray-20 );
-		}
-	}
 }
