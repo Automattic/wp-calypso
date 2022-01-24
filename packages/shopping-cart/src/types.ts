@@ -211,7 +211,6 @@ export interface RequestCartProduct {
 	volume: number;
 	quantity: number | null;
 	extra: RequestCartProductExtra;
-	is_domain_registration: boolean;
 }
 
 export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
