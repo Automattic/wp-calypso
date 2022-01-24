@@ -82,7 +82,6 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/magic-link-signup": true,
-		"jetpack/more-informative-scan": true,
 		"jetpack/pricing-page-annual-only": true,
 		"jetpack/pricing-page-v2-banner": true,
 		"jetpack/redirect-legacy-plans": true,

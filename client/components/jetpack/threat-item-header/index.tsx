@@ -1,126 +1,104 @@
+import { Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
-import { Threat } from 'calypso/components/jetpack/threat-item/types';
+import ThreatItemSubheader from 'calypso/components/jetpack/threat-item-subheader';
 import { getThreatType } from 'calypso/components/jetpack/threat-item/utils';
+import ThreatSeverityBadge from 'calypso/components/jetpack/threat-severity-badge';
+import type { Threat } from 'calypso/components/jetpack/threat-item/types';
+
+import './style.scss';
 
 interface Props {
 	threat: Threat;
 	// Set isStyled to false if you care about strings only
-	isStyled?: boolean;
+	isStyled: boolean;
 }
+
+const severityClassNames = ( severity: number ) => {
+	return {
+		'is-critical': severity >= 5,
+		'is-high': severity >= 3 && severity < 5,
+		'is-low': severity < 3,
+	};
+};
 
 // This should be temporary since this data should be coming from the api
 // and not something that we should change to accommodate the results.
-const ThreatItemHeader: React.FC< Props > = ( { threat, isStyled = true } ) => {
+const getThreatMessage = ( threat: Threat ) => {
 	const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
-
 	const basename = filename ? filename.replace( /.*\//, '' ) : '';
 
 	switch ( getThreatType( threat ) ) {
 		case 'core':
-			return (
-				<>
-					{ isStyled
-						? translate( 'Infected core file: {{filename/}}', {
-								components: {
-									filename: (
-										<code className="threat-item-header__alert-filename">{ basename }</code>
-									),
-								},
-						  } )
-						: translate( 'Infected core file: %s', {
-								args: [ basename ],
-						  } ) }
-				</>
-			);
+			return translate( 'Infected core file: %s', {
+				args: [ basename ],
+			} );
 
 		case 'file':
-			return (
-				<>
-					{ isStyled
-						? translate( 'The file {{filename/}} contains a malicious code pattern', {
-								components: {
-									filename: (
-										<code className="threat-item-header__alert-filename">{ basename }</code>
-									),
-								},
-						  } )
-						: translate( 'The file %s contains a malicious code pattern', {
-								args: [ basename ],
-						  } ) }
-				</>
-			);
+			return translate( 'File contains malicious code: %s', {
+				args: [ basename ],
+			} );
 
 		case 'plugin':
-			return (
-				<>
-					{ isStyled
-						? translate( 'Vulnerable Plugin: {{pluginSlug/}} (version {{version/}})', {
-								components: {
-									pluginSlug: (
-										<span className="threat-item-header__alert-slug">{ extension.slug }</span>
-									),
-									version: (
-										<span className="threat-item-header__alert-version">{ extension.version }</span>
-									),
-								},
-						  } )
-						: translate( 'Vulnerable Plugin: %(pluginSlug)s (version %(version)s)', {
-								args: {
-									pluginSlug: extension.slug,
-									version: extension.version,
-								},
-						  } ) }
-				</>
-			);
+			return translate( 'Vulnerable Plugin: %(pluginSlug)s (version %(version)s)', {
+				args: {
+					pluginSlug: extension.slug,
+					version: extension.version,
+				},
+			} );
 
 		case 'theme':
-			return (
-				<>
-					{ isStyled
-						? translate( 'Vulnerable Theme {{themeSlug/}} (version {{version/}})', {
-								components: {
-									themeSlug: (
-										<span className="threat-item-header__alert-slug">{ extension.slug }</span>
-									),
-									version: (
-										<span className="threat-item-header__alert-version">{ extension.version }</span>
-									),
-								},
-						  } )
-						: translate( 'Vulnerable Theme %(themeSlug)s (version %(version)s)', {
-								args: {
-									themeSlug: extension.slug,
-									version: extension.version,
-								},
-						  } ) }
-				</>
-			);
+			return translate( 'Vulnerable Theme %(themeSlug)s (version %(version)s)', {
+				args: {
+					themeSlug: extension.slug,
+					version: extension.version,
+				},
+			} );
 
 		case 'database':
 			if ( ! threat.rows ) {
-				return <>{ translate( 'Database threat' ) }</>;
+				return translate( 'Database threat' );
 			}
-			return (
-				<>
-					{ translate(
-						'Database threat on table %(threatTable)s affecting %(threatCount)d row ',
-						'Database threat on %(threatTable)s affecting %(threatCount)d rows',
-						{
-							count: Object.keys( threat.rows ).length,
-							args: {
-								threatCount: Object.keys( threat.rows ).length,
-								threatTable: threat.table,
-							},
-						}
-					) }
-				</>
+			return translate(
+				'Database threat on table %(threatTable)s affecting %(threatCount)d row ',
+				'Database threat on %(threatTable)s affecting %(threatCount)d rows',
+				{
+					count: Object.keys( threat.rows ).length,
+					args: {
+						threatCount: Object.keys( threat.rows ).length,
+						threatTable: threat.table,
+					},
+				}
 			);
 
 		case 'none':
 		default:
 			return <> { translate( 'Threat found' ) } </>;
 	}
+};
+
+const ThreatItemHeader: React.FC< Props > = ( { threat } ) => {
+	return (
+		<>
+			<ThreatSeverityBadge severity={ threat.severity } />
+			<div className="threat-item-header__card-container">
+				<div className="threat-item-header__card-top">{ getThreatMessage( threat ) }</div>
+				<span
+					className={ classnames(
+						'threat-item-header__card-bottom',
+						severityClassNames( threat.severity )
+					) }
+				>
+					<ThreatItemSubheader threat={ threat } />
+				</span>
+			</div>
+			{ threat.fixable && (
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
+				<Gridicon className="threat-item-header__autofix_badge" icon="checkmark" size={ 18 } />
+			) }
+		</>
+	);
 };
 
 export default ThreatItemHeader;

@@ -36,7 +36,7 @@ class ThreatDescription extends PureComponent< Props > {
 				if ( isFixable ) {
 					return translate( 'How will we fix it?' );
 				}
-				return translate( 'Resolving the threat' );
+				return translate( 'How to resolve or handle this detection?' );
 
 				break;
 
@@ -92,7 +92,7 @@ class ThreatDescription extends PureComponent< Props > {
 		return (
 			<div className="threat-description">
 				<p className="threat-description__section-title">
-					<strong>{ translate( 'What was the problem?' ) }</strong>
+					<strong>{ translate( 'What did Jetpack find?' ) }</strong>
 				</p>
 				{ this.renderTextOrNode( <p className="threat-description__section-text">{ problem }</p> ) }
 				{ ( filename || context || diff || rows ) && (

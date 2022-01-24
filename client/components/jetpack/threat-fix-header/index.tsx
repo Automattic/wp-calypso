@@ -3,8 +3,8 @@ import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import { Threat } from 'calypso/components/jetpack/threat-item-new/types';
-import { getThreatFix, getThreatMessage } from 'calypso/components/jetpack/threat-item-new/utils';
+import { Threat } from 'calypso/components/jetpack/threat-item/types';
+import { getThreatFix, getThreatMessage } from 'calypso/components/jetpack/threat-item/utils';
 import ThreatSeverityBadge from 'calypso/components/jetpack/threat-severity-badge';
 
 import './style.scss';
