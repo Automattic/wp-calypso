@@ -1,4 +1,4 @@
-@import '@wordpress/base-styles/mixins';
+@import '@automattic/calypso-color-schemes';
 
 .pagination-controls {
 	margin: 0;
@@ -26,7 +26,7 @@
 		background-color: var( --color-neutral-10 );
 
 		&:hover {
-			background-color: var( --color-neutral-light );
+			background-color: var( --color-neutral-40 );
 		}
 
 		&:disabled {
@@ -34,7 +34,7 @@
 		}
 
 		&.pagination-control__current {
-			background-color: var( --studio-gray-80 );
+			background-color: var( --wp-admin-theme-color );
 		}
 	}
 }

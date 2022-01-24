@@ -12,7 +12,7 @@ interface Props {
 
 const PaginationControl: React.FunctionComponent< Props > = ( props ) => {
 	const { currentPage, numberOfPages, setCurrentPage, classes } = props;
-	const classNames = classnames( 'pagination-controls', classes );
+	const classNames = classnames( 'pagination-controls', classes?.toString()?.split( ',' ) );
 
 	return (
 		<ul className={ classNames } aria-label={ __( 'Guide controls' ) }>
