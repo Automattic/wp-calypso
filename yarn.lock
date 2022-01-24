@@ -37,7 +37,7 @@ __metadata:
   resolution: "@automattic/accessible-focus@workspace:packages/accessible-focus"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -78,7 +78,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
@@ -94,7 +94,7 @@ __metadata:
     hash.js: ^1.1.7
     lodash: ^4.17.21
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     uuid: ^8.3.2
   languageName: unknown
   linkType: soft
@@ -167,7 +167,7 @@ __metadata:
     semver: ^7.3.2
     terser-webpack-plugin: ^5.2.4
     thread-loader: ^3.0.4
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     webpack-cli: ^4.9.1
   peerDependencies:
     postcss: ^8.4.5
@@ -202,7 +202,7 @@ __metadata:
     "@types/node": ^16.11.19
     cookie: ^0.4.1
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -239,7 +239,7 @@ __metadata:
     node-fetch: ^2.6.6
     playwright: 1.16
     totp-generator: ^0.0.12
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -290,7 +290,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     chai: ^4.3.4
     i18n-calypso: "workspace:^"
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     react: ^17.0.2
   languageName: unknown
@@ -328,7 +328,7 @@ __metadata:
     debug: ^4.3.3
     react: ^17.0.2
     react-dom: ^17.0.2
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -343,7 +343,7 @@ __metadata:
   resolution: "@automattic/calypso-url@workspace:packages/calypso-url"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -369,7 +369,7 @@ __metadata:
     lodash: ^4.17.21
     prop-types: ^15.7.2
     react-modal: ^3.14.3
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     utility-types: ^3.10.0
   peerDependencies:
     react: ^17.0.2
@@ -394,7 +394,7 @@ __metadata:
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -408,7 +408,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     cookie: ^0.4.1
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -430,7 +430,7 @@ __metadata:
     qs: ^6.9.1
     redux: ^4.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     utility-types: ^3.10.0
     validator: ^13.5.2
     wait-for-expect: ^3.0.2
@@ -465,7 +465,7 @@ __metadata:
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     utility-types: ^3.10.0
     webpack: ^5.65.0
   peerDependencies:
@@ -503,7 +503,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     use-debounce: ^3.1.0
     uuid: ^8.3.2
   peerDependencies:
@@ -557,7 +557,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -568,7 +568,7 @@ __metadata:
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -598,7 +598,7 @@ __metadata:
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -692,7 +692,7 @@ __metadata:
   resolution: "@automattic/js-utils@workspace:packages/js-utils"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -708,7 +708,7 @@ __metadata:
     "@wordpress/components": ^19.2.0
     "@wordpress/i18n": ^4.2.4
     "@wordpress/react-i18n": ^3.0.4
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@wordpress/data": ^6.1.5
     react: ^17.0.2
@@ -732,7 +732,7 @@ __metadata:
     react-dom: ^17.0.2
     redux: ^4.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     webpack: ^5.65.0
   languageName: unknown
   linkType: soft
@@ -772,7 +772,7 @@ __metadata:
     react-dom: ^17.0.2
     react-router-dom: ^5.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     use-debounce: ^3.1.0
   peerDependencies:
     "@wordpress/data": ^6.1.5
@@ -818,7 +818,7 @@ __metadata:
     debug: ^4.3.3
     react: ^17.0.2
     react-dom: ^17.0.2
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@emotion/react": ^11.4.1
     redux: ^4.1.2
@@ -831,7 +831,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/mocha": ^9.0.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     mocha: ">=8.0.0"
   languageName: unknown
@@ -961,7 +961,7 @@ __metadata:
     react-router-dom: ^5.1.2
     redux: ^4.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@wordpress/i18n": ^4.2.4
     react: ^17.0.2
@@ -988,7 +988,7 @@ __metadata:
     lodash: ^4.17.21
     react: ^17.0.2
     react-dom: ^17.0.2
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@wordpress/data": ^6.1.5
     react: ^17.0.2
@@ -1017,7 +1017,7 @@ __metadata:
     lodash: ^4.17.21
     prop-types: ^15.7.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     uuid: ^8.3.2
   peerDependencies:
     "@wordpress/data": ^6.1.5
@@ -1090,7 +1090,7 @@ __metadata:
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     webpack: ^5.65.0
   peerDependencies:
     react: ^17.0.2
@@ -1106,7 +1106,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     debug: ^4.3.3
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -1146,7 +1146,7 @@ __metadata:
     redux: ^4.1.2
     redux-thunk: ^2.3.0
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -1179,7 +1179,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@wordpress/element": ^4.0.4
   languageName: unknown
@@ -1191,7 +1191,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -1221,7 +1221,7 @@ __metadata:
   resolution: "@automattic/viewport@workspace:packages/viewport"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -1388,7 +1388,7 @@ __metadata:
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@emotion/react": ^11.4.1
     redux: ^4.1.2
@@ -28289,7 +28289,7 @@ fsevents@~2.1.2:
     crc32: ^0.2.2
     debug: ^4.3.3
     seed-random: ^2.2.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -36289,23 +36289,23 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.5.4":
-  version: 4.5.4
-  resolution: "typescript@npm:4.5.4"
+"typescript@npm:^4.5.5":
+  version: 4.5.5
+  resolution: "typescript@npm:4.5.5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 4dccd6947e632cc0070653788a3a81051825e9a7acd4c3586124e5a145148bb57b0a401b81d220ac1eb7742a29d5d22fd35af033f839daa60738c3e4fecb5850
+  checksum: ac15b92f3dcd9a4233cab288a913ccbd96729fc488181396fa93c0297ccef3cd3c2f9a7a63340efb0d07bff3d5026028fc81b9c1ef08076029e057081eb5884b
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.5.4#~builtin<compat/typescript>":
-  version: 4.5.4
-  resolution: "typescript@patch:typescript@npm%3A4.5.4#~builtin<compat/typescript>::version=4.5.4&hash=493e53"
+"typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
+  version: 4.5.5
+  resolution: "typescript@patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 7e9541c322d8e72164763c5ccb13e6f8534124a5917b697500033c9437e23c81bfdb0e14c9d4dd8cbe9ad78ea605e91eef02f9ee6f94d9f8130ac4846664e31c
+  checksum: 6a8888c9fe41d0a19324125c636b1adb9ec5c984342fc7a26f2a389a432a94639c24b72e6e019ffbbb03cb614c1f008b4c31e48fb560b772e45e6581265c500b
   languageName: node
   linkType: hard
 
@@ -38156,7 +38156,7 @@ testarmada-magellan@11.0.10:
     terser: ^5.5.1
     terser-webpack-plugin: ^5.2.4
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     webpack: ^5.65.0
     webpack-bundle-analyzer: ^4.5.0
     webpack-cli: ^4.9.1
