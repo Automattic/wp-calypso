@@ -277,14 +277,15 @@ const CTAButton = ( {
 			</Button>
 			{ isJetpackSelfHosted && isMarketplaceProduct && (
 				<div className="plugin-details-CTA__not-available">
-					<p>
+					<p className="plugin-details-CTA__not-available-text">
 						{ translate( 'Thanks for your interest. ' ) }
 						{ translate(
-							'Paid plugins are not yet available for Jetpack Sites but we can notify you when they are ready'
+							'Paid plugins are not yet available for Jetpack Sites but we can notify you when they are ready.'
 						) }
 					</p>
 					{ hasPreferences && (
 						<ToggleControl
+							className="plugin-details-CTA__follow-toggle"
 							label={ translate( 'Keep me updated' ) }
 							checked={ keepMeUpdatedPreference }
 							onChange={ updatedKeepMeUpdatedPreference }

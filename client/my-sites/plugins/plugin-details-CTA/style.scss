@@ -78,6 +78,18 @@
 	color: var( --studio-gray-50 );
 }
 
+.plugin-details-CTA__not-available {
+	.plugin-details-CTA__not-available-text {
+		color: var( --studio-gray-60 );
+		margin: 16px 0;
+		font-size: $font-body-small;
+	}
+
+	.plugin-details-CTA__follow-toggle label {
+		color: var( --studio-gray-80 );
+	}
+}
+
 .is-placeholder {
 	.plugin-details-CTA__price,
 	.plugin-details-CTA__install,
