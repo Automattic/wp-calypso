@@ -18,10 +18,9 @@
 	background-color: var( --color-accent );
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 0.6em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 0.6rem; /* stylelint-disable-line scales/font-sizes */
 		padding: 1px 4px;
 		top: 4px;
-		right: 0;
 	}
 }
 
