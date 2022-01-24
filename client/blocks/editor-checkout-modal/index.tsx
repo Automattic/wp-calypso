@@ -81,6 +81,7 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 						siteId={ selectedSiteId ?? undefined }
 						siteSlug={ site?.slug }
 						productAliasFromUrl={ commaSeparatedProductSlugs }
+						productSourceFromUrl="editor-checkout-modal"
 						onAfterPaymentComplete={ handleAfterPaymentComplete }
 					/>
 				</StripeHookProvider>

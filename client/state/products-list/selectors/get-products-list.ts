@@ -23,6 +23,7 @@ export interface ProductListItem {
 		expires?: string;
 	};
 	sale_cost?: number;
+	is_privacy_protection_product_purchase_allowed?: boolean;
 }
 
 export function getProductsList( state: AppState ): Record< string, ProductListItem > {
