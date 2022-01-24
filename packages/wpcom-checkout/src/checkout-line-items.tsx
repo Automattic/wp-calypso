@@ -13,7 +13,14 @@ import {
 	isJetpackProductSlug,
 	isTitanMail,
 } from '@automattic/calypso-products';
-import { CheckoutModal, FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
+import {
+	CheckoutModal,
+	FormStatus,
+	useFormStatus,
+	Button,
+	Theme,
+	LineItem as LineItemType,
+} from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -21,7 +28,6 @@ import { getSublabel, getLabel } from './checkout-labels';
 import { getIntroductoryOfferIntervalDisplay } from './get-introductory-offer-interval-display';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
-import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
 import type {
 	GSuiteProductUser,
 	ResponseCart,
@@ -707,6 +713,23 @@ function IntroductoryOfferCallout( {
 	return <DiscountCallout>{ text }</DiscountCallout>;
 }
 
+function PartnerLogo( { coupon }: { coupon: string } ): JSX.Element | null {
+	const translate = useTranslate();
+
+	if ( coupon.startsWith( 'IONOS_' ) ) {
+		return (
+			<div>
+				<div>{ translate( 'Included in your IONOS plan' ) }</div>
+				<div>
+					<img src={ '/calypso/images/jetpack/partners/partner-logo-ionos.png' } alt="IONOS Logo" />
+				</div>
+			</div>
+		);
+	}
+
+	return null;
+}
+
 function DomainDiscountCallout( {
 	product,
 }: {
@@ -829,6 +852,8 @@ function WPLineItem( {
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product );
 
+	const hasPartnerCoupon = responseCart.coupon.startsWith( 'IONOS_' );
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -890,13 +915,20 @@ function WPLineItem( {
 				</>
 			) }
 
-			{ sublabel && (
+			{ sublabel && ! hasPartnerCoupon && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
 					<DomainDiscountCallout product={ product } />
 					<FirstTermDiscountCallout product={ product } />
 					<CouponDiscountCallout product={ product } />
 					<IntroductoryOfferCallout product={ product } />
+				</LineItemMeta>
+			) }
+
+			{ sublabel && hasPartnerCoupon && (
+				<LineItemMeta>
+					<LineItemSublabelAndPrice product={ product } />
+					<PartnerLogo coupon={ responseCart.coupon } />
 				</LineItemMeta>
 			) }
 
