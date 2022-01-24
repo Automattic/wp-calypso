@@ -63,6 +63,31 @@ export function resolveDomainStatus(
 								components: { strong: <strong /> },
 						  } );
 
+				let noticeText = null;
+
+				if ( ! domain.pointsToWpcom ) {
+					const options = {
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									href={ domainMappingSetup(
+										siteSlug,
+										domain.domain,
+										domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update'
+									) }
+									onClick={ ( e ) => e.stopPropagation() }
+								/>
+							),
+						},
+					};
+
+					noticeText = translate(
+						"We noticed that something wasn't updated correctly. Please try {{a}}this setup{{/a}} again.",
+						options
+					);
+				}
+
 				if ( isExpiringSoon( domain, 5 ) ) {
 					return {
 						statusText: expiresMessage,
@@ -72,6 +97,7 @@ export function resolveDomainStatus(
 						listStatusText: expiresMessage,
 						listStatusClass: 'alert',
 						listStatusWeight: 1000,
+						noticeText,
 					};
 				}
 
@@ -83,6 +109,7 @@ export function resolveDomainStatus(
 					listStatusText: expiresMessage,
 					listStatusClass: 'warning',
 					listStatusWeight: 800,
+					noticeText,
 				};
 			}
 
