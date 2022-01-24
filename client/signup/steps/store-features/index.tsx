@@ -6,7 +6,7 @@ import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.
 import wooImage from 'calypso/assets/images/onboarding/woo.png';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
-import { tip } from '../../icons';
+import { shoppingBag, truck } from '../../icons';
 import SelectItems, { SelectItem } from '../../select-items';
 import './index.scss';
 
@@ -53,7 +53,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 					</span>
 				</>
 			),
-			icon: tip,
+			icon: shoppingBag,
 			value: 'simple',
 			actionText: translate( 'Continue' ),
 		},
@@ -75,7 +75,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 					</span>
 				</>
 			),
-			icon: tip,
+			icon: truck,
 			value: 'power',
 			actionText: translate( 'Upgrade' ),
 		},
