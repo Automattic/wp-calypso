@@ -1,10 +1,6 @@
 import getTourSteps from '../tour-steps';
 
 describe( 'Welcome Tour', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	describe( 'Tour Steps', () => {
 		it( 'should retrieve the "Find your way" slide when on English Locale', () => {
 			expect( getTourSteps( 'en', true ) ).toEqual(
