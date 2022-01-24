@@ -144,7 +144,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 
 							<div>
 								<TextControl
-									label={ __( 'Postcode (optional)' ) }
+									label={ __( 'Postcode' ) }
 									value={ get( WOOCOMMERCE_STORE_POSTCODE ) }
 									onChange={ ( value ) => {
 										update( WOOCOMMERCE_STORE_POSTCODE, value );
