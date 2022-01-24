@@ -3,6 +3,7 @@
 		background-color: var( --studio-white );
 		height: 100vh;
 		padding: 0;
+		overflow: inherit;
 		@media ( max-width: 782px ) {
 			padding: 0;
 			background-color: var( --studio-white );
