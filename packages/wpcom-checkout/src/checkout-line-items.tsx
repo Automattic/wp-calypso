@@ -159,6 +159,7 @@ function WPNonProductLineItem( {
 	removeProductFromCart,
 	createUserAndSiteBeforeTransaction,
 	isPwpoUser,
+	responseCart,
 }: {
 	lineItem: LineItemType;
 	className?: string | null;
@@ -167,6 +168,7 @@ function WPNonProductLineItem( {
 	removeProductFromCart?: () => void;
 	createUserAndSiteBeforeTransaction?: boolean;
 	isPwpoUser?: boolean;
+	responseCart?: ResponseCart;
 } ): JSX.Element {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -182,6 +184,11 @@ function WPNonProductLineItem( {
 		createUserAndSiteBeforeTransaction || false,
 		isPwpoUser || false
 	);
+
+	const product =
+		responseCart && responseCart.products.find( ( product ) => getSublabel( product ) );
+
+	const hasPartnerCoupon = responseCart && responseCart.coupon.startsWith( 'IONOS_' );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -232,6 +239,12 @@ function WPNonProductLineItem( {
 						copy={ modalCopy.description }
 					/>
 				</>
+			) }
+
+			{ product && hasPartnerCoupon && (
+				<LineItemMeta>
+					<PartnerLogo coupon={ responseCart.coupon } />
+				</LineItemMeta>
 			) }
 		</div>
 	);
@@ -836,7 +849,6 @@ function WPLineItem( {
 
 	const productSlug = product?.product_slug;
 
-	const sublabel = getSublabel( product );
 	const label = getLabel( product );
 
 	const originalAmountDisplay = product.item_original_subtotal_display;
@@ -852,7 +864,7 @@ function WPLineItem( {
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product );
 
-	const hasPartnerCoupon = responseCart.coupon.startsWith( 'IONOS_' );
+	const hasPartnerCoupon = responseCart && responseCart.coupon.startsWith( 'IONOS_' );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -915,7 +927,7 @@ function WPLineItem( {
 				</>
 			) }
 
-			{ sublabel && ! hasPartnerCoupon && (
+			{ product && ! hasPartnerCoupon && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
 					<DomainDiscountCallout product={ product } />
@@ -925,10 +937,10 @@ function WPLineItem( {
 				</LineItemMeta>
 			) }
 
-			{ sublabel && hasPartnerCoupon && (
+			{ product && hasPartnerCoupon && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
-					<PartnerLogo coupon={ responseCart.coupon } />
+					<CouponDiscountCallout product={ product } />
 				</LineItemMeta>
 			) }
 
