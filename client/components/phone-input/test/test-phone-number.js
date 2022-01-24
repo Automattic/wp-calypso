@@ -267,6 +267,16 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '01243 212 34', countries.MX ), '01243 212 34' );
 				equal( formatNumber( '01243 212 345', countries.MX ), '01243 212 345' );
 				equal( formatNumber( '01243 212 3456', countries.MX ), '01243 212 3456' );
+
+				equal( formatNumber( '2', countries.HU ), '2' );
+				equal( formatNumber( '24', countries.HU ), '24' );
+				equal( formatNumber( '06243', countries.HU ), '0624 3' );
+				equal( formatNumber( '0624 32', countries.HU ), '0624 32' );
+				equal( formatNumber( '0624 321', countries.HU ), '0624 321' );
+				equal( formatNumber( '0624 3212', countries.HU ), '0624 321 2' );
+				equal( formatNumber( '0624 321 23', countries.HU ), '0624 321 23' );
+				equal( formatNumber( '0624 321 234', countries.HU ), '0624 321 234' );
+				equal( formatNumber( '0624 321 2345', countries.HU ), '0624 321 2345' );
 			} );
 
 			test( 'should not add a prefix when the country does not have national prefix', () => {
