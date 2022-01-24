@@ -24,6 +24,7 @@ import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/ema
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
 import {
 	domainManagementList,
 	createSiteFromDomainOnly,
@@ -495,6 +496,13 @@ class DomainRow extends PureComponent {
 						/>
 						<div className="domain-row__domain-notice-message">{ noticeText }</div>
 					</div>
+				) }
+				{ site && (
+					<TransferConnectedDomainNudge
+						domain={ domain }
+						location="domains_list"
+						siteSlug={ site.slug }
+					/>
 				) }
 				{ this.renderOverlay() }
 			</div>
