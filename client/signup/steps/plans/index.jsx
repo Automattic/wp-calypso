@@ -182,7 +182,6 @@ export class PlansStep extends Component {
 								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 								isReskinned={ isReskinned }
-								disableMonthlyExperiment={ false }
 							/>
 						</div>
 					);

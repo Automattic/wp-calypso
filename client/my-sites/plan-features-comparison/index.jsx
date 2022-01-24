@@ -102,12 +102,11 @@ export class PlanFeaturesComparison extends Component {
 				rawPriceForMonthlyPlan,
 			} = properties;
 
-			const disabledClasses = this.getDisabledClasses( planName );
 			const classes = classNames( 'plan-features-comparison__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
 			const audience = planConstantObj.getAudience?.();
-			const billingTimeFrame = ! disabledClasses ? planConstantObj.getBillingTimeFrame() : null;
+			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
 
 			return (
 				<th scope="col" key={ planName } className={ classes }>
@@ -120,7 +119,6 @@ export class PlanFeaturesComparison extends Component {
 						currencyCode={ currencyCode }
 						discountPrice={ discountPrice }
 						hideMonthly={ hideMonthly }
-						disabledClasses={ disabledClasses }
 						isPlaceholder={ isPlaceholder }
 						planType={ planName }
 						popular={ popular }
@@ -131,7 +129,6 @@ export class PlanFeaturesComparison extends Component {
 						title={ planConstantObj.getTitle() }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
-						monthlyDisabled={ this.props.monthlyDisabled }
 					/>
 				</th>
 			);
@@ -163,12 +160,7 @@ export class PlanFeaturesComparison extends Component {
 				planConstantObj,
 				popular,
 			} = properties;
-			const disabledClasses = this.getDisabledClasses( planName );
-			const classes = classNames(
-				'plan-features-comparison__table-item',
-				'is-top-buttons',
-				disabledClasses
-			);
+			const classes = classNames( 'plan-features-comparison__table-item', 'is-top-buttons' );
 
 			return (
 				<td key={ planName } className={ classes }>
@@ -177,7 +169,6 @@ export class PlanFeaturesComparison extends Component {
 						className={ getPlanClass( planName ) }
 						current={ current }
 						freePlan={ isFreePlan( planName ) }
-						isDisabled={ Boolean( disabledClasses ) }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
 						isInSignup={ isInSignup }
@@ -189,13 +180,6 @@ export class PlanFeaturesComparison extends Component {
 					/>
 				</td>
 			);
-		} );
-	}
-	getDisabledClasses( planName ) {
-		return classNames( {
-			'plan-monthly-disabled-experiment':
-				this.props.monthlyDisabled &&
-				[ 'personal-bundle-monthly', 'value_bundle_monthly' ].includes( planName ),
 		} );
 	}
 
@@ -281,8 +265,7 @@ export class PlanFeaturesComparison extends Component {
 					'is-highlighted':
 						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
 					'is-bold': rowIndex === 0,
-				},
-				this.getDisabledClasses( planName )
+				}
 			);
 
 			return currentFeature ? (
@@ -314,7 +297,6 @@ PlanFeaturesComparison.propTypes = {
 	selectedFeature: PropTypes.string,
 	purchaseId: PropTypes.number,
 	siteId: PropTypes.number,
-	monthlyDisabled: PropTypes.bool,
 };
 
 PlanFeaturesComparison.defaultProps = {
@@ -322,7 +304,6 @@ PlanFeaturesComparison.defaultProps = {
 	isInSignup: true,
 	siteId: null,
 	onUpgradeClick: noop,
-	monthlyDisabled: false,
 };
 
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
@@ -355,7 +336,6 @@ export default connect(
 			siteId,
 			visiblePlans,
 			popularPlanSpec,
-			monthlyDisabled,
 		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
@@ -372,13 +352,7 @@ export default connect(
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
-
-				let popular = false;
-				if ( monthlyDisabled && isMonthlyPlan ) {
-					popular = planObject?.product_name_short === 'Business';
-				} else {
-					popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
-				}
+				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = true;

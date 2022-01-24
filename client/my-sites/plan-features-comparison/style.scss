@@ -194,12 +194,6 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
-	.plan-features-comparison__not-available-with-monthly-disclaimer {
-		color: var( --studio-orange-40 );
-		width: 55%;
-		margin: auto;
-	}
-
 	.is-placeholder {
 		width: 60%;
 		margin: 5px auto;
@@ -496,8 +490,4 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 	}
-}
-
-.plan-monthly-disabled-experiment {
-	opacity: 0.4;
 }

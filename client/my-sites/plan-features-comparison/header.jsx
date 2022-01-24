@@ -15,37 +15,24 @@ export class PlanFeaturesComparisonHeader extends Component {
 	}
 
 	renderPlansHeaderNoTabs() {
-		const {
-			disabledClasses,
-			planType,
-			popular,
-			selectedPlan,
-			isMonthlyPlan,
-			monthlyDisabled,
-			title,
-			translate,
-		} = this.props;
+		const { planType, popular, selectedPlan, title, translate } = this.props;
 
 		const headerClasses = classNames(
 			'plan-features-comparison__header',
-			getPlanClass( planType ),
-			disabledClasses
+			getPlanClass( planType )
 		);
-
-		const popularLabel =
-			monthlyDisabled && isMonthlyPlan ? translate( 'Popular on monthly' ) : translate( 'Popular' );
 
 		return (
 			<span>
 				<div>
-					{ popular && ! selectedPlan && <PlanPill isInSignup={ true }>{ popularLabel }</PlanPill> }
+					{ popular && ! selectedPlan && (
+						<PlanPill isInSignup={ true }>{ translate( 'Popular' ) }</PlanPill>
+					) }
 				</div>
 				<header className={ headerClasses }>
-					<h4 className={ classNames( 'plan-features-comparison__header-title', disabledClasses ) }>
-						{ title }
-					</h4>
+					<h4 className="plan-features-comparison__header-title">{ title }</h4>
 				</header>
-				<div className={ classNames( 'plan-features-comparison__pricing', disabledClasses ) }>
+				<div className="plan-features-comparison__pricing">
 					{ this.renderPriceGroup() }
 					{ this.getBillingTimeframe() }
 				</div>
@@ -62,12 +49,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 			translate,
 			annualPricePerMonth,
 			isMonthlyPlan,
-			disabledClasses,
 		} = this.props;
-
-		if ( disabledClasses ) {
-			return null;
-		}
 
 		if ( isMonthlyPlan && annualPricePerMonth < rawPrice ) {
 			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
@@ -87,21 +69,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 	}
 
 	getAnnualDiscount() {
-		const {
-			disabledClasses,
-			isMonthlyPlan,
-			rawPriceForMonthlyPlan,
-			annualPricePerMonth,
-			translate,
-		} = this.props;
-
-		if ( disabledClasses ) {
-			return (
-				<div className="plan-features-comparison__not-available-with-monthly-disclaimer">
-					This plan is only available with annual billing
-				</div>
-			);
-		}
+		const { isMonthlyPlan, rawPriceForMonthlyPlan, annualPricePerMonth, translate } = this.props;
 
 		if ( ! isMonthlyPlan ) {
 			const isLoading = typeof rawPriceForMonthlyPlan !== 'number';
@@ -116,7 +84,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 			return (
 				<div
 					className={ classNames( {
-						'plan-features-comparison__header-annual-discount': ! disabledClasses,
+						'plan-features-comparison__header-annual-discount': true,
 						'plan-features-comparison__header-annual-discount-is-loading': isLoading,
 					} ) }
 				>
@@ -138,23 +106,22 @@ export class PlanFeaturesComparisonHeader extends Component {
 	}
 
 	renderPriceGroup() {
-		const { currencyCode, disabledClasses, rawPrice, discountPrice } = this.props;
-		const displayNotation = ! disabledClasses;
+		const { currencyCode, rawPrice, discountPrice } = this.props;
 
 		if ( discountPrice ) {
 			return (
 				<span className="plan-features-comparison__header-price-group">
-					<div className={ classNames( 'plan-features-comparison__header-price-group-prices' ) }>
+					<div className="plan-features-comparison__header-price-group-prices">
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ rawPrice }
-							displayPerMonthNotation={ displayNotation }
+							displayPerMonthNotation={ true }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ discountPrice }
-							displayPerMonthNotation={ displayNotation }
+							displayPerMonthNotation={ true }
 							discounted
 						/>
 					</div>
@@ -163,13 +130,11 @@ export class PlanFeaturesComparisonHeader extends Component {
 		}
 
 		return (
-			<div className={ classNames( disabledClasses ) }>
-				<PlanPrice
-					currencyCode={ currencyCode }
-					rawPrice={ rawPrice }
-					displayPerMonthNotation={ displayNotation }
-				/>
-			</div>
+			<PlanPrice
+				currencyCode={ currencyCode }
+				rawPrice={ rawPrice }
+				displayPerMonthNotation={ true }
+			/>
 		);
 	}
 }
@@ -183,17 +148,13 @@ PlanFeaturesComparisonHeader.propTypes = {
 	rawPrice: PropTypes.number,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
-	disabledClasses: PropTypes.string,
 
 	// For Monthly Pricing test
 	annualPricePerMonth: PropTypes.number,
-
-	monthlyDisabled: PropTypes.bool,
 };
 
 PlanFeaturesComparisonHeader.defaultProps = {
 	popular: false,
-	monthlyDisabled: false,
 };
 
 export default localize( PlanFeaturesComparisonHeader );
