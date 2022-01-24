@@ -103,7 +103,7 @@ export default function InstallPlugins( {
 				page( wcAdmin );
 			}, 500 );
 		}
-	}, [ siteId, softwareApplied, wcAdmin, installFailed ] );
+	}, [ siteId, softwareApplied, wcAdmin, installFailed, trackRedirect ] );
 
 	return (
 		<>

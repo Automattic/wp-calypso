@@ -120,7 +120,7 @@ export default function TransferSite( {
 				page( wcAdmin );
 			}, 500 );
 		}
-	}, [ siteId, softwareApplied, wcAdmin ] );
+	}, [ siteId, softwareApplied, wcAdmin, trackRedirect ] );
 
 	return (
 		<>
