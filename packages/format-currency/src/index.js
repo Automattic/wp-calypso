@@ -58,6 +58,8 @@ export function getCurrencyObject( number, code, options = {} ) {
 	const sign = number < 0 ? '-' : '';
 	const absNumber = Math.abs( number );
 	const rawInteger = Math.floor( absNumber );
+	const rawFraction =
+		Number( Math.round( absNumber + `e+${ precision }` ) + `e-${ precision }` ) - rawInteger;
 	const integer = numberFormat( absNumber, {
 		decimals: precision,
 		thousandsSep: grouping,
@@ -65,7 +67,7 @@ export function getCurrencyObject( number, code, options = {} ) {
 	} ).split( decimal )[ 0 ];
 	const fraction =
 		precision > 0
-			? numberFormat( absNumber - rawInteger, {
+			? numberFormat( rawFraction, {
 					decimals: precision,
 					thousandsSep: grouping,
 					decPoint: decimal,
