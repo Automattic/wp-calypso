@@ -56,6 +56,10 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
 
+	&:last-child {
+		border-bottom: none;
+	}
+
 	.checkout-line-item__price {
 		position: relative;
 	}
