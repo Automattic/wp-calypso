@@ -374,21 +374,6 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
-		'jetpack-user': {
-			stepName: 'jetpack-user',
-			apiRequestFunction: createAccount,
-			providesToken: true,
-			props: {
-				get headerText() {
-					return i18n.translate( 'Create an account for Jetpack' );
-				},
-				get subHeaderText() {
-					return i18n.translate( "You're moments away from connecting Jetpack." );
-				},
-			},
-			providesDependencies: [ 'bearer_token', 'username' ],
-		},
-
 		'oauth2-user': {
 			stepName: 'oauth2-user',
 			apiRequestFunction: createAccount,
@@ -423,18 +408,6 @@ export function generateSteps( {
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
-				displayNameInput: true,
-				displayUsernameInput: false,
-			},
-		},
-
-		displayname: {
-			stepName: 'displayname',
-			apiRequestFunction: createAccount,
-			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username' ],
-			props: {
-				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				displayNameInput: true,
 				displayUsernameInput: false,
 			},
