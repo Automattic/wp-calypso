@@ -4,24 +4,29 @@ import { useSelector, useDispatch } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
-	updateSiteInfoCurrentIndex,
+	updateSiteInfoCurrentSectionID,
 	updateSiteInfoValues,
 } from 'calypso/state/signup/steps/site-info-collection/actions';
-import { SiteInfoCollectionData } from 'calypso/state/signup/steps/site-info-collection/schema';
+import {
+	SectionsTouchedInfo,
+	SITE_INFO_SECTIONS,
+	SiteInfo,
+} from 'calypso/state/signup/steps/site-info-collection/schema';
 import {
 	getSiteInfoCollectionData,
-	getSiteInfoCollectionCurrentIndex,
+	getSiteInfoCollectionOpenedSection,
+	getSiteInfoCollectionTouchedStates,
 } from 'calypso/state/signup/steps/site-info-collection/selectors';
 import { AccordionForm } from './accordion-form';
+import AccordionFormSection from './accordion-form-section';
 import { ContactInformation, TextInputField, SocialMediaProfiles } from './form-components';
-import { AccordionSectionProps, ValidationErrors, ValidatorFunction } from './types';
-
+import { validateSection, validateAll, ErrorMap } from './site-info-validators';
 import './style.scss';
 
 interface SiteInformationCollectionProps {
 	additionalStepData: object;
 	stepName: string;
-	submitSignupStep: ( step: { stepName: string }, formValues: SiteInfoCollectionData ) => void;
+	submitSignupStep: ( step: { stepName: string }, formValues: SiteInfo ) => void;
 	goToNextStep: () => void;
 }
 
@@ -38,75 +43,110 @@ function SiteInformationCollection( {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [ dispatch, stepName ] );
 
-	const siteInfoCollectionDataFromStore: SiteInfoCollectionData = useSelector(
-		getSiteInfoCollectionData
-	);
-	const currentIndex: number = useSelector( getSiteInfoCollectionCurrentIndex );
-
+	const siteInfoCollectionDataFromStore: SiteInfo = useSelector( getSiteInfoCollectionData );
+	const initialOpenSectionId: string = useSelector( getSiteInfoCollectionOpenedSection );
+	const touchedStates: SectionsTouchedInfo = useSelector( getSiteInfoCollectionTouchedStates );
 	// Initialize local state with the values from the redux store
-	const [ formValues, setFormValues ] = useState< SiteInfoCollectionData >(
-		siteInfoCollectionDataFromStore
-	);
+	const [ formValues, setFormValues ] = useState< SiteInfo >( siteInfoCollectionDataFromStore );
+	const [ formErrors, setFormErrors ] = useState< ErrorMap >( {} );
+
 	const onChangeField = ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => {
+		const validationResult = validateAll( formValues );
+		setFormErrors( validationResult.detailedErrors );
 		setFormValues( {
 			...formValues,
 			[ name ]: value,
 		} );
 	};
 
-	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
+	const saveFormState = ( openSectionId?: string ) => {
+		dispatch( updateSiteInfoValues( formValues ) );
+		if ( openSectionId ) {
+			dispatch( updateSiteInfoCurrentSectionID( openSectionId ) );
+		}
+	};
 
-	const sections: AccordionSectionProps[] = [
-		{
-			title: translate( '%d. Name of your business', {
-				args: [ 1 ],
-				comment: 'This is the serial number: 1',
-			} ),
-			component: (
+	const onSubmit = () => {
+		saveFormState();
+		const validationResult = validateAll( formValues );
+		setFormErrors( validationResult.detailedErrors );
+		if ( validationResult.isValid ) {
+			const step = {
+				stepName,
+				...additionalStepData,
+			};
+			submitSignupStep( step, {
+				...formValues,
+			} );
+			goToNextStep();
+		}
+		// Handle focus when submit failed
+	};
+
+	return (
+		<AccordionForm
+			initialOpenSectionId={ initialOpenSectionId }
+			isGoToNextAllowed={ ( sectionID ) => {
+				const validationResult = validateSection( sectionID as keyof typeof SITE_INFO_SECTIONS )(
+					formValues
+				);
+				setFormErrors( {
+					...formErrors,
+					...validationResult.detailedErrors,
+				} );
+				return validationResult.isValid;
+			} }
+			onNextCallback={ saveFormState }
+			onOpenCallback={ saveFormState }
+			onSubmit={ onSubmit }
+		>
+			<AccordionFormSection
+				sectionId={ SITE_INFO_SECTIONS.siteTitle }
+				title={ translate( '%d. Name of your business', {
+					args: [ 1 ],
+					comment: 'This is the serial number: 1',
+				} ) }
+				summary={ formValues.siteTitle }
+				showSkip={ false }
+				isTouched={ touchedStates.siteTitle }
+			>
 				<TextInputField
 					label={ translate(
 						'Please enter the name of your business as you want it to appear on your new site.'
 					) }
 					value={ formValues.siteTitle }
-					error={ formErrors.siteTitle }
+					errors={ formErrors.siteTitle }
 					name="siteTitle"
 					onChange={ onChangeField }
 				/>
-			),
-			showSkip: false,
-			summary: formValues.siteTitle,
-			validate: ( { siteTitle } ) => {
-				const isValid = Boolean( siteTitle?.length );
-				return {
-					result: isValid,
-					errors: {
-						siteTitle: isValid ? null : translate( 'Please enter a valid site title.' ),
-					},
-				};
-			},
-		},
-		{
-			title: translate( '%d. Site Description', {
-				args: [ 2 ],
-				comment: 'This is the serial number: 2',
-			} ),
-			component: (
+			</AccordionFormSection>
+			<AccordionFormSection
+				sectionId={ SITE_INFO_SECTIONS.siteDescription }
+				title={ translate( '%d. Site Description', {
+					args: [ 2 ],
+					comment: 'This is the serial number: 2',
+				} ) }
+				summary={ formValues.siteDescription }
+				showSkip={ true }
+				isTouched={ touchedStates.siteDescription }
+			>
 				<TextInputField
 					label={ translate( 'A short description for your website.' ) }
 					value={ formValues.siteDescription }
 					name="siteDescription"
 					onChange={ onChangeField }
 				/>
-			),
-			showSkip: true,
-			summary: formValues.siteDescription,
-		},
-		{
-			title: translate( '%d. Social Media Profiles', {
-				args: [ 3 ],
-				comment: 'This is the serial number: 3',
-			} ),
-			component: (
+			</AccordionFormSection>
+			<AccordionFormSection
+				sectionId={ SITE_INFO_SECTIONS.socialMedia }
+				title={ translate( '%d. Social Media Profiles', {
+					args: [ 3 ],
+					comment: 'This is the serial number: 3',
+				} ) }
+				summary={ undefined }
+				showSkip={ true }
+				isTouched={ touchedStates.socialMedia }
+			>
 				<SocialMediaProfiles
 					facebookProps={ {
 						value: formValues.facebookUrl,
@@ -126,16 +166,17 @@ function SiteInformationCollection( {
 					} }
 					onChange={ onChangeField }
 				/>
-			),
-			showSkip: true,
-			summary: undefined,
-		},
-		{
-			title: translate( '%d. Contact Information', {
-				args: [ 4 ],
-				comment: 'This is the serial number: 4',
-			} ),
-			component: (
+			</AccordionFormSection>
+			<AccordionFormSection
+				sectionId={ SITE_INFO_SECTIONS.contactInfo }
+				title={ translate( '%d. Contact Information', {
+					args: [ 4 ],
+					comment: 'This is the serial number: 4',
+				} ) }
+				summary={ undefined }
+				showSkip={ true }
+				isTouched={ touchedStates.contactInfo }
+			>
 				<ContactInformation
 					displayEmailProps={ {
 						value: formValues.displayEmail,
@@ -151,88 +192,8 @@ function SiteInformationCollection( {
 					} }
 					onChange={ onChangeField }
 				/>
-			),
-			showSkip: true,
-			summary: undefined,
-		},
-	];
-
-	const isSectionAtIndexTouchedInitialState: Record< string, boolean > = {};
-	for ( let i = 0; i <= currentIndex; i++ ) {
-		isSectionAtIndexTouchedInitialState[ `${ i }` ] = true;
-	}
-
-	const [ isSectionAtIndexTouched, setIsSectionAtIndexTouched ] = useState<
-		Record< string, boolean >
-	>( isSectionAtIndexTouchedInitialState );
-
-	const runValidatorAndSetFormErrors = ( validator: ValidatorFunction ) => {
-		const validationResult = validator( formValues );
-		setFormErrors( {
-			...formErrors,
-			...validationResult.errors,
-		} );
-		return validationResult;
-	};
-
-	const submitStep = () => {
-		// Re-run validation on all sections before submitting
-		for ( let index = 0; index < sections.length; index++ ) {
-			const section = sections[ index ];
-			if ( section.validate ) {
-				const validationResult = runValidatorAndSetFormErrors( section.validate );
-				if ( ! validationResult.result ) {
-					dispatch( updateSiteInfoCurrentIndex( index ) );
-					return;
-				}
-			}
-		}
-
-		const step = {
-			stepName,
-			...additionalStepData,
-		};
-		submitSignupStep( step, {
-			...formValues,
-		} );
-		goToNextStep();
-	};
-
-	const onOpen = ( currentIndex: number ) => {
-		dispatch( updateSiteInfoCurrentIndex( currentIndex ) );
-		dispatch( updateSiteInfoValues( formValues ) );
-		setIsSectionAtIndexTouched( { ...isSectionAtIndexTouched, [ `${ currentIndex }` ]: true } );
-	};
-
-	const onNext = ( validator?: ValidatorFunction ) => {
-		dispatch( updateSiteInfoValues( formValues ) );
-
-		if ( validator ) {
-			const validationResult = runValidatorAndSetFormErrors( validator );
-			if ( ! validationResult.result ) {
-				return;
-			}
-		}
-
-		if ( currentIndex < sections.length - 1 ) {
-			dispatch( updateSiteInfoCurrentIndex( currentIndex + 1 ) );
-			setIsSectionAtIndexTouched( {
-				...isSectionAtIndexTouched,
-				[ `${ currentIndex + 1 }` ]: true,
-			} );
-		} else {
-			submitStep();
-		}
-	};
-
-	return (
-		<AccordionForm
-			sections={ sections }
-			currentIndex={ currentIndex }
-			isSectionAtIndexTouched={ isSectionAtIndexTouched }
-			onNext={ onNext }
-			onOpen={ onOpen }
-		/>
+			</AccordionFormSection>
+		</AccordionForm>
 	);
 }
 

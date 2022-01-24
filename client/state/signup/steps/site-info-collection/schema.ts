@@ -1,7 +1,7 @@
 export const schema = {
 	type: 'object',
 	patternProperties: {
-		currentIndex: { type: 'number' },
+		initialOpenSectionId: { type: 'string' },
 		siteTitle: { type: 'string' },
 		siteDescription: { type: 'string' },
 		twitterUrl: { type: 'string' },
@@ -13,28 +13,55 @@ export const schema = {
 		displayAddress: { type: 'string' },
 	},
 };
-
-export interface SiteInfoCollectionData {
-	siteTitle: string;
-	siteDescription: string;
-	twitterUrl: string;
-	facebookUrl: string;
-	linkedinUrl: string;
-	instagramUrl: string;
-	displayEmail: string;
-	displayPhone: string;
-	displayAddress: string;
-}
-
-export const initialState = {
-	currentIndex: 0,
-	siteTitle: '',
-	siteDescription: '',
-	twitterUrl: '',
-	facebookUrl: '',
-	linkedinUrl: '',
-	instagramUrl: '',
-	displayEmail: '',
-	displayPhone: '',
-	displayAddress: '',
+export const SITE_INFO_SECTIONS = {
+	siteTitle: 'siteTitle',
+	siteDescription: 'siteDescription',
+	socialMedia: 'socialMedia',
+	contactInfo: 'contactInfo',
 };
+
+export const SITE_INFO_FIELDS = {
+	siteTitle: 'siteTitle',
+	siteDescription: 'siteDescription',
+	twitterUrl: 'twitterUrl',
+	facebookUrl: 'facebookUrl',
+	linkedinUrl: 'linkedinUrl',
+	instagramUrl: 'instagramUrl',
+	displayEmail: 'displayEmail',
+	displayPhone: 'displayPhone',
+	displayAddress: 'displayAddress',
+};
+
+export type SiteInfo = {
+	[ Property in keyof typeof SITE_INFO_FIELDS ]: string;
+};
+export type SectionsTouchedInfo = {
+	[ Property in keyof typeof SITE_INFO_SECTIONS ]: boolean;
+};
+
+export const initialState: {
+	initialOpenSectionId: string;
+	siteInfo: SiteInfo;
+	sectionsTouched: SectionsTouchedInfo;
+} = {
+	initialOpenSectionId: '',
+	siteInfo: {
+		siteTitle: '',
+		siteDescription: '',
+		twitterUrl: '',
+		facebookUrl: '',
+		linkedinUrl: '',
+		instagramUrl: '',
+		displayEmail: '',
+		displayPhone: '',
+		displayAddress: '',
+	},
+	sectionsTouched: {
+		siteTitle: false,
+		siteDescription: false,
+		socialMedia: false,
+		contactInfo: false,
+	},
+};
+
+export type SiteInfoCollectionData = typeof initialState;

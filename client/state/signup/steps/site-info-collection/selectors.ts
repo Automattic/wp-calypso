@@ -1,18 +1,31 @@
 import 'calypso/state/signup/init';
-import { initialState } from './schema';
+import { initialState, SiteInfoCollectionData } from './schema';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getSiteInfoCollectionData( state: any ) {
-	const { currentIndex, ...data } = state.signup?.steps?.siteInformationCollection || initialState;
-	return data;
+interface StateModel {
+	signup: { steps: { siteInformationCollection: SiteInfoCollectionData } };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getSiteInfoCollectionCurrentIndex( state: any ) {
-	return state.signup?.steps?.siteInformationCollection?.currentIndex || 0;
+export function getSiteInfoCollectionData( state: StateModel ) {
+	const { siteInfo } = state.signup?.steps?.siteInformationCollection || initialState;
+	return siteInfo;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getSiteInfoCollectionSiteTitle( state: any ) {
-	return state.signup?.steps?.siteInformationCollection?.siteTitle || '';
+export function getSiteInfoCollectionTouchedStates( state: StateModel ) {
+	const { sectionsTouched } = state.signup?.steps?.siteInformationCollection || initialState;
+	return sectionsTouched;
+}
+
+export function getSiteInfoCollectionOpenedSection( state: StateModel ) {
+	return state.signup?.steps?.siteInformationCollection?.initialOpenSectionId || '';
+}
+
+export function getSiteInfoCollectionTouchedSection( state: StateModel ) {
+	return (
+		state.signup?.steps?.siteInformationCollection?.sectionsTouched || initialState.sectionsTouched
+	);
+}
+
+export function getSiteInfoCollectionSiteTitle( state: StateModel ) {
+	const siteInformationCollection = state.signup?.steps?.siteInformationCollection;
+	return siteInformationCollection?.siteInfo?.siteTitle || '';
 }

@@ -1,13 +1,17 @@
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate, useRtl } from 'i18n-calypso';
+import { ReactElement } from 'react';
 import { AccordionSectionProps } from './types';
 
 interface AccordionFormSectionProps extends AccordionSectionProps {
-	isExpanded: boolean;
+	sectionId: string;
+	isExpanded?: boolean;
 	isTouched: boolean;
-	onOpen: () => void;
-	onNext: ( arg0: object ) => void;
+	children: ReactElement< any, any >;
+
+	onOpen?: ( sectionId: string ) => void;
+	onNext?: ( sectionId: string ) => void;
 }
 
 interface SectionHeaderProps {
@@ -93,11 +97,11 @@ export default function AccordionFormSection( props: AccordionFormSectionProps )
 	const isRTL = useRtl();
 
 	return (
-		<Section>
+		<Section id={ props.sectionId }>
 			<SectionHeader
-				isExpanded={ props.isExpanded }
+				isExpanded={ props.isExpanded || false }
 				isTouched={ props.isTouched }
-				onClick={ props.onOpen }
+				onClick={ () => props.onOpen && props.onOpen( props.sectionId ) }
 			>
 				<span>{ props.title }</span>
 				{ props.isExpanded && ! props.showSkip && (
@@ -107,14 +111,16 @@ export default function AccordionFormSection( props: AccordionFormSectionProps )
 			</SectionHeader>
 			{ props.isExpanded && (
 				<SectionContent>
-					{ props.component }
+					{ props.children }
 					<ButtonsContainer>
-						<NextButton onClick={ props.onNext }>
+						<NextButton onClick={ () => props.onNext && props.onNext( props.sectionId ) }>
 							{ translate( 'Next' ) }
 							<Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } />
 						</NextButton>
 						{ props.showSkip && (
-							<SkipLink onClick={ props.onNext }>{ translate( 'Skip' ) }</SkipLink>
+							<SkipLink onClick={ () => props.onNext && props.onNext( props.sectionId ) }>
+								{ translate( 'Skip' ) }
+							</SkipLink>
 						) }
 					</ButtonsContainer>
 				</SectionContent>

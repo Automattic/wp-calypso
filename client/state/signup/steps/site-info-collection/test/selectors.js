@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { getSiteInfoCollectionData, getSiteInfoCollectionCurrentIndex } from '../selectors';
+import { getSiteInfoCollectionData, getSiteInfoCollectionOpenedSection } from '../selectors';
 
 describe( 'selectors', () => {
 	test( 'should return the initial state as a default state', () => {
@@ -34,7 +34,7 @@ describe( 'selectors', () => {
 
 	test( 'should return the site info collection current index from the state', () => {
 		expect(
-			getSiteInfoCollectionCurrentIndex( {
+			getSiteInfoCollectionOpenedSection( {
 				signup: {
 					steps: {
 						siteInformationCollection: {

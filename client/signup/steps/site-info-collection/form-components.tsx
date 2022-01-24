@@ -79,7 +79,7 @@ interface TextInputFieldProps {
 	label?: TranslateResult;
 	placeholder?: TranslateResult;
 	value: string;
-	error?: TranslateResult | null;
+	errors?: TranslateResult[] | null;
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 }
 
@@ -87,8 +87,16 @@ export function TextInputField( props: TextInputFieldProps ) {
 	return (
 		<FormFieldset>
 			<Label htmlFor={ props.name }>{ props.label }</Label>
-			<TextInput { ...props } isError={ !! props.error } />
-			{ props.error && <FormInputValidation isError text={ props.error } /> }
+			<TextInput
+				{ ...props }
+				isError={ Array.isArray( props.errors ) && props.errors.length > 0 }
+			/>
+			{ Array.isArray( props.errors )
+				? props.errors
+						//Show only one error for now.
+						.slice( 0, 1 )
+						.map( ( error ) => <FormInputValidation key="error" isError text={ error } /> )
+				: null }
 		</FormFieldset>
 	);
 }
@@ -99,7 +107,7 @@ export function TextAreaField( props: TextInputFieldProps ) {
 			<Label htmlFor={ props.name }>{ props.label }</Label>
 			<TextArea
 				{ ...props }
-				isError={ !! props.error }
+				isError={ Array.isArray( props.errors ) && props.errors.length > 0 }
 				autoCapitalize="off"
 				autoCorrect="off"
 				spellCheck="false"

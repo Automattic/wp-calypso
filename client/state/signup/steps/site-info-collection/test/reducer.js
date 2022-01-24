@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import {
 	SIGNUP_STEPS_SITE_INFO_COLLECTION_UPDATE,
-	SIGNUP_STEPS_SITE_INFO_UPDATE_CURRENT_INDEX,
+	SIGNUP_STEPS_SITE_INFO_UPDATE_CURRENT_SECTION,
 	SIGNUP_COMPLETE_RESET,
 } from 'calypso/state/action-types';
 import signupSiteInfoCollectionReducer from '../reducer';
@@ -13,7 +13,7 @@ describe( 'reducer', () => {
 			signupSiteInfoCollectionReducer(
 				{ currentIndex: 0 },
 				{
-					type: SIGNUP_STEPS_SITE_INFO_UPDATE_CURRENT_INDEX,
+					type: SIGNUP_STEPS_SITE_INFO_UPDATE_CURRENT_SECTION,
 					currentIndex: 1,
 				}
 			)
