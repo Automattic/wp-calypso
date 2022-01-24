@@ -172,13 +172,12 @@ export function processNumber( inputNumber, numberRegion ) {
 		);
 	}
 
-	if ( numberRegion.nationalPrefix === '0' ) {
-		nationalNumber = nationalNumber.replace( /^0+/, '' );
+	// If the prefix has already been added, remove it because it will be added again later.
+	let prefixRegexp = new RegExp( `^${ prefix }` );
+	if ( numberRegion.nationalPrefix?.length === 1 ) {
+		prefixRegexp = new RegExp( `^${ prefix }+` );
 	}
-
-	if ( numberRegion.nationalPrefix === '01' ) {
-		nationalNumber = nationalNumber.replace( /^01+/, '' );
-	}
+	nationalNumber = nationalNumber.replace( prefixRegexp, '' );
 
 	debug( `National Number: ${ nationalNumber } for ${ inputNumber } in ${ numberRegion.isoCode }` );
 
