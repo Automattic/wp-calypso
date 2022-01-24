@@ -34,6 +34,7 @@ import {
 	PLUGIN_REMOVE_REQUEST,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
+	SITE_PLUGIN_UPDATED,
 } from 'calypso/state/action-types';
 import {
 	fetchSitePlugins,
@@ -297,6 +298,20 @@ describe( 'actions', () => {
 					siteId: 2916284,
 					pluginId: 'jetpack/jetpack',
 					data: jetpackUpdated,
+				} );
+			} );
+		} );
+
+		test( 'should dispatch site update action when request completes', () => {
+			const response = updatePlugin( site.ID, {
+				slug: 'jetpack',
+				id: 'jetpack/jetpack',
+				update: {},
+			} )( spy, getState );
+			return response.then( () => {
+				expect( spy ).toHaveBeenCalledWith( {
+					type: SITE_PLUGIN_UPDATED,
+					siteId: 2916284,
 				} );
 			} );
 		} );
