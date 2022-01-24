@@ -36,6 +36,17 @@ export class RevisionsComponent {
 	}
 
 	/**
+	 * Given a string of text, check whether the text is present in the Revisions modal.
+	 *
+	 * Note that this method does not check the nature of the text (addition, deletion).
+	 *
+	 * @param {string} text Text to check against the diff viewer.
+	 */
+	async validateTextInRevision( text: string ): Promise< void > {
+		await this.page.waitForSelector( `div.editor-revisions__dialog :text("${ text }")` );
+	}
+
+	/**
 	 * Clicks on a button with given text.
 	 *
 	 * @param {string} text Text of the button to click.

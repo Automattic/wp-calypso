@@ -1,46 +1,43 @@
 /**
  * @group gutenberg
+ * @group calypso-pr
  */
 
 import {
 	DataHelper,
-	BrowserHelper,
 	TestAccount,
+	envVariables,
 	GutenbergEditorPage,
 	EditorSettingsSidebarComponent,
 	RevisionsComponent,
-	setupHooks,
 	ParagraphBlock,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Browser, Page } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
-	const accountName = BrowserHelper.targetGutenbergEdge()
+	const accountName = envVariables.GUTENBERG_EDGE
 		? 'gutenbergSimpleSiteEdgeUser'
 		: 'simpleSitePersonalPlanUser';
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
+	let revisionsComponent: RevisionsComponent;
 	let page: Page;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+	beforeAll( async function () {
+		page = await browser.newPage();
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 		await gutenbergEditorPage.visit( 'post' );
 	} );
 
-	it( 'Enter post title', async function () {
-		gutenbergEditorPage = new GutenbergEditorPage( page );
-		await gutenbergEditorPage.enterTitle( DataHelper.getRandomPhrase() );
-		await gutenbergEditorPage.saveDraft();
-	} );
-
-	it.each( [ { revision: 1 }, { revision: 2 } ] )(
+	it.each( [ { revision: 1 }, { revision: 2 }, { revision: 3 } ] )(
 		'Create revision $revision',
 		async function ( { revision } ) {
 			const blockHandle = await gutenbergEditorPage.addBlock(
@@ -61,11 +58,17 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 		await editorSettingsSidebarComponent.showRevisions();
 	} );
 
-	it( 'Restore revision 1', async function () {
-		const revisionsComponent = new RevisionsComponent( page );
+	it( 'Revision 1 displays expected diff', async function () {
+		revisionsComponent = new RevisionsComponent( page );
 		await revisionsComponent.selectRevision( 1 );
+		await revisionsComponent.validateTextInRevision( 'Revision 1' );
+	} );
+
+	it( 'Restore revision 1', async function () {
+		revisionsComponent = new RevisionsComponent( page );
 		await revisionsComponent.clickButton( 'Load' );
+
 		const text = await gutenbergEditorPage.getText();
-		expect( text ).toEqual( '' );
+		expect( text ).toEqual( 'Revision 1' );
 	} );
 } );
