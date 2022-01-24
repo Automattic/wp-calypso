@@ -48,7 +48,6 @@
 
 	// client/layout/masterbar/style.scss
 	.masterbar__item {
-		padding: 0 8px;
 		font-size: $nav-unification-masterbar-font-size;
 	}
 
@@ -69,7 +68,6 @@
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item {
 			font-size: $nav-unification-masterbar-mobile-font-size;
-			padding: 0 15px;
 		}
 
 		.masterbar__item .gridicon + .masterbar__item-content {
@@ -83,7 +81,6 @@
 
 	// New post button
 	.masterbar__item-new {
-		padding: 0 8px;
 		font-size: $nav-unification-masterbar-font-size;
 		background: var( --studio-white );
 		color: $nav-unification-primary;
@@ -152,7 +149,6 @@
 			height: 36px;
 			margin-top: 5px;
 			width: auto;
-			padding: 0 8px;
 		}
 
 		.masterbar__toggle-drafts.button.is-borderless {
@@ -164,9 +160,6 @@
 
 	// client/layout/masterbar/style.scss
 	.masterbar__item-me {
-		padding-right: 10px;
-		padding-left: 8px;
-
 		.gravatar {
 			top: 50%;
 			left: 50%;
@@ -176,8 +169,6 @@
 	// breakpoint used in wp-admin
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item-me {
-			padding: 0 13px 0 15px;
-
 			// fix for profile picture currently hidden in production
 			.masterbar__item-content {
 				display: block;
@@ -197,8 +188,6 @@
 
 	@include breakpoint-deprecated( '<480px' ) {
 		.masterbar__item-me {
-			padding: 0 11px;
-
 			.gravatar {
 				width: 19px;
 				height: 19px;
@@ -208,9 +197,6 @@
 
 	// Notifications button
 	.masterbar__item-notifications {
-		padding-right: 5px;
-		padding-left: 5px;
-
 		.gridicon {
 			margin-top: 1px;
 		}
@@ -226,7 +212,6 @@
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item-notifications {
 			margin-right: 10px;
-			padding: 0 15px;
 			width: 26px;
 
 			.gridicon {
@@ -245,7 +230,6 @@
 			margin-top: 0;
 			margin-left: auto;
 			margin-right: auto;
-			padding: 0 8px;
 			width: auto;
 		}
 	}

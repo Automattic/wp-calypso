@@ -95,12 +95,19 @@ const EditContactInfoPage = ( {
 			);
 		}
 
+		const backUrl = domainManagementEdit(
+			selectedSite?.slug ?? '',
+			selectedDomainName,
+			currentRoute
+		);
+
 		return (
 			<EditContactInfoFormCard
 				domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
 				selectedDomain={ domain }
 				selectedSite={ selectedSite }
 				showContactInfoNote={ false }
+				backUrl={ backUrl }
 			/>
 		);
 	};

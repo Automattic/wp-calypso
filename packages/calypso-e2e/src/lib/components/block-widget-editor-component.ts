@@ -3,7 +3,7 @@ import { Page } from 'playwright';
 const selectors = {
 	editor: '#widgets-editor',
 
-	welcomeModalDismissButton: 'button[aria-label="Close dialogue"]',
+	welcomeModalDismissButton: 'button[aria-label="Close dialog"]',
 	welcomeTourDismissButton: 'button[aria-label="Close Tour"]',
 
 	addBlockButton: 'button[aria-label="Add block"]',

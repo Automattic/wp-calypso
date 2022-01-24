@@ -66,7 +66,8 @@ const RegisteredDomainDetails = ( {
 
 		if ( purchase && selectedSite.ID ) {
 			const renewalPrice =
-				getRenewalPrice( purchase ) + ( redemptionProduct ? redemptionProduct.cost : 0 );
+				getRenewalPrice( purchase ) +
+				( domain.isRedeemable && redemptionProduct ? redemptionProduct.cost : 0 );
 			const currencyCode = purchase.currencyCode;
 			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } )!;
 		}

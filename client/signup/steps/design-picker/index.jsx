@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
 import DesignPicker, {
 	FeaturedPicksButtons,
+	PremiumBadge,
 	isBlankCanvasDesign,
 	getDesignUrl,
 	useCategorization,
@@ -37,7 +39,15 @@ export default function DesignPickerStep( props ) {
 		showLetUsChoose,
 		hideFullScreenPreview,
 		hideDesignTitle,
+		sitePlanSlug,
 	} = props;
+
+	const isPremiumThemesAvailable = useMemo(
+		() => planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
+		[ sitePlanSlug ]
+	);
+
+	const userLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
@@ -50,7 +60,7 @@ export default function DesignPickerStep( props ) {
 	const scrollTop = useRef( 0 );
 
 	const { data: apiThemes = [] } = useThemeDesignsQuery(
-		{ tier: 'free' },
+		{ tier: isPremiumThemesAvailable ? 'all' : 'free' },
 		{ enabled: ! props.useDIFMThemes }
 	);
 
@@ -81,8 +91,6 @@ export default function DesignPickerStep( props ) {
 			timeoutID && window.clearTimeout( timeoutID );
 		};
 	}, [ props.stepSectionName ] );
-
-	const userLoggedIn = useSelector( isUserLoggedIn );
 
 	const { designs, featuredPicksDesigns } = useMemo( () => {
 		return {
@@ -125,7 +133,7 @@ export default function DesignPickerStep( props ) {
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
 
 		recordTracksEvent( 'calypso_signup_design_preview_select', {
-			theme: `pub/${ _selectedDesign.theme }`,
+			theme: _selectedDesign?.stylesheet ?? `pub/${ _selectedDesign.theme }`,
 			template: _selectedDesign.template,
 			flow: props.flowName,
 			intent: props.signupDependencies.intent,
@@ -137,7 +145,7 @@ export default function DesignPickerStep( props ) {
 
 	function submitDesign( _selectedDesign = selectedDesign ) {
 		recordTracksEvent( 'calypso_signup_select_design', {
-			theme: `pub/${ _selectedDesign?.theme }`,
+			theme: _selectedDesign?.stylesheet ?? `pub/${ _selectedDesign?.theme }`,
 			template: _selectedDesign?.template,
 			flow: props.flowName,
 			intent: props.signupDependencies.intent,
@@ -158,6 +166,7 @@ export default function DesignPickerStep( props ) {
 					'design-picker-step__has-categories': showDesignPickerCategories,
 				} ) }
 				highResThumbnails
+				premiumBadge={ <PremiumBadge /> }
 				categorization={ showDesignPickerCategories ? categorization : undefined }
 				categoriesHeading={
 					<FormattedHeader

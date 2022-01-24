@@ -11,7 +11,11 @@ export const upgradeIntent = withSchemaValidation( { type: 'string' }, ( state =
 		return state;
 	}
 
-	if ( [ 'checkout', 'checkout-thank-you', 'plans' ].includes( action.section.name ) ) {
+	if (
+		[ 'checkout', 'checkout-pending', 'checkout-thank-you', 'plans' ].includes(
+			action.section.name
+		)
+	) {
 		// Leave the intent alone for sections that should not clear it
 		return state;
 	}

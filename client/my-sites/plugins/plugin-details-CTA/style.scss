@@ -5,6 +5,20 @@
 	padding-bottom: 0;
 }
 
+.plugin-details-CTA__modal-overlay.dialog__backdrop {
+	background-color: rgba( var( --color-neutral-100-rgb ), 0.7 );
+}
+
+.plugin-details-CTA__dialog-content {
+	.eligibility-warnings {
+		margin: 0;
+
+		.card {
+			box-shadow: none;
+		}
+	}
+}
+
 .plugin-details-CTA__price {
 	font-family: $brand-serif;
 	font-size: $font-title-large;
@@ -18,6 +32,12 @@
 	&.align-right {
 		text-align: right;
 	}
+}
+
+.plugin-details-CTA__price-placeholder {
+	width: 100%;
+
+	@extend %placeholder;
 }
 
 .plugin-details-CTA__period {

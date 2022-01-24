@@ -2,9 +2,11 @@
  * @group calypso-release
  */
 
-import { setupHooks, DataHelper, EmailClient, LoginPage } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { DataHelper, EmailClient, LoginPage } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
 import type { Message } from 'mailosaur/lib/models';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function () {
 	// This method of obtaining the userEmail address of the test user is temporary.
@@ -21,8 +23,8 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 	let magicLinkURL: string;
 	let magicLinkEmail: Message;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
 	it( 'Navigate to Login page', async function () {

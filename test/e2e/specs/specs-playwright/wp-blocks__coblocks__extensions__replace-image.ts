@@ -3,8 +3,7 @@
  * @group coblocks
  */
 import {
-	setupHooks,
-	BrowserHelper,
+	envVariables,
 	DataHelper,
 	MediaHelper,
 	ElementHelper,
@@ -13,17 +12,19 @@ import {
 	ImageBlock,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
 let accountName: string;
-if ( BrowserHelper.targetCoBlocksEdge() ) {
+if ( envVariables.COBLOCKS_EDGE ) {
 	accountName = 'coBlocksSimpleSiteEdgeUser';
-} else if ( BrowserHelper.targetGutenbergEdge() ) {
+} else if ( envVariables.GUTENBERG_EDGE ) {
 	accountName = 'gutenbergSimpleSiteEdgeUser';
 } else {
 	accountName = 'gutenbergSimpleSiteUser';
 }
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), () => {
 	let page: Page;
@@ -33,8 +34,8 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	let uploadedImageURL: string;
 	let newImageURL: string;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		gutenbergEditorPage = new GutenbergEditorPage( page );
 

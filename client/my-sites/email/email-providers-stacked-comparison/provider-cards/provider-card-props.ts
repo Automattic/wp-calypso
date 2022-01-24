@@ -4,8 +4,9 @@ import type { AppLogo } from 'calypso/my-sites/email/email-providers-stacked-com
 import type { Site } from 'calypso/my-sites/scan/types';
 import type { TranslateResult } from 'i18n-calypso';
 
-export interface ProviderCard {
+export interface ProviderCardProps {
 	additionalPriceInformation?: TranslateResult;
+	appLogos?: AppLogo[];
 	badge?: ReactElement;
 	billingPeriod?: TranslateResult;
 	children?: any;
@@ -18,7 +19,6 @@ export interface ProviderCard {
 	footerBadge?: ReactElement | null;
 	formFields?: ReactElement;
 	logo?: ReactElement | { path: string; className?: string };
-	appLogos?: AppLogo[];
 	onExpandedChange?: ( providerKey: string, expanded: boolean ) => void;
 	priceBadge?: ReactElement | TranslateResult | null;
 	productName: TranslateResult;

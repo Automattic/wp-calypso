@@ -5,8 +5,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import StickyPanel from 'calypso/components/sticky-panel';
+import { withAddExternalMedia } from 'calypso/data/media/with-add-external-media';
 import { changeMediaSource } from 'calypso/state/media/actions';
-import { addExternalMedia, fetchNextMediaPage } from 'calypso/state/media/thunks';
+import { fetchNextMediaPage } from 'calypso/state/media/thunks';
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
 import MediaLibraryScale from './scale';
 
@@ -14,18 +15,19 @@ const DEBOUNCE_TIME = 250;
 
 class MediaLibraryExternalHeader extends Component {
 	static propTypes = {
-		onMediaScaleChange: PropTypes.func,
-		site: PropTypes.object.isRequired,
-		visible: PropTypes.bool.isRequired,
+		addExternalMedia: PropTypes.function,
 		canCopy: PropTypes.bool,
-		postId: PropTypes.number,
-		selectedItems: PropTypes.array,
-		onSourceChange: PropTypes.func,
-		sticky: PropTypes.bool,
 		hasAttribution: PropTypes.bool,
 		hasRefreshButton: PropTypes.bool,
 		isFetchingNextPage: PropTypes.bool,
 		mediaScale: PropTypes.number,
+		onMediaScaleChange: PropTypes.func,
+		onSourceChange: PropTypes.func,
+		postId: PropTypes.number,
+		selectedItems: PropTypes.array,
+		site: PropTypes.object.isRequired,
+		sticky: PropTypes.bool,
+		visible: PropTypes.bool.isRequired,
 	};
 
 	constructor( props ) {
@@ -151,7 +153,6 @@ const mapStateToProps = ( state, { site } ) => ( {
 } );
 
 export default connect( mapStateToProps, {
-	addExternalMedia,
 	changeMediaSource,
 	fetchNextMediaPage,
-} )( localize( MediaLibraryExternalHeader ) );
+} )( localize( withAddExternalMedia( MediaLibraryExternalHeader ) ) );

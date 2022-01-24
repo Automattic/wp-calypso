@@ -3,7 +3,6 @@
  */
 
 import {
-	setupHooks,
 	DataHelper,
 	SidebarComponent,
 	PreviewComponent,
@@ -25,8 +24,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	// This test will use partial matching names to cycle between available themes.
 	const themeName = 'Twenty Twen';
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await global.browser.newPage();
 		await testAccount.authenticate( page );
 	} );
 
@@ -45,8 +44,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 
 	it( `Search for free theme with keyword ${ themeName }`, async function () {
 		themesPage = new ThemesPage( page );
-		// 2021-11-29: Turn this on when premium themes are activated for everyone. -mreishus
-		// await themesPage.filterThemes( 'Free' );
+		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
 

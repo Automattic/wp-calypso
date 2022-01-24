@@ -59,34 +59,12 @@ yarn jest --group=calypso-pr
 
 ### Save authentication cookies
 
-Implemented in [#58082](https://github.com/Automattic/wp-calypso/pull/58082), this allows the storage of authenticated cookies of the users listed [here](https://github.com/Automattic/wp-calypso/blob/trunk/test/e2e/lib/jest/globalSetup.ts#L33). These cookies are valid for up to a day.
+Specify accounts to be pre-authenticated by saving authentication cookies and reusing them for each test that is run against those accounts.
 
 **Enable**
 
 ```
-export SAVE_AUTH_COOKIES=true
-```
-
-or
-
-```
-SAVE_AUTH_COOKIES=true yarn jest ...
-```
-
-The result should look like this:
-
-![saved_auth_cookie](resources/saved_auth_cookies.gif)
-
-**Disable**
-
-```
-unset SAVE_AUTH_COOKIES
-```
-
-or
-
-```
-SAVE_AUTH_COOKIES=false
+export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,eCommerceUser,defaultUser
 ```
 
 ### Target local webapp

@@ -3,6 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import { BrowserContext, Page } from 'playwright';
 import { getAccountCredential, getAccountSiteURL, getCalypsoURL, config } from '../data-helper';
+import envVariables from '../env-variables';
 import { TOTPClient } from '../totp-client';
 import { LoginPage } from './pages/login-page';
 
@@ -133,16 +134,7 @@ export class TestAccount {
 	 * @throws If the COOKIES_PATH env var value is invalid.
 	 */
 	private getAuthCookiesPath(): string {
-		const { COOKIES_PATH } = process.env;
-		if ( COOKIES_PATH === undefined ) {
-			throw new Error( 'Undefined COOKIES_PATH env variable' );
-		}
-
-		if ( COOKIES_PATH === '' ) {
-			throw new Error( 'COOKIES_PATH env variable should not be an empty string' );
-		}
-
-		return path.join( COOKIES_PATH, `${ this.accountName }.json` );
+		return path.join( envVariables.COOKIES_PATH, `${ this.accountName }.json` );
 	}
 
 	/**

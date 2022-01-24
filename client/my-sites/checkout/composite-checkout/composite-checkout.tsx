@@ -743,17 +743,18 @@ export default function CompositeCheckout( {
 				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
 			>
 				<WPCheckout
-					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-					changePlanLength={ changePlanLength }
-					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug }
-					countriesList={ countriesList }
 					addItemToCart={ addItemAndLog }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					isLoggedOutCart={ !! isLoggedOutCart }
+					changePlanLength={ changePlanLength }
+					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
+					isJetpackNotAtomic={ isJetpackNotAtomic }
+					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
+					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
+					siteId={ updatedSiteId }
+					siteUrl={ updatedSiteSlug }
 				/>
 			</CheckoutProvider>
 		</Fragment>

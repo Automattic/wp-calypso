@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
@@ -13,21 +12,11 @@ import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ActionSection, StyledNextButton } from '..';
 import SupportCard from '../components/support-card';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
 import './style.scss';
-
-export const ActionSection = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: baseline;
-	flex-wrap: wrap;
-
-	@media ( max-width: 320px ) {
-		align-items: center;
-	}
-`;
 
 const Divider = styled.hr`
 	border-top: 1px solid #eee;
@@ -39,15 +28,8 @@ const WarningsOrHoldsSection = styled.div`
 	margin-bottom: 40px;
 `;
 
-export const StyledNextButton = styled( NextButton )`
-	@media ( max-width: 320px ) {
-		width: 100%;
-		margin-bottom: 20px;
-	}
-`;
-
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToNextStep, isReskinned, headerTitle, headerDescription } = props;
+	const { goToNextStep, isReskinned } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -87,7 +69,9 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 		}
 
 		return (
-			<PlanWarning title={ __( 'Upgrade your plan' ) }>{ siteUpgrading.description }</PlanWarning>
+			<PlanWarning title={ __( 'Plan upgrade required' ) }>
+				{ siteUpgrading.description }
+			</PlanWarning>
 		);
 	}
 
@@ -137,7 +121,7 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 								goToNextStep();
 							} }
 						>
-							{ __( 'Sounds good' ) }
+							{ __( 'Confirm' ) }
 						</StyledNextButton>
 					</ActionSection>
 				</div>
@@ -160,10 +144,14 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			nextLabelText={ __( 'Confirm' ) }
 			allowBackFirstStep={ ! isEnabled( 'woop' ) }
 			backUrl={ isEnabled( 'woop' ) ? null : `/woocommerce-installation/${ wpcomDomain }` }
-			headerText={ headerTitle }
-			fallbackHeaderText={ headerTitle }
-			subHeaderText={ headerDescription }
-			fallbackSubHeaderText={ headerDescription }
+			headerText={ __( 'One final step' ) }
+			fallbackHeaderText={ __( 'One final step' ) }
+			subHeaderText={ __(
+				'We’ve highlighted a few important details you should review before we create your store. '
+			) }
+			fallbackSubHeaderText={ __(
+				'We’ve highlighted a few important details you should review before we create your store. '
+			) }
 			align={ isReskinned ? 'left' : 'center' }
 			stepContent={ getContent() }
 			isWideLayout={ isReskinned }

@@ -55,7 +55,6 @@ const stepNameToModuleName = {
 	'user-new': 'user',
 	'oauth2-user': 'user',
 	'oauth2-name': 'user',
-	displayname: 'user',
 	'reader-landing': 'reader-landing',
 	passwordless: 'passwordless',
 	'p2-details': 'p2-details',
@@ -77,8 +76,8 @@ const stepNameToModuleName = {
 	ready: 'import',
 	importing: 'import-from',
 	'select-site': 'woocommerce-install/select-site',
-	'business-info': 'woocommerce-install/step-business-info',
 	'store-address': 'woocommerce-install/step-store-address',
+	'business-info': 'woocommerce-install/step-business-info',
 	confirm: 'woocommerce-install/confirm',
 	transfer: 'woocommerce-install/transfer',
 };

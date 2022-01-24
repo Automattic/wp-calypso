@@ -129,6 +129,10 @@
 .plugin-details__plugins-sections {
 	.card {
 		padding-top: 44px;
+
+		&.no-header {
+			padding-top: 20px;
+		}
 	}
 
 	.plugin-sections__banner {

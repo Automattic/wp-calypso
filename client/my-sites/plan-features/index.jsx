@@ -88,6 +88,8 @@ export class PlanFeatures extends Component {
 
 	componentDidMount() {
 		this.isMounted = true;
+		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
+		retargetViewPlans();
 	}
 
 	render() {
@@ -818,12 +820,6 @@ export class PlanFeatures extends Component {
 				/>
 			);
 		} );
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
-		retargetViewPlans();
 	}
 }
 

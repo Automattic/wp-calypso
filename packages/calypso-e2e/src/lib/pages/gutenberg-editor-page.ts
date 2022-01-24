@@ -1,8 +1,8 @@
 import assert from 'assert';
 import { Page, Frame, ElementHandle, Response } from 'playwright';
-import { getTargetDeviceName } from '../../browser-helper';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
+import envVariables from '../../env-variables';
 import { NavbarComponent } from '../components';
 
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
@@ -484,7 +484,7 @@ export class GutenbergEditorPage {
 	 */
 	async openNavSidebar(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		if ( getTargetDeviceName() === 'desktop' ) {
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await frame.click( selectors.desktopEditorSidebarButton );
 		}
 	}
@@ -502,10 +502,9 @@ export class GutenbergEditorPage {
 	 */
 	async returnToCalypsoDashboard(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		const targetDevice = getTargetDeviceName();
 
 		if (
-			targetDevice !== 'mobile' &&
+			envVariables.VIEWPORT_NAME !== 'mobile' &&
 			( await frame.getAttribute( selectors.desktopEditorSidebarButton, 'aria-expanded' ) ) ===
 				'false'
 		) {
@@ -523,7 +522,7 @@ export class GutenbergEditorPage {
 
 		const actions: Promise< unknown >[] = [ navigationPromise ];
 
-		if ( getTargetDeviceName() !== 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			actions.push( frame.click( selectors.desktopDashboardLink ) );
 		} else {
 			actions.push( navbarComponent.clickMySites() );
@@ -547,7 +546,7 @@ export class GutenbergEditorPage {
 	 * @throws {Error} If environment is not 'mobile'.
 	 */
 	async openPreviewAsMobile(): Promise< Page > {
-		if ( getTargetDeviceName() !== 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			throw new Error( 'This method only works in a mobile environment.' );
 		}
 		const frame = await this.getEditorFrame();
@@ -573,7 +572,7 @@ export class GutenbergEditorPage {
 	 * @throws {Error} If environment is 'mobile'.
 	 */
 	async openPreviewAsDesktop( target: PreviewOptions ): Promise< void > {
-		if ( getTargetDeviceName() === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			throw new Error( 'This method only works in a non-mobile environment.' );
 		}
 		const frame = await this.getEditorFrame();
@@ -596,7 +595,7 @@ export class GutenbergEditorPage {
 	 * @throws {Error} If environment is 'mobile'.
 	 */
 	async closePreview(): Promise< void > {
-		if ( getTargetDeviceName() === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			throw new Error( ' This method only works in a non-mobile environment.' );
 		}
 		const frame = await this.getEditorFrame();

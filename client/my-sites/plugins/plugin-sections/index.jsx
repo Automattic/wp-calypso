@@ -290,31 +290,38 @@ class PluginSections extends Component {
 	}
 
 	render() {
+		const availableSections = this.getAvailableSections();
 		// Defensively check if this plugin has sections. If not, don't render anything.
-		if ( ! this.props.plugin || ! this.props.plugin.sections || ! this.getAvailableSections() ) {
+		if ( ! this.props.plugin || ! this.props.plugin.sections || ! availableSections ) {
 			return null;
 		}
 
+		const hasOnlyDescriptionSection =
+			availableSections.length === 1 &&
+			availableSections.find( ( section ) => section.key === 'description' );
+
 		return (
 			<div className={ classNames( 'plugin-sections', this.props.className ) }>
-				<div className="plugin-sections__header">
-					<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>
-						<NavTabs>
-							{ this.getAvailableSections().map( function ( section ) {
-								return (
-									<NavItem
-										key={ section.key }
-										onClick={ this.setSelectedSection.bind( this, section.key ) }
-										selected={ this.getSelected() === section.key }
-									>
-										{ section.title }
-									</NavItem>
-								);
-							}, this ) }
-						</NavTabs>
-					</SectionNav>
-				</div>
-				<Card>
+				{ ! hasOnlyDescriptionSection && (
+					<div className="plugin-sections__header">
+						<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>
+							<NavTabs>
+								{ availableSections.map( function ( section ) {
+									return (
+										<NavItem
+											key={ section.key }
+											onClick={ this.setSelectedSection.bind( this, section.key ) }
+											selected={ this.getSelected() === section.key }
+										>
+											{ section.title }
+										</NavItem>
+									);
+								}, this ) }
+							</NavTabs>
+						</SectionNav>
+					</div>
+				) }
+				<Card className={ classNames( { 'no-header': hasOnlyDescriptionSection } ) }>
 					{ 'faq' === this.getSelected() && this.props.isWpcom && this.getWpcomSupportContent() }
 					{ this.renderSelectedSection() }
 					{ this.renderReadMore() }

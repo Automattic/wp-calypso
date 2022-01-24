@@ -16,6 +16,7 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSite, getSiteId } from 'calypso/state/sites/selectors';
 import { UrlData } from '../import/types';
+import BloggerImporter from './blogger';
 import { Site } from './components/importer-drag';
 import NotAuthorized from './components/not-authorized';
 import NotFound from './components/not-found';
@@ -132,6 +133,24 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									 * Permission screen
 									 */
 									return <NotAuthorized siteSlug={ siteSlug } />;
+								} else if (
+									engine === 'blogger' &&
+									isEnabled( 'gutenboarding/import-from-blogger' )
+								) {
+									/**
+									 * Blogger importer
+									 */
+									return (
+										<BloggerImporter
+											job={ getImportJob( engine ) }
+											run={ runImportInitially }
+											siteId={ siteId }
+											site={ site }
+											siteSlug={ siteSlug }
+											fromSite={ fromSite }
+											urlData={ urlData }
+										/>
+									);
 								} else if (
 									engine === 'medium' &&
 									isEnabled( 'gutenboarding/import-from-medium' )

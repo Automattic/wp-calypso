@@ -208,8 +208,6 @@ class ReaderStream extends Component {
 		const { streamKey, updateCount } = this.props;
 		if ( updateCount > 0 ) {
 			this.props.showUpdates( { streamKey } );
-		} else {
-			this.props.selectFirstItem( { streamKey } );
 		}
 	};
 

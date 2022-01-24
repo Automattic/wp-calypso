@@ -285,6 +285,15 @@ export class CheckoutThankYouHeader extends PureComponent {
 			}
 		);
 	}
+	visitMyHome = ( event ) => {
+		event.preventDefault();
+
+		const { selectedSite } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_thank_you_no_site_receipt_error' );
+
+		page( `/home/${ selectedSite.slug }` );
+	};
 
 	visitDomain = ( event ) => {
 		event.preventDefault();
@@ -464,6 +473,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 	getButtons() {
 		const {
 			hasFailedPurchases,
+			isDataLoaded,
 			jetpackSearchCustomizeUrl,
 			translate,
 			primaryPurchase,
@@ -477,6 +487,18 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const isTrafficGuidePurchase = 'traffic-guide' === displayMode;
 		const isSearch = purchases?.length > 0 && purchases[ 0 ].productType === 'search';
 
+		if (
+			isDataLoaded &&
+			( ! primaryPurchase || ! selectedSite || ( selectedSite.jetpack && ! isAtomic ) )
+		) {
+			return (
+				<div className="checkout-thank-you__header-button">
+					<Button className={ headerButtonClassName } primary onClick={ this.visitMyHome }>
+						{ translate( 'Go to My Home' ) }
+					</Button>
+				</div>
+			);
+		}
 		if ( isSearch ) {
 			return (
 				<div className="checkout-thank-you__header-button">

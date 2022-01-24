@@ -374,21 +374,6 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
-		'jetpack-user': {
-			stepName: 'jetpack-user',
-			apiRequestFunction: createAccount,
-			providesToken: true,
-			props: {
-				get headerText() {
-					return i18n.translate( 'Create an account for Jetpack' );
-				},
-				get subHeaderText() {
-					return i18n.translate( "You're moments away from connecting Jetpack." );
-				},
-			},
-			providesDependencies: [ 'bearer_token', 'username' ],
-		},
-
 		'oauth2-user': {
 			stepName: 'oauth2-user',
 			apiRequestFunction: createAccount,
@@ -423,18 +408,6 @@ export function generateSteps( {
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
-				displayNameInput: true,
-				displayUsernameInput: false,
-			},
-		},
-
-		displayname: {
-			stepName: 'displayname',
-			apiRequestFunction: createAccount,
-			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username' ],
-			props: {
-				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				displayNameInput: true,
 				displayUsernameInput: false,
 			},
@@ -739,32 +712,16 @@ export function generateSteps( {
 		},
 
 		// Woocommerce Install steps.
+		'store-address': {
+			stepName: 'store-address',
+			dependencies: [ 'site' ],
+		},
 		'business-info': {
 			stepName: 'business-info',
 			dependencies: [ 'site' ],
 		},
-		'store-address': {
-			stepName: 'store-address',
-			props: {
-				headerTitle: i18n.translate( 'Add an address to accept payments' ),
-				headerDescription: i18n.translate(
-					'This will be used as your default business address. You can change it later if you need to.'
-				),
-			},
-			dependencies: [ 'site' ],
-		},
 		confirm: {
 			stepName: 'confirm',
-			props: {
-				get headerTitle() {
-					return i18n.translate( 'One final step' );
-				},
-				get headerDescription() {
-					return i18n.translate(
-						'We’ve highlighted a few important details you should review before we create your store. '
-					);
-				},
-			},
 			dependencies: [ 'site' ],
 			providesDependencies: [ 'siteConfirmed' ],
 		},

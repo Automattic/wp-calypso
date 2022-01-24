@@ -152,6 +152,7 @@
 					color: rgba( 255, 255, 255, 0.5 );
 					display: inline-block;
 					flex-basis: 34px;
+					margin-right: 10px;
 				}
 
 				.videos-ui__completed-checkmark {
@@ -181,10 +182,11 @@
 				}
 
 				.videos-ui__video-title {
-					white-space: nowrap;
-					overflow: hidden;
-					text-overflow: ellipsis;
 					margin-right: 10px;
+					display: -webkit-box;
+					-webkit-line-clamp: 2;
+					-webkit-box-orient: vertical;
+					overflow: hidden;
 				}
 
 				.videos-ui__chapter-accordion-toggle {

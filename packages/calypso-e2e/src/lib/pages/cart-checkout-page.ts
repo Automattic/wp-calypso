@@ -1,7 +1,6 @@
 import { Frame, Page } from 'playwright';
-import { getTargetDeviceName } from '../../browser-helper';
+import envVariables from '../../env-variables';
 import type { PaymentDetails, RegistrarDetails } from '../../data-helper';
-import type { TargetDevice } from '../../types';
 
 const selectors = {
 	// Modal
@@ -55,8 +54,10 @@ const selectors = {
 	couponCodeApplyButton: `button:text("Apply")`,
 	disabledButton: 'button[disabled]:has-text("Processing")',
 	paymentButton: `button.checkout-button`,
-	totalAmount: ( device: TargetDevice ) =>
-		device === 'mobile' ? '.wp-checkout__total-price' : '.wp-checkout-order-summary__total-price',
+	totalAmount:
+		envVariables.VIEWPORT_NAME === 'mobile'
+			? '.wp-checkout__total-price'
+			: '.wp-checkout-order-summary__total-price',
 	purchaseButton: `button.checkout-button:has-text("Pay")`,
 };
 
@@ -163,9 +164,7 @@ export class CartCheckoutPage {
 	async getCheckoutTotalAmount( { rawString = false }: { rawString?: boolean } = {} ): Promise<
 		number | string
 	> {
-		const elementHandle = await this.page.waitForSelector(
-			selectors.totalAmount( getTargetDeviceName() )
-		);
+		const elementHandle = await this.page.waitForSelector( selectors.totalAmount );
 		const stringAmount = await elementHandle.innerText();
 		if ( rawString ) {
 			// Returns the raw string.

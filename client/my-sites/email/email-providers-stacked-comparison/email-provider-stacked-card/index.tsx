@@ -7,7 +7,7 @@ import {
 	EmailProviderStackedFeatures,
 	EmailProviderStackedFeaturesToggleButton,
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
-import type { ProviderCard } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
+import type { ProviderCardProps } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 import type { MouseEvent, ReactElement } from 'react';
 
 import './style.scss';
@@ -31,7 +31,7 @@ const EmailProvidersStackedCard = ( {
 	productName,
 	providerKey,
 	showExpandButton = true,
-}: ProviderCard ): ReactElement => {
+}: ProviderCardProps ): ReactElement => {
 	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
 	const isViewportSizeLowerThan660px = useBreakpoint( '<660px' );
@@ -79,14 +79,14 @@ const EmailProvidersStackedCard = ( {
 			}
 			icon={ '' }
 		>
-			<div className="email-provider-stacked-card__provider-price-and-button">
-				{ showFeaturesToggleButton && (
+			{ showFeaturesToggleButton && (
+				<div className="email-provider-stacked-card__provider-price-and-button">
 					<EmailProviderStackedFeaturesToggleButton
 						handleClick={ () => setFeaturesExpanded( ! areFeaturesExpanded ) }
 						isRelatedContentExpanded={ areFeaturesExpanded }
 					/>
-				) }
-			</div>
+				</div>
+			) }
 
 			<div className="email-provider-stacked-card__provider-form-and-right-panel">
 				<div className="email-provider-stacked-card__provider-form">{ formFields }</div>

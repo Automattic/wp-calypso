@@ -34,7 +34,6 @@
 		"checkout/google-pay": false,
 		"i18n/community-translator": false,
 		"jetpack-cloud": true,
-		"jetpack/backups-date-picker": true,
 		"jetpack/more-informative-scan": true,
 		"jetpack/pricing-page": true,
 		"jetpack/pricing-page-annual-only": true,

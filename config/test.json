@@ -70,6 +70,7 @@
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"rum-tracking/logstash": false,
+		"seller-experience": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,

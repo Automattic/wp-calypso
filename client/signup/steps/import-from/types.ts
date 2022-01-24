@@ -1,7 +1,7 @@
 import { UrlData } from '../import/types';
 import { Site } from './components/importer-drag';
 
-export type Importer = 'medium' | 'squarespace' | 'wix' | 'wordpress';
+export type Importer = 'blogger' | 'medium' | 'squarespace' | 'wix' | 'wordpress';
 export type QueryObject = {
 	from: string;
 	to: string;

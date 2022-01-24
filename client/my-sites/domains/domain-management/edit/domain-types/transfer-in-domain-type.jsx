@@ -20,12 +20,12 @@ import DomainStatus from '../card/domain-status';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 
 class TransferInDomainType extends Component {
-	goToInboundTransferPage() {
+	goToInboundTransferPage = () => {
 		const { domain, selectedSite } = this.props;
 		page(
 			domainUseMyDomain( selectedSite.slug, domain.name, useMyDomainInputMode.startPendingTransfer )
 		);
-	}
+	};
 
 	renderPendingStart() {
 		const { domain, translate } = this.props;

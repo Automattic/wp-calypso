@@ -41,7 +41,7 @@
 			}
 
 			@include breakpoint-deprecated( '<660px' ) {
-				margin-left: 16px;
+				margin: 0 16px 24px;
 			}
 		}
 

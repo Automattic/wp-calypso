@@ -217,27 +217,27 @@ export class SiteDomains extends Component {
 	}
 
 	renderDomainTableFilterButton() {
-		const { selectedSite, domains, context } = this.props;
+		const { selectedSite, domains, context, translate } = this.props;
 
 		const selectedFilter = context?.query?.filter;
 		const nonWpcomDomains = filterOutWpcomDomains( domains );
 
 		const filterOptions = [
 			{
-				label: 'Site domains',
+				label: translate( 'Site domains' ),
 				value: '',
 				path: domainManagementList( selectedSite?.slug ),
 				count: nonWpcomDomains?.length,
 			},
 			{
-				label: 'Owned by me',
+				label: translate( 'Owned by me' ),
 				value: 'owned-by-me',
 				path:
 					domainManagementList( selectedSite?.slug ) + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
-				label: 'Owned by others',
+				label: translate( 'Owned by others' ),
 				value: 'owned-by-others',
 				path:
 					domainManagementList( selectedSite?.slug ) +
@@ -247,7 +247,7 @@ export class SiteDomains extends Component {
 			},
 			null,
 			{
-				label: 'All my domains',
+				label: translate( 'All my domains' ),
 				value: 'all-my-domains',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: null,
