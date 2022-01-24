@@ -24,8 +24,8 @@ import './style.scss';
 
 const SiteSettingsTraffic = ( {
 	fields,
-	handleAutosavingToggle,
 	handleAutosavingRadio,
+	handleAutosavingToggle,
 	handleSubmitForm,
 	isAdmin,
 	isJetpack,
@@ -33,6 +33,7 @@ const SiteSettingsTraffic = ( {
 	isRequestingSettings,
 	isSavingSettings,
 	setFieldValue,
+	siteId,
 	translate,
 } ) => (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -48,7 +49,11 @@ const SiteSettingsTraffic = ( {
 
 		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
 		{ isAdmin && (
-			<AsyncLoad require="calypso/my-sites/site-settings/seo-settings/form" placeholder={ null } />
+			<AsyncLoad
+				key={ siteId }
+				require="calypso/my-sites/site-settings/seo-settings/form"
+				placeholder={ null }
+			/>
 		) }
 		{ isAdmin && (
 			<RelatedPosts
@@ -101,6 +106,7 @@ const connectComponent = connect( ( state ) => {
 	const isJetpackAdmin = isJetpack && isAdmin;
 
 	return {
+		siteId,
 		isAdmin,
 		isJetpack,
 		isJetpackAdmin,

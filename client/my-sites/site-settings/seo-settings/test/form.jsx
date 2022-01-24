@@ -19,7 +19,7 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import { SeoForm } from '../form';
+import { SiteSettingsFormSEO as SeoForm } from '../form';
 
 const props = {
 	refreshSiteData: ( x ) => x,

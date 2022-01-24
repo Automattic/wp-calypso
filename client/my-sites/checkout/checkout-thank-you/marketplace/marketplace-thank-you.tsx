@@ -58,6 +58,7 @@ const ItemStyled = styled( Item )`
 	font-size: 14px;
 	font-weight: 500;
 	padding: 0;
+	justify-content: left;
 
 	&:hover {
 		background: var( --studio-white );

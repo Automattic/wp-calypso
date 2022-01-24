@@ -1,15 +1,15 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useEffect } from 'react';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Spinner from 'calypso/components/spinner';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import wpcom from 'calypso/lib/wp';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { getRequestActivityId, requestActivity } from 'calypso/state/data-getters';
-import { getHttpData, DataState } from 'calypso/state/data-layer/http-data';
+import { fromActivityApi } from 'calypso/state/data-layer/wpcom/sites/activity/from-api';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
@@ -19,7 +19,15 @@ import Error from './error';
 import Loading from './loading';
 import BackupRestoreFlow from './restore';
 import { RewindFlowPurpose } from './types';
-import type { ReactNode } from 'react';
+import type { FunctionComponent, ReactNode } from 'react';
+
+interface Activity {
+	activityIsRewindable: boolean;
+}
+
+interface ActivityError {
+	code?: string;
+}
 
 import './style.scss';
 
@@ -35,29 +43,27 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 	const siteId = useSelector( getSelectedSiteId );
 	const siteUrl = useSelector( ( state ) => ( siteId && getSiteUrl( state, siteId ) ) || '' );
 
-	const {
-		state: activityRequestState,
-		data: { activityIsRewindable } = { activityIsRewindable: undefined },
-		error: activityRequestError,
-	} = useSelector( () => getHttpData( getRequestActivityId( siteId, rewindId ) ) );
-
-	const loadingActivity = ! [ DataState.Success, DataState.Failure ].includes(
-		activityRequestState
+	const activityQuery = useQuery< Activity, ActivityError >(
+		[ 'activity', siteId, rewindId ],
+		() =>
+			wpcom.req
+				.get( {
+					apiNamespace: 'wpcom/v2',
+					path: `/sites/${ siteId }/activity/${ rewindId }`,
+				} )
+				.then( fromActivityApi ),
+		{ retry: false }
 	);
 
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ?? 0 ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ?? 0 ) );
 
-	useEffect( () => {
-		requestActivity( siteId, rewindId );
-	}, [ siteId, rewindId ] );
-
 	const wrapWithCard = ( content: ReactNode ) => <Card>{ content }</Card>;
 
 	const render = () => {
-		if ( null === applySiteOffset || loadingActivity ) {
+		if ( null === applySiteOffset || ! activityQuery.isFetched ) {
 			return wrapWithCard( <Loading /> );
-		} else if ( activityRequestError?.code === 'no_activity_for_site_and_rewind_id' ) {
+		} else if ( activityQuery.error?.code === 'no_activity_for_site_and_rewind_id' ) {
 			return wrapWithCard(
 				<Error
 					siteUrl={ siteUrl }
@@ -66,7 +72,7 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 					} ) }
 				/>
 			);
-		} else if ( activityIsRewindable === false ) {
+		} else if ( activityQuery.data?.activityIsRewindable === false ) {
 			return wrapWithCard(
 				<Error
 					siteUrl={ siteUrl }
@@ -75,7 +81,7 @@ const BackupRewindFlow: FunctionComponent< Props > = ( { rewindId, purpose } ) =
 					} ) }
 				/>
 			);
-		} else if ( DataState.Success !== activityRequestState ) {
+		} else if ( ! activityQuery.isSuccess ) {
 			return wrapWithCard(
 				<Error
 					siteUrl={ siteUrl }

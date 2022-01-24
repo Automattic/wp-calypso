@@ -1,5 +1,6 @@
 import page from 'page';
 import DomainManagementData from 'calypso/components/data/domain-management';
+import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
 	domainManagementChangeSiteAddress,
@@ -72,6 +73,13 @@ export default {
 	},
 
 	domainManagementEdit( pageContext, next ) {
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+		if ( isFreeUrlDomainName( selectedDomainName ) ) {
+			const state = pageContext.store.getState();
+			const siteSlug = getSelectedSiteSlug( state );
+			page.redirect( domainManagementList( siteSlug ) );
+		}
+
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementEdit( ':site', ':domain', pageContext.canonicalPath ) }
@@ -82,7 +90,7 @@ export default {
 				needsDomains
 				needsPlans
 				needsProductsList
-				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
+				selectedDomainName={ selectedDomainName }
 			/>
 		);
 		next();
