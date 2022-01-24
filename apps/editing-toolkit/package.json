@@ -47,6 +47,7 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/components": "workspace:^",
 		"@automattic/composite-checkout": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/domain-picker": "workspace:^",

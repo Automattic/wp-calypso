@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { PaginationControl } from '@automattic/components';
 import { getMediaQueryList, isMobile, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -14,7 +15,6 @@ import classNames from 'classnames';
 import minimize from './icons/minimize';
 import thumbsDown from './icons/thumbs_down';
 import thumbsUp from './icons/thumbs_up';
-import PaginationControl from './pagination';
 
 import './style-tour.scss';
 
@@ -109,6 +109,7 @@ function CardNavigation( {
 				currentPage={ currentStepIndex }
 				numberOfPages={ lastStepIndex + 1 }
 				setCurrentPage={ setCurrentStepIndex }
+				classes={ [ 'my-custom', 'pagination-classes' ] }
 			/>
 			<div>
 				{ currentStepIndex === 0 ? (
