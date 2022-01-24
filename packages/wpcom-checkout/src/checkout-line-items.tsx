@@ -189,11 +189,6 @@ function WPNonProductLineItem( {
 		isPwpoUser || false
 	);
 
-	const product =
-		responseCart && responseCart.products.find( ( product ) => getSublabel( product ) );
-
-	const hasPartnerCoupon = responseCart && responseCart.coupon.startsWith( 'IONOS_' );
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
@@ -245,10 +240,8 @@ function WPNonProductLineItem( {
 				</>
 			) }
 
-			{ product && hasPartnerCoupon && (
-				<LineItemMeta>
-					<PartnerLogo coupon={ responseCart.coupon } />
-				</LineItemMeta>
+			{ responseCart && (
+				<PartnerLogo coupon={ responseCart.coupon } products={ responseCart.products } />
 			) }
 		</div>
 	);
@@ -663,6 +656,14 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 	return coupon_savings_integer > 0;
 }
 
+function hasPartnerCoupon( coupon: string, products?: ResponseCartProduct[] ): boolean {
+	const productHasSublabel =
+		products && products.find( ( product: ResponseCartProduct ) => getSublabel( product ) );
+	const isPartnerCoupon = coupon.startsWith( 'IONOS_' );
+
+	return ( productHasSublabel && isPartnerCoupon ) || false;
+}
+
 function FirstTermDiscountCallout( {
 	product,
 }: {
@@ -730,17 +731,23 @@ function IntroductoryOfferCallout( {
 	return <DiscountCallout>{ text }</DiscountCallout>;
 }
 
-function PartnerLogo( { coupon }: { coupon: string } ): JSX.Element | null {
+function PartnerLogo( {
+	coupon,
+	products,
+}: {
+	coupon: string;
+	products?: ResponseCartProduct[];
+} ): JSX.Element | null {
 	const translate = useTranslate();
 
-	if ( coupon.startsWith( 'IONOS_' ) ) {
+	if ( hasPartnerCoupon( coupon, products ) ) {
 		return (
-			<div>
+			<LineItemMeta>
 				<div>{ translate( 'Included in your IONOS plan' ) }</div>
 				<div>
 					<img src={ '/calypso/images/jetpack/partners/partner-logo-ionos.png' } alt="IONOS Logo" />
 				</div>
-			</div>
+			</LineItemMeta>
 		);
 	}
 
