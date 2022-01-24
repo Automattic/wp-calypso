@@ -119,6 +119,13 @@ export class CheckoutThankYou extends Component {
 		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			didThemeRedirect: false,
+		};
+	}
+
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 
@@ -258,6 +265,12 @@ export class CheckoutThankYou extends Component {
 	};
 
 	redirectIfThemePurchased = () => {
+		// Only do theme redirect once
+		const { didThemeRedirect } = this.state;
+		if ( didThemeRedirect ) {
+			return;
+		}
+
 		const purchases = getPurchases( this.props );
 
 		if (
@@ -266,8 +279,11 @@ export class CheckoutThankYou extends Component {
 			purchases.every( isTheme )
 		) {
 			const themeId = purchases[ 0 ].meta;
-			this.props.requestThenActivate( themeId, this.props.selectedSite.ID, 'calypstore', true );
-			page.redirect( '/themes/' + this.props.selectedSite.slug );
+			// Mark that we've done the redirect, and do the actual redirect once the state is recorded
+			this.setState( { didThemeRedirect: true }, () => {
+				this.props.requestThenActivate( themeId, this.props.selectedSite.ID, 'calypstore', true );
+				page.redirect( '/themes/' + this.props.selectedSite.slug );
+			} );
 		}
 	};
 
