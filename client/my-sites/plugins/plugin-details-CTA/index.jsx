@@ -20,7 +20,7 @@ import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { userCan } from 'calypso/lib/site/utils';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
@@ -220,9 +220,14 @@ const CTAButton = ( {
 	const updatedKeepMeUpdatedPreference = useCallback(
 		( isChecked ) => {
 			dispatch( savePreference( keepMeUpdatedPreferenceId, isChecked ) );
-			// TODO: send event
+			dispatch(
+				recordTracksEvent( 'calypso_plugins_availability_jetpack_self_hosted', {
+					user_id: userId,
+					value: isChecked,
+				} )
+			);
 		},
-		[ keepMeUpdatedPreferenceId ]
+		[ keepMeUpdatedPreferenceId, userId ]
 	);
 
 	return (
