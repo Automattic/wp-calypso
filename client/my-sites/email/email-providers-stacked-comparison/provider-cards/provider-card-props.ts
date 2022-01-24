@@ -5,15 +5,10 @@ import type { Site } from 'calypso/my-sites/scan/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 export interface ProviderCardProps {
-	additionalPriceInformation?: TranslateResult;
 	appLogos?: AppLogo[];
-	badge?: ReactElement;
-	billingPeriod?: TranslateResult;
-	children?: any;
 	className?: string;
 	description: TranslateResult;
 	detailsExpanded?: boolean;
-	discount?: ReactElement | null;
 	expandButtonLabel: TranslateResult;
 	features: TranslateResult[];
 	footerBadge?: ReactElement | null;
