@@ -26,6 +26,7 @@ import PlanPill from 'calypso/components/plans/plan-pill';
 import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
+import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -227,17 +228,24 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	getAnnualDiscount() {
-		const { isMonthlyPlan, discountPrice, translate, rawPrice, relatedMonthlyPlan } = this.props;
+		const {
+			isMonthlyPlan,
+			translate,
+			relatedMonthlyPlan,
+			relatedYearlyPlan,
+			eligibleForWpcomMonthlyPlans,
+		} = this.props;
 
-		if ( isMonthlyPlan || ! relatedMonthlyPlan ) {
+		if ( isMonthlyPlan || ! relatedMonthlyPlan || ! eligibleForWpcomMonthlyPlans ) {
 			return;
 		}
 
-		const price = discountPrice || rawPrice;
-		const isLoading = typeof price !== 'number';
-		const discountRate = Math.round(
-			( 100 * ( relatedMonthlyPlan.raw_price - price ) ) / relatedMonthlyPlan.raw_price
-		);
+		const rawPrice = relatedMonthlyPlan.raw_price;
+
+		const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
+		const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
+
+		const isLoading = typeof rawPrice !== 'number';
 		const annualDiscountText = translate( `You're saving %(discountRate)s%% by paying annually`, {
 			args: { discountRate },
 		} );
@@ -582,6 +590,9 @@ PlanFeaturesHeader.propTypes = {
 	relatedYearlyPlan: PropTypes.object,
 
 	isLoggedInMonthlyPricing: PropTypes.bool,
+
+	monthlyDisabled: PropTypes.bool,
+	eligibleForWpcomMonthlyPlans: PropTypes.bool,
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -599,6 +610,8 @@ PlanFeaturesHeader.defaultProps = {
 	showPlanCreditsApplied: false,
 	siteSlug: '',
 	isLoggedInMonthlyPricing: false,
+	monthlyDisabled: false,
+	eligibleForWpcomMonthlyPlans: false,
 };
 
 export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
@@ -617,7 +630,8 @@ export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
 		isYearly,
 		isFirstYearPromotionalDiscount,
-		relatedYearlyPlan: isYearly ? null : relatedYearlyPlan,
+		relatedYearlyPlan,
 		siteSlug: getSiteSlug( state, selectedSiteId ),
+		eligibleForWpcomMonthlyPlans: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 	};
 } )( localize( PlanFeaturesHeader ) );
