@@ -22,7 +22,7 @@ export default function () {
 		);
 	}
 
-	if ( config.isEnabled( 'marketplace' ) ) {
+	if ( config.isEnabled( 'marketplace-domain-bundle' ) ) {
 		page( '/marketplace/domain/:site?', renderDomainsPage, makeLayout, clientRender );
 	}
 
