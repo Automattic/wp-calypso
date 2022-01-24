@@ -277,6 +277,14 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '0624 321 23', countries.HU ), '0624 321 23' );
 				equal( formatNumber( '0624 321 234', countries.HU ), '0624 321 234' );
 				equal( formatNumber( '0624 321 2345', countries.HU ), '0624 321 2345' );
+
+				equal( formatNumber( '2', countries.RU ), '2' );
+				equal( formatNumber( '24', countries.RU ), '24' );
+				equal( formatNumber( '8243', countries.RU ), '8243' );
+				equal( formatNumber( '82432', countries.RU ), '8243-2' );
+				equal( formatNumber( '8243-21', countries.RU ), '8243-21' );
+				equal( formatNumber( '8243-212', countries.RU ), '8243-21-2' );
+				equal( formatNumber( '8243-21-23', countries.RU ), '8243-21-23' );
 			} );
 
 			test( 'should not add a prefix when the country does not have national prefix', () => {
