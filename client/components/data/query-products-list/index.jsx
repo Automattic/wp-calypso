@@ -4,11 +4,10 @@ import { requestProductsList } from 'calypso/state/products-list/actions';
 import { isProductsListFetching, getProductsListType } from 'calypso/state/products-list/selectors';
 
 const request = ( { persist, ...props } ) => ( dispatch, getState ) => {
-	if ( persist && props.type === getProductsListType( getState() ) ) {
-		return;
-	}
-
-	if ( isProductsListFetching( getState() ) ) {
+	if (
+		isProductsListFetching( getState() ) ||
+		( persist && props.type === getProductsListType( getState() ) )
+	) {
 		return;
 	}
 
