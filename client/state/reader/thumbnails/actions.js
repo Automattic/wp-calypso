@@ -1,12 +1,7 @@
 import debugModule from 'debug';
 import getEmbedMetadata from 'get-video-id';
 import { get } from 'lodash';
-import {
-	READER_THUMBNAIL_REQUEST,
-	READER_THUMBNAIL_REQUEST_SUCCESS,
-	READER_THUMBNAIL_REQUEST_FAILURE,
-	READER_THUMBNAIL_RECEIVE,
-} from 'calypso/state/reader/action-types';
+import { READER_THUMBNAIL_RECEIVE } from 'calypso/state/reader/action-types';
 
 import 'calypso/state/reader/init';
 
@@ -32,21 +27,6 @@ export function receiveThumbnail( embedUrl, thumbnailUrl ) {
 	};
 }
 
-function requestSuccessful( embedUrl ) {
-	return {
-		type: READER_THUMBNAIL_REQUEST_SUCCESS,
-		embedUrl,
-	};
-}
-
-function requestFailure( embedUrl, error ) {
-	return {
-		type: READER_THUMBNAIL_REQUEST_FAILURE,
-		embedUrl,
-		error,
-	};
-}
-
 /**
  * Either instantly returns an action for the thumbnail info or
  * triggers a network request to fetch a thumbnailUrl if necessary
@@ -69,45 +49,21 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 		}
 		case 'vimeo': {
 			debug( `Requesting thumbnail for embed ${ embedUrl }` );
-			dispatch( {
-				type: READER_THUMBNAIL_REQUEST,
-				embedUrl,
-			} );
 
 			const fetchUrl = `https://vimeo.com/api/v2/video/${ id }.json`;
-			return globalThis.fetch( fetchUrl ).then(
-				async ( response ) => {
-					let json;
-					try {
-						json = await response.json();
-					} catch ( error ) {
-						dispatch( requestFailure( embedUrl, error ) );
-					}
+			return globalThis.fetch( fetchUrl ).then( async ( response ) => {
+				let json;
+				try {
+					json = await response.json();
+				} catch ( error ) {}
 
-					const thumbnailUrl = get( json, [ 0, 'thumbnail_large' ] );
-					if ( thumbnailUrl ) {
-						dispatch( requestSuccessful( embedUrl ) );
-						dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
-					} else {
-						dispatch(
-							requestFailure( embedUrl, {
-								type: BAD_API_RESPONSE,
-								response: {
-									status: response.status,
-									ok: response.ok,
-									body: json,
-								},
-							} )
-						);
-					}
-				},
-				( error ) => {
-					dispatch( requestFailure( embedUrl, error ) );
+				const thumbnailUrl = get( json, [ 0, 'thumbnail_large' ] );
+				if ( thumbnailUrl ) {
+					dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
 				}
-			);
+			} );
 		}
 		default:
-			dispatch( requestFailure( embedUrl, { type: UNSUPPORTED_EMBED } ) );
 			return Promise.resolve();
 	}
 };
