@@ -231,7 +231,11 @@ class ActivityLogTasklist extends Component {
 	updateItem = ( item ) => {
 		const { showInfoNotice, siteName, updateSingle, translate, trackUpdate } = this.props;
 
-		trackUpdate( item );
+		// if the item was enqueued by `updateAll` it has no `from` field because we don't want
+		// to record a track event for each item individually.
+		if ( item.from !== undefined ) {
+			trackUpdate( item );
+		}
 		updateSingle( item );
 
 		showInfoNotice(
