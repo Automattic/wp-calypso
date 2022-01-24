@@ -6,8 +6,7 @@
  * @see https://github.com/kvz/phpjs/blob/ffe1356af23a6f2512c84c954dd4e828e92579fa/functions/strings/number_format.js
  */
 function toFixedFix( n, prec ) {
-	const k = Math.pow( 10, prec );
-	return '' + ( Math.round( n * k ) / k ).toFixed( prec );
+	return '' + Number( Math.round( +n + `e+${ prec }` ) + `e-${ prec }` ).toFixed( prec );
 }
 
 export default function number_format( number, decimals, dec_point, thousands_sep ) {

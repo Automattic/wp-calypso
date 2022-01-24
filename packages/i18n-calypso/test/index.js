@@ -228,6 +228,9 @@ describe( 'I18n', function () {
 					} )
 				).toBe( '150,00' );
 			} );
+			it( 'should round 0.005 to 0.01', function () {
+				expect( numberFormat( 0.005, 2 ) ).toBe( '0,01' );
+			} );
 		} );
 
 		describe( 'overriding defaults', function () {
