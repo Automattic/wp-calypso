@@ -1,14 +1,11 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { requestProductsList } from 'calypso/state/products-list/actions';
-import { isProductsListFetching, getProductsList } from 'calypso/state/products-list/selectors';
+import { isProductsListFetching, getProductsListType } from 'calypso/state/products-list/selectors';
 
-const request = ( props ) => ( dispatch, getState ) => {
-	if ( props.persist ) {
-		const productsList = getProductsList( getState() );
-		if ( productsList && Object.keys( productsList ).length > 0 ) {
-			return;
-		}
+const request = ( { persist, ...props } ) => ( dispatch, getState ) => {
+	if ( persist && props.type === getProductsListType( getState() ) ) {
+		return;
 	}
 
 	if ( isProductsListFetching( getState() ) ) {
@@ -26,7 +23,7 @@ const request = ( props ) => ( dispatch, getState ) => {
  * @param {boolean} [props.persist] Set to true to persist the products list in the store.
  * @returns {null} 					No visible output.
  */
-export default function QueryProductsList( { type, persist } ) {
+export default function QueryProductsList( { type = 'all', persist } ) {
 	const dispatch = useDispatch();
 
 	// Only runs on mount.
