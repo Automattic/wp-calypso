@@ -256,6 +256,7 @@ const CTAButton = ( {
 			</Dialog>
 			<Button
 				className="plugin-details-CTA__install-button"
+				primary
 				onClick={ () => {
 					if ( hasEligibilityMessages ) {
 						return setShowEligibility( true );
