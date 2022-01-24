@@ -2,14 +2,16 @@ import { Button, Card, Popover, Gridicon } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { concat, without, isEmpty, find } from 'lodash';
 import { createRef, Component, Fragment } from 'react';
+import { useQuery } from 'react-query';
 import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
+import wpcom from 'calypso/lib/wp';
 import { updateFilter } from 'calypso/state/activity-log/actions';
+import { filterStateToApiQuery } from 'calypso/state/activity-log/utils';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-import { requestActivityActionTypeCounts } from 'calypso/state/data-getters';
+import fromActivityTypeApi from 'calypso/state/data-layer/wpcom/sites/activity-types/from-api';
 import MobileSelectPortal from './mobile-select-portal';
 
 export class ActionTypeSelector extends Component {
@@ -18,10 +20,7 @@ export class ActionTypeSelector extends Component {
 		selectedCheckboxes: [],
 	};
 
-	constructor( props ) {
-		super( props );
-		this.activityTypeButton = createRef();
-	}
+	activityTypeButton = createRef();
 
 	resetActivityTypeSelector = ( event ) => {
 		const { selectActionType, siteId, activityTypes } = this.props;
@@ -51,31 +50,30 @@ export class ActionTypeSelector extends Component {
 		if ( this.getSelectedCheckboxes().includes( group ) ) {
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: without( this.getSelectedCheckboxes(), group ),
+				selectedCheckboxes: this.getSelectedCheckboxes().filter( ( ch ) => ch !== group ),
 			} );
 		} else {
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: concat( this.getSelectedCheckboxes(), group ),
+				selectedCheckboxes: [ ...new Set( this.getSelectedCheckboxes() ).add( group ) ],
 			} );
 		}
 	};
 
 	getSelectedCheckboxes = () => {
-		const { selectedState } = this.props;
 		if ( this.state.userHasSelected ) {
 			return this.state.selectedCheckboxes;
 		}
-		if ( selectedState && selectedState.length ) {
-			return selectedState;
+		if ( this.props.filter?.group?.length ) {
+			return this.props.filter.group;
 		}
 		return [];
 	};
 
 	activityKeyToName = ( key ) => {
 		const { activityTypes } = this.props;
-		const match = find( activityTypes, [ 'key', key ] );
-		return ( match && match.name ) || key;
+		const match = activityTypes.find( ( item ) => item.key === key );
+		return match?.name ?? key;
 	};
 
 	handleClose = () => {
@@ -183,7 +181,7 @@ export class ActionTypeSelector extends Component {
 	render() {
 		const { translate, isVisible } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
-		const hasSelectedCheckboxes = ! isEmpty( selectedCheckboxes );
+		const hasSelectedCheckboxes = selectedCheckboxes.length > 0;
 
 		const buttonClass = classnames( 'filterbar__selection', {
 			'is-selected': hasSelectedCheckboxes,
@@ -235,40 +233,54 @@ export class ActionTypeSelector extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId, filter } ) => {
-	const activityTypes = siteId && requestActivityActionTypeCounts( siteId, filter );
-	const selectedState = filter && filter.group;
-	return {
-		activityTypes: ( siteId && activityTypes.data ) || [],
-		selectedState,
-	};
+const activityCountsQueryKey = ( siteId, filter ) => [
+	'activity-log-counts',
+	siteId,
+	filter.before ?? '',
+	filter.after ?? '',
+	filter.on ?? '',
+];
+const withActivityTypes = ( WrappedComponent ) => ( props ) => {
+	const { siteId, filter } = props;
+	const { data } = useQuery(
+		activityCountsQueryKey( siteId, filter ),
+		() =>
+			wpcom.req
+				.get(
+					{ path: `/sites/${ siteId }/activity/count/group`, apiNamespace: 'wpcom/v2' },
+					filterStateToApiQuery( filter, false )
+				)
+				.then( fromActivityTypeApi ),
+		{ enabled: !! siteId }
+	);
+	return <WrappedComponent { ...props } activityTypes={ data ?? [] } />;
 };
 
-const mapDispatchToProps = ( dispatch ) => ( {
-	selectActionType: ( siteId, group, allTypes ) => {
-		if ( 0 === group.length ) {
-			return dispatch(
-				withAnalytics(
-					recordTracksEvent( 'calypso_activitylog_filterbar_reset_type' ),
-					updateFilter( siteId, { group: null, page: 1 } )
-				)
-			);
-		}
-		const eventProps = { num_groups_selected: group.length };
-		allTypes.forEach(
-			( type ) => ( eventProps[ 'group_' + type.key ] = group.includes( type.key ) )
-		);
-		eventProps.num_total_activities_selected = allTypes.reduce( ( accumulator, type ) => {
-			return group.includes( type.key ) ? accumulator + type.count : accumulator;
-		}, 0 );
-
+const selectActionType = ( siteId, group, allTypes ) => ( dispatch ) => {
+	if ( 0 === group.length ) {
 		return dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_filterbar_select_type', eventProps ),
-				updateFilter( siteId, { group: group, page: 1 } )
+				recordTracksEvent( 'calypso_activitylog_filterbar_reset_type' ),
+				updateFilter( siteId, { group: null, page: 1 } )
 			)
 		);
-	},
-} );
+	}
+	const eventProps = { num_groups_selected: group.length };
+	allTypes.forEach(
+		( type ) => ( eventProps[ 'group_' + type.key ] = group.includes( type.key ) )
+	);
+	eventProps.num_total_activities_selected = allTypes.reduce( ( accumulator, type ) => {
+		return group.includes( type.key ) ? accumulator + type.count : accumulator;
+	}, 0 );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ActionTypeSelector ) );
+	return dispatch(
+		withAnalytics(
+			recordTracksEvent( 'calypso_activitylog_filterbar_select_type', eventProps ),
+			updateFilter( siteId, { group: group, page: 1 } )
+		)
+	);
+};
+
+export default withActivityTypes(
+	connect( null, { selectActionType } )( localize( ActionTypeSelector ) )
+);
