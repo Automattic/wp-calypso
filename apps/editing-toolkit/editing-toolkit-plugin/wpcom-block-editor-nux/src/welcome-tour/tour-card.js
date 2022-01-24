@@ -109,7 +109,6 @@ function CardNavigation( {
 				currentPage={ currentStepIndex }
 				numberOfPages={ lastStepIndex + 1 }
 				setCurrentPage={ setCurrentStepIndex }
-				classes={ [ 'my-custom', 'pagination-classes' ] }
 			/>
 			<div>
 				{ currentStepIndex === 0 ? (
