@@ -1,21 +1,4 @@
-import { hasTranslation } from '@wordpress/i18n';
 import getTourSteps from '../tour-steps';
-
-jest.mock( '@automattic/i18n-utils', () => ( {
-	localizeUrl: jest.fn(),
-} ) );
-
-jest.mock( '@wordpress/i18n', () => {
-	const originalModule = jest.requireActual( '@wordpress/i18n' );
-	return {
-		__esModule: true,
-		...originalModule,
-		hasTranslation: jest.fn( () => true ),
-	};
-} );
-
-const MOCK_DEFAULT_LOCALE_SLUG = 'en';
-const MOCK_REFERENCE_POSITIONING = true;
 
 describe( 'Welcome Tour', () => {
 	beforeEach( () => {
@@ -23,8 +6,8 @@ describe( 'Welcome Tour', () => {
 	} );
 
 	describe( 'Tour Steps', () => {
-		it( 'should retrieve the "Find your way" slide when on English Locale and translations are available', () => {
-			expect( getTourSteps( MOCK_DEFAULT_LOCALE_SLUG, MOCK_REFERENCE_POSITIONING ) ).toEqual(
+		it( 'should retrieve the "Find your way" slide when on English Locale', () => {
+			expect( getTourSteps( 'en', true ) ).toEqual(
 				expect.arrayContaining( [
 					expect.objectContaining( {
 						meta: expect.objectContaining( { heading: 'Find your way' } ),
@@ -33,20 +16,8 @@ describe( 'Welcome Tour', () => {
 			);
 		} );
 
-		it( 'should not retrieve the "Find your way" slide when on non-English Locale but translations are available', () => {
-			expect( getTourSteps( 'nl', MOCK_REFERENCE_POSITIONING ) ).not.toEqual(
-				expect.arrayContaining( [
-					expect.objectContaining( {
-						meta: expect.objectContaining( { heading: 'Find your way' } ),
-					} ),
-				] )
-			);
-		} );
-
-		it( 'should not retrieve the "Find your way" slide when on English Locale but translations ar not available', () => {
-			( ( hasTranslation as unknown ) as jest.Mock ).mockImplementation( () => false );
-
-			expect( getTourSteps( MOCK_DEFAULT_LOCALE_SLUG, MOCK_REFERENCE_POSITIONING ) ).not.toEqual(
+		it( 'should not retrieve the "Find your way" slide when on non-English Locale', () => {
+			expect( getTourSteps( 'nl', true ) ).not.toEqual(
 				expect.arrayContaining( [
 					expect.objectContaining( {
 						meta: expect.objectContaining( { heading: 'Find your way' } ),
