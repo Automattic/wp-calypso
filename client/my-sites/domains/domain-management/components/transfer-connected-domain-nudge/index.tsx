@@ -46,11 +46,11 @@ const TransferConnectedDomainNudge = ( {
 		},
 	};
 	const messageExpiring = translate(
-		'Your domain is expiring soon. Consider {{a}}transferring it{{/a}} to WordPress.com to manage your site and domains all from one place.',
+		'Your domain is expiring soon at your external provider. Consider {{a}}transferring it{{/a}} to WordPress.com to manage your site and domains all from one place.',
 		messageOptions
 	);
 	const messageExpired = translate(
-		'Your domain has recently expired. Consider {{a}}transferring it{{/a}} to WordPress.com to manage your site and domains all from one place.',
+		'Your domain has recently expired at your external provider. Consider {{a}}transferring it{{/a}} to WordPress.com to manage your site and domains all from one place.',
 		messageOptions
 	);
 
