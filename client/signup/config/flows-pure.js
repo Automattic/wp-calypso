@@ -261,7 +261,7 @@ export function generateFlows( {
 			destination: getThankYouNoSiteDestination,
 			description: 'An experimental approach for WordPress.com/domains',
 			disallowResume: true,
-			lastModified: '2021-01-20',
+			lastModified: '2022-01-20',
 			showRecaptcha: true,
 		},
 		{

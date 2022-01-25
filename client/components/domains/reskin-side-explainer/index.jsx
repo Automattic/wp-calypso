@@ -51,14 +51,13 @@ class ReskinSideExplainer extends Component {
 
 	render() {
 		const { title, subtitle, ctaText } = this.getStrings();
-		const { type } = this.props;
 
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events */
 			<div className="reskin-side-explainer">
 				<div className="reskin-side-explainer__title">{ title }</div>
 				<div className="reskin-side-explainer__subtitle">{ subtitle }</div>
-				{ type !== 'free-domain-only-explainer' && (
+				{ ctaText && (
 					<div className="reskin-side-explainer__cta">
 						<span
 							className="reskin-side-explainer__cta-text"
