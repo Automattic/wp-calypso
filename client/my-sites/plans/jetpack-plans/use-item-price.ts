@@ -139,9 +139,10 @@ const useItemPrice = (
 		};
 	}
 
-	let originalPrice = itemCost ? itemCost / 12 : 0;
+	// Calculate the monthly prices with cents rounded up.
+	let originalPrice = itemCost ? Math.ceil( ( itemCost / 12 ) * 100 ) / 100 : 0;
 	let discountedPrice = introductoryOfferPrices.introOfferCost
-		? introductoryOfferPrices.introOfferCost / 12
+		? Math.ceil( ( introductoryOfferPrices.introOfferCost / 12 ) * 100 ) / 100
 		: undefined;
 
 	// Introductory offer pricing is not yet supported for tiered plans, so we need to hard-code it for now.
