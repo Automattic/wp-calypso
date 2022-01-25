@@ -88,7 +88,6 @@ function load_core_fse() {
 	add_action( 'admin_menu', 'gutenberg_site_editor_menu', 9 );
 	add_action( 'admin_menu', 'gutenberg_remove_legacy_pages' );
 	add_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
-	add_filter( 'menu_order', 'gutenberg_menu_order' );
 	remove_action( 'init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
@@ -105,7 +104,6 @@ function unload_core_fse() {
 	remove_action( 'admin_menu', 'gutenberg_site_editor_menu', 9 );
 	remove_action( 'admin_menu', 'gutenberg_remove_legacy_pages' );
 	remove_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
-	remove_filter( 'menu_order', 'gutenberg_menu_order' );
 	if ( defined( 'REST_API_REQUEST' ) && true === REST_API_REQUEST ) {
 		// Do not hook to init during the REST API requests, as it causes PHP warnings
 		// while loading the alloptions (unable to access wp_0_ prefixed tables).
