@@ -60,7 +60,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 		const blockPatterns = await frame.evaluate(
 			`Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
 		);
-
+		// If this test fails, please contact #team-ganon to update premium pattern highlighting.
 		expect( blockPatterns ).toStrictEqual( true );
 	} );
 
