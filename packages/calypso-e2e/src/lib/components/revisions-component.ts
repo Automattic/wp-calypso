@@ -4,6 +4,9 @@ const selectors = {
 	revisionNumber: ( index: number ) =>
 		`li.editor-revisions-list__revision:nth-last-child(${ index })`,
 	button: ( text: string ) => `div[aria-modal="true"] button:has-text("${ text }")`,
+
+	// Diff viewer
+	diffViewer: ( text: string ) => `div.editor-revisions__dialog :text("${ text }")`,
 };
 
 /**
@@ -43,7 +46,7 @@ export class RevisionsComponent {
 	 * @param {string} text Text to check against the diff viewer.
 	 */
 	async validateTextInRevision( text: string ): Promise< void > {
-		await this.page.waitForSelector( `div.editor-revisions__dialog :text("${ text }")` );
+		await this.page.waitForSelector( selectors.diffViewer( text ) );
 	}
 
 	/**
