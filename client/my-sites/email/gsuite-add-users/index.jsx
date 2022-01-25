@@ -46,7 +46,7 @@ import './style.scss';
 
 class GSuiteAddUsers extends Component {
 	state = {
-		dirty: false,
+		showAllErrors: false,
 		users: [],
 	};
 
@@ -75,7 +75,7 @@ class GSuiteAddUsers extends Component {
 		const canContinue = areAllUsersValid( users );
 
 		this.setState( {
-			dirty: true,
+			showAllErrors: true,
 		} );
 
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
@@ -185,7 +185,7 @@ class GSuiteAddUsers extends Component {
 			userCanPurchaseGSuite,
 		} = this.props;
 
-		const { users, dirty } = this.state;
+		const { users, showAllErrors } = this.state;
 
 		const selectedDomainInfo = getGSuiteSupportedDomains( domains ).filter(
 			( { domainName } ) => selectedDomainName === domainName
@@ -204,7 +204,7 @@ class GSuiteAddUsers extends Component {
 						<GSuiteNewUserList
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							extraValidation={ ( user ) => validateAgainstExistingUsers( user, gsuiteUsers ) }
-							dirty={ dirty }
+							showAllErrors={ showAllErrors }
 							domains={ selectedDomainInfo }
 							onUsersChange={ this.handleUsersChange }
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }

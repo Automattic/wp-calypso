@@ -24,21 +24,20 @@ const LabelWrapper: FunctionComponent< LabelWrapperProps > = ( { label, children
 	);
 };
 
-interface Props {
+interface GSuiteNewUserProps {
 	autoFocus: boolean;
-	dirty?: boolean;
 	domains: string[];
 	onUserRemove: () => void;
 	onUserValueChange: ( field: string, value: string, mailBoxFieldTouched?: boolean ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	selectedDomainName: string;
 	showTrashButton: boolean;
+	showAllErrors?: boolean;
 	user: NewUser;
 }
 
-const GSuiteNewUser: FunctionComponent< Props > = ( {
+const GSuiteNewUser: FunctionComponent< GSuiteNewUserProps > = ( {
 	autoFocus,
-	dirty = false,
 	domains,
 	onUserRemove,
 	onUserValueChange,
@@ -51,6 +50,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		password: { value: password, error: passwordError },
 	},
 	selectedDomainName,
+	showAllErrors = false,
 	showTrashButton = true,
 } ) => {
 	const translate = useTranslate();
@@ -69,10 +69,10 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	const [ mailBoxFieldTouched, setMailBoxFieldTouched ] = useState( false );
 	const [ passwordFieldTouched, setPasswordFieldTouched ] = useState( false );
 
-	const hasMailBoxError = ( dirty || mailBoxFieldTouched ) && null !== mailBoxError;
-	const hasFirstNameError = ( dirty || firstNameFieldTouched ) && null !== firstNameError;
-	const hasLastNameError = ( dirty || lastNameFieldTouched ) && null !== lastNameError;
-	const hasPasswordError = ( dirty || passwordFieldTouched ) && null !== passwordError;
+	const hasMailBoxError = ( showAllErrors || mailBoxFieldTouched ) && null !== mailBoxError;
+	const hasFirstNameError = ( showAllErrors || firstNameFieldTouched ) && null !== firstNameError;
+	const hasLastNameError = ( showAllErrors || lastNameFieldTouched ) && null !== lastNameError;
+	const hasPasswordError = ( showAllErrors || passwordFieldTouched ) && null !== passwordError;
 
 	const emailAddressLabel = translate( 'Email address' );
 
