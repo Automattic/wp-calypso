@@ -110,6 +110,7 @@ export default function CompositeCheckout( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
+	customizedCancelUrl,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -132,6 +133,8 @@ export default function CompositeCheckout( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
+	/** Customized cancel url for PayPal */
+	customizedCancelUrl?: string;
 } ): JSX.Element {
 	const previousPath = useSelector( getPreviousPath );
 	const translate = useTranslate();
@@ -443,6 +446,7 @@ export default function CompositeCheckout( {
 			stripeConfiguration,
 			stripe,
 			recaptchaClientId,
+			customizedCancelUrl,
 		} ),
 		[
 			contactDetails,
@@ -457,6 +461,7 @@ export default function CompositeCheckout( {
 			stripeConfiguration,
 			updatedSiteSlug,
 			recaptchaClientId,
+			customizedCancelUrl,
 		]
 	);
 

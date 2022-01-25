@@ -1,6 +1,8 @@
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { Modal } from '@wordpress/components';
+import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useSelector } from 'react-redux';
 import CheckoutMasterbar from 'calypso/layout/masterbar/checkout';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
@@ -10,6 +12,7 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { KEY_PRODUCTS } from './constants';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
@@ -34,11 +37,12 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 		( state ) => {
 			const site = getSelectedSite( state );
 			const selectedSiteId = getSelectedSiteId( state );
+			const previousRoute = getPreviousRoute( state );
 
 			return {
 				siteSlug: site?.slug,
 				selectedSiteId,
-				previousRoute: getPreviousRoute( state ),
+				previousRoute: removeQueryArgs( previousRoute, KEY_PRODUCTS ),
 				isJetpackNotAtomic:
 					!! isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),
 			};
@@ -47,7 +51,7 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 
 	const handleRequestClose = () => {
 		onClose?.();
-		window.history.back();
+		page( previousRoute );
 	};
 
 	const handleAfterPaymentComplete = () => {
@@ -83,6 +87,7 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 						// Custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
 						redirectTo={ redirectTo || previousRoute }
 						customizedPreviousPath={ previousRoute }
+						customizedCancelUrl={ window.location.href }
 						isInModal
 						disabledThankYouPage
 						onAfterPaymentComplete={ handleAfterPaymentComplete }
