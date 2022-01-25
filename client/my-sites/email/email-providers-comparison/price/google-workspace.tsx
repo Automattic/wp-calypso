@@ -8,13 +8,15 @@ import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { hasGSuiteSupportedDomain, getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
 import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 import type { ReactElement } from 'react';
 
 import './style.scss';
@@ -26,14 +28,30 @@ const getGoogleWorkspaceProductSlug = ( intervalLength: IntervalLength ): string
 };
 
 type GoogleWorkspacePriceProps = {
+	domain: SiteDomain | undefined;
 	intervalLength: IntervalLength;
 };
 
-const GoogleWorkspacePrice = ( { intervalLength }: GoogleWorkspacePriceProps ): ReactElement => {
+const GoogleWorkspacePrice = ( {
+	domain,
+	intervalLength,
+}: GoogleWorkspacePriceProps ): ReactElement => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const productSlug = getGoogleWorkspaceProductSlug( intervalLength );
 	const product = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
+
+	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
+
+	const isGSuiteSupported = canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] );
+
+	if ( ! isGSuiteSupported ) {
+		return (
+			<div className="google-workspace-price__unavailable">
+				{ translate( 'Not available for this domain name' ) }
+			</div>
+		);
+	}
 
 	if ( intervalLength === IntervalLength.MONTHLY ) {
 		return (

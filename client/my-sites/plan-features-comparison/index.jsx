@@ -44,6 +44,11 @@ import './style.scss';
 const noop = () => {};
 
 export class PlanFeaturesComparison extends Component {
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
+		retargetViewPlans();
+	}
+
 	render() {
 		const { isInSignup, planProperties, translate } = this.props;
 		const tableClasses = classNames(
@@ -293,12 +298,6 @@ export class PlanFeaturesComparison extends Component {
 				<td key={ `${ planName }-none` } className="plan-features-comparison__table-item" />
 			);
 		} );
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
-		retargetViewPlans();
 	}
 }
 

@@ -94,95 +94,101 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 			<>
 				<div className="step-store-address__info-section" />
 				<div className="step-store-address__instructions-container">
-					<TextControl
-						label={ __( 'Address line 1' ) }
-						value={ get( WOOCOMMERCE_STORE_ADDRESS_1 ) }
-						onChange={ ( value ) => {
-							update( WOOCOMMERCE_STORE_ADDRESS_1, value );
-							clearError( WOOCOMMERCE_STORE_ADDRESS_1 );
+					<form
+						onSubmit={ ( e ) => {
+							e.preventDefault();
+							setSubmitted( submitted + 1 );
+							if ( validate() ) {
+								save();
+								dispatch( submitSignupStep( { stepName: 'store-address' } ) );
+								goToNextStep();
+							}
+							return false;
 						} }
-						className={ address1Error ? 'is-error' : '' }
-					/>
-					<ControlError error={ address1Error } />
-
-					<TextControl
-						label={ __( 'Address line 2 (optional)' ) }
-						value={ get( WOOCOMMERCE_STORE_ADDRESS_2 ) }
-						onChange={ ( value ) => {
-							update( WOOCOMMERCE_STORE_ADDRESS_2, value );
-							clearError( WOOCOMMERCE_STORE_ADDRESS_2 );
-						} }
-						className={ address2Error ? 'is-error' : '' }
-					/>
-					<ControlError error={ address2Error } />
-
-					<CityZipRow>
-						<div>
-							<TextControl
-								label={ __( 'City' ) }
-								value={ get( WOOCOMMERCE_STORE_CITY ) }
-								onChange={ ( value ) => {
-									update( WOOCOMMERCE_STORE_CITY, value );
-									clearError( WOOCOMMERCE_STORE_CITY );
-								} }
-								className={ cityError ? 'is-error' : '' }
-							/>
-							<ControlError error={ cityError } />
-						</div>
-
-						<div>
-							<TextControl
-								label={ __( 'Postcode' ) }
-								value={ get( WOOCOMMERCE_STORE_POSTCODE ) }
-								onChange={ ( value ) => {
-									update( WOOCOMMERCE_STORE_POSTCODE, value );
-									clearError( WOOCOMMERCE_STORE_POSTCODE );
-								} }
-								className={ postcodeError ? 'is-error' : '' }
-							/>
-							<ControlError error={ postcodeError } />
-						</div>
-					</CityZipRow>
-
-					<ComboboxControl
-						label={ __( 'Country / State' ) }
-						value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
-						onChange={ ( value: string | null ) => {
-							update( WOOCOMMERCE_DEFAULT_COUNTRY, value || '' );
-							clearError( WOOCOMMERCE_DEFAULT_COUNTRY );
-						} }
-						options={ countriesAsOptions }
-						className={ countryError ? 'is-error' : '' }
-					/>
-					<ControlError error={ countryError } />
-
-					<TextControl
-						label={ __( 'Email address' ) }
-						value={ getProfileEmail() }
-						onChange={ ( value ) => {
-							updateProfileEmail( value );
-							clearError( WOOCOMMERCE_ONBOARDING_PROFILE );
-						} }
-						className={ emailError ? 'is-error' : '' }
-					/>
-					<ControlError error={ emailError } />
-
-					<ActionSection>
-						<SupportCard />
-						<StyledNextButton
-							onClick={ () => {
-								setSubmitted( submitted + 1 );
-								if ( validate() ) {
-									save();
-									dispatch( submitSignupStep( { stepName: 'store-address' } ) );
-									goToNextStep();
-								}
+					>
+						<TextControl
+							label={ __( 'Address line 1' ) }
+							value={ get( WOOCOMMERCE_STORE_ADDRESS_1 ) }
+							onChange={ ( value ) => {
+								update( WOOCOMMERCE_STORE_ADDRESS_1, value );
+								clearError( WOOCOMMERCE_STORE_ADDRESS_1 );
 							} }
-							disabled={ Object.values( errors ).filter( Boolean ).length > 0 }
-						>
-							{ __( 'Continue' ) }
-						</StyledNextButton>
-					</ActionSection>
+							className={ address1Error ? 'is-error' : '' }
+						/>
+						<ControlError error={ address1Error } />
+
+						<TextControl
+							label={ __( 'Address line 2 (optional)' ) }
+							value={ get( WOOCOMMERCE_STORE_ADDRESS_2 ) }
+							onChange={ ( value ) => {
+								update( WOOCOMMERCE_STORE_ADDRESS_2, value );
+								clearError( WOOCOMMERCE_STORE_ADDRESS_2 );
+							} }
+							className={ address2Error ? 'is-error' : '' }
+						/>
+						<ControlError error={ address2Error } />
+
+						<CityZipRow>
+							<div>
+								<TextControl
+									label={ __( 'City' ) }
+									value={ get( WOOCOMMERCE_STORE_CITY ) }
+									onChange={ ( value ) => {
+										update( WOOCOMMERCE_STORE_CITY, value );
+										clearError( WOOCOMMERCE_STORE_CITY );
+									} }
+									className={ cityError ? 'is-error' : '' }
+								/>
+								<ControlError error={ cityError } />
+							</div>
+
+							<div>
+								<TextControl
+									label={ __( 'Postcode' ) }
+									value={ get( WOOCOMMERCE_STORE_POSTCODE ) }
+									onChange={ ( value ) => {
+										update( WOOCOMMERCE_STORE_POSTCODE, value );
+										clearError( WOOCOMMERCE_STORE_POSTCODE );
+									} }
+									className={ postcodeError ? 'is-error' : '' }
+								/>
+								<ControlError error={ postcodeError } />
+							</div>
+						</CityZipRow>
+
+						<ComboboxControl
+							label={ __( 'Country / State' ) }
+							value={ get( WOOCOMMERCE_DEFAULT_COUNTRY ) }
+							onChange={ ( value: string | null ) => {
+								update( WOOCOMMERCE_DEFAULT_COUNTRY, value || '' );
+								clearError( WOOCOMMERCE_DEFAULT_COUNTRY );
+							} }
+							options={ countriesAsOptions }
+							className={ countryError ? 'is-error' : '' }
+						/>
+						<ControlError error={ countryError } />
+
+						<TextControl
+							label={ __( 'Email address' ) }
+							value={ getProfileEmail() }
+							onChange={ ( value ) => {
+								updateProfileEmail( value );
+								clearError( WOOCOMMERCE_ONBOARDING_PROFILE );
+							} }
+							className={ emailError ? 'is-error' : '' }
+						/>
+						<ControlError error={ emailError } />
+
+						<ActionSection>
+							<SupportCard />
+							<StyledNextButton
+								type="submit"
+								disabled={ Object.values( errors ).filter( Boolean ).length > 0 }
+							>
+								{ __( 'Continue' ) }
+							</StyledNextButton>
+						</ActionSection>
+					</form>
 				</div>
 			</>
 		);
@@ -236,16 +242,14 @@ function useAddressFormValidation( siteId: number ) {
 		errors[ WOOCOMMERCE_STORE_ADDRESS_1 ] = ! get( WOOCOMMERCE_STORE_ADDRESS_1 )
 			? __( 'Please add an address' )
 			: '';
-		errors[ WOOCOMMERCE_STORE_ADDRESS_2 ] = ''; // Optional field
+		errors[ WOOCOMMERCE_STORE_ADDRESS_2 ] = ''; // Optional field.
 		errors[ WOOCOMMERCE_DEFAULT_COUNTRY ] = ! get( WOOCOMMERCE_DEFAULT_COUNTRY )
 			? __( 'Please select a country / region' )
 			: '';
 		errors[ WOOCOMMERCE_STORE_CITY ] = ! get( WOOCOMMERCE_STORE_CITY )
 			? __( 'Please add a city' )
 			: '';
-		errors[ WOOCOMMERCE_STORE_POSTCODE ] = ! get( WOOCOMMERCE_STORE_POSTCODE )
-			? __( 'Please add a postcode' )
-			: '';
+		errors[ WOOCOMMERCE_STORE_POSTCODE ] = ''; // Optional field.
 		errors[ WOOCOMMERCE_ONBOARDING_PROFILE ] = ! emailValidator.validate(
 			get( WOOCOMMERCE_ONBOARDING_PROFILE )?.[ 'store_email' ]
 		)

@@ -13,7 +13,7 @@ class ExporterContainer extends Component {
 		return (
 			<div className="exporter">
 				<Notices />
-				<ExportCard siteId={ siteId } />
+				<ExportCard key={ siteId } siteId={ siteId } />
 				{ ! isJetpack && <ExportMediaCard siteId={ siteId } /> }
 			</div>
 		);

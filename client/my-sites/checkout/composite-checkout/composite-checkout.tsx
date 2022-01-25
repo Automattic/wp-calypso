@@ -92,6 +92,7 @@ export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
+	productSourceFromUrl,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -113,6 +114,7 @@ export default function CompositeCheckout( {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
+	productSourceFromUrl?: string;
 	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
@@ -189,6 +191,7 @@ export default function CompositeCheckout( {
 		isJetpackCheckout,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
+		source: productSourceFromUrl,
 	} );
 
 	const cartKey = useCartKey();

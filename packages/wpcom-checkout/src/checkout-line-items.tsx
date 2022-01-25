@@ -309,28 +309,33 @@ interface ModalCopy {
 function returnModalCopyForProduct(
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
-	hasDomainsInCart: boolean,
+	hasBundledDomainInCart: boolean,
+	hasMarketplaceProductsInCart: boolean,
 	createUserAndSiteBeforeTransaction: boolean,
 	isPwpoUser: boolean
 ): ModalCopy {
-	const productType = getProductTypeForModalCopy( product, hasDomainsInCart );
-	const isRenewal = isWpComProductRenewal( product );
-	return returnModalCopy(
-		productType,
-		translate,
-		createUserAndSiteBeforeTransaction,
-		isPwpoUser,
-		isRenewal
+	const productType = getProductTypeForModalCopy(
+		product,
+		hasBundledDomainInCart,
+		hasMarketplaceProductsInCart,
+		isPwpoUser
 	);
+	const isRenewal = isWpComProductRenewal( product );
+	return returnModalCopy( productType, translate, createUserAndSiteBeforeTransaction, isRenewal );
 }
 
 function getProductTypeForModalCopy(
 	product: ResponseCartProduct,
-	hasDomainsInCart: boolean
+	hasBundledDomainInCart: boolean,
+	hasMarketplaceProductsInCart: boolean,
+	isPwpoUser: boolean
 ): string {
-	if ( isPlan( product ) ) {
-		if ( hasDomainsInCart ) {
-			return 'plan with dependencies';
+	if ( isWpComPlan( product.product_slug ) ) {
+		if ( hasMarketplaceProductsInCart ) {
+			return 'plan with marketplace dependencies';
+		}
+		if ( hasBundledDomainInCart && ! isPwpoUser ) {
+			return 'plan with domain dependencies';
 		}
 		return 'plan';
 	}
@@ -346,11 +351,30 @@ function returnModalCopy(
 	productType: string,
 	translate: ReturnType< typeof useTranslate >,
 	createUserAndSiteBeforeTransaction: boolean,
-	isPwpoUser: boolean,
 	isRenewal = false
 ): ModalCopy {
 	switch ( productType ) {
-		case 'plan with dependencies': {
+		case 'plan with marketplace dependencies':
+			if ( isRenewal ) {
+				return {
+					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
+					description: String(
+						translate(
+							"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your plan in the cart, and your plan will keep its current expiry date."
+						)
+					),
+				};
+			}
+
+			return {
+				title: String( translate( 'You are about to remove your plan from the cart' ) ),
+				description: String(
+					translate(
+						"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your new plan in the cart, and your site will continue to run its current plan."
+					)
+				),
+			};
+		case 'plan with domain dependencies': {
 			if ( isRenewal ) {
 				return {
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
@@ -372,13 +396,9 @@ function returnModalCopy(
 				);
 			} else {
 				description = String(
-					isPwpoUser
-						? translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
-						  )
-						: translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since your other product(s) depend on your plan to be purchased, they will also be removed from the cart and we will take you back to your site.'
-						  )
+					translate(
+						"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your new plan in the cart, and your site will continue to run its current plan."
+					)
 				);
 			}
 			return { title, description };
@@ -389,7 +409,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
 					description: String(
 						translate(
-							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date. We will then take you back to your site.'
+							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date.'
 						)
 					),
 				};
@@ -401,7 +421,7 @@ function returnModalCopy(
 					createUserAndSiteBeforeTransaction
 						? translate( 'When you press Continue, we will remove your plan from the cart.' )
 						: translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. We will then take you back to your site.'
+								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
 						  )
 				),
 			};
@@ -768,8 +788,13 @@ function WPLineItem( {
 } ): JSX.Element {
 	const id = product.uuid;
 	const translate = useTranslate();
-	const hasDomainsInCart = responseCart.products.some(
-		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+	const hasBundledDomainsInCart = responseCart.products.some(
+		( product ) =>
+			( product.is_domain_registration || product.product_slug === 'domain_transfer' ) &&
+			product.is_bundled
+	);
+	const hasMarketplaceProductsInCart = responseCart.products.some(
+		( product ) => product.extra.is_marketplace_product === true
 	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -777,7 +802,8 @@ function WPLineItem( {
 	const modalCopy = returnModalCopyForProduct(
 		product,
 		translate,
-		hasDomainsInCart,
+		hasBundledDomainsInCart,
+		hasMarketplaceProductsInCart,
 		createUserAndSiteBeforeTransaction || false,
 		isPwpoUser || false
 	);

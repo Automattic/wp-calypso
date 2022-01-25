@@ -805,6 +805,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 			timezone_string: guessTimezone(),
 			is_wpforteams_site: true,
 			p2_initialize_as_hub: true,
+			...( stepData.campaign && { p2_signup_campaign: stepData.campaign } ),
 		},
 		validate: false,
 		locale,

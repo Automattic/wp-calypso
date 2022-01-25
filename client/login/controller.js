@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { includes } from 'lodash';
 import page from 'page';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
@@ -111,7 +110,7 @@ export function magicLoginUse( context, next ) {
 
 	const { client_id, email, redirect_to, token } = previousQuery;
 
-	const flow = includes( redirect_to, 'jetpack/connect' ) ? 'jetpack' : null;
+	const flow = redirect_to?.includes( 'jetpack/connect' ) ? 'jetpack' : null;
 
 	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 
@@ -155,8 +154,8 @@ export function redirectJetpack( context, next ) {
 	const { redirect_to } = context.query;
 
 	const isUserComingFromPricingPage =
-		includes( redirect_to, 'source=jetpack-plans' ) ||
-		includes( redirect_to, 'source=jetpack-connect-plans' );
+		redirect_to?.includes( 'source=jetpack-plans' ) ||
+		redirect_to?.includes( 'source=jetpack-connect-plans' );
 	/**
 	 * Send arrivals from the jetpack connect process or jetpack's pricing page
 	 * (when site user email matches a wpcom account) to the jetpack branded login.
@@ -167,7 +166,7 @@ export function redirectJetpack( context, next ) {
 	 */
 	if (
 		isJetpack !== 'jetpack' &&
-		( includes( redirect_to, 'jetpack/connect' ) || isUserComingFromPricingPage )
+		( redirect_to?.includes( 'jetpack/connect' ) || isUserComingFromPricingPage )
 	) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
 	}
