@@ -6,6 +6,7 @@ import {
 	__experimentalNavigationBackButton as NavigationBackButton,
 } from '@wordpress/components';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
+import domReady from '@wordpress/dom-ready';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
@@ -1259,9 +1260,12 @@ function initPort( message ) {
 	window.removeEventListener( 'message', initPort, false );
 }
 
-( function () {
+// Note: domReady is used instead of `(function() { ... })()` because certain
+// things in `initPort` require other scripts to be loaded. (For example, ETK
+// scripts need to be available before some things will work correctly.)
+domReady( () => {
 	window.addEventListener( 'message', initPort, false );
 
 	//signal module loaded
 	sendMessage( { action: 'loaded' } );
-} )();
+} );
