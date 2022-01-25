@@ -1,3 +1,4 @@
+import { globe, addCard, layout } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import { Component } from 'react';
@@ -10,7 +11,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { globe, newSite, site } from '../../icons';
 import SelectItems from '../../select-items';
 import SiteOrDomainChoice from './choice';
 import DomainImage from './domain-image';
@@ -92,7 +92,7 @@ class SiteOrDomain extends Component {
 				key: 'page',
 				title: translate( 'New site' ),
 				description: translate( 'Choose a theme, customize and launch your site.' ),
-				icon: newSite,
+				icon: addCard,
 				value: 'page',
 				actionText: translate( 'Select' ),
 			},
@@ -103,7 +103,7 @@ class SiteOrDomain extends Component {
 				key: 'existing-site',
 				title: translate( 'Existing WordPress.com site' ),
 				description: translate( 'Use with a site you already started.' ),
-				icon: site,
+				icon: layout,
 				value: 'existing-site',
 				actionText: translate( 'Select' ),
 			} );

@@ -104,3 +104,11 @@
 	font-weight: 500;
 	border-radius: 4px 4px 0 0;
 }
+
+body.is-white-signup {
+	.site-or-domain__choices {
+		svg.select-items__item-icon {
+			fill: var( --studio-gray-30 );
+		}
+	}
+}
