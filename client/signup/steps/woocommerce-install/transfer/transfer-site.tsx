@@ -64,7 +64,9 @@ export default function TransferSite( {
 		() => {
 			dispatch( requestLatestAtomicTransfer( siteId ) );
 		},
-		isTransferringStatusFailed || transferStatus === transferStates.COMPLETED ? null : 3000
+		transferFailed || isTransferringStatusFailed || transferStatus === transferStates.COMPLETED
+			? null
+			: 3000
 	);
 
 	// Poll for software status
@@ -73,7 +75,10 @@ export default function TransferSite( {
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
 		// Only poll if the transfer is completed and not failed
-		isTransferringStatusFailed || transferStatus !== transferStates.COMPLETED || softwareApplied
+		transferFailed ||
+			isTransferringStatusFailed ||
+			transferStatus !== transferStates.COMPLETED ||
+			softwareApplied
 			? null
 			: 3000
 	);
@@ -121,6 +126,22 @@ export default function TransferSite( {
 			}, 500 );
 		}
 	}, [ siteId, softwareApplied, wcAdmin, trackRedirect ] );
+
+	// Timeout threshold for the install to complete.
+	useEffect( () => {
+		if ( transferFailed ) {
+			return;
+		}
+
+		const timeId = setTimeout( () => {
+			setTransferFailed( true );
+			onFailure();
+		}, 1000 * 80 );
+
+		return () => {
+			window?.clearTimeout( timeId );
+		};
+	}, [ onFailure, transferFailed ] );
 
 	return (
 		<>
