@@ -37,7 +37,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			title: translate( 'Start Simple' ),
 			description: (
 				<>
-					<span>{ translate( 'Free' ) }</span>
+					<span className="store-features__requirements">{ translate( 'Free' ) }</span>
 					<span>
 						{ translate(
 							'Ideal if you’re looking to accept donations or sell one or two products without needing to manage shipping.'
@@ -62,9 +62,21 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			title: translate( 'More Power' ),
 			description: (
 				<>
-					{ translate(
-						'If you have multiple products or require extensive order and shipping management than this might suit your needs better.'
-					) }
+					<span className="store-features__requirements">
+						{ translate( 'Requires {{link}}business plan{{/link}} for %(monthlyPrice)s/month', {
+							args: {
+								monthlyPrice: '$49',
+							},
+							components: {
+								link: <button />,
+							},
+						} ) }
+					</span>
+					<span>
+						{ translate(
+							'If you have multiple products or require extensive order and shipping management than this might suit your needs better.'
+						) }
+					</span>
 					<span className="store-features__powered-by">
 						<span className="store-features__image-wrapper">
 							<img src={ wooImage } alt="WooCommerce" />
