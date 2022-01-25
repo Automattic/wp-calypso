@@ -29,8 +29,9 @@ import {
 	areAllUsersValid,
 	getItemsForCart,
 	newUsers,
-	validateAgainstExistingUsers, validateUsers
-} from "calypso/lib/gsuite/new-users";
+	validateAgainstExistingUsers,
+	validateUsers,
+} from 'calypso/lib/gsuite/new-users';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';

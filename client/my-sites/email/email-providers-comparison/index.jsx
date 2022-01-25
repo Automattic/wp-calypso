@@ -43,7 +43,12 @@ import {
 	GOOGLE_PROVIDER_NAME,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from 'calypso/lib/gsuite/constants';
-import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
+import {
+	areAllUsersValid,
+	getItemsForCart,
+	newUsers,
+	validateUsers,
+} from 'calypso/lib/gsuite/new-users';
 import {
 	getTitanProductName,
 	isDomainEligibleForTitanFreeTrial,
@@ -281,9 +286,15 @@ class EmailProvidersComparison extends Component {
 	onGoogleConfirmNewUsers = () => {
 		const { comparisonContext, domain, gSuiteProduct, hasCartDomain, source } = this.props;
 		const { googleUsers } = this.state;
+		const validatedUsers = validateUsers( googleUsers );
 
 		const usersAreValid = areAllUsersValid( googleUsers );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
+
+		this.setState( {
+			validatedMailboxUuids: validatedUsers.map( ( user ) => user.uuid ),
+			googleUsers: validatedUsers,
+		} );
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
 			context: comparisonContext,
@@ -368,6 +379,8 @@ class EmailProvidersComparison extends Component {
 			skipButtonLabel,
 			translate,
 		} = this.props;
+
+		const { validatedMailboxUuids } = this.state;
 
 		// TODO: Improve handling of this case
 		if ( ! isGSuiteSupported ) {
@@ -476,6 +489,7 @@ class EmailProvidersComparison extends Component {
 						selectedDomainName={ selectedDomainName }
 						users={ googleUsers }
 						onReturnKeyPress={ this.onGoogleFormReturnKeyPress }
+						validatedMailboxUuids={ validatedMailboxUuids }
 					>
 						<div className="email-providers-comparison__gsuite-user-list-actions-container">
 							<Button
