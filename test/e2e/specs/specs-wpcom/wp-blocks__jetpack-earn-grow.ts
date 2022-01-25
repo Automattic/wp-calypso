@@ -1,7 +1,7 @@
 /**
  * @group gutenberg
  */
-import { BlockFlow, PayWithPaypalBlockFlow } from '@automattic/calypso-e2e';
+import { BlockFlow, PayWithPaypalBlockFlow, OpenTableFlow } from '@automattic/calypso-e2e';
 import { createBlockTests } from '../specs-playwright/shared-specs/block-testing';
 
 const blockFlows: BlockFlow[] = [
@@ -9,6 +9,9 @@ const blockFlows: BlockFlow[] = [
 		name: 'Test Paypal Block',
 		price: 900,
 		email: 'test@wordpress.com',
+	} ),
+	new OpenTableFlow( {
+		restaurant: 'Miku Restaurant - Vancouver',
 	} ),
 ];
 

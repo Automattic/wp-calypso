@@ -10,10 +10,10 @@ interface ConfigurationData {
 const blockParentSelector = 'div[aria-label="Block: Pay with PayPal"]';
 const selectors = {
 	// Editor
-	name: 'input[placeholder="Item name"]',
-	currency: '.simple-payments__field-currency .components-select-control__input',
-	price: '.simple-payments__field-price .components-text-control__input',
-	email: 'input[placeholder="Email"]',
+	name: `${ blockParentSelector } input[placeholder="Item name"]`,
+	currency: `${ blockParentSelector } .simple-payments__field-currency .components-select-control__input`,
+	price: `${ blockParentSelector } .simple-payments__field-price .components-text-control__input`,
+	email: `${ blockParentSelector } input[placeholder="Email"]`,
 };
 
 /**
