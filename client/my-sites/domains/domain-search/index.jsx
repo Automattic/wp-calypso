@@ -97,24 +97,20 @@ class DomainSearch extends Component {
 			} );
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.checkSiteIsUpgradeable( this.props );
+
+		this.isMounted = true;
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.selectedSiteId !== this.props.selectedSiteId ) {
-			this.checkSiteIsUpgradeable( nextProps );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.selectedSiteId !== this.props.selectedSiteId ) {
+			this.checkSiteIsUpgradeable( this.props );
 		}
 	}
 
 	componentWillUnmount() {
 		this.isMounted = false;
-	}
-
-	componentDidMount() {
-		this.isMounted = true;
 	}
 
 	checkSiteIsUpgradeable( props ) {
