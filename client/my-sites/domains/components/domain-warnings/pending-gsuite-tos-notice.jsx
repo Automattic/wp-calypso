@@ -22,12 +22,10 @@ class PendingGSuiteTosNotice extends PureComponent {
 		domains: PropTypes.array.isRequired,
 		section: PropTypes.string.isRequired,
 		isCompact: PropTypes.bool,
-		showDomainStatusNotice: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isCompact: false,
-		showDomainStatusNotice: false,
 	};
 
 	componentDidMount() {
@@ -102,44 +100,6 @@ class PendingGSuiteTosNotice extends PureComponent {
 					{ this.props.translate( 'Go' ) }
 				</NoticeAction>
 			</Notice>
-		);
-	}
-
-	domainStatusNotice() {
-		const { domains, translate } = this.props;
-		const domainName = domains[ 0 ].name;
-		const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
-		const emails = users.join( ', ' );
-
-		const button = (
-			<PendingGSuiteTosNoticeAction
-				domainName={ domainName }
-				section={ this.props.section }
-				siteSlug={ this.props.siteSlug }
-				user={ users[ 0 ] }
-				isCompact={ false }
-				cta={ translate( 'Finish Setup' ) }
-			/>
-		);
-
-		return (
-			<>
-				<p>
-					{ translate(
-						'Your new user {{strong}}%(emails)s{{/strong}} is ready! Complete the setup to activate it.',
-						'Your new users {{strong}}%(emails)s{{/strong}} are ready! Complete the setup to activate them.',
-						{
-							count: users.length,
-							args: { emails },
-							comment:
-								"%(emails)s is a list of email addresses separated by commas (e.g. 'one@example.com, two@example.com')",
-							components: { strong },
-						}
-					) }
-				</p>
-
-				{ button }
-			</>
 		);
 	}
 
@@ -219,10 +179,6 @@ class PendingGSuiteTosNotice extends PureComponent {
 	}
 
 	render() {
-		if ( this.props.showDomainStatusNotice ) {
-			return this.domainStatusNotice();
-		}
-
 		if ( this.props.isCompact ) {
 			return this.compactNotice();
 		}
