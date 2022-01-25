@@ -48,7 +48,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 							<img src={ paymentBlocksImage } alt="Payment Blocks" />
 						</span>
 						<span>
-							Powered by <button>Payment Blocks</button>
+							{ translate( 'Powered by' ) } <button>Payment Blocks</button>
 						</span>
 					</span>
 				</>
@@ -82,7 +82,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 							<img src={ wooImage } alt="WooCommerce" />
 						</span>
 						<span>
-							Powered by <button>WooCommerce</button>
+							{ translate( 'Powered by' ) } <button>WooCommerce</button>
 						</span>
 					</span>
 				</>
