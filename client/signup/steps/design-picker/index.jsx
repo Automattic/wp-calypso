@@ -64,7 +64,10 @@ export default function DesignPickerStep( props ) {
 
 	// Limit themes to those that support the Site editor, if site is fse eligible
 	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
-	const { data: blockEditorSettings } = useBlockEditorSettingsQuery( siteId, userLoggedIn );
+	const {
+		isLoading: blockEditorSettingsAreLoading,
+		data: blockEditorSettings,
+	} = useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
 	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
 	const themeFilters = isFSEEligible
 		? 'auto-loading-homepage,block-templates'
@@ -75,9 +78,9 @@ export default function DesignPickerStep( props ) {
 			filter: themeFilters,
 			tier: isPremiumThemesAvailable ? 'all' : 'free',
 		},
-		{ enabled: ! props.useDIFMThemes }
+		// Wait until block editor settings have loaded to load themes
+		{ enabled: ! props.useDIFMThemes && ! blockEditorSettingsAreLoading }
 	);
-
 	const allThemes = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
 	useEffect(
