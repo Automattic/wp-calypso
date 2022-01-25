@@ -29,8 +29,8 @@ import {
 	areAllUsersValid,
 	getItemsForCart,
 	newUsers,
-	validateAgainstExistingUsers,
-} from 'calypso/lib/gsuite/new-users';
+	validateAgainstExistingUsers, validateUsers
+} from "calypso/lib/gsuite/new-users";
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
@@ -46,8 +46,8 @@ import './style.scss';
 
 class GSuiteAddUsers extends Component {
 	state = {
-		showAllErrors: false,
 		users: [],
+		validatedMailboxUuids: [],
 	};
 
 	isMounted = false;
@@ -60,8 +60,9 @@ class GSuiteAddUsers extends Component {
 			const domainName = getEligibleGSuiteDomain( selectedDomainName, domains );
 
 			if ( '' !== domainName ) {
+				const newUser = newUsers( domainName );
 				return {
-					users: newUsers( domainName ),
+					users: newUser,
 				};
 			}
 		}
@@ -72,10 +73,12 @@ class GSuiteAddUsers extends Component {
 	handleContinue = () => {
 		const { domains, productType, selectedSite } = this.props;
 		const { users } = this.state;
+		const validatedUsers = validateUsers( users );
 		const canContinue = areAllUsersValid( users );
 
 		this.setState( {
-			showAllErrors: true,
+			validatedMailboxUuids: validatedUsers.map( ( user ) => user.uuid ),
+			users: validatedUsers,
 		} );
 
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
@@ -185,7 +188,7 @@ class GSuiteAddUsers extends Component {
 			userCanPurchaseGSuite,
 		} = this.props;
 
-		const { users, showAllErrors } = this.state;
+		const { users, validatedMailboxUuids } = this.state;
 
 		const selectedDomainInfo = getGSuiteSupportedDomains( domains ).filter(
 			( { domainName } ) => selectedDomainName === domainName
@@ -204,12 +207,12 @@ class GSuiteAddUsers extends Component {
 						<GSuiteNewUserList
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							extraValidation={ ( user ) => validateAgainstExistingUsers( user, gsuiteUsers ) }
-							showAllErrors={ showAllErrors }
 							domains={ selectedDomainInfo }
+							onReturnKeyPress={ this.handleReturnKeyPress }
 							onUsersChange={ this.handleUsersChange }
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
 							users={ users }
-							onReturnKeyPress={ this.handleReturnKeyPress }
+							validatedMailboxUuids={ validatedMailboxUuids }
 						>
 							<div className="gsuite-add-users__buttons">
 								<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>

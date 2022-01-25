@@ -1,12 +1,13 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, FunctionComponent, ReactNode, useState } from 'react';
+import { Fragment, FunctionComponent, ReactNode } from 'react';
 import {
 	newUser,
 	GSuiteNewUser as NewUser,
 	sanitizeEmail,
 	validateUsers,
 } from 'calypso/lib/gsuite/new-users';
+import GSuiteNewUser from './new-user';
 import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
 import './style.scss';
@@ -21,6 +22,7 @@ interface GSuiteNewUserListProps {
 	onUsersChange: ( users: NewUser[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	users: NewUser[];
+	validatedMailboxUuids?: string[];
 }
 
 const GSuiteNewUserList: FunctionComponent< GSuiteNewUserListProps > = ( {
@@ -32,10 +34,10 @@ const GSuiteNewUserList: FunctionComponent< GSuiteNewUserListProps > = ( {
 	onReturnKeyPress,
 	selectedDomainName,
 	showAddAnotherMailboxButton = true,
-	users,
+	users = [],
+	validatedMailboxUuids = [],
 } ) => {
 	const translate = useTranslate();
-	const [ validatedMailboxUuids, setValidatedMailboxUuids ] = useState< string[] >( [] );
 
 	const onUserValueChange = ( uuid: string ) => (
 		fieldName: string,
@@ -55,7 +57,6 @@ const GSuiteNewUserList: FunctionComponent< GSuiteNewUserListProps > = ( {
 
 			return changedUser;
 		} );
-		setValidatedMailboxUuids( changedUsers.map( ( changedUser ) => changedUser.uuid ) );
 		onUsersChange( validateUsers( changedUsers, extraValidation ) );
 	};
 
