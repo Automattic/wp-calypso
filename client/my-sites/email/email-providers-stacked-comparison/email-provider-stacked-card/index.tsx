@@ -16,7 +16,7 @@ import './style.scss';
 const noop = () => {};
 
 const EmailProvidersStackedCard = ( {
-	children,
+	appLogos = [],
 	className,
 	description,
 	detailsExpanded,
@@ -25,7 +25,6 @@ const EmailProvidersStackedCard = ( {
 	footerBadge,
 	formFields,
 	logo,
-	appLogos = [],
 	onExpandedChange = noop,
 	priceBadge = null,
 	productName,
@@ -99,8 +98,6 @@ const EmailProvidersStackedCard = ( {
 					) }
 				</div>
 			</div>
-
-			{ children }
 		</PromoCard>
 	);
 };
