@@ -43,7 +43,8 @@ export default function PostCheckoutUpsellExperimentRedirector( {
 			return;
 		}
 
-		if ( upsellExperimentAssignmentName === experimentAssignment?.variationName ) {
+		if ( true ) {
+		// if ( upsellExperimentAssignmentName === experimentAssignment?.variationName ) {
 			page( upsellUrl );
 
 			return;
