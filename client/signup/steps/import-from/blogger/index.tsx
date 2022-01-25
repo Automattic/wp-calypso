@@ -27,9 +27,6 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 		startImport,
 		resetImport,
 	} = props;
-	const importerData = importerConfig().blogger;
-
-	populateMessages();
 
 	/**
 	 * Effects
@@ -62,20 +59,9 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 		};
 	}
 
-	function checkProgress() {
-		return job?.importerState === appStates.IMPORTING;
-	}
+	function getImportDragConfig() {
+		const importerData = importerConfig()[ importer ];
 
-	function checkIsSuccess() {
-		return job?.importerState === appStates.IMPORT_SUCCESS;
-	}
-
-	function showVideoComponent() {
-		return checkProgress() || checkIsSuccess();
-	}
-
-	// Change the default messages
-	function populateMessages() {
 		const options: TranslateOptions = {
 			args: {
 				importerName: 'Blogger',
@@ -98,6 +84,20 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
 			options
 		);
+
+		return importerData;
+	}
+
+	function checkProgress() {
+		return job?.importerState === appStates.IMPORTING;
+	}
+
+	function checkIsSuccess() {
+		return job?.importerState === appStates.IMPORT_SUCCESS;
+	}
+
+	function showVideoComponent() {
+		return checkProgress() || checkIsSuccess();
 	}
 
 	return (
@@ -132,7 +132,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 						<ImporterDrag
 							urlData={ urlData }
 							site={ site }
-							importerData={ importerData }
+							importerData={ getImportDragConfig() }
 							importerStatus={ job }
 						/>
 					);
