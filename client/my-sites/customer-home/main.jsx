@@ -73,8 +73,12 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 				<SiteIcon site={ site } size={ 58 } />
 				<div className="customer-home__site-info">
 					<div className="customer-home__site-title">{ site.name }</div>
-					<ExternalLink href={ site.URL } className="customer-home__site-domain">
-						{ site.domain }
+					<ExternalLink
+						href={ site.URL }
+						className="customer-home__site-domain"
+						onClick={ trackViewSiteAction }
+					>
+						<span className="customer-home__site-domain-text">{ site.domain }</span>
 					</ExternalLink>
 				</div>
 			</div>

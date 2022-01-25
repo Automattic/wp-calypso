@@ -20,7 +20,6 @@ body.is-section-home.theme-default.color-scheme {
 
 	.customer-home__site-content {
 		display: flex;
-		flex-wrap: wrap;
 		padding: 0 16px 16px;
 
 		@include breakpoint-deprecated( '>660px' ) {
@@ -33,14 +32,27 @@ body.is-section-home.theme-default.color-scheme {
 		border: 1px solid var( --studio-gray-5 );
 		box-sizing: border-box;
 		border-radius: 4px;
-		width: 32px;
+		max-width: 58px;
 		height: auto;
 		margin-bottom: 8px;
+		flex: 1 0 auto;
+	}
 
-		@include break-small {
-			width: 58px;
-			height: auto;
+	.customer-home__site-domain {
+		display: flex;
+		flex-direction: row;
+
+		.customer-home__site-domain-text {
+			white-space: nowrap;
+    		overflow: hidden;
+    		text-overflow: ellipsis;
+			width: calc( 100vw - 120px );
+			max-width: fit-content;
 		}
+	}
+
+	.components-external-link__icon {
+		margin-top: 1px;
 	}
 
 	.customer-home__site-title {
