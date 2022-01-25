@@ -5,12 +5,22 @@ import tracksRecordEvent from './track-record-event';
  *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
-export default () => ( {
+export const wpcomBlockEditorSaveClick = () => ( {
 	id: 'wpcom-block-editor-save-click',
 	// The first selector is for site editing. The second is for post editing.
 	selector:
-		'.editor-entities-saved-states__save-button, .editor-post-publish-button:not(.has-changes-dot), .editor-post-save-draft',
+		'.editor-entities-saved-states__save-button, .editor-post-publish-button:not(.has-changes-dot)',
 	type: 'click',
+	handler: () => {
+		tracksRecordEvent( 'wpcom_block_editor_save_click' );
+	},
+} );
+
+export const wpcomBlockEditorSaveDraftClick = () => ( {
+	id: 'wpcom-block-editor-save-click',
+	selector: '.editor-post-save-draft',
+	type: 'click',
+	capture: true,
 	handler: () => {
 		tracksRecordEvent( 'wpcom_block_editor_save_click' );
 	},
