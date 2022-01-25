@@ -41,8 +41,18 @@ translate(
 );
 
 // Tell us about your business
-translate( 'Tell us a bit about your business' );
-translate( 'What type of products will be listed?' );
-translate( 'How many products do you want to sell?' );
-translate( 'Are you already selling?' );
-translate( '(optional)' );
+translate( 'What type of products will be listed? {{span}}(optional){{/span}}', {
+	components: {
+		span: <span />,
+	},
+} );
+translate( 'How many products do you want to sell? {{span}}(optional){{/span}}', {
+	components: {
+		span: <span />,
+	},
+} );
+translate( 'Are you already selling? {{span}}(optional){{/span}}', {
+	components: {
+		span: <span />,
+	},
+} );
