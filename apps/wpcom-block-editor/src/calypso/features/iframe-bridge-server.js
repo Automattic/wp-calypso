@@ -42,7 +42,7 @@ function addEditorListener( selector, cb ) {
 	clickOverrides[ selector ] = cb;
 
 	if ( ! addedListener ) {
-		document.querySelector( '#editor' )?.addEventListener( 'click', handleClosestEvent );
+		document.querySelector( '#editor' )?.addEventListener( 'click', triggerOverrideHandler );
 		addedListener = true;
 	}
 }
@@ -52,7 +52,7 @@ function addEditorListener( selector, cb ) {
 // from the DOM dynamically after the listeners are created. We need to handle
 // clicks anyways, so directly accessing the elements and adding listeners to them
 // is not viable.
-function handleClosestEvent( e ) {
+function triggerOverrideHandler( e ) {
 	const allSelectors = Object.keys( clickOverrides ).join( ', ' );
 	const matchingElement = e.target.closest( allSelectors );
 
