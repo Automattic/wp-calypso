@@ -7,7 +7,10 @@ import {
 	TextInputField,
 	SocialMediaProfiles,
 } from 'calypso/signup/accordion-form/form-components';
-import { AccordionSectionProps, useSectionReturnType } from 'calypso/signup/accordion-form/types';
+import {
+	AccordionSectionProps,
+	sectionGeneratorReturnType,
+} from 'calypso/signup/accordion-form/types';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
@@ -29,13 +32,13 @@ interface SiteInformationCollectionProps {
 	goToNextStep: () => void;
 }
 
-function useSections() {
+function sectionGenerator() {
 	return ( {
 		translate,
 		formValues,
 		formErrors,
 		onChangeField,
-	}: useSectionReturnType< SiteInfoCollectionData > ) => {
+	}: sectionGeneratorReturnType< SiteInfoCollectionData > ) => {
 		const sections: AccordionSectionProps< SiteInfoCollectionData >[] = [
 			{
 				title: translate( '%d. Name of your business', {
@@ -170,7 +173,7 @@ function SiteInformationCollection( {
 
 	return (
 		<AccordionForm
-			useSections={ useSections }
+			sectionGenerator={ sectionGenerator }
 			formValuesInitialState={ siteInfoCollectionDataFromStore }
 			currentIndex={ currentIndex }
 			updateCurrentIndex={ ( index ) => {

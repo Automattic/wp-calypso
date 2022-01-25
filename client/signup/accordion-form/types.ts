@@ -17,7 +17,7 @@ export interface AccordionSectionProps< T > {
 	summary: string | undefined;
 	validate?: ValidatorFunction< T >;
 }
-export interface useSectionReturnType< T > {
+export interface sectionGeneratorReturnType< T > {
 	translate: ReturnType< typeof useTranslate >;
 	formValues: T;
 	formErrors: ValidationErrors;

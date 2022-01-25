@@ -3,13 +3,15 @@ import { ChangeEvent, useState } from 'react';
 import AccordionFormSection from './accordion-form-section';
 import {
 	AccordionSectionProps,
-	useSectionReturnType,
+	sectionGeneratorReturnType,
 	ValidationErrors,
 	ValidatorFunction,
 } from './types';
 
 interface AccordionFormProps< T > {
-	useSections: () => ( props: useSectionReturnType< T > ) => AccordionSectionProps< T >[];
+	sectionGenerator: () => (
+		props: sectionGeneratorReturnType< T >
+	) => AccordionSectionProps< T >[];
 	currentIndex: number;
 	updateCurrentIndex: ( index: number ) => void;
 	onSubmit: ( formValues: T ) => void;
@@ -22,7 +24,7 @@ export default function AccordionForm< T >( {
 	updateCurrentIndex,
 	updateFormValues,
 	formValuesInitialState,
-	useSections,
+	sectionGenerator,
 	onSubmit,
 }: AccordionFormProps< T > ) {
 	const translate = useTranslate();
@@ -46,7 +48,7 @@ export default function AccordionForm< T >( {
 		Record< string, boolean >
 	>( isSectionAtIndexTouchedInitialState );
 
-	const sections = useSections()( { translate, formValues, formErrors, onChangeField } );
+	const sections = sectionGenerator()( { translate, formValues, formErrors, onChangeField } );
 
 	const runValidatorAndSetFormErrors = ( validator: ValidatorFunction< T > ) => {
 		const validationResult = validator( formValues );
