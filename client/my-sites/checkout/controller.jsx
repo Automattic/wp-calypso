@@ -14,7 +14,7 @@ import LicensingThankYouManualActivation from 'calypso/my-sites/checkout/checkou
 import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
 import LicensingThankYouManualActivationLicenseKey from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-license-key';
 import PostCheckoutUpsellExperimentRedirector, {
-	PROFESSIONAL_EMAIL_OFFER,
+	PROFESSIONAL_EMAIL_UPSELL_SLUG,
 } from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import { sites } from 'calypso/my-sites/controller';
 import {
@@ -298,7 +298,7 @@ export function upsellRedirect( context, next ) {
 	let upsellExperimentAssignmentName;
 	let upsellUrl;
 
-	if ( PROFESSIONAL_EMAIL_OFFER === upsellType ) {
+	if ( PROFESSIONAL_EMAIL_UPSELL_SLUG === upsellType ) {
 		upsellExperimentName = 'promote_professional_email_post_checkout_2021_10';
 		upsellExperimentAssignmentName = 'treatment';
 		upsellUrl = `/checkout/offer-professional-email/${ upsellMeta }/${ receiptId }/${ site }`;

@@ -895,7 +895,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer/professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -917,7 +917,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer/professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -939,7 +939,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer/professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -961,7 +961,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer/professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -987,7 +987,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer/professional-email-offer/domain-from-cart.com/1234abcd/foo.bar'
+				'/checkout/offer/professional-email/domain-from-cart.com/1234abcd/foo.bar'
 			);
 		} );
 
