@@ -12,7 +12,8 @@ export type ValidatorFunction< T > = ( formValues: T ) => ValidationResult;
 
 export interface AccordionSectionProps< T > {
 	title: TranslateResult;
-	component: ReactNode;
+	component?: ReactNode;
+	children?: ReactNode;
 	showSkip: boolean;
 	summary: string | undefined;
 	validate?: ValidatorFunction< T >;
