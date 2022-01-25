@@ -14,6 +14,8 @@ import {
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -166,6 +168,8 @@ export default connect(
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isVip = isVipSite( state, siteId );
+		const isP2 = isSiteWPForTeams( state, siteId );
+		const isP2Hub = isSiteP2Hub( state, siteId );
 		const rewindState = getRewindState( state, siteId );
 		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
@@ -176,10 +180,11 @@ export default connect(
 			siteSlug,
 			purchasesError: getPurchasesError( state ),
 			cloneUrl,
-			showChangeAddress: ! isJetpack && ! isVip,
+			showChangeAddress: ! isJetpack && ! isVip && ! isP2,
 			showClone: 'active' === rewindState.state && ! isAtomic,
-			showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
-			showDeleteContent: ! isJetpack && ! isVip,
+			showThemeSetup:
+				config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip && ! isP2,
+			showDeleteContent: ! isJetpack && ! isVip && ! isP2Hub,
 			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 			showManageConnection: isJetpack && ! isAtomic,
 			siteId,
