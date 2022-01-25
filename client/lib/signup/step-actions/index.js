@@ -43,9 +43,9 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
-const isUserAssignedFSEBeta = ( userId ) => {
-	const fse_beta_rollout_percentage_start_flow = 10;
+const FSE_BETA_ROLLOUT_PERCENTAGE_START_FLOW = 10;
 
+const isUserAssignedFSEBeta = ( userId ) => {
 	if ( ! userId ) {
 		return false;
 	}
@@ -56,7 +56,7 @@ const isUserAssignedFSEBeta = ( userId ) => {
 	}
 
 	// Check if the user ID is part of the eligible percentage.
-	return userId % 100 < fse_beta_rollout_percentage_start_flow;
+	return userId % 100 < FSE_BETA_ROLLOUT_PERCENTAGE_START_FLOW;
 };
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
