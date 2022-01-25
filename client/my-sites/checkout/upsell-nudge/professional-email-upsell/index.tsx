@@ -23,6 +23,7 @@ import type { ChangeEvent } from 'react';
 
 import './style.scss';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noopWithCallback = ( cartItem: MinimalRequestCartProduct, callback = () => {} ) => {
 	callback();
 };
@@ -30,7 +31,7 @@ const noopWithCallback = ( cartItem: MinimalRequestCartProduct, callback = () =>
 const ProfessionalEmailFeature = ( { children }: { children: TranslateResult } ) => {
 	return (
 		<li>
-			<Gridicon icon="checkmark" size={18} />
+			<Gridicon icon="checkmark" size={ 18 } />
 			<span>{ children }</span>
 		</li>
 	);
@@ -158,7 +159,7 @@ const ProfessionalEmailUpsell = ( {
 							<FormTextInputWithAffixes
 								value={ mailboxData.mailbox.value }
 								isError={ hasMailboxError }
-								onChange={ ( event: ChangeEvent<HTMLInputElement> ) => {
+								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
 									onMailboxValueChange( 'mailbox', event.target.value.toLowerCase() );
 								} }
 								onBlur={ () => {
@@ -180,7 +181,7 @@ const ProfessionalEmailUpsell = ( {
 								value={ mailboxData.password.value }
 								maxLength={ 100 }
 								isError={ hasPasswordError }
-								onChange={ ( event: ChangeEvent<HTMLInputElement> ) => {
+								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
 									onMailboxValueChange( 'password', event.target.value );
 								} }
 								onBlur={ () => {
