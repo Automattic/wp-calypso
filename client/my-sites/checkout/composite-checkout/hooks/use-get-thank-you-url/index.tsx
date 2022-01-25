@@ -29,7 +29,7 @@ export default function useGetThankYouUrl( {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( cart );
+	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination();
 
 	const getThankYouUrl = useCallback( () => {
 		debug( 'for getThankYouUrl, transactionResult is', transactionResult );

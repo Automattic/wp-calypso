@@ -615,7 +615,7 @@ export default connect(
 			siteSlug,
 			selectedSiteId,
 			hasSevenDayRefundPeriod: isMonthly( planSlug ),
-			isEligibleForSignupDestinationResult: isEligibleForSignupDestination( props.cart ),
+			isEligibleForSignupDestinationResult: isEligibleForSignupDestination(),
 			pricePerMonthForMonthlyPlan,
 			pricePerMonthForAnnualPlan,
 			annualPlanSlug,

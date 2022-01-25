@@ -21,7 +21,7 @@ export default function PostCheckoutUpsellExperimentRedirector( {
 	upsellExperimentName,
 	upsellUrl,
 }: PostCheckoutUpsellRedirectorProps ): null {
-	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( {} );
+	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination();
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		upsellExperimentName
