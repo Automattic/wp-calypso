@@ -1,23 +1,28 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.p2-join-sites__site-list {
+	margin-bottom: 2rem;
+}
+
 .p2-join-sites__site {
 	display: grid;
-	grid-template-columns: min-content auto;
+	grid-template-columns: min-content auto min-content;
 	grid-template-rows: 1fr 1fr;
 	column-gap: 18px;
 	padding: 14px;
-	border-top: 1px solid var( --p2-color-separator-light );
+	border-top: 1px solid var( --p2-color-border-light );
 
 	&:last-of-type {
-		border-bottom: 1px solid var( --p2-color-separator-light );
+		border-bottom: 1px solid var( --p2-color-border-light );
 	}
 }
 
 .p2-join-sites__site-icon {
 	height: 60px;
 	width: 60px;
-	grid-row: span 2;
+	grid-area: 1 / 1 / span 2 / span 1;
+	align-self: center;
 }
 
 .p2-join-sites__site-icon-placeholder {
@@ -34,16 +39,17 @@
 }
 
 .p2-join-sites__site-name {
-	font-weight: 700;
+	font-weight: 600;
 	padding-top: 0.5em;
+	grid-area: 1 / 2;
 }
 
 .p2-join-sites__site-details {
-	grid-column: 2;
+	grid-area: 2 / 2;
 	display: flex;
 	font-size: 0.875rem;
 	color: var( --p2-color-text-light );
-	line-height: 0.9;
+	line-height: 1.2;
 
 	> div:not( :first-child ) {
 		padding-left: 1em;
@@ -53,4 +59,45 @@
 		content: '\00B7';
 		padding-left: 1em;
 	}
+}
+
+.p2-join-sites__action {
+	grid-area: 1 / 3 / span 2 / span 1;
+	align-self: center;
+}
+
+.p2-join-sites__action button.p2-join-sites__join {
+	padding: 5px 20px;
+	font-size: var( --p2-font-size-form-xxs );
+	margin-bottom: 0;
+}
+
+.p2-join-sites__create {
+	background: var( --p2-color-background-very-light );
+	display: grid;
+	grid-template-columns: auto min-content;
+	grid-template-rows: 1fr 1fr;
+	padding: 16px 24px;
+	border-radius: 2px;
+}
+
+.p2-join-sites__create-header {
+	font-weight: 700;
+	grid-area: 1 / 1;
+}
+
+.p2-join-sites__create-subheader {
+	font-size: 0.875rem;
+	grid-area: 2 / 1;
+}
+
+.p2-join-sites__create-action {
+	grid-area: 1 / 2 / span 2 / span 1;
+	align-self: center;
+}
+
+.p2-join-sites__create-action button.p2-join-sites__create-button {
+	padding: 8px 24px;
+	font-size: var( --p2-font-size-form-xxs );
+	margin-bottom: 0;
 }

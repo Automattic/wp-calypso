@@ -1,17 +1,48 @@
+import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import './style.scss';
 
-function P2JoinSites( { flowName, positionInFlow, stepName } ) {
+function P2JoinSites( { flowName, goToNextStep, positionInFlow, stepName, submitSignupStep } ) {
 	const translate = useTranslate();
 
-	/* TODO
 	const handleCreateSiteClick = () => {
 		submitSignupStep( { stepName } );
 
 		goToNextStep();
 	};
-	*/
+
+	/**
+	 * TODO This list of sites that the user can join on their own will come from
+	 * an endpoint that, in turn, queries a database table that stores
+	 * workspace-to-email domain mappings.
+	 *
+	 * e.g.
+	 * (site id:int, email domain:string, ...)
+	 * 188873359, 'automattic.com',...
+	 * 188873359, 'a8c.com',...
+	 */
+
+	// As proof-of-concept, we hardcode this for now.
+	const sitesUserCanJoin = [
+		{
+			site_id: 189762656,
+			url: 'https://lighthouseworkspacehub.wordpress.com/',
+			name: 'Private Lighthouse',
+			user_count: 54,
+			p2_count: 8,
+			is_member: false,
+		},
+		{
+			siteId: 192942363,
+			url: 'https://annemirasolp2testhub.wordpress.com/',
+			name: "Anne's Test Hub",
+			user_count: 1,
+			p2_count: 8,
+			is_member: false,
+		},
+	];
+	/** END TODO */
 
 	const renderSiteIconImage = ( siteIconURL ) => {
 		return (
@@ -62,42 +93,42 @@ function P2JoinSites( { flowName, positionInFlow, stepName } ) {
 						} ) }
 					</div>
 				</div>
+				<div className="p2-join-sites__action">
+					<Button className="p2-join-sites__join">{ translate( 'Join' ) }</Button>
+				</div>
 			</div>
 		);
 	};
 
-	/**
-	 * TODO This list of sites that the user can join on their own will come from
-	 * an endpoint that, in turn, queries a database table that stores
-	 * workspace-to-email domain mappings,
-	 *
-	 * e.g.
-	 * (site id:int, email domain:string, ...)
-	 * 188873359, 'automattic.com',...
-	 * 188873359, 'a8c.com',...
-	 */
+	const renderOptionJoinSites = () => {
+		return (
+			<div className="p2-join-sites__site-list">
+				{ sitesUserCanJoin.map( ( site, index ) => renderSite( site, index ) ) }
+			</div>
+		);
+	};
 
-	// As proof-of-concept, we hardcode this for now.
-	const sitesUserCanJoin = [
-		{
-			site_id: 189762656,
-			url: 'https://lighthouseworkspacehub.wordpress.com/',
-			name: 'Private Lighthouse',
-			user_count: 54,
-			p2_count: 8,
-			is_member: false,
-		},
-		{
-			siteId: 192942363,
-			url: 'https://annemirasolp2testhub.wordpress.com/',
-			name: "Anne's Test Hub",
-			user_count: 1,
-			p2_count: 8,
-			is_member: false,
-		},
-	];
-
-	/** END TODO */
+	const renderOptionCreateSite = () => {
+		return (
+			<div className="p2-join-sites__create">
+				<div className="p2-join-sites__create-header">
+					{ translate( 'Want to create a new one?' ) }
+				</div>
+				<div className="p2-join-sites__create-subheader">
+					{ translate( 'Get another team on P2 — for free.' ) }
+				</div>
+				<div className="p2-join-sites__create-action">
+					<Button
+						className="p2-join-sites__create-button"
+						isPrimary={ true }
+						onClick={ handleCreateSiteClick }
+					>
+						{ translate( 'Create a new workspace' ) }
+					</Button>
+				</div>
+			</div>
+		);
+	};
 
 	return (
 		<P2StepWrapper
@@ -112,9 +143,8 @@ function P2JoinSites( { flowName, positionInFlow, stepName } ) {
 			}
 		>
 			<div className="p2-join-sites">
-				<div className="p2-join-sites__site-list">
-					{ sitesUserCanJoin.map( ( site, index ) => renderSite( site, index ) ) }
-				</div>
+				{ sitesUserCanJoin.length > 0 && renderOptionJoinSites() }
+				{ renderOptionCreateSite() }
 			</div>
 		</P2StepWrapper>
 	);

@@ -104,7 +104,7 @@
 		}
 	}
 
-	.signup__step.is-p-2-join-sites {
+	.signup__step.is-p-2-get-started {
 		.p2-step-wrapper {
 			@include break-mobile {
 				padding-left: 20px;
@@ -119,7 +119,7 @@
 			@include break-mobile {
 				padding-left: 20px;
 				padding-right: 20px;
-				max-width: 500px;
+				max-width: 700px;
 			}
 		}
 	}
