@@ -308,6 +308,10 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		return;
 	}
 
+	if ( newSiteParams.options.enable_fse ) {
+		recordTracksEvent( 'calypso_fse_enrolled', { flow: flowToCheck } );
+	}
+
 	const locale = getLocaleSlug();
 
 	wpcom.req.post(
