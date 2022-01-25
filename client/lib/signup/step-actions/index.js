@@ -308,9 +308,10 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		return;
 	}
 
-	if ( newSiteParams.options.enable_fse ) {
-		recordTracksEvent( 'calypso_fse_enrolled', { flow: flowToCheck } );
-	}
+	recordTracksEvent( 'calypso_fse_enrolled', {
+		flow: flowToCheck,
+		site_enrolled: !! newSiteParams.options.enable_fse,
+	} );
 
 	const locale = getLocaleSlug();
 
