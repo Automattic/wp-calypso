@@ -1,4 +1,4 @@
-import { Title, SubTitle, NextButton } from '@automattic/onboarding';
+import { Title, SubTitle, NextButton, Notice } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -17,6 +17,7 @@ interface Props {
 	sourceUrlAnalyzedData: UrlData;
 	targetSite: SitesItem | null;
 	targetSiteSlug: string;
+	isTargetSitePlanCompatible: boolean;
 	startImport: () => void;
 }
 
@@ -26,7 +27,14 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Fields
 	 */
-	const { sourceSiteUrl, sourceUrlAnalyzedData, targetSite, targetSiteSlug, startImport } = props;
+	const {
+		sourceSiteUrl,
+		sourceUrlAnalyzedData,
+		targetSite,
+		targetSiteSlug,
+		isTargetSitePlanCompatible,
+		startImport,
+	} = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 
 	return (
@@ -97,9 +105,18 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 					) }
 				</SubTitle>
 
-				<NextButton onClick={ () => setIsModalDetailsOpen( true ) }>
-					{ __( 'Start import' ) }
-				</NextButton>
+				{ ! isTargetSitePlanCompatible && (
+					<>
+						<Notice>{ __( 'You need to upgrade your account to import everything.' ) }</Notice>
+						<NextButton onClick={ startImport }>{ __( 'See plans' ) }</NextButton>
+					</>
+				) }
+
+				{ isTargetSitePlanCompatible && (
+					<NextButton onClick={ () => setIsModalDetailsOpen( true ) }>
+						{ __( 'Start import' ) }
+					</NextButton>
+				) }
 			</div>
 
 			{ isModalDetailsOpen && (

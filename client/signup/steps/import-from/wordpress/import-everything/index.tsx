@@ -13,16 +13,19 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveSite, requestSite, updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import DoneButton from '../../components/done-button';
 import NotAuthorized from '../../components/not-authorized';
+import { isTargetSitePlanCompatible } from '../../util';
 import { MigrationStatus, WPImportOption } from '../types';
 import { Confirm } from './confirm';
 
 interface Props {
 	sourceSiteId: number | null;
+	targetSite: SitesItem;
 	targetSiteId: number | null;
 	targetSiteSlug: string;
 }
@@ -100,12 +103,19 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	renderMigrationConfirm() {
-		const { sourceSite, targetSite, targetSiteSlug, sourceUrlAnalyzedData } = this.props;
+		const {
+			sourceSite,
+			targetSite,
+			targetSiteSlug,
+			sourceUrlAnalyzedData,
+			isTargetSitePlanCompatible,
+		} = this.props;
 
 		if ( sourceSite ) {
 			return (
 				<Confirm
 					startImport={ this.startMigration }
+					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
 					targetSite={ targetSite }
 					targetSiteSlug={ targetSiteSlug }
 					sourceSite={ sourceSite }
@@ -208,6 +218,7 @@ export const connector = connect(
 		return {
 			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, ownProps.targetSiteId as number ),
 			isTargetSiteJetpack: !! isJetpackSite( state, ownProps.targetSiteId as number ),
+			isTargetSitePlanCompatible: !! isTargetSitePlanCompatible( ownProps.targetSite as SitesItem ),
 			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
 			startMigration: !! get( getCurrentQueryArguments( state ), 'start', false ),
 			sourceSiteHasJetpack: false,
