@@ -1,13 +1,14 @@
-.site-or-domain__choices {
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: center;
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
 
-	.select-items {
-		border-radius: 4px;
-		border: solid 1px #eee;
-		padding-left: 60px;
-		padding-right: 20px;
+.site-or-domain__choices {
+	display: flex-start;
+	flex-flow: row wrap;
+	justify-content: flex-start;
+	.select-items__item-description {
+		strong {
+			color: var( --studio-green-60 );
+		}
 	}
 }
 
@@ -94,15 +95,13 @@
 	@include placeholder( --color-neutral-10 );
 }
 
-.site-or-domain__free-domain-badge {
+.site-or-domain__free-domain-note {
 	display: flex;
-	background-color: var( --studio-green-0 );
-	color: var( --studio-green-70 );
-	margin-bottom: 10px;
-	padding: 8px 16px;
+	color: var( --studio-gray-50 );
 	font-size: $font-body-small;
-	font-weight: 500;
-	border-radius: 4px 4px 0 0;
+	@include break-small {
+		padding-left: 60px;
+	}
 }
 
 body.is-white-signup {

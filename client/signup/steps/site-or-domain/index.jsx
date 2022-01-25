@@ -69,32 +69,33 @@ class SiteOrDomain extends Component {
 		return choices;
 	}
 
-	getDomainOnlyChoice() {
-		const { translate } = this.props;
+	getChoicesReskinned() {
+		const { translate, isLoggedIn } = this.props;
 
-		return [
+		const choices = [
 			{
 				key: 'domain',
 				title: translate( 'Just buy a domain' ),
 				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
 				icon: globe,
 				value: 'domain',
-				actionText: translate( 'Select' ),
+				actionText: translate( 'Get domain' ),
 			},
-		];
-	}
-
-	getAddSiteChoices() {
-		const { translate, isLoggedIn } = this.props;
-
-		const choices = [
 			{
 				key: 'page',
 				title: translate( 'New site' ),
-				description: translate( 'Choose a theme, customize and launch your site.' ),
+				description: translate(
+					'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
+					{
+						components: {
+							strong: <strong />,
+							br: <br />,
+						},
+					}
+				),
 				icon: addCard,
 				value: 'page',
-				actionText: translate( 'Select' ),
+				actionText: translate( 'Start site' ),
 			},
 		];
 
@@ -102,10 +103,18 @@ class SiteOrDomain extends Component {
 			choices.push( {
 				key: 'existing-site',
 				title: translate( 'Existing WordPress.com site' ),
-				description: translate( 'Use with a site you already started.' ),
+				description: translate(
+					'Use with a site you already started.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
+					{
+						components: {
+							strong: <strong />,
+							br: <br />,
+						},
+					}
+				),
 				icon: layout,
 				value: 'existing-site',
-				actionText: translate( 'Select' ),
+				actionText: translate( 'Choose site' ),
 			} );
 		}
 
@@ -119,13 +128,10 @@ class SiteOrDomain extends Component {
 			return (
 				<div className="site-or-domain__choices">
 					<div>
-						<SelectItems items={ this.getDomainOnlyChoice() } onSelect={ this.handleClickChoice } />
+						<SelectItems items={ this.getChoicesReskinned() } onSelect={ this.handleClickChoice } />
 					</div>
-					<div>
-						<div className="site-or-domain__free-domain-badge">
-							{ translate( 'A free domain for one year is included with all paid annual plans.' ) }
-						</div>
-						<SelectItems items={ this.getAddSiteChoices() } onSelect={ this.handleClickChoice } />
+					<div className="site-or-domain__free-domain-note">
+						{ translate( '*A free domain for one year is included with all paid annual plans.' ) }
 					</div>
 				</div>
 			);

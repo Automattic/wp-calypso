@@ -446,12 +446,10 @@ export function generateSteps( {
 			stepName: 'site-or-domain',
 			props: {
 				get headerText() {
-					return i18n.translate( 'Choose how you want to use your domain.' );
+					return i18n.translate( 'Choose how to use your domain' );
 				},
 				get subHeaderText() {
-					return i18n.translate(
-						"Don't worry you can easily add a site later if you're not ready."
-					);
+					return i18n.translate( 'Don’t worry, you can easily add a site later' );
 				},
 			},
 			providesDependencies: [
