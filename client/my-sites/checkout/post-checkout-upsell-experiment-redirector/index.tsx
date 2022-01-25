@@ -6,7 +6,7 @@ import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-
 
 export const PROFESSIONAL_EMAIL_UPSELL_SLUG = 'professional-email';
 
-interface PostCheckoutUpsellRedirectorProps {
+interface PostCheckoutUpsellExperimentRedirectorProps {
 	receiptId: string | undefined;
 	siteSlug: string | undefined;
 	upsellExperimentAssignmentName: string;
@@ -20,7 +20,7 @@ export default function PostCheckoutUpsellExperimentRedirector( {
 	upsellExperimentAssignmentName,
 	upsellExperimentName,
 	upsellUrl,
-}: PostCheckoutUpsellRedirectorProps ): null {
+}: PostCheckoutUpsellExperimentRedirectorProps ): null {
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination();
 
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
