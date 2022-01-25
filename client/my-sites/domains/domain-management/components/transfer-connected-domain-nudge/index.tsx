@@ -30,6 +30,7 @@ const TransferConnectedDomainNudge = ( {
 
 	const trackNudgeLinkClick = (): boolean => {
 		recordTracksEvent( 'calypso_domain_management_transfer_connected_domain_nudge_link_click', {
+			domain: domain.name,
 			location,
 		} );
 		return true;
