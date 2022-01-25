@@ -76,14 +76,6 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 							buttonIcon={ 'chevron-right' }
 							buttonOnClick={ () => onButtonClick( 'squarespace' ) }
 						/>
-						<ImporterLogo icon={ 'wix' } />
-						<ActionCard
-							classNames={ 'list__importer-action' }
-							headerText={ 'Wix' }
-							mainText={ 'www.wix.com' }
-							buttonIcon={ 'chevron-right' }
-							buttonOnClick={ () => onButtonClick( 'wix' ) }
-						/>
 					</div>
 
 					<div className={ 'list__importers list__importers-secondary' }>
