@@ -52,7 +52,6 @@
 		"domains/premium-domain-purchases": true,
 		"email-accounts/enabled": true,
 		"emails/in-depth-comparison": true,
-		"emails/new-email-comparison": true,
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
