@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -222,8 +221,7 @@ function PluginDetails( props ) {
 				navigationItems={ getNavigationItems() }
 				compactBreadcrumb={ ! isWide }
 			>
-				{ isEnabled( 'marketplace-v1' ) &&
-					( isMarketplaceProduct || shouldUpgrade ) &&
+				{ ( isMarketplaceProduct || shouldUpgrade ) &&
 					! requestingPluginsForSites &&
 					! isPluginInstalledOnsite && (
 						<BillingIntervalSwitcher
