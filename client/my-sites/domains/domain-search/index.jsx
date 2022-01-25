@@ -98,14 +98,14 @@ class DomainSearch extends Component {
 	};
 
 	componentDidMount() {
-		this.checkSiteIsUpgradeable( this.props );
+		this.checkSiteIsUpgradeable();
 
 		this.isMounted = true;
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.selectedSiteId !== this.props.selectedSiteId ) {
-			this.checkSiteIsUpgradeable( this.props );
+			this.checkSiteIsUpgradeable();
 		}
 	}
 
@@ -113,8 +113,8 @@ class DomainSearch extends Component {
 		this.isMounted = false;
 	}
 
-	checkSiteIsUpgradeable( props ) {
-		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
+	checkSiteIsUpgradeable() {
+		if ( this.props.selectedSite && ! this.props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add' );
 		}
 	}
