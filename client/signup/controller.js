@@ -287,6 +287,11 @@ export default {
 			userLoggedIn
 		);
 
+		// The woocommerce-install flow needs to support site switching.
+		if ( 'woocommerce-install' === flowName ) {
+			initialContext = context;
+		}
+
 		const { query } = initialContext;
 
 		// wait for the step component module to load
