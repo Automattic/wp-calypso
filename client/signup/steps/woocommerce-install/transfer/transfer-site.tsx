@@ -136,7 +136,7 @@ export default function TransferSite( {
 		const timeId = setTimeout( () => {
 			setTransferFailed( true );
 			onFailure( 'transfer_timeout' );
-		}, 1 );
+		}, 1000 * 80 );
 
 		return () => {
 			window?.clearTimeout( timeId );
