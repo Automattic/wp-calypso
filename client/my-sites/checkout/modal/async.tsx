@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import { KEY_PRODUCTS } from './constants';
 import type { Props } from '.';
 
 const useProducts = () => {
 	const { search } = window.location;
-	const products = useMemo( () => new URLSearchParams( search ).get( 'products' ), [ search ] );
+	const products = useMemo( () => new URLSearchParams( search ).get( KEY_PRODUCTS ), [ search ] );
 
 	return products;
 };
