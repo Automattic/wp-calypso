@@ -56,6 +56,11 @@ function handleClosestEvent( e ) {
 	const allSelectors = Object.keys( clickOverrides ).join( ', ' );
 	const matchingElement = e.target.closest( allSelectors );
 
+	if ( ! matchingElement ) {
+		return;
+	}
+
+	// Find the correct callback to use for this clicked element.
 	for ( const [ selector, cb ] of Object.entries( clickOverrides ) ) {
 		if ( matchingElement.matches( selector ) ) {
 			e.preventDefault();
