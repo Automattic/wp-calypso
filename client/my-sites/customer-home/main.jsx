@@ -58,7 +58,7 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 	}
 
 	const header = (
-		<div className="customer-home__heading" data-hello="world">
+		<div className="customer-home__heading">
 			<FormattedHeader
 				brandFont
 				headerText={ translate( 'My Home' ) }
