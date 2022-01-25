@@ -18,7 +18,7 @@ const useErrorNotice = ( error, refetch ) => {
 		dispatch(
 			errorNotice( translate( 'There was an error retrieving users' ), {
 				id: 'site-users-notice',
-				button: 'Try again.',
+				button: translate( 'Try again' ),
 				onClick: () => {
 					dispatch( removeNotice( 'site-users-notice' ) );
 					refetch();
