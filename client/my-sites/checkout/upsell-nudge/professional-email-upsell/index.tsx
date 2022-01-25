@@ -17,20 +17,32 @@ import {
 	transformMailboxForCart,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { TranslateResult } from 'i18n-calypso';
+import type { ChangeEvent } from 'react';
 
 import './style.scss';
 
-const noopWithCallback = ( ignored, callback = () => {} ) => {
+const noopWithCallback = ( cartItem: MinimalRequestCartProduct, callback = () => {} ) => {
 	callback();
 };
 
-const ProfessionalEmailFeature = ( { children } ) => {
+const ProfessionalEmailFeature = ( { children }: { children: TranslateResult } ) => {
 	return (
 		<li>
-			<Gridicon icon="checkmark" size="18" />
+			<Gridicon icon="checkmark" size={18} />
 			<span>{ children }</span>
 		</li>
 	);
+};
+
+type ProfessionalEmailUpsellProps = {
+	currencyCode: string;
+	domainName: string;
+	handleClickAccept: ( action: string ) => void;
+	handleClickDecline: () => void;
+	productCost?: number | null;
+	setCartItem: ( cartItem: MinimalRequestCartProduct, callback: () => void ) => void;
 };
 
 const ProfessionalEmailUpsell = ( {
@@ -40,7 +52,7 @@ const ProfessionalEmailUpsell = ( {
 	handleClickDecline,
 	productCost,
 	setCartItem = noopWithCallback,
-} ) => {
+}: ProfessionalEmailUpsellProps ) => {
 	const translate = useTranslate();
 
 	const [ mailboxData, setMailboxData ] = useState( buildNewTitanMailbox( domainName, false ) );
@@ -67,7 +79,7 @@ const ProfessionalEmailUpsell = ( {
 		comment: '{{price/}} is the formatted price, e.g. $20',
 	} );
 
-	const onMailboxValueChange = ( fieldName, fieldValue ) => {
+	const onMailboxValueChange = ( fieldName: string, fieldValue: string | null ) => {
 		const updatedMailboxData = {
 			...mailboxData,
 			[ fieldName ]: { value: fieldValue, error: null },
@@ -76,7 +88,10 @@ const ProfessionalEmailUpsell = ( {
 			[ updatedMailboxData ],
 			optionalMailboxFields
 		).pop();
-		setMailboxData( validatedMailboxData );
+
+		if ( validatedMailboxData ) {
+			setMailboxData( validatedMailboxData );
+		}
 	};
 
 	const handleAddEmail = () => {
@@ -143,7 +158,7 @@ const ProfessionalEmailUpsell = ( {
 							<FormTextInputWithAffixes
 								value={ mailboxData.mailbox.value }
 								isError={ hasMailboxError }
-								onChange={ ( event ) => {
+								onChange={ ( event: ChangeEvent<HTMLInputElement> ) => {
 									onMailboxValueChange( 'mailbox', event.target.value.toLowerCase() );
 								} }
 								onBlur={ () => {
@@ -165,7 +180,7 @@ const ProfessionalEmailUpsell = ( {
 								value={ mailboxData.password.value }
 								maxLength={ 100 }
 								isError={ hasPasswordError }
-								onChange={ ( event ) => {
+								onChange={ ( event: ChangeEvent<HTMLInputElement> ) => {
 									onMailboxValueChange( 'password', event.target.value );
 								} }
 								onBlur={ () => {
@@ -203,7 +218,7 @@ const ProfessionalEmailUpsell = ( {
 					<img
 						className="professional-email-upsell__titan-logo"
 						src={ poweredByTitanLogo }
-						alt={ translate( 'Powered by Titan' ) }
+						alt={ translate( 'Powered by Titan', { textOnly: true } ) }
 					/>
 				</div>
 			</div>
