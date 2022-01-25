@@ -19,11 +19,13 @@ import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
+import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import DIFMThemes from '../difm-design-picker/themes';
 import LetUsChoose from './let-us-choose';
 import PreviewToolbar from './preview-toolbar';
@@ -39,6 +41,7 @@ export default function DesignPickerStep( props ) {
 		showLetUsChoose,
 		hideFullScreenPreview,
 		hideDesignTitle,
+		signupDependencies: dependencies,
 		sitePlanSlug,
 	} = props;
 
@@ -59,8 +62,19 @@ export default function DesignPickerStep( props ) {
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 
+	// Limit themes to those that support the Site editor, if site is fse eligible
+	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
+	const { data: blockEditorSettings } = useBlockEditorSettingsQuery( siteId, userLoggedIn );
+	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
+	const themeFilters = isFSEEligible
+		? 'auto-loading-homepage,block-templates'
+		: 'auto-loading-homepage';
+
 	const { data: apiThemes = [] } = useThemeDesignsQuery(
-		{ tier: isPremiumThemesAvailable ? 'all' : 'free' },
+		{
+			filter: themeFilters,
+			tier: isPremiumThemesAvailable ? 'all' : 'free',
+		},
 		{ enabled: ! props.useDIFMThemes }
 	);
 
