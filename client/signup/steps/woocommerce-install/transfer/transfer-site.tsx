@@ -107,7 +107,7 @@ export default function TransferSite( {
 		if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
 			setTransferFailed( true );
-			onFailure( 'transfer_timeout' );
+			onFailure( 'transfer' );
 		}
 	}, [ siteId, transferStatus, isTransferringStatusFailed, onFailure ] );
 
@@ -135,8 +135,8 @@ export default function TransferSite( {
 
 		const timeId = setTimeout( () => {
 			setTransferFailed( true );
-			onFailure( 'timeout' );
-		}, 1000 * 80 );
+			onFailure( 'transfer_timeout' );
+		}, 1 );
 
 		return () => {
 			window?.clearTimeout( timeId );
