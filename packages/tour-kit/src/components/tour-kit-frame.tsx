@@ -31,8 +31,6 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	);
 	const [ isMinimized, setIsMinimized ] = useState( false );
 
-	useStepTracking( currentStepIndex, config.options?.callbacks?.onStepViewOnce );
-
 	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );
 	const [ tourReady, setTourReady ] = useState( false );
 	const tourContainerRef = useRef( null );
@@ -193,6 +191,8 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		isMobile ? 'is-mobile' : 'is-desktop',
 		{ 'is-visible': tourReady }
 	);
+
+	useStepTracking( currentStepIndex, config.options?.callbacks?.onStepViewOnce );
 
 	return (
 		<>

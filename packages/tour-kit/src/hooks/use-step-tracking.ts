@@ -19,7 +19,6 @@ const useStepTracking = (
 		}
 
 		setStepsViewed( ( prev ) => [ ...prev, currentStepIndex ] );
-
 		onStepViewOnce?.( currentStepIndex );
 	}, [ currentStepIndex, onStepViewOnce, stepsViewed ] );
 };
