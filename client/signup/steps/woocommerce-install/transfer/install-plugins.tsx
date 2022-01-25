@@ -15,7 +15,7 @@ import Progress from './progress';
 import './style.scss';
 
 // Timeout limit for the install to complete.
-const TIMEOUT_LIMIT = 1000 * 15; // 15 seconds.
+const TIMEOUT_LIMIT = 1000 * 45; // 45 seconds.
 
 export default function InstallPlugins( {
 	onFailure,
