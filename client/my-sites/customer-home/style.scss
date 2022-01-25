@@ -14,13 +14,10 @@ body.is-section-home.theme-default.color-scheme {
 		display: none;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
-		padding-right: 16px;
-	}
-
 	.customer-home__site-content {
 		display: flex;
 		padding: 0 16px 16px;
+		align-items: center;
 
 		@include breakpoint-deprecated( '>660px' ) {
 			padding:0 0 16px;
@@ -34,25 +31,27 @@ body.is-section-home.theme-default.color-scheme {
 		border-radius: 4px;
 		max-width: 58px;
 		height: auto;
-		margin-bottom: 8px;
 		flex: 1 0 auto;
 	}
 
 	.customer-home__site-domain {
 		display: flex;
 		flex-direction: row;
+		align-items: center;
 
 		.customer-home__site-domain-text {
 			white-space: nowrap;
-    		overflow: hidden;
-    		text-overflow: ellipsis;
-			width: calc( 100vw - 120px );
+			overflow: hidden;
+			text-overflow: ellipsis;
+			width: calc( 100vw - 132px );
 			max-width: fit-content;
+			font-size: $font-body-small;
+			line-height: 18px;
 		}
 	}
 
 	.components-external-link__icon {
-		margin-top: 1px;
+		margin: 1px 0 0 7px;
 	}
 
 	.customer-home__site-title {
@@ -63,6 +62,7 @@ body.is-section-home.theme-default.color-scheme {
 		line-height: 27px;
 		letter-spacing: -0.32px;
 		color: var( --studio-black );
+		margin-bottom: 4px;
 	}
 
 	.formatted-header {
