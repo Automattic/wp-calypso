@@ -98,8 +98,11 @@
 					padding: 0;
 				}
 
-				.components-checkbox-control__label {
-					color: $black;
+				.components-checkbox-control__label,
+				.components-select-control__input,
+				.components-text-control__input,
+				.components-combobox-control__input {
+					color: var( --color-neutral-70 );
 				}
 
 				.components-combobox-control__suggestions-container,
