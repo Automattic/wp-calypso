@@ -25,7 +25,7 @@ describe( 'ShoppingCartManager', () => {
 			const manager = cartManagerClient.forCartKey( mainCartKey );
 			const { responseCart } = manager.getState();
 			expect( responseCart.products.length ).toBe( 0 );
-			expect( responseCart.cart_key ).toBe( '' );
+			expect( responseCart.cart_key ).toBe( 'no-site' );
 		} );
 	} );
 

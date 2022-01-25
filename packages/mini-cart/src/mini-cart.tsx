@@ -99,7 +99,7 @@ export function MiniCart( {
 	onRemoveCoupon,
 }: {
 	selectedSiteSlug: string;
-	cartKey: string | number | undefined;
+	cartKey: number | undefined;
 	goToCheckout: ( siteSlug: string ) => void;
 	closeCart: () => void;
 	onRemoveProduct?: ( uuid: string ) => void;
@@ -111,7 +111,7 @@ export function MiniCart( {
 		removeProductFromCart,
 		isLoading,
 		isPendingUpdate,
-	} = useShoppingCart( cartKey ? String( cartKey ) : undefined );
+	} = useShoppingCart( cartKey ? cartKey : undefined );
 	const { __ } = useI18n();
 	const isDisabled = isLoading || isPendingUpdate;
 

@@ -1,4 +1,5 @@
 import debugFactory from 'debug';
+import { findCartKeyFromSiteSlug } from './cart-functions';
 import { CartActionError, CartActionConnectionError, CartActionResponseError } from './errors';
 import {
 	getShoppingCartManagerState,
@@ -26,6 +27,7 @@ import type {
 	DispatchAndWaitForValid,
 	ActionPromises,
 	ShoppingCartState,
+	CartKey,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:shopping-cart-manager' );
@@ -55,7 +57,7 @@ function getErrorFromState( state: ShoppingCartState ): undefined | CartActionEr
 }
 
 function createShoppingCartManager(
-	cartKey: string,
+	cartKey: CartKey,
 	getCart: GetCart,
 	setCart: SetCart
 ): ShoppingCartManager {
@@ -145,22 +147,24 @@ export function createShoppingCartManagerClient( {
 	getCart: GetCart;
 	setCart: SetCart;
 } ): ShoppingCartManagerClient {
-	const managersByCartKey: Record< string, ShoppingCartManager > = {};
+	const managersByCartKey = new Map< CartKey, ShoppingCartManager >();
 
-	function forCartKey( cartKey: string | undefined ): ShoppingCartManager {
+	function forCartKey( cartKey: CartKey | undefined ): ShoppingCartManager {
 		if ( ! cartKey ) {
 			return noopManager;
 		}
 
-		if ( ! managersByCartKey[ cartKey ] ) {
+		let manager = managersByCartKey.get( cartKey );
+		if ( typeof manager === 'undefined' ) {
 			debug( `creating cart manager for "${ cartKey }"` );
-			managersByCartKey[ cartKey ] = createShoppingCartManager( cartKey, getCart, setCart );
+			manager = createShoppingCartManager( cartKey, getCart, setCart );
+			managersByCartKey.set( cartKey, manager );
 		}
-
-		return managersByCartKey[ cartKey ];
+		return manager;
 	}
 
 	return {
 		forCartKey,
+		getCartKeyForSiteSlug: ( siteSlug: string ) => findCartKeyFromSiteSlug( siteSlug, getCart ),
 	};
 }
