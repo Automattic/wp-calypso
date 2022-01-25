@@ -3,8 +3,10 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
 import { useInterval } from '../../../../lib/interval/use-interval';
+import { FLOW_ID } from '../../constants';
 import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
+import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY } from '../../stores/onboard';
 
 import './style.scss';
@@ -28,6 +30,12 @@ const CreateSite: React.FunctionComponent = () => {
 	const totalSteps = steps.current.length;
 
 	const [ currentStep, setCurrentStep ] = React.useState( 0 );
+
+	// Gutenboarding now always enrolls the user in FSE, so this event should always fire on site
+	// creation.
+	React.useEffect( () => {
+		trackEventWithFlow( 'calypso_fse_enrolled', { site_enrolled: true, flow: FLOW_ID } );
+	}, [] );
 
 	/**
 	 * Completion progress: 0 <= progress <= 1
