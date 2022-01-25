@@ -279,7 +279,7 @@ export class JetpackAuthorize extends Component {
 			);
 			this.externalRedirectOnce( redirectAfterAuth );
 		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasJetpackBackupProduct ) {
-			debug( `Redirecting directly to cart with `, PRODUCT_JETPACK_BACKUP_T1_YEARLY, ' in cart.' );
+			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
