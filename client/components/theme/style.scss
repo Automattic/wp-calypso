@@ -78,6 +78,7 @@ $theme-info-height: 54px;
 	font-family: inherit;
 	overflow: hidden;
 	white-space: nowrap;
+	top: -1px;
 
 	&::before {
 		@include long-content-fade();
