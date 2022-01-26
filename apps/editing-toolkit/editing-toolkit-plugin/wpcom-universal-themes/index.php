@@ -115,7 +115,7 @@ function unload_core_fse() {
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_template_editing', 11 );
 
-	// always hide the WP core Site Editor.
+	// Hide the Site editor added by WP 5.9 (if Gutenberg is active).
 	add_action( 'admin_menu', __NAMESPACE__ . '\maybe_hide_core_site_editor' );
 }
 
