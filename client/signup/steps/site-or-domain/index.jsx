@@ -35,53 +35,20 @@ class SiteOrDomain extends Component {
 	}
 
 	getChoices() {
-		const { translate } = this.props;
+		const { translate, isReskinned, isLoggedIn } = this.props;
 
-		const choices = [
-			{
-				type: 'page',
-				label: translate( 'New site' ),
-				image: <NewSiteImage />,
-				description: translate(
-					'Choose a theme, customize, and launch your site. A free domain for one year is included with all annual plans.'
-				),
-			},
-		];
+		const choices = [];
 
-		if ( this.props.isLoggedIn ) {
+		if ( isReskinned ) {
 			choices.push( {
-				type: 'existing-site',
-				label: translate( 'Existing WordPress.com site' ),
-				image: <ExistingSiteImage />,
-				description: translate(
-					'Use with a site you already started. A free domain for one year is included with all annual plans.'
-				),
-			} );
-		}
-
-		choices.push( {
-			type: 'domain',
-			label: translate( 'Just buy a domain' ),
-			image: <DomainImage />,
-			description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
-		} );
-
-		return choices;
-	}
-
-	getChoicesReskinned() {
-		const { translate, isLoggedIn } = this.props;
-
-		const choices = [
-			{
 				key: 'domain',
 				title: translate( 'Just buy a domain' ),
 				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
 				icon: globe,
 				value: 'domain',
 				actionText: translate( 'Get domain' ),
-			},
-			{
+			} );
+			choices.push( {
 				key: 'page',
 				title: translate( 'New site' ),
 				description: translate(
@@ -96,25 +63,49 @@ class SiteOrDomain extends Component {
 				icon: addCard,
 				value: 'page',
 				actionText: translate( 'Start site' ),
-			},
-		];
-
-		if ( isLoggedIn ) {
+			} );
+			if ( isLoggedIn ) {
+				choices.push( {
+					key: 'existing-site',
+					title: translate( 'Existing WordPress.com site' ),
+					description: translate(
+						'Use with a site you already started.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
+						{
+							components: {
+								strong: <strong />,
+								br: <br />,
+							},
+						}
+					),
+					icon: layout,
+					value: 'existing-site',
+					actionText: translate( 'Choose site' ),
+				} );
+			}
+		} else {
 			choices.push( {
-				key: 'existing-site',
-				title: translate( 'Existing WordPress.com site' ),
+				type: 'page',
+				label: translate( 'New site' ),
+				image: <NewSiteImage />,
 				description: translate(
-					'Use with a site you already started.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
-					{
-						components: {
-							strong: <strong />,
-							br: <br />,
-						},
-					}
+					'Choose a theme, customize, and launch your site. A free domain for one year is included with all annual plans.'
 				),
-				icon: layout,
-				value: 'existing-site',
-				actionText: translate( 'Choose site' ),
+			} );
+			if ( this.props.isLoggedIn ) {
+				choices.push( {
+					type: 'existing-site',
+					label: translate( 'Existing WordPress.com site' ),
+					image: <ExistingSiteImage />,
+					description: translate(
+						'Use with a site you already started. A free domain for one year is included with all annual plans.'
+					),
+				} );
+			}
+			choices.push( {
+				type: 'domain',
+				label: translate( 'Just buy a domain' ),
+				image: <DomainImage />,
+				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
 			} );
 		}
 
@@ -124,28 +115,29 @@ class SiteOrDomain extends Component {
 	renderChoices() {
 		const { isReskinned, translate } = this.props;
 
-		if ( isReskinned )
-			return (
-				<div className="site-or-domain__choices">
-					<div>
-						<SelectItems items={ this.getChoicesReskinned() } onSelect={ this.handleClickChoice } />
-					</div>
-					<div className="site-or-domain__free-domain-note">
-						{ translate( '*A free domain for one year is included with all paid annual plans.' ) }
-					</div>
-				</div>
-			);
-
 		return (
 			<div className="site-or-domain__choices">
-				{ this.getChoices().map( ( choice, index ) => (
-					<SiteOrDomainChoice
-						choice={ choice }
-						handleClickChoice={ this.handleClickChoice }
-						isPlaceholder={ ! this.props.productsLoaded }
-						key={ `site-or-domain-choice-${ index }` }
-					/>
-				) ) }
+				{ isReskinned ? (
+					<>
+						<div>
+							<SelectItems items={ this.getChoices() } onSelect={ this.handleClickChoice } />
+						</div>
+						<div className="site-or-domain__free-domain-note">
+							{ translate( '*A free domain for one year is included with all paid annual plans.' ) }
+						</div>
+					</>
+				) : (
+					<>
+						{ this.getChoices().map( ( choice, index ) => (
+							<SiteOrDomainChoice
+								choice={ choice }
+								handleClickChoice={ this.handleClickChoice }
+								isPlaceholder={ ! this.props.productsLoaded }
+								key={ `site-or-domain-choice-${ index }` }
+							/>
+						) ) }
+					</>
+				) }
 			</div>
 		);
 	}
