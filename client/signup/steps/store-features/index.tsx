@@ -4,10 +4,12 @@ import { useDispatch } from 'react-redux';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.svg';
 import wooImage from 'calypso/assets/images/onboarding/woo.png';
+import { localizeUrl } from 'calypso/lib/i18n-utils/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import { shoppingBag, truck } from '../../icons';
 import SelectItems, { SelectItem } from '../../select-items';
+import { StoreFeatureSet } from './types';
 import './index.scss';
 
 interface Props {
@@ -31,7 +33,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [] );
 
-	const intents: SelectItem< any >[] = [
+	const intents: SelectItem< StoreFeatureSet >[] = [
 		{
 			key: 'simple',
 			title: translate( 'Start Simple' ),
@@ -48,7 +50,17 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 							<img src={ paymentBlocksImage } alt="Payment Blocks" />
 						</span>
 						<span>
-							{ translate( 'Powered by' ) } <button>Payment Blocks</button>
+							{ translate( 'Powered by {{a}}Payment Blocks{{/a}}', {
+								components: {
+									a: (
+										<a
+											href={ localizeUrl(
+												'https://wordpress.com/support/wordpress-editor/blocks/payments/'
+											) }
+										/>
+									),
+								},
+							} ) }
 						</span>
 					</span>
 				</>
@@ -63,12 +75,9 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			description: (
 				<>
 					<span className="store-features__requirements">
-						{ translate( 'Requires {{link}}business plan{{/link}} for %(monthlyPrice)s/month', {
-							args: {
-								monthlyPrice: '$49',
-							},
+						{ translate( 'Requires a {{a}}Business plan{{/a}}', {
 							components: {
-								link: <button />,
+								a: <a href="/plans/" />,
 							},
 						} ) }
 					</span>
@@ -82,7 +91,17 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 							<img src={ wooImage } alt="WooCommerce" />
 						</span>
 						<span>
-							{ translate( 'Powered by' ) } <button>WooCommerce</button>
+							{ translate( 'Powered by {{a}}WooCommerce{{/a}}', {
+								components: {
+									a: (
+										<a
+											href={ localizeUrl(
+												'https://wordpress.com/support/introduction-to-woocommerce/'
+											) }
+										/>
+									),
+								},
+							} ) }
 						</span>
 					</span>
 				</>
@@ -93,8 +112,16 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		},
 	];
 
-	const onSelect = () => {
-		throw new Error( 'Not yet implemented' );
+	const onSelect = ( selectedOption: StoreFeatureSet ) => {
+		switch ( selectedOption ) {
+			case 'power':
+				throw new Error( 'Not yet implemented' );
+				break;
+
+			case 'simple':
+				throw new Error( 'Not yet implemented' );
+				break;
+		}
 	};
 
 	return (
