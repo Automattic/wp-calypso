@@ -100,6 +100,74 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
+	/**
+	 ↓ HTML Renders
+	 */
+	function renderBloggerImporter() {
+		return (
+			<BloggerImporter
+				job={ getImportJob( engine ) }
+				run={ runImportInitially }
+				siteId={ siteId }
+				site={ site }
+				siteSlug={ siteSlug }
+				fromSite={ fromSite }
+				urlData={ urlData }
+			/>
+		);
+	}
+
+	function renderMediumImporter() {
+		return (
+			<MediumImporter
+				job={ getImportJob( engine ) }
+				run={ runImportInitially }
+				siteId={ siteId }
+				site={ site }
+				siteSlug={ siteSlug }
+				fromSite={ fromSite }
+				urlData={ urlData }
+			/>
+		);
+	}
+
+	function renderSquarespaceImporter() {
+		return (
+			<SquarespaceImporter
+				job={ getImportJob( engine ) }
+				run={ runImportInitially }
+				siteId={ siteId }
+				site={ site }
+				siteSlug={ siteSlug }
+				fromSite={ fromSite }
+				urlData={ urlData }
+			/>
+		);
+	}
+
+	function renderWixImporter() {
+		return (
+			<WixImporter
+				job={ getImportJob( engine ) }
+				run={ runImportInitially }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				fromSite={ fromSite }
+			/>
+		);
+	}
+
+	function renderWordpressImporter() {
+		return (
+			<WordpressImporter
+				job={ getImportJob( engine ) }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				fromSite={ fromSite }
+			/>
+		);
+	}
+
 	return (
 		<>
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
@@ -137,84 +205,24 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									engine === 'blogger' &&
 									isEnabled( 'gutenboarding/import-from-blogger' )
 								) {
-									/**
-									 * Blogger importer
-									 */
-									return (
-										<BloggerImporter
-											job={ getImportJob( engine ) }
-											run={ runImportInitially }
-											siteId={ siteId }
-											site={ site }
-											siteSlug={ siteSlug }
-											fromSite={ fromSite }
-											urlData={ urlData }
-										/>
-									);
+									return renderBloggerImporter();
 								} else if (
 									engine === 'medium' &&
 									isEnabled( 'gutenboarding/import-from-medium' )
 								) {
-									/**
-									 * Medium importer
-									 */
-									return (
-										<MediumImporter
-											job={ getImportJob( engine ) }
-											run={ runImportInitially }
-											siteId={ siteId }
-											site={ site }
-											siteSlug={ siteSlug }
-											fromSite={ fromSite }
-											urlData={ urlData }
-										/>
-									);
+									return renderMediumImporter();
 								} else if (
 									engine === 'squarespace' &&
 									isEnabled( 'gutenboarding/import-from-squarespace' )
 								) {
-									/**
-									 * Squarespace importer
-									 */
-									return (
-										<SquarespaceImporter
-											job={ getImportJob( engine ) }
-											run={ runImportInitially }
-											siteId={ siteId }
-											site={ site }
-											siteSlug={ siteSlug }
-											fromSite={ fromSite }
-											urlData={ urlData }
-										/>
-									);
+									return renderSquarespaceImporter();
 								} else if ( engine === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
-									/**
-									 * Wix importer
-									 */
-									return (
-										<WixImporter
-											job={ getImportJob( engine ) }
-											run={ runImportInitially }
-											siteId={ siteId }
-											siteSlug={ siteSlug }
-											fromSite={ fromSite }
-										/>
-									);
+									return renderWixImporter();
 								} else if (
 									engine === 'wordpress' &&
 									isEnabled( 'gutenboarding/import-from-wordpress' )
 								) {
-									/**
-									 * WordPress importer
-									 */
-									return (
-										<WordpressImporter
-											job={ getImportJob( engine ) }
-											siteId={ siteId }
-											siteSlug={ siteSlug }
-											fromSite={ fromSite }
-										/>
-									);
+									return renderWordpressImporter();
 								}
 							} )() }
 						</div>
