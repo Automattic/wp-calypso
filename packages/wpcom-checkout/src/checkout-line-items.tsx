@@ -663,7 +663,7 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 
 function hasPartnerCoupon( coupon: string, products?: ResponseCartProduct[] ): boolean {
 	const productHasSublabel =
-		products && products.find( ( product: ResponseCartProduct ) => getSublabel( product ) );
+		products && products.some( ( product: ResponseCartProduct ) => !! getSublabel( product ) );
 	const isPartnerCoupon = coupon.startsWith( 'IONOS_' );
 
 	return ( productHasSublabel && isPartnerCoupon ) || false;
