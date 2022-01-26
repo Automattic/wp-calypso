@@ -89,7 +89,7 @@ export class DowngradeStep extends Component {
 				refundReason = (
 					<p>
 						{ translate(
-							'You will keep all features of your current plan including the domain %(domain)s but the plan period will be reduced.',
+							'You will keep most features of your current plan including the domain %(domain)s but the plan period will be reduced.',
 							{ args: { domain: includedDomainPurchase.meta } }
 						) }
 					</p>
@@ -98,7 +98,7 @@ export class DowngradeStep extends Component {
 				refundReason = (
 					<p>
 						{ translate(
-							'You will keep most of the features of your current plan but will not have a free domain.'
+							'You will keep most of the features of your current plan but will not have a free domain registration.'
 						) }
 					</p>
 				);
