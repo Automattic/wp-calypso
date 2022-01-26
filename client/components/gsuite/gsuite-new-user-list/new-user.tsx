@@ -11,6 +11,8 @@ import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-w
 import { GSuiteNewUser as NewUser } from 'calypso/lib/gsuite/new-users';
 import GSuiteDomainsSelect from './domains-select';
 
+import type { ReactElement } from 'react';
+
 interface LabelWrapperProps {
 	label: TranslateResult;
 }
@@ -52,7 +54,7 @@ const GSuiteNewUser = ( {
 	selectedDomainName,
 	showAllErrors = false,
 	showTrashButton = true,
-}: GSuiteNewUserProps ) => {
+}: GSuiteNewUserProps ): ReactElement => {
 	const translate = useTranslate();
 	const isRtl = useRtl();
 

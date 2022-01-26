@@ -9,6 +9,7 @@ import {
 } from 'calypso/lib/gsuite/new-users';
 import GSuiteNewUser from './new-user';
 import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -36,7 +37,7 @@ const GSuiteNewUserList = ( {
 	showAddAnotherMailboxButton = true,
 	users = [],
 	validatedMailboxUuids = [],
-}: GSuiteNewUserListProps ) => {
+}: GSuiteNewUserListProps ): ReactElement => {
 	const translate = useTranslate();
 
 	const onUserValueChange = ( uuid: string ) => (
