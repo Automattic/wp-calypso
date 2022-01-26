@@ -15,7 +15,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
-function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon, defaultIcon = null } ) {
+function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon, defaultIcon } ) {
 	const iconSrc = resizeImageUrl( iconUrl, imgSize );
 
 	const classes = classNames( 'site-icon', {
@@ -60,6 +60,7 @@ SiteIcon.defaultProps = {
 	// display the site icons in different contexts.
 	imgSize: 120,
 	size: 32,
+	defaultIcon: null,
 };
 
 export default connect( ( state, { site, siteId, imgSize } ) => {
