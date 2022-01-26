@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import { layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -43,6 +44,8 @@ class Site extends Component {
 
 		isP2Hub: false,
 		isSiteP2: false,
+
+		isReskinned: false,
 	};
 
 	static propTypes = {
@@ -61,6 +64,7 @@ class Site extends Component {
 		compact: PropTypes.bool,
 		isP2Hub: PropTypes.bool,
 		isSiteP2: PropTypes.bool,
+		isReskinned: PropTypes.bool,
 	};
 
 	onSelect = ( event ) => {
@@ -114,6 +118,7 @@ class Site extends Component {
 			'is-selected': this.props.isSelected,
 			'is-highlighted': this.props.isHighlighted,
 			'is-compact': this.props.compact,
+			'is-reskinned': this.props.isReskinned,
 		} );
 
 		// We show public coming soon badge only when the site is not private.
@@ -151,19 +156,26 @@ class Site extends Component {
 							: site.domain
 					}
 				>
-					<SiteIcon site={ site } size={ this.props.compact ? 24 : 32 } />
+					<SiteIcon
+						defaultIcon={ this.props.isReskinned ? layout : null }
+						site={ site }
+						// eslint-disable-next-line no-nested-ternary
+						size={ this.props.compact ? 24 : this.props.isReskinned ? 50 : 32 }
+					/>
 					<div className="site__info">
 						<div className="site__title">{ site.title }</div>
-						<div className="site__domain">
-							{ /* eslint-disable-next-line no-nested-ternary */ }
-							{ this.props.isNavUnificationEnabled && ! isEnabled( 'jetpack-cloud' )
-								? site.domain
-								: this.props.homeLink
-								? translate( 'View %(domain)s', {
-										args: { domain: site.domain },
-								  } )
-								: site.domain }
-						</div>
+						{ ! this.props.isReskinned && (
+							<div className="site__domain">
+								{ /* eslint-disable-next-line no-nested-ternary */ }
+								{ this.props.isNavUnificationEnabled && ! isEnabled( 'jetpack-cloud' )
+									? site.domain
+									: this.props.homeLink
+									? translate( 'View %(domain)s', {
+											args: { domain: site.domain },
+									  } )
+									: site.domain }
+							</div>
+						) }
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.isSiteP2 && ! this.props.isP2Hub && (
 							<span className="site__badge is-p2">P2</span>
@@ -193,6 +205,18 @@ class Site extends Component {
 						) }
 						{ site.options && site.options.is_domain_only && (
 							<span className="site__badge site__badge-domain-only">{ translate( 'Domain' ) }</span>
+						) }
+						{ this.props.isReskinned && (
+							<div className="site__domain">
+								{ /* eslint-disable-next-line no-nested-ternary */ }
+								{ this.props.isNavUnificationEnabled && ! isEnabled( 'jetpack-cloud' )
+									? site.domain
+									: this.props.homeLink
+									? translate( 'View %(domain)s', {
+											args: { domain: site.domain },
+									  } )
+									: site.domain }
+							</div>
 						) }
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 					</div>
