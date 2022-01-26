@@ -251,7 +251,10 @@ const withActivityTypes = ( WrappedComponent ) => ( props ) => {
 					filterStateToApiQuery( filter, false )
 				)
 				.then( fromActivityTypeApi ),
-		{ enabled: !! siteId }
+		{
+			enabled: !! siteId,
+			staleTime: 10 * 1000,
+		}
 	);
 	return <WrappedComponent { ...props } activityTypes={ data ?? [] } />;
 };
