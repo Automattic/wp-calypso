@@ -21,7 +21,7 @@ export default function TransferSite( {
 	onFailure,
 	trackRedirect,
 }: {
-	onFailure: () => void;
+	onFailure: ( type: string ) => void;
 	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
@@ -107,7 +107,7 @@ export default function TransferSite( {
 		if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
 			setTransferFailed( true );
-			onFailure();
+			onFailure( 'transfer' );
 		}
 	}, [ siteId, transferStatus, isTransferringStatusFailed, onFailure ] );
 
@@ -135,7 +135,7 @@ export default function TransferSite( {
 
 		const timeId = setTimeout( () => {
 			setTransferFailed( true );
-			onFailure();
+			onFailure( 'transfer_timeout' );
 		}, 1000 * 80 );
 
 		return () => {
