@@ -2,12 +2,14 @@ import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
 import page from 'page';
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { fetchImporterState } from 'calypso/state/imports/actions';
+import { getStepUrl } from 'calypso/signup/utils';
+import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
+import { appStates } from 'calypso/state/imports/constants';
 import {
 	getImporterStatusForSiteId,
 	isImporterStatusHydrated,
@@ -48,6 +50,7 @@ interface Props {
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const {
 		urlData,
+		stepName,
 		stepSectionName,
 		siteId,
 		site,
@@ -56,6 +59,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		siteImports,
 		isImporterStatusHydrated,
 		fromSite,
+		path,
 	} = props;
 
 	/**
@@ -66,6 +70,8 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const getImportJob = ( engine: Importer ): ImportJob | undefined => {
 		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
 	};
+
+	const dispatch = useDispatch();
 
 	/**
 	 ↓ Effects
@@ -96,7 +102,33 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		// because of the browser's back edge case
 		if ( searchParams.get( 'run' ) === 'true' ) {
 			setRunImportInitially( true );
-			page.replace( props.path.replace( '&run=true', '' ).replace( 'run=true', '' ) );
+			page.replace( path.replace( '&run=true', '' ).replace( 'run=true', '' ) );
+		}
+	}
+
+	function shouldHideBackBtn() {
+		return false;
+	}
+
+	function getBackUrl() {
+		if ( stepName === 'importing' ) {
+			return getStepUrl( 'importer', 'capture', '', '', { siteSlug } );
+		}
+	}
+
+	function goToPreviousStep() {
+		const job = getImportJob( engine );
+
+		if ( ! job ) {
+			return;
+		}
+
+		switch ( job.importerState ) {
+			case appStates.UPLOADING:
+			case appStates.UPLOAD_PROCESSING:
+			case appStates.UPLOAD_SUCCESS:
+			case appStates.MAP_AUTHORS:
+				return dispatch( resetImport( siteId, job.importerId ) );
 		}
 	}
 
@@ -105,9 +137,12 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
 			<StepWrapper
-				flowName={ 'import-from' }
+				flowName={ 'importer' }
+				stepName={ stepName }
 				hideSkip={ true }
-				hideBack={ true }
+				hideBack={ shouldHideBackBtn() }
+				backUrl={ getBackUrl() }
+				goToPreviousStep={ goToPreviousStep }
 				hideNext={ true }
 				hideFormattedHeader={ true }
 				stepContent={
@@ -246,5 +281,6 @@ export default connect(
 	},
 	{
 		fetchImporterState,
+		resetImport,
 	}
 )( ImportOnboardingFrom );
