@@ -40,6 +40,7 @@ describe( 'NavigationLink', () => {
 
 	afterEach( () => {
 		getStepUrl.mockReset();
+		props.goToPreviousStep.mockReset();
 		props.goToNextStep.mockReset();
 	} );
 
