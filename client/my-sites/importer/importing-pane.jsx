@@ -33,6 +33,10 @@ const sum = ( a, b ) => a + b;
  * }
  */
 export const calculateProgress = ( progress ) => {
+	if ( ! progress ) {
+		return 0;
+	}
+
 	const { attachment = {} } = progress;
 
 	if ( attachment.total > 0 && attachment.completed >= 0 ) {
