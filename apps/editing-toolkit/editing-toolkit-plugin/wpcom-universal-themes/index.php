@@ -339,6 +339,15 @@ function display_fse_section() {
 }
 
 /**
+ * Always hide the Core Site Editor in favour of the Gutenberg version.
+ *
+ * @return void
+ */
+function hide_core_site_editor() {
+	remove_submenu_page( 'themes.php', 'site-editor.php' );
+}
+
+/**
  * Run everything
  *
  * @return void
@@ -352,6 +361,9 @@ function init() {
 	if ( is_core_fse_active() ) {
 		load_core_fse();
 	}
+
+	// always hide the WP core Site Editor.
+	add_action( 'admin_menu', __NAMESPACE__ . '\hide_core_site_editor' );
 }
 // For WPcom REST API requests to work properly.
 add_action( 'restapi_theme_init', __NAMESPACE__ . '\init' );
