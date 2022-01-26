@@ -7,10 +7,8 @@ import {
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { breadcrumbSchema } from './schema';
 
-import 'calypso/state/breadcrumb/init';
-
 // Stores the complete list of breadcrumbs in an array,
-export const items = withSchemaValidation( breadcrumbSchema, ( state = {}, action ) => {
+export const items = withSchemaValidation( breadcrumbSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case BREADCRUMB_RESET_LIST:
 			return [];
