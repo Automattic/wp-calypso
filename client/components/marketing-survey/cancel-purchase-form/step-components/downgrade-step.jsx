@@ -80,7 +80,7 @@ export class DowngradeStep extends Component {
 				  );
 		}
 
-		if ( 'downgrade-monthly' === upsell ) {
+		if ( 'downgrade-monthly' === upsell && canRefund ) {
 			refundTitle = translate(
 				'Would you rather switch to the more affordable monthly subscription?'
 			);
@@ -104,15 +104,11 @@ export class DowngradeStep extends Component {
 				);
 			}
 
-			refundDetails = canRefund
-				? translate(
-						'You can downgrade and get a partial refund of %(amount)s or ' +
-							'continue to the next step and cancel the plan.',
-						{ args: { amount } }
-				  )
-				: translate( 'You can downgrade and the new plan will renew at only %(amount)s.', {
-						args: { amount },
-				  } );
+			refundDetails = translate(
+				'You can downgrade and get a partial refund of %(amount)s or ' +
+					'continue to the next step and cancel the plan.',
+				{ args: { amount } }
+			);
 		}
 
 		return (
