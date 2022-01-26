@@ -41,6 +41,7 @@ class GoogleLoginButton extends Component {
 		error: '',
 		showError: false,
 		errorRef: null,
+		eventTimeStamp: null,
 		isDisabled: true,
 	};
 
@@ -142,6 +143,14 @@ class GoogleLoginButton extends Component {
 		event.preventDefault();
 		event.stopPropagation();
 
+		if ( this.state.error && this.state.eventTimeStamp !== event.timeStamp ) {
+			this.setState( {
+				showError: ! this.state.showError,
+				errorRef: event.currentTarget,
+				eventTimeStamp: event.timeStamp,
+			} );
+		}
+
 		if ( this.state.isDisabled ) {
 			return;
 		}
@@ -149,11 +158,6 @@ class GoogleLoginButton extends Component {
 		this.props.onClick( event );
 
 		if ( this.state.error ) {
-			this.setState( {
-				showError: ! this.state.showError,
-				errorRef: event.currentTarget,
-			} );
-
 			return;
 		}
 
@@ -177,9 +181,12 @@ class GoogleLoginButton extends Component {
 			return;
 		}
 
+		event.stopPropagation();
+
 		this.setState( {
 			showError: true,
 			errorRef: event.currentTarget,
+			eventTimeStamp: event.timeStamp,
 		} );
 	}
 
@@ -215,11 +222,9 @@ class GoogleLoginButton extends Component {
 				) : (
 					<button
 						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
-						onMouseOver={ this.showError }
-						onFocus={ this.showError }
-						onBlur={ this.hideError }
 						onClick={ this.handleClick }
-						onMouseDown={ this.handleClick }
+						onMouseEnter={ this.showError }
+						onMouseLeave={ this.hideError }
 					>
 						<GoogleIcon
 							isDisabled={ isDisabled }
