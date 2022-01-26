@@ -27,9 +27,6 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 		startImport,
 		resetImport,
 	} = props;
-	const importerData = importerConfig().medium;
-
-	populateMessages();
 
 	/**
 	 * Effects
@@ -64,20 +61,9 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 		};
 	}
 
-	function checkProgress() {
-		return job?.importerState === appStates.IMPORTING;
-	}
+	function getImportDragConfig() {
+		const importerData = importerConfig()[ importer ];
 
-	function checkIsSuccess() {
-		return job?.importerState === appStates.IMPORT_SUCCESS;
-	}
-
-	function showVideoComponent() {
-		return checkProgress() || checkIsSuccess();
-	}
-
-	// Change the default messages
-	function populateMessages() {
 		const options: TranslateOptions = {
 			args: {
 				importerName: 'Medium',
@@ -106,6 +92,20 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 				'{{supportLink/}}',
 			options
 		);
+
+		return importerData;
+	}
+
+	function checkProgress() {
+		return job?.importerState === appStates.IMPORTING;
+	}
+
+	function checkIsSuccess() {
+		return job?.importerState === appStates.IMPORT_SUCCESS;
+	}
+
+	function showVideoComponent() {
+		return checkProgress() || checkIsSuccess();
 	}
 
 	return (
@@ -140,7 +140,7 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 						<ImporterDrag
 							urlData={ urlData }
 							site={ site }
-							importerData={ importerData }
+							importerData={ getImportDragConfig() }
 							importerStatus={ job }
 						/>
 					);
