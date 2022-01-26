@@ -28,7 +28,7 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 		{
 			key: 'build',
 			title: translate( 'Build' ),
-			description: <p> { translate( 'Begin creating your website' ) }</p>,
+			description: <p>{ translate( 'Begin creating your website' ) }</p>,
 			icon: build,
 			value: 'build',
 			actionText: translate( 'Start building' ),
@@ -39,7 +39,7 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 		intents.push( {
 			key: 'sell',
 			title: translate( 'Sell' ),
-			description: <p> { translate( 'Set up an online store' ) }</p>,
+			description: <p>{ translate( 'Set up an online store' ) }</p>,
 			icon: tip,
 			value: 'sell',
 			actionText: translate( 'Start selling' ),

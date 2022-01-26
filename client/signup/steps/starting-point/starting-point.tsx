@@ -17,7 +17,7 @@ const useStartingPoints = ( { translate }: Pick< Props, 'translate' > ): Startin
 		{
 			key: 'write',
 			title: translate( 'Draft your first post' ),
-			description: <p> { translate( 'Start writing and build an audience' ) }</p>,
+			description: <p>{ translate( 'Start writing and build an audience' ) }</p>,
 			icon: write,
 			value: 'write',
 			actionText: translate( 'Start writing' ),
@@ -25,7 +25,7 @@ const useStartingPoints = ( { translate }: Pick< Props, 'translate' > ): Startin
 		{
 			key: 'courses',
 			title: translate( 'Watch Blogging videos' ),
-			description: <p> { translate( ' Learn the blogging basics in minutes ' ) }</p>,
+			description: <p>{ translate( ' Learn the blogging basics in minutes ' ) }</p>,
 			icon: play,
 			value: 'courses',
 			actionText: translate( 'Start learning' ),
@@ -34,7 +34,7 @@ const useStartingPoints = ( { translate }: Pick< Props, 'translate' > ): Startin
 		{
 			key: 'design',
 			title: translate( 'Choose a design' ),
-			description: <p> { translate( 'Make your blog feel like home' ) }</p>,
+			description: <p>{ translate( 'Make your blog feel like home' ) }</p>,
 			icon: design,
 			value: 'design',
 			actionText: translate( 'View designs' ),
