@@ -1,6 +1,7 @@
 import {
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
+	TERM_MONTHLY,
 	isJetpackSearch,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
@@ -112,6 +113,9 @@ const useIntroductoryOfferPrices = (
 	};
 };
 
+const getMonthlyPrice = ( yearlyPrice: number ): number =>
+	Math.ceil( ( yearlyPrice / 12 ) * 100 ) / 100;
+
 const useItemPrice = (
 	siteId: number | null,
 	item: SelectorProduct | null,
@@ -139,14 +143,21 @@ const useItemPrice = (
 		};
 	}
 
-	// Calculate the monthly prices with cents rounded up.
-	let originalPrice = itemCost ? Math.ceil( ( itemCost / 12 ) * 100 ) / 100 : 0;
-	let discountedPrice = introductoryOfferPrices.introOfferCost
-		? Math.ceil( ( introductoryOfferPrices.introOfferCost / 12 ) * 100 ) / 100
-		: undefined;
+	let originalPrice = 0;
+	let discountedPrice = undefined;
+
+	if ( item && itemCost ) {
+		originalPrice = itemCost;
+		if ( item.term !== TERM_MONTHLY ) {
+			originalPrice = getMonthlyPrice( itemCost );
+			discountedPrice = introductoryOfferPrices.introOfferCost
+				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
+				: undefined;
+		}
+	}
 
 	// Introductory offer pricing is not yet supported for tiered plans, so we need to hard-code it for now.
-	if ( item && isJetpackSearch( item ) ) {
+	if ( item && item.term !== TERM_MONTHLY && isJetpackSearch( item ) ) {
 		discountedPrice = originalPrice * ( 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 );
 	}
 
