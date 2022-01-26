@@ -25,7 +25,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const headerText = translate( 'Setup your store' );
-	const subHeaderText = translate( "Let's create a website that suits your needs." );
+	const subHeaderText = translate( 'Let’s create a website that suits your needs.' );
 	const siteSlug = props.signupDependencies.siteSlug;
 
 	const { stepName } = props;
