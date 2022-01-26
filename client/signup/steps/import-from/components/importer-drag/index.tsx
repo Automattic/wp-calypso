@@ -13,12 +13,7 @@ import { ImportJob } from '../../types';
 import './style.scss';
 import ImportingPane from '../importing-pane/importing-pane';
 import UploadingPane from '../uploading-pane/uploading-pane';
-
-export interface Site {
-	ID: number;
-	name: string;
-	URL: string;
-}
+import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 /**
  * Module variables
@@ -41,7 +36,7 @@ const uploadingStates = [
 interface Props {
 	importerStatus: ImportJob;
 	importerData: ImporterConfig;
-	site: Site;
+	site: SitesItem;
 	urlData: UrlData;
 	startImport: ( siteId: number, type: string ) => void;
 }

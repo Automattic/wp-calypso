@@ -10,11 +10,11 @@ import { UrlData } from 'calypso/signup/steps/import/types';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
-import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import CompleteScreen from '../../components/complete-screen';
 import GettingStartedVideo from '../../components/getting-started-video';
-import ImporterDrag, { Site } from '../../components/importer-drag';
+import ImporterDrag from '../../components/importer-drag';
 import ProgressScreen from '../../components/progress-screen';
+import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 import './style.scss';
 
@@ -133,7 +133,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		return (
 			job && (
 				<ImporterDrag
-					site={ siteItem as Site }
+					site={ siteItem as SitesItem }
 					urlData={ siteAnalyzedData }
 					importerData={ getImportDragConfig() }
 					importerStatus={ job }

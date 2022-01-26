@@ -17,7 +17,6 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSite, getSiteId } from 'calypso/state/sites/selectors';
 import { UrlData } from '../import/types';
 import BloggerImporter from './blogger';
-import { Site } from './components/importer-drag';
 import NotAuthorized from './components/not-authorized';
 import NotFound from './components/not-found';
 import MediumImporter from './medium';
@@ -27,6 +26,7 @@ import { Importer, ImportJob, QueryObject } from './types';
 import { getImporterTypeForEngine } from './util';
 import WixImporter from './wix';
 import WordpressImporter from './wordpress';
+import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -37,7 +37,7 @@ interface Props {
 	stepSectionName: string;
 	queryObject: QueryObject;
 	siteId: number;
-	site: Site;
+	site: SitesItem;
 	siteSlug: string;
 	fromSite: string;
 	canImport: boolean;
@@ -236,7 +236,7 @@ export default connect(
 		return {
 			urlData: getUrlData( state ),
 			siteId,
-			site: getSite( state, siteId ) as Site,
+			site: getSite( state, siteId ) as SitesItem,
 			siteSlug,
 			fromSite,
 			siteImports: getImporterStatusForSiteId( state, siteId ),

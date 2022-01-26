@@ -1,5 +1,5 @@
 import { UrlData } from '../import/types';
-import { Site } from './components/importer-drag';
+import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 export type Importer = 'blogger' | 'medium' | 'squarespace' | 'wix' | 'wordpress';
 export type QueryObject = {
@@ -40,7 +40,7 @@ export interface ImporterBaseProps {
 	job?: ImportJob;
 	run: boolean;
 	siteId: number;
-	site: Site;
+	site: SitesItem;
 	siteSlug: string;
 	fromSite: string;
 	urlData: UrlData;
