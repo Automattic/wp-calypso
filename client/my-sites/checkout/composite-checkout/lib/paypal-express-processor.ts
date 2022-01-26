@@ -34,26 +34,31 @@ export default async function payPalProcessor(
 	const thankYouUrl = getThankYouUrl();
 	let currentUrl;
 	let currentBaseUrl;
+	let currentUrlQuery;
 	try {
 		currentUrl = window.location.href;
 		currentBaseUrl = window.location.origin;
+		currentUrlQuery = window.location.search;
 	} catch ( error ) {
 		currentUrl = `https://wordpress.com/checkout/${ siteSlug }`;
 		currentBaseUrl = 'https://wordpress.com';
+		currentUrlQuery = '';
 	}
 	const currentUrlWithoutQuery = currentUrl.split( /\?|#/ )[ 0 ];
+	const updatedQuery = new URLSearchParams( currentUrlQuery );
 	const successUrl = thankYouUrl.startsWith( 'http' ) ? thankYouUrl : currentBaseUrl + thankYouUrl;
-	let cancelUrl = customizedCancelUrl;
-	if ( ! cancelUrl ) {
-		cancelUrl = createUserAndSiteBeforeTransaction
-			? currentUrlWithoutQuery + '?cart=no-user'
-			: currentUrlWithoutQuery;
+	if ( createUserAndSiteBeforeTransaction ) {
+		updatedQuery.append( 'cart', 'no-user' );
 	}
+	const updatedQueryString = updatedQuery.toString();
+	const cancelUrl = updatedQueryString.length
+		? currentUrlWithoutQuery + '?' + updatedQueryString
+		: currentUrlWithoutQuery;
 
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		responseCart,
 		successUrl,
-		cancelUrl,
+		cancelUrl: customizedCancelUrl || cancelUrl,
 		siteId,
 		domainDetails:
 			getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) || null,
