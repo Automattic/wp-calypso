@@ -24,7 +24,7 @@ const FileSelectThumbnailContainer = styled.div`
 	max-height: 145px;
 	min-height: 93px;
 	background: rgba( 187, 224, 250, 0.12 );
-	border: 1px dashed #dcdcde;
+	border: 1px dashed var( --studio-gray-5 );
 	border-radius: 5px;
 	text-align: center;
 	padding: 26px 5px;
