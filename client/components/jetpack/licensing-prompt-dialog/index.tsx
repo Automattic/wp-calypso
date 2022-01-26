@@ -91,7 +91,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 			<p className="licensing-prompt-dialog__instructions">
 				{ preventWidows(
 					translate(
-						'{{strong}}Check your email{{/strong}} for your license key. You should have received it after making your purchase.',
+						'Find the license key in your purchase confirmation email to activate your new Jetpack features.',
 						{
 							components: {
 								strong: <strong />,
