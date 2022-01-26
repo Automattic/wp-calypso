@@ -190,7 +190,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		'tour-kit-frame',
 		isMobile ? 'is-mobile' : 'is-desktop',
 		{ 'is-visible': tourReady },
-		classParser( config.options?.classes )
+		classParser( config.options?.className )
 	);
 
 	useStepTracking( currentStepIndex, config.options?.callbacks?.onStepViewOnce );

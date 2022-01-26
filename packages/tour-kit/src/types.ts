@@ -14,7 +14,7 @@ export type Step = {
 		// | ...
 	};
 	options?: {
-		classes?: string | Array< string >;
+		className?: string | Array< string >;
 	};
 };
 
@@ -51,7 +51,7 @@ export interface Config {
 	};
 	closeHandler: CloseHandler;
 	options?: {
-		classes?: string | Array< string >;
+		className?: string | Array< string >;
 		callbacks?: {
 			onMinimize?: Callback;
 			onMaximize?: Callback;
