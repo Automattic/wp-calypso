@@ -111,6 +111,8 @@ export class NavigationLink extends Component {
 			);
 
 			this.props.goToNextStep();
+		} else if ( this.props.goToNextStep ) {
+			this.props.goToNextStep();
 		}
 
 		if ( ! this.props.disabledTracks ) {
