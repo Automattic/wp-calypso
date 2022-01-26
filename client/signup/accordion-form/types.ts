@@ -15,7 +15,7 @@ export interface AccordionSectionProps< T > {
 	component?: ReactNode;
 	children?: ReactNode;
 	showSkip: boolean;
-	summary: string | undefined;
+	summary?: string;
 	validate?: ValidatorFunction< T >;
 }
 export interface sectionGeneratorReturnType< T > {
