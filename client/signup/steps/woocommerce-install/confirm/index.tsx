@@ -9,6 +9,7 @@ import EligibilityWarningsList from 'calypso/components/eligibility-warnings/war
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ActionSection, StyledNextButton } from '..';
@@ -114,6 +115,11 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 							onClick={ () => {
 								dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
 								if ( siteUpgrading.required ) {
+									dispatch(
+										recordTracksEvent( 'calypso_woocommerce_dashboard_upgrade_required', {
+											site: wpcomDomain,
+										} )
+									);
 									page( siteUpgrading.checkoutUrl );
 									return;
 								}
