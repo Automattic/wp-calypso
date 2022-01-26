@@ -745,7 +745,12 @@ function PartnerLogo( {
 			<LineItemMeta>
 				<div>{ translate( 'Included in your IONOS plan' ) }</div>
 				<div>
-					<img src={ '/calypso/images/jetpack/partners/partner-logo-ionos.png' } alt="IONOS Logo" />
+					<img
+						src={ '/calypso/images/jetpack/partners/partner-logo-ionos.png' }
+						alt="IONOS Logo"
+						width="67px"
+						height="26px"
+					/>
 				</div>
 			</LineItemMeta>
 		);
