@@ -1,6 +1,6 @@
 import { Page } from 'playwright';
-import envVariables from '../../env-variables';
 import { getCalypsoURL } from '../../data-helper';
+import envVariables from '../../env-variables';
 
 const selectors = {
 	// Fields
