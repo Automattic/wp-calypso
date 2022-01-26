@@ -62,7 +62,7 @@ describe( 'genericRedirectProcessor', () => {
 			stored_details_id: undefined,
 			street_number: undefined,
 			success_url:
-				'https://wordpress.com/checkout/thank-you/no-site/pending?redirectTo=https%3A%2F%2Fwordpress.com',
+				'https://wordpress.com/checkout/thank-you/no-site/pending?redirectTo=%2Fthank-you',
 			tef_bank: undefined,
 			zip: '10001',
 		},
@@ -165,7 +165,7 @@ describe( 'genericRedirectProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fwordpress.com',
+					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=%2Fthank-you',
 			},
 		} );
 	} );
@@ -287,7 +287,7 @@ describe( 'genericRedirectProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fwordpress.com',
+					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=%2Fthank-you',
 			},
 		} );
 	} );
@@ -323,7 +323,7 @@ describe( 'genericRedirectProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fwordpress.com',
+					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=%2Fthank-you',
 			},
 		} );
 	} );
