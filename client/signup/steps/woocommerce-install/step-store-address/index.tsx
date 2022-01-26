@@ -60,9 +60,11 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	const { validate, clearError, getError, errors } = useAddressFormValidation( siteId );
 
 	useEffect( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_woocommerce_dashboard_step_view', { step: 'store-address' } )
-		);
+		if ( siteId ) {
+			dispatch(
+				recordTracksEvent( 'calypso_woocommerce_dashboard_step_view', { step: 'store-address' } )
+			);
+		}
 	}, [ dispatch, siteId ] );
 
 	// @todo: Add a general hook to get and update multi-option data like the profile.

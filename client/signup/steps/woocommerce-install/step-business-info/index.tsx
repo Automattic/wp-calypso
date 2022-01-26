@@ -230,9 +230,11 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 	}
 
 	useEffect( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_woocommerce_dashboard_step_view', { step: 'business-info' } )
-		);
+		if ( siteId ) {
+			dispatch(
+				recordTracksEvent( 'calypso_woocommerce_dashboard_step_view', { step: 'business-info' } )
+			);
+		}
 	}, [ dispatch, siteId ] );
 
 	if ( ! siteId ) {
