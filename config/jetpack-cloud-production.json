@@ -32,6 +32,7 @@
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
 		"checkout/google-pay": false,
+		"fullstory": true,
 		"i18n/community-translator": false,
 		"jetpack-cloud": true,
 		"jetpack/more-informative-scan": true,

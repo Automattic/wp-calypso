@@ -35,6 +35,7 @@
 		"checkout/google-pay": false,
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
+		"fullstory": true,
 		"jetpack-cloud": true,
 		"jetpack/activity-log-sharing": true,
 		"jetpack/more-informative-scan": true,
