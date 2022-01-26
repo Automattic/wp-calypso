@@ -13,7 +13,7 @@ export const Label = styled( FormLabel )`
 	font-size: 13px;
 	line-height: 20px;
 	text-align: center;
-	color: #2c3338;
+	color: var( --studio-gray-80 );
 	text-decoration-line: underline;
 	letter-spacing: -0.16px;
 	text-overflow: ellipsis;
