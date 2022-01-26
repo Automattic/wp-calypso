@@ -107,7 +107,7 @@ export default function AccordionFormSection< T >( props: AccordionFormSectionPr
 			</SectionHeader>
 			{ props.isExpanded && (
 				<SectionContent>
-					{ props.component }
+					{ props.component ? props.component : props.children }
 					<ButtonsContainer>
 						<NextButton onClick={ props.onNext }>
 							{ translate( 'Next' ) }
