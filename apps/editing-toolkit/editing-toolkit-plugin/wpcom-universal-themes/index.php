@@ -116,7 +116,7 @@ function unload_core_fse() {
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_template_editing', 11 );
 
 	// always hide the WP core Site Editor.
-	add_action( 'admin_menu', __NAMESPACE__ . '\hide_core_site_editor' );
+	add_action( 'admin_menu', __NAMESPACE__ . '\maybe_hide_core_site_editor' );
 }
 
 /**
@@ -342,12 +342,16 @@ function display_fse_section() {
 }
 
 /**
- * Always hide the Core Site Editor in favour of the Gutenberg version.
+ * Hide the Core Site Editor in favour of the Gutenberg version.
  *
  * @return void
  */
-function hide_core_site_editor() {
-	remove_submenu_page( 'themes.php', 'site-editor.php' );
+function maybe_hide_core_site_editor() {
+	$is_wpcom            = defined( 'IS_WPCOM' ) && IS_WPCOM;
+	$is_gutenberg_active = $is_wpcom ? true : in_array( 'gutenberg/gutenberg.php', get_option( 'active_plugins' ), true );
+	if ( $is_gutenberg_active ) {
+		remove_submenu_page( 'themes.php', 'site-editor.php' );
+	}
 }
 
 /**
