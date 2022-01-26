@@ -1,5 +1,7 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import flows from 'calypso/signup/config/flows';
+import { addExcludeSteps, removeExcludeSteps } from 'calypso/state/signup/flow/actions';
 
 type BranchSteps = ( excludeSteps: string[] ) => void;
 
@@ -11,11 +13,10 @@ const memoExcludeSteps: { [ key: string ]: string[] } = {};
  * Also, it will clean up the exclude steps when the component mounts as the user might go back a step
  */
 const useBranchSteps = ( stepName: string ): BranchSteps => {
+	const dispatch = useDispatch();
 	const branchSteps = ( excludeSteps: string[] ) => {
-		excludeSteps.forEach( ( step ) => {
-			flows.excludeStep( step );
-		} );
-		memoExcludeSteps[ stepName ] = excludeSteps;
+		flows.excludeSteps( excludeSteps );
+		dispatch( addExcludeSteps( excludeSteps ) );
 	};
 
 	const restoreBranchSteps = () => {
@@ -24,6 +25,7 @@ const useBranchSteps = ( stepName: string ): BranchSteps => {
 			flows.resetExcludedStep( step );
 		} );
 		delete memoExcludeSteps[ stepName ];
+		dispatch( removeExcludeSteps( excludeSteps ) );
 	};
 
 	// Only do following things when mounted
