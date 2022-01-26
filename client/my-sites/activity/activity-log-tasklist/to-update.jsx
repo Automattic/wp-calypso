@@ -34,7 +34,11 @@ export default function ( WrappedComponent ) {
 		const siteAlertsQuery = useQuery(
 			[ 'site-alerts', siteId ],
 			() => wpcom.req.get( { path: `/sites/${ siteId }/alerts`, apiNamespace: 'wpcom/v2' } ),
-			{ refetchInterval: 5 * 60 * 1000 }
+			{
+				staleTime: Infinity,
+				refetchOnMount: 'always',
+				refetchInterval: 5 * 60 * 1000,
+			}
 		);
 
 		const themes = siteAlertsQuery.data?.updates?.themes ?? EMPTY_LIST;
@@ -52,7 +56,7 @@ export default function ( WrappedComponent ) {
 	}
 
 	WithItemsToUpdate.propTypes = {
-		siteId: PropTypes.number,
+		siteId: PropTypes.number.isRequired,
 	};
 
 	return WithItemsToUpdate;
