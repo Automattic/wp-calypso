@@ -15,8 +15,6 @@ import './style.scss';
 interface ProductOption {
 	value: string;
 	label: string;
-	cost: number;
-	currency: string;
 }
 
 function selectProductOptions( families: APIProductFamily[] ): ProductOption[] {
@@ -24,8 +22,6 @@ function selectProductOptions( families: APIProductFamily[] ): ProductOption[] {
 		family.products.map( ( product ) => ( {
 			value: product.slug,
 			label: product.name,
-			cost: product.cost,
-			currency: product.currency,
 		} ) )
 	);
 }

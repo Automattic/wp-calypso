@@ -43,3 +43,17 @@ p.issue-license-form__description {
 	font-size: 0.875rem;
 	color: #333;
 }
+	
+@media ( max-width: 960px ) {
+	.issue-license-form__top {
+		display: block;
+	}
+
+	p.issue-license-form__description {
+		margin: 2rem 0 1rem;
+	}
+
+	.issue-license-form__controls {
+		text-align: right;
+	}
+}

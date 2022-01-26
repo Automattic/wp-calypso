@@ -29,6 +29,7 @@
 	height: 16px;
 	display: inline-block;
 	float: right;
+	border-radius: 10px; /* stylelint-disable-line */
 }
 
 .license-product-card__radio .gridicon {
@@ -58,4 +59,14 @@
 .issue-license-form__top > div {
 	align-self: flex-end;
 	margin-bottom: 0;
+}
+
+@media ( max-width: 960px ) {
+	.license-product-card {
+		width: 100%;
+	}
+
+	.license-product-card__inner {
+		margin: 0.5rem 0;
+	}
 }

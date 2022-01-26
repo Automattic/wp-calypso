@@ -4,8 +4,7 @@ import { ReactElement } from 'react';
 import './style.scss';
 
 export default function LicenseProductCard( props: any ): ReactElement {
-	const { cost, label, orderIndex } = props.product;
-	const costPerMonth = Math.round( ( cost / 12 + Number.EPSILON ) * 100 ) / 100;
+	const { label, orderIndex } = props.product;
 	const productTitle = label.replace( 'Jetpack ', '' ).replace( '(', '' ).replace( ')', '' );
 
 	return (
@@ -28,8 +27,8 @@ export default function LicenseProductCard( props: any ): ReactElement {
 							{ props.isSelected && <Gridicon icon="checkmark" /> }
 						</div>
 					</div>
-					<h3 className="license-product-card__cost">${ costPerMonth }</h3>
-					<p className="license-product-card__text">/per site per month</p>
+					<h3 className="license-product-card__cost"></h3>
+					<p className="license-product-card__text"></p>
 				</div>
 			</div>
 		</div>
