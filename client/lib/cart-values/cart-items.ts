@@ -300,9 +300,10 @@ export function domainRegistration( properties: {
 	domain: string;
 	source?: string;
 	extra?: RequestCartProductExtra;
-} ): MinimalRequestCartProduct {
+} ): MinimalRequestCartProduct & { is_domain_registration: boolean } {
 	return {
 		...domainItem( properties.productSlug, properties.domain, properties.source ),
+		is_domain_registration: true,
 		...( properties.extra ? { extra: properties.extra } : {} ),
 	};
 }
