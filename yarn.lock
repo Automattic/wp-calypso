@@ -10883,14 +10883,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async@npm:^3.1.0":
-  version: 3.2.2
-  resolution: "async@npm:3.2.2"
-  checksum: 0702c7d70d26f8aa2afdcefca2a1aab45dd36d95e4b652ee3d1c784001b5fcb0132737e068200eb5f38feee01b748b1839c4c94ce11f37fd86b8fb3d6b5addaa
-  languageName: node
-  linkType: hard
-
-"async@npm:^3.2.0":
+"async@npm:^3.1.0, async@npm:^3.2.0":
   version: 3.2.3
   resolution: "async@npm:3.2.3"
   checksum: 109780c846f05109dde14412d916ae4ed6daf6f9aad0c4aa1dcf0d4da775a3a9e35e0e06e4e06ad9fed66f99ca15549da16f2f243c56103b346e9d3bcd9c943f
