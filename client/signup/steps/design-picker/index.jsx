@@ -302,9 +302,6 @@ export default function DesignPickerStep( props ) {
 		const defaultDependencies = { selectedDesign };
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemesAvailable;
-		const nextLabelText = shouldUpgrade
-			? translate( 'Upgrade Plan' )
-			: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
 
 		return (
 			<StepWrapper
@@ -317,14 +314,14 @@ export default function DesignPickerStep( props ) {
 				stepContent={ renderDesignPreview() }
 				align={ isMobile ? 'left' : 'center' }
 				hideSkip
-				hideNext={ false }
-				nextLabelText={ nextLabelText }
+				hideNext={ shouldUpgrade }
+				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
+				actionLabelText={ translate( 'Upgrade Plan' ) }
+				actionOnClick={ upgradePlan }
 				defaultDependencies={ defaultDependencies }
 				backUrl={ getStepUrl( flowName, stepName, '', locale, queryParams ) }
-				goToNextStep={ shouldUpgrade ? upgradePlan : submitDesign }
+				goToNextStep={ submitDesign }
 				stepSectionName={ designTitle }
-				// Prevent from completing the flow when the user clicks on Upgrade Plan button
-				nextDisabledSubmitOnClick={ shouldUpgrade }
 			/>
 		);
 	}

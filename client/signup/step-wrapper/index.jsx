@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { ActionButtons } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -24,7 +25,6 @@ class StepWrapper extends Component {
 		skipHeadingText: PropTypes.string,
 		skipButtonAlign: PropTypes.oneOf( [ 'top', 'bottom' ] ),
 		nextLabelText: PropTypes.string,
-		nextDisabledSubmitOnClick: PropTypes.bool,
 		// Displays an <hr> above the skip button and adds more white space
 		isLargeSkipLayout: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
@@ -101,7 +101,6 @@ class StepWrapper extends Component {
 		const {
 			shouldHideNavButtons,
 			nextLabelText,
-			nextDisabledSubmitOnClick,
 			defaultDependencies,
 			flowName,
 			stepName,
@@ -127,9 +126,25 @@ class StepWrapper extends Component {
 				borderless={ false }
 				primary
 				forwardIcon={ null }
-				disabledSubmitOnClick={ nextDisabledSubmitOnClick }
-				disabledTracksOnClick
 			/>
+		);
+	}
+
+	renderAction() {
+		const { actionLabelText, actionOnClick } = this.props;
+		if ( ! actionOnClick ) {
+			return null;
+		}
+
+		return (
+			<Button
+				primary
+				className="step-wrapper__navigation-link"
+				borderless={ false }
+				onClick={ actionOnClick }
+			>
+				{ actionLabelText }
+			</Button>
 		);
 	}
 
@@ -185,6 +200,7 @@ class StepWrapper extends Component {
 			skipButtonAlign === 'top' &&
 			this.renderSkip( { borderless: true, forwardIcon: null } );
 		const nextButton = ! hideNext && this.renderNext();
+		const actionButton = this.renderAction();
 		const hasNavigation = backButton || skipButton || nextButton;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-horizontal-layout': isHorizontalLayout,
@@ -204,6 +220,7 @@ class StepWrapper extends Component {
 						{ backButton }
 						{ skipButton }
 						{ nextButton }
+						{ actionButton }
 					</ActionButtons>
 					{ ! hideFormattedHeader && (
 						<div className="step-wrapper__header">
