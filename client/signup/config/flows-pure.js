@@ -299,7 +299,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'importer',
-			steps: isEnabled( 'gutenboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
+			steps: isEnabled( 'onboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
 			destination: '/',
 			pageTitle: translate( 'Import your site content' ),
 			description: 'A new import flow that can be used from the onboarding flow',

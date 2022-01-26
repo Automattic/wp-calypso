@@ -55,7 +55,7 @@ const useIntentsAlt = ( {
 }: Pick< Props, 'canImport' | 'translate' > ): IntentAlt[] => {
 	return [
 		{
-			show: isEnabled( 'gutenboarding/import' ),
+			show: isEnabled( 'onboarding/import' ),
 			key: 'import',
 			description: translate( 'Already have an existing website?' ),
 			value: 'import',

@@ -203,24 +203,21 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 									return <NotAuthorized siteSlug={ siteSlug } />;
 								} else if (
 									engine === 'blogger' &&
-									isEnabled( 'gutenboarding/import-from-blogger' )
+									isEnabled( 'onboarding/import-from-blogger' )
 								) {
 									return renderBloggerImporter();
-								} else if (
-									engine === 'medium' &&
-									isEnabled( 'gutenboarding/import-from-medium' )
-								) {
+								} else if ( engine === 'medium' && isEnabled( 'onboarding/import-from-medium' ) ) {
 									return renderMediumImporter();
 								} else if (
 									engine === 'squarespace' &&
-									isEnabled( 'gutenboarding/import-from-squarespace' )
+									isEnabled( 'onboarding/import-from-squarespace' )
 								) {
 									return renderSquarespaceImporter();
-								} else if ( engine === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
+								} else if ( engine === 'wix' && isEnabled( 'onboarding/import-from-wix' ) ) {
 									return renderWixImporter();
 								} else if (
 									engine === 'wordpress' &&
-									isEnabled( 'gutenboarding/import-from-wordpress' )
+									isEnabled( 'onboarding/import-from-wordpress' )
 								) {
 									return renderWordpressImporter();
 								}
