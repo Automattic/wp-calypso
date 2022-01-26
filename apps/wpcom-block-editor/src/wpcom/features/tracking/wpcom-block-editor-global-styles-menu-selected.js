@@ -2,8 +2,9 @@ import { __ } from '@wordpress/i18n';
 import tracksRecordEvent from './track-record-event';
 
 function trackGlobalStylesMenuSelected( { path } ) {
+	// Gutenberg 12.5.0 changes the selector for the preview at the top level to have the '*__iframe' suffix.
 	const isAtTopLevel = document.querySelector(
-		'.edit-site-global-styles-sidebar .edit-site-global-styles-preview'
+		'.edit-site-global-styles-sidebar .edit-site-global-styles-preview, .edit-site-global-styles-sidebar .edit-site-global-styles-preview__iframe'
 	);
 
 	if ( ! isAtTopLevel ) {
