@@ -10417,6 +10417,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"archiver@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "archiver@npm:5.3.0"
+  dependencies:
+    archiver-utils: ^2.1.0
+    async: ^3.2.0
+    buffer-crc32: ^0.2.1
+    readable-stream: ^3.6.0
+    readdir-glob: ^1.0.0
+    tar-stream: ^2.2.0
+    zip-stream: ^4.1.0
+  checksum: 48527f4b954355e12e5ec5dfc3fe9e148be6f0a264109d0f835f5ed290696f6d1c9a88b561a83be94b78f30a1dbbab64307d04740f979beed88e38e0d112f74f
+  languageName: node
+  linkType: hard
+
 "are-we-there-yet@npm:^2.0.0":
   version: 2.0.0
   resolution: "are-we-there-yet@npm:2.0.0"
@@ -10872,6 +10887,13 @@ __metadata:
   version: 3.2.2
   resolution: "async@npm:3.2.2"
   checksum: 0702c7d70d26f8aa2afdcefca2a1aab45dd36d95e4b652ee3d1c784001b5fcb0132737e068200eb5f38feee01b748b1839c4c94ce11f37fd86b8fb3d6b5addaa
+  languageName: node
+  linkType: hard
+
+"async@npm:^3.2.0":
+  version: 3.2.3
+  resolution: "async@npm:3.2.3"
+  checksum: 109780c846f05109dde14412d916ae4ed6daf6f9aad0c4aa1dcf0d4da775a3a9e35e0e06e4e06ad9fed66f99ca15549da16f2f243c56103b346e9d3bcd9c943f
   languageName: node
   linkType: hard
 
@@ -13737,6 +13759,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"compress-commons@npm:^4.1.0":
+  version: 4.1.1
+  resolution: "compress-commons@npm:4.1.1"
+  dependencies:
+    buffer-crc32: ^0.2.13
+    crc32-stream: ^4.0.2
+    normalize-path: ^3.0.0
+    readable-stream: ^3.6.0
+  checksum: 784ef2964cdce04fb6e91e3a4b8e2565db2024141259e8f843675ef556662b90a1d65aeaabe703f88d2eb0291fa4ed10a674a6c28f93b5fb37e569aad1b374fe
+  languageName: node
+  linkType: hard
+
 "compressible@npm:~2.0.16":
   version: 2.0.18
   resolution: "compressible@npm:2.0.18"
@@ -14169,6 +14203,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"crc-32@npm:^1.2.0":
+  version: 1.2.1
+  resolution: "crc-32@npm:1.2.1"
+  dependencies:
+    exit-on-epipe: ~1.0.1
+    printj: ~1.3.1
+  bin:
+    crc32: bin/crc32.njs
+  checksum: d3a77d2146ea39e327fcf0fa0373e43da8c9d011f97dbad411d88c39cb69a1c08925121609e77feffe848c83831fcc755f938fe46cd4428433408fbd601b0bc4
+  languageName: node
+  linkType: hard
+
 "crc32-stream@npm:^3.0.1":
   version: 3.0.1
   resolution: "crc32-stream@npm:3.0.1"
@@ -14176,6 +14222,16 @@ __metadata:
     crc: ^3.4.4
     readable-stream: ^3.4.0
   checksum: cf026cc08e68a7eb9f9245b3937d062339a54c2f5b4738c7fb861bd2db56ac220df3627f02ed6e0972633a99435d409f4470cf0a3aac6e944d87730493b6dea0
+  languageName: node
+  linkType: hard
+
+"crc32-stream@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "crc32-stream@npm:4.0.2"
+  dependencies:
+    crc-32: ^1.2.0
+    readable-stream: ^3.4.0
+  checksum: 215b515775296c9f152cbb8435c9e39552876042d52eec6569508f2bfc6d7c6cfa4bc8939002457c7f612e9b995a377f7abbaf473b961941b816361574913c9c
   languageName: node
   linkType: hard
 
@@ -17640,6 +17696,13 @@ __metadata:
   version: 0.1.12
   resolution: "exif-parser@npm:0.1.12"
   checksum: ef1df84edbba50621fcfe19510c8db3ddd9e7fb374459d3f77c9256c24584767c7fb4cf1b15aef46e87a06528d3c48e44de02cecc314656d22a5cf954a0e7192
+  languageName: node
+  linkType: hard
+
+"exit-on-epipe@npm:~1.0.1":
+  version: 1.0.1
+  resolution: "exit-on-epipe@npm:1.0.1"
+  checksum: f10a5fbf1abb6294b06220f99d84bb918286700e8aec3d364963767f1f0530b7e5abf29d8f0ef2672458e794f746f73254d397b1596acc745bdce81586b183c0
   languageName: node
   linkType: hard
 
@@ -29414,6 +29477,15 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"printj@npm:~1.3.1":
+  version: 1.3.1
+  resolution: "printj@npm:1.3.1"
+  bin:
+    printj: bin/printj.njs
+  checksum: 74c7f084f76ac871057a465586ffe3fd403b52a0be764bc7105a21f75eed42f8ff39cda2391566f4cd8992eb6a36790f99b3d40389cc9e8bee08af1b6250f75f
+  languageName: node
+  linkType: hard
+
 "prism-react-renderer@npm:^1.2.1":
   version: 1.2.1
   resolution: "prism-react-renderer@npm:1.2.1"
@@ -31011,6 +31083,15 @@ fsevents@~2.1.2:
     string_decoder: ^1.1.1
     util-deprecate: ^1.0.1
   checksum: 937bedd29ac8a68331666291922bea892fa2be1a33269e582de9f844a2002f146cf831e39cd49fe6a378d3f0c27358f259ed0e20d20f0bdc6a3f8fc21fce42dc
+  languageName: node
+  linkType: hard
+
+"readdir-glob@npm:^1.0.0":
+  version: 1.1.1
+  resolution: "readdir-glob@npm:1.1.1"
+  dependencies:
+    minimatch: ^3.0.4
+  checksum: 90936ece396c1e85534acc1f41a4904a5a8c063cdd405a1f1781b72207f100c79059435d6b98215336a07df6f577e50bc3a1568a0544b1aefbb4aef8d5c5acfb
   languageName: node
   linkType: hard
 
@@ -35172,7 +35253,7 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"tar-stream@npm:^2.0.0, tar-stream@npm:^2.1.0, tar-stream@npm:^2.1.4":
+"tar-stream@npm:^2.0.0, tar-stream@npm:^2.1.0, tar-stream@npm:^2.1.4, tar-stream@npm:^2.2.0":
   version: 2.2.0
   resolution: "tar-stream@npm:2.2.0"
   dependencies:
@@ -38188,6 +38269,7 @@ testarmada-magellan@11.0.10:
     "@testim/chrome-version": ^1.0.7
     "@types/jest": ^27.0.2
     "@xmpp/plugins": ^0.3.0
+    archiver: ^5.3.0
     asana-phrase: ^0.0.8
     babel-jest: ^27.2.4
     babel-plugin-dynamic-import-node: ^2.3.0
@@ -38200,6 +38282,7 @@ testarmada-magellan@11.0.10:
     esm: ^3.2.25
     execa: ^5.0.0
     ffmpeg-static: ^2.4.0
+    form-data: ^4.0.0
     fs-extra: ^0.22.1
     jest: ^27.2.4
     jest-docblock: ^27.0.6
@@ -38213,6 +38296,7 @@ testarmada-magellan@11.0.10:
     mocha-junit-reporter: ^2.0.2
     mocha-multi-reporters: ^1.5.1
     mocha-teamcity-reporter: ^3.0.0
+    node-fetch: ^2.6.1
     playwright: 1.16
     png-itxt: ^1.3.0
     postcss: ^8.3.11
@@ -39031,6 +39115,17 @@ testarmada-magellan@11.0.10:
     compress-commons: ^2.1.1
     readable-stream: ^3.4.0
   checksum: aac673670f9aa673cf6c8d99e010d6c99ab08deb80f919a0bc537d0c914ea640cb5aae1bbd84348dfa586693eab0bb62829d1c3033f163b489f9f08317fc954c
+  languageName: node
+  linkType: hard
+
+"zip-stream@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "zip-stream@npm:4.1.0"
+  dependencies:
+    archiver-utils: ^2.1.0
+    compress-commons: ^4.1.0
+    readable-stream: ^3.6.0
+  checksum: ed9eb9387953576c43bdf7678705e8b0ff4e9149cf92b39fa845ddd5413b08daf68655b1ee8311e2dd7c88ddeb95908a785e8e48473016b2595870b0adf588d4
   languageName: node
   linkType: hard
 

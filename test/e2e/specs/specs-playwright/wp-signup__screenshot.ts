@@ -9,7 +9,6 @@ import {
 	NavbarComponent,
 	PlansPage,
 	CartCheckoutPage,
-	setupHooks,
 	SidebarComponent,
 	UserSignupPage,
 	BrowserManager,
@@ -18,7 +17,7 @@ import {
 import archiver from 'archiver';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
 
 const selectors = {
@@ -27,18 +26,19 @@ const selectors = {
 	isWhiteSignup: 'body.is-white-signup.is-section-signup',
 	isBlueSignup: '.is-section-signup:not( .is-white-signup ) .signup__step.is-user .signup-form',
 };
+declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
+describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), function () {
 	const blogName = 'e2eflowtestingtos1.wordpress.com';
 	const cartItemForBusinessPlan = 'WordPress.com Business';
 	let page: Page;
 	let plansPage: PlansPage;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
-	describe( 'ToS tracking screenshots', function () {
+	describe( 'ToS signup, login, and checkout', function () {
 		jest.setTimeout( 1800000 );
 		let cartCheckoutPage: CartCheckoutPage;
 		const magnificientNonEnLocales = [
