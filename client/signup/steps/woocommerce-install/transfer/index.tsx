@@ -52,13 +52,13 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 				<>
 					{ isAtomic && (
 						<InstallPlugins
-							onFailure={ ( type ) => handleTransferFailure( type ) }
+							onFailure={ handleTransferFailure }
 							trackRedirect={ trackRedirect }
 						/>
 					) }
 					{ ! isAtomic && (
 						<TransferSite
-							onFailure={ ( type ) => handleTransferFailure( type ) }
+							onFailure={ handleTransferFailure }
 							trackRedirect={ trackRedirect }
 						/>
 					) }
