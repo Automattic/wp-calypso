@@ -1,9 +1,5 @@
 .store-features__powered-by {
-	display: block;
-	margin-top: 15px;
-
-	.store-features__image-wrapper {
-		display: inline-block;
+	.store-features__feature-icon {
 		vertical-align: middle;
 		margin-right: 15px;
 	}
@@ -12,12 +8,4 @@
 .store-features__requirements {
 	display: block;
 	margin-bottom: 15px;
-}
-
-.select-items__item-description button {
-	border: 0;
-	margin: 0;
-	background: none;
-	color: rgb( 6, 117, 196 );
-	cursor: pointer;
 }

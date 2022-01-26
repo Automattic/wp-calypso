@@ -42,29 +42,32 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			description: (
 				<>
 					<span className="store-features__requirements">{ translate( 'Free' ) }</span>
-					<span>
+
+					<p>
 						{ translate(
 							'Ideal if you’re looking to accept donations or sell one or two products without needing to manage shipping.'
 						) }
-					</span>
-					<span className="store-features__powered-by">
-						<span className="store-features__image-wrapper">
-							<img src={ paymentBlocksImage } alt="Payment Blocks" />
-						</span>
-						<span>
-							{ translate( 'Powered by {{a}}Payment Blocks{{/a}}', {
-								components: {
-									a: (
-										<a
-											href={ localizeUrl(
-												'https://wordpress.com/support/wordpress-editor/blocks/payments/'
-											) }
-										/>
-									),
-								},
-							} ) }
-						</span>
-					</span>
+					</p>
+
+					<footer className="store-features__powered-by">
+						<img
+							src={ paymentBlocksImage }
+							alt="Payment Blocks"
+							className="store-features__feature-icon"
+						/>
+
+						{ translate( 'Powered by {{a}}Payment Blocks{{/a}}', {
+							components: {
+								a: (
+									<a
+										href={ localizeUrl(
+											'https://wordpress.com/support/wordpress-editor/blocks/payments/'
+										) }
+									/>
+								),
+							},
+						} ) }
+					</footer>
 				</>
 			),
 			icon: shoppingBag,
@@ -83,29 +86,28 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 							},
 						} ) }
 					</span>
-					<span>
+
+					<p>
 						{ translate(
 							'If you have multiple products or require extensive order and shipping management than this might suit your needs better.'
 						) }
-					</span>
-					<span className="store-features__powered-by">
-						<span className="store-features__image-wrapper">
-							<img src={ wooImage } alt="WooCommerce" />
-						</span>
-						<span>
-							{ translate( 'Powered by {{a}}WooCommerce{{/a}}', {
-								components: {
-									a: (
-										<a
-											href={ localizeUrl(
-												'https://wordpress.com/support/introduction-to-woocommerce/'
-											) }
-										/>
-									),
-								},
-							} ) }
-						</span>
-					</span>
+					</p>
+
+					<footer className="store-features__powered-by">
+						<img src={ wooImage } alt="WooCommerce" className="store-features__feature-icon" />
+
+						{ translate( 'Powered by {{a}}WooCommerce{{/a}}', {
+							components: {
+								a: (
+									<a
+										href={ localizeUrl(
+											'https://wordpress.com/support/introduction-to-woocommerce/'
+										) }
+									/>
+								),
+							},
+						} ) }
+					</footer>
 				</>
 			),
 			icon: truck,
