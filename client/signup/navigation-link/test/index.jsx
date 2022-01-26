@@ -26,6 +26,7 @@ describe( 'NavigationLink', () => {
 		},
 		recordTracksEvent: noop,
 		submitSignupStep: noop,
+		goToPreviousStep: jest.fn(),
 		goToNextStep: jest.fn(),
 		translate: ( str ) => `translated:${ str }`,
 		userLoggedIn: true,
@@ -123,6 +124,22 @@ describe( 'NavigationLink', () => {
 		expect( props.goToNextStep ).not.toHaveBeenCalled();
 		wrapper.simulate( 'click' );
 		expect( props.goToNextStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should call goToPreviousStep() only when the direction is back and clicked', () => {
+		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
+
+		expect( props.goToPreviousStep ).not.toHaveBeenCalled();
+		wrapper.simulate( 'click' );
+		expect( props.goToPreviousStep ).toHaveBeenCalled();
+	} );
+
+	test( 'should not call goToPreviousStep() when the direction is forward', () => {
+		const wrapper = shallow( <NavigationLink { ...props } direction="forward" /> );
+
+		expect( props.goToPreviousStep ).not.toHaveBeenCalled();
+		wrapper.simulate( 'click' );
+		expect( props.goToPreviousStep ).not.toHaveBeenCalled();
 	} );
 
 	test( 'getPreviousStep() When in 2nd step should return 1st step', () => {

@@ -47,7 +47,7 @@ class StepWrapper extends Component {
 		return (
 			<NavigationLink
 				direction="back"
-				goToNextStep={ this.props.goToPreviousStep }
+				goToPreviousStep={ this.props.goToPreviousStep }
 				flowName={ this.props.flowName }
 				positionInFlow={ this.props.positionInFlow }
 				stepName={ this.props.stepName }

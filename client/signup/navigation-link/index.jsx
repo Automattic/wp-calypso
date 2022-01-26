@@ -16,6 +16,7 @@ import './style.scss';
 
 export class NavigationLink extends Component {
 	static propTypes = {
+		goToPreviousStep: PropTypes.func,
 		goToNextStep: PropTypes.func,
 		direction: PropTypes.oneOf( [ 'back', 'forward' ] ),
 		flowName: PropTypes.string.isRequired,
@@ -111,8 +112,8 @@ export class NavigationLink extends Component {
 			);
 
 			this.props.goToNextStep();
-		} else if ( this.props.goToNextStep ) {
-			this.props.goToNextStep();
+		} else if ( this.props.goToPreviousStep ) {
+			this.props.goToPreviousStep();
 		}
 
 		if ( ! this.props.disabledTracks ) {
