@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
@@ -25,6 +26,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const translate = useTranslate();
 	const headerText = translate( 'Setup your store' );
 	const subHeaderText = translate( "Let's create a website that suits your needs" );
+	const siteSlug = props.signupDependencies.siteSlug;
 
 	const { stepName } = props;
 
@@ -115,12 +117,11 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const onSelect = ( selectedOption: StoreFeatureSet ) => {
 		switch ( selectedOption ) {
 			case 'power':
-				throw new Error( 'Not yet implemented' );
+				page.redirect( `/start/woocommerce-install/confirm?site=${ siteSlug }` );
 				break;
 
 			case 'simple':
 				throw new Error( 'Not yet implemented' );
-				break;
 		}
 	};
 
