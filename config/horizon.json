@@ -53,7 +53,6 @@
 		"jetpack/pricing-page-v2-banner": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/user-licensing": true,
-		"jetpack/redirect-legacy-plans": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
 		"lasagna": true,
