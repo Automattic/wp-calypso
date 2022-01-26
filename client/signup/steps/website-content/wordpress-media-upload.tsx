@@ -19,6 +19,7 @@ const UPLOAD_STATES = {
 };
 
 const FileSelectThumbnailContainer = styled.div`
+	cursor: pointer;
 	min-width: 190px;
 	width: 190px;
 	max-height: 145px;
