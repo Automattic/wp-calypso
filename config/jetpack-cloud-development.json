@@ -45,7 +45,6 @@
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
-		"jetpack/user-licensing": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,
