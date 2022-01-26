@@ -17,7 +17,7 @@ const selectors = {
 };
 
 /**
- * Class representing the flow of using an Instagram block in the editor
+ * Class representing the flow of using an Pay with Paypal block in the editor
  */
 export class PayWithPaypalBlockFlow implements BlockFlow {
 	private configurationData: ConfigurationData;

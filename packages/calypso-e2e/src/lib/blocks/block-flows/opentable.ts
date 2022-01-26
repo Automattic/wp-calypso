@@ -17,7 +17,7 @@ const selectors = {
 };
 
 /**
- * Class representing the flow of using an Instagram block in the editor
+ * Class representing the flow of using an OpenTable block in the editor
  */
 export class OpenTableFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
