@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import JetpackFreeWelcomePage from 'calypso/components/jetpack/jetpack-free-welcome';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -54,9 +53,7 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 	const urlQueryArgs: QueryArgs = context.query;
 	const { site: siteParam, duration: durationParam } = getParamsFromContext( context );
 	const duration = siteId && ( getCurrentPlanTerm( state, siteId ) as Duration );
-	const planRecommendation = isEnabled( 'jetpack/redirect-legacy-plans' )
-		? getPlanRecommendationFromContext( context )
-		: undefined;
+	const planRecommendation = getPlanRecommendationFromContext( context );
 	const highlightedProducts = getHighlightedProduct( urlQueryArgs.plan ) || undefined;
 
 	const enableUserLicensesDialog = !! (

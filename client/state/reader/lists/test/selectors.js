@@ -1,6 +1,5 @@
 import {
 	isRequestingList,
-	isRequestingSubscribedLists,
 	getSubscribedLists,
 	isUpdatedList,
 	getListByOwnerAndSlug,
@@ -29,32 +28,6 @@ describe( 'selectors', () => {
 				reader: {
 					lists: {
 						isRequestingList: true,
-					},
-				},
-			} );
-
-			expect( isRequesting ).toBeTruthy();
-		} );
-	} );
-
-	describe( '#isRequestingSubscribedLists()', () => {
-		test( 'should return false if not fetching', () => {
-			const isRequesting = isRequestingSubscribedLists( {
-				reader: {
-					lists: {
-						isRequestingLists: false,
-					},
-				},
-			} );
-
-			expect( isRequesting ).toBeFalsy();
-		} );
-
-		test( 'should return true if fetching', () => {
-			const isRequesting = isRequestingSubscribedLists( {
-				reader: {
-					lists: {
-						isRequestingLists: true,
 					},
 				},
 			} );

@@ -4,9 +4,10 @@ import type {
 	ResponseCart,
 	ResponseCartProduct,
 	RequestCartProduct,
+	CartKey,
 } from '../../src/types';
 
-export const mainCartKey = '1';
+export const mainCartKey = 1;
 
 const emptyResponseCart = getEmptyResponseCart();
 
@@ -94,7 +95,7 @@ export const renewalTwo: ResponseCartProduct = {
 	extra: { purchaseType: 'renewal' },
 };
 
-export async function getCart( cartKey: string ): Promise< ResponseCart > {
+export async function getCart( cartKey: CartKey ): Promise< ResponseCart > {
 	if ( cartKey === mainCartKey ) {
 		return {
 			...emptyResponseCart,
@@ -114,7 +115,7 @@ function createProduct( productProps: RequestCartProduct ): ResponseCartProduct 
 	throw new Error( 'Unknown product' );
 }
 
-export async function setCart( cartKey: string, newCart: RequestCart ): Promise< ResponseCart > {
+export async function setCart( cartKey: CartKey, newCart: RequestCart ): Promise< ResponseCart > {
 	if ( [ 'no-site', 'no-user', mainCartKey ].includes( cartKey ) ) {
 		// Mock the shopping-cart endpoint response here
 		return {

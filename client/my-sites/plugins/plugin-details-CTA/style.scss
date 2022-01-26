@@ -58,19 +58,24 @@
 	.plugin-details-CTA__install-button {
 		width: 100%;
 		padding: 12px 16px;
-		background-color: var( --color-accent-50 );
-		color: var( --studio-white );
-
-		&:focus,
-		&:hover {
-			background-color: var( --color-accent-60 );
-		}
 	}
 }
 
 .plugin-details-CTA__t-and-c {
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-50 );
+}
+
+.plugin-details-CTA__not-available {
+	.plugin-details-CTA__not-available-text {
+		color: var( --studio-gray-60 );
+		margin: 16px 0;
+		font-size: $font-body-small;
+	}
+
+	.plugin-details-CTA__follow-toggle label {
+		color: var( --studio-gray-80 );
+	}
 }
 
 .is-placeholder {

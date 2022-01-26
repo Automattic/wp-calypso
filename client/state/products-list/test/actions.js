@@ -32,6 +32,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: PRODUCTS_LIST_RECEIVE,
 				productsList: { businessPlan },
+				productsListType: null,
 			} );
 		} );
 	} );
@@ -60,6 +61,7 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PRODUCTS_LIST_RECEIVE,
 					productsList: { businessPlan },
+					productsListType: null,
 				} );
 			} );
 		} );

@@ -23,8 +23,8 @@ import {
 	getThemeSignupUrl,
 	isPremiumThemeAvailable,
 	isThemeActive,
-	isThemeGutenbergFirst,
 	isThemePremium,
+	shouldShowTryAndCustomize,
 } from 'calypso/state/themes/selectors';
 
 const identity = ( theme ) => theme;
@@ -125,15 +125,7 @@ function getAllThemeOptions( { translate, blockEditorSettings } ) {
 		} ),
 		action: tryAndCustomizeAction,
 		hideForTheme: ( state, themeId, siteId ) =>
-			! isUserLoggedIn( state ) ||
-			( siteId &&
-				( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
-					( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
-			isThemeActive( state, themeId, siteId ) ||
-			( isThemePremium( state, themeId ) &&
-				isJetpackSite( state, siteId ) &&
-				! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-			isThemeGutenbergFirst( state, themeId ),
+			! shouldShowTryAndCustomize( state, themeId, siteId ),
 	};
 
 	const preview = {

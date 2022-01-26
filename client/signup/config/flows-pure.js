@@ -385,9 +385,9 @@ export function generateFlows( {
 				'site-options',
 				'starting-point',
 				'courses',
-				'design-setup-site',
 				'store-options',
 				'store-features',
+				'design-setup-site',
 			],
 			destination: getDestinationFromIntent,
 			description:
@@ -416,9 +416,7 @@ export function generateFlows( {
 		{
 			name: 'woocommerce-install',
 			pageTitle: translate( 'Add WooCommerce to your site' ),
-			steps: isEnabled( 'woop' )
-				? [ 'store-address', 'business-info', 'confirm', 'transfer' ]
-				: [ 'confirm', 'transfer' ],
+			steps: [ 'store-address', 'business-info', 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
 			providesDependenciesInQuery: [ 'site' ],

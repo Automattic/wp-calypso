@@ -19,8 +19,10 @@ const TIMEOUT_LIMIT = 1000 * 15; // 15 seconds.
 
 export default function InstallPlugins( {
 	onFailure,
+	trackRedirect,
 }: {
-	onFailure: () => void;
+	onFailure: ( type: string ) => void;
+	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
@@ -54,7 +56,7 @@ export default function InstallPlugins( {
 			return;
 		}
 
-		onFailure();
+		onFailure( 'install' );
 	}, [ softwareError, onFailure ] );
 
 	// Timeout threshold for the install to complete.
@@ -65,7 +67,7 @@ export default function InstallPlugins( {
 
 		const timeId = setTimeout( () => {
 			setIsTimeoutError( true );
-			onFailure();
+			onFailure( 'install_timeout' );
 		}, TIMEOUT_LIMIT );
 
 		return () => {
@@ -94,13 +96,14 @@ export default function InstallPlugins( {
 		}
 
 		if ( softwareApplied ) {
+			trackRedirect();
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
 				page( wcAdmin );
 			}, 500 );
 		}
-	}, [ siteId, softwareApplied, wcAdmin, installFailed ] );
+	}, [ siteId, softwareApplied, wcAdmin, installFailed, trackRedirect ] );
 
 	return (
 		<>

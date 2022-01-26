@@ -141,6 +141,7 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'redirect',
+				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
 			props: {
@@ -160,6 +161,7 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
+				'user_id',
 			],
 			optionalDependencies: [
 				'bearer_token',
@@ -167,6 +169,7 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
+				'user_id',
 			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
@@ -401,6 +404,7 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
+				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 		},
@@ -416,6 +420,7 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
+				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 			props: {
@@ -657,8 +662,8 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
+			providesDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
+			optionalDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),

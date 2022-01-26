@@ -111,6 +111,7 @@ const Designs: React.FunctionComponent = () => {
 				onSelect={ onSelect }
 				premiumBadge={ <PremiumBadge /> }
 				highResThumbnails
+				recommendedCategorySlug={ null }
 			/>
 		</div>
 	);

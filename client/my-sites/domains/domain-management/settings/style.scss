@@ -22,10 +22,7 @@
 			// Higher specificity needed to override .formatted-header.is-left-align media-query styles
 			header.settings-header__title {
 				margin: 8px 0;
-
-				&::first-letter {
-					text-transform: uppercase;
-				}
+				text-transform: lowercase;
 
 				.formatted-header__title {
 					font-weight: 400;

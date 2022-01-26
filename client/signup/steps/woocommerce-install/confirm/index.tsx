@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
@@ -142,8 +141,6 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			flowName="woocommerce-install"
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
-			allowBackFirstStep={ ! isEnabled( 'woop' ) }
-			backUrl={ isEnabled( 'woop' ) ? null : `/woocommerce-installation/${ wpcomDomain }` }
 			headerText={ __( 'One final step' ) }
 			fallbackHeaderText={ __( 'One final step' ) }
 			subHeaderText={ __(

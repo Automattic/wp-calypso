@@ -5,6 +5,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { Importer, ImportJob } from '../types';
 import { ContentChooser } from './content-chooser';
@@ -101,7 +102,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 					url={ fromSite }
 					sourceSiteId={ fromSiteItem?.ID as number }
 					sourceUrlAnalyzedData={ fromSiteAnalyzedData }
-					targetSite={ siteItem }
+					targetSite={ siteItem as SitesItem }
 					targetSiteId={ siteItem?.ID as number }
 					targetSiteSlug={ siteSlug }
 				/>

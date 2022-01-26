@@ -34,7 +34,7 @@
 	}
 	.formatted-header__title {
 		font-weight: 400;
-		margin: 0;
+		margin: 0 0 4px;
 		line-height: 100%;
 
 		@include break-zoomed-in {

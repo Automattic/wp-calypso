@@ -19,8 +19,10 @@ import './style.scss';
 
 export default function TransferSite( {
 	onFailure,
+	trackRedirect,
 }: {
-	onFailure: () => void;
+	onFailure: ( type: string ) => void;
+	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
 
@@ -62,7 +64,9 @@ export default function TransferSite( {
 		() => {
 			dispatch( requestLatestAtomicTransfer( siteId ) );
 		},
-		isTransferringStatusFailed || transferStatus === transferStates.COMPLETED ? null : 3000
+		transferFailed || isTransferringStatusFailed || transferStatus === transferStates.COMPLETED
+			? null
+			: 3000
 	);
 
 	// Poll for software status
@@ -71,7 +75,10 @@ export default function TransferSite( {
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
 		// Only poll if the transfer is completed and not failed
-		isTransferringStatusFailed || transferStatus !== transferStates.COMPLETED || softwareApplied
+		transferFailed ||
+			isTransferringStatusFailed ||
+			transferStatus !== transferStates.COMPLETED ||
+			softwareApplied
 			? null
 			: 3000
 	);
@@ -100,7 +107,7 @@ export default function TransferSite( {
 		if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
 			setTransferFailed( true );
-			onFailure();
+			onFailure( 'transfer' );
 		}
 	}, [ siteId, transferStatus, isTransferringStatusFailed, onFailure ] );
 
@@ -111,13 +118,30 @@ export default function TransferSite( {
 		}
 
 		if ( softwareApplied ) {
+			trackRedirect();
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
 				page( wcAdmin );
 			}, 500 );
 		}
-	}, [ siteId, softwareApplied, wcAdmin ] );
+	}, [ siteId, softwareApplied, wcAdmin, trackRedirect ] );
+
+	// Timeout threshold for the install to complete.
+	useEffect( () => {
+		if ( transferFailed ) {
+			return;
+		}
+
+		const timeId = setTimeout( () => {
+			setTransferFailed( true );
+			onFailure( 'transfer_timeout' );
+		}, 1000 * 80 );
+
+		return () => {
+			window?.clearTimeout( timeId );
+		};
+	}, [ onFailure, transferFailed ] );
 
 	return (
 		<>

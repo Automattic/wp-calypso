@@ -94,7 +94,7 @@ export async function reloadAndRetry(
 ): Promise< void > {
 	for ( let retries = 3; retries > 0; retries -= 1 ) {
 		try {
-			await func( page );
+			return await func( page );
 		} catch ( err ) {
 			// Throw the error if final retry failed.
 			if ( retries === 1 ) {

@@ -9,6 +9,7 @@ interface Props {
 	categories: Category[];
 	onSelect: ( selectedSlug: string | null ) => void;
 	selectedCategory: string | null;
+	recommendedCategorySlug: string | null;
 	heading?: ReactNode;
 	footer?: ReactNode;
 }
@@ -19,6 +20,7 @@ export function DesignPickerCategoryFilter( {
 	selectedCategory,
 	heading,
 	footer,
+	recommendedCategorySlug,
 }: Props ): ReactElement | null {
 	const instanceId = useInstanceId( DesignPickerCategoryFilter );
 	const { __ } = useI18n();
@@ -60,7 +62,12 @@ export function DesignPickerCategoryFilter( {
 						tabIndex={ slug === selectedCategory ? undefined : -1 }
 						className="design-picker-category-filter__menu-item"
 					>
-						{ name }
+						<span className="design-picker-category-filter__item-name">{ name }</span>{ ' ' }
+						{ recommendedCategorySlug === slug && (
+							<span className="design-picker-category-filter__recommended-badge">
+								{ __( 'Recommended' ) }
+							</span>
+						) }
 					</MenuItem>
 				) ) }
 			</NavigableMenu>
