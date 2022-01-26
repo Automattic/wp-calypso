@@ -38,14 +38,25 @@ function is_core_fse_active() {
 }
 
 /**
- * Proxy for `gutenberg_is_fse_theme` with `function_exists` guarding.
+ * Proxy for `gutenberg_is_fse_theme` or `wp_is_block_theme` with `function_exists` guarding.
  *
  * @uses gutenberg_is_fse_theme
+ * @uses wp_is_block_theme
  *
  * @return boolean
  */
 function is_fse_theme() {
-	return function_exists( 'gutenberg_is_fse_theme' ) && gutenberg_is_fse_theme();
+	// Gutenberg check, prior to WP 5.9.
+	if ( function_exists( 'gutenberg_is_fse_theme' ) ) {
+		return gutenberg_is_fse_theme();
+	}
+
+	// Core check, added in WP 5.9.
+	if ( function_exists( 'wp_is_block_theme' ) ) {
+		return wp_is_block_theme();
+	}
+
+	return false;
 }
 
 /**
@@ -92,6 +103,7 @@ function load_core_fse() {
 	remove_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_template_editing', 11 );
+	remove_action( 'admin_menu', __NAMESPACE__ . '\hide_core_site_editor' );
 }
 
 /**
@@ -114,9 +126,7 @@ function unload_core_fse() {
 	}
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_template_editing', 11 );
-
-	// Hide the Site editor added by WP 5.9 (if Gutenberg is active).
-	add_action( 'admin_menu', __NAMESPACE__ . '\maybe_hide_core_site_editor' );
+	add_action( 'admin_menu', __NAMESPACE__ . '\hide_core_site_editor' );
 }
 
 /**
@@ -342,16 +352,12 @@ function display_fse_section() {
 }
 
 /**
- * Hide the Core Site Editor in favour of the Gutenberg version.
+ * Hide the Core Site Editor (in addition to the Gutenberg one) when unloading Core FSE.
  *
  * @return void
  */
-function maybe_hide_core_site_editor() {
-	$is_wpcom            = defined( 'IS_WPCOM' ) && IS_WPCOM;
-	$is_gutenberg_active = $is_wpcom ? true : in_array( 'gutenberg/gutenberg.php', get_option( 'active_plugins' ), true );
-	if ( $is_gutenberg_active ) {
-		remove_submenu_page( 'themes.php', 'site-editor.php' );
-	}
+function hide_core_site_editor() {
+	remove_submenu_page( 'themes.php', 'site-editor.php' );
 }
 
 /**
