@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/_mixins.scss';
 
 .site-or-domain__choices {
-	display: flex-start;
+	display: flex;
 	flex-flow: row wrap;
 	justify-content: flex-start;
 	.select-items__item-description {
