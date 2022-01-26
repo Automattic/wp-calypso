@@ -36,7 +36,7 @@ interface GSuiteNewUserProps {
 	user: NewUser;
 }
 
-const GSuiteNewUser: FunctionComponent< GSuiteNewUserProps > = ( {
+const GSuiteNewUser = ( {
 	autoFocus,
 	domains,
 	onUserRemove,
@@ -52,7 +52,7 @@ const GSuiteNewUser: FunctionComponent< GSuiteNewUserProps > = ( {
 	selectedDomainName,
 	showAllErrors = false,
 	showTrashButton = true,
-} ) => {
+}: GSuiteNewUserProps ) => {
 	const translate = useTranslate();
 	const isRtl = useRtl();
 

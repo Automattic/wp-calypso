@@ -288,7 +288,7 @@ class EmailProvidersComparison extends Component {
 		const { googleUsers } = this.state;
 		const validatedUsers = validateUsers( googleUsers );
 
-		const usersAreValid = areAllUsersValid( googleUsers );
+		const usersAreValid = areAllUsersValid( validatedUsers );
 		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
 
 		this.setState( {

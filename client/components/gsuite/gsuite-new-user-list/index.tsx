@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, FunctionComponent, ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 import {
 	newUser,
 	GSuiteNewUser as NewUser,
@@ -25,7 +25,7 @@ interface GSuiteNewUserListProps {
 	validatedMailboxUuids?: string[];
 }
 
-const GSuiteNewUserList: FunctionComponent< GSuiteNewUserListProps > = ( {
+const GSuiteNewUserList = ( {
 	autoFocus = false,
 	children,
 	domains,
@@ -36,7 +36,7 @@ const GSuiteNewUserList: FunctionComponent< GSuiteNewUserListProps > = ( {
 	showAddAnotherMailboxButton = true,
 	users = [],
 	validatedMailboxUuids = [],
-} ) => {
+}: GSuiteNewUserListProps ) => {
 	const translate = useTranslate();
 
 	const onUserValueChange = ( uuid: string ) => (
