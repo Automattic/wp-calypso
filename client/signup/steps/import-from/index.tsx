@@ -124,10 +124,13 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		}
 
 		switch ( job.importerState ) {
-			case appStates.UPLOADING:
+			case appStates.IMPORTING:
+			case appStates.MAP_AUTHORS:
+			case appStates.READY_FOR_UPLOAD:
 			case appStates.UPLOAD_PROCESSING:
 			case appStates.UPLOAD_SUCCESS:
-			case appStates.MAP_AUTHORS:
+			case appStates.UPLOADING:
+			case appStates.UPLOAD_FAILURE:
 				return dispatch( resetImport( siteId, job.importerId ) );
 		}
 	}
