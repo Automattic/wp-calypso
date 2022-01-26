@@ -65,18 +65,6 @@ export function recordSignupComplete(
 	// Google Analytics
 	gaRecordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
 
-	// Tracks, Google Analytics, FullStory
-	if ( isNew7DUserSite ) {
-		const device = resolveDeviceTypeByViewPort();
-
-		// Tracks
-		recordTracksEvent( 'calypso_new_user_site_creation', { flow, device } );
-		// Google Analytics
-		gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
-		// FullStory
-		recordFullStoryEvent( 'calypso_new_user_site_creation', { flow, device } );
-	}
-
 	// Marketing
 	adTrackSignupComplete( { isNewUserSite: isNewUser && isNewSite } );
 
@@ -91,6 +79,23 @@ export function recordSignupComplete(
 		intent,
 		starting_point: startingPoint,
 	} );
+}
+
+export function recordNewUserSiteCreated( flow, isNewUser ) {
+	if ( ! isNewUser ) {
+		return;
+	}
+
+	const device = resolveDeviceTypeByViewPort();
+
+	// Tracks
+	recordTracksEvent( 'calypso_new_user_site_creation', { flow, device } );
+
+	// Google Analytics
+	gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );
+
+	// FullStory
+	recordFullStoryEvent( 'calypso_new_user_site_creation', { flow, device } );
 }
 
 export function recordSignupStep( flow, step, optionalProps ) {

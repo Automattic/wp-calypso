@@ -4,7 +4,7 @@ import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-import { recordRegistration } from 'calypso/lib/analytics/signup';
+import { recordRegistration, recordNewUserSiteCreated } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	updatePrivacyForDomain,
@@ -20,9 +20,14 @@ import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
-import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserName,
+	isUserLoggedIn,
+	getCurrentUserSiteCount,
+} from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
@@ -285,8 +290,10 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
 		return;
 	}
-
 	const locale = getLocaleSlug();
+	const isNew7dUser = !! (
+		getCurrentUserSiteCount( state ) <= 1 && isUserRegistrationDaysWithinRange( state, null, 0, 7 )
+	);
 
 	wpcom.req.post(
 		'/sites/new',
@@ -322,6 +329,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				isFreeThemePreselected,
 				themeSlugWithRepo
 			);
+
+			// Record calypso_new_user_site_creation
+			recordNewUserSiteCreated( flowToCheck, isNew7dUser );
 		}
 	);
 }
