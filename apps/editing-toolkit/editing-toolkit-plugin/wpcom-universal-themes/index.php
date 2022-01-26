@@ -114,6 +114,9 @@ function unload_core_fse() {
 	}
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_template_editing', 11 );
+
+	// always hide the WP core Site Editor.
+	add_action( 'admin_menu', __NAMESPACE__ . '\hide_core_site_editor' );
 }
 
 /**
@@ -361,9 +364,6 @@ function init() {
 	if ( is_core_fse_active() ) {
 		load_core_fse();
 	}
-
-	// always hide the WP core Site Editor.
-	add_action( 'admin_menu', __NAMESPACE__ . '\hide_core_site_editor' );
 }
 // For WPcom REST API requests to work properly.
 add_action( 'restapi_theme_init', __NAMESPACE__ . '\init' );
