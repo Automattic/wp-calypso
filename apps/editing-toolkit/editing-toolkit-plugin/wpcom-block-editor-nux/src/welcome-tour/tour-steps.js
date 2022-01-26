@@ -86,7 +86,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: null,
 			},
 			options: {
-				className: 'is-with-extra-padding',
+				classes: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
 			},
 		},
 		{
@@ -129,7 +129,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: 'block-inserter',
 			},
 			options: {
-				className: 'is-with-extra-padding',
+				classes: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
 			},
 		},
 		{
@@ -163,7 +163,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: null,
 			},
 			options: {
-				className: 'is-with-extra-padding',
+				classes: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
 			},
 		},
 		{
@@ -195,7 +195,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: 'undo-button',
 			},
 			options: {
-				className: 'is-with-extra-padding',
+				classes: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
 			},
 		},
 		{

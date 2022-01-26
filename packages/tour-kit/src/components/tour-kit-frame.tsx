@@ -9,6 +9,7 @@ import { usePopper } from 'react-popper';
  * Internal Dependencies
  */
 import useStepTracking from '../hooks/use-step-tracking';
+import { classParser } from '../utils';
 import KeyboardNavigation from './keyboard-navigation';
 import TourKitMinimized from './tour-kit-minimized';
 import Overlay from './tour-kit-overlay';
@@ -185,11 +186,11 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		}
 	}, [ popperUpdate, referenceElement ] );
 
-	const classNames = classnames(
+	const classes = classnames(
 		'tour-kit-frame',
-		config.options?.className,
 		isMobile ? 'is-mobile' : 'is-desktop',
-		{ 'is-visible': tourReady }
+		{ 'is-visible': tourReady },
+		classParser( config.options?.classes )
 	);
 
 	useStepTracking( currentStepIndex, config.options?.callbacks?.onStepViewOnce );
@@ -204,7 +205,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				tourContainerRef={ tourContainerRef }
 				isMinimized={ isMinimized }
 			/>
-			<div className={ classNames } ref={ tourContainerRef }>
+			<div className={ classes } ref={ tourContainerRef }>
 				{ showOverlay() && <Overlay visible={ true } /> }
 				{ showSpotlight() && (
 					<Spotlight

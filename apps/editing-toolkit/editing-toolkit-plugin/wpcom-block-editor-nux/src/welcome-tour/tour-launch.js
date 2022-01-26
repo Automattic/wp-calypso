@@ -136,7 +136,7 @@ function WelcomeTour() {
 					[]
 				),
 			],
-			className: 'wpcom-editor-welcome-tour',
+			classes: 'wpcom-editor-welcome-tour',
 		},
 	};
 
