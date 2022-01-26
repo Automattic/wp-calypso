@@ -10,9 +10,9 @@ import { parse as parseQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
-import PulsingDot from 'calypso/components/pulsing-dot';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
@@ -151,7 +151,7 @@ export class PlansStep extends Component {
 				<ProvideExperimentData name="calypso_mobile_plans_page_with_billing">
 					{ ( isLoading, experimentAssignment ) => {
 						if ( isLoading ) {
-							return <PulsingDot active />;
+							return this.renderLoading();
 						}
 
 						// This allows us to continue with the other experiments.
@@ -216,7 +216,7 @@ export class PlansStep extends Component {
 			>
 				{ ( isLoading, experimentAssignment ) => {
 					if ( isLoading ) {
-						return <PulsingDot active />;
+						return this.renderLoading();
 					}
 					const isTreatmentMonthlyDefault = experimentAssignment?.variationName !== null;
 
@@ -249,6 +249,14 @@ export class PlansStep extends Component {
 					);
 				} }
 			</ProvideExperimentData>
+		);
+	}
+
+	renderLoading() {
+		return (
+			<div className="plans__loading">
+				<LoadingEllipsis active />
+			</div>
 		);
 	}
 
