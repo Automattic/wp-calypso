@@ -63,6 +63,11 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	.checkout-line-item__price {
 		position: relative;
 	}
+
+	.checkout-line-item__partner-logo-image {
+		max-width: 67px;
+		max-height: 26px;
+	}
 `;
 
 export const LineItem = styled( WPLineItem )< {
@@ -740,21 +745,18 @@ function PartnerLogo( {
 } ): JSX.Element | null {
 	const translate = useTranslate();
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	if ( hasPartnerCoupon( coupon, products ) ) {
 		return (
 			<LineItemMeta>
 				<div>{ translate( 'Included in your IONOS plan' ) }</div>
-				<div>
-					<img
-						src={ '/calypso/images/jetpack/partners/partner-logo-ionos.png' }
-						alt="IONOS Logo"
-						width="67px"
-						height="26px"
-					/>
+				<div className={ 'checkout-line-item__partner-logo-image' }>
+					<img src={ '/calypso/images/jetpack/partners/partner-logo-ionos.png' } alt="IONOS Logo" />
 				</div>
 			</LineItemMeta>
 		);
 	}
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 	return null;
 }
