@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -62,6 +63,12 @@ export class TranslatorInvite extends Component {
 	}
 
 	render() {
+		const { locale } = this.props;
+
+		if ( config( 'i18n_default_locale_slug' ) === locale ) {
+			return null;
+		}
+
 		return (
 			<div className="translator-invite">
 				{ this.renderNoticeLabelText() }

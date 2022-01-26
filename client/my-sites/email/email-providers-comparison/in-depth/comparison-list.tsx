@@ -1,10 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { Button, Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { Card } from '@automattic/components';
 import EmailProviderFeatures from 'calypso/my-sites/email/email-provider-features';
 import EmailProviderPrice from 'calypso/my-sites/email/email-providers-comparison/in-depth/email-provider-price';
 import LearnMoreLink from 'calypso/my-sites/email/email-providers-comparison/in-depth/learn-more-link';
+import SelectButton from 'calypso/my-sites/email/email-providers-comparison/in-depth/select-button';
 import { ComparisonListOrTableProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 import type { ReactElement } from 'react';
 
@@ -16,8 +16,6 @@ const ComparisonList = ( {
 	onSelectEmailProvider,
 	selectedDomainName,
 }: ComparisonListOrTableProps ): ReactElement => {
-	const translate = useTranslate();
-
 	return (
 		<div className="email-providers-in-depth-comparison-list">
 			{ emailProviders.map( ( emailProviderFeatures ) => {
@@ -25,13 +23,13 @@ const ComparisonList = ( {
 
 				return (
 					<Card key={ emailProviderFeatures.slug }>
-						<div className="email-providers-in-depth-comparison-table__provider">
+						<div className="email-providers-in-depth-comparison-list__provider">
 							{ emailProviderFeatures.logo }
 
-							<div className="email-providers-in-depth-comparison-table__provider-info">
+							<div className="email-providers-in-depth-comparison-list__provider-info">
 								<h2>{ emailProviderFeatures.name }</h2>
 
-								{ emailProviderFeatures.description }
+								<p>{ emailProviderFeatures.description }</p>
 							</div>
 						</div>
 
@@ -51,13 +49,19 @@ const ComparisonList = ( {
 							<LearnMoreLink url={ emailProviderFeatures.supportUrl } />
 						</div>
 
-						<Button
+						{ emailProviderFeatures.badge && (
+							<div className="email-providers-in-depth-comparison-list__badge">
+								{ emailProviderFeatures.badge }
+							</div>
+						) }
+
+						<SelectButton
 							className="email-providers-in-depth-comparison-list__button"
-							onClick={ () => onSelectEmailProvider( emailProviderFeatures.slug ) }
-							primary
-						>
-							{ translate( 'Select' ) }
-						</Button>
+							emailProviderSlug={ emailProviderFeatures.slug }
+							intervalLength={ intervalLength }
+							onSelectEmailProvider={ onSelectEmailProvider }
+							selectedDomainName={ selectedDomainName }
+						/>
 					</Card>
 				);
 			} ) }

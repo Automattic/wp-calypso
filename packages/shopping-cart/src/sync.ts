@@ -12,6 +12,7 @@ import type {
 	CartSyncManager,
 	GetCart,
 	SetCart,
+	CartKey,
 } from './types';
 import type { Dispatch } from 'react';
 
@@ -20,7 +21,7 @@ const emptyCart = getEmptyResponseCart();
 const getEmptyCart = () => Promise.resolve( emptyCart );
 
 export function createCartSyncManager(
-	cartKey: string,
+	cartKey: CartKey,
 	getCart: GetCart,
 	setCart: SetCart
 ): CartSyncManager {

@@ -122,12 +122,16 @@ class EmailProvidersComparison extends Component {
 	constructor( props ) {
 		super( props );
 
-		const { selectedDomainName, shouldPromoteGoogleWorkspace } = props;
+		const { selectedDomainName } = props;
 
 		this.state = {
 			googleUsers: [],
 			titanMailboxes: [ buildNewTitanMailbox( selectedDomainName, false ) ],
-			expanded: this.getDefaultExpandedState( shouldPromoteGoogleWorkspace ),
+			expanded: {
+				forwarding: false,
+				google: false,
+				titan: true,
+			},
 			addingToCart: false,
 			emailForwardAdded: false,
 			validatedTitanMailboxUuids: [],
@@ -140,22 +144,6 @@ class EmailProvidersComparison extends Component {
 
 	componentWillUnmount() {
 		this.isMounted = false;
-	}
-
-	getDefaultExpandedState( shouldPromoteGoogleWorkspace ) {
-		if ( shouldPromoteGoogleWorkspace ) {
-			return {
-				forwarding: false,
-				google: true,
-				titan: false,
-			};
-		}
-
-		return {
-			forwarding: false,
-			google: false,
-			titan: true,
-		};
 	}
 
 	onExpandedStateChange = ( providerKey, isExpanded ) => {
@@ -803,7 +791,6 @@ class EmailProvidersComparison extends Component {
 			isSubmittingEmailForward,
 			selectedDomainName,
 			selectedSite,
-			shouldPromoteGoogleWorkspace,
 			source,
 		} = this.props;
 
@@ -833,11 +820,9 @@ class EmailProvidersComparison extends Component {
 					/>
 				) }
 
-				{ shouldPromoteGoogleWorkspace && this.renderGoogleCard() }
-
 				{ this.renderTitanCard() }
 
-				{ ! shouldPromoteGoogleWorkspace && this.renderGoogleCard() }
+				{ this.renderGoogleCard() }
 
 				{ ! hideEmailForwardingCard && this.renderEmailForwardingCard() }
 
@@ -886,8 +871,6 @@ export default connect(
 			isGSuiteSupported,
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,
-			shouldPromoteGoogleWorkspace:
-				isGSuiteSupported && ( ownProps.source === 'google-sale' || hasDiscount( gSuiteProduct ) ),
 			titanMailProduct: getProductBySlug( state, titanProductSlug ),
 		};
 	},

@@ -38,6 +38,9 @@ const SITE_TAKEN_ERROR_CODES = [
 
 const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
 
+const EMAIL_TRUCE_CAMPAIGN_REF = 'p2-email-truce';
+const EMAIL_TRUCE_CAMPAIGN_ID = 'p2-email-truce';
+
 /**
  * Module variables
  */
@@ -280,12 +283,18 @@ class P2Site extends Component {
 
 			this.resetAnalyticsData();
 
-			this.props.submitSignupStep( {
+			const stepData = {
 				stepName: this.props.stepName,
 				form: this.state.form,
 				site,
 				siteTitle,
-			} );
+			};
+
+			if ( this.props.refParameter === EMAIL_TRUCE_CAMPAIGN_REF ) {
+				stepData.campaign = EMAIL_TRUCE_CAMPAIGN_ID;
+			}
+
+			this.props.submitSignupStep( stepData );
 
 			this.props.goToNextStep();
 		} );

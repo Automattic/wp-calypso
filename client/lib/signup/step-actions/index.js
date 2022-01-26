@@ -523,7 +523,7 @@ function processItemCart(
 	isFreeThemePreselected,
 	themeSlugWithRepo
 ) {
-	const addToCartAndProceed = () => {
+	const addToCartAndProceed = async () => {
 		debug( 'preparing to add cart items (if any) from', newCartItems );
 		const reduxState = reduxStore.getState();
 		const newCartItemsToAdd = newCartItems
@@ -532,8 +532,9 @@ function processItemCart(
 
 		if ( newCartItemsToAdd.length ) {
 			debug( 'adding products to cart', newCartItemsToAdd );
+			const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
 			cartManagerClient
-				.forCartKey( siteSlug )
+				.forCartKey( cartKey )
 				.actions.addProductsToCart( newCartItemsToAdd )
 				.then( ( updatedCart ) => {
 					debug( 'product add request complete', updatedCart );
@@ -834,6 +835,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 			timezone_string: guessTimezone(),
 			is_wpforteams_site: true,
 			p2_initialize_as_hub: true,
+			...( stepData.campaign && { p2_signup_campaign: stepData.campaign } ),
 		},
 		validate: false,
 		locale,

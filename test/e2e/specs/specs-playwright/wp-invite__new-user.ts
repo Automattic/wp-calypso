@@ -9,13 +9,14 @@ import {
 	InvitePeoplePage,
 	PeoplePage,
 	LoginPage,
-	setupHooks,
 	UserSignupPage,
 	Roles,
 	CloseAccountFlow,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
@@ -31,8 +32,8 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	let adjustedInviteLink: string;
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
 	describe( 'Invite user', function () {

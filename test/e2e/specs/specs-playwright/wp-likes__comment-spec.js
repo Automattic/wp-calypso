@@ -7,7 +7,6 @@ import {
 	DataHelper,
 	CommentsComponent,
 	GutenbergEditorPage,
-	setupHooks,
 	TestAccount,
 } from '@automattic/calypso-e2e';
 
@@ -21,8 +20,8 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	let commentsComponent;
 	let gutenbergEditorPage;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await global.browser.newPage();
 		gutenbergEditorPage = new GutenbergEditorPage( page );
 
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );

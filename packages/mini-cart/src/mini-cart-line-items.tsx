@@ -18,6 +18,8 @@ const MiniCartLineItemsWrapper = styled.ul< { theme?: Theme } >`
 	box-sizing: border-box;
 	margin: 20px 0;
 	padding: 0;
+	overflow-y: scroll;
+	max-height: 50vh;
 `;
 
 const MiniCartLineItemWrapper = styled.li`
@@ -42,7 +44,7 @@ export function MiniCartLineItems( {
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 
 	return (
-		<MiniCartLineItemsWrapper>
+		<MiniCartLineItemsWrapper className="mini-cart-line-items">
 			{ responseCart.products.map( ( product ) => {
 				return (
 					<MiniCartLineItemWrapper key={ product.uuid }>
@@ -62,6 +64,7 @@ export function MiniCartLineItems( {
 						lineItem={ couponLineItem }
 						removeProductFromCart={ removeCoupon }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+						hasDeleteButton
 					/>
 				</MiniCartLineItemWrapper>
 			) }

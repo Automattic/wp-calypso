@@ -3,7 +3,7 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, screen, within, waitFor } from '@testing-library/react';
+import { render, fireEvent, screen, within, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
@@ -149,11 +149,29 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const getVariantItemText = await screen.findByText(
+			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+			fireEvent.click( editOrderButton );
+
+			expect( screen.getByText( getVariantItemTextForInterval( expectedVariant ) ) ).toBeVisible();
+		}
+	);
+
+	it.each( [
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' },
+	] )(
+		'does not render the $expectedVariant variant for a $cartPlan plan when the current plan is $activePlan and the order is not being edited',
+		async ( { activePlan, cartPlan, expectedVariant } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( activePlan ),
+			} ) );
+			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } /> );
+
+			const renderedVariant = await screen.findByText(
 				getVariantItemTextForInterval( expectedVariant )
 			);
-
-			expect( getVariantItemText ).toBeInTheDocument();
+			expect( renderedVariant ).not.toBeVisible();
 		}
 	);
 
@@ -234,9 +252,11 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		}
 	);
 
-	it( 'does not render the variant picker if there are no variants', async () => {
+	it( 'does not render the variant picker if there are no variants after clicking into edit mode', async () => {
 		const cartChanges = { products: [ domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
 
 		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
@@ -265,6 +285,8 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		const currentPlanRenewal = { ...planWithoutDomain, extra: { purchaseType: 'renewal' } };
 		const cartChanges = { products: [ currentPlanRenewal ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
+		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
+		fireEvent.click( editOrderButton );
 
 		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();

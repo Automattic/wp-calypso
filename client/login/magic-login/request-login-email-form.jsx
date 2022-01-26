@@ -1,7 +1,6 @@
 import { localize } from 'i18n-calypso';
-import { defer, get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -49,10 +48,11 @@ class RequestLoginEmailForm extends Component {
 		usernameOrEmail: this.props.userEmail || '',
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.requestError && nextProps.requestError ) {
-			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+	usernameOrEmailRef = createRef();
+
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.requestError && this.props.requestError ) {
+			this.usernameOrEmailRef.current?.focus();
 		}
 	}
 
@@ -64,10 +64,6 @@ class RequestLoginEmailForm extends Component {
 		if ( this.props.requestError ) {
 			this.props.hideMagicLoginRequestNotice();
 		}
-	};
-
-	saveUsernameOrEmailRef = ( input ) => {
-		this.usernameOrEmail = input;
 	};
 
 	onNoticeDismiss = () => {
@@ -91,7 +87,7 @@ class RequestLoginEmailForm extends Component {
 	};
 
 	getUsernameOrEmailFromState() {
-		return get( this, 'state.usernameOrEmail', '' );
+		return this.state.usernameOrEmail;
 	}
 
 	render() {
@@ -164,7 +160,7 @@ class RequestLoginEmailForm extends Component {
 							disabled={ isFetching || emailRequested }
 							value={ usernameOrEmail }
 							name="usernameOrEmail"
-							ref={ this.saveUsernameOrEmailRef }
+							ref={ this.usernameOrEmailRef }
 							onChange={ this.onUsernameOrEmailFieldChange }
 						/>
 

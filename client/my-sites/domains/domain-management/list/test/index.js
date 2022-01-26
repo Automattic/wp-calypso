@@ -95,7 +95,6 @@ describe( 'index', () => {
 				currentUser: {
 					capabilities: {},
 				},
-				productsList: {},
 			},
 			( state ) => {
 				return state;

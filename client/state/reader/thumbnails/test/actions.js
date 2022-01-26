@@ -2,12 +2,7 @@ import deepFreeze from 'deep-freeze';
 import nock from 'nock';
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
-import {
-	READER_THUMBNAIL_REQUEST,
-	READER_THUMBNAIL_REQUEST_SUCCESS,
-	READER_THUMBNAIL_REQUEST_FAILURE,
-	READER_THUMBNAIL_RECEIVE,
-} from 'calypso/state/reader/action-types';
+import { READER_THUMBNAIL_RECEIVE } from 'calypso/state/reader/action-types';
 import { receiveThumbnail, requestThumbnail } from '../actions';
 import sampleVimeoResponse from './fixtures/sample-vimeo-response.js';
 
@@ -33,10 +28,8 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestThumbnail', () => {
-		const unsupportedEmbedUrl = 'not-a-real-url';
 		const thumbnailUrl = 'https://i.vimeocdn.com/video/459553940_640.webp';
 		const successfulEmbedUrl = 'https://vimeo.com/6999927';
-		const failureEmbedUrl = 'https://vimeo.com/6999928';
 		const youtubeEmbedUrl = 'https://youtube.com/?v=UoOCrbV3ZQ';
 		const youtubeThumbnailUrl = 'https://img.youtube.com/vi/UoOCrbV3ZQ/mqdefault.jpg';
 
@@ -55,19 +48,7 @@ describe( 'actions', () => {
 
 		test( 'vimeo: should dispatch properly when receiving a valid response', async () => {
 			const dispatchSpy = jest.fn();
-			const request = requestThumbnail( successfulEmbedUrl )( dispatchSpy );
-
-			expect( dispatchSpy ).toHaveBeenCalledWith( {
-				type: READER_THUMBNAIL_REQUEST,
-				embedUrl: successfulEmbedUrl,
-			} );
-
-			await request;
-
-			expect( dispatchSpy ).toHaveBeenCalledWith( {
-				type: READER_THUMBNAIL_REQUEST_SUCCESS,
-				embedUrl: successfulEmbedUrl,
-			} );
+			await requestThumbnail( successfulEmbedUrl )( dispatchSpy );
 
 			expect( dispatchSpy ).toHaveBeenCalledWith( {
 				type: READER_THUMBNAIL_RECEIVE,
@@ -75,7 +56,7 @@ describe( 'actions', () => {
 				thumbnailUrl,
 			} );
 
-			expect( dispatchSpy ).toHaveBeenCalledTimes( 3 );
+			expect( dispatchSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'youtube: should dispatch action with thumbnail instantly', () => {
@@ -87,40 +68,6 @@ describe( 'actions', () => {
 				embedUrl: youtubeEmbedUrl,
 				thumbnailUrl: youtubeThumbnailUrl,
 			} );
-			expect( dispatchSpy ).toHaveBeenCalledTimes( 1 );
-		} );
-
-		test( 'should dispatch the right actions if network request fails', async () => {
-			const dispatchSpy = jest.fn();
-			const request = requestThumbnail( failureEmbedUrl )( dispatchSpy );
-
-			expect( dispatchSpy ).toHaveBeenCalledWith( {
-				type: READER_THUMBNAIL_REQUEST,
-				embedUrl: failureEmbedUrl,
-			} );
-
-			await request;
-
-			expect( dispatchSpy ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					type: READER_THUMBNAIL_REQUEST_FAILURE,
-					embedUrl: failureEmbedUrl,
-				} )
-			);
-
-			expect( dispatchSpy ).toHaveBeenCalledTimes( 2 );
-		} );
-
-		test( 'should dispatch a failure action instantly if unsupported', () => {
-			const dispatchSpy = jest.fn();
-			requestThumbnail( unsupportedEmbedUrl )( dispatchSpy );
-
-			expect( dispatchSpy ).toHaveBeenCalledWith( {
-				type: READER_THUMBNAIL_REQUEST_FAILURE,
-				embedUrl: unsupportedEmbedUrl,
-				error: { type: 'UNSUPPORTED_EMBED' },
-			} );
-
 			expect( dispatchSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );

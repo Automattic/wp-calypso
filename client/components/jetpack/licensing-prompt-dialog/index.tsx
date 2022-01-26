@@ -47,13 +47,15 @@ function LicensingPromptDialog( { siteId }: Props ) {
 
 	const title = useMemo( () => {
 		if ( hasOneDetachedLicense ) {
-			return preventWidows(
-				translate( 'Your %(productName)s is pending activation', {
-					args: {
-						productName: detachedUserLicense && detachedUserLicense.product,
-					},
-				} )
-			);
+			return detachedUserLicense?.product
+				? preventWidows(
+						translate( 'Your %(productName)s is pending activation', {
+							args: {
+								productName: detachedUserLicense.product,
+							},
+						} )
+				  )
+				: preventWidows( translate( 'Your product is pending activation' ) );
 		}
 		return preventWidows( translate( 'You have an available product license key' ) );
 	}, [ detachedUserLicense, hasOneDetachedLicense, translate ] );

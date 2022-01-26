@@ -209,11 +209,17 @@ export function getTestDomainRegistrarDetails( email: string ): RegistrarDetails
 /**
  * Adjusts the user invite link to the correct environment.
  *
- * @param {string} inviteURL Invitation link.
- * @returns {string} Adjusted invitation link with the correct hostname.
+ * By default, all invite links reference the production `wordpress.com` hostname.
+ * However, for end-to-end tests it is desirable to test invite functionality against
+ * the development environment.
+ *
+ * @param {string} inviteURL Full invitation link.
+ * @returns {string} Adjusted invitation link with the intended hostname.
  */
 export function adjustInviteLink( inviteURL: string ): string {
-	return inviteURL.replace( 'https://wordpress.com', config.get( 'calypsoBaseURL' ) );
+	const originalURL = new URL( inviteURL );
+	const adjustedURL = new URL( originalURL.pathname, config.get( 'calypsoBaseURL' ) );
+	return adjustedURL.href;
 }
 
 /**

@@ -160,6 +160,24 @@ export class Theme extends Component {
 			'theme__badge-price-upsell': showUpsell,
 		} );
 
+		/*
+		 * Check the theme object (not the price prop) for the true price.
+		 * Sometimes it will be an object, other times it will be a string.
+		 * Check both cases to ensure we have a non-zero price.
+		 */
+		let isPremiumTheme = false;
+		if ( typeof theme.price === 'object' && 0 !== theme.price.value ) {
+			isPremiumTheme = true;
+		} else if ( typeof theme.price === 'string' && '' !== theme.price ) {
+			isPremiumTheme = true;
+		}
+
+		/*
+		 * Only show the Premium badge if we're not already showing the price
+		 * and the theme isn't the active theme.
+		 */
+		const showPremiumBadge = isPremiumTheme && ! hasPrice && ! active;
+
 		const themeDescription = decodeEntities( description );
 
 		// for performance testing
@@ -258,6 +276,9 @@ export class Theme extends Component {
 									context: 'singular noun, the currently active theme',
 								} ) }
 							</span>
+						) }
+						{ showPremiumBadge && (
+							<span className="theme__badge-premium">{ translate( 'Premium' ) }</span>
 						) }
 						<span className={ priceClass }>{ price }</span>
 						{ upsell }

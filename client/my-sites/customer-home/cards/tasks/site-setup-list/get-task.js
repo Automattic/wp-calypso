@@ -54,6 +54,7 @@ export const getTask = (
 		taskUrls,
 		userEmail,
 		isBlogger,
+		isFSEActive,
 	} = {}
 ) => {
 	let taskData = {};
@@ -171,11 +172,13 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.FRONT_PAGE_UPDATED:
 			taskData = {
 				timing: 20,
-				title: translate( 'Update your homepage' ),
+				title: isFSEActive
+					? translate( "Update your site's design" )
+					: translate( 'Update your homepage' ),
 				description: translate(
 					"We've created the basics, now it's time for you to update the images and text. Make a great first impression. Everything you do can be changed anytime."
 				),
-				actionText: translate( 'Edit homepage' ),
+				actionText: isFSEActive ? translate( 'Edit site' ) : translate( 'Edit homepage' ),
 				actionUrl: taskUrls?.front_page_updated,
 			};
 			break;

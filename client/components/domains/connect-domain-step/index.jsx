@@ -85,7 +85,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 			setDomainSetupInfoError( {} );
 			setLoadingDomainSetupInfo( true );
 			wpcom
-				.domain()
+				.domain( domain )
 				.mappingSetupInfo( selectedSite.ID, domain )
 				.then( ( data ) => {
 					setDomainSetupInfo( { data } );

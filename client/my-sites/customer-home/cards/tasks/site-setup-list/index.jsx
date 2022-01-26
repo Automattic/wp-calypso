@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import Spinner from 'calypso/components/spinner';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { getTaskList } from 'calypso/lib/checklist';
 import { navigate } from 'calypso/lib/navigate';
@@ -23,6 +24,7 @@ import { getSiteOption, getSiteSlug, getCustomizerUrl } from 'calypso/state/site
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
 import { getTask } from './get-task';
+import MobileAppDownload from './mobile-app-download';
 import NavItem from './nav-item';
 
 /**
@@ -107,6 +109,7 @@ const SiteSetupList = ( {
 	firstIncompleteTask,
 	isEmailUnverified,
 	isPodcastingSite,
+	isFSEActive,
 	menusUrl,
 	siteId,
 	siteSlug,
@@ -186,6 +189,7 @@ const SiteSetupList = ( {
 				taskUrls,
 				userEmail,
 				isBlogger,
+				isFSEActive,
 			} );
 			setCurrentTask( newCurrentTask );
 			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
@@ -223,6 +227,10 @@ const SiteSetupList = ( {
 		}
 	};
 
+	const isMobileAppTaskCompleted = tasks.some(
+		( task ) => task.id === CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED && task.isCompleted
+	);
+
 	return (
 		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
@@ -257,14 +265,18 @@ const SiteSetupList = ( {
 				<CardHeading>
 					{ isBlogger ? translate( 'Blog setup' ) : translate( 'Site setup' ) }
 				</CardHeading>
-				<ul className="site-setup-list__list">
+				<ul
+					className={ classnames( 'site-setup-list__list', {
+						'is-mobile-app-completed': isMobileAppTaskCompleted,
+					} ) }
+				>
 					{ tasks.map( ( task ) => {
 						const enhancedTask = getTask( task, { isBlogger, userEmail } );
 						const isCurrent = task.id === currentTask.id;
 						const isCompleted = task.isCompleted;
 
 						return (
-							<li key={ task.id }>
+							<li key={ task.id } className={ `site-setup-list__task-${ task.id }` }>
 								<NavItem
 									key={ task.id }
 									taskId={ task.id }
@@ -318,12 +330,16 @@ const SiteSetupList = ( {
 						);
 					} ) }
 				</ul>
+				{ ! isMobileAppTaskCompleted && <MobileAppDownload /> }
 			</div>
 		</Card>
 	);
 };
 
-export default connect( ( state ) => {
+const ConnectedSiteSetupList = connect( ( state, props ) => {
+	const { blockEditorSettings } = props;
+
+	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
 	const siteId = getSelectedSiteId( state );
 	const user = getCurrentUser( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
@@ -339,7 +355,6 @@ export default connect( ( state ) => {
 		siteSegment,
 		siteVerticals,
 	} );
-
 	// Existing usage didn't have a global selector, we can tidy this in a follow up.
 	const emailVerificationStatus = state?.currentUser?.emailVerification?.status;
 
@@ -347,6 +362,7 @@ export default connect( ( state ) => {
 		emailVerificationStatus,
 		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
+		isFSEActive,
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getCustomizerUrl( state, siteId, null, null, 'add-menu' ),
 		siteId,
@@ -356,3 +372,5 @@ export default connect( ( state ) => {
 		userEmail: user?.email,
 	};
 } )( SiteSetupList );
+
+export default withBlockEditorSettings( ConnectedSiteSetupList );

@@ -92,6 +92,7 @@ export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
+	productSourceFromUrl,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -113,6 +114,7 @@ export default function CompositeCheckout( {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
+	productSourceFromUrl?: string;
 	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
@@ -189,6 +191,7 @@ export default function CompositeCheckout( {
 		isJetpackCheckout,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
+		source: productSourceFromUrl,
 	} );
 
 	const cartKey = useCartKey();
@@ -743,17 +746,18 @@ export default function CompositeCheckout( {
 				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
 			>
 				<WPCheckout
-					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-					changePlanLength={ changePlanLength }
-					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug }
-					countriesList={ countriesList }
 					addItemToCart={ addItemAndLog }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					isLoggedOutCart={ !! isLoggedOutCart }
+					changePlanLength={ changePlanLength }
+					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
+					isJetpackNotAtomic={ isJetpackNotAtomic }
+					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
+					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
+					siteId={ updatedSiteId }
+					siteUrl={ updatedSiteSlug }
 				/>
 			</CheckoutProvider>
 		</Fragment>

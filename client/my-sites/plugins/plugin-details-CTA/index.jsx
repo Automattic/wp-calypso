@@ -11,23 +11,27 @@ import {
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
+import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { userCan } from 'calypso/lib/site/utils';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { PluginPrice, getPeriodVariationValue } from '../plugin-price';
@@ -89,7 +93,9 @@ const PluginDetailsCTA = ( {
 					<div className="plugin-details-CTA__price align-right">
 						<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 							{ ( { isFetching, price, period } ) =>
-								! isFetching && (
+								isFetching ? (
+									<div className="plugin-details-CTA__price-placeholder">...</div>
+								) : (
 									<>
 										{ price + ' ' }
 										<span className="plugin-details-CTA__period">{ period }</span>
@@ -119,7 +125,9 @@ const PluginDetailsCTA = ( {
 			<div className="plugin-details-CTA__price">
 				<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 					{ ( { isFetching, price, period } ) =>
-						! isFetching && (
+						isFetching ? (
+							<div className="plugin-details-CTA__price-placeholder">...</div>
+						) : (
 							<>
 								{ price ? (
 									<>
@@ -151,16 +159,20 @@ const PluginDetailsCTA = ( {
 					shouldUpgrade={ shouldUpgrade }
 				/>
 			</div>
-			<div className="plugin-details-CTA__t-and-c">
-				{ translate(
-					'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the Third-Party plugin Terms.',
-					{
-						components: {
-							a: <a target="_blank" rel="noopener noreferrer" href="https://wordpress.com/tos/" />,
-						},
-					}
-				) }
-			</div>
+			{ ( ! isJetpackSelfHosted || ! isMarketplaceProduct ) && (
+				<div className="plugin-details-CTA__t-and-c">
+					{ translate(
+						'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the Third-Party plugin Terms.',
+						{
+							components: {
+								a: (
+									<a target="_blank" rel="noopener noreferrer" href="https://wordpress.com/tos/" />
+								),
+							},
+						}
+					) }
+				</div>
+			) }
 
 			{ ! isJetpackSelfHosted && (
 				<USPS
@@ -197,23 +209,38 @@ const CTAButton = ( {
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
 
-	// disable paid plugin cta for jetpack sites
-	if ( isJetpackSelfHosted && isMarketplaceProduct ) {
-		return (
-			<p className="plugin-details-CTA__not-available">
-				{ translate( 'This plugin is supported only in WordPress.com sites for the moment.' ) }
-			</p>
-		);
-	}
+	// Keep me updated
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const keepMeUpdatedPreferenceId = `jetpack-self-hosted-keep-updated-${ userId }`;
+	const keepMeUpdatedPreference = useSelector( ( state ) =>
+		getPreference( state, keepMeUpdatedPreferenceId )
+	);
+	const hasPreferences = useSelector( hasReceivedRemotePreferences );
+
+	const updatedKeepMeUpdatedPreference = useCallback(
+		( isChecked ) => {
+			dispatch( savePreference( keepMeUpdatedPreferenceId, isChecked ) );
+			dispatch(
+				recordTracksEvent( 'calypso_plugins_availability_jetpack_self_hosted', {
+					user_id: userId,
+					value: isChecked,
+				} )
+			);
+		},
+		[ keepMeUpdatedPreferenceId, userId ]
+	);
 
 	return (
 		<>
 			<Dialog
+				additionalClassNames={ 'plugin-details-CTA__dialog-content' }
+				additionalOverlayClassNames={ 'plugin-details-CTA__modal-overlay' }
 				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
 			>
 				<EligibilityWarnings
+					currentContext={ 'plugin-details' }
 					standaloneProceed
 					onProceed={ () =>
 						onClickInstallPlugin( {
@@ -229,6 +256,7 @@ const CTAButton = ( {
 			</Dialog>
 			<Button
 				className="plugin-details-CTA__install-button"
+				primary
 				onClick={ () => {
 					if ( hasEligibilityMessages ) {
 						return setShowEligibility( true );
@@ -242,6 +270,7 @@ const CTAButton = ( {
 						billingPeriod,
 					} );
 				} }
+				disabled={ isJetpackSelfHosted && isMarketplaceProduct }
 			>
 				{
 					// eslint-disable-next-line no-nested-ternary
@@ -252,6 +281,24 @@ const CTAButton = ( {
 						: translate( 'Install and activate' )
 				}
 			</Button>
+			{ isJetpackSelfHosted && isMarketplaceProduct && (
+				<div className="plugin-details-CTA__not-available">
+					<p className="plugin-details-CTA__not-available-text">
+						{ translate( 'Thanks for your interest. ' ) }
+						{ translate(
+							'Paid plugins are not yet available for Jetpack Sites but we can notify you when they are ready.'
+						) }
+					</p>
+					{ hasPreferences && (
+						<ToggleControl
+							className="plugin-details-CTA__follow-toggle"
+							label={ translate( 'Keep me updated' ) }
+							checked={ keepMeUpdatedPreference }
+							onChange={ updatedKeepMeUpdatedPreference }
+						/>
+					) }
+				</div>
+			) }
 		</>
 	);
 };

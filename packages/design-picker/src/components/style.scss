@@ -203,16 +203,6 @@
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 		margin-top: -0.1em;
 	}
-
-	.design-picker__premium-container {
-		margin-left: 6px;
-		/* stylelint-disable-next-line */
-		font-size: rem( 10px ); //typography-exception
-
-		.components-popover__content {
-			background-color: var( --studio-gray-80 );
-		}
-	}
 }
 
 // dark theme styles

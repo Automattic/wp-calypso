@@ -20,6 +20,7 @@ const EMAIL_PROVIDER_FEATURES_TYPE = [ 'importing', 'storage', 'support', 'tools
 type EmailProviderFeature = typeof EMAIL_PROVIDER_FEATURES_TYPE[ number ];
 
 export type EmailProviderFeatures = {
+	badge?: ReactNode;
 	description: TranslateResult;
 	list: Record< EmailProviderFeature, TranslateResult >;
 	logo: ReactNode;
@@ -29,13 +30,18 @@ export type EmailProviderFeatures = {
 };
 
 export type EmailProvidersInDepthComparisonProps = {
-	comparisonContext: string;
 	selectedDomainName: string;
 	selectedIntervalLength: IntervalLength | undefined;
-	siteName: string;
-	source: string;
 };
 
 export type LearnMoreLinkProps = {
 	url: string;
+};
+
+export type SelectButtonProps = {
+	className: string;
+	emailProviderSlug: string;
+	intervalLength: IntervalLength;
+	onSelectEmailProvider: ( emailProviderSlug: string ) => void;
+	selectedDomainName: string;
 };

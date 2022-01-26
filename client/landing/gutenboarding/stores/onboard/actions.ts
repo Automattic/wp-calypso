@@ -46,7 +46,6 @@ export function* createSite( {
 		selectedFonts,
 		siteTitle,
 		selectedFeatures,
-		isEnrollingInFseBeta,
 	}: State = yield select( ONBOARD_STORE, 'getState' );
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
@@ -64,7 +63,7 @@ export function* createSite( {
 			},
 			lang_id: lang_id,
 			site_creation_flow: 'gutenboarding',
-			enable_fse: isEnrollingInFseBeta,
+			enable_fse: true,
 			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
@@ -191,11 +190,6 @@ export const startOnboarding = () => ( {
 	type: 'ONBOARDING_START' as const,
 } );
 
-export const enrollInFseBeta = ( enrollInFseBeta: boolean ) => ( {
-	type: 'SET_ENROLL_IN_FSE_BETA' as const,
-	enrollInFseBeta,
-} );
-
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -216,5 +210,4 @@ export type OnboardAction = ReturnType<
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof startOnboarding
-	| typeof enrollInFseBeta
 >;

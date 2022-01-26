@@ -2,19 +2,26 @@ import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
-const SharingServiceConnectedAccounts = ( { children, connect, service, translate } ) => (
-	<div className="connections__sharing-service-accounts-detail">
-		<ul className="connections__sharing-service-connected-accounts">{ children }</ul>
-		{ ( 'publicize' === service.type || 'instagram-basic-display' === service.ID ) &&
-			'google_plus' !== service.ID && (
+const SharingServiceConnectedAccounts = ( { children, connect, service, translate } ) => {
+	const allowMultipleAccounts = [ 'instagram-basic-display', 'p2_github' ];
+	const doesNotAllowMultipleAccounts = [ 'google_plus' ];
+	const shouldShowConnectButton =
+		( 'publicize' === service.type || allowMultipleAccounts.includes( service.ID ) ) &&
+		! doesNotAllowMultipleAccounts.includes( service.ID );
+
+	return (
+		<div className="connections__sharing-service-accounts-detail">
+			<ul className="connections__sharing-service-connected-accounts">{ children }</ul>
+			{ shouldShowConnectButton && (
 				<Button onClick={ connect }>
-					{ translate( 'Connect a different account', {
+					{ translate( 'Connect one more account', {
 						comment: 'Sharing: Publicize connections',
 					} ) }
 				</Button>
 			) }
-	</div>
-);
+		</div>
+	);
+};
 
 SharingServiceConnectedAccounts.propTypes = {
 	connect: PropTypes.func, // Handler to invoke when adding a new connection

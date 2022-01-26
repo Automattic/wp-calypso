@@ -208,8 +208,8 @@ const Settings = ( {
 		}
 
 		return areAllWpcomNameServers()
-			? translate( 'Your domain is pointing to WordPress.com', { textOnly: true } )
-			: translate( 'Your domain is pointing to custom name servers', { textOnly: true } );
+			? translate( 'Your domain is using WordPress.com name servers', { textOnly: true } )
+			: translate( 'Your domain is using custom name servers', { textOnly: true } );
 	};
 
 	const renderNameServersSection = () => {

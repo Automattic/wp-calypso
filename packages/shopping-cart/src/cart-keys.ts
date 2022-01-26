@@ -1,1 +1,2 @@
-export const cartKeysThatDoNotAllowFetch = [ 'no-user' ];
+import type { CartKey } from './types';
+export const cartKeysThatDoNotAllowFetch: CartKey[] = [ 'no-user' ];
