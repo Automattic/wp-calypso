@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FoldableFAQ from 'calypso/components/foldable-faq';
-import { getHelpLink } from 'calypso/my-sites/plans-features-main/jetpack-faq';
+import { getAgenciesLink, getHelpLink } from 'calypso/my-sites/plans-features-main/jetpack-faq';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
@@ -33,10 +33,10 @@ const JetpackFAQ: React.FC = () => {
 	);
 
 	return (
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<>
 			<section className="jetpack-faq">
 				<h2 className="jetpack-faq__heading">{ translate( 'Frequently Asked Questions' ) }</h2>
-
 				<FoldableFAQ
 					id="priority-support"
 					question={ translate( 'Is priority support included in all plans?' ) }
@@ -49,7 +49,6 @@ const JetpackFAQ: React.FC = () => {
 						}
 					) }
 				</FoldableFAQ>
-
 				<FoldableFAQ
 					id="cancellation-policy"
 					question={ translate( 'What is your cancellation policy?' ) }
@@ -63,19 +62,29 @@ const JetpackFAQ: React.FC = () => {
 						}
 					) }
 				</FoldableFAQ>
-
+				<FoldableFAQ
+					id="volume-discount"
+					question={ translate( 'Do you have any discounts for multiple sites?' ) }
+					onToggle={ onFaqToggle }
+				>
+					{ translate(
+						'Anyone with at least five websites can join our licensing platform and enjoy a 25% discount across all Jetpack products! You can learn more about our {{agenciesLink}}licensing platform and agency program here{{/agenciesLink}}.',
+						{
+							components: { agenciesLink: getAgenciesLink() },
+						}
+					) }
+				</FoldableFAQ>
 				<FoldableFAQ
 					id="wpcom-account"
 					question={ translate( 'Why do I need a WordPress.com account?' ) }
 					onToggle={ onFaqToggle }
 				>
 					{ translate(
-						"Many of Jetpack's core features make use of the WordPress.com cloud. In order to make sure everything" +
-							" works correctly, Jetpack requires you to connect a free WordPress.com account. If you don't already" +
+						'Many of Jetpack’s core features make use of the WordPress.com cloud. In order to make sure everything' +
+							' works correctly, Jetpack requires you to connect a free WordPress.com account. If you don’t already' +
 							' have an account you can easily create one during the connection process.'
 					) }
 				</FoldableFAQ>
-
 				<FoldableFAQ
 					id="hosting-requirements"
 					question={ translate( 'What are the hosting requirements?' ) }
@@ -85,7 +94,6 @@ const JetpackFAQ: React.FC = () => {
 						'You should be running the latest version of WordPress and a publicly-accessible site with XML-RPC enabled.'
 					) }
 				</FoldableFAQ>
-
 				<FoldableFAQ
 					id="multisite-network"
 					question={ translate( 'Does this work with a multisite network?' ) }
@@ -97,7 +105,6 @@ const JetpackFAQ: React.FC = () => {
 							' and Jetpack Scan are not currently compatible with Multisite networks.'
 					) }
 				</FoldableFAQ>
-
 				<FoldableFAQ
 					id="more-questions"
 					question={ translate( 'Have more questions?' ) }
@@ -112,6 +119,7 @@ const JetpackFAQ: React.FC = () => {
 				</FoldableFAQ>
 			</section>
 		</>
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
 };
 

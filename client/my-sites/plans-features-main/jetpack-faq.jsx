@@ -21,6 +21,19 @@ export const getHelpLink = ( context ) => {
 	);
 };
 
+export const getAgenciesLink = () => {
+	return (
+		<a
+			href="https://jetpack.com/for/agencies/"
+			target="_blank"
+			rel="noopener noreferrer"
+			onClick={ () => {
+				recordTracksEvent( 'calypso_jetpack_faq_agencies_click' );
+			} }
+		/>
+	);
+};
+
 const JetpackFAQ = () => {
 	const translate = useTranslate();
 
