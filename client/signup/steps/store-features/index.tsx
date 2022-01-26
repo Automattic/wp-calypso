@@ -119,7 +119,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const onSelect = ( selectedOption: StoreFeatureSet ) => {
 		switch ( selectedOption ) {
 			case 'power':
-				page.redirect( `/start/woocommerce-install/confirm?site=${ siteSlug }` );
+				page.redirect( `/start/woocommerce-install/?site=${ siteSlug }` );
 				break;
 
 			case 'simple':
