@@ -130,7 +130,7 @@ class EmailProvidersComparison extends Component {
 		const { selectedDomainName, shouldPromoteGoogleWorkspace } = props;
 
 		this.state = {
-			googleUsers: [],
+			googleUsers: newUsers( selectedDomainName ),
 			titanMailboxes: [ buildNewTitanMailbox( selectedDomainName, false ) ],
 			expanded: this.getDefaultExpandedState( shouldPromoteGoogleWorkspace ),
 			addingToCart: false,
