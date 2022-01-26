@@ -1,0 +1,9 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 19.75H80V18.25H16V19.75ZM83.25 23V63H84.75V23H83.25ZM12.75 63V23H11.25V63H12.75ZM80 19.75C81.7949 19.75 83.25 21.2051 83.25 23H84.75C84.75 20.3766 82.6234 18.25 80 18.25V19.75ZM16 18.25C13.3766 18.25 11.25 20.3766 11.25 23H12.75C12.75 21.2051 14.2051 19.75 16 19.75V18.25Z" fill="#8C8F94"/>
+<path d="M3 67V66.25C2.58579 66.25 2.25 66.5858 2.25 67H3ZM93 67H93.75C93.75 66.5858 93.4142 66.25 93 66.25V67ZM3 67.75H93V66.25H3V67.75ZM92.25 67V73H93.75V67H92.25ZM89 76.25H7V77.75H89V76.25ZM3.75 73V67H2.25V73H3.75ZM7 76.25C5.20507 76.25 3.75 74.7949 3.75 73H2.25C2.25 75.6234 4.37665 77.75 7 77.75V76.25ZM92.25 73C92.25 74.7949 90.7949 76.25 89 76.25V77.75C91.6234 77.75 93.75 75.6234 93.75 73H92.25Z" fill="#8C8F94"/>
+<line x1="45.75" y1="32.25" x2="50.25" y2="32.25" stroke="#C4C4C4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="57.75" y1="32.25" x2="62.25" y2="32.25" stroke="#C4C4C4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="69.75" y1="32.25" x2="74.25" y2="32.25" stroke="#C4C4C4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="23.5" cy="31.5" r="3.5" fill="#C4C4C4"/>
+<rect x="22" y="44" width="53" height="12" fill="#C4C4C4"/>
+</svg>

@@ -1,4 +1,3 @@
-import { Button, Card } from '@automattic/components';
 import styled from '@emotion/styled';
 import { NewOrExistingSiteChoiceType, ChoiceType } from './types';
 
@@ -8,39 +7,40 @@ interface Props {
 }
 
 const ChoiceContainer = styled.div`
+	border: 1px solid #c3c4c7;
+	box-sizing: border-box;
+	box-shadow: 0px 1px 2px rgba( 0, 0, 0, 0.05 );
+	border-radius: 4px;
+	cursor: pointer;
 	display: flex;
 	flex: 1;
-	flex-direction: column;
-	text-align: center;
+	gap: 30px;
+	padding: 32px;
 	width: 100%;
 
-	@media ( max-width: 480px ) {
-		margin: 12px;
+	&:hover,
+	&:focus-within {
+		border-color: var( --studio-gray-60 );
 	}
 `;
 
-const ChoiceImage = styled( Card )`
-	width: 100%;
-
-	@media ( max-width: 480px ) {
-		display: none;
+const ChoiceImage = styled.img`
+	display: none;
+	width: 96px;
+	@media ( min-width: 960px ) {
+		display: block;
 	}
 `;
 
-const ChoiceButtion = styled( Button )`
-	border-radius: 4px;
-	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+const ChoiceTitle = styled.div`
 	color: #101517;
-	font-weight: 500;
-	margin-top: 0.5rem;
-	min-width: 130px;
-`;
-
-const ChoiceSection = styled( Card )`
-	flex-grow: 1;
+	font-size: 16px;
+	line-height: 19px;
+	letter-spacing: 0.38px;
 `;
 
 const ChoiceDescription = styled.div`
+	color: var( --studio-gray-50 );
 	margin: 1.5em 0;
 `;
 
@@ -50,14 +50,16 @@ export default function NewOrExistingSiteChoice( props: Props ): React.ReactElem
 	};
 
 	return (
-		<ChoiceContainer data-e2e-type={ props.choice.type } key={ props.choice.type }>
-			<ChoiceImage compact>{ props.choice.image }</ChoiceImage>
-			<ChoiceSection compact>
-				<div>
-					<ChoiceButtion onClick={ handleClickChoice }>{ props.choice.label }</ChoiceButtion>
-				</div>
+		<ChoiceContainer
+			data-e2e-type={ props.choice.type }
+			key={ props.choice.type }
+			onClick={ handleClickChoice }
+		>
+			<ChoiceImage src={ props.choice.imageUrl }></ChoiceImage>
+			<div>
+				<ChoiceTitle>{ props.choice.label }</ChoiceTitle>
 				<ChoiceDescription>{ props.choice.description }</ChoiceDescription>
-			</ChoiceSection>
+			</div>
 		</ChoiceContainer>
 	);
 }
