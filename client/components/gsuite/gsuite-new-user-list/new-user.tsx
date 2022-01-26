@@ -10,7 +10,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { GSuiteNewUser as NewUser } from 'calypso/lib/gsuite/new-users';
 import GSuiteDomainsSelect from './domains-select';
-
 import type { ReactElement } from 'react';
 
 interface LabelWrapperProps {
