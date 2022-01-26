@@ -75,7 +75,7 @@ class GSuiteAddUsers extends Component {
 		const { domains, productType, selectedSite } = this.props;
 		const { users } = this.state;
 		const validatedUsers = validateUsers( users );
-		const canContinue = areAllUsersValid( users );
+		const canContinue = areAllUsersValid( validatedUsers );
 
 		this.setState( {
 			validatedMailboxUuids: validatedUsers.map( ( user ) => user.uuid ),
