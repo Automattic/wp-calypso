@@ -140,6 +140,7 @@ class GoogleLoginButton extends Component {
 
 	handleClick( event ) {
 		event.preventDefault();
+		event.stopPropagation();
 
 		if ( this.state.isDisabled ) {
 			return;
@@ -218,6 +219,7 @@ class GoogleLoginButton extends Component {
 						onFocus={ this.showError }
 						onBlur={ this.hideError }
 						onClick={ this.handleClick }
+						onMouseDown={ this.handleClick }
 					>
 						<GoogleIcon
 							isDisabled={ isDisabled }
