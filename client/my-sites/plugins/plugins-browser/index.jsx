@@ -23,6 +23,8 @@ import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
@@ -35,7 +37,11 @@ import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import {
+	recordTracksEvent,
+	recordGoogleEvent,
+	composeAnalytics,
+} from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
@@ -52,6 +58,7 @@ import {
 } from 'calypso/state/plugins/wporg/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -99,6 +106,9 @@ const PluginsBrowser = ( {
 	const jetpackNonAtomic = useSelector(
 		( state ) =>
 			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
+	);
+	const isSiteConnected = useSelector( ( state ) =>
+		getSiteConnectionStatus( state, selectedSite?.ID )
 	);
 	const isVip = useSelector( ( state ) => isVipSite( state, selectedSite?.ID ) );
 	const hasJetpack = useSelector( hasJetpackSites );
@@ -158,6 +168,11 @@ const PluginsBrowser = ( {
 		dispatch( updateBreadcrumbs( items ) );
 	}, [ siteSlug, search ] );
 
+	const trackSiteDisconnect = () =>
+		composeAnalytics(
+			recordGoogleEvent( 'Jetpack', 'Clicked in site indicator to start Jetpack Disconnect flow' ),
+			recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
+		);
 	const annoncementPages = [
 		{
 			headline: translate( 'NEW' ),
@@ -257,7 +272,24 @@ const PluginsBrowser = ( {
 					</div>
 				</FixedNavigationHeader>
 			) }
-
+			{ isSiteConnected === false && (
+				<Notice
+					icon="notice"
+					showDismiss={ false }
+					status="is-warning"
+					text={ translate( '%(siteName)s cannot be accessed.', {
+						textOnly: true,
+						args: { siteName: selectedSite.title },
+					} ) }
+				>
+					<NoticeAction
+						onClick={ trackSiteDisconnect }
+						href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
+					>
+						{ translate( 'I’d like to fix this now' ) }
+					</NoticeAction>
+				</Notice>
+			) }
 			<UpgradeNudge
 				selectedSite={ selectedSite }
 				sitePlan={ sitePlan }

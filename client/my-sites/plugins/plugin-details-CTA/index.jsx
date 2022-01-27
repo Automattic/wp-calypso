@@ -46,6 +46,7 @@ const PluginDetailsCTA = ( {
 	isPlaceholder,
 	billingPeriod,
 	isMarketplaceProduct,
+	isSiteConnected,
 } ) => {
 	const pluginSlug = plugin.slug;
 	const translate = useTranslate();
@@ -157,6 +158,7 @@ const PluginDetailsCTA = ( {
 					isMarketplaceProduct={ isMarketplaceProduct }
 					billingPeriod={ billingPeriod }
 					shouldUpgrade={ shouldUpgrade }
+					isSiteConnected={ isSiteConnected }
 				/>
 			</div>
 			{ ( ! isJetpackSelfHosted || ! isMarketplaceProduct ) && (
@@ -204,6 +206,7 @@ const CTAButton = ( {
 	isMarketplaceProduct,
 	billingPeriod,
 	isJetpackSelfHosted,
+	isSiteConnected,
 } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -270,7 +273,7 @@ const CTAButton = ( {
 						billingPeriod,
 					} );
 				} }
-				disabled={ isJetpackSelfHosted && isMarketplaceProduct }
+				disabled={ ( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false }
 			>
 				{
 					// eslint-disable-next-line no-nested-ternary
