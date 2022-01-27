@@ -24,8 +24,16 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 
 	const [ hasFailed, setHasFailed ] = useState( false );
 
-	const handleTransferFailure = ( type: string ) => {
-		dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', { action: type } ) );
+	const handleTransferFailure = ( failureInfo: string | object ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {
+				action: typeof failureInfo === 'string' ? failureInfo : failureInfo[ 'type' ],
+				site: domain,
+				error: failureInfo[ 'error' ] || '',
+				transfer_status: failureInfo[ 'transfer_status' ] || '',
+				software_status: failureInfo[ 'software_status' ] || '',
+			} )
+		);
 		setHasFailed( true );
 	};
 
@@ -51,16 +59,10 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 			stepContent={
 				<>
 					{ isAtomic && (
-						<InstallPlugins
-							onFailure={ handleTransferFailure }
-							trackRedirect={ trackRedirect }
-						/>
+						<InstallPlugins onFailure={ handleTransferFailure } trackRedirect={ trackRedirect } />
 					) }
 					{ ! isAtomic && (
-						<TransferSite
-							onFailure={ handleTransferFailure }
-							trackRedirect={ trackRedirect }
-						/>
+						<TransferSite onFailure={ handleTransferFailure } trackRedirect={ trackRedirect } />
 					) }
 				</>
 			}

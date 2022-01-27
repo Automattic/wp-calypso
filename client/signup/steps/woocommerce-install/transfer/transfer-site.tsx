@@ -21,7 +21,7 @@ export default function TransferSite( {
 	onFailure,
 	trackRedirect,
 }: {
-	onFailure: ( type: string ) => void;
+	onFailure: ( type: string | object ) => void;
 	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
@@ -107,9 +107,22 @@ export default function TransferSite( {
 		if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
 			setTransferFailed( true );
-			onFailure( 'transfer' );
+			onFailure( {
+				type: 'transfer',
+				error: transferError?.message || softwareError?.message,
+				transfer_status: transferStatus,
+				software_status: softwareStatus,
+			} );
 		}
-	}, [ siteId, transferStatus, isTransferringStatusFailed, onFailure ] );
+	}, [
+		siteId,
+		transferStatus,
+		isTransferringStatusFailed,
+		onFailure,
+		transferError,
+		softwareError,
+		softwareStatus,
+	] );
 
 	// Redirect to wc-admin once software installation is confirmed.
 	useEffect( () => {
