@@ -82,7 +82,13 @@ class DomainRow extends PureComponent {
 			<div className="domain-row__domain-cell">
 				<div className="domain-row__domain-name">
 					{ /* eslint-disable jsx-a11y/anchor-is-valid */ }
-					<a href="#" onClick={ this.handleClick }>
+					<a
+						href="#"
+						onClick={ ( event ) => {
+							event.preventDefault();
+							this.handleClick();
+						} }
+					>
 						{ domain.domain }
 					</a>
 					{ /* eslint-enable jsx-a11y/anchor-is-valid */ }
