@@ -590,8 +590,6 @@ PlanFeaturesHeader.propTypes = {
 	relatedYearlyPlan: PropTypes.object,
 
 	isLoggedInMonthlyPricing: PropTypes.bool,
-
-	monthlyDisabled: PropTypes.bool,
 	eligibleForWpcomMonthlyPlans: PropTypes.bool,
 };
 
@@ -610,7 +608,6 @@ PlanFeaturesHeader.defaultProps = {
 	showPlanCreditsApplied: false,
 	siteSlug: '',
 	isLoggedInMonthlyPricing: false,
-	monthlyDisabled: false,
 	eligibleForWpcomMonthlyPlans: false,
 };
 
