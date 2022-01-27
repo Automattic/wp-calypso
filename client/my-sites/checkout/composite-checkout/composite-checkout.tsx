@@ -7,6 +7,8 @@ import {
 	SubmitButtonWrapper,
 	checkoutTheme,
 	Button,
+	useTransactionStatus,
+	TransactionStatus,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
@@ -42,6 +44,7 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { CheckoutCompleteRedirecting } from './components/checkout-complete-redirecting';
 import EmptyCart from './components/empty-cart';
 import WPCheckout from './components/wp-checkout';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
@@ -678,8 +681,6 @@ export default function CompositeCheckout( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
-	// The goToPreviousPage function and subsequent conditional statement controls the 'back' button functionality on the empty cart page
-
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( updatedSiteSlug );
 
 	const goToPreviousPage = () =>
@@ -689,6 +690,24 @@ export default function CompositeCheckout( {
 			previousPath: customizedPreviousPath || previousPath,
 			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
 		} );
+
+	const { transactionStatus } = useTransactionStatus();
+
+	if ( transactionStatus === TransactionStatus.COMPLETE ) {
+		debug( 'rendering post-checkout redirecting page' );
+		return (
+			<Fragment>
+				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
+				<ThemeProvider theme={ theme }>
+					<MainContentWrapper>
+						<CheckoutStepAreaWrapper>
+							<CheckoutCompleteRedirecting />
+						</CheckoutStepAreaWrapper>
+					</MainContentWrapper>
+				</ThemeProvider>
+			</Fragment>
+		);
+	}
 
 	if (
 		shouldShowEmptyCartPage( {
