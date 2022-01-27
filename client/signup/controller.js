@@ -198,7 +198,6 @@ export default {
 			// Reset initialContext if a site query param
 			( newContext?.query?.site && newContext.query.site !== initialContext?.query?.site )
 		) {
-			console.log( 'saved initialContext', initialContext, newContext );
 			initialContext = Object.assign( {}, newContext );
 		}
 
@@ -292,11 +291,6 @@ export default {
 			userLoggedIn
 		);
 
-		// The woocommerce-install flow needs to support site switching.
-		// if ( 'woocommerce-install' === flowName ) {
-		// 	initialContext = context;
-		// }
-
 		const { query } = initialContext;
 
 		// wait for the step component module to load
@@ -373,7 +367,6 @@ export default {
 			next();
 			return;
 		}
-		// debugger;
 		const siteId = getSiteId( getState(), siteIdOrSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );

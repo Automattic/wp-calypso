@@ -10,7 +10,6 @@ import 'calypso/state/ui/init';
  * @returns {{type: string, siteId: number}} Action object
  */
 export function setSelectedSiteId( siteId ) {
-	console.error( 'setSelectedSiteId', siteId );
 	return {
 		type: SELECTED_SITE_SET,
 		siteId,
