@@ -92,7 +92,7 @@
 		"signup/social": true,
 		"signup/design-picker-categories": true,
 		"signup/design-picker-use-featured-picks-buttons": true,
-		"signup/design-picker-premium-themes-checkout": false,
+		"signup/design-picker-premium-themes-checkout": true,
 		"signup/hero-flow-non-en": true,
 		"signup/starting-point-courses": true,
 		"site-indicator": true,
