@@ -41,7 +41,7 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"chai": "^4.3.4",
-		"typescript": "^4.5.4"
+		"typescript": "^4.5.5"
 	},
 	"peerDependencies": {
 		"react": "^17.0.2"
