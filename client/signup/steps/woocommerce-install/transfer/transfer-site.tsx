@@ -112,8 +112,6 @@ export default function TransferSite( {
 				type: 'transfer',
 				error: transferError?.message || softwareError?.message,
 				code: transferError?.code || softwareError?.code,
-				transfer_status: transferStatus,
-				software_status: softwareStatus,
 			} );
 		}
 	}, [
