@@ -44,6 +44,8 @@ export class TestAccount {
 	/**
 	 * Logs in via the login page UI. The verification code will be submitted
 	 * automatically if it's defined in the config file.
+	 *
+	 * @param {Page} page on which actions are to take place.
 	 */
 	async logInViaLoginPage( page: Page ): Promise< void > {
 		const loginPage = new LoginPage( page );
@@ -55,6 +57,23 @@ export class TestAccount {
 		if ( verificationCode ) {
 			await loginPage.submitVerificationCode( verificationCode );
 		}
+	}
+
+	/**
+	 * Logs in via the login page UI, but shown on a popup.
+	 *
+	 * @param {Page} page Handle to the popup Page object.
+	 */
+	async logInViaPopupPage( page: Page ): Promise< void > {
+		const loginPage = new LoginPage( page );
+
+		const [ username, password ] = this.credentials;
+		await loginPage.fillUsername( username );
+		await loginPage.clickSubmit();
+		await loginPage.fillPassword( password );
+
+		// Popup pages close once authentication is successful.
+		await Promise.all( [ page.waitForEvent( 'close' ), loginPage.clickSubmit() ] );
 	}
 
 	/**
