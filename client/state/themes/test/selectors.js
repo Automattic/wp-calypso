@@ -70,8 +70,7 @@ const twentynineteen = {
 	id: 'twentynineteen',
 	name: 'Twenty Nineteen',
 	author: 'the WordPress team',
-	screenshot:
-		'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysixteen/screenshot.png',
+	screenshot: 'twentynineteen.jpg',
 	stylesheet: 'pub/twentynineteen',
 	demo_uri: 'https://twentynineteendemo.wordpress.com/',
 	author_uri: 'https://wordpress.org/',
