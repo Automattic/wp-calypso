@@ -1,9 +1,5 @@
 import getTourSteps from '../tour-steps';
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	localizeUrl: jest.fn(),
-} ) );
-
 describe( 'Welcome Tour', () => {
 	describe( 'Tour Steps', () => {
 		it( 'should retrieve the "Find your way" slide when on English Locale', () => {
