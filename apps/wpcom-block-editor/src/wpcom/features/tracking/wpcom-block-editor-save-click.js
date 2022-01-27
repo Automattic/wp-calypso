@@ -12,16 +12,17 @@ export const wpcomBlockEditorSaveClick = () => ( {
 		'.editor-entities-saved-states__save-button, .editor-post-publish-button:not(.has-changes-dot)',
 	type: 'click',
 	handler: () => {
+		const isSiteEditor = Boolean( select( 'core/edit-site' ) );
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
 		const isEditedPostBeingScheduled = select( 'core/editor' ).isEditedPostBeingScheduled();
-		let actionType;
+		let actionType = 'publishing';
 
-		if ( isEditedPostBeingScheduled ) {
+		if ( isSiteEditor ) {
+			actionType = 'saving';
+		} else if ( isEditedPostBeingScheduled ) {
 			actionType = 'scheduling';
 		} else if ( isCurrentPostPublished ) {
 			actionType = 'updating';
-		} else {
-			actionType = 'publishing';
 		}
 
 		tracksRecordEvent( 'wpcom_block_editor_save_click', {
