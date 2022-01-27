@@ -62,6 +62,7 @@ class Full_Site_Editing {
 		add_action( 'transition_post_status', array( $this, 'restrict_template_drafting' ), 10, 3 );
 		add_action( 'admin_menu', array( $this, 'remove_wp_admin_menu_items' ) );
 		add_filter( 'block_editor_rest_api_preload_paths', array( $this, 'preload_template_parts' ), 10, 2 );
+		add_filter( 'rest_api_init', array( $this, 'ensure_correct_controller' ), 98 );
 
 		$this->theme_slug           = normalize_theme_slug( get_stylesheet() );
 		$this->wp_template_inserter = new WP_Template_Inserter( $this->theme_slug );
@@ -78,6 +79,25 @@ class Full_Site_Editing {
 		}
 
 		return self::$instance;
+	}
+
+	/**
+	 * We fire this on priority 98, just before the 99 that the REST API uses
+	 * to translate registered post types into REST routes. We unset the Core
+	 * post_type and set ours.
+	 *
+	 * @return void
+	 */
+	public function ensure_correct_controller() {
+		if ( ! \A8C\FSE\is_full_site_editing_active() ) {
+			return;
+		}
+		global $wp_post_type;
+		// we can't unregister the post_type if it's the core one with the _builtin param. But: globals.
+		if ( isset( $wp_post_type['wp_template_part'] ) ) {
+			unset( $wp_post_type['wp_template_part'] );
+			$this->register_template_post_types();
+		}
 	}
 
 	/**
