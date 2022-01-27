@@ -60,6 +60,10 @@
 		@include break-small {
 			background-color: transparent;
 		}
+
+		button.is-primary {
+			border-radius: 4px;
+		}
 	}
 }
 

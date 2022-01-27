@@ -24,7 +24,6 @@ class StepWrapper extends Component {
 		skipHeadingText: PropTypes.string,
 		skipButtonAlign: PropTypes.oneOf( [ 'top', 'bottom' ] ),
 		nextLabelText: PropTypes.string,
-		nextDisabledSubmitOnClick: PropTypes.bool,
 		// Displays an <hr> above the skip button and adds more white space
 		isLargeSkipLayout: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
@@ -33,6 +32,7 @@ class StepWrapper extends Component {
 		isFullLayout: PropTypes.bool,
 		isHorizontalLayout: PropTypes.bool,
 		queryParams: PropTypes.object,
+		customizedActionButtons: PropTypes.element,
 	};
 
 	static defaultProps = {
@@ -101,7 +101,6 @@ class StepWrapper extends Component {
 		const {
 			shouldHideNavButtons,
 			nextLabelText,
-			nextDisabledSubmitOnClick,
 			defaultDependencies,
 			flowName,
 			stepName,
@@ -127,7 +126,6 @@ class StepWrapper extends Component {
 				borderless={ false }
 				primary
 				forwardIcon={ null }
-				disabledSubmitOnClick={ nextDisabledSubmitOnClick }
 				disabledTracksOnClick
 			/>
 		);
@@ -177,6 +175,7 @@ class StepWrapper extends Component {
 			align,
 			headerImageUrl,
 			isHorizontalLayout,
+			customizedActionButtons,
 		} = this.props;
 
 		const backButton = ! hideBack && this.renderBack();
@@ -185,7 +184,7 @@ class StepWrapper extends Component {
 			skipButtonAlign === 'top' &&
 			this.renderSkip( { borderless: true, forwardIcon: null } );
 		const nextButton = ! hideNext && this.renderNext();
-		const hasNavigation = backButton || skipButton || nextButton;
+		const hasNavigation = backButton || skipButton || nextButton || customizedActionButtons;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
@@ -204,6 +203,7 @@ class StepWrapper extends Component {
 						{ backButton }
 						{ skipButton }
 						{ nextButton }
+						{ customizedActionButtons }
 					</ActionButtons>
 					{ ! hideFormattedHeader && (
 						<div className="step-wrapper__header">

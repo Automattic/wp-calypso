@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import DesignPicker, {
 	FeaturedPicksButtons,
 	PremiumBadge,
@@ -336,9 +337,6 @@ export default function DesignPickerStep( props ) {
 		const defaultDependencies = { selectedDesign };
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
-		const nextLabelText = shouldUpgrade
-			? translate( 'Upgrade Plan' )
-			: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
 
 		return (
 			<StepWrapper
@@ -351,14 +349,19 @@ export default function DesignPickerStep( props ) {
 				stepContent={ renderDesignPreview() }
 				align={ isMobile ? 'left' : 'center' }
 				hideSkip
-				hideNext={ false }
-				nextLabelText={ nextLabelText }
+				hideNext={ shouldUpgrade }
+				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
 				defaultDependencies={ defaultDependencies }
 				backUrl={ getStepUrl( flowName, stepName, '', locale, queryParams ) }
-				goToNextStep={ shouldUpgrade ? upgradePlan : submitDesign }
+				goToNextStep={ submitDesign }
 				stepSectionName={ designTitle }
-				// Prevent from completing the flow when the user clicks on Upgrade Plan button
-				nextDisabledSubmitOnClick={ shouldUpgrade }
+				customizedActionButtons={
+					shouldUpgrade && (
+						<Button primary borderless={ false } onClick={ upgradePlan }>
+							{ translate( 'Upgrade Plan' ) }
+						</Button>
+					)
+				}
 			/>
 		);
 	}
