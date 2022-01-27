@@ -2,6 +2,7 @@ import { BlockFlow, EditorContext, PublishedPostContext } from '..';
 
 interface ConfigurationData {
 	phoneNumber: number | string;
+	buttonText?: string;
 }
 
 const blockParentSelector = 'div[aria-label="Block: WhatsApp Button"]';
@@ -9,6 +10,7 @@ const selectors = {
 	// Editor
 	settings: 'button[aria-label="WhatsApp Button Settings"]',
 	phoneNumberInput: 'input[placeholder="Your phone number…"]',
+	buttonLabel: 'a.whatsapp-block__button',
 
 	// Published
 	block: 'div.wp-block-jetpack-whatsapp-button',
@@ -38,6 +40,10 @@ export class WhatsAppButtonFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
+		if ( this.configurationData.buttonText ) {
+			await context.editorIframe.fill( selectors.buttonLabel, this.configurationData.buttonText );
+		}
+
 		await context.editorIframe.click( selectors.settings );
 		await context.editorIframe.fill(
 			selectors.phoneNumberInput,
@@ -52,5 +58,10 @@ export class WhatsAppButtonFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		await context.page.waitForSelector( selectors.block );
+		if ( this.configurationData.buttonText ) {
+			await context.page.waitForSelector(
+				`${ selectors.block } :text("${ this.configurationData.buttonText }")`
+			);
+		}
 	}
 }

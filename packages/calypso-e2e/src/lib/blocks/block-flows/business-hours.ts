@@ -10,7 +10,7 @@ const blockParentSelector = 'div[aria-label="Block: Business Hours"]';
 const selectors = {
 	// Editor
 	dayToggle: ( day: DaysOfWeek ) => `div.${ day } input`,
-	dayBusinessHOurs: ( day: DaysOfWeek ) => `div.${ day }.business-hours__hours`,
+	dayBusinessHours: ( day: DaysOfWeek ) => `div.${ day }.business-hours__hours`,
 
 	// Published
 	hoursForDay: ( day: DaysOfWeek ) => `div.jetpack-business-hours__item:has(dd.${ day })`,
@@ -42,7 +42,7 @@ export class BusinessHoursFlow implements BlockFlow {
 	async configure( context: EditorContext ): Promise< void > {
 		const day = this.configurationData.day;
 		await context.editorIframe.click( selectors.dayToggle( day ) );
-		await context.editorIframe.waitForSelector( selectors.dayBusinessHOurs( day ), {
+		await context.editorIframe.waitForSelector( selectors.dayBusinessHours( day ), {
 			state: 'visible',
 		} );
 	}

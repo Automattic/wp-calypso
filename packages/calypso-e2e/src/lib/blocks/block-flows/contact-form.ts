@@ -1,17 +1,16 @@
 import { BlockFlow, EditorContext, PublishedPostContext } from '..';
 
 interface ConfigurationData {
-	text: string;
+	nameLabel: string;
 }
 
 const blockParentSelector = 'div[aria-label="Block: Form"]';
 const selectors = {
 	// Editor
-	nameBlock: 'div[aria-label="Block: Name"]',
+	nameLabel: `${ blockParentSelector } label[role="textbox"]:text("Name")`,
 
 	// Published
 	publishedBlock: '.wp-block-jetpack-contact-form',
-	nameField: 'input[class="name"]',
 };
 
 /**
@@ -38,10 +37,10 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		// Add a new paragraph block after the Name block and insert some text.
-		await context.editorIframe.click( selectors.nameBlock );
-		await context.page.keyboard.press( 'Enter' );
-		await context.page.keyboard.insertText( this.configurationData.text );
+		await context.editorIframe.click( selectors.nameLabel );
+		await context.editorIframe.fill( selectors.nameLabel, '' );
+		// It turns out that for editable labels other methods of filling text doesn't work.
+		await context.page.keyboard.insertText( this.configurationData.nameLabel );
 	}
 
 	/**
@@ -52,7 +51,7 @@ export class ContactFormFlow implements BlockFlow {
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		await context.page.waitForSelector( selectors.publishedBlock );
 		await context.page.waitForSelector(
-			`${ selectors.publishedBlock } :text("${ this.configurationData.text }")`
+			`${ selectors.publishedBlock } :text("${ this.configurationData.nameLabel }")`
 		);
 	}
 }
