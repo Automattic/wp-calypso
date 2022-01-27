@@ -75,8 +75,6 @@ export class PlanFeaturesHeader extends Component {
 			popular,
 			selectedPlan,
 			isInSignup,
-			isMonthlyPlan,
-			monthlyDisabled,
 			title,
 			translate,
 		} = this.props;
@@ -85,8 +83,6 @@ export class PlanFeaturesHeader extends Component {
 			'is-p2-plus': planType === PLAN_P2_PLUS,
 		} );
 		const isCurrent = this.isPlanCurrent();
-		const popularLabel =
-			monthlyDisabled && isMonthlyPlan ? translate( 'Popular on monthly' ) : translate( 'Popular' );
 
 		return (
 			<header className={ headerClasses }>
@@ -107,7 +103,7 @@ export class PlanFeaturesHeader extends Component {
 					<PlanPill isInSignup={ isInSignup }>{ translate( 'Suggested' ) }</PlanPill>
 				) }
 				{ popular && ! selectedPlan && ! isCurrent && (
-					<PlanPill isInSignup={ isInSignup }>{ popularLabel }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 				) }
 				{ newPlan && ! selectedPlan && ! isCurrent && (
 					<PlanPill isInSignup={ isInSignup }>{ translate( 'New' ) }</PlanPill>
@@ -127,8 +123,6 @@ export class PlanFeaturesHeader extends Component {
 			planType,
 			popular,
 			selectedPlan,
-			monthlyDisabled,
-			isMonthlyPlan,
 			title,
 			audience,
 			translate,
@@ -136,8 +130,6 @@ export class PlanFeaturesHeader extends Component {
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 		const isPillInCorner = this.resolveIsPillInCorner();
-		const popularLabel =
-			monthlyDisabled && isMonthlyPlan ? translate( 'Popular on monthly' ) : translate( 'Popular' );
 
 		return (
 			<span>
@@ -148,7 +140,7 @@ export class PlanFeaturesHeader extends Component {
 						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Suggested' ) }</PlanPill>
 					) }
 					{ popular && ! selectedPlan && (
-						<PlanPill isInSignup={ isPillInCorner }>{ popularLabel }</PlanPill>
+						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Popular' ) }</PlanPill>
 					) }
 					{ newPlan && ! selectedPlan && (
 						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'New' ) }</PlanPill>
@@ -530,8 +522,6 @@ PlanFeaturesHeader.propTypes = {
 	relatedYearlyPlan: PropTypes.object,
 
 	isLoggedInMonthlyPricing: PropTypes.bool,
-
-	monthlyDisabled: PropTypes.bool,
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -549,7 +539,6 @@ PlanFeaturesHeader.defaultProps = {
 	showPlanCreditsApplied: false,
 	siteSlug: '',
 	isLoggedInMonthlyPricing: false,
-	monthlyDisabled: false,
 };
 
 export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
