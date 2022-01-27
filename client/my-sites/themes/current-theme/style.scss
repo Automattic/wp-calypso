@@ -33,11 +33,13 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	}
 
 	.current-theme__details {
+		padding: 16px;
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		font-size: $font-body-small;
 
 		@include break-small {
+			padding: 0;
 			flex-direction: row;
 			font-size: $font-body;
 			width: 100%;
@@ -45,18 +47,24 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	}
 
 	.current-theme__img {
+		width: 120px;
+		height: 90px;
 		border-bottom: $current-theme-border;
 		max-height: none;
-		width: auto;
+		box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
+
 
 		@include break-small {
+			height: auto;
 			max-height: 160px;
 			border-right: $current-theme-border;
 			border-bottom: none;
+			width: auto;
 		}
 
 		@include break-large {
 			max-height: 130px;
+			width: auto;
 		}
 	}
 
@@ -71,10 +79,17 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		}
 	}
 
+	.current-theme__content-learn-more {
+		display: none;
+		@include break-small {
+			display: block;
+		}
+	}
+
 	.current-theme__title-wrapper {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
+		align-items: start;
 		margin-top: 0;
 		flex-wrap: wrap;
 
@@ -118,7 +133,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		box-sizing: border-box;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		font-size: $font-body;
+		font-size: $font-body-large;
 		max-width: 100%;
 		margin-right: 8px;
 		margin-bottom: 6px;

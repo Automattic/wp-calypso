@@ -65,7 +65,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 							{ showScreenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
 							{ showScreenshot && (
 								<img
-									src={ currentTheme.screenshot + '?w=150' }
+									src={ currentTheme.screenshot + '&w=250' }
 									className="current-theme__img"
 									alt=""
 								/>
@@ -80,7 +80,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 									<span className="current-theme__name">{ text }</span>
 								</div>
 								<div className="current-theme__content-wrapper">
-									<p>
+									<p className="current-theme__content-learn-more">
 										{ translate( 'This is the active theme on your site.' ) }{ ' ' }
 										<InlineSupportLink supportContext="themes-switch">
 											{ translate( 'Learn more.' ) }
