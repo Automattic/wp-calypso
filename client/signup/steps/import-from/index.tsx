@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
 import page from 'page';
 import React, { useEffect, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
@@ -46,6 +46,7 @@ interface Props {
 	isImporterStatusHydrated: boolean;
 	siteImports: ImportJob[];
 	fetchImporterState: ( siteId: number ) => void;
+	resetImport: ( siteId: number, importerId: string ) => void;
 }
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const {
@@ -70,8 +71,6 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const getImportJob = ( engine: Importer ): ImportJob | undefined => {
 		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
 	};
-
-	const dispatch = useDispatch();
 
 	/**
 	 ↓ Effects
@@ -131,7 +130,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 			case appStates.UPLOAD_SUCCESS:
 			case appStates.UPLOADING:
 			case appStates.UPLOAD_FAILURE:
-				return dispatch( resetImport( siteId, job.importerId ) );
+				return props.resetImport( siteId, job.importerId );
 		}
 	}
 
