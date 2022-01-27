@@ -1,11 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import difmImageUrl from 'calypso/assets/images/difm/difm.svg';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { removeSiteSlugDependency } from 'calypso/state/signup/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import NewOrExistingSiteScreen from './new-or-existing-site';
 import { ChoiceType } from './types';
+
+import './style.scss';
 
 interface Props {
 	goToNextStep: () => void;
@@ -18,8 +21,10 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const headerText = translate( 'Choose where you want us to build your site.' );
-	const subHeaderText = '';
+	const headerText = translate( 'Do it For Me' );
+	const subHeaderText = translate(
+		'Get your business up quickly with our experts building your responsive, professional website. Select your best option:'
+	);
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
@@ -53,6 +58,9 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 			stepContent={ <NewOrExistingSiteScreen onSelect={ newOrExistingSiteSelected } /> }
 			align={ 'left' }
 			hideSkip
+			isHorizontalLayout={ true }
+			isWideLayout={ true }
+			headerImageUrl={ difmImageUrl }
 			{ ...props }
 		/>
 	);
