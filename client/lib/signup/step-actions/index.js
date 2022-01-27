@@ -373,19 +373,19 @@ function getDIFMLiteCartItemFromDependencies( dependencies ) {
 		displayAddress,
 	} = dependencies;
 	const extra = {
-		difm_lite_selected_design: selectedDesign?.theme,
-		difm_lite_site_category: selectedSiteCategory,
-		difm_lite_new_or_existing_site_choice: newOrExistingSiteChoice,
-		difm_lite_let_us_choose_selected: isLetUsChooseSelected,
-		difm_lite_site_title: siteTitle,
-		difm_lite_site_description: siteDescription,
-		difm_lite_twitter_url: twitterUrl,
-		difm_lite_facebook_url: facebookUrl,
-		difm_lite_linkedin_url: linkedinUrl,
-		difm_lite_instagram_url: instagramUrl,
-		difm_lite_display_email: displayEmail,
-		difm_lite_display_phone: displayPhone,
-		difm_lite_display_address: displayAddress,
+		selected_design: selectedDesign?.theme,
+		site_category: selectedSiteCategory,
+		new_or_existing_site_choice: newOrExistingSiteChoice,
+		let_us_choose_selected: isLetUsChooseSelected,
+		site_title: siteTitle,
+		site_description: siteDescription,
+		twitter_url: twitterUrl,
+		facebook_url: facebookUrl,
+		linkedin_url: linkedinUrl,
+		instagram_url: instagramUrl,
+		display_email: displayEmail,
+		display_phone: displayPhone,
+		display_address: displayAddress,
 	};
 	const cartItem = { product_slug: WPCOM_DIFM_LITE, extra };
 	return cartItem;
