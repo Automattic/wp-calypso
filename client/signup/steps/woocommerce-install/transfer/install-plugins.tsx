@@ -67,7 +67,11 @@ export default function InstallPlugins( {
 
 		const timeId = setTimeout( () => {
 			setIsTimeoutError( true );
-			onFailure( 'install_timeout' );
+			onFailure( {
+				type: 'install_timeout',
+				error: 'install took to long',
+				code: 'install_timeout',
+			} );
 		}, TIMEOUT_LIMIT );
 
 		return () => {
