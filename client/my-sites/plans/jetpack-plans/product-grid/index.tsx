@@ -12,7 +12,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import IntroPricingBannerV2 from 'calypso/components/jetpack/intro-pricing-banner-v2';
+import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -217,7 +217,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			<ProductGridSection>
 				{ ! planRecommendation && filterBar }
 				<div className="product-grid__pricing-banner">
-					<IntroPricingBannerV2 />
+					<IntroPricingBanner />
 				</div>
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {
