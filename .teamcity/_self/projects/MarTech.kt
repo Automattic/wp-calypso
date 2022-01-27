@@ -30,7 +30,7 @@ object MarTech : Project({
 	buildType(ToSAcceptanceTracking)
 })
 
-object ToSAcceptanceTracking: BuildType {
+object ToSAcceptanceTracking: BuildType ({
 	name = "ToS Acceptance Tracking"
 	description = "Captures screenshots of locations where Terms of Service are shown."
 
@@ -138,4 +138,4 @@ object ToSAcceptanceTracking: BuildType {
 			}
 		}
 	}
-}
+})
