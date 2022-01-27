@@ -2657,6 +2657,9 @@ describe( '#shouldShowTryAndCustomize', () => {
 						77203074: { edit_theme_options: true },
 					},
 				},
+				themes: {
+					queries: {},
+				},
 				sites: {
 					items: {
 						77203074: {
