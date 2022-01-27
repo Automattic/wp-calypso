@@ -5,6 +5,7 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
+import { classParser } from '../utils';
 import type { Config, TourStepRendererProps } from '../types';
 
 interface Props extends TourStepRendererProps {
@@ -22,15 +23,14 @@ const TourKitStep: React.FunctionComponent< Props > = ( {
 	setInitialFocusedElement,
 	onGoToStep,
 } ) => {
-	const classNames = classnames(
+	const classes = classnames(
 		'tour-kit-step',
 		`is-step-${ currentStepIndex }`,
-		config.options?.className ? `${ config.options?.className }__step` : '',
-		config.steps[ currentStepIndex ].options?.className
+		classParser( config.steps[ currentStepIndex ].options?.classNames )
 	);
 
 	return (
-		<div className={ classNames }>
+		<div className={ classes }>
 			{ config.renderers.tourStep( {
 				steps,
 				currentStepIndex,
