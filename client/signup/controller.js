@@ -192,9 +192,14 @@ export default {
 		next();
 	},
 
-	saveInitialContext( context, next ) {
-		if ( ! initialContext ) {
-			initialContext = Object.assign( {}, context );
+	saveInitialContext( newContext, next ) {
+		if (
+			! initialContext ||
+			// Reset initialContext if a site query param
+			( newContext?.query?.site && newContext.query.site !== initialContext?.query?.site )
+		) {
+			console.log( 'saved initialContext', initialContext, newContext );
+			initialContext = Object.assign( {}, newContext );
 		}
 
 		next();
@@ -288,9 +293,9 @@ export default {
 		);
 
 		// The woocommerce-install flow needs to support site switching.
-		if ( 'woocommerce-install' === flowName ) {
-			initialContext = context;
-		}
+		// if ( 'woocommerce-install' === flowName ) {
+		// 	initialContext = context;
+		// }
 
 		const { query } = initialContext;
 
@@ -368,6 +373,7 @@ export default {
 			next();
 			return;
 		}
+		// debugger;
 		const siteId = getSiteId( getState(), siteIdOrSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
