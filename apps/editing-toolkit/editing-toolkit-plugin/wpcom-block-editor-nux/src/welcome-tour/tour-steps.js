@@ -155,7 +155,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 						options: {
 							classNames: {
 								desktop: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
-								mobile: null,
+								mobile: 'wpcom-editor-welcome-tour__step',
 							},
 						},
 					},
