@@ -9814,7 +9814,7 @@ __metadata:
     cross-env: ^7.0.3
     electron: 12.1.0
     electron-builder: ^22.11.7
-    electron-fetch: ^1.7.3
+    electron-fetch: ^1.7.4
     electron-notarize: ^0.1.1
     electron-rebuild: ^2.3.5
     electron-updater: ^4.2.5
@@ -16034,12 +16034,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-fetch@npm:^1.7.3":
-  version: 1.7.3
-  resolution: "electron-fetch@npm:1.7.3"
+"electron-fetch@npm:^1.7.4":
+  version: 1.7.4
+  resolution: "electron-fetch@npm:1.7.4"
   dependencies:
     encoding: ^0.1.13
-  checksum: 87e596a9b8287be6ec9386a3b609e329ad04a97c37bb111f3434fce782b292bfa40edcece697745cad45c06863b7890df0fd3f4c47b8603842f551c4bc748ecd
+  checksum: 67b4497d6b02449f24f2e776c367944696ad83fe5c6827c43bf96a92453d71dccef6ca0cfe9607d202f5fdf49c0fdf90533d4188fbbce72c823b90df12ba4d54
   languageName: node
   linkType: hard
 
