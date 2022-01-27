@@ -16,7 +16,6 @@ import IntroPricingBannerV2 from 'calypso/components/jetpack/intro-pricing-banne
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import CategoryFilter from '../category-filter';
@@ -108,14 +107,12 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const showProductCategories = ! isDesktop;
 
 	const showAnnualPlansOnly = config.isEnabled( 'jetpack/pricing-page-annual-only' );
-	const useV2Banner = config.isEnabled( 'jetpack/pricing-page-v2-banner' );
 
 	const [ category, setCategory ] = useState< JetpackProductCategory >();
 	const onCategoryChange = useCallback( setCategory, [ setCategory ] );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const currentPlanSlug = currentPlan?.product_slug || null;
 
@@ -219,11 +216,9 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			) }
 			<ProductGridSection>
 				{ ! planRecommendation && filterBar }
-				{ useV2Banner && (
-					<div className="product-grid__pricing-banner">
-						<IntroPricingBannerV2 jetpackSaleCoupon={ jetpackSaleCoupon } />
-					</div>
-				) }
+				<div className="product-grid__pricing-banner">
+					<IntroPricingBannerV2 />
+				</div>
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {
 						'is-wrapping': shouldWrapGrid,
