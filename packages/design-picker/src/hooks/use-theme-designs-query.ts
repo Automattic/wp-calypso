@@ -13,6 +13,11 @@ const STATIC_PREVIEWS = [
 	'jones',
 	'baker',
 	'kingsley',
+	'twentytwentytwo-mint',
+	'twentytwentytwo-red',
+	'twentytwentytwo-blue',
+	'twentytwentytwo-swiss',
+	'twentytwentytwo-pink',
 ];
 
 export interface UseThemeDesignsQueryOptions {
