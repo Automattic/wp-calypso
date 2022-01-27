@@ -73,7 +73,7 @@ export default function InstallPlugins( {
 			setIsTimeoutError( true );
 			onFailure( {
 				type: 'install_timeout',
-				error: 'install took to long',
+				error: 'install took too long',
 				code: 'install_timeout',
 			} );
 		}, TIMEOUT_LIMIT );
