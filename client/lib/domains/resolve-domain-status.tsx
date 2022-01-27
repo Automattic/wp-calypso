@@ -102,7 +102,7 @@ export function resolveDomainStatus(
 							a: (
 								<a
 									href={ domainMappingSetup(
-										siteSlug,
+										siteSlug as string,
 										domain.domain,
 										domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update'
 									) }
