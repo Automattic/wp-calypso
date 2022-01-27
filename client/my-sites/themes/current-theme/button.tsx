@@ -1,19 +1,18 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 
-export default class extends Component {
-	static displayName = 'CurrentThemeButton';
+interface CurrentThemeButtonProps {
+	name: string;
+	label: string;
+	icon: string;
+	href: string;
+	onClick: ( this: null, name: string ) => void;
+	isPrimary: boolean;
+}
 
-	static propTypes = {
-		name: PropTypes.string.isRequired,
-		label: PropTypes.string.isRequired,
-		icon: PropTypes.string.isRequired,
-		href: PropTypes.string,
-		onClick: PropTypes.func,
-		isPrimary: PropTypes.bool,
-	};
+export default class extends Component< CurrentThemeButtonProps > {
+	static displayName = 'CurrentThemeButton';
 
 	render() {
 		return (
