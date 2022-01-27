@@ -3,19 +3,40 @@ import classnames from 'classnames';
 import { times } from 'lodash';
 import './style.scss';
 
+interface Buttons {
+	previous: {
+		onClick: () => () => void;
+		label: string;
+		icon?: string;
+		fill?: string;
+		style?: object;
+	};
+	next: {
+		onClick: () => () => void;
+		label: string;
+		icon?: string;
+		fill?: string;
+		style?: object;
+	};
+	classNames?: string | string[];
+}
+
 interface Props {
 	currentPage: number;
 	numberOfPages: number;
 	setCurrentPage: ( page: number ) => void;
-	classes: string | Array< string >;
+	classNames?: string | string[];
+	buttons?: Buttons;
 }
 
 const PaginationControl: React.FunctionComponent< Props > = ( props ) => {
-	const { currentPage, numberOfPages, setCurrentPage, classes } = props;
-	const classNames = classnames( 'pagination-controls', classes?.toString()?.split( ',' ) );
+	const { currentPage, numberOfPages, setCurrentPage, classNames, buttons } = props;
+	const { previous, next } = buttons;
+
+	const classes = classnames( 'pagination-controls', classNames?.toString()?.split( ',' ) );
 
 	return (
-		<ul className={ classNames } aria-label={ __( 'Guide controls' ) }>
+		<ul className={ classes } aria-label={ __( 'Guide controls' ) }>
 			{ times( numberOfPages, ( page ) => (
 				<li key={ page } aria-current={ page === currentPage ? 'page' : undefined }>
 					<button
@@ -34,6 +55,22 @@ const PaginationControl: React.FunctionComponent< Props > = ( props ) => {
 					/>
 				</li>
 			) ) }
+			{ buttons && (
+				<>
+					<li>
+						<button onClick={ previous.onClick } className={ previous.classNames }>
+							{ previous.icon }
+							{ previous.label }
+						</button>
+					</li>
+					<li>
+						<button onClick={ next.onClick } className={ next.classNames }>
+							{ next.label }
+							{ next.icon }
+						</button>
+					</li>
+				</>
+			) }
 		</ul>
 	);
 };

@@ -4,7 +4,7 @@
 	margin: 0;
 	display: flex;
 	justify-content: center;
-	
+
 	li {
 		display: inline-flex;
 		margin: 0 4px;
@@ -12,8 +12,8 @@
 		align-items: center;
 		border: none;
 	}
-	
-	button {
+
+	button.pagination-control__page {
 		border: none;
 		padding: 0;
 		width: 6px;

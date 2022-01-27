@@ -103,12 +103,28 @@ function CardNavigation( {
 	const startTourLabel = __( 'Try it out!', 'full-site-editing' );
 	const nextLabel = __( 'Next', 'full-site-editing' );
 
+	const buttons = {
+		previous: {
+			onClick: () => {},
+			label: 'Previous',
+			style: { color: 'red' },
+		},
+		next: {
+			onClick: () => {},
+			label: 'Next',
+			style: { color: 'red' },
+		},
+		classNames: [ 'test', 'class' ],
+	};
+
 	return (
 		<>
 			<PaginationControl
 				currentPage={ currentStepIndex }
 				numberOfPages={ lastStepIndex + 1 }
 				setCurrentPage={ setCurrentStepIndex }
+				classNames={ [ 'array', 'classes' ] }
+				buttons={ buttons }
 			/>
 			<div>
 				{ currentStepIndex === 0 ? (
