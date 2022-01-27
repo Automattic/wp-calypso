@@ -2649,5 +2649,28 @@ describe( '#shouldShowTryAndCustomize', () => {
 		expect( showTryAndCustomize ).to.be.true;
 	} );
 
-	//@TODO: should hide Try & Customize when on Jetpack Multisite
+	test( 'should not show Try & Customize action for Jetpack multisite', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						77203074: { edit_theme_options: true },
+					},
+				},
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true,
+							is_multisite: true,
+						},
+					},
+				},
+			},
+			'twentynineteen',
+			77203074
+		);
+		expect( showTryAndCustomize ).to.be.false;
+	} );
 } );
