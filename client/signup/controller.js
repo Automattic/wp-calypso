@@ -195,7 +195,7 @@ export default {
 	saveInitialContext( newContext, next ) {
 		if (
 			! initialContext ||
-			// Reset initialContext if a site query param
+			// Reset initialContext when site query param changes between old context and new.
 			( newContext?.query?.site && newContext.query.site !== initialContext?.query?.site )
 		) {
 			initialContext = Object.assign( {}, newContext );
