@@ -451,7 +451,7 @@ export class GutenbergEditorPage {
 		const frame = await this.getEditorFrame();
 
 		await Promise.all( [
-			this.page.waitForNavigation( { url: url, waitUntil: 'domcontentloaded' } ),
+			this.page.waitForNavigation( { url } ),
 			frame.click( selectors.viewButton ),
 		] );
 
@@ -470,7 +470,7 @@ export class GutenbergEditorPage {
 		 * @param page
 		 */
 		async function confirmPostShown( page: Page ): Promise< void > {
-			await page.waitForSelector( '.entry-content', { timeout: 15 * 1000 } );
+			await page.waitForSelector( '.entry-content', { timeout: 5 * 1000 } );
 		}
 	}
 
