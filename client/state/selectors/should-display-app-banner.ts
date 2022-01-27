@@ -42,13 +42,6 @@ export const shouldDisplayAppBanner = ( state: AppState ): boolean | undefined =
 		return false;
 	}
 
-	if (
-		typeof window !== 'undefined' &&
-		window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
-	) {
-		return false;
-	}
-
 	const sectionName = getSectionName( state );
 	const isNotesOpen = isNotificationsOpen( state );
 	const currentSection = getCurrentSection( sectionName, isNotesOpen );

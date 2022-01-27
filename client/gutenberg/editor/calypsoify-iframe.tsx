@@ -865,6 +865,11 @@ const mapStateToProps = (
 		fseParentPageId
 	);
 
+	// 'shouldDisplayAppBanner' does not check if we're in Blogger Flow, because it is a selector reading from the Redux state, and
+	// the Blogger Flow information is not in the Redux state, but in the session storage value wpcom_signup_complete_show_draft_post_modal.
+	// So instead we get that information from 'showDraftPostModal'
+	const displayAppBanner = shouldDisplayAppBanner( state ) && ! showDraftPostModal;
+
 	return {
 		closeUrl,
 		closeLabel,
@@ -889,7 +894,7 @@ const mapStateToProps = (
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ?? 0 ),
 		parentPostId,
-		shouldDisplayAppBanner: shouldDisplayAppBanner( state ),
+		shouldDisplayAppBanner: displayAppBanner,
 		appBannerDismissed: isAppBannerDismissed( state ),
 	};
 };
