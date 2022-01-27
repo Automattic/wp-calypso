@@ -114,22 +114,16 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 							disabled={ isTransferringBlocked || ! isDataReady }
 							onClick={ () => {
 								dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
-								if ( siteUpgrading.required ) {
-									dispatch(
-										recordTracksEvent( 'calypso_woocommerce_dashboard_confirm_submit', {
-											site: wpcomDomain,
-											upgrade_required: true,
-										} )
-									);
-									page( siteUpgrading.checkoutUrl );
-									return;
-								}
 								dispatch(
 									recordTracksEvent( 'calypso_woocommerce_dashboard_confirm_submit', {
 										site: wpcomDomain,
-										upgrade_required: false,
+										upgrade_required: siteUpgrading.required,
 									} )
 								);
+								if ( siteUpgrading.required ) {
+									page( siteUpgrading.checkoutUrl );
+									return;
+								}
 								goToNextStep();
 							} }
 						>
