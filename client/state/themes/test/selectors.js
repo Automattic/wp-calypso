@@ -66,16 +66,6 @@ const twentysixteen = {
 	author_uri: 'https://wordpress.org/',
 };
 
-const twentynineteen = {
-	id: 'twentynineteen',
-	name: 'Twenty Nineteen',
-	author: 'the WordPress team',
-	screenshot: 'twentynineteen.jpg',
-	stylesheet: 'pub/twentynineteen',
-	demo_uri: 'https://twentynineteendemo.wordpress.com/',
-	author_uri: 'https://wordpress.org/',
-};
-
 const mood = {
 	id: 'mood',
 	name: 'Mood',
@@ -89,13 +79,6 @@ const mood = {
 
 const quadrat = {
 	id: 'quadrat',
-	name: 'Quadrat',
-	author: 'Automattic',
-	screenshot: 'quadrat.jpg',
-	stylesheet: 'premium/quadrat',
-	template: 'blockbase-premium',
-	demo_uri: 'https://quadratdemo.wordpress.com/',
-	author_uri: 'https://wordpress.com/themes/',
 	taxonomies: {
 		theme_feature: [ { slug: 'auto-loading-homepage' } ],
 	},
@@ -2557,11 +2540,7 @@ describe( '#shouldShowTryAndCustomize', () => {
 					capabilities: {},
 				},
 				themes: {
-					queries: {
-						wpcom: new ThemeQueryManager( {
-							items: { quadrat },
-						} ),
-					},
+					queries: {},
 				},
 			},
 			'quadrat',
@@ -2581,14 +2560,14 @@ describe( '#shouldShowTryAndCustomize', () => {
 				themes: {
 					queries: {},
 					activeThemes: {
-						2916284: 'twentynineteen',
+						2916284: 'quadrat',
 					},
 				},
 				sites: {
 					items: {},
 				},
 			},
-			'twentynineteen',
+			'quadrat',
 			2916284
 		);
 		expect( showTryAndCustomize ).to.be.false;
@@ -2621,7 +2600,7 @@ describe( '#shouldShowTryAndCustomize', () => {
 		expect( showTryAndCustomize ).to.be.false;
 	} );
 
-	//Customizer-based themes like Twenty Nineteen should still show Try & Customize
+	//Customizer-based themes should still show Try & Customize
 	test( 'should show Try & Customize action for old themes', () => {
 		const showTryAndCustomize = shouldShowTryAndCustomize(
 			{
@@ -2633,7 +2612,7 @@ describe( '#shouldShowTryAndCustomize', () => {
 				themes: {
 					queries: {
 						wpcom: new ThemeQueryManager( {
-							items: { twentynineteen },
+							items: { mood },
 						} ),
 					},
 					activeThemes: {},
@@ -2642,7 +2621,7 @@ describe( '#shouldShowTryAndCustomize', () => {
 					items: {},
 				},
 			},
-			'twentynineteen',
+			'mood',
 			2916284
 		);
 		expect( showTryAndCustomize ).to.be.true;
