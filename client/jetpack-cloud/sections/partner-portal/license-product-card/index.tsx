@@ -27,8 +27,6 @@ export default function LicenseProductCard( props: any ): ReactElement {
 							{ props.isSelected && <Gridicon icon="checkmark" /> }
 						</div>
 					</div>
-					<h3 className="license-product-card__cost"></h3>
-					<p className="license-product-card__text"></p>
 				</div>
 			</div>
 		</div>
