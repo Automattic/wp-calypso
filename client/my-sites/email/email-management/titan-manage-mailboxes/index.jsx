@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import { isDesktop as isDesktopViewport } from '@automattic/viewport';
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -61,27 +61,41 @@ class TitanManageMailboxes extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	state = { isDesktop: isDesktop() };
+	unsubscribe = () => {};
+
+	componentDidMount() {
+		this.unsubscribe = subscribeIsDesktop( ( isActive ) => {
+			this.setState( { isDesktop: isActive } );
+		} );
+	}
+
+	componentWillUnmount() {
+		this.unsubscribe();
+	}
+
 	handleBack = () => {
 		const { currentRoute, selectedDomainName, selectedSite } = this.props;
 
 		page( emailManagement( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
 
-	buildNavItem = ( { context, description, disabled = false, materialIcon, text } ) => ( {
+	buildNavigationItem = ( { context, description, isDisabled = false, materialIcon, text } ) => ( {
 		description,
-		disabled,
+		disabled: isDisabled,
 		materialIcon,
 		path: this.getPath( context ),
 		text,
 	} );
 
 	getManagedItems = () => {
-		const { isDesktop, disabled = ! isDesktop, translate } = this.props;
+		const { translate } = this.props;
+		const isDisabled = ! this.state.isDesktop;
 
 		return [
 			{
 				context: TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_DESKTOP_APP,
-				disabled,
+				isDisabled,
 				description: translate( 'View settings required to configure third-party email apps' ),
 				materialIcon: 'dvr',
 				text: translate( 'Configure desktop app' ),
@@ -96,14 +110,14 @@ class TitanManageMailboxes extends Component {
 			},
 			{
 				context: TITAN_CONTROL_PANEL_CONTEXT_IMPORT_EMAIL_DATA,
-				disabled,
+				isDisabled,
 				description: translate( 'Migrate existing emails from a remote server via IMAP' ),
 				materialIcon: 'move_to_inbox',
 				text: translate( 'Import email data' ),
 			},
 			{
 				context: TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL,
-				disabled,
+				isDisabled,
 				description: translate(
 					'Route all undelivered emails to your domain to a specific mailbox'
 				),
@@ -112,14 +126,14 @@ class TitanManageMailboxes extends Component {
 			},
 			{
 				context: TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_INTERNAL_FORWARDING,
-				disabled,
+				isDisabled,
 				description: translate(
 					'Create email aliases that forward messages to one or several mailboxes'
 				),
 				materialIcon: 'forward_to_inbox',
 				text: translate( 'Set up internal forwarding' ),
 			},
-		].map( this.buildNavItem );
+		].map( this.buildNavigationItem );
 	};
 
 	getPath = ( context ) => {
@@ -138,13 +152,12 @@ class TitanManageMailboxes extends Component {
 		const {
 			domain,
 			hasSubscription,
-			isDesktop,
 			isLoadingPurchase,
 			purchase,
 			selectedSite,
 			translate,
 		} = this.props;
-		window.console.log( [ 'KRKK', 'RENDER', isDesktop, this.getManagedItems() ] );
+
 		return (
 			<>
 				<PageViewTracker
@@ -174,7 +187,7 @@ class TitanManageMailboxes extends Component {
 						selectedSite={ selectedSite }
 					/>
 
-					{ isDesktop || (
+					{ this.state.isDesktop || (
 						<CompactCard>
 							<Notice
 								className="titan-manage-mailboxes__mobile-warning"
@@ -182,22 +195,24 @@ class TitanManageMailboxes extends Component {
 								showDismiss={ false }
 							>
 								{ translate(
-									'Please switch to a desktop device to access all email management features.'
+									'Please switch to a device with a larger screen to access all email management features.'
 								) }
 							</Notice>
 						</CompactCard>
 					) }
 
-					<VerticalNav>
-						{ this.getManagedItems().map( ( navProps ) => (
-							<VerticalNavItemEnhanced
-								key={ navProps.path }
-								external
-								className="titan-manage-mailboxes__manage-titan-link"
-								{ ...navProps }
-							/>
-						) ) }
-					</VerticalNav>
+					{ hasSubscription && (
+						<VerticalNav>
+							{ this.getManagedItems().map( ( navProps ) => (
+								<VerticalNavItemEnhanced
+									className="titan-manage-mailboxes__manage-titan-link"
+									external
+									key={ navProps.path }
+									{ ...navProps }
+								/>
+							) ) }
+						</VerticalNav>
+					) }
 				</Main>
 			</>
 		);
@@ -212,12 +227,11 @@ export default connect( ( state, ownProps ) => {
 		isSiteRedirect: false,
 		selectedDomainName: ownProps.selectedDomainName,
 	} );
-	window.console.log( [ 'KRKK', 'CONNECT', isDesktopViewport() ] );
+
 	return {
 		currentRoute: getCurrentRoute( state ),
 		domain,
 		hasSubscription: hasEmailSubscription( domain ),
-		isDesktop: isDesktopViewport(),
 		isLoadingPurchase:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		purchase: getEmailPurchaseByDomain( state, domain ),
