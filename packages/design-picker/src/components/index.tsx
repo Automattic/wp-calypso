@@ -22,10 +22,6 @@ import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
 
-const noop = () => {
-	// Do nothing
-};
-
 interface DesignPreviewImageProps {
 	design: Design;
 	locale: string;
@@ -118,7 +114,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 interface DesignButtonCoverProps {
 	design: Design;
-	isPremiumThemesAvailable?: boolean;
+	isPremiumThemeAvailable?: boolean;
 	onSelect: ( design: Design ) => void;
 	onPreview: ( design: Design ) => void;
 	onUpgrade?: () => void;
@@ -126,13 +122,13 @@ interface DesignButtonCoverProps {
 
 const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 	design,
-	isPremiumThemesAvailable = false,
+	isPremiumThemeAvailable = false,
 	onSelect,
 	onPreview,
-	onUpgrade = noop,
+	onUpgrade,
 } ) => {
 	const { __ } = useI18n();
-	const shouldUpgrade = design.is_premium && ! isPremiumThemesAvailable;
+	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable;
 
 	return (
 		<div className="design-button-cover">
@@ -146,7 +142,7 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 				<Button
 					className="design-button-cover__button"
 					isPrimary
-					onClick={ () => ( shouldUpgrade ? onUpgrade() : onSelect( design ) ) }
+					onClick={ () => ( shouldUpgrade ? onUpgrade?.() : onSelect( design ) ) }
 				>
 					{ shouldUpgrade
 						? __( 'Upgrade Plan', __i18n_text_domain__ )
@@ -165,13 +161,13 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 };
 
 interface DesignButtonContainerProps extends DesignButtonProps {
-	isPremiumThemesAvailable?: boolean;
+	isPremiumThemeAvailable?: boolean;
 	onPreview?: ( design: Design ) => void;
 	onUpgrade?: () => void;
 }
 
 const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
-	isPremiumThemesAvailable,
+	isPremiumThemeAvailable,
 	onPreview,
 	onUpgrade,
 	...props
@@ -202,7 +198,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 			{ ! isBlankCanvas && (
 				<DesignButtonCover
 					design={ props.design }
-					isPremiumThemesAvailable={ isPremiumThemesAvailable }
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					onSelect={ props.onSelect }
 					onPreview={ onPreview }
 					onUpgrade={ onUpgrade }
@@ -230,7 +226,7 @@ export interface DesignPickerProps {
 	recommendedCategorySlug: string | null;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
-	isPremiumThemesAvailable?: boolean;
+	isPremiumThemeAvailable?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -251,7 +247,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	hideFullScreenPreview,
 	hideDesignTitle,
 	recommendedCategorySlug,
-	isPremiumThemesAvailable,
+	isPremiumThemeAvailable,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -292,7 +288,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						highRes={ highResThumbnails }
 						hideFullScreenPreview={ hideFullScreenPreview }
 						hideDesignTitle={ hideDesignTitle }
-						isPremiumThemesAvailable={ isPremiumThemesAvailable }
+						isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					/>
 				) ) }
 			</div>

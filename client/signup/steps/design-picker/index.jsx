@@ -47,7 +47,7 @@ export default function DesignPickerStep( props ) {
 		sitePlanSlug,
 	} = props;
 
-	const isPremiumThemesAvailable = useMemo(
+	const isPremiumThemeAvailable = useMemo(
 		() => planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
 		[ sitePlanSlug ]
 	);
@@ -64,7 +64,7 @@ export default function DesignPickerStep( props ) {
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 	const tier =
-		isPremiumThemesAvailable || isEnabled( 'signup/design-picker-premium-themes-checkout' )
+		isPremiumThemeAvailable || isEnabled( 'signup/design-picker-premium-themes-checkout' )
 			? 'all'
 			: 'free';
 
@@ -202,7 +202,7 @@ export default function DesignPickerStep( props ) {
 			return null;
 		}
 
-		return <AsyncCheckoutModal checkoutOnSuccessCallback={ null } />;
+		return <AsyncCheckoutModal />;
 	}
 
 	function renderDesignPicker() {
@@ -233,7 +233,7 @@ export default function DesignPickerStep( props ) {
 					categoriesFooter={ renderCategoriesFooter() }
 					hideFullScreenPreview={ hideFullScreenPreview }
 					hideDesignTitle={ hideDesignTitle }
-					isPremiumThemesAvailable={ isPremiumThemesAvailable }
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				/>
 				{ renderCheckoutModal() }
 			</>
@@ -335,7 +335,7 @@ export default function DesignPickerStep( props ) {
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const defaultDependencies = { selectedDesign };
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
-		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemesAvailable;
+		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 		const nextLabelText = shouldUpgrade
 			? translate( 'Upgrade Plan' )
 			: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
