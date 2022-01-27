@@ -138,6 +138,16 @@
 			"features": []
 		},
 		{
+			"title": "Stewart",
+			"slug": "stewart",
+			"template": "stewart",
+			"theme": "stewart",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
 			"title": "Kingsley",
 			"slug": "kingsley",
 			"template": "kingsley",
