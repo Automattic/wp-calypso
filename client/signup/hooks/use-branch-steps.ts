@@ -16,6 +16,7 @@ const useBranchSteps = ( stepName: string ): BranchSteps => {
 	const dispatch = useDispatch();
 	const branchSteps = ( excludeSteps: string[] ) => {
 		flows.excludeSteps( excludeSteps );
+		memoExcludeSteps[ stepName ] = excludeSteps;
 		dispatch( addExcludeSteps( excludeSteps ) );
 	};
 
