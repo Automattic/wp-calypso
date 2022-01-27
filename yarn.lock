@@ -1073,7 +1073,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@babel/runtime": ^7.16.7
     "@storybook/react": ^6.4.9
-    "@testing-library/dom": ^8.11.2
+    "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.2
     "@testing-library/user-event": ^13.5.0
     "@wordpress/base-styles": ^4.0.4
@@ -6258,9 +6258,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^8.0.0, @testing-library/dom@npm:^8.11.2":
-  version: 8.11.2
-  resolution: "@testing-library/dom@npm:8.11.2"
+"@testing-library/dom@npm:^8.0.0, @testing-library/dom@npm:^8.11.3":
+  version: 8.11.3
+  resolution: "@testing-library/dom@npm:8.11.3"
   dependencies:
     "@babel/code-frame": ^7.10.4
     "@babel/runtime": ^7.12.5
@@ -6270,7 +6270,7 @@ __metadata:
     dom-accessibility-api: ^0.5.9
     lz-string: ^1.4.4
     pretty-format: ^27.0.2
-  checksum: debdabe430b04d548275ad893f97346d437ac2851987793f9da82c41d65bf2dc69c6fa26b8d48e259a203659beb70e831c3542cc8a967333d1377fc536dda0a8
+  checksum: 2a27ace6e6172c26be6e7dd689ead87d874b34fa887017dcf1e20d1e0f6160f26236c53364217af005c14d87ad76680579e51b18ed2a8738e1b72c5ea908f6b2
   languageName: node
   linkType: hard
 
