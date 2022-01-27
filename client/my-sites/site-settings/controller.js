@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from 'page';
 import { billingHistory } from 'calypso/me/purchases/paths';
 import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
@@ -6,17 +5,12 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DeleteSite from './delete-site';
 import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import ManageConnection from './manage-connection';
 import StartOver from './start-over';
-import ThemeSetup from './theme-setup';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -76,20 +70,6 @@ export function startOver( context, next ) {
 	next();
 }
 
-export function themeSetup( context, next ) {
-	const site = getSelectedSite( context.store.getState() );
-	if ( site && site.jetpack ) {
-		return page.redirect( '/settings/general/' + site.slug );
-	}
-
-	if ( ! config.isEnabled( 'settings/theme-setup' ) ) {
-		return page.redirect( '/settings/general/' + site.slug );
-	}
-
-	context.primary = <ThemeSetup />;
-	next();
-}
-
 export function manageConnection( context, next ) {
 	context.primary = <ManageConnection />;
 	next();
@@ -118,4 +98,9 @@ export function legacyRedirects( context, next ) {
 
 export function redirectToTraffic( context ) {
 	return page.redirect( '/marketing/traffic/' + context.params.site_id );
+}
+
+export function redirectToGeneral( context ) {
+	const siteFragment = context.params.site_id ? `/${ context.params.site_id }` : '';
+	return page.redirect( `/settings/general${ siteFragment }` );
 }
