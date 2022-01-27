@@ -27,7 +27,7 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 	const handleTransferFailure = ( failureInfo: string | object ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {
-				action: typeof failureInfo === 'string' ? failureInfo : failureInfo[ 'type' ],
+				action: failureInfo[ 'type' ] || '',
 				site: domain,
 				code: failureInfo[ 'code' ] || '',
 				error: failureInfo[ 'error' ] || '',

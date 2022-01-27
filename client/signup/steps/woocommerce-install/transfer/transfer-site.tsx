@@ -107,6 +107,7 @@ export default function TransferSite( {
 		if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
 			setTransferFailed( true );
+
 			onFailure( {
 				type: 'transfer',
 				error: transferError?.message || softwareError?.message,
@@ -149,7 +150,11 @@ export default function TransferSite( {
 
 		const timeId = setTimeout( () => {
 			setTransferFailed( true );
-			onFailure( 'transfer_timeout' );
+			onFailure( {
+				type: 'transfer_timeout',
+				error: 'transfer took too long.',
+				code: 'transfer_timeout',
+			} );
 		}, 1000 * 180 );
 
 		return () => {
