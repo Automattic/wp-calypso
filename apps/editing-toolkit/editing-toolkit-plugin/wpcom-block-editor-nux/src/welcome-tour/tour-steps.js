@@ -50,7 +50,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: null,
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: null,
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		{
@@ -90,7 +93,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: 'block-inserter',
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: null,
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		{
@@ -124,7 +130,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: null,
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: null,
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		...( localeSlug === 'en'
@@ -144,7 +153,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 							isDesktopOnly: true,
 						},
 						options: {
-							classNames: [ 'is-with-extra-padding-desktop', 'wpcom-editor-welcome-tour__step' ],
+							classNames: {
+								desktop: [ 'is-with-extra-padding-desktop', 'wpcom-editor-welcome-tour__step' ],
+								mobile: null,
+							},
 						},
 					},
 			  ]
@@ -176,7 +188,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: 'undo-button',
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: null,
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		{

@@ -14,7 +14,10 @@ export type Step = {
 		// | ...
 	};
 	options?: {
-		classNames?: string | string[];
+		classNames?: {
+			desktop?: string | string[];
+			mobile?: string | string[];
+		};
 	};
 };
 
