@@ -98,6 +98,9 @@ const quadrat = {
 	template: 'blockbase-premium',
 	demo_uri: 'https://quadratdemo.wordpress.com/',
 	author_uri: 'https://wordpress.com/themes/',
+	taxonomies: {
+		theme_feature: [ { slug: 'auto-loading-homepage' } ],
+	},
 };
 
 const sidekick = {
@@ -2533,25 +2536,6 @@ describe( '#areRecommendedThemesLoading', () => {
 } );
 
 describe( '#shouldShowTryAndCustomize', () => {
-	const state = {
-		currentUser: {
-			capabilities: {
-				2916284: { edit_theme_options: true },
-			},
-		},
-		themes: {
-			queries: {
-				wpcom: new ThemeQueryManager( {
-					items: { quadrat, twentynineteen },
-				} ),
-			},
-			activeThemes: {},
-		},
-		sites: {
-			items: {},
-		},
-	};
-
 	test( 'should hide Try & Customize action when user does not have permissions', () => {
 		const showTryAndCustomize = shouldShowTryAndCustomize(
 			{
@@ -2597,11 +2581,7 @@ describe( '#shouldShowTryAndCustomize', () => {
 					},
 				},
 				themes: {
-					queries: {
-						wpcom: new ThemeQueryManager( {
-							items: { quadrat },
-						} ),
-					},
+					queries: {},
 					activeThemes: {
 						2916284: 'quadrat',
 					},
@@ -2616,13 +2596,57 @@ describe( '#shouldShowTryAndCustomize', () => {
 		expect( showTryAndCustomize ).to.be.false;
 	} );
 
+	//Block-based themes like Quadrat should not show the Try & Customize action
 	test( 'should not show Try & Customize action for new themes', () => {
-		const showTryAndCustomize = shouldShowTryAndCustomize( state, 'quadrat', 2916284 );
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						2916284: { edit_theme_options: true },
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { quadrat },
+						} ),
+					},
+					activeThemes: {},
+				},
+				sites: {
+					items: {},
+				},
+			},
+			'quadrat',
+			2916284
+		);
 		expect( showTryAndCustomize ).to.be.false;
 	} );
 
+	//Customizer-based themes like Twenty Nineteen should still show Try & Customize
 	test( 'should show Try & Customize action for old themes', () => {
-		const showTryAndCustomize = shouldShowTryAndCustomize( state, 'twentynineteen', 2916284 );
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						2916284: { edit_theme_options: true },
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { twentynineteen },
+						} ),
+					},
+					activeThemes: {},
+				},
+				sites: {
+					items: {},
+				},
+			},
+			'twentynineteen',
+			2916284
+		);
 		expect( showTryAndCustomize ).to.be.true;
 	} );
 
