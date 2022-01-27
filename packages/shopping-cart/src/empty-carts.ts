@@ -5,7 +5,7 @@ export function getEmptyResponseCart(): ResponseCart {
 		blog_id: '',
 		create_new_blog: false,
 		cart_generated_at_timestamp: 0,
-		cart_key: '',
+		cart_key: 'no-site',
 		products: [],
 		total_tax: '0',
 		total_tax_integer: 0,

@@ -9814,7 +9814,7 @@ __metadata:
     cross-env: ^7.0.3
     electron: 12.1.0
     electron-builder: ^22.11.7
-    electron-fetch: ^1.7.3
+    electron-fetch: ^1.7.4
     electron-notarize: ^0.1.1
     electron-rebuild: ^2.3.5
     electron-updater: ^4.2.5
@@ -12406,7 +12406,7 @@ __metadata:
     d3-array: ^2.4.0
     d3-axis: ^1.0.12
     d3-scale: ^3.2.1
-    d3-selection: ^1.4.1
+    d3-selection: ^1.4.2
     d3-shape: ^1.3.7
     debug: ^4.3.3
     deep-freeze: ^0.0.1
@@ -14878,10 +14878,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-selection@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "d3-selection@npm:1.4.1"
-  checksum: ea7d3520112704c5b304acc3e55552110a9a05c00530106f220bb7399a267e124a714689434de5de5a94283d7ca99f4602f859ea84fbc9283d9b68da78a550a8
+"d3-selection@npm:^1.4.2":
+  version: 1.4.2
+  resolution: "d3-selection@npm:1.4.2"
+  checksum: e755b6b62d794d0b968cc6264f37109e425de0d9fd306ce94414b07e46a2c6830d21c1fe0821a660d07e82069b6fe3b67da1b3b909e8f6af8f16f020cd25cae0
   languageName: node
   linkType: hard
 
@@ -16034,12 +16034,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-fetch@npm:^1.7.3":
-  version: 1.7.3
-  resolution: "electron-fetch@npm:1.7.3"
+"electron-fetch@npm:^1.7.4":
+  version: 1.7.4
+  resolution: "electron-fetch@npm:1.7.4"
   dependencies:
     encoding: ^0.1.13
-  checksum: 87e596a9b8287be6ec9386a3b609e329ad04a97c37bb111f3434fce782b292bfa40edcece697745cad45c06863b7890df0fd3f4c47b8603842f551c4bc748ecd
+  checksum: 67b4497d6b02449f24f2e776c367944696ad83fe5c6827c43bf96a92453d71dccef6ca0cfe9607d202f5fdf49c0fdf90533d4188fbbce72c823b90df12ba4d54
   languageName: node
   linkType: hard
 
@@ -38203,7 +38203,7 @@ testarmada-magellan@11.0.10:
     fs-extra: ^0.22.1
     jest: ^27.2.4
     jest-docblock: ^27.0.6
-    jest-environment-node: ^26.6.2
+    jest-environment-node: ^27.3.1
     jest-runner: ^27.0.6
     jest-runner-groups: ^2.1.0
     jest-teamcity: ^1.9.0

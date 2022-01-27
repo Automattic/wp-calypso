@@ -1,4 +1,3 @@
-import { isEnabled as isConfigEnabled } from '@automattic/calypso-config';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailForwardsAdd from 'calypso/my-sites/email/email-forwards-add';
@@ -6,7 +5,6 @@ import EmailManagementHome from 'calypso/my-sites/email/email-management/email-h
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
-import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-providers-comparison/in-depth';
 import { castIntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
@@ -95,25 +93,16 @@ export default {
 	},
 
 	emailManagementPurchaseNewEmailAccount( pageContext, next ) {
-		const comparisonComponent = ! isConfigEnabled( 'emails/new-email-comparison' ) ? (
-			<EmailProvidersComparison
-				comparisonContext="email-purchase"
-				selectedDomainName={ pageContext.params.domain }
-				source={ pageContext.query.source }
-			/>
-		) : (
-			<EmailProvidersStackedComparison
-				comparisonContext="email-purchase"
-				selectedDomainName={ pageContext.params.domain }
-				selectedEmailProviderSlug={ pageContext.query.provider }
-				selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
-				siteName={ pageContext.params.site }
-				source={ pageContext.query.source }
-			/>
-		);
-
 		pageContext.primary = (
-			<CalypsoShoppingCartProvider>{ comparisonComponent }</CalypsoShoppingCartProvider>
+			<CalypsoShoppingCartProvider>
+				<EmailProvidersStackedComparison
+					comparisonContext="email-purchase"
+					selectedDomainName={ pageContext.params.domain }
+					selectedEmailProviderSlug={ pageContext.query.provider }
+					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
+					source={ pageContext.query.source }
+				/>
+			</CalypsoShoppingCartProvider>
 		);
 
 		next();
@@ -123,11 +112,8 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<EmailProvidersInDepthComparison
-					comparisonContext="email-in-depth-comparison"
 					selectedDomainName={ pageContext.params.domain }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
-					siteName={ pageContext.params.site }
-					source={ pageContext.query.source }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

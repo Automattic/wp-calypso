@@ -73,7 +73,6 @@
 		"seller-experience": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
-		"settings/theme-setup": false,
 		"signup/social": true,
 		"site-indicator": true,
 		"themes/premium": true,

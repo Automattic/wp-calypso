@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	TERM_BIENNIALLY,
@@ -72,8 +71,7 @@ export default function PurchaseMeta( {
 		return <PurchaseMetaPlaceholder />;
 	}
 
-	const isJetpackProductOrPlan = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
-	const showJetpackUserLicense = isEnabled( 'jetpack/user-licensing' ) && isJetpackProductOrPlan;
+	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
 
 	return (
 		<>

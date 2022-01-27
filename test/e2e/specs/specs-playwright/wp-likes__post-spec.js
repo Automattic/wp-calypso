@@ -5,8 +5,8 @@
 import {
 	DataHelper,
 	GutenbergEditorPage,
+	LoginPage,
 	PublishedPostPage,
-	setupHooks,
 	TestAccount,
 } from '@automattic/calypso-e2e';
 
@@ -17,24 +17,19 @@ const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
-	const postingUser = 'simpleSitePersonalPlanUser';
-	const likeUser = 'defaultUser';
+	const postingUser = new TestAccount( 'simpleSitePersonalPlanUser' );
+	const likeUser = new TestAccount( 'defaultUser' );
 	let page;
 	let publishedURL;
 	let publishedPostPage;
 
-	setupHooks( ( args ) => {
-		page = args.page;
-	} );
-
 	describe( 'As the posting user', function () {
-		let testAccount;
 		let gutenbergEditorPage;
 
 		beforeAll( async () => {
+			page = await global.browser.newPage();
 			gutenbergEditorPage = new GutenbergEditorPage( page );
-			testAccount = new TestAccount( postingUser );
-			await testAccount.authenticate( page );
+			await postingUser.authenticate( page );
 		} );
 
 		it( 'Go to the new post page', async function () {
@@ -66,15 +61,22 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 	describe( 'As the liking user', () => {
 		beforeAll( async () => {
-			const testAccount = new TestAccount( likeUser );
-			await testAccount.authenticate( page );
+			page = await global.browser.newPage();
 		} );
 
 		it( 'Go to the published post page', async () => {
 			await page.goto( publishedURL );
 		} );
 
-		it( `Like post as ${ likeUser }`, async function () {
+		it( 'Login via popup to like the post', async function () {
+			page.on( 'popup', async ( popup ) => {
+				const loginPage = new LoginPage( popup );
+				await Promise.all( [
+					popup.waitForEvent( 'close' ),
+					loginPage.logInWithCredentials( ...likeUser.credentials ),
+				] );
+			} );
+
 			publishedPostPage = new PublishedPostPage( page );
 			await publishedPostPage.likePost();
 		} );

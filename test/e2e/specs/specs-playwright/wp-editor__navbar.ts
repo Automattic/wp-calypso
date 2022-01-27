@@ -3,15 +3,17 @@
  * @group calypso-pr
  */
 
-import { DataHelper, GutenbergEditorPage, setupHooks, TestAccount } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { DataHelper, GutenbergEditorPage, TestAccount } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 		gutenbergEditorPage = new GutenbergEditorPage( page );
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );

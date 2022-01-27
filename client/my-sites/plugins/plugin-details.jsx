@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -184,7 +183,10 @@ function PluginDetails( props ) {
 		// - change the first breadcrumb if prev page wasn't plugins page (eg activity log)
 		const navigationItems = [
 			{ label: translate( 'Plugins' ), href: `/plugins/${ selectedSite?.slug || '' }` },
-			{ label: fullPlugin.name, href: `/plugins/${ selectedSite?.slug }/${ fullPlugin.slug }` },
+			{
+				label: fullPlugin.name,
+				href: `/plugins/${ fullPlugin.slug }/${ selectedSite?.slug || '' }`,
+			},
 		];
 
 		return navigationItems;
@@ -214,13 +216,12 @@ function PluginDetails( props ) {
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
 			<SidebarNavigation />
 			<QueryEligibility siteId={ selectedSite?.ID } />
-			<QueryProductsList />
+			<QueryProductsList persist />
 			<FixedNavigationHeader
 				navigationItems={ getNavigationItems() }
 				compactBreadcrumb={ ! isWide }
 			>
-				{ isEnabled( 'marketplace-v1' ) &&
-					( isMarketplaceProduct || shouldUpgrade ) &&
+				{ ( isMarketplaceProduct || shouldUpgrade ) &&
 					! requestingPluginsForSites &&
 					! isPluginInstalledOnsite && (
 						<BillingIntervalSwitcher

@@ -2,14 +2,16 @@
  * @group calypso-pr
  */
 
-import { setupHooks, DataHelper } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { DataHelper } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Server-side Rendering' ), function () {
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
 	it.each`

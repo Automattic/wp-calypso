@@ -285,6 +285,7 @@ export function generateFlows( {
 			steps: [ 'themes-site-selected', 'plans-site-selected' ],
 			destination: getSiteDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
+			optionalDependenciesInQuery: [ 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',
 		},
@@ -299,7 +300,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'importer',
-			steps: isEnabled( 'gutenboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
+			steps: isEnabled( 'onboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
 			destination: '/',
 			pageTitle: translate( 'Import your site content' ),
 			description: 'A new import flow that can be used from the onboarding flow',
@@ -380,7 +381,15 @@ export function generateFlows( {
 		},
 		{
 			name: 'setup-site',
-			steps: [ 'intent', 'site-options', 'starting-point', 'courses', 'design-setup-site' ],
+			steps: [
+				'intent',
+				'site-options',
+				'starting-point',
+				'courses',
+				'store-options',
+				'store-features',
+				'design-setup-site',
+			],
 			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
@@ -408,9 +417,7 @@ export function generateFlows( {
 		{
 			name: 'woocommerce-install',
 			pageTitle: translate( 'Add WooCommerce to your site' ),
-			steps: isEnabled( 'woop' )
-				? [ 'store-address', 'business-info', 'confirm', 'transfer' ]
-				: [ 'confirm', 'transfer' ],
+			steps: [ 'store-address', 'business-info', 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
 			providesDependenciesInQuery: [ 'site' ],

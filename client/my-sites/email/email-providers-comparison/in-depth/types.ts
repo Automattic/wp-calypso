@@ -30,13 +30,18 @@ export type EmailProviderFeatures = {
 };
 
 export type EmailProvidersInDepthComparisonProps = {
-	comparisonContext: string;
 	selectedDomainName: string;
 	selectedIntervalLength: IntervalLength | undefined;
-	siteName: string;
-	source: string;
 };
 
 export type LearnMoreLinkProps = {
 	url: string;
+};
+
+export type SelectButtonProps = {
+	className: string;
+	emailProviderSlug: string;
+	intervalLength: IntervalLength;
+	onSelectEmailProvider: ( emailProviderSlug: string ) => void;
+	selectedDomainName: string;
 };

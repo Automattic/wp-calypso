@@ -20,7 +20,6 @@ import {
 	upsellNudge,
 	upsellRedirect,
 } from './controller';
-import { noop } from './utils';
 
 export default function () {
 	page( '/checkout*', recordSiftScienceUser );
@@ -219,7 +218,7 @@ export default function () {
 		'/checkout/:domainOrProduct',
 		redirectLoggedOut,
 		siteSelection,
-		isEnabled( 'jetpack/redirect-legacy-plans' ) ? redirectJetpackLegacyPlans : noop,
+		redirectJetpackLegacyPlans,
 		checkout,
 		makeLayout,
 		clientRender
@@ -229,7 +228,7 @@ export default function () {
 		'/checkout/:product/:domainOrProduct',
 		redirectLoggedOut,
 		siteSelection,
-		isEnabled( 'jetpack/redirect-legacy-plans' ) ? redirectJetpackLegacyPlans : noop,
+		redirectJetpackLegacyPlans,
 		checkout,
 		makeLayout,
 		clientRender

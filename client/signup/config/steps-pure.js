@@ -141,6 +141,7 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'redirect',
+				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
 			props: {
@@ -160,6 +161,7 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
+				'user_id',
 			],
 			optionalDependencies: [
 				'bearer_token',
@@ -167,6 +169,7 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
+				'user_id',
 			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
@@ -184,6 +187,19 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTitle', 'tagline' ],
 			apiRequestFunction: setOptionsOnSite,
 			delayApiRequestUntilComplete: true,
+		},
+
+		'store-options': {
+			stepName: 'store-options',
+			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
+			providesDependencies: [ 'siteTitle', 'tagline' ],
+			apiRequestFunction: setOptionsOnSite,
+			delayApiRequestUntilComplete: true,
+		},
+
+		'store-features': {
+			stepName: 'store-features',
+			dependencies: [ 'siteSlug' ],
 		},
 
 		'starting-point': {
@@ -374,21 +390,6 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
-		'jetpack-user': {
-			stepName: 'jetpack-user',
-			apiRequestFunction: createAccount,
-			providesToken: true,
-			props: {
-				get headerText() {
-					return i18n.translate( 'Create an account for Jetpack' );
-				},
-				get subHeaderText() {
-					return i18n.translate( "You're moments away from connecting Jetpack." );
-				},
-			},
-			providesDependencies: [ 'bearer_token', 'username' ],
-		},
-
 		'oauth2-user': {
 			stepName: 'oauth2-user',
 			apiRequestFunction: createAccount,
@@ -403,6 +404,7 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
+				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 		},
@@ -418,23 +420,12 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
+				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
-				displayNameInput: true,
-				displayUsernameInput: false,
-			},
-		},
-
-		displayname: {
-			stepName: 'displayname',
-			apiRequestFunction: createAccount,
-			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username' ],
-			props: {
-				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				displayNameInput: true,
 				displayUsernameInput: false,
 			},
@@ -671,8 +662,8 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
+			providesDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
+			optionalDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),

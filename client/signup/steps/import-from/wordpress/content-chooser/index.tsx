@@ -8,6 +8,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
 import { jetpack } from 'calypso/signup/icons';
 import SelectItems from 'calypso/signup/select-items';
+import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -20,7 +21,6 @@ interface Props {
 	onContentOnlySelection: () => void;
 	onContentEverythingSelection: () => void;
 }
-export type WPImportType = 'everything' | 'content_only';
 
 export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
@@ -35,6 +35,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Fields
 	 */
 	const [ hasOriginSiteJetpackConnected, setHasOriginSiteJetpackConnected ] = useState( false );
+	const [ isFetchingSite, setIsFetchingSite ] = useState( false );
 
 	/**
 	 ↓ Effects
@@ -45,11 +46,16 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Methods
 	 */
 	function checkOriginSiteJetpackConnection() {
+		setIsFetchingSite( true );
+
 		wpcom
 			.site( fromSite )
 			.get( { apiVersion: '1.2' } )
-			.then( ( site: any ) => setHasOriginSiteJetpackConnected( site && site.capabilities ) )
-			.catch( () => setHasOriginSiteJetpackConnected( false ) );
+			.then( ( site: SitesItem ) =>
+				setHasOriginSiteJetpackConnected( !! ( site && site.capabilities ) )
+			)
+			.catch( () => setHasOriginSiteJetpackConnected( false ) )
+			.finally( () => setIsFetchingSite( false ) );
 	}
 
 	return (
@@ -74,21 +80,25 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 						mainText={ __( "All your site's content, themes, plugins, users and settings" ) }
 					>
 						<NextButton
-							disabled={ ! hasOriginSiteJetpackConnected }
+							disabled={ ! hasOriginSiteJetpackConnected || isFetchingSite }
 							onClick={ onContentEverythingSelection }
 						>
 							{ __( 'Continue' ) }
 						</NextButton>
 					</ActionCard>
-					{ ! hasOriginSiteJetpackConnected && (
+					{ ! hasOriginSiteJetpackConnected && ! isFetchingSite && (
 						<SelectItems
 							onSelect={ onJetpackSelection }
 							items={ [
 								{
 									key: 'jetpack',
 									title: __( 'Jetpack required' ),
-									description: __(
-										'You need to have Jetpack installed on your site to be able to import everything.'
+									description: (
+										<p>
+											{ __(
+												'You need to have Jetpack installed on your site to be able to import everything.'
+											) }
+										</p>
 									),
 									icon: jetpack,
 									actionText: __( 'Install Jetpack' ),
@@ -97,6 +107,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 							] }
 						/>
 					) }
+					<hr />
 					<ActionCard
 						classNames={ classnames( 'list__importer-option', { 'is-disabled': false } ) }
 						headerText={ __( 'Content only' ) }

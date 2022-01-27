@@ -21,7 +21,6 @@ import {
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
 import { trackClick } from './helpers';
-
 import './themes-selection.scss';
 
 class ThemesSelection extends Component {
@@ -120,6 +119,11 @@ class ThemesSelection extends Component {
 		const wrappedPreviewAction = ( action ) => {
 			let defaultOption;
 			let secondaryOption = this.props.secondaryOption;
+
+			if ( secondaryOption?.hideForTheme( themeId, this.props.siteId ) ) {
+				secondaryOption = null;
+			}
+
 			return ( t ) => {
 				if ( ! this.props.isLoggedIn ) {
 					defaultOption = options.signup;
@@ -216,7 +220,7 @@ export const ConnectedThemesSelection = connect(
 		// results and sends all of the themes at once. QueryManager is not expecting such behaviour
 		// and we ended up loosing all of the themes above number 20. Real solution will be pagination on
 		// Jetpack themes endpoint.
-		const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId ) ? 2000 : 30;
+		const number = ! [ 'wpcom', 'wporg' ].includes( sourceSiteId ) ? 2000 : 100;
 		const query = {
 			search,
 			page,
@@ -227,6 +231,7 @@ export const ConnectedThemesSelection = connect(
 		return {
 			query,
 			source: sourceSiteId,
+			siteId: siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			themes: getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [],
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),

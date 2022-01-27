@@ -290,6 +290,7 @@ class TermFormDialog extends Component {
 						<TermTreeSelectorTerms
 							siteId={ siteId }
 							taxonomy={ taxonomy }
+							key={ taxonomy }
 							isError={ isError }
 							onSearch={ this.onSearch }
 							onChange={ this.onParentChange }

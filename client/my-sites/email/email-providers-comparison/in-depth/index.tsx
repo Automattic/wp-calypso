@@ -3,8 +3,10 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import ComparisonList from 'calypso/my-sites/email/email-providers-comparison/in-depth/comparison-list';
@@ -18,6 +20,7 @@ import {
 	emailManagementInDepthComparison,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
@@ -29,6 +32,7 @@ const EmailProvidersInDepthComparison = ( {
 	selectedDomainName,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
 }: EmailProvidersInDepthComparisonProps ): ReactElement => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const isMobile = useMobileBreakpoint();
@@ -40,6 +44,13 @@ const EmailProvidersInDepthComparison = ( {
 		if ( selectedSite === null ) {
 			return;
 		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_email_providers_in_depth_billing_interval_toggle_click', {
+				domain_name: selectedDomainName,
+				new_interval: newIntervalLength,
+			} )
+		);
 
 		page(
 			emailManagementInDepthComparison(
@@ -57,6 +68,13 @@ const EmailProvidersInDepthComparison = ( {
 			return;
 		}
 
+		dispatch(
+			recordTracksEvent( 'calypso_email_providers_in_depth_select_provider_click', {
+				domain_name: selectedDomainName,
+				provider: emailProviderSlug,
+			} )
+		);
+
 		page(
 			emailManagementPurchaseNewEmailAccount(
 				selectedSite.slug,
@@ -72,7 +90,12 @@ const EmailProvidersInDepthComparison = ( {
 	const ComparisonComponent = isMobile ? ComparisonList : ComparisonTable;
 
 	return (
-		<>
+		<Main wideLayout>
+			<PageViewTracker
+				path={ emailManagementInDepthComparison( ':site', ':domain' ) }
+				title="Email Comparison > In-Depth Comparison"
+			/>
+
 			<QueryProductsList />
 
 			<h1 className="email-providers-in-depth-comparison__header">
@@ -96,7 +119,7 @@ const EmailProvidersInDepthComparison = ( {
 			/>
 
 			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
-		</>
+		</Main>
 	);
 };
 

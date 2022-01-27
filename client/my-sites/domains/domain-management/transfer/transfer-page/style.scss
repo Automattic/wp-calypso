@@ -54,6 +54,13 @@
 				margin-bottom: 0;
 				font-size: $font-body-small;
 			}
+
+			&:last-child {
+				margin-bottom: 8px;
+				@include break-mobile {
+					margin-bottom: 0;
+				}
+			}
 		}
 	}
 

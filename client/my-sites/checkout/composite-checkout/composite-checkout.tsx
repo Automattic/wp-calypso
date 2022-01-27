@@ -92,6 +92,7 @@ export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
+	productSourceFromUrl,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -102,17 +103,20 @@ export default function CompositeCheckout( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	infoMessage,
-	isInEditor,
+	isInModal,
 	onAfterPaymentComplete,
-	isFocusedLaunch,
+	disabledThankYouPage,
 	isJetpackCheckout = false,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
+	customizedPreviousPath,
+	customizedCancelUrl,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
+	productSourceFromUrl?: string;
 	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
@@ -122,14 +126,17 @@ export default function CompositeCheckout( {
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
-	isFocusedLaunch?: boolean;
+	disabledThankYouPage?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
+	customizedPreviousPath?: string;
+	/** Customized cancel url for PayPal */
+	customizedCancelUrl?: string;
 } ): JSX.Element {
 	const previousPath = useSelector( getPreviousPath );
 	const translate = useTranslate();
@@ -180,7 +187,7 @@ export default function CompositeCheckout( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
-		isInEditor,
+		isInModal,
 		isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
@@ -189,6 +196,7 @@ export default function CompositeCheckout( {
 		isJetpackCheckout,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
+		source: productSourceFromUrl,
 	} );
 
 	const cartKey = useCartKey();
@@ -247,7 +255,7 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
-		isInEditor,
+		isInModal,
 		isJetpackCheckout,
 		domains,
 	} );
@@ -317,7 +325,11 @@ export default function CompositeCheckout( {
 	const {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
-	} = useRemoveFromCartAndRedirect( updatedSiteSlug, createUserAndSiteBeforeTransaction );
+	} = useRemoveFromCartAndRedirect(
+		updatedSiteSlug,
+		createUserAndSiteBeforeTransaction,
+		customizedPreviousPath
+	);
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		wpcomGetStoredCards,
@@ -437,6 +449,7 @@ export default function CompositeCheckout( {
 			stripeConfiguration,
 			stripe,
 			recaptchaClientId,
+			customizedCancelUrl,
 		} ),
 		[
 			contactDetails,
@@ -451,6 +464,7 @@ export default function CompositeCheckout( {
 			stripeConfiguration,
 			updatedSiteSlug,
 			recaptchaClientId,
+			customizedCancelUrl,
 		]
 	);
 
@@ -566,9 +580,9 @@ export default function CompositeCheckout( {
 		redirectTo,
 		purchaseId,
 		feature,
-		isInEditor,
+		isInModal,
 		isComingFromUpsell,
-		isFocusedLaunch,
+		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
 		isJetpackCheckout,
 		checkoutFlow,
@@ -677,7 +691,7 @@ export default function CompositeCheckout( {
 		leaveCheckout( {
 			siteSlug,
 			jetpackCheckoutBackUrl,
-			previousPath,
+			previousPath: customizedPreviousPath || previousPath,
 			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
 		} );
 
@@ -743,17 +757,18 @@ export default function CompositeCheckout( {
 				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
 			>
 				<WPCheckout
-					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-					changePlanLength={ changePlanLength }
-					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug }
-					countriesList={ countriesList }
 					addItemToCart={ addItemAndLog }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					isLoggedOutCart={ !! isLoggedOutCart }
+					changePlanLength={ changePlanLength }
+					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
+					isJetpackNotAtomic={ isJetpackNotAtomic }
+					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
+					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
+					siteId={ updatedSiteId }
+					siteUrl={ updatedSiteSlug }
 				/>
 			</CheckoutProvider>
 		</Fragment>

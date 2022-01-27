@@ -1,7 +1,12 @@
 import '@automattic/calypso-config';
 import { shuffle } from '@automattic/js-utils';
 import '../../constants';
-import { getDesignUrl, getAvailableDesigns } from '../available-designs';
+import {
+	getDesignUrl,
+	getAvailableDesigns,
+	includeFseDesigns,
+	excludeFseDesigns,
+} from '../available-designs';
 import { availableDesignsConfig } from '../available-designs-config';
 import type { Design } from '../../types';
 
@@ -161,7 +166,12 @@ describe( 'Design Picker design utils', () => {
 	describe( 'getAvailableDesigns', () => {
 		it( 'should get only FSE designs (both alpha and non alpha)', () => {
 			const mockDesignFSE = availableDesignsConfig.featured[ 3 ];
-			expect( getAvailableDesigns( { includeAlphaDesigns: true, useFseDesigns: true } ) ).toEqual( {
+			expect(
+				getAvailableDesigns( {
+					includeAlphaDesigns: true,
+					featuredDesignsFilter: includeFseDesigns,
+				} )
+			).toEqual( {
 				featured: [ mockDesignFSE ],
 			} );
 		} );
@@ -173,28 +183,34 @@ describe( 'Design Picker design utils', () => {
 			const mockDesignAlpha = availableDesignsConfig.featured[ 4 ];
 			const mockDesignBlankCanvas = availableDesignsConfig.featured[ 5 ];
 			const mockDesignMissingStylesheet = availableDesignsConfig.featured[ 6 ];
-			expect( getAvailableDesigns( { includeAlphaDesigns: true, useFseDesigns: false } ) ).toEqual(
-				{
-					featured: [
-						// Blank canvas is always in first position
-						mockDesignBlankCanvas,
-						mockDesign,
-						mockDesignWithoutFonts,
-						mockDesignPremium,
-						mockDesignAlpha,
-						mockDesignMissingStylesheet,
-					],
-				}
-			);
+			expect(
+				getAvailableDesigns( {
+					includeAlphaDesigns: true,
+					featuredDesignsFilter: excludeFseDesigns,
+				} )
+			).toEqual( {
+				featured: [
+					// Blank canvas is always in first position
+					mockDesignBlankCanvas,
+					mockDesign,
+					mockDesignWithoutFonts,
+					mockDesignPremium,
+					mockDesignAlpha,
+					mockDesignMissingStylesheet,
+				],
+			} );
 		} );
 
 		it( 'should get only FSE, non-alpha designs', () => {
 			const mockDesignFSE = availableDesignsConfig.featured[ 3 ];
-			expect( getAvailableDesigns( { includeAlphaDesigns: false, useFseDesigns: true } ) ).toEqual(
-				{
-					featured: [ mockDesignFSE ],
-				}
-			);
+			expect(
+				getAvailableDesigns( {
+					includeAlphaDesigns: false,
+					featuredDesignsFilter: includeFseDesigns,
+				} )
+			).toEqual( {
+				featured: [ mockDesignFSE ],
+			} );
 		} );
 
 		it( 'should get all non-alpha, non-FSE designs', () => {
@@ -203,18 +219,21 @@ describe( 'Design Picker design utils', () => {
 			const mockDesignPremium = availableDesignsConfig.featured[ 2 ];
 			const mockDesignBlankCanvas = availableDesignsConfig.featured[ 5 ];
 			const mockDesignMissingStylesheet = availableDesignsConfig.featured[ 6 ];
-			expect( getAvailableDesigns( { includeAlphaDesigns: false, useFseDesigns: false } ) ).toEqual(
-				{
-					featured: [
-						// Blank canvas is always in first position
-						mockDesignBlankCanvas,
-						mockDesign,
-						mockDesignWithoutFonts,
-						mockDesignPremium,
-						mockDesignMissingStylesheet,
-					],
-				}
-			);
+			expect(
+				getAvailableDesigns( {
+					includeAlphaDesigns: false,
+					featuredDesignsFilter: excludeFseDesigns,
+				} )
+			).toEqual( {
+				featured: [
+					// Blank canvas is always in first position
+					mockDesignBlankCanvas,
+					mockDesign,
+					mockDesignWithoutFonts,
+					mockDesignPremium,
+					mockDesignMissingStylesheet,
+				],
+			} );
 		} );
 
 		it( 'should randomize the results order when the randomize flag is specified', () => {

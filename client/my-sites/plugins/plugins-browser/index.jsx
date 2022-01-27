@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -219,7 +218,7 @@ const PluginsBrowser = ( {
 					<QueryWporgPlugins category="featured" />
 				</>
 			) }
-			{ isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic && <QueryProductsList /> }
+			{ ! jetpackNonAtomic && <QueryProductsList persist /> }
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<PageViewTrackerWrapper
 				category={ category }
@@ -229,7 +228,7 @@ const PluginsBrowser = ( {
 			<DocumentHead title={ translate( 'Plugins' ) } />
 			<SidebarNavigation />
 
-			{ isEnabled( 'marketplace-v1' ) && (
+			{ ! jetpackNonAtomic && (
 				<AnnouncementModal
 					announcementId="plugins-page-woo-extensions"
 					pages={ annoncementPages }
@@ -351,7 +350,7 @@ const SearchListView = ( {
 			} );
 
 		let pageSize = SEARCH_RESULTS_LIST_LENGTH;
-		if ( isEnabled( 'marketplace-v1' ) && pluginsPagination?.page === 1 ) {
+		if ( pluginsPagination?.page === 1 ) {
 			// Paid results appear only in the first page.
 			// Since the wporg results will always be an even number and paid results might be odd
 			// append one more wporg result if needed to fill the grid.
@@ -362,7 +361,7 @@ const SearchListView = ( {
 		}
 
 		const pluginItemsFeatch = ( page ) => {
-			return isEnabled( 'marketplace-v1' ) && page === 1
+			return page === 1
 				? SEARCH_RESULTS_LIST_LENGTH + ( paidPluginsBySearchTerm?.length % 2 )
 				: SEARCH_RESULTS_LIST_LENGTH;
 		};
@@ -371,7 +370,7 @@ const SearchListView = ( {
 			<>
 				<PluginsBrowserList
 					plugins={
-						isEnabled( 'marketplace-v1' ) && pluginsPagination?.page === 1
+						pluginsPagination?.page === 1
 							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
 							: pluginsBySearchTerm
 					}
@@ -521,7 +520,7 @@ const PluginBrowserContent = ( props ) => {
 
 	return (
 		<>
-			{ isEnabled( 'marketplace-v1' ) && ! props.jetpackNonAtomic ? (
+			{ ! props.jetpackNonAtomic ? (
 				<PluginSingleListView { ...props } category="paid" />
 			) : (
 				<PluginSingleListView { ...props } category="featured" />
@@ -673,10 +672,9 @@ function updateWpComRating( plugin ) {
  * @param {Array} featuredPlugins
  */
 function filterPopularPlugins( popularPlugins = [], featuredPlugins = [], jetpackNonAtomic ) {
-	// when marketplace-v1 is enabled no featured plugins will be showed
-	// since paid plugins will not be available for Jetpack self hosted sites,
+	// Since paid plugins will not be available for Jetpack self hosted sites,
 	// continue with filtering the popular plugins.
-	if ( isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic ) {
+	if ( ! jetpackNonAtomic ) {
 		featuredPlugins = [];
 	}
 

@@ -78,6 +78,7 @@ $theme-info-height: 54px;
 	font-family: inherit;
 	overflow: hidden;
 	white-space: nowrap;
+	top: -1px;
 
 	&::before {
 		@include long-content-fade();
@@ -101,6 +102,7 @@ $theme-info-height: 54px;
 .theme__upsell-icon svg {
 	transform: scale( 0.8 );
 	border: 2px solid var( --color-neutral-20 );
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 100%;
 	display: inline-block;
 	width: 22px;
@@ -124,12 +126,20 @@ $theme-info-height: 54px;
 
 .theme__badge-price-upgrade {
 	text-transform: uppercase;
-	font-size: 80%;
+	font-size: $font-body-small;
 }
 
 .theme__badge-active {
 	flex: 0 0 auto;
 	color: var( --color-primary-0 );
+	text-transform: uppercase;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
+}
+
+.theme__badge-premium {
+	color: var( --color-success );
+	flex: 0 0 auto;
 	text-transform: uppercase;
 	font-size: $font-body-extra-small;
 	font-weight: 600;

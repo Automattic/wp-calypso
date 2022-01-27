@@ -2,9 +2,10 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.playwright.prepareEnvironment
+import _self.lib.customBuildType.E2EBuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
@@ -212,34 +213,23 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 	}
 }
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
-    return BuildType {
-		id("WPComTests_gutenberg_Playwright_$targetDevice")
-		uuid=buildUuid
-		name = "Playwright E2E Tests ($targetDevice)"
-		description = "Runs Gutenberg E2E tests as $targetDevice using Playwright"
-
-		artifactRules = """
-			logs.tgz => logs.tgz
-			screenshots => screenshots
-			trace => trace
-		""".trimIndent()
-
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
-
-		params {
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
+    return E2EBuildType (
+		buildId = "WPComTests_gutenberg_Playwright_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "Playwright E2E Tests ($targetDevice)",
+		buildDescription = "Runs Gutenberg e2e tests on $targetDevice size",
+		testGroup = "gutenberg",
+		buildParams = {
 			text(
-				name = "URL",
+				name = "env.URL",
 				value = "https://wordpress.com",
 				label = "Test URL",
 				description = "URL to test against",
 				allowEmpty = false
 			)
 			checkbox(
-				name = "GUTENBERG_EDGE",
+				name = "env.GUTENBERG_EDGE",
 				value = "false",
 				label = "Use gutenberg-edge",
 				description = "Use a blog with gutenberg-edge sticker",
@@ -247,67 +237,16 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 				unchecked = "false"
 			)
 			checkbox(
-				name = "COBLOCKS_EDGE",
+				name = "env.COBLOCKS_EDGE",
 				value = "false",
 				label = "Use coblocks-edge",
 				description = "Use a blog with coblocks-edge sticker",
 				checked = "true",
 				unchecked = "false"
 			)
-		}
-
-		steps {
-			prepareEnvironment()
-			bashNodeScript {
-				name = "Run e2e tests ($targetDevice)"
-				scriptContent = """
-					shopt -s globstar
-					set -x
-
-					cd test/e2e
-					mkdir temp
-
-					export NODE_CONFIG_ENV=test
-					export PLAYWRIGHT_BROWSERS_PATH=0
-					export TEAMCITY_VERSION=2021
-					export HEADLESS=false
-
-					export GUTENBERG_EDGE=%GUTENBERG_EDGE%
-					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
-					export URL=%URL%
-
-					export TARGET_DEVICE=$targetDevice
-					export LOCALE=en
-					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-
-					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
-
-					# Run the test
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=gutenberg
-				""".trimIndent()
-			}
-			bashNodeScript {
-				name = "Collect results"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					set -x
-
-					mkdir -p screenshots
-					find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-					mkdir -p logs
-					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-					mkdir -p trace
-					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-				""".trimIndent()
-			}
-		}
-
-		features {
-			perfmon {
-			}
+			param("env.TARGET_DEVICE", "$targetDevice")
+		},
+		buildFeatures = {
 			notifications {
 				notifierSettings = slackNotifier {
 					connection = "PROJECT_EXT_11"
@@ -322,37 +261,8 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 				buildFailed = true
 				buildFinishedSuccessfully = true
 			}
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-				}
-			}
-		}
-
-		failureConditions {
-			executionTimeoutMin = 20
-			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
-			// been muted previously.
-			nonZeroExitCode = false
-
-			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
-			// crashes and no tests are run.
-			failOnMetricChange {
-				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-				threshold = 50
-				units = BuildFailureOnMetric.MetricUnit.PERCENTS
-				comparison = BuildFailureOnMetric.MetricComparison.LESS
-				compareTo = build {
-					buildRule = lastSuccessful()
-				}
-			}
-		}
-
-		triggers {
+		},
+		buildTriggers = {
 			schedule {
 				schedulingPolicy = daily {
 					hour = 4
@@ -364,96 +274,35 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): Bui
 				withPendingChangesOnly = false
 			}
 		}
-	}
+	)
 }
 
-fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): BuildType {
-    return BuildType {
-		id("WPComTests_coblocks_Playwright_$targetDevice")
-		uuid=buildUuid
-		name = "Playwright CoBlocks E2E Tests ($targetDevice)"
-		description = "Runs CoBlocks E2E tests as $targetDevice using Playwright"
-
-
-		artifactRules = """
-			reports => reports
-			logs.tgz => logs.tgz
-			screenshots => screenshots
-		""".trimIndent()
-
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
-
-		params {
+fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
+    return E2EBuildType (
+		buildId = "WPComTests_coblocks_Playwright_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "Playwright CoBlocks E2E Tests ($targetDevice)",
+		buildDescription = "Runs CoBlocks E2E tests as $targetDevice",
+		testGroup = "coblocks",
+		buildParams = {
 			text(
-				name = "URL",
+				name = "env.URL",
 				value = "https://wordpress.com",
 				label = "Test URL",
 				description = "URL to test against",
 				allowEmpty = false
 			)
 			checkbox(
-				name = "COBLOCKS_EDGE",
+				name = "env.COBLOCKS_EDGE",
 				value = "false",
 				label = "Use coblocks-edge",
 				description = "Use a blog with coblocks-edge sticker",
 				checked = "true",
 				unchecked = "false"
 			)
-		}
-
-		steps {
-			prepareEnvironment()
-			bashNodeScript {
-				name = "Run e2e tests ($targetDevice)"
-				scriptContent = """
-					shopt -s globstar
-					set -x
-
-					cd test/e2e
-					mkdir temp
-
-					export NODE_CONFIG_ENV=test
-					export PLAYWRIGHT_BROWSERS_PATH=0
-					export TEAMCITY_VERSION=2021
-					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
-					export URL=%URL%
-					export TARGET_DEVICE=$targetDevice
-					export LOCALE=en
-					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-					export DEBUG=pw:api
-					export HEADLESS=false
-
-					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
-
-					# Run the test
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=coblocks
-				""".trimIndent()
-			}
-			bashNodeScript {
-				name = "Collect results"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					set -x
-
-					mkdir -p screenshots
-					find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-					mkdir -p logs
-					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-					mkdir -p trace
-					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-				""".trimIndent()
-			}
-		}
-
-		features {
-			perfmon {
-			}
+			param("env.TARGET_DEVICE", "$targetDevice")
+		},
+		buildFeatures = {
 			notifications {
 				notifierSettings = slackNotifier {
 					connection = "PROJECT_EXT_11"
@@ -468,40 +317,9 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): Buil
 				buildFailed = true
 				buildFinishedSuccessfully = true
 			}
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-				}
-			}
-		}
-
-		failureConditions {
-			executionTimeoutMin = 20
-			// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
-			// been muted previously.
-			nonZeroExitCode = false
-
-			// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
-			// crashes and no tests are run.
-			failOnMetricChange {
-				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-				threshold = 50
-				units = BuildFailureOnMetric.MetricUnit.PERCENTS
-				comparison = BuildFailureOnMetric.MetricComparison.LESS
-				compareTo = build {
-					buildRule = lastSuccessful()
-				}
-			}
-		}
-
-		triggers {}
-	}
+		},
+	)
 }
-
 
 fun jetpackBuildType(screenSize: String): BuildType {
 	return BuildType {
@@ -702,105 +520,30 @@ private object VisualRegressionTests : BuildType({
 	}
 })
 
-private object I18NTests : BuildType({
-	name = "I18N Tests"
-	description = "Runs tests related to i18n"
-
-	artifactRules = """
-		logs.tgz => logs.tgz
-		screenshots => screenshots
-		trace => trace
-	""".trimIndent()
-
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
-
-	params {
+private object I18NTests : E2EBuildType(
+	buildId = "WPComTests_i18n",
+	buildUuid = "2698576f-6ae4-4f05-ae9a-55ce07c9b42f",
+	buildName = "I18N Tests",
+	buildDescription = "Runs tests related to i18n",
+	testGroup = "i18n",
+	buildParams = {
 		text(
-			name = "URL",
+			name = "env.URL",
 			value = "https://wordpress.com",
 			label = "Test URL",
 			description = "URL to test against",
 			allowEmpty = false
 		)
 		text(
-			name = "LOCALES",
+			name = "env.LOCALES",
 			value = "en,es,pt-br,de,fr,he,ja,it,nl,ru,tr,id,zh-cn,zh-tw,ko,ar,sv",
 			label = "Locales to use",
 			description = "Locales to use, separated by comma",
 			allowEmpty = false
 		)
-	}
-
-	steps {
-		prepareEnvironment()
-		bashNodeScript {
-			name = "Run i18n tests"
-			scriptContent = """
-				shopt -s globstar
-				set -x
-
-				cd test/e2e
-				mkdir temp
-
-				export NODE_CONFIG_ENV=test
-				export PLAYWRIGHT_BROWSERS_PATH=0
-				export TEAMCITY_VERSION=2021
-				export URL=%URL%
-				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export DEBUG=pw:api
-				export HEADLESS=false
-				export TARGET_DEVICE=desktop
-				export LOCALES=%LOCALES%
-
-				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
-
-				# Run the test
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=i18n
-			""".trimIndent()
-		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-			""".trimIndent()
-		}
-	}
-
-	failureConditions {
-		executionTimeoutMin = 30
-
-		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have
-		// been muted previously.
-		nonZeroExitCode = false
-
-		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner
-		// crashes and no tests are run.
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-			threshold = 50
-			units = BuildFailureOnMetric.MetricUnit.PERCENTS
-			comparison = BuildFailureOnMetric.MetricComparison.LESS
-			compareTo = build {
-				buildRule = lastSuccessful()
-			}
-		}
-	}
-
-	features {
+		param("env.TARGET_DEVICE", "desktop")
+	},
+	buildFeatures = {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -814,9 +557,8 @@ private object I18NTests : BuildType({
 			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
 		}
-	}
-
-	triggers {
+	},
+	buildTriggers = {
 		schedule {
 			schedulingPolicy = daily {
 				hour = 3
@@ -828,100 +570,19 @@ private object I18NTests : BuildType({
 			withPendingChangesOnly = false
 		}
 	}
-})
+)
 
-object P2E2ETests : BuildType({
-	name = "P2 E2E Tests"
-	description = "Runs end-to-end tests against P2."
-
-	artifactRules = """
-		logs.tgz => logs.tgz
-		screenshots => screenshots
-		trace => trace
-	""".trimIndent()
-
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
-
-	params {
-		checkbox(
-			name = "env.SAVE_AUTH_COOKIES",
-			value = "false",
-			label = "Save authentication cookies",
-			description = "Login once and reuse auth cookies for all specs",
-			checked = "true",
-			unchecked = "false"
-		)
-	}
-
-	steps {
-		prepareEnvironment()
-
-		bashNodeScript {
-			name = "Execute tests"
-			scriptContent = """
-				shopt -s globstar
-				set -x
-
-				cd test/e2e
-				mkdir temp
-
-				export URL="https://wpcalypso.wordpress.com"
-
-				export NODE_CONFIG_ENV=test
-				export PLAYWRIGHT_BROWSERS_PATH=0
-				export TEAMCITY_VERSION=2021
-				export LOCALE=en
-				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export DEBUG=pw:api
-				export HEADLESS=false
-
-				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
-
-				# Run the test
-				export TARGET_DEVICE=desktop
-				export LOCALE=en
-				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export DEBUG=pw:api
-
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=p2
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
-
-	features {
-		perfmon {
-		}
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
+object P2E2ETests : E2EBuildType(
+	buildId = "WPComTests_p2",
+	buildUuid = "086ed775-eee4-4cc0-abc4-bb497979ef48",
+	buildName = "P2 E2E Tests",
+	buildDescription = "Runs end-to-end tests against P2.",
+	testGroup = "p2",
+	buildParams = {
+		param("env.TARGET_DEVICE", "desktop")
+		param("env.URL", "https://wpcalypso.wordpress.com")
+	},
+	buildFeatures = {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -943,9 +604,8 @@ object P2E2ETests : BuildType({
 			branchFilter = "trunk"
 			buildFailed = true
 		}
-	}
-
-	triggers {
+	},
+	buildTriggers = {
 		schedule {
 			schedulingPolicy = cron {
 				hours = "*/3"
@@ -956,19 +616,5 @@ object P2E2ETests : BuildType({
 			withPendingChangesOnly = false
 		}
 	}
+)
 
-	failureConditions {
-		executionTimeoutMin = 10
-		// Do not fail on non-zero exit code to permit passing builds with muted tests.
-		nonZeroExitCode = false
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-			threshold = 50
-			units = BuildFailureOnMetric.MetricUnit.PERCENTS
-			comparison = BuildFailureOnMetric.MetricComparison.LESS
-			compareTo = build {
-				buildRule = lastSuccessful()
-			}
-		}
-	}
-})

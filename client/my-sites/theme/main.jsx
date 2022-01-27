@@ -62,6 +62,7 @@ import {
 	getThemeRequestErrors,
 	getThemeForumUrl,
 	getThemeDemoUrl,
+	shouldShowTryAndCustomize,
 } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -129,9 +130,8 @@ class ThemeSheet extends Component {
 		this.scrollToTop();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillUpdate( nextProps ) {
-		if ( nextProps.id !== this.props.id ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.props.id !== prevProps.id ) {
 			this.scrollToTop();
 		}
 	}
@@ -825,14 +825,23 @@ const ConnectedThemeSheet = connectOptions( ThemeSheet );
 const ThemeSheetWithEditorSettings = withBlockEditorSettings( ConnectedThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack, demoUrl } = props;
+	const {
+		siteId,
+		isActive,
+		isLoggedIn,
+		isPremium,
+		isPurchased,
+		isJetpack,
+		demoUrl,
+		showTryAndCustomize,
+	} = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
 	const needsJetpackPlanUpgrade = isJetpack && isPremium && ! isPurchased;
 
-	if ( needsJetpackPlanUpgrade ) {
-		secondaryOption = '';
+	if ( ! showTryAndCustomize ) {
+		secondaryOption = null;
 	}
 
 	if ( ! isLoggedIn ) {
@@ -896,6 +905,7 @@ export default connect(
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
+			showTryAndCustomize: shouldShowTryAndCustomize( state, id, siteId ),
 			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),

@@ -10,7 +10,7 @@ import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-wo
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import { canCurrentUserAddEmail, getSelectedDomain } from 'calypso/lib/domains';
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { hasGSuiteSupportedDomain, getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import {
 	areAllUsersValid,
@@ -25,7 +25,7 @@ import GoogleWorkspacePrice from 'calypso/my-sites/email/email-providers-compari
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import {
 	EmailProvidersStackedCardProps,
-	ProviderCard,
+	ProviderCardProps,
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
 import {
 	addToCartAndCheckout,
@@ -33,6 +33,7 @@ import {
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -58,13 +59,10 @@ const getGoogleFeatures = (): TranslateResult[] => {
 	];
 };
 
-const googleWorkspaceCardInformation: ProviderCard = {
+const googleWorkspaceCardInformation: ProviderCardProps = {
 	className: 'google-workspace-card',
-	detailsExpanded: false,
 	expandButtonLabel: translate( 'Select' ),
-	onExpandedChange: noop,
 	providerKey: 'google',
-	showExpandButton: true,
 	description: translate(
 		'Professional email integrated with Google Meet and other productivity tools from Google.'
 	),
@@ -83,10 +81,6 @@ const GoogleWorkspaceCard = ( {
 	selectedDomainName,
 	source,
 }: EmailProvidersStackedCardProps ): ReactElement => {
-	const googleWorkspace: ProviderCard = { ...googleWorkspaceCardInformation };
-	googleWorkspace.detailsExpanded = detailsExpanded;
-
-	const hasCartDomain = Boolean( cartDomainName );
 	const selectedSite = useSelector( getSelectedSite );
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const domain = getSelectedDomain( {
@@ -106,10 +100,22 @@ const GoogleWorkspaceCard = ( {
 		)
 	);
 
-	googleWorkspace.priceBadge = <GoogleWorkspacePrice intervalLength={ intervalLength } />;
+	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 
 	const [ googleUsers, setGoogleUsers ] = useState( newUsers( selectedDomainName ) );
 	const [ addingToCart, setAddingToCart ] = useState( false );
+
+	const isGSuiteSupported = canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] );
+	const isGSuiteAvailable = intervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
+
+	const googleWorkspace: ProviderCardProps = { ...googleWorkspaceCardInformation };
+	googleWorkspace.detailsExpanded = isGSuiteAvailable && detailsExpanded;
+	googleWorkspace.showExpandButton = isGSuiteAvailable;
+	googleWorkspace.priceBadge = (
+		<GoogleWorkspacePrice domain={ domain } intervalLength={ intervalLength } />
+	);
+
+	const hasCartDomain = Boolean( cartDomainName );
 
 	const onGoogleConfirmNewMailboxes = () => {
 		const usersAreValid = areAllUsersValid( googleUsers );

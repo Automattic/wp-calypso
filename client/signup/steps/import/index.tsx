@@ -70,10 +70,11 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 	const goToImporterPage = ( platform: ImporterPlatform ): void => {
 		let importerUrl;
 		if (
-			( platform === 'wordpress' && isEnabled( 'gutenboarding/import-from-wordpress' ) ) ||
-			( platform === 'medium' && isEnabled( 'gutenboarding/import-from-medium' ) ) ||
-			( platform === 'squarespace' && isEnabled( 'gutenboarding/import-from-squarespace' ) ) ||
-			( platform === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) )
+			( platform === 'blogger' && isEnabled( 'onboarding/import-from-blogger' ) ) ||
+			( platform === 'medium' && isEnabled( 'onboarding/import-from-medium' ) ) ||
+			( platform === 'squarespace' && isEnabled( 'onboarding/import-from-squarespace' ) ) ||
+			( platform === 'wix' && isEnabled( 'onboarding/import-from-wix' ) ) ||
+			( platform === 'wordpress' && isEnabled( 'onboarding/import-from-wordpress' ) )
 		) {
 			importerUrl = getWpComOnboardingUrl( signupDependencies.siteSlug, platform, urlData.url );
 		} else {

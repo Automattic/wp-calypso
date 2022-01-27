@@ -18,4 +18,5 @@ export interface PaymentProcessorOptions {
 	siteId: number | undefined;
 	contactDetails: ManagedContactDetails | undefined;
 	recaptchaClientId?: number;
+	customizedCancelUrl?: string;
 }

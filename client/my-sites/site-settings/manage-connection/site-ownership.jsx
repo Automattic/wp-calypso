@@ -22,7 +22,11 @@ import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-s
 import isJetpackUserConnectionOwner from 'calypso/state/selectors/is-jetpack-user-connection-owner';
 import { transferPlanOwnership } from 'calypso/state/sites/plans/actions';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
-import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	isCurrentPlanPaid,
+	isJetpackSite,
+	isJetpackProductSite,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import OwnershipInformation from './ownership-information';
 
@@ -287,7 +291,7 @@ export default connect(
 			isPaidPlan,
 			siteId,
 			siteIsConnected: isJetpackSiteConnected( state, siteId ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteIsJetpack: isJetpackSite( state, siteId ) || isJetpackProductSite( state, siteId ),
 			siteIsInDevMode: isJetpackSiteInDevelopmentMode( state, siteId ),
 			userIsConnectionOwner: isJetpackUserConnectionOwner( state, siteId ),
 		};

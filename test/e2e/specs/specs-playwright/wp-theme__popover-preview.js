@@ -7,7 +7,6 @@ import {
 	SidebarComponent,
 	ThemesPage,
 	PreviewComponent,
-	setupHooks,
 	SiteSelectComponent,
 	TestAccount,
 } from '@automattic/calypso-e2e';
@@ -23,8 +22,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	let previewComponent;
 	let page;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await global.browser.newPage();
 		await testAccount.authenticate( page );
 	} );
 
