@@ -39,6 +39,11 @@ object ToSAcceptanceTracking: BuildType {
 	name = "ToS Acceptance Tracking"
 	description = "Captures screenshots of locations where Terms of Service are shown."
 
+
+	artifactRules = """
+		screenshots => screenshots
+	""".trimIndent()
+
 	vcs {
 		root(Settings.WpCalypso)
 		cleanCheckout = true
@@ -98,13 +103,7 @@ object ToSAcceptanceTracking: BuildType {
 				set -x
 
 				mkdir -p screenshots
-				find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+				find test/e2e -type f -path '*tos*.png' -print0 | xargs -r -0 mv -t screenshots
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
