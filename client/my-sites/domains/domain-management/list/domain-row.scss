@@ -200,10 +200,12 @@
 		font-size: $font-body;
 		font-weight: 500; /* stylelint-disable-line */
 
-		a {
+		button {
 			color: var( --studio-gray-90 );
+			cursor: pointer;
+			font-weight: 500;
 		}
-		a:hover {
+		button:hover {
 			color: var( --color-link );
 		}
 
