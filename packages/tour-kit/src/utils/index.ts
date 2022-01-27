@@ -6,7 +6,7 @@
  */
 export function classParser( classes?: string | string[] ): string[] | null {
 	if ( classes?.length ) {
-		return classes?.toString().split( ',' );
+		return classes.toString().split( ',' );
 	}
 
 	return null;
