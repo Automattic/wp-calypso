@@ -11,8 +11,8 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-const postContent = DataHelper.getRandomPhrase();
-const postPassword = 'cat';
+const pageContent = DataHelper.getRandomPhrase();
+const pagePassword = 'cat';
 
 /**
  * Creates Page privacy tests.
@@ -23,7 +23,7 @@ const postPassword = 'cat';
  * @param {PrivacyOptions} param0.visibility Intended page/post privacy option.
  */
 export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions } ): void {
-	describe( DataHelper.createSuiteTitle( `Editor: Privacy` ), function () {
+	describe( DataHelper.createSuiteTitle( `Editor: Privacy (${ visibility })` ), function () {
 		const accountName = envVariables.GUTENBERG_EDGE
 			? 'gutenbergSimpleSiteEdgeUser'
 			: 'simpleSitePersonalPlanUser';
@@ -33,7 +33,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 		let gutenbergEditorPage: GutenbergEditorPage;
 		let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 
-		describe( `Create a ${ visibility } post`, function () {
+		describe( `Create a ${ visibility } page`, function () {
 			beforeAll( async function () {
 				page = await browser.newPage();
 
@@ -41,24 +41,24 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 				await testAccount.authenticate( page );
 			} );
 
-			it( 'Go to the new post page', async function () {
+			it( 'Start new page', async function () {
 				gutenbergEditorPage = new GutenbergEditorPage( page );
 				await gutenbergEditorPage.visit( 'page' );
 				await gutenbergEditorPage.selectPageDesign( 'blank' );
 			} );
 
-			it( 'Enter post title', async function () {
+			it( 'Enter page title', async function () {
 				gutenbergEditorPage = new GutenbergEditorPage( page );
 				await gutenbergEditorPage.enterTitle(
 					`Privacy: ${ visibility } - ${ DataHelper.getTimestamp() }`
 				);
 			} );
 
-			it( 'Enter post content', async function () {
-				await gutenbergEditorPage.enterText( postContent );
+			it( 'Enter page content', async function () {
+				await gutenbergEditorPage.enterText( pageContent );
 			} );
 
-			it( `Set post visibility to ${ visibility }`, async function () {
+			it( `Set page visibility to ${ visibility }`, async function () {
 				const frame = await gutenbergEditorPage.getEditorFrame();
 				editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( frame, page );
 
@@ -66,11 +66,11 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 				await editorSettingsSidebarComponent.setVisibility( visibility as PrivacyOptions );
 
 				if ( visibility === 'Password' ) {
-					await editorSettingsSidebarComponent.setPostPassword( postPassword );
+					await editorSettingsSidebarComponent.setPostPassword( pagePassword );
 				}
 			} );
 
-			it( 'Publish post', async function () {
+			it( 'Publish page', async function () {
 				// Private articles are published immediately as the option is selected.
 				// In other words, for Private articles the publish action happened in previous step.
 				if ( visibility === 'Private' ) {
@@ -81,7 +81,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 		} );
 
-		describe( 'Validate post content', function () {
+		describe( 'Validate page content', function () {
 			let testPage: Page;
 
 			beforeEach( async function () {
@@ -108,13 +108,13 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 
 					// If target article is password protected, unlock it first.
 					if ( visibility === 'Password' ) {
-						await publishedPostPage.enterPostPassword( postPassword );
+						await publishedPostPage.enterPostPassword( pagePassword );
 					}
-					await publishedPostPage.validateTextInPost( postContent );
+					await publishedPostPage.validateTextInPost( pageContent );
 				}
 			);
 
-			it( `View ${ visibility } page as posting user`, async function () {
+			it( `View ${ visibility } page as publishing user`, async function () {
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( testPage );
 				await testPage.goto( url );
@@ -123,9 +123,9 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 				// Posting user can see all of their pages, regardless of privacy setting.
 				// However, password protected pages still need to be unlocked.
 				if ( visibility === 'Password' ) {
-					await publishedPostPage.enterPostPassword( postPassword );
+					await publishedPostPage.enterPostPassword( pagePassword );
 				}
-				await publishedPostPage.validateTextInPost( postContent );
+				await publishedPostPage.validateTextInPost( pageContent );
 			} );
 		} );
 	} );
