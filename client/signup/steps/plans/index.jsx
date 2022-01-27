@@ -157,7 +157,7 @@ export class PlansStep extends Component {
 					}
 
 					// This allows us to continue with the other experiments.
-					if ( experimentAssignment?.variationName === null ) {
+					if ( ! experimentAssignment?.variationName ) {
 						return this.renderSignUpMonthlyPlansExperiment( errorDisplay );
 					}
 
