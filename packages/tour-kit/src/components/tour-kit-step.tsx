@@ -26,7 +26,7 @@ const TourKitStep: React.FunctionComponent< Props > = ( {
 	const classes = classnames(
 		'tour-kit-step',
 		`is-step-${ currentStepIndex }`,
-		classParser( config.steps[ currentStepIndex ].options?.className )
+		classParser( config.steps[ currentStepIndex ].options?.classNames )
 	);
 
 	return (

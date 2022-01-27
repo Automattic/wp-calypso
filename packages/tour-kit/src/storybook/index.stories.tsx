@@ -106,7 +106,7 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 		},
 		closeHandler: onClose,
 		options: {
-			className: 'mytour',
+			classNames: [ 'mytour' ],
 			...options,
 		},
 	};
