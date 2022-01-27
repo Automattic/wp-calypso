@@ -27,7 +27,6 @@ export default async function payPalProcessor(
 		siteId,
 		siteSlug,
 		contactDetails,
-		customizedCancelUrl,
 	} = transactionOptions;
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'paypal' } ) );
 
@@ -58,7 +57,7 @@ export default async function payPalProcessor(
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		responseCart,
 		successUrl,
-		cancelUrl: customizedCancelUrl || cancelUrl,
+		cancelUrl,
 		siteId,
 		domainDetails:
 			getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) || null,
