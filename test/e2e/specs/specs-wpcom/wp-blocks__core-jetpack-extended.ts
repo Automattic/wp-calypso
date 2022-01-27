@@ -3,7 +3,7 @@
  */
 
 import { InstagramBlockFlow, TwitterBlockFlow, BlockFlow } from '@automattic/calypso-e2e';
-import { createBlockTests } from './shared-specs/block-testing';
+import { createBlockTests } from '../specs-playwright/shared-specs/block-testing';
 
 const blockFlows: BlockFlow[] = [
 	new InstagramBlockFlow( {
@@ -16,4 +16,4 @@ const blockFlows: BlockFlow[] = [
 	} ),
 ];
 
-createBlockTests( 'Core blocks extended by Jetpack', blockFlows );
+createBlockTests( 'Blocks: Jetpack Extended Core Blocks', blockFlows );
