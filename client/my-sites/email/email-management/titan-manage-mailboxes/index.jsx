@@ -103,7 +103,7 @@ class TitanManageMailboxes extends Component {
 			{
 				context: TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP,
 				description: translate(
-					'Download our Android and iOS apps to access your emails on the go'
+					"Download Titan's Android and iOS apps to access your emails on the go"
 				),
 				materialIcon: 'smartphone',
 				text: translate( 'Get mobile app' ),
