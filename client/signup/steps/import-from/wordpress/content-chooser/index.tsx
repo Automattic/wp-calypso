@@ -93,8 +93,12 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 								{
 									key: 'jetpack',
 									title: __( 'Jetpack required' ),
-									description: __(
-										'You need to have Jetpack installed on your site to be able to import everything.'
+									description: (
+										<p>
+											{ __(
+												'You need to have Jetpack installed on your site to be able to import everything.'
+											) }
+										</p>
 									),
 									icon: jetpack,
 									actionText: __( 'Install Jetpack' ),
