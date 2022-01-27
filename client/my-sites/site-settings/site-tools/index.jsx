@@ -16,7 +16,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isJetpackProductSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import SiteToolsLink from './link';
 
@@ -149,7 +149,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId ) || isJetpackProductSite( state, siteId );
 		const isVip = isVipSite( state, siteId );
 		const isP2 = isSiteWPForTeams( state, siteId );
 		const isP2Hub = isSiteP2Hub( state, siteId );
