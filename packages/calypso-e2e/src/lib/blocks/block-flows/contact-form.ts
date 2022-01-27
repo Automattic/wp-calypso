@@ -38,9 +38,7 @@ export class ContactFormFlow implements BlockFlow {
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		await context.editorIframe.click( selectors.nameLabel );
-		await context.editorIframe.fill( selectors.nameLabel, '' );
-		// It turns out that for editable labels other methods of filling text doesn't work.
-		await context.page.keyboard.insertText( this.configurationData.nameLabel );
+		await context.editorIframe.fill( selectors.nameLabel, this.configurationData.nameLabel );
 	}
 
 	/**
