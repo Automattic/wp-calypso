@@ -36,7 +36,7 @@
 		"fullstory": true,
 		"gdpr-banner": false,
 		"google-my-business": true,
-		"gutenboarding/import": true,
+		"onboarding/import": true,
 		"happychat": true,
 		"help": true,
 		"inline-help": true,
