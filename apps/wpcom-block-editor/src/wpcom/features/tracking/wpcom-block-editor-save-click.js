@@ -8,19 +8,20 @@ import tracksRecordEvent from './track-record-event';
  */
 export const wpcomBlockEditorSaveClick = () => ( {
 	id: 'wpcom-block-editor-save-click',
-	// The first selector is for site editing. The second is for post editing.
 	selector:
 		'.editor-entities-saved-states__save-button, .editor-post-publish-button:not(.has-changes-dot)',
 	type: 'click',
 	handler: () => {
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
-		const isCurrentPostScheduled = select( 'core/editor' ).isCurrentPostScheduled();
+		const isEditedPostBeingScheduled = select( 'core/editor' ).isEditedPostBeingScheduled();
 		let actionType;
 
-		if ( isCurrentPostPublished || isCurrentPostScheduled ) {
-			actionType = 'update';
+		if ( isEditedPostBeingScheduled ) {
+			actionType = 'scheduling';
+		} else if ( isCurrentPostPublished ) {
+			actionType = 'updating';
 		} else {
-			actionType = 'publish';
+			actionType = 'publishing';
 		}
 
 		tracksRecordEvent( 'wpcom_block_editor_save_click', {
