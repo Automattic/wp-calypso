@@ -682,7 +682,7 @@ export class PlanFeatures extends Component {
 					isLaunchPage={ isLaunchPage }
 					nonDotBlogDomains={ nonDotBlogDomains }
 					planPropertiesPlan={ planPropertiesPlan }
-					key={ planPropertiesPlan.productSlug }
+					key={ planPropertiesPlan.planName }
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
 					selectedPlan={ selectedPlan }
 					selectedSiteSlug={ selectedSiteSlug }
@@ -799,7 +799,6 @@ export class PlanFeatures extends Component {
 			selectedSiteSlug,
 			purchaseId,
 		} = this.props;
-
 		return planProperties.map( ( planPropertiesPlan ) => {
 			return (
 				<PlanFeaturesActionsWrapper
@@ -812,7 +811,7 @@ export class PlanFeatures extends Component {
 					isLaunchPage={ isLaunchPage }
 					nonDotBlogDomains={ nonDotBlogDomains }
 					planPropertiesPlan={ planPropertiesPlan }
-					key={ planPropertiesPlan.productSlug }
+					key={ planPropertiesPlan.planName }
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
 					selectedPlan={ selectedPlan }
 					selectedSiteSlug={ selectedSiteSlug }

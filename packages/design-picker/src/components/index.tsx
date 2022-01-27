@@ -211,6 +211,7 @@ export interface DesignPickerProps {
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
 	categoriesFooter?: React.ReactNode;
+	recommendedCategorySlug: string | null;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
 }
@@ -231,6 +232,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	categorization,
 	hideFullScreenPreview,
 	hideDesignTitle,
+	recommendedCategorySlug,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -252,6 +254,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				<DesignPickerCategoryFilter
 					categories={ categorization.categories }
 					selectedCategory={ categorization.selection }
+					recommendedCategorySlug={ recommendedCategorySlug }
 					onSelect={ categorization.onSelect }
 					heading={ categoriesHeading }
 					footer={ categoriesFooter }

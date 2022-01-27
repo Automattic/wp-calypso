@@ -3,24 +3,26 @@
  */
 
 import {
-	setupHooks,
+	envVariables,
 	TestAccount,
-	BrowserHelper,
 	DataHelper,
 	GutenbergEditorPage,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), function () {
-	const accountName = BrowserHelper.targetGutenbergEdge()
+	const accountName = envVariables.GUTENBERG_EDGE
 		? 'gutenbergSimpleSiteEdgeUser'
 		: 'gutenbergSimpleSiteUser';
 
 	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
