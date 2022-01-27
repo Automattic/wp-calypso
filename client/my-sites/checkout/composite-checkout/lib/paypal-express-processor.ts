@@ -27,6 +27,7 @@ export default async function payPalProcessor(
 		siteId,
 		siteSlug,
 		contactDetails,
+		customizedCancelUrl,
 	} = transactionOptions;
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'paypal' } ) );
 
@@ -42,9 +43,12 @@ export default async function payPalProcessor(
 	}
 	const currentUrlWithoutQuery = currentUrl.split( /\?|#/ )[ 0 ];
 	const successUrl = thankYouUrl.startsWith( 'http' ) ? thankYouUrl : currentBaseUrl + thankYouUrl;
-	const cancelUrl = createUserAndSiteBeforeTransaction
-		? currentUrlWithoutQuery + '?cart=no-user'
-		: currentUrlWithoutQuery;
+	let cancelUrl = customizedCancelUrl;
+	if ( ! cancelUrl ) {
+		cancelUrl = createUserAndSiteBeforeTransaction
+			? currentUrlWithoutQuery + '?cart=no-user'
+			: currentUrlWithoutQuery;
+	}
 
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		responseCart,

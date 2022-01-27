@@ -232,6 +232,10 @@ const Flows = {
 		step && Flows.excludedSteps.indexOf( step ) === -1 && Flows.excludedSteps.push( step );
 	},
 
+	excludeSteps( steps ) {
+		steps.forEach( ( step ) => Flows.excludeStep( step ) );
+	},
+
 	filterExcludedSteps( flow ) {
 		if ( ! flow ) {
 			return;

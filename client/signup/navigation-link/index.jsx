@@ -33,6 +33,7 @@ export class NavigationLink extends Component {
 		backIcon: PropTypes.string,
 		forwardIcon: PropTypes.string,
 		queryParams: PropTypes.object,
+		disabledTracksOnClick: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -113,7 +114,7 @@ export class NavigationLink extends Component {
 			this.props.goToNextStep();
 		}
 
-		if ( ! this.props.disabledTracks ) {
+		if ( ! this.props.disabledTracksOnClick ) {
 			this.recordClick();
 		}
 	};

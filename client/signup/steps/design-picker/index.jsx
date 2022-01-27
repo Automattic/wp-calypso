@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import DesignPicker, {
 	FeaturedPicksButtons,
 	PremiumBadge,
@@ -21,6 +22,8 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
 import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
+import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -45,7 +48,7 @@ export default function DesignPickerStep( props ) {
 		sitePlanSlug,
 	} = props;
 
-	const isPremiumThemesAvailable = useMemo(
+	const isPremiumThemeAvailable = useMemo(
 		() => planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
 		[ sitePlanSlug ]
 	);
@@ -61,6 +64,10 @@ export default function DesignPickerStep( props ) {
 
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
+	const tier =
+		isPremiumThemeAvailable || isEnabled( 'signup/design-picker-premium-themes-checkout' )
+			? 'all'
+			: 'free';
 
 	// Limit themes to those that support the Site editor, if site is fse eligible
 	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
@@ -74,13 +81,11 @@ export default function DesignPickerStep( props ) {
 		: 'auto-loading-homepage';
 
 	const { data: apiThemes = [] } = useThemeDesignsQuery(
-		{
-			filter: themeFilters,
-			tier: isPremiumThemesAvailable ? 'all' : 'free',
-		},
+		{ filter: themeFilters, tier },
 		// Wait until block editor settings have loaded to load themes
 		{ enabled: ! props.useDIFMThemes && ! blockEditorSettingsAreLoading }
 	);
+
 	const allThemes = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
 	useEffect(
@@ -178,6 +183,10 @@ export default function DesignPickerStep( props ) {
 		);
 	}
 
+	function upgradePlan() {
+		openCheckoutModal( [ PLAN_PREMIUM ] );
+	}
+
 	function submitDesign( _selectedDesign = selectedDesign ) {
 		recordTracksEvent( 'calypso_signup_select_design', {
 			theme: _selectedDesign?.stylesheet ?? `pub/${ _selectedDesign?.theme }`,
@@ -189,33 +198,46 @@ export default function DesignPickerStep( props ) {
 		props.goToNextStep();
 	}
 
+	function renderCheckoutModal() {
+		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
+			return null;
+		}
+
+		return <AsyncCheckoutModal />;
+	}
+
 	function renderDesignPicker() {
 		return (
-			<DesignPicker
-				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
-				theme={ isReskinned ? 'light' : 'dark' }
-				locale={ translate.localeSlug }
-				onSelect={ pickDesign }
-				onPreview={ previewDesign }
-				className={ classnames( {
-					'design-picker-step__has-categories': showDesignPickerCategories,
-				} ) }
-				highResThumbnails
-				premiumBadge={ <PremiumBadge /> }
-				categorization={ showDesignPickerCategories ? categorization : undefined }
-				recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
-				categoriesHeading={
-					<FormattedHeader
-						id={ 'step-header' }
-						headerText={ headerText() }
-						subHeaderText={ subHeaderText() }
-						align="left"
-					/>
-				}
-				categoriesFooter={ renderCategoriesFooter() }
-				hideFullScreenPreview={ hideFullScreenPreview }
-				hideDesignTitle={ hideDesignTitle }
-			/>
+			<>
+				<DesignPicker
+					designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+					theme={ isReskinned ? 'light' : 'dark' }
+					locale={ translate.localeSlug }
+					onSelect={ pickDesign }
+					onPreview={ previewDesign }
+					onUpgrade={ upgradePlan }
+					className={ classnames( {
+						'design-picker-step__has-categories': showDesignPickerCategories,
+					} ) }
+					highResThumbnails
+					premiumBadge={ <PremiumBadge /> }
+					categorization={ showDesignPickerCategories ? categorization : undefined }
+					recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
+					categoriesHeading={
+						<FormattedHeader
+							id={ 'step-header' }
+							headerText={ headerText() }
+							subHeaderText={ subHeaderText() }
+							align="left"
+						/>
+					}
+					categoriesFooter={ renderCategoriesFooter() }
+					hideFullScreenPreview={ hideFullScreenPreview }
+					hideDesignTitle={ hideDesignTitle }
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				/>
+				{ renderCheckoutModal() }
+			</>
 		);
 	}
 
@@ -246,20 +268,26 @@ export default function DesignPickerStep( props ) {
 		} );
 
 		return (
-			<WebPreview
-				className="design-picker__web-preview"
-				showPreview
-				isContentOnly
-				showClose={ false }
-				showEdit={ false }
-				externalUrl={ siteSlug }
-				showExternal={ ! hideExternalPreview }
-				previewUrl={ previewUrl }
-				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-					components: { strong: <strong /> },
-				} ) }
-				toolbarComponent={ PreviewToolbar }
-			/>
+			<>
+				<WebPreview
+					className="design-picker__web-preview"
+					showPreview
+					isContentOnly
+					showClose={ false }
+					showEdit={ false }
+					externalUrl={ siteSlug }
+					showExternal={ ! hideExternalPreview }
+					previewUrl={ previewUrl }
+					loadingMessage={ translate(
+						'{{strong}}One moment, please…{{/strong}} loading your site.',
+						{
+							components: { strong: <strong /> },
+						}
+					) }
+					toolbarComponent={ PreviewToolbar }
+				/>
+				{ renderCheckoutModal() }
+			</>
 		);
 	}
 
@@ -308,6 +336,7 @@ export default function DesignPickerStep( props ) {
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const defaultDependencies = { selectedDesign };
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
+		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 
 		return (
 			<StepWrapper
@@ -320,14 +349,19 @@ export default function DesignPickerStep( props ) {
 				stepContent={ renderDesignPreview() }
 				align={ isMobile ? 'left' : 'center' }
 				hideSkip
-				hideNext={ false }
-				nextLabelText={ translate( 'Start with %(designTitle)s', {
-					args: { designTitle },
-				} ) }
+				hideNext={ shouldUpgrade }
+				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
 				defaultDependencies={ defaultDependencies }
 				backUrl={ getStepUrl( flowName, stepName, '', locale, queryParams ) }
 				goToNextStep={ submitDesign }
 				stepSectionName={ designTitle }
+				customizedActionButtons={
+					shouldUpgrade && (
+						<Button primary borderless={ false } onClick={ upgradePlan }>
+							{ translate( 'Upgrade Plan' ) }
+						</Button>
+					)
+				}
 			/>
 		);
 	}

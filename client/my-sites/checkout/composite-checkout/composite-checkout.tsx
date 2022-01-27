@@ -103,13 +103,15 @@ export default function CompositeCheckout( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	infoMessage,
-	isInEditor,
+	isInModal,
 	onAfterPaymentComplete,
-	isFocusedLaunch,
+	disabledThankYouPage,
 	isJetpackCheckout = false,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
+	customizedPreviousPath,
+	customizedCancelUrl,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -124,14 +126,17 @@ export default function CompositeCheckout( {
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
-	isFocusedLaunch?: boolean;
+	disabledThankYouPage?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
+	customizedPreviousPath?: string;
+	/** Customized cancel url for PayPal */
+	customizedCancelUrl?: string;
 } ): JSX.Element {
 	const previousPath = useSelector( getPreviousPath );
 	const translate = useTranslate();
@@ -182,7 +187,7 @@ export default function CompositeCheckout( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
-		isInEditor,
+		isInModal,
 		isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
@@ -250,7 +255,7 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
-		isInEditor,
+		isInModal,
 		isJetpackCheckout,
 		domains,
 	} );
@@ -320,7 +325,11 @@ export default function CompositeCheckout( {
 	const {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
-	} = useRemoveFromCartAndRedirect( updatedSiteSlug, createUserAndSiteBeforeTransaction );
+	} = useRemoveFromCartAndRedirect(
+		updatedSiteSlug,
+		createUserAndSiteBeforeTransaction,
+		customizedPreviousPath
+	);
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		wpcomGetStoredCards,
@@ -440,6 +449,7 @@ export default function CompositeCheckout( {
 			stripeConfiguration,
 			stripe,
 			recaptchaClientId,
+			customizedCancelUrl,
 		} ),
 		[
 			contactDetails,
@@ -454,6 +464,7 @@ export default function CompositeCheckout( {
 			stripeConfiguration,
 			updatedSiteSlug,
 			recaptchaClientId,
+			customizedCancelUrl,
 		]
 	);
 
@@ -569,9 +580,9 @@ export default function CompositeCheckout( {
 		redirectTo,
 		purchaseId,
 		feature,
-		isInEditor,
+		isInModal,
 		isComingFromUpsell,
-		isFocusedLaunch,
+		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
 		isJetpackCheckout,
 		checkoutFlow,
@@ -680,7 +691,7 @@ export default function CompositeCheckout( {
 		leaveCheckout( {
 			siteSlug,
 			jetpackCheckoutBackUrl,
-			previousPath,
+			previousPath: customizedPreviousPath || previousPath,
 			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
 		} );
 

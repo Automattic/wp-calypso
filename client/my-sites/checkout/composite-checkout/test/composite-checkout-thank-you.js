@@ -518,7 +518,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			isInEditor: true,
+			isInModal: true,
 			saveUrlToCookie,
 		} );
 		expect( saveUrlToCookie ).toBeCalledWith( url );
@@ -538,7 +538,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			isInEditor: true,
+			isInModal: true,
 			saveUrlToCookie,
 		} );
 		expect( saveUrlToCookie ).toBeCalledWith( '/checkout/thank-you/foo.bar/:receiptId' );
