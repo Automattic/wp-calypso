@@ -32,6 +32,7 @@ import {
 	recordSignupStep,
 	recordSignupInvalidStep,
 	recordSignupProcessingScreen,
+	recordSignupPlanChange,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
@@ -237,25 +238,29 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		const { flowName, stepName, signupDependencies, sitePlanSlug } = this.props;
+
 		if (
-			( this.props.flowName !== prevProps.flowName ||
-				this.props.stepName !== prevProps.stepName ) &&
+			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
 			! this.state.shouldShowLoadingScreen
 		) {
-			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+			recordSignupStep( flowName, stepName, this.getRecordProps() );
 		}
 
 		if (
-			get( this.props.signupDependencies, 'siteType' ) !==
-			get( prevProps.signupDependencies, 'siteType' )
+			get( signupDependencies, 'siteType' ) !== get( prevProps.signupDependencies, 'siteType' )
 		) {
 			this.startTrackingForBusinessSite();
 		}
 
-		if ( this.props.stepName !== prevProps.stepName ) {
+		if ( stepName !== prevProps.stepName ) {
 			this.preloadNextStep();
 			// `scrollToTop` here handles cases where the viewport may fall slightly below the top of the page when the next step is rendered
 			this.scrollToTop();
+		}
+
+		if ( sitePlanSlug !== prevProps.sitePlanSlug ) {
+			recordSignupPlanChange( flowName, stepName, prevProps.sitePlanSlug, sitePlanSlug );
 		}
 	}
 
