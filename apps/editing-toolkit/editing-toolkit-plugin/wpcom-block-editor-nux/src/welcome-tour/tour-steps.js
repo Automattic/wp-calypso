@@ -21,6 +21,9 @@ function getTourAssets( key ) {
 			desktop: { src: `${ CDN_PREFIX }/slide-move-block.gif`, type: 'image/gif' },
 			mobile: { src: `${ CDN_PREFIX }/slide-move-block_mobile.gif`, type: 'image/gif' },
 		},
+		findYourWay: {
+			desktop: { src: `${ CDN_PREFIX }/slide-find-your-way.gif`, type: 'image/gif' },
+		},
 		undo: { desktop: { src: `${ CDN_PREFIX }/slide-undo.gif`, type: 'image/gif' } },
 		welcome: {
 			desktop: { src: `${ CDN_PREFIX }/slide-welcome.png`, type: 'image/png' },
@@ -31,48 +34,9 @@ function getTourAssets( key ) {
 	return tourAssets[ key ];
 }
 
-const referenceElements = [
-	{
-		desktop: null,
-		mobile: null,
-	},
-	{
-		desktop: null,
-		mobile: null,
-	},
-	{
-		mobile:
-			'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
-		desktop:
-			'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
-	},
-	{
-		desktop: null,
-		mobile: null,
-	},
-	{
-		mobile:
-			'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
-		desktop:
-			'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
-	},
-	{
-		desktop: '.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
-	},
-	{
-		mobile: null,
-		desktop: null,
-	},
-	{
-		desktop: null,
-		mobile: null,
-	},
-];
-
 function getTourSteps( localeSlug, referencePositioning ) {
 	return [
 		{
-			referenceElements: referencePositioning && referenceElements[ 0 ],
 			meta: {
 				heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
 				descriptions: {
@@ -90,7 +54,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 1 ],
 			meta: {
 				heading: __( 'Everything is a block', 'full-site-editing' ),
 				descriptions: {
@@ -105,7 +68,12 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 2 ],
+			referenceElements: referencePositioning && {
+				mobile:
+					'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
+				desktop:
+					'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
+			},
 			meta: {
 				heading: __( 'Adding a new block', 'full-site-editing' ),
 				descriptions: {
@@ -133,7 +101,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 3 ],
 			meta: {
 				heading: __( 'Click a block to change it', 'full-site-editing' ),
 				descriptions: {
@@ -148,7 +115,12 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 4 ],
+			referenceElements: referencePositioning && {
+				mobile:
+					'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
+				desktop:
+					'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
+			},
 			meta: {
 				heading: __( 'More Options', 'full-site-editing' ),
 				descriptions: {
@@ -166,8 +138,33 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
 			},
 		},
+		...( localeSlug === 'en'
+			? [
+					{
+						meta: {
+							heading: __( 'Find your way', 'full-site-editing' ),
+							descriptions: {
+								desktop: __(
+									"Use List View to see all the blocks you've added. Click and drag any block to move it around.",
+									'full-site-editing'
+								),
+								mobile: null,
+							},
+							imgSrc: getTourAssets( 'findYourWay' ),
+							animation: null,
+							isDesktopOnly: true,
+						},
+						options: {
+							classNames: [ 'is-with-extra-padding-desktop', 'wpcom-editor-welcome-tour__step' ],
+						},
+					},
+			  ]
+			: [] ),
 		{
-			referenceElements: referencePositioning && referenceElements[ 5 ],
+			referenceElements: referencePositioning && {
+				desktop:
+					'.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
+			},
 			meta: {
 				heading: __( 'Undo any mistake', 'full-site-editing' ),
 				descriptions: {
@@ -180,7 +177,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 6 ],
 			meta: {
 				heading: __( 'Drag & drop', 'full-site-editing' ),
 				descriptions: {
@@ -199,7 +195,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && referenceElements[ 7 ],
 			meta: {
 				heading: __( 'Congratulations!', 'full-site-editing' ),
 				descriptions: {

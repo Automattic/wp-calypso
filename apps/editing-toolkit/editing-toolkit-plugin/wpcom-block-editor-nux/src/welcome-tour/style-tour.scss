@@ -216,13 +216,27 @@ $welcome-tour-card-media-extra-padding: 14%; // temporary value, to match the pa
 	width: 100%;
 }
 
-.wpcom-editor-welcome-tour.is-mobile {
-	.wpcom-editor-welcome-tour__step {
-		&.is-with-extra-padding {
-			.components-card__media img {
-				left: $welcome-tour-card-media-extra-padding;
-				top: $welcome-tour-card-media-extra-padding;
-				width: 100% - $welcome-tour-card-media-extra-padding;
+.wpcom-editor-welcome-tour {
+	&.is-mobile {
+		.wpcom-editor-welcome-tour__step {
+			&.is-with-extra-padding {
+				.components-card__media img {
+					left: $welcome-tour-card-media-extra-padding;
+					top: $welcome-tour-card-media-extra-padding;
+					width: 100% - $welcome-tour-card-media-extra-padding;
+				}
+			}
+		}
+	}
+
+	&.is-desktop {
+		.wpcom-editor-welcome-tour__step {
+			&.is-with-extra-padding-desktop {
+				.components-card__media img {
+					left: $welcome-tour-card-media-extra-padding;
+					top: $welcome-tour-card-media-extra-padding;
+					width: 100% - $welcome-tour-card-media-extra-padding;
+				}
 			}
 		}
 	}
