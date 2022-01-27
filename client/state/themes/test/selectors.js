@@ -41,6 +41,7 @@ import {
 	getWpcomParentThemeId,
 	getRecommendedThemes,
 	areRecommendedThemesLoading,
+	shouldShowTryAndCustomize,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -65,6 +66,17 @@ const twentysixteen = {
 	author_uri: 'https://wordpress.org/',
 };
 
+const twentynineteen = {
+	id: 'twentynineteen',
+	name: 'Twenty Nineteen',
+	author: 'the WordPress team',
+	screenshot:
+		'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysixteen/screenshot.png',
+	stylesheet: 'pub/twentynineteen',
+	demo_uri: 'https://twentynineteendemo.wordpress.com/',
+	author_uri: 'https://wordpress.org/',
+};
+
 const mood = {
 	id: 'mood',
 	name: 'Mood',
@@ -73,6 +85,18 @@ const mood = {
 	price: '$20',
 	stylesheet: 'premium/mood',
 	demo_uri: 'https://mooddemo.wordpress.com/',
+	author_uri: 'https://wordpress.com/themes/',
+};
+
+const quadrat = {
+	id: 'quadrat',
+	name: 'Quadrat',
+	author: 'Automattic',
+	screenshot: 'quadrat.jpg',
+	price: '$50',
+	stylesheet: 'premium/quadrat',
+	template: 'blockbase-premium',
+	demo_uri: 'https://quadratdemo.wordpress.com/',
 	author_uri: 'https://wordpress.com/themes/',
 };
 
@@ -380,7 +404,7 @@ describe( 'themes selectors', () => {
 			expect( query ).to.deep.equal( {} );
 		} );
 
-		test( 'given a site, should return last used query', () => {
+		test( 'given a site, should return last `use`d query', () => {
 			const query = getLastThemeQuery(
 				{
 					themes: {
@@ -2506,4 +2530,101 @@ describe( '#areRecommendedThemesLoading', () => {
 	test( 'should return false when filter request not initiated', () => {
 		expect( areRecommendedThemesLoading( state, 'lolol' ) ).to.be.false;
 	} );
+} );
+
+describe( '#shouldShowTryAndCustomize', () => {
+	const state = {
+		currentUser: {
+			capabilities: {
+				2916284: { edit_theme_options: true },
+			},
+		},
+		themes: {
+			queries: {
+				wpcom: new ThemeQueryManager( {
+					items: { quadrat, twentynineteen },
+				} ),
+			},
+			activeThemes: {},
+		},
+		sites: {
+			items: {},
+		},
+	};
+
+	test( 'should hide Try & Customize action when user does not have permissions', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						2916284: { edit_theme_options: false },
+					},
+				},
+			},
+			'quadrat',
+			2916284
+		);
+		expect( showTryAndCustomize ).to.be.false;
+	} );
+
+	test( 'should hide Try & Customize when logged out', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					id: null,
+					capabilities: {},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { quadrat },
+						} ),
+					},
+				},
+			},
+			'quadrat',
+			2916284
+		);
+		expect( showTryAndCustomize ).to.be.false;
+	} );
+
+	test( 'should hide Try & Customize for the currently active theme', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						2916284: { edit_theme_options: true },
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { quadrat },
+						} ),
+					},
+					activeThemes: {
+						2916284: 'quadrat',
+					},
+				},
+				sites: {
+					items: {},
+				},
+			},
+			'quadrat',
+			2916284
+		);
+		expect( showTryAndCustomize ).to.be.false;
+	} );
+
+	test( 'should not show Try & Customize action for new themes', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize( state, 'quadrat', 2916284 );
+		expect( showTryAndCustomize ).to.be.false;
+	} );
+
+	test( 'should show Try & Customize action for old themes', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize( state, 'twentynineteen', 2916284 );
+		expect( showTryAndCustomize ).to.be.true;
+	} );
+
+	//@TODO: should hide Try & Customize when on Jetpack Multisite
 } );
