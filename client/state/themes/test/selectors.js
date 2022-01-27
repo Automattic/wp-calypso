@@ -405,7 +405,7 @@ describe( 'themes selectors', () => {
 			expect( query ).to.deep.equal( {} );
 		} );
 
-		test( 'given a site, should return last `use`d query', () => {
+		test( 'given a site, should return last used query', () => {
 			const query = getLastThemeQuery(
 				{
 					themes: {
