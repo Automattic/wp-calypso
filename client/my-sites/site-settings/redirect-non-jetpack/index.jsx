@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isJetpackProductSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const redirectNonJetpack = ( redirectRoute ) => ( WrappedComponent ) => {
@@ -51,7 +51,7 @@ const redirectNonJetpack = ( redirectRoute ) => ( WrappedComponent ) => {
 
 		return {
 			siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteIsJetpack: isJetpackSite( state, siteId ) || isJetpackProductSite( state, siteId ),
 			siteSlug: getSelectedSiteSlug( state ),
 		};
 	} )( RedirectNonJetpack );
