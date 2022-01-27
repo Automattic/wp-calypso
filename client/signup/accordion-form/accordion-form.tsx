@@ -3,20 +3,22 @@ import { ChangeEvent, useState } from 'react';
 import AccordionFormSection from './accordion-form-section';
 import {
 	AccordionSectionProps,
-	sectionGeneratorReturnType,
+	SectionGeneratorReturnType,
 	ValidationErrors,
 	ValidatorFunction,
 } from './types';
 
 interface AccordionFormProps< T > {
-	sectionGenerator: () => (
-		props: sectionGeneratorReturnType< T >
+	generatedSections?: any[];
+	sectionGenerator?: () => (
+		props: SectionGeneratorReturnType< T >
 	) => AccordionSectionProps< T >[];
 	currentIndex: number;
 	updateCurrentIndex: ( index: number ) => void;
 	onSubmit: ( formValues: T ) => void;
 	formValuesInitialState: T;
-	updateFormValues: ( formValues: T ) => void;
+	updateFormValues?: ( formValues: T ) => void;
+	onErrorUpdates?: ( errors: any ) => void;
 }
 
 export default function AccordionForm< T >( {
@@ -26,6 +28,8 @@ export default function AccordionForm< T >( {
 	formValuesInitialState,
 	sectionGenerator,
 	onSubmit,
+	generatedSections,
+	onErrorUpdates,
 }: AccordionFormProps< T > ) {
 	const translate = useTranslate();
 	// Initialize local state with the values from the redux store
@@ -48,7 +52,14 @@ export default function AccordionForm< T >( {
 		Record< string, boolean >
 	>( isSectionAtIndexTouchedInitialState );
 
-	const sections = sectionGenerator()( { translate, formValues, formErrors, onChangeField } );
+	const sections = sectionGenerator
+		? sectionGenerator()( {
+				translate,
+				formValues,
+				formErrors,
+				onChangeField,
+		  } )
+		: generatedSections ?? [];
 
 	const runValidatorAndSetFormErrors = ( validator: ValidatorFunction< T > ) => {
 		const validationResult = validator( formValues );
@@ -56,6 +67,11 @@ export default function AccordionForm< T >( {
 			...formErrors,
 			...validationResult.errors,
 		} );
+		onErrorUpdates &&
+			onErrorUpdates( {
+				...formErrors,
+				...validationResult.errors,
+			} );
 		return validationResult;
 	};
 
@@ -77,12 +93,12 @@ export default function AccordionForm< T >( {
 
 	const onOpen = ( currentIndex: number ) => {
 		updateCurrentIndex( currentIndex );
-		updateFormValues( formValues );
+		updateFormValues && updateFormValues( formValues );
 		setIsSectionAtIndexTouched( { ...isSectionAtIndexTouched, [ `${ currentIndex }` ]: true } );
 	};
 
 	const onNext = ( validator?: ValidatorFunction< T > ) => {
-		updateFormValues( formValues );
+		updateFormValues && updateFormValues( formValues );
 
 		if ( validator ) {
 			const validationResult = runValidatorAndSetFormErrors( validator );

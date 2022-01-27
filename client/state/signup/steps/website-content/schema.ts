@@ -10,6 +10,9 @@ export const schema = {
 			pageData: {
 				type: 'object',
 				properties: {
+					id: {
+						type: 'string',
+					},
 					title: {
 						type: 'string',
 					},
@@ -28,10 +31,17 @@ export const schema = {
 	},
 };
 
+export interface ImageData {
+	caption: string;
+	url: string;
+	uploadID?: string;
+}
+
 export interface PageData {
+	id: string;
 	title: string;
 	content: string;
-	images: Array< string >;
+	images: Array< ImageData >;
 }
 
 export type WebsiteContent = Array< PageData >;
@@ -42,21 +52,41 @@ export interface WebsiteContentCollection {
 
 export const initialState: WebsiteContentCollection = {
 	currentIndex: 0,
+	websiteContent: [],
+};
+
+export const initialTestState: WebsiteContentCollection = {
+	currentIndex: 0,
 	websiteContent: [
 		{
-			title: 'Home',
+			id: 'Home',
+			title: 'Homepage',
 			content: '',
-			images: [],
+			images: [
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+			],
 		},
 		{
-			title: 'About',
+			id: 'About',
+			title: 'Information About You',
 			content: '',
-			images: [],
+			images: [
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+			],
 		},
 		{
-			title: 'Contact',
+			id: 'Contact',
+			title: 'Contact Info',
 			content: '',
-			images: [],
+			images: [
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+			],
 		},
 	],
 };
