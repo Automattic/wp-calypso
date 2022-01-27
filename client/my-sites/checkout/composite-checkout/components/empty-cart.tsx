@@ -4,8 +4,9 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
-export default function EmptyCart(): JSX.Element {
+export function EmptyCart(): JSX.Element {
 	const reduxDispatch = useDispatch();
 	const previousPath = useSelector( getPreviousPath );
 	const referrer = window?.document?.referrer ?? '';
@@ -43,4 +44,35 @@ function EmptyCartExplanation(): JSX.Element {
 			) }
 		</>
 	);
+}
+
+export function shouldShowEmptyCartPage( {
+	responseCart,
+	areWeRedirecting,
+	areThereErrors,
+	isCartPendingUpdate,
+	isInitialCartLoading,
+}: {
+	responseCart: ResponseCart;
+	areWeRedirecting: boolean;
+	areThereErrors: boolean;
+	isCartPendingUpdate: boolean;
+	isInitialCartLoading: boolean;
+} ): boolean {
+	if ( responseCart.products.length > 0 ) {
+		return false;
+	}
+	if ( areWeRedirecting ) {
+		return false;
+	}
+	if ( areThereErrors ) {
+		return true;
+	}
+	if ( isCartPendingUpdate ) {
+		return false;
+	}
+	if ( isInitialCartLoading ) {
+		return false;
+	}
+	return true;
 }
