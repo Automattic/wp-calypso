@@ -192,13 +192,9 @@ export default {
 		next();
 	},
 
-	saveInitialContext( newContext, next ) {
-		if (
-			! initialContext ||
-			// Reset initialContext when site query param changes between old context and new.
-			( newContext?.query?.site && newContext.query.site !== initialContext?.query?.site )
-		) {
-			initialContext = Object.assign( {}, newContext );
+	saveInitialContext( context, next ) {
+		if ( ! initialContext ) {
+			initialContext = Object.assign( {}, context );
 		}
 
 		next();
@@ -290,6 +286,11 @@ export default {
 			flowName,
 			userLoggedIn
 		);
+
+		// Update initialContext to help woocommerce-install support site switching.
+		if ( 'woocommerce-install' === flowName ) {
+			initialContext = context;
+		}
 
 		const { query } = initialContext;
 
