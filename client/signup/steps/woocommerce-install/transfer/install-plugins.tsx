@@ -21,7 +21,7 @@ export default function InstallPlugins( {
 	onFailure,
 	trackRedirect,
 }: {
-	onFailure: ( type: string ) => void;
+	onFailure: ( type: any ) => void;
 	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
@@ -56,7 +56,11 @@ export default function InstallPlugins( {
 			return;
 		}
 
-		onFailure( 'install' );
+		onFailure( {
+			type: 'install',
+			error: softwareError?.message,
+			code: softwareError?.code,
+		} );
 	}, [ softwareError, onFailure ] );
 
 	// Timeout threshold for the install to complete.
