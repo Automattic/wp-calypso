@@ -2676,4 +2676,43 @@ describe( '#shouldShowTryAndCustomize', () => {
 		);
 		expect( showTryAndCustomize ).to.be.false;
 	} );
+
+	test( 'should not show Try & Customize action for premium theme unavailable to Jetpack site', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						77203074: { edit_theme_options: true },
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { mood },
+						} ),
+					},
+				},
+				purchases: {
+					data: [],
+				},
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true,
+						},
+					},
+					plans: {
+						77203074: {
+							data: [],
+						},
+					},
+				},
+			},
+			'mood',
+			77203074
+		);
+		expect( showTryAndCustomize ).to.be.false;
+	} );
 } );
