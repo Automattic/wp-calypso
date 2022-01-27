@@ -68,22 +68,20 @@ export class ReaderSidebarOrganizationsList extends Component {
 			return acc;
 		}, 0 );
 		return (
-			<>
-				<SidebarItem
-					link={ '/read/' + organization.slug + '/unread' }
-					key={ translate( 'Unread' ) }
-					label={ translate( 'Unread' ) }
-					className={ ReaderSidebarHelper.itemLinkClass(
-						'/read/' + organization.slug + '/unread',
-						path,
-						{
-							'sidebar-streams__unread': true,
-						}
-					) }
-				>
-					{ sum > 0 && <Count count={ sum } compact /> }
-				</SidebarItem>
-			</>
+			<SidebarItem
+				link={ '/read/' + organization.slug + '/unread' }
+				key={ translate( 'Unread' ) }
+				label={ translate( 'Unread' ) }
+				className={ ReaderSidebarHelper.itemLinkClass(
+					'/read/' + organization.slug + '/unread',
+					path,
+					{
+						'sidebar-streams__unread': true,
+					}
+				) }
+			>
+				{ sum > 0 && <Count count={ sum } compact /> }
+			</SidebarItem>
 		);
 	}
 
