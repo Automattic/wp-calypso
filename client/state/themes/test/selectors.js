@@ -93,7 +93,6 @@ const quadrat = {
 	name: 'Quadrat',
 	author: 'Automattic',
 	screenshot: 'quadrat.jpg',
-	price: '$50',
 	stylesheet: 'premium/quadrat',
 	template: 'blockbase-premium',
 	demo_uri: 'https://quadratdemo.wordpress.com/',
@@ -2536,7 +2535,7 @@ describe( '#areRecommendedThemesLoading', () => {
 } );
 
 describe( '#shouldShowTryAndCustomize', () => {
-	test( 'should hide Try & Customize action when user does not have permissions', () => {
+	test( 'should not show Try & Customize action when user does not have permissions', () => {
 		const showTryAndCustomize = shouldShowTryAndCustomize(
 			{
 				currentUser: {
@@ -2551,7 +2550,7 @@ describe( '#shouldShowTryAndCustomize', () => {
 		expect( showTryAndCustomize ).to.be.false;
 	} );
 
-	test( 'should hide Try & Customize when logged out', () => {
+	test( 'should not show Try & Customize when logged out', () => {
 		const showTryAndCustomize = shouldShowTryAndCustomize(
 			{
 				currentUser: {
@@ -2572,7 +2571,7 @@ describe( '#shouldShowTryAndCustomize', () => {
 		expect( showTryAndCustomize ).to.be.false;
 	} );
 
-	test( 'should hide Try & Customize for the currently active theme', () => {
+	test( 'should not show Try & Customize for the currently active theme', () => {
 		const showTryAndCustomize = shouldShowTryAndCustomize(
 			{
 				currentUser: {
@@ -2583,14 +2582,14 @@ describe( '#shouldShowTryAndCustomize', () => {
 				themes: {
 					queries: {},
 					activeThemes: {
-						2916284: 'quadrat',
+						2916284: 'twentynineteen',
 					},
 				},
 				sites: {
 					items: {},
 				},
 			},
-			'quadrat',
+			'twentynineteen',
 			2916284
 		);
 		expect( showTryAndCustomize ).to.be.false;
