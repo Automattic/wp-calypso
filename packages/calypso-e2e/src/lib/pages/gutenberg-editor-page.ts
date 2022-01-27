@@ -337,23 +337,6 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Verify that an entry with the expected name is shown in the
-	 * block inserter search result.
-	 *
-	 * @param {string} text Text to search.
-	 * @returns {boolean} True if an entry with exact name match is found. False otherwise.
-	 */
-	async validateBlockShownInResult( text: string ): Promise< boolean > {
-		const frame = await this.getEditorFrame();
-
-		const elementHandle = await frame.waitForSelector(
-			`${ selectors.blockInserterResultItem } span:text("${ text }")`,
-			{ timeout: 15 * 1000 }
-		);
-		return Boolean( elementHandle );
-	}
-
-	/**
 	 * @returns Whether the Settings sidebar is open or not.
 	 */
 	async isSettingsSidebarOpen(): Promise< boolean > {
@@ -468,7 +451,7 @@ export class GutenbergEditorPage {
 		const frame = await this.getEditorFrame();
 
 		await Promise.all( [
-			this.page.waitForNavigation( { url } ),
+			this.page.waitForNavigation( { url: url, waitUntil: 'domcontentloaded' } ),
 			frame.click( selectors.viewButton ),
 		] );
 
@@ -487,7 +470,7 @@ export class GutenbergEditorPage {
 		 * @param page
 		 */
 		async function confirmPostShown( page: Page ): Promise< void > {
-			await page.waitForSelector( '.entry-content', { timeout: 5 * 1000 } );
+			await page.waitForSelector( '.entry-content', { timeout: 15 * 1000 } );
 		}
 	}
 
