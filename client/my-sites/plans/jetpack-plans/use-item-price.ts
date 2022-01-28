@@ -129,6 +129,7 @@ const useItemPrice = (
 		? sitePrices.isFetching
 		: listPrices.isFetching || introductoryOfferPrices.isFetching;
 	const itemCost = siteId ? sitePrices.itemCost : listPrices.itemCost;
+	const monthlyItemCost = siteId ? sitePrices.monthlyItemCost : listPrices.monthlyItemCost;
 
 	const priceTierList = useMemo(
 		() => ( siteId ? sitePrices.priceTierList : listPrices.priceTierList ),
@@ -149,7 +150,7 @@ const useItemPrice = (
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( item.term !== TERM_MONTHLY ) {
-			originalPrice = getMonthlyPrice( itemCost );
+			originalPrice = monthlyItemCost ?? getMonthlyPrice( itemCost );
 			discountedPrice = introductoryOfferPrices.introOfferCost
 				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
 				: undefined;
