@@ -305,6 +305,11 @@ export default function WPCheckout( {
 				<NonCheckoutContentWrapper>
 					<NonCheckoutContentInnerWrapper>
 						<CheckoutCompleteRedirecting />
+						<SubmitButtonWrapper>
+							<Button buttonType="primary" fullWidth isBusy disabled>
+								{ translate( 'Please wait…' ) }
+							</Button>
+						</SubmitButtonWrapper>
 					</NonCheckoutContentInnerWrapper>
 				</NonCheckoutContentWrapper>
 			</MainContentWrapper>

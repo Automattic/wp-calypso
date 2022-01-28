@@ -8,7 +8,6 @@ export function CheckoutCompleteRedirecting(): JSX.Element {
 			isStepActive={ false }
 			isStepComplete={ true }
 			titleContent={ <CheckoutCompleteRedirectingTitle /> }
-			completeStepContent={ <CheckoutCompleteRedirectingContent /> }
 		/>
 	);
 }
@@ -16,9 +15,4 @@ export function CheckoutCompleteRedirecting(): JSX.Element {
 function CheckoutCompleteRedirectingTitle(): JSX.Element {
 	const translate = useTranslate();
 	return <>{ translate( 'Your purchase has been completed!' ) }</>;
-}
-
-function CheckoutCompleteRedirectingContent(): JSX.Element {
-	const translate = useTranslate();
-	return <>{ translate( 'Please wait…' ) }</>;
 }
