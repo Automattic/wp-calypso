@@ -219,7 +219,7 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 	const getFragment = () => {
 		switch ( currentSection ) {
 			case GUTENBERG:
-				return '/post';
+				return currentRoute;
 			case NOTES:
 				return '/notifications';
 			case READER:
