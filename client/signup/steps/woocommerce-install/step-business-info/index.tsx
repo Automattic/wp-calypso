@@ -205,7 +205,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ): Reac
 										},
 									] }
 									onChange={ updateOtherPlatform }
-									required
 								/>
 
 								{ getProfileValue( 'other_platform' ) === 'other' && (
