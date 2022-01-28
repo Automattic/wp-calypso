@@ -11,7 +11,7 @@ function P2SignupProcessingScreen() {
 			</div>
 
 			<div className="p2-processing-screen__text">
-				{ translate( '{{h2}}Hooray!{{/h2}} {{p}}Your new P2 is almost ready.{{/p}}', {
+				{ translate( '{{h2}}Hooray!{{/h2}} {{p}}Your new P2 workspace is almost ready.{{/p}}', {
 					components: {
 						// eslint-disable-next-line jsx-a11y/heading-has-content
 						h2: <h2 />,
