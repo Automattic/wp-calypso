@@ -754,11 +754,9 @@ export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	return transactionsEndpoint;
 }
 
-export function setMockLocation( mockLocation ) {
-	jest.spyOn( window, 'location', 'get' ).mockReturnValue( {
-		...window.location,
-		...mockLocation,
-	} );
+export function setMockLocation( url ) {
+	const location = new URL( url );
+	jest.spyOn( window, 'location', 'get' ).mockReturnValue( location );
 }
 
 export const mockCreateAccountSiteNotCreatedResponse = () => [ 200, { success: true } ];
