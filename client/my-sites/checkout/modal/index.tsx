@@ -87,7 +87,6 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 						// Custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
 						redirectTo={ redirectTo || previousRoute }
 						customizedPreviousPath={ previousRoute }
-						customizedCancelUrl={ window.location.href }
 						isInModal
 						disabledThankYouPage
 						onAfterPaymentComplete={ handleAfterPaymentComplete }
