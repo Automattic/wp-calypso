@@ -9,14 +9,14 @@ export default function buildConnection() {
 	// Async load the connection library and return a promise with its default export.
 	// That's a factory function that creates and returns the `Connection` class instance.
 	function importConnectionLib() {
-		return new Promise( ( resolve ) =>
-			asyncRequire( 'calypso/lib/happychat/connection', resolve )
-		);
+		return import( 'calypso/lib/happychat/connection' );
 	}
 
 	function getConnection() {
 		if ( ! connection ) {
-			connection = importConnectionLib().then( ( createConnection ) => createConnection() );
+			connection = importConnectionLib().then( ( { default: createConnection } ) =>
+				createConnection()
+			);
 		}
 		return connection;
 	}

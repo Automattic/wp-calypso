@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
-import { openChat as openHappychat } from 'calypso/state/happychat/ui/actions';
 import { initialize as initializeDirectly } from 'calypso/state/help/directly/actions';
 import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
 import {
@@ -68,6 +67,5 @@ export default connect(
 	} ),
 	{
 		initializeDirectly,
-		openHappychat,
 	}
 )( QueryInlineHelpSupportTypes );

@@ -1,7 +1,7 @@
 import { Popover } from '@automattic/components';
 import InlineHelpPopoverContent from './popover-content';
 
-export default function InlineHelpPopover( { context, onClose, setDialogState } ) {
+export default function InlineHelpPopover( { context, onClose, showVideoResult } ) {
 	return (
 		<Popover
 			isVisible
@@ -10,7 +10,7 @@ export default function InlineHelpPopover( { context, onClose, setDialogState } 
 			context={ context }
 			className="inline-help__popover"
 		>
-			<InlineHelpPopoverContent onClose={ onClose } setDialogState={ setDialogState } />
+			<InlineHelpPopoverContent onClose={ onClose } showVideoResult={ showVideoResult } />
 		</Popover>
 	);
 }

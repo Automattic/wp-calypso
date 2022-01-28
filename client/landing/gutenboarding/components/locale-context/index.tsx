@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { LocaleProvider } from '@automattic/i18n-utils';
+import { getLanguageSlugs } from '@automattic/languages';
 import { subscribe, select } from '@wordpress/data';
 import { defaultI18n, LocaleData } from '@wordpress/i18n';
 import { I18nProvider } from '@wordpress/react-i18n';
 import * as React from 'react';
-import { getLanguageSlugs } from '../../../../lib/i18n-utils';
 import {
 	getLanguageFile,
 	getLanguageManifestFile,

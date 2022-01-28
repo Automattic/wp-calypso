@@ -6,7 +6,7 @@ import { shallow } from 'enzyme';
 import { getLocaleSlug } from 'i18n-calypso';
 import { LocaleSuggestions } from '../';
 
-jest.mock( 'calypso/lib/i18n-utils', () => ( { addLocaleToPath: ( locale ) => locale } ) );
+jest.mock( 'calypso/lib/i18n-utils/path', () => ( { addLocaleToPath: ( locale ) => locale } ) );
 jest.mock( 'i18n-calypso', () => ( { getLocaleSlug: jest.fn( () => '' ) } ) );
 
 jest.mock( 'calypso/components/notice', () => ( props ) => [ ...props.children ] );

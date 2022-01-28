@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
+import { getLanguage } from '@automattic/languages';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -17,7 +18,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import Notice from 'calypso/components/notice';
 import Timezone from 'calypso/components/timezone';
-import { getLanguage } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateConciergeSignupForm } from 'calypso/state/concierge/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';

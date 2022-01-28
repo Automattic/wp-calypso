@@ -1,10 +1,7 @@
 import config from '@automattic/calypso-config';
+import { getLanguageSlugs, isTranslatedIncompletely } from '@automattic/languages';
 import i18n from 'i18n-calypso';
-import {
-	getLanguageSlugs,
-	isDefaultLocale,
-	isTranslatedIncompletely,
-} from 'calypso/lib/i18n-utils';
+import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 import { initLanguageEmpathyMode } from 'calypso/lib/i18n-utils/empathy-mode';
 import { loadUserUndeployedTranslations } from 'calypso/lib/i18n-utils/switch-locale';
 import { LOCALE_SET } from 'calypso/state/action-types';

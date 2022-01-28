@@ -1,6 +1,7 @@
 import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { getLanguageSlugs } from '@automattic/languages';
 import debugFactory from 'debug';
 import page from 'page';
 import ReactDom from 'react-dom';
@@ -15,7 +16,6 @@ import { tracksEvents } from 'calypso/lib/analytics/tracks';
 import Logger from 'calypso/lib/catch-js-errors';
 import DesktopListeners from 'calypso/lib/desktop-listeners';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
-import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { attachLogmein } from 'calypso/lib/logmein';
 import { getToken } from 'calypso/lib/oauth-token';

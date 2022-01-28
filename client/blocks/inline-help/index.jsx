@@ -5,9 +5,8 @@ import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, Suspense, lazy } from 'react';
 import { connect } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
@@ -25,13 +24,9 @@ const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
 	: null;
 const debug = debugFactory( 'calypso:inline-help' );
 
-const InlineHelpPopover = ( props ) => (
-	<AsyncLoad { ...props } require="calypso/blocks/inline-help/popover" placeholder={ null } />
-);
+const InlineHelpPopover = lazy( () => import( 'calypso/blocks/inline-help/popover' ) );
 
-const InlineHelpDialog = ( props ) => (
-	<AsyncLoad { ...props } require="calypso/blocks/inline-help/dialog" placeholder={ null } />
-);
+const InlineHelpDialog = lazy( () => import( 'calypso/blocks/inline-help/dialog' ) );
 
 class InlineHelp extends Component {
 	static propTypes = {
@@ -43,7 +38,9 @@ class InlineHelp extends Component {
 		isPopoverVisible: false,
 	};
 
-	state = {};
+	state = {
+		videoLink: null,
+	};
 
 	componentDidMount() {
 		if ( globalKeyboardShortcuts ) {
@@ -68,7 +65,7 @@ class InlineHelp extends Component {
 	// Preload the async chunk on mouse hover or touch start
 	preload = () => {
 		if ( ! this.preloaded ) {
-			asyncRequire( 'calypso/blocks/inline-help/popover' );
+			import( 'calypso/blocks/inline-help/popover' );
 			this.preloaded = true;
 		}
 	};
@@ -101,19 +98,13 @@ class InlineHelp extends Component {
 		this.inlineHelpToggle = node;
 	};
 
-	// @TODO: Instead of prop drilling this should be done via redux
-	setDialogState = ( { showDialog, videoLink = null, dialogType } ) =>
-		this.setState( {
-			showDialog,
-			videoLink,
-			dialogType,
-		} );
+	showVideoResult = ( videoLink ) => this.setState( { videoLink } );
 
-	closeDialog = () => this.setState( { showDialog: false } );
+	closeVideoResult = () => this.setState( { videoLink: null } );
 
 	render() {
 		const { translate, isPopoverVisible } = this.props;
-		const { showDialog, videoLink, dialogType } = this.state;
+		const { videoLink } = this.state;
 		const inlineHelpButtonClasses = {
 			'inline-help__button': true,
 			'is-active': isPopoverVisible,
@@ -134,23 +125,23 @@ class InlineHelp extends Component {
 					<Gridicon icon={ ! isPopoverVisible ? 'help' : 'cross-circle' } size={ 48 } />
 				</Button>
 				{ isPopoverVisible && (
-					<InlineHelpPopover
-						context={ this.inlineHelpToggle }
-						onClose={ this.closeInlineHelp }
-						setDialogState={ this.setDialogState }
-					/>
+					<Suspense fallback={ null }>
+						<InlineHelpPopover
+							context={ this.inlineHelpToggle }
+							onClose={ this.closeInlineHelp }
+							showVideoResult={ this.showVideoResult }
+						/>
+					</Suspense>
 				) }
 				{ isWithinBreakpoint( '<660px' ) && isPopoverVisible && (
 					<RootChild>
 						<div className="inline-help__mobile-overlay"></div>
 					</RootChild>
 				) }
-				{ showDialog && (
-					<InlineHelpDialog
-						dialogType={ dialogType }
-						videoLink={ videoLink }
-						onClose={ this.closeDialog }
-					/>
+				{ videoLink && (
+					<Suspense fallback={ null }>
+						<InlineHelpDialog videoLink={ videoLink } onClose={ this.closeDialog } />
+					</Suspense>
 				) }
 			</div>
 		);
