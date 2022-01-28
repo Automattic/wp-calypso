@@ -88,7 +88,7 @@ class TitanManageMailboxes extends Component {
 		text,
 	} );
 
-	getManagedItems = () => {
+	getNavigationItems = () => {
 		const { translate } = this.props;
 		const isDisabled = ! this.state.isDesktop;
 
@@ -203,12 +203,12 @@ class TitanManageMailboxes extends Component {
 
 					{ hasSubscription && (
 						<VerticalNav>
-							{ this.getManagedItems().map( ( navProps ) => (
+							{ this.getNavigationItems().map( ( navigationItem ) => (
 								<VerticalNavItemEnhanced
 									className="titan-manage-mailboxes__manage-titan-link"
 									external
-									key={ navProps.path }
-									{ ...navProps }
+									key={ navigationItem.path }
+									{ ...navigationItem }
 								/>
 							) ) }
 						</VerticalNav>
