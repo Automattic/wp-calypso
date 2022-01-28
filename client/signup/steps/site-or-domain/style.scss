@@ -10,6 +10,11 @@
 			color: var( --studio-green-60 );
 		}
 	}
+  .select-items__item-info-wrapper {
+    @include break-mobile {
+      align-items: center;
+    }
+  }
 }
 
 .site-or-domain__choice {
