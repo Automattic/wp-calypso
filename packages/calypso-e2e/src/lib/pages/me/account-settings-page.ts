@@ -90,5 +90,6 @@ export class AccountSettingsPage {
 		await this.page.fill( selectors.uiLanguageSearch, localeSlug );
 		await this.page.click( selectors.uiLanguageItem( localeSlug ) );
 		await this.page.click( selectors.uiLanguageApplyButton );
+		await this.page.waitForLoadState();
 	}
 }

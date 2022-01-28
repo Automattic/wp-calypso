@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
 
 const selectors = {
@@ -33,6 +34,16 @@ export class UserSignupPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Navigates to the /start endpoint.
+	 *
+	 * @param {{path: string}: string } param1 Key/value pair of the path to be appended to /start. E.g. /start/premium is the premium plan signup flow.
+	 */
+	async visit( { path }: { path: string } = { path: '' } ): Promise< void > {
+		const targetUrl = path ? `start/${ path }` : 'start';
+		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
 	}
 
 	/**

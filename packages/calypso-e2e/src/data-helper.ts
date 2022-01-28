@@ -149,6 +149,25 @@ export function getAccountSiteURL(
 }
 
 /**
+ * Returns the bearer token of the user allowed to make media uploads to the ToS media upload destination wpcomtos.wordpress.com.
+ *
+ * @returns {string} Bearer token for the user allowed to make uploads.
+ * @throws {Error} If the bearer token is missing in the config file.
+ */
+export function getTosUploadToken(): string {
+	const uploadCredentials: { [ key: string ]: string } = config.get(
+		'martechTosUploadCredentials'
+	);
+	if ( ! Object.keys( uploadCredentials ).includes( 'bearer_token' ) ) {
+		throw new Error(
+			'Secrets file did not contain the bearer token for the ToS media destination'
+		);
+	}
+	const bearerToken = uploadCredentials[ 'bearer_token' ];
+	return bearerToken;
+}
+
+/**
  * Returns a new test email address with the domain name `mailosaur.io` within a specific inbox.
  *
  * @param param0 Keyed parameter object.
