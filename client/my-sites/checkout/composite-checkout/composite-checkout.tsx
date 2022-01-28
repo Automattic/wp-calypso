@@ -38,7 +38,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
-import getPreviousPath from 'calypso/state/selectors/get-previous-path';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -138,7 +138,7 @@ export default function CompositeCheckout( {
 	/** Customized cancel url for PayPal */
 	customizedCancelUrl?: string;
 } ): JSX.Element {
-	const previousPath = useSelector( getPreviousPath );
+	const previousPath = useSelector( getPreviousRoute );
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
 		useSelector(
