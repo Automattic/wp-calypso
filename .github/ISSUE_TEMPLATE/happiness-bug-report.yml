@@ -121,6 +121,7 @@ body:
         ---
 
         | ↓ Blocking Level/Visibility →| All users | Most users (>%50) | Some users (<50%) | One user |
+        | --- | --- | --- | --- | --- |
         | Platform unusable | [Pri] BLOCKER | [Pri] BLOCKER | [Pri] BLOCKER | [Pri] High |
         | Hard blocking, no workaround | [Pri] High | [Pri] High | [Pri] High | [Pri] High |
         | Difficult workaround | [Pri] High | [Pri] Normal | [Pri] Normal | [Pri] Normal |
