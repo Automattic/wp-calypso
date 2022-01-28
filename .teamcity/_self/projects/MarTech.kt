@@ -7,7 +7,6 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
-import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 
 object MarTech : Project({
@@ -19,14 +18,6 @@ object MarTech : Project({
 		param("docker_image", "%docker_image_e2e%")
 	}
 
-	features {
-		buildReportTab {
-			title = "VR Report"
-			startPage= "vr-report.zip!vr-report.zip!/test/visual/backstop_data/html_report/index.html"
-		}
-	}
-
-	// Keep the previous ID in order to preserve the historical data
 	buildType(ToSAcceptanceTracking)
 })
 
@@ -110,9 +101,8 @@ object ToSAcceptanceTracking: BuildType ({
 
 	triggers {
 		schedule {
-			schedulingPolicy = daily {
-				// Time in UTC. Roughly EU mid day, before US starts
-				hour = 11
+			schedulingPolicy = cron {
+				hour = '*/3'
 			}
 			branchFilter = """
 				+:trunk
