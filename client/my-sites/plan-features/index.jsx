@@ -346,7 +346,7 @@ export class PlanFeatures extends Component {
 		let buttonText = null;
 		let forceDisplayButton = false;
 
-		if ( redirectToAddDomainFlow ) {
+		if ( redirectToAddDomainFlow === true ) {
 			buttonText = translate( 'Add to Cart' );
 			forceDisplayButton = true;
 		}
@@ -591,7 +591,7 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
-		if ( redirectToAddDomainFlow ) {
+		if ( redirectToAddDomainFlow === true ) {
 			// In this flow, we add the product to the cart directly and then
 			// redirect to the "add a domain" page.
 			shoppingCartManager
