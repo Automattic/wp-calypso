@@ -1,7 +1,7 @@
 import { isYearly, isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
-	CheckoutStepAreaWrapper,
+	MainContentWrapper,
 	SubmitButtonWrapper,
 	Button,
 	useTransactionStatus,
@@ -301,9 +301,13 @@ export default function WPCheckout( {
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
 		return (
-			<CheckoutStepAreaWrapper>
-				<CheckoutCompleteRedirecting />
-			</CheckoutStepAreaWrapper>
+			<MainContentWrapper>
+				<NonCheckoutContentWrapper>
+					<NonCheckoutContentInnerWrapper>
+						<CheckoutCompleteRedirecting />
+					</NonCheckoutContentInnerWrapper>
+				</NonCheckoutContentWrapper>
+			</MainContentWrapper>
 		);
 	}
 
@@ -318,14 +322,18 @@ export default function WPCheckout( {
 	) {
 		debug( 'rendering empty cart page' );
 		return (
-			<CheckoutStepAreaWrapper>
-				<EmptyCart />
-				<SubmitButtonWrapper>
-					<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
-						{ translate( 'Go back' ) }
-					</Button>
-				</SubmitButtonWrapper>
-			</CheckoutStepAreaWrapper>
+			<MainContentWrapper>
+				<NonCheckoutContentWrapper>
+					<NonCheckoutContentInnerWrapper>
+						<EmptyCart />
+						<SubmitButtonWrapper>
+							<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
+								{ translate( 'Go back' ) }
+							</Button>
+						</SubmitButtonWrapper>
+					</NonCheckoutContentInnerWrapper>
+				</NonCheckoutContentWrapper>
+			</MainContentWrapper>
 		);
 	}
 
@@ -722,5 +730,31 @@ const SubmitButtonHeaderWrapper = styled.div`
 		&:hover {
 			color: ${ ( props ) => props.theme.colors.highlightOver };
 		}
+	}
+`;
+
+const NonCheckoutContentWrapper = styled.div`
+	display: flex;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		align-items: flex-start;
+		flex-direction: row;
+		justify-content: center;
+		width: 100%;
+	}
+`;
+
+const NonCheckoutContentInnerWrapper = styled.div`
+	background: ${ ( props ) => props.theme.colors.surface };
+	width: 100%;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		max-width: 556px;
+		margin: 0 auto;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		margin: 0;
 	}
 `;
