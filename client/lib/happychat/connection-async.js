@@ -10,7 +10,7 @@ export default function buildConnection() {
 	// That's a factory function that creates and returns the `Connection` class instance.
 	function importConnectionLib() {
 		return import(
-			/* webpackChunkName: async-load-calypso-lib-happychat-connection */ 'calypso/lib/happychat/connection'
+			/* webpackChunkName: "async-load-calypso-lib-happychat-connection" */ 'calypso/lib/happychat/connection'
 		);
 	}
 
