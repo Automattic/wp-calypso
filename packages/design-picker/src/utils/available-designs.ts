@@ -16,18 +16,28 @@ export const getDesignUrl = (
 	const template = encodeURIComponent( design.template );
 
 	// e.g. https://public-api.wordpress.com/rest/v1.1/template/demo/pub/rockfield/rockfield?font_headings=Playfair%20Display&font_base=Fira%20Sans&site_title=Rockfield&viewport_height=700&language=en
-	return addQueryArgs(
+	let url = addQueryArgs(
 		`https://public-api.wordpress.com/rest/v1.1/template/demo/${ repo }/${ theme }/${ template }`,
 		{
 			font_headings: design.fonts?.headings,
 			font_base: design.fonts?.base,
-			site_title: design.title,
 			viewport_height: 700,
 			language: locale,
 			use_screenshot_overrides: true,
 			...options,
 		}
 	);
+
+	if ( design.title ) {
+		// The design url is sometimes used in a `background-image: url()` CSS rule and unescaped
+		// parentheses in the URL break it. `addQueryArgs` and `encodeURIComponent` don't escape
+		// parentheses so we've got to do it ourselves.
+		url +=
+			'&site_title=' +
+			encodeURIComponent( design.title ).replace( '(', '%28' ).replace( ')', '%29' );
+	}
+
+	return url;
 };
 
 // Used for both prefetching and loading design screenshots
