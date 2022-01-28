@@ -44,6 +44,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 		const { currentTheme, currentThemeId, siteId, translate } = this.props;
 		const placeholderText = <span className="current-theme__placeholder">loading...</span>;
 		const text = currentTheme && currentTheme.name ? currentTheme.name : placeholderText;
+		const description = currentTheme && currentTheme.description ? currentTheme.description : '';
 
 		const options = pickBy(
 			this.props.options,
@@ -65,7 +66,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 							{ showScreenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
 							{ showScreenshot && (
 								<img
-									src={ currentTheme.screenshot + '&w=250' }
+									src={ currentTheme.screenshot + '&w=420' }
 									className="current-theme__img"
 									alt=""
 								/>
@@ -111,6 +112,26 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 									</div>
 								</div>
 							</div>
+						</div>
+						<div className="current-theme__more-info">
+							<p className="current-theme__theme-description">
+								<span>{ description }</span>
+							</p>
+							<a
+								className="current-theme__theme-description-link"
+								href={ options?.info?.getUrl( currentThemeId ) }
+							>
+								{ translate( 'Read more' ) }
+							</a>
+
+							<a
+								className="current-theme__theme-customize"
+								href={ options?.customize?.getUrl( currentThemeId ) }
+							>
+								<Gridicon icon={ options?.customize.icon } size={ 24 } />
+								<span>{ translate( 'Customize theme' ) }</span>
+								<Gridicon icon="chevron-right" size={ 24 } />
+							</a>
 						</div>
 					</div>
 				</div>
