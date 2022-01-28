@@ -102,7 +102,7 @@ object ToSAcceptanceTracking: BuildType ({
 	triggers {
 		schedule {
 			schedulingPolicy = cron {
-				hour = '*/3'
+				hours = "*/3"
 			}
 			branchFilter = """
 				+:trunk
