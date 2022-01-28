@@ -4,7 +4,7 @@ import { includes } from 'lodash';
 import {
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 	ALLOWED_SECTIONS,
-	isDismissed,
+	// isDismissed,
 	getCurrentSection,
 } from 'calypso/blocks/app-banner/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
@@ -50,8 +50,8 @@ export const shouldDisplayAppBanner = ( state: AppState ): boolean | undefined =
 		return false;
 	}
 
-	const dismissedUntil = getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE );
-	const dismissed = isDismissed( dismissedUntil, currentSection );
+	// const dismissedUntil = getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE );
+	const dismissed = false; // isDismissed( dismissedUntil, currentSection );
 
 	return isMobile() && ! isWpMobileApp() && ! dismissed;
 };
