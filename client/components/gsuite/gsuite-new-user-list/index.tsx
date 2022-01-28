@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, FunctionComponent, ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 import {
 	newUser,
 	GSuiteNewUser as NewUser,
@@ -9,10 +9,11 @@ import {
 } from 'calypso/lib/gsuite/new-users';
 import GSuiteNewUser from './new-user';
 import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
-interface Props {
+interface GSuiteNewUserListProps {
 	autoFocus?: boolean;
 	children?: ReactNode;
 	domains?: SiteDomain[];
@@ -22,9 +23,10 @@ interface Props {
 	onUsersChange: ( users: NewUser[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	users: NewUser[];
+	validatedMailboxUuids?: string[];
 }
 
-const GSuiteNewUserList: FunctionComponent< Props > = ( {
+const GSuiteNewUserList = ( {
 	autoFocus = false,
 	children,
 	domains,
@@ -33,8 +35,9 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 	onReturnKeyPress,
 	selectedDomainName,
 	showAddAnotherMailboxButton = true,
-	users,
-} ) => {
+	users = [],
+	validatedMailboxUuids = [],
+}: GSuiteNewUserListProps ): ReactElement => {
 	const translate = useTranslate();
 
 	const onUserValueChange = ( uuid: string ) => (
@@ -55,7 +58,6 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 
 			return changedUser;
 		} );
-
 		onUsersChange( validateUsers( changedUsers, extraValidation ) );
 	};
 
@@ -75,6 +77,7 @@ const GSuiteNewUserList: FunctionComponent< Props > = ( {
 				<Fragment key={ user.uuid }>
 					<GSuiteNewUser
 						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+						showAllErrors={ validatedMailboxUuids.includes( user.uuid ) }
 						domains={
 							domains ? domains.map( ( domain ) => domain.name ?? '' ) : [ selectedDomainName ]
 						}
