@@ -121,7 +121,18 @@ body:
         ---
 
         <br>
-  - type: dropdown
+  - type: markdown
+    attributes:
+      value: |
+        | A | All users | Most users (>%50) | Some users (<50%) | One user |
+        | Platform unusable | [Pri] BLOCKER | [Pri] BLOCKER | [Pri] BLOCKER | [Pri] High |
+        | Hard blocking, no workaround | [Pri] High | [Pri] High | [Pri] High | [Pri] High |
+        | Difficult workaround | [Pri] High | [Pri] Normal | [Pri] Normal | [Pri] Normal |
+        | Easy workaround | [Pri] Normal | [Pri] Normal | [Pri] Low | [Pri] Low |
+        | No user impact | [Pri] Normal | [Pri] Normal | [Pri] Low | [Pri] Low |
+
+        For the source, please refer to pciE2j-oG-p2.
+    - type: dropdown
     id: reproducibility
     attributes:
       label: Reproducibility
