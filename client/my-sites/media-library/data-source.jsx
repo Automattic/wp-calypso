@@ -63,6 +63,8 @@ export class MediaLibraryDataSource extends Component {
 				label: translate( 'Pexels free photos' ),
 				icon: <PexelsIcon className="gridicon" />, // eslint-disable-line wpcalypso/jsx-classname-namespace
 			} );
+		}
+		if ( config.isEnabled( 'external-media/openverse' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'openverse',
 				label: translate( 'Openverse free photos' ),
