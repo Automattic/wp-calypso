@@ -47,7 +47,7 @@ export default async function payPalProcessor(
 	const updatedQuery = new URLSearchParams( currentUrlQuery );
 	const successUrl = thankYouUrl.startsWith( 'http' ) ? thankYouUrl : currentBaseUrl + thankYouUrl;
 	if ( createUserAndSiteBeforeTransaction ) {
-		updatedQuery.append( 'cart', 'no-user' );
+		updatedQuery.set( 'cart', 'no-user' );
 	}
 	const updatedQueryString = updatedQuery.toString();
 	const cancelUrl = updatedQueryString.length
