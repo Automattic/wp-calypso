@@ -1,6 +1,11 @@
 import { isYearly, isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
+	MainContentWrapper,
+	SubmitButtonWrapper,
+	Button,
+	useTransactionStatus,
+	TransactionStatus,
 	Checkout,
 	CheckoutStep,
 	CheckoutStepArea,
@@ -21,7 +26,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
+import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
 	hasGoogleApps,
@@ -29,8 +34,11 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
+import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -38,7 +46,9 @@ import getContactDetailsType from '../lib/get-contact-details-type';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
+import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutHelpLink from './checkout-help-link';
+import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import PaymentMethodStep from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
@@ -126,6 +136,10 @@ export default function WPCheckout( {
 	showErrorMessageBriefly,
 	siteId,
 	siteUrl,
+	isRemovingProductFromCart,
+	areThereErrors,
+	isInitialCartLoading,
+	customizedPreviousPath,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changePlanLength: OnChangeItemVariant;
@@ -139,6 +153,10 @@ export default function WPCheckout( {
 	showErrorMessageBriefly: ( error: string ) => void;
 	siteId: number | undefined;
 	siteUrl: string | undefined;
+	isRemovingProductFromCart: boolean;
+	areThereErrors: boolean;
+	isInitialCartLoading: boolean;
+	customizedPreviousPath?: string;
 } ): JSX.Element {
 	const cartKey = useCartKey();
 	const {
@@ -268,6 +286,62 @@ export default function WPCheckout( {
 		? String( translate( 'Updating cart…' ) )
 		: String( translate( 'Please wait…' ) );
 
+	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
+	const previousPath = useSelector( getPreviousRoute );
+	const goToPreviousPage = () =>
+		leaveCheckout( {
+			siteSlug: siteUrl,
+			jetpackCheckoutBackUrl,
+			previousPath: customizedPreviousPath || previousPath,
+			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
+		} );
+
+	const { transactionStatus } = useTransactionStatus();
+
+	if ( transactionStatus === TransactionStatus.COMPLETE ) {
+		debug( 'rendering post-checkout redirecting page' );
+		return (
+			<MainContentWrapper>
+				<NonCheckoutContentWrapper>
+					<NonCheckoutContentInnerWrapper>
+						<CheckoutCompleteRedirecting />
+						<SubmitButtonWrapper>
+							<Button buttonType="primary" fullWidth isBusy disabled>
+								{ translate( 'Please wait…' ) }
+							</Button>
+						</SubmitButtonWrapper>
+					</NonCheckoutContentInnerWrapper>
+				</NonCheckoutContentWrapper>
+			</MainContentWrapper>
+		);
+	}
+
+	if (
+		shouldShowEmptyCartPage( {
+			responseCart,
+			areWeRedirecting: isRemovingProductFromCart,
+			areThereErrors,
+			isCartPendingUpdate,
+			isInitialCartLoading,
+		} )
+	) {
+		debug( 'rendering empty cart page' );
+		return (
+			<MainContentWrapper>
+				<NonCheckoutContentWrapper>
+					<NonCheckoutContentInnerWrapper>
+						<EmptyCart />
+						<SubmitButtonWrapper>
+							<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
+								{ translate( 'Go back' ) }
+							</Button>
+						</SubmitButtonWrapper>
+					</NonCheckoutContentInnerWrapper>
+				</NonCheckoutContentWrapper>
+			</MainContentWrapper>
+		);
+	}
+
 	return (
 		<Checkout>
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
@@ -372,7 +446,7 @@ export default function WPCheckout( {
 					{ contactDetailsType !== 'none' && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
-							isCompleteCallback={ () => {
+							isCompleteCallback={ async () => {
 								setShouldShowContactDetailsValidationErrors( true );
 								// Touch the fields so they display validation errors
 								touchContactFields();
@@ -661,5 +735,31 @@ const SubmitButtonHeaderWrapper = styled.div`
 		&:hover {
 			color: ${ ( props ) => props.theme.colors.highlightOver };
 		}
+	}
+`;
+
+const NonCheckoutContentWrapper = styled.div`
+	display: flex;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		align-items: flex-start;
+		flex-direction: row;
+		justify-content: center;
+		width: 100%;
+	}
+`;
+
+const NonCheckoutContentInnerWrapper = styled.div`
+	background: ${ ( props ) => props.theme.colors.surface };
+	width: 100%;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		max-width: 556px;
+		margin: 0 auto;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		margin: 0;
 	}
 `;
