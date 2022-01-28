@@ -118,8 +118,7 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 		const { noticeText, statusClass } = resolveDomainStatus( domain, null, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
-			email: null,
-		} as any );
+		} );
 
 		if ( noticeText && statusClass )
 			return (

@@ -74,6 +74,7 @@ export type ResponseDomain = {
 	hasZone: boolean;
 	isAutoRenewing: boolean;
 	isEligibleForInboundTransfer: boolean;
+	isIcannVerificationSuspended: boolean;
 	isLocked: boolean;
 	isPendingIcannVerification: boolean;
 	isPendingRenewal: boolean;
