@@ -61,7 +61,12 @@ import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
 import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSiteId, isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import {
+	getSiteId,
+	isCurrentPlanPaid,
+	getSitePlanSlug,
+	getSitePlanName,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
@@ -129,6 +134,8 @@ class Signup extends Component {
 		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
+		sitePlanName: PropTypes.string,
+		sitePlanSlug: PropTypes.string,
 		isPaidPlan: PropTypes.bool,
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
@@ -238,7 +245,7 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, signupDependencies, sitePlanSlug } = this.props;
+		const { flowName, stepName, signupDependencies, sitePlanName, sitePlanSlug } = this.props;
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
@@ -260,7 +267,14 @@ class Signup extends Component {
 		}
 
 		if ( sitePlanSlug !== prevProps.sitePlanSlug ) {
-			recordSignupPlanChange( flowName, stepName, prevProps.sitePlanSlug, sitePlanSlug );
+			recordSignupPlanChange(
+				flowName,
+				stepName,
+				prevProps.sitePlanName,
+				prevProps.sitePlanSlug,
+				sitePlanName,
+				sitePlanSlug
+			);
 		}
 	}
 
@@ -771,6 +785,7 @@ export default connect(
 			isNewishUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 			existingSiteCount: getCurrentUserSiteCount( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
+			sitePlanName: getSitePlanName( state, siteId ),
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
 			siteId,
