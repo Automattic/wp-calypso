@@ -26,7 +26,7 @@ export interface StepState {
 		url: string;
 	};
 	lastUpdated: number;
-	providedDependencies?: string[];
+	providedDependencies?: any;
 	status: 'completed' | 'processing' | 'pending' | 'in-progress' | 'invalid';
 	stepName: string;
 	wasSkipped?: boolean;

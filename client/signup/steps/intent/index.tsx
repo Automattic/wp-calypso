@@ -34,13 +34,15 @@ const EXTERNAL_FLOW: { [ key: string ]: string } = {
 	import: 'importer',
 };
 
+const getExcludeSteps = ( values: any ) => EXCLUDE_STEPS[ values?.intent ];
+
 export default function IntentStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { goToNextStep, stepName, queryObject } = props;
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
-	const branchSteps = useBranchSteps( stepName );
+	const branchSteps = useBranchSteps( stepName, getExcludeSteps );
 
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 	const canImport = useSelector( ( state ) =>
@@ -48,14 +50,16 @@ export default function IntentStep( props: Props ): React.ReactNode {
 	);
 
 	const submitIntent = ( intent: IntentFlag ) => {
-		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
+		const values = { intent };
+
+		recordTracksEvent( 'calypso_signup_intent_select', values );
 
 		if ( EXTERNAL_FLOW[ intent ] ) {
-			dispatch( submitSignupStep( { stepName }, { intent } ) );
+			dispatch( submitSignupStep( { stepName }, values ) );
 			page( getStepUrl( EXTERNAL_FLOW[ intent ], '', '', '', queryObject ) );
 		} else {
-			branchSteps( EXCLUDE_STEPS[ intent ] );
-			dispatch( submitSignupStep( { stepName }, { intent } ) );
+			branchSteps( values );
+			dispatch( submitSignupStep( { stepName }, values ) );
 			goToNextStep();
 		}
 	};

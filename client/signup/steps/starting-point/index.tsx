@@ -17,12 +17,14 @@ interface Props {
 	initialContext: any;
 }
 
-const EXCLUDE_STEPS: { [ key in StartingPointFlag ]: string[] } = {
+const EXCLUDE_STEPS: { [ key: string ]: string[] } = {
 	write: [ 'courses', 'design-setup-site' ],
 	courses: [ 'design-setup-site' ],
 	design: [ 'courses' ],
 	'skip-to-my-home': [ 'courses', 'design-setup-site' ],
 };
+
+const getExcludeSteps = ( values: any ) => EXCLUDE_STEPS[ values?.startingPoint ];
 
 export default function StartingPointStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
@@ -32,12 +34,13 @@ export default function StartingPointStep( props: Props ): React.ReactNode {
 		components: { br: <br /> },
 	} );
 	const subHeaderText = translate( "Don't worry. You can come back to these steps!" );
-	const branchSteps = useBranchSteps( stepName );
+	const branchSteps = useBranchSteps( stepName, getExcludeSteps );
 
 	const submitStartingPoint = ( startingPoint: StartingPointFlag ) => {
-		branchSteps( EXCLUDE_STEPS[ startingPoint ] );
+		const values = { startingPoint };
+		branchSteps( values );
 		recordTracksEvent( 'calypso_signup_starting_point_select', { starting_point: startingPoint } );
-		dispatch( submitSignupStep( { stepName }, { startingPoint } ) );
+		dispatch( submitSignupStep( { stepName }, values ) );
 		goToNextStep();
 	};
 

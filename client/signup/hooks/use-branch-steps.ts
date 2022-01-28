@@ -1,31 +1,33 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import flows from 'calypso/signup/config/flows';
 import { addExcludeSteps, removeExcludeSteps } from 'calypso/state/signup/flow/actions';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 
-type BranchSteps = ( excludeSteps: string[] ) => void;
+type GetExcludeSteps< Values > = ( values?: Values ) => string[];
 
-const memoExcludeSteps: { [ key: string ]: string[] } = {};
+type BranchSteps< Values > = ( values: Values ) => void;
 
 /**
  * This hook returns the function to do branch steps. Ensure this function is called before submitSignupStep
  * because we process all of the steps immediately after submitting.
  * Also, it will clean up the exclude steps when the component mounts as the user might go back a step
  */
-const useBranchSteps = ( stepName: string ): BranchSteps => {
+const useBranchSteps = < Values >(
+	stepName: string,
+	getExcludeSteps: GetExcludeSteps< Values >
+): BranchSteps< Values > => {
 	const dispatch = useDispatch();
-	const branchSteps = ( excludeSteps: string[] ) => {
+	const signupProgress = useSelector( getSignupProgress );
+	const branchSteps = ( values: Values ) => {
+		const excludeSteps = getExcludeSteps( values ) || [];
 		flows.excludeSteps( excludeSteps );
-		memoExcludeSteps[ stepName ] = excludeSteps;
 		dispatch( addExcludeSteps( excludeSteps ) );
 	};
 
 	const restoreBranchSteps = () => {
-		const excludeSteps = memoExcludeSteps[ stepName ] || [];
-		excludeSteps.forEach( ( step ) => {
-			flows.resetExcludedStep( step );
-		} );
-		delete memoExcludeSteps[ stepName ];
+		const excludeSteps = getExcludeSteps( signupProgress[ stepName ]?.providedDependencies ) || [];
+		excludeSteps.forEach( ( step ) => flows.resetExcludedStep( step ) );
 		dispatch( removeExcludeSteps( excludeSteps ) );
 	};
 
