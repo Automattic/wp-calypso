@@ -16,17 +16,17 @@ export default ( state = {}, { type, backups } ) => {
 	switch ( type ) {
 		case REWIND_BACKUPS_REQUEST:
 			return {
-				backups,
+				backups: state.backups,
 				requestStatus: 'pending',
 			};
 		case REWIND_BACKUPS_REQUEST_SUCCESS:
 			return {
-				backups,
+				backups: state.backups,
 				requestStatus: 'success',
 			};
 		case REWIND_BACKUPS_REQUEST_FAILURE:
 			return {
-				backups,
+				backups: state.backups,
 				requestStatus: 'failure',
 			};
 		case REWIND_BACKUPS_SET:
