@@ -691,8 +691,13 @@ export function generateSteps( {
 			apiRequestFunction: setDesignIfNewSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug', 'newOrExistingSiteChoice' ],
-			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory', 'isLetUsChooseSelected' ],
-			optionalDependencies: [ 'selectedDesign', 'isLetUsChooseSelected' ],
+			providesDependencies: [
+				'isFSEActive',
+				'selectedDesign',
+				'selectedSiteCategory',
+				'isLetUsChooseSelected',
+			],
+			optionalDependencies: [ 'isFSEActive', 'selectedDesign', 'isLetUsChooseSelected' ],
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,
