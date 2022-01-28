@@ -50,16 +50,16 @@ export default function IntentStep( props: Props ): React.ReactNode {
 	);
 
 	const submitIntent = ( intent: IntentFlag ) => {
-		const values = { intent };
+		const providedDependencies = { intent };
 
-		recordTracksEvent( 'calypso_signup_intent_select', values );
+		recordTracksEvent( 'calypso_signup_intent_select', providedDependencies );
 
 		if ( EXTERNAL_FLOW[ intent ] ) {
-			dispatch( submitSignupStep( { stepName }, values ) );
+			dispatch( submitSignupStep( { stepName }, providedDependencies ) );
 			page( getStepUrl( EXTERNAL_FLOW[ intent ], '', '', '', queryObject ) );
 		} else {
-			branchSteps( values );
-			dispatch( submitSignupStep( { stepName }, values ) );
+			branchSteps( providedDependencies );
+			dispatch( submitSignupStep( { stepName }, providedDependencies ) );
 			goToNextStep();
 		}
 	};

@@ -37,10 +37,10 @@ export default function StartingPointStep( props: Props ): React.ReactNode {
 	const branchSteps = useBranchSteps( stepName, getExcludeSteps );
 
 	const submitStartingPoint = ( startingPoint: StartingPointFlag ) => {
-		const values = { startingPoint };
-		branchSteps( values );
+		const providedDependencies = { startingPoint };
+		branchSteps( providedDependencies );
 		recordTracksEvent( 'calypso_signup_starting_point_select', { starting_point: startingPoint } );
-		dispatch( submitSignupStep( { stepName }, values ) );
+		dispatch( submitSignupStep( { stepName }, providedDependencies ) );
 		goToNextStep();
 	};
 
