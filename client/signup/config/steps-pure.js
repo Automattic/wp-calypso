@@ -457,7 +457,7 @@ export function generateSteps( {
 			apiRequestFunction: createSiteOrDomain,
 			props: {
 				get headerText() {
-					return i18n.translate( 'Choose your site?' );
+					return i18n.translate( 'Choose your site' );
 				},
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
