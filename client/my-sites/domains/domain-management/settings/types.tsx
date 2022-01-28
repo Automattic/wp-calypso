@@ -49,10 +49,16 @@ export type SettingsPageConnectedDispatchProps = {
 	recordTracksEvent: typeof recordTracksEvent;
 };
 
-export type SettingsHeaderProps = {
+export type SettingsHeaderOwnProps = {
 	domain: ResponseDomain;
 	site: SiteData;
 };
+
+export type SettingsHeaderConnectedProps = {
+	isDomainOnlySite: boolean;
+};
+
+export type SettingsHeaderProps = SettingsHeaderOwnProps & SettingsHeaderConnectedProps;
 
 export type SettingsPageProps = SettingsPagePassedProps &
 	SettingsPageConnectedProps &
