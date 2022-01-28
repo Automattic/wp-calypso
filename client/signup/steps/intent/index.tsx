@@ -12,6 +12,7 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 import { getSiteId } from 'calypso/state/sites/selectors';
 import IntentScreen from './intent-screen';
 import type { IntentFlag } from './types';
+import type { Dependencies } from 'calypso/signup/types';
 
 interface Props {
 	goToNextStep: () => void;
@@ -24,7 +25,7 @@ interface Props {
 	};
 }
 
-const EXCLUDE_STEPS: { [ key: string ]: string[] } = {
+const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
 	write: [ 'store-options', 'store-features' ],
 	build: [ 'site-options', 'starting-point', 'courses', 'store-options', 'store-features' ],
 	sell: [ 'site-options', 'starting-point', 'courses', 'design-setup-site' ],
@@ -34,7 +35,8 @@ const EXTERNAL_FLOW: { [ key: string ]: string } = {
 	import: 'importer',
 };
 
-const getExcludeSteps = ( values: any ) => EXCLUDE_STEPS[ values?.intent ];
+const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
+	EXCLUDED_STEPS[ providedDependencies?.intent ];
 
 export default function IntentStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
@@ -42,7 +44,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 	const { goToNextStep, stepName, queryObject } = props;
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
-	const branchSteps = useBranchSteps( stepName, getExcludeSteps );
+	const branchSteps = useBranchSteps( stepName, getExcludedSteps );
 
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 	const canImport = useSelector( ( state ) =>

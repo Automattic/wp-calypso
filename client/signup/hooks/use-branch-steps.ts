@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import flows from 'calypso/signup/config/flows';
-import { addExcludeSteps, removeExcludeSteps } from 'calypso/state/signup/flow/actions';
+import { addExcludedSteps, removeExcludedSteps } from 'calypso/state/signup/flow/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import type { Dependencies } from 'calypso/signup/types';
 
-type GetExcludeSteps = ( providedDependencies?: Dependencies ) => string[];
+type GetExcludedSteps = ( providedDependencies?: Dependencies ) => string[];
 
 type BranchSteps = ( providedDependencies: Dependencies ) => void;
 
@@ -14,19 +14,20 @@ type BranchSteps = ( providedDependencies: Dependencies ) => void;
  * because we process all of the steps immediately after submitting.
  * Also, it will clean up the exclude steps when the component mounts as the user might go back a step
  */
-const useBranchSteps = ( stepName: string, getExcludeSteps: GetExcludeSteps ): BranchSteps => {
+const useBranchSteps = ( stepName: string, getExcludedSteps: GetExcludedSteps ): BranchSteps => {
 	const dispatch = useDispatch();
 	const signupProgress = useSelector( getSignupProgress );
 	const branchSteps = ( providedDependencies: Dependencies ) => {
-		const excludeSteps = getExcludeSteps( providedDependencies ) || [];
-		flows.excludeSteps( excludeSteps );
-		dispatch( addExcludeSteps( excludeSteps ) );
+		const excludedSteps = getExcludedSteps( providedDependencies ) || [];
+		flows.excludeSteps( excludedSteps );
+		dispatch( addExcludedSteps( excludedSteps ) );
 	};
 
 	const restoreBranchSteps = () => {
-		const excludeSteps = getExcludeSteps( signupProgress[ stepName ]?.providedDependencies ) || [];
-		excludeSteps.forEach( ( step ) => flows.resetExcludedStep( step ) );
-		dispatch( removeExcludeSteps( excludeSteps ) );
+		const excludedSteps =
+			getExcludedSteps( signupProgress[ stepName ]?.providedDependencies ) || [];
+		excludedSteps.forEach( ( step ) => flows.resetExcludedStep( step ) );
+		dispatch( removeExcludedSteps( excludedSteps ) );
 	};
 
 	// Only do following things when mounted

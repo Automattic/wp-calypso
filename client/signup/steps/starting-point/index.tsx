@@ -8,6 +8,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import StartingPoint from './starting-point';
 import type { StartingPointFlag } from './types';
+import type { Dependencies } from 'calypso/signup/types';
 
 interface Props {
 	goToNextStep: () => void;
@@ -17,14 +18,15 @@ interface Props {
 	initialContext: any;
 }
 
-const EXCLUDE_STEPS: { [ key: string ]: string[] } = {
+const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
 	write: [ 'courses', 'design-setup-site' ],
 	courses: [ 'design-setup-site' ],
 	design: [ 'courses' ],
 	'skip-to-my-home': [ 'courses', 'design-setup-site' ],
 };
 
-const getExcludeSteps = ( values: any ) => EXCLUDE_STEPS[ values?.startingPoint ];
+const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
+	EXCLUDED_STEPS[ providedDependencies?.startingPoint ];
 
 export default function StartingPointStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
@@ -34,7 +36,7 @@ export default function StartingPointStep( props: Props ): React.ReactNode {
 		components: { br: <br /> },
 	} );
 	const subHeaderText = translate( "Don't worry. You can come back to these steps!" );
-	const branchSteps = useBranchSteps( stepName, getExcludeSteps );
+	const branchSteps = useBranchSteps( stepName, getExcludedSteps );
 
 	const submitStartingPoint = ( startingPoint: StartingPointFlag ) => {
 		const providedDependencies = { startingPoint };
