@@ -28,10 +28,9 @@
 
 .themes__content {
 	min-height: 100vh;
-	margin: 0 16px;
-
-	@include break-small {
-		margin: 0;
+	
+	@include breakpoint-deprecated( '<660px' ) {
+		margin: 0 16px;
 	}
 }
 
