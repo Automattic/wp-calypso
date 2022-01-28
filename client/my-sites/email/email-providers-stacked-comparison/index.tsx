@@ -33,8 +33,8 @@ import './style.scss';
 type EmailProvidersStackedComparisonProps = {
 	comparisonContext: string;
 	selectedDomainName: string;
-	selectedEmailProviderSlug: string;
-	selectedIntervalLength: IntervalLength | undefined;
+	selectedEmailProviderSlug?: string;
+	selectedIntervalLength?: IntervalLength;
 	source: string;
 };
 
