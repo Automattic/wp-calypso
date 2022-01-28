@@ -120,6 +120,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 							<a
 								className="current-theme__theme-description-link"
 								href={ options?.info?.getUrl( currentThemeId ) }
+								onClick={ this.trackClick }
 							>
 								{ translate( 'Read more' ) }
 							</a>
@@ -127,6 +128,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 							<a
 								className="current-theme__theme-customize"
 								href={ options?.customize?.getUrl( currentThemeId ) }
+								onClick={ this.trackClick }
 							>
 								<Gridicon icon={ options?.customize.icon } size={ 24 } />
 								<span>{ translate( 'Customize theme' ) }</span>
