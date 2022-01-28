@@ -1,6 +1,7 @@
 import 'calypso/state/themes/init';
 import { arePremiumThemesEnabled } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { TrendingTheme } from 'calypso/types';
 
 const emptyList = [];
 
@@ -8,7 +9,7 @@ const emptyList = [];
  * Gets the list of trending themes.
  *
  * @param {object} state Global state tree
- * @returns {Array} the list of trending themes
+ * @returns {TrendingTheme[]} the list of trending themes
  */
 export function getTrendingThemes( state ) {
 	if ( ! state.themes.trendingThemes?.themes ) {

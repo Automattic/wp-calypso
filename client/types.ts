@@ -22,34 +22,60 @@ export type PostType = 'page' | 'post' | string;
 export interface Theme {
 	author: string;
 	author_uri: string;
-	cost: ThemeCost;
 	date_launched: string;
 	date_updated: string;
 	demo_uri: string;
 	description: string;
-	descriptionLong: string;
-	download: string;
-	download_url: string;
 	id: string;
-	launch_date: string;
-	license: string;
-	license_uri: string;
 	name: string;
-	next: string;
-	popularity_rank: string;
-	preview_url: string;
+	price: {
+		value: number;
+		currency: string;
+		display: string;
+	};
+	rank_popularity: string;
+	rank_trending: string;
 	screenshot: string;
 	screenshots: string[];
 	stylesheet: string;
-	supportDocumentation: string;
-	tags: string[];
 	taxonomies?: {
 		theme_feature?: ThemeFeature[];
 	};
 	template: string;
 	theme_uri: string;
-	trending_rank: number;
 	version: string;
+}
+
+export interface CanonicalTheme extends Theme {
+	cost: ThemeCost;
+	descriptionLong: string;
+	download: string;
+	download_url: string;
+	launch_date: string;
+	license: string;
+	license_uri: string;
+	next: string;
+	popularity_rank: string;
+	preview_url: string;
+	supportDocumentation: string;
+	tags: string[];
+	trending_rank: number;
+}
+
+export interface TrendingTheme extends Theme {
+	date_launched: string;
+	date_updated: string;
+	demo_uri: string;
+	description: string;
+	id: string;
+	language: string;
+	price: {
+		value: number;
+		currency: string;
+		display: string;
+	};
+	rank_popularity: string;
+	rank_trending: string;
 }
 
 interface ThemeCost {
@@ -62,6 +88,10 @@ interface ThemeFeature {
 	name: string;
 	slug: string;
 	term_id: string;
+}
+
+export interface TrendingThemesFilter {
+	filter: string | undefined;
 }
 
 // Comment stuff
