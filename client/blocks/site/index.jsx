@@ -100,6 +100,22 @@ class Site extends Component {
 		page( '/view/' + siteSlug );
 	};
 
+	renderSiteDomain = () => {
+		const { site, homeLink, translate } = this.props;
+		return (
+			<div className="site__domain">
+				{ /* eslint-disable-next-line no-nested-ternary */ }
+				{ this.props.isNavUnificationEnabled && ! isEnabled( 'jetpack-cloud' )
+					? site.domain
+					: homeLink
+					? translate( 'View %(domain)s', {
+							args: { domain: site.domain },
+					  } )
+					: site.domain }
+			</div>
+		);
+	};
+
 	render() {
 		const { isSiteUnlaunched, site, translate } = this.props;
 
@@ -164,18 +180,7 @@ class Site extends Component {
 					/>
 					<div className="site__info">
 						<div className="site__title">{ site.title }</div>
-						{ ! this.props.isReskinned && (
-							<div className="site__domain">
-								{ /* eslint-disable-next-line no-nested-ternary */ }
-								{ this.props.isNavUnificationEnabled && ! isEnabled( 'jetpack-cloud' )
-									? site.domain
-									: this.props.homeLink
-									? translate( 'View %(domain)s', {
-											args: { domain: site.domain },
-									  } )
-									: site.domain }
-							</div>
-						) }
+						{ ! this.props.isReskinned && this.renderSiteDomain() }
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.isSiteP2 && ! this.props.isP2Hub && (
 							<span className="site__badge is-p2">P2</span>
@@ -206,18 +211,7 @@ class Site extends Component {
 						{ site.options && site.options.is_domain_only && (
 							<span className="site__badge site__badge-domain-only">{ translate( 'Domain' ) }</span>
 						) }
-						{ this.props.isReskinned && (
-							<div className="site__domain">
-								{ /* eslint-disable-next-line no-nested-ternary */ }
-								{ this.props.isNavUnificationEnabled && ! isEnabled( 'jetpack-cloud' )
-									? site.domain
-									: this.props.homeLink
-									? translate( 'View %(domain)s', {
-											args: { domain: site.domain },
-									  } )
-									: site.domain }
-							</div>
-						) }
+						{ this.props.isReskinned && this.renderSiteDomain() }
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 					</div>
 					{ this.props.homeLink && this.props.showHomeIcon && (
