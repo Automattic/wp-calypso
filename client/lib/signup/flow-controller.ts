@@ -48,7 +48,7 @@ const debug = debugModule( 'calypso:signup' );
 
 interface StepDependendencies {
 	dependencies?: string[];
-	providedDependencies?: string[];
+	providedDependencies?: Dependencies;
 	providesDependencies?: string[];
 	optionalDependencies?: string[];
 }
