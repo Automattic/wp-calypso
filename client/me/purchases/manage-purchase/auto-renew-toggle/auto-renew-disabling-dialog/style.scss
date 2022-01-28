@@ -1,5 +1,5 @@
 .dialog.card.auto-renew-disabling-dialog {
-	max-width: 600px;
+	max-width: 90%;
 
 	&.atomic-follow-up {
 		ul {
@@ -14,9 +14,18 @@
 			width: 100%;
 		}
 	}
+
+	& > .dialog__content {
+		overflow-wrap: break-word;
+	}
 }
 
 .auto-renew-disabling-dialog__header {
 	font-size: $font-title-medium;
 	margin-bottom: 14px;
+}
+@media ( min-width: 660px ) {
+	.dialog.card.auto-renew-disabling-dialog {
+		max-width: 600px;
+	}
 }
