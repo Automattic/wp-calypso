@@ -32,27 +32,26 @@ export default async function payPalProcessor(
 
 	const thankYouUrl = getThankYouUrl();
 	let currentUrl;
-	let currentBaseUrl;
-	let currentUrlQuery;
 	try {
-		currentUrl = window.location.href;
-		currentBaseUrl = window.location.origin;
-		currentUrlQuery = window.location.search;
+		currentUrl = new URL( window.location.href );
 	} catch ( error ) {
-		currentUrl = `https://wordpress.com/checkout/${ siteSlug }`;
-		currentBaseUrl = 'https://wordpress.com';
-		currentUrlQuery = '';
+		currentUrl = new URL( `https://wordpress.com/checkout/${ siteSlug }` );
 	}
-	const currentUrlWithoutQuery = currentUrl.split( /\?|#/ )[ 0 ];
-	const updatedQuery = new URLSearchParams( currentUrlQuery );
-	const successUrl = thankYouUrl.startsWith( 'http' ) ? thankYouUrl : currentBaseUrl + thankYouUrl;
+	// We must strip out the hash value because it may break URL encoding when
+	// this value is passed back and forth to PayPal and through our own
+	// endpoints. Otherwise we may end up with an incorrect URL like
+	// 'http://wordpress.com/checkout?cart=no-user#step2?paypal=ABCDEFG'.
+	currentUrl.hash = '';
+	// The successUrl must always be absolute but getThankYouUrl can return
+	// relative paths, so we must check.
+	const successUrl = thankYouUrl.startsWith( 'http' )
+		? thankYouUrl
+		: currentUrl.origin + thankYouUrl;
 	if ( createUserAndSiteBeforeTransaction ) {
-		updatedQuery.set( 'cart', 'no-user' );
+		// It's not clear if this is still required but it may be.
+		currentUrl.searchParams.set( 'cart', 'no-user' );
 	}
-	const updatedQueryString = updatedQuery.toString();
-	const cancelUrl = updatedQueryString.length
-		? currentUrlWithoutQuery + '?' + updatedQueryString
-		: currentUrlWithoutQuery;
+	const cancelUrl = currentUrl.toString();
 
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		responseCart,
