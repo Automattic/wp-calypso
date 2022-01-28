@@ -1,24 +1,22 @@
 .dialog.card.auto-renew-disabling-dialog {
 	max-width: 600px;
+
+	&.atomic-follow-up {
+		ul {
+			list-style-type: none;
+			margin: 0;
+		}
+
+		.button {
+			margin-bottom: 8px;
+			padding: 8px 10px;
+			text-align: center;
+			width: 100%;
+		}
+	}
 }
 
 .auto-renew-disabling-dialog__header {
 	font-size: $font-title-medium;
 	margin-bottom: 14px;
-}
-
-.dialog.card.auto-renew-disabling-dialog.atomic-follow-up {
-	max-width: 600px;
-
-	ul {
-		list-style-type: none;
-		margin: 0;
-	}
-
-	.button {
-		margin-bottom: 8px;
-		padding: 8px 10px;
-		text-align: center;
-		width: 100%;
-	}
 }
