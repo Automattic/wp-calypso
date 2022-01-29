@@ -1,4 +1,4 @@
-import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe';
+import isEligibleForGutenframe from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
 import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
@@ -11,7 +11,7 @@ import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 export const getSiteEditorUrl = ( state, siteId ) => {
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 
-	if ( ! shouldLoadGutenframe( state, siteId ) ) {
+	if ( ! isEligibleForGutenframe( state, siteId ) ) {
 		return `${ siteAdminUrl }admin.php?page=gutenberg-edit-site`;
 	}
 
