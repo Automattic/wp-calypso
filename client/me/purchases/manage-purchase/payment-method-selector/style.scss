@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .payment-method-selector__terms {
 	color: var( --color-text-subtle );
 	margin: 5px 0 0;
@@ -39,9 +42,13 @@
 	}
 
 	.checkout-submit-button .checkout-button {
-		width: auto;
+		@include break-mobile {
+			width: auto;
+		}
 
-		background-color: var( --color-accent );
+		&:not( .is-status-paypal ) {
+			background-color: var( --color-accent );
+		}
 
 		&:focus {
 			outline: var( --color-primary-light ) solid 2px;
