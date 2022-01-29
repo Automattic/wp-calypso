@@ -213,13 +213,27 @@ export function getiOSDeepLink( currentRoute, currentSection ) {
 	return fragment.length > 0 ? `${ baseURI }#${ fragment }` : baseURI;
 }
 
+function getEditorPath( currentRoute ) {
+	const paths = currentRoute.split( '/' );
+	// if ( paths[ 0 ] && paths[ 1 ] && paths[ 2 ] ) {
+	// 	return '/' + paths[ 0 ] + '/' + paths[ 1 ] + '/' + paths[ 2 ];
+	// }
+	if ( paths[ 0 ] && paths[ 1 ] ) {
+		return '/' + paths[ 0 ] + '/' + paths[ 1 ];
+	}
+	if ( paths[ 0 ] ) {
+		return '/' + paths[ 0 ];
+	}
+	return '/post';
+}
+
 export function buildDeepLinkFragment( currentRoute, currentSection ) {
 	const hasRoute = currentRoute !== null && currentRoute !== '/';
 
 	const getFragment = () => {
 		switch ( currentSection ) {
 			case GUTENBERG:
-				return currentRoute;
+				return getEditorPath( currentRoute );
 			case NOTES:
 				return '/notifications';
 			case READER:
