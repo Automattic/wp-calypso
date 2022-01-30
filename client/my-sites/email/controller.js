@@ -7,7 +7,7 @@ import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-providers-comparison/in-depth';
 import { castIntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-stacked-comparison/page';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
@@ -95,7 +95,7 @@ export default {
 	emailManagementPurchaseNewEmailAccount( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<EmailProvidersStackedComparison
+				<EmailProvidersStackedComparisonPage
 					comparisonContext="email-purchase"
 					selectedDomainName={ pageContext.params.domain }
 					selectedEmailProviderSlug={ pageContext.query.provider }
