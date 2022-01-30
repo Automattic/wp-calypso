@@ -44,6 +44,7 @@ describe( '<DesignPicker /> integration', () => {
 		const firstDesignButton = screen.getAllByRole( 'button' )[ 0 ];
 		expect( firstDesignButton ).toHaveTextContent( /blank\scanvas/i );
 	} );
+
 	( [ 'light', 'dark' ] as DesignPickerProps[ 'theme' ][] ).forEach( ( theme ) =>
 		it( `Should have design-picker--theme-${ theme } class when theme prop is set to ${ theme }`, () => {
 			const mockedOnSelectCallback = jest.fn();
