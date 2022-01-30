@@ -4,6 +4,7 @@ import emailIllustration from 'calypso/assets/images/email-providers/email-illus
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { getGSuiteMailboxCount } from 'calypso/lib/gsuite';
@@ -13,6 +14,7 @@ import EmailManagementHome from 'calypso/my-sites/email/email-management/email-h
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import MailboxSelectionList from 'calypso/my-sites/email/inbox/mailbox-selection-list';
 import ProgressLine from 'calypso/my-sites/email/inbox/mailbox-selection-list/progress-line';
+import { emailManagementInbox } from 'calypso/my-sites/email/paths';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -20,11 +22,22 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
+const TrackPageView = ( { context } ) => {
+	return (
+		<PageViewTracker
+			path={ emailManagementInbox( ':site' ) }
+			title="Inbox"
+			properties={ { context } }
+		/>
+	);
+};
+
 const NoAccessCard = () => {
 	const translate = useTranslate();
 
 	return (
 		<Main>
+			<TrackPageView context="no-access" />
 			<EmptyContent
 				title={ translate( 'You are not authorized to view this page' ) }
 				illustration={ '/calypso/images/illustrations/illustration-404.svg' }
@@ -38,6 +51,7 @@ const NotSupportedOnP2Card = () => {
 
 	return (
 		<Main>
+			<TrackPageView context="not-supported-on-p2" />
 			<EmptyContent
 				title={ translate( 'Inbox is not supported on P2 sites' ) }
 				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
@@ -99,23 +113,36 @@ const InboxManagement = () => {
 	}
 
 	if ( isLoadingDomains ) {
-		return <ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />;
+		return (
+			<>
+				<TrackPageView context="progress-line" />
+				<ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />
+			</>
+		);
 	}
 
 	const nonWPCOMDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
 
 	if ( hasAtLeastOneMailbox( nonWPCOMDomains ) ) {
-		return <MailboxSelectionList />;
+		return (
+			<>
+				<TrackPageView context="mailbox-selection-list" />
+				<MailboxSelectionList />
+			</>
+		);
 	}
 
 	return (
 		<CalypsoShoppingCartProvider>
-			<EmailManagementHome
-				emailListInactiveHeader={ <MainHeader /> }
-				sectionHeaderLabel={ translate( 'Domains' ) }
-				showActiveDomainList={ showActiveDomainList( nonWPCOMDomains ) }
-				source={ INBOX_SOURCE }
-			/>
+			<>
+				<TrackPageView context="email-home" />
+				<EmailManagementHome
+					emailListInactiveHeader={ <MainHeader /> }
+					sectionHeaderLabel={ translate( 'Domains' ) }
+					showActiveDomainList={ showActiveDomainList( nonWPCOMDomains ) }
+					source={ INBOX_SOURCE }
+				/>
+			</>
 		</CalypsoShoppingCartProvider>
 	);
 };
