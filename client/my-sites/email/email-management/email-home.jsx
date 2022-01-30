@@ -10,6 +10,7 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
@@ -19,7 +20,7 @@ import EmailListInactive from 'calypso/my-sites/email/email-management/home/emai
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
-import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import { emailManagement, emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -91,6 +92,7 @@ class EmailManagementHome extends Component {
 			}
 
 			return this.renderContentWithHeader(
+				'email-plan',
 				<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } source={ source } />
 			);
 		}
@@ -99,6 +101,7 @@ class EmailManagementHome extends Component {
 
 		if ( nonWpcomDomains.length < 1 ) {
 			return this.renderContentWithHeader(
+				'email-no-plan',
 				<EmailNoDomain selectedSite={ selectedSite } source={ source } />
 			);
 		}
@@ -108,11 +111,18 @@ class EmailManagementHome extends Component {
 
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 			return (
-				<EmailProvidersStackedComparison
-					comparisonContext="email-home-single-domain"
-					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
-					source={ source }
-				/>
+				<>
+					<PageViewTracker
+						path={ emailManagement( ':site', selectedDomainName ?? null ) }
+						title={ 'Email Home' }
+						properties={ { source, context: 'email-home-single-domain' } }
+					/>
+					<EmailProvidersStackedComparison
+						comparisonContext="email-home-single-domain"
+						selectedDomainName={ domainsWithNoEmail[ 0 ].name }
+						source={ source }
+					/>
+				</>
 			);
 		}
 
@@ -127,6 +137,7 @@ class EmailManagementHome extends Component {
 		}
 
 		return this.renderContentWithHeader(
+			'mail-list',
 			<>
 				{ showActiveDomainList && (
 					<EmailListActive
@@ -154,6 +165,7 @@ class EmailManagementHome extends Component {
 		const { translate } = this.props;
 
 		return this.renderContentWithHeader(
+			'no-access',
 			<>
 				<EmptyContent
 					title={ translate( 'You are not authorized to view this page' ) }
@@ -165,6 +177,7 @@ class EmailManagementHome extends Component {
 
 	renderLoadingPlaceholder() {
 		return this.renderContentWithHeader(
+			'placeholder',
 			<>
 				<SectionHeader className="email-home__section-placeholder is-placeholder" />
 				<Card className="email-home__content-placeholder is-placeholder" />
@@ -172,11 +185,17 @@ class EmailManagementHome extends Component {
 		);
 	}
 
-	renderContentWithHeader( content ) {
-		const { translate, selectedSiteId } = this.props;
+	renderContentWithHeader( context, content ) {
+		const { source, selectedDomainName, selectedSiteId, translate } = this.props;
 
 		return (
 			<Main wideLayout>
+				<PageViewTracker
+					path={ emailManagement( ':site', selectedDomainName ?? null ) }
+					title={ 'Email Home' }
+					properties={ { source, context } }
+				/>
+
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 				<DocumentHead title={ titleCase( translate( 'Emails' ) ) } />
