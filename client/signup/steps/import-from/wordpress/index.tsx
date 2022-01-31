@@ -1,9 +1,8 @@
 import page from 'page';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { addQueryArgs } from 'calypso/lib/route';
 import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
-import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -27,7 +26,6 @@ interface Props {
 
 export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wordpress';
-	const dispatch = useDispatch();
 
 	/**
 	 ↓ Fields
@@ -47,9 +45,6 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 */
 	useEffect( checkOptionQueryParam );
 	useEffect( checkImporterAvailability, [ siteId ] );
-	useEffect( () => {
-		dispatch( analyzeUrl( fromSite ) );
-	}, [ fromSiteAnalyzedData && fromSiteAnalyzedData.url ] );
 
 	/**
 	 ↓ Methods
