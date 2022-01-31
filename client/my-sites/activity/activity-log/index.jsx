@@ -40,6 +40,7 @@ import {
 	recordTracksEvent as recordTracksEventAction,
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
+import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { requestActivityLogs } from 'calypso/state/data-getters';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import {
@@ -147,6 +148,7 @@ class ActivityLog extends Component {
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 		this.findExistingRewind( this.props );
+		this.initializeBreadcrumbs();
 
 		if ( isMobile() ) {
 			// Filter bar is only sticky on mobile
@@ -169,6 +171,15 @@ class ActivityLog extends Component {
 			this.props.getRewindRestoreProgress( siteId, rewindState.rewind.restoreId );
 		}
 	};
+
+	initializeBreadcrumbs() {
+		this.props.updateBreadcrumbs( [
+			{
+				label: this.props.translate( 'Activity Log' ),
+				href: `/activity-log/${ this.props.slug || '' }`,
+			},
+		] );
+	}
 
 	onScroll = () => {
 		const y = window.scrollY;
@@ -726,5 +737,6 @@ export default connect(
 				rewindRestore( siteId, actionId )
 			),
 		selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),
+		updateBreadcrumbs,
 	}
 )( localize( withLocalizedMoment( ActivityLog ) ) );
