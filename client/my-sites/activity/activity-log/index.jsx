@@ -3,7 +3,7 @@
 import { isFreePlan } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
-import { find, get, isEmpty, isEqual } from 'lodash';
+import { get, isEmpty, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment, createRef } from 'react';
 import { connect } from 'react-redux';
@@ -51,7 +51,6 @@ import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activi
 import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
-import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
 import getRequestedRewind from 'calypso/state/selectors/get-requested-rewind';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
@@ -112,10 +111,6 @@ class ActivityLog extends Component {
 		} ),
 		backupProgress: PropTypes.object,
 		changePeriod: PropTypes.func,
-		requestedRestore: PropTypes.shape( {
-			rewindId: PropTypes.string.isRequired,
-			activityTs: PropTypes.number.isRequired,
-		} ),
 		requestedRestoreId: PropTypes.string,
 		rewindRequestDismiss: PropTypes.func.isRequired,
 		rewindRestore: PropTypes.func.isRequired,
@@ -640,7 +635,6 @@ export default connect(
 		const gmtOffset = getSiteGmtOffset( state, siteId );
 		const timezone = getSiteTimezoneValue( state, siteId );
 		const requestedRestoreId = getRequestedRewind( state, siteId );
-		const requestedBackupId = getRequestedBackup( state, siteId );
 		const rewindBackups = getRewindBackups( state, siteId );
 		const rewindState = getRewindState( state, siteId );
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
@@ -691,10 +685,7 @@ export default connect(
 			logs: visibleLogEntries,
 			allLogsVisible,
 			logLoadingState: displayRulesLoaded && logs && logs.state,
-			requestedRestore: find( logs, { activityId: requestedRestoreId } ),
 			requestedRestoreId,
-			requestedBackup: find( logs, { activityId: requestedBackupId } ),
-			requestedBackupId,
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
 			rewindBackups,
