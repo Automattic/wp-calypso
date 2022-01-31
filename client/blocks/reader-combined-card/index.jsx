@@ -164,7 +164,7 @@ class ReaderCombinedCardComponent extends Component {
 						posts={ posts }
 					/>
 				</div>
-				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
+				{ feedId && <QueryReaderFeed feedId={ +feedId } /> }
 				{ siteId && <QueryReaderSite siteId={ +siteId } /> }
 			</Card>
 		);
