@@ -111,14 +111,15 @@ export class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		const editText =
-			'video' === mimePrefix ? translate( 'Edit Thumbnail' ) : translate( 'Edit Image' );
+		const isVideoMime = 'video' === mimePrefix;
+		const editText = isVideoMime ? translate( 'Edit Thumbnail' ) : translate( 'Edit Image' );
+		const forceDisable = isVideoMime && !! item.thumbnail_generating;
 
 		return (
 			<Button
 				className="editor-media-modal-detail__edit"
 				onClick={ onEdit }
-				disabled={ isItemBeingUploaded( item ) }
+				disabled={ forceDisable || isItemBeingUploaded( item ) }
 			>
 				<Gridicon icon="pencil" size={ 36 } /> { editText }
 			</Button>
