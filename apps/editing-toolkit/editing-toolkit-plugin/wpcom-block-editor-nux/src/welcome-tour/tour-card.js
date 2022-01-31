@@ -98,24 +98,7 @@ function CardNavigation( {
 	onPreviousStepProgression,
 	setInitialFocusedElement,
 } ) {
-	// These are defined on their own lines because of a minification issue.
-	// __('translations') do not always work correctly when used inside of ternary statements.
-	const startTourLabel = __( 'Try it out!', 'full-site-editing' );
-	const nextLabel = __( 'Next', 'full-site-editing' );
-
-	const buttons = {
-		previous: {
-			onClick: () => {},
-			label: 'Previous',
-			style: { color: 'red' },
-		},
-		next: {
-			onClick: () => {},
-			label: 'Next',
-			style: { color: 'red' },
-		},
-		classNames: [ 'test', 'class' ],
-	};
+	const isFirstStep = currentStepIndex === 0;
 
 	return (
 		<>
@@ -124,28 +107,37 @@ function CardNavigation( {
 				numberOfPages={ lastStepIndex + 1 }
 				setCurrentPage={ setCurrentStepIndex }
 				classNames={ [ 'array', 'classes' ] }
-				buttons={ buttons }
-			/>
-			<div>
-				{ currentStepIndex === 0 ? (
-					<Button isTertiary={ true } onClick={ onDismiss( 'no-thanks-btn' ) }>
-						{ __( 'Skip', 'full-site-editing' ) }
-					</Button>
+			>
+				{ isFirstStep ? (
+					<div>
+						<Button isTertiary onClick={ onDismiss( 'no-thanks-btn' ) }>
+							{ __( 'Skip', 'full-site-editing' ) }
+						</Button>
+						<Button
+							className="welcome-tour-card__next-btn"
+							isPrimary
+							onClick={ onNextStepProgression }
+							ref={ setInitialFocusedElement }
+						>
+							{ __( 'Try it out!', 'full-site-editing' ) }
+						</Button>
+					</div>
 				) : (
-					<Button isTertiary={ true } onClick={ onPreviousStepProgression }>
-						{ __( 'Back', 'full-site-editing' ) }
-					</Button>
+					<div>
+						<Button isTertiary onClick={ onPreviousStepProgression }>
+							{ __( 'Back', 'full-site-editing' ) }
+						</Button>
+						<Button
+							className="welcome-tour-card__next-btn"
+							isPrimary
+							onClick={ onNextStepProgression }
+							ref={ setInitialFocusedElement }
+						>
+							{ __( 'Next', 'full-site-editing' ) }
+						</Button>
+					</div>
 				) }
-
-				<Button
-					className="welcome-tour-card__next-btn"
-					isPrimary={ true }
-					onClick={ onNextStepProgression }
-					ref={ setInitialFocusedElement }
-				>
-					{ currentStepIndex === 0 ? startTourLabel : nextLabel }
-				</Button>
-			</div>
+			</PaginationControl>
 		</>
 	);
 }

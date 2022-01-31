@@ -4,13 +4,19 @@
 	margin: 0;
 	display: flex;
 	justify-content: center;
+	width: 100%;
 
 	li {
 		display: inline-flex;
-		margin: 0 4px;
+		margin: auto 4px;
 		height: 18px;
 		align-items: center;
 		border: none;
+	}
+
+	li.navigation-buttons {
+		margin-left: auto;
+		height: 32px;
 	}
 
 	button.pagination-control__page {
@@ -18,9 +24,7 @@
 		padding: 0;
 		width: 6px;
 		height: 6px;
-		/* stylelint-disable declaration-property-unit-allowed-list */
-		border-radius: 50%;
-		/* stylelint-enable declaration-property-unit-allowed-list */
+		border-radius: 50%; /* stylelint-disable-line */
 		cursor: pointer;
 		transition: all 0.2s ease-in-out;
 		background-color: var( --color-neutral-10 );
@@ -37,4 +41,5 @@
 			background-color: var( --wp-admin-theme-color );
 		}
 	}
+
 }
