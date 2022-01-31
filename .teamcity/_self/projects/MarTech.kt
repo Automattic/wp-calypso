@@ -91,6 +91,16 @@ object ToSAcceptanceTracking: BuildType ({
 	features {
 		perfmon {
 		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#martech-tos-alerts"
+				messageFormat = simpleMessageFormat()
+			}
+			buildFailedToStart = true
+			buildFailed = true
+			buildProbablyHanging = true
+		}
 	}
 
 	triggers {
