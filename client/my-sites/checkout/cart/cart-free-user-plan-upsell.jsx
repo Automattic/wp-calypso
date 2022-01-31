@@ -21,8 +21,6 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { isRequestingPlans } from 'calypso/state/plans/selectors';
 import { getPlanPrice } from 'calypso/state/products-list/selectors';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
@@ -173,9 +171,7 @@ const mapStateToProps = ( state, { cart, addItemToCart } ) => {
 			selectedSiteId &&
 			getPlanPrice( state, selectedSiteId, personalPlan, false ),
 		selectedSite: selectedSite,
-		showPlanUpsell: getCurrentUser( state )
-			? selectedSiteId && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-			: false,
+		showPlanUpsell: selectedSiteId ?? false,
 		addItemToCart,
 	};
 };
