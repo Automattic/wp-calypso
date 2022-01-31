@@ -1,18 +1,34 @@
 import { mapValues } from 'lodash';
+import { BaseSyntheticEvent } from 'react';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { isMagnificentLocale } from 'calypso/lib/i18n-utils';
 
-export function trackClick( componentName, eventName, verb = 'click' ) {
+interface ThemeOption {
+	action?: () => void;
+	extendedLabel?: string;
+	getUrl?: () => string;
+	header?: string;
+	hideForTheme?: () => void;
+	icon?: string;
+	label?: string;
+	separator?: boolean;
+}
+
+interface ThemeOptions {
+	[ key: string ]: ThemeOption;
+}
+
+export function trackClick( componentName: string, eventName: BaseSyntheticEvent, verb = 'click' ) {
 	const stat = `${ componentName } ${ eventName } ${ verb }`;
 	gaRecordEvent( 'Themes', titlecase( stat ) );
 }
 
-export function addTracking( options ) {
+export function addTracking( options: ThemeOptions ): ThemeOptions {
 	return mapValues( options, appendActionTracking );
 }
 
-function appendActionTracking( option, name ) {
+function appendActionTracking( option: ThemeOption, name: string ): ThemeOption {
 	const { action } = option;
 
 	return Object.assign( {}, option, {
@@ -23,7 +39,20 @@ function appendActionTracking( option, name ) {
 	} );
 }
 
-export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
+export function getAnalyticsData(
+	path: string,
+	{
+		filter,
+		vertical,
+		tier,
+		site_id,
+	}: {
+		filter: string | undefined;
+		vertical: string | undefined;
+		tier: string | undefined;
+		site_id: string | undefined;
+	}
+) {
 	let analyticsPath = '/themes';
 	let analyticsPageTitle = 'Themes';
 
@@ -51,7 +80,7 @@ export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
 	return { analyticsPath, analyticsPageTitle };
 }
 
-export function localizeThemesPath( path, locale, isLoggedOut = true ) {
+export function localizeThemesPath( path: string, locale: string, isLoggedOut = true ): string {
 	const shouldPrefix = isLoggedOut && isMagnificentLocale( locale ) && path.startsWith( '/theme' );
 
 	return shouldPrefix ? `/${ locale }${ path }` : path;
