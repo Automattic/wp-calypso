@@ -14,7 +14,6 @@ import 'calypso/state/inline-support-article/init';
  * @param {string} options.actionLabel Label of the action
  * @param {string} options.actionUrl   URL of the action
  * @param {number} options.blogId      The blog id of the support article
- *
  * @returns {object}		Action
  */
 export function openSupportArticleDialog( {
@@ -24,6 +23,14 @@ export function openSupportArticleDialog( {
 	actionUrl = null,
 	blogId = null,
 } ) {
+	if ( window.history?.pushState ) {
+		const searchParams = new URLSearchParams( window.location.search );
+		searchParams.set( 'support-article', postId );
+		const newUrl = window.location.pathname + '?' + decodeURIComponent( searchParams.toString() );
+
+		// Adds a back button but nothing else changes.
+		window.history.pushState( { postId }, '', newUrl );
+	}
 	return {
 		type: SUPPORT_ARTICLE_DIALOG_OPEN,
 		postId,
@@ -40,5 +47,14 @@ export function openSupportArticleDialog( {
  * @returns {object}		Action
  */
 export function closeSupportArticleDialog() {
+	if ( window.history?.pushState ) {
+		const searchParams = new URLSearchParams( window.location.search );
+		searchParams.delete( 'support-article' );
+		const newUrl =
+			window.location.pathname +
+			( searchParams.toString() ? '?' + decodeURIComponent( searchParams.toString() ) : '' );
+		// Adds a back button but nothing else changes.
+		window.history.pushState( null, '', newUrl );
+	}
 	return { type: SUPPORT_ARTICLE_DIALOG_CLOSE };
 }
