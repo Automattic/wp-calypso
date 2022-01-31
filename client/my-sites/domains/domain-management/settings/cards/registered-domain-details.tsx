@@ -62,6 +62,10 @@ const RegisteredDomainDetails = ( {
 			return <p className="details-card__autorenew-placeholder" />;
 		}
 
+		if ( domain.bundledPlanSubscriptionId ) {
+			return null;
+		}
+
 		let formattedPrice = '';
 
 		if ( purchase && selectedSite.ID ) {
