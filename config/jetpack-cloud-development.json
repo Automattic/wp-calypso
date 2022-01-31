@@ -38,7 +38,6 @@
 		"fullstory": true,
 		"jetpack-cloud": true,
 		"jetpack/activity-log-sharing": true,
-		"jetpack/more-informative-scan": true,
 		"jetpack/partner-portal-payment": true,
 		"jetpack/pricing-page": true,
 		"jetpack/pricing-page-annual-only": true,

@@ -32,7 +32,6 @@
 		"checkout/google-pay": true,
 		"fullstory": true,
 		"jetpack-cloud": true,
-		"jetpack/more-informative-scan": true,
 		"jetpack/search-product": true,
 		"jetpack/pricing-page": true,
 		"jetpack/pricing-page-annual-only": true,

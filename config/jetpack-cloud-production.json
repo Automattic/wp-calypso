@@ -35,7 +35,6 @@
 		"fullstory": true,
 		"i18n/community-translator": false,
 		"jetpack-cloud": true,
-		"jetpack/more-informative-scan": true,
 		"jetpack/pricing-page": true,
 		"jetpack/pricing-page-annual-only": true,
 		"jetpack/server-credentials-advanced-flow": true,

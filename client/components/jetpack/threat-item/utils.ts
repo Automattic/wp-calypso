@@ -2,6 +2,61 @@ import { translate } from 'i18n-calypso';
 import { Threat, ThreatFix, ThreatType } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
+// This should be temporary since this data should be coming from the api
+// and not something that we should change to accommodate the results.
+export const getThreatMessage = ( threat: Threat ): string | TranslateResult => {
+	const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
+	const basename = filename ? filename.replace( /.*\//, '' ) : '';
+
+	switch ( getThreatType( threat ) ) {
+		case 'core':
+			return translate( 'Compromised WordPress core file: %s', {
+				args: [ basename ],
+			} );
+
+		case 'file':
+			return translate( 'Malicious code found in file: %s', {
+				args: [ basename ],
+			} );
+
+		case 'plugin':
+			return translate( 'Vulnerable Plugin: %(pluginSlug)s (version %(version)s)', {
+				args: {
+					pluginSlug: extension.slug,
+					version: extension.version,
+				},
+			} );
+
+		case 'theme':
+			return translate( 'Vulnerable Theme %(themeSlug)s (version %(version)s)', {
+				args: {
+					themeSlug: extension.slug,
+					version: extension.version,
+				},
+			} );
+
+		case 'database':
+			if ( ! threat.rows ) {
+				return translate( 'Database threat' );
+			}
+			return translate(
+				'Database threat on table %(threatTable)s affecting %(threatCount)d row ',
+				'Database threat on %(threatTable)s affecting %(threatCount)d rows',
+				{
+					count: Object.keys( threat.rows ).length,
+					args: {
+						threatCount: Object.keys( threat.rows ).length,
+						threatTable: threat.table,
+					},
+				}
+			);
+
+		case 'none':
+		default:
+			return translate( 'Threat found' );
+	}
+};
+
 export function getThreatType( threat: Threat ): ThreatType {
 	// We can't use `hasOwnProperty` here to test these conditions because
 	// the object might contains those keys with an undefined value
@@ -57,10 +112,7 @@ export const getThreatVulnerability = ( threat: Threat ): string | TranslateResu
 	}
 };
 
-export const getThreatFix = ( fixable: ThreatFix | false ): TranslateResult => {
-	if ( ! fixable ) {
-		return translate( 'Jetpack Scan will resolve the threat.' );
-	}
+export const getThreatFix = ( fixable: ThreatFix ): TranslateResult => {
 	switch ( fixable.fixer ) {
 		case 'replace':
 			return translate( 'Jetpack Scan will replace the affected file or directory.' );
