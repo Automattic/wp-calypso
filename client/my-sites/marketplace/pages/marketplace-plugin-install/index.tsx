@@ -3,7 +3,7 @@ import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
@@ -66,7 +66,7 @@ const MarketplacePluginInstall = ( {
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
-	const installedPlugin = useSelector( ( state ) =>
+	const installedPlugin = useSelector( ( state: DefaultRootState ): InstalledPlugin | undefined =>
 		getPluginOnSite( state, siteId, isUploadFlow ? uploadedPluginSlug : productSlug )
 	);
 	const pluginActive = useSelector( ( state ) =>
@@ -204,8 +204,8 @@ const MarketplacePluginInstall = ( {
 		) {
 			dispatch(
 				activatePlugin( siteId, {
-					slug: ( installedPlugin as InstalledPlugin )?.slug,
-					id: ( installedPlugin as InstalledPlugin )?.id,
+					slug: installedPlugin?.slug,
+					id: installedPlugin?.id,
 				} )
 			);
 			setCurrentStep( 2 );
@@ -221,9 +221,7 @@ const MarketplacePluginInstall = ( {
 		) {
 			waitFor( 1 ).then( () =>
 				page.redirect(
-					`/marketplace/thank-you/${
-						( installedPlugin as InstalledPlugin )?.slug || productSlug
-					}/${ selectedSiteSlug }`
+					`/marketplace/thank-you/${ installedPlugin?.slug || productSlug }/${ selectedSiteSlug }`
 				)
 			);
 		}
