@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment, createRef } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import VisibleDaysLimitUpsell from 'calypso/components/activity-card-list/visible-days-limit-upsell';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -23,6 +23,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
+import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -41,7 +42,6 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
-import { requestActivityLogs } from 'calypso/state/data-getters';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import {
 	siteHasBackupProductPurchase,
@@ -386,11 +386,19 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, logLoadingState, siteId, translate, siteHasNoLog, slug } = this.props;
+		const {
+			filter,
+			displayRulesLoaded,
+			logsLoaded,
+			siteId,
+			translate,
+			siteHasNoLog,
+			slug,
+		} = this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
-		if ( logLoadingState === 'success' ) {
+		if ( displayRulesLoaded && logsLoaded ) {
 			return isFilterEmpty ? (
 				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteHasNoLog } />
 			) : (
@@ -574,7 +582,7 @@ class ActivityLog extends Component {
 	}
 
 	renderFilterbar() {
-		const { siteId, filter, logs, siteHasNoLog, logLoadingState } = this.props;
+		const { siteId, filter, logs, siteHasNoLog, displayRulesLoaded, logsLoaded } = this.props;
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
 		if ( siteHasNoLog ) {
@@ -586,7 +594,7 @@ class ActivityLog extends Component {
 				<Filterbar
 					siteId={ siteId }
 					filter={ filter }
-					isLoading={ logLoadingState !== 'success' }
+					isLoading={ ! displayRulesLoaded || ! logsLoaded }
 					isVisible={ ! ( isEmpty( logs ) && isFilterEmpty ) }
 				/>
 			</div>
@@ -623,6 +631,43 @@ class ActivityLog extends Component {
 
 const emptyList = [];
 
+function filterLogEntries( allLogEntries, visibleDays, gmtOffset, timezone ) {
+	if ( ! Number.isFinite( visibleDays ) ) {
+		return allLogEntries;
+	}
+
+	const oldestVisibleDate = applySiteOffset( Date.now(), { gmtOffset, timezone } )
+		.subtract( visibleDays, 'days' )
+		.startOf( 'day' );
+
+	// This could slightly degrade performance, but it's likely
+	// this entire component tree gets refactored or removed soon,
+	// in favor of calypso/my-sites/activity/activity-log-v2.
+	return allLogEntries.filter( ( log ) => {
+		const dateWithOffset = applySiteOffset( log.activityDate, { gmtOffset, timezone } );
+		return dateWithOffset.isSameOrAfter( oldestVisibleDate, 'day' );
+	} );
+}
+
+function withActivityLog( Inner ) {
+	return ( props ) => {
+		const { siteId, filter, gmtOffset, timezone } = props;
+		const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
+		const { data, isSuccess } = useActivityLogQuery( siteId, filter );
+		const allLogEntries = data ?? emptyList;
+		const visibleLogEntries = filterLogEntries( allLogEntries, visibleDays, gmtOffset, timezone );
+		const allLogsVisible = visibleLogEntries.length === allLogEntries.length;
+		return (
+			<Inner
+				{ ...props }
+				logs={ visibleLogEntries }
+				logsLoaded={ isSuccess }
+				allLogsVisible={ allLogsVisible }
+			/>
+		);
+	};
+}
+
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
@@ -643,30 +688,6 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 
 		const displayRulesLoaded = getRewindPoliciesRequestStatus( state, siteId ) === 'success';
-		const visibleDays = getActivityLogVisibleDays( state, siteId );
-		const oldestVisibleDate = Number.isFinite( visibleDays )
-			? applySiteOffset( Date.now(), { gmtOffset, timezone } )
-					.subtract( visibleDays, 'days' )
-					.startOf( 'day' )
-			: undefined;
-
-		const logs = siteId && requestActivityLogs( siteId, filter );
-		const allLogEntries = logs?.data ?? emptyList;
-		const visibleLogEntries = oldestVisibleDate
-			? // This could slightly degrade performance, but it's likely
-			  // this entire component tree gets refactored or removed soon,
-			  // in favor of calypso/my-sites/activity/activity-log-v2.
-			  //
-			  // eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			  allLogEntries.filter( ( log ) =>
-					applySiteOffset( log.activityDate, { gmtOffset, timezone } ).isSameOrAfter(
-						oldestVisibleDate,
-						'day'
-					)
-			  )
-			: allLogEntries;
-
-		const allLogsVisible = visibleLogEntries.length === allLogEntries.length;
 
 		return {
 			gmtOffset,
@@ -676,9 +697,7 @@ export default connect(
 			filter,
 			isAtomic: isAtomicSite( state, siteId ),
 			isJetpack,
-			logs: visibleLogEntries,
-			allLogsVisible,
-			logLoadingState: displayRulesLoaded && logs && logs.state,
+			displayRulesLoaded,
 			requestedRestoreId,
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
@@ -724,4 +743,4 @@ export default connect(
 		selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),
 		updateBreadcrumbs,
 	}
-)( localize( withLocalizedMoment( ActivityLog ) ) );
+)( withActivityLog( localize( withLocalizedMoment( ActivityLog ) ) ) );
