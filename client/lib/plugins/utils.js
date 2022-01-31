@@ -245,3 +245,21 @@ export function normalizePluginsList( pluginsList ) {
 export function filterNotices( logs, siteId, pluginId ) {
 	return filter( logs, filterNoticesBy.bind( this, siteId, pluginId ) );
 }
+
+/**
+ * Regex to extract the author from the search
+ */
+export const AUTHOR_PATTERN = /author:"(.*)"/;
+
+/**
+ * Extract author and search params from the plugin search query
+ *
+ * @param {string} searchTerm The full plugin search query
+ * @returns {Array<string|null>} The first item will be the search and the second will be the author if exists
+ */
+export function extractSearchInformation( searchTerm = '' ) {
+	const author = searchTerm.match( AUTHOR_PATTERN )?.[ 1 ] || null;
+	const search = searchTerm.replace( AUTHOR_PATTERN, '' );
+
+	return [ search, author ];
+}

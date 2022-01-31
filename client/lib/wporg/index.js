@@ -58,6 +58,7 @@ export function fetchPluginsList( options ) {
 	const pageSize = options.pageSize || DEFAULT_PAGE_SIZE;
 	const category = options.category || DEFAULT_CATEGORY;
 	const search = options.search;
+	const author = options.author;
 
 	const query = {
 		action: 'query_plugins',
@@ -72,6 +73,10 @@ export function fetchPluginsList( options ) {
 		query[ 'request[search]' ] = search;
 	} else {
 		query[ 'request[browse]' ] = category;
+	}
+
+	if ( author ) {
+		query[ 'request[author]' ] = author;
 	}
 
 	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
