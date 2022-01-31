@@ -15,7 +15,15 @@ export function isTreatmentPlansReorderTest( state: AppState ): boolean {
 }
 
 export function getJetpackSaleCoupon( state: AppState ): JetpackSaleCoupon | null {
-	return state?.marketing?.jetpackSaleCoupon;
+	return state?.marketing?.jetpackSaleCoupon?.coupon;
+}
+
+export function getHasRequestedJetpackSaleCoupon( state: AppState ): boolean {
+	return state?.marketing?.jetpackSaleCoupon?.isRequesting === false;
+}
+
+export function getIsRequestingJetpackSaleCoupon( state: AppState ): boolean {
+	return state?.marketing?.jetpackSaleCoupon?.isRequesting === true;
 }
 
 export function getJetpackSaleCouponDiscountRatio( state: AppState ): number {
