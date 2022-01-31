@@ -821,7 +821,6 @@ export class DomainWarnings extends PureComponent {
 
 		return (
 			<PendingGSuiteTosNotice
-				isCompact={ this.props.isCompact }
 				key="pending-gsuite-tos-notice"
 				siteSlug={ this.props.selectedSite && this.props.selectedSite.slug }
 				domains={ domains }
