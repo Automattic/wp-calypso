@@ -1,9 +1,7 @@
-import { get } from 'lodash';
-
-import 'calypso/state/inline-support-article/init';
-
-/**
- * @param {object} state Global app state
- * @returns {object} ...
+/*
+ * @returns bool ...
  */
-export default ( state ) => get( state, 'inlineSupportArticle.isVisible', false );
+export default () => {
+	const searchParams = new URLSearchParams( window.location.search );
+	return searchParams.has( 'support-article' );
+};

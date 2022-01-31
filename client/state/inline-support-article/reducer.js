@@ -4,11 +4,6 @@ import {
 	SUPPORT_ARTICLE_DIALOG_CLOSE,
 } from 'calypso/state/action-types';
 
-function defaultIsVisible() {
-	const searchParams = new URLSearchParams( window.location.search );
-	return searchParams.has( 'support-article' );
-}
-
 function defaultPostId() {
 	const searchParams = new URLSearchParams( window.location.search );
 	return searchParams.has( 'support-article' )
@@ -30,7 +25,6 @@ export default withStorageKey(
 		state = {
 			postId: defaultPostId(),
 			postUrl: defaultPostUrl(),
-			isVisible: defaultIsVisible(),
 			blogId: null,
 		},
 		action
@@ -48,7 +42,6 @@ export default withStorageKey(
 				return {
 					postUrl,
 					postId,
-					isVisible: true,
 					actionLabel,
 					actionUrl,
 					blogId,
@@ -57,7 +50,6 @@ export default withStorageKey(
 			case SUPPORT_ARTICLE_DIALOG_CLOSE:
 				return {
 					...state,
-					isVisible: false,
 				};
 		}
 
