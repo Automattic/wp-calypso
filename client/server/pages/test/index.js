@@ -456,16 +456,16 @@ const assertDefaultContext = ( { url, entry } ) => {
 		] );
 	} );
 
-	it( 'sets the featuresHelper when config is enabled', async () => {
-		app.withConfigEnabled( { 'dev/features-helper': true } );
+	it( 'sets the preferencesHelper when config is enabled', async () => {
+		app.withConfigEnabled( { 'dev/preferences-helper': true } );
 		const { request } = await app.run();
-		expect( request.context.featuresHelper ).toEqual( true );
+		expect( request.context.preferencesHelper ).toEqual( true );
 	} );
 
-	it( 'sets the featuresHelper when config is disabled', async () => {
-		app.withConfigEnabled( { 'dev/features-helper': false } );
+	it( 'sets the preferencesHelper when config is disabled', async () => {
+		app.withConfigEnabled( { 'dev/preferences-helper': false } );
 		const { request } = await app.run();
-		expect( request.context.featuresHelper ).toEqual( false );
+		expect( request.context.preferencesHelper ).toEqual( false );
 	} );
 
 	it( 'sets devDocsUrl', async () => {
