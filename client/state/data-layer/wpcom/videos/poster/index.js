@@ -51,8 +51,9 @@ const fetch = ( action ) => {
 
 const onSuccess = ( action, data ) => ( dispatch, getState ) => {
 	const { poster: posterUrl } = data;
+	const isGeneratingThumbnail = !! data.generating;
 
-	if ( data.generating ) {
+	if ( isGeneratingThumbnail ) {
 		setTimeout( () => {
 			dispatch( refreshAction( action.videoId, { mediaId: action.meta.mediaId } ) );
 		}, 1000 );
