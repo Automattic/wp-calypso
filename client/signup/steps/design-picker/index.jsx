@@ -220,7 +220,7 @@ export default function DesignPickerStep( props ) {
 						'design-picker-step__has-categories': showDesignPickerCategories,
 					} ) }
 					highResThumbnails
-					premiumBadge={ <PremiumBadge /> }
+					premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
 					categorization={ showDesignPickerCategories ? categorization : undefined }
 					recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
 					categoriesHeading={
