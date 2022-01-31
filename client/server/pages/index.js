@@ -127,11 +127,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	if ( ! request.cookies.country_code && geoIPCountryCode ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
-	const authHelper = config.isEnabled( 'dev/auth-helper' );
-	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
-	const preferencesHelper =
-		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
-	const featuresHelper = config.isEnabled( 'dev/features-helper' );
 
 	const flags = ( request.query.flags || '' ).split( ',' );
 	const context = Object.assign( {}, request.context, {
@@ -147,9 +142,9 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
 		manifests: request.getAssets().manifests,
-		authHelper,
-		preferencesHelper,
-		featuresHelper,
+		authHelper: !! config.isEnabled( 'dev/auth-helper' ),
+		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
+		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
 		target: 'evergreen',

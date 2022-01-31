@@ -4,7 +4,6 @@ import debugFactory from 'debug';
 import page from 'page';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
-import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { setRoute } from 'calypso/state/route/actions';
 
@@ -52,6 +51,26 @@ export function setupContextMiddleware() {
 	} );
 }
 
+function renderDevHelpers( reduxStore ) {
+	if ( config.isEnabled( 'dev/preferences-helper' ) ) {
+		const prefHelperEl = document.querySelector( '.environment.is-prefs' );
+		if ( prefHelperEl ) {
+			asyncRequire( 'calypso/lib/preferences-helper', ( prefHelper ) => {
+				prefHelper( prefHelperEl, reduxStore );
+			} );
+		}
+	}
+
+	if ( config.isEnabled( 'features-helper' ) ) {
+		const featureHelperEl = document.querySelector( '.environment.is-features' );
+		if ( featureHelperEl ) {
+			asyncRequire( 'calypso/lib/features-helper', ( featureHelper ) => {
+				featureHelper( featureHelperEl );
+			} );
+		}
+	}
+}
+
 export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
@@ -83,5 +102,5 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	setupContextMiddleware();
 	setRouteMiddleware( reduxStore );
 	setAnalyticsMiddleware( currentUser, reduxStore );
-	loadDevHelpers( reduxStore );
+	renderDevHelpers( reduxStore );
 }

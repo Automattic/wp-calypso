@@ -8,7 +8,6 @@ import { isEqual } from 'lodash';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
-import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { LocaleContext } from './components/locale-context';
 import { WindowLocaleEffectManager } from './components/window-locale-effect-manager';
 import { setupWpDataDebug } from './devtools';
@@ -47,7 +46,6 @@ window.AppBoot = async () => {
 	addHotJarScript();
 	// Add accessible-focus listener.
 	accessibleFocus();
-	loadDevHelpers();
 
 	// If site was recently created, redirect to customer site home.
 	const shouldRedirect = await checkAndRedirectIfSiteWasCreatedRecently();
