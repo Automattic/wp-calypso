@@ -433,12 +433,12 @@ export class UpsellNudge extends Component {
 		// Professional Email needs to add the locally built cartItem to the cart,
 		// as we need to handle validation failures before redirecting to checkout.
 		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType ) {
-			// Make sure we store the original post-checkout destination in a cookie
+			// If we don't have an existing destination, calculate the thank you destination for
+			// the original cart contents, and only store it if the cart update succeeds.
 			const destinationFromCookie = retrieveSignupDestination();
-			if ( ! destinationFromCookie ) {
-				const initialThankYouUrl = this.getThankYouPageUrlForIncomingCart( true );
-				persistSignupDestination( initialThankYouUrl );
-			}
+			const destinationToPersist = destinationFromCookie
+				? null
+				: this.getThankYouPageUrlForIncomingCart( true );
 
 			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ).then( () => {
 				if ( this.props?.cart?.messages ) {
@@ -448,6 +448,11 @@ export class UpsellNudge extends Component {
 						return;
 					}
 				}
+
+				if ( destinationToPersist ) {
+					persistSignupDestination( destinationToPersist );
+				}
+
 				page( '/checkout/' + siteSlug );
 			} );
 			return;
