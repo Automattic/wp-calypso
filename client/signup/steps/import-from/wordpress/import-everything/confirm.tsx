@@ -4,6 +4,7 @@ import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React, { useState } from 'react';
+import SiteIcon from 'calypso/blocks/site-icon';
 import { UrlData } from 'calypso/signup/steps/import/types';
 import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 import ConfirmModal from './confirm-modal';
@@ -28,6 +29,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Fields
 	 */
 	const {
+		sourceSite,
 		sourceSiteUrl,
 		sourceUrlAnalyzedData,
 		targetSite,
@@ -49,14 +51,13 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 								{ __( 'Original site' ) }
 							</div>
 
-							<div
-								className={ classnames( 'import_site-mapper-name', {
-									'with-favicon': sourceUrlAnalyzedData?.meta.favicon,
-								} ) }
-							>
+							<div className={ classnames( 'import_site-mapper-name with-favicon' ) }>
 								{ sourceUrlAnalyzedData?.meta.favicon && (
-									<img alt={ 'Icon' } src={ sourceUrlAnalyzedData?.meta.favicon } />
+									<div className={ classnames( 'site-icon' ) }>
+										<img alt={ 'Icon' } src={ sourceUrlAnalyzedData?.meta.favicon } />
+									</div>
 								) }
+								{ ! sourceUrlAnalyzedData?.meta.favicon && <SiteIcon siteId={ sourceSite?.ID } /> }
 								<span>{ sourceUrlAnalyzedData?.meta.title }</span>
 								<small>{ convertToFriendlyWebsiteName( sourceSiteUrl ) }</small>
 							</div>
@@ -68,7 +69,8 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 								{ __( 'New site' ) }
 							</div>
 
-							<div className={ classnames( 'import_site-mapper-name' ) }>
+							<div className={ classnames( 'import_site-mapper-name with-favicon' ) }>
+								<SiteIcon siteId={ targetSite?.ID } />
 								<span>{ targetSite?.name }</span>
 								<small>{ convertToFriendlyWebsiteName( targetSiteSlug ) }</small>
 							</div>
