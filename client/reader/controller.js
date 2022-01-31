@@ -107,7 +107,7 @@ export function unmountSidebar( context, next ) {
 	next();
 }
 
-export function following( context, next, includeSeenPosts = false ) {
+export function following( context, next, includeSeenPosts = true ) {
 	const basePath = sectionify( context.path );
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Following';
 	const mcKey = 'following';
