@@ -131,18 +131,11 @@ class ActivityLog extends Component {
 		scrollTicking: false,
 	};
 
-	filterBarRef = null;
-
-	constructor( props ) {
-		super( props );
-
-		this.onScroll = this.onScroll.bind( this );
-		this.filterBarRef = createRef();
-	}
+	filterBarRef = createRef();
 
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
-		this.findExistingRewind( this.props );
+		this.findExistingRewind();
 		this.initializeBreadcrumbs();
 
 		if ( isMobile() ) {
@@ -157,15 +150,16 @@ class ActivityLog extends Component {
 
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.rewindState.rewind && this.props.rewindState.rewind ) {
-			this.findExistingRewind( this.props );
+			this.findExistingRewind();
 		}
 	}
 
-	findExistingRewind = ( { siteId, rewindState } ) => {
+	findExistingRewind() {
+		const { siteId, rewindState } = this.props;
 		if ( rewindState.rewind && rewindState.rewind.restoreId ) {
 			this.props.getRewindRestoreProgress( siteId, rewindState.rewind.restoreId );
 		}
-	};
+	}
 
 	initializeBreadcrumbs() {
 		this.props.updateBreadcrumbs( [
