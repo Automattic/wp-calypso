@@ -4,7 +4,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.svg';
-import wooImage from 'calypso/assets/images/onboarding/woo.png';
+import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { localizeUrl } from 'calypso/lib/i18n-utils/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
@@ -94,7 +94,11 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 					</p>
 
 					<footer className="store-features__powered-by">
-						<img src={ wooImage } alt="WooCommerce" className="store-features__feature-icon" />
+						<img
+							src={ wooCommerceImage }
+							alt="WooCommerce"
+							className="store-features__feature-icon"
+						/>
 
 						{ translate( 'Powered by {{a}}WooCommerce{{/a}}', {
 							components: {
