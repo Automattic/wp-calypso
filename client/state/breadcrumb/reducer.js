@@ -1,4 +1,3 @@
-import { withStorageKey } from '@automattic/state-utils';
 import {
 	BREADCRUMB_RESET_LIST,
 	BREADCRUMB_UPDATE_LIST,
@@ -32,4 +31,4 @@ const combinedReducer = combineReducers( {
 	items,
 } );
 
-export default withStorageKey( 'breadcrumb', combinedReducer );
+export default combinedReducer;
