@@ -156,7 +156,6 @@ class VideoEditor extends Component {
 		const { error, isLoading, isSelectingFrame, pauseVideo } = this.state;
 
 		const classes = classNames( 'video-editor', className );
-		const isThumbnailGenerating = !! get( media, 'thumbnail_generating', false );
 
 		return (
 			<div className={ classes }>
@@ -172,7 +171,7 @@ class VideoEditor extends Component {
 								onVideoLoaded={ this.setIsLoading }
 							/>
 						</div>
-						{ uploadProgress && ! error && ! isSelectingFrame && (
+						{ uploadProgress && ! error && (
 							<ProgressBar
 								className="video-editor__progress-bar"
 								isPulsing={ true }
@@ -184,7 +183,7 @@ class VideoEditor extends Component {
 							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
 						</span>
 						<VideoEditorControls
-							isPosterUpdating={ isThumbnailGenerating || ( uploadProgress && ! error ) }
+							isPosterUpdating={ isSelectingFrame || ( uploadProgress && ! error ) }
 							isVideoLoading={ isLoading }
 							onCancel={ onCancel }
 							onSelectFrame={ this.selectFrame }

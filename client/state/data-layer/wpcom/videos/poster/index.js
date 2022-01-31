@@ -57,6 +57,8 @@ const onSuccess = ( action, data ) => ( dispatch, getState ) => {
 		setTimeout( () => {
 			dispatch( refreshAction( action.videoId, { mediaId: action.meta.mediaId } ) );
 		}, 1000 );
+
+		dispatch( showUploadProgress( 100 ) );
 		return;
 	}
 
