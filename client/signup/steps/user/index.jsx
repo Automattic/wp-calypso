@@ -98,7 +98,6 @@ export class UserStep extends Component {
 
 	state = {
 		recaptchaClientId: null,
-		isMobile: isMobile(),
 	};
 
 	componentDidUpdate() {
@@ -454,7 +453,7 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
-					isMobile={ this.state.isMobile }
+					isMobile={ isMobile() }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
