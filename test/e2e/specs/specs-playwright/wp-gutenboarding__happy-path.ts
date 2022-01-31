@@ -64,7 +64,12 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		} );
 
 		it( 'Navigate to Home dashboard', async function () {
-			await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'load' } );
+			// When you go to the home dashboard, there is a delayed redirect to '**/home/<sitename>'.
+			// That delayed redirect can disrupt following actions in a race condition, so we must wait for that redirect to finish!
+			await Promise.all( [
+				page.waitForNavigation( { url: '**/home/**' } ),
+				page.goto( DataHelper.getCalypsoURL( 'home' ) ),
+			] );
 		} );
 	} );
 

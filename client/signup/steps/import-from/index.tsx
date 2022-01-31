@@ -47,6 +47,7 @@ interface Props {
 	isImporterStatusHydrated: boolean;
 	siteImports: ImportJob[];
 	fetchImporterState: ( siteId: number ) => void;
+	resetImport: ( siteId: number, importerId: string ) => void;
 }
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const {
@@ -138,7 +139,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 			case appStates.UPLOAD_SUCCESS:
 			case appStates.UPLOADING:
 			case appStates.UPLOAD_FAILURE:
-				return dispatch( resetImport( siteId, job.importerId ) );
+				return props.resetImport( siteId, job.importerId );
 		}
 	}
 

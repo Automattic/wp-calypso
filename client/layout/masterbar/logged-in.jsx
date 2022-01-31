@@ -13,7 +13,7 @@ import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
-import getPreviousPath from 'calypso/state/selectors/get-previous-path.js';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -362,7 +362,7 @@ export default connect(
 			currentSelectedSiteSlug: currentSelectedSiteId
 				? getSiteSlug( state, currentSelectedSiteId )
 				: undefined,
-			previousPath: getPreviousPath( state ),
+			previousPath: getPreviousRoute( state ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),

@@ -80,6 +80,12 @@ const VideosUi = ( {
 		}
 	};
 
+	const onVideoTranslationSupportLinkClick = () => {
+		recordTracksEvent( 'calypso_courses_translation_support_link_click', {
+			course: course.slug,
+		} );
+	};
+
 	useEffect( () => {
 		if ( course ) {
 			recordTracksEvent( 'calypso_courses_view', {
@@ -99,7 +105,9 @@ const VideosUi = ( {
 							'These videos are currently only available in English. Please {{supportLink}}let us know{{/supportLink}} if you would like them translated.',
 							{
 								components: {
-									supportLink: <a href="/help/contact" />,
+									supportLink: (
+										<a href="/help/contact" onClick={ onVideoTranslationSupportLinkClick } />
+									),
 								},
 							}
 						) }

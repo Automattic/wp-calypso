@@ -75,26 +75,16 @@
 	padding: 1rem 0;
 }
 
-.jetpack-plans__pricing-header,
-.jetpack-plans__pricing-header-v2 {
-	padding: 0 1rem;
-	max-width: none;
-
-	text-align: center;
-	font-weight: 700;
+.jetpack-plans__pricing-header {
 	font-size: $font-title-large;
+	font-weight: 700;
+	margin-bottom: 32px;
+	margin-top: 32px;
+	max-width: none;
+	padding: 0 1rem;
+	text-align: center;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: $font-headline-small;
 	}
-}
-
-.jetpack-plans__pricing-header-v2 {
-	margin-top: 32px;
-	margin-bottom: 32px;
-}
-
-.jetpack-plans__pricing-header {
-	margin-top: 3rem;
-	margin-bottom: 3rem;
 }

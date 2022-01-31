@@ -56,14 +56,14 @@
 			padding-left: 56px;
 		}
 
-		img {
+		.site-icon {
 			position: absolute;
 			top: 0;
 			left: 0;
 			border-radius: 4px;
 			border: solid 1px var( --studio-gray-5 );
-			height: 40px;
-			width: 40px;
+			height: 40px !important;
+			width: 40px !important;
 		}
 
 		span, small {

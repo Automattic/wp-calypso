@@ -5,7 +5,8 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
-import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { Importer, ImportJob } from '../types';
 import { ContentChooser } from './content-chooser';
 import ImportContentOnly from './import-content-only';
@@ -30,11 +31,13 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 ↓ Fields
 	 */
 	const [ option, setOption ] = useState< WPImportOption >();
-	const { job, fromSite, siteSlug } = props;
+	const { job, fromSite, siteSlug, siteId } = props;
 	const siteItem = useSelector( ( state ) => getSiteBySlug( state, siteSlug ) );
 	const fromSiteItem = useSelector( ( state ) =>
 		getSiteBySlug( state, convertToFriendlyWebsiteName( fromSite ) )
 	);
+	const isSiteAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const fromSiteAnalyzedData = useSelector( getUrlData );
 
 	/**
@@ -57,6 +60,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 		updateCurrentPageQueryParam( { option: WPImportOption.CONTENT_ONLY } );
 	}
 
+	function checkImporterAvailability() {
+		! isSiteAtomic && isSiteJetpack && redirectToWpAdminImportPage();
+	}
+
 	function checkOptionQueryParam() {
 		const urlSearchParams = new URLSearchParams( window.location.search );
 		const optionParam = urlSearchParams.get( 'option' );
@@ -76,6 +83,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 		const currentPath = window.location.pathname + window.location.search;
 
 		page( addQueryArgs( params, currentPath ) );
+	}
+
+	function redirectToWpAdminImportPage() {
+		return page( `/import/${ siteSlug }` );
 	}
 
 	/**

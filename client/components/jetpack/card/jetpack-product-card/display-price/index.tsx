@@ -24,6 +24,7 @@ type OwnProps = {
 	isFree?: boolean;
 	isIncludedInPlan?: boolean;
 	isOwned?: boolean;
+	pricesAreFetching?: boolean | null;
 	showAbovePriceText?: boolean;
 	originalPrice?: number;
 	productName: TranslateResult;
@@ -44,6 +45,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 	showAbovePriceText,
 	hideSavingLabel,
 	originalPrice,
+	pricesAreFetching,
 	productName,
 	tooltipText,
 } ) => {
@@ -73,6 +75,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 		<Paid
 			discountedPrice={ discountedPrice }
 			originalPrice={ originalPrice }
+			pricesAreFetching={ pricesAreFetching }
 			billingTerm={ billingTerm }
 			currencyCode={ currencyCode }
 			displayFrom={ displayFrom }

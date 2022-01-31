@@ -17,6 +17,7 @@ import {
 	expectedCreateAccountRequest,
 	mockCreateAccountSiteCreatedResponse,
 	mockCreateAccountSiteNotCreatedResponse,
+	setMockLocation,
 } from './util';
 
 describe( 'payPalExpressProcessor', () => {
@@ -51,8 +52,12 @@ describe( 'payPalExpressProcessor', () => {
 		country: '',
 		domain_details: null,
 		postal_code: '',
-		success_url: 'https://example.com',
+		success_url: 'https://example.com/thank-you',
 	};
+
+	beforeEach( () => {
+		setMockLocation( 'https://example.com/' );
+	} );
 
 	it( 'sends the correct data to the endpoint with no site and one product', async () => {
 		const transactionsEndpoint = mockPayPalEndpoint( mockPayPalRedirectResponse );
@@ -231,6 +236,62 @@ describe( 'payPalExpressProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedRequest,
 			cancel_url: 'https://example.com/?cart=no-user',
+			cart: {
+				...basicExpectedRequest.cart,
+				blog_id: '0',
+				cart_key: 'no-site',
+				coupon: '',
+				create_new_blog: true,
+			},
+		} );
+	} );
+
+	it( 'creates an account before sending the correct data with a site creation request to the endpoint with no site and a query string in the original URL', async () => {
+		setMockLocation( 'https://wordpress.com/checkout/no-site?signup=1&isDomainOnly=1' );
+		const transactionsEndpoint = mockPayPalEndpoint( mockPayPalRedirectResponse );
+		const expected = { payload: 'https://test-redirect-url', type: 'REDIRECT' };
+		await expect(
+			payPalExpressProcessor( {
+				...options,
+				contactDetails: {
+					countryCode,
+					postalCode,
+					email,
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedRequest,
+			cancel_url: 'https://wordpress.com/checkout/no-site?signup=1&isDomainOnly=1',
+			success_url: 'https://wordpress.com/thank-you',
+			cart: {
+				...basicExpectedRequest.cart,
+				blog_id: '0',
+				cart_key: 'no-site',
+				coupon: '',
+				create_new_blog: true,
+			},
+		} );
+	} );
+
+	it( 'creates an account before sending the correct data with a site creation request to the endpoint with no site and a query string with a hash in the original URL', async () => {
+		setMockLocation( 'https://wordpress.com/checkout/no-site?signup=1&isDomainOnly=1#foobar' );
+		const transactionsEndpoint = mockPayPalEndpoint( mockPayPalRedirectResponse );
+		const expected = { payload: 'https://test-redirect-url', type: 'REDIRECT' };
+		await expect(
+			payPalExpressProcessor( {
+				...options,
+				contactDetails: {
+					countryCode,
+					postalCode,
+					email,
+				},
+			} )
+		).resolves.toStrictEqual( expected );
+		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
+			...basicExpectedRequest,
+			cancel_url: 'https://wordpress.com/checkout/no-site?signup=1&isDomainOnly=1',
+			success_url: 'https://wordpress.com/thank-you',
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: '0',

@@ -23,6 +23,7 @@ type OwnProps = {
 	description?: ReactNode;
 	originalPrice?: number;
 	discountedPrice?: number;
+	pricesAreFetching?: boolean | null;
 	hidePrice?: boolean;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
@@ -61,6 +62,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	description,
 	originalPrice,
 	discountedPrice,
+	pricesAreFetching,
 	hidePrice,
 	buttonLabel,
 	buttonPrimary,
@@ -83,12 +85,11 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	scrollCardIntoView,
 	collapseFeaturesOnMobile,
 } ) => {
-	const billingTerm = item.displayTerm || item.term;
 	const isFree = item.isFree;
 
 	const translate = useTranslate();
 	const anchorRef = useRef< HTMLDivElement >( null );
-	const { discount } = useCouponDiscount( billingTerm, originalPrice, discountedPrice );
+	const { discount } = useCouponDiscount( originalPrice, discountedPrice );
 	const showDiscountLabel =
 		! hideSavingLabel &&
 		discount &&
@@ -164,6 +165,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						discountedPrice={ discountedPrice }
 						currencyCode={ item.displayCurrency }
 						originalPrice={ originalPrice ?? 0 }
+						pricesAreFetching={ pricesAreFetching }
 						displayFrom={ displayFrom }
 						showAbovePriceText={ showAbovePriceText }
 						belowPriceText={ item.belowPriceText }

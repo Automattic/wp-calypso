@@ -141,7 +141,7 @@ describe( 'Design Picker design utils', () => {
 			const mockDesign = availableDesignsConfig.featured[ 0 ];
 
 			expect( getDesignUrl( mockDesign, mockLocale ) ).toEqual(
-				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesign.stylesheet }/${ mockDesign.template }?font_headings=${ mockDesign.fonts.headings }&font_base=${ mockDesign.fonts.base }&site_title=${ mockDesign.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
+				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesign.stylesheet }/${ mockDesign.template }?font_headings=${ mockDesign.fonts.headings }&font_base=${ mockDesign.fonts.base }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true&site_title=${ mockDesign.title }`
 			);
 		} );
 
@@ -149,7 +149,7 @@ describe( 'Design Picker design utils', () => {
 			const mockDesignWithoutFonts = availableDesignsConfig.featured[ 1 ];
 
 			expect( getDesignUrl( mockDesignWithoutFonts, mockLocale ) ).toEqual(
-				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesignWithoutFonts.stylesheet }/${ mockDesignWithoutFonts.template }?site_title=${ mockDesignWithoutFonts.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
+				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesignWithoutFonts.stylesheet }/${ mockDesignWithoutFonts.template }?viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true&site_title=${ mockDesignWithoutFonts.title }`
 			);
 		} );
 
@@ -158,7 +158,18 @@ describe( 'Design Picker design utils', () => {
 			const mockDesignMissingStylesheet = availableDesignsConfig.featured[ 6 ];
 
 			expect( getDesignUrl( mockDesignMissingStylesheet, mockLocale ) ).toEqual(
-				`https://public-api.wordpress.com/rest/v1.1/template/demo/pub/${ mockDesignMissingStylesheet.theme }/${ mockDesignMissingStylesheet.template }?site_title=${ mockDesignMissingStylesheet.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
+				`https://public-api.wordpress.com/rest/v1.1/template/demo/pub/${ mockDesignMissingStylesheet.theme }/${ mockDesignMissingStylesheet.template }?viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true&site_title=${ mockDesignMissingStylesheet.title }`
+			);
+		} );
+
+		// Parentheses in uri components don't usually need to be escaped, but because the design url sometimes appears
+		// in a `background-url: url( ... )` CSS rule the parentheses will break it.
+		it( 'escapes parentheses within the site title', () => {
+			const mockDesign = availableDesignsConfig.featured[ 0 ];
+			mockDesign.title = 'Mock(Design)';
+
+			expect( getDesignUrl( mockDesign, mockLocale ) ).toEqual(
+				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesign.stylesheet }/${ mockDesign.template }?font_headings=${ mockDesign.fonts.headings }&font_base=${ mockDesign.fonts.base }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true&site_title=Mock%28Design%29`
 			);
 		} );
 	} );

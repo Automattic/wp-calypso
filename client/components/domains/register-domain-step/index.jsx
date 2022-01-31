@@ -1377,10 +1377,7 @@ class RegisterDomainStep extends Component {
 	};
 
 	useYourDomainFunction = () => {
-		const { lastDomainStatus } = this.state;
-		return domainAvailability.MAPPED === lastDomainStatus
-			? this.goToTransferDomainStep
-			: this.goToUseYourDomainStep;
+		return this.goToUseYourDomainStep;
 	};
 
 	renderSearchResults() {

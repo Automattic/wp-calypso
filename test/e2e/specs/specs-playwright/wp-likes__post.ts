@@ -5,10 +5,12 @@
 import {
 	DataHelper,
 	GutenbergEditorPage,
-	LoginPage,
 	PublishedPostPage,
 	TestAccount,
 } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 /**
  * Constants
@@ -19,15 +21,15 @@ const quote =
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	const postingUser = new TestAccount( 'simpleSitePersonalPlanUser' );
 	const likeUser = new TestAccount( 'defaultUser' );
-	let page;
-	let publishedURL;
-	let publishedPostPage;
+	let page: Page;
+	let publishedURL: string;
+	let publishedPostPage: PublishedPostPage;
 
 	describe( 'As the posting user', function () {
-		let gutenbergEditorPage;
+		let gutenbergEditorPage: GutenbergEditorPage;
 
 		beforeAll( async () => {
-			page = await global.browser.newPage();
+			page = await browser.newPage();
 			gutenbergEditorPage = new GutenbergEditorPage( page );
 			await postingUser.authenticate( page );
 		} );
@@ -61,7 +63,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 	describe( 'As the liking user', () => {
 		beforeAll( async () => {
-			page = await global.browser.newPage();
+			page = await browser.newPage();
 		} );
 
 		it( 'Go to the published post page', async () => {
@@ -70,11 +72,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 		it( 'Login via popup to like the post', async function () {
 			page.on( 'popup', async ( popup ) => {
-				const loginPage = new LoginPage( popup );
-				await Promise.all( [
-					popup.waitForEvent( 'close' ),
-					loginPage.logInWithCredentials( ...likeUser.credentials ),
-				] );
+				await likeUser.logInViaPopupPage( popup );
 			} );
 
 			publishedPostPage = new PublishedPostPage( page );

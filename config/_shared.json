@@ -198,7 +198,8 @@
 		"business-monthly",
 		"ecommerce",
 		"ecommerce-monthly",
-		"ecommerce-onboarding"
+		"ecommerce-onboarding",
+		"domain"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
 	"difm_typeform_id": "YMiXMYId",

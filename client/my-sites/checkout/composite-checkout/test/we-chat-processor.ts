@@ -66,7 +66,7 @@ describe( 'weChatProcessor', () => {
 			stored_details_id: undefined,
 			street_number: undefined,
 			success_url:
-				'https://example.com/checkout/thank-you/no-site/pending?redirectTo=https%3A%2F%2Fexample.com',
+				'https://example.com/checkout/thank-you/no-site/pending?redirectTo=https%3A%2F%2Fexample.com%2Fthank-you',
 			tef_bank: undefined,
 			zip: '10001',
 		},
@@ -144,7 +144,7 @@ describe( 'weChatProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com',
+					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com%2Fthank-you',
 			},
 		} );
 	} );
@@ -189,7 +189,7 @@ describe( 'weChatProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com',
+					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com%2Fthank-you',
 			},
 		} );
 	} );
@@ -224,7 +224,7 @@ describe( 'weChatProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com',
+					'https://example.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=https%3A%2F%2Fexample.com%2Fthank-you',
 			},
 		} );
 	} );
