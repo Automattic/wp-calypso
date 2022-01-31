@@ -80,10 +80,8 @@ class ReaderPostCardAdapter extends Component {
 				compact={ this.props.compact }
 			>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
-				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
-				{ isDiscover && (
-					<QueryReaderSite siteId={ discoverPostKey.blogId } includeMeta={ false } />
-				) }
+				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } /> }
+				{ isDiscover && <QueryReaderSite siteId={ discoverPostKey.blogId } /> }
 				{ hasDiscoverSourcePost && <QueryReaderPost postKey={ discoverPostKey } /> }
 			</ReaderPostCard>
 		);
