@@ -1,10 +1,14 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 
 import './style.scss';
 
-const ThemesSelectionHeader = ( { label, noMarginBeforeHeader } ) => {
+interface ThemesSelectionHeaderProps {
+	label: string;
+	noMarginBeforeHeader: boolean;
+}
+
+const ThemesSelectionHeader = ( { label, noMarginBeforeHeader }: ThemesSelectionHeaderProps ) => {
 	const translate = useTranslate();
 
 	const classes = classNames( 'themes__themes-selection-header', {
@@ -16,11 +20,6 @@ const ThemesSelectionHeader = ( { label, noMarginBeforeHeader } ) => {
 			<h2>{ label || translate( 'WordPress.com themes' ) }</h2>
 		</div>
 	);
-};
-
-ThemesSelectionHeader.propTypes = {
-	label: PropTypes.string,
-	count: PropTypes.number,
 };
 
 export default ThemesSelectionHeader;
