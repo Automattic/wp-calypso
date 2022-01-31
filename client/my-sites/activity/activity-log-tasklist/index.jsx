@@ -13,6 +13,7 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
 import { PLUGIN_INSTALLATION_COMPLETED } from 'calypso/state/plugins/installed/status/constants';
@@ -227,7 +228,7 @@ class ActivityLogTasklist extends Component {
 					} ),
 					{
 						id: `alitemupdate-${ item.slug }`,
-						duration: 3000,
+						duration: DEFAULT_NOTICE_DURATION,
 					}
 				);
 				this.dismiss( item );
