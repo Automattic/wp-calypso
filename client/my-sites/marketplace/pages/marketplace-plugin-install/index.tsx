@@ -288,7 +288,7 @@ const MarketplacePluginInstall = ( {
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
 					action={ translate( 'Continue' ) }
-					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php` }
+					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
 				/>
 			);
 		}
