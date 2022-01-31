@@ -23,7 +23,6 @@ const noop = () => {};
 
 export class WebPreviewContent extends Component {
 	previewId = uuid();
-	_hasTouch = false;
 
 	state = {
 		iframeUrl: null,
@@ -35,12 +34,6 @@ export class WebPreviewContent extends Component {
 	setIframeInstance = ( ref ) => {
 		this.iframe = ref;
 	};
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		// Cache touch and mobile detection for the entire lifecycle of the component
-		this._hasTouch = hasTouch();
-	}
 
 	componentDidMount() {
 		window.addEventListener( 'message', this.handleMessage );
@@ -270,7 +263,7 @@ export class WebPreviewContent extends Component {
 		const { translate, toolbarComponent: ToolbarComponent } = this.props;
 
 		const className = classNames( this.props.className, 'web-preview__inner', {
-			'is-touch': this._hasTouch,
+			'is-touch': hasTouch(),
 			'is-with-sidebar': this.props.hasSidebar,
 			'is-visible': this.props.showPreview,
 			'is-computer': this.state.device === 'computer',
@@ -375,7 +368,7 @@ WebPreviewContent.propTypes = {
 	// Called when the edit button is clicked
 	onEdit: PropTypes.func,
 	// Optional loading message to display during loading
-	loadingMessage: PropTypes.oneOfType( [ PropTypes.array, PropTypes.string ] ),
+	loadingMessage: PropTypes.node,
 	// The iframe's title element, used for accessibility purposes
 	iframeTitle: PropTypes.string,
 	// Makes room for a sidebar if desired
