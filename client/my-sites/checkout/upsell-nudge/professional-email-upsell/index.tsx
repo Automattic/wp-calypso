@@ -23,11 +23,6 @@ import type { ChangeEvent } from 'react';
 
 import './style.scss';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noopWithCallback = ( cartItem: MinimalRequestCartProduct, callback = () => {} ) => {
-	callback();
-};
-
 const ProfessionalEmailFeature = ( { children }: { children: TranslateResult } ) => {
 	return (
 		<li>
@@ -52,7 +47,7 @@ const ProfessionalEmailUpsell = ( {
 	handleClickAccept,
 	handleClickDecline,
 	productCost,
-	setCartItem = noopWithCallback,
+	setCartItem,
 }: ProfessionalEmailUpsellProps ) => {
 	const translate = useTranslate();
 
