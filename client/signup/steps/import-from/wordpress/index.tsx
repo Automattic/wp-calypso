@@ -44,6 +44,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 ↓ Effects
 	 */
 	useEffect( checkOptionQueryParam );
+	useEffect( checkImporterAvailability, [ siteId ] );
 
 	/**
 	 ↓ Methods
