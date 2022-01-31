@@ -79,7 +79,7 @@ class ReaderPostCardAdapter extends Component {
 				postKey={ this.props.postKey }
 				compact={ this.props.compact }
 			>
-				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
+				{ feedId && <QueryReaderFeed feedId={ feedId } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } /> }
 				{ isDiscover && <QueryReaderSite siteId={ discoverPostKey.blogId } /> }
 				{ hasDiscoverSourcePost && <QueryReaderPost postKey={ discoverPostKey } /> }
