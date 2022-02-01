@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import ActivityCard from 'calypso/components/activity-card';
 import Pagination from 'calypso/components/pagination';
@@ -7,7 +7,8 @@ import './style.scss';
 
 const BACKUPS_PER_PAGE = 10;
 
-const BackupDelta = ( { realtimeBackups, translate, isToday } ) => {
+export default function BackupDelta( { realtimeBackups, isToday } ) {
+	const translate = useTranslate();
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 
 	const onPageChange = ( pageNumber ) => setCurrentPage( pageNumber );
@@ -49,6 +50,4 @@ const BackupDelta = ( { realtimeBackups, translate, isToday } ) => {
 			</div>
 		</div>
 	);
-};
-
-export default localize( BackupDelta );
+}
