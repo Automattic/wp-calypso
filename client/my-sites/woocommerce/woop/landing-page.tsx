@@ -79,7 +79,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				secondaryActionTarget="_blank"
 				className="woop__landing-page-cta woocommerce_landing-page-empty-content"
 			/>
-			<WooCommerceColophon />
+			<WooCommerceColophon wpcomDomain={ wpcomDomain || '' } />
 		</div>
 	);
 };
