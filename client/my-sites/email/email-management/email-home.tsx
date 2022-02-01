@@ -2,7 +2,6 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
-import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
