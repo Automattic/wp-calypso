@@ -19,6 +19,8 @@ object WPComPlugins : Project({
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
 	buildType(O2Blocks)
+	buildType(Happychat)
+	buildType(InlineHelp)
 
 	cleanup {
 		keepRule {
@@ -150,4 +152,20 @@ private object O2Blocks : WPComPluginBuild(
 			"""
 		}
 	}
+)
+
+private object Happychat : WPComPluginBuild(
+	buildId = "WPComPlugins_HappychatWidget",
+	buildName = "Happychat",
+	pluginSlug = "happychat",
+	archiveDir = "./dist/",
+	docsLink = "TODO",
+)
+
+private object InlineHelp : WPComPluginBuild(
+	buildId = "WPComPlugins_InlineHelpWidget",
+	buildName = "Inline Help",
+	pluginSlug = "inline-help",
+	archiveDir = "./dist/",
+	docsLink = "TODO",
 )
