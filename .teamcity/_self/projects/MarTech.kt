@@ -28,7 +28,7 @@ object ToSAcceptanceTracking: BuildType ({
 
 
 	artifactRules = """
-		screenshots => screenshots
+		tos_screenshots => tos_screenshots
 	""".trimIndent()
 
 	vcs {
@@ -82,8 +82,8 @@ object ToSAcceptanceTracking: BuildType ({
 			scriptContent = """
 				set -x
 
-				mkdir -p screenshots
-				find test/e2e -type f -path '*tos*.png' -print0 | xargs -r -0 mv -t screenshots
+				mkdir -p tos_screenshots
+				find test/e2e -type f -path '*tos*.png' -print0 | xargs -r -0 mv -t tos_screenshots
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
