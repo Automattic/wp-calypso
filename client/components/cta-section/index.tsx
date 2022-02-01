@@ -1,9 +1,19 @@
+import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
 import { ReactElement } from 'react';
 
 const Container = styled.div`
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	align-items: center;
 	min-height: 500px;
+	column-gap: 2em;
+	row-gap: 2em;
+
+	@media ( max-width: 660px ) {
+		grid-template-columns: 1fr;
+	}
 `;
 
 const CtaContainer = styled.div`
@@ -35,31 +45,37 @@ const Title = styled.h4`
 interface Props {
 	title?: TranslateResult;
 	headline?: TranslateResult;
-	notice?: ReactElement | null;
-	cta?: ReactElement | null;
-	byline?: ReactElement | null;
-	children?: ReactElement | null;
+	buttonText: TranslateResult;
+	buttonDisabled: boolean;
+	buttonAction: () => void;
+	notice: ReactElement | null;
+	ctaRef?: React.RefObject< HTMLButtonElement >;
 }
 
-const CtaSection: React.FunctionComponent< Props > = ( {
-	title = '',
-	headline = '',
-	notice = null,
-	cta = null,
-	children = null,
-	byline = null,
-} ) => {
+const CtaSection: React.FunctionComponent< Props > = ( props ) => {
+	const {
+		children,
+		title,
+		headline,
+		buttonText,
+		buttonDisabled = false,
+		buttonAction,
+		notice = null,
+		ctaRef,
+	} = props;
 	return (
 		<Container>
 			<CtaContainer>
-				<Title>{ title }</Title>
-				<Headline>{ headline }</Headline>
+				<Headline>{ title }</Headline>
+				<Title>{ headline }</Title>
 				{ notice }
-				{ cta }
-				{ byline }
+				<Button primary onClick={ buttonAction } ref={ ctaRef } disabled={ buttonDisabled }>
+					{ buttonText }
+				</Button>
 			</CtaContainer>
 			<ContentContainer>{ children }</ContentContainer>
 		</Container>
 	);
 };
+
 export default CtaSection;
