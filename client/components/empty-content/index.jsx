@@ -18,7 +18,10 @@ class EmptyContent extends Component {
 		actionTarget: PropTypes.string,
 		actionHoverCallback: PropTypes.func,
 		actionDisabled: PropTypes.bool,
-		actionRef: PropTypes.func,
+		actionRef: PropTypes.oneOfType( [
+			PropTypes.func,
+			PropTypes.shape( { current: PropTypes.instanceOf( Element ) } ),
+		] ),
 		secondaryAction: PropTypes.node,
 		secondaryActionURL: PropTypes.string,
 		secondaryActionCallback: PropTypes.func,
