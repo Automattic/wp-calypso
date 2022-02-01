@@ -72,6 +72,8 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				) }
 				action={ __( 'Start a new store' ) }
 				actionCallback={ onCTAClickHandler }
+				actionDisabled={ isTransferringBlocked }
+				actionRef={ ctaRef }
 				secondaryAction={ __( 'Learn more' ) }
 				secondaryActionURL="https://wordpress.com/support/introduction-to-woocommerce/"
 				secondaryActionTarget="_blank"
