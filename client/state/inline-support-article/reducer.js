@@ -5,7 +5,7 @@ import {
 } from 'calypso/state/action-types';
 
 function defaultPostId() {
-	if ( ! window || ! URLSearchParams ) {
+	if ( ! window && ! URLSearchParams ) {
 		return null;
 	}
 
