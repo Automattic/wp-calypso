@@ -8,7 +8,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -287,8 +286,4 @@ export class Theme extends Component {
 	}
 }
 
-const ThemeWithEditorSettings = withBlockEditorSettings( Theme );
-
-export default connect( null, { recordTracksEvent, setThemesBookmark } )(
-	localize( ThemeWithEditorSettings )
-);
+export default connect( null, { recordTracksEvent, setThemesBookmark } )( localize( Theme ) );
