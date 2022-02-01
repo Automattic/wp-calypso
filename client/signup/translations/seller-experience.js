@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 
-// Setup your store
+// Set up your store
 translate( 'Set up your store' );
 translate( 'Let’s create a website that suits your needs.' );
 translate( 'Start simple' );
@@ -19,7 +19,17 @@ translate( 'Powered by {{a}}Payment Blocks{{/a}}', {
 } );
 translate( 'Continue' );
 translate( 'Start with more' );
+translate( 'Requires a {{a}}paid plan{{/a}}', {
+	components: {
+		a: <a href="/plans/" />,
+	},
+} );
 translate( 'Requires a {{a}}Business plan{{/a}}', {
+	components: {
+		a: <a href="/plans/" />,
+	},
+} );
+translate( 'Included in your {{a}}plan{{/a}}', {
 	components: {
 		a: <a href="/plans/" />,
 	},
@@ -52,6 +62,18 @@ translate( 'How many products do you want to sell? {{span}}(optional){{/span}}',
 	},
 } );
 translate( 'Are you already selling? {{span}}(optional){{/span}}', {
+	components: {
+		span: <span />,
+	},
+} );
+
+// Name your store
+translate( 'Store name {{span}}(optional){{/span}}', {
+	components: {
+		span: <span />,
+	},
+} );
+translate( 'Description {{span}}(optional){{/span}}', {
 	components: {
 		span: <span />,
 	},
