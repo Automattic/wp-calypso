@@ -2,6 +2,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import withP2HubHasP2s from 'calypso/data/p2/with-p2-hub-has-p2s';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -129,8 +130,9 @@ class SiteTools extends Component {
 
 	checkForSubscriptions = ( event ) => {
 		trackDeleteSiteOption( 'delete-site' );
+		const { isAtomic, hasCancelablePurchases, p2HubHasP2s } = this.props;
 
-		if ( this.props.isAtomic || ! this.props.hasCancelablePurchases ) {
+		if ( isAtomic || ! hasCancelablePurchases || ! p2HubHasP2s ) {
 			return true;
 		}
 
@@ -175,4 +177,4 @@ export default connect(
 	{
 		errorNotice,
 	}
-)( localize( SiteTools ) );
+)( localize( withP2HubHasP2s( SiteTools ) ) );
