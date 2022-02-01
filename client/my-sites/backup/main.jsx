@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
@@ -21,7 +21,6 @@ import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
-import getRewindBackupsRequestStatus from 'calypso/state/selectors/get-rewind-backups-request-status';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -40,14 +39,6 @@ import './style.scss';
 const BackupPage = ( { queryDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSettingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
-
-	const rewindBackupRequestStatus = useSelector( ( state ) =>
-		getRewindBackupsRequestStatus( state, siteId )
-	);
-
-	useEffect( () => {
-		console.log( 'Rewind backup request status: ', rewindBackupRequestStatus );
-	}, [ rewindBackupRequestStatus ] );
 
 	const moment = useLocalizedMoment();
 	const parsedQueryDate = queryDate ? moment( queryDate, INDEX_FORMAT ) : moment();
