@@ -50,6 +50,8 @@ interface Props {
 	resetImport: ( siteId: number, importerId: string ) => void;
 }
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
+	const IMPORT_ROUTE = '/start/from/importing';
+
 	const {
 		urlData,
 		stepName,
@@ -95,7 +97,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function isLoading() {
-		return ! isImporterStatusHydrated;
+		return ! isImporterStatusHydrated || ! page.current.startsWith( IMPORT_ROUTE );
 	}
 
 	function hasPermission(): boolean {
@@ -232,16 +234,16 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 					>
 						<div className="import-layout__center">
 							{ ( () => {
-								if ( ! siteSlug ) {
-									/**
-									 * Not found
-									 */
-									return <NotFound />;
-								} else if ( isLoading() ) {
+								if ( isLoading() ) {
 									/**
 									 * Loading screen
 									 */
 									return <LoadingEllipsis />;
+								} else if ( ! siteSlug ) {
+									/**
+									 * Not found
+									 */
+									return <NotFound />;
 								} else if ( ! hasPermission() ) {
 									/**
 									 * Permission screen
