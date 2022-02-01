@@ -1,9 +1,4 @@
-import {
-	REWIND_BACKUPS_REQUEST,
-	REWIND_BACKUPS_SET,
-	REWIND_BACKUPS_REQUEST_SUCCESS,
-	REWIND_BACKUPS_REQUEST_FAILURE,
-} from 'calypso/state/action-types';
+import { REWIND_BACKUPS_SET } from 'calypso/state/action-types';
 
 /**
  * Returns the updated backups state after an action has been dispatched. The
@@ -14,25 +9,11 @@ import {
 
 export default ( state = {}, { type, backups } ) => {
 	switch ( type ) {
-		case REWIND_BACKUPS_REQUEST:
-			return {
-				backups: state.backups,
-				requestStatus: 'pending',
-			};
-		case REWIND_BACKUPS_REQUEST_SUCCESS:
-			return {
-				backups: state.backups,
-				requestStatus: 'success',
-			};
-		case REWIND_BACKUPS_REQUEST_FAILURE:
-			return {
-				backups: state.backups,
-				requestStatus: 'failure',
-			};
 		case REWIND_BACKUPS_SET:
 			return {
 				backups,
 				requestStatus: state.requestStatus,
+				isInitialized: true,
 			};
 	}
 
