@@ -1,12 +1,15 @@
 import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import EmptyContent from 'calypso/components/empty-content';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
+import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -21,6 +24,10 @@ import { installPlugin, activatePlugin } from 'calypso/state/plugins/installed/a
 import { getPluginOnSite, getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
+import {
+	isMarketplaceProduct as isMarketplaceProductSelector,
+	getProductsList,
+} from 'calypso/state/products-list/selectors';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
@@ -52,6 +59,7 @@ const MarketplacePluginInstall = ( {
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
 	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
 	const [ noDirectAccessError, setNoDirectAccessError ] = useState( false );
+	const [ directInstallationAllowed, setDirectInstallationAllowed ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -79,6 +87,16 @@ const MarketplacePluginInstall = ( {
 	const pluginInstallStatus = useSelector( ( state ) =>
 		getStatusForPlugin( state, siteId, productSlug )
 	);
+
+	const productsList = useSelector( ( state ) => getProductsList( state ) );
+	const isProductListFetched = Object.values( productsList ).length > 0;
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, productSlug )
+	);
+
+	const { data: wpComPluginData } = useWPCOMPlugin( productSlug, {
+		enabled: isProductListFetched && isMarketplaceProduct,
+	} );
 
 	const marketplacePluginInstallationInProgress = useSelector( ( state ) => {
 		const { pluginInstallationStatus, productSlugInstalled, primaryDomain } = getPurchaseFlowState(
@@ -153,7 +171,7 @@ const MarketplacePluginInstall = ( {
 	// Installing plugin flow startup
 	useEffect( () => {
 		if (
-			marketplacePluginInstallationInProgress &&
+			( marketplacePluginInstallationInProgress || directInstallationAllowed ) &&
 			! isUploadFlow &&
 			! initializeInstallFlow &&
 			wporgPlugin &&
@@ -179,6 +197,7 @@ const MarketplacePluginInstall = ( {
 		}
 	}, [
 		marketplacePluginInstallationInProgress,
+		directInstallationAllowed,
 		isUploadFlow,
 		initializeInstallFlow,
 		selectedSite,
@@ -249,7 +268,7 @@ const MarketplacePluginInstall = ( {
 				/>
 			);
 		}
-		if ( isUploadFlow && noDirectAccessError ) {
+		if ( isUploadFlow && noDirectAccessError && ! directInstallationAllowed ) {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
@@ -262,17 +281,56 @@ const MarketplacePluginInstall = ( {
 				/>
 			);
 		}
-		if ( noDirectAccessError ) {
+		if ( noDirectAccessError && ! directInstallationAllowed ) {
+			const variationPeriod = 'monthly';
+			const marketplaceProductSlug = wpComPluginData?.variations?.[ variationPeriod ]?.product_slug;
+
 			return (
-				<EmptyContent
-					illustration="/calypso/images/illustrations/error.svg"
-					title={ null }
-					line={ translate(
-						'This URL should not be accessed directly. Please click the Install button on the plugin page.'
-					) }
-					action={ translate( 'Go to the plugin page' ) }
-					actionURL={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }
-				/>
+				<>
+					<QueryProductsList />
+					<EmptyContent
+						className="marketplace-plugin-install__direct-install-container"
+						illustration={
+							wporgPlugin?.icon ||
+							wpComPluginData?.icon ||
+							'/calypso/images/illustrations/error.svg'
+						}
+						illustrationWidth={ ( wporgPlugin?.icon || wpComPluginData?.icon ) && 128 }
+						title={ wporgPlugin?.name || wpComPluginData?.name || productSlug }
+						line={ translate( 'Do you want to install the plugin %(plugin)s?', {
+							args: { plugin: wporgPlugin?.name || wpComPluginData?.name || productSlug },
+						} ) }
+					>
+						{ isProductListFetched && (
+							<div className="marketplace-plugin-install__direct-install-actions">
+								<Button href={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }>
+									{ translate( 'Go to the plugin page' ) }
+								</Button>
+
+								{ ! isMarketplaceProduct ? (
+									<Button primary onClick={ () => setDirectInstallationAllowed( true ) }>
+										{ translate( 'Install and activate plugin' ) }
+									</Button>
+								) : (
+									<Button
+										primary
+										onClick={ () =>
+											page(
+												`/checkout/${
+													selectedSite?.slug || ''
+												}/${ marketplaceProductSlug }?redirect_to=/marketplace/thank-you/${ marketplaceProductSlug }/${
+													selectedSite?.slug || ''
+												}#step2`
+											)
+										}
+									>
+										{ translate( 'Purchase and activate plugin' ) }
+									</Button>
+								) }
+							</div>
+						) }
+					</EmptyContent>
+				</>
 			);
 		}
 		if ( pluginExists ) {
