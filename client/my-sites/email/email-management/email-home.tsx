@@ -76,6 +76,7 @@ const EmailManagementHome = ( props: EmailManagementHomeProps ): ReactElement =>
 	const renderContentWithHeader = ( content: ReactElement ) => {
 		return (
 			<Main wideLayout>
+
 				<DocumentHead title={ toTitleCase( translate( 'Emails', { textOnly: true } ) ) } />
 
 				<SidebarNavigation />
@@ -83,6 +84,7 @@ const EmailManagementHome = ( props: EmailManagementHomeProps ): ReactElement =>
 				<EmailHeader />
 
 				{ content }
+
 			</Main>
 		);
 	};
