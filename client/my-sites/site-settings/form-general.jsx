@@ -607,6 +607,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			site,
 			siteIsJetpack,
+			siteIsAtomic,
 			siteIsVip,
 			siteSlug,
 			translate,
@@ -641,7 +642,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ this.props.isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
 
-				{ ! isWPForTeamsSite && ! siteIsJetpack && (
+				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
 							title={ translate( 'Footer credit' ) }
