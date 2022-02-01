@@ -587,6 +587,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/happychat-app@workspace:apps/happychat"
   dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
@@ -635,6 +636,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/inline-help@workspace:apps/inline-help"
   dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
