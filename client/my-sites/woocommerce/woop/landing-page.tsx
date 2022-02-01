@@ -66,7 +66,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 			<EmptyContent
 				title={ __( 'Set up a store and start selling online' ) }
 				illustration="/calypso/images/illustrations/illustration-shopping-bags.svg"
-				illustrationWidth="150"
+				illustrationWidth={ 150 }
 				line={ __(
 					'Set up a new store in minutes. Get secure payments, configurable shipping options, and more, out of the box.'
 				) }
