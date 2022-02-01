@@ -53,8 +53,8 @@ const CtaSection: React.FunctionComponent< Props > = ( props ) => {
 	return (
 		<Container>
 			<CtaContainer>
-				<Headline>{ title }</Headline>
-				<Title>{ headline }</Title>
+				<Title>{ title }</Title>
+				<Headline>{ headline }</Headline>
 				{ notice }
 				{ children }
 			</CtaContainer>

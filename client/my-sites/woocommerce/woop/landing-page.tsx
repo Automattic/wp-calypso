@@ -63,10 +63,10 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				</Button>
 			</FixedNavigationHeader>
 			<CtaSection
-				title={ __(
+				title={ __( 'Setup a store and start selling online' ) }
+				headline={ __(
 					'Set up a new store in minutes. Get secure payments, configurable shipping options, and more, out of the box.'
 				) }
-				headline={ __( 'Setup a store and start selling online' ) }
 				notice={ renderWarningNotice() }
 			>
 				<Button href="https://wordpress.com/support/introduction-to-woocommerce/" ref={ ctaRef }>
