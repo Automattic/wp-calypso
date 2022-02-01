@@ -563,6 +563,18 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
 			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
 		} );
+
+		test( 'Should return crossed price when First Year Promotional discount is applied', () => {
+			const comp = new PlanFeaturesHeader( {
+				...baseProps,
+				discountPrice: 30,
+				isFirstYearPromotionalDiscount: true,
+			} );
+			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
+			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
+			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
+			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 30 );
+		} );
 	} );
 
 	describe( 'has only rawPrice', () => {

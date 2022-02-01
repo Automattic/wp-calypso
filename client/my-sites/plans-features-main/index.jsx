@@ -168,12 +168,12 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
+			isBillingWordingExperiment,
 			redirectToAddDomainFlow,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
-
 		return (
 			<div
 				className={ classNames(
@@ -212,6 +212,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+					isBillingWordingExperiment={ isBillingWordingExperiment }
 					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
 				/>
 			</div>

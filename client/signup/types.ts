@@ -1,5 +1,5 @@
 export interface Dependencies {
-	[ other: string ]: string[];
+	[ other: string ]: any;
 }
 
 export interface Flow {

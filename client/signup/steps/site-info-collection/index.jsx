@@ -45,11 +45,11 @@ function SiteInformationCollection( {
 
 	const onTypeformSubmission = ( typeformSubmissionId ) => {
 		const extra = {
-			difm_lite_selected_design: selectedDesign?.theme,
-			difm_lite_site_category: selectedSiteCategory,
-			difm_lite_typeform_response_id: typeformSubmissionId,
-			difm_lite_new_or_existing_site_choice: newOrExistingSiteChoice,
-			difm_lite_let_us_choose_selected: !! isLetUsChooseSelected,
+			selected_design: selectedDesign?.theme,
+			site_category: selectedSiteCategory,
+			typeform_response_id: typeformSubmissionId,
+			new_or_existing_site_choice: newOrExistingSiteChoice,
+			let_us_choose_selected: !! isLetUsChooseSelected,
 		};
 		const cartItem = { product_slug: WPCOM_DIFM_LITE, extra };
 		const step = {

@@ -1,3 +1,5 @@
+import type { Dependencies } from 'calypso/signup/types';
+
 export const schema = {
 	type: 'object',
 	patternProperties: {
@@ -26,7 +28,7 @@ export interface StepState {
 		url: string;
 	};
 	lastUpdated: number;
-	providedDependencies?: string[];
+	providedDependencies?: Dependencies;
 	status: 'completed' | 'processing' | 'pending' | 'in-progress' | 'invalid';
 	stepName: string;
 	wasSkipped?: boolean;

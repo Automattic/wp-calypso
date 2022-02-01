@@ -22,7 +22,6 @@ export type GDPRConsentStatus = keyof typeof gdprConsentStatus | null;
 
 export type GoogleEmailSubscription = EmailSubscription & {
 	pendingTosAcceptance?: boolean;
-	pendingUsers?: Array< string >;
 	productSlug?: string;
 	subscribedDate?: string;
 	subscriptionId?: string;

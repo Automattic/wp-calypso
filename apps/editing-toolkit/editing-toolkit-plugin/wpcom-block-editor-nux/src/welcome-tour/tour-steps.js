@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, hasTranslation } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 function getTourAssets( key ) {
 	const CDN_PREFIX = 'https://s0.wp.com/i/editor-welcome-tour';
@@ -81,17 +81,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 						'Click + to open the inserter. Then click the block you want to add.',
 						'full-site-editing'
 					),
-					mobile:
-						localeSlug === 'en' ||
-						hasTranslation?.( 'Tap + to open the inserter. Then tap the block you want to add.' )
-							? __(
-									'Tap + to open the inserter. Then tap the block you want to add.',
-									'full-site-editing'
-							  )
-							: __(
-									'Click + to open the inserter. Then click the block you want to add.',
-									'full-site-editing'
-							  ),
+					mobile: __(
+						'Tap + to open the inserter. Then tap the block you want to add.',
+						'full-site-editing'
+					),
 				},
 				imgSrc: getTourAssets( 'addBlock' ),
 				animation: 'block-inserter',
@@ -125,11 +118,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				heading: __( 'More Options', 'full-site-editing' ),
 				descriptions: {
 					desktop: __( 'Click the settings icon to see even more options.', 'full-site-editing' ),
-					mobile:
-						localeSlug === 'en' ||
-						hasTranslation?.( 'Tap the settings icon to see even more options.' )
-							? __( 'Tap the settings icon to see even more options.', 'full-site-editing' )
-							: __( 'Click the settings icon to see even more options.', 'full-site-editing' ),
+					mobile: __( 'Tap the settings icon to see even more options.', 'full-site-editing' ),
 				},
 				imgSrc: getTourAssets( 'moreOptions' ),
 				animation: null,
@@ -181,11 +170,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				heading: __( 'Drag & drop', 'full-site-editing' ),
 				descriptions: {
 					desktop: __( 'To move blocks around, click and drag the handle.', 'full-site-editing' ),
-					mobile:
-						localeSlug === 'en' ||
-						hasTranslation?.( 'To move blocks around, tap the up and down arrows.' )
-							? __( 'To move blocks around, tap the up and down arrows.', 'full-site-editing' )
-							: __( 'To move blocks around, click and drag the handle.', 'full-site-editing' ),
+					mobile: __( 'To move blocks around, tap the up and down arrows.', 'full-site-editing' ),
 				},
 				imgSrc: getTourAssets( 'moveBlock' ),
 				animation: 'undo-button',

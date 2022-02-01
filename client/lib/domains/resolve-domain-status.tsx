@@ -4,7 +4,6 @@ import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
-import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
 import {
 	SETTING_PRIMARY_DOMAIN,
@@ -221,16 +220,6 @@ export function resolveDomainStatus(
 						}
 					),
 					listStatusClass: 'verifying',
-					listStatusWeight: 600,
-				};
-			}
-
-			if ( hasPendingGSuiteUsers( domain ) ) {
-				return {
-					statusText: translate( 'Action required' ),
-					statusClass: 'status-error',
-					status: translate( 'Action required' ),
-					icon: 'info',
 					listStatusWeight: 600,
 				};
 			}
@@ -497,16 +486,6 @@ export function resolveDomainStatus(
 					noticeText,
 					listStatusClass: 'info',
 					listStatusWeight: 400,
-				};
-			}
-
-			if ( hasPendingGSuiteUsers( domain ) ) {
-				return {
-					statusText: translate( 'Action required' ),
-					statusClass: 'status-error',
-					status: translate( 'Action required' ),
-					icon: 'info',
-					listStatusWeight: 600,
 				};
 			}
 
