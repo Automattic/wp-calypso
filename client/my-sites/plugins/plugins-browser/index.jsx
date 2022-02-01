@@ -222,7 +222,7 @@ const PluginsBrowser = ( {
 					<QueryWporgPlugins category="featured" />
 				</>
 			) }
-			{ ! jetpackNonAtomic && <QueryProductsList persist /> }
+			<QueryProductsList persist />
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<PageViewTrackerWrapper
 				category={ category }
