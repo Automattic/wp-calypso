@@ -21,12 +21,18 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let page: Page;
-	let testFiles: { image: TestFile; image_reserved_name: TestFile; audio: TestFile };
+	let testFiles: {
+		image: TestFile;
+		image_modal: TestFile;
+		image_reserved_name: TestFile;
+		audio: TestFile;
+	};
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		testFiles = {
 			image: await MediaHelper.createTestFile( TEST_IMAGE_PATH ),
+			image_modal: await MediaHelper.createTestFile( TEST_IMAGE_PATH ),
 			image_reserved_name: await MediaHelper.createTestFile( TEST_IMAGE_PATH, {
 				postfix: 'filewith#?#?reservedurlchars',
 			} ),
@@ -65,6 +71,17 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		await imageBlock.upload( testFiles.image_reserved_name.fullpath );
 	} );
 
+	it( `${ ImageBlock.blockName } block: upload image file using Calypso media modal `, async function () {
+		const blockHandle = await gutenbergEditorPage.addBlock(
+			ImageBlock.blockName,
+			ImageBlock.blockEditorSelector
+		);
+		const imageBlock = new ImageBlock( blockHandle );
+
+		await imageBlock.selectImageSource( 'Media Library' );
+		await imageBlock.uploadFromModal( testFiles.image_modal.fullpath );
+	} );
+
 	it( `${ AudioBlock.blockName } block: upload audio file`, async function () {
 		const blockHandle = await gutenbergEditorPage.addBlock(
 			AudioBlock.blockName,
@@ -84,6 +101,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	} );
 
 	it( 'Publish and visit post', async function () {
+		await gutenbergEditorPage.saveDraft();
 		await gutenbergEditorPage.publish( { visit: true } );
 	} );
 

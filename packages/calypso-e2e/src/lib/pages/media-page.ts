@@ -1,6 +1,8 @@
 import { ElementHandle, Page } from 'playwright';
 import { waitForElementEnabled, clickNavTab } from '../../element-helper';
 
+type ModalAction = 'Confirm' | 'Cancel';
+
 const selectors = {
 	// Gallery view
 	gallery: '.media-library__content',
@@ -24,6 +26,10 @@ const selectors = {
 		`.image-editor__toolbar-button span:text("${ text }")`,
 	imageEditorResetButton: 'button[data-e2e-button="reset"]',
 	imageEditorCancelButton: 'button[data-e2e-button="cancel"]',
+
+	// When embedded in a modal
+	modalActionButton: ( action: ModalAction ) =>
+		`button[data-e2e-button="${ action.toLowerCase() }"]`,
 };
 
 /**
@@ -172,5 +178,16 @@ export class MediaPage {
 					.then( ( element ) => element.innerText() )
 			);
 		}
+	}
+
+	/* Modal mode */
+
+	/**
+	 *
+	 * @param action
+	 */
+	async clickModalButton( action: ModalAction ): Promise< void > {
+		const locator = this.page.locator( selectors.modalActionButton( action ) );
+		await locator.click();
 	}
 }
