@@ -64,7 +64,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 			</FixedNavigationHeader>
 			{ renderWarningNotice() }
 			<EmptyContent
-				title={ __( 'Setup a store and start selling online' ) }
+				title={ __( 'Set up a store and start selling online' ) }
 				illustration="/calypso/images/illustrations/illustration-shopping-bags.svg"
 				illustrationWidth="150"
 				line={ __(

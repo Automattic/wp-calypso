@@ -1,17 +1,19 @@
+@import '@automattic/onboarding/styles/mixins';
+
 body.is-section-woocommerce-installation.theme-default.color-scheme {
 	--color-surface-backdrop: var( --studio-white );
 }
 
 .woocommerce_landing-page {
+	padding-top: 3em;
+
 	.empty-content__title {
-		font-family: Recoleta;
+		@include onboarding-heading-text;
 		color: var( --studio-gray-90 );
-		font-size: 2.81rem;
-		line-height: 1.19;
-		padding-bottom: 1em;
+		padding: 1em 0 0.5em;
 	}
 	.empty-content__line {
-		font-size: 16px;
-		padding-bottom: 10px;
+		@include onboarding-large-text;
+		margin-bottom: 1.5em;
 	}
 }
