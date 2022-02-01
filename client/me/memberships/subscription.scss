@@ -131,10 +131,4 @@
 	.accessible-focus &:focus {
 		box-shadow: 0 0 0 2px var( --color-error-light );
 	}
-
-	.gridicon {
-		margin-top: -2px;
-		margin-right: 4px;
-		vertical-align: middle;
-	}
 }
