@@ -9,6 +9,7 @@ import isRewindBackupsInitialized from 'calypso/state/rewind/selectors/is-rewind
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { useIsDateVisible } from '../hooks';
 import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
+
 import './style.scss';
 
 export const DailyStatus = ( { selectedDate } ) => {

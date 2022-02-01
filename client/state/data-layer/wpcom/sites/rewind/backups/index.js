@@ -1,8 +1,4 @@
-import {
-	REWIND_BACKUPS_REQUEST,
-	REWIND_BACKUPS_REQUEST_FAILURE,
-	REWIND_BACKUPS_SET,
-} from 'calypso/state/action-types';
+import { REWIND_BACKUPS_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
@@ -21,21 +17,9 @@ export const fetchBackups = ( action ) => {
 	);
 };
 
-export const onError = ( siteId, backups ) => [
-	{
-		type: REWIND_BACKUPS_REQUEST_FAILURE,
-		siteId,
-	},
-	{
-		type: REWIND_BACKUPS_SET,
-		siteId,
-		backups,
-	},
-];
-
 export const setBackups = ( { siteId }, backups ) => setRewindBackups( siteId, backups );
 
-export const resetBackups = ( { siteId } ) => onError( siteId, [] );
+export const resetBackups = ( { siteId } ) => setRewindBackups( siteId, [] );
 
 registerHandlers( 'state/data-layer/wpcom/sites/rewind/backups/index.js', {
 	[ REWIND_BACKUPS_REQUEST ]: [
