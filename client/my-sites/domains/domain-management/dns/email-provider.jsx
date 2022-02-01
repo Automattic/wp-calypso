@@ -65,8 +65,11 @@ class EmailProvider extends Component {
 	render() {
 		const { template, translate } = this.props;
 		const { token, submitting } = this.state;
-		const { name, label, placeholder, validationPattern } = template;
-		const isDataValid = token.match( validationPattern );
+		const { expectedValue, label, name, placeholder, validationPattern } = template;
+
+		const isDataValid = validationPattern
+			? token.match( validationPattern )
+			: token === expectedValue;
 
 		return (
 			<form className="dns__form">

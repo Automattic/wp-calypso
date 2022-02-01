@@ -74,6 +74,14 @@ export const dnsTemplates = {
 		PROVIDER: 'microsoft-office365',
 		SERVICE: 'O365',
 	},
+	TITAN: {
+		PROVIDER: 'titan-mail',
+		SERVICE: 'titan',
+	},
+	WPCOM_EMAIL_FORWARDING: {
+		PROVIDER: 'WordPress.com',
+		SERVICE: 'email-forwarding',
+	},
 	ZOHO_MAIL: {
 		PROVIDER: 'zoho-mail',
 		SERVICE: 'Zoho',
