@@ -26,6 +26,7 @@ import PlanPill from 'calypso/components/plans/plan-pill';
 import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
+import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -94,6 +95,7 @@ export class PlanFeaturesHeader extends Component {
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
+					{ this.getAnnualDiscount() }
 					{ this.getBillingTimeframe() }
 				</div>
 				{ ! isInSignup && isCurrent && (
@@ -222,6 +224,41 @@ export class PlanFeaturesHeader extends Component {
 		return translate(
 			"You'll receive a discount from the full price of %(price)s because you already have a plan.",
 			{ args: { price } }
+		);
+	}
+
+	getAnnualDiscount() {
+		const {
+			isMonthlyPlan,
+			translate,
+			relatedMonthlyPlan,
+			relatedYearlyPlan,
+			eligibleForWpcomMonthlyPlans,
+		} = this.props;
+
+		if ( isMonthlyPlan || ! relatedMonthlyPlan || ! eligibleForWpcomMonthlyPlans ) {
+			return;
+		}
+
+		const rawPrice = relatedMonthlyPlan.raw_price;
+
+		const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
+		const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
+
+		const isLoading = typeof rawPrice !== 'number';
+		const annualDiscountText = translate( `You're saving %(discountRate)s%% by paying annually`, {
+			args: { discountRate },
+		} );
+
+		return (
+			<div
+				className={ classNames( {
+					'plan-features__header-annual-discount': true,
+					'plan-features__header-annual-discount-is-loading': isLoading,
+				} ) }
+			>
+				<span>{ annualDiscountText }</span>
+			</div>
 		);
 	}
 
@@ -382,6 +419,7 @@ export class PlanFeaturesHeader extends Component {
 			discountPrice,
 			rawPrice,
 			relatedMonthlyPlan,
+			isFirstYearPromotionalDiscount,
 			isLoggedInMonthlyPricing,
 		} = this.props;
 
@@ -406,6 +444,9 @@ export class PlanFeaturesHeader extends Component {
 			}
 		}
 
+		if ( isFirstYearPromotionalDiscount ) {
+			return this.renderPriceGroup( rawPrice, discountPrice );
+		}
 		return this.renderPriceGroup( rawPrice );
 	}
 
@@ -549,6 +590,7 @@ PlanFeaturesHeader.propTypes = {
 	relatedYearlyPlan: PropTypes.object,
 
 	isLoggedInMonthlyPricing: PropTypes.bool,
+	eligibleForWpcomMonthlyPlans: PropTypes.bool,
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -566,18 +608,27 @@ PlanFeaturesHeader.defaultProps = {
 	showPlanCreditsApplied: false,
 	siteSlug: '',
 	isLoggedInMonthlyPricing: false,
+	eligibleForWpcomMonthlyPlans: false,
 };
 
 export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
 	const isYearly = !! relatedMonthlyPlan;
+	const relatedYearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( planType ) );
+
+	const isFirstYearPromotionalDiscount =
+		isYearly &&
+		relatedYearlyPlan &&
+		'first_year_promotional_discounts' === relatedYearlyPlan.overridden_price_reason;
 
 	return {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
 		isYearly,
-		relatedYearlyPlan: getPlanBySlug( state, getYearlyPlanByMonthly( planType ) ),
+		isFirstYearPromotionalDiscount,
+		relatedYearlyPlan,
 		siteSlug: getSiteSlug( state, selectedSiteId ),
+		eligibleForWpcomMonthlyPlans: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 	};
 } )( localize( PlanFeaturesHeader ) );
