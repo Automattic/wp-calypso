@@ -155,7 +155,6 @@ private object O2Blocks : WPComPluginBuild(
 )
 
 private object Happychat : WPComPluginBuild(
-	buildId = "WPComPlugins_Happychat",
 	buildName = "Happychat",
 	pluginSlug = "happychat",
 	archiveDir = "./dist/",
@@ -163,7 +162,6 @@ private object Happychat : WPComPluginBuild(
 )
 
 private object InlineHelp : WPComPluginBuild(
-	buildId = "WPComPlugins_InlineHelp",
 	buildName = "Inline Help",
 	pluginSlug = "inline-help",
 	archiveDir = "./dist/",

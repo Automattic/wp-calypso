@@ -12,7 +12,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 open class WPComPluginBuild(
-	var buildId: String,
+	var buildId: String = "",
 	var buildName: String,
 	var docsLink: String,
 	var archiveDir: String,
