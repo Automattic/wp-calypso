@@ -9,7 +9,6 @@ export default ( state = {}, { type, backups } ) => {
 		case REWIND_BACKUPS_SET:
 			return {
 				backups,
-				requestStatus: state.requestStatus,
 				isInitialized: true,
 			};
 	}
