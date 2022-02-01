@@ -37,7 +37,19 @@ interface EmailManagementHomeProps {
 	source: string;
 }
 
-const EmailManagementHome = ( props: EmailManagementHomeProps ) => {
+function toTitleCase( words: string[] | string ): string {
+	if ( typeof words === 'string' ) {
+		words = words.trim().split( ' ' );
+	}
+
+	const result = words.map( function ( word ) {
+		return word.charAt( 0 ).toUpperCase() + word.slice( 1 );
+	} );
+
+	return result.join( ' ' );
+}
+
+const EmailManagementHome = ( props: EmailManagementHomeProps ): ReactElement => {
 	const {
 		emailListInactiveHeader,
 		showActiveDomainList = true,
@@ -64,7 +76,7 @@ const EmailManagementHome = ( props: EmailManagementHomeProps ) => {
 	const renderContentWithHeader = ( content: ReactElement ) => {
 		return (
 			<Main wideLayout>
-				<DocumentHead title={ titleCase( translate( 'Emails' ) ) } />
+				<DocumentHead title={ toTitleCase( translate( 'Emails', { textOnly: true } ) ) } />
 
 				<SidebarNavigation />
 
