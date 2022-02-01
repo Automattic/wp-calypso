@@ -43,6 +43,10 @@ const GoogleWorkspacePrice = ( {
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 
+	if ( ! domain ) {
+		return <></>;
+	}
+
 	const isGSuiteSupported = canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] );
 
 	if ( ! isGSuiteSupported ) {
