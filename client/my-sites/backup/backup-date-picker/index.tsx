@@ -38,8 +38,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 
 	const firstKnownBackupAttempt = useFirstKnownBackupAttempt( siteId );
 	const oldestDateAvailable = useDateWithOffset(
-		firstKnownBackupAttempt.backupAttempt?.activityTs,
-		{ shouldExecute: !! firstKnownBackupAttempt.backupAttempt }
+		firstKnownBackupAttempt.backupAttempt?.activityTs
 	);
 	// Get the oldest visible backup date.
 	// This is added into the state via QueryRewindPolicies
