@@ -1,9 +1,9 @@
 import {
 	SIGNUP_CURRENT_FLOW_NAME_SET,
 	SIGNUP_PREVIOUS_FLOW_NAME_SET,
-	SIGNUP_FLOW_ADD_EXCLUDE_STEPS,
-	SIGNUP_FLOW_REMOVE_EXCLUDE_STEPS,
-	SIGNUP_FLOW_RESET_EXCLUDE_STEPS,
+	SIGNUP_FLOW_ADD_EXCLUDED_STEPS,
+	SIGNUP_FLOW_REMOVE_EXCLUDED_STEPS,
+	SIGNUP_FLOW_RESET_EXCLUDED_STEPS,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/signup/init';
@@ -22,22 +22,22 @@ export function setPreviousFlowName( flowName ) {
 	};
 }
 
-export function addExcludeSteps( steps ) {
+export function addExcludedSteps( steps ) {
 	return {
-		type: SIGNUP_FLOW_ADD_EXCLUDE_STEPS,
+		type: SIGNUP_FLOW_ADD_EXCLUDED_STEPS,
 		steps,
 	};
 }
 
-export function removeExcludeSteps( steps ) {
+export function removeExcludedSteps( steps ) {
 	return {
-		type: SIGNUP_FLOW_REMOVE_EXCLUDE_STEPS,
+		type: SIGNUP_FLOW_REMOVE_EXCLUDED_STEPS,
 		steps,
 	};
 }
 
-export function resetExcludeSteps() {
+export function resetExcludedSteps() {
 	return {
-		type: SIGNUP_FLOW_RESET_EXCLUDE_STEPS,
+		type: SIGNUP_FLOW_RESET_EXCLUDED_STEPS,
 	};
 }
