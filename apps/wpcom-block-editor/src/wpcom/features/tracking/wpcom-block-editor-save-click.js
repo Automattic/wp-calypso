@@ -1,3 +1,5 @@
+import { select } from '@wordpress/data';
+import { getEditorType } from '../utils';
 import tracksRecordEvent from './track-record-event';
 
 /**
@@ -7,12 +9,26 @@ import tracksRecordEvent from './track-record-event';
  */
 export const wpcomBlockEditorSaveClick = () => ( {
 	id: 'wpcom-block-editor-save-click',
-	// The first selector is for site editing. The second is for post editing.
 	selector:
 		'.editor-entities-saved-states__save-button, .editor-post-publish-button:not(.has-changes-dot)',
 	type: 'click',
 	handler: () => {
-		tracksRecordEvent( 'wpcom_block_editor_save_click' );
+		const isSiteEditor = getEditorType() === 'site';
+		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
+		const isEditedPostBeingScheduled = select( 'core/editor' ).isEditedPostBeingScheduled();
+		let actionType = 'publish';
+
+		if ( isSiteEditor ) {
+			actionType = 'save';
+		} else if ( isEditedPostBeingScheduled ) {
+			actionType = 'schedule';
+		} else if ( isCurrentPostPublished ) {
+			actionType = 'update';
+		}
+
+		tracksRecordEvent( 'wpcom_block_editor_save_click', {
+			action_type: actionType,
+		} );
 	},
 } );
 
@@ -22,6 +38,8 @@ export const wpcomBlockEditorSaveDraftClick = () => ( {
 	type: 'click',
 	capture: true,
 	handler: () => {
-		tracksRecordEvent( 'wpcom_block_editor_save_click' );
+		tracksRecordEvent( 'wpcom_block_editor_save_click', {
+			action_type: 'save_draft',
+		} );
 	},
 } );
