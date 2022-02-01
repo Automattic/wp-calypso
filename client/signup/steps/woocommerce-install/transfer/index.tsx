@@ -10,6 +10,12 @@ import TransferSite from './transfer-site';
 import type { WooCommerceInstallProps } from '../';
 import './style.scss';
 
+export interface FailureInfo {
+	type: string;
+	code: string;
+	error: string;
+}
+
 export default function Transfer( props: WooCommerceInstallProps ): ReactElement | null {
 	const dispatch = useDispatch();
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
@@ -24,13 +30,13 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 
 	const [ hasFailed, setHasFailed ] = useState( false );
 
-	const handleTransferFailure = ( failureInfo: string | object ) => {
+	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {
-				action: failureInfo[ 'type' ] || '',
+				action: failureInfo.type,
 				site: domain,
-				code: failureInfo[ 'code' ] || '',
-				error: failureInfo[ 'error' ] || '',
+				code: failureInfo.code,
+				error: failureInfo.error,
 			} )
 		);
 		setHasFailed( true );

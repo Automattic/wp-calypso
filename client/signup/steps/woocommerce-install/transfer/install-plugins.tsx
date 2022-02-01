@@ -11,8 +11,8 @@ import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Error from './error';
 import Progress from './progress';
-
 import './style.scss';
+import { FailureInfo } from '.';
 
 // Timeout limit for the install to complete.
 const TIMEOUT_LIMIT = 1000 * 45; // 45 seconds.
@@ -21,7 +21,7 @@ export default function InstallPlugins( {
 	onFailure,
 	trackRedirect,
 }: {
-	onFailure: ( type: any ) => void;
+	onFailure: ( type: FailureInfo ) => void;
 	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
@@ -58,8 +58,8 @@ export default function InstallPlugins( {
 
 		onFailure( {
 			type: 'install',
-			error: softwareError?.message,
-			code: softwareError?.code,
+			error: softwareError?.message || '',
+			code: softwareError?.code || '',
 		} );
 	}, [ softwareError, onFailure ] );
 

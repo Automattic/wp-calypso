@@ -14,14 +14,14 @@ import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Error from './error';
 import Progress from './progress';
-
 import './style.scss';
+import { FailureInfo } from '.';
 
 export default function TransferSite( {
 	onFailure,
 	trackRedirect,
 }: {
-	onFailure: ( type: string | object ) => void;
+	onFailure: ( type: FailureInfo ) => void;
 	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
@@ -110,8 +110,8 @@ export default function TransferSite( {
 
 			onFailure( {
 				type: 'transfer',
-				error: transferError?.message || softwareError?.message,
-				code: transferError?.code || softwareError?.code,
+				error: transferError?.message || softwareError?.message || '',
+				code: transferError?.code || softwareError?.code || '',
 			} );
 		}
 	}, [
