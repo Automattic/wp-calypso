@@ -39,6 +39,8 @@ interface CurrentThemeProps {
  */
 class CurrentTheme extends Component< CurrentThemeProps > {
 	trackClick = ( event: MouseEvent< HTMLButtonElement > ) => trackClick( 'current theme', event );
+	trackLinkClick = ( event: MouseEvent< HTMLAnchorElement > ) =>
+		trackClick( 'current theme', event );
 
 	render() {
 		const { currentTheme, currentThemeId, siteId, translate } = this.props;
@@ -119,18 +121,18 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 							</p>
 							<a
 								className="current-theme__theme-description-link"
-								href={ options?.info?.getUrl( currentThemeId ) }
-								onClick={ this.trackClick }
+								href={ options.info.getUrl( currentThemeId ) }
+								onClick={ this.trackLinkClick }
 							>
 								{ translate( 'Read more' ) }
 							</a>
 
 							<a
 								className="current-theme__theme-customize"
-								href={ options?.customize?.getUrl( currentThemeId ) }
-								onClick={ this.trackClick }
+								href={ options.customize.getUrl( currentThemeId ) }
+								onClick={ this.trackLinkClick }
 							>
-								<Gridicon icon={ options?.customize.icon } size={ 24 } />
+								<Gridicon icon={ options.customize.icon } size={ 24 } />
 								<span>{ translate( 'Customize theme' ) }</span>
 								<Gridicon icon="chevron-right" size={ 24 } />
 							</a>
