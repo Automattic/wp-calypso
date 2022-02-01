@@ -162,17 +162,14 @@
 	}
 }
 
-.email-plan-header {
+.email-plan-header.card.is-compact {
 	align-items: center;
+	display: flex;
 	flex-wrap: wrap;
 
 	h2 {
 		font-size: $font-title-large;
 		word-break: break-all;
-	}
-
-	&.card {
-		display: flex;
 	}
 
 	&.success {
@@ -251,33 +248,29 @@
 	}
 }
 
-.email-plan-mailboxes-list__mailbox-list-item {
+.email-plan-mailboxes-list__mailbox-list-item.card.is-compact {
 	flex-direction: column;
+	display: flex;
 
-	&.card {
-		display: flex;
+	@include break-xlarge {
+		flex-direction: row;
 
-		&.is-compact {
-			@include break-xlarge {
-				flex-direction: row;
-				/* The padding jumps as we need the padding on this element instead
-				 * of mailbox-list-item-main when we shift to flex-direction: row
-				 */
-				padding-right: 72px;
-			}
+		/* The padding jumps as we need the padding on this element instead
+		 * of mailbox-list-item-main when we shift to flex-direction: row
+		 */
+		padding-right: 72px;
+	}
+
+	&.is-highlight {
+		padding-left: 13px;
+
+		@include break-mobile {
+			padding-left: 21px;
 		}
+	}
 
-		&.is-highlight {
-			padding-left: 13px;
-
-			@include break-mobile {
-				padding-left: 21px;
-			}
-		}
-
-		&.is-error {
-			border-left-color: var( --color-error-50 );
-		}
+	&.is-error {
+		border-left-color: var( --color-error-50 );
 	}
 
 	.email-plan-mailboxes-list__mailbox-list-item-main {
@@ -375,13 +368,10 @@
 	}
 }
 
-.email-plan-subscription__card {
+.email-plan-subscription__card.card.is-compact {
 	align-items: center;
+	display: flex;
 	flex-wrap: wrap;
-
-	&.card {
-		display: flex;
-	}
 
 	@include break-small {
 		flex-wrap: initial;
