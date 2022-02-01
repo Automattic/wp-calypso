@@ -1,3 +1,17 @@
 body.is-section-woocommerce-installation.theme-default.color-scheme {
 	--color-surface-backdrop: var( --studio-white );
 }
+
+.woocommerce_landing-page {
+	.empty-content__title {
+		font-family: Recoleta;
+		color: var( --studio-gray-90 );
+		font-size: 2.81rem;
+		line-height: 1.19;
+		padding-bottom: 1em;
+	}
+	.empty-content__line {
+		font-size: 16px;
+		padding-bottom: 10px;
+	}
+}

@@ -3,16 +3,7 @@ import { TranslateResult } from 'i18n-calypso';
 import { ReactElement } from 'react';
 
 const Container = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	align-items: center;
 	min-height: 500px;
-	column-gap: 2em;
-	row-gap: 2em;
-
-	@media ( max-width: 660px ) {
-		grid-template-columns: 1fr;
-	}
 `;
 
 const CtaContainer = styled.div`

@@ -4,7 +4,8 @@ import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
-import CtaSection from 'calypso/components/cta-section';
+import StoreIllustration from 'calypso/assets/images/domains/free-domain.svg';
+import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
@@ -62,32 +63,21 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 					{ __( 'Start a new store' ) }
 				</Button>
 			</FixedNavigationHeader>
-			<CtaSection
+			<EmptyContent
 				title={ __( 'Setup a store and start selling online' ) }
-				headline={ __(
+				illustration="/calypso/images/illustrations/illustration-shopping-bags.svg"
+				illustrationWidth="150"
+				line={ __(
 					'Set up a new store in minutes. Get secure payments, configurable shipping options, and more, out of the box.'
 				) }
-				notice={ renderWarningNotice() }
-				cta={
-					<>
-						<Button
-							href="https://wordpress.com/support/introduction-to-woocommerce/"
-							ref={ ctaRef }
-						>
-							{ __( 'Learn more' ) }
-						</Button>
-						<Button
-							primary
-							onClick={ onCTAClickHandler }
-							ref={ ctaRef }
-							disabled={ isTransferringBlocked }
-						>
-							{ __( 'Start a new store' ) }
-						</Button>
-					</>
-				}
-				byline={ <WooCommerceColophon /> }
+				action={ __( 'Start a new store' ) }
+				actionCallback={ onCTAClickHandler }
+				secondaryAction={ __( 'Learn more' ) }
+				secondaryActionURL="https://wordpress.com/support/introduction-to-woocommerce/"
+				secondaryActionTarget="_blank"
+				className="woop__landing-page-cta woocommerce_landing-page"
 			/>
+			<WooCommerceColophon />
 		</div>
 	);
 };
