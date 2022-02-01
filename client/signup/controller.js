@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isMobile } from '@automattic/viewport';
 import { isEmpty } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
@@ -333,7 +334,11 @@ export default {
 
 		// Pre-fetching the experiment
 		if ( flowName === 'onboarding' || flowName === 'launch-site' ) {
-			await loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' );
+			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' );
+		}
+
+		if ( isMobile() && 'onboarding' === flowName ) {
+			loadExperimentAssignment( 'calypso_mobile_plans_page_with_billing' );
 		}
 
 		context.primary = createElement( SignupComponent, {
