@@ -5,6 +5,10 @@ import {
 } from 'calypso/state/action-types';
 
 function defaultPostId() {
+	if ( ! window || ! URLSearchParams ) {
+		return null;
+	}
+
 	const searchParams = new URLSearchParams( window.location.search );
 	return searchParams.has( 'support-article' )
 		? parseInt( searchParams.get( 'support-article' ) )
