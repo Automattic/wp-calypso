@@ -11,6 +11,9 @@ const selectors = {
 	urlInput: 'input.capture__input',
 	migrationInput: ( value: string ) =>
 		`input#sites-block__faux-site-selector-url-input[value="${ value }"]`,
+	wordPress: ( text: string ) =>
+		'.content-chooser .import-layout__column:nth-child(2) .list__importer-option:nth-child(2)' +
+		` .action-card__button-container button:text("${ text }")`,
 
 	// Errors
 	analyzeError: ( text: string ) => `div.capture__input-error-msg:text("${ text }")`,
@@ -103,6 +106,13 @@ export class StartImportFlow {
 	 */
 	async validateMigrationPage( siteSlug: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.migrationInput( siteSlug ) );
+	}
+
+	/**
+	 * Validates that we've landed on the WordPress migration page.
+	 */
+	async validateWordPressPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.wordPress( 'Continue' ) );
 	}
 
 	/**

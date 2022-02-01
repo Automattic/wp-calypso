@@ -40,8 +40,11 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 			await startImportFlow.validateImportPage();
 			await startImportFlow.clickButton( 'Import your content' );
 
-			// When the new flows will be created this check will need to be replaced
+			// Remove when onboarding/import-from-wordpress will be enabled on wpcalypso
 			await startImportFlow.validateMigrationPage( 'https://make.wordpress.org/' );
+
+			// Add when onboarding/import-from-wordpress will be enabled on wpcalypso
+			// await startImportFlow.validateWordPressPage();
 		} );
 	} );
 
