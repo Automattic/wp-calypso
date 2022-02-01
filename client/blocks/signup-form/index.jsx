@@ -1034,7 +1034,7 @@ class SignupForm extends Component {
 			`<PasswordlessSignupForm />` is for the `onboarding` flow.
 			Require only email to create account for mobile users.
 		*/
-		if ( this.props.isMobile ) {
+		if ( this.props.isMobile && this.props.flowName !== 'wpcc' ) {
 			const logInUrl = this.getLoginLink();
 
 			return (
