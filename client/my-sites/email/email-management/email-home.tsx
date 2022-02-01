@@ -22,6 +22,7 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -59,7 +60,7 @@ const EmailManagementHome = ( props: EmailManagementHomeProps ) => {
 	} );
 
 	const hasSiteDomainsLoaded = isFetched;
-	const domains = data?.domains;
+	const domains = data?.domains?.map( createSiteDomainObject );
 
 	const renderContentWithHeader = ( content: ReactElement ) => {
 		return (
