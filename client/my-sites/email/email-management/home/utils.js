@@ -10,7 +10,6 @@ import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
 	hasGSuiteWithUs,
-	hasPendingGSuiteUsers,
 	isPendingGSuiteTOSAcceptance,
 } from 'calypso/lib/gsuite';
 import {
@@ -121,10 +120,6 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 			isPendingGSuiteTOSAcceptance( domain ) ||
 			( emailAccount && hasGoogleAccountTOSWarning( emailAccount ) )
 		) {
-			return errorStatus;
-		}
-
-		if ( hasPendingGSuiteUsers( domain ) ) {
 			return errorStatus;
 		}
 

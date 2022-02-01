@@ -6,7 +6,7 @@ const Owned: React.FC = () => {
 	return (
 		<p className="display-price__you-own-this">
 			<Gridicon className="display-price__you-own-this-icon" icon="checkmark-circle" size={ 48 } />
-			{ translate( 'You own this product' ) }
+			{ translate( 'Active on your site' ) }
 		</p>
 	);
 };

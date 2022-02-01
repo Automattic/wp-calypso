@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Provider as ReduxProvider } from 'react-redux';
 import { RouteProvider } from 'calypso/components/route';
+import { setHrefLangLinks } from 'calypso/controller/localized-links';
 import {
 	setLocaleMiddleware,
 	setSectionMiddleware,
@@ -34,6 +35,7 @@ const ReduxWrappedLayout = ( {
 	primary,
 	secondary,
 	redirectUri,
+	showGdprBanner,
 } ) => {
 	return (
 		<RouteProvider
@@ -42,7 +44,12 @@ const ReduxWrappedLayout = ( {
 			currentQuery={ currentQuery }
 		>
 			<ReduxProvider store={ store }>
-				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+				<LayoutLoggedOut
+					primary={ primary }
+					secondary={ secondary }
+					redirectUri={ redirectUri }
+					showGdprBanner={ showGdprBanner }
+				/>
 			</ReduxProvider>
 		</RouteProvider>
 	);
@@ -57,7 +64,7 @@ export default ( router ) => {
 		router(
 			[ `/log-in/link/use/${ lang }`, `/log-in/jetpack/link/use/${ lang }` ],
 			redirectLoggedIn,
-			setLocaleMiddleware,
+			setLocaleMiddleware(),
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			magicLoginUse,
 			makeLoggedOutLayout
@@ -66,7 +73,7 @@ export default ( router ) => {
 		router(
 			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }`, `/log-in/new/link/${ lang }` ],
 			redirectLoggedIn,
-			setLocaleMiddleware,
+			setLocaleMiddleware(),
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			magicLogin,
 			makeLoggedOutLayout
@@ -86,7 +93,8 @@ export default ( router ) => {
 		],
 		redirectJetpack,
 		redirectDefaultLocale,
-		setLocaleMiddleware,
+		setLocaleMiddleware(),
+		setHrefLangLinks,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		login,
 		setShouldServerSideRenderLogin,

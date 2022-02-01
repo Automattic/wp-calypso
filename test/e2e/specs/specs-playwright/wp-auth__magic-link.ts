@@ -2,26 +2,29 @@
  * @group calypso-release
  */
 
-import { setupHooks, DataHelper, EmailClient, LoginPage } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { DataHelper, EmailClient, LoginPage } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
 import type { Message } from 'mailosaur/lib/models';
 
+declare const browser: Browser;
+
 describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function () {
-	const inboxId = DataHelper.config.get( 'defaultUserInboxId' ) as string;
-	// This method of obtaining the email address of the test user is temporary.
+	// This method of obtaining the userEmail address of the test user is temporary.
 	// The encrypted configuration file needs a revamp and have the format standardized
 	// and when that is copmlete, this can be replaced with an appropriate query method
-	// to extract the email address of the test user.
+	// to extract the userEmail address of the test user.
 	// See https://github.com/Automattic/wp-calypso/issues/55694.
-	const email = `main.${ inboxId }@mailosaur.io`;
-	let magicLink: string;
-	let loginPage: LoginPage;
-	let page: Page;
-	let message: Message;
-	let emailClient: EmailClient;
+	const emailInboxId = DataHelper.config.get( 'defaultUserInboxId' ) as string;
+	const userEmail = `main.${ emailInboxId }@mailosaur.io`;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	let page: Page;
+	let loginPage: LoginPage;
+	let emailClient: EmailClient;
+	let magicLinkURL: string;
+	let magicLinkEmail: Message;
+
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
 	it( 'Navigate to Login page', async function () {
@@ -30,29 +33,37 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 	} );
 
 	it( 'Request magic link', async function () {
-		await loginPage.requestMagicLink( email );
-	} );
+		await loginPage.clickSendMagicLink();
+		await loginPage.fillUsername( userEmail );
+		await loginPage.clickSubmit();
 
-	it( 'Magic link is received', async function () {
 		emailClient = new EmailClient();
-		message = await emailClient.getLastEmail( {
-			inboxId: inboxId,
-			emailAddress: email,
+		magicLinkEmail = await emailClient.getLastEmail( {
+			inboxId: emailInboxId,
+			emailAddress: userEmail,
 			subject: 'Log in to WordPress.com',
 		} );
-		const links = await emailClient.getLinksFromMessage( message );
-		magicLink = links.find( ( link: string ) => link.includes( 'wpcom_email_click' ) ) as string;
-		expect( magicLink ).toBeDefined();
+		const links = await emailClient.getLinksFromMessage( magicLinkEmail );
+		magicLinkURL = links.find( ( link ) => link.includes( 'wpcom_email_click' ) ) as string;
+
+		expect( magicLinkURL ).toBeDefined();
 	} );
 
-	it( 'Log in using magic link', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.followMagicLink( magicLink );
+	it( 'Go to the Magic Link URL', async function () {
+		await page.goto( new URL( magicLinkURL ).toString() );
 	} );
 
-	afterAll( async function () {
-		if ( message ) {
-			await emailClient.deleteMessage( message );
+	it( 'Click the "Continue to WordPress.com" button', async () => {
+		await page.click( 'text=Continue to WordPress.com' );
+	} );
+
+	it( 'Ensure user is logged in', async () => {
+		await page.waitForSelector( 'text="My Home"' );
+	} );
+
+	afterAll( async () => {
+		if ( magicLinkEmail ) {
+			await emailClient.deleteMessage( magicLinkEmail );
 		}
 	} );
 } );

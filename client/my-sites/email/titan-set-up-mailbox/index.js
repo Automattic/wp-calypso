@@ -69,7 +69,7 @@ const TitanSetUpMailbox = ( { selectedDomainName, source } ) => {
 			<Main wideLayout={ true }>
 				<DocumentHead title={ titleCase( title ) } />
 
-				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+				<EmailHeader />
 
 				<HeaderCake onClick={ handleBack }>
 					{ getTitanProductName() + ': ' + selectedDomainName }

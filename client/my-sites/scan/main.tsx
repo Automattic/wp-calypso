@@ -1,7 +1,7 @@
-import { Button, Card, ProgressBar, Gridicon } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
+import { Button, ProgressBar, Gridicon, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
@@ -30,6 +30,7 @@ import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpa
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ScanNavigation from './navigation';
+import type { TranslateResult } from 'i18n-calypso';
 import type { utc } from 'moment';
 
 import './style.scss';
@@ -48,7 +49,7 @@ interface Props {
 	moment: {
 		utc: typeof utc;
 	};
-	applySiteOffset: applySiteOffsetType;
+	applySiteOffset: applySiteOffsetType | null;
 	dispatchRecordTracksEvent: ( arg0: string, arg1: Record< string, unknown > ) => null;
 	dispatchScanRun: ( arg0: number ) => null;
 	isAdmin: boolean;
@@ -72,7 +73,7 @@ class ScanPage extends Component< Props > {
 		);
 	}
 
-	renderHeader( text: i18nCalypso.TranslateResult ) {
+	renderHeader( text: TranslateResult ) {
 		return <h1 className="scan__header">{ text }</h1>;
 	}
 
@@ -153,24 +154,34 @@ class ScanPage extends Component< Props > {
 
 		return (
 			<>
-				<SecurityIcon icon="in-progress" />
-				{ this.renderHeader( heading ) }
-				<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
-				{ isInitialScan && (
+				<Card>
+					<SecurityIcon icon="in-progress" />
+					{ this.renderHeader( heading ) }
+					{ isInitialScan && (
+						<p className="scan__initial-scan-message">
+							{ translate(
+								'Welcome to Jetpack Scan. We are starting your first scan now. ' +
+									'Scan results will be ready soon.'
+							) }
+						</p>
+					) }
+					<p className="scan__progress-bar-percent">{ scanProgress }%</p>
+					<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
 					<p>
 						{ translate(
-							'Welcome to Jetpack Scan, we are taking a first look at your site now ' +
-								'and the results will be with you soon.'
+							'{{strong}}Did you know{{/strong}} {{br/}}' +
+								'We will send you an email if security threats are found. In the meantime feel ' +
+								'free to continue to use your site as normal, you can check back on ' +
+								'progress at any time.',
+							{
+								components: {
+									strong: <strong />,
+									br: <br />,
+								},
+							}
 						) }
 					</p>
-				) }
-				<p>
-					{ translate(
-						'We will send you an email if security threats are found. In the meantime feel ' +
-							'free to continue to use your site as normal, you can check back on ' +
-							'progress at any time.'
-					) }
-				</p>
+				</Card>
 			</>
 		);
 	}
@@ -213,7 +224,12 @@ class ScanPage extends Component< Props > {
 		// because it disrupts the fluidity of the progress bar
 
 		if ( scanState?.state === 'provisioning' ) {
-			return this.renderProvisioning();
+			return (
+				<>
+					{ ' ' }
+					<Card> { this.renderProvisioning() } </Card>{ ' ' }
+				</>
+			);
 		}
 
 		if ( scanState?.state === 'scanning' ) {
@@ -229,7 +245,12 @@ class ScanPage extends Component< Props > {
 		// We should have a scanState by now, since we're not requesting an update;
 		// if we don't, that's an error condition and we should display that
 		if ( ! scanState ) {
-			return this.renderScanError();
+			return (
+				<>
+					{ ' ' }
+					<Card> { this.renderScanError() } </Card>{ ' ' }
+				</>
+			);
 		}
 
 		const { threats, mostRecent } = scanState;
@@ -243,10 +264,20 @@ class ScanPage extends Component< Props > {
 		}
 
 		if ( errorFound ) {
-			return this.renderScanError();
+			return (
+				<>
+					{ ' ' }
+					<Card> { this.renderScanError() } </Card>{ ' ' }
+				</>
+			);
 		}
 
-		return this.renderScanOkay();
+		return (
+			<>
+				{ ' ' }
+				<Card> { this.renderScanOkay() } </Card>{ ' ' }
+			</>
+		);
 	}
 
 	renderJetpackReviewPrompt() {
@@ -269,14 +300,19 @@ class ScanPage extends Component< Props > {
 	render() {
 		const { siteId, siteSettingsUrl } = this.props;
 		const isJetpackPlatform = isJetpackCloud();
+		let mainClass = 'scan';
 
 		if ( ! siteId ) {
 			return;
 		}
 
+		if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
+			mainClass = 'scan-new';
+		}
+
 		return (
 			<Main
-				className={ classNames( 'scan', {
+				className={ classNames( mainClass, {
 					is_jetpackcom: isJetpackPlatform,
 				} ) }
 			>
@@ -290,9 +326,7 @@ class ScanPage extends Component< Props > {
 
 				<QueryJetpackScan siteId={ siteId } />
 				<ScanNavigation section={ 'scanner' } />
-				<Card>
-					<div className="scan__content">{ this.renderScanState() }</div>
-				</Card>
+				{ <div className="scan__content">{ this.renderScanState() }</div> }
 				{ this.renderJetpackReviewPrompt() }
 			</Main>
 		);
@@ -331,4 +365,4 @@ export default connect(
 		dispatchRecordTracksEvent: recordTracksEvent,
 		dispatchScanRun: triggerScanRun,
 	}
-)( compose( withLocalizedMoment, withApplySiteOffset )( ScanPage ) );
+)( withLocalizedMoment( withApplySiteOffset( ScanPage ) ) );

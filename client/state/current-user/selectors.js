@@ -24,10 +24,10 @@ export function isUserLoggedIn( state ) {
  * Returns the user object for the current user.
  *
  * @param  {object}  state  Global state tree
- * @returns {?object}        Current user
+ * @returns {import('calypso/lib/user/user').UserData|null}        Current user
  */
 export function getCurrentUser( state ) {
-	return get( state, [ 'currentUser', 'user' ], null );
+	return state?.currentUser?.user ?? null;
 }
 
 /**
@@ -50,14 +50,6 @@ export const createCurrentUserSelector = ( path, otherwise = null ) => ( state )
  * @returns {?string}        Current user locale
  */
 export const getCurrentUserLocale = createCurrentUserSelector( 'localeSlug' );
-
-/**
- * Returns the locale variant slug for the current user.
- *
- * @param  {object}  state  Global state tree
- * @returns {?string}        Current user locale variant
- */
-export const getCurrentUserLocaleVariant = createCurrentUserSelector( 'localeVariant' );
 
 /**
  * Returns the country code for the current user.

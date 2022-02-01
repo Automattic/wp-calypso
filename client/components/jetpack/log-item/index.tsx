@@ -2,13 +2,13 @@ import classnames from 'classnames';
 import { PureComponent, ReactNode } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FoldableCard from 'calypso/components/foldable-card';
-
+import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 export interface Props {
 	children?: ReactNode;
 	className?: string;
-	header: string | i18nCalypso.TranslateResult;
+	header: string | TranslateResult;
 	subheader?: string | ReactNode;
 	highlight?: 'info' | 'success' | 'warning' | 'error';
 	tag?: string;

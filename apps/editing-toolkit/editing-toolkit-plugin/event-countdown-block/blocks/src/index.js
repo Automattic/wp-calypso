@@ -20,7 +20,7 @@ registerBlockType( 'jetpack/event-countdown', {
 	},
 	example: {
 		attributes: {
-			eventDate: '2024-04-08T11:38:32',
+			eventTimestamp: 1318874398,
 			eventTitle: 'Total Solar Eclipse',
 		},
 	},
@@ -30,8 +30,8 @@ registerBlockType( 'jetpack/event-countdown', {
 			source: 'text',
 			selector: '.event-countdown__event-title',
 		},
-		eventDate: {
-			type: 'string',
+		eventTimestamp: {
+			type: 'number',
 		},
 	},
 
@@ -41,6 +41,21 @@ registerBlockType( 'jetpack/event-countdown', {
 		}
 		return view( { ...props, isEditView: true } );
 	},
-
 	save: view,
+	deprecated: [
+		{
+			attributes: {
+				eventTitle: {
+					type: 'string',
+					source: 'text',
+					selector: '.event-countdown__event-title',
+				},
+				eventDate: {
+					type: 'string',
+				},
+			},
+			// the new `view` function can handle the deprecated attributes
+			save: view,
+		},
+	],
 } );

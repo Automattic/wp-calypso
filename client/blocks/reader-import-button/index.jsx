@@ -39,7 +39,19 @@ class ReaderImportButton extends Component {
 		}
 
 		this.fileName = file.name;
-		const req = wpcom.undocumented().importReaderFeed( file, this.onImport );
+		const req = wpcom.req.post(
+			{
+				path: '/read/following/mine/import',
+				formData: [ [ 'import', file ] ],
+			},
+			// XXX: kind strange, wpcom.js, that `apiVersion` must be in `query`
+			// *and* pass a `body` of null for this to work properly…
+			{
+				apiVersion: '1.2',
+			},
+			null,
+			this.onImport
+		);
 		req.upload.onprogress = this.onImportProgress;
 
 		this.setState( {

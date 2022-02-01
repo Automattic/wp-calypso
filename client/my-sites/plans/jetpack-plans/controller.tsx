@@ -1,6 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import JetpackFreeWelcomePage from 'calypso/components/jetpack/jetpack-free-welcome';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSlugInTerm } from './convert-slug-terms';
@@ -53,10 +53,13 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 	const urlQueryArgs: QueryArgs = context.query;
 	const { site: siteParam, duration: durationParam } = getParamsFromContext( context );
 	const duration = siteId && ( getCurrentPlanTerm( state, siteId ) as Duration );
-	const planRecommendation = isEnabled( 'jetpack/redirect-legacy-plans' )
-		? getPlanRecommendationFromContext( context )
-		: undefined;
+	const planRecommendation = getPlanRecommendationFromContext( context );
 	const highlightedProducts = getHighlightedProduct( urlQueryArgs.plan ) || undefined;
+
+	const enableUserLicensesDialog = !! (
+		siteId &&
+		( isJetpackCloud() || context.path.startsWith( '/jetpack/connect/plans' ) )
+	);
 
 	context.primary = (
 		<SelectorPage
@@ -69,6 +72,7 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 			header={ context.header }
 			footer={ context.footer }
 			planRecommendation={ planRecommendation }
+			enableUserLicensesDialog={ enableUserLicensesDialog }
 		/>
 	);
 

@@ -84,6 +84,7 @@ export default function () {
 		`/jetpack/connect/plans`,
 		controller.redirectToLoginIfLoggedOut,
 		siteSelection,
+		controller.partnerCouponRedirects,
 		controller.offerResetRedirects,
 		controller.offerResetContext
 	);

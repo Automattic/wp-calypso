@@ -1,10 +1,11 @@
 {
 	"name": "@automattic/viewport-react",
 	"version": "1.0.0",
-	"description": "React helpers for tracking viewport changes",
+	"description": "React helpers for tracking viewport changes.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
+	"types": "./types.d.ts",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -13,25 +14,21 @@
 	},
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport-react#readme",
 	"dependencies": {
-		"@automattic/viewport": "^1.0.0",
-		"@babel/runtime": "^7.15.3",
-		"@wordpress/compose": "^5.0.2"
+		"@automattic/viewport": "workspace:^",
+		"@wordpress/compose": "^5.0.7"
 	},
 	"peerDependencies": {
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"regenerator-runtime": "^0.13.9"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},

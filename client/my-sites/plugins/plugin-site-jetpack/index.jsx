@@ -1,10 +1,11 @@
-import { Button } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import Site from 'calypso/blocks/site';
-import FoldableCard from 'calypso/components/foldable-card';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
@@ -15,127 +16,169 @@ import {
 	getPluginOnSite,
 	isPluginActionInProgress,
 } from 'calypso/state/plugins/installed/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 
 import './style.scss';
 
-class PluginSiteJetpack extends Component {
-	static propTypes = {
-		site: PropTypes.object,
-		plugin: PropTypes.object,
-		allowedActions: PropTypes.shape( {
-			activation: PropTypes.bool,
-			autoupdate: PropTypes.bool,
-			remove: PropTypes.bool,
-		} ),
-		isAutoManaged: PropTypes.bool,
-	};
+const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedActions, ...props } ) => {
+	const translate = useTranslate();
+	const {
+		activation: canToggleActivation = true,
+		autoupdate: canToggleAutoupdate = true,
+		remove: canToggleRemove = true,
+	} = allowedActions;
 
-	static defaultProps = {
-		allowedActions: {
-			activation: true,
-			autoupdate: true,
-			remove: true,
-		},
-		isAutoManaged: false,
-	};
-
-	renderInstallButton = () => {
-		return (
-			<PluginInstallButton
-				isEmbed={ true }
-				selectedSite={ this.props.site }
-				plugin={ this.props.plugin }
-				isInstalling={ this.props.installInProgress }
-			/>
+	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, site.ID, plugin.slug ) );
+	const settingsLink = pluginOnSite?.action_links?.Settings ?? null;
+	const installInProgress = useSelector( ( state ) =>
+		isPluginActionInProgress( state, site.ID, plugin.id, INSTALL_PLUGIN )
+	);
+	const [ isMobileLayout, setIsMobileLayout ] = useState();
+	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
+	const currentPurchase =
+		plugin.isMarketplaceProduct &&
+		purchases.find( ( purchase ) =>
+			Object.values( plugin?.variations ).some(
+				( variation ) => variation.product_slug === purchase.productSlug
+			)
 		);
-	};
 
-	renderInstallPlugin = () => {
-		return (
-			<FoldableCard
-				compact
-				className="plugin-site-jetpack"
-				header={ <Site site={ this.props.site } indicator={ false } /> }
-				actionButton={ this.renderInstallButton() }
-			/>
+	useEffect( () => {
+		if ( isWithinBreakpoint( '<1040px' ) ) {
+			setIsMobileLayout( true );
+		}
+		const unsubscribe = subscribeIsWithinBreakpoint( '<1040px', ( isMobile ) =>
+			setIsMobileLayout( isMobile )
 		);
-	};
 
-	renderPluginSite = () => {
-		const {
-			activation: canToggleActivation,
-			autoupdate: canToggleAutoupdate,
-			remove: canToggleRemove,
-		} = this.props.allowedActions;
+		return () => {
+			if ( typeof unsubscribe === 'function' ) {
+				unsubscribe();
+			}
+		};
+	}, [] );
 
-		const showAutoManagedMessage = this.props.isAutoManaged;
+	if ( ! site || ! plugin ) {
+		return null;
+	}
 
-		const settingsLink = this.props?.pluginOnSite?.action_links?.Settings ?? null;
-
+	if ( ! pluginOnSite ) {
 		return (
-			<FoldableCard
-				compact
-				clickableHeader
-				className="plugin-site-jetpack"
-				header={ <Site site={ this.props.site } indicator={ false } /> }
-				summary={
-					<PluginUpdateIndicator
-						site={ this.props.site }
-						plugin={ this.props.plugin }
-						expanded={ false }
-					/>
-				}
-				expandedSummary={
-					<PluginUpdateIndicator
-						site={ this.props.site }
-						plugin={ this.props.plugin }
-						expanded={ true }
-					/>
-				}
-			>
-				<div>
-					{ canToggleActivation && (
-						<PluginActivateToggle site={ this.props.site } plugin={ this.props.pluginOnSite } />
-					) }
-					{ canToggleAutoupdate && (
-						<PluginAutoupdateToggle
-							site={ this.props.site }
-							plugin={ this.props.pluginOnSite }
-							wporg={ true }
+			<div className="plugin-site-jetpack__container">
+				<div className="plugin-site-jetpack__domain">{ site.domain }</div>
+				<div className="plugin-site-jetpack__install-button">
+					{
+						<PluginInstallButton
+							isEmbed={ true }
+							selectedSite={ site }
+							plugin={ plugin }
+							isInstalling={ installInProgress }
+							{ ...props }
 						/>
-					) }
-					{ canToggleRemove && (
-						<PluginRemoveButton plugin={ this.props.pluginOnSite } site={ this.props.site } />
-					) }
-					{ settingsLink && (
-						<Button compact href={ settingsLink }>
-							{ this.props.translate( `Settings` ) }
-						</Button>
-					) }
-					{ showAutoManagedMessage && (
+					}
+				</div>
+			</div>
+		);
+	}
+
+	return (
+		<>
+			{ plugin.isMarketplaceProduct && <QuerySitePurchases siteId={ site.ID } /> }
+			<div className="plugin-site-jetpack__container">
+				<div className="plugin-site-jetpack__domain">
+					{ site.domain }
+					{ ( isAutoManaged || plugin.isMarketplaceProduct ) && (
 						<div className="plugin-site-jetpack__automanage-notice">
-							{ this.props.translate( 'Auto-managed on this site' ) }
+							{ translate( 'Auto-managed on this site' ) }
 						</div>
 					) }
 				</div>
-			</FoldableCard>
-		);
-	};
+				{ canToggleActivation && (
+					<PluginActivateToggle
+						site={ site }
+						plugin={ pluginOnSite }
+						hideLabel={ ! isMobileLayout }
+					/>
+				) }
+				{ canToggleAutoupdate && (
+					<PluginAutoupdateToggle
+						site={ site }
+						plugin={ pluginOnSite }
+						wporg={ true }
+						hideLabel={ ! isMobileLayout }
+						toggleExtraContent={
+							! isMobileLayout && <PluginUpdateIndicator site={ site } plugin={ plugin } expanded />
+						}
+						isMarketplaceProduct={ plugin.isMarketplaceProduct }
+					/>
+				) }
 
-	render() {
-		if ( ! this.props.site || ! this.props.plugin ) {
-			return null;
-		}
+				<div className="plugin-site-jetpack__action plugin-action last-actions">
+					{ ! isMobileLayout && canToggleRemove && (
+						<PluginRemoveButton
+							plugin={ pluginOnSite }
+							site={ site }
+							isMarketplaceProduct={ plugin.isMarketplaceProduct }
+						/>
+					) }
+					{ ( isMobileLayout || settingsLink || currentPurchase ) && (
+						<EllipsisMenu position={ 'bottom' }>
+							{ currentPurchase?.id && (
+								<PopoverMenuItem
+									icon="credit-card"
+									href={ `/me/purchases/${ site.domain }/${ currentPurchase.id }` }
+								>
+									{ translate( 'Manage Subscription' ) }
+								</PopoverMenuItem>
+							) }
+							{ settingsLink && (
+								<PopoverMenuItem icon="cog" href={ settingsLink }>
+									{ translate( 'Settings' ) }
+								</PopoverMenuItem>
+							) }
+							{ isMobileLayout && (
+								<>
+									<PluginUpdateIndicator
+										site={ site }
+										plugin={ plugin }
+										expanded
+										menuItem
+										isMarketplaceProduct={ plugin.isMarketplaceProduct }
+									/>
+									<PluginRemoveButton
+										plugin={ pluginOnSite }
+										site={ site }
+										menuItem
+										isMarketplaceProduct={ plugin.isMarketplaceProduct }
+									/>
+								</>
+							) }
+						</EllipsisMenu>
+					) }
+				</div>
+			</div>
+		</>
+	);
+};
 
-		if ( ! this.props.pluginOnSite ) {
-			return this.renderInstallPlugin();
-		}
+PluginSiteJetpack.propTypes = {
+	site: PropTypes.object,
+	plugin: PropTypes.object,
+	allowedActions: PropTypes.shape( {
+		activation: PropTypes.bool,
+		autoupdate: PropTypes.bool,
+		remove: PropTypes.bool,
+	} ),
+	isAutoManaged: PropTypes.bool,
+};
 
-		return this.renderPluginSite();
-	}
-}
+PluginSiteJetpack.defaultProps = {
+	allowedActions: {
+		activation: true,
+		autoupdate: true,
+		remove: true,
+	},
+	isAutoManaged: false,
+};
 
-export default connect( ( state, { site, plugin } ) => ( {
-	installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, INSTALL_PLUGIN ),
-	pluginOnSite: getPluginOnSite( state, site.ID, plugin.slug ),
-} ) )( localize( PluginSiteJetpack ) );
+export default PluginSiteJetpack;

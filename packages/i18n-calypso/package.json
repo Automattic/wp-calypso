@@ -1,7 +1,7 @@
 {
 	"name": "i18n-calypso",
 	"version": "5.0.0",
-	"description": "i18n JavaScript library on top of Tannin originally used in Calypso",
+	"description": "I18n JavaScript library on top of Tannin originally used in Calypso.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
@@ -14,16 +14,14 @@
 	},
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/i18n-calypso#readme",
 	"dependencies": {
-		"@automattic/interpolate-components": "^1.1.2",
-		"@babel/runtime": "^7.15.3",
+		"@automattic/interpolate-components": "workspace:^",
+		"@babel/runtime": "^7.16.7",
 		"@tannin/sprintf": "^1.1.0",
-		"@wordpress/compose": "^5.0.2",
-		"debug": "^4.0.0",
+		"@wordpress/compose": "^5.0.7",
+		"debug": "^4.3.3",
 		"events": "^3.0.0",
 		"hash.js": "^1.1.5",
 		"lodash": "^4.17.21",
@@ -32,7 +30,7 @@
 		"use-subscription": "^1.5.1"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-test-renderer": "^17.0.2"
@@ -41,7 +39,7 @@
 		"react": "^17.0.2"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
 	}

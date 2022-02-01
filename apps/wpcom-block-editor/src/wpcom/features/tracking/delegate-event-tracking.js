@@ -6,6 +6,10 @@ import wpcomBlockEditorDetailsOpen from './wpcom-block-editor-details-open';
 import wpcomBlockEditorGlobalStylesMenuSelected from './wpcom-block-editor-global-styles-menu-selected';
 import wpcomBlockEditorListViewSelect from './wpcom-block-editor-list-view-select';
 import wpcomBlockEditorPostPublishAddNewClick from './wpcom-block-editor-post-publish-add-new-click';
+import {
+	wpcomBlockEditorSaveClick,
+	wpcomBlockEditorSaveDraftClick,
+} from './wpcom-block-editor-save-click';
 import wpcomBlockEditorTemplatePartDetachBlocks from './wpcom-block-editor-template-part-detach-blocks';
 import wpcomBlockPremiumContentPlanUpgrade from './wpcom-block-premium-content-plan-upgrade';
 import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content-stripe-connect';
@@ -59,6 +63,8 @@ const EVENTS_MAPPING = [
 	wpcomBlockEditorListViewSelect(),
 	wpcomBlockEditorTemplatePartDetachBlocks(),
 	wpcomBlockEditorPostPublishAddNewClick(),
+	wpcomBlockEditorSaveClick(),
+	wpcomBlockEditorSaveDraftClick(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
 const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! capture );

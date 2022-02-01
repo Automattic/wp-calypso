@@ -3,6 +3,10 @@
 
 .onboarding-block {
 	@include onboarding-block-margin;
+
+	&--is-wide {
+		@include onboarding-block-margin-wide;
+	}
 }
 
 .gutenboarding-page {

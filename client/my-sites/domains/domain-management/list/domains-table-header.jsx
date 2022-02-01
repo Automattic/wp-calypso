@@ -131,7 +131,11 @@ class DomainsTableHeader extends PureComponent {
 							} ) }
 							data-column={ column.name }
 						>
-							{ column.label } { this.renderSortIcon( column, activeSortKey, activeSortOrder ) }
+							{ column.label }{ ' ' }
+							{ column.bubble > 0 && (
+								<span className={ `list__${ column.name }-cell__bubble` }>{ column.bubble }</span>
+							) }
+							{ this.renderSortIcon( column, activeSortKey, activeSortOrder ) }
 						</Button>
 					) ) }
 				</div>
@@ -150,7 +154,6 @@ class DomainsTableHeader extends PureComponent {
 			return (
 				<CompactCard className={ listHeaderClasses }>
 					<FormCheckbox
-						className="list__checkbox"
 						onChange={ this.onToggle }
 						onClick={ this.stopPropagation }
 						checked={ isChecked }

@@ -10,9 +10,8 @@ import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
-import wp from 'calypso/lib/wp';
+import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
@@ -26,8 +25,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-
-const wpcom = wp.undocumented();
 
 export class MapDomain extends Component {
 	static propTypes = {
@@ -73,13 +70,10 @@ export class MapDomain extends Component {
 
 		this.props.shoppingCartManager
 			.addProductsToCart( [
-				fillInSingleCartItemAttributes(
-					domainRegistration( {
-						productSlug: suggestion.product_slug,
-						domain: suggestion.domain_name,
-					} ),
-					this.props.productsList
-				),
+				domainRegistration( {
+					productSlug: suggestion.product_slug,
+					domain: suggestion.domain_name,
+				} ),
 			] )
 			.then( () => {
 				this.isMounted && page( '/checkout/' + selectedSiteSlug );
@@ -111,8 +105,8 @@ export class MapDomain extends Component {
 		// We don't go through the usual checkout process
 		// Instead, we add the mapping directly
 		if ( selectedSite.is_vip ) {
-			wpcom
-				.addVipDomainMapping( selectedSite.ID, domain )
+			wpcom.req
+				.post( `/sites/${ selectedSite.ID }/vip-domain-mapping`, { domain } )
 				.then(
 					() => {
 						page( domainManagementList( selectedSiteSlug ) );
@@ -126,8 +120,8 @@ export class MapDomain extends Component {
 				} );
 			return;
 		} else if ( this.props.isSiteOnPaidPlan ) {
-			wpcom
-				.addDomainMapping( selectedSite.ID, domain )
+			wpcom.req
+				.post( `/sites/${ selectedSite.ID }/add-domain-mapping`, { domain } )
 				.then(
 					() => {
 						this.props.successNotice(
@@ -152,10 +146,12 @@ export class MapDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug + '/domain-mapping:' + domain );
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.checkSiteIsUpgradeable( this.props );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.checkSiteIsUpgradeable( nextProps );
 	}

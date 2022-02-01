@@ -55,6 +55,10 @@
 	font-weight: 600;
 	border-bottom: 1px solid var( --studio-gray-10 );
 	padding-bottom: 16px;
+
+	@include breakpoint-deprecated( '<480px' ) {
+		margin-top: 40px;
+	}
 }
 
 .daily-backup-status__section-header {
@@ -165,6 +169,10 @@
 	font-style: italic;
 	padding-top: 16px;
 	color: var( --studio-gray-40 );
+
+	@include breakpoint-deprecated( '<480px' ) {
+		margin-bottom: 8px;
+	}
 }
 
 .daily-backup-status__daily {

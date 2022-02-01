@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/calypso-color-schemes",
 	"version": "2.1.1",
-	"description": "Calypso Shared Style Bits",
+	"description": "Calypso Shared Style Bits.",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"keywords": [
@@ -16,21 +16,20 @@
 		"url": "https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/calypso-color-schemes"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"main": "css/index.css",
 	"publishConfig": {
 		"access": "public"
 	},
 	"scripts": {
-		"clean": "npx rimraf js css src/__color-studio",
+		"clean": "rm -rf js css src/__color-studio",
 		"prepare": "node bin/prepare-sass-assets.js && node bin/build-css.js"
 	},
 	"devDependencies": {
-		"@automattic/calypso-eslint-overrides": "^1.0.0",
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"postcss": "^8.3.11",
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/color-studio": "2.5.0",
+		"postcss": "^8.4.5",
 		"postcss-custom-properties": "^11.0.0",
 		"sass": "^1.37.5"
 	}

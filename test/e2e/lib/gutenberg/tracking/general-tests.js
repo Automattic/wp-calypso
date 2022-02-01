@@ -146,11 +146,16 @@ export function createGeneralTests( { it, editorType, postType, baseContext = un
 		await editor.toggleListView();
 
 		const secondLastItemLocator = By.css(
-			'[aria-label="Block navigation structure"] [role="row"]:nth-last-child(2) button'
+			'[aria-label="Block navigation structure"] [role="row"]:nth-last-child(2) a'
 		);
 		const lastItemLocator = By.css(
-			'[aria-label="Block navigation structure"] [role="row"]:nth-last-child(1) button'
+			'[aria-label="Block navigation structure"] [role="row"]:nth-last-child(1) a'
 		);
+
+		// Scroll to the bottom of the list view container before attempting to click the items. For
+		// whatever reason, the above nth-child selectors stopped working (return null) when the
+		// elements have not first been scrolled into view.
+		await editor.scrollListViewToEnd();
 		await driverHelper.clickWhenClickable( this.driver, secondLastItemLocator );
 		await driverHelper.clickWhenClickable( this.driver, lastItemLocator );
 

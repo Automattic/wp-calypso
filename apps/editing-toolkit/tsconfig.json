@@ -40,6 +40,7 @@
 		{ "path": "../../packages/domain-picker" },
 		{ "path": "../../packages/onboarding" },
 		{ "path": "../../packages/launch" },
+		{ "path": "../../packages/tour-kit" },
 		{ "path": "../../packages/plans-grid" },
 		{ "path": "../../packages/i18n-utils" }
 	]

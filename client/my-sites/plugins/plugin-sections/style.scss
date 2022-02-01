@@ -125,3 +125,17 @@
 .plugin-sections__header > div {
 	margin-bottom: 0;
 }
+
+.plugin-details__plugins-sections {
+	.card {
+		padding-top: 44px;
+
+		&.no-header {
+			padding-top: 20px;
+		}
+	}
+
+	.plugin-sections__banner {
+		padding-bottom: 50px;
+	}
+}

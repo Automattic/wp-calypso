@@ -1,7 +1,6 @@
 import { Page } from 'playwright';
-import { getTargetDeviceName } from '../../browser-helper';
 import { clickNavTab } from '../../element-helper';
-import { TargetDevice } from '../../types';
+import envVariables from '../../env-variables';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
 export type Plan = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
@@ -17,16 +16,8 @@ const selectors = {
 	activeNavigationTab: ( tabName: PlansPageTab ) =>
 		`.is-selected.section-nav-tab:has-text("${ tabName }")`,
 
-	actionButton: ( {
-		viewport,
-		plan,
-		buttonText,
-	}: {
-		viewport: TargetDevice;
-		plan: Plan;
-		buttonText: PlanActionButton;
-	} ) => {
-		const viewportSuffix = viewport === 'mobile' ? 'mobile' : 'table';
+	actionButton: ( { plan, buttonText }: { plan: Plan; buttonText: PlanActionButton } ) => {
+		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
 };
@@ -72,11 +63,10 @@ export class PlansPage {
 	 */
 	async validateActiveNavigationTab( expectedTab: PlansPageTab ): Promise< void > {
 		await this.waitUntilLoaded();
-		const targetDevice = getTargetDeviceName();
 
 		// For mobile sized viewport, the currently selected tab name will be shown alongside the
 		// dropdown toggle button, so verify the expected tab name is shown there.
-		if ( targetDevice === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await this.page.waitForSelector(
 				`${ selectors.mobileNavTabsToggle }:has-text("${ expectedTab }")`
 			);
@@ -108,9 +98,7 @@ export class PlansPage {
 		plan: Plan;
 		buttonText: PlanActionButton;
 	} ): Promise< void > {
-		await this.waitUntilLoaded();
 		const selector = selectors.actionButton( {
-			viewport: getTargetDeviceName(),
 			plan: plan,
 			buttonText: buttonText,
 		} );

@@ -1,4 +1,6 @@
-.portal-nav {
+// Making sure the styles below overwrite the .section-nav rules by increasing the selector
+// specificity with .section-nav, since we can't rely on the order stylesheets are loaded.
+.portal-nav.section-nav {
 	flex: 1 1 180px;
 	max-width: 280px;
 	margin: 0;

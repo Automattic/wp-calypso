@@ -2,6 +2,11 @@
 
 ## trunk
 
+- Dropped Babel presets. They have been moved to `@automattic/calypso-babel-config`. The new packge should be a drop in replacement, anywhere you were using `@automattic/calypso-build/babel/dependencies` you can use `@automattic/calypso-babel-config/presets/dependencies` (same for the other presets)
+- Dropped Jest presets. They have been moved to `@automattic/calypso-jest`. . The new packge should be a drop in replacement, you can use `preset: @automattic/calypso-jest` in your Jest config.
+
+## 10.0.0
+
 - Dropped `cache-loader`, as it is not compatible with Webpack 5.
 - Dropped `cacheDirectory` option in Sass loader
 - Updated dependencies:

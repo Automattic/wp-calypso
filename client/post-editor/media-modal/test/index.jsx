@@ -102,7 +102,10 @@ describe( 'EditorMediaModal', () => {
 		);
 		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
-				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
+				expect( deleteMedia ).to.have.been.calledWith(
+					DUMMY_SITE.ID,
+					media.map( ( { ID } ) => ID )
+				);
 				resolve();
 			} );
 		} );
@@ -120,83 +123,10 @@ describe( 'EditorMediaModal', () => {
 
 		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
-				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA );
-				resolve();
-			} );
-		} );
-	} );
-
-	test( 'should prompt to delete a single item from the detail view', () => {
-		const media = DUMMY_MEDIA[ 0 ];
-		const tree = shallow(
-			<EditorMediaModal { ...baseProps } selectedItems={ [ media ] } view={ ModalViews.DETAIL } />
-		).instance();
-		tree.deleteMedia();
-
-		expect( accept ).to.have.been.calledWith(
-			'Are you sure you want to delete this item? ' +
-				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
-				'This cannot be undone.'
-		);
-		return new Promise( ( resolve ) => {
-			process.nextTick( function () {
-				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, media );
-				resolve();
-			} );
-		} );
-	} );
-
-	test( 'should prompt to delete a single item from the detail view, even when multiple selected', () => {
-		const tree = shallow(
-			<EditorMediaModal { ...baseProps } view={ ModalViews.DETAIL } />
-		).instance();
-		tree.deleteMedia();
-
-		expect( accept ).to.have.been.calledWith(
-			'Are you sure you want to delete this item? ' +
-				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
-				'This cannot be undone.'
-		);
-
-		return new Promise( ( resolve ) => {
-			process.nextTick( function () {
-				expect( deleteMedia ).to.have.been.calledWith( DUMMY_SITE.ID, DUMMY_MEDIA[ 0 ] );
-				resolve();
-			} );
-		} );
-	} );
-
-	test( 'should return to the list view after deleting the only item in detail view', () => {
-		const tree = shallow(
-			<EditorMediaModal
-				{ ...baseProps }
-				selectedItems={ DUMMY_MEDIA.slice( 0, 1 ) }
-				view={ ModalViews.DETAIL }
-				setView={ spy }
-			/>
-		).instance();
-
-		tree.deleteMedia();
-
-		return new Promise( ( resolve ) => {
-			process.nextTick( function () {
-				expect( spy ).to.have.been.calledWith( ModalViews.LIST );
-				resolve();
-			} );
-		} );
-	} );
-
-	test( 'should revert to an earlier media item when the last item is deleted from detail view', () => {
-		const tree = shallow(
-			<EditorMediaModal { ...baseProps } view={ ModalViews.DETAIL } setView={ spy } />
-		).instance();
-		tree.setDetailSelectedIndex( 1 );
-		tree.deleteMedia();
-
-		return new Promise( ( resolve ) => {
-			process.nextTick( function () {
-				expect( spy ).to.not.have.been.called;
-				expect( tree.state.detailSelectedIndex ).to.equal( 0 );
+				expect( deleteMedia ).to.have.been.calledWith(
+					DUMMY_SITE.ID,
+					DUMMY_MEDIA.map( ( { ID } ) => ID )
+				);
 				resolve();
 			} );
 		} );

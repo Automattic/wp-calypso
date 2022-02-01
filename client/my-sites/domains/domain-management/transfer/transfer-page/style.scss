@@ -1,0 +1,162 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/colors';
+
+.transfer-page {
+	header.formatted-header {
+		margin-bottom: 24px;
+
+		h1.formatted-header__title {
+			color: $gray-900;
+			font-size: $font-title-medium;
+
+			@include break-mobile {
+				font-size: $font-title-large;
+			}
+		}
+	}
+
+	.card {
+		color: var( --studio-gray-50 );
+		padding: 16px;
+		margin-bottom: 24px;
+
+		@include break-mobile {
+			padding: 24px;
+		}
+
+		.card-heading,
+		.action-card__heading {
+			margin: 0;
+			font-weight: 600;
+			font-size: $font-body;
+			color: var( --studio-gray-80 );
+		}
+
+		.action-card {
+			padding: 0;
+			box-shadow: none;
+
+			.action-card__button-container {
+				margin-top: 16px;
+				margin-bottom: 0;
+
+				a {
+					width: initial;
+				}
+
+				@include break-mobile {
+					margin: 0;
+				}
+			}
+
+			p {
+				margin-bottom: 0;
+				font-size: $font-body-small;
+			}
+
+			&:last-child {
+				margin-bottom: 8px;
+				@include break-mobile {
+					margin-bottom: 0;
+				}
+			}
+		}
+	}
+
+	.transfer-page__item-separator {
+		height: 0;
+		margin: 16px 0;
+		border-bottom: 1px solid #dcdcde;
+
+		@include break-mobile {
+			margin: 24px 0;
+		}
+	}
+
+	.transfer-page__help {
+		&-section-card {
+			background: var( --studio-gray-0 );
+			border-radius: 2px;
+			box-shadow: none;
+			padding: 24px;
+		}
+
+		&-section-title {
+			font-size: $font-body-small;
+			line-height: 24px;
+			font-weight: 600;
+			margin-bottom: 4px;
+			color: var( --studio-gray-80 );
+		}
+
+		&-section-text {
+			color: var( --studio-gray-50 );
+			font-size: $font-body-small;
+			line-height: 20px;
+			margin-bottom: 0;
+
+			br {
+				content: ' ';
+				display: block;
+				margin-bottom: 20px;
+			}
+		}
+	}
+
+	.transfer-page__transfer-lock {
+		margin: 8px 0 16px;
+	}
+
+	.transfer-page__transfer-lock-label {
+		display: flex;
+		font-size: $font-body-small;
+		color: var( --studio-gray-80 );
+
+		svg {
+			margin-right: 8px;
+		}
+	}
+
+	.transfer-page__advanced-transfer-options {
+		margin-top: 24px;
+
+		p {
+			font-size: $font-body-small;
+		}
+
+		.card-heading {
+			margin: 0;
+		}
+
+		.search-card {
+			padding: 0;
+		}
+	}
+
+	.transfer-page__transfer-lock-placeholder {
+		display: block;
+		width: 120px;
+		margin-bottom: 8px;
+		@include placeholder();
+	}
+
+	@include breakpoint-deprecated( '>1280px' ) {
+		.layout__column--main {
+			padding-right: 24px;
+		}
+
+		.layout__column--sidebar {
+			padding-left: 24px;
+		}
+	}
+
+	&__loader {
+		display: flex;
+		margin-bottom: 16px;
+		> p {
+			margin-bottom: 0;
+			margin-left: 16px;
+		}
+	}
+}

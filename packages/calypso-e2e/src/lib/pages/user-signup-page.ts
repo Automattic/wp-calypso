@@ -1,5 +1,6 @@
 import { Page } from 'playwright';
-import { getTargetDeviceName } from '../../browser-helper';
+import { getCalypsoURL } from '../../data-helper';
+import envVariables from '../../env-variables';
 
 const selectors = {
 	// Fields
@@ -36,6 +37,16 @@ export class UserSignupPage {
 	}
 
 	/**
+	 * Navigates to the /start endpoint.
+	 *
+	 * @param {{path: string}: string } param1 Key/value pair of the path to be appended to /start. E.g. /start/premium is the premium plan signup flow.
+	 */
+	async visit( { path }: { path: string } = { path: '' } ): Promise< void > {
+		const targetUrl = path ? `start/${ path }` : 'start';
+		await this.page.goto( getCalypsoURL( targetUrl ), { waitUntil: 'networkidle' } );
+	}
+
+	/**
 	 * Fill out required information then submit the form to complete the signup.
 	 *
 	 * @param {string} email Email address of the new user.
@@ -68,10 +79,8 @@ export class UserSignupPage {
 	 * @param {string} password Password of the new user.
 	 */
 	async signupWPCC( email: string, password: string ): Promise< void > {
-		const target = getTargetDeviceName();
-
 		// On mobile devices, the signup form is not shown by default.
-		if ( target === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await this.page.click( selectors.createWPCOMAccountButton );
 		}
 

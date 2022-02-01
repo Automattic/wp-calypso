@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import {
 	getSiteFrontPageType,
 	getSitePostsPage,
@@ -46,9 +46,9 @@ class BlogPostsPage extends Component {
 	};
 
 	render() {
-		const { isFullSiteEditing } = this.props;
+		const { isLegacyFSE } = this.props;
 
-		if ( isFullSiteEditing ) {
+		if ( isLegacyFSE ) {
 			return null;
 		}
 
@@ -92,6 +92,6 @@ export default connect( ( state, props ) => {
 		isFrontPage: getSiteFrontPageType( state, props.site.ID ) === 'posts',
 		postsPage: getSitePostsPage( state, props.site.ID ),
 		frontPage: getSiteFrontPage( state, props.site.ID ),
-		isFullSiteEditing: isSiteUsingFullSiteEditing( state, props.site.ID ),
+		isLegacyFSE: isSiteUsingLegacyFSE( state, props.site.ID ),
 	};
 }, mapDispatchToProps )( localize( BlogPostsPage ) );

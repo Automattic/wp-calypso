@@ -4,7 +4,7 @@ import {
 	PLAN_BUSINESS,
 	FEATURE_AUDIO_UPLOADS,
 	FEATURE_ADVANCED_DESIGN,
-	FEATURE_BUSINESS_ONBOARDING,
+	FEATURE_UPLOAD_PLUGINS,
 } from '@automattic/calypso-products';
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
@@ -23,6 +23,7 @@ import {
 	isSitePlanDiscounted,
 	getSitePlanSlug,
 	hasFeature,
+	isIntroductoryOfferAppliedToPlanPrice,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -355,6 +356,13 @@ describe( 'selectors', () => {
 					rawPrice: 30,
 					rawDiscount: 10,
 				},
+				{
+					currentPlan: false,
+					productSlug: 'jetpack_security',
+					introductoryOfferRawPrice: 15,
+					rawPrice: 30,
+					rawDiscount: 0,
+				},
 			],
 		};
 		const state = {
@@ -398,6 +406,12 @@ describe( 'selectors', () => {
 				isMonthly: true,
 			} );
 			expect( discountPrice ).to.equal( null );
+		} );
+		test( 'should return the introductory offer discounted price if available', () => {
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'jetpack_security', {
+				isMonthly: true,
+			} );
+			expect( discountPrice ).to.equal( 15 );
 		} );
 	} );
 
@@ -779,7 +793,7 @@ describe( 'selectors', () => {
 						},
 					},
 					2916284,
-					FEATURE_BUSINESS_ONBOARDING
+					FEATURE_UPLOAD_PLUGINS
 				)
 			).to.be.false;
 		} );
@@ -828,6 +842,49 @@ describe( 'selectors', () => {
 					FEATURE_AUDIO_UPLOADS
 				)
 			).to.be.true;
+		} );
+	} );
+	describe( '#isIntroductoryOfferAppliedToPlanPrice()', () => {
+		const plans = {
+			data: [
+				{
+					currentPlan: false,
+					productSlug: 'personal-bundle',
+					rawPrice: 299,
+					rawDiscount: 0,
+				},
+				{
+					currentPlan: false,
+					productSlug: 'personal-bundle-offer',
+					introductoryOfferRawPrice: 99,
+					rawPrice: 199,
+					rawDiscount: 0,
+				},
+			],
+		};
+		const state = {
+			sites: {
+				plans: {
+					77203074: plans,
+				},
+			},
+		};
+
+		test( 'should return a discount price', () => {
+			const isIntroductoryOfferApplied = isIntroductoryOfferAppliedToPlanPrice(
+				state,
+				77203074,
+				'personal-bundle'
+			);
+			expect( isIntroductoryOfferApplied ).to.equal( false );
+		} );
+		test( 'should return a monthly discount price - annual term', () => {
+			const isIntroductoryOfferApplied = isIntroductoryOfferAppliedToPlanPrice(
+				state,
+				77203074,
+				'personal-bundle-offer'
+			);
+			expect( isIntroductoryOfferApplied ).to.equal( true );
 		} );
 	} );
 } );

@@ -1,0 +1,31 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.email-providers-stacked-comparison__header,
+.email-providers-stacked-comparison__sub-header {
+	padding-left: 16px;
+	padding-right: 16px;
+	text-align: center;
+
+	@include break-medium {
+		padding: 0;
+	}
+}
+
+.email-providers-stacked-comparison__header {
+	font-size: $font-title-large;
+	padding-left: 16px;
+	padding-right: 16px;
+	padding-top: 16px;
+
+	@extend .wp-brand-font;
+
+	@include break-medium {
+		padding: 0;
+	}
+}
+
+.email-providers-stacked-comparison__sub-header {
+	font-size: $font-body-small;
+}

@@ -29,5 +29,6 @@ export type Scan = {
 export type Site = {
 	ID: number;
 	name: string;
+	slug: string;
 	URL: string;
 };

@@ -39,16 +39,13 @@ class EmailUnverifiedNotice extends Component {
 			pendingRequest: true,
 		} );
 
-		wpcom
-			.undocumented()
-			.me()
-			.sendVerificationEmail( ( error, response ) => {
-				this.setState( {
-					emailSent: response && response.success,
-					error: error,
-					pendingRequest: false,
-				} );
+		wpcom.req.post( '/me/send-verification-email', ( error, response ) => {
+			this.setState( {
+				emailSent: response && response.success,
+				error: error,
+				pendingRequest: false,
 			} );
+		} );
 	};
 
 	renderEmailSendPending() {

@@ -9,9 +9,6 @@ import {
 	PUBLICIZE_SHARE_ACTION_DELETE,
 	PUBLICIZE_SHARE_ACTION_DELETE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_DELETE_FAILURE,
-	PUBLICIZE_SHARE_ACTION_EDIT,
-	PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS,
-	PUBLICIZE_SHARE_ACTION_EDIT_FAILURE,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
@@ -122,48 +119,6 @@ export function deletePostShareAction( siteId, postId, actionId ) {
 				}
 
 				dispatch( { type: PUBLICIZE_SHARE_ACTION_DELETE_SUCCESS, siteId, postId, actionId } );
-			}
-		);
-	};
-}
-
-export function editPostShareAction( siteId, postId, actionId, message, share_date ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: PUBLICIZE_SHARE_ACTION_EDIT,
-			siteId,
-			postId,
-			actionId,
-		} );
-
-		const editActionPath = `/sites/${ siteId }/posts/${ postId }/publicize/scheduled-actions/${ actionId }`;
-		return wpcom.req.put(
-			{
-				path: editActionPath,
-				body: { message, share_date },
-				apiNamespace: 'wpcom/v2',
-			},
-			( error, data ) => {
-				if ( error || ! data.item ) {
-					// TODO: consider return an WP_Error instance istead of `! data.item`
-					return dispatch( {
-						type: PUBLICIZE_SHARE_ACTION_EDIT_FAILURE,
-						siteId,
-						postId,
-						actionId,
-						error,
-					} );
-				}
-
-				// TODO: until we have proper data coming
-				data.item.ID = actionId;
-				dispatch( {
-					type: PUBLICIZE_SHARE_ACTION_EDIT_SUCCESS,
-					siteId,
-					postId,
-					actionId,
-					item: data.item,
-				} );
 			}
 		);
 	};

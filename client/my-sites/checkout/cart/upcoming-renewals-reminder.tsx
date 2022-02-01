@@ -18,10 +18,10 @@ import {
 	getRenewableSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import { ReduxDispatch } from 'calypso/state/redux-store';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 const OtherPurchasesLink = styled.button`
 	background: transparent;
@@ -49,11 +49,11 @@ interface SelectedSite {
 
 interface Props {
 	cart: PartialCart;
-	addItemToCart: ( product: RequestCartProduct ) => void;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 }
 
 const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {
-	const reduxDispatch = useDispatch< ReduxDispatch >();
+	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) as SelectedSite );
@@ -217,7 +217,7 @@ function getMessages( {
 
 	const purchase = renewablePurchasesNotAlreadyInCart[ 0 ];
 	const buttonLabel = translate( 'Add to Cart' );
-	let message: ReturnType< typeof translate > = '';
+	let message: TranslateResult = '';
 	const translateOptions = {
 		comment:
 			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "in a month", "a week ago"',

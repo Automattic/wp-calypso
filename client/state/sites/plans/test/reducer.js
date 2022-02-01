@@ -3,9 +3,6 @@ import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
 	SITE_PLANS_FETCH_FAILED,
-	SITE_PLANS_TRIAL_CANCEL,
-	SITE_PLANS_TRIAL_CANCEL_FAILED,
-	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_REMOVE,
 } from 'calypso/state/action-types';
 import { plans } from '../reducer';
@@ -159,72 +156,6 @@ describe( 'reducer', () => {
 					error: null,
 					hasLoadedFromServer: false,
 					isRequesting: true,
-				},
-			} );
-		} );
-
-		test( 'should return the original state with updating enabled when trial cancelation is triggered', () => {
-			const original = Object.freeze( {
-				11111111: {
-					data: [],
-					error: null,
-					hasLoadedFromServer: false,
-					isRequesting: false,
-				},
-			} );
-			const state = plans( original, {
-				type: SITE_PLANS_TRIAL_CANCEL,
-				siteId: 11111111,
-			} );
-
-			expect( state ).to.eql( {
-				11111111: {
-					data: [],
-					error: null,
-					hasLoadedFromServer: false,
-					isRequesting: true,
-				},
-			} );
-		} );
-
-		test( 'should return the original state with an error and requesting disabled when trial cancelation failed', () => {
-			const original = Object.freeze( {
-				11111111: {
-					data: [],
-					error: null,
-					hasLoadedFromServer: true,
-					isRequesting: true,
-				},
-			} );
-			const state = plans( original, {
-				type: SITE_PLANS_TRIAL_CANCEL_FAILED,
-				siteId: 11111111,
-				error: 'Unable to cancel plan trial',
-			} );
-
-			expect( state ).to.eql( {
-				11111111: {
-					data: [],
-					error: 'Unable to cancel plan trial',
-					hasLoadedFromServer: true,
-					isRequesting: false,
-				},
-			} );
-		} );
-
-		test( 'should return a list of plans with loaded from server enabled and requesting disabled when trial cancelation completed', () => {
-			const state = plans( undefined, {
-				type: SITE_PLANS_TRIAL_CANCEL_COMPLETED,
-				siteId: 11111111,
-				plans: [],
-			} );
-
-			expect( state ).to.eql( {
-				11111111: {
-					data: [],
-					error: null,
-					hasLoadedFromServer: true,
-					isRequesting: false,
 				},
 			} );
 		} );

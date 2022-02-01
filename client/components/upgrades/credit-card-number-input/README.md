@@ -5,13 +5,10 @@
 ## Usage
 
 ```jsx
-import React from 'react';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 
-class MyComponent extends React.Component {
-	render() {
-		return <CreditCardNumberInput value={ this.state.card.number } />;
-	}
+function MyComponent() {
+	return <CreditCardNumberInput value={ this.state.card.number } />;
 }
 ```
 

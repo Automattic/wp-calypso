@@ -96,6 +96,7 @@ class TransferDomainStep extends Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( this.props.initialState ) {
 			this.setState( Object.assign( {}, this.props.initialState, this.getDefaultState() ) );
@@ -296,14 +297,14 @@ class TransferDomainStep extends Component {
 	startPendingInboundTransfer = ( domain, authCode ) => {
 		const { selectedSite, translate } = this.props;
 
-		startInboundTransfer( selectedSite.ID, domain, authCode, ( error, result ) => {
-			if ( result ) {
+		startInboundTransfer( selectedSite.ID, domain, authCode )
+			.then( () => {
 				this.props.fetchSiteDomains( selectedSite.ID );
 				page( domainManagementTransferIn( selectedSite.slug, domain ) );
-			} else {
+			} )
+			.catch( () => {
 				this.props.errorNotice( translate( 'We were unable to start the transfer.' ) );
-			}
-		} );
+			} );
 	};
 
 	getTransferDomainPrecheck() {
@@ -628,35 +629,26 @@ class TransferDomainStep extends Component {
 	getInboundTransferStatus = () => {
 		this.setState( { submittingWhois: true } );
 
-		return new Promise( ( resolve ) => {
-			checkInboundTransferStatus(
-				getFixedDomainSearch( this.state.searchQuery ),
-				( error, result ) => {
-					this.setState( { submittingWhois: false } );
-
-					if ( ! isEmpty( error ) ) {
-						resolve();
-						return;
-					}
-
-					const inboundTransferStatus = {
-						creationDate: result.creation_date,
-						email: result.admin_email,
-						loading: false,
-						losingRegistrar: result.registrar,
-						losingRegistrarIanaId: result.registrar_iana_id,
-						privacy: result.privacy,
-						termMaximumInYears: result.term_maximum_in_years,
-						transferEligibleDate: result.transfer_eligible_date,
-						transferRestrictionStatus: result.transfer_restriction_status,
-						unlocked: result.unlocked,
-					};
-
-					this.setState( { inboundTransferStatus } );
-					resolve( { inboundTransferStatus } );
-				}
-			);
-		} );
+		return checkInboundTransferStatus( getFixedDomainSearch( this.state.searchQuery ) )
+			.then( ( result ) => {
+				const inboundTransferStatus = {
+					creationDate: result.creation_date,
+					email: result.admin_email,
+					loading: false,
+					losingRegistrar: result.registrar,
+					losingRegistrarIanaId: result.registrar_iana_id,
+					privacy: result.privacy,
+					termMaximumInYears: result.term_maximum_in_years,
+					transferEligibleDate: result.transfer_eligible_date,
+					transferRestrictionStatus: result.transfer_restriction_status,
+					unlocked: result.unlocked,
+				};
+				this.setState( { submittingWhois: false, inboundTransferStatus } );
+				return { inboundTransferStatus };
+			} )
+			.catch( () => {
+				this.setState( { submittingWhois: false } );
+			} );
 	};
 
 	getAuthCodeStatus = ( domain, authCode ) => {

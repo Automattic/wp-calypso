@@ -217,6 +217,7 @@ registerHandlers( 'state/data-layer/wpcom/domains/transfer/index.js', {
 			onError: handleIpsTagSaveFailure,
 		} ),
 	],
+	// TODO: Remove this and related code after the redesigned transfer pages are deployed
 	[ DOMAIN_TRANSFER_CODE_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestDomainTransferCode,

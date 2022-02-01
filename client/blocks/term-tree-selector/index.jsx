@@ -43,12 +43,6 @@ export default class TermTreeSelector extends Component {
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.taxonomy !== this.props.taxonomy ) {
-			this.setState( { search: '' } );
-		}
-	}
-
 	render() {
 		const {
 			taxonomy,
@@ -74,6 +68,7 @@ export default class TermTreeSelector extends Component {
 			<div>
 				<TermTreeSelectorTerms
 					taxonomy={ taxonomy }
+					key={ taxonomy }
 					onSearch={ this.onSearch }
 					onChange={ onChange }
 					query={ query }

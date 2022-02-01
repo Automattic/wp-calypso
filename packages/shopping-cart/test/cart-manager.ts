@@ -25,8 +25,29 @@ describe( 'ShoppingCartManager', () => {
 			const manager = cartManagerClient.forCartKey( mainCartKey );
 			const { responseCart } = manager.getState();
 			expect( responseCart.products.length ).toBe( 0 );
-			expect( responseCart.cart_key ).toBe( '' );
+			expect( responseCart.cart_key ).toBe( 'no-site' );
 		} );
+	} );
+
+	it( 'clearMessages removes messages from the cart', async () => {
+		const mockGetCart = jest.fn().mockResolvedValue( {
+			...getEmptyResponseCart(),
+			messages: { errors: [ { code: 'test-error', message: 'Test Error' } ] },
+		} );
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart: mockGetCart,
+			setCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		try {
+			await manager.fetchInitialCart();
+		} catch {}
+		const { responseCart: initialCart } = manager.getState();
+		expect( initialCart.messages.errors.length ).toBe( 1 );
+		await manager.actions.clearMessages();
+		const { responseCart } = manager.getState();
+		expect( responseCart.messages?.errors ?? [] ).toEqual( [] );
+		expect( responseCart.messages?.success ?? [] ).toEqual( [] );
 	} );
 
 	it( 'addProductsToCart adds the products to the cart if not queued', async () => {
@@ -40,6 +61,43 @@ describe( 'ShoppingCartManager', () => {
 		const { responseCart } = manager.getState();
 		expect( responseCart.products.length ).toBe( 1 );
 		expect( responseCart.products[ 0 ].product_slug ).toBe( planOne.product_slug );
+	} );
+
+	it( 'addProductsToCart rejects its promise if there are error messages in the response', async () => {
+		const errorCode = 'test-error';
+		const errorMessage = 'test error message';
+		const mockSetCart = jest.fn().mockResolvedValue( {
+			...getEmptyResponseCart(),
+			messages: { errors: [ { code: errorCode, message: errorMessage } ] },
+		} );
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart,
+			setCart: mockSetCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		await manager.fetchInitialCart();
+		expect.assertions( 2 );
+		return manager.actions.addProductsToCart( [ planOne ] ).catch( ( error ) => {
+			expect( error.message ).toEqual( errorMessage );
+			expect( error.code ).toEqual( errorCode );
+		} );
+	} );
+
+	it( 'addProductsToCart rejects its promise if there is a connection error', async () => {
+		const errorCode = 'SET_SERVER_CART_ERROR';
+		const errorMessage = 'test error message';
+		const mockSetCart = jest.fn().mockRejectedValue( { message: errorMessage } );
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart,
+			setCart: mockSetCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		await manager.fetchInitialCart();
+		expect.assertions( 2 );
+		return manager.actions.addProductsToCart( [ planOne ] ).catch( ( error ) => {
+			expect( error.message ).toEqual( errorMessage );
+			expect( error.code ).toEqual( errorCode );
+		} );
 	} );
 
 	it( 'addProductsToCart adds the products to the cart if queued', async () => {

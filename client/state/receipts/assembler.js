@@ -98,7 +98,7 @@ export function createReceiptObject( data ) {
 		purchases: flattenPurchases( data.purchases || {} ).map( ( purchase ) => {
 			return {
 				delayedProvisioning: Boolean( purchase.delayed_provisioning ),
-				freeTrial: purchase.free_trial,
+				freeTrial: Boolean( purchase.free_trial ),
 				isDomainRegistration: Boolean( purchase.is_domain_registration ),
 				meta: purchase.meta,
 				productId: purchase.product_id,
@@ -107,7 +107,7 @@ export function createReceiptObject( data ) {
 				productName: purchase.product_name,
 				productNameShort: purchase.product_name_short,
 				newQuantity: purchase.new_quantity,
-				registrarSupportUrl: purchase.registrar_support_url,
+				registrarSupportUrl: purchase.registrar_support_url ?? '',
 				isEmailVerified: Boolean( purchase.is_email_verified ),
 				isRootDomainWithUs: Boolean( purchase.is_root_domain_with_us ),
 			};

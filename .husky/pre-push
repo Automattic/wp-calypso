@@ -1,0 +1,4 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+yarn run install-if-no-packages && node bin/pre-push-hook.js

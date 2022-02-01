@@ -5,6 +5,8 @@ import {
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
@@ -35,14 +37,15 @@ export default async function existingCardProcessor(
 	}
 	const {
 		stripe,
-		recordEvent,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		contactDetails,
+		reduxDispatch,
 	} = dataForProcessor;
 	if ( ! stripe ) {
 		throw new Error( 'Stripe is required to submit an existing card payment' );
 	}
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'existingCard' } ) );
 
 	const domainDetails = getDomainDetails( contactDetails, {
 		includeDomainDetails,
@@ -67,20 +70,27 @@ export default async function existingCardProcessor(
 	debug( 'submitting existing card transaction', formattedTransactionData );
 
 	return submitWpcomTransaction( formattedTransactionData, dataForProcessor )
-		.then( ( stripeResponse ) => {
+		.then( async ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				debug( 'transaction requires authentication' );
 				// 3DS authentication required
-				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-				return confirmStripePaymentIntent(
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
+				// If this fails, it will reject (throw) and we'll end up in the catch block below.
+				await confirmStripePaymentIntent(
 					stripe,
 					stripeResponse?.message?.payment_intent_client_secret
 				);
+				// We must return the original authentication response in order to have
+				// access to the order_id so that we can display a pending page while
+				// we wait for Stripe to send a webhook to complete the purchase.
 			}
 			return stripeResponse;
 		} )
 		.then( ( stripeResponse ) => {
-			if ( stripeResponse?.redirect_url ) {
+			if (
+				stripeResponse?.redirect_url &&
+				! stripeResponse?.message?.payment_intent_client_secret
+			) {
 				debug( 'transaction requires redirect' );
 				return makeRedirectResponse( stripeResponse.redirect_url );
 			}

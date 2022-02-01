@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { getStepUrl, isFirstStepInFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
@@ -15,6 +16,7 @@ import './style.scss';
 
 export class NavigationLink extends Component {
 	static propTypes = {
+		goToPreviousStep: PropTypes.func,
 		goToNextStep: PropTypes.func,
 		direction: PropTypes.oneOf( [ 'back', 'forward' ] ),
 		flowName: PropTypes.string.isRequired,
@@ -31,6 +33,8 @@ export class NavigationLink extends Component {
 		primary: PropTypes.bool,
 		backIcon: PropTypes.string,
 		forwardIcon: PropTypes.string,
+		queryParams: PropTypes.object,
+		disabledTracksOnClick: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -81,7 +85,7 @@ export class NavigationLink extends Component {
 			return this.props.backUrl;
 		}
 
-		const { flowName, signupProgress, stepName, userLoggedIn } = this.props;
+		const { flowName, signupProgress, stepName, userLoggedIn, queryParams } = this.props;
 		const previousStep = this.getPreviousStep( flowName, signupProgress, stepName );
 
 		const stepSectionName = get(
@@ -96,7 +100,8 @@ export class NavigationLink extends Component {
 			previousStep.lastKnownFlow || this.props.flowName,
 			previousStep.stepName,
 			stepSectionName,
-			locale
+			locale,
+			queryParams
 		);
 	}
 
@@ -108,18 +113,24 @@ export class NavigationLink extends Component {
 			);
 
 			this.props.goToNextStep();
+		} else if ( this.props.goToPreviousStep ) {
+			this.props.goToPreviousStep();
 		}
 
-		this.recordClick();
+		if ( ! this.props.disabledTracksOnClick ) {
+			this.recordClick();
+		}
 	};
 
 	recordClick() {
 		const tracksProps = {
 			flow: this.props.flowName,
 			step: this.props.stepName,
+			intent: this.props.intent,
 		};
 
-		if ( this.props.direction === 'back' ) {
+		// We don't need to track if we are in the sub-steps since it's not really going back a step
+		if ( this.props.direction === 'back' && ! this.props.stepSectionName ) {
 			this.props.recordTracksEvent( 'calypso_signup_previous_step_button_click', tracksProps );
 		}
 
@@ -164,12 +175,16 @@ export class NavigationLink extends Component {
 			this.props.cssClass
 		);
 
+		const hrefUrl =
+			this.props.direction === 'forward' && this.props.forwardUrl
+				? this.props.forwardUrl
+				: this.getBackUrl();
 		return (
 			<Button
 				primary={ primary }
 				borderless={ borderless }
 				className={ buttonClasses }
-				href={ this.getBackUrl() }
+				href={ hrefUrl }
 				onClick={ this.handleClick }
 				rel={ this.props.rel }
 			>
@@ -182,9 +197,14 @@ export class NavigationLink extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		userLoggedIn: isUserLoggedIn( state ),
-		signupProgress: getSignupProgress( state ),
-	} ),
+	( state ) => {
+		const { intent } = getSignupDependencyStore( state );
+
+		return {
+			userLoggedIn: isUserLoggedIn( state ),
+			signupProgress: getSignupProgress( state ),
+			intent,
+		};
+	},
 	{ recordTracksEvent, submitSignupStep }
 )( localize( NavigationLink ) );

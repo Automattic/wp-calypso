@@ -185,9 +185,8 @@ export function deleteSite( siteId ) {
 			)
 		);
 
-		return wpcom
-			.undocumented()
-			.deleteSite( siteId )
+		return wpcom.req
+			.post( `/sites/${ siteId }/delete` )
 			.then( () => {
 				dispatch( receiveDeletedSite( siteId ) );
 				dispatch(

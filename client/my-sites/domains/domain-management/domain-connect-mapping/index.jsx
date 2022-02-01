@@ -20,8 +20,6 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
-const wpcom = wp.undocumented();
-
 class DomainConnectMapping extends Component {
 	static propTypes = {
 		domains: PropTypes.array.isRequired,
@@ -173,25 +171,21 @@ class DomainConnectMapping extends Component {
 	};
 
 	applyDomainConnectMappingTemplate = () => {
+		const { selectedDomainName } = this.props;
 		this.setState( { submitting: true } );
 
-		this.props.recordConfigureYourDomainClick( this.props.selectedDomainName );
+		this.props.recordConfigureYourDomainClick( selectedDomainName );
 
 		const redirectUri =
 			'https://wordpress.com' +
-			domainManagementDomainConnectMapping(
-				this.props.selectedSite.slug,
-				this.props.selectedDomainName
-			) +
+			domainManagementDomainConnectMapping( this.props.selectedSite.slug, selectedDomainName ) +
 			'?' +
 			this.getRedirectUriStatusString();
 
-		wpcom
-			.getDomainConnectSyncUxUrl(
-				this.props.selectedDomainName,
-				'WordPress.com',
-				'hosting',
-				redirectUri
+		wp.req
+			.get(
+				`/domains/${ selectedDomainName }/dns/providers/WordPress.com/services/hosting/syncurl`,
+				{ redirect_uri: redirectUri }
 			)
 			.then(
 				( data ) => {
@@ -199,10 +193,7 @@ class DomainConnectMapping extends Component {
 					const syncUxUrl = data?.sync_ux_apply_url;
 
 					if ( success && syncUxUrl ) {
-						this.props.recordConfigureYourDomainRedirect(
-							this.props.selectedDomainName,
-							syncUxUrl
-						);
+						this.props.recordConfigureYourDomainRedirect( selectedDomainName, syncUxUrl );
 						navigate( syncUxUrl );
 					} else {
 						this.setState( {

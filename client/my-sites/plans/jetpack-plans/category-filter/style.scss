@@ -1,0 +1,32 @@
+.category-filter {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+
+	margin: 1.5rem 0;
+
+	list-style-type: none;
+
+	font-size: 1.125rem;
+	font-weight: 700;
+
+	> li {
+		margin: 0.5rem 1rem;
+	}
+}
+
+.category-filter__link {
+	&:any-link {
+		color: var( --color-text );
+
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	&.is-selected {
+		text-decoration: underline;
+	}
+}

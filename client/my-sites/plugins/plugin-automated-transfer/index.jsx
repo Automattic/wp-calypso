@@ -38,6 +38,7 @@ class PluginAutomatedTransfer extends Component {
 		transferComplete: false,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const { COMPLETE } = transferStates;
 		const { isTransferring, isFailedTransfer, transferState } = this.props;
@@ -53,6 +54,7 @@ class PluginAutomatedTransfer extends Component {
 		clearInterval( this.interval );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const { siteId } = this.props;
 		const { COMPLETE } = transferStates;

@@ -1,8 +1,8 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
-import { has, mapValues, pickBy, flowRight as compose } from 'lodash';
+import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -21,58 +21,55 @@ import {
 	getThemeHelpUrl,
 	getThemePurchaseUrl,
 	getThemeSignupUrl,
-	getThemeSupportUrl,
 	isPremiumThemeAvailable,
 	isThemeActive,
-	isThemeGutenbergFirst,
 	isThemePremium,
+	shouldShowTryAndCustomize,
 } from 'calypso/state/themes/selectors';
 
 const identity = ( theme ) => theme;
 
-function getAllThemeOptions( { translate } ) {
-	const purchase = config.isEnabled( 'upgrades/checkout' )
-		? {
-				label: translate( 'Purchase', {
-					context: 'verb',
-				} ),
-				extendedLabel: translate( 'Purchase this design' ),
-				header: translate( 'Purchase on:', {
-					context: 'verb',
-					comment: 'label for selecting a site for which to purchase a theme',
-				} ),
-				getUrl: getThemePurchaseUrl,
-				hideForTheme: ( state, themeId, siteId ) =>
-					isJetpackSite( state, siteId ) || // No individual theme purchase on a JP site
-					! isUserLoggedIn( state ) || // Not logged in
-					! isThemePremium( state, themeId ) || // Not a premium theme
-					isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
-					isThemeActive( state, themeId, siteId ), // Already active
-		  }
-		: {};
+function getAllThemeOptions( { translate, blockEditorSettings } ) {
+	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
 
-	const upgradePlan = config.isEnabled( 'upgrades/checkout' )
-		? {
-				label: translate( 'Upgrade to activate', {
-					comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
-				} ),
-				extendedLabel: translate( 'Upgrade to activate', {
-					comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
-				} ),
-				header: translate( 'Upgrade on:', {
-					context: 'verb',
-					comment: 'label for selecting a site for which to upgrade a plan',
-				} ),
-				getUrl: ( state, themeId, siteId ) =>
-					getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
-				hideForTheme: ( state, themeId, siteId ) =>
-					! isJetpackSite( state, siteId ) ||
-					! isUserLoggedIn( state ) ||
-					! isThemePremium( state, themeId ) ||
-					isThemeActive( state, themeId, siteId ) ||
-					isPremiumThemeAvailable( state, themeId, siteId ),
-		  }
-		: {};
+	const purchase = {
+		label: translate( 'Purchase', {
+			context: 'verb',
+		} ),
+		extendedLabel: translate( 'Purchase this design' ),
+		header: translate( 'Purchase on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to purchase a theme',
+		} ),
+		getUrl: getThemePurchaseUrl,
+		hideForTheme: ( state, themeId, siteId ) =>
+			isJetpackSite( state, siteId ) || // No individual theme purchase on a JP site
+			! isUserLoggedIn( state ) || // Not logged in
+			! isThemePremium( state, themeId ) || // Not a premium theme
+			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
+			isThemeActive( state, themeId, siteId ), // Already active
+	};
+
+	const upgradePlan = {
+		label: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
+		} ),
+		extendedLabel: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
+		} ),
+		header: translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan',
+		} ),
+		getUrl: ( state, themeId, siteId ) =>
+			getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
+		hideForTheme: ( state, themeId, siteId ) =>
+			! isJetpackSite( state, siteId ) ||
+			! isUserLoggedIn( state ) ||
+			! isThemePremium( state, themeId ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			isPremiumThemeAvailable( state, themeId, siteId ),
+	};
 
 	const activate = {
 		label: translate( 'Activate' ),
@@ -99,17 +96,26 @@ function getAllThemeOptions( { translate } ) {
 	};
 
 	const customize = {
-		label: translate( 'Customize' ),
-		extendedLabel: translate( 'Customize this design' ),
-		header: translate( 'Customize on:', {
-			comment: 'label in the dialog for selecting a site for which to customize a theme',
-		} ),
 		icon: 'customize',
-		getUrl: getCustomizeUrl,
+		getUrl: ( state, themeId, siteId ) => getCustomizeUrl( state, themeId, siteId, isFSEActive ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 			! isThemeActive( state, themeId, siteId ),
 	};
+
+	if ( isFSEActive ) {
+		customize.label = translate( 'Edit', { comment: "label for button to edit a theme's design" } );
+		customize.extendedLabel = translate( 'Edit this design' );
+		customize.header = translate( 'Edit design on:', {
+			comment: "label in the dialog for selecting a site for which to edit a theme's design",
+		} );
+	} else {
+		customize.label = translate( 'Customize' );
+		customize.extendedLabel = translate( 'Customize this design' );
+		customize.header = translate( 'Customize on:', {
+			comment: 'label in the dialog for selecting a site for which to customize a theme',
+		} );
+	}
 
 	const tryandcustomize = {
 		label: translate( 'Try & Customize' ),
@@ -119,15 +125,7 @@ function getAllThemeOptions( { translate } ) {
 		} ),
 		action: tryAndCustomizeAction,
 		hideForTheme: ( state, themeId, siteId ) =>
-			! isUserLoggedIn( state ) ||
-			( siteId &&
-				( ! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
-					( isJetpackSite( state, siteId ) && isJetpackSiteMultiSite( state, siteId ) ) ) ) ||
-			isThemeActive( state, themeId, siteId ) ||
-			( isThemePremium( state, themeId ) &&
-				isJetpackSite( state, siteId ) &&
-				! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-			isThemeGutenbergFirst( state, themeId ),
+			! shouldShowTryAndCustomize( state, themeId, siteId ),
 	};
 
 	const preview = {
@@ -160,13 +158,6 @@ function getAllThemeOptions( { translate } ) {
 		getUrl: getThemeDetailsUrl,
 	};
 
-	const support = {
-		label: translate( 'Setup' ),
-		icon: 'help',
-		getUrl: getThemeSupportUrl,
-		hideForTheme: ( state, themeId ) => ! isThemePremium( state, themeId ),
-	};
-
 	const help = {
 		label: translate( 'Support' ),
 		getUrl: getThemeHelpUrl,
@@ -183,7 +174,6 @@ function getAllThemeOptions( { translate } ) {
 		signup,
 		separator,
 		info,
-		support,
 		help,
 	};
 }
@@ -236,7 +226,7 @@ const connectOptionsHoc = connect(
 	( options, actions, ownProps ) => {
 		const { defaultOption, secondaryOption, getScreenshotOption } = ownProps;
 		options = mapValues( options, ( option, name ) => {
-			if ( has( option, 'action' ) ) {
+			if ( option.hasOwnProperty( 'action' ) ) {
 				return { ...option, action: actions[ name ] };
 			}
 			return option;
@@ -252,4 +242,4 @@ const connectOptionsHoc = connect(
 	}
 );
 
-export const connectOptions = compose( localize, connectOptionsHoc );
+export const connectOptions = compose( localize, withBlockEditorSettings, connectOptionsHoc );

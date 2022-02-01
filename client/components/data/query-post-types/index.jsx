@@ -1,59 +1,30 @@
-import { isEqual, pick } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { requestPostTypes } from 'calypso/state/post-types/actions';
-import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 
-// list of site settings properties that trigger a new query when they change
-const POST_TYPE_SETTINGS = [ 'jetpack_portfolio', 'jetpack_testimonial' ];
+const getPostTypeSetting = ( siteId, settingName ) => ( state ) =>
+	getSiteSetting( state, siteId, settingName );
 
-class QueryPostTypes extends Component {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		requestingPostTypes: PropTypes.bool,
-		themeSlug: PropTypes.string,
-		postTypeSettings: PropTypes.object,
-		requestPostTypes: PropTypes.func,
-	};
+function QueryPostTypes( { siteId } ) {
+	const dispatch = useDispatch();
+	const themeSlug = useSelector( ( state ) => getSiteOption( state, siteId, 'theme_slug' ) );
+	const jetpackTestimonial = useSelector( getPostTypeSetting( siteId, 'jetpack_testimonial' ) );
+	const jetpackPortfolio = useSelector( getPostTypeSetting( siteId, 'jetpack_portfolio' ) );
 
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
-	}
-
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { siteSettings, siteId, themeSlug } = this.props;
-		const {
-			siteSettings: nextSiteSettings,
-			siteId: nextSiteId,
-			themeSlug: nextThemeSlug,
-		} = nextProps;
-
-		const hasThemeChanged = themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug;
-		const hasPostTypeSettingChanged = ! isEqual(
-			pick( siteSettings, POST_TYPE_SETTINGS ),
-			pick( nextSiteSettings, POST_TYPE_SETTINGS )
-		);
-
-		if ( siteId !== nextSiteId || hasThemeChanged || hasPostTypeSettingChanged ) {
-			this.request( nextProps );
+	useEffect( () => {
+		if ( siteId ) {
+			dispatch( requestPostTypes( siteId ) );
 		}
-	}
+	}, [ dispatch, siteId, themeSlug, jetpackTestimonial, jetpackPortfolio ] );
 
-	request( props ) {
-		props.requestPostTypes( props.siteId );
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect(
-	( state, { siteId } ) => ( {
-		siteSettings: getSiteSettings( state, siteId ),
-		themeSlug: getSiteOption( state, siteId, 'theme_slug' ),
-	} ),
-	{ requestPostTypes }
-)( QueryPostTypes );
+QueryPostTypes.propTypes = {
+	siteId: PropTypes.number.isRequired,
+};
+
+export default QueryPostTypes;

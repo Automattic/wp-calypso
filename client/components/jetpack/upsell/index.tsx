@@ -39,7 +39,7 @@ const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 			{ buttonLink && (
 				<Button
 					className="upsell__button"
-					href={ buttonLink }
+					href={ String( buttonLink ) }
 					onClick={ onClick }
 					primary
 					target={ openButtonLinkOnNewTab ? '_blank' : '_self' }
@@ -50,7 +50,7 @@ const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 			{ secondaryButtonLink && (
 				<Button
 					className="upsell__button"
-					href={ secondaryButtonLink }
+					href={ String( secondaryButtonLink ) }
 					onClick={ secondaryOnClick }
 					target="_blank"
 				>

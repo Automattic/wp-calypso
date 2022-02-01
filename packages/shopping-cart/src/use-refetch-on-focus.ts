@@ -3,6 +3,7 @@ import { useEffect, useContext } from 'react';
 import { cartKeysThatDoNotAllowFetch } from './cart-keys';
 import ShoppingCartOptionsContext from './shopping-cart-options-context';
 import useManagerClient from './use-manager-client';
+import type { CartKey } from './types';
 
 const debug = debugFactory( 'shopping-cart:use-refetch-on-focus' );
 
@@ -27,7 +28,7 @@ function isOffline(): boolean {
 	}
 }
 
-export default function useRefetchOnFocus( cartKey: string | undefined ): void {
+export default function useRefetchOnFocus( cartKey: CartKey | undefined ): void {
 	const managerClient = useManagerClient( 'useRefetchOnFocus' );
 
 	const manager = managerClient.forCartKey( cartKey );

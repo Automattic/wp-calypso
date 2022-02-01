@@ -10,6 +10,8 @@ import {
 	PLUGINS_WPORG_PLUGIN_RECEIVE,
 	PLUGINS_WPORG_PLUGIN_REQUEST,
 } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
 	getNextPluginsListPage,
 	isFetching,
@@ -32,7 +34,7 @@ export function fetchPluginData( pluginSlug ) {
 		} );
 
 		try {
-			const data = await fetchPluginInformation( pluginSlug );
+			const data = await fetchPluginInformation( pluginSlug, getCurrentUserLocale( getState() ) );
 
 			dispatch( {
 				type: PLUGINS_WPORG_PLUGIN_RECEIVE,
@@ -107,9 +109,8 @@ export function fetchPluginsList(
 
 		// The "Featured" category is managed by WP.com instead of WP.org
 		if ( 'featured' === category ) {
-			wpcom
-				.undocumented()
-				.getFeaturedPlugins()
+			wpcom.req
+				.get( '/plugins/featured', { apiNamespace: 'wpcom/v2' } )
 				.then( ( data ) => {
 					dispatch( receivePluginsList( category, page, searchTerm, data, null ) );
 				} )
@@ -119,19 +120,28 @@ export function fetchPluginsList(
 			return;
 		}
 
-		fetchWporgPluginsList(
-			{
-				pageSize,
-				page,
-				category,
-				search: searchTerm,
-			},
-			function ( error, data ) {
-				dispatch(
-					receivePluginsList( category, page, searchTerm, data?.plugins ?? [], error, data?.info )
-				);
-			}
-		);
+		return fetchWporgPluginsList( {
+			pageSize,
+			page,
+			category,
+			search: searchTerm,
+			locale: getCurrentUserLocale( getState() ),
+		} )
+			.then( ( { info, plugins } ) => {
+				dispatch( receivePluginsList( category, page, searchTerm, plugins, null, info ) );
+				// Do not trigger a new tracks event for subsequent pages.
+				if ( searchTerm && info?.page === 1 ) {
+					dispatch(
+						recordTracksEvent( 'calypso_plugins_search_results_show', {
+							search_term: searchTerm,
+							results_count: info?.results,
+						} )
+					);
+				}
+			} )
+			.catch( ( error ) => {
+				dispatch( receivePluginsList( category, page, searchTerm, [], error ) );
+			} );
 	};
 }
 

@@ -1,4 +1,4 @@
-import { cloneDeep, includes, omit, range } from 'lodash';
+import { cloneDeep, omit, range } from 'lodash';
 import QueryManager from '../';
 import { DEFAULT_PAGINATED_QUERY, PAGINATION_QUERY_KEYS } from './constants';
 import PaginatedQueryKey from './key';
@@ -210,7 +210,7 @@ export default class PaginatedQueryManager extends QueryManager {
 				// Ensure that item set is comprised of all indices leading up
 				// to received page, even if those items are not known.
 				const itemKey = nextQuery.itemKeys[ index ];
-				if ( ! includes( pageItemKeys, itemKey ) ) {
+				if ( ! pageItemKeys.includes( itemKey ) ) {
 					return itemKey;
 				}
 			} ),
@@ -222,7 +222,7 @@ export default class PaginatedQueryManager extends QueryManager {
 			...nextQuery.itemKeys.slice( startOffset + perPage ).filter( ( itemKey ) => {
 				// Filter out any item keys which exist in the page set, as
 				// this indicates that they've trickled down from later page
-				return itemKey && ! includes( pageItemKeys, itemKey );
+				return itemKey && ! pageItemKeys.includes( itemKey );
 			} ),
 		];
 

@@ -22,6 +22,7 @@ class AuthorMappingPane extends PureComponent {
 			PropTypes.shape( {
 				id: PropTypes.string.isRequired,
 				name: PropTypes.string.isRequired,
+				icon: PropTypes.string,
 			} ).isRequired
 		).isRequired,
 		sourceTitle: PropTypes.string.isRequired,

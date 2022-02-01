@@ -16,7 +16,6 @@ import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { MarketplaceHeaderTitle } from 'calypso/my-sites/marketplace/components';
-import MarketplaceShoppingCart from 'calypso/my-sites/marketplace/components/marketplace-shopping-cart';
 import {
 	MARKETPLACE_FLOW_ID,
 	ANALYTICS_UI_LOCATION_MARKETPLACE_DOMAIN_SELECTION,
@@ -77,13 +76,13 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	const domainObject = useSelector( ( state ) =>
 		getWpComDomainBySiteId( state, selectedSite?.ID )
 	);
-	const domain = domainObject?.domain;
+	const domain = domainObject?.domain ?? '';
 	const siteName = getSiteNameFromURL( domain );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	useEffect( () => {
-		setIsExpandedBasketView( isDesktop() );
+		setIsExpandedBasketView( isDesktop() ?? false );
 		selectedSite && dispatch( fetchSiteDomains( selectedSite.ID ) );
 	}, [ setIsExpandedBasketView, selectedSite, dispatch ] );
 
@@ -95,6 +94,9 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 
 	const onDomainSelect = async ( suggestion: DomainSuggestions.DomainSuggestion ) => {
 		const { product_slug, domain_name } = suggestion;
+		if ( ! product_slug ) {
+			throw new Error( 'Cannot select domain without product slug' );
+		}
 		const domainProduct = {
 			...domainRegistration( {
 				productSlug: product_slug,
@@ -121,7 +123,9 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	};
 
 	const freeWpcomStagingDomain: DomainSuggestions.DomainSuggestion = {
-		domain_name: `${ getSiteNameFromURL( selectedSite?.slug ) }.wpcomstaging.com`,
+		domain_name: selectedSite?.slug
+			? `${ getSiteNameFromURL( selectedSite.slug ) }.wpcomstaging.com`
+			: '.wpcomstaging.com',
 		cost: 'Free',
 		match_reasons: [ 'Domain name after transfer' ],
 		unavailable: false,
@@ -153,7 +157,7 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 									}`
 							  )
 					}
-					tooltip={ translate( 'Close Domain Selection' ) }
+					tooltip={ String( translate( 'Close Domain Selection' ) ) }
 					tipTarget="close"
 				/>
 			</Masterbar>
@@ -174,16 +178,6 @@ function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 						currentDomain={ selectedDomain }
 						showRecommendationLabel={ false }
 						onUseYourDomainClick={ redirectToUseDomainFlow }
-					/>
-				</div>
-				<div className="marketplace-domain-upsell__shopping-cart-container">
-					<MarketplaceShoppingCart
-						onCheckout={ () =>
-							page( `/checkout${ selectedSite ? `/${ selectedSite.slug }` : '' }` )
-						}
-						selectedDomainProductUUID={ selectedDomainProductUUID }
-						isExpandedBasketView={ isExpandedBasketView }
-						toggleExpandedBasketView={ () => setIsExpandedBasketView( ! isExpandedBasketView ) }
 					/>
 				</div>
 			</div>

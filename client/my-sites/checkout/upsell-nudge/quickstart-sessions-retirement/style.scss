@@ -1,0 +1,40 @@
+main.quickstart-sessions-retirement.main {
+	margin: auto;
+}
+
+.quickstart-sessions-retirement {
+	display: flex;
+	flex-direction: column;
+
+	.card {
+		width: 100%;
+	}
+
+	.quickstart-sessions-retirement__card-header,
+	.quickstart-sessions-retirement__card-footer {
+		width: 100%;
+	}
+
+	.quickstart-sessions-retirement__card-body {
+		flex: 1;
+		overflow: auto;
+	}
+
+	.quickstart-sessions-retirement__header {
+		font-style: italic;
+		text-align: center;
+	}
+
+	.quickstart-sessions-retirement__sub-header {
+		font-size: $font-title-medium;
+		font-weight: 600;
+		line-height: 1.4;
+		margin-bottom: 1.4em;
+		margin-top: 0.5em;
+		text-align: center;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			font-size: $font-title-small;
+		}
+	}
+}

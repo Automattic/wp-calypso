@@ -9,15 +9,21 @@
 }
 
 .plugin-ratings__rating-stars {
-	font-size: $font-title-medium;
+	display: flex;
+	align-items: center;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		display: inline-block;
 		margin-right: 8px;
 	}
+
+	.rating {
+		margin-right: 5px;
+	}
 }
 
-.plugin-ratings__rating-text {
+.plugin-ratings__rating-text,
+.plugin-ratings__num-ratings {
 	font-size: $font-body-extra-small;
 	color: var( --color-neutral-light );
 	margin-bottom: 16px;
@@ -27,6 +33,10 @@
 		line-height: 24px;
 		vertical-align: top;
 	}
+}
+
+.plugin-ratings__num-ratings {
+	margin: 0;
 }
 
 .plugin-ratings__rating-tier-text,

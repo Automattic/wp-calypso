@@ -41,6 +41,8 @@ export type ThankYouProps = {
 	thankYouImage: {
 		alt: string | TranslateResult;
 		src: string;
+		width?: string;
+		height?: string;
 	};
 	thankYouTitle?: string | TranslateResult;
 	thankYouSubtitle?: string | TranslateResult;

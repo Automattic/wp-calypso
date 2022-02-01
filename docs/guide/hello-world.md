@@ -147,16 +147,18 @@ touch client/my-sites/hello-world/main.jsx
 Start by importing React as an external dependency at the top, then import the internal "Main" UI component from `components/main`. We'll use it to set up our view tree. Finally, create and export a new React Component.
 
 ```javascript
-import React from 'react';
+import { Component } from 'react';
 import Main from 'calypso/components/main';
 
-export default class HelloWorld extends React.Component {}
+export default class HelloWorld extends Component {}
 ```
 
 Cool. Let's make the React component render something for us. We'll do that by adding a `render()` method that uses the "Main" component and outputs some markup. Let's add the `render()` method inside of the `React.Component` extension like so:
 
 ```jsx
-export default class HelloWorld extends React.Component {
+import { Component } from 'react';
+
+export default class HelloWorld extends Component {
 	render() {
 		return (
 			<Main>
@@ -195,7 +197,9 @@ Then add some styles for our `HelloWorld` component:
 Let's update the component we wrote above to include our new styles:
 
 ```jsx
-export default class HelloWorld extends React.Component {
+import { Component } from 'react';
+
+export default class HelloWorld extends Component {
 	render() {
 		return (
 			<Main className="hello-world">
@@ -220,7 +224,6 @@ Time to hook this up with our controller function. Open `/hello-world/controller
 Import React and your new component at the top of the file:
 
 ```javascript
-import React from 'react';
 import HelloWorld from 'calypso/my-sites/hello-world/main';
 ```
 

@@ -3,7 +3,7 @@
 Images from this folder are managed by webpack, and can be imported like this:
 
 ```javascript
-import mediaPostImageURL from 'assets/images/upgrades/media-post.svg';
+import mediaPostImageURL from 'calypso/assets/images/upgrades/media-post.svg';
 ```
 
 You can then use such image that way:

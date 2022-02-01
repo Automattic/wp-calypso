@@ -155,7 +155,6 @@ export const trackRequests = ( next ) => ( store, action ) => {
  *   onError    :: Action -> ErrorData -> Action
  *   onProgress :: Action -> ProgressData -> Action
  *   fromApi    :: ResponseData -> TransformedData throws TransformerError|SchemaError
- *
  * @param {Function} middleware intercepts requests moving through the system
  * object - options object with named parameters:
  * function - options.fetch called if action lacks response meta; should create HTTP request
@@ -163,7 +162,7 @@ export const trackRequests = ( next ) => ( store, action ) => {
  * function - options.onError called if the action meta includes error data
  * function - options.onProgress called on progress events when uploading
  * function - options.fromApi maps between API data and Calypso data
- * @returns {object} action or action thunk to be executed in response to HTTP event
+ * @returns {(options: {fetch?: any; onSuccess?: any; onError?: any; onProgress?: any; fromApi?: any}) => any} action or action thunk to be executed in response to HTTP event
  */
 export const requestDispatcher = ( middleware ) => ( options ) => {
 	if ( ! options.fetch ) {

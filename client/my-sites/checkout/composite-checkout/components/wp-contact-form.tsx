@@ -1,10 +1,6 @@
-import {
-	FormStatus,
-	useSelect,
-	useFormStatus,
-	useIsStepActive,
-} from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
+import { useSelect } from '@wordpress/data';
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
 import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
 import ContactDetailsContainer from './contact-details-container';
@@ -44,7 +40,7 @@ export default function WPContactForm( {
 	isLoggedOutCart: boolean;
 } ): JSX.Element {
 	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
-		select( 'wpcom' ).getContactInfo()
+		select( 'wpcom-checkout' ).getContactInfo()
 	);
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();

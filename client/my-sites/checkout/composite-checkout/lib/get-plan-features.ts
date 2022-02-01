@@ -15,9 +15,9 @@ export default function getPlanFeatures(
 	translate: ReturnType< typeof useTranslate >,
 	hasDomainsInCart: boolean,
 	hasRenewalInCart: boolean,
-	planHasDomainCredit: boolean
+	nextDomainIsFree: boolean
 ): string[] {
-	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && planHasDomainCredit;
+	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && nextDomainIsFree;
 	const productSlug = plan?.product_slug;
 
 	if ( ! productSlug ) {
@@ -30,21 +30,10 @@ export default function getPlanFeatures(
 		? String( translate( 'Free domain for one year' ) )
 		: undefined;
 	const googleAnalytics = String( translate( 'Track your stats with Google Analytics' ) );
-	const annualPlanOnly = ( feature: string | undefined ): string | null => {
-		if ( ! feature ) {
-			return null;
-		}
-
-		const label = translate( '(annual plans only)', {
-			comment: 'Label attached to a feature',
-		} );
-
-		return `~~${ feature } ${ label }`;
-	};
 
 	if ( isWpComPersonalPlan( productSlug ) ) {
 		return [
-			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
+			! isMonthlyPlan && freeOneYearDomain,
 			String( translate( 'Best-in-class hosting' ) ),
 			String( translate( 'Dozens of Free Themes' ) ),
 		].filter( isValueTruthy );
@@ -52,8 +41,11 @@ export default function getPlanFeatures(
 
 	if ( isWpComPremiumPlan( productSlug ) ) {
 		return [
-			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
-			isMonthlyPlan ? annualPlanOnly( liveChatSupport ) : liveChatSupport,
+			! isMonthlyPlan && freeOneYearDomain,
+			! isMonthlyPlan && liveChatSupport,
+			isEnabled( 'themes/premium' )
+				? String( translate( 'Unlimited access to our library of Premium Themes' ) )
+				: null,
 			isEnabled( 'earn/pay-with-paypal' )
 				? String( translate( 'Subscriber-only content and Pay with PayPal buttons' ) )
 				: String( translate( 'Subscriber-only content and payment buttons' ) ),
@@ -63,8 +55,8 @@ export default function getPlanFeatures(
 
 	if ( isWpComBusinessPlan( productSlug ) ) {
 		return [
-			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
-			isMonthlyPlan ? annualPlanOnly( liveChatSupport ) : liveChatSupport,
+			! isMonthlyPlan && freeOneYearDomain,
+			! isMonthlyPlan && liveChatSupport,
 			String( translate( 'Install custom plugins and themes' ) ),
 			String( translate( 'Drive traffic to your site with our advanced SEO tools' ) ),
 			String( translate( 'Track your stats with Google Analytics' ) ),
@@ -74,8 +66,8 @@ export default function getPlanFeatures(
 
 	if ( isWpComEcommercePlan( productSlug ) ) {
 		return [
-			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
-			isMonthlyPlan ? annualPlanOnly( liveChatSupport ) : liveChatSupport,
+			! isMonthlyPlan && freeOneYearDomain,
+			! isMonthlyPlan && liveChatSupport,
 			String( translate( 'Install custom plugins and themes' ) ),
 			String( translate( 'Accept payments in 60+ countries' ) ),
 			String( translate( 'Integrations with top shipping carriers' ) ),

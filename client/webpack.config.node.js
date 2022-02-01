@@ -117,7 +117,7 @@ const webpackConfig = {
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
-				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
+				presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
 				cacheDirectory,
 				cacheIdentifier,
 				cacheCompression: false,

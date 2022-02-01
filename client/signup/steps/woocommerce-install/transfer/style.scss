@@ -1,0 +1,36 @@
+@import '@automattic/onboarding/styles/base-styles.scss';
+@import '@automattic/onboarding/styles/mixins.scss';
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.transfer__step-wrapper {
+	.step-wrapper__content {
+		padding: 1em;
+		max-width: 540px;
+		text-align: center;
+		margin: 32vh auto;
+	}
+}
+
+$progress-duration: 800ms;
+
+.transfer__progress-bar {
+	position: relative;
+	overflow: hidden;
+	height: 6px;
+	margin-top: 1em;
+	background: var( --studio-gray-10 );
+	--progress: 0;
+
+	&::before {
+		background: var( --studio-blue-40 );
+		transform: translateX( calc( -100% * min( 1 - var( --progress, 0 ), 1 ) ) );
+		position: absolute;
+		content: '';
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		transition: transform $progress-duration ease-out;
+	}
+}

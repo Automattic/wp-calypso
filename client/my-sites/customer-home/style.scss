@@ -1,14 +1,68 @@
 @import './grid-mixins.scss';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
-body.is-section-home {
-	background: var( --studio-white );
+body.is-section-home.theme-default.color-scheme {
+	--color-surface-backdrop: var( --studio-white );
 }
 
 .customer-home__heading {
-	display: flex;
+	display: block;
 
-	@include breakpoint-deprecated( '<660px' ) {
-		padding-right: 16px;
+	.customer-home__view-site-button,
+	.formatted-header__subtitle {
+		display: none;
+	}
+
+	.customer-home__site-content {
+		display: flex;
+		padding: 0 16px 16px;
+		align-items: center;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			padding:0 0 16px;
+		}
+	}
+
+	.site-icon {
+		margin-right: 10px;
+		border: 1px solid var( --studio-gray-5 );
+		box-sizing: border-box;
+		border-radius: 4px;
+		max-width: 58px;
+		height: auto;
+		flex: 1 0 auto;
+	}
+
+	.customer-home__site-domain {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+
+		.customer-home__site-domain-text {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			width: calc( 100vw - 132px );
+			max-width: fit-content;
+			font-size: $font-body-small;
+			line-height: 18px;
+		}
+	}
+
+	.components-external-link__icon {
+		margin: 1px 0 0 7px;
+	}
+
+	.customer-home__site-title {
+		font-family: $brand-serif;
+		font-style: normal;
+		font-weight: normal;
+		font-size: $font-title-small;
+		line-height: 27px;
+		letter-spacing: -0.32px;
+		color: var( --studio-black );
+		margin-bottom: 4px;
 	}
 
 	.formatted-header {
@@ -28,6 +82,20 @@ body.is-section-home {
 			white-space: nowrap;
 		}
 	}
+	@include break-medium {
+		display: flex;
+		flex: 0 0 auto;
+	
+		.customer-home__site-content {
+			display: none;
+		}
+
+		.customer-home__view-site-button,
+		.formatted-header__subtitle {
+			display: block;
+		}
+	}
+	
 }
 
 .customer-home__layout {
@@ -133,11 +201,6 @@ body.is-section-home {
 	}
 }
 
-.is-section-home.is-nav-unification .sidebar .sidebar__heading::after,
-.is-section-home.is-nav-unification .sidebar .sidebar__menu-link::after {
-	border-right-color: var( --studio-white );
-}
-
 .primary__customer-home-location-content {
 	display: flex;
 	flex-direction: column;
@@ -149,7 +212,8 @@ body.is-section-home {
 	// This lets us align the edges of the pager controls with text & images
 	// from the cards while also giving the checklist the freedom to reach the
 	// edges of the space with it's inner list.
-	.card, .task {
+	.card,
+	.task {
 		margin: 32px;
 	}
 
@@ -163,7 +227,6 @@ body.is-section-home {
 	@include breakpoint-deprecated( '>660px' ) {
 		box-shadow: 0 0 0 1px var( --color-border-subtle );
 	}
-
 }
 
 .primary__customer-home-location-content .dot-pager__controls {
@@ -174,7 +237,8 @@ body.is-section-home {
 .primary__customer-home-location-content .task {
 	box-shadow: none;
 
-	.task__text, .task__illustration {
+	.task__text,
+	.task__illustration {
 		padding-top: 0;
 		padding-bottom: 0;
 	}

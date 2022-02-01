@@ -1,11 +1,12 @@
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
+import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
 import { tryToGuessPostalCodeFormat } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import wp from 'calypso/lib/wp';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
 import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
-import { createAccount } from '../payment-method-helpers';
+import { createWpcomAccountBeforeTransaction } from './create-wpcom-account-before-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { ResponseCart, DomainContactDetails } from '@automattic/shopping-cart';
@@ -27,26 +28,30 @@ export default async function payPalProcessor(
 		siteSlug,
 		contactDetails,
 	} = transactionOptions;
-	recordTransactionBeginAnalytics( {
-		reduxDispatch,
-		paymentMethodId: 'paypal',
-	} );
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'paypal' } ) );
 
 	const thankYouUrl = getThankYouUrl();
 	let currentUrl;
-	let currentBaseUrl;
 	try {
-		currentUrl = window.location.href;
-		currentBaseUrl = window.location.origin;
+		currentUrl = new URL( window.location.href );
 	} catch ( error ) {
-		currentUrl = `https://wordpress.com/checkout/${ siteSlug }`;
-		currentBaseUrl = 'https://wordpress.com';
+		currentUrl = new URL( `https://wordpress.com/checkout/${ siteSlug }` );
 	}
-	const currentUrlWithoutQuery = currentUrl.split( /\?|#/ )[ 0 ];
-	const successUrl = thankYouUrl.startsWith( 'http' ) ? thankYouUrl : currentBaseUrl + thankYouUrl;
-	const cancelUrl = createUserAndSiteBeforeTransaction
-		? currentUrlWithoutQuery + '?cart=no-user'
-		: currentUrlWithoutQuery;
+	// We must strip out the hash value because it may break URL encoding when
+	// this value is passed back and forth to PayPal and through our own
+	// endpoints. Otherwise we may end up with an incorrect URL like
+	// 'http://wordpress.com/checkout?cart=no-user#step2?paypal=ABCDEFG'.
+	currentUrl.hash = '';
+	// The successUrl must always be absolute but getThankYouUrl can return
+	// relative paths, so we must check.
+	const successUrl = thankYouUrl.startsWith( 'http' )
+		? thankYouUrl
+		: currentUrl.origin + thankYouUrl;
+	if ( createUserAndSiteBeforeTransaction ) {
+		// It's not clear if this is still required but it may be.
+		currentUrl.searchParams.set( 'cart', 'no-user' );
+	}
+	const cancelUrl = currentUrl.toString();
 
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		responseCart,
@@ -58,10 +63,30 @@ export default async function payPalProcessor(
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
 	return wpcomPayPalExpress( formattedTransactionData, transactionOptions )
-		.then( makeRedirectResponse )
+		.then( ( response ) => {
+			if ( ! response?.redirect_url ) {
+				throw new Error( 'There was an error redirecting to PayPal' );
+			}
+			return makeRedirectResponse( response.redirect_url );
+		} )
 		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
+/**
+ * Submit a transaction to the WPCOM PayPal transactions endpoint.
+ *
+ * This is one of two transactions endpoint functions; also see
+ * `submitWpcomTransaction`.
+ *
+ * Note that the payload property is (mostly) in camelCase but the actual
+ * submitted data will be converted (mostly) to snake_case.
+ *
+ * Please do not alter payload inside this function if possible to retain type
+ * safety. Instead, alter
+ * `createPayPalExpressEndpointRequestPayloadFromLineItems` or add a new type
+ * safe function that works similarly (see
+ * `createWpcomAccountBeforeTransaction`).
+ */
 async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
@@ -70,31 +95,13 @@ async function wpcomPayPalExpress(
 		payload.cart.is_jetpack_checkout && payload.cart.cart_key === 'no-user';
 
 	if ( transactionOptions.createUserAndSiteBeforeTransaction || isJetpackUserLessCheckout ) {
-		const createAccountOptions = isJetpackUserLessCheckout
-			? { signupFlowName: 'jetpack-userless-checkout' }
-			: { signupFlowName: 'onboarding-registrationless' };
-
-		return createAccount( createAccountOptions ).then( ( response ) => {
-			const siteIdFromResponse = response?.blog_details?.blogid;
-
-			// If the account is already created(as happens when we are reprocessing after a transaction error), then
-			// the create account response will not have a site ID, so we fetch from state.
-			const siteId = siteIdFromResponse || transactionOptions.siteId;
-			const newPayload = {
-				...payload,
-				siteId,
-				cart: {
-					...payload.cart,
-					blog_id: siteId || '0',
-					cart_key: siteId || 'no-site',
-				},
-			};
-
-			return wp.undocumented().paypalExpressUrl( newPayload );
-		} );
+		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 
-	return wp.undocumented().paypalExpressUrl( payload );
+	const body = mapRecordKeysRecursively( payload, camelToSnakeCase );
+	const path = '/me/paypal-express-url';
+	const apiVersion = '1.2';
+	return wp.req.post( { path }, { apiVersion }, body );
 }
 
 function createPayPalExpressEndpointRequestPayloadFromLineItems( {

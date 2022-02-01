@@ -48,7 +48,11 @@ export function isUnderDomainManagementAll( path ) {
 }
 
 export function domainAddNew( siteName, searchTerm ) {
-	const path = `/domains/add/${ siteName }`;
+	let path = `/domains/add`;
+
+	if ( siteName ) {
+		path = `${ path }/${ siteName }`;
+	}
 
 	if ( searchTerm ) {
 		return `${ path }?suggestion=${ searchTerm }`;
@@ -69,6 +73,10 @@ export function domainManagementRoot() {
 	return '/domains/manage';
 }
 
+/**
+ * @param {string?} siteName
+ * @param {string?} relativeTo
+ */
 export function domainManagementList( siteName, relativeTo = null ) {
 	if ( isUnderDomainManagementAll( relativeTo ) || isUnderEmailManagementAll( relativeTo ) ) {
 		return domainManagementRoot();
@@ -80,10 +88,20 @@ export function domainManagementEdit( siteName, domainName, relativeTo ) {
 	return domainManagementEditBase( siteName, domainName, 'edit', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementContactsPrivacy( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'contacts-privacy', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementEditContactInfo( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
 }
@@ -92,6 +110,11 @@ export function domainManagementAllEditContactInfo() {
 	return domainManagementAllRoot() + '/edit-contact-info';
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementManageConsent( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'manage-consent', relativeTo );
 }
@@ -114,50 +137,127 @@ export function domainManagementEmailForwarding( siteName, domainName ) {
 	return domainManagementEditBase( siteName, domainName, 'email-forwarding' );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementChangeSiteAddress( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'change-site-address', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementNameServers( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'name-servers', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementDns( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'dns', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
+export function domainManagementDnsAddRecord( siteName, domainName, relativeTo = null ) {
+	return domainManagementEditBase( siteName, domainName, 'add-dns-record', relativeTo );
+}
+
+export function domainManagementDnsEditRecord( siteName, domainName, recordId, relativeTo = null ) {
+	let path = domainManagementEditBase( siteName, domainName, 'edit-dns-record', relativeTo );
+	if ( recordId ) {
+		path += '?recordId=' + encodeURI( recordId );
+	}
+	return path;
+}
+
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementRedirectSettings( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'redirect-settings', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementSecurity( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'security', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementSiteRedirect( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'redirect', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransfer( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, '', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferIn( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'in', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferInPrecheck( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'precheck', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferOut( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'out', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferToAnotherUser( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'other-user', relativeTo );
 }
 
+/**
+ * @param {string} siteName
+ * @param {string} domainName
+ * @param {string?} relativeTo
+ */
 export function domainManagementTransferToOtherSite( siteName, domainName, relativeTo = null ) {
 	return domainManagementTransferBase( siteName, domainName, 'other-site', relativeTo );
 }
@@ -260,4 +360,10 @@ export function getSectionName( pathname ) {
 
 export function domainManagementDomainConnectMapping( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'domain-connect-mapping', relativeTo );
+}
+
+export function createSiteFromDomainOnly( siteSlug, siteId ) {
+	return `/start/site-selected/?siteSlug=${ encodeURIComponent(
+		siteSlug
+	) }&siteId=${ encodeURIComponent( siteId ) }`;
 }

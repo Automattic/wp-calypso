@@ -14,6 +14,7 @@ import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -165,32 +166,36 @@ class CustomContentTypes extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, isWPForTeamsSite } = this.props;
 		return (
 			<Card className="custom-content-types site-settings">
 				<FormFieldset>{ this.renderBlogPostSettings() }</FormFieldset>
 
-				<FormFieldset>
-					<SupportInfo
-						text={ translate(
-							'Adds the Testimonial custom post type, allowing you to collect, organize, ' +
-								'and display testimonials on your site.'
-						) }
-						link="https://jetpack.com/support/custom-content-types/"
-					/>
-					{ this.renderTestimonialSettings() }
-				</FormFieldset>
+				{ ! isWPForTeamsSite && (
+					<>
+						<FormFieldset>
+							<SupportInfo
+								text={ translate(
+									'Adds the Testimonial custom post type, allowing you to collect, organize, ' +
+										'and display testimonials on your site.'
+								) }
+								link="https://jetpack.com/support/custom-content-types/"
+							/>
+							{ this.renderTestimonialSettings() }
+						</FormFieldset>
 
-				<FormFieldset>
-					<SupportInfo
-						text={ translate(
-							'Adds the Portfolio custom post type, allowing you to ' +
-								'manage and showcase projects on your site.'
-						) }
-						link="https://jetpack.com/support/custom-content-types/"
-					/>
-					{ this.renderPortfolioSettings() }
-				</FormFieldset>
+						<FormFieldset>
+							<SupportInfo
+								text={ translate(
+									'Adds the Portfolio custom post type, allowing you to ' +
+										'manage and showcase projects on your site.'
+								) }
+								link="https://jetpack.com/support/custom-content-types/"
+							/>
+							{ this.renderPortfolioSettings() }
+						</FormFieldset>
+					</>
+				) }
 			</Card>
 		);
 	}
@@ -216,6 +221,7 @@ export default connect(
 
 		return {
 			siteId,
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
 			customContentTypesModuleActive: isJetpackModuleActive(
 				state,

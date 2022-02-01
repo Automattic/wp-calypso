@@ -43,16 +43,13 @@ export function requestTagImages( tag, limit = 5 ) {
 			tag,
 		} );
 
-		const query = {
-			tag,
-			number: limit,
-		};
-
 		debug( `Requesting tag images for tag ${ tag }` );
 
-		return wpcom
-			.undocumented()
-			.readTagImages( query )
+		return wpcom.req
+			.get( `/read/tags/${ encodeURIComponent( tag ) }/images`, {
+				apiVersion: '1.2',
+				number: limit,
+			} )
 			.then(
 				( data ) => {
 					dispatch( receiveTagImages( tag, ( data && data.images ) || [] ) );

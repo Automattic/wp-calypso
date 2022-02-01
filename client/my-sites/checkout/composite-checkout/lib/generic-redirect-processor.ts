@@ -50,10 +50,7 @@ export default async function genericRedirectProcessor(
 	const successUrl = successUrlObject.href;
 	const cancelUrl = `${ origin }${ pathname }${ search }`;
 
-	recordTransactionBeginAnalytics( {
-		paymentMethodId,
-		reduxDispatch,
-	} );
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
 
 	const formattedTransactionData = prepareRedirectTransaction(
 		paymentMethodId,

@@ -18,7 +18,7 @@ EmailProviderFeature.propTypes = {
 	title: PropTypes.string.isRequired,
 };
 
-function EmailProviderFeatures( { features } ) {
+function EmailProviderFeatures( { features, logos } ) {
 	if ( ! features ) {
 		return null;
 	}
@@ -28,12 +28,21 @@ function EmailProviderFeatures( { features } ) {
 			{ features.map( ( feature, index ) => (
 				<EmailProviderFeature key={ index } title={ feature } />
 			) ) }
+
+			{ logos && (
+				<div className="email-provider-features__logos">
+					{ logos.map( ( { image, imageAltText, title }, index ) => (
+						<img alt={ imageAltText } key={ index } src={ image } title={ title } />
+					) ) }
+				</div>
+			) }
 		</div>
 	);
 }
 
 EmailProviderFeatures.propTypes = {
-	features: PropTypes.arrayOf( PropTypes.string ),
+	features: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
+	logos: PropTypes.arrayOf( PropTypes.object ),
 };
 
 export default EmailProviderFeatures;

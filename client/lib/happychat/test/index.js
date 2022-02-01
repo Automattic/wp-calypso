@@ -11,7 +11,6 @@ import {
 	receiveStatus,
 	receiveToken,
 	receiveTranscript,
-	receiveTranscriptTimeout,
 	receiveUnauthorized,
 	requestTranscript,
 	sendTyping,
@@ -252,18 +251,6 @@ describe( 'connection', () => {
 		} );
 
 		describe( 'connection.request should emit a SocketIO event', () => {
-			test( 'and dispatch callbackTimeout if request ran out of time', async () => {
-				socket.emit( 'init' ); // resolve internal openSocket promise
-
-				const action = requestTranscript( null );
-				socket.emit = jest.fn();
-				await expect( () => connection.request( action, 100 ) ).rejects.toThrow( 'timeout' );
-				expect( socket.emit ).toHaveBeenCalled();
-				expect( socket.emit.mock.calls[ 0 ][ 0 ] ).toBe( action.event );
-				expect( socket.emit.mock.calls[ 0 ][ 1 ] ).toBe( action.payload );
-				expect( dispatch ).toHaveBeenCalledWith( receiveTranscriptTimeout() );
-			} );
-
 			test( 'and dispatch callback if request responded successfully', () => {
 				socket.emit( 'init' ); // resolve internal openSocket promise
 

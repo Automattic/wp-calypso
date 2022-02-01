@@ -1,5 +1,10 @@
 import config from '@automattic/calypso-config';
-import { FEATURE_UPLOAD_THEMES, PLAN_PREMIUM, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	FEATURE_PREMIUM_THEMES,
+	FEATURE_UPLOAD_THEMES,
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -40,6 +45,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -55,6 +62,7 @@ import {
 	getThemeRequestErrors,
 	getThemeForumUrl,
 	getThemeDemoUrl,
+	shouldShowTryAndCustomize,
 } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -89,6 +97,8 @@ class ThemeSheet extends Component {
 		isActive: PropTypes.bool,
 		isPurchased: PropTypes.bool,
 		isJetpack: PropTypes.bool,
+		isAtomic: PropTypes.bool,
+		isStandaloneJetpack: PropTypes.bool,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
@@ -120,8 +130,8 @@ class ThemeSheet extends Component {
 		this.scrollToTop();
 	}
 
-	UNSAFE_componentWillUpdate( nextProps ) {
-		if ( nextProps.id !== this.props.id ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.props.id !== prevProps.id ) {
 			this.scrollToTop();
 		}
 	}
@@ -150,7 +160,11 @@ class ThemeSheet extends Component {
 	getValidSections = () => {
 		const validSections = [];
 		validSections.push( '' ); // Default section
-		this.props.supportDocumentation && validSections.push( 'setup' );
+
+		if ( ! this.props.isPremium && this.props.supportDocumentation ) {
+			validSections.push( 'setup' );
+		}
+
 		validSections.push( 'support' );
 		return validSections;
 	};
@@ -228,7 +242,8 @@ class ThemeSheet extends Component {
 	};
 
 	shouldRenderPreviewButton() {
-		return this.isThemeAvailable() && ! this.isThemeCurrentOne();
+		const { isWPForTeamsSite } = this.props;
+		return this.isThemeAvailable() && ! this.isThemeCurrentOne() && ! isWPForTeamsSite;
 	}
 
 	isThemeCurrentOne() {
@@ -487,7 +502,7 @@ class ThemeSheet extends Component {
 	renderSupportTab = () => {
 		const {
 			isCurrentUserPaid,
-			isJetpack,
+			isStandaloneJetpack,
 			forumUrl,
 			isWpcomTheme,
 			isLoggedIn,
@@ -499,7 +514,9 @@ class ThemeSheet extends Component {
 		if ( isLoggedIn ) {
 			renderedTab = (
 				<div>
-					{ isCurrentUserPaid && ! isJetpack && this.renderSupportContactUsCard( buttonCount++ ) }
+					{ isCurrentUserPaid &&
+						! isStandaloneJetpack &&
+						this.renderSupportContactUsCard( buttonCount++ ) }
 					{ forumUrl && this.renderSupportThemeForumCard( buttonCount++ ) }
 					{ isWpcomTheme && this.renderSupportCssCard( buttonCount++ ) }
 				</div>
@@ -577,6 +594,7 @@ class ThemeSheet extends Component {
 					<div className="theme__retired-theme-message-details">
 						<div className="theme__retired-theme-message-details-title">
 							{ this.props.translate( 'This theme is retired' ) }
+							<InlineSupportLink supportContext="themes-retired" showText={ false } />
 						</div>
 						<div>
 							{ this.props.translate(
@@ -652,6 +670,7 @@ class ThemeSheet extends Component {
 			siteId,
 			siteSlug,
 			retired,
+			hasUnlimitedPremiumThemes,
 			isPremium,
 			isJetpack,
 			isWpcomTheme,
@@ -659,6 +678,7 @@ class ThemeSheet extends Component {
 			translate,
 			canUserUploadThemes,
 			previousRoute,
+			isWPForTeamsSite,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
@@ -702,7 +722,9 @@ class ThemeSheet extends Component {
 
 		let pageUpsellBanner;
 		let previewUpsellBanner;
-		const hasWpComThemeUpsellBanner = ! isJetpack && isPremium && ! isVip && ! retired;
+
+		const hasWpComThemeUpsellBanner =
+			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
 		const hasWpOrgThemeUpsellBanner =
 			! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
 		const hasUpsellBanner = hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner;
@@ -776,7 +798,7 @@ class ThemeSheet extends Component {
 					backText={ previousRoute ? translate( 'Back' ) : translate( 'All Themes' ) }
 					onClick={ this.goBack }
 				>
-					{ ! retired && ! hasWpOrgThemeUpsellBanner && this.renderButton() }
+					{ ! retired && ! hasWpOrgThemeUpsellBanner && ! isWPForTeamsSite && this.renderButton() }
 				</HeaderCake>
 				<div className="theme__sheet-columns">
 					<div className="theme__sheet-column-left">
@@ -803,14 +825,23 @@ const ConnectedThemeSheet = connectOptions( ThemeSheet );
 const ThemeSheetWithEditorSettings = withBlockEditorSettings( ConnectedThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack, demoUrl } = props;
+	const {
+		siteId,
+		isActive,
+		isLoggedIn,
+		isPremium,
+		isPurchased,
+		isJetpack,
+		demoUrl,
+		showTryAndCustomize,
+	} = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
 	const needsJetpackPlanUpgrade = isJetpack && isPremium && ! isPurchased;
 
-	if ( needsJetpackPlanUpgrade ) {
-		secondaryOption = '';
+	if ( ! showTryAndCustomize ) {
+		secondaryOption = null;
 	}
 
 	if ( ! isLoggedIn ) {
@@ -850,6 +881,10 @@ export default connect(
 		const error = theme ? false : getThemeRequestErrors( state, id, siteIdOrWpcom );
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, id );
 
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
+		const isStandaloneJetpack = isJetpack && ! isAtomic;
+
 		return {
 			...theme,
 			id,
@@ -862,16 +897,21 @@ export default connect(
 			isWpcomTheme,
 			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, id, siteId ),
-			isJetpack: isJetpackSite( state, siteId ),
+			isJetpack,
+			isAtomic,
+			isStandaloneJetpack,
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
+			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
+			showTryAndCustomize: shouldShowTryAndCustomize( state, id, siteId ),
 			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			previousRoute: getPreviousRoute( state ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		};
 	},
 	{

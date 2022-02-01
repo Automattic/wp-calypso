@@ -72,15 +72,14 @@ class TermTreeSelectorList extends Component {
 		height: 300,
 	};
 
-	// initialState is also used to reset state when a the taxonomy prop changes
-	static initialState = {
+	state = {
 		searchTerm: '',
 		requestedPages: Object.freeze( [ 1 ] ),
 	};
 
-	state = this.constructor.initialState;
+	constructor( props ) {
+		super( props );
 
-	UNSAFE_componentWillMount() {
 		this.itemHeights = {};
 		this.hasPerformedSearch = false;
 		this.list = null;
@@ -93,18 +92,12 @@ class TermTreeSelectorList extends Component {
 		}, SEARCH_DEBOUNCE_TIME_MS );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.taxonomy !== this.props.taxonomy ) {
-			this.setState( this.constructor.initialState );
-		}
-
-		if ( this.props.terms !== nextProps.terms ) {
-			this.getTermChildren.cache.clear();
-			this.termIds = map( nextProps.terms, 'ID' );
-		}
-	}
-
 	componentDidUpdate( prevProps ) {
+		if ( prevProps.terms !== this.props.terms ) {
+			this.getTermChildren.cache.clear();
+			this.termIds = map( this.props.terms, 'ID' );
+		}
+
 		const forceUpdate =
 			! isEqual( prevProps.selected, this.props.selected ) ||
 			( prevProps.loading && ! this.props.loading ) ||

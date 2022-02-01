@@ -17,7 +17,6 @@ export const fetchAtomicTransfer = ( siteId ) => ( {
 /**
  *
  * @see state/automated-transfer/constants#transferStates
- *
  * @param {number} siteId The site id to which the status belongs
  * @param {object} transfer atomic transfer object
  * @returns {object} An action object

@@ -24,9 +24,8 @@ export const requestSiteMonitorSettings = ( siteId ) => {
 			siteId,
 		} );
 
-		return wp
-			.undocumented()
-			.fetchMonitorSettings( siteId )
+		return wp.req
+			.get( `/jetpack-blogs/${ siteId }` )
 			.then( ( response ) => {
 				dispatch( {
 					type: SITE_MONITOR_SETTINGS_RECEIVE,
@@ -66,9 +65,11 @@ export const updateSiteMonitorSettings = ( siteId, settings ) => {
 			settings,
 		} );
 
-		return wp
-			.undocumented()
-			.updateMonitorSettings( siteId, email_notifications, wp_note_notifications )
+		return wp.req
+			.post( `/jetpack-blogs/${ siteId }`, {
+				email_notifications,
+				wp_note_notifications,
+			} )
 			.then( () => {
 				dispatch( {
 					type: SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,

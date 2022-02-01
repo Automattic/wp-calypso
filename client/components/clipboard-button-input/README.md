@@ -7,7 +7,6 @@ Clipboard Button Input is a React component used to display a text input field c
 In most cases, the component can be treated much like any other text input element. Pass a `value` to be used as the input text to be copied.
 
 ```jsx
-import React from 'react';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 
 export default function MyComponent() {

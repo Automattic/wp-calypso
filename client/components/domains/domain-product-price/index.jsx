@@ -165,17 +165,7 @@ class DomainProductPrice extends Component {
 			'is-free-domain': showStrikedOutPrice,
 			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
 		} );
-
 		const productPriceClassName = showStrikedOutPrice ? '' : 'domain-product-price__price';
-
-		const renewalPrice = showStrikedOutPrice && (
-			<div className="domain-product-price__renewal-price">
-				{ translate( 'Renews at: %(cost)s {{small}}/year{{/small}}', {
-					args: { cost: price },
-					components: { small: <small /> },
-				} ) }
-			</div>
-		);
 
 		return (
 			<div className={ className }>
@@ -185,7 +175,6 @@ class DomainProductPrice extends Component {
 						components: { small: <small /> },
 					} ) }
 				</span>
-				{ renewalPrice }
 			</div>
 		);
 	}

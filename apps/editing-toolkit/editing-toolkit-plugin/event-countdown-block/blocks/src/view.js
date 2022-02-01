@@ -10,11 +10,16 @@ const view = ( { attributes, className, isEditView } ) => {
 	let hours = '&nbsp;';
 	let mins = '&nbsp;';
 	let secs = '&nbsp;';
-
 	if ( isEditView ) {
 		// Zero out.
 		days = hours = mins = secs = 0;
-		const eventTime = new Date( attributes.eventDate ).getTime();
+		let eventTime;
+		if ( attributes.eventTimestamp ) {
+			eventTime = attributes.eventTimestamp * 1000;
+		} else {
+			// backwards compatibility
+			eventTime = new Date( attributes.eventDate ).getTime();
+		}
 		const now = Date.now();
 		const diff = eventTime - now;
 
@@ -37,7 +42,9 @@ const view = ( { attributes, className, isEditView } ) => {
 
 	return (
 		<div className={ className }>
-			<div className="event-countdown__date">{ attributes.eventDate }</div>
+			<div className="event-countdown__date">
+				{ attributes.eventTimestamp || attributes.eventDate }
+			</div>
 			<div className="event-countdown__counter">
 				<p>
 					<strong className="event-countdown__day">{ days }</strong>{ ' ' }

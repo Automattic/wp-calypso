@@ -3,7 +3,6 @@ import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar } from 'calypso/me/controller';
 import * as membershipsController from 'calypso/me/memberships/controller';
-import * as pendingController from 'calypso/me/pending-payments/controller';
 import * as billingController from 'calypso/me/purchases/billing-history/controller';
 import * as paymentMethodsController from 'calypso/me/purchases/payment-methods/controller';
 import { siteSelection } from 'calypso/my-sites/controller';
@@ -45,16 +44,6 @@ export default ( router ) => {
 		makeLayout,
 		clientRender
 	);
-
-	if ( config.isEnabled( 'async-payments' ) ) {
-		router(
-			paths.purchasesRoot + '/pending',
-			sidebar,
-			pendingController.pendingPayments,
-			makeLayout,
-			clientRender
-		);
-	}
 
 	router(
 		paths.purchasesRoot + '/other/:subscriptionId',

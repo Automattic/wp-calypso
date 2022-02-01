@@ -29,7 +29,7 @@ import {
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_PLAN,
 } from './constants';
-import { getForCurrentCROIteration, Iterations } from './iterations';
+import { getForCurrentCROIteration } from './iterations';
 import objectIsPlan from './object-is-plan';
 import { SelectorProduct } from './types';
 
@@ -38,11 +38,14 @@ function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
 }
 
 function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlug {
-	return [ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ].includes( slug );
+	return ( [
+		...JETPACK_LEGACY_PLANS,
+		...JETPACK_RESET_PLANS,
+	] as ReadonlyArray< string > ).includes( slug );
 }
 
 function objectIsSelectorProduct(
-	item: Record< string, unknown > | SelectorProduct
+	item: Plan | Product | SelectorProduct | Record< string, unknown >
 ): item is SelectorProduct {
 	const requiredKeys = [
 		'productSlug',
@@ -57,14 +60,17 @@ function objectIsSelectorProduct(
 
 function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | undefined {
 	if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
-		return getForCurrentCROIteration( ( variation: Iterations ) =>
-			EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]( variation )
-		);
-	} else if ( slugIsJetpackProductSlug( slug ) ) {
-		return JETPACK_SITE_PRODUCTS_WITH_FEATURES[ slug ];
-	} else if ( slugIsJetpackPlanSlug( slug ) ) {
+		return EXTERNAL_PRODUCTS_SLUG_MAP[ slug ]();
+	}
+
+	if ( slugIsJetpackProductSlug( slug ) ) {
+		return ( JETPACK_SITE_PRODUCTS_WITH_FEATURES as Record< string, Product > )[ slug ];
+	}
+
+	if ( slugIsJetpackPlanSlug( slug ) ) {
 		return getPlan( slug ) as Plan;
 	}
+
 	return null;
 }
 
@@ -79,7 +85,9 @@ function itemToSelectorProduct(
 ): SelectorProduct | null {
 	if ( objectIsSelectorProduct( item ) ) {
 		return item;
-	} else if ( objectIsProduct( item ) ) {
+	}
+
+	if ( objectIsProduct( item ) ) {
 		let monthlyProductSlug;
 		let yearlyProductSlug;
 		if (
@@ -94,36 +102,36 @@ function itemToSelectorProduct(
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 
+		// We do not support TERM_BIENNIALLY for Jetpack plans
+		if ( item.term === TERM_BIENNIALLY ) {
+			return null;
+		}
+
 		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
 
 		return {
 			productSlug: item.product_slug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug,
-			displayName: getJetpackProductDisplayName( item ),
+			displayName: getJetpackProductDisplayName( item ) ?? '',
 			type: ITEM_TYPE_PRODUCT,
 			shortName: getJetpackProductShortName( item ) || '',
-			tagline: getJetpackProductTagline( item ),
+			tagline: getJetpackProductTagline( item ) ?? '',
 			description: getJetpackProductDescription( item ),
 			buttonLabel: getJetpackProductCallToAction( item ),
 			monthlyProductSlug,
 			term: item.term,
-			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
+			categories: item.categories,
+			hidePrice: ( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes(
+				item.product_slug
+			),
 			features: {
-				items:
-					getForCurrentCROIteration( ( variation: Iterations ) =>
-						buildCardFeaturesFromItem(
-							item,
-							{
-								withoutDescription: true,
-								withoutIcon: true,
-							},
-							variation
-						)
-					) || [],
+				items: buildCardFeaturesFromItem( item ),
 			},
 		};
-	} else if ( objectIsPlan( item ) ) {
+	}
+
+	if ( objectIsPlan( item ) ) {
 		const productSlug = item.getStoreSlug();
 		let monthlyProductSlug;
 		let yearlyProductSlug;
@@ -132,28 +140,26 @@ function itemToSelectorProduct(
 		} else if ( item.term === TERM_MONTHLY ) {
 			yearlyProductSlug = getYearlyPlanByMonthly( productSlug );
 		}
-		const isResetPlan = JETPACK_RESET_PLANS.includes( productSlug );
+		const isResetPlan = ( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( productSlug );
 		const iconAppend = isResetPlan ? '_v2' : '';
 		return {
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
-			displayName: getForCurrentCROIteration( item.getTitle ),
+			displayName: getForCurrentCROIteration( item.getTitle ) ?? '',
 			type: ITEM_TYPE_PLAN,
-			shortName: getForCurrentCROIteration( item.getTitle ),
+			shortName: getForCurrentCROIteration( item.getTitle ) ?? '',
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {
-				items:
-					getForCurrentCROIteration( ( variation: Iterations ) =>
-						buildCardFeaturesFromItem( item, undefined, variation )
-					) || [],
+				items: buildCardFeaturesFromItem( item ),
 			},
 			legacy: ! isResetPlan,
 		};
 	}
+
 	return null;
 }
 
@@ -168,5 +174,6 @@ export default function slugToSelectorProduct( slug: string ): SelectorProduct |
 	if ( ! item ) {
 		return null;
 	}
+
 	return itemToSelectorProduct( item );
 }

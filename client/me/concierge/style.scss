@@ -113,7 +113,7 @@
 		margin-bottom: 0;
 	}
 
-	.form-fieldset__phone-number {
+	.form-phone-input__phone-number {
 		margin-top: 20px;
 
 		@include breakpoint-deprecated( '>480px' ) {

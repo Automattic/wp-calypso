@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,8 +13,10 @@ import {
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isJetpackProductSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import SiteToolsLink from './link';
 
@@ -47,20 +48,16 @@ class SiteTools extends Component {
 			showClone,
 			showDeleteContent,
 			showDeleteSite,
-			showThemeSetup,
 			showManageConnection,
 			siteId,
 		} = this.props;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }`;
-		const themeSetupLink = `/settings/theme-setup/${ siteSlug }`;
 		const startOverLink = `/settings/start-over/${ siteSlug }`;
 		const deleteSiteLink = `/settings/delete-site/${ siteSlug }`;
 		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }`;
 
-		const themeSetupText = translate( "Automatically make your site look like your theme's demo." );
 		const changeSiteAddress = translate( 'Change your site address' );
-		const themeSetup = translate( 'Theme setup' );
 		const startOver = translate( 'Delete your content' );
 		const startOverText = translate(
 			"Keep your site's address and current theme, but remove all posts, " +
@@ -78,11 +75,6 @@ class SiteTools extends Component {
 		const cloneTitle = translate( 'Clone', { context: 'verb' } );
 		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
 
-		let changeAddressText = translate( "Register a new domain or change your site's address." );
-		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
-			changeAddressText = translate( 'Change your site address.' );
-		}
-
 		return (
 			<div className="site-tools">
 				<QueryRewindState siteId={ siteId } />
@@ -92,19 +84,11 @@ class SiteTools extends Component {
 						href={ changeAddressLink }
 						onClick={ this.trackChangeAddress }
 						title={ changeSiteAddress }
-						description={ changeAddressText }
+						description={ translate( "Register a new domain or change your site's address." ) }
 					/>
 				) }
 				{ showClone && (
 					<SiteToolsLink href={ cloneUrl } title={ cloneTitle } description={ cloneText } />
-				) }
-				{ showThemeSetup && (
-					<SiteToolsLink
-						href={ themeSetupLink }
-						onClick={ this.trackThemeSetup }
-						title={ themeSetup }
-						description={ themeSetupText }
-					/>
 				) }
 				{ showDeleteContent && (
 					<SiteToolsLink
@@ -139,10 +123,6 @@ class SiteTools extends Component {
 		trackDeleteSiteOption( 'change-address' );
 	}
 
-	trackThemeSetup() {
-		trackDeleteSiteOption( 'theme-setup' );
-	}
-
 	trackStartOver() {
 		trackDeleteSiteOption( 'start-over' );
 	}
@@ -169,8 +149,10 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSelectedSiteSlug( state );
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId ) || isJetpackProductSite( state, siteId );
 		const isVip = isVipSite( state, siteId );
+		const isP2 = isSiteWPForTeams( state, siteId );
+		const isP2Hub = isSiteP2Hub( state, siteId );
 		const rewindState = getRewindState( state, siteId );
 		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
@@ -181,10 +163,9 @@ export default connect(
 			siteSlug,
 			purchasesError: getPurchasesError( state ),
 			cloneUrl,
-			showChangeAddress: ! isJetpack && ! isVip,
+			showChangeAddress: ! isJetpack && ! isVip && ! isP2,
 			showClone: 'active' === rewindState.state && ! isAtomic,
-			showThemeSetup: config.isEnabled( 'settings/theme-setup' ) && ! isJetpack && ! isVip,
-			showDeleteContent: ! isJetpack && ! isVip,
+			showDeleteContent: ! isJetpack && ! isVip && ! isP2Hub,
 			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 			showManageConnection: isJetpack && ! isAtomic,
 			siteId,

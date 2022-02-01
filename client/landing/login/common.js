@@ -99,7 +99,7 @@ const setAnalyticsMiddleware = ( currentUser, reduxStore ) => {
 };
 
 export function setupMiddlewares( currentUser, reduxStore ) {
-	setupContextMiddleware( reduxStore );
+	setupContextMiddleware();
 	setRouteMiddleware( reduxStore );
 	setAnalyticsMiddleware( currentUser, reduxStore );
 	renderDevHelpers( reduxStore );

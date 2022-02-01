@@ -142,7 +142,6 @@ class EmailsStep extends Component {
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ subHeaderText }
 				stepContent={ this.renderContent() }
-				showSiteMockups={ false }
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ translate( 'Back' ) }
 				hideSkip={ false }

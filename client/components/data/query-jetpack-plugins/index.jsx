@@ -14,17 +14,17 @@ class QueryJetpackPlugins extends Component {
 		fetchPlugins: PropTypes.func,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( this.props.siteIds && ! this.props.isRequestingForSites ) {
 			this.props.fetchPlugins( this.props.siteIds );
 		}
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( isEqual( nextProps.siteIds, this.props.siteIds ) ) {
+	componentDidUpdate( prevProps ) {
+		if ( isEqual( prevProps.siteIds, this.props.siteIds ) ) {
 			return;
 		}
-		this.refresh( nextProps.isRequestingForSites, nextProps.siteIds );
+		this.refresh( prevProps.isRequestingForSites, prevProps.siteIds );
 	}
 
 	refresh( isRequesting, siteIds ) {

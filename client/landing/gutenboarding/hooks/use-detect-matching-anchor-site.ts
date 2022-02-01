@@ -1,5 +1,4 @@
 import { useSelect } from '@wordpress/data';
-import page from 'page';
 import { useState, useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useIsAnchorFm, useAnchorFmParams } from '../path';
@@ -34,22 +33,23 @@ export default function useDetectMatchingAnchorSite(): boolean {
 		}
 
 		setIsLoading( true );
-		wpcom
-			.undocumented()
-			.getMatchingAnchorSite(
-				anchorFmPodcastId,
-				anchorFmEpisodeId,
-				anchorFmSpotifyUrl,
-				anchorFmSite,
-				anchorFmPost
-			)
+
+		// construct query object from entries that are not null or undefined
+		const query = Object.fromEntries(
+			[
+				[ 'podcast', anchorFmPodcastId ],
+				[ 'episode', anchorFmEpisodeId ],
+				[ 'spotify_url', anchorFmSpotifyUrl ],
+				[ 'site', anchorFmSite ],
+				[ 'post', anchorFmPost ],
+			].filter( ( [ , value ] ) => value != null )
+		);
+
+		wpcom.req
+			.get( { path: '/anchor', apiNamespace: 'wpcom/v2' }, query )
 			.then( ( result: AnchorEndpointResult ) => {
-				if ( result?.location ) {
-					try {
-						page( result.location );
-					} catch ( err ) {
-						window.location.href = result.location;
-					}
+				if ( result.location ) {
+					window.location.href = result.location;
 				} else {
 					setIsLoading( false );
 				}

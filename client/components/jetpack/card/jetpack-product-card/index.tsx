@@ -6,6 +6,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import starIcon from './assets/star.svg';
 import DisplayPrice from './display-price';
 import JetpackProductCardFeatures from './features';
+import useCouponDiscount from './use-coupon-discount';
 import type {
 	ScrollCardIntoViewCallback,
 	SelectorProduct,
@@ -15,15 +16,18 @@ import type { Moment } from 'moment';
 import './style.scss';
 
 type OwnProps = {
+	className?: string;
 	item: SelectorProduct;
 	// Disallow h6, so it can be used for a sub-header if needed
 	headerLevel: 1 | 2 | 3 | 4 | 5;
 	description?: ReactNode;
-	originalPrice: number;
+	originalPrice?: number;
 	discountedPrice?: number;
+	pricesAreFetching?: boolean | null;
+	hidePrice?: boolean;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
-	onButtonClick: React.MouseEventHandler;
+	onButtonClick?: React.MouseEventHandler;
 	buttonURL?: string;
 	expiryDate?: Moment;
 	isFeatured?: boolean;
@@ -38,7 +42,9 @@ type OwnProps = {
 	aboveButtonText?: TranslateResult | ReactNode;
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
+	showAbovePriceText?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
+	collapseFeaturesOnMobile?: boolean;
 };
 
 type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
@@ -50,11 +56,14 @@ const Header: React.FC< HeaderProps > = ( { level, children, ...headerProps } ) 
 	createElement( `h${ level }`, headerProps, children );
 
 const JetpackProductCard: React.FC< OwnProps > = ( {
+	className,
 	item,
 	headerLevel,
 	description,
 	originalPrice,
 	discountedPrice,
+	pricesAreFetching,
+	hidePrice,
 	buttonLabel,
 	buttonPrimary,
 	onButtonClick,
@@ -71,23 +80,49 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	tooltipText,
 	featuredLabel,
 	hideSavingLabel,
+	showAbovePriceText,
 	aboveButtonText = null,
 	scrollCardIntoView,
+	collapseFeaturesOnMobile,
 } ) => {
-	const translate = useTranslate();
+	const isFree = item.isFree;
 
+	const translate = useTranslate();
 	const anchorRef = useRef< HTMLDivElement >( null );
+	const { discount } = useCouponDiscount( originalPrice, discountedPrice );
+	const showDiscountLabel =
+		! hideSavingLabel &&
+		discount &&
+		discount > 0 &&
+		! isFree &&
+		! isDisabled &&
+		! isOwned &&
+		! isDeprecated &&
+		! isIncludedInPlan;
+
+	const discountElt = showDiscountLabel
+		? translate( '%(percent)d%% off {{sup}}*{{/sup}}', {
+				args: {
+					percent: discount,
+				},
+				comment:
+					'Should be as concise as possible. * refers to a clause describing the displayed price adjustment. The {{sup}} tag displays it as superscript.',
+				components: {
+					sup: <sup />,
+				},
+		  } )
+		: null;
 
 	useEffect( () => {
 		// The <DisplayPrice /> appearance changes the layout of the page and breaks the scroll into view behavior. Therefore, we will only scroll the element into view once the price is fully loaded.
 		if ( anchorRef && anchorRef.current && originalPrice ) {
 			scrollCardIntoView && scrollCardIntoView( anchorRef.current, item.productSlug );
 		}
-	}, [ originalPrice ] );
+	}, [ originalPrice, item.productSlug, scrollCardIntoView ] );
 
 	return (
 		<div
-			className={ classNames( 'jetpack-product-card', {
+			className={ classNames( 'jetpack-product-card', className, {
 				'is-disabled': isDisabled,
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
@@ -104,9 +139,14 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 				</div>
 			) }
 			<div className="jetpack-product-card__body">
-				<Header level={ headerLevel } className="jetpack-product-card__product-name">
-					{ item.displayName }
-				</Header>
+				<header className="jetpack-product-card__heading">
+					<Header level={ headerLevel } className="jetpack-product-card__product-name">
+						{ item.displayName }
+					</Header>
+					{ discountElt && (
+						<span className="jetpack-product-card__discount-label">{ discountElt }</span>
+					) }
+				</header>
 				{ item.subheader && (
 					<Header
 						level={ ( headerLevel + 1 ) as HeaderLevel }
@@ -116,22 +156,26 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					</Header>
 				) }
 
-				<DisplayPrice
-					isDeprecated={ isDeprecated }
-					isOwned={ isOwned }
-					isIncludedInPlan={ isIncludedInPlan }
-					isFree={ item.isFree }
-					discountedPrice={ discountedPrice }
-					currencyCode={ item.displayCurrency }
-					originalPrice={ originalPrice }
-					displayFrom={ displayFrom }
-					belowPriceText={ item.belowPriceText }
-					expiryDate={ expiryDate }
-					billingTerm={ item.displayTerm || item.term }
-					tooltipText={ tooltipText }
-					productName={ item.displayName }
-					hideSavingLabel={ hideSavingLabel }
-				/>
+				{ ! hidePrice && (
+					<DisplayPrice
+						isDeprecated={ isDeprecated }
+						isOwned={ isOwned }
+						isIncludedInPlan={ isIncludedInPlan }
+						isFree={ item.isFree }
+						discountedPrice={ discountedPrice }
+						currencyCode={ item.displayCurrency }
+						originalPrice={ originalPrice ?? 0 }
+						pricesAreFetching={ pricesAreFetching }
+						displayFrom={ displayFrom }
+						showAbovePriceText={ showAbovePriceText }
+						belowPriceText={ item.belowPriceText }
+						expiryDate={ expiryDate }
+						billingTerm={ item.displayTerm || item.term }
+						tooltipText={ tooltipText }
+						productName={ item.displayName }
+						hideSavingLabel={ hideSavingLabel }
+					/>
+				) }
 
 				{ aboveButtonText && (
 					<p className="jetpack-product-card__above-button">{ aboveButtonText }</p>
@@ -141,31 +185,34 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						{ preventWidows( disabledMessage ) }
 					</p>
 				) }
-				{ ! isDisabled &&
-					( buttonURL ? (
-						<Button
-							primary={ buttonPrimary }
-							className="jetpack-product-card__button"
-							onClick={ onButtonClick }
-							href={ buttonURL }
-							disabled={ isDeprecated }
-						>
-							{ buttonLabel }
-						</Button>
-					) : (
-						<Button
-							primary={ buttonPrimary }
-							className="jetpack-product-card__button"
-							onClick={ onButtonClick }
-							disabled={ isDeprecated }
-						>
-							{ buttonLabel }
-						</Button>
-					) ) }
+				{ buttonURL ? (
+					<Button
+						primary={ buttonPrimary }
+						className="jetpack-product-card__button"
+						onClick={ onButtonClick }
+						href={ isDisabled ? '#' : buttonURL }
+						disabled={ isDisabled }
+					>
+						{ buttonLabel }
+					</Button>
+				) : (
+					<Button
+						primary={ buttonPrimary }
+						className="jetpack-product-card__button"
+						onClick={ onButtonClick }
+						disabled={ isDisabled }
+					>
+						{ buttonLabel }
+					</Button>
+				) }
 
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 				{ item.features && item.features.items.length > 0 && (
-					<JetpackProductCardFeatures features={ item.features } />
+					<JetpackProductCardFeatures
+						productSlug={ item.productSlug }
+						features={ item.features }
+						collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
+					/>
 				) }
 			</div>
 		</div>

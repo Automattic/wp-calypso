@@ -10,7 +10,7 @@ import './style.scss';
 
 function SidebarNavigation( {
 	sectionTitle,
-	children,
+	children = undefined,
 	toggleSidebar,
 	isNavUnificationEnabled: isUnifiedNavEnabled,
 } ) {

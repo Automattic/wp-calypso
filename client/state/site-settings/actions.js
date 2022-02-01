@@ -9,8 +9,8 @@ import {
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
+import { requestSite } from 'calypso/state/sites/actions';
 import { normalizeSettings } from './utils';
-
 import 'calypso/state/site-settings/init';
 import 'calypso/state/ui/init';
 
@@ -58,9 +58,8 @@ export function requestSiteSettings( siteId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.settings( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/settings`, { apiVersion: '1.4' } )
 			.then( ( { name, description, settings } ) => {
 				const savedSettings = {
 					...normalizeSettings( settings ),
@@ -84,23 +83,22 @@ export function requestSiteSettings( siteId ) {
 	};
 }
 
-export function saveSiteSettings( siteId, settings ) {
+export function saveSiteSettings( siteId, settings = {} ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_SETTINGS_SAVE,
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.settings( siteId, 'post', settings )
+		return wpcom.req
+			.post( '/sites/' + siteId + '/settings', { apiVersion: '1.4' }, settings )
 			.then( ( body ) => {
 				dispatch( updateSiteSettings( siteId, normalizeSettings( body.updated ) ) );
 				dispatch( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
 					siteId,
 				} );
-
+				dispatch( requestSite( siteId ) );
 				return body;
 			} )
 			.catch( ( error ) => {

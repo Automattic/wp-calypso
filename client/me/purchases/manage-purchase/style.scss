@@ -1,3 +1,24 @@
+.purchases.manage-purchase > button.card,
+.purchases.manage-purchase > a.card {
+	padding-inline-start: 16px;
+	padding-inline-end: 16px;
+
+	color: var( --color-link );
+
+	.card__link-indicator {
+		right: 16px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			right: 24px;
+		}
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-inline-start: 24px;
+		padding-inline-end: 24px;
+	}
+}
+
 .manage-purchase__info {
 	font-size: $font-body-small;
 	padding: 0;
@@ -215,8 +236,8 @@
 			box-sizing: border-box;
 			flex: 1 1 auto;
 			font-size: $font-body-small;
-			text-align: center;
-			padding: 15px 8px 12px;
+			padding: 15px 16px 12px;
+			min-height: 130px;
 
 			&:first-child {
 				padding-left: 0;
@@ -264,14 +285,29 @@
 }
 
 .manage-purchase__detail {
-	@include breakpoint-deprecated( '<660px' ) {
-		text-align: right;
-	}
-
 	display: block;
+	text-align: right;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		text-align: left;
+	}
 
 	.components-toggle-control {
 		display: inline-block;
+
+		.components-form-toggle {
+			margin-right: initial;
+		}
+	}
+
+	.manage-purchase__payment-method {
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 6px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			justify-content: flex-start;
+		}
 	}
 
 	.payment-logo {
@@ -283,6 +319,10 @@
 		cursor: pointer;
 	}
 
+	.manage-purchase__backup-payment-method-notice a {
+		display: inline;
+	}
+
 	&.is-expiring .manage-purchase__detail-date-span {
 		color: var( --studio-pink-50 );
 	}
@@ -290,6 +330,10 @@
 
 .manage-purchase__detail .user__name {
 	margin-right: 0;
+}
+
+.manage-purchase__auto-renew-toggle .components-base-control__field {
+	margin-bottom: 6px;
 }
 
 .manage-purchase__expiring-credit-card-notice.notice,
@@ -301,16 +345,23 @@
 	}
 }
 
-.manage-purchase__renew-button {
-	@include breakpoint-deprecated( '<660px' ) {
-		margin-top: 16px;
-		width: 100%;
-	}
+.manage-purchase__renew-upgrade-buttons {
+	display: none;
 
 	@include breakpoint-deprecated( '>660px' ) {
+		display: initial;
 		position: absolute;
 		right: 24px;
 		top: 16px;
+
+		> a,
+		> button {
+			margin-inline-end: 8px;
+
+			&:last-child {
+				margin-inline-end: initial;
+			}
+		}
 	}
 }
 
@@ -383,4 +434,3 @@
 		margin-top: 0;
 	}
 }
-

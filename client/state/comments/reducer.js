@@ -7,7 +7,6 @@ import {
 	reject,
 	isEqual,
 	get,
-	zipObject,
 	includes,
 	omit,
 	startsWith,
@@ -251,17 +250,18 @@ export const expansions = ( state = {}, action ) => {
 			const stateKey = getStateKey( siteId, postId );
 			const currentExpansions = state[ stateKey ] || {};
 
-			const newDisplayTypes = map( commentIds, ( id ) => {
-				if (
-					! has( currentExpansions, id ) ||
-					expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )
-				) {
-					return displayType;
-				}
-				return currentExpansions[ id ];
-			} );
 			// generate object of { [ commentId ]: displayType }
-			const newVal = zipObject( commentIds, newDisplayTypes );
+			const newVal = Object.fromEntries(
+				commentIds.map( ( id ) => {
+					if (
+						! has( currentExpansions, id ) ||
+						expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )
+					) {
+						return [ id, displayType ];
+					}
+					return [ id, currentExpansions[ id ] ];
+				} )
+			);
 
 			return {
 				...state,

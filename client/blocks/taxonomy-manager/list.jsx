@@ -2,7 +2,6 @@ import { CompactCard } from '@automattic/components';
 import { WindowScroller } from '@automattic/react-virtualized';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { includes, filter, map, reduce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -47,19 +46,9 @@ export class TaxonomyManagerList extends Component {
 		requestedPages: [ 1 ],
 	};
 
-	UNSAFE_componentWillMount() {
-		this.termIds = map( this.props.terms, 'ID' );
-	}
-
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( newProps.terms !== this.props.terms ) {
-			this.termIds = map( newProps.terms, 'ID' );
-		}
-	}
-
 	getTermChildren( termId ) {
 		const { terms } = this.props;
-		return filter( terms, { parent: termId } );
+		return terms?.filter( ( term ) => term.parent === termId ) ?? [];
 	}
 
 	getItemHeight = ( item, _recurse = false ) => {
@@ -68,15 +57,16 @@ export class TaxonomyManagerList extends Component {
 		}
 
 		// if item has a parent, and parent is in payload, height is already part of parent
-		if ( item.parent && ! _recurse && includes( this.termIds, item.parent ) ) {
+		if (
+			item.parent &&
+			! _recurse &&
+			this.props.terms.some( ( term ) => term.ID === item.parent )
+		) {
 			return 0;
 		}
 
-		return reduce(
-			this.getTermChildren( item.ID ),
-			( memo, childItem ) => {
-				return memo + this.getItemHeight( childItem, true );
-			},
+		return this.getTermChildren( item.ID ).reduce(
+			( totalHeight, childItem ) => totalHeight + this.getItemHeight( childItem, true ),
 			ITEM_HEIGHT
 		);
 	};
@@ -93,7 +83,11 @@ export class TaxonomyManagerList extends Component {
 
 	renderItem( item, _recurse = false ) {
 		// if item has a parent and it is in current props.terms, do not render
-		if ( item.parent && ! _recurse && includes( this.termIds, item.parent ) ) {
+		if (
+			item.parent &&
+			! _recurse &&
+			this.props.terms.some( ( term ) => term.ID === item.parent )
+		) {
 			return;
 		}
 		const children = this.getTermChildren( item.ID );
@@ -182,9 +176,9 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		loading: isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
-		terms: getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
-		siteId,
 		query,
+		siteId,
+		terms: getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 	};
 } )( localize( TaxonomyManagerList ) );

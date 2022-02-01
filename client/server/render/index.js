@@ -7,12 +7,13 @@ import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
+import { isDefaultLocale, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { getNormalizedPath } from 'calypso/server/isomorphic-routing';
 import stateCache from 'calypso/server/state-cache';
 import {
@@ -20,7 +21,6 @@ import {
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
 } from 'calypso/state/document-head/selectors';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import initialReducer from 'calypso/state/reducer';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
@@ -71,11 +71,11 @@ export function renderJsx( view, props ) {
  * Cache is keyed by stringified element by default.
  *
  * @param {object} element - React element to be rendered to html
- * @param {string} key - (optional) custom key
+ * @param {string} key - cache key
  * @param {object} req - Request object
  * @returns {string} The rendered Layout
  */
-export function render( element, key = JSON.stringify( element ), req ) {
+function render( element, key, req ) {
 	try {
 		const startTime = Date.now();
 		debug( 'cache access for key', key );
@@ -89,18 +89,16 @@ export function render( element, key = JSON.stringify( element ), req ) {
 				config.isEnabled( 'ssr/always-log-cache-misses' )
 			) {
 				// Log 0.1% of cache misses
-				req.context.store.dispatch(
-					logToLogstash( {
-						feature: 'calypso_ssr',
-						message: 'render cache miss',
-						extra: {
-							key,
-							'existing-keys': markupCache.keys,
-							'user-agent': get( req.headers, 'user-agent', '' ),
-							path: req.context.path,
-						},
-					} )
-				);
+				logToLogstash( {
+					feature: 'calypso_ssr',
+					message: 'render cache miss',
+					extra: {
+						key,
+						'existing-keys': markupCache.keys,
+						'user-agent': get( req.headers, 'user-agent', '' ),
+						path: req.context.path,
+					},
+				} );
 			}
 			renderedLayout = ReactDomServer.renderToString( element );
 			markupCache.set( key, renderedLayout );
@@ -191,9 +189,6 @@ export function attachI18n( context ) {
 
 	if ( context.store ) {
 		context.lang = getCurrentLocaleSlug( context.store.getState() ) || localeSlug;
-
-		const isLocaleRTL = isLocaleRtl( localeSlug );
-		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
 }
 
@@ -225,7 +220,9 @@ export function serverRender( req, res ) {
 	attachI18n( context );
 
 	if ( shouldServerSideRender( context ) ) {
-		cacheKey = getNormalizedPath( context.pathname, context.query );
+		cacheKey = `${ getNormalizedPath( context.pathname, context.query ) }:gdpr=${
+			context.showGdprBanner
+		}`;
 		context.renderedLayout = render(
 			context.layout,
 			req.error ? req.error.message : cacheKey,

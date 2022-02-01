@@ -14,7 +14,7 @@ import './style.scss';
 
 const JetpackDisconnectedWPCOM: FunctionComponent = () => {
 	const translate = useTranslate();
-	const { name: siteName, slug: siteSlug, URL: siteUrl } = useSelector( getSelectedSite );
+	const { name: siteName, slug: siteSlug, URL: siteUrl } = useSelector( getSelectedSite ) ?? {};
 	const reconnectUrl = `/settings/disconnect-site/${ siteSlug }?type=down`;
 	const onReconnectClick = useTrackCallback( undefined, 'calypso_jetpack_backup_reconnect_click' );
 	const onSupportClick = useTrackCallback( undefined, 'calypso_jetpack_backup_support_click' );

@@ -59,18 +59,6 @@ export default function RevokeLicenseDialog( {
 		</Button>,
 	];
 
-	buttons.unshift(
-		<a
-			href="https://github.com/Automattic/jetpack-licensing-api/tree/master/integration-docs#glossary"
-			target="_blank"
-			rel="noreferrer noopener"
-		>
-			{ translate( 'Learn more about revoking licenses' ) }
-			&nbsp;
-			<Gridicon icon="external" size={ 18 } />
-		</a>
-	);
-
 	return (
 		<Dialog
 			isVisible={ true }
@@ -82,13 +70,22 @@ export default function RevokeLicenseDialog( {
 			<h2 className="revoke-license-dialog__heading">
 				{ translate( 'Are you sure you want to revoke this license?' ) }
 			</h2>
-
 			<p>
 				{ translate(
 					'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
 				) }
+				&nbsp;
+				<a
+					className="revoke-license-dialog__learn-more"
+					href="https://github.com/Automattic/jetpack-licensing-api/tree/master/integration-docs#glossary"
+					target="_blank"
+					rel="noreferrer noopener"
+				>
+					{ translate( 'Learn more about revoking licenses' ) }
+					&nbsp;
+					<Gridicon icon="external" size={ 18 } />
+				</a>
 			</p>
-
 			<ul>
 				{ siteUrl && (
 					<li>
@@ -102,7 +99,6 @@ export default function RevokeLicenseDialog( {
 					<strong>{ translate( 'License:' ) }</strong> <code>{ licenseKey }</code>
 				</li>
 			</ul>
-
 			<p className="revoke-license-dialog__warning">
 				<Gridicon icon="info-outline" size={ 18 } />
 

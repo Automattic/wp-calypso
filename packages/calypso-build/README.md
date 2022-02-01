@@ -19,9 +19,11 @@ yarn add --dev @automattic/calypso-build
 Then, add a `build` script that invokes the `calypso-build` command:
 
 ```json
+{
 	"scripts": {
 		"build": "calypso-build ./src/editor.js"
 	}
+}
 ```
 
 Simple as that -- the only argument you really need to pass to `calypso-build` is an entry point file for your project. By default, this will create a `dist/` subfolder in your current working directory that will contain the built files -- typically one `.js`, one `.css`, and one `.rtl.css` file.
@@ -31,9 +33,11 @@ Simple as that -- the only argument you really need to pass to `calypso-build` i
 If you want your built files to go elsewhere, you can customize the output path as follows:
 
 ```json
+{
 	"scripts": {
 		"build": "calypso-build --output-path='./build' ./src/editor.js"
 	}
+}
 ```
 
 ### Multiple entry points
@@ -41,9 +45,11 @@ If you want your built files to go elsewhere, you can customize the output path 
 It's also possible to define more than one entry point (resulting in one bundle per entry point):
 
 ```json
+{
 	"scripts": {
 		"build": "calypso-build --output-path='./build' editor=./src/editor.js view=./src/view.js"
 	}
+}
 ```
 
 ### Command Line Interface based on Webpack's
@@ -57,9 +63,11 @@ It was our conscious decision to stick to Webpack's interface rather than coveri
 That `webpack.config.js` introduces one rather WordPress/Gutenberg specific "environment" option, `WP`, which you can set as follows:
 
 ```json
+{
 	"scripts": {
 		"build": "calypso-build ./src/editor.js --env WP"
 	}
+}
 ```
 
 The impact of this option is twofold:
@@ -99,38 +107,12 @@ module.exports = getWebpackConfig;
 `calypso-build` will automatically pick up your `webpack.config.js` if it's in the same directory that the command is called from. You can customize that filename and location using the `--config` option:
 
 ```json
+{
 	"scripts": {
 		"build": "calypso-build --config='./config-files/webpack.config.js' ./src/editor.js"
 	}
+}
 ```
-
-## Advanced Usage: Use own Babel Config
-
-It is also possible to customize how Babel transpiles a project. Simply add a `babel.config.js` to your project's root (i.e. the location you call `yarn run build` from), and the build tool will pick it up over its own `babel.config.js` to transpile your project.
-
-To extend the default behavior provided by `@automattic/calypso-build`, you can use presets found in its `babel/` directory, and add your own presets and/or plugins, e.g.
-
-```js
-module.exports = {
-	presets: [
-		'@automattic/calypso-build/babel/wordpress-element',
-		'@automattic/calypso-build/babel/default',
-	],
-	plugins: [ 'my-custom-babel-plugin' ],
-};
-```
-
-The `default` preset has a `modules` option that specifies whether we want to transpile ESM `import` and `export` statements. Most common values are `false`, which keeps these statements intact and results in ES modules as output, and `'commonjs'`, which transpiles the module to the CommonJS format. See the [@babel/preset-env documentation](https://babeljs.io/docs/en/babel-preset-env#modules) for more details.
-
-```js
-module.exports = {
-	presets: [ [ '@automattic/calypso-build/babel/default', { modules: 'commonjs' } ] ],
-};
-```
-
-Another way to set the `modules` option is to set the `MODULES` environment variable to `'esm'` (maps to `false`) or any other valid value. That's convenient for running Babel from command line, where specifying options for presets (`--presets=...`) is not supported.
-
-The `default` preset also specifies `corejs`, `debug`, and `useBuiltIns` options that's passed through to [@babel/preset-env](https://babeljs.io/docs/en/babel-preset-env#options).
 
 ## Advanced Usage: Use own PostCSS Config
 
@@ -147,14 +129,4 @@ module.exports = () => ( {
 		autoprefixer: {},
 	},
 } );
-```
-
-## Jest
-
-Use the provided Jest configuration via a preset. In your `jest.config.js` set the following:
-
-```js
-module.exports = {
-	preset: '@automattic/calypso-build',
-};
 ```

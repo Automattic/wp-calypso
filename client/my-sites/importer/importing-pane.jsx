@@ -1,7 +1,7 @@
 import { ProgressBar } from '@automattic/components';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
-import { has, omit } from 'lodash';
+import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -32,7 +32,12 @@ const sum = ( a, b ) => a + b;
  *     …
  * }
  */
-const calculateProgress = ( progress ) => {
+export const calculateProgress = ( progress ) => {
+	// The backend does not output the 'progress' field for all the enqueued not running imports.
+	if ( ! progress ) {
+		return 0;
+	}
+
 	const { attachment = {} } = progress;
 
 	if ( attachment.total > 0 && attachment.completed >= 0 ) {
@@ -51,34 +56,32 @@ const calculateProgress = ( progress ) => {
 	return ( 100 * percentages.reduce( sum, 0 ) ) / percentages.length;
 };
 
-const resourcesRemaining = ( progress ) =>
+export const resourcesRemaining = ( progress ) =>
 	Object.keys( progress )
 		.map( ( k ) => progress[ k ] )
 		.map( ( { completed, total } ) => total - completed )
 		.reduce( sum, 0 );
 
-const hasProgressInfo = ( progress ) => {
+export const hasProgressInfo = ( progress ) => {
 	if ( ! progress ) {
 		return false;
 	}
 
-	const types = Object.keys( progress )
-		.map( ( k ) => progress[ k ] )
-		.filter( ( { total } ) => total > 0 );
+	const types = Object.values( progress ).filter( ( { total } ) => total > 0 );
 
 	if ( ! types.length ) {
 		return false;
 	}
 
 	const firstType = types.shift();
-	if ( ! has( firstType, 'completed' ) ) {
+	if ( ! firstType.hasOwnProperty( 'completed' ) ) {
 		return false;
 	}
 
 	return true;
 };
 
-class ImportingPane extends PureComponent {
+export class ImportingPane extends PureComponent {
 	static displayName = 'ImportingPane';
 
 	static propTypes = {

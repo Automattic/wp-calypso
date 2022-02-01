@@ -1,0 +1,127 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.details-card {
+	.details-card__section {
+		margin-top: 16px;
+
+		@include break-mobile {
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+
+		&.dates {
+			display: block;
+
+			@include break-mobile {
+				display: flex;
+			}
+		}
+
+		.details-card__date {
+			display: block;
+			margin-top: 16px;
+
+			@include break-mobile {
+				display: flex;
+				flex-direction: column;
+				flex-grow: 1;
+				margin-top: 0;
+			}
+		}
+
+		.details-card__date-label,
+		.details-card__autorenew-text {
+			font-size: $font-body-small;
+			color: var( --studio-gray-50 );
+		}
+
+		.details-card__autorenew-placeholder {
+			display: block;
+			width: 80px;
+			@include placeholder();
+		}
+
+		& .button:not( .is-primary ) {
+			color: var( --studio-gray-80 );
+		}
+		& .button:not( :first-child ) {
+			margin-left: 16px;
+		}
+	}
+}
+
+.name-servers-card {
+	margin-top: 16px;
+
+	@include break-mobile {
+		margin-top: 0;
+	}
+
+	&__loading {
+		@include placeholder();
+	}
+
+	&__name-server-list {
+		p {
+			font-size: $font-body-small;
+			margin-bottom: 0;
+		}
+
+		p + .button {
+			margin-top: 24px;
+		}
+	}
+
+	.components-base-control__field {
+		margin-bottom: 16px;
+	}
+
+	.components-toggle-control__label {
+		font-size: $font-body-small;
+	}
+
+	.name-servers__custom-nameservers-form {
+		font-size: $font-body-small;
+	}
+
+	.name-servers__custom-nameservers-subtitle {
+		color: var( --studio-gray-50 );
+	}
+}
+
+// TODO: This should be extracted into a new component
+.custom-name-servers-notice {
+	flex-basis: 100%;
+	background-color: var( --studio-gray-0 );
+	display: flex;
+	align-items: center;
+	padding: 8px;
+	gap: 8px;
+	border-radius: 2px;
+
+	&__icon.gridicon {
+		min-width: 18px;
+		fill: var( --studio-orange-40 );
+	}
+
+	&__message {
+		font-weight: 400;
+		font-size: $font-body-small;
+		color: var( --studio-gray-80 );
+	}
+}
+
+.site-redirect-card__explanation {
+	display: block;
+	margin-top: 5px;
+	margin-bottom: 0;
+	font-size: $font-body-small;
+	font-style: italic;
+	color: var( --color-text-subtle );
+
+	a {
+		white-space: nowrap;
+	}
+}

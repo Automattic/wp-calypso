@@ -20,5 +20,6 @@ export * from './signup-pick-plan-page';
 export * from './account-closed-page';
 export * from './domains-page';
 export * from './use-a-domain-i-own-page';
+export * from './p2-page';
 
 export * from './me';

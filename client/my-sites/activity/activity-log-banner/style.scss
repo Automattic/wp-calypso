@@ -56,6 +56,18 @@
 	margin-bottom: 8px;
 	font-weight: 600;
 }
+
+.activity-log-banner__controls {
+	@include breakpoint-deprecated( '<480px' ) {
+		display: flex;
+		flex-wrap: wrap;
+
+		> .button {
+			flex: 1;
+		}
+	}
+}
+
 .activity-log-banner__action {
 	width: 50px;
 }

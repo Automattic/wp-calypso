@@ -1,10 +1,10 @@
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Children, PureComponent, cloneElement } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import TaskPlaceholder from './task-placeholder';
 
@@ -26,12 +26,6 @@ class Checklist extends PureComponent {
 
 	componentDidMount() {
 		this.notifyCompletion();
-	}
-
-	UNSAFE_componentWillReceiveProps( { siteId } ) {
-		if ( siteId !== this.props.siteId ) {
-			this.setState( { expandedTaskIndex: undefined } );
-		}
 	}
 
 	componentDidUpdate() {
@@ -143,6 +137,11 @@ class Checklist extends PureComponent {
 	}
 }
 
-export default connect( ( state ) => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( localize( Checklist ) );
+const ChecklistForSite = ( props ) => {
+	const siteId = useSelector( getSelectedSiteId );
+	const translate = useTranslate();
+
+	return <Checklist key={ siteId } siteId={ siteId } translate={ translate } { ...props } />;
+};
+
+export default ChecklistForSite;

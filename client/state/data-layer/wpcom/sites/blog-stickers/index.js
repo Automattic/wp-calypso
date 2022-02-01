@@ -22,7 +22,7 @@ export const receiveBlogStickerListError = () =>
 
 export const receiveBlogStickerList = ( action, response ) =>
 	! response || ! Array.isArray( response )
-		? receiveBlogStickerListError( action )
+		? receiveBlogStickerListError()
 		: receiveBlogStickers( action.payload.blogId, response );
 
 registerHandlers( 'state/data-layer/wpcom/sites/blog-stickers/index.js', {

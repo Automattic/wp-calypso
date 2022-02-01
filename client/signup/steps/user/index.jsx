@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
+import { isDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
-import i18n, { localize } from 'i18n-calypso';
+import cookie from 'cookie';
+import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -10,6 +12,8 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -26,6 +30,7 @@ import {
 	getNextStepName,
 	getPreviousStepName,
 	getStepUrl,
+	isP2Flow,
 } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -58,10 +63,11 @@ function getRedirectToAfterLoginUrl( {
 	const stepAfterRedirect =
 		getNextStepName( flowName, stepName, userLoggedIn ) ||
 		getPreviousStepName( flowName, stepName, userLoggedIn );
-	const queryArgs = new URLSearchParams( initialContext?.query );
-	const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
 
-	return window.location.origin + getStepUrl( flowName, stepAfterRedirect ) + queryArgsString;
+	return (
+		window.location.origin +
+		getStepUrl( flowName, stepAfterRedirect, '', '', initialContext?.query )
+	);
 }
 
 function isOauth2RedirectValid( oauth2Redirect ) {
@@ -93,28 +99,21 @@ export class UserStep extends Component {
 	};
 
 	state = {
-		subHeaderText: '',
 		recaptchaClientId: null,
+		experiment: null,
+		isDesktop: isDesktop(),
 	};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			this.props.flowName !== nextProps.flowName ||
-			this.props.locale !== nextProps.locale ||
-			this.props.subHeaderText !== nextProps.subHeaderText
-		) {
-			this.setSubHeaderText( nextProps );
-		}
-	}
-
-	UNSAFE_componentWillMount() {
-		const { oauth2Signup, initialContext } = this.props;
-		const clientId = get( initialContext, 'query.oauth2_client_id', null );
-
-		this.setSubHeaderText( this.props );
-
-		if ( oauth2Signup && clientId ) {
-			this.props.fetchOAuth2ClientData( clientId );
+	componentDidUpdate() {
+		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
+			// It looks like the user just completed the User Registartion Step
+			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
+			const url = new URL( window.location );
+			const searchParams = url.searchParams;
+			searchParams.set( 'user_completed', true );
+			url.search = searchParams.toString();
+			// Redirect to itself and append ?user_completed
+			window.location.replace( url.toString() );
 		}
 	}
 
@@ -125,18 +124,47 @@ export class UserStep extends Component {
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
-		i18n.on( 'change', this.handleI18nChange );
+		const clientId = get( this.props.initialContext, 'query.oauth2_client_id', null );
+		if ( this.props.oauth2Signup && clientId ) {
+			this.props.fetchOAuth2ClientData( clientId );
+		}
+
+		const signupFlows = [
+			'onboarding',
+			'free',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+			'with-theme',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+			'with-design-picker',
+		];
+		if ( signupFlows.includes( this.props.flowName ) ) {
+			const experimentCheck = this.state.isDesktop
+				? 'registration_email_only_desktop_v3'
+				: 'registration_email_only_mobile_v3';
+
+			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
+				this.setState( { experiment: experimentName } );
+				experimentName.variationName === 'treatment'
+					? this.persistExperimentName( experimentName.experimentName )
+					: null;
+			} );
+		}
 	}
 
-	componentWillUnmount() {
-		i18n.off( 'change', this.handleI18nChange );
-	}
-
-	handleI18nChange = () => {
-		this.setSubHeaderText( this.props );
+	persistExperimentName = ( experimentName ) => {
+		const DAY_IN_SECONDS = 3600 * 24;
+		const expirationDate = new Date( new Date().getTime() + DAY_IN_SECONDS * 1000 );
+		const options = { path: '/', expires: expirationDate, sameSite: 'strict' };
+		document.cookie = cookie.serialize( 'wpcom_signup_experiment_name', experimentName, options );
 	};
 
-	setSubHeaderText( props ) {
+	getSubHeaderText() {
 		const {
 			flowName,
 			oauth2Client,
@@ -148,9 +176,9 @@ export class UserStep extends Component {
 			sectionName,
 			from,
 			locale,
-		} = props;
+		} = this.props;
 
-		let subHeaderText = props.subHeaderText;
+		let subHeaderText = this.props.subHeaderText;
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
@@ -203,31 +231,31 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
 		}
 
-		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
-			subHeaderText = translate( 'First, create your WordPress.com account.' );
+		if ( isReskinned && 0 === positionInFlow ) {
+			const loginUrl = login( {
+				isJetpack: 'jetpack-connect' === sectionName,
+				from,
+				redirectTo: getRedirectToAfterLoginUrl( this.props ),
+				locale,
+				oauth2ClientId: oauth2Client?.id,
+				wccomFrom,
+				isWhiteLogin: isReskinned,
+				signupUrl: window.location.pathname + window.location.search,
+			} );
 
-			if ( isReskinned ) {
-				const loginUrl = login( {
-					isJetpack: 'jetpack-connect' === sectionName,
-					from,
-					redirectTo: getRedirectToAfterLoginUrl( props ),
-					locale,
-					oauth2ClientId: oauth2Client?.id,
-					wccomFrom,
-					isWhiteLogin: isReskinned,
-					signupUrl: window.location.pathname + window.location.search,
-				} );
-
-				subHeaderText = translate(
-					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
-					{
-						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-					}
-				);
-			}
+			subHeaderText = translate(
+				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+				{
+					components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+				}
+			);
 		}
 
-		this.setState( { subHeaderText } );
+		if ( this.props.userLoggedIn ) {
+			subHeaderText = '';
+		}
+
+		return subHeaderText;
 	}
 
 	initGoogleRecaptcha() {
@@ -350,6 +378,10 @@ export class UserStep extends Component {
 		return this.props.step && 'completed' === this.props.step.status;
 	}
 
+	userCreationCompletedAndHasHistory( props ) {
+		return 'completed' === props.step?.status && detectHistoryNavigation.loadedViaHistory();
+	}
+
 	userCreationPending() {
 		return this.props.step && 'pending' === this.props.step.status;
 	}
@@ -413,7 +445,7 @@ export class UserStep extends Component {
 	submitButtonText() {
 		const { translate, flowName } = this.props;
 
-		if ( flowName === 'p2' ) {
+		if ( isP2Flow( flowName ) ) {
 			return translate( 'Continue' );
 		}
 
@@ -426,6 +458,10 @@ export class UserStep extends Component {
 		}
 
 		return translate( 'Create your account' );
+	}
+
+	isPasswordlessExperiment() {
+		return this.state.experiment?.variationName === 'treatment';
 	}
 
 	renderSignupForm() {
@@ -459,13 +495,12 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
+					isPasswordlessExperiment={ this.isPasswordlessExperiment() }
+					experimentName={ this.state.experiment }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					showRecaptchaToS={
-						flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha
-					}
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
 				/>
@@ -494,8 +529,12 @@ export class UserStep extends Component {
 	}
 
 	render() {
-		if ( this.props.flowName === 'p2' ) {
+		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
+		}
+
+		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
+			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
 		return (
@@ -503,7 +542,7 @@ export class UserStep extends Component {
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }
-				subHeaderText={ this.state.subHeaderText }
+				subHeaderText={ this.getSubHeaderText() }
 				positionInFlow={ this.props.positionInFlow }
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }

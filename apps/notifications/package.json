@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/notifications",
 	"version": "1.0.0",
-	"description": "WordPress.com Notifications Panel",
+	"description": "WordPress.com Notifications Panel.",
 	"main": "dist/build.min.js",
 	"sideEffects": true,
 	"repository": {
@@ -12,45 +12,48 @@
 	"private": true,
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"analyze-bundles": "EMIT_STATS=true yarn run build && webpack-bundle-analyzer stats.json dist -h 127.0.0.1 -s gzip",
+		"clean": "rm -rf dist stats.json",
 		"build:notifications": "calypso-build",
-		"dev-server": "webpack serve --inline --progress --liveReload --content-base dist --watch-content-base --host calypso.localhost --port 3000",
+		"dev-server": "NODE_ENV=development webpack serve",
 		"start": "yarn run clean && yarn run build:notifications && yarn run dev-server",
-		"dev": "node ../../bin/build-calypso-app.mjs --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/notifications",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/notifications",
 		"build": "NODE_ENV=production yarn dev"
 	},
 	"dependencies": {
-		"@automattic/calypso-color-schemes": "^2.1.1",
-		"@automattic/calypso-polyfills": "^2.0.0",
-		"calypso": "^0.17.0",
+		"@automattic/calypso-color-schemes": "workspace:^",
+		"@automattic/calypso-polyfills": "workspace:^",
+		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
+		"autoprefixer": "^10.2.5",
+		"calypso": "workspace:^",
 		"classnames": "^2.3.1",
-		"debug": "^4.1.1",
-		"i18n-calypso": "^5.0.0",
-		"moment": "^2.26.0",
+		"debug": "^4.3.3",
+		"i18n-calypso": "workspace:^",
 		"page": "^1.11.5",
 		"prop-types": "^15.7.2",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"react-redux": "^7.2.4",
-		"redux": "^4.1.1",
+		"react-redux": "^7.2.6",
+		"redux": "^4.1.2",
 		"redux-thunk": "^2.3.0",
-		"wpcom": "^6.0.0",
-		"wpcom-proxy-request": "^6.0.0",
-		"wpcom-xhr-request": "^1.2.0"
+		"webpack-bundle-analyzer": "^4.5.0",
+		"wpcom": "workspace:^",
+		"wpcom-proxy-request": "workspace:^",
+		"wpcom-xhr-request": "workspace:^"
 	},
 	"devDependencies": {
-		"@automattic/calypso-build": "^9.0.0",
-		"@automattic/calypso-eslint-overrides": "^1.0.0",
+		"@automattic/calypso-apps-builder": "workspace:^",
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"enzyme": "^3.11.0",
 		"html-webpack-plugin": "^5.0.0-beta.4",
-		"jest": "^27.2.4",
-		"postcss": "^8.3.11",
-		"webpack": "^5.54.0",
-		"webpack-dev-server": "^3.11.2"
+		"jest": "^27.3.1",
+		"postcss": "^8.4.5",
+		"postcss-custom-properties": "^11.0.0",
+		"webpack": "^5.65.0",
+		"webpack-dev-server": "^4.7.3"
 	}
 }

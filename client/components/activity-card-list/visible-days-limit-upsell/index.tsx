@@ -10,23 +10,30 @@ import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useTrackUpsellView, useTrackUpgradeClick } from './hooks';
+import type { Activity } from 'calypso/components/activity-card/types';
 
 import './style.scss';
 
-const PLACEHOLDER_ACTIVITY = {
+const PLACEHOLDER_ACTIVITY: Activity = {
 	actorName: 'Jetpack',
-	actorRemoteId: 0,
-	actorWpcomId: 0,
 	actorRole: '',
 	actorType: 'Application',
-	activityDate: '2021-01-01T00:00:00.000+00:00',
+	activityId: -1,
+	activityName: '',
+	activityMedia: {
+		available: false,
+		medium_url: '',
+		name: '',
+		thumbnail_url: '',
+		type: '',
+		url: '',
+	},
 	activityTs: 1609459200000,
-	activityGroup: 'rewind',
 	activityIcon: 'cloud',
+	activityIsRewindable: false,
 	activityStatus: 'success',
-	activityType: 'Backup',
 	activityTitle: '',
-	activityDescription: [],
+	activityDescription: [ {} ],
 };
 
 type OwnProps = {

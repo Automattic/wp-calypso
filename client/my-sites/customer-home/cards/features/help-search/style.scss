@@ -159,7 +159,7 @@ $min_results_height: 180px;
 		padding-right: 0;
 	}
 
-	.search-card {
+	.card.search-card {
 		margin: 0;
 		border-radius: 2px;
 		border-color: var( --color-border );
@@ -169,9 +169,14 @@ $min_results_height: 180px;
 			border-radius: 2px;
 
 			.search__input {
-				padding: 11px 0;
-				font-size: $font-body-small;
+				padding: 6px 0;
+				font-size: $font-body;
 				color: var( --color-text );
+
+				@include break-mobile {
+					padding: 11px 0;
+					font-size: $font-body-small;
+				}
 			}
 
 			.search__input::placeholder {

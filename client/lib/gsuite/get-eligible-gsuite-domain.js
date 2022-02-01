@@ -1,4 +1,3 @@
-import { get, sortBy } from 'lodash';
 import { canDomainAddGSuite } from './can-domain-add-gsuite';
 import { getGSuiteSupportedDomains } from './gsuite-supported-domain';
 
@@ -19,10 +18,13 @@ export function getEligibleGSuiteDomain( selectedDomainName, domains ) {
 	}
 
 	// Orders domains with the primary domain in first position, if any
-	const supportedDomains = sortBy(
-		getGSuiteSupportedDomains( domains ),
-		( domain ) => ! domain.isPrimary
+	const supportedDomains = getGSuiteSupportedDomains( domains ).sort(
+		( domainA, domainB ) => ( domainB.isPrimary ?? false ) - ( domainA.isPrimary ?? false )
 	);
 
-	return get( supportedDomains, '[0].name', '' );
+	if ( ! supportedDomains.length ) {
+		return '';
+	}
+
+	return supportedDomains[ 0 ].name;
 }

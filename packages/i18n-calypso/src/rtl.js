@@ -1,31 +1,32 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { forwardRef } from 'react';
+import { forwardRef, useContext, useMemo } from 'react';
 import { useSubscription } from 'use-subscription';
+import I18NContext from './context';
 
-export default function rtlFactory( i18n ) {
+export function useRtl() {
+	const i18n = useContext( I18NContext );
 	// Subscription object (adapter) for the `useSubscription` hook
-	const RtlSubscription = {
-		getCurrentValue() {
-			return i18n.isRtl();
-		},
-		subscribe( callback ) {
-			i18n.on( 'change', callback );
-			return () => i18n.off( 'change', callback );
-		},
-	};
-
-	function useRtl() {
-		return useSubscription( RtlSubscription );
-	}
-
-	const withRtl = createHigherOrderComponent(
-		( WrappedComponent ) =>
-			forwardRef( ( props, ref ) => {
-				const isRtl = useRtl();
-				return <WrappedComponent { ...props } isRtl={ isRtl } ref={ ref } />;
-			} ),
-		'WithRTL'
+	const RtlSubscription = useMemo(
+		() => ( {
+			getCurrentValue() {
+				return i18n.isRtl();
+			},
+			subscribe( callback ) {
+				i18n.on( 'change', callback );
+				return () => i18n.off( 'change', callback );
+			},
+		} ),
+		[ i18n ]
 	);
 
-	return { useRtl, withRtl };
+	return useSubscription( RtlSubscription );
 }
+
+export const withRtl = createHigherOrderComponent(
+	( WrappedComponent ) =>
+		forwardRef( ( props, ref ) => {
+			const isRtl = useRtl();
+			return <WrappedComponent { ...props } isRtl={ isRtl } ref={ ref } />;
+		} ),
+	'WithRTL'
+);

@@ -41,6 +41,8 @@ ExternalLinkWithTracking.propTypes = {
 	target: PropTypes.string,
 	tracksEventName: PropTypes.string.isRequired,
 	tracksEventProps: PropTypes.object,
+	rel: PropTypes.string,
+	children: PropTypes.node,
 
 	// Connected props
 	recordTracksEvent: PropTypes.func.isRequired,

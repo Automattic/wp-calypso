@@ -33,6 +33,19 @@ function createPurchaseObject( purchase ) {
 					intervalCount: Number( purchase.introductory_offer.interval_count ),
 					intervalUnit: String( purchase.introductory_offer.interval_unit ),
 					isWithinPeriod: Boolean( purchase.introductory_offer.is_within_period ),
+					transitionAfterRenewalCount: Number(
+						purchase.introductory_offer.transition_after_renewal_count
+					),
+					isNextRenewalUsingOffer: Boolean(
+						purchase.introductory_offer.is_next_renewal_using_offer
+					),
+					remainingRenewalsUsingOffer: Number(
+						purchase.introductory_offer.remaining_renewals_using_offer
+					),
+					shouldProrateWhenOfferEnds: Boolean(
+						purchase.introductory_offer.should_prorate_when_offer_ends
+					),
+					isNextRenewalProrated: Boolean( purchase.introductory_offer.is_next_renewal_prorated ),
 			  }
 			: null,
 		isCancelable: Boolean( purchase.is_cancelable ),
@@ -63,6 +76,7 @@ function createPurchaseObject( purchase ) {
 		refundOptions: purchase.refund_options,
 		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
+		regularPriceText: purchase.regular_price_text,
 		renewDate: purchase.renew_date,
 		saleAmount: purchase.sale_amount,
 		siteId: Number( purchase.blog_id ),

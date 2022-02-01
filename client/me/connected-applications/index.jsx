@@ -17,6 +17,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
+import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 
 import './style.scss';
 
@@ -63,7 +64,7 @@ class ConnectedApplications extends PureComponent {
 	}
 
 	renderConnectedApps() {
-		const { apps } = this.props;
+		const { apps, intlCollator } = this.props;
 
 		if ( apps === null ) {
 			return this.renderPlaceholders();
@@ -73,9 +74,14 @@ class ConnectedApplications extends PureComponent {
 			return this.renderEmptyContent();
 		}
 
-		return apps.map( ( connection ) => (
-			<ConnectedAppItem connection={ connection } key={ connection.ID } />
-		) );
+		// Sorts the list into alphabetical order then displays them.
+		return apps
+			.sort( ( a, b ) => {
+				return intlCollator.compare( a.title, b.title );
+			} )
+			.map( ( connection ) => (
+				<ConnectedAppItem connection={ connection } key={ connection.ID } />
+			) );
 	}
 
 	renderConnectedAppsList() {
@@ -122,4 +128,5 @@ class ConnectedApplications extends PureComponent {
 
 export default connect( ( state ) => ( {
 	apps: getConnectedApplications( state ),
+	intlCollator: getCurrentIntlCollator( state ),
 } ) )( localize( ConnectedApplications ) );

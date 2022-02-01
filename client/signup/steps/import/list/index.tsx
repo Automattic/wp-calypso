@@ -1,16 +1,36 @@
+import { Button } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
+import { urlDataUpdate } from 'calypso/state/imports/url-analyzer/actions';
+import { GoToStep, ImporterPlatform, UrlData } from '../types';
 import type * as React from 'react';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const ListStep: React.FunctionComponent = () => {
+interface Props {
+	goToStep: GoToStep;
+	urlDataUpdate: ( urlData: UrlData ) => void;
+}
+
+const ListStep: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const history = useHistory();
+	const { goToStep, urlDataUpdate } = props;
+
+	const onButtonClick = ( platform: ImporterPlatform ): void => {
+		urlDataUpdate( {
+			url: '',
+			platform,
+			meta: {
+				favicon: null,
+				title: null,
+			},
+		} );
+		goToStep( `ready` );
+	};
 
 	return (
 		<>
@@ -30,6 +50,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'WordPress' }
 							mainText={ 'www.wordpress.org' }
 							buttonIcon={ 'chevron-right' }
+							buttonOnClick={ () => onButtonClick( 'wordpress' ) }
 						/>
 						<ImporterLogo icon={ 'blogger-alt' } />
 						<ActionCard
@@ -37,6 +58,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'Blogger' }
 							mainText={ 'www.blogger.com' }
 							buttonIcon={ 'chevron-right' }
+							buttonOnClick={ () => onButtonClick( 'blogger' ) }
 						/>
 						<ImporterLogo icon={ 'medium' } />
 						<ActionCard
@@ -44,6 +66,7 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'Medium' }
 							mainText={ 'www.medium.com' }
 							buttonIcon={ 'chevron-right' }
+							buttonOnClick={ () => onButtonClick( 'medium' ) }
 						/>
 						<ImporterLogo icon={ 'squarespace' } />
 						<ActionCard
@@ -51,37 +74,42 @@ const ListStep: React.FunctionComponent = () => {
 							headerText={ 'Squarespace' }
 							mainText={ 'www.squarespace.com' }
 							buttonIcon={ 'chevron-right' }
-						/>
-						<ImporterLogo icon={ 'wix' } />
-						<ActionCard
-							classNames={ 'list__importer-action' }
-							headerText={ 'Wix' }
-							mainText={ 'www.wix.com' }
-							buttonIcon={ 'chevron-right' }
-							buttonOnClick={ () => history.push( '/import?step=capture' ) }
+							buttonOnClick={ () => onButtonClick( 'squarespace' ) }
 						/>
 					</div>
 
 					<div className={ 'list__importers list__importers-secondary' }>
-						<h3>Other platforms</h3>
+						<h3>{ __( 'Other platforms' ) }</h3>
 						<ul>
 							<li>
-								<a href={ '#temp' }>Blogroll</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'blogroll' ) }>
+									Blogroll
+								</Button>
 							</li>
 							<li>
-								<a href={ '#temp' }>Ghost</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'ghost' ) }>
+									Ghost
+								</Button>
 							</li>
 							<li>
-								<a href={ '#temp' }>Tumblr</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'tumblr' ) }>
+									Tumblr
+								</Button>
 							</li>
 							<li>
-								<a href={ '#temp' }>LiveJournal</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'livejournal' ) }>
+									LiveJournal
+								</Button>
 							</li>
 							<li>
-								<a href={ '#temp' }>Movable Type & TypePad</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'movabletype' ) }>
+									Movable Type & TypePad
+								</Button>
 							</li>
 							<li>
-								<a href={ '#temp' }>Xanga</a>
+								<Button borderless={ true } onClick={ () => onButtonClick( 'xanga' ) }>
+									Xanga
+								</Button>
 							</li>
 						</ul>
 					</div>
@@ -91,4 +119,8 @@ const ListStep: React.FunctionComponent = () => {
 	);
 };
 
-export default ListStep;
+const connector = connect( () => ( {} ), {
+	urlDataUpdate,
+} );
+
+export default connector( ListStep );

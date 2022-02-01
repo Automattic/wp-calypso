@@ -8,35 +8,41 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import StartingPoint from './starting-point';
 import type { StartingPointFlag } from './types';
+import type { Dependencies } from 'calypso/signup/types';
 
 interface Props {
 	goToNextStep: () => void;
 	isReskinned: boolean;
 	signupDependencies: any;
 	stepName: string;
+	initialContext: any;
 }
 
-// TODO: Adding take the masterclass
-const EXCLUDE_STEPS: { [ key in StartingPointFlag ]: string[] } = {
-	write: [ 'design-setup-site' ],
-	design: [],
-	skip: [ 'design-setup-site' ],
+const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
+	write: [ 'courses', 'design-setup-site' ],
+	courses: [ 'design-setup-site' ],
+	design: [ 'courses' ],
+	'skip-to-my-home': [ 'courses', 'design-setup-site' ],
 };
+
+const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
+	EXCLUDED_STEPS[ providedDependencies?.startingPoint ];
 
 export default function StartingPointStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { goToNextStep, stepName } = props;
-	const headerText = translate( 'Nice job! Lastly,{{br}}{{/br}}pick a starting point', {
+	const headerText = translate( 'Nice job! Now it’s{{br}}{{/br}} time to get creative.', {
 		components: { br: <br /> },
 	} );
 	const subHeaderText = translate( "Don't worry. You can come back to these steps!" );
-	const branchSteps = useBranchSteps( stepName );
+	const branchSteps = useBranchSteps( stepName, getExcludedSteps );
 
 	const submitStartingPoint = ( startingPoint: StartingPointFlag ) => {
-		branchSteps( EXCLUDE_STEPS[ startingPoint ] );
+		const providedDependencies = { startingPoint };
+		branchSteps( providedDependencies );
 		recordTracksEvent( 'calypso_signup_starting_point_select', { starting_point: startingPoint } );
-		dispatch( submitSignupStep( { stepName }, { startingPoint } ) );
+		dispatch( submitSignupStep( { stepName }, providedDependencies ) );
 		goToNextStep();
 	};
 
@@ -58,7 +64,7 @@ export default function StartingPointStep( props: Props ): React.ReactNode {
 			skipButtonAlign={ 'top' }
 			skipLabelText={ translate( 'Skip to My Home' ) }
 			// We need to redirect user to My Home and apply the default theme if the user skips this step
-			goToNextStep={ () => submitStartingPoint( 'skip' ) }
+			goToNextStep={ () => submitStartingPoint( 'skip-to-my-home' ) }
 			isHorizontalLayout={ true }
 		/>
 	);

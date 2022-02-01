@@ -1,5 +1,5 @@
 export interface Dependencies {
-	[ other: string ]: string[];
+	[ other: string ]: any;
 }
 
 export interface Flow {
@@ -15,3 +15,7 @@ export interface Flow {
 	showRecaptcha?: boolean;
 	enableBranchSteps?: boolean;
 }
+
+export type GoToStep = ( stepName: string, stepSectionName?: string, flowName?: string ) => void;
+
+export type GoToNextStep = ( nextFlowName?: string ) => void;

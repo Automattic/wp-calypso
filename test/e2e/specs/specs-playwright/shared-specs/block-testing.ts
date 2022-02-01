@@ -1,14 +1,14 @@
 import {
 	DataHelper,
 	BlockFlow,
-	setupHooks,
 	GutenbergEditorPage,
-	LoginPage,
-	NewPostFlow,
 	EditorContext,
 	PublishedPostContext,
+	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 /**
  * Creates a suite of block smoke tests for a set of block flows.
@@ -23,22 +23,15 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		let editorContext: EditorContext;
 		let publishedPostContext: PublishedPostContext;
 
-		setupHooks( ( args ) => {
-			page = args.page;
+		beforeAll( async () => {
+			page = await browser.newPage();
+			gutenbergEditorPage = new GutenbergEditorPage( page );
+			const testAccount = new TestAccount( 'gutenbergSimpleSiteUser' );
+			await testAccount.authenticate( page );
 		} );
 
-		describe( 'Editor set up', function () {
-			it( 'Log in and start a new post', async function () {
-				const loginPage = new LoginPage( page );
-				await loginPage.login( { account: 'gutenbergSimpleSiteUser' } );
-
-				const newPostFlow = new NewPostFlow( page );
-				await newPostFlow.newPostFromNavbar();
-
-				gutenbergEditorPage = new GutenbergEditorPage( page );
-				const title = DataHelper.getRandomPhrase();
-				await gutenbergEditorPage.enterTitle( title );
-			} );
+		it( 'Go to the new post page', async () => {
+			await gutenbergEditorPage.visit( 'post' );
 		} );
 
 		describe( 'Add and configure blocks in the editor', function () {

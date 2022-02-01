@@ -13,9 +13,15 @@
 }
 
 .export-card__subtitle,
+.export-media-card__warning,
 .export-media-card__subtitle {
 	font-size: $font-body-small;
 	color: var( --color-neutral-70 );
+}
+
+.export-media-card__warning {
+	margin-top: 10px;
+	font-style: italic;
 }
 
 .export-card .foldable-card__summary div {

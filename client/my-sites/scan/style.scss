@@ -7,6 +7,11 @@
 	}
 }
 
+.scan-new.is_jetpackcom.main {
+	padding-left: 0;
+	padding-right: 0;
+}
+
 .scan__content p {
 	font-size: $font-body;
 	margin-bottom: 16px;
@@ -17,10 +22,38 @@
 	}
 }
 
+.scan__content p.scan__initial-scan-message {
+	font-size: $font-title-medium;
+	line-height: 32px;
+	letter-spacing: 0.005em;
+	color: #2c3338;
+}
+
+.scan__progress-bar-percent {
+	font-weight: 600;
+	line-height: 24px;
+	text-align: right;
+	color: #23282d;
+}
+
 .security-icon {
 	display: block;
 	margin: 0 auto;
 	width: 48px;
+
+	// To align vertically with .backup-upsell__icon-header
+	padding: 9px 0;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 0;
+	}
+}
+
+.security-icon-new {
+	display: block;
+	margin: 0 auto;
+	width: 40px;
+	height: 48px;
 
 	// To align vertically with .backup-upsell__icon-header
 	padding: 9px 0;

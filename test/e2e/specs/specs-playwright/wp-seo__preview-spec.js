@@ -2,25 +2,17 @@
  * @group calypso-pr
  */
 
-import {
-	DataHelper,
-	LoginPage,
-	SidebarComponent,
-	MarketingPage,
-	setupHooks,
-} from '@automattic/calypso-e2e';
+import { DataHelper, SidebarComponent, MarketingPage, TestAccount } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
 	let marketingPage;
 	let page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
-	} );
+	beforeAll( async () => {
+		page = await global.browser.newPage();
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'wooCommerceUser' } );
+		const testAccount = new TestAccount( 'eCommerceUser' );
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'Navigate to Tools > Marketing page', async function () {

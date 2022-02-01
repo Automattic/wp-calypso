@@ -37,7 +37,11 @@ import './style.scss';
 
 class ActivityLogItem extends Component {
 	static propTypes = {
+		className: PropTypes.string,
+
 		siteId: PropTypes.number.isRequired,
+
+		activity: PropTypes.object.isRequired,
 
 		// Connected props
 		siteSlug: PropTypes.string.isRequired,
@@ -410,11 +414,12 @@ class ActivityLogItem extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { activity, siteId } ) => {
+const mapStateToProps = ( state, { className, activity, siteId } ) => {
 	const rewindState = getRewindState( state, siteId );
 	const site = getSite( state, siteId );
 
 	return {
+		className,
 		activity,
 		gmtOffset: getSiteGmtOffset( state, siteId ),
 		mightBackup: activity && activity.activityId === getRequestedBackup( state, siteId ),

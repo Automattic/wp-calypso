@@ -1,0 +1,56 @@
+.domain-info-card {
+	&.action-card {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		padding: 24px 0;
+		box-shadow: none;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			padding: 16px;
+		}
+
+		& ~ & {
+			border-top: 1px solid var( --studio-gray-5 );
+		}
+
+		.action-card__main {
+			.action-card__heading {
+				margin: 0;
+				font-weight: 600;
+				line-height: 24px;
+				font-size: $font-body;
+				display: flex;
+				column-gap: 8px;
+				align-items: center;
+			}
+
+			p {
+				margin: 0 0 16px;
+				font-size: $font-body-small;
+				color: var( --studio-gray-50 );
+				display: flex;
+				align-items: center;
+
+				svg {
+					fill: var( --studio-gray-50 );
+					margin: 0 8px 0 3px;
+				}
+			}
+		}
+
+		.action-card__button-container {
+			align-self: unset;
+			margin-bottom: 0;
+			> .button {
+				margin-left: 0;
+				padding: 7px 12px;
+				box-shadow: none;
+
+				&:hover {
+					color: var( --color-text-subtle );
+				}
+			}
+		}
+	}
+}

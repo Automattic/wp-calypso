@@ -6,15 +6,13 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { States } from 'calypso/state/exporter/constants';
 import { getExportingState, getDownloadUrl } from 'calypso/state/exporter/selectors';
-import { isGuidedTransferAwaitingPurchase } from 'calypso/state/sites/guided-transfer/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import CompletePurchaseNotice from './guided-transfer-card/complete-purchase-notice';
 
 /**
  * Displays local notices for the Export tab of Site Settings
  */
 class Notices extends Component {
-	exportNotice() {
+	render() {
 		const { exportDidComplete, exportDidFail, exportDownloadURL, translate } = this.props;
 
 		if ( exportDidComplete ) {
@@ -48,25 +46,12 @@ class Notices extends Component {
 
 		return null;
 	}
-
-	render() {
-		return (
-			<div>
-				{ this.exportNotice() }
-				{ this.props.isGuidedTransferAwaitingPurchase && <CompletePurchaseNotice /> }
-			</div>
-		);
-	}
 }
 
 const mapStateToProps = ( state ) => ( {
 	exportDidComplete: getExportingState( state, getSelectedSiteId( state ) ) === States.COMPLETE,
 	exportDidFail: getExportingState( state, getSelectedSiteId( state ) ) === States.FAILED,
 	exportDownloadURL: getDownloadUrl( state ),
-	isGuidedTransferAwaitingPurchase: isGuidedTransferAwaitingPurchase(
-		state,
-		getSelectedSiteId( state )
-	),
 } );
 
 export default connect( mapStateToProps )( localize( Notices ) );

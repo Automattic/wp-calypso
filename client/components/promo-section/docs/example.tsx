@@ -21,9 +21,11 @@ const PromoSectionExample = () => {
 				image: {
 					path: simplePaymentsImage,
 				},
-				cta: {
-					text: 'Collect One-time Payments',
-					url: '/',
+				actions: {
+					cta: {
+						text: 'Collect One-time Payments',
+						action: '/',
+					},
 				},
 			},
 			{
@@ -33,9 +35,11 @@ const PromoSectionExample = () => {
 				image: {
 					path: recurringImage,
 				},
-				cta: {
-					text: 'Collect Payments',
-					url: '/',
+				actions: {
+					cta: {
+						text: 'Collect Payments',
+						action: '/',
+					},
 				},
 			},
 		],

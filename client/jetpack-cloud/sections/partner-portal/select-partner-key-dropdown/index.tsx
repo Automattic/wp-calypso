@@ -30,6 +30,7 @@ export default function SelectPartnerKeyDropdown(): ReactElement | null {
 		partner.keys.map( ( key ) => ( {
 			value: key.id.toString(),
 			label: key.name,
+			isLabel: false,
 		} ) );
 
 	if ( ! options || options.length <= 1 ) {

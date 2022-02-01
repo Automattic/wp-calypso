@@ -15,7 +15,7 @@ export default class LogItemExample extends PureComponent {
 					This log item has a custom tag.
 				</LogItem>
 				<LogItem header="HTML Contents" subheader="This is the subheader">
-					<CardHeading tag="h2" size={ 18 }>
+					<CardHeading tagName="h2" size={ 18 }>
 						This is a header!
 					</CardHeading>
 				</LogItem>

@@ -36,6 +36,7 @@ export interface AvailableProductVariant {
 	};
 	priceFull: number;
 	priceFinal: number;
+	introductoryOfferPrice: number | null;
 }
 
 export interface AvailableProductVariantAndCompared extends AvailableProductVariant {
@@ -59,6 +60,12 @@ const Discount = styled.span`
 	.rtl & {
 		margin-right: 0;
 		margin-left: 8px;
+	}
+	order: unset;
+
+	@media ( max-width: 660px ) {
+		order: 1;
+		width: 100%;
 	}
 `;
 
@@ -157,8 +164,8 @@ function getLowestPriceTimesVariantInterval(
 	}
 
 	allVariants.sort( ( variantA, variantB ) => {
-		const variantAInterval = getTermDuration( variantA.plan.term );
-		const variantBInterval = getTermDuration( variantB.plan.term );
+		const variantAInterval = getTermDuration( variantA.plan.term ) ?? 0;
+		const variantBInterval = getTermDuration( variantB.plan.term ) ?? 0;
 		return variantAInterval - variantBInterval;
 	} );
 	const lowestVariant = allVariants[ 0 ];
@@ -180,7 +187,7 @@ function isVariantAllowed(
 	if ( ! activePlanRenewalInterval || activePlanRenewalInterval < 1 ) {
 		return true;
 	}
-	const variantRenewalInterval = getTermDuration( variant.plan.term );
+	const variantRenewalInterval = getTermDuration( variant.plan.term ) ?? 0;
 	if ( activePlanRenewalInterval <= variantRenewalInterval ) {
 		return true;
 	}
@@ -196,8 +203,14 @@ function isVariantAllowed(
 }
 
 function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompared } ) {
-	const currentPrice = variant.priceFinal || variant.priceFull;
-	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
+	const currentPrice =
+		variant.introductoryOfferPrice !== null
+			? variant.introductoryOfferPrice
+			: variant.priceFinal || variant.priceFull;
+	// extremely low "discounts" are possible if the price of the longer term has been rounded
+	// if they cannot be rounded to at least a percentage point we should not show them
+	const isDiscounted =
+		Math.floor( 100 - ( currentPrice / variant.priceFullBeforeDiscount ) * 100 ) > 0;
 	return (
 		<Fragment>
 			{ isDiscounted && <VariantPriceDiscount variant={ variant } /> }
@@ -213,26 +226,38 @@ function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompare
 
 function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAndCompared } ) {
 	const translate = useTranslate();
-	const discountPercentage = Math.round(
-		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
+	const maybeFinalPrice =
+		variant.introductoryOfferPrice !== null ? variant.introductoryOfferPrice : variant.priceFinal;
+	const discountPercentage = Math.floor(
+		100 - ( maybeFinalPrice / variant.priceFullBeforeDiscount ) * 100
 	);
-	return (
-		<Discount>
-			{ translate( 'Save %(percent)s%%', {
+	let message = '';
+	if ( variant.introductoryOfferPrice ) {
+		message = String(
+			translate( 'Eligible orders save %(percent)s%%', {
 				args: {
 					percent: discountPercentage,
 				},
-			} ) }
-		</Discount>
-	);
+			} )
+		);
+	} else {
+		message = String(
+			translate( 'Save %(percent)s%%', {
+				args: {
+					percent: discountPercentage,
+				},
+			} )
+		);
+	}
+	return <Discount>{ message }</Discount>;
 }
 
 function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
-	const chosenPlan = getPlan( productSlug )
-		? getPlan( productSlug )
-		: getProductFromSlug( productSlug );
+	const chosenPlan = getPlan( productSlug ?? '' )
+		? getPlan( productSlug ?? '' )
+		: getProductFromSlug( productSlug ?? '' );
 
-	if ( ! chosenPlan ) {
+	if ( ! chosenPlan || typeof chosenPlan === 'string' ) {
 		return [];
 	}
 

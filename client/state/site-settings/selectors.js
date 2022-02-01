@@ -36,11 +36,23 @@ export function getSiteSettingsSaveRequestStatus( state, siteId ) {
 }
 
 /**
+ * @typedef {{
+ blog_public?: number;
+ woocommerce_store_address?: string;
+ woocommerce_store_address_2?: string;
+ woocommerce_store_city?: string;
+ woocommerce_store_postcode?: string;
+ woocommerce_default_country?: string;
+ woocommerce_onboarding_profile?: array;
+ }} SiteSettingsItem
+ */
+
+/**
  * Returns the settings for the specified site ID
  *
  * @param  {object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @returns {object}        Site settings
+ * @returns {SiteSettingsItem}        Site settings
  */
 export function getSiteSettings( state, siteId ) {
 	return get( state.siteSettings.items, [ siteId ], null );

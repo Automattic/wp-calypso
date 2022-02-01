@@ -1,4 +1,3 @@
-import { isEnabled as isConfigEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { includes } from 'lodash';
@@ -94,7 +93,7 @@ class FileImporter extends PureComponent {
 			tagName: 'button',
 		};
 
-		if ( isConfigEnabled( 'tools/migrate' ) && overrideDestination ) {
+		if ( overrideDestination ) {
 			/**
 			 * Override where the user lands when they click the importer.
 			 *

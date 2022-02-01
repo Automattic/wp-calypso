@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .gsuite-add-users__buttons {
 	display: flex;
 	flex-direction: column;
@@ -6,25 +9,7 @@
 		margin-top: 10px;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
-		flex-direction: row;
-
-		button {
-			margin-left: 10px;
-			margin-top: 0;
-		}
-	}
-
-	@include breakpoint-deprecated( '>660px' ) {
-		flex-direction: column;
-
-		button {
-			margin-left: 0;
-			margin-top: 10px;
-		}
-	}
-
-	@include breakpoint-deprecated( '>800px' ) {
+	@include break-mobile {
 		flex-direction: row;
 
 		button {

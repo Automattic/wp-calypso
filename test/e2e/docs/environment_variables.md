@@ -1,41 +1,32 @@
+Return to [Top Page](../README.md).
+
 # Environment Variables
 
 Environment Variables are values that are defined at the system level to serve as configuration for programs.
 
 ## Required
 
-| Name            | Description                                         | Example   | Required | Store in file? |
-| --------------- | --------------------------------------------------- | --------- | -------- | -------------- |
-| CONFIG_KEY      | Secrets decryption key obtained from a8c key store. | hunter2   | No       | **NO**         |
-| NODE_CONFIG_ENV | Name of decrypted secrets file.                     | decrypted | No       | **NO**         |
+| Name            | Description                                         |
+| --------------- | --------------------------------------------------- |
+| CONFIG_KEY      | Secrets decryption key obtained from a8c key store. |
+| NODE_CONFIG_ENV | Name of decrypted secrets file.                     |
 
-## Magellan
+## Framework
 
-| Name          | Description                                                              | Example | Required | Store in file? |
-| ------------- | ------------------------------------------------------------------------ | ------- | -------- | -------------- |
-| MAGELLANDEBUG | If this is set, the full mocha output is printed while running Magellan. | 1       | No       | **NO**         |
+| Name                  | Description                                         | Default                                                          |
+| --------------------- | --------------------------------------------------- | ---------------------------------------------------------------- |
+| HEADLESS              | Configure browser headless/headful mode.            | false                                                            |
+| SLOW_MO               | Slow down the execution by given milliseconds.      | 0                                                                |
+| AUTHENTICATE_ACCOUNTS | List of accounts to pre-authenticate for later use. | [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ] |
+| COOKIES_PATH          | Path on disk to the saved authenticated cookies.    | ./cookies/                                                       |
+| VIEWPORT_NAME         | Specify the viewport to be used.                    | desktop                                                          |
 
-## Test Framework (Selenium)
+## CI
 
-| Name            | Description                                              | Example          | Required | Store in file? |
-| --------------- | -------------------------------------------------------- | ---------------- | -------- | -------------- |
-| BROWSERLOCALE   | Specify the target browser locale.                       | en               | No       | **NO**         |
-| BROWSERSIZE     | Specify the target browser window size.                  | desktop          | No       | **NO**         |
-| HEADLESS        | Configure browser headless/headful mode.                 | 1                | No       | **NO**         |
-| SCREENSHOTDIR   | Override the default path for screenshots to be written. | /tmp/screenshots | No       | **NO**         |
-| TEMP_ASSET_PATH | Override the base artifacts path.                        | /tmp/artifacts   | No       | **NO**         |
-| TEST_VIDEO      | Configure if video recording is to be used.              | true             | No       | **NO**         |
-
-## Test Framework (Playwright)
-
-| Name            | Description                                                   | Example          | Required | Store in file? |
-| --------------- | ------------------------------------------------------------- | ---------------- | -------- | -------------- |
-| HEADLESS        | Configure browser headless/headful mode.                      | 1                | No       | **NO**         |
-| LOCALE          | Specify the target browser locale.                            | en               | No       | **NO**         |
-| SCREENSHOTDIR   | Override the default path for screenshots to be written.      | /tmp/screenshots | No       | **NO**         |
-| TEMP_ASSET_PATH | Override the base artifacts path.                             | /tmp/artifacts   | No       | **NO**         |
-| VIDEODIR        | Override the default path for video recordings to be written. | /tmp/recordings  | No       | **NO**         |
-| TARGET_DEVICE   | Specify the device type to be used.                           | desktop          | No       | **NO**         |
+| Name           | Description                            | Example | Required |
+| -------------- | -------------------------------------- | ------- | -------- |
+| COBLOCKS_EDGE  | Use the bleeding edge CoBlocks build.  | true    | No       |
+| GUTENBERG_EDGE | Use the bleeding edge Gutenberg build. | true    | No       |
 
 <!-- When adding new rows, run the following command to sort the resulting sub-table in alphabetical order:
 
@@ -44,4 +35,8 @@ head -n 38 environment_variables.md | tail +33 | sort --field-separator=\| --key
 
 Adjust the value of `head -n <x>` to be the last row of the table to be sorted.
 Adjust the value of `tail +x` to be the first row of the table to be sorted.
+
+eg. head -n 28 environment_variables.md | tail +27 | sort --field-separator=\| --key=1
+
+-> sorts from row 27 to 28.
  -->

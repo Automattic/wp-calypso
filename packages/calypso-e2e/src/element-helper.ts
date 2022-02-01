@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { getTargetDeviceName } from './browser-helper';
+import envVariables from './env-variables';
 
 const selectors = {
 	// clickNavTab
@@ -49,10 +49,8 @@ export async function waitForElementEnabled(
  * @param {string} name Name of the tab to be clicked.
  */
 export async function clickNavTab( page: Page, name: string ): Promise< void > {
-	const targetDevice = getTargetDeviceName();
-
 	// Mobile view - navtabs become a dropdown.
-	if ( targetDevice === 'mobile' ) {
+	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 		await page.click( selectors.mobileNavTabsToggle );
 	}
 
@@ -64,7 +62,7 @@ export async function clickNavTab( page: Page, name: string ): Promise< void > {
 		.then( ( element ) => element.innerText() );
 
 	if ( currentTab === name ) {
-		if ( targetDevice === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await page.click( selectors.mobileNavTabsToggle );
 		}
 		return;
@@ -74,4 +72,37 @@ export async function clickNavTab( page: Page, name: string ): Promise< void > {
 	// This implicitly checks whether the intended tab is now active.
 	const elementHandle = await page.waitForSelector( selectors.navTab( name ) );
 	await Promise.all( [ page.waitForNavigation(), elementHandle.click() ] );
+}
+
+/**
+ * Retry any function up to three times or action passes without throwing an exception,
+ * whichever comes first.
+ *
+ * The function being passed in must throw an exception for this retry to work.
+ *
+ * This is useful for situations where the backend must process the results of a
+ * previous action then inform the front end of the result of the process.
+ * An example of this is the user invitation system where the backend must receive,
+ * verify and send the invitation issued by a user. If the resulting checks were
+ * successful, the resulting invitation is shown as 'pending'.
+ *
+ * @param {Page} page Page object.
+ */
+export async function reloadAndRetry(
+	page: Page,
+	func: ( page: Page ) => Promise< void >
+): Promise< void > {
+	for ( let retries = 3; retries > 0; retries -= 1 ) {
+		try {
+			return await func( page );
+		} catch ( err ) {
+			// Throw the error if final retry failed.
+			if ( retries === 1 ) {
+				throw err;
+			} else {
+				await page.reload();
+			}
+		}
+	}
+	return;
 }

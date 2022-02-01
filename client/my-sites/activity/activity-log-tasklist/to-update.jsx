@@ -1,67 +1,63 @@
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { requestSiteAlerts } from 'calypso/state/data-getters';
+import { useRef } from 'react';
+import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
+import wpcom from 'calypso/lib/wp';
 import { getPluginsWithUpdates } from 'calypso/state/plugins/installed/selectors';
 import { isJetpackSiteSecondaryNetworkSite } from 'calypso/state/sites/selectors';
 
-const emptyList = [];
+const EMPTY_LIST = [];
 
 const unionBySlug = ( a = [], b = [] ) => [
 	...a,
 	...b.filter( ( be ) => ! a.some( ( ae ) => ae.slug === be.slug ) ),
 ];
 
-export default ( WrappedComponent ) => {
-	class ToUpdate extends Component {
-		static propTypes = {
-			siteId: PropTypes.number,
+export default function ( WrappedComponent ) {
+	function WithItemsToUpdate( { siteId, ...props } ) {
+		const pluginsWithUpdates = useSelector( ( state ) => {
+			if ( isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
+				return EMPTY_LIST;
+			}
+			return getPluginsWithUpdates( state, [ siteId ] ) ?? EMPTY_LIST;
+		} );
 
-			// Connected
-			plugins: PropTypes.arrayOf( PropTypes.object ),
-			themes: PropTypes.arrayOf( PropTypes.object ),
-			core: PropTypes.arrayOf( PropTypes.object ),
-		};
+		// merge the `pluginsWithUpdates` object into the previous value, so that plugins that
+		// have been updated are still part of the list and don't disappear.
+		const plugins = useRef( { siteId: undefined, mergedPlugins: undefined } );
+		const mergedPlugins =
+			plugins.current.siteId === siteId
+				? unionBySlug( pluginsWithUpdates, plugins.current.mergedPlugins )
+				: pluginsWithUpdates;
+		plugins.current = { siteId, mergedPlugins };
 
-		state = {
-			// Plugins already updated + those with pending updates
-			plugins: emptyList,
-			siteId: this.props.siteId,
-		};
+		const siteAlertsQuery = useQuery(
+			[ 'site-alerts', siteId ],
+			() => wpcom.req.get( { path: `/sites/${ siteId }/alerts`, apiNamespace: 'wpcom/v2' } ),
+			{
+				staleTime: Infinity,
+				refetchOnMount: 'always',
+				refetchInterval: 5 * 60 * 1000,
+			}
+		);
 
-		static getDerivedStateFromProps( nextProps, prevState ) {
-			return {
-				plugins:
-					nextProps.siteId === prevState.siteId
-						? unionBySlug( nextProps.plugins ?? [], prevState.plugins ?? [] )
-						: emptyList,
-				siteId: nextProps.siteId,
-			};
-		}
+		const themes = siteAlertsQuery.data?.updates?.themes ?? EMPTY_LIST;
+		const core = siteAlertsQuery.data?.updates?.core ?? EMPTY_LIST;
 
-		render() {
-			return (
-				<WrappedComponent
-					{ ...this.props }
-					siteId={ this.props.siteId }
-					plugins={ this.state.plugins }
-					themes={ this.props.themes }
-					core={ this.props.core }
-				/>
-			);
-		}
+		return (
+			<WrappedComponent
+				{ ...props }
+				siteId={ siteId }
+				plugins={ mergedPlugins }
+				themes={ themes }
+				core={ core }
+			/>
+		);
 	}
-	return connect( ( state, { siteId } ) => {
-		const alertsData = requestSiteAlerts( siteId );
-		let pluginsWithUpdates = emptyList;
-		if ( ! isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
-			pluginsWithUpdates = getPluginsWithUpdates( state, [ siteId ] );
-		}
-		return {
-			plugins: pluginsWithUpdates,
-			themes: get( alertsData, 'data.updates.themes', emptyList ),
-			core: get( alertsData, 'data.updates.core', emptyList ),
-		};
-	} )( ToUpdate );
-};
+
+	WithItemsToUpdate.propTypes = {
+		siteId: PropTypes.number.isRequired,
+	};
+
+	return WithItemsToUpdate;
+}

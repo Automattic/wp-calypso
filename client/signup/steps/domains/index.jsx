@@ -1,16 +1,16 @@
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
+import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import MapDomainStep from 'calypso/components/domains/map-domain-step';
+import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
-import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
-import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
+import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import Notice from 'calypso/components/notice';
 import {
 	domainRegistration,
@@ -42,8 +42,6 @@ import {
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
-import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import {
 	removeStep,
 	saveSignupStep,
@@ -119,6 +117,10 @@ class DomainsStep extends Component {
 
 			props.goToNextStep();
 		}
+		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
+		this.state = {
+			currentStep: null,
+		};
 	}
 
 	/**
@@ -141,19 +143,6 @@ class DomainsStep extends Component {
 		return isPlansStepExistsInFutureOfFlow && ! isPlanStepSkipped;
 	};
 
-	componentDidUpdate( prevProps ) {
-		// If the signup site preview is visible and there's a sub step, e.g., mapping, transfer, use-your-domain
-		if ( prevProps.stepSectionName !== this.props.stepSectionName ) {
-			if ( this.props.isSitePreviewVisible && this.props.stepSectionName ) {
-				this.props.hideSitePreview();
-			}
-
-			if ( ! this.props.isSitePreviewVisible && ! this.props.stepSectionName ) {
-				this.props.showSitePreview();
-			}
-		}
-	}
-
 	isEligibleVariantForDomainTest() {
 		return this.showTestCopy;
 	}
@@ -161,14 +150,6 @@ class DomainsStep extends Component {
 	getLocale() {
 		return ! this.props.userLoggedIn ? this.props.locale : '';
 	}
-
-	getMapDomainUrl = () => {
-		return getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.getLocale() );
-	};
-
-	getTransferDomainUrl = () => {
-		return getStepUrl( this.props.flowName, this.props.stepName, 'transfer', this.getLocale() );
-	};
 
 	getUseYourDomainUrl = () => {
 		return getStepUrl(
@@ -360,7 +341,7 @@ class DomainsStep extends Component {
 		this.props.goToNextStep();
 	};
 
-	handleAddTransfer = ( domain, authCode ) => {
+	handleAddTransfer = ( { domain, authCode } ) => {
 		const domainItem = domainTransfer( {
 			domain,
 			extra: {
@@ -448,21 +429,59 @@ class DomainsStep extends Component {
 		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
+	shouldHideDomainExplainer = () => {
+		const { flowName } = this.props;
+		return [
+			'free',
+			'personal',
+			'personal-monthly',
+			'premium',
+			'premium-monthly',
+			'business',
+			'business-monthly',
+			'ecommerce',
+			'ecommerce-monthly',
+			'domain',
+		].includes( flowName );
+	};
+
+	shouldHideUseYourDomain = () => {
+		const { flowName } = this.props;
+		return [ 'domain' ].includes( flowName );
+	};
+
+	shouldDisplayDomainOnlyExplainer = () => {
+		const { flowName } = this.props;
+		return [ 'domain' ].includes( flowName );
+	};
+
 	getSideContent = () => {
 		return (
 			<div className="domains__domain-side-content-container">
-				<div className="domains__domain-side-content">
-					<ReskinSideExplainer
-						onClick={ this.handleDomainExplainerClick }
-						type={ 'free-domain-explainer' }
-					/>
-				</div>
-				<div className="domains__domain-side-content">
-					<ReskinSideExplainer
-						onClick={ this.handleUseYourDomainClick }
-						type={ 'use-your-domain' }
-					/>
-				</div>
+				{ ! this.shouldHideDomainExplainer() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={ 'free-domain-explainer' }
+						/>
+					</div>
+				) }
+				{ ! this.shouldHideUseYourDomain() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleUseYourDomainClick }
+							type={ 'use-your-domain' }
+						/>
+					</div>
+				) }
+				{ this.shouldDisplayDomainOnlyExplainer() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={ 'free-domain-only-explainer' }
+						/>
+					</div>
+				) }
 			</div>
 		);
 	};
@@ -517,8 +536,8 @@ class DomainsStep extends Component {
 					products={ this.props.productsList }
 					basePath={ this.props.path }
 					promoTlds={ trueNamePromoTlds }
-					mapDomainUrl={ this.getMapDomainUrl() }
-					transferDomainUrl={ this.getTransferDomainUrl() }
+					mapDomainUrl={ this.getUseYourDomainUrl() }
+					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
 					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 					onSave={ this.handleSave.bind( this, 'domainForm' ) }
@@ -555,72 +574,49 @@ class DomainsStep extends Component {
 		);
 	};
 
-	mappingForm = () => {
-		const initialState = this.props.step ? this.props.step.mappingForm : undefined;
-		const initialQuery =
-			this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
-
-		return (
-			<div className="domains__step-section-wrapper" key="mappingForm">
-				<CalypsoShoppingCartProvider>
-					<MapDomainStep
-						analyticsSection={ this.getAnalyticsSection() }
-						initialState={ initialState }
-						path={ this.props.path }
-						onRegisterDomain={ this.handleAddDomain }
-						onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
-						onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-						products={ this.props.productsList }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						initialQuery={ initialQuery }
-					/>
-				</CalypsoShoppingCartProvider>
-			</div>
-		);
+	onUseMyDomainConnect = ( { domain } ) => {
+		this.handleAddMapping( 'useYourDomainForm', domain );
 	};
 
-	onTransferSave = ( state ) => {
-		this.handleSave( 'transferForm', state );
-	};
+	insertUrlParams( params ) {
+		if ( history.pushState ) {
+			const searchParams = new URLSearchParams( window.location.search );
 
-	transferForm = () => {
-		const initialQuery = get( this.props.step, 'domainForm.lastQuery' );
+			Object.entries( params ).forEach( ( [ key, value ] ) => searchParams.set( key, value ) );
+			const newUrl =
+				window.location.protocol +
+				'//' +
+				window.location.host +
+				window.location.pathname +
+				'?' +
+				decodeURIComponent( searchParams.toString() );
+			window.history.pushState( { path: newUrl }, '', newUrl );
+		}
+	}
 
-		return (
-			<div className="domains__step-section-wrapper" key="transferForm">
-				<CalypsoShoppingCartProvider>
-					<TransferDomainStep
-						analyticsSection={ this.getAnalyticsSection() }
-						basePath={ this.props.path }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						initialQuery={ initialQuery }
-						isSignupStep
-						mapDomainUrl={ this.getMapDomainUrl() }
-						onRegisterDomain={ this.handleAddDomain }
-						onTransferDomain={ this.handleAddTransfer }
-						onSave={ this.onTransferSave }
-						products={ this.props.productsList }
-					/>
-				</CalypsoShoppingCartProvider>
-			</div>
-		);
-	};
+	setCurrentFlowStep( { mode, domain } ) {
+		this.setState( { currentStep: mode }, () => {
+			this.insertUrlParams( { step: this.state.currentStep, initialQuery: domain } );
+		} );
+	}
 
 	useYourDomainForm = () => {
-		const initialQuery = get( this.props.step, 'domainForm.lastQuery' );
+		const queryObject = parse( window.location.search.replace( '?', '' ) );
+		const initialQuery = get( this.props.step, 'domainForm.lastQuery' ) || queryObject.initialQuery;
 
 		return (
 			<div className="domains__step-section-wrapper" key="useYourDomainForm">
 				<CalypsoShoppingCartProvider>
-					<UseYourDomainStep
+					<UseMyDomain
 						analyticsSection={ this.getAnalyticsSection() }
 						basePath={ this.props.path }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						initialQuery={ initialQuery }
+						initialMode={ queryObject.step ?? inputMode.domainInput }
+						onNextStep={ this.setCurrentFlowStep }
 						isSignupStep
-						mapDomainUrl={ this.getMapDomainUrl() }
-						transferDomainUrl={ this.getTransferDomainUrl() }
-						products={ this.props.productsList }
+						showHeader={ false }
+						onTransfer={ this.handleAddTransfer }
+						onConnect={ this.onUseMyDomainConnect }
 					/>
 				</CalypsoShoppingCartProvider>
 			</div>
@@ -642,10 +638,7 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			return (
-				! stepSectionName &&
-				translate( "Enter your site's name or some descriptive keywords to get started" )
-			);
+			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
 		}
 
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
@@ -694,14 +687,6 @@ class DomainsStep extends Component {
 		let content;
 		let sideContent;
 
-		if ( 'mapping' === this.props.stepSectionName ) {
-			content = this.mappingForm();
-		}
-
-		if ( 'transfer' === this.props.stepSectionName ) {
-			content = this.transferForm();
-		}
-
 		if ( 'use-your-domain' === this.props.stepSectionName ) {
 			content = this.useYourDomainForm();
 		}
@@ -736,39 +721,76 @@ class DomainsStep extends Component {
 		);
 	}
 
+	getPreviousStepUrl() {
+		if ( 'use-your-domain' !== this.props.stepSectionName ) return null;
+
+		const { step, ...queryValues } = parse( window.location.search.replace( '?', '' ) );
+		const currentStep = step ?? this.state?.currentStep;
+
+		let mode = inputMode.domainInput;
+		switch ( currentStep ) {
+			case null:
+			case inputMode.domainInput:
+				return null;
+
+			case inputMode.transferOrConnect:
+				mode = inputMode.domainInput;
+				break;
+
+			case inputMode.transferDomain:
+			case inputMode.ownershipVerification:
+				mode = inputMode.transferOrConnect;
+				break;
+		}
+		return getStepUrl(
+			this.props.flowName,
+			this.props.stepName,
+			'use-your-domain',
+			this.getLocale(),
+			{
+				step: mode,
+				...queryValues,
+			}
+		);
+	}
+
+	removeQueryParam( url ) {
+		return url.split( '?' )[ 0 ];
+	}
+
 	render() {
 		if ( this.skipRender ) {
 			return null;
 		}
 
-		const { isAllDomains, translate, sites, isReskinned, userLoggedIn } = this.props;
+		const { isAllDomains, translate, isReskinned } = this.props;
 		const source = get( this.props, 'queryObject.source' );
-		const hasSite = Object.keys( sites ).length > 0;
 		let backUrl;
 		let backLabelText;
-		let isExternalBackUrl;
-		const locale = ! userLoggedIn ? getLocaleSlug() : '';
+		let isExternalBackUrl = false;
 
-		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
-			backUrl = getStepUrl( this.props.flowName, this.props.stepName, 'use-your-domain', locale );
-		} else if ( this.props.stepSectionName ) {
-			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, locale );
-		} else if ( 0 === this.props.positionInFlow && hasSite ) {
-			backUrl = '/sites/';
-			backLabelText = translate( 'Back to My Sites' );
+		const previousStepBackUrl = this.getPreviousStepUrl();
 
-			if ( isAllDomains ) {
-				backUrl = domainManagementRoot();
-				backLabelText = translate( 'Back to All Domains' );
+		if ( previousStepBackUrl ) {
+			backUrl = previousStepBackUrl;
+		} else if ( isAllDomains ) {
+			backUrl = domainManagementRoot();
+			backLabelText = translate( 'Back to All Domains' );
+		} else {
+			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
+
+			if ( backUrl === this.removeQueryParam( this.props.path ) ) {
+				backUrl = '/sites/';
+				backLabelText = translate( 'Back to My Sites' );
 			}
-		}
 
-		const externalBackUrl = getExternalBackUrl( source, this.props.stepSectionName );
-		if ( externalBackUrl ) {
-			backUrl = externalBackUrl;
-			backLabelText = translate( 'Back' );
-			// Solves route conflicts between LP and calypso (ex. /domains).
-			isExternalBackUrl = true;
+			const externalBackUrl = getExternalBackUrl( source, this.props.stepSectionName );
+			if ( externalBackUrl ) {
+				backUrl = externalBackUrl;
+				backLabelText = translate( 'Back' );
+				// Solves route conflicts between LP and calypso (ex. /domains).
+				isExternalBackUrl = true;
+			}
 		}
 
 		const headerText = this.getHeaderText();
@@ -791,7 +813,6 @@ class DomainsStep extends Component {
 						{ this.renderContent() }
 					</div>
 				}
-				showSiteMockups={ this.props.showSiteMockups }
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ true }
@@ -848,7 +869,6 @@ export default connect(
 			siteType: getSiteType( state ),
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSelectedSite( state ),
-			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
 			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
 			userLoggedIn: isUserLoggedIn( state ),
@@ -867,7 +887,5 @@ export default connect(
 		submitSignupStep,
 		recordTracksEvent,
 		fetchUsernameSuggestion,
-		hideSitePreview,
-		showSitePreview,
 	}
 )( localize( DomainsStep ) );

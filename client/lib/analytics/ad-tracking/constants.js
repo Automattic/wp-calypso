@@ -66,6 +66,7 @@ export const TRACKING_IDS = {
 	facebookInit: '823166884443641',
 	facebookJetpackInit: '919484458159593',
 	fullStory: '120RG4',
+	fullStoryJetpack: '181XXV',
 	linkedInPartnerId: '195308',
 	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
 	pinterestInit: '2613194105266',

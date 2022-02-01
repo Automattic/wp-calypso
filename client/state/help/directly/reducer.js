@@ -9,10 +9,8 @@ import { STATUS_UNINITIALIZED, STATUS_INITIALIZING, STATUS_READY, STATUS_ERROR }
 
 export const questionAsked = ( state = null, action ) => {
 	switch ( action.type ) {
-		case DIRECTLY_ASK_QUESTION: {
-			const { questionText, name, email } = action;
-			return { questionText, name, email };
-		}
+		case DIRECTLY_ASK_QUESTION:
+			return true;
 	}
 
 	return state;

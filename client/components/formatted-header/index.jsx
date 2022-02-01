@@ -40,11 +40,12 @@ FormattedHeader.propTypes = {
 	id: PropTypes.string,
 	className: PropTypes.string,
 	brandFont: PropTypes.bool,
-	headerText: PropTypes.node.isRequired,
+	headerText: PropTypes.node,
 	subHeaderText: PropTypes.node,
 	compactOnMobile: PropTypes.bool,
 	isSecondary: PropTypes.bool,
 	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
+	hasScreenOptions: PropTypes.bool,
 };
 
 FormattedHeader.defaultProps = {

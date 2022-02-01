@@ -46,6 +46,7 @@ import type {
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
@@ -55,9 +56,9 @@ export default function useCreatePaymentCompleteCallback( {
 	redirectTo,
 	purchaseId,
 	feature,
-	isInEditor,
+	isInModal,
 	isComingFromUpsell,
-	isFocusedLaunch,
+	disabledThankYouPage,
 	siteSlug,
 	isJetpackCheckout = false,
 	checkoutFlow,
@@ -67,9 +68,9 @@ export default function useCreatePaymentCompleteCallback( {
 	redirectTo?: string | undefined;
 	purchaseId?: number | undefined;
 	feature?: string | undefined;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	isComingFromUpsell?: boolean;
-	isFocusedLaunch?: boolean;
+	disabledThankYouPage?: boolean;
 	siteSlug: string | undefined;
 	isJetpackCheckout?: boolean;
 	checkoutFlow?: string;
@@ -97,7 +98,7 @@ export default function useCreatePaymentCompleteCallback( {
 		getJetpackCheckoutRedirectUrl( state, siteId )
 	);
 
-	const domains = useSiteDomains( siteId );
+	const domains = useSiteDomains( siteId ?? undefined );
 
 	return useCallback(
 		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
@@ -125,7 +126,7 @@ export default function useCreatePaymentCompleteCallback( {
 				productAliasFromUrl,
 				isEligibleForSignupDestinationResult,
 				hideNudge: isComingFromUpsell,
-				isInEditor,
+				isInModal,
 				isJetpackCheckout,
 				jetpackTemporarySiteId,
 				adminPageRedirect,
@@ -148,11 +149,12 @@ export default function useCreatePaymentCompleteCallback( {
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
 				console.error( err );
-				recordCompositeCheckoutErrorDuringAnalytics( {
-					reduxDispatch,
-					errorObject: err,
-					failureDescription: 'useCreatePaymentCompleteCallback',
-				} );
+				reduxDispatch(
+					recordCompositeCheckoutErrorDuringAnalytics( {
+						errorObject: err,
+						failureDescription: 'useCreatePaymentCompleteCallback',
+					} )
+				);
 			}
 
 			const receiptId = transactionResult?.receipt_id;
@@ -213,9 +215,10 @@ export default function useCreatePaymentCompleteCallback( {
 				}
 			}
 
-			// Focused Launch is showing a success dialog directly in editor instead of a thank you page.
+			// Checkout in the modal might not need thank you page.
+			// For example, Focused Launch is showing a success dialog directly in editor instead of a thank you page.
 			// See https://github.com/Automattic/wp-calypso/pull/47808#issuecomment-755196691
-			if ( isInEditor && isFocusedLaunch && ! hasEcommercePlan( responseCart ) ) {
+			if ( isInModal && disabledThankYouPage && ! hasEcommercePlan( responseCart ) ) {
 				return;
 			}
 
@@ -249,7 +252,7 @@ export default function useCreatePaymentCompleteCallback( {
 			productAliasFromUrl,
 			isEligibleForSignupDestinationResult,
 			isComingFromUpsell,
-			isInEditor,
+			isInModal,
 			reduxStore,
 			isDomainOnly,
 			moment,
@@ -258,7 +261,7 @@ export default function useCreatePaymentCompleteCallback( {
 			translate,
 			responseCart,
 			createUserAndSiteBeforeTransaction,
-			isFocusedLaunch,
+			disabledThankYouPage,
 			isJetpackCheckout,
 			checkoutFlow,
 			adminPageRedirect,
@@ -281,7 +284,7 @@ function displayRenewalSuccessNotice(
 	purchases: Record< number, Purchase[] >,
 	translate: ReturnType< typeof useTranslate >,
 	moment: ReturnType< typeof useLocalizedMoment >,
-	reduxDispatch: ReturnType< typeof useDispatch >
+	reduxDispatch: CalypsoDispatch
 ): void {
 	const renewalItem = getRenewalItems( responseCart )[ 0 ];
 	// group all purchases into an array
@@ -308,7 +311,9 @@ function displayRenewalSuccessNotice(
 					{
 						args: {
 							productName: renewalItem.product_name,
-							duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
+							duration: moment
+								.duration( { days: parseInt( renewalItem.bill_period, 10 ) } )
+								.humanize(),
 							email: product.user_email,
 						},
 						components: {
@@ -330,7 +335,9 @@ function displayRenewalSuccessNotice(
 				{
 					args: {
 						productName: renewalItem.product_name,
-						duration: moment.duration( { days: renewalItem.bill_period } ).humanize(),
+						duration: moment
+							.duration( { days: parseInt( renewalItem.bill_period, 10 ) } )
+							.humanize(),
 						date: moment( product.expiry ).format( 'LL' ),
 						email: product.user_email,
 					},
@@ -354,7 +361,7 @@ function recordPaymentCompleteAnalytics( {
 	redirectUrl: string;
 	responseCart: ResponseCart;
 	checkoutFlow?: string;
-	reduxDispatch: ReturnType< typeof useDispatch >;
+	reduxDispatch: CalypsoDispatch;
 } ) {
 	const wpcomPaymentMethod = paymentMethodId
 		? translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )

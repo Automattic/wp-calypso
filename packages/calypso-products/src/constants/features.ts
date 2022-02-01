@@ -56,7 +56,6 @@ export const FEATURE_AUDIO_UPLOADS = 'audio-upload';
 export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
 export const FEATURE_ADVANCED_SEO = 'advanced-seo';
-export const FEATURE_BUSINESS_ONBOARDING = 'business-onboarding';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 export const FEATURE_INSTALL_PLUGINS = 'install-plugins';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
@@ -87,6 +86,8 @@ export const PREMIUM_DESIGN_FOR_STORES = 'premium-design-for-stores';
 export const FEATURE_SFTP_DATABASE = 'sftp-and-database-access';
 export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
+export const FEATURE_WOOP = 'woop';
+export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';

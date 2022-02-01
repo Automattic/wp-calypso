@@ -3,7 +3,6 @@ import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import Badge from 'calypso/components/badge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -11,7 +10,6 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import {
 	areAllMailboxesValid,
@@ -19,7 +17,6 @@ import {
 	transformMailboxForCart,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 
 import './style.scss';
 
@@ -45,7 +42,6 @@ const ProfessionalEmailUpsell = ( {
 	setCartItem = noopWithCallback,
 } ) => {
 	const translate = useTranslate();
-	const productsList = useSelector( getProductsList );
 
 	const [ mailboxData, setMailboxData ] = useState( buildNewTitanMailbox( domainName, false ) );
 	const [ showAllErrors, setShowAllErrors ] = useState( false );
@@ -108,9 +104,7 @@ const ProfessionalEmailUpsell = ( {
 			},
 		} );
 
-		setCartItem( fillInSingleCartItemAttributes( cartItem, productsList ), () =>
-			handleClickAccept( 'accept' )
-		);
+		setCartItem( cartItem, () => handleClickAccept( 'accept' ) );
 	};
 
 	return (
@@ -147,7 +141,6 @@ const ProfessionalEmailUpsell = ( {
 						<FormLabel>
 							{ translate( 'Enter email address' ) }
 							<FormTextInputWithAffixes
-								placeholder={ translate( 'Email address' ) }
 								value={ mailboxData.mailbox.value }
 								isError={ hasMailboxError }
 								onChange={ ( event ) => {
@@ -169,7 +162,6 @@ const ProfessionalEmailUpsell = ( {
 							<FormPasswordInput
 								autoCapitalize="off"
 								autoCorrect="off"
-								placeholder={ translate( 'Password' ) }
 								value={ mailboxData.password.value }
 								maxLength={ 100 }
 								isError={ hasPasswordError }

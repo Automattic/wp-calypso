@@ -68,10 +68,7 @@ export class SupportComponent {
 		await Promise.all( [
 			// Waits for all placeholder CSS elements to be removed from the DOM.
 			this.waitForQueryComplete(),
-			// Waits for one of the network request (triggered by the opening of the popover) to complete.
-			this.page.waitForResponse(
-				( response ) => response.status() === 200 && response.url().includes( 'kayako/mine?' )
-			),
+			this.page.waitForSelector( selectors.supportPopoverButton ),
 			this.page.click( selectors.supportPopoverButton ),
 		] );
 
@@ -170,7 +167,10 @@ export class SupportComponent {
 	 * The target button is shown only for Article type results.
 	 */
 	async clickReadMore(): Promise< void > {
-		await this.page.click( selectors.readMoreButton );
+		await Promise.all( [
+			this.page.waitForSelector( selectors.supportArticlePlaceholder, { state: 'hidden' } ),
+			this.page.click( selectors.readMoreButton ),
+		] );
 	}
 
 	/**
@@ -179,14 +179,14 @@ export class SupportComponent {
 	 * @returns {Promise<Page>} Reference to support page.
 	 */
 	async visitArticle(): Promise< Page > {
-		// Wait for the placeholder to disappear from the Support article preview.
-		await this.page.waitForSelector( selectors.supportArticlePlaceholder, { state: 'hidden' } );
+		await this.page.waitForLoadState( 'networkidle' );
+		const visitArticleLocator = this.page.locator( selectors.visitArticleButton );
 
 		const browserContext = this.page.context();
 		// `Visit article` launches a new page.
 		const [ newPage ] = await Promise.all( [
 			browserContext.waitForEvent( 'page' ),
-			this.page.click( selectors.visitArticleButton ),
+			visitArticleLocator.click( { force: true } ),
 		] );
 		await newPage.waitForLoadState( 'domcontentloaded' );
 

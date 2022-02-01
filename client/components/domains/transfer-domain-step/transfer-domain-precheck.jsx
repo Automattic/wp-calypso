@@ -40,10 +40,12 @@ class TransferDomainPrecheck extends Component {
 		unlockCheckClicked: false,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		this.UNSAFE_componentWillReceiveProps( this.props );
+		this.UNSAFE_componentWillReceiveProps( this.props ); // @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Reset steps if domain became locked again
 		if ( false === nextProps.unlocked ) {

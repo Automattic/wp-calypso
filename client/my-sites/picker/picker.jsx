@@ -29,6 +29,7 @@ class SitePicker extends Component {
 		isRendered: this.props.currentLayoutFocus === 'sites',
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.currentLayoutFocus === 'sites' && ! this.state.isRendered ) {
 			this.setState( { isRendered: true } );

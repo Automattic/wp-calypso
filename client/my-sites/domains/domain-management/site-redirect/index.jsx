@@ -50,6 +50,7 @@ class SiteRedirect extends Component {
 		this.props.fetchSiteRedirect( this.props.selectedSite.domain );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.location.value !== nextProps.location.value ) {
 			this.setState( {

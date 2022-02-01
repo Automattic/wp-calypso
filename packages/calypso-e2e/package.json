@@ -1,10 +1,12 @@
 {
 	"name": "@automattic/calypso-e2e",
 	"version": "0.1.0",
-	"description": "Tools for e2e tests",
+	"description": "Tools for e2e tests.",
 	"main": "dist/esm/src/index.js",
 	"types": "dist/types/src/index.d.ts",
 	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
@@ -16,21 +18,28 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
+		"@types/totp-generator": "^0.0.3",
 		"config": "^3.3.6",
 		"mailosaur": "^7.3.1",
-		"playwright": "1.14.0"
+		"playwright": "1.16",
+		"totp-generator": "^0.0.12"
 	},
 	"devDependencies": {
-		"@automattic/calypso-eslint-overrides": "^1.0.0",
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"@types/config": "^0.0.40",
-		"@types/jest": "^27.0.2",
-		"@types/node": "^16.11.6",
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/languages": "workspace:^",
+		"@jest/globals": "^27.3.1",
+		"@types/config": "^0.0.41",
+		"@types/jest": "^27.4.0",
+		"@types/node": "^16.11.19",
+		"@types/node-fetch": "^2.5.12",
+		"@wordpress/i18n": "^4.2.4",
 		"asana-phrase": "^0.0.8",
-		"typescript": "^4.4.3"
+		"node-fetch": "^2.6.6",
+		"typescript": "^4.5.5"
 	},
 	"scripts": {
-		"clean": "yarn build --clean && npx rimraf dist",
+		"clean": "yarn build --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json",
 		"test": "yarn jest"
 	}

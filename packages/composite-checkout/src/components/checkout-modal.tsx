@@ -1,11 +1,10 @@
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import * as React from 'react';
 import joinClasses from '../lib/join-classes';
 import Button from './button';
+import type { MouseEvent } from 'react';
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
@@ -14,11 +13,12 @@ export default function CheckoutModal( {
 	title,
 	copy,
 	primaryAction,
+	secondaryAction,
 	cancelAction = noop,
 	closeModal,
 	isVisible,
-	buttonCTA,
-	cancelButtonCTA,
+	primaryButtonCTA,
+	secondaryButtonCTA,
 }: CheckoutModalProps ): JSX.Element | null {
 	const { __ } = useI18n();
 	useModalScreen( isVisible, closeModal );
@@ -27,14 +27,16 @@ export default function CheckoutModal( {
 		return null;
 	}
 
-	const titleId = `${ title.toLowerCase().replace( /[^a-z0-9_-]/g, '-' ) }-modal-title`;
+	const titleId = `${ String( title )
+		.toLowerCase()
+		.replace( /[^a-z0-9_-]/g, '-' ) }-modal-title`;
 
 	return (
 		<CheckoutModalWrapper
 			role="dialog"
 			aria-labelledby={ titleId }
 			className={ joinClasses( [ className, 'checkout-modal' ] ) }
-			onClick={ () => handleCancelAction( cancelAction, closeModal ) }
+			onClick={ () => handleActionAndClose( cancelAction, closeModal ) }
 		>
 			<CheckoutModalContent className="checkout-modal__content" onClick={ preventClose }>
 				<CheckoutModalTitle id={ titleId } className="checkout-modal__title">
@@ -43,16 +45,22 @@ export default function CheckoutModal( {
 				<CheckoutModalCopy className="checkout-modal__copy">{ copy }</CheckoutModalCopy>
 
 				<CheckoutModalActions>
-					<Button onClick={ () => handleCancelAction( cancelAction, closeModal ) }>
-						{ cancelButtonCTA || __( 'Cancel' ) }
-					</Button>
+					{ secondaryAction && secondaryButtonCTA && (
+						<Button
+							onClick={ () => {
+								handleActionAndClose( secondaryAction, closeModal );
+							} }
+						>
+							{ secondaryButtonCTA }
+						</Button>
+					) }
 					<Button
 						buttonType="primary"
 						onClick={ () => {
-							handlePrimaryAction( primaryAction, closeModal );
+							handleActionAndClose( primaryAction, closeModal );
 						} }
 					>
-						{ buttonCTA || __( 'Continue' ) }
+						{ primaryButtonCTA || __( 'Continue' ) }
 					</Button>
 				</CheckoutModalActions>
 			</CheckoutModalContent>
@@ -60,30 +68,19 @@ export default function CheckoutModal( {
 	);
 }
 
-CheckoutModal.propTypes = {
-	closeModal: PropTypes.func.isRequired,
-	title: PropTypes.string.isRequired,
-	copy: PropTypes.string.isRequired,
-	primaryAction: PropTypes.func.isRequired,
-	cancelAction: PropTypes.func,
-	isVisible: PropTypes.bool.isRequired,
-	className: PropTypes.string,
-	buttonCTA: PropTypes.string,
-	cancelButtonCTA: PropTypes.string,
-};
-
 type Callback = () => void;
 
 interface CheckoutModalProps {
 	closeModal: Callback;
-	title: string;
-	copy: string;
+	title: React.ReactNode;
+	copy: React.ReactNode;
 	primaryAction: Callback;
+	secondaryAction?: Callback;
 	cancelAction?: Callback;
 	isVisible: boolean;
 	className?: string;
-	buttonCTA?: string;
-	cancelButtonCTA?: string;
+	primaryButtonCTA?: React.ReactNode;
+	secondaryButtonCTA?: React.ReactNode;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -155,34 +152,22 @@ const CheckoutModalTitle = styled.h1`
 
 const CheckoutModalCopy = styled.p`
 	margin: 0;
+	color: ${ ( props ) => props.theme.colors.textColor };
 `;
 
 const CheckoutModalActions = styled.div`
 	display: flex;
 	justify-content: flex-end;
+	gap: 8px;
 	margin-top: 24px;
-
-	button:first-of-type {
-		margin-right: 8px;
-
-		.rtl & {
-			margin-right: 0;
-			margin-left: 8px;
-		}
-	}
 `;
 
-function handlePrimaryAction( primaryAction: Callback, closeModal: Callback ) {
-	primaryAction();
+function handleActionAndClose( action: Callback, closeModal: Callback ) {
+	action();
 	closeModal();
 }
 
-function handleCancelAction( cancelAction: Callback, closeModal: Callback ) {
-	cancelAction();
-	closeModal();
-}
-
-function preventClose( event: React.MouseEvent< HTMLDivElement, MouseEvent > ) {
+function preventClose( event: MouseEvent< HTMLDivElement > ) {
 	event.stopPropagation();
 }
 

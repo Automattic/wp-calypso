@@ -2,9 +2,9 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getMediaQueryList, isMobile, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -18,57 +18,52 @@ import PaginationControl from './pagination';
 
 import './style-tour.scss';
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
-const useEffectOnlyOnce = ( func ) => useEffect( func, [] );
-
 function WelcomeTourCard( {
 	cardContent,
-	currentCardIndex,
-	justMaximized,
-	lastCardIndex,
+	currentStepIndex,
+	lastStepIndex,
 	onMinimize,
 	onDismiss,
-	setJustMaximized,
-	setCurrentCardIndex,
-	onNextCardProgression,
-	onPreviousCardProgression,
+	setCurrentStepIndex,
+	onNextStepProgression,
+	onPreviousStepProgression,
 	isGutenboarding,
-	focusedOnLaunchRef,
+	setInitialFocusedElement,
 } ) {
-	const { description, heading, imgSrc } = cardContent;
-	const isLastCard = currentCardIndex === lastCardIndex;
+	const { descriptions, heading, imgSrc } = cardContent;
+	const isLastStep = currentStepIndex === lastStepIndex;
 
-	// Ensure tracking is recorded once per slide view
-	useEffectOnlyOnce( () => {
-		// Don't track slide view if returning from minimized state
-		if ( justMaximized ) {
-			setJustMaximized( false );
-			return;
-		}
-
-		recordTracksEvent( 'calypso_editor_wpcom_tour_slide_view', {
-			slide_number: currentCardIndex + 1,
-			is_last_slide: isLastCard,
-			slide_heading: heading,
-			is_gutenboarding: isGutenboarding,
-		} );
-	} );
+	const description = descriptions[ isMobile() ? 'mobile' : 'desktop' ] ?? descriptions.desktop;
 
 	return (
 		<Card className="welcome-tour-card" isElevated>
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
-			<CardMedia>
-				<img alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) } src={ imgSrc } />
+			{ /* TODO: Update selector for images in @wordpress/components/src/card/styles/card-styles.js */ }
+			<CardMedia className={ 'welcome-tour-card__media' }>
+				<picture>
+					{ imgSrc.mobile && (
+						<source
+							srcSet={ imgSrc.mobile.src }
+							type={ imgSrc.mobile.type }
+							media={ getMediaQueryList( MOBILE_BREAKPOINT )?.media }
+						/>
+					) }
+					<img
+						alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) }
+						src={ imgSrc.desktop?.src }
+					/>
+				</picture>
 			</CardMedia>
 			<CardBody>
 				<h2 className="welcome-tour-card__heading">{ heading }</h2>
 				<p className="welcome-tour-card__description">
 					{ description }
-					{ isLastCard ? (
+					{ isLastStep ? (
 						<Button
 							className="welcome-tour-card__description"
 							isTertiary
-							onClick={ () => setCurrentCardIndex( 0 ) }
+							onClick={ () => setCurrentStepIndex( 0 ) }
+							ref={ setInitialFocusedElement }
 						>
 							{ __( 'Restart tour', 'full-site-editing' ) }
 						</Button>
@@ -76,17 +71,17 @@ function WelcomeTourCard( {
 				</p>
 			</CardBody>
 			<CardFooter>
-				{ isLastCard ? (
+				{ isLastStep ? (
 					<TourRating isGutenboarding={ isGutenboarding }></TourRating>
 				) : (
 					<CardNavigation
-						currentCardIndex={ currentCardIndex }
-						lastCardIndex={ lastCardIndex }
+						currentStepIndex={ currentStepIndex }
+						lastStepIndex={ lastStepIndex }
 						onDismiss={ onDismiss }
-						setCurrentCardIndex={ setCurrentCardIndex }
-						onNextCardProgression={ onNextCardProgression }
-						onPreviousCardProgression={ onPreviousCardProgression }
-						focusedOnLaunchRef={ focusedOnLaunchRef }
+						setCurrentStepIndex={ setCurrentStepIndex }
+						onNextStepProgression={ onNextStepProgression }
+						onPreviousStepProgression={ onPreviousStepProgression }
+						setInitialFocusedElement={ setInitialFocusedElement }
 					></CardNavigation>
 				) }
 			</CardFooter>
@@ -95,13 +90,13 @@ function WelcomeTourCard( {
 }
 
 function CardNavigation( {
-	currentCardIndex,
-	lastCardIndex,
+	currentStepIndex,
+	lastStepIndex,
 	onDismiss,
-	setCurrentCardIndex,
-	onNextCardProgression,
-	onPreviousCardProgression,
-	focusedOnLaunchRef,
+	setCurrentStepIndex,
+	onNextStepProgression,
+	onPreviousStepProgression,
+	setInitialFocusedElement,
 } ) {
 	// These are defined on their own lines because of a minification issue.
 	// __('translations') do not always work correctly when used inside of ternary statements.
@@ -111,17 +106,17 @@ function CardNavigation( {
 	return (
 		<>
 			<PaginationControl
-				currentPage={ currentCardIndex }
-				numberOfPages={ lastCardIndex + 1 }
-				setCurrentPage={ setCurrentCardIndex }
+				currentPage={ currentStepIndex }
+				numberOfPages={ lastStepIndex + 1 }
+				setCurrentPage={ setCurrentStepIndex }
 			/>
 			<div>
-				{ currentCardIndex === 0 ? (
+				{ currentStepIndex === 0 ? (
 					<Button isTertiary={ true } onClick={ onDismiss( 'no-thanks-btn' ) }>
 						{ __( 'Skip', 'full-site-editing' ) }
 					</Button>
 				) : (
-					<Button isTertiary={ true } onClick={ onPreviousCardProgression }>
+					<Button isTertiary={ true } onClick={ onPreviousStepProgression }>
 						{ __( 'Back', 'full-site-editing' ) }
 					</Button>
 				) }
@@ -129,10 +124,10 @@ function CardNavigation( {
 				<Button
 					className="welcome-tour-card__next-btn"
 					isPrimary={ true }
-					onClick={ onNextCardProgression }
-					ref={ focusedOnLaunchRef }
+					onClick={ onNextStepProgression }
+					ref={ setInitialFocusedElement }
 				>
-					{ currentCardIndex === 0 ? startTourLabel : nextLabel }
+					{ currentStepIndex === 0 ? startTourLabel : nextLabel }
 				</Button>
 			</div>
 		</>
@@ -140,10 +135,8 @@ function CardNavigation( {
 }
 
 function CardOverlayControls( { onMinimize, onDismiss } ) {
-	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls' );
-
 	return (
-		<div className={ buttonClasses }>
+		<div className="welcome-tour-card__overlay-controls">
 			<Flex>
 				<Button
 					label={ __( 'Minimize Tour', 'full-site-editing' ) }

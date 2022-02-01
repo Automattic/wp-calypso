@@ -2,7 +2,7 @@
 	"name": "@automattic/webpack-inline-constant-exports-plugin",
 	"version": "1.0.0",
 	"author": "Automattic Inc.",
-	"description": "Webpack plugin to inline constant exports from modules",
+	"description": "Webpack plugin to inline constant exports from modules.",
 	"license": "GPL-2.0-or-later",
 	"keywords": [
 		"webpack"
@@ -16,18 +16,15 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/webpack-inline-constant-exports-plugin"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
-	"scripts": {},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"peerDependencies": {
-		"webpack": "^5.54.0"
+		"webpack": "^5.65.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-eslint-overrides": "^1.0.0",
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"rimraf": "^3.0.0",
-		"webpack": "^5.54.0"
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"rimraf": "^3.0.2",
+		"webpack": "^5.65.0"
 	},
 	"files": [
 		"index.js"

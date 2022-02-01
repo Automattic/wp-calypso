@@ -1,6 +1,10 @@
 import type { ITEM_TYPE_PLAN, ITEM_TYPE_PRODUCT } from './constants';
 import type { PlanRecommendation } from './plan-upgrade/types';
-import type { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
+import type {
+	TERM_ANNUALLY,
+	TERM_MONTHLY,
+	JetpackProductCategory,
+} from '@automattic/calypso-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode, ReactElement } from 'react';
@@ -35,6 +39,7 @@ export interface SelectorPageProps extends BasePageProps {
 	siteSlug?: string;
 	planRecommendation?: PlanRecommendation;
 	highlightedProducts?: string[];
+	enableUserLicensesDialog?: boolean;
 }
 
 export interface ProductsGridProps {
@@ -81,13 +86,8 @@ export type SelectorProductFeaturesItem = {
 	isDifferentiator?: boolean;
 };
 
-export type SelectorProductFeaturesSection = {
-	heading: TranslateResult;
-	list: SelectorProductFeaturesItem[];
-};
-
 export type SelectorProductFeatures = {
-	items: SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[];
+	items: SelectorProductFeaturesItem[];
 };
 
 export interface SelectorProduct extends SelectorProductCost {
@@ -116,6 +116,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	displayCurrency?: string;
 	displayFrom?: boolean;
 	belowPriceText?: TranslateResult;
+	categories?: JetpackProductCategory[];
 }
 
 export type SiteProduct = {

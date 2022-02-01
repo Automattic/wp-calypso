@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -220,18 +219,9 @@ class DomainRegistrationSuggestion extends Component {
 		const {
 			showHstsNotice,
 			suggestion: { domain_name: domain },
-			translate,
 		} = this.props;
 
-		let isAvailable = false;
-
-		//If we're on the Mapping or Transfer pages, add a note about availability
-		if ( includes( page.current, '/mapping' ) || includes( page.current, '/transfer' ) ) {
-			isAvailable = true;
-		}
-
-		let title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
-		title = this.renderDomainParts( domain );
+		const title = this.renderDomainParts( domain );
 
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain':

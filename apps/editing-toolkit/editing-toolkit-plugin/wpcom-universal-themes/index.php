@@ -26,19 +26,48 @@ function is_core_fse_active() {
 		return false;
 	}
 
-	// Now we just check for our own option.
-	return (bool) get_option( ACTIVATE_FSE_OPTION_NAME );
+	if ( is_universal_theme() ) {
+		return (bool) get_option( ACTIVATE_FSE_OPTION_NAME );
+	}
+
+	// Universal themes can use the customizer to customize the site, regardless of whether or
+	// not the full site editor is activated. Block themes, however, don't have access to the
+	// customizer. If the site editor is disabled for them, it will severely limit site
+	// customizability. Because of this we always activate FSE for block themes.
+	return true;
 }
 
 /**
- * Proxy for `gutenberg_is_fse_theme` with `function_exists` guarding.
+ * Proxy for `gutenberg_is_fse_theme` or `wp_is_block_theme` with `function_exists` guarding.
  *
  * @uses gutenberg_is_fse_theme
+ * @uses wp_is_block_theme
  *
  * @return boolean
  */
 function is_fse_theme() {
-	return function_exists( 'gutenberg_is_fse_theme' ) && gutenberg_is_fse_theme();
+	// Gutenberg check, prior to WP 5.9.
+	if ( function_exists( 'gutenberg_is_fse_theme' ) ) {
+		return gutenberg_is_fse_theme();
+	}
+
+	// Core check, added in WP 5.9.
+	if ( function_exists( 'wp_is_block_theme' ) ) {
+		return wp_is_block_theme();
+	}
+
+	return false;
+}
+
+/**
+ * To identify universal themes, we assume that child themes will
+ * all use blockbase as their default theme template. This
+ * function checks if the current template is a blockbase template.
+ *
+ * @return boolean
+ */
+function is_universal_theme() {
+	return 'blockbase' === basename( get_template() );
 }
 
 /**
@@ -70,11 +99,11 @@ function load_core_fse() {
 	add_action( 'admin_menu', 'gutenberg_site_editor_menu', 9 );
 	add_action( 'admin_menu', 'gutenberg_remove_legacy_pages' );
 	add_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
-	add_filter( 'menu_order', 'gutenberg_menu_order' );
 	remove_action( 'init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_template_editing', 11 );
+	remove_action( 'admin_menu', __NAMESPACE__ . '\hide_core_site_editor' );
 }
 
 /**
@@ -87,7 +116,6 @@ function unload_core_fse() {
 	remove_action( 'admin_menu', 'gutenberg_site_editor_menu', 9 );
 	remove_action( 'admin_menu', 'gutenberg_remove_legacy_pages' );
 	remove_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
-	remove_filter( 'menu_order', 'gutenberg_menu_order' );
 	if ( defined( 'REST_API_REQUEST' ) && true === REST_API_REQUEST ) {
 		// Do not hook to init during the REST API requests, as it causes PHP warnings
 		// while loading the alloptions (unable to access wp_0_ prefixed tables).
@@ -98,6 +126,7 @@ function unload_core_fse() {
 	}
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_template_editing', 11 );
+	add_action( 'admin_menu', __NAMESPACE__ . '\hide_core_site_editor' );
 }
 
 /**
@@ -113,8 +142,13 @@ function load_helpers() {
 	if ( apply_filters( 'a8c_hide_core_fse_activation', false ) ) {
 		return;
 	}
+	// This menu toggles site editor visibility for universal themes.
+	// It's unnecessary for block themes because the site editor
+	// will always be visible.
+	if ( is_universal_theme() ) {
+		add_action( 'admin_menu', __NAMESPACE__ . '\add_submenu' );
+	}
 	add_action( 'admin_notices', __NAMESPACE__ . '\theme_nag' );
-	add_action( 'admin_menu', __NAMESPACE__ . '\add_submenu' );
 	add_action( 'admin_init', __NAMESPACE__ . '\init_settings' );
 }
 
@@ -135,14 +169,14 @@ function unload_helpers() {
  * @return void
  */
 function add_submenu() {
-	add_theme_page(
-		__( 'Site Editor (beta)', 'full-site-editing' ),
+	add_options_page(
+		__( 'Full Site Editing (beta)', 'full-site-editing' ),
 		sprintf(
 		/* translators: %s: "beta" label. */
-			__( 'Site Editor %s', 'full-site-editing' ),
+			__( 'Full Site Editing %s', 'full-site-editing' ),
 			'<span class="awaiting-mod">' . esc_html__( 'beta', 'full-site-editing' ) . '</span>'
 		),
-		'edit_theme_options',
+		'manage_options',
 		'site-editor-toggle',
 		__NAMESPACE__ . '\menu_page'
 	);
@@ -243,7 +277,7 @@ function menu_page() {
 		id="site-editor-toggle"
 		class="wrap"
 	>
-	<h1><?php esc_html_e( 'Site Editor (beta)', 'full-site-editing' ); ?></h1>
+	<h1><?php esc_html_e( 'Full Site Editing (beta)', 'full-site-editing' ); ?></h1>
 	<?php settings_errors(); ?>
 	<form method="post" action="options.php">
 		<?php settings_fields( 'site-editor-toggle' ); ?>
@@ -315,6 +349,15 @@ function display_fse_section() {
 		'<p>%s</p>',
 		esc_html__( 'The Site Editor is an exciting new direction for WordPress themes! Blocks are now the foundation of your whole site and everything is editable.', 'full-site-editing' )
 	);
+}
+
+/**
+ * Hide the Core Site Editor (in addition to the Gutenberg one) when unloading Core FSE.
+ *
+ * @return void
+ */
+function hide_core_site_editor() {
+	remove_submenu_page( 'themes.php', 'site-editor.php' );
 }
 
 /**

@@ -1,6 +1,5 @@
 import { getPlan, getPlanClass } from '@automattic/calypso-products';
 import { ProductIcon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -33,15 +32,6 @@ class PlanThankYouCard extends Component {
 		return translate( '%(planName)s Plan', {
 			args: { planName: getPlan( plan.productSlug ).getTitle() },
 		} );
-	}
-
-	renderPlanPrice() {
-		const { plan } = this.props;
-		if ( ! plan || ! plan.rawPrice || ! plan.currencyCode ) {
-			return '';
-		}
-
-		return formatCurrency( plan.rawPrice, plan.currencyCode );
 	}
 
 	renderPlanIcon() {
@@ -109,7 +99,6 @@ class PlanThankYouCard extends Component {
 
 				<ThankYouCard
 					name={ this.renderPlanName() }
-					price={ this.renderPlanPrice() }
 					heading={ this.renderHeading() }
 					description={ 'string' === typeof description ? description : null }
 					descriptionWithHTML={ 'object' === typeof description ? description : null }

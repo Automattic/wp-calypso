@@ -117,4 +117,5 @@ const TermOptionsItem = styled.li`
 
 const VariantLabel = styled.span`
 	flex: 1;
+	display: flex;
 `;

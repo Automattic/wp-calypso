@@ -6,14 +6,18 @@ import {
 } from '@automattic/composite-checkout';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCreditCard, saveCreditCard } from './stored-payment-method-api';
-import type { StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
+import type {
+	StripeSetupIntentId,
+	StripeConfiguration,
+	StripeSetupIntent,
+} from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 const wpcomAssignPaymentMethod = (
 	subscriptionId: string,
@@ -41,6 +45,7 @@ export async function assignNewCardProcessor(
 		translate,
 		stripe,
 		stripeConfiguration,
+		stripeSetupIntentId,
 		cardNumberElement,
 		reduxDispatch,
 		eventSource,
@@ -49,17 +54,18 @@ export async function assignNewCardProcessor(
 		translate: ReturnType< typeof useTranslate >;
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
+		stripeSetupIntentId: StripeSetupIntentId | undefined;
 		cardNumberElement: StripeCardNumberElement | undefined;
-		reduxDispatch: ReturnType< typeof useDispatch >;
+		reduxDispatch: CalypsoDispatch;
 		eventSource?: string;
 	},
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
 	try {
 		if ( ! isNewCardDataValid( submitData ) ) {
-			throw new Error( 'Credit Card data is missing name, country, or postal code' );
+			throw new Error( 'Credit Card data is missing country' );
 		}
-		if ( ! stripe || ! stripeConfiguration ) {
+		if ( ! stripe || ! stripeConfiguration || ! stripeSetupIntentId ) {
 			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
 		}
 		if ( ! cardNumberElement ) {
@@ -68,27 +74,28 @@ export async function assignNewCardProcessor(
 
 		const { name, countryCode, postalCode, useForAllSubscriptions } = submitData;
 
-		recordFormSubmitEvent( {
-			reduxDispatch,
-			purchase,
-			useForAllSubscriptions,
-		} );
+		reduxDispatch( recordFormSubmitEvent( { purchase, useForAllSubscriptions } ) );
 
 		const formFieldValues = {
 			country: countryCode,
-			postal_code: postalCode,
-			name,
+			postal_code: postalCode ?? '',
+			name: name ?? '',
 		};
 		const tokenResponse = await createStripeSetupIntentAsync(
 			formFieldValues,
 			stripe,
 			cardNumberElement,
-			stripeConfiguration
+			stripeSetupIntentId
 		);
 		const token = tokenResponse.payment_method;
 		if ( ! token ) {
 			throw new Error( String( translate( 'Failed to add card.' ) ) );
 		}
+
+		// If we've reached this point in the code and anything after this fails,
+		// we must regenerate the payment intent, which is done by calling `reload`
+		// as returned by `useStripeSetupIntentId` from
+		// `@automattic/calypso-stripe`.
 
 		if ( purchase ) {
 			const result = await updateCreditCard( {
@@ -127,7 +134,7 @@ async function createStripeSetupIntentAsync(
 	},
 	stripe: Stripe,
 	cardNumberElement: StripeCardNumberElement,
-	stripeConfiguration: StripeConfiguration
+	setupIntentId: StripeSetupIntentId
 ): Promise< StripeSetupIntent > {
 	const paymentDetailsForStripe = {
 		name,
@@ -139,29 +146,29 @@ async function createStripeSetupIntentAsync(
 	return createStripeSetupIntent(
 		stripe,
 		cardNumberElement,
-		stripeConfiguration,
+		setupIntentId,
 		paymentDetailsForStripe
 	);
 }
 
 function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
 	const newCardData = data as NewCardSubmitData;
-	return !! ( newCardData.name && newCardData.countryCode && newCardData.postalCode );
+	return !! newCardData.countryCode;
 }
 
 interface NewCardSubmitData {
-	name: string;
+	name?: string;
 	countryCode: string;
-	postalCode: string;
+	postalCode?: string;
 	useForAllSubscriptions: boolean;
 }
 
 export async function assignExistingCardProcessor(
 	purchase: Purchase | undefined,
-	reduxDispatch: ReturnType< typeof useDispatch >,
+	reduxDispatch: CalypsoDispatch,
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
-	recordFormSubmitEvent( { reduxDispatch, purchase } );
+	reduxDispatch( recordFormSubmitEvent( { purchase } ) );
 	try {
 		if ( ! isValidExistingCardData( submitData ) ) {
 			throw new Error( 'Credit card data is missing stored details id' );
@@ -189,12 +196,12 @@ interface ExistingCardSubmitData {
 
 export async function assignPayPalProcessor(
 	purchase: Purchase | undefined,
-	reduxDispatch: ReturnType< typeof useDispatch >
+	reduxDispatch: CalypsoDispatch
 ): Promise< PaymentProcessorResponse > {
 	if ( ! purchase ) {
 		throw new Error( 'Cannot assign PayPal payment method without a purchase' );
 	}
-	recordFormSubmitEvent( { reduxDispatch, purchase } );
+	reduxDispatch( recordFormSubmitEvent( { purchase } ) );
 	return wpcomCreatePayPalAgreement(
 		String( purchase.id ),
 		addQueryArgs( window.location.href, { success: 'true' } ),
@@ -207,22 +214,18 @@ export async function assignPayPalProcessor(
 }
 
 function recordFormSubmitEvent( {
-	reduxDispatch,
 	purchase,
 	useForAllSubscriptions,
 }: {
-	reduxDispatch: ReturnType< typeof useDispatch >;
-	purchase?: Purchase | undefined;
+	purchase?: Purchase;
 	useForAllSubscriptions?: boolean;
 } ) {
-	reduxDispatch(
-		purchase?.productSlug
-			? recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
-					product_slug: purchase.productSlug,
-					use_for_all_subs: String( useForAllSubscriptions ),
-			  } )
-			: recordTracksEvent( 'calypso_add_credit_card_form_submit', {
-					use_for_all_subs: String( useForAllSubscriptions ),
-			  } )
-	);
+	return purchase?.productSlug
+		? recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
+				product_slug: purchase.productSlug,
+				use_for_all_subs: String( useForAllSubscriptions ),
+		  } )
+		: recordTracksEvent( 'calypso_add_credit_card_form_submit', {
+				use_for_all_subs: String( useForAllSubscriptions ),
+		  } );
 }

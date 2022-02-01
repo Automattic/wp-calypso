@@ -28,7 +28,7 @@ const object = {
 	stepName: 'theme-selection', // required
 	apiRequestFunction: function ( callback ) {
 		// optional
-		wpcom.undocumented().someRequest( function ( errors, response ) {
+		wpcom.req.post( '/some-endpoint', function ( errors, response ) {
 			callback( errors, { userId: response.userId } );
 		} );
 	},

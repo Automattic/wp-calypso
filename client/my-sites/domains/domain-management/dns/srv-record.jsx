@@ -38,10 +38,10 @@ class SrvRecord extends Component {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{ translate( 'Name (optional)', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
-						placeholder={ translate( 'Enter subdomain (optional)', {
+						placeholder={ translate( 'Enter subdomain', {
 							context:
 								'Placeholder shown when entering the optional subdomain part of a new DNS record',
 						} ) }
@@ -77,13 +77,7 @@ class SrvRecord extends Component {
 
 				<FormFieldset>
 					<FormLabel>{ translate( 'Priority', { context: 'Dns Record' } ) }</FormLabel>
-					<FormTextInput
-						name="aux"
-						isError={ ! isAuxValid }
-						onChange={ onChange }
-						value={ aux }
-						defaultValue="10"
-					/>
+					<FormTextInput name="aux" isError={ ! isAuxValid } onChange={ onChange } value={ aux } />
 					{ ! isAuxValid && (
 						<FormInputValidation text={ translate( 'Invalid Priority' ) } isError />
 					) }
@@ -96,7 +90,6 @@ class SrvRecord extends Component {
 						isError={ ! isWeightValid }
 						onChange={ onChange }
 						value={ weight }
-						defaultValue="10"
 					/>
 					{ ! isWeightValid && (
 						<FormInputValidation text={ translate( 'Invalid Weight' ) } isError />

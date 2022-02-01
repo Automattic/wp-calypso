@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/components",
 	"version": "1.0.0-alpha.4",
-	"description": "Automattic Components",
+	"description": "Automattic Components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -20,19 +20,17 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"dist",
 		"src"
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@babel/runtime": "^7.15.3",
+		"@wordpress/base-styles": "^4.0.4",
 		"classnames": "^2.3.1",
 		"gridicons": "^3.4.0",
-		"i18n-calypso": "^5.0.0",
+		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
 		"prop-types": "^15.7.2",
 		"react-modal": "^3.14.3",
@@ -43,19 +41,16 @@
 		"react-dom": "^17.0.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"@storybook/addon-actions": "^6.3.11",
-		"@storybook/preset-scss": "^1.0.3",
-		"css-loader": "^3.4.2",
-		"enzyme": "^3.11.0",
-		"sass-loader": "^10.1.1",
-		"style-loader": "^1.2.1",
-		"typescript": "^4.4.3",
-		"webpack": "^5.54.0"
+		"@automattic/calypso-color-schemes": "workspace:^",
+		"@automattic/calypso-storybook": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/react": "^6.4.9",
+		"typescript": "^4.5.5"
 	},
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
-		"prepack": "yarn run clean && yarn run build"
+		"prepack": "yarn run clean && yarn run build",
+		"storybook": "start-storybook"
 	}
 }

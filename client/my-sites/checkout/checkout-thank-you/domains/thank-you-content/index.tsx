@@ -4,15 +4,15 @@ import { getTitanEmailUrl } from 'calypso/lib/titan';
 import DomainMappingProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-mapping';
 import DomainRegistrationThankYouProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-registration';
 import DomainTransferProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-transfer';
-import {
-	DomainThankYouParams,
-	DomainThankYouProps,
-	DomainThankYouPropsGetter,
-	DomainThankYouType,
-} from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
+import type { ThankYouNextStepProps } from 'calypso/components/thank-you/types';
+import type {
+	DomainThankYouParams,
+	DomainThankYouPropsGetter,
+	DomainThankYouType,
+} from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 
 const thankYouContentGetter: Record< DomainThankYouType, DomainThankYouPropsGetter > = {
 	MAPPING: DomainMappingProps,
@@ -35,7 +35,7 @@ export function buildDomainStepForProfessionalEmail(
 	}: DomainThankYouParams,
 	domainType: DomainThankYouType,
 	primary: boolean
-): DomainThankYouProps {
+): ThankYouNextStepProps | null {
 	if ( hideProfessionalEmailStep ) {
 		return null;
 	}
@@ -54,7 +54,7 @@ export function buildDomainStepForProfessionalEmail(
 			),
 			stepCta: (
 				<FullWidthButton
-					href={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain ) }
+					href={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug ?? domain, domain ) }
 					className={ `domain-${ domainType }__thank-you-button domain-thank-you__button` }
 					primary={ primary }
 					busy={ false }

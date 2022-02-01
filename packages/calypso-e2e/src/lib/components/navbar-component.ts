@@ -3,7 +3,7 @@ import { Page } from 'playwright';
 const selectors = {
 	// Buttons on navbar
 	mySiteButton: '[data-tip-target="my-sites"]',
-	writeButton: '*css=a >> text=Write',
+	writeButton: '.masterbar__item-new',
 	notificationsButton: 'a[href="/notifications"]',
 	meButton: 'a[data-tip-target="me"]',
 };

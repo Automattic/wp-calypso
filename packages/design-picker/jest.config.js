@@ -4,7 +4,6 @@ module.exports = {
 	testMatch: [ '<rootDir>/**/__tests__/**/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	setupFilesAfterEnv: [
 		'@testing-library/jest-dom/extend-expect',
-		'jest-canvas-mock',
 		'@automattic/calypso-build/jest/mocks/match-media',
 	],
 };

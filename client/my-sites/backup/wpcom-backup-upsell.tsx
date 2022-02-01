@@ -14,10 +14,6 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import {
-	getForCurrentCROIteration,
-	Iterations,
-} from 'calypso/my-sites/plans/jetpack-plans/iterations';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -79,43 +75,6 @@ const BackupUpsellBody: FunctionComponent = () => {
 	const translate = useTranslate();
 	const postCheckoutUrl = window.location.pathname + window.location.search;
 
-	const upsellButtons = getForCurrentCROIteration( {
-		[ Iterations.ONLY_REALTIME_PRODUCTS ]: (
-			<Button
-				className="backup__wpcom-cta"
-				href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_t1_yearly`, {
-					redirect_to: postCheckoutUrl,
-				} ) }
-				onClick={ onUpgradeClick }
-				primary
-			>
-				{ translate( 'Get backups' ) }
-			</Button>
-		),
-	} ) ?? (
-		<>
-			<Button
-				className="backup__wpcom-cta backup__wpcom-realtime-cta"
-				href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_realtime`, {
-					redirect_to: postCheckoutUrl,
-				} ) }
-				onClick={ onUpgradeClick }
-				primary
-			>
-				{ translate( 'Get real-time backups' ) }
-			</Button>
-			<Button
-				className="backup__wpcom-cta backup__wpcom-daily-cta"
-				href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_daily`, {
-					redirect_to: postCheckoutUrl,
-				} ) }
-				onClick={ onUpgradeClick }
-			>
-				{ translate( 'Get daily backups' ) }
-			</Button>
-		</>
-	);
-
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'Get time travel for your site with Jetpack Backup' ) ) }
@@ -138,7 +97,20 @@ const BackupUpsellBody: FunctionComponent = () => {
 				/>
 			) }
 
-			{ isAdmin && <div className="backup__wpcom-ctas">{ upsellButtons }</div> }
+			{ isAdmin && (
+				<div className="backup__wpcom-ctas">
+					<Button
+						className="backup__wpcom-cta"
+						href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_t1_yearly`, {
+							redirect_to: postCheckoutUrl,
+						} ) }
+						onClick={ onUpgradeClick }
+						primary
+					>
+						{ translate( 'Get backups' ) }
+					</Button>
+				</div>
+			) }
 		</PromoCard>
 	);
 };

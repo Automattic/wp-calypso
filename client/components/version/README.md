@@ -5,13 +5,10 @@ Version is a React component for rendering a version number
 ## Usage
 
 ```jsx
-import React from 'react';
 import Version from 'calypso/components/version';
 
-class MyComponent extends React.Component {
-	render() {
-		return <Version version={ 123 } icon="plugins" />;
-	}
+function MyComponent() {
+	return <Version version={ 123 } icon="plugins" />;
 }
 ```
 

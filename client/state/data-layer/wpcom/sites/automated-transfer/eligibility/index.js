@@ -61,7 +61,8 @@ export const eligibilityHoldsFromApi = ( { errors = [] }, options = {} ) =>
 const eligibilityWarningsFromApi = ( { warnings = {} } ) =>
 	Object.keys( warnings )
 		.reduce( ( list, type ) => list.concat( warnings[ type ] ), [] ) // combine plugin and theme warnings into one list
-		.map( ( { description, name, support_url } ) => ( {
+		.map( ( { description, name, support_url, id } ) => ( {
+			id,
 			name,
 			description,
 			supportUrl: support_url,

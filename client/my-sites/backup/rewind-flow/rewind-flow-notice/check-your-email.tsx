@@ -1,9 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import Notice, { RewindFlowNoticeLevel } from './index';
+import type { TranslateResult } from 'i18n-calypso';
 
 interface Props {
-	message: i18nCalypso.TranslateResult;
+	message: TranslateResult;
 }
 
 const RewindFlowCheckYourEmail: FunctionComponent< Props > = ( { message } ) => {

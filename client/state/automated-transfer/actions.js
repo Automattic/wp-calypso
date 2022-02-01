@@ -3,6 +3,7 @@ import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
 	AUTOMATED_TRANSFER_STATUS_REQUEST,
+	AUTOMATED_TRANSFER_STATUS_REQUEST_ONCE,
 	AUTOMATED_TRANSFER_STATUS_SET,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
@@ -40,6 +41,11 @@ export const fetchAutomatedTransferStatus = ( siteId ) => ( {
 	siteId,
 } );
 
+export const fetchAutomatedTransferStatusOnce = ( siteId ) => ( {
+	type: AUTOMATED_TRANSFER_STATUS_REQUEST_ONCE,
+	siteId,
+} );
+
 /**
  * Sets the status of an automated transfer for a particular site.
  *
@@ -48,7 +54,6 @@ export const fetchAutomatedTransferStatus = ( siteId ) => ( {
  * current status.
  *
  * @see state/automated-transfer/constants#transferStates
- *
  * @param {number} siteId The site id to which the status belongs
  * @param {string} status The new status of the automated transfer
  * @param {string} uploadedPluginId Id of any uploaded plugin
@@ -91,7 +96,6 @@ export const requestEligibility = ( siteId ) => ( {
  * Merges given eligibility information into the app state
  *
  * @see state/automated-transfer/eligibility/reducer
- *
  * @param {number} siteId Site to which the information belongs
  * @param {object} param eligibility information to be merged into existing state
  * @param {object} param.eligibilityHolds The holds for eligibility

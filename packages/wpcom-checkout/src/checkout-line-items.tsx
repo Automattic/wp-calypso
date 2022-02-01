@@ -1,5 +1,4 @@
 import {
-	TITAN_MAIL_MONTHLY_SLUG,
 	isDomainRegistration,
 	isPlan,
 	isMonthlyProduct,
@@ -12,14 +11,9 @@ import {
 	isGSuiteOrExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackProductSlug,
+	isTitanMail,
 } from '@automattic/calypso-products';
-import {
-	CheckoutModal,
-	FormStatus,
-	useFormStatus,
-	useEvents,
-	Button,
-} from '@automattic/composite-checkout';
+import { CheckoutModal, FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -29,9 +23,11 @@ import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
 import type {
+	GSuiteProductUser,
 	ResponseCart,
 	RemoveProductFromCart,
 	ResponseCartProduct,
+	TitanProductUser,
 } from '@automattic/shopping-cart';
 
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
@@ -79,30 +75,32 @@ export const LineItem = styled( WPLineItem )< {
 
 const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
-	display: flex;
 	font-size: 14px;
-	justify-content: space-between;
 	width: 100%;
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.success };
-	text-align: right;
+	display: block;
+	margin: 2px 0;
+`;
 
-	.rtl & {
-		text-align: left;
-	}
+const NotApplicableCallout = styled.div< { theme?: Theme } >`
+	color: ${ ( props ) => props.theme.colors.textColorLight };
+	display: block;
+	margin: 2px 0;
+	font-size: 12px;
 `;
 
 const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	flex: 1;
 	word-break: break-word;
-	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
+	font-size: 16px;
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
-	font-size: ${ ( { isSummary } ) => ( isSummary ? '14px' : '16px' ) };
+	font-size: 16px;
 
 	.rtl & {
 		margin-right: 12px;
@@ -217,9 +215,13 @@ function WPNonProductLineItem( {
 						closeModal={ () => {
 							setIsModalVisible( false );
 						} }
+						secondaryAction={ () => {
+							setIsModalVisible( false );
+						} }
 						primaryAction={ () => {
 							removeProductFromCart();
 						} }
+						secondaryButtonCTA={ String( 'Cancel' ) }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
 					/>
@@ -230,53 +232,72 @@ function WPNonProductLineItem( {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-function GSuiteUsersList( { product }: { product: ResponseCartProduct } ) {
-	const users = product.extra?.google_apps_users ?? [];
-	return (
-		<>
-			{ users.map( ( user, index ) => {
-				return (
-					<LineItemMeta key={ user.email }>
-						<div key={ user.email }>{ user.email }</div>
-						{ index === 0 && <GSuiteDiscountCallout product={ product } /> }
-					</LineItemMeta>
-				);
-			} ) }
-		</>
-	);
-}
-
-function TitanMailMeta( {
+function EmailMeta( {
 	product,
 	isRenewal,
 }: {
 	product: ResponseCartProduct;
 	isRenewal: boolean;
-} ) {
+} ): JSX.Element | null {
 	const translate = useTranslate();
-	const quantity = product.extra?.new_quantity ?? 1;
-	const domainName = product.meta;
-	const translateArgs = {
-		args: {
-			numberOfMailboxes: quantity,
-			domainName,
-		},
-		count: quantity,
-	};
+
+	if ( isRenewal ) {
+		let numberOfMailboxes = null;
+
+		if ( isGSuiteOrExtraLicenseProductSlug( product.product_slug ) ) {
+			numberOfMailboxes = product.volume ?? null;
+		}
+
+		if ( isGoogleWorkspaceProductSlug( product.product_slug ) || isTitanMail( product ) ) {
+			numberOfMailboxes = product.current_quantity ?? null;
+		}
+
+		if ( numberOfMailboxes === null ) {
+			return null;
+		}
+
+		return (
+			<LineItemMeta>
+				{ translate(
+					'%(numberOfMailboxes)d mailbox for %(domainName)s',
+					'%(numberOfMailboxes)d mailboxes for %(domainName)s',
+					{
+						args: {
+							numberOfMailboxes,
+							domainName: product.meta,
+						},
+						count: numberOfMailboxes,
+					}
+				) }
+			</LineItemMeta>
+		);
+	}
+
+	let mailboxes: GSuiteProductUser[] | TitanProductUser[] | [  ] = [];
+
+	if (
+		isGoogleWorkspaceProductSlug( product.product_slug ) ||
+		isGSuiteOrExtraLicenseProductSlug( product.product_slug )
+	) {
+		mailboxes = product.extra?.google_apps_users ?? [];
+	}
+
+	if ( isTitanMail( product ) ) {
+		mailboxes = product.extra?.email_users ?? [];
+	}
+
 	return (
-		<LineItemMeta>
-			{ isRenewal
-				? translate(
-						'%(numberOfMailboxes)d mailbox for %(domainName)s',
-						'%(numberOfMailboxes)d mailboxes for %(domainName)s',
-						translateArgs
-				  )
-				: translate(
-						'%(numberOfMailboxes)d new mailbox for %(domainName)s',
-						'%(numberOfMailboxes)d new mailboxes for %(domainName)s',
-						translateArgs
-				  ) }
-		</LineItemMeta>
+		<>
+			{ mailboxes.map( ( mailbox, index ) => {
+				return (
+					<LineItemMeta key={ mailbox.email }>
+						<div key={ mailbox.email }>{ mailbox.email }</div>
+
+						{ index === 0 && <GSuiteDiscountCallout product={ product } /> }
+					</LineItemMeta>
+				);
+			} ) }
+		</>
 	);
 }
 
@@ -288,28 +309,33 @@ interface ModalCopy {
 function returnModalCopyForProduct(
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
-	hasDomainsInCart: boolean,
+	hasBundledDomainInCart: boolean,
+	hasMarketplaceProductsInCart: boolean,
 	createUserAndSiteBeforeTransaction: boolean,
 	isPwpoUser: boolean
 ): ModalCopy {
-	const productType = getProductTypeForModalCopy( product, hasDomainsInCart );
-	const isRenewal = isWpComProductRenewal( product );
-	return returnModalCopy(
-		productType,
-		translate,
-		createUserAndSiteBeforeTransaction,
-		isPwpoUser,
-		isRenewal
+	const productType = getProductTypeForModalCopy(
+		product,
+		hasBundledDomainInCart,
+		hasMarketplaceProductsInCart,
+		isPwpoUser
 	);
+	const isRenewal = isWpComProductRenewal( product );
+	return returnModalCopy( productType, translate, createUserAndSiteBeforeTransaction, isRenewal );
 }
 
 function getProductTypeForModalCopy(
 	product: ResponseCartProduct,
-	hasDomainsInCart: boolean
+	hasBundledDomainInCart: boolean,
+	hasMarketplaceProductsInCart: boolean,
+	isPwpoUser: boolean
 ): string {
-	if ( isPlan( product ) ) {
-		if ( hasDomainsInCart ) {
-			return 'plan with dependencies';
+	if ( isWpComPlan( product.product_slug ) ) {
+		if ( hasMarketplaceProductsInCart ) {
+			return 'plan with marketplace dependencies';
+		}
+		if ( hasBundledDomainInCart && ! isPwpoUser ) {
+			return 'plan with domain dependencies';
 		}
 		return 'plan';
 	}
@@ -325,11 +351,30 @@ function returnModalCopy(
 	productType: string,
 	translate: ReturnType< typeof useTranslate >,
 	createUserAndSiteBeforeTransaction: boolean,
-	isPwpoUser: boolean,
 	isRenewal = false
 ): ModalCopy {
 	switch ( productType ) {
-		case 'plan with dependencies': {
+		case 'plan with marketplace dependencies':
+			if ( isRenewal ) {
+				return {
+					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
+					description: String(
+						translate(
+							"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your plan in the cart, and your plan will keep its current expiry date."
+						)
+					),
+				};
+			}
+
+			return {
+				title: String( translate( 'You are about to remove your plan from the cart' ) ),
+				description: String(
+					translate(
+						"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your new plan in the cart, and your site will continue to run its current plan."
+					)
+				),
+			};
+		case 'plan with domain dependencies': {
 			if ( isRenewal ) {
 				return {
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
@@ -351,13 +396,9 @@ function returnModalCopy(
 				);
 			} else {
 				description = String(
-					isPwpoUser
-						? translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
-						  )
-						: translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since your other product(s) depend on your plan to be purchased, they will also be removed from the cart and we will take you back to your site.'
-						  )
+					translate(
+						"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your new plan in the cart, and your site will continue to run its current plan."
+					)
 				);
 			}
 			return { title, description };
@@ -368,7 +409,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
 					description: String(
 						translate(
-							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date. We will then take you back to your site.'
+							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date.'
 						)
 					),
 				};
@@ -380,7 +421,7 @@ function returnModalCopy(
 					createUserAndSiteBeforeTransaction
 						? translate( 'When you press Continue, we will remove your plan from the cart.' )
 						: translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. We will then take you back to your site.'
+								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
 						  )
 				),
 			};
@@ -491,18 +532,13 @@ function LineItemSublabelAndPrice( {
 	product: ResponseCartProduct;
 } ): JSX.Element | null {
 	const translate = useTranslate();
-	const isDomainRegistration = product.is_domain_registration;
-	const isDomainMap = product.product_slug === 'domain_map';
 	const productSlug = product.product_slug;
 	const sublabel = getSublabel( product );
 
-	const isGSuite =
-		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
-	// This is the price for one item for products with a quantity (eg. seats in a license).
-	const itemPrice = product.item_original_cost_for_quantity_one_display;
-
 	if ( isPlan( product ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isP2Plus( product ) ) {
+			// This is the price for one item for products with a quantity (eg. seats in a license).
+			const itemPrice = product.item_original_cost_for_quantity_one_display;
 			const members = product?.current_quantity || 1;
 			const p2Options = {
 				args: {
@@ -511,6 +547,7 @@ function LineItemSublabelAndPrice( {
 				},
 				count: members,
 			};
+
 			return (
 				<>
 					{ translate(
@@ -543,10 +580,44 @@ function LineItemSublabelAndPrice( {
 	}
 
 	if (
-		( isDomainRegistration || isDomainMap || isGSuite ) &&
-		product.months_per_bill_period === 12
+		isGoogleWorkspaceProductSlug( productSlug ) ||
+		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
+		isTitanMail( product )
 	) {
+		let billingInterval = null;
+
+		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
+			billingInterval = translate( 'billed annually' );
+		}
+
+		if ( product.months_per_bill_period === 1 ) {
+			billingInterval = translate( 'billed monthly' );
+		}
+
+		if ( billingInterval === null ) {
+			return <>{ sublabel }</>;
+		}
+
+		return (
+			<>
+				{ translate( '%(productDescription)s: %(billingInterval)s', {
+					args: {
+						productDescription: sublabel,
+						billingInterval,
+					},
+					comment:
+						"Product description and billing interval (already translated) separated by a colon (e.g. 'Productivity Tools and Mailboxes: billed annually')",
+				} ) }
+			</>
+		);
+	}
+
+	const isDomainRegistration = product.is_domain_registration;
+	const isDomainMapping = productSlug === 'domain_map';
+
+	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
 		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : null;
+
 		return (
 			<>
 				{ translate( '%(premiumLabel)s %(sublabel)s: %(interval)s', {
@@ -561,6 +632,7 @@ function LineItemSublabelAndPrice( {
 			</>
 		);
 	}
+
 	return <>{ sublabel || null }</>;
 }
 
@@ -578,6 +650,10 @@ function FirstTermDiscountCallout( {
 	const origCost = product.item_original_cost_integer;
 	const cost = product.product_cost_integer;
 	const isRenewal = product.is_renewal;
+
+	if ( product.introductory_offer_terms?.enabled ) {
+		return null;
+	}
 
 	if (
 		( ! isWpComPlan( planSlug ) && ! isJetpackProductSlug( planSlug ) ) ||
@@ -609,6 +685,13 @@ function IntroductoryOfferCallout( {
 	product: ResponseCartProduct;
 } ): JSX.Element | null {
 	const translate = useTranslate();
+	if ( product.introductory_offer_terms?.reason ) {
+		return (
+			<NotApplicableCallout>
+				{ translate( 'Order not eligible for introductory discount' ) }
+			</NotApplicableCallout>
+		);
+	}
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
@@ -617,7 +700,9 @@ function IntroductoryOfferCallout( {
 		translate,
 		product.introductory_offer_terms.interval_unit,
 		product.introductory_offer_terms.interval_count,
-		isFreeTrial
+		isFreeTrial,
+		'checkout',
+		product.introductory_offer_terms.transition_after_renewal_count
 	);
 	return <DiscountCallout>{ text }</DiscountCallout>;
 }
@@ -664,10 +749,8 @@ function GSuiteDiscountCallout( {
 } ): JSX.Element | null {
 	const translate = useTranslate();
 
-	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug );
-
 	if (
-		isGSuite &&
+		isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug ) &&
 		product.item_original_subtotal_integer < product.item_original_subtotal_integer &&
 		product.is_sale_coupon_applied
 	) {
@@ -686,6 +769,9 @@ function WPLineItem( {
 	createUserAndSiteBeforeTransaction,
 	responseCart,
 	isPwpoUser,
+	onRemoveProduct,
+	onRemoveProductClick,
+	onRemoveProductCancel,
 }: {
 	children?: React.ReactNode;
 	product: ResponseCartProduct;
@@ -696,11 +782,19 @@ function WPLineItem( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
 	isPwpoUser?: boolean;
+	onRemoveProduct?: ( label: string ) => void;
+	onRemoveProductClick?: ( label: string ) => void;
+	onRemoveProductCancel?: ( label: string ) => void;
 } ): JSX.Element {
 	const id = product.uuid;
 	const translate = useTranslate();
-	const hasDomainsInCart = responseCart.products.some(
-		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+	const hasBundledDomainsInCart = responseCart.products.some(
+		( product ) =>
+			( product.is_domain_registration || product.product_slug === 'domain_transfer' ) &&
+			product.is_bundled
+	);
+	const hasMarketplaceProductsInCart = responseCart.products.some(
+		( product ) => product.extra.is_marketplace_product === true
 	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -708,21 +802,16 @@ function WPLineItem( {
 	const modalCopy = returnModalCopyForProduct(
 		product,
 		translate,
-		hasDomainsInCart,
+		hasBundledDomainsInCart,
+		hasMarketplaceProductsInCart,
 		createUserAndSiteBeforeTransaction || false,
 		isPwpoUser || false
 	);
-	const onEvent = useEvents();
 	const isDisabled = formStatus !== FormStatus.READY;
 
 	const isRenewal = isWpComProductRenewal( product );
 
 	const productSlug = product?.product_slug;
-
-	const isGSuite =
-		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
-
-	const isTitanMail = productSlug === TITAN_MAIL_MONTHLY_SLUG;
 
 	const sublabel = getSublabel( product );
 	const label = getLabel( product );
@@ -734,6 +823,11 @@ function WPLineItem( {
 	const isDiscounted = Boolean(
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);
+
+	const isEmail =
+		isGoogleWorkspaceProductSlug( productSlug ) ||
+		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
+		isTitanMail( product );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -767,12 +861,7 @@ function WPLineItem( {
 							disabled={ isDisabled }
 							onClick={ () => {
 								setIsModalVisible( true );
-								onEvent( {
-									type: 'a8c_checkout_delete_product_press',
-									payload: {
-										product_name: label,
-									},
-								} );
+								onRemoveProductClick?.( label );
 							} }
 						>
 							{ translate( 'Remove from cart' ) }
@@ -786,18 +875,15 @@ function WPLineItem( {
 						} }
 						primaryAction={ () => {
 							removeProductFromCart( product.uuid );
-							onEvent( {
-								type: 'a8c_checkout_delete_product',
-								payload: {
-									product_name: label,
-								},
-							} );
+							onRemoveProduct?.( label );
 						} }
 						cancelAction={ () => {
-							onEvent( {
-								type: 'a8c_checkout_cancel_delete_product',
-							} );
+							onRemoveProductCancel?.( label );
 						} }
+						secondaryAction={ () => {
+							onRemoveProductCancel?.( label );
+						} }
+						secondaryButtonCTA={ String( translate( 'Cancel' ) ) }
 						title={ modalCopy.title }
 						copy={ modalCopy.description }
 					/>
@@ -813,9 +899,11 @@ function WPLineItem( {
 					<IntroductoryOfferCallout product={ product } />
 				</LineItemMeta>
 			) }
+
 			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
-			{ isGSuite && <GSuiteUsersList product={ product } /> }
-			{ isTitanMail && <TitanMailMeta product={ product } isRenewal={ isRenewal } /> }
+
+			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
+
 			{ children }
 		</div>
 	);

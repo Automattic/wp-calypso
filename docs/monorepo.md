@@ -105,7 +105,9 @@ If your package requires compilation, the `package.json` `build` script should c
 - If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds. Also, make sure to add `@automattic/calypso-build` in `devDependencies`.
 - If it contains [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) (eg `.scss`) then after `transpile` append `&& copy-assets` ie `"build": "transpile && copy-assets"`.
 
-Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
+`package.json` is linted using ESLint. Run `yarn eslint packages/*/package.json apps/*/package.json` to validate them.
+
+If you need exceptions to linting rules, add a `./eslintrc.js` file to your app/package and disable the relevant rules.
 
 ## Running Tests
 

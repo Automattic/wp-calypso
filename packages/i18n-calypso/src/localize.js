@@ -1,47 +1,37 @@
-import { Component } from 'react';
+import { forwardRef, useContext, useEffect, useMemo, useState } from 'react';
+import I18NContext from './context';
+
+function bindI18nProps( i18n ) {
+	return {
+		numberFormat: i18n.numberFormat.bind( i18n ),
+		translate: i18n.translate.bind( i18n ),
+		locale: i18n.getLocaleSlug(),
+	};
+}
 
 /**
  * Localize a React component
  *
- * @param {object} i18n I18N instance to use for localization
- * @returns {Function} Component localization function
+ * @param  {import('react').Component} ComposedComponent React component to localize
+ * @returns {import('react').Component} The localized component
  */
-export default function ( i18n ) {
-	const i18nProps = {
-		numberFormat: i18n.numberFormat.bind( i18n ),
-		translate: i18n.translate.bind( i18n ),
-	};
+export default function localize( ComposedComponent ) {
+	const LocalizedComponent = forwardRef( ( props, ref ) => {
+		const i18n = useContext( I18NContext );
+		const [ counter, setCounter ] = useState( 0 );
+		useEffect( () => {
+			const onChange = () => setCounter( ( c ) => c + 1 );
+			i18n.on( 'change', onChange );
+			return () => i18n.off( 'change', onChange );
+		}, [ i18n ] );
 
-	/**
-	 * Localize a React component
-	 *
-	 * @param  {React.Component} ComposedComponent React component to localize
-	 * @returns {React.Component}                   The localized component
-	 */
-	return function ( ComposedComponent ) {
-		const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
+		const i18nProps = useMemo( () => bindI18nProps( i18n, counter ), [ i18n, counter ] );
 
-		return class extends Component {
-			static displayName = 'Localized(' + componentName + ')';
+		return <ComposedComponent { ...props } { ...i18nProps } ref={ ref } />;
+	} );
 
-			boundForceUpdate = this.forceUpdate.bind( this );
+	const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
+	LocalizedComponent.displayName = 'Localized(' + componentName + ')';
 
-			componentDidMount() {
-				i18n.on( 'change', this.boundForceUpdate );
-			}
-
-			componentWillUnmount() {
-				i18n.off( 'change', this.boundForceUpdate );
-			}
-
-			render() {
-				const props = {
-					locale: i18n.getLocaleSlug(),
-					...this.props,
-					...i18nProps,
-				};
-				return <ComposedComponent { ...props } />;
-			}
-		};
-	};
+	return LocalizedComponent;
 }

@@ -1,0 +1,33 @@
+{
+	"name": "@automattic/eslint-plugin-json",
+	"version": "0.1.0",
+	"description": "ESLint plugin to lint package.json files.",
+	"main": "src/index.js",
+	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/eslint-plugin-json"
+	},
+	"keywords": [
+		"eslint",
+		"lint",
+		"package.json"
+	],
+	"license": "GPL-2.0-or-later",
+	"dependencies": {
+		"@wordpress/npm-package-json-lint-config": "^4.1.0",
+		"eslint-plugin-json-es": "^1.5.4",
+		"esquery": "^1.4.0",
+		"npm-package-json-lint": "^5.4.2"
+	},
+	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^"
+	},
+	"peerDependencies": {
+		"eslint": ">=8.6.0"
+	}
+}

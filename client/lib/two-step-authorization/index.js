@@ -11,7 +11,6 @@ import { requestUserProfileLinks } from 'calypso/state/profile-links/actions';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );
-const wpcom = wp.undocumented();
 
 /*
  * Initialize TwoStepAuthorization with defaults
@@ -39,7 +38,7 @@ function TwoStepAuthorization() {
  * fetch data about users two step configuration from /me/two-step
  */
 TwoStepAuthorization.prototype.fetch = function ( callback ) {
-	wpcom.me().getTwoStep( ( error, data ) => {
+	wp.req.get( '/me/two-step/', ( error, data ) => {
 		if ( ! error ) {
 			this.data = data;
 
@@ -132,7 +131,8 @@ TwoStepAuthorization.prototype.loginUserWithSecurityKey = function ( args ) {
  * Given a code, validate the code which will update a user's twostep_auth cookie
  */
 TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
-	wpcom.me().validateTwoStepCode(
+	wp.req.post(
+		'/me/two-step/validate',
 		{
 			...args,
 			code: args.code.replace( /\s/g, '' ),
@@ -175,7 +175,7 @@ TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
  * /me/two-step/sms/new
  */
 TwoStepAuthorization.prototype.sendSMSCode = function ( callback ) {
-	wpcom.me().sendSMSValidationCode( ( error, data ) => {
+	wp.req.post( '/me/two-step/sms/new', ( error, data ) => {
 		if ( error ) {
 			debug( 'Sending SMS code failed: ' + JSON.stringify( error ) );
 
@@ -201,7 +201,7 @@ TwoStepAuthorization.prototype.sendSMSCode = function ( callback ) {
  * Fetches a new set of backup codes by calling /me/two-step/backup-codes/new
  */
 TwoStepAuthorization.prototype.backupCodes = function ( callback ) {
-	wpcom.me().backupCodes( ( error, data ) => {
+	wp.req.post( '/me/two-step/backup-codes/new', ( error, data ) => {
 		if ( error ) {
 			debug( 'Fetching Backup Codes failed: ' + JSON.stringify( error ) );
 		} else {
@@ -225,7 +225,7 @@ TwoStepAuthorization.prototype.validateBackupCode = function ( code, callback ) 
 		action: 'create-backup-receipt',
 	};
 
-	wpcom.me().validateTwoStepCode( args, ( error, data ) => {
+	wp.req.post( '/me/two-step/validate', args, ( error, data ) => {
 		if ( error ) {
 			debug( 'Validating Two Step Code failed: ' + JSON.stringify( error ) );
 		}
@@ -247,7 +247,7 @@ TwoStepAuthorization.prototype.validateBackupCode = function ( code, callback ) 
  * from me/two-step/app-auth-setup
  */
 TwoStepAuthorization.prototype.getAppAuthCodes = function ( callback ) {
-	wpcom.me().getAppAuthCodes( function ( error, data ) {
+	wp.req.get( '/me/two-step/app-auth-setup/', function ( error, data ) {
 		if ( error ) {
 			debug( 'Getting App Auth Codes failed: ' + JSON.stringify( error ) );
 		}

@@ -34,10 +34,7 @@ SettingsSectionHeader.propTypes = {
 	isSaving: PropTypes.bool,
 	onButtonClick: PropTypes.func,
 	showButton: PropTypes.bool,
-	title: PropTypes.string.isRequired,
-
-	// from localize() HoC
-	translate: PropTypes.func,
+	title: PropTypes.node.isRequired,
 };
 
 export default SettingsSectionHeader;

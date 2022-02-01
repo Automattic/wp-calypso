@@ -16,3 +16,6 @@ dist/
 
 # Playwright results
 results/
+
+# Cookie files
+cookies/

@@ -1,4 +1,5 @@
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
+import SearchRestyled from '@automattic/search';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -46,12 +47,14 @@ class SiteSelector extends Component {
 		filter: PropTypes.func,
 		groups: PropTypes.bool,
 		onSiteSelect: PropTypes.func,
+		searchPlaceholder: PropTypes.string,
 		showRecentSites: PropTypes.bool,
 		recentSites: PropTypes.array,
 		selectedSite: PropTypes.object,
 		visibleSites: PropTypes.arrayOf( PropTypes.object ),
 		allSitesPath: PropTypes.string,
 		navigateToSite: PropTypes.func.isRequired,
+		isReskinned: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -377,6 +380,7 @@ class SiteSelector extends Component {
 				onMouseEnter={ this.onSiteHover }
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( site ) }
+				isReskinned={ this.props.isReskinned }
 			/>
 		);
 	}
@@ -400,20 +404,24 @@ class SiteSelector extends Component {
 
 		const sites = this.sitesToBeRendered();
 
+		const SearchComponent = this.props.isReskinned ? SearchRestyled : Search;
+
 		return (
 			<div
 				className={ selectorClass }
 				onMouseMove={ this.onMouseMove }
 				onMouseLeave={ this.onMouseLeave }
 			>
-				<Search
+				<SearchComponent
 					onSearch={ this.onSearch }
 					delaySearch={ true }
+					placeholder={ this.props.searchPlaceholder }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus={ this.props.autoFocus }
 					disabled={ ! this.props.hasLoadedSites }
 					onSearchClose={ this.props.onClose }
 					onKeyDown={ this.onKeyDown }
+					isReskinned={ this.props.isReskinned }
 				/>
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }

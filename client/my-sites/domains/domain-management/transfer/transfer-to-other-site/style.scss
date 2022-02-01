@@ -1,0 +1,66 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/colors';
+
+.transfer-domain-to-other-site {
+	background: var( --studio-white );
+
+	.formatted-header__title {
+		font-size: $font-title-medium;
+
+		@include break-medium {
+			font-size: $font-title-large;
+		}
+
+	}
+
+	&__card {
+		padding: 0;
+		box-shadow: none;
+		background: transparent;
+
+		.site-selector {
+			.search {
+				margin: 0;
+				min-height: 40px;
+			}
+
+			&__sites {
+				border-top: none;
+			}
+
+			&__sites {
+				background: transparent;
+				margin: 0;
+
+				.site {
+					padding: 24px 16px;
+
+					&__content {
+						padding: 0;
+					}
+
+					& ~ .site {
+						border-top: 1px solid var( --studio-gray-5 );
+					}
+
+					&__title::after, &__domain::after {
+						background: none;
+					}
+				}
+			}
+		}
+	}
+
+	&__container {
+		margin: 16px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			margin: 0;
+		}
+	}
+
+	.site-selector.is-large .site-selector__sites {
+		border-top: none;
+	}
+}

@@ -38,7 +38,6 @@ function highlightNode( node, term, wrapperNode ) {
 		remainingText = node.nodeValue;
 	}
 
-	// eslint-disable-next-line no-constant-condition
 	while ( true ) {
 		pos = remainingText.toLowerCase().indexOf( term.toLowerCase() );
 		if ( ! remainingText || pos === -1 ) {

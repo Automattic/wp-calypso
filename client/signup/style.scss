@@ -338,19 +338,30 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	.signup-header {
 		.wordpress-logo {
 			position: absolute;
-			left: 24px;
+			left: 20px;
 			top: 20px;
 			fill: var( --color-text );
+			stroke: var( --color-text );
 			transform-origin: 0 0;
 		}
 		.signup-header__right {
 			top: 22px;
-			right: 24px;
+			right: 20px;
 
 			.flow-progress-indicator {
 				font-weight: 500; /* stylelint-disable-line */
 				font-size: 0.875rem;
 				color: var( --studio-gray-30 );
+			}
+		}
+
+		@include break-small {
+			.wordpress-logo {
+				left: 24px;
+			}
+
+			.signup-header__right {
+				right: 24px;
 			}
 		}
 	}
@@ -452,18 +463,17 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	.signup__step.is-user {
 		.formatted-header {
 			.formatted-header__title {
-				text-align: left;
+				text-align: center;
 
 				@include break-small {
 					max-width: inherit;
-					text-align: center;
 					font-size: 3.25rem; /* stylelint-disable-line */
 					line-height: 3.5rem;
 				}
 			}
 
 			.formatted-header__subtitle {
-				text-align: left;
+				text-align: center;
 				color: #646970;
 
 				a {
@@ -474,7 +484,6 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 				@include break-small {
 					max-width: inherit;
-					text-align: center;
 					font-size: 1.125rem; /* stylelint-disable-line */
 					line-height: 1.625rem;
 					letter-spacing: 0.24px;
@@ -772,7 +781,8 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.signup__step.is-design-setup-site {
+	.signup__step.is-design-setup-site,
+	.signup__step.is-difm-design-setup-site {
 		.step-wrapper__header {
 			@include breakpoint-deprecated( '<660px' ) {
 				margin-left: 0;

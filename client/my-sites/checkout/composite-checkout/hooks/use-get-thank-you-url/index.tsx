@@ -4,9 +4,9 @@ import { useSelector } from 'react-redux';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getThankYouPageUrl from './get-thank-you-page-url';
-import type { Domain } from '@automattic/data-stores';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
@@ -22,7 +22,7 @@ export default function useGetThankYouUrl( {
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	hideNudge,
-	isInEditor,
+	isInModal,
 	isJetpackCheckout = false,
 	domains,
 }: GetThankYouUrlProps ): GetThankYouUrl {
@@ -49,7 +49,7 @@ export default function useGetThankYouUrl( {
 			productAliasFromUrl,
 			isEligibleForSignupDestinationResult,
 			hideNudge,
-			isInEditor,
+			isInModal,
 			isJetpackCheckout,
 			domains,
 		};
@@ -60,7 +60,7 @@ export default function useGetThankYouUrl( {
 
 		return url;
 	}, [
-		isInEditor,
+		isInModal,
 		transactionResult,
 		isEligibleForSignupDestinationResult,
 		siteSlug,
@@ -88,7 +88,7 @@ export interface GetThankYouUrlProps {
 	isJetpackNotAtomic?: boolean;
 	productAliasFromUrl?: string | undefined;
 	hideNudge?: boolean;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	isJetpackCheckout?: boolean;
-	domains: Domain[] | undefined;
+	domains: SiteDomain[] | undefined;
 }

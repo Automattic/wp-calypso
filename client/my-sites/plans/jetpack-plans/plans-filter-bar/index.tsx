@@ -1,20 +1,14 @@
-import {
-	JETPACK_PRODUCTS_BY_TERM,
-	JETPACK_RESET_PLANS_BY_TERM,
-	TERM_MONTHLY,
-	TERM_ANNUALLY,
-} from '@automattic/calypso-products';
+import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
-import useDetectWindowBoundary from '../use-detect-window-boundary';
-import getHighestAnnualDiscount from './get-highest-annual-discount';
 import type { Duration, DurationChangeCallback } from '../types';
 
 import './style.scss';
@@ -34,19 +28,6 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) 
 	const translate = useTranslate();
 	const isMobile: boolean = useMobileBreakpoint();
 
-	const slugsToCheck = [
-		...JETPACK_PRODUCTS_BY_TERM.map( ( s ) => s.yearly ),
-		...JETPACK_RESET_PLANS_BY_TERM.map( ( s ) => s.yearly ),
-	];
-
-	const highestAnnualDiscount = useSelector( ( state ) =>
-		getHighestAnnualDiscount( state, slugsToCheck )
-	);
-
-	if ( ! highestAnnualDiscount ) {
-		return null;
-	}
-
 	return toggleChecked ? (
 		<div
 			className={ classNames( 'plans-filter-bar__discount-message', {
@@ -54,18 +35,18 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) 
 			} ) }
 		>
 			<div>
+				{ String.fromCodePoint( 0x1f389 ) } { /* Celebration emoji 🎉 */ }
 				<span className="plans-filter-bar__discount-message-text">
 					{ isMobile
-						? translate( 'Save %(discount)s by paying yearly', {
-								args: { discount: highestAnnualDiscount },
-								comment: 'Discount is either a currency-formatted number or percentage',
+						? translate( 'Get %(discount)s%% off by billing yearly', {
+								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+								comment: 'Discount is a percentage',
 						  } )
-						: translate( 'Save %(discount)s', {
-								args: { discount: highestAnnualDiscount },
-								comment: 'Discount is either a currency-formatted number or percentage',
+						: translate( 'Get %(discount)s%% off*', {
+								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+								comment: 'Discount is a percentage. * is a clause describing the price adjustment.',
 						  } ) }
 				</span>
-				{ String.fromCodePoint( 0x1f389 ) } { /* Celebration emoji 🎉 */ }
 			</div>
 		</div>
 	) : null;
@@ -96,9 +77,11 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 		onDurationChange?.( selectedDuration );
 	}, [ onDurationChange, durationChecked ] );
 
+	const outerDivProps = barRef ? { ref: barRef as React.RefObject< HTMLDivElement > } : {};
+
 	return (
 		<>
-			<div className="plans-filter-bar__viewport-sentinel" ref={ barRef }></div>
+			<div className="plans-filter-bar__viewport-sentinel" { ...outerDivProps }></div>
 			<div
 				className={ classNames( 'plans-filter-bar', {
 					sticky: hasCrossed,

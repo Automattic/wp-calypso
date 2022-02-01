@@ -46,6 +46,17 @@ class DomainDns {
 	delete( record, query, fn ) {
 		return this.wpcom.req.post( this._subpath + '/delete', query, record, fn );
 	}
+
+	/**
+	 * Sets the default A records also deleting any A and AAAA custom records.
+	 *
+	 * @param {object} [query] - query object parameter
+	 * @param {Function} [fn] - callback function
+	 * @returns {Function} request handler
+	 */
+	setDefaultARecords( query, fn ) {
+		return this.wpcom.req.post( this._subpath + '/set-default-a-records', query, null, fn );
+	}
 }
 
 /**

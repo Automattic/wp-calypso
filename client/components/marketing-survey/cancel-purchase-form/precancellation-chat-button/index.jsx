@@ -7,6 +7,7 @@ import HappychatButton from 'calypso/components/happychat/button';
 import MaterialIcon from 'calypso/components/material-icon';
 import { hasIncludedDomain } from 'calypso/lib/purchases';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isPrecancellationChatAvailable from 'calypso/state/happychat/selectors/is-precancellation-chat-available';
 import './style.scss';
 
 class PrecancellationChatButton extends Component {
@@ -37,7 +38,11 @@ class PrecancellationChatButton extends Component {
 	};
 
 	render() {
-		const { icon, translate } = this.props;
+		const { isAvailable, icon, translate } = this.props;
+
+		if ( ! isAvailable ) {
+			return null;
+		}
 
 		return (
 			<HappychatButton
@@ -51,6 +56,9 @@ class PrecancellationChatButton extends Component {
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-} )( localize( PrecancellationChatButton ) );
+export default connect(
+	( state ) => ( {
+		isAvailable: isPrecancellationChatAvailable( state ),
+	} ),
+	{ recordTracksEvent }
+)( localize( PrecancellationChatButton ) );

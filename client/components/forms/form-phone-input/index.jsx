@@ -36,7 +36,7 @@ export class FormPhoneInput extends Component {
 		phoneNumber: this.props.initialPhoneNumber || '',
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.maybeSetCountryStateFromList();
 	}
 
@@ -47,7 +47,7 @@ export class FormPhoneInput extends Component {
 	render() {
 		return (
 			<div className={ classnames( this.props.className, 'form-phone-input' ) }>
-				<FormFieldset className="form-fieldset__country">
+				<FormFieldset className="form-phone-input__country">
 					<FormLabel htmlFor="country_code">
 						{ this.props.translate( 'Country code', {
 							context: 'The country code for the phone for the user.',
@@ -63,7 +63,7 @@ export class FormPhoneInput extends Component {
 					/>
 				</FormFieldset>
 
-				<FormFieldset className="form-fieldset__phone-number">
+				<FormFieldset className="form-phone-input__phone-number">
 					<FormLabel htmlFor="phone_number">{ this.props.translate( 'Phone number' ) }</FormLabel>
 					<FormTelInput
 						{ ...this.props.phoneInputProps }

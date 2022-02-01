@@ -57,10 +57,16 @@ export class PluginAutoUpdateToggle extends Component {
 	};
 
 	getDisabledInfo() {
-		const { site, wporg, translate } = this.props;
+		const { site, wporg, translate, isMarketplaceProduct } = this.props;
 		if ( ! site ) {
 			// we don't have enough info
 			return null;
+		}
+
+		if ( isMarketplaceProduct ) {
+			return translate(
+				'This plugin is auto managed and therefore will auto update to the latest stable version.'
+			);
 		}
 
 		if ( ! wporg ) {
@@ -133,7 +139,16 @@ export class PluginAutoUpdateToggle extends Component {
 	}
 
 	render() {
-		const { inProgress, site, plugin, translate, disabled } = this.props;
+		const {
+			inProgress,
+			site,
+			plugin,
+			disabled,
+			translate,
+			hideLabel,
+			toggleExtraContent,
+			isMarketplaceProduct,
+		} = this.props;
 		if ( ! site.jetpack ) {
 			return null;
 		}
@@ -146,13 +161,16 @@ export class PluginAutoUpdateToggle extends Component {
 
 		return (
 			<PluginAction
-				disabled={ disabled }
+				disabled={ isMarketplaceProduct ? true : disabled } // Marketplace products are auto-managed.
 				label={ label }
-				status={ plugin.autoupdate }
+				className="plugin-autoupdate-toggle"
+				status={ isMarketplaceProduct ? true : plugin.autoupdate } // Marketplace products are auto-managed.
 				action={ this.toggleAutoUpdates }
 				inProgress={ inProgress }
 				disabledInfo={ getDisabledInfo }
 				htmlFor={ 'autoupdates-' + plugin.slug + '-' + site.ID }
+				hideLabel={ hideLabel }
+				toggleExtraContent={ toggleExtraContent }
 			/>
 		);
 	}
@@ -164,11 +182,13 @@ PluginAutoUpdateToggle.propTypes = {
 	plugin: PropTypes.object.isRequired,
 	wporg: PropTypes.bool,
 	disabled: PropTypes.bool,
+	isMarketplaceProduct: PropTypes.bool,
 };
 
 PluginAutoUpdateToggle.defaultProps = {
 	isMock: false,
 	disabled: false,
+	isMarketplaceProduct: false,
 };
 
 export default connect(

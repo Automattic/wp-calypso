@@ -6,6 +6,7 @@ import {
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_JETPACK_BACKUP_DAILY,
 	FEATURE_JETPACK_BACKUP_REALTIME,
+	FEATURE_JETPACK_BACKUP_T2_YEARLY,
 	FEATURE_VIDEO_UPLOADS,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
@@ -941,7 +942,7 @@ describe( 'planHasAtLeastOneFeature', () => {
 	test( 'should return true when a plan has one of the provided features', () => {
 		expect(
 			planHasAtLeastOneFeature( PLAN_JETPACK_COMPLETE, [
-				FEATURE_JETPACK_BACKUP_REALTIME, // Jetpack Complete has realtime backup
+				FEATURE_JETPACK_BACKUP_T2_YEARLY, // Jetpack Complete has realtime backup
 				FEATURE_ACTIVITY_LOG, // Activity log is not listed in Jetpack Complete features
 			] )
 		).to.be.true;
@@ -949,8 +950,8 @@ describe( 'planHasAtLeastOneFeature', () => {
 
 	test( 'should return false when a plan has none of the provided features', () => {
 		expect(
-			planHasAtLeastOneFeature( PLAN_JETPACK_SECURITY_DAILY, [
-				FEATURE_JETPACK_BACKUP_REALTIME,
+			planHasAtLeastOneFeature( PLAN_JETPACK_SECURITY_T1_YEARLY, [
+				FEATURE_JETPACK_BACKUP_T2_YEARLY,
 				FEATURE_VIDEO_UPLOADS,
 			] )
 		).to.be.false;

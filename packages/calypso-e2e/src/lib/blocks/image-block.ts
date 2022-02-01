@@ -3,13 +3,10 @@ import { Page, ElementHandle } from 'playwright';
 const selectors = {
 	block: '.wp-block-image',
 	fileInput: '.components-form-file-upload input[type="file"]',
-	spinner: '.components-spinner',
-
 	// Use the attribute CSS selector to perform partial match, beginning with the filename.
 	// If a file with the same name already exists in the Media Gallery, WPCOM resolves this clash
 	// by appending a numerical postfix (eg. <original-filename>-2).
-	imageTitleData: ( filename: string ) =>
-		`${ selectors.block } img[data-image-title*="${ filename }" i]`,
+	image: ( filename: string ) => `${ selectors.block } img[data-image-title*="${ filename }" i]`,
 };
 
 /**
@@ -30,17 +27,40 @@ export class ImageBlock {
 	}
 
 	/**
+	 * @returns {Promise< ElementHandle >} The image element
+	 */
+	async getImage(): Promise< ElementHandle > {
+		return await this.block.waitForSelector( 'img' );
+	}
+
+	/**
+	 * Waits for the image to be uploaded.
+	 */
+	async waitUntilUploaded(): Promise< void > {
+		await Promise.all( [
+			// Checking spinner isn't enough sometimes, as can be observed with the
+			// Logos block: While the spinner has already disappeared, the image is
+			// still being uploaded and the block gets refreshed when it's done. Only
+			// when the image is properly uploaded, its source is updated (refreshed)
+			// from the initial "blob:*" to "https:*". This is what we're checking now
+			// to make sure the block is valid and ready to be published.
+			this.block.waitForSelector( 'img:not([src^="blob:"])' ),
+			this.block.waitForElementState( 'stable' ),
+		] );
+	}
+
+	/**
 	 * Uplaods the target file at the supplied path to WPCOM.
 	 *
 	 * @param {string} path Path to the file on disk.
+	 * @returns The uploaded image element handle.
 	 */
-	async upload( path: string ): Promise< void > {
-		const input = await this.block.waitForSelector( selectors.fileInput, { state: 'attached' } );
+	async upload( path: string ): Promise< ElementHandle > {
+		const input = await this.block.waitForSelector( 'input[type="file"]', { state: 'attached' } );
 		await input.setInputFiles( path );
-		await Promise.all( [
-			this.block.waitForSelector( selectors.spinner, { state: 'hidden' } ),
-			this.block.waitForElementState( 'stable' ),
-		] );
+		await this.waitUntilUploaded();
+
+		return await this.getImage();
 	}
 
 	/**
@@ -52,7 +72,7 @@ export class ImageBlock {
 	 */
 	static async validatePublishedContent( page: Page, contents: string[] ): Promise< void > {
 		for await ( const content of contents ) {
-			await page.waitForSelector( selectors.imageTitleData( content ) );
+			await page.waitForSelector( selectors.image( content ) );
 		}
 	}
 }

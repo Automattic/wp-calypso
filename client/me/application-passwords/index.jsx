@@ -30,6 +30,7 @@ class ApplicationPasswords extends Component {
 
 	state = this.constructor.initialState;
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.state.submittingForm && ! this.props.newAppPassword && !! nextProps.newAppPassword ) {
 			this.setState( { submittingForm: false } );

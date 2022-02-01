@@ -5,7 +5,7 @@ export function getEmptyResponseCart(): ResponseCart {
 		blog_id: '',
 		create_new_blog: false,
 		cart_generated_at_timestamp: 0,
-		cart_key: '',
+		cart_key: 'no-site',
 		products: [],
 		total_tax: '0',
 		total_tax_integer: 0,
@@ -33,6 +33,7 @@ export function getEmptyResponseCart(): ResponseCart {
 		tax: { location: {}, display_taxes: false },
 		is_signup: false,
 		next_domain_is_free: false,
+		next_domain_condition: '',
 	};
 }
 
@@ -63,6 +64,7 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		is_domain_registration: false,
 		is_bundled: false,
 		is_sale_coupon_applied: false,
+		bill_period: '365',
 		months_per_bill_period: null,
 		uuid: 'product001',
 		cost: 0,

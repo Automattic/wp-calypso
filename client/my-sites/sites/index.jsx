@@ -27,10 +27,11 @@ class Sites extends Component {
 	}
 
 	filterSites = ( site ) => {
-		// only show Jetpack sites with the full Plugin
+		// only show Jetpack sites with the full Plugin or Backup Plugin
 		if (
 			site?.options?.jetpack_connection_active_plugins &&
-			! site.options.jetpack_connection_active_plugins.includes( 'jetpack' )
+			! site.options.jetpack_connection_active_plugins.includes( 'jetpack' ) &&
+			! site.options.jetpack_connection_active_plugins.includes( 'jetpack-backup' )
 		) {
 			return false;
 		}
@@ -56,9 +57,9 @@ class Sites extends Component {
 			return true;
 		}
 
-		// Supported on Simple and Atomic Sites
+		// filter out all VIP sites
 		if ( /^\/home/.test( path ) ) {
-			return ! site.is_vip && ! ( site.jetpack && ! site.options.is_automated_transfer );
+			return ! site.is_vip;
 		}
 
 		return site;
@@ -110,7 +111,7 @@ class Sites extends Component {
 				path = translate( 'Sharing' );
 				break;
 			case 'people':
-				path = translate( 'People' );
+				path = translate( 'Users' );
 				break;
 			case 'domains':
 				path = translate( 'Domains' );

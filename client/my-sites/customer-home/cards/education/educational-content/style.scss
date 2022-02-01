@@ -21,6 +21,15 @@
 		margin-bottom: 12px;
 		display: flex;
 
+		button {
+			color: var( --color-link );
+			font-size: 1rem;
+			cursor: pointer;
+			&:hover {
+				color: var( --color-link-dark );
+			}
+		}
+
 		&:last-child {
 			margin-bottom: 0;
 		}

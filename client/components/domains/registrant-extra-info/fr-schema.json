@@ -112,5 +112,5 @@
 			}
 		}
 	],
-	"note": "We'll want to fetch this through the API, where wpcom.undocumented already has `mapKeysRecursively()` & `camelCase()`"
+	"note": "We'll want to fetch this through the API and recursively camel-case the response keys."
 }

@@ -25,9 +25,8 @@ export function getSyncStatus( siteId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.getJetpackSyncStatus( siteId )
+		return wpcom.req
+			.get( `/sites/${ siteId }/sync/status` )
 			.then( ( data ) => {
 				dispatch( {
 					type: JETPACK_SYNC_STATUS_SUCCESS,
@@ -53,9 +52,8 @@ export function scheduleJetpackFullysync( siteId ) {
 			siteId,
 		} );
 
-		return wpcom
-			.undocumented()
-			.scheduleJetpackFullysync( siteId )
+		return wpcom.req
+			.post( `/sites/${ siteId }/sync` )
 			.then( ( data ) => {
 				dispatch( {
 					type: JETPACK_SYNC_START_SUCCESS,

@@ -13,7 +13,9 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
-import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
+import { filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -92,9 +94,8 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request, entrypoint = 'entry-main' ) {
+function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	let initialServerState = {};
-	let lang = config( 'i18n_default_locale_slug' );
 	// We don't compare context.query against an allowed list here. Explicit allowance lists are route-specific,
 	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
 	// called before route-specific middleware, so it's up to the cache *writes* in server
@@ -108,12 +109,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		initialServerState = getInitialServerState( serializeCachedServerState );
 	}
 
-	// We assign request.context.lang in the handleLocaleSubdomains()
-	// middleware function if we detect a language slug in subdomain
-	if ( request.context && request.context.lang ) {
-		lang = request.context.lang;
-	}
-
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
 		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
@@ -123,6 +118,16 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	const reduxStore = createReduxStore( initialServerState );
 	setStore( reduxStore );
 
+	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
+	const showGdprBanner = shouldSeeGdprBanner(
+		request.cookies.country_code || geoIPCountryCode,
+		request.cookies.sensitive_pixel_option
+	);
+
+	if ( ! request.cookies.country_code && geoIPCountryCode ) {
+		response.cookie( 'country_code', geoIPCountryCode );
+	}
+
 	const flags = ( request.query.flags || '' ).split( ',' );
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
@@ -130,12 +135,11 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
-		isRTL: false,
 		requestFrom: request.query.from,
 		isWCComConnect,
 		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
 		badge: false,
-		lang,
+		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
 		manifests: request.getAssets().manifests,
 		authHelper: !! config.isEnabled( 'dev/auth-helper' ),
@@ -149,6 +153,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 			flags.includes( 'use-translation-chunks' ) ||
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		useLoadingEllipsis: !! request.query.loading_ellipsis,
+		showGdprBanner,
 	} );
 
 	context.app = {
@@ -202,7 +207,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 }
 
 const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
-	req.context = getDefaultContext( req, entrypoint );
+	req.context = getDefaultContext( req, res, entrypoint );
 	next();
 };
 
@@ -300,7 +305,13 @@ function setUpLoggedInRoute( req, res, next ) {
 				// Setting user in the state is safe as long as we don't cache it
 				req.context.store.dispatch( setCurrentUser( data ) );
 
-				if ( data.localeSlug ) {
+				if (
+					data.localeSlug &&
+					! (
+						data.use_fallback_for_incomplete_languages &&
+						isTranslatedIncompletely( data.localeVariant || data.localeSlug )
+					)
+				) {
 					req.context.lang = data.localeSlug;
 					req.context.store.dispatch( {
 						type: LOCALE_SET,
@@ -494,44 +505,6 @@ const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next
 
 	res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
 };
-
-/**
- * Sets language properties to context if
- * a WordPress.com language slug is detected in the hostname
- *
- * @param {object} req Express request object
- * @param {object} res Express response object
- * @param {Function} next a callback to call when done
- * @returns {Function|undefined} res.redirect if not logged in
- */
-function handleLocaleSubdomains( req, res, next ) {
-	const langSlug = req.hostname?.endsWith( config( 'hostname' ) )
-		? req.hostname.split( '.' )[ 0 ]
-		: null;
-
-	if ( langSlug && includes( config( 'magnificent_non_en_locales' ), langSlug ) ) {
-		// Retrieve the language object for the RTL information.
-		const language = getLanguage( langSlug );
-
-		// Switch locales only in a logged-out state.
-		if ( language && ! req.context.isLoggedIn ) {
-			req.context = {
-				...req.context,
-				lang: language.langSlug,
-				isRTL: !! language.rtl,
-			};
-		} else {
-			// Strip the langSlug and redirect using hostname
-			// so that the user's locale preferences take priority.
-			const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
-			const port = process.env.PORT || config( 'port' ) || '';
-			const hostname = req.hostname.substr( langSlug.length + 1 );
-			const redirectUrl = `${ protocol }://${ hostname }:${ port }${ req.path }`;
-			return res.redirect( redirectUrl );
-		}
-	}
-	next();
-}
 
 /**
  * Checks if the passed URL has the same origin as the request
@@ -748,7 +721,6 @@ export default function pages() {
 	app.use( middlewareAssets() );
 	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
-	app.use( handleLocaleSubdomains );
 	app.use( middlewareUnsupportedBrowser() );
 
 	if ( ! isJetpackCloud() ) {

@@ -46,6 +46,10 @@ export const JETPACK_BACKUP_PRODUCTS = <const>[
 	...JETPACK_BACKUP_PRODUCTS_YEARLY,
 	...JETPACK_BACKUP_PRODUCTS_MONTHLY,
 ];
+export const JETPACK_BACKUP_T1_PRODUCTS = <const>[
+	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+];
 
 // Scan
 export const JETPACK_SCAN_PRODUCTS = <const>[
@@ -218,6 +222,10 @@ export const JETPACK_SECURITY_PLANS = <const>[
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 ];
+export const JETPACK_SECURITY_T1_PLANS = <const>[
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+];
 
 // Complete
 export const JETPACK_COMPLETE_PLANS = <const>[
@@ -290,6 +298,16 @@ export const JETPACK_PLAN_UPGRADE_MAP: Record< string, string[] > = {
 		PLAN_JETPACK_SECURITY_T1_YEARLY,
 	],
 };
+
+// Categories
+export const JETPACK_SECURITY_CATEGORY = 'jetpack_security_category';
+export const JETPACK_PERFORMANCE_CATEGORY = 'jetpack_performance_category';
+export const JETPACK_GROWTH_CATEGORY = 'jetpack_growth_category';
+export const JETPACK_PRODUCT_CATEGORIES = <const>[
+	JETPACK_SECURITY_CATEGORY,
+	JETPACK_PERFORMANCE_CATEGORY,
+	JETPACK_GROWTH_CATEGORY,
+];
 
 // URL
 export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';

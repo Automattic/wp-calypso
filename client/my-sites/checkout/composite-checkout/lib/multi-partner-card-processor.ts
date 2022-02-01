@@ -6,6 +6,8 @@ import {
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
@@ -66,11 +68,17 @@ async function stripeCardProcessor(
 	const {
 		includeDomainDetails,
 		includeGSuiteDetails,
-		recordEvent: onEvent,
 		responseCart,
 		siteId,
 		contactDetails,
+		reduxDispatch,
 	} = transactionOptions;
+	reduxDispatch(
+		recordTransactionBeginAnalytics( {
+			paymentMethodId: 'stripe',
+			useForAllSubscriptions: submitData.useForAllSubscriptions,
+		} )
+	);
 
 	let paymentMethodToken;
 	try {
@@ -109,19 +117,27 @@ async function stripeCardProcessor(
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
 	return submitWpcomTransaction( formattedTransactionData, transactionOptions )
-		.then( ( stripeResponse ) => {
+		.then( async ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+				debug( 'transaction requires authentication' );
 				// 3DS authentication required
-				onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-				return confirmStripePaymentIntent(
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
+				// If this fails, it will reject (throw) and we'll end up in the catch block below.
+				await confirmStripePaymentIntent(
 					submitData.stripe,
 					stripeResponse?.message?.payment_intent_client_secret
 				);
+				// We must return the original authentication response in order to have
+				// access to the order_id so that we can display a pending page while
+				// we wait for Stripe to send a webhook to complete the purchase.
 			}
 			return stripeResponse;
 		} )
 		.then( ( stripeResponse ) => {
-			if ( stripeResponse?.redirect_url ) {
+			if (
+				stripeResponse?.redirect_url &&
+				! stripeResponse?.message?.payment_intent_client_secret
+			) {
 				return makeRedirectResponse( stripeResponse.redirect_url );
 			}
 			return makeSuccessResponse( stripeResponse );
@@ -147,7 +163,9 @@ async function ebanxCardProcessor(
 		responseCart,
 		siteId,
 		contactDetails,
+		reduxDispatch,
 	} = transactionOptions;
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'ebanx' } ) );
 
 	let paymentMethodToken;
 	try {

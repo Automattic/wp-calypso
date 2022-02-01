@@ -7,17 +7,14 @@ External Link is a React component for rendering an external link.
 ### Usage
 
 ```jsx
-import React from 'react';
 import ExternalLink from 'calypso/components/external-link';
 
-class MyComponent extends React.Component {
-	render() {
-		return (
-			<ExternalLink icon href="https://wordpress.org" onClick={ () => {} }>
-				WordPress.org
-			</ExternalLink>
-		);
-	}
+function MyComponent() {
+	return (
+		<ExternalLink icon href="https://wordpress.org" onClick={ () => {} }>
+			WordPress.org
+		</ExternalLink>
+	);
 }
 ```
 
@@ -42,23 +39,20 @@ and is capable of recording Tracks events.
 ### Usage
 
 ```jsx
-import React from 'react';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 
-class MyComponent extends React.Component {
-	render() {
-		return (
-			<ExternalLinkWithTracking
-				icon
-				href="https://wordpress.org"
-				onClick={ () => {} }
-				tracksEventName="tracks_event_name"
-				tracksEventProps={ { foo: 'baz' } }
-			>
-				WordPress.org
-			</ExternalLinkWithTracking>
-		);
-	}
+function MyComponent() {
+	return (
+		<ExternalLinkWithTracking
+			icon
+			href="https://wordpress.org"
+			onClick={ () => {} }
+			tracksEventName="tracks_event_name"
+			tracksEventProps={ { foo: 'baz' } }
+		>
+			WordPress.org
+		</ExternalLinkWithTracking>
+	);
 }
 ```
 

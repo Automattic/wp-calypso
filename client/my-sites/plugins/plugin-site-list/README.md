@@ -7,14 +7,12 @@ This component is used to represent a list of `Plugin-Site`, with a `Section-Hea
 ```jsx
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 
-return (
-	<PluginSiteList
-		sites={ sites }
-		plugin={ this.state.plugin }
-		notices={ this.state.notices }
-		title={ title }
-	/>
-);
+<PluginSiteList
+	sites={ sites }
+	plugin={ this.state.plugin }
+	notices={ this.state.notices }
+	title={ title }
+/>;
 ```
 
 ## Props

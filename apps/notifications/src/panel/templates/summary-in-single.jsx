@@ -1,4 +1,4 @@
-import { Component, createFactory } from 'react';
+import { Component } from 'react';
 import { html } from '../indices-to-html';
 import { linkProps } from './functions';
 
@@ -61,27 +61,25 @@ class UserHeader extends Component {
 	}
 }
 
-const Header = createFactory(
-	class extends Component {
-		render() {
-			const subject = (
-				<div
-					className="wpnc__subject"
-					dangerouslySetInnerHTML={ {
-						__html: html( this.props.subject ),
-					} }
-				/>
-			);
+class Header extends Component {
+	render() {
+		const subject = (
+			<div
+				className="wpnc__subject"
+				dangerouslySetInnerHTML={ {
+					__html: html( this.props.subject ),
+				} }
+			/>
+		);
 
-			return (
-				<div className="wpnc__summary">
-					{ subject }
-					<Snippet note={ this.props.note } snippet={ this.props.snippet } url={ this.props.url } />
-				</div>
-			);
-		}
+		return (
+			<div className="wpnc__summary">
+				{ subject }
+				<Snippet note={ this.props.note } snippet={ this.props.snippet } url={ this.props.url } />
+			</div>
+		);
 	}
-);
+}
 
 class SummaryInSingle extends Component {
 	render() {

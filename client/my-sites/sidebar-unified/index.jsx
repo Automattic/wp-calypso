@@ -44,7 +44,6 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
-	const isJetpackNonAtomicSite = isJetpack && ! isSiteAtomic;
 	const [ showDialog, setShowDialog ] = useState( false );
 	const [ externalUrl, setExternalUrl ] = useState();
 
@@ -58,19 +57,22 @@ export const MySitesSidebarUnified = ( { path } ) => {
 		return <Spinner className="sidebar-unified__menu-loading" />;
 	}
 
-	// Checks if there is a Happy Chat active and user clicks on an External link.
-	// On which case we show a modal awaiting for user confirmation for opening that
-	// link on new tab in order to avoid Happy Chat session disconnection.
-	// We return a bool that shows if the logic should terminate here.
-	const continueInCalypso = ( url, event ) => {
-		if ( isHappychatSessionActive && isExternal( url ) ) {
-			// Do not show warning modal on Jetpack sites, since all external links are
-			// always opened on new tabs for these sites.
-			if ( isJetpackNonAtomicSite ) {
-				return false;
-			}
+	// Jetpack self-hosted sites should open external links to WP Admin in new tabs,
+	// since WP Admin is considered a separate area from Calypso on those sites.
+	const shouldOpenExternalLinksInCurrentTab = ! isJetpack || isSiteAtomic;
 
-			event && event.preventDefault();
+	/**
+	 * Checks whether the user can navigate to the given URL. Users contacting support
+	 * via Happychat should be refrained from visiting external links in the current
+	 * browser tab, since that would terminates the chat. We instead show a modal
+	 * awaiting for user confirmation to visit it on a new tab, so the active Happychat
+	 * session in the current tab is not affected.
+	 *
+	 * @param {string} url The URL to check.
+	 * @returns {boolean} Whether the user is allowed to navigate.
+	 */
+	const canNavigate = ( url ) => {
+		if ( isHappychatSessionActive && isExternal( url ) && shouldOpenExternalLinksInCurrentTab ) {
 			setExternalUrl( url );
 			setShowDialog( true );
 			dispatch(
@@ -80,6 +82,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 			);
 			return false;
 		}
+
 		return true;
 	};
 
@@ -116,9 +119,8 @@ export const MySitesSidebarUnified = ( { path } ) => {
 								link={ item.url }
 								selected={ isSelected }
 								sidebarCollapsed={ sidebarIsCollapsed }
-								isHappychatSessionActive={ isHappychatSessionActive }
-								isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
-								continueInCalypso={ continueInCalypso }
+								shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+								canNavigate={ canNavigate }
 								{ ...item }
 							/>
 						);
@@ -128,9 +130,8 @@ export const MySitesSidebarUnified = ( { path } ) => {
 						<MySitesSidebarUnifiedItem
 							key={ item.slug }
 							selected={ isSelected }
-							isHappychatSessionActive={ isHappychatSessionActive }
-							isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
-							continueInCalypso={ continueInCalypso }
+							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+							canNavigate={ canNavigate }
 							{ ...item }
 						/>
 					);

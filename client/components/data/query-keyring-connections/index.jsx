@@ -15,7 +15,7 @@ class QueryKeyringConnections extends Component {
 		forceRefresh: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( ! this.props.isRequesting ) {
 			this.props.requestKeyringConnections( this.props.forceRefresh );
 		}

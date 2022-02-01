@@ -295,6 +295,7 @@ class PodcastingDetails extends Component {
 					</FormSettingExplanation>
 					<TermTreeSelector
 						taxonomy="category"
+						key="category"
 						selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
 						podcastingCategoryId={ podcastingCategoryId }
 						onChange={ this.onCategorySelected }

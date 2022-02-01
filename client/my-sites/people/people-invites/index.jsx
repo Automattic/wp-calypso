@@ -83,7 +83,7 @@ class PeopleInvites extends PureComponent {
 				<FormattedHeader
 					brandFont
 					className="people-invites__page-heading"
-					headerText={ translate( 'People' ) }
+					headerText={ translate( 'Users' ) }
 					subHeaderText={ translate( 'View and manage the invites to your site.' ) }
 					align="left"
 				/>

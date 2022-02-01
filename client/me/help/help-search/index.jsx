@@ -14,7 +14,11 @@ export default function HelpSearch( props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ searchQuery, setQuery ] = useState( '' );
-	const { data: helpLinks } = useHelpSearchQuery( searchQuery );
+	const { data: helpLinks } = useHelpSearchQuery( searchQuery, {
+		meta: {
+			persist: false,
+		},
+	} );
 
 	const onSearch = ( query ) => {
 		setQuery( query );

@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import Head from 'calypso/components/head';
+import { isLocaleRtl } from 'calypso/lib/i18n-utils';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { chunkCssLinks } from './utils';
 
@@ -12,10 +13,10 @@ function DomainsLanding( {
 	entrypoint,
 	head,
 	i18nLocaleScript,
-	isRTL,
 	lang,
 	manifests,
 } ) {
+	const isRTL = isLocaleRtl( lang );
 	return (
 		<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 			<Head title={ head.title } branchName={ branchName } inlineScriptNonce={ inlineScriptNonce }>

@@ -1,4 +1,6 @@
 import debugFactory from 'debug';
+import { findCartKeyFromSiteSlug } from './cart-functions';
+import { CartActionError, CartActionConnectionError, CartActionResponseError } from './errors';
 import {
 	getShoppingCartManagerState,
 	createSubscriptionManager,
@@ -25,6 +27,7 @@ import type {
 	DispatchAndWaitForValid,
 	ActionPromises,
 	ShoppingCartState,
+	CartKey,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:shopping-cart-manager' );
@@ -34,15 +37,27 @@ function createDispatchAndWaitForValid(
 	actionPromises: ActionPromises
 ): DispatchAndWaitForValid {
 	return ( action ) => {
-		return new Promise< ResponseCart >( ( resolve ) => {
-			actionPromises.add( resolve );
+		return new Promise< ResponseCart >( ( resolve, reject ) => {
+			actionPromises.add( { resolve, reject } );
 			dispatch( action );
 		} );
 	};
 }
 
+function getErrorFromState( state: ShoppingCartState ): undefined | CartActionError {
+	if ( state.loadingError ) {
+		return new CartActionConnectionError( state.loadingError, state.loadingErrorType );
+	}
+	const errorMessages = state.responseCart.messages?.errors ?? [];
+	if ( errorMessages.length > 0 ) {
+		const firstMessage = errorMessages[ 0 ];
+		return new CartActionResponseError( firstMessage.message, firstMessage.code );
+	}
+	return undefined;
+}
+
 function createShoppingCartManager(
-	cartKey: string,
+	cartKey: CartKey,
 	getCart: GetCart,
 	setCart: SetCart
 ): ShoppingCartManager {
@@ -60,10 +75,21 @@ function createShoppingCartManager(
 		const isStateChanged = newState !== state;
 		state = newState;
 
+		if ( state.cacheStatus === 'error' ) {
+			actionPromises.reject(
+				new CartActionConnectionError( state.loadingError, state.loadingErrorType )
+			);
+		}
+
 		if ( ! isStatePendingUpdateOrQueuedAction( state ) ) {
 			// action promises are resolved even if state hasn't changed so that
 			// noop actions resolve immediately.
-			actionPromises.resolve( state.responseCart );
+			const error = getErrorFromState( state );
+			if ( error ) {
+				actionPromises.reject( error );
+			} else {
+				actionPromises.resolve( state.responseCart );
+			}
 		}
 
 		if ( isStateChanged ) {
@@ -93,12 +119,16 @@ function createShoppingCartManager(
 	let didInitialFetch = false;
 	const initialFetch = () => {
 		if ( didInitialFetch ) {
+			const error = getErrorFromState( state );
+			if ( error ) {
+				return Promise.reject( error );
+			}
 			return Promise.resolve( state.lastValidResponseCart );
 		}
 		didInitialFetch = true;
 		takeActionsBasedOnState( state, dispatch );
-		return new Promise< ResponseCart >( ( resolve ) => {
-			actionPromises.add( resolve );
+		return new Promise< ResponseCart >( ( resolve, reject ) => {
+			actionPromises.add( { resolve, reject } );
 		} );
 	};
 
@@ -117,22 +147,24 @@ export function createShoppingCartManagerClient( {
 	getCart: GetCart;
 	setCart: SetCart;
 } ): ShoppingCartManagerClient {
-	const managersByCartKey: Record< string, ShoppingCartManager > = {};
+	const managersByCartKey = new Map< CartKey, ShoppingCartManager >();
 
-	function forCartKey( cartKey: string | undefined ): ShoppingCartManager {
+	function forCartKey( cartKey: CartKey | undefined ): ShoppingCartManager {
 		if ( ! cartKey ) {
 			return noopManager;
 		}
 
-		if ( ! managersByCartKey[ cartKey ] ) {
+		let manager = managersByCartKey.get( cartKey );
+		if ( typeof manager === 'undefined' ) {
 			debug( `creating cart manager for "${ cartKey }"` );
-			managersByCartKey[ cartKey ] = createShoppingCartManager( cartKey, getCart, setCart );
+			manager = createShoppingCartManager( cartKey, getCart, setCart );
+			managersByCartKey.set( cartKey, manager );
 		}
-
-		return managersByCartKey[ cartKey ];
+		return manager;
 	}
 
 	return {
 		forCartKey,
+		getCartKeyForSiteSlug: ( siteSlug: string ) => findCartKeyFromSiteSlug( siteSlug, getCart ),
 	};
 }

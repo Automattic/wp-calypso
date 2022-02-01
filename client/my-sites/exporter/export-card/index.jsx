@@ -20,14 +20,8 @@ import {
 import AdvancedSettings from './advanced-settings';
 
 class ExportCard extends Component {
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.props.advancedSettingsFetch( this.props.siteId );
-	}
-
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( newProps.siteId !== this.props.siteId ) {
-			this.props.advancedSettingsFetch( newProps.siteId );
-		}
 	}
 
 	render() {

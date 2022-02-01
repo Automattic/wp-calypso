@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { concat, flowRight } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -27,7 +26,7 @@ import { cleanUrl } from './utils';
 
 export class SearchPurchase extends Component {
 	static propTypes = {
-		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
+		type: PropTypes.oneOf( [ ...FLOW_TYPES, false ] ),
 		url: PropTypes.string,
 		processJpSite: PropTypes.func,
 	};
@@ -60,13 +59,11 @@ export class SearchPurchase extends Component {
 		this.setState( { candidateSites } );
 	}
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( this.props.url ) {
 			this.checkUrl( cleanUrl( this.props.url ) );
 		}
-	}
 
-	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: 'jp_lp',
 			cta_id: this.props.ctaId,
@@ -221,9 +218,4 @@ const connectComponent = connect(
 	}
 );
 
-export default flowRight(
-	jetpackConnection,
-	connectComponent,
-	searchSites,
-	localize
-)( SearchPurchase );
+export default jetpackConnection( connectComponent( searchSites( localize( SearchPurchase ) ) ) );

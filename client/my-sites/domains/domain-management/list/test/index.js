@@ -11,16 +11,11 @@ import deepFreeze from 'deep-freeze';
 import { shallow, mount } from 'enzyme';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
-import { List as DomainList } from '..';
+import { SiteDomains } from '../site-domains';
 
 const noop = () => {};
 
 jest.mock( 'calypso/lib/wp', () => ( {
-	undocumented: () => ( {
-		getProducts: () => {},
-		getSitePlans: () => {},
-		getSiteFeatures: () => {},
-	} ),
 	req: {
 		get: () => Promise.reject( new Error( '.get() not implemented in mock' ) ),
 	},
@@ -106,7 +101,7 @@ describe( 'index', () => {
 			}
 		);
 		const cartManagerClient = createShoppingCartManagerClient( { getCart, setCart } );
-		return mount( <DomainList { ...props } />, {
+		return mount( <SiteDomains { ...props } />, {
 			wrappingComponent: TestProvider,
 			wrappingComponentProps: { store, cartManagerClient },
 		} );
@@ -118,7 +113,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should list two domains', () => {
-			expect( component.find( 'DomainItem' ) ).toHaveLength( 2 );
+			expect( component.find( 'DomainRow' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -129,7 +124,7 @@ describe( 'index', () => {
 				userCanManageOptions: false,
 			} );
 
-			const wrapper = shallow( <DomainList { ...props } /> );
+			const wrapper = shallow( <SiteDomains { ...props } /> );
 
 			expect( wrapper.find( 'EmptyContent' ) ).toHaveLength( 1 );
 		} );

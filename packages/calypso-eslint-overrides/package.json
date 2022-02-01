@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/calypso-eslint-overrides",
 	"version": "1.0.0",
-	"description": "Shared Calypso eslint config",
+	"description": "Shared Calypso eslint config.",
 	"keywords": [
 		"calypso",
 		"eslint"
@@ -18,10 +18,8 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	}
 }

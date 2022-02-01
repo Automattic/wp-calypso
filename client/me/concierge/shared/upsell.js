@@ -1,4 +1,4 @@
-import { Button, CompactCard } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -25,13 +25,7 @@ class Upsell extends Component {
 					<Site siteId={ site.ID } />
 				</CompactCard>
 				<CompactCard>
-					<p>
-						{ translate( 'You do not have any available Quick Start sessions.' ) }{ ' ' }
-						{ translate( 'Click the button to purchase a new session.' ) }
-					</p>
-					<Button href={ `/checkout/offer-quickstart-session/${ site.slug }` } primary>
-						{ translate( 'Learn More' ) }
-					</Button>
+					<span>{ translate( 'You do not have any available Quick Start sessions.' ) }</span>
 				</CompactCard>
 			</div>
 		);

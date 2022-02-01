@@ -155,11 +155,11 @@ const PlansFeatureListItem: React.FunctionComponent< FeatureListItemProps > = (
 			) }
 		>
 			<ItemWrapper className="plans-feature-list__item-content-wrapper">
-				<BulletIcon className="plans-feature-list__item-bullet-icon" />
+				{ requiresAnnuallyBilledPlan && (
+					<FeatureAnnualDiscountNudge billingPeriod={ billingPeriod } __={ __ } />
+				) }
 				<span className="plans-feature-list__item-text">
-					{ requiresAnnuallyBilledPlan && (
-						<FeatureAnnualDiscountNudge billingPeriod={ billingPeriod } __={ __ } />
-					) }
+					<BulletIcon className="plans-feature-list__item-bullet-icon" />
 					<span className="plans-feature-list__item-description">{ textNode }</span>
 				</span>
 			</ItemWrapper>

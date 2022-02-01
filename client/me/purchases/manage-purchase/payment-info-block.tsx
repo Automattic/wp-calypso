@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PaymentLogo from 'calypso/components/payment-logo';
 import {
@@ -13,10 +12,23 @@ import {
 	hasPaymentMethod,
 } from 'calypso/lib/purchases';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import type { ReactNode } from 'react';
 
-export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } ): JSX.Element {
+export default function PaymentInfoBlock( {
+	purchase,
+	cards,
+}: {
+	purchase: Purchase;
+	cards: StoredCard[];
+} ): JSX.Element {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const isBackupMethodAvailable = cards.some(
+		( card ) =>
+			card.stored_details_id !== purchase.payment.storedDetailsId &&
+			card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value
+	);
 
 	if ( isIncludedWithPlan( purchase ) ) {
 		return <PaymentInfoBlockWrapper>{ translate( 'Included with plan' ) }</PaymentInfoBlockWrapper>;
@@ -32,12 +44,15 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 		isRechargeable( purchase )
 	) {
 		const logoType = paymentLogoType( purchase );
+		const willNotBeBilled = !! ( isExpiring( purchase ) && purchase.payment.creditCard );
 		return (
-			<PaymentInfoBlockWrapper
-				willNotBeBilled={ !! ( isExpiring( purchase ) && purchase.payment.creditCard ) }
-			>
-				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
-				{ purchase.payment.creditCard?.number ?? '' }
+			<PaymentInfoBlockWrapper>
+				<span className="manage-purchase__payment-method">
+					<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
+					{ purchase.payment.creditCard?.number ?? '' }
+				</span>
+				{ willNotBeBilled && <WillNotBeBilledNotice /> }
+				{ isBackupMethodAvailable && ! willNotBeBilled && <BackupPaymentMethodNotice /> }
 			</PaymentInfoBlockWrapper>
 		);
 	}
@@ -48,23 +63,31 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 		isRechargeable( purchase )
 	) {
 		const logoType = paymentLogoType( purchase );
+		const willNotBeBilled = isExpiring( purchase );
 		return (
-			<PaymentInfoBlockWrapper willNotBeBilled={ isExpiring( purchase ) }>
-				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
+			<PaymentInfoBlockWrapper>
+				<span className="manage-purchase__payment-method">
+					<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />
+				</span>
 				{ translate( 'expiring %(cardExpiry)s', {
 					args: {
 						cardExpiry: moment( purchase.payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
 					},
 				} ) }
+				{ willNotBeBilled && <WillNotBeBilledNotice /> }
+				{ isBackupMethodAvailable && ! willNotBeBilled && <BackupPaymentMethodNotice /> }
 			</PaymentInfoBlockWrapper>
 		);
 	}
 
 	if ( hasPaymentMethod( purchase ) && isRechargeable( purchase ) ) {
 		const logoType = paymentLogoType( purchase );
+		const willNotBeBilled = isExpiring( purchase );
 		return (
-			<PaymentInfoBlockWrapper willNotBeBilled={ isExpiring( purchase ) }>
-				<PaymentLogo type={ logoType } disabled={ isExpiring( purchase ) } />
+			<PaymentInfoBlockWrapper>
+				<PaymentLogo type={ logoType } disabled={ willNotBeBilled } />
+				{ willNotBeBilled && <WillNotBeBilledNotice /> }
+				{ isBackupMethodAvailable && ! willNotBeBilled && <BackupPaymentMethodNotice /> }
 			</PaymentInfoBlockWrapper>
 		);
 	}
@@ -72,23 +95,34 @@ export default function PaymentInfoBlock( { purchase }: { purchase: Purchase } )
 	return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
 }
 
-function PaymentInfoBlockWrapper( {
-	children,
-	willNotBeBilled,
-}: {
-	children: React.ReactNode;
-	willNotBeBilled?: boolean;
-} ) {
+function PaymentInfoBlockWrapper( { children }: { children: ReactNode } ) {
 	const translate = useTranslate();
 	return (
 		<aside aria-label={ String( translate( 'Payment method' ) ) }>
 			<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
-			{ willNotBeBilled && (
-				<div className="manage-purchase__detail-label-subtitle">
-					{ translate( '(this will not be billed)' ) }
-				</div>
-			) }
 			<span className="manage-purchase__detail">{ children }</span>
 		</aside>
 	);
+}
+
+function WillNotBeBilledNotice() {
+	const translate = useTranslate();
+	return (
+		<div className="manage-purchase__detail-label-subtitle">
+			{ translate( '(this will not be billed)' ) }
+		</div>
+	);
+}
+
+function BackupPaymentMethodNotice() {
+	const translate = useTranslate();
+	const noticeText = translate(
+		'If the renewal fails, a {{link}}backup payment method{{/link}} may be used.',
+		{
+			components: {
+				link: <a href="/me/purchases/payment-methods" />,
+			},
+		}
+	);
+	return <div className="manage-purchase__backup-payment-method-notice">{ noticeText }</div>;
 }

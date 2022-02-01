@@ -62,6 +62,7 @@ export function getOptionInfo( {
 		domain,
 		primaryWithPlansOnly,
 		selectedSite,
+		isSignupStep,
 	} );
 
 	const mappingPriceText = getMappingPriceText( {

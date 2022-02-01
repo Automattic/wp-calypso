@@ -1,4 +1,3 @@
-import * as features from './constants/features';
 import type {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
@@ -9,15 +8,12 @@ import type {
 	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
 	TERMS_LIST,
-	TYPES_LIST,
 	PERIOD_LIST,
+	JETPACK_PRODUCT_CATEGORIES,
 } from './constants';
-import type { getJetpackStorageAmountDisplays } from './translations';
 import type { TranslateResult } from 'i18n-calypso';
 
-const featureValues = Object.values( features );
-
-export type Feature = typeof featureValues[ number ];
+export type Feature = string;
 
 // WPCom
 export type WPComProductSlug = typeof WPCOM_PRODUCTS[ number ];
@@ -30,13 +26,18 @@ export interface WPComPlan extends Plan {
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
 	getPlanCompareFeatures?: (
-		experiment: string,
-		options: Record< string, unknown >
+		experiment?: string,
+		options?: Record< string, string | boolean[] >
 	) => TranslateResult[];
 	getSignupFeatures?: () => Feature[];
 	getBlogSignupFeatures?: () => Feature[];
 	getPortfolioSignupFeatures?: () => Feature[];
+	getPromotedFeatures?: () => Feature[];
+	getPathSlug: () => string;
 }
+
+export type IncompleteWPcomPlan = Partial< WPComPlan > &
+	Pick< WPComPlan, 'group' | 'type' | 'getTitle' | 'getDescription' >;
 
 // Jetpack
 export type JetpackProductSlug = typeof JETPACK_PRODUCTS_LIST[ number ];
@@ -49,13 +50,18 @@ export type JetpackPlanSlug =
 export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
-export type JetpackSlugsWithStorage = keyof ReturnType< typeof getJetpackStorageAmountDisplays >;
 
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
 	getPlanCardFeatures?: () => Feature[];
+	getPathSlug: () => string;
 }
+
+export type IncompleteJetpackPlan = Partial< JetpackPlan > &
+	Pick< JetpackPlan, 'group' | 'type' | 'getTitle' | 'getDescription' >;
+
+export type JetpackProductCategory = typeof JETPACK_PRODUCT_CATEGORIES[ number ];
 
 // All
 export type ProductSlug = WPComProductSlug | JetpackProductSlug;
@@ -68,23 +74,30 @@ export interface Product {
 	type: ProductSlug;
 	term: typeof TERMS_LIST[ number ];
 	bill_period: typeof PERIOD_LIST[ number ];
+	categories: JetpackProductCategory[];
 	getFeatures?: () => Feature[];
 	getProductId: () => number;
 	getStoreSlug: () => ProductSlug;
 }
 
-export interface Plan {
-	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
-	type: typeof TYPES_LIST[ number ];
+export interface BillingTerm {
 	term: typeof TERMS_LIST[ number ];
-	availableFor: ( plan: PlanSlug ) => boolean;
-	getProductId: () => number;
-	getPathSlug: () => string;
-	getStoreSlug: () => PlanSlug;
 	getBillingTimeFrame: () => TranslateResult;
+}
+
+export type Plan = BillingTerm & {
+	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
+	type: string;
+	availableFor?: ( plan: PlanSlug ) => boolean;
+	getSignupCompareAvailableFeatures?: () => string[];
+	getProductId: () => number;
+	getPathSlug?: () => string;
+	getStoreSlug: () => PlanSlug;
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
-	getTagline: () => TranslateResult;
+	getShortDescription?: () => TranslateResult;
+	getTagline?: () => TranslateResult;
+	getPlanCardFeatures?: () => Feature[];
 
 	/**
 	 * Features that are included as part of this plan.
@@ -102,4 +115,13 @@ export interface Plan {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
+};
+
+export type WithSnakeCaseSlug = { product_slug: string };
+export type WithCamelCaseSlug = { productSlug: string };
+
+export interface PlanMatchesQuery {
+	term?: string;
+	group?: string;
+	type?: string;
 }

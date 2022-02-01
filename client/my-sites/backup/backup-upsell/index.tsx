@@ -1,16 +1,16 @@
+import { PRODUCT_JETPACK_BACKUP_T1_YEARLY } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
+import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import Upsell from 'calypso/components/jetpack/upsell';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
 import Main from 'calypso/components/main';
-import {
-	getForCurrentCROIteration,
-	Iterations,
-} from 'calypso/my-sites/plans/jetpack-plans/iterations';
+import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
+import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -64,23 +64,22 @@ const BackupsUpsellBody: FunctionComponent = () => {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const dispatch = useDispatch();
 
-	const bodyText =
-		getForCurrentCROIteration( {
-			[ Iterations.ONLY_REALTIME_PRODUCTS ]: translate(
-				'Get peace of mind knowing your work will be saved, add backups today.'
-			),
-		} ) ??
-		translate(
-			'Get peace of mind knowing your work will be saved, add backups today. Choose from real time or daily backups.'
-		);
+	const onClick = useCallback(
+		() => dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) ),
+		[ dispatch ]
+	);
+	const item = slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_T1_YEARLY ) as SelectorProduct;
+
 	return (
-		<Upsell
-			headerText={ translate( 'Your site does not have backups' ) }
-			bodyText={ bodyText }
-			buttonLink={ `https://jetpack.com/upgrade/backup/?site=${ selectedSiteSlug }` }
-			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) ) }
-			iconComponent={ <BackupsUpsellIcon /> }
-			openButtonLinkOnNewTab={ false }
+		<JetpackProductCard
+			buttonLabel={ translate( 'Upgrade now' ) }
+			buttonPrimary
+			buttonURL={ `https://jetpack.com/upgrade/backup/?site=${ selectedSiteSlug }` }
+			description={ item.description }
+			headerLevel={ 3 }
+			hidePrice
+			item={ item }
+			onButtonClick={ onClick }
 		/>
 	);
 };

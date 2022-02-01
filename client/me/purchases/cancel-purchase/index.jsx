@@ -59,6 +59,7 @@ class CancelPurchase extends Component {
 		purchaseListUrl: purchasesRoot,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		if ( ! this.isDataValid() ) {
 			this.redirect( this.props );
@@ -66,6 +67,7 @@ class CancelPurchase extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
 			this.redirect( nextProps );
@@ -80,10 +82,14 @@ class CancelPurchase extends Component {
 
 		const { purchase } = props;
 
+		if ( ! purchase ) {
+			return false;
+		}
+
 		// For domain transfers, we only allow cancel if it's also refundable
 		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
 
-		return purchase && isCancelable( purchase ) && isDomainTransferCancelable;
+		return isCancelable( purchase ) && isDomainTransferCancelable;
 	};
 
 	redirect = ( props ) => {

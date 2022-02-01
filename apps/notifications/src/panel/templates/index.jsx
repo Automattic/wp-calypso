@@ -71,6 +71,7 @@ class Layout extends Component {
 		selectedNote: null,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.filterController = FilterBarController( this.refreshNotesToDisplay );
 		this.props.global.client = this.props.client;
@@ -96,6 +97,7 @@ class Layout extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedNoteId ) {
 			this.setState( {
@@ -120,6 +122,7 @@ class Layout extends Component {
 		} );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillUpdate( nextProps ) {
 		const { selectedNoteId: nextNote } = nextProps;
 		const { selectedNoteId: prevNote } = this.props;

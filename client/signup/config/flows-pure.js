@@ -10,8 +10,8 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getChecklistThemeDestination = noop,
-	getImportDestination = noop,
 	getDestinationFromIntent = noop,
+	getDIFMSignupDestination = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -56,15 +56,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'rebrand-cities',
-			steps: [ 'rebrand-cities-welcome', 'user' ],
-			destination: function ( dependencies ) {
-				return '/plans/select/business/' + dependencies.siteSlug;
-			},
-			description: 'Create an account for REBRAND cities partnership',
-			lastModified: '2019-06-17',
-		},
-		{
 			name: 'with-theme',
 			steps: [ 'domains-theme-preselected', 'plans', 'user' ],
 			destination: getChecklistThemeDestination,
@@ -93,21 +84,6 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'The current best performing flow in AB tests',
 			lastModified: '2019-06-20',
-		},
-		{
-			name: 'onboarding-with-preview',
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
-			destination: getSignupDestination,
-			description: 'The improved onboarding flow.',
-			lastModified: '2020-03-03',
-			showRecaptcha: true,
 		},
 		{
 			name: 'onboarding',
@@ -158,8 +134,6 @@ export function generateFlows( {
 			description: 'Allow new Pressable users to grant permission to server credentials',
 			lastModified: '2017-11-20',
 			disallowResume: true,
-			allowContinue: false,
-			hideFlowProgress: true,
 		},
 		{
 			name: 'rewind-switch',
@@ -169,8 +143,6 @@ export function generateFlows( {
 				'Allows users with Jetpack plan with VaultPress credentials to migrate credentials',
 			lastModified: '2018-01-27',
 			disallowResume: true,
-			allowContinue: false,
-			hideFlowProgress: true,
 		},
 		{
 			name: 'rewind-setup',
@@ -179,8 +151,6 @@ export function generateFlows( {
 			description: 'Allows users with Jetpack plan to setup credentials',
 			lastModified: '2019-11-11',
 			disallowResume: true,
-			allowContinue: false,
-			hideFlowProgress: true,
 			forceLogin: true,
 		},
 		{
@@ -191,8 +161,6 @@ export function generateFlows( {
 				'Allow users of sites that can auto-config to grant permission to server credentials',
 			lastModified: '2018-02-13',
 			disallowResume: true,
-			allowContinue: false,
-			hideFlowProgress: true,
 		},
 		{
 			name: 'simple',
@@ -215,7 +183,6 @@ export function generateFlows( {
 			description: 'Allow Jetpack users to clone a site via Rewind (alternate restore)',
 			lastModified: '2018-05-28',
 			disallowResume: true,
-			allowContinue: false,
 		},
 		// Important: For any changes done to the ecommerce flow,
 		// please copy the same changes to ecommerce-onboarding flow too
@@ -274,6 +241,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'p2-new',
+			steps: [ 'user', 'p2-confirm-email', 'p2-site' ],
+			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
+			description: 'New P2 signup flow',
+			lastModified: '2021-12-27',
+			showRecaptcha: true,
+		},
+		{
 			name: 'domain',
 			steps: [
 				'domain-only',
@@ -286,7 +261,7 @@ export function generateFlows( {
 			destination: getThankYouNoSiteDestination,
 			description: 'An experimental approach for WordPress.com/domains',
 			disallowResume: true,
-			lastModified: '2020-08-11',
+			lastModified: '2022-01-20',
 			showRecaptcha: true,
 		},
 		{
@@ -310,6 +285,7 @@ export function generateFlows( {
 			steps: [ 'themes-site-selected', 'plans-site-selected' ],
 			destination: getSiteDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
+			optionalDependenciesInQuery: [ 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',
 		},
@@ -323,34 +299,23 @@ export function generateFlows( {
 			pageTitle: translate( 'Launch your site' ),
 		},
 		{
-			name: 'import',
-			steps: [ 'user', 'from-url', 'domains', 'plans-import' ],
-			destination: getImportDestination,
-			description: 'A flow to kick off an import during signup',
-			disallowResume: true,
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		},
-		// IMPORTANT: steps should match the onboarding flow through the `site-type` step to prevent issues
-		// when switching from the onboarding flow.
-		{
-			name: 'import-onboarding',
-			steps: [ 'user', 'site-type', 'import-url', 'import-preview', 'domains', 'plans-import' ],
-			destination: getImportDestination,
-			description: 'Import flow that can be used from the onboarding flow',
-			disallowResume: true,
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		},
-		{
 			name: 'importer',
-			steps: isEnabled( 'gutenboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
+			steps: isEnabled( 'onboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
 			destination: '/',
+			pageTitle: translate( 'Import your site content' ),
 			description: 'A new import flow that can be used from the onboarding flow',
 			lastModified: '2021-10-18',
 			disallowResume: true,
-			hideFlowProgress: true,
-			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'siteSlug' ],
+		},
+		{
+			name: 'from',
+			steps: [ 'importing' ],
+			destination: '/',
+			pageTitle: translate( 'Import your site content' ),
+			description: 'Onboarding - start from importer',
+			lastModified: '2021-11-15',
+			enableBranchSteps: true,
 		},
 		{
 			name: 'reader',
@@ -367,7 +332,6 @@ export function generateFlows( {
 			description: "Crowdsignal's custom WordPress.com Connect signup flow",
 			lastModified: '2018-11-14',
 			disallowResume: true,
-			autoContinue: true,
 			showRecaptcha: true,
 		},
 		{
@@ -417,12 +381,16 @@ export function generateFlows( {
 		},
 		{
 			name: 'setup-site',
-			steps: isEnabled( 'signup/hero-flow' )
-				? [ 'intent', 'site-options', 'starting-point', 'design-setup-site' ]
-				: [ 'design-setup-site' ],
-			destination: isEnabled( 'signup/hero-flow' )
-				? getDestinationFromIntent
-				: getChecklistThemeDestination,
+			steps: [
+				'intent',
+				'site-options',
+				'starting-point',
+				'courses',
+				'store-options',
+				'store-features',
+				'design-setup-site',
+			],
+			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
 			lastModified: '2021-10-14',
@@ -433,10 +401,28 @@ export function generateFlows( {
 		},
 		{
 			name: 'do-it-for-me',
-			steps: [ 'user', 'difm-design', 'site-info-collection', 'domains' ],
-			destination: getSignupDestination,
+			steps: [
+				'user',
+				'new-or-existing-site',
+				'difm-site-picker',
+				'difm-design-setup-site',
+				'site-info-collection',
+				'domains',
+			],
+			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
+			excludeFromManageSiteFlows: true,
 			lastModified: '2021-09-30',
+		},
+		{
+			name: 'woocommerce-install',
+			pageTitle: translate( 'Add WooCommerce to your site' ),
+			steps: [ 'store-address', 'business-info', 'confirm', 'transfer' ],
+			destination: '/',
+			description: 'Onboarding and installation flow for woocommerce on all plans.',
+			providesDependenciesInQuery: [ 'site' ],
+			lastModified: '2021-12-21',
+			disallowResume: false,
 		},
 	];
 

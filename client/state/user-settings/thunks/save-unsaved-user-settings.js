@@ -8,8 +8,6 @@ import {
 
 import 'calypso/state/user-settings/init';
 
-const wpcom = wp.undocumented();
-
 /**
  * Redux thunk which exclusively updates given unsaved user settings
  *
@@ -25,7 +23,7 @@ const saveUnsavedUserSettings = ( fields = [] ) => async ( dispatch, getState ) 
 		return obj;
 	}, {} );
 
-	const response = await wpcom.me().settings().update( settingsToSave );
+	const response = await wp.me().settings().update( settingsToSave );
 	dispatch( saveUserSettingsSuccess( fromApi( response ) ) );
 	dispatch( clearUnsavedUserSettings( fields ) );
 

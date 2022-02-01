@@ -38,10 +38,7 @@ export default async function weChatProcessor(
 		contactDetails,
 	} = options;
 	const paymentMethodId = 'wechat';
-	recordTransactionBeginAnalytics( {
-		reduxDispatch,
-		paymentMethodId,
-	} );
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
 		true

@@ -6,9 +6,32 @@
 
 	&__threats-section {
 		display: flex;
+		flex-direction: column;
 		overflow-y: auto;
-		max-height: 240px;
 	}
+
+	&__card-container {
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: column;
+		border: 1px solid var( --studio-gray-5 );
+		border-bottom: 0;
+		height: 97px;
+		width: 594px;
+		flex-grow: 1;
+
+		&:last-of-type {
+			border-bottom: 1px solid var( --studio-gray-5 );
+		}
+
+		@include breakpoint-deprecated( '>960px' ) {
+			flex-wrap: nowrap;
+			flex-direction: row;
+			height: 100px;
+		}
+	}
+
+
 
 	&__icon {
 		color: var( --color-primary-40 );

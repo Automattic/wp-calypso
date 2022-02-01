@@ -5,18 +5,7 @@
 @import '@wordpress/base-styles/z-index';
 
 $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: replace with standard color
-
-.wpcom-editor-welcome-tour-frame {
-	background-color: $white;
-	border-radius: 2px;
-	bottom: 44px;
-	display: inline;
-	left: 16px;
-	position: fixed;
-	z-index: 9999;
-	// Avoid the text cursor when the text is not selectable
-	cursor: default;
-}
+$welcome-tour-card-media-extra-padding: 14%; // temporary value, to match the padding of the desktop instructional graphics
 
 .welcome-tour-card__heading {
 	font-size: 1.125rem; /* stylelint-disable-line */
@@ -78,17 +67,23 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	}
 }
 
+.wpcom-editor-welcome-tour > .tour-kit-frame__container {
+	box-shadow: none;
+}
+
 .welcome-tour-card {
 	width: 400px;
 	max-width: 92vw;
 
 	&.welcome-tour-card.is-elevated {
+		box-shadow: none;
 		box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 0 1px, rgba( 0, 0, 0, 0.1 ) 0 2px 4px 0;
 	}
 
 	&.components-card {
 		border: none;
 		border-radius: 4px; /* stylelint-disable-line */
+		box-shadow: none;
 	}
 
 	.components-card__body {
@@ -134,6 +129,8 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 		padding-top: math.percentage( math.div( math.ceil( math.div( 1, 1.53 ) * 100 ), 100 ) ); // img width:height ratio (1:1.53)
 		position: relative;
 		width: 100%;
+        // TODO CLK: use welcome-tour-card class to keep specific to welcome tour
+		background-color: #e7eaeb; // the color of the background used in desktop graphics
 
 		img {
 			left: 0;
@@ -167,9 +164,10 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 .welcome-tour-card__overlay-controls {
 	left: 0;
 	padding: $grid-unit-15;
-	position: absolute;
 	right: 0;
 	z-index: 1; // z-index is needed because overlay controls are written before components-card__media, and so ends up under the image
+    // TODO CLK: use welcome-tour-card class to keep specific to welcome tour
+	position: absolute;
 
 	.components-button {
 		width: 32px;
@@ -190,8 +188,8 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 			opacity: 0;
 		}
 
-		.wpcom-editor-welcome-tour-frame:hover &,
-		.wpcom-editor-welcome-tour-frame:focus-within & {
+		.tour-kit-frame__container:hover &,
+		.tour-kit-frame__container:focus-within & {
 			.components-button {
 				opacity: 0.7;
 
@@ -208,4 +206,38 @@ $welcome-tour-button-background-color: #32373c; // former $dark-gray-700. TODO: 
 	margin-left: $grid-unit-15;
 	justify-content: center;
 	min-width: 85px;
+}
+
+// TODO: Remove once @wordpress/components/src/card/styles/card-styles.js is updated
+.welcome-tour-card__media img {
+	display: block;
+	height: auto;
+	max-width: 100%;
+	width: 100%;
+}
+
+.wpcom-editor-welcome-tour {
+	&.is-mobile {
+		.wpcom-editor-welcome-tour__step {
+			&.is-with-extra-padding {
+				.components-card__media img {
+					left: $welcome-tour-card-media-extra-padding;
+					top: $welcome-tour-card-media-extra-padding;
+					width: 100% - $welcome-tour-card-media-extra-padding;
+				}
+			}
+		}
+	}
+
+	&.is-desktop {
+		.wpcom-editor-welcome-tour__step {
+			&.is-with-extra-padding-desktop {
+				.components-card__media img {
+					left: $welcome-tour-card-media-extra-padding;
+					top: $welcome-tour-card-media-extra-padding;
+					width: 100% - $welcome-tour-card-media-extra-padding;
+				}
+			}
+		}
+	}
 }

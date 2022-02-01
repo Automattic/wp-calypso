@@ -1,7 +1,7 @@
-import config from '@automattic/calypso-config';
 import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
+	isWpComMonthlyPlan,
 	isWpComBusinessPlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
@@ -24,6 +24,7 @@ import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
+import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import pluginsThemesImage from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
 import downgradeImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
@@ -42,6 +43,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getName, isRefundable } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
+import wpcom from 'calypso/lib/wp';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -73,6 +75,7 @@ import previousStep from './previous-step';
 import { radioTextOption, radioSelectOption } from './radio-option';
 import BusinessATStep from './step-components/business-at-step';
 import DowngradeStep from './step-components/downgrade-step';
+import FreeMonthOfferStep from './step-components/free-month-offer-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
 import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, FINAL_STEP, INITIAL_STEP } from './steps';
 
@@ -99,23 +102,19 @@ class CancelPurchaseForm extends Component {
 		isVisible: false,
 	};
 
-	shouldShowChatButton = () => {
-		if ( ! config.isEnabled( 'upgrades/precancellation-chat' ) ) {
-			return false;
-		}
-
+	shouldShowChatButton() {
 		// Jetpack doesn't do Happychat support
 		// NOTE: The HappychatButton component may still decide not to render,
 		// based on agent availability and connection status.
 		return ! this.props.isJetpack;
-	};
+	}
 
-	shouldUseBlankCanvasLayout = () => {
+	shouldUseBlankCanvasLayout() {
 		const { isJetpack, purchase } = this.props;
 		return isPlan( purchase ) && ! isJetpack;
-	};
+	}
 
-	getAllSurveySteps = () => {
+	getAllSurveySteps() {
 		const { purchase, shouldRevertAtomicSite } = this.props;
 
 		if ( isPlan( purchase ) ) {
@@ -131,7 +130,7 @@ class CancelPurchaseForm extends Component {
 		}
 
 		return [ FINAL_STEP ];
-	};
+	}
 
 	initSurveyState() {
 		const [ firstStep ] = this.getAllSurveySteps();
@@ -167,6 +166,7 @@ class CancelPurchaseForm extends Component {
 			upsell: '',
 			atomicRevertCheckOne: false,
 			atomicRevertCheckTwo: false,
+			purchaseIsAlreadyExtended: false,
 		};
 	}
 
@@ -219,6 +219,15 @@ class CancelPurchaseForm extends Component {
 				!! this.props.downgradeClick
 			) {
 				newState.upsell = 'downgrade-personal';
+			}
+
+			if (
+				[ 'noTime', 'siteIsNotReady' ].includes( value ) &&
+				isWpComMonthlyPlan( purchase.productSlug ) &&
+				!! this.props.freeMonthOfferClick &&
+				! this.state.purchaseIsAlreadyExtended
+			) {
+				newState.upsell = 'free-month-offer';
 			}
 		}
 
@@ -368,6 +377,16 @@ class CancelPurchaseForm extends Component {
 		}
 	};
 
+	freeMonthOfferClick = () => {
+		if ( ! this.state.isSubmitting ) {
+			this.props.freeMonthOfferClick();
+			this.recordEvent( 'calypso_purchases_free_month_offer_form_submit' );
+			this.setState( {
+				isSubmitting: true,
+			} );
+		}
+	};
+
 	showUpsell = () => {
 		const { isSubmitting, upsell } = this.state;
 
@@ -418,7 +437,7 @@ class CancelPurchaseForm extends Component {
 						actionText={ translate( 'Upgrade my site' ) }
 						image={ pluginsThemesImage }
 					>
-						<UpgradeATStep />
+						<UpgradeATStep selectedSite={ site } />
 					</Upsell>
 				);
 			case 'downgrade-personal':
@@ -438,6 +457,16 @@ class CancelPurchaseForm extends Component {
 							planCost={ planCost }
 							refundAmount={ this.getRefundAmount() }
 						/>
+					</Upsell>
+				);
+			case 'free-month-offer':
+				return (
+					<Upsell
+						actionOnClick={ this.freeMonthOfferClick }
+						actionText={ translate( 'Get a free month' ) }
+						image={ rocketImage }
+					>
+						<FreeMonthOfferStep productSlug={ purchase.productSlug } />
 					</Upsell>
 				);
 			default:
@@ -513,6 +542,14 @@ class CancelPurchaseForm extends Component {
 				value: 'couldNotActivate',
 				label: translate( 'I was unable to activate or use the product.' ),
 				textPlaceholder: translate( 'Where did you run into problems?' ),
+			},
+			{
+				value: 'noTime',
+				label: translate( "I don't have time." ),
+			},
+			{
+				value: 'siteIsNotReady',
+				label: translate( 'My site is not ready.' ),
 			},
 			{
 				value: 'noLongerWantToTransfer',
@@ -1170,6 +1207,30 @@ class CancelPurchaseForm extends Component {
 		return firstButtons.concat( isFirstStep ? [ next ] : [ prev, next ] );
 	};
 
+	fetchPurchaseExtendedStatus = async ( purchaseId ) => {
+		const newState = {
+			...this.state,
+		};
+
+		try {
+			const res = await wpcom.req.get( {
+				path: `/purchases/${ purchaseId }/has-extended`,
+				apiNamespace: 'wpcom/v2',
+			} );
+
+			newState.purchaseIsAlreadyExtended = res.has_extended;
+		} catch {
+			// When the request fails, set the flag to true so the extra options don't show up to users.
+			newState.purchaseIsAlreadyExtended = true;
+		}
+
+		if ( newState.purchaseIsAlreadyExtended && newState.upsell === 'free-month-offer' ) {
+			newState.upsell = '';
+		}
+
+		this.setState( newState );
+	};
+
 	componentDidUpdate( prevProps ) {
 		if (
 			! prevProps.isVisible &&
@@ -1181,9 +1242,15 @@ class CancelPurchaseForm extends Component {
 	}
 
 	componentDidMount() {
+		const { purchase } = this.props;
+
 		this.initSurveyState();
-		if ( this.props.isAtomicSite && this.props.purchase?.siteId ) {
-			this.props.fetchAtomicTransfer( this.props.purchase.siteId );
+		if ( this.props.isAtomicSite && purchase?.siteId ) {
+			this.props.fetchAtomicTransfer( purchase.siteId );
+		}
+
+		if ( purchase?.id && isWpComMonthlyPlan( purchase?.productSlug ) ) {
+			this.fetchPurchaseExtendedStatus( purchase.id );
 		}
 	}
 

@@ -1,14 +1,17 @@
 import { localize, translate } from 'i18n-calypso';
-import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
 import Main from 'calypso/components/main';
-import { getSelectedDomain, isRegisteredDomain } from 'calypso/lib/domains';
+import { getSelectedDomain, isFreeUrlDomain, isRegisteredDomain } from 'calypso/lib/domains';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import { domainManagementEdit, domainManagementNameServers } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementList,
+	domainManagementNameServers,
+} from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 import './style.scss';
@@ -22,9 +25,12 @@ class ChangeSiteAddress extends Component {
 
 	goBack = () => {
 		let path;
+		const selectedDomain = getSelectedDomain( this.props );
 
-		if ( isRegisteredDomain( getSelectedDomain( this.props ) ) ) {
+		if ( isRegisteredDomain( selectedDomain ) ) {
 			path = domainManagementNameServers;
+		} else if ( isFreeUrlDomain( selectedDomain ) ) {
+			path = domainManagementList;
 		} else {
 			path = domainManagementEdit;
 		}
@@ -36,12 +42,13 @@ class ChangeSiteAddress extends Component {
 
 	render() {
 		const domain = getSelectedDomain( this.props );
-		const dotblogSubdomain = get( domain, 'name', '' ).match( /\.\w+\.blog$/ );
+		const domainName = domain?.name ?? '';
+		const dotblogSubdomain = domainName.match( /\.\w+\.blog$/ );
 		const domainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
 
 		return (
 			<Main className="change-site-address">
-				<Header onClick={ this.goBack } selectedDomainName={ domain.name }>
+				<Header onClick={ this.goBack } selectedDomainName={ domainName }>
 					{ translate( 'Change Site Address' ) }
 				</Header>
 

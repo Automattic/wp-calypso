@@ -2,9 +2,9 @@
 .layout__loader {
 	background: transparent;
 	border-bottom: 1px solid transparent;
-	height: 46px;
+	height: var( --masterbar-height );
 	margin-left: -10%;
-	position: absolute;
+	position: fixed;
 	left: 50%;
 	top: 0;
 	width: 20%;

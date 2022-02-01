@@ -1,31 +1,20 @@
+import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
-import {
-	HAPPYCHAT_ELIGIBILITY_SET,
-	PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
-} from 'calypso/state/action-types';
-import { setSupportLevel } from 'calypso/state/help/actions';
-import { logToLogstash } from 'calypso/state/logstash/actions';
+import { HAPPYCHAT_SET_USER_CONFIG } from 'calypso/state/action-types';
 import { errorNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/happychat/init';
 
-export const setHappyChatEligibility = ( isEligible ) => ( {
-	type: HAPPYCHAT_ELIGIBILITY_SET,
-	isEligible,
-} );
-
-export const setPresalePrecancellationAvailability = ( availability ) => ( {
-	type: PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
-	availability,
+export const setHappychatUserConfig = ( config ) => ( {
+	type: HAPPYCHAT_SET_USER_CONFIG,
+	config,
 } );
 
 export const requestHappychatEligibility = () => ( dispatch ) => {
 	wpcom.req
 		.get( '/help/olark/mine' )
 		.then( ( configuration ) => {
-			dispatch( setHappyChatEligibility( configuration.isUserEligible ) );
-			dispatch( setPresalePrecancellationAvailability( configuration.availability ) );
-			dispatch( setSupportLevel( configuration.supportLevel ) );
+			dispatch( setHappychatUserConfig( configuration ) );
 		} )
 		.catch( ( error ) => {
 			// Hides notices for authorization errors as they should be legitimate (e.g. we use this error code to check
@@ -34,18 +23,16 @@ export const requestHappychatEligibility = () => ( dispatch ) => {
 				dispatch( errorNotice( error.message ) );
 				// Log this failure to logstash. This is debug info for https://github.com/Automattic/wp-calypso/issues/51517
 				// and can probably be removed once that's closed.
-				dispatch(
-					logToLogstash( {
-						feature: 'calypso_client',
-						message: 'Olark configuration request failed',
-						severity: 'error',
-						extra: {
-							error: error.name,
-							status: error.status,
-							message: error.message,
-						},
-					} )
-				);
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'Olark configuration request failed',
+					severity: 'error',
+					extra: {
+						error: error.name,
+						status: error.status,
+						message: error.message,
+					},
+				} );
 			}
 		} );
 };

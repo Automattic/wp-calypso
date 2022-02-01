@@ -14,6 +14,7 @@
 	// Fixes font anti-aliasing in iframes: andrewmoreton.co.uk/typekit-iframes-safari-weird-antialiasing/
 	-webkit-font-smoothing: subpixel-antialiased;
 
+	/* stylelint-disable-next-line unit-allowed-list */
 	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
 		body.font-smoothing-antialiased & {
 			text-rendering: optimizeLegibility;
@@ -203,7 +204,7 @@
 		background: var( --color-surface );
 		border: 1px solid var( --color-neutral-light );
 		border-right: none;
-		font-size: 13px;
+		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		height: 26px;
 		cursor: pointer;
 		user-select: none; // Makes text unselectable
@@ -222,14 +223,14 @@
 		}
 
 		&:first-of-type {
-			border-top-left-radius: 4px;
-			border-bottom-left-radius: 4px;
+			border-top-left-radius: 4px; /* stylelint-disable-line scales/radii */
+			border-bottom-left-radius: 4px; /* stylelint-disable-line scales/radii */
 		}
 
 		&:last-of-type {
 			border-right: 1px solid var( --color-neutral-light );
-			border-top-right-radius: 4px;
-			border-bottom-right-radius: 4px;
+			border-top-right-radius: 4px; /* stylelint-disable-line scales/radii */
+			border-bottom-right-radius: 4px; /* stylelint-disable-line scales/radii */
 
 			&.selected {
 				border-right-color: var( --color-primary );
@@ -292,7 +293,7 @@
 			border: {
 				width: 1px;
 				style: solid;
-				radius: 50%;
+				radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			}
 		}
 	}
@@ -317,12 +318,12 @@
 		transform: translateY( -50% );
 
 		h2 {
-			font: 400 21px/24px $sans;
+			font: 400 21px/24px $sans; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			margin-bottom: 4px;
 		}
 
 		p {
-			font: 400 16px/24px $sans;
+			font: 400 16px/24px $sans; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 	}
 
@@ -378,7 +379,7 @@
 		}
 
 		.wpnc__note .wpnc__note-icon img {
-			border-radius: 50%;
+			border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 
 		.unread .wpnc__note-icon .wpnc__gridicon {
@@ -421,8 +422,8 @@
 			text-align: left;
 
 			.wpnc__subject {
-				max-height: 3em;
-				-webkit-line-clamp: 2;
+				max-height: 4em;
+				-webkit-line-clamp: 3;
 				@extend %ellipsy-box;
 				font-size: $wpnc__font-size;
 				line-height: $wpnc__line-height;
@@ -605,7 +606,7 @@
 		.wpnc__comment .wpnc__user p.wpnc__excerpt {
 			color: var( --color-secondary );
 			max-height: 1.5em;
-			font-size: 14px;
+			font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 
 		.wpnc__reply {
@@ -638,7 +639,7 @@
 		}
 
 		.wpnc__note-icon .wpnc__gridicon {
-			font-size: 2em;
+			font-size: 2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			background-color: var( --color-neutral-10 );
 			border-color: var( --color-neutral-10 );
 		}
@@ -726,7 +727,7 @@
 			pre {
 				background: var( --color-neutral-0 );
 				border: 1px solid var( --color-neutral-10 );
-				border-radius: 3px;
+				border-radius: 3px; /* stylelint-disable-line scales/radii */
 				padding: 4px;
 
 				code {
@@ -737,12 +738,26 @@
 
 			code {
 				font-family: $code;
-				font-size: 90%;
+				font-size: 90%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				color: var( --color-neutral-50 );
 				background: var( --color-neutral-0 );
 				border: 1px solid var( --color-neutral-10 );
-				border-radius: 3px;
+				border-radius: 3px; /* stylelint-disable-line scales/radii */
 				padding: 0 2px;
+			}
+
+			// Use important to overwrite the styles as the priority of #wpnc-panel selector is too high
+			// See: client/notifications/style.scss
+			ol.wpnc__ol--outside {
+				margin-left: 1.2em !important;
+				list-style-position: outside !important;
+				overflow: visible;
+			}
+
+			hr.wpnc__hr-separator {
+				width: 100px;
+				height: 2px;
+				margin: 4px auto;
 			}
 		}
 
@@ -785,7 +800,6 @@
 	}
 
 	.wpnc__single-view .wpnc__badge .wpnc__body .wpnc__body-content .wpnc__paragraph {
-		text-align: center;
 		font-family: $sans;
 	}
 

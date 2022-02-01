@@ -3,7 +3,6 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
-	isGuidedTransfer,
 	isTitanMail,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
@@ -28,7 +27,6 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedP
 		purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ||
 		purchases.some( isDomainRegistration ) ||
 		purchases.some( isDomainMapping ) ||
-		purchases.some( isGuidedTransfer ) ||
 		purchases.some( isDomainTransfer ) ||
 		purchases.some( isTitanMail );
 

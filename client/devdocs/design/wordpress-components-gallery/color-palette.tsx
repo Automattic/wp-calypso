@@ -8,7 +8,7 @@ const ColorPaletteExample = () => {
 		{ name: 'blue', color: '#00f' },
 	];
 
-	const [ color, setColor ] = useState( colors[ 0 ] );
+	const [ color, setColor ] = useState( colors[ 0 ].color );
 
 	return (
 		<ColorPalette

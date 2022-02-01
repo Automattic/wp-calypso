@@ -3,6 +3,7 @@ import {
 	FEATURE_PERFORMANCE,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_SFTP,
+	FEATURE_INSTALL_PLUGINS,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -25,6 +26,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import HoldList, { hasBlockingHold } from './hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
+import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
 
 import './style.scss';
 
@@ -32,14 +34,13 @@ import './style.scss';
 const noop = () => {};
 
 interface ExternalProps {
+	isEligible?: boolean;
 	backUrl: string;
 	onProceed: () => void;
+	standaloneProceed: boolean;
 	className?: string;
-	eligibilityData?: {
-		eligibilityHolds: string[];
-		eligibilityWarnings: string[];
-		lastUpdated: string;
-	};
+	eligibilityData?: EligibilityData;
+	currentContext?: string;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -53,6 +54,7 @@ export const EligibilityWarnings = ( {
 	isEligible,
 	isPlaceholder,
 	onProceed,
+	standaloneProceed,
 	recordUpgradeClick,
 	siteId,
 	siteSlug,
@@ -79,6 +81,10 @@ export const EligibilityWarnings = ( {
 	const makeCurrentSitePublic = () => makeSitePublic( siteId );
 
 	const logEventAndProceed = () => {
+		if ( standaloneProceed ) {
+			onProceed();
+			return;
+		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
 			page.redirect( `/checkout/${ siteSlug }/business` );
@@ -215,7 +221,7 @@ const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalPr
 		siteId,
 		siteSlug,
 		siteIsLaunching: getRequest( state, launchSite( siteId ) )?.isLoading ?? false,
-		siteIsSavingSettings: isSavingSiteSettings( state, siteId ),
+		siteIsSavingSettings: isSavingSiteSettings( state, siteId ?? 0 ),
 	};
 };
 
@@ -233,7 +239,6 @@ const mapDispatchToProps = {
 		saveSiteSettings( selectedSiteId, {
 			blog_public: 1,
 			wpcom_coming_soon: 0,
-			apiVersion: '1.4',
 		} ),
 };
 
@@ -245,7 +250,11 @@ function mergeProps(
 	let context: string | null = null;
 	let feature = '';
 	let ctaName = '';
-	if ( includes( ownProps.backUrl, 'plugins' ) ) {
+	if ( ownProps.currentContext === 'plugin-details' ) {
+		context = ownProps.currentContext;
+		feature = FEATURE_INSTALL_PLUGINS;
+		ctaName = 'calypso-plugin-details-eligibility-upgrade-nudge';
+	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins';
 		feature = FEATURE_UPLOAD_PLUGINS;
 		ctaName = 'calypso-plugin-eligibility-upgrade-nudge';

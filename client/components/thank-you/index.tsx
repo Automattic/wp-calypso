@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -36,7 +37,7 @@ const ThankYouBody = styled.div`
 	margin-top: 50px;
 	> div {
 		width: 600px;
-		padding: 0 35px;
+		padding: 0 20px;
 	}
 	div {
 		min-width: 144px;
@@ -146,11 +147,12 @@ const ThankYouSupportSection = ( props: ThankYouSupportSectionProps ) => {
 
 export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
 
 	const {
-		headerBackgroundColor = '#0675C4',
+		headerBackgroundColor = 'var( --studio-blue-50 )',
 		headerClassName,
-		headerTextColor = 'white',
+		headerTextColor = 'var( --studio-white )',
 		containerClassName,
 		sections,
 		showSupportSection = true,
@@ -177,8 +179,8 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 		background-color: ${ headerBackgroundColor };
 		min-height: 352px;
 		img {
-			width: auto;
-			height: 200px;
+			width: ${ thankYouImage.width ? null : 'auto' };
+			height: ${ thankYouImage.height ? null : '200px' };
 			margin-bottom: 14px;
 		}
 	`;
@@ -193,7 +195,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 				title: translate( 'Ask a question' ),
 			},
 			{
-				href: SUPPORT_ROOT,
+				href: localizeUrl( SUPPORT_ROOT ),
 				title: translate( 'View support documentation' ),
 			},
 		],
@@ -206,8 +208,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	return (
 		<ThankYouContainer className={ classNames( 'thank-you__container', containerClassName ) }>
 			<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
-				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
-				<img { ...thankYouImage } />
+				<img { ...{ ...thankYouImage, alt: String( thankYouImage.alt ) } } />
 				{ thankYouTitle && (
 					<ThankYouTitleContainer>
 						<h1 className="thank-you__header-title wp-brand-font">{ thankYouTitle }</h1>

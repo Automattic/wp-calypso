@@ -5,7 +5,6 @@
 ```js
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import React from 'react';
 import LoadingPlaceholder from 'calypso/me/purchases/components/loading-placeholder';
 
 const MyComponentLoadingPlaceholder = ( { translate } ) => (

@@ -1,5 +1,4 @@
 import { isMobile } from '@automattic/viewport';
-import { find, startsWith } from 'lodash';
 import { CSSProperties } from 'react';
 import scrollTo from 'calypso/lib/scroll-to';
 import { Coordinate, DialogPosition, ArrowPosition } from './types';
@@ -101,7 +100,7 @@ export function targetForSlug( targetSlug?: string ) {
 		: `[data-tip-target="${ targetSlug }"]`;
 
 	const targetEls = query( cssSelector );
-	return find( targetEls, hasNonEmptyClientRect ) || null;
+	return targetEls.find( hasNonEmptyClientRect ) || null;
 }
 
 export function getValidatedArrowPosition( {
@@ -130,7 +129,8 @@ export function getValidatedArrowPosition( {
 	}
 
 	if (
-		( startsWith( arrow, 'left' ) || startsWith( arrow, 'right' ) ) &&
+		arrow &&
+		( arrow.startsWith( 'left' ) || arrow.startsWith( 'right' ) ) &&
 		DIALOG_WIDTH > 0.98 * document.documentElement.clientWidth
 	) {
 		// window not wide enough for adding an arrow
@@ -200,7 +200,7 @@ function scrollIntoView( target: Element, scrollContainer: Element | null ) {
 
 	if ( isMobile() ) {
 		clientHeight = document.documentElement.clientHeight;
-	} else if ( window === scrollContainer ) {
+	} else if ( ( window as unknown ) === ( scrollContainer as unknown ) ) {
 		// An improvement here could be to limit DOM access, via some sort of memoization
 		const body = document.querySelector( 'body' );
 
@@ -224,6 +224,6 @@ function scrollIntoView( target: Element, scrollContainer: Element | null ) {
 	const scrollMax = scrollHeight - clientHeight - scrollTop;
 	const y = Math.min( 0.75 * top, scrollMax );
 
-	scrollTo( { y, container } );
+	scrollTo( { y, container: container as HTMLElement } );
 	return y;
 }

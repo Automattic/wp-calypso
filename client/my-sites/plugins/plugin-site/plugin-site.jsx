@@ -3,9 +3,14 @@ import { connect } from 'react-redux';
 import PluginSiteJetpack from 'calypso/my-sites/plugins/plugin-site-jetpack';
 import PluginSiteNetwork from 'calypso/my-sites/plugins/plugin-site-network';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 
 const PluginSite = ( props ) => {
 	if ( ! props.site ) {
+		return null;
+	}
+
+	if ( props.plugin.isMarketplaceProduct && ! props.isWPCOM ) {
 		return null;
 	}
 
@@ -20,6 +25,7 @@ function mapStateToProps( state, ownProps ) {
 	const siteId = get( ownProps, 'site.ID' );
 	return {
 		isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+		isWPCOM: getIsSiteWPCOM( state, siteId ),
 	};
 }
 

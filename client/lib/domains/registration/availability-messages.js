@@ -366,6 +366,18 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
+		case domainAvailability.AVAILABLE_RESERVED:
+			message = translate(
+				'Sorry, {{strong}}%(domain)s{{/strong}} is reserved by the .%(tld)s registry and cannot be registered without permission.',
+				{
+					args: { domain, tld },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
+
 		case domainAvailability.TRANSFERRABLE_PREMIUM:
 			message = translate(
 				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support transfers of premium domains on WordPress.com, but if you are the owner of this domain, you can {{a}}map it to your site{{/a}}.",

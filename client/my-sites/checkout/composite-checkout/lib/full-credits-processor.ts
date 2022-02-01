@@ -1,5 +1,6 @@
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { recordTransactionBeginAnalytics } from './analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
@@ -27,7 +28,10 @@ export default async function fullCreditsProcessor(
 		includeDomainDetails,
 		includeGSuiteDetails,
 		contactDetails,
+		reduxDispatch,
 	} = transactionOptions;
+
+	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'full-credits' } ) );
 
 	const formattedTransactionData = prepareCreditsTransaction(
 		{

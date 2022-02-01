@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import bodyParser from 'body-parser';
 import qs from 'qs';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
 
 function loginEndpointData() {
@@ -35,11 +36,13 @@ function loginWithApple( request, response, next ) {
 	// However Apple sends the user data only once,
 	// so let's query our sign-up endpoint with the `signup_flow_name=no-signup` to make sure the user data is saved
 	if ( userEmail ) {
-		wpcom
-			.undocumented()
-			.usersSocialNew( {
+		wpcom.req
+			.post( '/users/social/new', {
 				...loginEndpointData(),
 				...request.user_openid_data,
+				locale: getLocaleSlug(),
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
 			} )
 			.catch( () => {
 				// ignore errors

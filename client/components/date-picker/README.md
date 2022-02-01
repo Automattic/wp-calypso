@@ -6,11 +6,11 @@ React component used to display a Date Picker.
 
 ## Example Usage
 
-```js
-import React from 'react';
+```jsx
+import { Component } from 'react';
 import DatePicker from 'calypso/components/date-picker';
 
-export default class extends React.Component {
+export default class extends Component {
 	// ...
 
 	onSelectDay( date ) {

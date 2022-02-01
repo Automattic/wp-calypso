@@ -1,5 +1,5 @@
-import { defaultRegistry } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
+import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
@@ -7,8 +7,6 @@ import { requestContactDetailsCache } from 'calypso/state/domains/management/act
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import type { UpdateTaxLocationInCart } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
-
-const { dispatch } = defaultRegistry;
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
@@ -33,10 +31,12 @@ export default function useCachedDomainContactDetails(
 		? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode ?? '' )
 		: false;
 
+	const { loadDomainContactDetailsFromCache } = useDispatch( 'wpcom-checkout' );
+
 	useEffect( () => {
 		if ( cachedContactDetails ) {
 			debug( 'using fetched cached domain contact details', cachedContactDetails );
-			dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( {
+			loadDomainContactDetailsFromCache( {
 				...cachedContactDetails,
 				postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : undefined,
 			} );
@@ -52,5 +52,10 @@ export default function useCachedDomainContactDetails(
 				subdivisionCode: cachedContactDetails.state ?? '',
 			} );
 		}
-	}, [ cachedContactDetails, updateCartLocation, arePostalCodesSupported ] );
+	}, [
+		cachedContactDetails,
+		updateCartLocation,
+		arePostalCodesSupported,
+		loadDomainContactDetailsFromCache,
+	] );
 }

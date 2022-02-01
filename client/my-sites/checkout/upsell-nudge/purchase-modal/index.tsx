@@ -20,14 +20,13 @@ import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/ty
 
 import './style.scss';
 
-const noop = () => null;
-
 type PurchaseModalProps = {
 	cart: ResponseCart;
 	cards: StoredCard[];
 	isCartUpdating: boolean;
 	onClose: () => void;
 	siteSlug: string;
+	discountRateCopy: string;
 };
 
 export function PurchaseModal( {
@@ -36,6 +35,7 @@ export function PurchaseModal( {
 	isCartUpdating,
 	onClose,
 	siteSlug,
+	discountRateCopy,
 }: PurchaseModalProps ): JSX.Element {
 	const [ step, setStep ] = useState( BEFORE_SUBMIT );
 	const submitTransaction = useSubmitTransaction( {
@@ -50,6 +50,7 @@ export function PurchaseModal( {
 		onClose,
 		siteSlug,
 		step,
+		discountRateCopy,
 		submitTransaction,
 	};
 
@@ -64,7 +65,6 @@ function wrapValueInManagedValue( value: string | undefined ): ManagedValue {
 	return {
 		value: value ?? '',
 		isTouched: true,
-		isRequired: false,
 		errors: [],
 	};
 }
@@ -92,7 +92,6 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.E
 			getThankYouUrl: () => '/plans',
 			includeDomainDetails,
 			includeGSuiteDetails,
-			recordEvent: noop,
 			reduxDispatch,
 			responseCart,
 			siteSlug: selectedSite?.slug ?? '',

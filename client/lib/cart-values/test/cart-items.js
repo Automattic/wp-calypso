@@ -631,7 +631,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 	} );
 	const properties = {
 		domain: 'purchased.com',
-		source: 'source',
 	};
 	describe( 'isDomainProduct', () => {
 		test( 'should return the corresponding renewal item', () => {
@@ -641,7 +640,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				extra: {
 					purchaseId: 123,
 					purchaseType: 'renewal',
-					source: 'source',
 				},
 				meta: 'purchased.com',
 				product_slug: 'domain_map',
@@ -690,7 +688,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 				extra: {
 					purchaseId: 123,
 					purchaseType: 'renewal',
-					source: 'source',
 				},
 				meta: 'purchased.com',
 				product_slug: 'offsite_redirect',

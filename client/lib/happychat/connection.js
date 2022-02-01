@@ -113,14 +113,12 @@ class Connection {
 	 *
 	 * - request was succesful: would dispatch action.callback
 	 * - request was unsucessful: would dispatch receiveError
-	 * - request timeout: would dispatch action.callbackTimeout
 	 *
 	 * @param  {object} action A Redux action with props
 	 *                  	{
 	 *                  		event: SocketIO event name,
 	 *                  		payload: contents to be sent,
-	 *                  		callback: a Redux action creator,
-	 *                  		callbackTimeout: a Redux action creator,
+	 *                  		callback: a Redux action creator
 	 *                  	}
 	 * @param  {number} timeout How long (in milliseconds) has the server to respond
 	 * @returns { Promise } Fulfilled (returns the transcript response)
@@ -152,10 +150,11 @@ class Connection {
 				// dispatch the request state upon promise race resolution
 				promiseRace.then(
 					( result ) => this.dispatch( action.callback( result ) ),
-					( e ) =>
-						e.message === 'timeout'
-							? this.dispatch( action.callbackTimeout() )
-							: this.dispatch( receiveError( action.event + ' request failed: ' + e.message ) )
+					( e ) => {
+						if ( e.message !== 'timeout' ) {
+							this.dispatch( receiveError( action.event + ' request failed: ' + e.message ) );
+						}
+					}
 				);
 
 				return promiseRace;

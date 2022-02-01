@@ -23,6 +23,10 @@
 	}
 }
 
+.themes__content {
+	min-height: 100vh;
+}
+
 .is-section-themes.has-no-sidebar .themes__content {
 	padding: 0 0 32px;
 

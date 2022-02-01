@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
@@ -11,6 +12,7 @@ import { EMPTY_SITE } from 'calypso/lib/url/support';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const StartOver = ( { translate, selectedSiteSlug } ) => {
+	const localizeUrl = useLocalizeUrl();
 	return (
 		<div
 			className="main main-column" // eslint-disable-line wpcalypso/jsx-classname-namespace
@@ -46,7 +48,7 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 				<ActionPanelFooter>
 					<Button
 						className="action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace
-						href={ EMPTY_SITE }
+						href={ localizeUrl( EMPTY_SITE ) }
 					>
 						{ translate( 'Follow the steps' ) }
 						<Gridicon icon="external" size={ 48 } />

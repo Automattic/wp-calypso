@@ -14,7 +14,7 @@ const fromApi = ( data ) => {
 	const restoreId = parseInt( data.restore_id, 10 );
 
 	if ( Number.isNaN( restoreId ) ) {
-		throw new SchemaError( 'missing numeric restore id - found `${ data.restore_id }`' );
+		throw new SchemaError( `missing numeric restore id - found '${ data.restore_id }'` );
 	}
 
 	return restoreId;

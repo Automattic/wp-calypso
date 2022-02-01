@@ -2,6 +2,7 @@ import { URL } from '../../types';
 
 export type UserMetaData = {
 	links: Record< 'self' | 'help' | 'site' | 'flags', URL >;
+	plans_reorder_abtest_variation?: string;
 	data?: {
 		flags: {
 			active_flags: string[];
@@ -21,7 +22,6 @@ export type OptionalUserData = {
 	email_verified: boolean;
 	has_unseen_notes: boolean;
 	is_new_reader: boolean;
-	isRTL: boolean;
 	is_valid_google_apps_country: boolean;
 	localeSlug: string;
 	localeVariant: string;

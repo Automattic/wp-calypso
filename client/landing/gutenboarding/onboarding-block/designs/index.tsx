@@ -1,13 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
-import DesignPicker, { getAvailableDesigns } from '@automattic/design-picker';
+import DesignPicker, { PremiumBadge, getAvailableDesigns } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import * as React from 'react';
-import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
-import Badge from '../../components/badge';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { useIsAnchorFm } from '../../path';
@@ -16,30 +13,67 @@ import type { Design } from '@automattic/design-picker';
 
 import './style.scss';
 
-const Designs: React.FunctionComponent = () => {
+interface HeaderProps {
+	isAnchorFmSignup: boolean;
+}
+
+const Header: React.FunctionComponent< HeaderProps > = ( { isAnchorFmSignup } ) => {
 	const { __ } = useI18n();
+
+	const { goBack } = useStepNavigation();
+	const title = __( 'Choose a design' );
+	const subTitle = isAnchorFmSignup
+		? __( 'Pick a homepage layout for your podcast site. You can customize or change it later.' )
+		: __( 'Pick your favorite homepage layout. You can customize or change it later.' );
+
+	return (
+		<div className="designs__header">
+			<div className="designs__heading">
+				<Title className="designs__heading-title">{ title }</Title>
+				<SubTitle>{ subTitle }</SubTitle>
+			</div>
+			<ActionButtons>
+				<BackButton onClick={ goBack } />
+			</ActionButtons>
+		</div>
+	);
+};
+
+const Designs: React.FunctionComponent = () => {
 	const locale = useLocale();
-	const { goBack, goNext } = useStepNavigation();
+	const { goNext } = useStepNavigation();
 	const { setSelectedDesign, setFonts, resetFonts, setRandomizedDesigns } = useDispatch(
 		ONBOARD_STORE
 	);
-	const {
-		getSelectedDesign,
-		hasPaidDesign,
-		getRandomizedDesigns,
-		isEnrollingInFseBeta,
-	} = useSelect( ( select ) => select( ONBOARD_STORE ) );
-	const isAnchorFmSignup = useIsAnchorFm();
+	const { selectedDesign, hasPaidDesign, randomizedDesigns } = useSelect( ( select ) => {
+		const onboardSelect = select( ONBOARD_STORE );
 
-	const selectedDesign = getSelectedDesign();
-	const isFse = isEnrollingInFseBeta();
+		return {
+			selectedDesign: onboardSelect.getSelectedDesign(),
+			hasPaidDesign: onboardSelect.hasPaidDesign(),
+			randomizedDesigns: onboardSelect.getRandomizedDesigns(),
+		};
+	} );
+	const isAnchorFmSignup = useIsAnchorFm();
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: selectedDesign?.slug,
-		is_selected_design_premium: hasPaidDesign(),
+		is_selected_design_premium: hasPaidDesign,
 	} ) );
 
 	const [ userHasSelectedDesign, setUserHasSelectedDesign ] = React.useState( false );
+
+	const onSelect = ( design: Design ) => {
+		setSelectedDesign( design );
+		setUserHasSelectedDesign( true );
+
+		if ( design.fonts ) {
+			setFonts( design.fonts );
+		} else {
+			// Some designs may not specify font pairings
+			resetFonts();
+		}
+	};
 
 	useEffect( () => {
 		if ( selectedDesign && userHasSelectedDesign ) {
@@ -55,57 +89,29 @@ const Designs: React.FunctionComponent = () => {
 		// Make sure we're using the right designs since we can't rely on config variables
 		// any more and `getRandomizedDesigns` is auto-populated in a state-agnostic way.
 		const availableDesigns = getAvailableDesigns( {
-			useFseDesigns: isFse,
+			featuredDesignsFilter: ( design ) => {
+				if ( isAnchorFmSignup ) {
+					return design.features.includes( 'anchorfm' );
+				}
+
+				return !! design.is_fse;
+			},
 			randomize: true,
 		} );
 		setRandomizedDesigns( availableDesigns );
-	}, [ isFse, setRandomizedDesigns ] );
+	}, [ setRandomizedDesigns, isAnchorFmSignup ] );
 
 	return (
 		<div className="gutenboarding-page designs">
-			<div className="designs__header">
-				<div className="designs__heading">
-					<Title>{ __( 'Choose a design' ) }</Title>
-					<SubTitle>
-						{ isAnchorFmSignup
-							? __(
-									'Pick a homepage layout for your podcast site. You can customize or change it later.'
-							  )
-							: __( 'Pick your favorite homepage layout. You can customize or change it later.' ) }
-					</SubTitle>
-				</div>
-				<ActionButtons>
-					<BackButton onClick={ goBack } />
-				</ActionButtons>
-			</div>
+			<Header isAnchorFmSignup={ isAnchorFmSignup } />
 			<DesignPicker
-				designs={ getRandomizedDesigns().featured.filter(
-					( design ) =>
-						// TODO Add finalized design templates to available designs config
-						// along with `is_anchorfm` prop (config is stored in the
-						// `@automattic/design-picker` package)
-						isAnchorFmSignup === design.features.includes( 'anchorfm' )
-				) }
+				designs={ randomizedDesigns.featured }
 				isGridMinimal={ isAnchorFmSignup }
 				locale={ locale }
-				onSelect={ ( design: Design ) => {
-					setSelectedDesign( design );
-					setUserHasSelectedDesign( true );
-
-					if ( design.fonts ) {
-						setFonts( design.fonts );
-					} else {
-						// Some designs may not specify font pairings
-						resetFonts();
-					}
-				} }
-				premiumBadge={
-					<Badge className="designs__premium-badge">
-						<JetpackLogo className="designs__premium-badge-logo" size={ 20 } />
-						<span className="designs__premium-badge-text">{ __( 'Premium' ) }</span>
-					</Badge>
-				}
-				showCategoryFilter={ isEnabled( 'signup/design-picker-categories' ) }
+				onSelect={ onSelect }
+				premiumBadge={ <PremiumBadge /> }
+				highResThumbnails
+				recommendedCategorySlug={ null }
 			/>
 		</div>
 	);

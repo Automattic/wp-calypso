@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { has, keyBy, get, omit } from 'lodash';
+import { keyBy, get, omit } from 'lodash';
 import stepsConfig from 'calypso/signup/config/steps-pure';
 import {
 	SIGNUP_COMPLETE_RESET,
@@ -8,7 +8,6 @@ import {
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
-	SIGNUP_STEPS_SITE_TYPE_SET,
 	SIGNUP_PROGRESS_REMOVE_STEP,
 	SIGNUP_PROGRESS_ADD_STEP,
 } from 'calypso/state/action-types';
@@ -83,7 +82,7 @@ const completeStep = ( state, { step } ) => updateStep( state, { ...step, status
 const invalidateStep = ( state, { step, errors } ) => {
 	const newStepState = { ...step, errors, status: 'invalid' };
 
-	return has( state, step.stepName )
+	return state.hasOwnProperty( step.stepName )
 		? updateStep( state, newStepState )
 		: addStep( state, newStepState );
 };
@@ -93,12 +92,14 @@ const processStep = ( state, { step } ) => updateStep( state, { ...step, status:
 const saveStep = ( state, { step } ) => {
 	const status = get( state, [ step.stepName, 'status' ] );
 
-	return has( state, step.stepName )
+	return state.hasOwnProperty( step.stepName )
 		? updateStep( state, {
 				...step,
-				// The pending status means this step needs to delay api request and the user goes back to this step
+				// The pending status means this step needs to delay api requests until the setup-site flow completes
+				// In case the user goes back to an earlier step and changes their intent
 				// So we can mark status as in-progress
-				status: status === 'pending' ? 'in-progress' : status,
+				status:
+					status === 'pending' && step.lastKnownFlow === 'setup-site' ? 'in-progress' : status,
 		  } )
 		: addStep( state, { ...step, status: 'in-progress' } );
 };
@@ -107,7 +108,7 @@ const submitStep = ( state, { step } ) => {
 	const stepHasApiRequestFunction = get( stepsConfig, [ step.stepName, 'apiRequestFunction' ] );
 	const status = stepHasApiRequestFunction ? 'pending' : 'completed';
 
-	return has( state, step.stepName )
+	return state.hasOwnProperty( step.stepName )
 		? updateStep( state, { ...step, status } )
 		: addStep( state, { ...step, status } );
 };
@@ -128,9 +129,6 @@ export default withSchemaValidation( schema, ( state = {}, action ) => {
 			return saveStep( state, action );
 		case SIGNUP_PROGRESS_SUBMIT_STEP:
 			return submitStep( state, action );
-		case SIGNUP_STEPS_SITE_TYPE_SET:
-			delete state[ 'domains-with-preview' ];
-			return state;
 		case SIGNUP_PROGRESS_REMOVE_STEP:
 			return removeStep( state, action );
 	}

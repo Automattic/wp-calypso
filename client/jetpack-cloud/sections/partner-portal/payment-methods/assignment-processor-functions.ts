@@ -1,33 +1,42 @@
 import { createStripeSetupIntent } from '@automattic/calypso-stripe';
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
 import { saveCreditCard } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/stored-payment-method-api';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 interface Props {
 	useAsPrimaryPaymentMethod?: boolean;
 	translate: ReturnType< typeof useTranslate >;
 	stripe: Stripe | null;
 	stripeConfiguration: StripeConfiguration | null;
+	setupIntentId: string | undefined;
 	element: StripeCardNumberElement | undefined;
-	dispatch: ReturnType< typeof useDispatch >;
+	dispatch: CalypsoDispatch;
 }
 
 export async function assignNewCardProcessor(
-	{ useAsPrimaryPaymentMethod, translate, stripe, stripeConfiguration, dispatch, element }: Props,
+	{
+		useAsPrimaryPaymentMethod,
+		translate,
+		stripe,
+		stripeConfiguration,
+		setupIntentId,
+		dispatch,
+		element,
+	}: Props,
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
-	recordFormSubmitEvent( { dispatch } );
+	dispatch( recordFormSubmitEvent() );
 
 	try {
 		if ( ! isNewCardDataValid( submitData ) ) {
 			throw new Error( 'Credit Card data is missing your full name.' );
 		}
-		if ( ! stripe || ! stripeConfiguration ) {
+		if ( ! stripe || ! stripeConfiguration || ! setupIntentId ) {
 			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
 		}
 		if ( ! element ) {
@@ -43,7 +52,7 @@ export async function assignNewCardProcessor(
 			formFieldValues,
 			stripe,
 			element,
-			stripeConfiguration
+			setupIntentId
 		);
 		const token = tokenResponse.payment_method;
 
@@ -71,12 +80,12 @@ async function createStripeSetupIntentAsync(
 	},
 	stripe: Stripe,
 	element: StripeCardNumberElement,
-	stripeConfiguration: StripeConfiguration
+	setupIntentId: string
 ): Promise< StripeSetupIntent > {
 	const paymentDetailsForStripe = {
 		name,
 	};
-	return createStripeSetupIntent( stripe, element, stripeConfiguration, paymentDetailsForStripe );
+	return createStripeSetupIntent( stripe, element, setupIntentId, paymentDetailsForStripe );
 }
 
 function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
@@ -88,6 +97,6 @@ interface NewCardSubmitData {
 	name: string;
 }
 
-function recordFormSubmitEvent( { dispatch }: { dispatch: ReturnType< typeof useDispatch > } ) {
-	dispatch( recordTracksEvent( 'calypso_partner_portal_add_credit_card_form_submit' ) );
+function recordFormSubmitEvent() {
+	return recordTracksEvent( 'calypso_partner_portal_add_credit_card_form_submit' );
 }

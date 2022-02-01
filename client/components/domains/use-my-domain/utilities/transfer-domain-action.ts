@@ -1,6 +1,4 @@
 import page from 'page';
-import { DefaultRootState } from 'react-redux';
-import { Dispatch } from 'redux';
 import {
 	transferDomainError,
 	useMyDomainInputMode as inputMode,
@@ -9,21 +7,19 @@ import {
 	AuthCodeValidationError,
 	AuthCodeValidationHandler,
 } from 'calypso/components/domains/connect-domain-step/types';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { domainTransfer, updatePrivacyForDomain } from 'calypso/lib/cart-values/cart-items';
+import { startInboundTransfer } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 
 const noop = () => null;
 export const transferDomainAction: AuthCodeValidationHandler = (
 	{ selectedSite, verificationData, domain, ...props },
 	onDone = noop
-) => async ( _: Dispatch< never >, getState: () => DefaultRootState ) => {
+) => async () => {
 	const mode = ( props as Record< string, string > ).initialMode;
-	const productsList = getProductsList( getState() );
 	const transferrableStatuses = [
 		domainAvailability.TRANSFERRABLE,
 		domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE,
@@ -32,10 +28,11 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 	if ( ! selectedSite ) return onDone( { message: transferDomainError.NO_SELECTED_SITE } );
 
 	try {
-		const wpcomDomain = wpcom.domain( domain );
 		const authCode = verificationData.ownership_verification_data.verification_data;
-
-		const authCodeCheckResult = await wpcomDomain.checkAuthCode( authCode );
+		const authCodeCheckResult = await wpcom.req.get(
+			`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-check-auth-code`,
+			{ auth_code: authCode }
+		);
 
 		if ( ! authCodeCheckResult.success )
 			return onDone( {
@@ -43,8 +40,14 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 				message: transferDomainError.AUTH_CODE,
 			} );
 
-		const checkAvailabilityResult = await wpcomDomain.isDomainAvailable( selectedSite.ID, false );
-
+		const checkAvailabilityResult = await wpcom.req.get(
+			`/domains/${ encodeURIComponent( domain ) }/is-available`,
+			{
+				blog_id: selectedSite.ID,
+				apiVersion: '1.3',
+				is_cart_pre_check: false,
+			}
+		);
 		const addTransferToCartAndCheckout = async () => {
 			let supportsPrivacy = false;
 
@@ -65,31 +68,21 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 			}
 
 			await cartManagerClient
-				.forCartKey( selectedSite.ID.toString() )
-				.actions.addProductsToCart( [ fillInSingleCartItemAttributes( transfer, productsList ) ] );
+				.forCartKey( selectedSite.ID )
+				.actions.addProductsToCart( [ transfer ] );
 			return page( '/checkout/' + selectedSite.slug );
 		};
 
 		const startInboundTransferAndReload = async () => {
 			try {
-				const result = await wpcom
-					.undocumented()
-					.startInboundTransfer( selectedSite.ID, domain, authCode );
-				if ( result.success ) {
-					page( domainManagementTransferIn( selectedSite.slug, domain ) );
-				} else {
-					return onDone( {
-						message: transferDomainError.GENERIC_ERROR,
-					} );
-				}
+				await startInboundTransfer( selectedSite.ID, domain, authCode );
+				page( domainManagementTransferIn( selectedSite.slug, domain ) );
 			} catch ( error ) {
-				return onDone( {
-					message: transferDomainError.GENERIC_ERROR,
-				} );
+				onDone( { message: transferDomainError.GENERIC_ERROR } );
 			}
 		};
 
-		if ( inputMode.transferDomain === mode ) {
+		if ( inputMode.startPendingTransfer === mode ) {
 			await startInboundTransferAndReload();
 		} else {
 			await addTransferToCartAndCheckout();

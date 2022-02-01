@@ -9,9 +9,9 @@ import isJetpackSite from './is-jetpack-site';
  *
  * @param   {object}  state        Global state tree
  * @param   {?number} siteId       Site ID
- * @param   {?string} panel        Optional panel to autofocus
- * @param   {?string} returnUrl    Optional return url for when the user closes the customizer
- * @param   {?string} guide        Optional parameter to show a help guide in the customizer. possible values:
+ * @param   {?string} [panel]        Optional panel to autofocus
+ * @param   {?string} [returnUrl]    Optional return url for when the user closes the customizer
+ * @param   {?string} [guide]        Optional parameter to show a help guide in the customizer. possible values:
  *                                 'add-menu' and 'social-media' show custom guides, any other value shows the default guide
  * @returns {string}               Customizer URL
  */

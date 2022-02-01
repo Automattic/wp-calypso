@@ -65,7 +65,6 @@ const buildPropsFromContextBlock = ( block ) => {
  * block action.
  *
  * @param {string} rootClientId The rootClientId of the block event.
- *
  * @returns {object} The block event's context properties.
  */
 export const getBlockEventContextProperties = ( rootClientId ) => {
@@ -109,7 +108,6 @@ export const getBlockEventContextProperties = ( rootClientId ) => {
  * @param {object|Array} newObject The object that has had an update.
  * @param {object|Array} oldObject The original object to reference.
  * @param {Array}  		 keyMap    Used in recursion.  A list of keys mapping to the changed item.
- *
  * @returns {Array[object]} Array of objects containing a keyMap array and value for the changed items.
  */
 const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
@@ -147,7 +145,6 @@ const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
  *
  * @param {object} newContent The object that has had an update.
  * @param {object} oldContent The original object to reference.
- *
  * @returns {Array[object]} Array of objects containing a keyMap array and value for the changed items.
  */
 const findUpdates = ( newContent, oldContent ) => {
@@ -178,7 +175,6 @@ const findUpdates = ( newContent, oldContent ) => {
  *
  * @param {Array[string]} keyMap A list of keys mapping to the changed item in the global styles content object.
  * @param {*} 			  value  New value of the updated item.
- *
  * @returns {object} An object containing the event properties for a global styles change.
  */
 const buildGlobalStylesEventProps = ( keyMap, value ) => {
@@ -256,4 +252,16 @@ export const getFlattenedBlockNames = ( block ) => {
 	}
 
 	return blockNames;
+};
+
+/**
+ * Checks the editor for open saving interfaces and returns the result.
+ *
+ * @returns {string} Name of saving interface found.
+ */
+export const findSavingSource = () => {
+	const savePanel = document.querySelector( '.entities-saved-states__panel' );
+	// Currently we only expect these save actions to trigger from the save panel.
+	// However, we fall back to 'unknown' in case some new saving mechanism is added.
+	return savePanel ? 'multi-entity-save-panel' : 'unknown';
 };

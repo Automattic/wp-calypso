@@ -430,14 +430,10 @@ ul.module-header-actions {
 		 */
 		th:first-child {
 			width: 34px; // 24 (margin-left) + 12 (margin-right) + 1 (border) + 34 = 70
-			transform: translateX( -70px );
 			background: var( --color-surface );
-			position: fixed;
+			position: sticky;
+			left: 0;
 			z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
-		}
-
-		.module-content-table-scroll {
-			margin-left: 70px;
 		}
 
 		th,

@@ -8,8 +8,12 @@ export interface SinglePreferenceType {
 }
 
 export interface PreferenceType {
-	scan?: SinglePreferenceType;
+	scan?: ScanPreferenceType;
 	restore?: SinglePreferenceType;
+}
+
+export interface ScanPreferenceType {
+	[ siteId: string ]: SinglePreferenceType;
 }
 
 export const emptyPreference: SinglePreferenceType = {

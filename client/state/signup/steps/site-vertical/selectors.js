@@ -1,7 +1,5 @@
-import { get, find } from 'lodash';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { get } from 'lodash';
 import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
-import { getVerticals } from 'calypso/state/signup/verticals/selectors';
 
 import 'calypso/state/signup/init';
 
@@ -9,51 +7,6 @@ export function getSiteVerticalName( state ) {
 	return get( state, 'signup.steps.siteVertical.name', '' );
 }
 
-export function getSiteVerticalData( state ) {
-	const siteType = getSiteType( state );
-	const verticalName = getSiteVerticalName( state );
-	const verticals = getVerticals( state, verticalName, siteType );
-
-	const match = find(
-		verticals,
-		( item ) => item.verticalName.toLowerCase() === verticalName.toLowerCase()
-	);
-
-	if ( match ) {
-		return match;
-	}
-
-	return {
-		isUserInputVertical: true,
-		parent: '',
-		preview: '',
-		previewStylesUrl: '',
-		siteType,
-		verticalId: '',
-		verticalName,
-		verticalSlug: verticalName,
-	};
-}
-
-export function getSiteVerticalPreview( state ) {
-	return get( getSiteVerticalData( state ), 'preview', '' );
-}
-
-export function getSiteVerticalPreviewScreenshot( state, viewportDevice ) {
-	const screenshots = get( getSiteVerticalData( state ), 'previewScreenshots' );
-
-	return get(
-		screenshots,
-		viewportDevice,
-		get( screenshots, viewportDevice === 'phone' ? 'phoneHighDpi' : 'desktopHighDpi' )
-	);
-}
-
-export function getSiteVerticalPreviewStyles( state ) {
-	return get( getSiteVerticalData( state ), 'previewStylesUrl', '' );
-}
-
-// TODO: All the following selectors will be updated to use getSiteVerticalData like getSiteVerticalPreview() does.
 export function getSiteVerticalId( state ) {
 	return get( state, 'signup.steps.siteVertical.id', '' );
 }

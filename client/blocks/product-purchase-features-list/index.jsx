@@ -26,7 +26,7 @@ import { isWordadsInstantActivationEligible } from 'calypso/lib/ads/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import { hasDomainCredit, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AdvertisingRemoved from './advertising-removed';
@@ -34,6 +34,7 @@ import BusinessOnboarding from './business-onboarding';
 import CustomCSS from './custom-css';
 import CustomDomain from './custom-domain';
 import CustomizeTheme from './customize-theme';
+import FindNewTheme from './find-new-theme';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import GoogleMyBusiness from './google-my-business';
 import HappinessSupportCard from './happiness-support-card';
@@ -85,6 +86,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
 				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -149,6 +151,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<CustomCSS selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -181,6 +184,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 				<SellOnlinePaypal isJetpack={ false } />
@@ -398,7 +402,7 @@ export default connect(
 			isAutomatedTransfer,
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
-			showCustomizerFeature: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
+			showCustomizerFeature: ! isSiteUsingLegacyFSE( state, selectedSiteId ),
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			scheduleId: getConciergeScheduleId( state ),
 			isMonthlyPlan: TERM_MONTHLY === getPlan( ownProps.plan )?.term,

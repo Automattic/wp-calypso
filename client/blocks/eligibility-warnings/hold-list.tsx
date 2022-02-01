@@ -84,42 +84,52 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
  * @param {Function} translate Translate fn
  * @returns {object} Dictionary of blocking holds and their corresponding messages
  */
-export function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
+export function getBlockingMessages(
+	translate: LocalizeProps[ 'translate' ] | ( ( str: string ) => string )
+): Record< string, { message: string; status: string | null; contactUrl: string | null } > {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
-			message: translate(
-				'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
+			message: String(
+				translate(
+					'This site is not currently eligible to install themes and plugins, or activate hosting access. Please contact our support team for help.'
+				)
 			),
 			status: 'is-error',
 			contactUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
 		},
 		TRANSFER_ALREADY_EXISTS: {
-			message: translate(
-				'Installation in progress. Just a minute! Please wait until the installation is finished, then try again.'
+			message: String(
+				translate(
+					'Installation in progress. Just a minute! Please wait until the installation is finished, then try again.'
+				)
 			),
 			status: null,
 			contactUrl: null,
 		},
 		NO_JETPACK_SITES: {
-			message: translate( 'Try using a different site.' ),
+			message: String( translate( 'Try using a different site.' ) ),
 			status: 'is-error',
 			contactUrl: null,
 		},
 		NO_VIP_SITES: {
-			message: translate( 'Try using a different site.' ),
+			message: String( translate( 'Try using a different site.' ) ),
 			status: 'is-error',
 			contactUrl: null,
 		},
 		SITE_GRAYLISTED: {
-			message: translate(
-				"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
+			message: String(
+				translate(
+					"There's an ongoing site dispute. Contact us to review your site's standing and resolve the dispute."
+				)
 			),
 			status: 'is-error',
 			contactUrl: localizeUrl( 'https://wordpress.com/support/suspended-blogs/' ),
 		},
 		NO_SSL_CERTIFICATE: {
-			message: translate(
-				'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
+			message: String(
+				translate(
+					'Certificate installation in progress. Hold tight! We are setting up a digital certificate to allow secure browsing on your site using "HTTPS".'
+				)
 			),
 			status: null,
 			contactUrl: null,
@@ -229,7 +239,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 										<Button
 											compact
 											disabled={ !! hasValidBlockingHold }
-											href={ holdMessages[ hold ].supportUrl }
+											href={ holdMessages[ hold ].supportUrl ?? '' }
 											rel="noopener noreferrer"
 										>
 											{ translate( 'Help' ) }
@@ -286,7 +296,7 @@ export const hasBlockingHold = ( holds: string[] ) =>
 	holds.some( ( hold ) =>
 		isHardBlockingHoldType(
 			hold,
-			getBlockingMessages( ( string ) => string )
+			getBlockingMessages( ( str: string ) => str )
 		)
 	);
 

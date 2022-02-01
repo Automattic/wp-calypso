@@ -37,9 +37,9 @@ function isEligibleTitanDomain( domain, mustBeEligibleForFreeTrial ) {
  *   - The most recent non-primary domain eligible found
  *
  * @param {string} selectedDomainName - domain name of the site currently selected by the user
- * @param {Array} domains - list of domain objects
+ * @param {import('calypso/state/sites/domains/types').SiteDomain[]} domains - list of domain objects
  * @param {boolean} mustBeEligibleForFreeTrial - whether the domain should also be eligible for the 3-month free trial
- * @returns {?object} - the first eligible domain found, null otherwise
+ * @returns {?import('calypso/state/sites/domains/types').SiteDomain} - the first eligible domain found, null otherwise
  */
 export function getEligibleTitanDomain( selectedDomainName, domains, mustBeEligibleForFreeTrial ) {
 	if ( ! domains ) {

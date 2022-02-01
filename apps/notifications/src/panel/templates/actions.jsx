@@ -28,14 +28,14 @@ const getInitialReplyValue = ( note, translate ) => {
 	}
 
 	if ( username ) {
-		return translate( 'Reply to %(username)s...', {
+		return translate( 'Reply to %(username)s…', {
 			args: { username },
 		} );
 	}
 
 	return getType( note ) === 'post'
-		? translate( 'Reply to post...' )
-		: translate( 'Reply to comment...' );
+		? translate( 'Reply to post…' )
+		: translate( 'Reply to comment…' );
 };
 
 const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {

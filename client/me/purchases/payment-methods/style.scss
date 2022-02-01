@@ -20,6 +20,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	flex-wrap: wrap;
 }
 
 .payment-method-details__image {
@@ -76,7 +77,6 @@
 	font-size: 0.875rem;
 }
 
-
 .payment-method-delete-dialog {
 	&.dialog {
 		max-width: 440px;
@@ -84,5 +84,25 @@
 
 	.card-heading {
 		margin-top: 0;
+	}
+}
+
+.payment-method-backup-toggle {
+	margin: 6px 16px 4px 76px;
+	order: 4;
+	width: 100%;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 4px 32px 4px 16px;
+		order: unset;
+		width: auto;
+	}
+}
+
+/* Jetpack cloud overwrites */
+
+.payment-method__wrapper.is-jetpack-cloud {
+	.components-checkbox-control__input[type='checkbox']:checked {
+		background-color: var( --studio-jetpack-green-50 );
 	}
 }

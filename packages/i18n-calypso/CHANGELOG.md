@@ -2,6 +2,7 @@
 
 - Add `i18n.getLocaleVariant()` method to get a nonstandard locale variant slug.
 - Bump `interpolate-components` (renamed to `@automattic/interpolate-components`) to 1.1.2 (for React 17 compat).
+- Add support for passing an `I18N` object in React context
 
 ## 5.0.0
 

@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import illustration from 'calypso/assets/images/illustrations/domain.svg';
+import illustration from 'calypso/assets/images/domains/domain.svg';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -36,6 +36,10 @@ function UseMyDomainInput( {
 		if ( event.key === 'Escape' ) {
 			onClear();
 			return;
+		}
+
+		if ( event.key === ' ' ) {
+			return false;
 		}
 	};
 

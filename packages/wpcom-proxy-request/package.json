@@ -1,7 +1,7 @@
 {
 	"name": "wpcom-proxy-request",
 	"version": "6.0.0",
-	"description": "Proxied cookie-authenticated REST API requests to WordPress.com",
+	"description": "Proxied cookie-authenticated REST API requests to WordPress.com.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
@@ -14,7 +14,7 @@
 		"api",
 		"cookie"
 	],
-	"author": "Automattic, Inc.",
+	"author": "Automattic Inc.",
 	"license": "MIT",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"repository": {
@@ -25,9 +25,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"dist",
 		"types",
@@ -36,20 +34,19 @@
 	],
 	"types": "types",
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.15.3",
-		"debug": "^4.1.1",
+		"debug": "^4.3.3",
 		"progress-event": "^1.0.0",
 		"uuid": "^8.3.2",
 		"wp-error": "^1.3.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-eslint-overrides": "^1.0.0",
-		"@automattic/calypso-typescript-config": "^1.0.0",
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
 		"chai": "^4.3.4"
 	}
 }

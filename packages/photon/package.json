@@ -1,10 +1,11 @@
 {
 	"name": "photon",
 	"version": "4.0.0",
-	"description": "JavaScript library for the WordPress.com Photon image manipulation service",
+	"description": "JavaScript library for the WordPress.com Photon image manipulation service.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.ts",
+	"types": "dist/types/index.d.ts",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -22,27 +23,30 @@
 		"api",
 		"library"
 	],
+	"files": [
+		"dist",
+		"src"
+	],
 	"author": "Automattic Inc.",
 	"contributors": [
 		"Nathan Rajlich <nathan@automattic.com>"
 	],
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"@babel/runtime": "^7.15.3",
+		"@types/seed-random": "^2.2.1",
 		"crc32": "^0.2.2",
-		"debug": "^4.0.0",
+		"debug": "^4.3.3",
 		"seed-random": "^2.2.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.5.5"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"build": "transpile",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build"
 	}
 }

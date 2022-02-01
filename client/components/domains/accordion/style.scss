@@ -1,0 +1,61 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.accordion {
+	.is-placeholder {
+		@include placeholder();
+	}
+	.card.foldable-card {
+		margin: 0;
+		&.is-expanded {
+			margin: 0;
+			.foldable-card__content {
+				border-top: none;
+				padding: 0 16px 16px;
+				@include break-small {
+					padding: 0 24px 24px;
+				}
+			}
+			.foldable-card__header {
+				padding-bottom: 8px;
+				@include break-small {
+					padding-bottom: 16px;
+				}
+			}
+		}
+		.foldable-card__header {
+			padding: 16px;
+			@include break-small {
+				padding: 24px;
+			}
+		}
+		.foldable__expand {
+			width: 56px;
+			@include break-small {
+				width: 74px;
+			}
+			.gridicon {
+				fill: var( --color-neutral-80 );
+			}
+		}
+		.foldable__secondary {
+			display: none;
+		}
+		.foldable-card__action {
+			@include break-small {
+				right: 4px;
+			}
+		}
+	}
+	&__title {
+		margin-bottom: 0;
+		line-height: 1.5em;
+		font-weight: 600;
+		color: var( --studio-gray-80 );
+	}
+	&__subtitle {
+		font-size: $font-body-small;
+		margin-bottom: 0;
+		color: var( --studio-gray-50 );
+	}
+}

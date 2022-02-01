@@ -31,7 +31,7 @@ The custom `combineReducers` handles persistence for the reducers it's combining
 To opt-out of persistence we simply combine reducers without any attached schema.
 
 ```javascript
-return combineReducers( {
+combineReducers( {
 	age,
 	height,
 } );
@@ -40,7 +40,7 @@ return combineReducers( {
 To persist, we add the schema by wrapping the reducer with the `withSchemaValidation` util:
 
 ```javascript
-return combineReducers( {
+combineReducers( {
 	age: withSchemaValidation( ageSchema, age ),
 	height,
 } );

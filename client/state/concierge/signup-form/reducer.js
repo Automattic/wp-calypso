@@ -23,15 +23,6 @@ export const timezone = ( state = guessTimezone() || 'UTC', action ) => {
 	return state;
 };
 
-export const isRebrandCitiesSite = ( state = false, action ) => {
-	switch ( action.type ) {
-		case CONCIERGE_SIGNUP_FORM_UPDATE:
-			return action.signupForm.isRebrandCitiesSite;
-	}
-
-	return state;
-};
-
 export const firstname = ( state = '', action ) => {
 	switch ( action.type ) {
 		case CONCIERGE_SIGNUP_FORM_UPDATE:
@@ -92,7 +83,6 @@ export default combineReducers( {
 	message,
 	timezone,
 	status,
-	isRebrandCitiesSite,
 	phoneNumber,
 	countryCode,
 	phoneNumberWithoutCountryCode,

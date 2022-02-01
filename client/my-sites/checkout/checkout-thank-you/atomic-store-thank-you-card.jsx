@@ -50,24 +50,21 @@ class AtomicStoreThankYouCard extends Component {
 
 		this.setState( { resendStatus: RESEND_PENDING } );
 
-		wpcom
-			.undocumented()
-			.me()
-			.sendVerificationEmail( ( error ) => {
-				if ( error ) {
-					this.props.errorNotice(
-						translate( "Couldn't resend verification email. Please try again." ),
-						{
-							id: VERIFY_EMAIL_ERROR_NOTICE,
-						}
-					);
+		wpcom.req.post( '/me/send-verification-email', ( error ) => {
+			if ( error ) {
+				this.props.errorNotice(
+					translate( "Couldn't resend verification email. Please try again." ),
+					{
+						id: VERIFY_EMAIL_ERROR_NOTICE,
+					}
+				);
 
-					this.setState( { resendStatus: RESEND_ERROR } );
-					return;
-				}
+				this.setState( { resendStatus: RESEND_ERROR } );
+				return;
+			}
 
-				this.setState( { resendStatus: RESEND_SUCCESS } );
-			} );
+			this.setState( { resendStatus: RESEND_SUCCESS } );
+		} );
 	};
 
 	resendButtonText = () => {

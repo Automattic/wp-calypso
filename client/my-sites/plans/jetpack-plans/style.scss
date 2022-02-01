@@ -1,11 +1,70 @@
+/* cyrillic-ext */
 @font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
 	font-display: swap;
-	font-family: 'Noto Sans SemiCondensed Bold';
+	src: url( 'https://s0.wp.com/i/fonts/inter/Inter-Regular.woff2?v=3.19' ) format( 'woff2' ),
+		url( 'https://s0.wp.com/i/fonts/inter/Inter-Regular.woff?v=3.19' ) format( 'woff' );
+}
+@font-face {
+	font-family: 'Inter';
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url( 'https://s0.wp.com/i/fonts/inter/Inter-Italic.woff2?v=3.19' ) format( 'woff2' ),
+		url( 'https://s0.wp.com/i/fonts/inter/Inter-Italic.woff?v=3.19' ) format( 'woff' );
+}
+
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500; /* stylelint-disable scales/font-weights */
+	font-display: swap;
+	src: url( 'https://s0.wp.com/i/fonts/inter/Inter-Medium.woff2?v=3.19' ) format( 'woff2' ),
+		url( 'https://s0.wp.com/i/fonts/inter/Inter-Medium.woff?v=3.19' ) format( 'woff' );
+}
+@font-face {
+	font-family: 'Inter';
+	font-style: italic;
+	font-weight: 500;
+	font-display: swap;
+	src: url( 'https://s0.wp.com/i/fonts/inter/Inter-MediumItalic.woff2?v=3.19' ) format( 'woff2' ),
+		url( 'https://s0.wp.com/i/fonts/inter/Inter-MediumItalic.woff?v=3.19' ) format( 'woff' );
+}
+
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url( 'https://s0.wp.com/i/fonts/inter/Inter-SemiBold.woff2?v=3.19' ) format( 'woff2' ),
+		url( 'https://s0.wp.com/i/fonts/inter/Inter-SemiBold.woff?v=3.19' ) format( 'woff' );
+}
+@font-face {
+	font-family: 'Inter';
+	font-style: italic;
+	font-weight: 600;
+	font-display: swap;
+	src: url( 'https://s0.wp.com/i/fonts/inter/Inter-SemiBoldItalic.woff2?v=3.19' ) format( 'woff2' ),
+		url( 'https://s0.wp.com/i/fonts/inter/Inter-SemiBoldItalic.woff?v=3.19' ) format( 'woff' );
+}
+
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
 	font-weight: 700;
-	src:
-		url( 'https://s1.wp.com/i/fonts/notosans/NotoSans-SemiCondensedBold.woff2' ) format( 'woff2' ),
-		url( 'https://s1.wp.com/i/fonts/notosans/NotoSans-SemiCondensedBold.woff' ) format( 'woff' ),
-		url( 'https://s1.wp.com/i/fonts/notosans/NotoSans-SemiCondensedBold.ttf' ) format( 'truetype' );
+	font-display: swap;
+	src: url( 'https://s0.wp.com/i/fonts/inter/Inter-Bold.woff2?v=3.19' ) format( 'woff2' ),
+		url( 'https://s0.wp.com/i/fonts/inter/Inter-Bold.woff?v=3.19' ) format( 'woff' );
+}
+@font-face {
+	font-family: 'Inter';
+	font-style: italic;
+	font-weight: 700;
+	font-display: swap;
+	src: url( 'https://s0.wp.com/i/fonts/inter/Inter-BoldItalic.woff2?v=3.19' ) format( 'woff2' ),
+		url( 'https://s0.wp.com/i/fonts/inter/Inter-BoldItalic.woff?v=3.19' ) format( 'woff' );
 }
 
 .selector__main {
@@ -17,13 +76,13 @@
 }
 
 .jetpack-plans__pricing-header {
-	margin-top: 3rem;
-	padding: 0 1rem;
-	max-width: none;
-
-	text-align: center;
-	font-weight: 700;
 	font-size: $font-title-large;
+	font-weight: 700;
+	margin-bottom: 32px;
+	margin-top: 32px;
+	max-width: none;
+	padding: 0 1rem;
+	text-align: center;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		font-size: $font-headline-small;

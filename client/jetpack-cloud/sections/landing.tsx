@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isBackupPluginActive from 'calypso/state/sites/selectors/is-backup-plugin-active';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -13,7 +14,7 @@ import { AppState } from 'calypso/types';
 
 const siteIsEligible = ( state: AppState, siteId: number | null ) =>
 	siteId
-		? isJetpackSite( state, siteId ) &&
+		? ( isJetpackSite( state, siteId ) || isBackupPluginActive( state, siteId ) ) &&
 		  ! isSiteAtomic( state, siteId ) &&
 		  ! isJetpackSiteMultiSite( state, siteId )
 		: null;

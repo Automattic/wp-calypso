@@ -3,17 +3,18 @@
  */
 
 import {
-	setupHooks,
 	DataHelper,
-	LoginPage,
 	SidebarComponent,
 	PreviewComponent,
 	ThemesPage,
 	ThemesDetailPage,
 	SiteSelectComponent,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
+	const testAccount = new TestAccount( 'defaultUser' );
+	const testAccountSiteDomain = testAccount.getSiteURL( { protocol: false } );
 	let sidebarComponent;
 	let themesPage;
 	let themesDetailPage;
@@ -22,16 +23,10 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	let page;
 	// This test will use partial matching names to cycle between available themes.
 	const themeName = 'Twenty Twen';
-	const user = 'defaultUser';
-	const siteURL = DataHelper.getAccountSiteURL( user, { protocol: false } );
 
-	setupHooks( ( args ) => {
-		page = args.page;
-	} );
-
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: user } );
+	beforeAll( async () => {
+		page = await global.browser.newPage();
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'Navigate to Appearance > Themes', async function () {
@@ -39,16 +34,17 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 		await sidebarComponent.navigate( 'Appearance', 'Themes' );
 	} );
 
-	it( `Choose test site ${ siteURL } if Site Selector is shown`, async function () {
+	it( `Choose test site ${ testAccountSiteDomain } if Site Selector is shown`, async function () {
 		const siteSelectComponent = new SiteSelectComponent( page );
 
 		if ( await siteSelectComponent.isSiteSelectorVisible() ) {
-			await siteSelectComponent.selectSite( siteURL );
+			await siteSelectComponent.selectSite( testAccountSiteDomain );
 		}
 	} );
 
 	it( `Search for free theme with keyword ${ themeName }`, async function () {
 		themesPage = new ThemesPage( page );
+		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
 

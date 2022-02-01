@@ -61,6 +61,10 @@ interface Billing {
 	costs: BillingCosts;
 }
 
+interface BillingDashboardQueryError {
+	code?: string;
+}
+
 function queryBillingDashboard(): Promise< APIBilling > {
 	return wpcomJpl.req.get( {
 		apiNamespace: 'wpcom/v2',
@@ -85,14 +89,14 @@ function selectBillingDashboard( api: APIBilling ): Billing {
 	};
 }
 
-export default function useBillingDashboardQuery< TError = unknown >(
-	options?: UseQueryOptions< APIBilling, TError, Billing >
-): UseQueryResult< Billing, TError > {
+export default function useBillingDashboardQuery(
+	options?: UseQueryOptions< APIBilling, BillingDashboardQueryError, Billing >
+): UseQueryResult< Billing, BillingDashboardQueryError > {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
-	return useQuery< APIBilling, TError, Billing >(
+	return useQuery< APIBilling, BillingDashboardQueryError, Billing >(
 		[ 'partner-portal', 'billing-dashboard', activeKeyId ],
 		queryBillingDashboard,
 		{

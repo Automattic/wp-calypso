@@ -11,6 +11,7 @@
 		padding: 9px 40px;
 		border-radius: 4px; /* stylelint-disable-line scales/radii */
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		line-height: 20px;
 
 		// override unnecessary super specificity added by another class
 		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
@@ -33,7 +34,7 @@
 
 		@include break-medium {
 			h1 {
-				width: 492px;
+				width: 500px;
 				margin: auto;
 			}
 
@@ -74,12 +75,12 @@
 			margin-bottom: 20px;
 		}
 
-		.action-buttons__back {
-			color: var( --studio-gray-100 ) !important;
+		.components-button.action-buttons__back {
+			color: var( --studio-gray-100 );
 			font-weight: 500; /* stylelint-disable-line */
 
 			&:hover {
-				text-decoration: none;
+				color: var( --color-neutral-70 );
 			}
 		}
 	}
@@ -114,6 +115,42 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+	}
+
+	.import-layout__text-center {
+		text-align: center;
+	}
+}
+
+.import__details-list {
+	display: flex;
+	flex-wrap: wrap;
+	color: var( --studio-gray-70 );
+	font-size: $font-body-small;
+	margin: 1em 0;
+
+	li {
+		position: relative;
+		box-sizing: border-box;
+		display: flex;
+		flex: 100%;
+		margin-bottom: 12px;
+		padding-left: 34px;
+
+		@include break-small {
+			flex: 50%;
+		}
+	}
+
+	span {
+		margin-right: 0.5em;
+	}
+
+	svg {
+		position: absolute;
+		top: 1px;
+		left: 0;
+		fill: var( --studio-gray-20 );
 	}
 }
 
@@ -169,12 +206,14 @@
 		margin-bottom: 0;
 	}
 
+	.action-card__button-container a,
 	.action-card__button-container button {
 		text-align: right;
 		padding-right: 0;
 		border: none;
 	}
 
+	.action-card__button-container a svg,
 	.action-card__button-container button svg {
 		fill: var( --studio-gray-30 );
 	}
@@ -240,6 +279,30 @@
 			font-weight: normal;
 			line-height: 1.25em;
 			margin-bottom: 0.75em;
+		}
+
+	}
+
+	.components-modal__button-actions {
+		text-align: right;
+		margin-top: 2.5rem;
+
+		& > button:not( :last-child ) {
+			margin-right: 1rem;
+		}
+
+		button {
+			border-radius: 4px;
+			font-weight: 500;
+		}
+
+		.action-buttons__cancel {
+			color: var( --studio-gray-100 );
+		}
+
+		.action-buttons__next.is-primary {
+			border: none;
+			background: #117ac9;
 		}
 	}
 }

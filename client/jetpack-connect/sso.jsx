@@ -39,10 +39,12 @@ class JetpackSsoForm extends Component {
 		showTermsDialog: false,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.maybeValidateSSO();
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.maybeValidateSSO( nextProps );
 
@@ -409,7 +411,7 @@ class JetpackSsoForm extends Component {
 						noticeText={ translate( 'You must verify your email to sign in with WordPress.com.' ) }
 						noticeStatus="is-info"
 					>
-						<Card>
+						<Card className="jetpack-connect__logged-in-card">
 							{ currentUser.email_verified && this.maybeRenderErrorNotice() }
 							<div className="jetpack-connect__sso-user-profile">
 								<Gravatar user={ currentUser } size={ 120 } imgSize={ 400 } />

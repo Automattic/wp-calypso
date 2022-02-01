@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
-import { navigate } from 'calypso/lib/navigate';
 import { toggleMySitesSidebarSection as toggleSection } from 'calypso/state/my-sites/sidebar/actions';
 import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
 import MySitesSidebarUnifiedItem from './item';
@@ -26,9 +25,8 @@ export const MySitesSidebarUnifiedMenu = ( {
 	link,
 	selected,
 	sidebarCollapsed,
-	isHappychatSessionActive,
-	isJetpackNonAtomicSite,
-	continueInCalypso,
+	shouldOpenExternalLinksInCurrentTab,
+	canNavigate,
 	...props
 } ) => {
 	const reduxDispatch = useDispatch();
@@ -38,20 +36,25 @@ export const MySitesSidebarUnifiedMenu = ( {
 		Array.isArray( children ) &&
 		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
+	const isDesktop = isWithinBreakpoint( '>782px' );
+	const isMobile = ! isDesktop;
 	const showAsExpanded =
-		( ! isWithinBreakpoint( '>782px' ) && ( childIsSelected || isExpanded ) ) || // For mobile breakpoints, we dont' care about the sidebar collapsed status.
-		( isWithinBreakpoint( '>782px' ) && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
+		( isMobile && ( childIsSelected || isExpanded ) ) || // For mobile breakpoints, we dont' care about the sidebar collapsed status.
+		( isDesktop && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
 
-	const onClick = () => {
-		// Only open the page if menu is NOT full-width, otherwise just open / close the section instead of directly redirecting to the section.
-		if ( isWithinBreakpoint( '>782px' ) ) {
-			if ( link ) {
-				if ( ! continueInCalypso( link ) ) {
-					return;
-				}
+	const onClick = ( event ) => {
+		// Block the navigation on mobile viewports and just toggle the section,
+		// since we don't show the child items on hover and users should have a
+		// chance to see them.
+		if ( isMobile ) {
+			event?.preventDefault();
+			reduxDispatch( toggleSection( sectionId ) );
+			return;
+		}
 
-				navigate( link );
-			}
+		if ( ! canNavigate( link ) ) {
+			event?.preventDefault();
+			return;
 		}
 
 		window.scrollTo( 0, 0 );
@@ -61,7 +64,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	return (
 		<li>
 			<ExpandableSidebarMenu
-				onClick={ () => onClick() }
+				onClick={ onClick }
 				expanded={ showAsExpanded }
 				title={ title }
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
@@ -69,6 +72,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				count={ count }
 				hideExpandableIcon={ true }
 				inlineText={ props.inlineText }
+				href={ link }
 				{ ...props }
 			>
 				{ children.map( ( item ) => {
@@ -79,9 +83,8 @@ export const MySitesSidebarUnifiedMenu = ( {
 							{ ...item }
 							selected={ isSelected }
 							isSubItem={ true }
-							isHappychatSessionActive={ isHappychatSessionActive }
-							isJetpackNonAtomicSite={ isJetpackNonAtomicSite }
-							continueInCalypso={ continueInCalypso }
+							shouldOpenExternalLinksInCurrentTab={ shouldOpenExternalLinksInCurrentTab }
+							canNavigate={ canNavigate }
 						/>
 					);
 				} ) }
@@ -99,9 +102,8 @@ MySitesSidebarUnifiedMenu.propTypes = {
 	children: PropTypes.array.isRequired,
 	link: PropTypes.string,
 	sidebarCollapsed: PropTypes.bool,
-	isHappychatSessionActive: PropTypes.bool.isRequired,
-	isJetpackNonAtomicSite: PropTypes.bool.isRequired,
-	continueInCalypso: PropTypes.func.isRequired,
+	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
+	canNavigate: PropTypes.func.isRequired,
 	/*
 	Example of children shape:
 	[

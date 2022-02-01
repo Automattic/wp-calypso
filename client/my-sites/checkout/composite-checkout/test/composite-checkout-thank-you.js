@@ -25,12 +25,6 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	redirectCheckoutToWpAdmin: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const mock = () => 'development';
-	mock.isEnabled = jest.fn();
-	return mock;
-} );
-
 const defaultArgs = {
 	getUrlFromCookie: jest.fn( () => null ),
 	saveUrlToCookie: jest.fn(),
@@ -524,7 +518,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			isInEditor: true,
+			isInModal: true,
 			saveUrlToCookie,
 		} );
 		expect( saveUrlToCookie ).toBeCalledWith( url );
@@ -544,7 +538,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			isInEditor: true,
+			isInModal: true,
 			saveUrlToCookie,
 		} );
 		expect( saveUrlToCookie ).toBeCalledWith( '/checkout/thank-you/foo.bar/:receiptId' );
@@ -824,6 +818,16 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=concierge' );
+	} );
+
+	it( 'redirects to a Jetpack cloud redirectTo', () => {
+		const redirectTo =
+			'http://cloud.jetpack.com/purchases/add-payment-method/fast-hummingbird.jurassic.ninja';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			redirectTo,
+		} );
+		expect( url ).toBe( redirectTo );
 	} );
 
 	describe( 'Professional Email upsell', () => {
@@ -1270,7 +1274,7 @@ describe( 'getThankYouPageUrl', () => {
 				isJetpackCheckout: true,
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=%3AreceiptId'
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=%3AreceiptId'
 			);
 		} );
 
@@ -1290,7 +1294,7 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: 80023,
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023'
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023'
 			);
 		} );
 
@@ -1309,7 +1313,9 @@ describe( 'getThankYouPageUrl', () => {
 				isJetpackCheckout: true,
 				receiptId: 'invalid receipt ID',
 			} );
-			expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily'
+			);
 		} );
 
 		it( 'redirects with jetpackTemporarySiteId query param when available', () => {
@@ -1329,7 +1335,7 @@ describe( 'getThankYouPageUrl', () => {
 				jetpackTemporarySiteId: 123456789,
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023&siteId=123456789'
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&siteId=123456789'
 			);
 		} );
 	} );

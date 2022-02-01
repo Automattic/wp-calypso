@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	isPlan,
 	isGoogleWorkspaceExtraLicence,
@@ -97,7 +96,6 @@ export function createTransactionEndpointCartFromResponseCart( {
 
 		// At this point, cart_key will be 'no-user' | blog_id | 'no-site', in that order.
 		const cartKey = isUserLess ? responseCart.cart_key : responseCart.blog_id || 'no-site';
-		const isSiteLessJetpackCheckout = isEnabled( 'jetpack/siteless-checkout' ) && isSiteLess;
 
 		// A cart with the 'no-user' key, in the context of a Jetpack checkout flow, means that
 		// a WP.com account will be created before submitting the transaction (see submitWpcomTransaction).
@@ -106,7 +104,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 		return {
 			blog_id: responseCart.blog_id.toString(),
 			cart_key: cartKey.toString(),
-			create_new_blog: isSiteLessJetpackCheckout,
+			create_new_blog: isSiteLess,
 			is_jetpack_checkout: true,
 			coupon: responseCart.coupon || '',
 			currency: responseCart.currency,

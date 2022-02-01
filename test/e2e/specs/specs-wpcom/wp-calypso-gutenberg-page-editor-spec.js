@@ -38,7 +38,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			if ( host !== 'WPCOM' ) {
 				this.loginFlow = new LoginFlow( this.driver );
 			}
-			return await this.loginFlow.loginAndStartNewPage( null, true );
+			return await this.loginFlow.loginAndStartNewPage( null );
 		} );
 
 		it( 'Can enter page title, content and image', async function () {
@@ -122,7 +122,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-			return await this.loginFlow.loginAndStartNewPage( null, true );
+			return await this.loginFlow.loginAndStartNewPage( null );
 		} );
 
 		it( 'Can enter page title and content', async function () {
@@ -191,7 +191,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 		describe( 'Publish a Password Protected Page', function () {
 			it( 'Can log in', async function () {
 				this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-				return await this.loginFlow.loginAndStartNewPage( null, true );
+				return await this.loginFlow.loginAndStartNewPage( null );
 			} );
 
 			it( 'Can enter page title and content and set to password protected', async function () {
@@ -450,7 +450,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 
 		it( 'Can log in', async function () {
 			this.loginFlow = new LoginFlow( this.driver, gutenbergUser );
-			return await this.loginFlow.loginAndStartNewPage( null, true );
+			return await this.loginFlow.loginAndStartNewPage( null );
 		} );
 
 		it( 'Can insert the payment button', async function () {

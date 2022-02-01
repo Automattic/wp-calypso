@@ -1,22 +1,55 @@
 .backup-date-picker {
 	display: flex;
-	align-items: center;
-	background: #fff;
-	padding-top: 0.5rem;
+	align-items: stretch;
 	font-size: $font-body-small;
+	margin-bottom: 1rem;
+	flex-wrap: wrap;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		background: transparent;
+		flex-wrap: nowrap;
+	}
+}
+
+.backup-date-picker__select-date-container {
+	display: flex;
+	align-items: center;
+	padding: 0.5rem;
+	background: #fff;
+	box-shadow: 0 0 0 1px #dcdcde;
+	flex-grow: 1;
+	flex-basis: 100%;
+}
+
+.backup-date-picker__date-button-container {
+	position: relative;
+	flex-basis: 100%;
+	margin-top: 1rem;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-basis: auto;
+		flex-shrink: 0;
+		margin-top: 0;
+		margin-left: 1rem;
 	}
 }
 
 .backup-date-picker__select-date {
 	flex-grow: 1;
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		justify-content: flex-start;
+	}
+
+	// Variant when the calendar date picker is used
+	&--with-date-calendar-picker {
+		.backup-date-picker__select-date--previous,
+		.backup-date-picker__select-date--next {
+			@include breakpoint-deprecated( '>660px' ) {
+				max-width: none;
+			}
+		}
 	}
 }
 
@@ -26,14 +59,19 @@
 	flex: 1;
 	align-items: center;
 	cursor: pointer;
-}
-
-.backup-date-picker__select-date--previous {
-	text-align: left;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		max-width: 153px;
 	}
+}
+
+.backup-date-picker__current-date {
+	display: flex;
+	align-items: center;
+}
+
+.backup-date-picker__select-date--previous {
+	text-align: left;
 }
 
 .backup-date-picker__select-date--next {
@@ -48,14 +86,11 @@
 	display: flex;
 	flex: 1;
 	align-items: center;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		max-width: 153px;
-	}
 }
 
 .backup-date-picker__search-link {
 	display: flex;
+	align-items: center;
 }
 
 .backup-date-picker__button--next.button.is-borderless.is-compact,
@@ -88,7 +123,7 @@
 	box-shadow: none;
 }
 
-.backup-date-picker .button,
+.backup-date-picker__select-date .button,
 .backup-date-picker .date-range {
 	display: inline-block;
 	float: none;
@@ -122,14 +157,126 @@
 	fill: currentColor;
 }
 
-/* WordPress.com-only styles */
-.wordpressdotcom .backup-date-picker {
-	margin-bottom: 1rem;
-	padding: 0.5rem;
-	background: #fff;
-	box-shadow: 0 0 0 1px #dcdcde;
+.backup-date-picker__date-button-button {
+	width: 100%;
 
-	&__search-icon.gridicon {
-		fill: currentColor;
+	// Reiterate the button styles from wpcom to make them consistent in Jetpack cloud.
+	.is_jetpackcom & {
+		border: 1px solid var( --color-neutral-10 );
+		border-radius: 2px;
+		font-weight: normal;
+		color: var( --color-neutral-70 );
+
+		&:focus {
+			border-width: 1px;
+		}
+
+		&:hover {
+			color: var( --color-neutral-70 );
+			border-color: var( --color-neutral-20 );
+			background: #fff;
+		}
+	}
+
+	svg {
+		margin-right: 0.5rem;
+	}
+
+	// Select date button should fill the height of the stretched container.
+	@include breakpoint-deprecated('>660px') {
+		height: 100%;
+	}
+}
+
+.backup-date-picker__date-button-picker {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	padding: 1rem;
+	background: #fff;
+	border-bottom: 1px solid #dcdcde;
+	box-sizing: border-box;
+
+	.backup-date-picker__picker-background-screen {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		background: #fff;
+	}
+
+	.date-picker {
+		position: relative;
+		z-index: 1;
+	}
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		bottom: 100%;
+		right: 65px;
+		width: 20px;
+		height: 20px;
+		background: #fff;
+		transform: rotate( 45deg ) translateX( 75% );
+		display: none;
+	}
+
+	&::after {
+		z-index: -1;
+		box-shadow: 0 0 5px 1px #dcdcde;
+	}
+
+	// Overriding this rule specifically for backups output. ( the :not selectors add extra specificity )
+	// This is not totally ideal, but a bit better than stringing random selectors together to override specificity.
+	.DayPicker-Day.DayPicker-Day--is-selected:not( .DayPicker-Day--today ):not( .DayPicker-Day--events ) .date-picker__day,
+	// When today is the active day.
+	.DayPicker-Day.DayPicker-Day--is-selected.DayPicker-Day--today .date-picker__day,
+	.DayPicker-Day--is-selected .date-picker__day {
+		background-color: var( --studio-jetpack-green-50 );
+	}
+
+	// Style Sundays the same as the other days
+	.DayPicker-Day--sunday:not( .DayPicker-Day--today ):not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) .date-picker__day {
+		color: var( --color-neutral-70 );
+	}
+
+	// Show a small dot on the days that should have a backup available.
+	.DayPicker-Day:not( .DayPicker-Day--disabled ) .date-picker__day {
+		position: relative;
+
+		&::after {
+			content: '';
+			display: block;
+			position: absolute;
+			bottom: 1px;
+			left: calc( 50% - 2px );
+			width: 4px;
+			height: 4px;
+			border-radius: 2px;
+			background-color: var( --studio-gray-10 );
+		}
+	}
+
+	// Change the color of the backup dot on the active day.
+	.DayPicker-Day:not( .DayPicker-Day--disabled ).DayPicker-Day--is-selected .date-picker__day::after {
+		background-color: white;
+	}
+
+
+	@include breakpoint-deprecated('>660px') {
+		position: absolute;
+		right: 0;
+		width: 300px;
+		top: calc( 100% + 1rem );
+		box-shadow: 0 0 5px 1px #dcdcde;
+		border: none;
+
+		&::before,
+		&::after {
+			display: block;
+		}
 	}
 }

@@ -8,10 +8,9 @@ import {
 import 'calypso/state/data-layer/wpcom/jetpack/settings';
 import 'calypso/state/jetpack/init';
 
-export const requestJetpackSettings = ( siteId, query ) => ( {
+export const requestJetpackSettings = ( siteId ) => ( {
 	type: JETPACK_SETTINGS_REQUEST,
 	siteId,
-	query,
 	meta: {
 		dataLayer: {
 			trackRequest: true,

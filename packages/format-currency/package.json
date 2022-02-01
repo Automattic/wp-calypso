@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/format-currency",
 	"version": "1.0.0-alpha.0",
-	"description": "JavaScript library for formatting currency",
+	"description": "JavaScript library for formatting currency.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
@@ -20,16 +20,13 @@
 	],
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"@babel/runtime": "^7.15.3",
-		"i18n-calypso": "^5.0.0"
+		"i18n-calypso": "workspace:^"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "rm -rf dist",
 		"build": "transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},
@@ -37,7 +34,7 @@
 		"react": "^17.0.2"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0"
+		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"types": "types"
 }

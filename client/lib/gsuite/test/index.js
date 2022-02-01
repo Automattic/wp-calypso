@@ -6,7 +6,6 @@ import {
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithUs,
-	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
 
 describe( 'index', () => {
@@ -228,20 +227,6 @@ describe( 'index', () => {
 						hasWpcomNameservers: true,
 					},
 				] )
-			).toEqual( true );
-		} );
-	} );
-
-	describe( '#hasPendingGSuiteUsers', () => {
-		test( 'returns false if googleAppsSubscription.pendingUsers has an empty array', () => {
-			expect( hasPendingGSuiteUsers( { googleAppsSubscription: { pendingUsers: [] } } ) ).toEqual(
-				false
-			);
-		} );
-
-		test( 'returns true if googleAppsSubscription.pendingUsers has an non-empty array', () => {
-			expect(
-				hasPendingGSuiteUsers( { googleAppsSubscription: { pendingUsers: [ 'foo' ] } } )
 			).toEqual( true );
 		} );
 	} );

@@ -37,12 +37,11 @@ import {
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
-import { getForCurrentCROIteration, Iterations } from './iterations';
 import type { SelectorProduct } from './types';
 import type { JetpackPlanSlug } from '@automattic/calypso-products';
 
 export const PLAN_COMPARISON_PAGE = 'https://jetpack.com/features/comparison/';
-export const INTRO_PRICING_DISCOUNT_PERCENTAGE = 40;
+export const INTRO_PRICING_DISCOUNT_PERCENTAGE = 50;
 
 // Types of items. This determines the card UI.
 export const ITEM_TYPE_PLAN = 'item-type-plan';
@@ -53,9 +52,7 @@ export const ITEM_TYPE_PRODUCT = 'item-type-product';
 const CRM_ENTREPRENEUR_PRICE = 17;
 const CRM_ENTREPRENEUR_CURRENCY = 'USD';
 
-export const EXTERNAL_PRODUCT_CRM_FREE: ( variation: Iterations ) => SelectorProduct = (
-	variation
-) => ( {
+export const EXTERNAL_PRODUCT_CRM_FREE = (): SelectorProduct => ( {
 	productSlug: PRODUCT_JETPACK_CRM_FREE,
 	term: TERM_ANNUALLY,
 	type: ITEM_TYPE_PRODUCT,
@@ -75,34 +72,26 @@ export const EXTERNAL_PRODUCT_CRM_FREE: ( variation: Iterations ) => SelectorPro
 	description: translate( 'Build better relationships with your customers and clients.' ),
 	buttonLabel: translate( 'Start for free' ),
 	features: {
-		items: buildCardFeaturesFromItem(
-			[
-				FEATURE_CRM_NO_CONTACT_LIMITS,
-				FEATURE_CRM_PROPOSALS_AND_INVOICES,
-				FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
-			],
-			{ withoutDescription: true, withoutIcon: true },
-			variation
-		),
+		items: buildCardFeaturesFromItem( [
+			FEATURE_CRM_NO_CONTACT_LIMITS,
+			FEATURE_CRM_PROPOSALS_AND_INVOICES,
+			FEATURE_CRM_INTEGRATED_WITH_WORDPRESS,
+		] ),
 	},
 	hidePrice: true,
 	externalUrl:
 		'https://jetpackcrm.com/pricing?utm_source=jetpack&utm_medium=web&utm_campaign=pricing_i4&utm_content=pricing',
 } );
 
-export const EXTERNAL_PRODUCT_CRM_FREE_MONTHLY: ( variation: Iterations ) => SelectorProduct = (
-	variation
-) => ( {
-	...EXTERNAL_PRODUCT_CRM_FREE( variation ),
+export const EXTERNAL_PRODUCT_CRM_FREE_MONTHLY = (): SelectorProduct => ( {
+	...EXTERNAL_PRODUCT_CRM_FREE(),
 	term: TERM_MONTHLY,
 	productSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	costProductSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	monthlyProductSlug: PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 } );
 
-export const EXTERNAL_PRODUCT_CRM: ( variation: Iterations ) => SelectorProduct = (
-	variation
-) => ( {
+export const EXTERNAL_PRODUCT_CRM = (): SelectorProduct => ( {
 	productSlug: PRODUCT_JETPACK_CRM,
 	term: TERM_ANNUALLY,
 	type: ITEM_TYPE_PRODUCT,
@@ -122,25 +111,19 @@ export const EXTERNAL_PRODUCT_CRM: ( variation: Iterations ) => SelectorProduct 
 	),
 	buttonLabel: translate( 'Get CRM' ),
 	features: {
-		items: buildCardFeaturesFromItem(
-			[
-				FEATURE_CRM_LEADS_AND_FUNNEL,
-				FEATURE_CRM_PROPOSALS_AND_INVOICES,
-				FEATURE_CRM_TRACK_TRANSACTIONS,
-				FEATURE_CRM_NO_CONTACT_LIMITS,
-			],
-			{ withoutDescription: true, withoutIcon: true },
-			variation
-		),
+		items: buildCardFeaturesFromItem( [
+			FEATURE_CRM_LEADS_AND_FUNNEL,
+			FEATURE_CRM_PROPOSALS_AND_INVOICES,
+			FEATURE_CRM_TRACK_TRANSACTIONS,
+			FEATURE_CRM_NO_CONTACT_LIMITS,
+		] ),
 	},
 	hidePrice: true,
 	externalUrl: 'https://jetpackcrm.com/pricing/',
 } );
 
-export const EXTERNAL_PRODUCT_CRM_MONTHLY: ( variation: Iterations ) => SelectorProduct = (
-	variation
-) => ( {
-	...EXTERNAL_PRODUCT_CRM( variation ),
+export const EXTERNAL_PRODUCT_CRM_MONTHLY = (): SelectorProduct => ( {
+	...EXTERNAL_PRODUCT_CRM(),
 	productSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 	term: TERM_MONTHLY,
 	displayTerm: TERM_ANNUALLY,
@@ -156,10 +139,7 @@ export const EXTERNAL_PRODUCTS_LIST = [
 ];
 
 // External Product slugs to SelectorProduct.
-export const EXTERNAL_PRODUCTS_SLUG_MAP: Record<
-	string,
-	( variation: Iterations ) => SelectorProduct
-> = {
+export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct > = {
 	[ PRODUCT_JETPACK_CRM_FREE ]: EXTERNAL_PRODUCT_CRM_FREE,
 	[ PRODUCT_JETPACK_CRM_FREE_MONTHLY ]: EXTERNAL_PRODUCT_CRM_FREE_MONTHLY,
 	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
@@ -170,18 +150,9 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record<
  * Constants that contain products including option and regular types.
  */
 
-export const SELECTOR_PLANS = getForCurrentCROIteration( {
-	[ Iterations.ONLY_REALTIME_PRODUCTS ]: [
-		PLAN_JETPACK_SECURITY_T1_YEARLY,
-		PLAN_JETPACK_SECURITY_T1_MONTHLY,
-		PLAN_JETPACK_COMPLETE,
-		PLAN_JETPACK_COMPLETE_MONTHLY,
-	],
-} ) ?? [
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-	PLAN_JETPACK_SECURITY_REALTIME,
-	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+export const SELECTOR_PLANS = [
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];

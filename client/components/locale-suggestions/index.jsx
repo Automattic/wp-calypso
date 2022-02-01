@@ -28,7 +28,7 @@ export class LocaleSuggestions extends Component {
 		dismissed: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		let { locale } = this.props;
 
 		if ( ! locale && typeof navigator === 'object' && 'languages' in navigator ) {
@@ -44,9 +44,9 @@ export class LocaleSuggestions extends Component {
 		this.props.setLocale( locale );
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.locale !== nextProps.locale ) {
-			this.props.setLocale( nextProps.locale );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.locale !== this.props.locale ) {
+			this.props.setLocale( this.props.locale );
 		}
 	}
 

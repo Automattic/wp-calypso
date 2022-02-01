@@ -4,8 +4,8 @@ import { PureComponent } from 'react';
 
 interface Props extends LocalizeProps {
 	dateFormat?: string;
-	expiryDateMoment: Moment;
-	renewDateMoment: Moment;
+	expiryDateMoment?: Moment;
+	renewDateMoment?: Moment;
 	isRefundable?: boolean;
 	purchaseDateMoment?: Moment;
 }

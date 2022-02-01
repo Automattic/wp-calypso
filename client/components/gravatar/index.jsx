@@ -17,6 +17,7 @@ import './style.scss';
 
 export class Gravatar extends Component {
 	static propTypes = {
+		className: PropTypes.string,
 		user: PropTypes.object,
 		size: PropTypes.number,
 		imgSize: PropTypes.number,
@@ -25,6 +26,7 @@ export class Gravatar extends Component {
 			PropTypes.string, // the temp image base64 string if it exists
 			PropTypes.bool, // or false if the temp image does not exist
 		] ),
+		alt: PropTypes.string,
 	};
 
 	static defaultProps = {

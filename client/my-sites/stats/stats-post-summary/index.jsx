@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { flatten, flowRight, get, range } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,6 +11,19 @@ import SummaryChart from '../stats-summary';
 
 import './style.scss';
 
+function* statsByMonth( stats, moment ) {
+	for ( const year of Object.keys( stats.years ) ) {
+		for ( let month = 1; month <= 12; month++ ) {
+			const firstDayOfMonth = moment( `1/${ month }/${ year }`, 'DD/MM/YYYY' );
+			yield {
+				period: firstDayOfMonth.format( 'MMM YYYY' ),
+				periodLabel: firstDayOfMonth.format( 'MMMM YYYY' ),
+				value: stats.years[ year ]?.months[ month ] ?? 0,
+			};
+		}
+	}
+}
+
 class StatsPostSummary extends Component {
 	static propTypes = {
 		postId: PropTypes.number,
@@ -20,13 +32,14 @@ class StatsPostSummary extends Component {
 	};
 
 	state = {
+		selectedRecord: null,
 		period: 'day',
 	};
 
 	selectPeriod( period ) {
 		return () =>
 			this.setState( {
-				selectedRecord: undefined,
+				selectedRecord: null,
 				period,
 			} );
 	}
@@ -74,18 +87,7 @@ class StatsPostSummary extends Component {
 					return [];
 				}
 
-				const months = flatten(
-					Object.keys( stats.years ).map( ( year ) => {
-						return range( 1, 13 ).map( ( month ) => {
-							const firstDayOfMonth = moment( `1/${ month }/${ year }`, 'DD/MM/YYYY' );
-							return {
-								period: firstDayOfMonth.format( 'MMM YYYY' ),
-								periodLabel: firstDayOfMonth.format( 'MMMM YYYY' ),
-								value: get( stats.years, [ year, 'months', month ], 0 ),
-							};
-						} );
-					} )
-				);
+				const months = [ ...statsByMonth( stats, moment ) ];
 				const firstNotEmpty = months.findIndex( ( item ) => item.value !== 0 );
 				const reverseLastNotEmpty = [ ...months ]
 					.reverse()
@@ -163,11 +165,7 @@ class StatsPostSummary extends Component {
 	}
 }
 
-const connectComponent = connect( ( state, { siteId, postId } ) => {
-	return {
-		stats: getPostStats( state, siteId, postId ),
-		isRequesting: isRequestingPostStats( state, siteId, postId ),
-	};
-} );
-
-export default flowRight( connectComponent, localize, withLocalizedMoment )( StatsPostSummary );
+export default connect( ( state, { siteId, postId } ) => ( {
+	stats: getPostStats( state, siteId, postId ),
+	isRequesting: isRequestingPostStats( state, siteId, postId ),
+} ) )( localize( withLocalizedMoment( StatsPostSummary ) ) );

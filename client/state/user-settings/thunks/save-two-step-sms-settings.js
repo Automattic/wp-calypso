@@ -8,8 +8,6 @@ import {
 
 import 'calypso/state/user-settings/init';
 
-const wpcom = wp.undocumented();
-
 /**
  * Redux thunk which exclusively updates `countryCode` and `phoneNumber` settings
  * required for Two-factor-authentication.
@@ -29,7 +27,7 @@ const saveTwoStepSMSSettings = ( countryCode, phoneNumber ) => async ( dispatch 
 	};
 
 	try {
-		const response = await wpcom.me().settings().update( settings );
+		const response = await wp.me().settings().update( settings );
 		dispatch( saveUserSettingsSuccess( fromApi( response ) ) );
 	} catch ( err ) {
 		dispatch( saveUserSettingsFailure( settings, err ) );

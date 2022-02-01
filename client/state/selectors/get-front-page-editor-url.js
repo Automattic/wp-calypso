@@ -1,4 +1,6 @@
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor.js';
 import getSiteFrontPage from 'calypso/state/sites/selectors/get-site-front-page';
 
 /**
@@ -14,5 +16,10 @@ export default function getFrontPageEditorUrl( state, siteId ) {
 	if ( 0 === frontPageId ) {
 		return false;
 	}
+
+	if ( isSiteUsingCoreSiteEditor( state, siteId ) ) {
+		return getSiteEditorUrl( state, siteId );
+	}
+
 	return getEditorUrl( state, siteId, frontPageId, 'page' );
 }

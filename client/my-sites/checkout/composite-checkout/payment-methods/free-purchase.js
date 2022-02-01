@@ -1,10 +1,4 @@
-import {
-	Button,
-	useFormStatus,
-	FormStatus,
-	useLineItems,
-	useEvents,
-} from '@automattic/composite-checkout';
+import { Button, useFormStatus, FormStatus, useLineItems } from '@automattic/composite-checkout';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import WordPressLogo from '../components/wordpress-logo';
@@ -22,10 +16,8 @@ export function createFreePaymentMethod() {
 function FreePurchaseSubmitButton( { disabled, onClick } ) {
 	const [ items ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 
 	const handleButtonPress = () => {
-		onEvent( { type: 'FREE_TRANSACTION_BEGIN' } );
 		onClick( 'free-purchase', {
 			items,
 		} );

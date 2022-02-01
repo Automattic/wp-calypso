@@ -37,9 +37,8 @@ export const fetchAlternates = ( payload ) => ( dispatch ) => {
 
 	dispatch( fetchAlternatesRequest( postKey ) );
 
-	return wpcom
-		.undocumented()
-		.supportAlternates( { site: blogId, postId } )
+	return wpcom.req
+		.get( `/support/alternates/${ blogId }/posts/${ postId }` )
 		.then( ( data ) => {
 			dispatch( fetchAlternatesReceive( postKey, data ) );
 			return dispatch( fetchAlternatesRequestSuccess( postKey ) );

@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import { get, includes, reject } from 'lodash';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { addQueryArgs } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
@@ -73,11 +74,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
 	}
 
 	// Initially ship to English users only, then ship to all users when translations complete
-	if ( isEnabled( 'signup/hero-flow' ) && englishLocales.includes( localeSlug ) ) {
-		return addQueryArgs( queryParam, '/start/setup-site' ) + '&flags=signup/hero-flow'; // we don't want the flag name to be escaped
-	}
-
-	if ( isEnabled( 'signup/setup-site-after-checkout' ) && englishLocales.includes( localeSlug ) ) {
+	if ( englishLocales.includes( localeSlug ) || isEnabled( 'signup/hero-flow-non-en' ) ) {
 		return addQueryArgs( queryParam, '/start/setup-site' );
 	}
 
@@ -101,10 +98,10 @@ function getEditorDestination( dependencies ) {
 }
 
 function getDestinationFromIntent( dependencies ) {
-	const { intent, startingPoint, siteSlug } = dependencies;
+	const { intent, startingPoint, siteSlug, isFSEActive } = dependencies;
 
 	// If the user skips starting point, redirect them to My Home
-	if ( intent === 'write' && startingPoint !== 'skip' ) {
+	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 		if ( startingPoint !== 'write' ) {
 			window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
 		}
@@ -112,18 +109,15 @@ function getDestinationFromIntent( dependencies ) {
 		return `/post/${ siteSlug }`;
 	}
 
+	if ( isFSEActive && intent !== 'write' ) {
+		return `/site-editor/${ dependencies.siteSlug }`;
+	}
+
 	return getChecklistThemeDestination( dependencies );
 }
 
-function getImportDestination( { importSiteEngine, importSiteUrl, siteSlug } ) {
-	return addQueryArgs(
-		{
-			engine: importSiteEngine || null,
-			'from-site': importSiteUrl || null,
-			signup: 1,
-		},
-		`/import/${ siteSlug }`
-	);
+function getDIFMSignupDestination( { siteSlug } ) {
+	return `/home/${ siteSlug }`;
 }
 
 const flows = generateFlows( {
@@ -134,8 +128,8 @@ const flows = generateFlows( {
 	getThankYouNoSiteDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
-	getImportDestination,
 	getDestinationFromIntent,
+	getDIFMSignupDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
@@ -197,7 +191,13 @@ const Flows = {
 		}
 
 		if ( isUserLoggedIn ) {
-			flow = removeUserStepFromFlow( flow );
+			const urlParams = new URLSearchParams( window.location.search );
+			const param = urlParams.get( 'user_completed' );
+			// Remove the user step unless the user has just completed the step
+			// and then clicked the back button.
+			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() ) {
+				flow = removeUserStepFromFlow( flow );
+			}
 		}
 
 		if ( flowName === 'p2' && isUserLoggedIn ) {
@@ -230,6 +230,10 @@ const Flows = {
 	 */
 	excludeStep( step ) {
 		step && Flows.excludedSteps.indexOf( step ) === -1 && Flows.excludedSteps.push( step );
+	},
+
+	excludeSteps( steps ) {
+		steps.forEach( ( step ) => Flows.excludeStep( step ) );
 	},
 
 	filterExcludedSteps( flow ) {

@@ -50,7 +50,7 @@ const NoBackupsYet: FunctionComponent< Props > = ( { isFeatured } ) => {
 					<li>
 						<Button
 							className="backup-card__support-button"
-							href={ siteUrl }
+							href={ siteUrl ?? '' }
 							target="_blank"
 							rel="noopener noreferrer"
 							primary
@@ -61,7 +61,7 @@ const NoBackupsYet: FunctionComponent< Props > = ( { isFeatured } ) => {
 					<li>
 						<Button
 							className="backup-card__support-button"
-							href={ adminUrl }
+							href={ adminUrl ?? '' }
 							target="_blank"
 							rel="noopener noreferrer"
 						>

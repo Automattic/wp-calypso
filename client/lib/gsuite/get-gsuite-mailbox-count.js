@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 export function getGSuiteMailboxCount( domain ) {
-	return get( domain, 'googleAppsSubscription.totalUserCount', 0 );
+	return domain?.googleAppsSubscription?.totalUserCount ?? 0;
 }

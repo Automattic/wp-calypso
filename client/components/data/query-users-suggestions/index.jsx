@@ -1,51 +1,29 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestUserSuggestions } from 'calypso/state/user-suggestions/actions';
 import { isRequestingUserSuggestions as isRequesting } from 'calypso/state/user-suggestions/selectors';
 
-class QueryUsersSuggestions extends Component {
-	static propTypes = {
-		siteId: PropTypes.number,
-		isRequesting: PropTypes.bool,
-		requestUserSuggestions: PropTypes.func,
-	};
-
-	static defaultProps = {
-		requestUserSuggestions: () => {},
-		isRequesting: false,
-	};
-
-	UNSAFE_componentWillMount() {
-		this.request( this.props );
+const request = ( siteId ) => ( dispatch, getState ) => {
+	if ( ! isRequesting( getState(), siteId ) ) {
+		dispatch( requestUserSuggestions( siteId ) );
 	}
+};
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
-			return;
+function QueryUsersSuggestions( { siteId } ) {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		if ( siteId ) {
+			dispatch( request( siteId ) );
 		}
+	}, [ dispatch, siteId ] );
 
-		this.request( nextProps );
-	}
-
-	request( props ) {
-		if ( props.isRequesting || ! props.siteId ) {
-			return;
-		}
-
-		props.requestUserSuggestions( props.siteId );
-	}
-
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			isRequesting: isRequesting( state, ownProps.siteId ),
-		};
-	},
-	{ requestUserSuggestions }
-)( QueryUsersSuggestions );
+QueryUsersSuggestions.propTypes = {
+	siteId: PropTypes.number,
+};
+
+export default QueryUsersSuggestions;

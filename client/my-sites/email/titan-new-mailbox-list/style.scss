@@ -28,6 +28,7 @@
 	.titan-new-mailbox-list__supplied-actions {
 		display: flex;
 		flex-direction: column;
+		justify-content: space-between;
 
 		@include break-mobile {
 			flex-direction: row;

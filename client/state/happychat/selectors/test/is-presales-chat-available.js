@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isPresalesChatAvailable from '../is-presales-chat-available';
 
 describe( '#isPresalesChatAvailable()', () => {
@@ -6,24 +5,24 @@ describe( '#isPresalesChatAvailable()', () => {
 		const isPresaleAvailable = isPresalesChatAvailable( {
 			happychat: {
 				user: {
-					isPresalesPrecancellationEligible: {
+					availability: {
 						presale: false,
 					},
 				},
 			},
 		} );
-		expect( isPresaleAvailable ).to.equal( false );
+		expect( isPresaleAvailable ).toBe( false );
 	} );
 	test( 'should return true if presales chat is available', () => {
 		const isPresaleAvailable = isPresalesChatAvailable( {
 			happychat: {
 				user: {
-					isPresalesPrecancellationEligible: {
+					availability: {
 						presale: true,
 					},
 				},
 			},
 		} );
-		expect( isPresaleAvailable ).to.equal( true );
+		expect( isPresaleAvailable ).toBe( true );
 	} );
 } );

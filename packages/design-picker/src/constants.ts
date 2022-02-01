@@ -4,6 +4,8 @@ export const FONT_TITLES: Partial< Record< Font, string > > = {
 	'Playfair Display': 'Playfair',
 };
 
+export const SHOW_ALL_SLUG = 'CLIENT_ONLY_SHOW_ALL_SLUG';
+
 /**
  * Pairings of fontFamilies
  *

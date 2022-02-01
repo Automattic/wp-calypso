@@ -6,7 +6,7 @@ const path = require( 'path' );
 
 const dir = process.cwd();
 const root = path.dirname( __dirname );
-const babelPresetFile = path.join( root, 'babel', 'default.js' );
+const babelPresetFile = require.resolve( '@automattic/calypso-babel-config/presets/default.js' );
 
 const inputDir = path.join( dir, 'src' );
 const outputDirESM = path.join( dir, 'dist', 'esm' );

@@ -1,6 +1,44 @@
+@import '@automattic/onboarding/styles/mixins';
+
 .jetpack-product-card .display-price {
 	.is-disabled & {
 		opacity: 0.4;
+	}
+
+	&.is-free {
+		margin-block-start: -4px;
+		padding-block-start: 24px;
+
+		@include break-medium {
+			min-height: 80px;
+		}
+
+		// Adjust leading margin so that different UI fonts
+		// still align to the price the same way
+		&.is-jetpack-cloud {
+			.display-price__above-price-text {
+				margin-inline-start: 0;
+			}
+
+			.display-price__price-free {
+				margin-inline-start: -4px;
+			}
+		}
+
+		.display-price__above-price-text {
+			display: block;
+			margin-block-start: -24px;
+			margin-inline-start: 2px;
+
+			font-size: 1rem;
+			font-weight: 700;
+		}
+
+		.display-price__price-free {
+			display: block;
+			line-height: $font-headline-medium;
+			letter-spacing: -2px;
+		}
 	}
 
 	.plan-price {
@@ -57,28 +95,24 @@
 	}
 
 	&__you-save,
-	&__get-started {
+	&__get-started,
+	&__no-savings {
 		display: inline-block;
 		margin-block-start: 24px;
 		border-radius: 4px; /* stylelint-disable-line scales/radii */
-		padding: 4px 24px 4px 8px;
+		padding: 4px 8px;
 
 		font-size: $font-body-small;
 		font-weight: 700;
-
-		/* To make the slanted right edge */
-		clip-path: polygon(
-			0 0,
-			calc( 100% + 1px ) 0,
-			calc( 100% - 6px ) calc( 100% - 4px ),
-			calc( 100% - 8px ) calc( 100% - 1px ),
-			calc( 100% - 10px ) 100%,
-			0 100%
-		);
 	}
 
 	&__you-save {
 		background-color: var( --studio-yellow-10 );
+	}
+
+	&__no-savings {
+		background-color: var( --studio-gray-5 );
+		font-weight: 400;
 	}
 
 	&__get-started {
@@ -158,5 +192,33 @@
 
 	&__expiration-date {
 		color: var( --studio-pink-50 );
+	}
+}
+
+.jetpack-product-card__heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	margin: 0.75rem 0;
+}
+
+.jetpack-product-card__discount-label {
+	display: inline-block;
+
+	padding: 0.125rem 0.5rem;
+	margin: 0.25rem 0;
+
+	background-color: var( --studio-yellow-10 );
+	border-radius: 4px;
+
+	font-size: $font-body-small;
+	font-weight: 700;
+
+	sup {
+		position: relative;
+		top: -0.5em;
+
+		font-size: 0.75em;
 	}
 }

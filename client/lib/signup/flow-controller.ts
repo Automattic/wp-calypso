@@ -28,7 +28,12 @@ import {
 	removeSiteSlugDependency,
 } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { getCurrentFlowName, getPreviousFlowName } from 'calypso/state/signup/flow/selectors';
+import { resetExcludedSteps } from 'calypso/state/signup/flow/actions';
+import {
+	getCurrentFlowName,
+	getPreviousFlowName,
+	getExcludedSteps,
+} from 'calypso/state/signup/flow/selectors';
 import {
 	completeSignupStep,
 	invalidateStep,
@@ -41,21 +46,25 @@ import type { Flow, Dependencies } from '../../signup/types';
 
 const debug = debugModule( 'calypso:signup' );
 
-interface Step {
+interface StepDependendencies {
+	dependencies?: string[];
+	providedDependencies?: Dependencies;
+	providesDependencies?: string[];
+	optionalDependencies?: string[];
+}
+
+interface Step extends StepDependendencies {
 	apiRequestFunction?: (
 		callback: ( errors: Record< string, string >[], providedDependencies: Dependencies ) => void,
-		dependenciesFound: Dependencies,
+		dependenciesFound: Record< string, unknown >,
 		step: Step,
 		reduxStore: Store
 	) => void;
 	delayApiRequestUntilComplete?: boolean;
-	dependencies?: string[];
-	providedDependencies?: string[];
-	providesDependencies?: string[];
-	optionalDependencies?: string[];
 	providesToken?: boolean;
 	stepName: string;
 	allowUnauthenticated?: boolean;
+	isPasswordlessSignupForm?: boolean;
 }
 
 const steps: Record< string, Step > = untypedSteps;
@@ -103,7 +112,7 @@ export default class SignupFlowController {
 		try {
 			this._assertFlowHasValidDependencies();
 		} catch ( ex ) {
-			debug( 'Invalid dependencies in flow : ' + ex.message );
+			debug( 'Invalid dependencies in flow : ' + ( ex as Error ).message );
 			if ( this._flowName !== flows.defaultFlowName ) {
 				// redirect to the default signup flow, hopefully it will be valid
 				page( getStepUrl() );
@@ -370,6 +379,22 @@ export default class SignupFlowController {
 			'optionalDependencies'
 		);
 
+		/*
+			AB Test: passwordlessSignup
+			`isPasswordlessSignupForm` is set by the PasswordlessSignupForm.
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow.
+			For passwordless signups, the API call has already occurred in the PasswordlessSignupForm, so here it is skipped.
+		*/
+		if ( step?.isPasswordlessSignupForm ) {
+			this._processingSteps.delete( step.stepName );
+			recordTracksEvent( 'calypso_signup_actions_complete_step', {
+				step: step.stepName,
+				flow: this._flowName,
+			} );
+			this._reduxStore.dispatch( completeSignupStep( step, dependenciesFound ) );
+			return;
+		}
+
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {
 			this._reduxStore.dispatch( processStep( step ) );
@@ -387,9 +412,12 @@ export default class SignupFlowController {
 				if ( errors ) {
 					this._reduxStore.dispatch( invalidateStep( step, errors ) );
 				} else {
+					const { intent } = getSignupDependencyStore( this._reduxStore.getState() );
+
 					recordTracksEvent( 'calypso_signup_actions_complete_step', {
 						step: step.stepName,
 						flow: this._flowName,
+						intent,
 					} );
 					this._reduxStore.dispatch( completeSignupStep( step, providedDependencies ) );
 				}
@@ -400,14 +428,13 @@ export default class SignupFlowController {
 		);
 	}
 
-	_findDependencies( stepName: string, dependencyKey = 'dependencies' ): Record< string, unknown > {
-		const dependencyStore = getSignupDependencyStore( this._reduxStore.getState() );
+	_findDependencies( stepName: string, dependencyKey: keyof StepDependendencies = 'dependencies' ) {
+		const dependencyStore: Record< string, unknown > = getSignupDependencyStore(
+			this._reduxStore.getState()
+		);
 		const stepConfig = steps[ stepName ];
-		if ( ! stepConfig || ! stepConfig[ dependencyKey ] ) {
-			return {};
-		}
-
-		return pick( dependencyStore, stepConfig[ dependencyKey ] );
+		const keysToSelect = stepConfig ? stepConfig[ dependencyKey ] : undefined;
+		return pick( dependencyStore, keysToSelect ?? [] );
 	}
 
 	_destination( dependencies: Dependencies ): string {
@@ -437,6 +464,7 @@ export default class SignupFlowController {
 
 	reset() {
 		this._reduxStore.dispatch( resetSignup() );
+		this._reduxStore.dispatch( resetExcludedSteps() );
 	}
 
 	cleanup() {
@@ -444,8 +472,18 @@ export default class SignupFlowController {
 	}
 
 	changeFlowName( flowName: string ) {
-		const userLoggedIn = isUserLoggedIn( this._reduxStore.getState() );
-		flows.resetExcludedSteps();
+		const state = this._reduxStore.getState();
+		const userLoggedIn = isUserLoggedIn( state );
+
+		// Restore the exclude steps when the user goes back to the flow with branch steps.
+		// For example, if one of steps have to checkout and user selects 3rd-party payment
+		// we need to keep exclude steps after they finish the checkout
+		if ( this._flow.enableBranchSteps ) {
+			flows.excludeSteps( getExcludedSteps( state ) );
+		} else {
+			flows.resetExcludedSteps();
+		}
+
 		this._flowName = flowName;
 		this._flow = flows.getFlow( flowName, userLoggedIn );
 	}

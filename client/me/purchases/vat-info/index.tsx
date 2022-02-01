@@ -1,6 +1,6 @@
 import { CompactCard, Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';

@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
-import { FunctionComponent } from 'react';
+import type { TranslateResult } from 'i18n-calypso';
+import type { FunctionComponent } from 'react';
 
 enum RewindFlowNoticeLevel {
 	NOTICE,
@@ -10,8 +11,8 @@ enum RewindFlowNoticeLevel {
 interface Props {
 	gridicon: string;
 	link?: string;
-	message?: i18nCalypso.TranslateResult;
-	title: i18nCalypso.TranslateResult;
+	message?: TranslateResult;
+	title: TranslateResult;
 	type: RewindFlowNoticeLevel;
 }
 

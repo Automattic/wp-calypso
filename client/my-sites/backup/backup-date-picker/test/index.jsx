@@ -5,7 +5,7 @@ const mockUseDispatch = () => () => null;
 const mockUseSelector = ( func ) => func();
 const mockUseTranslate = () => ( text ) => text;
 const mockUseCanGoToDate = () => () => true;
-const mockIsEnabled = () => true;
+const mockIsEnabled = () => false; // disable feature flags
 
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
@@ -257,22 +257,5 @@ describe( 'BackupDatePicker', () => {
 			);
 
 			picker.find( '.backup-date-picker__select-date--next' ).simulate( 'click' );
-		} ) );
-
-	test( 'Records a Tracks event when the search icon is clicked', () =>
-		new Promise( ( done ) => {
-			const checkSearchClickTracksEvent = ( event ) => {
-				const name = getTracksEventName( event );
-				expect( name ).toEqual( 'calypso_jetpack_backup_search' );
-				done();
-			};
-
-			useDispatch.mockImplementation( () => checkSearchClickTracksEvent );
-
-			const picker = shallow(
-				<BackupDatePicker selectedDate={ moment() } onDateChange={ () => {} } />
-			);
-
-			picker.find( '.backup-date-picker__search-link' ).simulate( 'click' );
 		} ) );
 } );

@@ -114,7 +114,12 @@ export function fetchSiteDomains( siteId ) {
 		return wpcom.req
 			.get( `/sites/${ siteId }/domains`, { apiVersion: '1.2' } )
 			.then( ( data ) => {
-				const { domains = [] } = data;
+				const { domains = [], error, message } = data;
+
+				if ( error ) {
+					throw new Error( message );
+				}
+
 				dispatch( domainsRequestSuccessAction( siteId ) );
 				dispatch( domainsReceiveAction( siteId, domains ) );
 			} )
@@ -147,6 +152,18 @@ export function disableDomainPrivacy( siteId, domain ) {
 	};
 }
 
+/**
+ * @callback onComplete
+ * @param {any} error
+ * @param {any} data
+ * @returns {void}
+ */
+
+/**
+ * @param {number} siteId
+ * @param {string} domain
+ * @param {onComplete} onComplete
+ */
 export const setPrimaryDomain = ( siteId, domain, onComplete = noop ) => ( dispatch ) => {
 	debug( 'setPrimaryDomain', siteId, domain );
 	return wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain }, ( error, data ) => {

@@ -26,6 +26,7 @@ describe( 'NavigationLink', () => {
 		},
 		recordTracksEvent: noop,
 		submitSignupStep: noop,
+		goToPreviousStep: jest.fn(),
 		goToNextStep: jest.fn(),
 		translate: ( str ) => `translated:${ str }`,
 		userLoggedIn: true,
@@ -39,6 +40,7 @@ describe( 'NavigationLink', () => {
 
 	afterEach( () => {
 		getStepUrl.mockReset();
+		props.goToPreviousStep.mockReset();
 		props.goToNextStep.mockReset();
 	} );
 
@@ -85,7 +87,13 @@ describe( 'NavigationLink', () => {
 
 		// It should call getStepUrl()
 		expect( getStepUrl ).toHaveBeenCalled();
-		expect( getStepUrl ).toHaveBeenCalledWith( 'test:flow', 'test:step1', 'test:section1', 'en' );
+		expect( getStepUrl ).toHaveBeenCalledWith(
+			'test:flow',
+			'test:step1',
+			'test:section1',
+			'en',
+			undefined
+		);
 
 		// when it is the first step
 		getStepUrl.mockReset();
@@ -96,7 +104,7 @@ describe( 'NavigationLink', () => {
 		] );
 		wrapper.setProps( { stepName: 'test:step1' } ); // set the first step
 		expect( getStepUrl ).toHaveBeenCalled();
-		expect( getStepUrl ).toHaveBeenCalledWith( 'test:flow', null, '', 'en' );
+		expect( getStepUrl ).toHaveBeenCalledWith( 'test:flow', null, '', 'en', undefined );
 
 		// The href should be backUrl when exist.
 		wrapper.setProps( { backUrl: 'test:back-url' } );
@@ -117,6 +125,22 @@ describe( 'NavigationLink', () => {
 		expect( props.goToNextStep ).not.toHaveBeenCalled();
 		wrapper.simulate( 'click' );
 		expect( props.goToNextStep ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should call goToPreviousStep() only when the direction is back and clicked', () => {
+		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
+
+		expect( props.goToPreviousStep ).not.toHaveBeenCalled();
+		wrapper.simulate( 'click' );
+		expect( props.goToPreviousStep ).toHaveBeenCalled();
+	} );
+
+	test( 'should not call goToPreviousStep() when the direction is forward', () => {
+		const wrapper = shallow( <NavigationLink { ...props } direction="forward" /> );
+
+		expect( props.goToPreviousStep ).not.toHaveBeenCalled();
+		wrapper.simulate( 'click' );
+		expect( props.goToPreviousStep ).not.toHaveBeenCalled();
 	} );
 
 	test( 'getPreviousStep() When in 2nd step should return 1st step', () => {

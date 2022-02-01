@@ -23,9 +23,8 @@ export const requestJetpackConnectionStatus = ( siteId ) => {
 			siteId,
 		} );
 
-		return wp
-			.undocumented()
-			.getJetpackConnectionStatus( siteId )
+		return wp.req
+			.get( `/jetpack-blogs/${ siteId }/rest-api/`, { path: '/jetpack/v4/connection/' } )
 			.then( ( response ) => {
 				dispatch( {
 					type: JETPACK_CONNECTION_STATUS_RECEIVE,
@@ -54,9 +53,8 @@ export const requestJetpackUserConnectionData = ( siteId ) => {
 			siteId,
 		} );
 
-		return wp
-			.undocumented()
-			.getJetpackUserConnectionData( siteId )
+		return wp.req
+			.get( `/jetpack-blogs/${ siteId }/rest-api/`, { path: '/jetpack/v4/connection/data/' } )
 			.then( ( response ) => {
 				dispatch( {
 					type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
@@ -79,17 +77,14 @@ export const requestJetpackUserConnectionData = ( siteId ) => {
 };
 
 export const disconnect = ( siteId ) => ( dispatch ) =>
-	wp
-		.undocumented()
-		.disconnectJetpack( siteId )
-		.then( ( response ) => {
-			dispatch( {
-				type: JETPACK_DISCONNECT_RECEIVE,
-				siteId,
-				status: response,
-			} );
-			dispatch( fetchCurrentUser() );
+	wp.req.post( `/jetpack-blogs/${ siteId }/mine/delete` ).then( ( response ) => {
+		dispatch( {
+			type: JETPACK_DISCONNECT_RECEIVE,
+			siteId,
+			status: response,
 		} );
+		dispatch( fetchCurrentUser() );
+	} );
 
 /**
  * Change the jetpack connection owner.

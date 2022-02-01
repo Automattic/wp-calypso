@@ -7,15 +7,12 @@ import {
 	CheckoutSteps,
 	CheckoutSummaryArea,
 	CheckoutProvider,
-	defaultRegistry,
 	FormStatus,
 	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	useIsStepActive,
-	useSelect,
-	useDispatch,
 	useFormStatus,
 	makeSuccessResponse,
 } from '@automattic/composite-checkout';
@@ -49,27 +46,6 @@ async function payPalProcessor( data ) {
 	await asyncTimeout( 2000 );
 	return makeSuccessResponse( { success: true } );
 }
-
-const { registerStore } = defaultRegistry;
-
-registerStore( 'demo', {
-	actions: {
-		setCountry( payload ) {
-			return { type: 'set_country', payload };
-		},
-	},
-	selectors: {
-		getCountry( state ) {
-			return state.country;
-		},
-	},
-	reducer( state = {}, action ) {
-		if ( action.type === 'set_country' ) {
-			return { ...state, country: action.payload };
-		}
-		return state;
-	},
-} );
 
 const getTotal = ( items ) => {
 	const lineItemTotal = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
@@ -121,9 +97,20 @@ const Form = styled.div`
 	margin-bottom: 0.5em;
 `;
 
+const contactFormData = {
+	country: '',
+};
+
+function setCountry( value ) {
+	contactFormData.country = value;
+}
+
+function getCountry() {
+	return contactFormData.country;
+}
+
 function ContactForm( { summary } ) {
-	const country = useSelect( ( storeSelect ) => storeSelect( 'demo' )?.getCountry() ?? '' );
-	const { setCountry } = useDispatch( 'demo' );
+	const country = getCountry();
 	const onChangeCountry = ( event ) => setCountry( event.target.value );
 	const { formStatus } = useFormStatus();
 
@@ -181,7 +168,6 @@ export function CheckoutDemo() {
 			items={ items }
 			total={ total }
 			onPaymentComplete={ onPaymentComplete }
-			registry={ defaultRegistry }
 			isLoading={ isLoading }
 			paymentMethods={ [ payPalMethod ] }
 			paymentProcessors={ { paypal: payPalProcessor } }
@@ -193,7 +179,7 @@ export function CheckoutDemo() {
 }
 
 function MyCheckoutBody() {
-	const country = useSelect( ( storeSelect ) => storeSelect( 'demo' )?.getCountry() ?? '' );
+	const country = getCountry();
 
 	return (
 		<Checkout>

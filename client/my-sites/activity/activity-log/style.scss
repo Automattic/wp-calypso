@@ -1,3 +1,7 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 // Activity Log
 
 .activity-log__wrapper {
@@ -29,6 +33,10 @@
 		background: var( --color-neutral-10 );
 		background: linear-gradient( var( --color-neutral-10 ), var( --color-surface-backdrop ) );
 	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		margin-top: 2rem;
+	}
 }
 
 .activity-log__time-period {
@@ -57,6 +65,12 @@
 	&.is-bottom-pagination {
 		margin: 14px 0 48px;
 	}
+
+	&.is-top-pagination {
+		@include breakpoint-deprecated( '<480px' ) {
+			display: none;
+		}
+	}
 }
 
 .activity-log__fader {
@@ -68,4 +82,14 @@
 	z-index: 179;
 	height: 15%;
 	pointer-events: none;
+}
+
+.activity-log__filterbar-ctn.is-sticky {
+	@include breakpoint-deprecated( '<480px' ) {
+		position: fixed;
+		top: var( --masterbar-height );
+		left: 0;
+		right: 0;
+		z-index: z-index( 'root', '.masterbar' );
+	}
 }

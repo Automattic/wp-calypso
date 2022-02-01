@@ -38,6 +38,7 @@ export class NoteList extends Component {
 
 	noteElements = {};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		this.props.global.updateStatusBar = this.updateStatusBar;
 		this.props.global.resetStatusBar = this.resetStatusBar;
@@ -57,6 +58,7 @@ export class NoteList extends Component {
 		ReactDOM.findDOMNode( this.scrollableContainer ).removeEventListener( 'scroll', this.onScroll );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.props.isPanelOpen && ! nextProps.isPanelOpen ) {
 			// scroll to top, from toggling frame

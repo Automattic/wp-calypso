@@ -1,83 +1,59 @@
-.intro-pricing-banner {
+.intro-pricing-banner,
+.intro-pricing-banner__sticky {
 	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	align-items: center;
+	flex-direction: row;
 
-	margin-top: calc( 32px * 3 );
-	padding: 32px;
+	justify-content: center;
 
-	border-width: 1px 0;
-	border-style: solid;
-	border-color: rgba( var( --studio-gray-10-rgb ), 0.6 );
-
-	background-color: rgba( var( --studio-white-rgb ), 0.6 );
-
-	@include breakpoint-deprecated( '>660px' ) {
+	.intro-pricing-banner__discount,
+	.intro-pricing-banner__guarantee {
+		display: flex;
 		flex-direction: row;
-		margin-bottom: calc( 32px * 3 );
+		align-items: center;
 
-		border-width: 1px;
-		border-radius: calc( 2px * 4 );
+		font-size: $font-body;
 	}
 
-	p {
-		line-height: inherit;
-	}
-}
-
-.intro-pricing-banner__copy {
-	order: 2;
-	min-width: 50%;
-	max-width: 30rem;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		order: initial;
+	> :not( :last-child ) {
 		margin-right: 16px;
 	}
 }
 
-.intro-pricing-banner__header {
-	margin-top: -8px;
-	margin-bottom: 8px;
+.intro-pricing-banner {
+	height: 54px;
+	margin-bottom: 32px;
+}
 
-	text-align: center;
-	font-size: $font-title-small;
-	font-weight: 700;
+.intro-pricing-banner__sticky {
+	position: fixed;
+	width: 100%;
+	left: 0;
+	top: var( --masterbar-height );
 
-	@include breakpoint-deprecated( '>660px' ) {
-		text-align: initial;
-		font-size: $font-title-medium;
+	background-color: var( --color-surface );
+	box-shadow: 0 4px 4px 0 #00000014;
+
+	z-index: 2;
+	height: 54px;
+}
+.is-section-jetpack-connect,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
+	.intro-pricing-banner__sticky {
+		top: 0;
 	}
 }
 
-.intro-pricing-banner__call-to-action {
-	margin-bottom: initial;
-
-	font-size: $font-body-small;
-	color: var( --studio-gray-60 );
-
+// target Calypso pricing filter bar, not jetpack cloud
+.is-group-sites.is-section-plans .intro-pricing-banner__sticky {
+	// At this screen size, the left sidebar is 228px;
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: $font-body;
+		width: calc( 100% - 228px );
+		left: 228px;
 	}
-}
 
-.intro-pricing-banner__badge {
-	width: calc( 241px * 0.6 );
-	height: calc( 239px * 0.6 );
-
-	margin-top: calc( -32px * 3 );
-
-	// To center the alt-text until the image loads
-	line-height: 239px;
-	vertical-align: middle;
-	text-align: center;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		width: 241px;
-		height: 239px;
-
-		margin-bottom: calc( -32px * 3 );
-		margin-right: -32px;
+	// At this screen size, the lft sidebar is 272px;
+	@include breakpoint-deprecated( '>960px' ) {
+		width: calc( 100% - 272px );
+		left: 272px;
 	}
 }

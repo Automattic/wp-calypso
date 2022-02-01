@@ -7,7 +7,7 @@ import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 
 const debug = debugFactory( 'calypso:query-site-purchases' );
 
-export default function QuerySitePurchases( { siteId } ) {
+export const useQuerySitePurchases = ( siteId ) => {
 	const isRequesting = useSelector( ( state ) => isFetchingSitePurchases( state ) );
 	const reduxDispatch = useDispatch();
 	const previousSiteId = useRef();
@@ -26,7 +26,10 @@ export default function QuerySitePurchases( { siteId } ) {
 
 		reduxDispatch( fetchSitePurchases( siteId ) );
 	}, [ siteId, reduxDispatch, isRequesting ] );
+};
 
+export default function QuerySitePurchases( { siteId } ) {
+	useQuerySitePurchases( siteId );
 	return null;
 }
 

@@ -4,8 +4,6 @@ import {
 	getRequestError,
 	getTwoFactorAuthNonce,
 	getTwoFactorAuthRequestError,
-	getTwoFactorPushPollInProgress,
-	getTwoFactorPushPollSuccess,
 	getTwoFactorPushToken,
 	getTwoFactorSupportedAuthTypes,
 	getTwoFactorUserId,
@@ -262,44 +260,6 @@ describe( 'selectors', () => {
 					},
 				} )
 			).toBe( token );
-		} );
-	} );
-
-	describe( 'getTwoFactorPushPollInProgress()', () => {
-		test( 'should return false by default', () => {
-			expect( getTwoFactorPushPollInProgress( EMPTY_STATE ) ).toBe( false );
-		} );
-
-		test( 'should return polling progresss status', () => {
-			const inProgress = true;
-			expect(
-				getTwoFactorPushPollInProgress( {
-					login: {
-						twoFactorAuthPushPoll: {
-							inProgress,
-						},
-					},
-				} )
-			).toBe( inProgress );
-		} );
-	} );
-
-	describe( 'getTwoFactorPushPollSuccess()', () => {
-		test( 'should return false by default', () => {
-			expect( getTwoFactorPushPollSuccess( EMPTY_STATE ) ).toBe( false );
-		} );
-
-		test( 'should return push polling success status', () => {
-			const success = true;
-			expect(
-				getTwoFactorPushPollSuccess( {
-					login: {
-						twoFactorAuthPushPoll: {
-							success,
-						},
-					},
-				} )
-			).toBe( success );
 		} );
 	} );
 

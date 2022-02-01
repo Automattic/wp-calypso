@@ -77,8 +77,8 @@ references:
   restore-yarn-cache: &restore-yarn-cache
     name: 'Restore yarn cache'
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-yarn-cache-{{ arch }}-{{ checksum ".yarnrc.yml" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-yarn-cache-{{ arch }}
 
   yarn-install: &yarn-install
     name: Install dependencies
@@ -86,7 +86,7 @@ references:
       source "$HOME/.nvm/nvm.sh"
       nvm use
       npm install -g yarn
-      yarn install --frozen-lockfile
+      yarn install --immutable --inline-builds
 
   update-node: &update-node
     name: Update node
@@ -103,19 +103,11 @@ references:
 
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-yarn-modules-{{ checksum ".nvmrc" }}-{{ checksum "yarn.lock" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v3-yarn-cache-{{ arch }}-{{ checksum ".yarnrc.yml" }}
     paths:
-      - ~/.cache/yarn
+      # This is the default path when using enableGlobalCache:true
+      - ~/.yarn/berry/cache
 
-  desktop-install-app-deps: &desktop-install-app-deps
-    name: Install Desktop Dependencies
-    command: |
-      source "$HOME/.nvm/nvm.sh"
-      nvm use
-      npm install -g yarn@1.22.10
-      yarn
-      cd desktop
-      yarn
   desktop-cache-paths: &desktop-cache-paths
     - desktop/resource/certificates/win.p12
     - desktop/resource/certificates/mac.p12
@@ -139,14 +131,6 @@ references:
     failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
 
 commands:
-  prepare:
-    description: 'Prepare Job'
-    steps:
-      # folders to collect results
-      - run: *setup-results-and-artifacts
-      - attach_workspace:
-          at: '~'
-      - run: *update-node
   store-artifacts-and-test-results:
     description: Stores artifacts and test results
     steps:
@@ -158,28 +142,18 @@ commands:
           path: /tmp/artifacts
 
 jobs:
-  setup:
+  translate:
     <<: *defaults
     steps:
-      # repo
       - restore_cache: *restore-git-cache
       - checkout
       - run: *update-git
       - save_cache: *save-git-cache
       - run: *update-node
-      # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
       - save_cache: *save-yarn-cache
-      - persist_to_workspace:
-          root: '~'
-          paths:
-            - wp-calypso
-
-  translate:
-    <<: *defaults
-    steps:
-      - prepare
+      - run: *setup-results-and-artifacts
       - run:
           name: Extract strings
           command: |
@@ -248,12 +222,16 @@ jobs:
     working_directory: /Users/distiller/wp-calypso
     environment:
       CONFIG_ENV: release
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
           at: /Users/distiller/wp-calypso
       - run: *update-node
-      - run: *desktop-install-app-deps
+      - restore_cache: *restore-yarn-cache
+      - run: *yarn-install
+      - save_cache: *save-yarn-cache
       - run:
           name: Build Desktop Mac
           no_output_timeout: 45m
@@ -268,7 +246,7 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
+            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
             # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
             # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
@@ -283,7 +261,7 @@ jobs:
             nvm use
             npm install -g yarn
 
-            yarn run test-desktop:e2e
+            cd desktop && yarn run test:e2e
       - run:
           when: always
           name: Persist Mac Executable
@@ -305,10 +283,7 @@ jobs:
           path: desktop/release
       - store_artifacts:
           when: always
-          path: desktop/e2e/logs
-      - store_artifacts:
-          when: always
-          path: desktop/e2e/screenshots
+          path: desktop/test/e2e/results/
       - persist_to_workspace:
           root: ~/wp-calypso
           paths:
@@ -324,6 +299,8 @@ jobs:
     shell: /bin/bash --login
     environment:
       CONFIG_ENV: release
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -334,7 +311,9 @@ jobs:
           command: |
             sudo apt update
             sudo apt-get install -y libsecret-1-dev
-      - run: *desktop-install-app-deps
+      - restore_cache: *restore-yarn-cache
+      - run: *yarn-install
+      - save_cache: *save-yarn-cache
       - run:
           name: Build Desktop Linux
           environment:
@@ -358,7 +337,7 @@ jobs:
             nvm use
             npm install -g yarn
 
-            yarn run test-desktop:e2e
+            cd desktop && yarn run test:e2e
       - run:
           when: always
           name: Persist Linux Executable
@@ -379,10 +358,7 @@ jobs:
           path: desktop/release
       - store_artifacts:
           when: always
-          path: desktop/e2e/logs
-      - store_artifacts:
-          when: always
-          path: desktop/e2e/screenshots
+          path: desktop/test/e2e/results/
       - persist_to_workspace:
           root: ~/wp-calypso
           paths:
@@ -394,6 +370,8 @@ jobs:
     working_directory: C:\Users\circleci\wp-calypso
     environment:
       CONFIG_ENV: release
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -412,10 +390,7 @@ jobs:
           command: cinst make
       - run:
           name: Install Desktop Dependencies
-          command: |
-            yarn
-            cd desktop
-            yarn
+          command: yarn
       - when:
           condition: << pipeline.git.tag >>
           steps:
@@ -538,10 +513,7 @@ workflows:
   version: 2
   calypso:
     jobs:
-      - setup
-      - translate:
-          requires:
-            - setup
+      - translate
   wp-desktop:
     jobs:
       - wp-desktop-assets:

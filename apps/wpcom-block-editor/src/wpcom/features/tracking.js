@@ -12,6 +12,7 @@ import {
 	buildGlobalStylesContentEvents,
 	getFlattenedBlockNames,
 	getBlockEventContextProperties,
+	findSavingSource,
 } from './utils';
 
 // Debugger.
@@ -460,7 +461,7 @@ const trackDisableComplementaryArea = ( scope ) => {
 const trackSaveEntityRecord = ( kind, name, record ) => {
 	if ( kind === 'postType' && name === 'wp_template_part' ) {
 		const variationSlug = record.area !== 'uncategorized' ? record.area : undefined;
-		if ( document.querySelector( '.edit-site-template-part-converter__modal' ) ) {
+		if ( document.querySelector( '.edit-site-create-template-part-modal' ) ) {
 			ignoreNextReplaceBlocksAction = true;
 			const convertedParentBlocks = select( 'core/block-editor' ).getBlocksByClientId(
 				select( 'core/block-editor' ).getSelectedBlockClientIds()
@@ -603,10 +604,10 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 		return;
 	}
 
-	if ( kind === 'postType' && type === 'wp_global_styles' ) {
+	if ( kind === 'root' && type === 'globalStyles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
-		const entityContent = JSON.parse( editedEntity?.content );
-		const updatedContent = JSON.parse( updates?.content );
+		const entityContent = { settings: editedEntity.settings, styles: editedEntity.styles };
+		const updatedContent = { settings: updates.settings, styles: updates.styles };
 
 		// Sometimes a second update is triggered corresponding to no changes since the last update.
 		// Therefore we must check if there is a change to avoid debouncing a valid update to a changeless update.
@@ -621,18 +622,36 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 };
 
 /**
- * Tracks saveEditedEntityRecord for saving global styles updates.
+ * Tracks saveEditedEntityRecord for saving various entities.
  *
  * @param {string} kind Kind of the edited entity record.
  * @param {string} type Name of the edited entity record.
  * @param {number} id   Record ID of the edited entity record.
  */
 const trackSaveEditedEntityRecord = ( kind, type, id ) => {
-	if ( kind === 'postType' && type === 'wp_global_styles' ) {
-		const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
-		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
-		const entityContent = JSON.parse( savedEntity?.content?.raw );
-		const updatedContent = JSON.parse( editedEntity?.content );
+	const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
+	const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
+
+	// If the item saved is a template part, make note of the area variation.
+	const templatePartArea = type === 'wp_template_part' ? savedEntity?.area : undefined;
+	// If the template parts area variation changed, add the new area classification as well.
+	const newTemplatePartArea =
+		type === 'wp_template_part' && savedEntity?.area !== editedEntity?.area
+			? editedEntity.area
+			: undefined;
+
+	tracksRecordEvent( 'wpcom_block_editor_edited_entity_saved', {
+		entity_kind: kind,
+		entity_type: type,
+		entity_id: id,
+		saving_source: findSavingSource(),
+		template_part_area: templatePartArea,
+		new_template_part_area: newTemplatePartArea,
+	} );
+
+	if ( kind === 'root' && type === 'globalStyles' ) {
+		const entityContent = { settings: savedEntity.settings, styles: savedEntity.styles };
+		const updatedContent = { settings: editedEntity.settings, styles: editedEntity.styles };
 
 		buildGlobalStylesContentEvents(
 			updatedContent,
@@ -640,6 +659,28 @@ const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 			'wpcom_block_editor_global_styles_save'
 		);
 	}
+};
+
+/**
+ * Tracks __experimentalSaveEditedEntityRecord for saving various entities. Currently this is only
+ * expected to be triggered for site entity items like logo, description, and title.
+ *
+ * @param {string} kind Kind of the edited entity record.
+ * @param {string} type Name of the edited entity record.
+ * @param {number} id   Record ID of the edited entity record.
+ */
+const trackSaveSpecifiedEntityEdits = ( kind, type, id, itemsToSave ) => {
+	const source = findSavingSource();
+
+	itemsToSave.forEach( ( item ) =>
+		tracksRecordEvent( 'wpcom_block_editor_edited_entity_saved', {
+			entity_kind: kind,
+			entity_type: type,
+			entity_id: id,
+			saving_source: source,
+			item_saved: item,
+		} )
+	);
 };
 
 /**
@@ -667,6 +708,7 @@ const REDUX_TRACKING = {
 		saveEntityRecord: trackSaveEntityRecord,
 		editEntityRecord: trackEditEntityRecord,
 		saveEditedEntityRecord: trackSaveEditedEntityRecord,
+		__experimentalSaveSpecifiedEntityEdits: trackSaveSpecifiedEntityEdits,
 	},
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),

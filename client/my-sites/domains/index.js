@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
@@ -106,6 +105,16 @@ export default function () {
 	);
 
 	registerStandardDomainManagementPages(
+		paths.domainManagementDnsAddRecord,
+		domainManagementController.domainManagementDnsAddRecord
+	);
+
+	registerStandardDomainManagementPages(
+		paths.domainManagementDnsEditRecord,
+		domainManagementController.domainManagementDnsEditRecord
+	);
+
+	registerStandardDomainManagementPages(
 		paths.domainManagementNameServers,
 		domainManagementController.domainManagementNameServers
 	);
@@ -169,157 +178,155 @@ export default function () {
 		domainManagementController.domainManagementTransferIn
 	);
 
-	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
-		page(
-			'/domains/add',
-			siteSelection,
-			domainsController.domainsAddHeader,
-			domainsController.redirectToUseYourDomainIfVipSite(),
-			domainsController.jetpackNoDomainsWarning,
-			sites,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add',
+		siteSelection,
+		domainsController.domainsAddHeader,
+		domainsController.redirectToUseYourDomainIfVipSite(),
+		domainsController.jetpackNoDomainsWarning,
+		sites,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/mapping',
-			siteSelection,
-			domainsController.domainsAddHeader,
-			domainsController.jetpackNoDomainsWarning,
-			sites,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/mapping',
+		siteSelection,
+		domainsController.domainsAddHeader,
+		domainsController.jetpackNoDomainsWarning,
+		sites,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/transfer',
-			siteSelection,
-			domainsController.domainsAddHeader,
-			domainsController.jetpackNoDomainsWarning,
-			sites,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/transfer',
+		siteSelection,
+		domainsController.domainsAddHeader,
+		domainsController.jetpackNoDomainsWarning,
+		sites,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/site-redirect',
-			siteSelection,
-			domainsController.domainsAddRedirectHeader,
-			domainsController.jetpackNoDomainsWarning,
-			sites,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/site-redirect',
+		siteSelection,
+		domainsController.domainsAddRedirectHeader,
+		domainsController.jetpackNoDomainsWarning,
+		sites,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/:domain',
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.redirectToUseYourDomainIfVipSite(),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.domainSearch,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/:domain',
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add' ),
+		domainsController.redirectToUseYourDomainIfVipSite(),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.domainSearch,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/:domain/email/:siteSlug',
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.emailUpsellForDomainRegistration,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/:domain/email/:siteSlug',
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.emailUpsellForDomainRegistration,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/suggestion/:suggestion/:domain',
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.redirectToUseYourDomainIfVipSite(),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.redirectToDomainSearchSuggestion
-		);
+	page(
+		'/domains/add/suggestion/:suggestion/:domain',
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add' ),
+		domainsController.redirectToUseYourDomainIfVipSite(),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.redirectToDomainSearchSuggestion
+	);
 
-		page(
-			'/domains/add/mapping/:domain',
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add/mapping' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.mapDomain,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/mapping/:domain',
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add/mapping' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.mapDomain,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			paths.domainMappingSetup( ':site', ':domain' ),
-			siteSelection,
-			navigation,
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.mapDomainSetup,
-			makeLayout,
-			clientRender
-		);
+	page(
+		paths.domainMappingSetup( ':site', ':domain' ),
+		siteSelection,
+		navigation,
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.mapDomainSetup,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/domains/add/site-redirect/:domain',
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add/site-redirect' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.siteRedirect,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/domains/add/site-redirect/:domain',
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add/site-redirect' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.siteRedirect,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			paths.domainTransferIn( ':domain' ),
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add/transfer' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.transferDomain,
-			makeLayout,
-			clientRender
-		);
+	page(
+		paths.domainTransferIn( ':domain' ),
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add/transfer' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.transferDomain,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			paths.domainUseYourDomain( ':site' ),
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.useYourDomain,
-			makeLayout,
-			clientRender
-		);
+	page(
+		paths.domainUseYourDomain( ':site' ),
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.useYourDomain,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			paths.domainUseMyDomain( ':site' ),
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/add' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.useMyDomain,
-			makeLayout,
-			clientRender
-		);
+	page(
+		paths.domainUseMyDomain( ':site' ),
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.useMyDomain,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
-			siteSelection,
-			navigation,
-			domainsController.redirectIfNoSite( '/domains/manage' ),
-			domainsController.jetpackNoDomainsWarning,
-			domainsController.transferDomainPrecheck,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/manage' ),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.transferDomainPrecheck,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/domains/:site',

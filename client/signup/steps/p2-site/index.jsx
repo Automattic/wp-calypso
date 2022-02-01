@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, map, deburr, get } from 'lodash';
@@ -8,11 +9,12 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
+import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
-import { logToLogstash } from 'calypso/state/logstash/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
 
@@ -35,6 +37,9 @@ const SITE_TAKEN_ERROR_CODES = [
 ];
 
 const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
+
+const EMAIL_TRUCE_CAMPAIGN_REF = 'p2-email-truce';
+const EMAIL_TRUCE_CAMPAIGN_ID = 'p2-email-truce';
 
 /**
  * Module variables
@@ -111,7 +116,7 @@ class P2Site extends Component {
 	};
 
 	logValidationErrorToLogstash = ( error, errorMessage ) => {
-		this.props.logToLogstash( {
+		logToLogstash( {
 			feature: 'calypso_wp_for_teams',
 			message: 'P2 signup validation failed',
 			extra: {
@@ -140,11 +145,17 @@ class P2Site extends Component {
 		}
 
 		if ( ! isEmpty( fields.site ) ) {
-			wpcom.undocumented().sitesNew(
+			const locale = getLocaleSlug();
+			wpcom.req.post(
+				'/sites/new',
 				{
 					blog_name: fields.site,
 					blog_title: fields.siteTitle,
 					validate: true,
+					locale,
+					lang_id: getLanguage( locale ).value,
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
 				},
 				( error, response ) => {
 					debug( error, response );
@@ -272,12 +283,18 @@ class P2Site extends Component {
 
 			this.resetAnalyticsData();
 
-			this.props.submitSignupStep( {
+			const stepData = {
 				stepName: this.props.stepName,
 				form: this.state.form,
 				site,
 				siteTitle,
-			} );
+			};
+
+			if ( this.props.refParameter === EMAIL_TRUCE_CAMPAIGN_REF ) {
+				stepData.campaign = EMAIL_TRUCE_CAMPAIGN_ID;
+			}
+
+			this.props.submitSignupStep( stepData );
 
 			this.props.goToNextStep();
 		} );
@@ -471,6 +488,4 @@ class P2Site extends Component {
 	}
 }
 
-export default connect( null, { saveSignupStep, submitSignupStep, logToLogstash } )(
-	localize( P2Site )
-);
+export default connect( null, { saveSignupStep, submitSignupStep } )( localize( P2Site ) );

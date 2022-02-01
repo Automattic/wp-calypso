@@ -1,11 +1,26 @@
+import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
 import wp from 'calypso/lib/wp';
-import { createAccount } from '../payment-method-helpers';
+import { createWpcomAccountBeforeTransaction } from './create-wpcom-account-before-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type {
 	WPCOMTransactionEndpointRequestPayload,
 	WPCOMTransactionEndpointResponse,
 } from '@automattic/wpcom-checkout';
 
+/**
+ * Submit a transaction to the WPCOM transactions endpoint.
+ *
+ * This is one of two transactions endpoint functions; also see
+ * `wpcomPayPalExpress`.
+ *
+ * Note that the payload property is (mostly) in camelCase but the actual
+ * submitted data will be converted (mostly) to snake_case.
+ *
+ * Please do not alter payload inside this function if possible to retain type
+ * safety. Instead, alter `createTransactionEndpointRequestPayload` or add a
+ * new type safe function that works similarly (see
+ * `createWpcomAccountBeforeTransaction`).
+ */
 export default async function submitWpcomTransaction(
 	payload: WPCOMTransactionEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
@@ -14,29 +29,8 @@ export default async function submitWpcomTransaction(
 		payload.cart.is_jetpack_checkout && payload.cart.cart_key === 'no-user';
 
 	if ( transactionOptions.createUserAndSiteBeforeTransaction || isJetpackUserLessCheckout ) {
-		const isJetpackUserLessCheckout = payload.cart.is_jetpack_checkout;
-
-		const createAccountOptions = isJetpackUserLessCheckout
-			? { signupFlowName: 'jetpack-userless-checkout' }
-			: { signupFlowName: 'onboarding-registrationless' };
-
-		return createAccount( createAccountOptions ).then( ( response ) => {
-			const siteIdFromResponse = response?.blog_details?.blogid;
-
-			// If the account is already created(as happens when we are reprocessing after a transaction error), then
-			// the create account response will not have a site ID, so we fetch from state.
-			const siteId = siteIdFromResponse || transactionOptions.siteId;
-			const newPayload = {
-				...payload,
-				cart: {
-					...payload.cart,
-					blog_id: siteId || '0',
-					cart_key: siteId || 'no-site',
-				},
-			};
-			return wp.undocumented().transactions( newPayload );
-		} );
+		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 
-	return wp.undocumented().transactions( payload );
+	return wp.req.post( '/me/transactions', mapRecordKeysRecursively( payload, camelToSnakeCase ) );
 }

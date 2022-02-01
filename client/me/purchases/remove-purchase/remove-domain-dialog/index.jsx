@@ -1,4 +1,5 @@
 import { Dialog } from '@automattic/components';
+import { Icon, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -10,7 +11,7 @@ import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getName } from 'calypso/lib/purchases';
-import { getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import wpcom from 'calypso/lib/wp';
 import {
 	domainManagementTransferOut,
@@ -36,49 +37,34 @@ class RemoveDomainDialog extends Component {
 	};
 
 	renderDomainDeletionWarning( productName ) {
-		const { translate, hasTitanWithUs, slug, currentRoute } = this.props;
+		const { translate, slug, currentRoute } = this.props;
 
 		return (
 			<Fragment>
 				<p>
 					{ translate(
-						'This will stop all services connected to %(domain)s including your email and website. ' +
-							'If you wish to use %(domain)s with another service or provider you can:',
+						'Deleting a domain will make all services connected to it unreachable, including your email and website. It will also make the domain available for someone else to register.',
 						{
 							args: { domain: productName },
 						}
 					) }
 				</p>
-				<ul>
-					<li>
-						<a href={ domainManagementNameServers( slug, productName, currentRoute ) }>
-							{ translate( 'Point %(domain)s to another service', {
-								args: { domain: productName },
-							} ) }
-						</a>
-					</li>
-					<li>
-						<a href={ domainManagementTransferOut( slug, productName, currentRoute ) }>
-							{ translate( 'Move %(domain)s to another provider', {
-								args: { domain: productName },
-							} ) }
-						</a>
-					</li>
-				</ul>
 				<p>
-					{ hasTitanWithUs &&
-						' ' +
-							translate(
-								'You also have an active %(productName)s subscription for this domain, and your emails will stop ' +
-									'working if you delete your domain.',
-								{
-									args: {
-										productName: getTitanProductName(),
-									},
-									comment:
-										'%(productName) is the name of the product, which should be "Professional Email" translated',
-								}
-							) }
+					{ translate(
+						'If you want to use {{strong}}%(domain)s{{/strong}} with another provider you can {{moveAnchor}}move it to another service{{/moveAnchor}} or {{transferAnchor}}transfer it to another provider{{/transferAnchor}}.',
+						{
+							args: { domain: productName },
+							components: {
+								strong: <strong />,
+								moveAnchor: (
+									<a href={ domainManagementNameServers( slug, productName, currentRoute ) } />
+								),
+								transferAnchor: (
+									<a href={ domainManagementTransferOut( slug, productName, currentRoute ) } />
+								),
+							},
+						}
+					) }
 				</p>
 			</Fragment>
 		);
@@ -90,7 +76,7 @@ class RemoveDomainDialog extends Component {
 		return (
 			<Fragment>
 				<FormSectionHeading>
-					{ translate( '{{strong}}You are deleting %(domain)s from the web.{{/strong}}', {
+					{ translate( '{{strong}}Delete %(domain)s{{/strong}}', {
 						args: { domain: productName },
 						components: { strong: <strong /> },
 					} ) }
@@ -166,7 +152,11 @@ class RemoveDomainDialog extends Component {
 				</FormFieldset>
 				<p>
 					{ translate(
-						'This domain name will be deleted. Any services related to it will cease to function. Are you sure you wish to proceed?'
+						'{{strong}}%(domain)s{{/strong}} will be deleted. Any services related to it will stop working. Are you sure you want to proceed?',
+						{
+							args: { domain: productName },
+							components: { strong: <strong /> },
+						}
 					) }
 				</p>
 			</Fragment>
@@ -235,16 +225,24 @@ class RemoveDomainDialog extends Component {
 			{
 				action: 'cancel',
 				disabled: this.props.isRemoving,
-				isPrimary: true,
-				label: translate( 'Never Mind' ),
+				label: this.state.step === 3 ? translate( 'Nevermind' ) : translate( 'Cancel' ),
 			},
 			{
 				action: 'remove',
 				additionalClassNames: [
 					this.props.isRemoving || this.state.isCheckingEmail ? 'is-busy' : '',
-					'is-scary',
+					'dialog__button--domains-remove',
 				],
-				label: translate( 'Delete this Domain' ),
+				isPrimary: true,
+				label:
+					this.state.step === 3 ? (
+						<>
+							<Icon icon={ trash } size={ 18 } />
+							{ translate( 'Delete this domain' ) }
+						</>
+					) : (
+						translate( 'Continue' )
+					),
 				onClick: this.nextStep,
 			},
 		];

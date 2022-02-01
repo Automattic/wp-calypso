@@ -10,7 +10,7 @@ import jetpackVideoHosting from 'calypso/layout/guided-tours/tours/jetpack-video
 import marketingConnectionsTour from 'calypso/layout/guided-tours/tours/marketing-connections-tour/meta';
 import mediaBasicsTour from 'calypso/layout/guided-tours/tours/media-basics-tour/meta';
 
-export default {
+export default [
 	checklistSiteTitle,
 	jetpackChecklist,
 	jetpackLazyImages,
@@ -22,4 +22,4 @@ export default {
 	jetpackVideoHosting,
 	marketingConnectionsTour,
 	mediaBasicsTour,
-};
+];

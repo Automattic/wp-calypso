@@ -1,10 +1,4 @@
-import {
-	Button,
-	FormStatus,
-	useLineItems,
-	useFormStatus,
-	useEvents,
-} from '@automattic/composite-checkout';
+import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -27,10 +21,8 @@ function FullCreditsSubmitButton( { disabled, onClick } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 
 	const handleButtonPress = () => {
-		onEvent( { type: 'FULL_CREDITS_TRANSACTION_BEGIN' } );
 		onClick( 'full-credits', {
 			items,
 		} );

@@ -23,10 +23,11 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 		url?.replace( /^https?:\/\//, '' )
 	);
 
-	if ( isSafeWpAdminUrl ) {
+	// Gives WP Admin Customizer a chance to return to where we started from.
+	if ( isSafeWpAdminUrl && url.includes( 'wp-admin/customize.php' ) ) {
 		url = addQueryArgs(
 			{
-				return: document.location.href, // Gives WP Admin a chance to return to where we started from.
+				return: document.location.href,
 			},
 			url
 		);

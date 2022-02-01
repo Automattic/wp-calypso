@@ -9,6 +9,7 @@ import {
 	DOMAIN_TRANSFER_CODE_REQUEST_FAILED,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
 	DOMAIN_TRANSFER_UPDATE,
+	DOMAIN_TRANSFER_UPDATE_LOCK,
 	DOMAIN_WAPI_INFO_FETCH,
 	DOMAIN_WAPI_INFO_FETCH_FAILURE,
 	DOMAIN_WAPI_INFO_FETCH_SUCCESS,
@@ -44,6 +45,13 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 				...state,
 				[ domain ]: options,
 			};
+		}
+		case DOMAIN_TRANSFER_UPDATE_LOCK: {
+			return updateDomainState( state, action.domain, {
+				data: Object.assign( {}, state[ action.domain ].data, {
+					locked: action.lock,
+				} ),
+			} );
 		}
 		case DOMAIN_TRANSFER_CODE_REQUEST: {
 			return updateDomainState( state, action.domain, {

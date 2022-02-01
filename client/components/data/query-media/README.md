@@ -7,7 +7,6 @@ Query Media is a React component used in managing the fetching of media queries.
 Render the component, passing `siteId` and `query` or a `siteId` and `mediaId`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
-import React from 'react';
 import QueryMedia from 'calypso/components/data/query-media';
 import MyMediaListItem from './list-item';
 

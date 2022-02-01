@@ -399,36 +399,6 @@ class Site {
 	wordAds() {
 		return new SiteWordAds( this._id, this.wpcom );
 	}
-
-	/**
-	 * Add a domain mapping to a site.
-	 *
-	 * @param {string} domain - domain to map
-	 * @param {object} extraData - extra data passed to the endpoint
-	 * @param {object} [query] - query object parameter
-	 * @param {Function} fn - callback function
-	 * @returns {Function} request handler
-	 */
-	addDomainMapping( domain, extraData, query, fn ) {
-		return this.wpcom.req.post(
-			`${ this.path }/add-domain-mapping`,
-			query,
-			{ domain, ...extraData },
-			fn
-		);
-	}
-
-	/**
-	 * Add a VIP domain mapping
-	 *
-	 * @param {string} domain - domain to map
-	 * @param {object} [query] - query object parameter
-	 * @param {Function} fn - callback function
-	 * @returns {Function} request handler
-	 */
-	addVipDomainMapping( domain, query, fn ) {
-		return this.wpcom.req.post( `${ this.path }/vip-domain-mapping`, query, { domain }, fn );
-	}
 }
 
 // add methods in runtime

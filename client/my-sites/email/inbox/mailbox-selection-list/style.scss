@@ -1,8 +1,8 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-body.is-section-inbox {
-	background-color: var( --studio-white );
+body.is-section-inbox.theme-default.color-scheme {
+	--color-surface-backdrop: var( --studio-white );
 }
 
 body.is-section-inbox .layout.is-section-inbox > .layout__content {
@@ -253,7 +253,8 @@ body.is-section-inbox .layout.is-section-inbox > .layout__content {
 				width: 100%;
 			}
 
-			> img, svg {
+			> img,
+			svg {
 				height: 36px;
 				margin-right: 16px;
 				min-height: 36px;

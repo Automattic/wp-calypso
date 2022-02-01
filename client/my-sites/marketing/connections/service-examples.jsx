@@ -31,6 +31,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'google_photos',
 	'mailchimp',
 	'slack',
+	'p2_github',
 ];
 
 class SharingServiceExamples extends Component {
@@ -309,6 +310,43 @@ class SharingServiceExamples extends Component {
 				},
 				label: this.props.translate(
 					'{{strong}}Preview posts and pages{{/strong}} directly from Slack.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				),
+			},
+		];
+	}
+
+	p2_github() {
+		return [
+			{
+				image: {
+					src: '/calypso/images/sharing/slack-screenshot-1.png',
+					alt: this.props.translate( 'Get Slack notifications with every new P2 post.', {
+						textOnly: true,
+					} ),
+				},
+				label: this.props.translate(
+					'Get {{strong}}Github previews{{/strong}} inside your P2 posts.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				),
+			},
+			{
+				image: {
+					src: '/calypso/images/sharing/slack-screenshot-1.png',
+					alt: this.props.translate( 'Get Slack notifications with every new P2 post.', {
+						textOnly: true,
+					} ),
+				},
+				label: this.props.translate(
+					'Get {{strong}}Github previews{{/strong}} inside your P2 posts.',
 					{
 						components: {
 							strong: <strong />,

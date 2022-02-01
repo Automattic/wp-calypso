@@ -59,7 +59,7 @@ function renderPeopleList( context, next ) {
 	const filter = context.params.filter;
 
 	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) );
+	context.store.dispatch( setTitle( i18n.translate( 'Users', { textOnly: true } ) ) );
 
 	context.primary = createElement( PeopleList, {
 		filter: filter,
@@ -75,7 +75,8 @@ function renderInvitePeople( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
 
 	context.primary = createElement( InvitePeople, {
-		site: site,
+		key: site.ID,
+		site,
 	} );
 	next();
 }

@@ -83,7 +83,7 @@ class Security2faSetupBackupCodes extends Component {
 	render() {
 		return (
 			<div>
-				<Security2faProgress step={ 3 } />
+				<Security2faProgress step={ 3 } isSmsFlow={ this.props.isSmsFlow } />
 				<p>
 					{ this.props.translate(
 						'Backup codes let you access your account if your phone is ' +

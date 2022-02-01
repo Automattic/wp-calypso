@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
@@ -17,6 +16,7 @@ import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/b
 import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
+import EmailSetup from 'calypso/my-sites/domains/domain-management/email-setup';
 import {
 	domainManagementEdit,
 	domainManagementList,
@@ -34,7 +34,6 @@ import {
 	CLOUDFLARE_NAMESERVERS_REGEX,
 } from './constants';
 import CustomNameserversForm from './custom-nameservers-form';
-import DnsTemplates from './dns-templates';
 import FetchError from './fetch-error';
 import withDomainNameservers from './with-domain-nameservers';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
@@ -54,6 +53,7 @@ class NameServers extends Component {
 		nameservers: this.props.nameservers ?? null,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( props ) {
 		this.setStateWhenLoadedFromServer( props );
 	}
@@ -162,7 +162,7 @@ class NameServers extends Component {
 
 				<VerticalNav>
 					{ this.hasWpcomNameservers() && ! this.isPendingTransfer() && (
-						<DnsTemplates selectedDomainName={ this.props.selectedDomainName } />
+						<EmailSetup selectedDomainName={ this.props.selectedDomainName } />
 					) }
 				</VerticalNav>
 			</Fragment>
@@ -176,9 +176,7 @@ class NameServers extends Component {
 
 		return (
 			<Main wideLayout className={ classes }>
-				{ config.isEnabled( 'domains/dns-records-redesign' )
-					? this.renderBreadcrumbs()
-					: this.header() }
+				{ this.renderBreadcrumbs() }
 				{ this.getContent() }
 			</Main>
 		);
@@ -312,7 +310,7 @@ class NameServers extends Component {
 			return false;
 		}
 
-		return getSelectedDomain( this.props ).isPendingIcannVerification;
+		return getSelectedDomain( this.props )?.isPendingIcannVerification;
 	}
 
 	handleChange = ( nameservers ) => {
@@ -361,6 +359,11 @@ const customNameServersLearnMoreClick = ( domainName ) =>
 		)
 	);
 
-export default connect( ( state ) => ( { currentRoute: getCurrentRoute( state ) } ), {
-	customNameServersLearnMoreClick,
-} )( localize( withDomainNameservers( NameServers ) ) );
+export default connect(
+	( state ) => ( {
+		currentRoute: getCurrentRoute( state ),
+	} ),
+	{
+		customNameServersLearnMoreClick,
+	}
+)( localize( withDomainNameservers( NameServers ) ) );

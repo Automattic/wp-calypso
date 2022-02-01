@@ -137,19 +137,21 @@ class SuccessBanner extends PureComponent {
 			>
 				{ params.track }
 				<p>{ params.taskFinished }</p>
-				{ params.actionButton }
-				{ ! backupUrl && (
-					<Button className="activity-log-banner__success-gotit" onClick={ this.handleDismiss }>
-						{ translate( 'Thanks, got it!' ) }
-					</Button>
-				) }
-				<HappychatButton
-					className="activity-log-banner__happychat-button"
-					onClick={ params.trackHappyChat }
-				>
-					<Gridicon icon="chat" />
-					<span>{ translate( 'Get help' ) }</span>
-				</HappychatButton>
+				<div className="activity-log-banner__controls">
+					{ params.actionButton }
+					{ ! backupUrl && (
+						<Button className="activity-log-banner__success-gotit" onClick={ this.handleDismiss }>
+							{ translate( 'Thanks, got it!' ) }
+						</Button>
+					) }
+					<HappychatButton
+						className="activity-log-banner__happychat-button"
+						onClick={ params.trackHappyChat }
+					>
+						<Gridicon icon="chat" />
+						<span>{ translate( 'Get help' ) }</span>
+					</HappychatButton>
+				</div>
 			</ActivityLogBanner>
 		);
 	}

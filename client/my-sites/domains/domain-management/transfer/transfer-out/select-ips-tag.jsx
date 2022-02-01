@@ -133,7 +133,7 @@ class SelectIpsTag extends Component {
 	}
 
 	renderIpsTagSelect() {
-		const { saveStatus, selectedDomainName, translate } = this.props;
+		const { redesign, saveStatus, selectedDomainName, translate } = this.props;
 
 		return (
 			<div>
@@ -159,7 +159,11 @@ class SelectIpsTag extends Component {
 					suggestions={ this.getSuggestions() }
 					suggest={ this.handleSuggestionClick }
 				/>
-				<FormButton onClick={ this.popOverDialog } disabled={ 'saving' === saveStatus }>
+				<FormButton
+					onClick={ this.popOverDialog }
+					disabled={ 'saving' === saveStatus }
+					isPrimary={ ! redesign }
+				>
 					{ translate( 'Submit' ) }
 				</FormButton>
 
@@ -211,23 +215,29 @@ class SelectIpsTag extends Component {
 	}
 
 	render() {
-		const { translate, saveStatus } = this.props;
+		const { translate, saveStatus, redesign } = this.props;
+
+		const content = (
+			<>
+				<p>
+					{ translate(
+						"{{strong}}.uk{{/strong}} domains are transferred by setting the domain's IPS tag here to the " +
+							'value provided by the new registrar and then contacting the {{em}}new registrar{{/em}} to ' +
+							'complete the transfer.',
+						{ components: { strong: <strong />, em: <em /> } }
+					) }
+				</p>
+				{ 'success' === saveStatus ? this.renderGoToGainingRegistrar() : this.renderIpsTagSelect() }
+			</>
+		);
+
+		if ( redesign ) {
+			return content;
+		}
 
 		return (
 			<div>
-				<Card>
-					<p>
-						{ translate(
-							"{{strong}}.uk{{/strong}} domains are transferred by setting the domain's IPS tag here to the " +
-								'value provided by the new registrar and then contacting the {{em}}new registrar{{/em}} to ' +
-								'complete the transfer.',
-							{ components: { strong: <strong />, em: <em /> } }
-						) }
-					</p>
-					{ 'success' === saveStatus
-						? this.renderGoToGainingRegistrar()
-						: this.renderIpsTagSelect() }
-				</Card>
+				<Card>{ content }</Card>
 			</div>
 		);
 	}

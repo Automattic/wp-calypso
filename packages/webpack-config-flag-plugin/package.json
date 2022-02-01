@@ -1,10 +1,12 @@
 {
 	"name": "@automattic/webpack-config-flag-plugin",
 	"version": "1.0.0",
-	"description": "A webpack plugin to replace `config.isEnabled` flag checks with literals",
+	"description": "A webpack plugin to replace `config.isEnabled` flag checks with literals.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"main": "index.js",
 	"peerDependencies": {
-		"webpack": "^5.54.0"
+		"webpack": "^5.65.0"
 	},
 	"author": "Automattic Inc.",
 	"private": true,
@@ -19,7 +21,7 @@
 		"access": "public"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"rimraf": "^3.0.0"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"rimraf": "^3.0.2"
 	}
 }

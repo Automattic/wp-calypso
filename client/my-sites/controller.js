@@ -28,18 +28,23 @@ import {
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
 	domainManagementRoot,
+	domainManagementDnsAddRecord,
+	domainManagementDnsEditRecord,
+	domainAddNew,
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 	emailManagementInbox,
+	emailManagementInDepthComparison,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
 	emailManagementPurchaseNewEmailAccount,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
+import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -50,12 +55,15 @@ import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { requestSite } from 'calypso/state/sites/actions';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSite, getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -153,10 +161,21 @@ function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
 	clientRender( reactContext );
 }
 
+function renderSelectedSiteIsDIFMLiteInProgress( reactContext, selectedSite ) {
+	reactContext.primary = <DIFMLiteInProgress siteId={ selectedSite.ID } />;
+
+	reactContext.secondary = createNavigation( reactContext );
+
+	makeLayout( reactContext, noop );
+	clientRender( reactContext );
+}
+
 function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) {
 	const allPaths = [
 		domainManagementContactsPrivacy,
 		domainManagementDns,
+		domainManagementDnsAddRecord,
+		domainManagementDnsEditRecord,
 		domainManagementEdit,
 		domainManagementEditContactInfo,
 		domainManagementList,
@@ -169,6 +188,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementAddGSuiteUsers,
 		emailManagementForwarding,
 		emailManagementInbox,
+		emailManagementInDepthComparison,
 		emailManagementManageTitanAccount,
 		emailManagementManageTitanMailboxes,
 		emailManagementNewTitanAccount,
@@ -215,6 +235,31 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	return domainManagementPaths.indexOf( path ) > -1;
 }
 
+/**
+ * The paths allowed for domain-only sites and DIFM in-progress sites are the same
+ * with one exception - /domains/add should be allowed for DIFM in-progress sites.
+ *
+ * @param {string} path The path to be checked
+ * @param {string} slug The site slug
+ * @param {Array} domains The list of site domains
+ * @param {object} contextParams Context parameters
+ * @returns {boolean} true if the path is allowed, false otherwise
+ */
+function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams ) {
+	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), emailManagement( slug ) ];
+
+	const isAllowedForDomainOnlySites = domains.some( ( domain ) =>
+		isPathAllowedForDomainOnlySite( path, slug, domain, contextParams )
+	);
+
+	return (
+		isAllowedForDomainOnlySites ||
+		DIFMLiteInProgressAllowedPaths.some( ( DIFMLiteInProgressAllowedPath ) =>
+			path.startsWith( DIFMLiteInProgressAllowedPath )
+		)
+	);
+}
+
 function onSelectedSiteAvailable( context ) {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
@@ -238,6 +283,26 @@ function onSelectedSiteAvailable( context ) {
 		)
 	) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
+		return false;
+	}
+
+	/**
+	 * For DIFM in-progress sites, render the in-progress screen for all
+	 * paths except those in the allow-list defined in `isPathAllowedForDIFMInProgressSite`.
+	 * Ignore this check if we are inside a support session.
+	 */
+	const domains = getDomainsBySiteId( state, selectedSite.ID );
+	if (
+		isDIFMLiteInProgress( state, selectedSite.ID ) &&
+		! isSupportSession( state ) &&
+		! isPathAllowedForDIFMInProgressSite(
+			context.pathname,
+			selectedSite.slug,
+			domains,
+			context.params
+		)
+	) {
+		renderSelectedSiteIsDIFMLiteInProgress( context, selectedSite );
 		return false;
 	}
 
@@ -343,7 +408,6 @@ export function siteSelection( context, next ) {
 
 	const { getState, dispatch } = getStore( context );
 	const siteFragment = context.params.site || getSiteFragment( context.path );
-	const basePath = sectionify( context.path, siteFragment );
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
 
@@ -406,7 +470,7 @@ export function siteSelection( context, next ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
-		if ( onSelectedSiteAvailable( context, basePath ) ) {
+		if ( onSelectedSiteAvailable( context ) ) {
 			next();
 		}
 	} else {
@@ -428,7 +492,7 @@ export function siteSelection( context, next ) {
 					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 					// to wp-admin. In that case, don't continue handling the route.
 					dispatch( setSelectedSiteId( freshSiteId ) );
-					if ( onSelectedSiteAvailable( context, basePath ) ) {
+					if ( onSelectedSiteAvailable( context ) ) {
 						next();
 					}
 				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {

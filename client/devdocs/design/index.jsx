@@ -19,6 +19,7 @@ import Animate from 'calypso/components/animate/docs/example';
 import BackButton from 'calypso/components/back-button/docs/example';
 import Badge from 'calypso/components/badge/docs/example';
 import Banner from 'calypso/components/banner/docs/example';
+import Breadcrumb from 'calypso/components/breadcrumb/docs/example';
 import BulkSelect from 'calypso/components/bulk-select/docs/example';
 import ButtonGroups from 'calypso/components/button-group/docs/example';
 import CardHeading from 'calypso/components/card-heading/docs/example';
@@ -38,6 +39,7 @@ import ExternalLink from 'calypso/components/external-link/docs/example';
 import FAQ from 'calypso/components/faq/docs/example';
 import FeatureGate from 'calypso/components/feature-example/docs/example';
 import FilePickers from 'calypso/components/file-picker/docs/example';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header/docs/example';
 import FocusableExample from 'calypso/components/focusable/docs/example';
 import FoldableCard from 'calypso/components/foldable-card/docs/example';
 import FoldableFAQ from 'calypso/components/foldable-faq/docs/example';
@@ -97,6 +99,7 @@ import SplitButton from 'calypso/components/split-button/docs/example';
 import StepProgress from 'calypso/components/step-progress/docs/example';
 import SuggestionSearchExample from 'calypso/components/suggestion-search/docs/example';
 import SupportInfoExample from 'calypso/components/support-info/docs/example';
+import Swipeable from 'calypso/components/swipeable/docs/example';
 import TextDiff from 'calypso/components/text-diff/docs/example';
 import TextareaAutosize from 'calypso/components/textarea-autosize/docs/example';
 import TileGrid from 'calypso/components/tile-grid/docs/example';
@@ -172,6 +175,7 @@ export default class DesignAssets extends Component {
 					<BackButton readmeFilePath="back-button" />
 					<Badge readmeFilePath="badge" />
 					<Banner readmeFilePath="banner" />
+					<Breadcrumb searchKeywords="navigation" readmeFilePath="breadcrumb" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
 					<Buttons readmeFilePath="/packages/components/src/button" />
@@ -187,6 +191,7 @@ export default class DesignAssets extends Component {
 					<DateRange readmeFilePath="date-range" />
 					<DiffViewerExample readmeFilePath="diff-viewer" />
 					<DotPager readmeFilePath="dot-pager" />
+					<Swipeable readmeFilePath="swipeable" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
 					<EmptyContent readmeFilePath="empty-content" />
@@ -194,8 +199,12 @@ export default class DesignAssets extends Component {
 					<FAQ readmeFilePath="faq" />
 					<FeatureGate readmeFilePath="feature-example" />
 					<FilePickers readmeFilePath="file-picker" />
+					<FixedNavigationHeader
+						searchKeywords="breadcrumbs"
+						readmeFilePath="fixed-navigation-header"
+					/>
 					<FocusableExample readmeFilePath="focusable" />
-					<FoldableCard readmeFilePath="foldable-card" />
+					<FoldableCard readmeFilePath="foldable-card" searchKeywords="accordion" />
 					<FoldableFAQ readmeFilePath="foldable-faq" />
 					<FormattedDate readmeFilePath="formatted-date" />
 					<FormattedHeader readmeFilePath="formatted-header" />

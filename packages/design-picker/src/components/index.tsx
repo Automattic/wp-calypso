@@ -1,24 +1,23 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { Button, Tooltip } from '@wordpress/components';
+import { MShotsImage } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import {
 	getAvailableDesigns,
 	getDesignUrl,
 	mShotOptions,
 	isBlankCanvasDesign,
-	gatherCategories,
 	filterDesignsByCategory,
+	sortDesigns,
 } from '../utils';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
-import MShotsImage from './mshots-image';
-export { default as MShotsImage } from './mshots-image';
+import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
-
 import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
@@ -46,22 +45,25 @@ interface DesignButtonProps {
 	premiumBadge?: React.ReactNode;
 	highRes: boolean;
 	disabled?: boolean;
+	hideFullScreenPreview?: boolean;
+	hideDesignTitle?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
 	locale,
 	onSelect,
 	design,
-	premiumBadge,
+	premiumBadge = null,
 	highRes,
 	disabled,
+	hideDesignTitle,
 } ) => {
 	const { __ } = useI18n();
 
 	const isBlankCanvas = isBlankCanvasDesign( design );
 
 	const defaultTitle = design.title;
-	const blankCanvasTitle = __( 'Start with an empty page', __i18n_text_domain__ );
+	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
 
 	return (
@@ -90,7 +92,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			>
 				{ isBlankCanvas ? (
 					<div className="design-picker__image-frame-blank-canvas__title">
-						{ __( 'Blank Canvas' ) }
+						{ __( 'Start from scratch', __i18n_text_domain__ ) }
 					</div>
 				) : (
 					<div className="design-picker__image-frame-inside">
@@ -100,15 +102,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			</span>
 			<span className="design-picker__option-overlay">
 				<span id={ makeOptionId( design ) } className="design-picker__option-meta">
-					<span className="design-picker__option-name">{ designTitle }</span>
-					{ design.is_premium && premiumBadge && (
-						<Tooltip
-							position="bottom center"
-							text={ __( 'Requires a Personal plan or above', __i18n_text_domain__ ) }
-						>
-							<div className="design-picker__premium-container">{ premiumBadge }</div>
-						</Tooltip>
+					{ ! hideDesignTitle && (
+						<span className="design-picker__option-name">{ designTitle }</span>
 					) }
+					{ design.is_premium && premiumBadge }
 				</span>
 			</span>
 		</button>
@@ -117,16 +114,21 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 interface DesignButtonCoverProps {
 	design: Design;
+	isPremiumThemeAvailable?: boolean;
 	onSelect: ( design: Design ) => void;
 	onPreview: ( design: Design ) => void;
+	onUpgrade?: () => void;
 }
 
 const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 	design,
+	isPremiumThemeAvailable = false,
 	onSelect,
 	onPreview,
+	onUpgrade,
 } ) => {
 	const { __ } = useI18n();
+	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable;
 
 	return (
 		<div className="design-button-cover">
@@ -140,12 +142,12 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 				<Button
 					className="design-button-cover__button"
 					isPrimary
-					onClick={ () => onSelect( design ) }
+					onClick={ () => ( shouldUpgrade ? onUpgrade?.() : onSelect( design ) ) }
 				>
-					{
-						// translators: %s is the title of design with currency. Eg: Alves
-						sprintf( __( 'Start with %s', __i18n_text_domain__ ), design.title )
-					}
+					{ shouldUpgrade
+						? __( 'Upgrade Plan', __i18n_text_domain__ )
+						: // translators: %s is the title of design with currency. Eg: Alves
+						  sprintf( __( 'Start with %s', __i18n_text_domain__ ), design.title ) }
 				</Button>
 				<Button className="design-button-cover__button" onClick={ () => onPreview( design ) }>
 					{
@@ -159,23 +161,35 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 };
 
 interface DesignButtonContainerProps extends DesignButtonProps {
+	isPremiumThemeAvailable?: boolean;
 	onPreview?: ( design: Design ) => void;
+	onUpgrade?: () => void;
 }
 
 const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
+	isPremiumThemeAvailable,
 	onPreview,
+	onUpgrade,
 	...props
 } ) => {
 	const isDesktop = useViewportMatch( 'large' );
 	const isBlankCanvas = isBlankCanvasDesign( props.design );
 
-	if ( ! onPreview ) {
-		return <DesignButton { ...props } />;
+	if ( ! onPreview || props.hideFullScreenPreview ) {
+		return (
+			<div className="design-button-container design-button-container--without-preview">
+				<DesignButton { ...props } />
+			</div>
+		);
 	}
 
 	// Show the preview directly when selecting the design if the device is not desktop
 	if ( ! isDesktop ) {
-		return <DesignButton { ...props } onSelect={ onPreview } />;
+		return (
+			<div className="design-button-container">
+				<DesignButton { ...props } onSelect={ onPreview } />
+			</div>
+		);
 	}
 
 	// We don't need preview for blank canvas
@@ -184,8 +198,10 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 			{ ! isBlankCanvas && (
 				<DesignButtonCover
 					design={ props.design }
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					onSelect={ props.onSelect }
 					onPreview={ onPreview }
+					onUpgrade={ onUpgrade }
 				/>
 			) }
 			<DesignButton { ...props } disabled={ ! isBlankCanvas } />
@@ -197,55 +213,66 @@ export interface DesignPickerProps {
 	locale: string;
 	onSelect: ( design: Design ) => void;
 	onPreview?: ( design: Design ) => void;
+	onUpgrade?: () => void;
 	designs?: Design[];
 	premiumBadge?: React.ReactNode;
 	isGridMinimal?: boolean;
 	theme?: 'dark' | 'light';
 	className?: string;
 	highResThumbnails?: boolean;
-	showCategoryFilter?: boolean;
+	categorization?: Categorization;
+	categoriesHeading?: React.ReactNode;
+	categoriesFooter?: React.ReactNode;
+	recommendedCategorySlug: string | null;
+	hideFullScreenPreview?: boolean;
+	hideDesignTitle?: boolean;
+	isPremiumThemeAvailable?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
 	onSelect,
 	onPreview,
-	designs = getAvailableDesigns().featured.filter(
-		// By default, exclude anchorfm-specific designs
-		( design ) => design.features.findIndex( ( f ) => f === 'anchorfm' ) < 0
-	),
+	onUpgrade,
+	designs = getAvailableDesigns( {
+		featuredDesignsFilter: ( design ) => ! design.features.includes( 'anchorfm' ),
+	} ).featured,
 	premiumBadge,
 	isGridMinimal,
 	theme = 'light',
 	className,
 	highResThumbnails = false,
-	showCategoryFilter = false,
+	categoriesHeading,
+	categoriesFooter,
+	categorization,
+	hideFullScreenPreview,
+	hideDesignTitle,
+	recommendedCategorySlug,
+	isPremiumThemeAvailable,
 } ) => {
-	const categories = gatherCategories( designs );
-	const [ selectedCategory, setSelectedCategory ] = useState< string | null >(
-		categories[ 0 ]?.slug ?? null
-	);
+	const hasCategories = !! categorization?.categories.length;
+	const filteredDesigns = useMemo( () => {
+		const result = categorization?.selection
+			? filterDesignsByCategory( designs, categorization.selection )
+			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
-	useEffect( () => {
-		// When the category list changes check that the current selection
-		// still matches one of the given slugs, and if it doesn't reset
-		// the current selection.
-		const findResult = categories.find( ( { slug } ) => slug === selectedCategory );
-		if ( ! findResult ) {
-			setSelectedCategory( categories[ 0 ]?.slug ?? null );
-		}
-	}, [ categories, selectedCategory ] );
-
-	const filteredDesigns = ! showCategoryFilter
-		? designs
-		: filterDesignsByCategory( designs, selectedCategory );
+		result.sort( sortDesigns );
+		return result;
+	}, [ designs, categorization?.selection ] );
 
 	return (
-		<div className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className ) }>
-			{ showCategoryFilter && !! categories.length && (
+		<div
+			className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className, {
+				'design-picker--has-categories': hasCategories,
+			} ) }
+		>
+			{ categorization && hasCategories && (
 				<DesignPickerCategoryFilter
-					categories={ categories }
-					selectedCategory={ selectedCategory }
-					onSelect={ setSelectedCategory }
+					categories={ categorization.categories }
+					selectedCategory={ categorization.selection }
+					recommendedCategorySlug={ recommendedCategorySlug }
+					onSelect={ categorization.onSelect }
+					heading={ categoriesHeading }
+					footer={ categoriesFooter }
 				/>
 			) }
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
@@ -256,8 +283,12 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						locale={ locale }
 						onSelect={ onSelect }
 						onPreview={ onPreview }
+						onUpgrade={ onUpgrade }
 						premiumBadge={ premiumBadge }
 						highRes={ highResThumbnails }
+						hideFullScreenPreview={ hideFullScreenPreview }
+						hideDesignTitle={ hideDesignTitle }
+						isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					/>
 				) ) }
 			</div>

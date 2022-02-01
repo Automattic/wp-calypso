@@ -4,7 +4,7 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import isSiteEligibleForFullSiteEditing from 'calypso/state/selectors/is-site-eligible-for-full-site-editing';
+import isSiteEligibleForLegacyFSE from 'calypso/state/selectors/is-site-eligible-for-legacy-fse';
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor.js';
 import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'calypso/state/themes/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -15,6 +15,7 @@ const fetchFilters = ( action ) =>
 			method: 'GET',
 			apiVersion: '1.2',
 			path: '/theme-filters',
+			query: action.locale ? { locale: action.locale } : {},
 		},
 		action
 	);
@@ -38,7 +39,7 @@ registerHandlers( 'state/data-layer/wpcom/theme-filters/index.js', {
 		( store, action ) => {
 			const state = store.getState();
 			const selectedSiteId = getSelectedSiteId( state );
-			const isFse = isSiteEligibleForFullSiteEditing( state, selectedSiteId );
+			const isFse = isSiteEligibleForLegacyFSE( state, selectedSiteId );
 			const isCoreFse = isSiteUsingCoreSiteEditor( state, selectedSiteId );
 
 			return themeFiltersHandlers( store, {

@@ -4,8 +4,33 @@
 	}
 }
 
+.activity-card-list__pagination-top {
+	@include breakpoint-deprecated( '<480px' ) {
+		display: none;
+	}
+}
+
 .activity-card-list__pagination-bottom {
 	margin-bottom: 1rem;
+}
+
+.activity-card-list__filterbar-ctn.is-sticky {
+	@include breakpoint-deprecated( '<480px' ) {
+		position: fixed;
+		top: var( --masterbar-height );
+		left: 0;
+		right: 0;
+		z-index: z-index( 'root', '.masterbar' );
+
+		padding: 0 16px;
+
+		background-color: var( --color-surface-backdrop );
+		border-bottom: 1px solid var( --color-neutral-10 );
+
+		.filterbar {
+			margin-bottom: 0;
+		}
+	}
 }
 
 @include breakpoint-deprecated( '<660px' ) {

@@ -7,7 +7,6 @@
 Render the component, passing `siteId`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackUserConnection from 'calypso/components/data/query-jetpack-user-connection';
 import getJetpackUserConnection from 'calypso/state/selectors/get-jetpack-user-connection';

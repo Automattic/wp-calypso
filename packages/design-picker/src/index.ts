@@ -1,6 +1,7 @@
 export { default } from './components';
 
-export { default as MShotsImage } from './components/mshots-image';
+export { default as FeaturedPicksButtons } from './components/featured-picks-buttons';
+export { default as PremiumBadge } from './components/premium-badge';
 export {
 	availableDesignsConfig,
 	getAvailableDesigns,
@@ -9,4 +10,6 @@ export {
 	isBlankCanvasDesign,
 } from './utils';
 export { FONT_PAIRINGS, ANCHORFM_FONT_PAIRINGS } from './constants';
-export type { FontPair, Design } from './types';
+export type { FontPair, Design, Category } from './types';
+export { useCategorization } from './hooks/use-categorization';
+export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';

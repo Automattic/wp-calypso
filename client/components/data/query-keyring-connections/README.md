@@ -7,7 +7,6 @@
 Render the component without props. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
-import React from 'react';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 
 export default function MyConnectionsList( { connections } ) {

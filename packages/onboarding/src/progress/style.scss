@@ -1,0 +1,33 @@
+.onboarding-progress {
+
+	&__align-center {
+		text-align: center;
+	}
+
+	&__align-right {
+		text-align: right;
+	}
+
+	&__align-left {
+		text-align: left;
+	}
+
+	.onboarding-title {
+		font-family: var( --font-base, var( --font-base-default ) );
+		color: var( --studio-gray-80 );
+		font-size: 1.75rem; /* stylelint-disable-line */
+		line-height: 1em;
+		margin-bottom: 2rem;
+	}
+
+	.onboarding-subtitle {
+		color: var( --studio-gray-40 );
+		font-size: 0.875rem;
+		line-height: 1.5rem;
+	}
+
+	.progress-bar {
+		margin-bottom: 2em;
+		background: var( --studio-gray-5 );
+	}
+}

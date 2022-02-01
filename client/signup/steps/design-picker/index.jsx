@@ -1,261 +1,423 @@
 import { isEnabled } from '@automattic/calypso-config';
-import DesignPicker, { isBlankCanvasDesign, getDesignUrl } from '@automattic/design-picker';
+import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
+import DesignPicker, {
+	FeaturedPicksButtons,
+	PremiumBadge,
+	isBlankCanvasDesign,
+	getDesignUrl,
+	useCategorization,
+	useThemeDesignsQuery,
+} from '@automattic/design-picker';
+import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
-import { compose } from '@wordpress/compose';
-import { withViewportMatch } from '@wordpress/viewport';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { useViewportMatch } from '@wordpress/compose';
+import classnames from 'classnames';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
+import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
+import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
-import { getRecommendedThemes } from 'calypso/state/themes/selectors';
+import { getSiteId } from 'calypso/state/sites/selectors';
+import DIFMThemes from '../difm-design-picker/themes';
+import LetUsChoose from './let-us-choose';
 import PreviewToolbar from './preview-toolbar';
 import './style.scss';
 
-// Ideally this data should come from the themes API, maybe by a tag that's applied to
-// themes? e.g. `link-in-bio` or `no-fold`
-const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
+export default function DesignPickerStep( props ) {
+	const {
+		flowName,
+		stepName,
+		isReskinned,
+		queryParams,
+		showDesignPickerCategories,
+		showLetUsChoose,
+		hideFullScreenPreview,
+		hideDesignTitle,
+		signupDependencies: dependencies,
+		sitePlanSlug,
+	} = props;
 
-const EXCLUDED_THEMES = [
-	// The Ryu theme doesn't currently have any annotations
-	'ryu',
-];
+	const isPremiumThemeAvailable = useMemo(
+		() => planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
+		[ sitePlanSlug ]
+	);
 
-class DesignPickerStep extends Component {
-	static propTypes = {
-		goToNextStep: PropTypes.func.isRequired,
-		signupDependencies: PropTypes.object.isRequired,
-		stepName: PropTypes.string.isRequired,
-		locale: PropTypes.string.isRequired,
-		translate: PropTypes.func,
-		fetchRecommendedThemes: PropTypes.func.isRequired,
-		themes: PropTypes.array.isRequired,
-	};
+	const userLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
 
-	static defaultProps = {
-		useHeadstart: true,
-	};
+	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
+	const useFeaturedPicksButtons =
+		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
 
-	state = {
-		selectedDesign: null,
-		scrollTop: 0,
-	};
+	const dispatch = useDispatch();
+	const translate = useTranslate();
 
-	componentDidMount() {
-		this.props.saveSignupStep( { stepName: this.props.stepName } );
-		this.fetchThemes();
-	}
+	const [ selectedDesign, setSelectedDesign ] = useState( null );
+	const scrollTop = useRef( 0 );
+	const tier =
+		isPremiumThemeAvailable || isEnabled( 'signup/design-picker-premium-themes-checkout' )
+			? 'all'
+			: 'free';
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.stepSectionName !== this.props.stepSectionName ) {
-			this.updateSelectedDesign();
-			this.updateScrollPosition();
-		}
-	}
+	// Limit themes to those that support the Site editor, if site is fse eligible
+	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
+	const {
+		isLoading: blockEditorSettingsAreLoading,
+		data: blockEditorSettings,
+	} = useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
+	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
+	const themeFilters = isFSEEligible
+		? 'auto-loading-homepage,block-templates'
+		: 'auto-loading-homepage';
 
-	updateScrollPosition() {
-		if ( this.props.stepSectionName ) {
-			this.setState( { scrollTop: document.scrollingElement.scrollTop } );
+	const { data: apiThemes = [] } = useThemeDesignsQuery(
+		{ filter: themeFilters, tier },
+		// Wait until block editor settings have loaded to load themes
+		{ enabled: ! props.useDIFMThemes && ! blockEditorSettingsAreLoading }
+	);
+
+	const allThemes = props.useDIFMThemes ? DIFMThemes : apiThemes;
+
+	useEffect(
+		() => {
+			dispatch( saveSignupStep( { stepName: props.stepName } ) );
+		},
+		// Ignoring dependencies because we only want to save the step on first mount
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
+
+	// Update Scroll position when section changes
+	useLayoutEffect( () => {
+		let timeoutID;
+		if ( props.stepSectionName ) {
+			scrollTop.current = document.scrollingElement.scrollTop;
 		} else {
 			// Defer restore scroll position to ensure DesignPicker is rendered
-			window.setTimeout( () => {
-				document.scrollingElement.scrollTop = this.state.scrollTop;
+			timeoutID = window.setTimeout( () => {
+				document.scrollingElement.scrollTop = scrollTop.current;
 			} );
 		}
-	}
 
-	fetchThemes() {
-		this.props.fetchRecommendedThemes( 'auto-loading-homepage' );
-	}
+		return () => {
+			timeoutID && window.clearTimeout( timeoutID );
+		};
+	}, [ props.stepSectionName ] );
 
-	getDesigns() {
-		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
-		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
-		// component itself. The `/new` environment needs helpers for making authenticated requests to
-		// the theme API before we can do this.
-		const allThemes = this.props.themes
-			.filter( ( { id } ) => ! EXCLUDED_THEMES.includes( id ) )
-			.map( ( { id, name, taxonomies } ) => ( {
-				categories: taxonomies?.theme_subject ?? [
-					{ name: this.props.translate( 'No Category' ), slug: 'CLIENT_ONLY-no-category' },
-				],
-				features: [],
-				is_premium: false,
-				slug: id,
-				template: id,
-				theme: id,
-				title: name,
-				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-			} ) );
+	const { designs, featuredPicksDesigns } = useMemo( () => {
+		return {
+			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
+			featuredPicksDesigns: allThemes.filter( ( theme ) => theme.is_featured_picks ),
+		};
+	}, [ allThemes ] );
 
-		if ( allThemes.length === 0 ) {
-			return [];
+	// Update the selected design when the section changes
+	useEffect( () => {
+		setSelectedDesign( designs.find( ( { theme } ) => theme === props.stepSectionName ) );
+	}, [ designs, props.stepSectionName, setSelectedDesign ] );
+
+	const getCategorizationOptionsForStep = () => {
+		const result = {
+			showAllFilter: props.showDesignPickerCategoriesAllFilter,
+		};
+		const intent = props.signupDependencies.intent;
+		switch ( intent ) {
+			case 'write':
+				result.defaultSelection = 'blog';
+				result.sort = sortBlogToTop;
+				break;
+			case 'sell':
+				// @TODO: This should be 'ecommerce' once we have some themes with that slug.
+				result.defaultSelection = 'business';
+				result.sort = sortEcommerceToTop;
+				break;
+			default:
+				result.defaultSelection = null;
+				result.sort = sortBlogToTop;
+				break;
 		}
+		return result;
+	};
+	const categorization = useCategorization( designs, getCategorizationOptionsForStep() );
 
-		return [ allThemes[ 0 ], ...shuffle( allThemes.slice( 1 ) ) ];
-	}
-
-	updateSelectedDesign() {
-		const { stepSectionName } = this.props;
-
-		this.setState( {
-			selectedDesign: this.getDesigns().find( ( { theme } ) => theme === stepSectionName ),
-		} );
-	}
-
-	pickDesign = ( selectedDesign ) => {
+	function pickDesign( _selectedDesign, additionalDependencies = {} ) {
 		// Design picker preview will submit the defaultDependencies via next button,
 		// So only do this when the user picks the design directly
-		this.props.submitSignupStep(
-			{
-				stepName: this.props.stepName,
-			},
-			{
-				selectedDesign,
-			}
+		dispatch(
+			submitSignupStep(
+				{
+					stepName: props.stepName,
+				},
+				{
+					selectedDesign: _selectedDesign,
+					selectedSiteCategory: categorization.selection,
+					...additionalDependencies,
+				}
+			)
 		);
 
-		this.submitDesign( selectedDesign );
-	};
+		submitDesign( _selectedDesign );
+	}
 
-	previewDesign = ( selectedDesign ) => {
+	function previewDesign( _selectedDesign ) {
+		const locale = ! userLoggedIn ? getLocaleSlug() : '';
+
 		recordTracksEvent( 'calypso_signup_design_preview_select', {
-			theme: `pub/${ selectedDesign.theme }`,
-			template: selectedDesign.template,
+			theme: _selectedDesign?.stylesheet ?? `pub/${ _selectedDesign.theme }`,
+			template: _selectedDesign.template,
+			flow: props.flowName,
+			intent: props.signupDependencies.intent,
 		} );
+		page(
+			getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale, queryParams )
+		);
+	}
 
-		page( getStepUrl( this.props.flowName, this.props.stepName, selectedDesign.theme ) );
-	};
+	function upgradePlan() {
+		openCheckoutModal( [ PLAN_PREMIUM ] );
+	}
 
-	submitDesign = ( selectedDesign = this.state.selectedDesign ) => {
+	function submitDesign( _selectedDesign = selectedDesign ) {
 		recordTracksEvent( 'calypso_signup_select_design', {
-			theme: `pub/${ selectedDesign?.theme }`,
-			template: selectedDesign?.template,
+			theme: _selectedDesign?.stylesheet ?? `pub/${ _selectedDesign?.theme }`,
+			template: _selectedDesign?.template,
+			flow: props.flowName,
+			intent: props.signupDependencies.intent,
 		} );
 
-		this.props.goToNextStep();
-	};
+		props.goToNextStep();
+	}
 
-	renderDesignPicker() {
-		const designs = this.getDesigns();
+	function renderCheckoutModal() {
+		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
+			return null;
+		}
 
+		return <AsyncCheckoutModal />;
+	}
+
+	function renderDesignPicker() {
 		return (
-			<DesignPicker
-				designs={ designs }
-				theme={ this.props.isReskinned ? 'light' : 'dark' }
-				locale={ this.props.locale } // props.locale obtained via `localize` HoC
-				onSelect={ this.pickDesign }
-				onPreview={ this.previewDesign }
-				highResThumbnails
-				showCategoryFilter={ isEnabled( 'signup/design-picker-categories' ) }
-			/>
+			<>
+				<DesignPicker
+					designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+					theme={ isReskinned ? 'light' : 'dark' }
+					locale={ translate.localeSlug }
+					onSelect={ pickDesign }
+					onPreview={ previewDesign }
+					onUpgrade={ upgradePlan }
+					className={ classnames( {
+						'design-picker-step__has-categories': showDesignPickerCategories,
+					} ) }
+					highResThumbnails
+					premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
+					categorization={ showDesignPickerCategories ? categorization : undefined }
+					recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
+					categoriesHeading={
+						<FormattedHeader
+							id={ 'step-header' }
+							headerText={ headerText() }
+							subHeaderText={ subHeaderText() }
+							align="left"
+						/>
+					}
+					categoriesFooter={ renderCategoriesFooter() }
+					hideFullScreenPreview={ hideFullScreenPreview }
+					hideDesignTitle={ hideDesignTitle }
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				/>
+				{ renderCheckoutModal() }
+			</>
 		);
 	}
 
-	renderDesignPreview() {
+	function renderCategoriesFooter() {
+		return (
+			<>
+				{ useFeaturedPicksButtons && (
+					<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
+				) }
+				{ showLetUsChoose && (
+					<LetUsChoose flowName={ props.flowName } designs={ designs } onSelect={ pickDesign } />
+				) }
+			</>
+		);
+	}
+
+	function renderDesignPreview() {
 		const {
-			signupDependencies: { siteSlug },
-			locale,
-			translate,
-		} = this.props;
+			signupDependencies: { siteSlug, siteTitle, intent },
+			hideExternalPreview,
+		} = props;
 
-		const { selectedDesign } = this.state;
-		const previewUrl = getDesignUrl( selectedDesign, locale, { iframe: true } );
+		const previewUrl = getDesignUrl( selectedDesign, translate.localeSlug, {
+			iframe: true,
+			// If the user fills out the site title with write intent, we show it on the design preview
+			// Otherwise, use the title of selected design directly
+			site_title: intent === 'write' && siteTitle ? siteTitle : selectedDesign?.title,
+		} );
 
 		return (
-			<WebPreview
-				className="design-picker__web-preview"
-				showPreview
-				isContentOnly
-				showClose={ false }
-				showEdit={ false }
-				externalUrl={ siteSlug }
-				previewUrl={ previewUrl }
-				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-					components: { strong: <strong /> },
-				} ) }
-				toolbarComponent={ PreviewToolbar }
-			/>
+			<>
+				<WebPreview
+					className="design-picker__web-preview"
+					showPreview
+					isContentOnly
+					showClose={ false }
+					showEdit={ false }
+					externalUrl={ siteSlug }
+					showExternal={ ! hideExternalPreview }
+					previewUrl={ previewUrl }
+					loadingMessage={ translate(
+						'{{strong}}One moment, please…{{/strong}} loading your site.',
+						{
+							components: { strong: <strong /> },
+						}
+					) }
+					toolbarComponent={ PreviewToolbar }
+				/>
+				{ renderCheckoutModal() }
+			</>
 		);
 	}
 
-	headerText() {
-		const { translate } = this.props;
+	function headerText() {
+		if ( showDesignPickerCategories ) {
+			return translate( 'Themes' );
+		}
 
 		return translate( 'Choose a design' );
 	}
-	subHeaderText() {
-		const { translate } = this.props;
 
-		return translate( 'Pick your favorite homepage layout. You can customize or change it later.' );
-	}
-
-	render() {
-		const { flowName, stepName, userLoggedIn, isReskinned, isMobile, translate } = this.props;
-		const { selectedDesign } = this.state;
-		const headerText = this.headerText();
-		const subHeaderText = this.subHeaderText();
-
-		if ( selectedDesign ) {
-			const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
-			const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
-			const defaultDependencies = { selectedDesign };
-			const locale = ! userLoggedIn ? getLocaleSlug() : '';
-
-			return (
-				<StepWrapper
-					{ ...this.props }
-					className="design-picker__preview"
-					fallbackHeaderText={ designTitle }
-					headerText={ designTitle }
-					fallbackSubHeaderText={ '' }
-					subHeaderText={ '' }
-					stepContent={ this.renderDesignPreview() }
-					align={ isMobile ? 'left' : 'center' }
-					hideSkip
-					hideNext={ false }
-					nextLabelText={ translate( 'Start with %(designTitle)s', {
-						args: { designTitle },
-					} ) }
-					defaultDependencies={ defaultDependencies }
-					backUrl={ getStepUrl( flowName, stepName, '', locale ) }
-					goToNextStep={ this.submitDesign }
-				/>
+	function subHeaderText() {
+		if ( ! showDesignPickerCategories ) {
+			return translate(
+				'Pick your favorite homepage layout. You can customize or change it later.'
 			);
 		}
 
+		const text = translate( 'Choose a starting theme. You can change it later.' );
+
+		if ( englishLocales.includes( translate.localeSlug ) ) {
+			// An English only trick so the line wraps between sentences.
+			return text
+				.replace( /\s/g, '\xa0' ) // Replace all spaces with non-breaking spaces
+				.replace( /\.\s/g, '. ' ); // Replace all spaces at the end of sentences with a regular breaking space
+		}
+
+		return text;
+	}
+
+	function skipLabelText() {
+		const { signupDependencies } = props;
+
+		if ( signupDependencies?.intent === 'write' ) {
+			return translate( 'Skip and draft first post' );
+		}
+
+		// Fall back to the default skip label used by <StepWrapper>
+		return undefined;
+	}
+
+	const isMobile = useViewportMatch( 'small', '<' );
+
+	if ( selectedDesign ) {
+		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
+		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
+		const defaultDependencies = { selectedDesign };
+		const locale = ! userLoggedIn ? getLocaleSlug() : '';
+		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
+
 		return (
 			<StepWrapper
-				{ ...this.props }
-				fallbackHeaderText={ headerText }
-				headerText={ headerText }
-				fallbackSubHeaderText={ subHeaderText }
-				subHeaderText={ subHeaderText }
-				stepContent={ this.renderDesignPicker() }
-				align={ isReskinned ? 'left' : 'center' }
-				skipButtonAlign={ isReskinned ? 'top' : 'bottom' }
+				{ ...props }
+				className="design-picker__preview"
+				fallbackHeaderText={ designTitle }
+				headerText={ designTitle }
+				fallbackSubHeaderText={ '' }
+				subHeaderText={ '' }
+				stepContent={ renderDesignPreview() }
+				align={ isMobile ? 'left' : 'center' }
+				hideSkip
+				hideNext={ shouldUpgrade }
+				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
+				defaultDependencies={ defaultDependencies }
+				backUrl={ getStepUrl( flowName, stepName, '', locale, queryParams ) }
+				goToNextStep={ submitDesign }
+				stepSectionName={ designTitle }
+				customizedActionButtons={
+					shouldUpgrade && (
+						<Button primary borderless={ false } onClick={ upgradePlan }>
+							{ translate( 'Upgrade Plan' ) }
+						</Button>
+					)
+				}
 			/>
 		);
 	}
+
+	const headerProps = showDesignPickerCategories
+		? { hideFormattedHeader: true }
+		: {
+				fallbackHeaderText: headerText(),
+				headerText: headerText(),
+				fallbackSubHeaderText: subHeaderText(),
+				subHeaderText: subHeaderText(),
+		  };
+
+	return (
+		<StepWrapper
+			{ ...props }
+			className={ classnames( {
+				'design-picker__has-categories': showDesignPickerCategories,
+			} ) }
+			{ ...headerProps }
+			stepContent={ renderDesignPicker() }
+			align={ isReskinned ? 'left' : 'center' }
+			skipButtonAlign={ isReskinned ? 'top' : 'bottom' }
+			skipLabelText={ skipLabelText() }
+		/>
+	);
 }
 
-export default compose(
-	connect(
-		( state ) => {
-			return {
-				themes: getRecommendedThemes( state, 'auto-loading-homepage' ),
-				userLoggedIn: isUserLoggedIn( state ),
-			};
-		},
-		{ fetchRecommendedThemes, saveSignupStep, submitSignupStep }
-	),
-	withViewportMatch( { isMobile: '< small' } ),
-	localize
-)( DesignPickerStep );
+DesignPickerStep.propTypes = {
+	goToNextStep: PropTypes.func.isRequired,
+	signupDependencies: PropTypes.object.isRequired,
+	stepName: PropTypes.string.isRequired,
+};
+
+// Ensures Blog category appears at the top of the design category list
+// (directly below the All Themes category).
+function sortBlogToTop( a, b ) {
+	if ( a.slug === b.slug ) {
+		return 0;
+	} else if ( a.slug === 'blog' ) {
+		return -1;
+	} else if ( b.slug === 'blog' ) {
+		return 1;
+	}
+	return 0;
+}
+// Ensures Ecommerce category appears at the top of the design category list
+// (directly below the All Themes category).
+// @TODO: This should be 'ecommerce' once we have some themes with that slug.
+function sortEcommerceToTop( a, b ) {
+	if ( a.slug === b.slug ) {
+		return 0;
+	} else if ( a.slug === 'business' ) {
+		return -1;
+	} else if ( b.slug === 'business' ) {
+		return 1;
+	}
+	return 0;
+}

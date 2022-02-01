@@ -17,7 +17,6 @@ import {
 } from 'calypso/state/editor/last-draft/selectors';
 import { getEditorPath } from 'calypso/state/editor/selectors';
 import { isRequestingSitePost } from 'calypso/state/posts/selectors';
-import { getSectionName } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -28,10 +27,10 @@ class ResumeEditing extends Component {
 		requesting: PropTypes.bool,
 		draft: PropTypes.object,
 		editPath: PropTypes.string,
-		section: PropTypes.string,
 		translate: PropTypes.func,
 	};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Once we start tracking a draft, monitor received changes for that
 		// post to ensure we stop tracking if it's published or trashed.
@@ -46,8 +45,8 @@ class ResumeEditing extends Component {
 	};
 
 	render() {
-		const { siteId, postId, requesting, draft, editPath, section, translate } = this.props;
-		if ( ! draft || 'post-editor' === section ) {
+		const { siteId, postId, requesting, draft, editPath, translate } = this.props;
+		if ( ! draft ) {
 			return null;
 		}
 
@@ -79,7 +78,6 @@ export default connect(
 			requesting: siteId && postId && isRequestingSitePost( state, siteId, postId ),
 			draft: getEditorLastDraftPost( state ),
 			editPath: getEditorPath( state, siteId, postId ),
-			section: getSectionName( state ),
 		};
 	},
 	{ resetEditorLastDraft }

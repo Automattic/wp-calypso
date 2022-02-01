@@ -33,11 +33,9 @@ import {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'calypso/lib/purchases';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import {
-	getForCurrentCROIteration,
-	Iterations,
-} from 'calypso/my-sites/plans/jetpack-plans/iterations';
+import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
 import {
@@ -62,6 +60,7 @@ class PurchasesListing extends Component {
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
 		purchases: PropTypes.array,
+		currentUserId: PropTypes.number,
 
 		// From withLocalizedMoment() HoC
 		moment: PropTypes.func.isRequired,
@@ -174,7 +173,7 @@ class PurchasesListing extends Component {
 	}
 
 	getActionButton( purchase ) {
-		const { selectedSiteSlug, translate } = this.props;
+		const { selectedSiteSlug, translate, currentUserId } = this.props;
 
 		// No action button if there's no site selected.
 		if ( ! selectedSiteSlug || ! purchase ) {
@@ -208,9 +207,25 @@ class PurchasesListing extends Component {
 			label = translate( 'Renew now' );
 		}
 
+		const userIsPurchaseOwner =
+			purchase?.userIsOwner || ( currentUserId !== null && currentUserId === purchase?.userId );
+
 		return (
-			<Button href={ this.props.getManagePurchaseUrlFor( selectedSiteSlug, purchase.id ) } compact>
+			<Button
+				href={
+					// Reason for making it '#' is to ensure that it gets rendered as <a /> and not as <button />
+					// If it's rendered as <button />, `OwnerInfo` uses `InfoPopover` and that also renders a button
+					// we can't render <button /> inside another <button />
+					userIsPurchaseOwner
+						? this.props.getManagePurchaseUrlFor( selectedSiteSlug, purchase.id )
+						: '#'
+				}
+				disabled={ ! userIsPurchaseOwner }
+				compact
+			>
 				{ label }
+				&nbsp;
+				<OwnerInfo purchaseId={ purchase?.id } />
 			</Button>
 		);
 	}
@@ -308,11 +323,7 @@ class PurchasesListing extends Component {
 			return null;
 		}
 
-		return (
-			getForCurrentCROIteration( {
-				[ Iterations.ONLY_REALTIME_PRODUCTS ]: <BackupStorageSpace />,
-			} ) ?? null
-		);
+		return <BackupStorageSpace />;
 	}
 
 	renderPlan() {
@@ -355,19 +366,22 @@ class PurchasesListing extends Component {
 				<Card compact>
 					<strong>{ translate( 'My Solutions' ) }</strong>
 				</Card>
-				{ productPurchases.map( ( purchase ) => (
-					<MyPlanCard
-						key={ purchase.id }
-						action={ this.getProductActionButtons( purchase ) }
-						details={ this.getExpirationInfoForPurchase( purchase ) }
-						isError={ this.isProductExpiring( purchase ) }
-						isPlaceholder={ this.isLoading() }
-						product={ purchase.productSlug }
-						tagline={ getJetpackProductTagline( purchase, true ) }
-						title={ this.getTitle( purchase ) }
-						headerChildren={ this.getHeaderChildren( purchase ) }
-					/>
-				) ) }
+				{ productPurchases.map( ( purchase ) =>
+					this.isLoading() ? (
+						<MyPlanCard isPlaceholder key={ purchase.id } />
+					) : (
+						<MyPlanCard
+							key={ purchase.id }
+							action={ this.getProductActionButtons( purchase ) }
+							details={ this.getExpirationInfoForPurchase( purchase ) }
+							isError={ this.isProductExpiring( purchase ) }
+							product={ purchase.productSlug }
+							tagline={ getJetpackProductTagline( { product_slug: purchase.productSlug }, true ) }
+							title={ this.getTitle( purchase ) }
+							headerChildren={ this.getHeaderChildren( purchase ) }
+						/>
+					)
+				) }
 			</Fragment>
 		);
 	}
@@ -402,5 +416,6 @@ export default connect( ( state ) => {
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		isCloudEligible: isJetpackCloudEligible( state, selectedSiteId ),
+		currentUserId: getCurrentUserId( state ),
 	};
 } )( localize( withLocalizedMoment( PurchasesListing ) ) );

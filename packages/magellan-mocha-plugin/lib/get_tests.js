@@ -1,7 +1,7 @@
 const spawnSync = require( 'child_process' ).spawnSync;
 const fs = require( 'fs' );
 const path = require( 'path' );
-const clc = require( 'cli-color' );
+const chalk = require( 'chalk' );
 const _ = require( 'lodash' );
 const pkgUp = require( 'pkg-up' );
 const logger = require( 'testarmada-logger' );
@@ -57,7 +57,7 @@ module.exports = function ( settings ) {
 		return new Locator( t.fullTitle, t.file, t.pending, t.title );
 	} );
 
-	logger.log( clc.green( 'Found ' + tests.length + ' tests in test files' ) );
+	logger.log( chalk.green( 'Found ' + tests.length + ' tests in test files' ) );
 
 	return tests;
 };

@@ -1,0 +1,9 @@
+.difm-lite-in-progress__site-placeholder {
+	h2 {
+		@include placeholder();
+	}
+}
+
+.difm-lite-in-progress__action-panel {
+	text-align: left;
+}

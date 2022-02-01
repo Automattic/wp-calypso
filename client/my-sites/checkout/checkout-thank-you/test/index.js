@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,
@@ -21,7 +25,6 @@ import {
 	isDIFMProduct,
 } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
-import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
 import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
 import { CheckoutThankYou } from '../index';
 
@@ -39,14 +42,10 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 jest.mock( '../domain-registration-details', () => 'component--domain-registration-details' );
 jest.mock( '../google-apps-details', () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => 'component--jetpack-plan-details' );
-jest.mock( '../rebrand-cities-thank-you', () => 'component--RebrandCitiesThankYou' );
 jest.mock( '../atomic-store-thank-you-card', () => 'component--AtomicStoreThankYouCard' );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( '../header', () => 'CheckoutThankYouHeader' );
 jest.mock( 'calypso/components/happiness-support', () => 'HappinessSupport' );
-jest.mock( 'calypso/lib/rebrand-cities', () => ( {
-	isRebrandCitiesSiteUrl: jest.fn( () => false ),
-} ) );
 
 const translate = ( x ) => x;
 
@@ -125,73 +124,6 @@ describe( 'CheckoutThankYou', () => {
 				true
 			);
 			expect( comp.find( 'CheckoutThankYouHeader' ).props().upgradeIntent ).toBe( 'plugins' );
-		} );
-	} );
-
-	describe( 'Presence of <RebrandCitiesThankYou /> in render() output', () => {
-		afterAll( () => {
-			isRebrandCitiesSiteUrl.mockImplementation( () => false );
-		} );
-
-		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( ( product_slug ) => {
-			test( 'Should be there for a business plan', () => {
-				isRebrandCitiesSiteUrl.mockImplementation( () => true );
-				const props = {
-					...defaultProps,
-					selectedSite: {
-						plan: {
-							product_slug,
-						},
-					},
-				};
-				const comp = shallow( <CheckoutThankYou { ...props } /> );
-				expect( comp.find( 'component--RebrandCitiesThankYou' ) ).toHaveLength( 1 );
-			} );
-		} );
-
-		[ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ].forEach( ( product_slug ) => {
-			test( 'Should not be there for a business plan if isRebrandCitiesSiteUrl is false', () => {
-				isRebrandCitiesSiteUrl.mockImplementation( () => false );
-				const props = {
-					...defaultProps,
-					selectedSite: {
-						plan: {
-							product_slug,
-						},
-					},
-				};
-				const comp = shallow( <CheckoutThankYou { ...props } /> );
-				expect( comp.find( 'component--RebrandCitiesThankYou' ) ).toHaveLength( 0 );
-			} );
-		} );
-
-		[
-			PLAN_BLOGGER,
-			PLAN_BLOGGER_2_YEARS,
-			PLAN_PERSONAL,
-			PLAN_PERSONAL_2_YEARS,
-			PLAN_JETPACK_PERSONAL,
-			PLAN_JETPACK_PERSONAL_MONTHLY,
-			PLAN_PREMIUM,
-			PLAN_PREMIUM_2_YEARS,
-			PLAN_JETPACK_PREMIUM,
-			PLAN_JETPACK_PREMIUM_MONTHLY,
-			PLAN_JETPACK_BUSINESS,
-			PLAN_JETPACK_BUSINESS_MONTHLY,
-		].forEach( ( product_slug ) => {
-			test( 'Should not be there for any no-business plan', () => {
-				isRebrandCitiesSiteUrl.mockImplementation( () => true );
-				const props = {
-					...defaultProps,
-					selectedSite: {
-						plan: {
-							product_slug,
-						},
-					},
-				};
-				const comp = shallow( <CheckoutThankYou { ...props } /> );
-				expect( comp.find( 'component--RebrandCitiesThankYou' ) ).toHaveLength( 0 );
-			} );
 		} );
 	} );
 

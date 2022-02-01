@@ -16,9 +16,7 @@ interface Props {
 const JetpackCredentialsBanner: React.FC< Props > = ( { siteSlug } ): React.ReactElement => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const preference: Preference[] = useSelector( ( state ) =>
-		getPreference( state, JETPACK_CREDENTIALS_BANNER_PREFERENCE )
-	);
+	const preference: Preference[] = useSelector( ( state ) => getPreference( state ) );
 
 	const savePreferenceType = React.useCallback(
 		( type: PreferenceType ) => {

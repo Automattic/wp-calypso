@@ -24,6 +24,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 class SiteSettingsFormJetpackMonitor extends Component {
 	state = {};
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( isEmpty( this.state ) && nextProps.monitorSettings ) {
 			this.setState( nextProps.monitorSettings );

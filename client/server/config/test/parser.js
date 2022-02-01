@@ -1,10 +1,18 @@
 import parser from '@automattic/calypso-config/parser';
 import mockFs from 'mock-fs';
 
+const withEnv = ( env = {} ) => {
+	for ( const [ k, v ] of Object.entries( env ) ) {
+		process.env[ k ] = v;
+	}
+};
+
 function setValidSecrets() {
 	mockFs( {
 		'/valid-path/secrets.json': JSON.stringify( {
 			secret: 'very',
+			wpcom_calypso_rest_api_key: 'rest_api',
+			wpcom_calypso_support_session_rest_api_key: 'session_api',
 		} ),
 		'/valid-path/empty-secrets.json': JSON.stringify( {
 			secret: 'fromempty',
@@ -38,8 +46,8 @@ function setValidEnvFiles() {
 
 function setEmptySecrets() {
 	mockFs( {
-		'/valid-path/empty-secrets.json': JSON.stringify( {
-			secret: 'fromempty',
+		'/valid-path/secrets.json': JSON.stringify( {
+			secret: 'very',
 		} ),
 		'/valid-path/_shared.json': JSON.stringify( {
 			features: {
@@ -50,8 +58,14 @@ function setEmptySecrets() {
 }
 
 describe( 'parser', () => {
+	let realProcessEnv;
+	beforeEach( () => {
+		realProcessEnv = { ...process.env };
+	} );
+
 	afterEach( () => {
 		mockFs.restore();
+		process.env = { ...realProcessEnv };
 	} );
 
 	test( 'should return empty objects for an invalid path', () => {
@@ -109,6 +123,19 @@ describe( 'parser', () => {
 		} );
 
 		expect( data ).toHaveProperty( 'features.disabledFeature2', true );
+	} );
+
+	test( 'should override secrets with env vars', () => {
+		withEnv( {
+			WPCOM_CALYPSO_REST_API_KEY: 'foo',
+			WPCOM_CALYPSO_SUPPORT_SESSION_REST_API_KEY: 'bar',
+		} );
+		setValidSecrets();
+
+		const { serverData } = parser( '/valid-path' );
+
+		expect( serverData.wpcom_calypso_rest_api_key ).toBe( 'foo' );
+		expect( serverData.wpcom_calypso_support_session_rest_api_key ).toBe( 'bar' );
 	} );
 
 	test( 'should explicitly set user-bootstrapping to false if there are no real secrets', () => {

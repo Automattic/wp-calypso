@@ -1,6 +1,12 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.titan-new-mailbox .form-label > input[type=text],
+.titan-new-mailbox .form-label > .form-text-input-with-affixes,
+.titan-new-mailbox .form-label > .form-password-input {
+	margin-top: 5px;
+}
+
 .titan-new-mailbox .form-label .form-text-input-with-affixes__suffix,
 .titan-new-mailbox .form-label .form-text-input-with-affixes__prefix {
 	font-weight: normal;
@@ -41,20 +47,5 @@
 		.components-toggle-control p {
 			margin-bottom: 0;
 		}
-	}
-}
-
-.titan-new-mailbox.show-labels {
-	.form-fieldset .form-label {
-		color: var( --color-text );
-
-		> div,
-		> input {
-			margin-top: 5px;
-		}
-	}
-
-	.titan-new-mailbox__remove-mailbox-button {
-		margin-top: calc( 1.5em + 5px );
 	}
 }

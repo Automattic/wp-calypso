@@ -235,9 +235,7 @@ export function isRequestingLists( state = false, action ) {
 export const errors = withSchemaValidation( errorsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_LIST_UPDATE_FAILURE:
-			const newError = {};
-			newError[ action.list.ID ] = action.error.statusCode;
-			return Object.assign( {}, state, newError );
+			return { ...state, [ action.list.ID ]: action.error.statusCode };
 	}
 
 	return state;

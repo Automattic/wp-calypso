@@ -247,7 +247,6 @@ Typically, you'd wrap your exported function with `localize`:
 ```jsx
 // greeting.jsx
 import { localize } from 'i18n-calypso';
-import React from 'react';
 
 function Greeting( { translate, className } ) {
 	return <h1 className={ className }>{ translate( 'Hello!' ) }</h1>;
@@ -260,7 +259,6 @@ When the wrapped component is rendered, the render behavior of the original comp
 
 ```jsx
 // index.jsx
-import React from 'react';
 import { render } from 'react-dom';
 import Greeting from './greeting';
 
@@ -289,7 +287,6 @@ The function can be called to return a localized value of a string, and it also 
 
 ```jsx
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
 
 function Greeting( { className } ) {
 	const translate = useTranslate();
@@ -318,7 +315,6 @@ Example:
 ```jsx
 import { Gridicon } from '@automattic/components';
 import { useRtl } from 'i18n-calypso';
-import React from 'react';
 
 export default function Header() {
 	const isRtl = useRtl();
@@ -341,7 +337,6 @@ Example:
 ```jsx
 import { Gridicon } from '@automattic/components';
 import { withRtl } from 'i18n-calypso';
-import React from 'react';
 
 function Header( { isRtl } ) {
 	const icon = isRtl ? 'arrow-left' : 'arrow-right';
@@ -369,13 +364,19 @@ In order to reduce file-size, i18n-calypso allows the usage of hashed keys for l
 Instead of providing the full English text, like here:
 
 ```json
-{"":{"localeSlug":"de"},"Please enter a valid email address.":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
+{
+	"": { "localeSlug": "de" },
+	"Please enter a valid email address.": [ "", "Bitte gib eine gültige E-Mail-Adresse ein." ]
+}
 ```
 
 just the hash is used for lookup, resulting in a shorter file.
 
 ```json
-{"":{"localeSlug":"de","key-hash":"sha1-1"},"d":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
+{
+	"": { "localeSlug": "de", "key-hash": "sha1-1" },
+	"d": [ "", "Bitte gib eine gültige E-Mail-Adresse ein." ]
+}
 ```
 
 The generator of the jed file would usually try to choose the smallest hash length at which no hash collisions occur. In the above example a hash length of 1 (`d` short for `d2306dd8970ff616631a3501791297f31475e416`) is enough because there is only one string.

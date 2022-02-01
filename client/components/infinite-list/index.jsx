@@ -46,6 +46,7 @@ export default class InfiniteList extends Component {
 	topPlaceholderRef = createRef();
 	bottomPlaceholderRef = createRef();
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const url = page.current;
 		let newState;
@@ -109,6 +110,7 @@ export default class InfiniteList extends Component {
 		}
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( newProps ) {
 		this.scrollHelper.props = newProps;
 

@@ -15,31 +15,21 @@ jest.mock( 'calypso/lib/analytics/mc', () => ( {
 	bumpStat: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/wp', () => {
-	const readFeedPost = jest.fn();
-	const readSitePost = jest.fn();
-
-	return {
-		undocumented: () => ( {
-			readFeedPost,
-			readSitePost,
-		} ),
-	};
-} );
-
-const undocumented = wp.undocumented;
+jest.mock( 'calypso/lib/wp', () => ( {
+	req: {
+		get: jest.fn(),
+	},
+} ) );
 
 describe( 'actions', () => {
 	const dispatchSpy = jest.fn();
 	const trackingSpy = tracks.recordTracksEvent;
-	const readFeedStub = undocumented().readFeedPost;
-	const readSiteStub = undocumented().readSitePost;
+	const wpcomGetStub = wp.req.get;
 
 	afterEach( () => {
 		dispatchSpy.mockReset();
 		trackingSpy.mockReset();
-		readFeedStub.mockReset();
-		readSiteStub.mockReset();
+		wpcomGetStub.mockReset();
 	} );
 
 	describe( '#receivePosts()', () => {
@@ -73,13 +63,10 @@ describe( 'actions', () => {
 
 	describe( '#fetchPost', () => {
 		test( 'should call read/sites for blog posts', () => {
-			readSiteStub.mockReturnValue( Promise.resolve( {} ) );
+			wpcomGetStub.mockReturnValue( Promise.resolve( {} ) );
 			const req = actions.fetchPost( { blogId: 1, postId: 2 } )( dispatchSpy );
 
-			expect( readSiteStub ).toHaveBeenCalledWith( {
-				site: 1,
-				postId: 2,
-			} );
+			expect( wpcomGetStub ).toHaveBeenCalledWith( '/read/sites/1/posts/2', {} );
 
 			return req.then( () => {
 				expect( dispatchSpy ).toHaveBeenCalledWith( expect.any( Function ) );
@@ -87,13 +74,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should call read/feeds for feed posts', () => {
-			readFeedStub.mockReturnValue( Promise.resolve( {} ) );
+			wpcomGetStub.mockReturnValue( Promise.resolve( {} ) );
 			const req = actions.fetchPost( { feedId: 1, postId: 2 } )( dispatchSpy );
 
-			expect( readFeedStub ).toHaveBeenCalledWith( {
-				feedId: 1,
-				postId: 2,
-			} );
+			expect( wpcomGetStub ).toHaveBeenCalledWith( '/read/feed/1/posts/2', { apiVersion: '1.2' } );
 
 			return req.then( () => {
 				expect( dispatchSpy ).toHaveBeenCalledWith( expect.any( Function ) );
@@ -101,13 +85,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch an error when a blog post call fails', () => {
-			readSiteStub.mockReturnValue( Promise.reject( { status: 'oh no' } ) );
+			wpcomGetStub.mockReturnValue( Promise.reject( { status: 'oh no' } ) );
 			const req = actions.fetchPost( { blogId: 1, postId: 2 } )( dispatchSpy );
 
-			expect( readSiteStub ).toHaveBeenCalledWith( {
-				site: 1,
-				postId: 2,
-			} );
+			expect( wpcomGetStub ).toHaveBeenCalledWith( '/read/sites/1/posts/2', {} );
 
 			return req.then( () => {
 				expect( dispatchSpy ).toHaveBeenCalledWith( {
@@ -128,13 +109,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch an error when a feed post call fails', () => {
-			readFeedStub.mockReturnValue( Promise.reject( { status: 'oh no' } ) );
+			wpcomGetStub.mockReturnValue( Promise.reject( { status: 'oh no' } ) );
 			const req = actions.fetchPost( { feedId: 1, postId: 2 } )( dispatchSpy );
 
-			expect( readFeedStub ).toHaveBeenCalledWith( {
-				feedId: 1,
-				postId: 2,
-			} );
+			expect( wpcomGetStub ).toHaveBeenCalledWith( '/read/feed/1/posts/2', { apiVersion: '1.2' } );
 
 			return req.then( () => {
 				expect( dispatchSpy ).toHaveBeenCalledWith( {

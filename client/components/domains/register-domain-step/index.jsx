@@ -28,7 +28,7 @@ import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
-import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
+import Illustration from 'calypso/assets/images/domains/domain.svg';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
@@ -66,7 +66,6 @@ import { DropdownFilters, FilterResetNotice } from 'calypso/components/domains/s
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
-import StickyPanel from 'calypso/components/sticky-panel';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
@@ -86,8 +85,6 @@ import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError,
 } from 'calypso/state/domains/suggestions/selectors';
-import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import AlreadyOwnADomain from './already-own-a-domain';
 import tip from './tip';
 
@@ -270,6 +267,7 @@ class RegisterDomainStep extends Component {
 		};
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		// Reset state on site change
 		if (
@@ -309,7 +307,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	checkForBloggerPlan() {
-		const plan = get( this.props, 'selectedSite.plan', false );
+		const plan = get( this.props, 'selectedSite.plan', {} );
 		const products = get( this.props, 'cart.products', [] );
 		const isBloggerPlan = isBlogger( plan ) || products.some( isBlogger );
 
@@ -353,11 +351,6 @@ class RegisterDomainStep extends Component {
 			this.props.selectedSite.domain !== prevProps.selectedSite.domain
 		) {
 			this.focusSearchCard();
-		}
-
-		// Hide the signup site preview when we're loading results
-		if ( this.props.isSignupStep && this.state.loadingResults && this.props.isSitePreviewVisible ) {
-			this.props.hideSitePreview();
 		}
 	}
 
@@ -445,11 +438,11 @@ class RegisterDomainStep extends Component {
 		return (
 			<>
 				<div className={ containerDivClassName }>
-					<StickyPanel className={ searchBoxClassName }>
+					<div className={ searchBoxClassName }>
 						<CompactCard className="register-domain-step__search-card">
 							{ this.renderSearchBar() }
 						</CompactCard>
-					</StickyPanel>
+					</div>
 					{ ! isSignupStep && isQueryInvalid && (
 						<Notice
 							className="register-domain-step__notice"
@@ -648,7 +641,7 @@ class RegisterDomainStep extends Component {
 					title=""
 					className="register-domain-step__placeholder"
 					illustration={ Illustration }
-					illustrationWidth={ 180 }
+					illustrationWidth={ 280 }
 				/>
 			</>
 		);
@@ -674,17 +667,15 @@ class RegisterDomainStep extends Component {
 		this.save();
 
 		Object.keys( this.state.premiumDomains ).map( ( premiumDomain ) => {
-			this.fetchDomainPricePromise( premiumDomain )
-				.catch( () => [] )
-				.then( ( domainPrice ) => {
-					this.setState( ( state ) => {
-						const newPremiumDomains = { ...state.premiumDomains };
-						newPremiumDomains[ premiumDomain ] = domainPrice;
-						return {
-							premiumDomains: newPremiumDomains,
-						};
-					} );
+			this.fetchDomainPrice( premiumDomain ).then( ( domainPrice ) => {
+				this.setState( ( state ) => {
+					const newPremiumDomains = { ...state.premiumDomains };
+					newPremiumDomains[ premiumDomain ] = domainPrice;
+					return {
+						premiumDomains: newPremiumDomains,
+					};
 				} );
+			} );
 		} );
 	};
 
@@ -795,11 +786,6 @@ class RegisterDomainStep extends Component {
 			return;
 		}
 
-		// Reshow the signup site preview if there is no search query
-		if ( ! searchQuery && this.props.isSignupStep && ! this.props.isSitePreviewVisible ) {
-			this.props.showSitePreview();
-		}
-
 		const cleanedQuery = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
 		const loadingResults = Boolean( cleanedQuery );
 		const isInitialQueryActive = ! searchQuery || searchQuery === this.props.suggestion;
@@ -842,25 +828,19 @@ class RegisterDomainStep extends Component {
 			.catch( noop );
 	};
 
-	fetchDomainPricePromise = ( domain ) => {
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().getDomainPrice( domain, ( serverError, result ) => {
-				if ( serverError ) {
-					resolve( {
-						pending: true,
-						error: serverError,
-					} );
-					return;
-				}
-
-				resolve( {
-					pending: false,
-					is_premium: result.is_premium,
-					cost: result.cost,
-					is_price_limit_exceeded: result?.is_price_limit_exceeded,
-				} );
-			} );
-		} );
+	fetchDomainPrice = ( domain ) => {
+		return wpcom.req
+			.get( `/domains/${ encodeURIComponent( domain ) }/price` )
+			.then( ( data ) => ( {
+				pending: false,
+				is_premium: data.is_premium,
+				cost: data.cost,
+				is_price_limit_exceeded: data.is_price_limit_exceeded,
+			} ) )
+			.catch( ( error ) => ( {
+				pending: true,
+				error,
+			} ) );
 	};
 
 	preCheckDomainAvailability = ( domain ) => {
@@ -1397,10 +1377,7 @@ class RegisterDomainStep extends Component {
 	};
 
 	useYourDomainFunction = () => {
-		const { lastDomainStatus } = this.state;
-		return domainAvailability.MAPPED === lastDomainStatus
-			? this.goToTransferDomainStep
-			: this.goToUseYourDomainStep;
+		return this.goToUseYourDomainStep;
 	};
 
 	renderSearchResults() {
@@ -1612,7 +1589,6 @@ export default connect(
 	( state, props ) => {
 		const queryObject = getQueryObject( props );
 		return {
-			isSitePreviewVisible: isSitePreviewVisible( state ),
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
@@ -1630,7 +1606,5 @@ export default connect(
 		recordShowMoreResults,
 		recordTransferDomainButtonClick,
 		recordUseYourDomainButtonClick,
-		hideSitePreview,
-		showSitePreview,
 	}
 )( withCartKey( withShoppingCart( localize( RegisterDomainStep ) ) ) );

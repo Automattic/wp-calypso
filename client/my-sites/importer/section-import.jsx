@@ -24,7 +24,7 @@ import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
 import JetpackImporter from 'calypso/my-sites/importer/jetpack-importer';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { fetchImporterState, startImport } from 'calypso/state/imports/actions';
+import { fetchImporterState, startImport, cancelImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getImporterStatusForSiteId,
@@ -93,6 +93,12 @@ class SectionImport extends Component {
 		} );
 	};
 
+	cancelNonStartedImports = () => {
+		this.props.siteImports
+			.filter( ( x ) => x.importerState === appStates.READY_FOR_UPLOAD )
+			.forEach( ( x ) => this.props.cancelImport( x.site.ID, x.importerId ) );
+	};
+
 	trackImporterStateChange = memoizeLast( ( importerState, importerId ) => {
 		const stateToEventNameMap = {
 			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',
@@ -124,6 +130,10 @@ class SectionImport extends Component {
 		}
 
 		this.handleStateChanges();
+	}
+
+	componentWillUnmount() {
+		this.cancelNonStartedImports();
 	}
 
 	/**
@@ -167,11 +177,7 @@ class SectionImport extends Component {
 		return (
 			<>
 				{ importerElements }
-				<CompactCard
-					href={ site.options.admin_url + 'import.php' }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
+				<CompactCard href={ site.options.admin_url + 'import.php' }>
 					{ this.props.translate( 'Choose from full list' ) }
 				</CompactCard>
 			</>
@@ -320,5 +326,5 @@ export default connect(
 			isImporterStatusHydrated: isImporterStatusHydrated( state ),
 		};
 	},
-	{ recordTracksEvent, startImport, fetchImporterState }
+	{ recordTracksEvent, startImport, fetchImporterState, cancelImport }
 )( localize( SectionImport ) );

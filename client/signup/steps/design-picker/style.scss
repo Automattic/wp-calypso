@@ -1,7 +1,8 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.signup__step.is-design-setup-site {
+.signup__step.is-design-setup-site,
+.signup__step.is-difm-design-setup-site {
 	.step-wrapper {
 		padding-left: 24px;
 		padding-right: 24px;
@@ -15,11 +16,6 @@
 		@include break-small {
 			padding-left: 48px;
 			padding-right: 48px;
-		}
-
-		@include break-medium {
-			padding-left: 96px;
-			padding-right: 96px;
 		}
 	}
 
@@ -35,6 +31,14 @@
 		}
 	}
 
+	.step-wrapper.design-picker__has-categories {
+		.step-wrapper__content {
+			@include break-medium {
+				margin-top: 64px;
+			}
+		}
+	}
+
 	// Ugly, but necessary to cancel out some signup styles
 	// without causing regressions to other parts of `/start`
 	button:not( .is-primary ) {
@@ -45,19 +49,20 @@
 		}
 	}
 
-	.design-picker__grid {
-		grid-template-columns: 1fr;
-
-		@include break-medium {
-			grid-template-columns: 1fr 1fr;
-			column-gap: 49px;
-			row-gap: 39px;
+	.design-picker__has-categories {
+		.formatted-header__subtitle {
+			// Overrides some very specific selectors in /client/signup/style.scss
+			margin: 12px 0 48px !important;
 		}
 	}
 
 	.action-buttons {
 		@include break-small {
 			background-color: transparent;
+		}
+
+		button.is-primary {
+			border-radius: 4px;
 		}
 	}
 }
@@ -66,8 +71,15 @@
 	padding-bottom: 30px;
 
 	.step-wrapper__content {
-		height: calc( 100vh - 256px );
-		max-height: 540px;
+		height: calc( 100vh - 245px );
+
+		@include break-mobile {
+			height: calc( 100vh - 225px );
+		}
+
+		@include break-small {
+			height: calc( 100vh - 128px );
+		}
 	}
 
 	@include break-small {
@@ -77,7 +89,7 @@
 		}
 
 		.step-wrapper__content {
-			max-height: 960px;
+			max-height: 1080px;
 		}
 	}
 }

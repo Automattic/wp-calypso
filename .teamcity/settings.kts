@@ -1,18 +1,23 @@
+
 import _self.bashNodeScript
 import _self.yarn_install_cmd
-import jetbrains.buildServer.configs.kotlin.v2019_2.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.dockerSupport
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
-import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.dockerRegistry
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
+import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
+import jetbrains.buildServer.configs.kotlin.v2019_2.project
+import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.dockerRegistry
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
-import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
-import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
+import jetbrains.buildServer.configs.kotlin.v2019_2.version
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -54,14 +59,21 @@ project {
 		text("E2E_WORKERS", "16", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
 		text("env.JEST_MAX_WORKERS", "16", label = "Jest max workers", description = "How many tests run in parallel", allowEmpty = true)
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
-		param("teamcity.git.fetchAllHeads", "true")
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
 		text("docker_image", "registry.a8c.com/calypso/base:latest", label = "Docker image", description = "Default Docker image used to run builds", allowEmpty = true)
 		text("docker_image_e2e", "registry.a8c.com/calypso/ci-e2e:latest", label = "Docker e2e image", description = "Docker image used to run e2e tests", allowEmpty = true)
 		text("env.DOCKER_BUILDKIT", "1", label = "Enable Docker BuildKit", description = "Enables BuildKit (faster image generation). Values 0 or 1", allowEmpty = true)
-		password("CONFIG_E2E_ENCRYPTION_KEY", "credentialsJSON:819c139c-90a1-4803-8367-00e5aa5fdb07", display = ParameterDisplay.HIDDEN)
 		password("mc_post_root", "credentialsJSON:2f764583-d399-4d5f-8ee1-06f68ef2e2a6", display = ParameterDisplay.HIDDEN )
 		password("mc_auth_secret", "credentialsJSON:5b1903f9-4b03-43ff-bba8-4a7509d07088", display = ParameterDisplay.HIDDEN)
+		password("mc_teamcity_webhook", "credentialsJSON:7a711930-afd4-4058-b33f-39af8a0b7f91", display = ParameterDisplay.HIDDEN)
+
+		// Fetch all heads. This is used for builds that merge trunk before running tests
+		param("teamcity.git.fetchAllHeads", "true")
+
+		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
+		password("E2E_CONFIG_ENCRYPTION_KEY_JANUARY_22", "credentialsJSON:b06c1dcd-2188-45e2-b08b-dd97b06e2be6", display = ParameterDisplay.HIDDEN)
+		password("CONFIG_E2E_ENCRYPTION_KEY_LEGACY", "credentialsJSON:819c139c-90a1-4803-8367-00e5aa5fdb07", display = ParameterDisplay.HIDDEN)
+		param("E2E_CONFIG_ENCRYPTION_KEY", "%E2E_CONFIG_ENCRYPTION_KEY_JANUARY_22%")
 	}
 
 	features {
@@ -111,20 +123,6 @@ object BuildBaseImages : BuildType({
 			param("dockerImage.platform", "linux")
 		}
 		dockerCommand {
-			name = "Build CI Desktop image"
-			commandType = build {
-				source = file {
-					path = "Dockerfile.base"
-				}
-				namesAndTags = """
-					registry.a8c.com/calypso/ci-desktop:%image_tag%
-					registry.a8c.com/calypso/ci-desktop:%build.number%
-				""".trimIndent()
-				commandArgs = "--target ci-desktop"
-			}
-			param("dockerImage.platform", "linux")
-		}
-		dockerCommand {
 			name = "Build CI e2e image"
 			commandType = build {
 				source = file {
@@ -158,8 +156,6 @@ object BuildBaseImages : BuildType({
 				namesAndTags = """
 					registry.a8c.com/calypso/base:%image_tag%
 					registry.a8c.com/calypso/base:%build.number%
-					registry.a8c.com/calypso/ci-desktop:%image_tag%
-					registry.a8c.com/calypso/ci-desktop:%build.number%
 					registry.a8c.com/calypso/ci-e2e:%image_tag%
 					registry.a8c.com/calypso/ci-e2e:%build.number%
 					registry.a8c.com/calypso/ci-wpcom:%image_tag%
@@ -325,7 +321,7 @@ object WpCalypso : GitVcsRoot({
 	branchSpec = "+:refs/heads/*"
 	useTagsAsBranches = true
 	authMethod = uploadedKey {
-		uploadedKey = "Sergio TeamCity"
+		uploadedKey = "matticbot"
 	}
 })
 

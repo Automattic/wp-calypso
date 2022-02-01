@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
 import { SiteSettingsSecurity } from '../main';

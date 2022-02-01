@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { TranslateResult } from 'i18n-calypso';
-import React from 'react';
+import { preventWidows } from 'calypso/lib/formatting';
 import './style.scss';
 
 export interface SelectItem< T > {
@@ -12,6 +12,7 @@ export interface SelectItem< T > {
 	icon: React.ReactElement;
 	value: T;
 	actionText: TranslateResult;
+	hidden?: boolean;
 }
 
 interface Props< T > {
@@ -28,8 +29,8 @@ function SelectItems< T >( { className, items, onSelect }: Props< T > ): React.R
 					<Icon className="select-items__item-icon" icon={ icon } size={ 24 } />
 					<div className="select-items__item-info-wrapper">
 						<div className="select-items__item-info">
-							<h2 className="select-items__item-title">{ title }</h2>
-							<p className="select-items__item-description">{ description }</p>
+							<h2 className="select-items__item-title">{ preventWidows( title ) }</h2>
+							<div className="select-items__item-description">{ preventWidows( description ) }</div>
 						</div>
 						<Button className="select-items__item-button" onClick={ () => onSelect( value ) }>
 							{ actionText }

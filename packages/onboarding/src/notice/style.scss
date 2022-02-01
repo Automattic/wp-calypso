@@ -1,0 +1,19 @@
+.onboarding-notice {
+	display: flex;
+	color: var( --studio-gray-50 );
+	font-size: 0.875em; /* stylelint-disable-line */
+	margin-bottom: 1.5em;
+
+	svg {
+		align-self: center;
+		fill: var( --color-warning-30 );
+		flex-shrink: 0;
+		margin-right: 1em;
+		transform: rotate( 180deg );
+	}
+
+	p {
+		margin-bottom: 0;
+		line-height: 28px;
+	}
+}

@@ -39,7 +39,6 @@ class CalendarStep extends Component {
 			lastname: signupForm.lastname,
 			message: signupForm.message,
 			timezone: signupForm.timezone,
-			isRebrandCitiesSite: signupForm.isRebrandCitiesSite,
 			phoneNumber: signupForm.phoneNumber,
 		};
 
@@ -50,6 +49,7 @@ class CalendarStep extends Component {
 		this.props.recordTracksEvent( 'calypso_concierge_book_calendar_step' );
 	}
 
+	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillUpdate( nextProps ) {
 		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
 			// go to confirmation page if booking was successfull

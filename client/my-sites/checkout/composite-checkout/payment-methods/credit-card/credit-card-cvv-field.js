@@ -1,5 +1,6 @@
-import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { CardCvcElement } from '@stripe/react-stripe-js';
+import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import {
 	LeftColumn,

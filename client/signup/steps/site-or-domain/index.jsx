@@ -1,7 +1,9 @@
+import { globe, addCard, layout } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import HeaderImage from 'calypso/assets/images/domains/domain.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug } from 'calypso/lib/domains';
@@ -9,6 +11,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import SelectItems from '../../select-items';
 import SiteOrDomainChoice from './choice';
 import DomainImage from './domain-image';
 import ExistingSiteImage from './existing-site-image';
@@ -32,51 +35,109 @@ class SiteOrDomain extends Component {
 	}
 
 	getChoices() {
-		const { translate } = this.props;
+		const { translate, isReskinned, isLoggedIn } = this.props;
 
-		const choices = [
-			{
+		const choices = [];
+
+		if ( isReskinned ) {
+			choices.push( {
+				key: 'domain',
+				title: translate( 'Just buy a domain' ),
+				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
+				icon: globe,
+				value: 'domain',
+				actionText: translate( 'Get domain' ),
+			} );
+			choices.push( {
+				key: 'page',
+				title: translate( 'New site' ),
+				description: translate(
+					'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
+					{
+						components: {
+							strong: <strong />,
+							br: <br />,
+						},
+					}
+				),
+				icon: addCard,
+				value: 'page',
+				actionText: translate( 'Start site' ),
+			} );
+			if ( isLoggedIn ) {
+				choices.push( {
+					key: 'existing-site',
+					title: translate( 'Existing WordPress.com site' ),
+					description: translate(
+						'Use with a site you already started.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
+						{
+							components: {
+								strong: <strong />,
+								br: <br />,
+							},
+						}
+					),
+					icon: layout,
+					value: 'existing-site',
+					actionText: translate( 'Choose site' ),
+				} );
+			}
+		} else {
+			choices.push( {
 				type: 'page',
 				label: translate( 'New site' ),
 				image: <NewSiteImage />,
 				description: translate(
 					'Choose a theme, customize, and launch your site. A free domain for one year is included with all annual plans.'
 				),
-			},
-		];
-
-		if ( this.props.isLoggedIn ) {
+			} );
+			if ( this.props.isLoggedIn ) {
+				choices.push( {
+					type: 'existing-site',
+					label: translate( 'Existing WordPress.com site' ),
+					image: <ExistingSiteImage />,
+					description: translate(
+						'Use with a site you already started. A free domain for one year is included with all annual plans.'
+					),
+				} );
+			}
 			choices.push( {
-				type: 'existing-site',
-				label: translate( 'Existing WordPress.com site' ),
-				image: <ExistingSiteImage />,
-				description: translate(
-					'Use with a site you already started. A free domain for one year is included with all annual plans.'
-				),
+				type: 'domain',
+				label: translate( 'Just buy a domain' ),
+				image: <DomainImage />,
+				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
 			} );
 		}
-
-		choices.push( {
-			type: 'domain',
-			label: translate( 'Just buy a domain' ),
-			image: <DomainImage />,
-			description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
-		} );
 
 		return choices;
 	}
 
 	renderChoices() {
+		const { isReskinned, translate } = this.props;
+
 		return (
 			<div className="site-or-domain__choices">
-				{ this.getChoices().map( ( choice, index ) => (
-					<SiteOrDomainChoice
-						choice={ choice }
-						handleClickChoice={ this.handleClickChoice }
-						isPlaceholder={ ! this.props.productsLoaded }
-						key={ `site-or-domain-choice-${ index }` }
-					/>
-				) ) }
+				{ isReskinned ? (
+					<>
+						<div>
+							<SelectItems items={ this.getChoices() } onSelect={ this.handleClickChoice } />
+						</div>
+						<div className="site-or-domain__free-domain-note">
+							{ translate( '*A free domain for one year is included with all paid annual plans.' ) }
+						</div>
+					</>
+				) : (
+					<>
+						{ this.getChoices().map( ( choice, index ) => (
+							<SiteOrDomainChoice
+								choice={ choice }
+								handleClickChoice={ this.handleClickChoice }
+								isPlaceholder={ ! this.props.productsLoaded }
+								key={ `site-or-domain-choice-${ index }` }
+							/>
+						) ) }
+					</>
+				) }
 			</div>
 		);
 	}
@@ -144,7 +205,7 @@ class SiteOrDomain extends Component {
 	};
 
 	render() {
-		const { translate, productsLoaded } = this.props;
+		const { translate, productsLoaded, isReskinned } = this.props;
 
 		if ( productsLoaded && ! this.getDomainName() ) {
 			const headerText = translate( 'Unsupported domain.' );
@@ -168,6 +229,14 @@ class SiteOrDomain extends Component {
 			);
 		}
 
+		const additionalProps = {};
+
+		if ( isReskinned ) {
+			additionalProps.isHorizontalLayout = true;
+			additionalProps.align = 'left';
+			additionalProps.headerImageUrl = HeaderImage;
+		}
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
@@ -178,6 +247,7 @@ class SiteOrDomain extends Component {
 				fallbackHeaderText={ this.props.headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
 				stepContent={ this.renderScreen() }
+				{ ...additionalProps }
 			/>
 		);
 	}

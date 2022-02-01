@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -12,16 +11,17 @@ import { getItemSlugByDuration } from './utils';
 import type { Duration, PurchaseCallback, PurchaseURLCallback, SelectorProduct } from '../types';
 import type { PlanRecommendation } from './types';
 import './style.scss';
+import type { ReactNode, FC } from 'react';
 
 type Props = {
 	planRecommendation: PlanRecommendation;
 	duration: Duration;
-	filterBar: React.ReactNode;
+	filterBar: ReactNode;
 	onSelectProduct: PurchaseCallback;
-	createButtonURL: PurchaseURLCallback;
+	createButtonURL?: PurchaseURLCallback;
 };
 
-const PlanUpgradeSection: React.FC< Props > = ( {
+const PlanUpgradeSection: FC< Props > = ( {
 	planRecommendation,
 	duration,
 	filterBar,
@@ -47,17 +47,20 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 				components: {
 					product: (
 						<span className="plan-upgrade__product">
-							{ newItems.reduce( ( result, { displayName }, index ) => {
-								if ( result.length === 0 ) {
-									return [ displayName ];
-								}
+							{ newItems.reduce(
+								( result: ReactNode[], { displayName }: SelectorProduct, index: number ) => {
+									if ( result.length === 0 ) {
+										return [ displayName ];
+									}
 
-								if ( index === newItemCount - 1 ) {
-									return [ ...result, ' & ', displayName ];
-								}
+									if ( index === newItemCount - 1 ) {
+										return [ ...result, ' & ', displayName ];
+									}
 
-								return [ ...result, ', ', displayName ];
-							}, [] ) }
+									return [ ...result, ', ', displayName ];
+								},
+								[]
+							) }
 						</span>
 					),
 				},
@@ -102,7 +105,6 @@ const PlanUpgradeSection: React.FC< Props > = ( {
 									siteId={ siteId }
 									currencyCode={ currencyCode }
 									selectedTerm={ duration }
-									featuredPlans={ newPlans }
 									featuredLabel={ translate( 'Recommended for you' ) }
 									isAligned
 									hideSavingLabel

@@ -18,10 +18,10 @@ const TimeFrame: React.FC< TimeFrameProps > = ( { expiryDate, billingTerm } ) =>
 
 	const billingTermText = useMemo( () => {
 		if ( billingTerm === TERM_MONTHLY ) {
-			return translate( '/month, paid monthly' );
+			return translate( '/month, billed monthly' );
 		}
 
-		return translate( '/month, paid yearly' );
+		return translate( '/month, billed yearly' );
 	}, [ billingTerm, translate ] );
 
 	return productExpiryDate ? (

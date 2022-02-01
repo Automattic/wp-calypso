@@ -36,7 +36,7 @@ import type { AppState } from 'calypso/types';
  */
 export const isPlanIncludingSiteBackup = createSelector(
 	( state: AppState, siteId: number | null, planSlug: string ): boolean | null => {
-		if ( ! siteId || ! JETPACK_PLANS.includes( planSlug ) ) {
+		if ( ! siteId || ! ( JETPACK_PLANS as ReadonlyArray< string > ).includes( planSlug ) ) {
 			return null;
 		}
 
@@ -109,7 +109,10 @@ export const isBackupProductIncludedInSitePlan = createSelector(
 
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 
-		if ( ! sitePlanSlug || ! JETPACK_PLANS.includes( sitePlanSlug ) ) {
+		if (
+			! sitePlanSlug ||
+			! ( JETPACK_PLANS as ReadonlyArray< string > ).includes( sitePlanSlug )
+		) {
 			return null;
 		}
 

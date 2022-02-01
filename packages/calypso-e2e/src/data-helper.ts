@@ -105,7 +105,7 @@ export function getCalypsoURL(
  * @returns {string[]} Username and password found in the secrets file for the given account type.
  * @throws {Error} If accountType does not correspond to a valid entry in the file.
  */
-export function getAccountCredential( accountType: string ): string[] {
+export function getAccountCredential( accountType: string ): [ string, string ] {
 	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
 	if ( ! Object.keys( testAccounts ).includes( accountType ) ) {
 		throw new Error(
@@ -146,6 +146,25 @@ export function getAccountSiteURL(
 	}
 
 	return url.toString();
+}
+
+/**
+ * Returns the bearer token of the user allowed to make media uploads to the ToS media upload destination wpcomtos.wordpress.com.
+ *
+ * @returns {string} Bearer token for the user allowed to make uploads.
+ * @throws {Error} If the bearer token is missing in the config file.
+ */
+export function getTosUploadToken(): string {
+	const uploadCredentials: { [ key: string ]: string } = config.get(
+		'martechTosUploadCredentials'
+	);
+	if ( ! Object.keys( uploadCredentials ).includes( 'bearer_token' ) ) {
+		throw new Error(
+			'Secrets file did not contain the bearer token for the ToS media destination'
+		);
+	}
+	const bearerToken = uploadCredentials[ 'bearer_token' ];
+	return bearerToken;
 }
 
 /**
@@ -209,11 +228,17 @@ export function getTestDomainRegistrarDetails( email: string ): RegistrarDetails
 /**
  * Adjusts the user invite link to the correct environment.
  *
- * @param {string} inviteURL Invitation link.
- * @returns {string} Adjusted invitation link with the correct hostname.
+ * By default, all invite links reference the production `wordpress.com` hostname.
+ * However, for end-to-end tests it is desirable to test invite functionality against
+ * the development environment.
+ *
+ * @param {string} inviteURL Full invitation link.
+ * @returns {string} Adjusted invitation link with the intended hostname.
  */
 export function adjustInviteLink( inviteURL: string ): string {
-	return inviteURL.replace( 'https://wordpress.com', config.get( 'calypsoBaseURL' ) );
+	const originalURL = new URL( inviteURL );
+	const adjustedURL = new URL( originalURL.pathname, config.get( 'calypsoBaseURL' ) );
+	return adjustedURL.href;
 }
 
 /**

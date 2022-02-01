@@ -9,6 +9,9 @@ import {
 	getPlan,
 	isPlan,
 	isWpComPremiumPlan,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import {
@@ -27,7 +30,9 @@ import {
 	hasTitanMail,
 	hasTrafficGuide,
 	hasDIFMProduct,
+	hasMonthlyCartItem,
 } from 'calypso/lib/cart-values/cart-items';
+import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
@@ -35,8 +40,8 @@ import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/u
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { PROFESSIONAL_EMAIL_OFFER } from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
-import type { Domain } from '@automattic/data-stores';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
@@ -58,38 +63,38 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
 	hideNudge,
-	isInEditor,
+	isInModal,
 	isJetpackCheckout = false,
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
 }: {
-	siteSlug: string | undefined;
-	adminUrl: string | undefined;
-	redirectTo?: string | undefined;
-	receiptId: number | undefined;
-	orderId: number | undefined;
-	purchaseId: number | undefined;
-	feature: string | undefined;
-	cart: ResponseCart | undefined;
+	siteSlug?: string;
+	adminUrl?: string;
+	redirectTo?: string;
+	receiptId?: number;
+	orderId?: number;
+	purchaseId?: number;
+	feature?: string;
+	cart?: ResponseCart;
 	isJetpackNotAtomic?: boolean;
-	productAliasFromUrl: string | undefined;
+	productAliasFromUrl?: string;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult?: boolean;
 	hideNudge?: boolean;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
-	domains: Domain[] | undefined;
+	domains?: SiteDomain[];
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
-	// (i.e. on WordPress.com), the same site as the cart's site, or a Jetpack or WP.com
-	// site's block editor (in wp-admin). This is required for Jetpack's (and WP.com's)
-	// paid blocks Upgrade Nudge.
+	// (i.e. on WordPress.com), the same site as the cart's site, a Jetpack cloud URL,
+	// or a Jetpack or WP.com site's block editor (in wp-admin). This is required for Jetpack's
+	// (and WP.com's) paid blocks Upgrade Nudge.
 	if ( redirectTo ) {
 		const { protocol, hostname, port, pathname, query } = parseUrl( redirectTo, true, true );
 
@@ -118,6 +123,12 @@ export default function getThankYouPageUrl( {
 			debug( 'returning sanitized internal redirectTo', redirectTo );
 			return sanitizedRedirectTo;
 		}
+
+		if ( hostname === 'cloud.jetpack.com' ) {
+			debug( 'returning Jetpack cloud redirectTo', redirectTo );
+			return redirectTo;
+		}
+
 		debug( 'ignorning redirectTo', redirectTo );
 	}
 
@@ -135,23 +146,17 @@ export default function getThankYouPageUrl( {
 
 	// jetpack userless & siteless checkout uses a special thank you page
 	if ( isJetpackCheckout ) {
+		// extract a product from the cart, in userless/siteless checkout there should only be one
+		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
+
 		if ( siteSlug ) {
 			debug( 'redirecting to userless jetpack thank you' );
-
-			// extract a product from the cart, in userless checkout there should only be one
-			const productSlug = cart?.products[ 0 ]?.product_slug;
-
-			return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug ?? 'no_product' }`;
+			return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug }`;
 		}
+
 		// siteless checkout
 		debug( 'redirecting to siteless jetpack thank you' );
-
-		// extract a product from the cart, in siteless checkout there should only be one
-		const productSlug = cart?.products[ 0 ]?.product_slug;
-
-		const thankYouUrlSiteLess = `/checkout/jetpack/thank-you/no-site/${
-			productSlug ?? 'no_product'
-		}`;
+		const thankYouUrl = `/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`;
 
 		const isValidReceiptId =
 			! isNaN( parseInt( pendingOrReceiptId ) ) || pendingOrReceiptId === ':receiptId';
@@ -160,7 +165,7 @@ export default function getThankYouPageUrl( {
 				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 			},
-			thankYouUrlSiteLess
+			thankYouUrl
 		);
 	}
 
@@ -188,7 +193,7 @@ export default function getThankYouPageUrl( {
 
 	// If the user is making a purchase/upgrading within the editor,
 	// we want to return them back to the editor after the purchase is successful.
-	if ( isInEditor && cart && ! hasEcommercePlan( cart ) ) {
+	if ( isInModal && cart && ! hasEcommercePlan( cart ) ) {
 		saveUrlToCookie( window?.location.href );
 	}
 
@@ -318,7 +323,7 @@ function getFallbackDestination( {
 		// Check the cart (since our Thank You modal doesn't support multiple products, we only take the first
 		// one found).
 		const productFromCart = cart?.products?.find( ( { product_slug } ) =>
-			productsWithCustomThankYou.includes( product_slug )
+			( productsWithCustomThankYou as ReadonlyArray< string > ).includes( product_slug )
 		)?.product_slug;
 
 		const purchasedProduct =
@@ -389,14 +394,56 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 	const currentPlan = getPlan( currentPlanSlug );
 
 	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
-		return getPlan(
-			findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan.term } )
-		)?.getPathSlug();
+		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan?.term } );
+		return planKey ? getPlan( planKey )?.getPathSlug?.() : undefined;
 	}
 
 	return;
 }
 
+function getMonthlyToAnnualUpsellUrl( {
+	pendingOrReceiptId,
+	cart,
+	siteSlug,
+	orderId,
+}: {
+	pendingOrReceiptId: string;
+	orderId: number | undefined;
+	cart: ResponseCart | undefined;
+	siteSlug: string | undefined;
+} ): string | undefined {
+	if ( orderId ) {
+		return;
+	}
+
+	const monthlyPlansDefaultExperiment = dangerouslyGetExperimentAssignment(
+		'calypso_signup_monthly_plans_default_202201_v2'
+	);
+	if ( monthlyPlansDefaultExperiment?.variationName === null ) {
+		return;
+	}
+
+	if ( cart && hasMonthlyCartItem( cart ) ) {
+		let planType;
+		if ( hasPersonalPlan( cart ) ) {
+			planType = PLAN_PERSONAL;
+		} else if ( hasPremiumPlan( cart ) ) {
+			planType = PLAN_PREMIUM;
+		} else if ( hasBusinessPlan( cart ) ) {
+			planType = PLAN_BUSINESS;
+		} else if ( hasEcommercePlan( cart ) ) {
+			planType = PLAN_ECOMMERCE;
+		}
+
+		if ( ! planType ) {
+			return;
+		}
+
+		return `/checkout/${ siteSlug }/offer-annual-upgrade/${ planType }/${ pendingOrReceiptId }`;
+	}
+
+	return;
+}
 function getPlanUpgradeUpsellUrl( {
 	pendingOrReceiptId,
 	cart,
@@ -436,10 +483,21 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
-	domains: Domain[] | undefined;
+	domains: SiteDomain[] | undefined;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
+	}
+
+	const monthlyToAnnualUpsellExperimentUrl = getMonthlyToAnnualUpsellUrl( {
+		pendingOrReceiptId,
+		cart,
+		orderId,
+		siteSlug,
+	} );
+
+	if ( monthlyToAnnualUpsellExperimentUrl ) {
+		return monthlyToAnnualUpsellExperimentUrl;
 	}
 
 	const professionalEmailUpsellUrl = getProfessionalEmailUpsellUrl( {
@@ -491,7 +549,7 @@ function getProfessionalEmailUpsellUrl( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	orderId: number | undefined;
-	domains: Domain[] | undefined;
+	domains: SiteDomain[] | undefined;
 } ): string | undefined {
 	if ( orderId || ! cart ) {
 		return;
@@ -521,7 +579,7 @@ function getProfessionalEmailUpsellUrl( {
 	// Uses either a domain being purchased, or the first domain eligible found in site domains
 	if ( domainRegistrations.length > 0 ) {
 		domainName = domainRegistrations[ 0 ].meta;
-	} else {
+	} else if ( siteSlug && domains ) {
 		const domain = getEligibleTitanDomain( siteSlug, domains, true );
 
 		if ( domain ) {

@@ -25,9 +25,7 @@ Simply extend the configuration from your project's `.eslintrc` configuration fi
 
 ```json
 {
-    "extends": [
-        "plugin:wpcalypso/recommended"
-    ]
+	"extends": [ "plugin:wpcalypso/recommended" ]
 }
 ```
 
@@ -35,9 +33,7 @@ Or, if your project uses React and you want to opt in to additional React-specif
 
 ```json
 {
-    "extends": [
-        "plugin:wpcalypso/react"
-    ]
+	"extends": [ "plugin:wpcalypso/react" ]
 }
 ```
 
@@ -55,9 +51,7 @@ First, add `wpcalypso` to the plugins section of your `.eslintrc` configuration 
 
 ```json
 {
-    "plugins": [
-        "wpcalypso"
-    ]
+	"plugins": [ "wpcalypso" ]
 }
 ```
 
@@ -65,9 +59,9 @@ Then configure the rules you want to use under the rules section.
 
 ```json
 {
-    "rules": {
-        "wpcalypso/rule-name": "error"
-    }
+	"rules": {
+		"wpcalypso/rule-name": "error"
+	}
 }
 ```
 

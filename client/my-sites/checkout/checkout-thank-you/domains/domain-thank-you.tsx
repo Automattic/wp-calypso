@@ -35,7 +35,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			hasProfessionalEmail,
 			hideProfessionalEmailStep,
 		} );
-	}, [ type, domain, selectedSiteSlug, email ] );
+	}, [ type, domain, selectedSiteSlug, email, hasProfessionalEmail, hideProfessionalEmailStep ] );
 
 	return (
 		<ThankYou

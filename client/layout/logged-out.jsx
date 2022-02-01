@@ -36,8 +36,10 @@ const LayoutLoggedOut = ( {
 	sectionTitle,
 	redirectUri,
 	useOAuth2Layout,
+	showGdprBanner,
 } ) => {
 	const isCheckout = sectionName === 'checkout';
+	const isCheckoutPending = sectionName === 'checkout-pending';
 	const isJetpackCheckout =
 		sectionName === 'checkout' && window.location.pathname.startsWith( '/checkout/jetpack' );
 
@@ -86,6 +88,7 @@ const LayoutLoggedOut = ( {
 				title={ sectionTitle }
 				sectionName={ sectionName }
 				isCheckout={ isCheckout }
+				isCheckoutPending={ isCheckoutPending }
 				redirectUri={ redirectUri }
 			/>
 		);
@@ -107,7 +110,7 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
-			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner /> }
+			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner showGdprBanner={ showGdprBanner } /> }
 		</div>
 	);
 };

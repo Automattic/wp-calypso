@@ -28,8 +28,11 @@ export default function WPCOMUpsellPage(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, trackEventName );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
-	const isAdmin = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
-	const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
+	const isAdmin = useSelector( ( state ) =>
+		canCurrentUser( state, siteId ?? 0, 'manage_options' )
+	);
+	const { product_slug: planSlug = '' } =
+		useSelector( ( state ) => getSitePlan( state, siteId ) ) ?? {};
 	const translate = useTranslate();
 	const promos: PromoSectionProps = {
 		promos: [

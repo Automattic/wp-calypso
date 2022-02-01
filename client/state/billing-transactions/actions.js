@@ -19,9 +19,8 @@ export const requestBillingTransactions = () => {
 			type: BILLING_TRANSACTIONS_REQUEST,
 		} );
 
-		return wp
-			.undocumented()
-			.billingHistory()
+		return wp.req
+			.get( '/me/billing-history', { apiVersion: '1.3' } )
 			.then( ( { billing_history, upcoming_charges } ) => {
 				dispatch( {
 					type: BILLING_TRANSACTIONS_RECEIVE,
@@ -48,10 +47,8 @@ export const sendBillingReceiptEmail = ( receiptId ) => {
 			receiptId,
 		} );
 
-		return wp
-			.undocumented()
-			.me()
-			.billingHistoryEmailReceipt( receiptId )
+		return wp.req
+			.get( `/me/billing-history/receipt/${ receiptId }/email` )
 			.then( () => {
 				dispatch( {
 					type: BILLING_RECEIPT_EMAIL_SEND_SUCCESS,

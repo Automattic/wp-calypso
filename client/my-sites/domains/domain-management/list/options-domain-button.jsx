@@ -1,8 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { Icon, moreVertical, plus, search } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -12,11 +11,7 @@ import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import {
-	domainAddNew,
-	domainManagementAllRoot,
-	domainUseMyDomain,
-} from 'calypso/my-sites/domains/paths';
+import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { composeAnalytics, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -26,11 +21,13 @@ class AddDomainButton extends Component {
 		selectedSiteSlug: PropTypes.string,
 		specificSiteActions: PropTypes.bool,
 		ellipsisButton: PropTypes.bool,
+		borderless: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		specificSiteActions: false,
 		ellipsisButton: false,
+		borderless: false,
 	};
 
 	state = {
@@ -62,7 +59,7 @@ class AddDomainButton extends Component {
 	};
 
 	renderOptions = () => {
-		const { specificSiteActions, translate } = this.props;
+		const { selectedSiteSlug, specificSiteActions, translate } = this.props;
 
 		if ( specificSiteActions ) {
 			const useYourDomainUrl = domainUseMyDomain( this.props.selectedSiteSlug );
@@ -81,16 +78,13 @@ class AddDomainButton extends Component {
 
 		return (
 			<Fragment>
-				{ ! config.isEnabled( 'domains/management-list-redesign' ) && (
-					<PopoverMenuItem href={ domainManagementAllRoot() } onClick={ this.trackMenuClick }>
-						{ translate( 'Manage all domains' ) }
-					</PopoverMenuItem>
-				) }
 				<PopoverMenuItem icon="plus" href="/new" onClick={ this.trackMenuClick }>
 					{ translate( 'Add a domain to a new site' ) }
 				</PopoverMenuItem>
 				<PopoverMenuItem icon="create" href="/domains/add" onClick={ this.trackMenuClick }>
-					{ translate( 'Add a domain to a different site' ) }
+					{ selectedSiteSlug
+						? translate( 'Add a domain to a different site' )
+						: translate( 'Add a domain to an existing site' ) }
 				</PopoverMenuItem>
 				<PopoverMenuItem icon="domains" href="/start/domain" onClick={ this.trackMenuClick }>
 					{ translate( 'Add a domain without a site' ) }
@@ -101,7 +95,6 @@ class AddDomainButton extends Component {
 
 	renderLabel() {
 		const { ellipsisButton, specificSiteActions, translate } = this.props;
-		const isRedesign = config.isEnabled( 'domains/management-list-redesign' );
 
 		if ( ellipsisButton ) {
 			return <Icon icon={ moreVertical } className="options-domain-button__ellipsis gridicon" />;
@@ -109,28 +102,19 @@ class AddDomainButton extends Component {
 
 		let label = translate( 'Other domain options' );
 		if ( specificSiteActions ) {
-			label = isRedesign ? translate( 'Add a domain' ) : translate( 'Add a domain to this site' );
-		}
-
-		if ( isRedesign ) {
-			return (
-				<>
-					<Icon icon={ plus } className="options-domain-button__add gridicon" viewBox="2 2 20 20" />
-					<span className="options-domain-button__desktop">{ label }</span>
-				</>
-			);
+			label = translate( 'Add a domain' );
 		}
 
 		return (
 			<>
-				{ label }
-				{ <Gridicon icon="chevron-down" /> }
+				<Icon icon={ plus } className="options-domain-button__add gridicon" viewBox="2 2 20 20" />
+				<span className="options-domain-button__desktop">{ label }</span>
 			</>
 		);
 	}
 
 	render() {
-		const { specificSiteActions, ellipsisButton } = this.props;
+		const { specificSiteActions, ellipsisButton, borderless } = this.props;
 		const classes = classNames( 'options-domain-button', ellipsisButton && 'ellipsis' );
 
 		return (
@@ -140,6 +124,7 @@ class AddDomainButton extends Component {
 					className={ classes }
 					onClick={ this.toggleAddMenu }
 					ref={ this.addDomainButtonRef }
+					borderless={ borderless }
 				>
 					{ this.renderLabel() }
 				</Button>

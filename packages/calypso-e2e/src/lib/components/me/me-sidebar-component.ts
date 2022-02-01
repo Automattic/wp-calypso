@@ -2,7 +2,8 @@ import { Page } from 'playwright';
 
 const selectors = {
 	// Menu items
-	menuItem: ( menu: string ) => `.sidebar a:has(span:has-text("${ menu }"))`,
+	menuItem: ( menu: string ) =>
+		`.sidebar a:has(span:has-text("${ menu }")), .sidebar a[href="${ menu }"]`,
 };
 
 /**
@@ -23,7 +24,7 @@ export class MeSidebarComponent {
 	/**
 	 * Given a string, navigate to the menu on the sidebar.
 	 *
-	 * @param {string} menu Menu item to navigate to.
+	 * @param {string} menu Menu item label or href to navigate to.
 	 */
 	async navigate( menu: string ): Promise< void > {
 		await Promise.all( [

@@ -13,7 +13,7 @@ export interface Category {
 	name: string;
 }
 
-export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
+export type DesignFeatures = 'anchorfm' | 'difm-lite-default'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
 export interface Design {
 	categories: Array< Category >;
@@ -21,6 +21,7 @@ export interface Design {
 	is_alpha?: boolean;
 	is_fse?: boolean;
 	is_premium: boolean;
+	stylesheet?: string;
 	slug: string;
 	template: string;
 	theme: string;
@@ -28,12 +29,18 @@ export interface Design {
 	title: string;
 	features: Array< DesignFeatures >;
 
+	// This design will appear at the top, regardless of category
+	showFirst?: boolean;
+
 	/**
 	 * Quickly hide a design from the picker without having to remove
 	 * it from the list of available design configs (stored in the
 	 * `@automattic/design-picker` package)
 	 */
 	hide?: boolean;
+
+	// designs with a "featured" term in the theme_picks taxonomy
+	is_featured_picks?: boolean;
 }
 
 export interface DesignUrlOptions {

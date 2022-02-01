@@ -14,6 +14,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
+import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import {
 	SUPPORT_TYPE_ADMIN_SECTION,
@@ -21,6 +22,7 @@ import {
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
 import PlaceholderLines from './placeholder-lines';
+import './inline-help-search-results.scss';
 
 const noop = () => {};
 
@@ -56,7 +58,11 @@ function HelpSearchResults( {
 	const hasPurchases = useSelector( hasCancelableUserPurchases );
 	const sectionName = useSelector( getSectionName );
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
-	const rawContextualResults = useMemo( () => getContextResults( sectionName ), [ sectionName ] );
+	const siteIntent = useSiteOption( 'site_intent' );
+	const rawContextualResults = useMemo( () => getContextResults( sectionName, siteIntent ), [
+		sectionName,
+		siteIntent,
+	] );
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const contextualResults = rawContextualResults.filter(

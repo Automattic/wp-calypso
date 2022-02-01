@@ -42,9 +42,15 @@ describe( 'getLanguageFileUrl()', () => {
 	} );
 
 	test( 'should append a revision cache buster.', () => {
-		const expected = getLanguageFilePathUrl() + 'zh-v1.1.js?v=123';
+		const expectedWithNumberRevision = getLanguageFilePathUrl() + 'zh-v1.1.js?v=123';
 
-		expect( getLanguageFileUrl( 'zh', 'js', { zh: 123 } ) ).toEqual( expected );
+		expect( getLanguageFileUrl( 'zh', 'js', { zh: 123 } ) ).toEqual( expectedWithNumberRevision );
+
+		const expectedWithStringRevision = getLanguageFilePathUrl() + 'de-v1.1.js?v=abc123';
+
+		expect( getLanguageFileUrl( 'de', 'js', { de: 'abc123' } ) ).toEqual(
+			expectedWithStringRevision
+		);
 	} );
 
 	test( 'should not append a revision cache buster for an unknown locale.', () => {
@@ -53,10 +59,10 @@ describe( 'getLanguageFileUrl()', () => {
 		expect( getLanguageFileUrl( 'kr', 'js', { xd: 222 } ) ).toEqual( expected );
 	} );
 
-	test( 'should not use a non-number revision', () => {
+	test( 'should not use a non-number-or-string revision', () => {
 		const expected = getLanguageFilePathUrl() + 'zh-v1.1.js';
 
-		expect( getLanguageFileUrl( 'zh', 'js', { zh: 'what-is-this?' } ) ).toEqual( expected );
+		expect( getLanguageFileUrl( 'zh', 'js', { zh: true } ) ).toEqual( expected );
 	} );
 } );
 

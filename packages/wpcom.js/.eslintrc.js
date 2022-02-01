@@ -10,6 +10,17 @@ module.exports = {
 			...nodeConfig,
 		},
 		{
+			files: [ './examples/**/package.json' ],
+			rules: {
+				'@automattic/json/require-repository-directory': 'off',
+				'@automattic/json/require-license': 'off',
+				'@automattic/json/valid-values-name-scope': 'off',
+				'@automattic/json/description-format': 'off',
+				'@automattic/json/valid-values-author': 'off',
+			},
+		},
+
+		{
 			files: './test/**/*',
 			rules: {
 				// These files use a weird mixture of CJS and ESM. Disabling the rules for now until they can

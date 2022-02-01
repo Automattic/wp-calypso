@@ -26,9 +26,7 @@ export default function PortalNav( { className = '' }: Props ): ReactElement | n
 	const partnerFetched = useSelector( hasFetchedPartner );
 	const partner = useSelector( getCurrentPartner );
 	const isManagingSites = ! useSelector( isPartnerPortal );
-	const selectedText = isManagingSites
-		? translate( 'Manage Sites' )
-		: translate( 'Partner Portal' );
+	const selectedText = isManagingSites ? translate( 'Manage Sites' ) : translate( 'Licensing' );
 	const show = partnerFetched && partner;
 
 	if ( ! isSectionNameEnabled( 'jetpack-cloud-partner-portal' ) ) {
@@ -63,9 +61,9 @@ export default function PortalNav( { className = '' }: Props ): ReactElement | n
 						<NavItem
 							path="/partner-portal"
 							selected={ ! isManagingSites }
-							onClick={ () => onNavItemClick( 'Partner Portal' ) }
+							onClick={ () => onNavItemClick( 'Licensing' ) }
 						>
-							{ translate( 'Partner Portal' ) }
+							{ translate( 'Licensing' ) }
 						</NavItem>
 					</NavTabs>
 				</SectionNav>

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -14,11 +13,13 @@ import {
 	sharingButtons,
 	traffic,
 	ultimateTrafficGuide,
-	doItForMeLandingPage,
-	doItForMeSiteInformationCollection,
 } from './controller';
 
 export default function () {
+	page( '/marketing/do-it-for-me*', function redirectToDIFMLandingPage() {
+		window.location.replace( 'https://wordpress.com/do-it-for-me' );
+	} );
+
 	const paths = [
 		'/marketing',
 		'/marketing/connections',
@@ -30,11 +31,6 @@ export default function () {
 		'/sharing/buttons',
 		'/marketing/business-tools',
 	];
-
-	if ( config.isEnabled( 'difm-lite-pilot' ) ) {
-		paths.push( '/marketing/do-it-for-me/landing' );
-		paths.push( '/marketing/do-it-for-me/site-info' );
-	}
 
 	paths.forEach( ( path ) => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
 
@@ -105,25 +101,4 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
-	if ( config.isEnabled( 'difm-lite-pilot' ) ) {
-		page(
-			'/marketing/do-it-for-me/landing/:domain',
-			siteSelection,
-			sites,
-			navigation,
-			doItForMeLandingPage,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/marketing/do-it-for-me/site-info/:domain',
-			siteSelection,
-			sites,
-			navigation,
-			doItForMeSiteInformationCollection,
-			makeLayout,
-			clientRender
-		);
-	}
 }

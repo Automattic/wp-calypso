@@ -34,6 +34,7 @@ import {
 	PLUGIN_REMOVE_REQUEST,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
+	SITE_PLUGIN_UPDATED,
 } from 'calypso/state/action-types';
 import {
 	fetchSitePlugins,
@@ -301,6 +302,20 @@ describe( 'actions', () => {
 			} );
 		} );
 
+		test( 'should dispatch site update action when request completes', () => {
+			const response = updatePlugin( site.ID, {
+				slug: 'jetpack',
+				id: 'jetpack/jetpack',
+				update: {},
+			} )( spy, getState );
+			return response.then( () => {
+				expect( spy ).toHaveBeenCalledWith( {
+					type: SITE_PLUGIN_UPDATED,
+					siteId: 2916284,
+				} );
+			} );
+		} );
+
 		test( 'should dispatch fail action when request fails', () => {
 			const response = updatePlugin( site.ID, { slug: 'fake', id: 'fake/fake', update: {} } )(
 				spy,
@@ -500,9 +515,9 @@ describe( 'actions', () => {
 		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2916284/plugins/jetpack/install' )
+				.post( '/rest/v1.1/sites/2916284/plugins/install', { slug: 'jetpack' } )
 				.reply( 200, jetpackUpdated )
-				.post( '/rest/v1.1/sites/2916284/plugins/fake/install' )
+				.post( '/rest/v1.1/sites/2916284/plugins/install', { slug: 'fake' } )
 				.reply( 400, {
 					error: 'unknown_plugin',
 					message: 'Plugin file does not exist.',

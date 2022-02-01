@@ -1,4 +1,5 @@
 import { Modal } from '@wordpress/components';
+import { useEffect, useRef } from '@wordpress/element';
 import classnames from 'classnames';
 import React from 'react';
 import './style.scss';
@@ -11,6 +12,7 @@ interface Props {
 	imageSrc: string;
 	actionButtons: React.ReactElement;
 	onRequestClose: () => void;
+	onOpen?: () => void;
 }
 
 const NuxModal: React.FC< Props > = ( {
@@ -21,7 +23,18 @@ const NuxModal: React.FC< Props > = ( {
 	imageSrc,
 	actionButtons,
 	onRequestClose,
+	onOpen,
 } ) => {
+	const prevIsOpen = useRef< boolean | null >( null );
+
+	useEffect( () => {
+		if ( ! prevIsOpen.current && isOpen ) {
+			onOpen?.();
+		}
+
+		prevIsOpen.current = isOpen;
+	}, [ prevIsOpen, isOpen, onOpen ] );
+
 	if ( ! isOpen ) {
 		return null;
 	}

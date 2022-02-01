@@ -1,7 +1,9 @@
 {
 	"name": "@automattic/mocha-debug-reporter",
 	"version": "0.1.0",
-	"description": "Mocha reporter that dumps all info about the test execution",
+	"description": "Mocha reporter that dumps all info about the test execution.",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
 	"main": "dist/cjs/cjs.js",
 	"author": "Automattic Inc.",
 	"repository": {
@@ -19,14 +21,14 @@
 		"@types/mocha": "^9.0.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"typescript": "^4.4.3"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.5.5"
 	},
 	"peerDependencies": {
 		"mocha": ">=8.0.0"
 	},
 	"scripts": {
-		"clean": "yarn build --clean && npx rimraf dist",
+		"clean": "yarn build --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json"
 	}
 }

@@ -9,7 +9,7 @@ import ReaderSidebarHelper from '../helper';
 import '../style.scss';
 
 const ReaderSidebarFollowingItem = ( props ) => {
-	const { site, path } = props;
+	const { site, path, isUnseen } = props;
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 
@@ -56,7 +56,7 @@ const ReaderSidebarFollowingItem = ( props ) => {
 						{ site.last_updated > 0 && moment( new Date( site.last_updated ) ).fromNow() }
 					</span>
 				</span>
-				{ site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
+				{ isUnseen && site.unseen_count > 0 && <Count count={ site.unseen_count } compact /> }
 			</a>
 		</li>
 	);

@@ -92,7 +92,7 @@ export const MarketingTools: FunctionComponent = () => {
 		page( marketingUltimateTrafficGuide( selectedSiteSlug ) );
 	};
 
-	const isEnglish = config( 'english_locales' ).includes( getLocaleSlug() );
+	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
 
 	return (
 		<Fragment>

@@ -9,15 +9,10 @@ Shortcode is a React component enabling sandboxed rendering of a shortcode strin
 Simply pass a site ID and a shortcode string child. The component will automatically trigger a network request to retrieve the rendered shortcode.
 
 ```jsx
-import React from 'react';
 import Shortcode from 'calypso/blocks/shortcode';
 
-export default class extends React.Component {
-	static displayName = 'MyComponent';
-
-	render() {
-		return <Shortcode siteId={ 6393289 }>[gallery ids="31860,31856"]</Shortcode>;
-	}
+export default function MyComponent() {
+	return <Shortcode siteId={ 6393289 }>[gallery ids="31860,31856"]</Shortcode>;
 }
 ```
 

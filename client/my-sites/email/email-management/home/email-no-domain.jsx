@@ -2,7 +2,7 @@ import { isFreePlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import Illustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
+import Illustration from 'calypso/assets/images/domains/domain.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import { recordInboxUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';

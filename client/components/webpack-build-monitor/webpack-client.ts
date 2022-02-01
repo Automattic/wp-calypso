@@ -47,6 +47,13 @@ function reportProblems( type: string, problems: string[] ) {
 	}
 }
 
+type HotModule = {
+	hot?: {
+		status: () => string;
+		check: ( a: boolean ) => Promise< string[] >;
+	};
+};
+
 function processUpdate( message: UpdateMessage, setBuildState: BuildStateSetter ) {
 	const { errors, warnings, hash } = message;
 
@@ -66,19 +73,20 @@ function processUpdate( message: UpdateMessage, setBuildState: BuildStateSetter 
 	}
 
 	// if the webpack runtime doesn't have the hot reload plugin, reload is always needed
-	if ( ! module.hot ) {
+	const { hot } = module as HotModule;
+	if ( ! hot ) {
 		setBuildState( BuildState.NEEDS_RELOAD );
 		return;
 	}
 
 	// hot update already in progress, triggered by another message handler
-	if ( module.hot.status() !== 'idle' ) {
+	if ( hot.status() !== 'idle' ) {
 		return;
 	}
 
 	setBuildState( BuildState.UPDATING );
 
-	module.hot
+	hot
 		.check( true )
 		.then( ( updatedModules ) => {
 			setBuildState( BuildState.IDLE );

@@ -9,9 +9,6 @@ export const remoteValuesSchema = {
 		},
 	},
 	properties: {
-		mediaModalGalleryInstructionsDismissed: {
-			type: 'boolean',
-		},
 		'guided-tours-history': {
 			type: 'array',
 			items: {
@@ -35,10 +32,6 @@ export const remoteValuesSchema = {
 			type: 'number',
 			minimum: 0,
 			maximum: 1,
-		},
-		editorConfirmationDisabledSites: {
-			type: 'array',
-			items: { type: 'number' },
 		},
 		colorScheme: {
 			type: 'string',

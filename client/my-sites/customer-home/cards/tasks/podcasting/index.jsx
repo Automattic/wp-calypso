@@ -14,6 +14,7 @@ const Podcasting = () => {
 			) }
 			actionText={ translate( 'Create an Anchor account' ) }
 			actionUrl={ `https://anchor.fm/wordpressdotcom` }
+			actionTarget="_blank"
 			illustration={ podcastingIllustration }
 			taskId={ TASK_PODCASTING }
 		/>

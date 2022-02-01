@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
@@ -17,7 +18,6 @@ import {
 	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
 	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
 	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
-	CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
 	CONCIERGE_WPCOM_BUSINESS_ID,
 	CONCIERGE_WPCOM_SESSION_PRODUCT_ID,
 } from 'calypso/me/concierge/constants';
@@ -35,6 +35,7 @@ import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-n
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
 import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import getSites from 'calypso/state/selectors/get-sites';
+import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import ConciergeBanner from '../concierge-banner';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
@@ -80,7 +81,7 @@ class PurchasesList extends Component {
 					bannerType = CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION;
 			}
 		} else {
-			bannerType = CONCIERGE_SUGGEST_PURCHASE_CONCIERGE;
+			return;
 		}
 
 		return (
@@ -104,7 +105,7 @@ class PurchasesList extends Component {
 	}
 
 	render() {
-		const { purchases, sites, translate, subscriptions } = this.props;
+		const { cards, purchases, sites, translate, subscriptions } = this.props;
 		let content;
 
 		if ( this.isDataLoading() ) {
@@ -126,6 +127,7 @@ class PurchasesList extends Component {
 							slug={ site.slug }
 							purchases={ site.purchases }
 							showSite={ true }
+							cards={ cards }
 						/>
 					) ) }
 				</>
@@ -166,6 +168,7 @@ class PurchasesList extends Component {
 		return (
 			<Main wideLayout className="purchases-list">
 				<QueryUserPurchases />
+				<QueryStoredCards />
 				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
@@ -201,6 +204,7 @@ PurchasesList.propTypes = {
 
 export default connect(
 	( state ) => ( {
+		cards: getAllStoredCards( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		isFetchingUserPurchases: isFetchingUserPurchases( state ),
 		purchases: getUserPurchases( state ),

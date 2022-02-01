@@ -47,11 +47,6 @@ export class SiteSettingsNavigation extends Component {
 			return <SectionNav />;
 		}
 
-		if ( section === 'guidedTransfer' ) {
-			// Dont show the navigation for guided transfer since it includes its own back navigation
-			return null;
-		}
-
 		return (
 			<SectionNav selectedText={ selectedText }>
 				<NavTabs>

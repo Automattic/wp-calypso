@@ -8,20 +8,14 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import { map } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
 import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
 
 function MyJetpackSettings( { settings, siteId } ) {
-	const query = {
-		token: 'skyfKuaiKjbd8mK0Ngo75XyzfeKjp8sA',
-		userEmail: 'exampleuser@yourgroovydomain.com',
-	};
-
 	return (
 		<div>
-			<QueryJetpackSettings query={ query } siteId={ siteId } />
+			<QueryJetpackSettings siteId={ siteId } />
 			{ map( settings, ( value, name ) => (
 				<div>
 					{ name }: { value.toString() }
@@ -46,12 +40,3 @@ export default connect( ( state, { siteId } ) => ( {
 </table>
 
 The site ID for which Jetpack Settings should be requested.
-
-### `query`
-
-<table>
-	<tr><th>Type</th><td>Object</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-</table>
-
-A query to use when requesting Jetpack Settings.

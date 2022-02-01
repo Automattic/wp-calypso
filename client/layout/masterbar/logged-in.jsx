@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
@@ -7,13 +8,12 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
-import { requestHttpData } from 'calypso/state/data-layer/http-data';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import getPreviousPath from 'calypso/state/selectors/get-previous-path.js';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -47,6 +47,7 @@ class MasterbarLoggedIn extends Component {
 		siteSlug: PropTypes.string,
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
+		isCheckoutPending: PropTypes.bool,
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
@@ -94,31 +95,23 @@ class MasterbarLoggedIn extends Component {
 		 *
 		 * This code makes it possible to reset the failed migration state when clicking My Sites too.
 		 */
-		if ( config.isEnabled( 'tools/migrate' ) ) {
-			const { migrationStatus, currentSelectedSiteId } = this.props;
+		const { migrationStatus, currentSelectedSiteId } = this.props;
 
-			if ( currentSelectedSiteId && migrationStatus === 'error' ) {
-				/**
-				 * Reset the in-memory site lock for the currently selected site
-				 */
-				this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null );
+		if ( currentSelectedSiteId && migrationStatus === 'error' ) {
+			/**
+			 * Reset the in-memory site lock for the currently selected site
+			 */
+			this.props.updateSiteMigrationMeta( currentSelectedSiteId, 'inactive', null );
 
-				/**
-				 * Reset the migration on the backend
-				 */
-				requestHttpData(
-					'site-migration',
-					http( {
-						apiNamespace: 'wpcom/v2',
-						method: 'POST',
-						path: `/sites/${ currentSelectedSiteId }/reset-migration`,
-						body: {},
-					} ),
-					{
-						freshness: 0,
-					}
-				);
-			}
+			/**
+			 * Reset the migration on the backend
+			 */
+			wpcom.req
+				.post( {
+					path: `/sites/${ currentSelectedSiteId }/reset-migration`,
+					apiNamespace: 'wpcom/v2',
+				} )
+				.catch( () => {} );
 		}
 	};
 
@@ -153,6 +146,15 @@ class MasterbarLoggedIn extends Component {
 
 	preloadMe = () => {
 		preload( 'me' );
+	};
+
+	goToCheckout = ( siteId ) => {
+		this.props.recordTracksEvent( 'calypso_masterbar_cart_go_to_checkout' );
+		page( `/checkout/${ siteId }` );
+	};
+
+	onRemoveCartProduct = ( uuid = 'coupon' ) => {
+		this.props.recordTracksEvent( 'calypso_masterbar_cart_remove_product', { uuid } );
 	};
 
 	isActive = ( section ) => {
@@ -208,16 +210,19 @@ class MasterbarLoggedIn extends Component {
 			domainOnlySite,
 			translate,
 			isCheckout,
+			isCheckoutPending,
 			isMigrationInProgress,
 			previousPath,
 			siteSlug,
 			isJetpackNotAtomic,
 			title,
+			currentSelectedSiteSlug,
+			currentSelectedSiteId,
 		} = this.props;
 
 		const { isActionSearchVisible } = this.state;
 
-		if ( isCheckout ) {
+		if ( isCheckout || isCheckoutPending ) {
 			return (
 				<AsyncLoad
 					require="calypso/layout/masterbar/checkout.tsx"
@@ -226,6 +231,7 @@ class MasterbarLoggedIn extends Component {
 					isJetpackNotAtomic={ isJetpackNotAtomic }
 					previousPath={ previousPath }
 					siteSlug={ siteSlug }
+					isLeavingAllowed={ ! isCheckoutPending }
 				/>
 			);
 		}
@@ -240,74 +246,91 @@ class MasterbarLoggedIn extends Component {
 					/>
 				) : null }
 				<Masterbar>
-					{ this.renderMySites() }
-					<Item
-						tipTarget="reader"
-						className="masterbar__reader"
-						url="/read"
-						icon="reader"
-						onClick={ this.clickReader }
-						isActive={ this.isActive( 'reader' ) }
-						tooltip={ translate( 'Read the blogs and topics you follow' ) }
-						preloadSection={ this.preloadReader }
-					>
-						{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-					</Item>
-					{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
-						<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
-					) }
-					{ isWordPressActionSearchFeatureEnabled && (
+					<div className="masterbar__section masterbar__section--left">
+						{ this.renderMySites() }
 						<Item
-							tipTarget="Action Search"
-							icon="search"
-							onClick={ this.clickSearchActions }
-							isActive={ false }
-							className="masterbar__item-action-search"
-							tooltip={ translate( 'Search' ) }
+							tipTarget="reader"
+							className="masterbar__reader"
+							url="/read"
+							icon="reader"
+							onClick={ this.clickReader }
+							isActive={ this.isActive( 'reader' ) }
+							tooltip={ translate( 'Read the blogs and topics you follow' ) }
+							preloadSection={ this.preloadReader }
+						>
+							{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+						</Item>
+						{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
+							<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
+						) }
+						{ isWordPressActionSearchFeatureEnabled && (
+							<Item
+								tipTarget="Action Search"
+								icon="search"
+								onClick={ this.clickSearchActions }
+								isActive={ false }
+								className="masterbar__item-action-search"
+								tooltip={ translate( 'Search' ) }
+								preloadSection={ this.preloadMe }
+							>
+								{ translate( 'Search Actions' ) }
+							</Item>
+						) }
+					</div>
+					<div className="masterbar__section masterbar__section--center">
+						<AsyncLoad require="calypso/my-sites/resume-editing" placeholder={ null } />
+						{ ! domainOnlySite && ! isMigrationInProgress && (
+							<AsyncLoad
+								require="./publish"
+								placeholder={ null }
+								isActive={ this.isActive( 'post' ) }
+								className="masterbar__item-new"
+								tooltip={ translate( 'Create a New Post' ) }
+							>
+								{ translate( 'Write' ) }
+							</AsyncLoad>
+						) }
+					</div>
+					<div className="masterbar__section masterbar__section--right">
+						<AsyncLoad
+							require="./masterbar-cart/masterbar-cart-wrapper"
+							placeholder={ null }
+							goToCheckout={ this.goToCheckout }
+							onRemoveProduct={ this.onRemoveCartProduct }
+							onRemoveCoupon={ this.onRemoveCartProduct }
+							selectedSiteSlug={ currentSelectedSiteSlug }
+							selectedSiteId={ currentSelectedSiteId }
+						/>
+						<Item
+							tipTarget="me"
+							url="/me"
+							icon="user-circle"
+							onClick={ this.clickMe }
+							isActive={ this.isActive( 'me' ) }
+							className="masterbar__item-me"
+							tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 							preloadSection={ this.preloadMe }
 						>
-							{ translate( 'Search Actions' ) }
+							<Gravatar user={ this.props.user } alt={ translate( 'My Profile' ) } size={ 18 } />
+							<span className="masterbar__item-me-label">
+								{ translate( 'My Profile', {
+									context: 'Toolbar, must be shorter than ~12 chars',
+								} ) }
+							</span>
 						</Item>
-					) }
-					<AsyncLoad require="calypso/my-sites/resume-editing" placeholder={ null } />
-					{ ! domainOnlySite && ! isMigrationInProgress && (
-						<AsyncLoad
-							require="./publish"
-							placeholder={ null }
-							isActive={ this.isActive( 'post' ) }
-							className="masterbar__item-new"
-							tooltip={ translate( 'Create a New Post' ) }
+						<Notifications
+							isShowing={ this.props.isNotificationsShowing }
+							isActive={ this.isActive( 'notifications' ) }
+							className="masterbar__item-notifications"
+							tooltip={ translate( 'Manage your notifications' ) }
 						>
-							{ translate( 'Write' ) }
-						</AsyncLoad>
-					) }
-					<Item
-						tipTarget="me"
-						url="/me"
-						icon="user-circle"
-						onClick={ this.clickMe }
-						isActive={ this.isActive( 'me' ) }
-						className="masterbar__item-me"
-						tooltip={ translate( 'Update your profile, personal settings, and more' ) }
-						preloadSection={ this.preloadMe }
-					>
-						<Gravatar user={ this.props.user } alt={ translate( 'My Profile' ) } size={ 18 } />
-						<span className="masterbar__item-me-label">
-							{ translate( 'My Profile', { context: 'Toolbar, must be shorter than ~12 chars' } ) }
-						</span>
-					</Item>
-					<Notifications
-						isShowing={ this.props.isNotificationsShowing }
-						isActive={ this.isActive( 'notifications' ) }
-						className="masterbar__item-notifications"
-						tooltip={ translate( 'Manage your notifications' ) }
-					>
-						<span className="masterbar__item-notifications-label">
-							{ translate( 'Notifications', {
-								comment: 'Toolbar, must be shorter than ~12 chars',
-							} ) }
-						</span>
-					</Notifications>
+							<span className="masterbar__item-notifications-label">
+								{ translate( 'Notifications', {
+									comment: 'Toolbar, must be shorter than ~12 chars',
+								} ) }
+							</span>
+						</Notifications>
+					</div>
 				</Masterbar>
 			</>
 		);
@@ -336,7 +359,10 @@ export default connect(
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
-			previousPath: getPreviousPath( state ),
+			currentSelectedSiteSlug: currentSelectedSiteId
+				? getSiteSlug( state, currentSelectedSiteId )
+				: undefined,
+			previousPath: getPreviousRoute( state ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),

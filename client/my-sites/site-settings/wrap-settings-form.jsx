@@ -38,7 +38,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			uniqueEvents: {},
 		};
 
-		UNSAFE_componentWillMount() {
+		componentDidMount() {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
 		}
 
@@ -174,7 +174,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			}
 
 			const siteFields = pick( fields, settingsFields.site );
-			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion: '1.4' } );
+			this.props.saveSiteSettings( siteId, siteFields );
 		};
 
 		handleRadio = ( event ) => {

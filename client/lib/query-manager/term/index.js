@@ -1,4 +1,3 @@
-import { includes } from 'lodash';
 import PaginatedQueryManager from '../paginated';
 import { DEFAULT_TERM_QUERY } from './constants';
 import TermQueryKey from './key';
@@ -24,8 +23,8 @@ export default class TermQueryManager extends PaginatedQueryManager {
 
 		const search = query.search.toLowerCase();
 		return (
-			( term.name && includes( term.name.toLowerCase(), search ) ) ||
-			( term.slug && includes( term.slug.toLowerCase(), search ) )
+			( term.name && term.name.toLowerCase().includes( search ) ) ||
+			( term.slug && term.slug.toLowerCase().includes( search ) )
 		);
 	}
 

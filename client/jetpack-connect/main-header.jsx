@@ -7,7 +7,6 @@ import {
 	PRODUCTS_LIST,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { concat } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -15,7 +14,7 @@ import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 
 class JetpackConnectMainHeader extends Component {
 	static propTypes = {
-		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
+		type: PropTypes.oneOf( [ ...FLOW_TYPES, false ] ),
 	};
 
 	getTexts() {

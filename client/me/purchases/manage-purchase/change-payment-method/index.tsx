@@ -1,4 +1,8 @@
-import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import {
+	StripeHookProvider,
+	StripeSetupIntentIdProvider,
+	useStripe,
+} from '@automattic/calypso-stripe';
 import page from 'page';
 import { Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -126,12 +130,10 @@ function getChangePaymentMethodTitleCopy( currentPaymentMethodId: string ): stri
 export default function ChangePaymentMethodWrapper( props: ChangePaymentMethodProps ): JSX.Element {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
-		<StripeHookProvider
-			locale={ locale }
-			configurationArgs={ { needs_intent: true } }
-			fetchStripeConfiguration={ getStripeConfiguration }
-		>
-			<ChangePaymentMethod { ...props } />
+		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
+			<StripeSetupIntentIdProvider fetchStipeSetupIntentId={ getStripeConfiguration }>
+				<ChangePaymentMethod { ...props } />
+			</StripeSetupIntentIdProvider>
 		</StripeHookProvider>
 	);
 }

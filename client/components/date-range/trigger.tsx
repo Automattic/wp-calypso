@@ -1,8 +1,8 @@
 import { Button, ScreenReaderText, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Moment } from 'moment';
-import { FunctionComponent } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
+import type { Moment } from 'moment';
+import type { FunctionComponent, Ref } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
@@ -12,7 +12,7 @@ interface Props {
 	endDate: Date | Moment | null | undefined;
 	startDateText: string;
 	endDateText: string;
-	buttonRef: Record< string, unknown >;
+	buttonRef: Ref< HTMLAnchorElement | HTMLButtonElement > | undefined;
 	onTriggerClick: () => void;
 	onClearClick: () => void;
 	triggerText: ( startDateText: string, endDateText: string ) => string;

@@ -9,8 +9,14 @@ import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import Search from 'calypso/components/search';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import StickyPanel from 'calypso/components/sticky-panel';
-import { getThemeFilters, getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
+import {
+	arePremiumThemesEnabled,
+	getThemeFilters,
+	getThemeFilterToTermTable,
+} from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MagicSearchWelcome from './welcome';
 
 import './style.scss';
@@ -20,11 +26,19 @@ const preferredOrderOfTaxonomies = [ 'feature', 'layout', 'column', 'subject', '
 
 class ThemesMagicSearchCard extends Component {
 	static propTypes = {
+		tier: PropTypes.string,
+		select: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		onSearch: PropTypes.func.isRequired,
 		search: PropTypes.string,
 		translate: PropTypes.func.isRequired,
+		showTierThemesControl: PropTypes.bool,
 		isBreakpointActive: PropTypes.bool, // comes from withMobileBreakpoint HOC
+	};
+
+	static defaultProps = {
+		tier: 'all',
+		showTierThemesControl: true,
 	};
 
 	constructor( props ) {
@@ -268,8 +282,14 @@ class ThemesMagicSearchCard extends Component {
 	};
 
 	render() {
-		const { translate, filters } = this.props;
+		const { translate, filters, showTierThemesControl, premiumThemesEnabled } = this.props;
 		const { isPopoverVisible } = this.state;
+
+		const tiers = [
+			{ value: 'all', label: translate( 'All' ) },
+			{ value: 'free', label: translate( 'Free' ) },
+			{ value: 'premium', label: translate( 'Premium' ) },
+		];
 
 		const filtersKeys = [
 			...intersection( preferredOrderOfTaxonomies, Object.keys( filters ) ),
@@ -363,6 +383,14 @@ class ThemesMagicSearchCard extends Component {
 						onClick={ this.handleClickInside }
 					>
 						{ searchField }
+						{ premiumThemesEnabled && showTierThemesControl && (
+							<SimplifiedSegmentedControl
+								key={ this.props.tier }
+								initialSelected={ this.props.tier || 'all' }
+								options={ tiers }
+								onSelect={ this.props.select }
+							/>
+						) }
 					</div>
 				</StickyPanel>
 			</div>
@@ -377,10 +405,16 @@ const allowSomeAllValidFilters = ( filtersKeys ) =>
 	intersection( filtersKeys, [ 'feature', 'column', 'subject' ] );
 
 export default compose(
-	connect( ( state ) => ( {
-		filters: allowSomeThemeFilters( getThemeFilters( state ) ),
-		allValidFilters: allowSomeAllValidFilters( Object.keys( getThemeFilterToTermTable( state ) ) ),
-	} ) ),
+	connect( ( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return {
+			premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
+			filters: allowSomeThemeFilters( getThemeFilters( state ) ),
+			allValidFilters: allowSomeAllValidFilters(
+				Object.keys( getThemeFilterToTermTable( state ) )
+			),
+		};
+	} ),
 	localize,
 	wrapWithClickOutside,
 	withMobileBreakpoint

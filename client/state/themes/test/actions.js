@@ -305,7 +305,6 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'with a Jetpack site', () => {
-			// see lib/wpcom-undocumented/lib/undocumented#jetpackThemeDetails
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
@@ -1199,7 +1198,7 @@ describe( 'actions', () => {
 	describe( '#requestThemeFilters', () => {
 		test( 'should return THEME_FILTERS_REQUEST action', () => {
 			const action = requestThemeFilters();
-			expect( action ).to.deep.equal( { type: THEME_FILTERS_REQUEST } );
+			expect( action ).to.deep.equal( { type: THEME_FILTERS_REQUEST, locale: null } );
 		} );
 	} );
 

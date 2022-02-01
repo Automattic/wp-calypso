@@ -1,12 +1,10 @@
 import { ThemeProvider } from '@emotion/react';
-import { DataRegistry } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CheckoutContext from '../lib/checkout-context';
 import { useFormStatusManager } from '../lib/form-status';
 import { LineItemsProvider } from '../lib/line-items';
-import { defaultRegistry, RegistryProvider } from '../lib/registry';
 import defaultTheme from '../lib/theme';
 import { useTransactionStatusManager } from '../lib/transaction-status';
 import {
@@ -46,12 +44,12 @@ export function CheckoutProvider( {
 	onPaymentRedirect,
 	onPaymentError,
 	onPageLoadError,
+	onStepChanged,
+	onPaymentMethodChanged,
 	redirectToUrl,
 	theme,
 	paymentMethods,
 	paymentProcessors,
-	registry,
-	onEvent,
 	isLoading,
 	isValidating,
 	initiallySelectedPaymentMethodId = null,
@@ -64,8 +62,6 @@ export function CheckoutProvider( {
 		theme,
 		paymentMethods,
 		paymentProcessors,
-		registry,
-		onEvent,
 		isLoading,
 		isValidating,
 		children,
@@ -111,31 +107,29 @@ export function CheckoutProvider( {
 		transactionLastResponse,
 	} );
 
-	// Create the registry automatically if it's not a prop
-	const registryRef = useRef< DataRegistry | undefined >( registry );
-	registryRef.current = registryRef.current || defaultRegistry;
-
 	const value = useMemo(
 		() => ( {
 			allPaymentMethods: paymentMethods,
 			paymentMethodId,
 			setPaymentMethodId,
-			onEvent: onEvent || noop,
 			formStatus,
 			setFormStatus,
 			transactionStatusManager,
 			paymentProcessors,
 			onPageLoadError,
+			onStepChanged,
+			onPaymentMethodChanged,
 		} ),
 		[
 			formStatus,
-			onEvent,
 			paymentMethodId,
 			paymentMethods,
 			setFormStatus,
 			transactionStatusManager,
 			paymentProcessors,
 			onPageLoadError,
+			onStepChanged,
+			onPaymentMethodChanged,
 		]
 	);
 
@@ -151,21 +145,16 @@ export function CheckoutProvider( {
 		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onLoadError }>
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
-				<RegistryProvider value={ registryRef.current }>
-					<LineItemsProvider items={ items } total={ total }>
-						<CheckoutContext.Provider value={ value }>
-							<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
-							{ children }
-						</CheckoutContext.Provider>
-					</LineItemsProvider>
-				</RegistryProvider>
+				<LineItemsProvider items={ items } total={ total }>
+					<CheckoutContext.Provider value={ value }>
+						<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
+						{ children }
+					</CheckoutContext.Provider>
+				</LineItemsProvider>
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
 	);
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop(): void {}
 
 function CheckoutProviderPropValidator( {
 	propsToValidate,
@@ -206,30 +195,48 @@ function useCallEventCallbacks( {
 	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
 } ): void {
-	useEffect( () => {
-		if ( onPaymentComplete && formStatus === FormStatus.COMPLETE ) {
-			debug( "form status is complete so I'm calling onPaymentComplete" );
-			onPaymentComplete( { paymentMethodId, transactionLastResponse } );
-		}
-	}, [ formStatus, onPaymentComplete, transactionLastResponse, paymentMethodId ] );
+	// Store the callbacks as refs so we do not call them more than once if they
+	// are anonymous functions. This way they are only called when the
+	// transactionStatus/formStatus changes, which is what we really want.
+	const paymentCompleteRef = useRef( onPaymentComplete );
+	paymentCompleteRef.current = onPaymentComplete;
+	const paymentRedirectRef = useRef( onPaymentRedirect );
+	paymentRedirectRef.current = onPaymentRedirect;
+	const paymentErrorRef = useRef( onPaymentError );
+	paymentErrorRef.current = onPaymentError;
+
+	const prevFormStatus = useRef< FormStatus >();
+	const prevTransactionStatus = useRef< TransactionStatus >();
 
 	useEffect( () => {
-		if ( onPaymentRedirect && transactionStatus === TransactionStatus.REDIRECTING ) {
-			debug( "transaction status is redirecting so I'm calling onPaymentRedirect" );
-			onPaymentRedirect( { paymentMethodId, transactionLastResponse } );
+		if (
+			paymentCompleteRef.current &&
+			formStatus === FormStatus.COMPLETE &&
+			formStatus !== prevFormStatus.current
+		) {
+			debug( "form status changed to complete so I'm calling onPaymentComplete" );
+			paymentCompleteRef.current( { paymentMethodId, transactionLastResponse } );
 		}
-	}, [
-		transactionStatus,
-		onPaymentRedirect,
-		onPaymentError,
-		paymentMethodId,
-		transactionLastResponse,
-	] );
+		prevFormStatus.current = formStatus;
+	}, [ formStatus, transactionLastResponse, paymentMethodId ] );
 
 	useEffect( () => {
-		if ( onPaymentError && transactionStatus === TransactionStatus.ERROR ) {
-			debug( "transaction status is error so I'm calling onPaymentError" );
-			onPaymentError( { paymentMethodId, transactionError } );
+		if (
+			paymentRedirectRef.current &&
+			transactionStatus === TransactionStatus.REDIRECTING &&
+			transactionStatus !== prevTransactionStatus.current
+		) {
+			debug( "transaction status changed to redirecting so I'm calling onPaymentRedirect" );
+			paymentRedirectRef.current( { paymentMethodId, transactionLastResponse } );
 		}
-	}, [ transactionStatus, onPaymentRedirect, onPaymentError, paymentMethodId, transactionError ] );
+		if (
+			paymentErrorRef.current &&
+			transactionStatus === TransactionStatus.ERROR &&
+			transactionStatus !== prevTransactionStatus.current
+		) {
+			debug( "transaction status changed to error so I'm calling onPaymentError" );
+			paymentErrorRef.current( { paymentMethodId, transactionError } );
+		}
+		prevTransactionStatus.current = transactionStatus;
+	}, [ transactionStatus, paymentMethodId, transactionLastResponse, transactionError ] );
 }

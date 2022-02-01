@@ -28,8 +28,6 @@ export const sendEmailLogin = (
 		createAccount = false,
 	}
 ) => {
-	//Kind of weird usage, but this is a straight port from undocumented.js for now.
-	//I can move this to the caller, if there's equivalent info in the state tree
 	const locale = getLocaleSlug();
 	const lang_id = getLanguage( locale ).value;
 

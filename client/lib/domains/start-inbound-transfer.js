@@ -1,19 +1,12 @@
 import wpcom from 'calypso/lib/wp';
 
-export function startInboundTransfer( siteId, domainName, authCode, onComplete ) {
-	if ( ! domainName || ! siteId ) {
-		onComplete( null );
-		return;
+export function startInboundTransfer( siteId, domain, authCode ) {
+	if ( ! domain || ! siteId ) {
+		return Promise.reject( new Error( 'Missing siteId or domain' ) );
 	}
 
-	wpcom
-		.undocumented()
-		.startInboundTransfer( siteId, domainName, authCode, function ( serverError, result ) {
-			if ( serverError ) {
-				onComplete( serverError.error );
-				return;
-			}
-
-			onComplete( null, result );
-		} );
+	return wpcom.req.get(
+		`/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ siteId }`,
+		authCode ? { auth_code: authCode } : {}
+	);
 }

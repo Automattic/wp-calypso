@@ -1,6 +1,5 @@
 import assert from 'assert';
 import * as cartItems from '../cart-items';
-import * as cartValues from '../index';
 
 describe( 'index', () => {
 	const TEST_BLOG_ID = 1;
@@ -12,7 +11,7 @@ describe( 'index', () => {
 			productSlug: 'dotcom_domain',
 			domain: 'testdomain.com',
 		} );
-		PREMIUM_PRODUCT = cartItems.planItem( 'value_bundle', { isFreeTrial: false } );
+		PREMIUM_PRODUCT = cartItems.planItem( 'value_bundle' );
 	} );
 
 	describe( 'cartItems.hasProduct( cart, productSlug )', () => {
@@ -29,20 +28,5 @@ describe( 'index', () => {
 			};
 			assert( ! cartItems.hasProduct( cartWithoutPremium, PREMIUM_PRODUCT ) );
 		} );
-	} );
-} );
-
-describe( 'hasPendingPayment()', () => {
-	test( 'return true if cart shows pending payment', () => {
-		expect( cartValues.hasPendingPayment( { has_pending_payment: true } ) );
-	} );
-	test( 'return false if cart shows no pending payments', () => {
-		expect( cartValues.hasPendingPayment( { has_pending_payment: false } ) ).toBe( false );
-	} );
-	test( 'return false if has_pending_payment is not set', () => {
-		expect( cartValues.hasPendingPayment( { has_pending_payment: null } ) ).toBe( false );
-		expect( cartValues.hasPendingPayment( {} ) ).toBe( false );
-		expect( cartValues.hasPendingPayment( null ) ).toBe( false );
-		expect( cartValues.hasPendingPayment( undefined ) ).toBe( false );
 	} );
 } );

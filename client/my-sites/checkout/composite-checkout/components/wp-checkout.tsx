@@ -1,6 +1,11 @@
 import { isYearly, isJetpackPurchasableItem, isMonthlyProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
+	MainContentWrapper,
+	SubmitButtonWrapper,
+	Button,
+	useTransactionStatus,
+	TransactionStatus,
 	Checkout,
 	CheckoutStep,
 	CheckoutStepArea,
@@ -8,22 +13,20 @@ import {
 	CheckoutStepBody,
 	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	getDefaultPaymentMethodStep,
-	useDispatch,
-	useEvents,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
 	usePaymentMethod,
-	useSelect,
 	useTotal,
 	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
+import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useCallback } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
+import { useState, useCallback } from 'react';
+import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
 	hasGoogleApps,
@@ -31,7 +34,11 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
+import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -39,7 +46,9 @@ import getContactDetailsType from '../lib/get-contact-details-type';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
+import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutHelpLink from './checkout-help-link';
+import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import PaymentMethodStep from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
@@ -47,7 +56,8 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from '../components/item-variation-picker';
-import type { RemoveProductFromCart, RequestCartProduct } from '@automattic/shopping-cart';
+import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
+import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
@@ -114,27 +124,39 @@ const OrderReviewTitle = () => {
 const paymentMethodStep = getDefaultPaymentMethodStep();
 
 export default function WPCheckout( {
-	removeProductFromCart,
+	addItemToCart,
 	changePlanLength,
+	countriesList,
+	createUserAndSiteBeforeTransaction,
+	infoMessage,
+	isJetpackNotAtomic,
+	isLoggedOutCart,
+	onPageLoadError,
+	removeProductFromCart,
+	showErrorMessageBriefly,
 	siteId,
 	siteUrl,
-	countriesList,
-	addItemToCart,
-	showErrorMessageBriefly,
-	isLoggedOutCart,
-	infoMessage,
-	createUserAndSiteBeforeTransaction,
+	isRemovingProductFromCart,
+	areThereErrors,
+	isInitialCartLoading,
+	customizedPreviousPath,
 }: {
-	removeProductFromCart: RemoveProductFromCart;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changePlanLength: OnChangeItemVariant;
+	countriesList: CountryListItem[];
+	createUserAndSiteBeforeTransaction: boolean;
+	infoMessage?: JSX.Element;
+	isJetpackNotAtomic: boolean;
+	isLoggedOutCart: boolean;
+	onPageLoadError: CheckoutPageErrorCallback;
+	removeProductFromCart: RemoveProductFromCart;
+	showErrorMessageBriefly: ( error: string ) => void;
 	siteId: number | undefined;
 	siteUrl: string | undefined;
-	countriesList: CountryListItem[];
-	addItemToCart: ( item: Partial< RequestCartProduct > ) => void;
-	showErrorMessageBriefly: ( error: string ) => void;
-	isLoggedOutCart: boolean;
-	infoMessage?: JSX.Element;
-	createUserAndSiteBeforeTransaction: boolean;
+	isRemovingProductFromCart: boolean;
+	areThereErrors: boolean;
+	isInitialCartLoading: boolean;
+	customizedPreviousPath?: string;
 } ): JSX.Element {
 	const cartKey = useCartKey();
 	const {
@@ -147,7 +169,6 @@ export default function WPCheckout( {
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
-	const onEvent = useEvents();
 	const reduxDispatch = useReduxDispatch();
 
 	const areThereDomainProductsInCart =
@@ -157,14 +178,17 @@ export default function WPCheckout( {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
-		sel( 'wpcom' ).getContactInfo()
+		sel( 'wpcom-checkout' ).getContactInfo()
 	);
+
+	const isJetpackCheckout =
+		isJetpackNotAtomic || window.location.pathname.startsWith( '/checkout/jetpack' );
+
 	const {
-		setSiteId,
 		touchContactFields,
 		applyDomainContactValidationResults,
 		clearDomainContactErrorMessages,
-	} = useDispatch( 'wpcom' );
+	} = useDispatch( 'wpcom-checkout' );
 
 	const [
 		shouldShowContactDetailsValidationErrors,
@@ -181,6 +205,10 @@ export default function WPCheckout( {
 	// If the page includes a 'order-review=true' query string, then start with
 	// the order review step visible.
 	const [ isOrderReviewActive, setIsOrderReviewActive ] = useState( () => {
+		if ( isJetpackCheckout ) {
+			return false;
+		}
+
 		try {
 			const shouldInitOrderReviewStepActive =
 				window?.location?.search.includes( 'order-review=true' ) ?? false;
@@ -198,11 +226,6 @@ export default function WPCheckout( {
 	} );
 
 	const { formStatus } = useFormStatus();
-
-	// Copy siteId to the store so it can be more easily accessed during payment submission
-	useEffect( () => {
-		setSiteId( siteId );
-	}, [ siteId, setSiteId ] );
 
 	const arePostalCodesSupported = getCountryPostalCodeSupport(
 		countriesList,
@@ -245,31 +268,79 @@ export default function WPCheckout( {
 
 	const onReviewError = useCallback(
 		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId: 'review',
-				},
+			onPageLoadError( 'step_load', String( error ), {
+				step_id: 'review',
 			} ),
-		[ onEvent ]
+		[ onPageLoadError ]
 	);
 
 	const onSummaryError = useCallback(
 		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId: 'summary',
-				},
+			onPageLoadError( 'step_load', String( error ), {
+				step_id: 'summary',
 			} ),
-		[ onEvent ]
+		[ onPageLoadError ]
 	);
 
 	const validatingButtonText = isCartPendingUpdate
 		? String( translate( 'Updating cart…' ) )
 		: String( translate( 'Please wait…' ) );
+
+	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
+	const previousPath = useSelector( getPreviousRoute );
+	const goToPreviousPage = () =>
+		leaveCheckout( {
+			siteSlug: siteUrl,
+			jetpackCheckoutBackUrl,
+			previousPath: customizedPreviousPath || previousPath,
+			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
+		} );
+
+	const { transactionStatus } = useTransactionStatus();
+
+	if ( transactionStatus === TransactionStatus.COMPLETE ) {
+		debug( 'rendering post-checkout redirecting page' );
+		return (
+			<MainContentWrapper>
+				<NonCheckoutContentWrapper>
+					<NonCheckoutContentInnerWrapper>
+						<CheckoutCompleteRedirecting />
+						<SubmitButtonWrapper>
+							<Button buttonType="primary" fullWidth isBusy disabled>
+								{ translate( 'Please wait…' ) }
+							</Button>
+						</SubmitButtonWrapper>
+					</NonCheckoutContentInnerWrapper>
+				</NonCheckoutContentWrapper>
+			</MainContentWrapper>
+		);
+	}
+
+	if (
+		shouldShowEmptyCartPage( {
+			responseCart,
+			areWeRedirecting: isRemovingProductFromCart,
+			areThereErrors,
+			isCartPendingUpdate,
+			isInitialCartLoading,
+		} )
+	) {
+		debug( 'rendering empty cart page' );
+		return (
+			<MainContentWrapper>
+				<NonCheckoutContentWrapper>
+					<NonCheckoutContentInnerWrapper>
+						<EmptyCart />
+						<SubmitButtonWrapper>
+							<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
+								{ translate( 'Go back' ) }
+							</Button>
+						</SubmitButtonWrapper>
+					</NonCheckoutContentInnerWrapper>
+				</NonCheckoutContentWrapper>
+			</MainContentWrapper>
+		);
+	}
 
 	return (
 		<Checkout>
@@ -315,26 +386,53 @@ export default function WPCheckout( {
 					stepId="review-order-step"
 					isStepActive={ isOrderReviewActive }
 					isStepComplete={ true }
-					goToThisStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
-					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
-					activeStepContent={
-						<WPCheckoutOrderReview
-							removeProductFromCart={ removeProductFromCart }
-							couponFieldStateProps={ couponFieldStateProps }
-							onChangePlanLength={ changePlanLength }
-							siteUrl={ siteUrl }
-							siteId={ siteId }
-							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						/>
+					goToThisStep={
+						isJetpackCheckout ? undefined : () => setIsOrderReviewActive( ! isOrderReviewActive )
+					}
+					goToNextStep={
+						isJetpackCheckout
+							? undefined
+							: () => {
+									setIsOrderReviewActive( ! isOrderReviewActive );
+									reduxDispatch(
+										recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+											step: 0,
+											step_name: 'review-order-step',
+										} )
+									);
+							  }
 					}
 					titleContent={ <OrderReviewTitle /> }
+					activeStepContent={
+						isJetpackCheckout ? null : (
+							<WPCheckoutOrderReview
+								removeProductFromCart={ removeProductFromCart }
+								couponFieldStateProps={ couponFieldStateProps }
+								onChangePlanLength={ changePlanLength }
+								siteUrl={ siteUrl }
+								siteId={ siteId }
+								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							/>
+						)
+					}
 					completeStepContent={
-						<WPCheckoutOrderReview
-							isSummary
-							removeProductFromCart={ removeProductFromCart }
-							couponFieldStateProps={ couponFieldStateProps }
-							siteUrl={ siteUrl }
-						/>
+						isJetpackCheckout ? (
+							<WPCheckoutOrderReview
+								removeProductFromCart={ removeProductFromCart }
+								couponFieldStateProps={ couponFieldStateProps }
+								onChangePlanLength={ changePlanLength }
+								siteUrl={ siteUrl }
+								siteId={ siteId }
+								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							/>
+						) : (
+							<WPCheckoutOrderReview
+								isSummary
+								removeProductFromCart={ removeProductFromCart }
+								couponFieldStateProps={ couponFieldStateProps }
+								siteUrl={ siteUrl }
+							/>
+						)
 					}
 					editButtonText={ String( translate( 'Edit' ) ) }
 					editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
@@ -348,7 +446,7 @@ export default function WPCheckout( {
 					{ contactDetailsType !== 'none' && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
-							isCompleteCallback={ () => {
+							isCompleteCallback={ async () => {
 								setShouldShowContactDetailsValidationErrors( true );
 								// Touch the fields so they display validation errors
 								touchContactFields();
@@ -356,16 +454,24 @@ export default function WPCheckout( {
 								return validateContactDetails(
 									contactInfo,
 									isLoggedOutCart,
-									activePaymentMethod,
 									responseCart,
-									onEvent,
 									showErrorMessageBriefly,
 									applyDomainContactValidationResults,
 									clearDomainContactErrorMessages,
 									reduxDispatch,
 									translate,
 									true
-								);
+								).then( ( response ) => {
+									if ( response ) {
+										reduxDispatch(
+											recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+												step: 1,
+												step_name: 'contact-form',
+											} )
+										);
+									}
+									return response;
+								} );
 							} }
 							activeStepContent={
 								<WPContactForm
@@ -377,9 +483,7 @@ export default function WPCheckout( {
 										validateContactDetails(
 											contactInfo,
 											isLoggedOutCart,
-											activePaymentMethod,
 											responseCart,
-											onEvent,
 											showErrorMessageBriefly,
 											applyDomainContactValidationResults,
 											clearDomainContactErrorMessages,
@@ -631,5 +735,31 @@ const SubmitButtonHeaderWrapper = styled.div`
 		&:hover {
 			color: ${ ( props ) => props.theme.colors.highlightOver };
 		}
+	}
+`;
+
+const NonCheckoutContentWrapper = styled.div`
+	display: flex;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		align-items: flex-start;
+		flex-direction: row;
+		justify-content: center;
+		width: 100%;
+	}
+`;
+
+const NonCheckoutContentInnerWrapper = styled.div`
+	background: ${ ( props ) => props.theme.colors.surface };
+	width: 100%;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		max-width: 556px;
+		margin: 0 auto;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		margin: 0;
 	}
 `;

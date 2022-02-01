@@ -1,12 +1,16 @@
+import { PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
+import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import Upsell from 'calypso/components/jetpack/upsell';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -56,20 +60,22 @@ function ScanUpsellBody() {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const item = slugToSelectorProduct( PRODUCT_JETPACK_SCAN );
+	const onClick = useCallback(
+		() => dispatch( recordTracksEvent( 'calypso_jetpack_scan_upsell_click' ) ),
+		[ dispatch ]
+	);
+
 	return (
-		<Upsell
-			headerText={ translate( 'Your site does not have scan' ) }
-			bodyText={ translate(
-				'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
-			) }
-			buttonLink={ `https://jetpack.com/upgrade/scan/?site=${ selectedSiteSlug }` }
-			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_scan_upsell_click' ) ) }
-			openButtonLinkOnNewTab={ false }
-			iconComponent={
-				<div className="scan-upsell__icon">
-					<SecurityIcon icon="info" />
-				</div>
-			}
+		<JetpackProductCard
+			buttonLabel={ translate( 'Upgrade now' ) }
+			buttonPrimary
+			buttonURL={ `https://jetpack.com/upgrade/scan/?site=${ selectedSiteSlug }` }
+			description={ item.description }
+			headerLevel={ 3 }
+			hidePrice
+			item={ item }
+			onButtonClick={ onClick }
 		/>
 	);
 }

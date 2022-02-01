@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { getTargetDeviceName } from '../../browser-helper';
+import envVariables from '../../env-variables';
 import type { Plans } from '../../types';
 
 export type Features =
@@ -15,6 +15,8 @@ export type Features =
 const selectors = {
 	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
+	buttonSkip: '.action-buttons__skip',
+	buttonNext: '.action-buttons__next',
 	wpLogo: 'div.gutenboarding__header-wp-logo',
 
 	// Start your website
@@ -23,7 +25,7 @@ const selectors = {
 	siteIsCalled: 'label[data-e2e-string="My site is called"]',
 
 	// Domain
-	domainSearch: 'input[placeholder="Search for a domain"]',
+	domainSearch: '.domain-picker__search input[name="search"]',
 	domainSuggestionSpan: ( target: string ) =>
 		`.domain-picker__suggestion-item-name span:has-text("${ target }")`,
 
@@ -40,6 +42,7 @@ const selectors = {
 	// Plans
 	planItem: '.plans-accordion-item',
 	planName: '.plans-accordion-item__name',
+	showAllPlans: '.plans-accordion__toggle-all-button',
 	selectPlanButton: ( name: string ) =>
 		`.plans-accordion-item:has(.plans-accordion-item__name:has-text("${ name }")) ${ selectors.button(
 			'Select'
@@ -76,10 +79,23 @@ export class GutenboardingFlow {
 	 * Given a text, clicks on the first instance of the button with the text.
 	 *
 	 * @param {string} text User-visible text on the button.
-	 * @returns {Promise<void>} No return value.
 	 */
-	async clickButton( text: string ) {
+	async clickButton( text: string ): Promise< void > {
 		await this.page.click( selectors.button( text ) );
+	}
+
+	/**
+	 * Clicks the first skip button button.
+	 */
+	async clickSkipButton(): Promise< void > {
+		await this.page.click( selectors.buttonSkip );
+	}
+
+	/**
+	 * Clicks the first next button button.
+	 */
+	async clickNextButton(): Promise< void > {
+		await this.page.click( selectors.buttonNext );
 	}
 
 	/**
@@ -165,18 +181,15 @@ export class GutenboardingFlow {
 	 * @param {string} name One portion of the name of the font pair.
 	 */
 	async selectFont( name: string ): Promise< void > {
-		// Font selector depends on the viewport name but lumps non-mobile into desktop.
-		const viewportName = getTargetDeviceName() === 'mobile' ? 'mobile' : 'desktop';
-
 		// Mobile viewport puts the buttons behind a dropdown.
-		if ( viewportName === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await this.page.click( selectors.mobileFontPairingDropdown );
 		}
 
 		// Click on the desired font pairing.
-		await this.page.click( selectors.fontPairingButton( viewportName, name ) );
+		await this.page.click( selectors.fontPairingButton( envVariables.VIEWPORT_NAME, name ) );
 
-		if ( viewportName === 'desktop' ) {
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.page.waitForSelector( `button.is-selected span:text("${ name }")` );
 		} else {
 			await this.page.waitForSelector(
@@ -207,13 +220,20 @@ export class GutenboardingFlow {
 	/* Plan selection screen */
 
 	/**
+	 * Expand all plans.
+	 */
+	async expandAllPlans(): Promise< void > {
+		await this.page.click( selectors.showAllPlans );
+	}
+
+	/**
 	 * Given a name, select a plan matching the name.
 	 *
 	 * @param {string} name Name of the plan.
 	 */
 	async selectPlan( name: Plans ): Promise< void > {
 		// First, expand the accordion.
-		await this.page.click( ':text-is("Show all plans")' );
+		await this.expandAllPlans();
 		await this.page.click( selectors.selectPlanButton( name ) );
 	}
 

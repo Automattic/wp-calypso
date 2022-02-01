@@ -23,7 +23,9 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 				// typically use `/` to indicate the start of the base URL,
 				// but starting with css-loader v4, it started trying to handle
 				// absolute paths itself.
-				url: ( path ) => ! path.startsWith( '/' ),
+				url: {
+					filter: ( path ) => ! path.startsWith( '/' ),
+				},
 			},
 		},
 		{
@@ -51,10 +53,9 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
  * @param  {object}   _                Options
  * @param  {string}   _.chunkFilename  filename pattern to use for CSS files
  * @param  {string}   _.filename       filename pattern to use for CSS chunk files
- * @param  {boolean}  _.minify         whether to minify CSS
  * @returns {object[]}                 styling relevant webpack plugin objects
  */
-module.exports.plugins = ( { chunkFilename, filename, minify } ) => [
+module.exports.plugins = ( { chunkFilename, filename } ) => [
 	new MiniCssExtractPlugin( {
 		chunkFilename,
 		filename,
@@ -64,7 +65,5 @@ module.exports.plugins = ( { chunkFilename, filename, minify } ) => [
 		},
 	} ),
 	new MiniCSSWithRTLPlugin(),
-	new WebpackRTLPlugin( {
-		minify,
-	} ),
+	new WebpackRTLPlugin(),
 ];

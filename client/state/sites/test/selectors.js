@@ -47,7 +47,6 @@ import {
 	getCustomizerUrl,
 	getJetpackComputedAttributes,
 	getSiteComputedAttributes,
-	withSelectedSite,
 } from '../selectors';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -3604,7 +3603,7 @@ describe( 'selectors', () => {
 	describe( 'canCurrentUserUseCustomerHome()', () => {
 		const createState = ( {
 			created_at,
-			manage_options = true,
+			edit_posts = true,
 			jetpack = false,
 			vip = false,
 			atomic = false,
@@ -3615,7 +3614,7 @@ describe( 'selectors', () => {
 			currentUser: {
 				capabilities: {
 					1: {
-						manage_options,
+						edit_posts,
 					},
 				},
 			},
@@ -3630,10 +3629,10 @@ describe( 'selectors', () => {
 			},
 		} );
 
-		test( "should return false if user can't manage site options", () => {
+		test( "should return false if user can't edit posts", () => {
 			expect(
 				canCurrentUserUseCustomerHome(
-					createState( { created_at: '2020-01-01', manage_options: false } )
+					createState( { created_at: '2020-01-01', edit_posts: false } )
 				)
 			).toBe( false );
 		} );
@@ -3656,25 +3655,6 @@ describe( 'selectors', () => {
 					createState( { created_at: '2020-01-01', jetpack: true, atomic: true } )
 				)
 			).toBe( true );
-		} );
-	} );
-
-	describe( 'withSelectedSite()', () => {
-		test( 'returns selector with selected site added on call', () => {
-			const state = {
-				sites: {
-					items: {
-						2916288: {
-							jetpack: true,
-						},
-					},
-				},
-				ui: {
-					selectedSiteId: 2916288,
-				},
-			};
-			const selector = withSelectedSite( isJetpackSite );
-			expect( selector( state ) ).toEqual( true );
 		} );
 	} );
 } );

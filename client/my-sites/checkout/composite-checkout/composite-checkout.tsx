@@ -1,23 +1,15 @@
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
-import {
-	CheckoutProvider,
-	CheckoutStepAreaWrapper,
-	MainContentWrapper,
-	SubmitButtonWrapper,
-	checkoutTheme,
-	defaultRegistry,
-	Button,
-} from '@automattic/composite-checkout';
+import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
-import { ThemeProvider } from '@emotion/react';
+import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { Fragment, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
+import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
@@ -25,18 +17,20 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
+import {
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateCheckoutPaymentMethodToTracksPaymentMethod,
+} from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors';
+import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import EmptyCart from './components/empty-cart';
 import WPCheckout from './components/wp-checkout';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
@@ -54,7 +48,7 @@ import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
 import useStoredCards from './hooks/use-stored-cards';
 import { useWpcomStore } from './hooks/wpcom-store';
-import { logStashLoadErrorEventAction, logStashEventAction } from './lib/analytics';
+import { logStashLoadErrorEvent, logStashEvent } from './lib/analytics';
 import existingCardProcessor from './lib/existing-card-processor';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import freePurchaseProcessor from './lib/free-purchase-processor';
@@ -66,24 +60,18 @@ import payPalProcessor from './lib/paypal-express-processor';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import weChatProcessor from './lib/we-chat-processor';
 import webPayProcessor from './lib/web-pay-processor';
-import createAnalyticsEventHandler from './record-analytics';
 import { StoredCard } from './types/stored-cards';
-import {
-	emptyManagedContactDetails,
-	applyContactDetailsRequiredMask,
-	domainRequiredContactDetails,
-	taxRequiredContactDetails,
-} from './types/wpcom-store-state';
-import type { ReactStandardAction } from './types/analytics';
+import { emptyManagedContactDetails } from './types/wpcom-store-state';
 import type { PaymentProcessorOptions } from './types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
-import type { ManagedContactDetails, CountryListItem } from '@automattic/wpcom-checkout';
+import type {
+	ManagedContactDetails,
+	CountryListItem,
+	CheckoutPaymentMethodSlug,
+} from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
-
-const { select, registerStore } = defaultRegistry;
 
 const wpcomGetStoredCards = (): StoredCard[] => wp.req.get( { path: '/me/stored-cards' } );
 
@@ -91,6 +79,7 @@ export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
+	productSourceFromUrl,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -101,17 +90,19 @@ export default function CompositeCheckout( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	infoMessage,
-	isInEditor,
+	isInModal,
 	onAfterPaymentComplete,
-	isFocusedLaunch,
-	isJetpackCheckout,
+	disabledThankYouPage,
+	isJetpackCheckout = false,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
+	customizedPreviousPath,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
+	productSourceFromUrl?: string;
 	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
@@ -121,14 +112,15 @@ export default function CompositeCheckout( {
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
-	isFocusedLaunch?: boolean;
-	isJetpackCheckout: boolean;
+	disabledThankYouPage?: boolean;
+	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
+	customizedPreviousPath?: string;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -138,15 +130,13 @@ export default function CompositeCheckout( {
 		isJetpackCheckout ||
 		false;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
+	const isLoadingIntroOffers = useSelector( ( state ) =>
+		getIsIntroOfferRequesting( state, siteId )
+	);
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const createUserAndSiteBeforeTransaction =
 		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackCheckout;
 	const reduxDispatch = useDispatch();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const recordEvent: ( action: ReactStandardAction ) => void = useCallback(
-		createAnalyticsEventHandler( reduxDispatch ),
-		[]
-	);
 	const isJetpackSitelessCheckout = isJetpackCheckout && ! jetpackSiteSlug;
 	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
 
@@ -180,7 +170,7 @@ export default function CompositeCheckout( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
-		isInEditor,
+		isInModal,
 		isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
@@ -189,6 +179,7 @@ export default function CompositeCheckout( {
 		isJetpackCheckout,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
+		source: productSourceFromUrl,
 	} );
 
 	const cartKey = useCartKey();
@@ -205,6 +196,8 @@ export default function CompositeCheckout( {
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
 	} = useShoppingCart( cartKey );
+
+	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 
 	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
 		productsForCart,
@@ -245,30 +238,22 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
-		isInEditor,
+		isInModal,
 		isJetpackCheckout,
 		domains,
 	} );
 
 	const getThankYouUrl = useCallback( () => {
 		const url = getThankYouUrlBase();
-		recordEvent( {
-			type: 'THANK_YOU_URL_GENERATED',
-			payload: { url },
+		logStashEvent( 'thank you url generated', {
+			url,
 		} );
 		return url;
-	}, [ getThankYouUrlBase, recordEvent ] );
+	}, [ getThankYouUrlBase ] );
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	useWpcomStore(
-		registerStore,
-		applyContactDetailsRequiredMask(
-			emptyManagedContactDetails,
-			contactDetailsType === 'domain' ? domainRequiredContactDetails : taxRequiredContactDetails
-		),
-		updateContactDetailsCache
-	);
+	useWpcomStore( emptyManagedContactDetails, updateContactDetailsCache );
 
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation, countriesList );
@@ -276,11 +261,9 @@ export default function CompositeCheckout( {
 	// Record errors adding products to the cart
 	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
-			reduxDispatch(
-				logStashEventAction( 'calypso_composite_checkout_products_load_error', {
-					error_message: String( message ),
-				} )
-			);
+			logStashEvent( 'calypso_composite_checkout_products_load_error', {
+				error_message: String( message ),
+			} );
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_products_load_error', {
 					error_message: String( message ),
@@ -290,9 +273,18 @@ export default function CompositeCheckout( {
 	} );
 
 	useActOnceOnStrings( [ cartLoadingError ].filter( isValueTruthy ), ( messages ) => {
-		messages.forEach( ( message ) =>
-			recordEvent( { type: 'CART_ERROR', payload: { type: cartLoadingErrorType, message } } )
-		);
+		messages.forEach( ( message ) => {
+			logStashEvent( 'calypso_checkout_composite_cart_error', {
+				type: cartLoadingErrorType ?? '',
+				message,
+			} );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_cart_error', {
+					error_type: cartLoadingErrorType,
+					error_message: String( message ),
+				} )
+			);
+		} );
 	} );
 
 	// Display errors. Note that we display all errors if any of them change,
@@ -309,18 +301,18 @@ export default function CompositeCheckout( {
 		);
 	} );
 
-	const errors = responseCart.messages?.errors ?? [];
+	const responseCartErrors = responseCart.messages?.errors ?? [];
 	const areThereErrors =
-		[ ...errors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy ).length > 0;
+		[ ...responseCartErrors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy )
+			.length > 0;
 
-	const siteSlugLoggedOutCart: string | undefined = select( 'wpcom' )?.getSiteSlug();
 	const {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
 	} = useRemoveFromCartAndRedirect(
 		updatedSiteSlug,
-		siteSlugLoggedOutCart,
-		createUserAndSiteBeforeTransaction
+		createUserAndSiteBeforeTransaction,
+		customizedPreviousPath
 	);
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
@@ -329,9 +321,13 @@ export default function CompositeCheckout( {
 	);
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
-		messages.forEach( ( message ) =>
-			recordEvent( { type: 'STORED_CARD_ERROR', payload: message } )
-		);
+		messages.forEach( ( message ) => {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_stored_card_error', {
+					error_message: String( message ),
+				} )
+			);
+		} );
 	} );
 
 	const {
@@ -370,7 +366,12 @@ export default function CompositeCheckout( {
 		// Only wait for web pay to load if we are using web pay
 		( allowedPaymentMethods.includes( 'web-pay' ) && isWebPayLoading );
 
-	const contactDetails: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
+	const contactDetails: ManagedContactDetails | undefined = useSelect( ( select ) =>
+		select( 'wpcom-checkout' )?.getContactInfo()
+	);
+	const recaptchaClientId: number | undefined = useSelect( ( select ) =>
+		select( 'wpcom-checkout' )?.getRecaptchaClientId()
+	);
 	const countryCode: string = contactDetails?.countryCode?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
@@ -393,31 +394,27 @@ export default function CompositeCheckout( {
 		checkoutFlow
 	);
 
-	const products = useSelector( ( state ) => getProductsList( state ) );
-
 	const changePlanLength = useCallback(
 		( uuidToReplace, newProductSlug, newProductId ) => {
-			recordEvent( {
-				type: 'CART_CHANGE_PLAN_LENGTH',
-				payload: { newProductSlug },
-			} );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
+					new_product_slug: newProductSlug,
+				} )
+			);
 			replaceProductInCart( uuidToReplace, {
 				product_slug: newProductSlug,
 				product_id: newProductId,
 			} );
 		},
-		[ replaceProductInCart, recordEvent ]
+		[ replaceProductInCart, reduxDispatch ]
 	);
 
-	// Often products are added using just the product_slug but missing the
-	// product_id; this adds it.
-	const addItemWithEssentialProperties = useCallback(
+	const addItemAndLog = useCallback(
 		( cartItem ) => {
-			const adjustedItem = fillInSingleCartItemAttributes( cartItem, products );
-			recordAddEvent( adjustedItem );
-			addProductsToCart( [ adjustedItem ] );
+			recordAddEvent( cartItem );
+			addProductsToCart( [ cartItem ] );
 		},
-		[ addProductsToCart, products ]
+		[ addProductsToCart ]
 	);
 
 	const includeDomainDetails = contactDetailsType === 'domain';
@@ -429,13 +426,13 @@ export default function CompositeCheckout( {
 			getThankYouUrl,
 			includeDomainDetails,
 			includeGSuiteDetails,
-			recordEvent,
 			reduxDispatch,
 			responseCart,
-			siteId,
+			siteId: updatedSiteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
+			recaptchaClientId,
 		} ),
 		[
 			contactDetails,
@@ -443,13 +440,13 @@ export default function CompositeCheckout( {
 			getThankYouUrl,
 			includeDomainDetails,
 			includeGSuiteDetails,
-			recordEvent,
 			reduxDispatch,
 			responseCart,
-			siteId,
+			updatedSiteId,
 			stripe,
 			stripeConfiguration,
 			updatedSiteSlug,
+			recaptchaClientId,
 		]
 	);
 
@@ -507,13 +504,15 @@ export default function CompositeCheckout( {
 		isInitialCartLoading ||
 		arePaymentMethodsLoading ||
 		paymentMethods.length < 1 ||
-		responseCart.products.length < 1;
+		responseCart.products.length < 1 ||
+		isLoadingIntroOffers;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
+			isLoadingIntroOffers,
 		} );
 	} else {
 		debug( 'no longer loading' );
@@ -530,7 +529,7 @@ export default function CompositeCheckout( {
 
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(
 		( errorType, errorMessage, errorData ) => {
-			reduxDispatch( logStashLoadErrorEventAction( errorType, errorMessage, errorData ) );
+			logStashLoadErrorEvent( errorType, errorMessage, errorData );
 			function errorTypeToTracksEventName( type: string ): string {
 				switch ( type ) {
 					case 'page_load':
@@ -563,26 +562,100 @@ export default function CompositeCheckout( {
 		redirectTo,
 		purchaseId,
 		feature,
-		isInEditor,
+		isInModal,
 		isComingFromUpsell,
-		isFocusedLaunch,
+		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
 		isJetpackCheckout,
 		checkoutFlow,
 	} );
 
+	const handleStepChanged = useCallback(
+		( {
+			stepNumber,
+			previousStepNumber,
+			paymentMethodId,
+		}: {
+			stepNumber: number | null;
+			previousStepNumber: number;
+			paymentMethodId: string;
+		} ) => {
+			if ( stepNumber === 2 && previousStepNumber === 1 ) {
+				reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
+						payment_method:
+							translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
+					} )
+				);
+			}
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_step_changed', {
+					step: stepNumber,
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
+
+	const handlePaymentMethodChanged = useCallback(
+		( method: string ) => {
+			logStashEvent( 'payment_method_select', {
+				newMethodId: String( method ),
+			} );
+			// Need to convert to the slug format used in old checkout so events are comparable
+			const rawPaymentMethodSlug = String( method );
+			const legacyPaymentMethodSlug = translateCheckoutPaymentMethodToTracksPaymentMethod(
+				rawPaymentMethodSlug as CheckoutPaymentMethodSlug
+			);
+			reduxDispatch( recordTracksEvent( 'calypso_checkout_switch_to_' + legacyPaymentMethodSlug ) );
+		},
+		[ reduxDispatch ]
+	);
+
 	const handlePaymentComplete = useCallback(
 		( args ) => {
 			onPaymentComplete?.( args );
 			onAfterPaymentComplete?.();
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+					step: 2,
+					step_name: 'payment-method-step',
+				} )
+			);
 		},
-		[ onPaymentComplete, onAfterPaymentComplete ]
+		[ onPaymentComplete, onAfterPaymentComplete, reduxDispatch ]
 	);
 
 	const handlePaymentError = useCallback(
-		( { transactionError }: { transactionError: string | null } ) => {
+		( {
+			transactionError,
+			paymentMethodId,
+		}: {
+			transactionError: string | null;
+			paymentMethodId: string | null;
+		} ) => {
 			reduxDispatch(
 				errorNotice( transactionError || translate( 'An error occurred during your purchase.' ) )
+			);
+
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_payment_error', {
+					error_code: null,
+					reason: String( transactionError ),
+				} )
+			);
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_payment_error', {
+					error_code: null,
+					payment_method:
+						translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ?? '' ) || '',
+					reason: String( transactionError ),
+				} )
+			);
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_stripe_transaction_error', {
+					error_message: String( transactionError ),
+				} )
 			);
 		},
 		[ reduxDispatch, translate ]
@@ -592,49 +665,9 @@ export default function CompositeCheckout( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
-	if (
-		shouldShowEmptyCartPage( {
-			responseCart,
-			areWeRedirecting: isRemovingProductFromCart,
-			areThereErrors,
-			isCartPendingUpdate,
-			isInitialCartLoading,
-		} )
-	) {
-		debug( 'rendering empty cart page' );
-		const goToPlans = () => {
-			recordEvent( {
-				type: 'EMPTY_CART_CTA_CLICKED',
-			} );
-			if ( updatedSiteSlug ) {
-				page( `/plans/${ updatedSiteSlug }` );
-			} else {
-				page( '/plans' );
-			}
-		};
-		return (
-			<Fragment>
-				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
-				<ThemeProvider theme={ theme }>
-					<MainContentWrapper>
-						<CheckoutStepAreaWrapper>
-							<EmptyCart />
-							<SubmitButtonWrapper>
-								<Button buttonType="primary" fullWidth onClick={ goToPlans }>
-									{ translate( 'Browse our plans' ) }
-								</Button>
-							</SubmitButtonWrapper>
-						</CheckoutStepAreaWrapper>
-					</MainContentWrapper>
-				</ThemeProvider>
-			</Fragment>
-		);
-	}
-
-	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
-
 	return (
 		<Fragment>
+			<QueryIntroOffers siteId={ updatedSiteId } />
 			<QueryJetpackSaleCoupon />
 			<QuerySitePlans siteId={ updatedSiteId } />
 			<QuerySitePurchases siteId={ updatedSiteId } />
@@ -654,26 +687,32 @@ export default function CompositeCheckout( {
 				onPaymentError={ handlePaymentError }
 				onPaymentRedirect={ handlePaymentRedirect }
 				onPageLoadError={ onPageLoadError }
-				onEvent={ recordEvent }
+				onStepChanged={ handleStepChanged }
+				onPaymentMethodChanged={ handlePaymentMethodChanged }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }
-				registry={ defaultRegistry }
 				isLoading={ isLoading }
 				isValidating={ isCartPendingUpdate }
 				theme={ theme }
 				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
 			>
 				<WPCheckout
-					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+					customizedPreviousPath={ customizedPreviousPath }
+					isRemovingProductFromCart={ isRemovingProductFromCart }
+					areThereErrors={ areThereErrors }
+					isInitialCartLoading={ isInitialCartLoading }
+					addItemToCart={ addItemAndLog }
 					changePlanLength={ changePlanLength }
-					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug }
 					countriesList={ countriesList }
-					addItemToCart={ addItemWithEssentialProperties }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					isLoggedOutCart={ !! isLoggedOutCart }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
+					isJetpackNotAtomic={ isJetpackNotAtomic }
+					isLoggedOutCart={ !! isLoggedOutCart }
+					onPageLoadError={ onPageLoadError }
+					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
+					siteId={ updatedSiteId }
+					siteUrl={ updatedSiteSlug }
 				/>
 			</CheckoutProvider>
 		</Fragment>
@@ -728,35 +767,4 @@ function getAnalyticsPath(
 	}
 
 	return { analyticsPath, analyticsProps };
-}
-
-function shouldShowEmptyCartPage( {
-	responseCart,
-	areWeRedirecting,
-	areThereErrors,
-	isCartPendingUpdate,
-	isInitialCartLoading,
-}: {
-	responseCart: ResponseCart;
-	areWeRedirecting: boolean;
-	areThereErrors: boolean;
-	isCartPendingUpdate: boolean;
-	isInitialCartLoading: boolean;
-} ): boolean {
-	if ( responseCart.products.length > 0 ) {
-		return false;
-	}
-	if ( areWeRedirecting ) {
-		return false;
-	}
-	if ( areThereErrors ) {
-		return true;
-	}
-	if ( isCartPendingUpdate ) {
-		return false;
-	}
-	if ( isInitialCartLoading ) {
-		return false;
-	}
-	return true;
 }

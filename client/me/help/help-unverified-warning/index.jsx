@@ -48,10 +48,8 @@ class HelpUnverifiedWarning extends Component {
 				resendState: RESEND_IN_PROGRESS,
 			} );
 
-			wpcom
-				.undocumented()
-				.me()
-				.sendVerificationEmail()
+			wpcom.req
+				.post( '/me/send-verification-email' )
 				.then( () => {
 					const nextResendState = RESEND_SUCCESS;
 

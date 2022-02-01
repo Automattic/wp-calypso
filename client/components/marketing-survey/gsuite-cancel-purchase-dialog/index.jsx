@@ -83,7 +83,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 		}
 	};
 
-	saveSurveyResults = async () => {
+	saveSurveyResults = () => {
 		const { purchase } = this.props;
 		const { surveyAnswerId, surveyAnswerText } = this.state;
 		const surveyData = {
@@ -94,14 +94,11 @@ class GSuiteCancelPurchaseDialog extends Component {
 			type: 'remove',
 		};
 
-		const response = await this.props.submitSurvey(
+		this.props.submitSurvey(
 			'calypso-gsuite-remove-purchase',
 			purchase.siteId,
 			enrichedSurveyData( surveyData, purchase )
 		);
-		if ( ! response.success ) {
-			this.props.errorNotice( response.err );
-		}
 	};
 
 	removePurchase = async () => {

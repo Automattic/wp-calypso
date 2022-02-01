@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { get, has } from 'lodash';
 import { makeLayout, render } from 'calypso/controller';
 import { addQueryArgs } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
@@ -37,7 +36,6 @@ function determinePostType( context ) {
 	return context.params.customPostType;
 }
 
-//duplicated from post-editor/controller.js. We should import it from there instead
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
 		return null;
@@ -226,11 +224,9 @@ function showDraftPostModal() {
 }
 
 export const post = ( context, next ) => {
-	// See post-editor/controller.js for reference.
-
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
-	const jetpackCopy = parseInt( get( context, 'query.jetpack-copy', null ) );
+	const jetpackCopy = parseInt( context.query[ 'jetpack-copy' ] );
 
 	// Check if this value is an integer.
 	const duplicatePostId = Number.isInteger( jetpackCopy ) ? jetpackCopy : null;
@@ -258,7 +254,7 @@ export const post = ( context, next ) => {
 			anchorFmData={ anchorFmData }
 			fseParentPageId={ fseParentPageId }
 			parentPostId={ parentPostId }
-			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
+			creatingNewHomepage={ postType === 'page' && context.query.hasOwnProperty( 'new-homepage' ) }
 			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }
 			showDraftPostModal={ showDraftPostModal() }
 		/>

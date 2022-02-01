@@ -18,7 +18,13 @@ import { filter, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
-import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
+import {
+	inIframe,
+	isEditorReady,
+	isEditorReadyWithBlocks,
+	sendMessage,
+	getPages,
+} from '../../utils';
 import FeedbackForm from './fse-beta/feedback-form';
 /**
  * Conditional dependency.  We cannot use the standard 'import' since this package is
@@ -963,7 +969,7 @@ function getCalypsoUrlInfo( calypsoPort ) {
 }
 
 async function handleEditorLoaded( calypsoPort ) {
-	await isEditorReadyWithBlocks();
+	await isEditorReady();
 	const isNew = select( 'core/editor' ).isCleanNewPost();
 	const blocks = select( 'core/block-editor' ).getBlocks();
 
@@ -1081,6 +1087,39 @@ function handleInlineHelpButton( calypsoPort ) {
 	);
 }
 
+/**
+ * If WelcomeTour is set to show, check if the App Banner is visible.
+ * If App Banner is visible, we set the Welcome Tour to not show.
+ * When the App Banner gets dismissed, we set the Welcome Tour to show.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function handleAppBannerShowing( calypsoPort ) {
+	const isWelcomeGuideShown = select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown();
+	if ( ! isWelcomeGuideShown ) {
+		return;
+	}
+
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getIsAppBannerVisible',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( { data } ) => {
+		const { isAppBannerVisible, hasAppBannerBeenDismissed } = data;
+		if ( hasAppBannerBeenDismissed ) {
+			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true, { onlyLocal: true } );
+		} else if ( isAppBannerVisible ) {
+			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( false, {
+				onlyLocal: true,
+			} );
+		}
+	};
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1185,6 +1224,8 @@ function initPort( message ) {
 		handleInlineHelpButton( calypsoPort );
 
 		handleSiteEditorFeedbackPlugin( calypsoPort );
+
+		handleAppBannerShowing( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

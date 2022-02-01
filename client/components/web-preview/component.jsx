@@ -1,5 +1,4 @@
 import { RootChild } from '@automattic/components';
-import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -79,21 +78,12 @@ export class WebPreviewModal extends Component {
 	constructor( props ) {
 		super( props );
 
-		this._hasTouch = false;
-		this._isMobile = false;
-
 		this.state = {
 			device: props.defaultViewportDevice || 'computer',
 		};
 
 		this.keyDown = this.keyDown.bind( this );
 		this.setDeviceViewport = this.setDeviceViewport.bind( this );
-	}
-
-	UNSAFE_componentWillMount() {
-		// Cache touch and mobile detection for the entire lifecycle of the component
-		this._hasTouch = hasTouch();
-		this._isMobile = isMobile();
 	}
 
 	componentDidMount() {
@@ -136,7 +126,7 @@ export class WebPreviewModal extends Component {
 
 	render() {
 		const className = classNames( this.props.className, 'web-preview', {
-			'is-touch': this._hasTouch,
+			'is-touch': hasTouch(),
 			'is-with-sidebar': this.props.hasSidebar,
 			'is-visible': this.props.showPreview,
 			'is-computer': this.state.device === 'computer',

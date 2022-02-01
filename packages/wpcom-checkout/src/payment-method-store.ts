@@ -1,4 +1,4 @@
-import { registerStore } from '@automattic/composite-checkout';
+import { registerStore } from '@wordpress/data';
 
 export interface StoreStateValue {
 	value: string;

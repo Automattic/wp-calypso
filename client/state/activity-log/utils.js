@@ -1,10 +1,8 @@
-export const filterStateToApiQuery = ( filter ) => {
-	// by default, we'll tell the api to create aggregate events
-	const aggregate = typeof filter.aggregate === 'undefined' ? true : filter.aggregate;
-
+export const filterStateToApiQuery = ( filter, addAggregate = true ) => {
 	return Object.assign(
 		{},
-		{ aggregate },
+		// by default, we'll tell the api to create aggregate events
+		addAggregate && { aggregate: filter.aggregate ?? true },
 		filter.action && { action: filter.action },
 		filter.on && { on: filter.on },
 		filter.after && { after: filter.after },

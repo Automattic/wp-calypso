@@ -9,7 +9,6 @@
 Render the component, passing props to describe your query.
 
 ```jsx
-import React from 'react';
 import PostTypeList from 'calypso/my-sites/post-type-list';
 
 export default function MyComponent() {

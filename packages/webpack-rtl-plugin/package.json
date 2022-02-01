@@ -12,9 +12,8 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/webpack-rtl-plugin"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
 	"keywords": [
 		"webpack",
 		"css",
@@ -25,13 +24,13 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "^1.0.0",
-		"css-loader": "^5.2.4",
-		"mini-css-extract-plugin": "^1.6.0",
-		"webpack": "^5.54.0"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"css-loader": "^6.5.1",
+		"mini-css-extract-plugin": "^1.6.2",
+		"webpack": "^5.65.0"
 	},
 	"peerDependencies": {
-		"webpack": "^5.54.0"
+		"webpack": "^5.65.0"
 	},
 	"dependencies": {
 		"@romainberger/css-diff": "^1.0.3",

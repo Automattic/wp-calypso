@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -14,10 +15,6 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingContactDetailsCache from 'calypso/state/selectors/is-requesting-contact-details-cache';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
-
-const wpcom = wp.undocumented();
-
-import './list-all.scss';
 
 class BulkEditContactInfo extends Component {
 	static propTypes = {
@@ -116,7 +113,7 @@ class BulkEditContactInfo extends Component {
 	};
 
 	onTransferLockOptOutChange = ( event ) => {
-		this.props.onTransferLockOptOutChange( event.target.checked );
+		this.props.onTransferLockOptOutChange( ! event.target.checked );
 	};
 
 	validateContactDetails = ( contactDetails ) => {
@@ -124,11 +121,22 @@ class BulkEditContactInfo extends Component {
 			return;
 		}
 
-		wpcom.validateDomainContactInformation(
-			contactDetails,
-			this.props.domainNamesList ?? [],
-			( error, data ) => {
-				let errorMessages = ( data && data.messages ) || {};
+		wp.req
+			.post(
+				'/me/domain-contact-information/validate',
+				mapRecordKeysRecursively(
+					{
+						contactInformation: contactDetails,
+						domainNames: this.props.domainNamesList ?? [],
+					},
+					camelToSnakeCase
+				)
+			)
+			.then( ( data ) => {
+				let errorMessages = mapRecordKeysRecursively(
+					( data && data.messages ) || {},
+					snakeToCamelCase
+				);
 				if ( Object.keys( errorMessages ).length > 0 ) {
 					errorMessages = Object.entries( errorMessages ).reduce( ( result, [ field, errors ] ) => {
 						result[ field ] = Array.isArray( errors ) ? errors.join( ' ' ) : errors;
@@ -139,8 +147,7 @@ class BulkEditContactInfo extends Component {
 				this.setState( {
 					errorMessages,
 				} );
-			}
-		);
+			} );
 	};
 
 	handleSaveContactInfo = () => this.props.handleSaveContactInfo( this.state.contactDetails );
@@ -168,7 +175,7 @@ class BulkEditContactInfo extends Component {
 					onChange={ this.onTransferLockOptOutChange }
 					saveButtonLabel={ translate( 'Save contact info' ) }
 				/>
-				<div className="list__form-buttons">
+				<div>
 					<Button
 						primary
 						onClick={ this.handleSaveContactInfo }

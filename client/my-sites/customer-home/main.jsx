@@ -1,14 +1,17 @@
 import { Button } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -17,6 +20,7 @@ import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { canCurrentUserUseCustomerHome, getSiteOption } from 'calypso/state/sites/selectors';
@@ -47,6 +51,19 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 		return;
 	}, [ shouldShowNotice, translate, reduxDispatch, noticeType ] );
 
+	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
+	useEffect( () => {
+		if ( 'IN' !== detectedCountryCode ) {
+			return;
+		}
+
+		addHotJarScript();
+
+		if ( window && window.hj ) {
+			window.hj( 'trigger', 'in_survey_1' );
+		}
+	}, [ detectedCountryCode ] );
+
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
 		return (
@@ -66,6 +83,21 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 				align="left"
 				hasScreenOptions
 			/>
+
+			<div className="customer-home__site-content">
+				<SiteIcon site={ site } size={ 58 } />
+				<div className="customer-home__site-info">
+					<div className="customer-home__site-title">{ site.name }</div>
+					<ExternalLink
+						href={ site.URL }
+						className="customer-home__site-domain"
+						onClick={ trackViewSiteAction }
+					>
+						<span className="customer-home__site-domain-text">{ site.domain }</span>
+					</ExternalLink>
+				</div>
+			</div>
+
 			<div className="customer-home__view-site-button">
 				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 					{ translate( 'Visit site' ) }
