@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
-import StoreIllustration from 'calypso/assets/images/domains/free-domain.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import WarningCard from 'calypso/components/warning-card';
@@ -63,6 +62,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 					{ __( 'Start a new store' ) }
 				</Button>
 			</FixedNavigationHeader>
+			{ renderWarningNotice() }
 			<EmptyContent
 				title={ __( 'Setup a store and start selling online' ) }
 				illustration="/calypso/images/illustrations/illustration-shopping-bags.svg"
