@@ -41,7 +41,13 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			title: translate( 'Start simple' ),
 			description: (
 				<>
-					<span className="store-features__requirements">{ translate( 'Free' ) }</span>
+					<span className="store-features__requirements">
+						{ translate( 'Requires a {{a}}paid plan{{/a}}', {
+							components: {
+								a: <a href={ `/plans/${ siteSlug }` } />,
+							},
+						} ) }
+					</span>
 
 					<p>
 						{ translate(
@@ -82,7 +88,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 					<span className="store-features__requirements">
 						{ translate( 'Requires a {{a}}Business plan{{/a}}', {
 							components: {
-								a: <a href="/plans/" />,
+								a: <a href={ `/plans/${ siteSlug }` } />,
 							},
 						} ) }
 					</span>
