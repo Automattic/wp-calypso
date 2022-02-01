@@ -51,7 +51,11 @@ interface Props {
 }
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const IMPORT_ROUTE = '/start/from/importing';
+	const dispatch = useDispatch();
 
+	/**
+	 ↓ Fields
+	 */
 	const {
 		urlData,
 		stepName,
@@ -65,17 +69,11 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		fromSite,
 		path,
 	} = props;
-
-	/**
-	 ↓ Fields
-	 */
 	const engine: Importer = stepSectionName.toLowerCase() as Importer;
 	const [ runImportInitially, setRunImportInitially ] = useState( false );
 	const getImportJob = ( engine: Importer ): ImportJob | undefined => {
 		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
 	};
-
-	const dispatch = useDispatch();
 	const fromSiteData = useSelector( getUrlData );
 
 	/**
@@ -235,19 +233,10 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 						<div className="import-layout__center">
 							{ ( () => {
 								if ( isLoading() ) {
-									/**
-									 * Loading screen
-									 */
 									return <LoadingEllipsis />;
 								} else if ( ! siteSlug ) {
-									/**
-									 * Not found
-									 */
 									return <NotFound />;
 								} else if ( ! hasPermission() ) {
-									/**
-									 * Permission screen
-									 */
 									return <NotAuthorized siteSlug={ siteSlug } />;
 								} else if (
 									engine === 'blogger' &&
