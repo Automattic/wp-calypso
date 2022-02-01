@@ -24,9 +24,9 @@ const CtaContainer = styled.div`
 	}
 `;
 
-// const ContentContainer = styled.div`
-// 	justify-self: end;
-// `;
+const ContentContainer = styled.div`
+	justify-self: end;
+`;
 
 const Headline = styled.h3`
 	font-size: 16px;
@@ -44,23 +44,31 @@ const Title = styled.h4`
 interface Props {
 	title?: TranslateResult;
 	headline?: TranslateResult;
-	notice: ReactElement | null;
-	ctaRef?: React.RefObject< HTMLButtonElement >;
+	notice?: ReactElement | null;
+	cta?: ReactElement | null;
+	byline?: ReactElement | null;
+	children?: ReactElement | null;
 }
 
-const CtaSection: React.FunctionComponent< Props > = ( props ) => {
-	const { children, title, headline, notice = null } = props;
+const CtaSection: React.FunctionComponent< Props > = ( {
+	title = '',
+	headline = '',
+	notice = null,
+	cta = null,
+	children = null,
+	byline = null,
+} ) => {
 	return (
 		<Container>
 			<CtaContainer>
 				<Title>{ title }</Title>
 				<Headline>{ headline }</Headline>
 				{ notice }
-				{ children }
+				{ cta }
+				{ byline }
 			</CtaContainer>
-			{ /* <ContentContainer>{ children }</ContentContainer> */ }
+			<ContentContainer>{ children }</ContentContainer>
 		</Container>
 	);
 };
-
 export default CtaSection;
