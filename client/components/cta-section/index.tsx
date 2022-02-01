@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
 import { ReactElement } from 'react';
@@ -25,9 +24,9 @@ const CtaContainer = styled.div`
 	}
 `;
 
-const ContentContainer = styled.div`
-	justify-self: end;
-`;
+// const ContentContainer = styled.div`
+// 	justify-self: end;
+// `;
 
 const Headline = styled.h3`
 	font-size: 16px;
@@ -45,35 +44,21 @@ const Title = styled.h4`
 interface Props {
 	title?: TranslateResult;
 	headline?: TranslateResult;
-	buttonText: TranslateResult;
-	buttonDisabled: boolean;
-	buttonAction: () => void;
 	notice: ReactElement | null;
 	ctaRef?: React.RefObject< HTMLButtonElement >;
 }
 
 const CtaSection: React.FunctionComponent< Props > = ( props ) => {
-	const {
-		children,
-		title,
-		headline,
-		buttonText,
-		buttonDisabled = false,
-		buttonAction,
-		notice = null,
-		ctaRef,
-	} = props;
+	const { children, title, headline, notice = null } = props;
 	return (
 		<Container>
 			<CtaContainer>
 				<Headline>{ title }</Headline>
 				<Title>{ headline }</Title>
 				{ notice }
-				<Button primary onClick={ buttonAction } ref={ ctaRef } disabled={ buttonDisabled }>
-					{ buttonText }
-				</Button>
+				{ children }
 			</CtaContainer>
-			<ContentContainer>{ children }</ContentContainer>
+			{ /* <ContentContainer>{ children }</ContentContainer> */ }
 		</Container>
 	);
 };

@@ -67,12 +67,21 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 					'Set up a new store in minutes. Get secure payments, configurable shipping options, and more, out of the box.'
 				) }
 				headline={ __( 'Setup a store and start selling online' ) }
-				buttonText={ __( 'Start a new store' ) }
-				buttonAction={ onCTAClickHandler }
-				buttonDisabled={ isTransferringBlocked }
-				ctaRef={ ctaRef }
 				notice={ renderWarningNotice() }
-			></CtaSection>
+			>
+				<Button href="https://wordpress.com/support/introduction-to-woocommerce/" ref={ ctaRef }>
+					{ __( 'Learn more' ) }
+				</Button>
+				<Button
+					primary
+					onClick={ onCTAClickHandler }
+					ref={ ctaRef }
+					disabled={ isTransferringBlocked }
+				>
+					{ __( 'Start a new store' ) }
+				</Button>
+			</CtaSection>
+
 			<WooCommerceColophon />
 		</div>
 	);
