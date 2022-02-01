@@ -404,7 +404,7 @@ class P2Site extends Component {
 					className="p2-site__validation-site"
 				>
 					<FormLabel htmlFor="site-address-input">
-						{ this.props.translate( 'Choose an address for your P2 workspace' ) }
+						{ this.props.translate( 'Choose an address for your workspace' ) }
 					</FormLabel>
 					<div className="p2-site__site-url-container">
 						<FormTextInput
