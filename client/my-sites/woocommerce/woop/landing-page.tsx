@@ -4,15 +4,11 @@ import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
-import Image01 from 'calypso/assets/images/woocommerce/woop-cta-image01.jpeg';
-import Image02 from 'calypso/assets/images/woocommerce/woop-cta-image02.jpeg';
-import Image03 from 'calypso/assets/images/woocommerce/woop-cta-image03.jpeg';
-import Image04 from 'calypso/assets/images/woocommerce/woop-cta-image04.jpeg';
 import CtaSection from 'calypso/components/cta-section';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import MasonryWave from 'calypso/components/masonry-wave';
 import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
+import WooCommerceColophon from '../woocommerce-colophon';
 
 import './style.scss';
 
@@ -24,8 +20,6 @@ interface Props {
 	startSetup: () => void;
 	siteId: number;
 }
-
-const images = [ { src: Image01 }, { src: Image02 }, { src: Image03 }, { src: Image04 } ];
 
 const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
@@ -76,9 +70,8 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				buttonDisabled={ isTransferringBlocked }
 				ctaRef={ ctaRef }
 				notice={ renderWarningNotice() }
-			>
-				<MasonryWave images={ images } />
-			</CtaSection>
+			></CtaSection>
+			<WooCommerceColophon />
 		</div>
 	);
 };
