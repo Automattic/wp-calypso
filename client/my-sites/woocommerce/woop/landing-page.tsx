@@ -59,13 +59,15 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 		<div className="woop__landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
 				<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
-					{ __( 'Set up my store!' ) }
+					{ __( 'Start a new store' ) }
 				</Button>
 			</FixedNavigationHeader>
 			<CtaSection
-				title={ __( 'Have something to sell?' ) }
-				headline={ __( 'Build exactly the eCommerce website you want.' ) }
-				buttonText={ __( 'Set up my store!' ) }
+				title={ __(
+					'Set up a new store in minutes. Get secure payments, configurable shipping options, and more, out of the box.'
+				) }
+				headline={ __( 'Setup a store and start selling online' ) }
+				buttonText={ __( 'Start a new store' ) }
 				buttonAction={ onCTAClickHandler }
 				buttonDisabled={ isTransferringBlocked }
 				ctaRef={ ctaRef }
