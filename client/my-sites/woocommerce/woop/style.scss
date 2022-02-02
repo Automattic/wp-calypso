@@ -47,5 +47,14 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 		width: calc( 33% - 1em );
 		box-shadow: none;
 		background-color: var( --color-woocommerce-onboarding-background );
+
+		.action-panel__title {
+			font-weight: 500;
+			font-size: 1.25rem;
+		}
+
+		.gridicon {
+			fill: #0675c4; // TODO: maybe we need to define this color as a variable somewhere?
+		}
 	}
 }
