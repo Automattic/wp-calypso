@@ -65,7 +65,7 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 		font-size: 2rem;
 		max-width: 377px;
 		line-height: 40px;
-		font-family: 'Recoleta';
+		@include onboarding-font-recoleta;
 	}
 
 	.promo-section__promos .promo-card {
