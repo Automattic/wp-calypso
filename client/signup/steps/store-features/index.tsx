@@ -126,10 +126,10 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 				page.redirect( `/start/woocommerce-install/?site=${ siteSlug }` );
 				break;
 
-			case 'simple':
-				//@TODO: assign the Zoologist theme
+			case 'simple': {
 				page.redirect( `/site-editor/${ siteSlug }/` );
 				break;
+			}
 		}
 	};
 
@@ -147,6 +147,9 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			defaultDependencies={ {
 				siteTitle: '',
 				tagline: '',
+				//Temporarily hard-coded to Zoologist; eventually we'll add a theme selection step.
+				themeSlugWithRepo: 'pub/zoologist',
+				useThemeHeadstart: true,
 			} }
 			{ ...props }
 		/>
