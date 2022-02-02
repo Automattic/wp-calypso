@@ -90,6 +90,7 @@ module.exports = {
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		new ExtensiveLodashReplacementPlugin(),
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',
