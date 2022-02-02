@@ -56,17 +56,8 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
 
-	&:last-child {
-		border-bottom: none;
-	}
-
 	.checkout-line-item__price {
 		position: relative;
-	}
-
-	.checkout-line-item__partner-logo-image {
-		max-width: 67px;
-		max-height: 26px;
 	}
 `;
 
@@ -85,6 +76,32 @@ export const LineItem = styled( WPLineItem )< {
 
 	.checkout-line-item__price {
 		position: relative;
+	}
+`;
+
+export const CouponLineItem = styled( WPCouponLineItem )< {
+	theme?: Theme;
+} >`
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
+
+	&[data-partner-coupon='true'] ${ NonProductLineItem } {
+		border-bottom: none;
+	}
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	.jetpack-partner-logo {
+		padding-bottom: 20px;
+	}
+
+	.checkout-line-item__partner-logo-image {
+		max-width: 67px;
+		max-height: 26px;
 	}
 `;
 
@@ -168,7 +185,6 @@ function WPNonProductLineItem( {
 	removeProductFromCart,
 	createUserAndSiteBeforeTransaction,
 	isPwpoUser,
-	responseCart,
 }: {
 	lineItem: LineItemType;
 	className?: string | null;
@@ -177,7 +193,6 @@ function WPNonProductLineItem( {
 	removeProductFromCart?: () => void;
 	createUserAndSiteBeforeTransaction?: boolean;
 	isPwpoUser?: boolean;
-	responseCart?: ResponseCart;
 } ): JSX.Element {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -244,13 +259,46 @@ function WPNonProductLineItem( {
 					/>
 				</>
 			) }
-
-			{ responseCart && (
-				<PartnerLogo coupon={ responseCart.coupon } products={ responseCart.products } />
-			) }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
+function WPCouponLineItem( {
+	lineItem,
+	className,
+	isSummary,
+	hasDeleteButton,
+	removeProductFromCart,
+	createUserAndSiteBeforeTransaction,
+	isPwpoUser,
+	hasPartnerCoupon,
+}: {
+	lineItem: LineItemType;
+	className?: string | null;
+	isSummary?: boolean;
+	hasDeleteButton?: boolean;
+	removeProductFromCart?: () => void;
+	createUserAndSiteBeforeTransaction?: boolean;
+	isPwpoUser?: boolean;
+	hasPartnerCoupon?: boolean;
+} ): JSX.Element {
+	return (
+		<div
+			className={ joinClasses( [ className, 'coupon-line-item' ] ) }
+			data-partner-coupon={ !! hasPartnerCoupon }
+		>
+			<NonProductLineItem
+				lineItem={ lineItem }
+				isSummary={ isSummary }
+				hasDeleteButton={ hasDeleteButton }
+				removeProductFromCart={ removeProductFromCart }
+				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+				isPwpoUser={ isPwpoUser }
+			/>
+			{ !! hasPartnerCoupon && <PartnerLogo /> }
+		</div>
+	);
 }
 
 function EmailMeta( {
@@ -742,29 +790,19 @@ function IntroductoryOfferCallout( {
 	return <DiscountCallout>{ text }</DiscountCallout>;
 }
 
-function PartnerLogo( {
-	coupon,
-	products,
-}: {
-	coupon: string;
-	products?: ResponseCartProduct[];
-} ): JSX.Element | null {
+function PartnerLogo( { className }: { className?: string } ): JSX.Element | null {
 	const translate = useTranslate();
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	if ( hasPartnerCoupon( coupon, products ) ) {
-		return (
-			<LineItemMeta>
-				<div>{ translate( 'Included in your IONOS plan' ) }</div>
-				<div className={ 'checkout-line-item__partner-logo-image' }>
-					<img src={ '/calypso/images/jetpack/partners/partner-logo-ionos.png' } alt="IONOS Logo" />
-				</div>
-			</LineItemMeta>
-		);
-	}
+	return (
+		<LineItemMeta className={ joinClasses( [ className, 'jetpack-partner-logo' ] ) }>
+			<div>{ translate( 'Included in your IONOS plan' ) }</div>
+			<div className={ 'checkout-line-item__partner-logo-image' }>
+				<img src={ '/calypso/images/jetpack/partners/partner-logo-ionos.png' } alt="IONOS Logo" />
+			</div>
+		</LineItemMeta>
+	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-
-	return null;
 }
 
 function DomainDiscountCallout( {
