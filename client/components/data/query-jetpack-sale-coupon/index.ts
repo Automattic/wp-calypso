@@ -1,17 +1,21 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchJetpackSaleCoupon } from 'calypso/state/marketing/actions';
-import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
+import {
+	getHasRequestedJetpackSaleCoupon,
+	getIsRequestingJetpackSaleCoupon,
+} from 'calypso/state/marketing/selectors';
 
 export default function QueryJetpackSaleCoupon(): null {
 	const dispatch = useDispatch();
-	const saleCoupon = useSelector( getJetpackSaleCoupon );
+	const hasRequestedCoupon = useSelector( getHasRequestedJetpackSaleCoupon );
+	const isRequestingCoupon = useSelector( getIsRequestingJetpackSaleCoupon );
 
 	useEffect( () => {
-		if ( ! saleCoupon ) {
+		if ( ! isRequestingCoupon && ! hasRequestedCoupon ) {
 			dispatch( fetchJetpackSaleCoupon() );
 		}
-	}, [ dispatch, saleCoupon ] );
+	}, [ dispatch, hasRequestedCoupon, isRequestingCoupon ] );
 
 	return null;
 }

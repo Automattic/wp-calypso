@@ -1,5 +1,6 @@
 .intro-pricing-banner,
-.intro-pricing-banner__sticky {
+.intro-pricing-banner__sticky,
+.intro-pricing-banner__loading {
 	display: flex;
 	flex-direction: row;
 
@@ -19,9 +20,19 @@
 	}
 }
 
-.intro-pricing-banner {
+.intro-pricing-banner,
+.intro-pricing-banner__loading {
 	height: 54px;
 	margin-bottom: 32px;
+}
+
+.intro-pricing-banner__loading {
+	.intro-pricing-banner__discount,
+	.intro-pricing-banner__guarantee {
+		span {
+			@include placeholder();
+		}
+	}
 }
 
 .intro-pricing-banner__sticky {
