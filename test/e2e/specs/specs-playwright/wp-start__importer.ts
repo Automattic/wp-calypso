@@ -86,6 +86,18 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		} );
 	} );
 
+	// Blogger, Medium, Squarespace
+	describe( 'Follow the import file flow', () => {
+		navigateToSetup();
+
+		it( 'Start an valid import file', async () => {
+			await startImportFlow.enterURL( 'https://squarespace.com' );
+			await startImportFlow.validateImportPage();
+			await startImportFlow.clickButton( 'Import your content' );
+			await startImportFlow.validateImporterDragPage( 'squarespace' );
+		} );
+	} );
+
 	// The "I don't have a site address" flow.
 	describe( "I don't have a site flow", () => {
 		navigateToSetup();
