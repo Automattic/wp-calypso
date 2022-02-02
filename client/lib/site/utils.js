@@ -2,6 +2,7 @@ import { planHasFeature } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 import { get } from 'lodash';
 import { withoutHttp } from 'calypso/lib/url';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 
 export function userCan( capability, site ) {
 	return site && site.capabilities && site.capabilities[ capability ];
@@ -135,4 +136,22 @@ export function hasSiteFeature( site, feature ) {
 	if ( site && site.plan ) {
 		return planHasFeature( site.plan.product_slug, feature );
 	}
+}
+
+/**
+ * Compare two lists of sites and tell if they have the same ids
+ *
+ * @param {Array} siteListA
+ * @param {Array} siteListB
+ * @returns boolean
+ */
+export function compareSiteIds( siteListA, siteListB ) {
+	const siteIdsA = [ ...new Set( siteObjectsToSiteIds( siteListA ) ) ];
+	const siteIdsB = [ ...new Set( siteObjectsToSiteIds( siteListB ) ) ];
+
+	if ( siteIdsA.length !== siteIdsB.length ) {
+		return false;
+	}
+
+	return ! siteIdsA.some( ( id ) => siteIdsB.indexOf( id ) === -1 );
 }

@@ -1,10 +1,13 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { compareSiteIds } from 'calypso/lib/site/utils';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { fetchPlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -17,6 +20,7 @@ import jetpackMenu from './static-data/jetpack-fallback-menu';
 const useSiteMenuItems = () => {
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
+	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins, compareSiteIds );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
 	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSiteId ) );
@@ -26,11 +30,15 @@ const useSiteMenuItems = () => {
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
 			dispatch( requestAdminMenu( selectedSiteId ) );
-			if ( isJetpack ) {
-				dispatch( fetchPlugins( [ selectedSiteId ] ) );
-			}
 		}
-	}, [ dispatch, isJetpack, selectedSiteId, siteDomain, locale ] );
+	}, [ dispatch, selectedSiteId, siteDomain, locale ] );
+
+	useEffect( () => {
+		const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
+		if ( siteIds.length ) {
+			dispatch( fetchPlugins( siteIds ) );
+		}
+	}, [ sitesWithPlugins ] );
 
 	/**
 	 * As a general rule we allow fallback data to remain as static as possible.
