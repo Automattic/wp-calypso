@@ -5,15 +5,18 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 }
 
 .woocommerce_landing-page {
-	padding-top: 3em;
+	.woocommerce_landing-page-empty-content {
+		padding-top: 3em;
+		max-width: 540px;
 
-	.empty-content__title {
-		@include onboarding-heading-text;
-		color: var( --studio-gray-90 );
-		padding: 1em 0 0.5em;
-	}
-	.empty-content__line {
-		@include onboarding-large-text;
-		margin-bottom: 1.5em;
+		.empty-content__title {
+			@include onboarding-heading-text;
+			color: var( --studio-gray-90 );
+			padding: 1em 0 0.5em;
+		}
+		.empty-content__line {
+			@include onboarding-large-text;
+			margin-bottom: 1.5em;
+		}
 	}
 }

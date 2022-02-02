@@ -56,7 +56,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	}
 
 	return (
-		<div className="woop__landing-page">
+		<div className="woop__landing-page woocommerce_landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
 				<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
 					{ __( 'Start a new store' ) }
@@ -77,7 +77,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				secondaryAction={ __( 'Learn more' ) }
 				secondaryActionURL="https://wordpress.com/support/introduction-to-woocommerce/"
 				secondaryActionTarget="_blank"
-				className="woop__landing-page-cta woocommerce_landing-page"
+				className="woop__landing-page-cta woocommerce_landing-page-empty-content"
 			/>
 			<WooCommerceColophon />
 		</div>
