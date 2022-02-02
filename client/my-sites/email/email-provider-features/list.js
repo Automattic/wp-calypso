@@ -54,7 +54,9 @@ const getGoogleFeatures = () => {
 		translate( '30GB storage' ),
 		translate( 'Email, calendars, and contacts' ),
 		translate( 'Video calls, docs, spreadsheets, and more' ),
-		translate( 'Work from anywhere on any device – even offline' ),
+		translate( 'Real-time collaboration' ),
+		translate( 'Store and share files in the cloud' ),
+		translate( '24/7 support via email' ),
 	];
 };
 
@@ -64,7 +66,7 @@ const getTitanFeatures = ( isMonthlyProduct = true ) => {
 		translate( 'Send and receive from your custom domain' ),
 		translate( '30GB storage' ),
 		translate( 'Email, calendars, and contacts' ),
-		translate( 'One-click import of existing emails and contacts' ),
+		translate( '24/7 support via email' ),
 	];
 };
 

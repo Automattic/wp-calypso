@@ -16,7 +16,6 @@ export type EmailProviderPriceProps = {
 };
 
 const EMAIL_PROVIDER_FEATURES_TYPE = [
-	'access',
 	'collaboration',
 	'importing',
 	'storage',

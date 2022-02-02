@@ -505,7 +505,7 @@ class EmailProvidersComparison extends Component {
 				title={ getGoogleMailServiceFamily() }
 				starLabel={ starLabel }
 				description={ translate(
-					'Business email with Gmail and other productivity tools from Google.'
+					'Business email with Gmail. Include other collaboration and productivity tools from Google.'
 				) }
 				formattedPrice={ formattedPrice }
 				discount={ discount }
@@ -651,7 +651,7 @@ class EmailProvidersComparison extends Component {
 				title={ getTitanProductName() }
 				badge={ poweredByTitan }
 				description={ translate(
-					'Integrated email solution with powerful features for your WordPress.com site.'
+					'Integrated email solution with powerful features. Manage your email and more on any device.'
 				) }
 				detailsExpanded={ this.state.expanded.titan }
 				onExpandedChange={ this.onExpandedStateChange }

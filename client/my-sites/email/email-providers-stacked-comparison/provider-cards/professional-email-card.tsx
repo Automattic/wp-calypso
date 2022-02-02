@@ -66,7 +66,7 @@ const professionalEmailCardInformation: ProviderCardProps = {
 	providerKey: 'titan',
 	showExpandButton: true,
 	description: translate(
-		'Integrated email solution with powerful features for your WordPress.com site.'
+		'Integrated email solution with powerful features. Manage your email and more on any device.'
 	),
 	logo,
 	productName: getTitanProductName(),

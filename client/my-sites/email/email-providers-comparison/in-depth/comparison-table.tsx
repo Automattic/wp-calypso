@@ -78,16 +78,6 @@ const ComparisonTable = ( {
 
 				<tr className="email-providers-in-depth-comparison-table__separator">
 					<td className="email-providers-in-depth-comparison-table__feature">
-						{ translate( 'Access' ) }
-					</td>
-
-					{ emailProviders.map( ( emailProviderFeatures ) => (
-						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.table.access }</td>
-					) ) }
-				</tr>
-
-				<tr className="email-providers-in-depth-comparison-table__separator">
-					<td className="email-providers-in-depth-comparison-table__feature">
 						{ translate( 'Collaboration' ) }
 					</td>
 

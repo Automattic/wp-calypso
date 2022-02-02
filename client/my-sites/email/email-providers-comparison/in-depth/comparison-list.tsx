@@ -19,14 +19,7 @@ const ComparisonList = ( {
 	return (
 		<div className="email-providers-in-depth-comparison-list">
 			{ emailProviders.map( ( emailProviderFeatures ) => {
-				const {
-					access,
-					collaboration,
-					importing,
-					tools,
-					storage,
-					support,
-				} = emailProviderFeatures.list;
+				const { collaboration, importing, tools, storage, support } = emailProviderFeatures.list;
 
 				return (
 					<Card key={ emailProviderFeatures.slug }>
@@ -50,7 +43,7 @@ const ComparisonList = ( {
 
 						<div className="email-providers-in-depth-comparison-list__features">
 							<EmailProviderFeatures
-								features={ [ tools, storage, access, collaboration, importing, support ] }
+								features={ [ tools, storage, collaboration, importing, support ] }
 							/>
 						</div>
 

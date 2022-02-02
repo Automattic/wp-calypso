@@ -21,30 +21,31 @@ export const professionalEmailFeatures: EmailProviderFeatures = {
 	slug: TITAN_PRODUCT_TYPE,
 	name: getTitanProductName(),
 	description: translate(
-		'Integrated email solution with powerful features for your WordPress.com site.'
+		'Integrated email solution with powerful features. Manage your email and more on any device.'
 	),
 	logo: <Gridicon className="professional-email-logo" icon="my-sites" />,
 	list: {
 		importing: translate( 'One-click import of existing emails and contacts' ),
-		storage: translate( '30GB storage' ),
+		storage: translate( '30GB storage for emails' ),
 		support: translate( '24/7 support via email' ),
-		tools: translate( 'Integrated email management, Inbox, Calendar and Contacts' ),
+		tools: translate( 'Inbox, Calendar and Contacts' ),
 	},
 	supportUrl: ADDING_TITAN_TO_YOUR_SITE,
 	table: {
-		access: translate( 'Online' ),
-		collaboration: translate( 'None' ),
+		collaboration: '-',
 		importing: translate( 'One-click import of existing emails and contacts' ),
-		storage: translate( '30GB storage' ),
+		storage: translate( '30GB for emails' ),
 		support: translate( '24/7 via email' ),
-		tools: translate( 'Integrated email management, Inbox, Calendar and Contacts' ),
+		tools: translate( 'Inbox, Calendar and Contacts' ),
 	},
 };
 
 export const googleWorkspaceFeatures: EmailProviderFeatures = {
 	slug: GOOGLE_WORKSPACE_PRODUCT_TYPE,
 	name: getGoogleMailServiceFamily(),
-	description: translate( 'Business email with Gmail and other productivity tools from Google.' ),
+	description: translate(
+		'Business email with Gmail. Include other collaboration and productivity tools from Google.'
+	),
 	logo: (
 		<img
 			alt={ translate( 'Google Workspace icon', { textOnly: true } ) }
@@ -53,10 +54,9 @@ export const googleWorkspaceFeatures: EmailProviderFeatures = {
 		/>
 	),
 	list: {
-		access: translate( 'Online & offline access' ),
-		collaboration: translate( 'Real-time collaboration' ),
+		collaboration: translate( 'Real-time collaboration for Docs, Sheets, and Slides' ),
 		importing: translate( 'Easy to import your existing emails and contacts' ),
-		storage: translate( '30GB storage with shared files' ),
+		storage: translate( '30GB storage for emails and cloud storage' ),
 		support: translate( '24/7 support via email' ),
 		tools: translate(
 			'Gmail, Calendar, Contacts, Meet, Chat, Drive, Docs, Sheets, Slides and more'
@@ -64,10 +64,9 @@ export const googleWorkspaceFeatures: EmailProviderFeatures = {
 	},
 	supportUrl: ADDING_GSUITE_TO_YOUR_SITE,
 	table: {
-		access: translate( 'Online & offline' ),
-		collaboration: translate( 'Real-time' ),
+		collaboration: translate( 'Real-time for Docs, Sheets, and Slides' ),
 		importing: translate( 'Easy to import your existing emails and contacts' ),
-		storage: translate( '30GB storage with shared files' ),
+		storage: translate( '30GB for emails and cloud storage' ),
 		support: translate( '24/7 via email' ),
 		tools: translate(
 			'Gmail, Calendar, Contacts, Meet, Chat, Drive, Docs, Sheets, Slides and more'

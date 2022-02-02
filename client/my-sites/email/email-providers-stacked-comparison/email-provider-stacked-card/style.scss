@@ -102,7 +102,7 @@ $width-left-panel-card: 55%;
 	width: 100%;
 
 	@include break-xlarge {
-		margin-left: 10px;
+		margin-left: 20px;
 		margin-top: 0;
 		width: $width-right-panel-card;
 	}
@@ -240,7 +240,7 @@ $width-left-panel-card: 55%;
 
 .email-provider-stacked-card__provider-right-panel {
 	@include break-xlarge {
-		margin-left: 24px;
+		margin-left: 30px;
 	}
 
 	img {
@@ -251,6 +251,8 @@ $width-left-panel-card: 55%;
 .email-provider-stacked-card__title {
 	font-size: $font-title-small;
 	color: var( --color-neutral-70 );
+
+	@extend .wp-brand-font;
 }
 
 .email-provider-stacked-card__title-container {
@@ -262,6 +264,7 @@ $width-left-panel-card: 55%;
 
 	p {
 		margin-bottom: 0;
+		margin-top: 10px;
 	}
 }
 
