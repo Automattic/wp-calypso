@@ -1,12 +1,11 @@
-import { ReactElement } from 'react';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison/index';
+import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
-import type { EmailProvidersStackedComparisonProps } from 'calypso/my-sites/email/email-providers-stacked-comparison/index';
+import type { EmailProvidersStackedComparisonProps } from 'calypso/my-sites/email/email-providers-stacked-comparison';
 
 const EmailProvidersStackedComparisonPage = (
 	props: EmailProvidersStackedComparisonProps
-): ReactElement => {
+): JSX.Element => {
 	return (
 		<>
 			<PageViewTracker
