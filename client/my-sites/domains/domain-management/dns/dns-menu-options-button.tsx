@@ -182,7 +182,7 @@ function DnsMenuOptionsButton( {
 		if ( shouldRestoreEmailDns ) {
 			restoreEmailDnsRecords( {
 				dnsTemplate: emailProviderConfig[ providerKey ].dnsTemplate,
-				variables: emailProviderConfig[ providerKey ]?.templateVariables ?? {},
+				variables: emailProviderConfig[ providerKey ].templateVariableBuilder?.( { domain } ) ?? {},
 			} );
 		}
 	};
