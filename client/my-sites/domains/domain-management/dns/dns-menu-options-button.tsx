@@ -215,8 +215,14 @@ function DnsMenuOptionsButton( {
 
 	const emailRestoreItems = emailProviderKeys.map(
 		( emailProviderKey: EmailProviderKey ): JSX.Element => {
-			const isEmailMenuItemEnabled =
-				emailProviderConfig[ emailProviderKey ].hasServiceFunction?.( domain ) ?? true;
+			let isEmailMenuItemEnabled = true;
+
+			if ( ! domain ) {
+				isEmailMenuItemEnabled = false;
+			} else {
+				isEmailMenuItemEnabled =
+					emailProviderConfig[ emailProviderKey ].hasServiceFunction?.( domain ) ?? true;
+			}
 
 			return (
 				<PopoverMenuItem
