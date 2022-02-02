@@ -20,3 +20,11 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 		}
 	}
 }
+
+.woop__landing-page-features-section {
+	.promo-section__promos .promo-card {
+		/* Todo: add media queries */
+		width: calc( 33% - 1em );
+		box-shadow: none;
+	}
+}
