@@ -12,7 +12,7 @@ describe( 'getRewindBackups()', () => {
 		const state = {
 			rewind: {
 				123: {
-					backups: [ 1, 2, 3 ],
+					backups: { backups: [ 1, 2, 3 ] },
 				},
 			},
 		};
@@ -36,7 +36,7 @@ describe( 'getRewindBackups()', () => {
 		const state = {
 			rewind: {
 				123: {
-					backups: [ 1, 2, 3 ],
+					backups: { backups: [ 1, 2, 3 ] },
 				},
 			},
 		};
