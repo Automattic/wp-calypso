@@ -48,9 +48,15 @@ const emailProviderConfig: Record< EmailProviderKey, EmailProviderConfiguration 
 	},
 	GOOGLE: {
 		dnsTemplate: dnsTemplates.G_SUITE,
-		hasServiceFunction: ( domain: ResponseDomain | undefined ): boolean =>
-			hasGSuiteWithUs( domain ) || hasGSuiteWithAnotherProvider( domain ),
+		hasServiceFunction: ( domain: ResponseDomain | undefined ): boolean => {
+			// Disable Google for now as our back-end template requires a site verification token
+			return false && ( hasGSuiteWithUs( domain ) || hasGSuiteWithAnotherProvider( domain ) );
+		},
 		providerSlug: 'google',
+		templateVariables: {
+			// The back-end template requires a `token` variable for a site verification record
+			token: ' ',
+		},
 	},
 	TITAN: {
 		dnsTemplate: dnsTemplates.TITAN,
