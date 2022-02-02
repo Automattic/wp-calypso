@@ -278,7 +278,6 @@ class MasterbarLoggedIn extends Component {
 						) }
 					</div>
 					<div className="masterbar__section masterbar__section--center">
-						<AsyncLoad require="calypso/my-sites/resume-editing" placeholder={ null } />
 						{ ! domainOnlySite && ! isMigrationInProgress && (
 							<AsyncLoad
 								require="./publish"
