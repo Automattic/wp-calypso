@@ -661,7 +661,13 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 	return coupon_savings_integer > 0;
 }
 
-function hasPartnerCoupon( coupon: string, products?: ResponseCartProduct[] ): boolean {
+export function getPartnerCoupon( {
+	coupon,
+	products,
+}: {
+	coupon: string;
+	products?: ResponseCartProduct[];
+} ): boolean {
 	const productHasSublabel =
 		products && products.some( ( product: ResponseCartProduct ) => !! getSublabel( product ) );
 	const isPartnerCoupon = coupon.startsWith( 'IONOS_' );
@@ -882,7 +888,10 @@ function WPLineItem( {
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product );
 
-	const containsPartnerCoupon = hasPartnerCoupon( responseCart.coupon, [ product ] );
+	const containsPartnerCoupon = getPartnerCoupon( {
+		coupon: responseCart.coupon,
+		products: [ product ],
+	} );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
