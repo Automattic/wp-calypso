@@ -1,12 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.svg';
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { localizeUrl } from 'calypso/lib/i18n-utils/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getSiteEditorUrl } from 'calypso/state/selectors/get-site-editor-url';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import { shoppingBag, truck } from '../../icons';
 import SelectItems, { SelectItem } from '../../select-items';
@@ -19,6 +20,7 @@ interface Props {
 	signupDependencies: any;
 	stepName: string;
 	initialContext: any;
+	siteId: number;
 }
 
 export default function StoreFeaturesStep( props: Props ): React.ReactNode {
@@ -27,6 +29,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const headerText = translate( 'Set up your store' );
 	const subHeaderText = translate( 'Let’s create a website that suits your needs.' );
 	const siteSlug = props.signupDependencies.siteSlug;
+	const siteEditorUrl = useSelector( ( state ) => getSiteEditorUrl( state, props.siteId ) );
 
 	const { stepName } = props;
 
@@ -127,7 +130,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 				break;
 
 			case 'simple': {
-				page.redirect( `/site-editor/${ siteSlug }/` );
+				page.redirect( siteEditorUrl );
 				break;
 			}
 		}
@@ -147,9 +150,6 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			defaultDependencies={ {
 				siteTitle: '',
 				tagline: '',
-				//Temporarily hard-coded to Zoologist; eventually we'll add a theme selection step.
-				themeSlugWithRepo: 'pub/zoologist',
-				useThemeHeadstart: true,
 			} }
 			{ ...props }
 		/>
