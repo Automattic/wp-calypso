@@ -168,6 +168,7 @@ private object Happychat : WPComPluginBuild(
 	pluginSlug = "happychat",
 	archiveDir = "./dist/",
 	docsLink = "TODO",
+	withPRNotify = "false",
 )
 
 private object InlineHelp : WPComPluginBuild(
@@ -176,4 +177,5 @@ private object InlineHelp : WPComPluginBuild(
 	pluginSlug = "inline-help",
 	archiveDir = "./dist/",
 	docsLink = "TODO",
+	withPRNotify = "false",
 )
