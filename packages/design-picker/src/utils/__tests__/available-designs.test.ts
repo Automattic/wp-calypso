@@ -166,10 +166,10 @@ describe( 'Design Picker design utils', () => {
 		// in a `background-url: url( ... )` CSS rule the parentheses will break it.
 		it( 'escapes parentheses within the site title', () => {
 			const mockDesign = availableDesignsConfig.featured[ 0 ];
-			mockDesign.title = 'Mock(Design)';
+			mockDesign.title = 'Mock(Design)(Title)';
 
 			expect( getDesignUrl( mockDesign, mockLocale ) ).toEqual(
-				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesign.stylesheet }/${ mockDesign.template }?font_headings=${ mockDesign.fonts.headings }&font_base=${ mockDesign.fonts.base }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true&site_title=Mock%28Design%29`
+				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesign.stylesheet }/${ mockDesign.template }?font_headings=${ mockDesign.fonts.headings }&font_base=${ mockDesign.fonts.base }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true&site_title=Mock%28Design%29%28Title%29`
 			);
 		} );
 	} );

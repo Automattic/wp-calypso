@@ -36,6 +36,10 @@ const _filters = {
 	},
 };
 
+export function isEqualSlugOrId( pluginSlug, plugin ) {
+	return plugin.slug === pluginSlug || plugin?.id?.split( '/' ).shift() === pluginSlug;
+}
+
 export function isRequesting( state, siteId ) {
 	if ( typeof state.plugins.installed.isRequesting[ siteId ] === 'undefined' ) {
 		return false;
@@ -102,17 +106,18 @@ export function getPluginsOnSites( state, plugins ) {
 }
 
 export function getPluginOnSites( state, siteIds, pluginSlug ) {
-	return getPlugins( state, siteIds ).find( ( plugin ) => plugin.slug === pluginSlug );
+	return getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
 }
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );
-	return find( pluginList, { slug: pluginSlug } );
+	return find( pluginList, ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
 }
 
 export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 	const pluginList = getPlugins( state, siteIds );
-	const plugin = find( pluginList, { slug: pluginSlug } );
+	const plugin = find( pluginList, ( pluginItem ) => isEqualSlugOrId( pluginSlug, pluginItem ) );
+
 	if ( ! plugin ) {
 		return [];
 	}

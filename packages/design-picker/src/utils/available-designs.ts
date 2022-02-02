@@ -34,7 +34,7 @@ export const getDesignUrl = (
 		// parentheses so we've got to do it ourselves.
 		url +=
 			'&site_title=' +
-			encodeURIComponent( design.title ).replace( '(', '%28' ).replace( ')', '%29' );
+			encodeURIComponent( design.title ).replace( /\(/g, '%28' ).replace( /\)/g, '%29' );
 	}
 
 	return url;

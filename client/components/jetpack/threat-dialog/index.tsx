@@ -1,11 +1,9 @@
-import { Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
 import ServerCredentialsWizardDialog from 'calypso/components/jetpack/server-credentials-wizard-dialog';
-import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
+import ThreatFixHeader from 'calypso/components/jetpack/threat-fix-header';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
-import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
 
 import './style.scss';
 
@@ -22,7 +20,6 @@ const ThreatDialog: React.FC< Props > = ( {
 	action,
 	onCloseDialog,
 	onConfirmation,
-	siteName,
 	showDialog,
 	threat,
 } ) => {
@@ -64,31 +61,18 @@ const ThreatDialog: React.FC< Props > = ( {
 			baseDialogClassName={ 'threat-dialog' }
 		>
 			<>
-				<h3 className="threat-dialog__threat-title">{ <ThreatItemHeader threat={ threat } /> }</h3>
-				<div className="threat-dialog__threat-description">{ threat.description }</div>
-				<div className="threat-dialog__warning">
-					<Gridicon
-						className={ classnames(
-							'threat-dialog__warning-icon',
-							`threat-dialog__warning-icon--${ action }-threat`
-						) }
-						icon="info"
-						size={ 36 }
-					/>
-					<p className="threat-dialog__warning-message">
-						{ action === 'fix'
-							? getThreatFix( threat.fixable )
-							: translate(
-									'You shouldn’t ignore a security issue unless you are absolutely sure it’s harmless. If you choose to ignore this threat, it will remain on your site "{{strong}}%s{{/strong}}".',
-									{
-										args: [ siteName ],
-										components: {
-											strong: <strong />,
-										},
-									}
-							  ) }
-					</p>
-				</div>
+				<p>
+					{ action === 'fix' && translate( 'Jetpack will fix the threat:' ) }
+
+					{ action === 'ignore' && translate( 'Jetpack will ignore the threat:' ) }
+				</p>
+				<h3 className="threat-dialog__threat-title">
+					{ <ThreatFixHeader threat={ threat } action={ action } /> }
+				</h3>
+				{ action === 'ignore' &&
+					translate(
+						'By ignoring this threat you confirm that you have reviewed the detected code and assume the risks of keeping a potentially malicious file on your site. If you are unsure please request an estimate with Codeable.'
+					) }
 			</>
 		</ServerCredentialsWizardDialog>
 	);

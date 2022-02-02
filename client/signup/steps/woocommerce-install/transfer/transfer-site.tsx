@@ -14,14 +14,14 @@ import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Error from './error';
 import Progress from './progress';
-
 import './style.scss';
+import { FailureInfo } from '.';
 
 export default function TransferSite( {
 	onFailure,
 	trackRedirect,
 }: {
-	onFailure: ( type: string ) => void;
+	onFailure: ( type: FailureInfo ) => void;
 	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
@@ -107,9 +107,22 @@ export default function TransferSite( {
 		if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
 			setTransferFailed( true );
-			onFailure( 'transfer' );
+
+			onFailure( {
+				type: 'transfer',
+				error: transferError?.message || softwareError?.message || '',
+				code: transferError?.code || softwareError?.code || '',
+			} );
 		}
-	}, [ siteId, transferStatus, isTransferringStatusFailed, onFailure ] );
+	}, [
+		siteId,
+		transferStatus,
+		isTransferringStatusFailed,
+		onFailure,
+		transferError,
+		softwareError,
+		softwareStatus,
+	] );
 
 	// Redirect to wc-admin once software installation is confirmed.
 	useEffect( () => {
@@ -135,7 +148,11 @@ export default function TransferSite( {
 
 		const timeId = setTimeout( () => {
 			setTransferFailed( true );
-			onFailure( 'transfer_timeout' );
+			onFailure( {
+				type: 'transfer_timeout',
+				error: 'transfer took too long.',
+				code: 'transfer_timeout',
+			} );
 		}, 1000 * 180 );
 
 		return () => {

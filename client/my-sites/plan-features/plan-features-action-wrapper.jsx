@@ -42,7 +42,7 @@ export default function PlanFeaturesActionsWrapper( {
 		}
 	}
 
-	if ( redirectToAddDomainFlow ) {
+	if ( redirectToAddDomainFlow === true ) {
 		buttonText = translate( 'Add to Cart' );
 		forceDisplayButton = true;
 	}

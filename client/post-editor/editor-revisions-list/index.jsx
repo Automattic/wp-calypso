@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import { selectPostRevision } from 'calypso/state/posts/revisions/actions';
 import EditorRevisionsListHeader from './header';
 import EditorRevisionsListItem from './item';
@@ -39,17 +38,9 @@ class EditorRevisionsList extends PureComponent {
 		// Make sure that scroll position in the editor is not preserved.
 		window.scrollTo( 0, 0 );
 
-		KeyboardShortcuts.on( 'move-selection-up', this.selectNextRevision );
-		KeyboardShortcuts.on( 'move-selection-down', this.selectPreviousRevision );
-
 		if ( ! this.props.selectedRevisionId ) {
 			this.trySelectingLatestRevision();
 		}
-	}
-
-	componentWillUnmount() {
-		KeyboardShortcuts.off( 'move-selection-up', this.selectNextRevision );
-		KeyboardShortcuts.off( 'move-selection-down', this.selectPreviousRevision );
 	}
 
 	componentDidUpdate( prevProps ) {

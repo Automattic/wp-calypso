@@ -97,9 +97,6 @@ open class E2EBuildType(
 			bashNodeScript {
 				name = "Prepare environment"
 				scriptContent = """
-					export NODE_ENV="test"
-					export PLAYWRIGHT_BROWSERS_PATH=0
-
 					# Install deps
 					yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
 

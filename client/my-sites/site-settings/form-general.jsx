@@ -33,7 +33,12 @@ import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
-import { getSiteOption, isJetpackSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import {
+	getSiteOption,
+	isJetpackSite,
+	isCurrentPlanPaid,
+	getCustomizerUrl,
+} from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -602,15 +607,16 @@ export class SiteSettingsFormGeneral extends Component {
 
 	render() {
 		const {
+			customizerUrl,
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
+			isWPForTeamsSite,
 			site,
 			siteIsJetpack,
+			siteIsAtomic,
 			siteIsVip,
-			siteSlug,
 			translate,
-			isWPForTeamsSite,
 		} = this.props;
 
 		const classes = classNames( 'site-settings__general-settings', {
@@ -641,7 +647,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ this.props.isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
 
-				{ ! isWPForTeamsSite && ! siteIsJetpack && (
+				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
 							title={ translate( 'Footer credit' ) }
@@ -657,10 +663,7 @@ export class SiteSettingsFormGeneral extends Component {
 								) }
 							</p>
 							<div>
-								<Button
-									className="site-settings__footer-credit-change"
-									href={ '/customize/identity/' + siteSlug }
-								>
+								<Button className="site-settings__footer-credit-change" href={ customizerUrl }>
 									{ translate( 'Change footer credit' ) }
 								</Button>
 							</div>
@@ -707,6 +710,7 @@ const connectComponent = connect( ( state ) => {
 		siteDomains: getDomainsBySiteId( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
+		customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,

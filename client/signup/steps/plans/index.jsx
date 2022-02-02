@@ -1,7 +1,7 @@
 import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
+import { isDesktop, subscribeIsDesktop, isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { intersection } from 'lodash';
@@ -10,9 +10,9 @@ import { parse as parseQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
-import PulsingDot from 'calypso/components/pulsing-dot';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
@@ -148,6 +148,66 @@ export class PlansStep extends Component {
 
 		return (
 			<ProvideExperimentData
+				name="calypso_mobile_plans_page_with_billing"
+				options={ { isEligible: isMobile() && 'onboarding' === this.props.flowName } }
+			>
+				{ ( isLoading, experimentAssignment ) => {
+					if ( isLoading ) {
+						return this.renderLoading();
+					}
+
+					// This allows us to continue with the other experiments.
+					if ( ! experimentAssignment?.variationName ) {
+						return this.renderSignUpMonthlyPlansExperiment( errorDisplay );
+					}
+
+					return (
+						<div>
+							{ errorDisplay }
+							<QueryPlans />
+							<PlansFeaturesMain
+								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+								hideFreePlan={ hideFreePlan }
+								isInSignup={ true }
+								isLaunchPage={ isLaunchPage }
+								intervalType={ this.getIntervalType( false ) }
+								isBillingWordingExperiment={ experimentAssignment?.variationName !== null }
+								onUpgradeClick={ this.onSelectPlan }
+								showFAQ={ false }
+								domainName={ this.getDomainName() }
+								customerType={ this.getCustomerType() }
+								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+								plansWithScroll={ this.state.isDesktop }
+								planTypes={ planTypes }
+								flowName={ flowName }
+								showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+								isAllPaidPlansShown={ true }
+								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+								isReskinned={ isReskinned }
+								disableMonthlyExperiment={ false }
+							/>
+						</div>
+					);
+				} }
+			</ProvideExperimentData>
+		);
+	}
+
+	renderSignUpMonthlyPlansExperiment( errorDisplay ) {
+		const {
+			disableBloggerPlanWithNonBlogDomain,
+			hideFreePlan,
+			isLaunchPage,
+			selectedSite,
+			planTypes,
+			flowName,
+			showTreatmentPlansReorderTest,
+			isInVerticalScrollingPlansExperiment,
+			isReskinned,
+		} = this.props;
+		return (
+			<ProvideExperimentData
 				name="calypso_signup_monthly_plans_default_202201_v2"
 				options={ {
 					isEligible: [ 'onboarding', 'launch-site' ].includes( this.props.flowName ),
@@ -155,7 +215,7 @@ export class PlansStep extends Component {
 			>
 				{ ( isLoading, experimentAssignment ) => {
 					if ( isLoading ) {
-						return <PulsingDot active />;
+						return this.renderLoading();
 					}
 					const isTreatmentMonthlyDefault = experimentAssignment?.variationName !== null;
 
@@ -169,6 +229,7 @@ export class PlansStep extends Component {
 								isInSignup={ true }
 								isLaunchPage={ isLaunchPage }
 								intervalType={ this.getIntervalType( isTreatmentMonthlyDefault ) }
+								isBillingWordingExperiment={ false }
 								onUpgradeClick={ this.onSelectPlan }
 								showFAQ={ false }
 								domainName={ this.getDomainName() }
@@ -187,6 +248,14 @@ export class PlansStep extends Component {
 					);
 				} }
 			</ProvideExperimentData>
+		);
+	}
+
+	renderLoading() {
+		return (
+			<div className="plans__loading">
+				<LoadingEllipsis active />
+			</div>
 		);
 	}
 

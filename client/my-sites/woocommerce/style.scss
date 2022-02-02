@@ -1,3 +1,5 @@
+@import '@automattic/onboarding/styles/mixins';
+
 .woocommerce {
 	@import 'dashboard/setup/style';
 
@@ -10,7 +12,9 @@
 	}
 
 	.woocommerce-colophon {
-		margin-top: 40px;
+		@include onboarding-small-text;
+
+		margin-top: 1em;
 		text-align: center;
 		color: var( --color-text-subtle );
 

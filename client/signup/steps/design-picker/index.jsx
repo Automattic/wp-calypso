@@ -121,6 +121,14 @@ export default function DesignPickerStep( props ) {
 		};
 	}, [ allThemes ] );
 
+	const getEventPropsByDesign = ( design ) => ( {
+		theme: design?.stylesheet ?? `pub/${ design.theme }`,
+		template: design.template,
+		is_premium: design?.is_premium,
+		flow: flowName,
+		intent: dependencies.intent,
+	} );
+
 	// Update the selected design when the section changes
 	useEffect( () => {
 		setSelectedDesign( designs.find( ( { theme } ) => theme === props.stepSectionName ) );
@@ -172,12 +180,11 @@ export default function DesignPickerStep( props ) {
 	function previewDesign( _selectedDesign ) {
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
 
-		recordTracksEvent( 'calypso_signup_design_preview_select', {
-			theme: _selectedDesign?.stylesheet ?? `pub/${ _selectedDesign.theme }`,
-			template: _selectedDesign.template,
-			flow: props.flowName,
-			intent: props.signupDependencies.intent,
-		} );
+		recordTracksEvent(
+			'calypso_signup_design_preview_select',
+			getEventPropsByDesign( _selectedDesign )
+		);
+
 		page(
 			getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale, queryParams )
 		);
@@ -188,13 +195,7 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function submitDesign( _selectedDesign = selectedDesign ) {
-		recordTracksEvent( 'calypso_signup_select_design', {
-			theme: _selectedDesign?.stylesheet ?? `pub/${ _selectedDesign?.theme }`,
-			template: _selectedDesign?.template,
-			flow: props.flowName,
-			intent: props.signupDependencies.intent,
-		} );
-
+		recordTracksEvent( 'calypso_signup_select_design', getEventPropsByDesign( _selectedDesign ) );
 		props.goToNextStep();
 	}
 
@@ -220,7 +221,7 @@ export default function DesignPickerStep( props ) {
 						'design-picker-step__has-categories': showDesignPickerCategories,
 					} ) }
 					highResThumbnails
-					premiumBadge={ <PremiumBadge /> }
+					premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
 					categorization={ showDesignPickerCategories ? categorization : undefined }
 					recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
 					categoriesHeading={

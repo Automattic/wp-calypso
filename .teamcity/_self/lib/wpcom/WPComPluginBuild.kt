@@ -20,6 +20,7 @@ open class WPComPluginBuild(
 	var releaseTag: String = "$pluginSlug-release-build",
 	var normalizeFiles: String = "",
 	var withSlackNotify: String = "false",
+	var withPRNotify: String = "true",
 	var buildEnv: String = "production",
 	var buildSteps: BuildSteps.() -> Unit = {},
 	var buildParams: ParametrizedWithType.() -> Unit = {},
@@ -34,6 +35,7 @@ open class WPComPluginBuild(
 		val pluginSlug = pluginSlug
 		val normalizeFiles = normalizeFiles
 		val withSlackNotify = withSlackNotify
+		val withPRNotify = withPRNotify
 		val buildSteps = buildSteps
 		val buildEnv = buildEnv
 		val params = params
@@ -145,27 +147,32 @@ open class WPComPluginBuild(
 					cd $workingDir
 					cp README.md $archiveDir
 
-					# 1. Download and unzip current release build.
-					mkdir ./release-archive
-					wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
-					unzip -q ./tmp-release-archive-download.zip -d ./release-archive
-					echo "Diffing against current trunk release build (`grep build_number ./release-archive/build_meta.txt | sed s/build_number=//`).";
+					# We can manually skip diff checking to account for the case
+					# that there is no existing release archive, in which case
+					# the next several lines would fail.
+					if [ "%skip_release_diff%" != "true" ] ; then
+						# 1. Download and unzip current release build.
+						mkdir ./release-archive
+						wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
+						unzip -q ./tmp-release-archive-download.zip -d ./release-archive
+						echo "Diffing against current trunk release build (`grep build_number ./release-archive/build_meta.txt | sed s/build_number=//`).";
 
-					# 2. Change anything from the release build which is "unstable", like the version number and build metadata.
-					# These operations restore idempotence between the two builds.
-					rm -f ./release-archive/build_meta.txt
+						# 2. Change anything from the release build which is "unstable", like the version number and build metadata.
+						# These operations restore idempotence between the two builds.
+						rm -f ./release-archive/build_meta.txt
 
-					$normalizeFiles
+						$normalizeFiles
+					fi
 
 					# 3. Check if the current build has changed, and if so, tag it for release.
 					# Note: we exclude asset changes because we only really care if the build files (JS/CSS) change. That file is basically just metadata.
-					if ! diff -rq --exclude="*.asset.php" --exclude="cache-buster.txt" --exclude="README.md" $archiveDir ./release-archive/ ; then
+					if [ "%skip_release_diff%" = "true" ] || ! diff -rq --exclude="*.asset.php" --exclude="cache-buster.txt" --exclude="README.md" $archiveDir ./release-archive/ ; then
 						echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
 						tag_response=`curl -s -X POST -H "Content-Type: text/plain" --data "$releaseTag" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/`
 						echo -e "Build tagging status: ${'$'}tag_response\n"
 
 						# On normal PRs, post a message about WordPress.com deployments.
-						if [[ "%teamcity.build.branch.is_default%" != "true" ]] ; then
+						if [[ "%teamcity.build.branch.is_default%" != "true" ]] && [ "$withPRNotify" == "true" ] ; then
 							%teamcity.build.checkoutDir%/bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" <<- EOF || true
 							**This PR modifies the release build for $pluginSlug**
 

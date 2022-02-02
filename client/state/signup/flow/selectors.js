@@ -10,6 +10,6 @@ export function getPreviousFlowName( state ) {
 	return get( state, 'signup.flow.previousFlowName', '' );
 }
 
-export function getExcludeSteps( state ) {
+export function getExcludedSteps( state ) {
 	return get( state, 'signup.flow.excludedSteps', [] );
 }

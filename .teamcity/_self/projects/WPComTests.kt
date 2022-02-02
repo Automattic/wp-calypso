@@ -217,7 +217,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2E
     return E2EBuildType (
 		buildId = "WPComTests_gutenberg_Playwright_$targetDevice",
 		buildUuid = buildUuid,
-		buildName = "Playwright E2E Tests ($targetDevice)",
+		buildName = "Playwright Gutenberg E2E tests ($targetDevice)",
 		buildDescription = "Runs Gutenberg e2e tests on $targetDevice size",
 		testGroup = "gutenberg",
 		buildParams = {

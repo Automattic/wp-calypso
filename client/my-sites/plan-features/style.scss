@@ -422,6 +422,13 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plan-features__header-discounted-info {
+	color: var( --studio-green-60 );
+	font-weight: 600;
+	margin-top: -16px;
+	margin-bottom: 12px;
+}
+
 .plan-features__header-credit-label {
 	font-size: $font-body-extra-small;
 	line-height: 20px;
@@ -1236,3 +1243,29 @@ button.plan-features__scroll-button {
 		}
 	}
 }
+
+.plan-features__mobile-disabled {
+	.plan-features__header, .plan-features__pricing, .plan-features__description, .foldable-card {
+		opacity: 0.4;
+	}
+
+	.plan-features__not-available {
+		color: var( --studio-orange-40 );
+		font-weight: 600;
+		margin: auto;
+		padding-top: 10px;
+		text-align: center;
+	}
+}
+
+.plan-features__header-annual-discount {
+	color: var( --color-accent );
+	font-size: 0.75rem;
+    line-height: normal;
+	margin-bottom: 0.75rem;
+
+	&-is-loading {
+		display: none;
+	}
+}
+

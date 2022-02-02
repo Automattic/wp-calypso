@@ -1,14 +1,14 @@
 import {
 	SIGNUP_CURRENT_FLOW_NAME_SET,
 	SIGNUP_PREVIOUS_FLOW_NAME_SET,
-	SIGNUP_FLOW_ADD_EXCLUDE_STEPS,
-	SIGNUP_FLOW_REMOVE_EXCLUDE_STEPS,
-	SIGNUP_FLOW_RESET_EXCLUDE_STEPS,
+	SIGNUP_FLOW_ADD_EXCLUDED_STEPS,
+	SIGNUP_FLOW_REMOVE_EXCLUDED_STEPS,
+	SIGNUP_FLOW_RESET_EXCLUDED_STEPS,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { currentFlowNameSchema, previousFlowNameSchema, excludedStepsSchema } from './schema';
 
-const EMPTY_EXCLUDE_STEPS = [];
+const EMPTY_EXCLUDED_STEPS = [];
 
 export const currentFlowName = withSchemaValidation(
 	currentFlowNameSchema,
@@ -23,17 +23,17 @@ export const previousFlowName = withSchemaValidation(
 
 export const excludedSteps = withSchemaValidation(
 	excludedStepsSchema,
-	( state = EMPTY_EXCLUDE_STEPS, { type, steps } ) => {
+	( state = EMPTY_EXCLUDED_STEPS, { type, steps } ) => {
 		switch ( type ) {
-			case SIGNUP_FLOW_ADD_EXCLUDE_STEPS: {
+			case SIGNUP_FLOW_ADD_EXCLUDED_STEPS: {
 				return Array.from( new Set( [ ...state, ...steps ] ) );
 			}
-			case SIGNUP_FLOW_REMOVE_EXCLUDE_STEPS: {
+			case SIGNUP_FLOW_REMOVE_EXCLUDED_STEPS: {
 				const removeStepsSet = new Set( steps );
 				return state.filter( ( step ) => ! removeStepsSet.has( step ) );
 			}
-			case SIGNUP_FLOW_RESET_EXCLUDE_STEPS:
-				return EMPTY_EXCLUDE_STEPS;
+			case SIGNUP_FLOW_RESET_EXCLUDED_STEPS:
+				return EMPTY_EXCLUDED_STEPS;
 			default:
 				return state;
 		}

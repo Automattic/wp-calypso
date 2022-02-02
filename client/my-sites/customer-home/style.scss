@@ -98,6 +98,10 @@ body.is-section-home.theme-default.color-scheme {
 	
 }
 
+.customer-home__heading + .customer-home__layout {
+	margin-top: 24px;
+}
+
 .customer-home__layout {
 	@include grid-row( 4, 1 );
 	@include breakpoint-deprecated( '>1040px' ) {

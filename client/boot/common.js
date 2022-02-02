@@ -368,12 +368,6 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 		reduxStore.dispatch( initHappychatConnection( getHappychatAuth( state )() ) );
 	}
 
-	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-		asyncRequire( 'calypso/lib/keyboard-shortcuts/global', ( setupGlobalKeyboardShortcuts ) => {
-			setupGlobalKeyboardShortcuts();
-		} );
-	}
-
 	if ( window.electron ) {
 		DesktopListeners.init( reduxStore );
 	}

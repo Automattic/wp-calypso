@@ -1,5 +1,5 @@
 const cleanSlug = ( slug: string ) =>
-	slug.replace( /_/g, '-' ).split( /-(monthly|yearly|2y)/ )[ 0 ];
+	slug && slug.replace( /_/g, '-' ).split( /-(monthly|yearly|2y)/ )[ 0 ];
 
 /**
  * Returns true if a list of products contains a marketplace product with the specified product slug.

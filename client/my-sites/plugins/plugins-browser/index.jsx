@@ -36,6 +36,8 @@ import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-brow
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
@@ -76,6 +78,8 @@ const PluginsBrowser = ( {
 	hideHeader,
 	doSearch,
 } ) => {
+	const breadcrumbs = useSelector( getBreadcrumbs );
+
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
 
@@ -142,7 +146,7 @@ const PluginsBrowser = ( {
 		return ! selectedSite?.ID && hasJetpack;
 	}, [ isJetpack, selectedSite, hasJetpack ] );
 
-	const navigationItems = useMemo( () => {
+	useEffect( () => {
 		const items = [ { label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }` } ];
 		if ( search ) {
 			items.push( {
@@ -151,8 +155,8 @@ const PluginsBrowser = ( {
 			} );
 		}
 
-		return items;
-	}, [ search, siteSlug ] );
+		dispatch( updateBreadcrumbs( items ) );
+	}, [ siteSlug, search ] );
 
 	const annoncementPages = [
 		{
@@ -218,7 +222,7 @@ const PluginsBrowser = ( {
 					<QueryWporgPlugins category="featured" />
 				</>
 			) }
-			{ ! jetpackNonAtomic && <QueryProductsList persist /> }
+			<QueryProductsList persist />
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<PageViewTrackerWrapper
 				category={ category }
@@ -236,10 +240,7 @@ const PluginsBrowser = ( {
 				/>
 			) }
 			{ ! hideHeader && (
-				<FixedNavigationHeader
-					className="plugins-browser__header"
-					navigationItems={ navigationItems }
-				>
+				<FixedNavigationHeader className="plugins-browser__header" navigationItems={ breadcrumbs }>
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
 							shouldShowManageButton={ shouldShowManageButton }

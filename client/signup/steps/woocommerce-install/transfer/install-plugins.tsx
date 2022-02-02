@@ -11,8 +11,8 @@ import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Error from './error';
 import Progress from './progress';
-
 import './style.scss';
+import { FailureInfo } from '.';
 
 // Timeout limit for the install to complete.
 const TIMEOUT_LIMIT = 1000 * 45; // 45 seconds.
@@ -21,7 +21,7 @@ export default function InstallPlugins( {
 	onFailure,
 	trackRedirect,
 }: {
-	onFailure: ( type: string ) => void;
+	onFailure: ( type: FailureInfo ) => void;
 	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
@@ -56,7 +56,11 @@ export default function InstallPlugins( {
 			return;
 		}
 
-		onFailure( 'install' );
+		onFailure( {
+			type: 'install',
+			error: softwareError?.message || '',
+			code: softwareError?.code || '',
+		} );
 	}, [ softwareError, onFailure ] );
 
 	// Timeout threshold for the install to complete.
@@ -67,7 +71,11 @@ export default function InstallPlugins( {
 
 		const timeId = setTimeout( () => {
 			setIsTimeoutError( true );
-			onFailure( 'install_timeout' );
+			onFailure( {
+				type: 'install_timeout',
+				error: 'install took too long',
+				code: 'install_timeout',
+			} );
 		}, TIMEOUT_LIMIT );
 
 		return () => {

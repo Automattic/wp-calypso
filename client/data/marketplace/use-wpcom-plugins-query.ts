@@ -60,7 +60,7 @@ const fetchWPCOMPlugin = ( slug: string ) => {
 export const useWPCOMPlugin = (
 	slug: string,
 	{ enabled = true, staleTime = 1000 * 60 * 60 * 2, refetchOnMount = true }: UseQueryOptions = {}
-): UseQueryResult => {
+): UseQueryResult< any > => {
 	return useQuery( getCacheKey( slug ), () => fetchWPCOMPlugin( slug ), {
 		select: ( data ) => normalizePluginData( { detailsFetched: Date.now() }, data ),
 		enabled: enabled,

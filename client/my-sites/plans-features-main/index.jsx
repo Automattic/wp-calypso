@@ -168,12 +168,12 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
+			isBillingWordingExperiment,
 			redirectToAddDomainFlow,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
-
 		return (
 			<div
 				className={ classNames(
@@ -212,6 +212,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+					isBillingWordingExperiment={ isBillingWordingExperiment }
 					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
 				/>
 			</div>
@@ -411,7 +412,7 @@ export class PlansFeaturesMain extends Component {
 
 		// In the "purchase a plan and free domain" flow we do not want to show
 		// monthly plans because monthly plans do not come with a free domain.
-		if ( redirectToAddDomainFlow ) {
+		if ( redirectToAddDomainFlow !== undefined ) {
 			hidePlanSelector = true;
 		}
 

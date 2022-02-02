@@ -313,6 +313,7 @@ export class PlanFeatures extends Component {
 			showPlanCreditsApplied,
 			isLaunchPage,
 			isInVerticalScrollingPlansExperiment,
+			isBillingWordingExperiment,
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -346,7 +347,7 @@ export class PlanFeatures extends Component {
 		let buttonText = null;
 		let forceDisplayButton = false;
 
-		if ( redirectToAddDomainFlow ) {
+		if ( redirectToAddDomainFlow === true ) {
 			buttonText = translate( 'Add to Cart' );
 			forceDisplayButton = true;
 		}
@@ -398,6 +399,7 @@ export class PlanFeatures extends Component {
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
 						isInSignup={ isInSignup }
+						isBillingWordingExperiment={ isBillingWordingExperiment }
 					/>
 					<p className="plan-features__description">{ planDescription }</p>
 					<PlanFeaturesActions
@@ -591,7 +593,7 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
-		if ( redirectToAddDomainFlow ) {
+		if ( redirectToAddDomainFlow === true ) {
 			// In this flow, we add the product to the cart directly and then
 			// redirect to the "add a domain" page.
 			shoppingCartManager

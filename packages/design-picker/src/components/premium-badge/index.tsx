@@ -8,9 +8,10 @@ import './style.scss';
 
 interface Props {
 	className?: string;
+	isPremiumThemeAvailable?: boolean;
 }
 
-const PremiumBadge: FunctionComponent< Props > = ( { className } ) => {
+const PremiumBadge: FunctionComponent< Props > = ( { className, isPremiumThemeAvailable } ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -18,10 +19,17 @@ const PremiumBadge: FunctionComponent< Props > = ( { className } ) => {
 			position="top center"
 			// @ts-expect-error: @types/wordpress__components doesn't align with latest @wordpress/components
 			delay={ 300 }
-			text={ __(
-				'Let your site stand out from the crowd with a modern and stylish Premium theme.',
-				__i18n_text_domain__
-			) }
+			text={
+				isPremiumThemeAvailable
+					? __(
+							'Let your site stand out from the crowd with a modern and stylish Premium theme. Premium themes are included in your plan.',
+							__i18n_text_domain__
+					  )
+					: __(
+							'Let your site stand out from the crowd with a modern and stylish Premium theme.',
+							__i18n_text_domain__
+					  )
+			}
 		>
 			<div className={ classNames( 'premium-badge', className ) }>
 				{ /*  eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }

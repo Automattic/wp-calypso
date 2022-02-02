@@ -191,7 +191,10 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 			{ nav }
 
-			<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>
+			<Main
+				className={ classNames( 'selector__main', iterationClassName, 'fs-unmask' ) }
+				wideLayout
+			>
 				<PageViewTracker
 					path={ viewTrackerPath }
 					properties={ viewTrackerProps }

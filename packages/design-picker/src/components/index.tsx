@@ -14,6 +14,7 @@ import {
 	isBlankCanvasDesign,
 	filterDesignsByCategory,
 	sortDesigns,
+	excludeFseDesigns,
 } from '../utils';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import type { Categorization } from '../hooks/use-categorization';
@@ -234,7 +235,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	onPreview,
 	onUpgrade,
 	designs = getAvailableDesigns( {
-		featuredDesignsFilter: ( design ) => ! design.features.includes( 'anchorfm' ),
+		featuredDesignsFilter: ( design ) =>
+			! design.features.includes( 'anchorfm' ) && excludeFseDesigns( design ),
 	} ).featured,
 	premiumBadge,
 	isGridMinimal,

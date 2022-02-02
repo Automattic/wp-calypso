@@ -1,24 +1,38 @@
 import { Frame, Page } from 'playwright';
 
-export type EditorSidebarTab = 'Post' | 'Block';
-export type EditorSidebarSection = 'Categories' | 'Tags';
+export type EditorSidebarTab = 'Post' | 'Block' | 'Page';
+export type EditorSidebarSection = 'Categories' | 'Tags' | 'Status & Visibility';
+export type PrivacyOptions = 'Public' | 'Private' | 'Password';
 
 const sidebarParentSelector = '[aria-label="Editor settings"]';
 
 const selectors = {
+	// Tab
 	tabButton: ( tabName: EditorSidebarTab ) =>
 		`${ sidebarParentSelector } button:has-text("${ tabName }")`,
 	activeTabButton: ( tabName: EditorSidebarTab ) =>
 		`${ sidebarParentSelector } button.is-active:has-text("${ tabName }")`,
+
+	// Sections
 	sectionToggle: ( sectionName: EditorSidebarSection ) =>
 		`${ sidebarParentSelector } .components-panel__body-toggle:has-text("${ sectionName }")`,
 	expandedSection: ( sectionName: EditorSidebarSection ) =>
 		`${ sidebarParentSelector } .is-opened .components-panel__body-toggle:has-text("${ sectionName }")`,
 	revisionsToggle: `${ sidebarParentSelector } .components-panel__body:has-text("Revisions")`,
 	lastSection: `${ sidebarParentSelector } .components-panel__body >> nth=-1`,
+
+	// Status & Visibility
+	visibilityToggle: '.edit-post-post-visibility__toggle',
+	visibilityPopover: 'fieldset.editor-post-visibility__dialog-fieldset',
+	visibilityOption: ( option: PrivacyOptions ) => `input[value="${ option.toLowerCase() }"]`,
+	postPasswordInput: '.editor-post-visibility__dialog-password-input',
+
+	// Category
 	categoryCheckbox: ( categoryName: string ) =>
 		`${ sidebarParentSelector } [aria-label=Categories] :text("${ categoryName }")`,
 	tagInput: `${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") input`,
+
+	// Tag
 	addedTag: ( tagName: string ) =>
 		`${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") .components-form-token-field__token:has-text("${ tagName }")`,
 	closeSidebarButton: `${ sidebarParentSelector } [aria-label="Close settings"]:visible`, // there's a hidden copy in there
@@ -59,12 +73,44 @@ export class EditorSettingsSidebarComponent {
 	 * @param {EditorSidebarSection} sectionName Name of section.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async expandSectionIfCollapsed( sectionName: EditorSidebarSection ): Promise< void > {
+	async expandSection( sectionName: EditorSidebarSection ): Promise< void > {
 		// Avoid the wpcalypso/staging banner
 		await this.scrollToBottomOfSidebar();
 		if ( ! ( await this.frame.isVisible( selectors.expandedSection( sectionName ) ) ) ) {
 			await this.frame.click( selectors.sectionToggle( sectionName ) );
 		}
+	}
+
+	/* Status & Visibility */
+
+	/**
+	 * Sets the post visibility to the provided visibility setting.
+	 *
+	 * @param {PrivacyOptions} visibility Desired post visibility setting.
+	 */
+	async setVisibility( visibility: PrivacyOptions ): Promise< void > {
+		await this.expandSection( 'Status & Visibility' );
+		await this.frame.click( selectors.visibilityToggle );
+		// Important to wait for the popover element to finish its animation, as the radio buttons
+		// will not be actionable until then.
+		const popoverHandle = await this.frame.waitForSelector( selectors.visibilityPopover );
+		await popoverHandle.waitForElementState( 'stable' );
+
+		// Private posts display a dialog that when accepted will publish the post.
+		// For non-Private posts, this handler has no effect.
+		await Promise.all( [
+			this.page.once( 'dialog', ( dialog ) => dialog.accept() ),
+			this.frame.click( selectors.visibilityOption( visibility ) ),
+		] );
+	}
+
+	/**
+	 * Sets the article password, for password-protected articles.
+	 *
+	 * @param {string} password Password to be used.
+	 */
+	async setPostPassword( password: string ): Promise< void > {
+		await this.frame.fill( selectors.postPasswordInput, password );
 	}
 
 	/**

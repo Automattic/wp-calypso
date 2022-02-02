@@ -39,7 +39,6 @@ import {
 	masterbarIsVisible,
 	getSidebarIsCollapsed,
 } from 'calypso/state/ui/selectors';
-import SupportUser from 'calypso/support/support-user';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
 import { handleScroll } from './utils';
@@ -271,11 +270,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'keyboard-shortcuts' ) && (
-					<AsyncLoad require="calypso/lib/keyboard-shortcuts/menu" placeholder={ null } />
-				) }
 				{ this.renderMasterbar() }
-				<SupportUser />
 				<LayoutLoader />
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />

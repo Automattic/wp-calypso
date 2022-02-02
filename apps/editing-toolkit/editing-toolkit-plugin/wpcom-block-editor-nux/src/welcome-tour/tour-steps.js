@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, hasTranslation } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 function getTourAssets( key ) {
 	const CDN_PREFIX = 'https://s0.wp.com/i/editor-welcome-tour';
@@ -50,7 +50,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: null,
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		{
@@ -65,6 +68,12 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 				imgSrc: getTourAssets( 'allBlocks' ),
 				animation: null,
+			},
+			options: {
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: 'wpcom-editor-welcome-tour__step',
+				},
 			},
 		},
 		{
@@ -81,23 +90,19 @@ function getTourSteps( localeSlug, referencePositioning ) {
 						'Click + to open the inserter. Then click the block you want to add.',
 						'full-site-editing'
 					),
-					mobile:
-						localeSlug === 'en' ||
-						hasTranslation?.( 'Tap + to open the inserter. Then tap the block you want to add.' )
-							? __(
-									'Tap + to open the inserter. Then tap the block you want to add.',
-									'full-site-editing'
-							  )
-							: __(
-									'Click + to open the inserter. Then click the block you want to add.',
-									'full-site-editing'
-							  ),
+					mobile: __(
+						'Tap + to open the inserter. Then tap the block you want to add.',
+						'full-site-editing'
+					),
 				},
 				imgSrc: getTourAssets( 'addBlock' ),
 				animation: 'block-inserter',
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		{
@@ -113,6 +118,12 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				imgSrc: getTourAssets( 'makeBold' ),
 				animation: null,
 			},
+			options: {
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: 'wpcom-editor-welcome-tour__step',
+				},
+			},
 		},
 		{
 			referenceElements: referencePositioning && {
@@ -125,17 +136,16 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				heading: __( 'More Options', 'full-site-editing' ),
 				descriptions: {
 					desktop: __( 'Click the settings icon to see even more options.', 'full-site-editing' ),
-					mobile:
-						localeSlug === 'en' ||
-						hasTranslation?.( 'Tap the settings icon to see even more options.' )
-							? __( 'Tap the settings icon to see even more options.', 'full-site-editing' )
-							: __( 'Click the settings icon to see even more options.', 'full-site-editing' ),
+					mobile: __( 'Tap the settings icon to see even more options.', 'full-site-editing' ),
 				},
 				imgSrc: getTourAssets( 'moreOptions' ),
 				animation: null,
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		...( localeSlug === 'en'
@@ -155,7 +165,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 							isDesktopOnly: true,
 						},
 						options: {
-							classNames: [ 'is-with-extra-padding-desktop', 'wpcom-editor-welcome-tour__step' ],
+							classNames: {
+								desktop: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+								mobile: 'wpcom-editor-welcome-tour__step',
+							},
 						},
 					},
 			  ]
@@ -175,23 +188,28 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: 'undo-button',
 				isDesktopOnly: true,
 			},
+			options: {
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: 'wpcom-editor-welcome-tour__step',
+				},
+			},
 		},
 		{
 			meta: {
 				heading: __( 'Drag & drop', 'full-site-editing' ),
 				descriptions: {
 					desktop: __( 'To move blocks around, click and drag the handle.', 'full-site-editing' ),
-					mobile:
-						localeSlug === 'en' ||
-						hasTranslation?.( 'To move blocks around, tap the up and down arrows.' )
-							? __( 'To move blocks around, tap the up and down arrows.', 'full-site-editing' )
-							: __( 'To move blocks around, click and drag the handle.', 'full-site-editing' ),
+					mobile: __( 'To move blocks around, tap the up and down arrows.', 'full-site-editing' ),
 				},
 				imgSrc: getTourAssets( 'moveBlock' ),
 				animation: 'undo-button',
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		{
@@ -226,6 +244,12 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 				imgSrc: getTourAssets( 'finish' ),
 				animation: 'block-inserter',
+			},
+			options: {
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: 'wpcom-editor-welcome-tour__step',
+				},
 			},
 		},
 	];
