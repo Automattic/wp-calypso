@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -56,7 +55,9 @@ function ConnectDomainStep( {
 	}, [ initialStep, setPageSlug ] );
 
 	useEffect( () => {
-		if ( isDomainConnected ) page( domainUseMyDomain( selectedSite.slug ) );
+		if ( isDomainConnected ) {
+			page( domainUseMyDomain( selectedSite.slug ) );
+		}
 	}, [ isDomainConnected, selectedSite.slug ] );
 
 	const verifyConnection = useCallback(
@@ -202,7 +203,7 @@ ConnectDomainStep.propTypes = {
 
 export default connect( ( state ) => {
 	const selectedSite = getSelectedSite( state );
-	const siteId = get( selectedSite, 'ID', null );
+	const siteId = selectedSite?.ID;
 
 	return {
 		domains: getDomainsBySiteId( state, siteId ),
