@@ -12,7 +12,10 @@ import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import {
+	GUTENBOARDING_SECTION_DEFINITION,
+	STEPPER_SECTION_DEFINITION,
+} from 'calypso/landing/gutenboarding/sections';
 import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import { filterLanguageRevisions } from 'calypso/lib/i18n-utils';
 import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
@@ -783,6 +786,7 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/new', 'entry-gutenboarding' );
+	handleSectionPath( STEPPER_SECTION_DEFINITION, '/stepper', 'entry-stepper' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(
