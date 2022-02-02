@@ -15,7 +15,7 @@ function WooCommerceColophon() {
 			<ExternalLink icon={ false } onClick={ onClick } href="https://woocommerce.com">
 				{ translate( 'Powered by {{WooCommerceLogo /}}', {
 					components: {
-						WooCommerceLogo: <WooCommerceLogo height={ 32 } width={ 120 } />,
+						WooCommerceLogo: <WooCommerceLogo />,
 					},
 				} ) }
 			</ExternalLink>
