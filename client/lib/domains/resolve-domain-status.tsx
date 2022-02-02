@@ -193,12 +193,18 @@ export function resolveDomainStatus(
 				}
 			}
 
-			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
+			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom && siteSlug ) {
 				const status = translate(
-					'{{strong}}Verifying connection:{{/strong}} You can continue to work on your site, but you domain won’t be reachable just yet.',
+					'{{strong}}Verifying connection:{{/strong}} You can continue to work on your site, but you domain won’t be reachable just yet. You can review the {{a}}setup instructions{{/a}} to ensure everything is correct.',
 					{
 						components: {
 							strong: <strong />,
+							a: (
+								<a
+									href={ domainMappingSetup( siteSlug as string, domain.domain, setupStep ) }
+									onClick={ ( e ) => e.stopPropagation() }
+								/>
+							),
 						},
 					}
 				);
@@ -209,10 +215,16 @@ export function resolveDomainStatus(
 					icon: 'verifying',
 					listStatusText: status,
 					noticeText: translate(
-						'It can take between a few minutes to 72 hours to verify the connection. You can continue to work on your site, but {{strong}}%(domainName)s{{/strong}} won’t be reachable just yet.',
+						'It can take between a few minutes to 72 hours to verify the connection. You can continue to work on your site, but {{strong}}%(domainName)s{{/strong}} won’t be reachable just yet. You can review the {{a}}setup instructions{{/a}} to ensure everything is correct.',
 						{
 							components: {
 								strong: <strong />,
+								a: (
+									<a
+										href={ domainMappingSetup( siteSlug as string, domain.domain, setupStep ) }
+										onClick={ ( e ) => e.stopPropagation() }
+									/>
+								),
 							},
 							args: {
 								domainName: domain.name,
