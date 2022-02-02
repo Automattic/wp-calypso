@@ -35,6 +35,7 @@ import type {
 	ResponseCartProduct,
 	TitanProductUser,
 } from '@automattic/shopping-cart';
+import { getPartnerCoupon } from './partner-coupon';
 
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	theme?: Theme;
@@ -707,20 +708,6 @@ function LineItemSublabelAndPrice( {
 
 function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
 	return coupon_savings_integer > 0;
-}
-
-export function getPartnerCoupon( {
-	coupon,
-	products,
-}: {
-	coupon: string;
-	products?: ResponseCartProduct[];
-} ): boolean {
-	const productHasSublabel =
-		products && products.some( ( product: ResponseCartProduct ) => !! getSublabel( product ) );
-	const isPartnerCoupon = coupon.startsWith( 'IONOS_' );
-
-	return ( productHasSublabel && isPartnerCoupon ) || false;
 }
 
 function FirstTermDiscountCallout( {
