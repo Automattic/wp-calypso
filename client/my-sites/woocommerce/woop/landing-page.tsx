@@ -1,11 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import FormattedHeader from 'calypso/components/formatted-header';
+import PromoCard from 'calypso/components/promo-section/promo-card';
 import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
 import WooCommerceColophon from '../woocommerce-colophon';
@@ -80,6 +82,34 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				className="woop__landing-page-cta woocommerce_landing-page-empty-content"
 			/>
 			<WooCommerceColophon wpcomDomain={ wpcomDomain || '' } />
+			<div className="woop__landing-page-features-section">
+				<FormattedHeader headerText={ __( 'Everything you need to create a successful store' ) } />
+				<div className="woop__landing-page-features">
+					<PromoCard
+						title={ __( 'Run Your Store From Anywhere' ) }
+						image={ <Gridicon icon="globe" /> }
+					>
+						<p>
+							{ __(
+								'Manage your business on the go with the WooCommerce Mobile App. Create products, process orders, and keep an eye on key stats in real-time.'
+							) }
+						</p>
+					</PromoCard>
+					<PromoCard
+						title={ __( 'Learn With a Global Community' ) }
+						image={ <Gridicon icon="user-circle" /> }
+					>
+						<p>{ __( 'WooCommerce is one of the fastest-growing eCommerce communities.' ) }</p>
+					</PromoCard>
+					<PromoCard title={ __( 'Customize and Extend' ) } image={ <Gridicon icon="story" /> }>
+						<p>
+							{ __(
+								'From subscriptions to gym classes to luxury cars, WooCommerce is fully customizable.'
+							) }
+						</p>
+					</PromoCard>
+				</div>
+			</div>
 		</div>
 	);
 };
