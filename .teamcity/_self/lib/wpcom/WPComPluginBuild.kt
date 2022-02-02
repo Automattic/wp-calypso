@@ -20,6 +20,7 @@ open class WPComPluginBuild(
 	var releaseTag: String = "$pluginSlug-release-build",
 	var normalizeFiles: String = "",
 	var withSlackNotify: String = "false",
+	var withPRNotify: String = "true",
 	var buildEnv: String = "production",
 	var buildSteps: BuildSteps.() -> Unit = {},
 	var buildParams: ParametrizedWithType.() -> Unit = {},
@@ -34,6 +35,7 @@ open class WPComPluginBuild(
 		val pluginSlug = pluginSlug
 		val normalizeFiles = normalizeFiles
 		val withSlackNotify = withSlackNotify
+		val withPRNotify = withPRNotify
 		val buildSteps = buildSteps
 		val buildEnv = buildEnv
 		val params = params
@@ -170,7 +172,7 @@ open class WPComPluginBuild(
 						echo -e "Build tagging status: ${'$'}tag_response\n"
 
 						# On normal PRs, post a message about WordPress.com deployments.
-						if [[ "%teamcity.build.branch.is_default%" != "true" ]] ; then
+						if [[ "%teamcity.build.branch.is_default%" != "true" ]] && [ "$withPRNotify" == "true" ] ; then
 							%teamcity.build.checkoutDir%/bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" <<- EOF || true
 							**This PR modifies the release build for $pluginSlug**
 
