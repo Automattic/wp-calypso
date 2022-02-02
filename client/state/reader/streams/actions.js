@@ -3,9 +3,6 @@ import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
 	READER_STREAMS_SHOW_UPDATES,
-	READER_STREAMS_SELECT_ITEM,
-	READER_STREAMS_SELECT_NEXT_ITEM,
-	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_UPDATES_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { getStream } from 'calypso/state/reader/streams/selectors';
@@ -63,27 +60,6 @@ export function receiveUpdates( { streamKey, streamItems } ) {
 	return {
 		type: READER_STREAMS_UPDATES_RECEIVE,
 		payload: { streamKey, streamItems },
-	};
-}
-
-export function selectItem( { streamKey, postKey } ) {
-	return {
-		type: READER_STREAMS_SELECT_ITEM,
-		payload: { streamKey, postKey },
-	};
-}
-
-export function selectNextItem( { streamKey, items } ) {
-	return {
-		type: READER_STREAMS_SELECT_NEXT_ITEM,
-		payload: { streamKey, items },
-	};
-}
-
-export function selectPrevItem( { streamKey, items } ) {
-	return {
-		type: READER_STREAMS_SELECT_PREV_ITEM,
-		payload: { streamKey, items },
 	};
 }
 
