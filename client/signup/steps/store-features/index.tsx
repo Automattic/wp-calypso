@@ -127,7 +127,9 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 				break;
 
 			case 'simple':
-				throw new Error( 'Not yet implemented' );
+				//@TODO: assign the Zoologist theme
+				page.redirect( `/site-editor/${ siteSlug }/` );
+				break;
 		}
 	};
 
