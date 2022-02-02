@@ -11,8 +11,11 @@ const selectors = {
 	urlInput: 'input.capture__input',
 
 	// The "content only" "continue" button of '/start/from/importing/wordpress'
-	wordPress: ( text: string ) =>
-		`.content-chooser .import-layout__column:nth-child(2) > div > div:last-child button:text("${ text }")`,
+	wpContentOnlyContinueButton:
+		'.content-chooser .import-layout__column:nth-child(2) > div > div:last-child button:text("Continue")',
+
+	// ImporterDrag page
+	importerDrag: ( text: string ) => `div.importer-wrapper__${ text }`,
 
 	// Errors
 	analyzeError: ( text: string ) => `div.capture__input-error-msg:text("${ text }")`,
@@ -104,7 +107,21 @@ export class StartImportFlow {
 	 * Validates that we've landed on the WordPress migration page.
 	 */
 	async validateWordPressPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.wordPress( 'Continue' ) );
+		await this.page.waitForSelector( selectors.wpContentOnlyContinueButton );
+	}
+
+	/**
+	 * Validates that we've landed on the importer drag page.
+	 */
+	async validateImporterDragPage( importer: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.importerDrag( importer ) );
+	}
+
+	/**
+	 * Continue 'content only' WordPress migration.
+	 */
+	async contentOnlyWordPressPage(): Promise< void > {
+		await this.page.click( selectors.wpContentOnlyContinueButton );
 	}
 
 	/**

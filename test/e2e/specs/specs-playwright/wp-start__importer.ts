@@ -49,6 +49,8 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 			await startImportFlow.validateImportPage();
 			await startImportFlow.clickButton( 'Import your content' );
 			await startImportFlow.validateWordPressPage();
+			await startImportFlow.contentOnlyWordPressPage();
+			await startImportFlow.validateImporterDragPage( 'wordpress' );
 		} );
 	} );
 
