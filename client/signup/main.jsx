@@ -266,7 +266,7 @@ class Signup extends Component {
 			this.scrollToTop();
 		}
 
-		if ( sitePlanSlug !== prevProps.sitePlanSlug ) {
+		if ( sitePlanSlug && prevProps.sitePlanSlug && sitePlanSlug !== prevProps.sitePlanSlug ) {
 			recordSignupPlanChange(
 				flowName,
 				stepName,
