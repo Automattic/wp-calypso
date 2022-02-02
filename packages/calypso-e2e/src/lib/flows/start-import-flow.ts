@@ -9,11 +9,10 @@ const selectors = {
 
 	// Inputs
 	urlInput: 'input.capture__input',
-	migrationInput: ( value: string ) =>
-		`input#sites-block__faux-site-selector-url-input[value="${ value }"]`,
+
+	// The "content only" "continue" button of '/start/from/importing/wordpress'
 	wordPress: ( text: string ) =>
-		'.content-chooser .import-layout__column:nth-child(2) .list__importer-option:nth-child(2)' +
-		` .action-card__button-container button:text("${ text }")`,
+		`.content-chooser .import-layout__column:nth-child(2) > div > div:last-child button:text("${ text }")`,
 
 	// Errors
 	analyzeError: ( text: string ) => `div.capture__input-error-msg:text("${ text }")`,
@@ -44,7 +43,7 @@ export class StartImportFlow {
 	constructor( private page: Page ) {}
 
 	/**
-	 * Given text, clicks on the first instance of the button with the text.
+	 * Given text, click on the button's first instance with the text.
 	 *
 	 * @param {string} text User-visible text on the button.
 	 */
@@ -99,13 +98,6 @@ export class StartImportFlow {
 	 */
 	async validateDesignPage(): Promise< void > {
 		await this.page.waitForSelector( selectors.setupHeader );
-	}
-
-	/**
-	 * Validates that we've landed on the migration page.
-	 */
-	async validateMigrationPage( siteSlug: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.migrationInput( siteSlug ) );
 	}
 
 	/**
