@@ -1,5 +1,6 @@
-import { updateDns } from 'calypso/state/domains/dns/actions';
+import { applyDnsTemplate, updateDns } from 'calypso/state/domains/dns/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { AnyAction, Dispatch } from 'redux';
 
 export type DnsRecord = {
@@ -28,16 +29,27 @@ type UnpackPromisedValue< T > = T extends ( ...args: unknown[] ) => infer R
 	: T;
 
 export type DnsMenuOptionsButtonProps = {
-	domain: string;
+	domain: ResponseDomain | undefined;
+	domainName: string;
 	pointsToWpcom: boolean;
 	dns: Dns;
+	dispatchApplyDnsTemplate: UnpackPromisedValue< typeof applyDnsTemplate >;
 	dispatchUpdateDns: UnpackPromisedValue< typeof updateDns >;
 	dispatchSuccessNotice: typeof successNotice;
 	dispatchErrorNotice: typeof errorNotice;
 };
 
+export type DnsTemplateDetails = {
+	PROVIDER: string;
+	SERVICE: string;
+};
+
 export type RestoreDialogResult = {
 	shouldRestoreDefaultRecords: boolean;
+};
+
+export type RestoreEmailDnsDialogResult = {
+	shouldRestoreEmailDns: boolean;
 };
 
 export type DndAddNewRecordButtonProps = {

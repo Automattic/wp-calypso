@@ -63,7 +63,8 @@ class DnsRecords extends Component {
 		const optionsButton = (
 			<DnsMenuOptionsButton
 				key="menu-options-button"
-				domain={ selectedDomainName }
+				domain={ selectedDomain }
+				domainName={ selectedDomainName }
 				dns={ dns }
 				pointsToWpcom={ pointsToWpcom }
 			/>
