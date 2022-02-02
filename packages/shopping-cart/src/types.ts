@@ -193,11 +193,7 @@ export interface RequestCart {
 	products: RequestCartProduct[];
 	tax: RequestCartTaxData;
 	coupon: string;
-	currency: string;
-	locale: string;
-	is_coupon_applied: boolean;
 	temporary: false;
-	extra: string;
 }
 
 export type RequestCartTaxData = null | {
