@@ -102,9 +102,6 @@ class ThemeShowcase extends Component {
 		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
-		blockEditorSettings: PropTypes.shape( {
-			is_fse_eligible: PropTypes.bool,
-		} ),
 	};
 
 	static defaultProps = {
