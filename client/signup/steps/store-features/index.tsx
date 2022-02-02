@@ -29,10 +29,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const subHeaderText = translate( 'Let’s create a website that suits your needs.' );
 	const siteSlug = props.signupDependencies.siteSlug;
 
-	const sitePlanSlug = useSelector( ( state ) => {
-		const site = getSite( state, siteSlug );
-		return site && site.plan && site.plan.product_slug;
-	} );
+	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );
 
 	const isPaidPlan = sitePlanSlug !== 'free_plan';
 
