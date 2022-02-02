@@ -9,7 +9,7 @@ export interface WooCommerceColophonProps {
 function WooCommerceColophon( props: WooCommerceColophonProps ) {
 	const translate = useTranslate();
 	const { wpcomDomain } = props;
-	const woocommercePluginURL = `http://calypso.localhost:3000/plugins/woocommerce/${ wpcomDomain }`;
+	const woocommercePluginURL = `/plugins/woocommerce/${ wpcomDomain }`;
 
 	const onClick = () => {
 		recordTracksEvent( 'calypso_woocommerce_woocommercecolophon_click' );
