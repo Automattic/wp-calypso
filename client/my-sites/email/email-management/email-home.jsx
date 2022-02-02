@@ -108,13 +108,11 @@ class EmailManagementHome extends Component {
 
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 			return (
-				<>
-					<EmailProvidersStackedComparison
-						comparisonContext="email-home-single-domain"
-						selectedDomainName={ domainsWithNoEmail[ 0 ].name }
-						source={ source }
-					/>
-				</>
+				<EmailProvidersStackedComparison
+					comparisonContext="email-home-single-domain"
+					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
+					source={ source }
+				/>
 			);
 		}
 
@@ -156,12 +154,10 @@ class EmailManagementHome extends Component {
 		const { translate } = this.props;
 
 		return this.renderContentWithHeader(
-			<>
-				<EmptyContent
-					title={ translate( 'You are not authorized to view this page' ) }
-					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-				/>
-			</>
+			<EmptyContent
+				title={ translate( 'You are not authorized to view this page' ) }
+				illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+			/>
 		);
 	}
 
