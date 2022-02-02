@@ -10,7 +10,6 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
@@ -20,7 +19,7 @@ import EmailListInactive from 'calypso/my-sites/email/email-management/home/emai
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
-import { emailManagement, emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -112,11 +111,6 @@ class EmailManagementHome extends Component {
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 			return (
 				<>
-					<PageViewTracker
-						path={ emailManagement( ':site', selectedDomainName ?? null ) }
-						title={ 'Email Home' }
-						properties={ { source, context: 'email-home-single-domain' } }
-					/>
 					<EmailProvidersStackedComparison
 						comparisonContext="email-home-single-domain"
 						selectedDomainName={ domainsWithNoEmail[ 0 ].name }
@@ -186,16 +180,10 @@ class EmailManagementHome extends Component {
 	}
 
 	renderContentWithHeader( context, content ) {
-		const { source, selectedDomainName, selectedSiteId, translate } = this.props;
+		const { selectedSiteId, translate } = this.props;
 
 		return (
 			<Main wideLayout>
-				<PageViewTracker
-					path={ emailManagement( ':site', selectedDomainName ?? null ) }
-					title={ 'Email Home' }
-					properties={ { source, context } }
-				/>
-
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 				<DocumentHead title={ titleCase( translate( 'Emails' ) ) } />
