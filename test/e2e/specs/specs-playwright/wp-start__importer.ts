@@ -90,7 +90,7 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 	describe( 'Follow the import file flow', () => {
 		navigateToSetup();
 
-		it( 'Start an valid import file', async () => {
+		it( 'Start a valid import file', async () => {
 			await startImportFlow.enterURL( 'https://squarespace.com' );
 			await startImportFlow.validateImportPage();
 			await startImportFlow.clickButton( 'Import your content' );
