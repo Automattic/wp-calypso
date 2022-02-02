@@ -115,7 +115,6 @@ const InboxManagement = () => {
 	if ( isLoadingDomains ) {
 		return (
 			<>
-				<TrackPageView context="progress-line" />
 				<ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />
 			</>
 		);
@@ -126,7 +125,6 @@ const InboxManagement = () => {
 	if ( hasAtLeastOneMailbox( nonWPCOMDomains ) ) {
 		return (
 			<>
-				<TrackPageView context="mailbox-selection-list" />
 				<MailboxSelectionList />
 			</>
 		);

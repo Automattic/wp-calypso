@@ -1,7 +1,7 @@
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailForwardsAdd from 'calypso/my-sites/email/email-forwards-add';
-import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
+import EmailManagementHomePage from 'calypso/my-sites/email/email-management/page';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
@@ -153,7 +153,7 @@ export default {
 	emailManagement( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<EmailManagementHome
+				<EmailManagementHomePage
 					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
 				/>
