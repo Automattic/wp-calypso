@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 /**
  * Internal Dependencies
@@ -23,10 +24,13 @@ const TourKitStep: React.FunctionComponent< Props > = ( {
 	setInitialFocusedElement,
 	onGoToStep,
 } ) => {
+	const isMobile = useMobileBreakpoint();
 	const classes = classnames(
 		'tour-kit-step',
 		`is-step-${ currentStepIndex }`,
-		classParser( config.steps[ currentStepIndex ].options?.classNames )
+		classParser(
+			config.steps[ currentStepIndex ].options?.classNames?.[ isMobile ? 'mobile' : 'desktop' ]
+		)
 	);
 
 	return (

@@ -50,7 +50,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: null,
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		{
@@ -65,6 +68,12 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 				imgSrc: getTourAssets( 'allBlocks' ),
 				animation: null,
+			},
+			options: {
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: 'wpcom-editor-welcome-tour__step',
+				},
 			},
 		},
 		{
@@ -90,7 +99,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: 'block-inserter',
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		{
@@ -105,6 +117,12 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 				imgSrc: getTourAssets( 'makeBold' ),
 				animation: null,
+			},
+			options: {
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: 'wpcom-editor-welcome-tour__step',
+				},
 			},
 		},
 		{
@@ -124,7 +142,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: null,
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		...( localeSlug === 'en'
@@ -144,7 +165,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 							isDesktopOnly: true,
 						},
 						options: {
-							classNames: [ 'is-with-extra-padding-desktop', 'wpcom-editor-welcome-tour__step' ],
+							classNames: {
+								desktop: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+								mobile: 'wpcom-editor-welcome-tour__step',
+							},
 						},
 					},
 			  ]
@@ -164,6 +188,12 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: 'undo-button',
 				isDesktopOnly: true,
 			},
+			options: {
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: 'wpcom-editor-welcome-tour__step',
+				},
+			},
 		},
 		{
 			meta: {
@@ -176,7 +206,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				animation: 'undo-button',
 			},
 			options: {
-				classNames: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
 			},
 		},
 		{
@@ -211,6 +244,12 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 				imgSrc: getTourAssets( 'finish' ),
 				animation: 'block-inserter',
+			},
+			options: {
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: 'wpcom-editor-welcome-tour__step',
+				},
 			},
 		},
 	];
