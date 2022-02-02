@@ -15,5 +15,5 @@ export const hasMarketplaceProduct = (
 	Object.entries( productsList ).some(
 		( [ subscriptionSlug, { product_type } ] ) =>
 			cleanSlug( productSlug ) === cleanSlug( subscriptionSlug ) &&
-			product_type.startsWith( 'marketplace' )
+			product_type?.startsWith( 'marketplace' )
 	);
