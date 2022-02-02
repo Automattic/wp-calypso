@@ -16,7 +16,9 @@
 	margin-bottom: 4px;
 	line-height: 16px;
 
-	.form-radio {
+	input[type='radio'] {
+		appearance: auto;
+		vertical-align: middle;
 		margin: 0 4px 0 0;
 	}
 }

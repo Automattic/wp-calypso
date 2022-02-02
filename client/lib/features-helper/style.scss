@@ -25,8 +25,11 @@
 	color: var( --studio-red-70 );
 }
 
-.environment.is-features:hover .features-helper__current-features.card {
+.environment.is-features:hover .features-helper__current-features {
 	display: block;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	padding: 16px;
 	max-height: 80vh;
 	overflow-y: scroll;
 	position: absolute;
