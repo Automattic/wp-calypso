@@ -1,6 +1,10 @@
 @import '@automattic/onboarding/styles/mixins';
 @import 'jetpack-connect/colors.scss';
 
+.is-group-woocommerce-installation.is-section-woocommerce-installation .layout__content {
+	padding-bottom: 0; //removes whitespace in the end
+}
+
 body.is-section-woocommerce-installation.theme-default.color-scheme {
 	--color-surface-backdrop: var( --studio-white );
 }
@@ -33,14 +37,27 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 
 .woop__landing-page-features-section {
 	@include woocommerce-colors();
+	margin-top: 100px;
+	padding-top: 60px;
+	padding-bottom: 40px;
+	padding-left: 20px;
+    padding-right: 20px;
 
 	// on desktop make the section full width so it takes the whole space
 	@media ( min-width: 660px ) {
 		margin-left: -30px;
-		width: calc( 100% + 60px );
+		width: calc( 100% + 20px );
 	}
 
 	background-color: var( --color-woocommerce-onboarding-background );
+	.formatted-header .formatted-header__title {
+		text-align: left;
+		margin-left: 32px;
+		font-size: 2rem;
+		max-width: 377px;
+		line-height: 40px;
+		font-family: 'Recoleta';
+	}
 
 	.promo-section__promos .promo-card {
 		/* Todo: add media queries */
