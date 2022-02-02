@@ -11,7 +11,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
-import WooCommerceColophon from '../woocommerce-colophon';
+import WooCommerceColophon from './woocommerce-colophon';
 
 import './style.scss';
 
@@ -83,7 +83,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	};
 
 	return (
-		<div className="woop__landing-page woocommerce_landing-page">
+		<div className="landing-page woocommerce_landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
 				<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
 					{ __( 'Start a new store' ) }
@@ -110,7 +110,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 						{ __( 'Learn more' ) }
 					</InlineSupportLink>
 				}
-				className="woop__landing-page-cta woocommerce_landing-page-empty-content"
+				className="landing-page__empty-content"
 			/>
 			<WooCommerceColophon wpcomDomain={ wpcomDomain || '' } />
 			<div className="woop__landing-page-features-section">

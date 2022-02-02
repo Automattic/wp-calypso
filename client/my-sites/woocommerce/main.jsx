@@ -6,7 +6,7 @@ import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import RequiredPluginsInstallView from './dashboard/required-plugins-install-view';
+import WoopLandingPage from './landing-page';
 
 function WooCommerce() {
 	const siteId = useSelector( getSelectedSiteId );
@@ -22,7 +22,7 @@ function WooCommerce() {
 				<PageViewTracker path="/woocommerce-installation/:site" title="WooCommerce Installation" />
 				<QuerySiteFeatures siteId={ siteId } />
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
-				<RequiredPluginsInstallView siteId={ siteId } />
+				<WoopLandingPage siteId={ siteId } />
 			</Main>
 		</div>
 	);

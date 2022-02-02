@@ -1,8 +1,6 @@
 @import '@automattic/onboarding/styles/mixins';
 
 .woocommerce {
-	@import 'dashboard/setup/style';
-
 	.main {
 		padding-top: 72px;
 
@@ -34,6 +32,102 @@
 
 		@include breakpoint-deprecated( '<660px' ) {
 			margin-bottom: 24px;
+		}
+	}
+}
+
+.is-group-woocommerce-installation.is-section-woocommerce-installation .layout__content {
+	padding-bottom: 0; //removes whitespace in the end
+}
+
+body.is-section-woocommerce-installation.theme-default.color-scheme {
+	--color-surface-backdrop: var( --studio-white );
+}
+
+.woocommerce {
+	.main.is-wide-layout {
+		width: 100%;
+		padding-bottom: 0;
+		max-width: 100%;
+		margin: 0;
+	}
+}
+
+.woocommerce_landing-page {
+	.landing-page__empty-content {
+		padding-top: 3em;
+		max-width: 540px;
+
+		.empty-content__title {
+			@include onboarding-heading-text;
+			color: var( --studio-gray-90 );
+			padding: 1em 0 0.5em;
+		}
+		.empty-content__line {
+			@include onboarding-large-text;
+			margin-bottom: 1.5em;
+		}
+	}
+}
+
+.woop__landing-page-features-section {
+	@include woocommerce-colors();
+	margin-top: 100px;
+	padding-top: 60px;
+	padding-bottom: 40px;
+	padding-left: 20px;
+	padding-right: 20px;
+
+	// on desktop make the section full width so it takes the whole space
+	@media ( min-width: 660px ) {
+		margin-left: -30px;
+		width: calc( 100% + 20px );
+	}
+
+	background-color: var( --color-woocommerce-onboarding-background );
+	.formatted-header .formatted-header__title {
+		@media ( max-width: $break-mobile ) {
+			margin-left: 0;
+			margin-right: 0;
+			width: 100%;
+			max-width: fit-content;
+			text-align: center;
+		}
+
+		text-align: left;
+		margin-left: 32px;
+		font-size: 2rem;
+		max-width: 377px;
+		line-height: 40px;
+		@include onboarding-font-recoleta;
+	}
+
+	.promo-section__promos .promo-card {
+		// 3 column layout
+		@media ( min-width: $break-wide ) {
+			width: calc( 33% - 1em );
+		}
+		box-shadow: none;
+		background-color: var( --color-woocommerce-onboarding-background );
+
+		.action-panel__title {
+			@media ( max-width: $break-mobile ) {
+				display: block;
+				width: 100%;
+				text-align: center;
+			}
+			font-weight: 500;
+			font-size: 1.25rem;
+		}
+
+		.action-panel__body {
+			@media ( max-width: $break-mobile ) {
+				text-align: center;
+			}
+		}
+
+		.gridicon {
+			fill: #0675c4; // TODO: maybe we need to define this color as a variable somewhere?
 		}
 	}
 }
