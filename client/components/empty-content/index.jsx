@@ -20,7 +20,7 @@ class EmptyContent extends Component {
 		actionDisabled: PropTypes.bool,
 		actionRef: PropTypes.oneOfType( [
 			PropTypes.func,
-			PropTypes.shape( { current: PropTypes.instanceOf( Element ) } ),
+			PropTypes.shape( { current: PropTypes.any } ),
 		] ),
 		secondaryAction: PropTypes.node,
 		secondaryActionURL: PropTypes.string,
