@@ -13,6 +13,14 @@ object WPComPlugins : Project({
 	params {
 		param("docker_image", "registry.a8c.com/calypso/ci-wpcom:latest")
 		param("build.prefix", "1")
+		checkbox(
+			name = "skip_release_diff",
+			value = "false",
+			label = "Skip release diff",
+			description = "Skips the diff against the previous successful build, uploading the artifact as the latest successful build.",
+			checked = "true",
+			unchecked = "false"
+		)
 	}
 
 	buildType(EditingToolkit)
