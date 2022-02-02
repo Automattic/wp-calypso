@@ -2,7 +2,6 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
-import toTitleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
@@ -38,7 +37,7 @@ const ContentWithHeader = ( { children }: ContentWithHeaderProps ): ReactElement
 	const translate = useTranslate();
 	return (
 		<Main wideLayout>
-			<DocumentHead title={ toTitleCase( translate( 'Emails', { textOnly: true } ) ) } />
+			<DocumentHead title={ translate( 'Emails', { textOnly: true } ) } />
 
 			<SidebarNavigation />
 
