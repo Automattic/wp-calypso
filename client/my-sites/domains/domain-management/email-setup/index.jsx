@@ -6,7 +6,6 @@ import FoldableCard from 'calypso/components/foldable-card';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { isSubdomain } from 'calypso/lib/domains';
 import { dnsTemplates } from 'calypso/lib/domains/constants';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import EmailProvider from '../dns/email-provider';
@@ -20,78 +19,57 @@ class EmailSetup extends Component {
 
 	constructor( props ) {
 		super( props );
-		const { selectedDomainName, translate } = props;
+		const { translate } = props;
 		const googleServiceName = getGoogleMailServiceFamily();
-		const professionalEmailServiceName = translate( 'Professional Email' );
-
-		const hideProfessionalEmailTemplate = isSubdomain( selectedDomainName );
-
-		const providerTemplates = [
-			hideProfessionalEmailTemplate
-				? null
-				: {
-						name: professionalEmailServiceName,
-						label: translate( 'Enter your domain name to confirm the changes' ),
-						placeholder: translate( 'example.com' ),
-						expectedValue: selectedDomainName,
-						dnsTemplateProvider: dnsTemplates.TITAN.PROVIDER,
-						dnsTemplateService: dnsTemplates.TITAN.SERVICE,
-						modifyVariables: ( variables ) =>
-							Object.assign( {}, variables, {
-								dmarc_host: variables.domain,
-							} ),
-				  },
-			{
-				name: googleServiceName,
-				label: translate( '%(serviceName)s Verification Token - from the TXT record verification', {
-					args: { serviceName: googleServiceName },
-					comment:
-						'%(serviceName)s will be replaced with the name of the service ' +
-						'that this token applies to, for example G Suite or Office 365',
-				} ),
-				placeholder: 'google-site-verification=...',
-				validationPattern: /^google-site-verification=[A-Za-z0-9_-]{43}$/,
-				dnsTemplateProvider: dnsTemplates.G_SUITE.PROVIDER,
-				dnsTemplateService: dnsTemplates.G_SUITE.SERVICE,
-			},
-			{
-				name: 'Office 365',
-				label: translate( '%(serviceName)s Verification Token - from the TXT record verification', {
-					args: { serviceName: 'Office 365' },
-					comment:
-						'%(serviceName)s will be replaced with the name of the service ' +
-						'that this token applies to, for example G Suite or Office 365',
-				} ),
-				placeholder: 'MS=ms...',
-				validationPattern: /^MS=ms\d{8}$/,
-				dnsTemplateProvider: dnsTemplates.MICROSOFT_OFFICE365.PROVIDER,
-				dnsTemplateService: dnsTemplates.MICROSOFT_OFFICE365.SERVICE,
-				modifyVariables: ( variables ) =>
-					Object.assign( {}, variables, {
-						mxdata: variables.domain.replace( '.', '-' ) + '.mail.protection.outlook.com',
-					} ),
-			},
-			{
-				name: 'Zoho Mail',
-				label: translate( 'Zoho Mail CNAME zb code' ),
-				placeholder: 'zb...',
-				validationPattern: /^zb\w{1,100}$/,
-				dnsTemplateProvider: dnsTemplates.ZOHO_MAIL.PROVIDER,
-				dnsTemplateService: dnsTemplates.ZOHO_MAIL.SERVICE,
-			},
-			{
-				name: translate( 'Email Forwarding' ),
-				label: translate( 'Enter your domain name to confirm the changes' ),
-				placeholder: translate( 'example.com' ),
-				expectedValue: selectedDomainName,
-				dnsTemplateProvider: dnsTemplates.WPCOM_EMAIL_FORWARDING.PROVIDER,
-				dnsTemplateService: dnsTemplates.WPCOM_EMAIL_FORWARDING.SERVICE,
-			},
-		].filter( ( template ) => template !== null );
 
 		this.state = {
-			selectedTab: hideProfessionalEmailTemplate ? googleServiceName : professionalEmailServiceName,
-			templates: providerTemplates,
+			selectedTab: googleServiceName,
+			templates: [
+				{
+					name: googleServiceName,
+					label: translate(
+						'%(serviceName)s Verification Token - from the TXT record verification',
+						{
+							args: { serviceName: googleServiceName },
+							comment:
+								'%(serviceName)s will be replaced with the name of the service ' +
+								'that this token applies to, for example G Suite or Office 365',
+						}
+					),
+					placeholder: 'google-site-verification=...',
+					validationPattern: /^google-site-verification=[A-Za-z0-9_-]{43}$/,
+					dnsTemplateProvider: dnsTemplates.G_SUITE.PROVIDER,
+					dnsTemplateService: dnsTemplates.G_SUITE.SERVICE,
+				},
+				{
+					name: 'Office 365',
+					label: translate(
+						'%(serviceName)s Verification Token - from the TXT record verification',
+						{
+							args: { serviceName: 'Office 365' },
+							comment:
+								'%(serviceName)s will be replaced with the name of the service ' +
+								'that this token applies to, for example G Suite or Office 365',
+						}
+					),
+					placeholder: 'MS=ms...',
+					validationPattern: /^MS=ms\d{8}$/,
+					dnsTemplateProvider: dnsTemplates.MICROSOFT_OFFICE365.PROVIDER,
+					dnsTemplateService: dnsTemplates.MICROSOFT_OFFICE365.SERVICE,
+					modifyVariables: ( variables ) =>
+						Object.assign( {}, variables, {
+							mxdata: variables.domain.replace( '.', '-' ) + '.mail.protection.outlook.com',
+						} ),
+				},
+				{
+					name: 'Zoho Mail',
+					label: translate( 'Zoho Mail CNAME zb code' ),
+					placeholder: 'zb...',
+					validationPattern: /^zb\w{1,100}$/,
+					dnsTemplateProvider: dnsTemplates.ZOHO_MAIL.PROVIDER,
+					dnsTemplateService: dnsTemplates.ZOHO_MAIL.SERVICE,
+				},
+			],
 		};
 	}
 
