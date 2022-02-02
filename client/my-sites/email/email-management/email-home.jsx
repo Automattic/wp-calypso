@@ -91,7 +91,6 @@ class EmailManagementHome extends Component {
 			}
 
 			return this.renderContentWithHeader(
-				'email-plan',
 				<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } source={ source } />
 			);
 		}
@@ -100,7 +99,6 @@ class EmailManagementHome extends Component {
 
 		if ( nonWpcomDomains.length < 1 ) {
 			return this.renderContentWithHeader(
-				'email-no-plan',
 				<EmailNoDomain selectedSite={ selectedSite } source={ source } />
 			);
 		}
@@ -131,7 +129,6 @@ class EmailManagementHome extends Component {
 		}
 
 		return this.renderContentWithHeader(
-			'mail-list',
 			<>
 				{ showActiveDomainList && (
 					<EmailListActive
@@ -159,7 +156,6 @@ class EmailManagementHome extends Component {
 		const { translate } = this.props;
 
 		return this.renderContentWithHeader(
-			'no-access',
 			<>
 				<EmptyContent
 					title={ translate( 'You are not authorized to view this page' ) }
@@ -171,7 +167,6 @@ class EmailManagementHome extends Component {
 
 	renderLoadingPlaceholder() {
 		return this.renderContentWithHeader(
-			'placeholder',
 			<>
 				<SectionHeader className="email-home__section-placeholder is-placeholder" />
 				<Card className="email-home__content-placeholder is-placeholder" />
@@ -179,7 +174,7 @@ class EmailManagementHome extends Component {
 		);
 	}
 
-	renderContentWithHeader( context, content ) {
+	renderContentWithHeader( content ) {
 		const { selectedSiteId, translate } = this.props;
 
 		return (
