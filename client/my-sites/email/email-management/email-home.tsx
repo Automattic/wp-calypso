@@ -2,11 +2,12 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
+import toTitleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
-import { useEmailsManagementDomainsQuery } from 'calypso/data/emails/use-emails-management-domains';
+import { useGetEmailDomainsQuery } from 'calypso/data/emails/use-get-email-domains-query';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
@@ -29,6 +30,50 @@ import type { ReactElement } from 'react';
 
 import './style.scss';
 
+interface ContentWithHeaderProps {
+	children: ReactElement;
+}
+
+const ContentWithHeader = ( { children }: ContentWithHeaderProps ): ReactElement => {
+	const translate = useTranslate();
+	return (
+		<Main wideLayout>
+			<DocumentHead title={ toTitleCase( translate( 'Emails', { textOnly: true } ) ) } />
+
+			<SidebarNavigation />
+
+			<EmailHeader />
+
+			{ children }
+		</Main>
+	);
+};
+
+const NoAccess = (): ReactElement => {
+	const translate = useTranslate();
+	return (
+		<ContentWithHeader>
+			<>
+				<EmptyContent
+					title={ translate( 'You are not authorized to view this page' ) }
+					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+				/>
+			</>
+		</ContentWithHeader>
+	);
+};
+
+const LoadingPlaceholder = (): ReactElement => {
+	return (
+		<ContentWithHeader>
+			<>
+				<SectionHeader className="email-home__section-placeholder is-placeholder" />
+				<Card className="email-home__content-placeholder is-placeholder" />
+			</>
+		</ContentWithHeader>
+	);
+};
+
 interface EmailManagementHomeProps {
 	emailListInactiveHeader: ReactElement;
 	sectionHeaderLabel: TranslateResult;
@@ -37,19 +82,7 @@ interface EmailManagementHomeProps {
 	source: string;
 }
 
-function toTitleCase( words: string[] | string ): string {
-	if ( typeof words === 'string' ) {
-		words = words.trim().split( ' ' );
-	}
-
-	const result = words.map( function ( word ) {
-		return word.charAt( 0 ).toUpperCase() + word.slice( 1 );
-	} );
-
-	return result.join( ' ' );
-}
-
-const EmailManagementHome = ( props: EmailManagementHomeProps ): ReactElement => {
+const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 	const {
 		emailListInactiveHeader,
 		showActiveDomainList = true,
@@ -58,70 +91,40 @@ const EmailManagementHome = ( props: EmailManagementHomeProps ): ReactElement =>
 		source,
 	} = props;
 
-	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
-	const canManageSite = useSelector( ( state ) =>
-		canCurrentUser( state, selectedSite?.ID ?? 0, 'manage_options' )
-	);
+
+	const canManageSite = useSelector( ( state ) => {
+		if ( ! selectedSite ) {
+			return;
+		}
+		return canCurrentUser( state, selectedSite.ID, 'manage_options' );
+	} );
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const hasSitesLoaded = useSelector( ( state ) => hasLoadedSites( state ) );
 
-	const { data, isFetched } = useEmailsManagementDomainsQuery( selectedSite?.ID ?? 0, {
+	const { data, isLoading: isSiteDomainLoading } = useGetEmailDomainsQuery( selectedSite?.ID ?? 0, {
+		enabled: selectedSite !== null,
 		retry: false,
 	} );
 
-	const hasSiteDomainsLoaded = isFetched;
 	const domains = data?.domains?.map( createSiteDomainObject );
 
-	const renderContentWithHeader = ( content: ReactElement ) => {
-		return (
-			<Main wideLayout>
-				<DocumentHead title={ toTitleCase( translate( 'Emails', { textOnly: true } ) ) } />
-
-				<SidebarNavigation />
-
-				<EmailHeader />
-
-				{ content }
-			</Main>
-		);
-	};
-
-	const renderNoAccess = () => {
-		return renderContentWithHeader(
-			<>
-				<EmptyContent
-					title={ translate( 'You are not authorized to view this page' ) }
-					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-				/>
-			</>
-		);
-	};
-
-	const renderLoadingPlaceholder = (): ReactElement => {
-		return renderContentWithHeader(
-			<>
-				<SectionHeader className="email-home__section-placeholder is-placeholder" />
-				<Card className="email-home__content-placeholder is-placeholder" />
-			</>
-		);
-	};
-
-	if ( ! hasSiteDomainsLoaded || ! hasSitesLoaded || ! selectedSite ) {
-		return renderLoadingPlaceholder();
+	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
+		return <LoadingPlaceholder />;
 	}
 
 	if ( ! canManageSite ) {
-		return renderNoAccess();
+		return <NoAccess />;
 	}
 
 	const domainHasEmail = ( domain: ResponseDomain ) =>
 		hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) || hasEmailForwards( domain );
 
 	if ( selectedDomainName ) {
-		const selectedDomain = domains.find( ( domain: ResponseDomain ) => {
-			return selectedDomainName === domain.name;
-		} );
+		const selectedDomain =
+			domains.find( ( domain: ResponseDomain ) => {
+				return selectedDomainName === domain.name;
+			} ) ?? ( {} as ResponseDomain );
 
 		if ( ! domainHasEmail( selectedDomain ) ) {
 			return (
@@ -133,16 +136,20 @@ const EmailManagementHome = ( props: EmailManagementHomeProps ): ReactElement =>
 			);
 		}
 
-		return renderContentWithHeader(
-			<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } source={ source } />
+		return (
+			<ContentWithHeader>
+				<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } source={ source } />
+			</ContentWithHeader>
 		);
 	}
 
 	const nonWpcomDomains = domains.filter( ( domain: ResponseDomain ) => ! domain.isWPCOMDomain );
 
 	if ( nonWpcomDomains.length < 1 ) {
-		return renderContentWithHeader(
-			<EmailNoDomain selectedSite={ selectedSite } source={ source } />
+		return (
+			<ContentWithHeader>
+				<EmailNoDomain selectedSite={ selectedSite } source={ source } />
+			</ContentWithHeader>
 		);
 	}
 
@@ -165,34 +172,36 @@ const EmailManagementHome = ( props: EmailManagementHomeProps ): ReactElement =>
 		domainsWithEmail.length === 1 &&
 		domainsWithNoEmail.length === 0 &&
 		domainsWithEmail[ 0 ].domain === selectedSite?.domain &&
-		domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount > 0 &&
+		( domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount ?? 0 ) > 0 &&
 		domainsWithEmail[ 0 ].titanMailSubscription?.numberOfMailboxes === 0
 	) {
 		page( emailManagementTitanSetUpMailbox( selectedSite?.slug, selectedSite?.domain ) );
 	}
 
-	return renderContentWithHeader(
-		<>
-			{ showActiveDomainList && (
-				<EmailListActive
+	return (
+		<ContentWithHeader>
+			<>
+				{ showActiveDomainList && (
+					<EmailListActive
+						currentRoute={ currentRoute }
+						domains={ domainsWithEmail }
+						selectedSiteId={ selectedSite?.ID }
+						selectedSiteSlug={ selectedSite?.slug }
+						source={ source }
+					/>
+				) }
+
+				<EmailListInactive
 					currentRoute={ currentRoute }
-					domains={ domainsWithEmail }
-					selectedSiteId={ selectedSite?.ID }
+					domains={ domainsWithNoEmail }
+					headerComponent={ emailListInactiveHeader }
+					sectionHeaderLabel={ sectionHeaderLabel }
 					selectedSiteSlug={ selectedSite?.slug }
 					source={ source }
 				/>
-			) }
-
-			<EmailListInactive
-				currentRoute={ currentRoute }
-				domains={ domainsWithNoEmail }
-				headerComponent={ emailListInactiveHeader }
-				sectionHeaderLabel={ sectionHeaderLabel }
-				selectedSiteSlug={ selectedSite?.slug }
-				source={ source }
-			/>
-		</>
+			</>
+		</ContentWithHeader>
 	);
 };
 
-export default EmailManagementHome;
+export default EmailHome;
