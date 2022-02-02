@@ -52,7 +52,7 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 	background-color: var( --color-woocommerce-onboarding-background );
 	.formatted-header .formatted-header__title {
 
-		@media ( max-width: 480px ) {
+		@media ( max-width: $break-mobile ) {
 			margin-left: 0;
 			margin-right: 0;
 			width: 100%;
@@ -70,14 +70,14 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 
 	.promo-section__promos .promo-card {
 		// 3 column layout
-		@media ( min-width: 1281px ) {
+		@media ( min-width: $break-wide ) {
 			width: calc( 33% - 1em );
 		}
 		box-shadow: none;
 		background-color: var( --color-woocommerce-onboarding-background );
 
 		.action-panel__title {
-			@media ( max-width: 480px ) {
+			@media ( max-width: $break-mobile ) {
 				display: block;
 				width: 100%;
 				text-align: center;
@@ -87,7 +87,7 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 		}
 
 		.action-panel__body {
-			@media ( max-width: 480px ) {
+			@media ( max-width: $break-mobile ) {
 				text-align: center;
 			}
 		}
