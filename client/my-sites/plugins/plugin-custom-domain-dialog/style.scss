@@ -1,0 +1,29 @@
+.plugin-custom-domain-dialog__modal {
+	box-shadow: 0 3px 8px rgba( 0, 0, 0, 0.12 ), 0 3px 1px rgba( 0, 0, 0, 0.04 );
+	border-radius: 4px;
+
+	.dialog__content {
+		padding: 48px;
+	}
+}
+
+.plugin-custom-domain-dialog__content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	row-gap: 32px;
+	max-width: 412px;
+	text-align: center;
+
+	.plugin-icon {
+		width: 72px;
+		height: 72px;
+	}
+}
+
+.plugin-custom-domain-dialog__learn-more {
+	text-decoration: underline;
+	font-weight: 500;
+	display: block;
+	margin: 16px auto 0;
+}

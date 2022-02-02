@@ -1,6 +1,7 @@
-import { Dialog } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PluginIcon from '../plugin-icon/plugin-icon';
+import './style.scss';
 
 interface Props {
 	plugin: { name: string; icon: string };
@@ -23,13 +24,15 @@ export const PluginCustomDomainDialog = ( {
 
 	return (
 		<Dialog
-			additionalClassNames={ 'plugin-custom-domain-dialog__content' }
+			additionalClassNames={ 'plugin-custom-domain-dialog__modal' }
 			isVisible={ isDialogVisible }
 			onClose={ closeDialog }
 		>
-			<div>
-				<PluginIcon image={ plugin.icon } />
-				<p>
+			<div className="plugin-custom-domain-dialog__content">
+				<div className="plugin-custom-domain-dialog__icon">
+					<PluginIcon image={ plugin.icon } />
+				</div>
+				<div className="plugin-custom-domain-dialog__description">
 					{ hasNonPrimaryCustomDomain
 						? translate(
 								'%(pluginName)s will help you optimize your site around your primary domain. We recommend setting your custom domain as your primary before installing.',
@@ -43,7 +46,18 @@ export const PluginCustomDomainDialog = ( {
 									args: { pluginName: plugin.name },
 								}
 						  ) }
-				</p>
+				</div>
+				<div className="plugin-custom-domain-dialog__buttons">
+					<Button>{ translate( 'Manage domains' ) }</Button>
+					<Button primary>
+						{ translate( 'Install %(pluginName)s', {
+							args: { pluginName: plugin.name },
+						} ) }
+					</Button>
+					<Button plain className="plugin-custom-domain-dialog__learn-more">
+						{ translate( 'or learn more' ) }
+					</Button>
+				</div>
 			</div>
 		</Dialog>
 	);
