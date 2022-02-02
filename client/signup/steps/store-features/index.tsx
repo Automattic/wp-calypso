@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.svg';
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { localizeUrl } from 'calypso/lib/i18n-utils/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
@@ -148,6 +149,9 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	];
 
 	const onSelect = ( selectedOption: StoreFeatureSet ) => {
+		recordTracksEvent( 'calypso_signup_store_feature_select', {
+			store_feature: selectedOption,
+		} );
 		switch ( selectedOption ) {
 			case 'power':
 				page.redirect( `/start/woocommerce-install/?site=${ siteSlug }` );
