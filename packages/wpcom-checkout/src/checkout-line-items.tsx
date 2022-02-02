@@ -28,6 +28,7 @@ import { getSublabel, getLabel } from './checkout-labels';
 import { getIntroductoryOfferIntervalDisplay } from './get-introductory-offer-interval-display';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
+import { getPartnerCoupon } from './partner-coupon';
 import type {
 	GSuiteProductUser,
 	ResponseCart,
@@ -35,7 +36,6 @@ import type {
 	ResponseCartProduct,
 	TitanProductUser,
 } from '@automattic/shopping-cart';
-import { getPartnerCoupon } from './partner-coupon';
 
 export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	theme?: Theme;
