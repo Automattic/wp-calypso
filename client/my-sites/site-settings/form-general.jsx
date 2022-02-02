@@ -710,7 +710,7 @@ const connectComponent = connect( ( state ) => {
 		siteDomains: getDomainsBySiteId( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
-		customizerUrl: getCustomizerUrl( state, siteId ),
+		customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
