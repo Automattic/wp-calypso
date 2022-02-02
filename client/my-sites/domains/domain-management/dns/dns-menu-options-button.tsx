@@ -266,7 +266,7 @@ function DnsMenuOptionsButton( {
 				context={ optionsButtonRef.current }
 				position="bottom"
 			>
-				<PopoverMenuItem onClick={ showRestoreDialog } disabled={ pointsToWpcom }>
+				<PopoverMenuItem onClick={ showRestoreDialog } disabled={ pointsToWpcom || ! domain }>
 					<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
 					{ __( 'Restore default A records' ) }
 				</PopoverMenuItem>
