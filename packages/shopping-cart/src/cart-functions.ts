@@ -31,10 +31,7 @@ function convertResponseCartProductToRequestCartProduct(
 
 export function convertResponseCartToRequestCart( {
 	products,
-	currency,
-	locale,
 	coupon,
-	is_coupon_applied,
 	tax,
 }: TempResponseCart ): RequestCart {
 	let requestCartTax = null;
@@ -49,13 +46,9 @@ export function convertResponseCartToRequestCart( {
 	}
 	return {
 		products: products.map( convertResponseCartProductToRequestCartProduct ),
-		currency,
-		locale,
 		coupon,
-		is_coupon_applied,
 		temporary: false,
 		tax: requestCartTax,
-		extra: '', // This property doesn't appear to be used for anything
 	};
 }
 
