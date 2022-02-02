@@ -221,9 +221,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				{ siteId && <QuerySites siteId={ siteId } /> }
-
-				{ footer }
 			</Main>
+			{ footer }
 		</>
 	);
 };

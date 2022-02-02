@@ -1,134 +1,326 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+/**
+ * WARNING: rules below are directly copied from
+ * https://opengrok.a8c.com/source/xref/a8c/jetpackme-new/scss/jetpack-footer.css
+ *
+ * Some overwrites are necessary to make both this and Jetpack.com footers look
+ * similar.
+ */
 
-.jpcom-footer {
-	display: flex;
-	justify-content: space-between;
-	flex-wrap: wrap;
+// ============================================================================
+// Overwrites
+// ============================================================================
 
-	padding: 12px 16px 24px;
+.jetpack-footer {
+	line-height: 1.4;
 
-	@include break-mobile {
-		padding: 12px 12px 24px;
-	}
+	-webkit-font-smoothing: initial;
 
-	@include breakpoint-deprecated( '>660px' ) {
-		padding: 40px 0 24px;
-	}
-}
-
-.jpcom-footer__separator {
-	// This color comes from design (not present in color-studio).
-	background: #c9d7e1;
-
-	margin: 0;
-
-	// These 3 properties make the line go across the whole viewport even when the
-	// parent component doesn't go that far.
-	position: relative;
-	left: calc( -50vw + 50% );
-	width: 100vw;
-}
-
-.jpcom-footer__col {
-	flex: 0 0 100%;
-
-	padding: 10px 0;
-
-	@include break-mobile {
-		flex: 0 0 calc( 50% - 24px );
-
-		padding: 10px 12px;
-	}
-
-	// We need this deprecated breakpoint since Calypso still uses it to determine
-	// the layout padding.
-	@include breakpoint-deprecated( '>660px' ) {
-		flex: 0 0 calc( 50% - 12px );
-
-		padding: 10px 0;
-	}
-
-	@include break-large {
-		flex: 0 0 25%;
-	}
-
-	@include break-xlarge {
-		flex: 0 0 20%;
+	ul {
+		margin-inline-start: 0;
 	}
 }
 
-.jpcom-footer__sub-col {
-	margin-top: 20px;
-}
-
-.jpcom-footer__links {
-	list-style: none;
-	list-style-image: none;
-
-	margin: 0;
-}
-
-.jpcom-footer__link {
-	padding-bottom: 8px;
-}
-
-.jpcom-footer__col-header {
-	font-weight: 700;
-	margin-bottom: 20px;
-}
-
-.jpcom-footer__col--logo {
-	display: none;
-
-	@include break-xlarge {
-		display: block;
-	}
-}
-
-.jpcom-footer__plugs {
-	text-align: center;
-
-	font-size: 0.875rem;
-}
-
-.jpcom-footer__plugs-group {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-	align-items: center;
-
-	padding: 20px 10px;
-
-	a {
-		color: #2e4453;
-	}
-
-	@include break-mobile {
-		flex-direction: row;
-	}
-}
-
-.jpcom-footer__a8c-services-plug {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	padding-bottom: 14px;
-
-	@include break-mobile {
-		padding-bottom: 0;
+.social-properties {
+	> li > a {
+		padding: 12px !important;
 	}
 
 	svg {
-		margin-right: 8px;
+		fill: var( --studio-gray-80 );
 	}
 }
 
-.jpcom-footer__a8c-attr-plug {
-	width: 180px;
+.social-properties__accessible-name {
+	@include hide-content-accessibly();
 }
 
-.jpcom-footer__hiring-plug {
-	padding: 20px;
+.jetpack-footer__language {
+	height: 48px;
+}
+
+// ============================================================================
+// Jetpack.com styles
+// ============================================================================
+
+.jetpack-footer__content,
+.a8c-footer__link-list {
+	max-width: 1148px;
+	margin: 0 auto;
+}
+
+@media ( min-width: 531px ) {
+	.jetpack-footer__head,
+	.sitemap__list,
+	.a8c-footer__link-list {
+		display: grid;
+		column-gap: 3rem;
+		grid-template-columns: repeat( 2, 1fr );
+	}
+}
+@media ( min-width: 901px ) {
+	.jetpack-footer__head,
+	.sitemap__list,
+	.a8c-footer__link-list {
+		grid-template-columns: repeat( 3, 1fr );
+	}
+}
+@media ( min-width: 1101px ) {
+	.jetpack-footer__head,
+	.sitemap__list,
+	.a8c-footer__link-list {
+		grid-template-columns: repeat( 4, 1fr );
+	}
+}
+@media ( min-width: 1301px ) {
+	.jetpack-footer__head,
+	.sitemap__list,
+	.a8c-footer__link-list {
+		grid-template-columns: repeat( 5, 1fr );
+	}
+}
+
+.jetpack-footer {
+	padding: 4rem 7.5% 4.5rem;
+	background-color: #f0f2eb;
+}
+@media ( max-width: 600px ) {
+	.jetpack-footer {
+		padding-block-start: 3rem;
+	}
+}
+
+.jetpack-footer__head {
+	margin-block-end: 2.5rem;
+}
+@media ( max-width: 530px ) {
+	.jetpack-footer__head {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+}
+
+@media ( min-width: 531px ) {
+	.jetpack-footer__language {
+		grid-column-start: -2;
+	}
+}
+
+@media ( min-width: 531px ) {
+	.jetpack-footer__language-toggle {
+		margin-inline-start: -1rem;
+	}
+}
+
+.sitemap__list {
+	margin-block-start: 0;
+	margin-block-end: 0;
+	padding-inline-start: 0;
+	padding-inline-end: 0;
+	list-style-type: none;
+}
+.sitemap__list :any-link {
+	color: #007117;
+}
+.sitemap__list :any-link:hover {
+	color: #007117;
+	text-decoration: underline;
+}
+
+.sitemap__category {
+	margin: 5rem 0;
+}
+@media ( min-width: 531px ) {
+	.sitemap__category {
+		margin: 2.5rem 0;
+	}
+}
+.sitemap__category:last-child {
+	margin-block-end: 0;
+}
+
+.sitemap__category-label {
+	display: block;
+	margin-block-end: 1rem;
+	color: #2c3338;
+	font-weight: 600;
+}
+@media ( max-width: 600px ) {
+	.sitemap__category-label {
+		margin-block-end: 0.75rem;
+		font-size: 0.8125rem;
+	}
+}
+
+.sitemap__link-list {
+	margin-block-start: 0;
+	margin-block-end: 0;
+	padding-inline-start: 0;
+	padding-inline-end: 0;
+	list-style-type: none;
+	line-height: 1.2;
+}
+@media ( max-width: 600px ) {
+	.sitemap__link-list {
+		font-size: 0.8125rem;
+	}
+}
+.sitemap__link-list > li {
+	margin: 0.75rem 0;
+}
+@media ( max-width: 600px ) {
+	.sitemap__link-list > li {
+		margin: 1rem 0;
+	}
+}
+
+.sitemap .store-buttons {
+	margin-block-start: 1rem;
+}
+.sitemap .store-buttons ul {
+	margin-block-start: 0;
+	margin-block-end: 0;
+	padding-inline-start: 0;
+	padding-inline-end: 0;
+	list-style-type: none;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.sitemap .store-buttons ul > li {
+	margin: 0.25rem 1.5rem 0.25rem 0;
+}
+.sitemap .store-buttons ul > li:last-child {
+	margin-inline-end: 0;
+}
+.sitemap .store-buttons ul > li > a {
+	display: block;
+	transition: transform 0.1s;
+}
+.sitemap .store-buttons ul > li > a:hover {
+	transform: scale( 1.05 );
+}
+
+@media ( min-width: 531px ) {
+	.sitemap__category-social,
+	.sitemap__category-mobile {
+		grid-column: 1 / -1;
+	}
+}
+
+@media ( min-width: 901px ) {
+	.sitemap__category-social {
+		grid-column-end: auto;
+	}
+}
+
+@media ( min-width: 901px ) {
+	.sitemap__category-mobile {
+		grid-column-start: 2;
+	}
+}
+
+.a8c-footer {
+	padding: 1.5rem 7.5%;
+	background-color: #101517;
+}
+@media ( max-width: 600px ) {
+	.a8c-footer {
+		padding-block-start: 1rem;
+		padding-block-end: 1rem;
+	}
+}
+
+.a8c-footer__link-list {
+	margin-block-start: 0;
+	margin-block-end: 0;
+	padding-inline-start: 0;
+	padding-inline-end: 0;
+	list-style-type: none;
+}
+@media ( min-width: 531px ) {
+	.a8c-footer__link-list {
+		display: flex;
+		justify-content: space-between;
+	}
+}
+@media ( min-width: 901px ) {
+	.a8c-footer__link-list {
+		display: grid;
+	}
+}
+.a8c-footer__link-list > li {
+	margin: 1rem 0;
+}
+@media ( max-width: 600px ) {
+	.a8c-footer__link-list > li {
+		font-size: 0.8125rem;
+	}
+}
+.a8c-footer__link-list :any-link {
+	color: white;
+	text-decoration: underline;
+}
+.a8c-footer__link-list :any-link:hover {
+	color: white;
+	text-decoration: none;
+}
+.a8c-footer__link-list .a8c-footer__home-link {
+	text-decoration: none;
+}
+@media ( max-width: 600px ) {
+	.a8c-footer__link-list .a8c-footer__home-link {
+		font-size: 0.6875rem;
+	}
+}
+
+@media ( min-width: 901px ) {
+	.a8c-footer__home {
+		grid-column: 1 / 3;
+	}
+}
+
+.a8c-footer__home-link {
+	display: inline-flex;
+	align-items: baseline;
+}
+
+.a8c-footer__a8c-logo {
+	position: relative;
+	top: 1px;
+	height: 0.75rem;
+	margin: 0 0.5rem;
+}
+@media ( max-width: 600px ) {
+	.a8c-footer__a8c-logo {
+		top: 0;
+		height: 0.5rem;
+		margin: 0 0.25rem;
+	}
+}
+
+@media ( min-width: 901px ) {
+	.a8c-footer__work {
+		grid-column-start: -2;
+	}
+}
+
+.social-properties {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.social-properties > li {
+	margin: 0 2px 0 0;
+}
+.social-properties > li:first-child {
+	margin-inline-start: -14px;
+}
+.social-properties > li > a {
+	display: block;
+	padding: 14px;
+	transition: opacity 0.1s;
+}
+.social-properties > li > a:hover {
+	opacity: 0.75;
 }
