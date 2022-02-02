@@ -4,38 +4,40 @@ import { times } from 'lodash';
 import './style.scss';
 
 interface Props {
-	currentPage: number;
+	onChange: ( page: number ) => void;
+	pageIndex: number;
 	numberOfPages: number;
-	setCurrentPage: ( page: number ) => void;
 	classNames?: string | string[];
 }
 
 const PaginationControl: React.FunctionComponent< Props > = ( props ) => {
-	const { currentPage, numberOfPages, setCurrentPage, classNames, children } = props;
+	const { pageIndex, numberOfPages, onChange, classNames, children } = props;
 
-	const classes = classnames( 'pagination-controls', classNames?.toString()?.split( ',' ) );
+	const classes = classnames( 'pagination-control', classNames );
 
 	return (
-		<ul className={ classes } aria-label={ __( 'Guide controls' ) }>
-			{ times( numberOfPages, ( page ) => (
-				<li key={ page } aria-current={ page === currentPage ? 'page' : undefined }>
+		<ul className={ classes } aria-label={ __( 'Pagination control' ) }>
+			{ times( numberOfPages, ( index ) => (
+				<li
+					key={ `${ numberOfPages }-${ index }` }
+					aria-current={ index === pageIndex ? 'page' : undefined }
+				>
 					<button
-						key={ page }
 						className={ classnames( 'pagination-control__page', {
-							'pagination-control__current': page === currentPage,
+							'pagination-control__current': index === pageIndex,
 						} ) }
-						disabled={ page === currentPage }
+						disabled={ index === pageIndex }
 						aria-label={ sprintf(
 							/* translators: 1: current page number 2: total number of pages */
 							__( 'Page %1$d of %2$d' ),
-							page + 1,
+							index + 1,
 							numberOfPages
 						) }
-						onClick={ () => setCurrentPage( page ) }
+						onClick={ () => onChange( index ) }
 					/>
 				</li>
 			) ) }
-			{ children && <li className={ classnames( 'navigation-buttons' ) }>{ children }</li> }
+			{ children && <li className="pagination-control__last-item">{ children }</li> }
 		</ul>
 	);
 };

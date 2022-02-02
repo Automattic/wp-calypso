@@ -106,7 +106,6 @@ function CardNavigation( {
 				currentPage={ currentStepIndex }
 				numberOfPages={ lastStepIndex + 1 }
 				setCurrentPage={ setCurrentStepIndex }
-				classNames={ [ 'array', 'classes' ] }
 			>
 				{ isFirstStep ? (
 					<div>

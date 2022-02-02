@@ -1,6 +1,6 @@
 @import '@automattic/calypso-color-schemes';
 
-.pagination-controls {
+.pagination-control {
 	margin: 0;
 	display: flex;
 	justify-content: center;
@@ -14,7 +14,7 @@
 		border: none;
 	}
 
-	li.navigation-buttons {
+	li.pagination-control__last-item {
 		margin-left: auto;
 		height: 32px;
 	}
