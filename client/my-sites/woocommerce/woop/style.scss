@@ -1,3 +1,22 @@
+@import '@automattic/onboarding/styles/mixins';
+
 body.is-section-woocommerce-installation.theme-default.color-scheme {
 	--color-surface-backdrop: var( --studio-white );
+}
+
+.woocommerce_landing-page {
+	.woocommerce_landing-page-empty-content {
+		padding-top: 3em;
+		max-width: 540px;
+
+		.empty-content__title {
+			@include onboarding-heading-text;
+			color: var( --studio-gray-90 );
+			padding: 1em 0 0.5em;
+		}
+		.empty-content__line {
+			@include onboarding-large-text;
+			margin-bottom: 1.5em;
+		}
+	}
 }

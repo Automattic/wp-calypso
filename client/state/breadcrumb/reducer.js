@@ -14,7 +14,7 @@ export default ( state = [], action ) => {
 		case BREADCRUMB_APPEND_ITEM:
 			// Don't append if it is the same as the last item
 			// eslint-disable-next-line no-case-declarations
-			const currentLastItem = state.at( -1 ) || {};
+			const currentLastItem = state[ state.length - 1 ] || {};
 			if ( currentLastItem.label === action.item?.label ) {
 				return [ ...state ];
 			}

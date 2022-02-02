@@ -587,6 +587,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/happychat-app@workspace:apps/happychat"
   dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
@@ -635,6 +636,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/inline-help@workspace:apps/inline-help"
   dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
@@ -645,6 +647,7 @@ __metadata:
     enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4
+    path-browserify: ^1.0.1
     postcss: ^8.3.11
     react: ^17.0.2
     react-dom: ^17.0.2

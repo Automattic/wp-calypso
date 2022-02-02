@@ -1,8 +1,6 @@
 import { once, defer } from 'lodash';
 import page from 'page';
-import keyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import {
-	NOTIFICATIONS_PANEL_TOGGLE,
 	ROUTE_SET,
 	SELECTED_SITE_SET,
 	SITE_RECEIVE,
@@ -15,7 +13,6 @@ import {
 	createPathWithoutImmediateLoginInformation,
 } from 'calypso/state/immediate-login/utils';
 import { successNotice } from 'calypso/state/notices/actions';
-import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 
 /**
  * Notifies user about the fact that they were automatically logged in
@@ -59,27 +56,10 @@ const notifyAboutImmediateLoginLinkEffects = once( ( dispatch, action, getState 
 	} );
 } );
 
-/**
- * Sets isNotificationOpen for lib/keyboard-shortcuts
- *
- * @param {Function} dispatch - redux dispatch function
- * @param {object}   action   - the dispatched action
- * @param {Function} getState - redux getState function
- */
-const updateNotificationsOpenForKeyboardShortcuts = ( dispatch, action, getState ) => {
-	// flip the state here, since the reducer hasn't had a chance to update yet
-	const toggledState = ! isNotificationsOpen( getState() );
-	keyboardShortcuts.setNotificationsOpen( toggledState );
-};
-
 const handler = async ( dispatch, action, getState ) => {
 	switch ( action.type ) {
 		case ROUTE_SET:
 			return notifyAboutImmediateLoginLinkEffects( dispatch, action, getState );
-
-		//when the notifications panel is open keyboard events should not fire.
-		case NOTIFICATIONS_PANEL_TOGGLE:
-			return updateNotificationsOpenForKeyboardShortcuts( dispatch, action, getState );
 
 		case SELECTED_SITE_SET:
 		case SITE_RECEIVE:

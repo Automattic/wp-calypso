@@ -8,5 +8,5 @@ import 'calypso/state/rewind/init';
  * @returns {Array} Rewind backups list
  */
 export default function getRewindBackups( state, siteId ) {
-	return state.rewind?.[ siteId ]?.backups ?? null;
+	return state.rewind?.[ siteId ]?.backups?.backups ?? null;
 }

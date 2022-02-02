@@ -1,5 +1,6 @@
 import { Path, SVG } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -14,11 +15,12 @@ function P2StepWrapper( {
 	subHeaderText,
 	positionInFlow,
 	children,
+	className,
 } ) {
 	const translate = useTranslate();
 
 	return (
-		<div className="p2-step-wrapper">
+		<div className={ classnames( 'p2-step-wrapper', className ) }>
 			<div className="p2-step-wrapper__header">
 				<div className="p2-step-wrapper__header-logo">
 					<SVG xmlns="http://www.w3.org/2000/svg" width="67" height="32" viewBox="0 0 67 32">
