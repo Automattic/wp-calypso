@@ -304,7 +304,6 @@ const JetpackComFooter: React.FC = () => {
 											className="a8c-footer__a8c-logo"
 											src={ a8cLogo }
 											alt={ translate( 'Automattic' ) as string }
-											width={ 150 }
 											loading="lazy"
 										/>
 									),
