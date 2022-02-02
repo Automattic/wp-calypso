@@ -13,9 +13,9 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 
 	// Check if we are running on wpcalypso or production.
 	// Remove when 'onboarding/import-from-wordpress' will be enabled on wpcalypso.
-	const isStagingOrProd = DataHelper.getCalypsoURL()
+	const isLocal = DataHelper.getCalypsoURL()
 		.toLowerCase()
-		.includes( 'https://wordpress.com' );
+		.includes( 'http://calypso.localhost:3000' );
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -41,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 	 * Remove the skip-if conditional when 'onboarding/import-from-wordpress' is enabled on wpcalypso.
 	 * Substitute it with 'describe'.
 	 */
-	skipDescribeIf( isStagingOrProd )( 'Follow the WordPress import flow', () => {
+	skipDescribeIf( ! isLocal )( 'Follow the WordPress import flow', () => {
 		navigateToSetup();
 
 		it( 'Start a WordPress import', async () => {
