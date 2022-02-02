@@ -68,17 +68,15 @@ const MainHeader = () => {
 	};
 
 	return (
-		<>
-			<PromoCard
-				className={ 'inbox__is-inbox-card' }
-				icon={ null }
-				image={ image }
-				isPrimary={ true }
-				title={ translate( 'Pick a domain to get started' ) }
-			>
-				<p>{ translate( 'Pick one of your domains below to add an email solution.' ) }</p>
-			</PromoCard>
-		</>
+		<PromoCard
+			className={ 'inbox__is-inbox-card' }
+			icon={ null }
+			image={ image }
+			isPrimary={ true }
+			title={ translate( 'Pick a domain to get started' ) }
+		>
+			<p>{ translate( 'Pick one of your domains below to add an email solution.' ) }</p>
+		</PromoCard>
 	);
 };
 
@@ -113,21 +111,13 @@ const InboxManagement = () => {
 	}
 
 	if ( isLoadingDomains ) {
-		return (
-			<>
-				<ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />
-			</>
-		);
+		return <ProgressLine statusText={ translate( 'Loading your mailboxes' ) } />;
 	}
 
 	const nonWPCOMDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
 
 	if ( hasAtLeastOneMailbox( nonWPCOMDomains ) ) {
-		return (
-			<>
-				<MailboxSelectionList />
-			</>
-		);
+		return <MailboxSelectionList />;
 	}
 
 	return (
