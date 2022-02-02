@@ -34,11 +34,15 @@ enum EmailProvider {
 
 type EmailProviderKey = keyof typeof EmailProvider;
 
+type EmailProviderTemplateBuilderArguments = {
+	domain: ResponseDomain | undefined;
+};
+
 type EmailProviderConfiguration = {
 	dnsTemplate: DnsTemplateDetails;
 	hasServiceFunction?: ( domain: ResponseDomain | undefined ) => boolean;
 	providerSlug: string;
-	templateVariables?: object;
+	templateVariableBuilder?: ( { domain }: { domain: ResponseDomain | undefined } ) => object;
 };
 
 const emailProviderConfig: Record< EmailProviderKey, EmailProviderConfiguration > = {
@@ -53,17 +57,26 @@ const emailProviderConfig: Record< EmailProviderKey, EmailProviderConfiguration 
 			return false && ( hasGSuiteWithUs( domain ) || hasGSuiteWithAnotherProvider( domain ) );
 		},
 		providerSlug: 'google',
-		templateVariables: {
-			// The back-end template requires a `token` variable for a site verification record
-			token: ' ',
+		templateVariableBuilder: (): object => {
+			return {
+				// The back-end template requires a `token` variable for a site verification record
+				token: ' ',
+			};
 		},
 	},
 	TITAN: {
 		dnsTemplate: dnsTemplates.TITAN,
 		hasServiceFunction: hasTitanMailWithUs,
 		providerSlug: 'titan',
-		templateVariables: {
-			dmarc_host: '_dmarc',
+		templateVariableBuilder: ( { domain }: EmailProviderTemplateBuilderArguments ): object => {
+			const dmarcHost =
+				domain && domain.isSubdomain && domain.subdomainPart
+					? '_dmarc.' + domain.subdomainPart
+					: '_dmarc';
+
+			return {
+				dmarc_host: dmarcHost,
+			};
 		},
 	},
 };

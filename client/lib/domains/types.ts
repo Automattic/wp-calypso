@@ -104,7 +104,7 @@ export type ResponseDomain = {
 	registryExpiryDate: string;
 	sslStatus: string | null;
 	subscriptionId: string | null;
-	subdomainPart: string;
+	subdomainPart?: string;
 	supportsDomainConnect: boolean;
 	supportsGdprConsentManagement: boolean;
 	supportsTransferApproval: boolean;
