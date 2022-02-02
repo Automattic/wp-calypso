@@ -20,7 +20,7 @@ interface Props {
 	signupDependencies: any;
 	stepName: string;
 	initialContext: any;
-	siteId: number;
+	siteId: object;
 }
 
 export default function StoreFeaturesStep( props: Props ): React.ReactNode {
