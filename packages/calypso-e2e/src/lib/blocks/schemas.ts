@@ -6,8 +6,8 @@ import { ElementHandle, Frame, Page } from 'playwright';
 export interface BlockFlow {
 	blockSidebarName: string;
 	blockEditorSelector: string;
-	configure( context: EditorContext ): Promise< void >;
-	validateAfterPublish( context: PublishedPostContext ): Promise< void >;
+	configure?( context: EditorContext ): Promise< void >;
+	validateAfterPublish?( context: PublishedPostContext ): Promise< void >;
 }
 
 /**

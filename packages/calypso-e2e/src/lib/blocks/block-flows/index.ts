@@ -5,3 +5,6 @@ export * from './opentable';
 export * from './business-hours';
 export * from './whatsapp-button';
 export * from './contact-form';
+export * from './blog-posts';
+export * from './post-carousel';
+export * from './timeline';
