@@ -35,7 +35,7 @@ const fetch = ( action ) => {
 		return;
 	}
 
-	const { atTime, file } = action.params;
+	const { atTime, file, isMillisec } = action.params;
 	const params = Object.assign(
 		{
 			apiVersion: '1.1',
@@ -43,7 +43,7 @@ const fetch = ( action ) => {
 			path: `/videos/${ action.videoId }/poster`,
 		},
 		file && { formData: [ [ 'poster', file ] ] },
-		atTime !== undefined && { body: { at_time: atTime } }
+		atTime !== undefined && { body: { at_time: atTime, is_millisec: isMillisec } }
 	);
 
 	return http( params, action );

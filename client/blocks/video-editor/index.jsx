@@ -77,8 +77,9 @@ class VideoEditor extends Component {
 	 * Updates the poster by selecting a particular frame of the video.
 	 *
 	 * @param {number} currentTime - Time at which to capture the frame
+	 * @param {boolean} isMillisec - Whether the time is in milliseconds
 	 */
-	updatePoster = ( currentTime ) => {
+	updatePoster = ( currentTime, isMillisec ) => {
 		if ( ! this.state.isSelectingFrame ) {
 			return;
 		}
@@ -87,7 +88,14 @@ class VideoEditor extends Component {
 		const guid = get( media, 'videopress_guid', null );
 
 		if ( guid ) {
-			this.props.updatePoster( guid, { atTime: currentTime }, { mediaId: media.ID } );
+			this.props.updatePoster(
+				guid,
+				{
+					atTime: currentTime,
+					isMillisec,
+				},
+				{ mediaId: media.ID }
+			);
 		}
 	};
 
