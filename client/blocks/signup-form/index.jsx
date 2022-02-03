@@ -89,7 +89,7 @@ class SignupForm extends Component {
 		goToNextStep: PropTypes.func,
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
-		isMobile: PropTypes.bool,
+		isPasswordlessExperiment: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
@@ -111,7 +111,7 @@ class SignupForm extends Component {
 		displayNameInput: false,
 		displayUsernameInput: true,
 		flowName: '',
-		isMobie: false,
+		isPasswordlessExperiment: false,
 		isSocialSignupEnabled: false,
 		horizontal: false,
 	};
@@ -1031,10 +1031,11 @@ class SignupForm extends Component {
 		}
 
 		/*
+			AB Test: passwordlessSignup
 			`<PasswordlessSignupForm />` is for the `onboarding` flow.
-			Require only email to create account for mobile users.
+			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
 		*/
-		if ( this.props.isMobile && this.props.flowName !== 'wpcc' ) {
+		if ( this.props.isPasswordlessExperiment ) {
 			const logInUrl = this.getLoginLink();
 
 			return (
