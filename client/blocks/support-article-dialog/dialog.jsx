@@ -67,8 +67,8 @@ export const SupportArticleDialog = ( {
 	}, [ actionUrl, post ] );
 
 	const handleCloseDialog = () => {
-		updateSupportArticle( null );
 		closeSupportArticleDialog();
+		updateSupportArticle( null );
 	};
 
 	return (

@@ -1,20 +1,13 @@
-import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import { hasUrlSearchQuery } from 'calypso/lib/url-search-query-state';
-import isInlineSupportArticleVisible from 'calypso/state/selectors/is-inline-support-article-visible';
+import { useHasUrlSearchQuery } from 'calypso/lib/url-search-query-state';
 
-function SupportArticleDialogLoader( { isVisible } ) {
-	if ( isVisible === false ) {
-		isVisible = hasUrlSearchQuery( 'support-article' );
-	}
-
+function SupportArticleDialogLoader() {
+	const hasQueryInUrl = useHasUrlSearchQuery( 'support-article' );
 	return (
-		isVisible && (
+		hasQueryInUrl && (
 			<AsyncLoad require="calypso/blocks/support-article-dialog/dialog" placeholder={ null } />
 		)
 	);
 }
 
-export default connect( ( state ) => ( {
-	isVisible: isInlineSupportArticleVisible( state ),
-} ) )( SupportArticleDialogLoader );
+export default SupportArticleDialogLoader;
