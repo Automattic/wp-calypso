@@ -57,6 +57,7 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 			},
 			properties: {
 				type: 'calypso_woocommerce_dashboard_snag_error', // everything added here is queryable
+				action: failureInfo.type,
 			},
 		} );
 		setHasFailed( true );
