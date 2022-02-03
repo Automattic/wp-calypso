@@ -8,7 +8,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import SocialLogo from 'calypso/components/social-logo';
 
-// TODO: This should probably moved out to a more difm components section
+// TODO: This probably should be moved out to a more suitable folder name like difm-components
 export const Label = styled( FormLabel )`
 	color: var( --studio-gray-50 );
 	font-weight: 500;
