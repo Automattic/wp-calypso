@@ -62,6 +62,10 @@ const RegisteredDomainDetails = ( {
 			return <p className="details-card__autorenew-placeholder" />;
 		}
 
+		if ( ! purchase || ( ! purchase.canDisableAutoRenew && ! purchase.canReenableAutoRenew ) ) {
+			return null;
+		}
+
 		if ( domain.bundledPlanSubscriptionId ) {
 			return null;
 		}

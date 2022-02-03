@@ -9,6 +9,7 @@ function createPurchaseObject( purchase ) {
 		mostRecentRenewDate: purchase.most_recent_renew_date,
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),
+		canReenableAutoRenew: Boolean( purchase.can_reenable_auto_renewal ),
 		costToUnbundle: purchase.cost_to_unbundle
 			? Number( purchase.cost_to_unbundle )
 			: Number( purchase.amount ),
