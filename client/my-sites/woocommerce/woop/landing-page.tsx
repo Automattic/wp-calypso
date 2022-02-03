@@ -1,11 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import FormattedHeader from 'calypso/components/formatted-header';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
 import WooCommerceColophon from '../woocommerce-colophon';
@@ -55,6 +57,30 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 		);
 	}
 
+	const promos: PromoSectionProps = {
+		promos: [
+			{
+				title: __( 'Run Your Store From Anywhere' ),
+				body: __(
+					'Manage your business on the go with the WooCommerce Mobile App. Create products, process orders, and keep an eye on key stats in real-time.'
+				),
+				image: <Gridicon icon="globe" />,
+			},
+			{
+				title: __( 'Learn With a Global Community' ),
+				body: __( 'WooCommerce is one of the fastest-growing eCommerce communities.' ),
+				image: <Gridicon icon="user-circle" />,
+			},
+			{
+				title: __( 'Customize and Extend' ),
+				body: __(
+					'From subscriptions to gym classes to luxury cars, WooCommerce is fully customizable.'
+				),
+				image: <Gridicon icon="story" />,
+			},
+		],
+	};
+
 	return (
 		<div className="woop__landing-page woocommerce_landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
@@ -80,6 +106,12 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				className="woop__landing-page-cta woocommerce_landing-page-empty-content"
 			/>
 			<WooCommerceColophon wpcomDomain={ wpcomDomain || '' } />
+			<div className="woop__landing-page-features-section">
+				<FormattedHeader headerText={ __( 'Everything you need to create a successful store' ) } />
+				<div className="woop__landing-page-features">
+					<PromoSection { ...promos } />
+				</div>
+			</div>
 		</div>
 	);
 };
