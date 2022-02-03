@@ -1,5 +1,7 @@
+import config from '@automattic/calypso-config';
 import { ReactElement, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { logToLogstash } from 'calypso/lib/logstash';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -39,6 +41,20 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 				error: failureInfo.error,
 			} )
 		);
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: failureInfo.error,
+			severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+			blog_id: siteId,
+			extra: {
+				env: config( 'env_id' ),
+				type: 'calypso_woocommerce_dashboard_snag_error',
+				action: failureInfo.type,
+				site: domain,
+				code: failureInfo.code,
+				message: failureInfo.error,
+			},
+		} );
 		setHasFailed( true );
 	};
 
