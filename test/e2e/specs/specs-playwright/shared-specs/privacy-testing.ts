@@ -68,9 +68,6 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 					password: pagePassword,
 				} );
 
-				// if ( visibility === 'Password' ) {
-				// 	await editorSettingsSidebarComponent.setPostPassword( pagePassword );
-				// }
 				await gutenbergEditorPage.closeSettings();
 			} );
 

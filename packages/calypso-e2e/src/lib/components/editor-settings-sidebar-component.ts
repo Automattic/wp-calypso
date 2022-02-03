@@ -88,7 +88,8 @@ export class EditorSettingsSidebarComponent {
 	 *
 	 * @param {PrivacyOptions} visibility Desired post visibility setting.
 	 * @param param1 Object parameter.
-	 * @param {string} param1.password Password for the post.
+	 * @param {string} param1.password Password for the post. Normally an optinal value, this
+	 * 	must be set if the `visibility` parameter is set to `Password`.
 	 */
 	async setVisibility(
 		visibility: PrivacyOptions,
