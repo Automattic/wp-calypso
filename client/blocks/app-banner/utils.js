@@ -9,6 +9,11 @@ export const ALLOWED_SECTIONS = [ GUTENBERG, NOTES, READER, STATS ];
 export const ONE_WEEK_IN_MILLISECONDS = 604800000;
 export const ONE_MONTH_IN_MILLISECONDS = 2419200000; // 28 days
 
+// Experiment Configuration
+export const TWO_WEEKS_IN_MILLISECONDS = 1209600000;
+export const ONE_DAY_IN_MILLISECONDS = 86400000;
+export const APP_BANNER_EXPERIMENT_NAME = 'calypso_mobileweb_appbanner_frequency_20220128_v1';
+
 export function getAppBannerData( translate, sectionName ) {
 	switch ( sectionName ) {
 		case GUTENBERG:
@@ -55,10 +60,10 @@ export function getCurrentSection( currentSection, isNotesOpen ) {
 	return null;
 }
 
-function getDismissTimes() {
+function getDismissTimes( isControl ) {
 	const currentTime = Date.now();
-	const currentSection = ONE_MONTH_IN_MILLISECONDS;
-	const otherSections = ONE_WEEK_IN_MILLISECONDS;
+	const currentSection = isControl ? ONE_MONTH_IN_MILLISECONDS : TWO_WEEKS_IN_MILLISECONDS;
+	const otherSections = isControl ? ONE_WEEK_IN_MILLISECONDS : ONE_DAY_IN_MILLISECONDS;
 
 	return {
 		current: currentTime + currentSection,
@@ -66,8 +71,8 @@ function getDismissTimes() {
 	};
 }
 
-export function getNewDismissTimes( dismissedSection, currentDismissTimes ) {
-	const dismissTimes = getDismissTimes();
+export function getNewDismissTimes( dismissedSection, currentDismissTimes, isControl ) {
+	const dismissTimes = getDismissTimes( isControl );
 
 	return reduce(
 		ALLOWED_SECTIONS,
