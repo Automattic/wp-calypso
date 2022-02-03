@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import appStoreBadge from './assets/app-store-badge.png';
@@ -33,6 +34,10 @@ const getTrackLinkClick = ( link: string ) => () => {
  */
 const JetpackComFooter: React.FC = () => {
 	const translate = useTranslate();
+	const region = useGeoLocationQuery()?.data?.region;
+	const hideCaliforniaNotice = useMemo( () => region && region.toLowerCase() !== 'california', [
+		region,
+	] );
 	const { sitemap, socialProps } = useMemo( () => {
 		const sitemap = [
 			{
@@ -113,14 +118,16 @@ const JetpackComFooter: React.FC = () => {
 						href: addQueryArgs( utmParams, 'http://automattic.com/privacy/' ),
 						trackId: 'privacy_policy',
 					},
-					{
-						label: translate( 'Privacy Notice for California Users' ),
-						href: addQueryArgs(
-							utmParams,
-							'https://automattic.com/privacy/#california-consumer-privacy-act-ccpa'
-						),
-						trackId: 'privacy_policy_california',
-					},
+					hideCaliforniaNotice
+						? null
+						: {
+								label: translate( 'Privacy Notice for California Users' ),
+								href: addQueryArgs(
+									utmParams,
+									'https://automattic.com/privacy/#california-consumer-privacy-act-ccpa'
+								),
+								trackId: 'privacy_policy_california',
+						  },
 				],
 			},
 			{
@@ -190,7 +197,7 @@ const JetpackComFooter: React.FC = () => {
 			sitemap,
 			socialProps,
 		};
-	}, [ translate ] );
+	}, [ translate, hideCaliforniaNotice ] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -218,17 +225,25 @@ const JetpackComFooter: React.FC = () => {
 								<li key={ category as string } className="sitemap__category">
 									<span className="sitemap__category-label">{ category }</span>
 									<ul className="sitemap__link-list">
-										{ items.map( ( { label, href, trackId } ) => (
-											<li key={ label as string }>
-												<ExternalLink
-													href={ href }
-													className="sitemap__link"
-													onClick={ trackId ? getTrackLinkClick( trackId ) : null }
-												>
-													{ label }
-												</ExternalLink>
-											</li>
-										) ) }
+										{ items.map( ( item ) => {
+											if ( ! item ) {
+												return;
+											}
+
+											const { label, href, trackId } = item;
+
+											return (
+												<li key={ label as string }>
+													<ExternalLink
+														href={ href }
+														className="sitemap__link"
+														onClick={ trackId ? getTrackLinkClick( trackId ) : null }
+													>
+														{ label }
+													</ExternalLink>
+												</li>
+											);
+										} ) }
 									</ul>
 								</li>
 							) ) }
