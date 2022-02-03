@@ -14,6 +14,7 @@ import 'calypso/state/inline-support-article/init';
  * @param {string} options.actionLabel Label of the action
  * @param {string} options.actionUrl   URL of the action
  * @param {number} options.blogId      The blog id of the support article
+ *
  * @returns {object}		Action
  */
 export function openSupportArticleDialog( {
