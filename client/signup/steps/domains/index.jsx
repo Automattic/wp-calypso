@@ -176,13 +176,6 @@ class DomainsStep extends Component {
 		} );
 	};
 
-	isExperiment() {
-		return (
-			'domain_step_copy_test_202201' === this.state.experiment?.experimentName &&
-			this.state.experiment?.variationName !== null
-		);
-	}
-
 	isPurchasingTheme = () => {
 		return this.props.queryObject && this.props.queryObject.premium;
 	};
