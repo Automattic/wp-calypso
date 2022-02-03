@@ -41,8 +41,8 @@
 }
 
 .license-product-card.selected .license-product-card__radio {
-	border: 2px solid green;
-	background: green;
+	border: 2px solid var( --studio-jetpack-green-50 );
+	background: var( --studio-jetpack-green-50 );
 }
 
 .issue-license-form p.license-product-card__text {

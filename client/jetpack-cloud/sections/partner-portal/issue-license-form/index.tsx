@@ -76,17 +76,25 @@ export default function IssueLicenseForm(): ReactElement {
 
 	return (
 		<div className="issue-license-form">
-			<div className="issue-license-form__top">
-				<p className="issue-license-form__description">
-					{ translate( 'Select the Jetpack product you would like to issue a new license for' ) }
-				</p>
-				<div className="issue-license-form__controls">
-					<Button primary onClick={ onIssueLicense }>
-						{ translate( 'Select License' ) }
-					</Button>
-				</div>
-			</div>
-			<div className="issue-license-form__bottom">{ productCards }</div>
+			{ products.isLoading && <div className="issue-license-form__placeholder" /> }
+
+			{ ! products.isLoading && (
+				<>
+					<div className="issue-license-form__top">
+						<p className="issue-license-form__description">
+							{ translate(
+								'Select the Jetpack product you would like to issue a new license for'
+							) }
+						</p>
+						<div className="issue-license-form__controls">
+							<Button primary onClick={ onIssueLicense }>
+								{ translate( 'Select License' ) }
+							</Button>
+						</div>
+					</div>
+					<div className="issue-license-form__bottom">{ productCards }</div>
+				</>
+			) }
 		</div>
 	);
 }
