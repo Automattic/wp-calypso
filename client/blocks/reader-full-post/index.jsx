@@ -99,13 +99,6 @@ export class FullPostView extends Component {
 	postContentWrapper = createRef();
 
 	componentDidMount() {
-		/*
-		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
-		KeyboardShortcuts.on( 'like-selection', this.handleLike );
-		KeyboardShortcuts.on( 'move-selection-down', this.goToNextPost );
-		KeyboardShortcuts.on( 'move-selection-up', this.goToPreviousPost );
-		*/
-
 		// Send page view
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
@@ -122,6 +115,8 @@ export class FullPostView extends Component {
 		// Adds WPiFrameResize listener for setting the corect height in embedded iFrames.
 		this.stopResize =
 			this.postContentWrapper.current && WPiFrameResize( this.postContentWrapper.current );
+
+		document.addEventListener( 'keydown', this.handleKeydown, true );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -158,16 +153,36 @@ export class FullPostView extends Component {
 
 	componentWillUnmount() {
 		this.props.unsetViewingFullPostKey( keyForPost( this.props.post ) );
-		/*
-		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
-		KeyboardShortcuts.off( 'like-selection', this.handleLike );
-		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
-		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
-		*/
 		// Remove WPiFrameResize listener.
 		this.stopResize?.();
 		this.props.enableAppBanner(); // reset the app banner
+
+		document.removeEventListener( 'keydown', this.handleKeydown, true );
 	}
+
+	handleKeydown = ( event ) => {
+		switch ( event.keyCode ) {
+			// Close full post - Esc
+			case 27: {
+				return this.handleBack( event );
+			}
+
+			// Like post - l
+			case 76: {
+				return this.handleLike();
+			}
+
+			// Previous post - j
+			case 74: {
+				return this.goToPreviousPost();
+			}
+
+			// Next post - k
+			case 75: {
+				return this.goToNextPost();
+			}
+		}
+	};
 
 	handleBack = ( event ) => {
 		event.preventDefault();
