@@ -7,6 +7,12 @@ export type QueryObject = {
 	to: string;
 };
 
+export interface ImportError {
+	error: boolean;
+	errorType: string;
+	errorMessage: string;
+}
+
 export interface ImportJob {
 	importerId: string;
 	importerState: string;
