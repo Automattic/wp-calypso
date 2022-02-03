@@ -1,7 +1,5 @@
 import page from 'page';
-import { reduxGetState } from 'calypso/lib/redux-bridge';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
-import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 
 export function isSpecialClick( event ) {
 	return event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
@@ -15,7 +13,7 @@ export function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
-export function showSelectedPost( { replaceHistory, postKey, comments } ) {
+export function showSelectedPost( { replaceHistory, postKey, postObject, comments } ) {
 	if ( ! postKey ) {
 		return;
 	}
@@ -25,10 +23,8 @@ export function showSelectedPost( { replaceHistory, postKey, comments } ) {
 		return;
 	}
 
-	const post = getPostByKey( reduxGetState(), postKey );
-
-	if ( isXPost( post ) && ! replaceHistory ) {
-		return showFullXPost( XPostHelper.getXPostMetadata( post ) );
+	if ( isXPost( postObject ) && ! replaceHistory ) {
+		return showFullXPost( XPostHelper.getXPostMetadata( postObject ) );
 	}
 
 	// normal

@@ -33,6 +33,7 @@ import {
 import {
 	getStream,
 	getTransformedStreamItems,
+	getTransformedStreamItemsPosts,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -385,6 +386,7 @@ class ReaderStream extends Component {
 			showSelectedPost( {
 				...args,
 				postKey: postKey.isCombination ? keyForPost( args ) : postKey,
+				postObject: this.props.postsItems[ index ],
 				streamKey,
 			} );
 
@@ -485,6 +487,11 @@ export default connect(
 				shouldCombine: shouldCombineCards,
 			} ),
 			notificationsOpen: isNotificationsOpen( state ),
+			postsItems: getTransformedStreamItemsPosts( state, {
+				streamKey,
+				recsStreamKey,
+				shouldCombine: shouldCombineCards,
+			} ),
 			stream,
 			recsStream: getStream( state, recsStreamKey ),
 			selectedPostKey: stream.selected,
