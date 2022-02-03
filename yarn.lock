@@ -1415,7 +1415,6 @@ __metadata:
     debug: ^4.3.3
     enzyme: ^3.11.0
     jest: ^27.3.1
-    jquery: ^1.12.3
     lodash: ^4.17.21
     npm-run-all: ^4.1.5
     postcss: ^8.4.5
@@ -23358,13 +23357,6 @@ fsevents@~2.1.2:
   version: 0.4.3
   resolution: "jpeg-js@npm:0.4.3"
   checksum: f1d6f38e5250e80f0ff9020f09f216f1493d4bd1ce091fff1ae361fcdab199df5df03a6d81a418964074b572b8f6ecfad3cf4ea807e5aa96477c092b3d247a12
-  languageName: node
-  linkType: hard
-
-"jquery@npm:^1.12.3":
-  version: 1.12.3
-  resolution: "jquery@npm:1.12.3"
-  checksum: bd69cd957822669dc228c8e6a6a461b344e7b878b86f3597f37b04bebb8905f509dbef59fef179dbf958cdea428a99a64824f2395a9e3bb554d46cf0f4b250b0
   languageName: node
   linkType: hard
 
