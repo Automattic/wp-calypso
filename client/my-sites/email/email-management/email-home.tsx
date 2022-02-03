@@ -29,11 +29,7 @@ import type { ReactElement } from 'react';
 
 import './style.scss';
 
-interface ContentWithHeaderProps {
-	children: ReactElement;
-}
-
-const ContentWithHeader = ( { children }: ContentWithHeaderProps ): ReactElement => {
+const ContentWithHeader = ( props: { children: ReactElement } ): ReactElement => {
 	const translate = useTranslate();
 	return (
 		<Main wideLayout>
@@ -43,7 +39,7 @@ const ContentWithHeader = ( { children }: ContentWithHeaderProps ): ReactElement
 
 			<EmailHeader />
 
-			{ children }
+			{ props.children }
 		</Main>
 	);
 };
@@ -52,12 +48,10 @@ const NoAccess = (): ReactElement => {
 	const translate = useTranslate();
 	return (
 		<ContentWithHeader>
-			<>
-				<EmptyContent
-					title={ translate( 'You are not authorized to view this page' ) }
-					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-				/>
-			</>
+			<EmptyContent
+				title={ translate( 'You are not authorized to view this page' ) }
+				illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+			/>
 		</ContentWithHeader>
 	);
 };
@@ -101,10 +95,12 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const hasSitesLoaded = useSelector( ( state ) => hasLoadedSites( state ) );
 
-	const { data, isLoading: isSiteDomainLoading } = useGetEmailDomainsQuery( selectedSite?.ID ?? 0, {
-		enabled: selectedSite !== null,
-		retry: false,
-	} );
+	const { data, isLoading: isSiteDomainLoading } = useGetEmailDomainsQuery(
+		selectedSite?.ID ?? null,
+		{
+			retry: false,
+		}
+	);
 
 	const domains = data?.domains?.map( createSiteDomainObject );
 
