@@ -2,7 +2,6 @@ import { isFreePlan } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
-import { FunctionComponent, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import ActivityCardList from 'calypso/components/activity-card-list';
@@ -12,12 +11,11 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Upsell from 'calypso/components/jetpack/upsell';
 import Main from 'calypso/components/main';
+import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestActivityLogs, getRequestActivityLogsId } from 'calypso/state/data-getters';
-import { getHttpData } from 'calypso/state/data-layer/http-data';
 import {
 	siteHasBackupProductPurchase,
 	siteHasScanProductPurchase,
@@ -27,6 +25,7 @@ import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
@@ -36,7 +35,7 @@ const ActivityLogV2: FunctionComponent = () => {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
-	const logs = useSelector( () => getHttpData( getRequestActivityLogsId( siteId, filter ) ).data );
+	const { data: logs } = useActivityLogQuery( siteId, filter );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const siteIsOnFreePlan = useSelector(
 		( state ) =>
@@ -78,11 +77,6 @@ const ActivityLogV2: FunctionComponent = () => {
 			</p>
 		</div>
 	);
-
-	// when the filter changes, re-request the logs
-	useEffect( () => {
-		requestActivityLogs( siteId, filter );
-	}, [ filter, siteId ] );
 
 	return (
 		<Main
