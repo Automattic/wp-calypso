@@ -47,14 +47,6 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 			message: failureInfo.error,
 			severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 			blog_id: siteId,
-			extra: {
-				env: config( 'env_id' ),
-				type: 'calypso_woocommerce_dashboard_snag_error',
-				action: failureInfo.type,
-				site: domain,
-				code: failureInfo.code,
-				message: failureInfo.error,
-			},
 			properties: {
 				env: config( 'env_id' ),
 				type: 'calypso_woocommerce_dashboard_snag_error',
