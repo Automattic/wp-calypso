@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { withSearchQueryState } from 'calypso/lib/url-search-query-state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
@@ -75,9 +76,9 @@ class InlineHelpRichResult extends Component {
 			// Until we can deliver localized inline support article content, we send the
 			// the user to the localized support blog, if one exists.
 			event.preventDefault();
+			this.props.updateUrlSearchQuery( postId );
 			this.props.openSupportArticleDialog( { postId, postUrl: link } );
 		}
-		// falls back on href
 	};
 
 	render() {
@@ -109,4 +110,7 @@ const mapDispatchToProps = {
 	openSupportArticleDialog,
 };
 
-export default connect( null, mapDispatchToProps )( localize( InlineHelpRichResult ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( withSearchQueryState( InlineHelpRichResult, 'support-article' ) ) );
