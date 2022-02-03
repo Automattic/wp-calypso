@@ -4,7 +4,7 @@ import { SharingService, connectFor } from 'calypso/my-sites/marketing/connectio
 import { deleteP2KeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-export class Slack extends SharingService {
+export class P2Slack extends SharingService {
 	static propTypes = {
 		// This foreign propTypes access should be safe because we expect all of them to be removed
 		// eslint-disable-next-line react/forbid-foreign-prop-types
@@ -69,7 +69,7 @@ export class Slack extends SharingService {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<img
 				className="sharing-service__logo"
-				src="/calypso/images/sharing/slack-logo.svg"
+				src="/calypso/images/sharing/p2-slack-logo.svg"
 				width="48"
 				height="48"
 				alt=""
@@ -79,7 +79,7 @@ export class Slack extends SharingService {
 }
 
 export default connectFor(
-	Slack,
+	P2Slack,
 	( state, props ) => {
 		return {
 			...props,
