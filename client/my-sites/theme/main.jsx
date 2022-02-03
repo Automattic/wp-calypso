@@ -31,13 +31,11 @@ import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
-import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
@@ -112,9 +110,6 @@ class ThemeSheet extends Component {
 			label: PropTypes.string,
 			action: PropTypes.func,
 			getUrl: PropTypes.func,
-		} ),
-		blockEditorSettings: PropTypes.shape( {
-			is_fse_eligible: PropTypes.bool,
 		} ),
 	};
 
@@ -196,24 +191,15 @@ class ThemeSheet extends Component {
 	};
 
 	renderBar = () => {
-		const { author, blockEditorSettings, name, taxonomies, translate } = this.props;
+		const { author, name, translate } = this.props;
 
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
-		const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
-		const showBetaBadge = isFullSiteEditingTheme( { taxonomies } ) && isFSEEligible;
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">
-					{ title }
-					{ showBetaBadge && (
-						<Badge type="warning-clear" className="theme__sheet-badge-beta">
-							{ translate( 'Beta' ) }
-						</Badge>
-					) }
-				</span>
+				<span className="theme__sheet-bar-title">{ title }</span>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
@@ -822,7 +808,6 @@ class ThemeSheet extends Component {
 }
 
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
-const ThemeSheetWithEditorSettings = withBlockEditorSettings( ConnectedThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
 	const {
@@ -858,7 +843,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	}
 
 	return (
-		<ThemeSheetWithEditorSettings
+		<ConnectedThemeSheet
 			{ ...props }
 			demo_uri={ demoUrl }
 			siteId={ siteId }
