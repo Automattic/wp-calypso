@@ -1,17 +1,9 @@
 import deepfreeze from 'deep-freeze';
 import moment from 'moment';
 import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
-import {
-	receivePage,
-	selectItem,
-	receiveUpdates,
-	selectNextItem,
-	selectPrevItem,
-	requestPage,
-} from '../actions';
+import { receivePage, receiveUpdates, requestPage } from '../actions';
 import {
 	items,
-	selected,
 	pendingItems,
 	pageHandle,
 	isRequesting,
@@ -223,48 +215,6 @@ describe( 'streams.pendingItems reducer', () => {
 			postKey4,
 			{ isGap: true, from: moment( TIME1 ), to: moment( TIME2 ) },
 		] );
-	} );
-} );
-
-describe( 'streams.selected reducer', () => {
-	const streamItems = [ time1PostKey, time2PostKey ];
-	it( 'should return null by default', () => {
-		expect( selected( undefined, {} ) ).toEqual( null );
-	} );
-
-	it( 'should store the selected postKey', () => {
-		const action = selectItem( { postKey: time1PostKey } );
-		const state = selected( undefined, action );
-
-		expect( state ).toBe( time1PostKey );
-	} );
-
-	it( 'should update the index for a stream', () => {
-		const prevState = time1PostKey;
-		const action = selectItem( { postKey: time2PostKey } );
-		const nextState = selected( prevState, action );
-		expect( nextState ).toBe( time2PostKey );
-	} );
-
-	it( 'should return state unchanged if at last item and trying to select next one', () => {
-		const prevState = time2PostKey;
-		const action = selectNextItem( { items: streamItems } );
-		const nextState = selected( prevState, action );
-		expect( nextState ).toBe( prevState );
-	} );
-
-	it( 'should select previous item', () => {
-		const prevState = time2PostKey;
-		const action = selectPrevItem( { items: streamItems } );
-		const nextState = selected( prevState, action );
-		expect( nextState ).toBe( time1PostKey );
-	} );
-
-	it( 'should return state unchanged if at first item and trying to select previous item', () => {
-		const prevState = time1PostKey;
-		const action = selectPrevItem( { items: streamItems } );
-		const nextState = selected( prevState, action );
-		expect( nextState ).toBe( prevState );
 	} );
 } );
 

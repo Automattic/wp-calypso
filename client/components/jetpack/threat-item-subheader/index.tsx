@@ -13,7 +13,6 @@ import './style.scss';
 
 interface Props {
 	threat: Threat;
-	isFixable: boolean;
 }
 
 const entryActionClassNames = ( threat: Threat ) => {
@@ -57,24 +56,9 @@ const getThreatStatusMessage = ( translate: ReturnType< typeof useTranslate >, t
 	return null;
 };
 
-const getAutoFixBadge = (
-	translate: ReturnType< typeof useTranslate >,
-	threat: Threat,
-	isFixable: boolean
-) => {
-	if ( isFixable && threat.status !== 'fixed' ) {
-		return (
-			<Badge className={ classnames( 'threat-item-subheader__badge', 'is-auto-fix' ) }>
-				<small>{ translate( 'Auto fix' ) }</small>
-			</Badge>
-		);
-	}
-	return null;
-};
-
 // This renders two different kind of sub-headers. One is for current threats (displayed
 // in the Scanner section), and the other for threats in the History section.
-const ThreatItemSubheader: React.FC< Props > = ( { threat, isFixable } ) => {
+const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
 	const translate = useTranslate();
 	if ( threat.status === 'current' ) {
 		switch ( getThreatType( threat ) ) {
@@ -90,16 +74,10 @@ const ThreatItemSubheader: React.FC< Props > = ( { threat, isFixable } ) => {
 								),
 							},
 						} ) }
-						{ getAutoFixBadge( translate, threat, isFixable ) }
 					</>
 				);
 			default:
-				return (
-					<>
-						{ getThreatVulnerability( threat ) }
-						{ getAutoFixBadge( translate, threat, isFixable ) }
-					</>
-				);
+				return <>{ getThreatVulnerability( threat ) }</>;
 		}
 	} else {
 		const threatStatusMessage = getThreatStatusMessage( translate, threat );

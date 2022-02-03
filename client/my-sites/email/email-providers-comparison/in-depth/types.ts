@@ -37,3 +37,11 @@ export type EmailProvidersInDepthComparisonProps = {
 export type LearnMoreLinkProps = {
 	url: string;
 };
+
+export type SelectButtonProps = {
+	className: string;
+	emailProviderSlug: string;
+	intervalLength: IntervalLength;
+	onSelectEmailProvider: ( emailProviderSlug: string ) => void;
+	selectedDomainName: string;
+};

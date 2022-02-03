@@ -422,6 +422,13 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plan-features__header-discounted-info {
+	color: var( --studio-green-60 );
+	font-weight: 600;
+	margin-top: -16px;
+	margin-bottom: 12px;
+}
+
 .plan-features__header-credit-label {
 	font-size: $font-body-extra-small;
 	line-height: 20px;
@@ -1250,3 +1257,15 @@ button.plan-features__scroll-button {
 		text-align: center;
 	}
 }
+
+.plan-features__header-annual-discount {
+	color: var( --color-accent );
+	font-size: 0.75rem;
+    line-height: normal;
+	margin-bottom: 0.75rem;
+
+	&-is-loading {
+		display: none;
+	}
+}
+

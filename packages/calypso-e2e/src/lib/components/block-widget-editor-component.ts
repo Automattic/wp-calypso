@@ -3,9 +3,11 @@ import { Page } from 'playwright';
 const selectors = {
 	editor: '#widgets-editor',
 
-	welcomeModalDismissButton: 'button[aria-label="Close dialogue"]',
+	// Welcome Guide and Welcome Tour
+	welcomeModalDismissButton: 'div.components-modal__header > button', // Instead of aria-label, which changes depending on English UK/US.
 	welcomeTourDismissButton: 'button[aria-label="Close Tour"]',
 
+	// Block Widget editor
 	addBlockButton: 'button[aria-label="Add block"]',
 	blockSearch: 'input[placeholder="Search"]',
 };

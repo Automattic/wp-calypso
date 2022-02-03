@@ -10,20 +10,19 @@
 
 .settings-header {
 	&__container {
+		margin-bottom: 24px;
+
 		&-title {
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
-			margin: 0 0 16px;
+			margin: 0;
 			column-gap: 16px;
 
 			// Higher specificity needed to override .formatted-header.is-left-align media-query styles
 			header.settings-header__title {
 				margin: 8px 0;
-
-				&::first-letter {
-					text-transform: uppercase;
-				}
+				text-transform: lowercase;
 
 				.formatted-header__title {
 					font-weight: 400;
@@ -117,15 +116,20 @@
 			}
 		}
 	}
+
 	&__domain-notice {
 		flex-basis: 100%;
 		background-color: var( --studio-gray-0 );
 		display: flex;
 		align-items: center;
 		padding: 5px;
-		margin: 12px 0 24px;
+		margin: 12px 0 0;
 		gap: 8px;
 		border-radius: 2px;
+
+		@include break-mobile {
+			margin: 8px 0 0;
+		}
 	}
 
 	&__domain-notice-icon.gridicon {

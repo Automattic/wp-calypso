@@ -1,16 +1,8 @@
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
-import {
-	CheckoutProvider,
-	CheckoutStepAreaWrapper,
-	MainContentWrapper,
-	SubmitButtonWrapper,
-	checkoutTheme,
-	Button,
-} from '@automattic/composite-checkout';
+import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
-import { ThemeProvider } from '@emotion/react';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -27,8 +19,6 @@ import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
-import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
-import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	translateCheckoutPaymentMethodToTracksPaymentMethod,
@@ -38,11 +28,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
-import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import EmptyCart from './components/empty-cart';
 import WPCheckout from './components/wp-checkout';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
@@ -76,7 +64,6 @@ import { StoredCard } from './types/stored-cards';
 import { emptyManagedContactDetails } from './types/wpcom-store-state';
 import type { PaymentProcessorOptions } from './types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
 import type {
 	ManagedContactDetails,
 	CountryListItem,
@@ -92,6 +79,7 @@ export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
+	productSourceFromUrl,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -102,17 +90,19 @@ export default function CompositeCheckout( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	infoMessage,
-	isInEditor,
+	isInModal,
 	onAfterPaymentComplete,
-	isFocusedLaunch,
+	disabledThankYouPage,
 	isJetpackCheckout = false,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
+	customizedPreviousPath,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
+	productSourceFromUrl?: string;
 	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
@@ -122,16 +112,16 @@ export default function CompositeCheckout( {
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	infoMessage?: JSX.Element;
 	onAfterPaymentComplete?: () => void;
-	isFocusedLaunch?: boolean;
+	disabledThankYouPage?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
+	customizedPreviousPath?: string;
 } ): JSX.Element {
-	const previousPath = useSelector( getPreviousPath );
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
 		useSelector(
@@ -180,7 +170,7 @@ export default function CompositeCheckout( {
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
-		isInEditor,
+		isInModal,
 		isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
@@ -189,6 +179,7 @@ export default function CompositeCheckout( {
 		isJetpackCheckout,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
+		source: productSourceFromUrl,
 	} );
 
 	const cartKey = useCartKey();
@@ -247,7 +238,7 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
-		isInEditor,
+		isInModal,
 		isJetpackCheckout,
 		domains,
 	} );
@@ -310,14 +301,19 @@ export default function CompositeCheckout( {
 		);
 	} );
 
-	const errors = responseCart.messages?.errors ?? [];
+	const responseCartErrors = responseCart.messages?.errors ?? [];
 	const areThereErrors =
-		[ ...errors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy ).length > 0;
+		[ ...responseCartErrors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy )
+			.length > 0;
 
 	const {
 		isRemovingProductFromCart,
 		removeProductFromCartAndMaybeRedirect,
-	} = useRemoveFromCartAndRedirect( updatedSiteSlug, createUserAndSiteBeforeTransaction );
+	} = useRemoveFromCartAndRedirect(
+		updatedSiteSlug,
+		createUserAndSiteBeforeTransaction,
+		customizedPreviousPath
+	);
 
 	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		wpcomGetStoredCards,
@@ -566,9 +562,9 @@ export default function CompositeCheckout( {
 		redirectTo,
 		purchaseId,
 		feature,
-		isInEditor,
+		isInModal,
 		isComingFromUpsell,
-		isFocusedLaunch,
+		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
 		isJetpackCheckout,
 		checkoutFlow,
@@ -669,48 +665,6 @@ export default function CompositeCheckout( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
-	// The goToPreviousPage function and subsequent conditional statement controls the 'back' button functionality on the empty cart page
-
-	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( updatedSiteSlug );
-
-	const goToPreviousPage = () =>
-		leaveCheckout( {
-			siteSlug,
-			jetpackCheckoutBackUrl,
-			previousPath,
-			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
-		} );
-
-	if (
-		shouldShowEmptyCartPage( {
-			responseCart,
-			areWeRedirecting: isRemovingProductFromCart,
-			areThereErrors,
-			isCartPendingUpdate,
-			isInitialCartLoading,
-		} )
-	) {
-		debug( 'rendering empty cart page' );
-
-		return (
-			<Fragment>
-				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
-				<ThemeProvider theme={ theme }>
-					<MainContentWrapper>
-						<CheckoutStepAreaWrapper>
-							<EmptyCart />
-							<SubmitButtonWrapper>
-								<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
-									{ translate( 'Go back' ) }
-								</Button>
-							</SubmitButtonWrapper>
-						</CheckoutStepAreaWrapper>
-					</MainContentWrapper>
-				</ThemeProvider>
-			</Fragment>
-		);
-	}
-
 	return (
 		<Fragment>
 			<QueryIntroOffers siteId={ updatedSiteId } />
@@ -743,17 +697,22 @@ export default function CompositeCheckout( {
 				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
 			>
 				<WPCheckout
-					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-					changePlanLength={ changePlanLength }
-					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug }
-					countriesList={ countriesList }
+					customizedPreviousPath={ customizedPreviousPath }
+					isRemovingProductFromCart={ isRemovingProductFromCart }
+					areThereErrors={ areThereErrors }
+					isInitialCartLoading={ isInitialCartLoading }
 					addItemToCart={ addItemAndLog }
-					showErrorMessageBriefly={ showErrorMessageBriefly }
-					isLoggedOutCart={ !! isLoggedOutCart }
+					changePlanLength={ changePlanLength }
+					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
+					isJetpackNotAtomic={ isJetpackNotAtomic }
+					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
+					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
+					siteId={ updatedSiteId }
+					siteUrl={ updatedSiteSlug }
 				/>
 			</CheckoutProvider>
 		</Fragment>
@@ -808,35 +767,4 @@ function getAnalyticsPath(
 	}
 
 	return { analyticsPath, analyticsProps };
-}
-
-function shouldShowEmptyCartPage( {
-	responseCart,
-	areWeRedirecting,
-	areThereErrors,
-	isCartPendingUpdate,
-	isInitialCartLoading,
-}: {
-	responseCart: ResponseCart;
-	areWeRedirecting: boolean;
-	areThereErrors: boolean;
-	isCartPendingUpdate: boolean;
-	isInitialCartLoading: boolean;
-} ): boolean {
-	if ( responseCart.products.length > 0 ) {
-		return false;
-	}
-	if ( areWeRedirecting ) {
-		return false;
-	}
-	if ( areThereErrors ) {
-		return true;
-	}
-	if ( isCartPendingUpdate ) {
-		return false;
-	}
-	if ( isInitialCartLoading ) {
-		return false;
-	}
-	return true;
 }

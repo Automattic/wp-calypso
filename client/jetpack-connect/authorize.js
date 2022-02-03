@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { PRODUCT_JETPACK_BACKUP_T1_YEARLY } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -39,6 +40,7 @@ import {
 import {
 	isFetchingSitePurchases,
 	siteHasJetpackProductPurchase,
+	siteHasBackupProductPurchase,
 } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
@@ -215,7 +217,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	redirect() {
-		const { isMobileAppFlow, mobileAppRedirect } = this.props;
+		const { isMobileAppFlow, mobileAppRedirect, siteHasJetpackBackupProduct } = this.props;
 		const {
 			from,
 			homeUrl,
@@ -276,6 +278,9 @@ export class JetpackAuthorize extends Component {
 				this.isSso()
 			);
 			this.externalRedirectOnce( redirectAfterAuth );
+		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasJetpackBackupProduct ) {
+			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
+			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );
@@ -914,6 +919,7 @@ const connectComponent = connect(
 			partnerSlug: getPartnerSlugFromQuery( state ),
 			selectedPlanSlug,
 			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
+			siteHasJetpackBackupProduct: siteHasBackupProductPurchase( state, authQuery.clientId ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};

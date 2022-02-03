@@ -1,7 +1,12 @@
 import '@automattic/calypso-config';
 import { shuffle } from '@automattic/js-utils';
 import '../../constants';
-import { getDesignUrl, getAvailableDesigns } from '../available-designs';
+import {
+	getDesignUrl,
+	getAvailableDesigns,
+	includeFseDesigns,
+	excludeFseDesigns,
+} from '../available-designs';
 import { availableDesignsConfig } from '../available-designs-config';
 import type { Design } from '../../types';
 
@@ -136,7 +141,7 @@ describe( 'Design Picker design utils', () => {
 			const mockDesign = availableDesignsConfig.featured[ 0 ];
 
 			expect( getDesignUrl( mockDesign, mockLocale ) ).toEqual(
-				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesign.stylesheet }/${ mockDesign.template }?font_headings=${ mockDesign.fonts.headings }&font_base=${ mockDesign.fonts.base }&site_title=${ mockDesign.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
+				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesign.stylesheet }/${ mockDesign.template }?font_headings=${ mockDesign.fonts.headings }&font_base=${ mockDesign.fonts.base }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true&site_title=${ mockDesign.title }`
 			);
 		} );
 
@@ -144,7 +149,7 @@ describe( 'Design Picker design utils', () => {
 			const mockDesignWithoutFonts = availableDesignsConfig.featured[ 1 ];
 
 			expect( getDesignUrl( mockDesignWithoutFonts, mockLocale ) ).toEqual(
-				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesignWithoutFonts.stylesheet }/${ mockDesignWithoutFonts.template }?site_title=${ mockDesignWithoutFonts.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
+				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesignWithoutFonts.stylesheet }/${ mockDesignWithoutFonts.template }?viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true&site_title=${ mockDesignWithoutFonts.title }`
 			);
 		} );
 
@@ -153,7 +158,18 @@ describe( 'Design Picker design utils', () => {
 			const mockDesignMissingStylesheet = availableDesignsConfig.featured[ 6 ];
 
 			expect( getDesignUrl( mockDesignMissingStylesheet, mockLocale ) ).toEqual(
-				`https://public-api.wordpress.com/rest/v1.1/template/demo/pub/${ mockDesignMissingStylesheet.theme }/${ mockDesignMissingStylesheet.template }?site_title=${ mockDesignMissingStylesheet.title }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true`
+				`https://public-api.wordpress.com/rest/v1.1/template/demo/pub/${ mockDesignMissingStylesheet.theme }/${ mockDesignMissingStylesheet.template }?viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true&site_title=${ mockDesignMissingStylesheet.title }`
+			);
+		} );
+
+		// Parentheses in uri components don't usually need to be escaped, but because the design url sometimes appears
+		// in a `background-url: url( ... )` CSS rule the parentheses will break it.
+		it( 'escapes parentheses within the site title', () => {
+			const mockDesign = availableDesignsConfig.featured[ 0 ];
+			mockDesign.title = 'Mock(Design)(Title)';
+
+			expect( getDesignUrl( mockDesign, mockLocale ) ).toEqual(
+				`https://public-api.wordpress.com/rest/v1.1/template/demo/${ mockDesign.stylesheet }/${ mockDesign.template }?font_headings=${ mockDesign.fonts.headings }&font_base=${ mockDesign.fonts.base }&viewport_height=700&language=${ mockLocale }&use_screenshot_overrides=true&site_title=Mock%28Design%29%28Title%29`
 			);
 		} );
 	} );
@@ -161,7 +177,12 @@ describe( 'Design Picker design utils', () => {
 	describe( 'getAvailableDesigns', () => {
 		it( 'should get only FSE designs (both alpha and non alpha)', () => {
 			const mockDesignFSE = availableDesignsConfig.featured[ 3 ];
-			expect( getAvailableDesigns( { includeAlphaDesigns: true, useFseDesigns: true } ) ).toEqual( {
+			expect(
+				getAvailableDesigns( {
+					includeAlphaDesigns: true,
+					featuredDesignsFilter: includeFseDesigns,
+				} )
+			).toEqual( {
 				featured: [ mockDesignFSE ],
 			} );
 		} );
@@ -173,28 +194,34 @@ describe( 'Design Picker design utils', () => {
 			const mockDesignAlpha = availableDesignsConfig.featured[ 4 ];
 			const mockDesignBlankCanvas = availableDesignsConfig.featured[ 5 ];
 			const mockDesignMissingStylesheet = availableDesignsConfig.featured[ 6 ];
-			expect( getAvailableDesigns( { includeAlphaDesigns: true, useFseDesigns: false } ) ).toEqual(
-				{
-					featured: [
-						// Blank canvas is always in first position
-						mockDesignBlankCanvas,
-						mockDesign,
-						mockDesignWithoutFonts,
-						mockDesignPremium,
-						mockDesignAlpha,
-						mockDesignMissingStylesheet,
-					],
-				}
-			);
+			expect(
+				getAvailableDesigns( {
+					includeAlphaDesigns: true,
+					featuredDesignsFilter: excludeFseDesigns,
+				} )
+			).toEqual( {
+				featured: [
+					// Blank canvas is always in first position
+					mockDesignBlankCanvas,
+					mockDesign,
+					mockDesignWithoutFonts,
+					mockDesignPremium,
+					mockDesignAlpha,
+					mockDesignMissingStylesheet,
+				],
+			} );
 		} );
 
 		it( 'should get only FSE, non-alpha designs', () => {
 			const mockDesignFSE = availableDesignsConfig.featured[ 3 ];
-			expect( getAvailableDesigns( { includeAlphaDesigns: false, useFseDesigns: true } ) ).toEqual(
-				{
-					featured: [ mockDesignFSE ],
-				}
-			);
+			expect(
+				getAvailableDesigns( {
+					includeAlphaDesigns: false,
+					featuredDesignsFilter: includeFseDesigns,
+				} )
+			).toEqual( {
+				featured: [ mockDesignFSE ],
+			} );
 		} );
 
 		it( 'should get all non-alpha, non-FSE designs', () => {
@@ -203,18 +230,21 @@ describe( 'Design Picker design utils', () => {
 			const mockDesignPremium = availableDesignsConfig.featured[ 2 ];
 			const mockDesignBlankCanvas = availableDesignsConfig.featured[ 5 ];
 			const mockDesignMissingStylesheet = availableDesignsConfig.featured[ 6 ];
-			expect( getAvailableDesigns( { includeAlphaDesigns: false, useFseDesigns: false } ) ).toEqual(
-				{
-					featured: [
-						// Blank canvas is always in first position
-						mockDesignBlankCanvas,
-						mockDesign,
-						mockDesignWithoutFonts,
-						mockDesignPremium,
-						mockDesignMissingStylesheet,
-					],
-				}
-			);
+			expect(
+				getAvailableDesigns( {
+					includeAlphaDesigns: false,
+					featuredDesignsFilter: excludeFseDesigns,
+				} )
+			).toEqual( {
+				featured: [
+					// Blank canvas is always in first position
+					mockDesignBlankCanvas,
+					mockDesign,
+					mockDesignWithoutFonts,
+					mockDesignPremium,
+					mockDesignMissingStylesheet,
+				],
+			} );
 		} );
 
 		it( 'should randomize the results order when the randomize flag is specified', () => {

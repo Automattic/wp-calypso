@@ -11,6 +11,16 @@
 	padding: 0;
 	position: relative;
 
+	&.is-reskinned {
+		.site-icon {
+			background-color: var( --color-neutral-0 );
+			svg {
+				transform: scale( 0.65 );
+				fill: var( --color-neutral-50 );
+			}
+		}
+	}
+
 	&.is-loading {
 		pointer-events: none;
 

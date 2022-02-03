@@ -15,6 +15,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteFrontPage,
@@ -35,6 +36,7 @@ export const QuickLinks = ( {
 	canManageSite,
 	canModerateComments,
 	customizeUrl,
+	isAtomic,
 	isStaticHomePage,
 	showCustomizer,
 	canAddEmail,
@@ -198,15 +200,17 @@ export const QuickLinks = ( {
 						external
 						iconSrc={ fiverrIcon }
 					/>
-					<ActionBox
-						href="https://anchor.fm/wordpressdotcom"
-						onClick={ trackAnchorPodcastAction }
-						target="_blank"
-						label={ translate( 'Create a podcast with Anchor' ) }
-						external
-						iconSrc={ anchorLogoIcon }
-					/>
 				</>
+			) }
+			{ canManageSite && ! isAtomic && (
+				<ActionBox
+					href="https://anchor.fm/wordpressdotcom"
+					onClick={ trackAnchorPodcastAction }
+					target="_blank"
+					label={ translate( 'Create a podcast with Anchor' ) }
+					external
+					iconSrc={ anchorLogoIcon }
+				/>
 			) }
 		</div>
 	);
@@ -398,6 +402,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
+		isAtomic: isSiteAtomic( state, siteId ),
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		isUnifiedNavEnabled: isNavUnificationEnabled,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),

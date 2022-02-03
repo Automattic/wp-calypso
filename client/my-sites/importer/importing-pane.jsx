@@ -33,6 +33,11 @@ const sum = ( a, b ) => a + b;
  * }
  */
 export const calculateProgress = ( progress ) => {
+	// The backend does not output the 'progress' field for all the enqueued not running imports.
+	if ( ! progress ) {
+		return 0;
+	}
+
 	const { attachment = {} } = progress;
 
 	if ( attachment.total > 0 && attachment.completed >= 0 ) {

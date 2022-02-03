@@ -1,18 +1,16 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
-import Image01 from 'calypso/assets/images/woocommerce/woop-cta-image01.jpeg';
-import Image02 from 'calypso/assets/images/woocommerce/woop-cta-image02.jpeg';
-import Image03 from 'calypso/assets/images/woocommerce/woop-cta-image03.jpeg';
-import Image04 from 'calypso/assets/images/woocommerce/woop-cta-image04.jpeg';
-import CtaSection from 'calypso/components/cta-section';
+import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import MasonryWave from 'calypso/components/masonry-wave';
+import FormattedHeader from 'calypso/components/formatted-header';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
+import WooCommerceColophon from '../woocommerce-colophon';
 
 import './style.scss';
 
@@ -24,8 +22,6 @@ interface Props {
 	startSetup: () => void;
 	siteId: number;
 }
-
-const images = [ { src: Image01 }, { src: Image02 }, { src: Image03 }, { src: Image04 } ];
 
 const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
@@ -61,24 +57,61 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 		);
 	}
 
+	const promos: PromoSectionProps = {
+		promos: [
+			{
+				title: __( 'Run Your Store From Anywhere' ),
+				body: __(
+					'Manage your business on the go with the WooCommerce Mobile App. Create products, process orders, and keep an eye on key stats in real-time.'
+				),
+				image: <Gridicon icon="globe" />,
+			},
+			{
+				title: __( 'Learn With a Global Community' ),
+				body: __( 'WooCommerce is one of the fastest-growing eCommerce communities.' ),
+				image: <Gridicon icon="user-circle" />,
+			},
+			{
+				title: __( 'Customize and Extend' ),
+				body: __(
+					'From subscriptions to gym classes to luxury cars, WooCommerce is fully customizable.'
+				),
+				image: <Gridicon icon="story" />,
+			},
+		],
+	};
+
 	return (
-		<div className="woop__landing-page">
+		<div className="woop__landing-page woocommerce_landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
 				<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
-					{ __( 'Set up my store!' ) }
+					{ __( 'Start a new store' ) }
 				</Button>
 			</FixedNavigationHeader>
-			<CtaSection
-				title={ __( 'Have something to sell?' ) }
-				headline={ __( 'Build exactly the eCommerce website you want.' ) }
-				buttonText={ __( 'Set up my store!' ) }
-				buttonAction={ onCTAClickHandler }
-				buttonDisabled={ isTransferringBlocked }
-				ctaRef={ ctaRef }
-				notice={ renderWarningNotice() }
-			>
-				<MasonryWave images={ images } />
-			</CtaSection>
+			{ renderWarningNotice() }
+			<EmptyContent
+				title={ __( 'Set up a store and start selling online' ) }
+				illustration="/calypso/images/illustrations/illustration-shopping-bags.svg"
+				illustrationWidth={ 150 }
+				line={ __(
+					'Set up a new store in minutes. Get secure payments, configurable shipping options, and more, out of the box.'
+				) }
+				action={ __( 'Start a new store' ) }
+				actionCallback={ onCTAClickHandler }
+				actionDisabled={ isTransferringBlocked }
+				actionRef={ ctaRef }
+				secondaryAction={ __( 'Learn more' ) }
+				secondaryActionURL="https://wordpress.com/support/introduction-to-woocommerce/"
+				secondaryActionTarget="_blank"
+				className="woop__landing-page-cta woocommerce_landing-page-empty-content"
+			/>
+			<WooCommerceColophon wpcomDomain={ wpcomDomain || '' } />
+			<div className="woop__landing-page-features-section">
+				<FormattedHeader headerText={ __( 'Everything you need to create a successful store' ) } />
+				<div className="woop__landing-page-features">
+					<PromoSection { ...promos } />
+				</div>
+			</div>
 		</div>
 	);
 };

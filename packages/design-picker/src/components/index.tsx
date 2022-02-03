@@ -14,6 +14,7 @@ import {
 	isBlankCanvasDesign,
 	filterDesignsByCategory,
 	sortDesigns,
+	excludeFseDesigns,
 } from '../utils';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import type { Categorization } from '../hooks/use-categorization';
@@ -114,16 +115,21 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 interface DesignButtonCoverProps {
 	design: Design;
+	isPremiumThemeAvailable?: boolean;
 	onSelect: ( design: Design ) => void;
 	onPreview: ( design: Design ) => void;
+	onUpgrade?: () => void;
 }
 
 const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 	design,
+	isPremiumThemeAvailable = false,
 	onSelect,
 	onPreview,
+	onUpgrade,
 } ) => {
 	const { __ } = useI18n();
+	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable;
 
 	return (
 		<div className="design-button-cover">
@@ -137,12 +143,12 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 				<Button
 					className="design-button-cover__button"
 					isPrimary
-					onClick={ () => onSelect( design ) }
+					onClick={ () => ( shouldUpgrade ? onUpgrade?.() : onSelect( design ) ) }
 				>
-					{
-						// translators: %s is the title of design with currency. Eg: Alves
-						sprintf( __( 'Start with %s', __i18n_text_domain__ ), design.title )
-					}
+					{ shouldUpgrade
+						? __( 'Upgrade Plan', __i18n_text_domain__ )
+						: // translators: %s is the title of design with currency. Eg: Alves
+						  sprintf( __( 'Start with %s', __i18n_text_domain__ ), design.title ) }
 				</Button>
 				<Button className="design-button-cover__button" onClick={ () => onPreview( design ) }>
 					{
@@ -156,11 +162,15 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 };
 
 interface DesignButtonContainerProps extends DesignButtonProps {
+	isPremiumThemeAvailable?: boolean;
 	onPreview?: ( design: Design ) => void;
+	onUpgrade?: () => void;
 }
 
 const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
+	isPremiumThemeAvailable,
 	onPreview,
+	onUpgrade,
 	...props
 } ) => {
 	const isDesktop = useViewportMatch( 'large' );
@@ -189,8 +199,10 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 			{ ! isBlankCanvas && (
 				<DesignButtonCover
 					design={ props.design }
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					onSelect={ props.onSelect }
 					onPreview={ onPreview }
+					onUpgrade={ onUpgrade }
 				/>
 			) }
 			<DesignButton { ...props } disabled={ ! isBlankCanvas } />
@@ -202,6 +214,7 @@ export interface DesignPickerProps {
 	locale: string;
 	onSelect: ( design: Design ) => void;
 	onPreview?: ( design: Design ) => void;
+	onUpgrade?: () => void;
 	designs?: Design[];
 	premiumBadge?: React.ReactNode;
 	isGridMinimal?: boolean;
@@ -211,17 +224,20 @@ export interface DesignPickerProps {
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
 	categoriesFooter?: React.ReactNode;
+	recommendedCategorySlug: string | null;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
+	isPremiumThemeAvailable?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
 	onSelect,
 	onPreview,
-	designs = getAvailableDesigns().featured.filter(
-		// By default, exclude anchorfm-specific designs
-		( design ) => design.features.findIndex( ( f ) => f === 'anchorfm' ) < 0
-	),
+	onUpgrade,
+	designs = getAvailableDesigns( {
+		featuredDesignsFilter: ( design ) =>
+			! design.features.includes( 'anchorfm' ) && excludeFseDesigns( design ),
+	} ).featured,
 	premiumBadge,
 	isGridMinimal,
 	theme = 'light',
@@ -232,6 +248,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	categorization,
 	hideFullScreenPreview,
 	hideDesignTitle,
+	recommendedCategorySlug,
+	isPremiumThemeAvailable,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -253,6 +271,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				<DesignPickerCategoryFilter
 					categories={ categorization.categories }
 					selectedCategory={ categorization.selection }
+					recommendedCategorySlug={ recommendedCategorySlug }
 					onSelect={ categorization.onSelect }
 					heading={ categoriesHeading }
 					footer={ categoriesFooter }
@@ -266,10 +285,12 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						locale={ locale }
 						onSelect={ onSelect }
 						onPreview={ onPreview }
+						onUpgrade={ onUpgrade }
 						premiumBadge={ premiumBadge }
 						highRes={ highResThumbnails }
 						hideFullScreenPreview={ hideFullScreenPreview }
 						hideDesignTitle={ hideDesignTitle }
+						isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					/>
 				) ) }
 			</div>

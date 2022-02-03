@@ -76,11 +76,12 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 				>
 					<CompositeCheckout
 						redirectTo={ redirectTo } // custom thank-you URL for payments that are processed after a redirect (eg: Paypal)
-						isInEditor
-						isFocusedLaunch={ isFocusedLaunch }
+						isInModal
+						disabledThankYouPage={ isFocusedLaunch }
 						siteId={ selectedSiteId ?? undefined }
 						siteSlug={ site?.slug }
 						productAliasFromUrl={ commaSeparatedProductSlugs }
+						productSourceFromUrl="editor-checkout-modal"
 						onAfterPaymentComplete={ handleAfterPaymentComplete }
 					/>
 				</StripeHookProvider>

@@ -1,13 +1,14 @@
 import {
 	DataHelper,
 	BlockFlow,
-	setupHooks,
 	GutenbergEditorPage,
 	EditorContext,
 	PublishedPostContext,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 /**
  * Creates a suite of block smoke tests for a set of block flows.
@@ -22,8 +23,8 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		let editorContext: EditorContext;
 		let publishedPostContext: PublishedPostContext;
 
-		setupHooks( async ( args ) => {
-			page = args.page;
+		beforeAll( async () => {
+			page = await browser.newPage();
 			gutenbergEditorPage = new GutenbergEditorPage( page );
 			const testAccount = new TestAccount( 'gutenbergSimpleSiteUser' );
 			await testAccount.authenticate( page );
@@ -48,7 +49,9 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 				} );
 
 				it( `${ blockFlow.blockSidebarName }: Configure the block`, async function () {
-					await blockFlow.configure( editorContext );
+					if ( blockFlow.configure ) {
+						await blockFlow.configure( editorContext );
+					}
 				} );
 
 				it( `${ blockFlow.blockSidebarName }: There are no block warnings or errors in the editor`, async function () {
@@ -69,7 +72,9 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		describe( 'Validating blocks in published post.', function () {
 			for ( const blockFlow of blockFlows ) {
 				it( `${ blockFlow.blockSidebarName }: Expected content is in published post`, async function () {
-					await blockFlow.validateAfterPublish( publishedPostContext );
+					if ( blockFlow.validateAfterPublish ) {
+						await blockFlow.validateAfterPublish( publishedPostContext );
+					}
 				} );
 			}
 		} );

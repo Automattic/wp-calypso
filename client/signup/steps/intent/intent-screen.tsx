@@ -20,7 +20,7 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 		{
 			key: 'write',
 			title: translate( 'Write' ),
-			description: translate( 'Share your ideas with the world' ),
+			description: <p>{ translate( 'Share your ideas with the world' ) }</p>,
 			icon: write,
 			value: 'write',
 			actionText: translate( 'Start writing' ),
@@ -28,7 +28,7 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 		{
 			key: 'build',
 			title: translate( 'Build' ),
-			description: translate( 'Begin creating your website' ),
+			description: <p>{ translate( 'Begin creating your website' ) }</p>,
 			icon: build,
 			value: 'build',
 			actionText: translate( 'Start building' ),
@@ -39,7 +39,7 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 		intents.push( {
 			key: 'sell',
 			title: translate( 'Sell' ),
-			description: translate( 'Set up an online store' ),
+			description: <p>{ translate( 'Set up an online store' ) }</p>,
 			icon: tip,
 			value: 'sell',
 			actionText: translate( 'Start selling' ),
@@ -55,7 +55,7 @@ const useIntentsAlt = ( {
 }: Pick< Props, 'canImport' | 'translate' > ): IntentAlt[] => {
 	return [
 		{
-			show: isEnabled( 'gutenboarding/import' ),
+			show: isEnabled( 'onboarding/import' ),
 			key: 'import',
 			description: translate( 'Already have an existing website?' ),
 			value: 'import',

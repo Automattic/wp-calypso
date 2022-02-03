@@ -16,6 +16,7 @@ import './style.scss';
 
 export class NavigationLink extends Component {
 	static propTypes = {
+		goToPreviousStep: PropTypes.func,
 		goToNextStep: PropTypes.func,
 		direction: PropTypes.oneOf( [ 'back', 'forward' ] ),
 		flowName: PropTypes.string.isRequired,
@@ -33,6 +34,7 @@ export class NavigationLink extends Component {
 		backIcon: PropTypes.string,
 		forwardIcon: PropTypes.string,
 		queryParams: PropTypes.object,
+		disabledTracksOnClick: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -111,9 +113,11 @@ export class NavigationLink extends Component {
 			);
 
 			this.props.goToNextStep();
+		} else if ( this.props.goToPreviousStep ) {
+			this.props.goToPreviousStep();
 		}
 
-		if ( ! this.props.disabledTracks ) {
+		if ( ! this.props.disabledTracksOnClick ) {
 			this.recordClick();
 		}
 	};
@@ -125,7 +129,8 @@ export class NavigationLink extends Component {
 			intent: this.props.intent,
 		};
 
-		if ( this.props.direction === 'back' ) {
+		// We don't need to track if we are in the sub-steps since it's not really going back a step
+		if ( this.props.direction === 'back' && ! this.props.stepSectionName ) {
 			this.props.recordTracksEvent( 'calypso_signup_previous_step_button_click', tracksProps );
 		}
 

@@ -6,11 +6,10 @@ import {
 	ChangeUILanguageFlow,
 	DataHelper,
 	GutenbergEditorPage,
-	setupHooks,
 	TestAccount,
-	TestEnvironment,
+	envVariables,
 } from '@automattic/calypso-e2e';
-import { Page, Frame } from 'playwright';
+import { Page, Frame, Browser } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
 
 type Translations = {
@@ -208,25 +207,29 @@ const translations: Translations = {
 	},
 };
 
+declare const browser: Browser;
+
 describe( 'I18N: Editor', function () {
 	// Filter out the locales that do not have valid translation content defined above.
 	const locales = Object.keys( translations ).filter( ( locale ) =>
-		TestEnvironment.LOCALES().includes( locale )
+		( envVariables.TEST_LOCALES as ReadonlyArray< string > ).includes( locale )
 	);
 	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 		// Confirm page leave with unsaved changes prompt.
 		page.on( 'dialog', async ( dialog ) => {
 			if ( dialog.type() === 'beforeunload' ) {
 				await dialog.accept();
 			}
 		} );
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+
 		const testAccount = new TestAccount( 'i18nUser' );
 		await testAccount.authenticate( page );
+
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {

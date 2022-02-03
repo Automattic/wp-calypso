@@ -8,5 +8,6 @@ export * from './audio-block';
 export * from './file-block';
 export * from './logos-block';
 export * from './schemas';
-export * from './jetpack-extended';
 export * from './paragraph-block';
+
+export * from './block-flows';

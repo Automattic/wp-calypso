@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
-import { openChat as openHappychat } from 'calypso/state/happychat/ui/actions';
 import { initialize as initializeDirectly } from 'calypso/state/help/directly/actions';
 import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
 import {
@@ -26,11 +25,11 @@ class QueryInlineHelpSupportTypes extends Component {
 		this.prepareDirectlyWidget();
 	}
 
-	prepareDirectlyWidget = () => {
+	prepareDirectlyWidget() {
 		if ( this.hasDataToDetermineVariation() && this.props.isDirectlyUninitialized ) {
 			this.props.initializeDirectly();
 		}
-	};
+	}
 
 	/**
 	 * Before determining which variation to assign, certain async data needs to be in place.
@@ -38,14 +37,14 @@ class QueryInlineHelpSupportTypes extends Component {
 	 *
 	 * @returns {boolean} Whether all the data is present to determine the variation to show
 	 */
-	hasDataToDetermineVariation = () => {
+	hasDataToDetermineVariation() {
 		const ticketReadyOrError =
 			this.props.ticketSupportConfigurationReady || this.props.ticketSupportRequestError !== null;
 		const happychatReadyOrDisabled =
 			! config.isEnabled( 'happychat' ) || this.props.isHappychatUserEligible !== null;
 
 		return ticketReadyOrError && happychatReadyOrDisabled;
-	};
+	}
 
 	render() {
 		return (
@@ -68,6 +67,5 @@ export default connect(
 	} ),
 	{
 		initializeDirectly,
-		openHappychat,
 	}
 )( QueryInlineHelpSupportTypes );

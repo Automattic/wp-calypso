@@ -9,7 +9,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -22,7 +21,6 @@ import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/lis
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import GoogleSaleBanner from 'calypso/my-sites/email/google-sale-banner';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
@@ -36,7 +34,6 @@ import {
 	showUpdatePrimaryDomainErrorNotice,
 } from 'calypso/state/domains/management/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getPurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -88,7 +85,6 @@ export class SiteDomains extends Component {
 		const {
 			currentRoute,
 			domains,
-			hasProductsList,
 			isAtomicSite,
 			isFetchingPurchases,
 			selectedSite,
@@ -157,10 +153,6 @@ export class SiteDomains extends Component {
 
 		return (
 			<>
-				{ ! hasProductsList && <QueryProductsList /> }
-
-				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
-
 				<div className="domain-management-list__items">
 					<div className="domain-management-list__filter">
 						{ this.renderDomainTableFilterButton() }
@@ -217,27 +209,27 @@ export class SiteDomains extends Component {
 	}
 
 	renderDomainTableFilterButton() {
-		const { selectedSite, domains, context } = this.props;
+		const { selectedSite, domains, context, translate } = this.props;
 
 		const selectedFilter = context?.query?.filter;
 		const nonWpcomDomains = filterOutWpcomDomains( domains );
 
 		const filterOptions = [
 			{
-				label: 'Site domains',
+				label: translate( 'Site domains' ),
 				value: '',
 				path: domainManagementList( selectedSite?.slug ),
 				count: nonWpcomDomains?.length,
 			},
 			{
-				label: 'Owned by me',
+				label: translate( 'Owned by me' ),
 				value: 'owned-by-me',
 				path:
 					domainManagementList( selectedSite?.slug ) + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
-				label: 'Owned by others',
+				label: translate( 'Owned by others' ),
 				value: 'owned-by-others',
 				path:
 					domainManagementList( selectedSite?.slug ) +
@@ -247,7 +239,7 @@ export class SiteDomains extends Component {
 			},
 			null,
 			{
-				label: 'All my domains',
+				label: translate( 'All my domains' ),
 				value: 'all-my-domains',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: null,
@@ -504,7 +496,6 @@ export default connect(
 		return {
 			currentRoute: getCurrentRoute( state ),
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
-			hasProductsList: 0 < ( getProductsList( state )?.length ?? 0 ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 			hasNonPrimaryDomainsFlag: getCurrentUser( state )

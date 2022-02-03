@@ -102,11 +102,12 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		return false;
 	}, [ item.productSlug, sitePlan, siteProducts ] );
 	// Calculate the product price.
-	const { originalPrice, discountedPrice, priceTierList } = useItemPrice(
-		siteId,
-		item,
-		item?.monthlyProductSlug || ''
-	);
+	const {
+		originalPrice,
+		discountedPrice,
+		priceTierList,
+		isFetching: pricesAreFetching,
+	} = useItemPrice( siteId, item, item?.monthlyProductSlug || '' );
 
 	const isItemPlanFeature = !! (
 		sitePlan && planHasFeature( sitePlan.product_slug, item.productSlug )
@@ -241,6 +242,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			hideSavingLabel={ hideSavingLabel }
 			scrollCardIntoView={ scrollCardIntoView }
 			collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
+			pricesAreFetching={ pricesAreFetching }
 		/>
 	);
 };

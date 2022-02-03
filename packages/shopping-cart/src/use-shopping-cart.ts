@@ -3,9 +3,9 @@ import { createUseShoppingCartState } from './shopping-cart-hook-manager';
 import ShoppingCartOptionsContext from './shopping-cart-options-context';
 import useManagerClient from './use-manager-client';
 import useRefetchOnFocus from './use-refetch-on-focus';
-import type { UseShoppingCart } from './types';
+import type { UseShoppingCart, CartKey } from './types';
 
-export default function useShoppingCart( cartKey?: string ): UseShoppingCart {
+export default function useShoppingCart( cartKey?: CartKey ): UseShoppingCart {
 	const managerClient = useManagerClient( 'useShoppingCart' );
 
 	const { defaultCartKey } = useContext( ShoppingCartOptionsContext );

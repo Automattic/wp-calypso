@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Card, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
@@ -119,8 +120,8 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 						className="memberships__subscription-remove"
 						onClick={ stopSubscription }
 					>
-						<Gridicon icon="trash" />
 						{ translate( 'Stop %s subscription.', { args: subscription.title } ) }
+						<Gridicon className="card__link-indicator" icon="trash" />
 					</CompactCard>
 				</>
 			) }

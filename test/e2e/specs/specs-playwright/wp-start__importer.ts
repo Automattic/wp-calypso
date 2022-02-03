@@ -2,15 +2,23 @@
  * @group calypso-pr
  */
 
-import { DataHelper, TestAccount, setupHooks, StartImportFlow } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { DataHelper, skipDescribeIf, StartImportFlow, TestAccount } from '@automattic/calypso-e2e';
+import { Browser, Page } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 	let page: Page;
 	let startImportFlow: StartImportFlow;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	// Check if we are running on wpcalypso or production.
+	// Remove when 'onboarding/import-from-wordpress' will be enabled on wpcalypso.
+	const isLocal = DataHelper.getCalypsoURL()
+		.toLowerCase()
+		.includes( 'http://calypso.localhost:3000' );
+
+	beforeAll( async () => {
+		page = await browser.newPage();
 		startImportFlow = new StartImportFlow( page );
 
 		const testAccount = new TestAccount( 'defaultUser' );
@@ -18,7 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 	} );
 
 	/**
-	 * Navigate to initial setup page
+	 * Navigate to initial setup page.
 	 *
 	 * @param siteSlug The site slug URL.
 	 */
@@ -29,17 +37,20 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		} );
 	};
 
-	// A normal and valid import flow.
-	describe( 'Follow the import flow', () => {
+	/**
+	 * Remove the skip-if conditional when 'onboarding/import-from-wordpress' is enabled on wpcalypso.
+	 * Substitute it with 'describe'.
+	 */
+	skipDescribeIf( ! isLocal )( 'Follow the WordPress import flow', () => {
 		navigateToSetup();
 
 		it( 'Start a WordPress import', async () => {
 			await startImportFlow.enterURL( 'make.wordpress.org' );
 			await startImportFlow.validateImportPage();
 			await startImportFlow.clickButton( 'Import your content' );
-
-			// When the new flows will be created this check will need to be replaced
-			await startImportFlow.validateMigrationPage( 'https://make.wordpress.org/' );
+			await startImportFlow.validateWordPressPage();
+			await startImportFlow.contentOnlyWordPressPage();
+			await startImportFlow.validateImporterDragPage( 'wordpress' );
 		} );
 	} );
 
@@ -75,6 +86,18 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		} );
 	} );
 
+	// Blogger, Medium, Squarespace
+	describe( 'Follow the import file flow', () => {
+		navigateToSetup();
+
+		it( 'Start a valid import file', async () => {
+			await startImportFlow.enterURL( 'https://squarespace.com' );
+			await startImportFlow.validateImportPage();
+			await startImportFlow.clickButton( 'Import your content' );
+			await startImportFlow.validateImporterDragPage( 'squarespace' );
+		} );
+	} );
+
 	// The "I don't have a site address" flow.
 	describe( "I don't have a site flow", () => {
 		navigateToSetup();
@@ -86,7 +109,7 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		} );
 	} );
 
-	// Go back through pages
+	// Go back through pages.
 	describe( 'Go back to first page', () => {
 		navigateToSetup();
 
@@ -108,7 +131,7 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		} );
 	} );
 
-	// Go back from a importer error page
+	// Go back from a importer error page.
 	describe( 'Go back from error', () => {
 		navigateToSetup();
 

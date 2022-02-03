@@ -110,9 +110,8 @@ export class ConversationCommentList extends Component {
 		this.reqMoreComments();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { hiddenComments, commentsTree, siteId, commentErrors } = nextProps;
+	componentDidUpdate() {
+		const { hiddenComments, commentsTree, siteId, commentErrors } = this.props;
 
 		// if we are running low on comments to expand then fetch more
 		if ( size( hiddenComments ) < FETCH_NEW_COMMENTS_THRESHOLD ) {
@@ -129,7 +128,7 @@ export class ConversationCommentList extends Component {
 		inaccessible
 			.filter( ( commentId ) => ! commentErrors[ getErrorKey( siteId, commentId ) ] )
 			.forEach( ( commentId ) => {
-				nextProps.requestComment( {
+				this.props.requestComment( {
 					commentId,
 					siteId,
 				} );

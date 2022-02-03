@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
@@ -11,23 +9,14 @@ import EligibilityWarningsList from 'calypso/components/eligibility-warnings/war
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ActionSection, StyledNextButton } from '..';
 import SupportCard from '../components/support-card';
 import useWooCommerceOnPlansEligibility from '../hooks/use-woop-handling';
 import type { WooCommerceInstallProps } from '../';
 import './style.scss';
-
-export const ActionSection = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: baseline;
-	flex-wrap: wrap;
-
-	@media ( max-width: 320px ) {
-		align-items: center;
-	}
-`;
 
 const Divider = styled.hr`
 	border-top: 1px solid #eee;
@@ -37,13 +26,6 @@ const Divider = styled.hr`
 
 const WarningsOrHoldsSection = styled.div`
 	margin-bottom: 40px;
-`;
-
-export const StyledNextButton = styled( NextButton )`
-	@media ( max-width: 320px ) {
-		width: 100%;
-		margin-bottom: 20px;
-	}
 `;
 
 export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
@@ -132,6 +114,12 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 							disabled={ isTransferringBlocked || ! isDataReady }
 							onClick={ () => {
 								dispatch( submitSignupStep( { stepName: 'confirm' }, { siteConfirmed: siteId } ) );
+								dispatch(
+									recordTracksEvent( 'calypso_woocommerce_dashboard_confirm_submit', {
+										site: wpcomDomain,
+										upgrade_required: siteUpgrading.required,
+									} )
+								);
 								if ( siteUpgrading.required ) {
 									page( siteUpgrading.checkoutUrl );
 									return;
@@ -160,8 +148,6 @@ export default function Confirm( props: WooCommerceInstallProps ): ReactElement 
 			flowName="woocommerce-install"
 			hideSkip={ true }
 			nextLabelText={ __( 'Confirm' ) }
-			allowBackFirstStep={ ! isEnabled( 'woop' ) }
-			backUrl={ isEnabled( 'woop' ) ? null : `/woocommerce-installation/${ wpcomDomain }` }
 			headerText={ __( 'One final step' ) }
 			fallbackHeaderText={ __( 'One final step' ) }
 			subHeaderText={ __(

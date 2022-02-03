@@ -8,11 +8,11 @@ import {
 	SidebarComponent,
 	InvitePeoplePage,
 	PeoplePage,
-	BrowserManager,
-	setupHooks,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	const newUsername = `e2eflowtestingviewer${ DataHelper.getTimestamp() }`;
@@ -28,8 +28,8 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	let peoplePage: PeoplePage;
 	let page: Page;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 
 		const testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page );
@@ -75,11 +75,13 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 		await peoplePage.revokeInvite();
 	} );
 
-	it( `Ensure invite link is no longer valid`, async function () {
-		const testContext = await BrowserManager.newBrowserContext();
-		const testPage = await BrowserManager.newPage( { context: testContext } );
-		await testPage.goto( adjustedInviteLink );
+	it( 'Close current page', async () => {
+		await page.close();
+	} );
 
-		await testPage.waitForSelector( `:text("Oops, that invite is not valid")` );
+	it( `Ensure invite link is no longer valid`, async function () {
+		page = await browser.newPage();
+		await page.goto( adjustedInviteLink );
+		await page.waitForSelector( `:text("Oops, that invite is not valid")` );
 	} );
 } );

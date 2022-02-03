@@ -37,7 +37,7 @@ __metadata:
   resolution: "@automattic/accessible-focus@workspace:packages/accessible-focus"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -78,7 +78,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
@@ -94,7 +94,7 @@ __metadata:
     hash.js: ^1.1.7
     lodash: ^4.17.21
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     uuid: ^8.3.2
   languageName: unknown
   linkType: soft
@@ -167,7 +167,7 @@ __metadata:
     semver: ^7.3.2
     terser-webpack-plugin: ^5.2.4
     thread-loader: ^3.0.4
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     webpack-cli: ^4.9.1
   peerDependencies:
     postcss: ^8.4.5
@@ -202,7 +202,7 @@ __metadata:
     "@types/node": ^16.11.19
     cookie: ^0.4.1
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -239,7 +239,7 @@ __metadata:
     node-fetch: ^2.6.6
     playwright: 1.16
     totp-generator: ^0.0.12
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -290,7 +290,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     chai: ^4.3.4
     i18n-calypso: "workspace:^"
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     react: ^17.0.2
   languageName: unknown
@@ -328,7 +328,7 @@ __metadata:
     debug: ^4.3.3
     react: ^17.0.2
     react-dom: ^17.0.2
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -343,7 +343,7 @@ __metadata:
   resolution: "@automattic/calypso-url@workspace:packages/calypso-url"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -369,7 +369,7 @@ __metadata:
     lodash: ^4.17.21
     prop-types: ^15.7.2
     react-modal: ^3.14.3
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     utility-types: ^3.10.0
   peerDependencies:
     react: ^17.0.2
@@ -394,7 +394,7 @@ __metadata:
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -408,7 +408,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     cookie: ^0.4.1
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -430,7 +430,7 @@ __metadata:
     qs: ^6.9.1
     redux: ^4.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     utility-types: ^3.10.0
     validator: ^13.5.2
     wait-for-expect: ^3.0.2
@@ -465,7 +465,7 @@ __metadata:
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     utility-types: ^3.10.0
     webpack: ^5.65.0
   peerDependencies:
@@ -503,7 +503,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     use-debounce: ^3.1.0
     uuid: ^8.3.2
   peerDependencies:
@@ -557,7 +557,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -568,7 +568,7 @@ __metadata:
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -580,6 +580,36 @@ __metadata:
     i18n-calypso: "workspace:^"
   peerDependencies:
     react: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
+"@automattic/happychat-app@workspace:apps/happychat":
+  version: 0.0.0-use.local
+  resolution: "@automattic/happychat-app@workspace:apps/happychat"
+  dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-babel-config": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
+    "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
+    autoprefixer: ^10.2.5
+    calypso: "workspace:^"
+    enzyme: ^3.11.0
+    html-webpack-plugin: ^5.0.0-beta.4
+    jest: ^27.2.4
+    postcss: ^8.3.11
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-query: ^3.32.1
+    react-redux: ^7.2.6
+    redux: ^4.1.2
+    redux-thunk: ^2.3.0
+    webpack: ^5.63.0
+    webpack-bundle-analyzer: ^4.5.0
+    webpack-dev-server: ^4.7.3
+    wpcom: "workspace:^"
+    wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -598,7 +628,38 @@ __metadata:
     react-dom: ^17.0.2
     react-test-renderer: ^17.0.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
+  languageName: unknown
+  linkType: soft
+
+"@automattic/inline-help@workspace:apps/inline-help":
+  version: 0.0.0-use.local
+  resolution: "@automattic/inline-help@workspace:apps/inline-help"
+  dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-babel-config": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
+    "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
+    autoprefixer: ^10.2.5
+    calypso: "workspace:^"
+    enzyme: ^3.11.0
+    html-webpack-plugin: ^5.0.0-beta.4
+    jest: ^27.2.4
+    path-browserify: ^1.0.1
+    postcss: ^8.3.11
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-query: ^3.32.1
+    react-redux: ^7.2.6
+    redux: ^4.1.2
+    redux-thunk: ^2.3.0
+    webpack: ^5.63.0
+    webpack-bundle-analyzer: ^4.5.0
+    webpack-dev-server: ^4.7.3
+    wpcom: "workspace:^"
+    wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -692,7 +753,7 @@ __metadata:
   resolution: "@automattic/js-utils@workspace:packages/js-utils"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -708,7 +769,7 @@ __metadata:
     "@wordpress/components": ^19.2.0
     "@wordpress/i18n": ^4.2.4
     "@wordpress/react-i18n": ^3.0.4
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@wordpress/data": ^6.1.5
     react: ^17.0.2
@@ -732,7 +793,7 @@ __metadata:
     react-dom: ^17.0.2
     redux: ^4.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     webpack: ^5.65.0
   languageName: unknown
   linkType: soft
@@ -772,7 +833,7 @@ __metadata:
     react-dom: ^17.0.2
     react-router-dom: ^5.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     use-debounce: ^3.1.0
   peerDependencies:
     "@wordpress/data": ^6.1.5
@@ -818,7 +879,7 @@ __metadata:
     debug: ^4.3.3
     react: ^17.0.2
     react-dom: ^17.0.2
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@emotion/react": ^11.4.1
     redux: ^4.1.2
@@ -831,7 +892,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/mocha": ^9.0.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     mocha: ">=8.0.0"
   languageName: unknown
@@ -899,7 +960,7 @@ __metadata:
     redux-thunk: ^2.3.0
     webpack: ^5.65.0
     webpack-bundle-analyzer: ^4.5.0
-    webpack-dev-server: ^4.7.2
+    webpack-dev-server: ^4.7.3
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
     wpcom-xhr-request: "workspace:^"
@@ -961,7 +1022,7 @@ __metadata:
     react-router-dom: ^5.1.2
     redux: ^4.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@wordpress/i18n": ^4.2.4
     react: ^17.0.2
@@ -988,7 +1049,7 @@ __metadata:
     lodash: ^4.17.21
     react: ^17.0.2
     react-dom: ^17.0.2
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@wordpress/data": ^6.1.5
     react: ^17.0.2
@@ -1017,7 +1078,7 @@ __metadata:
     lodash: ^4.17.21
     prop-types: ^15.7.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     uuid: ^8.3.2
   peerDependencies:
     "@wordpress/data": ^6.1.5
@@ -1073,7 +1134,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@babel/runtime": ^7.16.7
     "@storybook/react": ^6.4.9
-    "@testing-library/dom": ^8.11.2
+    "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.2
     "@testing-library/user-event": ^13.5.0
     "@wordpress/base-styles": ^4.0.4
@@ -1090,7 +1151,7 @@ __metadata:
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     webpack: ^5.65.0
   peerDependencies:
     react: ^17.0.2
@@ -1106,7 +1167,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     debug: ^4.3.3
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -1146,7 +1207,7 @@ __metadata:
     redux: ^4.1.2
     redux-thunk: ^2.3.0
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -1179,7 +1240,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@wordpress/element": ^4.0.4
   languageName: unknown
@@ -1191,7 +1252,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -1221,7 +1282,7 @@ __metadata:
   resolution: "@automattic/viewport@workspace:packages/viewport"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -1388,7 +1449,7 @@ __metadata:
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   peerDependencies:
     "@emotion/react": ^11.4.1
     redux: ^4.1.2
@@ -6258,9 +6319,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^8.0.0, @testing-library/dom@npm:^8.11.2":
-  version: 8.11.2
-  resolution: "@testing-library/dom@npm:8.11.2"
+"@testing-library/dom@npm:^8.0.0, @testing-library/dom@npm:^8.11.3":
+  version: 8.11.3
+  resolution: "@testing-library/dom@npm:8.11.3"
   dependencies:
     "@babel/code-frame": ^7.10.4
     "@babel/runtime": ^7.12.5
@@ -6270,7 +6331,7 @@ __metadata:
     dom-accessibility-api: ^0.5.9
     lz-string: ^1.4.4
     pretty-format: ^27.0.2
-  checksum: debdabe430b04d548275ad893f97346d437ac2851987793f9da82c41d65bf2dc69c6fa26b8d48e259a203659beb70e831c3542cc8a967333d1377fc536dda0a8
+  checksum: 2a27ace6e6172c26be6e7dd689ead87d874b34fa887017dcf1e20d1e0f6160f26236c53364217af005c14d87ad76680579e51b18ed2a8738e1b72c5ea908f6b2
   languageName: node
   linkType: hard
 
@@ -9814,7 +9875,7 @@ __metadata:
     cross-env: ^7.0.3
     electron: 12.1.0
     electron-builder: ^22.11.7
-    electron-fetch: ^1.7.3
+    electron-fetch: ^1.7.4
     electron-notarize: ^0.1.1
     electron-rebuild: ^2.3.5
     electron-updater: ^4.2.5
@@ -10417,6 +10478,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"archiver@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "archiver@npm:5.3.0"
+  dependencies:
+    archiver-utils: ^2.1.0
+    async: ^3.2.0
+    buffer-crc32: ^0.2.1
+    readable-stream: ^3.6.0
+    readdir-glob: ^1.0.0
+    tar-stream: ^2.2.0
+    zip-stream: ^4.1.0
+  checksum: 48527f4b954355e12e5ec5dfc3fe9e148be6f0a264109d0f835f5ed290696f6d1c9a88b561a83be94b78f30a1dbbab64307d04740f979beed88e38e0d112f74f
+  languageName: node
+  linkType: hard
+
 "are-we-there-yet@npm:^2.0.0":
   version: 2.0.0
   resolution: "are-we-there-yet@npm:2.0.0"
@@ -10868,10 +10944,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async@npm:^3.1.0":
-  version: 3.2.2
-  resolution: "async@npm:3.2.2"
-  checksum: 0702c7d70d26f8aa2afdcefca2a1aab45dd36d95e4b652ee3d1c784001b5fcb0132737e068200eb5f38feee01b748b1839c4c94ce11f37fd86b8fb3d6b5addaa
+"async@npm:^3.1.0, async@npm:^3.2.0":
+  version: 3.2.3
+  resolution: "async@npm:3.2.3"
+  checksum: 109780c846f05109dde14412d916ae4ed6daf6f9aad0c4aa1dcf0d4da775a3a9e35e0e06e4e06ad9fed66f99ca15549da16f2f243c56103b346e9d3bcd9c943f
   languageName: node
   linkType: hard
 
@@ -12406,7 +12482,7 @@ __metadata:
     d3-array: ^2.4.0
     d3-axis: ^1.0.12
     d3-scale: ^3.2.1
-    d3-selection: ^1.4.1
+    d3-selection: ^1.4.2
     d3-shape: ^1.3.7
     debug: ^4.3.3
     deep-freeze: ^0.0.1
@@ -12503,7 +12579,7 @@ __metadata:
     valid-url: ^1.0.9
     webpack: ^5.65.0
     webpack-bundle-analyzer: ^4.5.0
-    webpack-dev-middleware: ^5.2.2
+    webpack-dev-middleware: ^5.3.0
     webpack-hot-middleware: ^2.25.1
     webpack-node-externals: ^3.0.0
     wpcom: "workspace:^"
@@ -13737,6 +13813,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"compress-commons@npm:^4.1.0":
+  version: 4.1.1
+  resolution: "compress-commons@npm:4.1.1"
+  dependencies:
+    buffer-crc32: ^0.2.13
+    crc32-stream: ^4.0.2
+    normalize-path: ^3.0.0
+    readable-stream: ^3.6.0
+  checksum: 784ef2964cdce04fb6e91e3a4b8e2565db2024141259e8f843675ef556662b90a1d65aeaabe703f88d2eb0291fa4ed10a674a6c28f93b5fb37e569aad1b374fe
+  languageName: node
+  linkType: hard
+
 "compressible@npm:~2.0.16":
   version: 2.0.18
   resolution: "compressible@npm:2.0.18"
@@ -14169,6 +14257,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"crc-32@npm:^1.2.0":
+  version: 1.2.1
+  resolution: "crc-32@npm:1.2.1"
+  dependencies:
+    exit-on-epipe: ~1.0.1
+    printj: ~1.3.1
+  bin:
+    crc32: bin/crc32.njs
+  checksum: d3a77d2146ea39e327fcf0fa0373e43da8c9d011f97dbad411d88c39cb69a1c08925121609e77feffe848c83831fcc755f938fe46cd4428433408fbd601b0bc4
+  languageName: node
+  linkType: hard
+
 "crc32-stream@npm:^3.0.1":
   version: 3.0.1
   resolution: "crc32-stream@npm:3.0.1"
@@ -14176,6 +14276,16 @@ __metadata:
     crc: ^3.4.4
     readable-stream: ^3.4.0
   checksum: cf026cc08e68a7eb9f9245b3937d062339a54c2f5b4738c7fb861bd2db56ac220df3627f02ed6e0972633a99435d409f4470cf0a3aac6e944d87730493b6dea0
+  languageName: node
+  linkType: hard
+
+"crc32-stream@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "crc32-stream@npm:4.0.2"
+  dependencies:
+    crc-32: ^1.2.0
+    readable-stream: ^3.4.0
+  checksum: 215b515775296c9f152cbb8435c9e39552876042d52eec6569508f2bfc6d7c6cfa4bc8939002457c7f612e9b995a377f7abbaf473b961941b816361574913c9c
   languageName: node
   linkType: hard
 
@@ -14878,10 +14988,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"d3-selection@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "d3-selection@npm:1.4.1"
-  checksum: ea7d3520112704c5b304acc3e55552110a9a05c00530106f220bb7399a267e124a714689434de5de5a94283d7ca99f4602f859ea84fbc9283d9b68da78a550a8
+"d3-selection@npm:^1.4.2":
+  version: 1.4.2
+  resolution: "d3-selection@npm:1.4.2"
+  checksum: e755b6b62d794d0b968cc6264f37109e425de0d9fd306ce94414b07e46a2c6830d21c1fe0821a660d07e82069b6fe3b67da1b3b909e8f6af8f16f020cd25cae0
   languageName: node
   linkType: hard
 
@@ -16034,12 +16144,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-fetch@npm:^1.7.3":
-  version: 1.7.3
-  resolution: "electron-fetch@npm:1.7.3"
+"electron-fetch@npm:^1.7.4":
+  version: 1.7.4
+  resolution: "electron-fetch@npm:1.7.4"
   dependencies:
     encoding: ^0.1.13
-  checksum: 87e596a9b8287be6ec9386a3b609e329ad04a97c37bb111f3434fce782b292bfa40edcece697745cad45c06863b7890df0fd3f4c47b8603842f551c4bc748ecd
+  checksum: 67b4497d6b02449f24f2e776c367944696ad83fe5c6827c43bf96a92453d71dccef6ca0cfe9607d202f5fdf49c0fdf90533d4188fbbce72c823b90df12ba4d54
   languageName: node
   linkType: hard
 
@@ -17640,6 +17750,13 @@ __metadata:
   version: 0.1.12
   resolution: "exif-parser@npm:0.1.12"
   checksum: ef1df84edbba50621fcfe19510c8db3ddd9e7fb374459d3f77c9256c24584767c7fb4cf1b15aef46e87a06528d3c48e44de02cecc314656d22a5cf954a0e7192
+  languageName: node
+  linkType: hard
+
+"exit-on-epipe@npm:~1.0.1":
+  version: 1.0.1
+  resolution: "exit-on-epipe@npm:1.0.1"
+  checksum: f10a5fbf1abb6294b06220f99d84bb918286700e8aec3d364963767f1f0530b7e5abf29d8f0ef2672458e794f746f73254d397b1596acc745bdce81586b183c0
   languageName: node
   linkType: hard
 
@@ -26649,10 +26766,10 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"node-forge@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "node-forge@npm:0.10.0"
-  checksum: 9cbf9ac8fc3889a5a46b0248f7238ee4014770bf31d22e04c0c7f04ed91c8be4584c5f534cdf6037e99f236c636c925cba960501ed2b850e077512e152760663
+"node-forge@npm:^1.2.0":
+  version: 1.2.1
+  resolution: "node-forge@npm:1.2.1"
+  checksum: 0563bef5c6abfd031018ebd9cae41432811faef0b25ca7651489fb5f946250c3f8c433f42e76e9fd98f0d7617c12b700f8cbea134a1d284df84f8104c79127c0
   languageName: node
   linkType: hard
 
@@ -28289,7 +28406,7 @@ fsevents@~2.1.2:
     crc32: ^0.2.2
     debug: ^4.3.3
     seed-random: ^2.2.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -29411,6 +29528,15 @@ fsevents@~2.1.2:
     parse-ms: ^1.0.0
     plur: ^1.0.0
   checksum: 039c5ae944e779d8e1cb5e2d21df00c40a9f873713f32d26fe2f8cf994beee9e2beec0d9872e344a2385eb2c541bde91a7ea5ef6697b9a80c5e03b06232b3520
+  languageName: node
+  linkType: hard
+
+"printj@npm:~1.3.1":
+  version: 1.3.1
+  resolution: "printj@npm:1.3.1"
+  bin:
+    printj: bin/printj.njs
+  checksum: 74c7f084f76ac871057a465586ffe3fd403b52a0be764bc7105a21f75eed42f8ff39cda2391566f4cd8992eb6a36790f99b3d40389cc9e8bee08af1b6250f75f
   languageName: node
   linkType: hard
 
@@ -31011,6 +31137,15 @@ fsevents@~2.1.2:
     string_decoder: ^1.1.1
     util-deprecate: ^1.0.1
   checksum: 937bedd29ac8a68331666291922bea892fa2be1a33269e582de9f844a2002f146cf831e39cd49fe6a378d3f0c27358f259ed0e20d20f0bdc6a3f8fc21fce42dc
+  languageName: node
+  linkType: hard
+
+"readdir-glob@npm:^1.0.0":
+  version: 1.1.1
+  resolution: "readdir-glob@npm:1.1.1"
+  dependencies:
+    minimatch: ^3.0.4
+  checksum: 90936ece396c1e85534acc1f41a4904a5a8c063cdd405a1f1781b72207f100c79059435d6b98215336a07df6f577e50bc3a1568a0544b1aefbb4aef8d5c5acfb
   languageName: node
   linkType: hard
 
@@ -33124,12 +33259,12 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"selfsigned@npm:^1.10.11":
-  version: 1.10.11
-  resolution: "selfsigned@npm:1.10.11"
+"selfsigned@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "selfsigned@npm:2.0.0"
   dependencies:
-    node-forge: ^0.10.0
-  checksum: 4054e22f9398efe2bde89302bbd668218d87af1042619528eb370072d6496dfa5389e6a2a2266f8b2e302effd397973432290db4cc9e9c18d44a35379d2c1538
+    node-forge: ^1.2.0
+  checksum: 159e3a18e107f587c5f29ec908458dc315b45f6aada702645d7cb0f59865086443f898c96cc96aab6d57f62e948ef0cd0c131971fbde43777ed52fd154121d3d
   languageName: node
   linkType: hard
 
@@ -35172,7 +35307,7 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"tar-stream@npm:^2.0.0, tar-stream@npm:^2.1.0, tar-stream@npm:^2.1.4":
+"tar-stream@npm:^2.0.0, tar-stream@npm:^2.1.0, tar-stream@npm:^2.1.4, tar-stream@npm:^2.2.0":
   version: 2.2.0
   resolution: "tar-stream@npm:2.2.0"
   dependencies:
@@ -36289,23 +36424,23 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.5.4":
-  version: 4.5.4
-  resolution: "typescript@npm:4.5.4"
+"typescript@npm:^4.5.5":
+  version: 4.5.5
+  resolution: "typescript@npm:4.5.5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 4dccd6947e632cc0070653788a3a81051825e9a7acd4c3586124e5a145148bb57b0a401b81d220ac1eb7742a29d5d22fd35af033f839daa60738c3e4fecb5850
+  checksum: ac15b92f3dcd9a4233cab288a913ccbd96729fc488181396fa93c0297ccef3cd3c2f9a7a63340efb0d07bff3d5026028fc81b9c1ef08076029e057081eb5884b
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.5.4#~builtin<compat/typescript>":
-  version: 4.5.4
-  resolution: "typescript@patch:typescript@npm%3A4.5.4#~builtin<compat/typescript>::version=4.5.4&hash=493e53"
+"typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
+  version: 4.5.5
+  resolution: "typescript@patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 7e9541c322d8e72164763c5ccb13e6f8534124a5917b697500033c9437e23c81bfdb0e14c9d4dd8cbe9ad78ea605e91eef02f9ee6f94d9f8130ac4846664e31c
+  checksum: 6a8888c9fe41d0a19324125c636b1adb9ec5c984342fc7a26f2a389a432a94639c24b72e6e019ffbbb03cb614c1f008b4c31e48fb560b772e45e6581265c500b
   languageName: node
   linkType: hard
 
@@ -37477,7 +37612,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"webpack-dev-middleware@npm:^5.2.2, webpack-dev-middleware@npm:^5.3.0":
+"webpack-dev-middleware@npm:^5.3.0":
   version: 5.3.0
   resolution: "webpack-dev-middleware@npm:5.3.0"
   dependencies:
@@ -37492,9 +37627,9 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"webpack-dev-server@npm:^4.7.2":
-  version: 4.7.2
-  resolution: "webpack-dev-server@npm:4.7.2"
+"webpack-dev-server@npm:^4.7.3":
+  version: 4.7.3
+  resolution: "webpack-dev-server@npm:4.7.3"
   dependencies:
     "@types/bonjour": ^3.5.9
     "@types/connect-history-api-fallback": ^1.3.5
@@ -37518,7 +37653,7 @@ testarmada-magellan@11.0.10:
     p-retry: ^4.5.0
     portfinder: ^1.0.28
     schema-utils: ^4.0.0
-    selfsigned: ^1.10.11
+    selfsigned: ^2.0.0
     serve-index: ^1.9.1
     sockjs: ^0.3.21
     spdy: ^4.0.2
@@ -37532,7 +37667,7 @@ testarmada-magellan@11.0.10:
       optional: true
   bin:
     webpack-dev-server: bin/webpack-dev-server.js
-  checksum: 862cba6576f5e187e3e6d90a5abb63076f8d2385bde7122d8ee503f5cd0b264d99ab63478cbb4a317880af4d9cb4eda52714ee9bb31cbc3218894c0eca3544fc
+  checksum: 3c488f035a733ff4233592d35c8eeaacccb643fe3de907317188c54030ca19e92f95a85e8acdd6fbda998b077a0342cd3b73a3a824b10a25de357d1641ebf5d9
   languageName: node
   linkType: hard
 
@@ -38156,11 +38291,11 @@ testarmada-magellan@11.0.10:
     terser: ^5.5.1
     terser-webpack-plugin: ^5.2.4
     tslib: ^2.3.0
-    typescript: ^4.5.4
+    typescript: ^4.5.5
     webpack: ^5.65.0
     webpack-bundle-analyzer: ^4.5.0
     webpack-cli: ^4.9.1
-    webpack-dev-middleware: ^5.2.2
+    webpack-dev-middleware: ^5.3.0
     whybundled: ^2.0.0
     wpcom: "workspace:^"
     yargs: ^17.0.1
@@ -38188,6 +38323,7 @@ testarmada-magellan@11.0.10:
     "@testim/chrome-version": ^1.0.7
     "@types/jest": ^27.0.2
     "@xmpp/plugins": ^0.3.0
+    archiver: ^5.3.0
     asana-phrase: ^0.0.8
     babel-jest: ^27.2.4
     babel-plugin-dynamic-import-node: ^2.3.0
@@ -38200,10 +38336,11 @@ testarmada-magellan@11.0.10:
     esm: ^3.2.25
     execa: ^5.0.0
     ffmpeg-static: ^2.4.0
+    form-data: ^4.0.0
     fs-extra: ^0.22.1
     jest: ^27.2.4
     jest-docblock: ^27.0.6
-    jest-environment-node: ^26.6.2
+    jest-environment-node: ^27.3.1
     jest-runner: ^27.0.6
     jest-runner-groups: ^2.1.0
     jest-teamcity: ^1.9.0
@@ -38213,6 +38350,7 @@ testarmada-magellan@11.0.10:
     mocha-junit-reporter: ^2.0.2
     mocha-multi-reporters: ^1.5.1
     mocha-teamcity-reporter: ^3.0.0
+    node-fetch: ^2.6.1
     playwright: 1.16
     png-itxt: ^1.3.0
     postcss: ^8.3.11
@@ -39031,6 +39169,17 @@ testarmada-magellan@11.0.10:
     compress-commons: ^2.1.1
     readable-stream: ^3.4.0
   checksum: aac673670f9aa673cf6c8d99e010d6c99ab08deb80f919a0bc537d0c914ea640cb5aae1bbd84348dfa586693eab0bb62829d1c3033f163b489f9f08317fc954c
+  languageName: node
+  linkType: hard
+
+"zip-stream@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "zip-stream@npm:4.1.0"
+  dependencies:
+    archiver-utils: ^2.1.0
+    compress-commons: ^4.1.0
+    readable-stream: ^3.6.0
+  checksum: ed9eb9387953576c43bdf7678705e8b0ff4e9149cf92b39fa845ddd5413b08daf68655b1ee8311e2dd7c88ddeb95908a785e8e48473016b2595870b0adf588d4
   languageName: node
   linkType: hard
 

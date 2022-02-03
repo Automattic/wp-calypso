@@ -11,23 +11,14 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
 
 import './style.scss';
-const strong = <strong />;
 
 class PendingGSuiteTosNotice extends PureComponent {
 	static propTypes = {
 		siteSlug: PropTypes.string.isRequired,
 		domains: PropTypes.array.isRequired,
 		section: PropTypes.string.isRequired,
-		isCompact: PropTypes.bool,
-		showDomainStatusNotice: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		isCompact: false,
-		showDomainStatusNotice: false,
 	};
 
 	componentDidMount() {
@@ -58,31 +49,11 @@ class PendingGSuiteTosNotice extends PureComponent {
 		return 'info';
 	}
 
-	getExclamation( severity ) {
-		const { translate } = this.props;
-
-		const translationOptions = {
-			context: 'Beginning of Google Workspace pending account notice',
-			comment: "Used as an exclamation in Google Workspace's pending account notice",
-		};
-
-		switch ( severity ) {
-			case 'warning':
-				return translate( 'Attention!', translationOptions );
-
-			case 'error':
-				return translate( 'Urgent!', translationOptions );
-
-			default:
-				return '';
-		}
-	}
-
 	finishSetupClickHandler = () => {
 		this.props.finishSetupNoticeClick( this.props.siteSlug );
 	};
 
-	compactNotice() {
+	render() {
 		const href =
 			this.props.domains.length === 1
 				? emailManagement( this.props.siteSlug, this.props.domains[ 0 ].name )
@@ -90,10 +61,9 @@ class PendingGSuiteTosNotice extends PureComponent {
 
 		return (
 			<Notice
-				isCompact={ this.props.isCompact }
+				isCompact
 				status={ `is-${ this.getNoticeSeverity() }` }
 				showDismiss={ false }
-				key="pending-gapps-tos-acceptance-domain-compact"
 				text={ this.props.translate( 'Email requires action', 'Emails require action', {
 					count: this.props.domains.length,
 				} ) }
@@ -103,140 +73,6 @@ class PendingGSuiteTosNotice extends PureComponent {
 				</NoticeAction>
 			</Notice>
 		);
-	}
-
-	domainStatusNotice() {
-		const { domains, translate } = this.props;
-		const domainName = domains[ 0 ].name;
-		const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
-		const emails = users.join( ', ' );
-
-		const button = (
-			<PendingGSuiteTosNoticeAction
-				domainName={ domainName }
-				section={ this.props.section }
-				siteSlug={ this.props.siteSlug }
-				user={ users[ 0 ] }
-				isCompact={ false }
-				cta={ translate( 'Finish Setup' ) }
-			/>
-		);
-
-		return (
-			<>
-				<p>
-					{ translate(
-						'Your new user {{strong}}%(emails)s{{/strong}} is ready! Complete the setup to activate it.',
-						'Your new users {{strong}}%(emails)s{{/strong}} are ready! Complete the setup to activate them.',
-						{
-							count: users.length,
-							args: { emails },
-							comment:
-								"%(emails)s is a list of email addresses separated by commas (e.g. 'one@example.com, two@example.com')",
-							components: { strong },
-						}
-					) }
-				</p>
-
-				{ button }
-			</>
-		);
-	}
-
-	oneDomainNotice() {
-		const { translate } = this.props;
-		const severity = this.getNoticeSeverity();
-		const exclamation = this.getExclamation( severity );
-		const domainName = this.props.domains[ 0 ].name;
-		const users = this.props.domains[ 0 ].googleAppsSubscription.pendingUsers;
-
-		return (
-			<Notice
-				isCompact={ this.props.isCompact }
-				status={ `is-${ severity }` }
-				className="domain-warnings__pending-g-suite-tos-notice"
-				showDismiss={ false }
-				key="pending-gapps-tos-acceptance-domain"
-				text={ translate(
-					'%(exclamation)s Finish the setup of {{strong}}%(emails)s{{/strong}} to activate it.',
-					'%(exclamation)s Finish the setup of {{strong}}%(emails)s{{/strong}} to activate them.',
-					{
-						count: users.length,
-						args: { exclamation, emails: users.join( ', ' ) },
-						comment:
-							"%(emails)s is a list of email addresses separated by a comma (e.g. 'one@example.com, two@example.com')",
-						components: { strong },
-					}
-				) }
-			>
-				<NoticeAction>
-					<PendingGSuiteTosNoticeAction
-						domainName={ domainName }
-						section={ this.props.section }
-						siteSlug={ this.props.siteSlug }
-						user={ users[ 0 ] }
-					/>
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
-	multipleDomainsNotice() {
-		const { translate } = this.props;
-		const severity = this.getNoticeSeverity();
-		const exclamation = this.getExclamation( severity );
-
-		return (
-			<Notice
-				status={ `is-${ severity }` }
-				showDismiss={ false }
-				key="pending-gapps-tos-acceptance-domains"
-			>
-				{ translate( '%(exclamation)s Finish the setup of your new users to activate them:', {
-					args: { exclamation },
-				} ) }
-
-				<ul>
-					{ this.props.domains.map(
-						( { name: domainName, googleAppsSubscription: { pendingUsers: users } } ) => {
-							return (
-								<li key={ `pending-gapps-tos-acceptance-domain-${ domainName }` }>
-									<strong>{ domainName } </strong>
-
-									<PendingGSuiteTosNoticeAction
-										domainName={ domainName }
-										section={ this.props.section }
-										siteSlug={ this.props.siteSlug }
-										user={ users[ 0 ] }
-									/>
-								</li>
-							);
-						}
-					) }
-				</ul>
-			</Notice>
-		);
-	}
-
-	render() {
-		if ( this.props.showDomainStatusNotice ) {
-			return this.domainStatusNotice();
-		}
-
-		if ( this.props.isCompact ) {
-			return this.compactNotice();
-		}
-
-		switch ( this.props.domains.length ) {
-			case 0:
-				return null;
-
-			case 1:
-				return this.oneDomainNotice();
-
-			default:
-				return this.multipleDomainsNotice();
-		}
 	}
 }
 

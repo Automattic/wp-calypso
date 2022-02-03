@@ -32,6 +32,7 @@ import {
 	recordSignupStep,
 	recordSignupInvalidStep,
 	recordSignupProcessingScreen,
+	recordSignupPlanChange,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
@@ -60,7 +61,12 @@ import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
 import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSiteId, isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import {
+	getSiteId,
+	isCurrentPlanPaid,
+	getSitePlanSlug,
+	getSitePlanName,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
@@ -128,6 +134,8 @@ class Signup extends Component {
 		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
+		sitePlanName: PropTypes.string,
+		sitePlanSlug: PropTypes.string,
 		isPaidPlan: PropTypes.bool,
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
@@ -237,25 +245,36 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		const { flowName, stepName, signupDependencies, sitePlanName, sitePlanSlug } = this.props;
+
 		if (
-			( this.props.flowName !== prevProps.flowName ||
-				this.props.stepName !== prevProps.stepName ) &&
+			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
 			! this.state.shouldShowLoadingScreen
 		) {
-			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+			recordSignupStep( flowName, stepName, this.getRecordProps() );
 		}
 
 		if (
-			get( this.props.signupDependencies, 'siteType' ) !==
-			get( prevProps.signupDependencies, 'siteType' )
+			get( signupDependencies, 'siteType' ) !== get( prevProps.signupDependencies, 'siteType' )
 		) {
 			this.startTrackingForBusinessSite();
 		}
 
-		if ( this.props.stepName !== prevProps.stepName ) {
+		if ( stepName !== prevProps.stepName ) {
 			this.preloadNextStep();
 			// `scrollToTop` here handles cases where the viewport may fall slightly below the top of the page when the next step is rendered
 			this.scrollToTop();
+		}
+
+		if ( sitePlanSlug && prevProps.sitePlanSlug && sitePlanSlug !== prevProps.sitePlanSlug ) {
+			recordSignupPlanChange(
+				flowName,
+				stepName,
+				prevProps.sitePlanName,
+				prevProps.sitePlanSlug,
+				sitePlanName,
+				sitePlanSlug
+			);
 		}
 	}
 
@@ -766,6 +785,7 @@ export default connect(
 			isNewishUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 			existingSiteCount: getCurrentUserSiteCount( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
+			sitePlanName: getSitePlanName( state, siteId ),
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
 			siteId,

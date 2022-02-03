@@ -27,9 +27,6 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 		startImport,
 		resetImport,
 	} = props;
-	const importerData = importerConfig().squarespace;
-
-	populateMessages();
 
 	/**
 	 * Effects
@@ -62,20 +59,9 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 		};
 	}
 
-	function checkProgress() {
-		return job?.importerState === appStates.IMPORTING;
-	}
+	function getImportDragConfig() {
+		const importerData = importerConfig()[ importer ];
 
-	function checkIsSuccess() {
-		return job?.importerState === appStates.IMPORT_SUCCESS;
-	}
-
-	function showVideoComponent() {
-		return checkProgress() || checkIsSuccess();
-	}
-
-	// Change the default messages
-	function populateMessages() {
 		const options: TranslateOptions = {
 			args: {
 				importerName: 'Squarespace',
@@ -98,6 +84,20 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
 			options
 		);
+
+		return importerData;
+	}
+
+	function checkProgress() {
+		return job?.importerState === appStates.IMPORTING;
+	}
+
+	function checkIsSuccess() {
+		return job?.importerState === appStates.IMPORT_SUCCESS;
+	}
+
+	function showVideoComponent() {
+		return checkProgress() || checkIsSuccess();
 	}
 
 	return (
@@ -132,7 +132,7 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 						<ImporterDrag
 							urlData={ urlData }
 							site={ site }
-							importerData={ importerData }
+							importerData={ getImportDragConfig() }
 							importerStatus={ job }
 						/>
 					);

@@ -22,7 +22,6 @@ export type GDPRConsentStatus = keyof typeof gdprConsentStatus | null;
 
 export type GoogleEmailSubscription = EmailSubscription & {
 	pendingTosAcceptance?: boolean;
-	pendingUsers?: Array< string >;
 	productSlug?: string;
 	subscribedDate?: string;
 	subscriptionId?: string;
@@ -74,6 +73,7 @@ export type ResponseDomain = {
 	hasZone: boolean;
 	isAutoRenewing: boolean;
 	isEligibleForInboundTransfer: boolean;
+	isIcannVerificationSuspended: boolean;
 	isLocked: boolean;
 	isPendingIcannVerification: boolean;
 	isPendingRenewal: boolean;
@@ -101,6 +101,7 @@ export type ResponseDomain = {
 	registrar: string;
 	registrationDate: string;
 	renewableUntil: string;
+	registryExpiryDate: string;
 	sslStatus: string | null;
 	subscriptionId: string | null;
 	subdomainPart: string;

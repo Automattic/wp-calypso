@@ -3,7 +3,6 @@ import {
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
 	SITE_FEATURES_FETCH_FAILED,
-	SITE_FEATURES_REMOVE,
 } from 'calypso/state/action-types';
 import { featuresReducer as features } from '../reducer';
 
@@ -198,90 +197,6 @@ describe( 'reducer', () => {
 					error: null,
 					hasLoadedFromServer: true,
 					isRequesting: true,
-				},
-			} );
-		} );
-
-		test( 'should return an empty state when original state is undefined and removal is triggered', () => {
-			const state = features( undefined, {
-				type: SITE_FEATURES_REMOVE,
-				siteId: 11111111,
-			} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should return the original state when removal is triggered for an unknown site', () => {
-			const original = Object.freeze( {
-				11111111: {
-					data: {
-						active: [ 'feature_active_a_01', 'feature_active_a_02', 'feature_active_a_03' ],
-						available: {
-							feature_available_01: [ 'plan_a-01_01', 'plan_a-01_02', 'plan_a-01_03' ],
-							feature_available_02: [ 'plan_a-02_01', 'plan_a-02_02', 'plan_a-02_03' ],
-							feature_available_03: [ 'plan_a-03_01', 'plan_a-03_02', 'plan_a-03_03' ],
-						},
-					},
-					error: 'Unable to fetch site features',
-					hasLoadedFromServer: false,
-					isRequesting: false,
-				},
-			} );
-			const state = features( original, {
-				type: SITE_FEATURES_REMOVE,
-				siteId: 22222222,
-			} );
-
-			expect( state ).to.eql( original );
-		} );
-
-		test( 'should remove features for a given site when removal is triggered', () => {
-			const original = Object.freeze( {
-				11111111: {
-					data: {
-						active: [ 'feature_active_a_01', 'feature_active_a_02', 'feature_active_a_03' ],
-						available: {
-							feature_available_01: [ 'plan_a-01_01', 'plan_a-01_02', 'plan_a-01_03' ],
-							feature_available_02: [ 'plan_a-02_01', 'plan_a-02_02', 'plan_a-02_03' ],
-							feature_available_03: [ 'plan_a-03_01', 'plan_a-03_02', 'plan_a-03_03' ],
-						},
-					},
-					error: 'Unable to fetch site features',
-					hasLoadedFromServer: false,
-					isRequesting: false,
-				},
-				22222222: {
-					data: {
-						active: [ 'feature_active_b_01', 'feature_active_b_02', 'feature_active_b_03' ],
-						available: {
-							feature_available_01: [ 'plan_b-01_01', 'plan_b-01_02', 'plan_b-01_03' ],
-							feature_available_02: [ 'plan_b-02_01', 'plan_b-02_02', 'plan_b-02_03' ],
-							feature_available_03: [ 'plan_b-03_01', 'plan_b-03_02', 'plan_b-03_03' ],
-						},
-					},
-					error: null,
-					hasLoadedFromServer: true,
-					isRequesting: false,
-				},
-			} );
-			const state = features( original, {
-				type: SITE_FEATURES_REMOVE,
-				siteId: 11111111,
-			} );
-
-			expect( state ).to.eql( {
-				22222222: {
-					data: {
-						active: [ 'feature_active_b_01', 'feature_active_b_02', 'feature_active_b_03' ],
-						available: {
-							feature_available_01: [ 'plan_b-01_01', 'plan_b-01_02', 'plan_b-01_03' ],
-							feature_available_02: [ 'plan_b-02_01', 'plan_b-02_02', 'plan_b-02_03' ],
-							feature_available_03: [ 'plan_b-03_01', 'plan_b-03_02', 'plan_b-03_03' ],
-						},
-					},
-					error: null,
-					hasLoadedFromServer: true,
-					isRequesting: false,
 				},
 			} );
 		} );

@@ -238,7 +238,12 @@ const MailboxSelectionList = () => {
 	} );
 
 	useEffect( () => {
-		dispatch( recordPageView( emailManagementInbox( ':site' ), 'Inbox' ) );
+		dispatch(
+			recordPageView( emailManagementInbox( ':site' ), 'Inbox', undefined, {
+				has_error: isError,
+				context: 'mailbox-selection-list',
+			} )
+		);
 	}, [ dispatch ] );
 
 	if ( isLoading || selectedSiteId === null ) {

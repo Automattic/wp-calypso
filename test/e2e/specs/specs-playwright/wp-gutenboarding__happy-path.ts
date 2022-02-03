@@ -2,13 +2,10 @@
  * @group calypso-release
  */
 
-import {
-	setupHooks,
-	DataHelper,
-	CloseAccountFlow,
-	GutenboardingFlow,
-} from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { DataHelper, CloseAccountFlow, GutenboardingFlow } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 	const siteTitle = DataHelper.getBlogName();
@@ -21,8 +18,8 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 	let gutenboardingFlow: GutenboardingFlow;
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
 	describe( 'Signup via /new', function () {
@@ -42,13 +39,8 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			await gutenboardingFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Select Vesta as the site design', async function () {
-			await gutenboardingFlow.selectDesign( 'Vesta' );
-		} );
-
-		it( 'Pick the Playfair font pairing', async function () {
-			await gutenboardingFlow.selectFont( 'Playfair' );
-			await gutenboardingFlow.clickButton( 'Continue' );
+		it( 'Select Quadrat Black as the site design', async function () {
+			await gutenboardingFlow.selectDesign( 'Quadrat Black' );
 		} );
 
 		it( 'Select to add the Plugin feature', async function () {
@@ -66,15 +58,18 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 
 		it( 'Create account', async function () {
 			await Promise.all( [
-				page.waitForNavigation(),
+				page.waitForNavigation( { waitUntil: 'networkidle' } ),
 				gutenboardingFlow.signup( email, signupPassword ),
 			] );
 		} );
 
-		it( 'Land in Home dashboard', async function () {
-			await page.waitForURL( '**/home/**' );
-			const currentURL = page.url();
-			expect( currentURL ).toContain( siteTitle );
+		it( 'Navigate to Home dashboard', async function () {
+			// When you go to the home dashboard, there is a delayed redirect to '**/home/<sitename>'.
+			// That delayed redirect can disrupt following actions in a race condition, so we must wait for that redirect to finish!
+			await Promise.all( [
+				page.waitForNavigation( { url: '**/home/**' } ),
+				page.goto( DataHelper.getCalypsoURL( 'home' ) ),
+			] );
 		} );
 	} );
 

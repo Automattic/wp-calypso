@@ -350,9 +350,9 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => ( {
-	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
-} );
+const mapDispatchToProps = {
+	selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),
+};
 
 /** @type {typeof ActivityCardList} */
 const connectedComponent = connect(

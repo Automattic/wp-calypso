@@ -8,14 +8,15 @@ import {
 	DomainsPage,
 	SidebarComponent,
 	DomainSearchComponent,
-	setupHooks,
 	CartCheckoutPage,
 	IndividualPurchasePage,
 	NavbarComponent,
 	NavbarCartComponent,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
 	let page: Page;
@@ -28,8 +29,8 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 
 	const blogName = DataHelper.getBlogName();
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 		const testAccount = new TestAccount( 'calypsoPreReleaseUser' );
 		await testAccount.authenticate( page );
 	} );

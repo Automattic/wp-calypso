@@ -132,6 +132,7 @@ $autobar-height: 20px;
 
 .masterbar__section--center {
 	flex: 1;
+	justify-content: center;
 
 	@include breakpoint-deprecated( '>480px' ) {
 		flex: 0 0 auto;

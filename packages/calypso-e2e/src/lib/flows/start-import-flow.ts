@@ -9,8 +9,13 @@ const selectors = {
 
 	// Inputs
 	urlInput: 'input.capture__input',
-	migrationInput: ( value: string ) =>
-		`input#sites-block__faux-site-selector-url-input[value="${ value }"]`,
+
+	// The "content only" "continue" button of '/start/from/importing/wordpress'
+	wpContentOnlyContinueButton:
+		'.content-chooser .import-layout__column:nth-child(2) > div > div:last-child button:text("Continue")',
+
+	// ImporterDrag page
+	importerDrag: ( text: string ) => `div.importer-wrapper__${ text }`,
 
 	// Errors
 	analyzeError: ( text: string ) => `div.capture__input-error-msg:text("${ text }")`,
@@ -41,7 +46,7 @@ export class StartImportFlow {
 	constructor( private page: Page ) {}
 
 	/**
-	 * Given text, clicks on the first instance of the button with the text.
+	 * Given text, click on the button's first instance with the text.
 	 *
 	 * @param {string} text User-visible text on the button.
 	 */
@@ -99,10 +104,24 @@ export class StartImportFlow {
 	}
 
 	/**
-	 * Validates that we've landed on the migration page.
+	 * Validates that we've landed on the WordPress migration page.
 	 */
-	async validateMigrationPage( siteSlug: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.migrationInput( siteSlug ) );
+	async validateWordPressPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.wpContentOnlyContinueButton );
+	}
+
+	/**
+	 * Validates that we've landed on the importer drag page.
+	 */
+	async validateImporterDragPage( importer: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.importerDrag( importer ) );
+	}
+
+	/**
+	 * Continue 'content only' WordPress migration.
+	 */
+	async contentOnlyWordPressPage(): Promise< void > {
+		await this.page.click( selectors.wpContentOnlyContinueButton );
 	}
 
 	/**

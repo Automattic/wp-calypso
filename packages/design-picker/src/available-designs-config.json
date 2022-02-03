@@ -32,6 +32,72 @@
 			"features": []
 		},
 		{
+			"title": "Twenty Twenty-Two",
+			"slug": "twentytwentytwo",
+			"template": "twentytwentytwo",
+			"theme": "twentytwentytwo",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"is_featured_picks": true,
+			"features": []
+		},
+		{
+			"title": "Twenty Twenty-Two Swiss",
+			"slug": "twentytwentytwo-swiss",
+			"template": "twentytwentytwo",
+			"theme": "twentytwentytwo-swiss",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"is_featured_picks": true,
+			"features": []
+		},
+		{
+			"title": "Twenty Twenty-Two Pink",
+			"slug": "twentytwentytwo-pink",
+			"template": "twentytwentytwo",
+			"theme": "twentytwentytwo-pink",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"is_featured_picks": true,
+			"features": []
+		},
+		{
+			"title": "Twenty Twenty-Two Mint",
+			"slug": "twentytwentytwo-mint",
+			"template": "twentytwentytwo",
+			"theme": "twentytwentytwo-mint",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"is_featured_picks": true,
+			"features": []
+		},
+		{
+			"title": "Twenty Twenty-Two Red",
+			"slug": "twentytwentytwo-red",
+			"template": "twentytwentytwo",
+			"theme": "twentytwentytwo-red",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"is_featured_picks": true,
+			"features": []
+		},
+		{
+			"title": "Twenty Twenty-Two Blue",
+			"slug": "twentytwentytwo-blue",
+			"template": "twentytwentytwo",
+			"theme": "twentytwentytwo-blue",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"is_featured_picks": true,
+			"features": []
+		},
+		{
 			"title": "Arbutus",
 			"slug": "arbutus",
 			"template": "arbutus",
@@ -69,6 +135,16 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": false,
+			"features": []
+		},
+		{
+			"title": "Stewart",
+			"slug": "stewart",
+			"template": "stewart",
+			"theme": "stewart",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
 			"features": []
 		},
 		{
@@ -795,6 +871,56 @@
 			"is_premium": false,
 			"is_fse": false,
 			"is_featured_picks": true,
+			"features": []
+		},
+		{
+			"title": "Bennett",
+			"slug": "bennett",
+			"template": "bennett",
+			"theme": "bennett",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Calvin",
+			"slug": "calvin",
+			"template": "calvin",
+			"theme": "calvin",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Farrow",
+			"slug": "farrow",
+			"template": "farrow",
+			"theme": "farrow",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Barnett",
+			"slug": "barnett",
+			"template": "barnett",
+			"theme": "barnett",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Livro",
+			"slug": "livro",
+			"template": "livro",
+			"theme": "livro",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
 			"features": []
 		}
 	]

@@ -7,10 +7,9 @@ import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
@@ -23,7 +22,6 @@ import {
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -32,11 +30,11 @@ import type { ReactElement } from 'react';
 
 import './style.scss';
 
-type EmailProvidersStackedComparisonProps = {
+export type EmailProvidersStackedComparisonProps = {
 	comparisonContext: string;
 	selectedDomainName: string;
-	selectedEmailProviderSlug: string;
-	selectedIntervalLength: IntervalLength | undefined;
+	selectedEmailProviderSlug?: string;
+	selectedIntervalLength?: IntervalLength;
 	source: string;
 };
 
@@ -64,8 +62,6 @@ const EmailProvidersStackedComparison = ( {
 		};
 	} );
 
-	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
-
 	const currentRoute = useSelector( getCurrentRoute );
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -80,8 +76,6 @@ const EmailProvidersStackedComparison = ( {
 	if ( ! domain ) {
 		return <></>;
 	}
-
-	const isGSuiteSupported = canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] );
 
 	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
@@ -138,17 +132,10 @@ const EmailProvidersStackedComparison = ( {
 		);
 	};
 
-	const showGoogleWorkspaceCard =
-		selectedIntervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
 	const hasExistingEmailForwards = hasEmailForwards( domain );
 
 	return (
-		<Main className="email-providers-stacked-comparison__main" wideLayout>
-			<PageViewTracker
-				path={ emailManagementPurchaseNewEmailAccount( ':site', ':domain' ) }
-				title="Email Comparison"
-			/>
-
+		<Main wideLayout>
 			<QueryProductsList />
 
 			<QueryEmailForwards domainName={ selectedDomainName } />
@@ -195,24 +182,33 @@ const EmailProvidersStackedComparison = ( {
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
 				detailsExpanded={ detailsExpanded.titan }
-				selectedDomainName={ selectedDomainName }
-				source={ source }
 				intervalLength={ selectedIntervalLength }
 				onExpandedChange={ changeExpandedState }
+				selectedDomainName={ selectedDomainName }
+				source={ source }
 			/>
 
-			{ showGoogleWorkspaceCard && (
-				<GoogleWorkspaceCard
-					comparisonContext={ comparisonContext }
-					detailsExpanded={ detailsExpanded.google }
-					selectedDomainName={ selectedDomainName }
-					source={ source }
-					intervalLength={ selectedIntervalLength }
-					onExpandedChange={ changeExpandedState }
-				/>
-			) }
+			<GoogleWorkspaceCard
+				comparisonContext={ comparisonContext }
+				detailsExpanded={ detailsExpanded.google }
+				intervalLength={ selectedIntervalLength }
+				onExpandedChange={ changeExpandedState }
+				selectedDomainName={ selectedDomainName }
+				source={ source }
+			/>
 
 			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
+
+			<TrackComponentView
+				eventName="calypso_email_providers_comparison_page_view"
+				eventProperties={ {
+					context: comparisonContext,
+					interval: selectedIntervalLength,
+					layout: 'stacked',
+					provider: selectedEmailProviderSlug,
+					source,
+				} }
+			/>
 		</Main>
 	);
 };

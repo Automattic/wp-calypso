@@ -3,6 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import { BrowserContext, Page } from 'playwright';
 import { getAccountCredential, getAccountSiteURL, getCalypsoURL, config } from '../data-helper';
+import envVariables from '../env-variables';
 import { TOTPClient } from '../totp-client';
 import { LoginPage } from './pages/login-page';
 
@@ -43,6 +44,8 @@ export class TestAccount {
 	/**
 	 * Logs in via the login page UI. The verification code will be submitted
 	 * automatically if it's defined in the config file.
+	 *
+	 * @param {Page} page on which actions are to take place.
 	 */
 	async logInViaLoginPage( page: Page ): Promise< void > {
 		const loginPage = new LoginPage( page );
@@ -54,6 +57,23 @@ export class TestAccount {
 		if ( verificationCode ) {
 			await loginPage.submitVerificationCode( verificationCode );
 		}
+	}
+
+	/**
+	 * Logs in via the login page UI, but shown on a popup.
+	 *
+	 * @param {Page} page Handle to the popup Page object.
+	 */
+	async logInViaPopupPage( page: Page ): Promise< void > {
+		const loginPage = new LoginPage( page );
+
+		const [ username, password ] = this.credentials;
+		await loginPage.fillUsername( username );
+		await loginPage.clickSubmit();
+		await loginPage.fillPassword( password );
+
+		// Popup pages close once authentication is successful.
+		await Promise.all( [ page.waitForEvent( 'close' ), loginPage.clickSubmit() ] );
 	}
 
 	/**
@@ -133,16 +153,7 @@ export class TestAccount {
 	 * @throws If the COOKIES_PATH env var value is invalid.
 	 */
 	private getAuthCookiesPath(): string {
-		const { COOKIES_PATH } = process.env;
-		if ( COOKIES_PATH === undefined ) {
-			throw new Error( 'Undefined COOKIES_PATH env variable' );
-		}
-
-		if ( COOKIES_PATH === '' ) {
-			throw new Error( 'COOKIES_PATH env variable should not be an empty string' );
-		}
-
-		return path.join( COOKIES_PATH, `${ this.accountName }.json` );
+		return path.join( envVariables.COOKIES_PATH, `${ this.accountName }.json` );
 	}
 
 	/**

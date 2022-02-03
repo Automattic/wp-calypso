@@ -38,14 +38,25 @@ function is_core_fse_active() {
 }
 
 /**
- * Proxy for `gutenberg_is_fse_theme` with `function_exists` guarding.
+ * Proxy for `gutenberg_is_fse_theme` or `wp_is_block_theme` with `function_exists` guarding.
  *
  * @uses gutenberg_is_fse_theme
+ * @uses wp_is_block_theme
  *
  * @return boolean
  */
 function is_fse_theme() {
-	return function_exists( 'gutenberg_is_fse_theme' ) && gutenberg_is_fse_theme();
+	// Gutenberg check, prior to WP 5.9.
+	if ( function_exists( 'gutenberg_is_fse_theme' ) ) {
+		return gutenberg_is_fse_theme();
+	}
+
+	// Core check, added in WP 5.9.
+	if ( function_exists( 'wp_is_block_theme' ) ) {
+		return wp_is_block_theme();
+	}
+
+	return false;
 }
 
 /**
@@ -88,11 +99,11 @@ function load_core_fse() {
 	add_action( 'admin_menu', 'gutenberg_site_editor_menu', 9 );
 	add_action( 'admin_menu', 'gutenberg_remove_legacy_pages' );
 	add_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
-	add_filter( 'menu_order', 'gutenberg_menu_order' );
 	remove_action( 'init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_template_editing', 11 );
+	remove_action( 'admin_menu', __NAMESPACE__ . '\hide_core_site_editor' );
 }
 
 /**
@@ -105,7 +116,6 @@ function unload_core_fse() {
 	remove_action( 'admin_menu', 'gutenberg_site_editor_menu', 9 );
 	remove_action( 'admin_menu', 'gutenberg_remove_legacy_pages' );
 	remove_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
-	remove_filter( 'menu_order', 'gutenberg_menu_order' );
 	if ( defined( 'REST_API_REQUEST' ) && true === REST_API_REQUEST ) {
 		// Do not hook to init during the REST API requests, as it causes PHP warnings
 		// while loading the alloptions (unable to access wp_0_ prefixed tables).
@@ -116,6 +126,7 @@ function unload_core_fse() {
 	}
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
 	add_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_template_editing', 11 );
+	add_action( 'admin_menu', __NAMESPACE__ . '\hide_core_site_editor' );
 }
 
 /**
@@ -338,6 +349,15 @@ function display_fse_section() {
 		'<p>%s</p>',
 		esc_html__( 'The Site Editor is an exciting new direction for WordPress themes! Blocks are now the foundation of your whole site and everything is editable.', 'full-site-editing' )
 	);
+}
+
+/**
+ * Hide the Core Site Editor (in addition to the Gutenberg one) when unloading Core FSE.
+ *
+ * @return void
+ */
+function hide_core_site_editor() {
+	remove_submenu_page( 'themes.php', 'site-editor.php' );
 }
 
 /**

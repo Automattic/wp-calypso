@@ -1,9 +1,11 @@
 import { useSelector } from 'react-redux';
+import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import BackupDelta from 'calypso/components/jetpack/backup-delta';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import MostRecentStatus from 'calypso/components/jetpack/daily-backup-status';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import isRewindBackupsInitialized from 'calypso/state/rewind/selectors/is-rewind-backups-initialized.ts';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { useIsDateVisible } from '../hooks';
 import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
@@ -24,9 +26,7 @@ export const DailyStatus = ( { selectedDate } ) => {
 	useDailyBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
 	useDailyBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
 
-	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs, {
-		shouldExecute: !! lastBackupBeforeDate,
-	} );
+	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs );
 
 	if ( isLoading ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
@@ -62,12 +62,17 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
 
-	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs, {
-		shouldExecute: !! lastBackupBeforeDate,
-	} );
+	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs );
 
-	if ( isLoading ) {
-		return <BackupPlaceholder showDatePicker={ false } />;
+	const isInitialized = useSelector( ( state ) => isRewindBackupsInitialized( state, siteId ) );
+
+	if ( isLoading || ! isInitialized ) {
+		return (
+			<>
+				<BackupPlaceholder showDatePicker={ false } />
+				<QueryRewindBackups siteId={ siteId } />
+			</>
+		);
 	}
 
 	return (

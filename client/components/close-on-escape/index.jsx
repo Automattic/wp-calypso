@@ -1,4 +1,3 @@
-import { filter, isEmpty, last } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -7,8 +6,8 @@ const ESC_KEY_CODE = 27;
 let components = [];
 
 function onKeydown( event ) {
-	if ( ! isEmpty( components ) && event.keyCode === ESC_KEY_CODE && ! isInput( event.target ) ) {
-		const component = last( components );
+	if ( components.length && event.keyCode === ESC_KEY_CODE && ! isInput( event.target ) ) {
+		const component = components[ components.length - 1 ];
 
 		component.onEscape();
 	}
@@ -28,14 +27,14 @@ function removeKeydownListener() {
 
 function startCloseOnEscForComponent( component, onEscape ) {
 	components.push( { component, onEscape } );
-	if ( ! isEmpty( components ) ) {
+	if ( components.length ) {
 		addKeydownListener();
 	}
 }
 
 function stopCloseOnEscForComponent( component ) {
-	components = filter( components, ( item ) => item.component !== component );
-	if ( isEmpty( components ) ) {
+	components = components.filter( ( item ) => item.component !== component );
+	if ( ! components.length ) {
 		removeKeydownListener();
 	}
 }
@@ -46,7 +45,7 @@ class CloseOnEscape extends Component {
 	}
 
 	componentWillUnmount() {
-		stopCloseOnEscForComponent( this, this.props.onEscape );
+		stopCloseOnEscForComponent( this );
 	}
 
 	render() {

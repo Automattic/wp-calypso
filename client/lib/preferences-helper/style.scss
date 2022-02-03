@@ -52,8 +52,11 @@
 	}
 }
 
-.environment.is-prefs:hover .preferences-helper__current-preferences.card {
+.environment.is-prefs:hover .preferences-helper__current-preferences {
 	display: block;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	padding: 16px;
 	max-height: 80vh;
 	overflow-y: scroll;
 	position: absolute;

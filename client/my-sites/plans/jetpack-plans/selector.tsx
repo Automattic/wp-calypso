@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryJetpackUserLicenses from 'calypso/components/data/query-jetpack-user-licenses';
 import QueryJetpackUserLicensesCounts from 'calypso/components/data/query-jetpack-user-licenses-counts';
@@ -190,7 +191,10 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 			{ nav }
 
-			<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>
+			<Main
+				className={ classNames( 'selector__main', iterationClassName, 'fs-unmask' ) }
+				wideLayout
+			>
 				<PageViewTracker
 					path={ viewTrackerPath }
 					properties={ viewTrackerProps }
@@ -213,12 +217,12 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				/>
 
 				<QueryProductsList type="jetpack" />
+				<QueryIntroOffers siteId={ siteId ?? 'none' } />
 				{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				{ siteId && <QuerySites siteId={ siteId } /> }
-
-				{ footer }
 			</Main>
+			{ footer }
 		</>
 	);
 };

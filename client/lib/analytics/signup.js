@@ -155,3 +155,34 @@ export function recordSignupProcessingScreen( flow, previousStep, optionalProps 
 		...optionalProps,
 	} );
 }
+
+/**
+ * Records plan change in signup flow
+ *
+ * @param {string} flow Signup flow name
+ * @param {string} step The step when the user changes the plan
+ * @param {string} previousPlanName The plan name before changing
+ * @param {string} previousPlanSlug The plan slug before changing
+ * @param {string} currentPlanName The plan name after changing
+ * @param {string} currentPlanSlug The plan slug after changing
+ */
+export const recordSignupPlanChange = (
+	flow,
+	step,
+	previousPlanName,
+	previousPlanSlug,
+	currentPlanName,
+	currentPlanSlug
+) => {
+	const device = resolveDeviceTypeByViewPort();
+
+	recordTracksEvent( 'calypso_signup_plan_change ', {
+		flow,
+		step,
+		device,
+		previousPlanName,
+		previousPlanSlug,
+		currentPlanName,
+		currentPlanSlug,
+	} );
+};

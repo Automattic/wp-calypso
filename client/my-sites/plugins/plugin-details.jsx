@@ -1,10 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -24,6 +24,8 @@ import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custo
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
+import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
@@ -58,6 +60,8 @@ import NoPermissionsError from './no-permissions-error';
 function PluginDetails( props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	// Site information.
 	const selectedSite = useSelector( getSelectedSite );
@@ -142,6 +146,7 @@ function PluginDetails( props ) {
 			...wpcomPlugin,
 			...wporgPlugin,
 			...plugin,
+			fetched: wpcomPlugin?.fetched || wporgPlugin?.fetched,
 			isMarketplaceProduct,
 		};
 	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched, isMarketplaceProduct ] );
@@ -178,17 +183,25 @@ function PluginDetails( props ) {
 		requestingPluginsForSites,
 	] );
 
-	const getNavigationItems = () => {
-		// ToDo:
-		// - add "Search Results" breadcrumb if prev page was search results
-		// - change the first breadcrumb if prev page wasn't plugins page (eg activity log)
-		const navigationItems = [
-			{ label: translate( 'Plugins' ), href: `/plugins/${ selectedSite?.slug || '' }` },
-			{ label: fullPlugin.name, href: `/plugins/${ selectedSite?.slug }/${ fullPlugin.slug }` },
-		];
+	useEffect( () => {
+		if ( breadcrumbs.length === 0 ) {
+			dispatch(
+				appendBreadcrumb( {
+					label: translate( 'Plugins' ),
+					href: `/plugins/${ selectedSite?.slug || '' }`,
+				} )
+			);
+		}
 
-		return navigationItems;
-	};
+		if ( fullPlugin.name && fullPlugin.slug ) {
+			dispatch(
+				appendBreadcrumb( {
+					label: fullPlugin.name,
+					href: `/plugins/${ fullPlugin.slug }/${ selectedSite?.slug || '' }`,
+				} )
+			);
+		}
+	}, [ fullPlugin.name, fullPlugin.slug, selectedSite ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
@@ -213,14 +226,11 @@ function PluginDetails( props ) {
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
 			<SidebarNavigation />
+			<QueryJetpackPlugins siteIds={ siteIds } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
-			<QueryProductsList />
-			<FixedNavigationHeader
-				navigationItems={ getNavigationItems() }
-				compactBreadcrumb={ ! isWide }
-			>
-				{ isEnabled( 'marketplace-v1' ) &&
-					( isMarketplaceProduct || shouldUpgrade ) &&
+			<QueryProductsList persist />
+			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs }>
+				{ ( isMarketplaceProduct || shouldUpgrade ) &&
 					! requestingPluginsForSites &&
 					! isPluginInstalledOnsite && (
 						<BillingIntervalSwitcher

@@ -24,6 +24,7 @@ import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/ema
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
 import {
 	domainManagementList,
 	createSiteFromDomainOnly,
@@ -80,11 +81,7 @@ class DomainRow extends PureComponent {
 		return (
 			<div className="domain-row__domain-cell">
 				<div className="domain-row__domain-name">
-					{ /* eslint-disable jsx-a11y/anchor-is-valid */ }
-					<a href="#" onClick={ this.handleClick }>
-						{ domain.domain }
-					</a>
-					{ /* eslint-enable jsx-a11y/anchor-is-valid */ }
+					<button onClick={ this.handleClick }>{ domain.domain }</button>
 				</div>
 				{ domainTypeText && <div className="domain-row__domain-type-text">{ domainTypeText }</div> }
 				{ domain?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
@@ -495,6 +492,13 @@ class DomainRow extends PureComponent {
 						/>
 						<div className="domain-row__domain-notice-message">{ noticeText }</div>
 					</div>
+				) }
+				{ site && (
+					<TransferConnectedDomainNudge
+						domain={ domain }
+						location="domains_list"
+						siteSlug={ site.slug }
+					/>
 				) }
 				{ this.renderOverlay() }
 			</div>

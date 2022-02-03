@@ -36,6 +36,10 @@
 		.author-selector__author-toggle {
 			justify-content: unset;
 		}
+
+		div:last-of-type {
+			width: 50%;
+		}
 	}
 
 	.importer__mapping-description {

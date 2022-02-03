@@ -11,16 +11,18 @@ import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Error from './error';
 import Progress from './progress';
-
 import './style.scss';
+import { FailureInfo } from '.';
 
 // Timeout limit for the install to complete.
-const TIMEOUT_LIMIT = 1000 * 15; // 15 seconds.
+const TIMEOUT_LIMIT = 1000 * 45; // 45 seconds.
 
 export default function InstallPlugins( {
 	onFailure,
+	trackRedirect,
 }: {
-	onFailure: () => void;
+	onFailure: ( type: FailureInfo ) => void;
+	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
@@ -54,7 +56,11 @@ export default function InstallPlugins( {
 			return;
 		}
 
-		onFailure();
+		onFailure( {
+			type: 'install',
+			error: softwareError?.message || '',
+			code: softwareError?.code || '',
+		} );
 	}, [ softwareError, onFailure ] );
 
 	// Timeout threshold for the install to complete.
@@ -65,7 +71,11 @@ export default function InstallPlugins( {
 
 		const timeId = setTimeout( () => {
 			setIsTimeoutError( true );
-			onFailure();
+			onFailure( {
+				type: 'install_timeout',
+				error: 'install took too long',
+				code: 'install_timeout',
+			} );
 		}, TIMEOUT_LIMIT );
 
 		return () => {
@@ -94,13 +104,14 @@ export default function InstallPlugins( {
 		}
 
 		if ( softwareApplied ) {
+			trackRedirect();
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
 				page( wcAdmin );
 			}, 500 );
 		}
-	}, [ siteId, softwareApplied, wcAdmin, installFailed ] );
+	}, [ siteId, softwareApplied, wcAdmin, installFailed, trackRedirect ] );
 
 	return (
 		<>

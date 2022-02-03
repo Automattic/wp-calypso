@@ -1,8 +1,8 @@
 /**
  * External Dependencies
  */
+import { focus } from '@wordpress/dom';
 import { useEffect, useCallback, useState } from '@wordpress/element';
-
 /**
  * A hook that constraints tabbing/focus on focuable elements in the given element ref.
  *
@@ -39,23 +39,11 @@ const useFocusTrap = ( ref: React.MutableRefObject< null | HTMLElement > ): void
 	);
 
 	useEffect( () => {
-		const focusableElementSelectors = [
-			'a[href]:not([disabled])',
-			'button:not([disabled])',
-			'textarea:not([disabled])',
-			'input[type="text"]:not([disabled])',
-			'input[type="radio"]:not([disabled])',
-			'input[type="checkbox"]:not([disabled])',
-			'select:not([disabled])',
-		];
-
-		const focusableElements = ref.current?.querySelectorAll< HTMLElement >(
-			focusableElementSelectors.toString()
-		);
+		const focusableElements = focus.focusable.find( ref.current as HTMLElement );
 
 		if ( focusableElements && focusableElements.length ) {
-			setFirstFocusableElement( focusableElements[ 0 ] );
-			setLastFocusableElement( focusableElements[ focusableElements.length - 1 ] );
+			setFirstFocusableElement( focusableElements[ 0 ] as HTMLElement );
+			setLastFocusableElement( focusableElements[ focusableElements.length - 1 ] as HTMLElement );
 		}
 
 		document.addEventListener( 'keydown', handleTrapFocus );

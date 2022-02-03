@@ -7,8 +7,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { isRecentlyRegistered, isExpiringSoon } from 'calypso/lib/domains/utils';
-import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
-import { shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
 import {
 	DOMAIN_EXPIRATION,
 	DOMAIN_EXPIRATION_REDEMPTION,
@@ -16,7 +14,6 @@ import {
 } from 'calypso/lib/url/support';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -169,31 +166,6 @@ class RegisteredDomainType extends Component {
 		return null;
 	}
 
-	renderPendingGSuiteTosNotice() {
-		const { domain, purchase, selectedSite } = this.props;
-
-		if (
-			! hasPendingGSuiteUsers( domain ) ||
-			domain.pendingTransfer ||
-			domain.expired ||
-			domain.isPendingIcannVerification ||
-			isExpiringSoon( domain, 30 ) ||
-			isRecentlyRegistered( domain ) ||
-			( purchase && shouldRenderExpiringCreditCard( purchase ) )
-		) {
-			return null;
-		}
-
-		return (
-			<PendingGSuiteTosNotice
-				siteSlug={ selectedSite.slug }
-				domains={ [ domain ] }
-				section="domain-management"
-				showDomainStatusNotice
-			/>
-		);
-	}
-
 	renderOutboundTransferInProgress() {
 		const { domain, selectedSite } = this.props;
 		return <OutboundTransferConfirmation domain={ domain } siteId={ selectedSite.ID } />;
@@ -339,7 +311,6 @@ class RegisteredDomainType extends Component {
 					{ this.renderRecentlyRegistered() }
 					{ this.renderOutboundTransferInProgress() }
 					{ this.renderDomainOnlyNotice() }
-					{ this.renderPendingGSuiteTosNotice() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />

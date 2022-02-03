@@ -33,7 +33,7 @@ const fetchWPCOMPlugins = ( type: Type, searchTerm?: string ) => {
 export const useWPCOMPlugins = (
 	type: Type,
 	searchTerm?: string,
-	{ enabled = true, staleTime = 1000 * 60 * 60 * 24, refetchOnMount = false }: UseQueryOptions = {}
+	{ enabled = true, staleTime = 1000 * 60 * 60 * 2, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	return useQuery( getCacheKey( type + searchTerm ), () => fetchWPCOMPlugins( type, searchTerm ), {
 		select: ( data ) => normalizePluginsList( data.results ),
@@ -59,8 +59,8 @@ const fetchWPCOMPlugin = ( slug: string ) => {
  */
 export const useWPCOMPlugin = (
 	slug: string,
-	{ enabled = true, staleTime = 1000 * 60 * 60 * 24, refetchOnMount = false }: UseQueryOptions = {}
-): UseQueryResult => {
+	{ enabled = true, staleTime = 1000 * 60 * 60 * 2, refetchOnMount = true }: UseQueryOptions = {}
+): UseQueryResult< any > => {
 	return useQuery( getCacheKey( slug ), () => fetchWPCOMPlugin( slug ), {
 		select: ( data ) => normalizePluginData( { detailsFetched: Date.now() }, data ),
 		enabled: enabled,

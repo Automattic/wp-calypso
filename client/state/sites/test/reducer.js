@@ -36,7 +36,6 @@ describe( 'reducer', () => {
 			'mediaStorage',
 			'plans',
 			'products',
-			'monitor',
 			'requesting',
 			'blogStickers',
 			'hasAllSitesList',

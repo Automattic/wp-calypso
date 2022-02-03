@@ -47,15 +47,17 @@ function LicensingPromptDialog( { siteId }: Props ) {
 
 	const title = useMemo( () => {
 		if ( hasOneDetachedLicense ) {
-			return preventWidows(
-				translate( 'Your %(productName)s is pending activation', {
-					args: {
-						productName: detachedUserLicense && detachedUserLicense.product,
-					},
-				} )
-			);
+			return detachedUserLicense?.product
+				? preventWidows(
+						translate( 'Activate %(productName)s', {
+							args: {
+								productName: detachedUserLicense.product,
+							},
+						} )
+				  )
+				: preventWidows( translate( 'Your product is pending activation' ) );
 		}
-		return preventWidows( translate( 'You have an available product license key' ) );
+		return preventWidows( translate( 'Activate your new Jetpack features' ) );
 	}, [ detachedUserLicense, hasOneDetachedLicense, translate ] );
 
 	const activateProductClick = useCallback( () => {
@@ -89,7 +91,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 			<p className="licensing-prompt-dialog__instructions">
 				{ preventWidows(
 					translate(
-						'{{strong}}Check your email{{/strong}} for your license key. You should have received it after making your purchase.',
+						'Find the license key in your purchase confirmation email to activate your new Jetpack features.',
 						{
 							components: {
 								strong: <strong />,

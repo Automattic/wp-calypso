@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
 	isPersonal,
 	isPremium,
@@ -153,17 +154,15 @@ class ManagePurchase extends Component {
 		cancelLink: null,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( ! this.isDataValid() ) {
 			page.redirect( this.props.purchaseListUrl );
 			return;
 		}
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.isDataValid( prevProps ) && ! this.isDataValid() ) {
 			page.redirect( this.props.purchaseListUrl );
 			return;
 		}
@@ -526,7 +525,7 @@ class ManagePurchase extends Component {
 		};
 
 		return (
-			<CompactCard href={ link } onClick={ onClick }>
+			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				{ text }
 			</CompactCard>
 		);

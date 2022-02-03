@@ -6,7 +6,6 @@ import {
 	getSiteUserConnectionsForService,
 	getRemovableConnections,
 	hasFetchedConnections,
-	isFetchingConnection,
 	isFetchingConnections,
 } from '../selectors';
 
@@ -333,74 +332,6 @@ describe( '#hasFetchedConnections()', () => {
 		);
 
 		expect( hasFetched ).to.be.true;
-	} );
-} );
-
-describe( 'isFetchingConnection()', () => {
-	test( 'should return false if fetch has never been triggered for a connection', () => {
-		const isFetching = isFetchingConnection(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnection: {},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).to.be.false;
-	} );
-
-	test( 'should return true if connection is currently fetching', () => {
-		const isFetching = isFetchingConnection(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnection: {
-							2916284: true,
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).to.be.true;
-	} );
-
-	test( 'should return false if connection is not currently being fetched', () => {
-		const isFetching = isFetchingConnection(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnection: {
-							2916284: false,
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).to.be.false;
-	} );
-
-	test( 'should return false if connections are fetching, but not the given connection', () => {
-		const isFetching = isFetchingConnection(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnection: {
-							77203074: true,
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).to.be.false;
 	} );
 } );
 

@@ -10,7 +10,8 @@ import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { domainManagementList, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-setup-info-link';
 import { isMappingVerificationSuccess } from './connect-domain-step-verification-status-parsing.js';
@@ -20,7 +21,15 @@ import { connectADomainStepsDefinition } from './page-definitions.js';
 
 import './style.scss';
 
-function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialStep, showErrors } ) {
+function ConnectDomainStep( {
+	domain,
+	selectedSite,
+	initialSetupInfo,
+	initialStep,
+	showErrors,
+	domains,
+	hasSiteDomainsLoaded,
+} ) {
 	const { __ } = useI18n();
 	const [ pageSlug, setPageSlug ] = useState( stepSlug.SUGGESTED_START );
 	const [ verificationStatus, setVerificationStatus ] = useState( {} );
@@ -34,6 +43,9 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 	const mode = connectADomainStepsDefinition[ pageSlug ].mode;
 	const step = connectADomainStepsDefinition[ pageSlug ].step;
 
+	const isDomainConnected =
+		hasSiteDomainsLoaded && ! domains.some( ( _domain ) => _domain.domain === domain );
+
 	const statusRef = useRef( {} );
 
 	useEffect( () => {
@@ -41,6 +53,12 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 			setPageSlug( initialStep );
 		}
 	}, [ initialStep, setPageSlug ] );
+
+	useEffect( () => {
+		if ( isDomainConnected ) {
+			page( domainUseMyDomain( selectedSite.slug ) );
+		}
+	}, [ isDomainConnected, selectedSite.slug ] );
 
 	const verifyConnection = useCallback(
 		( setStepAfterVerify = true ) => {
@@ -77,7 +95,11 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 	);
 
 	useEffect( () => {
-		if ( statusRef.current?.hasLoadedStatusInfo?.[ domain ] || loadingDomainSetupInfo ) {
+		if (
+			statusRef.current?.hasLoadedStatusInfo?.[ domain ] ||
+			loadingDomainSetupInfo ||
+			! isDomainConnected
+		) {
 			return;
 		}
 
@@ -85,7 +107,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 			setDomainSetupInfoError( {} );
 			setLoadingDomainSetupInfo( true );
 			wpcom
-				.domain()
+				.domain( domain )
 				.mappingSetupInfo( selectedSite.ID, domain )
 				.then( ( data ) => {
 					setDomainSetupInfo( { data } );
@@ -94,16 +116,28 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 				.catch( ( error ) => setDomainSetupInfoError( { error } ) )
 				.finally( () => setLoadingDomainSetupInfo( false ) );
 		} )();
-	}, [ domain, domainSetupInfo, initialSetupInfo, loadingDomainSetupInfo, selectedSite.ID ] );
+
+		return () => {
+			setDomainSetupInfo( {} );
+			setLoadingDomainSetupInfo( false );
+		};
+	}, [
+		domain,
+		domainSetupInfo,
+		initialSetupInfo,
+		loadingDomainSetupInfo,
+		selectedSite.ID,
+		isDomainConnected,
+	] );
 
 	useEffect( () => {
-		if ( ! showErrors || statusRef.current?.hasFetchedVerificationStatus ) {
+		if ( ! showErrors || statusRef.current?.hasFetchedVerificationStatus || ! isDomainConnected ) {
 			return;
 		}
 
 		statusRef.current.hasFetchedVerificationStatus = true;
 		verifyConnection( false );
-	}, [ showErrors, verifyConnection ] );
+	}, [ showErrors, verifyConnection, isDomainConnected ] );
 
 	const goBack = () => {
 		const prevPageSlug = connectADomainStepsDefinition[ pageSlug ]?.prev;
@@ -160,11 +194,20 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 
 ConnectDomainStep.propTypes = {
 	domain: PropTypes.string.isRequired,
+	domains: PropTypes.array,
 	selectedSite: PropTypes.object,
 	initialStep: PropTypes.string,
 	showErrors: PropTypes.bool,
+	hasSiteDomainsLoaded: PropTypes.bool,
 };
 
-export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(
-	ConnectDomainStep
-);
+export default connect( ( state ) => {
+	const selectedSite = getSelectedSite( state );
+	const siteId = selectedSite?.ID;
+
+	return {
+		domains: getDomainsBySiteId( state, siteId ),
+		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
+		selectedSite,
+	};
+} )( ConnectDomainStep );

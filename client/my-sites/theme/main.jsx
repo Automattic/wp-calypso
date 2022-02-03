@@ -31,13 +31,11 @@ import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
-import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
@@ -62,6 +60,7 @@ import {
 	getThemeRequestErrors,
 	getThemeForumUrl,
 	getThemeDemoUrl,
+	shouldShowTryAndCustomize,
 } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -112,9 +111,6 @@ class ThemeSheet extends Component {
 			action: PropTypes.func,
 			getUrl: PropTypes.func,
 		} ),
-		blockEditorSettings: PropTypes.shape( {
-			is_fse_eligible: PropTypes.bool,
-		} ),
 	};
 
 	static defaultProps = {
@@ -129,9 +125,8 @@ class ThemeSheet extends Component {
 		this.scrollToTop();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillUpdate( nextProps ) {
-		if ( nextProps.id !== this.props.id ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.props.id !== prevProps.id ) {
 			this.scrollToTop();
 		}
 	}
@@ -196,24 +191,15 @@ class ThemeSheet extends Component {
 	};
 
 	renderBar = () => {
-		const { author, blockEditorSettings, name, taxonomies, translate } = this.props;
+		const { author, name, translate } = this.props;
 
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
-		const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
-		const showBetaBadge = isFullSiteEditingTheme( { taxonomies } ) && isFSEEligible;
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">
-					{ title }
-					{ showBetaBadge && (
-						<Badge type="warning-clear" className="theme__sheet-badge-beta">
-							{ translate( 'Beta' ) }
-						</Badge>
-					) }
-				</span>
+				<span className="theme__sheet-bar-title">{ title }</span>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
@@ -822,17 +808,25 @@ class ThemeSheet extends Component {
 }
 
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
-const ThemeSheetWithEditorSettings = withBlockEditorSettings( ConnectedThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack, demoUrl } = props;
+	const {
+		siteId,
+		isActive,
+		isLoggedIn,
+		isPremium,
+		isPurchased,
+		isJetpack,
+		demoUrl,
+		showTryAndCustomize,
+	} = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
 	const needsJetpackPlanUpgrade = isJetpack && isPremium && ! isPurchased;
 
-	if ( needsJetpackPlanUpgrade ) {
-		secondaryOption = '';
+	if ( ! showTryAndCustomize ) {
+		secondaryOption = null;
 	}
 
 	if ( ! isLoggedIn ) {
@@ -849,7 +843,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	}
 
 	return (
-		<ThemeSheetWithEditorSettings
+		<ConnectedThemeSheet
 			{ ...props }
 			demo_uri={ demoUrl }
 			siteId={ siteId }
@@ -896,6 +890,7 @@ export default connect(
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
+			showTryAndCustomize: shouldShowTryAndCustomize( state, id, siteId ),
 			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),

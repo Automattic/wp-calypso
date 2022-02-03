@@ -12,11 +12,13 @@ describe( 'getLastGoodRewindBackup()', () => {
 		const state = {
 			rewind: {
 				123: {
-					backups: [
-						{ id: 1, status: 'finished' },
-						{ id: 2, status: 'finished' },
-						{ id: 3, status: 'finished' },
-					],
+					backups: {
+						backups: [
+							{ id: 1, status: 'finished' },
+							{ id: 2, status: 'finished' },
+							{ id: 3, status: 'finished' },
+						],
+					},
 				},
 			},
 		};
@@ -40,11 +42,13 @@ describe( 'getLastGoodRewindBackup()', () => {
 		const state = {
 			rewind: {
 				123: {
-					backups: [
-						{ id: 1, status: 'failed' },
-						{ id: 2, status: 'failed' },
-						{ id: 3, status: 'failed' },
-					],
+					backups: {
+						backups: [
+							{ id: 1, status: 'failed' },
+							{ id: 2, status: 'failed' },
+							{ id: 3, status: 'failed' },
+						],
+					},
 				},
 			},
 		};
@@ -57,11 +61,13 @@ describe( 'getLastGoodRewindBackup()', () => {
 		const state = {
 			rewind: {
 				123: {
-					backups: [
-						{ id: 1, status: 'failed' },
-						{ id: 2, status: 'finished' },
-						{ id: 3, status: 'finished' },
-					],
+					backups: {
+						backups: [
+							{ id: 1, status: 'failed' },
+							{ id: 2, status: 'finished' },
+							{ id: 3, status: 'finished' },
+						],
+					},
 				},
 			},
 		};

@@ -134,7 +134,10 @@ async function stripeCardProcessor(
 			return stripeResponse;
 		} )
 		.then( ( stripeResponse ) => {
-			if ( stripeResponse?.redirect_url ) {
+			if (
+				stripeResponse?.redirect_url &&
+				! stripeResponse?.message?.payment_intent_client_secret
+			) {
 				return makeRedirectResponse( stripeResponse.redirect_url );
 			}
 			return makeSuccessResponse( stripeResponse );

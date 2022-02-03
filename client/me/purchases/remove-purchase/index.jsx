@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
 	isDomainMapping,
 	isDomainRegistration,
@@ -414,7 +415,6 @@ class RemovePurchase extends Component {
 
 		const defaultContent = (
 			<>
-				<Gridicon icon="trash" />
 				{
 					// translators: productName is a product name, like Jetpack
 					translate( 'Remove %(productName)s', { args: { productName } } )
@@ -429,6 +429,7 @@ class RemovePurchase extends Component {
 			<>
 				<Wrapper tagName="button" className={ wrapperClassName } onClick={ this.openDialog }>
 					{ this.props.children ? this.props.children : defaultContent }
+					<Gridicon className="card__link-indicator" icon="trash" />
 				</Wrapper>
 				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
 				{ this.shouldHandleMarketplaceSubscriptions() &&

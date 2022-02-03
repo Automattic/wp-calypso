@@ -38,6 +38,9 @@ const SITE_TAKEN_ERROR_CODES = [
 
 const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
 
+const EMAIL_TRUCE_CAMPAIGN_REF = 'p2-email-truce';
+const EMAIL_TRUCE_CAMPAIGN_ID = 'p2-email-truce';
+
 /**
  * Module variables
  */
@@ -280,12 +283,18 @@ class P2Site extends Component {
 
 			this.resetAnalyticsData();
 
-			this.props.submitSignupStep( {
+			const stepData = {
 				stepName: this.props.stepName,
 				form: this.state.form,
 				site,
 				siteTitle,
-			} );
+			};
+
+			if ( this.props.refParameter === EMAIL_TRUCE_CAMPAIGN_REF ) {
+				stepData.campaign = EMAIL_TRUCE_CAMPAIGN_ID;
+			}
+
+			this.props.submitSignupStep( stepData );
 
 			this.props.goToNextStep();
 		} );
@@ -374,7 +383,7 @@ class P2Site extends Component {
 					className="p2-site__validation-site-title"
 				>
 					<FormLabel htmlFor="site-title-input">
-						{ this.props.translate( 'Name your team' ) }
+						{ this.props.translate( 'Name your workspace' ) }
 					</FormLabel>
 					<FormTextInput
 						id="site-title-input"
@@ -395,7 +404,7 @@ class P2Site extends Component {
 					className="p2-site__validation-site"
 				>
 					<FormLabel htmlFor="site-address-input">
-						{ this.props.translate( 'Choose an address for your P2 workspace' ) }
+						{ this.props.translate( 'Choose an address for your workspace' ) }
 					</FormLabel>
 					<div className="p2-site__site-url-container">
 						<FormTextInput
@@ -452,11 +461,13 @@ class P2Site extends Component {
 	render() {
 		return (
 			<P2StepWrapper
+				className="p2-site__create"
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.translate(
-					'Share, discuss, review, and collaborate across time zones, without interruptions.'
+				headerText={ this.props.translate( 'Create a workspace' ) }
+				subHeaderText={ this.props.translate(
+					'Your workspace is where you will create all the different P2s for teams, projects, topics, etc.'
 				) }
 			>
 				<form className="p2-site__form" onSubmit={ this.handleSubmit } noValidate>

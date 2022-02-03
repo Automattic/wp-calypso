@@ -9,19 +9,7 @@ import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { getTitanProductName } from 'calypso/lib/titan';
 import { TITAN_PRODUCT_TYPE } from 'calypso/lib/titan/constants';
 import { ADDING_GSUITE_TO_YOUR_SITE, ADDING_TITAN_TO_YOUR_SITE } from 'calypso/lib/url/support';
-import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import type { EmailProviderFeatures } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
-
-export const isBillingAvailable = (
-	emailProviderFeatures: EmailProviderFeatures,
-	intervalLength: IntervalLength
-) => {
-	if ( intervalLength === IntervalLength.ANNUALLY ) {
-		return true;
-	}
-
-	return emailProviderFeatures.slug !== GOOGLE_WORKSPACE_PRODUCT_TYPE;
-};
 
 export const professionalEmailFeatures: EmailProviderFeatures = {
 	badge: (

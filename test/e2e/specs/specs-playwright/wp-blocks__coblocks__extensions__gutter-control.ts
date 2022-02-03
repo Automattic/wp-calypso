@@ -3,23 +3,24 @@
  * @group coblocks
  */
 import {
-	setupHooks,
-	BrowserHelper,
+	envVariables,
 	DataHelper,
 	GutenbergEditorPage,
 	PricingTableBlock,
 	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
 
 let accountName: string;
-if ( BrowserHelper.targetCoBlocksEdge() ) {
+if ( envVariables.COBLOCKS_EDGE ) {
 	accountName = 'coBlocksSimpleSiteEdgeUser';
-} else if ( BrowserHelper.targetGutenbergEdge() ) {
+} else if ( envVariables.GUTENBERG_EDGE ) {
 	accountName = 'gutenbergSimpleSiteEdgeUser';
 } else {
 	accountName = 'gutenbergSimpleSiteUser';
 }
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
 	let page: Page;
@@ -27,8 +28,8 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 
-	setupHooks( async ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 		testAccount = new TestAccount( accountName );
 		gutenbergEditorPage = new GutenbergEditorPage( page );
 

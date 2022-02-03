@@ -1,19 +1,17 @@
 import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
-import { memo } from 'react';
 
 const headerClass = 'features-helper__feature-header';
 const itemClass = 'features-helper__feature-item';
 const enabledClass = 'features-helper__feature-item-enabled';
 const disabledClass = 'features-helper__feature-item-disabled';
 
-export const FeatureList = memo( () => {
+export default function FeatureList() {
 	const currentXLProjects = [];
 	const enabledFeatures = config.enabledFeatures();
 	return (
 		<>
 			<div>Features</div>
-			<Card className="features-helper__current-features">
+			<div className="features-helper__current-features">
 				<div className={ headerClass }>Current XL Projects</div>
 				{ currentXLProjects.map( ( flag ) => {
 					const isFlagEnabled = config.isEnabled( flag );
@@ -32,8 +30,7 @@ export const FeatureList = memo( () => {
 						{ flag }
 					</div>
 				) ) }
-			</Card>
+			</div>
 		</>
 	);
-} );
-export default FeatureList;
+}

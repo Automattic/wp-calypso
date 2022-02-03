@@ -48,7 +48,7 @@ import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
-import { filterDomainsByOwner } from './helpers';
+import { filterDomainsByOwner, filterDomainOnlyDomains } from './helpers';
 import ListItemPlaceholder from './item-placeholder';
 import {
 	countDomainsInOrangeStatus,
@@ -270,6 +270,11 @@ class AllDomains extends Component {
 
 		const selectedFilter = context?.query?.filter;
 
+		const domains =
+			selectedFilter === 'domain-only'
+				? filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails(), sites )
+				: filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter );
+
 		const domainsTableColumns = [
 			{
 				name: 'domain',
@@ -335,11 +340,10 @@ class AllDomains extends Component {
 					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
 				bubble: countDomainsInOrangeStatus(
-					filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter ).map(
-						( domain ) =>
-							resolveDomainStatus( domain, null, {
-								getMappingErrors: true,
-							} )
+					domains.map( ( domain ) =>
+						resolveDomainStatus( domain, null, {
+							getMappingErrors: true,
+						} )
 					)
 				),
 			},
@@ -376,10 +380,7 @@ class AllDomains extends Component {
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
 				<DomainsTable
 					currentRoute={ currentRoute }
-					domains={ filterDomainsByOwner(
-						this.mergeFilteredDomainsWithDomainsDetails(),
-						selectedFilter
-					) }
+					domains={ domains }
 					handleDomainItemToggle={ this.handleDomainItemToggle }
 					domainsTableColumns={ domainsTableColumns }
 					isManagingAllSites={ true }
@@ -548,29 +549,35 @@ class AllDomains extends Component {
 	}
 
 	renderDomainTableFilterButton() {
-		const { context } = this.props;
+		const { context, translate, sites } = this.props;
 
 		const selectedFilter = context?.query?.filter;
 		const nonWpcomDomains = this.mergeFilteredDomainsWithDomainsDetails();
 
 		const filterOptions = [
 			{
-				label: 'All domains',
+				label: translate( 'All domains' ),
 				value: '',
 				path: domainManagementRoot(),
 				count: nonWpcomDomains?.length,
 			},
 			{
-				label: 'Owned by me',
+				label: translate( 'Owned by me' ),
 				value: 'owned-by-me',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
-				label: 'Owned by others',
+				label: translate( 'Owned by others' ),
 				value: 'owned-by-others',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-others' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-others' )?.length,
+			},
+			{
+				label: translate( 'Parked domains' ),
+				value: 'domain-only',
+				path: domainManagementRoot() + '?' + stringify( { filter: 'domain-only' } ),
+				count: filterDomainOnlyDomains( nonWpcomDomains, sites )?.length,
 			},
 		];
 

@@ -28,7 +28,12 @@ import {
 	removeSiteSlugDependency,
 } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { getCurrentFlowName, getPreviousFlowName } from 'calypso/state/signup/flow/selectors';
+import { resetExcludedSteps } from 'calypso/state/signup/flow/actions';
+import {
+	getCurrentFlowName,
+	getPreviousFlowName,
+	getExcludedSteps,
+} from 'calypso/state/signup/flow/selectors';
 import {
 	completeSignupStep,
 	invalidateStep,
@@ -43,7 +48,7 @@ const debug = debugModule( 'calypso:signup' );
 
 interface StepDependendencies {
 	dependencies?: string[];
-	providedDependencies?: string[];
+	providedDependencies?: Dependencies;
 	providesDependencies?: string[];
 	optionalDependencies?: string[];
 }
@@ -459,6 +464,7 @@ export default class SignupFlowController {
 
 	reset() {
 		this._reduxStore.dispatch( resetSignup() );
+		this._reduxStore.dispatch( resetExcludedSteps() );
 	}
 
 	cleanup() {
@@ -466,8 +472,18 @@ export default class SignupFlowController {
 	}
 
 	changeFlowName( flowName: string ) {
-		const userLoggedIn = isUserLoggedIn( this._reduxStore.getState() );
-		flows.resetExcludedSteps();
+		const state = this._reduxStore.getState();
+		const userLoggedIn = isUserLoggedIn( state );
+
+		// Restore the exclude steps when the user goes back to the flow with branch steps.
+		// For example, if one of steps have to checkout and user selects 3rd-party payment
+		// we need to keep exclude steps after they finish the checkout
+		if ( this._flow.enableBranchSteps ) {
+			flows.excludeSteps( getExcludedSteps( state ) );
+		} else {
+			flows.resetExcludedSteps();
+		}
+
 		this._flowName = flowName;
 		this._flow = flows.getFlow( flowName, userLoggedIn );
 	}
