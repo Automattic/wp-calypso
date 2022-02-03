@@ -20,9 +20,10 @@ export const schema = {
 						type: 'string',
 					},
 					images: {
-						type: 'array',
-						items: {
-							type: 'string',
+						type: 'object',
+						properties: {
+							caption: '',
+							url: '',
 						},
 					},
 				},
@@ -53,40 +54,4 @@ export interface WebsiteContentCollection {
 export const initialState: WebsiteContentCollection = {
 	currentIndex: 0,
 	websiteContent: [],
-};
-
-export const initialTestState: WebsiteContentCollection = {
-	currentIndex: 0,
-	websiteContent: [
-		{
-			id: 'Home',
-			title: 'Homepage',
-			content: '',
-			images: [
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-			],
-		},
-		{
-			id: 'About',
-			title: 'Information About You',
-			content: '',
-			images: [
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-			],
-		},
-		{
-			id: 'Contact',
-			title: 'Contact Info',
-			content: '',
-			images: [
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-			],
-		},
-	],
 };

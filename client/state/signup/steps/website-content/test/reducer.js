@@ -8,8 +8,43 @@ import {
 	initializePages,
 } from '../actions';
 import websiteContentCollectionReducer from '../reducer';
-import { initialTestState, initialState } from '../schema';
+import { initialState } from '../schema';
 
+const initialTestState = {
+	currentIndex: 0,
+	websiteContent: [
+		{
+			id: 'Home',
+			title: 'Homepage',
+			content: '',
+			images: [
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+			],
+		},
+		{
+			id: 'About',
+			title: 'Information About You',
+			content: '',
+			images: [
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+			],
+		},
+		{
+			id: 'Contact',
+			title: 'Contact Info',
+			content: '',
+			images: [
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+			],
+		},
+	],
+};
 describe( 'reducer', () => {
 	test( 'should update the current index', () => {
 		expect(

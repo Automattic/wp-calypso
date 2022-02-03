@@ -14,6 +14,7 @@ import {
 	getWebsiteContentDataCollectionIndex,
 } from 'calypso/state/signup/steps/website-content/selectors';
 import { sectionGenerator } from './section-generator';
+import './style.scss';
 
 interface WebsiteContentStepProps {
 	additionalStepData: object;
