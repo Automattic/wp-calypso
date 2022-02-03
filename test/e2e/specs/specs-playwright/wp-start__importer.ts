@@ -2,7 +2,7 @@
  * @group calypso-pr
  */
 
-import { DataHelper, skipDescribeIf, StartImportFlow, TestAccount } from '@automattic/calypso-e2e';
+import { DataHelper, StartImportFlow, TestAccount } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
@@ -10,12 +10,6 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 	let page: Page;
 	let startImportFlow: StartImportFlow;
-
-	// Check if we are running on wpcalypso or production.
-	// Remove when 'onboarding/import-from-wordpress' will be enabled on wpcalypso.
-	const isLocal = DataHelper.getCalypsoURL()
-		.toLowerCase()
-		.includes( 'http://calypso.localhost:3000' );
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -37,11 +31,8 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		} );
 	};
 
-	/**
-	 * Remove the skip-if conditional when 'onboarding/import-from-wordpress' is enabled on wpcalypso.
-	 * Substitute it with 'describe'.
-	 */
-	skipDescribeIf( ! isLocal )( 'Follow the WordPress import flow', () => {
+	// WordPress content-only flow
+	describe( 'Follow the WordPress import flow', () => {
 		navigateToSetup();
 
 		it( 'Start a WordPress import', async () => {
