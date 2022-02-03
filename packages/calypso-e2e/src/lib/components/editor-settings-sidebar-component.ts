@@ -26,6 +26,7 @@ const selectors = {
 	visibilityPopover: 'fieldset.editor-post-visibility__dialog-fieldset',
 	visibilityOption: ( option: PrivacyOptions ) => `input[value="${ option.toLowerCase() }"]`,
 	postPasswordInput: '.editor-post-visibility__dialog-password-input',
+	trashPostButton: '.editor-post-trash',
 
 	// Category
 	categoryCheckbox: ( categoryName: string ) =>
@@ -128,6 +129,16 @@ export class EditorSettingsSidebarComponent {
 	 */
 	async setPostPassword( password: string ): Promise< void > {
 		await this.frame.fill( selectors.postPasswordInput, password );
+	}
+
+	/**
+	 * Trashes the current post.
+	 */
+	async trashPost(): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.frame.click( selectors.trashPostButton ),
+		] );
 	}
 
 	/**
