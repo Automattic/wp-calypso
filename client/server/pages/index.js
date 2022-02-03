@@ -13,7 +13,9 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import { filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -92,7 +94,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request, entrypoint = 'entry-main' ) {
+function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	let initialServerState = {};
 	// We don't compare context.query against an allowed list here. Explicit allowance lists are route-specific,
 	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
@@ -115,6 +117,16 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 
 	const reduxStore = createReduxStore( initialServerState );
 	setStore( reduxStore );
+
+	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
+	const showGdprBanner = shouldSeeGdprBanner(
+		request.cookies.country_code || geoIPCountryCode,
+		request.cookies.sensitive_pixel_option
+	);
+
+	if ( ! request.cookies.country_code && geoIPCountryCode ) {
+		response.cookie( 'country_code', geoIPCountryCode );
+	}
 
 	const flags = ( request.query.flags || '' ).split( ',' );
 	const context = Object.assign( {}, request.context, {
@@ -141,6 +153,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 			flags.includes( 'use-translation-chunks' ) ||
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		useLoadingEllipsis: !! request.query.loading_ellipsis,
+		showGdprBanner,
 	} );
 
 	context.app = {
@@ -194,7 +207,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 }
 
 const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
-	req.context = getDefaultContext( req, entrypoint );
+	req.context = getDefaultContext( req, res, entrypoint );
 	next();
 };
 
@@ -292,7 +305,13 @@ function setUpLoggedInRoute( req, res, next ) {
 				// Setting user in the state is safe as long as we don't cache it
 				req.context.store.dispatch( setCurrentUser( data ) );
 
-				if ( data.localeSlug ) {
+				if (
+					data.localeSlug &&
+					! (
+						data.use_fallback_for_incomplete_languages &&
+						isTranslatedIncompletely( data.localeVariant || data.localeSlug )
+					)
+				) {
 					req.context.lang = data.localeSlug;
 					req.context.store.dispatch( {
 						type: LOCALE_SET,

@@ -24,9 +24,8 @@ import blogStickers from './blog-stickers/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import { featuresReducer as features } from './features/reducer';
-import guidedTransfer from './guided-transfer/reducer';
+import introOffers from './intro-offers/reducer';
 import mediaStorage from './media-storage/reducer';
-import monitor from './monitor/reducer';
 import { plans } from './plans/reducer';
 import { products } from './products/reducer';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
@@ -343,13 +342,12 @@ export default combineReducers( {
 	connection,
 	domains,
 	requestingAll,
+	introOffers,
 	items,
 	mediaStorage,
 	plans,
 	products,
 	features,
-	guidedTransfer,
-	monitor,
 	requesting,
 	blogStickers,
 	hasAllSitesList,

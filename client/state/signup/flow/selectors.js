@@ -9,3 +9,7 @@ export function getCurrentFlowName( state ) {
 export function getPreviousFlowName( state ) {
 	return get( state, 'signup.flow.previousFlowName', '' );
 }
+
+export function getExcludedSteps( state ) {
+	return get( state, 'signup.flow.excludedSteps', [] );
+}

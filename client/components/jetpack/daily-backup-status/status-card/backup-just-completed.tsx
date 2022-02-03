@@ -17,9 +17,7 @@ const BackupJustCompleted: React.FC< Props > = ( { justCompletedBackupDate, last
 	const getDisplayDate = useGetDisplayDate();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteLastBackupDate = useDateWithOffset( lastBackupDate, {
-		shouldExecute: !! lastBackupDate,
-	} );
+	const siteLastBackupDate = useDateWithOffset( lastBackupDate );
 	const justCompletedDisplayDate = getDisplayDate( justCompletedBackupDate, false );
 	const lastBackupDisplayDate = getDisplayDate( lastBackupDate, false );
 

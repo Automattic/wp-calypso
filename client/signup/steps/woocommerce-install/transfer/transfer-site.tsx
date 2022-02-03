@@ -14,13 +14,15 @@ import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Error from './error';
 import Progress from './progress';
-
 import './style.scss';
+import { FailureInfo } from '.';
 
 export default function TransferSite( {
 	onFailure,
+	trackRedirect,
 }: {
-	onFailure: () => void;
+	onFailure: ( type: FailureInfo ) => void;
+	trackRedirect: () => void;
 } ): ReactElement | null {
 	const dispatch = useDispatch();
 
@@ -62,7 +64,9 @@ export default function TransferSite( {
 		() => {
 			dispatch( requestLatestAtomicTransfer( siteId ) );
 		},
-		isTransferringStatusFailed || transferStatus === transferStates.COMPLETED ? null : 3000
+		transferFailed || isTransferringStatusFailed || transferStatus === transferStates.COMPLETED
+			? null
+			: 3000
 	);
 
 	// Poll for software status
@@ -71,7 +75,10 @@ export default function TransferSite( {
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
 		// Only poll if the transfer is completed and not failed
-		isTransferringStatusFailed || transferStatus !== transferStates.COMPLETED || softwareApplied
+		transferFailed ||
+			isTransferringStatusFailed ||
+			transferStatus !== transferStates.COMPLETED ||
+			softwareApplied
 			? null
 			: 3000
 	);
@@ -100,9 +107,22 @@ export default function TransferSite( {
 		if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
 			setTransferFailed( true );
-			onFailure();
+
+			onFailure( {
+				type: 'transfer',
+				error: transferError?.message || softwareError?.message || '',
+				code: transferError?.code || softwareError?.code || '',
+			} );
 		}
-	}, [ siteId, transferStatus, isTransferringStatusFailed, onFailure ] );
+	}, [
+		siteId,
+		transferStatus,
+		isTransferringStatusFailed,
+		onFailure,
+		transferError,
+		softwareError,
+		softwareStatus,
+	] );
 
 	// Redirect to wc-admin once software installation is confirmed.
 	useEffect( () => {
@@ -111,13 +131,34 @@ export default function TransferSite( {
 		}
 
 		if ( softwareApplied ) {
+			trackRedirect();
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
 				page( wcAdmin );
 			}, 500 );
 		}
-	}, [ siteId, softwareApplied, wcAdmin ] );
+	}, [ siteId, softwareApplied, wcAdmin, trackRedirect ] );
+
+	// Timeout threshold for the install to complete.
+	useEffect( () => {
+		if ( transferFailed ) {
+			return;
+		}
+
+		const timeId = setTimeout( () => {
+			setTransferFailed( true );
+			onFailure( {
+				type: 'transfer_timeout',
+				error: 'transfer took too long.',
+				code: 'transfer_timeout',
+			} );
+		}, 1000 * 180 );
+
+		return () => {
+			window?.clearTimeout( timeId );
+		};
+	}, [ onFailure, transferFailed ] );
 
 	return (
 		<>

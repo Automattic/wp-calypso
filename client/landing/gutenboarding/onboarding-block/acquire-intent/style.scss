@@ -35,12 +35,6 @@
 		flex-wrap: wrap;
 		align-items: baseline;
 	}
-
-	.vertical-select + & {
-		@include break-medium {
-			margin-top: 20px;
-		}
-	}
 }
 
 .site-title__input-label {
@@ -55,6 +49,11 @@
 .site-title__input-wrapper {
 	position: relative;
 	flex: 1;
+
+	&.has-overflowing-placeholder {
+		flex-basis: 100%;
+		max-width: 100%;
+	}
 
 	@include break-small {
 		min-width: 300px;
@@ -102,30 +101,4 @@
 		margin-top: 40px;
 		justify-content: flex-start;
 	}
-}
-
-// The Action Buttons footer is only displayed in the FSE Beta flow,
-// where the Acquire Intent step gains an additional "go back" button.
-.acquire-intent__footer.action-buttons {
-	margin: 0;
-	justify-content: space-between;
-
-	@include break-small {
-		margin-top: 40px;
-		justify-content: flex-start;
-	}
-}
-
-.acquire-intent__mobile-vertical-input {
-	display: flex;
-	flex-wrap: wrap;
-}
-
-.acquire-intent__mobile-next-arrow,
-.acquire-intent__mobile-back-arrow {
-	cursor: pointer;
-}
-
-.acquire-intent__mobile-back-arrow {
-	margin-bottom: 20px;
 }

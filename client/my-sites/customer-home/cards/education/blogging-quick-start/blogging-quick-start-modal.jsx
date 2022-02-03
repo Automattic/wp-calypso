@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import VideosUi from 'calypso/components/videos-ui';
 import ModalFooterBar from 'calypso/components/videos-ui/modal-footer-bar';
@@ -8,6 +9,13 @@ import './style.scss';
 
 const BloggingQuickStartModal = ( props ) => {
 	const { isVisible = false, onClose = () => {} } = props;
+
+	// Scroll to top on initial load regardless of previous page position
+	useEffect( () => {
+		if ( isVisible ) {
+			window.scrollTo( 0, 0 );
+		}
+	}, [ isVisible ] );
 
 	return (
 		isVisible && (

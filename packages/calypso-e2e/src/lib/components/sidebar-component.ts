@@ -1,6 +1,6 @@
 import { ElementHandle, Page } from 'playwright';
-import { getTargetDeviceName } from '../../browser-helper';
 import { getCalypsoURL } from '../../data-helper';
+import envVariables from '../../env-variables';
 import { NavbarComponent } from './navbar-component';
 
 const selectors = {
@@ -47,7 +47,7 @@ export class SidebarComponent {
 	async navigate( item: string, subitem?: string ): Promise< void > {
 		await this.waitForSidebarInitialization();
 
-		if ( getTargetDeviceName() === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await this.openMobileSidebar();
 		}
 
@@ -92,11 +92,9 @@ export class SidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async switchSite(): Promise< void > {
-		const device = getTargetDeviceName();
-
 		await this.waitForSidebarInitialization();
 
-		if ( device === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await this.openMobileSidebar();
 		}
 

@@ -215,7 +215,6 @@ class DnsRecordsList extends Component {
 			<DnsRecordData
 				key={ 'domain-connect-record' }
 				dnsRecord={ record }
-				onDeleteDns={ this.deleteDns }
 				selectedDomainName={ selectedDomainName }
 				selectedSite={ selectedSite }
 				enabled={ enabled }
@@ -243,7 +242,6 @@ class DnsRecordsList extends Component {
 				<DnsRecordData
 					key={ index }
 					dnsRecord={ dnsRecord }
-					onDeleteDns={ this.deleteDns }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
 					enabled={ true }

@@ -4,13 +4,9 @@ import { localize, TranslateResult } from 'i18n-calypso';
 import { map, pickBy } from 'lodash';
 import { Component, MouseEvent } from 'react';
 import { connect } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-settings-query';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
-import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { Theme } from 'calypso/types';
 import { trackClick } from '../helpers';
@@ -29,7 +25,6 @@ interface Option {
 }
 
 interface CurrentThemeProps {
-	blockEditorSettings: BlockEditorSettings;
 	currentTheme: Theme | null;
 	currentThemeId: string | null;
 	name: string;
@@ -46,7 +41,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 	trackClick = ( event: MouseEvent< HTMLButtonElement > ) => trackClick( 'current theme', event );
 
 	render() {
-		const { currentTheme, currentThemeId, blockEditorSettings, siteId, translate } = this.props;
+		const { currentTheme, currentThemeId, siteId, translate } = this.props;
 		const placeholderText = <span className="current-theme__placeholder">loading...</span>;
 		const text = currentTheme && currentTheme.name ? currentTheme.name : placeholderText;
 
@@ -59,8 +54,6 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 		const showScreenshot = currentTheme && currentTheme.screenshot;
 		// Some themes have no screenshot, so only show placeholder until details loaded
 		const showScreenshotPlaceholder = ! currentTheme;
-		const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
-		const showBetaBadge = isFullSiteEditingTheme( currentTheme ) && isFSEEligible;
 
 		return (
 			<Card className="current-theme">
@@ -80,11 +73,6 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 							<div className="current-theme__description">
 								<div className="current-theme__title-wrapper">
 									<div className="current-theme__badge-wrapper">
-										{ showBetaBadge && (
-											<Badge type="warning-clear" className="current-theme__badge-beta">
-												{ translate( 'Beta' ) }
-											</Badge>
-										) }
 										<span className="current-theme__label">
 											{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
 										</span>
@@ -132,7 +120,6 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 }
 
 const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
-const CurrentThemeWithEditorSettings = withBlockEditorSettings( ConnectedCurrentTheme );
 
 const CurrentThemeWithOptions = ( {
 	siteId,
@@ -143,7 +130,7 @@ const CurrentThemeWithOptions = ( {
 	currentThemeId: string | null;
 	siteId: number;
 } ) => (
-	<CurrentThemeWithEditorSettings
+	<ConnectedCurrentTheme
 		currentTheme={ currentTheme }
 		currentThemeId={ currentThemeId }
 		siteId={ siteId }

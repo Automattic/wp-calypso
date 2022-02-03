@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -146,6 +147,7 @@ const ThankYouSupportSection = ( props: ThankYouSupportSectionProps ) => {
 
 export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
 
 	const {
 		headerBackgroundColor = 'var( --studio-blue-50 )',
@@ -193,7 +195,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 				title: translate( 'Ask a question' ),
 			},
 			{
-				href: SUPPORT_ROOT,
+				href: localizeUrl( SUPPORT_ROOT ),
 				title: translate( 'View support documentation' ),
 			},
 		],

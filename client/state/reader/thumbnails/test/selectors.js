@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { getThumbnailForIframe, isRequestingThumbnailUrl } from '../selectors';
+import { getThumbnailForIframe } from '../selectors';
 
 describe( 'selectors', () => {
 	const embedUrl = 'embedUrl';
@@ -28,23 +28,6 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( getThumbnailForIframe( state, embedUrl ) ).to.eql( thumbnailUrl );
-		} );
-	} );
-
-	describe( '#isRequestingThumbnailUrl()', () => {
-		test( 'should return true if requesting thumbnail for the embed', () => {
-			const state = {
-				reader: {
-					thumbnails: {
-						requesting: {
-							[ embedUrl ]: true,
-							[ embedUrl + '2' ]: false,
-						},
-					},
-				},
-			};
-			expect( isRequestingThumbnailUrl( state, embedUrl ) ).to.equal( true );
-			expect( isRequestingThumbnailUrl( state, embedUrl + '2' ) ).to.equal( false );
 		} );
 	} );
 } );

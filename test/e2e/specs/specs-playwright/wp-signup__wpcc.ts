@@ -5,12 +5,13 @@
 import {
 	DataHelper,
 	LoginPage,
-	setupHooks,
 	UserSignupPage,
 	CloseAccountFlow,
 	EmailClient,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function () {
 	const inboxId = DataHelper.config.get( 'signupInboxId' ) as string;
@@ -23,8 +24,8 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 	} );
 
 	describe( 'Signup via /start/wpcc', function () {
@@ -84,13 +85,22 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 
 	describe( 'Ensure account is no longer accessible', function () {
 		let loginPage: LoginPage;
-		it( 'Navigate to WordPress.com Login page', async function () {
+
+		beforeAll( async () => {
 			loginPage = new LoginPage( page );
+		} );
+
+		it( 'Go to WordPress.com Login page', async function () {
 			await loginPage.visit();
 		} );
 
 		it( 'Ensure user is unable to log in', async function () {
-			expect( loginPage.login( { username: email, password: signupPassword } ) ).rejects.toThrow();
+			await loginPage.fillUsername( email );
+			await loginPage.clickSubmit();
+			await loginPage.fillPassword( signupPassword );
+			await loginPage.clickSubmit();
+
+			await page.waitForSelector( 'text=This account has been closed' );
 		} );
 	} );
 } );

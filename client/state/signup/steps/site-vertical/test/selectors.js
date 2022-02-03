@@ -3,9 +3,7 @@ import {
 	getSiteVerticalName,
 	getSiteVerticalSlug,
 	getSiteVerticalIsUserInput,
-	getSiteVerticalPreview,
 	getSiteVerticalParentId,
-	getSiteVerticalData,
 	getVerticalForDomainSuggestions,
 } from '../selectors';
 
@@ -16,14 +14,12 @@ describe( 'selectors', () => {
 				{
 					verticalName: 'felice',
 					verticalSlug: 'felice',
-					preview: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->',
 				},
 			],
 			contento: [
 				{
 					verticalName: 'contento',
 					verticalSlug: 'contento',
-					preview: '<!--gutenberg-loves-you <p>High five!</p>-->',
 				},
 			],
 		},
@@ -79,15 +75,6 @@ describe( 'selectors', () => {
 			);
 		} );
 	} );
-	describe( 'getSiteVerticalPreview', () => {
-		test( 'should return empty string as a default state', () => {
-			expect( getSiteVerticalPreview( {} ) ).toBe( '' );
-		} );
-
-		test( 'should return site vertical from the state', () => {
-			expect( getSiteVerticalPreview( state ) ).toEqual( verticals.business.felice[ 0 ].preview );
-		} );
-	} );
 	describe( 'getSiteVerticalId', () => {
 		test( 'should return empty string as a default state', () => {
 			expect( getSiteVerticalId( {} ) ).toBe( '' );
@@ -108,27 +95,6 @@ describe( 'selectors', () => {
 			);
 		} );
 	} );
-	describe( 'getSiteVerticalData', () => {
-		const defaultPreviewData = {
-			isUserInputVertical: true,
-			parent: '',
-			preview: '',
-			previewStylesUrl: '',
-			siteType: '',
-			verticalId: '',
-			verticalName: '',
-			verticalSlug: '',
-		};
-
-		test( 'should return default vertical object with empty string values', () => {
-			expect( getSiteVerticalData( {} ) ).toEqual( defaultPreviewData );
-		} );
-
-		test( 'should return direct match', () => {
-			expect( getSiteVerticalData( state ) ).toEqual( verticals.business.felice[ 0 ] );
-		} );
-	} );
-
 	describe( 'getVerticalForDomainSuggestions', () => {
 		test( 'should return empty string as a default state', () => {
 			expect( getVerticalForDomainSuggestions( { signup: undefined } ) ).toEqual( '' );

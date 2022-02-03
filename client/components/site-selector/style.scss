@@ -53,16 +53,20 @@
 	}
 }
 
-
 .notouch .site-selector.is-hover-enabled .site:hover,
-.notouch .site-selector.is-hover-enabled .all-sites:hover
-.site-selector .site.is-highlighted,
+.notouch .site-selector.is-hover-enabled .all-sites:hover .site-selector .site.is-highlighted,
 .site-selector .all-sites.is-highlighted {
 	background-color: var( --color-neutral-5 );
 	cursor: pointer;
 
 	.site__badge {
 		background-color: var( --color-surface );
+
+		&.is-p2,
+		&.is-p2-workspace {
+			background: var( --p2-color-link-dark );
+			color: var( --p2-color-white );
+		}
 	}
 
 	.site__title,
@@ -75,14 +79,25 @@
 
 // Highlight & hover effects
 .notouch .layout__secondary .site-selector.is-hover-enabled .site:hover,
-.notouch .layout__secondary .site-selector.is-hover-enabled .all-sites:hover
-.layout__secondary .site-selector .site.is-highlighted,
+.notouch
+	.layout__secondary
+	.site-selector.is-hover-enabled
+	.all-sites:hover
+	.layout__secondary
+	.site-selector
+	.site.is-highlighted,
 .layout__secondary .site-selector .all-sites.is-highlighted {
 	background: var( --color-sidebar-menu-hover-background );
 
 	.site__badge {
 		background: var( --color-sidebar-background );
 		color: var( --color-sidebar-text );
+
+		&.is-p2,
+		&.is-p2-workspace {
+			background: var( --p2-color-link-dark );
+			color: var( --p2-color-white );
+		}
 	}
 
 	.site__title,
@@ -107,6 +122,12 @@
 .layout__secondary .site-selector .site__badge {
 	background: var( --color-sidebar-menu-hover-background );
 	color: var( --color-sidebar-menu-hover-text );
+
+	&.is-p2,
+	&.is-p2-workspace {
+		background: var( --p2-color-link );
+		color: var( --p2-color-white );
+	}
 }
 
 .site-selector .search {

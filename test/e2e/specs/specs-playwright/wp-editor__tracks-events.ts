@@ -2,41 +2,32 @@
  * @group gutenberg
  */
 
-import {
-	DataHelper,
-	LoginPage,
-	NewPostFlow,
-	GutenbergEditorPage,
-	setupHooks,
-} from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { DataHelper, GutenbergEditorPage, TestAccount } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
 import { getLatestEvent } from '../../lib/gutenberg/tracking/playwright-utils';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Tracks Events for Post Editor` ), function () {
 	let page: Page;
-	const mainUser = 'gutenbergSimpleSiteUser';
+	let gutenbergEditorPage: GutenbergEditorPage;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+		const testAccount = new TestAccount( 'gutenbergSimpleSiteUser' );
+		await testAccount.authenticate( page );
 	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: mainUser } );
-	} );
-
-	it( 'Start new post', async function () {
-		const newPostFlow = new NewPostFlow( page );
-		await newPostFlow.newPostFromNavbar();
+	it( 'Go to the new post page', async function () {
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( 'Enter post title', async function () {
-		const gutenbergEditorPage = new GutenbergEditorPage( page );
 		await gutenbergEditorPage.enterTitle( DataHelper.getRandomPhrase() );
 	} );
 
 	it( 'Tracks "wpcom_block_editor_post_publish_add_new_click" event', async function () {
-		const gutenbergEditorPage = new GutenbergEditorPage( page );
 		await gutenbergEditorPage.publish();
 		// Get the frame before creating the new post because we won't be able to access it once navigation starts
 		const frame = await gutenbergEditorPage.waitUntilLoaded();

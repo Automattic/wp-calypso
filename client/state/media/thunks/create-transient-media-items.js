@@ -39,7 +39,7 @@ export function createTransientMediaItems( files, site ) {
 
 			dispatch( createMediaItem( site, transientMedia ) );
 
-			return transientMedia;
+			return [ file, transientMedia ];
 		} );
 	};
 }

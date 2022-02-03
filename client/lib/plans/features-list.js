@@ -274,7 +274,7 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
-					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br}}{{br}}' +
+					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br /}}{{br /}}' +
 					'This offer is redeemable one time only, and does not apply to plan upgrades, renewals, or premium domains.',
 				{
 					components: {
@@ -302,10 +302,10 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
+		getTitle: () => i18n.translate( 'Premium themes' ),
 		getDescription: () =>
 			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
 			),
 	},
 

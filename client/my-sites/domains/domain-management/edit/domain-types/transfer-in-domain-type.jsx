@@ -20,16 +20,12 @@ import DomainStatus from '../card/domain-status';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 
 class TransferInDomainType extends Component {
-	startTransfer = () => {
-		this.setState( { isTransferring: true }, this.goToInboundTransferPage );
-	};
-
-	goToInboundTransferPage() {
+	goToInboundTransferPage = () => {
 		const { domain, selectedSite } = this.props;
 		page(
 			domainUseMyDomain( selectedSite.slug, domain.name, useMyDomainInputMode.startPendingTransfer )
 		);
-	}
+	};
 
 	renderPendingStart() {
 		const { domain, translate } = this.props;
@@ -62,7 +58,7 @@ class TransferInDomainType extends Component {
 						  ) }
 				</p>
 
-				<Button disabled={ ! currentUserIsOwner } primary onClick={ this.startTransfer }>
+				<Button disabled={ ! currentUserIsOwner } primary onClick={ this.goToInboundTransferPage }>
 					{ translate( 'Start transfer' ) }
 				</Button>
 			</>
@@ -124,7 +120,7 @@ class TransferInDomainType extends Component {
 						  ) }
 				</p>
 
-				<Button disabled={ ! currentUserIsOwner } onClick={ this.startTransfer }>
+				<Button disabled={ ! currentUserIsOwner } onClick={ this.goToInboundTransferPage }>
 					{ translate( 'Start transfer again' ) }
 				</Button>
 			</>

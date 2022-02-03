@@ -1,5 +1,4 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -85,11 +84,11 @@ class InlineHelpRichResult extends Component {
 		const { type, title, description, link } = this.props.result;
 		const buttonLabel = this.getButtonLabel( type );
 		const buttonIcon = this.buttonIcons[ type ];
-		const classes = classNames( 'inline-help__richresult__title' );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				<h2 className={ classes } tabIndex="-1">
+				<h2 className="inline-help__richresult__title" tabIndex="-1">
 					{ preventWidows( decodeEntities( title ) ) }
 				</h2>
 				<p>{ preventWidows( decodeEntities( description ) ) }</p>
@@ -100,6 +99,7 @@ class InlineHelpRichResult extends Component {
 				</Button>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 

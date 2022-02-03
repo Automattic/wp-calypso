@@ -1,79 +1,55 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { withShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Main from 'calypso/components/main';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
-import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
-import { BillingIntervalToggle } from 'calypso/my-sites/email/billing-interval-toggle';
+import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
+import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
+import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
-import { IntervalLength } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import {
-	emailManagementAddEmailForwards,
 	emailManagementInDepthComparison,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
-import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { ReactElement } from 'react';
 
 import './style.scss';
 
-type EmailProvidersStackedComparisonProps = {
-	cartDomainName?: string;
+export type EmailProvidersStackedComparisonProps = {
 	comparisonContext: string;
-	currencyCode?: string;
-	currentRoute?: string;
-	domain?: any;
-	domainName?: string;
-	domainsWithForwards?: string[];
-	gSuiteProduct?: string;
-	hasCartDomain?: boolean;
-	isGSuiteSupported?: boolean;
-	productsList?: string[];
-	requestingSiteDomains?: boolean;
 	selectedDomainName: string;
-	selectedEmailProviderSlug: string;
-	selectedIntervalLength: IntervalLength | undefined;
-	selectedSite?: SiteData | null;
-	shoppingCartManager?: any;
-	showEmailForwardLink?: boolean;
-	siteName: string;
+	selectedEmailProviderSlug?: string;
+	selectedIntervalLength?: IntervalLength;
 	source: string;
 };
 
 const EmailProvidersStackedComparison = ( {
 	comparisonContext,
-	currentRoute,
-	domain,
-	domainsWithForwards,
-	isGSuiteSupported,
 	selectedDomainName,
 	selectedEmailProviderSlug,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
-	selectedSite,
-	showEmailForwardLink = true,
-	siteName,
 	source,
 }: EmailProvidersStackedComparisonProps ): ReactElement => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
-		if ( selectedEmailProviderSlug === 'google-workspace' ) {
+		if ( selectedEmailProviderSlug === GOOGLE_WORKSPACE_PRODUCT_TYPE ) {
 			return {
 				titan: false,
 				google: true,
@@ -85,6 +61,21 @@ const EmailProvidersStackedComparison = ( {
 			google: false,
 		};
 	} );
+
+	const currentRoute = useSelector( getCurrentRoute );
+
+	const selectedSite = useSelector( getSelectedSite );
+
+	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
+	const domain = getSelectedDomain( {
+		domains,
+		selectedDomainName: selectedDomainName,
+	} );
+	const domainsWithForwards = useSelector( ( state ) => getDomainsWithForwards( state, domains ) );
+
+	if ( ! domain ) {
+		return <></>;
+	}
 
 	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
@@ -98,9 +89,11 @@ const EmailProvidersStackedComparison = ( {
 		} );
 
 		if ( isCurrentlyExpanded ) {
-			recordTracksEvent( 'calypso_email_providers_expand_section_click', {
-				provider: providerKey,
-			} );
+			dispatch(
+				recordTracksEvent( 'calypso_email_providers_expand_section_click', {
+					provider: providerKey,
+				} )
+			);
 		}
 
 		setDetailsExpanded( Object.fromEntries( expandedEntries ) );
@@ -110,6 +103,13 @@ const EmailProvidersStackedComparison = ( {
 		if ( ! selectedSite?.slug ) {
 			return;
 		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_email_providers_billing_interval_toggle_click', {
+				domain_name: selectedDomainName,
+				new_interval: newIntervalLength,
+			} )
+		);
 
 		page(
 			emailManagementPurchaseNewEmailAccount(
@@ -123,13 +123,21 @@ const EmailProvidersStackedComparison = ( {
 		);
 	};
 
-	const showGoogleWorkspaceCard =
-		selectedIntervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
+	const handleCompareClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_email_providers_compare_link_click', {
+				domain_name: selectedDomainName,
+				interval: selectedIntervalLength,
+			} )
+		);
+	};
+
 	const hasExistingEmailForwards = hasEmailForwards( domain );
 
 	return (
-		<Main className="email-providers-stacked-comparison__main" wideLayout>
+		<Main wideLayout>
 			<QueryProductsList />
+
 			<QueryEmailForwards domainName={ selectedDomainName } />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
@@ -138,19 +146,20 @@ const EmailProvidersStackedComparison = ( {
 				{ translate( 'Pick an email solution' ) }
 			</h1>
 
-			{ isEnabled( 'emails/in-depth-comparison' ) && (
+			{ isEnabled( 'emails/in-depth-comparison' ) && selectedSite && (
 				<div className="email-providers-stacked-comparison__sub-header">
 					{ translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
 						components: {
 							a: (
 								<a
 									href={ emailManagementInDepthComparison(
-										siteName,
+										selectedSite.slug,
 										selectedDomainName,
 										currentRoute,
 										null,
 										selectedIntervalLength
 									) }
+									onClick={ handleCompareClick }
 								/>
 							),
 						},
@@ -173,71 +182,35 @@ const EmailProvidersStackedComparison = ( {
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
 				detailsExpanded={ detailsExpanded.titan }
-				selectedDomainName={ selectedDomainName }
-				source={ source }
 				intervalLength={ selectedIntervalLength }
 				onExpandedChange={ changeExpandedState }
+				selectedDomainName={ selectedDomainName }
+				source={ source }
 			/>
 
-			{ showGoogleWorkspaceCard && (
-				<GoogleWorkspaceCard
-					comparisonContext={ comparisonContext }
-					detailsExpanded={ detailsExpanded.google }
-					selectedDomainName={ selectedDomainName }
-					source={ source }
-					intervalLength={ selectedIntervalLength }
-					onExpandedChange={ changeExpandedState }
-				/>
-			) }
+			<GoogleWorkspaceCard
+				comparisonContext={ comparisonContext }
+				detailsExpanded={ detailsExpanded.google }
+				intervalLength={ selectedIntervalLength }
+				onExpandedChange={ changeExpandedState }
+				selectedDomainName={ selectedDomainName }
+				source={ source }
+			/>
 
-			{ ! hasExistingEmailForwards && showEmailForwardLink && selectedSite && (
-				<div className="email-providers-stacked-comparison__email-forward-section">
-					{ translate( 'Looking for a free email solution?' ) }{ ' ' }
-					{ translate( 'Start with {{link}}Email Forwarding{{/link}}.', {
-						components: {
-							link: (
-								<a
-									href={ emailManagementAddEmailForwards(
-										selectedSite.slug,
-										selectedDomainName,
-										currentRoute,
-										'purchase'
-									) }
-								/>
-							),
-						},
-					} ) }
-				</div>
-			) }
+			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
+
+			<TrackComponentView
+				eventName="calypso_email_providers_comparison_page_view"
+				eventProperties={ {
+					context: comparisonContext,
+					interval: selectedIntervalLength,
+					layout: 'stacked',
+					provider: selectedEmailProviderSlug,
+					source,
+				} }
+			/>
 		</Main>
 	);
 };
 
-export default connect( ( state, ownProps: EmailProvidersStackedComparisonProps ) => {
-	const selectedSite = getSelectedSite( state );
-	const domains = getDomainsBySiteId( state, selectedSite?.ID );
-	const domain = getSelectedDomain( {
-		domains,
-		selectedDomainName: ownProps.selectedDomainName,
-	} );
-
-	const hasCartDomain = Boolean( ownProps.cartDomainName );
-
-	const isGSuiteSupported =
-		canUserPurchaseGSuite( state ) &&
-		( hasCartDomain || ( domain && hasGSuiteSupportedDomain( [ domain ] ) ) );
-
-	return {
-		comparisonContext: ownProps.comparisonContext,
-		currentRoute: getCurrentRoute( state ),
-		domain,
-		domainsWithForwards: getDomainsWithForwards( state, domains ),
-		hasCartDomain,
-		isGSuiteSupported,
-		requestingSiteDomains: Boolean(
-			selectedSite && isRequestingSiteDomains( state, selectedSite.ID )
-		),
-		selectedSite,
-		source: ownProps.source,
-	};
-} )( withCartKey( withShoppingCart( EmailProvidersStackedComparison ) ) );
+export default EmailProvidersStackedComparison;

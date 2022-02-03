@@ -42,8 +42,6 @@ import {
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
-import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import {
 	removeStep,
 	saveSignupStep,
@@ -144,19 +142,6 @@ class DomainsStep extends Component {
 
 		return isPlansStepExistsInFutureOfFlow && ! isPlanStepSkipped;
 	};
-
-	componentDidUpdate( prevProps ) {
-		// If the signup site preview is visible and there's a sub step, e.g., mapping, transfer, use-your-domain
-		if ( prevProps.stepSectionName !== this.props.stepSectionName ) {
-			if ( this.props.isSitePreviewVisible && this.props.stepSectionName ) {
-				this.props.hideSitePreview();
-			}
-
-			if ( ! this.props.isSitePreviewVisible && ! this.props.stepSectionName ) {
-				this.props.showSitePreview();
-			}
-		}
-	}
 
 	isEligibleVariantForDomainTest() {
 		return this.showTestCopy;
@@ -456,7 +441,18 @@ class DomainsStep extends Component {
 			'business-monthly',
 			'ecommerce',
 			'ecommerce-monthly',
+			'domain',
 		].includes( flowName );
+	};
+
+	shouldHideUseYourDomain = () => {
+		const { flowName } = this.props;
+		return [ 'domain' ].includes( flowName );
+	};
+
+	shouldDisplayDomainOnlyExplainer = () => {
+		const { flowName } = this.props;
+		return [ 'domain' ].includes( flowName );
 	};
 
 	getSideContent = () => {
@@ -470,12 +466,22 @@ class DomainsStep extends Component {
 						/>
 					</div>
 				) }
-				<div className="domains__domain-side-content">
-					<ReskinSideExplainer
-						onClick={ this.handleUseYourDomainClick }
-						type={ 'use-your-domain' }
-					/>
-				</div>
+				{ ! this.shouldHideUseYourDomain() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleUseYourDomainClick }
+							type={ 'use-your-domain' }
+						/>
+					</div>
+				) }
+				{ this.shouldDisplayDomainOnlyExplainer() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={ 'free-domain-only-explainer' }
+						/>
+					</div>
+				) }
 			</div>
 		);
 	};
@@ -632,10 +638,7 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			return (
-				! stepSectionName &&
-				translate( "Enter your site's name or some descriptive keywords to get started" )
-			);
+			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
 		}
 
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
@@ -810,7 +813,6 @@ class DomainsStep extends Component {
 						{ this.renderContent() }
 					</div>
 				}
-				showSiteMockups={ this.props.showSiteMockups }
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ true }
@@ -867,7 +869,6 @@ export default connect(
 			siteType: getSiteType( state ),
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSelectedSite( state ),
-			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
 			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
 			userLoggedIn: isUserLoggedIn( state ),
@@ -886,7 +887,5 @@ export default connect(
 		submitSignupStep,
 		recordTracksEvent,
 		fetchUsernameSuggestion,
-		hideSitePreview,
-		showSitePreview,
 	}
 )( localize( DomainsStep ) );

@@ -8,18 +8,22 @@ export type ShoppingCartReducer = (
 	action: ShoppingCartAction
 ) => ShoppingCartState;
 
-export type GetCart = ( cartKey: string ) => Promise< ResponseCart >;
-export type SetCart = ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
+export type CartKey = number | 'no-user' | 'no-site';
+
+export type GetCart = ( cartKey: CartKey ) => Promise< ResponseCart >;
+export type SetCart = ( cartKey: CartKey, requestCart: RequestCart ) => Promise< ResponseCart >;
 
 export interface ShoppingCartManagerOptions {
 	refetchOnWindowFocus?: boolean;
-	defaultCartKey?: string;
+	defaultCartKey?: CartKey;
 }
 
-export type GetManagerForKey = ( cartKey: string | undefined ) => ShoppingCartManager;
+export type GetManagerForKey = ( cartKey: CartKey | undefined ) => ShoppingCartManager;
+export type GetCartKeyForSiteSlug = ( siteSlug: string ) => Promise< CartKey >;
 
 export interface ShoppingCartManagerClient {
 	forCartKey: GetManagerForKey;
+	getCartKeyForSiteSlug: GetCartKeyForSiteSlug;
 }
 
 export type UnsubscribeFunction = () => void;
@@ -219,7 +223,7 @@ export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
 export interface ResponseCart< P = ResponseCartProduct > {
 	blog_id: number | string;
 	create_new_blog: boolean;
-	cart_key: string;
+	cart_key: CartKey;
 	products: P[];
 	total_tax: string; // Please try not to use this
 	total_tax_integer: number;
@@ -367,6 +371,7 @@ export interface ResponseCartProductExtra {
 	privacy?: boolean;
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
+	is_marketplace_product?: boolean;
 }
 
 export interface RequestCartProductExtra extends ResponseCartProductExtra {

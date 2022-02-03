@@ -11,22 +11,33 @@ export const getDesignUrl = (
 	locale: string,
 	options: DesignUrlOptions = {}
 ): string => {
+	const repo = design.stylesheet ? design.stylesheet.split( '/' )[ 0 ] : 'pub';
 	const theme = encodeURIComponent( design.theme );
 	const template = encodeURIComponent( design.template );
 
-	// e.g. https://public-api.wordpress.com/rest/v1/template/demo/rockfield/rockfield?font_headings=Playfair%20Display&font_base=Fira%20Sans&site_title=Rockfield&viewport_height=700&language=en
-	return addQueryArgs(
-		`https://public-api.wordpress.com/rest/v1/template/demo/${ theme }/${ template }`,
+	// e.g. https://public-api.wordpress.com/rest/v1.1/template/demo/pub/rockfield/rockfield?font_headings=Playfair%20Display&font_base=Fira%20Sans&site_title=Rockfield&viewport_height=700&language=en
+	let url = addQueryArgs(
+		`https://public-api.wordpress.com/rest/v1.1/template/demo/${ repo }/${ theme }/${ template }`,
 		{
 			font_headings: design.fonts?.headings,
 			font_base: design.fonts?.base,
-			site_title: design.title,
 			viewport_height: 700,
 			language: locale,
 			use_screenshot_overrides: true,
 			...options,
 		}
 	);
+
+	if ( design.title ) {
+		// The design url is sometimes used in a `background-image: url()` CSS rule and unescaped
+		// parentheses in the URL break it. `addQueryArgs` and `encodeURIComponent` don't escape
+		// parentheses so we've got to do it ourselves.
+		url +=
+			'&site_title=' +
+			encodeURIComponent( design.title ).replace( /\(/g, '%28' ).replace( /\)/g, '%29' );
+	}
+
+	return url;
 };
 
 // Used for both prefetching and loading design screenshots
@@ -41,11 +52,16 @@ export const mShotOptions = ( { preview }: Design, highRes: boolean ): MShotsOpt
 	};
 };
 
+type DesignFilter = ( design: Design ) => boolean;
+
 interface AvailableDesignsOptions {
 	includeAlphaDesigns?: boolean;
-	useFseDesigns?: boolean;
+	featuredDesignsFilter?: DesignFilter;
 	randomize?: boolean;
 }
+
+export const excludeFseDesigns: DesignFilter = ( design ) => ! design.is_fse;
+export const includeFseDesigns: DesignFilter = ( design ) => !! design.is_fse;
 
 /**
  * To prevent the accumulation of tech debt, make duplicate entries for all Universal
@@ -54,7 +70,7 @@ interface AvailableDesignsOptions {
  */
 export function getAvailableDesigns( {
 	includeAlphaDesigns = isEnabled( 'gutenboarding/alpha-templates' ),
-	useFseDesigns = false,
+	featuredDesignsFilter = excludeFseDesigns,
 	randomize = false,
 }: AvailableDesignsOptions = {} ): AvailableDesigns {
 	let designs = { ...availableDesignsConfig };
@@ -72,9 +88,7 @@ export function getAvailableDesigns( {
 	// If we are opting into FSE, show only FSE designs.
 	designs = {
 		...designs,
-		featured: designs.featured.filter( ( design ) =>
-			useFseDesigns ? design.is_fse : ! design.is_fse
-		),
+		featured: designs.featured.filter( featuredDesignsFilter ),
 	};
 
 	if ( randomize ) {

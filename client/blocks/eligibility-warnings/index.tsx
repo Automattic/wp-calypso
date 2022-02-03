@@ -3,6 +3,7 @@ import {
 	FEATURE_PERFORMANCE,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_SFTP,
+	FEATURE_INSTALL_PLUGINS,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -39,6 +40,7 @@ interface ExternalProps {
 	standaloneProceed: boolean;
 	className?: string;
 	eligibilityData?: EligibilityData;
+	currentContext?: string;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -248,7 +250,11 @@ function mergeProps(
 	let context: string | null = null;
 	let feature = '';
 	let ctaName = '';
-	if ( includes( ownProps.backUrl, 'plugins' ) ) {
+	if ( ownProps.currentContext === 'plugin-details' ) {
+		context = ownProps.currentContext;
+		feature = FEATURE_INSTALL_PLUGINS;
+		ctaName = 'calypso-plugin-details-eligibility-upgrade-nudge';
+	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins';
 		feature = FEATURE_UPLOAD_PLUGINS;
 		ctaName = 'calypso-plugin-eligibility-upgrade-nudge';

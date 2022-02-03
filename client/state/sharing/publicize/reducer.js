@@ -3,9 +3,6 @@ import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_RECEIVE,
-	PUBLICIZE_CONNECTION_REQUEST,
-	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -72,37 +69,6 @@ export const sharePostStatus = ( state = {}, action ) => {
 					...state[ siteId ],
 					[ postId ]: undefined,
 				},
-			};
-		}
-	}
-
-	return state;
-};
-
-export const fetchingConnection = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case PUBLICIZE_CONNECTION_REQUEST: {
-			const { connectionId } = action;
-
-			return {
-				...state,
-				[ connectionId ]: true,
-			};
-		}
-		case PUBLICIZE_CONNECTION_REQUEST_SUCCESS: {
-			const { connectionId } = action;
-
-			return {
-				...state,
-				[ connectionId ]: false,
-			};
-		}
-		case PUBLICIZE_CONNECTION_REQUEST_FAILURE: {
-			const { connectionId } = action;
-
-			return {
-				...state,
-				[ connectionId ]: false,
 			};
 		}
 	}
@@ -197,7 +163,6 @@ export const connections = withSchemaValidation( connectionsSchema, ( state = {}
 } );
 
 export default combineReducers( {
-	fetchingConnection,
 	fetchingConnections,
 	fetchedConnections,
 	connections,

@@ -2,6 +2,7 @@ import { getCurrentUser, getDoNotTrack } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import debug from 'debug';
 import { isE2ETest } from 'calypso/lib/e2e';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TRACKING_IDS } from './ad-tracking/constants';
 import { mayWeTrackCurrentUserGdpr, isPiiUrl } from './utils';
 
@@ -55,7 +56,7 @@ function maybeAddFullStoryScript() {
 	window._fs_debug = 'development' === process.env.NODE_ENV;
 	window._fs_host = 'fullstory.com';
 	window._fs_script = 'edge.fullstory.com/s/fs.js';
-	window._fs_org = TRACKING_IDS.fullStory;
+	window._fs_org = isJetpackCloud() ? TRACKING_IDS.fullStoryJetpack : TRACKING_IDS.fullStory;
 	window._fs_namespace = 'FS';
 
 	( function ( m, n, e, t, l, o, g, y ) {

@@ -29,7 +29,7 @@ export CONFIG_KEY=<decryption_key_from_a8c_store>
 Optional:
 
 ```
-export SAVE_AUTH_COOKIES=<true/false>
+export AUTHENTICATE_ACCOUNTS=p2User,i18nUser
 ```
 
 For a list of supported environment variables, please refer to [this page](environment_variables.md).

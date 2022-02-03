@@ -1,7 +1,8 @@
 import assert from 'assert';
-import { Page, Frame, ElementHandle } from 'playwright';
-import { getTargetDeviceName } from '../../browser-helper';
+import { Page, Frame, ElementHandle, Response } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
+import envVariables from '../../env-variables';
 import { NavbarComponent } from '../components';
 
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
@@ -11,6 +12,10 @@ const selectors = {
 	// iframe and editor
 	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
 	editorTitle: '.editor-post-title__input',
+
+	// Editor: Page
+	blankPageButton: '.page-pattern-modal__blank-button',
+	pageDesign: ( name: string ) => `li:text(${ name })`,
 
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
@@ -75,6 +80,19 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Opens the "new post/page" page. By default it will open the "new post" page.
+	 *
+	 * Example "new post": {@link https://wordpress.com/post}
+	 * Example "new page": {@link https://wordpress.com/page}
+	 */
+	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
+		const request = await this.page.goto( getCalypsoURL( type ) );
+		await this.waitUntilLoaded();
+
+		return request;
+	}
+
+	/**
 	 * Initialization steps to ensure the page is fully loaded.
 	 *
 	 * @returns {Promise<Frame>} iframe holding the editor.
@@ -86,6 +104,8 @@ export class GutenbergEditorPage {
 		// takes too long here, so the most reliable alternative is the title being
 		// visible.
 		await frame.waitForSelector( selectors.editorTitle );
+		// Once https://github.com/Automattic/wp-calypso/issues/57660 is resolved,
+		// the next line should be removed.
 		await this.forceDismissWelcomeTour();
 
 		return frame;
@@ -113,6 +133,27 @@ export class GutenbergEditorPage {
 
 			return actionPayload.show === false;
 		} );
+	}
+
+	/**
+	 * Choose a page design.
+	 *
+	 * If a non-default value is provided, this method will select from
+	 * a matching design from the list.
+	 *
+	 * If the value provided is `blank`, the button on the modal labeled
+	 * "Blank Page" will be selected instead.
+	 *
+	 * @param {string} name Name of the design.
+	 */
+	async selectPageDesign( name: string ): Promise< void > {
+		const frame = await this.getEditorFrame();
+
+		if ( name.toLowerCase() === 'blank' ) {
+			await frame.click( selectors.blankPageButton );
+		} else {
+			await frame.click( selectors.pageDesign( name ) );
+		}
 	}
 
 	/**
@@ -374,14 +415,28 @@ export class GutenbergEditorPage {
 
 		await frame.click( selectors.publishButton( selectors.postToolbar ) );
 		await frame.click( selectors.publishButton( selectors.publishPanel ) );
-
-		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
-		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
+		const publishedURL = await this.getPublishedURL();
 
 		if ( visit ) {
 			await this.visitPublishedPost( publishedURL );
 		}
 		return publishedURL;
+	}
+
+	/**
+	 * Obtains the published article's URL from post-publish panels.
+	 *
+	 * This method is only able to obtain the published article's URL if immediately
+	 * preceded by the action of publishing the article *and* the post-publish panel
+	 * being visible.
+	 *
+	 * @returns {Promise<string>} Published article's URL.
+	 */
+	async getPublishedURL(): Promise< string > {
+		const frame = await this.getEditorFrame();
+
+		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
+		return ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
 	}
 
 	/**
@@ -424,10 +479,23 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	private async visitPublishedPost( url: string ): Promise< void > {
+		// Some blocks, like "Click To Tweet" or "Logos" cause the post-publish
+		// panel to close immediately and leave the post in the unsaved state for
+		// some reason. Since the post state is unsaved, the warning dialog will be
+		// displayed on the published post link click. By default, Playwright will
+		// dismiss the dialog so we need this listener to accept it and open the
+		// published post.
+		//
+		// Once https://github.com/Automattic/wp-calypso/issues/54421 is resolved,
+		// this listener can be removed.
+		this.page.once( 'dialog', async ( dialog ) => {
+			await dialog.accept();
+		} );
+
 		const frame = await this.getEditorFrame();
 
 		await Promise.all( [
-			this.page.waitForNavigation( { url } ),
+			this.page.waitForNavigation( { url: url, waitUntil: 'domcontentloaded' } ),
 			frame.click( selectors.viewButton ),
 		] );
 
@@ -446,7 +514,7 @@ export class GutenbergEditorPage {
 		 * @param page
 		 */
 		async function confirmPostShown( page: Page ): Promise< void > {
-			await page.waitForSelector( '.entry-content', { timeout: 5 * 1000 } );
+			await page.waitForSelector( '.entry-content', { timeout: 15 * 1000 } );
 		}
 	}
 
@@ -460,7 +528,7 @@ export class GutenbergEditorPage {
 	 */
 	async openNavSidebar(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		if ( getTargetDeviceName() === 'desktop' ) {
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await frame.click( selectors.desktopEditorSidebarButton );
 		}
 	}
@@ -478,10 +546,9 @@ export class GutenbergEditorPage {
 	 */
 	async returnToCalypsoDashboard(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		const targetDevice = getTargetDeviceName();
 
 		if (
-			targetDevice !== 'mobile' &&
+			envVariables.VIEWPORT_NAME !== 'mobile' &&
 			( await frame.getAttribute( selectors.desktopEditorSidebarButton, 'aria-expanded' ) ) ===
 				'false'
 		) {
@@ -499,7 +566,7 @@ export class GutenbergEditorPage {
 
 		const actions: Promise< unknown >[] = [ navigationPromise ];
 
-		if ( getTargetDeviceName() !== 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			actions.push( frame.click( selectors.desktopDashboardLink ) );
 		} else {
 			actions.push( navbarComponent.clickMySites() );
@@ -523,7 +590,7 @@ export class GutenbergEditorPage {
 	 * @throws {Error} If environment is not 'mobile'.
 	 */
 	async openPreviewAsMobile(): Promise< Page > {
-		if ( getTargetDeviceName() !== 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			throw new Error( 'This method only works in a mobile environment.' );
 		}
 		const frame = await this.getEditorFrame();
@@ -549,7 +616,7 @@ export class GutenbergEditorPage {
 	 * @throws {Error} If environment is 'mobile'.
 	 */
 	async openPreviewAsDesktop( target: PreviewOptions ): Promise< void > {
-		if ( getTargetDeviceName() === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			throw new Error( 'This method only works in a non-mobile environment.' );
 		}
 		const frame = await this.getEditorFrame();
@@ -572,7 +639,7 @@ export class GutenbergEditorPage {
 	 * @throws {Error} If environment is 'mobile'.
 	 */
 	async closePreview(): Promise< void > {
-		if ( getTargetDeviceName() === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			throw new Error( ' This method only works in a non-mobile environment.' );
 		}
 		const frame = await this.getEditorFrame();

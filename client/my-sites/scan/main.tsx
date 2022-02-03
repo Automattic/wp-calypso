@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button, ProgressBar, Gridicon, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
@@ -12,7 +11,6 @@ import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
-import ScanThreatsNew from 'calypso/components/jetpack/scan-threats-new';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -32,6 +30,7 @@ import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpa
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ScanNavigation from './navigation';
+import type { TranslateResult } from 'i18n-calypso';
 import type { utc } from 'moment';
 
 import './style.scss';
@@ -74,7 +73,7 @@ class ScanPage extends Component< Props > {
 		);
 	}
 
-	renderHeader( text: i18nCalypso.TranslateResult ) {
+	renderHeader( text: TranslateResult ) {
 		return <h1 className="scan__header">{ text }</h1>;
 	}
 
@@ -147,7 +146,7 @@ class ScanPage extends Component< Props > {
 		);
 	}
 
-	renderScanningNew() {
+	renderScanning() {
 		const { scanProgress = 0, isInitialScan } = this.props;
 
 		const heading =
@@ -183,36 +182,6 @@ class ScanPage extends Component< Props > {
 						) }
 					</p>
 				</Card>
-			</>
-		);
-	}
-
-	renderScanning() {
-		const { scanProgress = 0, isInitialScan } = this.props;
-
-		const heading =
-			scanProgress === 0 ? translate( 'Preparing to scan' ) : translate( 'Scanning files' );
-
-		return (
-			<>
-				<SecurityIcon icon="in-progress" />
-				{ this.renderHeader( heading ) }
-				<ProgressBar value={ scanProgress } total={ 100 } color="#069E08" />
-				{ isInitialScan && (
-					<p>
-						{ translate(
-							'Welcome to Jetpack Scan, we are taking a first look at your site now ' +
-								'and the results will be with you soon.'
-						) }
-					</p>
-				) }
-				<p>
-					{ translate(
-						'We will send you an email if security threats are found. In the meantime feel ' +
-							'free to continue to use your site as normal, you can check back on ' +
-							'progress at any time.'
-					) }
-				</p>
 			</>
 		);
 	}
@@ -255,22 +224,15 @@ class ScanPage extends Component< Props > {
 		// because it disrupts the fluidity of the progress bar
 
 		if ( scanState?.state === 'provisioning' ) {
-			if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
-				return (
-					<>
-						{ ' ' }
-						<Card> { this.renderProvisioning() } </Card>{ ' ' }
-					</>
-				);
-			}
-			return this.renderProvisioning();
+			return (
+				<>
+					{ ' ' }
+					<Card> { this.renderProvisioning() } </Card>{ ' ' }
+				</>
+			);
 		}
 
 		if ( scanState?.state === 'scanning' ) {
-			if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
-				return this.renderScanningNew();
-			}
-
 			return this.renderScanning();
 		}
 
@@ -283,15 +245,12 @@ class ScanPage extends Component< Props > {
 		// We should have a scanState by now, since we're not requesting an update;
 		// if we don't, that's an error condition and we should display that
 		if ( ! scanState ) {
-			if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
-				return (
-					<>
-						{ ' ' }
-						<Card> { this.renderScanError() } </Card>{ ' ' }
-					</>
-				);
-			}
-			return this.renderScanError();
+			return (
+				<>
+					{ ' ' }
+					<Card> { this.renderScanError() } </Card>{ ' ' }
+				</>
+			);
 		}
 
 		const { threats, mostRecent } = scanState;
@@ -300,35 +259,25 @@ class ScanPage extends Component< Props > {
 		const errorFound = !! mostRecent?.error;
 
 		// If we found threats, show them whether or not Scan encountered an error
-		if ( threatsFound && isEnabled( 'jetpack/more-informative-scan' ) ) {
-			return <ScanThreatsNew threats={ threats } error={ errorFound } site={ site } />;
-		} else if ( threatsFound ) {
+		if ( threatsFound ) {
 			return <ScanThreats threats={ threats } error={ errorFound } site={ site } />;
 		}
 
 		if ( errorFound ) {
-			if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
-				return (
-					<>
-						{ ' ' }
-						<Card> { this.renderScanError() } </Card>{ ' ' }
-					</>
-				);
-			}
-
-			return this.renderScanError();
-		}
-
-		if ( isEnabled( 'jetpack/more-informative-scan' ) ) {
 			return (
 				<>
 					{ ' ' }
-					<Card> { this.renderScanOkay() } </Card>{ ' ' }
+					<Card> { this.renderScanError() } </Card>{ ' ' }
 				</>
 			);
 		}
 
-		return this.renderScanOkay();
+		return (
+			<>
+				{ ' ' }
+				<Card> { this.renderScanOkay() } </Card>{ ' ' }
+			</>
+		);
 	}
 
 	renderJetpackReviewPrompt() {
@@ -377,14 +326,7 @@ class ScanPage extends Component< Props > {
 
 				<QueryJetpackScan siteId={ siteId } />
 				<ScanNavigation section={ 'scanner' } />
-				{ isEnabled( 'jetpack/more-informative-scan' ) && (
-					<div className="scan__content">{ this.renderScanState() }</div>
-				) }
-				{ ! isEnabled( 'jetpack/more-informative-scan' ) && (
-					<Card>
-						<div className="scan__content">{ this.renderScanState() }</div>
-					</Card>
-				) }
+				{ <div className="scan__content">{ this.renderScanState() }</div> }
 				{ this.renderJetpackReviewPrompt() }
 			</Main>
 		);
@@ -423,4 +365,4 @@ export default connect(
 		dispatchRecordTracksEvent: recordTracksEvent,
 		dispatchScanRun: triggerScanRun,
 	}
-)( compose( withLocalizedMoment, withApplySiteOffset )( ScanPage ) );
+)( withLocalizedMoment( withApplySiteOffset( ScanPage ) ) );

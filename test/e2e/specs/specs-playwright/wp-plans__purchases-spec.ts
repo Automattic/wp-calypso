@@ -4,14 +4,15 @@
 
 import {
 	DataHelper,
-	LoginPage,
-	setupHooks,
 	SidebarComponent,
 	PlansPage,
 	IndividualPurchasePage,
 	CartCheckoutPage,
+	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	let page: Page;
@@ -19,16 +20,14 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	let purchasesPage: IndividualPurchasePage;
 	let cartCheckoutPage: CartCheckoutPage;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
+
+		const testAccount = new TestAccount( 'defaultUser' );
+		await testAccount.authenticate( page );
 	} );
 
 	describe( 'Initial navigation', function () {
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: 'defaultUser' } );
-		} );
-
 		it( 'Navigate to Upgrades > Plans', async function () {
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.navigate( 'Upgrades', 'Plans' );

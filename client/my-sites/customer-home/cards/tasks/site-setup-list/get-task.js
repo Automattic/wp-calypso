@@ -54,6 +54,7 @@ export const getTask = (
 		taskUrls,
 		userEmail,
 		isBlogger,
+		isFSEActive,
 	} = {}
 ) => {
 	let taskData = {};
@@ -80,19 +81,20 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED:
 			taskData = {
 				timing: 1,
-				title: translate( 'Confirm your email address' ),
-				description: translate(
-					'Please click the link in the email we sent to %(email)s. ' +
-						'Typo in your email address? {{changeButton}}Change it here{{/changeButton}}.',
-					{
-						args: {
-							email: userEmail,
-						},
-						components: {
-							br: <br />,
-							changeButton: <a href="/me/account" />,
-						},
-					}
+				title: (
+					<>
+						{ translate( 'Confirm your email address' ) }
+						<span className="site-setup-list__nav-item-email">{ userEmail }</span>
+					</>
+				),
+				description: (
+					<>
+						{ translate(
+							'We have sent an email to this address to verify your account. Not in inbox or spam folder? Tap the Resend email button! '
+						) }
+						<span className="site-setup-list__task-description-email"> { userEmail } </span>
+						<a href="/me/account">{ translate( 'Change' ) }</a>
+					</>
 				),
 				actionText: translate( 'Resend email' ),
 				actionDispatch: verifyEmail,
@@ -170,11 +172,13 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.FRONT_PAGE_UPDATED:
 			taskData = {
 				timing: 20,
-				title: translate( 'Update your homepage' ),
+				title: isFSEActive
+					? translate( "Update your site's design" )
+					: translate( 'Update your homepage' ),
 				description: translate(
 					"We've created the basics, now it's time for you to update the images and text. Make a great first impression. Everything you do can be changed anytime."
 				),
-				actionText: translate( 'Edit homepage' ),
+				actionText: isFSEActive ? translate( 'Edit site' ) : translate( 'Edit homepage' ),
 				actionUrl: taskUrls?.front_page_updated,
 			};
 			break;
@@ -295,6 +299,7 @@ export const getTask = (
 		...task,
 		...taskData,
 	};
+
 	return {
 		...enhancedTask,
 		description: getTaskDescription( enhancedTask, { isDomainUnverified, isEmailUnverified } ),

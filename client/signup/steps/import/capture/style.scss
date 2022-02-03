@@ -75,4 +75,10 @@ $placeholder-color: #909398;
 		line-height: 1.4286em;
 		margin-top: 8px;
 	}
+
+	.capture__next-button-icon {
+		.rtl & {
+			transform: scaleX( -1 );
+		}
+	}
 }

@@ -50,7 +50,7 @@ class ErrorReporting_Activation_Test extends TestCase {
 	 *
 	 * @var int $current_segment
 	 */
-	private $current_segment = 1;
+	private $current_segment = 10;
 	/**
 	 * A dummy id that represents an a11n user. It's used in the `is_automattician`
 	 * stub defined above.

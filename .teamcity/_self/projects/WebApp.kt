@@ -2,9 +2,10 @@ package _self.projects
 
 import Settings
 import _self.bashNodeScript
-import _self.lib.playwright.prepareEnvironment
+import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
@@ -131,7 +132,6 @@ object BuildDockerImage : BuildType({
 				namesAndTags = """
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
-					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
 			}
 		}
@@ -146,12 +146,11 @@ object BuildDockerImage : BuildType({
 					exit 0
 				fi
 
+				docker push "registry.a8c.com/calypso/app:latest"
 				ACTION="done";
 				FAILURES=$(curl --silent -X GET -H "Content-Type: text/plain" https://teamcity.a8c.com/guestAuth/app/rest/builds/?locator=id:%teamcity.build.id% | grep -c "FAILURE")
 				if [ ${'$'}FAILURES -ne 0 ]; then
 					ACTION="fail"
-				#else
-				#	docker push "registry.a8c.com/calypso:%build.vcs.number%-%teamcity.build.branch%"
 				fi
 
 				payload=${'$'}(jq -n \
@@ -177,8 +176,32 @@ object BuildDockerImage : BuildType({
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				Link to Calypso live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%
-				Link to Jetpack Cloud live: https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack
+				<details>
+					<summary>Calypso Live <a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%">(direct link)</a></summary>
+					<table>
+						<tr>
+							<td>
+								<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Abuild-%build.number%%26flags%3Doauth&choe=UTF-8" />
+							</td>
+							<td>
+								<a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%">https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%</a>
+							</td>
+						</tr>
+					</table>
+				</details>
+				<details>
+					<summary>Jetpack Cloud live <a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack">(direct link)</a></summary>
+					<table>
+						<tr>
+							<td>
+								<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Abuild-%build.number%%26env%3Djetpack%26flags%3Doauth&choe=UTF-8" />
+							</td>
+							<td>
+								<a href="https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack">https://calypso.live?image=registry.a8c.com/calypso/app:build-%build.number%&env=jetpack</a>
+							</td>
+						</tr>
+					</table>
+				</details>
 				EOF
 			"""
 		}
@@ -561,96 +584,28 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
-fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType {
-	return BuildType {
-		id("Calypso_E2E_Playwright_$targetDevice")
-		uuid = buildUuid
-		name = "E2E Tests ($targetDevice)"
-		description = "Runs Calypso e2e tests on $targetDevice size"
-
-		artifactRules = """
-			logs.tgz => logs.tgz
-			screenshots => screenshots
-			trace => trace
-		""".trimIndent()
-
-		vcs {
-			root(Settings.WpCalypso)
-			cleanCheckout = true
-		}
-
-		params {
-			checkbox(
-				name = "env.SAVE_AUTH_COOKIES",
-				value = "true",
-				label = "Save authentication cookies",
-				description = "Login once and reuse auth cookies for all specs",
-				checked = "true",
-				unchecked = "false"
-			)
-		}
-
-		steps {
-			prepareEnvironment()
-
-			bashNodeScript {
-				name = "Run e2e tests ($targetDevice)"
-				scriptContent = """
-					shopt -s globstar
-					set -x
-
-					chmod +x ./bin/get-calypso-live-url.sh
-					URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
-					if [[ ${'$'}? -ne 0 ]]; then
-						// Command failed. URL contains stderr
-						echo ${'$'}URL
-						exit 1
-					fi
-
-					cd test/e2e
-					mkdir temp
-
-					export LIVEBRANCHES=true
-					export NODE_CONFIG_ENV=test
-					export PLAYWRIGHT_BROWSERS_PATH=0
-					export TEAMCITY_VERSION=2021
-					export HEADLESS=false
-
-					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-					# Run the test
-					export TARGET_DEVICE=$targetDevice
-					export LOCALE=en
-					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-					export DEBUG=pw:api
-
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-pr
-				""".trimIndent()
-				dockerImage = "%docker_image_e2e%"
-			}
-			bashNodeScript {
-				name = "Collect results"
-				executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-				scriptContent = """
-					set -x
-
-					mkdir -p screenshots
-					find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-					mkdir -p logs
-					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-					mkdir -p trace
-					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-				""".trimIndent()
-				dockerImage = "%docker_image_e2e%"
-			}
-		}
-
-		features {
-			perfmon {
-			}
+fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
+	return E2EBuildType(
+		buildId = "Calypso_E2E_Playwright_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "E2E Tests ($targetDevice)",
+		buildDescription = "Runs Calypso e2e tests on $targetDevice size",
+		getCalypsoLiveURL = """
+			chmod +x ./bin/get-calypso-live-url.sh
+			URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+			if [[ ${'$'}? -ne 0 ]]; then
+				// Command failed. URL contains stderr
+				echo ${'$'}URL
+				exit 1
+			fi
+		""".trimIndent(),
+		testGroup = "calypso-pr",
+		buildParams = {
+			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,defaultUser,eCommerceUser")
+			param("env.LIVEBRANCHES", "true")
+			param("env.TARGET_DEVICE", "$targetDevice")
+		},
+		buildFeatures = {
 			pullRequests {
 				vcsRootExtId = "${Settings.WpCalypso.id}"
 				provider = github {
@@ -660,18 +615,8 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
 				}
 			}
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-					}
-				}
-			}
-		}
-
-		triggers {
+		},
+		buildTriggers = {
 			vcs {
 				branchFilter = """
 					+:*
@@ -679,109 +624,27 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): BuildType 
 					-:trunk
 				""".trimIndent()
 			}
-			schedule {
-				schedulingPolicy = cron {
-					minutes = "0/30"
-				}
-				branchFilter = "+:trunk"
-				triggerBuild = always()
-				withPendingChangesOnly = false
-			}
-		}
-
-		failureConditions {
-			executionTimeoutMin = 20
-			// Do not fail on non-zero exit code to permit passing builds with muted tests.
-			nonZeroExitCode = false
-			failOnMetricChange {
-				metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-				threshold = 50
-				units = BuildFailureOnMetric.MetricUnit.PERCENTS
-				comparison = BuildFailureOnMetric.MetricComparison.LESS
-				compareTo = build {
-					buildRule = lastSuccessful()
-				}
-			}
-		}
-
-		dependencies {
+		},
+		buildDependencies = {
 			snapshot(BuildDockerImage) {
 				onDependencyFailure = FailureAction.FAIL_TO_START
 			}
 		}
-	}
+	)
 }
 
-object PreReleaseE2ETests : BuildType({
-	id("Calypso_E2E_Pre_Release")
-	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
-	name = "Pre-Release E2E Tests"
-	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
-	maxRunningBuilds = 1
-
-	artifactRules = """
-		logs.tgz => logs.tgz
-		screenshots => screenshots
-		trace => trace
-	""".trimIndent()
-
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
-
-	steps {
-		prepareEnvironment()
-		bashNodeScript {
-			name = "Run pre-release e2e tests"
-			scriptContent = """
-				shopt -s globstar
-				set -x
-
-				cd test/e2e
-				mkdir temp
-
-				export URL="https://wpcalypso.wordpress.com"
-
-				export NODE_CONFIG_ENV=test
-				export PLAYWRIGHT_BROWSERS_PATH=0
-				export TEAMCITY_VERSION=2021
-				export TARGET_DEVICE=desktop
-				export LOCALE=en
-				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export DEBUG=pw:api
-				export HEADLESS=false
-
-				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
-
-	features {
-		perfmon {
-		}
-
+object PreReleaseE2ETests : E2EBuildType(
+	buildId = "Calypso_E2E_Pre_Release",
+	buildUuid = "9c2f634f-6582-4245-bb77-fb97d9f16533",
+	buildName = "Pre-Release E2E Tests",
+	buildDescription = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production.",
+	concurrentBuilds = 1,
+	testGroup = "calypso-release",
+	buildParams = {
+		param("env.TARGET_DEVICE", "desktop")
+		param("env.URL", "https://wpcalypso.wordpress.com")
+	},
+	buildFeatures = {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -794,94 +657,20 @@ object PreReleaseE2ETests : BuildType({
 			buildProbablyHanging = true
 		}
 	}
+)
 
-	triggers {}
-
-	failureConditions {
-		executionTimeoutMin = 20
-		nonZeroExitCode = false
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-			threshold = 50
-			units = BuildFailureOnMetric.MetricUnit.PERCENTS
-			comparison = BuildFailureOnMetric.MetricComparison.LESS
-			compareTo = build {
-				buildRule = lastSuccessful()
-			}
-		}
-	}
-})
-
-object QuarantinedE2ETests: BuildType( {
-	id("Quarantined_E2E_Tests")
-	uuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c"
-	name = "Quarantined E2E Tests"
-	description = "E2E tests quarantined due to intermittent failures."
-	maxRunningBuilds = 1
-
-	artifactRules = """
-		logs.tgz => logs.tgz
-		screenshots => screenshots
-		trace => trace
-	""".trimIndent()
-
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
-
-	steps {
-		prepareEnvironment()
-		bashNodeScript {
-			name = "Run e2e tests"
-			scriptContent = """
-				shopt -s globstar
-				set -x
-
-				cd test/e2e
-				mkdir temp
-
-				export URL="https://wpcalypso.wordpress.com"
-
-				export NODE_CONFIG_ENV=test
-				export PLAYWRIGHT_BROWSERS_PATH=0
-				export TEAMCITY_VERSION=2021
-				export TARGET_DEVICE=desktop
-				export LOCALE=en
-				export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL%/}\"}"
-				export DEBUG=pw:api
-				export HEADLESS=false
-
-				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%CONFIG_E2E_ENCRYPTION_KEY%"
-
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=quarantined
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
-
-	features {
-		perfmon {
-		}
-
+object QuarantinedE2ETests: E2EBuildType(
+	buildId = "Quarantined_E2E_Tests",
+	buildUuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c",
+	buildName = "Quarantined E2E Tests",
+	buildDescription = "E2E tests quarantined due to intermittent failures.",
+	concurrentBuilds = 1,
+	testGroup = "quarantined",
+	buildParams = {
+		param("env.TARGET_DEVICE", "desktop")
+		param("env.URL", "https://wpcalypso.wordpress.com")
+	},
+	buildFeatures = {
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -893,22 +682,16 @@ object QuarantinedE2ETests: BuildType( {
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
-	}
-
-	triggers {
+	},
+	buildTriggers = {
 		schedule {
 			schedulingPolicy = cron {
-				hours = "*/3"
-				dayOfWeek = "2-6"
+				hours = "01"
 			}
 			branchFilter = "+:trunk"
 			triggerBuild = always()
 			withPendingChangesOnly = false
 		}
 	}
+)
 
-	failureConditions {
-		executionTimeoutMin = 20
-		nonZeroExitCode = false
-	}
-})

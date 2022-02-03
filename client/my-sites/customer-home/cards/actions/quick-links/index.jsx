@@ -1,4 +1,4 @@
-import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
@@ -15,6 +15,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteFrontPage,
@@ -35,6 +36,7 @@ export const QuickLinks = ( {
 	canManageSite,
 	canModerateComments,
 	customizeUrl,
+	isAtomic,
 	isStaticHomePage,
 	showCustomizer,
 	canAddEmail,
@@ -191,22 +193,24 @@ export const QuickLinks = ( {
 						label={
 							getLocaleSlug() === 'en' ||
 							getLocaleSlug() === 'en-gb' ||
-							i18nCalypso.hasTranslation( 'Create a logo with Fiverr' )
+							i18n.hasTranslation( 'Create a logo with Fiverr' )
 								? translate( 'Create a logo with Fiverr' )
 								: translate( 'Create a logo' )
 						}
 						external
 						iconSrc={ fiverrIcon }
 					/>
-					<ActionBox
-						href="https://anchor.fm/wordpressdotcom"
-						onClick={ trackAnchorPodcastAction }
-						target="_blank"
-						label={ translate( 'Create a podcast with Anchor' ) }
-						external
-						iconSrc={ anchorLogoIcon }
-					/>
 				</>
+			) }
+			{ canManageSite && ! isAtomic && (
+				<ActionBox
+					href="https://anchor.fm/wordpressdotcom"
+					onClick={ trackAnchorPodcastAction }
+					target="_blank"
+					label={ translate( 'Create a podcast with Anchor' ) }
+					external
+					iconSrc={ anchorLogoIcon }
+				/>
 			) }
 		</div>
 	);
@@ -398,6 +402,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
+		isAtomic: isSiteAtomic( state, siteId ),
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		isUnifiedNavEnabled: isNavUnificationEnabled,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),

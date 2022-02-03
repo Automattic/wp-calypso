@@ -1,5 +1,5 @@
 import { Frame, Page } from 'playwright';
-import { BrowserHelper } from '../..';
+import envVariables from '../../env-variables';
 
 const selectors = {
 	// Generic
@@ -81,7 +81,7 @@ export class StartSiteFlow {
 	 * @param {string} themeName Name of theme, e.g. "Zoologist".
 	 */
 	async previewTheme( themeName: string ): Promise< void > {
-		if ( BrowserHelper.getTargetDeviceName() === 'desktop' ) {
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.page.hover( selectors.individualThemeContainer( themeName ) );
 			await this.page.click( selectors.previewThemeButtonDesktop( themeName ) );
 		} else {

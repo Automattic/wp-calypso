@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -18,6 +17,7 @@ import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -33,8 +33,11 @@ import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
@@ -75,6 +78,8 @@ const PluginsBrowser = ( {
 	hideHeader,
 	doSearch,
 } ) => {
+	const breadcrumbs = useSelector( getBreadcrumbs );
+
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
 
@@ -104,6 +109,7 @@ const PluginsBrowser = ( {
 	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 	const pluginsByCategory = useSelector( ( state ) => getPluginsListByCategory( state, category ) );
 	const pluginsByCategoryNew = useSelector( ( state ) => getPluginsListByCategory( state, 'new' ) );
 	const pluginsByCategoryFeatured = useSelector( ( state ) =>
@@ -140,7 +146,7 @@ const PluginsBrowser = ( {
 		return ! selectedSite?.ID && hasJetpack;
 	}, [ isJetpack, selectedSite, hasJetpack ] );
 
-	const navigationItems = useMemo( () => {
+	useEffect( () => {
 		const items = [ { label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }` } ];
 		if ( search ) {
 			items.push( {
@@ -149,8 +155,8 @@ const PluginsBrowser = ( {
 			} );
 		}
 
-		return items;
-	}, [ search, siteSlug ] );
+		dispatch( updateBreadcrumbs( items ) );
+	}, [ siteSlug, search ] );
 
 	const annoncementPages = [
 		{
@@ -216,7 +222,8 @@ const PluginsBrowser = ( {
 					<QueryWporgPlugins category="featured" />
 				</>
 			) }
-			{ isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic && <QueryProductsList /> }
+			<QueryProductsList persist />
+			<QueryJetpackPlugins siteIds={ siteIds } />
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }
@@ -225,7 +232,7 @@ const PluginsBrowser = ( {
 			<DocumentHead title={ translate( 'Plugins' ) } />
 			<SidebarNavigation />
 
-			{ isEnabled( 'marketplace-v1' ) && (
+			{ ! jetpackNonAtomic && (
 				<AnnouncementModal
 					announcementId="plugins-page-woo-extensions"
 					pages={ annoncementPages }
@@ -233,10 +240,7 @@ const PluginsBrowser = ( {
 				/>
 			) }
 			{ ! hideHeader && (
-				<FixedNavigationHeader
-					className="plugins-browser__header"
-					navigationItems={ navigationItems }
-				>
+				<FixedNavigationHeader className="plugins-browser__header" navigationItems={ breadcrumbs }>
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
 							shouldShowManageButton={ shouldShowManageButton }
@@ -347,7 +351,7 @@ const SearchListView = ( {
 			} );
 
 		let pageSize = SEARCH_RESULTS_LIST_LENGTH;
-		if ( isEnabled( 'marketplace-v1' ) && pluginsPagination?.page === 1 ) {
+		if ( pluginsPagination?.page === 1 ) {
 			// Paid results appear only in the first page.
 			// Since the wporg results will always be an even number and paid results might be odd
 			// append one more wporg result if needed to fill the grid.
@@ -358,7 +362,7 @@ const SearchListView = ( {
 		}
 
 		const pluginItemsFeatch = ( page ) => {
-			return isEnabled( 'marketplace-v1' ) && page === 1
+			return page === 1
 				? SEARCH_RESULTS_LIST_LENGTH + ( paidPluginsBySearchTerm?.length % 2 )
 				: SEARCH_RESULTS_LIST_LENGTH;
 		};
@@ -367,7 +371,7 @@ const SearchListView = ( {
 			<>
 				<PluginsBrowserList
 					plugins={
-						isEnabled( 'marketplace-v1' ) && pluginsPagination?.page === 1
+						pluginsPagination?.page === 1
 							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
 							: pluginsBySearchTerm
 					}
@@ -517,7 +521,7 @@ const PluginBrowserContent = ( props ) => {
 
 	return (
 		<>
-			{ isEnabled( 'marketplace-v1' ) && ! props.jetpackNonAtomic ? (
+			{ ! props.jetpackNonAtomic ? (
 				<PluginSingleListView { ...props } category="paid" />
 			) : (
 				<PluginSingleListView { ...props } category="featured" />
@@ -669,10 +673,9 @@ function updateWpComRating( plugin ) {
  * @param {Array} featuredPlugins
  */
 function filterPopularPlugins( popularPlugins = [], featuredPlugins = [], jetpackNonAtomic ) {
-	// when marketplace-v1 is enabled no featured plugins will be showed
-	// since paid plugins will not be available for Jetpack self hosted sites,
+	// Since paid plugins will not be available for Jetpack self hosted sites,
 	// continue with filtering the popular plugins.
-	if ( isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic ) {
+	if ( ! jetpackNonAtomic ) {
 		featuredPlugins = [];
 	}
 

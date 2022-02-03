@@ -1,3 +1,4 @@
+@import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
@@ -42,6 +43,7 @@ $width-left-panel-card: 55%;
 
 .email-provider-stacked-card__provider__action-panel.is-primary {
 	flex-direction: column;
+
 	@include break-mobile {
 		flex-direction: row;
 	}
@@ -78,7 +80,6 @@ $width-left-panel-card: 55%;
 	align-items: center;
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 1em;
 	order: 3;
 
 	.email-provider-stacked-features__toggle-button {
@@ -108,25 +109,13 @@ $width-left-panel-card: 55%;
 
 .email-provider-stacked-card__title-price-badge {
 	font-size: $font-body-small;
-	margin-top: 0.5em;
+	margin-top: 10px;
 	width: 100%;
 
 	@include break-xlarge {
 		margin-left: 10px;
 		margin-top: 0;
 		width: $width-right-panel-card;
-	}
-
-	.promo-card__price {
-		.price__cost {
-			.provider-cards__price-with-interval-price-discounted {
-				text-decoration: line-through;
-			}
-
-			.provider-cards__price-with-interval-sale-price {
-				color: var( --studio-green-50 );
-			}
-		}
 	}
 }
 
@@ -135,7 +124,17 @@ $width-left-panel-card: 55%;
 }
 
 .email-providers-stacked-comparison__provider-card {
-	padding-top: 36px;
+	&.action-panel {
+		padding-bottom: 24px;
+	}
+
+	@include break-medium {
+		padding-top: 36px;
+
+		&.action-panel {
+			padding-bottom: 36px;
+		}
+	}
 
 	&.card.action-panel.promo-card {
 		display: flex;
@@ -149,7 +148,7 @@ $width-left-panel-card: 55%;
 			color: var( --color-text );
 
 			p {
-				margin-bottom: 0.5em;
+				margin-bottom: 0;
 			}
 		}
 
@@ -157,7 +156,7 @@ $width-left-panel-card: 55%;
 			display: flex;
 			flex-direction: row;
 			margin-bottom: 0;
-			margin-top: 3px;
+			margin-top: 0;
 			padding-right: 12px;
 			text-align: left;
 
@@ -190,6 +189,7 @@ $width-left-panel-card: 55%;
 		flex-direction: column;
 
 		@include break-xlarge {
+			align-items: center;
 			flex-direction: row;
 		}
 
@@ -198,14 +198,11 @@ $width-left-panel-card: 55%;
 
 			@include break-xlarge {
 				margin-left: 10px;
+				margin-top: 0;
 			}
 
 			.button {
 				width: 100%;
-
-				@include break-xlarge {
-					width: 100%;
-				}
 			}
 		}
 	}
@@ -263,25 +260,19 @@ $width-left-panel-card: 55%;
 }
 
 .email-provider-stacked-card__title {
-	margin-top: 4px;
-	font-size: 1.25rem;
-	line-height: 24px;
+	font-size: $font-title-small;
 	color: var( --color-neutral-70 );
 }
 
 .email-provider-stacked-card__title-container {
-	display: flex;
-	flex-direction: column;
-	font-size: $font-body-small;
-	max-width: 100%;
-
 	@include break-xlarge {
-		width: $width-left-panel-card;
+		margin-right: 10px;
+		min-width: $width-left-panel-card;
+		max-width: $width-left-panel-card;
 	}
 
 	p {
 		margin-bottom: 0;
-		margin-right: 10px;
 	}
 }
 
@@ -303,6 +294,22 @@ $width-left-panel-card: 55%;
 			border-left-width: 0;
 			border-top-width: 1px;
 		}
+	}
+}
+
+.email-provider-stacked-features__logos {
+	column-gap: 5px;
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: 32px;
+
+	@include break-xlarge {
+		justify-content: space-between;
+		column-gap: 3px;
+	}
+
+	img {
+		width: 32px;
 	}
 }
 

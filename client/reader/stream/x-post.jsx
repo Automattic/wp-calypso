@@ -209,8 +209,8 @@ class CrossPost extends PureComponent {
 					) }
 					{ post.author && this.getDescription( post.author.first_name ) }
 				</div>
-				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
-				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
+				{ feedId && <QueryReaderFeed feedId={ +feedId } /> }
+				{ siteId && <QueryReaderSite siteId={ +siteId } /> }
 			</Card>
 		);
 	}

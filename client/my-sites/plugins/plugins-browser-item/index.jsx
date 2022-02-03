@@ -14,6 +14,7 @@ import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
@@ -39,9 +40,12 @@ const PluginsBrowserListElement = ( props ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const sitesWithPlugin = useSelector( ( state ) =>
-		isJetpack && currentSites
+		currentSites
 			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
 			: []
+	);
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, plugin.slug || '' )
 	);
 
 	const dateFromNow = useMemo(
@@ -147,10 +151,11 @@ const PluginsBrowserListElement = ( props ) => {
 							plugin={ plugin }
 							billingPeriod={ billingPeriod }
 							shouldUpgrade={ shouldUpgrade }
+							currentSites={ currentSites }
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
-						{ !! plugin.rating && (
+						{ !! plugin.rating && ! isMarketplaceProduct && (
 							<div className="plugins-browser-item__ratings">
 								<PluginRatings
 									rating={ plugin.rating }
@@ -181,6 +186,7 @@ const InstalledInOrPricing = ( {
 	plugin,
 	billingPeriod,
 	shouldUpgrade,
+	currentSites,
 } ) => {
 	const translate = useTranslate();
 
@@ -189,7 +195,12 @@ const InstalledInOrPricing = ( {
 			/* eslint-disable wpcalypso/jsx-gridicon-size */
 			<div className="plugins-browser-item__installed">
 				<Gridicon icon="checkmark" size={ 14 } />
-				{ translate( 'Installed' ) }
+				{ isWpcomPreinstalled || currentSites.length === 1
+					? translate( 'Installed' )
+					: translate( 'Installed on %d site', 'Installed on %d sites', {
+							args: [ sitesWithPlugin.length ],
+							count: sitesWithPlugin.length,
+					  } ) }
 			</div>
 			/* eslint-enable wpcalypso/jsx-gridicon-size */
 		);
@@ -199,7 +210,9 @@ const InstalledInOrPricing = ( {
 		<div className="plugins-browser-item__pricing">
 			<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 				{ ( { isFetching, price, period } ) =>
-					! isFetching && (
+					isFetching ? (
+						<div className="plugins-browser-item__pricing-placeholder">...</div>
+					) : (
 						<>
 							{ price ? (
 								<>

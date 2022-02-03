@@ -18,7 +18,7 @@ export const processorOptions = {
 	stripeConfiguration,
 	reduxDispatch: () => null,
 	responseCart: getEmptyResponseCart(),
-	getThankYouUrl: () => '',
+	getThankYouUrl: () => '/thank-you',
 	siteSlug: undefined,
 	siteId: undefined,
 	contactDetails: undefined,
@@ -752,6 +752,11 @@ export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 		.reply( transactionsEndpointResponse );
 
 	return transactionsEndpoint;
+}
+
+export function setMockLocation( url ) {
+	const location = new URL( url );
+	jest.spyOn( window, 'location', 'get' ).mockReturnValue( location );
 }
 
 export const mockCreateAccountSiteNotCreatedResponse = () => [ 200, { success: true } ];

@@ -4,29 +4,32 @@
 
 import {
 	DataHelper,
-	LoginPage,
 	SidebarComponent,
 	SupportComponent,
-	setupHooks,
+	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), function () {
 	let page: Page;
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
-	} );
-
 	describe.each( [
-		{ siteType: 'Simple', user: 'defaultUser' },
-		{ siteType: 'Atomic', user: 'eCommerceUser' },
-	] )( 'Unsupported search keywords ($siteType)', function ( { user } ) {
+		{ siteType: 'Simple', accountName: 'defaultUser' },
+		{ siteType: 'Atomic', accountName: 'eCommerceUser' },
+	] )( 'Unsupported search keywords ($siteType)', function ( { accountName } ) {
 		let supportComponent: SupportComponent;
 
-		it( 'Log in', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+		beforeAll( async () => {
+			page = await browser.newPage();
+
+			const testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await page.close();
 		} );
 
 		it( 'Open Settings page', async function () {

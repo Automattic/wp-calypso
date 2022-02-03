@@ -78,7 +78,7 @@ export function fetchThemeFilters( context, next ) {
 			return next();
 		}
 	} );
-	store.dispatch( requestThemeFilters() );
+	store.dispatch( requestThemeFilters( context.lang ) );
 }
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects

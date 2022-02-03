@@ -32,6 +32,7 @@ import {
 	recordSignupStep,
 	recordSignupInvalidStep,
 	recordSignupProcessingScreen,
+	recordSignupPlanChange,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
@@ -53,8 +54,6 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { showSitePreview, hideSitePreview } from 'calypso/state/signup/preview/actions';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
@@ -62,13 +61,17 @@ import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
 import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSiteId, isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import {
+	getSiteId,
+	isCurrentPlanPaid,
+	getSitePlanSlug,
+	getSitePlanName,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
 import { addP2SignupClassName } from './controller';
-import SiteMockups from './site-mockup';
 import {
 	persistSignupDestination,
 	setSignupCompleteSlug,
@@ -131,13 +134,14 @@ class Signup extends Component {
 		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
+		sitePlanName: PropTypes.string,
+		sitePlanSlug: PropTypes.string,
 		isPaidPlan: PropTypes.bool,
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
 		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
-		shouldShowMockups: PropTypes.bool,
 	};
 
 	state = {
@@ -238,30 +242,39 @@ class Signup extends Component {
 			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
 		}
 		this.preloadNextStep();
-		this.maybeShowSitePreview();
 	}
 
 	componentDidUpdate( prevProps ) {
+		const { flowName, stepName, signupDependencies, sitePlanName, sitePlanSlug } = this.props;
+
 		if (
-			( this.props.flowName !== prevProps.flowName ||
-				this.props.stepName !== prevProps.stepName ) &&
+			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
 			! this.state.shouldShowLoadingScreen
 		) {
-			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+			recordSignupStep( flowName, stepName, this.getRecordProps() );
 		}
 
 		if (
-			get( this.props.signupDependencies, 'siteType' ) !==
-			get( prevProps.signupDependencies, 'siteType' )
+			get( signupDependencies, 'siteType' ) !== get( prevProps.signupDependencies, 'siteType' )
 		) {
 			this.startTrackingForBusinessSite();
 		}
 
-		if ( this.props.stepName !== prevProps.stepName ) {
-			this.maybeShowSitePreview();
+		if ( stepName !== prevProps.stepName ) {
 			this.preloadNextStep();
 			// `scrollToTop` here handles cases where the viewport may fall slightly below the top of the page when the next step is rendered
 			this.scrollToTop();
+		}
+
+		if ( sitePlanSlug && prevProps.sitePlanSlug && sitePlanSlug !== prevProps.sitePlanSlug ) {
+			recordSignupPlanChange(
+				flowName,
+				stepName,
+				prevProps.sitePlanName,
+				prevProps.sitePlanSlug,
+				sitePlanName,
+				sitePlanSlug
+			);
 		}
 	}
 
@@ -291,15 +304,6 @@ class Signup extends Component {
 			// to process the signup flow.
 			this.props.removeStep( p2SiteStep );
 			this.props.addStep( p2SiteStep );
-		}
-	}
-
-	maybeShowSitePreview() {
-		// Only show the site preview on main step pages, not sub step section screens
-		if ( this.props.shouldStepShowSitePreview && ! this.props.stepSectionName ) {
-			this.props.showSitePreview();
-		} else {
-			this.props.hideSitePreview();
 		}
 	}
 
@@ -745,9 +749,6 @@ class Signup extends Component {
 					/>
 				) }
 				<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>
-				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
-					<SiteMockups stepName={ this.props.stepName } />
-				) }
 				{ this.state.bearerToken && (
 					<WpcomLoginForm
 						authorization={ 'Bearer ' + this.state.bearerToken }
@@ -761,7 +762,7 @@ class Signup extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	( state ) => {
 		const signupDependencies = getSignupDependencyStore( state );
 
 		// Use selectedSiteId which was set by setSelectedSiteForSignup of controller
@@ -771,11 +772,6 @@ export default connect(
 		// See: https://github.com/Automattic/wp-calypso/pull/57386
 		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
-		const shouldStepShowSitePreview = get(
-			steps[ ownProps.stepName ],
-			'props.showSiteMockups',
-			false
-		);
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
@@ -789,12 +785,11 @@ export default connect(
 			isNewishUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 			existingSiteCount: getCurrentUserSiteCount( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
+			sitePlanName: getSitePlanName( state, siteId ),
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
 			siteId,
 			siteType: getSiteType( state ),
-			shouldStepShowSitePreview,
-			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
 		};
 	},
@@ -805,8 +800,6 @@ export default connect(
 		submitSignupStep,
 		removeStep,
 		loadTrackingTool,
-		showSitePreview,
-		hideSitePreview,
 		addStep,
 	}
 )( Signup );

@@ -10,18 +10,18 @@
 		top: var( --masterbar-height );
 		padding: 0 16px;
 		left: 0;
-		right: 0px;
+		right: 0;
 		border-bottom: 1px solid var( --studio-gray-5 );
 
 		@include breakpoint-deprecated( '>660px' ) {
 			padding: 0 24px;
 		}
 
-		@media screen and ( min-width: #{ ($break-medium + 1) } ) {
+		@media screen and ( min-width: #{ ( $break-medium + 1 ) } ) {
 			left: var( --sidebar-width-min );
 		}
 
-		@media screen and ( min-width: #{ ($break-large + 1) } ) {
+		@media screen and ( min-width: #{ ( $break-large + 1 ) } ) {
 			padding: 0 32px;
 		}
 
@@ -183,5 +183,12 @@
 
 	@include breakpoint-deprecated( '<660px' ) {
 		height: 76px;
+	}
+}
+
+/* This prevents breadcrumbs component from being partially hidden when happychat is open */
+.has-docked-chat .breadcrumbs > div:first-child {
+	@include breakpoint-deprecated( '>1040px' ) {
+		right: var( --sidebar-width-max );
 	}
 }

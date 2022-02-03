@@ -10,6 +10,10 @@
 
 	&__content {
 		grid-column: 1 / 2;
+		padding-bottom: 1px;
+		@include break-xlarge {
+			padding-bottom: 0;
+		}
 	}
 
 	&__sidebar {

@@ -29,7 +29,7 @@
 .importer__source-author {
 	width: 45%;
 	padding-top: 0.5em;
-	display: inline-block;
+	display: flex;
 	color: var( --color-neutral-70 );
 	text-align: left;
 	text-overflow: ellipsis;
@@ -37,6 +37,10 @@
 	white-space: nowrap;
 	font-size: $font-body-small;
 	font-weight: 600;
+
+	.importer__icon {
+		margin: 0 8px;
+	}
 
 	@include breakpoint-deprecated( '<480px' ) {
 		width: 35%;

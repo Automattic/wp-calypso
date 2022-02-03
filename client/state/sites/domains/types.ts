@@ -3,6 +3,7 @@ export interface SiteDomain {
 	autoRenewing?: boolean;
 	blogId?: number;
 	canSetAsPrimary?: boolean;
+	currentUserCanAddEmail?: boolean;
 	currentUserCanManage?: boolean;
 	domain: string;
 	expired?: boolean;

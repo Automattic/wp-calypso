@@ -1,8 +1,7 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import i18nCalypso, { localize, useTranslate } from 'i18n-calypso';
+import i18n, { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -31,7 +30,6 @@ import {
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import OwnerInfo from './owner-info';
-
 import 'calypso/me/purchases/style.scss';
 
 const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
@@ -69,11 +67,9 @@ class PurchaseItem extends Component {
 
 		if ( isDisconnectedSite ) {
 			if ( isJetpackTemporarySite ) {
-				const isJetpackUserLicensingEnabled = isEnabled( 'jetpack/user-licensing' );
-				const errorMessage = isJetpackUserLicensingEnabled
-					? translate( 'Pending activation' )
-					: translate( 'Awaiting site URL' );
-				return <span className="purchase-item__is-error">{ errorMessage }</span>;
+				return (
+					<span className="purchase-item__is-error">{ translate( 'Pending activation' ) }</span>
+				);
 			}
 
 			if ( isJetpack ) {
@@ -115,7 +111,7 @@ class PurchaseItem extends Component {
 			if (
 				isRenewing( purchase ) &&
 				( locale === 'en' ||
-					i18nCalypso.hasTranslation(
+					i18n.hasTranslation(
 						'Free trial ends on {{span}}%(date)s{{/span}}, renews automatically at %(amount)s'
 					) )
 			) {
@@ -135,7 +131,7 @@ class PurchaseItem extends Component {
 
 			if (
 				locale === 'en' ||
-				i18nCalypso.hasTranslation( 'Free trial ends on {{span}}%(date)s{{/span}}' )
+				i18n.hasTranslation( 'Free trial ends on {{span}}%(date)s{{/span}}' )
 			) {
 				const expiryClass =
 					expiry < moment().add( 7, 'days' )

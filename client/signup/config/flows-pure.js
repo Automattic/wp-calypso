@@ -86,21 +86,6 @@ export function generateFlows( {
 			lastModified: '2019-06-20',
 		},
 		{
-			name: 'onboarding-with-preview',
-			steps: [
-				'user',
-				'site-type',
-				'site-topic-with-preview',
-				'site-title-with-preview',
-				'domains-with-preview',
-				'plans',
-			],
-			destination: getSignupDestination,
-			description: 'The improved onboarding flow.',
-			lastModified: '2020-03-03',
-			showRecaptcha: true,
-		},
-		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans' ]
@@ -276,7 +261,7 @@ export function generateFlows( {
 			destination: getThankYouNoSiteDestination,
 			description: 'An experimental approach for WordPress.com/domains',
 			disallowResume: true,
-			lastModified: '2020-08-11',
+			lastModified: '2022-01-20',
 			showRecaptcha: true,
 		},
 		{
@@ -300,6 +285,7 @@ export function generateFlows( {
 			steps: [ 'themes-site-selected', 'plans-site-selected' ],
 			destination: getSiteDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
+			optionalDependenciesInQuery: [ 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',
 		},
@@ -314,7 +300,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'importer',
-			steps: isEnabled( 'gutenboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
+			steps: isEnabled( 'onboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
 			destination: '/',
 			pageTitle: translate( 'Import your site content' ),
 			description: 'A new import flow that can be used from the onboarding flow',
@@ -395,14 +381,22 @@ export function generateFlows( {
 		},
 		{
 			name: 'setup-site',
-			steps: [ 'intent', 'site-options', 'starting-point', 'courses', 'design-setup-site' ],
+			steps: [
+				'intent',
+				'site-options',
+				'starting-point',
+				'courses',
+				'store-options',
+				'store-features',
+				'design-setup-site',
+			],
 			destination: getDestinationFromIntent,
 			description:
 				'Sets up a site that has already been created and paid for (if purchases were made)',
 			lastModified: '2021-10-14',
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
-			pageTitle: translate( 'Setup your site' ),
+			pageTitle: translate( 'Set up your site' ),
 			enableBranchSteps: true,
 		},
 		{
@@ -423,9 +417,7 @@ export function generateFlows( {
 		{
 			name: 'woocommerce-install',
 			pageTitle: translate( 'Add WooCommerce to your site' ),
-			steps: isEnabled( 'woop' )
-				? [ 'store-address', 'confirm', 'transfer' ]
-				: [ 'confirm', 'transfer' ],
+			steps: [ 'store-address', 'business-info', 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
 			providesDependenciesInQuery: [ 'site' ],

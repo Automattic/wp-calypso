@@ -110,6 +110,10 @@ const JetpackComMasterbar: React.FC = () => {
 				href: '/pricing/',
 			},
 			{
+				label: translate( 'Agencies' ),
+				href: '/for/agencies/',
+			},
+			{
 				label: translate( 'Support' ),
 				href: '/support/',
 			},

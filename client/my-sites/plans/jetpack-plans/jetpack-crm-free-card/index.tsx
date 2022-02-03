@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
+	TERM_ANNUALLY,
 	PRODUCT_JETPACK_CRM_FREE,
 	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	TERM_MONTHLY,
@@ -11,12 +12,13 @@ import { useDispatch } from 'react-redux';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { ITEM_TYPE_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import type { Duration, SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 const CRM_FREE_URL =
 	'https://jetpackcrm.com/pricing?utm_source=jetpack&utm_medium=web&utm_campaign=pricing_i4&utm_content=pricing';
 
-const useCrmFreeItem = ( duration: Duration ) => {
+const useCrmFreeItem = ( duration: Duration ): SelectorProduct => {
 	const translate = useTranslate();
 
 	return useMemo(
@@ -27,11 +29,17 @@ const useCrmFreeItem = ( duration: Duration ) => {
 			displayName: translate( 'Jetpack CRM' ),
 			features: {
 				items: [
-					{ text: translate( 'Unlimited contacts' ) },
-					{ text: translate( 'Manage billing and create invoices' ) },
-					{ text: translate( 'CRM fully integrated with WordPress' ) },
+					{ slug: 'not used', text: translate( 'Unlimited contacts' ) },
+					{ slug: 'not used', text: translate( 'Manage billing and create invoices' ) },
+					{ slug: 'not used', text: translate( 'CRM fully integrated with WordPress' ) },
 				],
 			},
+			type: ITEM_TYPE_PLAN, // not used
+			term: TERM_ANNUALLY, // not used
+			iconSlug: 'not used',
+			shortName: 'not used',
+			tagline: 'not used',
+			description: 'not used',
 		} ),
 		[ duration, translate ]
 	);

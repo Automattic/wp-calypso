@@ -24,7 +24,7 @@ import './uploading-pane.scss';
 
 const noop = () => {};
 
-class UploadingPane extends PureComponent {
+export class UploadingPane extends PureComponent {
 	static displayName = 'SiteSettingsUploadingPane';
 
 	static propTypes = {
@@ -61,7 +61,8 @@ class UploadingPane extends PureComponent {
 
 		if (
 			( prevImporterStatus.importerState === appStates.UPLOADING ||
-				prevImporterStatus.importerState === appStates.UPLOAD_PROCESSING ) &&
+				prevImporterStatus.importerState === appStates.UPLOAD_PROCESSING ||
+				prevImporterStatus.importerState === appStates.UPLOAD_SUCCESS ) &&
 			importerStatus.importerState === appStates.UPLOAD_SUCCESS
 		) {
 			this.props.startMappingAuthors( importerStatus.importerId );

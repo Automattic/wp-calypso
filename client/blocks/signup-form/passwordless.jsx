@@ -182,7 +182,6 @@ class PasswordlessSignupForm extends Component {
 		this.setState( {
 			email: value,
 			errorMessages: null,
-			isEmailAddressValid: emailValidator.validate( value ),
 		} );
 
 	renderNotice() {

@@ -36,7 +36,7 @@ const initialPreparedProductsState = {
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
-	isInEditor,
+	isInModal,
 	isJetpackNotAtomic,
 	isPrivate,
 	siteSlug,
@@ -45,10 +45,11 @@ export default function usePrepareProductsForCart( {
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	source,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
@@ -57,6 +58,7 @@ export default function usePrepareProductsForCart( {
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	source?: string;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -105,6 +107,7 @@ export default function usePrepareProductsForCart( {
 		isJetpackCheckout,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
+		source,
 	} );
 	useAddRenewalItems( {
 		originalPurchaseId,
@@ -115,7 +118,7 @@ export default function usePrepareProductsForCart( {
 	useNothingToAdd( { addHandler, dispatch } );
 
 	// Do not strip products from url until the URL has been parsed
-	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInEditor;
+	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInModal;
 	const doNotStripProducts = Boolean( ! areProductsRetrievedFromUrl || isJetpackCheckout );
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
 
@@ -341,6 +344,7 @@ function useAddProductFromSlug( {
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	source,
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -350,13 +354,9 @@ function useAddProductFromSlug( {
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	source?: string;
 } ) {
-	const products: Record<
-		string,
-		{
-			product_slug: string;
-		}
-	> = useSelector( getProductsList );
+	const products = useSelector( getProductsList );
 	const translate = useTranslate();
 
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
@@ -401,6 +401,8 @@ function useAddProductFromSlug( {
 				isJetpackCheckout,
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
+				privacy: product.is_privacy_protection_product_purchase_allowed,
+				source,
 			} )
 		);
 
@@ -440,6 +442,7 @@ function useAddProductFromSlug( {
 		dispatch,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
+		source,
 	] );
 }
 
@@ -519,49 +522,44 @@ function createItemToAddToCart( {
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
+	privacy,
+	source,
 }: {
 	productSlug: string;
 	productAlias: string;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
+	privacy?: boolean;
+	source?: string;
 } ): RequestCartProduct {
-	debug( 'creating product with', productSlug, productAlias );
+	// Allow setting meta (theme name or domain name) from products in the URL by
+	// using a colon between the product slug and the meta.
 	const [ , meta ] = productAlias.split( ':' );
 	// Some meta values contain slashes, so we decode them
 	const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
 
-	if ( productAlias.startsWith( 'theme:' ) ) {
-		debug( 'creating theme product' );
-		return addContextToProduct(
-			createRequestCartProduct( {
-				product_slug: productSlug,
-				meta: cartMeta,
-			} )
-		);
-	}
-
-	if ( productAlias.startsWith( 'domain-mapping:' ) ) {
-		debug( 'creating domain mapping product' );
-		return addContextToProduct(
-			createRequestCartProduct( {
-				product_slug: productSlug,
-				meta: cartMeta,
-			} )
-		);
-	}
-
-	return addContextToProduct(
-		createRequestCartProduct( {
-			product_slug: productSlug,
-			extra: { isJetpackCheckout, jetpackSiteSlug, jetpackPurchaseToken },
-		} )
+	debug(
+		'creating product with',
+		productSlug,
+		'from alias',
+		productAlias,
+		'with meta',
+		cartMeta,
+		'and privacy',
+		privacy
 	);
-}
 
-function addContextToProduct( product: RequestCartProduct ): RequestCartProduct {
-	return {
-		...product,
-		extra: { ...product.extra, context: 'calypstore' },
-	};
+	return createRequestCartProduct( {
+		product_slug: productSlug,
+		extra: {
+			isJetpackCheckout,
+			jetpackSiteSlug,
+			jetpackPurchaseToken,
+			privacy,
+			context: 'calypstore',
+			source: source ?? undefined,
+		},
+		...( cartMeta ? { meta: cartMeta } : {} ),
+	} );
 }

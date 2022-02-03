@@ -1,9 +1,4 @@
-import {
-	READER_THUMBNAIL_REQUEST,
-	READER_THUMBNAIL_REQUEST_SUCCESS,
-	READER_THUMBNAIL_REQUEST_FAILURE,
-	READER_THUMBNAIL_RECEIVE,
-} from 'calypso/state/reader/action-types';
+import { READER_THUMBNAIL_RECEIVE } from 'calypso/state/reader/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
 /**
@@ -38,28 +33,6 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-/**
- * Returns the updated requesting state after an action has been dispatched.
- * Requesting state tracks whether a request is in progress.
- *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
- */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
-		case READER_THUMBNAIL_REQUEST:
-		case READER_THUMBNAIL_REQUEST_SUCCESS:
-		case READER_THUMBNAIL_REQUEST_FAILURE:
-			return {
-				...state,
-				[ action.embedUrl ]: action.type === READER_THUMBNAIL_REQUEST,
-			};
-	}
-	return state;
-}
-
 export default combineReducers( {
 	items,
-	requesting,
 } );

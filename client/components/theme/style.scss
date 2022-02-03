@@ -64,6 +64,7 @@ $theme-info-height: 54px;
 	height: $theme-info-height;
 	display: flex;
 	background: var( --color-surface );
+	align-items: center;
 }
 
 .theme__info-title {
@@ -77,6 +78,7 @@ $theme-info-height: 54px;
 	font-family: inherit;
 	overflow: hidden;
 	white-space: nowrap;
+	top: -1px;
 
 	&::before {
 		@include long-content-fade();
@@ -85,25 +87,22 @@ $theme-info-height: 54px;
 
 .theme__badge-price {
 	flex: 0 0 auto;
-	padding: 18px 10px 0;
+	padding: 0 10px;
 	color: var( --color-success );
 	font-size: $font-body-small;
 	font-weight: 600;
 }
 
-.theme__badge-price-test {
-	padding: 18px 5px;
-}
-
 .theme__upsell {
 	flex: 0 0 auto;
-	padding: 16px 10px 0 0;
+	padding: 5px 10px 0 0;
 	color: var( --color-neutral-light );
 }
 
 .theme__upsell-icon svg {
 	transform: scale( 0.8 );
 	border: 2px solid var( --color-neutral-20 );
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 100%;
 	display: inline-block;
 	width: 22px;
@@ -127,13 +126,20 @@ $theme-info-height: 54px;
 
 .theme__badge-price-upgrade {
 	text-transform: uppercase;
-	font-size: 80%;
+	font-size: $font-body-small;
 }
 
 .theme__badge-active {
 	flex: 0 0 auto;
-	padding: 18px 10px 0;
 	color: var( --color-primary-0 );
+	text-transform: uppercase;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
+}
+
+.theme__badge-premium {
+	color: var( --color-success );
+	flex: 0 0 auto;
 	text-transform: uppercase;
 	font-size: $font-body-extra-small;
 	font-weight: 600;
@@ -288,3 +294,4 @@ $theme-info-height: 54px;
 .theme__ribbon {
 	text-transfrom: capitalize;
 }
+

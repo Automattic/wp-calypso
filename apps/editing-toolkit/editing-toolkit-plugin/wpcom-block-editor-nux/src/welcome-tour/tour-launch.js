@@ -11,7 +11,6 @@ import { useEffect, useMemo } from '@wordpress/element';
  * Internal Dependencies
  */
 import { usePrefetchTourAssets } from './hooks';
-import { WelcomeTourContextProvider, useWelcomeTourContext } from './tour-context';
 import WelcomeTourMinimized from './tour-minimized-renderer';
 import WelcomeTourStep from './tour-step-renderer';
 import getTourSteps from './tour-steps';
@@ -26,7 +25,6 @@ function LaunchWpcomWelcomeTour() {
 			select( 'automattic/starter-page-layouts' ).isOpen(),
 		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
 	} ) );
-
 	const localeSlug = useLocale();
 
 	// Preload first card image (others preloaded after open state confirmed)
@@ -48,11 +46,7 @@ function LaunchWpcomWelcomeTour() {
 		return null;
 	}
 
-	return (
-		<WelcomeTourContextProvider>
-			<WelcomeTour />
-		</WelcomeTourContextProvider>
-	);
+	return <WelcomeTour />;
 }
 
 function WelcomeTour() {
@@ -65,7 +59,6 @@ function WelcomeTour() {
 	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() ).filter(
 		( step ) => ! ( step.meta.isDesktopOnly && isMobile() )
 	);
-	const { setJustMaximized } = useWelcomeTourContext();
 
 	// Preload card images
 	usePrefetchTourAssets( tourSteps );
@@ -93,10 +86,20 @@ function WelcomeTour() {
 					} );
 				},
 				onMaximize: ( currentStepIndex ) => {
-					setJustMaximized( true );
 					recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
 						is_gutenboarding: isGutenboarding,
 						slide_number: currentStepIndex + 1,
+					} );
+				},
+				onStepViewOnce: ( currentStepIndex ) => {
+					const lastStepIndex = tourSteps.length - 1;
+					const { heading } = tourSteps[ currentStepIndex ].meta;
+
+					recordTracksEvent( 'calypso_editor_wpcom_tour_slide_view', {
+						slide_number: currentStepIndex + 1,
+						is_last_slide: currentStepIndex === lastStepIndex,
+						slide_heading: heading,
+						is_gutenboarding: isGutenboarding,
 					} );
 				},
 			},
@@ -133,7 +136,7 @@ function WelcomeTour() {
 					[]
 				),
 			],
-			className: 'wpcom-editor-welcome-tour',
+			classNames: 'wpcom-editor-welcome-tour',
 		},
 	};
 

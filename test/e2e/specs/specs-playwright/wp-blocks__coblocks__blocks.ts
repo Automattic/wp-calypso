@@ -3,8 +3,7 @@
  * @group coblocks
  */
 import {
-	setupHooks,
-	BrowserHelper,
+	envVariables,
 	DataHelper,
 	MediaHelper,
 	GutenbergEditorPage,
@@ -14,29 +13,28 @@ import {
 	HeroBlock,
 	LogosBlock,
 	PricingTableBlock,
-	NewPostFlow,
+	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-let user: string;
-if ( BrowserHelper.targetCoBlocksEdge() ) {
-	user = 'coBlocksSimpleSiteEdgeUser';
-} else if ( BrowserHelper.targetGutenbergEdge() ) {
-	user = 'gutenbergSimpleSiteEdgeUser';
+let accountName: string;
+if ( envVariables.COBLOCKS_EDGE ) {
+	accountName = 'coBlocksSimpleSiteEdgeUser';
+} else if ( envVariables.GUTENBERG_EDGE ) {
+	accountName = 'gutenbergSimpleSiteEdgeUser';
 } else {
-	user = 'gutenbergSimpleSiteUser';
+	accountName = 'gutenbergSimpleSiteUser';
 }
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	let page: Page;
+	let testAccount: TestAccount;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 	let logoImage: TestFile;
-
-	setupHooks( ( args ) => {
-		page = args.page;
-	} );
 
 	// Test data
 	const pricingTableBlockPrices = [ 4.99, 9.99 ];
@@ -44,8 +42,16 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	const clicktoTweetBlockTweet = 'Tweet text';
 
 	beforeAll( async () => {
+		page = await browser.newPage();
 		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
+		testAccount = new TestAccount( accountName );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+
+		await testAccount.authenticate( page );
+	} );
+
+	it( 'Go to the new post page', async () => {
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( `Insert ${ PricingTableBlock.blockName } block and enter prices`, async function () {

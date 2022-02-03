@@ -98,7 +98,7 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 					<div className="storybook__tourkit-minimized">
 						<div className="storybook__tourkit-minimized-controls">
 							<button onClick={ onDismiss( 'main-btn' ) }>Close</button>
-							<button onClick={ onMaximize }>Miximize</button>
+							<button onClick={ onMaximize }>Maximize</button>
 						</div>
 					</div>
 				);
@@ -106,7 +106,7 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 		},
 		closeHandler: onClose,
 		options: {
-			className: 'mytour',
+			classNames: [ 'mytour' ],
 			...options,
 		},
 	};

@@ -30,7 +30,7 @@ function SelectItems< T >( { className, items, onSelect }: Props< T > ): React.R
 					<div className="select-items__item-info-wrapper">
 						<div className="select-items__item-info">
 							<h2 className="select-items__item-title">{ preventWidows( title ) }</h2>
-							<p className="select-items__item-description">{ preventWidows( description ) }</p>
+							<div className="select-items__item-description">{ preventWidows( description ) }</div>
 						</div>
 						<Button className="select-items__item-button" onClick={ () => onSelect( value ) }>
 							{ actionText }

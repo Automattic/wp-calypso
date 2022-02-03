@@ -6,12 +6,10 @@ import {
 	ChangeUILanguageFlow,
 	DataHelper,
 	GutenbergEditorPage,
-	LoginPage,
-	NewPostFlow,
-	setupHooks,
-	TestEnvironment,
+	TestAccount,
+	envVariables,
 } from '@automattic/calypso-e2e';
-import { Page, Frame } from 'playwright';
+import { Page, Frame, Browser } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
 
 type Translations = {
@@ -209,26 +207,29 @@ const translations: Translations = {
 	},
 };
 
+declare const browser: Browser;
+
 describe( 'I18N: Editor', function () {
-	let page: Page;
 	// Filter out the locales that do not have valid translation content defined above.
 	const locales = Object.keys( translations ).filter( ( locale ) =>
-		TestEnvironment.LOCALES().includes( locale )
+		( envVariables.TEST_LOCALES as ReadonlyArray< string > ).includes( locale )
 	);
+	let page: Page;
+	let gutenbergEditorPage: GutenbergEditorPage;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
 		// Confirm page leave with unsaved changes prompt.
 		page.on( 'dialog', async ( dialog ) => {
 			if ( dialog.type() === 'beforeunload' ) {
 				await dialog.accept();
 			}
 		} );
-	} );
 
-	it( 'Log in', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: 'i18nUser' } );
+		const testAccount = new TestAccount( 'i18nUser' );
+		await testAccount.authenticate( page );
+
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
@@ -248,15 +249,15 @@ describe( 'I18N: Editor', function () {
 				] );
 			} );
 
-			it( 'Start new post', async function () {
-				const newPostFlow = new NewPostFlow( page );
-				await newPostFlow.newPostFromNavbar();
+			it( 'Go to the new post page', async function () {
+				await gutenbergEditorPage.visit( 'post' );
 			} );
 		} );
 
 		describe.each( translations[ locale ].blocks )(
 			'Translations for block: $blockName',
-			function ( block ) {
+			( ...args ) => {
+				const block = args[ 0 ]; // Makes TS stop complaining about incompatible args type
 				let frame: Frame;
 				let gutenbergEditorPage: GutenbergEditorPage;
 

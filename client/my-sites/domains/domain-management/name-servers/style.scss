@@ -27,19 +27,9 @@
 	}
 }
 
-.name-servers__dns-templates-buttons {
-	margin-top: 20px;
-}
-
 .name-servers.is-placeholder {
-	.name-servers__dns,
-	.name-servers__dns-templates {
-		.name-servers__title {
-			@include placeholder();
-		}
-
-		.name-servers__toggle,
-		.name-servers__dns-templates-buttons {
+	.name-servers__dns {
+		.name-servers__toggle {
 			display: none;
 		}
 

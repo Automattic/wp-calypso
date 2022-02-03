@@ -3,45 +3,33 @@
  */
 
 import {
-	setupHooks,
 	DataHelper,
-	TOTPClient,
-	LoginPage,
 	P2Page,
 	IsolatedBlockEditorComponent,
 	ParagraphBlock,
+	TestAccount,
 } from '@automattic/calypso-e2e';
-import { ElementHandle, Page } from 'playwright';
+import { ElementHandle, Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 	let page: Page;
+	let testAccount: TestAccount;
 	let blockHandle: ElementHandle;
 	let p2Page: P2Page;
 	let isolatedBlockEditorComponent: IsolatedBlockEditorComponent;
 
-	const user = 'p2User';
 	const postContent = DataHelper.getTimestamp();
 
-	setupHooks( ( args: { page: Page } ) => {
-		page = args.page;
-	} );
-
-	it( 'Log In', async function () {
-		const loginPage = new LoginPage( page );
-		await loginPage.login( { account: user }, { landingUrl: '**/log-in/authenticator' } );
-
-		/* Normally setup for a const will be located outside
-		of the test step for organization purposes.
-		However, TOTP codes are time-sensitive and so as an exception
-		the setup is done within the test step.
-		*/
-		const totpClient = new TOTPClient( DataHelper.config.get( 'p2UserTOTP' ) );
-		const code = totpClient.getToken();
-		await loginPage.enter2FACode( code );
+	beforeAll( async () => {
+		page = await browser.newPage();
+		testAccount = new TestAccount( 'p2User' );
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'View P2', async function () {
-		await page.goto( DataHelper.getAccountSiteURL( user ), { waitUntil: 'networkidle' } );
+		await page.goto( testAccount.getSiteURL(), { waitUntil: 'networkidle' } );
 	} );
 
 	it( 'Add a Paragraph block', async function () {

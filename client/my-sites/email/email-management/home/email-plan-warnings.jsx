@@ -8,7 +8,7 @@ import {
 	hasGoogleAccountTOSWarning,
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
-import { getGoogleAdminUrl } from 'calypso/lib/gsuite';
+import { getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -39,9 +39,8 @@ class EmailPlanWarnings extends Component {
 		const { domain, translate } = this.props;
 
 		return (
-			// TODO: Change to `getGoogleAdminWithTosUrl()` function flagged in https://github.com/Automattic/wp-calypso/pull/53032#pullrequestreview-664396027
-			<Button compact primary href={ getGoogleAdminUrl( domain.name ) } target="_blank">
-				{ translate( 'Finish Setup' ) }
+			<Button compact primary href={ getGoogleAdminWithTosUrl( domain.name ) } target="_blank">
+				{ translate( 'Finish setup' ) }
 				<Gridicon icon="external" />
 			</Button>
 		);

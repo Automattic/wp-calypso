@@ -1,9 +1,11 @@
 import config from '@automattic/calypso-config';
+import { isMobile } from '@automattic/viewport';
 import { isEmpty } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
@@ -286,6 +288,11 @@ export default {
 			userLoggedIn
 		);
 
+		// Update initialContext to help woocommerce-install support site switching.
+		if ( 'woocommerce-install' === flowName ) {
+			initialContext = context;
+		}
+
 		const { query } = initialContext;
 
 		// wait for the step component module to load
@@ -323,6 +330,15 @@ export default {
 			! isManageSiteFlow
 		) {
 			context.store.dispatch( setSelectedSiteId( null ) );
+		}
+
+		// Pre-fetching the experiment
+		if ( flowName === 'onboarding' || flowName === 'launch-site' ) {
+			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' );
+		}
+
+		if ( isMobile() && 'onboarding' === flowName ) {
+			loadExperimentAssignment( 'calypso_mobile_plans_page_with_billing' );
 		}
 
 		context.primary = createElement( SignupComponent, {

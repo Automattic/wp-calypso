@@ -5,7 +5,10 @@ import {
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { receiveJetpackSaleCoupon } from 'calypso/state/marketing/actions';
+import {
+	receiveJetpackSaleCoupon,
+	fetchJetpackSaleCouponFailed,
+} from 'calypso/state/marketing/actions';
 
 const noop = () => {};
 
@@ -41,6 +44,8 @@ export const fetchJetpackSaleCouponHandler = ( action ) =>
 export const receiveJetpackSaleCouponHandler = ( action, jetpackSaleCoupon ) =>
 	receiveJetpackSaleCoupon( jetpackSaleCoupon );
 
+export const fetchJetpackSaleCouponOnErrorHandler = () => fetchJetpackSaleCouponFailed();
+
 registerHandlers( 'state/data-layer/wpcom/marketing/index.js', {
 	[ MARKETING_CLICK_UPGRADE_NUDGE ]: [
 		dispatchRequest( {
@@ -54,7 +59,7 @@ registerHandlers( 'state/data-layer/wpcom/marketing/index.js', {
 		dispatchRequest( {
 			fetch: fetchJetpackSaleCouponHandler,
 			onSuccess: receiveJetpackSaleCouponHandler,
-			onError: noop,
+			onError: fetchJetpackSaleCouponOnErrorHandler,
 		} ),
 	],
 } );

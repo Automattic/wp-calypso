@@ -12,7 +12,6 @@ import InfoPopover from 'calypso/components/info-popover';
 import SegmentedControl from 'calypso/components/segmented-control';
 import SiteVerticalsSuggestionSearch from 'calypso/components/site-verticals-suggestion-search';
 import formState from 'calypso/lib/form-state';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -26,7 +25,6 @@ import { setSiteGoals } from 'calypso/state/signup/steps/site-goals/actions';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { setSiteTitle } from 'calypso/state/signup/steps/site-title/actions';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
 import {
 	getSiteVerticalId,
@@ -156,15 +154,7 @@ class AboutStep extends Component {
 
 	handleSubmit = ( event ) => {
 		event.preventDefault();
-		const {
-			goToNextStep,
-			stepName,
-			flowName,
-			shouldHideSiteTitle,
-			shouldHideSiteGoals,
-			previousFlowName,
-			siteType,
-		} = this.props;
+		const { goToNextStep, stepName, flowName, previousFlowName } = this.props;
 
 		//Defaults
 		let themeRepo = 'pub/radcliffe-2';
@@ -177,15 +167,13 @@ class AboutStep extends Component {
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 		const eventAttributes = {};
 
-		if ( ! shouldHideSiteTitle ) {
-			//Site Title
-			const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
-			if ( siteTitleInput !== '' ) {
-				siteTitleValue = siteTitleInput;
-				this.props.setSiteTitle( siteTitleValue );
-			}
-			eventAttributes.site_title = siteTitleInput || 'N/A';
+		//Site Title
+		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
+		if ( siteTitleInput !== '' ) {
+			siteTitleValue = siteTitleInput;
+			this.props.setSiteTitle( siteTitleValue );
 		}
+		eventAttributes.site_title = siteTitleInput || 'N/A';
 
 		// Set Site Topic value for tracking/marketing
 		eventAttributes.site_topic = this.state.hasPrepopulatedVertical
@@ -213,41 +201,28 @@ class AboutStep extends Component {
 		} );
 
 		//Site Goals
-		if ( shouldHideSiteGoals ) {
-			themeRepo =
-				getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
+		const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
+		const siteGoalsArray = siteGoalsInput.split( ',' );
+		const siteGoalsGroup = siteGoalsArray.sort().join();
 
-			if ( 'ecommerce' === flowName ) {
-				designType = 'page';
-			} else {
-				designType = getSiteTypePropertyValue( 'slug', siteType, 'designType' ) || 'blog';
-			}
+		this.props.setSiteGoals( siteGoalsInput );
+		themeRepo = this.state.hasPrepopulatedVertical
+			? 'pub/radcliffe-2'
+			: getThemeForSiteGoals( siteGoalsInput );
+		designType = getDesignTypeForSiteGoals( siteGoalsInput, flowName );
 
-			eventAttributes.site_type = siteType;
-		} else {
-			const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
-			const siteGoalsArray = siteGoalsInput.split( ',' );
-			const siteGoalsGroup = siteGoalsArray.sort().join();
+		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
+			eventAttributes[ `site_goal_${ siteGoalsArray[ i ] }` ] = true;
+		}
 
-			this.props.setSiteGoals( siteGoalsInput );
-			themeRepo = this.state.hasPrepopulatedVertical
-				? 'pub/radcliffe-2'
-				: getThemeForSiteGoals( siteGoalsInput );
-			designType = getDesignTypeForSiteGoals( siteGoalsInput, flowName );
+		eventAttributes.site_goal_selections = siteGoalsGroup;
 
-			for ( let i = 0; i < siteGoalsArray.length; i++ ) {
-				eventAttributes[ `site_goal_${ siteGoalsArray[ i ] }` ] = true;
-			}
-
-			eventAttributes.site_goal_selections = siteGoalsGroup;
-
-			//Store
-			if ( designType === DESIGN_TYPE_STORE ) {
-				nextFlowName =
-					siteGoalsArray.indexOf( 'sell' ) === -1 && previousFlowName
-						? previousFlowName
-						: 'ecommerce';
-			}
+		//Store
+		if ( designType === DESIGN_TYPE_STORE ) {
+			nextFlowName =
+				siteGoalsArray.indexOf( 'sell' ) === -1 && previousFlowName
+					? previousFlowName
+					: 'ecommerce';
 		}
 
 		//SET DESIGN TYPE
@@ -432,7 +407,7 @@ class AboutStep extends Component {
 	}
 
 	renderContent() {
-		const { translate, siteTitle, shouldHideSiteTitle, shouldHideSiteGoals } = this.props;
+		const { translate, siteTitle } = this.props;
 
 		const { siteTopicValue } = this.state;
 
@@ -441,28 +416,24 @@ class AboutStep extends Component {
 				<div className="about__form-wrapper">
 					<form onSubmit={ this.handleSubmit }>
 						<Card>
-							{ ! shouldHideSiteTitle && (
-								<FormFieldset>
-									<FormLabel htmlFor="siteTitle">
-										{ translate( 'What would you like to name your site?' ) }
-										<InfoPopover className="about__info-popover" position="top">
-											{ translate(
-												"We'll use this as your site title. " +
-													"Don't worry, you can change this later."
-											) }
-										</InfoPopover>
-									</FormLabel>
-									<FormTextInput
-										id="siteTitle"
-										name="siteTitle"
-										placeholder={ translate(
-											"E.g., Mel's Diner, Stevie’s Blog, Vail Renovations"
+							<FormFieldset>
+								<FormLabel htmlFor="siteTitle">
+									{ translate( 'What would you like to name your site?' ) }
+									<InfoPopover className="about__info-popover" position="top">
+										{ translate(
+											"We'll use this as your site title. " +
+												"Don't worry, you can change this later."
 										) }
-										defaultValue={ siteTitle }
-										onChange={ this.handleChangeEvent }
-									/>
-								</FormFieldset>
-							) }
+									</InfoPopover>
+								</FormLabel>
+								<FormTextInput
+									id="siteTitle"
+									name="siteTitle"
+									placeholder={ translate( "E.g., Mel's Diner, Stevie’s Blog, Vail Renovations" ) }
+									defaultValue={ siteTitle }
+									onChange={ this.handleChangeEvent }
+								/>
+							</FormFieldset>
 
 							{ this.shouldShowSiteTopicField() && (
 								<FormFieldset>
@@ -479,14 +450,12 @@ class AboutStep extends Component {
 								</FormFieldset>
 							) }
 
-							{ ! shouldHideSiteGoals && (
-								<FormFieldset>
-									<FormLegend>
-										{ translate( 'What’s the primary goal you have for your site?' ) }
-									</FormLegend>
-									{ this.renderGoalCheckboxes() }
-								</FormFieldset>
-							) }
+							<FormFieldset>
+								<FormLegend>
+									{ translate( 'What’s the primary goal you have for your site?' ) }
+								</FormLegend>
+								{ this.renderGoalCheckboxes() }
+							</FormFieldset>
 
 							{ this.renderExperienceOptions() }
 
@@ -534,23 +503,14 @@ class AboutStep extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
+	( state ) => ( {
 		siteTitle: getSiteTitle( state ),
 		siteGoals: getSiteGoals( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
-		siteType: getSiteType( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		verticalId: getSiteVerticalId( state ),
 		verticalParentId: getSiteVerticalParentId( state ),
-		shouldHideSiteGoals:
-			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-type' ),
-		shouldHideSiteTitle:
-			'onboarding' === ownProps.flowName && includes( ownProps.steps, 'site-title' ),
-		shouldSkipAboutStep:
-			includes( ownProps.steps, 'site-type' ) &&
-			includes( ownProps.steps, 'site-topic' ) &&
-			includes( ownProps.steps, 'site-title' ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	{

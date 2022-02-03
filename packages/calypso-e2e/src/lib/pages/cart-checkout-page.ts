@@ -1,7 +1,7 @@
 import { Frame, Page } from 'playwright';
-import { getTargetDeviceName } from '../../browser-helper';
+import { getCalypsoURL } from '../../data-helper';
+import envVariables from '../../env-variables';
 import type { PaymentDetails, RegistrarDetails } from '../../data-helper';
-import type { TargetDevice } from '../../types';
 
 const selectors = {
 	// Modal
@@ -38,9 +38,11 @@ const selectors = {
 	// Tax information
 	countryCode: `select[aria-labelledby="country-selector-label"]`,
 	postalCode: `input[id="contact-postal-code"]`,
-	submitBillingInformationButton: `button[aria-label="Continue with the entered contact details"]`,
+	submitBillingInformationButton:
+		'[data-testid="contact-form--visible"] button.checkout-button.is-status-primary',
 
 	// Payment field
+	paymentMethod: '[data-testid="payment-method-step--visible"]',
 	cardholderName: `input[id="cardholder-name"]`,
 	cardNumberFrame: 'iframe[title="Secure card number input frame"]',
 	cardNumberInput: 'input[data-elements-stable-field-name="cardNumber"]',
@@ -55,9 +57,12 @@ const selectors = {
 	couponCodeApplyButton: `button:text("Apply")`,
 	disabledButton: 'button[disabled]:has-text("Processing")',
 	paymentButton: `button.checkout-button`,
-	totalAmount: ( device: TargetDevice ) =>
-		device === 'mobile' ? '.wp-checkout__total-price' : '.wp-checkout-order-summary__total-price',
+	totalAmount:
+		envVariables.VIEWPORT_NAME === 'mobile'
+			? '.wp-checkout__total-price'
+			: '.wp-checkout-order-summary__total-price',
 	purchaseButton: `button.checkout-button:has-text("Pay")`,
+	closeCheckout: 'button[data-tip-target="close"]',
 };
 
 /**
@@ -75,6 +80,21 @@ export class CartCheckoutPage {
 		this.page = page;
 	}
 
+	/**
+	 * Navigates to checkout page of the specified blog.
+	 *
+	 * @param {string} blogName Blogname for which checkout is to be loaded.
+	 */
+	async visit( blogName: string ): Promise< void > {
+		await this.page.goto( getCalypsoURL( `checkout/${ blogName }` ), { waitUntil: 'networkidle' } );
+	}
+
+	/**
+	 * Validates that the card payment input fields are visible.
+	 */
+	async validatePaymentForm(): Promise< void > {
+		await this.page.waitForSelector( selectors.cardholderName );
+	}
 	/**
 	 * Validates that an item is in the cart with the expected text. Throws if it isn't.
 	 *
@@ -163,9 +183,7 @@ export class CartCheckoutPage {
 	async getCheckoutTotalAmount( { rawString = false }: { rawString?: boolean } = {} ): Promise<
 		number | string
 	> {
-		const elementHandle = await this.page.waitForSelector(
-			selectors.totalAmount( getTargetDeviceName() )
-		);
+		const elementHandle = await this.page.waitForSelector( selectors.totalAmount );
 		const stringAmount = await elementHandle.innerText();
 		if ( rawString ) {
 			// Returns the raw string.

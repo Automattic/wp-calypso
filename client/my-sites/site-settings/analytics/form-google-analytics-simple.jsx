@@ -38,7 +38,7 @@ const GoogleAnalyticsSimpleForm = ( {
 	site,
 	translate,
 } ) => {
-	const analyticsSupportUrl = 'https://wordpress.com/support/google-analytics/';
+	const analyticsSupportUrl = localizeUrl( 'https://wordpress.com/support/google-analytics/' );
 	const nudgeTitle = translate(
 		'Connect your site to Google Analytics in seconds with the Premium plan'
 	);
@@ -161,11 +161,7 @@ const GoogleAnalyticsSimpleForm = ( {
 									{
 										components: {
 											a: (
-												<a
-													href={ localizeUrl( analyticsSupportUrl ) }
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
+												<a href={ analyticsSupportUrl } target="_blank" rel="noopener noreferrer" />
 											),
 										},
 									}

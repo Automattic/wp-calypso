@@ -12,7 +12,6 @@ describe( 'reducer', () => {
 			isUserInput: true,
 			name: 'glücklich',
 			slug: 'happy',
-			preview: '<ho>ho</ho>',
 		};
 		expect(
 			reducer( state, {
@@ -30,7 +29,6 @@ describe( 'reducer', () => {
 			isUserInput: true,
 			name: 'glücklich',
 			slug: 'happy',
-			preview: '<ho>ho</ho>',
 		};
 		expect( reducer( state, { type: JETPACK_CONNECT_AUTHORIZE } ) ).toEqual( {} );
 	} );

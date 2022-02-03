@@ -23,12 +23,20 @@ const EmailProviderStackedFeature = ( {
 	);
 };
 
+export interface AppLogo {
+	image: string;
+	imageAltText: string;
+	title: string;
+}
+
 export interface EmailProviderStackedFeaturesProps {
 	features: TranslateResult[];
+	appLogos: AppLogo[];
 }
 
 export const EmailProviderStackedFeatures = ( {
 	features,
+	appLogos,
 }: EmailProviderStackedFeaturesProps ): ReactElement | null => {
 	const translate = useTranslate();
 
@@ -41,9 +49,18 @@ export const EmailProviderStackedFeatures = ( {
 			<span className={ 'email-provider-stacked-features__whats-included' }>
 				{ translate( "What's included:" ) }
 			</span>
+
 			{ features.map( ( feature, index ) => (
 				<EmailProviderStackedFeature key={ index } title={ feature } />
 			) ) }
+
+			{ appLogos && (
+				<div className="email-provider-stacked-features__logos">
+					{ appLogos.map( ( { image, imageAltText, title }, index ) => (
+						<img alt={ imageAltText } key={ index } src={ image } title={ title } />
+					) ) }
+				</div>
+			) }
 		</>
 	);
 };

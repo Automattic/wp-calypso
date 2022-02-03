@@ -1,7 +1,7 @@
 .tour-kit-frame {
     visibility: hidden;
 
-    &.--visible {
+    &.is-visible {
         visibility: visible;
     }
 }
@@ -28,13 +28,13 @@
 	background: rgba( 0, 0, 0 );
 	opacity: 0;
 
-	&.--visible {
+	&.is-visible {
 		opacity: 0.5;
 	}
 }
 
 .tour-kit-spotlight {
-	&.--visible {
+	&.is-visible {
 		position: fixed;
 		overflow: hidden;
 		// box-shadow: 0 0 0 9999px rgba(0, 0, 255, 0.2);

@@ -62,6 +62,7 @@ describe( 'CompositeCheckout', () => {
 		hasLoadedSiteDomains.mockImplementation( () => true );
 		getDomainsBySiteId.mockImplementation( () => [] );
 		isMarketplaceProduct.mockImplementation( () => false );
+		isJetpackSite.mockImplementation( () => false );
 
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
@@ -614,7 +615,8 @@ describe( 'CompositeCheckout', () => {
 			'Remove WordPress.com Personal from cart'
 		);
 		fireEvent.click( removeProductButton );
-		const confirmButton = await screen.findByText( 'Continue' );
+		const confirmModal = await screen.findByRole( 'dialog' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( () => {
 			expect( navigate ).toHaveBeenCalledWith( '/plans/foo.com' );
@@ -624,14 +626,13 @@ describe( 'CompositeCheckout', () => {
 	it( 'does not redirect to the plans page if the cart is empty after removing a product when it is not the last', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove foo.cash from cart'
 		);
 		fireEvent.click( removeProductButton );
-		const confirmButton = await screen.findByText( 'Continue' );
+		const confirmModal = await screen.findByRole( 'dialog' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );

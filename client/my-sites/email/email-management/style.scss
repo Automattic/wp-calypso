@@ -120,12 +120,14 @@
 
 .email-list-inactive {
 	margin-top: 15px;
+
 	> .card {
 		align-items: center;
 		display: flex;
 		margin-bottom: 0;
 		padding-bottom: 20px;
 		padding-top: 20px;
+
 		> span {
 			flex: 1 1 auto;
 			line-height: 40px;
@@ -146,7 +148,7 @@
 }
 
 .email-plan__actions .vertical-nav-item.card,
-.email-plan-mailboxes-list__mailbox-list-item.card {
+.email-plan-mailboxes-list__mailbox-list-item.card.is-compact {
 	padding-bottom: 28px;
 	padding-top: 28px;
 }
@@ -160,9 +162,9 @@
 	}
 }
 
-.email-plan-header {
-	display: flex;
+.email-plan-header.card.is-compact {
 	align-items: center;
+	display: flex;
 	flex-wrap: wrap;
 
 	h2 {
@@ -226,7 +228,8 @@
 	display: flex;
 	line-height: 24px;
 
-	> img, > svg {
+	> img,
+	> svg {
 		margin-right: 8px;
 	}
 
@@ -234,6 +237,7 @@
 		> img {
 			filter: grayscale( 100% ) brightness( 0.2 ) invert( 1 );
 		}
+
 		> svg {
 			fill: white;
 		}
@@ -244,32 +248,29 @@
 	}
 }
 
-.email-plan-mailboxes-list__mailbox-list-item {
-	display: flex;
+.email-plan-mailboxes-list__mailbox-list-item.card.is-compact {
 	flex-direction: column;
+	display: flex;
 
-	&.card {
-		&.is-compact {
-			@include break-xlarge {
-				flex-direction: row;
-				/* The padding jumps as we need the padding on this element instead
-				 * of mailbox-list-item-main when we shift to flex-direction: row
-				 */
-				padding-right: 72px;
-			}
+	@include break-xlarge {
+		flex-direction: row;
+
+		/* The padding jumps as we need the padding on this element instead
+		 * of mailbox-list-item-main when we shift to flex-direction: row
+		 */
+		padding-right: 72px;
+	}
+
+	&.is-highlight {
+		padding-left: 13px;
+
+		@include break-mobile {
+			padding-left: 21px;
 		}
+	}
 
-		&.is-highlight {
-			padding-left: 13px;
-
-			@include break-mobile {
-				padding-left: 21px;
-			}
-		}
-
-		&.is-error {
-			border-left-color: var( --color-error-50 );
-		}
+	&.is-error {
+		border-left-color: var( --color-error-50 );
 	}
 
 	.email-plan-mailboxes-list__mailbox-list-item-main {
@@ -290,21 +291,25 @@
 			margin-top: 0.5em;
 		}
 	}
+
 	&.is-placeholder > span,
 	&.is-placeholder .email-plan-mailboxes-list__mailbox-list-item-main {
 		@include placeholder( --color-neutral-5 );
 		width: 50%;
 	}
+
 	&.no-emails > span {
 		color: var( --color-text-subtle );
 		font-style: italic;
 	}
+
 	> svg,
 	.email-plan-mailboxes-list__mailbox-list-item-main svg {
 		fill: var( --studio-gray-40 );
 		margin-right: 10px;
 		vertical-align: middle;
 	}
+
 	.email-plan-mailboxes-list__mailbox-list-item-main span {
 		vertical-align: middle;
 		word-break: break-all;
@@ -341,6 +346,7 @@
 			margin-right: 6px;
 			vertical-align: middle;
 		}
+
 		> span {
 			vertical-align: middle;
 		}
@@ -362,7 +368,7 @@
 	}
 }
 
-.email-plan-subscription__card {
+.email-plan-subscription__card.card.is-compact {
 	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
@@ -386,6 +392,7 @@
 		label {
 			font-size: $font-body;
 		}
+
 		/* vertically aligns the auto-renew toggle - not sure if there's a better way... */
 		> div > div {
 			margin-top: auto;

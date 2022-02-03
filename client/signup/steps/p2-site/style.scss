@@ -1,3 +1,10 @@
+.p2-site__create {
+	.p2-step-wrapper__header-text {
+		font-size: var( --p2-font-size-form-xl );
+		font-weight: 700;
+	}
+}
+
 .p2-site__site-url-container {
 	position: relative;
 }

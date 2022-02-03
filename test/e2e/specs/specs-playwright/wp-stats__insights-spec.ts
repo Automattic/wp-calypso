@@ -2,30 +2,27 @@
  * @group calypso-pr
  */
 
-import {
-	setupHooks,
-	DataHelper,
-	LoginPage,
-	StatsPage,
-	SidebarComponent,
-} from '@automattic/calypso-e2e';
-import { Page } from 'playwright';
+import { DataHelper, StatsPage, SidebarComponent, TestAccount } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Stats' ), function () {
 	let page: Page;
 
-	setupHooks( ( args ) => {
-		page = args.page;
-	} );
-
 	describe.each`
-		siteType      | user
-		${ 'Simple' } | ${ 'defaultUser' }
+		siteType      | accountName
 		${ 'Atomic' } | ${ 'eCommerceUser' }
-	`( 'View Insights ($siteType)', function ( { user } ) {
-		it( 'Log In', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.login( { account: user } );
+	`( 'View Insights ($siteType)', function ( { accountName } ) {
+		beforeAll( async () => {
+			page = await browser.newPage();
+
+			const testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
+		} );
+
+		afterAll( async () => {
+			await page.close();
 		} );
 
 		it( 'Navigate to Stats', async function () {

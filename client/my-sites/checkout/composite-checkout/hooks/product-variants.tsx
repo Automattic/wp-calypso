@@ -36,7 +36,7 @@ export interface AvailableProductVariant {
 	};
 	priceFull: number;
 	priceFinal: number;
-	isIntroductoryOfferApplied: boolean;
+	introductoryOfferPrice: number | null;
 }
 
 export interface AvailableProductVariantAndCompared extends AvailableProductVariant {
@@ -203,8 +203,14 @@ function isVariantAllowed(
 }
 
 function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompared } ) {
-	const currentPrice = variant.priceFinal || variant.priceFull;
-	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
+	const currentPrice =
+		variant.introductoryOfferPrice !== null
+			? variant.introductoryOfferPrice
+			: variant.priceFinal || variant.priceFull;
+	// extremely low "discounts" are possible if the price of the longer term has been rounded
+	// if they cannot be rounded to at least a percentage point we should not show them
+	const isDiscounted =
+		Math.floor( 100 - ( currentPrice / variant.priceFullBeforeDiscount ) * 100 ) > 0;
 	return (
 		<Fragment>
 			{ isDiscounted && <VariantPriceDiscount variant={ variant } /> }
@@ -220,11 +226,13 @@ function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompare
 
 function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAndCompared } ) {
 	const translate = useTranslate();
-	const discountPercentage = Math.round(
-		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
+	const maybeFinalPrice =
+		variant.introductoryOfferPrice !== null ? variant.introductoryOfferPrice : variant.priceFinal;
+	const discountPercentage = Math.floor(
+		100 - ( maybeFinalPrice / variant.priceFullBeforeDiscount ) * 100
 	);
 	let message = '';
-	if ( variant.isIntroductoryOfferApplied ) {
+	if ( variant.introductoryOfferPrice ) {
 		message = String(
 			translate( 'Eligible orders save %(percent)s%%', {
 				args: {

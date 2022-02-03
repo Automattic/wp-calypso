@@ -38,12 +38,6 @@ class PreviewMain extends Component {
 			: 'tablet',
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		this.updateUrl();
-		this.updateLayout();
-	}
-
 	updateLayout = () => {
 		this.setState( {
 			showingClose: isWithinBreakpoint( '<660px' ),
@@ -53,6 +47,9 @@ class PreviewMain extends Component {
 	debouncedUpdateLayout = debounce( this.updateLayout, 50 );
 
 	componentDidMount() {
+		this.updateUrl();
+		this.updateLayout();
+
 		if ( typeof window !== 'undefined' ) {
 			window.addEventListener( 'resize', this.debouncedUpdateLayout );
 		}

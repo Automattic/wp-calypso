@@ -33,7 +33,7 @@ import './section-migrate.scss';
 
 const THIRTY_SECONDS = 30 * 1000;
 
-class SectionMigrate extends Component {
+export class SectionMigrate extends Component {
 	_startedMigrationFromCart = false;
 	_timeStartedMigrationFromCart = false;
 
@@ -291,7 +291,7 @@ class SectionMigrate extends Component {
 					is_atomic: isBackendAtomic,
 				} = response;
 
-				if ( sourceSiteId && sourceSiteId !== this.props.sourceSiteId ) {
+				if ( sourceSiteId && sourceSiteId.toString() !== this.props.sourceSiteId.toString() ) {
 					this.setSourceSiteId( sourceSiteId );
 				}
 
@@ -699,7 +699,7 @@ const navigateToSelectedSourceSite = ( sourceSiteId ) => ( dispatch, getState ) 
 	page( `/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }` );
 };
 
-export default connect(
+export const connector = connect(
 	( state, ownProps ) => {
 		const targetSiteId = getSelectedSiteId( state );
 		return {
@@ -721,4 +721,6 @@ export default connect(
 		requestSite,
 		recordTracksEvent,
 	}
-)( localize( SectionMigrate ) );
+);
+
+export default connector( localize( SectionMigrate ) );

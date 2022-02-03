@@ -5,7 +5,9 @@ import { getUrlParts } from '@automattic/calypso-url';
  */
 
 // No iterations, currently
-export enum Iterations {}
+export enum Iterations {
+	_ = '', // Needed to convince TS that this is not a numeric enum.
+}
 
 const iterationNames: string[] = Object.values( Iterations );
 

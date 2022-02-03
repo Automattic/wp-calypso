@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -10,10 +9,10 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import TileGrid from 'calypso/components/tile-grid';
 import Tile from 'calypso/components/tile-grid/tile';
+import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { requestActivityLogs } from 'calypso/state/data-getters';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import './style.scss';
@@ -182,17 +181,23 @@ class ClonePointStep extends Component {
 	}
 }
 
+function withActivityLog( Inner ) {
+	return ( props ) => {
+		const { siteId } = props;
+		const { data: logs } = useActivityLogQuery( siteId, {}, { enabled: !! siteId } );
+		return <Inner { ...props } logs={ logs ?? [] } />;
+	};
+}
+
 export default connect(
-	( state, ownProps ) => {
-		const siteId = get( ownProps, [ 'signupDependencies', 'originBlogId' ] );
-		const logs = siteId && requestActivityLogs( siteId, {} );
+	( state, { signupDependencies } ) => {
+		const siteId = signupDependencies?.originBlogId;
 
 		return {
 			siteId,
-			logs: ( siteId && logs.data ) || [],
 			timezone: getSiteOption( state, siteId, 'timezone' ),
 			gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
 		};
 	},
 	{ submitSignupStep }
-)( localize( withLocalizedMoment( ClonePointStep ) ) );
+)( withActivityLog( localize( withLocalizedMoment( ClonePointStep ) ) ) );

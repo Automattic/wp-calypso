@@ -4,7 +4,7 @@ import config from '@automattic/calypso-config';
 import express from 'express';
 import { escapeRegExp, find, escape as escapeHTML, once } from 'lodash';
 import lunr from 'lunr';
-import marked from 'marked';
+import { marked } from 'marked';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-json';
@@ -221,7 +221,7 @@ export default function devdocs() {
 				return;
 			}
 
-			response.send( 'html' === format ? marked( doc.content ) : doc.content );
+			response.send( 'html' === format ? marked.parse( doc.content ) : doc.content );
 		} catch ( error ) {
 			console.error( error );
 			response.status( 400 ).json( { message: 'Internal server error: no document index' } );

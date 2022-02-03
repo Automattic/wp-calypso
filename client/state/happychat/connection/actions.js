@@ -15,7 +15,6 @@ import {
 	HAPPYCHAT_IO_RECEIVE_TOKEN,
 	HAPPYCHAT_IO_RECEIVE_UNAUTHORIZED,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
-	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT,
 	HAPPYCHAT_IO_SEND_MESSAGE_EVENT,
 	HAPPYCHAT_IO_SEND_MESSAGE_LOG,
@@ -187,22 +186,11 @@ export const receiveTranscript = ( { messages, timestamp } ) => ( {
 } );
 
 /**
- * Returns an action object for the timeout of the transcript request.
- *
- * @returns {object} Action object
- */
-export const receiveTranscriptTimeout = () => ( {
-	type: HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
-} );
-
-/**
  * Returns an action object that prepares the transcript request
  * to be send to happychat as a SocketIO event.
  *
  * @param {string} timestamp Latest transcript timestamp
  * @param {number} timeout The number of milliseconds to wait for server response.
- *                 	 If it hasn't responded after the timeout, the connection library
- *                 	 will dispatch the receiveTranscriptTimeout action.
  * @returns {object} Action object
  */
 export const requestTranscript = ( timestamp, timeout = 10000 ) => ( {
@@ -211,7 +199,6 @@ export const requestTranscript = ( timestamp, timeout = 10000 ) => ( {
 	payload: timestamp,
 	timeout: timeout,
 	callback: receiveTranscript,
-	callbackTimeout: receiveTranscriptTimeout,
 } );
 
 /**

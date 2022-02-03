@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { Icon, home, moreVertical, redo, plus } from '@wordpress/icons';
+import { Icon, home, info, moreVertical, redo, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -24,6 +24,7 @@ import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/ema
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
 import {
 	domainManagementList,
 	createSiteFromDomainOnly,
@@ -80,11 +81,7 @@ class DomainRow extends PureComponent {
 		return (
 			<div className="domain-row__domain-cell">
 				<div className="domain-row__domain-name">
-					{ /* eslint-disable jsx-a11y/anchor-is-valid */ }
-					<a href="#" onClick={ this.handleClick }>
-						{ domain.domain }
-					</a>
-					{ /* eslint-enable jsx-a11y/anchor-is-valid */ }
+					<button onClick={ this.handleClick }>{ domain.domain }</button>
 				</div>
 				{ domainTypeText && <div className="domain-row__domain-type-text">{ domainTypeText }</div> }
 				{ domain?.isPrimary && ! isManagingAllSites && this.renderPrimaryBadge() }
@@ -148,9 +145,10 @@ class DomainRow extends PureComponent {
 	}
 
 	renderExpiryDate( expiryDate ) {
+		const { domain } = this.props;
 		return (
 			<div className="domain-row__registered-until-cell">
-				{ expiryDate ? expiryDate.format( 'LL' ) : '-' }
+				{ expiryDate && domain.type !== domainTypes.MAPPED ? expiryDate.format( 'LL' ) : '-' }
 			</div>
 		);
 	}
@@ -454,9 +452,13 @@ class DomainRow extends PureComponent {
 	}
 
 	render() {
-		const { domain, isManagingAllSites, showCheckbox, translate } = this.props;
+		const { domain, isManagingAllSites, site, showCheckbox, purchase, translate } = this.props;
 		const domainTypeText = getDomainTypeText( domain, translate, domainInfoContext.DOMAIN_ROW );
 		const expiryDate = domain?.expiry ? moment.utc( domain?.expiry ) : null;
+		const { noticeText, statusClass } = resolveDomainStatus( domain, purchase, {
+			siteSlug: site?.slug,
+			getMappingErrors: true,
+		} );
 
 		return (
 			<div className="domain-row">
@@ -477,6 +479,27 @@ class DomainRow extends PureComponent {
 					{ this.renderDomainStatus() }
 					{ this.renderMobileExtraInfo( expiryDate, domainTypeText ) }
 				</div>
+				{ noticeText && (
+					<div className="domain-row__domain-notice">
+						<Icon
+							icon={ info }
+							size={ 18 }
+							className={ classnames( 'domain-row__domain-notice-icon gridicon', {
+								'gridicon--error': 'status-success' !== statusClass,
+								'gridicon--success': 'status-success' === statusClass,
+							} ) }
+							viewBox="2 2 20 20"
+						/>
+						<div className="domain-row__domain-notice-message">{ noticeText }</div>
+					</div>
+				) }
+				{ site && (
+					<TransferConnectedDomainNudge
+						domain={ domain }
+						location="domains_list"
+						siteSlug={ site.slug }
+					/>
+				) }
 				{ this.renderOverlay() }
 			</div>
 		);

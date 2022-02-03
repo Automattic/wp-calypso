@@ -22,6 +22,6 @@ export const settingsHostSelectionPath = ( siteSlug?: string ): string =>
 export const settingsCredentialsPath = ( siteSlug: string, host: string ): string =>
 	settingsPath( siteSlug, `credentials/${ host }` );
 
-const purchasesBasePath = () => '/purchases';
+export const purchasesBasePath = () => '/purchases';
 export const purchasesPath = ( siteSlug?: string ): string =>
 	siteSlug ? `${ purchasesBasePath() }/${ siteSlug }` : purchasesBasePath();

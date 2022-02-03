@@ -141,6 +141,7 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'redirect',
+				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
 			props: {
@@ -160,6 +161,7 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
+				'user_id',
 			],
 			optionalDependencies: [
 				'bearer_token',
@@ -167,6 +169,7 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
+				'user_id',
 			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
@@ -184,6 +187,19 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTitle', 'tagline' ],
 			apiRequestFunction: setOptionsOnSite,
 			delayApiRequestUntilComplete: true,
+		},
+
+		'store-options': {
+			stepName: 'store-options',
+			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
+			providesDependencies: [ 'siteTitle', 'tagline' ],
+			apiRequestFunction: setOptionsOnSite,
+			delayApiRequestUntilComplete: true,
+		},
+
+		'store-features': {
+			stepName: 'store-features',
+			dependencies: [ 'siteSlug' ],
 		},
 
 		'starting-point': {
@@ -374,21 +390,6 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
-		'jetpack-user': {
-			stepName: 'jetpack-user',
-			apiRequestFunction: createAccount,
-			providesToken: true,
-			props: {
-				get headerText() {
-					return i18n.translate( 'Create an account for Jetpack' );
-				},
-				get subHeaderText() {
-					return i18n.translate( "You're moments away from connecting Jetpack." );
-				},
-			},
-			providesDependencies: [ 'bearer_token', 'username' ],
-		},
-
 		'oauth2-user': {
 			stepName: 'oauth2-user',
 			apiRequestFunction: createAccount,
@@ -403,6 +404,7 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
+				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 		},
@@ -418,23 +420,12 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
+				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
-				displayNameInput: true,
-				displayUsernameInput: false,
-			},
-		},
-
-		displayname: {
-			stepName: 'displayname',
-			apiRequestFunction: createAccount,
-			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username' ],
-			props: {
-				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				displayNameInput: true,
 				displayUsernameInput: false,
 			},
@@ -446,12 +437,10 @@ export function generateSteps( {
 			stepName: 'site-or-domain',
 			props: {
 				get headerText() {
-					return i18n.translate( 'Choose how you want to use your domain.' );
+					return i18n.translate( 'Choose how to use your domain' );
 				},
 				get subHeaderText() {
-					return i18n.translate(
-						"Don't worry you can easily add a site later if you're not ready."
-					);
+					return i18n.translate( 'Don’t worry, you can easily add a site later' );
 				},
 			},
 			providesDependencies: [
@@ -468,7 +457,7 @@ export function generateSteps( {
 			apiRequestFunction: createSiteOrDomain,
 			props: {
 				get headerText() {
-					return i18n.translate( 'Choose your site?' );
+					return i18n.translate( 'Choose your site' );
 				},
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
@@ -559,13 +548,6 @@ export function generateSteps( {
 			providesDependencies: [],
 		},
 
-		/* Improved Onboarding */
-		'site-type': {
-			stepName: 'site-type',
-			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTypeFulfilled,
-		},
-
 		'site-type-with-theme': {
 			stepName: 'site-type',
 			providesDependencies: [ 'siteType' ],
@@ -583,45 +565,6 @@ export function generateSteps( {
 			stepName: 'site-topic',
 			providesDependencies: [ 'siteTopic' ],
 			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
-		// Steps with preview
-		// These can be removed once we make the preview the default
-		'site-topic-with-preview': {
-			stepName: 'site-topic-with-preview',
-			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'domains-with-preview': {
-			stepName: 'domains-with-preview',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
-			props: {
-				showSiteMockups: true,
-				isDomainOnly: false,
-			},
-			dependencies: [ 'themeSlugWithRepo' ],
-			delayApiRequestUntilComplete: true,
-		},
-
-		'site-title-with-preview': {
-			stepName: 'site-title-with-preview',
-			providesDependencies: [ 'siteTitle' ],
-			props: {
-				showSiteMockups: true,
-			},
 		},
 
 		launch: {
@@ -717,8 +660,8 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
+			providesDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
+			optionalDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
@@ -746,14 +689,22 @@ export function generateSteps( {
 			apiRequestFunction: setDesignIfNewSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug', 'newOrExistingSiteChoice' ],
-			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'selectedDesign' ],
+			providesDependencies: [
+				'isFSEActive',
+				'selectedDesign',
+				'selectedSiteCategory',
+				'isLetUsChooseSelected',
+			],
+			optionalDependencies: [ 'isFSEActive', 'selectedDesign', 'isLetUsChooseSelected' ],
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
 				showDesignPickerCategoriesAllFilter: false,
+				showLetUsChoose: true,
+				hideFullScreenPreview: true,
+				hideDesignTitle: true,
 			},
 		},
 		'site-info-collection': {
@@ -781,30 +732,17 @@ export function generateSteps( {
 			stepName: 'importing',
 		},
 
-		// Woocommerce Install steps
+		// Woocommerce Install steps.
 		'store-address': {
 			stepName: 'store-address',
-			props: {
-				headerTitle: i18n.translate( 'Add an address to accept payments' ),
-				headerDescription: i18n.translate(
-					'This will be used as your default business address. You can change it later if you need to.'
-				),
-			},
 			dependencies: [ 'site' ],
-			providesDependencies: [ 'siteConfirmed' ],
+		},
+		'business-info': {
+			stepName: 'business-info',
+			dependencies: [ 'site' ],
 		},
 		confirm: {
 			stepName: 'confirm',
-			props: {
-				get headerTitle() {
-					return i18n.translate( 'One final step' );
-				},
-				get headerDescription() {
-					return i18n.translate(
-						'We’ve highlighted a few important details you should review before we create your store. '
-					);
-				},
-			},
 			dependencies: [ 'site' ],
 			providesDependencies: [ 'siteConfirmed' ],
 		},

@@ -27,7 +27,6 @@ export {
 export { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from './gsuite-supported-domain';
 export { hasGSuiteWithAnotherProvider } from './has-gsuite-with-another-provider';
 export { hasGSuiteWithUs } from './has-gsuite-with-us';
-export { hasPendingGSuiteUsers } from './has-pending-gsuite-users';
 export { getGoogleMailServiceFamily } from './get-google-mail-service-family';
 export { getProductSlug, getProductType } from './gsuite-product-type';
 export { isPendingGSuiteTOSAcceptance } from './is-pending-gsuite-tos-acceptance';

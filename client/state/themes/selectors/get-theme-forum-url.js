@@ -1,4 +1,3 @@
-import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 import { isWpcomTheme } from 'calypso/state/themes/selectors/is-wpcom-theme';
 import { isWporgTheme } from 'calypso/state/themes/selectors/is-wporg-theme';
 
@@ -13,9 +12,6 @@ import 'calypso/state/themes/init';
  * @returns {?string}         Theme forum URL
  */
 export function getThemeForumUrl( state, themeId ) {
-	if ( isThemePremium( state, themeId ) ) {
-		return '//premium-themes.forums.wordpress.com/forum/' + themeId;
-	}
 	if ( isWpcomTheme( state, themeId ) ) {
 		return '//en.forums.wordpress.com/forum/themes';
 	}

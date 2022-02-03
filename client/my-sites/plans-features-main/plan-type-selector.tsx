@@ -33,7 +33,6 @@ type Props = {
 	isInSignup: boolean;
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
-	disableMonthlyExperiment?: boolean;
 };
 
 interface PathArgs {
@@ -93,7 +92,12 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 		<>
 			{ [ 'right', 'bottom' ].map( ( pos ) => (
 				<CSSTransition key={ pos } in={ inProp } timeout={ timeout } classNames="popover">
-					<StyledPopover position={ pos } context={ context } isVisible={ true }>
+					<StyledPopover
+						position={ pos }
+						context={ context }
+						isVisible={ true }
+						autoPosition={ false }
+					>
 						{ children }
 					</StyledPopover>
 				</CSSTransition>
@@ -104,11 +108,7 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 
 type IntervalTypeProps = Pick<
 	Props,
-	| 'intervalType'
-	| 'plans'
-	| 'isInSignup'
-	| 'eligibleForWpcomMonthlyPlans'
-	| 'disableMonthlyExperiment'
+	'intervalType' | 'plans' | 'isInSignup' | 'eligibleForWpcomMonthlyPlans'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
@@ -119,13 +119,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = intervalType === 'monthly' && isInSignup;
-	const maxDiscount = useMaxDiscount(
-		props.plans.filter(
-			( plan ) =>
-				! props.disableMonthlyExperiment ||
-				! [ 'personal-bundle-monthly', 'value_bundle_monthly' ].includes( plan )
-		)
-	);
+	const maxDiscount = useMaxDiscount( props.plans );
 
 	if ( ! eligibleForWpcomMonthlyPlans ) {
 		return null;

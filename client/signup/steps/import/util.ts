@@ -44,7 +44,9 @@ export function convertPlatformName( platform: ImporterPlatform ): string {
 }
 
 export function convertToFriendlyWebsiteName( website: string ): string {
-	const { hostname, pathname } = new URL( website );
+	const { hostname, pathname } = new URL(
+		website.startsWith( 'http' ) ? website : `http://${ website }`
+	);
 	return ( hostname + ( pathname === '/' ? '' : pathname ) ).replace( 'www.', '' );
 }
 

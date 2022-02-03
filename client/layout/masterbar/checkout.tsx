@@ -16,6 +16,7 @@ interface Props {
 	isJetpackNotAtomic?: boolean;
 	previousPath?: string;
 	siteSlug?: string;
+	isLeavingAllowed?: boolean;
 }
 
 const CheckoutMasterbar: FunctionComponent< Props > = ( {
@@ -23,6 +24,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	isJetpackNotAtomic,
 	previousPath,
 	siteSlug,
+	isLeavingAllowed,
 } ) => {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
@@ -61,13 +63,15 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	return (
 		<Masterbar>
 			<div className="masterbar__secure-checkout">
-				<Item
-					icon="cross"
-					className="masterbar__close-button"
-					onClick={ clickClose }
-					tooltip={ String( translate( 'Close Checkout' ) ) }
-					tipTarget="close"
-				/>
+				{ isLeavingAllowed && (
+					<Item
+						icon="cross"
+						className="masterbar__close-button"
+						onClick={ clickClose }
+						tooltip={ String( translate( 'Close Checkout' ) ) }
+						tipTarget="close"
+					/>
+				) }
 				{ ! isJetpack && <WordPressWordmark className="masterbar__wpcom-wordmark" /> }
 				{ isJetpack && <JetpackLogo className="masterbar__jetpack-wordmark" full /> }
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>

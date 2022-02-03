@@ -10,7 +10,6 @@ const initialState = {
 	name: '',
 	parentId: '',
 	slug: '',
-	preview: '',
 	suggestedTheme: '',
 };
 

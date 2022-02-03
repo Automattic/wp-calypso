@@ -12,6 +12,7 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 import { getSiteId } from 'calypso/state/sites/selectors';
 import IntentScreen from './intent-screen';
 import type { IntentFlag } from './types';
+import type { Dependencies } from 'calypso/signup/types';
 
 interface Props {
 	goToNextStep: () => void;
@@ -24,14 +25,18 @@ interface Props {
 	};
 }
 
-const EXCLUDE_STEPS: { [ key: string ]: string[] } = {
-	write: [],
-	build: [ 'site-options', 'starting-point', 'courses' ],
+const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
+	write: [ 'store-options', 'store-features' ],
+	build: [ 'site-options', 'starting-point', 'courses', 'store-options', 'store-features' ],
+	sell: [ 'site-options', 'starting-point', 'courses', 'design-setup-site' ],
 };
 
 const EXTERNAL_FLOW: { [ key: string ]: string } = {
 	import: 'importer',
 };
+
+const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
+	EXCLUDED_STEPS[ providedDependencies?.intent ];
 
 export default function IntentStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
@@ -39,7 +44,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 	const { goToNextStep, stepName, queryObject } = props;
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
-	const branchSteps = useBranchSteps( stepName );
+	const branchSteps = useBranchSteps( stepName, getExcludedSteps );
 
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 	const canImport = useSelector( ( state ) =>
@@ -47,13 +52,16 @@ export default function IntentStep( props: Props ): React.ReactNode {
 	);
 
 	const submitIntent = ( intent: IntentFlag ) => {
-		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
+		const providedDependencies = { intent };
+
+		recordTracksEvent( 'calypso_signup_intent_select', providedDependencies );
 
 		if ( EXTERNAL_FLOW[ intent ] ) {
+			dispatch( submitSignupStep( { stepName }, providedDependencies ) );
 			page( getStepUrl( EXTERNAL_FLOW[ intent ], '', '', '', queryObject ) );
 		} else {
-			branchSteps( EXCLUDE_STEPS[ intent ] );
-			dispatch( submitSignupStep( { stepName }, { intent } ) );
+			branchSteps( providedDependencies );
+			dispatch( submitSignupStep( { stepName }, providedDependencies ) );
 			goToNextStep();
 		}
 	};

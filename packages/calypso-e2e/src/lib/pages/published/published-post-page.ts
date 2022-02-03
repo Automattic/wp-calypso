@@ -3,6 +3,8 @@ import { Frame, Page } from 'playwright';
 const selectors = {
 	// Post body
 	postBody: '.entry-content',
+	postPasswordInput: 'input[name="post_password"]',
+	submitPasswordButton: 'input[name="Submit"]',
 
 	// Like Widget
 	likeWidget: 'iframe[title="Like or Reblog"]',
@@ -25,6 +27,19 @@ export class PublishedPostPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Fills and submits the post password for password protected entries.
+	 *
+	 * @param {string} password Password to submit.
+	 */
+	async enterPostPassword( password: string ): Promise< void > {
+		await this.page.fill( selectors.postPasswordInput, password );
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.submitPasswordButton ),
+		] );
 	}
 
 	/**

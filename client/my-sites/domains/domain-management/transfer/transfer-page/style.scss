@@ -19,6 +19,7 @@
 	.card {
 		color: var( --studio-gray-50 );
 		padding: 16px;
+		margin-bottom: 24px;
 
 		@include break-mobile {
 			padding: 24px;
@@ -53,6 +54,13 @@
 				margin-bottom: 0;
 				font-size: $font-body-small;
 			}
+
+			&:last-child {
+				margin-bottom: 8px;
+				@include break-mobile {
+					margin-bottom: 0;
+				}
+			}
 		}
 	}
 
@@ -86,6 +94,7 @@
 			color: var( --studio-gray-50 );
 			font-size: $font-body-small;
 			line-height: 20px;
+			margin-bottom: 0;
 
 			br {
 				content: ' ';

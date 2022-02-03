@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=9">
+	<title>Inline Help</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="mobile-web-app-capable" content="yes">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap">
+  <% htmlWebpackPlugin.files.css.forEach( ( style ) => {
+    if ( ! style.includes( '.rtl.css' ) ) {
+      %><link rel="stylesheet" href="<%= style %>"><%
+    }
+  } ) %>
+</head>
+
+<body>
+	<div id="wpcom"></div>
+  <script>
+    window.configData = {
+      env_id: 'development',
+      i18n_default_locale_slug: 'en',
+      google_analytics_key: 'UA-10673494-15',
+      client_slug: 'browser',
+      twemoji_cdn_url: 'https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/',
+      happychat_url: 'https://happychat-io-staging.go-vip.co/customer',
+      site_filter: [],
+      sections: {},
+      enable_all_sections: false,
+      livechat_support_locales: [ 'en' ],
+			upwork_support_locales: [ 'de' ],
+      jetpack_support_blog: 'jetpackme.wordpress.com',
+      wpcom_support_blog: 'en.support.wordpress.com',
+			gutenboarding_url: '/new',
+      features: {
+        happychat: true,
+      }
+    };
+  </script>
+	<% htmlWebpackPlugin.files.js.forEach( function( script ) { %><script charset="UTF-8" src="<%= script %>"></script><% } ) %>
+</body>
+
+</html>

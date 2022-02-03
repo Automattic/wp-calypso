@@ -65,6 +65,7 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet }: any ): Design {
 		features: [],
 		is_premium: stylesheet && stylesheet.startsWith( 'premium/' ),
 		is_featured_picks: isFeaturedPicks,
+		stylesheet,
 		slug: id,
 		template: id,
 		theme: id,

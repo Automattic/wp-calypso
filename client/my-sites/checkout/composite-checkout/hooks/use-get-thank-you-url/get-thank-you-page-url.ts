@@ -1,5 +1,4 @@
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -10,6 +9,9 @@ import {
 	getPlan,
 	isPlan,
 	isWpComPremiumPlan,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import {
@@ -28,7 +30,9 @@ import {
 	hasTitanMail,
 	hasTrafficGuide,
 	hasDIFMProduct,
+	hasMonthlyCartItem,
 } from 'calypso/lib/cart-values/cart-items';
+import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
@@ -59,7 +63,7 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
 	hideNudge,
-	isInEditor,
+	isInModal,
 	isJetpackCheckout = false,
 	jetpackTemporarySiteId,
 	adminPageRedirect,
@@ -79,7 +83,7 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult?: boolean;
 	hideNudge?: boolean;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
@@ -142,23 +146,17 @@ export default function getThankYouPageUrl( {
 
 	// jetpack userless & siteless checkout uses a special thank you page
 	if ( isJetpackCheckout ) {
+		// extract a product from the cart, in userless/siteless checkout there should only be one
+		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
+
 		if ( siteSlug ) {
 			debug( 'redirecting to userless jetpack thank you' );
-
-			// extract a product from the cart, in userless checkout there should only be one
-			const productSlug = cart?.products[ 0 ]?.product_slug;
-
-			return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug ?? 'no_product' }`;
+			return `/checkout/jetpack/thank-you/${ siteSlug }/${ productSlug }`;
 		}
+
 		// siteless checkout
 		debug( 'redirecting to siteless jetpack thank you' );
-
-		// extract a product from the cart, in siteless checkout there should only be one
-		const productSlug = cart?.products[ 0 ]?.product_slug;
-
-		const thankYouUrl = isEnabled( 'jetpack/user-licensing' )
-			? `/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug ?? 'no_product' }`
-			: `/checkout/jetpack/thank-you/no-site/${ productSlug ?? 'no_product' }`;
+		const thankYouUrl = `/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`;
 
 		const isValidReceiptId =
 			! isNaN( parseInt( pendingOrReceiptId ) ) || pendingOrReceiptId === ':receiptId';
@@ -195,7 +193,7 @@ export default function getThankYouPageUrl( {
 
 	// If the user is making a purchase/upgrading within the editor,
 	// we want to return them back to the editor after the purchase is successful.
-	if ( isInEditor && cart && ! hasEcommercePlan( cart ) ) {
+	if ( isInModal && cart && ! hasEcommercePlan( cart ) ) {
 		saveUrlToCookie( window?.location.href );
 	}
 
@@ -403,6 +401,49 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 	return;
 }
 
+function getMonthlyToAnnualUpsellUrl( {
+	pendingOrReceiptId,
+	cart,
+	siteSlug,
+	orderId,
+}: {
+	pendingOrReceiptId: string;
+	orderId: number | undefined;
+	cart: ResponseCart | undefined;
+	siteSlug: string | undefined;
+} ): string | undefined {
+	if ( orderId ) {
+		return;
+	}
+
+	const monthlyPlansDefaultExperiment = dangerouslyGetExperimentAssignment(
+		'calypso_signup_monthly_plans_default_202201_v2'
+	);
+	if ( monthlyPlansDefaultExperiment?.variationName === null ) {
+		return;
+	}
+
+	if ( cart && hasMonthlyCartItem( cart ) ) {
+		let planType;
+		if ( hasPersonalPlan( cart ) ) {
+			planType = PLAN_PERSONAL;
+		} else if ( hasPremiumPlan( cart ) ) {
+			planType = PLAN_PREMIUM;
+		} else if ( hasBusinessPlan( cart ) ) {
+			planType = PLAN_BUSINESS;
+		} else if ( hasEcommercePlan( cart ) ) {
+			planType = PLAN_ECOMMERCE;
+		}
+
+		if ( ! planType ) {
+			return;
+		}
+
+		return `/checkout/${ siteSlug }/offer-annual-upgrade/${ planType }/${ pendingOrReceiptId }`;
+	}
+
+	return;
+}
 function getPlanUpgradeUpsellUrl( {
 	pendingOrReceiptId,
 	cart,
@@ -446,6 +487,17 @@ function getRedirectUrlForPostCheckoutUpsell( {
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
+	}
+
+	const monthlyToAnnualUpsellExperimentUrl = getMonthlyToAnnualUpsellUrl( {
+		pendingOrReceiptId,
+		cart,
+		orderId,
+		siteSlug,
+	} );
+
+	if ( monthlyToAnnualUpsellExperimentUrl ) {
+		return monthlyToAnnualUpsellExperimentUrl;
 	}
 
 	const professionalEmailUpsellUrl = getProfessionalEmailUpsellUrl( {

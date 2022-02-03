@@ -78,7 +78,7 @@ class SiteTitleStep extends Component {
 	};
 
 	render() {
-		const { flowName, positionInFlow, showSiteMockups, siteType, stepName } = this.props;
+		const { flowName, positionInFlow, siteType, stepName } = this.props;
 		const headerText = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleLabel' );
 		const subHeaderText = getSiteTypePropertyValue( 'slug', siteType, 'siteTitleSubheader' );
 
@@ -93,7 +93,6 @@ class SiteTitleStep extends Component {
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ subHeaderText }
 					stepContent={ this.renderSiteTitleStep() }
-					showSiteMockups={ showSiteMockups }
 				/>
 			</div>
 		);

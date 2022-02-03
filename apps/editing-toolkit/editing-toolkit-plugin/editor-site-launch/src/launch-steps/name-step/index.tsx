@@ -42,7 +42,7 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 						autoCorrect="off"
 					/>
 					<div className="nux-launch-step__input-hint">
-						<Tip size={ 18 } />
+						<Tip />
 						{ /* translators: The "it" here refers to the site title. */ }
 						<span>{ __( "Don't worry, you can change it later.", 'full-site-editing' ) }</span>
 					</div>

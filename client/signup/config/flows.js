@@ -98,7 +98,7 @@ function getEditorDestination( dependencies ) {
 }
 
 function getDestinationFromIntent( dependencies ) {
-	const { intent, startingPoint, siteSlug } = dependencies;
+	const { intent, startingPoint, siteSlug, isFSEActive } = dependencies;
 
 	// If the user skips starting point, redirect them to My Home
 	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
@@ -107,6 +107,10 @@ function getDestinationFromIntent( dependencies ) {
 		}
 
 		return `/post/${ siteSlug }`;
+	}
+
+	if ( isFSEActive && intent !== 'write' ) {
+		return `/site-editor/${ dependencies.siteSlug }`;
 	}
 
 	return getChecklistThemeDestination( dependencies );
@@ -226,6 +230,10 @@ const Flows = {
 	 */
 	excludeStep( step ) {
 		step && Flows.excludedSteps.indexOf( step ) === -1 && Flows.excludedSteps.push( step );
+	},
+
+	excludeSteps( steps ) {
+		steps.forEach( ( step ) => Flows.excludeStep( step ) );
 	},
 
 	filterExcludedSteps( flow ) {

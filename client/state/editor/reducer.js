@@ -7,7 +7,6 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import imageEditor from './image-editor/reducer';
-import lastDraft from './last-draft/reducer';
 import videoEditor from './video-editor/reducer';
 
 /**
@@ -59,7 +58,6 @@ const combinedReducer = combineReducers( {
 	iframePort,
 	imageEditor,
 	videoEditor,
-	lastDraft,
 } );
 
 export default withStorageKey( 'editor', combinedReducer );

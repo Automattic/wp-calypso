@@ -42,7 +42,7 @@ const NameserversToggle = ( { enabled, onToggle, selectedDomainName }: NameServe
 			<ToggleControl
 				onChange={ handleToggle }
 				checked={ enabled }
-				label={ translate( 'Point to WordPress.com name servers' ) }
+				label={ translate( 'Use WordPress.com name servers' ) }
 			/>
 		</form>
 	);

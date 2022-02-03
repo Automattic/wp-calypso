@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
 	isPersonal,
 	isPremium,
@@ -24,6 +25,7 @@ import {
 	JETPACK_SECURITY_T1_PLANS,
 	isP2Plus,
 	getMonthlyPlanByYearly,
+	hasMarketplaceProduct,
 } from '@automattic/calypso-products';
 import { Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -81,7 +83,9 @@ import {
 	getCurrentUser,
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
+	getSitePurchases,
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
@@ -122,7 +126,9 @@ class ManagePurchase extends Component {
 		isAtomicSite: PropTypes.bool,
 		isJetpackTemporarySite: PropTypes.bool,
 		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
+		productsList: PropTypes.object,
 		purchase: PropTypes.object,
+		purchases: PropTypes.array,
 		purchaseAttachedTo: PropTypes.object,
 		purchaseListUrl: PropTypes.string,
 		redirectTo: PropTypes.string,
@@ -146,17 +152,15 @@ class ManagePurchase extends Component {
 		cancelLink: null,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( ! this.isDataValid() ) {
 			page.redirect( this.props.purchaseListUrl );
 			return;
 		}
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
+	componentDidUpdate( prevProps ) {
+		if ( this.isDataValid( prevProps ) && ! this.isDataValid() ) {
 			page.redirect( this.props.purchaseListUrl );
 			return;
 		}
@@ -423,6 +427,7 @@ class ManagePurchase extends Component {
 				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedPurchasesFromServer }
 				hasNonPrimaryDomainsFlag={ hasNonPrimaryDomainsFlag }
 				hasCustomPrimaryDomain={ hasCustomPrimaryDomain }
+				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 				site={ site }
 				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl }
@@ -518,7 +523,7 @@ class ManagePurchase extends Component {
 		};
 
 		return (
-			<CompactCard href={ link } onClick={ onClick }>
+			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				{ text }
 			</CompactCard>
 		);
@@ -724,6 +729,17 @@ class ManagePurchase extends Component {
 		} );
 	}
 
+	getActiveMarketplaceSubscriptions() {
+		const { purchase, purchases, productsList } = this.props;
+
+		if ( ! isPlan( purchase ) ) return [];
+
+		return purchases.filter(
+			( _purchase ) =>
+				_purchase.active && hasMarketplaceProduct( productsList, _purchase.productSlug )
+		);
+	}
+
 	renderPurchaseDetail( preventRenewal ) {
 		if ( this.isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
@@ -839,7 +855,6 @@ class ManagePurchase extends Component {
 			getChangePaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
-
 		let changePaymentMethodPath = false;
 		if ( ! this.isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
 			changePaymentMethodPath = getChangePaymentMethodUrlFor( siteSlug, purchase );
@@ -926,11 +941,13 @@ export default connect( ( state, props ) => {
 			: null;
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteId = selectedSiteId || ( purchase ? purchase.siteId : null );
+	const purchases = purchase && getSitePurchases( state, purchase.siteId );
 	const userId = getCurrentUserId( state );
 	const isProductOwner = purchase && purchase.userId === userId;
 	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
 	const isPurchasePlan = purchase && isPlan( purchase );
 	const isPurchaseTheme = purchase && isTheme( purchase );
+	const productsList = getProductsList( state );
 	const site = getSite( state, siteId );
 	const hasLoadedSites = ! isRequestingSites( state );
 	const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
@@ -946,7 +963,9 @@ export default connect( ( state, props ) => {
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
 		hasCustomPrimaryDomain: hasCustomDomain( site ),
+		productsList,
 		purchase,
+		purchases,
 		purchaseAttachedTo,
 		siteId,
 		isProductOwner,

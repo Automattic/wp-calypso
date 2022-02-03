@@ -30,7 +30,7 @@ import type {
 	TransferDomainToOtherSiteProps,
 	TransferDomainToOtherSiteStateProps,
 } from './types';
-
+import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 export class TransferDomainToOtherSite extends Component< TransferDomainToOtherSiteProps > {
@@ -110,7 +110,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		}
 	};
 
-	getMessage(): i18nCalypso.TranslateResult {
+	getMessage(): TranslateResult {
 		const { selectedDomainName: domainName, translate } = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
 		return translate(

@@ -9,7 +9,6 @@ import {
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isGuidedTransfer,
 	isJetpackPlan,
 	isPlan,
 	isBlogger,
@@ -65,7 +64,7 @@ import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customiz
 import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getPlansBySite, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
-import { themeActivated } from 'calypso/state/themes/actions';
+import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
@@ -79,7 +78,6 @@ import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import GoogleAppsDetails from './google-apps-details';
-import GuidedTransferDetails from './guided-transfer-details';
 import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
@@ -121,9 +119,15 @@ export class CheckoutThankYou extends Component {
 		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			didThemeRedirect: false,
+		};
+	}
+
 	componentDidMount() {
 		this.redirectIfThemePurchased();
-		this.redirectIfDomainOnly( this.props );
 
 		const {
 			gsuiteReceipt,
@@ -165,7 +169,6 @@ export class CheckoutThankYou extends Component {
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.redirectIfThemePurchased();
-		this.redirectIfDomainOnly( nextProps );
 
 		if (
 			! this.props.receipt.hasLoadedFromServer &&
@@ -178,11 +181,15 @@ export class CheckoutThankYou extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { receiptId, selectedSiteSlug } = this.props;
+		const { receiptId, selectedSiteSlug, domainOnlySiteFlow } = this.props;
 
 		// Update route when an ecommerce site goes Atomic and site slug changes
 		// from 'wordpress.com` to `wpcomstaging.com`.
-		if ( selectedSiteSlug && selectedSiteSlug !== prevProps.selectedSiteSlug ) {
+		if (
+			selectedSiteSlug &&
+			selectedSiteSlug !== prevProps.selectedSiteSlug &&
+			! domainOnlySiteFlow
+		) {
 			const receiptPath = receiptId ? `/${ receiptId }` : '';
 			page( `/checkout/thank-you/${ selectedSiteSlug }${ receiptPath }` );
 		}
@@ -258,6 +265,12 @@ export class CheckoutThankYou extends Component {
 	};
 
 	redirectIfThemePurchased = () => {
+		// Only do theme redirect once
+		const { didThemeRedirect } = this.state;
+		if ( didThemeRedirect ) {
+			return;
+		}
+
 		const purchases = getPurchases( this.props );
 
 		if (
@@ -266,24 +279,11 @@ export class CheckoutThankYou extends Component {
 			purchases.every( isTheme )
 		) {
 			const themeId = purchases[ 0 ].meta;
-			this.props.themeActivated(
-				'premium/' + themeId,
-				this.props.selectedSite.ID,
-				'calypstore',
-				true
-			);
-			page.redirect( '/themes/' + this.props.selectedSite.slug );
-		}
-	};
-
-	redirectIfDomainOnly = ( props ) => {
-		if ( props.domainOnlySiteFlow && get( props, 'receipt.hasLoadedFromServer', false ) ) {
-			const purchases = getPurchases( props );
-			const failedPurchases = getFailedPurchases( props );
-			if ( purchases.length > 0 && ! failedPurchases.length ) {
-				const domainName = find( purchases, isDomainRegistration ).meta;
-				page.redirect( domainManagementList( domainName ) );
-			}
+			// Mark that we've done the redirect, and do the actual redirect once the state is recorded
+			this.setState( { didThemeRedirect: true }, () => {
+				this.props.requestThenActivate( themeId, this.props.selectedSite.ID, 'calypstore', true );
+				page.redirect( '/themes/' + this.props.selectedSite.slug );
+			} );
 		}
 	};
 
@@ -602,8 +602,6 @@ export class CheckoutThankYou extends Component {
 				return [ false, ...findPurchaseAndDomain( purchases, isTitanMail ) ];
 			} else if ( purchases.some( isChargeback ) ) {
 				return [ ChargebackDetails, find( purchases, isChargeback ) ];
-			} else if ( purchases.some( isGuidedTransfer ) ) {
-				return [ GuidedTransferDetails, find( purchases, isGuidedTransfer ) ];
 			}
 		}
 
@@ -737,6 +735,6 @@ export default connect(
 		fetchSitePlans,
 		refreshSitePlans,
 		recordStartTransferClickInThankYou,
-		themeActivated,
+		requestThenActivate,
 	}
 )( localize( CheckoutThankYou ) );

@@ -1,0 +1,54 @@
+// PlaceholderLines component
+.inline-help__results-placeholder {
+	margin: 16px;
+	min-height: 120px;
+}
+
+.inline-help__results-placeholder-item {
+	height: 16px;
+	margin: 16px 0;
+	border-radius: 16px; /* stylelint-disable-line scales/radii */
+	background-color: var( --color-neutral-0 );
+	color: transparent;
+	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ) infinite;
+	animation-delay: 0s;
+
+	&:nth-child( 1 ) {
+		animation-delay: -1.3s;
+	}
+
+	&:nth-child( 2 ) {
+		animation-delay: -2.5s;
+	}
+
+	&:nth-child( 3 ) {
+		animation-delay: -3.8s;
+	}
+
+	&::after {
+		content: '\00a0';
+	}
+}
+
+@keyframes inline-help__results-placeholder-loading {
+	0% {
+		opacity: 0.3;
+		width: 65%;
+	}
+	25% {
+		opacity: 0.6;
+		width: 90%;
+	}
+	50% {
+		opacity: 0.5;
+		width: 18%;
+	}
+	75% {
+		opacity: 0.8;
+		width: 75%;
+	}
+	100% {
+		opacity: 0.3;
+		width: 65%;
+	}
+}

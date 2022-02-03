@@ -16,8 +16,6 @@ import isRequestingContactDetailsCache from 'calypso/state/selectors/is-requesti
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
-import './list-all.scss';
-
 class BulkEditContactInfo extends Component {
 	static propTypes = {
 		handleSaveContactInfo: PropTypes.func.isRequired,
@@ -177,7 +175,7 @@ class BulkEditContactInfo extends Component {
 					onChange={ this.onTransferLockOptOutChange }
 					saveButtonLabel={ translate( 'Save contact info' ) }
 				/>
-				<div className="list__form-buttons">
+				<div>
 					<Button
 						primary
 						onClick={ this.handleSaveContactInfo }

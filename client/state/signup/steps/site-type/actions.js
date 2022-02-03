@@ -1,4 +1,3 @@
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { SIGNUP_STEPS_SITE_TYPE_SET } from 'calypso/state/action-types';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
@@ -11,21 +10,9 @@ export function setSiteType( siteType ) {
 	};
 }
 
-export function submitSiteType( siteType, stepName = 'site-type' ) {
+export function submitSiteType( siteType, stepName ) {
 	return ( dispatch ) => {
 		dispatch( setSiteType( siteType ) );
-
-		let themeSlugWithRepo = undefined;
-		if ( 'site-type-with-theme' !== stepName ) {
-			themeSlugWithRepo =
-				getSiteTypePropertyValue( 'slug', siteType, 'theme' ) || 'pub/independent-publisher-2';
-		}
-
-		dispatch(
-			submitSignupStep(
-				{ stepName },
-				{ siteType, ...( themeSlugWithRepo && { themeSlugWithRepo } ) }
-			)
-		);
+		dispatch( submitSignupStep( { stepName }, { siteType } ) );
 	};
 }

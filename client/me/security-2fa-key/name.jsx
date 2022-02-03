@@ -14,7 +14,6 @@ class Security2faKeyAddName extends Component {
 	};
 
 	state = {
-		error: false,
 		keyName: '',
 	};
 

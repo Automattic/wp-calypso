@@ -99,12 +99,14 @@ const actions = {
 			value: response.should_show_first_post_published_modal,
 		};
 	},
-	setShowWelcomeGuide: ( show, { openedManually } = {} ) => {
-		apiFetch( {
-			path: '/wpcom/v2/block-editor/nux',
-			method: 'POST',
-			data: { show_welcome_guide: show },
-		} );
+	setShowWelcomeGuide: ( show, { openedManually, onlyLocal } = {} ) => {
+		if ( ! onlyLocal ) {
+			apiFetch( {
+				path: '/wpcom/v2/block-editor/nux',
+				method: 'POST',
+				data: { show_welcome_guide: show },
+			} );
+		}
 
 		return {
 			type: 'WPCOM_WELCOME_GUIDE_SHOW_SET',

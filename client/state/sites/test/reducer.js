@@ -36,12 +36,11 @@ describe( 'reducer', () => {
 			'mediaStorage',
 			'plans',
 			'products',
-			'guidedTransfer',
-			'monitor',
 			'requesting',
 			'blogStickers',
 			'hasAllSitesList',
 			'features',
+			'introOffers',
 		] );
 	} );
 

@@ -1,6 +1,7 @@
 export { default } from './components';
 
 export { default as FeaturedPicksButtons } from './components/featured-picks-buttons';
+export { default as PremiumBadge } from './components/premium-badge';
 export {
 	availableDesignsConfig,
 	getAvailableDesigns,

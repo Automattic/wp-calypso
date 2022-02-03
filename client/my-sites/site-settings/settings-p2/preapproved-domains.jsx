@@ -16,6 +16,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import TokenField from 'calypso/components/token-field';
 import wpcom from 'calypso/lib/wp';
+import RoleSelect from 'calypso/my-sites/people/role-select';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -32,6 +33,7 @@ const P2PreapprovedDomainsForm = ( {
 	updateFields,
 } ) => {
 	const SETTING_KEY_PREAPPROVED_DOMAINS = 'p2_preapproved_domains';
+	const DEFAULT_ROLE = 'author';
 
 	const isWPForTeamsSite = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
 	const isP2Hub = useSelector( ( state ) => isSiteP2Hub( state, siteId ) );
@@ -40,6 +42,7 @@ const P2PreapprovedDomainsForm = ( {
 	const [ isValidating, setIsValidating ] = useState( false );
 	const [ validTokens, setValidTokens ] = useState( [] );
 	const [ invalidTokens, setInvalidTokens ] = useState( {} );
+	const [ selectedRole, setSelectedRole ] = useState( DEFAULT_ROLE );
 	const [ error, setError ] = useState( {} );
 
 	useEffect( () => {
@@ -49,8 +52,9 @@ const P2PreapprovedDomainsForm = ( {
 
 		// Domains should always be toggled on if text field is not empty.
 		// The reverse is not true -- it can be toggled on while empty.
-		if ( fields.p2_preapproved_domains.length > 0 ) {
+		if ( fields.p2_preapproved_domains?.domains?.[ 0 ] ) {
 			setIsToggledOn( true );
+			setSelectedRole( fields.p2_preapproved_domains?.role );
 		}
 	}, [ fields ] );
 
@@ -58,24 +62,37 @@ const P2PreapprovedDomainsForm = ( {
 		return null;
 	}
 
-	const getFormField = () => {
-		return fields?.p2_preapproved_domains || [];
-	};
+	const setFormFieldValue = ( role, domains ) => {
+		const value = {
+			role,
+			domains,
+		};
 
-	const setFormField = ( domains ) => {
-		updateFields( { [ SETTING_KEY_PREAPPROVED_DOMAINS ]: domains } );
+		if ( ! domains?.[ 0 ] ) {
+			updateFields( { [ SETTING_KEY_PREAPPROVED_DOMAINS ]: '' } );
+			return;
+		}
+
+		updateFields( { [ SETTING_KEY_PREAPPROVED_DOMAINS ]: value } );
 	};
 
 	const handleSubmitButtonClick = ( event ) => {
-		if ( ! isValidating ) {
-			handleSubmitForm( event );
+		if ( isValidating ) {
+			return;
 		}
+
+		// Bail if there are invalid domains.
+		if ( invalidTokens.length > 0 ) {
+			return;
+		}
+
+		handleSubmitForm( event );
 	};
 
 	const handleDomainsToggle = () => {
 		// Clear field if toggling off. If toggling on, it should have
 		// been empty to start with.
-		setFormField( [] );
+		setFormFieldValue( DEFAULT_ROLE, [] );
 
 		setIsToggledOn( ! isToggledOn );
 	};
@@ -141,12 +158,16 @@ const P2PreapprovedDomainsForm = ( {
 
 	const onTokensChange = ( rawTokens ) => {
 		const tokens = normalizeTokens( rawTokens );
-		setFormField( tokens );
+		setFormFieldValue( selectedRole, tokens );
 		validateTokens( tokens );
 	};
 
+	const getTokens = () => {
+		return fields?.p2_preapproved_domains?.domains || [];
+	};
+
 	const getTokensWithStatus = () => {
-		const rawTokens = getFormField();
+		const rawTokens = getTokens();
 
 		const tokens = rawTokens.map( ( token ) => {
 			if ( invalidTokens && invalidTokens[ token ] ) {
@@ -169,6 +190,12 @@ const P2PreapprovedDomainsForm = ( {
 		} );
 
 		return tokens;
+	};
+
+	const onRoleChange = ( event ) => {
+		const role = event.target.value || DEFAULT_ROLE;
+		setSelectedRole( role );
+		setFormFieldValue( role, getTokens() );
 	};
 
 	return (
@@ -202,6 +229,15 @@ const P2PreapprovedDomainsForm = ( {
 							></ToggleControl>
 							{ isToggledOn && (
 								<>
+									<RoleSelect
+										id="role"
+										name="role"
+										includeFollower={ false }
+										siteId={ siteId }
+										onChange={ onRoleChange }
+										value={ selectedRole }
+										disabled={ isRequestingSettings }
+									/>
 									<FormLabel htmlFor="blogname">{ translate( 'Approved domains' ) }</FormLabel>
 									<TokenField
 										name="p2_preapproved_domains"

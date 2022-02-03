@@ -10,7 +10,7 @@ export type BlockEditorSettings = {
 
 export const useBlockEditorSettingsQuery = (
 	siteId: number,
-	userLoggedIn = false
+	isEnabled = false
 ): UseQueryResult< BlockEditorSettings > => {
 	const themeId = useSelector( ( state ) => getActiveTheme( state, siteId ) );
 
@@ -24,6 +24,6 @@ export const useBlockEditorSettingsQuery = (
 				apiNamespace: 'wpcom/v2',
 			} );
 		},
-		{ enabled: userLoggedIn && !! siteId }
+		{ enabled: isEnabled && !! siteId }
 	);
 };

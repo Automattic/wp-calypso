@@ -1,7 +1,9 @@
 .remove-purchase__card {
-	color: var( --color-primary );
-	text-align: left;
+	margin: 10px auto;
 	width: 100%;
+	color: var( --color-link );
+	text-align: left;
+	font-size: 100%;
 
 	&:active,
 	&:focus,
@@ -10,14 +12,9 @@
 	}
 
 	.gridicons-trash {
-		margin-block-start: -2px;
-		margin-inline-start: -4px;
-		margin-inline-end: 4px;
 		vertical-align: middle;
 	}
 }
-
-
 .dialog__button--domains-remove {
 	> .dialog__button-label {
 		display: flex;
@@ -27,5 +24,11 @@
 		> svg {
 			fill: var( --color-text-inverted );
 		}
+	}
+}
+
+@media ( min-width: 480px ) {
+	.remove-purchase__card {
+		margin: 16px auto;
 	}
 }

@@ -1,9 +1,7 @@
-import { omit } from 'lodash';
 import {
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
 	SITE_FEATURES_FETCH_FAILED,
-	SITE_FEATURES_REMOVE,
 } from 'calypso/state/action-types';
 
 export const initialSiteState = {
@@ -48,9 +46,6 @@ export function featuresReducer( state = {}, { type, siteId, features, error } )
 				error: error,
 				isRequesting: false,
 			} );
-
-		case SITE_FEATURES_REMOVE:
-			return omit( state, siteId );
 	}
 
 	return state;

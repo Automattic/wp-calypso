@@ -3,37 +3,41 @@
  * @group coblocks
  */
 import {
-	setupHooks,
-	BrowserHelper,
+	envVariables,
 	DataHelper,
 	GutenbergEditorPage,
 	PricingTableBlock,
-	NewPostFlow,
+	TestAccount,
 } from '@automattic/calypso-e2e';
-import { Frame, Page } from 'playwright';
+import { Page, Browser } from 'playwright';
 
-let user: string;
-if ( BrowserHelper.targetCoBlocksEdge() ) {
-	user = 'coBlocksSimpleSiteEdgeUser';
-} else if ( BrowserHelper.targetGutenbergEdge() ) {
-	user = 'gutenbergSimpleSiteEdgeUser';
+let accountName: string;
+if ( envVariables.COBLOCKS_EDGE ) {
+	accountName = 'coBlocksSimpleSiteEdgeUser';
+} else if ( envVariables.GUTENBERG_EDGE ) {
+	accountName = 'gutenbergSimpleSiteEdgeUser';
 } else {
-	user = 'gutenbergSimpleSiteUser';
+	accountName = 'gutenbergSimpleSiteUser';
 }
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
 	let page: Page;
+	let testAccount: TestAccount;
 	let gutenbergEditorPage: GutenbergEditorPage;
-	let editorFrame: Frame;
 	let pricingTableBlock: PricingTableBlock;
 
-	setupHooks( ( args ) => {
-		page = args.page;
+	beforeAll( async () => {
+		page = await browser.newPage();
+		testAccount = new TestAccount( accountName );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+
+		await testAccount.authenticate( page );
 	} );
 
-	beforeAll( async () => {
-		gutenbergEditorPage = await new NewPostFlow( page ).startImmediately( user );
-		editorFrame = await gutenbergEditorPage.getEditorFrame();
+	it( 'Go to the new post page', async () => {
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( 'Insert Pricing Table block', async () => {
@@ -51,6 +55,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	it.each( PricingTableBlock.gutterValues )(
 		'Verify "%s" gutter button is present',
 		async ( value ) => {
+			const editorFrame = await gutenbergEditorPage.getEditorFrame();
 			await editorFrame.waitForSelector( `button[aria-label="${ value }"]` );
 		}
 	);

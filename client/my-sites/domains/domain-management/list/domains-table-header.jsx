@@ -154,7 +154,6 @@ class DomainsTableHeader extends PureComponent {
 			return (
 				<CompactCard className={ listHeaderClasses }>
 					<FormCheckbox
-						className="list__checkbox"
 						onChange={ this.onToggle }
 						onClick={ this.stopPropagation }
 						checked={ isChecked }

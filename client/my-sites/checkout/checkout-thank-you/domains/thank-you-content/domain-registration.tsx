@@ -41,7 +41,7 @@ const DomainRegistrationThankYouProps = ( {
 						),
 						stepCta: (
 							<FullWidthButton
-								href={ domainManagementList( selectedSiteSlug, null ) }
+								href={ domainManagementList( selectedSiteSlug ?? domain, null ) }
 								primary
 								busy={ false }
 								disabled={ false }

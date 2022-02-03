@@ -30,7 +30,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'twitter',
 	'google_photos',
 	'mailchimp',
-	'slack',
+	'p2_slack',
 	'p2_github',
 ];
 
@@ -283,7 +283,7 @@ class SharingServiceExamples extends Component {
 		];
 	}
 
-	slack() {
+	p2_slack() {
 		return [
 			{
 				image: {

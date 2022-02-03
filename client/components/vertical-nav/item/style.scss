@@ -8,6 +8,12 @@
 			top: 0;
 			right: 16px;
 	}
+
+	&.disabled {
+		> svg, span {
+			opacity: 0.5;
+		}
+	}
 }
 
 .vertical-nav-item.is-placeholder {

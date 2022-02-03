@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
-import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -14,7 +13,6 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
@@ -31,7 +29,6 @@ import {
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
-import FseThemes from './fse-themes';
 import { addTracking, trackClick, localizeThemesPath } from './helpers';
 import RecommendedThemes from './recommended-themes';
 import ThemePreview from './theme-preview';
@@ -79,18 +76,6 @@ class ThemeShowcase extends Component {
 				order: 3,
 			},
 			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4 },
-			FSE: {
-				key: 'fse',
-				text: (
-					<span>
-						{ props.translate( 'Full Site Editing' ) }
-						<Badge type="warning-clear" className="theme-showcase__badge-beta">
-							{ props.translate( 'Beta' ) }
-						</Badge>
-					</span>
-				),
-				order: 5,
-			},
 		};
 		this.state = {
 			tabFilter:
@@ -116,9 +101,6 @@ class ThemeShowcase extends Component {
 		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
-		blockEditorSettings: PropTypes.shape( {
-			is_fse_eligible: PropTypes.bool,
-		} ),
 	};
 
 	static defaultProps = {
@@ -284,9 +266,6 @@ class ThemeShowcase extends Component {
 				return true;
 			case this.tabFilters.MYTHEMES.key:
 				return this.props.isJetpackSite;
-			case this.tabFilters.FSE.key:
-				// Display FSE tab if the Site Editor is active for the site.
-				return this.props.blockEditorSettings?.is_fse_eligible;
 		}
 	};
 
@@ -427,7 +406,6 @@ class ThemeShowcase extends Component {
 					{ 'all' === this.state.tabFilter.key && this.allThemes( { themeProps } ) }
 					{ 'my-themes' === this.state.tabFilter.key && <ThemesSelection { ...themeProps } /> }
 					{ 'trending' === this.state.tabFilter.key && <TrendingThemes { ...themeProps } /> }
-					{ 'fse' === this.state.tabFilter.key && <FseThemes { ...themeProps } /> }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal source={ 'list' } />
@@ -456,7 +434,4 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	null
-)( localize( withBlockEditorSettings( ThemeShowcase ) ) );
+export default connect( mapStateToProps, null )( localize( ThemeShowcase ) );

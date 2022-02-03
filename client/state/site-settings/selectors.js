@@ -43,6 +43,7 @@ export function getSiteSettingsSaveRequestStatus( state, siteId ) {
  woocommerce_store_city?: string;
  woocommerce_store_postcode?: string;
  woocommerce_default_country?: string;
+ woocommerce_onboarding_profile?: array;
  }} SiteSettingsItem
  */
 

@@ -55,7 +55,7 @@ export default function () {
 	// Manage payment methods.
 	if ( config.isEnabled( 'jetpack/partner-portal-payment' ) ) {
 		page(
-			`/partner-portal/payment-method`,
+			`/partner-portal/payment-methods`,
 			controller.requireAccessContext,
 			controller.requireTermsOfServiceConsentContext,
 			controller.requireSelectedPartnerKeyContext,
@@ -65,7 +65,7 @@ export default function () {
 		);
 
 		page(
-			`/partner-portal/payment-method/add`,
+			`/partner-portal/payment-methods/add`,
 			controller.requireAccessContext,
 			controller.requireTermsOfServiceConsentContext,
 			controller.requireSelectedPartnerKeyContext,
