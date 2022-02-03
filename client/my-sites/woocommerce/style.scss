@@ -1,4 +1,5 @@
 @import '@automattic/onboarding/styles/mixins';
+@import 'jetpack-connect/colors.scss';
 
 .woocommerce {
 	.main {
@@ -70,7 +71,7 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 	}
 }
 
-.woop__landing-page-features-section {
+.landing-page__features-section {
 	@include woocommerce-colors();
 	margin-top: 100px;
 	padding-top: 60px;

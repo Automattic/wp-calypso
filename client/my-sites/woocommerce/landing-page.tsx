@@ -24,7 +24,7 @@ interface Props {
 	siteId: number;
 }
 
-const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
+const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce' } ];
 	const ctaRef = useRef( null );
@@ -83,7 +83,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	};
 
 	return (
-		<div className="landing-page woocommerce_landing-page">
+		<div className="landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
 				<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
 					{ __( 'Start a new store' ) }
@@ -113,9 +113,9 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				className="landing-page__empty-content"
 			/>
 			<WooCommerceColophon wpcomDomain={ wpcomDomain || '' } />
-			<div className="woop__landing-page-features-section">
+			<div className="landing-page__features-section">
 				<FormattedHeader headerText={ __( 'Everything you need to create a successful store' ) } />
-				<div className="woop__landing-page-features">
+				<div className="landing-page__features">
 					<PromoSection { ...promos } />
 				</div>
 			</div>
@@ -123,4 +123,4 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	);
 };
 
-export default WoopLandingPage;
+export default LandingPage;
