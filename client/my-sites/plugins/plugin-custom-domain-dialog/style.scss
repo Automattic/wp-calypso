@@ -21,9 +21,19 @@
 	}
 }
 
-.plugin-custom-domain-dialog__learn-more {
-	text-decoration: underline;
-	font-weight: 500;
-	display: block;
-	margin: 16px auto 0;
+.plugin-custom-domain-dialog__buttons {
+	display: flex;
+	gap: 16px 8px;
+	flex-wrap: wrap;
+	justify-content: center;
+
+	button {
+		flex-grow: 1;
+		font-weight: 500;
+	}
+
+	.plugin-custom-domain-dialog__learn-more {
+		flex-basis: 100%;
+		text-decoration: underline;
+	}
 }
