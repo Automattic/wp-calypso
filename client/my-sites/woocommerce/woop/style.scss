@@ -41,7 +41,7 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 	padding-top: 60px;
 	padding-bottom: 40px;
 	padding-left: 20px;
-    padding-right: 20px;
+	padding-right: 20px;
 
 	// on desktop make the section full width so it takes the whole space
 	@media ( min-width: 660px ) {
@@ -50,50 +50,55 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 	}
 
 	background-color: var( --color-woocommerce-onboarding-background );
-	.formatted-header .formatted-header__title {
-
-		@media ( max-width: $break-mobile ) {
-			margin-left: 0;
-			margin-right: 0;
-			width: 100%;
-			max-width: fit-content;
-			text-align: center;
+	.woop__landing-page-features-container {
+		.main.is-wide-layout & {
+			max-width: 1040px;
+			margin: auto;
 		}
 
-		text-align: left;
-		margin-left: 32px;
-		font-size: 2rem;
-		max-width: 377px;
-		line-height: 40px;
-		@include onboarding-font-recoleta;
-	}
-
-	.promo-section__promos .promo-card {
-		// 3 column layout
-		@media ( min-width: $break-wide ) {
-			width: calc( 33% - 1em );
-		}
-		box-shadow: none;
-		background-color: var( --color-woocommerce-onboarding-background );
-
-		.action-panel__title {
+		.formatted-header .formatted-header__title {
 			@media ( max-width: $break-mobile ) {
-				display: block;
-				width: 100%;
+				margin-left: 0;
+				margin-right: 0;
+				max-width: fit-content;
 				text-align: center;
 			}
-			font-weight: 500;
-			font-size: 1.25rem;
+
+			text-align: left;
+			font-size: 2rem;
+			max-width: 377px;
+			line-height: 40px;
+			@include onboarding-font-recoleta;
 		}
 
-		.action-panel__body {
-			@media ( max-width: $break-mobile ) {
-				text-align: center;
+		.promo-section__promos .promo-card {
+			// 3 column layout
+			@media ( min-width: $break-wide ) {
+				width: calc( 33% - 1em );
 			}
-		}
+			box-shadow: none;
+			background-color: var( --color-woocommerce-onboarding-background );
+			padding: 0 1em 1em 0;
 
-		.gridicon {
-			fill: #0675c4; // TODO: maybe we need to define this color as a variable somewhere?
+			.action-panel__title {
+				@media ( max-width: $break-mobile ) {
+					display: block;
+					width: 100%;
+					text-align: center;
+				}
+				font-weight: 500;
+				font-size: 1.25rem;
+			}
+
+			.action-panel__body {
+				@media ( max-width: $break-mobile ) {
+					text-align: center;
+				}
+			}
+
+			.gridicon {
+				fill: #0675c4; // TODO: maybe we need to define this color as a variable somewhere?
+			}
 		}
 	}
 }

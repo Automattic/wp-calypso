@@ -83,7 +83,11 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 
 	return (
 		<div className="woop__landing-page woocommerce_landing-page">
-			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
+			<FixedNavigationHeader
+				navigationItems={ navigationItems }
+				contentRef={ ctaRef }
+				compactBreadcrumb={ false }
+			>
 				<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
 					{ __( 'Start a new store' ) }
 				</Button>
@@ -107,9 +111,13 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 			/>
 			<WooCommerceColophon wpcomDomain={ wpcomDomain || '' } />
 			<div className="woop__landing-page-features-section">
-				<FormattedHeader headerText={ __( 'Everything you need to create a successful store' ) } />
-				<div className="woop__landing-page-features">
-					<PromoSection { ...promos } />
+				<div className="woop__landing-page-features-container">
+					<FormattedHeader
+						headerText={ __( 'Everything you need to create a successful store' ) }
+					/>
+					<div className="woop__landing-page-features">
+						<PromoSection { ...promos } />
+					</div>
 				</div>
 			</div>
 		</div>
