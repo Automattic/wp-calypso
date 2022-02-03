@@ -1,47 +1,23 @@
 import { Card, Button } from '@automattic/components';
 import { PanelBody } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
-import { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import ExternalLink from 'calypso/components/external-link';
 import MaterialIcon from 'calypso/components/material-icon';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import wpcom from 'calypso/lib/wp';
 import {
 	composeAnalytics,
 	recordTracksEvent,
 	recordGoogleEvent,
 	bumpStat,
 } from 'calypso/state/analytics/actions';
-import { getHttpData, requestHttpData, resetHttpData } from 'calypso/state/data-layer/http-data';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RestorePasswordDialog from './restore-db-password';
 
 import './style.scss';
-
-const requestId = ( siteId ) => `pma-link-request-${ siteId }`;
-
-export const requestPmaLink = ( siteId ) =>
-	requestHttpData(
-		requestId( siteId ),
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ siteId }/hosting/pma/token`,
-				apiNamespace: 'wpcom/v2',
-				body: {},
-			},
-			{}
-		),
-		{
-			fromApi: () => ( { token } ) => {
-				return [ [ requestId( siteId ), { token } ] ];
-			},
-			freshness: 0,
-		}
-	);
 
 const trackOpenPhpmyadmin = () =>
 	composeAnalytics(
@@ -53,23 +29,31 @@ const trackOpenPhpmyadmin = () =>
 		bumpStat( 'hosting-config', 'open-phpmyadmin' )
 	);
 
-const PhpMyAdminCard = ( {
-	translate,
-	siteId,
-	token,
-	loading,
-	disabled,
-	trackOpenPhpmyadmin: trackOpenDB,
-} ) => {
-	useEffect( () => {
-		if ( token ) {
-			trackOpenDB();
-			window.open( `https://wordpress.com/pma-login?token=${ token }` );
-		}
-		return () => resetHttpData( requestId( siteId ) );
-	}, [ token, siteId ] );
+export default function PhpMyAdminCard( { disabled } ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const siteId = useSelector( getSelectedSiteId );
 
+	const [ loading, setLoading ] = useState( false );
 	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
+
+	async function openPmaLink() {
+		setLoading( true );
+		try {
+			const { token } = await wpcom.req.post( {
+				path: `/sites/${ siteId }/hosting/pma/token`,
+				apiNamespace: 'wpcom/v2',
+			} );
+
+			if ( token ) {
+				dispatch( trackOpenPhpmyadmin() );
+				window.open( `https://wordpress.com/pma-login?token=${ token }` );
+			}
+		} catch {
+			// ignore errors
+		}
+		setLoading( false );
+	}
 
 	return (
 		<Card className="phpmyadmin-card">
@@ -103,11 +87,7 @@ const PhpMyAdminCard = ( {
 					'Managing a database can be tricky and it’s not necessary for your site to function.'
 				) }
 			</p>
-			<Button
-				onClick={ () => requestPmaLink( siteId ) }
-				busy={ ! disabled && loading }
-				disabled={ disabled }
-			>
+			<Button onClick={ openPmaLink } busy={ ! disabled && loading } disabled={ disabled }>
 				<span>{ translate( 'Open phpMyAdmin' ) }</span>
 				<MaterialIcon icon="launch" size={ 16 } />
 			</Button>
@@ -119,9 +99,7 @@ const PhpMyAdminCard = ( {
 								<Button
 									compact
 									borderless
-									onClick={ () => {
-										setIsRestorePasswordDialogVisible( true );
-									} }
+									onClick={ () => setIsRestorePasswordDialogVisible( true ) }
 								/>
 							),
 						},
@@ -130,28 +108,9 @@ const PhpMyAdminCard = ( {
 			) }
 			<RestorePasswordDialog
 				isVisible={ isRestorePasswordDialogVisible }
-				onCancel={ () => {
-					setIsRestorePasswordDialogVisible( false );
-				} }
-				onRestore={ () => {
-					setIsRestorePasswordDialogVisible( false );
-				} }
+				onCancel={ () => setIsRestorePasswordDialogVisible( false ) }
+				onRestore={ () => setIsRestorePasswordDialogVisible( false ) }
 			/>
 		</Card>
 	);
-};
-
-export default connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-
-		const pmaTokenRequest = getHttpData( requestId( siteId ) );
-
-		return {
-			token: get( pmaTokenRequest.data, 'token', null ),
-			loading: pmaTokenRequest.state === 'pending',
-			siteId,
-		};
-	},
-	{ trackOpenPhpmyadmin }
-)( localize( PhpMyAdminCard ) );
+}
