@@ -1,10 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
-import ExternalLink from 'calypso/components/external-link';
 import WooCommerceLogo from './woocommerce-logo';
 
-function WooCommerceColophon() {
+export interface WooCommerceColophonProps {
+	wpcomDomain: string;
+}
+
+function WooCommerceColophon( props: WooCommerceColophonProps ) {
 	const translate = useTranslate();
+	const { wpcomDomain } = props;
+	const woocommercePluginURL = `/plugins/woocommerce/${ wpcomDomain }`;
 
 	const onClick = () => {
 		recordTracksEvent( 'calypso_woocommerce_woocommercecolophon_click' );
@@ -12,13 +17,13 @@ function WooCommerceColophon() {
 
 	return (
 		<div className="woocommerce-colophon">
-			<ExternalLink icon={ false } onClick={ onClick } href="https://woocommerce.com">
+			<a onClick={ onClick } href={ woocommercePluginURL }>
 				{ translate( 'Powered by {{WooCommerceLogo /}}', {
 					components: {
-						WooCommerceLogo: <WooCommerceLogo height={ 32 } width={ 120 } />,
+						WooCommerceLogo: <WooCommerceLogo />,
 					},
 				} ) }
-			</ExternalLink>
+			</a>
 		</div>
 	);
 }

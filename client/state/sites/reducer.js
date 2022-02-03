@@ -26,7 +26,6 @@ import domains from './domains/reducer';
 import { featuresReducer as features } from './features/reducer';
 import introOffers from './intro-offers/reducer';
 import mediaStorage from './media-storage/reducer';
-import monitor from './monitor/reducer';
 import { plans } from './plans/reducer';
 import { products } from './products/reducer';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
@@ -349,7 +348,6 @@ export default combineReducers( {
 	plans,
 	products,
 	features,
-	monitor,
 	requesting,
 	blogStickers,
 	hasAllSitesList,

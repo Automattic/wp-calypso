@@ -5,10 +5,11 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import HeaderImage from 'calypso/assets/images/domains/domain.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import { getUserSiteCountForPlatform } from 'calypso/components/site-selector/utils';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug } from 'calypso/lib/domains';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SelectItems from '../../select-items';
@@ -35,7 +36,7 @@ class SiteOrDomain extends Component {
 	}
 
 	getChoices() {
-		const { translate, isReskinned, isLoggedIn } = this.props;
+		const { translate, isReskinned, isLoggedIn, siteCount } = this.props;
 
 		const choices = [];
 
@@ -64,7 +65,7 @@ class SiteOrDomain extends Component {
 				value: 'page',
 				actionText: translate( 'Start site' ),
 			} );
-			if ( isLoggedIn ) {
+			if ( isLoggedIn && siteCount > 0 ) {
 				choices.push( {
 					key: 'existing-site',
 					title: translate( 'Existing WordPress.com site' ),
@@ -91,7 +92,7 @@ class SiteOrDomain extends Component {
 					'Choose a theme, customize, and launch your site. A free domain for one year is included with all annual plans.'
 				),
 			} );
-			if ( this.props.isLoggedIn ) {
+			if ( isLoggedIn && siteCount > 0 ) {
 				choices.push( {
 					type: 'existing-site',
 					label: translate( 'Existing WordPress.com site' ),
@@ -257,11 +258,13 @@ export default connect(
 	( state ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
+		const user = getCurrentUser( state );
 
 		return {
 			isLoggedIn: isUserLoggedIn( state ),
 			productsList,
 			productsLoaded,
+			siteCount: getUserSiteCountForPlatform( user ),
 		};
 	},
 	{ submitSignupStep }

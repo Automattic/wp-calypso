@@ -2,8 +2,7 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
-import { useCallback, useMemo } from 'react';
-import * as React from 'react';
+import { useCallback, useMemo, FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -27,7 +26,7 @@ const onSpace = ( fn: () => void ) => ( { key }: { key?: string } ) => {
 	}
 };
 
-const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) => {
+const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 	const dispatch = useDispatch();
 
 	const moment = useLocalizedMoment();
@@ -39,8 +38,7 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 
 	const firstKnownBackupAttempt = useFirstKnownBackupAttempt( siteId );
 	const oldestDateAvailable = useDateWithOffset(
-		firstKnownBackupAttempt.backupAttempt?.activityTs,
-		{ shouldExecute: !! firstKnownBackupAttempt.backupAttempt }
+		firstKnownBackupAttempt.backupAttempt?.activityTs
 	);
 	// Get the oldest visible backup date.
 	// This is added into the state via QueryRewindPolicies

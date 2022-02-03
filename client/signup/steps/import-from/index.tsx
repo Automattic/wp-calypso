@@ -50,6 +50,12 @@ interface Props {
 	resetImport: ( siteId: number, importerId: string ) => void;
 }
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
+	const IMPORT_ROUTE = '/start/from/importing';
+	const dispatch = useDispatch();
+
+	/**
+	 ↓ Fields
+	 */
 	const {
 		urlData,
 		stepName,
@@ -63,17 +69,11 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		fromSite,
 		path,
 	} = props;
-
-	/**
-	 ↓ Fields
-	 */
 	const engine: Importer = stepSectionName.toLowerCase() as Importer;
 	const [ runImportInitially, setRunImportInitially ] = useState( false );
 	const getImportJob = ( engine: Importer ): ImportJob | undefined => {
 		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
 	};
-
-	const dispatch = useDispatch();
 	const fromSiteData = useSelector( getUrlData );
 
 	/**
@@ -95,7 +95,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function isLoading() {
-		return ! isImporterStatusHydrated;
+		return ! isImporterStatusHydrated || ! page.current.startsWith( IMPORT_ROUTE );
 	}
 
 	function hasPermission(): boolean {
@@ -232,20 +232,11 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 					>
 						<div className="import-layout__center">
 							{ ( () => {
-								if ( ! siteSlug ) {
-									/**
-									 * Not found
-									 */
-									return <NotFound />;
-								} else if ( isLoading() ) {
-									/**
-									 * Loading screen
-									 */
+								if ( isLoading() ) {
 									return <LoadingEllipsis />;
+								} else if ( ! siteSlug ) {
+									return <NotFound />;
 								} else if ( ! hasPermission() ) {
-									/**
-									 * Permission screen
-									 */
 									return <NotAuthorized siteSlug={ siteSlug } />;
 								} else if (
 									engine === 'blogger' &&

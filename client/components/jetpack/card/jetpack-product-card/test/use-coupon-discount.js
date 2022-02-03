@@ -5,7 +5,7 @@ import useCouponDiscount from '../use-coupon-discount';
 
 const mockStore = configureStore( [] );
 const wrapper = ( discount ) => {
-	const store = mockStore( { marketing: { jetpackSaleCoupon: { discount } } } );
+	const store = mockStore( { marketing: { jetpackSaleCoupon: { coupon: { discount } } } } );
 
 	return ( { children } ) => <Provider store={ store }>{ children }</Provider>;
 };

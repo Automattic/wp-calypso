@@ -6,11 +6,13 @@ import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.svg';
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { localizeUrl } from 'calypso/lib/i18n-utils/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSiteEditorUrl } from 'calypso/state/selectors/get-site-editor-url';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSite } from 'calypso/state/sites/selectors';
 import { shoppingBag, truck } from '../../icons';
 import SelectItems, { SelectItem } from '../../select-items';
 import { StoreFeatureSet } from './types';
@@ -36,6 +38,22 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const userLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
 	const { data: blockEditorSettings } = useBlockEditorSettingsQuery( siteId, userLoggedIn );
 
+	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );
+
+	const isPaidPlan = sitePlanSlug !== 'free_plan';
+
+	let isBusinessOrEcommercePlan;
+
+	switch ( sitePlanSlug ) {
+		case 'business-bundle':
+		case 'ecommerce-bundle':
+			isBusinessOrEcommercePlan = true;
+			break;
+
+		default:
+			isBusinessOrEcommercePlan = false;
+	}
+
 	// Only do following things when mounted
 	React.useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
@@ -47,7 +65,15 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			title: translate( 'Start simple' ),
 			description: (
 				<>
-					<span className="store-features__requirements">{ translate( 'Free' ) }</span>
+					<span className="store-features__requirements">
+						{ isPaidPlan
+							? translate( 'Included in your plan' )
+							: translate( 'Requires a {{a}}paid plan{{/a}}', {
+									components: {
+										a: <a href={ `/plans/${ siteSlug }` } />,
+									},
+							  } ) }
+					</span>
 
 					<p>
 						{ translate(
@@ -86,11 +112,13 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			description: (
 				<>
 					<span className="store-features__requirements">
-						{ translate( 'Requires a {{a}}Business plan{{/a}}', {
-							components: {
-								a: <a href="/plans/" />,
-							},
-						} ) }
+						{ isBusinessOrEcommercePlan
+							? translate( 'Included in your plan' )
+							: translate( 'Requires a {{a}}Business plan{{/a}}', {
+									components: {
+										a: <a href={ `/plans/${ siteSlug }` } />,
+									},
+							  } ) }
 					</span>
 
 					<p>
@@ -127,6 +155,9 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	];
 
 	const onSelect = ( selectedOption: StoreFeatureSet ) => {
+		recordTracksEvent( 'calypso_signup_store_feature_select', {
+			store_feature: selectedOption,
+		} );
 		switch ( selectedOption ) {
 			case 'power':
 				page.redirect( `/start/woocommerce-install/?site=${ siteSlug }` );

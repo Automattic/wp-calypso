@@ -30,7 +30,7 @@ export default function SupportCard(): ReactElement {
 				a: (
 					<SupportLinkStyle
 						href={ addQueryArgs( '/help/contact', {
-							redirect_to: `/start/woocommerce-install/confirm?site=${ domain }`,
+							redirect_to: `${ window.location.pathname }?site=${ domain }`,
 						} ) }
 					/>
 				),

@@ -26,9 +26,7 @@ export const DailyStatus = ( { selectedDate } ) => {
 	useDailyBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
 	useDailyBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
 
-	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs, {
-		shouldExecute: !! lastBackupBeforeDate,
-	} );
+	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs );
 
 	if ( isLoading ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
@@ -64,9 +62,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
 
-	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs, {
-		shouldExecute: !! lastBackupBeforeDate,
-	} );
+	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs );
 
 	const isInitialized = useSelector( ( state ) => isRewindBackupsInitialized( state, siteId ) );
 

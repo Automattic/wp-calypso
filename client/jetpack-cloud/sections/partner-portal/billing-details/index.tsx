@@ -30,7 +30,7 @@ export default function BillingDetails(): ReactElement {
 							<div className="billing-details__product">
 								{ product.productName }
 								<span className="billing-details__line-item-meta">
-									{ translate( 'Price per license: %(price)s', {
+									{ translate( 'Price per license per month: %(price)s', {
 										args: { price: formatCurrency( product.productCost, 'USD' ) },
 									} ) }
 								</span>

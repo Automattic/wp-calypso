@@ -7,7 +7,7 @@ import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
@@ -30,11 +30,11 @@ import type { ReactElement } from 'react';
 
 import './style.scss';
 
-type EmailProvidersStackedComparisonProps = {
+export type EmailProvidersStackedComparisonProps = {
 	comparisonContext: string;
 	selectedDomainName: string;
-	selectedEmailProviderSlug: string;
-	selectedIntervalLength: IntervalLength | undefined;
+	selectedEmailProviderSlug?: string;
+	selectedIntervalLength?: IntervalLength;
 	source: string;
 };
 
@@ -136,11 +136,6 @@ const EmailProvidersStackedComparison = ( {
 
 	return (
 		<Main wideLayout>
-			<PageViewTracker
-				path={ emailManagementPurchaseNewEmailAccount( ':site', ':domain' ) }
-				title="Email Comparison"
-			/>
-
 			<QueryProductsList />
 
 			<QueryEmailForwards domainName={ selectedDomainName } />
@@ -203,6 +198,17 @@ const EmailProvidersStackedComparison = ( {
 			/>
 
 			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
+
+			<TrackComponentView
+				eventName="calypso_email_providers_comparison_page_view"
+				eventProperties={ {
+					context: comparisonContext,
+					interval: selectedIntervalLength,
+					layout: 'stacked',
+					provider: selectedEmailProviderSlug,
+					source,
+				} }
+			/>
 		</Main>
 	);
 };
