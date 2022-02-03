@@ -1,4 +1,4 @@
-import { BlockFlow, EditorContext, PublishedPostContext } from '..';
+import { BlockFlow, PublishedPostContext } from '..';
 
 const blockParentSelector = '[aria-label="Block: Subscription Form"]';
 const selectors = {
@@ -12,17 +12,6 @@ const selectors = {
 export class SubscriptionFormBlockFlow implements BlockFlow {
 	blockSidebarName = 'Subscription Form';
 	blockEditorSelector = blockParentSelector;
-
-	// TODO: Delete this post-rebase
-	/**
-	 * Configure the block in the editor with the configuration data from the constructor
-	 *
-	 * @param {EditorContext} context The current context for the editor at the point of test execution
-	 */
-	async configure( context: EditorContext ): Promise< void > {
-		await context.page.waitForSelector( 'foo' );
-		return;
-	}
 
 	/**
 	 * Validate the block in the published post
