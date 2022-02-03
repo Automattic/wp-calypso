@@ -6,6 +6,7 @@ import {
 	__experimentalNavigationBackButton as NavigationBackButton,
 } from '@wordpress/components';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
+import domReady from '@wordpress/dom-ready';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
@@ -13,7 +14,6 @@ import { comment, wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
-import $ from 'jquery';
 import { filter, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
@@ -34,6 +34,41 @@ import FeedbackForm from './fse-beta/feedback-form';
 const editSitePackage = require( '@wordpress/edit-site' );
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
+
+const clickOverrides = {};
+let addedListener = false;
+// Replicates basic '$( el ).on( selector, cb )'. Includes preventDefault to override
+// the default event handlers.
+function addEditorListener( selector, cb ) {
+	clickOverrides[ selector ] = cb;
+
+	if ( ! addedListener ) {
+		document.querySelector( '#editor' )?.addEventListener( 'click', triggerOverrideHandler );
+		addedListener = true;
+	}
+}
+
+// Calls a callback if the event occured on an element or parent thereof matching
+// the callback's selector. This is needed because elements are added and removed
+// from the DOM dynamically after the listeners are created. We need to handle
+// clicks anyways, so directly accessing the elements and adding listeners to them
+// is not viable.
+function triggerOverrideHandler( e ) {
+	const allSelectors = Object.keys( clickOverrides ).join( ', ' );
+	const matchingElement = e.target.closest( allSelectors );
+
+	if ( ! matchingElement ) {
+		return;
+	}
+
+	// Find the correct callback to use for this clicked element.
+	for ( const [ selector, cb ] of Object.entries( clickOverrides ) ) {
+		if ( matchingElement.matches( selector ) ) {
+			e.preventDefault();
+			cb( e );
+		}
+	}
+}
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
@@ -94,9 +129,7 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
-	$( '#editor' ).on( 'click', '[href*="revision.php"]', ( e ) => {
-		e.preventDefault();
-
+	addEditorListener( '[href*="revision.php"]', () => {
 		calypsoPort.postMessage( { action: 'openRevisions' } );
 
 		calypsoPort.addEventListener( 'message', onLoadRevision, false );
@@ -575,13 +608,13 @@ function handleCloseEditor( calypsoPort ) {
 function handleCloseInLegacyEditors( handleClose ) {
 	// Selects close buttons in Gutenberg plugin < v7.7
 	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a';
+	addEditorListener( legacySelector, handleClose );
 
 	// Selects the close button in modern Gutenberg versions, unless it itself is a close button override
 	const wpcomCloseSelector = '.wpcom-block-editor__close-button';
 	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
 	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
-
-	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, handleClose );
+	addEditorListener( selector, handleClose );
 }
 
 /**
@@ -600,19 +633,19 @@ function isNavSidebarPresent() {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 async function openLinksInParentFrame( calypsoPort ) {
-	const viewPostLinkSelectors = [
+	const viewPostLinks = [
 		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 	].join( ',' );
-	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
+
+	addEditorListener( viewPostLinks, ( e ) => {
 		// Ignore if the click has modifier
 		if ( e.shiftKey || e.ctrlKey || e.metaKey ) {
 			return;
 		}
 
-		e.preventDefault();
 		calypsoPort.postMessage( {
 			action: 'viewPost',
 			payload: { postUrl: e.target.href },
@@ -774,10 +807,7 @@ async function openLinksInParentFrame( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openCustomizer( calypsoPort ) {
-	const customizerLinkSelector = 'a.components-button[href*="customize.php"]';
-	$( '#editor' ).on( 'click', customizerLinkSelector, ( e ) => {
-		e.preventDefault();
-
+	addEditorListener( '[href*="customize.php"]', ( e ) => {
 		calypsoPort.postMessage( {
 			action: 'openCustomizer',
 			payload: {
@@ -795,8 +825,7 @@ function openCustomizer( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openTemplatePartLinks( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.template__block-container .template-block__overlay a', ( e ) => {
-		e.preventDefault();
+	addEditorListener( '.template__block-container .template-block__overlay a', ( e ) => {
 		e.stopPropagation(); // Otherwise it will port the message twice.
 
 		// Get the template part ID from the current href.
@@ -1231,7 +1260,10 @@ function initPort( message ) {
 	window.removeEventListener( 'message', initPort, false );
 }
 
-$( () => {
+// Note: domReady is used instead of `(function() { ... })()` because certain
+// things in `initPort` require other scripts to be loaded. (For example, ETK
+// scripts need to be available before some things will work correctly.)
+domReady( () => {
 	window.addEventListener( 'message', initPort, false );
 
 	//signal module loaded
