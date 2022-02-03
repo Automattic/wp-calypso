@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
 import ExternalLink from 'calypso/components/external-link';
 import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
+import { withUrlSearchQueryState } from 'calypso/lib/url-search-query-state';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -116,7 +117,10 @@ class InlineSupportLink extends Component {
 			<LinkComponent
 				className={ classnames( 'inline-support-link', className ) }
 				href={ url }
-				onClick={ ( event ) => openDialog( event, supportPostId, url ) }
+				onClick={ ( event ) => {
+					openDialog( event, supportPostId, url );
+					this.props.updateUrlSearchQuery( supportPostId );
+				} }
 				onMouseEnter={
 					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates
 						? this.loadAlternates
@@ -173,4 +177,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineSupportLink ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( withUrlSearchQueryState( InlineSupportLink, 'support-article' ) ) );

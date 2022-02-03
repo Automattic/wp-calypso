@@ -4,31 +4,13 @@ import {
 	SUPPORT_ARTICLE_DIALOG_CLOSE,
 } from 'calypso/state/action-types';
 
-function defaultPostId() {
-	if ( ! window && ! URLSearchParams ) {
-		return null;
-	}
-
-	const searchParams = new URLSearchParams( window.location.search );
-	return searchParams.has( 'support-article' )
-		? parseInt( searchParams.get( 'support-article' ) )
-		: null;
-}
-
-function defaultPostUrl() {
-	const postId = defaultPostId();
-	if ( postId ) {
-		return 'https://support.wordpress.com?p=' + postId;
-	}
-	return null;
-}
-
 export default withStorageKey(
 	'inlineSupportArticle',
 	(
 		state = {
-			postId: defaultPostId(),
-			postUrl: defaultPostUrl(),
+			postId: null,
+			postUrl: null,
+			isVisible: false,
 			blogId: null,
 		},
 		action
@@ -46,6 +28,7 @@ export default withStorageKey(
 				return {
 					postUrl,
 					postId,
+					isVisible: true,
 					actionLabel,
 					actionUrl,
 					blogId,
@@ -54,6 +37,7 @@ export default withStorageKey(
 			case SUPPORT_ARTICLE_DIALOG_CLOSE:
 				return {
 					...state,
+					isVisible: false,
 				};
 		}
 

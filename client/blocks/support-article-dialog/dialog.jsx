@@ -10,6 +10,7 @@ import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
 import EmbedContainer from 'calypso/components/embed-container';
 import { isDefaultLocale } from 'calypso/lib/i18n-utils';
+import { useUrlSearchQueryState, getUrlSearchQuery } from 'calypso/lib/url-search-query-state';
 import { closeSupportArticleDialog as closeDialog } from 'calypso/state/inline-support-article/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -47,6 +48,11 @@ export const SupportArticleDialog = ( {
 	const siteId = post?.site_ID;
 	const shouldQueryReaderPost = ! post && ! shouldRequestAlternates && ! isRequestingAlternates;
 
+	const [ supportArticleId, updateSupportArticle ] = useUrlSearchQueryState( 'support-article' );
+	if ( ! actionUrl ) {
+		actionUrl = 'https://support.wordpress.com?p=' + supportArticleId;
+	}
+
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
 		if ( typeof window !== 'undefined' && actionUrl.indexOf( '#' ) !== -1 && post?.content ) {
@@ -60,28 +66,31 @@ export const SupportArticleDialog = ( {
 		}
 	}, [ actionUrl, post ] );
 
+	const handleCloseDialog = () => {
+		updateSupportArticle( null );
+		closeSupportArticleDialog();
+	};
+
 	return (
 		<Dialog
 			isVisible
 			additionalClassNames="support-article-dialog"
 			baseClassName="support-article-dialog__base dialog"
 			buttons={ [
-				<Button onClick={ closeSupportArticleDialog }>
-					{ translate( 'Close', { textOnly: true } ) }
-				</Button>,
+				<Button onClick={ handleCloseDialog }>{ translate( 'Close', { textOnly: true } ) }</Button>,
 				actionUrl && (
 					<Button
 						href={ actionUrl }
 						target={ actionIsExternal ? '_blank' : undefined }
 						primary
-						onClick={ () => ( actionIsExternal ? noop() : closeSupportArticleDialog() ) }
+						onClick={ () => ( actionIsExternal ? noop() : handleCloseDialog() ) }
 					>
 						{ actionLabel } { actionIsExternal && <Gridicon icon="external" size={ 12 } /> }
 					</Button>
 				),
 			].filter( Boolean ) }
-			onCancel={ closeSupportArticleDialog }
-			onClose={ closeSupportArticleDialog }
+			onCancel={ handleCloseDialog }
+			onClose={ handleCloseDialog }
 		>
 			{ siteId && <QueryReaderSite siteId={ +siteId } /> }
 			{ shouldQueryReaderPost && <QueryReaderPost postKey={ postKey } /> }
@@ -122,7 +131,10 @@ const getPostKey = memoize(
 );
 
 const mapStateToProps = ( state ) => {
-	const postId = getInlineSupportArticlePostId( state );
+	let postId = getInlineSupportArticlePostId( state );
+	if ( ! postId ) {
+		postId = parseInt( getUrlSearchQuery( 'support-article' ) );
+	}
 	const requestBlogId = getInlineSupportArticleBlogId( state );
 	const blogId = requestBlogId ?? SUPPORT_BLOG_ID;
 	const actionUrl = getInlineSupportArticleActionUrl( state );
