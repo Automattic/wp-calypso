@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
-import { isMobile } from '@automattic/viewport';
+import { isDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
+import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -12,6 +13,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -98,6 +100,8 @@ export class UserStep extends Component {
 
 	state = {
 		recaptchaClientId: null,
+		experiment: null,
+		isDesktop: isDesktop(),
 	};
 
 	componentDidUpdate() {
@@ -124,7 +128,41 @@ export class UserStep extends Component {
 		if ( this.props.oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
 		}
+
+		const signupFlows = [
+			'onboarding',
+			'free',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+			'with-theme',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+			'with-design-picker',
+		];
+		if ( signupFlows.includes( this.props.flowName ) ) {
+			const experimentCheck = this.state.isDesktop
+				? 'registration_email_only_desktop_v3'
+				: 'registration_email_only_mobile_v3';
+
+			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
+				this.setState( { experiment: experimentName } );
+				experimentName.variationName === 'treatment'
+					? this.persistExperimentName( experimentName.experimentName )
+					: null;
+			} );
+		}
 	}
+
+	persistExperimentName = ( experimentName ) => {
+		const DAY_IN_SECONDS = 3600 * 24;
+		const expirationDate = new Date( new Date().getTime() + DAY_IN_SECONDS * 1000 );
+		const options = { path: '/', expires: expirationDate, sameSite: 'strict' };
+		document.cookie = cookie.serialize( 'wpcom_signup_experiment_name', experimentName, options );
+	};
 
 	getSubHeaderText() {
 		const {
@@ -422,6 +460,10 @@ export class UserStep extends Component {
 		return translate( 'Create your account' );
 	}
 
+	isPasswordlessExperiment() {
+		return this.state.experiment?.variationName === 'treatment';
+	}
+
 	renderSignupForm() {
 		const { oauth2Client, wccomFrom, isReskinned } = this.props;
 		let socialService;
@@ -453,7 +495,8 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
-					isMobile={ isMobile() }
+					isPasswordlessExperiment={ this.isPasswordlessExperiment() }
+					experimentName={ this.state.experiment }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
