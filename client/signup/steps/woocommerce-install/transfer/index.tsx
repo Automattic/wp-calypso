@@ -41,6 +41,7 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 				error: failureInfo.error,
 			} )
 		);
+
 		logToLogstash( {
 			feature: 'calypso_client',
 			message: failureInfo.error,
@@ -53,6 +54,9 @@ export default function Transfer( props: WooCommerceInstallProps ): ReactElement
 				site: domain,
 				code: failureInfo.code,
 				message: failureInfo.error,
+			},
+			properties: {
+				type: 'calypso_woocommerce_dashboard_snag_error', // everything added here is queryable
 			},
 		} );
 		setHasFailed( true );
