@@ -500,7 +500,6 @@ export class GutenbergEditorPage {
 		// are disabled while the post is saved. Wait for the state of
 		// Publish button to return to 'enabled' before proceeding.
 		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
-		await frame.waitForSelector( selectors.saveDraftButton );
 	}
 
 	/**
