@@ -1,15 +1,21 @@
 export const schema = {
+	$schema: 'https://json-schema.org/draft/2020-12/schema',
+	title: 'Website content schema',
 	type: 'object',
+	required: [ 'currentIndex', 'websiteContent' ],
 	properties: {
-		currentIndex: 'number',
+		currentIndex: {
+			type: 'number',
+			description: 'The current position in the form index',
+		},
 		websiteContent: {
 			type: 'array',
-			items: { $ref: '#/$defs/pageData' },
-		},
-		$defs: {
-			pageData: {
+			items: {
 				type: 'object',
 				properties: {
+					id: {
+						type: 'string',
+					},
 					title: {
 						type: 'string',
 					},
@@ -19,7 +25,11 @@ export const schema = {
 					images: {
 						type: 'array',
 						items: {
-							type: 'string',
+							type: 'object',
+							properties: {
+								caption: { type: 'string' },
+								url: { type: 'string' },
+							},
 						},
 					},
 				},
@@ -28,10 +38,17 @@ export const schema = {
 	},
 };
 
+export interface ImageData {
+	caption: string;
+	url: string;
+	uploadID?: string;
+}
+
 export interface PageData {
+	id: string;
 	title: string;
 	content: string;
-	images: Array< string >;
+	images: Array< ImageData >;
 }
 
 export type WebsiteContent = Array< PageData >;
@@ -42,21 +59,5 @@ export interface WebsiteContentCollection {
 
 export const initialState: WebsiteContentCollection = {
 	currentIndex: 0,
-	websiteContent: [
-		{
-			title: 'Home',
-			content: '',
-			images: [],
-		},
-		{
-			title: 'About',
-			content: '',
-			images: [],
-		},
-		{
-			title: 'Contact',
-			content: '',
-			images: [],
-		},
-	],
+	websiteContent: [],
 };

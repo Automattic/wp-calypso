@@ -6,8 +6,8 @@ import placeholder from 'calypso/assets/images/difm/placeholder.svg';
 import FilePicker from 'calypso/components/file-picker';
 import Spinner from 'calypso/components/spinner';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
+import { Label, SubLabel } from 'calypso/signup/accordion-form/form-components';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
-import { Label, SubLabel } from './components';
 
 const debug = debugFactory( 'difm:website-content' );
 
@@ -17,6 +17,10 @@ const UPLOAD_STATES = {
 	COMPLETED: 'COMPLETED',
 	FAILED: 'FAILED',
 };
+const Content = styled.div`
+	overflow: hidden;
+	white-space: nowrap;
+`;
 
 const FileSelectThumbnailContainer = styled.div`
 	cursor: pointer;
@@ -46,20 +50,32 @@ const Preview = styled.div`
 	margin: 0 auto;
 `;
 
+export interface MediaUploadData {
+	title: string;
+	URL: string;
+	uploadID: string;
+	mediaIndex: number;
+}
 interface WordpressMediaUploadProps {
-	onMediaUploaded: ( { title, URL, ID }: { title: string; URL: string; ID: string } ) => void;
-	mediaId: number;
+	onMediaUploaded: ( imageData: MediaUploadData ) => void;
+	mediaIndex: number;
 	site: SiteData;
+	initialUrl: string;
+	initialCaption: string;
 }
 
 export function WordpressMediaUpload( {
-	mediaId,
+	mediaIndex,
 	site,
 	onMediaUploaded,
+	initialUrl,
+	initialCaption,
 }: WordpressMediaUploadProps ) {
-	const [ uploadState, setUploadState ] = useState( UPLOAD_STATES.NOT_SELECTED );
-	const [ uploadedImageUrl, setUploadedImageUrl ] = useState( '' );
-	const [ imageCaption, setImageCaption ] = useState( '' );
+	const [ uploadedImageUrl, setUploadedImageUrl ] = useState( initialUrl );
+	const [ uploadState, setUploadState ] = useState(
+		initialUrl ? UPLOAD_STATES.COMPLETED : UPLOAD_STATES.NOT_SELECTED
+	);
+	const [ imageCaption, setImageCaption ] = useState( initialCaption );
 	const translate = useTranslate();
 	const addMedia = useAddMedia();
 	const onPick = async function ( file: FileList ) {
@@ -69,7 +85,7 @@ export function WordpressMediaUpload( {
 			const [ { title, URL, ID } ] = await addMedia( file, site );
 			setUploadedImageUrl( URL );
 			setImageCaption( title );
-			onMediaUploaded( { title, URL, ID } );
+			onMediaUploaded( { title, URL, uploadID: ID, mediaIndex } );
 			setUploadState( UPLOAD_STATES.COMPLETED );
 		} catch ( e: any ) {
 			setUploadState( UPLOAD_STATES.FAILED );
@@ -81,9 +97,9 @@ export function WordpressMediaUpload( {
 	switch ( uploadState ) {
 		case UPLOAD_STATES.COMPLETED:
 			return (
-				<FilePicker key={ mediaId } accept="image/*" onPick={ onPick }>
+				<FilePicker key={ mediaIndex } accept="image/*" onPick={ onPick }>
 					<FileSelectThumbnailContainer>
-						<div>
+						<Content>
 							<Preview>
 								<CroppedImage>
 									<img src={ uploadedImageUrl } alt={ imageCaption } />
@@ -91,13 +107,13 @@ export function WordpressMediaUpload( {
 							</Preview>
 							<Label>{ translate( 'Change File' ) }</Label>
 							<SubLabel>{ imageCaption }</SubLabel>
-						</div>
+						</Content>
 					</FileSelectThumbnailContainer>
 				</FilePicker>
 			);
 		case UPLOAD_STATES.IN_PROGRESS:
 			return (
-				<FileSelectThumbnailContainer key={ mediaId }>
+				<FileSelectThumbnailContainer key={ mediaIndex }>
 					<div>
 						<Preview>
 							<Spinner />
@@ -107,15 +123,15 @@ export function WordpressMediaUpload( {
 			);
 		case UPLOAD_STATES.FAILED:
 			return (
-				<FilePicker accept="image/*" onPick={ onPick } key={ mediaId }>
+				<FilePicker accept="image/*" onPick={ onPick } key={ mediaIndex }>
 					<FileSelectThumbnailContainer>
-						<div>
+						<Content>
 							<Preview>
 								<img src={ placeholder } alt="placeholder" />
 							</Preview>
 							<Label>{ translate( 'Choose file' ) }</Label>
 							<SubLabel color="red">{ translate( 'Image upload failed' ) }</SubLabel>
-						</div>
+						</Content>
 					</FileSelectThumbnailContainer>
 				</FilePicker>
 			);
@@ -123,9 +139,9 @@ export function WordpressMediaUpload( {
 		case UPLOAD_STATES.NOT_SELECTED:
 		default:
 			return (
-				<FilePicker accept="image/*" onPick={ onPick } key={ mediaId }>
+				<FilePicker accept="image/*" onPick={ onPick } key={ mediaIndex }>
 					<FileSelectThumbnailContainer>
-						<div>
+						<Content>
 							<Preview>
 								<img src={ placeholder } alt="placeholder" />
 							</Preview>
@@ -135,7 +151,7 @@ export function WordpressMediaUpload( {
 							/>
 							<Label>{ translate( 'Choose file' ) }</Label>
 							{ /* <SubLabel>{ translate( 'or drag here')}</SubLabel> */ }
-						</div>
+						</Content>
 					</FileSelectThumbnailContainer>
 				</FilePicker>
 			);

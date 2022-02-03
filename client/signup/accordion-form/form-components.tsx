@@ -8,14 +8,22 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import SocialLogo from 'calypso/components/social-logo';
 
-const Label = styled( FormLabel )`
+// TODO: This probably should be moved out to a more suitable folder name like difm-components
+export const Label = styled( FormLabel )`
 	color: var( --studio-gray-50 );
+	font-weight: 500;
+	cursor: inherit;
+`;
+
+export const SubLabel = styled( Label )`
 	font-weight: 400;
-	margin-bottom: 24px;
+	text-decoration-line: none;
+	color: ${ ( props ) => ( props.color ? props.color : 'inherited' ) };
 `;
 
 const TextInput = styled( FormTextInput )`
 	input&.form-text-input {
+		margin-top: 16px;
 		border-radius: 4px;
 		line-height: 44px;
 		height: 44px;
@@ -29,10 +37,9 @@ const TextInput = styled( FormTextInput )`
 `;
 
 const TextArea = styled( FormTextArea )`
-	input&.form-text-area {
+	textarea&.form-textarea {
+		margin-top: 24px;
 		border-radius: 4px;
-		line-height: 44px;
-		height: 44px;
 		font-size: 14px;
 		&:focus,
 		&:focus:hover {
@@ -80,6 +87,8 @@ interface TextInputFieldProps {
 	placeholder?: TranslateResult;
 	value: string;
 	error?: TranslateResult | null;
+	sublabel?: TranslateResult;
+	rows?: number;
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 }
 
@@ -87,23 +96,31 @@ export function TextInputField( props: TextInputFieldProps ) {
 	return (
 		<FormFieldset>
 			<Label htmlFor={ props.name }>{ props.label }</Label>
+			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextInput { ...props } isError={ !! props.error } />
 			{ props.error && <FormInputValidation isError text={ props.error } /> }
 		</FormFieldset>
 	);
 }
 
-export function TextAreaField( props: TextInputFieldProps ) {
+interface TextAreaFieldProps extends TextInputFieldProps {
+	rows?: number;
+}
+
+export function TextAreaField( props: TextAreaFieldProps ) {
 	return (
 		<FormFieldset>
 			<Label htmlFor={ props.name }>{ props.label }</Label>
+			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
 				{ ...props }
+				rows={ props.rows ? props.rows : 10 }
 				isError={ !! props.error }
 				autoCapitalize="off"
 				autoCorrect="off"
 				spellCheck="false"
 			/>
+			{ props.error && <FormInputValidation isError text={ props.error } /> }
 		</FormFieldset>
 	);
 }
@@ -222,3 +239,10 @@ export function ContactInformation( {
 		</FlexContainer>
 	);
 }
+
+export const HorizontalGrid = styled.div`
+	margin-top: 24px;
+	display: flex;
+	justify-content: space-between;
+	width: 627px;
+`;
