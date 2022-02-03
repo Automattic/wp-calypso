@@ -11,7 +11,7 @@ const useP2HubP2sQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 	const requestUnnecessary = ! isWPForTeamsSite || ! isP2Hub;
 
 	return useQuery(
-		[ 'p2-hub-p2s', siteId ],
+		[ 'p2-hub-p2s', siteId, fetchOptions ],
 		() =>
 			wpcom.req.get(
 				{
