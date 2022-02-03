@@ -7,6 +7,8 @@ import {
 	WhatsAppButtonFlow,
 	ContactFormFlow,
 	PremiumContentBlockFlow,
+	SubscriptionFormBlockFlow,
+	ContactInfoBlockFlow,
 	DataHelper,
 } from '@automattic/calypso-e2e';
 import { createBlockTests } from '../specs-playwright/shared-specs/block-testing';
@@ -19,6 +21,8 @@ const blockFlows: BlockFlow[] = [
 		subscriberTitle: DataHelper.getRandomPhrase(),
 		subscriberText: DataHelper.getRandomPhrase(),
 	} ),
+	new SubscriptionFormBlockFlow(),
+	new ContactInfoBlockFlow( { email: 'foo@example.com', phoneNumber: '(213) 621-0002' } ),
 ];
 
 createBlockTests( 'Blocks: Jetpack Grow', blockFlows );

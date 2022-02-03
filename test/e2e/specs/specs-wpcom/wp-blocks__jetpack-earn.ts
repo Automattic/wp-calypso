@@ -1,7 +1,12 @@
 /**
  * @group gutenberg
  */
-import { BlockFlow, PayWithPaypalBlockFlow, OpenTableFlow } from '@automattic/calypso-e2e';
+import {
+	BlockFlow,
+	PayWithPaypalBlockFlow,
+	OpenTableFlow,
+	PaymentsBlockFlow,
+} from '@automattic/calypso-e2e';
 import { createBlockTests } from '../specs-playwright/shared-specs/block-testing';
 
 const blockFlows: BlockFlow[] = [
@@ -13,6 +18,7 @@ const blockFlows: BlockFlow[] = [
 	new OpenTableFlow( {
 		restaurant: 'Miku Restaurant - Vancouver',
 	} ),
+	new PaymentsBlockFlow( { buttonText: 'Donate to Me' } ),
 ];
 
 createBlockTests( 'Blocks: Jetpack Earn', blockFlows );

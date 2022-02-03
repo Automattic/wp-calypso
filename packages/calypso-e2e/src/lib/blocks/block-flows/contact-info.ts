@@ -14,7 +14,7 @@ const selectors = {
 /**
  * Class representing the flow of using a Contact Info block in the editor.
  */
-export class ContactInfoBlock implements BlockFlow {
+export class ContactInfoBlockFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
 
 	/**

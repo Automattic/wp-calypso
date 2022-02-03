@@ -6,7 +6,7 @@ interface ConfigurationData {
 
 const blockParentSelector = '[aria-label="Block: Payments"]';
 const selectors = {
-	editableButtonText: `${ blockParentSelector } [role=textbox]`,
+	buttonText: `${ blockParentSelector } [role=textbox]`,
 };
 
 /**
@@ -33,14 +33,7 @@ export class PaymentsBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		// On mobile, you need to focus the parent block first, then the sub-block. This is also desktop safe.
-		await context.editorIframe.click( blockParentSelector );
-		// We can't use the 'fill' method because it's not a real textarea :(
-		await context.editorIframe.click( selectors.editableButtonText );
-		await context.editorIframe.type(
-			selectors.editableButtonText,
-			this.configurationData.buttonText
-		);
+		await context.editorIframe.fill( selectors.buttonText, this.configurationData.buttonText );
 	}
 
 	/**

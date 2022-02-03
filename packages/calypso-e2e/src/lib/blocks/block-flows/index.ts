@@ -9,3 +9,7 @@ export * from './blog-posts';
 export * from './post-carousel';
 export * from './timeline';
 export * from './premium-content';
+export * from './subscription-form';
+export * from './payments';
+export * from './contact-info';
+export * from './star-rating';
