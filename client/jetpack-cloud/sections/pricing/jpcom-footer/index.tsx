@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';
@@ -192,6 +192,7 @@ const JetpackComFooter: React.FC = () => {
 		};
 	}, [ translate ] );
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<footer>
 			<div className="jetpack-footer">
@@ -326,6 +327,7 @@ const JetpackComFooter: React.FC = () => {
 			</div>
 		</footer>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default JetpackComFooter;
