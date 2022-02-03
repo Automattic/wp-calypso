@@ -37,6 +37,7 @@ const selectors = {
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 	updateButton: 'button:text("Update")',
+	switchToDraftButton: 'button.editor-post-switch-to-draft',
 
 	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
@@ -443,6 +444,25 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Unpublishes the post or page by switching to draft.
+	 */
+	async unpublish(): Promise< void > {
+		const frame = await this.getEditorFrame();
+
+		// Add handler to handle dialog that must be accepted for the post
+		// to be unpublished.
+		this.page.once( 'dialog', async ( dialog ) => {
+			await dialog.accept();
+		} );
+
+		await frame.click( selectors.switchToDraftButton );
+		// Similar to Save Draft, the publish button temporarily becomes disabled
+		// while the unpublish process takes place. This waits for the publish button
+		// to again become enabled.
+		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
+	}
+
+	/**
 	 * Obtains the published article's URL from post-publish panels.
 	 *
 	 * This method is only able to obtain the published article's URL if immediately
@@ -480,6 +500,7 @@ export class GutenbergEditorPage {
 		// are disabled while the post is saved. Wait for the state of
 		// Publish button to return to 'enabled' before proceeding.
 		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
+		await frame.waitForSelector( selectors.saveDraftButton );
 	}
 
 	/**
