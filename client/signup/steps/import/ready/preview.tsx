@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { MShotParams } from '../types';
 import useWindowDimensions from '../windowDimensions.effect';
@@ -85,4 +85,7 @@ const ImportPreview: FunctionComponent< Props > = ( { website } ) => {
 	);
 };
 
-export default ImportPreview;
+export default memo(
+	ImportPreview,
+	( prevProps: Props, nextProps: Props ) => prevProps?.website === nextProps?.website
+);
