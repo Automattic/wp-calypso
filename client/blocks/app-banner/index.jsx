@@ -71,11 +71,9 @@ export class AppBanner extends Component {
 		} else {
 			this.state = { isDraftPostModalShown: false };
 		}
-
-		this.loadExperiment();
 	}
 
-	loadExperiment() {
+	loadDismissTimesExperiment() {
 		// Set a default value just in case the assignment hasn't loaded yet
 		this.experimentIsControl = true;
 
@@ -160,6 +158,8 @@ export class AppBanner extends Component {
 		if ( ! this.props.shouldDisplayAppBanner || this.state.isDraftPostModalShown ) {
 			return null;
 		}
+
+		this.loadDismissTimesExperiment();
 
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
