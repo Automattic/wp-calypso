@@ -44,7 +44,7 @@ export const googleWorkspaceFeatures: EmailProviderFeatures = {
 	slug: GOOGLE_WORKSPACE_PRODUCT_TYPE,
 	name: getGoogleMailServiceFamily(),
 	description: translate(
-		'Business email with Gmail. Include other collaboration and productivity tools from Google.'
+		'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
 	),
 	logo: (
 		<img

@@ -66,7 +66,7 @@ const googleWorkspaceCardInformation: ProviderCardProps = {
 	expandButtonLabel: translate( 'Select' ),
 	providerKey: 'google',
 	description: translate(
-		'Business email with Gmail. Include other collaboration and productivity tools from Google.'
+		'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
 	),
 	logo: { path: googleWorkspaceIcon, className: 'google-workspace-icon' },
 	appLogos: getGoogleAppLogos(),

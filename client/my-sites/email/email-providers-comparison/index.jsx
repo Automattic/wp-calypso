@@ -505,7 +505,7 @@ class EmailProvidersComparison extends Component {
 				title={ getGoogleMailServiceFamily() }
 				starLabel={ starLabel }
 				description={ translate(
-					'Business email with Gmail. Include other collaboration and productivity tools from Google.'
+					'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
 				) }
 				formattedPrice={ formattedPrice }
 				discount={ discount }
