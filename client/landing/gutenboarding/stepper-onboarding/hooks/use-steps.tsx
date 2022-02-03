@@ -1,5 +1,5 @@
-import { steps } from '../steps';
+import { Steps } from '../steps';
 
 export function useSteps() {
-	return steps;
+	return Object.values( Steps );
 }

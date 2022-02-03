@@ -9,14 +9,14 @@ export function useStepNavigation() {
 	const history = useHistory();
 
 	const goNext = React.useCallback( () => {
-		const currentIndex = steps.indexOf( step );
-		const goTo = steps[ Math.min( currentIndex + 1, steps.length - 1 ) ];
+		const index = steps.indexOf( step );
+		const goTo = steps[ Math.min( index + 1, steps.length - 1 ) ];
 		history.push( `/${ goTo }` );
 	}, [ step, steps, history ] );
 
 	const goBack = React.useCallback( () => {
-		const currentIndex = steps.indexOf( step );
-		const goTo = steps[ Math.max( currentIndex - 1, 0 ) ];
+		const index = steps.indexOf( step );
+		const goTo = steps[ Math.max( index - 1, 0 ) ];
 		history.push( `/${ goTo }` );
 	}, [ step, steps, history ] );
 

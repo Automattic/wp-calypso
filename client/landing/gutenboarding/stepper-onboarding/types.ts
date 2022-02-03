@@ -1,3 +1,4 @@
-import { steps } from './steps';
+import { Steps } from './steps';
 
-export type StepType = typeof steps[ number ];
+type Keys = keyof typeof Steps;
+export type StepType = typeof Steps[ Keys ];

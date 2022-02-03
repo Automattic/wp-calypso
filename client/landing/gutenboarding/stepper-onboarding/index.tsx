@@ -1,19 +1,23 @@
+import { Route, Switch } from 'react-router-dom';
 import { useStepNavigation } from './hooks/use-step-navigation';
-
-const appSteps = {
-	first: 'first step',
-	second: 'second step',
-	third: 'third step',
-};
+import { Steps } from './steps';
 
 export function Stepper() {
-	const { currentStep, goNext, goBack } = useStepNavigation();
+	const { goNext, goBack } = useStepNavigation();
 
 	return (
 		<div>
-			<div>{ appSteps[ currentStep ] }</div>
-			<button onClick={ goBack }>Previous step</button>
-			<button onClick={ goNext }>Next step</button>
+			{ Object.values( Steps ).map( ( step ) => (
+				<Switch>
+					<Route path={ `/${ step }` } key={ step }>
+						{ step } step
+					</Route>
+				</Switch>
+			) ) }
+			<div>
+				<button onClick={ goBack }>Previous step</button>
+				<button onClick={ goNext }>Next step</button>
+			</div>
 		</div>
 	);
 }
