@@ -396,7 +396,7 @@ export function generateFlows( {
 			lastModified: '2021-10-14',
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
-			pageTitle: translate( 'Setup your site' ),
+			pageTitle: translate( 'Set up your site' ),
 			enableBranchSteps: true,
 		},
 		{
