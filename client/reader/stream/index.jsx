@@ -141,35 +141,56 @@ class ReaderStream extends Component {
 		this.props.viewStream( streamKey, window.location.pathname );
 		this.fetchNextPage( {} );
 
-		/*
-		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
-		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
-		KeyboardShortcuts.on( 'open-selection', this.handleOpenSelection );
-		KeyboardShortcuts.on( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
-		KeyboardShortcuts.on( 'like-selection', this.toggleLikeOnSelectedPost );
-		KeyboardShortcuts.on( 'go-to-top', this.goToTop );
-		*/
-
 		window.addEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
 			window.history.scrollRestoration = 'manual';
 		}
+
+		document.addEventListener( 'keydown', this.handleKeydown, true );
 	}
 
 	componentWillUnmount() {
-		/*
-		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
-		KeyboardShortcuts.off( 'move-selection-up', this.selectPrevItem );
-		KeyboardShortcuts.off( 'open-selection', this.handleOpenSelection );
-		KeyboardShortcuts.off( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
-		KeyboardShortcuts.off( 'like-selection', this.toggleLikeOnSelectedPost );
-		KeyboardShortcuts.off( 'go-to-top', this.goToTop );
-		*/
 		window.removeEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
 			window.history.scrollRestoration = 'auto';
 		}
+
+		document.removeEventListener( 'keydown', this.handleKeydown, true );
 	}
+
+	handleKeydown = ( event ) => {
+		switch ( event.keyCode ) {
+			// Move selection down - j
+			case 74: {
+				return this.selectNextItem();
+			}
+
+			// Move selection up - k
+			case 75: {
+				return this.selectPrevItem();
+			}
+
+			// Open selection - Enter
+			case 13: {
+				return this.handleOpenSelection();
+			}
+
+			// Open selection in a new tab - v
+			case 86: {
+				return this.handleOpenSelectionNewTab();
+			}
+
+			// Like selection - l
+			case 76: {
+				return this.toggleLikeOnSelectedPost();
+			}
+
+			// Go to top - .
+			case 190: {
+				return this.goToTop();
+			}
+		}
+	};
 
 	handleOpenSelectionNewTab = () => {
 		window.open( this.props.selectedPostKey.url, '_blank', 'noreferrer,noopener' );
@@ -188,7 +209,7 @@ class ReaderStream extends Component {
 		// only toggle a like on a x-post if we have the appropriate metadata,
 		// and original post is full screen
 		const xPostMetadata = XPostHelper.getXPostMetadata( selectedPost );
-		if ( xPostMetadata.postURL ) {
+		if ( xPostMetadata?.postURL ) {
 			return;
 		}
 
