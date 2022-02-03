@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { times } from 'lodash';
+import { findLast, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
@@ -12,15 +12,25 @@ import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
 import ReaderMain from 'calypso/reader/components/reader-main';
+import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString, keyForPost } from 'calypso/reader/post-key';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
+import XPostHelper from 'calypso/reader/xpost-helper';
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
+import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
+import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
-import { requestPage, showUpdates } from 'calypso/state/reader/streams/actions';
+import {
+	requestPage,
+	selectItem,
+	selectNextItem,
+	selectPrevItem,
+	showUpdates,
+} from 'calypso/state/reader/streams/actions';
 import {
 	getStream,
 	getTransformedStreamItems,
@@ -131,6 +141,15 @@ class ReaderStream extends Component {
 		this.props.viewStream( streamKey, window.location.pathname );
 		this.fetchNextPage( {} );
 
+		/*
+		KeyboardShortcuts.on( 'move-selection-down', this.selectNextItem );
+		KeyboardShortcuts.on( 'move-selection-up', this.selectPrevItem );
+		KeyboardShortcuts.on( 'open-selection', this.handleOpenSelection );
+		KeyboardShortcuts.on( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
+		KeyboardShortcuts.on( 'like-selection', this.toggleLikeOnSelectedPost );
+		KeyboardShortcuts.on( 'go-to-top', this.goToTop );
+		*/
+
 		window.addEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
 			window.history.scrollRestoration = 'manual';
@@ -138,11 +157,63 @@ class ReaderStream extends Component {
 	}
 
 	componentWillUnmount() {
+		/*
+		KeyboardShortcuts.off( 'move-selection-down', this.selectNextItem );
+		KeyboardShortcuts.off( 'move-selection-up', this.selectPrevItem );
+		KeyboardShortcuts.off( 'open-selection', this.handleOpenSelection );
+		KeyboardShortcuts.off( 'open-selection-new-tab', this.handleOpenSelectionNewTab );
+		KeyboardShortcuts.off( 'like-selection', this.toggleLikeOnSelectedPost );
+		KeyboardShortcuts.off( 'go-to-top', this.goToTop );
+		*/
 		window.removeEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
 			window.history.scrollRestoration = 'auto';
 		}
 	}
+
+	handleOpenSelectionNewTab = () => {
+		window.open( this.props.selectedPostKey.url, '_blank', 'noreferrer,noopener' );
+	};
+
+	handleOpenSelection = () => {
+		showSelectedPost( {
+			store: this.props.streamKey,
+			postKey: this.props.selectedPostKey,
+		} );
+	};
+
+	toggleLikeOnSelectedPost = () => {
+		const { selectedPost } = this.props;
+
+		// only toggle a like on a x-post if we have the appropriate metadata,
+		// and original post is full screen
+		const xPostMetadata = XPostHelper.getXPostMetadata( selectedPost );
+		if ( xPostMetadata.postURL ) {
+			return;
+		}
+
+		if ( shouldShowLikes( selectedPost ) ) {
+			this.toggleLikeAction();
+		}
+	};
+
+	toggleLikeAction() {
+		const { likedPost, selectedPost } = this.props;
+		if ( likedPost === null ) {
+			// unknown... ignore for now
+			return;
+		}
+
+		const toggler = likedPost ? this.props.unlikePost : this.props.likePost;
+		toggler( selectedPost.site_ID, selectedPost.ID, { source: 'reader' } );
+	}
+
+	goToTop = () => {
+		const { streamKey, updateCount } = this.props;
+		if ( updateCount > 0 ) {
+			this.props.showUpdates( { streamKey } );
+		}
+	};
 
 	getVisibleItemIndexes() {
 		return (
@@ -150,6 +221,85 @@ class ReaderStream extends Component {
 			this.listRef.current.getVisibleItemIndexes( { offsetTop: HEADER_OFFSET_TOP } )
 		);
 	}
+
+	selectNextItem = () => {
+		// note that we grab the items directly from the stream because we don't want the transformed
+		// one with combined cards
+		const {
+			streamKey,
+			stream: { items },
+		} = this.props;
+
+		// do we have a selected item? if so, just move to the next one
+		if ( this.props.selectedPostKey ) {
+			this.props.selectNextItem( { streamKey, items } );
+			return;
+		}
+
+		const visibleIndexes = this.getVisibleItemIndexes();
+
+		// This is slightly magical...
+		// When a user tries to select the "next" item, we really want to select
+		// the next item if and only if the currently selected item is at the top of the
+		// screen. If the currently selected item is off screen, we'd rather select the item
+		// at the top of the screen, rather than the strictly "next" item. This is so a user can
+		// pick an item with the keyboard shortcuts, then scroll down a bit, then hit `next` again
+		// and have it pick the item at the top of the screen, rather than the item we scrolled past
+		if ( visibleIndexes && visibleIndexes.length > 0 ) {
+			// default to the first item in the visible list. this item is likely off screen when the user
+			// is scrolled down the page
+			let index = visibleIndexes[ 0 ].index;
+
+			// walk down the list of "visible" items, looking for the first item whose top extent is on screen
+			for ( let i = 0; i < visibleIndexes.length; i++ ) {
+				const visibleIndex = visibleIndexes[ i ];
+				// skip items whose top are off screen or are recommendation blocks
+				if ( visibleIndex.bounds.top > 0 && ! items[ visibleIndex.index ].isRecommendationBlock ) {
+					index = visibleIndex.index;
+					break;
+				}
+			}
+
+			const candidateItem = items[ index ];
+			// is this a combo card?
+			if ( candidateItem.isCombination ) {
+				// pick the first item
+				const postKey = {
+					postId: candidateItem.postIds[ 0 ],
+					feedId: candidateItem.feedId,
+					blogId: candidateItem.blogId,
+				};
+				this.props.selectItem( { streamKey, postKey } );
+			}
+
+			// find the index of the post / gap in the items array.
+			// Start the search from the index in the items array, which has to be equal to or larger than
+			// the index in the items array.
+			// Use lastIndexOf to walk the array from right to left
+			const selectedPostKey = findLast( items, items[ index ], index );
+			if ( keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
+				this.props.selectNextItem( { streamKey, items } );
+			} else {
+				this.props.selectItem( { streamKey, postKey: selectedPostKey } );
+			}
+		}
+	};
+
+	selectPrevItem = () => {
+		// note that we grab the items directly from the stream because we don't want the transformed
+		// one with combined cards
+		const {
+			streamKey,
+			selectedPostKey,
+			stream: { items },
+		} = this.props;
+		// unlike selectNextItem, we don't want any magic here. Just move back an item if the user
+		// currently has a selected item. Otherwise do nothing.
+		// We avoid the magic here because we expect users to enter the flow using next, not previous.
+		if ( selectedPostKey ) {
+			this.props.selectPrevItem( { streamKey, items } );
+		}
+	};
 
 	poll = () => {
 		const { streamKey } = this.props;
@@ -317,11 +467,17 @@ export default connect(
 			lastPage: stream.lastPage,
 			isRequesting: stream.isRequesting,
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
+			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 		};
 	},
 	{
 		resetCardExpansions,
+		likePost,
+		unlikePost,
 		requestPage,
+		selectItem,
+		selectNextItem,
+		selectPrevItem,
 		showUpdates,
 		viewStream,
 	}
