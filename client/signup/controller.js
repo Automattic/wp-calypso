@@ -355,7 +355,7 @@ export default {
 			'ecommerce-monthly',
 		];
 		if ( signupFlows.includes( flowName ) ) {
-			await loadExperimentAssignment( 'domain_step_copy_test_202201' );
+			await loadExperimentAssignment( 'calypso_signup_domain_step_copy_test_202201_v2' );
 		}
 
 		context.primary = createElement( SignupComponent, {
