@@ -1,6 +1,7 @@
 import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { addQueryArgs } from 'calypso/lib/route';
 import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
@@ -62,7 +63,11 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	}
 
 	function checkImporterAvailability() {
-		! isSiteAtomic && isSiteJetpack && redirectToWpAdminImportPage();
+		isNotAtomicJetpack() && redirectToWpAdminImportPage();
+	}
+
+	function isNotAtomicJetpack() {
+		return ! isSiteAtomic && isSiteJetpack;
 	}
 
 	function checkOptionQueryParam() {
@@ -95,36 +100,42 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 */
 	return (
 		<>
-			{ undefined === option && (
-				<ContentChooser
-					onJetpackSelection={ installJetpack }
-					onContentOnlySelection={ switchToContentUploadScreen }
-					onContentEverythingSelection={ switchToMigrationScreen }
-					{ ...props }
-				/>
-			) }
-
-			{ WPImportOption.EVERYTHING === option && (
-				<ImportEverything
-					url={ fromSite }
-					sourceSiteId={ fromSiteItem?.ID as number }
-					sourceUrlAnalyzedData={ fromSiteAnalyzedData }
-					targetSite={ siteItem as SitesItem }
-					targetSiteId={ siteItem?.ID as number }
-					targetSiteSlug={ siteSlug }
-				/>
-			) }
-
-			{ WPImportOption.CONTENT_ONLY === option && (
-				<ImportContentOnly
-					job={ job }
-					fromSite={ fromSite }
-					importer={ importer }
-					siteItem={ siteItem }
-					siteSlug={ siteSlug }
-					siteAnalyzedData={ fromSiteAnalyzedData }
-				/>
-			) }
+			{ ( () => {
+				if ( isNotAtomicJetpack() ) {
+					return <LoadingEllipsis />;
+				} else if ( undefined === option ) {
+					return (
+						<ContentChooser
+							onJetpackSelection={ installJetpack }
+							onContentOnlySelection={ switchToContentUploadScreen }
+							onContentEverythingSelection={ switchToMigrationScreen }
+							{ ...props }
+						/>
+					);
+				} else if ( WPImportOption.EVERYTHING === option ) {
+					return (
+						<ImportEverything
+							url={ fromSite }
+							sourceSiteId={ fromSiteItem?.ID as number }
+							sourceUrlAnalyzedData={ fromSiteAnalyzedData }
+							targetSite={ siteItem as SitesItem }
+							targetSiteId={ siteItem?.ID as number }
+							targetSiteSlug={ siteSlug }
+						/>
+					);
+				} else if ( WPImportOption.CONTENT_ONLY === option ) {
+					return (
+						<ImportContentOnly
+							job={ job }
+							fromSite={ fromSite }
+							importer={ importer }
+							siteItem={ siteItem }
+							siteSlug={ siteSlug }
+							siteAnalyzedData={ fromSiteAnalyzedData }
+						/>
+					);
+				}
+			} )() }
 		</>
 	);
 };
