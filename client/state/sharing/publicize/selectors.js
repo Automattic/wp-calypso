@@ -118,17 +118,6 @@ export function isFetchingConnections( state, siteId ) {
 	return get( state.sharing.publicize.fetchingConnections, [ siteId ], false );
 }
 
-/**
- * Returns true if a connection is currently fetching for the given ID.
- *
- * @param  {object}  state        Global state tree
- * @param  {number}  connectionId Connection ID
- * @returns {boolean}              Whether the connection is being fetched.
- */
-export function isFetchingConnection( state, connectionId ) {
-	return state.sharing.publicize.fetchingConnection[ connectionId ] || false;
-}
-
 export function isRequestingSharePost( state, siteId, postId ) {
 	return get( state.sharing.publicize.sharePostStatus, [ siteId, postId, 'requesting' ], false );
 }
