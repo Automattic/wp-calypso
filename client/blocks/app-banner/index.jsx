@@ -7,6 +7,7 @@ import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import versionCompare from 'calypso/lib/version-compare';
 import {
 	bumpStat,
@@ -30,6 +31,7 @@ import {
 	getNewDismissTimes,
 	getCurrentSection,
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
+	APP_BANNER_EXPERIMENT_NAME,
 } from './utils';
 
 import './style.scss';
@@ -69,6 +71,18 @@ export class AppBanner extends Component {
 		} else {
 			this.state = { isDraftPostModalShown: false };
 		}
+
+		this.loadExperiment();
+	}
+
+	loadExperiment() {
+		// Set a default value just in case the assignment hasn't loaded yet
+		this.experimentIsControl = true;
+
+		loadExperimentAssignment( APP_BANNER_EXPERIMENT_NAME ).then( ( experimentObject ) => {
+			const variationName = experimentObject.variationName;
+			this.experimentIsControl = variationName == null;
+		} );
 	}
 
 	stopBubblingEvents = ( event ) => {
@@ -109,7 +123,7 @@ export class AppBanner extends Component {
 		event.preventDefault();
 		const { currentSection, dismissedUntil } = this.props;
 
-		this.props.saveDismissTime( currentSection, dismissedUntil );
+		this.props.saveDismissTime( currentSection, dismissedUntil, this.experimentIsControl );
 		this.props.dismissAppBanner();
 	};
 
@@ -143,7 +157,6 @@ export class AppBanner extends Component {
 
 	render() {
 		const { translate, currentSection } = this.props;
-
 		if ( ! this.props.shouldDisplayAppBanner || this.state.isDraftPostModalShown ) {
 			return null;
 		}
@@ -243,7 +256,7 @@ const mapDispatchToProps = {
 			recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
 			bumpStat( 'calypso_mobile_app_banner', 'banner_open' )
 		),
-	saveDismissTime: ( sectionName, currentDimissTimes ) =>
+	saveDismissTime: ( sectionName, currentDimissTimes, isControl ) =>
 		withAnalytics(
 			composeAnalytics(
 				recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { page: sectionName } ),
@@ -251,7 +264,7 @@ const mapDispatchToProps = {
 			),
 			savePreference(
 				APP_BANNER_DISMISS_TIMES_PREFERENCE,
-				getNewDismissTimes( sectionName, currentDimissTimes )
+				getNewDismissTimes( sectionName, currentDimissTimes, isControl )
 			)
 		),
 	dismissAppBanner,
