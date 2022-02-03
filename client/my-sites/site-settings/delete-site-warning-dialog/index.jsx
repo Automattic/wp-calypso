@@ -1,24 +1,19 @@
 import { Dialog, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
-import getSiteUrl from '../../../state/sites/selectors/get-site-url';
-import getSelectedSiteId from '../../../state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
 
 function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose } ) {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
-	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 
 	const getButtons = () => {
 		const buttons = [ { action: 'dismiss', label: translate( 'Dismiss' ) } ];
 		if ( p2HubP2Count ) {
 			buttons.push(
-				<Button primary href={ siteUrl }>
-					{ translate( "Go to the workspace's P2 listing", { context: 'button label' } ) }
+				<Button primary href={ '/settings/general' }>
+					{ translate( 'Go to your site listing' ) }
 				</Button>
 			);
 		} else {
