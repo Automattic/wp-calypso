@@ -258,55 +258,52 @@ export const fetchStripeConfiguration = async () => {
 	};
 };
 
-export async function mockSetCartEndpoint( _, requestCart ) {
-	const {
-		products: requestProducts,
-		currency: requestCurrency,
-		coupon: requestCoupon,
-		locale: requestLocale,
-	} = requestCart;
-	const products = requestProducts.map( convertRequestProductToResponseProduct( requestCurrency ) );
+export async function mockSetCartEndpointWith( { currency, locale } ) {
+	return async ( _, requestCart ) => {
+		const { products: requestProducts, coupon: requestCoupon } = requestCart;
+		const products = requestProducts.map( convertRequestProductToResponseProduct( currency ) );
 
-	const taxInteger = products.reduce( ( accum, current ) => {
-		return accum + current.item_tax;
-	}, 0 );
+		const taxInteger = products.reduce( ( accum, current ) => {
+			return accum + current.item_tax;
+		}, 0 );
 
-	const totalInteger = products.reduce( ( accum, current ) => {
-		return accum + current.item_subtotal_integer;
-	}, taxInteger );
+		const totalInteger = products.reduce( ( accum, current ) => {
+			return accum + current.item_subtotal_integer;
+		}, taxInteger );
 
-	return {
-		allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
-		blog_id: '1234',
-		cart_generated_at_timestamp: 12345,
-		cart_key: '1234',
-		coupon: requestCoupon,
-		coupon_discounts_integer: [],
-		coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
-		coupon_savings_total_integer: requestCoupon ? 1000 : 0,
-		create_new_blog: false,
-		credits_display: '0',
-		credits_integer: 0,
-		currency: requestCurrency,
-		is_coupon_applied: true,
-		is_signup: false,
-		locale: requestLocale,
-		next_domain_is_free: false,
-		products,
-		savings_total_display: requestCoupon ? 'R$10' : 'R$0',
-		savings_total_integer: requestCoupon ? 1000 : 0,
-		sub_total_display: 'R$149',
-		sub_total_integer: totalInteger - taxInteger,
-		sub_total_with_taxes_display: 'R$156',
-		sub_total_with_taxes_integer: totalInteger,
-		tax: { location: {}, display_taxes: true },
-		total_cost: 0,
-		total_cost_display: 'R$156',
-		total_cost_integer: totalInteger,
-		total_tax: '',
-		total_tax_breakdown: [],
-		total_tax_display: 'R$7',
-		total_tax_integer: taxInteger,
+		return {
+			allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
+			blog_id: '1234',
+			cart_generated_at_timestamp: 12345,
+			cart_key: '1234',
+			coupon: requestCoupon,
+			coupon_discounts_integer: [],
+			coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
+			coupon_savings_total_integer: requestCoupon ? 1000 : 0,
+			create_new_blog: false,
+			credits_display: '0',
+			credits_integer: 0,
+			currency,
+			is_coupon_applied: true,
+			is_signup: false,
+			locale,
+			next_domain_is_free: false,
+			products,
+			savings_total_display: requestCoupon ? 'R$10' : 'R$0',
+			savings_total_integer: requestCoupon ? 1000 : 0,
+			sub_total_display: 'R$149',
+			sub_total_integer: totalInteger - taxInteger,
+			sub_total_with_taxes_display: 'R$156',
+			sub_total_with_taxes_integer: totalInteger,
+			tax: { location: {}, display_taxes: true },
+			total_cost: 0,
+			total_cost_display: 'R$156',
+			total_cost_integer: totalInteger,
+			total_tax: '',
+			total_tax_breakdown: [],
+			total_tax_display: 'R$7',
+			total_tax_integer: taxInteger,
+		};
 	};
 }
 
