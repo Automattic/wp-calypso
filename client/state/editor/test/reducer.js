@@ -9,7 +9,6 @@ describe( 'reducer', () => {
 			'iframePort',
 			'imageEditor',
 			'videoEditor',
-			'lastDraft',
 		] );
 	} );
 

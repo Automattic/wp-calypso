@@ -4,9 +4,6 @@ import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_RECEIVE,
-	PUBLICIZE_CONNECTION_REQUEST,
-	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -14,41 +11,9 @@ import {
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
-import { fetchingConnection, fetchingConnections, connections } from '../reducer';
+import { fetchingConnections, connections } from '../reducer';
 
 describe( 'reducer', () => {
-	describe( 'fetchConnection()', () => {
-		test( 'should set fetching to true for fetching action', () => {
-			const state = fetchingConnection( null, {
-				type: PUBLICIZE_CONNECTION_REQUEST,
-				connectionId: 2,
-				siteId: 2916284,
-			} );
-
-			expect( state[ 2 ] ).to.be.true;
-		} );
-
-		test( 'should set fetching to false for received action', () => {
-			const state = fetchingConnection( null, {
-				type: PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
-				connectionId: 2,
-				siteId: 2916284,
-			} );
-
-			expect( state[ 2 ] ).to.be.false;
-		} );
-
-		test( 'should set fetching to false for failed action', () => {
-			const state = fetchingConnection( null, {
-				type: PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-				connectionId: 2,
-				siteId: 2916284,
-			} );
-
-			expect( state[ 2 ] ).to.be.false;
-		} );
-	} );
-
 	describe( '#fetchingConnections()', () => {
 		test( 'should set fetching to true for fetching action', () => {
 			const state = fetchingConnections( null, {

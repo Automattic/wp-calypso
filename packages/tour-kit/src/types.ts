@@ -14,7 +14,16 @@ export type Step = {
 		// | ...
 	};
 	options?: {
-		classNames?: string | string[];
+		classNames?: {
+			/**
+			 * `desktop` classes are applied when min-width is larger or equal to 480px.
+			 */
+			desktop?: string | string[];
+			/**
+			 * `mobile` classes are applied when max-width is smaller than 480px.
+			 */
+			mobile?: string | string[];
+		};
 	};
 };
 

@@ -40,6 +40,7 @@ class DomainRegistrationSuggestion extends Component {
 			product_slug: PropTypes.string,
 			cost: PropTypes.string,
 			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
+			currency_code: PropTypes.string,
 		} ).isRequired,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
@@ -394,7 +395,8 @@ class DomainRegistrationSuggestion extends Component {
 const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
-	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
+	const currentUserCurrencyCode =
+		props.suggestion.currency_code || getCurrentUserCurrencyCode( state );
 	const stripZeros = props.showStrikedOutPrice ? true : false;
 	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
 	const flowName = getCurrentFlowName( state );

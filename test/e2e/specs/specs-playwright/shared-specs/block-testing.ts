@@ -49,7 +49,9 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 				} );
 
 				it( `${ blockFlow.blockSidebarName }: Configure the block`, async function () {
-					await blockFlow.configure( editorContext );
+					if ( blockFlow.configure ) {
+						await blockFlow.configure( editorContext );
+					}
 				} );
 
 				it( `${ blockFlow.blockSidebarName }: There are no block warnings or errors in the editor`, async function () {
@@ -70,7 +72,9 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		describe( 'Validating blocks in published post.', function () {
 			for ( const blockFlow of blockFlows ) {
 				it( `${ blockFlow.blockSidebarName }: Expected content is in published post`, async function () {
-					await blockFlow.validateAfterPublish( publishedPostContext );
+					if ( blockFlow.validateAfterPublish ) {
+						await blockFlow.validateAfterPublish( publishedPostContext );
+					}
 				} );
 			}
 		} );

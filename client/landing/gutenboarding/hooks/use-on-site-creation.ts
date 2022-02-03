@@ -85,8 +85,12 @@ export default function useOnSiteCreation(): void {
 			setSelectedSite( newSite.blogid );
 
 			let destination;
+
 			if ( design?.is_fse ) {
 				destination = `/site-editor/${ newSite.site_slug }/`;
+			} else if ( design?.features?.includes( 'anchorfm' ) ) {
+				//Anchor.fm users should land in the page editor
+				destination = `/page/${ newSite.site_slug }/home/`;
 			} else {
 				destination = `/home/${ newSite.site_slug }/`;
 			}

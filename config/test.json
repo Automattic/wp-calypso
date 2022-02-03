@@ -54,7 +54,6 @@
 		"layout/support-article-dialog": true,
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": true,
-		"keyboard-shortcuts": true,
 		"mailchimp": true,
 		"me/account-close": true,
 		"me/vat-details": true,

@@ -31,7 +31,6 @@ import {
 	RelatedPostsFromSameSite,
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
-import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -56,9 +55,6 @@ import {
 	recordTrackForPost,
 	recordPermalinkClick,
 } from 'calypso/reader/stats';
-import { showSelectedPost } from 'calypso/reader/utils';
-import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
-import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
@@ -69,12 +65,10 @@ import {
 	requestMarkAsUnseenBlog,
 } from 'calypso/state/reader/seen-posts/actions';
 import { getSite } from 'calypso/state/reader/sites/selectors';
-import { getNextItem, getPreviousItem } from 'calypso/state/reader/streams/selectors';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
 } from 'calypso/state/reader/viewing/actions';
-import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
@@ -100,11 +94,6 @@ export class FullPostView extends Component {
 	postContentWrapper = createRef();
 
 	componentDidMount() {
-		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
-		KeyboardShortcuts.on( 'like-selection', this.handleLike );
-		KeyboardShortcuts.on( 'move-selection-down', this.goToNextPost );
-		KeyboardShortcuts.on( 'move-selection-up', this.goToPreviousPost );
-
 		// Send page view
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
@@ -157,10 +146,7 @@ export class FullPostView extends Component {
 
 	componentWillUnmount() {
 		this.props.unsetViewingFullPostKey( keyForPost( this.props.post ) );
-		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
-		KeyboardShortcuts.off( 'like-selection', this.handleLike );
-		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
-		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
+
 		// Remove WPiFrameResize listener.
 		this.stopResize?.();
 		this.props.enableAppBanner(); // reset the app banner
@@ -180,32 +166,6 @@ export class FullPostView extends Component {
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_full_post_comments_button_clicked', this.props.post );
 		this.scrollToComments();
-	};
-
-	handleLike = () => {
-		// cannot like posts backed by rss feeds
-		if ( ! this.props.post || this.props.post.is_external ) {
-			return;
-		}
-
-		const { site_ID: siteId, ID: postId } = this.props.post;
-		let liked = this.props.liked;
-
-		if ( liked ) {
-			this.props.unlikePost( siteId, postId, { source: 'reader' } );
-			liked = false;
-		} else {
-			this.props.likePost( siteId, postId, { source: 'reader' } );
-			liked = true;
-		}
-
-		recordAction( liked ? 'liked_post' : 'unliked_post' );
-		recordGaEvent( liked ? 'Clicked Like Post' : 'Clicked Unlike Post' );
-		recordTrackForPost(
-			liked ? 'calypso_reader_article_liked' : 'calypso_reader_article_unliked',
-			this.props.post,
-			{ context: 'full-post', event_source: 'keyboard' }
-		);
 	};
 
 	handleRelatedPostFromSameSiteClicked = () => {
@@ -316,18 +276,6 @@ export class FullPostView extends Component {
 		const isError = post?.is_error || site?.is_error;
 		if ( isLoading || isError ) {
 			this.props.disableAppBanner();
-		}
-	};
-
-	goToNextPost = () => {
-		if ( this.props.nextPost ) {
-			showSelectedPost( { postKey: this.props.nextPost } );
-		}
-	};
-
-	goToPreviousPost = () => {
-		if ( this.props.previousPost ) {
-			showSelectedPost( { postKey: this.props.previousPost } );
 		}
 	};
 
@@ -623,7 +571,6 @@ export default connect(
 			isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
 			teams: getReaderTeams( state ),
 			post,
-			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,
 		};
 
@@ -637,12 +584,6 @@ export default connect(
 			props.referralPost = getPostByKey( state, ownProps.referral );
 		}
 
-		const currentStreamKey = getCurrentStream( state );
-		if ( currentStreamKey ) {
-			props.previousPost = getPreviousItem( state, postKey );
-			props.nextPost = getNextItem( state, postKey );
-		}
-
 		return props;
 	},
 	{
@@ -651,8 +592,6 @@ export default connect(
 		markPostSeen,
 		setViewingFullPostKey,
 		unsetViewingFullPostKey,
-		likePost,
-		unlikePost,
 		requestMarkAsSeen,
 		requestMarkAsUnseen,
 		requestMarkAsSeenBlog,

@@ -912,6 +912,16 @@
 			"is_premium": false,
 			"is_fse": true,
 			"features": []
+		},
+		{
+			"title": "Livro",
+			"slug": "livro",
+			"template": "livro",
+			"theme": "livro",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
 		}
 	]
 }

@@ -12,7 +12,6 @@ import {
 	SidebarComponent,
 	UserSignupPage,
 	BrowserManager,
-	DomainSearchComponent,
 } from '@automattic/calypso-e2e';
 import archiver from 'archiver';
 import FormData from 'form-data';
@@ -24,7 +23,6 @@ const selectors = {
 	isWhiteLogin: '.is-section-login.is-white-login',
 	isBlueLogin: '.is-section-login:not( .is-white-login )',
 	isWhiteSignup: 'body.is-white-signup.is-section-signup',
-	isBlueSignup: '.is-section-signup:not( .is-white-signup ) .signup__step.is-user .signup-form',
 };
 declare const browser: Browser;
 
@@ -59,47 +57,6 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			'ar',
 			'sv',
 		];
-
-		it( 'Screenshot blue background signup page in desktop viewport, en and Mag-16 locales', async function () {
-			const userSignupPage = new UserSignupPage( page );
-			let domainSearchComponent: DomainSearchComponent;
-			const username = `e2eflowtestingdomainonly${ DataHelper.getTimestamp() }`;
-			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
-				await userSignupPage.visit( { path: `domain/${ locale }` } );
-				await BrowserManager.setStoreCookie( page, { currency: 'JPY' } );
-
-				domainSearchComponent = new DomainSearchComponent( page );
-				await domainSearchComponent.search( username + '.live' );
-				await domainSearchComponent.selectDomain( '.live' );
-
-				await page.click(
-					'[data-e2e-type="domain"].site-or-domain__choice .site-or-domain__choice-button button'
-				);
-				await page.waitForSelector( selectors.isBlueSignup );
-
-				await page.screenshot( {
-					path: `tos_blue_signup_desktop_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 410, height: 820 } );
-				await page.screenshot( {
-					path: `tos_blue_signup_mobile_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 1024, height: 1366 } );
-				await page.screenshot( {
-					path: `tos_blue_signup_tablet_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 1280, height: 720 } );
-			}
-		} );
 
 		it( 'Screenshot white background signup page in desktop viewport, en and Mag-16 locales', async function () {
 			const userSignupPage = new UserSignupPage( page );

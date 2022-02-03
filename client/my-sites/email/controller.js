@@ -1,13 +1,13 @@
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailForwardsAdd from 'calypso/my-sites/email/email-forwards-add';
-import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
+import EmailManagementHomePage from 'calypso/my-sites/email/email-management/home-page';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
 import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-manage-mailboxes';
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-providers-comparison/in-depth';
 import { castIntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-stacked-comparison/page';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
@@ -95,7 +95,7 @@ export default {
 	emailManagementPurchaseNewEmailAccount( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<EmailProvidersStackedComparison
+				<EmailProvidersStackedComparisonPage
 					comparisonContext="email-purchase"
 					selectedDomainName={ pageContext.params.domain }
 					selectedEmailProviderSlug={ pageContext.query.provider }
@@ -153,7 +153,7 @@ export default {
 	emailManagement( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
-				<EmailManagementHome
+				<EmailManagementHomePage
 					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
 				/>

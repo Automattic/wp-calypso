@@ -17,6 +17,11 @@ class EmptyContent extends Component {
 		actionCallback: PropTypes.func,
 		actionTarget: PropTypes.string,
 		actionHoverCallback: PropTypes.func,
+		actionDisabled: PropTypes.bool,
+		actionRef: PropTypes.oneOfType( [
+			PropTypes.func,
+			PropTypes.shape( { current: PropTypes.any } ),
+		] ),
 		secondaryAction: PropTypes.node,
 		secondaryActionURL: PropTypes.string,
 		secondaryActionCallback: PropTypes.func,
@@ -44,6 +49,8 @@ class EmptyContent extends Component {
 					onClick={ this.props.actionCallback }
 					href={ localizeUrl( this.props.actionURL ) }
 					target={ this.props.actionTarget }
+					disabled={ this.props.actionDisabled }
+					ref={ this.props.actionRef }
 					onMouseEnter={ this.props.actionHoverCallback }
 					onTouchStart={ this.props.actionHoverCallback }
 				>

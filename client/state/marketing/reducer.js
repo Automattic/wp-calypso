@@ -1,5 +1,9 @@
 import { withStorageKey } from '@automattic/state-utils';
-import { MARKETING_JETPACK_SALE_COUPON_RECEIVE } from 'calypso/state/action-types';
+import {
+	MARKETING_JETPACK_SALE_COUPON_RECEIVE,
+	MARKETING_JETPACK_SALE_COUPON_FETCH,
+	MARKETING_JETPACK_SALE_COUPON_FETCH_FAILURE,
+} from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import 'calypso/state/marketing/init';
 
@@ -10,7 +14,7 @@ import 'calypso/state/marketing/init';
  * @param  {object} action Action payload
  * @returns {object}       Updated state
  */
-export const jetpackSaleCoupon = ( state = null, action ) => {
+export const coupon = ( state = null, action ) => {
 	switch ( action.type ) {
 		case MARKETING_JETPACK_SALE_COUPON_RECEIVE:
 			return action.jetpackSaleCoupon.coupon;
@@ -19,8 +23,23 @@ export const jetpackSaleCoupon = ( state = null, action ) => {
 	return state;
 };
 
+export const isRequesting = ( state = null, action ) => {
+	switch ( action.type ) {
+		case MARKETING_JETPACK_SALE_COUPON_RECEIVE:
+		case MARKETING_JETPACK_SALE_COUPON_FETCH_FAILURE:
+			return false;
+		case MARKETING_JETPACK_SALE_COUPON_FETCH:
+			return true;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
-	jetpackSaleCoupon,
+	jetpackSaleCoupon: combineReducers( {
+		isRequesting,
+		coupon,
+	} ),
 } );
 
 export default withStorageKey( 'marketing', reducer );
