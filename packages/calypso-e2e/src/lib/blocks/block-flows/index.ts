@@ -8,3 +8,4 @@ export * from './contact-form';
 export * from './blog-posts';
 export * from './post-carousel';
 export * from './timeline';
+export * from './premium-content';
