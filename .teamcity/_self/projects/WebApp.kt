@@ -28,6 +28,7 @@ object WebApp : Project({
 
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
+	buildType(Translate)
 	buildType(BuildDockerImage)
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
@@ -580,6 +581,48 @@ object CheckCodeStyleBranch : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
+		}
+	}
+})
+
+object Translate : BuildType({
+	name = "Translate"
+	description = "Extract translatable strings from the source code and build POT file"
+
+	artifactRules = """
+		translate => translate
+	""".trimIndent()
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				# Install modules
+				${_self.yarn_install_cmd}
+			"""
+		}
+		bashNodeScript {
+			name = "Extract strings"
+			scriptContent = """
+				# Run script to extract strings from source code
+				yarn run translate
+
+				# Move `calypso-strings.pot` to artifacts directory
+				mv public/calypso-strings.pot "./translate"
+			"""
+		}
+		bashNodeScript {
+			name = "Build New Strings .pot"
+			scriptContent = """
+				# Clone GP LocalCI Client
+				git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
+
+				# Build `localci-new-strings.pot`
+				DEFAULT_BRANCH=trunk bash gp-localci-client/generate-new-strings-pot.sh "%teamcity.build.branch%" "${Settings.WpCalypso.paramRefs.buildVcsNumber}" "./translate"
+
+				# Remove GP LocalCI Client
+				rm -rf gp-localci-client
+			"""
 		}
 	}
 })
