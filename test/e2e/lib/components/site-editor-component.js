@@ -237,11 +237,6 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 	async changeGlobalStylesFontSize( value, blocksLevel ) {
 		if ( ! blocksLevel ) {
 			await this.clickGlobalStylesMenuItem( 'Aa\nText' );
-			// const locator = driverHelper.createTextLocator(
-			// 	By.css( '.edit-site-global-styles-sidebar button div' ),
-			// 	'Text'
-			// );
-			// await driverHelper.clickWhenClickable( this.driver, locator );
 		}
 		await driverHelper.clickIfPresent(
 			this.driver,
