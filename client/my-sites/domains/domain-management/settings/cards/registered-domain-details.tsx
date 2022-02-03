@@ -66,10 +66,6 @@ const RegisteredDomainDetails = ( {
 			return null;
 		}
 
-		if ( domain.bundledPlanSubscriptionId ) {
-			return null;
-		}
-
 		let formattedPrice = '';
 
 		if ( purchase && selectedSite.ID ) {
