@@ -13,21 +13,19 @@ const useP2HubP2sQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 	return useQuery(
 		[ 'p2-hub-p2s', siteId ],
 		() =>
-			requestUnnecessary
-				? () => {}
-				: wpcom.req.get(
-						{
-							path: `/p2/workspace/sites/all`,
-							apiNamespace: 'wpcom/v2',
-						},
-						{
-							hub_id: siteId,
-							...fetchOptions,
-						}
-				  ),
+			wpcom.req.get(
+				{
+					path: `/p2/workspace/sites/all`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{
+					hub_id: siteId,
+					...fetchOptions,
+				}
+			),
 		{
 			...queryOptions,
-			enabled: !! siteId,
+			enabled: !! siteId && ! requestUnnecessary,
 			retryDelay: 3000,
 		}
 	);
