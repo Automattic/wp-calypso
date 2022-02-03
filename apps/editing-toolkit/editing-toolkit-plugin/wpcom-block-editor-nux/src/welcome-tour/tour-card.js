@@ -103,9 +103,9 @@ function CardNavigation( {
 	return (
 		<>
 			<PaginationControl
-				currentPage={ currentStepIndex }
+				activePageIndex={ currentStepIndex }
 				numberOfPages={ lastStepIndex + 1 }
-				setCurrentPage={ setCurrentStepIndex }
+				onChange={ setCurrentStepIndex }
 			>
 				{ isFirstStep ? (
 					<div>

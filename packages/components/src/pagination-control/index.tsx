@@ -5,13 +5,13 @@ import './style.scss';
 
 interface Props {
 	onChange: ( page: number ) => void;
-	pageIndex: number;
+	activePageIndex: number;
 	numberOfPages: number;
 	classNames?: string | string[];
 }
 
 const PaginationControl: React.FunctionComponent< Props > = ( props ) => {
-	const { pageIndex, numberOfPages, onChange, classNames, children } = props;
+	const { activePageIndex, numberOfPages, onChange, classNames, children } = props;
 
 	const classes = classnames( 'pagination-control', classNames );
 
@@ -20,13 +20,13 @@ const PaginationControl: React.FunctionComponent< Props > = ( props ) => {
 			{ times( numberOfPages, ( index ) => (
 				<li
 					key={ `${ numberOfPages }-${ index }` }
-					aria-current={ index === pageIndex ? 'page' : undefined }
+					aria-current={ index === activePageIndex ? 'page' : undefined }
 				>
 					<button
 						className={ classnames( 'pagination-control__page', {
-							'pagination-control__current': index === pageIndex,
+							'pagination-control__current': index === activePageIndex,
 						} ) }
-						disabled={ index === pageIndex }
+						disabled={ index === activePageIndex }
 						aria-label={ sprintf(
 							/* translators: 1: current page number 2: total number of pages */
 							__( 'Page %1$d of %2$d' ),

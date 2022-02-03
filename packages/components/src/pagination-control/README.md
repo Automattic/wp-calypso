@@ -10,7 +10,7 @@ import { PaginationControl } from '@automattic/components';
 function MyComponent() {
 	return (
 		<PaginationControl
-			pageIndex={ pageIndex }
+			activePageIndex={ pageIndex }
 			numberOfPages={ numberOfPages }
 			onChange={ onChange }
 			classes={ [ 'my-controls', 'custom-pagination' ] }
@@ -29,7 +29,7 @@ function MyComponent() {
 
 | Name             | Type            | Required | Description                                                                   |
 | ---------------- | --------------- | -------- | ----------------------------------------------------------------------------- |
-| `pageIndex`      | `number`        | yes      | Index of the current page/step the user is viewing                            |
+| `activePageIndex`      | `number`        | yes      | Index of the current page/step the user is viewing                            |
 | `numberOfPages`  | `number`        | yes      | Total number of pages/steps available                                         |
 | `onChange`       | `function`      | yes      | Callback to run when the dots are clicked. The *index* is being passed as an argument. This should have no return |
 | `classes`        | `string\|array` | optional | List of classes you wish to apply to the controls                             |
