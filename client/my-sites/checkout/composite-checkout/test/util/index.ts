@@ -1,8 +1,18 @@
 import config from '@automattic/calypso-config';
-import { getEmptyResponseCart } from '@automattic/shopping-cart';
+import {
+	getEmptyResponseCart,
+	getEmptyResponseCartProduct,
+	RequestCartProduct,
+} from '@automattic/shopping-cart';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+import type {
+	SetCart,
+	RequestCart,
+	ResponseCart,
+	ResponseCartProduct,
+} from '@automattic/shopping-cart';
 
 export const stripeConfiguration = {
 	processor_id: 'IE',
@@ -258,8 +268,8 @@ export const fetchStripeConfiguration = async () => {
 	};
 };
 
-export async function mockSetCartEndpointWith( { currency, locale } ) {
-	return async ( _, requestCart ) => {
+export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
+	return async ( _: number, requestCart: RequestCart ) => {
 		const { products: requestProducts, coupon: requestCoupon } = requestCart;
 		const products = requestProducts.map( convertRequestProductToResponseProduct( currency ) );
 
@@ -275,7 +285,7 @@ export async function mockSetCartEndpointWith( { currency, locale } ) {
 			allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
 			blog_id: '1234',
 			cart_generated_at_timestamp: 12345,
-			cart_key: '1234',
+			cart_key: 1234,
 			coupon: requestCoupon,
 			coupon_discounts_integer: [],
 			coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
@@ -303,17 +313,21 @@ export async function mockSetCartEndpointWith( { currency, locale } ) {
 			total_tax_breakdown: [],
 			total_tax_display: 'R$7',
 			total_tax_integer: taxInteger,
+			next_domain_condition: '',
 		};
 	};
 }
 
-function convertRequestProductToResponseProduct( currency ) {
+function convertRequestProductToResponseProduct(
+	currency: string
+): ( product: RequestCartProduct ) => ResponseCartProduct {
 	return ( product ) => {
 		const { product_slug } = product;
 
 		switch ( product_slug ) {
 			case 'personal-bundle': // WPCOM Personal Bundle
 				return {
+					...getEmptyResponseCartProduct(),
 					product_id: 1009,
 					product_name: 'WordPress.com Personal',
 					product_slug: 'personal-bundle',
@@ -331,6 +345,7 @@ function convertRequestProductToResponseProduct( currency ) {
 				};
 			case 'domain_map':
 				return {
+					...getEmptyResponseCartProduct(),
 					product_id: 5,
 					product_name: 'Domain Mapping',
 					product_slug: 'domain_map',
@@ -348,6 +363,7 @@ function convertRequestProductToResponseProduct( currency ) {
 				};
 			case 'domain_reg':
 				return {
+					...getEmptyResponseCartProduct(),
 					product_id: 6,
 					product_name: 'Domain Registration',
 					product_slug: 'domain_reg',
@@ -365,6 +381,7 @@ function convertRequestProductToResponseProduct( currency ) {
 				};
 			case 'gapps':
 				return {
+					...getEmptyResponseCartProduct(),
 					product_id: 9,
 					product_name: 'G Suite',
 					product_slug: 'gapps',
@@ -382,6 +399,7 @@ function convertRequestProductToResponseProduct( currency ) {
 				};
 			case 'premium_theme':
 				return {
+					...getEmptyResponseCartProduct(),
 					product_id: 39,
 					product_name: 'Premium Theme: Ovation',
 					product_slug: 'premium_theme',
@@ -398,6 +416,7 @@ function convertRequestProductToResponseProduct( currency ) {
 				};
 			case 'concierge-session':
 				return {
+					...getEmptyResponseCartProduct(),
 					product_id: 371,
 					product_name: 'Support Session',
 					product_slug: 'concierge-session',
@@ -414,6 +433,7 @@ function convertRequestProductToResponseProduct( currency ) {
 				};
 			case 'jetpack_scan':
 				return {
+					...getEmptyResponseCartProduct(),
 					product_id: 2106,
 					product_name: 'Jetpack Scan Daily',
 					product_slug: 'jetpack_scan',
@@ -431,6 +451,7 @@ function convertRequestProductToResponseProduct( currency ) {
 				};
 			case 'jetpack_backup_daily':
 				return {
+					...getEmptyResponseCartProduct(),
 					product_id: 2100,
 					product_name: 'Jetpack Backup (Daily)',
 					product_slug: 'jetpack_backup_daily',
@@ -449,6 +470,7 @@ function convertRequestProductToResponseProduct( currency ) {
 		}
 
 		return {
+			...getEmptyResponseCartProduct(),
 			product_id: Math.ceil( Math.random() * 3000 ),
 			product_name: `Unknown mocked product: ${ product_slug }`,
 			product_slug: 'unknown',
@@ -463,13 +485,13 @@ function convertRequestProductToResponseProduct( currency ) {
 	};
 }
 
-export function mockGetCartEndpointWith( initialCart ) {
+export function mockGetCartEndpointWith( initialCart: ResponseCart ) {
 	return async () => {
 		return initialCart;
 	};
 }
 
-export function getActivePersonalPlanDataForType( type ) {
+export function getActivePersonalPlanDataForType( type: string ) {
 	switch ( type ) {
 		case 'none':
 			return null;
@@ -502,7 +524,7 @@ export function getActivePersonalPlanDataForType( type ) {
 	}
 }
 
-export function getPersonalPlanForInterval( type ) {
+export function getPersonalPlanForInterval( type: string ) {
 	switch ( type ) {
 		case 'monthly':
 			return planWithoutDomainMonthly;
@@ -515,7 +537,7 @@ export function getPersonalPlanForInterval( type ) {
 	}
 }
 
-export function getBusinessPlanForInterval( type ) {
+export function getBusinessPlanForInterval( type: string ) {
 	switch ( type ) {
 		case 'monthly':
 			return planLevel2Monthly;
@@ -528,7 +550,7 @@ export function getBusinessPlanForInterval( type ) {
 	}
 }
 
-export function getVariantItemTextForInterval( type ) {
+export function getVariantItemTextForInterval( type: string ) {
 	switch ( type ) {
 		case 'monthly':
 			return 'One month';
@@ -751,9 +773,9 @@ export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 	return transactionsEndpoint;
 }
 
-export function setMockLocation( url ) {
-	const location = new URL( url );
-	jest.spyOn( window, 'location', 'get' ).mockReturnValue( location );
+export function setMockLocation( href: string ) {
+	const url = new URL( href );
+	jest.spyOn( window, 'location', 'get' ).mockReturnValue( url );
 }
 
 export const mockCreateAccountSiteNotCreatedResponse = () => [ 200, { success: true } ];
