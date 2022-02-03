@@ -122,8 +122,6 @@ class DomainsStep extends Component {
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
 		this.state = {
 			currentStep: null,
-			experiment: null,
-			experimentLoaded: false,
 		};
 	}
 
