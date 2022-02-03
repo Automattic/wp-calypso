@@ -114,7 +114,7 @@ export function TextAreaField( props: TextAreaFieldProps ) {
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
 				{ ...props }
-				rows={ props.rows ? props.rows : 20 }
+				rows={ props.rows ? props.rows : 10 }
 				isError={ !! props.error }
 				autoCapitalize="off"
 				autoCorrect="off"
