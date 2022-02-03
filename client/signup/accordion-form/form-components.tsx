@@ -12,6 +12,7 @@ import SocialLogo from 'calypso/components/social-logo';
 export const Label = styled( FormLabel )`
 	color: var( --studio-gray-50 );
 	font-weight: 500;
+	cursor: inherit;
 `;
 
 export const SubLabel = styled( Label )`
