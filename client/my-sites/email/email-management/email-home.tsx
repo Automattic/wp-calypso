@@ -15,7 +15,7 @@ import EmailListActive from 'calypso/my-sites/email/email-management/home/email-
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
-import EmailProvidersComparisonStacked from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -123,7 +123,7 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 
 		if ( ! domainHasEmail( selectedDomain ) ) {
 			return (
-				<EmailProvidersComparisonStacked
+				<EmailProvidersStackedComparisonPage
 					comparisonContext="email-home-selected-domain"
 					selectedDomainName={ selectedDomainName }
 					source={ source }
@@ -155,7 +155,7 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 
 	if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 		return (
-			<EmailProvidersComparisonStacked
+			<EmailProvidersStackedComparisonPage
 				comparisonContext="email-home-single-domain"
 				selectedDomainName={ domainsWithNoEmail[ 0 ].name }
 				source={ source }
