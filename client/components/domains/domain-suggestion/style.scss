@@ -330,7 +330,7 @@ body.is-section-signup.is-white-signup {
 			font-weight: 500; /* stylelint-disable-line */
 		}
 
-		@include break-xlarge {
+		@include break-wide {
 			align-self: center;
 			margin-left: 12px;
 			margin-bottom: 0;
