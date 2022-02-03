@@ -1,29 +1,14 @@
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 type FilterDomainsByOwnerType = (
 	domains: Array< ResponseDomain >,
 	filter: 'owned-by-me' | 'owned-by-others' | undefined
 ) => Array< ResponseDomain >;
 
-type JSONValue =
-	| string
-	| number
-	| boolean
-	| null
-	| { [ x: string ]: JSONValue }
-	| Array< JSONValue >;
-
-type Site = {
-	[ key: string ]: JSONValue;
-	options: {
-		[ key: string ]: JSONValue;
-		is_domain_only: boolean;
-	};
-};
-
 type FilterDomainsDomainOnlyType = (
 	domains: Array< ResponseDomain >,
-	sites: Array< Site >
+	sites: Array< SiteData >
 ) => Array< ResponseDomain >;
 
 export const filterDomainsByOwner: FilterDomainsByOwnerType = ( domains, filter ) => {
@@ -37,8 +22,8 @@ export const filterDomainsByOwner: FilterDomainsByOwnerType = ( domains, filter 
 	} );
 };
 
-export const filterDomainsDomainOnly: FilterDomainsDomainOnlyType = ( domains, sites ) => {
+export const filterDomainOnlyDomains: FilterDomainsDomainOnlyType = ( domains, sites ) => {
 	return domains.filter( ( domain: ResponseDomain ) => {
-		return sites[ domain.blogId ].options.is_domain_only;
+		return sites[ domain.blogId ].options?.is_domain_only;
 	} );
 };

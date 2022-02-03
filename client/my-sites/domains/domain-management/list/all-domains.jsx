@@ -48,7 +48,7 @@ import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
-import { filterDomainsByOwner, filterDomainsDomainOnly } from './helpers';
+import { filterDomainsByOwner, filterDomainOnlyDomains } from './helpers';
 import ListItemPlaceholder from './item-placeholder';
 import {
 	countDomainsInOrangeStatus,
@@ -272,7 +272,7 @@ class AllDomains extends Component {
 
 		const domains =
 			selectedFilter === 'domain-only'
-				? filterDomainsDomainOnly( this.mergeFilteredDomainsWithDomainsDetails(), sites )
+				? filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails(), sites )
 				: filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter );
 
 		const domainsTableColumns = [
@@ -574,10 +574,10 @@ class AllDomains extends Component {
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-others' )?.length,
 			},
 			{
-				label: translate( 'Domain only' ),
+				label: translate( 'Parked domains' ),
 				value: 'domain-only',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'domain-only' } ),
-				count: filterDomainsDomainOnly( nonWpcomDomains, sites )?.length,
+				count: filterDomainOnlyDomains( nonWpcomDomains, sites )?.length,
 			},
 		];
 
