@@ -9,7 +9,7 @@ import {
 } from 'calypso/signup/accordion-form/form-components';
 import {
 	AccordionSectionProps,
-	sectionGeneratorReturnType,
+	SectionGeneratorReturnType,
 } from 'calypso/signup/accordion-form/types';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
@@ -38,7 +38,7 @@ function sectionGenerator() {
 		formValues,
 		formErrors,
 		onChangeField,
-	}: sectionGeneratorReturnType< SiteInfoCollectionData > ) => {
+	}: SectionGeneratorReturnType< SiteInfoCollectionData > ) => {
 		const sections: AccordionSectionProps< SiteInfoCollectionData >[] = [
 			{
 				title: translate( '%d. Name of your business', {
@@ -150,7 +150,6 @@ function SiteInformationCollection( {
 	goToNextStep,
 }: SiteInformationCollectionProps ) {
 	const dispatch = useDispatch();
-
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [ dispatch, stepName ] );
