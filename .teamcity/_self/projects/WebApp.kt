@@ -603,7 +603,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 		buildParams = {
 			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,defaultUser,eCommerceUser")
 			param("env.LIVEBRANCHES", "true")
-			param("env.TARGET_DEVICE", "$targetDevice")
+			param("env.VIEWPORT_NAME", "$targetDevice")
 		},
 		buildFeatures = {
 			pullRequests {
@@ -641,7 +641,7 @@ object PreReleaseE2ETests : E2EBuildType(
 	concurrentBuilds = 1,
 	testGroup = "calypso-release",
 	buildParams = {
-		param("env.TARGET_DEVICE", "desktop")
+		param("env.VIEWPORT_NAME", "desktop")
 		param("env.URL", "https://wpcalypso.wordpress.com")
 	},
 	buildFeatures = {
@@ -667,7 +667,7 @@ object QuarantinedE2ETests: E2EBuildType(
 	concurrentBuilds = 1,
 	testGroup = "quarantined",
 	buildParams = {
-		param("env.TARGET_DEVICE", "desktop")
+		param("env.VIEWPORT_NAME", "desktop")
 		param("env.URL", "https://wpcalypso.wordpress.com")
 	},
 	buildFeatures = {
