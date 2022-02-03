@@ -162,16 +162,16 @@ const mapStateToProps = ( state, { cart, addItemToCart } ) => {
 	return {
 		hasPaidPlan: siteHasPaidPlan( selectedSite ),
 		hasPlanInCart: hasPlan( cart ),
-		isPlansListFetching: isPlansListFetching,
+		isPlansListFetching,
 		isRegisteringOrTransferringDomain: hasDomainRegistration( cart ) || hasTransferProduct( cart ),
 		isSitePlansListFetching: isRequestingSitePlans( state ),
-		personalPlan: personalPlan,
+		personalPlan,
 		planPrice:
 			! isPlansListFetching &&
 			selectedSiteId &&
 			getPlanPrice( state, selectedSiteId, personalPlan, false ),
-		selectedSite: selectedSite,
-		showPlanUpsell: selectedSiteId ?? false,
+		selectedSite,
+		showPlanUpsell: !! selectedSiteId,
 		addItemToCart,
 	};
 };
