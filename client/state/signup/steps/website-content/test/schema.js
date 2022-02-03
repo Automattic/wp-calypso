@@ -1,6 +1,42 @@
 import { assert } from 'chai';
 import validator from 'is-my-json-valid';
-import { initialState, schema, initialTestState } from '../schema';
+import { initialState, schema } from '../schema';
+
+const initialTestState = {
+	currentIndex: 0,
+	websiteContent: [
+		{
+			id: 'Home',
+			title: 'Homepage',
+			content: '',
+			images: [
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+			],
+		},
+		{
+			id: 'About',
+			title: 'Information About You',
+			content: '',
+			images: [
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+			],
+		},
+		{
+			id: 'Contact',
+			title: 'Contact Info',
+			content: '',
+			images: [
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+				{ caption: '', url: '' },
+			],
+		},
+	],
+};
 
 describe( 'schema', () => {
 	test( 'Schema should be valid', () => {
