@@ -328,6 +328,7 @@ export interface ResponseCartProduct {
 	coupon_savings_display?: string;
 	coupon_savings_integer?: number;
 	price: number;
+	item_tax: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
 	is_renewal?: boolean;

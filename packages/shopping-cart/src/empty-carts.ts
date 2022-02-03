@@ -69,6 +69,7 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		uuid: 'product001',
 		cost: 0,
 		price: 0,
+		item_tax: 0,
 		product_type: 'test',
 		included_domain_purchase_amount: 0,
 	};
