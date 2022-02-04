@@ -1158,10 +1158,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const blockToolbarOptionsLocator = By.css(
 					'[aria-label="Block tools"] [aria-label="Options"]'
 				);
-				const removeBlockOptionsItemLocator = driverHelper.createTextLocator(
-					By.css( '[aria-label="Options"] button' ),
-					'Remove Heading\n⌃⌥Z'
+				const removeBlockOptionsItemLocator = By.css(
+					'[aria-label="Options"] div.components-menu-group:last-of-type button:last-of-type'
 				);
+
 				await driverHelper.clickWhenClickable( this.driver, blockToolbarOptionsLocator );
 				await driverHelper.clickWhenClickable( this.driver, removeBlockOptionsItemLocator );
 
