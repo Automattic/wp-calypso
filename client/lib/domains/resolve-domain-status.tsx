@@ -75,6 +75,18 @@ export function resolveDomainStatus(
 		},
 	};
 
+	const mappingSetupStep =
+		domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update';
+	const mappingSetupComponents = {
+		strong: <strong />,
+		a: (
+			<a
+				href={ domainMappingSetup( siteSlug as string, domain.domain, mappingSetupStep ) }
+				onClick={ ( e ) => e.stopPropagation() }
+			/>
+		),
+	};
+
 	switch ( domain.type ) {
 		case domainTypes.MAPPED:
 			if ( isExpiringSoon( domain, 30 ) ) {
@@ -95,25 +107,9 @@ export function resolveDomainStatus(
 				let noticeText = null;
 
 				if ( ! domain.pointsToWpcom ) {
-					const options = {
-						components: {
-							strong: <strong />,
-							a: (
-								<a
-									href={ domainMappingSetup(
-										siteSlug as string,
-										domain.domain,
-										domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update'
-									) }
-									onClick={ ( e ) => e.stopPropagation() }
-								/>
-							),
-						},
-					};
-
 					noticeText = translate(
 						"We noticed that something wasn't updated correctly. Please try {{a}}this setup{{/a}} again.",
-						options
+						{ components: mappingSetupComponents }
 					);
 				}
 
@@ -151,30 +147,16 @@ export function resolveDomainStatus(
 					moment.utc().isAfter( registrationDatePlus3Days );
 
 				if ( hasMappingError ) {
-					const setupStep =
-						domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update';
-					const options = {
-						components: {
-							strong: <strong />,
-							a: (
-								<a
-									href={ domainMappingSetup( siteSlug, domain.domain, setupStep ) }
-									onClick={ ( e ) => e.stopPropagation() }
-								/>
-							),
-						},
-					};
-
 					let status;
 					if ( domain?.connectionMode === 'advanced' ) {
 						status = translate(
 							'{{strong}}Connection error:{{/strong}} The A records are incorrect. Please {{a}}try this step{{/a}} again.',
-							options
+							{ components: mappingSetupComponents }
 						);
 					} else {
 						status = translate(
 							'{{strong}}Connection error:{{/strong}} The name servers are incorrect. Please {{a}}try this step{{/a}} again.',
-							options
+							{ components: mappingSetupComponents }
 						);
 					}
 					return {
@@ -185,7 +167,7 @@ export function resolveDomainStatus(
 						listStatusText: status,
 						noticeText: translate(
 							"We noticed that something wasn't updated correctly. Please try {{a}}this setup{{/a}} again.",
-							options
+							{ components: mappingSetupComponents }
 						),
 						listStatusClass: 'alert',
 						listStatusWeight: 1000,
@@ -195,12 +177,8 @@ export function resolveDomainStatus(
 
 			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
 				const status = translate(
-					'{{strong}}Verifying connection:{{/strong}} You can continue to work on your site, but you domain won’t be reachable just yet.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
+					'{{strong}}Verifying connection:{{/strong}} You can continue to work on your site, but you domain won’t be reachable just yet. You can review the {{a}}setup instructions{{/a}} to ensure everything is correct.',
+					{ components: mappingSetupComponents }
 				);
 				return {
 					statusText: translate( 'Verifying' ),
@@ -209,11 +187,9 @@ export function resolveDomainStatus(
 					icon: 'verifying',
 					listStatusText: status,
 					noticeText: translate(
-						'It can take between a few minutes to 72 hours to verify the connection. You can continue to work on your site, but {{strong}}%(domainName)s{{/strong}} won’t be reachable just yet.',
+						'It can take between a few minutes to 72 hours to verify the connection. You can continue to work on your site, but {{strong}}%(domainName)s{{/strong}} won’t be reachable just yet. You can review the {{a}}setup instructions{{/a}} to ensure everything is correct.',
 						{
-							components: {
-								strong: <strong />,
-							},
+							components: mappingSetupComponents,
 							args: {
 								domainName: domain.name,
 							},
