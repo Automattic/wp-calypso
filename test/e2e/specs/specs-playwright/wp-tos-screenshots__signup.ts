@@ -8,11 +8,7 @@ import FormData from 'form-data';
 import fetch from 'node-fetch';
 import { Page, Browser } from 'playwright';
 
-const selectors = {
-	isWhiteLogin: '.is-section-login.is-white-login',
-	isBlueLogin: '.is-section-login:not( .is-white-login )',
-	isWhiteSignup: 'body.is-white-signup.is-section-signup',
-};
+const selectors = { isWhiteSignup: 'body.is-white-signup.is-section-signup' };
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), function () {
@@ -46,6 +42,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		it( 'Screenshot white background signup page in desktop viewport, en and Mag-16 locales', async function () {
 			const userSignupPage = new UserSignupPage( page );
 			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
+				page.setViewportSize( { width: 1280, height: 720 } );
 				await userSignupPage.visit( { path: locale } );
 				page.waitForSelector( selectors.isWhiteSignup );
 				await page.screenshot( {
@@ -68,7 +65,6 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 					type: 'jpeg',
 					quality: 20,
 				} );
-				page.setViewportSize( { width: 1280, height: 720 } );
 			}
 		} );
 
