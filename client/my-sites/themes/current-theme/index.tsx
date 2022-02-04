@@ -119,23 +119,29 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 							<p className="current-theme__theme-description">
 								<span>{ description }</span>
 							</p>
-							<a
-								className="current-theme__theme-description-link"
-								href={ options.info.getUrl( currentThemeId ) }
-								onClick={ this.trackLinkClick }
-							>
-								{ translate( 'Read more' ) }
-							</a>
+							{ options?.info && options?.info?.getUrl && (
+								<a
+									className="current-theme__theme-description-link"
+									href={ options.info.getUrl( currentThemeId ) }
+									onClick={ this.trackLinkClick }
+								>
+									{ translate( 'Read more' ) }
+								</a>
+							) }
 
-							<a
-								className="current-theme__theme-customize"
-								href={ options.customize.getUrl( currentThemeId ) }
-								onClick={ this.trackLinkClick }
-							>
-								<Gridicon icon={ options.customize.icon } size={ 24 } />
-								<span>{ translate( 'Customize theme' ) }</span>
-								<Gridicon icon="chevron-right" size={ 24 } />
-							</a>
+							{ options?.customize && options?.customize?.getUrl && (
+								<a
+									className="current-theme__theme-customize"
+									href={ options.customize.getUrl( currentThemeId ) }
+									onClick={ this.trackLinkClick }
+								>
+									{ options?.customize?.icon && (
+										<Gridicon icon={ options.customize.icon } size={ 24 } />
+									) }
+									<span>{ translate( 'Customize theme' ) }</span>
+									<Gridicon icon="chevron-right" size={ 24 } />
+								</a>
+							) }
 						</div>
 					</div>
 				</div>
