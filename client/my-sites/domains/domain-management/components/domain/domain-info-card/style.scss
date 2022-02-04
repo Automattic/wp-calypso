@@ -52,5 +52,17 @@
 				}
 			}
 		}
+
+		.domain-delete-info-card {
+			display: flex;
+			flex-direction: row-reverse;
+			align-items: center;
+			margin-top: 0;
+
+			svg {
+				top: 3px;
+				right: 0;
+			}
+		}
 	}
 }
