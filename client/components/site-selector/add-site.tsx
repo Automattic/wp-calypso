@@ -23,6 +23,7 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 		<span className="site-selector__add-new-site">
 			<Button
 				borderless
+				busy={ ! onboardingUrl }
 				href={ `${ onboardingUrl }?ref=calypso-selector` }
 				onClick={ recordAddNewSite }
 			>
