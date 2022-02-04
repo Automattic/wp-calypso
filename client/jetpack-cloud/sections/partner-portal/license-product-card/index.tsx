@@ -4,15 +4,24 @@ import { ReactElement } from 'react';
 import './style.scss';
 
 export default function LicenseProductCard( props: any ): ReactElement {
-	const { label, orderIndex } = props.product;
+	const {
+		product: { label },
+		orderIndex,
+	} = props;
 	const productTitle = label.replace( 'Jetpack ', '' ).replace( '(', '' ).replace( ')', '' );
+
+	function handleKeyDown( e: any ) {
+		if ( 32 === e.keyCode ) {
+			props.onSelectProduct( props.product );
+		}
+	}
 
 	return (
 		<div
 			onClick={ () => props.onSelectProduct( props.product ) }
-			onKeyDown={ () => props.onSelectProduct( props.product ) }
+			onKeyDown={ ( e ) => handleKeyDown( e ) }
 			role="radio"
-			tabIndex={ orderIndex }
+			tabIndex={ orderIndex + 100 }
 			aria-checked={ props.isSelected }
 			className={ classNames( {
 				'license-product-card': true,
