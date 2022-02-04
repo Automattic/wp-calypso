@@ -31,16 +31,18 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 	/**
 	 * Effects
 	 */
-	useEffect( runImport, [ job ] );
+	useEffect( handleJobStateTransition, [ job ] );
 
 	/**
 	 ↓ Methods
 	 */
-	function runImport() {
-		// If there is no existing import job, start a new
+	function handleJobStateTransition() {
+		// If there is no existing import job, create a new job
 		if ( job === undefined ) {
 			startImport( siteId, getImporterTypeForEngine( importer ) );
-		} else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
+		}
+		// If the job is in a ready state, start the import process
+		else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
 			importSite( prepareImportParams() );
 		}
 	}
