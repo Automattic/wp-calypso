@@ -78,8 +78,7 @@ export class AppBanner extends Component {
 		this.experimentIsControl = true;
 
 		loadExperimentAssignment( APP_BANNER_EXPERIMENT_NAME ).then( ( experimentObject ) => {
-			const variationName = experimentObject.variationName;
-			this.experimentIsControl = variationName == null;
+			this.experimentIsControl = ! experimentObject?.variationName;
 		} );
 	}
 
