@@ -98,7 +98,8 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch/complete actions', () => {
 			return removePurchase(
 				purchaseId,
-				userId
+				userId,
+				siteId
 			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_COMPLETED,
@@ -123,7 +124,8 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch/remove actions', () => {
 			return removePurchase(
 				purchaseId,
-				userId
+				userId,
+				siteId
 			)( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PURCHASE_REMOVE_FAILED,

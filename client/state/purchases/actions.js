@@ -90,6 +90,7 @@ export const removePurchase = ( purchaseId, userId, siteId ) => ( dispatch ) => 
 
 				dispatch( requestHappychatEligibility() );
 
+				// Refresh the sidebar to update the site Plan.
 				if ( siteId !== undefined ) {
 					dispatch( requestAdminMenu( siteId ) );
 				}

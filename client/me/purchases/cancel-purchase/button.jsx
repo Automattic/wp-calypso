@@ -199,8 +199,9 @@ class CancelPurchaseButton extends Component {
 					return;
 				}
 
-				this.props.refreshSitePlans( purchase.siteId );
-				this.props.clearPurchases( purchase.siteId );
+				const siteId = purchase.siteId;
+				this.props.refreshSitePlans( siteId );
+				this.props.clearPurchases( siteId );
 				this.props.successNotice( response.message, { displayOnNextPage: true } );
 				page.redirect( this.props.purchaseListUrl );
 			}

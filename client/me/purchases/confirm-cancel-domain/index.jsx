@@ -134,8 +134,9 @@ class ConfirmCancelDomain extends Component {
 				return;
 			}
 
-			this.props.refreshSitePlans( purchase.siteId );
-			this.props.clearPurchases( purchase.siteId );
+			const siteId = purchase.siteId;
+			this.props.refreshSitePlans( siteId );
+			this.props.clearPurchases( siteId );
 
 			recordTracksEvent( 'calypso_domain_cancel_form_submit', {
 				product_slug: purchase.productSlug,
