@@ -11,7 +11,7 @@
 		-webkit-font-smoothing: initial;
 	}
 
-	.locale-switcher__content {
+	.locale-switcher__content.dialog.card {
 		height: 100%;
 		max-width: none;
 		max-height: none;
@@ -21,7 +21,7 @@
 	}
 }
 
-.locale-switcher {
+.locale-switcher.dialog__content {
 	box-sizing: border-box;
 	width: 100%;
 	height: 100%;
