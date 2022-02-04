@@ -175,7 +175,7 @@ export function resolveDomainStatus(
 				}
 			}
 
-			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom && siteSlug ) {
+			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
 				const status = translate(
 					'{{strong}}Verifying connection:{{/strong}} You can continue to work on your site, but you domain won’t be reachable just yet. You can review the {{a}}setup instructions{{/a}} to ensure everything is correct.',
 					{ components: mappingSetupComponents }
