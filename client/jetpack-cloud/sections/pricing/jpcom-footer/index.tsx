@@ -1,5 +1,7 @@
+import { Gridicon } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';
@@ -9,6 +11,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import appStoreBadge from './assets/app-store-badge.png';
 import googlePlayBadge from './assets/google-play-badge.png';
 import a8cLogo from './assets/logo-a8c-white.svg';
+import LocalSwitcher from './locale-switcher';
 import './style.scss';
 
 const JPCOM_HOME = 'https://jetpack.com';
@@ -38,6 +41,8 @@ const JetpackComFooter: React.FC = () => {
 	const hideCaliforniaNotice = useMemo( () => region && region.toLowerCase() !== 'california', [
 		region,
 	] );
+	const defaultLocale = useLocale();
+	const [ isLocaleSwitcherVisible, setLocaleSwitcherVisibility ] = useState( false );
 	const { sitemap, socialProps } = useMemo( () => {
 		const sitemap = [
 			{
@@ -199,9 +204,17 @@ const JetpackComFooter: React.FC = () => {
 		};
 	}, [ translate, hideCaliforniaNotice ] );
 
+	const onLanguageClick = useCallback( () => setLocaleSwitcherVisibility( true ), [
+		setLocaleSwitcherVisibility,
+	] );
+	const onLocaleSwitcherClose = useCallback( () => setLocaleSwitcherVisibility( false ), [
+		setLocaleSwitcherVisibility,
+	] );
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<footer>
+			<LocalSwitcher isVisible={ isLocaleSwitcherVisible } onClose={ onLocaleSwitcherClose } />
 			<div className="jetpack-footer">
 				<div className="jetpack-footer__content">
 					<div className="jetpack-footer__head">
@@ -213,7 +226,14 @@ const JetpackComFooter: React.FC = () => {
 							<JetpackLogo full />
 						</ExternalLink>
 						<div className="jetpack-footer__language">
-							<div className="jetpack-footer__language-toggle"></div>
+							<button
+								className="language-toggle jetpack-footer__language-toggle"
+								aria-label={ translate( 'Select language' ) as string }
+								onClick={ onLanguageClick }
+							>
+								<span>{ defaultLocale.toUpperCase() }</span>
+								<Gridicon icon="chevron-down" size={ 18 } />
+							</button>
 						</div>
 					</div>
 					<nav
