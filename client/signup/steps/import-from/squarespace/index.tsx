@@ -8,6 +8,7 @@ import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import CompleteScreen from '../components/complete-screen';
+import ErrorMessage from '../components/error-message';
 import GettingStartedVideo from '../components/getting-started-video';
 import ImporterDrag from '../components/importer-drag';
 import ProgressScreen from '../components/progress-screen';
@@ -96,6 +97,10 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 		return job?.importerState === appStates.IMPORT_SUCCESS;
 	}
 
+	function checkIsFailed() {
+		return job?.importerState === appStates.IMPORT_FAILURE;
+	}
+
 	function showVideoComponent() {
 		return checkProgress() || checkIsSuccess();
 	}
@@ -107,9 +112,6 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 					if ( ! job ) {
 						return;
 					} else if ( checkIsSuccess() ) {
-						/**
-						 * Complete screen
-						 */
 						return (
 							<CompleteScreen
 								siteId={ siteId }
@@ -118,10 +120,9 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 								resetImport={ resetImport }
 							/>
 						);
+					} else if ( checkIsFailed() ) {
+						return <ErrorMessage siteSlug={ siteSlug } />;
 					} else if ( checkProgress() ) {
-						/**
-						 * Progress screen
-						 */
 						return <ProgressScreen job={ job } />;
 					}
 
