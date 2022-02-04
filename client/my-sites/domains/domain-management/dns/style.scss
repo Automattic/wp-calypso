@@ -191,7 +191,9 @@ body.dns__body-white {
 			fill: var( --studio-gray-90 );
 		}
 
-		&:disabled, &:disabled:hover {
+		&:disabled,
+		&:disabled:hover {
+			color: var( --studio-gray-20 );
 			svg {
 				fill: var( --color-neutral-20 );
 			}
@@ -200,8 +202,12 @@ body.dns__body-white {
 
 	.popover__menu-item.is-selected,
 	.popover__menu-item:hover,
-	.popover__menu-item:focus {
+	.popover__menu-item:focus,
+	.popover__menu-item.is-selected:disabled,
+	.popover__menu-item:hover:disabled,
+	.popover__menu-item:focus:disabled {
 		color: var( --studio-white );
+		background-color: var( --color-primary );
 		svg {
 			fill: var( --studio-white );
 		}
