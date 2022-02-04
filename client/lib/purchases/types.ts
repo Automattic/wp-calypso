@@ -19,8 +19,6 @@ export interface Purchase {
 	payment: PurchasePayment;
 	subscriptionStatus: string;
 	domain: string;
-	canDisableAutoRenew: boolean;
-	canReenableAutoRenew: boolean;
 }
 
 export interface PurchasePayment {
