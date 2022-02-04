@@ -203,11 +203,7 @@ class PurchasesListing extends Component {
 			label = translate( 'Manage subscription' );
 		}
 
-		const isLocked = this.props.purchases.reduce(
-			( carry, originalPurchase ) =>
-				originalPurchase.id === purchase.id ? originalPurchase.isLocked : carry,
-			false
-		);
+		const isLocked = this.props.purchases.some( ( p ) => p.id === purchase.id && p.isLocked );
 
 		if (
 			purchase.autoRenew &&

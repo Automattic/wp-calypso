@@ -79,15 +79,8 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		getSiteAvailableProduct( state, siteId, item.productSlug )
 	);
 
-	const jetpackUpgradesLocked = purchases.reduce(
-		( carry, purchase ) => ( purchase.isLocked ? true : carry ),
-		false
-	);
-
-	const existingPurchaseIsIapPurchase = purchases.reduce(
-		( carry, purchase ) => ( purchase.isInAppPurchase ? true : carry ),
-		false
-	);
+	const jetpackUpgradesLocked = purchases.some( ( purchase ) => purchase.isLocked );
+	const existingPurchaseIsIapPurchase = purchases.some( ( purchase ) => purchase.isInAppPurchase );
 
 	// Determine whether product is owned.
 	const isOwned = useMemo( () => {
