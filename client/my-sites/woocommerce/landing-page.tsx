@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import EmptyContent from 'calypso/components/empty-content';
@@ -29,9 +30,13 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const navigationItems = [ { label: 'WooCommerce' } ];
 	const ctaRef = useRef( null );
 
-	const { isTransferringBlocked, wpcomDomain, isDataReady } = useWooCommerceOnPlansEligibility(
-		siteId
-	);
+	const {
+		isTransferringBlocked,
+		wpcomDomain,
+		isDataReady,
+		currentUserEmail,
+		isEmailVerified,
+	} = useWooCommerceOnPlansEligibility( siteId );
 
 	function onCTAClickHandler() {
 		recordTracksEvent( 'calypso_woocommerce_dashboard_action_click', {
@@ -43,6 +48,22 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	}
 
 	function renderWarningNotice() {
+		if ( currentUserEmail && ! isEmailVerified ) {
+			return (
+				<WarningsOrHoldsSection>
+					<WarningCard
+						message={ sprintf(
+							/* translators: %s: The user's primary email address (ex.: user@example.com) */
+							__(
+								"You need to confirm your email address before setting up a store. We've sent an email to %s with instructions for you to follow."
+							),
+							currentUserEmail
+						) }
+					/>
+				</WarningsOrHoldsSection>
+			);
+		}
+
 		if ( ! isTransferringBlocked || ! isDataReady ) {
 			return null;
 		}
@@ -99,7 +120,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				) }
 				action={ __( 'Start a new store' ) }
 				actionCallback={ onCTAClickHandler }
-				actionDisabled={ isTransferringBlocked }
+				actionDisabled={ isTransferringBlocked || ! isEmailVerified }
 				actionRef={ ctaRef }
 				secondaryAction={
 					<InlineSupportLink
