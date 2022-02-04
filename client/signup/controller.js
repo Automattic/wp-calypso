@@ -326,7 +326,6 @@ export default {
 		if (
 			! providesDependenciesInQuery?.includes( 'siteId' ) &&
 			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
-			! providesDependenciesInQuery?.includes( 'site' ) &&
 			! isManageSiteFlow
 		) {
 			context.store.dispatch( setSelectedSiteId( null ) );
@@ -380,8 +379,6 @@ export default {
 		const signupDependencies = getSignupDependencyStore( getState() );
 
 		const siteIdOrSlug =
-			query?.site ||
-			signupDependencies?.site ||
 			signupDependencies?.siteSlug ||
 			query?.siteSlug ||
 			signupDependencies?.siteId ||

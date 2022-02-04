@@ -12,10 +12,10 @@ export interface WooCommerceInstallProps {
 	headerTitle: string;
 	headerDescription: string;
 	queryObject: {
-		site: string;
+		siteSlug: string;
 	};
 	signupDependencies: {
-		site: string;
+		siteSlug: string;
 		siteConfirmed?: number;
 	};
 }

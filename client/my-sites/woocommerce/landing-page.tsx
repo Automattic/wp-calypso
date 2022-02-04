@@ -44,7 +44,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 			feature: 'woop', // WooCommerce on Plans
 		} );
 
-		return page( `/start/woocommerce-install/?site=${ wpcomDomain }` );
+		return page( `/start/woocommerce-install/?siteSlug=${ wpcomDomain }` );
 	}
 
 	function renderWarningNotice() {

@@ -420,7 +420,7 @@ export function generateFlows( {
 			steps: [ 'store-address', 'business-info', 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
-			providesDependenciesInQuery: [ 'site' ],
+			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2021-12-21',
 			disallowResume: false,
 		},
