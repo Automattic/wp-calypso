@@ -208,3 +208,13 @@ function populate_wp_template_data() {
 }
 register_activation_hook( __FILE__, __NAMESPACE__ . '\populate_wp_template_data' );
 add_action( 'switch_theme', __NAMESPACE__ . '\populate_wp_template_data' );
+
+/**
+ * Migrates a Legacy Dotcom FSE site to use Core FSE!
+ *
+ * @return array|WP_Error array of status messages on success, WP_Error on failure.
+ */
+function migrate_to_core_fse() {
+	require_once __DIR__ . '/migrate-to-core-fse.php';
+	return \migrate_legacy_fse_to_core_fse();
+}
