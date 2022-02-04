@@ -85,10 +85,11 @@ class CancelPurchaseButton extends Component {
 		cancelPurchase( purchase.id, ( success ) => {
 			const purchaseName = getName( purchase );
 			const subscriptionEndDate = getSubscriptionEndDate( purchase );
+			const siteId = purchase.siteId;
 
-			this.props.refreshSitePlans( purchase.siteId );
+			this.props.refreshSitePlans( siteId );
 
-			this.props.clearPurchases();
+			this.props.clearPurchases( siteId );
 
 			if ( success ) {
 				this.props.successNotice(
@@ -141,9 +142,11 @@ class CancelPurchaseButton extends Component {
 
 		this.props.successNotice( response.message, { displayOnNextPage: true } );
 
-		this.props.refreshSitePlans( this.props.purchase.siteId );
+		const siteId = this.props.purchase.siteId;
 
-		this.props.clearPurchases();
+		this.props.refreshSitePlans( siteId );
+
+		this.props.clearPurchases( siteId );
 
 		page.redirect( this.props.purchaseListUrl );
 	};
@@ -165,8 +168,9 @@ class CancelPurchaseButton extends Component {
 					return;
 				}
 
-				this.props.refreshSitePlans( purchase.siteId );
-				this.props.clearPurchases();
+				const siteId = purchase.siteId;
+				this.props.refreshSitePlans( siteId );
+				this.props.clearPurchases( siteId );
 				this.props.successNotice( response.message, { displayOnNextPage: true } );
 				page.redirect( this.props.purchaseListUrl );
 			}
@@ -196,7 +200,7 @@ class CancelPurchaseButton extends Component {
 				}
 
 				this.props.refreshSitePlans( purchase.siteId );
-				this.props.clearPurchases();
+				this.props.clearPurchases( purchase.siteId );
 				this.props.successNotice( response.message, { displayOnNextPage: true } );
 				page.redirect( this.props.purchaseListUrl );
 			}

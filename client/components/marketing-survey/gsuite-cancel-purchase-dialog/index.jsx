@@ -104,7 +104,7 @@ class GSuiteCancelPurchaseDialog extends Component {
 	removePurchase = async () => {
 		const { domain, productName, purchase, translate, userId } = this.props;
 
-		await this.props.removePurchase( purchase.id, userId );
+		await this.props.removePurchase( purchase.id, userId, purchase.siteId );
 
 		const { purchasesError } = this.props;
 

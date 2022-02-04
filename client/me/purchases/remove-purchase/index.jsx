@@ -147,7 +147,7 @@ class RemovePurchase extends Component {
 	handlePurchaseRemoval = async ( purchase ) => {
 		const { userId, isDomainOnlySite, translate, purchasesError } = this.props;
 
-		await this.props.removePurchase( purchase.id, userId );
+		await this.props.removePurchase( purchase.id, userId, purchase.siteId );
 
 		const productName = getName( purchase );
 		let successMessage;

@@ -160,7 +160,7 @@ export default function useCreatePaymentCompleteCallback( {
 			const receiptId = transactionResult?.receipt_id;
 			debug( 'transactionResult was', transactionResult );
 
-			reduxDispatch( clearPurchases() );
+			reduxDispatch( clearPurchases( siteId ) );
 
 			// Removes the destination cookie only if redirecting to the signup destination.
 			// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
