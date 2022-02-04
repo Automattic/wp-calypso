@@ -75,7 +75,7 @@ export const setOembedProviderLink = ( context, next ) => {
 	const href =
 		'https://public-api.wordpress.com/oembed/1.0' +
 		'?url=' +
-		encodeURIComponent( context.path ) +
+		encodeURIComponent( 'https://wordpress.com' + context.path ) +
 		'&for=wpcom-auto-discovery';
 
 	const links = [
