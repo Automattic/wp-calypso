@@ -46,6 +46,7 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
+import DomainOnlyUpsellCarousel from './domain-only-upsell-carousel';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
 import { filterDomainsByOwner, filterDomainOnlyDomains } from './helpers';
@@ -397,6 +398,16 @@ class AllDomains extends Component {
 		);
 	}
 
+	renderDomainOnlyUpsellCarousel() {
+		const { sites } = this.props;
+		// TO DO Order by registrationDate
+		const domains = filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails(), sites );
+		if ( domains.length === 0 ) {
+			return null;
+		}
+		return <DomainOnlyUpsellCarousel domain={ domains[ 0 ] } />;
+	}
+
 	handleContactInfoTransferLockOptOutChange = ( transferLockOptOut ) => {
 		this.setState( { transferLockOptOut } );
 	};
@@ -657,6 +668,7 @@ class AllDomains extends Component {
 						<SidebarNavigation />
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						<div>{ this.renderDomainsList() }</div>
+						<div>{ this.renderDomainOnlyUpsellCarousel() }</div>
 					</Main>
 				</div>
 			</>
