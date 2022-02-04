@@ -72,6 +72,11 @@ export interface APILicense {
 	revoked_at: string | null;
 }
 
+export interface APILicenseAttach {
+	ok: boolean;
+	error: string;
+}
+
 export interface APIProductFamilyProduct {
 	name: string;
 	slug: string;

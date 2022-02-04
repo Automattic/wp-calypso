@@ -1,4 +1,5 @@
 import page from 'page';
+import AttachLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/attach-license';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
@@ -27,6 +28,7 @@ import {
 	hasActivePartnerKey,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
+import getSites from 'calypso/state/selectors/get-sites';
 import Header from './header';
 import type PageJS from 'page';
 
@@ -89,6 +91,17 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <IssueLicense />;
+	context.footer = <JetpackComFooter />;
+	next();
+}
+
+export function attachLicenseContext( context: PageJS.Contet, next: () => void ): void {
+	const state = context.store.getState();
+	const sites = getSites( state );
+
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <AttachLicense sites={ sites } />;
 	context.footer = <JetpackComFooter />;
 	next();
 }
