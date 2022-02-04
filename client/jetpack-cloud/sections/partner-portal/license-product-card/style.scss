@@ -5,7 +5,7 @@
 	width: 100%;
 
 	@include break-wide {
-		width: 33%;
+		width: 33.33%;
 	}
 }
 
@@ -57,18 +57,12 @@
 	background: var( --studio-jetpack-green-50 );
 }
 
-.issue-license-form p.license-product-card__text {
+/*
+ * This is currently not being used, but should remain because it will be
+ * added back in when we show prices for licenses.
+ */
+p.license-product-card__text {
 	font-size: 0.75rem;
 	color: #777;
-	margin-bottom: 0;
-}
-
-.issue-license-form__top {
-	display: flex;
-	justify-content: space-between;
-}
-
-.issue-license-form__top > div {
-	align-self: flex-end;
 	margin-bottom: 0;
 }

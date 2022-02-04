@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
 .issue-license-form {
@@ -27,33 +28,47 @@
 	}
 }
 
+.issue-license-form__controls {
+	text-align: right;
+
+	@include break-large {
+		text-align: left;
+	}
+}
+
 .issue-license-form__top {
 	margin-bottom: 1rem;
 	margin-top: -1.5rem;
+	display: block;
+
+	@include break-large {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	& > div {
+		align-self: flex-end;
+		margin-bottom: 0;
+	}
 }
 
 .issue-license-form__bottom {
 	display: flex;
 	flex-wrap: wrap;
+
+	@include break-wide {
+		margin-left: -0.5rem;
+		margin-right: -0.5rem;
+	}
 }
 
 p.issue-license-form__description {
-	margin-bottom: 0;
+	margin: 2rem 0 1rem;
 	align-self: flex-end;
 	font-size: 0.875rem;
 	color: #333;
-}
-	
-@media ( max-width: 960px ) {
-	.issue-license-form__top {
-		display: block;
-	}
 
-	p.issue-license-form__description {
-		margin: 2rem 0 1rem;
-	}
-
-	.issue-license-form__controls {
-		text-align: right;
+	@include break-large {
+		margin: 0;
 	}
 }
