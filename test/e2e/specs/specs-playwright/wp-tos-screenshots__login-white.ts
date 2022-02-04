@@ -2,13 +2,15 @@
  * @group legal
  */
 import fs from 'fs';
-import { DataHelper, UserSignupPage } from '@automattic/calypso-e2e';
+import { DataHelper, LoginPage } from '@automattic/calypso-e2e';
 import archiver from 'archiver';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 import { Page, Browser } from 'playwright';
 
-const selectors = { isWhiteSignup: 'body.is-white-signup.is-section-signup' };
+const selectors = {
+	isWhiteLogin: '.is-section-login.is-white-login',
+};
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), function () {
@@ -18,7 +20,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		page = await browser.newPage();
 	} );
 
-	describe( 'ToS screenshots of WP.com signup in desktop, tablet, and mobile viewports', function () {
+	describe( 'ToS screenshots of WP.com white login in desktop, tablet, and mobile viewports', function () {
 		jest.setTimeout( 1800000 );
 		const magnificientNonEnLocales = [
 			'pt-br',
@@ -39,43 +41,45 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			'sv',
 		];
 
-		it( 'Screenshot white background signup page in en and Mag-16 locales', async function () {
-			const userSignupPage = new UserSignupPage( page );
-			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
+		it( 'Screenshot white background login page in en and Mag-16 locales', async function () {
+			const loginPage = new LoginPage( page );
+			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
 				page.setViewportSize( { width: 1280, height: 720 } );
-				await userSignupPage.visit( { path: locale } );
-				page.waitForSelector( selectors.isWhiteSignup );
+				await loginPage.visit( { path: `new/${ locale }` } );
+				page.waitForSelector( selectors.isWhiteLogin );
 				await page.screenshot( {
-					path: `tos_white_signup_desktop_${ locale }.png`,
+					path: `tos_white_login_desktop_${ locale }.png`,
 					fullPage: true,
 					type: 'jpeg',
 					quality: 20,
 				} );
 				page.setViewportSize( { width: 410, height: 820 } );
 				await page.screenshot( {
-					path: `tos_white_signup_mobile_${ locale }.png`,
+					path: `tos_white_login_mobile_${ locale }.png`,
 					fullPage: true,
 					type: 'jpeg',
 					quality: 20,
 				} );
 				page.setViewportSize( { width: 1024, height: 1366 } );
 				await page.screenshot( {
-					path: `tos_white_signup_tablet_${ locale }.png`,
+					path: `tos_white_login_tablet_${ locale }.png`,
 					fullPage: true,
 					type: 'jpeg',
 					quality: 20,
 				} );
 			}
+			const credentials = DataHelper.getAccountCredential( 'martechTosUser' );
+			await loginPage.logInWithCredentials( ...credentials );
 		} );
 
 		it( 'Zip screenshots and upload', async function () {
-			const zipFilename = 'tos-screenshots-signup.zip';
+			const zipFilename = 'tos-screenshots-login-white.zip';
 			const archive = archiver( 'zip', {
 				zlib: { level: 9 }, // Sets the compression level.
 			} );
 			const output = fs.createWriteStream( zipFilename );
 			archive.pipe( output );
-			archive.glob( 'tos_white_signup_*' );
+			archive.glob( 'tos_white_login_*' );
 			archive.finalize();
 
 			output.on( 'close', function () {
