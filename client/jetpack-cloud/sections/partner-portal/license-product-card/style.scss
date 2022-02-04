@@ -15,6 +15,7 @@
 	border: 1px solid #ddd;
 	border-radius: 2px;
 	cursor: pointer;
+	user-select: none;
 
 	@include break-wide {
 		margin: 0.5rem;
