@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isExpiringSoon } from 'calypso/lib/domains/utils';
-import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
+import { getRenewalPrice, isExpiring, isRenewable } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -62,7 +62,7 @@ const RegisteredDomainDetails = ( {
 			return <p className="details-card__autorenew-placeholder" />;
 		}
 
-		if ( ! purchase || ( ! purchase.canDisableAutoRenew && ! purchase.canReenableAutoRenew ) ) {
+		if ( ! purchase || ! isRenewable( purchase ) ) {
 			return null;
 		}
 
