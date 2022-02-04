@@ -102,7 +102,11 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				actionDisabled={ isTransferringBlocked }
 				actionRef={ ctaRef }
 				secondaryAction={
-					<InlineSupportLink supportContext="introduction-to-woocommerce" showIcon={ false }>
+					<InlineSupportLink
+						className="landing-page__learnmore empty-content__action button"
+						supportContext="introduction-to-woocommerce"
+						showIcon={ false }
+					>
 						{ __( 'Learn more' ) }
 					</InlineSupportLink>
 				}
