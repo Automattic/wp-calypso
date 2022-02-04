@@ -1,6 +1,7 @@
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import placeholderImage from 'calypso/assets/images/domains/domain.svg';
 import DotPager from 'calypso/components/dot-pager';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { DomainOnlyUpsellCarouselProps } from './types';
@@ -11,6 +12,60 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 	const translate = useTranslate();
 	const { domain } = props;
 
+	const illustration = <img src={ placeholderImage } alt="" width={ 140 } />;
+
+	const renderAddSiteCard = () => {
+		return (
+			<Card className="domain-only-upsell-carousel__card" key="domain-only-upsell-site">
+				<div className="domain-only-upsell-carousel__card-wrapper is-compact">
+					<div className="domain-only-upsell-carousel__card-illustration">{ illustration }</div>
+					<div className="domain-only-upsell-carousel__card-content">
+						<div className="domain-only-upsell-carousel__card-text">
+							<h2>
+								{ translate( 'Create a site for %(domain)s', {
+									args: { domain: domain.domain },
+								} ) }
+							</h2>
+							<h3> { translate( 'Choose a theme, customize and launch your site.' ) } </h3>
+						</div>
+						<div className="domain-only-upsell-carousel__card-actions">
+							<Button primary>{ translate( 'Create site' ) }</Button>
+						</div>
+					</div>
+				</div>
+			</Card>
+		);
+	};
+
+	const renderEmailCard = () => {
+		return (
+			<Card className="domain-only-upsell-carousel__card" key="domain-only-upsell-email">
+				<div className="domain-only-upsell-carousel__card-wrapper is-compact">
+					<div className="domain-only-upsell-carousel__card-illustration">{ illustration }</div>
+					<div className="domain-only-upsell-carousel__card-content">
+						<div className="domain-only-upsell-carousel__card-text">
+							<h2>
+								{ translate( 'Add email for %(domain)s', {
+									args: { domain: domain.domain },
+								} ) }
+							</h2>
+							<h3>
+								{ translate( 'Send and receive emails from %(email)s', {
+									args: { email: `youremail@${ domain.domain }` },
+								} ) }
+							</h3>
+						</div>
+						<div className="domain-only-upsell-carousel__card-actions">
+							<Button primary>{ translate( 'Add professional email' ) }</Button>
+						</div>
+					</div>
+				</div>
+			</Card>
+		);
+	};
+
+	const cards = [ renderAddSiteCard(), renderEmailCard() ];
+
 	return (
 		<DotPager
 			className="domain-only-upsell-carousel"
@@ -18,16 +73,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 			showControlLabels={ false }
 			onPageSelected={ () => null }
 		>
-			<Card>
-				{ translate( 'Create a site for %(domain)s', {
-					args: { domain: domain.domain },
-				} ) }
-			</Card>
-			<Card>
-				{ translate( 'Add email for %(domain)s', {
-					args: { domain: domain.domain },
-				} ) }
-			</Card>
+			{ cards }
 		</DotPager>
 	);
 };
