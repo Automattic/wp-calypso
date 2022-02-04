@@ -1,13 +1,24 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
 .license-product-card {
-	width: 33%;
+	width: 100%;
+
+	@include break-wide {
+		width: 33%;
+	}
 }
 
 .license-product-card__inner {
-	margin: 0.5rem;
+	margin: 0.5rem 0;
 	padding: 1.5rem;
 	border: 1px solid #ddd;
 	border-radius: 2px;
 	cursor: pointer;
+
+	@include break-wide {
+		margin: 0.5rem;
+	}
 }
 
 .license-product-card.selected .license-product-card__inner {
@@ -59,14 +70,4 @@
 .issue-license-form__top > div {
 	align-self: flex-end;
 	margin-bottom: 0;
-}
-
-@media ( max-width: 960px ) {
-	.license-product-card {
-		width: 100%;
-	}
-
-	.license-product-card__inner {
-		margin: 0.5rem 0;
-	}
 }
