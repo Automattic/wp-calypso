@@ -20,7 +20,7 @@ const SupportLinkStyle = styled.a`
 	font-weight: bold;
 `;
 
-export default function SupportCard(): ReactElement {
+export default function SupportCard( { backUrl }: { backUrl?: string } ): ReactElement {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
@@ -30,7 +30,7 @@ export default function SupportCard(): ReactElement {
 				a: (
 					<SupportLinkStyle
 						href={ addQueryArgs( '/help/contact', {
-							redirect_to: `${ window.location.pathname }?site=${ domain }`,
+							redirect_to: backUrl || `${ window.location.pathname }?site=${ domain }`,
 						} ) }
 					/>
 				),
