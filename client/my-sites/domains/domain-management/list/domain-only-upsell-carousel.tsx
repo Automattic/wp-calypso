@@ -3,7 +3,9 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import placeholderImage from 'calypso/assets/images/domains/domain.svg';
 import DotPager from 'calypso/components/dot-pager';
+import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { createSiteFromDomainOnly } from '../../paths';
 import { DomainOnlyUpsellCarouselProps } from './types';
 
 import './style.scss';
@@ -29,7 +31,9 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 							<h3> { translate( 'Choose a theme, customize and launch your site.' ) } </h3>
 						</div>
 						<div className="domain-only-upsell-carousel__card-actions">
-							<Button primary>{ translate( 'Create site' ) }</Button>
+							<Button primary href={ createSiteFromDomainOnly( domain.domain, domain.blogId ) }>
+								{ translate( 'Create site' ) }
+							</Button>
 						</div>
 					</div>
 				</div>
@@ -56,7 +60,12 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 							</h3>
 						</div>
 						<div className="domain-only-upsell-carousel__card-actions">
-							<Button primary>{ translate( 'Add professional email' ) }</Button>
+							<Button
+								primary
+								href={ emailManagementPurchaseNewEmailAccount( domain.domain, domain.domain ) }
+							>
+								{ translate( 'Add professional email' ) }
+							</Button>
 						</div>
 					</div>
 				</div>
