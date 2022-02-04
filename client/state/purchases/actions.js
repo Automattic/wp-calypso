@@ -13,7 +13,7 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
-
+import { requestAdminMenu } from '../admin-menu/actions';
 import 'calypso/state/purchases/init';
 
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
@@ -29,6 +29,9 @@ export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
 		type: PURCHASES_SITE_FETCH,
 		siteId,
 	} );
+
+	// Refresh sidebar menu to ensure Plan description is updated.
+	dispatch( requestAdminMenu( siteId ) );
 
 	return wpcom.req
 		.get( `/sites/${ siteId }/purchases` )
