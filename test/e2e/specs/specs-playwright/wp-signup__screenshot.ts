@@ -10,7 +10,6 @@ import {
 	PlansPage,
 	CartCheckoutPage,
 	SidebarComponent,
-	UserSignupPage,
 	BrowserManager,
 } from '@automattic/calypso-e2e';
 import archiver from 'archiver';
@@ -57,35 +56,6 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			'ar',
 			'sv',
 		];
-
-		it( 'Screenshot white background signup page in desktop viewport, en and Mag-16 locales', async function () {
-			const userSignupPage = new UserSignupPage( page );
-			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
-				await userSignupPage.visit( { path: locale } );
-				page.waitForSelector( selectors.isWhiteSignup );
-				await page.screenshot( {
-					path: `tos_white_signup_desktop_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 410, height: 820 } );
-				await page.screenshot( {
-					path: `tos_white_signup_mobile_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 1024, height: 1366 } );
-				await page.screenshot( {
-					path: `tos_white_signup_tablet_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 1280, height: 720 } );
-			}
-		} );
 
 		it( 'Screenshot blue background login page in desktop viewport, en and Mag-16 locales', async function () {
 			const loginPage = new LoginPage( page );

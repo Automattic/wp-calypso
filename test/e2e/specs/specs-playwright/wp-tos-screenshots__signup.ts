@@ -22,7 +22,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		page = await browser.newPage();
 	} );
 
-	describe( 'ToS signup, login, and checkout', function () {
+	describe( 'ToS screenshots of WP.com signup in desktop, tablet, and mobile', function () {
 		jest.setTimeout( 1800000 );
 		const magnificientNonEnLocales = [
 			'pt-br',
