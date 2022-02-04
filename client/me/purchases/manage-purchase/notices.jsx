@@ -57,15 +57,11 @@ class PurchaseNotice extends Component {
 		getManagePurchaseUrlFor: PropTypes.func,
 		getAddNewPaymentMethodUrlFor: PropTypes.func,
 		isProductOwner: PropTypes.bool,
-		purchaseIsInAppPurchase: PropTypes.bool,
-		purchaseManagementIsLocked: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		getManagePurchaseUrlFor: managePurchase,
 		getAddNewPaymentMethodUrlFor: getAddNewPaymentMethodPath,
-		purchaseIsInAppPurchase: false,
-		purchaseManagementIsLocked: false,
 	};
 
 	state = {
@@ -1017,7 +1013,7 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( this.props.purchaseManagementIsLocked && this.props.purchaseIsInAppPurchase ) {
+		if ( this.props.purchase.isLocked && this.props.purchase.isInAppPurchase ) {
 			return this.renderInAppPurchaseNotice();
 		}
 
