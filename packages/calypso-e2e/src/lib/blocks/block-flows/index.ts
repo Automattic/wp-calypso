@@ -13,3 +13,5 @@ export * from './subscription-form';
 export * from './payments';
 export * from './contact-info';
 export * from './star-rating';
+export * from './slideshow';
+export * from './tiled-gallery';
