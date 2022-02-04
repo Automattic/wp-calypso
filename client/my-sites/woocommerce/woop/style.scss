@@ -41,7 +41,7 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 	padding-top: 60px;
 	padding-bottom: 40px;
 	padding-left: 20px;
-    padding-right: 20px;
+	padding-right: 20px;
 
 	// on desktop make the section full width so it takes the whole space
 	@media ( min-width: 660px ) {
@@ -51,7 +51,6 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 
 	background-color: var( --color-woocommerce-onboarding-background );
 	.formatted-header .formatted-header__title {
-
 		@media ( max-width: $break-mobile ) {
 			margin-left: 0;
 			margin-right: 0;

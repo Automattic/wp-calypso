@@ -7,6 +7,7 @@ import page from 'page';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
@@ -100,9 +101,15 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				actionCallback={ onCTAClickHandler }
 				actionDisabled={ isTransferringBlocked }
 				actionRef={ ctaRef }
-				secondaryAction={ __( 'Learn more' ) }
-				secondaryActionURL="https://wordpress.com/support/introduction-to-woocommerce/"
-				secondaryActionTarget="_blank"
+				secondaryAction={
+					<InlineSupportLink
+						className="landing-page__learnmore empty-content__action button"
+						supportContext="introduction-to-woocommerce"
+						showIcon={ false }
+					>
+						{ __( 'Learn more' ) }
+					</InlineSupportLink>
+				}
 				className="woop__landing-page-cta woocommerce_landing-page-empty-content"
 			/>
 			<WooCommerceColophon wpcomDomain={ wpcomDomain || '' } />
