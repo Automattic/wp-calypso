@@ -62,12 +62,12 @@ export function getCurrentSection( currentSection, isNotesOpen ) {
 
 function getDismissTimes( isControl ) {
 	const currentTime = Date.now();
-	const currentSection = isControl ? ONE_MONTH_IN_MILLISECONDS : TWO_WEEKS_IN_MILLISECONDS;
-	const otherSections = isControl ? ONE_WEEK_IN_MILLISECONDS : ONE_DAY_IN_MILLISECONDS;
+	const longerTime = isControl ? ONE_MONTH_IN_MILLISECONDS : TWO_WEEKS_IN_MILLISECONDS;
+	const shorterTime = isControl ? ONE_WEEK_IN_MILLISECONDS : ONE_DAY_IN_MILLISECONDS;
 
 	return {
-		current: currentTime + currentSection,
-		other: currentTime + otherSections,
+		longer_duration: currentTime + longerTime,
+		shorter_duration: currentTime + shorterTime,
 	};
 }
 
@@ -79,14 +79,14 @@ export function getNewDismissTimes( dismissedSection, currentDismissTimes, isCon
 		( result, section ) => {
 			if ( section === dismissedSection ) {
 				// Dismiss selected section for a longer period.
-				result[ section ] = dismissTimes.current;
+				result[ section ] = dismissTimes.longer_duration;
 			} else {
 				// Dismiss all other sections for a shorter period, but make sure that we preserve previous dismiss time
 				// if it was longer than that (e.g. if other section was also dismissed for a month).
 				result[ section ] =
-					get( currentDismissTimes, section, -Infinity ) > dismissTimes.other
+					get( currentDismissTimes, section, -Infinity ) > dismissTimes.shorter_duration
 						? get( currentDismissTimes, section )
-						: dismissTimes.other;
+						: dismissTimes.shorter_duration;
 			}
 
 			return result;
