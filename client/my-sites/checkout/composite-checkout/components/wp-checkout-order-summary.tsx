@@ -1,12 +1,10 @@
 import {
 	isPlan,
 	isMonthly,
-	isMonthlyProduct,
 	getYearlyPlanByMonthly,
 	getPlan,
 	isDomainProduct,
 	isDomainTransfer,
-	isDIFMProduct,
 	isWpComPersonalPlan,
 	isWpComPlan,
 } from '@automattic/calypso-products';
@@ -25,7 +23,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -157,7 +155,6 @@ function CheckoutSummaryFeaturesList( props: {
 		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
 	);
 	const hasPlanInCart = responseCart.products.some( ( product ) => isPlan( product ) );
-	const hasDIFMLiteInCart = responseCart.products.some( ( product ) => isDIFMProduct( product ) );
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector( ( state ) =>
 		siteId ? isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) : undefined
@@ -165,29 +162,13 @@ function CheckoutSummaryFeaturesList( props: {
 
 	const showRefundText = responseCart.total_cost > 0;
 
-	const refundTexts = new Set< TranslateResult >();
-
-	if ( hasDIFMLiteInCart ) {
-		responseCart.products.forEach( ( product ) => {
-			let refundDays = 0;
-			if ( isDomainProduct( product ) || isDomainTransfer( product ) ) {
-				refundDays = 4;
-			} else if ( isPlan( product ) ) {
-				refundDays = isMonthlyProduct( product ) ? 7 : 14;
-			} else if ( isDIFMProduct( product ) ) {
-				refundDays = 2;
-			}
-			refundTexts.add( getRefundText( refundDays, product.product_name, translate ) );
-		} );
-	} else {
-		let refundDays = 0;
-		if ( hasDomainsInCart && ! hasPlanInCart ) {
-			refundDays = 4;
-		} else if ( hasPlanInCart && ! hasDomainsInCart ) {
-			refundDays = hasMonthlyPlanInCart ? 7 : 14;
-		}
-		refundTexts.add( getRefundText( refundDays, null, translate ) );
+	let refundDays = 0;
+	if ( hasDomainsInCart && ! hasPlanInCart ) {
+		refundDays = 4;
+	} else if ( hasPlanInCart && ! hasDomainsInCart ) {
+		refundDays = hasMonthlyPlanInCart ? 7 : 14;
 	}
+	const refundText = getRefundText( refundDays, null, translate );
 
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
@@ -205,13 +186,12 @@ function CheckoutSummaryFeaturesList( props: {
 				<WPCheckoutCheckIcon id="features-list-support-text" />
 				<SupportText hasPlanInCart={ hasPlanInCart } isJetpackNotAtomic={ isJetpackNotAtomic } />
 			</CheckoutSummaryFeaturesListItem>
-			{ showRefundText &&
-				Array.from( refundTexts.values() ).map( ( refundText, index ) => (
-					<CheckoutSummaryFeaturesListItem key={ index }>
-						<WPCheckoutCheckIcon id="features-list-refund-text" />
-						{ refundText }
-					</CheckoutSummaryFeaturesListItem>
-				) ) }
+			{ showRefundText && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="features-list-refund-text" />
+					{ refundText }
+				</CheckoutSummaryFeaturesListItem>
+			) }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
