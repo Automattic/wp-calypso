@@ -2,8 +2,13 @@
  * @group calypso-release
  */
 
-import { DataHelper, CloseAccountFlow, GutenboardingFlow } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import {
+	DataHelper,
+	CloseAccountFlow,
+	GutenboardingFlow,
+	GutenbergEditorPage,
+} from '@automattic/calypso-e2e';
+import { Page, Browser, Frame } from 'playwright';
 
 declare const browser: Browser;
 
@@ -14,11 +19,12 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		prefix: `e2eflowtestinggutenboarding${ DataHelper.getTimestamp() }`,
 	} );
 	const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
+	const themeName = 'Twenty Twenty-Two Red';
 
 	let gutenboardingFlow: GutenboardingFlow;
 	let page: Page;
 
-	beforeAll( async () => {
+	beforeAll( async function () {
 		page = await browser.newPage();
 	} );
 
@@ -39,8 +45,8 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			await gutenboardingFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Select Quadrat Black as the site design', async function () {
-			await gutenboardingFlow.selectDesign( 'Quadrat Black' );
+		it( `Select ${ themeName } as the site design`, async function () {
+			await gutenboardingFlow.selectDesign( themeName );
 		} );
 
 		it( 'Select to add the Plugin feature', async function () {
@@ -63,6 +69,26 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			] );
 		} );
 
+		it( 'Navigated to Site Editor', async function () {
+			await page.waitForURL( /.*\/site-editor\/.*/, { waitUntil: 'networkidle' } );
+
+			// {@TODO} This is temporary while the FSE spec is awaiting migration to Playwright.
+			const gutenbergEditorPage = new GutenbergEditorPage( page );
+			await gutenbergEditorPage.forceDismissWelcomeTour();
+			const outerFrame = await gutenbergEditorPage.getEditorFrame();
+
+			// There's another iframe within the parent iframe.
+			const innerFrame = ( await (
+				await outerFrame.waitForSelector( 'iframe[name="editor-canvas"]' )
+			 ).contentFrame() ) as Frame;
+			await innerFrame.waitForSelector( '[aria-label="Block: Site Title"]' );
+			const elementHandle = await innerFrame.waitForSelector( '[aria-label="Block: Site Title"]' );
+			const siteEditorTitle = await elementHandle.innerText();
+			expect( siteEditorTitle ).toStrictEqual( siteTitle );
+		} );
+	} );
+
+	describe( 'Delete user account', function () {
 		it( 'Navigate to Home dashboard', async function () {
 			// When you go to the home dashboard, there is a delayed redirect to '**/home/<sitename>'.
 			// That delayed redirect can disrupt following actions in a race condition, so we must wait for that redirect to finish!
@@ -71,9 +97,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 				page.goto( DataHelper.getCalypsoURL( 'home' ) ),
 			] );
 		} );
-	} );
 
-	describe( 'Delete user account', function () {
 		it( 'Close account', async function () {
 			const closeAccountFlow = new CloseAccountFlow( page );
 			await closeAccountFlow.closeAccount();
