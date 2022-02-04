@@ -60,14 +60,15 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 
 			it( `Set page visibility to ${ visibility }`, async function () {
 				const frame = await gutenbergEditorPage.getEditorFrame();
+				await gutenbergEditorPage.openSettings();
+
 				editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( frame, page );
-
 				await editorSettingsSidebarComponent.clickTab( 'Page' );
-				await editorSettingsSidebarComponent.setVisibility( visibility as PrivacyOptions );
+				await editorSettingsSidebarComponent.setVisibility( visibility as PrivacyOptions, {
+					password: pagePassword,
+				} );
 
-				if ( visibility === 'Password' ) {
-					await editorSettingsSidebarComponent.setPostPassword( pagePassword );
-				}
+				await gutenbergEditorPage.closeSettings();
 			} );
 
 			it( 'Publish page', async function () {

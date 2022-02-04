@@ -244,7 +244,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2E
 				checked = "true",
 				unchecked = "false"
 			)
-			param("env.TARGET_DEVICE", "$targetDevice")
+			param("env.VIEWPORT_NAME", "$targetDevice")
 		},
 		buildFeatures = {
 			notifications {
@@ -300,7 +300,7 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EB
 				checked = "true",
 				unchecked = "false"
 			)
-			param("env.TARGET_DEVICE", "$targetDevice")
+			param("env.VIEWPORT_NAME", "$targetDevice")
 		},
 		buildFeatures = {
 			notifications {
@@ -541,7 +541,7 @@ private object I18NTests : E2EBuildType(
 			description = "Locales to use, separated by comma",
 			allowEmpty = false
 		)
-		param("env.TARGET_DEVICE", "desktop")
+		param("env.VIEWPORT_NAME", "desktop")
 	},
 	buildFeatures = {
 		notifications {
@@ -579,7 +579,7 @@ object P2E2ETests : E2EBuildType(
 	buildDescription = "Runs end-to-end tests against P2.",
 	testGroup = "p2",
 	buildParams = {
-		param("env.TARGET_DEVICE", "desktop")
+		param("env.VIEWPORT_NAME", "desktop")
 		param("env.URL", "https://wpcalypso.wordpress.com")
 	},
 	buildFeatures = {
