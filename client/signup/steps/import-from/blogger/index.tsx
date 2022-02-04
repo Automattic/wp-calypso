@@ -98,7 +98,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 	}
 
 	function checkIsFailed() {
-		return job && job.importerState === appStates.IMPORT_FAILURE;
+		return job?.importerState === appStates.IMPORT_FAILURE;
 	}
 
 	function showVideoComponent() {
