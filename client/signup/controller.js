@@ -290,6 +290,19 @@ export default {
 
 		// Update initialContext to help woocommerce-install support site switching.
 		if ( 'woocommerce-install' === flowName ) {
+			const currentSiteId = getSiteId( context.store.getState(), context.query.siteSlug );
+			const previousSiteId = getSiteId(
+				initialContext.store.getState(),
+				initialContext.query.siteSlug
+			);
+
+			if ( currentSiteId !== previousSiteId ) {
+				// when changing sites setSelectedSiteForSignup uses the queryDependencies stored
+				// in the redux store this causes that when a site slug changes the first step doesn't
+				// catch the siteId change, this forces that change.
+				context.store.dispatch( setSelectedSiteId( currentSiteId ) );
+			}
+
 			initialContext = context;
 		}
 
@@ -387,6 +400,7 @@ export default {
 			next();
 			return;
 		}
+
 		const siteId = getSiteId( getState(), siteIdOrSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );
