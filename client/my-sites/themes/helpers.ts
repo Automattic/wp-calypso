@@ -47,10 +47,10 @@ export function getAnalyticsData(
 		tier,
 		site_id,
 	}: {
-		filter: string | undefined;
-		vertical: string | undefined;
-		tier: string | undefined;
-		site_id: string | undefined;
+		filter?: string;
+		vertical?: string;
+		tier?: string;
+		site_id?: string;
 	}
 ) {
 	let analyticsPath = '/themes';
