@@ -34,7 +34,6 @@ export function trackClick( componentName: string, eventName: BaseSyntheticEvent
 }
 
 export function addTracking( options: ThemeOptions ): ThemeOptions {
-	console.log( { options } );
 	return mapValues( options, appendActionTracking );
 }
 
