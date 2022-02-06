@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, edit, home, moreVertical } from '@wordpress/icons';
 import PropTypes from 'prop-types';
@@ -9,17 +9,15 @@ import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
-import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/paths';
+import ChangeSiteAddressDialog from 'calypso/my-sites/domains/domain-management/change-site-address-dialog';
 
 import './free-domain-item.scss';
 
 export default function FreeDomainItem( {
-	currentRoute,
 	domain,
 	disabled,
 	isBusy,
 	onMakePrimary,
-	site,
 	isAtomicSite,
 } ) {
 	const canMakePrimary = domain.canSetAsPrimary && ! domain.isPrimary;
@@ -28,6 +26,7 @@ export default function FreeDomainItem( {
 		event.stopPropagation();
 		onMakePrimary( domain.domain );
 	};
+	const [ isDialogVisible, setDialogVisible ] = useState( false );
 
 	return (
 		<div className="free-domain-item">
@@ -63,15 +62,19 @@ export default function FreeDomainItem( {
 						</PopoverMenuItem>
 					) }
 					{ ! isAtomicSite && (
-						<PopoverMenuItem
-							href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
-						>
+						<PopoverMenuItem onClick={ () => setDialogVisible( true ) }>
 							<Icon icon={ edit } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ __( 'Change site address' ) }
 						</PopoverMenuItem>
 					) }
 				</EllipsisMenu>
 			) }
+
+			<ChangeSiteAddressDialog
+				domain={ domain }
+				isDialogVisible={ isDialogVisible }
+				closeDialog={ () => setDialogVisible( false ) }
+			/>
 
 			{ isBusy && <Spinner /> }
 		</div>
