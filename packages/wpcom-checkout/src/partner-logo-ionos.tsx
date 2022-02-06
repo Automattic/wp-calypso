@@ -1,6 +1,9 @@
+import { useTranslate } from 'i18n-calypso';
 export default function PartnerLogoIonos() {
+	const translate = useTranslate();
 	return (
-		<svg xmlns="http://www.w3.org/2000/svg" width="67" height="26" xmlSpace="preserve">
+		<svg xmlns="http://www.w3.org/2000/svg" width="67" height="26" xmlSpace="preserve" role="img">
+			<title>{ translate( 'IONOS logo' ) }</title>
 			<image
 				width="67"
 				height="26"
