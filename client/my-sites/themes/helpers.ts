@@ -16,7 +16,16 @@ interface ThemeOption {
 }
 
 interface ThemeOptions {
-	[ key: string ]: ThemeOption;
+	activate: ThemeOption;
+	customize: ThemeOption;
+	deleteTheme: ThemeOption;
+	help: ThemeOption;
+	preview: ThemeOption;
+	purchase: ThemeOption;
+	separator: ThemeOption;
+	signup: ThemeOption;
+	tryandcustomize: ThemeOption;
+	upgradePlan: ThemeOption;
 }
 
 export function trackClick( componentName: string, eventName: BaseSyntheticEvent, verb = 'click' ) {
@@ -25,6 +34,7 @@ export function trackClick( componentName: string, eventName: BaseSyntheticEvent
 }
 
 export function addTracking( options: ThemeOptions ): ThemeOptions {
+	console.log( { options } );
 	return mapValues( options, appendActionTracking );
 }
 
