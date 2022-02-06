@@ -5,7 +5,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { isMagnificentLocale } from 'calypso/lib/i18n-utils';
 
 interface ThemeOption {
-	action?: () => void;
+	action?(): void;
 	extendedLabel?: string;
 	getUrl?: () => string;
 	header?: string;
