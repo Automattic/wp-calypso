@@ -29,6 +29,7 @@ import { getIntroductoryOfferIntervalDisplay } from './get-introductory-offer-in
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
+import IonosLogo from './partner-logo-ionos';
 import type {
 	GSuiteProductUser,
 	ResponseCart,
@@ -98,11 +99,6 @@ export const CouponLineItem = styled( WPCouponLineItem )< {
 
 	.jetpack-partner-logo {
 		padding-bottom: 20px;
-	}
-
-	.checkout-line-item__partner-logo-image {
-		max-width: 67px;
-		max-height: 26px;
 	}
 `;
 
@@ -785,7 +781,7 @@ function PartnerLogo( { className }: { className?: string } ): JSX.Element | nul
 		<LineItemMeta className={ joinClasses( [ className, 'jetpack-partner-logo' ] ) }>
 			<div>{ translate( 'Included in your IONOS plan' ) }</div>
 			<div className={ 'checkout-line-item__partner-logo-image' }>
-				<img src={ '/calypso/images/jetpack/partners/partner-logo-ionos.png' } alt="IONOS Logo" />
+				<IonosLogo />
 			</div>
 		</LineItemMeta>
 	);
