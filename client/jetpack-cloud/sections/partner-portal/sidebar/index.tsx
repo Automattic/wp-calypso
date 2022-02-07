@@ -61,12 +61,12 @@ class PartnerPortalSidebar extends Component< Props > {
 						{ config.isEnabled( 'jetpack/partner-portal-payment' ) && (
 							<SidebarItem
 								customIcon={ <JetpackIcons icon="credit-card" /> }
-								label={ translate( 'Payment Method', {
+								label={ translate( 'Payment Methods', {
 									comment: 'Jeptack sidebar navigation item',
 								} ) }
-								link="/partner-portal/payment-method"
-								onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Payment Method' ) }
-								selected={ itemLinkMatches( [ '/partner-portal/payment-method' ], path ) }
+								link="/partner-portal/payment-methods"
+								onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Payment Methods' ) }
+								selected={ itemLinkMatches( [ '/partner-portal/payment-methods' ], path ) }
 							/>
 						) }
 					</SidebarMenu>

@@ -5,7 +5,9 @@ interface ConfigurationData {
 	buttonText?: string;
 }
 
-const blockParentSelector = 'div[aria-label="Block: WhatsApp Button"]';
+// The parent selector for the block changes between mobile and desktop viewport.
+const blockParentSelector =
+	'div[aria-label="Block: Send A Message"], div[aria-label="Block: WhatsApp Button"]';
 const selectors = {
 	// Editor
 	settings: 'button[aria-label="WhatsApp Button Settings"]',

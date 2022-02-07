@@ -3,13 +3,16 @@
  */
 
 import { DataHelper, SidebarComponent, MarketingPage, TestAccount } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
 
-describe( DataHelper.createSuiteTitle( 'SEO Preview Page' ), function () {
-	let marketingPage;
-	let page;
+declare const browser: Browser;
+
+describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
+	let marketingPage: MarketingPage;
+	let page: Page;
 
 	beforeAll( async () => {
-		page = await global.browser.newPage();
+		page = await browser.newPage();
 
 		const testAccount = new TestAccount( 'eCommerceUser' );
 		await testAccount.authenticate( page );

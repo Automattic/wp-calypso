@@ -3,8 +3,6 @@ import {
 	SITE_KEYRINGS_REQUEST,
 	SITE_KEYRINGS_REQUEST_FAILURE,
 	SITE_KEYRINGS_REQUEST_SUCCESS,
-	SITE_KEYRINGS_SAVE,
-	SITE_KEYRINGS_SAVE_FAILURE,
 	SITE_KEYRINGS_SAVE_SUCCESS,
 	SITE_KEYRINGS_DELETE_SUCCESS,
 	SITE_KEYRINGS_UPDATE_SUCCESS,
@@ -33,45 +31,6 @@ export const requesting = ( state = {}, action ) => {
 		case SITE_KEYRINGS_REQUEST_FAILURE: {
 			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		}
-	}
-
-	return state;
-};
-
-/**
- * Returns the save Request status after an action has been dispatched. The
- * state maps site ID to the request status
- *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- */
-export const saveRequests = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case SITE_KEYRINGS_SAVE: {
-			const { siteId } = action;
-
-			return {
-				...state,
-				[ siteId ]: { saving: true, status: 'pending', error: false },
-			};
-		}
-		case SITE_KEYRINGS_SAVE_SUCCESS: {
-			const { siteId } = action;
-
-			return {
-				...state,
-				[ siteId ]: { saving: false, status: 'success', error: false },
-			};
-		}
-		case SITE_KEYRINGS_SAVE_FAILURE: {
-			const { siteId, error } = action;
-
-			return {
-				...state,
-				[ siteId ]: { saving: false, status: 'error', error },
-			};
 		}
 	}
 
@@ -138,7 +97,6 @@ const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) =
 const combinedReducer = combineReducers( {
 	items,
 	requesting,
-	saveRequests,
 } );
 
 export default withStorageKey( 'siteKeyrings', combinedReducer );

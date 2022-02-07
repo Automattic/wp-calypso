@@ -107,6 +107,9 @@ const testGlobalStylesColorAndTypography = async (
 	await editor.clickGlobalStylesMenuItem( 'Typography' );
 	await editor.changeGlobalStylesFontSize( '11', blocksLevel );
 	await editor.clickGlobalStylesBackButton();
+	if ( ! blocksLevel ) {
+		await editor.clickGlobalStylesBackButton();
+	}
 	// Update events are debounced to avoid event spam when items are updated using
 	// slider inputs. Therefore we must wait so this update event is not debounced.
 	await driver.sleep( 100 );
@@ -520,6 +523,7 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 
 				await editor.clickGlobalStylesMenuItem( 'Typography' );
 				await editor.changeGlobalStylesFontSize( '11' );
+				await editor.clickGlobalStylesBackButton();
 				await editor.clickGlobalStylesBackButton();
 				await editor.clickGlobalStylesMenuItem( 'Colors' );
 				await editor.changeGlobalStylesColor( 'Text', { valueIndex: 1 } );
@@ -1154,10 +1158,10 @@ describe( `[${ host }] Calypso Gutenberg Site Editor Tracking: (${ screenSize })
 				const blockToolbarOptionsLocator = By.css(
 					'[aria-label="Block tools"] [aria-label="Options"]'
 				);
-				const removeBlockOptionsItemLocator = driverHelper.createTextLocator(
-					By.css( '[aria-label="Options"] button' ),
-					'Remove Heading'
+				const removeBlockOptionsItemLocator = By.css(
+					'[aria-label="Options"] div.components-menu-group:last-of-type button:last-of-type'
 				);
+
 				await driverHelper.clickWhenClickable( this.driver, blockToolbarOptionsLocator );
 				await driverHelper.clickWhenClickable( this.driver, removeBlockOptionsItemLocator );
 

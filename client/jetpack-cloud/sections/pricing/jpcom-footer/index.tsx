@@ -1,13 +1,17 @@
+import { Gridicon } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import appStoreBadge from './assets/app-store-badge.png';
 import googlePlayBadge from './assets/google-play-badge.png';
 import a8cLogo from './assets/logo-a8c-white.svg';
+import LocalSwitcher from './locale-switcher';
 import './style.scss';
 
 const JPCOM_HOME = 'https://jetpack.com';
@@ -33,6 +37,12 @@ const getTrackLinkClick = ( link: string ) => () => {
  */
 const JetpackComFooter: React.FC = () => {
 	const translate = useTranslate();
+	const region = useGeoLocationQuery()?.data?.region;
+	const hideCaliforniaNotice = useMemo( () => region && region.toLowerCase() !== 'california', [
+		region,
+	] );
+	const defaultLocale = useLocale();
+	const [ isLocaleSwitcherVisible, setLocaleSwitcherVisibility ] = useState( false );
 	const { sitemap, socialProps } = useMemo( () => {
 		const sitemap = [
 			{
@@ -113,14 +123,16 @@ const JetpackComFooter: React.FC = () => {
 						href: addQueryArgs( utmParams, 'http://automattic.com/privacy/' ),
 						trackId: 'privacy_policy',
 					},
-					{
-						label: translate( 'Privacy Notice for California Users' ),
-						href: addQueryArgs(
-							utmParams,
-							'https://automattic.com/privacy/#california-consumer-privacy-act-ccpa'
-						),
-						trackId: 'privacy_policy_california',
-					},
+					hideCaliforniaNotice
+						? null
+						: {
+								label: translate( 'Privacy Notice for California Users' ),
+								href: addQueryArgs(
+									utmParams,
+									'https://automattic.com/privacy/#california-consumer-privacy-act-ccpa'
+								),
+								trackId: 'privacy_policy_california',
+						  },
 				],
 			},
 			{
@@ -190,11 +202,19 @@ const JetpackComFooter: React.FC = () => {
 			sitemap,
 			socialProps,
 		};
-	}, [ translate ] );
+	}, [ translate, hideCaliforniaNotice ] );
+
+	const onLanguageClick = useCallback( () => setLocaleSwitcherVisibility( true ), [
+		setLocaleSwitcherVisibility,
+	] );
+	const onLocaleSwitcherClose = useCallback( () => setLocaleSwitcherVisibility( false ), [
+		setLocaleSwitcherVisibility,
+	] );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<footer>
+			<LocalSwitcher isVisible={ isLocaleSwitcherVisible } onClose={ onLocaleSwitcherClose } />
 			<div className="jetpack-footer">
 				<div className="jetpack-footer__content">
 					<div className="jetpack-footer__head">
@@ -206,7 +226,14 @@ const JetpackComFooter: React.FC = () => {
 							<JetpackLogo full />
 						</ExternalLink>
 						<div className="jetpack-footer__language">
-							<div className="jetpack-footer__language-toggle"></div>
+							<button
+								className="language-toggle jetpack-footer__language-toggle"
+								aria-label={ translate( 'Select language' ) as string }
+								onClick={ onLanguageClick }
+							>
+								<span>{ defaultLocale.toUpperCase() }</span>
+								<Gridicon icon="chevron-down" size={ 18 } />
+							</button>
 						</div>
 					</div>
 					<nav
@@ -218,17 +245,25 @@ const JetpackComFooter: React.FC = () => {
 								<li key={ category as string } className="sitemap__category">
 									<span className="sitemap__category-label">{ category }</span>
 									<ul className="sitemap__link-list">
-										{ items.map( ( { label, href, trackId } ) => (
-											<li key={ label as string }>
-												<ExternalLink
-													href={ href }
-													className="sitemap__link"
-													onClick={ trackId ? getTrackLinkClick( trackId ) : null }
-												>
-													{ label }
-												</ExternalLink>
-											</li>
-										) ) }
+										{ items.map( ( item ) => {
+											if ( ! item ) {
+												return;
+											}
+
+											const { label, href, trackId } = item;
+
+											return (
+												<li key={ label as string }>
+													<ExternalLink
+														href={ href }
+														className="sitemap__link"
+														onClick={ trackId ? getTrackLinkClick( trackId ) : null }
+													>
+														{ label }
+													</ExternalLink>
+												</li>
+											);
+										} ) }
 									</ul>
 								</li>
 							) ) }

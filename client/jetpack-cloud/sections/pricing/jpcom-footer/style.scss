@@ -34,10 +34,6 @@
 	@include hide-content-accessibly();
 }
 
-.jetpack-footer__language {
-	height: 48px;
-}
-
 // ============================================================================
 // Jetpack.com styles
 // ============================================================================
@@ -323,4 +319,39 @@
 }
 .social-properties > li > a:hover {
 	opacity: 0.75;
+}
+.jetpack-footer__language-toggle {
+	margin-inline-start: -1rem;
+}
+.language-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 48px;
+	min-height: 48px;
+	padding: 0.5rem 1rem;
+	background-color: transparent;
+	border: none;
+	border-radius: 3px;
+	appearance: none;
+	font-size: 0.875rem;
+	line-height: 1;
+	text-transform: uppercase;
+	transition: color 0.1s, background-color 0.1s;
+	cursor: pointer;
+}
+.language-toggle:focus,
+.language-toggle:hover {
+	outline: 0;
+	color: white;
+	background-color: black;
+}
+.language-toggle:active {
+	color: white;
+	background-color: #2c3338;
+}
+.language-toggle .gridicon {
+	width: 1.125rem;
+	height: 1.125rem;
+	margin-inline-start: 0.25rem;
 }

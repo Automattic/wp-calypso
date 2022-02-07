@@ -2,7 +2,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
-import { fetchPlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -26,11 +25,8 @@ const useSiteMenuItems = () => {
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
 			dispatch( requestAdminMenu( selectedSiteId ) );
-			if ( isJetpack ) {
-				dispatch( fetchPlugins( [ selectedSiteId ] ) );
-			}
 		}
-	}, [ dispatch, isJetpack, selectedSiteId, siteDomain, locale ] );
+	}, [ dispatch, selectedSiteId, siteDomain, locale ] );
 
 	/**
 	 * As a general rule we allow fallback data to remain as static as possible.

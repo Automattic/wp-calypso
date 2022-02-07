@@ -19,11 +19,11 @@ export default function PaymentMethodList(): ReactElement {
 	return (
 		<Main wideLayout className="payment-method-list">
 			<QueryStoredCards />
-			<DocumentHead title={ translate( 'Payment Method' ) } />
+			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
 
 			<div className="payment-method-list__header">
-				<CardHeading size={ 36 }>{ translate( 'Payment Method' ) }</CardHeading>
+				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
 			</div>
 
 			<div className="payment-method-list__body">

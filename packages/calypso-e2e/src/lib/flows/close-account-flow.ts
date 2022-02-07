@@ -1,5 +1,4 @@
 import { Page } from 'playwright';
-import { NavbarComponent, MeSidebarComponent } from '../components';
 import { AccountSettingsPage, AccountClosedPage } from '../pages';
 
 /**
@@ -24,12 +23,8 @@ export class CloseAccountFlow {
 	 * then onto Account Settings.
 	 */
 	async closeAccount(): Promise< void > {
-		const navbarComponent = new NavbarComponent( this.page );
-		await navbarComponent.clickMe();
-		const meSidebarComponent = new MeSidebarComponent( this.page );
-		await meSidebarComponent.navigate( 'Account Settings' );
-
 		const accountSettingsPage = new AccountSettingsPage( this.page );
+		await accountSettingsPage.visit();
 		await accountSettingsPage.closeAccount();
 
 		const accountClosedPage = new AccountClosedPage( this.page );

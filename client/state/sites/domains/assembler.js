@@ -32,6 +32,12 @@ function assembleCurrentUserCannotAddEmailReason( reason ) {
 	return errorDetails[ 0 ];
 }
 
+/**
+ * Creates a ResponseDomain object.
+ *
+ * @param {object} domain domain object
+ * @returns {import('calypso/lib/domains/types').ResponseDomain} Response domain
+ */
 export const createSiteDomainObject = ( domain ) => {
 	let transferEndDate = null;
 	if ( domain.transfer_start_date ) {

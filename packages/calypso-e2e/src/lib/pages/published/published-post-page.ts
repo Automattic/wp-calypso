@@ -36,10 +36,7 @@ export class PublishedPostPage {
 	 */
 	async enterPostPassword( password: string ): Promise< void > {
 		await this.page.fill( selectors.postPasswordInput, password );
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.submitPasswordButton ),
-		] );
+		await Promise.all( [ this.page.waitForNavigation(), this.page.keyboard.press( 'Enter' ) ] );
 	}
 
 	/**

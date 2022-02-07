@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement } from 'react';
+import { useSelector } from 'react-redux';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';
 import StepContent from './step-content';
 
@@ -10,7 +13,9 @@ const WarningsOrHoldsSection = styled.div`
 
 export default function Error(): ReactElement {
 	const { __ } = useI18n();
-	// todo: both messages sort of say the same thing, refer to figma and fix
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+
 	return (
 		<StepContent
 			title={ __( "We've hit a snag" ) }
@@ -19,7 +24,7 @@ export default function Error(): ReactElement {
 			) }
 		>
 			<WarningsOrHoldsSection>
-				<SupportCard />
+				<SupportCard backUrl={ `/woocommerce-installation/${ domain }` } />
 			</WarningsOrHoldsSection>
 		</StepContent>
 	);

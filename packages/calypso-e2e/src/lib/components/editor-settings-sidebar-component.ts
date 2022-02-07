@@ -87,8 +87,14 @@ export class EditorSettingsSidebarComponent {
 	 * Sets the post visibility to the provided visibility setting.
 	 *
 	 * @param {PrivacyOptions} visibility Desired post visibility setting.
+	 * @param param1 Object parameter.
+	 * @param {string} param1.password Password for the post. Normally an optinal value, this
+	 * 	must be set if the `visibility` parameter is set to `Password`.
 	 */
-	async setVisibility( visibility: PrivacyOptions ): Promise< void > {
+	async setVisibility(
+		visibility: PrivacyOptions,
+		{ password }: { password?: string } = {}
+	): Promise< void > {
 		await this.expandSection( 'Status & Visibility' );
 		await this.frame.click( selectors.visibilityToggle );
 		// Important to wait for the popover element to finish its animation, as the radio buttons
@@ -102,6 +108,17 @@ export class EditorSettingsSidebarComponent {
 			this.page.once( 'dialog', ( dialog ) => dialog.accept() ),
 			this.frame.click( selectors.visibilityOption( visibility ) ),
 		] );
+
+		// For Password-protected posts, the password field needs to be filled.
+		if ( visibility === 'Password' ) {
+			if ( ! password ) {
+				throw new Error( 'Post password is undefined.' );
+			}
+			await this.setPostPassword( password );
+		}
+
+		// Close the visibility sub-panel.
+		await this.frame.click( selectors.visibilityToggle );
 	}
 
 	/**

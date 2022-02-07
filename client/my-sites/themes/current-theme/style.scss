@@ -5,7 +5,20 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 
 .current-theme {
 	padding: 0;
-	margin-bottom: 24px;
+	margin: 0 0 24px;
+	background: #fff;
+	border-radius: 4px;
+	box-shadow: none;
+	filter: drop-shadow( 0 1px 2px rgba( 0, 0, 0, 0.05 ) );
+	@include breakpoint-deprecated( '<660px' ) {
+		margin: 0 16px 24px;
+	}
+	
+	@include break-medium {
+		border-radius: 0;
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+		filter: none;
+	}
 }
 
 .current-theme__post-revamp {
@@ -21,11 +34,13 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		&::after {
 			content: '';
 			display: block;
-			background: #fff;
-			height: 69px;
+			height: 48px;
 			width: 100%;
 			border-top: $current-theme-border;
 
+			@include break-medium {
+				height: 69px;
+			}
 			@include break-xlarge {
 				content: none;
 			}
@@ -33,11 +48,13 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	}
 
 	.current-theme__details {
+		padding: 16px;
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		font-size: $font-body-small;
 
-		@include break-small {
+		@include break-medium {
+			padding: 0;
 			flex-direction: row;
 			font-size: $font-body;
 			width: 100%;
@@ -45,18 +62,27 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	}
 
 	.current-theme__img {
+		width: 100px;
+		height: 78px;
 		border-bottom: $current-theme-border;
 		max-height: none;
-		width: auto;
+		filter: drop-shadow( 0 3px 8px rgba( 0, 0, 0, 0.12 ) ) drop-shadow( 0 3px 1px rgba( 0, 0, 0, 0.04 ) );
+		border-radius: 4px;
 
-		@include break-small {
+
+		@include break-medium {
+			height: auto;
 			max-height: 160px;
 			border-right: $current-theme-border;
 			border-bottom: none;
+			width: auto;
+			filter: none;
+			border-radius: 0;
 		}
 
 		@include break-large {
 			max-height: 130px;
+			width: auto;
 		}
 	}
 
@@ -71,10 +97,17 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		}
 	}
 
+	.current-theme__content-learn-more {
+		display: none;
+		@include break-medium {
+			display: block;
+		}
+	}
+
 	.current-theme__title-wrapper {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
+		align-items: start;
 		margin-top: 0;
 		flex-wrap: wrap;
 
@@ -82,10 +115,11 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 			flex-wrap: initial;
 		}
 
-		@include break-small {
+		@include break-medium {
 			flex-direction: row-reverse;
 			justify-content: flex-end;
 			flex-wrap: wrap;
+			align-items: center;
 		}
 	}
 
@@ -93,21 +127,32 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		display: flex;
 		flex-direction: row-reverse;
 		align-items: center;
-		margin-bottom: 6px;
+
+		@include break-small {
+			margin-bottom: 6px;
+		}
 	}
 
 	.current-theme__label {
 		font-size: $font-body-extra-small;
-		color: var( --color-text-inverted );
+		font-weight: 600;
 		display: inline-block;
-		background: var( --color-neutral-dark );
-		white-space: nowrap;
-		padding: 4px 12px;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 120px;
-		margin-right: 8px;
+		text-transform: uppercase;
 
-		@include break-small {
+		color: var( --color-neutral-30 );
+
+		@include break-medium {
+			font-weight: normal;
+			text-transform: none;
+			color: var( --color-text-inverted );
+			display: inline-block;
+			background: var( --color-neutral-dark );
+			white-space: nowrap;
+			padding: 4px 12px;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 120px;
+			margin-right: 8px;
+		
 			align-self: center;
 			margin-bottom: 0;
 		}
@@ -118,10 +163,14 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		box-sizing: border-box;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		font-size: $font-body;
+		font-size: $font-body-large;
 		max-width: 100%;
 		margin-right: 8px;
 		margin-bottom: 6px;
+
+		@include break-medium {
+			font-size: $font-body;
+		}
 
 		@include breakpoint-deprecated( '>960px' ) {
 			font-size: $font-title-small;
@@ -129,11 +178,12 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	}
 
 	.current-theme__content-wrapper {
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		display: none;
+		
 
-		@include break-small {
+		@include break-medium {
+			display: flex;
+			align-items: center;
 			justify-content: space-between;
 		}
 	}
@@ -145,27 +195,91 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	}
 
 	.current-theme__description {
-		align-self: center;
+		align-self: flex-start;
 		font-size: $font-body-small;
-		margin: 20px 16px 12px;
+		margin: 12px 16px;
 		width: 100%;
+
+		@include break-medium {
+			align-self: center;
+			margin: 20px 16px 12px;
+		}
 
 		p {
 			color: var( --color-text-subtle );
 			margin-bottom: 0;
 		}
 	}
+	
+	.current-theme__more-info {
+		@include break-medium {
+			display: none;
+		}
+	}
+
+	.current-theme__theme-customize {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		padding: 12px 0;
+		color: var( --studio-neutral-100 );
+		display: flex;
+
+		.gridicon {
+			padding: 0 8px 0 16px;
+		}
+		.gridicons-chevron-right {
+			position: absolute;
+			right: 8px;
+			color: var( --color-sidebar-gridicon-fil );
+		}
+	}
+	
+	.current-theme__theme-description {
+		font-size: $font-body-small;
+		line-height: 20px;
+		padding: 0 16px 8px;
+		letter-spacing: 0.32px;
+
+		color: var( --color-text-subtle );
+		max-height: 2.2em;
+		overflow: hidden;
+		margin-bottom: 0;
+
+		span {
+			display: -webkit-box;
+  			-webkit-line-clamp: 2;
+  			-webkit-box-orient: vertical;
+			position: relative;
+		}
+
+	}
+
+	.current-theme__theme-description-link {
+		font-weight: 500;
+		font-size: $font-body-small;
+		line-height: 20px;
+		color: var( --studio-black );
+		display: inline-block;
+		border-bottom: 1px solid var( --studio-black );
+		margin: 0 16px 16px;
+	}
 
 	.current-theme__actions {
 		box-sizing: border-box;
 		padding-top: 16px;
-		display: flex;
+		display: none;
 		align-items: flex-end;
 		justify-content: flex-end;
 		flex-grow: 1;
 		position: absolute;
 		bottom: 16px;
 		right: 15px;
+
+		@include break-medium {
+			display: flex;
+		}
 
 		@include break-xlarge {
 			padding-top: 0;

@@ -1,5 +1,5 @@
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import EmailManagementHome from 'calypso/my-sites/email/email-management/email-home';
+import EmailHome from 'calypso/my-sites/email/email-management/email-home';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 
 type EmailManagementHomePageProps = {
@@ -15,7 +15,7 @@ const EmailManagementHomePage = ( props: EmailManagementHomePageProps ): JSX.Ele
 				title="Email Home"
 				properties={ { source: props.source } }
 			/>
-			<EmailManagementHome { ...props } />
+			<EmailHome { ...props } />
 		</>
 	);
 };

@@ -34,7 +34,7 @@ export type EmailProvidersStackedComparisonProps = {
 	comparisonContext: string;
 	selectedDomainName: string;
 	selectedEmailProviderSlug?: string;
-	selectedIntervalLength?: IntervalLength;
+	selectedIntervalLength?: IntervalLength | undefined;
 	source: string;
 };
 
