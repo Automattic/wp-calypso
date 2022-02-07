@@ -183,8 +183,9 @@ export class MediaPage {
 	/* Modal mode */
 
 	/**
+	 * Interacts with the react modal component that embeds MediaPage.
 	 *
-	 * @param action
+	 * @param {ModalAction} action Action to perform on the modal.
 	 */
 	async clickModalButton( action: ModalAction ): Promise< void > {
 		const locator = this.page.locator( selectors.modalActionButton( action ) );

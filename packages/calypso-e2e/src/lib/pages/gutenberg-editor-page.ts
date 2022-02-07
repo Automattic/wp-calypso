@@ -287,7 +287,8 @@ export class GutenbergEditorPage {
 		// Confirm the block has been added to the editor body.
 		const elementHandle = await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
 
-		// Dismiss the block inserter if viewport is larger than mobile.
+		// Dismiss the block inserter if viewport is larger than mobile to ensure
+		// no interference from the block inserter in subsequent actions on the editor.
 		// In mobile, the block inserter will auto-close.
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			await frame.click( selectors.blockInserterToggle );
