@@ -11,6 +11,7 @@ import RegisterDomainStep from 'calypso/components/domains/register-domain-step'
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
 import {
 	domainRegistration,
@@ -20,6 +21,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -142,10 +144,6 @@ class DomainsStep extends Component {
 
 		return isPlansStepExistsInFutureOfFlow && ! isPlanStepSkipped;
 	};
-
-	isEligibleVariantForDomainTest() {
-		return this.showTestCopy;
-	}
 
 	getLocale() {
 		return ! this.props.userLoggedIn ? this.props.locale : '';
@@ -486,7 +484,7 @@ class DomainsStep extends Component {
 		);
 	};
 
-	domainForm = () => {
+	domainForm = ( isDomainStepCopyTreatment ) => {
 		let initialState = {};
 		if ( this.props.step ) {
 			initialState = this.props.step.domainForm;
@@ -568,11 +566,20 @@ class DomainsStep extends Component {
 						this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 					}
 					isReskinned={ this.props.isReskinned }
+					isCopyExperiment={ isDomainStepCopyTreatment }
 					reskinSideContent={ this.getSideContent() }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
 	};
+
+	renderLoading() {
+		return (
+			<div className="domains__loading">
+				<LoadingEllipsis active />
+			</div>
+		);
+	}
 
 	onUseMyDomainConnect = ( { domain } ) => {
 		this.handleAddMapping( 'useYourDomainForm', domain );
@@ -623,7 +630,7 @@ class DomainsStep extends Component {
 		);
 	};
 
-	getSubHeaderText() {
+	getSubHeaderText( isDomainStepCopyTreatment ) {
 		const {
 			flowName,
 			isAllDomains,
@@ -638,7 +645,14 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
+			if ( ! stepSectionName && isDomainStepCopyTreatment ) {
+				return 'A domain name is a first step in branding your website, and helps you choose your web address, too.';
+			}
+
+			return (
+				! stepSectionName &&
+				translate( "Enter your site's name or some descriptive keywords to get started" )
+			);
 		}
 
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
@@ -656,7 +670,7 @@ class DomainsStep extends Component {
 			: translate( "Enter your site's name or some keywords that describe it to get started." );
 	}
 
-	getHeaderText() {
+	getHeaderText( isDomainStepCopyTreatment ) {
 		const {
 			headerText,
 			isAllDomains,
@@ -671,6 +685,9 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
+			if ( isDomainStepCopyTreatment && ! stepSectionName ) {
+				return 'Find a domain';
+			}
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
@@ -683,7 +700,7 @@ class DomainsStep extends Component {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
-	renderContent() {
+	renderContent( isDomainStepCopyTreatment ) {
 		let content;
 		let sideContent;
 
@@ -692,7 +709,7 @@ class DomainsStep extends Component {
 		}
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
-			content = this.domainForm();
+			content = this.domainForm( isDomainStepCopyTreatment );
 		}
 
 		if ( ! this.props.stepSectionName && this.props.isReskinned ) {
@@ -793,33 +810,62 @@ class DomainsStep extends Component {
 			}
 		}
 
-		const headerText = this.getHeaderText();
-		const fallbackSubHeaderText = this.getSubHeaderText();
+		const domainTestEligibleSignupFlows = [
+			'onboarding',
+			'launch-site',
+			'free',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+		];
 
 		return (
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				backUrl={ backUrl }
-				positionInFlow={ this.props.positionInFlow }
-				headerText={ headerText }
-				subHeaderText={ fallbackSubHeaderText }
-				isExternalBackUrl={ isExternalBackUrl }
-				fallbackHeaderText={ headerText }
-				fallbackSubHeaderText={ fallbackSubHeaderText }
-				stepContent={
-					<div>
-						{ ! this.props.productsLoaded && <QueryProductsList /> }
-						{ this.renderContent() }
-					</div>
-				}
-				allowBackFirstStep={ !! backUrl }
-				backLabelText={ backLabelText }
-				hideSkip={ true }
-				goToNextStep={ this.handleSkip }
-				align={ isReskinned ? 'left' : 'center' }
-				isWideLayout={ isReskinned }
-			/>
+			<ProvideExperimentData
+				name="calypso_signup_domain_step_copy_test_202201_v2"
+				options={ {
+					isEligible: domainTestEligibleSignupFlows.includes( this.props.flowName ),
+				} }
+			>
+				{ ( isLoading, experimentAssignment ) => {
+					if ( isLoading ) {
+						return this.renderLoading();
+					}
+					const isDomainStepCopyTreatment = experimentAssignment?.variationName === 'treatment';
+					const headerText = this.getHeaderText( isDomainStepCopyTreatment );
+					const fallbackSubHeaderText = this.getSubHeaderText( isDomainStepCopyTreatment );
+
+					return (
+						<StepWrapper
+							flowName={ this.props.flowName }
+							stepName={ this.props.stepName }
+							backUrl={ backUrl }
+							positionInFlow={ this.props.positionInFlow }
+							headerText={ headerText }
+							subHeaderText={ fallbackSubHeaderText }
+							isExternalBackUrl={ isExternalBackUrl }
+							fallbackHeaderText={ headerText }
+							fallbackSubHeaderText={ fallbackSubHeaderText }
+							stepContent={
+								<div>
+									{ ! this.props.productsLoaded && <QueryProductsList /> }
+									{ this.renderContent( isDomainStepCopyTreatment ) }
+								</div>
+							}
+							allowBackFirstStep={ !! backUrl }
+							backLabelText={ backLabelText }
+							hideSkip={ true }
+							goToNextStep={ this.handleSkip }
+							align={ isReskinned ? 'left' : 'center' }
+							isWideLayout={ isReskinned }
+						/>
+					);
+				} }
+			</ProvideExperimentData>
 		);
 	}
 }

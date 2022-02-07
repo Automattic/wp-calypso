@@ -341,6 +341,23 @@ export default {
 			loadExperimentAssignment( 'calypso_mobile_plans_page_with_billing' );
 		}
 
+		const signupFlows = [
+			'onboarding',
+			'launch-site',
+			'free',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+		];
+		if ( signupFlows.includes( flowName ) ) {
+			loadExperimentAssignment( 'calypso_signup_domain_step_copy_test_202201_v2' );
+		}
+
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
