@@ -12,8 +12,8 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
-import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import 'calypso/state/purchases/init';
 
