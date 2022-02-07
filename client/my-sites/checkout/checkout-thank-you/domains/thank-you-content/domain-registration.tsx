@@ -56,7 +56,7 @@ const DomainRegistrationThankYouProps = ( {
 						),
 					},
 					{
-						stepKey: 'domain_registration_whats_next_plugin_setup',
+						stepKey: 'domain_registration_whats_next_view_domains',
 						stepTitle: translate( 'Manage your domains' ),
 						stepDescription: translate(
 							'View domain settings, manage every aspect of your domain and add additional domains.'
