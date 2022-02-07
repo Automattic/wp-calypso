@@ -289,14 +289,6 @@ function load_wpcom_block_editor_sidebar() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
 
 /**
- * Load WPCOM seller celebration modal.
- */
-function load_wpcom_seller_celebration_modal() {
-	require_once __DIR__ . '/wpcom-seller-celebration-modal/class-wpcom-seller-celebration-modal.php';
-}
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_seller_celebration_modal' );
-
-/**
  * Coming soon module.
  */
 function load_coming_soon() {

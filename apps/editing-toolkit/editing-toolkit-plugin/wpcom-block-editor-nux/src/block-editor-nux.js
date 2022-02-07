@@ -11,6 +11,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { getQueryArg } from '@wordpress/url';
 import DraftPostModal from './draft-post-modal';
 import PostPublishedModal from './post-published-modal';
+import SellerCelebrationModal from './seller-celebration-modal';
 import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT } from './store';
 import WpcomNux from './welcome-modal/wpcom-nux';
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
@@ -79,6 +80,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 		<>
 			<WelcomeTour />
 			<PostPublishedModal />
+			<SellerCelebrationModal />
 		</>
 	),
 } );
