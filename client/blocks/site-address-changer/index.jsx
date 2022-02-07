@@ -419,9 +419,9 @@ export class SiteAddressChanger extends Component {
 	};
 
 	renderConfirmationForm = () => {
-		const { currentDomain, currentDomainSuffix, siteId, translate } = this.props;
+		const { currentDomainSuffix, siteId, translate } = this.props;
 		const { domainFieldValue: newDomainName, newDomainSuffix } = this.state;
-		const currentDomainName = get( currentDomain, 'name', '' );
+		const currentDomainPrefix = this.getCurrentDomainPrefix();
 
 		return (
 			<form className="site-address-changer__dialog">
@@ -443,13 +443,13 @@ export class SiteAddressChanger extends Component {
 					/>
 					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
 						{ translate(
-							'{{strong}}%(currentDomainName)s{{/strong}}%(currentDomainSuffix)s will be removed and unavailable for use.',
+							'{{strong}}%(currentDomainPrefix)s{{/strong}}%(currentDomainSuffix)s will be removed and unavailable for use.',
 							{
 								components: {
 									strong: <strong />,
 								},
 								args: {
-									currentDomainName,
+									currentDomainPrefix,
 									currentDomainSuffix,
 								},
 							}
