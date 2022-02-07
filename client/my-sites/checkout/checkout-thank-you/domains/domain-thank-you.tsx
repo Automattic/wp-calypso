@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button, Gridicon } from '@automattic/components';
-import { useMemo } from 'react';
+import { translate } from 'i18n-calypso';
+import { useMemo, useEffect } from 'react';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
@@ -44,7 +45,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 	}, [ type, domain, selectedSiteSlug, email, hasProfessionalEmail, hideProfessionalEmailStep ] );
 	const dispatch = useDispatch();
 
-	React.useEffect( () => {
+	useEffect( () => {
 		dispatch( hideMasterbar() );
 		return () => {
 			dispatch( showMasterbar() );
@@ -57,7 +58,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 				<WordPressLogo className="checkout-thank-you__domains-header-logo" size={ 24 } />
 				<Button borderless={ true } href={ domainManagementRoot() }>
 					<Gridicon icon={ 'chevron-left' } size={ 18 } />
-					<span>All Domains</span>
+					<span>{ translate( 'All domains' ) }</span>
 				</Button>
 			</div>
 		);

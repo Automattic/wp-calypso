@@ -43,9 +43,9 @@ const DomainRegistrationThankYouProps = ( {
 					...( professionalEmail ? [ professionalEmail ] : [] ),
 					{
 						stepKey: 'domain_registration_whats_next_plugin_setup',
-						stepTitle: translate( 'Organize your domains' ),
+						stepTitle: translate( 'Manage your domains' ),
 						stepDescription: translate(
-							'Set up a primary domain, connect other domains and make sure people can find your site'
+							'View domain settings, manage every aspect of your domain and add additional domains.'
 						),
 						stepCta: (
 							<FullWidthButton
@@ -53,7 +53,7 @@ const DomainRegistrationThankYouProps = ( {
 								busy={ false }
 								disabled={ false }
 							>
-								{ translate( 'Manage domains' ) }
+								{ translate( 'View your domains' ) }
 							</FullWidthButton>
 						),
 					},
