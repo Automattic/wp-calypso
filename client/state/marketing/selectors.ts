@@ -1,3 +1,8 @@
+import {
+	JETPACK_PRODUCTS_BY_TERM,
+	JETPACK_RESET_PLANS_BY_TERM,
+	PRODUCT_JETPACK_SEARCH,
+} from '@automattic/calypso-products';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type { AppState } from 'calypso/types';
 import 'calypso/state/marketing/init';
@@ -34,4 +39,24 @@ export function getJetpackSaleCouponDiscountRatio( state: AppState ): number {
 export function getFullJetpackSaleCouponDiscountRatio( state: AppState ): number {
 	const discount = getJetpackSaleCoupon( state )?.final_discount || 0;
 	return discount / 100;
+}
+
+interface DiscountMap {
+	[ productSlug: string ]: number;
+}
+
+export function getJetpackCouponDiscountMap( state: AppState ): DiscountMap {
+	const discount = ( 100 - ( getJetpackSaleCoupon( state )?.discount || 0 ) ) / 100;
+	const discountMap: DiscountMap = {};
+
+	[ JETPACK_RESET_PLANS_BY_TERM, JETPACK_PRODUCTS_BY_TERM ].forEach( ( productSlugMap ) =>
+		productSlugMap.forEach( ( { yearly } ) => {
+			// search requires special discount support since
+			if ( yearly !== PRODUCT_JETPACK_SEARCH ) {
+				discountMap[ yearly ] = discount;
+			}
+		} )
+	);
+
+	return discountMap;
 }
