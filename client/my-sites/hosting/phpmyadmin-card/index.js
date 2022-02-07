@@ -14,6 +14,7 @@ import {
 	recordGoogleEvent,
 	bumpStat,
 } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RestorePasswordDialog from './restore-db-password';
 
@@ -50,7 +51,7 @@ export default function PhpMyAdminCard( { disabled } ) {
 				window.open( `https://wordpress.com/pma-login?token=${ token }` );
 			}
 		} catch {
-			// ignore errors
+			dispatch( errorNotice( translate( 'Could not open phpMyAdmin. Please try again.' ) ) );
 		}
 		setLoading( false );
 	}
