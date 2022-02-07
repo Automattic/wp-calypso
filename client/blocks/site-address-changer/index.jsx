@@ -329,7 +329,40 @@ export class SiteAddressChanger extends Component {
 	};
 
 	renderNewAddressForm = () => {
-		const { currentDomain, isAvailable, siteId, selectedSiteSlug, translate } = this.props;
+		const {
+			currentDomain,
+			isAvailable,
+			siteId,
+			selectedSiteSlug,
+			translate,
+			isAtomicSite,
+		} = this.props;
+
+		if ( isAtomicSite ) {
+			return (
+				<div className="site-address-changer__content">
+					<Gridicon icon="info-outline" />
+					{ translate( 'wpcomstaging.com addresses cannot be changed.' ) }
+				</div>
+			);
+		}
+
+		if ( ! currentDomain.currentUserCanManage ) {
+			return (
+				<div className="site-address-changer site-address-changer__only-owner-info">
+					<Gridicon icon="info-outline" />
+					{ isEmpty( currentDomain.owner )
+						? translate( 'Only the site owner can edit this domain name.' )
+						: translate(
+								'Only the site owner ({{strong}}%(ownerInfo)s{{/strong}}) can edit this domain name.',
+								{
+									args: { ownerInfo: currentDomain.owner },
+									components: { strong: <strong /> },
+								}
+						  ) }
+				</div>
+			);
+		}
 
 		const { domainFieldValue } = this.state;
 		const currentDomainName = get( currentDomain, 'name', '' );
@@ -461,33 +494,7 @@ export class SiteAddressChanger extends Component {
 	};
 
 	render() {
-		const { currentDomain, translate, isAtomicSite, isDialogVisible, onClose } = this.props;
-
-		if ( ! currentDomain.currentUserCanManage ) {
-			return (
-				<div className="site-address-changer site-address-changer__only-owner-info">
-					<Gridicon icon="info-outline" />
-					{ isEmpty( currentDomain.owner )
-						? translate( 'Only the site owner can edit this domain name.' )
-						: translate(
-								'Only the site owner ({{strong}}%(ownerInfo)s{{/strong}}) can edit this domain name.',
-								{
-									args: { ownerInfo: currentDomain.owner },
-									components: { strong: <strong /> },
-								}
-						  ) }
-				</div>
-			);
-		}
-
-		if ( isAtomicSite ) {
-			return (
-				<div className="site-address-changer site-address-changer__only-owner-info">
-					<Gridicon icon="info-outline" />
-					{ translate( 'wpcomstaging.com addresses cannot be changed.' ) }
-				</div>
-			);
-		}
+		const { isDialogVisible, onClose } = this.props;
 
 		return (
 			<Dialog
