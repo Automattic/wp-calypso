@@ -34,6 +34,7 @@ import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
+	persistSignupDestination,
 } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -370,11 +371,7 @@ export class UpsellNudge extends Component {
 		}
 	}
 
-	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
-		const { trackUpsellButtonClick, upsellType } = this.props;
-
-		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
-
+	getThankYouPageUrlForIncomingCart = ( shouldHideUpsellNudges = true ) => {
 		const getThankYouPageUrlArguments = {
 			siteSlug: this.props.siteSlug,
 			receiptId: this.props.receiptId || 'noPreviousPurchase',
@@ -383,7 +380,15 @@ export class UpsellNudge extends Component {
 			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
 		};
 
-		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+		return getThankYouPageUrl( getThankYouPageUrlArguments );
+	};
+
+	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
+		const { trackUpsellButtonClick, upsellType } = this.props;
+
+		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
+
+		const url = this.getThankYouPageUrlForIncomingCart( shouldHideUpsellNudges );
 
 		// Removes the destination cookie only if redirecting to the signup destination.
 		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
@@ -428,6 +433,13 @@ export class UpsellNudge extends Component {
 		// Professional Email needs to add the locally built cartItem to the cart,
 		// as we need to handle validation failures before redirecting to checkout.
 		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType ) {
+			// If we don't have an existing destination, calculate the thank you destination for
+			// the original cart contents, and only store it if the cart update succeeds.
+			const destinationFromCookie = retrieveSignupDestination();
+			const destinationToPersist = destinationFromCookie
+				? null
+				: this.getThankYouPageUrlForIncomingCart( true );
+
 			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ).then( () => {
 				if ( this.props?.cart?.messages ) {
 					const { errors } = this.props.cart.messages;
@@ -436,6 +448,11 @@ export class UpsellNudge extends Component {
 						return;
 					}
 				}
+
+				if ( destinationToPersist ) {
+					persistSignupDestination( destinationToPersist );
+				}
+
 				page( '/checkout/' + siteSlug );
 			} );
 			return;
