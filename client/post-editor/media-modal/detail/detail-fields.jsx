@@ -174,6 +174,21 @@ class EditorMediaModalDetailFields extends Component {
 		);
 	};
 
+	renderOriginalVideoUrl = () => {
+		const videopressGuid = this.getItemValue( 'videopress_guid' );
+
+		// only render this field if its for a videopress video, and if the provided URL doesn't match the original_url
+		if ( ! videopressGuid || this.getItemValue( 'URL' ) === this.getItemValue( 'original_url' ) ) {
+			return;
+		}
+
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Original URL' ) }>
+				<ClipboardButtonInput value={ this.getItemValue( 'original_url' ) } />
+			</EditorMediaModalFieldset>
+		);
+	};
+
 	renderRating = () => {
 		const items = [
 			{
@@ -317,6 +332,7 @@ class EditorMediaModalDetailFields extends Component {
 				{ this.renderAllowDownloadOption() }
 				{ this.renderRating() }
 				{ this.renderVideoPressShortcode() }
+				{ this.renderOriginalVideoUrl() }
 			</div>
 		);
 	}
