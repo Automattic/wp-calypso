@@ -26,14 +26,14 @@ function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose } ) {
 		return buttons;
 	};
 
-	const getWarningHeader = () => {
+	const renderWarningHeader = () => {
 		if ( p2HubP2Count ) {
 			return translate( 'P2 workspace' );
 		}
 		return translate( 'Paid Upgrades' );
 	};
 
-	const getWarningContent = () => {
+	const renderWarningContent = () => {
 		if ( p2HubP2Count ) {
 			return translate(
 				'There is %(numP2s)d P2 in your workspace. Please delete it prior to deleting your workspace.',
@@ -58,8 +58,8 @@ function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose } ) {
 			onClose={ onClose }
 			className="delete-site-warning-dialog"
 		>
-			<h1>{ getWarningHeader() }</h1>
-			<p>{ getWarningContent() }</p>
+			<h1>{ renderWarningHeader() }</h1>
+			<p>{ renderWarningContent() }</p>
 		</Dialog>
 	);
 }
