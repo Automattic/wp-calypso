@@ -1,0 +1,68 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.license-product-card {
+	width: 100%;
+
+	@include break-wide {
+		width: 33.33%;
+	}
+}
+
+.license-product-card__inner {
+	margin: 0.5rem 0;
+	padding: 1.5rem;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	cursor: pointer;
+	user-select: none;
+
+	@include break-wide {
+		margin: 0.5rem;
+	}
+}
+
+.license-product-card.selected .license-product-card__inner {
+	border: 1px solid #fff;
+	background: #fff;
+	box-shadow: 0 0 12px #ddd;
+}
+
+.license-product-card__title {
+	font-size: 1.5rem;
+	margin-bottom: 1rem;
+	color: #444;
+	display: inline-block;
+}
+
+.license-product-card__radio {
+	border: 2px solid #444;
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	float: right;
+	border-radius: 10px; /* stylelint-disable-line */
+}
+
+.license-product-card__radio .gridicon {
+	color: #fff;
+	position: relative;
+	top: -4px;
+	left: 1px;
+	width: 14px;
+}
+
+.license-product-card.selected .license-product-card__radio {
+	border: 2px solid var( --studio-jetpack-green-50 );
+	background: var( --studio-jetpack-green-50 );
+}
+
+/*
+ * This is currently not being used, but should remain because it will be
+ * added back in when we show prices for licenses.
+ */
+p.license-product-card__text {
+	font-size: 0.75rem;
+	color: #777;
+	margin-bottom: 0;
+}
