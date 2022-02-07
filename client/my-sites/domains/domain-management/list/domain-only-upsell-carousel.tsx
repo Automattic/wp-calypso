@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import placeholderImage from 'calypso/assets/images/domains/domain.svg';
 import DotPager from 'calypso/components/dot-pager';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { createSiteFromDomainOnly } from '../../paths';
@@ -12,11 +13,24 @@ import './style.scss';
 
 const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.Element => {
 	const translate = useTranslate();
-	const { domain } = props;
+	const { domain, dispatchRecordTracksEvent } = props;
 
 	const illustration = <img src={ placeholderImage } alt="" width={ 140 } />;
 
+	const getActionClickHandler = (
+		type: string,
+		buttonURL: string,
+		sourceCardType: string
+	) => () => {
+		dispatchRecordTracksEvent( 'calypso_empty_domain_list_card_action', {
+			button_type: type,
+			button_url: buttonURL,
+			source_card_type: sourceCardType,
+		} );
+	};
+
 	const renderAddSiteCard = () => {
+		const actionUrl = createSiteFromDomainOnly( domain.domain, domain.blogId );
 		return (
 			<Card className="domain-only-upsell-carousel__card" key="domain-only-upsell-site">
 				<div className="domain-only-upsell-carousel__card-wrapper is-compact">
@@ -31,17 +45,26 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 							<h3> { translate( 'Choose a theme, customize and launch your site.' ) } </h3>
 						</div>
 						<div className="domain-only-upsell-carousel__card-actions">
-							<Button primary href={ createSiteFromDomainOnly( domain.domain, domain.blogId ) }>
+							<Button
+								primary
+								href={ actionUrl }
+								onClick={ getActionClickHandler( 'primary', actionUrl, 'create-site' ) }
+							>
 								{ translate( 'Create site' ) }
 							</Button>
 						</div>
 					</div>
 				</div>
+				<TrackComponentView
+					eventName="calypso_domain_only_upsell_carousel_impression"
+					eventProperties={ { content_type: 'create-site' } }
+				/>
 			</Card>
 		);
 	};
 
 	const renderEmailCard = () => {
+		const actionUrl = emailManagementPurchaseNewEmailAccount( domain.domain, domain.domain );
 		return (
 			<Card className="domain-only-upsell-carousel__card" key="domain-only-upsell-email">
 				<div className="domain-only-upsell-carousel__card-wrapper is-compact">
@@ -62,13 +85,18 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 						<div className="domain-only-upsell-carousel__card-actions">
 							<Button
 								primary
-								href={ emailManagementPurchaseNewEmailAccount( domain.domain, domain.domain ) }
+								href={ actionUrl }
+								onClick={ getActionClickHandler( 'primary', actionUrl, 'add-professional-email' ) }
 							>
 								{ translate( 'Add professional email' ) }
 							</Button>
 						</div>
 					</div>
 				</div>
+				<TrackComponentView
+					eventName="calypso_domain_only_upsell_carousel_impression"
+					eventProperties={ { content_type: 'add-professional-email' } }
+				/>
 			</Card>
 		);
 	};
@@ -76,14 +104,16 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 	const cards = [ renderAddSiteCard(), renderEmailCard() ];
 
 	return (
-		<DotPager
-			className="domain-only-upsell-carousel"
-			hasDynamicHeight
-			showControlLabels={ false }
-			onPageSelected={ () => null }
-		>
-			{ cards }
-		</DotPager>
+		<>
+			<DotPager
+				className="domain-only-upsell-carousel"
+				hasDynamicHeight
+				showControlLabels={ false }
+				onPageSelected={ () => null }
+			>
+				{ cards }
+			</DotPager>
+		</>
 	);
 };
 
