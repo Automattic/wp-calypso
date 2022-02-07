@@ -206,7 +206,7 @@ class GoogleMyBusinessStats extends Component {
 
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
 
-				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
+				<QuerySiteKeyrings siteId={ siteId } />
 				<QueryKeyringConnections forceRefresh />
 				<QueryKeyringServices />
 
