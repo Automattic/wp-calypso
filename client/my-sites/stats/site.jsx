@@ -353,7 +353,7 @@ class StatsSite extends Component {
 			<Main wideLayout>
 				<QueryKeyringConnections />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }
+				<QuerySiteKeyrings siteId={ siteId } />
 				<DocumentHead title={ translate( 'Stats and Insights' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
