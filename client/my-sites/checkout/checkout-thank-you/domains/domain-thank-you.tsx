@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import domainThankYouContent from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content';
 import {
 	DomainThankYouProps,
 	DomainThankYouType,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 import './style.scss';
 
@@ -36,6 +38,14 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 			hideProfessionalEmailStep,
 		} );
 	}, [ type, domain, selectedSiteSlug, email, hasProfessionalEmail, hideProfessionalEmailStep ] );
+	const dispatch = useDispatch();
+
+	React.useEffect( () => {
+		dispatch( hideMasterbar() );
+		return () => {
+			dispatch( showMasterbar() );
+		};
+	}, [ dispatch ] );
 
 	return (
 		<ThankYou
