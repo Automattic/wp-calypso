@@ -437,7 +437,7 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	);
 }
 
-export function setFeaturesOnSite( callback, { siteSlug } ) {
+export function getSiteFeatures( callback, { siteSlug } ) {
 	if ( ! siteSlug ) {
 		defer( callback );
 		return;

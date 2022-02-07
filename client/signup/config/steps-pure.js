@@ -29,7 +29,7 @@ export function generateSteps( {
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
-	setFeaturesOnSite = noop,
+	getSiteFeatures = noop,
 	setIntentOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
@@ -201,7 +201,7 @@ export function generateSteps( {
 		'store-features': {
 			stepName: 'store-features',
 			dependencies: [ 'siteSlug' ],
-			apiRequestFunction: setFeaturesOnSite,
+			apiRequestFunction: getSiteFeatures,
 			delayApiRequestUntilComplete: true,
 			providesDependencies: [ 'isFSEActive' ],
 			optionalDependencies: [ 'isFSEActive' ],
