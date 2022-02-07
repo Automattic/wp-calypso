@@ -43,7 +43,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
-const FSE_BETA_ROLLOUT_PERCENTAGE_START_FLOW = 50;
+const FSE_BETA_ROLLOUT_PERCENTAGE_START_FLOW = 100;
 
 const isUserAssignedFSEBeta = ( userId ) => {
 	if ( ! userId ) {
