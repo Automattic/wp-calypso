@@ -38,7 +38,7 @@ const CityZipRow = styled.div`
 `;
 
 export default function StepStoreAddress( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToNextStep, isReskinned } = props;
+	const { goToNextStep, isReskinned, signupDependencies } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -56,12 +56,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	const { get, save, update } = useSiteSettings( siteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
-	// Get the correct URL for the back button.
-	const urlParams = new URLSearchParams( window.location.search );
-	const backPath = urlParams.get( 'back_to' ) ?? '';
-	const backUrl = backPath.match( /^\/(?!\/)/ )
-		? backPath
-		: `/woocommerce-installation/${ domain }`;
+	const backUrl = signupDependencies.back_to ?? `/woocommerce-installation/${ domain }`;
 
 	const { validate, clearError, getError, errors } = useAddressFormValidation( siteId );
 
