@@ -41,7 +41,7 @@ import {
 import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getByPurchaseId, isInAppPurchase } from 'calypso/state/purchases/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { managePurchase } from '../paths';
@@ -415,11 +415,7 @@ function PurchaseMetaExpiration( {
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
 
-	const purchaseIsInAppPurchase = useSelector( ( state ) =>
-		isInAppPurchase( state, purchase?.id )
-	);
-
-	if ( ! purchase || isDomainTransfer( purchase ) || purchaseIsInAppPurchase ) {
+	if ( ! purchase || isDomainTransfer( purchase ) || purchase?.isInAppPurchase ) {
 		return null;
 	}
 
