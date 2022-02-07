@@ -1,5 +1,5 @@
 import page from 'page';
-import { Component, useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 function updateUrlSearchQuery( queryName, queryValue ) {
 	if ( typeof window === 'undefined' ) {
@@ -58,10 +58,8 @@ export function useUrlSearchQueryState( queryName ) {
 }
 
 export const withUrlSearchQueryState = ( WrappedComponent, queryName ) => {
-	return class WithSearchQueryState extends Component {
-		render() {
-			const updateUrlSearch = ( value ) => updateUrlSearchQuery( queryName, value );
-			return <WrappedComponent updateUrlSearchQuery={ updateUrlSearch } { ...this.props } />;
-		}
+	return function WithSearchQueryState( props ) {
+		const updateUrlSearch = ( value ) => updateUrlSearchQuery( queryName, value );
+		return <WrappedComponent updateUrlSearchQuery={ updateUrlSearch } { ...props } />;
 	};
 };
