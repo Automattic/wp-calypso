@@ -1,3 +1,4 @@
+import { Icon, info } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import domainRegisteredSuccess from 'calypso/assets/images/domains/domain.svg';
 import { buildDomainStepForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
@@ -24,15 +25,22 @@ const DomainRegistrationThankYouProps = ( {
 			selectedSiteSlug,
 		},
 		'REGISTRATION',
-		false
+		true
 	);
 
 	const returnProps: DomainThankYouProps = {
+		thankYouNotice: {
+			noticeTitle: translate(
+				'During setup your domain may be unreliable during the first 30 minutes.'
+			),
+			noticeIconCustom: <Icon icon={ info } size={ 24 } />,
+		},
 		sections: [
 			{
 				sectionKey: 'domain_registration_whats_next',
 				sectionTitle: translate( 'What’s next?' ),
 				nextSteps: [
+					...( professionalEmail ? [ professionalEmail ] : [] ),
 					{
 						stepKey: 'domain_registration_whats_next_plugin_setup',
 						stepTitle: translate( 'Organize your domains' ),
@@ -42,7 +50,6 @@ const DomainRegistrationThankYouProps = ( {
 						stepCta: (
 							<FullWidthButton
 								href={ domainManagementList( selectedSiteSlug ?? domain, null ) }
-								primary
 								busy={ false }
 								disabled={ false }
 							>
@@ -50,7 +57,6 @@ const DomainRegistrationThankYouProps = ( {
 							</FullWidthButton>
 						),
 					},
-					...( professionalEmail ? [ professionalEmail ] : [] ),
 				],
 			},
 		],
@@ -60,7 +66,7 @@ const DomainRegistrationThankYouProps = ( {
 			width: '150px',
 			height: 'auto',
 		},
-		thankYouTitle: translate( 'Congratulations on your purchase!' ),
+		thankYouTitle: translate( 'All ready to go!' ),
 		thankYouSubtitle: translate(
 			'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.',
 			{

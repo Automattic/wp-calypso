@@ -39,6 +39,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 
 	return (
 		<ThankYou
+			headerBackgroundColor="var( --studio-white )"
 			containerClassName="checkout-thank-you__domains"
 			sections={ thankYouProps.sections }
 			showSupportSection={ true }

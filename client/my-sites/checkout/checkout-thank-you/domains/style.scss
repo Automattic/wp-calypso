@@ -11,3 +11,34 @@
 		padding-left: 0;
 	}
 }
+
+.checkout-thank-you__domains {
+	.thank-you__container-header {
+		min-height: auto;
+		margin-top: 80px;
+		padding-bottom: 0;
+	}
+	.thank-you__header-title {
+		color: var( --studio-gray-100 );
+		@include break-small {
+			font-size: $font-headline-medium;
+		}
+	}
+	.thank-you__header-subtitle {
+		color: var( --studio-gray-100 );
+	}
+	.thank-you__body {
+		margin-top: 72px;
+	}
+	.thank-you__notice {
+		background-color: var( --studio-gray-0 );
+		color: var( --studio-gray-50 );
+		max-width: 600px;
+		height: auto;
+		margin: auto;
+		svg {
+			fill: var( --studio-gray-50 );
+			margin-right: 3px;
+		}
+	}
+}
