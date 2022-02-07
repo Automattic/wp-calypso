@@ -1,4 +1,4 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -9,6 +9,7 @@ import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -25,7 +26,6 @@ import { isRequestingSiteAddressChange } from 'calypso/state/site-address-change
 import { isSiteAddressValidationAvailable } from 'calypso/state/site-address-change/selectors/is-site-address-validation-available';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
@@ -312,25 +312,28 @@ export class SiteAddressChanger extends Component {
 		const addDomainPath = '/domains/add/' + selectedSiteSlug;
 
 		return (
-			<form onSubmit={ this.onSubmit }>
+			<form onSubmit={ this.onSubmit } className="site-address-changer__content">
 				<TrackComponentView
 					eventName="calypso_siteaddresschange_form_view"
 					eventProperties={ { blog_id: siteId } }
 				/>
-				<Card className="site-address-changer__content">
-					<div className="site-address-changer__info">
-						<p>
-							{ translate(
-								'Once you change your site address, %(currentDomainName)s will no longer be available. {{a}}Did you want to add a custom domain instead?{{/a}}',
-								{
-									args: { currentDomainName },
-									components: {
-										a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
-									},
-								}
-							) }
-						</p>
-					</div>
+				<FormSectionHeading>
+					<strong>{ translate( 'Change your site address' ) }</strong>
+				</FormSectionHeading>
+				<div className="site-address-changer__info">
+					<p>
+						{ translate(
+							'Once you change your site address, %(currentDomainName)s will no longer be available. {{a}}Did you want to add a custom domain instead?{{/a}}',
+							{
+								args: { currentDomainName },
+								components: {
+									a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
+								},
+							}
+						) }
+					</p>
+				</div>
+				<div className="site-address-changer__details">
 					<FormLabel htmlFor="site-address-changer__text-input">
 						{ translate( 'Enter your new site address' ) }
 					</FormLabel>
@@ -354,7 +357,7 @@ export class SiteAddressChanger extends Component {
 							{ translate( 'Change site address' ) }
 						</FormButton>
 					</FormButtonsBar>
-				</Card>
+				</div>
 			</form>
 		);
 	};
@@ -374,7 +377,7 @@ export class SiteAddressChanger extends Component {
 					} }
 				/>
 				<h1 className="site-address-changer__dialog-heading">
-					{ translate( 'Confirm Site Address Change' ) }
+					{ translate( 'Confirm your decision' ) }
 				</h1>
 				<div className="site-address-changer__confirmation-detail">
 					<Gridicon
