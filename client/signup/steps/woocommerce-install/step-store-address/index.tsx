@@ -56,6 +56,13 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	const { get, save, update } = useSiteSettings( siteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
+	// Get the correct URL for the back button.
+	const urlParams = new URLSearchParams( window.location.search );
+	const backPath = urlParams.get( 'back_to' ) ?? '';
+	const backUrl = backPath.match( /^\/(?!\/)/ )
+		? backPath
+		: `/woocommerce-installation/${ domain }`;
+
 	const { validate, clearError, getError, errors } = useAddressFormValidation( siteId );
 
 	// @todo: Add a general hook to get and update multi-option data like the profile.
@@ -207,7 +214,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 			flowName="woocommerce-install"
 			hideSkip={ true }
 			allowBackFirstStep={ true }
-			backUrl={ `/woocommerce-installation/${ domain }` }
+			backUrl={ backUrl }
 			headerText={ __( 'Add an address to accept payments' ) }
 			fallbackHeaderText={ __( 'Add an address to accept payments' ) }
 			subHeaderText={ __(

@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import page from 'page';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -44,7 +45,11 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 			feature: 'woop', // WooCommerce on Plans
 		} );
 
-		return page( `/start/woocommerce-install/?siteSlug=${ wpcomDomain }` );
+		return page(
+			addQueryArgs( `/start/woocommerce-install/?siteSlug=${ wpcomDomain }`, {
+				back_to: `/woocommerce-installation/${ wpcomDomain }`,
+			} )
+		);
 	}
 
 	function renderWarningNotice() {
