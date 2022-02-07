@@ -25,7 +25,9 @@ export const clearPurchases = () => ( dispatch, getState ) => {
 
 	dispatch( { type: PURCHASES_REMOVE } );
 	dispatch( requestHappychatEligibility() );
-	dispatch( requestAdminMenu( siteId ) );
+	if ( siteId ) {
+		dispatch( requestAdminMenu( siteId ) );
+	}
 };
 
 export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
@@ -90,7 +92,9 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch, getState ) =
 				} );
 
 				dispatch( requestHappychatEligibility() );
-				dispatch( requestAdminMenu( siteId ) );
+				if ( siteId ) {
+					dispatch( requestAdminMenu( siteId ) );
+				}
 
 				resolve( data );
 			} )
