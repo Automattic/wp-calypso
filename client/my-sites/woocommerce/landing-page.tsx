@@ -82,23 +82,35 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const promos: PromoSectionProps = {
 		promos: [
 			{
-				title: __( 'Run Your Store From Anywhere' ),
+				title: (
+					<>
+						<Gridicon icon="globe" />
+						{ __( 'Run Your Store From Anywhere' ) }
+					</>
+				),
 				body: __(
 					'Manage your business on the go with the WooCommerce Mobile App. Create products, process orders, and keep an eye on key stats in real-time.'
 				),
-				image: <Gridicon icon="globe" />,
 			},
 			{
-				title: __( 'Learn With a Global Community' ),
+				title: (
+					<>
+						<Gridicon icon="user-circle" />
+						{ __( 'Learn With a Global Community' ) }
+					</>
+				),
 				body: __( 'WooCommerce is one of the fastest-growing eCommerce communities.' ),
-				image: <Gridicon icon="user-circle" />,
 			},
 			{
-				title: __( 'Customize and Extend' ),
+				title: (
+					<>
+						<Gridicon icon="story" />
+						{ __( 'Customize and Extend' ) }
+					</>
+				),
 				body: __(
 					'From subscriptions to gym classes to luxury cars, WooCommerce is fully customizable.'
 				),
-				image: <Gridicon icon="story" />,
 			},
 		],
 	};
