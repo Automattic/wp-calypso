@@ -44,16 +44,11 @@ export default function PostCheckoutUpsellExperimentRedirector( {
 		}
 
 		if ( upsellExperimentAssignmentName === experimentAssignment?.variationName ) {
-			//page( upsellUrl );
-			//return;
-			if ( getThankYouUrl() ) {
-				// remove this condition
-			}
+			page( upsellUrl );
+			return;
 		}
 
-		//page( getThankYouUrl() );
-
-		page( upsellUrl );
+		page( getThankYouUrl() );
 	} );
 
 	return null;
