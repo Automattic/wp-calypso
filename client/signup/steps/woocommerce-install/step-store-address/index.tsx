@@ -10,7 +10,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ActionSection, StyledNextButton } from '..';
 import SupportCard from '../components/support-card';
@@ -24,7 +23,7 @@ import {
 	WOOCOMMERCE_ONBOARDING_PROFILE,
 	optionNameType,
 } from '../hooks/use-site-settings';
-import type { WooCommerceInstallProps } from '..';
+import type { WooCommerceStoreAddressProps } from '..';
 import './style.scss';
 
 const CityZipRow = styled.div`
@@ -37,7 +36,9 @@ const CityZipRow = styled.div`
 	justify-items: stretch;
 `;
 
-export default function StepStoreAddress( props: WooCommerceInstallProps ): ReactElement | null {
+export default function StepStoreAddress(
+	props: WooCommerceStoreAddressProps
+): ReactElement | null {
 	const { goToNextStep, isReskinned, signupDependencies } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -54,9 +55,8 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	} );
 
 	const { get, save, update } = useSiteSettings( siteId );
-	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
-	const backUrl = signupDependencies.back_to ?? `/woocommerce-installation/${ domain }`;
+	const backUrl = signupDependencies.back_to;
 
 	const { validate, clearError, getError, errors } = useAddressFormValidation( siteId );
 

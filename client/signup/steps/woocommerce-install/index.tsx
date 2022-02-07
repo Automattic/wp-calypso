@@ -17,6 +17,23 @@ export interface WooCommerceInstallProps {
 	signupDependencies: {
 		siteSlug: string;
 		siteConfirmed?: number;
+	};
+}
+export interface WooCommerceStoreAddressProps {
+	siteId: number;
+	goToStep: GoToStep;
+	goToNextStep: GoToNextStep;
+	stepName: string;
+	stepSectionName: string;
+	isReskinned: boolean;
+	headerTitle: string;
+	headerDescription: string;
+	queryObject: {
+		site: string;
+	};
+	signupDependencies: {
+		site: string;
+		siteConfirmed?: number;
 		back_to?: string;
 	};
 }
