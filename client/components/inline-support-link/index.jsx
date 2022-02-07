@@ -118,8 +118,9 @@ class InlineSupportLink extends Component {
 				className={ classnames( 'inline-support-link', className ) }
 				href={ url }
 				onClick={ ( event ) => {
-					openDialog( event, supportPostId, url );
+					const openDialogReturn = openDialog( event, supportPostId, url );
 					this.props.updateUrlSearchQuery( supportPostId );
+					return openDialogReturn;
 				} }
 				onMouseEnter={
 					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates
