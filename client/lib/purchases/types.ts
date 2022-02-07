@@ -21,6 +21,7 @@ export interface Purchase {
 	domain: string;
 	isLocked: boolean;
 	isInAppPurchase: boolean;
+	iapPurchaseManagementLink?: string;
 }
 
 export interface PurchasePayment {

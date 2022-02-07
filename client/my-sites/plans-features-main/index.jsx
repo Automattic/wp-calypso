@@ -43,7 +43,7 @@ import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
-import { isInAppPurchase } from 'calypso/state/purchases/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
@@ -507,15 +507,16 @@ PlansFeaturesMain.defaultProps = {
 export default connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
-		const currentPlan = getSitePlan( state, siteId );
-		const currentPurchase = getCurrentPlan( state, siteId );
-		const sitePlanSlug = currentPlan?.product_slug;
+		const sitePlan = getSitePlan( state, siteId );
+		const currentPlan = getCurrentPlan( state, siteId );
+		const currentPurchase = getByPurchaseId( state, currentPlan?.id );
+		const sitePlanSlug = sitePlan?.product_slug;
 		const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
 
 		let customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
 			selectedPlan: props.selectedPlan,
-			currentPlan,
+			sitePlan,
 		} );
 
 		// Make sure the plans for the default customer type can be purchased.
@@ -528,7 +529,7 @@ export default connect(
 		}
 
 		return {
-			currentPurchaseIsInAppPurchase: isInAppPurchase( state, currentPurchase?.id ),
+			currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,
 			customerType,
 			domains: getDomainsBySiteId( state, siteId ),
 			isChatAvailable: isHappychatAvailable( state ),

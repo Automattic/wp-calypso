@@ -83,6 +83,7 @@ describe( 'selectors', () => {
 				error: null,
 				expiryDate: undefined,
 				expiryStatus: '',
+				iapPurchaseManagementLink: undefined,
 				includedDomain: undefined,
 				includedDomainPurchaseAmount: undefined,
 				introductoryOffer: null,

@@ -1000,7 +1000,7 @@ class PurchaseNotice extends Component {
 						},
 					}
 				) }
-			></Notice>
+			/>
 		);
 	}
 
