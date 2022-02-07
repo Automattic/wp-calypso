@@ -10,8 +10,6 @@ jest.mock( 'calypso/lib/wporg', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/blocks/upsell-nudge', () => 'upsell-nudge' );
-jest.mock( 'calypso/components/notice', () => 'Notice' );
-jest.mock( 'calypso/components/notice/notice-action', () => 'NoticeAction' );
 
 jest.mock( '@automattic/languages', () => [
 	{
@@ -52,7 +50,10 @@ const initialReduxState = {
 		},
 	},
 	ui: { selectedSiteId: 1 },
-	sites: { items: { 1: { ID: 1, plan: { productSlug: PLAN_FREE } } } },
+	sites: {
+		items: { 1: { ID: 1, title: 'Test Site', plan: { productSlug: PLAN_FREE } } },
+		connection: { items: { 1: true } },
+	},
 	currentUser: { capabilities: { 1: { manage_options: true } } },
 	media: {
 		queries: {
@@ -171,5 +172,15 @@ describe( 'PluginsBrowser basic tests', () => {
 		expect(
 			comp.find( 'upsell-nudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length
 		).toBe( 0 );
+	} );
+	test( 'should show notice if site is not connected to wpcom', () => {
+		const comp = mountWithRedux( <PluginsBrowser />, {
+			ui: { selectedSiteId: 1 },
+			sites: {
+				items: { 1: { jetpack: false } },
+				connection: { items: { 1: false } },
+			},
+		} );
+		expect( comp.containsMatchingElement( <span>I’d like to fix this now</span> ) ).toBeTruthy();
 	} );
 } );

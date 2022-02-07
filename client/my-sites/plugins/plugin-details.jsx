@@ -24,6 +24,11 @@ import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custo
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
@@ -49,6 +54,7 @@ import {
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	isJetpackSite,
@@ -101,6 +107,14 @@ function PluginDetails( props ) {
 	const isWpcom = selectedSite && ! isJetpack;
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
+	const isSiteConnected = useSelector( ( state ) =>
+		getSiteConnectionStatus( state, selectedSite?.ID )
+	);
+	const trackSiteDisconnect = () =>
+		composeAnalytics(
+			recordGoogleEvent( 'Jetpack', 'Clicked in site indicator to start Jetpack Disconnect flow' ),
+			recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
+		);
 
 	// Header Navigation and billing period switcher.
 	const isWide = useBreakpoint( '>1280px' );
@@ -246,6 +260,25 @@ function PluginDetails( props ) {
 				plugins={ [ fullPlugin ] }
 			/>
 
+			{ isSiteConnected === false && (
+				<Notice
+					icon="notice"
+					showDismiss={ false }
+					status="is-warning"
+					text={ translate( '%(siteName)s cannot be accessed.', {
+						textOnly: true,
+						args: { siteName: selectedSite.title },
+					} ) }
+				>
+					<NoticeAction
+						onClick={ trackSiteDisconnect }
+						href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
+					>
+						{ translate( 'I’d like to fix this now' ) }
+					</NoticeAction>
+				</Notice>
+			) }
+
 			<div className="plugin-details__page">
 				<div className="plugin-details__layout plugin-details__top-section">
 					<div className="plugin-details__layout-col-left">
@@ -261,6 +294,7 @@ function PluginDetails( props ) {
 							isPlaceholder={ showPlaceholder }
 							billingPeriod={ billingPeriod }
 							isMarketplaceProduct={ isMarketplaceProduct }
+							isSiteConnected={ isSiteConnected }
 						/>
 					</div>
 				</div>
