@@ -3,7 +3,7 @@ import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite/get-gsuite-subsc
 /**
  * Given a domain object, does that domain have G Suite with us.
  *
- * @param {undefined|{googleAppsSubscription?:{status?: string}}} domain - Domain object
+ * @param {undefined|{googleAppsSubscription?:{status?: string}}|import('calypso/lib/domains/types').ResponseDomain} domain - Domain object
  * @returns {boolean} - true if the domain is under our management, false otherwise
  */
 export function hasGSuiteWithUs( domain ) {
