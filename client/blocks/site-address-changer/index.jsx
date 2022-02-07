@@ -4,8 +4,6 @@ import { debounce, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormButton from 'calypso/components/forms/form-button';
-import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -16,9 +14,9 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
-	requestSiteAddressChange,
-	requestSiteAddressAvailability,
 	clearValidationError,
+	requestSiteAddressAvailability,
+	requestSiteAddressChange,
 } from 'calypso/state/site-address-change/actions';
 import { getSiteAddressAvailabilityPending } from 'calypso/state/site-address-change/selectors/get-site-address-availability-pending';
 import { getSiteAddressValidationError } from 'calypso/state/site-address-change/selectors/get-site-address-validation-error';
@@ -26,7 +24,9 @@ import { isRequestingSiteAddressChange } from 'calypso/state/site-address-change
 import { isSiteAddressValidationAvailable } from 'calypso/state/site-address-change/selectors/is-site-address-validation-available';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
 import './style.scss';
+
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
 const VALIDATION_DEBOUNCE_MS = 800;
@@ -126,9 +126,7 @@ export class SiteAddressChanger extends Component {
 		} );
 	}
 
-	onSubmit = ( event ) => {
-		event.preventDefault();
-
+	onSubmit = () => {
 		if ( ! this.state.validationMessage ) {
 			this.showConfirmationForm();
 		}
@@ -285,34 +283,64 @@ export class SiteAddressChanger extends Component {
 		} );
 	};
 
-	renderNewAddressForm = () => {
-		const {
-			currentDomain,
-			isAvailabilityPending,
-			isAvailable,
-			isSiteAddressChangeRequesting,
-			siteId,
-			selectedSiteSlug,
-			translate,
-		} = this.props;
+	getStepButtons = () => {
+		const { translate } = this.props;
 
-		const { domainFieldValue, newDomainSuffix } = this.state;
-		const { currentDomainSuffix } = this.props;
+		if ( 0 === this.state.step ) {
+			const { isAvailabilityPending, isAvailable, isSiteAddressChangeRequesting } = this.props;
+
+			const { domainFieldValue, newDomainSuffix } = this.state;
+			const { currentDomainSuffix } = this.props;
+			const currentDomainPrefix = this.getCurrentDomainPrefix();
+			const isBusy = isSiteAddressChangeRequesting || isAvailabilityPending;
+
+			const isDisabled =
+				( domainFieldValue === currentDomainPrefix && newDomainSuffix === currentDomainSuffix ) ||
+				! isAvailable ||
+				this.isUnsyncedAtomicSite();
+
+			return [
+				{
+					action: 'confirm',
+					additionalClassNames: [ isBusy ? 'is-busy' : '' ],
+					isPrimary: true,
+					disabled: isDisabled,
+					label: translate( 'Change site address' ),
+					onClick: this.onSubmit,
+				},
+			];
+		} else if ( 1 === this.state.step ) {
+			return [
+				{
+					action: 'cancel',
+					onClick: this.onConfirmationFormClose,
+					isPrimary: false,
+					label: translate( 'Cancel' ),
+				},
+				{
+					action: 'confirm',
+					disabled: ! this.state.isConfirmationChecked,
+					isPrimary: true,
+					onClick: this.onConfirmationFormSubmit,
+					label: translate( 'Change site address' ),
+				},
+			];
+		}
+	};
+
+	renderNewAddressForm = () => {
+		const { currentDomain, isAvailable, siteId, selectedSiteSlug, translate } = this.props;
+
+		const { domainFieldValue } = this.state;
 		const currentDomainName = get( currentDomain, 'name', '' );
 		const currentDomainPrefix = this.getCurrentDomainPrefix();
 		const shouldShowValidationMessage = this.shouldShowValidationMessage();
 		const validationMessage = this.getValidationMessage();
-		const isBusy = isSiteAddressChangeRequesting || isAvailabilityPending;
-
-		const isDisabled =
-			( domainFieldValue === currentDomainPrefix && newDomainSuffix === currentDomainSuffix ) ||
-			! isAvailable ||
-			this.isUnsyncedAtomicSite();
 
 		const addDomainPath = '/domains/add/' + selectedSiteSlug;
 
 		return (
-			<form onSubmit={ this.onSubmit } className="site-address-changer__content">
+			<div className="site-address-changer__content">
 				<TrackComponentView
 					eventName="calypso_siteaddresschange_form_view"
 					eventProperties={ { blog_id: siteId } }
@@ -352,13 +380,8 @@ export class SiteAddressChanger extends Component {
 						isError={ ! isAvailable }
 						text={ validationMessage || '\u00A0' }
 					/>
-					<FormButtonsBar className="site-address-changer__form-footer">
-						<FormButton disabled={ isDisabled } busy={ isBusy } type="submit">
-							{ translate( 'Change site address' ) }
-						</FormButton>
-					</FormButtonsBar>
 				</div>
-			</form>
+			</div>
 		);
 	};
 
@@ -433,18 +456,6 @@ export class SiteAddressChanger extends Component {
 						) }
 					</span>
 				</FormLabel>
-				<FormButtonsBar className="site-address-changer__form-footer site-address-changer__form-footer--confirmation">
-					<FormButton type="button" onClick={ this.onConfirmationFormClose } isPrimary={ false }>
-						{ this.props.translate( 'Cancel' ) }
-					</FormButton>
-					<FormButton
-						type="button"
-						disabled={ ! this.state.isConfirmationChecked }
-						onClick={ this.onConfirmationFormSubmit }
-					>
-						{ this.props.translate( 'Change site address' ) }
-					</FormButton>
-				</FormButtonsBar>
 			</form>
 		);
 	};
@@ -480,6 +491,7 @@ export class SiteAddressChanger extends Component {
 
 		return (
 			<Dialog
+				buttons={ this.getStepButtons() }
 				className="site-address-changer"
 				isVisible={ isDialogVisible }
 				onClose={ onClose }
