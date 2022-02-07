@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import EmptyContent from 'calypso/components/empty-content';
@@ -11,7 +12,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
-import WooCommerceColophon from '../woocommerce-colophon';
+import WooCommerceColophon from './woocommerce-colophon';
 
 import './style.scss';
 
@@ -24,14 +25,18 @@ interface Props {
 	siteId: number;
 }
 
-const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
+const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce' } ];
 	const ctaRef = useRef( null );
 
-	const { isTransferringBlocked, wpcomDomain, isDataReady } = useWooCommerceOnPlansEligibility(
-		siteId
-	);
+	const {
+		isTransferringBlocked,
+		wpcomDomain,
+		isDataReady,
+		currentUserEmail,
+		isEmailVerified,
+	} = useWooCommerceOnPlansEligibility( siteId );
 
 	function onCTAClickHandler() {
 		recordTracksEvent( 'calypso_woocommerce_dashboard_action_click', {
@@ -43,6 +48,22 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	}
 
 	function renderWarningNotice() {
+		if ( currentUserEmail && ! isEmailVerified ) {
+			return (
+				<WarningsOrHoldsSection>
+					<WarningCard
+						message={ sprintf(
+							/* translators: %s: The user's primary email address (ex.: user@example.com) */
+							__(
+								"You need to confirm your email address before setting up a store. We've sent an email to %s with instructions for you to follow."
+							),
+							currentUserEmail
+						) }
+					/>
+				</WarningsOrHoldsSection>
+			);
+		}
+
 		if ( ! isTransferringBlocked || ! isDataReady ) {
 			return null;
 		}
@@ -83,7 +104,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	};
 
 	return (
-		<div className="woop__landing-page woocommerce_landing-page">
+		<div className="landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
 				<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
 					{ __( 'Start a new store' ) }
@@ -99,7 +120,7 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				) }
 				action={ __( 'Start a new store' ) }
 				actionCallback={ onCTAClickHandler }
-				actionDisabled={ isTransferringBlocked }
+				actionDisabled={ isTransferringBlocked || ! isEmailVerified }
 				actionRef={ ctaRef }
 				secondaryAction={
 					<InlineSupportLink
@@ -110,12 +131,12 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 						{ __( 'Learn more' ) }
 					</InlineSupportLink>
 				}
-				className="woop__landing-page-cta woocommerce_landing-page-empty-content"
+				className="landing-page__empty-content"
 			/>
 			<WooCommerceColophon wpcomDomain={ wpcomDomain || '' } />
-			<div className="woop__landing-page-features-section">
+			<div className="landing-page__features-section">
 				<FormattedHeader headerText={ __( 'Everything you need to create a successful store' ) } />
-				<div className="woop__landing-page-features">
+				<div className="landing-page__features">
 					<PromoSection { ...promos } />
 				</div>
 			</div>
@@ -123,4 +144,4 @@ const WoopLandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	);
 };
 
-export default WoopLandingPage;
+export default LandingPage;
