@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -450,7 +450,7 @@ export class SiteAddressChanger extends Component {
 	};
 
 	render() {
-		const { currentDomain, translate, isAtomicSite } = this.props;
+		const { currentDomain, translate, isAtomicSite, isDialogVisible, onClose } = this.props;
 
 		if ( ! currentDomain.currentUserCanManage ) {
 			return (
@@ -479,10 +479,15 @@ export class SiteAddressChanger extends Component {
 		}
 
 		return (
-			<div className="site-address-changer">
+			<Dialog
+				className="site-address-changer"
+				isVisible={ isDialogVisible }
+				onClose={ onClose }
+				leaveTimeout={ 0 }
+			>
 				{ 0 === this.state.step && this.renderNewAddressForm() }
 				{ 1 === this.state.step && this.renderConfirmationForm() }
-			</div>
+			</Dialog>
 		);
 	}
 }

@@ -1,15 +1,15 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { createInterpolateElement, useState } from '@wordpress/element';
+import { createInterpolateElement, useState, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, edit, home, moreVertical } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
+import SiteAddressChanger from 'calypso/blocks/site-address-changer';
 import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
-import ChangeSiteAddressDialog from 'calypso/my-sites/domains/domain-management/change-site-address-dialog';
 
 import './free-domain-item.scss';
 
@@ -27,6 +27,26 @@ export default function FreeDomainItem( {
 		onMakePrimary( domain.domain );
 	};
 	const [ isDialogVisible, setDialogVisible ] = useState( false );
+	const [ openDialog, closeDialog ] = useMemo( () => {
+		const toggleDialog = ( visible ) => () => setDialogVisible( visible );
+
+		return [ toggleDialog( true ), toggleDialog( false ) ];
+	}, [] );
+
+	const renderSiteAddressChanger = () => {
+		const domainName = domain?.name ?? '';
+		const dotblogSubdomain = domainName.match( /\.\w+\.blog$/ );
+		const currentDomainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
+
+		return (
+			<SiteAddressChanger
+				currentDomain={ domain }
+				currentDomainSuffix={ currentDomainSuffix }
+				isDialogVisible={ isDialogVisible }
+				onClose={ closeDialog }
+			/>
+		);
+	};
 
 	return (
 		<div className="free-domain-item">
@@ -62,7 +82,7 @@ export default function FreeDomainItem( {
 						</PopoverMenuItem>
 					) }
 					{ ! isAtomicSite && (
-						<PopoverMenuItem onClick={ () => setDialogVisible( true ) }>
+						<PopoverMenuItem onClick={ openDialog }>
 							<Icon icon={ edit } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ __( 'Change site address' ) }
 						</PopoverMenuItem>
@@ -70,11 +90,7 @@ export default function FreeDomainItem( {
 				</EllipsisMenu>
 			) }
 
-			<ChangeSiteAddressDialog
-				domain={ domain }
-				isDialogVisible={ isDialogVisible }
-				closeDialog={ () => setDialogVisible( false ) }
-			/>
+			{ renderSiteAddressChanger() }
 
 			{ isBusy && <Spinner /> }
 		</div>
