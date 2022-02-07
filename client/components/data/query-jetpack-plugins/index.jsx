@@ -24,7 +24,7 @@ class QueryJetpackPlugins extends Component {
 		if ( isEqual( prevProps.siteIds, this.props.siteIds ) ) {
 			return;
 		}
-		this.refresh( prevProps.isRequestingForSites, prevProps.siteIds );
+		this.refresh( this.props.isRequestingForSites, this.props.siteIds );
 	}
 
 	refresh( isRequesting, siteIds ) {
