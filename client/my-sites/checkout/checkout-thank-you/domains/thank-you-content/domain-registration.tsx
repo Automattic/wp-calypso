@@ -2,7 +2,7 @@ import { Icon, info } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import domainRegisteredSuccess from 'calypso/assets/images/domains/domain.svg';
 import { buildDomainStepForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import type {
 	DomainThankYouParams,
@@ -42,6 +42,20 @@ const DomainRegistrationThankYouProps = ( {
 				nextSteps: [
 					...( professionalEmail ? [ professionalEmail ] : [] ),
 					{
+						stepKey: 'domain_registration_whats_next_create-site',
+						stepTitle: translate( 'Add a site' ),
+						stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
+						stepCta: (
+							<FullWidthButton
+								href={ createSiteFromDomainOnly( selectedSiteSlug ?? domain, null ) }
+								busy={ false }
+								disabled={ false }
+							>
+								{ translate( 'Create a site' ) }
+							</FullWidthButton>
+						),
+					},
+					{
 						stepKey: 'domain_registration_whats_next_plugin_setup',
 						stepTitle: translate( 'Manage your domains' ),
 						stepDescription: translate(
@@ -49,7 +63,7 @@ const DomainRegistrationThankYouProps = ( {
 						),
 						stepCta: (
 							<FullWidthButton
-								href={ domainManagementList( selectedSiteSlug ?? domain, null ) }
+								href={ domainManagementList( '' ) }
 								busy={ false }
 								disabled={ false }
 							>
