@@ -6,7 +6,7 @@ function updateUrlSearchQuery( queryName, queryValue ) {
 		return;
 	}
 	const searchParams = new URLSearchParams( window.location.search );
-	// let historyObject = null;
+
 	let newQuery = '';
 	if ( queryValue ) {
 		searchParams.set( queryName, queryValue );
