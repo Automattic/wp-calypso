@@ -164,7 +164,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 				break;
 
 			case 'simple': {
-				if ( blockEditorSettings?.is_fse_eligible ) {
+				if ( blockEditorSettings?.is_fse_active ) {
 					page.redirect( siteEditorUrl );
 				} else {
 					page.redirect( `/page/${ siteSlug }/home/` );
