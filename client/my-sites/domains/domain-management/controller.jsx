@@ -3,7 +3,6 @@ import DomainManagementData from 'calypso/components/data/domain-management';
 import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
-	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementDnsAddRecord,
@@ -334,20 +333,6 @@ export default {
 				analyticsPath={ domainManagementTransferOut( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Another Registrar"
 				component={ DomainManagement.TransferOut }
-				context={ pageContext }
-				needsDomains
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
-	},
-
-	domainManagementChangeSiteAddress( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementChangeSiteAddress( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Change Site Address"
-				component={ DomainManagement.ChangeSiteAddress }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }

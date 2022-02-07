@@ -142,15 +142,6 @@ export function domainManagementEmailForwarding( siteName, domainName ) {
  * @param {string} domainName
  * @param {string?} relativeTo
  */
-export function domainManagementChangeSiteAddress( siteName, domainName, relativeTo = null ) {
-	return domainManagementEditBase( siteName, domainName, 'change-site-address', relativeTo );
-}
-
-/**
- * @param {string} siteName
- * @param {string} domainName
- * @param {string?} relativeTo
- */
 export function domainManagementNameServers( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'name-servers', relativeTo );
 }
