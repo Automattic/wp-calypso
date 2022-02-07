@@ -113,6 +113,7 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 						.gridicon {
 							padding-right: 0.5rem;
 							fill: #0675c4; // TODO: maybe we need to define this color as a variable somewhere?
+							flex-shrink: 0; // prevent icon resizing breaking p padding-left calc at 1300px
 						}
 					}
 
