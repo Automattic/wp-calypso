@@ -30,7 +30,7 @@ import {
 	planWithBundledDomain,
 	planWithoutDomain,
 	fetchStripeConfiguration,
-	mockSetCartEndpoint,
+	mockSetCartEndpointWith,
 	mockGetCartEndpointWith,
 	getActivePersonalPlanDataForType,
 	createTestReduxStore,
@@ -92,6 +92,11 @@ describe( 'CompositeCheckout', () => {
 			sub_total_display: 'R$156',
 			coupon_discounts_integer: [],
 		};
+
+		const mockSetCartEndpoint = mockSetCartEndpointWith( {
+			currency: initialCart.currency,
+			locale: initialCart.locale,
+		} );
 
 		const store = createTestReduxStore();
 
