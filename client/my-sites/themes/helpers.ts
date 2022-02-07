@@ -1,5 +1,4 @@
 import { mapValues } from 'lodash';
-import { BaseSyntheticEvent } from 'react';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { isMagnificentLocale } from 'calypso/lib/i18n-utils';
@@ -28,7 +27,7 @@ interface ThemeOptions {
 	upgradePlan: ThemeOption;
 }
 
-export function trackClick( componentName: string, eventName: BaseSyntheticEvent, verb = 'click' ) {
+export function trackClick( componentName: string, eventName: string, verb = 'click' ) {
 	const stat = `${ componentName } ${ eventName } ${ verb }`;
 	gaRecordEvent( 'Themes', titlecase( stat ) );
 }
