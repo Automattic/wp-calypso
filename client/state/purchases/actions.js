@@ -13,8 +13,8 @@ import {
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
-import { requestAdminMenu } from '../admin-menu/actions';
-import { getSelectedSiteId } from '../ui/selectors';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import 'calypso/state/purchases/init';
 
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
