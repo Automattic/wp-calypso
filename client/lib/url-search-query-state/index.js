@@ -58,8 +58,8 @@ export function useUrlSearchQueryState( queryName ) {
 }
 
 export const withUrlSearchQueryState = ( WrappedComponent, queryName ) => {
+	const updateUrlSearch = ( value ) => updateUrlSearchQuery( queryName, value );
 	return function WithSearchQueryState( props ) {
-		const updateUrlSearch = ( value ) => updateUrlSearchQuery( queryName, value );
 		return <WrappedComponent updateUrlSearchQuery={ updateUrlSearch } { ...props } />;
 	};
 };
