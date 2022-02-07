@@ -47,6 +47,7 @@ export const UpsellNudge = ( {
 	isJetpackDevDocs,
 	isJetpack,
 	isAtomic,
+	isStandaloneJetpack,
 	isVip,
 	siteIsWPForTeams,
 	list,
@@ -129,7 +130,7 @@ export const UpsellNudge = ( {
 			horizontal={ horizontal }
 			href={ href }
 			icon="star"
-			jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
+			jetpack={ isStandaloneJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
 			isAtomic={ isAtomic }
 			list={ list }
 			onClick={ onClick }
@@ -157,12 +158,15 @@ UpsellNudge.defaultProps = {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 
+	const isJetpack = isJetpackSite( state, siteId );
+	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	return {
 		site: getSite( state, siteId ),
 		planHasFeature: hasFeature( state, siteId, ownProps.feature ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
-		isJetpack: isJetpackSite( state, siteId ),
-		isAtomic: isSiteAutomatedTransfer( state, siteId ),
+		isJetpack,
+		isAtomic,
+		isStandaloneJetpack: isJetpack && ! isAtomic,
 		isVip: isVipSite( state, siteId ),
 		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
