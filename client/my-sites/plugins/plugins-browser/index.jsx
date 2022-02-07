@@ -628,7 +628,7 @@ const ManageButton = ( { shouldShowManageButton, siteAdminUrl, siteSlug, jetpack
 
 	return (
 		<Button className="plugins-browser__button" href={ managePluginsDestination }>
-			<span className="plugins-browser__button-text">{ translate( 'Manage plugins' ) }</span>
+			<span className="plugins-browser__button-text">{ translate( 'Installed Plugins' ) }</span>
 		</Button>
 	);
 };
