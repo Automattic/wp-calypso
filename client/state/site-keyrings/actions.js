@@ -53,20 +53,15 @@ export function requestSiteKeyrings( siteId ) {
 
 export function createSiteKeyring( siteId, keyring ) {
 	return ( dispatch ) =>
-		wpcom.req
-			.post( `/sites/${ siteId }/keyrings`, {}, keyring )
-			.then( ( body ) => {
-				dispatch( {
-					type: SITE_KEYRINGS_SAVE_SUCCESS,
-					siteId,
-					keyring,
-				} );
-
-				return body;
-			} )
-			.catch( ( error ) => {
-				return Promise.reject( error );
+		wpcom.req.post( `/sites/${ siteId }/keyrings`, {}, keyring ).then( ( body ) => {
+			dispatch( {
+				type: SITE_KEYRINGS_SAVE_SUCCESS,
+				siteId,
+				keyring,
 			} );
+
+			return body;
+		} );
 }
 
 export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
