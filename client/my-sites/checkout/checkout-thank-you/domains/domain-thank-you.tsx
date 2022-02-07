@@ -1,12 +1,16 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+import { Button, Gridicon } from '@automattic/components';
 import { useMemo } from 'react';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import domainThankYouContent from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content';
 import {
 	DomainThankYouProps,
 	DomainThankYouType,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
+import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 import './style.scss';
@@ -47,17 +51,32 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		};
 	}, [ dispatch ] );
 
+	const renderHeader = () => {
+		return (
+			<div className="checkout-thank-you__domains-header">
+				<WordPressLogo className="checkout-thank-you__domains-header-logo" size={ 24 } />
+				<Button borderless={ true } href={ domainManagementRoot() }>
+					<Gridicon icon={ 'chevron-left' } size={ 18 } />
+					<span>All Domains</span>
+				</Button>
+			</div>
+		);
+	};
+
 	return (
-		<ThankYou
-			headerBackgroundColor="var( --studio-white )"
-			containerClassName="checkout-thank-you__domains"
-			sections={ thankYouProps.sections }
-			showSupportSection={ true }
-			thankYouImage={ thankYouProps.thankYouImage }
-			thankYouTitle={ thankYouProps.thankYouTitle }
-			thankYouSubtitle={ thankYouProps.thankYouSubtitle }
-			thankYouNotice={ thankYouProps.thankYouNotice }
-		/>
+		<>
+			{ renderHeader() }
+			<ThankYou
+				headerBackgroundColor="var( --studio-white )"
+				containerClassName="checkout-thank-you__domains"
+				sections={ thankYouProps.sections }
+				showSupportSection={ true }
+				thankYouImage={ thankYouProps.thankYouImage }
+				thankYouTitle={ thankYouProps.thankYouTitle }
+				thankYouSubtitle={ thankYouProps.thankYouSubtitle }
+				thankYouNotice={ thankYouProps.thankYouNotice }
+			/>
+		</>
 	);
 };
 
