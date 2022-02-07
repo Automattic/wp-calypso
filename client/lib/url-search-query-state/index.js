@@ -2,7 +2,7 @@ import page from 'page';
 import { Component, useEffect, useState, useCallback } from 'react';
 
 function updateUrlSearchQuery( queryName, queryValue ) {
-	if ( ! window ) {
+	if ( typeof window === 'undefined' ) {
 		return;
 	}
 	const searchParams = new URLSearchParams( window.location.search );
