@@ -118,6 +118,10 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 
 					.action-panel__body {
 						font-size: $font-body-small;
+
+						p {
+							padding-left: calc( 24px + 0.5rem ); // grid icon + space
+						}
 					}
 				}
 			}
