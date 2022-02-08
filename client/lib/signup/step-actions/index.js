@@ -437,6 +437,35 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	);
 }
 
+export function setStoreFeatures( callback, { siteSlug } ) {
+	if ( ! siteSlug ) {
+		defer( callback );
+		return;
+	}
+
+	wpcom.req
+		.post( `/sites/${ siteSlug }/themes/mine`, { theme: 'zoologist', dont_change_homepage: true } )
+		.then( () =>
+			wpcom.req.post( {
+				path: `/sites/${ siteSlug }/theme-setup`,
+				apiNamespace: 'wpcom/v2',
+				body: { trim_content: true },
+			} )
+		)
+		.then( () =>
+			wpcom.req.get( {
+				path: `/sites/${ siteSlug }/block-editor`,
+				apiNamespace: 'wpcom/v2',
+			} )
+		)
+		.then( ( data ) => {
+			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
+		} )
+		.catch( ( errors ) => {
+			callback( [ errors ] );
+		} );
+}
+
 export function setIntentOnSite( callback, { siteSlug, intent } ) {
 	if ( ! intent ) {
 		defer( callback );
