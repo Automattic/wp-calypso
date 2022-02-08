@@ -8,9 +8,9 @@ import type {
 
 import 'calypso/state/notices/init';
 
-export const removeNotice: NoticeRemovalActionCreator = ( noticeId ) => {
+export const removeNotice: NoticeRemovalActionCreator = () => {
 	return {
-		noticeId,
+		noticeId: 123,
 		type: NOTICE_REMOVE,
 	};
 };
