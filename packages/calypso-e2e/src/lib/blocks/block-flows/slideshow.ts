@@ -13,7 +13,7 @@ const selectors = {
 };
 
 /**
- * Class representing the flow of using a Contact Info block in the editor.
+ * Class representing the flow of using a Slideshow block in the editor.
  */
 export class SlideshowBlockFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
@@ -39,9 +39,9 @@ export class SlideshowBlockFlow implements BlockFlow {
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		for ( const imagePath of this.configurationData.imagePaths ) {
-			// Always make a duplicate test version first.
+			// Always make a duplicate "test" version of the image to preserve the original.
 			const testFile = await createTestFile( imagePath );
-			// We keep track of the names for later validation.
+			// We keep track of the names for later validation in the published post.
 			this.preparedImageFileNames.push( testFile.basename );
 			await context.editorIframe.setInputFiles( selectors.fileInput, testFile.fullpath );
 			await context.editorIframe.waitForSelector( selectors.uploadingIndicator, {
@@ -58,7 +58,7 @@ export class SlideshowBlockFlow implements BlockFlow {
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		for ( const imageFileName of this.preparedImageFileNames ) {
 			await context.page.waitForSelector( selectors.publishedImage( imageFileName ), {
-				state: 'attached', // May not be visible if not the current slide
+				state: 'attached', // The image not be visible if it's not the current slide.
 			} );
 		}
 	}

@@ -7,8 +7,8 @@ interface ConfigurationData {
 
 const blockParentSelector = '[aria-label="Block: Contact Info"]';
 const selectors = {
-	emailTextArea: 'textarea[aria-label=Email]',
-	phoneNumberTextArea: 'textarea[aria-label="Phone number"]',
+	emailTextarea: `${ blockParentSelector } textarea[aria-label=Email]`,
+	phoneNumberTextarea: `${ blockParentSelector } textarea[aria-label="Phone number"]`,
 };
 
 /**
@@ -35,9 +35,9 @@ export class ContactInfoBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		await context.editorIframe.fill( selectors.emailTextArea, this.configurationData.email );
+		await context.editorIframe.fill( selectors.emailTextarea, this.configurationData.email );
 		await context.editorIframe.fill(
-			selectors.phoneNumberTextArea,
+			selectors.phoneNumberTextarea,
 			this.configurationData.phoneNumber
 		);
 	}

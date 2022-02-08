@@ -13,7 +13,7 @@ const selectors = {
 };
 
 /**
- * Class representing the flow of using a Contact Info block in the editor.
+ * Class representing the flow of using a Premium Content block in the editor.
  */
 export class PremiumContentBlockFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
@@ -53,6 +53,7 @@ export class PremiumContentBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
+		// Since we're viewing as the publishing user, we should see the subscriber version of the content.
 		await context.page.waitForSelector( `text="${ this.configurationData.subscriberTitle }"` );
 		await context.page.waitForSelector( `text="${ this.configurationData.subscriberText }"` );
 	}

@@ -18,7 +18,7 @@ const selectors = {
 };
 
 /**
- * Class representing the flow of using a Contact Info block in the editor.
+ * Class representing the flow of using a Star Rating block in the editor.
  */
 export class StarRatingBlock implements BlockFlow {
 	private configurationData: ConfigurationData;
@@ -43,12 +43,12 @@ export class StarRatingBlock implements BlockFlow {
 	async configure( context: EditorContext ): Promise< void > {
 		const rating = this.configurationData.rating;
 		if ( rating === 1 ) {
-			// this is the default!
+			// This is the default when you add the block -- we're done here.
 			return;
 		}
 
 		if ( rating === 0.5 ) {
-			// because the default is 1 start, we just have one click to do here
+			// Because the default is 1 start, we just have one click to do here.
 			await context.editorIframe.click( selectors.starButton( 1 ) );
 			return;
 		}
@@ -60,7 +60,7 @@ export class StarRatingBlock implements BlockFlow {
 
 		if ( halfRatings.includes( rating as HalfRating ) ) {
 			const starNthIndex = Math.ceil( rating );
-			// two clicks creates a half star rating!
+			// Two clicks creates a half star rating.
 			await context.editorIframe.click( selectors.starButton( starNthIndex ) );
 			await context.editorIframe.click( selectors.starButton( starNthIndex ) );
 			return;
