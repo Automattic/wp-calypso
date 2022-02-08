@@ -386,10 +386,9 @@ export function generateFlows( {
 				'site-options',
 				'starting-point',
 				'courses',
+				'design-setup-site',
 				'store-options',
 				'store-features',
-				//@TODO Figure out how to skip design setup for store flows
-				//'design-setup-site',
 			],
 			destination: getDestinationFromIntent,
 			description:
