@@ -5,35 +5,68 @@ import { purchasesRoot } from 'calypso/me/purchases/paths';
 
 import './style.scss';
 
-function DeleteSiteWarningDialog( { isVisible, onClose } ) {
+function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose } ) {
 	const translate = useTranslate();
-	const buttons = [
-		{ action: 'dismiss', label: translate( 'Dismiss' ) },
-		<Button primary href={ purchasesRoot }>
-			{ translate( 'Manage purchases', { context: 'button label' } ) }
-		</Button>,
-	];
+
+	const getButtons = () => {
+		const buttons = [ { action: 'dismiss', label: translate( 'Dismiss' ) } ];
+		if ( p2HubP2Count ) {
+			buttons.push(
+				<Button primary href={ '/settings/general' }>
+					{ translate( 'Go to your site listing' ) }
+				</Button>
+			);
+		} else {
+			buttons.push(
+				<Button primary href={ purchasesRoot }>
+					{ translate( 'Manage purchases', { context: 'button label' } ) }
+				</Button>
+			);
+		}
+		return buttons;
+	};
+
+	const renderWarningHeader = () => {
+		if ( p2HubP2Count ) {
+			return translate( 'P2 workspace' );
+		}
+		return translate( 'Paid Upgrades' );
+	};
+
+	const renderWarningContent = () => {
+		if ( p2HubP2Count ) {
+			return translate(
+				'There is %(numP2s)d P2 in your workspace. Please delete it prior to deleting your workspace.',
+				'There are %(numP2s)d P2s in your workspace. Please delete them prior to deleting your workspace.',
+				{
+					count: p2HubP2Count,
+					args: {
+						numP2s: p2HubP2Count,
+					},
+				}
+			);
+		}
+		return translate(
+			'You have active paid upgrades on your site. Please cancel your upgrades prior to deleting your site.'
+		);
+	};
 
 	return (
 		<Dialog
 			isVisible={ isVisible }
-			buttons={ buttons }
+			buttons={ getButtons() }
 			onClose={ onClose }
 			className="delete-site-warning-dialog"
 		>
-			<h1>{ translate( 'Paid Upgrades' ) }</h1>
-			<p>
-				{ translate(
-					'You have active paid upgrades on your site. ' +
-						'Please cancel your upgrades prior to deleting your site.'
-				) }
-			</p>
+			<h1>{ renderWarningHeader() }</h1>
+			<p>{ renderWarningContent() }</p>
 		</Dialog>
 	);
 }
 
 DeleteSiteWarningDialog.propTypes = {
 	isVisible: PropTypes.bool.isRequired,
+	p2HubP2Count: PropTypes.number,
 	onClose: PropTypes.func.isRequired,
 };
 

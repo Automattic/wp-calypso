@@ -2,6 +2,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -114,7 +115,11 @@ class SiteTools extends Component {
 						description={ manageConnectionText }
 					/>
 				) }
-				<DeleteSiteWarningDialog isVisible={ this.state.showDialog } onClose={ this.closeDialog } />
+				<DeleteSiteWarningDialog
+					isVisible={ this.state.showDialog }
+					p2HubP2Count={ this.props?.p2HubP2Count }
+					onClose={ this.closeDialog }
+				/>
 			</div>
 		);
 	}
@@ -129,8 +134,9 @@ class SiteTools extends Component {
 
 	checkForSubscriptions = ( event ) => {
 		trackDeleteSiteOption( 'delete-site' );
+		const { isAtomic, hasCancelablePurchases, p2HubP2Count } = this.props;
 
-		if ( this.props.isAtomic || ! this.props.hasCancelablePurchases ) {
+		if ( isAtomic || ( ! hasCancelablePurchases && ! p2HubP2Count ) ) {
 			return true;
 		}
 
@@ -175,4 +181,4 @@ export default connect(
 	{
 		errorNotice,
 	}
-)( localize( SiteTools ) );
+)( localize( withP2HubP2Count( SiteTools ) ) );
