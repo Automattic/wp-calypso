@@ -266,7 +266,6 @@ const sections = [
 		paths: [ '/accept-invite' ],
 		module: 'calypso/my-sites/invites',
 		enableLoggedOut: true,
-		isomorphic: true,
 	},
 	{
 		name: 'earn',
