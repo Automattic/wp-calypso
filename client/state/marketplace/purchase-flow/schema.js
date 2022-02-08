@@ -4,10 +4,6 @@ export const purchaseFlowSchema = {
 	properties: {
 		primaryDomain: { type: 'string' },
 		productSlugInstalled: { type: 'string' },
-		siteTransferStatus: { type: 'string' },
-		reasonForSiteTransferStatus: { type: 'string' },
 		pluginInstallationStatus: { type: 'string' },
-		reasonForPluginInstallationStatus: { type: 'string' },
-		isPluginInstalledAlongWithTransfer: { type: 'boolean' },
 	},
 };
