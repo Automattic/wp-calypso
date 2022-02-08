@@ -9884,7 +9884,7 @@ __metadata:
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: ^1.18
+    playwright: 1.16
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -28534,6 +28534,32 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:=1.16.3":
+  version: 1.16.3
+  resolution: "playwright-core@npm:1.16.3"
+  dependencies:
+    commander: ^8.2.0
+    debug: ^4.1.1
+    extract-zip: ^2.0.1
+    https-proxy-agent: ^5.0.0
+    jpeg-js: ^0.4.2
+    mime: ^2.4.6
+    pngjs: ^5.0.0
+    progress: ^2.0.3
+    proper-lockfile: ^4.1.1
+    proxy-from-env: ^1.1.0
+    rimraf: ^3.0.2
+    socks-proxy-agent: ^6.1.0
+    stack-utils: ^2.0.3
+    ws: ^7.4.6
+    yauzl: ^2.10.0
+    yazl: ^2.5.1
+  bin:
+    playwright: cli.js
+  checksum: 9ae0cc2714d24fc464ab29cd9c9f4ed2b6d6cf0d88ed1034d40763501f4a9c5094bdff2008c1eb23123671eb61590b0c71af1971714d3b0b7541e42d3ba0d519
+  languageName: node
+  linkType: hard
+
 "playwright-core@npm:=1.18.1":
   version: 1.18.1
   resolution: "playwright-core@npm:1.18.1"
@@ -28557,6 +28583,17 @@ fsevents@~2.1.2:
   bin:
     playwright: cli.js
   checksum: e64581928d9a42dce66f623b3af8ff8774ab2b09518756eb72449b3c5988cbe7336e898926b0bf3a56c8f317e4419f7aaa2ca3d826e9b705e8912738ffb3d9c0
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.16":
+  version: 1.16.3
+  resolution: "playwright@npm:1.16.3"
+  dependencies:
+    playwright-core: =1.16.3
+  bin:
+    playwright: cli.js
+  checksum: dff5dd835a6d0a61d15b03dd2626971274c839babbc6533c6d0716129ec470fc3b95f3996d4e6f4a794c55e3380c20c97049a13d4fe8b06cc6a32fa418e4c0e2
   languageName: node
   linkType: hard
 
