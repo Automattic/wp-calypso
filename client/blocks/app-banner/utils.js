@@ -66,8 +66,8 @@ function getDismissTimes( isControl ) {
 	const shorterTime = isControl ? ONE_WEEK_IN_MILLISECONDS : ONE_DAY_IN_MILLISECONDS;
 
 	return {
-		longer_duration: currentTime + longerTime,
-		shorter_duration: currentTime + shorterTime,
+		longerDuration: currentTime + longerTime,
+		shorterDuration: currentTime + shorterTime,
 	};
 }
 
@@ -79,14 +79,14 @@ export function getNewDismissTimes( dismissedSection, currentDismissTimes, isCon
 		( result, section ) => {
 			if ( section === dismissedSection ) {
 				// Dismiss selected section for a longer period.
-				result[ section ] = dismissTimes.longer_duration;
+				result[ section ] = dismissTimes.longerDuration;
 			} else {
 				// Dismiss all other sections for a shorter period, but make sure that we preserve previous dismiss time
 				// if it was longer than that (e.g. if other section was also dismissed for a month).
 				result[ section ] =
-					get( currentDismissTimes, section, -Infinity ) > dismissTimes.shorter_duration
+					get( currentDismissTimes, section, -Infinity ) > dismissTimes.shorterDuration
 						? get( currentDismissTimes, section )
-						: dismissTimes.shorter_duration;
+						: dismissTimes.shorterDuration;
 			}
 
 			return result;
