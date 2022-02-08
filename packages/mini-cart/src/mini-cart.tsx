@@ -9,7 +9,7 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 
 const MiniCartWrapper = styled.div`
 	box-sizing: border-box;
-	padding: 32px 24px;
+	padding: 16px;
 	max-width: 480px;
 	text-align: left;
 	font-size: 1rem;
@@ -22,18 +22,25 @@ const MiniCartHeader = styled.div`
 `;
 
 const MiniCartTitle = styled.h2`
-	font-size: 2rem;
+	font-size: 1.5rem;
 	line-height: 1em;
 	font-family: 'Recoleta';
+	margin-bottom: 5px;
 	grid-column: 1/2;
 	grid-row: 1;
 `;
 
 const MiniCartCloseButton = styled.button`
+	color: var( --color-text-subtle );
+	cursor: pointer;
 	grid-column: 2/3;
 	grid-row: 1;
 	justify-self: end;
 	font-size: 1.4em;
+	&:hover,
+	&:focus {
+		color: var( --color-neutral-70 );
+	}
 `;
 
 const MiniCartSiteTitle = styled.span`
