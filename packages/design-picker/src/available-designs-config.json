@@ -6,7 +6,7 @@
 			"template": "ames",
 			"theme": "ames",
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
-			"is_premium": false,
+			"is_premium": true,
 			"is_fse": true,
 			"features": []
 		},
