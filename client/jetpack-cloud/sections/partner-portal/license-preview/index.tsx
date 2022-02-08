@@ -8,11 +8,11 @@ import page from 'page';
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormattedDate from 'calypso/components/formatted-date';
-import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
 import './style.scss';
@@ -149,14 +149,12 @@ export default function LicensePreview( {
 
 				<div>
 					{ licenseState === LicenseState.Detached && (
-						<ClipboardButton
-							text={ licenseKey }
-							className="license-preview__copy-license-key"
+						<Button
 							compact
-							onCopy={ onCopyLicense }
+							href={ addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' ) }
 						>
-							{ translate( 'Copy License' ) }
-						</ClipboardButton>
+							{ translate( 'Assign License' ) }
+						</Button>
 					) }
 				</div>
 
