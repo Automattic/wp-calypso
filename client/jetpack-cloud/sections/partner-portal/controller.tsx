@@ -88,7 +88,7 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 	next();
 }
 
-export function assignLicenseContext( context: PageJS.Contet, next: () => void ): void {
+export function assignLicenseContext( context: PageJS.Context, next: () => void ): void {
 	const state = context.store.getState();
 	const sites = getSites( state );
 
