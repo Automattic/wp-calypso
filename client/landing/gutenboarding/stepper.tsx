@@ -3,12 +3,11 @@ import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import ReactDom from 'react-dom';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { LocaleContext } from './components/locale-context';
 import { WindowLocaleEffectManager } from './components/window-locale-effect-manager';
 import { setupWpDataDebug } from './devtools';
 import StepperOnboarding from './stepper-onboarding';
-import { path } from './stepper-onboarding/path';
 
 import 'calypso/components/environment-badge/style.scss';
 
@@ -40,14 +39,7 @@ window.AppBoot = async () => {
 		<LocaleContext>
 			<WindowLocaleEffectManager />
 			<BrowserRouter basename="stepper">
-				<Switch>
-					<Route exact path={ path }>
-						<StepperOnboarding />
-					</Route>
-					<Route>
-						<Redirect to="/first" />
-					</Route>
-				</Switch>
+				<StepperOnboarding />
 			</BrowserRouter>
 		</LocaleContext>,
 		document.getElementById( 'wpcom' )
