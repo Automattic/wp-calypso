@@ -1,7 +1,6 @@
 import {
 	isRequestingList,
 	getSubscribedLists,
-	isUpdatedList,
 	getListByOwnerAndSlug,
 	getMatchingItem,
 	isSubscribedByOwnerAndSlug,
@@ -80,38 +79,6 @@ describe( 'selectors', () => {
 				{ ID: 456, slug: 'ants', title: 'abc' },
 				{ ID: 123, slug: 'bananas', title: 'def' },
 			] );
-		} );
-	} );
-
-	describe( '#isUpdatedList()', () => {
-		test( 'should return false if list has not been updated', () => {
-			const isUpdated = isUpdatedList(
-				{
-					reader: {
-						lists: {
-							updatedLists: [],
-						},
-					},
-				},
-				123
-			);
-
-			expect( isUpdated ).toBeFalsy();
-		} );
-
-		test( 'should return true if the list has been updated', () => {
-			const isUpdated = isUpdatedList(
-				{
-					reader: {
-						lists: {
-							updatedLists: [ 123, 456 ],
-						},
-					},
-				},
-				123
-			);
-
-			expect( isUpdated ).toBeTruthy();
 		} );
 	} );
 

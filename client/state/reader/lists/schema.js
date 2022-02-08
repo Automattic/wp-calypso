@@ -23,10 +23,6 @@ export const subscriptionsSchema = {
 	type: 'array',
 };
 
-export const updatedListsSchema = {
-	type: 'array',
-};
-
 export const errorsSchema = {
 	type: 'object',
 };

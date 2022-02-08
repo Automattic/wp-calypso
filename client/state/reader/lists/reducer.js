@@ -1,6 +1,6 @@
 /* eslint-disable no-case-declarations */
 
-import { filter, some, get, includes, keyBy, map, omit, reject } from 'lodash';
+import { filter, some, includes, keyBy, map, omit, reject } from 'lodash';
 import {
 	READER_LIST_CREATE,
 	READER_LIST_DELETE,
@@ -21,9 +21,7 @@ import {
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
-
-const union = ( ...arrays ) => [ ...new Set( [].concat( ...arrays ) ) ];
+import { itemsSchema, subscriptionsSchema, errorsSchema } from './schema';
 
 /**
  * Tracks all known list objects, indexed by list ID.
@@ -136,25 +134,6 @@ export const subscribedLists = withSchemaValidation(
 );
 
 /**
- * Tracks which list IDs have been updated recently. Used to show the correct success message.
- *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- */
-export const updatedLists = withSchemaValidation( updatedListsSchema, ( state = [], action ) => {
-	switch ( action.type ) {
-		case READER_LIST_UPDATE_SUCCESS:
-			const newListId = get( action, 'data.list.ID' );
-			if ( ! newListId ) {
-				return state;
-			}
-			return union( state, [ newListId ] );
-	}
-	return state;
-} );
-
-/**
  * Returns the updated requests state after an action has been dispatched.
  *
  * @param  {object} state  Current state
@@ -245,7 +224,6 @@ export default combineReducers( {
 	items,
 	listItems,
 	subscribedLists,
-	updatedLists,
 	isCreatingList,
 	isRequestingList,
 	isRequestingLists,
