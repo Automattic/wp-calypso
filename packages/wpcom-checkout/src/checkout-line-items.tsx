@@ -84,9 +84,7 @@ export const LineItem = styled( WPLineItem )< {
 export const CouponLineItem = styled( WPCouponLineItem )< {
 	theme?: Theme;
 } >`
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
+	display: block;
 	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
 
 	&[data-partner-coupon='true'] ${ NonProductLineItem } {
