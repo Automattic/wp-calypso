@@ -51,10 +51,12 @@ function getPathForCommand( command ) {
 	const path_to_command = path.join( __dirname, '..', 'vendor', 'bin', command );
 	return _.trim( path_to_command );
 }
-function linterFailure() {
+function reportFailure( check = 'linter' ) {
 	console.log(
 		chalk.red( 'COMMIT ABORTED:' ),
-		'The linter reported some problems. ' +
+		'The ' +
+			check +
+			' reported some problems. ' +
 			'If you are aware of them and it is OK, ' +
 			'repeat the commit command with --no-verify to avoid this check.'
 	);
@@ -142,7 +144,7 @@ if ( toPHPCBF.length ) {
 			// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
 			// https://github.com/squizlabs/PHP_CodeSniffer/blob/HEAD/src/Runner.php#L210
 			if ( 2 === error.status ) {
-				linterFailure();
+				reportFailure();
 			}
 		}
 		execSync( `git add ${ toPHPCBF.join( ' ' ) }` );
@@ -174,7 +176,7 @@ if ( toStylelint.length ) {
 	} );
 
 	if ( lintResult.status ) {
-		linterFailure();
+		reportFailure();
 	}
 }
 
@@ -186,7 +188,25 @@ if ( toEslint.length ) {
 	} );
 
 	if ( lintResult.status ) {
-		linterFailure();
+		reportFailure();
+	}
+}
+
+// then tsc
+const toTsc = files.filter( ( file ) => /\.tsx?$/.test( file ) );
+if ( toTsc.length ) {
+	toTsc.forEach( ( file ) => console.log( `Typechecking staged file: ${ file }` ) );
+	const tscResult = spawnSync(
+		'./node_modules/.bin/tsc',
+		[ '--noEmit', '--skipLibCheck', ...toTsc ],
+		{
+			shell: true,
+			stdio: 'inherit',
+		}
+	);
+
+	if ( tscResult.status ) {
+		reportFailure( 'type check' );
 	}
 }
 
@@ -203,7 +223,7 @@ if ( toPHPCS.length ) {
 		);
 
 		if ( lintResult.status ) {
-			linterFailure();
+			reportFailure();
 		}
 	} else {
 		printPhpcsDocs();
