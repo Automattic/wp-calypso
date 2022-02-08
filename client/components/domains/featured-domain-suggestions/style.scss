@@ -225,7 +225,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 		flex-direction: column-reverse;
 		margin-bottom: initial;
 
-		@include break-xlarge {
+		@include break-wide {
 			flex-direction: row;
 		}
 	}

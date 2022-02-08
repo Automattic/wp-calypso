@@ -15,5 +15,7 @@ export const hasMarketplaceProduct = (
 	Object.entries( productsList ).some(
 		( [ subscriptionSlug, { product_type } ] ) =>
 			cleanSlug( productSlug ) === cleanSlug( subscriptionSlug ) &&
+			// additional type check needed when called from JS context
+			typeof product_type === 'string' &&
 			product_type.startsWith( 'marketplace' )
 	);

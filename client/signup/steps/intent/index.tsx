@@ -82,6 +82,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 			align={ 'left' }
 			hideSkip
 			isHorizontalLayout={ true }
+			siteId={ siteId }
 			{ ...props }
 		/>
 	);

@@ -5,7 +5,7 @@ import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
  * Retrieves url for site editor.
  *
  * @param {object} state  Global state tree
- * @param {object} siteId Site ID
+ * @param {number} siteId Site ID
  * @returns {string} Url of site editor instance for calypso or wp-admin.
  */
 export const getSiteEditorUrl = ( state, siteId ) => {

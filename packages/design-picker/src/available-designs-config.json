@@ -39,7 +39,6 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": true,
-			"is_featured_picks": true,
 			"features": []
 		},
 		{
@@ -50,7 +49,6 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": true,
-			"is_featured_picks": true,
 			"features": []
 		},
 		{
@@ -61,7 +59,6 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": true,
-			"is_featured_picks": true,
 			"features": []
 		},
 		{
@@ -72,7 +69,6 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": true,
-			"is_featured_picks": true,
 			"features": []
 		},
 		{
@@ -83,7 +79,6 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": true,
-			"is_featured_picks": true,
 			"features": []
 		},
 		{
@@ -94,7 +89,6 @@
 			"categories": [ { "slug": "featured", "name": "Featured" } ],
 			"is_premium": false,
 			"is_fse": true,
-			"is_featured_picks": true,
 			"features": []
 		},
 		{

@@ -14,11 +14,7 @@ export enum MARKETPLACE_ASYNC_PROCESS_STATUS {
 export interface IPurchaseFlowState {
 	primaryDomain: string | null;
 	productSlugInstalled: string | null;
-	siteTransferStatus: MARKETPLACE_ASYNC_PROCESS_STATUS;
-	reasonForSiteTransferStatus: string | null;
 	pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS;
-	reasonForPluginInstallationStatus: string | null;
-	isPluginInstalledAlongWithTransfer: boolean | null;
 }
 
 export interface IBillingIntervalState {

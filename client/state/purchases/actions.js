@@ -12,16 +12,22 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
-
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import 'calypso/state/purchases/init';
 
 const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
 const PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase.' );
 
-export const clearPurchases = () => ( dispatch ) => {
+export const clearPurchases = () => ( dispatch, getState ) => {
+	const siteId = getSelectedSiteId( getState() );
+
 	dispatch( { type: PURCHASES_REMOVE } );
 	dispatch( requestHappychatEligibility() );
+	if ( siteId ) {
+		dispatch( requestAdminMenu( siteId ) );
+	}
 };
 
 export const fetchSitePurchases = ( siteId ) => ( dispatch ) => {
@@ -69,7 +75,9 @@ export const fetchUserPurchases = ( userId ) => ( dispatch ) => {
 		} );
 };
 
-export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
+export const removePurchase = ( purchaseId, userId ) => ( dispatch, getState ) => {
+	const siteId = getSelectedSiteId( getState() );
+
 	return new Promise( ( resolve ) =>
 		wpcom.req
 			.post( {
@@ -84,6 +92,9 @@ export const removePurchase = ( purchaseId, userId ) => ( dispatch ) => {
 				} );
 
 				dispatch( requestHappychatEligibility() );
+				if ( siteId ) {
+					dispatch( requestAdminMenu( siteId ) );
+				}
 
 				resolve( data );
 			} )
