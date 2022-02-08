@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 const hideImageOnError = ( event ) => {
-	event.target.style.display = 'none';
+	event.target.parentNode.style.display = 'none';
 };
 
 export default function FeaturedImage( { src, alt } ) {
