@@ -28,8 +28,6 @@ describe( 'system reducer', () => {
 		const previousState = {
 			system: {
 				apiReady: true,
-				authorized: true,
-				authorizationLoaded: true,
 				blocked: false,
 				wpcomSubscription: wpcomSubscription,
 			},
@@ -55,8 +53,6 @@ describe( 'system reducer', () => {
 		const previousState = {
 			system: {
 				apiReady: true,
-				authorized: true,
-				authorizationLoaded: true,
 				blocked: false,
 				wpcomSubscription: wpcomSubscriptionId,
 			},
@@ -88,16 +84,12 @@ describe( 'settings reducer', () => {
 		const previousState = {
 			settings: {
 				enabled: false,
-				dismissedNotice: true,
-				dismissedNoticeAt: 1466067124796,
 			},
 		};
 		deepFreeze( previousState );
 		const newState = serialize( reducer, previousState ).root();
 
 		expect( newState.settings ).to.eql( {
-			dismissedNotice: true,
-			dismissedNoticeAt: 1466067124796,
 			enabled: false,
 		} );
 	} );
@@ -121,16 +113,12 @@ describe( 'settings reducer', () => {
 		const previousState = {
 			settings: {
 				enabled: false,
-				dismissedNotice: true,
-				dismissedNoticeAt: 1466067124796,
 			},
 		};
 		deepFreeze( previousState );
 		const newState = deserialize( reducer, previousState );
 
 		expect( newState.settings ).to.eql( {
-			dismissedNotice: true,
-			dismissedNoticeAt: 1466067124796,
 			enabled: false,
 		} );
 	} );
