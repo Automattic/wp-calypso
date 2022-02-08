@@ -31,7 +31,7 @@ const DomainRegistrationThankYouProps = ( {
 	const returnProps: DomainThankYouProps = {
 		thankYouNotice: {
 			noticeTitle: translate(
-				'During setup your domain may be unreliable during the first 30 minutes.'
+				'It may take up to 30 minutes for your domain to start working properly.'
 			),
 			noticeIconCustom: <Icon icon={ info } size={ 24 } />,
 		},
