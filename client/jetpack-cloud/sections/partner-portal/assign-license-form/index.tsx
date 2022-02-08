@@ -69,9 +69,7 @@ export default function AssignLicenseForm( { sites } ): ReactElement {
 		<div className="assign-license-form">
 			<div className="assign-license-form__top">
 				<p className="assign-license-form__description">
-					{ translate(
-						'Select the website you would like to assign the license to.'
-					) }
+					{ translate( 'Select the website you would like to assign the license to.' ) }
 				</p>
 				<div className="assign-license-form__controls">
 					<Button

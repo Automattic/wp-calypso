@@ -10,7 +10,7 @@ interface MutationAssignLicenseVariables {
 function mutationAssignLicense( {
 	licenseKey,
 	selectedSite,
-}: MutationAssignLicenseVariables ): Promise< APILicense > {
+}: MutationAssignLicenseVariables ): Promise< APILicenseAssign > {
 	return wpcomJpl.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: `/jetpack-licensing/license/${ licenseKey }/site`,
