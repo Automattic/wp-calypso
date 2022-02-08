@@ -4,7 +4,6 @@ import {
 	getListByOwnerAndSlug,
 	getMatchingItem,
 	isSubscribedByOwnerAndSlug,
-	hasError,
 	isMissingByOwnerAndSlug,
 } from '../selectors';
 
@@ -234,38 +233,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( isSubscribed ).toEqual( true );
-		} );
-	} );
-
-	describe( '#hasError()', () => {
-		test( 'should return false if there is no error for the list', () => {
-			const result = hasError(
-				{
-					reader: {
-						lists: {
-							errors: { 123: 400 },
-						},
-					},
-				},
-				456
-			);
-
-			expect( result ).toBeFalsy();
-		} );
-
-		test( 'should return true if the list has an error', () => {
-			const result = hasError(
-				{
-					reader: {
-						lists: {
-							errors: { 123: 400 },
-						},
-					},
-				},
-				123
-			);
-
-			expect( result ).toBeTruthy();
 		} );
 	} );
 

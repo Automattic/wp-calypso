@@ -60,17 +60,6 @@ export const getSubscribedLists = createSelector(
 );
 
 /**
- * Returns true if the specified list has an error recorded.
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  listId  List ID
- * @returns {boolean}        Whether list has an error
- */
-export function hasError( state, listId ) {
-	return state.reader.lists.errors.hasOwnProperty( listId );
-}
-
-/**
  * Returns information about a single Reader list.
  *
  * @param  {object}  state  Global state tree

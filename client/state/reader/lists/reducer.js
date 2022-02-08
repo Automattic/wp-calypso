@@ -21,7 +21,7 @@ import {
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import { itemsSchema, subscriptionsSchema, errorsSchema } from './schema';
+import { itemsSchema, subscriptionsSchema } from './schema';
 
 /**
  * Tracks all known list objects, indexed by list ID.
@@ -204,22 +204,6 @@ export function isRequestingLists( state = false, action ) {
 	return state;
 }
 
-/**
- * Returns errors received when trying to update lists, keyed by list ID.
- *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
- */
-export const errors = withSchemaValidation( errorsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_LIST_UPDATE_FAILURE:
-			return { ...state, [ action.list.ID ]: action.error.statusCode };
-	}
-
-	return state;
-} );
-
 export default combineReducers( {
 	items,
 	listItems,
@@ -228,5 +212,4 @@ export default combineReducers( {
 	isRequestingList,
 	isRequestingLists,
 	isUpdatingList,
-	errors,
 } );
