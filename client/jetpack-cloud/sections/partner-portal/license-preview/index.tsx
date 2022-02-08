@@ -50,7 +50,7 @@ export default function LicensePreview( {
 		domain && [ LicenseState.Attached, LicenseState.Revoked ].indexOf( licenseState ) !== -1;
 	const justIssued =
 		moment.utc( issuedAt, 'YYYY-MM-DD HH:mm:ss' ) > moment.utc().subtract( 1, 'minute' );
-
+	const justAssigned = justIssued && 'attached' === licenseState;
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_preview_toggle' ) );
@@ -101,10 +101,16 @@ export default function LicensePreview( {
 							</span>
 						) }
 
-						{ justIssued && (
+						{ justIssued && ! justAssigned && (
 							<span className="license-preview__tag license-preview__tag--is-just-issued">
 								<Gridicon icon="checkmark-circle" size={ 18 } />
 								{ translate( 'Just issued' ) }
+							</span>
+						) }
+						{ justAssigned && (
+							<span className="license-preview__tag license-preview__tag--is-assigned">
+								<Gridicon icon="checkmark-circle" size={ 18 } />
+								{ translate( 'Successfully assigned' ) }
 							</span>
 						) }
 					</h3>
