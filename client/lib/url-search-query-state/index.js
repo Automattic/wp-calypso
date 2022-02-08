@@ -19,7 +19,7 @@ function updateUrlSearchQuery( queryName, queryValue ) {
 	}
 	page( window.location.pathname + newQuery );
 	// Dispatch the custom event. So that we can listen for the event and update the state accordingly.
-	const event = new CustomEvent( 'changeUrlSearchQuery', { details: { queryName, queryValue } } );
+	const event = new CustomEvent( 'changeUrlSearchQuery' );
 	window.dispatchEvent( event );
 }
 
