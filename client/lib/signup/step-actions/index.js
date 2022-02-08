@@ -437,25 +437,6 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	);
 }
 
-export function getSiteFeatures( callback, { siteSlug } ) {
-	if ( ! siteSlug ) {
-		defer( callback );
-		return;
-	}
-
-	wpcom.req
-		.get( {
-			path: `/sites/${ siteSlug }/block-editor`,
-			apiNamespace: 'wpcom/v2',
-		} )
-		.then( ( data ) => {
-			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
-		} )
-		.catch( ( errors ) => {
-			callback( [ errors ] );
-		} );
-}
-
 export function setIntentOnSite( callback, { siteSlug, intent } ) {
 	if ( ! intent ) {
 		defer( callback );
