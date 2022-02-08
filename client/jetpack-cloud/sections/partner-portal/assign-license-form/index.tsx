@@ -12,7 +12,7 @@ import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import './style.scss';
 
-export default function AssignLicenseForm( { sites } ): ReactElement {
+export default function AssignLicenseForm( { sites }: any ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ filter, setFilter ] = useState( false );
