@@ -13,7 +13,7 @@ switch ( process.platform ) {
 	case 'darwin':
 		APP_PATH = path.join(
 			__dirname,
-			'../../../release/mac/WordPress.com.app/Contents/MacOS/WordPress.com'
+			'../../../release/mac-arm64/WordPress.com.app/Contents/MacOS/WordPress.com'
 		);
 		break;
 	default:
@@ -119,7 +119,6 @@ describe( 'User Can log in', () => {
 
 		if ( electronApp ) {
 			try {
-				await electronApp.context().close();
 				await electronApp.close();
 			} catch {}
 		}
