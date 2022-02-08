@@ -9,7 +9,10 @@ import InviteAccept from 'calypso/my-sites/invites/invite-accept';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
 import { setUserEmailVerified } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import {
+	setDocumentHeadLink,
+	setDocumentHeadTitle as setTitle,
+} from 'calypso/state/document-head/actions';
 import { acceptInvite as acceptInviteAction } from 'calypso/state/invites/actions';
 
 /**
@@ -62,3 +65,32 @@ export function acceptInvite( context, next ) {
 	} );
 	next();
 }
+
+export const setOembedProviderLink = ( context, next ) => {
+	if ( ! context.isServerSide ) {
+		next();
+		return;
+	}
+
+	const href =
+		'https://public-api.wordpress.com/oembed/1.0' +
+		'?url=' +
+		encodeURIComponent( 'https://wordpress.com' + context.path ) +
+		'&for=wpcom-auto-discovery';
+
+	const links = [
+		{
+			rel: 'alternate',
+			type: 'application/json+oembed',
+			href: href + '&format=json',
+		},
+		{
+			rel: 'alternate',
+			type: 'application/xml+oembed',
+			href: href + '&format=xml',
+		},
+	];
+
+	context.store.dispatch( setDocumentHeadLink( links ) );
+	next();
+};
