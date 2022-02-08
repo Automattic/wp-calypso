@@ -99,6 +99,11 @@ function load_core_fse() {
 	add_action( 'admin_menu', 'gutenberg_site_editor_menu', 9 );
 	add_action( 'admin_menu', 'gutenberg_remove_legacy_pages' );
 	add_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
+	add_action( 'admin_menu', __NAMESPACE__ . '\hide_nav_menus_submenu' );
+
+	// Hides the AMP menu.
+	remove_action( 'admin_menu', 'amp_add_customizer_link' );
+
 	remove_action( 'init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
@@ -116,6 +121,11 @@ function unload_core_fse() {
 	remove_action( 'admin_menu', 'gutenberg_site_editor_menu', 9 );
 	remove_action( 'admin_menu', 'gutenberg_remove_legacy_pages' );
 	remove_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
+	remove_action( 'admin_menu', __NAMESPACE__ . '\hide_nav_menus_submenu' );
+
+	// Shows the AMP menu.
+	add_action( 'admin_menu', 'amp_add_customizer_link' );
+
 	if ( defined( 'REST_API_REQUEST' ) && true === REST_API_REQUEST ) {
 		// Do not hook to init during the REST API requests, as it causes PHP warnings
 		// while loading the alloptions (unable to access wp_0_ prefixed tables).
@@ -367,6 +377,15 @@ function display_fse_section() {
  */
 function hide_core_site_editor() {
 	remove_submenu_page( 'themes.php', 'site-editor.php' );
+}
+
+/**
+ * Hide the (Nav) Menus submenu when site editing is enabled
+ *
+ * @return void
+ */
+function hide_nav_menus_submenu() {
+	remove_submenu_page( 'themes.php', 'nav-menus.php' );
 }
 
 /**
