@@ -3,14 +3,14 @@ import { ReactElement, useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import AttachLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/attach-license-form';
+import AssignLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 
-export default function AttachLicense( { sites } ): ReactElement {
+export default function AssignLicense( { sites } ): ReactElement {
 	const translate = useTranslate();
 
 	useEffect( () => {
-		const layoutClass = 'layout__content--partner-portal-attach-license';
+		const layoutClass = 'layout__content--partner-portal-assign-license';
 		const content = document.getElementById( 'content' );
 
 		if ( content ) {
@@ -21,12 +21,12 @@ export default function AttachLicense( { sites } ): ReactElement {
 	}, [] );
 
 	return (
-		<Main wideLayout className="attach-license">
-			<DocumentHead title={ translate( 'Attach your new License' ) } />
+		<Main wideLayout className="assign-license">
+			<DocumentHead title={ translate( 'Assign your new License' ) } />
 			<SidebarNavigation />
-			<CardHeading size={ 36 }>{ translate( 'Attach your new License' ) }</CardHeading>
+			<CardHeading size={ 36 }>{ translate( 'Assign your new License' ) }</CardHeading>
 
-			<AttachLicenseForm sites={ sites } />
+			<AssignLicenseForm sites={ sites } />
 		</Main>
 	);
 }

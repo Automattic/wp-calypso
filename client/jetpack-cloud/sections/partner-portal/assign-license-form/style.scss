@@ -1,6 +1,6 @@
 @import '@wordpress/base-styles/_mixins.scss';
 
-.attach-license-form {
+.assign-license-form {
 
 	p {
 		font-size: 1rem;
@@ -27,46 +27,46 @@
 	}
 }
 
-.attach-license-form__top {
+.assign-license-form__top {
 	display: flex;
 	justify-content: space-between;
 }
 
-.attach-license-form__top > div {
+.assign-license-form__top > div {
 	align-self: flex-end;
 	margin-bottom: 0;
 }
 
-.attach-license-form__top {
+.assign-license-form__top {
 	margin-bottom: 1rem;
 	margin-top: -1.5rem;
 }
 
-.attach-license-form__bottom {
+.assign-license-form__bottom {
 	display: flex;
 	flex-wrap: wrap;
 }
 
-p.attach-license-form__description {
+p.assign-license-form__description {
 	margin-bottom: 0;
 	align-self: flex-end;
 	font-size: 0.875rem;
 	color: #333;
 }
 
-.attach-license-form__site-card {
+.assign-license-form__site-card {
 	margin-bottom: 0;
 }
 
-.attach-license-form__search-field {
+.assign-license-form__search-field {
 	margin-bottom: 1px;
 }
 
-.attach-license-form__site-card-radio.form-radio {
+.assign-license-form__site-card-radio.form-radio {
 	margin-right: 1rem;
 }
 
-.attach-license-form__attach-later.button {
+.assign-license-form__assign-later.button {
 	margin-right: 1rem;
 	font-weight: 700;
 	text-decoration: underline;

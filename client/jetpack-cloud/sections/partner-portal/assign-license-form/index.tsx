@@ -9,10 +9,10 @@ import SearchCard from 'calypso/components/search-card';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
-import useAttachLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-attach-license-mutation';
+import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import './style.scss';
 
-export default function AttachLicenseForm( { sites } ): ReactElement {
+export default function AssignLicenseForm( { sites } ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ filter, setFilter ] = useState( false );
@@ -24,9 +24,9 @@ export default function AttachLicenseForm( { sites } ): ReactElement {
 	const siteCards = sites.map( ( site: any ) => {
 		if ( -1 !== site.domain.search( filter ) || false === filter ) {
 			return (
-				<Card key={ site.ID } className="attach-license-form__site-card">
+				<Card key={ site.ID } className="assign-license-form__site-card">
 					<FormRadio
-						className="attach-license-form__site-card-radio"
+						className="assign-license-form__site-card-radio"
 						label=""
 						name="site_select"
 						onClick={ () => onSelectSite( site.ID ) }
@@ -39,7 +39,7 @@ export default function AttachLicenseForm( { sites } ): ReactElement {
 
 	const onSearch = ( query: any ) => setFilter( query );
 
-	const attachLicense = useAttachLicenseMutation( {
+	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( licenseKey: any ) => {
 			setIsSubmitting( false );
 			page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
@@ -50,46 +50,46 @@ export default function AttachLicenseForm( { sites } ): ReactElement {
 		},
 	} );
 
-	const onAttachLicense = useCallback( () => {
+	const onAssignLicense = useCallback( () => {
 		setIsSubmitting( true );
-		dispatch( infoNotice( translate( 'Attaching license…' ) ) );
+		dispatch( infoNotice( translate( 'Assigning license…' ) ) );
 		dispatch(
-			recordTracksEvent( 'calypso_partner_portal_attach_license_submit', {
+			recordTracksEvent( 'calypso_partner_portal_assign_license_submit', {
 				licenseKey,
 				selectedSite,
 			} )
 		);
-		attachLicense.mutate( { licenseKey, selectedSite } );
-	}, [ dispatch, licenseKey, selectedSite, attachLicense.mutate ] );
+		assignLicense.mutate( { licenseKey, selectedSite } );
+	}, [ dispatch, licenseKey, selectedSite, assignLicense.mutate ] );
 
-	const onAttachLater = () =>
+	const onAssignLater = () =>
 		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
 
 	return (
-		<div className="attach-license-form">
-			<div className="attach-license-form__top">
-				<p className="attach-license-form__description">
+		<div className="assign-license-form">
+			<div className="assign-license-form__top">
+				<p className="assign-license-form__description">
 					{ translate(
-						'Select the website that you would like to apply the license to. You can also attach it later.'
+						'Select the website you would like to assign the license to.'
 					) }
 				</p>
-				<div className="attach-license-form__controls">
+				<div className="assign-license-form__controls">
 					<Button
 						borderless
-						onClick={ onAttachLater }
+						onClick={ onAssignLater }
 						disabled={ isSubmitting }
-						className="attach-license-form__attach-later"
+						className="assign-license-form__assign-later"
 					>
 						{ translate( 'Assign later' ) }
 					</Button>
-					<Button primary onClick={ onAttachLicense } disabled={ isSubmitting }>
-						{ translate( 'Attach to website' ) }
+					<Button primary onClick={ onAssignLicense } disabled={ isSubmitting }>
+						{ translate( 'Assign to website' ) }
 					</Button>
 				</div>
 			</div>
 
 			<SearchCard
-				className="attach-license-form__search-field"
+				className="assign-license-form__search-field"
 				placeHolder={ translate( 'Search for website URL right here' ) }
 				onSearch={ onSearch }
 			/>

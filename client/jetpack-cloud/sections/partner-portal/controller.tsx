@@ -1,5 +1,5 @@
 import page from 'page';
-import AttachLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/attach-license';
+import AssignLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/assign-license';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
@@ -88,13 +88,13 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 	next();
 }
 
-export function attachLicenseContext( context: PageJS.Contet, next: () => void ): void {
+export function assignLicenseContext( context: PageJS.Contet, next: () => void ): void {
 	const state = context.store.getState();
 	const sites = getSites( state );
 
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <AttachLicense sites={ sites } />;
+	context.primary = <AssignLicense sites={ sites } />;
 	context.footer = <JetpackComFooter />;
 	next();
 }

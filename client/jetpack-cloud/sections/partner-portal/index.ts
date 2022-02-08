@@ -52,13 +52,13 @@ export default function () {
 		clientRender
 	);
 
-	// Attach a license.
+	// Assign a license to a site.
 	page(
-		`/partner-portal/attach-license`,
+		`/partner-portal/assign-license`,
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
-		controller.attachLicenseContext,
+		controller.assignLicenseContext,
 		makeLayout,
 		clientRender
 	);

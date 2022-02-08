@@ -72,7 +72,7 @@ export interface APILicense {
 	revoked_at: string | null;
 }
 
-export interface APILicenseAttach {
+export interface APILicenseAssign {
 	ok: boolean;
 	error: string;
 }
