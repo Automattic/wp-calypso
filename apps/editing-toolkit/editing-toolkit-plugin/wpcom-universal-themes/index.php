@@ -150,14 +150,6 @@ function load_helpers() {
 		return;
 	}
 
-	// AMP registration on the default 10 priority is too early and confuses the current
-	// Gutenberg (v12.5.1 at this comment's writing) `gutenberg_remove_legacy_pages` function
-	// into mistaking it for the Customizer proper.
-	if ( function_exists( 'amp_add_customizer_link' ) ) {
-		remove_action( 'admin_menu', 'amp_add_customizer_link' );
-		add_action( 'admin_menu', 'amp_add_customizer_link', 11 );
-	}
-
 	if ( apply_filters( 'a8c_hide_core_fse_activation', false ) ) {
 		return;
 	}
