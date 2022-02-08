@@ -2,7 +2,7 @@ import { Card, Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, TranslateResult } from 'i18n-calypso';
 import { map, pickBy } from 'lodash';
-import { Component, MouseEvent } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
@@ -38,9 +38,9 @@ interface CurrentThemeProps {
  * related actions.
  */
 class CurrentTheme extends Component< CurrentThemeProps > {
-	trackClick = ( event: MouseEvent< HTMLButtonElement > ) => trackClick( 'current theme', event );
-	trackLinkClick = ( event: MouseEvent< HTMLAnchorElement > ) =>
-		trackClick( 'current theme', event );
+	trackClick = ( eventName: string ) => () => {
+		trackClick( 'current theme', eventName );
+	};
 
 	render() {
 		const { currentTheme, currentThemeId, siteId, translate } = this.props;
@@ -104,7 +104,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 													href={
 														currentThemeId && option.getUrl ? option.getUrl( currentThemeId ) : ''
 													}
-													onClick={ this.trackClick }
+													onClick={ this.trackClick( name ) }
 												>
 													{ option.icon && <Gridicon icon={ option.icon } size={ 18 } /> }
 													{ option.label }
@@ -123,7 +123,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 								<a
 									className="current-theme__theme-description-link"
 									href={ options.info.getUrl( currentThemeId ) }
-									onClick={ this.trackLinkClick }
+									onClick={ this.trackClick( 'read more link' ) }
 								>
 									{ translate( 'Read more' ) }
 								</a>
@@ -133,7 +133,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 								<a
 									className="current-theme__theme-customize"
 									href={ options.customize.getUrl( currentThemeId ) }
-									onClick={ this.trackLinkClick }
+									onClick={ this.trackClick( 'customize theme link' ) }
 								>
 									{ options?.customize?.icon && (
 										<Gridicon icon={ options.customize.icon } size={ 24 } />
