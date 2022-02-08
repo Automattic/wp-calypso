@@ -204,6 +204,8 @@ class CancelPurchaseForm extends Component {
 			upsell: '',
 		};
 
+		const canRefund = !! parseFloat( this.getRefundAmount() );
+
 		if ( this.shouldUseBlankCanvasLayout() ) {
 			const { purchase } = this.props;
 			if ( value === 'couldNotInstall' && isWpComBusinessPlan( purchase.productSlug ) ) {
@@ -226,7 +228,7 @@ class CancelPurchaseForm extends Component {
 				newState.upsell = 'downgrade-personal';
 			}
 
-			if ( value === 'onlyNeedFree' && !! this.props.downgradeClick ) {
+			if ( value === 'onlyNeedFree' && !! this.props.downgradeClick && canRefund ) {
 				if ( isWpComPremiumPlan( purchase.productSlug ) ) {
 					newState.upsell = 'downgrade-personal';
 				} else if (
@@ -961,7 +963,7 @@ class CancelPurchaseForm extends Component {
 		const { refundOptions, currencyCode } = purchase;
 		const { precision } = getCurrencyDefaults( currencyCode );
 		const refundAmount =
-			isRefundable( purchase ) && refundOptions[ 0 ] && refundOptions[ 0 ].refund_amount
+			isRefundable( purchase ) && refundOptions?.[ 0 ]?.refund_amount
 				? refundOptions[ 0 ].refund_amount
 				: 0;
 
