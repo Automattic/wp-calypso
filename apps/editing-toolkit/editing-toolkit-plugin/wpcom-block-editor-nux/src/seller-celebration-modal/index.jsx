@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import NuxModal from '../nux-modal';
 import contentSubmittedImage from './images/post-published.svg';
 import './style.scss';
@@ -25,19 +26,21 @@ const SellerCelebrationModal = () => {
 	const isEditorSaving = useSelect( ( select ) =>
 		select( 'core' ).isSavingEntityRecord( 'root', 'site' )
 	);
+	const intent = useSiteIntent();
 
 	useEffect( () => {
 		if (
 			isSiteEditor &&
 			! isEditorSaving &&
 			previousIsEditorSaving.current &&
-			! hasDisplayedModal
+			! hasDisplayedModal &&
+			intent === 'sell'
 		) {
 			setIsModalOpen( true );
 			setHasDisplayedModal( true );
 		}
 		previousIsEditorSaving.current = isEditorSaving;
-	}, [ isEditorSaving, hasDisplayedModal, isSiteEditor ] );
+	}, [ isEditorSaving, hasDisplayedModal, isSiteEditor, intent ] );
 
 	// if save state has changed and was saving on last render
 	// then it has finished saving
