@@ -6,9 +6,9 @@ import { isMagnificentLocale } from 'calypso/lib/i18n-utils';
 interface ThemeOption {
 	action?(): void;
 	extendedLabel?: string;
-	getUrl?: () => string;
+	getUrl?(): string;
 	header?: string;
-	hideForTheme?: () => void;
+	hideForTheme?(): void;
 	icon?: string;
 	label?: string;
 	separator?: boolean;
