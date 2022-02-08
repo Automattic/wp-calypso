@@ -290,19 +290,6 @@ export default {
 
 		// Update initialContext to help woocommerce-install support site switching.
 		if ( 'woocommerce-install' === flowName ) {
-			const currentSiteId = getSiteId( context.store.getState(), context.query.siteSlug );
-			const previousSiteId = getSiteId(
-				initialContext.store.getState(),
-				initialContext.query.siteSlug
-			);
-
-			if ( currentSiteId !== previousSiteId ) {
-				// when changing sites setSelectedSiteForSignup uses the queryDependencies stored
-				// in the redux store this causes that when a site slug changes the first step doesn't
-				// catch the siteId change, this forces that change.
-				context.store.dispatch( setSelectedSiteId( currentSiteId ) );
-			}
-
 			initialContext = context;
 		}
 
@@ -387,15 +374,24 @@ export default {
 
 		next();
 	},
-	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
-		const { getState, dispatch } = signupStore;
+	setSelectedSiteForSignup( context, next ) {
+		const { getState, dispatch } = context.store;
+		const userLoggedIn = isUserLoggedIn( getState() );
+		const flowName = getFlowName( context.params, userLoggedIn );
 		const signupDependencies = getSignupDependencyStore( getState() );
+		let siteIdOrSlug;
 
-		const siteIdOrSlug =
-			signupDependencies?.siteSlug ||
-			query?.siteSlug ||
-			signupDependencies?.siteId ||
-			query?.siteId;
+		if ( 'woocommerce-install' === flowName ) {
+			// forces query precedence on woocommerce-install
+			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
+		} else {
+			siteIdOrSlug =
+				signupDependencies?.siteSlug ||
+				context.query?.siteSlug ||
+				signupDependencies?.siteId ||
+				context.query?.siteId;
+		}
+
 		if ( ! siteIdOrSlug ) {
 			next();
 			return;
