@@ -35,9 +35,6 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 	const mode = connectADomainStepsDefinition[ pageSlug ].mode;
 	const step = connectADomainStepsDefinition[ pageSlug ].step;
 
-	// const isDomainConnected =
-	// 	hasSiteDomainsLoaded && domains.some( ( _domain ) => _domain.domain === domain );
-
 	const statusRef = useRef( {} );
 
 	useEffect( () => {
@@ -45,12 +42,6 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 			setPageSlug( initialStep );
 		}
 	}, [ initialStep, setPageSlug ] );
-
-	// useEffect( () => {
-	// 	if ( ! isDomainConnected ) {
-	// 		page( domainUseMyDomain( selectedSite.slug ) );
-	// 	}
-	// }, [ isDomainConnected, selectedSite.slug ] );
 
 	const verifyConnection = useCallback(
 		( setStepAfterVerify = true ) => {
