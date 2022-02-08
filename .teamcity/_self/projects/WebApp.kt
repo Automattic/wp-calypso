@@ -334,16 +334,7 @@ object RunAllUnitTests : BuildType({
 				# These are not expected to fail
 				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
-
-				# These have known errors, so we report them as checkstyle
-				(
-					# Enable pipe errors in this subshell. After all, we know these will fail.
-					set +e
-					yarn tsc --build client 2>&1 | tee tsc_out
-					mkdir -p checkstyle_results
-					yarn run typescript-checkstyle < tsc_out | sed -e "s#${'$'}PWD#~#g" > ./checkstyle_results/tsc.xml
-					cat ./checkstyle_results/tsc.xml
-				)
+				yarn tsc --build client/tsconfig.json
 			"""
 		}
 		bashNodeScript {
