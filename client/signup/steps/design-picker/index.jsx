@@ -102,6 +102,10 @@ export default function DesignPickerStep( props ) {
 		let timeoutID;
 		if ( props.stepSectionName ) {
 			scrollTop.current = document.scrollingElement.scrollTop;
+			// Defer reset scroll position to ensure DesignPreview (WebPreview) is rendered
+			timeoutID = window.setTimeout( () => {
+				document.scrollingElement.scrollTop = 0;
+			} );
 		} else {
 			// Defer restore scroll position to ensure DesignPicker is rendered
 			timeoutID = window.setTimeout( () => {
