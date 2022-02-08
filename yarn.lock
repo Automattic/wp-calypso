@@ -9872,7 +9872,7 @@ __metadata:
     archiver: ^3.1.1
     copy-webpack-plugin: ^10.1.0
     cross-env: ^7.0.3
-    electron: ^17.0.0
+    electron: 17.0.0
     electron-builder: ^22.11.7
     electron-fetch: ^1.7.4
     electron-notarize: ^0.1.1
@@ -16238,7 +16238,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^17.0.0":
+"electron@npm:17.0.0":
   version: 17.0.0
   resolution: "electron@npm:17.0.0"
   dependencies:
