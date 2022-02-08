@@ -62,6 +62,9 @@ export default function AttachLicenseForm( { sites } ): ReactElement {
 		attachLicense.mutate( { licenseKey, selectedSite } );
 	}, [ dispatch, licenseKey, selectedSite, attachLicense.mutate ] );
 
+	const onAttachLater = () =>
+		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
+
 	return (
 		<div className="attach-license-form">
 			<div className="attach-license-form__top">
@@ -71,6 +74,14 @@ export default function AttachLicenseForm( { sites } ): ReactElement {
 					) }
 				</p>
 				<div className="attach-license-form__controls">
+					<Button
+						borderless
+						onClick={ onAttachLater }
+						disabled={ isSubmitting }
+						className="attach-license-form__attach-later"
+					>
+						{ translate( 'Assign later' ) }
+					</Button>
 					<Button primary onClick={ onAttachLicense } disabled={ isSubmitting }>
 						{ translate( 'Attach to website' ) }
 					</Button>
