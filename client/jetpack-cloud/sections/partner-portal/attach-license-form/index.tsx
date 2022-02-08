@@ -8,7 +8,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import SearchCard from 'calypso/components/search-card';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import useAttachLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-attach-license-mutation';
 import './style.scss';
 
@@ -52,6 +52,7 @@ export default function AttachLicenseForm( { sites } ): ReactElement {
 
 	const onAttachLicense = useCallback( () => {
 		setIsSubmitting( true );
+		dispatch( infoNotice( translate( 'Attaching license…' ) ) );
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_attach_license_submit', {
 				licenseKey,
