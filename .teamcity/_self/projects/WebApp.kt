@@ -28,6 +28,7 @@ object WebApp : Project({
 
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
+	buildType(Translate)
 	buildType(BuildDockerImage)
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
@@ -580,6 +581,20 @@ object CheckCodeStyleBranch : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
+		}
+	}
+})
+
+object Translate : BuildType({
+	name = "Translate"
+	description = "Extract translatable strings from the source code and build POT file"
+
+	steps {
+		bashNodeScript {
+			name = "Translate Build Steps"
+			scriptContent = """
+				echo "@todo: Translate Build Script"
+			"""
 		}
 	}
 })
