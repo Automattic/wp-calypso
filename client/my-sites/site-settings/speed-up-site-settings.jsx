@@ -12,6 +12,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -51,6 +52,7 @@ class SpeedUpSiteSettings extends Component {
 			selectedSiteId,
 			siteAcceleratorStatus,
 			siteIsJetpack,
+			siteIsAtomic,
 			translate,
 		} = this.props;
 
@@ -102,7 +104,11 @@ class SpeedUpSiteSettings extends Component {
 								text={ translate(
 									"Delays the loading of images until they are visible in the visitor's browser."
 								) }
-								link="https://jetpack.com/support/lazy-images/"
+								link={
+									siteIsAtomic
+										? 'https://wordpress.com/support/settings/performance-settings/#performance-amp-speed'
+										: 'https://jetpack.com/support/lazy-images/'
+								}
 							/>
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }
@@ -149,6 +155,7 @@ export default connect( ( state ) => {
 		selectedSiteId,
 		siteAcceleratorStatus,
 		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
+		siteIsAtomic: isSiteAutomatedTransfer( state, selectedSiteId ),
 		isPageOptimizeActive: isPluginActive( state, selectedSiteId, 'page-optimize' ),
 		pageOptimizeUrl: getSiteAdminUrl( state, selectedSiteId, 'admin.php?page=page-optimize' ),
 	};
