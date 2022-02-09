@@ -8,6 +8,7 @@ export type CannotAddEmailReason = {
 export type DomainType = keyof typeof domainType;
 
 interface EmailSubscription {
+	hasExpectedDnsRecords?: boolean | null;
 	ownedByUserId?: number;
 	status: string;
 }
@@ -68,6 +69,7 @@ export type ResponseDomain = {
 	expirySoon: boolean;
 	gdprConsentStatus: GDPRConsentStatus;
 	googleAppsSubscription: GoogleEmailSubscription | null;
+	hasEmailForwardsDnsRecords?: boolean | null;
 	hasRegistration: boolean;
 	hasWpcomNameservers: boolean;
 	hasZone: boolean;
