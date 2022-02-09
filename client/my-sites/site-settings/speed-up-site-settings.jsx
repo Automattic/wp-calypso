@@ -68,7 +68,12 @@ class SpeedUpSiteSettings extends Component {
 									'files and images so your visitors enjoy ' +
 									'the fastest experience regardless of device or location.'
 							) }
-							link="http://jetpack.com/support/site-accelerator/"
+							link={
+								siteIsAtomic
+									? 'https://wordpress.com/support/settings/performance-settings/#enable-site-accelerator'
+									: 'https://jetpack.com/support/site-accelerator/'
+							}
+							privacyLink={ ! siteIsAtomic }
 						/>
 						<FormSettingExplanation className="site-settings__feature-description">
 							{ translate(
@@ -106,9 +111,10 @@ class SpeedUpSiteSettings extends Component {
 								) }
 								link={
 									siteIsAtomic
-										? 'https://wordpress.com/support/settings/performance-settings/#performance-amp-speed'
+										? 'https://wordpress.com/support/settings/performance-settings/#lazy-load-images'
 										: 'https://jetpack.com/support/lazy-images/'
 								}
+								privacyLink={ ! siteIsAtomic }
 							/>
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }

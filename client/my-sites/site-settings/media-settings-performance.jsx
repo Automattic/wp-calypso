@@ -53,6 +53,7 @@ class MediaSettingsPerformance extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			isVideoPressAvailable,
+			siteIsAtomic,
 			siteId,
 			translate,
 		} = this.props;
@@ -63,7 +64,12 @@ class MediaSettingsPerformance extends Component {
 				<FormFieldset className="site-settings__formfieldset jetpack-video-hosting-settings">
 					<SupportInfo
 						text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
-						link="https://jetpack.com/support/videopress/"
+						link={
+							siteIsAtomic
+								? 'https://wordpress.com/support/videopress/'
+								: 'https://jetpack.com/support/videopress/'
+						}
+						privacyLink={ ! siteIsAtomic }
 					/>
 					<JetpackModuleToggle
 						siteId={ siteId }
@@ -179,6 +185,7 @@ const checkForActiveJetpackVideoPressPurchases = ( purchase ) =>
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
+	const siteIsAtomic = isSiteAutomatedTransfer( state, selectedSiteId );
 	const isVideoPressAvailable =
 		isJetpackSite( state, selectedSiteId ) ||
 		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) ||
@@ -186,11 +193,12 @@ export default connect( ( state ) => {
 		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
 
 	return {
+		siteIsAtomic,
 		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
 		isVideoPressAvailable,
 		isVideoPressFreeTier:
 			isJetpackSite( state, selectedSiteId ) &&
-			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
+			! siteIsAtomic &&
 			! getSitePurchases( state, selectedSiteId ).find(
 				checkForActiveJetpackVideoPressPurchases
 			) &&
