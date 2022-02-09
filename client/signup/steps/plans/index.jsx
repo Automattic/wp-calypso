@@ -4,7 +4,6 @@ import { Button } from '@automattic/components';
 import { isDesktop, subscribeIsDesktop, isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { intersection } from 'lodash';
 import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
 import { Component } from 'react';
@@ -22,7 +21,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
@@ -94,10 +92,7 @@ export class PlansStep extends Component {
 			return this.props.customerType;
 		}
 
-		const siteGoals = this.props.siteGoals.split( ',' );
-		const customerType =
-			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) ||
-			( intersection( siteGoals, [ 'sell', 'promote' ] ).length > 0 ? 'business' : 'personal' );
+		const customerType = getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' );
 
 		return customerType;
 	}
@@ -418,7 +413,6 @@ export default connect(
 		// they apply to the given site.
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
-		siteGoals: getSiteGoals( state ) || '',
 		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		showTreatmentPlansReorderTest:

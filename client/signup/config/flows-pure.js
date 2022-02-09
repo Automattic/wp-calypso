@@ -79,13 +79,6 @@ export function generateFlows( {
 			lastModified: '2019-10-16',
 		},
 		{
-			name: 'main',
-			steps: [ 'user', 'about', 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'The current best performing flow in AB tests',
-			lastModified: '2019-06-20',
-		},
-		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans' ]
