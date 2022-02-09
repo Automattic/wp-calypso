@@ -1,8 +1,9 @@
 import { Button } from '@automattic/components';
-import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import page from 'page';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import {
 	modeType,
@@ -11,12 +12,15 @@ import {
 } from 'calypso/components/domains/connect-domain-step/constants';
 import FoldableCard from 'calypso/components/foldable-card';
 import MaterialIcon from 'calypso/components/material-icon';
+import { domainManagementDns } from 'calypso/my-sites/domains/paths';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
 
 import './style.scss';
 
 export default function ConnectDomainStepSuggestedStart( {
 	className,
+	domain,
 	pageSlug,
 	mode,
 	onNextStep,
@@ -24,22 +28,14 @@ export default function ConnectDomainStepSuggestedStart( {
 	setPage,
 } ) {
 	const { __ } = useI18n();
+	const selectedSite = useSelector( getSelectedSite );
+	const goToDnsRecordsPage = () => page( domainManagementDns( selectedSite?.slug, domain ) );
 	const switchToAdvancedSetup = () => setPage( stepSlug.ADVANCED_START );
 
 	const stepContent = (
 		<div className={ className + '__suggested-start' }>
 			<p className={ className + '__text' }>
-				{ createInterpolateElement(
-					__(
-						'This is the easiest way to connect your domain, using name servers. If needed you can also use our <a>advanced setup</a>, using root A & CNAME records.'
-					),
-					{
-						a: createElement( 'a', {
-							className: 'connect-domain-step__change_mode_link',
-							onClick: switchToAdvancedSetup,
-						} ),
-					}
-				) }
+				{ __( 'This is the easiest way to connect your domain, using name servers.' ) }
 			</p>
 			<CardHeading tagName="h2" className={ className + '__sub-heading' }>
 				<MaterialIcon className={ className + '__sub-heading-icon' } size={ 24 } icon="timer" />
@@ -62,16 +58,17 @@ export default function ConnectDomainStepSuggestedStart( {
 				expanded={ false }
 			>
 				<p>
-					If you have any email or services other than web hosting connected to this domain, we
-					recommend you copy over your DNS records before proceeding with this setup to avoid
-					distruptions. You can then start the setup again by going back to Upgrades &gt; Domains.
+					{ __(
+						'If you have any email or services other than web hosting connected to this domain, we recommend you copy over your DNS records before proceeding with this setup to avoid distruptions. You can then start the setup again by going back to Upgrades > Domains.'
+					) }
 				</p>
-				<Button onclick={ null }>Go to DNS records</Button>
+				<Button onClick={ goToDnsRecordsPage }>Go to DNS records</Button>
 				<p>
-					Alternatively, you can continue to use your current DNS provider by adding the correct A
-					records and CNAME records using our advanced setup.
+					{ __(
+						'Alternatively, you can continue to use your current DNS provider by adding the correct A records and CNAME records using our advanced setup.'
+					) }
 				</p>
-				<Button onclick={ null }>Switch to advance setup</Button>
+				<Button onClick={ switchToAdvancedSetup }>Switch to advanced setup</Button>
 			</FoldableCard>
 			<Button primary onClick={ onNextStep }>
 				{ __( 'Start setup' ) }
