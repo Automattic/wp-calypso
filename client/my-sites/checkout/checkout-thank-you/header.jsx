@@ -494,18 +494,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const isConciergePurchase = 'concierge' === displayMode;
 		const isTrafficGuidePurchase = 'traffic-guide' === displayMode;
 
-		if (
-			isDataLoaded &&
-			( ! primaryPurchase || ! selectedSite || ( selectedSite.jetpack && ! isAtomic ) )
-		) {
-			return (
-				<div className="checkout-thank-you__header-button">
-					<Button className={ headerButtonClassName } primary onClick={ this.visitMyHome }>
-						{ translate( 'Go to My Home' ) }
-					</Button>
-				</div>
-			);
-		}
 		if ( this.isSearch() ) {
 			return (
 				<div className="checkout-thank-you__header-button">
@@ -516,6 +504,19 @@ export class CheckoutThankYouHeader extends PureComponent {
 						onClick={ this.recordThankYouClick }
 					>
 						{ translate( 'Customize Search' ) }
+					</Button>
+				</div>
+			);
+		}
+
+		if (
+			isDataLoaded &&
+			( ! primaryPurchase || ! selectedSite || ( selectedSite.jetpack && ! isAtomic ) )
+		) {
+			return (
+				<div className="checkout-thank-you__header-button">
+					<Button className={ headerButtonClassName } primary onClick={ this.visitMyHome }>
+						{ translate( 'Go to My Home' ) }
 					</Button>
 				</div>
 			);
