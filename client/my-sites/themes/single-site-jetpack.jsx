@@ -55,7 +55,9 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			event="calypso_themes_list_install_themes"
 			feature={ FEATURE_UPLOAD_THEMES }
 			plan={ PLAN_BUSINESS }
-			title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
+			title={ translate(
+				'Unlock ALL premium themes and upload your own themes with our Business and eCommerce plans!'
+			) }
 			forceHref={ true }
 			showIcon={ true }
 		/>
