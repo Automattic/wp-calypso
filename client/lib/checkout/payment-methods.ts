@@ -28,6 +28,7 @@ export interface PaymentMethod {
 	remember: '1' | '0';
 	stored_details_id: string;
 	user_id: string;
+	is_default: boolean;
 }
 
 export interface PaymentMethodMeta {
