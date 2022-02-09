@@ -27,3 +27,12 @@ body.is-section-signup.is-white-signup .signup {
 		}
 	}
 }
+
+.user__simpler-mobile-form {
+	.formatted-header__subtitle,
+	.formatted-header__title {
+		justify-content: center;
+		display: flex;
+		white-space: break-spaces;
+	}
+}

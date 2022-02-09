@@ -135,9 +135,6 @@ export class UserStep extends Component {
 			userLoggedIn,
 			wccomFrom,
 			isReskinned,
-			sectionName,
-			from,
-			locale,
 		} = this.props;
 
 		let subHeaderText = this.props.subHeaderText;
@@ -194,16 +191,7 @@ export class UserStep extends Component {
 		}
 
 		if ( isReskinned && 0 === positionInFlow ) {
-			const loginUrl = login( {
-				isJetpack: 'jetpack-connect' === sectionName,
-				from,
-				redirectTo: getRedirectToAfterLoginUrl( this.props ),
-				locale,
-				oauth2ClientId: oauth2Client?.id,
-				wccomFrom,
-				isWhiteLogin: isReskinned,
-				signupUrl: window.location.pathname + window.location.search,
-			} );
+			const loginUrl = this.getLoginUrl( this.props );
 
 			subHeaderText = translate(
 				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
@@ -401,6 +389,10 @@ export class UserStep extends Component {
 			} );
 		}
 
+		if ( this.isSimplerMobileForm() && this.isEmailForm() ) {
+			return translate( 'Create Account' );
+		}
+
 		return headerText;
 	}
 
@@ -460,11 +452,40 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
+					isSimplerMobileForm={ this.isSimplerMobileForm() }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
 		);
 	}
+
+	isPasswordlessExperiment() {
+		return this.state.experiment?.variationName === 'treatment';
+	}
+
+	isSimplerMobileForm() {
+		return this.props.flowName === 'onboarding' && isMobile() && this.state.isExperiemntTreatment;
+	}
+
+	isEmailForm() {
+		return this.props.path.includes( '/email' );
+	}
+
+	getLoginUrl( props ) {
+		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale } = props;
+
+		return login( {
+			isJetpack: 'jetpack-connect' === sectionName,
+			from,
+			redirectTo: getRedirectToAfterLoginUrl( props ),
+			locale,
+			oauth2ClientId: oauth2Client?.id,
+			wccomFrom,
+			isWhiteLogin: isReskinned,
+			signupUrl: window.location.pathname + window.location.search,
+		} );
+	}
+
 
 	renderP2SignupStep() {
 		return (
@@ -492,6 +513,27 @@ export class UserStep extends Component {
 
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
 			return null; // return nothing so that we don't see the error message and the sign up form.
+		}
+
+		if ( this.isSimplerMobileForm() ) {
+			const loginUrl = this.getLoginUrl( this.props );
+			const subHeading = this.props.translate( 'Already have an account? {{a}}Log in{{/a}}', {
+				components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+			} );
+
+			return (
+				<div className="user__simpler-mobile-form">
+					<StepWrapper
+						flowName={ this.props.flowName }
+						stepName={ this.props.stepName }
+						headerText={ this.getHeaderText() }
+						subHeaderText={ subHeading }
+						positionInFlow={ this.props.positionInFlow }
+						fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
+						stepContent={ this.renderSignupForm() }
+					/>
+				</div>
+			);
 		}
 
 		return (
