@@ -30,18 +30,17 @@ export const PluginCustomDomainDialog = ( {
 	const buttons = [
 		{
 			action: 'learn-more',
-			label: translate( 'Learn more', { context: 'button label' } ),
+			label: translate( 'Learn more' ),
 		},
 		{
 			action: 'manage-domains',
 			href: '/domains/manage/' + selectedSiteUrl,
-			label: translate( 'Manage domains', { context: 'button label' } ),
+			label: translate( 'Manage domains' ),
 		},
 		{
 			action: 'install-plugin',
 			label: translate( 'Install %(pluginName)s', {
 				args: { pluginName: plugin.name },
-				context: 'button label',
 			} ),
 			isPrimary: true,
 			onClick: onProceed,
