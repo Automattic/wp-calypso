@@ -216,6 +216,36 @@
 		}
 	}
 
+	&__connected-services-card.foldable-card.card,
+	&__connected-services-card.foldable-card.card.is-expanded {
+		margin-bottom: 32px;
+
+		.foldable-card__main div {
+			display: flex;
+			font-weight: 600;
+			font-size: $font-body;
+
+			svg {
+				margin-right: 4px;
+			}
+		}
+
+		.foldable-card__content {
+			padding-top: 0;
+			border-top: none;
+
+			p {
+				margin: 0;
+			}
+			p + .button {
+				margin-top: 16px;
+			}
+			.button + p {
+				margin-top: 24px;
+			}
+		}
+	}
+
 	&__advanced-records {
 		.connect-domain-step__records-list-header {
 			display: none;
@@ -265,7 +295,7 @@
 		}
 
 		&-state {
-			display:flex;
+			display: flex;
 			align-items: center;
 
 			&-icon.gridicon { /* need .gridicon for increased specificity */

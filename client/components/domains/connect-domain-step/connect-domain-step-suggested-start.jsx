@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
+import { Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import CardHeading from 'calypso/components/card-heading';
@@ -8,6 +9,7 @@ import {
 	stepsHeading,
 	stepSlug,
 } from 'calypso/components/domains/connect-domain-step/constants';
+import FoldableCard from 'calypso/components/foldable-card';
 import MaterialIcon from 'calypso/components/material-icon';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
 
@@ -48,6 +50,29 @@ export default function ConnectDomainStepSuggestedStart( {
 				<br />
 				{ __( 'It can take up to 72 hours for the domain to be fully connected.' ) }
 			</p>
+			<FoldableCard
+				clickableHeader
+				className={ className + '__connected-services-card' }
+				header={
+					<div>
+						<Icon icon={ info } size={ 24 } />
+						Any services connected to this domain?
+					</div>
+				}
+				expanded={ false }
+			>
+				<p>
+					If you have any email or services other than web hosting connected to this domain, we
+					recommend you copy over your DNS records before proceeding with this setup to avoid
+					distruptions. You can then start the setup again by going back to Upgrades &gt; Domains.
+				</p>
+				<Button onclick={ null }>Go to DNS records</Button>
+				<p>
+					Alternatively, you can continue to use your current DNS provider by adding the correct A
+					records and CNAME records using our advanced setup.
+				</p>
+				<Button onclick={ null }>Switch to advance setup</Button>
+			</FoldableCard>
 			<Button primary onClick={ onNextStep }>
 				{ __( 'Start setup' ) }
 			</Button>
