@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import placeholderImage from 'calypso/assets/images/domains/domain.svg';
 import DotPager from 'calypso/components/dot-pager';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { createSiteFromDomainOnly } from '../../paths';
@@ -101,7 +102,10 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 		);
 	};
 
-	const cards = [ renderAddSiteCard(), renderEmailCard() ];
+	const cards = [ renderAddSiteCard() ];
+	if ( ! hasPaidEmailWithUs( domain ) ) {
+		cards.push( renderEmailCard() );
+	}
 
 	return (
 		<>
