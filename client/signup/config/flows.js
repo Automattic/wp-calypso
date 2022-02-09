@@ -109,6 +109,10 @@ function getDestinationFromIntent( dependencies ) {
 		return `/post/${ siteSlug }`;
 	}
 
+	if ( ! isFSEActive && intent === 'sell' ) {
+		return `/page/${ dependencies.siteSlug }/home`;
+	}
+
 	if ( isFSEActive && intent !== 'write' ) {
 		return `/site-editor/${ dependencies.siteSlug }`;
 	}

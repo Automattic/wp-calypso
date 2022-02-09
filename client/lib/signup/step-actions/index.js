@@ -443,8 +443,9 @@ export function setStoreFeatures( callback, { siteSlug } ) {
 		return;
 	}
 
+	//Hard-code the theme slug for now, we'll use design selection step in a future iteration.
 	wpcom.req
-		.post( `/sites/${ siteSlug }/themes/mine`, { theme: 'zoologist', dont_change_homepage: true } )
+		.post( `/sites/${ siteSlug }/themes/mine`, { theme: 'zoologist', dont_change_homepage: false } )
 		.then( () =>
 			wpcom.req.post( {
 				path: `/sites/${ siteSlug }/theme-setup`,
