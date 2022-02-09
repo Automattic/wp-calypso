@@ -64,7 +64,6 @@ class DnsRecords extends Component {
 			<DnsMenuOptionsButton
 				key="menu-options-button"
 				domain={ selectedDomain }
-				domainName={ selectedDomainName }
 				dns={ dns }
 				pointsToWpcom={ pointsToWpcom }
 			/>

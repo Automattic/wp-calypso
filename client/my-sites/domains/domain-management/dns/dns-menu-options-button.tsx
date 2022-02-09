@@ -78,7 +78,6 @@ const emailProviderKeys: EmailProviderKey[] = [
 
 function DnsMenuOptionsButton( {
 	domain,
-	domainName,
 	pointsToWpcom,
 	dns,
 	dispatchApplyDnsTemplate,
@@ -115,6 +114,8 @@ function DnsMenuOptionsButton( {
 				[ 'A', 'AAAA' ].includes( record.type )
 		);
 	}, [ dns ] );
+
+	const domainName = domain?.domain ?? domain?.name;
 
 	const restoreEmailDnsRecords = useCallback(
 		async ( {
