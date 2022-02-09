@@ -12,7 +12,7 @@ import {
 function StoreStatsModule( { header, children, data, emptyMessage, className, requesting } ) {
 	const isLoading = requesting && ! ( data && data.length );
 	const hasEmptyData = ! requesting && data && data.length === 0;
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 	return (
 		<div className={ classnames( 'store-stats-module', className ) }>
 			{ header }
@@ -22,13 +22,12 @@ function StoreStatsModule( { header, children, data, emptyMessage, className, re
 				</Card>
 			) }
 			{ ! isLoading && hasEmptyData && (
-				<Card className="stats-module is-showing-error has-no-data">
+				<Card className="store-stats-module__card stats-module is-showing-error has-no-data">
 					<ErrorPanel message={ emptyMessage } />
 				</Card>
 			) }
 			{ ! isLoading && ! hasEmptyData && children }
 		</div>
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);
 }
 
