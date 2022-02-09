@@ -38,6 +38,7 @@ import {
 } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getUserExperience } from 'calypso/state/signup/steps/user-experience/selectors';
+import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 
 const Visibility = Site.Visibility;
@@ -437,28 +438,42 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	);
 }
 
-export function setStoreFeatures( callback, { siteSlug } ) {
+export async function setStoreFeatures( callback, { siteSlug } ) {
 	if ( ! siteSlug ) {
 		defer( callback );
 		return;
 	}
 
-	//Hard-code the theme slug for now, we'll use design selection step in a future iteration.
+	try {
+		const patternPost = await wpcom.req.get( {
+			path: `/sites/dotcompatterns.wordpress.com/posts/4348?http_envelope=1`,
+			apiNamespace: 'rest/v1.1',
+		} );
+
+		const newPage = await wpcom.req.post( {
+			path: `/sites/${ siteSlug }/pages`,
+			apiNamespace: 'wp/v2',
+			body: {
+				content: patternPost.content,
+				title: 'Home',
+				status: 'publish',
+			},
+		} );
+
+		updateSiteFrontPage( siteSlug, {
+			show_on_front: 'page',
+			page_on_front: newPage.id,
+		} )();
+	} catch ( e ) {
+		defer( callback );
+		return;
+	}
+
 	wpcom.req
-		.post( `/sites/${ siteSlug }/themes/mine`, { theme: 'zoologist', dont_change_homepage: false } )
-		.then( () =>
-			wpcom.req.post( {
-				path: `/sites/${ siteSlug }/theme-setup`,
-				apiNamespace: 'wpcom/v2',
-				body: { trim_content: true },
-			} )
-		)
-		.then( () =>
-			wpcom.req.get( {
-				path: `/sites/${ siteSlug }/block-editor`,
-				apiNamespace: 'wpcom/v2',
-			} )
-		)
+		.get( {
+			path: `/sites/${ siteSlug }/block-editor`,
+			apiNamespace: 'wpcom/v2',
+		} )
 		.then( ( data ) => {
 			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
 		} )
