@@ -218,3 +218,27 @@ function migrate_to_core_fse() {
 	require_once __DIR__ . '/migrate-to-core-fse.php';
 	return \migrate_legacy_fse_to_core_fse();
 }
+
+/**
+ * Registers our REST route for Legacy Dotcom FSE on Atomic migration.
+ *
+ * @return void
+ */
+function register_migration_route() {
+	if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+		return;
+	}
+
+	require_once __DIR__ . '/migrate-rest-route.php';
+
+	register_rest_route(
+		'wpcom/v1',
+		'migrate-legacy-fse',
+		array(
+			'methods'             => 'POST',
+			'permission_callback' => 'is_user_logged_in',
+			'callback'            => __NAMESPACE__ . '/migrate_rest_callback',
+		)
+	);
+}
+add_action( 'rest_api_init', __NAMESPACE__ . '/register_migration_route' );
