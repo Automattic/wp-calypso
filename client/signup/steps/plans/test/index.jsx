@@ -26,7 +26,6 @@ import { PlansStep, isDotBlogDomainRegistration } from '../index';
 
 const noop = () => {};
 const props = {
-	siteGoals: '',
 	stepName: 'Step name',
 	stepSectionName: 'Step section name',
 	signupDependencies: { domainItem: null },
@@ -206,30 +205,12 @@ describe( 'Plans.onSelectPlan', () => {
 } );
 
 describe( 'Plans.getCustomerType', () => {
-	describe( 'Should return "business" if at least one site goal seem related to business', () => {
-		const goals = [ 'sell', 'share', 'educate,sell', 'promote,educate' ];
-		goals.forEach( ( goal ) =>
-			test( `Should return "business" for site goals ${ goal }`, () => {
-				const comp = new PlansStep( { ...props, siteGoals: 'sell' } );
-				expect( comp.getCustomerType() ).toEqual( 'business' );
-			} )
-		);
-	} );
-	describe( 'Should return "business" if none of site goal sseem related to business', () => {
-		const goals = [ 'educate', 'share', 'showcase', 'share,showcase,educate' ];
-		goals.forEach( ( goal ) =>
-			test( `Should return "business" for site goals ${ goal }`, () => {
-				const comp = new PlansStep( { ...props, siteGoals: 'sell' } );
-				expect( comp.getCustomerType() ).toEqual( 'business' );
-			} )
-		);
-	} );
 	test( 'Should return site type property is siteType is provided', () => {
-		const comp = new PlansStep( { ...props, siteGoals: 'share', siteType: 'online-store' } );
+		const comp = new PlansStep( { ...props, siteType: 'online-store' } );
 		expect( comp.getCustomerType() ).toEqual( 'business' );
 	} );
 	test( "Should return customerType prop when it's provided", () => {
-		const comp = new PlansStep( { ...props, siteGoals: 'sell', customerType: 'personal' } );
+		const comp = new PlansStep( { ...props, customerType: 'personal' } );
 		expect( comp.getCustomerType() ).toEqual( 'personal' );
 	} );
 } );
