@@ -232,7 +232,7 @@ export function ContactInformation( {
 			<AddressField>
 				<TextAreaField
 					{ ...displayAddressProps }
-					label={ translate( 'Physical address' ) }
+					label={ translate( 'Physical address (if you want a map on your site)' ) }
 					onChange={ onChange }
 				/>
 			</AddressField>
