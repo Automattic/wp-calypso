@@ -445,7 +445,7 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 		return;
 	}
 
-  try {
+	try {
 		const patternPost = await wpcom.req.get( {
 			path: `/sites/dotcompatterns.wordpress.com/posts/4348?http_envelope=1`,
 			apiNamespace: 'rest/v1.1',
