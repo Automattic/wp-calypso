@@ -6,10 +6,11 @@
 	flex-direction: column;
 	justify-content: center;
 	margin-top: -12px;
-	margin-bottom: 40px;
+	margin-bottom: 16px;
 	padding-left: 40px;
 
 	@include break-small {
+		margin-bottom: 40px;
 		padding-left: 60px;
 	}
 }
@@ -63,7 +64,10 @@
 	&-description {
 		font-size: $font-body-small;
 		color: #646970;
-		margin-bottom: 0;
+
+		p {
+			margin-bottom: 0;
+		}
 	}
 
 	&-button {
