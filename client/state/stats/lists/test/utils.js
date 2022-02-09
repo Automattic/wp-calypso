@@ -8,7 +8,6 @@ import {
 	normalizers,
 	parseOrderDeltas,
 	parseOrdersChartData,
-	parseStoreStatsReferrers,
 	rangeOfPeriod,
 } from '../utils';
 
@@ -1887,61 +1886,6 @@ describe( 'utils', () => {
 						labelIcon: 'external',
 					},
 				] );
-			} );
-		} );
-
-		describe( 'parseStoreStatsReferrers', () => {
-			const validData = {
-				data: [
-					{
-						date: '2018-04-10',
-						data: [
-							[ 'green', 4 ],
-							[ 'red', 8 ],
-						],
-					},
-					{
-						date: '2018-04-09',
-						data: [
-							[ 'orange', 12 ],
-							[ 'blue', 16 ],
-						],
-					},
-				],
-				fields: [ 'color', 'age' ],
-			};
-
-			test( 'should return empty array for malformed payload', () => {
-				const noPayload = parseStoreStatsReferrers( undefined );
-				const noData = parseStoreStatsReferrers( {} );
-				const dataNotArray = parseStoreStatsReferrers( { data: {} } );
-
-				expect( noPayload ).toEqual( [] );
-				expect( noData ).toEqual( [] );
-				expect( dataNotArray ).toEqual( [] );
-			} );
-
-			test( 'should an array of objects with all fields', () => {
-				const parsedData = parseStoreStatsReferrers( validData );
-
-				expect( parsedData ).toHaveLength( validData.data.length );
-
-				const { fields } = validData;
-				const firstRecord = parsedData[ 0 ];
-
-				// Make sure all fields are present
-				firstRecord.data.forEach( ( d ) => {
-					expect( d[ fields[ 0 ] ] ).toBeDefined();
-					expect( d[ fields[ 1 ] ] ).toBeDefined();
-				} );
-
-				// Make sure values are correctly lined up
-				firstRecord.data.forEach( ( d, idx ) => {
-					expect( d.color ).toBe( validData.data[ 0 ].data[ idx ][ 0 ] );
-					expect( d.age ).toBe( validData.data[ 0 ].data[ idx ][ 1 ] );
-				} );
-
-				expect( firstRecord ).toHaveProperty( 'date', '2018-04-10' );
 			} );
 		} );
 	} );
