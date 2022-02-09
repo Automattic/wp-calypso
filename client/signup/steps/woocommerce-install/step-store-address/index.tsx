@@ -10,6 +10,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ActionSection, StyledNextButton } from '..';
 import SupportCard from '../components/support-card';
@@ -56,7 +57,11 @@ export default function StepStoreAddress(
 
 	const { get, save, update } = useSiteSettings( siteId );
 
-	const backUrl = signupDependencies.back_to;
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+	const backPath = signupDependencies?.back_to;
+	// Check for a valid back path, otherwise go back to the WooCommerce install landing page.
+	const backUrl =
+		backPath && backPath.match( /^\/(?!\/)/ ) ? backPath : `/woocommerce-installation/${ domain }`;
 
 	const { validate, clearError, getError, errors } = useAddressFormValidation( siteId );
 
