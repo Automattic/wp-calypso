@@ -28,7 +28,9 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 					<div className="plugin-details-header__info">
 						<div className="plugin-details-header__info-title">{ translate( 'Developer' ) }</div>
 						<div className="plugin-details-header__info-value">
-							<a href={ plugin.author_url }>{ plugin.author_name }</a>
+							<a href={ `/plugins?s=author:"${ plugin.author_name || '' }"` }>
+								{ plugin.author_name }
+							</a>
 						</div>
 					</div>
 					{ !! plugin.rating && (
