@@ -412,6 +412,7 @@ export function generateFlows( {
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
 			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
+			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2021-12-21',
 			disallowResume: false,
 		},

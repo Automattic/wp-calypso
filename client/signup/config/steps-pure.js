@@ -741,6 +741,7 @@ export function generateSteps( {
 		'store-address': {
 			stepName: 'store-address',
 			dependencies: [ 'siteSlug', 'back_to' ],
+			optionalDependencies: [ 'back_to' ],
 		},
 		'business-info': {
 			stepName: 'business-info',
