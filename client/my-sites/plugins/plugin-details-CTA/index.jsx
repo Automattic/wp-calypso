@@ -224,6 +224,9 @@ const CTAButton = ( {
 	const primaryDomain = useSelector( ( state ) =>
 		getPrimaryDomainBySiteId( state, selectedSite?.ID )
 	);
+
+	const pluginRequiresCustomPrimaryDomain =
+		primaryDomain?.isSubdomain && plugin?.requirements?.required_primary_domain;
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 
 	const updatedKeepMeUpdatedPreference = useCallback(
@@ -241,11 +244,29 @@ const CTAButton = ( {
 
 	return (
 		<>
-			<PluginCustomDomainDialog isDialogVisible={ true } plugin={ plugin } domains={ domains } />
+			<PluginCustomDomainDialog
+				onProceed={ () => {
+					if ( hasEligibilityMessages ) {
+						return setShowEligibility( true );
+					}
+					onClickInstallPlugin( {
+						dispatch,
+						selectedSite,
+						plugin,
+						upgradeAndInstall: shouldUpgrade,
+						isMarketplaceProduct,
+						billingPeriod,
+					} );
+				} }
+				isDialogVisible={ showAddCustomDomain }
+				plugin={ plugin }
+				domains={ domains }
+				closeDialog={ () => setShowAddCustomDomain( false ) }
+			/>
 			<Dialog
 				additionalClassNames={ 'plugin-details-CTA__dialog-content' }
 				additionalOverlayClassNames={ 'plugin-details-CTA__modal-overlay' }
-				isVisible={ showEligibility || showAddCustomDomain }
+				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
 			>
@@ -268,7 +289,7 @@ const CTAButton = ( {
 				className="plugin-details-CTA__install-button"
 				primary
 				onClick={ () => {
-					if ( primaryDomain?.isSubdomain ) {
+					if ( pluginRequiresCustomPrimaryDomain ) {
 						return setShowAddCustomDomain( true );
 					}
 					if ( hasEligibilityMessages ) {
