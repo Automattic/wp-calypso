@@ -576,13 +576,6 @@ export function generateSteps( {
 			},
 		},
 
-		passwordless: {
-			stepName: 'passwordless',
-			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'email', 'username' ],
-			unstorableDependencies: [ 'bearer_token' ],
-		},
-
 		'p2-details': {
 			stepName: 'p2-details',
 		},
