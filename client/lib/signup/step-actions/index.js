@@ -438,7 +438,7 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	);
 }
 
-export async function setStoreFeatures( callback, { siteSlug } ) {
+export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItems, reduxStore ) {
 	if ( ! siteSlug ) {
 		defer( callback );
 		return;
@@ -463,7 +463,7 @@ export async function setStoreFeatures( callback, { siteSlug } ) {
 		updateSiteFrontPage( siteSlug, {
 			show_on_front: 'page',
 			page_on_front: newPage.id,
-		} )();
+		} )( reduxStore.dispatch );
 	} catch ( e ) {
 		defer( callback );
 		return;
