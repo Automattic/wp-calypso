@@ -100,10 +100,6 @@ function load_core_fse() {
 	add_action( 'admin_menu', 'gutenberg_remove_legacy_pages' );
 	add_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
 	add_action( 'admin_menu', __NAMESPACE__ . '\hide_nav_menus_submenu' );
-
-	// Hides the AMP menu.
-	remove_action( 'admin_menu', 'amp_add_customizer_link' );
-
 	remove_action( 'init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_action( 'restapi_theme_init', __NAMESPACE__ . '\hide_template_cpts', 11 );
 	remove_filter( 'block_editor_settings_all', __NAMESPACE__ . '\hide_fse_blocks' );
@@ -122,9 +118,6 @@ function unload_core_fse() {
 	remove_action( 'admin_menu', 'gutenberg_remove_legacy_pages' );
 	remove_action( 'admin_bar_menu', 'gutenberg_adminbar_items', 50 );
 	remove_action( 'admin_menu', __NAMESPACE__ . '\hide_nav_menus_submenu' );
-
-	// Shows the AMP menu.
-	add_action( 'admin_menu', 'amp_add_customizer_link' );
 
 	if ( defined( 'REST_API_REQUEST' ) && true === REST_API_REQUEST ) {
 		// Do not hook to init during the REST API requests, as it causes PHP warnings
@@ -150,13 +143,8 @@ function load_helpers() {
 		return;
 	}
 
-	// AMP registration on the default 10 priority is too early and confuses the current
-	// Gutenberg (v12.5.1 at this comment's writing) `gutenberg_remove_legacy_pages` function
-	// into mistaking it for the Customizer proper.
-	if ( function_exists( 'amp_add_customizer_link' ) ) {
-		remove_action( 'admin_menu', 'amp_add_customizer_link' );
-		add_action( 'admin_menu', 'amp_add_customizer_link', 11 );
-	}
+	// Amp plugin helper.
+	add_action( 'admin_menu', __NAMESPACE__ . '\maybe_juggle_amp_priority', 0 );
 
 	if ( apply_filters( 'a8c_hide_core_fse_activation', false ) ) {
 		return;
@@ -180,6 +168,24 @@ function unload_helpers() {
 	remove_action( 'admin_notices', __NAMESPACE__ . '\theme_nag' );
 	remove_action( 'admin_menu', __NAMESPACE__ . '\add_submenu' );
 	remove_action( 'admin_init', __NAMESPACE__ . '\init_settings' );
+	remove_action( 'admin_menu', __NAMESPACE__ . '\maybe_juggle_amp_priority', 0 );
+}
+
+/**
+ * AMP registration on the default 10 priority is too early and confuses the current Gutenberg
+ * plugin's `gutenberg_remove_legacy_pages` function into mistaking it for the Customizer proper.
+ *
+ * This will be fixed once https://github.com/WordPress/gutenberg/pull/38598 is released.
+ *
+ * @return void
+ */
+function maybe_juggle_amp_priority() {
+	if ( ! function_exists( 'amp_add_customizer_link' ) || ! has_action( 'admin_menu', 'amp_add_customizer_link' ) ) {
+		return;
+	}
+
+	remove_action( 'admin_menu', 'amp_add_customizer_link' );
+	add_action( 'admin_menu', 'amp_add_customizer_link', 11 );
 }
 
 /**
