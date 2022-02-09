@@ -236,7 +236,12 @@ export class PlanFeaturesHeader extends Component {
 			eligibleForWpcomMonthlyPlans,
 		} = this.props;
 
-		if ( isMonthlyPlan || ! relatedMonthlyPlan || ! eligibleForWpcomMonthlyPlans ) {
+		if (
+			isMonthlyPlan ||
+			! relatedMonthlyPlan ||
+			! eligibleForWpcomMonthlyPlans ||
+			! relatedYearlyPlan
+		) {
 			return;
 		}
 
