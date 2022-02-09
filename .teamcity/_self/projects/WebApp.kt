@@ -589,12 +589,49 @@ object Translate : BuildType({
 	name = "Translate"
 	description = "Extract translatable strings from the source code and build POT file"
 
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
 	steps {
 		bashNodeScript {
 			name = "Translate Build Steps"
 			scriptContent = """
 				echo "@todo: Translate Build Script"
 			"""
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+			+:*
+			-:pull*
+		""".trimIndent()
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
 		}
 	}
 })
