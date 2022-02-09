@@ -24,7 +24,6 @@ import {
 	getCurrentUserId,
 	getCurrentUserName,
 	isUserLoggedIn,
-	// getSiteId,
 } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
