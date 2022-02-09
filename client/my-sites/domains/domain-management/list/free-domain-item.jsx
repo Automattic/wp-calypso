@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { createInterpolateElement, useState, useMemo } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, edit, home, moreVertical } from '@wordpress/icons';
 import PropTypes from 'prop-types';
@@ -27,11 +27,6 @@ export default function FreeDomainItem( {
 		onMakePrimary( domain.domain );
 	};
 	const [ isDialogVisible, setDialogVisible ] = useState( false );
-	const [ openDialog, closeDialog ] = useMemo( () => {
-		const toggleDialog = ( visible ) => () => setDialogVisible( visible );
-
-		return [ toggleDialog( true ), toggleDialog( false ) ];
-	}, [] );
 
 	const renderSiteAddressChanger = () => {
 		const domainName = domain?.name ?? '';
@@ -43,7 +38,7 @@ export default function FreeDomainItem( {
 				currentDomain={ domain }
 				currentDomainSuffix={ currentDomainSuffix }
 				isDialogVisible={ isDialogVisible }
-				onClose={ closeDialog }
+				onClose={ () => setDialogVisible( false ) }
 			/>
 		);
 	};
@@ -82,7 +77,7 @@ export default function FreeDomainItem( {
 						</PopoverMenuItem>
 					) }
 					{ ! isAtomicSite && (
-						<PopoverMenuItem onClick={ openDialog }>
+						<PopoverMenuItem onClick={ () => setDialogVisible( true ) }>
 							<Icon icon={ edit } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ __( 'Change site address' ) }
 						</PopoverMenuItem>
