@@ -658,7 +658,7 @@ class DomainsStep extends Component {
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
 		const onboardingSubHeaderCopy =
 			siteType &&
-			[ 'onboarding' ].includes( flowName ) &&
+			flowName === 'onboarding' &&
 			getSiteTypePropertyValue( 'slug', siteType, subHeaderPropertyName );
 
 		if ( onboardingSubHeaderCopy ) {
