@@ -24,6 +24,7 @@ import {
 	getCurrentUserId,
 	getCurrentUserName,
 	isUserLoggedIn,
+	// getSiteId,
 } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -451,9 +452,59 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 		 * have a way to get raw block source.
 		 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
 		 */
-		const patternPost =
-			'<!-- wp:columns {"align":"wide"} --><div class="wp-block-columns alignwide"><!-- wp:column --><div class="wp-block-column"><!-- wp:image --><figure class="wp-block-image"><img alt=""/></figure><!-- /wp:image --></div><!-- /wp:column --><!-- wp:column {"style":{"spacing":{"padding":{"right":"10%","left":"5%"}}}} --><div class="wp-block-column" style="padding-right:10%;padding-left:5%"><!-- wp:heading {"textAlign":"left","fontSize":"x-large"} --><h2 class="has-text-align-left has-x-large-font-size" id="item-name">Item Name</h2><!-- /wp:heading --><!-- wp:paragraph {"align":"left","style":{"color":{"text":"#808080"}},"fontSize":"small"} --><p class="has-text-align-left has-text-color has-small-font-size" style="color:#808080">Quick details</p><!-- /wp:paragraph --><!-- wp:heading {"level":3,"fontSize":"medium"} --><h3 class="has-medium-font-size" id="0-00">$0.00</h3><!-- /wp:heading --><!-- wp:jetpack/recurring-payments --><div class="wp-block-jetpack-recurring-payments"><!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":"Buy Now","backgroundColor":"primary","borderRadius":0,"width":"100%"} /--></div><!-- /wp:jetpack/recurring-payments --><!-- wp:spacer {"height":"20px"} --><div style="height:20px" aria-hidden="true" class="wp-block-spacer"></div><!-- /wp:spacer --><!-- wp:paragraph {"align":"left","style":{"typography":{"fontSize":18}}} --><p class="has-text-align-left" style="font-size:18px">Describe your item. Use this section to add a full description and details of your product, along with its many selling points.</p><!-- /wp:paragraph --><!-- wp:social-links {"iconColor":"foreground-dark","iconColorValue":"#101010","className":"is-style-logos-only"} --><ul class="wp-block-social-links has-icon-color is-style-logos-only"><!-- wp:social-link {"service":"facebook"} /--><!-- wp:social-link {"service":"twitter"} /--></ul><!-- /wp:social-links --></div><!-- /wp:column --></div><!-- /wp:columns -->';
+		const patternPost = `
+			<!-- wp:columns {"align":"wide"} -->
+			<div class="wp-block-columns alignwide">
+				<!-- wp:column -->
+				<div class="wp-block-column">
+					<!-- wp:image -->
+					<figure class="wp-block-image"><img alt="" /></figure>
+					<!-- /wp:image -->
+				</div>
+				<!-- /wp:column -->
 
+				<!-- wp:column {"style":{"spacing":{"padding":{"right":"10%","left":"5%"}}}} -->
+				<div class="wp-block-column" style="padding-right:10%;padding-left:5%">
+					<!-- wp:heading {"textAlign":"left","fontSize":"x-large"} -->
+					<h2 class="has-text-align-left has-x-large-font-size" id="item-name">Item Name</h2>
+					<!-- /wp:heading -->
+
+					<!-- wp:paragraph {"align":"left","style":{"color":{"text":"#808080"}},"fontSize":"small"} -->
+					<p class="has-text-align-left has-text-color has-small-font-size" style="color:#808080">Quick details</p>
+					<!-- /wp:paragraph -->
+
+					<!-- wp:heading {"level":3,"fontSize":"medium"} -->
+					<h3 class="has-medium-font-size" id="0-00">$0.00</h3>
+					<!-- /wp:heading -->
+
+					<!-- wp:jetpack/recurring-payments -->
+					<div class="wp-block-jetpack-recurring-payments">
+						<!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":"Buy Now","backgroundColor":"primary","borderRadius":0,"width":"100%"} /-->
+					</div>
+					<!-- /wp:jetpack/recurring-payments -->
+
+					<!-- wp:spacer {"height":"20px"} -->
+					<div style="height:20px" aria-hidden="true" class="wp-block-spacer"></div>
+					<!-- /wp:spacer -->
+
+					<!-- wp:paragraph {"align":"left","style":{"typography":{"fontSize":18}}} -->
+					<p class="has-text-align-left" style="font-size:18px">Describe your item. Lorem ipsum dolor sit amet,
+						consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+						minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+					<!-- /wp:paragraph -->
+
+					<!-- wp:social-links {"iconColor":"foreground-dark","iconColorValue":"#101010","className":"is-style-logos-only"} -->
+					<ul class="wp-block-social-links has-icon-color is-style-logos-only">
+						<!-- wp:social-link {"service":"facebook"} /-->
+
+						<!-- wp:social-link {"service":"twitter"} /-->
+					</ul>
+					<!-- /wp:social-links -->
+				</div>
+				<!-- /wp:column -->
+			</div>
+			<!-- /wp:columns -->
+		`;
 		// Create a new Home page
 		const newPage = await wpcom.req.post( {
 			path: `/sites/${ siteSlug }/pages`,
@@ -479,7 +530,7 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 
 	/*
 	 * Check to see if FSE is active on the site
-	 * to pass to our getDestinationFromIntent callback.
+	 * and pass to our getDestinationFromIntent callback.
 	 */
 	wpcom.req
 		.get( {
