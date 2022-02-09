@@ -156,8 +156,9 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		switch ( selectedOption ) {
 			case 'power':
 				page(
-					addQueryArgs( `/start/woocommerce-install/?site=${ siteSlug }`, {
+					addQueryArgs( `/start/woocommerce-install`, {
 						back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
+						siteSlug: siteSlug,
 					} )
 				);
 				break;
