@@ -450,7 +450,7 @@ export function setStoreFeatures( callback, { siteSlug } ) {
 			wpcom.req.post( {
 				path: `/sites/${ siteSlug }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
-				body: { trim_content: true },
+				body: { trim_content: true, store_setup: true },
 			} )
 		)
 		.then( () =>
