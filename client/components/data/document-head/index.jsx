@@ -13,8 +13,7 @@ import { getDocumentHeadFormattedTitle } from 'calypso/state/document-head/selec
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
 
 class DocumentHead extends Component {
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		const { title, unreadCount } = this.props;
 
 		if ( this.props.title !== undefined ) {
@@ -32,39 +31,39 @@ class DocumentHead extends Component {
 		if ( this.props.meta !== undefined ) {
 			this.props.setMeta( this.props.meta );
 		}
-	}
 
-	componentDidMount() {
 		this.setFormattedTitle( this.props.formattedTitle );
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		// The `title` prop is commonly receiving its value as a result from a `translate` call
 		// and in some cases it returns a React component instead of string.
 		// A shallow comparison of two React components may result in unnecessary title updates.
 		// To avoid that, we compare the string representation of the passed `title` prop value.
 		if (
-			nextProps.title !== undefined &&
-			this.props.title?.toString?.() !== nextProps.title?.toString?.()
+			this.props.title !== undefined &&
+			prevProps.title?.toString?.() !== this.props.title?.toString?.()
 		) {
-			this.props.setTitle( nextProps.title );
+			prevProps.setTitle( this.props.title );
 		}
 
-		if ( nextProps.unreadCount !== undefined && this.props.unreadCount !== nextProps.unreadCount ) {
-			this.props.setUnreadCount( nextProps.unreadCount );
+		if (
+			this.props.unreadCount !== undefined &&
+			prevProps.unreadCount !== this.props.unreadCount
+		) {
+			prevProps.setUnreadCount( this.props.unreadCount );
 		}
 
-		if ( nextProps.link !== undefined && ! isEqual( this.props.link, nextProps.link ) ) {
-			this.props.setLink( nextProps.link );
+		if ( this.props.link !== undefined && ! isEqual( prevProps.link, this.props.link ) ) {
+			prevProps.setLink( this.props.link );
 		}
 
-		if ( nextProps.meta !== undefined && ! isEqual( this.props.meta, nextProps.meta ) ) {
-			this.props.setMeta( nextProps.meta );
+		if ( this.props.meta !== undefined && ! isEqual( prevProps.meta, this.props.meta ) ) {
+			prevProps.setMeta( this.props.meta );
 		}
 
-		if ( nextProps.formattedTitle !== this.props.formattedTitle ) {
-			this.setFormattedTitle( nextProps.formattedTitle );
+		if ( this.props.formattedTitle !== prevProps.formattedTitle ) {
+			this.setFormattedTitle( this.props.formattedTitle );
 		}
 	}
 
