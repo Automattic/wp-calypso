@@ -243,6 +243,7 @@ export function ContactInformation( {
 export const HorizontalGrid = styled.div`
 	margin-top: 24px;
 	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
 	justify-content: space-between;
-	width: 627px;
 `;
