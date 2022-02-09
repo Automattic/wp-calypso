@@ -1,43 +1,27 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { requestJetpackUserConnectionData } from 'calypso/state/jetpack/connection/actions';
 import isRequestingJetpackUserConnection from 'calypso/state/selectors/is-requesting-jetpack-user-connection';
 
-class QueryJetpackUserConnection extends Component {
-	static propTypes = {
-		siteId: PropTypes.number,
-		// Connected props
-		isRequesting: PropTypes.bool,
-		requestJetpackUserConnectionData: PropTypes.func.isRequired,
-	};
-
-	componentDidMount() {
-		this.request( this.props );
+const request = ( siteId ) => ( dispatch, getState ) => {
+	if ( ! isRequestingJetpackUserConnection( getState(), siteId ) ) {
+		dispatch( requestJetpackUserConnectionData( siteId ) );
 	}
+};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
-			return;
-		}
-		this.request( nextProps );
-	}
+function QueryJetpackUserConnection( { siteId } ) {
+	const dispatch = useDispatch();
 
-	request( props ) {
-		if ( props.siteId && ! props.isRequesting ) {
-			props.requestJetpackUserConnectionData( props.siteId );
-		}
-	}
+	useEffect( () => {
+		dispatch( request( siteId ) );
+	}, [ dispatch, siteId ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
 
-export default connect(
-	( state, { siteId } ) => ( {
-		isRequesting: isRequestingJetpackUserConnection( state, siteId ),
-	} ),
-	{ requestJetpackUserConnectionData }
-)( QueryJetpackUserConnection );
+QueryJetpackUserConnection.propTypes = {
+	siteId: PropTypes.number.isRequired,
+};
+
+export default QueryJetpackUserConnection;
