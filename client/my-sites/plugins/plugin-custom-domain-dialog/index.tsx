@@ -1,5 +1,7 @@
-import { Button, Dialog } from '@automattic/components';
+import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PluginIcon from '../plugin-icon/plugin-icon';
 import './style.scss';
 
@@ -8,6 +10,7 @@ interface Props {
 	domains: Array< { isPrimary: boolean; isSubdomain: boolean } >;
 	closeDialog: () => void;
 	isDialogVisible: boolean;
+	onProceed: () => void;
 }
 
 export const PluginCustomDomainDialog = ( {
@@ -15,19 +18,38 @@ export const PluginCustomDomainDialog = ( {
 	domains,
 	closeDialog,
 	isDialogVisible,
+	onProceed,
 }: Props ): JSX.Element => {
 	const translate = useTranslate();
+	const selectedSiteUrl = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 
 	const hasNonPrimaryCustomDomain = domains.some(
 		( { isPrimary, isSubdomain } ) => ! isPrimary && ! isSubdomain
 	);
 
+	const buttons = [
+		{
+			action: 'learn-more',
+			label: translate( 'Learn more', { context: 'button label' } ),
+		},
+		{
+			action: 'manage-domains',
+			href: '/domains/manage/' + selectedSiteUrl,
+			label: translate( 'Manage domains', { context: 'button label' } ),
+		},
+		{
+			action: 'install-plugin',
+			label: translate( 'Install %(pluginName)s', {
+				args: { pluginName: plugin.name },
+				context: 'button label',
+			} ),
+			isPrimary: true,
+			onClick: onProceed,
+		},
+	];
+
 	return (
-		<Dialog
-			additionalClassNames={ 'plugin-custom-domain-dialog__modal' }
-			isVisible={ isDialogVisible }
-			onClose={ closeDialog }
-		>
+		<Dialog isVisible={ isDialogVisible } onClose={ closeDialog } buttons={ buttons }>
 			<div className="plugin-custom-domain-dialog__content">
 				<div className="plugin-custom-domain-dialog__icon">
 					<PluginIcon image={ plugin.icon } />
@@ -46,17 +68,6 @@ export const PluginCustomDomainDialog = ( {
 									args: { pluginName: plugin.name },
 								}
 						  ) }
-				</div>
-				<div className="plugin-custom-domain-dialog__buttons">
-					<Button>{ translate( 'Manage domains' ) }</Button>
-					<Button primary>
-						{ translate( 'Install %(pluginName)s', {
-							args: { pluginName: plugin.name },
-						} ) }
-					</Button>
-					<Button plain className="plugin-custom-domain-dialog__learn-more">
-						{ translate( 'or learn more' ) }
-					</Button>
 				</div>
 			</div>
 		</Dialog>

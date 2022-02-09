@@ -1,18 +1,8 @@
-.plugin-custom-domain-dialog__modal {
-	box-shadow: 0 3px 8px rgba( 0, 0, 0, 0.12 ), 0 3px 1px rgba( 0, 0, 0, 0.04 );
-	border-radius: 4px;
-
-	.dialog__content {
-		padding: 48px;
-	}
-}
-
 .plugin-custom-domain-dialog__content {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	row-gap: 32px;
-	max-width: 412px;
+	row-gap: 24px;
 	text-align: center;
 
 	.plugin-icon {
@@ -21,19 +11,12 @@
 	}
 }
 
-.plugin-custom-domain-dialog__buttons {
-	display: flex;
-	gap: 16px 8px;
-	flex-wrap: wrap;
-	justify-content: center;
+.plugin-custom-domain-dialog__description {
+	max-width: 412px;
+}
 
-	button {
-		flex-grow: 1;
-		font-weight: 500;
-	}
-
-	.plugin-custom-domain-dialog__learn-more {
-		flex-basis: 100%;
-		text-decoration: underline;
+.plugin-custom-domain-dialog__icon {
+	.plugin-icon {
+		margin: 0;
 	}
 }
