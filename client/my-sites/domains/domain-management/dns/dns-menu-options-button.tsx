@@ -51,18 +51,10 @@ const emailProviderConfig: Record< EmailProviderKey, EmailProviderConfiguration 
 		providerSlug: 'email-forwarding',
 	},
 	GOOGLE: {
-		dnsTemplate: dnsTemplates.G_SUITE,
-		hasServiceFunction: ( domain: ResponseDomain | undefined ): boolean => {
-			// Disable Google for now as our back-end template requires a site verification token
-			return false && ( hasGSuiteWithUs( domain ) || hasGSuiteWithAnotherProvider( domain ) );
-		},
+		dnsTemplate: dnsTemplates.GMAIL,
+		hasServiceFunction: ( domain: ResponseDomain | undefined ): boolean =>
+			hasGSuiteWithUs( domain ) || hasGSuiteWithAnotherProvider( domain ),
 		providerSlug: 'google',
-		templateVariableBuilder: (): object => {
-			return {
-				// The back-end template requires a `token` variable for a site verification record
-				token: ' ',
-			};
-		},
 	},
 	TITAN: {
 		dnsTemplate: dnsTemplates.TITAN,
