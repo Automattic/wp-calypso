@@ -13,7 +13,10 @@ const GUTENBOARDING_LOCALES = [ 'en', 'en-gb' ];
 const useOnboardingUrl = (): string => {
 	const userLocale = useLocale();
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_site_create_existing_users_to_start_flow'
+		'calypso_site_create_existing_users_to_start_flow',
+		{
+			isEligible: ! isJetpackCloud() && GUTENBOARDING_LOCALES.includes( userLocale ),
+		}
 	);
 
 	if ( isJetpackCloud() ) {
