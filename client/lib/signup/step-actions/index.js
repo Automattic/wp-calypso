@@ -24,6 +24,7 @@ import {
 	getCurrentUserId,
 	getCurrentUserName,
 	isUserLoggedIn,
+	// getSiteId,
 } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -444,6 +445,8 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 		return;
 	}
 
+	const siteId = getSiteId( reduxStore.getState(), siteSlug );
+
 	try {
 		const patternPost = await wpcom.req.get( {
 			path: `/sites/dotcompatterns.wordpress.com/posts/4348?http_envelope=1`,
@@ -460,10 +463,12 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 			},
 		} );
 
-		updateSiteFrontPage( siteSlug, {
+		const action = updateSiteFrontPage( siteId, {
 			show_on_front: 'page',
 			page_on_front: newPage.id,
-		} )( reduxStore.dispatch );
+		} );
+
+		await action( reduxStore.dispatch );
 	} catch ( e ) {
 		defer( callback );
 		return;
