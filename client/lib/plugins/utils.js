@@ -87,6 +87,7 @@ export function getAllowedPluginData( plugin ) {
 		'product_video',
 		'rating',
 		'ratings',
+		'requirements',
 		'sections',
 		'slug',
 		'support_URL',
