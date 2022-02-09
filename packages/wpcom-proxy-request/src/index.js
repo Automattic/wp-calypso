@@ -413,14 +413,11 @@ function onmessage( e ) {
 	const headers = data[ 2 ];
 
 	// We don't want to delete requests while we're processing stream messages
-	const processingStreamMode = ( typeof headers === 'object' && shouldProcessInStreamMode( headers[ 'Content-Type' ] ) );
-	if ( statusCode === 207 || processingStreamMode ) {
+	if ( statusCode === 207 ) {
 		// 207 is a signal from rest-proxy. It means, "this isn't the final
 		// response to the query." The proxy supports WebSocket connections
 		// by invoking the original success callback for each message received.
-		console.log( 'processing streams: ', headers );
 	} else {
-
 		// this is the final response to this query
 		delete requests[ id ];
 	}
@@ -437,12 +434,10 @@ function onmessage( e ) {
 
 		// FIXME @azabani remove once stream mode processing is implemented
 		if ( shouldProcessInStreamMode( headers[ 'Content-Type' ] ) ) {
-			//console.log( 'the xhr request contains: ', xhr );
-			console.log( 'statusCode: ', statusCode );
-			console.log( 'header status: ', headers[ 'status ' ] );
-			console.log( 'passing body to the next layer: ', body );
-			onStreamRecord( body );
-			return;
+			if ( statusCode == 207 ) {
+				onStreamRecord( body );
+				return;
+			}
 		}
 	}
 
