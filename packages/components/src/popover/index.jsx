@@ -129,6 +129,18 @@ class PopoverInner extends Component {
 		}
 	};
 
+	getTouchEvent = () => {
+		if ( 'onpointerdown' in document ) {
+			return 'pointerdown';
+		}
+
+		if ( 'ontouchstart' in document ) {
+			return 'touchstart';
+		}
+
+		return 'click';
+	};
+
 	// --- click outside ---
 	bindClickoutHandler() {
 		// run the listener in the capture phase, to run before the React click handler that
@@ -136,11 +148,11 @@ class PopoverInner extends Component {
 		// UI element and removes the event target from DOM. Running the clickout handler after
 		// that would fail to evaluate correctly if the `event.target` (already removed from DOM)
 		// is a DOM child of the popover's DOM element.
-		document.addEventListener( 'click', this.onClickout, true );
+		document.addEventListener( this.getTouchEvent(), this.onClickout, true );
 	}
 
 	unbindClickoutHandler() {
-		document.removeEventListener( 'click', this.onClickout, true );
+		document.removeEventListener( this.getTouchEvent(), this.onClickout, true );
 	}
 
 	onClickout = ( event ) => {
