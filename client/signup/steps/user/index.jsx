@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
-import { isDesktop } from '@automattic/viewport';
+import { isDesktop, isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
-import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -100,7 +99,7 @@ export class UserStep extends Component {
 
 	state = {
 		recaptchaClientId: null,
-		experiment: null,
+		isExperimentTreatment: null,
 		isDesktop: isDesktop(),
 	};
 
@@ -129,40 +128,14 @@ export class UserStep extends Component {
 			this.props.fetchOAuth2ClientData( clientId );
 		}
 
-		const signupFlows = [
-			'onboarding',
-			'free',
-			'personal',
-			'premium',
-			'business',
-			'ecommerce',
-			'with-theme',
-			'personal-monthly',
-			'premium-monthly',
-			'business-monthly',
-			'ecommerce-monthly',
-			'with-design-picker',
-		];
-		if ( signupFlows.includes( this.props.flowName ) ) {
-			const experimentCheck = this.state.isDesktop
-				? 'registration_email_only_desktop_v3'
-				: 'registration_email_only_mobile_v3';
-
-			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
-				this.setState( { experiment: experimentName } );
-				experimentName.variationName === 'treatment'
-					? this.persistExperimentName( experimentName.experimentName )
-					: null;
-			} );
+		if ( this.props.flowName === 'onboarding' ) {
+			loadExperimentAssignment( 'registration_social_login_first_on_mobile' ).then(
+				( experimentName ) => {
+					this.setState( { isExperimentTreatment: experimentName.variationName !== null } );
+				}
+			);
 		}
 	}
-
-	persistExperimentName = ( experimentName ) => {
-		const DAY_IN_SECONDS = 3600 * 24;
-		const expirationDate = new Date( new Date().getTime() + DAY_IN_SECONDS * 1000 );
-		const options = { path: '/', expires: expirationDate, sameSite: 'strict' };
-		document.cookie = cookie.serialize( 'wpcom_signup_experiment_name', experimentName, options );
-	};
 
 	getSubHeaderText() {
 		const {
@@ -173,9 +146,6 @@ export class UserStep extends Component {
 			userLoggedIn,
 			wccomFrom,
 			isReskinned,
-			sectionName,
-			from,
-			locale,
 		} = this.props;
 
 		let subHeaderText = this.props.subHeaderText;
@@ -232,16 +202,7 @@ export class UserStep extends Component {
 		}
 
 		if ( isReskinned && 0 === positionInFlow ) {
-			const loginUrl = login( {
-				isJetpack: 'jetpack-connect' === sectionName,
-				from,
-				redirectTo: getRedirectToAfterLoginUrl( this.props ),
-				locale,
-				oauth2ClientId: oauth2Client?.id,
-				wccomFrom,
-				isWhiteLogin: isReskinned,
-				signupUrl: window.location.pathname + window.location.search,
-			} );
+			const loginUrl = this.getLoginUrl( this.props );
 
 			subHeaderText = translate(
 				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
@@ -439,6 +400,10 @@ export class UserStep extends Component {
 			} );
 		}
 
+		if ( this.isSimplerMobileForm() && this.isEmailForm() ) {
+			return translate( 'Create Account' );
+		}
+
 		return headerText;
 	}
 
@@ -462,6 +427,29 @@ export class UserStep extends Component {
 
 	isPasswordlessExperiment() {
 		return this.state.experiment?.variationName === 'treatment';
+	}
+
+	isSimplerMobileForm() {
+		return this.props.flowName === 'onboarding' && isMobile() && this.state.isExperiemntTreatment;
+	}
+
+	isEmailForm() {
+		return this.props.path.includes( '/email' );
+	}
+
+	getLoginUrl( props ) {
+		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale } = props;
+
+		return login( {
+			isJetpack: 'jetpack-connect' === sectionName,
+			from,
+			redirectTo: getRedirectToAfterLoginUrl( props ),
+			locale,
+			oauth2ClientId: oauth2Client?.id,
+			wccomFrom,
+			isWhiteLogin: isReskinned,
+			signupUrl: window.location.pathname + window.location.search,
+		} );
 	}
 
 	renderSignupForm() {
@@ -503,6 +491,7 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
+					isSimplerMobileForm={ this.isSimplerMobileForm() }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -535,6 +524,27 @@ export class UserStep extends Component {
 
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
 			return null; // return nothing so that we don't see the error message and the sign up form.
+		}
+
+		if ( this.isSimplerMobileForm() ) {
+			const loginUrl = this.getLoginUrl( this.props );
+			const subHeading = this.props.translate( 'Already have an account? {{a}}Log in{{/a}}', {
+				components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+			} );
+
+			return (
+				<div className="user__simpler-mobile-form">
+					<StepWrapper
+						flowName={ this.props.flowName }
+						stepName={ this.props.stepName }
+						headerText={ this.getHeaderText() }
+						subHeaderText={ subHeading }
+						positionInFlow={ this.props.positionInFlow }
+						fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
+						stepContent={ this.renderSignupForm() }
+					/>
+				</div>
+			);
 		}
 
 		return (

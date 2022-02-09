@@ -6,9 +6,9 @@ import { connect } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GoogleLoginButton from 'calypso/components/social-buttons/google';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import SocialSignupToS from './social-signup-tos';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -17,6 +17,7 @@ class SocialSignupForm extends Component {
 		translate: PropTypes.func.isRequired,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
+		disableTosText: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -118,24 +119,7 @@ class SocialSignupForm extends Component {
 							}
 						/>
 
-						<p className="signup-form__social-buttons-tos">
-							{ this.props.translate(
-								"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
-									' are creating an account and you agree to our' +
-									' {{a}}Terms of Service{{/a}}.',
-								{
-									components: {
-										a: (
-											<a
-												href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
-							) }
-						</p>
+						{ ! this.props.disableTosText && <SocialSignupToS /> }
 					</div>
 				</div>
 			)
