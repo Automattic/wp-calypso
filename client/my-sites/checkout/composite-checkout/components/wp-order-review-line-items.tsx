@@ -6,8 +6,10 @@ import {
 	getCreditsLineItemFromCart,
 	isWpComProductRenewal,
 	joinClasses,
+	CouponLineItem,
 	NonProductLineItem,
 	LineItem,
+	getPartnerCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
@@ -78,6 +80,10 @@ export function WPOrderReviewLineItems( {
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
+	const hasPartnerCoupon = getPartnerCoupon( {
+		coupon: responseCart.coupon,
+		products: responseCart.products,
+	} );
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -116,13 +122,14 @@ export function WPOrderReviewLineItems( {
 			} ) }
 			{ couponLineItem && (
 				<WPOrderReviewListItem key={ couponLineItem.id }>
-					<NonProductLineItem
+					<CouponLineItem
 						lineItem={ couponLineItem }
 						isSummary={ isSummary }
 						hasDeleteButton={ ! isSummary }
 						removeProductFromCart={ removeCoupon }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						isPwpoUser={ isPwpoUser }
+						hasPartnerCoupon={ hasPartnerCoupon }
 					/>
 				</WPOrderReviewListItem>
 			) }
