@@ -184,8 +184,6 @@ export function generateFlows( {
 			lastModified: '2018-05-28',
 			disallowResume: true,
 		},
-		// Important: For any changes done to the ecommerce flow,
-		// please copy the same changes to ecommerce-onboarding flow too
 		{
 			name: 'ecommerce',
 			steps: [ 'user', 'domains', 'plans-ecommerce-fulfilled' ],
@@ -193,13 +191,6 @@ export function generateFlows( {
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2020-08-11',
 			showRecaptcha: true,
-		},
-		{
-			name: 'ecommerce-onboarding',
-			steps: [ 'user', 'domains', 'plans-ecommerce' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2020-03-04',
 		},
 		{
 			name: 'ecommerce-design-first',
