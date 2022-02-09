@@ -34,10 +34,6 @@ enum EmailProvider {
 
 type EmailProviderKey = keyof typeof EmailProvider;
 
-type EmailProviderTemplateBuilderArguments = {
-	domain: ResponseDomain | undefined;
-};
-
 type EmailProviderConfiguration = {
 	dnsTemplate: DnsTemplateDetails;
 	hasServiceFunction?: ( domain: ResponseDomain | undefined ) => boolean;
@@ -60,14 +56,9 @@ const emailProviderConfig: Record< EmailProviderKey, EmailProviderConfiguration 
 		dnsTemplate: dnsTemplates.TITAN,
 		hasServiceFunction: hasTitanMailWithUs,
 		providerSlug: 'titan',
-		templateVariableBuilder: ( { domain }: EmailProviderTemplateBuilderArguments ): object => {
-			const dmarcHost =
-				domain && domain.isSubdomain && domain.subdomainPart
-					? '_dmarc.' + domain.subdomainPart
-					: '_dmarc';
-
+		templateVariableBuilder: (): object => {
 			return {
-				dmarc_host: dmarcHost,
+				dmarc_host: '_dmarc',
 			};
 		},
 	},
