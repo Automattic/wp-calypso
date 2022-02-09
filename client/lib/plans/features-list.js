@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
+	FEATURE_SPAM_10K_PER_MONTH,
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
@@ -12,7 +13,6 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 	FEATURE_ADVANCED_SEO_TOOLS,
-	FEATURE_ADVANCED_STATS_V2,
 	FEATURE_AKISMET_V2,
 	FEATURE_ALL_BUSINESS_FEATURES,
 	FEATURE_ALL_FREE_FEATURES,
@@ -1208,9 +1208,12 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Block spam without CAPTCHAs' ),
 	},
 
-	[ FEATURE_ADVANCED_STATS_V2 ]: {
-		getSlug: () => FEATURE_ADVANCED_STATS_V2,
-		getTitle: () => i18n.translate( 'Advanced stats' ),
+	[ FEATURE_SPAM_10K_PER_MONTH ]: {
+		getSlug: () => FEATURE_SPAM_10K_PER_MONTH,
+		getTitle: () =>
+			i18n.translate( '10K API calls/mo', {
+				comment: '10 thousand API calls per month',
+			} ),
 	},
 
 	[ FEATURE_FILTERING_V2 ]: {

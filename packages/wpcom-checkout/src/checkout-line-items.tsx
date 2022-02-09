@@ -13,7 +13,14 @@ import {
 	isJetpackProductSlug,
 	isTitanMail,
 } from '@automattic/calypso-products';
-import { CheckoutModal, FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
+import {
+	CheckoutModal,
+	FormStatus,
+	useFormStatus,
+	Button,
+	Theme,
+	LineItem as LineItemType,
+} from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -21,7 +28,8 @@ import { getSublabel, getLabel } from './checkout-labels';
 import { getIntroductoryOfferIntervalDisplay } from './get-introductory-offer-interval-display';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
-import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
+import { getPartnerCoupon } from './partner-coupon';
+import IonosLogo from './partner-logo-ionos';
 import type {
 	GSuiteProductUser,
 	ResponseCart,
@@ -70,6 +78,24 @@ export const LineItem = styled( WPLineItem )< {
 
 	.checkout-line-item__price {
 		position: relative;
+	}
+`;
+
+export const CouponLineItem = styled( WPCouponLineItem )< {
+	theme?: Theme;
+} >`
+	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
+
+	&[data-partner-coupon='true'] ${ NonProductLineItem } {
+		border-bottom: none;
+	}
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	.jetpack-partner-logo {
+		padding-bottom: 20px;
 	}
 `;
 
@@ -230,6 +256,43 @@ function WPNonProductLineItem( {
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
+function WPCouponLineItem( {
+	lineItem,
+	className,
+	isSummary,
+	hasDeleteButton,
+	removeProductFromCart,
+	createUserAndSiteBeforeTransaction,
+	isPwpoUser,
+	hasPartnerCoupon,
+}: {
+	lineItem: LineItemType;
+	className?: string | null;
+	isSummary?: boolean;
+	hasDeleteButton?: boolean;
+	removeProductFromCart?: () => void;
+	createUserAndSiteBeforeTransaction?: boolean;
+	isPwpoUser?: boolean;
+	hasPartnerCoupon?: boolean;
+} ): JSX.Element {
+	return (
+		<div
+			className={ joinClasses( [ className, 'coupon-line-item' ] ) }
+			data-partner-coupon={ !! hasPartnerCoupon }
+		>
+			<NonProductLineItem
+				lineItem={ lineItem }
+				isSummary={ isSummary }
+				hasDeleteButton={ hasDeleteButton }
+				removeProductFromCart={ removeProductFromCart }
+				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+				isPwpoUser={ isPwpoUser }
+			/>
+			{ !! hasPartnerCoupon && <PartnerLogo /> }
+		</div>
+	);
 }
 
 function EmailMeta( {
@@ -707,6 +770,21 @@ function IntroductoryOfferCallout( {
 	return <DiscountCallout>{ text }</DiscountCallout>;
 }
 
+function PartnerLogo( { className }: { className?: string } ): JSX.Element | null {
+	const translate = useTranslate();
+
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return (
+		<LineItemMeta className={ joinClasses( [ className, 'jetpack-partner-logo' ] ) }>
+			<div>{ translate( 'Included in your IONOS plan' ) }</div>
+			<div className={ 'checkout-line-item__partner-logo-image' }>
+				<IonosLogo />
+			</div>
+		</LineItemMeta>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
 function DomainDiscountCallout( {
 	product,
 }: {
@@ -813,7 +891,6 @@ function WPLineItem( {
 
 	const productSlug = product?.product_slug;
 
-	const sublabel = getSublabel( product );
 	const label = getLabel( product );
 
 	const originalAmountDisplay = product.item_original_subtotal_display;
@@ -828,6 +905,11 @@ function WPLineItem( {
 		isGoogleWorkspaceProductSlug( productSlug ) ||
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product );
+
+	const containsPartnerCoupon = getPartnerCoupon( {
+		coupon: responseCart.coupon,
+		products: [ product ],
+	} );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -890,13 +972,20 @@ function WPLineItem( {
 				</>
 			) }
 
-			{ sublabel && (
+			{ product && ! containsPartnerCoupon && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
 					<DomainDiscountCallout product={ product } />
 					<FirstTermDiscountCallout product={ product } />
 					<CouponDiscountCallout product={ product } />
 					<IntroductoryOfferCallout product={ product } />
+				</LineItemMeta>
+			) }
+
+			{ product && containsPartnerCoupon && (
+				<LineItemMeta>
+					<LineItemSublabelAndPrice product={ product } />
+					<CouponDiscountCallout product={ product } />
 				</LineItemMeta>
 			) }
 

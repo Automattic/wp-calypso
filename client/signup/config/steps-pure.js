@@ -740,20 +740,20 @@ export function generateSteps( {
 		// Woocommerce Install steps.
 		'store-address': {
 			stepName: 'store-address',
-			dependencies: [ 'site' ],
+			dependencies: [ 'siteSlug' ],
 		},
 		'business-info': {
 			stepName: 'business-info',
-			dependencies: [ 'site' ],
+			dependencies: [ 'siteSlug' ],
 		},
 		confirm: {
 			stepName: 'confirm',
-			dependencies: [ 'site' ],
+			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'siteConfirmed' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-			dependencies: [ 'site', 'siteConfirmed' ],
+			dependencies: [ 'siteSlug', 'siteConfirmed' ],
 		},
 	};
 }

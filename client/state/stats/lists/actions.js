@@ -37,7 +37,6 @@ const wpcomV1Endpoints = {
 
 const wpcomV2Endpoints = {
 	statsOrders: 'stats/orders',
-	statsStoreReferrers: 'stats/events-by-referrer',
 	statsTopSellers: 'stats/top-sellers',
 	statsTopEarners: 'stats/top-earners',
 	statsTopCategories: 'stats/top-product-categories-by-usage',

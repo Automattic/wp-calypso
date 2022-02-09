@@ -7,7 +7,10 @@ import {
 	isWpComPremiumPlan,
 	isJetpackPlan,
 	isJetpackProduct,
+	planMatches,
 	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	GROUP_WPCOM,
 	JETPACK_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
 import { Dialog, Button } from '@automattic/components';
@@ -93,6 +96,8 @@ class CancelPurchaseForm extends Component {
 		flowType: PropTypes.string.isRequired,
 		showSurvey: PropTypes.bool.isRequired,
 		translate: PropTypes.func,
+		cancelBundledDomain: PropTypes.bool,
+		includedDomainPurchase: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -199,6 +204,8 @@ class CancelPurchaseForm extends Component {
 			upsell: '',
 		};
 
+		const canRefund = !! parseFloat( this.getRefundAmount() );
+
 		if ( this.shouldUseBlankCanvasLayout() ) {
 			const { purchase } = this.props;
 			if ( value === 'couldNotInstall' && isWpComBusinessPlan( purchase.productSlug ) ) {
@@ -219,6 +226,17 @@ class CancelPurchaseForm extends Component {
 				!! this.props.downgradeClick
 			) {
 				newState.upsell = 'downgrade-personal';
+			}
+
+			if ( value === 'onlyNeedFree' && !! this.props.downgradeClick && canRefund ) {
+				if ( isWpComPremiumPlan( purchase.productSlug ) ) {
+					newState.upsell = 'downgrade-personal';
+				} else if (
+					planMatches( purchase.productSlug, { term: TERM_ANNUALLY, group: GROUP_WPCOM } ) ||
+					planMatches( purchase.productSlug, { term: TERM_BIENNIALLY, group: GROUP_WPCOM } )
+				) {
+					newState.upsell = 'downgrade-monthly';
+				}
 			}
 
 			if (
@@ -367,9 +385,9 @@ class CancelPurchaseForm extends Component {
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
 
-	downgradeClick = () => {
+	downgradeClick = ( upsell ) => {
 		if ( ! this.state.isSubmitting ) {
-			this.props.downgradeClick();
+			this.props.downgradeClick( upsell );
 			this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
 			this.setState( {
 				isSubmitting: true,
@@ -394,7 +412,14 @@ class CancelPurchaseForm extends Component {
 			return null;
 		}
 
-		const { downgradePlanPrice, purchase, site, translate } = this.props;
+		const {
+			downgradePlanPrice,
+			purchase,
+			site,
+			translate,
+			includedDomainPurchase,
+			cancelBundledDomain,
+		} = this.props;
 
 		const dismissUpsell = () => this.setState( { upsell: '' } );
 
@@ -441,6 +466,8 @@ class CancelPurchaseForm extends Component {
 					</Upsell>
 				);
 			case 'downgrade-personal':
+			case 'downgrade-monthly':
+				//test
 				// eslint-disable-next-line no-case-declarations
 				const { precision } = getCurrencyDefaults( purchase.currencyCode );
 				// eslint-disable-next-line no-case-declarations
@@ -448,14 +475,21 @@ class CancelPurchaseForm extends Component {
 
 				return (
 					<Upsell
-						actionOnClick={ this.downgradeClick }
-						actionText={ translate( 'Switch to Personal' ) }
+						actionOnClick={ () => this.downgradeClick( upsell ) }
+						actionText={
+							upsell === 'downgrade-monthly'
+								? translate( 'Switch to a monthly subscription' )
+								: translate( 'Switch to Personal' )
+						}
 						image={ downgradeImage }
 					>
 						<DowngradeStep
 							currencySymbol={ purchase.currencySymbol }
 							planCost={ planCost }
 							refundAmount={ this.getRefundAmount() }
+							upsell={ upsell }
+							cancelBundledDomain={ cancelBundledDomain }
+							includedDomainPurchase={ includedDomainPurchase }
 						/>
 					</Upsell>
 				);
@@ -929,7 +963,7 @@ class CancelPurchaseForm extends Component {
 		const { refundOptions, currencyCode } = purchase;
 		const { precision } = getCurrencyDefaults( currencyCode );
 		const refundAmount =
-			isRefundable( purchase ) && refundOptions[ 0 ] && refundOptions[ 0 ].refund_amount
+			isRefundable( purchase ) && refundOptions?.[ 0 ]?.refund_amount
 				? refundOptions[ 0 ].refund_amount
 				: 0;
 

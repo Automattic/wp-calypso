@@ -188,8 +188,11 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
 			{
-				redirect_to: addQueryArgs( { site: wpcomDomain }, '/start/woocommerce-install/transfer' ),
-				cancel_to: addQueryArgs( { site: wpcomDomain }, '/start/woocommerce-install/confirm' ),
+				redirect_to: addQueryArgs(
+					{ siteSlug: wpcomDomain },
+					'/start/woocommerce-install/transfer'
+				),
+				cancel_to: addQueryArgs( { siteSlug: wpcomDomain }, '/start/woocommerce-install/confirm' ),
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),

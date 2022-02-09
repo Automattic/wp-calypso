@@ -326,7 +326,6 @@ export default {
 		if (
 			! providesDependenciesInQuery?.includes( 'siteId' ) &&
 			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
-			! providesDependenciesInQuery?.includes( 'site' ) &&
 			! isManageSiteFlow
 		) {
 			context.store.dispatch( setSelectedSiteId( null ) );
@@ -375,21 +374,29 @@ export default {
 
 		next();
 	},
-	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
-		const { getState, dispatch } = signupStore;
+	setSelectedSiteForSignup( context, next ) {
+		const { getState, dispatch } = context.store;
+		const userLoggedIn = isUserLoggedIn( getState() );
+		const flowName = getFlowName( context.params, userLoggedIn );
 		const signupDependencies = getSignupDependencyStore( getState() );
+		let siteIdOrSlug;
 
-		const siteIdOrSlug =
-			query?.site ||
-			signupDependencies?.site ||
-			signupDependencies?.siteSlug ||
-			query?.siteSlug ||
-			signupDependencies?.siteId ||
-			query?.siteId;
+		if ( 'woocommerce-install' === flowName ) {
+			// forces query precedence on woocommerce-install
+			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
+		} else {
+			siteIdOrSlug =
+				signupDependencies?.siteSlug ||
+				context.query?.siteSlug ||
+				signupDependencies?.siteId ||
+				context.query?.siteId;
+		}
+
 		if ( ! siteIdOrSlug ) {
 			next();
 			return;
 		}
+
 		const siteId = getSiteId( getState(), siteIdOrSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );

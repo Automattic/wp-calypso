@@ -111,7 +111,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"use-translation-chunks": true,
-		"woocommerce/extension-referrers": false,
 		"wpcom-user-bootstrap": true,
 		"wordpress-action-search": false,
 		"redirect-fallback-browsers": true,

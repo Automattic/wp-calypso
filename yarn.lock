@@ -237,7 +237,7 @@ __metadata:
     config: ^3.3.6
     mailosaur: ^7.3.1
     node-fetch: ^2.6.6
-    playwright: 1.16
+    playwright: ^1.18
     totp-generator: ^0.0.12
     typescript: ^4.5.5
   languageName: unknown
@@ -28560,6 +28560,32 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:=1.18.1":
+  version: 1.18.1
+  resolution: "playwright-core@npm:1.18.1"
+  dependencies:
+    commander: ^8.2.0
+    debug: ^4.1.1
+    extract-zip: ^2.0.1
+    https-proxy-agent: ^5.0.0
+    jpeg-js: ^0.4.2
+    mime: ^2.4.6
+    pngjs: ^5.0.0
+    progress: ^2.0.3
+    proper-lockfile: ^4.1.1
+    proxy-from-env: ^1.1.0
+    rimraf: ^3.0.2
+    socks-proxy-agent: ^6.1.0
+    stack-utils: ^2.0.3
+    ws: ^7.4.6
+    yauzl: ^2.10.0
+    yazl: ^2.5.1
+  bin:
+    playwright: cli.js
+  checksum: e64581928d9a42dce66f623b3af8ff8774ab2b09518756eb72449b3c5988cbe7336e898926b0bf3a56c8f317e4419f7aaa2ca3d826e9b705e8912738ffb3d9c0
+  languageName: node
+  linkType: hard
+
 "playwright@npm:1.16":
   version: 1.16.3
   resolution: "playwright@npm:1.16.3"
@@ -28568,6 +28594,17 @@ fsevents@~2.1.2:
   bin:
     playwright: cli.js
   checksum: dff5dd835a6d0a61d15b03dd2626971274c839babbc6533c6d0716129ec470fc3b95f3996d4e6f4a794c55e3380c20c97049a13d4fe8b06cc6a32fa418e4c0e2
+  languageName: node
+  linkType: hard
+
+"playwright@npm:^1.18":
+  version: 1.18.1
+  resolution: "playwright@npm:1.18.1"
+  dependencies:
+    playwright-core: =1.18.1
+  bin:
+    playwright: cli.js
+  checksum: 5a24f4b10abe6f1f1262d6e5fa269cc18a8254e192787995b9d6ea8e19e8d92c9d5cdea92839022fcf2c41c5727f89a88ea84c168a9fea8ef074e2d14e18e1d5
   languageName: node
   linkType: hard
 
@@ -38343,7 +38380,7 @@ testarmada-magellan@11.0.10:
     mocha-multi-reporters: ^1.5.1
     mocha-teamcity-reporter: ^3.0.0
     node-fetch: ^2.6.1
-    playwright: 1.16
+    playwright: ^1.18
     png-itxt: ^1.3.0
     postcss: ^8.3.11
     push-receiver: ^2.0.0

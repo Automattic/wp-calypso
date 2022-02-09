@@ -1,67 +1,15 @@
-import { assert, expect } from 'chai';
+import { assert } from 'chai';
 import moment from 'moment';
 import { UNITS } from '../constants';
 import {
-	calculateDelta,
 	formatValue,
 	getDelta,
-	getDeltaFromData,
-	getConversionRateData,
 	getStartDate,
 	getEndPeriod,
-	getStartPeriod,
 	getQueryDate,
 	getUnitPeriod,
 	getWidgetPath,
 } from '../utils';
-
-describe( 'calculateDelta', () => {
-	test( 'should return a correctly formed object', () => {
-		const item = { doodads: 75 };
-		const previousItem = { doodads: 50 };
-		const delta = calculateDelta( item, previousItem, 'doodads', 'day' );
-		assert.isObject( delta );
-		assert.isString( delta.value );
-		assert.isString( delta.since );
-		assert.isArray( delta.classes );
-	} );
-
-	test( 'should return correct values', () => {
-		const item = { doodads: 75 };
-		const previousItem = { doodads: 50, labelDay: 'a fortnight' };
-		const delta = calculateDelta( item, previousItem, 'doodads', 'day' );
-		assert.equal( delta.value, '50%' );
-		assert.equal( delta.since, 'since a fortnight' );
-		assert.include( delta.classes, 'is-favorable' );
-		assert.include( delta.classes, 'is-increase' );
-	} );
-
-	test( 'should return correct sign and direction', () => {
-		const item = { doodads: 75 };
-		const previousItem = { doodads: 100 };
-		const delta = calculateDelta( item, previousItem, 'doodads', 'day' );
-		assert.include( delta.classes, 'is-unfavorable' );
-		assert.include( delta.classes, 'is-decrease' );
-		assert.lengthOf( delta.classes, 2 );
-	} );
-
-	test( 'should return correct sign and direction for properties where less is good', () => {
-		const item = { total_refund: 75 };
-		const previousItem = { total_refund: 100 };
-		const delta = calculateDelta( item, previousItem, 'total_refund', 'day' );
-		assert.include( delta.classes, 'is-favorable' );
-		assert.include( delta.classes, 'is-decrease' );
-		assert.lengthOf( delta.classes, 2 );
-	} );
-
-	test( 'should return correct sign and direction for value of 0', () => {
-		const item = { doodads: 100 };
-		const previousItem = { doodads: 100 };
-		const delta = calculateDelta( item, previousItem, 'doodads', 'day' );
-		assert.include( delta.classes, 'is-neutral' );
-		assert.lengthOf( delta.classes, 1 );
-	} );
-} );
 
 describe( 'getQueryDate', () => {
 	test( 'should return a string', () => {
@@ -230,29 +178,6 @@ describe( 'getEndPeriod', () => {
 	} );
 } );
 
-describe( 'getStartPeriod', () => {
-	test( 'should return a string', () => {
-		const queryDate = getStartPeriod( '2017-07-05', 'week' );
-		assert.isString( queryDate );
-	} );
-	test( 'should return an the date for the first of the week', () => {
-		const queryDate = getStartPeriod( '2017-07-09', 'week' );
-		assert.strictEqual( queryDate, '2017-07-03' );
-	} );
-	test( 'should return an the date for the first of the month', () => {
-		const queryDate = getStartPeriod( '2017-07-05', 'month' );
-		assert.strictEqual( queryDate, '2017-07-01' );
-	} );
-	test( 'should return an the date for the start of the year', () => {
-		const queryDate = getStartPeriod( '2017-07-05', 'year' );
-		assert.strictEqual( queryDate, '2017-01-01' );
-	} );
-	test( 'should return an the date for the start of the day', () => {
-		const queryDate = getStartPeriod( '2017-07-05', 'day' );
-		assert.strictEqual( queryDate, '2017-07-05' );
-	} );
-} );
-
 describe( 'formatValue', () => {
 	test( 'should return a correctly formatted currency for NZD', () => {
 		const response = formatValue( 12.34, 'currency', 'NZD' );
@@ -324,119 +249,6 @@ describe( 'getDelta', () => {
 		const delta = getDelta( deltas, '2017-07-06', 'right' );
 		assert.strictEqual( delta.right, true );
 		assert.strictEqual( delta.period, '2017-07-06' );
-	} );
-} );
-
-const visitorData = [
-	{ visitors: 11735, period: '2018-01-01' },
-	{ visitors: 18513, period: '2018-02-01' },
-	{ visitors: 21110, period: '2018-03-01' },
-];
-
-describe( 'getDeltaFromData', () => {
-	test( 'should return an Object', () => {
-		const delta = getDeltaFromData( visitorData, '2018-03-01', 'visitors', 'month' );
-		assert.isObject( delta );
-	} );
-	test( 'should return empty if less than 3 data points are provided', () => {
-		const delta = getDeltaFromData( visitorData.slice( 0, 1 ), '2018-01-01', 'visitors', 'month' );
-		expect( delta ).to.eql( {} );
-	} );
-	test( 'should return empty if the selected date cannot be found', () => {
-		const delta = getDeltaFromData( visitorData, '2018-04-01', 'visitors', 'month' );
-		expect( delta ).to.eql( {} );
-	} );
-	test( 'should return the correct delta', () => {
-		const delta = getDeltaFromData( visitorData, '2018-03-01', 'visitors', 'month' );
-		assert.include( delta.classes, 'is-favorable' );
-		assert.include( delta.classes, 'is-increase' );
-		assert.equal( delta.value, '14%' );
-	} );
-} );
-
-const orderData = [
-	{
-		period: '2018-01-31',
-		orders: 18,
-	},
-	{
-		period: '2018-02-28',
-		orders: 13,
-	},
-	{
-		period: '2018-03-31',
-		orders: 110,
-	},
-];
-
-describe( 'getConversionRateData', () => {
-	test( 'should return an Array', () => {
-		const data = getConversionRateData( visitorData, orderData, 'month' );
-		assert.isArray( data );
-	} );
-	test( 'should return the correct conversion rate', () => {
-		const data = getConversionRateData( visitorData, orderData, 'month' );
-		/*
-			2018-01
-				( orders [18] ) / visitors [11735] ) * 100 = 0.15
-			2018-02
-				( orders [13] ) / visitors [18513] ) * 100 = 0.07
-			 2018-03
-				( orders [110 ] ) / visitors [21110] ) * 100 = 0.52
-		*/
-		expect( data ).to.eql( [
-			{
-				period: '2018-01',
-				conversionRate: 0.15,
-			},
-			{
-				period: '2018-02',
-				conversionRate: 0.07,
-			},
-			{
-				period: '2018-03',
-				conversionRate: 0.52,
-			},
-		] );
-	} );
-	test( 'should return zero rates if there are no visitors logged', () => {
-		const _visitorData = [
-			{ visitors: 0, period: '2018-01-01' },
-			{ visitors: 18513, period: '2018-02-01' },
-			{ visitors: 21110, period: '2018-03-01' },
-		];
-		const data = getConversionRateData( _visitorData, orderData, 'month' );
-		expect( data ).to.eql( [
-			{
-				period: '2018-01',
-				conversionRate: 0,
-			},
-			{
-				period: '2018-02',
-				conversionRate: 0.07,
-			},
-			{
-				period: '2018-03',
-				conversionRate: 0.52,
-			},
-		] );
-	} );
-	test( 'should return zero rates if product data is not logged', () => {
-		const data = getConversionRateData( visitorData, [], 'month' );
-		expect( data ).to.eql( [
-			{
-				period: '2018-01',
-				conversionRate: 0,
-			},
-			{
-				period: '2018-02',
-				conversionRate: 0,
-			},
-			{
-				period: '2018-03',
-				conversionRate: 0,
-			},
-		] );
 	} );
 } );
 
