@@ -2,7 +2,7 @@ import { isJetpackSearch } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
-// const JETPACK_SEARCH_INTRO_COUPON_CODE = 'FIRSTYEAR50';
+const JETPACK_SEARCH_INTRO_COUPON_CODE = 'FIRSTYEAR50';
 
 const isYearly = ( product: MinimalRequestCartProduct ) =>
 	! product.product_slug.endsWith( '_monthly' );
@@ -26,7 +26,7 @@ const useMaybeJetpackIntroCouponCode = (
 		);
 
 		if ( isEligibleForFirstYear50 ) {
-			// 	return JETPACK_SEARCH_INTRO_COUPON_CODE;
+			return JETPACK_SEARCH_INTRO_COUPON_CODE;
 		}
 
 		return undefined;

@@ -41,7 +41,7 @@ import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complet
 import useCreatePaymentMethods from './hooks/use-create-payment-methods';
 import useDetectedCountryCode from './hooks/use-detected-country-code';
 import useGetThankYouUrl from './hooks/use-get-thank-you-url';
-import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
+// import useMaybeJetpackIntroCouponCode from './hooks/use-maybe-jetpack-intro-coupon-code';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from './hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
@@ -184,7 +184,7 @@ export default function CompositeCheckout( {
 
 	const cartKey = useCartKey();
 	const {
-		couponStatus,
+		// couponStatus,
 		applyCoupon,
 		updateLocation,
 		replaceProductInCart,
@@ -199,10 +199,10 @@ export default function CompositeCheckout( {
 
 	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 
-	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
-		productsForCart,
-		couponStatus === 'applied'
-	);
+	// const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
+	// 	productsForCart,
+	// 	couponStatus === 'applied'
+	// );
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
@@ -210,7 +210,8 @@ export default function CompositeCheckout( {
 		isJetpackSitelessCheckout,
 		productsForCart,
 		areCartProductsPreparing,
-		couponCodeFromUrl: couponCodeFromUrl || maybeJetpackIntroCouponCode,
+		// couponCodeFromUrl: couponCodeFromUrl || maybeJetpackIntroCouponCode,
+		couponCodeFromUrl: couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
 		replaceProductsInCart,
