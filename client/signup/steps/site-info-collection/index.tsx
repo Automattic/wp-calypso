@@ -69,13 +69,13 @@ function sectionGenerator() {
 				},
 			},
 			{
-				title: translate( '%d. Site Description', {
+				title: translate( '%d. Site Tagline', {
 					args: [ 2 ],
 					comment: 'This is the serial number: 2',
 				} ),
 				component: (
 					<TextInputField
-						label={ translate( 'A short description for your website.' ) }
+						label={ translate( 'A short tagline for your website.' ) }
 						value={ formValues.siteDescription }
 						name="siteDescription"
 						onChange={ onChangeField }
