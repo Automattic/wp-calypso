@@ -185,7 +185,6 @@ const checkForActiveJetpackVideoPressPurchases = ( purchase ) =>
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
-	const siteIsAtomic = isSiteAutomatedTransfer( state, selectedSiteId );
 	const isVideoPressAvailable =
 		isJetpackSite( state, selectedSiteId ) ||
 		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) ||
@@ -193,12 +192,11 @@ export default connect( ( state ) => {
 		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
 
 	return {
-		siteIsAtomic,
 		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
 		isVideoPressAvailable,
 		isVideoPressFreeTier:
 			isJetpackSite( state, selectedSiteId ) &&
-			! siteIsAtomic &&
+			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
 			! getSitePurchases( state, selectedSiteId ).find(
 				checkForActiveJetpackVideoPressPurchases
 			) &&
