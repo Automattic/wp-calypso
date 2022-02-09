@@ -55,8 +55,13 @@ export class CheckoutThankYouHeader extends PureComponent {
 		recordStartTransferClickInThankYou: PropTypes.func.isRequired,
 	};
 
+	isSearch() {
+		const { purchases } = this.props;
+		return purchases?.length > 0 && purchases[ 0 ].productType === 'search';
+	}
+
 	getHeading() {
-		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, purchases } = this.props;
+		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
 
 		if ( ! isDataLoaded ) {
 			return this.props.translate( 'Loading…' );
@@ -66,7 +71,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Some items failed.' );
 		}
 
-		if ( purchases?.length > 0 && purchases[ 0 ].productType === 'search' ) {
+		if ( this.isSearch() ) {
 			return translate( 'Welcome to Jetpack Search!' );
 		}
 
@@ -96,14 +101,13 @@ export class CheckoutThankYouHeader extends PureComponent {
 			hasFailedPurchases,
 			primaryPurchase,
 			displayMode,
-			purchases,
 		} = this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
 		}
 
-		if ( purchases?.length > 0 && purchases[ 0 ].productType === 'search' ) {
+		if ( this.isSearch() ) {
 			return (
 				<div>
 					<p>{ translate( 'We are currently indexing your site.' ) }</p>
@@ -477,7 +481,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			jetpackSearchCustomizeUrl,
 			translate,
 			primaryPurchase,
-			purchases,
 			selectedSite,
 			displayMode,
 			isAtomic,
@@ -485,7 +488,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const headerButtonClassName = 'button is-primary';
 		const isConciergePurchase = 'concierge' === displayMode;
 		const isTrafficGuidePurchase = 'traffic-guide' === displayMode;
-		const isSearch = purchases?.length > 0 && purchases[ 0 ].productType === 'search';
 
 		if (
 			isDataLoaded &&
@@ -499,7 +501,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 				</div>
 			);
 		}
-		if ( isSearch ) {
+		if ( this.isSearch() ) {
 			return (
 				<div className="checkout-thank-you__header-button">
 					<Button
