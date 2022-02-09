@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { dnsTemplates } from 'calypso/lib/domains/constants';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	getGoogleMailServiceFamily,
 	hasGSuiteWithAnotherProvider,
@@ -36,25 +37,30 @@ type EmailProviderKey = keyof typeof EmailProvider;
 
 type EmailProviderConfiguration = {
 	dnsTemplate: DnsTemplateDetails;
-	hasServiceFunction?: ( domain: ResponseDomain | undefined ) => boolean;
+	shouldRestoreOptionBeEnabled: ( domain: ResponseDomain ) => boolean;
 	providerSlug: string;
-	templateVariableBuilder?: ( { domain }: { domain: ResponseDomain | undefined } ) => object;
+	templateVariableBuilder?: () => object;
 };
 
 const emailProviderConfig: Record< EmailProviderKey, EmailProviderConfiguration > = {
 	EMAIL_FORWARDING: {
 		dnsTemplate: dnsTemplates.WPCOM_EMAIL_FORWARDING,
 		providerSlug: 'email-forwarding',
+		shouldRestoreOptionBeEnabled: ( domain: ResponseDomain ): boolean =>
+			hasEmailForwards( domain ) && false === domain?.hasEmailForwardsDnsRecords,
 	},
 	GOOGLE: {
 		dnsTemplate: dnsTemplates.GMAIL,
-		hasServiceFunction: ( domain: ResponseDomain | undefined ): boolean =>
-			hasGSuiteWithUs( domain ) || hasGSuiteWithAnotherProvider( domain ),
+		shouldRestoreOptionBeEnabled: ( domain: ResponseDomain ): boolean =>
+			( hasGSuiteWithUs( domain ) || hasGSuiteWithAnotherProvider( domain ) ) &&
+			false === domain?.googleAppsSubscription?.hasExpectedDnsRecords,
 		providerSlug: 'google',
 	},
 	TITAN: {
 		dnsTemplate: dnsTemplates.TITAN,
-		hasServiceFunction: hasTitanMailWithUs,
+		shouldRestoreOptionBeEnabled: ( domain: ResponseDomain ): boolean =>
+			hasTitanMailWithUs( domain ) &&
+			false === domain?.titanMailSubscription?.hasExpectedDnsRecords,
 		providerSlug: 'titan',
 		templateVariableBuilder: (): object => {
 			return {
@@ -165,7 +171,7 @@ function DnsMenuOptionsButton( {
 		if ( shouldRestoreEmailDns ) {
 			restoreEmailDnsRecords( {
 				dnsTemplate: emailProviderConfig[ providerKey ].dnsTemplate,
-				variables: emailProviderConfig[ providerKey ].templateVariableBuilder?.( { domain } ) ?? {},
+				variables: emailProviderConfig[ providerKey ].templateVariableBuilder?.() ?? {},
 			} );
 		}
 	};
@@ -198,19 +204,14 @@ function DnsMenuOptionsButton( {
 
 	const emailRestoreItems = emailProviderKeys.map(
 		( emailProviderKey: EmailProviderKey ): JSX.Element => {
-			let isEmailMenuItemEnabled = true;
-
-			if ( ! domain ) {
-				isEmailMenuItemEnabled = false;
-			} else {
-				isEmailMenuItemEnabled =
-					emailProviderConfig[ emailProviderKey ].hasServiceFunction?.( domain ) ?? true;
-			}
+			const isEmailMenuItemDisabled =
+				domain === undefined ||
+				! emailProviderConfig[ emailProviderKey ].shouldRestoreOptionBeEnabled( domain );
 
 			return (
 				<PopoverMenuItem
 					key={ 'email-dns-restore-menu-item-' + emailProviderKey }
-					disabled={ ! isEmailMenuItemEnabled }
+					disabled={ isEmailMenuItemDisabled }
 					onClick={ () => showEmailRestoreDialog( emailProviderKey ) }
 				>
 					<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
