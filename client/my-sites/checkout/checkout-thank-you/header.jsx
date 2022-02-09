@@ -111,6 +111,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( this.isSearch() ) {
+			// Handle the Atomic vs Simple division here if needed.
+			// Might be fine to have the same message in both cases though.
 			return (
 				<div>
 					<p>{ translate( 'We are currently indexing your site.' ) }</p>
@@ -118,7 +120,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 						{ translate(
 							'In the meantime, we have configured Jetpack Search on your site' +
 								' ' +
-								'— you should try customizing it in your traditional WordPress dashboard.'
+								'— try customizing it!'
 						) }
 					</p>
 				</div>
