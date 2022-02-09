@@ -65,12 +65,6 @@ const CouponEnableButton = styled.button`
 	}
 `;
 
-const GeneratedNameNote = styled.p`
-	font-size: 0.75rem;
-	font-style: italic;
-	margin-top: 4px;
-`;
-
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
@@ -139,7 +133,7 @@ export default function WPCheckoutOrderReview( {
 	};
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
-	const shouldShowDomainNote = domainUrl?.includes( '.wordpress.com' );
+
 	const isPwpoUser = useSelector(
 		( state ) =>
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
@@ -150,14 +144,7 @@ export default function WPCheckoutOrderReview( {
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
 		>
 			{ ! planIsP2Plus && domainUrl && 'no-user' !== domainUrl && (
-				<SiteSummary>
-					{ translate( 'Site: %s', { args: domainUrl } ) }
-					{ shouldShowDomainNote && (
-						<GeneratedNameNote>
-							{ translate( 'You can change this name at any time in your account settings.' ) }
-						</GeneratedNameNote>
-					) }
-				</SiteSummary>
+				<SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary>
 			) }
 			{ planIsP2Plus && selectedSiteData?.name && (
 				<SiteSummary>
