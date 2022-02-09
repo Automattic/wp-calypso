@@ -234,6 +234,8 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 		font-size: $font-title-medium;
 		padding-right: 0;
 		margin-bottom: 0;
+		flex: 3;
+    align-self: baseline;
 	}
 
 	&.domain-suggestion.is-clickable:hover {

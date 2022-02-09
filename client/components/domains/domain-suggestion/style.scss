@@ -331,9 +331,10 @@ body.is-section-signup.is-white-signup {
 		}
 
 		@include break-wide {
-			align-self: center;
+			align-self: baseline;
 			margin-left: 12px;
 			margin-bottom: 0;
+			flex: 1;
 		}
 	}
 
@@ -389,6 +390,7 @@ body.is-section-signup.is-white-signup {
 
 			@include break-mobile {
 				font-size: 1rem;
+				align-self: baseline;
 			}
 		}
 		&.is-placeholder.card .domain-suggestion__action {
