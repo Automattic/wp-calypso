@@ -5,7 +5,7 @@ import { TASK_EARN_FEATURES } from 'calypso/my-sites/customer-home/cards/constan
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const EarnFeatures = ( { siteSlug, isSwiping = false } ) => {
+const EarnFeatures = ( { siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -18,7 +18,6 @@ const EarnFeatures = ( { siteSlug, isSwiping = false } ) => {
 			actionUrl={ `/earn/${ siteSlug }` }
 			completeOnStart={ false }
 			illustration={ earnIllustration }
-			isSwiping={ isSwiping }
 			taskId={ TASK_EARN_FEATURES }
 		/>
 	);

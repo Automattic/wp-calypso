@@ -8,7 +8,7 @@ import {
 } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
-const GoMobile = ( { isIos, isSwiping = false } ) => {
+const GoMobile = ( { isIos } ) => {
 	const translate = useTranslate();
 
 	const actionButton = isIos ? (
@@ -26,7 +26,6 @@ const GoMobile = ( { isIos, isSwiping = false } ) => {
 				)
 			) }
 			actionButton={ actionButton }
-			isSwiping={ isSwiping }
 			timing={ 2 }
 			taskId={ isIos ? TASK_GO_MOBILE_IOS : TASK_GO_MOBILE_ANDROID }
 		/>

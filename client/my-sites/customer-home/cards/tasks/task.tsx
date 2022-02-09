@@ -30,7 +30,6 @@ const Task = ( {
 	hasAction = true,
 	illustration,
 	isLoading: forceIsLoading = false,
-	isSwiping = false,
 	isUrgent = false,
 	showSkip = true,
 	enableSkipOptions = true,
@@ -46,7 +45,6 @@ const Task = ( {
 	description: ReactNode;
 	illustration?: string;
 	isLoading?: boolean;
-	isSwiping?: boolean;
 	isUrgent?: boolean;
 	showSkip?: boolean;
 	enableSkipOptions?: boolean;
@@ -80,12 +78,6 @@ const Task = ( {
 	const instanceId = useInstanceId( Task );
 
 	useEffect( () => setIsLoading( forceIsLoading ), [ forceIsLoading ] );
-
-	useEffect( () => {
-		if ( isSwiping ) {
-			setSkipOptionsVisible( false );
-		}
-	}, [ isSwiping ] );
 
 	const startTask = () => {
 		if ( actionOnClick instanceof Function ) {

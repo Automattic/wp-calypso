@@ -4,7 +4,7 @@ import growthSummitIllustration from 'calypso/assets/images/customer-home/illust
 import { TASK_CLOUDFLARE } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
-const Cloudflare = ( { isSwiping = false } ) => {
+const Cloudflare = () => {
 	const translate = useTranslate();
 	const showCloudflare = config.isEnabled( 'cloudflare' );
 
@@ -21,7 +21,6 @@ const Cloudflare = ( { isSwiping = false } ) => {
 					actionTarget="_blank"
 					completeOnStart={ false }
 					illustration={ growthSummitIllustration }
-					isSwiping={ isSwiping }
 					taskId={ TASK_CLOUDFLARE }
 				/>
 			) }

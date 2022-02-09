@@ -3,7 +3,7 @@ import podcastingIllustration from 'calypso/assets/images/customer-home/illustra
 import { TASK_PODCASTING } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
-const Podcasting = ( { isSwiping = false } ) => {
+const Podcasting = () => {
 	const translate = useTranslate();
 
 	return (
@@ -16,7 +16,6 @@ const Podcasting = ( { isSwiping = false } ) => {
 			actionUrl={ `https://anchor.fm/wordpressdotcom` }
 			actionTarget="_blank"
 			illustration={ podcastingIllustration }
-			isSwiping={ isSwiping }
 			taskId={ TASK_PODCASTING }
 		/>
 	);

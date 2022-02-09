@@ -59,8 +59,6 @@ export const Swipeable = ( {
 	children,
 	currentPage = 0,
 	onPageSelect,
-	onPageSwipeStart,
-	onPageSwipeEnd,
 	pageClassName,
 	containerClassName,
 	...otherProps
@@ -75,7 +73,6 @@ export const Swipeable = ( {
 	} );
 
 	const [ dragData, setDragData ] = useState( null );
-	const [ isSwiping, setIsSwiping ] = useState( false );
 
 	const pagesRef = useRef();
 	const numPages = Children.count( children );
@@ -124,10 +121,8 @@ export const Swipeable = ( {
 				return; // End early if we are not dragging any more.
 			}
 
-			setIsSwiping( false );
-			onPageSwipeEnd?.();
-
 			let dragPosition = getDragPositionAndTime( event );
+
 			if ( dragPosition.x === 0 ) {
 				dragPosition = dragData.last;
 			}
@@ -179,7 +174,6 @@ export const Swipeable = ( {
 			hasSwipedToPreviousPage,
 			numPages,
 			onPageSelect,
-			onPageSwipeEnd,
 			pagesStyle,
 			containerWidth,
 		]
@@ -195,17 +189,11 @@ export const Swipeable = ( {
 			const delta = dragPosition.x - dragData.start.x;
 			const absoluteDelta = Math.abs( delta );
 			const offset = getOffset( currentPage ) + delta;
-
 			setDragData( { ...dragData, last: dragPosition } );
 			// The user needs to swipe horizontally more then 2 px in order for the canvase to be dragging.
 			// We do this so that the user can scroll vertically smother.
 			if ( absoluteDelta < 3 ) {
 				return;
-			}
-
-			if ( ! isSwiping ) {
-				setIsSwiping( true );
-				onPageSwipeStart?.();
 			}
 
 			// Allow for swipe left or right
@@ -223,7 +211,6 @@ export const Swipeable = ( {
 			if ( ! swipeableArea ) {
 				return;
 			}
-
 			// Did the user swipe out of the swipeable area?
 			if (
 				dragPosition.x < swipeableArea.left ||
@@ -243,7 +230,6 @@ export const Swipeable = ( {
 			hasSwipedToPreviousPage,
 			swipeableArea,
 			pagesStyle,
-			onPageSwipeStart,
 			handleDragEnd,
 		]
 	);

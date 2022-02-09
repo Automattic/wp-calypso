@@ -7,7 +7,7 @@ import { TASK_CONNECT_ACCOUNTS } from 'calypso/my-sites/customer-home/cards/cons
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const ConnectAccountsTask = ( { siteSlug, isSwiping = false } ) => {
+const ConnectAccountsTask = ( { siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -25,7 +25,6 @@ const ConnectAccountsTask = ( { siteSlug, isSwiping = false } ) => {
 						: `/marketing/connections/${ siteSlug }?tour=marketingConnectionsTour`
 				}
 				illustration={ connectSocialAccountsIllustration }
-				isSwiping={ isSwiping }
 				timing={ 3 }
 				taskId={ TASK_CONNECT_ACCOUNTS }
 			/>

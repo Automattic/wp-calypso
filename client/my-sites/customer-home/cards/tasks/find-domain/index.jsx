@@ -6,7 +6,7 @@ import { TASK_FIND_DOMAIN } from 'calypso/my-sites/customer-home/cards/constants
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const FindDomain = ( { siteSlug, isSwiping = false } ) => {
+const FindDomain = ( { siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -20,7 +20,6 @@ const FindDomain = ( { siteSlug, isSwiping = false } ) => {
 			actionText={ translate( 'Find a domain' ) }
 			actionUrl={ `/domains/add/${ siteSlug }` }
 			illustration={ findDomainIllustration }
-			isSwiping={ isSwiping }
 			timing={ 10 }
 			taskId={ TASK_FIND_DOMAIN }
 		/>

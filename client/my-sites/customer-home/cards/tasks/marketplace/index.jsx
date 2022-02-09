@@ -5,7 +5,7 @@ import { TASK_MARKETPLACE } from 'calypso/my-sites/customer-home/cards/constants
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const Marketplace = ( { isSwiping = false } ) => {
+const Marketplace = () => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 
@@ -18,7 +18,6 @@ const Marketplace = ( { isSwiping = false } ) => {
 			actionText={ translate( "Let's explore!" ) }
 			actionUrl={ `/plugins/${ siteSlug }` }
 			illustration={ announcementImage }
-			isSwiping={ isSwiping }
 			taskId={ TASK_MARKETPLACE }
 		/>
 	);
