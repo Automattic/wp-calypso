@@ -2,7 +2,7 @@ import coursesLogo from 'calypso/assets/images/customer-home/courses-logo.png';
 import { TASK_WP_COURSES } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
-const WPCourses = () => {
+const WPCourses = ( { isSwiping = false } ) => {
 	return (
 		<Task
 			title="Introducing WordPress.com Courses"
@@ -11,6 +11,7 @@ const WPCourses = () => {
 			actionUrl="https://wpcourses.com/?utm_source=wordpressdotcom&utm_medium=referral&utm_campaign=courses_launch_myhome"
 			actionTarget="_blank"
 			illustration={ coursesLogo }
+			isSwiping={ isSwiping }
 			completeOnStart={ true }
 			taskId={ TASK_WP_COURSES }
 		/>

@@ -81,6 +81,8 @@ export const DotPager = ( {
 	children,
 	className,
 	onPageSelected,
+	onPageSwipeStart,
+	onPageSwipeEnd,
 	...props
 } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
@@ -109,6 +111,8 @@ export const DotPager = ( {
 			<Swipeable
 				hasDynamicHeight={ hasDynamicHeight }
 				onPageSelect={ handleSelectPage }
+				onPageSwipeStart={ () => onPageSwipeStart?.() }
+				onPageSwipeEnd={ () => onPageSwipeEnd?.() }
 				currentPage={ currentPage }
 				pageClassName="dot-pager__page"
 				containerClassName="dot-pager__pages"

@@ -3,7 +3,7 @@ import webinarsIllustration from 'calypso/assets/images/customer-home/illustrati
 import { TASK_WEBINARS } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
-const Webinars = () => {
+const Webinars = ( { isSwiping = false } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -17,6 +17,7 @@ const Webinars = () => {
 			actionTarget="_blank"
 			completeOnStart={ true }
 			illustration={ webinarsIllustration }
+			isSwiping={ isSwiping }
 			timing={ 2 }
 			taskId={ TASK_WEBINARS }
 		/>

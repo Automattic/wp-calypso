@@ -9,7 +9,7 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-pur
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const Renew = ( { card, moment, purchases, site, siteSlug } ) => {
+const Renew = ( { card, moment, purchases, site, siteSlug, isSwiping = false } ) => {
 	const translate = useTranslate();
 	const hasExpired = card === TASK_RENEW_EXPIRED_PLAN;
 
@@ -94,6 +94,7 @@ const Renew = ( { card, moment, purchases, site, siteSlug } ) => {
 			badgeText={ translate( 'Action required' ) }
 			illustration={ illustration }
 			isLoading={ ! planPurchase }
+			isSwiping={ isSwiping }
 			isUrgent={ hasExpired }
 			hasAction={ isOwner }
 			taskId={ card }

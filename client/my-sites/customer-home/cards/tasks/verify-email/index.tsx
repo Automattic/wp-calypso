@@ -6,7 +6,7 @@ import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
-const VerifyEmail = (): React.ReactElement => {
+const VerifyEmail = ( { isSwiping = false } ): React.ReactElement => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const userEmail = useSelector( getCurrentUserEmail );
@@ -28,6 +28,7 @@ const VerifyEmail = (): React.ReactElement => {
 			) }
 			actionText={ translate( 'Resend email' ) }
 			actionOnClick={ () => dispatch( verifyEmail( { showGlobalNotices: true } ) ) }
+			isSwiping={ isSwiping }
 			badgeText={ translate( 'Action required' ) }
 			showSkip={ false }
 			taskId={ TASK_VERIFY_EMAIL }

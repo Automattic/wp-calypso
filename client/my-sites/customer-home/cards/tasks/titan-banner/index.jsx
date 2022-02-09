@@ -6,7 +6,7 @@ import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const TitanBanner = () => {
+const TitanBanner = ( { isSwiping = false } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const emailComparisonPath = emailManagement( siteSlug, siteSlug );
@@ -27,6 +27,7 @@ const TitanBanner = () => {
 			completeOnStart={ false }
 			enableSkipOptions={ true }
 			illustration={ emailIllustration }
+			isSwiping={ isSwiping }
 			taskId={ TASK_UPSELL_TITAN }
 			timing={ 3 }
 		/>

@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { createElement, useEffect, useRef } from 'react';
+import { createElement, useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import DotPager from 'calypso/components/dot-pager';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -67,6 +67,7 @@ const cardComponents = {
 
 const Primary = ( { cards, trackCard } ) => {
 	const viewedCards = useRef( new Set() );
+	const [ isPageSwiping, setIsPageSwiping ] = useState( false );
 
 	const handlePageSelected = ( index ) => {
 		const selectedCard = cards && cards[ index ];
@@ -94,6 +95,8 @@ const Primary = ( { cards, trackCard } ) => {
 			showControlLabels="true"
 			hasDynamicHeight
 			onPageSelected={ handlePageSelected }
+			onPageSwipeStart={ () => setIsPageSwiping( true ) }
+			onPageSwipeEnd={ () => setIsPageSwiping( false ) }
 		>
 			{ cards.map(
 				( card, index ) =>
@@ -101,6 +104,7 @@ const Primary = ( { cards, trackCard } ) => {
 					createElement( cardComponents[ card ], {
 						key: index,
 						isIos: card === 'home-task-go-mobile-ios' ? true : null,
+						isSwiping: isPageSwiping,
 						card,
 					} )
 			) }
