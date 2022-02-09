@@ -18,7 +18,7 @@ interface SectionHeaderProps {
 
 const Section = styled.div`
 	border-bottom: 1px solid var( --studio-gray-5 );
-	padding: 20px;
+	padding: 0 20px;
 `;
 
 const SectionHeader = styled.div< SectionHeaderProps >`
@@ -29,6 +29,7 @@ const SectionHeader = styled.div< SectionHeaderProps >`
 	font-size: ${ ( props ) => ( props.isExpanded ? '20px' : '16px' ) };
 	line-height: 24px;
 	gap: 10px;
+	padding: 20px 0;
 	color: ${ ( props ) =>
 		props.isTouched ? 'var( --studio-gray-100 )' : 'var( --studio-gray-40 )' };
 `;
@@ -36,7 +37,7 @@ const SectionHeader = styled.div< SectionHeaderProps >`
 const SectionContent = styled.div`
 	display: flex;
 	flex-direction: column;
-	padding: 16px 0 36px 0;
+	padding: 0 0 36px 0;
 	@media ( min-width: 600px ) {
 		padding-right: 96px;
 	}
