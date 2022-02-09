@@ -124,7 +124,9 @@ function unload_core_fse() {
 	remove_action( 'admin_menu', __NAMESPACE__ . '\hide_nav_menus_submenu' );
 
 	// Shows the AMP menu.
-	add_action( 'admin_menu', 'amp_add_customizer_link', 11 );
+	if ( function_exists( 'amp_add_customizer_link' ) ) {
+		add_action( 'admin_menu', 'amp_add_customizer_link', 11 );
+	}
 
 	if ( defined( 'REST_API_REQUEST' ) && true === REST_API_REQUEST ) {
 		// Do not hook to init during the REST API requests, as it causes PHP warnings
