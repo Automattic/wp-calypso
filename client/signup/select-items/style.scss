@@ -65,7 +65,7 @@
 		font-size: $font-body-small;
 		color: #646970;
 
-		p {
+		> p:last-child {
 			margin-bottom: 0;
 		}
 	}
