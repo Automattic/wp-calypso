@@ -582,6 +582,7 @@ object Translate : BuildType({
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
+			dockerImage = "%docker_image_e2e%"
 		}
 		bashNodeScript {
 			name = "Extract strings"
@@ -592,6 +593,7 @@ object Translate : BuildType({
 				# Move `calypso-strings.pot` to artifacts directory
 				mv public/calypso-strings.pot "./translate"
 			"""
+			dockerImage = "%docker_image_e2e%"
 		}
 		bashNodeScript {
 			name = "Build New Strings .pot"
@@ -605,6 +607,7 @@ object Translate : BuildType({
 				# Remove GP LocalCI Client
 				rm -rf gp-localci-client
 			"""
+			dockerImage = "%docker_image_e2e%"
 		}
 	}
 
