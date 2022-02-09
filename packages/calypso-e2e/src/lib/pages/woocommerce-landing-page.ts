@@ -1,8 +1,10 @@
 import { Page } from 'playwright';
 
 export const selectors = {
-	start: 'button:text("Start a new store")',
-	learnMore: 'a:text("Learn more")',
+	start: '.woocommerce .empty-content button:text("Start a new store")',
+	installer: '.is-woocommerce-install',
+	learnMore: '.woocommerce span:text("Learn more")',
+	supportDialog: '.support-article-dialog',
 };
 
 /**
@@ -22,15 +24,15 @@ export class WoocommerceLandingPage {
 	 * Click the Learn more button
 	 */
 	async openLearnMore(): Promise< void > {
-		await this.page.waitForSelector( selectors.learnMore );
 		await this.page.click( selectors.learnMore );
+		await this.page.waitForSelector( selectors.supportDialog );
 	}
 
 	/**
 	 * Click the Start a new store button
 	 */
 	async openStoreSetup(): Promise< void > {
-		await this.page.waitForSelector( selectors.start );
 		await this.page.click( selectors.start );
+		await this.page.waitForSelector( selectors.installer );
 	}
 }

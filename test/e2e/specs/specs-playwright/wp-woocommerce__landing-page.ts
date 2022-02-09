@@ -12,7 +12,7 @@ describe( DataHelper.createSuiteTitle( 'WooCommerce Landing Page' ), function ()
 	let page: Page;
 
 	describe.each( [ { siteType: 'Simple', accountName: 'defaultUser' } ] )(
-		'Search and view a support article ($siteType)',
+		'View the learn more support article ($siteType sites)',
 		function ( { accountName } ) {
 			let landingPage: WoocommerceLandingPage;
 
@@ -29,12 +29,35 @@ describe( DataHelper.createSuiteTitle( 'WooCommerce Landing Page' ), function ()
 
 			it( 'Navigate to WooCommerce (landing page)', async function () {
 				const sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.navigate( 'Tools', 'Marketing' );
+				await sidebarComponent.navigate( 'WooCommerce' );
 			} );
 
 			it( 'Open Learn more', async function () {
 				landingPage = new WoocommerceLandingPage( page );
 				await landingPage.openLearnMore();
+			} );
+		}
+	);
+
+	describe.each( [ { siteType: 'Simple', accountName: 'defaultUser' } ] )(
+		'Enter the woo installer at /start ($siteType sites)',
+		function ( { accountName } ) {
+			let landingPage: WoocommerceLandingPage;
+
+			beforeAll( async () => {
+				page = await browser.newPage();
+
+				const testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+			} );
+
+			afterAll( async () => {
+				await page.close();
+			} );
+
+			it( 'Navigate to WooCommerce (landing page)', async function () {
+				const sidebarComponent = new SidebarComponent( page );
+				await sidebarComponent.navigate( 'WooCommerce' );
 			} );
 
 			it( 'Open WooCommerce installer (/start)', async function () {
@@ -43,11 +66,4 @@ describe( DataHelper.createSuiteTitle( 'WooCommerce Landing Page' ), function ()
 			} );
 		}
 	);
-
-	// describe.each( [ { siteType: 'Atomic', accountName: 'eCommerceUser' } ] )(
-	// 	'',
-	// 	function ( { accountName } ) {
-	// 		accountName;
-	// 	}
-	// );
 } );
