@@ -5,13 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.svg';
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
-import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { localizeUrl } from 'calypso/lib/i18n-utils/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getSiteEditorUrl } from 'calypso/state/selectors/get-site-editor-url';
-import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { shoppingBag, truck } from '../../icons';
 import SelectItems, { SelectItem } from '../../select-items';
@@ -33,10 +30,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const headerText = translate( 'Set up your store' );
 	const subHeaderText = translate( 'Let’s create a website that suits your needs.' );
 	const siteSlug = props.signupDependencies.siteSlug;
-	const { stepName, siteId } = props;
-	const siteEditorUrl = useSelector( ( state ) => getSiteEditorUrl( state, siteId ) );
-	const userLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
-	const { data: blockEditorSettings } = useBlockEditorSettingsQuery( siteId, userLoggedIn );
+	const { stepName, goToNextStep } = props;
 
 	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );
 
@@ -164,12 +158,8 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 				break;
 
 			case 'simple': {
-				if ( blockEditorSettings?.is_fse_active ) {
-					page.redirect( siteEditorUrl );
-				} else {
-					page.redirect( `/page/${ siteSlug }/home/` );
-				}
-				break;
+				dispatch( submitSignupStep( { stepName } ) );
+				goToNextStep();
 			}
 		}
 	};
