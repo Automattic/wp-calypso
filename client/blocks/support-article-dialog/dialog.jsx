@@ -10,6 +10,7 @@ import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
 import EmbedContainer from 'calypso/components/embed-container';
 import { isDefaultLocale } from 'calypso/lib/i18n-utils';
+import { useUrlSearchQueryState, getUrlSearchQuery } from 'calypso/lib/url-search-query-state';
 import { closeSupportArticleDialog as closeDialog } from 'calypso/state/inline-support-article/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
@@ -47,18 +48,27 @@ export const SupportArticleDialog = ( {
 	const siteId = post?.site_ID;
 	const shouldQueryReaderPost = ! post && ! shouldRequestAlternates && ! isRequestingAlternates;
 
+	const [ supportArticleId, updateSupportArticle ] = useUrlSearchQueryState( 'support-article' );
+
+	const articleUrl = actionUrl ? actionUrl : 'https://support.wordpress.com?p=' + supportArticleId;
+
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
-		if ( typeof window !== 'undefined' && actionUrl.indexOf( '#' ) !== -1 && post?.content ) {
+		if ( typeof window !== 'undefined' && articleUrl.indexOf( '#' ) !== -1 && post?.content ) {
 			setTimeout( () => {
-				const anchorId = actionUrl.split( '#' ).pop();
+				const anchorId = articleUrl.split( '#' ).pop();
 				const element = document.getElementById( anchorId );
 				if ( element ) {
 					element.scrollIntoView();
 				}
 			}, 0 );
 		}
-	}, [ actionUrl, post ] );
+	}, [ articleUrl, post ] );
+
+	const handleCloseDialog = () => {
+		closeSupportArticleDialog();
+		updateSupportArticle( null );
+	};
 
 	return (
 		<Dialog
@@ -66,22 +76,18 @@ export const SupportArticleDialog = ( {
 			additionalClassNames="support-article-dialog"
 			baseClassName="support-article-dialog__base dialog"
 			buttons={ [
-				<Button onClick={ closeSupportArticleDialog }>
-					{ translate( 'Close', { textOnly: true } ) }
+				<Button onClick={ handleCloseDialog }>{ translate( 'Close', { textOnly: true } ) }</Button>,
+				<Button
+					href={ articleUrl }
+					target={ actionIsExternal ? '_blank' : undefined }
+					primary
+					onClick={ actionIsExternal ? noop : handleCloseDialog }
+				>
+					{ actionLabel } { actionIsExternal && <Gridicon icon="external" size={ 12 } /> }
 				</Button>,
-				actionUrl && (
-					<Button
-						href={ actionUrl }
-						target={ actionIsExternal ? '_blank' : undefined }
-						primary
-						onClick={ () => ( actionIsExternal ? noop() : closeSupportArticleDialog() ) }
-					>
-						{ actionLabel } { actionIsExternal && <Gridicon icon="external" size={ 12 } /> }
-					</Button>
-				),
 			].filter( Boolean ) }
-			onCancel={ closeSupportArticleDialog }
-			onClose={ closeSupportArticleDialog }
+			onCancel={ handleCloseDialog }
+			onClose={ handleCloseDialog }
 		>
 			{ siteId && <QueryReaderSite siteId={ +siteId } /> }
 			{ shouldQueryReaderPost && <QueryReaderPost postKey={ postKey } /> }
@@ -122,7 +128,10 @@ const getPostKey = memoize(
 );
 
 const mapStateToProps = ( state ) => {
-	const postId = getInlineSupportArticlePostId( state );
+	let postId = getInlineSupportArticlePostId( state );
+	if ( ! postId ) {
+		postId = parseInt( getUrlSearchQuery( 'support-article' ), 10 );
+	}
 	const requestBlogId = getInlineSupportArticleBlogId( state );
 	const blogId = requestBlogId ?? SUPPORT_BLOG_ID;
 	const actionUrl = getInlineSupportArticleActionUrl( state );
