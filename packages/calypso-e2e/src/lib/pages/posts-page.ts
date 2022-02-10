@@ -54,6 +54,10 @@ export class PostsPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: PostsPageTabs ): Promise< void > {
+		// Without waiting for the `networkidle` event to fire, the clicks on the
+		// mobile navbar dropdowns are swallowed up.
+		await this.page.waitForLoadState( 'networkidle' );
+
 		await clickNavTab( this.page, name );
 		await this.waitUntilLoaded();
 	}
