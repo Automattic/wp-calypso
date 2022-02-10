@@ -19,9 +19,6 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 			);
 			return;
 		}
-
-		page.redirect( addQueryArgs( urlQueryArgs, `/pricing` ) );
-		return;
 	}
 
 	if ( context.pathname.endsWith( '/pricing' ) && urlQueryArgs.site ) {
