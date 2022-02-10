@@ -1030,7 +1030,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		if ( this.props.isPasswordless ) {
+		if ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) {
 			const logInUrl = this.getLoginLink();
 
 			return (
