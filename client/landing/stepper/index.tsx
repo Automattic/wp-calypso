@@ -3,11 +3,11 @@ import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import ReactDom from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-import { LocaleContext } from './components/locale-context';
-import { WindowLocaleEffectManager } from './components/window-locale-effect-manager';
-import { setupWpDataDebug } from './devtools';
-import StepperOnboarding from './stepper-onboarding';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { LocaleContext } from '../gutenboarding/components/locale-context';
+import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
+import { setupWpDataDebug } from '../gutenboarding/devtools';
+import { useFlows } from './flows';
 
 import 'calypso/components/environment-badge/style.scss';
 
@@ -39,9 +39,38 @@ window.AppBoot = async () => {
 		<LocaleContext>
 			<WindowLocaleEffectManager />
 			<BrowserRouter basename="stepper">
-				<StepperOnboarding />
+				<StepperFlows />
 			</BrowserRouter>
 		</LocaleContext>,
 		document.getElementById( 'wpcom' )
 	);
 };
+
+function StepperFlows() {
+	const NextHandler: React.FunctionComponent< { path: string } > = ( { path } ) => {
+		return <Redirect to={ path } />;
+	};
+
+	const flows = useFlows();
+
+	return (
+		<>
+			{ flows.map( ( flow ) => (
+				<Switch>
+					<Route exact path={ flow.path } key={ flow.path }>
+						<Redirect to={ [ ...flow.steps.values() ][ 0 ].path } />
+					</Route>
+					{ [ ...flow.steps.values() ].map( ( step ) => (
+						<Route exact path={ step.path } key={ `${ flow.path }-${ step.path }` }>
+							<flow.Render
+								Next={ NextHandler }
+								step={ step }
+								index={ flow.steps } // TS fail
+							/>
+						</Route>
+					) ) }
+				</Switch>
+			) ) }
+		</>
+	);
+}
