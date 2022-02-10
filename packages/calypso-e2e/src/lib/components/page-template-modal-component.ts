@@ -8,6 +8,7 @@ const selectors = {
 		`.page-pattern-modal__category-list button:has-text("${ category }")`,
 	mobileTemplateCategorySelectBox: '.page-pattern-modal__mobile-category-dropdown',
 	template: ( label: string ) => `button.pattern-selector-item__label:has-text("${ label }")`,
+	blankPageButton: 'button:has-text("Blank page")',
 };
 
 /**
@@ -52,6 +53,14 @@ export class PageTemplateModalComponent {
 	 */
 	async selectTemplate( label: string ): Promise< void > {
 		const locator = this.editorIframe.locator( selectors.template( label ) );
+		await locator.click();
+	}
+
+	/**
+	 * Select a blank page as your template.
+	 */
+	async selectBlankPage(): Promise< void > {
+		const locator = this.editorIframe.locator( selectors.blankPageButton );
 		await locator.click();
 	}
 }
