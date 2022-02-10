@@ -233,12 +233,12 @@ function register_migration_route() {
 
 	register_rest_route(
 		'wpcom/v1',
-		'migrate-legacy-fse',
+		'/migrate-legacy-fse',
 		array(
 			'methods'             => 'POST',
 			'permission_callback' => 'is_user_logged_in',
-			'callback'            => __NAMESPACE__ . '/migrate_rest_callback',
+			'callback'            => __NAMESPACE__ . '\migrate_rest_callback',
 		)
 	);
 }
-add_action( 'rest_api_init', __NAMESPACE__ . '/register_migration_route' );
+add_action( 'rest_api_init', __NAMESPACE__ . '\register_migration_route' );

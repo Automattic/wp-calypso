@@ -15,7 +15,7 @@ namespace A8C\FSE;
 function migrate_rest_callback() {
 	// Better permissions?
 	$result = migrate_to_core_fse();
-	if ( is_wp_error( $result ) ) {
+	if ( \is_wp_error( $result ) ) {
 		return $result;
 	}
 
@@ -24,5 +24,5 @@ function migrate_rest_callback() {
 		'messages' => $result,
 	);
 
-	return new WP_Rest_Response( $data, 200 );
+	return new \WP_Rest_Response( $data, 200 );
 }
