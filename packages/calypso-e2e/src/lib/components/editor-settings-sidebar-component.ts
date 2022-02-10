@@ -1,7 +1,7 @@
 import { Frame, Page } from 'playwright';
 
 export type EditorSidebarTab = 'Post' | 'Block' | 'Page';
-export type EditorSidebarSection = 'Categories' | 'Tags' | 'Status & Visibility';
+export type EditorSidebarSection = 'Categories' | 'Tags' | 'Status & Visibility' | 'Permalink';
 export type PrivacyOptions = 'Public' | 'Private' | 'Password';
 
 const sidebarParentSelector = '[aria-label="Editor settings"]';
@@ -36,6 +36,9 @@ const selectors = {
 	addedTag: ( tagName: string ) =>
 		`${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") .components-form-token-field__token:has-text("${ tagName }")`,
 	closeSidebarButton: `${ sidebarParentSelector } [aria-label="Close settings"]:visible`, // there's a hidden copy in there
+
+	// URl Slug
+	urlSlugInput: '.components-base-control__field:has-text("URL Slug") input',
 };
 
 /**
@@ -159,6 +162,18 @@ export class EditorSettingsSidebarComponent {
 		await this.frame.fill( selectors.tagInput, tagName );
 		await this.page.keyboard.press( 'Enter' );
 		await this.frame.waitForSelector( selectors.addedTag( tagName ) ); // make sure it got added!
+	}
+
+	/**
+	 * Enter the URL slug for the page/post.
+	 *
+	 * @param {string} slug URL slug to set.
+	 */
+	async enterUrlSlug( slug: string ) {
+		await this.frame.fill( selectors.urlSlugInput, slug );
+		// Playwright is so fast, let's make sure the post's/page's state actually updates in case we're going to publish or update right after.
+		// By adding the forward slash, we ensure the new route has been appended to the fully qualified URL in the sidebar.
+		await this.frame.waitForSelector( `text=/${ slug }` );
 	}
 
 	/**

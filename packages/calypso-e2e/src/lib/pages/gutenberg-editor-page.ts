@@ -49,7 +49,7 @@ const selectors = {
 	// corner. This addresses the bug where the post-publish panel is immediately
 	// closed when publishing with certain blocks on the editor canvas.
 	// See https://github.com/Automattic/wp-calypso/issues/54421.
-	viewButton: 'text=/View (Post|Page)/',
+	viewButton: 'a:text-matches("View (Post|Page)")',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
 
@@ -410,7 +410,7 @@ export class GutenbergEditorPage {
 	 * Publishes the post or page.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
-	 * @returns {Promise<string>} URL of the published post or page.
+	 * @returns {Promise<string>} The published URL.
 	 */
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
@@ -533,6 +533,7 @@ export class GutenbergEditorPage {
 
 		const frame = await this.getEditorFrame();
 
+		console.log( url );
 		await Promise.all( [
 			this.page.waitForNavigation( { url: url, waitUntil: 'domcontentloaded' } ),
 			frame.click( selectors.viewButton ),
