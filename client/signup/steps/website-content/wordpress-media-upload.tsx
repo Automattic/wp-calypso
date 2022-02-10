@@ -17,37 +17,40 @@ const UPLOAD_STATES = {
 	COMPLETED: 'COMPLETED',
 	FAILED: 'FAILED',
 };
-const Content = styled.div`
-	overflow: hidden;
-	white-space: nowrap;
-`;
 
 const FileSelectThumbnailContainer = styled.div`
 	cursor: pointer;
-	min-width: 190px;
-	width: 190px;
-	max-height: 145px;
-	min-height: 93px;
+	width: 195px;
+	height: 145px;
 	background: rgba( 187, 224, 250, 0.12 );
 	border: 1px dashed var( --studio-gray-5 );
 	border-radius: 5px;
 	text-align: center;
 	padding: 26px 5px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	.form-label {
+		text-decoration: underline;
+		font-weight: bold;
+		margin-bottom: 0;
+	}
 `;
 
 const CroppedImage = styled.div`
 	overflow: hidden;
-	height: 80%;
 	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
 	img {
+		max-height: 100%;
+		max-width: 100%;
 		margin: 0 auto;
 	}
-`;
-
-const Preview = styled.div`
-	width: 140px;
-	height: 43px;
-	margin: 0 auto;
 `;
 
 export interface MediaUploadData {
@@ -99,39 +102,26 @@ export function WordpressMediaUpload( {
 			return (
 				<FilePicker key={ mediaIndex } accept="image/*" onPick={ onPick }>
 					<FileSelectThumbnailContainer>
-						<Content>
-							<Preview>
-								<CroppedImage>
-									<img src={ uploadedImageUrl } alt={ imageCaption } />
-								</CroppedImage>
-							</Preview>
-							<Label>{ translate( 'Change File' ) }</Label>
-							<SubLabel>{ imageCaption }</SubLabel>
-						</Content>
+						<CroppedImage>
+							<img src={ uploadedImageUrl } alt={ imageCaption } />
+						</CroppedImage>
+						<Label>{ translate( 'Replace' ) }</Label>
 					</FileSelectThumbnailContainer>
 				</FilePicker>
 			);
 		case UPLOAD_STATES.IN_PROGRESS:
 			return (
 				<FileSelectThumbnailContainer key={ mediaIndex }>
-					<div>
-						<Preview>
-							<Spinner />
-						</Preview>
-					</div>
+					<Spinner />
 				</FileSelectThumbnailContainer>
 			);
 		case UPLOAD_STATES.FAILED:
 			return (
 				<FilePicker accept="image/*" onPick={ onPick } key={ mediaIndex }>
 					<FileSelectThumbnailContainer>
-						<Content>
-							<Preview>
-								<img src={ placeholder } alt="placeholder" />
-							</Preview>
-							<Label>{ translate( 'Choose file' ) }</Label>
-							<SubLabel color="red">{ translate( 'Image upload failed' ) }</SubLabel>
-						</Content>
+						<img src={ placeholder } alt="placeholder" />
+						<Label>{ translate( 'Choose file' ) }</Label>
+						<SubLabel color="red">{ translate( 'Image upload failed' ) }</SubLabel>
 					</FileSelectThumbnailContainer>
 				</FilePicker>
 			);
@@ -141,17 +131,9 @@ export function WordpressMediaUpload( {
 			return (
 				<FilePicker accept="image/*" onPick={ onPick } key={ mediaIndex }>
 					<FileSelectThumbnailContainer>
-						<Content>
-							<Preview>
-								<img src={ placeholder } alt="placeholder" />
-							</Preview>
-							<div
-								className="wordpress-media-upload__temporary-spacer"
-								style={ { width: '100px', height: '22px' } }
-							/>
-							<Label>{ translate( 'Choose file' ) }</Label>
-							{ /* <SubLabel>{ translate( 'or drag here')}</SubLabel> */ }
-						</Content>
+						<img src={ placeholder } alt="placeholder" />
+						<Label>{ translate( 'Choose file' ) }</Label>
+						{ /* <SubLabel>{ translate( 'or drag here')}</SubLabel> */ }
 					</FileSelectThumbnailContainer>
 				</FilePicker>
 			);
