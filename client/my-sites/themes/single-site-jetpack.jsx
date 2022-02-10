@@ -48,7 +48,8 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	} = props;
 
 	const displayUpsellBanner = isAtomic && ! requestingSitePlans && currentPlan;
-	const upsellUrl = isAtomic && `/plans/${ siteId }?feature=upload-themes&plan=business-bundle`;
+	const upsellUrl =
+		isAtomic && `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_BUSINESS }`;
 
 	const upsellBanner = (
 		<UpsellNudge
