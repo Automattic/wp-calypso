@@ -148,13 +148,13 @@ class SharingServiceDescription extends Component {
 			},
 			p2_github: function () {
 				if ( this.props.numberOfConnections > 0 ) {
-					return this.props.translate( 'Workspace connected to Github.', {
-						comment: 'Embed Github Issues in P2 posts.',
+					return this.props.translate( 'Workspace connected to GitHub.', {
+						comment: 'Embed GitHub Issues in P2 posts.',
 					} );
 				}
 
-				return this.props.translate( 'Connect this workspace to your Github.', {
-					comment: 'Embed Github Issues in P2 posts.',
+				return this.props.translate( 'Connect this workspace to your GitHub.', {
+					comment: 'Embed GitHub Issues in P2 posts.',
 				} );
 			},
 		} ),
