@@ -1,7 +1,7 @@
 import { Page, ElementHandle } from 'playwright';
 
 const selectors = {
-	block: '.wp-block-paragraph',
+	block: 'p',
 };
 
 /**
@@ -43,7 +43,7 @@ export class ParagraphBlock {
 		contents: ( string | number )[]
 	): Promise< void > {
 		for await ( const content of contents ) {
-			await page.waitForSelector( `${ selectors.block } :text("${ content.toString() }")` );
+			await page.waitForSelector( `${ selectors.block }:text("${ content.toString() }")` );
 		}
 	}
 }
