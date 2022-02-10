@@ -226,7 +226,8 @@ const CTAButton = ( {
 	);
 
 	const pluginRequiresCustomPrimaryDomain =
-		primaryDomain?.isSubdomain && plugin?.requirements?.required_primary_domain;
+		( primaryDomain?.isWpcomDomain || primaryDomain?.isWpcomStagingDomain ) &&
+		plugin?.requirements?.required_primary_domain;
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 
 	const updatedKeepMeUpdatedPreference = useCallback(

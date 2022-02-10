@@ -30,6 +30,7 @@ export const PluginCustomDomainDialog = ( {
 	const buttons = [
 		{
 			action: 'learn-more',
+			href: '/support/domains/#set-a-primary-address',
 			label: translate( 'Learn more' ),
 		},
 		{
