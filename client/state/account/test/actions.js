@@ -7,7 +7,6 @@ describe( 'actions', () => {
 			const action = closeAccount();
 			expect( action ).toEqual( {
 				type: ACCOUNT_CLOSE,
-				foo: 'bar',
 			} );
 		} );
 	} );
