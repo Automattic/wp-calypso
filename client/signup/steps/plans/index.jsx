@@ -92,7 +92,8 @@ export class PlansStep extends Component {
 			return this.props.customerType;
 		}
 
-		const customerType = getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' );
+		const customerType =
+			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) || 'personal';
 
 		return customerType;
 	}
