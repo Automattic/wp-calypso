@@ -3,8 +3,12 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { canRedirect } from 'calypso/lib/domains';
 
 const noop = () => {};
 
@@ -27,8 +31,11 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 	};
 
 	state = {
+		currentAddressOption: '',
 		isConfirmationChecked: false,
 	};
+
+	setOption = ( event ) => this.setState( { currentAddressOption: event.currentTarget.value } );
 
 	toggleConfirmationChecked = () => {
 		this.setState( {
@@ -36,14 +43,15 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 		} );
 	};
 
-	onConfirm = ( closeDialog ) => {
+	onConfirm = () => {
+		this.props.onConfirm( this.state.currentAddressOption );
 		this.onClose();
-		this.props.onConfirm( this.props.targetSite, closeDialog );
 	};
 
 	onClose = () => {
 		this.props.onClose();
 		this.setState( {
+			currentAddressOption: '',
 			isConfirmationChecked: false,
 		} );
 	};
@@ -56,6 +64,7 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 			newDomainName,
 			newDomainSuffix,
 			siteId,
+			siteRedirectPrice,
 			translate,
 		} = this.props;
 		const buttons = [
@@ -67,10 +76,17 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 				action: 'confirm',
 				label: translate( 'Change site address' ),
 				onClick: this.onConfirm,
-				disabled: ! this.state.isConfirmationChecked,
+				disabled: ! this.state.isConfirmationChecked || ! this.state.currentAddressOption,
 				isPrimary: true,
 			},
 		];
+
+		let abletoRedirect = true;
+		canRedirect( siteId, newDomainName + newDomainSuffix, ( error ) => {
+			if ( error ) {
+				abletoRedirect = false;
+			}
+		} );
 
 		return (
 			<Dialog
@@ -97,7 +113,7 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 					/>
 					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
 						{ translate(
-							'{{strong}}%(currentDomainName)s{{/strong}}%(currentDomainSuffix)s will be removed and unavailable for use.',
+							'{{strong}}%(currentDomainName)s{{/strong}}%(currentDomainSuffix)s will no longer be your site address.',
 							{
 								components: {
 									strong: <strong />,
@@ -131,6 +147,80 @@ class SiteAddressChangerConfirmationDialog extends PureComponent {
 						) }
 					</p>
 				</div>
+
+				<h2>
+					{ translate( 'What would you like to happen with %(currentSiteAddress)s?', {
+						args: {
+							currentSiteAddress: currentDomainName + currentDomainSuffix,
+						},
+					} ) }
+				</h2>
+
+				<FormFieldset>
+					<FormRadio
+						id="option-noredirect"
+						checked={ this.state.currentAddressOption === 'noredirect' }
+						name="noredirect"
+						value="noredirect"
+						onChange={ this.setOption }
+					/>
+					<FormLabel htmlFor="option-noredirect">
+						<span className="site-address-changer__option">
+							{ translate( 'Keep current address without redirecting it' ) }
+						</span>
+					</FormLabel>
+					<FormSettingExplanation>
+						{ translate( 'Your current site address will be replaced with a blank site.' ) }
+					</FormSettingExplanation>
+				</FormFieldset>
+				{ abletoRedirect && (
+					<FormFieldset>
+						<FormRadio
+							id="option-redirect"
+							checked={ this.state.currentAddressOption === 'redirect' }
+							name="redirect"
+							value="redirect"
+							onChange={ this.setOption }
+						/>
+						<FormLabel htmlFor="option-redirect">
+							<span className="site-address-changer__option">
+								{ translate(
+									'Redirect to {{strong}}%(newSiteAddress)s{{/strong}} (%(price)s per year)',
+									{
+										components: { strong: <strong /> },
+										args: {
+											newSiteAddress: newDomainName + newDomainSuffix,
+											price: siteRedirectPrice,
+										},
+									}
+								) }
+							</span>
+						</FormLabel>
+						<FormSettingExplanation>
+							{ translate(
+								'Visitors to your current site address will be automatically redirected to your new one.'
+							) }
+						</FormSettingExplanation>
+					</FormFieldset>
+				) }
+				<FormFieldset>
+					<FormRadio
+						id="option-discard"
+						checked={ this.state.currentAddressOption === 'discard' }
+						name="discard"
+						value="discard"
+						onChange={ this.setOption }
+					/>
+					<FormLabel htmlFor="option-discard">
+						<span className="site-address-changer__option">
+							{ translate( 'Discard address permanently' ) }
+						</span>
+					</FormLabel>
+					<FormSettingExplanation>
+						{ translate( 'Your current site address will not be available for use again.' ) }
+					</FormSettingExplanation>
+				</FormFieldset>
+
 				<h2>{ translate( 'Check the box to confirm' ) }</h2>
 				<FormLabel>
 					<FormInputCheckbox

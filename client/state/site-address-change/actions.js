@@ -107,7 +107,8 @@ export const requestSiteAddressChange = (
 	domain,
 	oldDomain,
 	siteType,
-	discard = true
+	discard = true,
+	shouldRedirect
 ) => async ( dispatch, getState ) => {
 	dispatch( {
 		type: SITE_ADDRESS_CHANGE_REQUEST,
@@ -158,11 +159,13 @@ export const requestSiteAddressChange = (
 				} )
 			);
 
-			// site slug, potentially freshly updated by the `requestSite` above
-			const siteSlug = getSiteSlug( getState(), siteId );
-			// new name of the `*.wordpress.com` domain that we just changed
-			const newDomain = newSlug + '.' + domain;
-			page( domainManagementEdit( siteSlug, newDomain ) );
+			if ( shouldRedirect ) {
+				// site slug, potentially freshly updated by the `requestSite` above
+				const siteSlug = getSiteSlug( getState(), siteId );
+				// new name of the `*.wordpress.com` domain that we just changed
+				const newDomain = newSlug + '.' + domain;
+				page( domainManagementEdit( siteSlug, newDomain ) );
+			}
 		}
 	} catch ( error ) {
 		dispatch(

@@ -1,9 +1,9 @@
-
 .site-address-changer__dialog {
 	text-align: left;
-	max-width: 400px;
+	max-width: 600px;
 
-	h2 {
+	h2,
+	.form-legend {
 		border-top: 1px solid var( --color-border-subtle );
 		font-weight: 600;
 		margin-top: 1.5em;
@@ -86,6 +86,10 @@
 			padding-right: 8px;
 		}
 	}
+}
+
+.site-address-changer__option {
+	font-weight: normal;
 }
 
 .site-address-changer__form-footer {
