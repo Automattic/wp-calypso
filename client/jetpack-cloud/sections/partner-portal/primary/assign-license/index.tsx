@@ -22,9 +22,9 @@ export default function AssignLicense( { sites }: any ): ReactElement {
 
 	return (
 		<Main wideLayout className="assign-license">
-			<DocumentHead title={ translate( 'Assign your new License' ) } />
+			<DocumentHead title={ translate( 'Assign your License' ) } />
 			<SidebarNavigation />
-			<CardHeading size={ 36 }>{ translate( 'Assign your new License' ) }</CardHeading>
+			<CardHeading size={ 36 }>{ translate( 'Assign your License' ) }</CardHeading>
 
 			<AssignLicenseForm sites={ sites } />
 		</Main>
