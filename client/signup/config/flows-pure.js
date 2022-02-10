@@ -251,18 +251,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'domain',
-			steps: [
-				'domain-only',
-				'site-or-domain',
-				'site-picker',
-				'themes',
-				'plans-site-selected',
-				'user',
-			],
+			steps: [ 'domain-only', 'site-or-domain', 'site-picker', 'plans-site-selected', 'user' ],
 			destination: getDomainSignupFlowDestination,
 			description: 'An experimental approach for WordPress.com/domains',
 			disallowResume: true,
-			lastModified: '2022-02-09',
+			lastModified: '2022-02-10',
 			showRecaptcha: true,
 		},
 		{
