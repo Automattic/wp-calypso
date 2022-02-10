@@ -54,8 +54,8 @@ export default function AssignLicenseForm( { sites }: any ): ReactElement {
 		setIsSubmitting( true );
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_assign_license_submit', {
-				licenseKey,
-				selectedSite,
+				license_key: licenseKey,
+				selected_site: selectedSite,
 			} )
 		);
 		assignLicense.mutate( { licenseKey, selectedSite } );
