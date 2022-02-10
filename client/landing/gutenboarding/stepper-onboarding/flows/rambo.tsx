@@ -45,14 +45,35 @@ const ramboLinearFlow: Flow< typeof flowPaths[ number ] > = {
 
 		if ( next ) {
 			const path = index.get( next )?.path;
-			return path && Next( { path } );
+			if ( path ) {
+				return Next( { path } );
+			}
 		}
 
+		const color = '#a4a4ad';
+
 		return (
-			<div>
-				<h3>Step { step.slug }</h3>
-				<div>{ step.Render( { onNext: handleNext } ) }</div>
-			</div>
+			<section
+				style={ {
+					border: `1px solid ${ color }`,
+					borderRadius: '5px',
+					padding: '20px',
+					fontFamily: 'Arial, Helvetica, sans-serif',
+				} }
+			>
+				<h4 style={ { color } }>Flow Step Wrapper</h4>
+				<section
+					style={ {
+						border: `1px solid ${ color }`,
+						borderRadius: '5px',
+						padding: '20px',
+						margin: '20px',
+					} }
+				>
+					<h4 style={ { color } }>Step</h4>
+					<step.Render onNext={ handleNext } />
+				</section>
+			</section>
 		);
 	},
 };

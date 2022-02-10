@@ -7,10 +7,10 @@ const RamboFirstBlood: Step = {
 	slug,
 	Render: ( { onNext } ) => {
 		return (
-			<>
-				<div>Rambo First Blood</div>
-				{ onNext && <button onClick={ () => onNext( RamboFirstBloodII.slug ) }>Next</button> }
-			</>
+			<section>
+				<p>Rambo First Blood</p>
+				{ onNext && <button onClick={ () => onNext( RamboFirstBloodII.slug ) }>Done</button> }
+			</section>
 		);
 	},
 };

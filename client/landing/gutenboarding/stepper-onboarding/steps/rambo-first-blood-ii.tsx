@@ -1,4 +1,3 @@
-import RamboFirstBlood from './rambo-first-blood';
 import RamboIII from './rambo-iii';
 import type { Step } from '../types';
 
@@ -8,11 +7,10 @@ const RamboFirstBloodII: Step = {
 	slug,
 	Render: ( { onNext } ) => {
 		return (
-			<>
-				<div>Rambo First Blood II</div>
-				{ onNext && <button onClick={ () => onNext( RamboFirstBlood.slug ) }>Previous</button> }
-				{ onNext && <button onClick={ () => onNext( RamboIII.slug ) }>Next</button> }
-			</>
+			<section>
+				<p>Rambo First Blood II</p>
+				{ onNext && <button onClick={ () => onNext( RamboIII.slug ) }>Done</button> }
+			</section>
 		);
 	},
 };

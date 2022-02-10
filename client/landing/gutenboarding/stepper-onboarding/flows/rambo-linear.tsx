@@ -45,11 +45,13 @@ const ramboLinearFlow: Flow< typeof flowPaths[ number ] > = {
 
 		if ( next ) {
 			const path = index.get( next )?.path;
-			return path && Next( { path } );
+			if ( path ) {
+				return Next( { path } );
+			}
 		}
 
 		/****************************************************
-		 * Linear flow. Flow takes control of navigation.
+		 * Linear Flow. Flow takes control of navigation.
 		 * Following parts would live in hooks/store for flows,
 		 * not here. Also reusable in ../index.tsx
 		 ****************************************************/
@@ -67,7 +69,7 @@ const ramboLinearFlow: Flow< typeof flowPaths[ number ] > = {
 		const getPreviousStepInFlow = ( slug: string ) => {
 			const index = getStepIndexInFlow( slug ) - 1;
 
-			if ( index ) {
+			if ( index >= 0 ) {
 				return getIndexSteps()[ index ];
 			}
 		};
@@ -75,7 +77,7 @@ const ramboLinearFlow: Flow< typeof flowPaths[ number ] > = {
 		const getNextStepInFlow = ( slug: string ) => {
 			const index = getStepIndexInFlow( slug ) + 1;
 
-			if ( index <= getIndexSteps.length ) {
+			if ( index <= getIndexSteps().length ) {
 				return getIndexSteps()[ index ];
 			}
 		};
@@ -90,23 +92,44 @@ const ramboLinearFlow: Flow< typeof flowPaths[ number ] > = {
 
 		/****************************************************/
 
+		const color = '#a4a4ad';
+
 		return (
-			<div>
-				<h3>Step { step.slug }</h3>
-				<div>{ step.Render( {} ) }</div>
+			<section
+				style={ {
+					border: `1px solid ${ color }`,
+					borderRadius: '5px',
+					padding: '20px',
+					fontFamily: 'Arial, Helvetica, sans-serif',
+				} }
+			>
+				<h4 style={ { color } }>Flow Step Wrapper</h4>
 				<nav>
-					{ ! isFirstStep( step.slug ) && (
-						<button onClick={ () => handleNext( getPreviousStepInFlow( step.slug )?.slug ) }>
-							Previous
-						</button>
-					) }
-					{ ! isLastStep( step.slug ) && (
-						<button onClick={ () => handleNext( getNextStepInFlow( step.slug )?.slug ) }>
-							Next
-						</button>
-					) }
+					<button
+						onClick={ () => handleNext( getPreviousStepInFlow( step.slug )?.slug ) }
+						disabled={ isFirstStep( step.slug ) }
+					>
+						Previous
+					</button>
+					<button
+						onClick={ () => handleNext( getNextStepInFlow( step.slug )?.slug ) }
+						disabled={ isLastStep( step.slug ) }
+					>
+						Next
+					</button>
 				</nav>
-			</div>
+				<section
+					style={ {
+						border: `1px solid ${ color }`,
+						borderRadius: '5px',
+						padding: '20px',
+						margin: '20px',
+					} }
+				>
+					<h4 style={ { color } }>Step</h4>
+					<step.Render onNext={ () => handleNext( getNextStepInFlow( step.slug )?.slug ) } />
+				</section>
+			</section>
 		);
 	},
 };

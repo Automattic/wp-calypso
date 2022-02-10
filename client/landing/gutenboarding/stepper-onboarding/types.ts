@@ -5,7 +5,7 @@ export type StepOptions = Record< string, unknown >;
 export interface Step {
 	slug: string;
 	options?: StepOptions;
-	Render: React.FunctionComponent< { onNext?: ( slug: string ) => void } >;
+	Render: React.FunctionComponent< { onNext?: ( slug?: string ) => void } >;
 }
 
 /** Flow */
