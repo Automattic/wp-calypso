@@ -7,11 +7,12 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAnalyzing, getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
 import CaptureStep from './capture';
 import ListStep from './list';
 import { ReadyPreviewStep, ReadyNotStep, ReadyStep, ReadyAlreadyOnWPCOMStep } from './ready';
 import { GoToStep, GoToNextStep, UrlData, RecordTracksEvent, ImporterPlatform } from './types';
-import { getImporterUrl, getWpComOnboardingUrl } from './util';
+import { getImporterUrl, getWpComOnboardingUrl, getWpOrgImporterUrl } from './util';
 import './style.scss';
 
 type Props = ConnectedProps< typeof connector > & {
@@ -33,6 +34,7 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 		stepName,
 		stepSectionName,
 		isAnalyzing,
+		isAtomicSite,
 		signupDependencies,
 		urlData,
 		recordTracksEvent,
@@ -69,7 +71,12 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 
 	const goToImporterPage = ( platform: ImporterPlatform ): void => {
 		let importerUrl;
-		if (
+
+		// Escape WordPress, has two sub-flows "Import everything" and "Content only"
+		// firstly show import type chooser screen and then decide about importer url
+		if ( isAtomicSite && platform !== 'wordpress' ) {
+			importerUrl = getWpOrgImporterUrl( signupDependencies.siteSlug, platform );
+		} else if (
 			( platform === 'blogger' && isEnabled( 'onboarding/import-from-blogger' ) ) ||
 			( platform === 'medium' && isEnabled( 'onboarding/import-from-medium' ) ) ||
 			( platform === 'squarespace' && isEnabled( 'onboarding/import-from-squarespace' ) ) ||
@@ -152,9 +159,10 @@ const ImportOnboarding: React.FunctionComponent< Props > = ( props ) => {
 };
 
 const connector = connect(
-	( state ) => ( {
+	( state, ownProps: { siteId: number } ) => ( {
 		urlData: getUrlData( state ),
 		isAnalyzing: isAnalyzing( state ),
+		isAtomicSite: isAtomicSiteSelector( state, ownProps.siteId ),
 	} ),
 	{
 		recordTracksEvent,
