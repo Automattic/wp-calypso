@@ -10,7 +10,8 @@ import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import { domainManagementList, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-setup-info-link';
@@ -106,6 +107,32 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 		verifyConnection( false );
 	}, [ showErrors, verifyConnection ] );
 
+	const renderBreadcrumbs = () => {
+		const items = [
+			{
+				label: __( 'Domains' ),
+				href: domainManagementList( selectedSite.slug, domain ),
+			},
+			{
+				label: __( 'Use a domain I own' ),
+				href: domainUseMyDomain( selectedSite.slug ),
+			},
+			{
+				label: __( 'Transfer or connect' ),
+				href: domainUseMyDomain( selectedSite.slug, domain ),
+			},
+			{ label: __( 'Connect' ) },
+		];
+
+		const mobileItem = {
+			label: __( 'Back to transfer or connect' ),
+			href: domainUseMyDomain( selectedSite.slug, domain ),
+			showBackArrow: true,
+		};
+
+		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+	};
+
 	const goBack = () => {
 		const prevPageSlug = connectADomainStepsDefinition[ pageSlug ]?.prev;
 
@@ -124,6 +151,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 
 	return (
 		<>
+			{ renderBreadcrumbs() }
 			<BackButton className={ baseClassName + '__go-back' } onClick={ goBack }>
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ __( 'Back' ) }
