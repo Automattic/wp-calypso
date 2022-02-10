@@ -30,7 +30,7 @@ export default function SupportCard( { backUrl }: { backUrl?: string } ): ReactE
 				a: (
 					<SupportLinkStyle
 						href={ addQueryArgs( '/help/contact', {
-							redirect_to: backUrl || `${ window.location.pathname }?site=${ domain }`,
+							redirect_to: backUrl || `${ window.location.pathname }?siteSlug=${ domain }`,
 						} ) }
 					/>
 				),
