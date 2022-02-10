@@ -37,7 +37,7 @@ const selectors = {
 		`${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") .components-form-token-field__token:has-text("${ tagName }")`,
 	closeSidebarButton: `${ sidebarParentSelector } [aria-label="Close settings"]:visible`, // there's a hidden copy in there
 
-	// URl Slug
+	// URL Slug
 	urlSlugInput: '.components-base-control__field:has-text("URL Slug") input',
 };
 

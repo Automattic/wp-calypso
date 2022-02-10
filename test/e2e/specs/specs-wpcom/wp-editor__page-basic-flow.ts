@@ -38,7 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await testAccount.authenticate( page );
 	} );
 
-	it( 'Visit /pages page', async function () {
+	it( 'Visit Pages page', async function () {
 		pagesPage = new PagesPage( page );
 		await pagesPage.visit();
 	} );
