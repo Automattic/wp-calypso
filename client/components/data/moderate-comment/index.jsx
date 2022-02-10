@@ -27,17 +27,17 @@ class ModerateComment extends Component {
 		this.moderate( this.props );
 	}
 
-	componentDidUpdate( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			this.props.siteId === nextProps.siteId &&
-			this.props.postId === nextProps.postId &&
-			this.props.commentId === nextProps.commentId &&
-			this.props.newStatus === nextProps.newStatus
+			this.props.siteId === prevProps.siteId &&
+			this.props.postId === prevProps.postId &&
+			this.props.commentId === prevProps.commentId &&
+			this.props.newStatus === prevProps.newStatus
 		) {
 			return;
 		}
 
-		this.moderate( nextProps );
+		this.moderate( prevProps );
 	}
 
 	showNotice( status ) {
