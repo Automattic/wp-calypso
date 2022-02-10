@@ -23,7 +23,7 @@ import Timezone from 'calypso/components/timezone';
 import { preventWidows } from 'calypso/lib/formatting';
 import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import scrollTo from 'calypso/lib/scroll-to';
-import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -223,7 +223,7 @@ export class SiteSettingsFormGeneral extends Component {
 					) }
 					&nbsp;
 					{ site.domain.endsWith( '.wordpress.com' ) && (
-						<a href={ domainManagementChangeSiteAddress( siteSlug, site.domain ) }>
+						<a href={ domainManagementEdit( siteSlug, site.domain ) }>
 							{ translate( 'You can change your site address in Domain Settings.' ) }
 						</a>
 					) }

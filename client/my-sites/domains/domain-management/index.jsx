@@ -1,6 +1,5 @@
 import AllDomains from 'calypso/my-sites/domains/domain-management/list/all-domains';
 import SiteDomains from 'calypso/my-sites/domains/domain-management/list/site-domains';
-import ChangeSiteAddress from './change-site-address';
 import ContactsPrivacy from './contacts-privacy';
 import AddDnsRecord from './dns/add-dns-record';
 import DnsRecords from './dns/dns-records';
@@ -23,7 +22,6 @@ import TransferDomainToOtherUser from './transfer/transfer-to-other-user/transfe
 
 export default {
 	AddDnsRecord,
-	ChangeSiteAddress,
 	ContactsPrivacy,
 	DnsRecords,
 	DnsRecordsList,
