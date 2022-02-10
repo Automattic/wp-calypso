@@ -36,10 +36,7 @@ export class SnackbarNotificationComponent {
 	 * @returns {Promise<boolean>} True if text is found in target snackbar notice.
 	 * 	False otherwise.
 	 */
-	async validateNoticeShown(
-		text: string,
-		{ type }: { type?: NoticeType } = {}
-	): Promise< boolean > {
+	async noticeShown( text: string, { type }: { type?: NoticeType } = {} ): Promise< boolean > {
 		const noticeType = `.is-${ type?.toLowerCase() }` || '';
 
 		const selector = `div.notice${ noticeType } :text("${ text }")`;

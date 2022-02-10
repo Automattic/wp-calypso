@@ -10,7 +10,6 @@ import {
 	TestAccount,
 	PostsPage,
 	ParagraphBlock,
-	EditorSettingsSidebarComponent,
 	SnackbarNotificationComponent,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
@@ -27,6 +26,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;
+	let postsPage: PostsPage;
 	let paragraphBlock: ParagraphBlock;
 	let postURL: string;
 
@@ -36,12 +36,14 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 
-		gutenbergEditorPage = new GutenbergEditorPage( page );
-		await gutenbergEditorPage.visit( 'post' );
+		postsPage = new PostsPage( page );
+		await postsPage.visit();
+		await postsPage.newPost();
 	} );
 
 	describe( 'Publish post', function () {
 		it( 'Enter post title', async function () {
+			gutenbergEditorPage = new GutenbergEditorPage( page );
 			await gutenbergEditorPage.enterTitle( postTitle );
 		} );
 
@@ -69,10 +71,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 	} );
 
 	describe( 'Edit published post', function () {
-		let postsPage: PostsPage;
-
 		it( 'Navigate to Posts page', async function () {
-			postsPage = new PostsPage( page );
 			await postsPage.visit();
 		} );
 
@@ -125,36 +124,31 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 	describe( 'Trash post', function () {
 		it( 'Trash post', async function () {
-			await gutenbergEditorPage.openSettings();
-			const frame = await gutenbergEditorPage.getEditorFrame();
-
-			const editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( frame, page );
-			await editorSettingsSidebarComponent.clickTab( 'Post' );
-			await editorSettingsSidebarComponent.trashPost();
-		} );
-
-		it( 'User is navigated to Posts > Trashed page', async function () {
-			await page.waitForURL( /.*posts\/trashed.*/, { waitUntil: 'load' } );
+			await postsPage.visit();
+			await postsPage.clickTab( 'Drafts' );
+			await postsPage.clickMenuItemForPost( { title: postTitle, action: 'Trash' } );
 		} );
 
 		it( 'Confirmation notice is shown', async function () {
 			const snackbarNotificationComponent = new SnackbarNotificationComponent( page );
-			await snackbarNotificationComponent.validateNoticeShown(
-				'Post successfully moved to trash.',
-				{ type: 'Success' }
-			);
+			await snackbarNotificationComponent.noticeShown( 'Post successfully moved to trash.', {
+				type: 'Success',
+			} );
 		} );
 	} );
 
 	describe( 'Permanently delete post', function () {
+		it( 'View trashed posts', async function () {
+			await postsPage.clickTab( 'Trashed' );
+		} );
+
 		it( 'Hard trash post', async function () {
-			const postsPage = new PostsPage( page );
 			await postsPage.clickMenuItemForPost( { title: postTitle, action: 'Delete Permanently' } );
 		} );
 
 		it( 'Confirmation notice is shown', async function () {
 			const snackbarNotificationComponent = new SnackbarNotificationComponent( page );
-			await snackbarNotificationComponent.validateNoticeShown( 'Post successfully deleted', {
+			await snackbarNotificationComponent.noticeShown( 'Post successfully deleted', {
 				type: 'Success',
 			} );
 		} );

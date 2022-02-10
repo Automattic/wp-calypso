@@ -1,14 +1,17 @@
 import { Page, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
-import { reloadAndRetry } from '../../element-helper';
+import { reloadAndRetry, clickNavTab } from '../../element-helper';
 
 type TrashedMenuItems = 'Restore' | 'Copy link' | 'Delete Permanently';
+type GenericMenuItems = 'Trash';
 
-type MenuItems = TrashedMenuItems;
+type MenuItems = TrashedMenuItems | GenericMenuItems;
+type PostsPageTabs = 'Published' | 'Drafts' | 'Scheduled' | 'Trashed';
 
 const selectors = {
 	// General
 	placeholder: `div.is-placeholder`,
+	addNewPostButton: 'a.post-type-list__add-post',
 
 	// Post Item
 	postItem: ( title: string ) => `div.post-item:has([data-e2e-title="${ title }"])`,
@@ -44,6 +47,17 @@ export class PostsPage {
 		return response;
 	}
 
+	/**
+	 * Clicks on the navigation tab (desktop) or dropdown (mobile).
+	 *
+	 * @param {string} name Name of the tab to click.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickTab( name: PostsPageTabs ): Promise< void > {
+		await clickNavTab( this.page, name );
+		await this.waitUntilLoaded();
+	}
+
 	/* Page readiness */
 
 	/**
@@ -72,11 +86,19 @@ export class PostsPage {
 		 * @param {Page} page Page object.
 		 */
 		async function waitForPostToAppear( page: Page ): Promise< void > {
-			const postLocator = page.locator( selectors.postItem( title as string ) );
+			const postLocator = page.locator( selectors.postItem( title ) );
 			await postLocator.waitFor( { state: 'visible', timeout: 20 * 1000 } );
 		}
 
 		await reloadAndRetry( this.page, waitForPostToAppear );
+	}
+
+	/**
+	 * Clicks on the `add new post` button.
+	 */
+	async newPost(): Promise< void > {
+		const locator = this.page.locator( selectors.addNewPostButton );
+		await locator.click();
 	}
 
 	/* Post actions */
@@ -158,9 +180,5 @@ export class PostsPage {
 		}
 
 		await locator.click();
-
-		if ( menuItem === 'Delete Permanently' ) {
-			await this.page.waitForResponse( /.*delete.*/ );
-		}
 	}
 }
