@@ -55,6 +55,8 @@ function WebsiteContentStep( {
 					return { id: 'Services', name: translate( 'Services' ) };
 				case 'creative-arts':
 					return { id: 'Portfolio', name: translate( 'Portfolio' ) };
+				case 'restaurant':
+					return { id: 'Menu', name: translate( 'Menu' ) };
 				default:
 					return { id: 'Blog', name: translate( 'Blog' ) };
 					break;
