@@ -85,6 +85,13 @@ function getLaunchDestination( dependencies ) {
 	return `/home/${ dependencies.siteSlug }`;
 }
 
+function getDomainSignupFlowDestination( { domainItem, cartItem, siteId } ) {
+	if ( domainItem && cartItem ) {
+		return addQueryArgs( { siteId }, '/start/setup-site' );
+	}
+	return getThankYouNoSiteDestination();
+}
+
 function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
@@ -130,6 +137,7 @@ const flows = generateFlows( {
 	getSignupDestination,
 	getLaunchDestination,
 	getThankYouNoSiteDestination,
+	getDomainSignupFlowDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
 	getDestinationFromIntent,
