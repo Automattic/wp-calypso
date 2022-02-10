@@ -3,6 +3,7 @@ import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import getDIFMLiteSiteCategory from 'calypso/state/selectors/get-difm-lite-site-category';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
 	initializePages,
@@ -13,7 +14,9 @@ import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
 } from 'calypso/state/signup/steps/website-content/selectors';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { sectionGenerator } from './section-generator';
+
 import './style.scss';
 
 interface WebsiteContentStepProps {
@@ -23,6 +26,10 @@ interface WebsiteContentStepProps {
 	flowName: string;
 	stepName: string;
 	positionInFlow: string;
+	queryObject: {
+		siteSlug?: string;
+		siteId?: string;
+	};
 }
 
 function WebsiteContentStep( {
@@ -30,22 +37,41 @@ function WebsiteContentStep( {
 	stepName,
 	submitSignupStep,
 	goToNextStep,
+	queryObject,
 }: WebsiteContentStepProps ) {
 	const websiteContent = useSelector( getWebsiteContent );
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
+	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
+	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ formErrors, setFormErrors ] = useState< any >( {} );
 
 	useEffect( () => {
-		dispatch(
-			initializePages( [
-				{ id: 'Home', name: translate( 'Homepage' ) },
-				{ id: 'About', name: translate( 'About' ) },
-				{ id: 'Contact', name: translate( 'Contact' ) },
-			] )
-		);
-	}, [ dispatch, initializePages ] );
+		function getPageFromCategory( category: string | null ) {
+			switch ( category ) {
+				case 'professional-services':
+				case 'local-services':
+					return { id: 'Services', name: translate( 'Services' ) };
+				case 'creative-arts':
+					return { id: 'Portfolio', name: translate( 'Portfolio' ) };
+				default:
+					return { id: 'Blog', name: translate( 'Blog' ) };
+					break;
+			}
+		}
+
+		if ( siteCategory ) {
+			dispatch(
+				initializePages( [
+					{ id: 'Home', name: translate( 'Homepage' ) },
+					{ id: 'About', name: translate( 'About' ) },
+					{ id: 'Contact', name: translate( 'Contact' ) },
+					getPageFromCategory( siteCategory ),
+				] )
+			);
+		}
+	}, [ dispatch, siteCategory, translate ] );
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );

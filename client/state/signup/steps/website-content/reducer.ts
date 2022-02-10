@@ -20,16 +20,15 @@ export default withSchemaValidation(
 					websiteContent: action.payload,
 				};
 			case SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES: {
-				// Initialize with provided pages only if given pages do not exist
 				// When initializing page we need to leave pages that already exist alone
 				// so that persisted state can load correctly
-				const existingPageIDs = state.websiteContent.map( ( page ) => page.id );
-				const newPages = action.payload.filter(
-					( page: PageData ) => ! existingPageIDs.includes( page.id )
-				);
+				const newPages = action.payload.map( ( page: PageData ) => ( {
+					...page,
+					...state.websiteContent.find( ( oldPage ) => oldPage.id === page.id ),
+				} ) );
 				return {
 					...state,
-					websiteContent: [ ...state.websiteContent, ...newPages ],
+					websiteContent: newPages,
 				};
 			}
 			case SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX:
