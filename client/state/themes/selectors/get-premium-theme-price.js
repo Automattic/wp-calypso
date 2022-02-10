@@ -3,7 +3,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 import { isPremiumThemeAvailable } from 'calypso/state/themes/selectors/is-premium-theme-available';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
-import isSiteAutomatedTransfer from '../../selectors/is-site-automated-transfer';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import 'calypso/state/themes/init';
 
 /**
