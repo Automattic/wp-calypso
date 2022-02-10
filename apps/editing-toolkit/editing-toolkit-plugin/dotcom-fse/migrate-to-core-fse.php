@@ -44,6 +44,8 @@ function migrate_legacy_fse_to_core_fse() {
 
 	// Activate theme fork that supports Core FSE. This will also deactivate Dotcom FSE.
 	switch_theme( $core_fse_theme );
+	// Delete the option that `did_insert_templates()` created to ensure we won't reactivate.
+	delete_option( basename( $dotcom_fse_theme ) . ' -fse-template-data-v1' );
 	$notes[] = sprintf( 'Now running the %s theme', $core_fse_theme );
 
 	$posts = get_posts( array( 'post_type' => 'wp_template_part' ) );
