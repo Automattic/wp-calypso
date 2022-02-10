@@ -34,13 +34,6 @@ export class PostsPage {
 	}
 
 	/**
-	 * Wait until the page is completely loaded.
-	 */
-	async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForSelector( selectors.placeholder, { state: 'detached' } );
-	}
-
-	/**
 	 * Opens the Posts page.
 	 *
 	 * Example {@link https://wordpress.com/posts}
@@ -51,6 +44,42 @@ export class PostsPage {
 		return response;
 	}
 
+	/* Page readiness */
+
+	/**
+	 * Wait until the page is completely loaded.
+	 */
+	async waitUntilLoaded(): Promise< void > {
+		await this.page.waitForSelector( selectors.placeholder, { state: 'detached' } );
+	}
+
+	/**
+	 * Ensures the post item denoted by the parameter `title` is shown on the page.
+	 * This method is a superset of the `waitUntilLoaded` method.
+	 *
+	 * Due to a race condition, sometimes the expected post does not appear
+	 * on the list of posts. This can occur when state for multiple posts are being modified
+	 * at the same time (eg. several posts being trashed).
+	 *
+	 * @param {string} title Post title.
+	 */
+	private async ensurePostShown( title: string ): Promise< void > {
+		await this.waitUntilLoaded();
+
+		/**
+		 * Closure to wait until the post to appear in the list of posts.
+		 *
+		 * @param {Page} page Page object.
+		 */
+		async function waitForPostToAppear( page: Page ): Promise< void > {
+			await page.waitForSelector( selectors.postItem( title as string ) );
+		}
+
+		reloadAndRetry( this.page, waitForPostToAppear );
+	}
+
+	/* Post actions */
+
 	/**
 	 * Given a post title, click on the post, triggering a navigation
 	 * to the editor page.
@@ -58,7 +87,8 @@ export class PostsPage {
 	 * @param {string} title Partial or full string of the post.
 	 */
 	async clickPost( title: string ): Promise< void > {
-		await this.waitUntilLoaded();
+		await this.ensurePostShown( title );
+
 		const locator = this.page.locator( selectors.postItem( title ) );
 		await locator.click();
 	}
@@ -69,10 +99,37 @@ export class PostsPage {
 	 * @param {string} title Post title on which the menu should be toggled.
 	 */
 	async togglePostMenu( title: string ): Promise< void > {
+		await this.ensurePostShown( title );
+
 		const locator = this.page.locator(
 			`${ selectors.postItem( title ) } ${ selectors.menuToggleButton }`
 		);
 		await locator.click();
+	}
+
+	/* Menu actions */
+
+	/**
+	 * Given a post title and target menu item, performs the following actions:
+	 * 	- locate the post with matching title.
+	 * 	- toggle the post menu.
+	 * 	- click on an menu action with matching name.
+	 *
+	 * @param param0 Object parameter.
+	 * @param {string} param0.title Title of the post.
+	 * @param {MenuItems} param0.action Name of the target action in the menu.
+	 */
+	async clickMenuItemForPost( {
+		title,
+		action,
+	}: {
+		title: string;
+		action: MenuItems;
+	} ): Promise< void > {
+		await this.ensurePostShown( title );
+
+		await this.togglePostMenu( title );
+		await this.clickMenuItem( action );
 	}
 
 	/**
@@ -80,7 +137,7 @@ export class PostsPage {
 	 *
 	 * @param {string} menuItem Target menu item.
 	 */
-	async clickMenuItem( menuItem: string ): Promise< void > {
+	private async clickMenuItem( menuItem: string ): Promise< void > {
 		const locator = this.page.locator( selectors.menuItem( menuItem ) );
 
 		// {@TODO} In the future, a possible idea may be to implement a following structure:
@@ -104,41 +161,5 @@ export class PostsPage {
 		if ( menuItem === 'Delete Permanently' ) {
 			await this.page.waitForResponse( /.*delete.*/ );
 		}
-	}
-
-	/**
-	 * Given a post title and target menu item, performs the following actions:
-	 * 	- locate the post with matching title.
-	 * 	- toggle the post menu.
-	 * 	- click on an menu action with matching name.
-	 *
-	 * @param param0 Object parameter.
-	 * @param {string} param0.title Title of the post.
-	 * @param {MenuItems} param0.action Name of the target action in the menu.
-	 */
-	async clickMenuItemForPost( {
-		title,
-		action,
-	}: {
-		title: string;
-		action: MenuItems;
-	} ): Promise< void > {
-		await this.waitUntilLoaded();
-
-		/**
-		 * Closure to wait until the post to appear in the list of posts.
-		 *
-		 * @param {Page} page Page object.
-		 */
-		async function waitForPostToAppear( page: Page ): Promise< void > {
-			await page.waitForSelector( selectors.postItem( title ), { timeout: 15 * 1000 } );
-		}
-
-		// Due to a race condition, sometimes the expected post does not appear
-		// on the list of posts. Typically a refresh solves the problem.
-		reloadAndRetry( this.page, waitForPostToAppear );
-
-		await this.togglePostMenu( title );
-		await this.clickMenuItem( action );
 	}
 }
