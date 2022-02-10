@@ -8,6 +8,7 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getWpOrgImporterUrl } from '../../import/util';
 import { Importer, ImportJob } from '../types';
 import { ContentChooser } from './content-chooser';
 import ImportContentOnly from './import-content-only';
@@ -59,7 +60,9 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	}
 
 	function switchToContentUploadScreen() {
-		updateCurrentPageQueryParam( { option: WPImportOption.CONTENT_ONLY } );
+		isSiteAtomic
+			? redirectToWpAdminWordPressImporter()
+			: updateCurrentPageQueryParam( { option: WPImportOption.CONTENT_ONLY } );
 	}
 
 	function checkImporterAvailability() {
@@ -93,6 +96,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 
 	function redirectToWpAdminImportPage() {
 		return page( `/import/${ siteSlug }` );
+	}
+
+	function redirectToWpAdminWordPressImporter() {
+		return page( getWpOrgImporterUrl( siteSlug, 'wordpress' ) );
 	}
 
 	/**
