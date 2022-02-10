@@ -37,7 +37,7 @@ class ModerateComment extends Component {
 			return;
 		}
 
-		this.moderate( prevProps );
+		this.moderate( this.props );
 	}
 
 	showNotice( status ) {
