@@ -38002,6 +38002,7 @@ testarmada-magellan@11.0.10:
     sharp: ^0.28
     sinon: ^12.0.1
     sinon-chai: ^3.7.0
+    socks-proxy-agent: ^6.1.0
     source-map: ^0.7.3
     stackframe: ^1.1.1
     stacktrace-gps: ^3.0.3
