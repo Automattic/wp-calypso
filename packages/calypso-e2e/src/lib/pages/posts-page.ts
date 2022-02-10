@@ -72,10 +72,11 @@ export class PostsPage {
 		 * @param {Page} page Page object.
 		 */
 		async function waitForPostToAppear( page: Page ): Promise< void > {
-			await page.waitForSelector( selectors.postItem( title as string ) );
+			const postLocator = page.locator( selectors.postItem( title as string ) );
+			await postLocator.waitFor( { state: 'visible', timeout: 20 * 1000 } );
 		}
 
-		reloadAndRetry( this.page, waitForPostToAppear );
+		await reloadAndRetry( this.page, waitForPostToAppear );
 	}
 
 	/* Post actions */
