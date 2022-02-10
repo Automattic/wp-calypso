@@ -13,17 +13,24 @@ export const Label = styled( FormLabel )`
 	color: var( --studio-gray-50 );
 	font-weight: 500;
 	cursor: inherit;
+	margin-bottom: 24px;
 `;
 
 export const SubLabel = styled( Label )`
 	font-weight: 400;
 	text-decoration-line: none;
 	color: ${ ( props ) => ( props.color ? props.color : 'inherited' ) };
+	margin-bottom: 16px;
+`;
+
+const Fieldset = styled( FormFieldset )`
+	.form-label {
+		margin-bottom: ${ ( props ) => ( props.sublabel ? '10px' : '24px' ) };
+	}
 `;
 
 const TextInput = styled( FormTextInput )`
 	input&.form-text-input {
-		margin-top: 16px;
 		border-radius: 4px;
 		line-height: 44px;
 		height: 44px;
@@ -38,7 +45,6 @@ const TextInput = styled( FormTextInput )`
 
 const TextArea = styled( FormTextArea )`
 	textarea&.form-textarea {
-		margin-top: 24px;
 		border-radius: 4px;
 		font-size: 14px;
 		&:focus,
@@ -72,6 +78,7 @@ const SocialMediaLabel = styled.span`
 	align-items: center;
 	display: flex;
 	gap: 10px;
+	margin-bottom: 12px;
 `;
 
 const AddressField = styled.div`
@@ -94,12 +101,12 @@ interface TextInputFieldProps {
 
 export function TextInputField( props: TextInputFieldProps ) {
 	return (
-		<FormFieldset>
+		<Fieldset sublabel={ props.sublabel }>
 			<Label htmlFor={ props.name }>{ props.label }</Label>
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextInput { ...props } isError={ !! props.error } />
 			{ props.error && <FormInputValidation isError text={ props.error } /> }
-		</FormFieldset>
+		</Fieldset>
 	);
 }
 
@@ -109,7 +116,7 @@ interface TextAreaFieldProps extends TextInputFieldProps {
 
 export function TextAreaField( props: TextAreaFieldProps ) {
 	return (
-		<FormFieldset>
+		<Fieldset sublabel={ props.sublabel }>
 			<Label htmlFor={ props.name }>{ props.label }</Label>
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
@@ -121,7 +128,7 @@ export function TextAreaField( props: TextAreaFieldProps ) {
 				spellCheck="false"
 			/>
 			{ props.error && <FormInputValidation isError text={ props.error } /> }
-		</FormFieldset>
+		</Fieldset>
 	);
 }
 
@@ -232,6 +239,7 @@ export function ContactInformation( {
 			<AddressField>
 				<TextAreaField
 					{ ...displayAddressProps }
+					rows={ 3 }
 					label={ translate( 'Physical address (if you want a map on your site)' ) }
 					onChange={ onChange }
 				/>
@@ -241,9 +249,12 @@ export function ContactInformation( {
 }
 
 export const HorizontalGrid = styled.div`
-	margin-top: 24px;
 	display: flex;
-	flex-wrap: wrap;
 	gap: 20px;
 	justify-content: space-between;
+	margin-bottom: 8px;
+	flex-wrap: wrap;
+	@media ( min-width: 1100px ) {
+		flex-wrap: nowrap;
+	}
 `;

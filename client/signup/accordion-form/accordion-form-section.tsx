@@ -29,7 +29,7 @@ const SectionHeader = styled.div< SectionHeaderProps >`
 	font-size: ${ ( props ) => ( props.isExpanded ? '20px' : '16px' ) };
 	line-height: 24px;
 	gap: 10px;
-	padding: 20px 0;
+	padding: 16px 0;
 	color: ${ ( props ) =>
 		props.isTouched ? 'var( --studio-gray-100 )' : 'var( --studio-gray-40 )' };
 `;
@@ -44,7 +44,7 @@ const SectionContent = styled.div`
 `;
 
 const ButtonsContainer = styled.div`
-	margin-top: 24px;
+	margin-top: 16px;
 	align-items: center;
 	display: flex;
 	gap: 24px;
