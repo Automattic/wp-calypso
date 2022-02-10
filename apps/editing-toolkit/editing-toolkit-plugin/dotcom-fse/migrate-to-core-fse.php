@@ -42,10 +42,6 @@ function migrate_legacy_fse_to_core_fse() {
 		return $errors;
 	}
 
-	// Template First themes: losing content integrity on theme switch? Go away..
-	$tft = A8C\MU\Full_Site_Editing\Template_First_Themes::get_instance();
-	remove_action( 'switch_theme', array( $tft, 'update_homepage_template' ), 10, 3 );
-
 	// Activate theme fork that supports Core FSE. This will also deactivate Dotcom FSE.
 	switch_theme( $core_fse_theme );
 	$notes[] = sprintf( 'Now running the %s theme', $core_fse_theme );
