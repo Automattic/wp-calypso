@@ -48,6 +48,8 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	} = props;
 
 	const displayUpsellBanner = isAtomic && ! requestingSitePlans && currentPlan;
+	const upsellUrl =
+		isAtomic && `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_BUSINESS }`;
 
 	const upsellBanner = (
 		<UpsellNudge
@@ -72,6 +74,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			<CurrentTheme siteId={ siteId } />
 			<ThemeShowcase
 				{ ...props }
+				upsellUrl={ upsellUrl }
 				siteId={ siteId }
 				emptyContent={ showWpcomThemesList ? <div /> : null }
 				isJetpackSite={ true }
