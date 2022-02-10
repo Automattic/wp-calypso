@@ -591,7 +591,8 @@ object Translate : BuildType({
 				yarn run translate
 
 				# Move `calypso-strings.pot` to artifacts directory
-				mv public/calypso-strings.pot "./translate"
+				mkdir -p ./translate
+				mv public/calypso-strings.pot ./translate/
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
