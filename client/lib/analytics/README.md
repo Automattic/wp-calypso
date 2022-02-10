@@ -4,7 +4,9 @@ This module includes functionality for interacting with analytics packages.
 
 Turn on debugging in the JavaScript developer console to view calls being made with the analytics module:
 
+1. Paste the following into the developer console:
 `localStorage.setItem('debug', 'calypso:analytics:*');`
+2. Refresh the browser window and notice the colour coded events in the developer console.
 
 You can limit to only calls made to Google Analytics, Tracks, or MC by replacing the `*` with an appropriate suffix. `ga` for Google Analytics, `tracks` for Tracks, `mc` for MC, and `ad-tracking` for Ad Tracking.
 
