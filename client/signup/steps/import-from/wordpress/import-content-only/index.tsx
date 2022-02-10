@@ -25,7 +25,6 @@ interface Props {
 	siteItem: SitesItem | null;
 	siteSlug: string;
 	siteAnalyzedData: UrlData;
-	fromSite: string;
 }
 
 const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
@@ -34,7 +33,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Fields
 	 */
-	const { job, importer, siteItem, siteSlug, siteAnalyzedData, fromSite } = props;
+	const { job, importer, siteItem, siteSlug, siteAnalyzedData } = props;
 
 	/**
 	 ↓ Effects
@@ -56,7 +55,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function prepareImportParams(): ImportJobParams {
-		const targetSiteUrl = fromSite.startsWith( 'http' ) ? fromSite : 'https://' + fromSite;
+		const targetSiteUrl = siteSlug.startsWith( 'http' ) ? siteSlug : 'https://' + siteSlug;
 
 		return {
 			engine: importer,

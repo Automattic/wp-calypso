@@ -35,7 +35,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	const { job, fromSite, siteSlug, siteId } = props;
 	const siteItem = useSelector( ( state ) => getSiteBySlug( state, siteSlug ) );
 	const fromSiteItem = useSelector( ( state ) =>
-		getSiteBySlug( state, convertToFriendlyWebsiteName( fromSite ) )
+		getSiteBySlug( state, fromSite ? convertToFriendlyWebsiteName( fromSite ) : '' )
 	);
 	const isSiteAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -127,7 +127,6 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 					return (
 						<ImportContentOnly
 							job={ job }
-							fromSite={ fromSite }
 							importer={ importer }
 							siteItem={ siteItem }
 							siteSlug={ siteSlug }
