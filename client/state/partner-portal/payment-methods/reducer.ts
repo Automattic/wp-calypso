@@ -5,12 +5,10 @@ import { combineReducers } from 'calypso/state/utils';
 const initialState = {
 	fields: {},
 	cardDataComplete: {
-		cardNumber: false,
-		cardCvc: false,
-		cardExpiry: false,
+		card: false,
 	},
 	cardDataErrors: {},
-	brand: {},
+	useAsPrimaryPaymentMethod: false,
 };
 
 interface FieldsStateValue {
@@ -89,12 +87,12 @@ export const cardDataErrors: Reducer< Record< string, unknown >, AnyAction > = (
 	}
 };
 
-export const brand: Reducer< Record< string, unknown >, AnyAction > = (
-	state = initialState.brand,
+export const useAsPrimaryPaymentMethod: Reducer< Record< string, unknown >, AnyAction > = (
+	state = initialState.useAsPrimaryPaymentMethod,
 	action
 ) => {
 	switch ( action?.type ) {
-		case 'BRAND_SET':
+		case 'USE_AS_PRIMARY_PAYMENT_METHOD':
 			return action.payload;
 		default:
 			return state;
@@ -105,7 +103,7 @@ const reducer = combineReducers( {
 	fields,
 	cardDataErrors,
 	cardDataComplete,
-	brand,
+	useAsPrimaryPaymentMethod,
 } );
 
 export type State = ReturnType< typeof reducer >;
