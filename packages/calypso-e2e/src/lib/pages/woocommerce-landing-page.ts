@@ -5,6 +5,7 @@ export const selectors = {
 	installer: '.is-woocommerce-install',
 	learnMore: '.woocommerce span:text("Learn more")',
 	supportDialog: '.support-article-dialog',
+	supportDialogClose: '.support-article-dialog button:text("Close")',
 };
 
 /**
@@ -26,6 +27,7 @@ export class WoocommerceLandingPage {
 	async openLearnMore(): Promise< void > {
 		await this.page.click( selectors.learnMore );
 		await this.page.waitForSelector( selectors.supportDialog );
+		await this.page.click( selectors.supportDialogClose );
 	}
 
 	/**
