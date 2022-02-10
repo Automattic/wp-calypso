@@ -614,8 +614,8 @@ function LineItemSublabelAndPrice( {
 			return (
 				<>
 					{ translate(
-						'Monthly subscription: %(itemPrice)s x %(members)s active member',
-						'Monthly subscription: %(itemPrice)s x %(members)s active members',
+						'Monthly subscription: %(itemPrice)s x %(members)s member',
+						'Monthly subscription: %(itemPrice)s x %(members)s members',
 						p2Options
 					) }
 				</>
