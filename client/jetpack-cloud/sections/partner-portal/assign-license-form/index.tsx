@@ -8,7 +8,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import SearchCard from 'calypso/components/search-card';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import './style.scss';
 
@@ -27,22 +27,22 @@ export default function AssignLicenseForm( { sites }: any ): ReactElement {
 				<Card key={ site.ID } className="assign-license-form__site-card">
 					<FormRadio
 						className="assign-license-form__site-card-radio"
-						label=""
+						label={ site.domain }
 						name="site_select"
+						disabled={ isSubmitting }
 						onClick={ () => onSelectSite( site.ID ) }
 					/>
-					{ site.domain }
 				</Card>
 			);
 		}
 	} );
 
-	const onSearch = ( query: any ) => setFilter( query );
-
 	const assignLicense = useAssignLicenseMutation( {
-		onSuccess: ( licenseKey: any ) => {
+		onSuccess: ( license: any ) => {
 			setIsSubmitting( false );
-			page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
+			page.redirect(
+				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
+			);
 		},
 		onError: ( error: Error ) => {
 			setIsSubmitting( false );
@@ -52,7 +52,6 @@ export default function AssignLicenseForm( { sites }: any ): ReactElement {
 
 	const onAssignLicense = useCallback( () => {
 		setIsSubmitting( true );
-		dispatch( infoNotice( translate( 'Assigning license…' ) ) );
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_assign_license_submit', {
 				licenseKey,
@@ -80,7 +79,7 @@ export default function AssignLicenseForm( { sites }: any ): ReactElement {
 					>
 						{ translate( 'Assign later' ) }
 					</Button>
-					<Button primary onClick={ onAssignLicense } disabled={ isSubmitting }>
+					<Button primary onClick={ onAssignLicense } busy={ isSubmitting }>
 						{ translate( 'Assign to website' ) }
 					</Button>
 				</div>
@@ -89,7 +88,7 @@ export default function AssignLicenseForm( { sites }: any ): ReactElement {
 			<SearchCard
 				className="assign-license-form__search-field"
 				placeHolder={ translate( 'Search for website URL right here' ) }
-				onSearch={ onSearch }
+				onSearch={ ( query: any ) => setFilter( query ) }
 			/>
 
 			{ siteCards }

@@ -48,9 +48,13 @@ export default function LicensePreview( {
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 	const showDomain =
 		domain && [ LicenseState.Attached, LicenseState.Revoked ].indexOf( licenseState ) !== -1;
-	const justIssued =
-		moment.utc( issuedAt, 'YYYY-MM-DD HH:mm:ss' ) > moment.utc().subtract( 1, 'minute' );
-	const justAssigned = justIssued && 'attached' === licenseState;
+
+	const oneMinuteAgo = moment.utc().subtract( 1, 'minute' );
+
+	const justIssued = moment.utc( issuedAt, 'YYYY-MM-DD HH:mm:ss' ) > oneMinuteAgo;
+
+	const justAssigned = moment.utc( attachedAt, 'YYYY-MM-DD HH:mm:ss' ) > oneMinuteAgo;
+
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_preview_toggle' ) );
@@ -107,6 +111,7 @@ export default function LicensePreview( {
 								{ translate( 'Just issued' ) }
 							</span>
 						) }
+
 						{ justAssigned && (
 							<span className="license-preview__tag license-preview__tag--is-assigned">
 								<Gridicon icon="checkmark-circle" size={ 18 } />

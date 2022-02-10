@@ -1,6 +1,6 @@
 import { useMutation, UseMutationOptions, UseMutationResult } from 'react-query';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
-import { APILicenseAssign } from 'calypso/state/partner-portal/types';
+import { APILicense } from 'calypso/state/partner-portal/types';
 
 interface MutationAssignLicenseVariables {
 	licenseKey: string;
@@ -10,7 +10,7 @@ interface MutationAssignLicenseVariables {
 function mutationAssignLicense( {
 	licenseKey,
 	selectedSite,
-}: MutationAssignLicenseVariables ): Promise< APILicenseAssign > {
+}: MutationAssignLicenseVariables ): Promise< APILicense > {
 	return wpcomJpl.req.post( {
 		apiNamespace: 'wpcom/v2',
 		path: `/jetpack-licensing/license/${ licenseKey }/site`,
@@ -19,9 +19,9 @@ function mutationAssignLicense( {
 }
 
 export default function useAssignLicenseMutation< TContext = unknown >(
-	options?: UseMutationOptions< APILicenseAssign, Error, MutationAssignLicenseVariables, TContext >
-): UseMutationResult< APILicenseAssign, Error, MutationAssignLicenseVariables, TContext > {
-	return useMutation< APILicenseAssign, Error, MutationAssignLicenseVariables, TContext >(
+	options?: UseMutationOptions< APILicense, Error, MutationAssignLicenseVariables, TContext >
+): UseMutationResult< APILicense, Error, MutationAssignLicenseVariables, TContext > {
+	return useMutation< APILicense, Error, MutationAssignLicenseVariables, TContext >(
 		mutationAssignLicense,
 		options
 	);
