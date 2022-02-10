@@ -20,17 +20,18 @@ export class MediaListData extends Component {
 		search: PropTypes.string,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.props.setQuery( this.props.siteId, this.getQuery() );
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const nextQuery = this.getQuery( nextProps );
+	componentDidUpdate( prevProps ) {
+		const nextQuery = this.getQuery();
 
-		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {
-			this.props.setQuery( nextProps.siteId, nextQuery );
+		if (
+			prevProps.siteId !== this.props.siteId ||
+			! isEqual( nextQuery, this.getQuery( prevProps ) )
+		) {
+			this.props.setQuery( this.props.siteId, nextQuery );
 		}
 	}
 
