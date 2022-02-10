@@ -3,6 +3,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugFactory from 'debug';
+import { translate } from 'i18n-calypso';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -465,11 +466,15 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 				<!-- wp:column {"style":{"spacing":{"padding":{"right":"10%","left":"5%"}}}} -->
 				<div class="wp-block-column" style="padding-right:10%;padding-left:5%">
 					<!-- wp:heading {"textAlign":"left","fontSize":"x-large"} -->
-					<h2 class="has-text-align-left has-x-large-font-size" id="item-name">Item Name</h2>
+					<h2 class="has-text-align-left has-x-large-font-size" id="item-name">${ translate(
+						'Item Name'
+					) }</h2>
 					<!-- /wp:heading -->
 
 					<!-- wp:paragraph {"align":"left","style":{"color":{"text":"#808080"}},"fontSize":"small"} -->
-					<p class="has-text-align-left has-text-color has-small-font-size" style="color:#808080">Quick details</p>
+					<p class="has-text-align-left has-text-color has-small-font-size" style="color:#808080">${ translate(
+						'Quick details'
+					) }</p>
 					<!-- /wp:paragraph -->
 
 					<!-- wp:heading {"level":3,"fontSize":"medium"} -->
@@ -478,7 +483,9 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 
 					<!-- wp:jetpack/recurring-payments -->
 					<div class="wp-block-jetpack-recurring-payments">
-						<!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":"Buy Now","backgroundColor":"primary","borderRadius":0,"width":"100%"} /-->
+						<!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":"${ translate(
+							'Buy Now'
+						) }","backgroundColor":"primary","borderRadius":0,"width":"100%"} /-->
 					</div>
 					<!-- /wp:jetpack/recurring-payments -->
 
@@ -487,9 +494,9 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 					<!-- /wp:spacer -->
 
 					<!-- wp:paragraph {"align":"left","style":{"typography":{"fontSize":18}}} -->
-					<p class="has-text-align-left" style="font-size:18px">Describe your item. Lorem ipsum dolor sit amet,
-						consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-						minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+					<p class="has-text-align-left" style="font-size:18px">${ translate(
+						`Describe your item. You can add a few lines here that describe the item you're selling. Or just delete this block if you don't need it!`
+					) }</p>
 					<!-- /wp:paragraph -->
 
 					<!-- wp:social-links {"iconColor":"foreground-dark","iconColorValue":"#101010","className":"is-style-logos-only"} -->
@@ -510,7 +517,7 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 			apiNamespace: 'wp/v2',
 			body: {
 				content: patternPost,
-				title: 'Home',
+				title: translate( 'Home' ),
 				status: 'publish',
 			},
 		} );
