@@ -31,6 +31,7 @@ describe( DataHelper.createSuiteTitle( 'WooCommerce Landing Page' ), function ()
 	it( 'Open Learn more', async function () {
 		landingPage = new WoocommerceLandingPage( page );
 		await landingPage.openLearnMore();
+		await landingPage.closeLearnMore();
 	} );
 
 	it( 'Open WooCommerce installer (/start)', async function () {

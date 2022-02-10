@@ -27,6 +27,12 @@ export class WoocommerceLandingPage {
 	async openLearnMore(): Promise< void > {
 		await this.page.click( selectors.learnMore );
 		await this.page.waitForSelector( selectors.supportDialog );
+	}
+
+	/**
+	 * Click the Close button
+	 */
+	async closeLearnMore(): Promise< void > {
 		await this.page.click( selectors.supportDialogClose );
 	}
 
