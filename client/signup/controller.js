@@ -10,6 +10,7 @@ import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
@@ -290,6 +291,11 @@ export default {
 
 		// Update initialContext to help woocommerce-install support site switching.
 		if ( 'woocommerce-install' === flowName ) {
+			if ( context?.query?.back_to ) {
+				// forces back_to update
+				context.store.dispatch( updateDependencies( { back_to: context.query.back_to } ) );
+			}
+
 			initialContext = context;
 		}
 

@@ -1,3 +1,4 @@
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
@@ -154,7 +155,12 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		} );
 		switch ( selectedOption ) {
 			case 'power':
-				page.redirect( `/start/woocommerce-install/?site=${ siteSlug }` );
+				page(
+					addQueryArgs( `/start/woocommerce-install`, {
+						back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
+						siteSlug: siteSlug,
+					} )
+				);
 				break;
 
 			case 'simple': {
