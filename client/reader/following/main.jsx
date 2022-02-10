@@ -1,8 +1,8 @@
 import { CompactCard, Button } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, localize } from 'i18n-calypso';
 import { trim } from 'lodash';
 import page from 'page';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, connect } from 'react-redux';
 import SearchInput from 'calypso/components/search';
 import SectionHeader from 'calypso/components/section-header';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
@@ -13,6 +13,7 @@ import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 import { recordTrack } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
@@ -81,4 +82,10 @@ function FollowingStream( { suggestions, ...props } ) {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-export default SuggestionProvider( FollowingStream );
+const wrapped = SuggestionProvider( FollowingStream );
+
+export default connect( ( state ) => {
+	return {
+		sites: getReaderFollowedSites( state ),
+	};
+} )( localize( wrapped ) );

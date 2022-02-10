@@ -29,6 +29,7 @@ import {
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
+import UnseenEmptyContent from './unseen-empty';
 import './style.scss';
 
 const GUESSED_POST_HEIGHT = 600;
@@ -58,6 +59,7 @@ class ReaderStream extends Component {
 		forcePlaceholders: PropTypes.bool,
 		recsStreamKey: PropTypes.string,
 		includeSeenPosts: PropTypes.bool,
+		sites: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -76,6 +78,7 @@ class ReaderStream extends Component {
 		intro: null,
 		forcePlaceholders: false,
 		includeSeenPosts: true,
+		sites: [],
 	};
 
 	listRef = createRef();
@@ -239,10 +242,14 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { forcePlaceholders, lastPage, streamKey } = this.props;
+		const { forcePlaceholders, lastPage, streamKey, sites, includeSeenPosts } = this.props;
 		let { items, isRequesting } = this.props;
 
 		const hasNoPosts = items.length === 0 && ! isRequesting;
+		const hasUnseenPosts = sites.reduce(
+			( acc, { unseen_count } ) => acc + ( unseen_count | 0 ),
+			0
+		);
 		let body;
 		let showingStream;
 
@@ -258,6 +265,10 @@ class ReaderStream extends Component {
 			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
 				body = <EmptyContent />;
 			}
+			showingStream = false;
+		} else if ( ! includeSeenPosts && ! hasUnseenPosts ) {
+			// we're on an "Unread" view but there are no posts to display
+			body = <UnseenEmptyContent />;
 			showingStream = false;
 		} else {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */

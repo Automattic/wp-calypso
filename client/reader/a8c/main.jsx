@@ -1,17 +1,18 @@
 import { Button } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
+import { localize, useTranslate } from 'i18n-calypso';
+import { useDispatch, useSelector, connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import Stream from 'calypso/reader/stream';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import getOrganizationSites from 'calypso/state/reader/follows/selectors/get-reader-follows-organization';
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
 import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 import { SECTION_A8C_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 
-export default function A8CFollowing( props ) {
+function A8CFollowing( props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const teams = useSelector( getReaderTeams );
@@ -37,3 +38,9 @@ export default function A8CFollowing( props ) {
 		</Stream>
 	);
 }
+
+export default connect( ( state ) => {
+	return {
+		sites: getOrganizationSites( state, AUTOMATTIC_ORG_ID ),
+	};
+} )( localize( A8CFollowing ) );
