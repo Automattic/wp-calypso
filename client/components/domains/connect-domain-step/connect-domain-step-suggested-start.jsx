@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
@@ -58,8 +59,13 @@ export default function ConnectDomainStepSuggestedStart( {
 				expanded={ false }
 			>
 				<p>
-					{ __(
-						'If you have any email or services other than web hosting connected to this domain, we recommend you copy over your DNS records before proceeding with this setup to avoid distruptions. You can then start the setup again by going back to Upgrades > Domains.'
+					{ createInterpolateElement(
+						__(
+							'If you have any email or services other than web hosting connected to this domain, we recommend you copy over your DNS records before proceeding with this setup to avoid distruptions. You can then start the setup again by going back to <em>Upgrades > Domains</em>.'
+						),
+						{
+							em: createElement( 'em' ),
+						}
 					) }
 				</p>
 				<Button onClick={ goToDnsRecordsPage }>Go to DNS records</Button>
