@@ -22,13 +22,41 @@ body.connect-domain-setup__body-white {
 		margin-bottom: 16px;
 	}
 
-	&__page-heading .formatted-header__title {
-		@include break-zoomed-in {
-			font-size: $font-title-medium;
+	&__title {
+		display: flex;
+		align-items: center;
+		margin-bottom: 16px;
+
+		.connect-domain-step__page-heading.formatted-header {
+			margin-bottom: 0;
 		}
 
-		@include break-small {
-			font-size: $font-title-large;
+		.connect-domain-step__page-heading .formatted-header__title {
+			margin-bottom: 0;
+
+			@include break-zoomed-in {
+				font-size: $font-title-medium;
+			}
+
+			@include break-small {
+				font-size: $font-title-large;
+			}
+		}
+
+		div.connect-domain-step__badge {
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+			margin: 16px 0 0 8px;
+			border-radius: 4px; /* stylelint-disable-line */
+			font-weight: 500; /* stylelint-disable-line */
+			font-size: $font-body-extra-small;
+			background: rgba( 220, 220, 222, 0.6 );
+			color: var( --studio-gray-80 );
+
+			@include breakpoint-deprecated( '>660px' ) {
+				margin: 0 0 0 16px;
+			}
 		}
 	}
 
@@ -323,7 +351,8 @@ body.connect-domain-setup__body-white {
 			display: flex;
 			align-items: center;
 
-			&-icon.gridicon { /* need .gridicon for increased specificity */
+			&-icon.gridicon {
+				/* need .gridicon for increased specificity */
 				margin-right: 4px;
 				height: 20px;
 				width: 20px;

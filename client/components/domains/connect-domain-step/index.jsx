@@ -6,6 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { connect } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
@@ -144,11 +145,27 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 		}
 	};
 
-	const headerText = sprintf(
-		/* translators: %s: domain name being connected (ex.: example.com) */
-		__( 'Connect %s' ),
-		domain
-	);
+	const renderTitle = () => {
+		const headerText = sprintf(
+			/* translators: %s: domain name being connected (ex.: example.com) */
+			__( 'Connect %s' ),
+			domain
+		);
+
+		return (
+			<div className={ baseClassName + '__title' }>
+				<FormattedHeader
+					brandFont
+					className={ baseClassName + '__page-heading' }
+					headerText={ headerText }
+					align="left"
+				/>
+				{ modeType.ADVANCED === mode && (
+					<Badge className={ baseClassName + '__badge' }>{ __( 'Advanced' ) }</Badge>
+				) }
+			</div>
+		);
+	};
 
 	const renderContent = () => {
 		return (
@@ -187,12 +204,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 		<>
 			<BodySectionCssClass bodyClass={ [ 'connect-domain-setup__body-white' ] } />
 			{ renderBreadcrumbs() }
-			<FormattedHeader
-				brandFont
-				className={ baseClassName + '__page-heading' }
-				headerText={ headerText }
-				align="left"
-			/>
+			{ renderTitle() }
 			<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
 			<ConnectDomainStepSupportInfoLink baseClassName={ baseClassName } mode={ mode } />
 			<ConnectDomainStepSwitchSetupInfoLink
