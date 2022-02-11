@@ -81,7 +81,7 @@ const ThankYouNotice = ( props: ThankYouNoticeProps ) => {
 			{ noticeIcon && (
 				<Gridicon icon={ noticeIcon } className="thank-you__notice-icon" size={ 24 } />
 			) }
-			{ noticeIconCustom && noticeIconCustom }
+			{ noticeIconCustom }
 			{ noticeTitle }
 		</ThankYouNoticeContainer>
 	);

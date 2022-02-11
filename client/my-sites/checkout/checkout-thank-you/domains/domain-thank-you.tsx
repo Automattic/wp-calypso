@@ -56,8 +56,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		return (
 			<div className="checkout-thank-you__domains-header">
 				<WordPressLogo className="checkout-thank-you__domains-header-logo" size={ 24 } />
-				<Button borderless={ true } href={ domainManagementRoot() }>
-					<Gridicon icon={ 'chevron-left' } size={ 18 } />
+				<Button borderless href={ domainManagementRoot() }>
+					<Gridicon icon="chevron-left" size={ 18 } />
 					<span>{ translate( 'All domains' ) }</span>
 				</Button>
 			</div>
