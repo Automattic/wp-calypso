@@ -1,7 +1,8 @@
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import placeholderImage from 'calypso/assets/images/domains/domain.svg';
+import addEmailImage from 'calypso/assets/images/domains/add-email.svg';
+import createSiteImage from 'calypso/assets/images/domains/create-site.svg';
 import DotPager from 'calypso/components/dot-pager';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
@@ -16,8 +17,6 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 	const translate = useTranslate();
 	const { domain, dispatchRecordTracksEvent } = props;
 
-	const illustration = <img src={ placeholderImage } alt="" width={ 140 } />;
-
 	const getActionClickHandler = ( buttonURL: string, sourceCardType: string ) => () => {
 		dispatchRecordTracksEvent( 'calypso_domain_only_upsell_card_click', {
 			button_url: buttonURL,
@@ -30,7 +29,9 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 		return (
 			<Card className="domain-only-upsell-carousel__card" key="domain-only-upsell-site">
 				<div className="domain-only-upsell-carousel__card-wrapper is-compact">
-					<div className="domain-only-upsell-carousel__card-illustration">{ illustration }</div>
+					<div className="domain-only-upsell-carousel__card-illustration">
+						<img src={ createSiteImage } alt="" width={ 170 } />
+					</div>
 					<div className="domain-only-upsell-carousel__card-content">
 						<div className="domain-only-upsell-carousel__card-text">
 							<h2>
@@ -52,7 +53,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 					</div>
 				</div>
 				<TrackComponentView
-					eventName="calypso_domain_only_upsell_carousel_impression"
+					eventName="calypso_domain_only_upsell_carousel_impression_create_site_card"
 					eventProperties={ { content_type: 'create-site' } }
 				/>
 			</Card>
@@ -64,7 +65,9 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 		return (
 			<Card className="domain-only-upsell-carousel__card" key="domain-only-upsell-email">
 				<div className="domain-only-upsell-carousel__card-wrapper is-compact">
-					<div className="domain-only-upsell-carousel__card-illustration">{ illustration }</div>
+					<div className="domain-only-upsell-carousel__card-illustration">
+						<img src={ addEmailImage } alt="" width={ 170 } />
+					</div>
 					<div className="domain-only-upsell-carousel__card-content">
 						<div className="domain-only-upsell-carousel__card-text">
 							<h2>
@@ -90,7 +93,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 					</div>
 				</div>
 				<TrackComponentView
-					eventName="calypso_domain_only_upsell_carousel_impression"
+					eventName="calypso_domain_only_upsell_carousel_impression_add_email_card"
 					eventProperties={ { content_type: 'add-professional-email' } }
 				/>
 			</Card>
