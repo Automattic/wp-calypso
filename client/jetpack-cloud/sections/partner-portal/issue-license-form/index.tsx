@@ -36,7 +36,7 @@ export default function IssueLicenseForm(): ReactElement {
 	const issueLicense = useIssueLicenseMutation( {
 		onSuccess: ( license ) => {
 			page.redirect(
-				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
+				addQueryArgs( { key: license.license_key }, '/partner-portal/assign-license' )
 			);
 		},
 		onError: ( error: Error ) => {
