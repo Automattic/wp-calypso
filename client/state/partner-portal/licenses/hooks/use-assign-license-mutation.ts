@@ -4,7 +4,7 @@ import { APILicense } from 'calypso/state/partner-portal/types';
 
 interface MutationAssignLicenseVariables {
 	licenseKey: string;
-	selectedSite: number;
+	selectedSite: number | boolean;
 }
 
 function mutationAssignLicense( {
