@@ -12,6 +12,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -434,33 +435,46 @@ export class UserStep extends Component {
 		}
 
 		return (
-			<>
-				<SignupForm
-					{ ...omit( this.props, [ 'translate' ] ) }
-					redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
-					disabled={ this.userCreationStarted() }
-					submitting={ this.userCreationStarted() }
-					save={ this.save }
-					submitForm={ this.submitForm }
-					submitButtonText={ this.submitButtonText() }
-					suggestedUsername={ this.props.suggestedUsername }
-					handleSocialResponse={ this.handleSocialResponse }
-					isPasswordless={ isMobile() }
-					isSocialSignupEnabled={ isSocialSignupEnabled }
-					socialService={ socialService }
-					socialServiceResponse={ socialServiceResponse }
-					recaptchaClientId={ this.state.recaptchaClientId }
-					horizontal={ isReskinned }
-					isReskinned={ isReskinned }
-					isSimplerMobileForm={ this.isSimplerMobileForm() }
-				/>
-				<div id="g-recaptcha"></div>
-			</>
-		);
-	}
+			<ProvideExperimentData
+				name="registration_social_login_first_on_mobile_v2"
+				options={ {
+					isEligible: isMobile(),
+				} }
+			>
+				{ ( isLoading, experimentAssignment ) => {
+					if ( isLoading ) {
+						return null;
+					}
 
-	isPasswordlessExperiment() {
-		return this.state.experiment?.variationName === 'treatment';
+					const isTreatment = experimentAssignment?.variationName === 'treatment';
+					return (
+						<>
+							<SignupForm
+								{ ...omit( this.props, [ 'translate' ] ) }
+								redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
+								disabled={ this.userCreationStarted() }
+								submitting={ this.userCreationStarted() }
+								save={ this.save }
+								submitForm={ this.submitForm }
+								submitButtonText={ this.submitButtonText() }
+								suggestedUsername={ this.props.suggestedUsername }
+								handleSocialResponse={ this.handleSocialResponse }
+								isPasswordless={ isMobile() }
+								experimentName={ this.state.experiment }
+								isSocialSignupEnabled={ isSocialSignupEnabled }
+								socialService={ socialService }
+								socialServiceResponse={ socialServiceResponse }
+								recaptchaClientId={ this.state.recaptchaClientId }
+								horizontal={ isReskinned }
+								isReskinned={ isReskinned }
+								isSimplerMobileForm={ isTreatment }
+							/>
+							<div id="g-recaptcha"></div>
+						</>
+					);
+				} }
+			</ProvideExperimentData>
+		);
 	}
 
 	isSimplerMobileForm() {
@@ -485,7 +499,6 @@ export class UserStep extends Component {
 			signupUrl: window.location.pathname + window.location.search,
 		} );
 	}
-
 
 	renderP2SignupStep() {
 		return (
