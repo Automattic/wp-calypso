@@ -212,12 +212,16 @@ export function getiOSDeepLink( currentRoute, currentSection ) {
 
 	return fragment.length > 0 ? `${ baseURI }#${ fragment }` : baseURI;
 }
-
+/**
+ * Returns the universal link that then gets used to send the user to the correct editor.
+ * If the app is installed otherwise they will end up on the new site creaton flow after creating an account.
+ *
+ * @param {string} currentRoute
+ * @returns string
+ */
 function getEditorPath( currentRoute ) {
-	const paths = currentRoute.split( '/' );
-	// if ( paths[ 0 ] && paths[ 1 ] && paths[ 2 ] ) {
-	// 	return '/' + paths[ 0 ] + '/' + paths[ 1 ] + '/' + paths[ 2 ];
-	// }
+	const paths = currentRoute.split( '/' ).filter( ( path ) => path );
+
 	if ( paths[ 0 ] && paths[ 1 ] ) {
 		return '/' + paths[ 0 ] + '/' + paths[ 1 ];
 	}
