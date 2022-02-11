@@ -36,6 +36,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 	const isStepStart = stepType.START === connectADomainStepsDefinition[ pageSlug ].step;
 	const mode = connectADomainStepsDefinition[ pageSlug ].mode;
 	const step = connectADomainStepsDefinition[ pageSlug ].step;
+	const prevPageSlug = connectADomainStepsDefinition[ pageSlug ].prev;
 
 	const statusRef = useRef( {} );
 
@@ -135,8 +136,6 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 	};
 
 	const goBack = () => {
-		const prevPageSlug = connectADomainStepsDefinition[ pageSlug ]?.prev;
-
 		if ( prevPageSlug ) {
 			setPageSlug( prevPageSlug );
 		} else {
@@ -154,10 +153,12 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 		<>
 			<BodySectionCssClass bodyClass={ [ 'connect-domain-setup__body-white' ] } />
 			{ renderBreadcrumbs() }
-			<BackButton className={ baseClassName + '__go-back' } onClick={ goBack }>
-				<Gridicon icon="arrow-left" size={ 18 } />
-				{ __( 'Back' ) }
-			</BackButton>
+			{ prevPageSlug && (
+				<BackButton className={ baseClassName + '__go-back' } onClick={ goBack }>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ __( 'Back' ) }
+				</BackButton>
+			) }
 			<FormattedHeader
 				brandFont
 				className={ baseClassName + '__page-heading' }
