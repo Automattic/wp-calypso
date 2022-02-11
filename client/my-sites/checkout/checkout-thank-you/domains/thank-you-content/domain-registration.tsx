@@ -28,6 +28,40 @@ const DomainRegistrationThankYouProps = ( {
 		true
 	);
 
+	const createSiteStep = {
+		stepKey: 'domain_registration_whats_next_create-site',
+		stepTitle: translate( 'Add a site' ),
+		stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
+		stepCta: (
+			<FullWidthButton
+				href={ createSiteFromDomainOnly( domain, null ) }
+				busy={ false }
+				disabled={ false }
+			>
+				{ translate( 'Create a site' ) }
+			</FullWidthButton>
+		),
+	};
+
+	const viewDomainsStep = {
+		stepKey: 'domain_registration_whats_next_view_domains',
+		stepTitle: selectedSiteSlug
+			? translate( 'Organize your domains' )
+			: translate( 'Manage your domains' ),
+		stepDescription: selectedSiteSlug
+			? translate(
+					'Set up a primary domain, connect other domains and make sure people can find your site.'
+			  )
+			: translate(
+					'View domain settings, manage every aspect of your domain and add additional domains.'
+			  ),
+		stepCta: (
+			<FullWidthButton href={ domainManagementList( '' ) } busy={ false } disabled={ false }>
+				{ selectedSiteSlug ? translate( 'Manage domains' ) : translate( 'View your domains' ) }
+			</FullWidthButton>
+		),
+	};
+
 	const returnProps: DomainThankYouProps = {
 		thankYouNotice: {
 			noticeTitle: translate(
@@ -41,48 +75,8 @@ const DomainRegistrationThankYouProps = ( {
 				sectionTitle: translate( 'What’s next?' ),
 				nextSteps: [
 					...( professionalEmail ? [ professionalEmail ] : [] ),
-					...( ! selectedSiteSlug
-						? [
-								{
-									stepKey: 'domain_registration_whats_next_create-site',
-									stepTitle: translate( 'Add a site' ),
-									stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
-									stepCta: (
-										<FullWidthButton
-											href={ createSiteFromDomainOnly( domain, null ) }
-											busy={ false }
-											disabled={ false }
-										>
-											{ translate( 'Create a site' ) }
-										</FullWidthButton>
-									),
-								},
-						  ]
-						: [] ),
-					{
-						stepKey: 'domain_registration_whats_next_view_domains',
-						stepTitle: selectedSiteSlug
-							? translate( 'Organize your domains' )
-							: translate( 'Manage your domains' ),
-						stepDescription: selectedSiteSlug
-							? translate(
-									'Set up a primary domain, connect other domains and make sure people can find your site.'
-							  )
-							: translate(
-									'View domain settings, manage every aspect of your domain and add additional domains.'
-							  ),
-						stepCta: (
-							<FullWidthButton
-								href={ domainManagementList( '' ) }
-								busy={ false }
-								disabled={ false }
-							>
-								{ selectedSiteSlug
-									? translate( 'Manage domains' )
-									: translate( 'View your domains' ) }
-							</FullWidthButton>
-						),
-					},
+					...( ! selectedSiteSlug ? [ createSiteStep ] : [] ),
+					viewDomainsStep,
 				],
 			},
 		],
