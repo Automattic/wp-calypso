@@ -296,7 +296,7 @@
 		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.2.1-beta-1",
 		"@types/react": "^17.0.38",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
-		"lzma-native": "^8.0.5"
+		"lzma-native": "^8.0.6"
 	},
 	"packageManager": "yarn@3.1.1",
 	"dependenciesMeta": {

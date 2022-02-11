@@ -24738,7 +24738,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"lzma-native@npm:^8.0.5":
+"lzma-native@npm:^8.0.6":
   version: 8.0.6
   resolution: "lzma-native@npm:8.0.6"
   dependencies:
