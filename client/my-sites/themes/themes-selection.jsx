@@ -21,8 +21,6 @@ import {
 	isThemeActive,
 	isInstallingTheme,
 	prependThemeFilterKeys,
-	getActiveTheme,
-	getCanonicalTheme,
 } from 'calypso/state/themes/selectors';
 import { trackClick } from './helpers';
 import './themes-selection.scss';
@@ -194,13 +192,9 @@ function bindGetPremiumThemePrice( state, siteId ) {
 	return ( themeId ) => getPremiumThemePrice( state, themeId, siteId );
 }
 
-function isThemeUniversal( theme ) {
-	return theme?.template !== 'blockbase' && theme?.id !== 'blockbase';
-}
-
 function filterOutUniversalThemes( themes = [] ) {
 	return themes.filter( ( theme ) => {
-		return isThemeUniversal( theme );
+		return theme?.template !== 'blockbase' && theme?.id !== 'blockbase';
 	} );
 }
 
@@ -249,15 +243,11 @@ export const ConnectedThemesSelection = withBlockEditorSettings(
 			let themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
 
 			// The block templates filter is used to search for full site editing (FSE) themes, which includes both
-			// universal and block themes. If, however, a user is already on a universal theme without FSE enabled
-			// (universal classic), selecting another universal theme will not enable the full site editor. Because
-			// of this, we filter out universal themes from the block-templates filter search results for universal
-			// classic sites. This logic will be removed when FSE is enabled for all sites with universal themes.
-			const currentTheme = getCanonicalTheme( state, siteId, getActiveTheme( state, siteId ) );
-			const isUniversalClassicSite =
-				! blockEditorSettings?.is_fse_active && isThemeUniversal( currentTheme );
-
-			if ( filter === 'block-templates' && isUniversalClassicSite ) {
+			// universal and block themes. If, however, a user is in the classic experience without FSE enabled,
+			// selecting another universal theme will not enable the full site editor. Because of this, we filter out
+			// universal themes from the block-templates filter search results for classic sites. This logic will be
+			// removed when FSE is enabled for all sites with universal themes.
+			if ( filter === 'block-templates' && ! blockEditorSettings?.is_fse_eligible ) {
 				themes = filterOutUniversalThemes( themes );
 			}
 
