@@ -15,6 +15,16 @@ body.connect-domain-setup__body-white {
 		margin-bottom: 16px;
 	}
 
+	&__page-heading .formatted-header__title {
+		@include break-zoomed-in {
+			font-size: $font-title-medium;
+		}
+
+		@include break-small {
+			font-size: $font-title-large;
+		}
+	}
+
 	& &__heading {
 		font-size: $font-title-medium;
 		font-weight: 500; /* stylelint-disable-line */
