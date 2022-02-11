@@ -194,9 +194,13 @@ function bindGetPremiumThemePrice( state, siteId ) {
 	return ( themeId ) => getPremiumThemePrice( state, themeId, siteId );
 }
 
+function isThemeUniversal( theme ) {
+	return theme?.template !== 'blockbase' && theme?.id !== 'blockbase';
+}
+
 function filterOutUniversalThemes( themes = [] ) {
 	return themes.filter( ( theme ) => {
-		return theme?.template !== 'blockbase';
+		return isThemeUniversal( theme );
 	} );
 }
 
@@ -249,10 +253,9 @@ export const ConnectedThemesSelection = withBlockEditorSettings(
 			// (universal classic), selecting another universal theme will not enable the full site editor. Because
 			// of this, we filter out universal themes from the block-templates filter search results for universal
 			// classic sites. This logic will be removed when FSE is enabled for all sites with universal themes.
-			const currentThemeId = getActiveTheme( state, siteId );
-			const currentTheme = getCanonicalTheme( state, siteId, currentThemeId );
+			const currentTheme = getCanonicalTheme( state, siteId, getActiveTheme( state, siteId ) );
 			const isUniversalClassicSite =
-				! blockEditorSettings?.is_fse_active && currentTheme?.template === 'blockbase';
+				! blockEditorSettings?.is_fse_active && isThemeUniversal( currentTheme );
 
 			if ( filter === 'block-templates' && isUniversalClassicSite ) {
 				themes = filterOutUniversalThemes( themes );
