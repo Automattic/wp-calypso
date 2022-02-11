@@ -192,15 +192,17 @@ function DnsMenuOptionsButton( {
 	);
 
 	const emailRestoreItems = emailProviderKeys.map(
-		( emailProviderKey: EmailProviderKey ): JSX.Element => {
-			const isEmailMenuItemDisabled =
+		( emailProviderKey: EmailProviderKey ): JSX.Element | null => {
+			if (
 				domain === undefined ||
-				! emailProviderConfig[ emailProviderKey ].shouldRestoreOptionBeEnabled( domain );
+				! emailProviderConfig[ emailProviderKey ].shouldRestoreOptionBeEnabled( domain )
+			) {
+				return null;
+			}
 
 			return (
 				<PopoverMenuItem
 					key={ 'email-dns-restore-menu-item-' + emailProviderKey }
-					disabled={ isEmailMenuItemDisabled }
 					onClick={ () => showEmailRestoreDialog( emailProviderKey ) }
 				>
 					<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
