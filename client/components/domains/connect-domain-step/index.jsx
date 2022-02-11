@@ -39,6 +39,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 	const mode = connectADomainStepsDefinition[ pageSlug ].mode;
 	const step = connectADomainStepsDefinition[ pageSlug ].step;
 	const prevPageSlug = connectADomainStepsDefinition[ pageSlug ].prev;
+	const isTwoColumnLayout = connectADomainStepsDefinition[ pageSlug ].twoColumnsLayout;
 
 	const statusRef = useRef( {} );
 
@@ -205,7 +206,11 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 			<BodySectionCssClass bodyClass={ [ 'connect-domain-setup__body-white' ] } />
 			{ renderBreadcrumbs() }
 			{ renderTitle() }
-			<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
+			{ isTwoColumnLayout ? (
+				<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
+			) : (
+				renderContent()
+			) }
 			<ConnectDomainStepSupportInfoLink baseClassName={ baseClassName } mode={ mode } />
 			<ConnectDomainStepSwitchSetupInfoLink
 				baseClassName={ baseClassName }
