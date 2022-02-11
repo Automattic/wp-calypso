@@ -7,7 +7,6 @@ import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import versionCompare from 'calypso/lib/version-compare';
 import {
 	bumpStat,
@@ -71,15 +70,6 @@ export class AppBanner extends Component {
 		} else {
 			this.state = { isDraftPostModalShown: false };
 		}
-	}
-
-	loadDismissTimesExperiment() {
-		// Set a default value just in case the assignment hasn't loaded yet
-		this.experimentIsControl = true;
-
-		loadExperimentAssignment( APP_BANNER_EXPERIMENT_NAME ).then( ( experimentObject ) => {
-			this.experimentIsControl = ! experimentObject?.variationName;
-		} );
 	}
 
 	stopBubblingEvents = ( event ) => {
@@ -157,8 +147,6 @@ export class AppBanner extends Component {
 		if ( ! this.props.shouldDisplayAppBanner || this.state.isDraftPostModalShown ) {
 			return null;
 		}
-
-		this.loadDismissTimesExperiment();
 
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
