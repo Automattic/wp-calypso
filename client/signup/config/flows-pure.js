@@ -121,13 +121,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'developer',
-			steps: [ 'site', 'user' ],
-			destination: '/devdocs/welcome',
-			description: 'Signup flow for developers in developer environment',
-			lastModified: '2015-11-23',
-		},
-		{
 			name: 'pressable-nux',
 			steps: [ 'creds-permission', 'creds-confirm', 'creds-complete' ],
 			destination: '/stats',
