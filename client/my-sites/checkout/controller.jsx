@@ -299,7 +299,7 @@ export function upsellRedirect( context, next ) {
 	let upsellUrl;
 
 	if ( PROFESSIONAL_EMAIL_OFFER === upsellType ) {
-		upsellExperimentName = 'promote_professional_email_post_checkout_2022_02';
+		upsellExperimentName = 'calypso_promote_professional_email_post_checkout_2022_02';
 		upsellExperimentAssignmentName = 'treatment';
 		upsellUrl = `/checkout/offer-professional-email/${ upsellMeta }/${ receiptId }/${ site }`;
 	}
