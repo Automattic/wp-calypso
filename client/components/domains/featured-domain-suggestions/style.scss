@@ -235,7 +235,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 		padding-right: 0;
 		margin-bottom: 0;
 		flex: 0 1 auto;
-    align-self: baseline;
+		align-self: baseline;
 	}
 
 	&.domain-suggestion.is-clickable:hover {
@@ -261,7 +261,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	margin: 0;
 	border-top: 1px solid rgba( 220, 220, 222, 0.64 );
-	
+
 	@include break-mobile {
 		margin: 0 20px;
 		border-top: none;
