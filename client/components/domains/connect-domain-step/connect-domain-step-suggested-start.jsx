@@ -53,7 +53,7 @@ export default function ConnectDomainStepSuggestedStart( {
 				header={
 					<div>
 						<Icon icon={ info } size={ 24 } />
-						Any services connected to this domain?
+						{ __( 'Any services connected to this domain?' ) }
 					</div>
 				}
 				expanded={ false }
@@ -68,13 +68,13 @@ export default function ConnectDomainStepSuggestedStart( {
 						}
 					) }
 				</p>
-				<Button onClick={ goToDnsRecordsPage }>Go to DNS records</Button>
+				<Button onClick={ goToDnsRecordsPage }>{ __( 'Go to DNS records' ) }</Button>
 				<p>
 					{ __(
 						'Alternatively, you can continue to use your current DNS provider by adding the correct A records and CNAME records using our advanced setup.'
 					) }
 				</p>
-				<Button onClick={ switchToAdvancedSetup }>Switch to advanced setup</Button>
+				<Button onClick={ switchToAdvancedSetup }>{ __( 'Switch to advanced setup' ) }</Button>
 			</FoldableCard>
 			<Button primary onClick={ onNextStep }>
 				{ __( 'Start setup' ) }
