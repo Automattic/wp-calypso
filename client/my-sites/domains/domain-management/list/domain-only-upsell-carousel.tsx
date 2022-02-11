@@ -18,13 +18,8 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 
 	const illustration = <img src={ placeholderImage } alt="" width={ 140 } />;
 
-	const getActionClickHandler = (
-		type: string,
-		buttonURL: string,
-		sourceCardType: string
-	) => () => {
-		dispatchRecordTracksEvent( 'calypso_empty_domain_list_card_action', {
-			button_type: type,
+	const getActionClickHandler = ( buttonURL: string, sourceCardType: string ) => () => {
+		dispatchRecordTracksEvent( 'calypso_domain_only_upsell_card_click', {
 			button_url: buttonURL,
 			source_card_type: sourceCardType,
 		} );
@@ -49,7 +44,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 							<Button
 								primary
 								href={ actionUrl }
-								onClick={ getActionClickHandler( 'primary', actionUrl, 'create-site' ) }
+								onClick={ getActionClickHandler( actionUrl, 'create-site' ) }
 							>
 								{ translate( 'Create site' ) }
 							</Button>
@@ -87,7 +82,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 							<Button
 								primary
 								href={ actionUrl }
-								onClick={ getActionClickHandler( 'primary', actionUrl, 'add-professional-email' ) }
+								onClick={ getActionClickHandler( actionUrl, 'add-professional-email' ) }
 							>
 								{ translate( 'Add professional email' ) }
 							</Button>
@@ -108,16 +103,9 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 	}
 
 	return (
-		<>
-			<DotPager
-				className="domain-only-upsell-carousel"
-				hasDynamicHeight
-				showControlLabels={ false }
-				onPageSelected={ () => null }
-			>
-				{ cards }
-			</DotPager>
-		</>
+		<DotPager className="domain-only-upsell-carousel" hasDynamicHeight showControlLabels={ false }>
+			{ cards }
+		</DotPager>
 	);
 };
 

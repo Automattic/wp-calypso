@@ -80,7 +80,7 @@ export const DotPager = ( {
 	hasDynamicHeight = false,
 	children,
 	className,
-	onPageSelected,
+	onPageSelected = null,
 	...props
 } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
