@@ -1,11 +1,12 @@
 export default function PaymentMethodImage() {
 	return (
 		<svg
-			width="432"
-			height="296"
+			// width="432"
+			// height="296"
 			viewBox="0 0 432 296"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
+			preserveAspectRatio="xMidYMid meet"
 		>
 			<rect x="96" y="96" width="336" height="200" rx="8" fill="#E9EFF5" />
 			<rect x="352" y="232" width="56" height="32" rx="8" fill="white" />

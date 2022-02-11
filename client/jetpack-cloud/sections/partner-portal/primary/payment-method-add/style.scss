@@ -25,7 +25,6 @@
 
     &__image {
         display: none;
-		align-self: center;
 
         @include break-large {
             display: flex;

@@ -5,7 +5,7 @@ import { saveCreditCard } from 'calypso/jetpack-cloud/sections/partner-portal/pa
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { Stripe, StripeCardElement, StripeCardNumberElement } from '@stripe/stripe-js';
+import type { Stripe, StripeCardElement } from '@stripe/stripe-js';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 interface Props {

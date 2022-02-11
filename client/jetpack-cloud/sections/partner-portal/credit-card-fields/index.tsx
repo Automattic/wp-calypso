@@ -1,6 +1,6 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { Field } from '@automattic/wpcom-checkout';
-import { StripeElementChangeEvent } from '@stripe/stripe-js';
+import { StripeElementChangeEvent, StripeElementStyle } from '@stripe/stripe-js';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -57,6 +57,15 @@ export default function CreditCardFields() {
 		setCardDataError( input.elementType, null );
 	};
 
+	const stripeElementStyle: StripeElementStyle = {
+		base: {
+			color: '#2c3338',
+		},
+		invalid: {
+			color: '#D63638',
+		},
+	};
+
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
@@ -86,6 +95,7 @@ export default function CreditCardFields() {
 				<CreditCardElementField
 					setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
 					handleStripeFieldChange={ handleStripeFieldChange }
+					stripeElementStyle={ stripeElementStyle }
 				/>
 
 				<SetAsPrimaryPaymentMethod
