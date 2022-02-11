@@ -6,6 +6,7 @@ import {
 	PrivacyOptions,
 	PublishedPostPage,
 	EditorSettingsSidebarComponent,
+	PageTemplateModalComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -44,7 +45,9 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			it( 'Start new page', async function () {
 				gutenbergEditorPage = new GutenbergEditorPage( page );
 				await gutenbergEditorPage.visit( 'page' );
-				await gutenbergEditorPage.selectPageDesign( 'blank' );
+				const editorIframe = await gutenbergEditorPage.waitUntilLoaded();
+				const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
+				await pageTemplateModalComponent.selectBlankPage();
 			} );
 
 			it( 'Enter page title', async function () {

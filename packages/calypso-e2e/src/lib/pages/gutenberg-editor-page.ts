@@ -13,10 +13,6 @@ const selectors = {
 	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
 	editorTitle: '.editor-post-title__input',
 
-	// Editor: Page
-	blankPageButton: '.page-pattern-modal__blank-button',
-	pageDesign: ( name: string ) => `li:text(${ name })`,
-
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
 	blockInserterPanel: '.block-editor-inserter__content',
@@ -49,7 +45,7 @@ const selectors = {
 	// corner. This addresses the bug where the post-publish panel is immediately
 	// closed when publishing with certain blocks on the editor canvas.
 	// See https://github.com/Automattic/wp-calypso/issues/54421.
-	viewButton: 'text=/View (Post|Page)/',
+	viewButton: 'a:text-matches("View (Post|Page)", "i")',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
 
@@ -135,27 +131,6 @@ export class GutenbergEditorPage {
 
 			return actionPayload.show === false;
 		} );
-	}
-
-	/**
-	 * Choose a page design.
-	 *
-	 * If a non-default value is provided, this method will select from
-	 * a matching design from the list.
-	 *
-	 * If the value provided is `blank`, the button on the modal labeled
-	 * "Blank Page" will be selected instead.
-	 *
-	 * @param {string} name Name of the design.
-	 */
-	async selectPageDesign( name: string ): Promise< void > {
-		const frame = await this.getEditorFrame();
-
-		if ( name.toLowerCase() === 'blank' ) {
-			await frame.click( selectors.blankPageButton );
-		} else {
-			await frame.click( selectors.pageDesign( name ) );
-		}
 	}
 
 	/**
@@ -410,7 +385,7 @@ export class GutenbergEditorPage {
 	 * Publishes the post or page.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
-	 * @returns {Promise<string>} URL of the published post or page.
+	 * @returns {Promise<string>} The published URL.
 	 */
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
@@ -533,6 +508,7 @@ export class GutenbergEditorPage {
 
 		const frame = await this.getEditorFrame();
 
+		console.log( url );
 		await Promise.all( [
 			this.page.waitForNavigation( { url: url, waitUntil: 'domcontentloaded' } ),
 			frame.click( selectors.viewButton ),
