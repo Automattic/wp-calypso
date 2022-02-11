@@ -9,7 +9,7 @@ import {
 } from './types';
 
 interface AccordionFormProps< T > {
-	generatedSections?: any[];
+	generatedSections?: AccordionSectionProps< T >[];
 	sectionGenerator?: () => (
 		props: SectionGeneratorReturnType< T >
 	) => AccordionSectionProps< T >[];
@@ -18,7 +18,7 @@ interface AccordionFormProps< T > {
 	onSubmit: ( formValues: T ) => void;
 	formValuesInitialState: T;
 	updateFormValues?: ( formValues: T ) => void;
-	onErrorUpdates?: ( errors: any ) => void;
+	onErrorUpdates?: ( errors: ValidationErrors ) => void;
 }
 
 export default function AccordionForm< T >( {

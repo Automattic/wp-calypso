@@ -41,6 +41,7 @@ export function generateSteps( {
 	isNewOrExistingSiteFulfilled = noop,
 	setDIFMLiteDesign = noop,
 	excludeStepIfEmailVerified = noop,
+	submitWebsiteContent = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -732,6 +733,8 @@ export function generateSteps( {
 		},
 		'website-content': {
 			stepName: 'website-content',
+			dependencies: [ 'siteSlug' ],
+			apiRequestFunction: submitWebsiteContent,
 		},
 		courses: {
 			stepName: 'courses',

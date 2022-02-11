@@ -41,6 +41,6 @@ export interface SiteDataOptions {
 	is_wpforteams_site: boolean;
 	is_difm_lite_in_progress: boolean;
 	is_domain_only: boolean;
-	difm_lite_site_options: DIFMLiteSiteOptions;
+	difm_lite_site_options?: DIFMLiteSiteOptions;
 	// TODO: fill out the rest of this
 }

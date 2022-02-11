@@ -442,6 +442,26 @@ export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
 	}
 }
 
+export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore ) {
+	const state = reduxStore.getState();
+	const websiteContent = getWebsiteContent( state );
+	if ( ! websiteContent ) {
+		defer( callback );
+		return;
+	}
+
+	wpcom.req
+		.post( {
+			path: `/sites/${ siteSlug }/do-it-for-me/website-content`,
+			apiNamespace: 'wpcom/v2',
+			body: { pages: websiteContent },
+		} )
+		.then( () => callback() )
+		.catch( ( errors ) => {
+			callback( [ errors ] );
+		} );
+}
+
 export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 	if ( ! selectedDesign ) {
 		defer( callback );
