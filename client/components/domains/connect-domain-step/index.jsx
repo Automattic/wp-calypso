@@ -8,6 +8,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { connect } from 'react-redux';
 import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
+import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import FormattedHeader from 'calypso/components/formatted-header';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import wpcom from 'calypso/lib/wp';
@@ -149,36 +150,50 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 		domain
 	);
 
+	const renderContent = () => {
+		return (
+			<>
+				{ prevPageSlug && (
+					<BackButton className={ baseClassName + '__go-back' } onClick={ goBack }>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ __( 'Back' ) }
+					</BackButton>
+				) }
+				<ConnectDomainSteps
+					baseClassName={ baseClassName }
+					domain={ domain }
+					initialPageSlug={ pageSlug }
+					stepsDefinition={ connectADomainStepsDefinition }
+					onSetPage={ setPageSlug }
+					onVerifyConnection={ verifyConnection }
+					verificationInProgress={ verificationInProgress }
+					verificationStatus={ verificationStatus || {} }
+					domainSetupInfo={ domainSetupInfo }
+					domainSetupInfoError={ domainSetupInfoError }
+					showErrors={ showErrors }
+				/>
+			</>
+		);
+	};
+
+	const renderSidebar = () => {
+		if ( ! isStepStart ) {
+			return null;
+		}
+		return <DomainTransferRecommendation />;
+	};
+
 	return (
 		<>
 			<BodySectionCssClass bodyClass={ [ 'connect-domain-setup__body-white' ] } />
 			{ renderBreadcrumbs() }
-			{ prevPageSlug && (
-				<BackButton className={ baseClassName + '__go-back' } onClick={ goBack }>
-					<Gridicon icon="arrow-left" size={ 18 } />
-					{ __( 'Back' ) }
-				</BackButton>
-			) }
 			<FormattedHeader
 				brandFont
 				className={ baseClassName + '__page-heading' }
 				headerText={ headerText }
 				align="left"
 			/>
-			<ConnectDomainSteps
-				baseClassName={ baseClassName }
-				domain={ domain }
-				initialPageSlug={ pageSlug }
-				stepsDefinition={ connectADomainStepsDefinition }
-				onSetPage={ setPageSlug }
-				onVerifyConnection={ verifyConnection }
-				verificationInProgress={ verificationInProgress }
-				verificationStatus={ verificationStatus || {} }
-				domainSetupInfo={ domainSetupInfo }
-				domainSetupInfoError={ domainSetupInfoError }
-				showErrors={ showErrors }
-			/>
-			{ isStepStart && <DomainTransferRecommendation /> }
+			<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
 			<ConnectDomainStepSupportInfoLink baseClassName={ baseClassName } mode={ mode } />
 			<ConnectDomainStepSwitchSetupInfoLink
 				baseClassName={ baseClassName }
