@@ -11,7 +11,12 @@ body.connect-domain-setup__body-white {
 }
 
 .connect-domain-step {
+	padding: 0 16px;
 	margin-bottom: 32px;
+
+	@include break-small {
+		padding: 0;
+	}
 
 	&.card {
 		margin-bottom: 16px;
