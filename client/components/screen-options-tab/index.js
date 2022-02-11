@@ -2,6 +2,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import versionCompare from 'calypso/lib/version-compare';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -17,7 +18,7 @@ const isBoolean = ( val ) => 'boolean' === typeof val;
 const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	const ref = useRef( null );
 	const [ isOpen, setIsOpen ] = useState( false );
-	const { __ } = useI18n();
+	const { _x } = useI18n();
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId );
@@ -32,6 +33,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 		( bool ) => {
 			if ( isBoolean( bool ) ) {
 				setIsOpen( bool );
+				bumpStat( 'view-switcher', 'open' );
 			} else {
 				setIsOpen( ! isOpen );
 			}
@@ -86,6 +88,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	}
 
 	const onSwitchView = ( view ) => {
+		bumpStat( 'view-switcher-preference', view );
 		if ( view === DEFAULT_VIEW ) {
 			setIsOpen( false );
 		}
@@ -94,7 +97,9 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	return (
 		<div className="screen-options-tab" ref={ ref } data-testid="screen-options-tab">
 			<button className="screen-options-tab__button" onClick={ handleToggle }>
-				<span className="screen-options-tab__label">{ __( 'Screen Options' ) }</span>
+				<span className="screen-options-tab__label">
+					{ _x( 'View', 'View options to switch between' ) }
+				</span>
 				<span
 					className={ classNames( 'screen-options-tab__icon', {
 						'screen-options-tab__icon--open': isOpen,
