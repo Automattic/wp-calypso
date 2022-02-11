@@ -14,7 +14,7 @@ body.connect-domain-setup__body-white {
 	padding: 0 16px;
 	margin-bottom: 32px;
 
-	@include break-small {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 0;
 	}
 
@@ -441,10 +441,10 @@ body.connect-domain-setup__body-white {
 }
 
 button.action_buttons__button.action-buttons__back.connect-domain-step__go-back {
-	@include break-mobile {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 0 0 18px;
 	}
 
-	margin: 16px 0 0 16px;
+	margin: 16px 0 16px 16px;
 	text-decoration: none;
 }
