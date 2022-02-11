@@ -157,11 +157,14 @@ const PluginsBrowser = ( {
 	}, [ isJetpack, selectedSite, hasJetpack ] );
 
 	useEffect( () => {
-		const items = [ { label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }` } ];
+		const items = [
+			{ label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }`, id: 'plugins' },
+		];
 		if ( search ) {
 			items.push( {
 				label: translate( 'Search Results' ),
 				href: `/plugins/${ siteSlug || '' }?s=${ search }`,
+				id: 'plugins-search',
 			} );
 		}
 

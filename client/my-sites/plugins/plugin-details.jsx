@@ -203,6 +203,7 @@ function PluginDetails( props ) {
 				appendBreadcrumb( {
 					label: translate( 'Plugins' ),
 					href: `/plugins/${ selectedSite?.slug || '' }`,
+					id: 'plugins',
 				} )
 			);
 		}
@@ -212,6 +213,7 @@ function PluginDetails( props ) {
 				appendBreadcrumb( {
 					label: fullPlugin.name,
 					href: `/plugins/${ fullPlugin.slug }/${ selectedSite?.slug || '' }`,
+					id: `plugin-${ fullPlugin.slug }`,
 				} )
 			);
 		}
