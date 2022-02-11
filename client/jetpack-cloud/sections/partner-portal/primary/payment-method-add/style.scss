@@ -2,18 +2,18 @@
 @import '@wordpress/base-styles/_mixins.scss';
 
 .payment-method-add {
-    &__wrapper  .card-heading {
+	&__wrapper .card-heading {
 		display: inline-block;
 		margin-top: 1rem;
-		margin-bottom: 1rem;
+		margin-bottom: 2rem;
 		color: var( --studio-gray-100 );
-	} 
+	}
 
-    &__content {
-        @include break-large {
-            display: flex;
-        }
-    }
+	&__content {
+		@include break-large {
+			display: flex;
+		}
+	}
 
 	&__form,
 	&__image {
@@ -23,43 +23,54 @@
 		flex: 1;
 	}
 
-    &__image {
-        display: none;
+	&__image {
+		display: none;
 
-        @include break-large {
-            display: flex;
-        }
+		@include break-large {
+			display: flex;
+			align-items: center;
+		}
+
+		svg {
+			max-width: 80%;
+		}
 	}
 
-    &__navigation-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        flex-direction: column-reverse;
+	&__navigation-buttons {
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: column-reverse;
 
-        @include break-large {
-            flex-direction: row;
-        }
+		@include break-large {
+			flex-direction: row;
+		}
 	}
 
 	&__back-button {
-        width: 100%;
+		width: 100%;
 		font-size: 1rem;
-        margin-top: 1rem;
+		margin-top: 1rem;
 
-        @include break-large {
-            width: auto;
-            margin-right: 1rem;
-        }
+		@include break-large {
+			width: auto;
+			margin-right: 1rem;
+		}
 	}
 
 	&__submit-button {
-        width: 100%;
+		width: 100%;
 		font-size: 1rem;
-        margin-top: 1rem;
+		margin-top: 1rem;
 
-        @include break-large {
-            width: auto;
-            display: inline;
-        }
+		@include break-large {
+			width: auto;
+			display: inline;
+		}
+
+		button {
+			&.checkout-button {
+				border-radius: var( --jetpack-corners-soft );
+			}
+		}
 	}
 }

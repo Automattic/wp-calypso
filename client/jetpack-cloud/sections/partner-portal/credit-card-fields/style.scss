@@ -1,9 +1,8 @@
 .credit-card-fields {
 	display: none;
-	margin-top: 0.7rem;
-	margin-bottom: 0.7rem;
 
-	&--is-loaded, &--placeholder {
+	&--is-loaded,
+	&--placeholder {
 		display: block;
 	}
 
@@ -19,6 +18,19 @@
 			line-height: 0.7;
 			font-size: $font-body-small;
 			color: var( --studio-gray-80 );
+		}
+	}
+
+	&__set-as-primary-field {
+		.components-checkbox-control__input {
+			&:checked {
+				background: var( --color-accent );
+				border-color: var( --color-accent );
+			}
+		}
+
+		.components-checkbox-control__label {
+			font-weight: 500;
 		}
 	}
 
@@ -81,6 +93,10 @@
 		width: 100%;
 		height: 40px;
 		@include placeholder( --color-neutral-10 );
+
+		&:first-child {
+			margin-top: 2rem;
+		}
 
 		&::before {
 			content: '';

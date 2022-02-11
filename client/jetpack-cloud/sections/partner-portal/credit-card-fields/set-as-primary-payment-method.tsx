@@ -33,6 +33,7 @@ export default function SetAsPrimaryPaymentMethod( {
 	return (
 		<CheckboxWrapper>
 			<CheckboxControl
+				className="credit-card-fields__set-as-primary-field"
 				disabled={ isDisabled }
 				checked={ isChecked }
 				onChange={ handleChangeEvent }

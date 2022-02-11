@@ -1,8 +1,6 @@
 export default function PaymentMethodImage() {
 	return (
 		<svg
-			// width="432"
-			// height="296"
 			viewBox="0 0 432 296"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
