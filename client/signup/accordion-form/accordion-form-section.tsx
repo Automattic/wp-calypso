@@ -44,7 +44,7 @@ const SectionContent = styled.div`
 `;
 
 const ButtonsContainer = styled.div`
-	margin-top: 16px;
+	margin-top: 4px;
 	align-items: center;
 	display: flex;
 	gap: 24px;

@@ -23,12 +23,6 @@ export const SubLabel = styled( Label )`
 	margin-bottom: 16px;
 `;
 
-const Fieldset = styled( FormFieldset )`
-	.form-label {
-		margin-bottom: ${ ( props ) => ( props.sublabel ? '10px' : '24px' ) };
-	}
-`;
-
 const TextInput = styled( FormTextInput )`
 	input&.form-text-input {
 		border-radius: 4px;
@@ -101,12 +95,12 @@ interface TextInputFieldProps {
 
 export function TextInputField( props: TextInputFieldProps ) {
 	return (
-		<Fieldset sublabel={ props.sublabel }>
+		<FormFieldset sublabel={ props.sublabel }>
 			<Label htmlFor={ props.name }>{ props.label }</Label>
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextInput { ...props } isError={ !! props.error } />
 			{ props.error && <FormInputValidation isError text={ props.error } /> }
-		</Fieldset>
+		</FormFieldset>
 	);
 }
 
@@ -116,7 +110,7 @@ interface TextAreaFieldProps extends TextInputFieldProps {
 
 export function TextAreaField( props: TextAreaFieldProps ) {
 	return (
-		<Fieldset sublabel={ props.sublabel }>
+		<FormFieldset sublabel={ props.sublabel }>
 			<Label htmlFor={ props.name }>{ props.label }</Label>
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
@@ -128,7 +122,7 @@ export function TextAreaField( props: TextAreaFieldProps ) {
 				spellCheck="false"
 			/>
 			{ props.error && <FormInputValidation isError text={ props.error } /> }
-		</Fieldset>
+		</FormFieldset>
 	);
 }
 
@@ -252,7 +246,7 @@ export const HorizontalGrid = styled.div`
 	display: flex;
 	gap: 20px;
 	justify-content: space-between;
-	margin-bottom: 8px;
+	margin-bottom: 20px;
 	flex-wrap: wrap;
 	@media ( min-width: 1100px ) {
 		flex-wrap: nowrap;
