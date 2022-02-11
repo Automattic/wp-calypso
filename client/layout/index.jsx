@@ -345,7 +345,9 @@ export default withCurrentRoute(
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
 		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
-		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
+		const noMasterbarForSection = [ 'signup', 'jetpack-connect', 'gutenberg-editor' ].includes(
+			sectionName
+		);
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
 			noMasterbarForSection ||
