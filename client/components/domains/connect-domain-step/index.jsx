@@ -14,7 +14,11 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import { domainManagementList, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementList,
+	domainUseMyDomain,
+} from 'calypso/my-sites/domains/paths';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-setup-info-link';
@@ -25,7 +29,14 @@ import { connectADomainStepsDefinition } from './page-definitions.js';
 
 import './style.scss';
 
-function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialStep, showErrors } ) {
+function ConnectDomainStep( {
+	domain,
+	selectedSite,
+	initialSetupInfo,
+	initialStep,
+	showErrors,
+	isFirstVisit,
+} ) {
 	const { __ } = useI18n();
 	const [ pageSlug, setPageSlug ] = useState( stepSlug.SUGGESTED_START );
 	const [ verificationStatus, setVerificationStatus ] = useState( {} );
@@ -113,7 +124,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 	}, [ showErrors, verifyConnection ] );
 
 	const renderBreadcrumbs = () => {
-		const items = [
+		let items = [
 			{
 				label: __( 'Domains' ),
 				href: domainManagementList( selectedSite.slug, domain ),
@@ -129,11 +140,31 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 			{ label: __( 'Connect' ) },
 		];
 
-		const mobileItem = {
+		let mobileItem = {
 			label: __( 'Back to transfer or connect' ),
 			href: domainUseMyDomain( selectedSite.slug, domain ),
 			showBackArrow: true,
 		};
+
+		if ( ! isFirstVisit ) {
+			items = [
+				{
+					label: __( 'Domains' ),
+					href: domainManagementList( selectedSite.slug, domain ),
+				},
+				{
+					label: domain,
+					href: domainManagementEdit( selectedSite.slug, domain ),
+				},
+				{ label: __( 'Connect' ) },
+			];
+
+			mobileItem = {
+				label: __( 'Back' ),
+				href: domainManagementEdit( selectedSite.slug, domain ),
+				showBackArrow: true,
+			};
+		}
 
 		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
 	};
@@ -229,6 +260,7 @@ ConnectDomainStep.propTypes = {
 	initialStep: PropTypes.string,
 	showErrors: PropTypes.bool,
 	hasSiteDomainsLoaded: PropTypes.bool,
+	isFirstVisit: PropTypes.bool,
 };
 
 export default connect( ( state ) => {

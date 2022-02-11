@@ -108,6 +108,7 @@ const mapDomain = ( context, next ) => {
 
 const mapDomainSetup = ( context, next ) => {
 	const showErrors = context.query?.showErrors === 'true' || context.query?.showErrors === '1';
+	const isFirstVisit = context.query?.firstVisit === 'true' || context.query?.firstVisit === '1';
 
 	context.primary = (
 		<Main wideLayout>
@@ -120,6 +121,7 @@ const mapDomainSetup = ( context, next ) => {
 				<ConnectDomainStep
 					domain={ context.params.domain }
 					initialStep={ context.query.step }
+					isFirstVisit={ isFirstVisit }
 					showErrors={ showErrors }
 				/>
 			</CalypsoShoppingCartProvider>
