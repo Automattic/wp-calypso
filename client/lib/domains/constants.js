@@ -86,10 +86,6 @@ export const dnsTemplates = {
 		PROVIDER: 'titan-mail',
 		SERVICE: 'titan',
 	},
-	WPCOM_EMAIL_FORWARDING: {
-		PROVIDER: 'WordPress.com',
-		SERVICE: 'email-forwarding',
-	},
 	ZOHO_MAIL: {
 		PROVIDER: 'zoho-mail',
 		SERVICE: 'Zoho',

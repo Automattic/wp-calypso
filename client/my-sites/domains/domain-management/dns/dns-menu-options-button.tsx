@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { dnsTemplates } from 'calypso/lib/domains/constants';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	getGoogleMailServiceFamily,
 	hasGSuiteWithAnotherProvider,
@@ -28,7 +27,6 @@ import type {
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 enum EmailProvider {
-	EMAIL_FORWARDING = 'EMAIL_FORWARDING',
 	GOOGLE = 'GOOGLE',
 	TITAN = 'TITAN',
 }
@@ -43,12 +41,6 @@ type EmailProviderConfiguration = {
 };
 
 const emailProviderConfig: Record< EmailProviderKey, EmailProviderConfiguration > = {
-	EMAIL_FORWARDING: {
-		dnsTemplate: dnsTemplates.WPCOM_EMAIL_FORWARDING,
-		providerSlug: 'email-forwarding',
-		shouldRestoreOptionBeEnabled: ( domain: ResponseDomain ): boolean =>
-			hasEmailForwards( domain ) && false === domain?.hasEmailForwardsDnsRecords,
-	},
 	GOOGLE: {
 		dnsTemplate: dnsTemplates.GMAIL,
 		shouldRestoreOptionBeEnabled: ( domain: ResponseDomain ): boolean =>
@@ -71,11 +63,7 @@ const emailProviderConfig: Record< EmailProviderKey, EmailProviderConfiguration 
 	},
 };
 
-const emailProviderKeys: EmailProviderKey[] = [
-	EmailProvider.TITAN,
-	EmailProvider.GOOGLE,
-	EmailProvider.EMAIL_FORWARDING,
-];
+const emailProviderKeys: EmailProviderKey[] = [ EmailProvider.TITAN, EmailProvider.GOOGLE ];
 
 function DnsMenuOptionsButton( {
 	domain,
@@ -184,7 +172,6 @@ function DnsMenuOptionsButton( {
 	);
 
 	const productNames: Record< EmailProviderKey, string > = {
-		EMAIL_FORWARDING: __( 'Email Forwarding' ),
 		GOOGLE: getGoogleMailServiceFamily(),
 		TITAN: __( 'Professional Email' ),
 	};
