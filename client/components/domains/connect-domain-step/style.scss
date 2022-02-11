@@ -367,29 +367,6 @@ body.connect-domain-setup__body-white {
 		}
 	}
 
-	&__advanced-start-notice .notice__text {
-		display: flex;
-		flex-direction: column;
-
-		@include break-mobile {
-			flex-direction: row;
-			align-items: center;
-		}
-
-		.notice__action {
-			padding-left: 0;
-			padding-bottom: 0;
-
-			@include break-mobile {
-				padding-top: 0;
-				padding-left: initial;
-			}
-
-			color: var( --studio-gray-20 );
-			text-decoration: none;
-		}
-	}
-
 	&__change_mode_link,
 	&__info-links a {
 		cursor: pointer;
