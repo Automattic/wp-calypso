@@ -89,7 +89,7 @@ class SignupForm extends Component {
 		goToNextStep: PropTypes.func,
 		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
-		isPasswordlessExperiment: PropTypes.bool,
+		isPasswordless: PropTypes.bool,
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
@@ -111,7 +111,7 @@ class SignupForm extends Component {
 		displayNameInput: false,
 		displayUsernameInput: true,
 		flowName: '',
-		isPasswordlessExperiment: false,
+		isPasswordless: false,
 		isSocialSignupEnabled: false,
 		horizontal: false,
 	};
@@ -1030,12 +1030,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		/*
-			AB Test: passwordlessSignup
-			`<PasswordlessSignupForm />` is for the `onboarding` flow.
-			We are testing whether a passwordless account creation and login improves signup rate in the `onboarding` flow
-		*/
-		if ( this.props.isPasswordlessExperiment ) {
+		if ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) {
 			const logInUrl = this.getLoginLink();
 
 			return (

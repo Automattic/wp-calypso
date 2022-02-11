@@ -48,6 +48,8 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	} = props;
 
 	const displayUpsellBanner = isAtomic && ! requestingSitePlans && currentPlan;
+	const upsellUrl =
+		isAtomic && `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_BUSINESS }`;
 
 	const upsellBanner = (
 		<UpsellNudge
@@ -55,7 +57,9 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			event="calypso_themes_list_install_themes"
 			feature={ FEATURE_UPLOAD_THEMES }
 			plan={ PLAN_BUSINESS }
-			title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
+			title={ translate(
+				'Unlock ALL premium themes and upload your own themes with our Business and eCommerce plans!'
+			) }
 			forceHref={ true }
 			showIcon={ true }
 		/>
@@ -70,6 +74,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			<CurrentTheme siteId={ siteId } />
 			<ThemeShowcase
 				{ ...props }
+				upsellUrl={ upsellUrl }
 				siteId={ siteId }
 				emptyContent={ showWpcomThemesList ? <div /> : null }
 				isJetpackSite={ true }

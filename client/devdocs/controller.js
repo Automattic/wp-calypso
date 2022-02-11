@@ -138,7 +138,7 @@ const devdocs = {
 				action: 'Log In to WordPress.com',
 				actionURL: login( { redirectTo } ),
 				secondaryAction: 'Register',
-				secondaryActionURL: '/start/developer',
+				secondaryActionURL: '/start/account',
 				illustration: '/calypso/images/illustrations/illustration-nosites.svg',
 			} );
 			next();

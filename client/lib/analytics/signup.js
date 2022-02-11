@@ -176,13 +176,13 @@ export const recordSignupPlanChange = (
 ) => {
 	const device = resolveDeviceTypeByViewPort();
 
-	recordTracksEvent( 'calypso_signup_plan_change ', {
+	recordTracksEvent( 'calypso_signup_plan_change', {
 		flow,
 		step,
 		device,
-		previousPlanName,
-		previousPlanSlug,
-		currentPlanName,
-		currentPlanSlug,
+		previous_plan_name: previousPlanName,
+		previous_plan_slug: previousPlanSlug,
+		current_plan_name: currentPlanName,
+		current_plan_slug: currentPlanSlug,
 	} );
 };

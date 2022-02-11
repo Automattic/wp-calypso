@@ -10,7 +10,6 @@ import {
 	PlansPage,
 	CartCheckoutPage,
 	SidebarComponent,
-	UserSignupPage,
 	BrowserManager,
 } from '@automattic/calypso-e2e';
 import archiver from 'archiver';
@@ -19,11 +18,6 @@ import fetch from 'node-fetch';
 import { Page, Browser } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
 
-const selectors = {
-	isWhiteLogin: '.is-section-login.is-white-login',
-	isBlueLogin: '.is-section-login:not( .is-white-login )',
-	isWhiteSignup: 'body.is-white-signup.is-section-signup',
-};
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), function () {
@@ -36,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		page = await browser.newPage();
 	} );
 
-	describe( 'ToS signup, login, and checkout', function () {
+	describe( 'ToS screenshots of WP.com checkout in desktop, tablet, and mobile viewports', function () {
 		jest.setTimeout( 1800000 );
 		let cartCheckoutPage: CartCheckoutPage;
 		const magnificientNonEnLocales = [
@@ -58,91 +52,9 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			'sv',
 		];
 
-		it( 'Screenshot white background signup page in desktop viewport, en and Mag-16 locales', async function () {
-			const userSignupPage = new UserSignupPage( page );
-			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
-				await userSignupPage.visit( { path: locale } );
-				page.waitForSelector( selectors.isWhiteSignup );
-				await page.screenshot( {
-					path: `tos_white_signup_desktop_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 410, height: 820 } );
-				await page.screenshot( {
-					path: `tos_white_signup_mobile_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 1024, height: 1366 } );
-				await page.screenshot( {
-					path: `tos_white_signup_tablet_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 1280, height: 720 } );
-			}
-		} );
-
-		it( 'Screenshot blue background login page in desktop viewport, en and Mag-16 locales', async function () {
+		it( 'Login to marTech user account', async function () {
 			const loginPage = new LoginPage( page );
-			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
-				await loginPage.visit( { path: locale } );
-				page.waitForSelector( selectors.isBlueLogin );
-				await page.screenshot( {
-					path: `tos_blue_login_desktop_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 410, height: 820 } );
-				await page.screenshot( {
-					path: `tos_blue_login_mobile_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 1024, height: 1366 } );
-				await page.screenshot( {
-					path: `tos_blue_login_tablet_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 1280, height: 720 } );
-			}
-		} );
-
-		it( 'Screenshot white background login page in desktop viewport, en and Mag-16 locales', async function () {
-			const loginPage = new LoginPage( page );
-			for ( const locale of [ 'en', ...magnificientNonEnLocales ] ) {
-				await loginPage.visit( { path: `new/${ locale }` } );
-				page.waitForSelector( selectors.isWhiteLogin );
-				await page.screenshot( {
-					path: `tos_white_login_desktop_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 410, height: 820 } );
-				await page.screenshot( {
-					path: `tos_white_login_mobile_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 1024, height: 1366 } );
-				await page.screenshot( {
-					path: `tos_white_login_tablet_${ locale }.png`,
-					fullPage: true,
-					type: 'jpeg',
-					quality: 20,
-				} );
-				page.setViewportSize( { width: 1280, height: 720 } );
-			}
+			await loginPage.visit( { path: 'new' } );
 			const credentials = DataHelper.getAccountCredential( 'martechTosUser' );
 			await loginPage.logInWithCredentials( ...credentials );
 		} );
@@ -155,6 +67,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 			const changeUILanguageFlow = new ChangeUILanguageFlow( page );
 			await changeUILanguageFlow.changeUILanguage( 'en' as LanguageSlug );
+			await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 		} );
 
 		it( 'Navigate to Upgrades > Plans', async function () {
@@ -184,7 +97,6 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 				page.setViewportSize( { width: 1280, height: 720 } );
 				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
-				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 				await cartCheckoutPage.visit( blogName );
 				const paymentDetails = DataHelper.getTestPaymentDetails();
 				await cartCheckoutPage.enterBillingDetails( paymentDetails );
@@ -213,13 +125,13 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		} );
 
 		it( 'Zip screenshots and upload', async function () {
-			const zipFilename = 'tos-screenshots.zip';
+			const zipFilename = 'tos-screenshots-checkout.zip';
 			const archive = archiver( 'zip', {
 				zlib: { level: 9 }, // Sets the compression level.
 			} );
 			const output = fs.createWriteStream( zipFilename );
 			archive.pipe( output );
-			archive.glob( 'tos_*' );
+			archive.glob( 'tos_checkout_*' );
 			archive.finalize();
 
 			output.on( 'close', function () {
@@ -234,7 +146,9 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 					},
 				} )
 					.then( ( response ) => response.json() )
-					.then( ( response ) => expect( response?.upload_status ).toStrictEqual( 'success' ) );
+					.then( ( response ) =>
+						expect( response?.data?.upload_status ).toStrictEqual( 'success' )
+					);
 			} );
 		} );
 	} );

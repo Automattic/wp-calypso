@@ -3,6 +3,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugFactory from 'debug';
+import { translate } from 'i18n-calypso';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -29,7 +30,6 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import {
@@ -37,7 +37,7 @@ import {
 	getSiteVerticalName,
 } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
-import { getUserExperience } from 'calypso/state/signup/steps/user-experience/selectors';
+import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 
 const Visibility = Site.Visibility;
@@ -148,7 +148,6 @@ function getNewSiteParams( {
 	const siteTitle = getSiteTitle( state ).trim();
 	const siteVerticalId = getSiteVerticalId( state );
 	const siteVerticalName = getSiteVerticalName( state );
-	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
@@ -180,7 +179,6 @@ function getNewSiteParams( {
 			theme,
 			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
 			default_annotation_as_primary_fallback: shouldUseDefaultAnnotationAsFallback,
-			siteGoals: siteGoals || undefined,
 			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
 			site_vertical_name: siteVerticalName || undefined,
@@ -437,6 +435,118 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	);
 }
 
+export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItems, reduxStore ) {
+	if ( ! siteSlug ) {
+		defer( callback );
+		return;
+	}
+
+	try {
+		/*
+		 * Get the block pattern source for use in our new home page.
+		 * Ideally we'd pull this content from the patterns repo dynamically, but we don't
+		 * have a way to get raw block source.
+		 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
+		 */
+		const patternPost = `
+			<!-- wp:columns {"align":"wide"} -->
+			<div class="wp-block-columns alignwide">
+				<!-- wp:column -->
+				<div class="wp-block-column">
+					<!-- wp:image -->
+					<figure class="wp-block-image"><img alt="" /></figure>
+					<!-- /wp:image -->
+				</div>
+				<!-- /wp:column -->
+
+				<!-- wp:column {"style":{"spacing":{"padding":{"right":"10%","left":"5%"}}}} -->
+				<div class="wp-block-column" style="padding-right:10%;padding-left:5%">
+					<!-- wp:heading {"textAlign":"left","fontSize":"x-large"} -->
+					<h2 class="has-text-align-left has-x-large-font-size" id="item-name">${ translate(
+						'Item Name'
+					) }</h2>
+					<!-- /wp:heading -->
+
+					<!-- wp:paragraph {"align":"left","style":{"color":{"text":"#808080"}},"fontSize":"small"} -->
+					<p class="has-text-align-left has-text-color has-small-font-size" style="color:#808080">${ translate(
+						'Quick details'
+					) }</p>
+					<!-- /wp:paragraph -->
+
+					<!-- wp:heading {"level":3,"fontSize":"medium"} -->
+					<h3 class="has-medium-font-size" id="0-00">$0.00</h3>
+					<!-- /wp:heading -->
+
+					<!-- wp:jetpack/recurring-payments -->
+					<div class="wp-block-jetpack-recurring-payments">
+						<!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":"${ translate(
+							'Buy Now'
+						) }","backgroundColor":"primary","borderRadius":0,"width":"100%"} /-->
+					</div>
+					<!-- /wp:jetpack/recurring-payments -->
+
+					<!-- wp:spacer {"height":"20px"} -->
+					<div style="height:20px" aria-hidden="true" class="wp-block-spacer"></div>
+					<!-- /wp:spacer -->
+
+					<!-- wp:paragraph {"align":"left","style":{"typography":{"fontSize":18}}} -->
+					<p class="has-text-align-left" style="font-size:18px">${ translate(
+						`Describe your item. You can add a few lines here that describe the item you're selling. Or just delete this block if you don't need it!`
+					) }</p>
+					<!-- /wp:paragraph -->
+
+					<!-- wp:social-links {"iconColor":"foreground-dark","iconColorValue":"#101010","className":"is-style-logos-only"} -->
+					<ul class="wp-block-social-links has-icon-color is-style-logos-only">
+						<!-- wp:social-link {"service":"facebook"} /-->
+
+						<!-- wp:social-link {"service":"twitter"} /-->
+					</ul>
+					<!-- /wp:social-links -->
+				</div>
+				<!-- /wp:column -->
+			</div>
+			<!-- /wp:columns -->
+		`;
+		// Create a new Home page
+		const newPage = await wpcom.req.post( {
+			path: `/sites/${ siteSlug }/pages`,
+			apiNamespace: 'wp/v2',
+			body: {
+				content: patternPost,
+				title: translate( 'Home' ),
+				status: 'publish',
+			},
+		} );
+
+		const siteId = getSiteId( reduxStore.getState(), siteSlug );
+
+		//Set the new Home page as the front page.
+		await updateSiteFrontPage( siteId, {
+			show_on_front: 'page',
+			page_on_front: newPage.id,
+		} )( reduxStore.dispatch );
+	} catch ( e ) {
+		defer( callback );
+		return;
+	}
+
+	/*
+	 * Check to see if FSE is active on the site
+	 * and pass to our getDestinationFromIntent callback.
+	 */
+	wpcom.req
+		.get( {
+			path: `/sites/${ siteSlug }/block-editor`,
+			apiNamespace: 'wpcom/v2',
+		} )
+		.then( ( data ) => {
+			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
+		} )
+		.catch( ( errors ) => {
+			callback( [ errors ] );
+		} );
+}
+
 export function setIntentOnSite( callback, { siteSlug, intent } ) {
 	if ( ! intent ) {
 		defer( callback );
@@ -612,7 +722,6 @@ export function createAccount(
 
 	const siteVertical = getSiteVertical( state );
 	const surveySiteType = getSurveySiteType( state ).trim();
-	const userExperience = getUserExperience( state );
 
 	const SIGNUP_TYPE_SOCIAL = 'social';
 	const SIGNUP_TYPE_DEFAULT = 'default';
@@ -730,7 +839,6 @@ export function createAccount(
 					signup_flow_name: flowName,
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: siteVertical,
-					nux_q_question_experience: userExperience || undefined,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
 					locale: getLocaleSlug(),

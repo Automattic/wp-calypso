@@ -113,51 +113,6 @@ export function getThemeForDesignType( designType ) {
 	}
 }
 
-export function getThemeForSiteGoals( siteGoals ) {
-	const siteGoalsValue = siteGoals.split( ',' );
-
-	if ( siteGoalsValue.indexOf( 'sell' ) !== -1 ) {
-		return 'pub/radcliffe-2';
-	}
-
-	if ( siteGoalsValue.indexOf( 'promote' ) !== -1 ) {
-		return 'pub/radcliffe-2';
-	}
-
-	if ( siteGoalsValue.indexOf( 'educate' ) !== -1 ) {
-		return 'pub/twentyfifteen';
-	}
-
-	if ( siteGoalsValue.indexOf( 'showcase' ) !== -1 ) {
-		return 'pub/altofocus';
-	}
-
-	return 'pub/independent-publisher-2';
-}
-
-export function getDesignTypeForSiteGoals( siteGoals, flow ) {
-	const siteGoalsValue = siteGoals.split( ',' );
-
-	//Identify stores for the store signup flow
-	if ( siteGoals === 'sell' || flow === 'ecommerce' ) {
-		return 'store';
-	}
-
-	if ( siteGoalsValue.indexOf( 'sell' ) !== -1 ) {
-		return 'page';
-	}
-
-	if ( siteGoalsValue.indexOf( 'promote' ) !== -1 ) {
-		return 'page';
-	}
-
-	if ( siteGoalsValue.indexOf( 'showcase' ) !== -1 ) {
-		return 'portfolio';
-	}
-
-	return 'blog';
-}
-
 export function getFilteredSteps( flowName, progress, isUserLoggedIn ) {
 	const flow = flows.getFlow( flowName, isUserLoggedIn );
 

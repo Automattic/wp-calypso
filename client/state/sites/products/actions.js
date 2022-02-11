@@ -6,26 +6,12 @@ import {
 	SITE_PRODUCTS_FETCH,
 	SITE_PRODUCTS_FETCH_COMPLETED,
 	SITE_PRODUCTS_FETCH_FAILED,
-	SITE_PRODUCTS_REMOVE,
 } from 'calypso/state/action-types';
 import { createSiteProductObject } from './assembler';
 
 import 'calypso/state/currency-code/init';
 
 const debug = debugFactory( 'calypso:site-products:actions' );
-
-/**
- * Returns an action object to be used in signalling that products for the given site have been cleared.
- *
- * @param {number} siteId identifier of the site
- * @returns {object} the corresponding action object
- */
-export function clearSiteProducts( siteId ) {
-	return {
-		type: SITE_PRODUCTS_REMOVE,
-		siteId,
-	};
-}
 
 /**
  * Fetches products for the given site.
@@ -76,18 +62,5 @@ export function fetchSiteProductsCompleted( siteId, products ) {
 		type: SITE_PRODUCTS_FETCH_COMPLETED,
 		siteId,
 		products: mapValues( products, createSiteProductObject ),
-	};
-}
-
-/**
- * Clears products and fetches them for the given site.
- *
- * @param {number} siteId identifier of the site
- * @returns {Function} the corresponding action thunk
- */
-export function refreshSiteProducts( siteId ) {
-	return ( dispatch ) => {
-		dispatch( clearSiteProducts( siteId ) );
-		dispatch( fetchSiteProducts( siteId ) );
 	};
 }

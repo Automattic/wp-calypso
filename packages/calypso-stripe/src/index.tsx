@@ -9,6 +9,7 @@ import type {
 	SetupIntent,
 	StripeElementLocale,
 	StripeCardNumberElement,
+	StripeCardElement,
 } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso-stripe' );
@@ -179,13 +180,13 @@ export class StripePaymentMethodError extends Error {
  * `incomplete_cvc`.
  *
  * @param {object} stripe The stripe object with payment data included
- * @param {object} element The StripeCardNumberElement
+ * @param {object} element The StripeCardNumberElement or StripeCardElement
  * @param {object} paymentDetails The `billing_details` field of the `createPaymentMethod()` request
  * @returns {Promise} Promise that will be resolved or rejected
  */
 export async function createStripePaymentMethod(
 	stripe: Stripe,
-	element: StripeCardNumberElement,
+	element: StripeCardNumberElement | StripeCardElement,
 	paymentDetails: PaymentDetails
 ): Promise< { id: string } > {
 	debug( 'creating payment method...', paymentDetails );
@@ -214,7 +215,7 @@ export async function createStripePaymentMethod(
 
 export async function createStripeSetupIntent(
 	stripe: Stripe,
-	element: StripeCardNumberElement,
+	element: StripeCardNumberElement | StripeCardElement,
 	setupIntentId: StripeSetupIntentId,
 	paymentDetails: PaymentDetails
 ): Promise< StripeSetupIntent > {

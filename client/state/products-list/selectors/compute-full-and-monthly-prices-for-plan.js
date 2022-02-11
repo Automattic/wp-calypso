@@ -21,7 +21,7 @@ export const computeFullAndMonthlyPricesForPlan = (
 	credits,
 	couponDiscounts
 ) => {
-	const couponDiscount = couponDiscounts[ planObject.getProductId() ] || 0;
+	const couponDiscount = couponDiscounts[ planObject.getStoreSlug() ] || 1;
 
 	if ( planObject.group === GROUP_WPCOM ) {
 		return computePricesForWpComPlan( state, siteId, planObject );
@@ -35,8 +35,11 @@ export const computeFullAndMonthlyPricesForPlan = (
 
 	return {
 		priceFull: planOrProductPrice,
-		priceFinal: Math.max( planOrProductPrice - credits - couponDiscount, 0 ),
-		introductoryOfferPrice,
+		priceFinal: Math.max( planOrProductPrice * couponDiscount - credits, 0 ),
+		introductoryOfferPrice:
+			introductoryOfferPrice !== null
+				? Math.max( introductoryOfferPrice * couponDiscount - credits, 0 )
+				: introductoryOfferPrice,
 	};
 };
 

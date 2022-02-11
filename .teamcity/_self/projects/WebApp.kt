@@ -334,16 +334,7 @@ object RunAllUnitTests : BuildType({
 				# These are not expected to fail
 				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
-
-				# These have known errors, so we report them as checkstyle
-				(
-					# Enable pipe errors in this subshell. After all, we know these will fail.
-					set +e
-					yarn tsc --build client 2>&1 | tee tsc_out
-					mkdir -p checkstyle_results
-					yarn run typescript-checkstyle < tsc_out | sed -e "s#${'$'}PWD#~#g" > ./checkstyle_results/tsc.xml
-					cat ./checkstyle_results/tsc.xml
-				)
+				yarn tsc --build client/tsconfig.json
 			"""
 		}
 		bashNodeScript {
@@ -422,20 +413,6 @@ object RunAllUnitTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 10
-
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
-			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
-			comparison = BuildFailureOnMetric.MetricComparison.MORE
-			threshold = 0
-			compareTo = build {
-				buildRule = buildWithTag {
-					tag = "release-candidate"
-				}
-			}
-			stopBuildOnFailure = true
-		}
-
 	}
 	features {
 		feature {
@@ -589,12 +566,49 @@ object Translate : BuildType({
 	name = "Translate"
 	description = "Extract translatable strings from the source code and build POT file"
 
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
 	steps {
 		bashNodeScript {
 			name = "Translate Build Steps"
 			scriptContent = """
 				echo "@todo: Translate Build Script"
 			"""
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+			+:*
+			-:pull*
+		""".trimIndent()
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
 		}
 	}
 })

@@ -79,13 +79,6 @@ export function generateFlows( {
 			lastModified: '2019-10-16',
 		},
 		{
-			name: 'main',
-			steps: [ 'user', 'about', 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'The current best performing flow in AB tests',
-			lastModified: '2019-06-20',
-		},
-		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans' ]
@@ -119,13 +112,6 @@ export function generateFlows( {
 			description: 'Signup flow for desktop app',
 			lastModified: '2021-03-26',
 			showRecaptcha: true,
-		},
-		{
-			name: 'developer',
-			steps: [ 'site', 'user' ],
-			destination: '/devdocs/welcome',
-			description: 'Signup flow for developers in developer environment',
-			lastModified: '2015-11-23',
 		},
 		{
 			name: 'pressable-nux',
@@ -184,8 +170,6 @@ export function generateFlows( {
 			lastModified: '2018-05-28',
 			disallowResume: true,
 		},
-		// Important: For any changes done to the ecommerce flow,
-		// please copy the same changes to ecommerce-onboarding flow too
 		{
 			name: 'ecommerce',
 			steps: [ 'user', 'domains', 'plans-ecommerce-fulfilled' ],
@@ -193,13 +177,6 @@ export function generateFlows( {
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2020-08-11',
 			showRecaptcha: true,
-		},
-		{
-			name: 'ecommerce-onboarding',
-			steps: [ 'user', 'domains', 'plans-ecommerce' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2020-03-04',
 		},
 		{
 			name: 'ecommerce-design-first',
@@ -386,9 +363,9 @@ export function generateFlows( {
 				'site-options',
 				'starting-point',
 				'courses',
+				'design-setup-site',
 				'store-options',
 				'store-features',
-				'design-setup-site',
 			],
 			destination: getDestinationFromIntent,
 			description:
@@ -420,7 +397,8 @@ export function generateFlows( {
 			steps: [ 'store-address', 'business-info', 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
-			providesDependenciesInQuery: [ 'siteSlug' ],
+			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
+			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2021-12-21',
 			disallowResume: false,
 		},

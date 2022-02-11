@@ -52,7 +52,6 @@ import {
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -394,8 +393,7 @@ class DomainsStep extends Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, isDomainOnly, siteType, siteGoals, signupDependencies } = this.props;
-		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
+		const { flowName, isDomainOnly, siteType, signupDependencies } = this.props;
 
 		// 'subdomain' flow coming from .blog landing pages
 		if ( flowName === 'subdomain' ) {
@@ -414,8 +412,6 @@ class DomainsStep extends Component {
 
 		// If we detect a 'blog' site type from Signup data
 		if (
-			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
-			( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
 			// Users choose `Blog` as their site type
 			'blog' === get( signupDependencies, 'siteType' ) ||
 			'blog' === siteType
@@ -658,7 +654,7 @@ class DomainsStep extends Component {
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
 		const onboardingSubHeaderCopy =
 			siteType &&
-			[ 'onboarding', 'ecommerce-onboarding' ].includes( flowName ) &&
+			flowName === 'onboarding' &&
 			getSiteTypePropertyValue( 'slug', siteType, subHeaderPropertyName );
 
 		if ( onboardingSubHeaderCopy ) {
@@ -911,7 +907,6 @@ export default connect(
 			designType: getDesignType( state ),
 			productsList,
 			productsLoaded,
-			siteGoals: getSiteGoals( state ),
 			siteType: getSiteType( state ),
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSelectedSite( state ),

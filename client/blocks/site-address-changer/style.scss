@@ -1,7 +1,6 @@
 
 .site-address-changer__dialog {
 	text-align: left;
-	max-width: 400px;
 
 	h2 {
 		border-top: 1px solid var( --color-border-subtle );
@@ -59,6 +58,10 @@
 
 .site-address-changer__info {
 	word-break: break-word;
+}
+
+.site-address-changer__details {
+	margin-top: 20px;
 }
 
 .site-address-changer__only-owner-info {

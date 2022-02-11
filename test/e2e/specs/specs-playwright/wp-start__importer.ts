@@ -49,12 +49,12 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 	describe.each( [
 		// wordpress.com is already a WPCOM site and ever will be.
 		{ url: 'wordpress.com', reason: 'Your site is already on WordPress.com' },
-		// example.com will never be a WordPress site.
-		{ url: 'example.com', reason: "Your existing content can't be imported" },
+		// gravatar.com is not a WordPress site.
+		{ url: 'gravatar.com', reason: "Your existing content can't be imported" },
 	] )( "Follow the WordPress can't be imported flow", ( { url, reason } ) => {
 		navigateToSetup();
 
-		it( `Start an invalid WordPress import (${ reason })`, async () => {
+		it( `Start an invalid WordPress import on ${ url } (${ reason })`, async () => {
 			await startImportFlow.enterURL( url );
 			await startImportFlow.validateBuildingPage( reason );
 			await startImportFlow.startBuilding();
@@ -69,8 +69,8 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		// One of several errors found on Blogs::get_blog_name_error_code.
 		// A deleted wpcom site does generate the same error.
 		it( 'Start an invalid WordPress import typo', async () => {
-			// 1.example.com is guaranteed never to be a valid DNS
-			await startImportFlow.enterURL( '1.example.com' );
+			// 1.gravatar.com is guaranteed never to be a valid DNS
+			await startImportFlow.enterURL( 'zz.gravatar.com' );
 			await startImportFlow.validateErrorCapturePage(
 				'The address you entered is not valid. Please try again.'
 			);
@@ -128,7 +128,7 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 
 		// Back to URL capture page from the error page
 		it( 'Back to URL capture page from error page', async () => {
-			await startImportFlow.enterURL( 'example.com' );
+			await startImportFlow.enterURL( 'gravatar.com' );
 			await startImportFlow.clickButton( 'Back to start' );
 			await startImportFlow.validateURLCapturePage();
 		} );

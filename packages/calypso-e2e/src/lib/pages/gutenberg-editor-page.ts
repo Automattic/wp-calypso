@@ -13,10 +13,6 @@ const selectors = {
 	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
 	editorTitle: '.editor-post-title__input',
 
-	// Editor: Page
-	blankPageButton: '.page-pattern-modal__blank-button',
-	pageDesign: ( name: string ) => `li:text(${ name })`,
-
 	// Block inserter
 	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
 	blockInserterPanel: '.block-editor-inserter__content',
@@ -36,6 +32,8 @@ const selectors = {
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
+	updateButton: 'button:text("Update")',
+	switchToDraftButton: 'button.editor-post-switch-to-draft',
 
 	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
@@ -47,7 +45,7 @@ const selectors = {
 	// corner. This addresses the bug where the post-publish panel is immediately
 	// closed when publishing with certain blocks on the editor canvas.
 	// See https://github.com/Automattic/wp-calypso/issues/54421.
-	viewButton: 'text=/View (Post|Page)/',
+	viewButton: 'a:text-matches("View (Post|Page)", "i")',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
 
@@ -133,27 +131,6 @@ export class GutenbergEditorPage {
 
 			return actionPayload.show === false;
 		} );
-	}
-
-	/**
-	 * Choose a page design.
-	 *
-	 * If a non-default value is provided, this method will select from
-	 * a matching design from the list.
-	 *
-	 * If the value provided is `blank`, the button on the modal labeled
-	 * "Blank Page" will be selected instead.
-	 *
-	 * @param {string} name Name of the design.
-	 */
-	async selectPageDesign( name: string ): Promise< void > {
-		const frame = await this.getEditorFrame();
-
-		if ( name.toLowerCase() === 'blank' ) {
-			await frame.click( selectors.blankPageButton );
-		} else {
-			await frame.click( selectors.pageDesign( name ) );
-		}
 	}
 
 	/**
@@ -408,7 +385,7 @@ export class GutenbergEditorPage {
 	 * Publishes the post or page.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
-	 * @returns {Promise<void} No return value.
+	 * @returns {Promise<string>} The published URL.
 	 */
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
@@ -421,6 +398,43 @@ export class GutenbergEditorPage {
 			await this.visitPublishedPost( publishedURL );
 		}
 		return publishedURL;
+	}
+
+	/**
+	 * Updates the post or page.
+	 *
+	 * @param {boolean} visit Whether to then visit the page.
+	 * @returns {Promise<string>} URL of the update post or page.
+	 */
+	async update( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
+		const frame = await this.getEditorFrame();
+
+		await frame.click( selectors.updateButton );
+		const publishedURL = await this.getPublishedURL();
+
+		if ( visit ) {
+			await this.visitPublishedPost( publishedURL );
+		}
+		return publishedURL;
+	}
+
+	/**
+	 * Unpublishes the post or page by switching to draft.
+	 */
+	async unpublish(): Promise< void > {
+		const frame = await this.getEditorFrame();
+
+		// Add handler to handle dialog that must be accepted for the post
+		// to be unpublished.
+		this.page.once( 'dialog', async ( dialog ) => {
+			await dialog.accept();
+		} );
+
+		await frame.click( selectors.switchToDraftButton );
+		// Similar to Save Draft, the publish button temporarily becomes disabled
+		// while the unpublish process takes place. This waits for the publish button
+		// to again become enabled.
+		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
 	}
 
 	/**
@@ -494,6 +508,7 @@ export class GutenbergEditorPage {
 
 		const frame = await this.getEditorFrame();
 
+		console.log( url );
 		await Promise.all( [
 			this.page.waitForNavigation( { url: url, waitUntil: 'domcontentloaded' } ),
 			frame.click( selectors.viewButton ),

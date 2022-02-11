@@ -29,7 +29,6 @@ import {
 	domainManagementTransfer,
 	domainManagementDns,
 	domainManagementDomainConnectMapping,
-	domainManagementChangeSiteAddress,
 	domainManagementRedirectSettings,
 	domainTransferIn,
 	domainManagementSecurity,
@@ -382,7 +381,7 @@ class DomainManagementNavigationEnhanced extends Component {
 	}
 
 	getSiteAddressChange() {
-		const { domain, selectedSite, translate, currentRoute } = this.props;
+		const { domain, translate } = this.props;
 		const { isWpcomStagingDomain } = domain;
 
 		if ( isWpcomStagingDomain ) {
@@ -391,7 +390,6 @@ class DomainManagementNavigationEnhanced extends Component {
 
 		return (
 			<VerticalNavItemEnhanced
-				path={ domainManagementChangeSiteAddress( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleChangeSiteAddressClick }
 				materialIcon="create"
 				text={ translate( 'Change site address' ) }

@@ -29,6 +29,7 @@ export function generateSteps( {
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
+	setStoreFeatures = noop,
 	setIntentOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
@@ -126,11 +127,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteSlug' ],
 		},
 
-		about: {
-			stepName: 'about',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo', 'siteTitle', 'surveyQuestion' ],
-		},
-
 		user: {
 			stepName: 'user',
 			apiRequestFunction: createAccount,
@@ -200,6 +196,10 @@ export function generateSteps( {
 		'store-features': {
 			stepName: 'store-features',
 			dependencies: [ 'siteSlug' ],
+			apiRequestFunction: setStoreFeatures,
+			delayApiRequestUntilComplete: true,
+			providesDependencies: [ 'isFSEActive' ],
+			optionalDependencies: [ 'isFSEActive' ],
 		},
 
 		'starting-point': {
@@ -735,7 +735,8 @@ export function generateSteps( {
 		// Woocommerce Install steps.
 		'store-address': {
 			stepName: 'store-address',
-			dependencies: [ 'siteSlug' ],
+			dependencies: [ 'siteSlug', 'back_to' ],
+			optionalDependencies: [ 'back_to' ],
 		},
 		'business-info': {
 			stepName: 'business-info',
