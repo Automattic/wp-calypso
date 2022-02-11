@@ -25,9 +25,9 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
-		"@storybook/addon-actions": "^6.4.9",
-		"@storybook/builder-webpack5": "^6.4.9",
-		"@storybook/manager-webpack5": "^6.4.9",
+		"@storybook/addon-actions": "^6.4.18",
+		"@storybook/builder-webpack5": "^6.4.18",
+		"@storybook/manager-webpack5": "^6.4.18",
 		"@storybook/preset-scss": "^1.0.3",
 		"css-loader": "^6.5.1",
 		"react": "^17.0.2",
@@ -37,6 +37,6 @@
 		"webpack": "^5.68.0"
 	},
 	"peerDependencies": {
-		"@storybook/react": "^6.4.9"
+		"@storybook/react": "^6.4.18"
 	}
 }

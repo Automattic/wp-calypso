@@ -44,7 +44,7 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/react": "^6.4.9",
+		"@storybook/react": "^6.4.18",
 		"typescript": "^4.5.5"
 	},
 	"scripts": {
