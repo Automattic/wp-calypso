@@ -199,7 +199,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": ^0.4.1
-    "@types/node": ^16.11.19
+    "@types/node": ^16.11.24
     cookie: ^0.4.1
     tslib: ^2.3.0
     typescript: ^4.5.5
@@ -229,7 +229,7 @@ __metadata:
     "@jest/globals": ^27.3.1
     "@types/config": ^0.0.41
     "@types/jest": ^27.4.0
-    "@types/node": ^16.11.19
+    "@types/node": ^16.11.24
     "@types/node-fetch": ^2.5.12
     "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.2.4
@@ -621,7 +621,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": 7.0.2
-    "@types/react": ^17.0.38
+    "@types/react": ^17.0.39
     "@wordpress/compose": ^5.0.7
     "@wordpress/i18n": ^4.2.4
     react: ^17.0.2
@@ -670,7 +670,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     react-dom: ^17.0.2
   peerDependencies:
-    "@types/react": ">=16.14.21"
+    "@types/react": ">=16.14.23"
     react: ">=16.2.0"
   peerDependenciesMeta:
     "@types/react":
@@ -891,7 +891,7 @@ __metadata:
   resolution: "@automattic/mocha-debug-reporter@workspace:packages/mocha-debug-reporter"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@types/mocha": ^9.0.0
+    "@types/mocha": ^9.1.0
     typescript: ^4.5.5
   peerDependencies:
     mocha: ">=8.0.0"
@@ -6708,10 +6708,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/history@npm:*":
-  version: 4.7.8
-  resolution: "@types/history@npm:4.7.8"
-  checksum: 235a1685602420795a37e4dd746d1ef029e678a9ea9871052d13cd6374bb7cc7ddab65e35c6e4038a923fac1a8192611215e90397ac46ebc88ea594c1ef0319b
+"@types/history@npm:*, @types/history@npm:^4.7.11":
+  version: 4.7.11
+  resolution: "@types/history@npm:4.7.11"
+  checksum: 3facf37c2493d1f92b2e93a22cac7ea70b06351c2ab9aaceaa3c56aa6099fb63516f6c4ec1616deb5c56b4093c026a043ea2d3373e6c0644d55710364d02c934
   languageName: node
   linkType: hard
 
@@ -6876,10 +6876,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mocha@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@types/mocha@npm:9.0.0"
-  checksum: 82501aa1453ffe204d94f0a975e2ff266bfe38fb66a788a6c1fd72db3b7707534fb28f60b99eee128b22df7efa2b3064c57e749ec5f142d294854bb43f3da82d
+"@types/mocha@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "@types/mocha@npm:9.1.0"
+  checksum: 67c4662437ffbac955e8de0fa3e60860913201e46ac9a86305347b79dabe47c5f0a03b3b11c19f7aa8855c13de3337dc1bbd227ca8178f14e7688eab13bbe5af
   languageName: node
   linkType: hard
 
@@ -6907,10 +6907,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^16.11.19":
-  version: 16.11.19
-  resolution: "@types/node@npm:16.11.19"
-  checksum: fe2fd2f15b4683345a7a7546c89ea75283acfd70d17c91dd6a0c4b8d42ef587c5b6506b6022b1b0778a1d7758cb7d3532d1d2cd6d052a880e78a9a5d0d52db44
+"@types/node@npm:*, @types/node@npm:^16.11.24":
+  version: 16.11.24
+  resolution: "@types/node@npm:16.11.24"
+  checksum: 288fa4870a40bd05816f1c1c1fbb0764fc5a9f2d5909463765aa660064610af537699df611a45f76686d2da5949b3c30311443a63ab0e823c6f193c676367618
   languageName: node
   linkType: hard
 
@@ -7063,26 +7063,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-redux@npm:^7.1.20, @types/react-redux@npm:^7.1.21":
-  version: 7.1.21
-  resolution: "@types/react-redux@npm:7.1.21"
+"@types/react-redux@npm:^7.1.20, @types/react-redux@npm:^7.1.22":
+  version: 7.1.22
+  resolution: "@types/react-redux@npm:7.1.22"
   dependencies:
     "@types/hoist-non-react-statics": ^3.3.0
     "@types/react": "*"
     hoist-non-react-statics: ^3.3.0
     redux: ^4.0.0
-  checksum: 917e52a33bd508b1daeb4fcbcc71449d402c6a3fcce52f76d10db8c17dd1c208da5c0c6e5ae2cecbd333f527e6e1bbc7646a96aa4cf21f816cd14dae8bd80674
+  checksum: a3928fca5be34385918909abeccfc487db7bc82f08745057aa96e905b942bb49de4b287f0874fdecd1cfac6c604996038e1ead9606a2000f5687b15854f2b15b
   languageName: node
   linkType: hard
 
-"@types/react-router-dom@npm:^5.3.2":
-  version: 5.3.2
-  resolution: "@types/react-router-dom@npm:5.3.2"
+"@types/react-router-dom@npm:^5.3.3":
+  version: 5.3.3
+  resolution: "@types/react-router-dom@npm:5.3.3"
   dependencies:
-    "@types/history": "*"
+    "@types/history": ^4.7.11
     "@types/react": "*"
     "@types/react-router": "*"
-  checksum: 4f212bea60632350462e00dfcb5f87ec958354622f81bb7d5c428554df4ed4ea2188dce3b502d1ad8338ea72cb93f61bd1e24ed098e566300f135ab310e70b88
+  checksum: a9231a16afb9ed5142678147eafec9d48582809295754fb60946e29fcd3757a4c7a3180fa94b45763e4c7f6e3f02379e2fcb8dd986db479dcab40eff5fc62a91
   languageName: node
   linkType: hard
 
@@ -7123,14 +7123,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^17.0.38":
-  version: 17.0.38
-  resolution: "@types/react@npm:17.0.38"
+"@types/react@npm:^17.0.39":
+  version: 17.0.39
+  resolution: "@types/react@npm:17.0.39"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 828cd27ac220be8232535c4451b0020f6f05535d62407e5fe2547544a7d3123777ed31ab547d7c7f3d8b59d37268ee4b9209f1c110809f084cbbf0a7e27cd7ef
+  checksum: 1b0c280596bf2a46da7f5fa42eca35a8a53000b18dddcc6ed32a6732577b909b81e680863a1482373fb934c0426e42932738cc849c7b6739006f1b1d8bdde2aa
   languageName: node
   linkType: hard
 
@@ -7349,9 +7349,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__block-editor@npm:*, @types/wordpress__block-editor@npm:^6.0.4":
-  version: 6.0.4
-  resolution: "@types/wordpress__block-editor@npm:6.0.4"
+"@types/wordpress__block-editor@npm:*, @types/wordpress__block-editor@npm:^6.0.5":
+  version: 6.0.5
+  resolution: "@types/wordpress__block-editor@npm:6.0.5"
   dependencies:
     "@types/react": "*"
     "@types/wordpress__blocks": "*"
@@ -7360,7 +7360,7 @@ __metadata:
     "@types/wordpress__keycodes": "*"
     "@wordpress/element": ^3.0.0
     react-autosize-textarea: ^7.1.0
-  checksum: cfc9108ee6dad9f28dca27ad6175a44d8e32a42e8426e7375b6598873717a44d9023d08af42ab82ef0d0202ba91e7a53394e7da8c7fefa5f61f1a07fe6ae494c
+  checksum: d2799a53fdf680c5348e76cd9c9c9c31d33099d3a8f5d5db8569fe8be281b458a76bbb99f56fa6cf8b77251e498d85a8bf5a39d85dc87a81d95060c0ec133148
   languageName: node
   linkType: hard
 
@@ -7383,9 +7383,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__components@npm:*, @types/wordpress__components@npm:^14.0.9":
-  version: 14.0.9
-  resolution: "@types/wordpress__components@npm:14.0.9"
+"@types/wordpress__components@npm:*, @types/wordpress__components@npm:^14.0.10":
+  version: 14.0.10
+  resolution: "@types/wordpress__components@npm:14.0.10"
   dependencies:
     "@types/react": "*"
     "@types/tinycolor2": "*"
@@ -7395,7 +7395,7 @@ __metadata:
     "@wordpress/element": ^3.0.0
     downshift: ^6.0.15
     re-resizable: ^6.4.0
-  checksum: 47035d37811ee3d3e2c4d7b3029c39040670a176802320c154fd18967a6e755738785816fb6cbe6804d83a6e332be705e5faecf86dd681e94f0730c574b296bf
+  checksum: 1032751b2a5e37642f64b1a97b79d150c6da21e1c7e40d2b8337133b59c10260310f04a3f5911f4bc8f4eb068f009a61bf18d92c476e899b3df11cef347e5b46
   languageName: node
   linkType: hard
 
@@ -37929,22 +37929,22 @@ testarmada-magellan@11.0.10:
     "@types/enzyme": ^3.10.11
     "@types/fast-json-stable-stringify": ^2.0.0
     "@types/lodash": ^4.14.178
-    "@types/node": ^16.11.19
+    "@types/node": ^16.11.24
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
-    "@types/react": ^17.0.38
+    "@types/react": ^17.0.39
     "@types/react-modal": ^3.13.1
-    "@types/react-redux": ^7.1.21
-    "@types/react-router-dom": ^5.3.2
+    "@types/react-redux": ^7.1.22
+    "@types/react-router-dom": ^5.3.3
     "@types/react-transition-group": ^4.4.4
     "@types/store": ^2.0.2
     "@types/uuid": ^8.3.4
     "@types/validator": ^13.7.1
     "@types/webpack-env": ^1.16.3
     "@types/wordpress__api-fetch": ^3.2.4
-    "@types/wordpress__block-editor": ^6.0.4
+    "@types/wordpress__block-editor": ^6.0.5
     "@types/wordpress__block-library": ^2.6.1
-    "@types/wordpress__components": ^14.0.9
+    "@types/wordpress__components": ^14.0.10
     "@types/wordpress__compose": ^4.0.1
     "@types/wordpress__data": ^4.6.10
     "@types/wordpress__data-controls": ^2.2.0
