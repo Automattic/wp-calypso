@@ -95,7 +95,6 @@ export function assignLicenseContext( context: PageJS.Context, next: () => void 
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <AssignLicense sites={ sites } />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
