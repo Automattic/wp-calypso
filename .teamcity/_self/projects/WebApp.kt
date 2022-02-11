@@ -413,20 +413,6 @@ object RunAllUnitTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 10
-
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
-			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
-			comparison = BuildFailureOnMetric.MetricComparison.MORE
-			threshold = 0
-			compareTo = build {
-				buildRule = buildWithTag {
-					tag = "release-candidate"
-				}
-			}
-			stopBuildOnFailure = true
-		}
-
 	}
 	features {
 		feature {
