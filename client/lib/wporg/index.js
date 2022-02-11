@@ -71,12 +71,14 @@ export function fetchPluginsList( options ) {
 
 	if ( search ) {
 		query[ 'request[search]' ] = search;
-	} else {
-		query[ 'request[browse]' ] = category;
 	}
 
 	if ( author ) {
 		query[ 'request[author]' ] = author;
+	}
+
+	if ( ! search && ! author ) {
+		query[ 'request[browse]' ] = category;
 	}
 
 	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
