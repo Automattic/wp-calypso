@@ -12,7 +12,6 @@ export const ONE_MONTH_IN_MILLISECONDS = 2419200000; // 28 days
 // Experiment Configuration
 export const TWO_WEEKS_IN_MILLISECONDS = 1209600000;
 export const ONE_DAY_IN_MILLISECONDS = 86400000;
-export const APP_BANNER_EXPERIMENT_NAME = 'calypso_mobileweb_appbanner_frequency_20220128_v1';
 
 export function getAppBannerData( translate, sectionName ) {
 	switch ( sectionName ) {
