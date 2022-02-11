@@ -49,7 +49,7 @@
 	&__back-button {
 		width: 100%;
 		font-size: 1rem;
-		margin-top: 1rem;
+		margin-top: 1.5rem;
 
 		@include break-large {
 			width: auto;
@@ -60,7 +60,7 @@
 	&__submit-button {
 		width: 100%;
 		font-size: 1rem;
-		margin-top: 1rem;
+		margin-top: 1.5rem;
 
 		@include break-large {
 			width: auto;

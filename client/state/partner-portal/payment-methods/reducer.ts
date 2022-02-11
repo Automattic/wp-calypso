@@ -8,7 +8,7 @@ const initialState = {
 		card: false,
 	},
 	cardDataErrors: {},
-	useAsPrimaryPaymentMethod: false,
+	useAsPrimaryPaymentMethod: true,
 };
 
 interface FieldsStateValue {

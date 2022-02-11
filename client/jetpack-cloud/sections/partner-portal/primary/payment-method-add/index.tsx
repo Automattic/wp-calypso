@@ -11,7 +11,7 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { CardElement, useElements } from '@stripe/react-stripe-js';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useMemo, ReactElement, useEffect, useState } from 'react';
+import { useCallback, useMemo, ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -60,10 +60,6 @@ function PaymentMethodAdd(): ReactElement {
 		[ reduxDispatch ]
 	);
 
-	const [ useAsPrimaryPaymentMethod, setUseAsPrimaryPaymentMethod ] = useState< boolean >(
-		0 === paymentMethods.length
-	);
-
 	useEffect( () => {
 		if ( stripeLoadingError ) {
 			reduxDispatch( errorNotice( stripeLoadingError.message ) );
@@ -101,7 +97,6 @@ function PaymentMethodAdd(): ReactElement {
 					card: ( data: unknown ) =>
 						assignNewCardProcessor(
 							{
-								useAsPrimaryPaymentMethod,
 								translate,
 								stripe,
 								stripeConfiguration,
