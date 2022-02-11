@@ -23,11 +23,11 @@ export default function ConnectDomainStepWrapper( {
 	const showProgress = Object.keys( progressStepList ).includes( pageSlug );
 
 	return (
-		<Card className={ className }>
-			<CardHeading className={ className + '__heading' }>{ heading }</CardHeading>
+		<div className={ className }>
+			{ /* <CardHeading className={ className + '__heading' }>{ heading }</CardHeading> */ }
 			{ showProgress && StepsProgress }
 			{ stepContent }
-		</Card>
+		</div>
 	);
 }
 
