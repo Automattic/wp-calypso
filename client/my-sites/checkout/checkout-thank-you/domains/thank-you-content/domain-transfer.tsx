@@ -1,3 +1,4 @@
+import { Icon, info } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import domainTransferredSuccess from 'calypso/assets/images/domains/transfer.svg';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
@@ -15,7 +16,7 @@ const domainTransferThankYouProps = ( {
 }: DomainThankYouParams ): DomainThankYouProps => ( {
 	thankYouNotice: {
 		noticeTitle: translate( 'The transfer process can take up to 5 days to complete' ),
-		noticeIcon: 'info',
+		noticeIconCustom: <Icon icon={ info } size={ 24 } />,
 	},
 	sections: [
 		{

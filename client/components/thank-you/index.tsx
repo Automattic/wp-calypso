@@ -74,13 +74,14 @@ const ThankYouNoticeContainer = styled.div`
 `;
 
 const ThankYouNotice = ( props: ThankYouNoticeProps ) => {
-	const { noticeTitle, noticeIcon } = props;
+	const { noticeTitle, noticeIcon, noticeIconCustom } = props;
 
 	return (
 		<ThankYouNoticeContainer className="thank-you__notice">
 			{ noticeIcon && (
 				<Gridicon icon={ noticeIcon } className="thank-you__notice-icon" size={ 24 } />
 			) }
+			{ noticeIconCustom }
 			{ noticeTitle }
 		</ThankYouNoticeContainer>
 	);
