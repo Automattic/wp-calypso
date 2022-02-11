@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
 import FormattedHeader from 'calypso/components/formatted-header';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import { domainManagementList, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
@@ -151,6 +152,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 
 	return (
 		<>
+			<BodySectionCssClass bodyClass={ [ 'connect-domain-setup__body-white' ] } />
 			{ renderBreadcrumbs() }
 			<BackButton className={ baseClassName + '__go-back' } onClick={ goBack }>
 				<Gridicon icon="arrow-left" size={ 18 } />
