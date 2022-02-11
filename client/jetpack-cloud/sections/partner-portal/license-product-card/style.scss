@@ -35,26 +35,8 @@
 	display: inline-block;
 }
 
-.license-product-card__radio {
-	border: 2px solid #444;
-	width: 16px;
-	height: 16px;
-	display: inline-block;
+.license-product-card .partner-portal-checkbox {
 	float: right;
-	border-radius: 10px; /* stylelint-disable-line */
-}
-
-.license-product-card__radio .gridicon {
-	color: #fff;
-	position: relative;
-	top: -4px;
-	left: 1px;
-	width: 14px;
-}
-
-.license-product-card.selected .license-product-card__radio {
-	border: 2px solid var( --studio-jetpack-green-50 );
-	background: var( --studio-jetpack-green-50 );
 }
 
 /*

@@ -4,8 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { ReactElement, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import FormRadio from 'calypso/components/forms/form-radio';
 import SearchCard from 'calypso/components/search-card';
+import PartnerPortalCheckbox from 'calypso/jetpack-cloud/sections/partner-portal/partner-portal-checkbox';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -24,14 +24,13 @@ export default function AssignLicenseForm( { sites }: any ): ReactElement {
 	const siteCards = sites.map( ( site: any ) => {
 		if ( -1 !== site.domain.search( filter ) || false === filter ) {
 			return (
-				<Card key={ site.ID } className="assign-license-form__site-card">
-					<FormRadio
-						className="assign-license-form__site-card-radio"
-						label={ site.domain }
-						name="site_select"
-						disabled={ isSubmitting }
-						onClick={ () => onSelectSite( site.ID ) }
-					/>
+				<Card
+					key={ site.ID }
+					className="assign-license-form__site-card"
+					onClick={ () => onSelectSite( site.ID ) }
+				>
+					<PartnerPortalCheckbox isChecked={ selectedSite === site.ID } />
+					<span className="assign-license-form__site-card-label">{ site.domain }</span>
 				</Card>
 			);
 		}

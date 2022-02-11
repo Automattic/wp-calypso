@@ -1,6 +1,6 @@
-import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { ReactElement } from 'react';
+import PartnerPortalCheckbox from 'calypso/jetpack-cloud/sections/partner-portal/partner-portal-checkbox';
 import './style.scss';
 
 export default function LicenseProductCard( props: any ): ReactElement {
@@ -32,9 +32,7 @@ export default function LicenseProductCard( props: any ): ReactElement {
 				<div className="license-product-card__details">
 					<div className="license-product-card__top">
 						<h3 className="license-product-card__title">{ productTitle }</h3>
-						<div className="license-product-card__radio">
-							{ props.isSelected && <Gridicon icon="checkmark" /> }
-						</div>
+						<PartnerPortalCheckbox isChecked={ props.isSelected } />
 					</div>
 				</div>
 			</div>

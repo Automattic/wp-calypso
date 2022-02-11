@@ -1,0 +1,21 @@
+.partner-portal-checkbox {
+	border: 2px solid #444;
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	float: left;
+	border-radius: 50%; /* stylelint-disable-line */
+}
+
+.partner-portal-checkbox .gridicon {
+	color: #fff;
+	position: relative;
+	top: -4px;
+	left: 1px;
+	width: 14px;
+}
+
+.partner-portal-checkbox.is-checked {
+	border: 2px solid var( --studio-jetpack-green-50 );
+	background: var( --studio-jetpack-green-50 );
+}

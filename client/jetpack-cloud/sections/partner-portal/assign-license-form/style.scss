@@ -62,8 +62,14 @@ p.assign-license-form__description {
 	margin-bottom: 1px;
 }
 
-.assign-license-form__site-card-radio.form-radio {
+.assign-license-form__site-card .partner-portal-checkbox {
 	margin-right: 1rem;
+	position: relative;
+	top: 3px;
+}
+
+.assign-license-form__site-card-label {
+	font-size: 1.1rem; /* stylelint-disable-line */
 }
 
 .assign-license-form__assign-later.button {
