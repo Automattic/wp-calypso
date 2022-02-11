@@ -1,15 +1,6 @@
 import * as actions from 'calypso/state/partner-portal/payment-methods/actions';
 
 describe( 'actions', () => {
-	describe( '#changeBrand()', () => {
-		test( 'should return an action to change the brand name', () => {
-			const { changeBrand } = actions;
-			const brandName = 'visa';
-
-			expect( changeBrand( brandName ) ).toEqual( { type: 'BRAND_SET', payload: brandName } );
-		} );
-	} );
-
 	describe( '#setCardDataError()', () => {
 		test( 'should return an action with a type and message', () => {
 			const { setCardDataError } = actions;
@@ -39,8 +30,8 @@ describe( 'actions', () => {
 	describe( '#setFieldValue()', () => {
 		test( 'should return an action with the key and field value', () => {
 			const { setFieldValue } = actions;
-			const key = 'cvc';
-			const value = '123';
+			const key = 'card';
+			const value = '4242424242424242';
 
 			expect( setFieldValue( key, value ) ).toEqual( {
 				type: 'FIELD_VALUE_SET',
@@ -52,7 +43,7 @@ describe( 'actions', () => {
 	describe( '#setFieldError()', () => {
 		test( 'should return an action with the key and error message', () => {
 			const { setFieldError } = actions;
-			const key = 'cvc';
+			const key = 'card';
 			const message = 'generic error';
 
 			expect( setFieldError( key, message ) ).toEqual( {
