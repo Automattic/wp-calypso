@@ -1,6 +1,4 @@
-import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
-import CardHeading from 'calypso/components/card-heading';
 import ConnectDomainStepProgress from './connect-domain-step-progress';
 import { stepSlug } from './constants';
 
@@ -8,7 +6,6 @@ import './style.scss';
 
 export default function ConnectDomainStepWrapper( {
 	className,
-	heading,
 	progressStepList,
 	pageSlug,
 	stepContent,
@@ -24,7 +21,6 @@ export default function ConnectDomainStepWrapper( {
 
 	return (
 		<div className={ className }>
-			{ /* <CardHeading className={ className + '__heading' }>{ heading }</CardHeading> */ }
 			{ showProgress && StepsProgress }
 			{ stepContent }
 		</div>
