@@ -94,7 +94,9 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 					},
 				} )
 					.then( ( response ) => response.json() )
-					.then( ( response ) => expect( response?.upload_status ).toStrictEqual( 'success' ) );
+					.then( ( response ) =>
+						expect( response?.data?.upload_status ).toStrictEqual( 'success' )
+					);
 			} );
 		} );
 	} );
