@@ -30,7 +30,6 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import {
@@ -38,7 +37,6 @@ import {
 	getSiteVerticalName,
 } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
-import { getUserExperience } from 'calypso/state/signup/steps/user-experience/selectors';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 
@@ -150,7 +148,6 @@ function getNewSiteParams( {
 	const siteTitle = getSiteTitle( state ).trim();
 	const siteVerticalId = getSiteVerticalId( state );
 	const siteVerticalName = getSiteVerticalName( state );
-	const siteGoals = getSiteGoals( state ).trim();
 	const siteType = getSiteType( state ).trim();
 	const siteSegment = getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
@@ -182,7 +179,6 @@ function getNewSiteParams( {
 			theme,
 			use_theme_annotation: get( signupDependencies, 'useThemeHeadstart', false ),
 			default_annotation_as_primary_fallback: shouldUseDefaultAnnotationAsFallback,
-			siteGoals: siteGoals || undefined,
 			site_segment: siteSegment || undefined,
 			site_vertical: siteVerticalId || undefined,
 			site_vertical_name: siteVerticalName || undefined,
@@ -726,7 +722,6 @@ export function createAccount(
 
 	const siteVertical = getSiteVertical( state );
 	const surveySiteType = getSurveySiteType( state ).trim();
-	const userExperience = getUserExperience( state );
 
 	const SIGNUP_TYPE_SOCIAL = 'social';
 	const SIGNUP_TYPE_DEFAULT = 'default';
@@ -844,7 +839,6 @@ export function createAccount(
 					signup_flow_name: flowName,
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: siteVertical,
-					nux_q_question_experience: userExperience || undefined,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
 					locale: getLocaleSlug(),

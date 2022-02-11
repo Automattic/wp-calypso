@@ -127,11 +127,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteSlug' ],
 		},
 
-		about: {
-			stepName: 'about',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo', 'siteTitle', 'surveyQuestion' ],
-		},
-
 		user: {
 			stepName: 'user',
 			apiRequestFunction: createAccount,
