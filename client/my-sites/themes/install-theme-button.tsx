@@ -2,17 +2,33 @@ import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { trackClick } from './helpers';
-
 import './install-theme-button.scss';
 
-const InstallThemeButton = ( {
+interface TracksEventProps {
+	tracksEventProps: { site_type: string | null };
+}
+
+interface InstallThemeButtonProps {
+	isMultisite: boolean | null;
+	jetpackSite: boolean | null;
+	isLoggedIn: boolean;
+	siteSlug: string | null;
+	siteCanInstallThemes: boolean | null;
+	dispatchTracksEvent( { tracksEventProps }: TracksEventProps ): void;
+	canUploadThemesOrPlugins: boolean;
+	atomicSite: boolean | null;
+}
+
+const InstallThemeButton: React.FC< InstallThemeButtonProps > = ( {
 	isMultisite,
 	jetpackSite,
 	isLoggedIn,
@@ -25,7 +41,7 @@ const InstallThemeButton = ( {
 		return null;
 	}
 
-	let siteType = null;
+	let siteType: string | null = null;
 	if ( ! isLoggedIn ) {
 		siteType = 'logged_out';
 	} else if ( atomicSite ) {
@@ -68,7 +84,7 @@ const InstallThemeButton = ( {
 	);
 };
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = ( state: IAppState ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const atomicSite = isAtomicSite( state, selectedSiteId );
 	return {
@@ -82,8 +98,8 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => ( {
-	dispatchTracksEvent: ( { tracksEventProps } ) =>
+const mapDispatchToProps = ( dispatch: Dispatch ) => ( {
+	dispatchTracksEvent: ( { tracksEventProps }: TracksEventProps ) =>
 		dispatch( recordTracksEvent( 'calypso_click_theme_upload', tracksEventProps ) ),
 } );
 
