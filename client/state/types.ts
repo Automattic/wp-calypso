@@ -1,5 +1,6 @@
 import type { IMarketplaceState } from 'calypso/state/marketplace/types';
 import type { IPluginsState } from 'calypso/state/plugins/reducer';
+import type { IUIState } from 'calypso/state/ui/types';
 import type { DefaultRootState } from 'react-redux';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
@@ -10,6 +11,7 @@ import type { ThunkDispatch } from 'redux-thunk';
 export interface IAppState extends DefaultRootState {
 	plugins: IPluginsState;
 	marketplace: IMarketplaceState;
+	ui: IUIState;
 }
 
 /**
