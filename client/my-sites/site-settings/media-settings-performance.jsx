@@ -69,7 +69,6 @@ class MediaSettingsPerformance extends Component {
 								? 'https://wordpress.com/support/videopress/'
 								: 'https://jetpack.com/support/videopress/'
 						}
-						privacyLink={ ! siteIsAtomic }
 					/>
 					<JetpackModuleToggle
 						siteId={ siteId }
