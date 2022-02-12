@@ -79,17 +79,18 @@ const getTitanClickHandler = ( app ) => {
  * Returns the available menu items for Titan Emails
  *
  * @param {Object} titanMenuParams The argument for this function.
- * @param {Function} titanMenuParams.showRemoveMailboxDialog The function that removes modal dialogs for confirming mailbox removals
+ * @param {Object} titanMenuParams.domain The domain object.
  * @param {Object} titanMenuParams.mailbox The mailbox object.
+ * @param {Function} titanMenuParams.showRemoveMailboxDialog The function that removes modal dialogs for confirming mailbox removals
  * @param {Function} titanMenuParams.translate The translate function.
  * @returns Array of menu items
  */
-const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) => {
+const getTitanMenuItems = ( { domain, mailbox, showRemoveMailboxDialog, translate } ) => {
 	const email = getEmailAddress( mailbox );
 
 	return [
 		{
-			href: getTitanEmailUrl( email ),
+			href: getTitanEmailUrl( domain, email ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
 			title: translate( 'View Mail', {
@@ -98,7 +99,7 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			onClick: getTitanClickHandler( 'webmail' ),
 		},
 		{
-			href: getTitanCalendarlUrl( email ),
+			href: getTitanCalendarlUrl( domain, email ),
 			image: titanCalendarIcon,
 			imageAltText: translate( 'Titan Calendar icon' ),
 			title: translate( 'View Calendar', {
@@ -107,7 +108,7 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			onClick: getTitanClickHandler( 'calendar' ),
 		},
 		{
-			href: getTitanContactsUrl( email ),
+			href: getTitanContactsUrl( domain, email ),
 			image: titanContactsIcon,
 			imageAltText: translate( 'Titan Contacts icon' ),
 			title: translate( 'View Contacts', {
@@ -330,8 +331,9 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 	const getMenuItems = () => {
 		if ( domainHasTitanMailWithUs ) {
 			return getTitanMenuItems( {
-				showRemoveMailboxDialog: () => setRemoveTitanMailboxDialogVisible( true ),
+				domain,
 				mailbox,
+				showRemoveMailboxDialog: () => setRemoveTitanMailboxDialogVisible( true ),
 				translate,
 			} );
 		}
