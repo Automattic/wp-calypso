@@ -20,7 +20,7 @@
 		"clean": "npx rimraf dist",
 		"build": "NODE_ENV=production yarn dev",
 		"build:inline-help": "calypso-build",
-		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/inline-help",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/calypso-inline-help",
 		"dev-server": "webpack serve",
 		"show-stats": "NODE_ENV=production EMIT_STATS=true yarn build"
 	},
