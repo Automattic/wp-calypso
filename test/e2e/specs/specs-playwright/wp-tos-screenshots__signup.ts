@@ -82,7 +82,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 				const form = new FormData();
 				const bearerToken = DataHelper.getTosUploadToken();
 				form.append( 'zip_file', fs.createReadStream( zipFilename ) );
-				fetch( 'https://public-api.wordpress.com/wpcom/v2/screenshots', {
+				fetch( 'https://public-api.wordpress.com/wpcom/v2/tos-screenshots', {
 					method: 'POST',
 					body: form,
 					headers: {
