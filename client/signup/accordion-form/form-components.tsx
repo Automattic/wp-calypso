@@ -13,17 +13,18 @@ export const Label = styled( FormLabel )`
 	color: var( --studio-gray-50 );
 	font-weight: 500;
 	cursor: inherit;
+	margin-bottom: 24px;
 `;
 
 export const SubLabel = styled( Label )`
 	font-weight: 400;
 	text-decoration-line: none;
 	color: ${ ( props ) => ( props.color ? props.color : 'inherited' ) };
+	margin-bottom: 16px;
 `;
 
 const TextInput = styled( FormTextInput )`
 	input&.form-text-input {
-		margin-top: 16px;
 		border-radius: 4px;
 		line-height: 44px;
 		height: 44px;
@@ -38,7 +39,6 @@ const TextInput = styled( FormTextInput )`
 
 const TextArea = styled( FormTextArea )`
 	textarea&.form-textarea {
-		margin-top: 24px;
 		border-radius: 4px;
 		font-size: 14px;
 		&:focus,
@@ -72,6 +72,7 @@ const SocialMediaLabel = styled.span`
 	align-items: center;
 	display: flex;
 	gap: 10px;
+	margin-bottom: 12px;
 `;
 
 const AddressField = styled.div`
@@ -232,7 +233,8 @@ export function ContactInformation( {
 			<AddressField>
 				<TextAreaField
 					{ ...displayAddressProps }
-					label={ translate( 'Physical address' ) }
+					rows={ 3 }
+					label={ translate( 'Physical address (if you want a map on your site)' ) }
 					onChange={ onChange }
 				/>
 			</AddressField>
@@ -241,8 +243,12 @@ export function ContactInformation( {
 }
 
 export const HorizontalGrid = styled.div`
-	margin-top: 24px;
 	display: flex;
+	gap: 20px;
 	justify-content: space-between;
-	width: 627px;
+	margin-bottom: 20px;
+	flex-wrap: wrap;
+	@media ( min-width: 1100px ) {
+		flex-wrap: nowrap;
+	}
 `;
