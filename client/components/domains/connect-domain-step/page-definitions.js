@@ -19,7 +19,6 @@ export const connectADomainStepsDefinition = {
 		step: stepType.START,
 		component: ConnectDomainStepSuggestedStart,
 		next: stepSlug.SUGGESTED_LOGIN,
-		twoColumnsLayout: true,
 	},
 	[ stepSlug.SUGGESTED_LOGIN ]: {
 		mode: modeType.SUGGESTED,
@@ -30,7 +29,6 @@ export const connectADomainStepsDefinition = {
 		component: ConnectDomainStepLogin,
 		next: stepSlug.SUGGESTED_UPDATE,
 		prev: stepSlug.SUGGESTED_START,
-		twoColumnsLayout: true,
 	},
 	[ stepSlug.SUGGESTED_UPDATE ]: {
 		mode: modeType.SUGGESTED,
@@ -40,21 +38,20 @@ export const connectADomainStepsDefinition = {
 		},
 		component: ConnectDomainStepSuggestedRecords,
 		prev: stepSlug.SUGGESTED_LOGIN,
-		twoColumnsLayout: true,
 	},
 	[ stepSlug.SUGGESTED_CONNECTED ]: {
 		mode: modeType.SUGGESTED,
 		step: stepType.CONNECTED,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.SUGGESTED_UPDATE,
-		twoColumnsLayout: false,
+		singleColumnLayout: true,
 	},
 	[ stepSlug.SUGGESTED_VERIFYING ]: {
 		mode: modeType.SUGGESTED,
 		step: stepType.VERIFYING,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.SUGGESTED_UPDATE,
-		twoColumnsLayout: false,
+		singleColumnLayout: true,
 	},
 
 	// Advanced flow
@@ -64,7 +61,6 @@ export const connectADomainStepsDefinition = {
 		component: ConnectDomainStepAdvancedStart,
 		next: stepSlug.ADVANCED_LOGIN,
 		prev: stepSlug.SUGGESTED_START,
-		twoColumnsLayout: true,
 	},
 	[ stepSlug.ADVANCED_LOGIN ]: {
 		mode: modeType.ADVANCED,
@@ -75,7 +71,6 @@ export const connectADomainStepsDefinition = {
 		component: ConnectDomainStepLogin,
 		next: stepSlug.ADVANCED_UPDATE,
 		prev: stepSlug.ADVANCED_START,
-		twoColumnsLayout: true,
 	},
 	[ stepSlug.ADVANCED_UPDATE ]: {
 		mode: modeType.ADVANCED,
@@ -85,21 +80,20 @@ export const connectADomainStepsDefinition = {
 		},
 		component: ConnectDomainStepAdvancedRecords,
 		prev: stepSlug.ADVANCED_LOGIN,
-		twoColumnsLayout: true,
 	},
 	[ stepSlug.ADVANCED_CONNECTED ]: {
 		mode: modeType.ADVANCED,
 		step: stepType.CONNECTED,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.ADVANCED_UPDATE,
-		twoColumnsLayout: false,
+		singleColumnLayout: true,
 	},
 	[ stepSlug.ADVANCED_VERIFYING ]: {
 		mode: modeType.ADVANCED,
 		step: stepType.VERIFYING,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.ADVANCED_UPDATE,
-		twoColumnsLayout: false,
+		singleColumnLayout: true,
 	},
 };
 

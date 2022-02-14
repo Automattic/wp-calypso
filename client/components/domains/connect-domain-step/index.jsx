@@ -39,7 +39,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 	const mode = connectADomainStepsDefinition[ pageSlug ].mode;
 	const step = connectADomainStepsDefinition[ pageSlug ].step;
 	const prevPageSlug = connectADomainStepsDefinition[ pageSlug ].prev;
-	const isTwoColumnLayout = connectADomainStepsDefinition[ pageSlug ].twoColumnsLayout;
+	const isTwoColumnLayout = ! connectADomainStepsDefinition[ pageSlug ].singleColumnLayout;
 
 	const statusRef = useRef( {} );
 
