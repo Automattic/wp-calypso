@@ -13,7 +13,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { AppState, SiteSlug } from 'calypso/types';
+import { AppState } from 'calypso/types';
 
 import './difm-lite-in-progress.scss';
 
@@ -59,11 +59,7 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactE
 		);
 	};
 
-	// No need to check for null here since the button is not rendered till we have a slug
-	const getWebsiteContentLink = ( slug: SiteSlug | null ) =>
-		`/start/site-content-collection/website-content?siteSlug=${ slug }`;
-
-	const renderUserActionNotRequired = () => (
+	return isWebsiteContentSubmitted ? (
 		<EmptyContent
 			title={ translate( 'Our experts are building your site' ) }
 			line={ translate(
@@ -78,24 +74,20 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactE
 			illustrationWidth={ 144 }
 			className="difm-lite-in-progress__content"
 		/>
-	);
-
-	const renderUserActionRequired = () => (
+	) : (
 		<EmptyContent
 			title={ translate( 'Website content not submitted' ) }
 			line={ translate(
 				'Please provide the necessary information for the creation of your website. To access click on the button below.'
 			) }
 			action={ translate( 'Add content to your website' ) }
-			actionURL={ getWebsiteContentLink( slug ) }
+			actionURL={ `/start/site-content-collection/website-content?siteSlug=${ slug }` }
 			secondaryActionCallback={ recordEmailClick }
 			illustration={ WebsiteContentRequiredIllustration }
 			illustrationWidth={ 144 }
 			className="difm-lite-in-progress__content"
 		/>
 	);
-
-	return isWebsiteContentSubmitted ? renderUserActionNotRequired() : renderUserActionRequired();
 }
 
 DIFMLiteInProgress.propTypes = {
