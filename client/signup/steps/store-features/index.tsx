@@ -103,7 +103,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		},
 		{
 			key: 'power',
-			title: translate( 'More Power' ),
+			title: translate( 'More power' ),
 			description: (
 				<>
 					<span className="store-features__requirements">
@@ -118,7 +118,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 
 					<p>
 						{ translate(
-							'If you have multiple products or require extensive order and shipping management than this might suit your needs better.'
+							'If you have multiple products or require extensive order and shipping management then this might suit your needs better.'
 						) }
 					</p>
 
