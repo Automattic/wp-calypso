@@ -173,16 +173,6 @@ describe( 'reducer', () => {
 			...initialTestState,
 			websiteContent: [
 				{
-					id: 'page-1',
-					title: 'Page 1',
-					content: 'Some existing Page 1 content',
-					images: [
-						{ caption: 'sample.jpg', url: 'sample.jpg' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-				{
 					id: 'page-2',
 					title: 'Page 2',
 					content: 'Some existing Page 2 content',
