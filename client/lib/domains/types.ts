@@ -105,8 +105,8 @@ export type ResponseDomain = {
 	renewableUntil: string;
 	registryExpiryDate: string;
 	sslStatus: string | null;
-	subscriptionId: string | null;
 	subdomainPart?: string;
+	subscriptionId: string | null;
 	supportsDomainConnect: boolean;
 	supportsGdprConsentManagement: boolean;
 	supportsTransferApproval: boolean;
