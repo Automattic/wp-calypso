@@ -95,7 +95,7 @@ interface TextInputFieldProps {
 
 export function TextInputField( props: TextInputFieldProps ) {
 	return (
-		<FormFieldset sublabel={ props.sublabel }>
+		<FormFieldset>
 			<Label htmlFor={ props.name }>{ props.label }</Label>
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextInput { ...props } isError={ !! props.error } />
@@ -110,7 +110,7 @@ interface TextAreaFieldProps extends TextInputFieldProps {
 
 export function TextAreaField( props: TextAreaFieldProps ) {
 	return (
-		<FormFieldset sublabel={ props.sublabel }>
+		<FormFieldset>
 			<Label htmlFor={ props.name }>{ props.label }</Label>
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
