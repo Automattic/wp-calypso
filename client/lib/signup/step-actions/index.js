@@ -428,63 +428,51 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 		 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
 		 */
 		const patternPost = `
-			<!-- wp:columns {"align":"wide"} -->
-			<div class="wp-block-columns alignwide">
-				<!-- wp:column -->
-				<div class="wp-block-column">
-					<!-- wp:image -->
-					<figure class="wp-block-image"><img alt="" /></figure>
-					<!-- /wp:image -->
-				</div>
-				<!-- /wp:column -->
+			<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"100px","bottom":"100px"}},"color":{"background":"#ecf2f3"}},"layout":{"inherit":true}} -->
+			<div class="wp-block-group alignfull has-background" style="background-color:#ecf2f3;padding-top:100px;padding-bottom:100px"><!-- wp:columns {"align":"wide"} -->
+			<div class="wp-block-columns alignwide"><!-- wp:column -->
+			<div class="wp-block-column"><!-- wp:image {"id":4390,"sizeSlug":"large","linkDestination":"none"} -->
+			<figure class="wp-block-image size-large"><img src="https://dotcompatterns.files.wordpress.com/2022/02/pexels-cottonbro-7026777.jpg?w=683" alt="" class="wp-image-4390"/></figure>
+			<!-- /wp:image --></div>
+			<!-- /wp:column -->
 
-				<!-- wp:column {"style":{"spacing":{"padding":{"right":"10%","left":"5%"}}}} -->
-				<div class="wp-block-column" style="padding-right:10%;padding-left:5%">
-					<!-- wp:heading {"textAlign":"left","fontSize":"x-large"} -->
-					<h2 class="has-text-align-left has-x-large-font-size" id="item-name">${ translate(
-						'Item Name'
-					) }</h2>
-					<!-- /wp:heading -->
+			<!-- wp:column {"style":{"spacing":{"padding":{"right":"40px","left":"40px"}}}} -->
+			<div class="wp-block-column" style="padding-right:40px;padding-left:40px"><!-- wp:heading {"level":1,"style":{"typography":{"fontSize":"40px"},"spacing":{"margin":{"top":"0px"}}}} -->
+			<h1 id="item-name" style="font-size:40px;margin-top:0px">Item Name</h1>
+			<!-- /wp:heading -->
 
-					<!-- wp:paragraph {"align":"left","style":{"color":{"text":"#808080"}},"fontSize":"small"} -->
-					<p class="has-text-align-left has-text-color has-small-font-size" style="color:#808080">${ translate(
-						'Quick details'
-					) }</p>
-					<!-- /wp:paragraph -->
+			<!-- wp:heading {"style":{"color":{"text":"#76797a"}},"fontSize":"medium"} -->
+			<h2 class="has-text-color has-medium-font-size" id="0-00" style="color:#76797a">$0.00</h2>
+			<!-- /wp:heading -->
 
-					<!-- wp:heading {"level":3,"fontSize":"medium"} -->
-					<h3 class="has-medium-font-size" id="0-00">$0.00</h3>
-					<!-- /wp:heading -->
+			<!-- wp:paragraph {"style":{"color":{"text":"#444444"}},"fontSize":"small"} -->
+			<p class="has-text-color has-small-font-size" style="color:#444444">Short description of your item.</p>
+			<!-- /wp:paragraph -->
 
-					<!-- wp:jetpack/recurring-payments -->
-					<div class="wp-block-jetpack-recurring-payments">
-						<!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":"${ translate(
-							'Buy Now'
-						) }","backgroundColor":"primary","borderRadius":0,"width":"100%"} /-->
-					</div>
-					<!-- /wp:jetpack/recurring-payments -->
+			<!-- wp:jetpack/recurring-payments -->
+			<div class="wp-block-jetpack-recurring-payments"><!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":"Buy Now","textColor":"background","backgroundColor":"black","borderRadius":0,"width":"100%"} /--></div>
+			<!-- /wp:jetpack/recurring-payments -->
 
-					<!-- wp:spacer {"height":"20px"} -->
-					<div style="height:20px" aria-hidden="true" class="wp-block-spacer"></div>
-					<!-- /wp:spacer -->
+			<!-- wp:spacer {"height":"20px"} -->
+			<div style="height:20px" aria-hidden="true" class="wp-block-spacer"></div>
+			<!-- /wp:spacer -->
 
-					<!-- wp:paragraph {"align":"left","style":{"typography":{"fontSize":18}}} -->
-					<p class="has-text-align-left" style="font-size:18px">${ translate(
-						`Describe your item. You can add a few lines here that describe the item you're selling. Or just delete this block if you don't need it!`
-					) }</p>
-					<!-- /wp:paragraph -->
+			<!-- wp:paragraph {"fontSize":"small"} -->
+			<p class="has-small-font-size"><strong>Description</strong></p>
+			<!-- /wp:paragraph -->
 
-					<!-- wp:social-links {"iconColor":"foreground-dark","iconColorValue":"#101010","className":"is-style-logos-only"} -->
-					<ul class="wp-block-social-links has-icon-color is-style-logos-only">
-						<!-- wp:social-link {"service":"facebook"} /-->
+			<!-- wp:paragraph {"style":{"color":{"text":"#444444"}},"fontSize":"small"} -->
+			<p class="has-text-color has-small-font-size" style="color:#444444">Describe your item. Use this section to add a full description and details of your product, along with its many selling points.</p>
+			<!-- /wp:paragraph -->
 
-						<!-- wp:social-link {"service":"twitter"} /-->
-					</ul>
-					<!-- /wp:social-links -->
-				</div>
-				<!-- /wp:column -->
-			</div>
-			<!-- /wp:columns -->
+			<!-- wp:social-links {"iconColor":"cyan-bluish-gray","iconColorValue":"#abb8c3","className":"is-style-logos-only"} -->
+			<ul class="wp-block-social-links has-icon-color is-style-logos-only"><!-- wp:social-link {"url":"#","service":"facebook"} /-->
+
+			<!-- wp:social-link {"url":"#","service":"instagram"} /--></ul>
+			<!-- /wp:social-links --></div>
+			<!-- /wp:column --></div>
+			<!-- /wp:columns --></div>
+			<!-- /wp:group -->
 		`;
 		// Create a new Home page
 		const newPage = await wpcom.req.post( {
