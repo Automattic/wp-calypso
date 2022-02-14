@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.svg';
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -176,7 +175,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			fallbackHeaderText={ headerText }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
-			headerImageUrl={ intentImageUrl }
+			headerImageUrl={ null }
 			stepContent={ <SelectItems items={ intents } onSelect={ onSelect } /> }
 			align={ 'left' }
 			hideSkip={ true }
