@@ -265,10 +265,9 @@ const PluginsBrowser = ( {
 						/>
 
 						<UploadPluginButton isMobile={ isMobile } siteSlug={ siteSlug } />
-
-						<div className="plugins-browser__searchbox">
-							{ <SearchBox isMobile={ isMobile } doSearch={ doSearch } search={ search } /> }
-						</div>
+					</div>
+					<div className="plugins-browser__searchbox">
+						{ <SearchBox isMobile={ isMobile } doSearch={ doSearch } search={ search } /> }
 					</div>
 				</FixedNavigationHeader>
 			) }

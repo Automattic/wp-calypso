@@ -7,6 +7,10 @@
 
 	.search-component {
 		height: 30px;
+		&.is-expanded-to-container {
+			height: 100%;
+		}
+
 		box-shadow: 0 0 0 1px var( --studio-gray-10 );
 
 		.search-component__open-icon,
