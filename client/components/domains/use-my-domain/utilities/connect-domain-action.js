@@ -38,7 +38,7 @@ export const connectDomainAction = (
 					)
 				);
 				const step = result.points_to_wpcom ? stepSlug.SUGGESTED_CONNECTED : '';
-				page( domainMappingSetup( selectedSite.slug, domain, step, false, true ) );
+				page( domainMappingSetup( selectedSite.slug, domain, step ) );
 			} )
 			.catch( ( error ) => {
 				if ( 'ownership_verification_failed' !== error.error ) {
