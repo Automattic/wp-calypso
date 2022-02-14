@@ -735,6 +735,7 @@ class ThemeSheet extends Component {
 						)
 					) }
 					event="themes_plan_particular_free_with_plan"
+					feature={ FEATURE_PREMIUM_THEMES }
 					forceHref={ true }
 					href={ plansUrl }
 					showIcon={ true }
