@@ -27,18 +27,17 @@ class ModerateComment extends Component {
 		this.moderate( this.props );
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
 		if (
-			this.props.siteId === nextProps.siteId &&
-			this.props.postId === nextProps.postId &&
-			this.props.commentId === nextProps.commentId &&
-			this.props.newStatus === nextProps.newStatus
+			this.props.siteId === prevProps.siteId &&
+			this.props.postId === prevProps.postId &&
+			this.props.commentId === prevProps.commentId &&
+			this.props.newStatus === prevProps.newStatus
 		) {
 			return;
 		}
 
-		this.moderate( nextProps );
+		this.moderate( this.props );
 	}
 
 	showNotice( status ) {
