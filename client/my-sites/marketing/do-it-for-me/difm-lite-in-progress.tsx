@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import SiteBuildInProgressIllustration from 'calypso/assets/images/difm/site-build-in-progress.svg';
+import WebsiteContentRequiredIllustration from 'calypso/assets/images/difm/website-content-required.svg';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
@@ -10,6 +11,7 @@ import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
 
@@ -21,6 +23,9 @@ type DIFMLiteInProgressProps = {
 
 function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactElement {
 	const slug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
+	const isWebsiteContentSubmitted = useSelector( ( state ) =>
+		isDIFMLiteWebsiteContentSubmitted( state, siteId )
+	);
 	const primaryDomain = useSelector( ( state: AppState ) =>
 		getPrimaryDomainBySiteId( state, siteId )
 	);
@@ -29,14 +34,14 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactE
 
 	if ( ! primaryDomain ) {
 		return (
-			<div>
+			<>
 				<QuerySiteDomains siteId={ siteId } />
 				<EmptyContent
 					className="difm-lite-in-progress__site-placeholder"
 					illustration={ SiteBuildInProgressIllustration }
 					illustrationWidth={ 144 }
 				/>
-			</div>
+			</>
 		);
 	}
 
@@ -54,23 +59,34 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactE
 		);
 	};
 
-	return (
-		<div>
-			<EmptyContent
-				title={ translate( 'Our experts are building your site' ) }
-				line={ translate(
-					"Our team is building your site. We'll be in touch when your site is ready."
-				) }
-				action={ translate( 'Manage domain' ) }
-				actionURL={ domainManagementList( slug ) }
-				secondaryAction={ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
-				secondaryActionURL={ emailManagement( slug, null ) }
-				secondaryActionCallback={ recordEmailClick }
-				illustration={ SiteBuildInProgressIllustration }
-				illustrationWidth={ 144 }
-				className="difm-lite-in-progress__content"
-			/>
-		</div>
+	return isWebsiteContentSubmitted ? (
+		<EmptyContent
+			title={ translate( 'Our experts are building your site' ) }
+			line={ translate(
+				"Our team is building your site. We'll be in touch when your site is ready."
+			) }
+			action={ translate( 'Manage domain' ) }
+			actionURL={ domainManagementList( slug ) }
+			secondaryAction={ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
+			secondaryActionURL={ emailManagement( slug, null ) }
+			secondaryActionCallback={ recordEmailClick }
+			illustration={ SiteBuildInProgressIllustration }
+			illustrationWidth={ 144 }
+			className="difm-lite-in-progress__content"
+		/>
+	) : (
+		<EmptyContent
+			title={ translate( 'Website content not submitted' ) }
+			line={ translate(
+				'Please provide the necessary information for the creation of your website. To access click on the button below.'
+			) }
+			action={ translate( 'Add content to your website' ) }
+			actionURL={ `/start/site-content-collection/website-content?siteSlug=${ slug }` }
+			secondaryActionCallback={ recordEmailClick }
+			illustration={ WebsiteContentRequiredIllustration }
+			illustrationWidth={ 144 }
+			className="difm-lite-in-progress__content"
+		/>
 	);
 }
 
