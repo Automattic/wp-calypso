@@ -36,6 +36,7 @@ const showErrorNotice = ( error ) => {
 		'too large': translate( 'The plugin zip file must be smaller than 10MB.' ),
 		incompatible: translate( 'The uploaded file is not a compatible plugin.' ),
 		unsupported_mime_type: translate( 'The uploaded file is not a valid zip.' ),
+		'invalid plugin': translate( 'The uploaded file is identified as malicious.' ),
 	};
 	const errorString = `${ error.error }${ error.message }`.toLowerCase();
 	const knownError = find( knownErrors, ( v, key ) => includes( errorString, key ) );
