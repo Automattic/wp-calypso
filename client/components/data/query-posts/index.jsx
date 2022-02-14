@@ -1,7 +1,8 @@
 import isShallowEqual from '@wordpress/is-shallow-equal';
 import debug from 'debug';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useMemoizedValue } from 'calypso/lib/use-memoized-value';
 import {
 	requestSitePosts,
 	requestSitePost,
@@ -13,14 +14,6 @@ import { isRequestingPostsForQuery, isRequestingSitePost } from 'calypso/state/p
  * Module variables
  */
 const log = debug( 'calypso:query-posts' );
-
-const useMemoizedQuery = ( query ) => {
-	const memoizedQuery = useRef();
-	if ( ! isShallowEqual( query, memoizedQuery.current ) ) {
-		memoizedQuery.current = query;
-	}
-	return memoizedQuery.current;
-};
 
 const request = ( siteId, postId, query ) => ( dispatch, getState ) => {
 	const state = getState();
@@ -45,7 +38,7 @@ const request = ( siteId, postId, query ) => ( dispatch, getState ) => {
 
 function QueryPosts( { siteId, postId, query } ) {
 	const dispatch = useDispatch();
-	const memoizedQuery = useMemoizedQuery( query );
+	const memoizedQuery = useMemoizedValue( query, isShallowEqual );
 
 	useEffect( () => {
 		dispatch( request( siteId, postId, memoizedQuery ) );
