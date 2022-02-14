@@ -5,6 +5,7 @@ import Button from 'calypso/components/forms/form-button';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
+import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -40,9 +41,10 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 	const needsCredentials = useSelector( ( state ) =>
 		getDoesRewindNeedCredentials( state, siteId )
 	);
+	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
 
-	const canRestore = ! disabled && ! needsCredentials;
-	const href = canRestore ? backupRestorePath( siteSlug, rewindId ) : undefined;
+	const isRestoreDisabled = disabled || needsCredentials || isRestoreInProgress;
+	const href = ! isRestoreDisabled ? backupRestorePath( siteSlug, rewindId ) : undefined;
 	const onRestore = () =>
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore', { rewind_id: rewindId } ) );
 
@@ -51,7 +53,7 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 			isPrimary
 			className="daily-backup-status__restore-button"
 			href={ href }
-			disabled={ ! canRestore }
+			disabled={ isRestoreDisabled }
 			onClick={ onRestore }
 		>
 			{ translate( 'Restore to this point' ) }
