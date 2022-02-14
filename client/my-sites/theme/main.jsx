@@ -719,7 +719,8 @@ class ThemeSheet extends Component {
 		// Show theme upsell banner on Atomic sites.
 		const hasThemeUpsellBannerAtomic = isAtomic && isPremium && ! canUserUploadThemes;
 
-		const hasUpsellBanner = hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner;
+		const hasUpsellBanner =
+			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
 
 		if ( hasWpComThemeUpsellBanner ) {
 			pageUpsellBanner = (
