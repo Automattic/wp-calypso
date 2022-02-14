@@ -1,6 +1,4 @@
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
@@ -30,7 +28,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const translate = useTranslate();
 	const headerText = translate( 'Set up your store' );
 	const subHeaderText = translate( 'Let’s create a website that suits your needs.' );
-	const siteSlug = props.signupDependencies.siteSlug;
+	const { siteSlug, siteTitle, tagline } = props.signupDependencies;
 	const { stepName, goToNextStep } = props;
 
 	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );
@@ -155,19 +153,16 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		} );
 		switch ( selectedOption ) {
 			case 'power':
-				page(
-					addQueryArgs( `/start/woocommerce-install`, {
-						back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
-						siteSlug: siteSlug,
-					} )
+				dispatch(
+					submitSignupStep( { stepName }, { siteTitle, tagline, storeType: 'woocommerce' } )
 				);
 				break;
 
 			case 'simple': {
 				dispatch( submitSignupStep( { stepName } ) );
-				goToNextStep();
 			}
 		}
+		goToNextStep();
 	};
 
 	return (

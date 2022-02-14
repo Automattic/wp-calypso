@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
+import { addQueryArgs as addWPQueryArgs } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -98,7 +99,7 @@ function getEditorDestination( dependencies ) {
 }
 
 function getDestinationFromIntent( dependencies ) {
-	const { intent, startingPoint, siteSlug, isFSEActive } = dependencies;
+	const { intent, storeType, startingPoint, siteSlug, isFSEActive } = dependencies;
 
 	// If the user skips starting point, redirect them to My Home
 	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
@@ -107,6 +108,13 @@ function getDestinationFromIntent( dependencies ) {
 		}
 
 		return `/post/${ siteSlug }`;
+	}
+
+	if ( intent === 'sell' && storeType === 'woocommerce' ) {
+		return addWPQueryArgs( `/start/woocommerce-install`, {
+			back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
+			siteSlug: siteSlug,
+		} );
 	}
 
 	if ( ! isFSEActive && intent === 'sell' ) {
