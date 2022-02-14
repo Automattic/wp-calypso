@@ -494,6 +494,7 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 				content: patternPost,
 				title: translate( 'Home' ),
 				status: 'publish',
+				template: 'header-footer-only',
 			},
 		} );
 
