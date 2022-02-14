@@ -38,6 +38,7 @@ import {
 	getSiteVerticalName,
 } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
+import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 
