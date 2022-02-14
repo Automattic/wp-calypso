@@ -12,11 +12,11 @@ export default ( state = [], action ) => {
 		case BREADCRUMB_UPDATE_LIST:
 			return [ ...action.items ];
 		case BREADCRUMB_APPEND_ITEM:
-			// Don't append if it is the same as the last item
+			// If it is the same kind as the last item, replace it.
 			// eslint-disable-next-line no-case-declarations
 			const currentLastItem = state[ state.length - 1 ] || {};
-			if ( currentLastItem.label === action.item?.label ) {
-				return [ ...state ];
+			if ( currentLastItem.id === action.item?.id ) {
+				state.pop();
 			}
 
 			return [ ...state, action.item ];

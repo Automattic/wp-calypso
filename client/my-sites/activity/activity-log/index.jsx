@@ -166,6 +166,7 @@ class ActivityLog extends Component {
 			{
 				label: this.props.translate( 'Activity Log' ),
 				href: `/activity-log/${ this.props.slug || '' }`,
+				id: 'activity-log',
 			},
 		] );
 	}
