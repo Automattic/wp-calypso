@@ -125,7 +125,6 @@ class PasswordlessSignupForm extends Component {
 
 		this.submitStep( {
 			username,
-			user_id: userId,
 			marketing_price_group,
 			bearer_token: response.bearer_token,
 		} );
