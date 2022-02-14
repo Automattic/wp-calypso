@@ -8,6 +8,8 @@ import {
 	JETPACK_MODULE_DEACTIVATE,
 	JETPACK_MODULE_DEACTIVATE_FAILURE,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	JETPACK_MODULE_KEY_CHECK_REQUEST,
+	JETPACK_MODULE_KEY_CHECK_SET,
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_MODULES_REQUEST,
 	JETPACK_MODULES_REQUEST_FAILURE,
@@ -15,6 +17,7 @@ import {
 } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
+import 'calypso/state/data-layer/wpcom/jetpack/modules';
 import 'calypso/state/jetpack/init';
 
 const noticeSettings = {
@@ -165,3 +168,16 @@ export const fetchModuleList = ( siteId ) => {
 			} );
 	};
 };
+
+export const checkModuleKey = ( siteId, moduleSlug ) => ( {
+	type: JETPACK_MODULE_KEY_CHECK_REQUEST,
+	siteId,
+	moduleSlug,
+} );
+
+export const setJetpackModuleKeyCheck = ( siteId, moduleSlug, isValid ) => ( {
+	type: JETPACK_MODULE_KEY_CHECK_SET,
+	siteId,
+	moduleSlug,
+	isValid,
+} );

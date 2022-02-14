@@ -9,7 +9,8 @@ import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import ExternalLink from 'calypso/components/external-link';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -19,7 +20,9 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SupportInfo from 'calypso/components/support-info';
+import { checkModuleKey } from 'calypso/state/jetpack/modules/actions';
 import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import { isJetpackModuleKeyValid } from 'calypso/state/selectors/is-jetpack-module-key-valid';
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getSiteProducts } from 'calypso/state/sites/selectors';
@@ -33,10 +36,12 @@ const SpamFilteringSettings = ( {
 	hasAkismetKeyError,
 	hasAntiSpamFeature,
 	hasJetpackAntiSpamProduct,
+	isAkimestKeyValid,
 	isRequestingSettings,
 	isRequestingSitePurchases,
 	isSavingSettings,
 	onChangeField,
+	siteId,
 	siteSlug,
 	translate,
 } ) => {
@@ -49,11 +54,18 @@ const SpamFilteringSettings = ( {
 	const inTransition = isRequestingSettings || isSavingSettings || isRequestingSitePurchases;
 	const isValidKey =
 		( wordpress_api_key && isStoredKey ) ||
-		( wordpress_api_key && isDirty && isStoredKey && ! hasAkismetKeyError );
+		( wordpress_api_key && isDirty && isStoredKey && ! hasAkismetKeyError ) ||
+		( ! wordpress_api_key && isAkimestKeyValid && ! isDirty );
 	const isInvalidKey = ( isDirty && hasAkismetKeyError && ! isStoredKey ) || isEmptyKey;
 	let validationText;
 	let className;
 	let header = null;
+
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( checkModuleKey( siteId, 'akismet' ) );
+	}, [ dispatch, siteId ] );
 
 	if ( inTransition ) {
 		return null;
@@ -153,25 +165,30 @@ SpamFilteringSettings.propTypes = {
 	siteSlug: PropTypes.string,
 };
 
-export default connect( ( state, { dirtyFields, fields } ) => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const selectedSiteSlug = getSelectedSiteSlug( state );
-	const hasAkismetKeyError =
-		isJetpackSettingsSaveFailure( state, selectedSiteId, fields ) &&
-		includes( dirtyFields, 'wordpress_api_key' );
-	const hasAkismetFeature = hasFeature( state, selectedSiteId, FEATURE_SPAM_AKISMET_PLUS );
-	const hasAntiSpamFeature =
-		hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM ) ||
-		hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM_MONTHLY );
-	const hasJetpackAntiSpamProduct =
-		getSiteProducts( state, selectedSiteId )?.filter( isJetpackAntiSpam ).length > 0;
+export default connect(
+	( state, { dirtyFields, fields } ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+		const selectedSiteSlug = getSelectedSiteSlug( state );
+		const hasAkismetKeyError =
+			isJetpackSettingsSaveFailure( state, selectedSiteId, fields ) &&
+			includes( dirtyFields, 'wordpress_api_key' );
+		const hasAkismetFeature = hasFeature( state, selectedSiteId, FEATURE_SPAM_AKISMET_PLUS );
+		const hasAntiSpamFeature =
+			hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM ) ||
+			hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM_MONTHLY );
+		const hasJetpackAntiSpamProduct =
+			getSiteProducts( state, selectedSiteId )?.filter( isJetpackAntiSpam ).length > 0;
 
-	return {
-		hasAkismetFeature,
-		hasAkismetKeyError,
-		hasAntiSpamFeature,
-		hasJetpackAntiSpamProduct,
-		siteSlug: selectedSiteSlug,
-		isRequestingSitePurchases: isFetchingSitePurchases( state ),
-	};
-} )( localize( SpamFilteringSettings ) );
+		return {
+			hasAkismetFeature,
+			hasAkismetKeyError,
+			hasAntiSpamFeature,
+			hasJetpackAntiSpamProduct,
+			isAkimestKeyValid: isJetpackModuleKeyValid( state, selectedSiteId, 'akismet' ),
+			siteId: selectedSiteId,
+			siteSlug: selectedSiteSlug,
+			isRequestingSitePurchases: isFetchingSitePurchases( state ),
+		};
+	},
+	{ checkModuleKey }
+)( localize( SpamFilteringSettings ) );

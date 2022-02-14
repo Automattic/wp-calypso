@@ -6,6 +6,7 @@ import {
 	JETPACK_MODULE_DEACTIVATE,
 	JETPACK_MODULE_DEACTIVATE_FAILURE,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	JETPACK_MODULE_KEY_CHECK_SET,
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_MODULES_REQUEST,
 	JETPACK_MODULES_REQUEST_FAILURE,
@@ -78,6 +79,18 @@ const createSettingsItemsReducer = () => {
 	};
 };
 
+const createKeysReducer = () => {
+	return ( state, { siteId, moduleSlug, isValid } ) => {
+		return merge( {}, state, {
+			[ siteId ]: {
+				[ moduleSlug ]: {
+					isValid,
+				},
+			},
+		} );
+	};
+};
+
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack modules data updates
@@ -136,7 +149,24 @@ export const requests = ( state = {}, action ) => {
 	return state;
 };
 
+/**
+ * `Reducer` function which handles actions concerning Jetpack modules keys.
+ *
+ * @param  {Array}  state  Current state
+ * @param  {object} action action
+ * @returns {Array}         Updated state
+ */
+export const keys = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case JETPACK_MODULE_KEY_CHECK_SET:
+			return createKeysReducer()( state, action );
+	}
+
+	return state;
+};
+
 export const reducer = combineReducers( {
 	items,
+	keys,
 	requests,
 } );
