@@ -71,16 +71,16 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 		selectOptions: [
 			PLACEHOLDER,
 			{
-				value: 'tooExpensice',
-				label: translate( 'Too expensive' ),
+				value: 'tooExpensive',
+				label: translate( 'It’s too expensive.' ),
 			},
 			{
 				value: 'wantCheaperPlan',
-				label: translate( 'I want a cheaper plan' ),
+				label: translate( 'I want a cheaper plan.' ),
 			},
 			{
 				value: 'freeIsGoodEnough',
-				label: translate( 'Free is good enough for me' ),
+				label: translate( 'Free is good enough for me.' ),
 			},
 		],
 	},
@@ -95,15 +95,15 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 			},
 			{
 				value: 'needProfessionalHelp',
-				label: translate( 'Need professional help to build my site' ),
+				label: translate( 'Need professional help to build my site.' ),
 			},
 			{
 				value: 'siteIsNotReady',
-				label: translate( 'My site is not ready' ),
+				label: translate( 'My site is not ready.' ),
 			},
 			{
 				value: 'cannotFindWhatIWanted',
-				label: translate( 'Couldn’t find what I wanted' ),
+				label: translate( 'Couldn’t find what I wanted.' ),
 			},
 		],
 	},
@@ -145,7 +145,7 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 			PLACEHOLDER,
 			{
 				value: 'tooComplicated',
-				label: translate( 'It’s too complicated for me' ),
+				label: translate( 'It’s too complicated for me.' ),
 			},
 			{
 				value: 'seoIssues',
@@ -164,7 +164,7 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 			PLACEHOLDER,
 			{
 				value: 'didNotGetFreeDomain',
-				label: translate( 'I didn’t get a free domain' ),
+				label: translate( 'I didn’t get a free domain.' ),
 			},
 			{
 				value: 'otherDomainIssues',
