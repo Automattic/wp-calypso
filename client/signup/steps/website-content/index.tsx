@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
+import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import getDIFMLiteSiteCategory from 'calypso/state/selectors/get-difm-lite-site-category';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
@@ -9,7 +10,6 @@ import {
 	initializePages,
 	updateWebsiteContentCurrentIndex,
 } from 'calypso/state/signup/steps/website-content/actions';
-import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
 import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
@@ -21,7 +21,7 @@ import './style.scss';
 
 interface WebsiteContentStepProps {
 	additionalStepData: object;
-	submitSignupStep: ( step: { stepName: string }, formValues: WebsiteContent ) => void;
+	submitSignupStep: ( step: { stepName: string } ) => void;
 	goToNextStep: () => void;
 	flowName: string;
 	stepName: string;
@@ -45,7 +45,7 @@ function WebsiteContentStep( {
 	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const [ formErrors, setFormErrors ] = useState< any >( {} );
+	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 
 	useEffect( () => {
 		function getPageFromCategory( category: string | null ) {
@@ -79,14 +79,12 @@ function WebsiteContentStep( {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [ dispatch, stepName ] );
 
-	const onSubmit = ( formValues: WebsiteContent ) => {
+	const onSubmit = () => {
 		const step = {
 			stepName,
 			...additionalStepData,
 		};
-		submitSignupStep( step, {
-			...formValues,
-		} );
+		submitSignupStep( step );
 		goToNextStep();
 	};
 
