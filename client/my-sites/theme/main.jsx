@@ -657,6 +657,7 @@ class ThemeSheet extends Component {
 			siteSlug,
 			retired,
 			hasUnlimitedPremiumThemes,
+			isAtomic,
 			isPremium,
 			isJetpack,
 			isWpcomTheme,
@@ -709,10 +710,15 @@ class ThemeSheet extends Component {
 		let pageUpsellBanner;
 		let previewUpsellBanner;
 
+		// Show theme upsell banner on Simple sites.
 		const hasWpComThemeUpsellBanner =
 			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
+		// Show theme upsell banner on Jetpack sites.
 		const hasWpOrgThemeUpsellBanner =
-			! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
+			! isAtomic && ! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
+		// Show theme upsell banner on Atomic sites.
+		const hasThemeUpsellBannerAtomic = isAtomic && isPremium && ! canUserUploadThemes;
+
 		const hasUpsellBanner = hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner;
 
 		if ( hasWpComThemeUpsellBanner ) {
@@ -734,7 +740,7 @@ class ThemeSheet extends Component {
 			);
 		}
 
-		if ( hasWpOrgThemeUpsellBanner ) {
+		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }
