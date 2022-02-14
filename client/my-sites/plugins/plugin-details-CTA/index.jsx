@@ -226,7 +226,7 @@ const CTAButton = ( {
 	);
 
 	const pluginRequiresCustomPrimaryDomain =
-		( primaryDomain?.isWpcomDomain || primaryDomain?.isWpcomStagingDomain ) &&
+		( primaryDomain?.isWPCOMDomain || primaryDomain?.isWpcomStagingDomain ) &&
 		plugin?.requirements?.required_primary_domain;
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 

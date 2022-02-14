@@ -1,4 +1,5 @@
 import { Dialog } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -21,6 +22,8 @@ export const PluginCustomDomainDialog = ( {
 	onProceed,
 }: Props ): JSX.Element => {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
+
 	const selectedSiteUrl = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 
 	const hasNonPrimaryCustomDomain = domains.some(
@@ -30,7 +33,7 @@ export const PluginCustomDomainDialog = ( {
 	const buttons = [
 		{
 			action: 'learn-more',
-			href: '/support/domains/#set-a-primary-address',
+			href: localizeUrl( 'https://wordpress.com/support/domains/#set-a-primary-address' ),
 			label: translate( 'Learn more' ),
 		},
 		{
