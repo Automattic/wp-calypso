@@ -33,6 +33,7 @@ class Shortcodes extends Component {
 			moduleUnavailable,
 			selectedSiteId,
 			translate,
+			siteIsAutomatedTransfer,
 		} = this.props;
 
 		return (
@@ -42,7 +43,12 @@ class Shortcodes extends Component {
 					text={ translate(
 						'Shortcodes are WordPress-specific markup that let you add media from popular sites. This feature is no longer necessary as the editor now handles media embeds rather gracefully.'
 					) }
-					link="https://jetpack.com/support/shortcode-embeds/"
+					link={
+						siteIsAutomatedTransfer
+							? 'https://wordpress.com/support/shortcodes/'
+							: 'https://jetpack.com/support/shortcode-embeds/'
+					}
+					privacyLink="https://jetpack.com/support/shortcode-embeds/#privacy"
 				/>
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }

@@ -1,8 +1,5 @@
 import { CompactCard } from '@automattic/components';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
 import Latex from './latex';
@@ -11,6 +8,8 @@ import PublishConfirmation from './publish-confirmation';
 import Shortcodes from './shortcodes';
 
 const Composing = ( {
+	siteIsAutomatedTransfer,
+	siteIsJetpack,
 	eventTracker,
 	fields,
 	handleSelect,
@@ -19,7 +18,6 @@ const Composing = ( {
 	isSavingSettings,
 	onChangeField,
 	setFieldValue,
-	siteIsJetpack,
 	updateFields,
 } ) => (
 	<>
@@ -38,6 +36,8 @@ const Composing = ( {
 			fields={ fields }
 			isRequestingSettings={ isRequestingSettings }
 			isSavingSettings={ isSavingSettings }
+			siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+			siteIsJetpack={ siteIsJetpack }
 			handleToggle={ handleToggle }
 		/>
 
@@ -48,6 +48,7 @@ const Composing = ( {
 					handleToggle={ handleToggle }
 					isRequestingSettings={ isRequestingSettings }
 					isSavingSettings={ isSavingSettings }
+					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
 					setFieldValue={ setFieldValue }
 				/>
 				<Shortcodes
@@ -55,6 +56,7 @@ const Composing = ( {
 					handleToggle={ handleToggle }
 					isRequestingSettings={ isRequestingSettings }
 					isSavingSettings={ isSavingSettings }
+					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
 					setFieldValue={ setFieldValue }
 				/>
 			</>
@@ -77,6 +79,8 @@ Composing.defaultProps = {
 };
 
 Composing.propTypes = {
+	siteIsAutomatedTransfer: PropTypes.bool,
+	siteIsJetpack: PropTypes.bool,
 	eventTracker: PropTypes.func.isRequired,
 	fields: PropTypes.object,
 	handleSelect: PropTypes.func.isRequired,
@@ -88,6 +92,4 @@ Composing.propTypes = {
 	updateFields: PropTypes.func.isRequired,
 };
 
-export default connect( ( state ) => ( {
-	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
-} ) )( Composing );
+export default Composing;

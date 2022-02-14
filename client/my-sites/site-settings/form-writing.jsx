@@ -62,6 +62,8 @@ class SiteSettingsFormWriting extends Component {
 					title={ translate( 'Composing' ) }
 				/>
 				<Composing
+					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+					siteIsJetpack={ siteIsJetpack }
 					handleSelect={ handleSelect }
 					handleToggle={ handleToggle }
 					onChangeField={ onChangeField }

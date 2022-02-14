@@ -24,10 +24,12 @@ class Latex extends Component {
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
 		fields: PropTypes.object,
+		siteIsAutomatedTransfer: PropTypes.bool,
 	};
 
 	render() {
 		const {
+			siteIsAutomatedTransfer,
 			isRequestingSettings,
 			isSavingSettings,
 			moduleUnavailable,
@@ -42,7 +44,12 @@ class Latex extends Component {
 					text={ translate(
 						'LaTeX is a powerful markup language for writing complex mathematical equations and formulas.'
 					) }
-					link="https://jetpack.com/support/beautiful-math/"
+					link={
+						siteIsAutomatedTransfer
+							? 'https://wordpress.com/support/latex/'
+							: 'https://jetpack.com/support/beautiful-math-with-latex/'
+					}
+					privacyLink="https://jetpack.com/support/beautiful-math-with-latex/#privacy"
 				/>
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }
