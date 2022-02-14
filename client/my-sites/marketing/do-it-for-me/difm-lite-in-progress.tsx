@@ -34,14 +34,14 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactE
 
 	if ( ! primaryDomain ) {
 		return (
-			<div>
+			<>
 				<QuerySiteDomains siteId={ siteId } />
 				<EmptyContent
 					className="difm-lite-in-progress__site-placeholder"
 					illustration={ SiteBuildInProgressIllustration }
 					illustrationWidth={ 144 }
 				/>
-			</div>
+			</>
 		);
 	}
 
