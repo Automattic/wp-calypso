@@ -355,7 +355,7 @@ const MarketplacePluginInstall = ( {
 					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate(
-						'This plugin is identified as malicious. If you want to install the plugin, please continue by uploading the plugin again from WP Admin.'
+						'This plugin is identified as malicious. If you still insist to install the plugin, please continue by uploading the plugin again from WP Admin.'
 					) }
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
