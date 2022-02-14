@@ -82,6 +82,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			await testPage.goto( postURL );
 			const publishedPostPage = new PublishedPostPage( testPage );
 			await publishedPostPage.validateTextInPost( postContent );
+			await testPage.close();
 		} );
 
 		it( 'View post as public', async function () {
@@ -92,6 +93,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			await publishedPostPage.validateTextInPost(
 				'It looks like nothing was found at this location. Maybe try a search?'
 			);
+			await testPage.close();
 		} );
 	} );
 
@@ -102,14 +104,13 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			const frame = await gutenbergEditorPage.getEditorFrame();
 			await gutenbergEditorPage.openSettings();
 			editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( frame, page );
+
 			await editorSettingsSidebarComponent.clickTab( 'Post' );
 			await editorSettingsSidebarComponent.openSchedule();
 		} );
 
 		it( 'Schedule post to first day of last month', async function () {
-			await page.pause();
-
-			// Get the previous month.
+			// Get the previous month. Dates in JS are 0-indexed.
 			const date = new Date();
 			date.setMonth( new Date().getMonth() - 1 );
 
@@ -140,6 +141,8 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 				await testPage.goto( postURL );
 				const publishedPostPage = new PublishedPostPage( testPage );
 				await publishedPostPage.validateTextInPost( postContent );
+
+				await testPage.close();
 			}
 		);
 	} );
