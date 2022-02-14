@@ -15,9 +15,7 @@ import {
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
-	SOCIAL_CREATE_ACCOUNT_REQUEST,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
@@ -169,14 +167,10 @@ export const requestError = ( state = null, action ) => {
 			const { error } = action;
 			return error;
 		}
-		case SOCIAL_CREATE_ACCOUNT_REQUEST:
-			return null;
 		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE: {
 			const { error } = action;
 			return error;
 		}
-		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS:
-			return null;
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST:
 			return null;
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE: {
@@ -216,10 +210,6 @@ export const requestSuccess = ( state = null, action ) => {
 			return false;
 		case LOGIN_REQUEST_SUCCESS:
 			return true;
-		case SOCIAL_CREATE_ACCOUNT_REQUEST:
-			return null;
-		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS:
-			return true;
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST:
 			return null;
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
@@ -242,10 +232,6 @@ export const requestNotice = ( state = null, action ) => {
 		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE:
 			return null;
 		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS: {
-			const { notice } = action;
-			return notice;
-		}
-		case SOCIAL_CREATE_ACCOUNT_REQUEST: {
 			const { notice } = action;
 			return notice;
 		}
@@ -366,28 +352,13 @@ export const twoFactorAuthRequestError = ( state = null, action ) => {
 	return state;
 };
 
-export const socialAccount = ( state = { isCreating: false, createError: null }, action ) => {
+export const socialAccount = ( state = { createError: null }, action ) => {
 	switch ( action.type ) {
-		case SOCIAL_CREATE_ACCOUNT_REQUEST:
-			return { isCreating: true };
 		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE: {
 			const { error } = action;
 
 			return {
-				isCreating: false,
 				createError: error,
-			};
-		}
-		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS: {
-			const {
-				data: { username, bearerToken },
-			} = action;
-
-			return {
-				isCreating: false,
-				username,
-				bearerToken,
-				createError: null,
 			};
 		}
 		case SOCIAL_LOGIN_REQUEST_FAILURE: {
@@ -430,8 +401,6 @@ export const socialAccountLink = ( state = { isLinking: false }, action ) => {
 			return userExistsErrorHandler( state, action );
 		case SOCIAL_LOGIN_REQUEST_FAILURE:
 			return userExistsErrorHandler( state, action );
-		case SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS:
-			return { isLinking: false };
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
 			return { isLinking: false };
 		case CURRENT_USER_RECEIVE:

@@ -145,14 +145,6 @@ export const isFormDisabled = ( state ) => state.login.isFormDisabled;
 export const getAuthAccountType = ( state ) => state.login.authAccountType;
 
 /**
- * Tells us if we're in a process of creating a social account
- *
- * @param  {object}   state  Global state tree
- * @returns {?boolean}         Error for the request.
- */
-export const isSocialAccountCreating = ( state ) => state.login.socialAccount.isCreating;
-
-/**
  * Gets Username of the created social account
  *
  * @param  {object}   state  Global state tree
