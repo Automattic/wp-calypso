@@ -189,9 +189,7 @@ export const QuickLinks = ( {
 						gridicon="plugins"
 					/>
 					<ActionBox
-						href={
-							'https://wp.me/logo-maker/?utm_campaign=my_home&utm_term=' + daysSinceSignup + 'd'
-						}
+						href={ 'https://wp.me/logo-maker/?utm_campaign=my_home_' + daysSinceSignup + 'd' }
 						onClick={ trackDesignLogoAction }
 						target="_blank"
 						label={
