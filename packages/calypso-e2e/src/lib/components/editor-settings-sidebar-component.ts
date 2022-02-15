@@ -184,10 +184,12 @@ export class EditorSettingsSidebarComponent {
 	 * @param {Schedule} date Date of the article to be scheduled.
 	 */
 	async schedule( date: Schedule ): Promise< void > {
-		for ( const [ key, value ] of Object.entries( date ) ) {
+		let key: keyof Schedule;
+
+		for ( key in date ) {
 			if ( key === 'meridian' ) {
 				// am/pm is a button.
-				await this.frame.click( selectors.scheduleMeridianButton( value ) );
+				await this.frame.click( selectors.scheduleMeridianButton( date[ key ] ) );
 				continue;
 			}
 			if ( key === 'month' ) {
@@ -195,14 +197,14 @@ export class EditorSettingsSidebarComponent {
 				// 2 digits as required by the select.
 				await this.frame.selectOption(
 					'select[name="month"]',
-					value.toString().padStart( 2, '0' )
+					date[ key ].toString().padStart( 2, '0' )
 				);
 				continue;
 			}
 
 			// Regular input fields.
 			const targetSelector = selectors.scheduleInput( key );
-			await this.frame.fill( targetSelector, value.toString() );
+			await this.frame.fill( targetSelector, date[ key ].toString() );
 		}
 	}
 

@@ -57,11 +57,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 		} );
 
 		it( 'Schedule the post for next year', async function () {
-			const currentDate = new Date();
+			const date = new Date();
+
 			await editorSettingsSidebarComponent.schedule( {
-				year: currentDate.getFullYear() + 1,
-				month: ( ( new Date().getMonth() + 1 ) % 12 ) + 1,
-				date: currentDate.getDate(),
+				year: date.getFullYear() + 1,
+				month: date.getMonth(),
+				date: date.getDate(),
 				hours: 12,
 				minutes: 1,
 				meridian: 'am',
