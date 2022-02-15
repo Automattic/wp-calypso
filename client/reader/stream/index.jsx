@@ -45,6 +45,7 @@ const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
 const noop = () => {};
 const pagesByKey = new Map();
+const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
 class ReaderStream extends Component {
 	static propTypes = {
@@ -159,6 +160,11 @@ class ReaderStream extends Component {
 	}
 
 	handleKeydown = ( event ) => {
+		const tagName = ( event.target || event.srcElement ).tagName;
+		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
+			return;
+		}
+
 		switch ( event.keyCode ) {
 			// Move selection down - j
 			case 74: {

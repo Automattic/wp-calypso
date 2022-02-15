@@ -84,6 +84,8 @@ import ReaderFullPostUnavailable from './unavailable';
 
 import './style.scss';
 
+const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
+
 export class FullPostView extends Component {
 	static propTypes = {
 		post: PropTypes.object,
@@ -161,6 +163,11 @@ export class FullPostView extends Component {
 	}
 
 	handleKeydown = ( event ) => {
+		const tagName = ( event.target || event.srcElement ).tagName;
+		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
+			return;
+		}
+
 		switch ( event.keyCode ) {
 			// Close full post - Esc
 			case 27: {
