@@ -1,3 +1,4 @@
+import { TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
@@ -10,7 +11,7 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
+import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
@@ -18,6 +19,7 @@ import {
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { TitanProductProps } from 'calypso/lib/cart-values/cart-items';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ChangeEvent } from 'react';
 
@@ -38,6 +40,7 @@ type ProfessionalEmailUpsellProps = {
 	handleClickAccept: ( action: string ) => void;
 	handleClickDecline: () => void;
 	productCost?: number | null;
+	productSlug: string;
 	setCartItem: ( cartItem: MinimalRequestCartProduct, callback: () => void ) => void;
 };
 
@@ -47,6 +50,7 @@ const ProfessionalEmailUpsell = ( {
 	handleClickAccept,
 	handleClickDecline,
 	productCost,
+	productSlug,
 	setCartItem,
 }: ProfessionalEmailUpsellProps ) => {
 	const translate = useTranslate();
@@ -68,12 +72,28 @@ const ProfessionalEmailUpsell = ( {
 
 	const optionalMailboxFields = [ 'alternativeEmail', 'name' ];
 
-	const formattedPrice = translate( '{{price/}} /mailbox /month', {
-		components: {
-			price: <span>{ formatCurrency( productCost ?? 0, currencyCode ) }</span>,
-		},
-		comment: '{{price/}} is the formatted price, e.g. $20',
-	} );
+	const resolveFormattedPrice = (
+		currencyCode: string,
+		productCost: number,
+		productSlug: string
+	): TranslateResult => {
+		if ( productSlug === TITAN_MAIL_MONTHLY_SLUG ) {
+			return translate( '{{price/}} /mailbox /month', {
+				components: {
+					price: <span>{ formatCurrency( productCost ?? 0, currencyCode ) }</span>,
+				},
+				comment: '{{price/}} is the formatted price, e.g. $20',
+			} );
+		}
+		return translate( '{{price/}} /mailbox /year', {
+			components: {
+				price: <span>{ formatCurrency( productCost ?? 0, currencyCode ) }</span>,
+			},
+			comment: '{{price/}} is the formatted price, e.g. $20',
+		} );
+	};
+
+	const formattedPrice = resolveFormattedPrice( currencyCode, productCost ?? 0, productSlug );
 
 	const onMailboxValueChange = ( fieldName: string, fieldValue: string | null ) => {
 		const updatedMailboxData = {
@@ -88,6 +108,15 @@ const ProfessionalEmailUpsell = ( {
 		if ( validatedMailboxData ) {
 			setMailboxData( validatedMailboxData );
 		}
+	};
+
+	const resolveTitanMailProduct = (
+		productSlug: string
+	): ( ( properties: TitanProductProps ) => MinimalRequestCartProduct ) => {
+		if ( productSlug === TITAN_MAIL_MONTHLY_SLUG ) {
+			return titanMailMonthly;
+		}
+		return titanMailYearly;
 	};
 
 	const handleAddEmail = () => {
@@ -105,8 +134,8 @@ const ProfessionalEmailUpsell = ( {
 		if ( ! mailboxesAreValid ) {
 			return;
 		}
-
-		const cartItem = titanMailMonthly( {
+		const titanMailProduct = resolveTitanMailProduct( productSlug );
+		const cartItem = titanMailProduct( {
 			domain: domainName,
 			quantity: validatedTitanMailboxes.length,
 			extra: {

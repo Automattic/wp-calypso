@@ -23,7 +23,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import Main from 'calypso/components/main';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 import {
 	isContactValidationResponseValid,
@@ -46,6 +46,7 @@ import {
 	getProductBySlug,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
+import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import {
@@ -309,6 +310,7 @@ export class UpsellNudge extends Component {
 			hasSevenDayRefundPeriod,
 			pricePerMonthForMonthlyPlan,
 			pricePerMonthForAnnualPlan,
+			productSlug,
 			annualPlanSlug,
 		} = this.props;
 
@@ -347,6 +349,7 @@ export class UpsellNudge extends Component {
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						productCost={ productCost }
+						productSlug={ productSlug }
 						/* Use the callback form of setState() to ensure handleClickAccept()
 						 is called after the state update */
 						setCartItem={ ( newCartItem, callback = noop ) =>
@@ -552,14 +555,17 @@ const trackUpsellButtonClick = ( eventName ) => {
 	return recordTracksEvent( eventName, { section: 'checkout' } );
 };
 
-const resolveProductSlug = ( upsellType, productAlias ) => {
+const resolveProductSlug = ( upsellType, productAlias, billingTerm ) => {
 	switch ( upsellType ) {
 		case BUSINESS_PLAN_UPGRADE_UPSELL:
 			return getPlanByPathSlug( productAlias )?.getStoreSlug();
 		case ANNUAL_PLAN_UPGRADE:
 			return productAlias;
 		case PROFESSIONAL_EMAIL_UPSELL:
-			return TITAN_MAIL_MONTHLY_SLUG;
+			if ( billingTerm === TERM_MONTHLY ) {
+				return TITAN_MAIL_MONTHLY_SLUG;
+			}
+			return TITAN_MAIL_YEARLY_SLUG;
 		case CONCIERGE_QUICKSTART_SESSION:
 		case CONCIERGE_SUPPORT_SESSION:
 		default:
@@ -588,7 +594,8 @@ export default connect(
 		const areStoredCardsLoading = hasLoadedCardsFromServer ? isFetchingCards : true;
 		const cards = getStoredCards( state );
 
-		const productSlug = resolveProductSlug( upsellType, upgradeItem );
+		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ) ?? TERM_MONTHLY;
+		const productSlug = resolveProductSlug( upsellType, upgradeItem, currentPlanTerm );
 		const productProperties = pick( getProductBySlug( state, productSlug ), [
 			'product_slug',
 			'product_id',
@@ -635,6 +642,7 @@ export default connect(
 			isEligibleForSignupDestinationResult: isEligibleForSignupDestination( props.cart ),
 			pricePerMonthForMonthlyPlan,
 			pricePerMonthForAnnualPlan,
+			productSlug,
 			annualPlanSlug,
 		};
 	},
