@@ -36,7 +36,7 @@ class CrossPost extends PureComponent {
 
 	handleTitleClick = ( event ) => {
 		// modified clicks should let the default action open a new tab/window
-		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
+		if ( event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
 			return;
 		}
 		event.preventDefault();
@@ -65,7 +65,7 @@ class CrossPost extends PureComponent {
 		}
 
 		// if the click has modifier, ignore it
-		if ( event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
+		if ( event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
 			return;
 		}
 
