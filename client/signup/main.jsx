@@ -703,13 +703,14 @@ class Signup extends Component {
 			this.props.isLoggedIn &&
 			this.props.signupDependencies.siteSlug &&
 			0 === this.props.siteDomains.length;
+		const isImportingFlow = this.props.flowName === 'from' && this.props.stepName === 'importing';
 
 		if ( isStepRemovedFromFlow ) {
 			return true;
 		}
 
 		// siteDomains is sometimes empty, so we need to force update.
-		if ( isDomainsForSiteEmpty ) {
+		if ( isDomainsForSiteEmpty && ! isImportingFlow ) {
 			return <QuerySiteDomains siteId={ this.props.siteId } />;
 		}
 	}
