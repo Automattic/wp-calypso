@@ -428,11 +428,11 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 		 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
 		 */
 		const patternPost = `
-			<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"100px","bottom":"100px"}},"color":{"background":"#ecf2f3"}},"layout":{"inherit":true}} -->
-			<div class="wp-block-group alignfull has-background" style="background-color:#ecf2f3;padding-top:100px;padding-bottom:100px"><!-- wp:columns {"align":"wide"} -->
+			<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"100px","bottom":"100px"}},"color":{"background":"#f6f6f6"}},"textColor":"black","layout":{"inherit":true}} -->
+			<div class="wp-block-group alignfull has-black-color has-text-color has-background" style="background-color:#f6f6f6;padding-top:100px;padding-bottom:100px"><!-- wp:columns {"align":"wide"} -->
 			<div class="wp-block-columns alignwide"><!-- wp:column -->
-			<div class="wp-block-column"><!-- wp:image {"id":4390,"sizeSlug":"large","linkDestination":"none"} -->
-			<figure class="wp-block-image size-large"><img src="https://dotcompatterns.files.wordpress.com/2022/02/pexels-cottonbro-7026777.jpg?w=683" alt="" class="wp-image-4390"/></figure>
+			<div class="wp-block-column"><!-- wp:image {"id":4407,"sizeSlug":"large","linkDestination":"none"} -->
+			<figure class="wp-block-image size-large"><img src="https://dotcompatterns.files.wordpress.com/2022/02/image-placeholder.png?w=1024" alt="" class="wp-image-4407"/></figure>
 			<!-- /wp:image --></div>
 			<!-- /wp:column -->
 
@@ -441,8 +441,8 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 			<h1 id="item-name" style="font-size:40px;margin-top:0px">Item Name</h1>
 			<!-- /wp:heading -->
 
-			<!-- wp:heading {"style":{"color":{"text":"#76797a"}},"fontSize":"medium"} -->
-			<h2 class="has-text-color has-medium-font-size" id="0-00" style="color:#76797a">$0.00</h2>
+			<!-- wp:heading {"style":{"color":{"text":"#444444"}},"fontSize":"medium"} -->
+			<h2 class="has-text-color has-medium-font-size" id="0-00" style="color:#444444">$0.00</h2>
 			<!-- /wp:heading -->
 
 			<!-- wp:paragraph {"style":{"color":{"text":"#444444"}},"fontSize":"small"} -->
@@ -450,7 +450,7 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 			<!-- /wp:paragraph -->
 
 			<!-- wp:jetpack/recurring-payments -->
-			<div class="wp-block-jetpack-recurring-payments"><!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":"Buy Now","textColor":"background","backgroundColor":"black","borderRadius":0,"width":"100%"} /--></div>
+			<div class="wp-block-jetpack-recurring-payments"><!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":"Buy Now","customTextColor":"#ffffff","backgroundColor":"black","borderRadius":0,"width":"100%"} /--></div>
 			<!-- /wp:jetpack/recurring-payments -->
 
 			<!-- wp:spacer {"height":"20px"} -->
@@ -463,13 +463,7 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 
 			<!-- wp:paragraph {"style":{"color":{"text":"#444444"}},"fontSize":"small"} -->
 			<p class="has-text-color has-small-font-size" style="color:#444444">Describe your item. Use this section to add a full description and details of your product, along with its many selling points.</p>
-			<!-- /wp:paragraph -->
-
-			<!-- wp:social-links {"iconColor":"cyan-bluish-gray","iconColorValue":"#abb8c3","className":"is-style-logos-only"} -->
-			<ul class="wp-block-social-links has-icon-color is-style-logos-only"><!-- wp:social-link {"url":"#","service":"facebook"} /-->
-
-			<!-- wp:social-link {"url":"#","service":"instagram"} /--></ul>
-			<!-- /wp:social-links --></div>
+			<!-- /wp:paragraph --></div>
 			<!-- /wp:column --></div>
 			<!-- /wp:columns --></div>
 			<!-- /wp:group -->
