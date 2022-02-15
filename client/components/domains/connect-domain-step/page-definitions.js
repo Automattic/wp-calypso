@@ -10,6 +10,7 @@ import ConnectDomainStepLogin from './connect-domain-step-login';
 import ConnectDomainStepOwnershipAuthCode from './connect-domain-step-ownership-auth-code';
 import ConnectDomainStepSuggestedRecords from './connect-domain-step-suggested-records';
 import ConnectDomainStepSuggestedStart from './connect-domain-step-suggested-start';
+import ConnectSubdomainStepAdvancedRecords from './connect-subdomain-step-advanced-records';
 import { modeType, stepSlug, stepType } from './constants';
 
 export const connectADomainStepsDefinition = {
@@ -161,7 +162,7 @@ export const connectASubdomainStepsDefinition = {
 		get name() {
 			return __( 'Update CNAME records' );
 		},
-		component: ConnectDomainStepAdvancedRecords, // TODO: change
+		component: ConnectSubdomainStepAdvancedRecords,
 		prev: stepSlug.SUBDOMAIN_ADVANCED_LOGIN,
 	},
 	[ stepSlug.SUBDOMAIN_ADVANCED_CONNECTED ]: {
