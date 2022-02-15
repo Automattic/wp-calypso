@@ -47,6 +47,9 @@ function getWebpackConfig(
 		gitDescribe: spawnSync( 'git', [ 'describe', '--always', '--dirty', '--long' ], {
 			encoding: 'utf8',
 		} ).stdout.replace( '\n', '' ),
+		gitCommit: spawnSync( 'git', [ 'rev-parse', 'HEAD' ], {
+			encoding: 'utf8',
+		} ).stdout.replace( '\n', '' ),
 	};
 
 	return {
@@ -89,6 +92,13 @@ function getWebpackConfig(
 				filename: path.join( outputPath, 'cache-buster.txt' ),
 				templateContent: () => pageMeta.gitDescribe,
 				inject: false,
+			} ),
+			new HtmlWebpackPlugin( {
+				filename: path.join( outputPath, 'build_meta.json' ),
+				template: path.join( __dirname, '../', 'build_meta_template.txt' ),
+				inject: false,
+				minify: { collapseWhitespace: false },
+				...pageMeta,
 			} ),
 			shouldEmitStats &&
 				new BundleAnalyzerPlugin( {

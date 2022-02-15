@@ -155,11 +155,18 @@ open class WPComPluginBuild(
 						mkdir ./release-archive
 						wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
 						unzip -q ./tmp-release-archive-download.zip -d ./release-archive
-						echo "Diffing against current trunk release build (`grep build_number ./release-archive/build_meta.txt | sed s/build_number=//`).";
 
 						# 2. Change anything from the release build which is "unstable", like the version number and build metadata.
 						# These operations restore idempotence between the two builds.
-						rm -f ./release-archive/build_meta.txt
+
+						if [ -f ./release-archive/build_meta.json ] ; then
+							echo "Diffing against current trunk release build (`jq -r ".build_number" ./release-archive/build_meta.json`).";
+							rm -f ./release-archive/build_meta.json
+						else
+							# TODO: Remove the if statement after all current release builds utilize the JSON meta format.
+							echo "Diffing against current trunk release build (`grep build_number ./release-archive/build_meta.txt | sed s/build_number=//`).";
+							rm -f ./release-archive/build_meta.txt
+						fi
 
 						$normalizeFiles
 					fi
@@ -197,13 +204,10 @@ open class WPComPluginBuild(
 						%teamcity.build.checkoutDir%/bin/add-pr-comment.sh "%teamcity.build.branch%" "$pluginSlug" "delete" <<< "" || true
 					fi
 
+
 					# 4. Create metadata file with info for the download script.
 					cd $archiveDir
-					tee build_meta.txt <<-EOM
-						commit_hash=%build.vcs.number%
-						commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
-						build_number=%build.number%
-						EOM
+					jq '.build_number="%build.number%"' "build_meta.json" > "build_meta.tmp" && mv "build_meta.tmp" "build_meta.json"
 
 					# 5. Create artifact of cwd.
 					echo
