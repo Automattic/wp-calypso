@@ -109,6 +109,7 @@ class SiteSettingsFormWriting extends Component {
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
+					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
 				/>
 
 				<FeedSettings
