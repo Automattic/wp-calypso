@@ -32,8 +32,11 @@ import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors'
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { PluginPrice, getPeriodVariationValue } from '../plugin-price';
 import USPS from './usps';
 import './style.scss';
@@ -211,6 +214,7 @@ const CTAButton = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
+	const [ showAddCustomDomain, setShowAddCustomDomain ] = useState( false );
 
 	// Keep me updated
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
@@ -219,6 +223,15 @@ const CTAButton = ( {
 		getPreference( state, keepMeUpdatedPreferenceId )
 	);
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
+
+	const primaryDomain = useSelector( ( state ) =>
+		getPrimaryDomainBySiteId( state, selectedSite?.ID )
+	);
+
+	const pluginRequiresCustomPrimaryDomain =
+		( primaryDomain?.isWPCOMDomain || primaryDomain?.isWpcomStagingDomain ) &&
+		plugin?.requirements?.required_primary_domain;
+	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 
 	const updatedKeepMeUpdatedPreference = useCallback(
 		( isChecked ) => {
@@ -235,6 +248,25 @@ const CTAButton = ( {
 
 	return (
 		<>
+			<PluginCustomDomainDialog
+				onProceed={ () => {
+					if ( hasEligibilityMessages ) {
+						return setShowEligibility( true );
+					}
+					onClickInstallPlugin( {
+						dispatch,
+						selectedSite,
+						plugin,
+						upgradeAndInstall: shouldUpgrade,
+						isMarketplaceProduct,
+						billingPeriod,
+					} );
+				} }
+				isDialogVisible={ showAddCustomDomain }
+				plugin={ plugin }
+				domains={ domains }
+				closeDialog={ () => setShowAddCustomDomain( false ) }
+			/>
 			<Dialog
 				additionalClassNames={ 'plugin-details-CTA__dialog-content' }
 				additionalOverlayClassNames={ 'plugin-details-CTA__modal-overlay' }
@@ -261,6 +293,9 @@ const CTAButton = ( {
 				className="plugin-details-CTA__install-button"
 				primary
 				onClick={ () => {
+					if ( pluginRequiresCustomPrimaryDomain ) {
+						return setShowAddCustomDomain( true );
+					}
 					if ( hasEligibilityMessages ) {
 						return setShowEligibility( true );
 					}
