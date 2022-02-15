@@ -149,13 +149,6 @@ export function generateFlows( {
 			disallowResume: true,
 		},
 		{
-			name: 'simple',
-			steps: [ 'passwordless' ],
-			destination: '/',
-			description: 'A very simple signup flow',
-			lastModified: '2019-05-09',
-		},
-		{
 			name: 'clone-site',
 			steps: [
 				'clone-start',
