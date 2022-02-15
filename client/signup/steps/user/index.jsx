@@ -454,7 +454,6 @@ export class UserStep extends Component {
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
 					isPasswordless={ isMobile() }
-					experimentName={ this.state.experiment }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
