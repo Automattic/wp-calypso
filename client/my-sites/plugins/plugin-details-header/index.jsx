@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
+import { getPluginAuthorKeyword } from 'calypso/lib/plugins/utils';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import './style.scss';
 
@@ -28,7 +29,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 					<div className="plugin-details-header__info">
 						<div className="plugin-details-header__info-title">{ translate( 'Developer' ) }</div>
 						<div className="plugin-details-header__info-value">
-							<a href={ `/plugins?s=author:"${ plugin.author_name || '' }"` }>
+							<a href={ `/plugins?s=author:"${ getPluginAuthorKeyword( plugin ) }"` }>
 								{ plugin.author_name }
 							</a>
 						</div>

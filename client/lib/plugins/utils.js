@@ -69,6 +69,7 @@ export function getAllowedPluginData( plugin ) {
 		'action_links',
 		'active',
 		'author',
+		'author_profile',
 		'author_url',
 		'autoupdate',
 		'banners',
@@ -262,4 +263,20 @@ export function extractSearchInformation( searchTerm = '' ) {
 	const search = searchTerm.replace( DEVELOPER_PATTERN, '' ).trim();
 
 	return [ search, author ];
+}
+
+export const WPORG_PROFILE_URL = 'https://profiles.wordpress.org/';
+
+/**
+ * Returns an author keyword to be used on plugin search by author
+ *
+ * @param plugin
+ * @returns {string} the keyword
+ */
+export function getPluginAuthorKeyword( plugin ) {
+	if ( plugin?.author_profile?.includes( WPORG_PROFILE_URL ) ) {
+		return plugin.author_profile.replace( WPORG_PROFILE_URL, '' ).replaceAll( '/', '' );
+	}
+
+	return plugin.author_name || '';
 }
