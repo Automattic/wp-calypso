@@ -66,6 +66,8 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 				minutes: 1,
 				meridian: 'am',
 			} );
+			// On mobile, the sidebar covers all of the screen.
+			await editorSettingsSidebarComponent.closeSidebar();
 		} );
 
 		it( 'Publish post', async function () {
@@ -122,6 +124,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 				minutes: 59,
 				meridian: 'pm',
 			} );
+			await editorSettingsSidebarComponent.closeSidebar();
 		} );
 
 		it( 'Publish post', async function () {
