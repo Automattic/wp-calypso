@@ -151,7 +151,7 @@ export class AppBanner extends Component {
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
 		return (
-			<ProvideExperimentData name="calypso_mobileweb_appbanner_frequency_20220128_v1">
+			<ProvideExperimentData name="calypso_mobileweb_appbanner_frequency_20220128_v2">
 				{ ( isLoading, experimentAssignment ) => {
 					if ( isLoading ) {
 						return null;
