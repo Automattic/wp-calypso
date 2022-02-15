@@ -11,6 +11,7 @@ import ConnectDomainStepOwnershipAuthCode from './connect-domain-step-ownership-
 import ConnectDomainStepSuggestedRecords from './connect-domain-step-suggested-records';
 import ConnectDomainStepSuggestedStart from './connect-domain-step-suggested-start';
 import ConnectSubdomainStepAdvancedRecords from './connect-subdomain-step-advanced-records';
+import ConnectSubdomainStepSuggestedRecords from './connect-subdomain-step-suggested-records';
 import { modeType, stepSlug, stepType } from './constants';
 
 export const connectADomainStepsDefinition = {
@@ -122,7 +123,7 @@ export const connectASubdomainStepsDefinition = {
 		get name() {
 			return __( 'Update NS records' );
 		},
-		component: ConnectDomainStepSuggestedRecords, // TODO: change
+		component: ConnectSubdomainStepSuggestedRecords,
 		prev: stepSlug.SUBDOMAIN_SUGGESTED_LOGIN,
 	},
 	[ stepSlug.SUBDOMAIN_SUGGESTED_CONNECTED ]: {
