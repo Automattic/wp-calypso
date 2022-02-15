@@ -1,10 +1,7 @@
 #!/usr/bin/env node
 
 // This script will return a url of an artifact generated in the latest project build for the specified branch.
-// eg: node bin/get-teamcity-artifact-url --token="secret" --artifact="translate/calypso-strings.pot"
-
-const https = require( 'https' );
-const SocksProxyAgent = require( 'socks-proxy-agent' );
+// eg: node bin/get-teamcity-artifact-url --artifact="translate/calypso-strings.pot"
 
 const parsedArgs = process.argv
 	.slice( 2 )
@@ -17,62 +14,19 @@ const parsedArgs = process.argv
 	}, {} );
 
 const args = {
-	token: '',
 	branch: 'trunk',
-	project: 'calypso_WebApp',
-	build: 'calypso_Translate',
-	status: 'SUCCESS',
+	buildType: 'calypso_Translate',
 	artifact: '',
 	...parsedArgs,
 };
 
-const host = 'teamcity.a8c.com';
-const baseOptions = {
-	host,
-	port: 443,
-	agent:
-		args.socks &&
-		new SocksProxyAgent( {
-			host: args.socks.split( ':' )[ 0 ],
-			port: args.socks.split( ':' )[ 1 ],
-		} ),
-	headers: {
-		Authorization: `Bearer ${ args.token }`,
-		Accept: 'application/json',
-	},
-};
-
-function get( options ) {
-	return new Promise( ( resolve, reject ) => {
-		https.get( options, ( response ) => {
-			let body = '';
-			response.on( 'data', ( data ) => {
-				body += data;
-			} );
-			response.on( 'end', () => {
-				try {
-					return resolve( JSON.parse( body ) );
-				} catch ( error ) {
-					reject( error );
-				}
-			} );
-			response.on( 'error', reject );
-		} );
-	} );
-}
-
 ( async function () {
-	try {
-		const { build } = await get( {
-			...baseOptions,
-			path: `/app/rest/builds?locator=project:${ args.project },branch:${ args.branch },buildType:${ args.build },status:${ args.status },count:1`,
-		} );
-		const path = build[ 0 ].href ?? '';
-
-		console.log( `https://${ host }${ path }/artifacts/content/${ args.artifact }` );
+	if ( args.artifact ) {
+		const url = `https://teamcity.a8c.com/repository/download/${ args.buildType }/.lastSuccessful/${ args.artifact }?guest=1&branch=${ args.branch }`;
+		console.log( url );
 		process.exit( 0 );
-	} catch ( error ) {
-		console.error( error );
+	} else {
+		console.error( 'The `--artifact` parameter is missing.' );
 		process.exit( 1 );
 	}
 } )();
