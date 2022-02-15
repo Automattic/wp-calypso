@@ -1,10 +1,13 @@
+import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import getDIFMLiteSiteCategory from 'calypso/state/selectors/get-difm-lite-site-category';
+import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
 	initializePages,
@@ -14,10 +17,12 @@ import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
 } from 'calypso/state/signup/steps/website-content/selectors';
-import { getSiteId } from 'calypso/state/sites/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteId, isRequestingSite } from 'calypso/state/sites/selectors';
 import { sectionGenerator } from './section-generator';
-
 import './style.scss';
+
+const debug = debugFactory( 'calypso:difm' );
 
 interface WebsiteContentStepProps {
 	additionalStepData: object;
@@ -43,9 +48,39 @@ function WebsiteContentStep( {
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
+	const isWebsiteContentSubmitted = useSelector( ( state ) =>
+		isDIFMLiteWebsiteContentSubmitted( state, siteId )
+	);
+	const isRequestingCurrentSite = useSelector( ( state ) =>
+		isRequestingSite( state, siteId as number )
+	);
+	const isSiteInformationLoaded = ! isRequestingCurrentSite;
+
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
+
+	useEffect( () => {
+		// Load the site information in case the user lands on this page and a site request is not triggered yet
+		siteId && dispatch( requestSite( siteId ) );
+	}, [ siteId, dispatch ] );
+
+	const isDIFMPurchased = !! siteCategory;
+
+	useEffect( () => {
+		if ( isSiteInformationLoaded && ! isDIFMPurchased ) {
+			debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
+			page( `/start/do-it-for-me?siteSlug=${ queryObject.siteSlug }` );
+		} else if ( isWebsiteContentSubmitted ) {
+			debug( 'Website content content already submitted, redirecting to home' );
+			page( `/home/${ queryObject.siteSlug }` );
+		}
+	}, [
+		isSiteInformationLoaded,
+		isDIFMPurchased,
+		isWebsiteContentSubmitted,
+		queryObject.siteSlug,
+	] );
 
 	useEffect( () => {
 		function getPageFromCategory( category: string | null ) {

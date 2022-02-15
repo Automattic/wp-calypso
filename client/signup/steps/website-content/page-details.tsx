@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, ReactChild } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
 	SubLabel,
@@ -22,7 +22,7 @@ export function PageDetails( {
 	onChangeField,
 }: {
 	page: PageData;
-	formErrors: any;
+	formErrors: Record< string, ReactChild >;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
 } ) {
 	const translate = useTranslate();

@@ -11,8 +11,12 @@ import type { AppState, SiteId } from 'calypso/types';
  */
 export default function isDIFMLiteWebsiteContentSubmitted(
 	state: AppState,
-	siteId: SiteId
+	siteId: SiteId | null
 ): boolean {
+	if ( ! siteId ) {
+		return false;
+	}
+
 	const site = getRawSite( state, siteId ) as SiteData;
 
 	if ( ! site ) {

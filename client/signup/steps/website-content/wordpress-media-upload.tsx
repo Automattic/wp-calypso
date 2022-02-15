@@ -90,6 +90,7 @@ export function WordpressMediaUpload( {
 			setImageCaption( title );
 			onMediaUploaded( { title, URL, uploadID: ID, mediaIndex } );
 			setUploadState( UPLOAD_STATES.COMPLETED );
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch ( e: any ) {
 			setUploadState( UPLOAD_STATES.FAILED );
 			debug( 'Image upload failed' );
