@@ -91,6 +91,7 @@ export function getAllowedPluginData( plugin ) {
 		'ratings',
 		'requirements',
 		'sections',
+		'setup_url',
 		'slug',
 		'support_URL',
 		'tags',
