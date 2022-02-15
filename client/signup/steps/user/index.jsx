@@ -508,7 +508,7 @@ export class UserStep extends Component {
 			<ProvideExperimentData
 				name="registration_social_login_first_on_mobile_v2"
 				options={ {
-					isEligible: true || ( isMobile() && this.props.flowName === 'onboarding' ),
+					isEligible: isMobile() && this.props.flowName === 'onboarding',
 				} }
 			>
 				{ ( isLoading, experimentAssignment ) => {
