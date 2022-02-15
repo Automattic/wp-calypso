@@ -459,8 +459,9 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		} )
 		.then( () => reduxStore.dispatch( requestSite( siteSlug ) ) )
 		.then( () => callback() )
-		.catch( ( errors ) => {
-			callback( [ errors ] );
+		.catch( ( error ) => {
+			reduxStore.dispatch( errorNotice( error.message ) );
+			callback( [ error ] );
 		} );
 }
 
