@@ -14,6 +14,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import LicensingActivationBanner from 'calypso/components/jetpack/licensing-activation-banner';
 import LicensingPromptDialog from 'calypso/components/jetpack/licensing-prompt-dialog';
 import Main from 'calypso/components/main';
+import { MAIN_CONTENT_ID } from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
@@ -193,6 +194,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 			<Main
 				className={ classNames( 'selector__main', iterationClassName, 'fs-unmask' ) }
+				id={ MAIN_CONTENT_ID }
 				wideLayout
 			>
 				<PageViewTracker
