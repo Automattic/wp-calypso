@@ -5,8 +5,21 @@ const log = require( '../../lib/logger' )( 'desktop:external-links' );
 let targetURL = '';
 
 module.exports = function ( { view } ) {
-	// TODO: Replace the "new-window" event with webcontents.setWindowOpenHandler
-	// when Electron is updated to >= 13.x
+	view.webContents.setWindowOpenHandler( ( details ) => {
+		const url = details.url;
+
+		// If the URL trying to open a new window is the Google Social login link, allow new window to open
+		if ( url.includes( 'https://accounts.google.com/o/oauth2/auth' ) ) {
+			return { action: 'allow' };
+		}
+		// Check if the incoming URL is blank and if it is send to the targetURL instead
+		const urlToLoad = url.includes( 'about:blank' ) || url === '' ? targetURL : url;
+		log.info( `Navigating to URL: '${ urlToLoad }'` );
+
+		view.webContents.loadURL( urlToLoad );
+		return { action: 'deny' };
+	} );
+
 	view.webContents.on( 'new-window', function ( event, url ) {
 		// If the URL trying to open a new window is the Google Social login link, allow new window to open
 		if ( url.includes( 'https://accounts.google.com/o/oauth2/auth' ) ) {
