@@ -32,7 +32,6 @@ function showAppWindow() {
 	const windowConfig = Settings.getSettingGroup( Config.mainWindow, null );
 	windowConfig.webPreferences.spellcheck = Settings.getSetting( 'spellcheck-enabled' );
 	windowConfig.webPreferences.preload = preloadFile;
-	windowConfig.webPreferences.nativeWindowOpen = true;
 
 	const bounds = {
 		...{ width: 800, height: 600 },
