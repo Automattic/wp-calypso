@@ -148,31 +148,27 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 			},
 		},
-		...( localeSlug === 'en'
-			? [
-					{
-						meta: {
-							heading: __( 'Find your way', 'full-site-editing' ),
-							descriptions: {
-								desktop: __(
-									"Use List View to see all the blocks you've added. Click and drag any block to move it around.",
-									'full-site-editing'
-								),
-								mobile: null,
-							},
-							imgSrc: getTourAssets( 'findYourWay' ),
-							animation: null,
-							isDesktopOnly: true,
-						},
-						options: {
-							classNames: {
-								desktop: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
-								mobile: 'wpcom-editor-welcome-tour__step',
-							},
-						},
-					},
-			  ]
-			: [] ),
+		{
+			meta: {
+				heading: __( 'Find your way', 'full-site-editing' ),
+				descriptions: {
+					desktop: __(
+						"Use List View to see all the blocks you've added. Click and drag any block to move it around.",
+						'full-site-editing'
+					),
+					mobile: null,
+				},
+				imgSrc: getTourAssets( 'findYourWay' ),
+				animation: null,
+				isDesktopOnly: true,
+			},
+			options: {
+				classNames: {
+					desktop: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+					mobile: 'wpcom-editor-welcome-tour__step',
+				},
+			},
+		},
 		{
 			referenceElements: referencePositioning && {
 				desktop:
