@@ -15,3 +15,5 @@ export * from './contact-info';
 export * from './star-rating';
 export * from './slideshow';
 export * from './tiled-gallery';
+export * from './youtube';
+export * from './layout-grid';
