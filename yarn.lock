@@ -12490,7 +12490,6 @@ __metadata:
     jest: ^27.3.1
     jest-fetch-mock: ^3.0.3
     jest-mock-process: ^1.4.1
-    keymaster: ^1.6.2
     lodash: ^4.17.21
     lodash-es: ^4.17.21
     lru: ^3.1.0
@@ -23805,13 +23804,6 @@ fsevents@~2.1.2:
   version: 1.0.0
   resolution: "kebab-case@npm:1.0.0"
   checksum: 41621f30c09529407c1fd3f427f84fbaa623e96668ee267e8822ea7365bd2bd31ee9a724d384aa08a0b36620010bba4b9f869e029b660f7c9dd1a23437103b6b
-  languageName: node
-  linkType: hard
-
-"keymaster@npm:^1.6.2":
-  version: 1.6.2
-  resolution: "keymaster@npm:1.6.2"
-  checksum: 84937c471250f1628cb362450a18aba0c6c567f9961f0b65e181b1c273c8458a4b2616389e689c97ac7f8df2bc8593caa190198177b540b949e7b93b931c3ed6
   languageName: node
   linkType: hard
 
