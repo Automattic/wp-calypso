@@ -162,10 +162,10 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 		| undefined
 		| { action_links?: { Settings?: string }; name?: string };
 
+	const fallbackSetupUrl = wpComPluginData?.setup_url && siteAdminUrl + wpComPluginData?.setup_url;
+
 	const setupURL =
-		pluginOnSiteData?.action_links?.Settings ||
-		siteAdminUrl + wpComPluginData?.setup_url ||
-		`${ siteAdminUrl }plugins.php`;
+		pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || `${ siteAdminUrl }plugins.php`;
 
 	const setupSection = {
 		sectionKey: 'setup_whats_next',
