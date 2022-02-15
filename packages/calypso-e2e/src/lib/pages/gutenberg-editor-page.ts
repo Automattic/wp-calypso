@@ -29,6 +29,7 @@ const selectors = {
 	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
 	closeSettingsButton: 'button[aria-label="Close settings"]:visible',
 	saveDraftButton: '.editor-post-save-draft',
+	saveDraftDisabledButton: 'button.editor-post-saved-state.is-saved[aria-disabled="true"]',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
@@ -284,7 +285,16 @@ export class GutenbergEditorPage {
 		await this.searchBlockInserter( blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
-		return await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
+		const elementHandle = await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
+
+		// Dismiss the block inserter if viewport is larger than mobile to ensure
+		// no interference from the block inserter in subsequent actions on the editor.
+		// In mobile, the block inserter will auto-close.
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+			await frame.click( selectors.blockInserterToggle );
+		}
+
+		return elementHandle;
 	}
 
 	/**
@@ -471,10 +481,8 @@ export class GutenbergEditorPage {
 		const frame = await this.getEditorFrame();
 
 		await frame.click( selectors.saveDraftButton );
-		// Once the Save draft button is clicked, buttons on the post toolbar
-		// are disabled while the post is saved. Wait for the state of
-		// Publish button to return to 'enabled' before proceeding.
-		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
+		// Wait for the Save Draft button to become disabled.
+		await frame.waitForSelector( selectors.saveDraftDisabledButton );
 	}
 
 	/**
