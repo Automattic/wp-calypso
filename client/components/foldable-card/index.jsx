@@ -2,7 +2,7 @@ import { Card, CompactCard, ScreenReaderText, Gridicon } from '@automattic/compo
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createElement } from 'react';
 
 import './style.scss';
 
@@ -120,12 +120,16 @@ class FoldableCard extends Component {
 			'is-clickable': !! this.props.clickableHeader,
 			'has-border': !! this.props.summary,
 		} );
+		const header = createElement(
+			this.props.headerTag ?? 'span',
+			{ classnames: 'foldable-card__main' },
+			this.props.header,
+			this.renderActionButton()
+		);
+
 		return (
 			<div className={ headerClasses } role="presentation" onClick={ headerClickAction }>
-				<span className="foldable-card__main">
-					{ this.props.header }
-					{ this.renderActionButton() }
-				</span>
+				{ header }
 				<span className="foldable-card__secondary">
 					{ summary }
 					{ expandedSummary }

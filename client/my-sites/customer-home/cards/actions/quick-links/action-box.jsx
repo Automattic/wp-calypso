@@ -34,7 +34,7 @@ const ActionBox = ( {
 		>
 			<div className="quick-links__action-box-image">{ getIcon() }</div>
 			<div className="quick-links__action-box-text">
-				<h6 className="quick-links__action-box-label">{ label }</h6>
+				<span className="quick-links__action-box-label">{ label }</span>
 			</div>
 		</CompactCard>
 	);
