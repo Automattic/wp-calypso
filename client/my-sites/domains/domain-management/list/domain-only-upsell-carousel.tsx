@@ -1,21 +1,54 @@
-import { Card, Button } from '@automattic/components';
+import { Card, Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import moment from 'moment';
+import { useEffect, useState, useRef, ReactChild } from 'react';
+import { connect, DefaultRootState } from 'react-redux';
 import addEmailImage from 'calypso/assets/images/domains/add-email.svg';
 import createSiteImage from 'calypso/assets/images/domains/create-site.svg';
 import DotPager from 'calypso/components/dot-pager';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestDomainsNotices, updateDomainNotice } from 'calypso/state/domains/notices/actions';
+import {
+	getDomainNotice,
+	isRequestingDomainNotices,
+	isUpdatingDomainNotices,
+} from 'calypso/state/domains/notices/selectors';
 import { createSiteFromDomainOnly } from '../../paths';
-import { DomainOnlyUpsellCarouselProps } from './types';
+import {
+	DomainOnlyUpsellCarouselConnectedProps,
+	DomainOnlyUpsellCarouselOwnProps,
+	DomainOnlyUpsellCarouselProps,
+	HideCardDuration,
+	UpsellCardNoticeType,
+} from './types';
 
 import './style.scss';
 
-const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.Element => {
+const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.Element | null => {
 	const translate = useTranslate();
-	const { domain, dispatchRecordTracksEvent } = props;
+	const [ areHideSiteCardOptionsVisible, setHideSiteCardOptionsVisible ] = useState( false );
+	const [ areHideEmailCardOptionsVisible, setHideEmailCardOptionsVisible ] = useState( false );
+	const hideCreateSiteCardButtonRef = useRef( null );
+	const hideAddEmailCardButtonRef = useRef( null );
+
+	const {
+		domain,
+		isRequestingDomainNotices,
+		isUpdatingDomainNotices,
+		hideCreateSiteCard,
+		hideAddEmailCard,
+		dispatchRecordTracksEvent,
+		requestDomainsNotices,
+	} = props;
+
+	useEffect( () => {
+		requestDomainsNotices( domain.domain );
+	}, [ requestDomainsNotices, domain.domain ] );
 
 	const getActionClickHandler = ( buttonURL: string, sourceCardType: string ) => () => {
 		dispatchRecordTracksEvent( 'calypso_domain_only_upsell_card_click', {
@@ -24,94 +57,184 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 		} );
 	};
 
-	const renderAddSiteCard = () => {
-		const actionUrl = createSiteFromDomainOnly( domain.domain, domain.blogId );
+	const hideCard = ( reminder: HideCardDuration, noticeType: string ) => {
+		setHideSiteCardOptionsVisible( false );
+		setHideEmailCardOptionsVisible( false );
+		const mapReminderToMomentArgs = {
+			'1w': 7,
+			'1m': 30,
+		};
+		const noticeValue = moment().add( mapReminderToMomentArgs[ reminder ], 'days' ).toISOString();
+		props.updateDomainNotice( domain.domain, noticeType, noticeValue );
+	};
+
+	const renderCard = ( {
+		actionUrl,
+		imageUrl,
+		title,
+		subtitle,
+		ref,
+		buttonLabel,
+		cardName,
+		cardNoticeType,
+		eventTrackViewName,
+		areHideOptionsVisible,
+		setHideOptionsVisible,
+	}: {
+		actionUrl: string;
+		imageUrl: string;
+		title: ReactChild;
+		subtitle: ReactChild;
+		ref: React.MutableRefObject< null >;
+		buttonLabel: ReactChild;
+		cardName: string;
+		cardNoticeType: UpsellCardNoticeType;
+		eventTrackViewName: string;
+		areHideOptionsVisible: boolean;
+		setHideOptionsVisible: ( arg: boolean ) => void;
+	} ): JSX.Element => {
 		return (
 			<Card className="domain-only-upsell-carousel__card" key="domain-only-upsell-site">
 				<div className="domain-only-upsell-carousel__card-wrapper is-compact">
 					<div className="domain-only-upsell-carousel__card-illustration">
-						<img src={ createSiteImage } alt="" width={ 170 } />
+						<img src={ imageUrl } alt="" width={ 170 } />
 					</div>
 					<div className="domain-only-upsell-carousel__card-content">
 						<div className="domain-only-upsell-carousel__card-text">
-							<h2>
-								{ translate( 'Create a site for %(domain)s', {
-									args: { domain: domain.domain },
-								} ) }
-							</h2>
-							<h3> { translate( 'Choose a theme, customize and launch your site.' ) } </h3>
+							<h2>{ title }</h2>
+							<h3> { subtitle } </h3>
 						</div>
 						<div className="domain-only-upsell-carousel__card-actions">
 							<Button
 								primary
 								href={ actionUrl }
-								onClick={ getActionClickHandler( actionUrl, 'create-site' ) }
+								onClick={ getActionClickHandler( actionUrl, cardName ) }
 							>
-								{ translate( 'Create site' ) }
+								{ buttonLabel }
 							</Button>
-						</div>
-					</div>
-				</div>
-				<TrackComponentView
-					eventName="calypso_domain_only_upsell_carousel_impression_create_site_card"
-					eventProperties={ { content_type: 'create-site' } }
-				/>
-			</Card>
-		);
-	};
-
-	const renderEmailCard = () => {
-		const actionUrl = emailManagementPurchaseNewEmailAccount( domain.domain, domain.domain );
-		return (
-			<Card className="domain-only-upsell-carousel__card" key="domain-only-upsell-email">
-				<div className="domain-only-upsell-carousel__card-wrapper is-compact">
-					<div className="domain-only-upsell-carousel__card-illustration">
-						<img src={ addEmailImage } alt="" width={ 170 } />
-					</div>
-					<div className="domain-only-upsell-carousel__card-content">
-						<div className="domain-only-upsell-carousel__card-text">
-							<h2>
-								{ translate( 'Add email for %(domain)s', {
-									args: { domain: domain.domain },
-								} ) }
-							</h2>
-							<h3>
-								{ translate( 'Send and receive emails from %(email)s', {
-									args: { email: `youremail@${ domain.domain }` },
-								} ) }
-							</h3>
-						</div>
-						<div className="domain-only-upsell-carousel__card-actions">
 							<Button
-								primary
-								href={ actionUrl }
-								onClick={ getActionClickHandler( actionUrl, 'add-professional-email' ) }
+								borderless
+								disabled={ isUpdatingDomainNotices }
+								ref={ ref }
+								onClick={ () => setHideOptionsVisible( true ) }
+								aria-haspopup
+								aria-expanded={ areHideOptionsVisible }
+								aria-controls={ `popover-menu-hide-${ cardName }` }
 							>
-								{ translate( 'Add professional email' ) }
+								{ translate( 'Hide this' ) } <Gridicon icon="dropdown" size={ 18 } />
 							</Button>
+							{ areHideOptionsVisible && (
+								<PopoverMenu
+									id={ `popover-menu-hide-${ cardName }` }
+									context={ ref.current }
+									isVisible={ areHideOptionsVisible }
+									onClose={ () => setHideOptionsVisible( false ) }
+									position="bottom"
+								>
+									<PopoverMenuItem onClick={ () => hideCard( '1w', cardNoticeType ) }>
+										{ translate( 'For a week' ) }
+									</PopoverMenuItem>
+									<PopoverMenuItem onClick={ () => hideCard( '1m', cardNoticeType ) }>
+										{ translate( 'For a month' ) }
+									</PopoverMenuItem>
+								</PopoverMenu>
+							) }
 						</div>
 					</div>
 				</div>
 				<TrackComponentView
-					eventName="calypso_domain_only_upsell_carousel_impression_add_email_card"
-					eventProperties={ { content_type: 'add-professional-email' } }
+					eventName={ eventTrackViewName }
+					eventProperties={ { content_type: cardName } }
 				/>
 			</Card>
 		);
 	};
 
-	const cards = [ renderAddSiteCard() ];
-	if ( ! hasPaidEmailWithUs( domain ) ) {
-		cards.push( renderEmailCard() );
+	if ( isRequestingDomainNotices ) return null;
+
+	const cards = [];
+
+	if ( ! hideCreateSiteCard ) {
+		cards.push(
+			renderCard( {
+				actionUrl: createSiteFromDomainOnly( domain.domain, domain.blogId ),
+				imageUrl: createSiteImage,
+				title: translate( 'Create a site for %(domain)s', {
+					args: { domain: domain.domain },
+				} ),
+				subtitle: translate( 'Choose a theme, customize and launch your site.' ),
+				ref: hideCreateSiteCardButtonRef,
+				buttonLabel: translate( 'Create site' ),
+				cardName: 'create-site',
+				cardNoticeType: 'upsellCarouselHideCreateSiteCardUntil',
+				eventTrackViewName: 'calypso_domain_only_upsell_carousel_impression_create_site_card',
+				areHideOptionsVisible: areHideSiteCardOptionsVisible,
+				setHideOptionsVisible: setHideSiteCardOptionsVisible,
+			} )
+		);
 	}
 
+	if ( ! hasPaidEmailWithUs( domain ) && ! hideAddEmailCard ) {
+		cards.push(
+			renderCard( {
+				actionUrl: emailManagementPurchaseNewEmailAccount( domain.domain, domain.domain ),
+				imageUrl: addEmailImage,
+				title: translate( 'Add email for %(domain)s', {
+					args: { domain: domain.domain },
+				} ),
+				subtitle: translate( 'Send and receive emails from %(email)s', {
+					args: { email: `youremail@${ domain.domain }` },
+				} ),
+				ref: hideAddEmailCardButtonRef,
+				buttonLabel: translate( 'Add professional email' ),
+				cardName: 'add-email',
+				cardNoticeType: 'upsellCarouselHideAddEmailCardUntil',
+				eventTrackViewName: 'calypso_domain_only_upsell_carousel_impression_add_email_card',
+				areHideOptionsVisible: areHideEmailCardOptionsVisible,
+				setHideOptionsVisible: setHideEmailCardOptionsVisible,
+			} )
+		);
+	}
+
+	if ( cards.length === 0 ) return null;
+
 	return (
-		<DotPager className="domain-only-upsell-carousel" hasDynamicHeight showControlLabels={ false }>
+		<DotPager
+			className="domain-only-upsell-carousel"
+			hasDynamicHeight={ false }
+			showControlLabels={ false }
+		>
 			{ cards }
 		</DotPager>
 	);
 };
 
-export default connect( null, { dispatchRecordTracksEvent: recordTracksEvent } )(
-	DomainOnlyUpsellCarousel
-);
+const shouldHideCard = ( date: string ): boolean => {
+	const reminderEnd = moment( date );
+	return reminderEnd.isValid() && moment().isBefore( reminderEnd );
+};
+
+export default connect<
+	DefaultRootState,
+	DomainOnlyUpsellCarouselConnectedProps,
+	DomainOnlyUpsellCarouselOwnProps
+>(
+	( state, ownProps ) => {
+		const domainName = ownProps.domain.domain;
+		return {
+			hideAddEmailCard: shouldHideCard(
+				getDomainNotice( state, domainName, 'upsellCarouselHideAddEmailCardUntil' )
+			),
+			hideCreateSiteCard: shouldHideCard(
+				getDomainNotice( state, domainName, 'upsellCarouselHideCreateSiteCardUntil' )
+			),
+			isRequestingDomainNotices: isRequestingDomainNotices( state, domainName ),
+			isUpdatingDomainNotices: isUpdatingDomainNotices( state, domainName ),
+		};
+	},
+	{
+		dispatchRecordTracksEvent: recordTracksEvent,
+		requestDomainsNotices,
+		updateDomainNotice,
+	}
+)( DomainOnlyUpsellCarousel );
