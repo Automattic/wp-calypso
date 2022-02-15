@@ -66,6 +66,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	 */
 	useEffect( fetchImporters, [ siteId ] );
 	useEffect( checkInitialRunState, [ siteId ] );
+	useEffect( checkSiteSlugUpdate, [ site?.slug ] );
 	useEffect( () => {
 		fromSiteData?.url && dispatch( analyzeUrl( fromSite as string ) );
 	}, [ fromSiteData?.url ] );
@@ -94,6 +95,14 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		if ( searchParams.get( 'run' ) === 'true' ) {
 			setRunImportInitially( true );
 			page.replace( path.replace( '&run=true', '' ).replace( 'run=true', '' ) );
+		}
+	}
+
+	function checkSiteSlugUpdate() {
+		// update site slug when destination site is in transition from simple to atomic
+		if ( site?.slug && siteSlug !== site.slug ) {
+			page.replace( path.replace( `to=${ siteSlug }`, `to=${ site.slug }` ) );
+			siteSlug = site.slug;
 		}
 	}
 
