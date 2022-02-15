@@ -117,7 +117,6 @@ describe( 'selectors', () => {
 				refundAmount: NaN,
 				refundOptions: undefined,
 				refundText: undefined,
-				regularPriceText: undefined,
 				renewDate: undefined,
 				saleAmount: undefined,
 				siteName: undefined,
