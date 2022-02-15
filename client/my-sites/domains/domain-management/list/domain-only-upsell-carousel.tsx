@@ -218,7 +218,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 };
 
 const shouldHideCard = ( date: string ): boolean => {
-	const reminderEnd = moment( date );
+	const reminderEnd = moment( new Date( date ) );
 	return reminderEnd.isValid() && moment().isBefore( reminderEnd );
 };
 
