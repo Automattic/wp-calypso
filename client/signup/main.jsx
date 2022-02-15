@@ -4,6 +4,7 @@ import {
 	isDomainTransfer,
 	isDomainMapping,
 } from '@automattic/calypso-products';
+import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugModule from 'debug';
 import {
 	clone,
@@ -448,6 +449,7 @@ class Signup extends Component {
 			theme: selectedDesign?.theme,
 			intent,
 			startingPoint,
+			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 		} );
 
 		this.handleLogin( dependencies, destination );

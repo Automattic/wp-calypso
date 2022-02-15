@@ -104,6 +104,9 @@ export function getAvailableDesigns( {
 	return designs;
 }
 
-export function isBlankCanvasDesign( design: Design ): boolean {
+export function isBlankCanvasDesign( design?: Design ): boolean {
+	if ( ! design ) {
+		return false;
+	}
 	return /blank-canvas/i.test( design.slug );
 }
