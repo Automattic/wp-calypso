@@ -67,6 +67,8 @@ project {
 		password("mc_post_root", "credentialsJSON:2f764583-d399-4d5f-8ee1-06f68ef2e2a6", display = ParameterDisplay.HIDDEN )
 		password("mc_auth_secret", "credentialsJSON:5b1903f9-4b03-43ff-bba8-4a7509d07088", display = ParameterDisplay.HIDDEN)
 		password("mc_teamcity_webhook", "credentialsJSON:7a711930-afd4-4058-b33f-39af8a0b7f91", display = ParameterDisplay.HIDDEN)
+		password("TRANSLATE_GH_APP_SECRET", "credentialsJSON:083cc9f7-4e9a-461f-b213-bc306baaeb28", display = ParameterDisplay.HIDDEN)
+		password("TRANSLATE_GH_APP_ID", "credentialsJSON:c03b1958-5ec3-4f4c-ab1c-ca1bf0e629f5", display = ParameterDisplay.HIDDEN)
 
 		// Fetch all heads. This is used for builds that merge trunk before running tests
 		param("teamcity.git.fetchAllHeads", "true")
