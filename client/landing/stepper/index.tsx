@@ -4,6 +4,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import ReactDom from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
+import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { LocaleContext } from '../gutenboarding/components/locale-context';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
@@ -27,6 +28,10 @@ interface AppWindow extends Window {
 declare const window: AppWindow;
 
 window.AppBoot = async () => {
+	// put the proxy iframe in "all blog access" mode
+	// see https://github.com/Automattic/wp-calypso/pull/60773#discussion_r799208216
+	requestAllBlogsAccess();
+
 	setupWpDataDebug();
 	// User is left undefined here because the user account will not be created
 	// until after the user has completed the flow.

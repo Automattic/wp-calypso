@@ -12,10 +12,8 @@ import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import {
-	GUTENBOARDING_SECTION_DEFINITION,
-	STEPPER_SECTION_DEFINITION,
-} from 'calypso/landing/gutenboarding/sections';
+import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import { filterLanguageRevisions } from 'calypso/lib/i18n-utils';
 import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
