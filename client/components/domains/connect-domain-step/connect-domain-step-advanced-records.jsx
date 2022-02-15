@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import { isSubdomain } from 'calypso/lib/domains';
 import ConnectDomainStepClipboardButton from './connect-domain-step-clipboard-button';
 import ConnectDomainStepVerificationNotice from './connect-domain-step-verification-error-notice';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
@@ -17,6 +18,7 @@ export default function ConnectDomainStepAdvancedRecords( {
 	mode,
 	onVerifyConnection,
 	progressStepList,
+	selectedSite,
 	showErrors,
 	verificationInProgress,
 	verificationStatus,
@@ -41,6 +43,18 @@ export default function ConnectDomainStepAdvancedRecords( {
 			type: 'CNAME',
 			name: 'www',
 			value: domain,
+		},
+	];
+	const cnameRecordsSubdomains = [
+		{
+			type: 'CNAME',
+			name: domain,
+			value: selectedSite.wpcom_url,
+		},
+		{
+			type: 'CNAME',
+			name: 'www.' + domain,
+			value: selectedSite.wpcom_url,
 		},
 	];
 
@@ -108,6 +122,37 @@ export default function ConnectDomainStepAdvancedRecords( {
 		</div>
 	);
 
+	const renderRecordsInstructions = () => {
+		if ( isSubdomain( domain ) ) {
+			return (
+				<>
+					<p className={ className + '__text' }>
+						{ __(
+							"Find the CNAME records on your subdomain's settings page and replace them with the following values:"
+						) }
+					</p>
+					{ renderRecordsList( cnameRecordsSubdomains ) }
+				</>
+			);
+		}
+		return (
+			<>
+				<p className={ className + '__text' }>
+					{ __( 'Find the root A records on your domain’s settings page.' ) }
+					<br />
+					{ __( 'Replace IP addresses (A records) of your domain to use the following values:' ) }
+				</p>
+				{ renderRecordsList( aRecords ) }
+				<p className={ className + '__text' }>
+					{ __( 'Next find the CNAME records on your domain’s settings page.' ) }
+					<br />
+					{ __( 'Replace the "www" CNAME record of your domain to use the following values:' ) }
+				</p>
+				{ renderRecordsList( cnameRecords ) }
+			</>
+		);
+	};
+
 	const stepContent = (
 		<div className={ className + '__advanced-records' }>
 			{ showErrors && (
@@ -116,20 +161,9 @@ export default function ConnectDomainStepAdvancedRecords( {
 					verificationStatus={ verificationStatus }
 				/>
 			) }
+			{ renderRecordsInstructions() }
 			<p className={ className + '__text' }>
-				{ __( 'Find the root A records on your domain’s settings page.' ) }
-				<br />
-				{ __( 'Replace IP addresses (A records) of your domain to use the following values:' ) }
-			</p>
-			{ renderRecordsList( aRecords ) }
-			<p className={ className + '__text' }>
-				{ __( 'Next find the CNAME records on your domain’s settings page.' ) }
-				<br />
-				{ __( 'Replace the "www" CNAME record of your domain to use the following values:' ) }
-			</p>
-			{ renderRecordsList( cnameRecords ) }
-			<p className={ className + '__text' }>
-				{ __( 'Once you\'ve updated the name servers click on "Verify Connection" below.' ) }
+				{ __( 'Once you\'ve updated the records click on "Verify Connection" below.' ) }
 			</p>
 			<div className={ className + '__actions' }>
 				<Button
