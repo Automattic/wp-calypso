@@ -7,6 +7,10 @@
 	// Set overflow: hidden here instead of the parent node so that its focus outline is not cut-off.
 	> a {
 		overflow: hidden;
+
+		&:focus {
+			box-shadow: 0 0 0 2px var( --color-primary );
+		}
 	}
 
 	&:first-child {
