@@ -42,7 +42,7 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) 
 								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
 								comment: 'Discount is a percentage',
 						  } )
-						: translate( 'Get %(discount)s%% off*', {
+						: translate( 'Get %(discount)s%% off', {
 								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
 								comment: 'Discount is a percentage. * is a clause describing the price adjustment.',
 						  } ) }
