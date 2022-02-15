@@ -122,19 +122,20 @@ export default function ConnectDomainStepAdvancedRecords( {
 		</div>
 	);
 
-	const renderRecordsInstructions = () => {
-		if ( isSubdomain( domain ) ) {
-			return (
-				<>
-					<p className={ className + '__text' }>
-						{ __(
-							"Find the CNAME records on your subdomain's settings page and replace them with the following values:"
-						) }
-					</p>
-					{ renderRecordsList( cnameRecordsSubdomains ) }
-				</>
-			);
-		}
+	const renderSubdomainInstructions = () => {
+		return (
+			<>
+				<p className={ className + '__text' }>
+					{ __(
+						"Find the CNAME records on your subdomain's settings page and replace them with the following values:"
+					) }
+				</p>
+				{ renderRecordsList( cnameRecordsSubdomains ) }
+			</>
+		);
+	};
+
+	const renderRootDomainInstructions = () => {
 		return (
 			<>
 				<p className={ className + '__text' }>
@@ -161,7 +162,7 @@ export default function ConnectDomainStepAdvancedRecords( {
 					verificationStatus={ verificationStatus }
 				/>
 			) }
-			{ renderRecordsInstructions() }
+			{ isSubdomain( domain ) ? renderSubdomainInstructions() : renderRootDomainInstructions() }
 			<p className={ className + '__text' }>
 				{ __( 'Once you\'ve updated the records click on "Verify Connection" below.' ) }
 			</p>
