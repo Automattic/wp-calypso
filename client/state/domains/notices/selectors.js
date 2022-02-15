@@ -7,3 +7,7 @@ export function getDomainNotice( state, domainName, noticeType ) {
 export function isRequestingDomainNotices( state, domainName ) {
 	return state.domains.notices[ domainName ]?.isFetching || null;
 }
+
+export function isUpdatingDomainNotices( state, domainName ) {
+	return state.domains.notices[ domainName ]?.isUpdating || null;
+}
