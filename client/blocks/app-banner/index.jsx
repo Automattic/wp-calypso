@@ -106,11 +106,11 @@ export class AppBanner extends Component {
 		return this.isiOS() || this.isAndroid();
 	}
 
-	dismiss = ( event ) => {
+	dismiss = ( experimentIsControl, event ) => {
 		event.preventDefault();
-		const { currentSection, dismissedUntil } = this.props;
 
-		this.props.saveDismissTime( currentSection, dismissedUntil, this.experimentIsControl );
+		const { currentSection, dismissedUntil } = this.props;
+		this.props.saveDismissTime( currentSection, dismissedUntil, experimentIsControl );
 		this.props.dismissAppBanner();
 	};
 
@@ -153,7 +153,7 @@ export class AppBanner extends Component {
 		return (
 			<ProvideExperimentData name="calypso_mobileweb_appbanner_frequency_20220128_v1">
 				{ ( isLoading, experimentAssignment ) => {
-					this.experimentIsControl = isLoading ? true : ! experimentAssignment?.variationName;
+					if ( isLoading ) {
 						return null;
 					}
 
@@ -194,7 +194,10 @@ export class AppBanner extends Component {
 									>
 										{ translate( 'Open in app' ) }
 									</Button>
-									<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
+									<Button
+										className="app-banner__no-thanks-button"
+										onClick={ this.dismiss.bind( null, ! experimentAssignment?.variationName ) }
+									>
 										{ translate( 'No thanks' ) }
 									</Button>
 								</div>
