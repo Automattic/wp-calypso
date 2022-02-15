@@ -67,11 +67,10 @@ const IntroPricingBanner: FunctionComponent = () => {
 					/>
 					<span>
 						{ preventWidows(
-							translate( 'Get %(percent)d%% off your first year.*', {
+							translate( 'Get %(percent)d%% off your first year.', {
 								args: {
 									percent: discountPercentage,
 								},
-								comment: '* clause describing the price adjustment',
 							} )
 						) }
 					</span>
@@ -87,9 +86,8 @@ const IntroPricingBanner: FunctionComponent = () => {
 						/>
 						<span>
 							{ preventWidows(
-								translate( '%(days)d day money back guarantee.**', {
+								translate( '%(days)d day money back guarantee.', {
 									args: { days: GUARANTEE_DAYS },
-									comment: '** clause describing the money back guarantee',
 								} )
 							) }
 						</span>
