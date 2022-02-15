@@ -14,5 +14,6 @@ export * from './block-widget-editor-component';
 export * from './revisions-component';
 export * from './snackbar-notification-component';
 export * from './page-template-modal-component';
+export * from './react-modal-component';
 
 export * from './me';

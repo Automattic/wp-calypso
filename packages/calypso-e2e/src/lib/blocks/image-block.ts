@@ -1,5 +1,6 @@
 import { Page, ElementHandle, Frame } from 'playwright';
-import { MediaPage } from '..';
+import { ReactModalComponent } from '../components';
+import { MediaPage } from '../pages';
 
 type Sources = 'Media Library' | 'Google Photos' | 'Pexels';
 
@@ -82,12 +83,12 @@ export class ImageBlock {
 		const frame = ( await this.block.ownerFrame() ) as Frame;
 		const page = frame.page();
 
-		// The resulting React modal is essentially the MediaPage, just
-		// embedded within the modal, with additional buttons to
-		// confirm or cancel image insertion.
-		const mediaPage = new MediaPage( page );
-		await mediaPage.upload( path );
-		await mediaPage.clickModalButton( 'Confirm' );
+		// The resulting react modal embeds the MediaPage with additional
+		// buttons to confirm/cancel action.
+		const reactModalComponent = new ReactModalComponent( page, new MediaPage( page ) );
+		await reactModalComponent.pageObject.upload( path );
+		await reactModalComponent.clickButton( 'Insert' );
+
 		await this.waitUntilUploaded();
 		return await this.getImage();
 	}
