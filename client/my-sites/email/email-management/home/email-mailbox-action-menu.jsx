@@ -36,7 +36,7 @@ import {
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import {
-	getTitanCalendarlUrl,
+	getTitanCalendarUrl,
 	getTitanContactsUrl,
 	getTitanEmailUrl,
 	hasTitanMailWithUs,
@@ -99,7 +99,7 @@ const getTitanMenuItems = ( { domain, mailbox, showRemoveMailboxDialog, translat
 			onClick: getTitanClickHandler( 'webmail' ),
 		},
 		{
-			href: getTitanCalendarlUrl( domain, email ),
+			href: getTitanCalendarUrl( domain, email ),
 			image: titanCalendarIcon,
 			imageAltText: translate( 'Titan Calendar icon' ),
 			title: translate( 'View Calendar', {

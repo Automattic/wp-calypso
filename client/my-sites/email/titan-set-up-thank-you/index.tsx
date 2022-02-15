@@ -42,7 +42,6 @@ const TitanSetUpThankYou = ( {
 
 	const domain = getSelectedDomain( {
 		domains,
-		isSiteRedirect: false,
 		selectedDomainName: domainName,
 	} );
 

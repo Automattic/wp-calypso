@@ -4,7 +4,7 @@
 const TITAN_APPS = {
 	CALENDAR: 'calendar',
 	CONTACTS: 'contacts',
-	MAIL: 'mail',
+	EMAIL: 'mail',
 };
 
 /**
@@ -16,7 +16,7 @@ const TITAN_APPS = {
  * @param {boolean?} clearPreviousSessions - Whether to clear previously logged-in sessions.
  * @returns The URL with app and prefilled `email_account` as query parameter
  */
-function getTitanUrl( domain, email, app = TITAN_APPS.MAIL, clearPreviousSessions = false ) {
+function getTitanUrl( domain, email, app = TITAN_APPS.EMAIL, clearPreviousSessions = false ) {
 	const titanBaseUrl = domain?.titanMailSubscription?.baseUrl ?? 'https://wp.titan.email';
 	const titanAppUrl = new URL( `${ titanBaseUrl }/${ app }/` );
 
@@ -31,7 +31,7 @@ function getTitanUrl( domain, email, app = TITAN_APPS.MAIL, clearPreviousSession
 	return titanAppUrl.href;
 }
 
-export function getTitanCalendarlUrl( domain, email ) {
+export function getTitanCalendarUrl( domain, email ) {
 	return getTitanUrl( domain, email, TITAN_APPS.CALENDAR );
 }
 
@@ -40,5 +40,5 @@ export function getTitanContactsUrl( domain, email ) {
 }
 
 export function getTitanEmailUrl( domain, email, clearPreviousSessions = false ) {
-	return getTitanUrl( domain, email, TITAN_APPS.MAIL, clearPreviousSessions );
+	return getTitanUrl( domain, email, TITAN_APPS.EMAIL, clearPreviousSessions );
 }

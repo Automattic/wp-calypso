@@ -27,9 +27,9 @@ const thankYouContentGetter: Record< DomainThankYouType, DomainThankYouPropsGett
 export default thankYouContentGetter;
 
 interface StepCTAProps {
+	domainType: DomainThankYouType;
 	email?: string;
 	primary: boolean;
-	domainType: DomainThankYouType;
 }
 
 const StepCTA: FunctionComponent< StepCTAProps > = ( { email, primary, domainType } ) => {
