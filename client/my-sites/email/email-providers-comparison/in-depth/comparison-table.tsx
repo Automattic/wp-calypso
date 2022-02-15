@@ -62,7 +62,7 @@ const ComparisonTable = ( {
 					</td>
 
 					{ emailProviders.map( ( emailProviderFeatures ) => (
-						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.list.tools }</td>
+						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.table.tools }</td>
 					) ) }
 				</tr>
 
@@ -72,7 +72,19 @@ const ComparisonTable = ( {
 					</td>
 
 					{ emailProviders.map( ( emailProviderFeatures ) => (
-						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.list.storage }</td>
+						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.table.storage }</td>
+					) ) }
+				</tr>
+
+				<tr className="email-providers-in-depth-comparison-table__separator">
+					<td className="email-providers-in-depth-comparison-table__feature">
+						{ translate( 'Collaboration' ) }
+					</td>
+
+					{ emailProviders.map( ( emailProviderFeatures ) => (
+						<td key={ emailProviderFeatures.slug }>
+							{ emailProviderFeatures.table.collaboration }
+						</td>
 					) ) }
 				</tr>
 
@@ -82,7 +94,7 @@ const ComparisonTable = ( {
 					</td>
 
 					{ emailProviders.map( ( emailProviderFeatures ) => (
-						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.list.importing }</td>
+						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.table.importing }</td>
 					) ) }
 				</tr>
 
@@ -92,7 +104,7 @@ const ComparisonTable = ( {
 					</td>
 
 					{ emailProviders.map( ( emailProviderFeatures ) => (
-						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.list.support }</td>
+						<td key={ emailProviderFeatures.slug }>{ emailProviderFeatures.table.support }</td>
 					) ) }
 				</tr>
 

@@ -669,7 +669,7 @@ function LineItemSublabelAndPrice( {
 						billingInterval,
 					},
 					comment:
-						"Product description and billing interval (already translated) separated by a colon (e.g. 'Productivity Tools and Mailboxes: billed annually')",
+						"Product description and billing interval (already translated) separated by a colon (e.g. 'Mailboxes and Productivity Tools: billed annually')",
 				} ) }
 			</>
 		);

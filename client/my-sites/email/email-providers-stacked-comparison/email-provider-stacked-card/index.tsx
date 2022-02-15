@@ -46,7 +46,7 @@ const EmailProvidersStackedCard = ( {
 	const header = (
 		<div className="email-provider-stacked-card__header">
 			<div className="email-provider-stacked-card__title-container">
-				<h2 className="email-provider-stacked-card__title wp-brand-font"> { productName } </h2>
+				<h2 className="email-provider-stacked-card__title"> { productName } </h2>
 				<p>{ description }</p>
 			</div>
 

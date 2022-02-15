@@ -83,7 +83,9 @@ export const EmailProviderStackedFeaturesToggleButton = ( {
 			onClick={ handleClick }
 		>
 			<span className="email-provider-stacked-features__toggle-text">
-				{ translate( 'Show all features' ) }
+				{ isRelatedContentExpanded
+					? translate( 'Hide all features' )
+					: translate( 'Show all features' ) }
 			</span>
 
 			<Gridicon icon={ isRelatedContentExpanded ? 'chevron-up' : 'chevron-down' } />
