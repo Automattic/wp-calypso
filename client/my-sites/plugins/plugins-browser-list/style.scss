@@ -40,6 +40,15 @@
 		&[class*='plugins-browser-list__search-for'] {
 			font-weight: 400;
 		}
+
+		.plugins-browser-list__browse-all {
+			font-size: $font-body;
+			display: flex;
+			align-items: center;
+			svg {
+				margin-left: 2px;
+			}
+		}
 	}
 
 	.plugins-browser-list__subtitle {
