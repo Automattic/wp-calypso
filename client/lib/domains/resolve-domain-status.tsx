@@ -2,6 +2,8 @@ import { Button } from '@automattic/components';
 import { Purchase } from '@automattic/wpcom-checkout';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
+import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
+import { isSubdomain } from 'calypso/lib/domains';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
@@ -75,8 +77,17 @@ export function resolveDomainStatus(
 		},
 	};
 
-	const mappingSetupStep =
-		domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update';
+	let mappingSetupStep: string =
+		domain.connectionMode === modeType.ADVANCED
+			? stepSlug.ADVANCED_UPDATE
+			: stepSlug.SUGGESTED_UPDATE;
+	if ( isSubdomain( domain.domain ) ) {
+		mappingSetupStep =
+			domain.connectionMode === modeType.ADVANCED
+				? stepSlug.SUBDOMAIN_ADVANCED_UPDATE
+				: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE;
+	}
+
 	const mappingSetupComponents = {
 		strong: <strong />,
 		a: (
