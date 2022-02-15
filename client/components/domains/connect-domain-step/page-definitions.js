@@ -95,8 +95,9 @@ export const connectADomainStepsDefinition = {
 		prev: stepSlug.ADVANCED_UPDATE,
 		singleColumnLayout: true,
 	},
+};
 
-	// Subdomain connection steps
+export const connectASubdomainStepsDefinition = {
 	// Suggested flow
 	[ stepSlug.SUBDOMAIN_SUGGESTED_START ]: {
 		mode: modeType.SUGGESTED,

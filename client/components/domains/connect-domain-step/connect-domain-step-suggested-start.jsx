@@ -32,7 +32,10 @@ export default function ConnectDomainStepSuggestedStart( {
 	const { __ } = useI18n();
 	const selectedSite = useSelector( getSelectedSite );
 	const goToDnsRecordsPage = () => page( domainManagementDns( selectedSite?.slug, domain ) );
-	const switchToAdvancedSetup = () => setPage( stepSlug.ADVANCED_START );
+	const firstStep = isSubdomain( domain )
+		? stepSlug.SUBDOMAIN_ADVANCED_START
+		: stepSlug.ADVANCED_START;
+	const switchToAdvancedSetup = () => setPage( firstStep );
 
 	const message = isSubdomain( domain )
 		? __(

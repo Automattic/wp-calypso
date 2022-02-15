@@ -26,7 +26,10 @@ import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-s
 import { isMappingVerificationSuccess } from './connect-domain-step-verification-status-parsing.js';
 import ConnectDomainSteps from './connect-domain-steps';
 import { modeType, stepType, stepSlug, defaultDomainSetupInfo } from './constants';
-import { connectADomainStepsDefinition } from './page-definitions.js';
+import {
+	connectADomainStepsDefinition,
+	connectASubdomainStepsDefinition,
+} from './page-definitions.js';
 
 import './style.scss';
 
@@ -39,6 +42,9 @@ function ConnectDomainStep( {
 	isFirstVisit,
 } ) {
 	const { __ } = useI18n();
+	const stepsDefinition = isSubdomain( domain )
+		? connectASubdomainStepsDefinition
+		: connectADomainStepsDefinition;
 	const firstStep = isSubdomain( domain )
 		? stepSlug.SUBDOMAIN_SUGGESTED_START
 		: stepSlug.SUGGESTED_START;
@@ -50,11 +56,11 @@ function ConnectDomainStep( {
 	const [ loadingDomainSetupInfo, setLoadingDomainSetupInfo ] = useState( false );
 
 	const baseClassName = 'connect-domain-step';
-	const isStepStart = stepType.START === connectADomainStepsDefinition[ pageSlug ].step;
-	const mode = connectADomainStepsDefinition[ pageSlug ].mode;
-	const step = connectADomainStepsDefinition[ pageSlug ].step;
-	const prevPageSlug = connectADomainStepsDefinition[ pageSlug ].prev;
-	const isTwoColumnLayout = ! connectADomainStepsDefinition[ pageSlug ].singleColumnLayout;
+	const isStepStart = stepType.START === stepsDefinition[ pageSlug ].step;
+	const mode = stepsDefinition[ pageSlug ].mode;
+	const step = stepsDefinition[ pageSlug ].step;
+	const prevPageSlug = stepsDefinition[ pageSlug ].prev;
+	const isTwoColumnLayout = ! stepsDefinition[ pageSlug ].singleColumnLayout;
 
 	const statusRef = useRef( {} );
 
@@ -227,7 +233,7 @@ function ConnectDomainStep( {
 					baseClassName={ baseClassName }
 					domain={ domain }
 					initialPageSlug={ pageSlug }
-					stepsDefinition={ connectADomainStepsDefinition }
+					stepsDefinition={ stepsDefinition }
 					onSetPage={ setPageSlug }
 					onVerifyConnection={ verifyConnection }
 					verificationInProgress={ verificationInProgress }
