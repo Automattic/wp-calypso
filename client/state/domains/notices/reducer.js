@@ -8,14 +8,19 @@ import {
 	DOMAINS_NOTICE_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 
-function updateStateForDomain( state, domainName, data ) {
+function updateStateForDomain( state, domainName, newData ) {
 	const command = state[ domainName ] ? '$merge' : '$set';
 
-	return update( state, {
+	const data = Object.assign( {}, newData );
+	data.items = Object.assign( {}, state[ domainName ]?.items || {}, newData.items || {} );
+
+	const newState = update( state, {
 		[ domainName ]: {
 			[ command ]: data,
 		},
 	} );
+
+	return newState;
 }
 
 export const initialStateForSite = {
