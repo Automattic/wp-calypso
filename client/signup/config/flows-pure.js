@@ -255,7 +255,7 @@ export function generateFlows( {
 			destination: getDomainSignupFlowDestination,
 			description: 'An experimental approach for WordPress.com/domains',
 			disallowResume: true,
-			lastModified: '2022-02-10',
+			lastModified: '2022-02-15',
 			showRecaptcha: true,
 		},
 		{
