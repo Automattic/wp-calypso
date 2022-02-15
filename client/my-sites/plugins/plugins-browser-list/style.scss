@@ -33,11 +33,9 @@
 		font-size: $font-title-small;
 		font-weight: 500;
 
-		&.paid {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-		}
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 
 		&[class*='plugins-browser-list__search-for'] {
 			font-weight: 400;
