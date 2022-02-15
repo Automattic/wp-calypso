@@ -154,6 +154,8 @@ export class AppBanner extends Component {
 			<ProvideExperimentData name="calypso_mobileweb_appbanner_frequency_20220128_v1">
 				{ ( isLoading, experimentAssignment ) => {
 					this.experimentIsControl = isLoading ? true : ! experimentAssignment?.variationName;
+						return null;
+					}
 
 					return (
 						<div
