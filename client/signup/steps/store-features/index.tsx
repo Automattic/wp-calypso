@@ -7,11 +7,13 @@ import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { localizeUrl } from 'calypso/lib/i18n-utils/utils';
+import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { shoppingBag, truck } from '../../icons';
 import SelectItems, { SelectItem } from '../../select-items';
+import { EXCLUDED_STEPS } from '../intent/index';
 import { StoreFeatureSet } from './types';
 import './index.scss';
 
@@ -31,6 +33,14 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const subHeaderText = translate( 'Let’s create a website that suits your needs.' );
 	const siteSlug = props.signupDependencies.siteSlug;
 	const { stepName, goToNextStep } = props;
+
+	/**
+	 * In the regular flow the "EXCLUDED_STEPS" are already excluded,
+	 * but this information is lost if the user leaves the flow and comes back,
+	 * e.g. they go to "More Power" and then click "Back"
+	 */
+	const branchSteps = useBranchSteps( stepName, () => EXCLUDED_STEPS.sell );
+	branchSteps( EXCLUDED_STEPS.sell );
 
 	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );
 
