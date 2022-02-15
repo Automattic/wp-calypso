@@ -461,7 +461,7 @@ const translateCategory = ( { category, translate } ) => {
 				context: 'Category description for the plugin browser.',
 			} );
 		case 'paid':
-			return translate( 'Featured', {
+			return translate( 'Premium', {
 				context: 'Category description for the plugin browser.',
 			} );
 	}
@@ -557,7 +557,10 @@ const PluginBrowserContent = ( props ) => {
 	return (
 		<>
 			{ ! props.jetpackNonAtomic ? (
-				<PluginSingleListView { ...props } category="paid" />
+				<>
+					<PluginSingleListView { ...props } category="paid" />
+					<PluginSingleListView { ...props } category="featured" />
+				</>
 			) : (
 				<PluginSingleListView { ...props } category="featured" />
 			) }
