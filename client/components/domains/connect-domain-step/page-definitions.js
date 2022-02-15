@@ -97,6 +97,87 @@ export const connectADomainStepsDefinition = {
 	},
 };
 
+export const connectASubdomainStepsDefinition = {
+	// Suggested flow
+	[ stepSlug.SUBDOMAIN_SUGGESTED_START ]: {
+		mode: modeType.SUGGESTED,
+		step: stepType.START,
+		component: ConnectDomainStepSuggestedStart, // TODO: change
+		next: stepSlug.SUBDOMAIN_SUGGESTED_LOGIN,
+	},
+	[ stepSlug.SUBDOMAIN_SUGGESTED_LOGIN ]: {
+		mode: modeType.SUGGESTED,
+		step: stepType.LOG_IN_TO_PROVIDER,
+		get name() {
+			return __( 'Log in to provider' );
+		},
+		component: ConnectDomainStepLogin,
+		next: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE,
+		prev: stepSlug.SUBDOMAIN_SUGGESTED_START,
+	},
+	[ stepSlug.SUBDOMAIN_SUGGESTED_UPDATE ]: {
+		mode: modeType.SUGGESTED,
+		step: stepType.UPDATE_NS_RECORDS,
+		get name() {
+			return __( 'Update NS records' );
+		},
+		component: ConnectDomainStepSuggestedRecords, // TODO: change
+		prev: stepSlug.SUBDOMAIN_SUGGESTED_LOGIN,
+	},
+	[ stepSlug.SUBDOMAIN_SUGGESTED_CONNECTED ]: {
+		mode: modeType.SUGGESTED,
+		step: stepType.CONNECTED,
+		component: ConnectDomainStepDone, // TODO: change
+		prev: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE,
+	},
+	[ stepSlug.SUBDOMAIN_SUGGESTED_VERIFYING ]: {
+		mode: modeType.SUGGESTED,
+		step: stepType.VERIFYING,
+		component: ConnectDomainStepDone, // TODO: change
+		prev: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE,
+	},
+
+	// Advanced flow
+	[ stepSlug.SUBDOMAIN_ADVANCED_START ]: {
+		mode: modeType.ADVANCED,
+		step: stepType.START,
+		component: ConnectDomainStepAdvancedStart, // TODO: change
+		next: stepSlug.SUBDOMAIN_ADVANCED_LOGIN,
+		prev: stepSlug.SUBDOMAIN_SUGGESTED_START,
+	},
+	[ stepSlug.SUBDOMAIN_ADVANCED_LOGIN ]: {
+		mode: modeType.ADVANCED,
+		step: stepType.LOG_IN_TO_PROVIDER,
+		get name() {
+			return __( 'Log in to provider' );
+		},
+		component: ConnectDomainStepLogin,
+		next: stepSlug.SUBDOMAIN_ADVANCED_UPDATE,
+		prev: stepSlug.SUBDOMAIN_ADVANCED_START,
+	},
+	[ stepSlug.SUBDOMAIN_ADVANCED_UPDATE ]: {
+		mode: modeType.ADVANCED,
+		step: stepType.UPDATE_CNAME_RECORDS,
+		get name() {
+			return __( 'Update CNAME records' );
+		},
+		component: ConnectDomainStepAdvancedRecords, // TODO: change
+		prev: stepSlug.SUBDOMAIN_ADVANCED_LOGIN,
+	},
+	[ stepSlug.SUBDOMAIN_ADVANCED_CONNECTED ]: {
+		mode: modeType.ADVANCED,
+		step: stepType.CONNECTED,
+		component: ConnectDomainStepDone, // TODO: change
+		prev: stepSlug.SUBDOMAIN_ADVANCED_UPDATE,
+	},
+	[ stepSlug.SUBDOMAIN_ADVANCED_VERIFYING ]: {
+		mode: modeType.ADVANCED,
+		step: stepType.VERIFYING,
+		component: ConnectDomainStepDone, // TODO: change
+		prev: stepSlug.SUBDOMAIN_ADVANCED_UPDATE,
+	},
+};
+
 export const connectADomainOwnershipVerificationStepsDefinition = {
 	[ 'unused start step' ]: {
 		mode: modeType.OWNERSHIP_VERIFICATION,
