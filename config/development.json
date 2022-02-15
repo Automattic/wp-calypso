@@ -34,6 +34,7 @@
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": true,
 		"checkout/google-pay": true,
+		"checkout/variant-dropdown": true,
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
