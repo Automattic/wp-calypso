@@ -5,6 +5,7 @@ import { Stripe } from '@stripe/stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
+import { useMemo } from 'react';
 import { State } from 'calypso/state/partner-portal/payment-methods/reducer';
 
 const debug = debugFactory( 'calypso:partner-portal:credit-card' );
@@ -35,6 +36,16 @@ export default function CreditCardSubmitButton( {
 	const cardElement = elements?.getElement( CardElement ) ?? undefined;
 	const formSubmitting = FormStatus.SUBMITTING === formStatus;
 
+	const buttonContents = useMemo( () => {
+		if ( formStatus === FormStatus.SUBMITTING ) {
+			return __( 'Processing…' );
+		}
+		if ( formStatus === FormStatus.READY ) {
+			return activeButtonText || __( 'Save payment method' );
+		}
+		return __( 'Please wait…' );
+	}, [ formStatus, activeButtonText, __ ] );
+
 	return (
 		<Button
 			className={ ! formSubmitting ? 'button is-primary' : '' }
@@ -63,26 +74,9 @@ export default function CreditCardSubmitButton( {
 			isBusy={ formSubmitting }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } activeButtonText={ activeButtonText } />
+			{ buttonContents }
 		</Button>
 	);
-}
-
-function ButtonContents( {
-	formStatus,
-	activeButtonText,
-}: {
-	formStatus: FormStatus;
-	activeButtonText: string | undefined;
-} ): JSX.Element {
-	const { __ } = useI18n();
-	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) } </>;
-	}
-	if ( formStatus === FormStatus.READY ) {
-		return <>{ activeButtonText || __( 'Save payment method' ) }</>;
-	}
-	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function isCreditCardFormValid( store: State, __: typeof import('@wordpress/i18n').__ ) {
