@@ -450,9 +450,7 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 			<!-- /wp:paragraph -->
 
 			<!-- wp:jetpack/recurring-payments -->
-			<div class="wp-block-jetpack-recurring-payments"><!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":${ translate(
-				'Buy Now'
-			) },"customTextColor":"#ffffff","backgroundColor":"black","borderRadius":0,"width":"100%"} /--></div>
+			<div class="wp-block-jetpack-recurring-payments"><!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":'Buy Now'},"customTextColor":"#ffffff","backgroundColor":"black","borderRadius":0,"width":"100%"} /--></div>
 			<!-- /wp:jetpack/recurring-payments -->
 
 			<!-- wp:spacer {"height":"20px"} -->
