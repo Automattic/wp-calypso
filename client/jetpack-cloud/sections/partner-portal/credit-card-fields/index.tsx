@@ -37,7 +37,7 @@ export default function CreditCardFields() {
 	const cardholderNameErrorMessages = getErrorMessagesForField( 'cardholderName' ) || [];
 	const cardholderNameErrorMessage = cardholderNameErrorMessages.length
 		? cardholderNameErrorMessages[ 0 ]
-		: null;
+		: undefined;
 
 	const handleStripeFieldChange = ( input: StripeElementChangeEvent ) => {
 		setCardDataComplete( input.elementType, input.complete );

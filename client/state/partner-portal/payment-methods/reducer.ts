@@ -11,7 +11,7 @@ const initialState = {
 	useAsPrimaryPaymentMethod: true,
 };
 
-export interface FieldsStateValue {
+interface FieldsStateValue {
 	value: string;
 	isTouched: boolean;
 	errors: string[];

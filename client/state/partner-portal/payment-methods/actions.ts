@@ -1,6 +1,6 @@
 import { AnyAction } from 'redux';
 
-export function setCardDataError( type: string, message: string ): AnyAction {
+export function setCardDataError( type: string, message: string | null ): AnyAction {
 	return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
 }
 
@@ -8,7 +8,7 @@ export function setCardDataComplete( type: string, complete: boolean ): AnyActio
 	return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
 }
 
-export function setUseAsPrimaryPaymentMethod( payload: string ) {
+export function setUseAsPrimaryPaymentMethod( payload: boolean ) {
 	return { type: 'USE_AS_PRIMARY_PAYMENT_METHOD', payload };
 }
 
