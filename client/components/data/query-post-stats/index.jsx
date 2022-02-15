@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useMemoizedValue } from 'calypso/lib/use-memoized-value';
+import { useMemoCompare } from 'calypso/lib/use-memo-compare';
 import { requestPostStats } from 'calypso/state/stats/posts/actions';
 import { isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 
@@ -13,7 +13,7 @@ const request = ( siteId, postId, fields ) => ( dispatch, getState ) => {
 
 function QueryPostStats( { siteId, postId, fields } ) {
 	const dispatch = useDispatch();
-	const memoizedFields = useMemoizedValue( fields, ( a, b ) => a?.join() !== b?.join() );
+	const memoizedFields = useMemoCompare( fields, ( a, b ) => a?.join() === b?.join() );
 
 	useEffect( () => {
 		if ( siteId && postId ) {

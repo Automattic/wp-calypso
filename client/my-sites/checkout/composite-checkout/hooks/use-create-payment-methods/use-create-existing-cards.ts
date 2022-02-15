@@ -1,6 +1,6 @@
 import { createExistingCardMethod } from '@automattic/wpcom-checkout';
 import { useMemo } from 'react';
-import useMemoCompare from '../use-memo-compare';
+import { useMemoCompare } from 'calypso/lib/use-memo-compare';
 import type { StoredCard } from '../../types/stored-cards';
 import type { StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
