@@ -17,6 +17,7 @@ export type ItemVariationPickerProps = {
 	isDisabled: boolean;
 	siteId: number | undefined;
 	productSlug: string;
+	type?: 'buttons' | 'dropdown';
 };
 
 export type OnChangeItemVariant = (
