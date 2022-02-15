@@ -11,7 +11,7 @@ const initialState = {
 	useAsPrimaryPaymentMethod: true,
 };
 
-interface FieldsStateValue {
+export interface FieldsStateValue {
 	value: string;
 	isTouched: boolean;
 	errors: string[];
@@ -87,7 +87,7 @@ export const cardDataErrors: Reducer< Record< string, unknown >, AnyAction > = (
 	}
 };
 
-export const useAsPrimaryPaymentMethod: Reducer< Record< string, unknown >, AnyAction > = (
+export const useAsPrimaryPaymentMethod: Reducer< boolean, AnyAction > = (
 	state = initialState.useAsPrimaryPaymentMethod,
 	action
 ) => {

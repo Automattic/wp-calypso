@@ -11,10 +11,10 @@ export function getIncompleteFieldKeys( state: State ): string[] {
 	return Object.keys( state.cardDataComplete ).filter( ( key ) => ! state.cardDataComplete[ key ] );
 }
 
-export function getFields( state: State ): Record< string, string > {
+export function getFields( state: State ): Record< string, unknown > {
 	return state.fields;
 }
 
-export function useAsPrimaryPaymentMethod( state: State ) {
+export function useAsPrimaryPaymentMethod( state: State ): boolean {
 	return state.useAsPrimaryPaymentMethod;
 }

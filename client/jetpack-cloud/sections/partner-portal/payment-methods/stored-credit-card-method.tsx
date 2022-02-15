@@ -1,7 +1,6 @@
-import { useI18n } from '@wordpress/react-i18n';
-import { Fragment } from 'react';
 import CreditCardFields from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields';
 import CreditCardSubmitButton from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-submit-button';
+import { State } from 'calypso/state/partner-portal/payment-methods/reducer';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { Stripe } from '@stripe/stripe-js';
@@ -12,14 +11,14 @@ export function createStoredCreditCardMethod( {
 	stripeConfiguration,
 	activePayButtonText = undefined,
 }: {
-	store: unknown;
+	store: State;
 	stripe: Stripe | null;
 	stripeConfiguration: StripeConfiguration | null;
 	activePayButtonText?: string | undefined;
 } ): PaymentMethod {
 	return {
 		id: 'card',
-		label: <CreditCardLabel />,
+		label: <></>,
 		activeContent: <CreditCardFields />,
 		submitButton: (
 			<CreditCardSubmitButton
@@ -29,16 +28,7 @@ export function createStoredCreditCardMethod( {
 				activeButtonText={ activePayButtonText }
 			/>
 		),
-		inactiveContent: <Fragment></Fragment>,
+		inactiveContent: <></>,
 		getAriaLabel: ( __ ) => __( 'Credit Card' ),
 	};
-}
-
-function CreditCardLabel() {
-	const { __ } = useI18n();
-	return (
-		<Fragment>
-			<span>{ __( 'Credit or debit card' ) }</span>
-		</Fragment>
-	);
 }

@@ -16,6 +16,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
+import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
 import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
@@ -23,8 +25,6 @@ import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import CreditCardLoading from '../../credit-card-fields/credit-card-loading';
-import PaymentMethodImage from '../../credit-card-fields/payment-method-image';
 
 import './style.scss';
 
@@ -53,9 +53,25 @@ function PaymentMethodAdd(): ReactElement {
 		);
 	};
 
+	const handleChangeError = useCallback(
+		( { transactionError }: { transactionError: string | null } ) => {
+			reduxDispatch(
+				errorNotice(
+					transactionError ||
+						translate( 'There was a problem assigning that payment method. Please try again.' )
+				)
+			);
+			// We need to regenerate the setup intent if the form was submitted.
+			reloadSetupIntentId();
+		},
+		[ reduxDispatch, translate, reloadSetupIntentId ]
+	);
+
 	const showSuccessMessage = useCallback(
 		( message ) => {
-			reduxDispatch( successNotice( message, { displayOnNextPage: true, duration: 5000 } ) );
+			reduxDispatch(
+				successNotice( message, { isPersistent: true, displayOnNextPage: true, duration: 5000 } )
+			);
 		},
 		[ reduxDispatch ]
 	);
@@ -92,6 +108,7 @@ function PaymentMethodAdd(): ReactElement {
 						reloadSetupIntentId,
 					} );
 				} }
+				onPaymentError={ handleChangeError }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ {
 					card: ( data: unknown ) =>

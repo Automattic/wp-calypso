@@ -21,7 +21,6 @@ export default function CreditCardFields() {
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);
 	const getField = ( key: string | number ) => fields[ key ] || {};
-	const getFieldValue = ( key: string | number ) => getField( key ).value ?? '';
 	const getErrorMessagesForField = ( key: string | number ) => {
 		const managedValue = getField( key );
 		return managedValue.errors ?? [];
@@ -74,8 +73,7 @@ export default function CreditCardFields() {
 			{ ! isStripeFullyLoaded && <CreditCardLoading /> }
 
 			<div
-				className={ classnames( {
-					'credit-card-fields': true,
+				className={ classnames( 'credit-card-fields', {
 					'credit-card-fields--is-loaded': isStripeFullyLoaded,
 				} ) }
 			>

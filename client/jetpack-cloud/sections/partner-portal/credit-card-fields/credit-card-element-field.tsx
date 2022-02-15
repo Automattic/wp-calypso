@@ -26,10 +26,8 @@ export default function CreditCardElementField( {
 			<label className="credit-card-fields__label">
 				<span className="credit-card-fields__label-text">{ __( 'Card details' ) }</span>
 				<span
-					className={ classnames( {
-						'credit-card-fields__stripe-element': true,
+					className={ classnames( 'credit-card-fields__stripe-element', 'number', {
 						'credit-card-fields__stripe-element--has-error': cardError,
-						number: true,
 					} ) }
 				>
 					<CardElement

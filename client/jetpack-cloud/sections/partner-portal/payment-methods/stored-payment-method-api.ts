@@ -14,14 +14,14 @@ export async function saveCreditCard( {
 	useAsPrimaryPaymentMethod: boolean;
 } ): Promise< StoredCardEndpointResponse > {
 	const additionalData = getParamsForApi( {
-		cardToken: token,
 		stripeConfiguration,
 		useAsPrimaryPaymentMethod,
 	} );
 
 	const response = await wp.req.post(
 		{
-			path: '/me/stored-cards',
+			apiNamespace: 'wpcom/v2',
+			path: '/jetpack/store-payment-method',
 		},
 		{
 			payment_key: token,
@@ -38,17 +38,14 @@ export async function saveCreditCard( {
 }
 
 function getParamsForApi( {
-	cardToken,
 	stripeConfiguration,
 	useAsPrimaryPaymentMethod,
 }: {
-	cardToken: string;
 	stripeConfiguration: StripeConfiguration;
 	useAsPrimaryPaymentMethod: boolean;
 } ) {
 	return {
 		payment_partner: stripeConfiguration.processor_id,
-		paygate_token: cardToken,
 		use_for_existing: useAsPrimaryPaymentMethod,
 	};
 }

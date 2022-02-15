@@ -1,10 +1,13 @@
+import { StripeConfiguration } from '@automattic/calypso-stripe';
 import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useElements, CardElement } from '@stripe/react-stripe-js';
+import { Stripe } from '@stripe/stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
+import { State } from 'calypso/state/partner-portal/payment-methods/reducer';
 
-const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
+const debug = debugFactory( 'calypso:partner-portal:credit-card' );
 
 export default function CreditCardSubmitButton( {
 	disabled,
@@ -13,7 +16,14 @@ export default function CreditCardSubmitButton( {
 	stripe,
 	stripeConfiguration,
 	activeButtonText,
-} ) {
+}: {
+	disabled?: boolean;
+	onClick?: ( element: string, submitData: unknown ) => void;
+	store: State;
+	stripe: Stripe | null;
+	stripeConfiguration: StripeConfiguration | null;
+	activeButtonText: string | undefined;
+} ): JSX.Element {
 	const { __ } = useI18n();
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>
@@ -23,15 +33,22 @@ export default function CreditCardSubmitButton( {
 	const { formStatus } = useFormStatus();
 	const elements = useElements();
 	const cardElement = elements?.getElement( CardElement ) ?? undefined;
+	const formSubmitting = FormStatus.SUBMITTING === formStatus;
 
 	return (
 		<Button
-			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			className="button is-primary"
+			className={ ! formSubmitting ? 'button is-primary' : '' }
 			disabled={ disabled }
 			onClick={ () => {
 				if ( isCreditCardFormValid( store, __ ) ) {
 					debug( 'submitting stripe payment' );
+
+					if ( ! onClick ) {
+						throw new Error(
+							'Missing onClick prop; CreditCardSubmitButton must be used as a payment button in CheckoutSubmitButton'
+						);
+					}
+
 					onClick( 'card', {
 						stripe,
 						name: cardholderName?.value,
@@ -43,7 +60,7 @@ export default function CreditCardSubmitButton( {
 				}
 			} }
 			buttonType="primary"
-			isBusy={ FormStatus.SUBMITTING === formStatus }
+			isBusy={ formSubmitting }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } activeButtonText={ activeButtonText } />
@@ -51,18 +68,24 @@ export default function CreditCardSubmitButton( {
 	);
 }
 
-function ButtonContents( { formStatus, activeButtonText = undefined } ) {
+function ButtonContents( {
+	formStatus,
+	activeButtonText,
+}: {
+	formStatus: FormStatus;
+	activeButtonText: string | undefined;
+} ): JSX.Element {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return __( 'Processing…' );
+		return <>{ __( 'Processing…' ) } </>;
 	}
 	if ( formStatus === FormStatus.READY ) {
-		return activeButtonText || __( 'Save payment method' );
+		return <>{ activeButtonText || __( 'Save payment method' ) }</>;
 	}
-	return __( 'Please wait…' );
+	return <>{ __( 'Please wait…' ) }</>;
 }
 
-function isCreditCardFormValid( store, __ ) {
+function isCreditCardFormValid( store: State, __: typeof import('@wordpress/i18n').__ ) {
 	debug( 'validating credit card fields' );
 
 	const fields = store.selectors.getFields( store.getState() );
