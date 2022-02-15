@@ -438,7 +438,7 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 
 			<!-- wp:column {"style":{"spacing":{"padding":{"right":"40px","left":"40px"}}}} -->
 			<div class="wp-block-column" style="padding-right:40px;padding-left:40px"><!-- wp:heading {"level":1,"style":{"typography":{"fontSize":"40px"},"spacing":{"margin":{"top":"0px"}}}} -->
-			<h1 id="item-name" style="font-size:40px;margin-top:0px">Item Name</h1>
+			<h1 id="item-name" style="font-size:40px;margin-top:0px">${ translate( 'Item Name' ) }</h1>
 			<!-- /wp:heading -->
 
 			<!-- wp:heading {"style":{"color":{"text":"#444444"}},"fontSize":"medium"} -->
@@ -446,11 +446,15 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 			<!-- /wp:heading -->
 
 			<!-- wp:paragraph {"style":{"color":{"text":"#444444"}},"fontSize":"small"} -->
-			<p class="has-text-color has-small-font-size" style="color:#444444">Short description of your item.</p>
+			<p class="has-text-color has-small-font-size" style="color:#444444">${ translate(
+				'Short description of your item.'
+			) }</p>
 			<!-- /wp:paragraph -->
 
 			<!-- wp:jetpack/recurring-payments -->
-			<div class="wp-block-jetpack-recurring-payments"><!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":"Buy Now","customTextColor":"#ffffff","backgroundColor":"black","borderRadius":0,"width":"100%"} /--></div>
+			<div class="wp-block-jetpack-recurring-payments"><!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":${ translate(
+				'Buy Now'
+			) },"customTextColor":"#ffffff","backgroundColor":"black","borderRadius":0,"width":"100%"} /--></div>
 			<!-- /wp:jetpack/recurring-payments -->
 
 			<!-- wp:spacer {"height":"20px"} -->
@@ -458,11 +462,13 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 			<!-- /wp:spacer -->
 
 			<!-- wp:paragraph {"fontSize":"small"} -->
-			<p class="has-small-font-size"><strong>Description</strong></p>
+			<p class="has-small-font-size"><strong>${ translate( 'Description' ) }</strong></p>
 			<!-- /wp:paragraph -->
 
 			<!-- wp:paragraph {"style":{"color":{"text":"#444444"}},"fontSize":"small"} -->
-			<p class="has-text-color has-small-font-size" style="color:#444444">Describe your item. Use this section to add a full description and details of your product, along with its many selling points.</p>
+			<p class="has-text-color has-small-font-size" style="color:#444444">${ translate(
+				'Describe your item. Use this section to add a full description and details of your product, along with its many selling points.'
+			) }</p>
 			<!-- /wp:paragraph --></div>
 			<!-- /wp:column --></div>
 			<!-- /wp:columns --></div>
