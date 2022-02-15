@@ -57,7 +57,11 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 		} );
 	};
 
-	const hideCard = ( reminder: HideCardDuration, noticeType: string ) => {
+	const hideCard = (
+		reminder: HideCardDuration,
+		noticeType: UpsellCardNoticeType,
+		sourceCardType: string
+	) => {
 		setHideSiteCardOptionsVisible( false );
 		setHideEmailCardOptionsVisible( false );
 		const mapReminderToMomentArgs = {
@@ -65,6 +69,10 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 			'1m': 30,
 		};
 		const noticeValue = moment().add( mapReminderToMomentArgs[ reminder ], 'days' ).toISOString();
+		dispatchRecordTracksEvent( 'calypso_domain_only_upsell_card_hide_card', {
+			source_card_type: sourceCardType,
+			reminder,
+		} );
 		props.updateDomainNotice( domain.domain, noticeType, noticeValue );
 	};
 
@@ -131,10 +139,10 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 									onClose={ () => setHideOptionsVisible( false ) }
 									position="bottom"
 								>
-									<PopoverMenuItem onClick={ () => hideCard( '1w', cardNoticeType ) }>
+									<PopoverMenuItem onClick={ () => hideCard( '1w', cardNoticeType, cardName ) }>
 										{ translate( 'For a week' ) }
 									</PopoverMenuItem>
-									<PopoverMenuItem onClick={ () => hideCard( '1m', cardNoticeType ) }>
+									<PopoverMenuItem onClick={ () => hideCard( '1m', cardNoticeType, cardName ) }>
 										{ translate( 'For a month' ) }
 									</PopoverMenuItem>
 								</PopoverMenu>
