@@ -121,7 +121,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 								aria-expanded={ areHideOptionsVisible }
 								aria-controls={ `popover-menu-hide-${ cardName }` }
 							>
-								{ translate( 'Hide this' ) } <Gridicon icon="dropdown" size={ 18 } />
+								{ translate( 'Hide this' ) } <Gridicon icon="chevron-down" size={ 12 } />
 							</Button>
 							{ areHideOptionsVisible && (
 								<PopoverMenu
