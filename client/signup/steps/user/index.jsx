@@ -390,10 +390,6 @@ export class UserStep extends Component {
 			} );
 		}
 
-		if ( this.isSimplerMobileForm() && this.isEmailForm() ) {
-			return translate( 'Create Account' );
-		}
-
 		return headerText;
 	}
 
@@ -415,7 +411,7 @@ export class UserStep extends Component {
 		return translate( 'Create your account' );
 	}
 
-	renderSignupForm() {
+	renderSignupForm( isTreatment = false ) {
 		const { oauth2Client, wccomFrom, isReskinned } = this.props;
 		let socialService;
 		let socialServiceResponse;
@@ -435,50 +431,30 @@ export class UserStep extends Component {
 		}
 
 		return (
-			<ProvideExperimentData
-				name="registration_social_login_first_on_mobile_v2"
-				options={ {
-					isEligible: isMobile(),
-				} }
-			>
-				{ ( isLoading, experimentAssignment ) => {
-					if ( isLoading ) {
-						return null;
-					}
-
-					const isTreatment = experimentAssignment?.variationName === 'treatment';
-					return (
-						<>
-							<SignupForm
-								{ ...omit( this.props, [ 'translate' ] ) }
-								redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
-								disabled={ this.userCreationStarted() }
-								submitting={ this.userCreationStarted() }
-								save={ this.save }
-								submitForm={ this.submitForm }
-								submitButtonText={ this.submitButtonText() }
-								suggestedUsername={ this.props.suggestedUsername }
-								handleSocialResponse={ this.handleSocialResponse }
-								isPasswordless={ isMobile() }
-								experimentName={ this.state.experiment }
-								isSocialSignupEnabled={ isSocialSignupEnabled }
-								socialService={ socialService }
-								socialServiceResponse={ socialServiceResponse }
-								recaptchaClientId={ this.state.recaptchaClientId }
-								horizontal={ isReskinned }
-								isReskinned={ isReskinned }
-								isSimplerMobileForm={ isTreatment }
-							/>
-							<div id="g-recaptcha"></div>
-						</>
-					);
-				} }
-			</ProvideExperimentData>
+			<>
+				<SignupForm
+					{ ...omit( this.props, [ 'translate' ] ) }
+					redirectToAfterLoginUrl={ getRedirectToAfterLoginUrl( this.props ) }
+					disabled={ this.userCreationStarted() }
+					submitting={ this.userCreationStarted() }
+					save={ this.save }
+					submitForm={ this.submitForm }
+					submitButtonText={ this.submitButtonText() }
+					suggestedUsername={ this.props.suggestedUsername }
+					handleSocialResponse={ this.handleSocialResponse }
+					isPasswordless={ isMobile() }
+					experimentName={ this.state.experiment }
+					isSocialSignupEnabled={ isSocialSignupEnabled }
+					socialService={ socialService }
+					socialServiceResponse={ socialServiceResponse }
+					recaptchaClientId={ this.state.recaptchaClientId }
+					horizontal={ isReskinned }
+					isReskinned={ isReskinned }
+					isSimplerMobileForm={ isTreatment }
+				/>
+				<div id="g-recaptcha"></div>
+			</>
 		);
-	}
-
-	isSimplerMobileForm() {
-		return this.props.flowName === 'onboarding' && isMobile() && this.state.isExperiemntTreatment;
 	}
 
 	isEmailForm() {
@@ -528,37 +504,54 @@ export class UserStep extends Component {
 			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
-		if ( this.isSimplerMobileForm() ) {
-			const loginUrl = this.getLoginUrl( this.props );
-			const subHeading = this.props.translate( 'Already have an account? {{a}}Log in{{/a}}', {
-				components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-			} );
-
-			return (
-				<div className="user__simpler-mobile-form">
-					<StepWrapper
-						flowName={ this.props.flowName }
-						stepName={ this.props.stepName }
-						headerText={ this.getHeaderText() }
-						subHeaderText={ subHeading }
-						positionInFlow={ this.props.positionInFlow }
-						fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
-						stepContent={ this.renderSignupForm() }
-					/>
-				</div>
-			);
-		}
-
 		return (
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				headerText={ this.getHeaderText() }
-				subHeaderText={ this.getSubHeaderText() }
-				positionInFlow={ this.props.positionInFlow }
-				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
-				stepContent={ this.renderSignupForm() }
-			/>
+			<ProvideExperimentData
+				name="registration_social_login_first_on_mobile_v2"
+				options={ {
+					isEligible: true || ( isMobile() && this.props.flowName === 'onboarding' ),
+				} }
+			>
+				{ ( isLoading, experimentAssignment ) => {
+					if ( isLoading ) {
+						return null;
+					}
+
+					if ( experimentAssignment?.variationName === 'treatment' ) {
+						const loginUrl = this.getLoginUrl( this.props );
+						const subHeading = this.props.translate( 'Already have an account? {{a}}Log in{{/a}}', {
+							components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+						} );
+						return (
+							<div className="user__simpler-mobile-form">
+								<StepWrapper
+									flowName={ this.props.flowName }
+									stepName={ this.props.stepName }
+									headerText={
+										this.isEmailForm()
+											? this.props.translate( 'Create Account' )
+											: this.getHeaderText()
+									}
+									subHeaderText={ subHeading }
+									positionInFlow={ this.props.positionInFlow }
+									fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
+									stepContent={ this.renderSignupForm( true ) }
+								/>
+							</div>
+						);
+					}
+					return (
+						<StepWrapper
+							flowName={ this.props.flowName }
+							stepName={ this.props.stepName }
+							headerText={ this.getHeaderText() }
+							subHeaderText={ this.getSubHeaderText() }
+							positionInFlow={ this.props.positionInFlow }
+							fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
+							stepContent={ this.renderSignupForm( false ) }
+						/>
+					);
+				} }
+			</ProvideExperimentData>
 		);
 	}
 }
