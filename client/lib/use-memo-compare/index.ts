@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 
 // See https://usehooks.com/useMemoCompare/
-export default function useMemoCompare< A, B >(
+export function useMemoCompare< A, B >(
 	next: B,
 	compare: ( previous: A | B | undefined, next: B ) => boolean
 ): A | B | undefined {
