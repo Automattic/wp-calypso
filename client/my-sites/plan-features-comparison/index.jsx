@@ -381,7 +381,8 @@ export default connect(
 							showMonthlyPrice
 						);
 						annualPricePerMonth =
-							yearlyPlanDiscount || getPlanRawPrice( state, yearlyPlan.product_id, true );
+							yearlyPlanDiscount ||
+							getPlanRawPrice( state, yearlyPlan.product_id, showMonthlyPrice );
 					}
 				}
 
