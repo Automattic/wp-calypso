@@ -426,11 +426,12 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 		 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
 		 */
 		const patternList = await wpcom.req.get( {
-			path: `/ptk/patterns/${ getLocaleSlug() }?http_envelope=1`,
+			path: `/ptk/patterns/${ getLocaleSlug() }?post_id=1899&http_envelope=1`,
 			apiNamespace: 'rest/v1',
 		} );
 
-		const singleProductPattern = patternList.find( ( x ) => x.ID === 4348 );
+		//Only item since we filter by id
+		const singleProductPattern = patternList[ 0 ];
 
 		// Create a new Home page
 		const newPage = await wpcom.req.post( {
