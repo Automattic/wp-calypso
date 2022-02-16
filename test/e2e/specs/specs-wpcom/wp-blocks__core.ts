@@ -1,0 +1,24 @@
+/**
+ * @group gutenberg
+ */
+
+import {
+	BlockFlow,
+	DataHelper,
+	LayoutGridBlockFlow,
+	YouTubeBlockFlow,
+} from '@automattic/calypso-e2e';
+import { createBlockTests } from '../specs-playwright/shared-specs/block-testing';
+
+const blockFlows: BlockFlow[] = [
+	new YouTubeBlockFlow( {
+		embedUrl: 'https://www.youtube.com/watch?v=twGLN4lug-I',
+		expectedVideoTitle: 'Getting Started on @WordPress.com',
+	} ),
+	new LayoutGridBlockFlow( {
+		leftColumnText: DataHelper.getRandomPhrase(),
+		rightColumnText: DataHelper.getRandomPhrase(),
+	} ),
+];
+
+createBlockTests( 'Blocks: Core', blockFlows );
