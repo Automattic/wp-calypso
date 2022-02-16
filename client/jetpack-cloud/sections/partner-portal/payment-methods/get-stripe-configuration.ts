@@ -7,7 +7,7 @@ export async function getStripeConfiguration(
 	const config = await wp.req.get(
 		{
 			apiNamespace: 'wpcom/v2',
-			path: '/jetpack/stripe-configuration',
+			path: '/jetpack/stripe/configuration',
 		},
 		requestArgs
 	);

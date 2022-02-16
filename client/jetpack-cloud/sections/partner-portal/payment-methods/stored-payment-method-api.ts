@@ -1,30 +1,24 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
-import type { StripeConfiguration } from '@automattic/calypso-stripe';
-
-type StoredCardEndpointResponse = unknown;
 
 export async function saveCreditCard( {
 	token,
-	stripeConfiguration,
 	useAsPrimaryPaymentMethod,
 }: {
 	token: string;
-	stripeConfiguration: StripeConfiguration;
 	useAsPrimaryPaymentMethod: boolean;
-} ): Promise< StoredCardEndpointResponse > {
+} ): Promise< unknown > {
 	const additionalData = getParamsForApi( {
-		stripeConfiguration,
 		useAsPrimaryPaymentMethod,
 	} );
 
 	const response = await wp.req.post(
 		{
 			apiNamespace: 'wpcom/v2',
-			path: '/jetpack/store-payment-method',
+			path: '/jetpack/stripe/store-payment-method',
 		},
 		{
-			payment_key: token,
+			payment_method_id: token,
 			...( additionalData ?? {} ),
 		}
 	);
@@ -37,15 +31,8 @@ export async function saveCreditCard( {
 	return response;
 }
 
-function getParamsForApi( {
-	stripeConfiguration,
-	useAsPrimaryPaymentMethod,
-}: {
-	stripeConfiguration: StripeConfiguration;
-	useAsPrimaryPaymentMethod: boolean;
-} ) {
+function getParamsForApi( { useAsPrimaryPaymentMethod }: { useAsPrimaryPaymentMethod: boolean } ) {
 	return {
-		payment_partner: stripeConfiguration.processor_id,
-		use_for_existing: useAsPrimaryPaymentMethod,
+		use_as_primary_payment_method: useAsPrimaryPaymentMethod,
 	};
 }
