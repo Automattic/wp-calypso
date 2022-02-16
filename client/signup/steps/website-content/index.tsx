@@ -1,11 +1,20 @@
+import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { Purchase } from 'calypso/lib/purchases/types';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import {
+	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
+} from 'calypso/state/purchases/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import getDIFMLiteSiteCategory from 'calypso/state/selectors/get-difm-lite-site-category';
 import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
@@ -17,8 +26,7 @@ import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
 } from 'calypso/state/signup/steps/website-content/selectors';
-import { requestSite } from 'calypso/state/sites/actions';
-import { getSiteId, isRequestingSite } from 'calypso/state/sites/selectors';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { sectionGenerator } from './section-generator';
 import './style.scss';
 
@@ -48,36 +56,37 @@ function WebsiteContentStep( {
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
+	useQuerySitePurchases( siteId );
+
+	const isPurchasesLoaded = useSelector( hasLoadedSitePurchasesFromServer );
+	const isPurchasesFetching = useSelector( isFetchingSitePurchases );
+	const purchases: Purchase[] = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+
 	const isWebsiteContentSubmitted = useSelector( ( state ) =>
 		isDIFMLiteWebsiteContentSubmitted( state, siteId )
 	);
-	const isRequestingCurrentSite = useSelector( ( state ) =>
-		isRequestingSite( state, siteId as number )
-	);
-	const isSiteInformationLoaded = ! isRequestingCurrentSite;
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 
 	useEffect( () => {
-		// Load the site information in case the user lands on this page and a site request is not triggered yet
-		siteId && dispatch( requestSite( siteId ) );
-	}, [ siteId, dispatch ] );
-
-	const isDIFMPurchased = !! siteCategory;
-
-	useEffect( () => {
-		if ( isSiteInformationLoaded && ! isDIFMPurchased ) {
-			debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
-			page( `/start/do-it-for-me?siteSlug=${ queryObject.siteSlug }` );
+		if ( ! isPurchasesFetching && isPurchasesLoaded ) {
+			const isDifmLitePurchased = purchases.some(
+				( p: Purchase ) => p.productSlug === WPCOM_DIFM_LITE
+			);
+			if ( ! isDifmLitePurchased ) {
+				debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
+				page( `/start/do-it-for-me?siteSlug=${ queryObject.siteSlug }` );
+			}
 		} else if ( isWebsiteContentSubmitted ) {
 			debug( 'Website content content already submitted, redirecting to home' );
 			page( `/home/${ queryObject.siteSlug }` );
 		}
 	}, [
-		isSiteInformationLoaded,
-		isDIFMPurchased,
+		isPurchasesFetching,
+		isPurchasesLoaded,
+		purchases,
 		isWebsiteContentSubmitted,
 		queryObject.siteSlug,
 	] );
@@ -139,16 +148,19 @@ function WebsiteContentStep( {
 	);
 	const generatedSections = generatedSectionsCallback();
 	return (
-		<AccordionForm
-			generatedSections={ generatedSections }
-			onErrorUpdates={ ( errors ) => setFormErrors( errors ) }
-			formValuesInitialState={ websiteContent }
-			currentIndex={ currentIndex }
-			updateCurrentIndex={ ( currentIndex ) => {
-				dispatch( updateWebsiteContentCurrentIndex( currentIndex ) );
-			} }
-			onSubmit={ onSubmit }
-		/>
+		<>
+			<QueryUserPurchases></QueryUserPurchases>
+			<AccordionForm
+				generatedSections={ generatedSections }
+				onErrorUpdates={ ( errors ) => setFormErrors( errors ) }
+				formValuesInitialState={ websiteContent }
+				currentIndex={ currentIndex }
+				updateCurrentIndex={ ( currentIndex ) => {
+					dispatch( updateWebsiteContentCurrentIndex( currentIndex ) );
+				} }
+				onSubmit={ onSubmit }
+			/>
+		</>
 	);
 }
 
