@@ -1,6 +1,4 @@
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.svg';
@@ -164,19 +162,14 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		} );
 		switch ( selectedOption ) {
 			case 'power':
-				page(
-					addQueryArgs( `/start/woocommerce-install`, {
-						back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
-						siteSlug: siteSlug,
-					} )
-				);
+				dispatch( submitSignupStep( { stepName }, { storeType: 'woocommerce' } ) );
 				break;
 
 			case 'simple': {
 				dispatch( submitSignupStep( { stepName } ) );
-				goToNextStep();
 			}
 		}
+		goToNextStep();
 	};
 
 	return (

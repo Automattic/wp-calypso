@@ -105,7 +105,7 @@ function getEditorDestination( dependencies ) {
 }
 
 function getDestinationFromIntent( dependencies ) {
-	const { intent, startingPoint, siteSlug, isFSEActive } = dependencies;
+	const { intent, storeType, startingPoint, siteSlug, isFSEActive } = dependencies;
 
 	// If the user skips starting point, redirect them to My Home
 	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
@@ -114,6 +114,16 @@ function getDestinationFromIntent( dependencies ) {
 		}
 
 		return `/post/${ siteSlug }`;
+	}
+
+	if ( intent === 'sell' && storeType === 'woocommerce' ) {
+		return addQueryArgs(
+			{
+				back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
+				siteSlug: siteSlug,
+			},
+			`/start/woocommerce-install`
+		);
 	}
 
 	if ( ! isFSEActive && intent === 'sell' ) {

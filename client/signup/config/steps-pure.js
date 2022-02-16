@@ -187,16 +187,14 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
 			providesDependencies: [ 'siteTitle', 'tagline' ],
 			apiRequestFunction: setOptionsOnSite,
-			delayApiRequestUntilComplete: true,
 		},
 
 		'store-features': {
 			stepName: 'store-features',
 			dependencies: [ 'siteSlug' ],
 			apiRequestFunction: setStoreFeatures,
-			delayApiRequestUntilComplete: true,
-			providesDependencies: [ 'isFSEActive' ],
-			optionalDependencies: [ 'isFSEActive' ],
+			providesDependencies: [ 'isFSEActive', 'storeType' ],
+			optionalDependencies: [ 'isFSEActive', 'storeType' ],
 		},
 
 		'starting-point': {
