@@ -151,7 +151,10 @@ const PluginsBrowser = ( {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
-	const pluginsByCategory = useSelector( ( state ) => getPluginsListByCategory( state, category ) );
+	let pluginsByCategory = useSelector( ( state ) => getPluginsListByCategory( state, category ) );
+	if ( category === 'paid' ) {
+		pluginsByCategory = paidPlugins;
+	}
 	const pluginsByCategoryNew = useSelector( ( state ) => getPluginsListByCategory( state, 'new' ) );
 	const pluginsByCategoryFeatured = useSelector( ( state ) =>
 		getPluginsListByCategory( state, 'featured' )
@@ -160,9 +163,13 @@ const PluginsBrowser = ( {
 		popularPlugins,
 		pluginsByCategoryFeatured
 	);
-	const isFetchingPluginsByCategory = useSelector( ( state ) =>
+	let isFetchingPluginsByCategory = useSelector( ( state ) =>
 		isFetchingPluginsList( state, category )
 	);
+	if ( category === 'paid' ) {
+		isFetchingPluginsByCategory = isFetchingPaidPlugins;
+	}
+
 	const isFetchingPluginsByCategoryNew = useSelector( ( state ) =>
 		isFetchingPluginsList( state, 'new' )
 	);
@@ -347,8 +354,8 @@ const PluginsBrowser = ( {
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 				search={ search }
 				category={ category }
-				isFetchingPluginsByCategory={ isFetchingPluginsByCategory }
 				pluginsByCategory={ pluginsByCategory }
+				isFetchingPluginsByCategory={ isFetchingPluginsByCategory }
 				paidPlugins={ paidPlugins }
 				isFetchingPaidPlugins={ isFetchingPaidPlugins }
 				sites={ sites }
