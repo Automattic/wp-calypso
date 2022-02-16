@@ -32,6 +32,8 @@ const NavItem = ( {
 				trackExpand();
 				onClick();
 			} }
+			role="tab"
+			aria-selected={ isCurrent }
 			data-task={ taskId }
 		>
 			<div className="nav-item__status">

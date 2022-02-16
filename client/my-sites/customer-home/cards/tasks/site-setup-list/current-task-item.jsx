@@ -5,7 +5,7 @@ import Badge from 'calypso/components/badge';
 
 const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout } ) => {
 	return (
-		<div className="site-setup-list__task task">
+		<div className="site-setup-list__task task" role="tabpanel">
 			<div className="site-setup-list__task-text task__text">
 				{ currentTask.isCompleted && ! currentTask.hideLabel && (
 					<Badge type="info" className="site-setup-list__task-badge task__badge">

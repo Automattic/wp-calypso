@@ -269,6 +269,9 @@ const SiteSetupList = ( {
 					className={ classnames( 'site-setup-list__list', {
 						'is-mobile-app-completed': isMobileAppTaskCompleted,
 					} ) }
+					role="tablist"
+					aria-label="Site setup"
+					aria-orientation="vertical"
 				>
 					{ tasks.map( ( task ) => {
 						const enhancedTask = getTask( task, { isBlogger, userEmail } );
