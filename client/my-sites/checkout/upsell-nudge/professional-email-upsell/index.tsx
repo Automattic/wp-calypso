@@ -1,9 +1,11 @@
-import { TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { MOBILE_BREAKPOINT } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import Badge from 'calypso/components/badge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -12,12 +14,17 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
 	transformMailboxForCart,
 	validateMailboxes,
 } from 'calypso/lib/titan/new-mailbox';
+import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getProductCost } from 'calypso/state/products-list/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TitanProductProps } from 'calypso/lib/cart-values/cart-items';
 import type { TranslateResult } from 'i18n-calypso';
@@ -39,9 +46,8 @@ type ProfessionalEmailUpsellProps = {
 	domainName: string;
 	handleClickAccept: ( action: string ) => void;
 	handleClickDecline: () => void;
-	productCost?: number | null;
-	productSlug: string;
 	setCartItem: ( cartItem: MinimalRequestCartProduct, callback: () => void ) => void;
+	intervalLength?: IntervalLength | undefined;
 };
 
 const ProfessionalEmailUpsell = ( {
@@ -49,11 +55,20 @@ const ProfessionalEmailUpsell = ( {
 	domainName,
 	handleClickAccept,
 	handleClickDecline,
-	productCost,
-	productSlug,
 	setCartItem,
+	intervalLength = IntervalLength.ANNUALLY,
 }: ProfessionalEmailUpsellProps ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const [ selectedIntervalLength, setSelectedIntervalLength ] = useState( intervalLength );
+	const productCost = useSelector( ( state ) => {
+		if ( selectedIntervalLength === IntervalLength.ANNUALLY ) {
+			return getProductCost( state, TITAN_MAIL_YEARLY_SLUG );
+		}
+		return getProductCost( state, TITAN_MAIL_MONTHLY_SLUG );
+	} );
+
+	const isMobileView = useBreakpoint( MOBILE_BREAKPOINT );
 
 	const [ mailboxData, setMailboxData ] = useState( buildNewTitanMailbox( domainName, false ) );
 	const [ showAllErrors, setShowAllErrors ] = useState( false );
@@ -72,12 +87,43 @@ const ProfessionalEmailUpsell = ( {
 
 	const optionalMailboxFields = [ 'alternativeEmail', 'name' ];
 
+	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
+		setSelectedIntervalLength( newIntervalLength );
+		dispatch(
+			recordTracksEvent( 'calypso_professional_email_upsell_nudge_billing_interval_toggle_click', {
+				domain_name: domainName,
+				new_interval: newIntervalLength,
+			} )
+		);
+	};
+
+	/**
+	 * We calculate the price for a year subscription, given how many months we are going to offer for free.
+	 * It takes into account leap years, and months like february.
+	 *
+	 * Example: If we give 3 months for free in February, for a product that cost 35$ yearly then we return the price
+	 * that we need to bill after those 3 months for the rest of the year.
+	 *
+	 * @param productCost
+	 * @param freeMonths
+	 */
+	const getProratedPrice = ( productCost: number, freeMonths: number ) => {
+		const now = new Date();
+		const freeDays = new Date( new Date().setMonth( now.getMonth() + freeMonths ) ).getTime();
+		const nextYearDate = new Date( new Date().setFullYear( now.getFullYear() + 1 ) );
+		const diff = new Date( nextYearDate.getTime() - freeDays );
+		const diffDays =
+			( nextYearDate.getTime() - now.getTime() ) / 86400000 - diff.getTime() / 86400000;
+		const price = ( 365 - diffDays ) / 365;
+		return price * productCost;
+	};
+
 	const getFormattedPrice = (
 		currencyCode: string,
-		productCost: number,
-		productSlug: string
+		intervalLength: IntervalLength,
+		productCost: number
 	): TranslateResult => {
-		if ( productSlug === TITAN_MAIL_MONTHLY_SLUG ) {
+		if ( intervalLength === IntervalLength.MONTHLY ) {
 			return translate( '{{price/}} /mailbox /month', {
 				components: {
 					price: <span>{ formatCurrency( productCost ?? 0, currencyCode ) }</span>,
@@ -85,16 +131,20 @@ const ProfessionalEmailUpsell = ( {
 				comment: '{{price/}} is the formatted price, e.g. $20',
 			} );
 		}
-
+		const proratedPrice = getProratedPrice( productCost, 3 );
 		return translate( '{{price/}} /mailbox /year', {
 			components: {
-				price: <span>{ formatCurrency( productCost ?? 0, currencyCode ) }</span>,
+				price: <span>{ formatCurrency( proratedPrice, currencyCode ) }</span>,
 			},
 			comment: '{{price/}} is the formatted price, e.g. $20',
 		} );
 	};
 
-	const formattedPrice = getFormattedPrice( currencyCode, productCost ?? 0, productSlug );
+	const formattedPrice = getFormattedPrice(
+		currencyCode,
+		selectedIntervalLength,
+		productCost ?? 0
+	);
 
 	const onMailboxValueChange = ( fieldName: string, fieldValue: string | null ) => {
 		const updatedMailboxData = {
@@ -137,12 +187,31 @@ const ProfessionalEmailUpsell = ( {
 		};
 
 		const cartItem =
-			productSlug === TITAN_MAIL_MONTHLY_SLUG
+			selectedIntervalLength === IntervalLength.MONTHLY
 				? titanMailMonthly( cartItemArgs )
 				: titanMailYearly( cartItemArgs );
 
 		setCartItem( cartItem, () => handleClickAccept( 'accept' ) );
 	};
+
+	const threeMonthsFreeBadge = (
+		<span>
+			<Badge type="success">{ translate( '3 months free' ) }</Badge>
+		</span>
+	);
+
+	const pricingComponent = (
+		<div className="professional-email-upsell__pricing">
+			{ threeMonthsFreeBadge }
+			<span
+				className={ classNames( 'professional-email-upsell__standard-price', {
+					'is-discounted': true,
+				} ) }
+			>
+				{ formattedPrice }
+			</span>
+		</div>
+	);
 
 	return (
 		<div>
@@ -158,21 +227,16 @@ const ProfessionalEmailUpsell = ( {
 						comment: '%(domain)s is a domain name, like example.com',
 					} ) }
 				</h1>
-				<div className="professional-email-upsell__pricing">
-					<span
-						className={ classNames( 'professional-email-upsell__standard-price', {
-							'is-discounted': true,
-						} ) }
-					>
-						{ formattedPrice }
-					</span>
-
-					<span>
-						<Badge type="success">{ translate( '3 months free' ) }</Badge>
-					</span>
-				</div>
+				<h3 className="professional-email-upsell__small-subtitle">
+					{ translate( 'No setup required. Easy to manage.' ) }
+				</h3>
+				<BillingIntervalToggle
+					intervalLength={ selectedIntervalLength }
+					onIntervalChange={ changeIntervalLength }
+				/>
 			</header>
 			<div className="professional-email-upsell__content">
+				{ isMobileView && pricingComponent }
 				<div className="professional-email-upsell__form">
 					<FormFieldset>
 						<FormLabel>
@@ -222,6 +286,7 @@ const ProfessionalEmailUpsell = ( {
 					</div>
 				</div>
 				<div className="professional-email-upsell__features">
+					{ ! isMobileView && pricingComponent }
 					<h2>{ translate( 'Why get Professional Email?' ) }</h2>
 					<ul className="professional-email-upsell__feature-list">
 						<ProfessionalEmailFeature>
