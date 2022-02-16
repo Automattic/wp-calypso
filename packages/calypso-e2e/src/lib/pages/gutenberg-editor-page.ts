@@ -35,6 +35,8 @@ const selectors = {
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 	updateButton: 'button:text("Update")',
 	switchToDraftButton: 'button.editor-post-switch-to-draft',
+	scheduleButton: ( parentSelector: string ) =>
+		`${ parentSelector } button:has-text("Schedule")[aria-disabled=false]`,
 
 	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
@@ -391,6 +393,7 @@ export class GutenbergEditorPage {
 		const frame = await this.getEditorFrame();
 		await frame.click( selectors.closeSettingsButton );
 	}
+
 	/**
 	 * Publishes the post or page.
 	 *
@@ -400,8 +403,15 @@ export class GutenbergEditorPage {
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
 
-		await frame.click( selectors.publishButton( selectors.postToolbar ) );
-		await frame.click( selectors.publishButton( selectors.publishPanel ) );
+		const initialPublishButton = `${ selectors.publishButton(
+			selectors.postToolbar
+		) }, ${ selectors.scheduleButton( selectors.postToolbar ) }`;
+		const secondaryPublishButton = `${ selectors.publishButton(
+			selectors.publishPanel
+		) }, ${ selectors.scheduleButton( selectors.publishPanel ) }`;
+
+		await frame.click( initialPublishButton );
+		await frame.click( secondaryPublishButton );
 		const publishedURL = await this.getPublishedURL();
 
 		if ( visit ) {
@@ -461,6 +471,15 @@ export class GutenbergEditorPage {
 
 		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
 		return ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
+	}
+
+	/**
+	 * Closes the post-publish panel.
+	 */
+	async closePostPublishPanel(): Promise< void > {
+		const frame = await this.getEditorFrame();
+
+		await frame.click( selectors.closePublishPanel );
 	}
 
 	/**

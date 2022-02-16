@@ -4,6 +4,15 @@ export type EditorSidebarTab = 'Post' | 'Block' | 'Page';
 export type EditorSidebarSection = 'Categories' | 'Tags' | 'Status & Visibility' | 'Permalink';
 export type PrivacyOptions = 'Public' | 'Private' | 'Password';
 
+interface Schedule {
+	year: number;
+	month: number;
+	date: number;
+	hours: number;
+	minutes: number;
+	meridian: 'am' | 'pm';
+}
+
 const sidebarParentSelector = '[aria-label="Editor settings"]';
 
 const selectors = {
@@ -26,6 +35,13 @@ const selectors = {
 	visibilityPopover: 'fieldset.editor-post-visibility__dialog-fieldset',
 	visibilityOption: ( option: PrivacyOptions ) => `input[value="${ option.toLowerCase() }"]`,
 	postPasswordInput: '.editor-post-visibility__dialog-password-input',
+
+	// Schedule
+	scheduleButton: `button.edit-post-post-schedule__toggle`,
+	scheduleInput: ( attribute: string ) => `input[name="${ attribute }"]`,
+	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) =>
+		`button.components-datetime__time-${ meridian }-button`,
+	scheduleResetButton: 'button.components-datetime__date-reset-button',
 
 	// Category
 	categoryCheckbox: ( categoryName: string ) =>
@@ -134,7 +150,73 @@ export class EditorSettingsSidebarComponent {
 	}
 
 	/**
-	 * Clikcks on the Revisions section in the sidebar to show a revisions modal.
+	 * Opens the scheduler if required.
+	 */
+	async openSchedule(): Promise< void > {
+		const expanded = await this.frame.getAttribute( selectors.scheduleButton, 'aria-expanded' );
+		if ( expanded !== 'true' ) {
+			await this.frame.click( selectors.scheduleButton );
+		}
+		await this.frame.waitForSelector( `${ selectors.scheduleButton }[aria-expanded="true"]` );
+	}
+
+	/**
+	 * Closes the scheduler if required.
+	 *
+	 * Under certain circumstances, the scheduler is auto-dismissed at the end
+	 * of interaction and thus the closure is not required.
+	 *
+	 * For instance, if the current time is in the 'am' and the article is
+	 * scheduled for 'pm', the act of clicking on the 'pm' button dismisses the
+	 * scheduler.
+	 */
+	async closeSchedule(): Promise< void > {
+		const expanded = await this.frame.getAttribute( selectors.scheduleButton, 'aria-expanded' );
+		if ( expanded !== 'false' ) {
+			await this.frame.click( selectors.scheduleButton );
+		}
+		await this.frame.waitForSelector( `${ selectors.scheduleButton }[aria-expanded="false"]` );
+	}
+
+	/**
+	 * Schedules the page/post.
+	 *
+	 * @param {Schedule} date Date of the article to be scheduled.
+	 */
+	async schedule( date: Schedule ): Promise< void > {
+		let key: keyof Schedule;
+
+		for ( key in date ) {
+			if ( key === 'meridian' ) {
+				// am/pm is a button.
+				await this.frame.click( selectors.scheduleMeridianButton( date[ key ] ) );
+				continue;
+			}
+			if ( key === 'month' ) {
+				// For month numbers less than 10, pad the digit to be
+				// 2 digits as required by the select.
+				await this.frame.selectOption(
+					'select[name="month"]',
+					date[ key ].toString().padStart( 2, '0' )
+				);
+				continue;
+			}
+
+			// Regular input fields.
+			const targetSelector = selectors.scheduleInput( key );
+			await this.frame.fill( targetSelector, date[ key ].toString() );
+		}
+	}
+
+	/**
+	 * Resets previously set schedule.
+	 */
+	async resetSchedule(): Promise< void > {
+		await this.frame.click( selectors.scheduleResetButton );
+	}
+
+	/**
+	 * Clicks on the Revisions section in the sidebar to show a revisions modal.
 	 */
 	async showRevisions(): Promise< void > {
 		await this.frame.click( selectors.revisionsToggle );
