@@ -1,4 +1,3 @@
-import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -6,16 +5,11 @@ import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { Purchase } from 'calypso/lib/purchases/types';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import {
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
-} from 'calypso/state/purchases/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import getDIFMLiteSiteCategory from 'calypso/state/selectors/get-difm-lite-site-category';
+import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
@@ -57,11 +51,6 @@ function WebsiteContentStep( {
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
 	useQuerySitePurchases( siteId );
-
-	const isPurchasesLoaded = useSelector( hasLoadedSitePurchasesFromServer );
-	const isPurchasesFetching = useSelector( isFetchingSitePurchases );
-	const purchases: Purchase[] = useSelector( ( state ) => getSitePurchases( state, siteId ) );
-
 	const isWebsiteContentSubmitted = useSelector( ( state ) =>
 		isDIFMLiteWebsiteContentSubmitted( state, siteId )
 	);
@@ -70,26 +59,18 @@ function WebsiteContentStep( {
 	const translate = useTranslate();
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 
+	// We assume that difm lite is purchased when the is_difm_lite_in_progress sticker is active in a given blog
+	const isDifmLitePurchased = useSelector( ( state ) => isDIFMLiteInProgress( state, siteId ) );
+
 	useEffect( () => {
-		if ( ! isPurchasesFetching && isPurchasesLoaded ) {
-			const isDifmLitePurchased = purchases.some(
-				( p: Purchase ) => p.productSlug === WPCOM_DIFM_LITE
-			);
-			if ( ! isDifmLitePurchased ) {
-				debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
-				page( `/start/do-it-for-me?siteSlug=${ queryObject.siteSlug }` );
-			}
+		if ( ! isDifmLitePurchased ) {
+			debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
+			page( `/start/do-it-for-me?siteSlug=${ queryObject.siteSlug }` );
 		} else if ( isWebsiteContentSubmitted ) {
 			debug( 'Website content content already submitted, redirecting to home' );
 			page( `/home/${ queryObject.siteSlug }` );
 		}
-	}, [
-		isPurchasesFetching,
-		isPurchasesLoaded,
-		purchases,
-		isWebsiteContentSubmitted,
-		queryObject.siteSlug,
-	] );
+	}, [ isDifmLitePurchased, isWebsiteContentSubmitted, queryObject.siteSlug ] );
 
 	useEffect( () => {
 		function getPageFromCategory( category: string | null ) {
