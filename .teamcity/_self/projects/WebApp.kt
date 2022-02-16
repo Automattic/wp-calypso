@@ -571,12 +571,48 @@ object Translate : BuildType({
 		cleanCheckout = true
 	}
 
+	artifactRules = """
+		translate => translate
+	""".trimIndent()
+
 	steps {
 		bashNodeScript {
-			name = "Translate Build Steps"
+			name = "Prepare environment"
 			scriptContent = """
-				echo "@todo: Translate Build Script"
+				# Install modules
+				${_self.yarn_install_cmd}
 			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Extract strings"
+			scriptContent = """
+				# Run script to extract strings from source code
+				yarn run translate
+
+				# Move `calypso-strings.pot` to artifacts directory
+				mkdir -p ./translate
+				mv public/calypso-strings.pot ./translate/
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Build New Strings .pot"
+			scriptContent = """
+				# Export LocalCI Client Authentication Variables
+				export LOCALCI_APP_SECRET="%TRANSLATE_GH_APP_SECRET%"
+				export LOCALCI_APP_ID="%TRANSLATE_GH_APP_ID%"
+
+				# Clone GP LocalCI Client
+				git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
+
+				# Build `localci-new-strings.pot`
+				DEFAULT_BRANCH=trunk bash gp-localci-client/generate-new-strings-pot.sh "%teamcity.build.branch%" "${Settings.WpCalypso.paramRefs.buildVcsNumber}" "./translate"
+
+				# Remove GP LocalCI Client
+				rm -rf gp-localci-client
+			"""
+			dockerImage = "%docker_image_e2e%"
 		}
 	}
 
