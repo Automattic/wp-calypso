@@ -58,11 +58,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 
 		it( 'Schedule the post for next year', async function () {
 			const date = new Date();
+			date.setUTCFullYear( date.getFullYear() + 1 );
 
 			await editorSettingsSidebarComponent.schedule( {
-				year: date.getFullYear() + 1,
-				month: date.getMonth(),
-				date: date.getDate(),
+				year: date.getUTCFullYear(),
+				month: date.getUTCMonth(),
+				date: date.getUTCDate(),
 				hours: 12,
 				minutes: 1,
 				meridian: 'am',
@@ -112,15 +113,14 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			await editorSettingsSidebarComponent.openSchedule();
 		} );
 
-		it( 'Schedule post to first day of last month', async function () {
-			// Get the previous month. Dates in JS are 0-indexed.
+		it( 'Schedule post to fist of the current month of last year', async function () {
 			const date = new Date();
-			date.setMonth( new Date().getMonth() - 1 );
+			date.setUTCFullYear( date.getUTCFullYear() - 1 );
 
 			await editorSettingsSidebarComponent.schedule( {
-				year: date.getFullYear(),
+				year: date.getUTCFullYear(),
 				date: 1,
-				month: date.getMonth() + 1,
+				month: date.getUTCMonth(),
 				hours: 12,
 				minutes: 59,
 				meridian: 'pm',
