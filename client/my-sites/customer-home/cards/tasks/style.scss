@@ -87,18 +87,18 @@
 		padding-top: 0;
 		margin-top: auto;
 		font-size: $font-body-small;
+
+		.is-link {
+			padding: 0 8px;
+
+			&:focus {
+				box-shadow: 0 0 0 2px var( --color-primary );
+			}
+		}
 	}
 
 	.task__action {
 		margin-right: 8px;
-	}
-
-	.task__skip {
-		padding: 0 8px;
-
-		&:focus {
-			box-shadow: 0 0 0 2px var( --color-primary );
-		}
 	}
 
 	.spinner {
