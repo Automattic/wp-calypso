@@ -17,7 +17,7 @@
 
 	// Breakpoint taken from jetpack.com, not standard in Calypso
 	@media ( min-width: 661px ) {
-		width: 100%;
+		width: calc( 100% - 2rem );
 		margin-top: -52px; // Undo the padding-top set by .layout__content
 		padding: 0;
 	}
