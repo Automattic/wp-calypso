@@ -27,6 +27,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
+import Spotlight from 'calypso/components/spotlight';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
@@ -614,6 +615,11 @@ const PluginBrowserContent = ( props ) => {
 		<>
 			{ ! props.jetpackNonAtomic ? (
 				<>
+					<Spotlight
+						taglineText="Drive more traffic with Yoast SEO"
+						illustrationSrc="https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389"
+						onClick={ () => {} }
+					/>
 					<PluginSingleListView { ...props } category="paid" />
 					<PluginSingleListView { ...props } category="featured" />
 				</>
