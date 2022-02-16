@@ -112,6 +112,8 @@ class SiteSettingsFormWriting extends Component {
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
+					siteId={ siteId }
+					siteIsJetpack={ siteIsJetpack }
 				/>
 
 				{ siteIsJetpack && (

@@ -11,7 +11,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 function ThemeEnhancements( {
@@ -23,7 +23,7 @@ function ThemeEnhancements( {
 	isRequestingSettings,
 	fields,
 	customizeUrl,
-	selectedSiteId,
+	siteId,
 } ) {
 	const isFormPending = isRequestingSettings || isSavingSettings;
 	const translate = useTranslate();
@@ -96,7 +96,7 @@ function ThemeEnhancements( {
 						privacyLink="https://jetpack.com/support/custom-css/#privacy"
 					/>
 					<JetpackModuleToggle
-						siteId={ selectedSiteId }
+						siteId={ siteId }
 						moduleSlug="custom-css"
 						label={ translate( 'Enhance CSS customization panel' ) }
 						disabled={ isFormPending }
@@ -159,7 +159,5 @@ export default connect( ( state ) => {
 	return {
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		selectedSiteId,
-		siteIsJetpack: isJetpackSite( state, selectedSiteId ),
-		site,
 	};
 } )( localize( ThemeEnhancements ) );
