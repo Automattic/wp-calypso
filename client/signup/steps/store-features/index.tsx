@@ -28,7 +28,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const translate = useTranslate();
 	const headerText = translate( 'Set up your store' );
 	const subHeaderText = translate( 'Let’s create a website that suits your needs.' );
-	const { siteSlug, siteTitle, tagline } = props.signupDependencies;
+	const { siteSlug } = props.signupDependencies;
 	const { stepName, goToNextStep } = props;
 
 	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );
@@ -153,9 +153,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		} );
 		switch ( selectedOption ) {
 			case 'power':
-				dispatch(
-					submitSignupStep( { stepName }, { siteTitle, tagline, storeType: 'woocommerce' } )
-				);
+				dispatch( submitSignupStep( { stepName }, { storeType: 'woocommerce' } ) );
 				break;
 
 			case 'simple': {
