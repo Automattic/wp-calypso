@@ -39,7 +39,7 @@ import {
 } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
-import { updateSiteFrontPage } from 'calypso/state/sites/actions';
+import { requestSite, updateSiteFrontPage } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 
 const Visibility = Site.Visibility;
@@ -457,9 +457,11 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 			apiNamespace: 'wpcom/v2',
 			body: { pages: websiteContent },
 		} )
+		.then( () => reduxStore.dispatch( requestSite( siteSlug ) ) )
 		.then( () => callback() )
-		.catch( ( errors ) => {
-			callback( [ errors ] );
+		.catch( ( error ) => {
+			reduxStore.dispatch( errorNotice( error.message ) );
+			callback( [ error ] );
 		} );
 }
 
