@@ -21,7 +21,8 @@ export type UseStepHook = () => StepPath[];
 
 export type UseStepNavigationHook = (
 	currentStep: StepPath,
-	navigate: ( stepName: StepPath ) => void
+	navigate: ( stepName: StepPath ) => void,
+	steps?: StepPath[]
 ) => NavigationControls;
 
 export type Flow = {

@@ -19,7 +19,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const currentRoute = useLocation().pathname.substring( 1 ) as StepPath;
 	const history = useHistory();
 	const stepNavigation = flow.useStepNavigation( currentRoute, ( path: StepPath ) =>
-		history.push( generatePath( path ) )
+		history.push( generatePath( path ), stepPaths )
 	);
 
 	return (
