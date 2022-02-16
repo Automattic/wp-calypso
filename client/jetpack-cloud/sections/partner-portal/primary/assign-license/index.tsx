@@ -6,7 +6,7 @@ import Main from 'calypso/components/main';
 import AssignLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 
-export default function AssignLicense( { sites }: any ): ReactElement {
+export default function AssignLicense( { sites, currentPage }: any ): ReactElement {
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -26,7 +26,7 @@ export default function AssignLicense( { sites }: any ): ReactElement {
 			<SidebarNavigation />
 			<CardHeading size={ 36 }>{ translate( 'Assign your License' ) }</CardHeading>
 
-			<AssignLicenseForm sites={ sites } />
+			<AssignLicenseForm sites={ sites } currentPage={ currentPage } />
 		</Main>
 	);
 }
