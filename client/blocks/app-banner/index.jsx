@@ -7,7 +7,7 @@ import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import versionCompare from 'calypso/lib/version-compare';
 import {
 	bumpStat,
@@ -31,7 +31,6 @@ import {
 	getNewDismissTimes,
 	getCurrentSection,
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
-	APP_BANNER_EXPERIMENT_NAME,
 } from './utils';
 
 import './style.scss';
@@ -73,15 +72,6 @@ export class AppBanner extends Component {
 		}
 	}
 
-	loadDismissTimesExperiment() {
-		// Set a default value just in case the assignment hasn't loaded yet
-		this.experimentIsControl = true;
-
-		loadExperimentAssignment( APP_BANNER_EXPERIMENT_NAME ).then( ( experimentObject ) => {
-			this.experimentIsControl = ! experimentObject?.variationName;
-		} );
-	}
-
 	stopBubblingEvents = ( event ) => {
 		event.stopPropagation();
 	};
@@ -116,11 +106,11 @@ export class AppBanner extends Component {
 		return this.isiOS() || this.isAndroid();
 	}
 
-	dismiss = ( event ) => {
+	dismiss = ( experimentIsControl, event ) => {
 		event.preventDefault();
-		const { currentSection, dismissedUntil } = this.props;
 
-		this.props.saveDismissTime( currentSection, dismissedUntil, this.experimentIsControl );
+		const { currentSection, dismissedUntil } = this.props;
+		this.props.saveDismissTime( currentSection, dismissedUntil, experimentIsControl );
 		this.props.dismissAppBanner();
 	};
 
@@ -158,50 +148,64 @@ export class AppBanner extends Component {
 			return null;
 		}
 
-		this.loadDismissTimesExperiment();
-
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
 		return (
-			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
-				<Card
-					className={ classNames( 'app-banner', 'is-compact', currentSection ) }
-					ref={ this.preventNotificationsClose }
-				>
-					<TrackComponentView
-						eventName="calypso_mobile_app_banner_impression"
-						eventProperties={ {
-							page: currentSection,
-						} }
-						statGroup="calypso_mobile_app_banner"
-						statName="impression"
-					/>
-					<div className="app-banner__circle is-top-left is-yellow" />
-					<div className="app-banner__circle is-top-right is-blue" />
-					<div className="app-banner__circle is-bottom-right is-red" />
-					<div className="app-banner__text-content">
-						<div className="app-banner__title">
-							<span> { title } </span>
-						</div>
-						<div className="app-banner__copy">
-							<span> { copy } </span>
-						</div>
-					</div>
-					<div className="app-banner__buttons">
-						<Button
-							primary
-							className="app-banner__open-button"
-							onClick={ this.openApp }
-							href={ this.getDeepLink() }
+			<ProvideExperimentData name="calypso_mobileweb_appbanner_frequency_20220128_v2">
+				{ ( isLoading, experimentAssignment ) => {
+					if ( isLoading ) {
+						return null;
+					}
+
+					return (
+						<div
+							className={ classNames( 'app-banner-overlay' ) }
+							ref={ this.preventNotificationsClose }
 						>
-							{ translate( 'Open in app' ) }
-						</Button>
-						<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
-							{ translate( 'No thanks' ) }
-						</Button>
-					</div>
-				</Card>
-			</div>
+							<Card
+								className={ classNames( 'app-banner', 'is-compact', currentSection ) }
+								ref={ this.preventNotificationsClose }
+							>
+								<TrackComponentView
+									eventName="calypso_mobile_app_banner_impression"
+									eventProperties={ {
+										page: currentSection,
+									} }
+									statGroup="calypso_mobile_app_banner"
+									statName="impression"
+								/>
+								<div className="app-banner__circle is-top-left is-yellow" />
+								<div className="app-banner__circle is-top-right is-blue" />
+								<div className="app-banner__circle is-bottom-right is-red" />
+								<div className="app-banner__text-content">
+									<div className="app-banner__title">
+										<span> { title } </span>
+									</div>
+									<div className="app-banner__copy">
+										<span> { copy } </span>
+									</div>
+								</div>
+								<div className="app-banner__buttons">
+									<Button
+										primary
+										className="app-banner__open-button"
+										onClick={ this.openApp }
+										href={ this.getDeepLink() }
+									>
+										{ translate( 'Open in app' ) }
+									</Button>
+									<Button
+										className="app-banner__no-thanks-button"
+										onClick={ this.dismiss.bind( null, ! experimentAssignment?.variationName ) }
+									>
+										{ translate( 'No thanks' ) }
+									</Button>
+								</div>
+							</Card>
+						</div>
+					);
+				} }
+			</ProvideExperimentData>
 		);
 	}
 }
