@@ -71,7 +71,7 @@ function WebsiteContentStep( {
 	useEffect( () => {
 		if ( isSiteInformationLoaded && ! isDifmLitePurchased ) {
 			debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
-			page( `/start/do-it-for-me?siteSlug=${ queryObject.siteSlug }` );
+			page( `/start/do-it-for-me` );
 		} else if ( isWebsiteContentSubmitted ) {
 			debug( 'Website content content already submitted, redirecting to home' );
 			page( `/home/${ queryObject.siteSlug }` );
