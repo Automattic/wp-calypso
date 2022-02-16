@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
@@ -20,7 +19,8 @@ import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
 } from 'calypso/state/signup/steps/website-content/selectors';
-import { getSiteId } from 'calypso/state/sites/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteId, isRequestingSite } from 'calypso/state/sites/selectors';
 import { sectionGenerator } from './section-generator';
 import './style.scss';
 
@@ -46,31 +46,43 @@ function WebsiteContentStep( {
 	goToNextStep,
 	queryObject,
 }: WebsiteContentStepProps ) {
+	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
 	const websiteContent = useSelector( getWebsiteContent );
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
-	useQuerySitePurchases( siteId );
 	const isWebsiteContentSubmitted = useSelector( ( state ) =>
 		isDIFMLiteWebsiteContentSubmitted( state, siteId )
 	);
-
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
+	const isSiteInformationLoaded = useSelector( ( state ) =>
+		isRequestingSite( state, siteId as number )
+	);
 
 	// We assume that difm lite is purchased when the is_difm_lite_in_progress sticker is active in a given blog
 	const isDifmLitePurchased = useSelector( ( state ) => isDIFMLiteInProgress( state, siteId ) );
 
+	//Make sure site information is loaded so that we can validate access to this page
 	useEffect( () => {
-		if ( ! isDifmLitePurchased ) {
+		siteId && dispatch( requestSite( siteId ) );
+	}, [ siteId ] );
+
+	useEffect( () => {
+		if ( isSiteInformationLoaded && ! isDifmLitePurchased ) {
 			debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
 			page( `/start/do-it-for-me?siteSlug=${ queryObject.siteSlug }` );
 		} else if ( isWebsiteContentSubmitted ) {
 			debug( 'Website content content already submitted, redirecting to home' );
 			page( `/home/${ queryObject.siteSlug }` );
 		}
-	}, [ isDifmLitePurchased, isWebsiteContentSubmitted, queryObject.siteSlug ] );
+	}, [
+		isSiteInformationLoaded,
+		isDifmLitePurchased,
+		isWebsiteContentSubmitted,
+		queryObject.siteSlug,
+	] );
 
 	useEffect( () => {
 		function getPageFromCategory( category: string | null ) {
