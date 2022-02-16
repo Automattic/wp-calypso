@@ -93,7 +93,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 				);
 			case 'wordpress':
 				return __(
-					"Our Self-Hosted WordPress content importer is the quickest way to move your content. After clicking 'Import your content', either enter your site's URL to move all your content, plugins, and custom themes to WordPress.com, or use the 'Import' feature to import just your site's content, including posts, pages, and media."
+					"Our Self-Hosted WordPress content importer is the quickest way to move your content. After clicking 'Import your content', you will have two options:"
 				);
 			case 'medium':
 				return __(
@@ -122,33 +122,74 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 					{ __( 'Learn more' ) }
 				</a>
 
-				<div className={ 'import__details-features' }>
-					<p>
-						{ createInterpolateElement( __( 'Things we <strong>can</strong> import:' ), {
-							strong: createElement( 'strong' ),
-						} ) }
-					</p>
-					<ul className={ 'import__details-list' }>
-						{ platformFeatureList[ platform ].supported.map( ( key ) => (
-							<li key={ key }>
-								<Icon size={ 20 } icon={ check } /> { translatedFeatureList[ key as FeatureName ] }
-							</li>
-						) ) }
-					</ul>
+				{ platform !== 'wordpress' && (
+					<div className={ 'import__details-features' }>
+						<p>
+							{ createInterpolateElement( __( 'Things we <strong>can</strong> import:' ), {
+								strong: createElement( 'strong' ),
+							} ) }
+						</p>
+						<ul className={ 'import__details-list' }>
+							{ platformFeatureList[ platform ].supported.map( ( key ) => (
+								<li key={ key }>
+									<Icon size={ 20 } icon={ check } />{ ' ' }
+									{ translatedFeatureList[ key as FeatureName ] }
+								</li>
+							) ) }
+						</ul>
 
-					<p>
-						{ createInterpolateElement( __( "Things we <strong>can't</strong> import:" ), {
-							strong: createElement( 'strong' ),
-						} ) }
-					</p>
-					<ul className={ 'import__details-list' }>
-						{ platformFeatureList[ platform ].unsupported.map( ( key ) => (
-							<li key={ key }>
-								<Icon size={ 20 } icon={ close } /> { translatedFeatureList[ key as FeatureName ] }
-							</li>
-						) ) }
-					</ul>
-				</div>
+						<p>
+							{ createInterpolateElement( __( "Things we <strong>can't</strong> import:" ), {
+								strong: createElement( 'strong' ),
+							} ) }
+						</p>
+						<ul className={ 'import__details-list' }>
+							{ platformFeatureList[ platform ].unsupported.map( ( key ) => (
+								<li key={ key }>
+									<Icon size={ 20 } icon={ close } />{ ' ' }
+									{ translatedFeatureList[ key as FeatureName ] }
+								</li>
+							) ) }
+						</ul>
+					</div>
+				) }
+
+				{ platform === 'wordpress' && (
+					<div className={ 'import__details-features' }>
+						<p>
+							{ createInterpolateElement( __( 'Import <strong>Content only</strong>:' ), {
+								strong: createElement( 'strong' ),
+							} ) }
+						</p>
+						<ul className={ 'import__details-list' }>
+							{ platformFeatureList[ platform ].supported.map( ( key ) => (
+								<li key={ key }>
+									<Icon size={ 20 } icon={ check } />{ ' ' }
+									{ translatedFeatureList[ key as FeatureName ] }
+								</li>
+							) ) }
+						</ul>
+
+						<p>
+							{ createInterpolateElement( __( 'Import <strong>Everything*</strong>:' ), {
+								strong: createElement( 'strong' ),
+							} ) }
+						</p>
+						<ul className={ 'import__details-list' }>
+							{ platformFeatureList[ platform ].supported
+								.concat( platformFeatureList[ platform ].unsupported )
+								.map( ( key ) => (
+									<li key={ key }>
+										<Icon size={ 20 } icon={ close } />{ ' ' }
+										{ translatedFeatureList[ key as FeatureName ] }
+									</li>
+								) ) }
+						</ul>
+						<div className={ 'import__details-footer' }>
+							<i>*{ __( 'Requires a Business plan.' ) }</i>
+						</div>
+					</div>
+				) }
 			</div>
 		</Modal>
 	);

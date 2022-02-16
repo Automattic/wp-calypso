@@ -143,4 +143,10 @@
 			color: var( --studio-gray-100 );
 		}
 	}
+
+	.import__details-footer {
+		font-weight: 300; /* stylelint-disable-line */
+		font-size: 0.875em; /* stylelint-disable-line */
+		color: var( --studio-gray-80 );
+	}
 }
