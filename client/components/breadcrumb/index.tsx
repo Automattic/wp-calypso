@@ -23,7 +23,7 @@ const StyledLi = styled.li`
 		--color-link: var( --studio-gray-80 );
 	}
 
-	:last-child:not( :first-child ) {
+	:last-of-type:not( :first-of-type ) {
 		--color-link: var( --studio-gray-50 );
 	}
 `;
