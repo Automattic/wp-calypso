@@ -1,14 +1,24 @@
 import styled from '@emotion/styled';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { useGetProductVariants } from '../../hooks/product-variants';
-import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
+import type { ItemVariationPickerProps } from './types';
 
-const TermOptions = styled.select`
-	padding: 0;
+const Dropdown = styled.div`
+	width: 100%;
 `;
 
-const TermOptionsItem = styled.option`
-	padding: 0;
+const Option = styled.div`
+	border: 1px solid #a7aaad;
+	border-radius: 3px;
+	padding: 14px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+`;
+
+const VariantLabel = styled.span`
+	flex: 1;
+	display: flex;
 `;
 
 export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps > = ( {
@@ -20,28 +30,32 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 } ) => {
 	const variants = useGetProductVariants( siteId, productSlug );
 
+	const [ open, setOpen ] = useState( false );
+
 	if ( variants.length < 2 ) {
 		return null;
 	}
 
 	return (
-		<TermOptions
-			disabled={ isDisabled }
-			value={ `${ selectedItem.product_id.toString() }:${ selectedItem.product_slug }` }
-			className="item-variation-dropdown"
-			onChange={ ( event ) => {
-				const [ productId, productSlug ] = event.target.value.split( ':' );
-				onChangeItemVariant( selectedItem.uuid, productSlug, parseInt( productId ) );
-			} }
-		>
-			{ variants.map( ( productVariant: WPCOMProductVariant ) => (
-				<TermOptionsItem
-					key={ productVariant.productId }
-					value={ `${ productVariant.productId }:${ productVariant.productSlug }` }
-				>
-					{ productVariant.variantLabel }
-				</TermOptionsItem>
-			) ) }
-		</TermOptions>
+		<Dropdown>
+			{ variants
+				.filter( ( { productId } ) => productId === selectedItem.product_id )
+				.map( ( { variantLabel, variantDetails } ) => (
+					<Option key="selectedItem" onClick={ () => setOpen( ! open ) }>
+						<VariantLabel>{ variantLabel }</VariantLabel>
+						{ variantDetails }
+					</Option>
+				) ) }
+			{ open &&
+				variants.map( ( { variantLabel, variantPrice, productId, productSlug } ) => (
+					<Option
+						key={ productSlug + variantLabel }
+						onClick={ () => onChangeItemVariant( selectedItem.uuid, productSlug, productId ) }
+					>
+						<span>{ variantLabel }</span>
+						<span>{ variantPrice }</span>
+					</Option>
+				) ) }
+		</Dropdown>
 	);
 };
