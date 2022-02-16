@@ -1,12 +1,12 @@
 import { useRef, useEffect } from 'react';
 
 // See https://usehooks.com/useMemoCompare/
-export function useMemoCompare< A, B >(
-	next: B,
-	compare: ( previous: A | B | undefined, next: B ) => boolean
-): A | B | undefined {
+export function useMemoCompare< T >(
+	next: T,
+	compare: ( previous: T | undefined, next: T ) => boolean
+): T | undefined {
 	// Ref for storing previous value
-	const previousRef = useRef< undefined | A | B >();
+	const previousRef = useRef< undefined | T >();
 	const previous = previousRef.current;
 
 	// Pass previous and next value to compare function
