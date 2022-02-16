@@ -1,67 +1,45 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { Interval } from 'calypso/lib/interval';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useInterval } from 'calypso/lib/interval';
 import { requestPostLikes } from 'calypso/state/posts/likes/actions';
 import { getPostLikeLastUpdated } from 'calypso/state/posts/selectors/get-post-like-last-updated';
 import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
 
-class QueryPostLikes extends Component {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-		postId: PropTypes.number.isRequired,
-		needsLikers: PropTypes.bool,
-		hasPostLikes: PropTypes.bool,
-		maxAgeSeconds: PropTypes.number, // max age of likes data in milliseconds
-		lastUpdated: PropTypes.number, // timestamp of when the like data was last updated
-		requestPostLikes: PropTypes.func.isRequired,
-	};
+const request = ( siteId, postId, maxAgeMs, needsLikers ) => ( dispatch, getState ) => {
+	const state = getState();
+	const lastUpdated = getPostLikeLastUpdated( state, siteId, postId );
+	const hasPostLikes = getPostLikes( state, siteId, postId ) !== null;
 
-	static defaultProps = {
-		maxAgeSeconds: 120,
-		needsLikers: false,
-	};
-
-	componentDidMount() {
-		this.request();
+	if ( ! lastUpdated || Date.now() - lastUpdated > maxAgeMs || ( needsLikers && ! hasPostLikes ) ) {
+		dispatch( requestPostLikes( siteId, postId ) );
 	}
+};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId || this.props.postId !== nextProps.postId ) {
-			this.request( nextProps );
+function QueryPostLikes( { siteId, postId, maxAgeSeconds = 120, needsLikers = false } ) {
+	const dispatch = useDispatch();
+	const maxAgeMs = maxAgeSeconds * 1000;
+
+	useInterval( () => {
+		if ( siteId && postId ) {
+			dispatch( request( siteId, postId, maxAgeMs, needsLikers ) );
 		}
-	}
+	}, maxAgeMs + 1 );
 
-	request = (
-		{
-			requestPostLikes: requestLikes,
-			siteId,
-			postId,
-			maxAgeSeconds,
-			hasPostLikes,
-			needsLikers,
-			lastUpdated,
-		} = this.props
-	) => {
-		if (
-			! lastUpdated ||
-			Date.now() - lastUpdated > maxAgeSeconds * 1000 ||
-			( needsLikers && ! hasPostLikes )
-		) {
-			requestLikes( siteId, postId, maxAgeSeconds );
+	useEffect( () => {
+		if ( siteId && postId ) {
+			dispatch( request( siteId, postId, maxAgeMs, needsLikers ) );
 		}
-	};
+	}, [ dispatch, siteId, postId, maxAgeMs, needsLikers ] );
 
-	render() {
-		return <Interval period={ this.props.maxAgeSeconds + 1 } onTick={ this.request } />;
-	}
+	return null;
 }
 
-export default connect(
-	( state, { siteId, postId } ) => ( {
-		lastUpdated: getPostLikeLastUpdated( state, siteId, postId ),
-		hasPostLikes: getPostLikes( state, siteId, postId ) !== null,
-	} ),
-	{ requestPostLikes }
-)( QueryPostLikes );
+QueryPostLikes.propTypes = {
+	siteId: PropTypes.number.isRequired,
+	postId: PropTypes.number.isRequired,
+	needsLikers: PropTypes.bool,
+	maxAgeSeconds: PropTypes.number, // max age of likes data in milliseconds
+};
+
+export default QueryPostLikes;
