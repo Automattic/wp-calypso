@@ -31,6 +31,7 @@ export default function AssignLicenseForm( { sites, currentPage }: any ): ReactE
 	const onSelectSite = ( site: any ) => setSelectedSite( site );
 
 	const siteCards = sites
+		// Slices sites list based on pagination settings before creating site cards components
 		.slice( SITE_CARDS_PER_PAGE * ( currentPage - 1 ), SITE_CARDS_PER_PAGE * currentPage )
 		.map( ( site: any ) => {
 			if ( -1 !== site.domain.search( filter ) || false === filter ) {
