@@ -37,6 +37,7 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
 import DomainSecurityDetails from './cards/domain-security-details';
+import DomainStatusCard from './cards/domain-status';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
 import SiteRedirectCard from './cards/site-redirect-card';
@@ -65,6 +66,7 @@ const Settings = ( {
 }: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
+	const isDomainOnly = selectedSite.options?.is_domain_only;
 
 	useEffect( () => {
 		if ( ! contactInformation ) {
@@ -116,6 +118,23 @@ const Settings = ( {
 		);
 	};
 
+	const renderStatusSection = () => {
+		if ( ! ( domain && isDomainOnly ) ) {
+			return null;
+		}
+
+		return (
+			<Accordion
+				title={ translate( 'Domain status', { textOnly: true } ) }
+				subtitle={ translate( 'Your domain is parked', { textOnly: true } ) }
+				key="status"
+				expanded
+			>
+				<DomainStatusCard selectedDomainName={ domain.domain } selectedSite={ selectedSite } />
+			</Accordion>
+		);
+	};
+
 	const renderDetailsSection = () => {
 		if ( ! domain ) {
 			return null;
@@ -126,7 +145,7 @@ const Settings = ( {
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
 					key="main"
-					expanded
+					expanded={ ! isDomainOnly }
 				>
 					<RegisteredDomainDetails
 						domain={ domain }
@@ -361,6 +380,7 @@ const Settings = ( {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		return (
 			<>
+				{ renderStatusSection() }
 				{ renderDetailsSection() }
 				{ renderTranferInMappedDomainSection() }
 				{ renderSetAsPrimaryDomainSection() }
