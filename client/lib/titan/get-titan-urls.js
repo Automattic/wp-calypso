@@ -10,14 +10,14 @@ const TITAN_APPS = {
 /**
  * Generates a URL pointing to the given Titan App
  *
- * @param {undefined|{titanMailSubscription?:{webmailUrl?: string}}} domain - Domain object
+ * @param {undefined|{titanMailSubscription?:{appsUrl?: string}}} domain - Domain object
  * @param {string?} email - The email address of the Titan account. Used for autofill on Titan's login page.
  * @param {string?} app - Can be one of the `TITAN_APPS` - `email`, `calendar` or `contacts`
  * @param {boolean?} clearPreviousSessions - Whether to clear previously logged-in sessions.
  * @returns The URL with app and prefilled `email_account` as query parameter
  */
 function getTitanUrl( domain, email, app = TITAN_APPS.EMAIL, clearPreviousSessions = false ) {
-	const titanBaseUrl = domain?.titanMailSubscription?.webmailUrl ?? 'https://wp.titan.email';
+	const titanBaseUrl = domain?.titanMailSubscription?.appsUrl ?? 'https://wp.titan.email';
 	const titanAppUrl = new URL( `${ titanBaseUrl }/${ app }/` );
 
 	if ( email?.includes( '@' ) ) {
