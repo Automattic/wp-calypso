@@ -101,15 +101,11 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 		! isIncludedInPlan;
 
 	const discountElt = showDiscountLabel
-		? translate( '%(percent)d%% off {{sup}}*{{/sup}}', {
+		? translate( '%(percent)d%% off', {
 				args: {
 					percent: discount,
 				},
-				comment:
-					'Should be as concise as possible. * refers to a clause describing the displayed price adjustment. The {{sup}} tag displays it as superscript.',
-				components: {
-					sup: <sup />,
-				},
+				comment: 'Should be as concise as possible.',
 		  } )
 		: null;
 

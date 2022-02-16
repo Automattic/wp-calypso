@@ -19,7 +19,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import CategoryFilter from '../category-filter';
-import { FootnotesList } from '../footnotes-list';
 import JetpackCrmFreeCard from '../jetpack-crm-free-card';
 import JetpackFreeCard from '../jetpack-free-card';
 import MoreInfoBox from '../more-info-box';
@@ -289,7 +288,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				</>
 			</ProductGridSection>
 			<StoreFooter />
-			<FootnotesList />
 		</>
 	);
 };
