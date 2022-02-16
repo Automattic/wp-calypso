@@ -194,6 +194,12 @@
 		margin-top: 0;
 	}
 
+	.site-setup-list__task-skip {
+		&:focus {
+			box-shadow: 0 0 0 2px var( --color-primary );
+		}
+	}
+
 	.spinner {
 		position: absolute;
 		left: 50%;
