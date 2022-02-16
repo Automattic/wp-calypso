@@ -19,7 +19,7 @@ const RecommendedThemes = ( props ) => {
 	);
 
 	const isFSEEligible = data?.is_fse_eligible ?? false;
-	const recommendedThemesFilter = isFSEEligible ? 'block-templates' : 'auto-loading-homepage';
+	const recommendedThemesFilter = isFSEEligible ? 'full-site-editing' : 'auto-loading-homepage';
 
 	const customizedThemesList = useSelector( ( state ) =>
 		getRecommendedThemesSelector( state, recommendedThemesFilter )
