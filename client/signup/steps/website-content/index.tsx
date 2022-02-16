@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -142,7 +141,6 @@ function WebsiteContentStep( {
 	const generatedSections = generatedSectionsCallback();
 	return (
 		<>
-			<QueryUserPurchases></QueryUserPurchases>
 			<AccordionForm
 				generatedSections={ generatedSections }
 				onErrorUpdates={ ( errors ) => setFormErrors( errors ) }
