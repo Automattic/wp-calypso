@@ -19,10 +19,6 @@ export function getPlanDiscountedRawPrice(
 ) {
 	const plan = getSitePlan( state, siteId, productSlug );
 
-	if ( ( plan?.introductoryOfferRawPrice ?? -1 ) > 0 ) {
-		return plan.introductoryOfferRawPrice;
-	}
-
 	if ( ( plan?.rawPrice ?? -1 ) < 0 || ! isSitePlanDiscounted( state, siteId, productSlug ) ) {
 		return null;
 	}
