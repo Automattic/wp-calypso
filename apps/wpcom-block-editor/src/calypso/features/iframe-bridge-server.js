@@ -1,6 +1,6 @@
 /* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
-import { createBlock, parse } from '@wordpress/blocks';
+import { parse } from '@wordpress/blocks';
 import {
 	Button,
 	__experimentalNavigationBackButton as NavigationBackButton,
@@ -18,6 +18,7 @@ import { filter, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
+import doPressThis from '../../lib/do-press-this';
 import {
 	inIframe,
 	isEditorReady,
@@ -168,56 +169,7 @@ function handlePressThis( calypsoPort ) {
 		}
 
 		calypsoPort.removeEventListener( 'message', onPressThis, false );
-
-		const unsubscribe = subscribe( () => {
-			// Calypso sends the message as soon as the iframe is loaded, so we
-			// need to be sure that the editor is initialized and the core blocks
-			// registered. There is an unstable selector for that, so we use
-			// `isCleanNewPost` otherwise which is triggered when everything is
-			// initialized if the post is new.
-			const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
-				? select( 'core/editor' ).__unstableIsEditorReady()
-				: select( 'core/editor' ).isCleanNewPost();
-			if ( ! editorIsReady ) {
-				return;
-			}
-
-			unsubscribe();
-
-			const title = get( payload, 'title' );
-			const text = get( payload, 'text' );
-			const url = get( payload, 'url' );
-			const image = get( payload, 'image' );
-			const embed = get( payload, 'embed' );
-			const link = `<a href="${ url }">${ title }</a>`;
-
-			const blocks = [];
-
-			if ( embed ) {
-				blocks.push( createBlock( 'core/embed', { url: embed } ) );
-			}
-
-			if ( image ) {
-				blocks.push(
-					createBlock( 'core/image', {
-						url: image,
-						caption: text ? '' : link,
-					} )
-				);
-			}
-
-			if ( text ) {
-				blocks.push(
-					createBlock( 'core/quote', {
-						value: `<p>${ text }</p>`,
-						citation: link,
-					} )
-				);
-			}
-
-			dispatch( 'core/editor' ).resetEditorBlocks( blocks );
-			dispatch( 'core/editor' ).editPost( { title: title } );
-		} );
+		doPressThis( payload );
 	}
 }
 
