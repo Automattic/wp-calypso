@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -136,6 +137,9 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 		}
 	}, [ wporgPlugin ] );
 
+	// retrieve WPCom plugin data
+	const { data: wpComPluginData } = useWPCOMPlugin( productSlug );
+
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
 	useEffect( () => {
@@ -158,7 +162,10 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 		| undefined
 		| { action_links?: { Settings?: string }; name?: string };
 
-	const setupURL = pluginOnSiteData?.action_links?.Settings || `${ siteAdminUrl }plugins.php`;
+	const fallbackSetupUrl = wpComPluginData?.setup_url && siteAdminUrl + wpComPluginData?.setup_url;
+
+	const setupURL =
+		pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || `${ siteAdminUrl }plugins.php`;
 
 	const setupSection = {
 		sectionKey: 'setup_whats_next',
