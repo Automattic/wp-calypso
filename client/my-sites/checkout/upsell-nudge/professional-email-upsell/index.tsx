@@ -72,7 +72,7 @@ const ProfessionalEmailUpsell = ( {
 
 	const optionalMailboxFields = [ 'alternativeEmail', 'name' ];
 
-	const resolveFormattedPrice = (
+	const getFormattedPrice = (
 		currencyCode: string,
 		productCost: number,
 		productSlug: string
@@ -85,6 +85,7 @@ const ProfessionalEmailUpsell = ( {
 				comment: '{{price/}} is the formatted price, e.g. $20',
 			} );
 		}
+
 		return translate( '{{price/}} /mailbox /year', {
 			components: {
 				price: <span>{ formatCurrency( productCost ?? 0, currencyCode ) }</span>,
@@ -93,7 +94,7 @@ const ProfessionalEmailUpsell = ( {
 		} );
 	};
 
-	const formattedPrice = resolveFormattedPrice( currencyCode, productCost ?? 0, productSlug );
+	const formattedPrice = getFormattedPrice( currencyCode, productCost ?? 0, productSlug );
 
 	const onMailboxValueChange = ( fieldName: string, fieldValue: string | null ) => {
 		const updatedMailboxData = {
@@ -108,15 +109,6 @@ const ProfessionalEmailUpsell = ( {
 		if ( validatedMailboxData ) {
 			setMailboxData( validatedMailboxData );
 		}
-	};
-
-	const resolveTitanMailProduct = (
-		productSlug: string
-	): ( ( properties: TitanProductProps ) => MinimalRequestCartProduct ) => {
-		if ( productSlug === TITAN_MAIL_MONTHLY_SLUG ) {
-			return titanMailMonthly;
-		}
-		return titanMailYearly;
 	};
 
 	const handleAddEmail = () => {
@@ -134,15 +126,20 @@ const ProfessionalEmailUpsell = ( {
 		if ( ! mailboxesAreValid ) {
 			return;
 		}
-		const titanMailProduct = resolveTitanMailProduct( productSlug );
-		const cartItem = titanMailProduct( {
+
+		const cartItemArgs: TitanProductProps = {
 			domain: domainName,
 			quantity: validatedTitanMailboxes.length,
 			extra: {
 				email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
 				new_quantity: validatedTitanMailboxes.length,
 			},
-		} );
+		};
+
+		const cartItem =
+			productSlug === TITAN_MAIL_MONTHLY_SLUG
+				? titanMailMonthly( cartItemArgs )
+				: titanMailYearly( cartItemArgs );
 
 		setCartItem( cartItem, () => handleClickAccept( 'accept' ) );
 	};

@@ -555,17 +555,17 @@ const trackUpsellButtonClick = ( eventName ) => {
 	return recordTracksEvent( eventName, { section: 'checkout' } );
 };
 
-const resolveProductSlug = ( upsellType, productAlias, billingTerm ) => {
+const getProductSlug = ( upsellType, productAlias, planTerm ) => {
 	switch ( upsellType ) {
 		case BUSINESS_PLAN_UPGRADE_UPSELL:
 			return getPlanByPathSlug( productAlias )?.getStoreSlug();
+
 		case ANNUAL_PLAN_UPGRADE:
 			return productAlias;
+
 		case PROFESSIONAL_EMAIL_UPSELL:
-			if ( billingTerm === TERM_MONTHLY ) {
-				return TITAN_MAIL_MONTHLY_SLUG;
-			}
-			return TITAN_MAIL_YEARLY_SLUG;
+			return planTerm === TERM_MONTHLY ? TITAN_MAIL_MONTHLY_SLUG : TITAN_MAIL_YEARLY_SLUG;
+
 		case CONCIERGE_QUICKSTART_SESSION:
 		case CONCIERGE_SUPPORT_SESSION:
 		default:
@@ -595,7 +595,7 @@ export default connect(
 		const cards = getStoredCards( state );
 
 		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ) ?? TERM_MONTHLY;
-		const productSlug = resolveProductSlug( upsellType, upgradeItem, currentPlanTerm );
+		const productSlug = getProductSlug( upsellType, upgradeItem, currentPlanTerm );
 		const productProperties = pick( getProductBySlug( state, productSlug ), [
 			'product_slug',
 			'product_id',
