@@ -19,6 +19,7 @@ class FoldableCard extends Component {
 		disabled: PropTypes.bool,
 		expandedSummary: PropTypes.node,
 		expanded: PropTypes.bool,
+		headerTagName: PropTypes.string,
 		icon: PropTypes.string,
 		onClick: PropTypes.func,
 		onClose: PropTypes.func,
@@ -32,6 +33,7 @@ class FoldableCard extends Component {
 		onOpen: noop,
 		onClose: noop,
 		cardKey: '',
+		headerTagName: 'span',
 		icon: 'chevron-down',
 		expanded: false,
 		screenReaderText: false,
@@ -121,7 +123,7 @@ class FoldableCard extends Component {
 			'has-border': !! this.props.summary,
 		} );
 		const header = createElement(
-			this.props.headerTag ?? 'span',
+			this.props.headerTagName,
 			{ classnames: 'foldable-card__main' },
 			this.props.header,
 			this.renderActionButton()

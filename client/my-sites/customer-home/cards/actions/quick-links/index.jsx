@@ -230,7 +230,7 @@ export const QuickLinks = ( {
 	return (
 		<FoldableCard
 			className="quick-links"
-			headerTag="h2"
+			headerTagName="h2"
 			header={ translate( 'Quick links' ) }
 			clickableHeader
 			expanded={ isExpanded }
