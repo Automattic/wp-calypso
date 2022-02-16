@@ -599,6 +599,10 @@ object Translate : BuildType({
 		bashNodeScript {
 			name = "Build New Strings .pot"
 			scriptContent = """
+				# Export LocalCI Client Authentication Variables
+				export LOCALCI_APP_SECRET="%TRANSLATE_GH_APP_SECRET%"
+				export LOCALCI_APP_ID="%TRANSLATE_GH_APP_ID%"
+
 				# Clone GP LocalCI Client
 				git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
 
