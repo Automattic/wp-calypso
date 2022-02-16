@@ -10,8 +10,5 @@ const args = yargs
 	.default( 'buildType', 'calypso_Translate' )
 	.required( 'artifact', 'Set the artifact file path.' ).argv;
 
-( function () {
-	const url = `https://teamcity.a8c.com/repository/download/${ args.buildType }/.lastSuccessful/${ args.artifact }?guest=1&branch=${ args.branch }`;
-	console.log( url );
-	process.exit( 0 );
-} )();
+const url = `https://teamcity.a8c.com/repository/download/${ args.buildType }/.lastSuccessful/${ args.artifact }?guest=1&branch=${ args.branch }`;
+console.log( url );
