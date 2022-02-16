@@ -84,6 +84,7 @@ class SiteSettingsFormSecurity extends Component {
 
 				<SettingsSectionHeader title={ translate( 'WordPress.com log in' ) } />
 				<Sso
+					siteIsAutomatedTransfer={ isAtomic }
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
