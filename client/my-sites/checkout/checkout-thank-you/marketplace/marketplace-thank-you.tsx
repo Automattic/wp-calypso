@@ -20,7 +20,7 @@ import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
-import { getSiteAdminUrl, getSiteUrl } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const ThankYouContainer = styled.div`
@@ -98,7 +98,6 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 	const { transfer } = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
 	const [ pluginIcon, setPluginIcon ] = useState( '' );
 
@@ -163,7 +162,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 		| undefined
 		| { action_links?: { Settings?: string }; name?: string };
 
-	const fallbackSetupUrl = wpComPluginData?.setup_url && siteUrl + wpComPluginData?.setup_url;
+	const fallbackSetupUrl = wpComPluginData?.setup_url && siteAdminUrl + wpComPluginData?.setup_url;
 
 	const setupURL =
 		pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || `${ siteAdminUrl }plugins.php`;
