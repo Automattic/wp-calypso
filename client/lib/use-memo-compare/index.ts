@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 
 // See https://usehooks.com/useMemoCompare/
 export function useMemoCompare< T >(
@@ -16,12 +16,10 @@ export function useMemoCompare< T >(
 	// If not equal update previousRef to next value.
 	// We only update if not equal so that this hook continues to return
 	// the same old value if compare keeps returning true.
-	useEffect( () => {
-		if ( ! isEqual ) {
-			previousRef.current = next;
-		}
-	} );
+	if ( ! isEqual ) {
+		previousRef.current = next;
+	}
 
-	// Finally, if equal then return the previous value
-	return isEqual ? previous : next;
+	// Finally, return the 'previous' value which might just have been updated
+	return previousRef.current;
 }
