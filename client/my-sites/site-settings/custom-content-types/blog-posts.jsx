@@ -4,6 +4,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 
 function BlogPosts( { fields, translate, onChangeField, isDisabled } ) {
 	const name = 'post';
+	const numberFieldIdentifier = 'posts_per_page';
 
 	return (
 		<FormFieldset>
@@ -18,13 +19,17 @@ function BlogPosts( { fields, translate, onChangeField, isDisabled } ) {
 						components: {
 							field: (
 								<FormTextInput
-									name={ name }
+									name={ numberFieldIdentifier }
 									type="number"
 									step="1"
 									min="0"
-									aria-labelledby={ name }
-									value={ 'undefined' === typeof fields[ name ] ? 10 : fields[ name ] }
-									onChange={ onChangeField( name ) }
+									aria-labelledby={ numberFieldIdentifier }
+									value={
+										'undefined' === typeof fields[ numberFieldIdentifier ]
+											? 10
+											: fields[ numberFieldIdentifier ]
+									}
+									onChange={ onChangeField( numberFieldIdentifier ) }
 									disabled={ isDisabled }
 								/>
 							),

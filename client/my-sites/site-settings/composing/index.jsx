@@ -1,5 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import PropTypes from 'prop-types';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
 import Latex from './latex';
@@ -8,6 +9,7 @@ import PublishConfirmation from './publish-confirmation';
 import Shortcodes from './shortcodes';
 
 const Composing = ( {
+	translate,
 	siteIsAutomatedTransfer,
 	siteIsJetpack,
 	eventTracker,
@@ -17,10 +19,17 @@ const Composing = ( {
 	isRequestingSettings,
 	isSavingSettings,
 	onChangeField,
-	setFieldValue,
 	updateFields,
+	handleSubmitForm,
 } ) => (
 	<>
+		<SettingsSectionHeader
+			disabled={ isRequestingSettings || isSavingSettings }
+			isSaving={ isSavingSettings }
+			onButtonClick={ handleSubmitForm }
+			showButton
+			title={ translate( 'Composing' ) }
+		/>
 		<CompactCard className="composing__card site-settings">
 			<PublishConfirmation />
 			<DefaultPostFormat
@@ -44,20 +53,14 @@ const Composing = ( {
 		{ siteIsJetpack && (
 			<>
 				<Latex
-					fields={ fields }
-					handleToggle={ handleToggle }
 					isRequestingSettings={ isRequestingSettings }
 					isSavingSettings={ isSavingSettings }
 					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
-					setFieldValue={ setFieldValue }
 				/>
 				<Shortcodes
-					fields={ fields }
-					handleToggle={ handleToggle }
 					isRequestingSettings={ isRequestingSettings }
 					isSavingSettings={ isSavingSettings }
 					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
-					setFieldValue={ setFieldValue }
 				/>
 			</>
 		) }
@@ -82,13 +85,14 @@ Composing.propTypes = {
 	siteIsAutomatedTransfer: PropTypes.bool,
 	siteIsJetpack: PropTypes.bool,
 	eventTracker: PropTypes.func.isRequired,
+	translate: PropTypes.func.isRequired,
+	handleSubmitForm: PropTypes.func.isRequired,
 	fields: PropTypes.object,
 	handleSelect: PropTypes.func.isRequired,
 	handleToggle: PropTypes.func.isRequired,
 	isRequestingSettings: PropTypes.bool,
 	isSavingSettings: PropTypes.bool,
 	onChangeField: PropTypes.func.isRequired,
-	setFieldValue: PropTypes.func.isRequired,
 	updateFields: PropTypes.func.isRequired,
 };
 

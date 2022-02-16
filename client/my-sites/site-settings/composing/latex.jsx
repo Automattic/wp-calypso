@@ -1,68 +1,58 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-class Latex extends Component {
-	static defaultProps = {
-		isSavingSettings: false,
-		isRequestingSettings: true,
-		fields: {},
-	};
-
-	static propTypes = {
-		handleToggle: PropTypes.func.isRequired,
-		setFieldValue: PropTypes.func.isRequired,
-		isSavingSettings: PropTypes.bool,
-		isRequestingSettings: PropTypes.bool,
-		fields: PropTypes.object,
-		siteIsAutomatedTransfer: PropTypes.bool,
-	};
-
-	render() {
-		const {
-			siteIsAutomatedTransfer,
-			isRequestingSettings,
-			isSavingSettings,
-			moduleUnavailable,
-			selectedSiteId,
-			translate,
-		} = this.props;
-
-		return (
-			<Card className="composing__card site-settings__card">
-				<QueryJetpackConnection siteId={ selectedSiteId } />
-				<SupportInfo
-					text={ translate(
-						'LaTeX is a powerful markup language for writing complex mathematical equations and formulas.'
-					) }
-					link={
-						siteIsAutomatedTransfer
-							? 'https://wordpress.com/support/latex/'
-							: 'https://jetpack.com/support/beautiful-math-with-latex/'
-					}
-					privacyLink="https://jetpack.com/support/beautiful-math-with-latex/#privacy"
-				/>
-				<JetpackModuleToggle
-					siteId={ selectedSiteId }
-					moduleSlug="latex"
-					label={ translate(
-						'Use the LaTeX markup language to write mathematical equations and formulas'
-					) }
-					disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
-				/>
-			</Card>
-		);
-	}
+function Latex( {
+	siteIsAutomatedTransfer,
+	isRequestingSettings,
+	isSavingSettings,
+	moduleUnavailable,
+	selectedSiteId,
+	translate,
+} ) {
+	return (
+		<Card className="composing__card site-settings__card">
+			<QueryJetpackConnection siteId={ selectedSiteId } />
+			<SupportInfo
+				text={ translate(
+					'LaTeX is a powerful markup language for writing complex mathematical equations and formulas.'
+				) }
+				link={
+					siteIsAutomatedTransfer
+						? 'https://wordpress.com/support/latex/'
+						: 'https://jetpack.com/support/beautiful-math-with-latex/'
+				}
+				privacyLink="https://jetpack.com/support/beautiful-math-with-latex/#privacy"
+			/>
+			<JetpackModuleToggle
+				siteId={ selectedSiteId }
+				moduleSlug="latex"
+				label={ translate(
+					'Use the LaTeX markup language to write mathematical equations and formulas'
+				) }
+				disabled={ isRequestingSettings || isSavingSettings || moduleUnavailable }
+			/>
+		</Card>
+	);
 }
+
+Latex.defaultProps = {
+	isSavingSettings: false,
+	isRequestingSettings: true,
+};
+
+Latex.propTypes = {
+	isSavingSettings: PropTypes.bool,
+	isRequestingSettings: PropTypes.bool,
+	siteIsAutomatedTransfer: PropTypes.bool,
+};
 
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
@@ -75,7 +65,6 @@ export default connect( ( state ) => {
 
 	return {
 		selectedSiteId,
-		afterTheDeadlineModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'latex' ),
 		moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 	};
 } )( localize( Latex ) );

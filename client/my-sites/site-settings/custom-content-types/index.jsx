@@ -3,12 +3,12 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import BlogPosts from './blog-posts';
 import Portfolios from './portfolios';
@@ -54,6 +54,7 @@ class CustomContentTypes extends Component {
 	render() {
 		const {
 			translate,
+			handleSubmitForm,
 			isWPForTeamsSite,
 			fields,
 			onChangeField,
@@ -66,35 +67,44 @@ class CustomContentTypes extends Component {
 		const isDisabled =
 			isRequestingSettings || isSavingSettings || activatingCustomContentTypesModule;
 		return (
-			<Card className="custom-content-types site-settings">
-				<BlogPosts
-					fields={ fields }
-					translate={ translate }
-					onChangeField={ onChangeField }
-					isDisabled={ isDisabled }
+			<>
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Content types' ) }
 				/>
+				<Card className="custom-content-types site-settings">
+					<BlogPosts
+						fields={ fields }
+						translate={ translate }
+						onChangeField={ onChangeField }
+						isDisabled={ isDisabled }
+					/>
 
-				{ ! isWPForTeamsSite && (
-					<>
-						<Testimonials
-							fields={ fields }
-							translate={ translate }
-							onChangeField={ onChangeField }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							isDisabled={ isDisabled }
-							siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
-						/>
-						<Portfolios
-							fields={ fields }
-							translate={ translate }
-							onChangeField={ onChangeField }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							isDisabled={ isDisabled }
-							siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
-						/>
-					</>
-				) }
-			</Card>
+					{ ! isWPForTeamsSite && (
+						<>
+							<Testimonials
+								fields={ fields }
+								translate={ translate }
+								onChangeField={ onChangeField }
+								handleAutosavingToggle={ handleAutosavingToggle }
+								isDisabled={ isDisabled }
+								siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+							/>
+							<Portfolios
+								fields={ fields }
+								translate={ translate }
+								onChangeField={ onChangeField }
+								handleAutosavingToggle={ handleAutosavingToggle }
+								isDisabled={ isDisabled }
+								siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+							/>
+						</>
+					) }
+				</Card>
+			</>
 		);
 	}
 }
@@ -106,6 +116,8 @@ CustomContentTypes.defaultProps = {
 };
 
 CustomContentTypes.propTypes = {
+	siteIsAutomatedTransfer: PropTypes.bool,
+	siteIsJetpack: PropTypes.bool,
 	handleAutosavingToggle: PropTypes.func.isRequired,
 	onChangeField: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
@@ -120,7 +132,6 @@ export default connect(
 		return {
 			siteId,
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-			siteIsJetpack: isJetpackSite( state, siteId ),
 			customContentTypesModuleActive: isJetpackModuleActive(
 				state,
 				siteId,

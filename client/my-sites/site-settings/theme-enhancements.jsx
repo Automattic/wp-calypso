@@ -1,11 +1,9 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -16,173 +14,143 @@ import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-secti
 import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-class ThemeEnhancements extends Component {
-	static defaultProps = {
-		isSavingSettings: false,
-		isRequestingSettings: true,
-		fields: {},
-	};
+function ThemeEnhancements( {
+	siteIsAutomatedTransfer,
+	siteIsJetpack,
+	handleAutosavingToggle,
+	handleAutosavingRadio,
+	isSavingSettings,
+	isRequestingSettings,
+	fields,
+	customizeUrl,
+	selectedSiteId,
+} ) {
+	const isFormPending = isRequestingSettings || isSavingSettings;
+	const translate = useTranslate();
+	const blockedByFooter = 'footer' === get( fields, 'infinite_scroll_blocked' );
+	const name = 'infinite_scroll';
 
-	static propTypes = {
-		onSubmitForm: PropTypes.func.isRequired,
-		handleAutosavingToggle: PropTypes.func.isRequired,
-		handleAutosavingRadio: PropTypes.func.isRequired,
-		isSavingSettings: PropTypes.bool,
-		isRequestingSettings: PropTypes.bool,
-		fields: PropTypes.object,
-		site: PropTypes.object,
-	};
-
-	isFormPending() {
-		const { isRequestingSettings, isSavingSettings } = this.props;
-
-		return isRequestingSettings || isSavingSettings;
-	}
-
-	renderToggle( name, isDisabled, label ) {
-		const { fields, handleAutosavingToggle } = this.props;
+	function RadioOptions() {
+		const options = [
+			{ value: 'default', label: 'Load more posts using the default theme behavior' },
+			{ value: 'button', label: 'Load more posts in page with a button' },
+			{ value: 'scroll', label: 'Load more posts as the reader scrolls down' },
+		];
 		return (
-			<ToggleControl
-				checked={ !! fields[ name ] }
-				disabled={ this.isFormPending() || isDisabled }
-				onChange={ handleAutosavingToggle( name ) }
-				label={ label }
-			/>
+			<>
+				<br />
+				{ options.map( ( option ) => {
+					const { value, label } = option;
+					return (
+						<FormLabel key={ value }>
+							<FormRadio
+								name={ name }
+								value={ value }
+								checked={ value === fields[ name ] }
+								onChange={ handleAutosavingRadio( name, value ) }
+								disabled={ isFormPending }
+								label={ label }
+							/>
+						</FormLabel>
+					);
+				} ) }
+				<br />
+			</>
 		);
 	}
 
-	renderRadio( name, value, label ) {
-		const { fields, handleAutosavingRadio } = this.props;
-		return (
-			<FormLabel>
-				<FormRadio
-					name={ name }
-					value={ value }
-					checked={ value === fields[ name ] }
-					onChange={ handleAutosavingRadio( name, value ) }
-					disabled={ this.isFormPending() }
-					label={ label }
-				/>
-			</FormLabel>
-		);
-	}
+	return (
+		<div>
+			<SettingsSectionHeader title={ translate( 'Theme enhancements' ) } />
 
-	renderSimpleSiteInfiniteScrollSettings() {
-		const { customizeUrl, fields, translate } = this.props;
-		const blockedByFooter = 'footer' === get( fields, 'infinite_scroll_blocked' );
-
-		return (
-			<FormFieldset>
-				<FormLegend>{ translate( 'Infinite scroll' ) }</FormLegend>
-				<SupportInfo
-					text={ translate( 'Control how additional posts are loaded.' ) }
-					link="https://wordpress.com/support/infinite-scroll/"
-					privacyLink={ false }
-				/>
-				{ this.renderToggle(
-					'infinite_scroll',
-					blockedByFooter,
-					translate( 'Load posts as you scroll. Disable to show a clickable button to load posts.' )
-				) }
-				{ blockedByFooter && (
-					<FormSettingExplanation isIndented>
+			{ siteIsJetpack ? (
+				<Card>
+					<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
+					<SupportInfo
+						text={ translate(
+							'Loads the next posts automatically when the reader approaches the bottom of the page.'
+						) }
+						link={
+							siteIsAutomatedTransfer
+								? 'https://wordpress.com/en/support/infinite-scroll/'
+								: 'https://jetpack.com/support/infinite-scroll/'
+						}
+						privacyLink="https://jetpack.com/support/infinite-scroll/#privacy"
+					/>
+					<FormSettingExplanation>
 						{ translate(
-							'Your site has a "footer" widget enabled so buttons will always be used. {{link}}Customize your site{{/link}}',
-							{
-								components: {
-									link: <a href={ customizeUrl } />,
-								},
-							}
+							'Create a smooth, uninterrupted reading experience by loading more content as visitors scroll to the bottom of your archive pages.'
 						) }
 					</FormSettingExplanation>
-				) }
-			</FormFieldset>
-		);
-	}
-
-	renderJetpackInfiniteScrollSettings() {
-		const { translate } = this.props;
-
-		return (
-			<FormFieldset>
-				<SupportInfo
-					text={ translate(
-						'Loads the next posts automatically when the reader approaches the bottom of the page.'
-					) }
-					link="https://jetpack.com/support/infinite-scroll/"
-				/>
-				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
-				<p>
-					{ translate(
-						'Create a smooth, uninterrupted reading experience by loading more content as visitors scroll to the bottom of your archive pages.'
-					) }
-				</p>
-				{ this.renderRadio(
-					'infinite_scroll',
-					'default',
-					translate( 'Load more posts using the default theme behavior' )
-				) }
-				{ this.renderRadio(
-					'infinite_scroll',
-					'button',
-					translate( 'Load more posts in page with a button' )
-				) }
-				{ this.renderRadio(
-					'infinite_scroll',
-					'scroll',
-					translate( 'Load more posts as the reader scrolls down' )
-				) }
-			</FormFieldset>
-		);
-	}
-
-	renderCustomCSSSettings() {
-		const { selectedSiteId, translate } = this.props;
-		const formPending = this.isFormPending();
-
-		return (
-			<FormFieldset>
-				<SupportInfo
-					text={ translate(
-						"Adds options for CSS preprocessor use, disabling the theme's CSS, or custom image width."
-					) }
-					link="https://jetpack.com/support/custom-css/"
-				/>
-
-				<JetpackModuleToggle
-					siteId={ selectedSiteId }
-					moduleSlug="custom-css"
-					label={ translate( 'Enhance CSS customization panel' ) }
-					disabled={ formPending }
-				/>
-			</FormFieldset>
-		);
-	}
-
-	render() {
-		const { siteIsJetpack, translate } = this.props;
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<div>
-				<SettingsSectionHeader title={ translate( 'Theme enhancements' ) } />
-
-				<Card className="theme-enhancements__card site-settings">
-					{ siteIsJetpack ? (
-						<Fragment>
-							{ this.renderJetpackInfiniteScrollSettings() }
-							<hr />
-							{ this.renderCustomCSSSettings() }
-						</Fragment>
-					) : (
-						this.renderSimpleSiteInfiniteScrollSettings()
+					<RadioOptions />
+					<hr />
+					<SupportInfo
+						text={ translate(
+							"Adds names for CSS preprocessor use, disabling the theme's CSS, or custom image width."
+						) }
+						link={
+							siteIsAutomatedTransfer
+								? 'https://wordpress.com/en/support/editing-css/'
+								: 'https://jetpack.com/support/custom-css/'
+						}
+						privacyLink="https://jetpack.com/support/custom-css/#privacy"
+					/>
+					<JetpackModuleToggle
+						siteId={ selectedSiteId }
+						moduleSlug="custom-css"
+						label={ translate( 'Enhance CSS customization panel' ) }
+						disabled={ isFormPending }
+					/>
+				</Card>
+			) : (
+				<Card>
+					<FormLegend>{ translate( 'Infinite scroll' ) }</FormLegend>
+					<SupportInfo
+						text={ translate( 'Control how additional posts are loaded.' ) }
+						link="https://wordpress.com/support/infinite-scroll/"
+						privacyLink={ false }
+					/>
+					<ToggleControl
+						checked={ !! fields[ name ] }
+						disabled={ isFormPending || blockedByFooter }
+						onChange={ handleAutosavingToggle( name ) }
+						label={ translate(
+							'Load posts as you scroll. Disable to show a clickable button to load posts.'
+						) }
+					/>
+					{ blockedByFooter && (
+						<FormSettingExplanation isIndented>
+							{ translate(
+								'Your site has a "footer" widget enabled so buttons will always be used. {{link}}Customize your site{{/link}}',
+								{
+									components: {
+										link: <a href={ customizeUrl } />,
+									},
+								}
+							) }
+						</FormSettingExplanation>
 					) }
 				</Card>
-			</div>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	}
+			) }
+		</div>
+	);
 }
+
+ThemeEnhancements.defaultProps = {
+	isSavingSettings: false,
+	isRequestingSettings: true,
+	fields: {},
+};
+
+ThemeEnhancements.propTypes = {
+	onSubmitForm: PropTypes.func.isRequired,
+	handleAutosavingToggle: PropTypes.func.isRequired,
+	handleAutosavingRadio: PropTypes.func.isRequired,
+	isSavingSettings: PropTypes.bool,
+	isRequestingSettings: PropTypes.bool,
+	fields: PropTypes.object,
+	site: PropTypes.object,
+};
 
 export default connect( ( state ) => {
 	const site = getSelectedSite( state );
