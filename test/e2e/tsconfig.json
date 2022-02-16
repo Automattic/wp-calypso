@@ -8,7 +8,9 @@
 	"include": [
 		"specs/specs-playwright",
 		"specs/specs-p2",
-		"specs/constants.js",
+		"specs/specs-wpcom",
+		"specs/specs-i18n",
+		"specs/constants.ts",
 		"lib/gutenberg/tracking"
 	]
 }

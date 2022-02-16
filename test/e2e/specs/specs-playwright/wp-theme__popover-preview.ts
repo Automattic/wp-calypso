@@ -10,6 +10,9 @@ import {
 	SiteSelectComponent,
 	TestAccount,
 } from '@automattic/calypso-e2e';
+import { Browser, Page } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	// This test will use this specific theme as it will never be active.
@@ -17,13 +20,13 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 	const testAccount = new TestAccount( 'defaultUser' );
 	const testAccountSiteDomain = testAccount.getSiteURL( { protocol: false } );
 
-	let sidebarComponent;
-	let themesPage;
-	let previewComponent;
-	let page;
+	let sidebarComponent: SidebarComponent;
+	let themesPage: ThemesPage;
+	let previewComponent: PreviewComponent;
+	let page: Page;
 
 	beforeAll( async () => {
-		page = await global.browser.newPage();
+		page = await browser.newPage();
 		await testAccount.authenticate( page );
 	} );
 
