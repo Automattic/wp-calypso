@@ -24,4 +24,10 @@ subscribe( () => {
 			openedManually: true,
 		} );
 	}
+	if ( select( 'core/edit-site' )?.isFeatureActive( 'welcomeGuide' ) ) {
+		dispatch( 'core/edit-site' ).toggleFeature( 'welcomeGuide' );
+		dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true, {
+			openedManually: true,
+		} );
+	}
 } );
