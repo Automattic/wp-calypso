@@ -117,7 +117,7 @@ function removeLoadingScreenClassNamesFromBody() {
 }
 
 function showProgressIndicator( flowName ) {
-	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site', 'importer' ];
+	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site', 'importer', 'domain' ];
 
 	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
 }
