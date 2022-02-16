@@ -118,7 +118,7 @@ export default function AssignLicenseForm( { sites, currentPage }: any ): ReactE
 			{ siteCards }
 
 			<Pagination
-				className="assign-license-form__sites-pagination"
+				className="assign-license-form__pagination"
 				page={ currentPage }
 				perPage={ SITE_CARDS_PER_PAGE }
 				total={ sites.length }
