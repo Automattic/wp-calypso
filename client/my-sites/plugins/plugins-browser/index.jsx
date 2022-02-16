@@ -102,9 +102,7 @@ const translateCategory = ( { category, translate } ) => {
 				context: 'Category description for the plugin browser.',
 			} );
 		default:
-			return translate( 'Plugins', {
-				context: 'Category description for the plugin browser.',
-			} );
+			return translate( 'Plugins' );
 	}
 };
 
