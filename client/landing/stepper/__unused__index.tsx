@@ -7,7 +7,7 @@ import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { LocaleContext } from '../gutenboarding/components/locale-context';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
-import { useFlows } from './flows';
+import { useFlows } from './__unused__flows';
 
 import 'calypso/components/environment-badge/style.scss';
 
@@ -65,6 +65,8 @@ function StepperFlows() {
 							<flow.Render
 								Next={ NextHandler }
 								step={ step }
+								// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+								// @ts-ignore
 								index={ flow.steps } // TS fail
 							/>
 						</Route>
