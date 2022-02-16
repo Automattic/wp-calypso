@@ -9,6 +9,7 @@ import { Card, Button } from '@automattic/components';
 import { CheckoutProvider, CheckoutSubmitButton } from '@automattic/composite-checkout';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { CardElement, useElements } from '@stripe/react-stripe-js';
+import { useSelect } from '@wordpress/data';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo, ReactElement, useEffect } from 'react';
@@ -46,6 +47,9 @@ function PaymentMethodAdd(): ReactElement {
 	const paymentMethods = useMemo( () => [ stripeMethod ].filter( isValueTruthy ), [
 		stripeMethod,
 	] );
+	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>
+		select( 'credit-card' ).useAsPrimaryPaymentMethod()
+	);
 
 	const onGoToPaymentMethods = () => {
 		reduxDispatch(
@@ -114,6 +118,7 @@ function PaymentMethodAdd(): ReactElement {
 					card: ( data: unknown ) =>
 						assignNewCardProcessor(
 							{
+								useAsPrimaryPaymentMethod,
 								translate,
 								stripe,
 								stripeConfiguration,
