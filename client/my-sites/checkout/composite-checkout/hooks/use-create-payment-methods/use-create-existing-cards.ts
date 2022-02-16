@@ -1,6 +1,6 @@
 import { createExistingCardMethod } from '@automattic/wpcom-checkout';
 import { useMemo } from 'react';
-import useMemoCompare from '../use-memo-compare';
+import { useMemoCompare } from 'calypso/lib/use-memo-compare';
 import type { StoredCard } from '../../types/stored-cards';
 import type { StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
@@ -22,17 +22,13 @@ export default function useCreateExistingCards( {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	// Memoize the cards by comparing their stored_details_id values, in case the
 	// objects themselves are recreated on each render.
-	const memoizedStoredCards: StoredCard[] | undefined = useMemoCompare(
-		storedCards,
-		( prev: undefined | StoredCard[], next: undefined | StoredCard[] ) => {
-			const prevIds = prev?.map( ( card ) => card.stored_details_id ) ?? [];
-			const nextIds = next?.map( ( card ) => card.stored_details_id ) ?? [];
-			return (
-				prevIds.length === nextIds.length &&
-				prevIds.every( ( id, index ) => id === nextIds[ index ] )
-			);
-		}
-	);
+	const memoizedStoredCards: StoredCard[] = useMemoCompare( storedCards, ( prev, next ) => {
+		const prevIds = prev?.map( ( card ) => card.stored_details_id ) ?? [];
+		const nextIds = next?.map( ( card ) => card.stored_details_id ) ?? [];
+		return (
+			prevIds.length === nextIds.length && prevIds.every( ( id, index ) => id === nextIds[ index ] )
+		);
+	} );
 
 	const existingCardMethods = useMemo( () => {
 		return (
