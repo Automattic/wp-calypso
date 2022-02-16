@@ -1,5 +1,5 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import wp from 'calypso/lib/wp';
+import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 
 export async function saveCreditCard( {
 	token,
@@ -12,7 +12,7 @@ export async function saveCreditCard( {
 		useAsPrimaryPaymentMethod,
 	} );
 
-	const response = await wp.req.post(
+	const response = await wpcomJpl.req.post(
 		{
 			apiNamespace: 'wpcom/v2',
 			path: '/jetpack/stripe/store-payment-method',
