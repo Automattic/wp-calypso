@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { FunctionComponent, useState } from 'react';
 import { useGetProductVariants } from '../../hooks/product-variants';
@@ -14,6 +15,11 @@ const Option = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+
+	&.is-selected {
+		background: #055d9c;
+		color: #ffff;
+	}
 `;
 
 const VariantLabel = styled.span`
@@ -24,7 +30,6 @@ const VariantLabel = styled.span`
 export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps > = ( {
 	selectedItem,
 	onChangeItemVariant,
-	isDisabled,
 	siteId,
 	productSlug,
 } ) => {
@@ -44,6 +49,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 					<Option key="selectedItem" onClick={ () => setOpen( ! open ) }>
 						<VariantLabel>{ variantLabel }</VariantLabel>
 						{ variantDetails }
+						<Gridicon icon={ open ? 'chevron-down' : 'chevron-up' } />
 					</Option>
 				) ) }
 			{ open &&
@@ -51,6 +57,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 					<Option
 						key={ productSlug + variantLabel }
 						onClick={ () => onChangeItemVariant( selectedItem.uuid, productSlug, productId ) }
+						className={ productId === selectedItem.product_id ? 'is-selected' : '' }
 					>
 						<span>{ variantLabel }</span>
 						<span>{ variantPrice }</span>
