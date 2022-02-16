@@ -3,30 +3,15 @@
 // This script will return a url of an artifact generated in the latest project build for the specified branch.
 // eg: node bin/get-teamcity-artifact-url --artifact="translate/calypso-strings.pot"
 
-const parsedArgs = process.argv
-	.slice( 2 )
-	.filter( ( arg ) => arg.startsWith( '--' ) )
-	.reduce( ( accumulator, arg ) => {
-		const [ key, value ] = arg.slice( 2 ).split( '=' );
-		accumulator[ key ] = value;
+const yargs = require( 'yargs' );
 
-		return accumulator;
-	}, {} );
+const args = yargs
+	.default( 'branch', 'trunk' )
+	.default( 'buildType', 'calypso_Translate' )
+	.required( 'artifact', 'Set the artifact file path.' ).argv;
 
-const args = {
-	branch: 'trunk',
-	buildType: 'calypso_Translate',
-	artifact: '',
-	...parsedArgs,
-};
-
-( async function () {
-	if ( args.artifact ) {
-		const url = `https://teamcity.a8c.com/repository/download/${ args.buildType }/.lastSuccessful/${ args.artifact }?guest=1&branch=${ args.branch }`;
-		console.log( url );
-		process.exit( 0 );
-	} else {
-		console.error( 'The `--artifact` parameter is missing.' );
-		process.exit( 1 );
-	}
+( function () {
+	const url = `https://teamcity.a8c.com/repository/download/${ args.buildType }/.lastSuccessful/${ args.artifact }?guest=1&branch=${ args.branch }`;
+	console.log( url );
+	process.exit( 0 );
 } )();
