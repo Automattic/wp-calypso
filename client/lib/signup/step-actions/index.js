@@ -423,63 +423,22 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 	try {
 		/*
 		 * Get the block pattern source for use in our new home page.
-		 * Ideally we'd pull this content from the patterns repo dynamically, but we don't
-		 * have a way to get raw block source.
 		 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
 		 */
-		const patternPost = `
-			<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"100px","bottom":"100px"}},"color":{"background":"#f6f6f6"}},"textColor":"black","layout":{"inherit":true}} -->
-			<div class="wp-block-group alignfull has-black-color has-text-color has-background" style="background-color:#f6f6f6;padding-top:100px;padding-bottom:100px"><!-- wp:columns {"align":"wide"} -->
-			<div class="wp-block-columns alignwide"><!-- wp:column -->
-			<div class="wp-block-column"><!-- wp:image {"id":4407,"sizeSlug":"large","linkDestination":"none"} -->
-			<figure class="wp-block-image size-large"><img src="https://dotcompatterns.files.wordpress.com/2022/02/image-placeholder.png?w=1024" alt="" class="wp-image-4407"/></figure>
-			<!-- /wp:image --></div>
-			<!-- /wp:column -->
+		const patternList = await wpcom.req.get( {
+			path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
+			apiNamespace: 'rest/v1',
+		} );
 
-			<!-- wp:column {"style":{"spacing":{"padding":{"right":"40px","left":"40px"}}}} -->
-			<div class="wp-block-column" style="padding-right:40px;padding-left:40px"><!-- wp:heading {"level":1,"style":{"typography":{"fontSize":"40px"},"spacing":{"margin":{"top":"0px"}}}} -->
-			<h1 id="item-name" style="font-size:40px;margin-top:0px">${ translate( 'Item Name' ) }</h1>
-			<!-- /wp:heading -->
+		//Only item since we filter by id
+		const singleProductPattern = patternList[ 0 ];
 
-			<!-- wp:heading {"style":{"color":{"text":"#444444"}},"fontSize":"medium"} -->
-			<h2 class="has-text-color has-medium-font-size" id="0-00" style="color:#444444">$0.00</h2>
-			<!-- /wp:heading -->
-
-			<!-- wp:paragraph {"style":{"color":{"text":"#444444"}},"fontSize":"small"} -->
-			<p class="has-text-color has-small-font-size" style="color:#444444">${ translate(
-				'Short description of your item.'
-			) }</p>
-			<!-- /wp:paragraph -->
-
-			<!-- wp:jetpack/recurring-payments -->
-			<div class="wp-block-jetpack-recurring-payments"><!-- wp:jetpack/button {"element":"a","uniqueId":"recurring-payments-id","text":${ translate(
-				'Buy Now'
-			) },"customTextColor":"#ffffff","backgroundColor":"black","borderRadius":0,"width":"100%"} /--></div>
-			<!-- /wp:jetpack/recurring-payments -->
-
-			<!-- wp:spacer {"height":"20px"} -->
-			<div style="height:20px" aria-hidden="true" class="wp-block-spacer"></div>
-			<!-- /wp:spacer -->
-
-			<!-- wp:paragraph {"fontSize":"small"} -->
-			<p class="has-small-font-size"><strong>${ translate( 'Description' ) }</strong></p>
-			<!-- /wp:paragraph -->
-
-			<!-- wp:paragraph {"style":{"color":{"text":"#444444"}},"fontSize":"small"} -->
-			<p class="has-text-color has-small-font-size" style="color:#444444">${ translate(
-				'Describe your item. Use this section to add a full description and details of your product, along with its many selling points.'
-			) }</p>
-			<!-- /wp:paragraph --></div>
-			<!-- /wp:column --></div>
-			<!-- /wp:columns --></div>
-			<!-- /wp:group -->
-		`;
 		// Create a new Home page
 		const newPage = await wpcom.req.post( {
 			path: `/sites/${ siteSlug }/pages`,
 			apiNamespace: 'wp/v2',
 			body: {
-				content: patternPost,
+				content: singleProductPattern.html,
 				title: translate( 'Home' ),
 				status: 'publish',
 				template: 'header-footer-only',
