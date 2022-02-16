@@ -15,6 +15,6 @@ export * from './revisions-component';
 export * from './snackbar-notification-component';
 export * from './page-template-modal-component';
 export * from './react-modal-component';
-export * from './popover-block-inserter';
+export * from './popover-block-inserter-component';
 
 export * from './me';
