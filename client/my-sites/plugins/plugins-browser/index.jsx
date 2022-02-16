@@ -83,6 +83,27 @@ import './style.scss';
 const SHORT_LIST_LENGTH = 6;
 const SEARCH_RESULTS_LIST_LENGTH = 12;
 
+const translateCategory = ( { category, translate } ) => {
+	switch ( category ) {
+		case 'new':
+			return translate( 'New', {
+				context: 'Category description for the plugin browser.',
+			} );
+		case 'popular':
+			return translate( 'Popular', {
+				context: 'Category description for the plugin browser.',
+			} );
+		case 'featured':
+			return translate( 'Featured', {
+				context: 'Category description for the plugin browser.',
+			} );
+		case 'paid':
+			return translate( 'Premium', {
+				context: 'Category description for the plugin browser.',
+			} );
+	}
+};
+
 const PluginsBrowser = ( {
 	trackPageViews = true,
 	category,
@@ -172,9 +193,16 @@ const PluginsBrowser = ( {
 				id: 'plugins-search',
 			} );
 		}
+		if ( category ) {
+			items.push( {
+				label: translateCategory( { category, translate } ),
+				href: `/plugins/${ category }/${ siteSlug || '' }`,
+				id: 'category',
+			} );
+		}
 
 		dispatch( updateBreadcrumbs( items ) );
-	}, [ siteSlug, search ] );
+	}, [ siteSlug, search, category ] );
 
 	const trackSiteDisconnect = () =>
 		composeAnalytics(
@@ -448,27 +476,6 @@ const SearchListView = ( {
 			} ) }
 		/>
 	);
-};
-
-const translateCategory = ( { category, translate } ) => {
-	switch ( category ) {
-		case 'new':
-			return translate( 'New', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'popular':
-			return translate( 'Popular', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'featured':
-			return translate( 'Featured', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'paid':
-			return translate( 'Premium', {
-				context: 'Category description for the plugin browser.',
-			} );
-	}
 };
 
 const FullListView = ( {
