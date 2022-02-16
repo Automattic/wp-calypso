@@ -18,8 +18,8 @@ const UPLOAD_STATES = {
 	FAILED: 'FAILED',
 };
 
-const FileSelectThumbnailContainer = styled.div`
-	cursor: pointer;
+const FileSelectThumbnailContainer = styled.div< { disabled?: boolean } >`
+	cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
 	width: 195px;
 	height: 145px;
 	background: rgba( 187, 224, 250, 0.12 );
@@ -54,13 +54,15 @@ const CroppedImage = styled.div`
 `;
 
 export interface MediaUploadData {
-	title: string;
-	URL: string;
-	uploadID: string;
+	title?: string;
+	URL?: string;
+	uploadID?: string;
 	mediaIndex: number;
 }
 interface WordpressMediaUploadProps {
-	onMediaUploaded: ( imageData: MediaUploadData ) => void;
+	onMediaUploadComplete: ( imageData: MediaUploadData ) => void;
+	onMediaUploadStart?: ( imageData: MediaUploadData ) => void;
+	onMediaUploadFailed?: ( imageData: MediaUploadData ) => void;
 	mediaIndex: number;
 	site: SiteData;
 	initialUrl: string;
@@ -70,7 +72,9 @@ interface WordpressMediaUploadProps {
 export function WordpressMediaUpload( {
 	mediaIndex,
 	site,
-	onMediaUploaded,
+	onMediaUploadComplete,
+	onMediaUploadStart,
+	onMediaUploadFailed,
 	initialUrl,
 	initialCaption,
 }: WordpressMediaUploadProps ) {
@@ -83,16 +87,18 @@ export function WordpressMediaUpload( {
 	const addMedia = useAddMedia();
 	const onPick = async function ( file: FileList ) {
 		setImageCaption( '' );
+		onMediaUploadStart && onMediaUploadStart( { mediaIndex } );
 		setUploadState( UPLOAD_STATES.IN_PROGRESS );
 		try {
 			const [ { title, URL, ID } ] = await addMedia( file, site );
 			setUploadedImageUrl( URL );
 			setImageCaption( title );
-			onMediaUploaded( { title, URL, uploadID: ID, mediaIndex } );
+			onMediaUploadComplete( { title, URL, uploadID: ID, mediaIndex } );
 			setUploadState( UPLOAD_STATES.COMPLETED );
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch ( e: any ) {
 			setUploadState( UPLOAD_STATES.FAILED );
+			onMediaUploadFailed && onMediaUploadFailed( { mediaIndex } );
 			debug( 'Image upload failed' );
 			debug( e.message );
 		}
@@ -112,7 +118,7 @@ export function WordpressMediaUpload( {
 			);
 		case UPLOAD_STATES.IN_PROGRESS:
 			return (
-				<FileSelectThumbnailContainer key={ mediaIndex }>
+				<FileSelectThumbnailContainer key={ mediaIndex } disabled={ true }>
 					<Spinner />
 				</FileSelectThumbnailContainer>
 			);

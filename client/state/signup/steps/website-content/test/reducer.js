@@ -6,12 +6,14 @@ import {
 	imageUploaded,
 	textChanged,
 	initializePages,
+	imageUploadInitiated,
 } from '../actions';
-import websiteContentCollectionReducer from '../reducer';
+import websiteContentCollectionReducer, { IMAGE_UPLOAD_STATES } from '../reducer';
 import { initialState } from '../schema';
 
 const initialTestState = {
 	currentIndex: 0,
+	imageUploadStates: {},
 	websiteContent: [
 		{
 			id: 'Home',
@@ -265,6 +267,11 @@ describe( 'reducer', () => {
 		const recieved = websiteContentCollectionReducer( { ...initialTestState }, action );
 		expect( recieved ).to.be.eql( {
 			...initialTestState,
+			imageUploadStates: {
+				Home: {
+					1: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+				},
+			},
 			websiteContent: [
 				{
 					id: 'Home',
@@ -342,6 +349,22 @@ describe( 'reducer', () => {
 					],
 				},
 			],
+		} );
+	} );
+
+	test( 'should update the image uploading state correctly', () => {
+		const action = imageUploadInitiated( {
+			pageId: 'About',
+			mediaIndex: 2,
+		} );
+		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
+		expect( nextState ).to.be.eql( {
+			...initialTestState,
+			imageUploadStates: {
+				About: {
+					2: 'UPLOAD_STARTED',
+				},
+			},
 		} );
 	} );
 
