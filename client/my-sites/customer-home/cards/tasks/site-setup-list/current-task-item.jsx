@@ -22,7 +22,7 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 					</div>
 				) }
 				{ ! useAccordionLayout && (
-					<h2 className="site-setup-list__task-title task__title">{ currentTask.title }</h2>
+					<h3 className="site-setup-list__task-title task__title">{ currentTask.title }</h3>
 				) }
 				<p className="site-setup-list__task-description task__description">
 					{ currentTask.description }
