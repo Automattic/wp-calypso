@@ -31,7 +31,7 @@ function EducationalContent( {
 	return (
 		<div className="educational-content">
 			<div className="educational-content__wrapper">
-				<h3>{ title }</h3>
+				<h2>{ title }</h2>
 				<p className="educational-content__description customer-home__card-subheader">
 					{ description }
 				</p>

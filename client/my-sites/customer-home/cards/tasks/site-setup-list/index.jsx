@@ -262,7 +262,7 @@ const SiteSetupList = ( {
 			) }
 
 			<div className="site-setup-list__nav">
-				<CardHeading>
+				<CardHeading tagName="h2">
 					{ isBlogger ? translate( 'Blog setup' ) : translate( 'Site setup' ) }
 				</CardHeading>
 				<ul

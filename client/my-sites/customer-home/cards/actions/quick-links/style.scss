@@ -64,6 +64,10 @@
 		transition: all 0.1s;
 	}
 
+	.quick-links__action-box-text {
+		display: flex;
+	}
+
 	.quick-links__action-box-label {
 		color: var( --color-text );
 		font-size: $font-body-small;
