@@ -124,7 +124,7 @@ class FoldableCard extends Component {
 		} );
 		const header = createElement(
 			this.props.headerTagName,
-			{ classnames: 'foldable-card__main' },
+			{ className: 'foldable-card__main' },
 			this.props.header,
 			this.renderActionButton()
 		);
