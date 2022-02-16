@@ -24,7 +24,7 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 			steps = [ { title: __( 'Preparing your domain' ) } ];
 			break;
 		case 'site-content-collection':
-			steps = [ { title: __( 'Saving your content' ) } ];
+			steps = [ { title: __( 'Saving your content' ) }, { title: __( 'Closing the loop' ) } ];
 			break;
 		default:
 			steps = [
