@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
+import SocialSignupToS from 'calypso/blocks/signup-form/social-signup-tos';
 import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
@@ -411,7 +412,7 @@ export class UserStep extends Component {
 		return translate( 'Create your account' );
 	}
 
-	renderSignupForm( isTreatment = false ) {
+	renderSignupForm() {
 		const { oauth2Client, wccomFrom, isReskinned } = this.props;
 		let socialService;
 		let socialServiceResponse;
@@ -450,7 +451,6 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
-					isSimplerMobileForm={ isTreatment }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -536,6 +536,7 @@ export class UserStep extends Component {
 									fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 									stepContent={ this.renderSignupForm( true ) }
 								/>
+								<SocialSignupToS />
 							</div>
 						);
 					}

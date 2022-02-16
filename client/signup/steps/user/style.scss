@@ -35,4 +35,20 @@ body.is-section-signup.is-white-signup .signup {
 		display: flex;
 		white-space: break-spaces;
 	}
+
+	.signup-form {
+		flex-direction: column-reverse !important;
+
+		.signup-form__social-buttons-tos {
+			display: none;
+		}
+	}
+
+	p.signup-form__social-buttons-tos {
+		font-size: 0.75rem;
+		text-align: left;
+		margin-top: 19px;
+		padding: 0 16px;
+		max-width: 408px;
+	}
 }

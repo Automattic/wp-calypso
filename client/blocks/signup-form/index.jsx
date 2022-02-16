@@ -55,7 +55,6 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
 import P2SignupForm from './p2';
 import PasswordlessSignupForm from './passwordless';
-import SimplerMobileForm from './simpler-mobile-form';
 import SocialSignupForm from './social';
 
 import './style.scss';
@@ -1024,30 +1023,6 @@ class SignupForm extends Component {
 						formFooter={ this.formFooter() }
 						handleSubmit={ this.handleSubmit }
 						{ ...socialProps }
-						footerLink={ this.props.footerLink || this.footerLink() }
-						error={ this.props?.step?.errors?.[ 0 ] }
-					/>
-				</>
-			);
-		}
-
-		if ( this.props.isSimplerMobileForm ) {
-			const socialProps = pick( this.props, [
-				'isSocialSignupEnabled',
-				'handleSocialResponse',
-				'socialService',
-				'socialServiceResponse',
-			] );
-
-			return (
-				<>
-					{ this.getNotice() }
-					<SimplerMobileForm
-						formFields={ this.formFields() }
-						formFooter={ this.formFooter() }
-						handleSubmit={ this.handleSubmit }
-						{ ...socialProps }
-						path={ this.props.path }
 						footerLink={ this.props.footerLink || this.footerLink() }
 						error={ this.props?.step?.errors?.[ 0 ] }
 					/>
