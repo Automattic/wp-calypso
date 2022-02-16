@@ -127,8 +127,7 @@ const PluginsBrowser = ( {
 	);
 	const pluginsByCategoryPopular = filterPopularPlugins(
 		popularPlugins,
-		pluginsByCategoryFeatured,
-		jetpackNonAtomic
+		pluginsByCategoryFeatured
 	);
 	const isFetchingPluginsByCategory = useSelector( ( state ) =>
 		isFetchingPluginsList( state, category )
@@ -709,13 +708,7 @@ function updateWpComRating( plugin ) {
  * @param {Array} popularPlugins
  * @param {Array} featuredPlugins
  */
-function filterPopularPlugins( popularPlugins = [], featuredPlugins = [], jetpackNonAtomic ) {
-	// Since paid plugins will not be available for Jetpack self hosted sites,
-	// continue with filtering the popular plugins.
-	if ( ! jetpackNonAtomic ) {
-		featuredPlugins = [];
-	}
-
+function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	const displayedFeaturedSlugsMap = new Map(
 		featuredPlugins
 			.slice( 0, SHORT_LIST_LENGTH ) // only displayed plugins
