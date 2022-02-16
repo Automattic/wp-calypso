@@ -65,14 +65,13 @@ export class Login extends Component {
 		this.recordPageView( this.props );
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.twoFactorAuthType !== nextProps.twoFactorAuthType ) {
-			this.recordPageView( nextProps );
+	componentDidUpdate( prevProps ) {
+		if ( this.props.twoFactorAuthType !== prevProps.twoFactorAuthType ) {
+			this.recordPageView( this.props );
 		}
 
-		if ( this.props.socialConnect !== nextProps.socialConnect ) {
-			this.recordPageView( nextProps );
+		if ( this.props.socialConnect !== prevProps.socialConnect ) {
+			this.recordPageView( this.props );
 		}
 	}
 
