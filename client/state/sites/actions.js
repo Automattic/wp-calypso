@@ -93,6 +93,12 @@ export function requestSites() {
 				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 			} )
 			.then( ( response ) => {
+				console.log( 'Delaying /sites response...' );
+				return new Promise( ( resolve ) => setTimeout( () => resolve( response ), 2 * 60 * 1000 ) );
+			} )
+			.then( ( response ) => {
+				console.log( 'Receiving sites!' );
+				console.log( { sites: response.sites } );
 				dispatch( receiveSites( response.sites ) );
 				dispatch( {
 					type: SITES_REQUEST_SUCCESS,
