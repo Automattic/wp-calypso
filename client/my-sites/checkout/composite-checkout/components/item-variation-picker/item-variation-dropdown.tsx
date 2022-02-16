@@ -14,6 +14,7 @@ const Option = styled.div`
 	padding: 14px;
 	display: flex;
 	flex-direction: row;
+	align-items: center;
 	justify-content: space-between;
 
 	&.is-selected {
@@ -46,15 +47,22 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 			{ variants
 				.filter( ( { productId } ) => productId === selectedItem.product_id )
 				.map( ( { variantLabel, variantDetails } ) => (
-					<Option key="selectedItem" onClick={ () => setOpen( ! open ) }>
+					<Option
+						role="button"
+						tabIndex={ 0 }
+						key="selectedItem"
+						onClick={ () => setOpen( ! open ) }
+					>
 						<VariantLabel>{ variantLabel }</VariantLabel>
 						{ variantDetails }
-						<Gridicon icon={ open ? 'chevron-down' : 'chevron-up' } />
+						<Gridicon icon={ open ? 'chevron-down' : 'chevron-up' } size={ 12 } />
 					</Option>
 				) ) }
 			{ open &&
 				variants.map( ( { variantLabel, variantPrice, productId, productSlug } ) => (
 					<Option
+						role="button"
+						tabIndex={ 0 }
 						key={ productSlug + variantLabel }
 						onClick={ () => onChangeItemVariant( selectedItem.uuid, productSlug, productId ) }
 						className={ productId === selectedItem.product_id ? 'is-selected' : '' }
