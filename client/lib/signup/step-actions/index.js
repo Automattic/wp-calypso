@@ -426,7 +426,7 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 		 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
 		 */
 		const patternList = await wpcom.req.get( {
-			path: `/ptk/patterns/${ getLocaleSlug() }?post_id=1899&http_envelope=1`,
+			path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
 			apiNamespace: 'rest/v1',
 		} );
 
