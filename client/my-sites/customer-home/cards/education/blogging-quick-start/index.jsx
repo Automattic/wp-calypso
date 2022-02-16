@@ -8,7 +8,10 @@ import BloggingQuickStartModal from './blogging-quick-start-modal';
 
 const BloggingQuickStart = () => {
 	const translate = useTranslate();
-	const { params, openModal, closeModal } = useRouteModal( 'courseSlug' );
+	const { isModalOpen, openModal, closeModal } = useRouteModal(
+		'courseSlug',
+		COURSE_SLUGS.BLOGGING_QUICK_START
+	);
 
 	return (
 		<EducationalContent
@@ -20,13 +23,13 @@ const BloggingQuickStart = () => {
 				{
 					ModalComponent: BloggingQuickStartModal,
 					modalComponentProps: {
-						isVisible: !! params.courseSlug,
+						isVisible: isModalOpen,
 						onClose: ( event ) => {
 							event.preventDefault();
 							closeModal();
 						},
 					},
-					onClick: () => openModal( { courseSlug: COURSE_SLUGS.BLOGGING_QUICK_START } ),
+					onClick: () => openModal(),
 					text: translate( 'Start learning' ),
 				},
 			] }
