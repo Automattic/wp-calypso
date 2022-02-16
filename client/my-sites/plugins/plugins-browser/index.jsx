@@ -151,10 +151,7 @@ const PluginsBrowser = ( {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
-	let pluginsByCategory = useSelector( ( state ) => getPluginsListByCategory( state, category ) );
-	if ( category === 'paid' ) {
-		pluginsByCategory = paidPlugins;
-	}
+	const pluginsByCategory = useSelector( ( state ) => getPluginsListByCategory( state, category ) );
 	const pluginsByCategoryNew = useSelector( ( state ) => getPluginsListByCategory( state, 'new' ) );
 	const pluginsByCategoryFeatured = useSelector( ( state ) =>
 		getPluginsListByCategory( state, 'featured' )
@@ -163,13 +160,9 @@ const PluginsBrowser = ( {
 		popularPlugins,
 		pluginsByCategoryFeatured
 	);
-	let isFetchingPluginsByCategory = useSelector( ( state ) =>
+	const isFetchingPluginsByCategory = useSelector( ( state ) =>
 		isFetchingPluginsList( state, category )
 	);
-	if ( category === 'paid' ) {
-		isFetchingPluginsByCategory = isFetchingPaidPlugins;
-	}
-
 	const isFetchingPluginsByCategoryNew = useSelector( ( state ) =>
 		isFetchingPluginsList( state, 'new' )
 	);
@@ -495,19 +488,32 @@ const FullListView = ( {
 	pluginsByCategory,
 	siteSlug,
 	sites,
+	paidPlugins,
+	isFetchingPaidPlugins,
+	billingPeriod,
+	setBillingPeriod,
 } ) => {
 	const translate = useTranslate();
 
-	if ( pluginsByCategory.length > 0 || isFetchingPluginsByCategory ) {
+	let plugins = pluginsByCategory;
+	let isFetching = isFetchingPluginsByCategory;
+	if ( category === 'paid' ) {
+		plugins = paidPlugins;
+		isFetching = isFetchingPaidPlugins;
+	}
+
+	if ( plugins.length > 0 || isFetching ) {
 		return (
 			<PluginsBrowserList
-				plugins={ pluginsByCategory }
+				plugins={ plugins }
 				listName={ category }
 				title={ translateCategory( { category, translate } ) }
 				site={ siteSlug }
-				showPlaceholders={ isFetchingPluginsByCategory }
+				showPlaceholders={ isFetching }
 				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
+				billingPeriod={ billingPeriod }
+				setBillingPeriod={ category === 'paid' && setBillingPeriod }
 				extended
 			/>
 		);
