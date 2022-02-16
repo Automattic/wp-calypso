@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import { getLastFocusableElement } from 'calypso/lib/dom/focus';
 
+/*
+ * WARNING: script below is directly ported from
+ * https://opengrok.a8c.com/source/xref/a8c/jetpackme-new/js/header.js
+ */
 export default function useUserMenu() {
-	// Make user menu expandable
 	useEffect( () => {
 		const menu = document.querySelector( '.js-user-menu' );
 		const btn = document.querySelector( '.js-user-menu-btn' );

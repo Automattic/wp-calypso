@@ -23,6 +23,12 @@ export const MAIN_CONTENT_ID = 'content';
 
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
 
+/**
+ * WARNING: this component is a reflection of the Jetpack.com header, whose markup is located here:
+ * https://opengrok.a8c.com/source/xref/a8c/jetpackme-new/parts/shared/header.php
+ *
+ * Both headers should stay in sync as much as possible.
+ */
 const JetpackComMasterbar: React.FC = () => {
 	const translate = useTranslate();
 	const locale = useLocale();

@@ -1,6 +1,10 @@
 import { useEffect } from 'react';
 import { getLastFocusableElement } from 'calypso/lib/dom/focus';
 
+/*
+ * WARNING: script below is directly ported from
+ * https://opengrok.a8c.com/source/xref/a8c/jetpackme-new/js/header.js
+ */
 export default function useMobileBtn() {
 	useEffect( () => {
 		const MOBILE_BP = 900; // lrg-screen breakpoint
