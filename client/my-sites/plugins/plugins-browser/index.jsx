@@ -101,6 +101,10 @@ const translateCategory = ( { category, translate } ) => {
 			return translate( 'Premium', {
 				context: 'Category description for the plugin browser.',
 			} );
+		default:
+			return translate( 'Plugins', {
+				context: 'Category description for the plugin browser.',
+			} );
 	}
 };
 
