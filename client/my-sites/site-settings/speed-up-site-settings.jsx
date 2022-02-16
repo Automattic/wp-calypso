@@ -72,6 +72,7 @@ class SpeedUpSiteSettings extends Component {
 									? 'https://wordpress.com/support/settings/performance-settings/#enable-site-accelerator'
 									: 'https://jetpack.com/support/site-accelerator/'
 							}
+							privacyLink="https://jetpack.com/support/site-accelerator/#privacy"
 						/>
 						<FormSettingExplanation className="site-settings__feature-description">
 							{ translate(
@@ -112,6 +113,7 @@ class SpeedUpSiteSettings extends Component {
 										? 'https://wordpress.com/support/settings/performance-settings/#lazy-load-images'
 										: 'https://jetpack.com/support/lazy-images/'
 								}
+								privacyLink="https://jetpack.com/support/lazy-images/#privacy"
 							/>
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }
