@@ -187,7 +187,6 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
 			providesDependencies: [ 'siteTitle', 'tagline' ],
 			apiRequestFunction: setOptionsOnSite,
-			delayApiRequestUntilComplete: true,
 		},
 
 		'store-features': {
