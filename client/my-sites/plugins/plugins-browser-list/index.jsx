@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
+import Spotlight from 'calypso/components/spotlight';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
@@ -106,6 +107,13 @@ const PluginsBrowserList = ( {
 					) }
 				</div>
 			</div>
+			{ listName === 'featured' && (
+				<Spotlight
+					taglineText="Drive more traffic with Yoast SEO"
+					illustrationSrc="https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389"
+					url={ `/plugins/wordpress-seo-premium/${ site }` }
+				/>
+			) }
 			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
 		</div>
 	);
