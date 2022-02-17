@@ -532,7 +532,7 @@ const FullListView = ( {
 		);
 	}
 
-	// todo: this shouldn't ever render but we can't return void/null here.
+	// This shouldn't ever render but we can't return void/null here.
 	return (
 		<NoResults
 			text={ translate( 'No plugins available.', {
