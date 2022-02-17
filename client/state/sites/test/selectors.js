@@ -38,6 +38,7 @@ import {
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
 	canJetpackSiteAutoUpdateCore,
+	getJetpackSearchDashboardUrl,
 	isJetpackSiteMultiSite,
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
@@ -2597,6 +2598,38 @@ describe( 'selectors', () => {
 
 			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
 			chaiExpect( canAutoUpdateCore ).to.equal( false );
+		} );
+	} );
+
+	describe( 'getJetpackSearchDashboardUrl()', () => {
+		test( 'should return null if no sites loaded', () => {
+			const dashboardUrl = getJetpackSearchDashboardUrl(
+				{
+					sites: {
+						items: {},
+					},
+				},
+				2916284
+			);
+
+			chaiExpect( dashboardUrl ).to.be.null;
+		} );
+		test( "should return '#' if we have a Jetpack site", () => {
+			const dashboardUrl = getJetpackSearchDashboardUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								jetpack: true,
+							},
+						},
+					},
+				},
+				2916284
+			);
+
+			chaiExpect( dashboardUrl ).to.equal( '#' );
 		} );
 	} );
 
