@@ -238,6 +238,17 @@ body.is-section-home.theme-default.color-scheme {
 	margin: 32px 32px 0;
 }
 
+.primary__customer-home-location-content .dot-pager__control-choose-page,
+.primary__customer-home-location-content .dot-pager__control-prev,
+.primary__customer-home-location-content .dot-pager__control-next,
+.customer-home__card .dot-pager__control-choose-page,
+.customer-home__card .dot-pager__control-prev,
+.customer-home__card .dot-pager__control-next {
+	&:focus-visible {
+		box-shadow: 0 0 0 2px var( --color-primary );
+	}
+}
+
 .primary__customer-home-location-content .task {
 	box-shadow: none;
 
