@@ -15,7 +15,7 @@ export async function saveCreditCard( {
 	const response = await wpcomJpl.req.post(
 		{
 			apiNamespace: 'wpcom/v2',
-			path: '/jetpack/stripe/store-payment-method',
+			path: '/jetpack-licensing/stripe/store-payment-method',
 		},
 		{
 			payment_method_id: token,
