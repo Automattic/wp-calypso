@@ -339,7 +339,7 @@ function PluginDetails( props ) {
 								) }
 							</div>
 							<div className="plugin-details__layout-col-right">
-								<PluginDetailsSidebar plugin={ fullPlugin } />
+								<PluginDetailsSidebar plugin={ fullPlugin } billingPeriod={ billingPeriod } />
 							</div>
 						</div>
 					</>
