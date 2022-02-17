@@ -3,6 +3,7 @@ import { Card, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import Spotlight from 'calypso/components/spotlight';
@@ -110,8 +111,12 @@ const PluginsBrowserList = ( {
 			</div>
 			{ listName === 'featured' && isEnabled( 'marketplace-spotlight' ) && (
 				<Spotlight
-					taglineText="Drive more traffic with Yoast SEO"
-					illustrationSrc="https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389"
+					taglineText={ __( 'Drive more traffic with Yoast SEO' ) }
+					titleText={ __( 'Under the Spotlight' ) }
+					ctaText={ __( 'View Details' ) }
+					illustrationSrc={ __(
+						'https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389'
+					) }
 					url={ `/plugins/wordpress-seo-premium/${ site }` }
 				/>
 			) }

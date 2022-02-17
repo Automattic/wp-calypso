@@ -44,10 +44,12 @@ interface SpotlightProps {
 	url: string;
 	taglineText: string;
 	illustrationSrc: string;
+	titleText: string;
+	ctaText: string;
 }
 
 const Spotlight: React.FunctionComponent< SpotlightProps > = ( props: SpotlightProps ) => {
-	const { taglineText, illustrationSrc, onClick, url } = props;
+	const { taglineText, illustrationSrc, onClick, url, titleText, ctaText } = props;
 
 	return (
 		<a href={ url } onClick={ onClick }>
@@ -55,12 +57,12 @@ const Spotlight: React.FunctionComponent< SpotlightProps > = ( props: SpotlightP
 				<SpotlightContent>
 					<SpotlightIllustration alt="Spotlight Logo" src={ illustrationSrc } />
 					<SpotlightTextContainer>
-						<SpotlightTitle>Under the Spotlight</SpotlightTitle>
+						<SpotlightTitle>{ titleText }</SpotlightTitle>
 						<SpotlightTagline>{ taglineText }</SpotlightTagline>
 					</SpotlightTextContainer>
 				</SpotlightContent>
 				<SpotlightCta>
-					<Button onClick={ onClick }>View Details</Button>
+					<Button onClick={ onClick }>{ ctaText }</Button>
 				</SpotlightCta>
 			</SpotlightContainer>
 		</a>
