@@ -1,10 +1,14 @@
+import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import getDIFMLiteSiteCategory from 'calypso/state/selectors/get-difm-lite-site-category';
+import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
+import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
 	initializePages,
@@ -14,10 +18,12 @@ import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
 } from 'calypso/state/signup/steps/website-content/selectors';
-import { getSiteId } from 'calypso/state/sites/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteId, isRequestingSite } from 'calypso/state/sites/selectors';
 import { sectionGenerator } from './section-generator';
-
 import './style.scss';
+
+const debug = debugFactory( 'calypso:difm' );
 
 interface WebsiteContentStepProps {
 	additionalStepData: object;
@@ -39,13 +45,13 @@ function WebsiteContentStep( {
 	goToNextStep,
 	queryObject,
 }: WebsiteContentStepProps ) {
-	const websiteContent = useSelector( getWebsiteContent );
-	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
-	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
-	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
+	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
+	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
+	const websiteContent = useSelector( getWebsiteContent );
+	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
+	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
 
 	useEffect( () => {
 		function getPageFromCategory( category: string | null ) {
@@ -122,17 +128,54 @@ export default function WrapperWebsiteContent(
 		flowName: string;
 		stepName: string;
 		positionInFlow: string;
+		queryObject: {
+			siteSlug?: string;
+			siteId?: string;
+		};
 	} & WebsiteContentStepProps
 ) {
-	const { flowName, stepName, positionInFlow } = props;
+	const { flowName, stepName, positionInFlow, queryObject } = props;
 	const translate = useTranslate();
-
+	const dispatch = useDispatch();
 	const headerText = translate( 'Website Content' );
 	const subHeaderText = translate(
 		'In this step, you will add your brand visuals, pages and media to be used on your website.'
 	);
+	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	return (
+	const isWebsiteContentSubmitted = useSelector( ( state ) =>
+		isDIFMLiteWebsiteContentSubmitted( state, siteId )
+	);
+	const isLoadingSiteInformation = useSelector( ( state ) =>
+		isRequestingSite( state, siteId as number )
+	);
+
+	// We assume that difm lite is purchased when the is_difm_lite_in_progress sticker is active in a given blog
+	const isDifmLitePurchased = useSelector( ( state ) => isDIFMLiteInProgress( state, siteId ) );
+
+	//Make sure the most up to date site information is loaded so that we can validate access to this page
+	useEffect( () => {
+		siteId && dispatch( requestSite( siteId ) );
+	}, [ siteId ] );
+
+	useEffect( () => {
+		if ( ! isLoadingSiteInformation ) {
+			if ( ! isDifmLitePurchased ) {
+				debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
+				page( `/start/do-it-for-me` );
+			} else if ( isWebsiteContentSubmitted ) {
+				debug( 'Website content content already submitted, redirecting to home' );
+				page( `/home/${ queryObject.siteSlug }` );
+			}
+		}
+	}, [
+		isLoadingSiteInformation,
+		isDifmLitePurchased,
+		isWebsiteContentSubmitted,
+		queryObject.siteSlug,
+	] );
+
+	return isLoadingSiteInformation ? null : (
 		<StepWrapper
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }

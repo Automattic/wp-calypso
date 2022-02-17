@@ -394,7 +394,7 @@ export function generateFlows( {
 
 		{
 			name: 'site-content-collection',
-			steps: [ 'website-content' ],
+			steps: [ 'user', 'website-content' ],
 			destination: getDIFMSiteContentCollectionDestination,
 			description: 'A flow to collect DIFM lite site content',
 			excludeFromManageSiteFlows: true,

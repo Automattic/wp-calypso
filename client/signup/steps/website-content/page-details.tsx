@@ -6,6 +6,7 @@ import {
 	TextAreaField,
 	HorizontalGrid,
 } from 'calypso/signup/accordion-form/form-components';
+import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import { imageUploaded, textChanged } from 'calypso/state/signup/steps/website-content/actions';
 import { PageData } from 'calypso/state/signup/steps/website-content/schema';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -21,7 +22,7 @@ export function PageDetails( {
 	onChangeField,
 }: {
 	page: PageData;
-	formErrors: any;
+	formErrors: ValidationErrors;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
 } ) {
 	const translate = useTranslate();
