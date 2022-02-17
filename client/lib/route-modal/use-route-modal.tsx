@@ -2,15 +2,15 @@ import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route.js';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
 interface ReturnValues {
 	/** Whether the query key exists or not */
 	isModalOpen: boolean;
 	/** The value of query key */
-	value: any;
+	value: unknown;
 	/** Set the query key to value */
-	openModal: ( value?: any ) => void;
+	openModal: ( currentValue?: unknown ) => void;
 	/** Clears the query key */
 	closeModal: () => void;
 }
@@ -18,7 +18,7 @@ interface ReturnValues {
 /**
  * React hook providing utils to control opening and closing modal via query string.
  */
-const useRouteModal = ( queryKey: string, defaultValue: any = '' ): ReturnValues => {
+const useRouteModal = ( queryKey: string, defaultValue: unknown = '' ): ReturnValues => {
 	const { currentQuery, previousRoute } = useSelector( ( state ) => ( {
 		currentQuery: getCurrentQueryArguments( state ),
 		previousRoute: getPreviousRoute( state ),
@@ -28,7 +28,7 @@ const useRouteModal = ( queryKey: string, defaultValue: any = '' ): ReturnValues
 
 	const isModalOpen = value != null;
 
-	const openModal = ( currentValue: any = defaultValue ) => {
+	const openModal = ( currentValue: unknown = defaultValue ) => {
 		const url = window.location.href.replace( window.location.origin, '' );
 		const queryParams = {
 			[ queryKey ]: currentValue,
