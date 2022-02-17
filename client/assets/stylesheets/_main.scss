@@ -320,3 +320,8 @@ object {
 html.no-scroll {
 	overflow: hidden;
 }
+
+body.no-scroll {
+	overflow: hidden;
+	height: 100vh;
+}
