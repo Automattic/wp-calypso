@@ -1,3 +1,4 @@
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { MOBILE_BREAKPOINT } from '@automattic/viewport';
@@ -14,7 +15,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
-import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import {
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
@@ -61,10 +61,12 @@ const ProfessionalEmailUpsell = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ selectedIntervalLength, setSelectedIntervalLength ] = useState( intervalLength );
+
 	const productCost = useSelector( ( state ) => {
 		if ( selectedIntervalLength === IntervalLength.ANNUALLY ) {
 			return getProductCost( state, TITAN_MAIL_YEARLY_SLUG );
 		}
+
 		return getProductCost( state, TITAN_MAIL_MONTHLY_SLUG );
 	} );
 
@@ -97,6 +99,15 @@ const ProfessionalEmailUpsell = ( {
 		);
 	};
 
+	function addMonths( date: Date, months: number ) {
+		const d = date.getDate();
+		date.setMonth( date.getMonth() + months );
+		if ( date.getDate() !== d ) {
+			date.setDate( 0 );
+		}
+		return date;
+	}
+
 	/**
 	 * We calculate the price for a year subscription, given how many months we are going to offer for free.
 	 * It takes into account leap years, and months like february.
@@ -109,12 +120,11 @@ const ProfessionalEmailUpsell = ( {
 	 */
 	const getProratedPrice = ( productCost: number, freeMonths: number ) => {
 		const now = new Date();
-		const freeDays = new Date( new Date().setMonth( now.getMonth() + freeMonths ) ).getTime();
-		const nextYearDate = new Date( new Date().setFullYear( now.getFullYear() + 1 ) );
-		const diff = new Date( nextYearDate.getTime() - freeDays );
-		const diffDays =
-			( nextYearDate.getTime() - now.getTime() ) / 86400000 - diff.getTime() / 86400000;
-		const price = ( 365 - diffDays ) / 365;
+		const freeTime = addMonths( new Date(), freeMonths ).getTime();
+		const nextYearDate = addMonths( new Date(), 12 );
+		const diff = nextYearDate.getTime() - freeTime;
+		const diffDays = ( nextYearDate.getTime() - now.getTime() ) / 86400000 - diff / 86400000;
+		const price = ( 365 - Math.round( diffDays ) ) / 365;
 		return price * productCost;
 	};
 
@@ -215,7 +225,7 @@ const ProfessionalEmailUpsell = ( {
 
 	return (
 		<div>
-			<header className="professional-email-upsell__header">
+			<header className="professional-email-upsell__header notouch">
 				<h3 className="professional-email-upsell__small-title">
 					{ translate( "Hold tight, we're getting your site ready." ) }
 				</h3>
