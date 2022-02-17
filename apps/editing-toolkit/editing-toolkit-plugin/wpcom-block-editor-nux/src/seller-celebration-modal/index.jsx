@@ -38,23 +38,23 @@ const SellerCelebrationModal = () => {
 	// - content includes product block
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ hasDisplayedModal, setHasDisplayedModal ] = useState( false );
+	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
 	const previousIsEditorSaving = useRef( false );
-	const isEditorSaving = useSelect( ( select ) => {
-		const isSavingSite = select( 'core' ).isSavingEntityRecord( 'root', 'site' );
-		const page = select( 'core/edit-site' ).getPage();
-		const pageId = parseInt( page?.context?.postId );
-		const isSavingEntity = select( 'core' ).isSavingEntityRecord( 'postType', 'page', pageId );
-		return isSavingSite || isSavingEntity;
+	const { isEditorSaving, hasPaymentsBlock } = useSelect( ( select ) => {
+		if ( isSiteEditor ) {
+			const isSavingSite = select( 'core' ).isSavingEntityRecord( 'root', 'site' );
+			const page = select( 'core/edit-site' ).getPage();
+			const pageId = parseInt( page?.context?.postId );
+			const isSavingEntity = select( 'core' ).isSavingEntityRecord( 'postType', 'page', pageId );
+			const pageEntity = select( 'core' ).getEntityRecord( 'postType', 'page', pageId );
+			const rawContent = pageEntity.content.raw;
+			return {
+				isEditorSaving: isSavingSite || isSavingEntity,
+				hasPaymentsBlock: rawContent.includes( '<!-- wp:jetpack/recurring-payments -->' ),
+			};
+		}
 	} );
 	const intent = useSiteIntent();
-
-	const hasPaymentsBlock = useSelect( ( select ) => {
-		const page = select( 'core/edit-site' ).getPage();
-		const pageId = parseInt( page?.context?.postId );
-		const pageEntity = select( 'core' ).getEntityRecord( 'postType', 'page', pageId );
-		const rawContent = pageEntity.content.raw;
-		return rawContent.includes( '<!-- wp:jetpack/recurring-payments -->' );
-	} );
 
 	useEffect( () => {
 		if (
