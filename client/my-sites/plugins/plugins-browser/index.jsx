@@ -219,7 +219,7 @@ const PluginsBrowser = ( {
 		}
 
 		dispatch( updateBreadcrumbs( items ) );
-	}, [ siteSlug, search, category ] );
+	}, [ siteSlug, search, category, dispatch, translate ] );
 
 	const trackSiteDisconnect = () =>
 		composeAnalytics(
