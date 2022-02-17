@@ -8,7 +8,7 @@ import {
 	TiledGalleryBlockFlow,
 } from '@automattic/calypso-e2e';
 import { TEST_IMAGE_PATH, ALT_TEST_IMAGE_PATH } from '../constants';
-import { createBlockTests } from '../specs-playwright/shared-specs/block-testing';
+import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
 	new SlideshowBlockFlow( { imagePaths: [ TEST_IMAGE_PATH, ALT_TEST_IMAGE_PATH ] } ),
