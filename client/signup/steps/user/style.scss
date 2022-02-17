@@ -49,5 +49,10 @@ body.is-section-signup.is-white-signup .signup {
 		text-align: left;
 		padding: 0 16px;
 		max-width: 408px;
+		color: var( --studio-gray-40 );
+    	font-weight: 400;
+		a {
+			color: var( --studio-gray-40 );
+		}
 	}
 }
