@@ -15,6 +15,7 @@ const SellerCelebrationModal = () => {
 	const { addEntities } = useDispatch( 'core' );
 
 	useEffect( () => {
+		// @TODO - not sure if I actually need this; need to test with it removed.
 		// Teach core data about the status entity so we can use selectors like `getEntityRecords()`
 		addEntities( [
 			{
@@ -25,17 +26,15 @@ const SellerCelebrationModal = () => {
 				plural: 'statuses',
 			},
 		] );
-
 		// Only register entity once
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 	// conditions to show:
 	// - user just finished saving (check)
-	// - we are on post editor (check)
 	// - editor has not yet displayed modal once (check)
 	// - user is a seller (check)
 	// - user has not saved site before
-	// - content includes product block
+	// - content includes product block (check)
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ hasDisplayedModal, setHasDisplayedModal ] = useState( false );
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
@@ -53,6 +52,19 @@ const SellerCelebrationModal = () => {
 				hasPaymentsBlock: rawContent.includes( '<!-- wp:jetpack/recurring-payments -->' ),
 			};
 		}
+		const currentPost = select( 'core/editor' ).getCurrentPost();
+		const isSavingEntity = select( 'core' ).isSavingEntityRecord(
+			'postType',
+			currentPost?.type,
+			currentPost?.id
+		);
+		const globalBlockCount = select( 'core/block-editor' ).getGlobalBlockCount(
+			'jetpack/recurring-payments'
+		);
+		return {
+			isEditorSaving: isSavingEntity,
+			hasPaymentsBlock: globalBlockCount > 0,
+		};
 	} );
 	const intent = useSiteIntent();
 
