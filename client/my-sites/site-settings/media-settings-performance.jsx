@@ -38,6 +38,7 @@ class MediaSettingsPerformance extends Component {
 		isSavingSettings: PropTypes.bool,
 		onChangeField: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
+		siteIsAtomic: PropTypes.bool,
 
 		// Connected props
 		isVideoPressActive: PropTypes.bool,
