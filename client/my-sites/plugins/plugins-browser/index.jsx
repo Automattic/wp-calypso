@@ -106,6 +106,21 @@ const translateCategory = ( { category, translate } ) => {
 	}
 };
 
+const translateCategoryTitle = ( { category, translate } ) => {
+	switch ( category ) {
+		case 'new':
+			return translate( 'All New Plugins' );
+		case 'popular':
+			return translate( 'All Popular Plugins' );
+		case 'featured':
+			return translate( 'All Featured Plugins' );
+		case 'paid':
+			return translate( 'All Premium Plugins' );
+		default:
+			return translate( 'Plugins' );
+	}
+};
+
 const PluginsBrowser = ( {
 	trackPageViews = true,
 	category,
@@ -197,7 +212,7 @@ const PluginsBrowser = ( {
 		}
 		if ( category ) {
 			items.push( {
-				label: translateCategory( { category, translate } ),
+				label: translateCategoryTitle( { category, translate } ),
 				href: `/plugins/${ category }/${ siteSlug || '' }`,
 				id: 'category',
 			} );
@@ -505,7 +520,7 @@ const FullListView = ( {
 			<PluginsBrowserList
 				plugins={ plugins }
 				listName={ category }
-				title={ translateCategory( { category, translate } ) }
+				title={ translateCategoryTitle( { category, translate } ) }
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
 				currentSites={ sites }
