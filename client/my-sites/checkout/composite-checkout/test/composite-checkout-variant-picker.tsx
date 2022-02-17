@@ -9,6 +9,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
+import getIntroOfferIsEligible from 'calypso/state/selectors/get-intro-offer-is-eligible';
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -52,6 +53,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		getDomainsBySiteId.mockImplementation( () => [] );
 		isMarketplaceProduct.mockImplementation( () => false );
 		getIntroOfferPrice.mockImplementation( () => null );
+		getIntroOfferIsEligible.mockImplementation( () => false );
 
 		const initialCart = {
 			coupon: '',
