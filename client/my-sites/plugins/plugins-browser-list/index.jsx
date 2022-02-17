@@ -1,5 +1,6 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,6 +8,7 @@ import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/bil
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import { PluginsBrowserListVariant } from './types';
+
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
@@ -23,9 +25,11 @@ const PluginsBrowserList = ( {
 	site,
 	currentSites,
 	listName,
+	expandedListLink,
 	size,
 } ) => {
 	const isWide = useBreakpoint( '>1280px' );
+	const { __ } = useI18n();
 
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
@@ -82,8 +86,11 @@ const PluginsBrowserList = ( {
 	return (
 		<div className="plugins-browser-list">
 			<div className="plugins-browser-list__header">
-				<div className={ classnames( 'plugins-browser-list__title', listName ) }>
-					{ title }
+				<div className="plugins-browser-list__titles">
+					<div className={ classnames( 'plugins-browser-list__title', listName ) }>{ title }</div>
+					<div className="plugins-browser-list__subtitle">{ subtitle }</div>
+				</div>
+				<div className="plugins-browser-list__actions">
 					{ setBillingPeriod && (
 						<BillingIntervalSwitcher
 							billingPeriod={ billingPeriod }
@@ -91,8 +98,13 @@ const PluginsBrowserList = ( {
 							compact={ ! isWide }
 						/>
 					) }
+					{ expandedListLink && (
+						<a className="plugins-browser-list__browse-all" href={ expandedListLink }>
+							{ __( 'Browse All' ) }
+							<Gridicon icon="arrow-right" size="18" />
+						</a>
+					) }
 				</div>
-				<div className="plugins-browser-list__subtitle">{ subtitle }</div>
 			</div>
 			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
 		</div>
