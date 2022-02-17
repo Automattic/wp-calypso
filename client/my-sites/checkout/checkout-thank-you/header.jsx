@@ -23,6 +23,7 @@ import {
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from 'calypso/lib/gsuite';
 import { getTitanEmailUrl, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { getTitanAppsUrlPrefix } from 'calypso/lib/titan/get-titan-urls';
 import {
 	domainManagementEdit,
 	domainManagementTransferInPrecheck,
@@ -41,7 +42,6 @@ import './style.scss';
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
 		displayMode: PropTypes.string,
-		domains: PropTypes.array,
 		hasFailedPurchases: PropTypes.bool,
 		isAtomic: PropTypes.bool,
 		isDataLoaded: PropTypes.bool.isRequired,
@@ -53,6 +53,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		recordStartTransferClickInThankYou: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
 		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
+		titanAppsUrlPrefix: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		upgradeIntent: PropTypes.string,
 	};
@@ -348,11 +349,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 	visitTitanWebmail = ( event ) => {
 		event.preventDefault();
 
-		const firstTitanDomain = this.props.domains.find( hasTitanMailWithUs );
-
 		this.props.recordTracksEvent( 'calypso_thank_you_titan_webmail_click' );
 
-		window.open( getTitanEmailUrl( firstTitanDomain, '' ) );
+		window.open( getTitanEmailUrl( this.props.titanAppsUrlPrefix, '' ) );
 	};
 
 	downloadTrafficGuideHandler = ( event ) => {
@@ -642,9 +641,11 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 export default connect(
 	( state, ownProps ) => ( {
-		domains: getDomainsBySiteId( state, ownProps.selectedSite?.ID ),
 		isAtomic: isAtomicSite( state, ownProps.selectedSite?.ID ),
 		jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, ownProps.selectedSite?.ID ),
+		titanAppsUrlPrefix: getTitanAppsUrlPrefix(
+			getDomainsBySiteId( state, ownProps.selectedSite?.ID ).find( hasTitanMailWithUs )
+		),
 		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
 	} ),
 	{

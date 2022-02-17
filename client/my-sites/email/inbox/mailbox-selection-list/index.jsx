@@ -17,10 +17,10 @@ import {
 } from 'calypso/lib/emails';
 import { getGmailUrl } from 'calypso/lib/gsuite';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
-import { getTitanEmailUrl, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { getTitanEmailUrl } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
+import useTitanAppsUrlPrefix from 'calypso/lib/titan/hooks/use-titan-apps-url-prefix';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import {
 	recordEmailAppLaunchEvent,
 	recordInboxNewMailboxUpsellClickEvent,
@@ -28,7 +28,7 @@ import {
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import { emailManagement, emailManagementInbox } from 'calypso/my-sites/email/paths';
 import { recordPageView } from 'calypso/state/analytics/actions';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
 
 /**
@@ -36,9 +36,9 @@ import ProgressLine from './progress-line';
  */
 import './style.scss';
 
-const getExternalUrl = ( domain, mailbox ) => {
+const getExternalUrl = ( mailbox, titanAppsUrlPrefix ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
-		return getTitanEmailUrl( domain, getEmailAddress( mailbox ), true );
+		return getTitanEmailUrl( titanAppsUrlPrefix, getEmailAddress( mailbox ), true );
 	}
 
 	if ( isGoogleEmailAccount( mailbox ) ) {
@@ -94,9 +94,7 @@ MailboxItemIcon.propType = {
 };
 
 const MailboxItem = ( { mailbox } ) => {
-	const siteId = useSelector( getSelectedSiteId );
-	const domains = useSiteDomains( siteId ?? null );
-	const firstTitanDomain = domains.find( hasTitanMailWithUs );
+	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 
 	if ( isEmailForwardAccount( mailbox ) ) {
 		return null;
@@ -108,7 +106,7 @@ const MailboxItem = ( { mailbox } ) => {
 				trackAppLaunchEvent( { mailbox, app: 'webmail', context: 'inbox-mailbox-selection' } )
 			}
 			className="mailbox-selection-list__item"
-			href={ getExternalUrl( firstTitanDomain, mailbox ) }
+			href={ getExternalUrl( mailbox, titanAppsUrlPrefix ) }
 			target="external"
 		>
 			<span className="mailbox-selection-list__icon">

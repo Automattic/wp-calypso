@@ -1,22 +1,19 @@
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import { getTitanEmailUrl, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { getTitanEmailUrl } from 'calypso/lib/titan';
+import useTitanAppsUrlPrefix from 'calypso/lib/titan/hooks/use-titan-apps-url-prefix';
 import DomainMappingProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-mapping';
 import DomainRegistrationThankYouProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-registration';
 import DomainTransferProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-transfer';
-import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ThankYouNextStepProps } from 'calypso/components/thank-you/types';
 import type {
 	DomainThankYouParams,
 	DomainThankYouPropsGetter,
 	DomainThankYouType,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
-import type { FunctionComponent } from 'react';
 
 const thankYouContentGetter: Record< DomainThankYouType, DomainThankYouPropsGetter > = {
 	MAPPING: DomainMappingProps,
@@ -32,14 +29,12 @@ interface StepCTAProps {
 	primary: boolean;
 }
 
-const StepCTA: FunctionComponent< StepCTAProps > = ( { email, primary, domainType } ) => {
-	const siteId = useSelector( getSelectedSiteId );
-	const domains = useSiteDomains( siteId ?? undefined );
-	const firstTitanDomain = domains.find( hasTitanMailWithUs );
+const StepCTA = ( { email, primary, domainType }: StepCTAProps ): JSX.Element => {
+	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 
 	return (
 		<FullWidthButton
-			href={ getTitanEmailUrl( firstTitanDomain, email, true ) }
+			href={ getTitanEmailUrl( titanAppsUrlPrefix, email, true ) }
 			target="_blank"
 			primary={ primary }
 			onClick={ () => {

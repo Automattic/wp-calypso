@@ -3,10 +3,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import thankYouEmail from 'calypso/assets/images/illustrations/thank-you-email.svg';
 import { ThankYou } from 'calypso/components/thank-you';
-import { getSelectedDomain } from 'calypso/lib/domains';
 import { getTitanEmailUrl } from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
-import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
+import useTitanAppsUrlPrefix from 'calypso/lib/titan/hooks/use-titan-apps-url-prefix';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
@@ -37,13 +36,8 @@ const TitanSetUpThankYou = ( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug ?? null;
-	const domains = useSiteDomains( selectedSite?.ID ?? undefined );
+	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 	const translate = useTranslate();
-
-	const domain = getSelectedDomain( {
-		domains,
-		selectedDomainName: domainName,
-	} );
 
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
 
@@ -71,7 +65,7 @@ const TitanSetUpThankYou = ( {
 				stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
 				stepCta: (
 					<FullWidthButton
-						href={ getTitanEmailUrl( domain, emailAddress, true ) }
+						href={ getTitanEmailUrl( titanAppsUrlPrefix, emailAddress, true ) }
 						primary
 						target="_blank"
 						onClick={ () => {
