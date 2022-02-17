@@ -2,7 +2,6 @@ import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	SubLabel,
 	Label,
 	TextAreaField,
 	HorizontalGrid,
@@ -62,23 +61,21 @@ export function PageDetails( {
 		<>
 			<TextAreaField
 				name={ fieldName }
-				label={ translate( 'Content' ) }
 				onChange={ onContentChange }
 				value={ page.content }
 				error={ formErrors[ fieldName ] }
-				sublabel={ translate(
+				label={ translate(
 					'Please provide the text you want to appear on your %(pageTitle)s page.',
 					{
 						args: { pageTitle },
 					}
 				) }
 			/>
-			<Label>{ translate( 'Media' ) }</Label>
-			<SubLabel>
-				{ translate( 'Upload up to 3 images to be used on your %(pageTitle)s page', {
+			<Label>
+				{ translate( 'Upload up to 3 images to be used on your %(pageTitle)s page.', {
 					args: { pageTitle },
 				} ) }
-			</SubLabel>
+			</Label>
 			<HorizontalGrid>
 				{ page.images.map( ( image, i ) => (
 					<WordpressMediaUpload

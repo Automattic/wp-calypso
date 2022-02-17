@@ -66,7 +66,7 @@ function WebsiteContentStep( {
 		if ( siteCategory ) {
 			dispatch(
 				initializePages( [
-					{ id: 'Home', name: translate( 'Homepage' ) },
+					{ id: 'Home', name: translate( 'Home' ) },
 					{ id: 'About', name: translate( 'About' ) },
 					{ id: 'Contact', name: translate( 'Contact' ) },
 					getPageFromCategory( siteCategory ),

@@ -1,3 +1,4 @@
+import { TranslateResult } from 'i18n-calypso';
 import {
 	AccordionSectionProps,
 	SectionGeneratorReturnType,
@@ -5,10 +6,9 @@ import {
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
 import { CONTENT_SUFFIX, PageDetails } from './page-details';
 
-const PAGE_TITLES: Record< string, string > = { Home: 'Homepage' };
-
 export const sectionGenerator = ( params: SectionGeneratorReturnType< WebsiteContent > ) => {
 	const { translate, formValues, formErrors, onChangeField } = params;
+	const PAGE_TITLES: Record< string, TranslateResult > = { Home: translate( 'Homepage' ) };
 	const sections: AccordionSectionProps< WebsiteContent >[] = formValues.map( ( page, index ) => {
 		const fieldNumber = index + 1;
 		const pageTitle = PAGE_TITLES[ page.id ] ? PAGE_TITLES[ page.id ] : page.title;
