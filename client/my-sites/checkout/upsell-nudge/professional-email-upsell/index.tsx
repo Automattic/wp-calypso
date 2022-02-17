@@ -99,55 +99,26 @@ const ProfessionalEmailUpsell = ( {
 		);
 	};
 
-	function addMonths( date: Date, months: number ) {
-		const d = date.getDate();
-		date.setMonth( date.getMonth() + months );
-		if ( date.getDate() !== d ) {
-			date.setDate( 0 );
-		}
-		return date;
-	}
-
-	/**
-	 * We calculate the price for a year subscription, given how many months we are going to offer for free.
-	 * It takes into account leap years, and months like february.
-	 *
-	 * Example: If we give 3 months for free in February, for a product that cost 35$ yearly then we return the price
-	 * that we need to bill after those 3 months for the rest of the year.
-	 *
-	 * @param productCost
-	 * @param freeMonths
-	 */
-	const getProratedPrice = ( productCost: number, freeMonths: number ) => {
-		const now = new Date();
-		const freeTime = addMonths( new Date(), freeMonths ).getTime();
-		const nextYearDate = addMonths( new Date(), 12 );
-		const diff = nextYearDate.getTime() - freeTime;
-		const diffDays = ( nextYearDate.getTime() - now.getTime() ) / 86400000 - diff / 86400000;
-		const price = ( 365 - Math.round( diffDays ) ) / 365;
-		return price * productCost;
-	};
-
 	const getFormattedPrice = (
 		currencyCode: string,
 		intervalLength: IntervalLength,
 		productCost: number
 	): TranslateResult => {
-		if ( intervalLength === IntervalLength.MONTHLY ) {
-			return translate( '{{price/}} /mailbox /month', {
-				components: {
-					price: <span>{ formatCurrency( productCost ?? 0, currencyCode ) }</span>,
-				},
-				comment: '{{price/}} is the formatted price, e.g. $20',
-			} );
-		}
-		const proratedPrice = getProratedPrice( productCost, 3 );
-		return translate( '{{price/}} /mailbox /year', {
+		const translateOptions = {
 			components: {
-				price: <span>{ formatCurrency( proratedPrice, currencyCode ) }</span>,
+				price: (
+					<span className="professional-email-upsell__discounted">
+						{ formatCurrency( productCost ?? 0, currencyCode ) }
+					</span>
+				),
 			},
 			comment: '{{price/}} is the formatted price, e.g. $20',
-		} );
+		};
+		if ( intervalLength === IntervalLength.MONTHLY ) {
+			return translate( '{{price/}} /mailbox /month', translateOptions );
+		}
+
+		return translate( '{{price/}} /mailbox /year', translateOptions );
 	};
 
 	const formattedPrice = getFormattedPrice(

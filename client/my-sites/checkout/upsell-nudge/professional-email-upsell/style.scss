@@ -17,16 +17,23 @@
 	text-align: center;
 
 	.billing-interval-toggle {
+		display: flex;
+
 		.segmented-control {
-			background-color: var( --studio-gray-5 );
-			border-color: var( --studio-gray-5 );
+			background-color: #f2f2f2;
+			border: solid 1px var( --studio-gray-5 );
 			border-radius: 6px; /* stylelint-disable-line */
 			color: var( --color-text );
 
+			&.is-compact {
+				margin-bottom: 0;
+				max-width: unset;
+			}
+
 			.segmented-control__item {
-				border: 1px solid;
 				border-radius: 6px; /* stylelint-disable-line */
-				border-color: var( --studio-gray-5 );
+				border: 1px solid #f2f2f2;
+				padding: 2px;
 
 				&.is-selected {
 					padding: 1px 0 0 1px;
@@ -43,7 +50,9 @@
 				& .segmented-control__link {
 					color: var( --color-text );
 					border: 0;
-
+					line-height: 18px;
+					margin: 1px;
+					padding-bottom: 6px;
 					&:hover {
 						background-color: unset;
 					}
@@ -55,8 +64,8 @@
 					border-color: var( --studio-white );
 					box-shadow: 0 4px 4px rgba( 0, 0, 0, 0.25 ), 0 3px 8px rgba( 0, 0, 0, 0.12 ),
 					inset 0 0 0 rgba( 0, 0, 0, 0.2 );
-					border: 0.5px solid rgba( 0, 0, 0, 0.07 );
 					color: var( --color-text );
+					padding-top: 6px;
 
 					&:hover {
 						background-color: var( --studio-white );
@@ -65,6 +74,10 @@
 			}
 		}
 	}
+}
+
+.professional-email-upsell__discounted {
+	text-decoration: line-through;
 }
 
 .professional-email-upsell__small-title {
