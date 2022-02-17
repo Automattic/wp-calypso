@@ -20,7 +20,7 @@ export const requestDomainsNotices = ( domainName ) => ( dispatch ) => {
 			dispatch( {
 				type: DOMAINS_NOTICES_REQUEST_SUCCESS,
 				domainName,
-				notices: states[ domainName ],
+				notices: states?.[ domainName ],
 			} );
 		},
 		( error ) => {
