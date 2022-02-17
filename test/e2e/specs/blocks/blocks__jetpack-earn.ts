@@ -7,7 +7,7 @@ import {
 	OpenTableFlow,
 	PaymentsBlockFlow,
 } from '@automattic/calypso-e2e';
-import { createBlockTests } from '../specs-playwright/shared-specs/block-testing';
+import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
 	new PayWithPaypalBlockFlow( {
