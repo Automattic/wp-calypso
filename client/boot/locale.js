@@ -10,6 +10,11 @@ import { loadUserUndeployedTranslations } from 'calypso/lib/i18n-utils/switch-lo
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setLocale } from 'calypso/state/ui/language/actions';
 
+/* translators: Do not translate. */
+i18n.translate( 'New String #1-1' );
+/* translators: Do not translate. */
+i18n.translate( 'New String #2-1' );
+
 function getLocaleFromPathname() {
 	const pathname = window.location.pathname.replace( /\/$/, '' );
 	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
