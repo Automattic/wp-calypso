@@ -614,6 +614,27 @@ object Translate : BuildType({
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
+		bashNodeScript {
+			name = "Notify GlotPress Translate build is ready"
+			scriptContent = """
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+					exit 0
+				fi
+
+				curl -X POST https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh \
+					-H 'Cache-Control: no-cache' \
+					-H 'Content-Type: application/json' \
+					-d '{
+							"payload": {
+								"username": "Automattic",
+								"reponame": "wp-calypso",
+								"branch": "%teamcity.build.branch%",
+								"vcs_revision": "${Settings.WpCalypso.paramRefs.buildVcsNumber}",
+								"build_num": "%teamcity.build.id%"
+							}
+						}'
+			"""
+		}
 	}
 
 	triggers {
