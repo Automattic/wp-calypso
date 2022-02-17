@@ -50,6 +50,11 @@
 
 .stats .inline-support-link {
 	margin-left: 4px;
+
+	&:focus-visible {
+		box-shadow: 0 0 0 2px var( --color-primary );
+		outline: 0;
+	}
 }
 
 .stats__empty {

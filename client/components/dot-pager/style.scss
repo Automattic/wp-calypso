@@ -44,6 +44,10 @@
 	&:disabled {
 		cursor: default;
 	}
+
+	&:focus-visible {
+		box-shadow: 0 0 0 2px var( --color-primary );
+	}
 }
 
 .dot-pager__control-prev,
