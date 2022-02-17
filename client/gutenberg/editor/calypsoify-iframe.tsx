@@ -265,9 +265,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				transferredPortObject,
 			] );
 
-			// Check if we're generating a post via Press This
-			this.pressThis();
-
 			// Notify external listeners that the iframe has loaded
 			this.props.setEditorIframeLoaded( true, this.iframePort );
 
@@ -609,19 +606,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		this.setState( { isCheckoutModalVisible: false } );
 	};
 
-	pressThis = () => {
-		const { pressThis } = this.props;
-
-		if ( ! ( pressThis && this.iframePort ) ) {
-			return;
-		}
-
-		this.iframePort.postMessage( {
-			action: 'pressThis',
-			payload: pressThis,
-		} );
-	};
-
 	/* eslint-disable @typescript-eslint/ban-types */
 	openCustomizer = ( autofocus: object, unsavedChanges: boolean ) => {
 		let { customizerUrl } = this.props;
@@ -811,6 +795,7 @@ const mapStateToProps = (
 		stripeConnectSuccess,
 		anchorFmData,
 		showDraftPostModal,
+		pressThis,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -836,6 +821,7 @@ const mapStateToProps = (
 		...anchorFmData,
 		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 		showDraftPostModal,
+		...pressThis,
 	} );
 
 	// needed for loading the editor in SU sessions

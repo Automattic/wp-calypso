@@ -18,7 +18,6 @@ import { filter, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
-import doPressThis from '../../lib/do-press-this';
 import {
 	inIframe,
 	isEditorReady,
@@ -149,27 +148,6 @@ function overrideRevisions( calypsoPort ) {
 
 			calypsoPort.removeEventListener( 'message', onLoadRevision, false );
 		}
-	}
-}
-
-/**
- * Adds support for Press This/Reblog.
- *
- * @param {MessagePort} calypsoPort port used for communication with parent frame.
- */
-function handlePressThis( calypsoPort ) {
-	calypsoPort.addEventListener( 'message', onPressThis, false );
-	calypsoPort.start();
-
-	function onPressThis( message ) {
-		const action = get( message, 'data.action' );
-		const payload = get( message, 'data.payload' );
-		if ( action !== 'pressThis' || ! payload ) {
-			return;
-		}
-
-		calypsoPort.removeEventListener( 'message', onPressThis, false );
-		doPressThis( payload );
 	}
 }
 
@@ -1167,8 +1145,6 @@ function initPort( message ) {
 		handlePostTrash( calypsoPort );
 
 		overrideRevisions( calypsoPort );
-
-		handlePressThis( calypsoPort );
 
 		// handle post state change to locked (current user not editing)
 		handlePostLocked( calypsoPort );
