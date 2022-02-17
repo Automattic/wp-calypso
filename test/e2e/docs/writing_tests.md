@@ -9,9 +9,8 @@
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-  - [Example](#example)
+  - [Example test spec](#example-test-spec)
   - [Quick start](#quick-start)
-  - [Top-level describe block](#top-level-describe-block)
   - [Child-level describe blocks](#child-level-describe-blocks)
   - [Test step](#test-step)
   - [Hooks](#hooks)
@@ -22,7 +21,11 @@
 
 <!-- /TOC -->
 
-## Example
+## Example test spec
+
+```shell
+specs/search__preview.ts
+```
 
 ```typescript
 /**
@@ -30,30 +33,53 @@
  * @group gutenberg
  */
 
-import { DataHelper, LoginPage } from '@automattic/calypso-e2e';
+import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
 
+// Define constants below the import, but above the global declaration.
 const xyz = 'someconst';
+const accountName = 'defaultUser';
 
+// Declare the global constant browser, representing an instance of the browser
+// launched by Playwright.
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
+describe( DataHelper.createSuiteTitle( 'Search: Preview' ), function () {
+	// Define a persistent page object, representing an instance of Playwright's Page
+	// object which interacts with the actual DOM.
+	// This instance of the `page` will be used throughout the test spec.
 	let page: Page;
 
-	beforeAll( async () => {
+	// Hook which will run before every `it` and `describe` in this spec.
+	beforeAll( async function () {
+		// Launch a new page instance.
 		page = await browser.newPage();
+
+		// Authentication boilerplate.
+		// `accountName` should map to an existing user in the encrypted secrets file.
+		const testAccount = new TestAccount( accountName );
+		await testAccount.authenticate( page );
 	} );
 
-	describe( 'Input valid search query', function () {
+	// Note use of a child-level describe block to group a set of steps in the flow.
+	describe( 'Input a search query', function () {
+		const searchQuery = 'some valid search string';
+		// Define child-level describe scoped variable for a component to be shared
+		// across this scope. Note the use of camelCase for variable naming.
 		let someComponent: SomeComponent;
-		const searchQuery = 'valid search string';
 
-		it( 'Check title', async function () {
-			someComponent = await SomeComponent.Expect( page );
+		// Note the short yet descriptive step name that definitively states the
+		// action performed in this step.
+		it( 'Check page title', async function () {
+			someComponent = new SomeComponent( page );
+
 			await someComponent.clickMyPages();
 			const resultValue = await someComponent.getTitle();
-			assert.strictEqual( resultValue, expectedValue );
+
+			// Use Jest's built-in `expect` when asserting in a test spec.
+			expect( resultValue ).toStrictEqual( expectedValue );
 		} );
 
+		// Short, decisive actions in each step.
 		it( 'Enter search string', async function () {
 			await someComponent.search( searchQuery );
 			await someComponent.clickResult( 1 );
@@ -61,16 +87,17 @@ describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
 	} );
 
 	describe( 'Change preview value', function () {
-		let anotherComponent: AnotherComponent;
-
+		// Use of Jest's built-in parametrization method to test slightly different
+		// variations of the input value.
 		it.each`
 			value         | expected
 			${ 'small' }  | ${ 's' }
 			${ 'medium' } | ${ 'm' }
-		`( 'Click on $value on AnotherComponent', function ( { value, expected } ) {
-			anotherComponent = await AnotherComponent.Expect( page );
+		`( 'Click on preview: $value', function ( { value, expected } ) {
+			const anotherComponent = new AnotherComponent( page );
+
 			const resultValue = await anotherComponent.click( value );
-			assert.strictEqual( resultValue, expected );
+			expect( resultValue ).toStrictEqual( expected );
 		} );
 	} );
 } );
@@ -81,63 +108,45 @@ describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
 1. Create a TypeScript file with the following naming structure.
 
 ```
-test/e2e/specs/specs-playwright/wp-<major feature>__<subfeature>.ts
+test/e2e/specs/<major_feature>/<major_feature>__<sub_feature>.ts
 ```
 
-This is for multiple reasons:
-
-- visual grouping of test specs by feature.
-- separation of tests into separate files to take advantage of parallelization.
-
-2. Import the basics
+2. Import the boilerplate.
 
 ```typescript
-import { DataHelper, LoginPage } from '@automattic/calypso-e2e';
+import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
+import { Page, Browser } from 'playwright';
 ```
 
-3. Assign a test group.
-
-Specs are grouped into suites using [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups). **Specs must be explicitly added to suites to be run as part of CI pipelines.**
-To add your spec file to suites, add a JSDoc block at the top of the file, and use the `@group` tag. Multiple suites are supported.
+3. Assign test group(s). See [What is tested?](./overview.md#what-is-tested).
 
 ```typescript
 /**
  * @group calypso-pr
  * @group gutenberg
+ * ...more as required.
  */
 ```
 
-The current suites used are...
+4. Define a top-level `describe` block.
 
-- `calypso-pr` - tests run pre-merge on every Calypso PR.
-- `calypso-release` - tests run post-merge and pre-release in the Calypso deployment process.
-- `gutenberg` - WPCOM focused tests run as part of Gutenberg upgrades.
-- `coblocks` - tests for CoBlocks features.
-- `i18n` - internationalization tests.
-- `p2` - P2 tests.
-- `quarantined` - flakey tests that need to prove their stability.
+As per the [Style Guide](style-guide-playwright.md#Tests), there should only be one top-level `describe` block in a spec file.
 
-4. Populate test steps.
+Using the `DataHelper.createSuiteTitle()` function, define a short, descriptive name for the overall suite:
 
-This is the longest and most arduous portion of the process.
+```typescript
+describe( DataHelper.createSuiteTitle( '<major_feature>: <sub_feature>' ), function () {
+	...
+} );
+```
+
+5. Populate test steps as necessary.
+
+This is the longest and most arduous portion of the process, where functions provided by page and component objects are called in sequence to execute some action.
 
 In some cases, this will be straightforward - all required methods would have been implemented in page objects already. In other cases, it may be required to implement new page objects from scratch.
 
 For guide on how writing page objects, components and flows please refer to the [Library Objects](library_objects.md) page.
-
-## Top-level `describe` block
-
-As referenced in the [Style Guide](style-guide-playwright.md#Tests), there should only be one top-level `describe` block in a spec file.
-
-Using the `DataHelper.createSuiteTitle` function, define a short, descriptive name for the overall suite:
-
-```typescript
-declare const browser: Browser;
-
-describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
-	...
-} );
-```
 
 ## Child-level describe blocks
 
@@ -154,20 +163,20 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
 	describe( 'Use Feature with valid string', function() {
-		// Valid string test
+		// Valid string test steps
 	});
 
 	describe( 'Use Feature with invalid string', function() {
-		// Invalid string test
+		// Invalid string test steps
 	});
 
 	describe( 'Use Feature with a number', funtion() {
-		// Number instead of string test
+		// Number instead of string test steps
 	});
 })
 ```
 
-Another way to use child-level `describe` blocks is to group distinct steps:
+Another way to use child-level `describe` blocks is to group distinct parts of an overall flow:
 
 ```typescript
 declare const browser: Browser;
@@ -203,7 +212,7 @@ it( 'Navigate to Media', async function () {
 
 `Jest` enforces that test steps within a `describe` block must have unique names.
 
-If a test is to be parametrized, use Jest's built-in [`each`](https://jestjs.io/docs/api#testeachtablename-fn-timeout):
+For steps that carry out same actions but with a set of slightly different input data, use Jest's built-in [`each` parametrization](https://jestjs.io/docs/api#testeachtablename-fn-timeout):
 
 ```typescript
 it.each( [ { target: 'Media' }, { target: 'Settings' } ] )(

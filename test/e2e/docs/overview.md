@@ -29,13 +29,18 @@ To accelerate development by being a force for continuous improvement, and help 
 
 ## What is tested?
 
-At the high level, each test file (or `spec`) fall under one of the following flows:
+Each test file (referred to as `spec`) should be assigned to at least one group.
+This ensures that [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups) is able to locate and run the appropriate set of test specs for the build configuration. **Failure to add a group will result in the spec not running as part of CI.**
 
-| Flow                 | Directory                |
-| -------------------- | ------------------------ |
-| Calypso              | `specs/specs-playwright` |
-| Editor               | `specs/specs-wpcom`      |
-| Internationalization | `specs/specs-i18n`       |
-| Jetpack              | `specs/specs-jetpack`    |
+The following groups are available as of this time:
 
-Core code for Jetpack, WooCommerce and Gutenberg are hosted in other repositories and they have separate e2e testing infrastructure. Tests within `test/e2e` are meant to test interactions between their respective components and Calypso/WordPress.com.
+| Group             | Remarks                                                                                  |
+| ----------------- | ---------------------------------------------------------------------------------------- |
+| `calypso-pr`      | Run for every commit to any feature branch in this repository.                           |
+| `calypso-release` | Run for every PR merged into `trunk` in this repository.                                 |
+| `gutenberg`       | Editor-focused specs run on regular cadence.                                             |
+| `coblocks`        | Block-focused specs for our fork of [CoBlocks](https://wordpress.org/plugins/coblocks/). |
+| `i18n`            | Specs verifying internationalized strings.                                               |
+| `p2`              | Specs for the internal P2 system.                                                        |
+| `quarantined`     | Specs that need additional work.                                                         |
+| `legal`           | Specs for the marketing and legal team.                                                  |
