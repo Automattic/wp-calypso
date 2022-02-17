@@ -23,7 +23,10 @@ export type DomainOnlyUpsellCarouselProps = DomainOnlyUpsellCarouselOwnProps &
 	DomainOnlyUpsellCarouselConnectedProps &
 	DomainOnlyUpsellCarouselStateProps;
 
-export type HideCardDuration = '1w' | '1m';
+export enum HideCardDuration {
+	ONE_WEEK = 'ONE_WEEK',
+	ONE_MONTH = 'ONE_MONTH',
+}
 
 export type UpsellCardNoticeType =
 	| 'upsellCarouselHideCreateSiteCardUntil'
