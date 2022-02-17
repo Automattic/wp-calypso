@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
-interface ReturnValues {
+export interface RouteModalData {
 	/** Whether the query key exists or not */
 	isModalOpen: boolean;
 	/** The value of query key */
@@ -18,7 +18,7 @@ interface ReturnValues {
 /**
  * React hook providing utils to control opening and closing modal via query string.
  */
-const useRouteModal = ( queryKey: string, defaultValue: unknown = '' ): ReturnValues => {
+const useRouteModal = ( queryKey: string, defaultValue: unknown = '' ): RouteModalData => {
 	const { currentQuery, previousRoute } = useSelector( ( state ) => ( {
 		currentQuery: getCurrentQueryArguments( state ),
 		previousRoute: getPreviousRoute( state ),
