@@ -33,6 +33,7 @@ const PluginsBrowserList = ( {
 } ) => {
 	const isWide = useBreakpoint( '>1280px' );
 	const { __ } = useI18n();
+	const yoastPlugin = plugins?.find( ( plugin ) => plugin.slug === 'wordpress-seo' );
 
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
@@ -114,7 +115,7 @@ const PluginsBrowserList = ( {
 					taglineText={ __( 'Drive more traffic with Yoast SEO' ) }
 					titleText={ __( 'Under the Spotlight' ) }
 					ctaText={ __( 'View Details' ) }
-					illustrationSrc="https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389"
+					illustrationSrc={ yoastPlugin?.icon ?? '' }
 					url={ `/plugins/wordpress-seo-premium/${ site }` }
 				/>
 			) }
