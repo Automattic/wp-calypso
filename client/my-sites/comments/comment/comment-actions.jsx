@@ -56,6 +56,7 @@ export class CommentActions extends Component {
 			window.confirm( this.props.translate( 'Delete this comment permanently?' ) )
 		) {
 			this.props.deletePermanently();
+			this.props.redirect();
 		}
 	};
 

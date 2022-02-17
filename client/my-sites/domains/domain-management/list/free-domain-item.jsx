@@ -1,25 +1,23 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, edit, home, moreVertical } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
+import SiteAddressChanger from 'calypso/blocks/site-address-changer';
 import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
-import { domainManagementChangeSiteAddress } from 'calypso/my-sites/domains/paths';
 
 import './free-domain-item.scss';
 
 export default function FreeDomainItem( {
-	currentRoute,
 	domain,
 	disabled,
 	isBusy,
 	onMakePrimary,
-	site,
 	isAtomicSite,
 } ) {
 	const canMakePrimary = domain.canSetAsPrimary && ! domain.isPrimary;
@@ -27,6 +25,22 @@ export default function FreeDomainItem( {
 	const handleMakePrimary = ( event ) => {
 		event.stopPropagation();
 		onMakePrimary( domain.domain );
+	};
+	const [ isDialogVisible, setDialogVisible ] = useState( false );
+
+	const renderSiteAddressChanger = () => {
+		const domainName = domain?.name ?? '';
+		const dotblogSubdomain = domainName.match( /\.\w+\.blog$/ );
+		const currentDomainSuffix = dotblogSubdomain ? dotblogSubdomain[ 0 ] : '.wordpress.com';
+
+		return (
+			<SiteAddressChanger
+				currentDomain={ domain }
+				currentDomainSuffix={ currentDomainSuffix }
+				isDialogVisible={ isDialogVisible }
+				onClose={ () => setDialogVisible( false ) }
+			/>
+		);
 	};
 
 	return (
@@ -63,15 +77,15 @@ export default function FreeDomainItem( {
 						</PopoverMenuItem>
 					) }
 					{ ! isAtomicSite && (
-						<PopoverMenuItem
-							href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
-						>
+						<PopoverMenuItem onClick={ () => setDialogVisible( true ) }>
 							<Icon icon={ edit } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ __( 'Change site address' ) }
 						</PopoverMenuItem>
 					) }
 				</EllipsisMenu>
 			) }
+
+			{ renderSiteAddressChanger() }
 
 			{ isBusy && <Spinner /> }
 		</div>

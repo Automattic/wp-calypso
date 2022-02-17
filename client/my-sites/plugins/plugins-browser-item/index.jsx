@@ -90,12 +90,12 @@ const PluginsBrowserListElement = ( props ) => {
 		const wpVersion = selectedSite?.options?.software_version;
 		const pluginTestedVersion = plugin?.tested;
 
-		if ( ! wpVersion || ! pluginTestedVersion ) {
+		if ( ! selectedSite?.jetpack || ! wpVersion || ! pluginTestedVersion ) {
 			return false;
 		}
 
 		return version_compare( wpVersion, pluginTestedVersion, '>' );
-	} );
+	}, [ selectedSite, plugin ] );
 
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
 

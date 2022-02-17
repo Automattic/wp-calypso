@@ -1,18 +1,9 @@
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { useMemoCompare } from 'calypso/lib/use-memo-compare';
 import { requestPostStats } from 'calypso/state/stats/posts/actions';
 import { isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
-
-function useMemoizedFields( fields ) {
-	const memoizedFields = useRef();
-
-	if ( fields?.join() !== memoizedFields.current?.join() ) {
-		memoizedFields.current = fields;
-	}
-
-	return memoizedFields.current;
-}
 
 const request = ( siteId, postId, fields ) => ( dispatch, getState ) => {
 	if ( ! isRequestingPostStats( getState(), siteId, postId, fields ) ) {
@@ -22,7 +13,7 @@ const request = ( siteId, postId, fields ) => ( dispatch, getState ) => {
 
 function QueryPostStats( { siteId, postId, fields } ) {
 	const dispatch = useDispatch();
-	const memoizedFields = useMemoizedFields( fields );
+	const memoizedFields = useMemoCompare( fields, ( a, b ) => a?.join() === b?.join() );
 
 	useEffect( () => {
 		if ( siteId && postId ) {

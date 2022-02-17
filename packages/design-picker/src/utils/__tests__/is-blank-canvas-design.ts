@@ -24,5 +24,11 @@ describe( 'Design Picker blank canvas utils', () => {
 			mockDesign.slug = 'blank-canva';
 			expect( isBlankCanvasDesign( mockDesign ) ).toBeFalsy();
 		} );
+		it( 'should return false when no design is provided', () => {
+			expect( isBlankCanvasDesign() ).toBeFalsy();
+		} );
+		it( 'should return false when undefined is provided', () => {
+			expect( isBlankCanvasDesign( undefined ) ).toBeFalsy();
+		} );
 	} );
 } );

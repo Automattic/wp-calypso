@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.0.3
 
-- Shortened timeout (trying it out at this point.)
+- Shortened timeout
 
 ## 0.0.2
 

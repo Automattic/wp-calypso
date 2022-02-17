@@ -32,9 +32,11 @@ const ActionBox = ( {
 				'quick-links__action-box__hide-link-indicator': hideLinkIndicator,
 			} ) }
 		>
-			<div className="quick-links__action-box-image">{ getIcon() }</div>
+			<div className="quick-links__action-box-image" aria-hidden="true">
+				{ getIcon() }
+			</div>
 			<div className="quick-links__action-box-text">
-				<h6 className="quick-links__action-box-label">{ label }</h6>
+				<span className="quick-links__action-box-label">{ label }</span>
 			</div>
 		</CompactCard>
 	);

@@ -18,7 +18,11 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import { Primitive } from 'utility-types';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
-import { getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
+import {
+	getPlanBySlug,
+	getPlanRawPrice,
+	getDiscountedRawPrice,
+} from 'calypso/state/plans/selectors';
 
 type Props = {
 	kind: 'interval' | 'customer';
@@ -209,7 +213,9 @@ function useMaxDiscount( plans: string[] ): number {
 			}
 
 			const monthlyPlanAnnualCost = getPlanRawPrice( state, monthlyPlan.product_id ) * 12;
-			const yearlyPlanCost = getPlanRawPrice( state, yearlyPlan.product_id );
+			const rawPrice = getPlanRawPrice( state, yearlyPlan.product_id );
+			const discountPrice = getDiscountedRawPrice( state, yearlyPlan.product_id );
+			const yearlyPlanCost = discountPrice || rawPrice;
 
 			return Math.round(
 				( ( monthlyPlanAnnualCost - yearlyPlanCost ) / ( monthlyPlanAnnualCost || 1 ) ) * 100

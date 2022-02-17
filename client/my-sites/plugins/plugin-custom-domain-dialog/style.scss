@@ -1,0 +1,22 @@
+.plugin-custom-domain-dialog__content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	row-gap: 24px;
+	text-align: center;
+
+	.plugin-icon {
+		width: 72px;
+		height: 72px;
+	}
+}
+
+.plugin-custom-domain-dialog__description {
+	max-width: 412px;
+}
+
+.plugin-custom-domain-dialog__icon {
+	.plugin-icon {
+		margin: 0;
+	}
+}

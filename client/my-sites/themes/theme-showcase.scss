@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
 .themes__upload-button {
 	float: right;
 
@@ -25,6 +28,10 @@
 
 .themes__content {
 	min-height: 100vh;
+	
+	@include breakpoint-deprecated( '<660px' ) {
+		margin: 0 16px;
+	}
 }
 
 .is-section-themes.has-no-sidebar .themes__content {

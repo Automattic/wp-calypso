@@ -11,6 +11,7 @@ import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import CompleteScreen from '../../components/complete-screen';
+import ErrorMessage from '../../components/error-message';
 import GettingStartedVideo from '../../components/getting-started-video';
 import ImporterDrag from '../../components/importer-drag';
 import ProgressScreen from '../../components/progress-screen';
@@ -24,7 +25,6 @@ interface Props {
 	siteItem: SitesItem | null;
 	siteSlug: string;
 	siteAnalyzedData: UrlData;
-	fromSite: string;
 }
 
 const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
@@ -33,7 +33,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Fields
 	 */
-	const { job, importer, siteItem, siteSlug, siteAnalyzedData, fromSite } = props;
+	const { job, importer, siteItem, siteSlug, siteAnalyzedData } = props;
 
 	/**
 	 ↓ Effects
@@ -55,7 +55,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function prepareImportParams(): ImportJobParams {
-		const targetSiteUrl = fromSite.startsWith( 'http' ) ? fromSite : 'https://' + fromSite;
+		const targetSiteUrl = siteSlug.startsWith( 'http' ) ? siteSlug : 'https://' + siteSlug;
 
 		return {
 			engine: importer,
@@ -105,6 +105,10 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		return job?.importerState === appStates.IMPORT_SUCCESS;
 	}
 
+	function checkIsFailed() {
+		return job?.importerState === appStates.IMPORT_FAILURE;
+	}
+
 	function showVideoComponent() {
 		return checkProgress() || checkIsSuccess();
 	}
@@ -148,6 +152,8 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				{ ( () => {
 					if ( checkIsSuccess() ) {
 						return renderHooray();
+					} else if ( checkIsFailed() ) {
+						return <ErrorMessage siteSlug={ siteSlug } />;
 					} else if ( checkProgress() ) {
 						return renderProgress();
 					}

@@ -28,6 +28,11 @@ export interface OnboardingCompleteParameters {
 	isNewSite: boolean;
 
 	/**
+	 * Whether the blank canvas design is selected
+	 */
+	isBlankCanvas?: boolean;
+
+	/**
 	 * The blog id of the newly created site
 	 */
 	blogId: number | string | undefined;

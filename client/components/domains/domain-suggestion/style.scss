@@ -328,12 +328,14 @@ body.is-section-signup.is-white-signup {
 			border-radius: 4px; /* stylelint-disable-line */
 			font-size: 0.75rem;
 			font-weight: 500; /* stylelint-disable-line */
+			white-space: nowrap;
 		}
 
-		@include break-xlarge {
-			align-self: center;
+		@include break-wide {
+			align-self: baseline;
 			margin-left: 12px;
 			margin-bottom: 0;
+			flex: 1;
 		}
 	}
 
@@ -389,6 +391,7 @@ body.is-section-signup.is-white-signup {
 
 			@include break-mobile {
 				font-size: 1rem;
+				align-self: baseline;
 			}
 		}
 		&.is-placeholder.card .domain-suggestion__action {

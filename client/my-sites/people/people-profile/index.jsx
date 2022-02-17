@@ -98,7 +98,7 @@ const PeopleProfile = ( { siteId, type, user, invite } ) => {
 
 	const handleLinkToReaderSiteStream = ( event ) => {
 		const modifierPressed =
-			event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
+			event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 
 		recordTrack( 'calypso_sites_people_followers_link_click', {
 			modifier_pressed: modifierPressed,

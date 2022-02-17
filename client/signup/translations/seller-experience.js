@@ -3,7 +3,7 @@ import { translate } from 'i18n-calypso';
 
 // Set up your store
 translate( 'Set up your store' );
-translate( 'Let’s create a website that suits your needs.' );
+translate( "Let's make sure you have everything you need to sell online." );
 translate( 'Start simple' );
 translate(
 	'Ideal if you’re looking to accept donations or sell one or two products without needing to manage shipping.'

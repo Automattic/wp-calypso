@@ -25,7 +25,7 @@ interface Props {
 	};
 }
 
-const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
+export const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
 	write: [ 'store-options', 'store-features' ],
 	build: [ 'site-options', 'starting-point', 'courses', 'store-options', 'store-features' ],
 	sell: [ 'site-options', 'starting-point', 'courses', 'design-setup-site' ],
@@ -82,6 +82,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 			align={ 'left' }
 			hideSkip
 			isHorizontalLayout={ true }
+			siteId={ siteId }
 			{ ...props }
 		/>
 	);

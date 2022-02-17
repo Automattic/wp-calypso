@@ -25,7 +25,7 @@ function EmailProviderFeatures( { features, logos } ) {
 
 	return (
 		<div className="email-provider-features">
-			{ features.map( ( feature, index ) => (
+			{ features.filter( Boolean ).map( ( feature, index ) => (
 				<EmailProviderFeature key={ index } title={ feature } />
 			) ) }
 
@@ -41,7 +41,8 @@ function EmailProviderFeatures( { features, logos } ) {
 }
 
 EmailProviderFeatures.propTypes = {
-	features: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
+	features: PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ) )
+		.isRequired,
 	logos: PropTypes.arrayOf( PropTypes.object ),
 };
 

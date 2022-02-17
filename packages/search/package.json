@@ -47,7 +47,7 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/react": "^6.4.9",
+		"@storybook/react": "^6.4.18",
 		"@testing-library/dom": "^8.11.3",
 		"@testing-library/react": "^12.1.2",
 		"@testing-library/user-event": "^13.5.0",
@@ -57,7 +57,7 @@
 		"react-dom": "^17.0.2",
 		"reakit-utils": "^0.15.1",
 		"typescript": "^4.5.5",
-		"webpack": "^5.65.0"
+		"webpack": "^5.68.0"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

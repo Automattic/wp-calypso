@@ -29,6 +29,11 @@ const ERROR_RESPONSE = {
 	message: 'folder_exists',
 };
 
+const UNKNOWN_ERROR_RESPONSE = {
+	error: 'unknown_error',
+	message: 'unknown_error',
+};
+
 describe( 'uploadPlugin', () => {
 	test( 'should return an http request action', () => {
 		const action = uploadPlugin( { siteId, file: 'xyz' } );
@@ -69,10 +74,16 @@ describe( 'uploadComplete', () => {
 } );
 
 describe( 'receiveError', () => {
-	test( 'should return a plugin upload error action', () => {
+	test( 'should return a plugin upload error action for a known error', () => {
 		const action = receiveError( { siteId }, ERROR_RESPONSE );
 		expect( action ).toEqual(
 			expect.arrayContaining( [ pluginUploadError( siteId, ERROR_RESPONSE ) ] )
+		);
+	} );
+	test( 'should return a plugin upload error action for an unknown error', () => {
+		const action = receiveError( { siteId }, UNKNOWN_ERROR_RESPONSE );
+		expect( action ).toEqual(
+			expect.arrayContaining( [ pluginUploadError( siteId, UNKNOWN_ERROR_RESPONSE ) ] )
 		);
 	} );
 } );

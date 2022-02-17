@@ -8,6 +8,7 @@ import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
 import CompleteScreen from '../components/complete-screen';
+import ErrorMessage from '../components/error-message';
 import GettingStartedVideo from '../components/getting-started-video';
 import ImporterDrag from '../components/importer-drag';
 import ProgressScreen from '../components/progress-screen';
@@ -31,16 +32,18 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 	/**
 	 * Effects
 	 */
-	useEffect( runImport, [ job ] );
+	useEffect( handleJobStateTransition, [ job ] );
 
 	/**
 	 ↓ Methods
 	 */
-	function runImport() {
-		// If there is no existing import job, start a new
+	function handleJobStateTransition() {
+		// If there is no existing import job, create a new job
 		if ( job === undefined ) {
 			startImport( siteId, getImporterTypeForEngine( importer ) );
-		} else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
+		}
+		// If the job is in a ready state, start the import process
+		else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
 			importSite( prepareImportParams() );
 		}
 	}
@@ -96,6 +99,10 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 		return job?.importerState === appStates.IMPORT_SUCCESS;
 	}
 
+	function checkIsFailed() {
+		return job?.importerState === appStates.IMPORT_FAILURE;
+	}
+
 	function showVideoComponent() {
 		return checkProgress() || checkIsSuccess();
 	}
@@ -107,9 +114,6 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 					if ( ! job ) {
 						return;
 					} else if ( checkIsSuccess() ) {
-						/**
-						 * Complete screen
-						 */
 						return (
 							<CompleteScreen
 								siteId={ siteId }
@@ -118,10 +122,9 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 								resetImport={ resetImport }
 							/>
 						);
+					} else if ( checkIsFailed() ) {
+						return <ErrorMessage siteSlug={ siteSlug } />;
 					} else if ( checkProgress() ) {
-						/**
-						 * Progress screen
-						 */
 						return <ProgressScreen job={ job } />;
 					}
 

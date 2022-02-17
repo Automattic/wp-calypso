@@ -13,6 +13,7 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import { filterLanguageRevisions } from 'calypso/lib/i18n-utils';
 import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
@@ -127,6 +128,11 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	if ( ! request.cookies.country_code && geoIPCountryCode ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
+	const authHelper = config.isEnabled( 'dev/auth-helper' );
+	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
+	const preferencesHelper =
+		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
+	const featuresHelper = config.isEnabled( 'dev/features-helper' );
 
 	const flags = ( request.query.flags || '' ).split( ',' );
 	const context = Object.assign( {}, request.context, {
@@ -142,9 +148,9 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
 		manifests: request.getAssets().manifests,
-		authHelper: !! config.isEnabled( 'dev/auth-helper' ),
-		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
-		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
+		authHelper,
+		preferencesHelper,
+		featuresHelper,
 		devDocsURL: '/devdocs',
 		store: reduxStore,
 		target: 'evergreen',
@@ -778,6 +784,7 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/new', 'entry-gutenboarding' );
+	handleSectionPath( STEPPER_SECTION_DEFINITION, '/stepper', 'entry-stepper' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

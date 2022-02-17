@@ -1,5 +1,4 @@
 const stepNameToModuleName = {
-	about: 'about',
 	'clone-start': 'clone-start',
 	'clone-destination': 'clone-destination',
 	'clone-credentials': 'clone-credentials',
@@ -58,7 +57,6 @@ const stepNameToModuleName = {
 	'oauth2-user': 'user',
 	'oauth2-name': 'user',
 	'reader-landing': 'reader-landing',
-	passwordless: 'passwordless',
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
 	'p2-get-started': 'p2-get-started',

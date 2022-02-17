@@ -64,12 +64,13 @@ export class SidebarComponent {
 			] );
 		}
 
-		/**
-		 * Do not verify selected menu items or retry if navigation takes user out of
-		 * Calypso (eg. WP-Admin, Widgets editor).
-		 */
 		const currentURL = this.page.url();
+		// Do not verify selected menu items or retry if navigation takes user out of Calypso (eg. WP-Admin, Widgets editor)...
 		if ( ! currentURL.startsWith( getCalypsoURL() ) ) {
+			return;
+		}
+		// ... or to a page in Calypso that closes the sidebar.
+		if ( currentURL.match( /\/(post|page|site-editor)\// ) ) {
 			return;
 		}
 

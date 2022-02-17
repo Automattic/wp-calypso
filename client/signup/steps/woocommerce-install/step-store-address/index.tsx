@@ -24,7 +24,7 @@ import {
 	WOOCOMMERCE_ONBOARDING_PROFILE,
 	optionNameType,
 } from '../hooks/use-site-settings';
-import type { WooCommerceInstallProps } from '..';
+import type { WooCommerceStoreAddressProps } from '..';
 import './style.scss';
 
 const CityZipRow = styled.div`
@@ -37,8 +37,10 @@ const CityZipRow = styled.div`
 	justify-items: stretch;
 `;
 
-export default function StepStoreAddress( props: WooCommerceInstallProps ): ReactElement | null {
-	const { goToNextStep, isReskinned } = props;
+export default function StepStoreAddress(
+	props: WooCommerceStoreAddressProps
+): ReactElement | null {
+	const { goToNextStep, isReskinned, signupDependencies } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -54,7 +56,12 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 	} );
 
 	const { get, save, update } = useSiteSettings( siteId );
+
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+	const backPath = signupDependencies?.back_to;
+	// Check for a valid back path, otherwise go back to the WooCommerce install landing page.
+	const backUrl =
+		backPath && backPath.match( /^\/(?!\/)/ ) ? backPath : `/woocommerce-installation/${ domain }`;
 
 	const { validate, clearError, getError, errors } = useAddressFormValidation( siteId );
 
@@ -207,7 +214,7 @@ export default function StepStoreAddress( props: WooCommerceInstallProps ): Reac
 			flowName="woocommerce-install"
 			hideSkip={ true }
 			allowBackFirstStep={ true }
-			backUrl={ `/woocommerce-installation/${ domain }` }
+			backUrl={ backUrl }
 			headerText={ __( 'Add an address to accept payments' ) }
 			fallbackHeaderText={ __( 'Add an address to accept payments' ) }
 			subHeaderText={ __(

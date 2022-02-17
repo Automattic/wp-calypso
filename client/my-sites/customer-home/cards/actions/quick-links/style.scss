@@ -23,6 +23,11 @@
 
 	.foldable-card__action {
 		margin-right: 8px;
+
+		&:focus-visible {
+			box-shadow: inset 0 0 0 2px var( --color-primary );
+			outline: 0;
+		}
 	}
 
 	.foldable-card__content {
@@ -64,6 +69,10 @@
 		transition: all 0.1s;
 	}
 
+	.quick-links__action-box-text {
+		display: flex;
+	}
+
 	.quick-links__action-box-label {
 		color: var( --color-text );
 		font-size: $font-body-small;
@@ -96,6 +105,11 @@
 		.quick-links__action-box-icon {
 			fill: var( --color-neutral-80 );
 		}
+	}
+
+	&:focus-visible {
+		box-shadow: inset 0 0 0 2px var( --color-primary );
+		outline: 0;
 	}
 
 	&:last-of-type {

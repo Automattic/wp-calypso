@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { createStore, applyMiddleware, compose } from 'redux';
 import dynamicMiddlewares from 'redux-dynamic-middlewares';
 import thunkMiddleware from 'redux-thunk';
-import { enhancer as httpDataEnhancer } from 'calypso/state/data-layer/http-data';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { addReducerEnhancer } from 'calypso/state/utils/add-reducer-enhancer';
 import actionLogger from './action-log';
@@ -47,7 +46,6 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 	const enhancers = [
 		addReducerEnhancer,
 		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
-		httpDataEnhancer,
 		applyMiddleware( ...middlewares ),
 		isBrowser && window.app && window.app.isDebug && actionLogger,
 		isBrowser && window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),

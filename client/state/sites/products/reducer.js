@@ -1,9 +1,7 @@
-import { omit } from 'lodash';
 import {
 	SITE_PRODUCTS_FETCH,
 	SITE_PRODUCTS_FETCH_COMPLETED,
 	SITE_PRODUCTS_FETCH_FAILED,
-	SITE_PRODUCTS_REMOVE,
 } from 'calypso/state/action-types';
 
 export const initialSiteState = {
@@ -48,9 +46,6 @@ export function products( state = {}, action ) {
 				error: action.error,
 				isRequesting: false,
 			} );
-
-		case SITE_PRODUCTS_REMOVE:
-			return omit( state, action.siteId );
 	}
 
 	return state;

@@ -30,12 +30,14 @@ function isSamePluginNotice( pluginId, log ) {
  * @returns {boolean} True if the plugin ID and slug match
  */
 export function isSamePluginIdSlug( idOrSlug, slugOrId ) {
+	const firstIdOrSlug = idOrSlug.toString();
+	const secondIdOrSlug = slugOrId.toString();
 	return (
-		idOrSlug === slugOrId ||
-		idOrSlug.startsWith( slugOrId + '/' ) ||
-		idOrSlug.endsWith( '/' + slugOrId ) ||
-		slugOrId.startsWith( idOrSlug + '/' ) ||
-		slugOrId.endsWith( '/' + idOrSlug )
+		firstIdOrSlug === secondIdOrSlug ||
+		firstIdOrSlug.startsWith( secondIdOrSlug + '/' ) ||
+		firstIdOrSlug.endsWith( '/' + secondIdOrSlug ) ||
+		secondIdOrSlug.startsWith( firstIdOrSlug + '/' ) ||
+		secondIdOrSlug.endsWith( '/' + firstIdOrSlug )
 	);
 }
 
@@ -87,7 +89,9 @@ export function getAllowedPluginData( plugin ) {
 		'product_video',
 		'rating',
 		'ratings',
+		'requirements',
 		'sections',
+		'setup_url',
 		'slug',
 		'support_URL',
 		'tags',

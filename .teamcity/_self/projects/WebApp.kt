@@ -28,6 +28,7 @@ object WebApp : Project({
 
 	buildType(RunAllUnitTests)
 	buildType(CheckCodeStyleBranch)
+	buildType(Translate)
 	buildType(BuildDockerImage)
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
@@ -333,16 +334,7 @@ object RunAllUnitTests : BuildType({
 				# These are not expected to fail
 				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
-
-				# These have known errors, so we report them as checkstyle
-				(
-					# Enable pipe errors in this subshell. After all, we know these will fail.
-					set +e
-					yarn tsc --build client 2>&1 | tee tsc_out
-					mkdir -p checkstyle_results
-					yarn run typescript-checkstyle < tsc_out | sed -e "s#${'$'}PWD#~#g" > ./checkstyle_results/tsc.xml
-					cat ./checkstyle_results/tsc.xml
-				)
+				yarn tsc --build client/tsconfig.json
 			"""
 		}
 		bashNodeScript {
@@ -421,20 +413,6 @@ object RunAllUnitTests : BuildType({
 
 	failureConditions {
 		executionTimeoutMin = 10
-
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.INSPECTION_ERROR_COUNT
-			units = BuildFailureOnMetric.MetricUnit.DEFAULT_UNIT
-			comparison = BuildFailureOnMetric.MetricComparison.MORE
-			threshold = 0
-			compareTo = build {
-				buildRule = buildWithTag {
-					tag = "release-candidate"
-				}
-			}
-			stopBuildOnFailure = true
-		}
-
 	}
 	features {
 		feature {
@@ -584,6 +562,114 @@ object CheckCodeStyleBranch : BuildType({
 	}
 })
 
+object Translate : BuildType({
+	name = "Translate"
+	description = "Extract translatable strings from the source code and build POT file"
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	artifactRules = """
+		translate => translate
+	""".trimIndent()
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				# Install modules
+				${_self.yarn_install_cmd}
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Extract strings"
+			scriptContent = """
+				# Run script to extract strings from source code
+				yarn run translate
+
+				# Move `calypso-strings.pot` to artifacts directory
+				mkdir -p ./translate
+				mv public/calypso-strings.pot ./translate/
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Build New Strings .pot"
+			scriptContent = """
+				# Export LocalCI Client Authentication Variables
+				export LOCALCI_APP_SECRET="%TRANSLATE_GH_APP_SECRET%"
+				export LOCALCI_APP_ID="%TRANSLATE_GH_APP_ID%"
+
+				# Clone GP LocalCI Client
+				git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
+
+				# Build `localci-new-strings.pot`
+				DEFAULT_BRANCH=trunk bash gp-localci-client/generate-new-strings-pot.sh "%teamcity.build.branch%" "${Settings.WpCalypso.paramRefs.buildVcsNumber}" "./translate"
+
+				# Remove GP LocalCI Client
+				rm -rf gp-localci-client
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+		bashNodeScript {
+			name = "Notify GlotPress Translate build is ready"
+			scriptContent = """
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+					exit 0
+				fi
+
+				curl -X POST https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh \
+					-H 'Cache-Control: no-cache' \
+					-H 'Content-Type: application/json' \
+					-d '{
+							"payload": {
+								"username": "Automattic",
+								"reponame": "wp-calypso",
+								"branch": "%teamcity.build.branch%",
+								"vcs_revision": "${Settings.WpCalypso.paramRefs.buildVcsNumber}",
+								"build_num": "%teamcity.build.id%"
+							}
+						}'
+			"""
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+			+:*
+			-:pull*
+		""".trimIndent()
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+	}
+})
+
 fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
 	return E2EBuildType(
 		buildId = "Calypso_E2E_Playwright_$targetDevice",
@@ -603,7 +689,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 		buildParams = {
 			param("env.AUTHENTICATE_ACCOUNTS", "simpleSitePersonalPlanUser,defaultUser,eCommerceUser")
 			param("env.LIVEBRANCHES", "true")
-			param("env.TARGET_DEVICE", "$targetDevice")
+			param("env.VIEWPORT_NAME", "$targetDevice")
 		},
 		buildFeatures = {
 			pullRequests {
@@ -641,7 +727,7 @@ object PreReleaseE2ETests : E2EBuildType(
 	concurrentBuilds = 1,
 	testGroup = "calypso-release",
 	buildParams = {
-		param("env.TARGET_DEVICE", "desktop")
+		param("env.VIEWPORT_NAME", "desktop")
 		param("env.URL", "https://wpcalypso.wordpress.com")
 	},
 	buildFeatures = {
@@ -667,7 +753,7 @@ object QuarantinedE2ETests: E2EBuildType(
 	concurrentBuilds = 1,
 	testGroup = "quarantined",
 	buildParams = {
-		param("env.TARGET_DEVICE", "desktop")
+		param("env.VIEWPORT_NAME", "desktop")
 		param("env.URL", "https://wpcalypso.wordpress.com")
 	},
 	buildFeatures = {

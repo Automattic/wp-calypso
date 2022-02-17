@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { getCalypsoURL } from '../../../data-helper';
 import { reloadAndRetry } from '../../../element-helper';
 import type { LanguageSlug } from '@automattic/languages';
 
@@ -35,6 +36,13 @@ export class AccountSettingsPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Visit the `/me/account` endpoint directly.
+	 */
+	async visit(): Promise< void > {
+		await this.page.goto( getCalypsoURL( 'me/account' ) );
 	}
 
 	/**

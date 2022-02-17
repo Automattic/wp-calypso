@@ -4,16 +4,13 @@ import {
 	isDomainTransfer,
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { ExperimentAssignment } from '@automattic/explat-client';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
-import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -68,12 +65,6 @@ const CouponEnableButton = styled.button`
 	}
 `;
 
-const GeneratedNameNote = styled.p`
-	font-size: 0.75rem;
-	font-style: italic;
-	margin-top: 4px;
-`;
-
 export default function WPCheckoutOrderReview( {
 	className,
 	removeProductFromCart,
@@ -95,36 +86,10 @@ export default function WPCheckoutOrderReview( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
-	const [ experiment, setExperiment ] = useState< ExperimentAssignment | null >( null );
 	const cartKey = useCartKey();
 	const { responseCart, removeCoupon, couponStatus } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	const reduxDispatch = useDispatch();
-
-	useEffect( () => {
-		function retrieveExperimentName(): string {
-			let experiment = '';
-			try {
-				const cookies = cookie.parse( document.cookie );
-				experiment = cookies.wpcom_signup_experiment_name;
-			} catch ( error ) {
-				reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cookie_read_failed' ) );
-			}
-			return experiment;
-		}
-
-		const experimentCheck = retrieveExperimentName();
-		let shouldCheck = true;
-		experimentCheck &&
-			loadExperimentAssignment( experimentCheck ).then( ( experimentObject ) => {
-				if ( shouldCheck ) {
-					setExperiment( experimentObject );
-				}
-			} );
-		return () => {
-			shouldCheck = false;
-		};
-	}, [ reduxDispatch ] );
 
 	const onRemoveProductCancel = useCallback( () => {
 		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_cancel_delete_product' ) );
@@ -168,7 +133,7 @@ export default function WPCheckoutOrderReview( {
 	};
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
-	const shouldShowDomainNote = experiment?.variationName && domainUrl?.includes( '.wordpress.com' );
+
 	const isPwpoUser = useSelector(
 		( state ) =>
 			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
@@ -179,14 +144,7 @@ export default function WPCheckoutOrderReview( {
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
 		>
 			{ ! planIsP2Plus && domainUrl && 'no-user' !== domainUrl && (
-				<SiteSummary>
-					{ translate( 'Site: %s', { args: domainUrl } ) }
-					{ shouldShowDomainNote && (
-						<GeneratedNameNote>
-							{ translate( 'You can change this name at any time in your account settings.' ) }
-						</GeneratedNameNote>
-					) }
-				</SiteSummary>
+				<SiteSummary>{ translate( 'Site: %s', { args: domainUrl } ) }</SiteSummary>
 			) }
 			{ planIsP2Plus && selectedSiteData?.name && (
 				<SiteSummary>

@@ -657,6 +657,7 @@ class ThemeSheet extends Component {
 			siteSlug,
 			retired,
 			hasUnlimitedPremiumThemes,
+			isAtomic,
 			isPremium,
 			isJetpack,
 			isWpcomTheme,
@@ -709,11 +710,18 @@ class ThemeSheet extends Component {
 		let pageUpsellBanner;
 		let previewUpsellBanner;
 
+		// Show theme upsell banner on Simple sites.
 		const hasWpComThemeUpsellBanner =
 			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
+		// Show theme upsell banner on Jetpack sites.
 		const hasWpOrgThemeUpsellBanner =
-			! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
-		const hasUpsellBanner = hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner;
+			! isAtomic && ! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
+		// Show theme upsell banner on Atomic sites.
+		const hasThemeUpsellBannerAtomic =
+			isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
+
+		const hasUpsellBanner =
+			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
 
 		if ( hasWpComThemeUpsellBanner ) {
 			pageUpsellBanner = (
@@ -727,6 +735,7 @@ class ThemeSheet extends Component {
 						)
 					) }
 					event="themes_plan_particular_free_with_plan"
+					feature={ FEATURE_PREMIUM_THEMES }
 					forceHref={ true }
 					href={ plansUrl }
 					showIcon={ true }
@@ -734,7 +743,7 @@ class ThemeSheet extends Component {
 			);
 		}
 
-		if ( hasWpOrgThemeUpsellBanner ) {
+		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }

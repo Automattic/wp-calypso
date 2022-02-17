@@ -1,6 +1,6 @@
-import { get, filter, find } from 'lodash';
-
 import 'calypso/state/site-keyrings/init';
+
+const EMPTY_ARRAY = [];
 
 /**
  * Returns true if we are requesting keyrings for the specified site ID, false otherwise.
@@ -10,29 +10,7 @@ import 'calypso/state/site-keyrings/init';
  * @returns {boolean}        Whether site keyrings is being requested
  */
 export function isRequestingSiteKeyrings( state, siteId ) {
-	return get( state.siteKeyrings.requesting, [ siteId ], false );
-}
-
-/**
- * Returns true if we are saving keyrings for the specified site ID, false otherwise.
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @returns {boolean}        Whether site keyrings is being requested
- */
-export function isSavingSiteKeyrings( state, siteId ) {
-	return get( state.siteKeyrings.saveRequests, [ siteId, 'saving' ], false );
-}
-
-/**
- * Returns the status of the last site keyrings save request
- *
- * @param  {object}  state  Global state tree
- * @param  {number}  siteId Site ID
- * @returns {string|undefined} The request status (pending, success or error) it will return undefined if no requests were issued yet.
- */
-export function getSiteKeyringsSaveRequestStatus( state, siteId ) {
-	return get( state.siteKeyrings.saveRequests, [ siteId, 'status' ] );
+	return state.siteKeyrings.requesting[ siteId ] ?? false;
 }
 
 /**
@@ -43,7 +21,7 @@ export function getSiteKeyringsSaveRequestStatus( state, siteId ) {
  * @returns {object}  Site keyrings indexed by keyring ids
  */
 export function getSiteKeyrings( state, siteId ) {
-	return get( state.siteKeyrings.items, [ siteId ], [] );
+	return state.siteKeyrings.items[ siteId ] ?? EMPTY_ARRAY;
 }
 
 /**
@@ -55,7 +33,9 @@ export function getSiteKeyrings( state, siteId ) {
  * @returns {Array}   Site keyrings list
  */
 export function getSiteKeyringsForService( state, siteId, service ) {
-	return filter( getSiteKeyrings( state, siteId ), { service } );
+	return getSiteKeyrings( state, siteId ).filter(
+		( siteKeyring ) => siteKeyring.service === service
+	);
 }
 
 /**
@@ -69,9 +49,10 @@ export function getSiteKeyringsForService( state, siteId, service ) {
  * @returns {?object}                Site Keyring connection
  */
 export function getSiteKeyringConnection( state, siteId, keyringId, externalUserId = null ) {
-	return find( getSiteKeyrings( state, siteId ), ( siteKeyring ) => {
-		return externalUserId === null
-			? siteKeyring.keyring_id === keyringId
-			: siteKeyring.keyring_id === keyringId && siteKeyring.external_user_id === externalUserId;
+	return getSiteKeyrings( state, siteId ).find( ( siteKeyring ) => {
+		return (
+			siteKeyring.keyring_id === keyringId &&
+			( externalUserId === null || siteKeyring.external_user_id === externalUserId )
+		);
 	} );
 }

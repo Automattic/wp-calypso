@@ -17,7 +17,6 @@ import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
 	SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,
-	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	ROUTE_SET,
 	CURRENT_USER_RECEIVE,
 } from 'calypso/state/action-types';
@@ -510,19 +509,6 @@ describe( 'reducer', () => {
 			expect( socialAccount( undefined, { type: 'does not matter' } ).createError ).to.be.null;
 		} );
 
-		test( 'should reset create error on create success', () => {
-			const state = {
-				createError: { message: 'error' },
-			};
-
-			const newState = socialAccount( state, {
-				type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
-				data: { username: 'test', bearerToken: '123' },
-			} );
-
-			expect( newState.createError ).to.be.null;
-		} );
-
 		test( 'should reset create error when user is received', () => {
 			const state = { createError: {} };
 
@@ -561,19 +547,6 @@ describe( 'reducer', () => {
 				authInfo,
 				email: error.email,
 			} );
-		} );
-
-		test( 'should reset linking mode on create success', () => {
-			const state = {
-				createError: { message: 'error' },
-			};
-
-			const newState = socialAccountLink( state, {
-				type: SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
-				data: { username: 'test', bearerToken: '123' },
-			} );
-
-			expect( newState ).to.to.eql( { isLinking: false } );
 		} );
 
 		test( 'should reset linking mode when user is received', () => {

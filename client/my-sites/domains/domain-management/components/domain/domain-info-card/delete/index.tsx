@@ -20,7 +20,7 @@ const DomainDeleteInfoCard = ( {
 
 	if ( isLoadingPurchase || ! purchase || ! domain.currentUserIsOwner ) return null;
 
-	const removePurchaseClassName = 'is-compact button';
+	const removePurchaseClassName = 'domain-delete-info-card is-compact button';
 
 	const title =
 		domain.type === domainType.TRANSFER ? translate( 'Cancel transfer' ) : translate( 'Delete' );

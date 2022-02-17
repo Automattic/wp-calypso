@@ -1,6 +1,7 @@
 // pageView is a wrapper for pageview events across Tracks and GA.
 
 import { recordTracksPageViewWithPageParams } from '@automattic/calypso-analytics';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { retarget as retargetAdTrackers } from 'calypso/lib/analytics/ad-tracking';
 import { retargetFullStory } from 'calypso/lib/analytics/fullstory';
 import { updateQueryParamsTracking } from 'calypso/lib/analytics/sem';
@@ -13,6 +14,9 @@ export function recordPageView( urlPath, pageTitle, params = {}, options = {} ) 
 	// Add delay to avoid stale `_dl` in recorded calypso_page_view event details.
 	// `_dl` (browserdocumentlocation) is read from the current URL by external JavaScript.
 	setTimeout( () => {
+		// Add device type to Tracks page view event.
+		params.device_type = resolveDeviceTypeByViewPort();
+
 		// Tracks, Google Analytics, Refer platform.
 		recordTracksPageViewWithPageParams( urlPath, params );
 		safeGoogleAnalyticsPageView( urlPath, pageTitle, options?.useJetpackGoogleAnalytics );

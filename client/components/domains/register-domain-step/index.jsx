@@ -1290,11 +1290,13 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderBestNamesPrompt() {
-		const { translate } = this.props;
+		const { isCopyExperiment, translate } = this.props;
 		return (
 			<div className="register-domain-step__example-prompt">
 				<Icon icon={ tip } size={ 20 } />
-				{ translate( 'The best names are short and memorable' ) }
+				{ isCopyExperiment
+					? 'You’ll see many options below. Or, you can choose a domain later and start with a free wordpress.com address.'
+					: translate( 'The best names are short and memorable' ) }
 			</div>
 		);
 	}

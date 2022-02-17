@@ -52,6 +52,17 @@ export default function () {
 		clientRender
 	);
 
+	// Assign a license to a site.
+	page(
+		`/partner-portal/assign-license`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.assignLicenseContext,
+		makeLayout,
+		clientRender
+	);
+
 	// Manage payment methods.
 	if ( config.isEnabled( 'jetpack/partner-portal-payment' ) ) {
 		page(

@@ -239,7 +239,9 @@ const NameServersCard = ( {
 				{ nameservers.map( ( nameserver ) => (
 					<p key={ nameserver }>{ nameserver }</p>
 				) ) }
-				<Button onClick={ editCustomNameServers }>Edit custom name servers</Button>
+				<Button onClick={ editCustomNameServers }>
+					{ translate( 'Edit custom name servers' ) }
+				</Button>
 			</div>
 		);
 	};

@@ -114,6 +114,7 @@ $table-padding: 15px;
 
 		&:first-child {
 			padding-left: $table-padding;
+			white-space: nowrap;
 		}
 
 		&:nth-child( n + 2 ) {

@@ -68,6 +68,7 @@ const MarketplacePluginInstall = ( {
 	const pluginUploadProgress = useSelector( ( state ) => getPluginUploadProgress( state, siteId ) );
 	const pluginUploadError = useSelector( ( state ) => getPluginUploadError( state, siteId ) );
 	const pluginExists = pluginUploadError?.error === 'folder_exists';
+	const pluginMalicious = pluginUploadError?.error === 'plugin_malicious';
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const uploadedPluginSlug = useSelector( ( state ) =>
@@ -340,6 +341,21 @@ const MarketplacePluginInstall = ( {
 					title={ null }
 					line={ translate(
 						'This plugin already exists on your site. If you want to upgrade or downgrade the plugin, please continue by uploading the plugin again from WP Admin.'
+					) }
+					secondaryAction={ translate( 'Back' ) }
+					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
+					action={ translate( 'Continue' ) }
+					actionURL={ `https://${ selectedSiteSlug }/wp-admin/plugin-install.php?tab=upload` }
+				/>
+			);
+		}
+		if ( pluginMalicious ) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/illustrations/error.svg"
+					title={ null }
+					line={ translate(
+						'This plugin is identified as malicious. If you still insist to install the plugin, please continue by uploading the plugin again from WP Admin.'
 					) }
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }

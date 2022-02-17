@@ -23,6 +23,7 @@ import {
 import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import getCurrentUserTimeSinceSignup from 'calypso/state/selectors/get-current-user-time-since-signup';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
@@ -43,6 +44,7 @@ export const MarketingTools: FunctionComponent = () => {
 	const showFacebookUpsell = [ 'value_bundle', 'personal-bundle', 'free_plan' ].includes(
 		sitePlan
 	);
+	const daysSinceSignup = useSelector( getCurrentUserTimeSinceSignup );
 
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
@@ -112,7 +114,7 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button
 						onClick={ handleCreateALogoClick }
-						href="https://wp.me/logo-maker/?utm_campaign=marketing_tab"
+						href={ 'https://wp.me/logo-maker/?utm_campaign=marketing_tab_' + daysSinceSignup + 'd' }
 						target="_blank"
 					>
 						{ translate( 'Create a logo' ) }

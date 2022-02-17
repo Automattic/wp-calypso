@@ -9,6 +9,10 @@ export const ALLOWED_SECTIONS = [ GUTENBERG, NOTES, READER, STATS ];
 export const ONE_WEEK_IN_MILLISECONDS = 604800000;
 export const ONE_MONTH_IN_MILLISECONDS = 2419200000; // 28 days
 
+// Experiment Configuration
+export const TWO_WEEKS_IN_MILLISECONDS = 1209600000;
+export const ONE_DAY_IN_MILLISECONDS = 86400000;
+
 export function getAppBannerData( translate, sectionName ) {
 	switch ( sectionName ) {
 		case GUTENBERG:
@@ -55,24 +59,33 @@ export function getCurrentSection( currentSection, isNotesOpen ) {
 	return null;
 }
 
-export function getNewDismissTimes( dismissedSection, currentDismissTimes ) {
+function getDismissTimes( isControl ) {
 	const currentTime = Date.now();
-	const aWeekFromNow = currentTime + ONE_WEEK_IN_MILLISECONDS;
-	const aMonthFromNow = currentTime + ONE_MONTH_IN_MILLISECONDS;
+	const longerTime = isControl ? ONE_MONTH_IN_MILLISECONDS : TWO_WEEKS_IN_MILLISECONDS;
+	const shorterTime = isControl ? ONE_WEEK_IN_MILLISECONDS : ONE_DAY_IN_MILLISECONDS;
+
+	return {
+		longerDuration: currentTime + longerTime,
+		shorterDuration: currentTime + shorterTime,
+	};
+}
+
+export function getNewDismissTimes( dismissedSection, currentDismissTimes, isControl ) {
+	const dismissTimes = getDismissTimes( isControl );
 
 	return reduce(
 		ALLOWED_SECTIONS,
 		( result, section ) => {
 			if ( section === dismissedSection ) {
-				// Dismiss selected section for a month.
-				result[ section ] = aMonthFromNow;
+				// Dismiss selected section for a longer period.
+				result[ section ] = dismissTimes.longerDuration;
 			} else {
-				// Dismiss all other sections for a week, but make sure that we preserve previous dismiss time
+				// Dismiss all other sections for a shorter period, but make sure that we preserve previous dismiss time
 				// if it was longer than that (e.g. if other section was also dismissed for a month).
 				result[ section ] =
-					get( currentDismissTimes, section, -Infinity ) > aWeekFromNow
+					get( currentDismissTimes, section, -Infinity ) > dismissTimes.shorterDuration
 						? get( currentDismissTimes, section )
-						: aWeekFromNow;
+						: dismissTimes.shorterDuration;
 			}
 
 			return result;

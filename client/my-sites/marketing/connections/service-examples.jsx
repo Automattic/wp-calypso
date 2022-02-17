@@ -324,29 +324,13 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/slack-screenshot-1.png',
-					alt: this.props.translate( 'Get Slack notifications with every new P2 post.', {
+					src: '/calypso/images/sharing/github-screenshot.png',
+					alt: this.props.translate( 'Get GitHub previews inside your P2 posts.', {
 						textOnly: true,
 					} ),
 				},
 				label: this.props.translate(
-					'Get {{strong}}Github previews{{/strong}} inside your P2 posts.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/slack-screenshot-1.png',
-					alt: this.props.translate( 'Get Slack notifications with every new P2 post.', {
-						textOnly: true,
-					} ),
-				},
-				label: this.props.translate(
-					'Get {{strong}}Github previews{{/strong}} inside your P2 posts.',
+					'Get {{strong}}GitHub previews{{/strong}} inside your P2 posts.',
 					{
 						components: {
 							strong: <strong />,

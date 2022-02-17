@@ -51,7 +51,6 @@
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
 		"email-accounts/enabled": true,
-		"emails/in-depth-comparison": true,
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
@@ -141,7 +140,6 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
-		"woocommerce/extension-referrers": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false

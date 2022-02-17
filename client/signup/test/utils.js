@@ -11,6 +11,7 @@ import {
 	getStepName,
 	getFlowName,
 	getFilteredSteps,
+	isPlanSelectionAvailableLaterInFlow,
 } from '../utils';
 
 jest.mock( 'calypso/signup/config/flows-pure', () => ( {
@@ -267,6 +268,23 @@ describe( 'utils', () => {
 			const canResume = canResumeFlow( 'onboarding', signupProgress );
 
 			expect( canResume ).toBe( false );
+		} );
+	} );
+
+	describe( 'isPlanSelectionAvailableLaterInFlow', () => {
+		const defaultFlowSteps = [ 'user', 'domains', 'plans' ];
+
+		test( 'should return true when given flow contains "plans" step', () => {
+			const isPlanSelectionAvailable = isPlanSelectionAvailableLaterInFlow( defaultFlowSteps );
+
+			expect( isPlanSelectionAvailable ).toBe( true );
+		} );
+
+		test( 'should return false when given flow doesn`t contain "plans" step', () => {
+			const flowSteps = [ 'user', 'domains' ];
+			const isPlanSelectionAvailable = isPlanSelectionAvailableLaterInFlow( flowSteps );
+
+			expect( isPlanSelectionAvailable ).toBe( false );
 		} );
 	} );
 } );

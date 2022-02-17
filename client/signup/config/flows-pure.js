@@ -9,6 +9,7 @@ export function generateFlows( {
 	getSignupDestination = noop,
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
+	getDomainSignupFlowDestination = noop,
 	getChecklistThemeDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
@@ -79,13 +80,6 @@ export function generateFlows( {
 			lastModified: '2019-10-16',
 		},
 		{
-			name: 'main',
-			steps: [ 'user', 'about', 'domains', 'plans' ],
-			destination: getSignupDestination,
-			description: 'The current best performing flow in AB tests',
-			lastModified: '2019-06-20',
-		},
-		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans' ]
@@ -119,13 +113,6 @@ export function generateFlows( {
 			description: 'Signup flow for desktop app',
 			lastModified: '2021-03-26',
 			showRecaptcha: true,
-		},
-		{
-			name: 'developer',
-			steps: [ 'site', 'user' ],
-			destination: '/devdocs/welcome',
-			description: 'Signup flow for developers in developer environment',
-			lastModified: '2015-11-23',
 		},
 		{
 			name: 'pressable-nux',
@@ -163,13 +150,6 @@ export function generateFlows( {
 			disallowResume: true,
 		},
 		{
-			name: 'simple',
-			steps: [ 'passwordless' ],
-			destination: '/',
-			description: 'A very simple signup flow',
-			lastModified: '2019-05-09',
-		},
-		{
 			name: 'clone-site',
 			steps: [
 				'clone-start',
@@ -184,8 +164,6 @@ export function generateFlows( {
 			lastModified: '2018-05-28',
 			disallowResume: true,
 		},
-		// Important: For any changes done to the ecommerce flow,
-		// please copy the same changes to ecommerce-onboarding flow too
 		{
 			name: 'ecommerce',
 			steps: [ 'user', 'domains', 'plans-ecommerce-fulfilled' ],
@@ -193,13 +171,6 @@ export function generateFlows( {
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2020-08-11',
 			showRecaptcha: true,
-		},
-		{
-			name: 'ecommerce-onboarding',
-			steps: [ 'user', 'domains', 'plans-ecommerce' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2020-03-04',
 		},
 		{
 			name: 'ecommerce-design-first',
@@ -250,18 +221,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'domain',
-			steps: [
-				'domain-only',
-				'site-or-domain',
-				'site-picker',
-				'themes',
-				'plans-site-selected',
-				'user',
-			],
-			destination: getThankYouNoSiteDestination,
+			steps: [ 'domain-only', 'site-or-domain', 'site-picker', 'plans-site-selected', 'user' ],
+			destination: getDomainSignupFlowDestination,
 			description: 'An experimental approach for WordPress.com/domains',
 			disallowResume: true,
-			lastModified: '2022-01-20',
+			lastModified: '2022-02-15',
 			showRecaptcha: true,
 		},
 		{
@@ -386,9 +350,9 @@ export function generateFlows( {
 				'site-options',
 				'starting-point',
 				'courses',
+				'design-setup-site',
 				'store-options',
 				'store-features',
-				'design-setup-site',
 			],
 			destination: getDestinationFromIntent,
 			description:
@@ -420,7 +384,8 @@ export function generateFlows( {
 			steps: [ 'store-address', 'business-info', 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',
-			providesDependenciesInQuery: [ 'site' ],
+			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
+			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2021-12-21',
 			disallowResume: false,
 		},

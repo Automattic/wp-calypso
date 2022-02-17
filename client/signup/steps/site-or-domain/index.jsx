@@ -201,7 +201,11 @@ class SiteOrDomain extends Component {
 			goToNextStep();
 		} else {
 			this.props.submitSignupStep( { stepName: 'site-picker', wasSkipped: true } );
-			goToStep( 'themes' );
+			this.props.submitSignupStep(
+				{ stepName: 'themes', wasSkipped: true },
+				{ themeSlugWithRepo: 'pub/twentysixteen' }
+			);
+			goToStep( 'plans-site-selected' );
 		}
 	};
 

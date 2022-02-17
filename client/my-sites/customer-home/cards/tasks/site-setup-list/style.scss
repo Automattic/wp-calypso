@@ -126,6 +126,10 @@
 			}
 		}
 
+		&:focus-visible {
+			box-shadow: inset 0 0 0 2px var( --color-primary );
+		}
+
 		&.is-current {
 			background-color: var( --color-primary-0 );
 			font-weight: 600;
@@ -165,6 +169,7 @@
 	}
 
 	.nav-item__text {
+		display: flex;
 		text-align: left;
 		line-height: 20px;
 	}
@@ -191,6 +196,12 @@
 
 	.site-setup-list__task-actions {
 		margin-top: 0;
+	}
+
+	.site-setup-list__task-skip {
+		&:focus-visible {
+			box-shadow: 0 0 0 2px var( --color-primary );
+		}
 	}
 
 	.spinner {

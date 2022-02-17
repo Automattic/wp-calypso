@@ -68,8 +68,6 @@
 }
 
 .design-picker__preview {
-	padding-bottom: 30px;
-
 	.step-wrapper__content {
 		height: calc( 100vh - 245px );
 
@@ -78,7 +76,11 @@
 		}
 
 		@include break-small {
-			height: calc( 100vh - 128px );
+			height: calc( 100vh - 132px );
+		}
+
+		@include break-medium {
+			height: calc( 100vh - 148px );
 		}
 	}
 

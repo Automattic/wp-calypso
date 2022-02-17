@@ -1,0 +1,114 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+
+.dialog__backdrop {
+	&.locale-switcher__overlay {
+		display: block;
+
+		background-color: rgba( 29, 35, 39, 0.92 );
+		color: var( --color-text-inverted );
+
+		-webkit-font-smoothing: initial;
+	}
+
+	.locale-switcher__content.dialog.card {
+		height: 100%;
+		max-width: none;
+		max-height: none;
+
+		background-color: transparent;
+		box-shadow: none;
+	}
+}
+
+.locale-switcher.dialog__content {
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	padding: 5vh 5vw;
+
+	color: var( --color-text-inverted );
+
+	.locale-switcher__header {
+		display: flex;
+		justify-content: space-between;
+
+		margin: 1.25rem 1.25rem 2rem;
+	}
+
+	.locale-switcher__title {
+		margin: 0;
+
+		color: inherit;
+
+		font-size: 1.75rem;
+		font-weight: 400;
+	}
+
+	.locale-switcher__close-btn {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		border: solid 2px transparent;
+		border-radius: 4px;
+		color: inherit;
+
+		transition: background 0.1s, border 0.1s;
+
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			background: var( --studio-black );
+			border-color: currentColor;
+			outline: none;
+		}
+
+		svg {
+			fill: currentColor;
+		}
+	}
+
+	.locale-switcher__list {
+		max-width: 500px;
+		margin: 1.25rem;
+
+		list-style-type: none;
+
+		@include break-small {
+			column-count: 2;
+		}
+	}
+
+	.locale-switcher__link {
+		display: block;
+
+		box-sizing: border-box;
+		max-width: 200px;
+		margin: 0.5rem 0;
+		padding: 0.75rem 1.25rem;
+
+		border-radius: 4px;
+		border: solid 2px transparent;
+		color: inherit;
+
+		font-size: 1rem;
+
+		transition: background 0.1s, border 0.1s;
+
+		&:hover {
+			border-color: currentColor;
+			background: #90aec2;
+		}
+
+		&:focus {
+			border-color: currentColor;
+			outline: none;
+		}
+
+		&.is-active {
+			background: var( --studio-black );
+		}
+	}
+}

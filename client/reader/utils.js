@@ -4,7 +4,7 @@ import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 
 export function isSpecialClick( event ) {
-	return event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
+	return event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 }
 
 export function isPostNotFound( post ) {

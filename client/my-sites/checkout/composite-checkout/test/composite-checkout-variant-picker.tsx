@@ -18,7 +18,7 @@ import {
 	domainProduct,
 	planWithoutDomain,
 	fetchStripeConfiguration,
-	mockSetCartEndpoint,
+	mockSetCartEndpointWith,
 	mockGetCartEndpointWith,
 	getActivePersonalPlanDataForType,
 	getPersonalPlanForInterval,
@@ -78,6 +78,11 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			sub_total_display: 'R$156',
 			coupon_discounts_integer: [],
 		};
+
+		const mockSetCartEndpoint = mockSetCartEndpointWith( {
+			currency: initialCart.currency,
+			locale: initialCart.locale,
+		} );
 
 		const store = createTestReduxStore();
 		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );

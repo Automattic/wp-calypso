@@ -8,6 +8,7 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getWpOrgImporterUrl } from '../../import/util';
 import { Importer, ImportJob } from '../types';
 import { ContentChooser } from './content-chooser';
 import ImportContentOnly from './import-content-only';
@@ -35,7 +36,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	const { job, fromSite, siteSlug, siteId } = props;
 	const siteItem = useSelector( ( state ) => getSiteBySlug( state, siteSlug ) );
 	const fromSiteItem = useSelector( ( state ) =>
-		getSiteBySlug( state, convertToFriendlyWebsiteName( fromSite ) )
+		getSiteBySlug( state, fromSite ? convertToFriendlyWebsiteName( fromSite ) : '' )
 	);
 	const isSiteAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -59,7 +60,9 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	}
 
 	function switchToContentUploadScreen() {
-		updateCurrentPageQueryParam( { option: WPImportOption.CONTENT_ONLY } );
+		isSiteAtomic
+			? redirectToWpAdminWordPressImporter()
+			: updateCurrentPageQueryParam( { option: WPImportOption.CONTENT_ONLY } );
 	}
 
 	function checkImporterAvailability() {
@@ -95,6 +98,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 		return page( `/import/${ siteSlug }` );
 	}
 
+	function redirectToWpAdminWordPressImporter() {
+		return page( getWpOrgImporterUrl( siteSlug, 'wordpress' ) );
+	}
+
 	/**
 	 ↓ HTML
 	 */
@@ -127,7 +134,6 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 					return (
 						<ImportContentOnly
 							job={ job }
-							fromSite={ fromSite }
 							importer={ importer }
 							siteItem={ siteItem }
 							siteSlug={ siteSlug }

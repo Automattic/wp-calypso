@@ -8,11 +8,11 @@ import page from 'page';
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormattedDate from 'calypso/components/formatted-date';
-import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
 import './style.scss';
@@ -48,8 +48,12 @@ export default function LicensePreview( {
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 	const showDomain =
 		domain && [ LicenseState.Attached, LicenseState.Revoked ].indexOf( licenseState ) !== -1;
-	const justIssued =
-		moment.utc( issuedAt, 'YYYY-MM-DD HH:mm:ss' ) > moment.utc().subtract( 1, 'minute' );
+
+	const oneMinuteAgo = moment.utc().subtract( 1, 'minute' );
+
+	const justIssued = moment.utc( issuedAt, 'YYYY-MM-DD HH:mm:ss' ) > oneMinuteAgo;
+
+	const justAssigned = moment.utc( attachedAt, 'YYYY-MM-DD HH:mm:ss' ) > oneMinuteAgo;
 
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
@@ -101,10 +105,17 @@ export default function LicensePreview( {
 							</span>
 						) }
 
-						{ justIssued && (
+						{ justIssued && ! justAssigned && (
 							<span className="license-preview__tag license-preview__tag--is-just-issued">
 								<Gridicon icon="checkmark-circle" size={ 18 } />
 								{ translate( 'Just issued' ) }
+							</span>
+						) }
+
+						{ justAssigned && (
+							<span className="license-preview__tag license-preview__tag--is-assigned">
+								<Gridicon icon="checkmark-circle" size={ 18 } />
+								{ translate( 'Successfully assigned' ) }
 							</span>
 						) }
 					</h3>
@@ -149,14 +160,12 @@ export default function LicensePreview( {
 
 				<div>
 					{ licenseState === LicenseState.Detached && (
-						<ClipboardButton
-							text={ licenseKey }
-							className="license-preview__copy-license-key"
+						<Button
 							compact
-							onCopy={ onCopyLicense }
+							href={ addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' ) }
 						>
-							{ translate( 'Copy License' ) }
-						</ClipboardButton>
+							{ translate( 'Assign License' ) }
+						</Button>
 					) }
 				</div>
 

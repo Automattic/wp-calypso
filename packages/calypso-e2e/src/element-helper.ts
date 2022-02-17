@@ -51,7 +51,10 @@ export async function waitForElementEnabled(
 export async function clickNavTab( page: Page, name: string ): Promise< void > {
 	// Mobile view - navtabs become a dropdown.
 	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-		await page.click( selectors.mobileNavTabsToggle );
+		const navTabsButtonLocator = page.locator( selectors.mobileNavTabsToggle );
+		await navTabsButtonLocator.click();
+		const navPanelLocator = page.locator( '.section-nav__panel' );
+		await navPanelLocator.waitFor( { state: 'visible' } );
 	}
 
 	// Get the current active tab, then check against the intended target.

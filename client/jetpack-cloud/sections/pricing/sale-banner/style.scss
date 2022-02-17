@@ -6,19 +6,9 @@
 	align-items: center;
 	justify-content: center;
 	padding: 1rem 3rem 1rem 2rem;
-	margin: -47px -32px 47px; // Undo the padding-top set by .layout__content
 	font-size: 1rem;
 	color: var( --studio-black );
 	background-color: var( --studio-jetpack-green-30 );
-
-	// Breakpoint taken from jetpack.com, not standard in Calypso
-	@media ( min-width: 661px ) {
-		margin: -71px -32px 71px; // Undo the padding-top set by .layout__content
-	}
-
-	@media ( min-width: 960px ) {
-		margin: -79px -32px 79px; // Undo the padding-top set by .layout__content
-	}
 
 	@media ( min-width: 1101px ) {
 		padding: 1rem;

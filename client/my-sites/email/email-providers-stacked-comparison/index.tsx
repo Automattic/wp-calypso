@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -34,7 +33,7 @@ export type EmailProvidersStackedComparisonProps = {
 	comparisonContext: string;
 	selectedDomainName: string;
 	selectedEmailProviderSlug?: string;
-	selectedIntervalLength?: IntervalLength;
+	selectedIntervalLength?: IntervalLength | undefined;
 	source: string;
 };
 
@@ -146,7 +145,7 @@ const EmailProvidersStackedComparison = ( {
 				{ translate( 'Pick an email solution' ) }
 			</h1>
 
-			{ isEnabled( 'emails/in-depth-comparison' ) && selectedSite && (
+			{ selectedSite && (
 				<div className="email-providers-stacked-comparison__sub-header">
 					{ translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
 						components: {

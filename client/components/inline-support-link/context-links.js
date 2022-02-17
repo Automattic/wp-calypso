@@ -177,6 +177,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/webmaster-tools/',
 		post_id: 5022,
 	},
+	'introduction-to-woocommerce': {
+		link: 'https://wordpress.com/support/introduction-to-woocommerce/',
+		post_id: 176336,
+	},
 };
 
 export default contextLinks;

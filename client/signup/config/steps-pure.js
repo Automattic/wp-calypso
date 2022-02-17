@@ -29,6 +29,7 @@ export function generateSteps( {
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
+	setStoreFeatures = noop,
 	setIntentOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
@@ -126,11 +127,6 @@ export function generateSteps( {
 			providesDependencies: [ 'siteSlug' ],
 		},
 
-		about: {
-			stepName: 'about',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo', 'siteTitle', 'surveyQuestion' ],
-		},
-
 		user: {
 			stepName: 'user',
 			apiRequestFunction: createAccount,
@@ -141,7 +137,6 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'redirect',
-				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
 			props: {
@@ -161,7 +156,6 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
-				'user_id',
 			],
 			optionalDependencies: [
 				'bearer_token',
@@ -169,7 +163,6 @@ export function generateSteps( {
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
 				'allowUnauthenticated',
-				'user_id',
 			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
@@ -194,12 +187,14 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
 			providesDependencies: [ 'siteTitle', 'tagline' ],
 			apiRequestFunction: setOptionsOnSite,
-			delayApiRequestUntilComplete: true,
 		},
 
 		'store-features': {
 			stepName: 'store-features',
 			dependencies: [ 'siteSlug' ],
+			apiRequestFunction: setStoreFeatures,
+			providesDependencies: [ 'isFSEActive', 'storeType' ],
+			optionalDependencies: [ 'isFSEActive', 'storeType' ],
 		},
 
 		'starting-point': {
@@ -404,7 +399,6 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
-				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 		},
@@ -420,7 +414,6 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'plans_reorder_abtest_variation',
-				'user_id',
 			],
 			optionalDependencies: [ 'plans_reorder_abtest_variation' ],
 			props: {
@@ -576,13 +569,6 @@ export function generateSteps( {
 			},
 		},
 
-		passwordless: {
-			stepName: 'passwordless',
-			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'email', 'username' ],
-			unstorableDependencies: [ 'bearer_token' ],
-		},
-
 		'p2-details': {
 			stepName: 'p2-details',
 		},
@@ -735,20 +721,21 @@ export function generateSteps( {
 		// Woocommerce Install steps.
 		'store-address': {
 			stepName: 'store-address',
-			dependencies: [ 'site' ],
+			dependencies: [ 'siteSlug', 'back_to' ],
+			optionalDependencies: [ 'back_to' ],
 		},
 		'business-info': {
 			stepName: 'business-info',
-			dependencies: [ 'site' ],
+			dependencies: [ 'siteSlug' ],
 		},
 		confirm: {
 			stepName: 'confirm',
-			dependencies: [ 'site' ],
+			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'siteConfirmed' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-			dependencies: [ 'site', 'siteConfirmed' ],
+			dependencies: [ 'siteSlug', 'siteConfirmed' ],
 		},
 	};
 }

@@ -12,6 +12,10 @@ import {
 	EligibilityData,
 	EligibilityWarning,
 } from 'calypso/state/automated-transfer/selectors';
+import {
+	getCurrentUserEmail,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
@@ -41,6 +45,8 @@ type EligibilityHook = {
 	};
 	isReadyToStart: boolean;
 	isAtomicSite: boolean;
+	currentUserEmail: string;
+	isEmailVerified: boolean;
 };
 
 export default function useEligibility( siteId: number ): EligibilityHook {
@@ -61,6 +67,10 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const { eligibilityHolds, eligibilityWarnings }: EligibilityData = useSelector( ( state ) =>
 		getEligibility( state, siteId )
 	);
+
+	// Get email verification data.
+	const currentUserEmail = useSelector( ( state ) => getCurrentUserEmail( state ) );
+	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
 
 	/*
 	 * Inspect transfer to detect blockers.
@@ -178,8 +188,11 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
 			{
-				redirect_to: addQueryArgs( { site: wpcomDomain }, '/start/woocommerce-install/transfer' ),
-				cancel_to: addQueryArgs( { site: wpcomDomain }, '/start/woocommerce-install/confirm' ),
+				redirect_to: addQueryArgs(
+					{ siteSlug: wpcomDomain },
+					'/start/woocommerce-install/transfer'
+				),
+				cancel_to: addQueryArgs( { siteSlug: wpcomDomain }, '/start/woocommerce-install/confirm' ),
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),
@@ -211,5 +224,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 		isDataReady: transferringDataIsAvailable,
 		isReadyToStart,
 		isAtomicSite,
+		currentUserEmail,
+		isEmailVerified,
 	};
 }

@@ -45,21 +45,23 @@ const UpsellWrapper = styled.div< DivProps >`
 			border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 			margin-left: 0;
 			margin-right: 0;
-			padding-left: 20px;
-			padding-right: 20px;
+			padding-left: 24px;
+			padding-right: 24px;
 		}
 
 		.section-header__label {
 			color: ${ ( props ) => props.theme.colors.textColor };
-			font-size: 16px;
+			font-size: 14px;
+			font-weight: 600;
 		}
 	}
 
 	.cart__upsell-body {
 		padding: 0 20px 20px;
+		font-size: 14px;
 
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-			padding: 20px;
+			padding: 16px 24px 24px;
 		}
 
 		p {

@@ -119,7 +119,6 @@ describe( 'User Can log in', () => {
 
 		if ( electronApp ) {
 			try {
-				await electronApp.context().close();
 				await electronApp.close();
 			} catch {}
 		}

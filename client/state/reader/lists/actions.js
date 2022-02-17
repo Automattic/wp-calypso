@@ -29,6 +29,7 @@ import 'calypso/state/data-layer/wpcom/read/lists/items';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/sites/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
+import 'calypso/state/data-layer/wpcom/read/lists/tags/new';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/new';
 import 'calypso/state/reader/init';
 

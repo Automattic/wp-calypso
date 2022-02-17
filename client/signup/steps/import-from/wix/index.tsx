@@ -7,15 +7,17 @@ import { getStepUrl } from 'calypso/signup/utils';
 import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
+import { getError } from 'calypso/state/imports/site-importer/selectors';
 import CompleteScreen from '../components/complete-screen';
 import ErrorMessage from '../components/error-message';
 import GettingStartedVideo from '../components/getting-started-video';
 import ProgressScreen from '../components/progress-screen';
-import { Importer, ImportJob, ImportJobParams } from '../types';
+import { Importer, ImportError, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
 
 interface Props {
 	job?: ImportJob;
+	error?: ImportError;
 	run: boolean;
 	siteId: number;
 	siteSlug: string;
@@ -26,7 +28,17 @@ interface Props {
 }
 export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wix';
-	const { job, run, siteId, siteSlug, fromSite, importSite, startImport, resetImport } = props;
+	const {
+		job,
+		error,
+		run,
+		siteId,
+		siteSlug,
+		fromSite,
+		importSite,
+		startImport,
+		resetImport,
+	} = props;
 
 	/**
 	 ↓ Effects
@@ -102,7 +114,10 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function checkIsFailed() {
-		return job && job.importerState === appStates.IMPORT_FAILURE;
+		return (
+			( job && job.importerState === appStates.IMPORT_FAILURE ) ||
+			( error?.error && error?.errorType === 'importError' )
+		);
 	}
 
 	function showVideoComponent() {
@@ -113,15 +128,11 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		<>
 			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
 				{ ( () => {
-					if ( checkProgress() ) {
-						/**
-						 * Progress screen
-						 */
+					if ( checkIsFailed() ) {
+						return <ErrorMessage siteSlug={ siteSlug } />;
+					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					} else if ( checkIsSuccess() ) {
-						/**
-						 * Complete screen
-						 */
 						return (
 							<CompleteScreen
 								siteId={ siteId }
@@ -130,13 +141,8 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 								resetImport={ resetImport }
 							/>
 						);
-					} else if ( checkIsFailed() ) {
-						return <ErrorMessage siteSlug={ siteSlug } />;
 					}
 
-					/**
-					 * Loading screen
-					 */
 					return <LoadingEllipsis />;
 				} )() }
 
@@ -146,8 +152,13 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default connect( null, {
-	importSite,
-	startImport,
-	resetImport,
-} )( WixImporter );
+export default connect(
+	( state ) => ( {
+		error: getError( state ),
+	} ),
+	{
+		importSite,
+		startImport,
+		resetImport,
+	}
+)( WixImporter );

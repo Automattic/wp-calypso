@@ -1,8 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import {
 	READER_UNFOLLOW,
-	READER_RECORD_FOLLOW,
-	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
 	READER_FOLLOW_ERROR,
 	READER_SITE_REQUEST_SUCCESS,
@@ -55,33 +53,6 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 			expect( state ).toEqual( {} );
-		} );
-
-		test( 'should insert a new URL when followed', () => {
-			const original = deepFreeze( {
-				'discover.wordpress.com': { is_following: true },
-				'dailypost.wordpress.com': { is_following: true },
-			} );
-			const state = items( original, {
-				type: READER_RECORD_FOLLOW,
-				payload: { url: 'http://data.blog' },
-			} );
-			expect( state[ 'data.blog' ] ).toEqual( { is_following: true } );
-		} );
-
-		test( 'should remove a URL when unfollowed', () => {
-			const original = deepFreeze( {
-				'discover.wordpress.com': { blog_ID: 123, is_following: true },
-				'dailypost.wordpress.com': { blog_ID: 124, is_following: true },
-			} );
-			const state = items( original, {
-				type: READER_RECORD_UNFOLLOW,
-				payload: { url: 'http://discover.wordpress.com' },
-			} );
-			expect( state[ 'discover.wordpress.com' ] ).toEqual( {
-				blog_ID: 123,
-				is_following: false,
-			} );
 		} );
 
 		test( 'should optimistically turn off new post notifications when unfollowed', () => {

@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import siteOptionsImage from 'calypso/assets/images/onboarding/site-options.svg';
+import storeImageUrl from 'calypso/assets/images/onboarding/store-onboarding.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -29,7 +29,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 			case 'store-options':
 				return {
 					headerText: translate( "First, let's give your store a name" ),
-					headerImage: intentImageUrl,
+					headerImage: storeImageUrl,
 					siteTitleLabel: translate( 'Store name' ),
 					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
 				};

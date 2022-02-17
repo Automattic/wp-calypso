@@ -12,6 +12,7 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getCurrentUserTimeSinceSignup from 'calypso/state/selectors/get-current-user-time-since-signup';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
@@ -62,6 +63,7 @@ export const QuickLinks = ( {
 	siteSlug,
 	blockEditorSettings,
 	areBlockEditorSettingsLoading,
+	daysSinceSignup,
 } ) => {
 	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
 
@@ -187,7 +189,7 @@ export const QuickLinks = ( {
 						gridicon="plugins"
 					/>
 					<ActionBox
-						href="https://wp.me/logo-maker/?utm_campaign=my_home"
+						href={ 'https://wp.me/logo-maker/?utm_campaign=my_home_' + daysSinceSignup + 'd' }
 						onClick={ trackDesignLogoAction }
 						target="_blank"
 						label={
@@ -228,6 +230,7 @@ export const QuickLinks = ( {
 	return (
 		<FoldableCard
 			className="quick-links"
+			headerTagName="h2"
 			header={ translate( 'Quick links' ) }
 			clickableHeader
 			expanded={ isExpanded }
@@ -406,6 +409,7 @@ const mapStateToProps = ( state ) => {
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		isUnifiedNavEnabled: isNavUnificationEnabled,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+		daysSinceSignup: getCurrentUserTimeSinceSignup( state ),
 	};
 };
 

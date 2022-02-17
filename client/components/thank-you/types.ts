@@ -11,6 +11,7 @@ export type ThankYouNextStepProps = {
 export type ThankYouNoticeProps = {
 	noticeTitle: React.ReactNode | React.ReactFragment;
 	noticeIcon?: string;
+	noticeIconCustom?: React.ReactNode | React.ReactFragment;
 };
 
 export type ThankYouSectionProps = {

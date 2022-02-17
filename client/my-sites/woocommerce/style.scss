@@ -1,13 +1,27 @@
 @import '@automattic/onboarding/styles/mixins';
+@import 'jetpack-connect/colors.scss';
+
+.is-group-woocommerce-installation.is-section-woocommerce-installation .layout__content {
+	padding-bottom: 0; //removes whitespace in the end
+}
+
+body.is-section-woocommerce-installation.theme-default.color-scheme {
+	--color-surface-backdrop: var( --studio-white );
+}
 
 .woocommerce {
-	@import 'dashboard/setup/style';
-
 	.main {
 		padding-top: 72px;
 
 		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 35px;
+		}
+
+		&.is-wide-layout {
+			width: 100%;
+			padding-bottom: 0;
+			max-width: 100%;
+			margin: 0;
 		}
 	}
 
@@ -34,6 +48,96 @@
 
 		@include breakpoint-deprecated( '<660px' ) {
 			margin-bottom: 24px;
+		}
+	}
+
+	.landing-page__empty-content {
+		max-width: 540px;
+		margin: 0 auto;
+		padding-top: 3em;
+		padding-left: 15px;
+		padding-right: 15px;
+
+		.empty-content__title {
+			@include onboarding-heading-text;
+			color: var( --studio-gray-90 );
+			padding: 1em 0 0.5em;
+		}
+
+		.empty-content__line {
+			@include onboarding-large-text;
+			margin-bottom: 1.5em;
+		}
+	}
+
+	.landing-page__features-section {
+		@include woocommerce-colors();
+		background-color: var( --color-woocommerce-onboarding-background );
+		margin-top: 100px;
+		padding-top: 60px;
+		padding-bottom: 40px;
+
+		padding-left: 10%;
+		padding-right: 5%;
+
+		.formatted-header .formatted-header__title {
+			@include onboarding-font-recoleta;
+			text-align: left;
+			font-size: 2rem;
+			max-width: 377px;
+			line-height: 40px;
+			padding-left: 0; // Match promo-card pad-left
+		}
+
+		.promo-section {
+			.promo-section__promos {
+				flex-direction: row;
+
+				.promo-card {
+					box-shadow: none;
+					background-color: var( --color-woocommerce-onboarding-background );
+					padding-left: 0;
+					padding-right: 0;
+					width: 90%;
+
+					@media ( min-width: $break-wide ) {
+						width: calc( 30% );
+						padding-left: 0;
+						padding-right: 20px;
+					}
+					.action-panel__title {
+						justify-content: normal;
+						font-weight: 500;
+						font-size: $font-body;
+
+						.gridicon {
+							padding-right: 0.5rem;
+							fill: #0675c4; // TODO: maybe we need to define this color as a variable somewhere?
+							flex-shrink: 0; // prevent icon resizing breaking p padding-left calc at 1300px
+						}
+					}
+
+					.action-panel__body {
+						font-size: $font-body-small;
+
+						p {
+							padding-left: calc( 24px + 0.5rem ); // grid icon + space
+						}
+					}
+				}
+			}
+		}
+
+		// Extend grey background outside the bottom stripe
+		&::before {
+			content: '';
+			background-color: var( --color-woocommerce-onboarding-background );
+			position: absolute;
+			height: 100%;
+			width: 200vw;
+			left: -100vw;
+			z-index: -1;
+			margin-top: -60px;
 		}
 	}
 }

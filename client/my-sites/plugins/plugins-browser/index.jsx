@@ -23,6 +23,8 @@ import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
@@ -35,7 +37,11 @@ import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import {
+	recordTracksEvent,
+	recordGoogleEvent,
+	composeAnalytics,
+} from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
@@ -52,6 +58,7 @@ import {
 } from 'calypso/state/plugins/wporg/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -100,6 +107,9 @@ const PluginsBrowser = ( {
 		( state ) =>
 			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
 	);
+	const isSiteConnected = useSelector( ( state ) =>
+		getSiteConnectionStatus( state, selectedSite?.ID )
+	);
 	const isVip = useSelector( ( state ) => isVipSite( state, selectedSite?.ID ) );
 	const hasJetpack = useSelector( hasJetpackSites );
 	const isRequestingSitesData = useSelector( isRequestingSites );
@@ -117,8 +127,7 @@ const PluginsBrowser = ( {
 	);
 	const pluginsByCategoryPopular = filterPopularPlugins(
 		popularPlugins,
-		pluginsByCategoryFeatured,
-		jetpackNonAtomic
+		pluginsByCategoryFeatured
 	);
 	const isFetchingPluginsByCategory = useSelector( ( state ) =>
 		isFetchingPluginsList( state, category )
@@ -147,17 +156,25 @@ const PluginsBrowser = ( {
 	}, [ isJetpack, selectedSite, hasJetpack ] );
 
 	useEffect( () => {
-		const items = [ { label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }` } ];
+		const items = [
+			{ label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }`, id: 'plugins' },
+		];
 		if ( search ) {
 			items.push( {
 				label: translate( 'Search Results' ),
 				href: `/plugins/${ siteSlug || '' }?s=${ search }`,
+				id: 'plugins-search',
 			} );
 		}
 
 		dispatch( updateBreadcrumbs( items ) );
 	}, [ siteSlug, search ] );
 
+	const trackSiteDisconnect = () =>
+		composeAnalytics(
+			recordGoogleEvent( 'Jetpack', 'Clicked in site indicator to start Jetpack Disconnect flow' ),
+			recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
+		);
 	const annoncementPages = [
 		{
 			headline: translate( 'NEW' ),
@@ -251,13 +268,29 @@ const PluginsBrowser = ( {
 
 						<UploadPluginButton isMobile={ isMobile } siteSlug={ siteSlug } />
 					</div>
-
 					<div className="plugins-browser__searchbox">
 						{ <SearchBox isMobile={ isMobile } doSearch={ doSearch } search={ search } /> }
 					</div>
 				</FixedNavigationHeader>
 			) }
-
+			{ isSiteConnected === false && (
+				<Notice
+					icon="notice"
+					showDismiss={ false }
+					status="is-warning"
+					text={ translate( '%(siteName)s cannot be accessed.', {
+						textOnly: true,
+						args: { siteName: selectedSite.title },
+					} ) }
+				>
+					<NoticeAction
+						onClick={ trackSiteDisconnect }
+						href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
+					>
+						{ translate( 'I’d like to fix this now' ) }
+					</NoticeAction>
+				</Notice>
+			) }
 			<UpgradeNudge
 				selectedSite={ selectedSite }
 				sitePlan={ sitePlan }
@@ -426,7 +459,7 @@ const translateCategory = ( { category, translate } ) => {
 				context: 'Category description for the plugin browser.',
 			} );
 		case 'paid':
-			return translate( 'Featured', {
+			return translate( 'Premium', {
 				context: 'Category description for the plugin browser.',
 			} );
 	}
@@ -522,7 +555,10 @@ const PluginBrowserContent = ( props ) => {
 	return (
 		<>
 			{ ! props.jetpackNonAtomic ? (
-				<PluginSingleListView { ...props } category="paid" />
+				<>
+					<PluginSingleListView { ...props } category="paid" />
+					<PluginSingleListView { ...props } category="featured" />
+				</>
 			) : (
 				<PluginSingleListView { ...props } category="featured" />
 			) }
@@ -628,7 +664,7 @@ const ManageButton = ( { shouldShowManageButton, siteAdminUrl, siteSlug, jetpack
 
 	return (
 		<Button className="plugins-browser__button" href={ managePluginsDestination }>
-			<span className="plugins-browser__button-text">{ translate( 'Manage plugins' ) }</span>
+			<span className="plugins-browser__button-text">{ translate( 'Installed Plugins' ) }</span>
 		</Button>
 	);
 };
@@ -672,13 +708,7 @@ function updateWpComRating( plugin ) {
  * @param {Array} popularPlugins
  * @param {Array} featuredPlugins
  */
-function filterPopularPlugins( popularPlugins = [], featuredPlugins = [], jetpackNonAtomic ) {
-	// Since paid plugins will not be available for Jetpack self hosted sites,
-	// continue with filtering the popular plugins.
-	if ( ! jetpackNonAtomic ) {
-		featuredPlugins = [];
-	}
-
+function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	const displayedFeaturedSlugsMap = new Map(
 		featuredPlugins
 			.slice( 0, SHORT_LIST_LENGTH ) // only displayed plugins

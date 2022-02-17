@@ -4,6 +4,7 @@ import './style.scss';
 
 export default function Main( {
 	className = '',
+	id = '',
 	children,
 	wideLayout = false,
 	fullWidthLayout = false,
@@ -14,7 +15,7 @@ export default function Main( {
 	} );
 
 	return (
-		<main className={ classes } role="main">
+		<main className={ classes } id={ id || null } role="main">
 			{ children }
 		</main>
 	);

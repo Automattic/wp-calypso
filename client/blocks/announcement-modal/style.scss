@@ -41,23 +41,22 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		box-sizing: border-box;
 	}
 
+	.components-modal__content {
+		position: relative;
+	}
+
 	.components-modal__header {
 		display: block;
 		position: absolute;
 		text-align: right;
 
 		svg {
-			fill: white;
-			filter: drop-shadow( 0 0 1px black );
+			fill: currentColor;
+			filter: none;
 		}
 
 		@media ( min-width: $modal-breakpoint ) {
 			position: fixed;
-
-			svg {
-				fill: currentColor;
-				filter: none;
-			}
 		}
 	}
 

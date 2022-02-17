@@ -34,6 +34,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Fields
 	 */
+	const showJetpackConnectionBlock = !! fromSite;
 	const [ hasOriginSiteJetpackConnected, setHasOriginSiteJetpackConnected ] = useState( false );
 	const [ isFetchingSite, setIsFetchingSite ] = useState( false );
 
@@ -46,6 +47,8 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Methods
 	 */
 	function checkOriginSiteJetpackConnection() {
+		if ( ! fromSite ) return;
+
 		setIsFetchingSite( true );
 
 		wpcom
@@ -86,7 +89,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 							{ __( 'Continue' ) }
 						</NextButton>
 					</ActionCard>
-					{ ! hasOriginSiteJetpackConnected && ! isFetchingSite && (
+					{ showJetpackConnectionBlock && ! hasOriginSiteJetpackConnected && ! isFetchingSite && (
 						<SelectItems
 							onSelect={ onJetpackSelection }
 							items={ [

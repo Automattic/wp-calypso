@@ -23,7 +23,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import Main from 'calypso/components/main';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
+import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 import {
 	isContactValidationResponseValid,
@@ -34,6 +34,7 @@ import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
+	persistSignupDestination,
 } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -45,6 +46,7 @@ import {
 	getProductBySlug,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
+import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import {
@@ -308,6 +310,7 @@ export class UpsellNudge extends Component {
 			hasSevenDayRefundPeriod,
 			pricePerMonthForMonthlyPlan,
 			pricePerMonthForAnnualPlan,
+			productSlug,
 			annualPlanSlug,
 		} = this.props;
 
@@ -346,6 +349,7 @@ export class UpsellNudge extends Component {
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						productCost={ productCost }
+						productSlug={ productSlug }
 						/* Use the callback form of setState() to ensure handleClickAccept()
 						 is called after the state update */
 						setCartItem={ ( newCartItem, callback = noop ) =>
@@ -370,11 +374,7 @@ export class UpsellNudge extends Component {
 		}
 	}
 
-	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
-		const { trackUpsellButtonClick, upsellType } = this.props;
-
-		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
-
+	getThankYouPageUrlForIncomingCart = ( shouldHideUpsellNudges = true ) => {
 		const getThankYouPageUrlArguments = {
 			siteSlug: this.props.siteSlug,
 			receiptId: this.props.receiptId || 'noPreviousPurchase',
@@ -383,7 +383,15 @@ export class UpsellNudge extends Component {
 			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
 		};
 
-		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+		return getThankYouPageUrl( getThankYouPageUrlArguments );
+	};
+
+	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
+		const { trackUpsellButtonClick, upsellType } = this.props;
+
+		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
+
+		const url = this.getThankYouPageUrlForIncomingCart( shouldHideUpsellNudges );
 
 		// Removes the destination cookie only if redirecting to the signup destination.
 		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
@@ -428,6 +436,13 @@ export class UpsellNudge extends Component {
 		// Professional Email needs to add the locally built cartItem to the cart,
 		// as we need to handle validation failures before redirecting to checkout.
 		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType ) {
+			// If we don't have an existing destination, calculate the thank you destination for
+			// the original cart contents, and only store it if the cart update succeeds.
+			const destinationFromCookie = retrieveSignupDestination();
+			const destinationToPersist = destinationFromCookie
+				? null
+				: this.getThankYouPageUrlForIncomingCart( true );
+
 			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ).then( () => {
 				if ( this.props?.cart?.messages ) {
 					const { errors } = this.props.cart.messages;
@@ -436,6 +451,11 @@ export class UpsellNudge extends Component {
 						return;
 					}
 				}
+
+				if ( destinationToPersist ) {
+					persistSignupDestination( destinationToPersist );
+				}
+
 				page( '/checkout/' + siteSlug );
 			} );
 			return;
@@ -535,14 +555,17 @@ const trackUpsellButtonClick = ( eventName ) => {
 	return recordTracksEvent( eventName, { section: 'checkout' } );
 };
 
-const resolveProductSlug = ( upsellType, productAlias ) => {
+const getProductSlug = ( upsellType, productAlias, planTerm ) => {
 	switch ( upsellType ) {
 		case BUSINESS_PLAN_UPGRADE_UPSELL:
 			return getPlanByPathSlug( productAlias )?.getStoreSlug();
+
 		case ANNUAL_PLAN_UPGRADE:
 			return productAlias;
+
 		case PROFESSIONAL_EMAIL_UPSELL:
-			return TITAN_MAIL_MONTHLY_SLUG;
+			return planTerm === TERM_MONTHLY ? TITAN_MAIL_MONTHLY_SLUG : TITAN_MAIL_YEARLY_SLUG;
+
 		case CONCIERGE_QUICKSTART_SESSION:
 		case CONCIERGE_SUPPORT_SESSION:
 		default:
@@ -571,7 +594,8 @@ export default connect(
 		const areStoredCardsLoading = hasLoadedCardsFromServer ? isFetchingCards : true;
 		const cards = getStoredCards( state );
 
-		const productSlug = resolveProductSlug( upsellType, upgradeItem );
+		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ) ?? TERM_MONTHLY;
+		const productSlug = getProductSlug( upsellType, upgradeItem, currentPlanTerm );
 		const productProperties = pick( getProductBySlug( state, productSlug ), [
 			'product_slug',
 			'product_id',
@@ -618,6 +642,7 @@ export default connect(
 			isEligibleForSignupDestinationResult: isEligibleForSignupDestination( props.cart ),
 			pricePerMonthForMonthlyPlan,
 			pricePerMonthForAnnualPlan,
+			productSlug,
 			annualPlanSlug,
 		};
 	},

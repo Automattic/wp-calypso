@@ -8,9 +8,9 @@
 
 .themes__install-theme-button-container {
 	margin: auto;
-	margin-right: 15px;
+	margin-right: 16px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-right: 0;
 		margin-bottom: 17px;
 	}

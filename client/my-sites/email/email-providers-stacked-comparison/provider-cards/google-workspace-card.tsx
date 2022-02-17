@@ -55,7 +55,9 @@ const getGoogleFeatures = (): TranslateResult[] => {
 		translate( '30GB storage' ),
 		translate( 'Email, calendars, and contacts' ),
 		translate( 'Video calls, docs, spreadsheets, and more' ),
-		translate( 'Work from anywhere on any device – even offline' ),
+		translate( 'Real-time collaboration' ),
+		translate( 'Store and share files in the cloud' ),
+		translate( '24/7 support via email' ),
 	];
 };
 
@@ -64,7 +66,7 @@ const googleWorkspaceCardInformation: ProviderCardProps = {
 	expandButtonLabel: translate( 'Select' ),
 	providerKey: 'google',
 	description: translate(
-		'Professional email integrated with Google Meet and other productivity tools from Google.'
+		'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
 	),
 	logo: { path: googleWorkspaceIcon, className: 'google-workspace-icon' },
 	appLogos: getGoogleAppLogos(),

@@ -370,12 +370,19 @@ export default connect(
 				const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
 				const discountPrice = getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
 
-				let annualPricePerMonth = rawPrice;
+				let annualPricePerMonth = discountPrice || rawPrice;
 				if ( isMonthlyPlan ) {
 					// Get annual price per month for comparison
 					const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
 					if ( yearlyPlan ) {
-						annualPricePerMonth = getPlanRawPrice( state, yearlyPlan.product_id, true );
+						const yearlyPlanDiscount = getDiscountedRawPrice(
+							state,
+							yearlyPlan.product_id,
+							showMonthlyPrice
+						);
+						annualPricePerMonth =
+							yearlyPlanDiscount ||
+							getPlanRawPrice( state, yearlyPlan.product_id, showMonthlyPrice );
 					}
 				}
 

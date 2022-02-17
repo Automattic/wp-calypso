@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -20,7 +19,6 @@ import { sparkWidgets, topProducts, topCategories, topCoupons, noDataMsg } from 
 import List from './store-stats-list';
 import Module from './store-stats-module';
 import Chart from './store-stats-orders-chart';
-import StoreStatsReferrerWidget from './store-stats-referrer-widget';
 import WidgetList from './store-stats-widget-list';
 import { getEndPeriod, getQueries, getWidgetPath } from './utils';
 
@@ -37,7 +35,7 @@ class StoreStats extends Component {
 	render() {
 		const { queryDate, selectedDate, siteId, slug, unit, queryParams, translate } = this.props;
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
-		const { orderQuery, referrerQuery } = getQueries( unit, queryDate );
+		const { orderQuery } = getQueries( unit, queryDate );
 		const { topListQuery } = getQueries( unit, selectedDate );
 		const topWidgets = [ topProducts, topCategories, topCoupons ];
 		const widgetPath = getWidgetPath( unit, slug, queryParams );
@@ -92,41 +90,6 @@ class StoreStats extends Component {
 						showQueryDate
 					/>
 				</StatsPeriodNavigation>
-				{ config.isEnabled( 'woocommerce/extension-referrers' ) && (
-					<div>
-						{ siteId && (
-							<QuerySiteStats
-								statType="statsStoreReferrers"
-								siteId={ siteId }
-								query={ referrerQuery }
-							/>
-						) }
-						<Module
-							siteId={ siteId }
-							emptyMessage={ noDataMsg }
-							query={ referrerQuery }
-							statType="statsStoreReferrers"
-							header={
-								<SectionHeader
-									href={ `/store/stats/referrers${ widgetPath }` }
-									label={ 'Store Referrers' }
-								/>
-							}
-						>
-							<StoreStatsReferrerWidget
-								unit={ unit }
-								queryParams={ queryParams }
-								slug={ slug }
-								siteId={ siteId }
-								query={ referrerQuery }
-								statType="statsStoreReferrers"
-								endSelectedDate={ endSelectedDate }
-								limit={ 5 }
-								pageType="orders"
-							/>
-						</Module>
-					</div>
-				) }
 				<div className="store-stats__widgets">
 					{ sparkWidgets.map( ( widget, index ) => (
 						<div className="store-stats__widgets-column widgets" key={ index }>

@@ -409,6 +409,10 @@ export const otherHosts: Host[] = [
 		id: 'wpengine',
 		name: 'WPEngine',
 	},
+	{
+		id: 'jurassic_ninja',
+		name: 'Jurassic Ninja',
+	},
 ];
 
 export const getProviderNameFromId = ( searchId?: string ): string | null => {

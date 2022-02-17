@@ -24,12 +24,12 @@ const EmailNoDomain = ( { selectedSite, translate, source } ) => {
 	if ( isFreePlanProduct ) {
 		return (
 			<EmptyContent
-				action={ translate( 'Upgrade', { context: 'verb' } ) }
+				action={ translate( 'Upgrade to a plan' ) }
 				actionCallback={ trackEvent }
 				actionURL={ `/plans/${ selectedSite.slug }` }
 				illustration={ Illustration }
 				line={ translate(
-					'Upgrade now, set up your domain and pick from one of our flexible options to connect your domain with email and start getting emails today.'
+					'Upgrade to a plan now, set up your domain and pick from one of our flexible options to connect your domain with email and start getting emails today.'
 				) }
 				title={ translate( 'Get your own domain for a custom email address' ) }
 			/>

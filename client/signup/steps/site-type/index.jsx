@@ -11,7 +11,7 @@ import SiteTypeForm from './form';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',
-	'online-store': 'ecommerce-onboarding',
+	'online-store': 'ecommerce',
 };
 
 class SiteType extends Component {

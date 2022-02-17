@@ -142,7 +142,7 @@ describe( 'selectors', () => {
 
 		test( 'Should return proper priceFinal if couponDiscounts are provided', () => {
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, { def: 60 } ) ).toEqual( {
+			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, { abc: 0.5 } ) ).toEqual( {
 				introductoryOfferPrice: null,
 				priceFull: 120,
 				priceFinal: 60,
@@ -234,7 +234,7 @@ describe( 'selectors', () => {
 			};
 
 			expect(
-				computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, { def: 60, mno: 120 } )
+				computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, { abc: 0.5, jkl: 0.8 } )
 			).toEqual( [
 				{
 					planSlug: 'plan1',
@@ -249,7 +249,7 @@ describe( 'selectors', () => {
 					plan: testPlans.plan2,
 					product: state.productsList.items.plan2,
 					priceFull: 240,
-					priceFinal: 120,
+					priceFinal: 192,
 					introductoryOfferPrice: null,
 				},
 			] );

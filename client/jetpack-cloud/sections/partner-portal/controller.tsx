@@ -1,4 +1,5 @@
 import page from 'page';
+import AssignLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/assign-license';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
@@ -20,34 +21,31 @@ import {
 	valueToEnum,
 	ensurePartnerPortalReturnUrl,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
 import { addQueryArgs } from 'calypso/lib/route';
 import {
 	getCurrentPartner,
 	hasActivePartnerKey,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
+import getSites from 'calypso/state/selectors/get-sites';
 import Header from './header';
 import type PageJS from 'page';
 
 export function partnerContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
 	context.primary = <PartnerAccess />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
 export function termsOfServiceContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
 	context.primary = <TermsOfServiceConsent />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
 export function partnerKeyContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
 	context.primary = <SelectPartnerKey />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
@@ -55,7 +53,6 @@ export function billingDashboardContext( context: PageJS.Context, next: () => vo
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <BillingDashboard />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
@@ -81,7 +78,6 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 			sortField={ sortField }
 		/>
 	);
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
@@ -89,7 +85,16 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <IssueLicense />;
-	context.footer = <JetpackComFooter />;
+	next();
+}
+
+export function assignLicenseContext( context: PageJS.Context, next: () => void ): void {
+	const state = context.store.getState();
+	const sites = getSites( state );
+
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <AssignLicense sites={ sites } />;
 	next();
 }
 
@@ -97,7 +102,6 @@ export function paymentMethodListContext( context: PageJS.Context, next: () => v
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <PaymentMethodList />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
@@ -105,14 +109,12 @@ export function paymentMethodAddContext( context: PageJS.Context, next: () => vo
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <PaymentMethodAdd />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 
 export function landingPageContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
 	context.primary = <LandingPage />;
-	context.footer = <JetpackComFooter />;
 	next();
 }
 

@@ -673,7 +673,7 @@ function purchaseType( purchase ) {
 	}
 
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
-		return i18n.translate( 'Productivity Tools and Mailboxes at %(domain)s', {
+		return i18n.translate( 'Mailboxes and Productivity Tools at %(domain)s', {
 			args: {
 				domain: purchase.meta,
 			},
