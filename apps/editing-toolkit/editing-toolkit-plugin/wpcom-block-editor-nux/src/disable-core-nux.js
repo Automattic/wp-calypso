@@ -8,6 +8,9 @@ const unsubscribe = subscribe( () => {
 	if ( select( 'core/edit-post' )?.isFeatureActive( 'welcomeGuide' ) ) {
 		dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
 	}
+	if ( select( 'core/edit-site' )?.isFeatureActive( 'welcomeGuide' ) ) {
+		dispatch( 'core/edit-site' ).toggleFeature( 'welcomeGuide' );
+	}
 	unsubscribe();
 } );
 
