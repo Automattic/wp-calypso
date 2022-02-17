@@ -62,21 +62,21 @@ export class Login extends Component {
 	}
 
 	componentDidMount() {
-		this.recordPageView( this.props );
+		this.recordPageView();
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( this.props.twoFactorAuthType !== prevProps.twoFactorAuthType ) {
-			this.recordPageView( this.props );
+			this.recordPageView();
 		}
 
 		if ( this.props.socialConnect !== prevProps.socialConnect ) {
-			this.recordPageView( this.props );
+			this.recordPageView();
 		}
 	}
 
-	recordPageView( props ) {
-		const { socialConnect, twoFactorAuthType } = props;
+	recordPageView() {
+		const { socialConnect, twoFactorAuthType } = this.props;
 
 		let url = '/log-in';
 		let title = 'Login';
