@@ -13,7 +13,7 @@ import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-s
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const Sso = ( {
-	siteIsAutomatedTransfer,
+	isAtomic,
 	fields,
 	handleAutosavingToggle,
 	isRequestingSettings,
@@ -34,7 +34,7 @@ const Sso = ( {
 							'Allows registered users to log in to your site with their WordPress.com accounts.'
 						) }
 						link={
-							siteIsAutomatedTransfer
+							isAtomic
 								? 'https://wordpress.com/en/support/wordpress-com-secure-sign-on-sso/'
 								: 'https://jetpack.com/support/sso/'
 						}
@@ -87,7 +87,7 @@ Sso.defaultProps = {
 };
 
 Sso.propTypes = {
-	siteIsAutomatedTransfer: PropTypes.bool,
+	isAtomic: PropTypes.bool,
 	siteIsJetpack: PropTypes.bool,
 	handleAutosavingToggle: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,

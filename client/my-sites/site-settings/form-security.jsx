@@ -23,7 +23,7 @@ class SiteSettingsFormSecurity extends Component {
 			fields,
 			handleAutosavingToggle,
 			handleSubmitForm,
-			siteIsAutomatedTransfer,
+			isAtomic,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -62,7 +62,7 @@ class SiteSettingsFormSecurity extends Component {
 
 				<QueryJetpackSettings siteId={ siteId } />
 
-				{ ! siteIsAutomatedTransfer && (
+				{ ! isAtomic && (
 					<div>
 						<SettingsSectionHeader
 							disabled={ isRequestingSettings || isSavingSettings || disableSpamFiltering }
@@ -84,7 +84,7 @@ class SiteSettingsFormSecurity extends Component {
 
 				<SettingsSectionHeader title={ translate( 'WordPress.com log in' ) } />
 				<Sso
-					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+					isAtomic={ isAtomic }
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
@@ -97,7 +97,7 @@ class SiteSettingsFormSecurity extends Component {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
+	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
 	const protectIsUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
@@ -113,7 +113,7 @@ const connectComponent = connect( ( state ) => {
 
 	return {
 		siteId,
-		siteIsAutomatedTransfer,
+		isAtomic,
 		protectModuleActive,
 		protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,
 		akismetUnavailable: siteInDevMode && akismetIsUnavailableInDevMode,
