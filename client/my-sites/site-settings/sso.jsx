@@ -36,7 +36,7 @@ const Sso = ( {
 						link={
 							siteIsAutomatedTransfer
 								? 'https://wordpress.com/en/support/wordpress-com-secure-sign-on-sso/'
-								: 'https://jetpack.com/support/sso//#testimonials'
+								: 'https://jetpack.com/support/sso/'
 						}
 						privacyLink="https://jetpack.com/support/sso/#privacy"
 					/>
