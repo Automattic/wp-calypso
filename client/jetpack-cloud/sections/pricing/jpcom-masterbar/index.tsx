@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { useLocale, jetpackComLocales } from '@automattic/i18n-utils';
+import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
@@ -11,7 +11,6 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banner';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { trailingslashit } from 'calypso/lib/route';
-import { urlToDomainAndPath } from 'calypso/lib/url';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import useMobileBtn from './use-mobile-btn';
@@ -24,19 +23,22 @@ export const MAIN_CONTENT_ID = 'content';
 
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
 
+type Props = {
+	pathname?: string;
+};
+
 /**
  * WARNING: this component is a reflection of the Jetpack.com header, whose markup is located here:
  * https://opengrok.a8c.com/source/xref/a8c/jetpackme-new/parts/shared/header.php
  *
  * Both headers should stay in sync as much as possible.
  */
-const JetpackComMasterbar: React.FC = () => {
+const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const user = useSelector( getCurrentUser );
-	const isJpComLocale = useMemo( () => jetpackComLocales.includes( locale ), [ locale ] );
 	const sections = useMemo(
 		() => [
 			{
@@ -128,19 +130,6 @@ const JetpackComMasterbar: React.FC = () => {
 		} );
 	}, [] );
 
-	const getLocalizedLink = useCallback(
-		( link ) => {
-			if ( locale !== 'en' && isJpComLocale && link.indexOf( JETPACK_COM_BASE_URL ) === 0 ) {
-				return `https://${ locale }.${ urlToDomainAndPath( link ) }`;
-			}
-
-			return link;
-		},
-		[ locale, isJpComLocale ]
-	);
-
-	const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-
 	useSubmenuBtn();
 	useUserMenu();
 	useMobileBtn();
@@ -158,7 +147,7 @@ const JetpackComMasterbar: React.FC = () => {
 						</a>
 						<ExternalLink
 							className="header__home-link"
-							href={ JETPACK_COM_BASE_URL }
+							href={ localizeUrl( JETPACK_COM_BASE_URL, locale ) }
 							aria-label={ translate( 'Jetpack home' ) }
 							onClick={ () => recordTracksEvent( 'calypso_jetpack_nav_logo_click' ) }
 						>
@@ -184,15 +173,16 @@ const JetpackComMasterbar: React.FC = () => {
 										<li
 											className={ classNames( {
 												'is-active':
+													pathname &&
 													href &&
 													new URL( trailingslashit( href ) ).pathname ===
-														new URL( trailingslashit( currentUrl ) ).pathname,
+														trailingslashit( pathname ),
 											} ) }
 											key={ href || id }
 										>
 											<Tag
 												className={ hasChildren ? 'header__menu-btn js-menu-btn' : '' }
-												href={ href ? getLocalizedLink( href ) : `#${ id }` }
+												href={ href ? localizeUrl( href, locale ) : `#${ id }` }
 												aria-expanded={ hasChildren ? false : undefined }
 												onClick={ href ? onLinkClick : undefined }
 											>
@@ -211,7 +201,7 @@ const JetpackComMasterbar: React.FC = () => {
 																<li key={ href }>
 																	<ExternalLink
 																		className="header__submenu-category header__submenu-link"
-																		href={ getLocalizedLink( href ) }
+																		href={ localizeUrl( href, locale ) }
 																		onClick={ onLinkClick }
 																	>
 																		<span className="header__submenu-label">
@@ -227,7 +217,7 @@ const JetpackComMasterbar: React.FC = () => {
 																			<li key={ href }>
 																				<ExternalLink
 																					className="header__submenu-link"
-																					href={ getLocalizedLink( href ) }
+																					href={ localizeUrl( href, locale ) }
 																					onClick={ onLinkClick }
 																				>
 																					<span className="header__submenu-label">{ label }</span>
@@ -269,7 +259,7 @@ const JetpackComMasterbar: React.FC = () => {
 													</span>
 													<ul className="user-menu__list">
 														<li>
-															<a className="js-manage-sites" href="/">
+															<a className="js-manage-sites" href={ localizeUrl( '/', locale ) }>
 																{ translate( 'Manage your sites' ) }
 															</a>
 														</li>
@@ -278,7 +268,10 @@ const JetpackComMasterbar: React.FC = () => {
 											</div>
 										</>
 									) : (
-										<a className="header__action-link js-login" href="/login/">
+										<a
+											className="header__action-link js-login"
+											href={ localizeUrl( '/login/', locale ) }
+										>
 											{ translate( 'Log in' ) }
 										</a>
 									) }
