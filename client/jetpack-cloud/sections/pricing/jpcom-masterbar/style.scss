@@ -27,8 +27,22 @@
 		margin: 0 auto !important;
 	}
 
-	.tooltip:after {
-		display: none !important;
+	.header__sections-list > li.is-active > a {
+		cursor: default;
+
+		&:after {
+			width: 100%;
+		}
+	}
+
+	.tooltip {
+		left: auto !important;
+		right: 0;
+		transform: none !important;
+
+		&:after {
+			display: none !important;
+		}
 	}
 
 	@media ( max-width: 900px ) {

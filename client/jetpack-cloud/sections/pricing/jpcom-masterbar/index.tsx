@@ -10,6 +10,7 @@ import Gravatar from 'calypso/components/gravatar';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banner';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { trailingslashit } from 'calypso/lib/route';
 import { urlToDomainAndPath } from 'calypso/lib/url';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
@@ -138,6 +139,8 @@ const JetpackComMasterbar: React.FC = () => {
 		[ locale, isJpComLocale ]
 	);
 
+	const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+
 	useSubmenuBtn();
 	useUserMenu();
 	useMobileBtn();
@@ -178,7 +181,15 @@ const JetpackComMasterbar: React.FC = () => {
 									const Tag = hasChildren ? 'a' : ExternalLink;
 
 									return (
-										<li key={ href || id }>
+										<li
+											className={ classNames( {
+												'is-active':
+													href &&
+													new URL( trailingslashit( href ) ).pathname ===
+														new URL( trailingslashit( currentUrl ) ).pathname,
+											} ) }
+											key={ href || id }
+										>
 											<Tag
 												className={ hasChildren ? 'header__menu-btn js-menu-btn' : '' }
 												href={ href ? getLocalizedLink( href ) : `#${ id }` }
