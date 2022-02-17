@@ -11,21 +11,24 @@ import {
 	SiteSelectComponent,
 	TestAccount,
 } from '@automattic/calypso-e2e';
+import { Browser, Page } from 'playwright';
+
+declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	const testAccount = new TestAccount( 'defaultUser' );
 	const testAccountSiteDomain = testAccount.getSiteURL( { protocol: false } );
-	let sidebarComponent;
-	let themesPage;
-	let themesDetailPage;
-	let previewComponent;
-	let popupTab;
-	let page;
+	let sidebarComponent: SidebarComponent;
+	let themesPage: ThemesPage;
+	let themesDetailPage: ThemesDetailPage;
+	let previewComponent: PreviewComponent;
+	let popupTab: Page;
+	let page: Page;
 	// This test will use partial matching names to cycle between available themes.
 	const themeName = 'Twenty Twen';
 
 	beforeAll( async () => {
-		page = await global.browser.newPage();
+		page = await browser.newPage();
 		await testAccount.authenticate( page );
 	} );
 

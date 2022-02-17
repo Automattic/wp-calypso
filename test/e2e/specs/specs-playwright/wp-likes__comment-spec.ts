@@ -9,19 +9,22 @@ import {
 	GutenbergEditorPage,
 	TestAccount,
 } from '@automattic/calypso-e2e';
+import { Browser, Page } from 'playwright';
 
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
+declare const browser: Browser;
+
 describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	const comment = DataHelper.getRandomPhrase();
-	let page;
+	let page: Page;
 	let publishedURL;
-	let commentsComponent;
-	let gutenbergEditorPage;
+	let commentsComponent: CommentsComponent;
+	let gutenbergEditorPage: GutenbergEditorPage;
 
 	beforeAll( async () => {
-		page = await global.browser.newPage();
+		page = await browser.newPage();
 		gutenbergEditorPage = new GutenbergEditorPage( page );
 
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
