@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
@@ -12,35 +12,63 @@ import './style.scss';
  * Show the seller celebration modal
  */
 const SellerCelebrationModal = () => {
+	const { addEntities } = useDispatch( 'core' );
+
+	useEffect( () => {
+		// Teach core data about the status entity so we can use selectors like `getEntityRecords()`
+		addEntities( [
+			{
+				baseURL: '/wp/v2/statuses',
+				key: 'slug',
+				kind: 'root',
+				name: 'status',
+				plural: 'statuses',
+			},
+		] );
+
+		// Only register entity once
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 	// conditions to show:
 	// - user just finished saving (check)
 	// - we are on post editor (check)
 	// - editor has not yet displayed modal once (check)
-	// - user is a seller
+	// - user is a seller (check)
 	// - user has not saved site before
 	// - content includes product block
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ hasDisplayedModal, setHasDisplayedModal ] = useState( false );
-	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
 	const previousIsEditorSaving = useRef( false );
-	const isEditorSaving = useSelect( ( select ) =>
-		select( 'core' ).isSavingEntityRecord( 'root', 'site' )
-	);
+	const isEditorSaving = useSelect( ( select ) => {
+		const isSavingSite = select( 'core' ).isSavingEntityRecord( 'root', 'site' );
+		const page = select( 'core/edit-site' ).getPage();
+		const pageId = parseInt( page?.context?.postId );
+		const isSavingEntity = select( 'core' ).isSavingEntityRecord( 'postType', 'page', pageId );
+		return isSavingSite || isSavingEntity;
+	} );
 	const intent = useSiteIntent();
+
+	const hasPaymentsBlock = useSelect( ( select ) => {
+		const page = select( 'core/edit-site' ).getPage();
+		const pageId = parseInt( page?.context?.postId );
+		const pageEntity = select( 'core' ).getEntityRecord( 'postType', 'page', pageId );
+		const rawContent = pageEntity.content.raw;
+		return rawContent.includes( '<!-- wp:jetpack/recurring-payments -->' );
+	} );
 
 	useEffect( () => {
 		if (
-			isSiteEditor &&
 			! isEditorSaving &&
 			previousIsEditorSaving.current &&
 			! hasDisplayedModal &&
-			intent === 'sell'
+			intent === 'sell' &&
+			hasPaymentsBlock
 		) {
 			setIsModalOpen( true );
 			setHasDisplayedModal( true );
 		}
 		previousIsEditorSaving.current = isEditorSaving;
-	}, [ isEditorSaving, hasDisplayedModal, isSiteEditor, intent ] );
+	}, [ isEditorSaving, hasDisplayedModal, intent, hasPaymentsBlock ] );
 
 	// if save state has changed and was saving on last render
 	// then it has finished saving
