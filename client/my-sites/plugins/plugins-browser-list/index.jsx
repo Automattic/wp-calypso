@@ -114,9 +114,7 @@ const PluginsBrowserList = ( {
 					taglineText={ __( 'Drive more traffic with Yoast SEO' ) }
 					titleText={ __( 'Under the Spotlight' ) }
 					ctaText={ __( 'View Details' ) }
-					illustrationSrc={ __(
-						'https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389'
-					) }
+					illustrationSrc="https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389"
 					url={ `/plugins/wordpress-seo-premium/${ site }` }
 				/>
 			) }
