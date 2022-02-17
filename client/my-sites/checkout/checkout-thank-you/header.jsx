@@ -479,11 +479,24 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
+	getSearchButtonProps() {
+		const { translate, selectedSite, jetpackSearchCustomizeUrl } = this.props;
+
+		// Should come from a selector.
+		const jetpackSearchDashboardUrl = '#';
+
+		const buttonTitle = selectedSite.jetpack
+			? translate( 'Go to Search Dashboard' )
+			: translate( 'Customize Search' );
+		const targetUrl = selectedSite.jetpack ? jetpackSearchDashboardUrl : jetpackSearchCustomizeUrl;
+
+		return { title: buttonTitle, url: targetUrl };
+	}
+
 	getButtons() {
 		const {
 			hasFailedPurchases,
 			isDataLoaded,
-			jetpackSearchCustomizeUrl,
 			translate,
 			primaryPurchase,
 			selectedSite,
@@ -495,15 +508,16 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const isTrafficGuidePurchase = 'traffic-guide' === displayMode;
 
 		if ( this.isSearch() ) {
+			const buttonProps = this.getSearchButtonProps();
 			return (
 				<div className="checkout-thank-you__header-button">
 					<Button
 						className={ headerButtonClassName }
 						primary
-						href={ jetpackSearchCustomizeUrl }
+						href={ buttonProps.url }
 						onClick={ this.recordThankYouClick }
 					>
-						{ translate( 'Customize Search' ) }
+						{ buttonProps.title }
 					</Button>
 				</div>
 			);
