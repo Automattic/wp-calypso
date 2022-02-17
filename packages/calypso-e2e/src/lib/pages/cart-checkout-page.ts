@@ -1,5 +1,4 @@
 import { Frame, Page } from 'playwright';
-import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
 import type { PaymentDetails, RegistrarDetails } from '../../data-helper';
 
@@ -78,15 +77,6 @@ export class CartCheckoutPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-	}
-
-	/**
-	 * Navigates to checkout page of the specified blog.
-	 *
-	 * @param {string} blogName Blogname for which checkout is to be loaded.
-	 */
-	async visit( blogName: string ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `checkout/${ blogName }` ), { waitUntil: 'networkidle' } );
 	}
 
 	/**
