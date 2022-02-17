@@ -28,6 +28,7 @@ export enum HideCardDuration {
 	ONE_MONTH = 'ONE_MONTH',
 }
 
-export type UpsellCardNoticeType =
-	| 'upsellCarouselHideCreateSiteCardUntil'
-	| 'upsellCarouselHideAddEmailCardUntil';
+export enum UpsellCardNoticeType {
+	HIDE_CREATE_SITE_CARD = 'upsellCarouselHideCreateSiteCardUntil',
+	HIDE_ADD_EMAIL_CARD = 'upsellCarouselHideAddEmailCardUntil',
+}

@@ -182,7 +182,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 				ref: hideCreateSiteCardButtonRef,
 				buttonLabel: translate( 'Create site' ),
 				cardName: 'create-site',
-				cardNoticeType: 'upsellCarouselHideCreateSiteCardUntil',
+				cardNoticeType: UpsellCardNoticeType.HIDE_CREATE_SITE_CARD,
 				eventTrackViewName: 'calypso_domain_only_upsell_carousel_impression_create_site_card',
 				areHideOptionsVisible: areHideSiteCardOptionsVisible,
 				setHideOptionsVisible: setHideSiteCardOptionsVisible,
@@ -204,7 +204,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 				ref: hideAddEmailCardButtonRef,
 				buttonLabel: translate( 'Add professional email' ),
 				cardName: 'add-email',
-				cardNoticeType: 'upsellCarouselHideAddEmailCardUntil',
+				cardNoticeType: UpsellCardNoticeType.HIDE_ADD_EMAIL_CARD,
 				eventTrackViewName: 'calypso_domain_only_upsell_carousel_impression_add_email_card',
 				areHideOptionsVisible: areHideEmailCardOptionsVisible,
 				setHideOptionsVisible: setHideEmailCardOptionsVisible,
@@ -240,10 +240,10 @@ export default connect<
 		const domainName = ownProps.domain.domain;
 		return {
 			hideAddEmailCard: shouldHideCard(
-				getDomainNotice( state, domainName, 'upsellCarouselHideAddEmailCardUntil' )
+				getDomainNotice( state, domainName, UpsellCardNoticeType.HIDE_ADD_EMAIL_CARD )
 			),
 			hideCreateSiteCard: shouldHideCard(
-				getDomainNotice( state, domainName, 'upsellCarouselHideCreateSiteCardUntil' )
+				getDomainNotice( state, domainName, UpsellCardNoticeType.HIDE_CREATE_SITE_CARD )
 			),
 			isRequestingDomainNotices: isRequestingDomainNotices( state, domainName ),
 			isUpdatingDomainNotices: isUpdatingDomainNotices( state, domainName ),
