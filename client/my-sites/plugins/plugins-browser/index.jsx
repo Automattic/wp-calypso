@@ -618,7 +618,7 @@ const PluginBrowserContent = ( props ) => {
 					<Spotlight
 						taglineText="Drive more traffic with Yoast SEO"
 						illustrationSrc="https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389"
-						onClick={ () => {} }
+						url={ `/plugins/wordpress-seo-premium/${ props.siteSlug }` }
 					/>
 					<PluginSingleListView { ...props } category="paid" />
 					<PluginSingleListView { ...props } category="featured" />
