@@ -75,6 +75,7 @@ import {
 } from 'calypso/state/reader/viewing/actions';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
@@ -163,6 +164,10 @@ export class FullPostView extends Component {
 	}
 
 	handleKeydown = ( event ) => {
+		if ( this.props.notificationsOpen ) {
+			return;
+		}
+
 		const tagName = ( event.target || event.srcElement ).tagName;
 		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
 			return;
@@ -646,6 +651,7 @@ export default connect(
 
 		const props = {
 			isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
+			notificationsOpen: isNotificationsOpen( state ),
 			teams: getReaderTeams( state ),
 			post,
 			liked: isLikedPost( state, siteId, post.ID ),

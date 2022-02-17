@@ -36,6 +36,7 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
@@ -160,6 +161,10 @@ class ReaderStream extends Component {
 	}
 
 	handleKeydown = ( event ) => {
+		if ( this.props.notificationsOpen ) {
+			return;
+		}
+
 		const tagName = ( event.target || event.srcElement ).tagName;
 		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
 			return;
@@ -487,6 +492,7 @@ export default connect(
 				recsStreamKey,
 				shouldCombine: shouldCombineCards,
 			} ),
+			notificationsOpen: isNotificationsOpen( state ),
 			stream,
 			recsStream: getStream( state, recsStreamKey ),
 			selectedPostKey: stream.selected,
