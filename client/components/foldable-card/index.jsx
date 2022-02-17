@@ -97,6 +97,7 @@ class FoldableCard extends Component {
 					disabled={ this.props.disabled }
 					type="button"
 					className="foldable-card__action foldable-card__expand"
+					aria-expanded={ this.state.expanded }
 					onClick={ clickAction }
 				>
 					<ScreenReaderText>{ screenReaderText }</ScreenReaderText>
