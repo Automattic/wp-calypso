@@ -1,5 +1,7 @@
 import { Button } from '@automattic/components';
 
+import './style.scss';
+
 interface SpotlightProps {
 	onClick: () => void;
 	taglineText: string;
@@ -11,14 +13,16 @@ const Spotlight: React.FunctionComponent< SpotlightProps > = ( props: SpotlightP
 
 	return (
 		<div className="spotlight" onClick={ onClick } onKeyDown={ onClick } role="link" tabIndex={ 0 }>
-			<img className="spotlight__illustration" alt="Spotlight Logo" src={ illustrationSrc } />
 			<div className="spotlight__content">
-				<span className="spotlight__title">Under the Spotlight</span>
-				<span className="spotlight__tagline">{ taglineText }</span>
+				<img className="spotlight__illustration" alt="Spotlight Logo" src={ illustrationSrc } />
+				<div className="spotlight__text-container">
+					<span className="spotlight__title">Under the Spotlight</span>
+					<span className="spotlight__tagline">{ taglineText }</span>
+				</div>
 			</div>
-			<Button className="spotlight__cta" onClick={ onClick }>
-				View Details
-			</Button>
+			<div className="spotlight__cta">
+				<Button onClick={ onClick }>View Details</Button>
+			</div>
 		</div>
 	);
 };
