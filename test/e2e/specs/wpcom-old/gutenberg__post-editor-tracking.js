@@ -1,10 +1,10 @@
 import config from 'config';
-import * as dataHelper from '../lib/data-helper.js';
-import * as driverManager from '../lib/driver-manager.js';
-import LoginFlow from '../lib/flows/login-flow.js';
-import { createGeneralTests } from '../lib/gutenberg/tracking/general-tests.js';
-import { clearEventsStack } from '../lib/gutenberg/tracking/utils.js';
-import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
+import * as dataHelper from '../../lib/data-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import { createGeneralTests } from '../../lib/gutenberg/tracking/general-tests.js';
+import { clearEventsStack } from '../../lib/gutenberg/tracking/utils.js';
+import WPAdminSidebar from '../../lib/pages/wp-admin/wp-admin-sidebar';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();

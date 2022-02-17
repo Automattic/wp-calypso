@@ -7,16 +7,16 @@ import { By, Key } from 'selenium-webdriver';
 /**
  * Internal dependencies
  */
-import GuideComponent from '../lib/components/guide-component.js';
-import SidebarComponent from '../lib/components/sidebar-component.js';
-import SiteEditorComponent from '../lib/components/site-editor-component.js';
-import * as dataHelper from '../lib/data-helper.js';
-import * as driverHelper from '../lib/driver-helper.js';
-import * as driverManager from '../lib/driver-manager.js';
-import LoginFlow from '../lib/flows/login-flow.js';
-import { createGeneralTests } from '../lib/gutenberg/tracking/general-tests.js';
-import { clearEventsStack, getEventsStack } from '../lib/gutenberg/tracking/utils.js';
-import SiteEditorPage from '../lib/pages/site-editor-page.js';
+import GuideComponent from '../../lib/components/guide-component.js';
+import SidebarComponent from '../../lib/components/sidebar-component.js';
+import SiteEditorComponent from '../../lib/components/site-editor-component.js';
+import * as dataHelper from '../../lib/data-helper.js';
+import * as driverHelper from '../../lib/driver-helper.js';
+import * as driverManager from '../../lib/driver-manager.js';
+import LoginFlow from '../../lib/flows/login-flow.js';
+import { createGeneralTests } from '../../lib/gutenberg/tracking/general-tests.js';
+import { clearEventsStack, getEventsStack } from '../../lib/gutenberg/tracking/utils.js';
+import SiteEditorPage from '../../lib/pages/site-editor-page.js';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
