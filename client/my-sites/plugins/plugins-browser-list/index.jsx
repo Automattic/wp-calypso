@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
@@ -107,7 +108,7 @@ const PluginsBrowserList = ( {
 					) }
 				</div>
 			</div>
-			{ listName === 'featured' && (
+			{ listName === 'featured' && isEnabled( 'marketplace-spotlight' ) && (
 				<Spotlight
 					taglineText="Drive more traffic with Yoast SEO"
 					illustrationSrc="https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389"
