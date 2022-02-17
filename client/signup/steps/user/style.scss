@@ -29,12 +29,6 @@ body.is-section-signup.is-white-signup .signup {
 }
 
 .user__simpler-mobile-form {
-	.formatted-header__subtitle,
-	.formatted-header__title {
-		justify-content: center;
-		display: flex;
-		white-space: break-spaces;
-	}
 
 	.signup-form {
 		flex-direction: column-reverse !important;
@@ -44,6 +38,10 @@ body.is-section-signup.is-white-signup .signup {
 		}
 	}
 
+	.signup-form__terms-of-service-link {
+		margin-bottom: 0 !important;
+	}
+
 	p.signup-form__social-buttons-tos {
 		font-size: 0.75rem;
 		text-align: left;
@@ -51,6 +49,9 @@ body.is-section-signup.is-white-signup .signup {
 		max-width: 408px;
 		color: var( --studio-gray-40 );
     	font-weight: 400;
+		margin-top: -60px;
+    	margin-bottom: 80px;
+
 		a {
 			color: var( --studio-gray-40 );
 		}

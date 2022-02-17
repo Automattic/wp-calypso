@@ -457,10 +457,6 @@ export class UserStep extends Component {
 		);
 	}
 
-	isEmailForm() {
-		return this.props.path.includes( '/email' );
-	}
-
 	getLoginUrl( props ) {
 		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale } = props;
 
@@ -504,6 +500,18 @@ export class UserStep extends Component {
 			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
+		const stepWrapper = (
+			<StepWrapper
+				flowName={ this.props.flowName }
+				stepName={ this.props.stepName }
+				headerText={ this.getHeaderText() }
+				subHeaderText={ this.getSubHeaderText() }
+				positionInFlow={ this.props.positionInFlow }
+				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
+				stepContent={ this.renderSignupForm() }
+			/>
+		);
+
 		return (
 			<ProvideExperimentData
 				name="registration_social_login_first_on_mobile_v2"
@@ -517,40 +525,14 @@ export class UserStep extends Component {
 					}
 
 					if ( experimentAssignment?.variationName === 'treatment' ) {
-						const loginUrl = this.getLoginUrl( this.props );
-						const subHeading = this.props.translate( 'Already have an account? {{a}}Log in{{/a}}', {
-							components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-						} );
 						return (
 							<div className="user__simpler-mobile-form">
-								<StepWrapper
-									flowName={ this.props.flowName }
-									stepName={ this.props.stepName }
-									headerText={
-										this.isEmailForm()
-											? this.props.translate( 'Create Account' )
-											: this.getHeaderText()
-									}
-									subHeaderText={ subHeading }
-									positionInFlow={ this.props.positionInFlow }
-									fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
-									stepContent={ this.renderSignupForm( true ) }
-								/>
+								{ stepWrapper }
 								<SocialSignupToS />
 							</div>
 						);
 					}
-					return (
-						<StepWrapper
-							flowName={ this.props.flowName }
-							stepName={ this.props.stepName }
-							headerText={ this.getHeaderText() }
-							subHeaderText={ this.getSubHeaderText() }
-							positionInFlow={ this.props.positionInFlow }
-							fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
-							stepContent={ this.renderSignupForm( false ) }
-						/>
-					);
+					return stepWrapper;
 				} }
 			</ProvideExperimentData>
 		);
