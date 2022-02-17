@@ -56,20 +56,20 @@ function WebsiteContentStep( {
 	const isWebsiteContentSubmitted = useSelector( ( state ) =>
 		isDIFMLiteWebsiteContentSubmitted( state, siteId )
 	);
-	const isSiteInformationLoaded = useSelector( ( state ) =>
+	const isLoadingSiteInformation = useSelector( ( state ) =>
 		isRequestingSite( state, siteId as number )
 	);
 
 	// We assume that difm lite is purchased when the is_difm_lite_in_progress sticker is active in a given blog
 	const isDifmLitePurchased = useSelector( ( state ) => isDIFMLiteInProgress( state, siteId ) );
 
-	//Make sure site information is loaded so that we can validate access to this page
+	//Make sure the most up to date site information is loaded so that we can validate access to this page
 	useEffect( () => {
 		siteId && dispatch( requestSite( siteId ) );
 	}, [ siteId ] );
 
 	useEffect( () => {
-		if ( isSiteInformationLoaded && ! isDifmLitePurchased ) {
+		if ( ! isLoadingSiteInformation && ! isDifmLitePurchased ) {
 			debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
 			page( `/start/do-it-for-me` );
 		} else if ( isWebsiteContentSubmitted ) {
@@ -77,7 +77,7 @@ function WebsiteContentStep( {
 			page( `/home/${ queryObject.siteSlug }` );
 		}
 	}, [
-		isSiteInformationLoaded,
+		isLoadingSiteInformation,
 		isDifmLitePurchased,
 		isWebsiteContentSubmitted,
 		queryObject.siteSlug,
