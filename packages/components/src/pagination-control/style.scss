@@ -37,7 +37,7 @@
 			cursor: default;
 		}
 
-		&.pagination-control__current {
+		&.is-current {
 			background-color: var( --wp-admin-theme-color );
 		}
 	}

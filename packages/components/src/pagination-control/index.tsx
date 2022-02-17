@@ -10,9 +10,13 @@ interface Props {
 	classNames?: string | string[];
 }
 
-const PaginationControl: React.FunctionComponent< Props > = ( props ) => {
-	const { activePageIndex, numberOfPages, onChange, classNames, children } = props;
-
+const PaginationControl: React.FunctionComponent< Props > = ( {
+	activePageIndex,
+	numberOfPages,
+	onChange,
+	classNames,
+	children,
+} ) => {
 	const classes = classnames( 'pagination-control', classNames );
 
 	return (
@@ -24,7 +28,7 @@ const PaginationControl: React.FunctionComponent< Props > = ( props ) => {
 				>
 					<button
 						className={ classnames( 'pagination-control__page', {
-							'pagination-control__current': index === activePageIndex,
+							'is-current': index === activePageIndex,
 						} ) }
 						disabled={ index === activePageIndex }
 						aria-label={ sprintf(
