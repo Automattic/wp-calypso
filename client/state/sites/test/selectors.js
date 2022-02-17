@@ -2614,14 +2614,14 @@ describe( 'selectors', () => {
 
 			chaiExpect( dashboardUrl ).to.be.null;
 		} );
-		test( "should return '#' if we have a Jetpack site", () => {
+		test( 'should return null if we have a Simple site', () => {
 			const dashboardUrl = getJetpackSearchDashboardUrl(
 				{
 					sites: {
 						items: {
 							2916284: {
 								ID: 2916284,
-								jetpack: true,
+								jetpack: false,
 							},
 						},
 					},
@@ -2629,7 +2629,65 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			chaiExpect( dashboardUrl ).to.equal( '#' );
+			chaiExpect( dashboardUrl ).to.be.null;
+		} );
+		test( "should return null if we can't find the adminUrl", () => {
+			const dashboardUrl = getJetpackSearchDashboardUrl(
+				{
+					sites: {
+						items: {},
+					},
+				},
+				2916284
+			);
+
+			chaiExpect( dashboardUrl ).to.be.null;
+		} );
+		test( 'should return default dashboard for old JP versions', () => {
+			const dashboardUrl = getJetpackSearchDashboardUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+									jetpack_version: '10.0',
+								},
+							},
+						},
+					},
+				},
+				2916284
+			);
+
+			chaiExpect( dashboardUrl ).to.equal(
+				'https://example.wordpress.com/wp-admin/admin.php?page=jetpack'
+			);
+		} );
+		test( 'should return Search dashboard for new JP versions', () => {
+			const dashboardUrl = getJetpackSearchDashboardUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+									jetpack_version: '10.1',
+								},
+							},
+						},
+					},
+				},
+				2916284
+			);
+
+			chaiExpect( dashboardUrl ).to.equal(
+				'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-search'
+			);
 		} );
 	} );
 
