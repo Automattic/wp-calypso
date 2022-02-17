@@ -128,7 +128,7 @@ describe( 'selectors', () => {
 			getIntroOfferPrice.mockReset();
 			getIntroOfferPrice.mockImplementation( () => null );
 			getIntroOfferIsEligible.mockReset();
-			getIntroOfferPrice.mockImplementation( () => false );
+			getIntroOfferIsEligible.mockImplementation( () => false );
 		} );
 		test( 'Should return shape { priceFull }', () => {
 			getPlanDiscountedRawPrice.mockImplementation( ( a, b, c, { isMonthly } ) =>
