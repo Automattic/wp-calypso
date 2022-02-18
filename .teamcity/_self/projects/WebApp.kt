@@ -571,10 +571,6 @@ object Translate : BuildType({
 		cleanCheckout = true
 	}
 
-	artifactRules = """
-		translate => translate
-	""".trimIndent()
-
 	steps {
 		bashNodeScript {
 			name = "Prepare environment"
@@ -593,6 +589,9 @@ object Translate : BuildType({
 				# Move `calypso-strings.pot` to artifacts directory
 				mkdir -p ./translate
 				mv public/calypso-strings.pot ./translate/
+
+				# Publish calypso-string.pot artifact
+				echo "##teamcity[publishArtifacts './translate/calypso-strings.pot']"
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -611,6 +610,9 @@ object Translate : BuildType({
 
 				# Remove GP LocalCI Client
 				rm -rf gp-localci-client
+
+				# Publish localci-new-strings.pot artifact
+				echo "##teamcity[publishArtifacts './translate/localci-new-strings.pot']"
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
