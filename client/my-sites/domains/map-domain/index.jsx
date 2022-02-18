@@ -146,26 +146,21 @@ export class MapDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug + '/domain-mapping:' + domain );
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		this.checkSiteIsUpgradeable( this.props );
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.checkSiteIsUpgradeable( nextProps );
-	}
-
 	componentDidMount() {
 		this.isMounted = true;
+		this.checkSiteIsUpgradeable();
+	}
+
+	componentDidUpdate() {
+		this.checkSiteIsUpgradeable();
 	}
 
 	componentWillUnmount() {
 		this.isMounted = false;
 	}
 
-	checkSiteIsUpgradeable( props ) {
-		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
+	checkSiteIsUpgradeable() {
+		if ( this.props.selectedSite && ! this.props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add/mapping' );
 		}
 	}
