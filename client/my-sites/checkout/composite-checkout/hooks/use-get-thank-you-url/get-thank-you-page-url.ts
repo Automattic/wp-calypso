@@ -39,7 +39,12 @@ import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { PROFESSIONAL_EMAIL_OFFER } from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
-import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
+import {
+	clearSignupCompleteFlowName,
+	getSignupCompleteFlowName,
+	persistSignupDestination,
+	retrieveSignupDestination,
+} from 'calypso/signup/storageUtils';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
@@ -217,13 +222,19 @@ export default function getThankYouPageUrl( {
 		}
 	}
 
+	const signupFlowName = getSignupCompleteFlowName();
+
 	// Domain only flow
-	if ( cart?.create_new_blog ) {
+	if ( cart?.create_new_blog || signupFlowName === 'domain' ) {
+		clearSignupCompleteFlowName();
 		const newBlogReceiptUrl = urlFromCookie
 			? `${ urlFromCookie }/${ pendingOrReceiptId }`
 			: fallbackUrl;
 		debug( 'new blog created, so returning', newBlogReceiptUrl );
-		return newBlogReceiptUrl;
+		// Subflow domain:add-new-site must skip the thankyou page
+		if ( newBlogReceiptUrl.includes( '/thank-you/' ) ) {
+			return newBlogReceiptUrl;
+		}
 	}
 
 	const redirectUrlForPostCheckoutUpsell = getRedirectUrlForPostCheckoutUpsell( {
