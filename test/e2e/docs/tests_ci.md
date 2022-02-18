@@ -9,16 +9,15 @@
 <!-- TOC -->
 
 - [Running tests on CI](#running-tests-on-ci)
-  - [Feature branch](#feature-branch)
-  - [Trunk](#trunk)
-  - [Manually run a build configuration](#manually-run-a-build-configuration)
-  - [Scheduled build configurations](#scheduled-build-configurations)
+    - [Feature branch](#feature-branch)
+    - [Trunk](#trunk)
+    - [Scheduled build configurations](#scheduled-build-configurations)
 
 <!-- /TOC -->
 
 <br>
 
-> :lock: Unfortunately, access to TeamCity is available only to Automatticians at this time. OSS Citizens (including Trialmatticians), please request an Automattician to execute the required e2e tests in the PR.
+> :lock: Unfortunately, access to TeamCity is available only to Automatticians at this time. OSS Citizens (including Trialmatticians), please request an Automattician to execute the required e2e tests in the PR prior to merge.
 
 ## Feature branch
 
@@ -30,8 +29,6 @@ Anytime a new branch is pushed to GitHub it also becomes available in TeamCity.
 | E2E Tests (desktop)      | Yes                      |
 | Pre-Release Tests        | No                       |
 
-![teamcity_branch_view](./resources/teamcity_feature_branch_animation.gif)
-<sup><center>Viewing various build configurations for a given branch.</center></sup>
 
 ## Trunk
 
@@ -44,20 +41,6 @@ The Pre-Release E2E tests are connected directly to the Calypso Deploy page and 
 | E2E Tests (mobile)       | No                       |
 | E2E Tests (desktop)      | No                       |
 | Pre-Release Tests        | Yes                      |
-
-## Manually run a build configuration
-
-Note the `Run` button beside every available build configuration. This is the quickest way to manually trigger a new run.
-
-Some reasons to trigger a manual run:
-
-- unexpected or flaky test suite (reminder: report flakey tests using [this form](https://github.com/Automattic/wp-calypso/issues/new?assignees=&labels=Flaky+e2e&template=flaky-e2e-spec-report.yml&title=Flaky+E2E%3A+))
-- additional data point for confidence.
-- target build configuration is not triggered automatically.
-
-On manually triggering a build, a build is added to the queue and will execute once its turn arrives.
-
-![](./resources/teamcity_build_manually_trigger_animation.gif)
 
 ## Scheduled build configurations
 
