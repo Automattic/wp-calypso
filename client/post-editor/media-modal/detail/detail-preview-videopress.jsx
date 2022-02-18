@@ -2,6 +2,11 @@ import classNames from 'classnames';
 import { get, keys } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { connect } from 'react-redux';
+import wpcom from 'wpcom';
+import proxyRequest from 'wpcom-proxy-request';
+import { withCurrentRoute } from 'calypso/components/route';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Module variables
@@ -63,11 +68,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 
 		const { data } = event;
 
-		if (
-			! data ||
-			-1 ===
-				[ 'videopress_loading_state', 'videopress_action_pause_response' ].indexOf( data.event )
-		) {
+		if ( ! data || ! data.event ) {
 			return;
 		}
 
@@ -86,6 +87,40 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 			}
 			this.props.onPause( currentTime, isMillisec );
 		}
+
+		if ( 'videopress_token_request' === data.event ) {
+			this.requestVideoPressToken( event );
+		}
+	};
+
+	requestVideoPressToken = ( event ) => {
+		const { siteId } = this.props;
+		const guid = event.data.guid;
+		const proxiedWpcom = wpcom();
+		proxiedWpcom.request = proxyRequest;
+
+		const path = `/sites/${ siteId }/media/videopress-playback-jwt/${ guid }`;
+		proxiedWpcom.req.post( { path, apiNamespace: 'wpcom/v2' } ).then( function ( response ) {
+			if ( ! response.metadata_token ) {
+				event.source.postMessage(
+					{
+						event: 'videopress_token_error',
+						guid,
+					},
+					'*'
+				);
+				return;
+			}
+			const jwt = response.metadata_token;
+			event.source.postMessage(
+				{
+					event: 'videopress_token_received',
+					guid,
+					jwt,
+				},
+				'*'
+			);
+		} );
 	};
 
 	destroy() {
@@ -143,4 +178,12 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 }
 
-export default EditorMediaModalDetailPreviewVideoPress;
+export default withCurrentRoute(
+	connect( ( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			siteId,
+		};
+	} )( EditorMediaModalDetailPreviewVideoPress )
+);
