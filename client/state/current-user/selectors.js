@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 /**
  * Returns the current user ID
  *
@@ -7,7 +5,7 @@ import { get } from 'lodash';
  * @returns {?number}        Current user ID
  */
 export function getCurrentUserId( state ) {
-	return get( state, [ 'currentUser', 'id' ] );
+	return state.currentUser.id;
 }
 
 /**
@@ -40,7 +38,7 @@ export function getCurrentUser( state ) {
  */
 export const createCurrentUserSelector = ( path, otherwise = null ) => ( state ) => {
 	const user = getCurrentUser( state );
-	return get( user, path, otherwise );
+	return user?.[ path ] ?? otherwise;
 };
 
 /**
