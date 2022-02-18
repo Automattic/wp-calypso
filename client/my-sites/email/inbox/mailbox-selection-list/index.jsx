@@ -17,9 +17,8 @@ import {
 } from 'calypso/lib/emails';
 import { getGmailUrl } from 'calypso/lib/gsuite';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
-import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
-import useTitanAppsUrlPrefix from 'calypso/lib/titan/hooks/use-titan-apps-url-prefix';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import {
 	recordEmailAppLaunchEvent,

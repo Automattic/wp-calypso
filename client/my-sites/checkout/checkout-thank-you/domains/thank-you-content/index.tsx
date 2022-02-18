@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { getTitanEmailUrl } from 'calypso/lib/titan';
-import useTitanAppsUrlPrefix from 'calypso/lib/titan/hooks/use-titan-apps-url-prefix';
+import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import DomainMappingProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-mapping';
 import DomainRegistrationThankYouProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-registration';
 import DomainTransferProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-transfer';

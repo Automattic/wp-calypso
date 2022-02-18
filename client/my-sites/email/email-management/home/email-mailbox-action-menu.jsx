@@ -40,8 +40,8 @@ import {
 	getTitanContactsUrl,
 	getTitanEmailUrl,
 	hasTitanMailWithUs,
+	useTitanAppsUrlPrefix,
 } from 'calypso/lib/titan';
-import useTitanAppsUrlPrefix from 'calypso/lib/titan/hooks/use-titan-apps-url-prefix';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { removeEmailForward } from 'calypso/state/email-forwarding/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

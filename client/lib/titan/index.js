@@ -12,3 +12,4 @@ export { getTitanCalendarUrl, getTitanContactsUrl, getTitanEmailUrl } from './ge
 export { hasTitanMailWithUs } from './has-titan-mail-with-us';
 export { isDomainEligibleForTitanFreeTrial } from './is-domain-eligible-for-titan-free-trial';
 export { isTitanMonthlyProduct } from './is-titan-monthly-product';
+export { useTitanAppsUrlPrefix } from './hooks/use-titan-apps-url-prefix';

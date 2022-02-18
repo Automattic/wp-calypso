@@ -3,9 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import thankYouEmail from 'calypso/assets/images/illustrations/thank-you-email.svg';
 import { ThankYou } from 'calypso/components/thank-you';
-import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
-import useTitanAppsUrlPrefix from 'calypso/lib/titan/hooks/use-titan-apps-url-prefix';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
