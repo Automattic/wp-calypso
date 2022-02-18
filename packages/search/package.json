@@ -49,7 +49,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/react": "^6.4.18",
 		"@testing-library/dom": "^8.11.3",
-		"@testing-library/react": "^12.1.2",
+		"@testing-library/react": "^12.1.3",
 		"@testing-library/user-event": "^13.5.0",
 		"@wordpress/data": "^6.1.5",
 		"@wordpress/is-shallow-equal": "^4.2.1",
