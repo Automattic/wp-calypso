@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/named
 import { SelectItems } from '@automattic/intent-screen';
 import { globe, addCard, layout } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
