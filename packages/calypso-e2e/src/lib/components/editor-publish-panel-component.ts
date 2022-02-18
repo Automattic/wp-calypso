@@ -1,4 +1,4 @@
-import { Page, Frame } from 'playwright';
+import { Page, Frame, FrameLocator } from 'playwright';
 
 // Options for Playwright's Frame.click() method.
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
@@ -10,7 +10,7 @@ const selectors = {
 	cancelPublishButton: `${ panel } div.editor-post-publish-panel__header-cancel-button > button`,
 
 	// Post-publish
-	postPublishClosePanelButton: `${ panel } button(type="button"]:has(svg[aria-hidden="true"])`, // aria-label changes depending on the UI language used.
+	postPublishClosePanelButton: `${ panel } button[type="button"]:has(svg[aria-hidden="true"])`, // aria-label changes depending on the UI language used.
 	viewArticleButton: `${ panel } a:text-matches("View (Post|Page)", "i")`,
 	articleURLField: `${ panel } input[readonly]`,
 	addNewButton: `${ panel } .post-publish-panel__postpublish-buttons > a`,
@@ -21,17 +21,17 @@ const selectors = {
  */
 export class EditorPublishPanelComponent {
 	private page: Page;
-	private frame: Frame;
+	private frameLocator: FrameLocator;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Frame} frame The edfitor iframe.
+	 * @param {FrameLocator} frameLocator Locator of the editor iframe.
 	 */
-	constructor( page: Page, frame: Frame ) {
+	constructor( page: Page, frameLocator: FrameLocator ) {
 		this.page = page;
-		this.frame = frame;
+		this.frameLocator = frameLocator;
 	}
 
 	/**
@@ -47,7 +47,7 @@ export class EditorPublishPanelComponent {
 	async closePanel(): Promise< void > {
 		// Construct a comma-separated list of CSS selectors so that one of them will match.
 		const selector = `${ selectors.cancelPublishButton }, ${ selectors.postPublishClosePanelButton }`;
-		const locator = this.frame.locator( selector );
+		const locator = this.frameLocator.locator( selector );
 		await locator.click();
 	}
 
@@ -57,7 +57,8 @@ export class EditorPublishPanelComponent {
 	 * Publish or schedule the article.
 	 */
 	async publish(): Promise< void > {
-		await this.frame.click( selectors.publishButton );
+		const publishButtonLocator = await this.frameLocator.locator( selectors.publishButton );
+		await publishButtonLocator.click();
 	}
 
 	/* Post-publish state */
@@ -68,7 +69,7 @@ export class EditorPublishPanelComponent {
 	 * @returns {string} URL to the published article.
 	 */
 	async getPublishedURL(): Promise< string > {
-		const locator = this.frame.locator( selectors.articleURLField );
+		const locator = this.frameLocator.locator( selectors.articleURLField );
 		const publishedURL = ( await locator.getAttribute( 'value' ) ) as string;
 		return publishedURL;
 	}
@@ -79,6 +80,7 @@ export class EditorPublishPanelComponent {
 	 * @param {ClickOptions} options Options to be forwarded to Frame.click().
 	 */
 	async addNew( options: ClickOptions = {} ): Promise< void > {
-		await this.frame.click( selectors.addNewButton, options );
+		const locator = this.frameLocator.locator( selectors.addNewButton );
+		await locator.click( options );
 	}
 }

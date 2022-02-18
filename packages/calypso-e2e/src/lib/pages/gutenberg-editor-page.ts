@@ -66,6 +66,7 @@ const selectors = {
  */
 export class GutenbergEditorPage {
 	private page: Page;
+	private editorPublishPanelComponent: EditorPublishPanelComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -74,6 +75,10 @@ export class GutenbergEditorPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.editorPublishPanelComponent = new EditorPublishPanelComponent(
+			page,
+			page.frameLocator( selectors.editorFrame )
+		);
 	}
 
 	/**
@@ -404,11 +409,10 @@ export class GutenbergEditorPage {
 		) }, ${ selectors.scheduleButton( selectors.postToolbar ) }`;
 		await frame.click( initialPublishButton );
 
-		const editorPublishPanelComponent = new EditorPublishPanelComponent( this.page, frame );
-		await editorPublishPanelComponent.publish();
+		await this.editorPublishPanelComponent.publish();
 
 		const publishedURL = await Promise.race( [
-			editorPublishPanelComponent.getPublishedURL(),
+			this.editorPublishPanelComponent.getPublishedURL(),
 			this.getPublishedURL(),
 		] );
 
