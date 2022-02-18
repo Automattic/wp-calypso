@@ -26883,15 +26883,15 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"npm-merge-driver@npm:^2.3.5":
-  version: 2.3.5
-  resolution: "npm-merge-driver@npm:2.3.5"
+"npm-merge-driver@npm:^2.3.6":
+  version: 2.3.6
+  resolution: "npm-merge-driver@npm:2.3.6"
   dependencies:
     mkdirp: ^0.5.1
     yargs: ^10.0.3
   bin:
     npm-merge-driver: index.js
-  checksum: 946b298b25ae1d12a4e4aa81e0fbf0647c295a2f66bc2a9900faa65c565b69ba286e1e3d1a65befd7364c44a85d1b9d44a14536616e41a56eed1f08a59a03ea3
+  checksum: 36fc01de609aa2b725024010fe720f72aeee69a3ae1531627a323daec2b50d2ed050aec2914b0919f229e1ce218098ac597b5d7b6bcca9827cce2f0a3435953c
   languageName: node
   linkType: hard
 
@@ -37983,7 +37983,7 @@ testarmada-magellan@11.0.10:
     ncp: ^2.0.0
     nock: ^12.0.3
     node-fetch: ^2.6.6
-    npm-merge-driver: ^2.3.5
+    npm-merge-driver: ^2.3.6
     npm-run-all: ^4.1.5
     photon: "workspace:^"
     postcss: ^8.4.5
