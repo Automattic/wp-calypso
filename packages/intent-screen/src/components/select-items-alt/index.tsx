@@ -2,19 +2,9 @@ import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
-import { TranslateResult } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
-
-export interface SelectAltItem< T > {
-	show: boolean;
-	key: string;
-	description: TranslateResult;
-	value: T;
-	actionText: TranslateResult;
-	disable: boolean;
-	disableText: TranslateResult;
-}
+import { SelectAltItem } from '../../types';
 
 interface Props< T > {
 	className?: string;

@@ -663,6 +663,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/intent-screen@workspace:^, @automattic/intent-screen@workspace:packages/intent-screen":
+  version: 0.0.0-use.local
+  resolution: "@automattic/intent-screen@workspace:packages/intent-screen"
+  dependencies:
+    "@popperjs/core": ^2.10.2
+    "@storybook/preset-scss": ^1.0.3
+    classnames: ^2.3.1
+    css-loader: ^3.6.0
+    react: ^17.0.2
+    react-popper: ^2.2.5
+    sass-loader: ^10.1.1
+    style-loader: ^1.2.1
+    typescript: ^4.4.4
+    use-debounce: ^3.1.0
+    webpack: ^5.63.0
+  peerDependencies:
+    "@wordpress/element": ^4.0.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/interpolate-components@workspace:^, @automattic/interpolate-components@workspace:packages/interpolate-components":
   version: 0.0.0-use.local
   resolution: "@automattic/interpolate-components@workspace:packages/interpolate-components"
@@ -12368,6 +12388,7 @@ __metadata:
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/intent-screen": "workspace:^"
     "@automattic/isolated-block-editor": ^2.8.1
     "@automattic/js-utils": "workspace:^"
     "@automattic/language-picker": "workspace:^"
@@ -32765,6 +32786,31 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"sass-loader@npm:^10.1.1":
+  version: 10.2.1
+  resolution: "sass-loader@npm:10.2.1"
+  dependencies:
+    klona: ^2.0.4
+    loader-utils: ^2.0.0
+    neo-async: ^2.6.2
+    schema-utils: ^3.0.0
+    semver: ^7.3.2
+  peerDependencies:
+    fibers: ">= 3.1.0"
+    node-sass: ^4.0.0 || ^5.0.0 || ^6.0.0
+    sass: ^1.3.0
+    webpack: ^4.36.0 || ^5.0.0
+  peerDependenciesMeta:
+    fibers:
+      optional: true
+    node-sass:
+      optional: true
+    sass:
+      optional: true
+  checksum: 03286a3b46c6d1c606c7e382cf9fefc569e45758d7d6e813a20a5b00926336baa8a45e833a7a4e461b4092aac22f6859052437e7d7c0d6f726c71328f8c25173
+  languageName: node
+  linkType: hard
+
 "sass-loader@npm:^12.1.0":
   version: 12.1.0
   resolution: "sass-loader@npm:12.1.0"
@@ -36072,7 +36118,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.5.5":
+"typescript@npm:^4.4.4, typescript@npm:^4.5.5":
   version: 4.5.5
   resolution: "typescript@npm:4.5.5"
   bin:
@@ -36082,7 +36128,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.4.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
   version: 4.5.5
   resolution: "typescript@patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"
   bin:

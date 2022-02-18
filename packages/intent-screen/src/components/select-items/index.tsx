@@ -1,27 +1,23 @@
 import { Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
-import { TranslateResult } from 'i18n-calypso';
-import { preventWidows } from 'calypso/lib/formatting';
 import './style.scss';
-
-export interface SelectItem< T > {
-	key: string;
-	title: TranslateResult;
-	description: TranslateResult;
-	icon: React.ReactElement;
-	value: T;
-	actionText: TranslateResult;
-	hidden?: boolean;
-}
+import { TranslateResult } from 'i18n-calypso';
+import { SelectItem } from '../../types';
 
 interface Props< T > {
 	className?: string;
 	items: SelectItem< T >[];
 	onSelect: ( value: T ) => void;
+	preventWidows: ( text: TranslateResult, wordsToKeep?: number ) => string;
 }
 
-function SelectItems< T >( { className, items, onSelect }: Props< T > ): React.ReactElement {
+function SelectItems< T >( {
+	className,
+	items,
+	onSelect,
+	preventWidows,
+}: Props< T > ): React.ReactElement {
 	return (
 		<div className={ classnames( 'select-items', className ) }>
 			{ items.map( ( { key, title, description, icon, actionText, value } ) => (

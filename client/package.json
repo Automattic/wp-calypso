@@ -34,6 +34,7 @@
 		"@automattic/explat-client-react-helpers": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/intent-screen": "workspace:^",
 		"@automattic/isolated-block-editor": "^2.8.1",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/language-picker": "workspace:^",
