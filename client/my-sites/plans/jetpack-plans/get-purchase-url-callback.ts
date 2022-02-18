@@ -24,7 +24,8 @@ import type {
 function buildCheckoutURL(
 	siteSlug: string,
 	products: string | string[],
-	urlQueryArgs: QueryArgs = {}
+	urlQueryArgs: QueryArgs = {},
+	locale?: string
 ): string {
 	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
@@ -43,7 +44,7 @@ function buildCheckoutURL(
 			urlQueryArgs.checkoutBackUrl = window.location.href;
 		}
 	}
-
+	const lang = locale ? `/${ locale }` : '';
 	// host maybe needed in either siteless or userless checkout below
 	const host =
 		'development' === urlQueryArgs.calypso_env
@@ -55,7 +56,7 @@ function buildCheckoutURL(
 		! siteSlug &&
 		! [ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ].includes( productsString )
 	) {
-		return addQueryArgs( urlQueryArgs, host + `/checkout/jetpack/${ productsString }` );
+		return addQueryArgs( urlQueryArgs, host + `/checkout/jetpack/${ productsString }${ lang }` );
 	}
 
 	// Enter userless checkout if unlinked, purchasetoken or purchaseNonce, and site are all set
@@ -65,7 +66,7 @@ function buildCheckoutURL(
 	if ( isJetpackCloud() && canDoUnlinkedCheckout ) {
 		return addQueryArgs(
 			urlQueryArgs,
-			host + `/checkout/jetpack/${ siteSlug }/${ productsString }`
+			host + `/checkout/jetpack/${ siteSlug }/${ productsString }${ lang }`
 		);
 	}
 
@@ -89,7 +90,8 @@ function buildCheckoutURL(
  */
 export const getPurchaseURLCallback = (
 	siteSlug: string,
-	urlQueryArgs: QueryArgs
+	urlQueryArgs: QueryArgs,
+	locale?: string
 ): PurchaseURLCallback => (
 	product: SelectorProduct,
 	isUpgradeableToYearly?,
@@ -101,12 +103,12 @@ export const getPurchaseURLCallback = (
 	if ( purchase && isUpgradeableToYearly ) {
 		const { productSlug: slug } = product;
 		const yearlySlug = getYearlySlugFromMonthly( slug );
-		return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
+		return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs, locale ) : undefined;
 	}
 	if ( purchase ) {
 		const relativePath = managePurchase( siteSlug, purchase.id );
 		return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
 	}
 
-	return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs );
+	return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs, locale );
 };
