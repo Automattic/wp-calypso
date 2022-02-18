@@ -249,7 +249,7 @@ export function filterNotices( logs, siteId, pluginId ) {
 /**
  * Regex to extract the author from the search
  */
-export const AUTHOR_PATTERN = /author:(?:\s)*"(.*)"/;
+export const DEVELOPER_PATTERN = /developer:(?:\s)*"(.*)"/;
 
 /**
  * Extract author and search params from the plugin search query
@@ -258,8 +258,8 @@ export const AUTHOR_PATTERN = /author:(?:\s)*"(.*)"/;
  * @returns {Array<string|null>} The first item will be the search and the second will be the author if exists
  */
 export function extractSearchInformation( searchTerm = '' ) {
-	const author = searchTerm.match( AUTHOR_PATTERN )?.[ 1 ] || null;
-	const search = searchTerm.replace( AUTHOR_PATTERN, '' ).trim();
+	const author = searchTerm.match( DEVELOPER_PATTERN )?.[ 1 ] || null;
+	const search = searchTerm.replace( DEVELOPER_PATTERN, '' ).trim();
 
 	return [ search, author ];
 }
