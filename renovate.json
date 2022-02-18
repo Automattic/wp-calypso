@@ -25,11 +25,12 @@
 			"includePaths": [ "packages/interpolate-components" ]
 		},
 		{
-			"packagePatterns": [ "react" ],
+			"matchPackagePatterns": [ "react" ],
 			"prPriority": 1
 		},
 		{
-			"packagePatterns": [ "redux", "react-redux" ],
+			"matchPackagePatterns": [ "redux" ],
+			"matchPackageNames": [ "react-redux" ],
 			"prPriority": 2
 		},
 		{
@@ -38,13 +39,13 @@
 		},
 		{
 			"groupName": "Type definitions",
-			"packagePatterns": [ "^@types/" ],
+			"matchPackagePatterns": [ "^@types/" ],
 			"prPriority": 2
 		},
 		{
 			"groupName": [ "webpack packages" ],
-			"packages": [ "style-loader", "html-loader", "exports-loader", "loader-utils" ],
-			"packagePatterns": [ "webpack", "terser" ],
+			"matchPackageNames": [ "style-loader", "html-loader", "exports-loader", "loader-utils" ],
+			"matchPackagePatterns": [ "webpack", "terser" ],
 			"prPriority": 2
 		},
 		{
