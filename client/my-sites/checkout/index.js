@@ -1,6 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	redirectLoggedOut,
+	render as clientRender,
+	setLocaleMiddleware,
+} from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
 import {
@@ -32,6 +37,14 @@ export default function () {
 		clientRender
 	);
 	page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
+	page(
+		'/checkout/jetpack/:productSlug/:lang',
+		setLocaleMiddleware(),
+		noSite,
+		checkoutSiteless,
+		makeLayout,
+		clientRender
+	);
 	page(
 		'/checkout/jetpack/thank-you-completed/no-site/:product',
 		noSite,
@@ -83,6 +96,13 @@ export default function () {
 	);
 
 	page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
+	page(
+		'/checkout/jetpack/:siteSlug/:productSlug/:lang',
+		setLocaleMiddleware(),
+		checkout,
+		makeLayout,
+		clientRender
+	);
 	page(
 		'/checkout/jetpack/thank-you/:site/:product',
 		loggedInSiteSelection,
