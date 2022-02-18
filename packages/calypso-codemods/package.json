@@ -22,7 +22,7 @@
 		"@babel/preset-env": "^7.16.7",
 		"jscodeshift": "^0.13.0",
 		"lodash": "^4.17.21",
-		"react-codemod": "^5.0.5"
+		"react-codemod": "^5.4.3"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",

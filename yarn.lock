@@ -12353,7 +12353,7 @@ __metadata:
     "@babel/preset-env": ^7.16.7
     jscodeshift: ^0.13.0
     lodash: ^4.17.21
-    react-codemod: ^5.0.5
+    react-codemod: ^5.4.3
   bin:
     calypso-codemods: ./index.js
   languageName: unknown
@@ -17338,7 +17338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^6.8.0":
+"eslint@npm:^6.6.0, eslint@npm:^6.8.0":
   version: 6.8.0
   resolution: "eslint@npm:6.8.0"
   dependencies:
@@ -23414,7 +23414,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jscodeshift@npm:^0.6.3, jscodeshift@npm:^0.6.4":
+"jscodeshift@npm:^0.6.3":
   version: 0.6.4
   resolution: "jscodeshift@npm:0.6.4"
   dependencies:
@@ -30009,20 +30009,21 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-codemod@npm:^5.0.5":
-  version: 5.1.1
-  resolution: "react-codemod@npm:5.1.1"
+"react-codemod@npm:^5.4.3":
+  version: 5.4.3
+  resolution: "react-codemod@npm:5.4.3"
   dependencies:
     chalk: ^2.4.2
+    eslint: ^6.6.0
     execa: ^3.2.0
     globby: ^10.0.1
     inquirer: ^7.0.0
     is-git-clean: ^1.1.0
-    jscodeshift: ^0.6.4
+    jscodeshift: ^0.11.0
     meow: ^5.0.0
   bin:
-    react-codemod: ./bin/react-codemod.js
-  checksum: eac9281a123a88115e3230f7b9295d02f1ba9d05b3f8f8769c05aa23401a66e689d122d7c30e804a83a3a77822cf88d159bd920be5afbfa85f905d1091a71eab
+    react-codemod: bin/react-codemod.js
+  checksum: cd16a0a5fd784517a3b1cbdd4a6299cfce7c8bf50c86a956288889f94982a441a9637d02959c1c6d4b9ad0a4f21a3f6ba22f6f217926d14af25d974ad207f724
   languageName: node
   linkType: hard
 
