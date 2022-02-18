@@ -4,43 +4,43 @@
 		{
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
-			"prPriority": 2
+			"prPriority": 3
 		},
 		{
 			"extends": "monorepo:babel",
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"extends": "monorepo:lodash",
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"extends": "monorepo:react",
-			"prPriority": 1,
+			"prPriority": 2,
 			"ignorePaths": [ "packages/interpolate-components" ]
 		},
 		{
 			"extends": [ "monorepo:react", ":disablePeerDependencies" ],
-			"prPriority": 1,
+			"prPriority": 2,
 			"includePaths": [ "packages/interpolate-components" ]
 		},
 		{
 			"packagePatterns": [ "^redux$", "^react-redux$" ],
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"packageName": "typescript",
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"groupName": "Type definitions",
 			"packagePatterns": [ "^@types/" ],
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"groupName": [ "webpack packages" ],
 			"packagePatterns": [ "webpack" ],
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"packageName": "tinymce",
@@ -48,17 +48,17 @@
 		},
 		{
 			"extends": "monorepo:storybook",
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"extends": "packages:linters",
 			"groupName": "linters",
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"extends": "packages:unitTest",
 			"groupName": "unit test packages",
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"matchDepTypes": [ "devDependencies" ],
@@ -72,7 +72,7 @@
 				"storybook",
 				"eslint"
 			],
-			"prPriority": 0
+			"prPriority": 1
 		}
 	],
 	"dependencyDashboardTitle": "Renovate Dependency Updates",
