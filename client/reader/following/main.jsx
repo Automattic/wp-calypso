@@ -48,10 +48,10 @@ function FollowingStream( { suggestions, ...props } ) {
 		suggestions
 			.flatMap( ( query ) => [
 				<Suggestion
+					key={ query.railcar.railcar }
 					suggestion={ query.text }
 					source="following"
 					railcar={ query.railcar }
-					key={ query.railcar.railcar }
 				/>,
 				', ',
 			] )
