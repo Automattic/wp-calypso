@@ -180,7 +180,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 								.concat( platformFeatureList[ platform ].unsupported )
 								.map( ( key ) => (
 									<li key={ key }>
-										<Icon size={ 20 } icon={ close } />{ ' ' }
+										<Icon size={ 20 } icon={ check } />{ ' ' }
 										{ translatedFeatureList[ key as FeatureName ] }
 									</li>
 								) ) }
