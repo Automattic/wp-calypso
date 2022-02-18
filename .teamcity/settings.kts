@@ -53,6 +53,7 @@ project {
 	subProject(_self.projects.MarTech)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
+	buildType(ValidateRenovateConfig)
 	buildType(SmartBuildLauncher)
 
 	params {
