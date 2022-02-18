@@ -65,7 +65,7 @@ interface Props {
 	postId: T.PostId;
 	postType: T.PostType;
 	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
-	pressThis: any;
+	pressThisData: any;
 	anchorFmData: {
 		anchor_podcast: string | undefined;
 		anchor_episode: string | undefined;
@@ -795,7 +795,7 @@ const mapStateToProps = (
 		stripeConnectSuccess,
 		anchorFmData,
 		showDraftPostModal,
-		pressThis,
+		pressThisData,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -821,7 +821,7 @@ const mapStateToProps = (
 		...anchorFmData,
 		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 		showDraftPostModal,
-		...pressThis,
+		...pressThisData,
 	} );
 
 	// needed for loading the editor in SU sessions

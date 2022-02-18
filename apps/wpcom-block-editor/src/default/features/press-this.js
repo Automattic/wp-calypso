@@ -1,23 +1,14 @@
 import { createBlock } from '@wordpress/blocks';
-import { dispatch, select, subscribe } from '@wordpress/data';
+import { dispatch } from '@wordpress/data';
 import { getQueryArgs } from '@wordpress/url';
+import { isEditorReady } from '../../utils';
 
 const { url, title, text, image, embed } = getQueryArgs( window.location.href );
 
 if ( url ) {
-	const unsubscribe = subscribe( () => {
-		// We need to be sure that the editor is initialized and the core blocks
-		// registered. There is an unstable selector for that, so we use
-		// `isCleanNewPost` otherwise which is triggered when everything is
-		// initialized if the post is new.
-		const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
-			? select( 'core/editor' ).__unstableIsEditorReady()
-			: select( 'core/editor' ).isCleanNewPost();
-		if ( ! editorIsReady ) {
-			return;
-		}
-
-		unsubscribe();
+	( async () => {
+		// Wait for the editor to be initialized and the core blocks registered.
+		await isEditorReady();
 
 		const link = `<a href="${ url }">${ title }</a>`;
 
@@ -47,5 +38,5 @@ if ( url ) {
 
 		dispatch( 'core/editor' ).resetEditorBlocks( blocks );
 		dispatch( 'core/editor' ).editPost( { title: title } );
-	} );
+	} )();
 }
