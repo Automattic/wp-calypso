@@ -29,7 +29,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 					<div className="plugin-details-header__info">
 						<div className="plugin-details-header__info-title">{ translate( 'Developer' ) }</div>
 						<div className="plugin-details-header__info-value">
-							<a href={ `/plugins?s=author:"${ getPluginAuthorKeyword( plugin ) }"` }>
+							<a href={ `/plugins?s=developer:"${ getPluginAuthorKeyword( plugin ) }"` }>
 								{ plugin.author_name }
 							</a>
 						</div>
