@@ -125,8 +125,7 @@ const Settings = ( {
 
 		return (
 			<Accordion
-				title={ translate( 'Domain status', { textOnly: true } ) }
-				subtitle={ translate( 'Your domain is parked', { textOnly: true } ) }
+				title={ translate( 'Connect a WordPress.com site', { textOnly: true } ) }
 				key="status"
 				expanded
 			>

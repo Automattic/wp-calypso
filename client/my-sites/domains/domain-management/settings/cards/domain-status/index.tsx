@@ -17,7 +17,7 @@ const DomainStatusCard = ( props: DomainStatusCardProps ): JSX.Element => {
 	return (
 		<div className="domain-status__card">
 			<div className="domain-status__card-content">
-				<p>{ translate( 'Your domain is registered but not pointing to a site.' ) }</p>
+				<p>{ translate( 'Your domain is not associated with a WordPress.com site.' ) }</p>
 			</div>
 			<div className="domain-status__card-button-container">
 				<Button href={ createSiteFromDomainOnly( selectedDomainName ) } primary>
