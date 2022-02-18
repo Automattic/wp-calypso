@@ -97,7 +97,7 @@ const PluginDetailsSidebar = ( {
 				title={ translate( 'Support' ) }
 				description={
 					isAnnualPeriod
-						? translate( 'Live chat support 24x7.' )
+						? translate( 'Live chat support 24x7' )
 						: translate( 'Unlimited Email Support' )
 				}
 				links={ supportLinks }
