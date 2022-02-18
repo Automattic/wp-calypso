@@ -38,7 +38,7 @@ const Sso = ( {
 								? 'https://wordpress.com/en/support/wordpress-com-secure-sign-on-sso/'
 								: 'https://jetpack.com/support/sso/'
 						}
-						privacyLink="https://jetpack.com/support/sso/#privacy"
+						privacyLink={ isAtomic }
 					/>
 
 					<JetpackModuleToggle
@@ -88,7 +88,6 @@ Sso.defaultProps = {
 
 Sso.propTypes = {
 	isAtomic: PropTypes.bool,
-	siteIsJetpack: PropTypes.bool,
 	handleAutosavingToggle: PropTypes.func.isRequired,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
