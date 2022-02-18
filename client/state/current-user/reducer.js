@@ -1,4 +1,3 @@
-import { get, isEqual, reduce } from 'lodash';
 import {
 	CURRENT_USER_RECEIVE,
 	CURRENT_USER_SET_EMAIL_VERIFIED,
@@ -49,11 +48,31 @@ export const user = ( state = null, action ) => {
 export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
-			return get( action.user, 'meta.data.flags.active_flags', [] );
+			return action.user.meta.data?.flags?.active_flags ?? [];
 	}
 
 	return state;
 } );
+
+/**
+ * Compare if two sets of capabilities are equal.
+ *
+ * Capability sets are simple objects with boolean flags,
+ * so comparison is as simple as comparing objects at the first level.
+ *
+ * @param  {object} capA First set of capabilities
+ * @param  {object} capB Second set of capabilities
+ * @returns {boolean} True if capability sets are the same, false otherwise.
+ */
+function areCapabilitiesEqual( capA, capB ) {
+	if ( ! capA || ! capB ) {
+		return false;
+	}
+
+	const keysA = Object.keys( capA );
+	const keysB = Object.keys( capB );
+	return keysA.length === keysB.length && keysA.every( ( key ) => capB[ key ] === capA[ key ] );
+}
 
 /**
  * Returns the updated capabilities state after an action has been dispatched.
@@ -69,22 +88,18 @@ export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = 
 		case SITE_RECEIVE:
 		case SITES_RECEIVE: {
 			const sites = action.site ? [ action.site ] : action.sites;
-			return reduce(
-				sites,
-				( memo, site ) => {
-					if ( ! site.capabilities || isEqual( site.capabilities, memo[ site.ID ] ) ) {
-						return memo;
-					}
-
-					if ( memo === state ) {
-						memo = { ...state };
-					}
-
-					memo[ site.ID ] = site.capabilities;
+			return sites.reduce( ( memo, site ) => {
+				if ( ! site.capabilities || areCapabilitiesEqual( site.capabilities, memo[ site.ID ] ) ) {
 					return memo;
-				},
-				state
-			);
+				}
+
+				if ( memo === state ) {
+					memo = { ...state };
+				}
+
+				memo[ site.ID ] = site.capabilities;
+				return memo;
+			}, state );
 		}
 	}
 
