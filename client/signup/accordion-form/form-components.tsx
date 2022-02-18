@@ -170,7 +170,7 @@ export function SocialMediaProfiles( {
 	return (
 		<>
 			<Label>
-				{ translate( 'Please enter the following Social Media profile links if you have any.' ) }
+				{ translate( 'Please enter the following social media profile links if you have any.' ) }
 			</Label>
 			<FlexContainer>
 				<TextInputField

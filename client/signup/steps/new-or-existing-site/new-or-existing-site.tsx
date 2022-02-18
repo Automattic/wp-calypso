@@ -29,7 +29,7 @@ export default function NewOrExistingSiteScreen( props: Props ): React.ReactElem
 			label: translate( 'New site' ),
 			imageUrl: NewSiteImageUrl,
 			description: translate(
-				'Start afresh. We will build your site from scratch. A free domain for one year is included.'
+				'Start fresh. We will build your site from scratch. A free domain for one year is included.'
 			),
 		},
 		{
