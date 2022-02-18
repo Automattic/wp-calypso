@@ -1,10 +1,12 @@
 import { Gridicon } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import PropTypes from 'prop-types';
+import { useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import MaterialIcon from 'calypso/components/material-icon';
+import { SwipeableContext } from 'calypso/components/swipeable/context';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
@@ -27,6 +29,7 @@ function EducationalContent( {
 	height,
 } ) {
 	const dispatch = useDispatch();
+	const { isInCurrentPage } = useContext( SwipeableContext );
 
 	return (
 		<div className="educational-content">
@@ -53,6 +56,7 @@ function EducationalContent( {
 											card_name: cardName,
 										} }
 										statsName={ cardName }
+										tabIndex={ ! isInCurrentPage ? -1 : undefined }
 									>
 										{ text }
 									</InlineSupportLink>
@@ -60,6 +64,7 @@ function EducationalContent( {
 								{ externalLink && (
 									<ExternalLink
 										href={ url }
+										tabIndex={ ! isInCurrentPage ? -1 : undefined }
 										onClick={ () => dispatch( trackNavigation( url, cardName ) ) }
 										icon
 									>
@@ -67,7 +72,11 @@ function EducationalContent( {
 									</ExternalLink>
 								) }
 								{ calypsoLink && (
-									<a href={ url } onClick={ () => dispatch( trackNavigation( url, cardName ) ) }>
+									<a
+										href={ url }
+										tabIndex={ ! isInCurrentPage ? -1 : undefined }
+										onClick={ () => dispatch( trackNavigation( url, cardName ) ) }
+									>
 										{ text }
 									</a>
 								) }
@@ -77,7 +86,9 @@ function EducationalContent( {
 						modalLinks.map( ( { ModalComponent, modalComponentProps, onClick, text } ) => (
 							<div className="educational-content__link" key={ text }>
 								<ModalComponent { ...modalComponentProps } />
-								<button onClick={ () => onClick() }>{ text }</button>
+								<button tabIndex={ ! isInCurrentPage ? -1 : undefined } onClick={ () => onClick() }>
+									{ text }
+								</button>
 							</div>
 						) ) }
 				</div>

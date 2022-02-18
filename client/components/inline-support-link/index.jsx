@@ -27,6 +27,7 @@ class InlineSupportLink extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
+		tabIndex: PropTypes.number,
 		supportPostId: PropTypes.number,
 		supportLink: PropTypes.string,
 		showText: PropTypes.bool,
@@ -69,6 +70,7 @@ class InlineSupportLink extends Component {
 	render() {
 		const {
 			className,
+			tabIndex,
 			showText,
 			showIcon,
 			iconSize,
@@ -117,6 +119,7 @@ class InlineSupportLink extends Component {
 			<LinkComponent
 				className={ classnames( 'inline-support-link', className ) }
 				href={ url }
+				tabIndex={ tabIndex }
 				onClick={ ( event ) => {
 					const openDialogReturn = openDialog( event, supportPostId, url );
 					this.props.updateUrlSearchQuery( supportPostId );

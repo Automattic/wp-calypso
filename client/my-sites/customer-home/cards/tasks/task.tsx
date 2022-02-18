@@ -3,12 +3,13 @@ import { isDesktop } from '@automattic/viewport';
 import { useInstanceId } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Spinner from 'calypso/components/spinner';
+import { SwipeableContext } from 'calypso/components/swipeable/context';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -76,6 +77,7 @@ const Task = ( {
 	const skipButtonRef = useRef( null );
 	const { skipCard } = useSkipCurrentViewMutation( siteId ?? 0 );
 	const instanceId = useInstanceId( Task );
+	const { isInCurrentPage } = useContext( SwipeableContext );
 
 	useEffect( () => setIsLoading( forceIsLoading ), [ forceIsLoading ] );
 
@@ -141,6 +143,7 @@ const Task = ( {
 				onClick={ startTask }
 				href={ actionUrl }
 				target={ actionTarget }
+				tabIndex={ ! isInCurrentPage ? -1 : undefined }
 			>
 				{ actionText }
 			</Button>
@@ -170,6 +173,7 @@ const Task = ( {
 						<Button
 							className="task__skip is-link"
 							ref={ skipButtonRef }
+							tabIndex={ ! isInCurrentPage ? -1 : undefined }
 							onClick={ () => ( enableSkipOptions ? setSkipOptionsVisible( true ) : skipTask() ) }
 							aria-haspopup
 							// The WAI recommendation is to not present the aria-expanded attribute when the menu is hidden.
