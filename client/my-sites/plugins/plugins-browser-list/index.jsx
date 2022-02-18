@@ -6,7 +6,6 @@ import classnames from 'classnames';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import Spotlight from 'calypso/components/spotlight';
-import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
@@ -30,12 +29,11 @@ const PluginsBrowserList = ( {
 	listName,
 	expandedListLink,
 	size,
+	spotlightPlugin,
+	spotlightPluginFetched,
 } ) => {
 	const isWide = useBreakpoint( '>1280px' );
 	const { __ } = useI18n();
-	const { data: spotlightPlugin, isFetched: spotlightPluginFetched } = useWPCOMPlugin(
-		'wordpress-seo-premium'
-	);
 
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
