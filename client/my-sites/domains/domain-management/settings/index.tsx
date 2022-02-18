@@ -36,8 +36,8 @@ import {
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
+import DomainOnlyConnectCard from './cards/domain-only-connect';
 import DomainSecurityDetails from './cards/domain-security-details';
-import DomainStatusCard from './cards/domain-status';
 import NameServersCard from './cards/name-servers-card';
 import RegisteredDomainDetails from './cards/registered-domain-details';
 import SiteRedirectCard from './cards/site-redirect-card';
@@ -129,7 +129,7 @@ const Settings = ( {
 				key="status"
 				expanded
 			>
-				<DomainStatusCard selectedDomainName={ domain.domain } selectedSite={ selectedSite } />
+				<DomainOnlyConnectCard selectedDomainName={ domain.domain } selectedSite={ selectedSite } />
 			</Accordion>
 		);
 	};

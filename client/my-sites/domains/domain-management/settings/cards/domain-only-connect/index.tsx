@@ -6,20 +6,20 @@ import {
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import type { DomainStatusCardProps } from './types';
+import type { DomainOnlyConnectCardProps } from './types';
 
 import './style.scss';
 
-const DomainStatusCard = ( props: DomainStatusCardProps ): JSX.Element => {
+const DomainOnlyConnectCard = ( props: DomainOnlyConnectCardProps ): JSX.Element => {
 	const translate = useTranslate();
 	const { selectedSite, selectedDomainName, currentRoute } = props;
 
 	return (
-		<div className="domain-status__card">
-			<div className="domain-status__card-content">
+		<div className="domain-only-connect__card">
+			<div className="domain-only-connect__card-content">
 				<p>{ translate( 'Your domain is not associated with a WordPress.com site.' ) }</p>
 			</div>
-			<div className="domain-status__card-button-container">
+			<div className="domain-only-connect__card-button-container">
 				<Button href={ createSiteFromDomainOnly( selectedDomainName ) } primary>
 					{ translate( 'Create a site' ) }
 				</Button>
@@ -40,4 +40,4 @@ const DomainStatusCard = ( props: DomainStatusCardProps ): JSX.Element => {
 
 export default connect( ( state ) => ( {
 	currentRoute: getCurrentRoute( state ),
-} ) )( DomainStatusCard );
+} ) )( DomainOnlyConnectCard );
