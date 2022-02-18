@@ -12,20 +12,34 @@ describe( DataHelper.createSuiteTitle( 'WooCommerce Landing Page' ), function ()
 	let pluginsPage: PluginsPage;
 	let siteUrl: string;
 
-	beforeAll( async () => {
+	beforeEach( async () => {
 		page = await browser.newPage();
+	} );
 
-		const testAccount = new TestAccount( 'defaultUser' );
-		await testAccount.authenticate( page );
-		siteUrl = testAccount.getSiteURL( { protocol: false } );
+	afterEach( async () => {
+		await page.close();
 	} );
 
 	it( 'Plugins page loads premium,featured,popular,new sections', async function () {
+		const testAccount = new TestAccount( 'defaultUser' );
+		await testAccount.authenticate( page );
+		siteUrl = testAccount.getSiteURL( { protocol: false } );
+
 		pluginsPage = new PluginsPage( page );
 		await pluginsPage.visit( `/plugins/${ siteUrl }` );
-		await pluginsPage.hasSection( 'Premium' );
-		await pluginsPage.hasSection( 'Featured' );
-		await pluginsPage.hasSection( 'Popular' );
-		await pluginsPage.hasSection( 'New' );
+		await pluginsPage.onlyHasSections( [ 'Premium', 'Featured', 'Popular', 'New' ] );
+	} );
+
+	it( 'Plugins page loads featured,popular,new sections on Jetpack sites', async function () {
+		const testAccount = new TestAccount( 'jetpackUserPREMIUM' );
+		await testAccount.authenticate( page );
+		siteUrl = testAccount
+			.getSiteURL( { protocol: false } )
+			.replace( 'https://', '' )
+			.replace( '/wp-admin', '' );
+
+		pluginsPage = new PluginsPage( page );
+		await pluginsPage.visit( `/plugins/${ siteUrl }` );
+		await pluginsPage.onlyHasSections( [ 'Featured', 'Popular', 'New' ] );
 	} );
 } );
