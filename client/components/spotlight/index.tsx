@@ -44,7 +44,6 @@ const SpotlightCta = styled.div`
 	max-height: 32px;
 `;
 interface SpotlightProps {
-	onClick?: () => void;
 	url: string;
 	taglineText: string;
 	illustrationSrc: string;
@@ -53,10 +52,10 @@ interface SpotlightProps {
 }
 
 const Spotlight: React.FunctionComponent< SpotlightProps > = ( props: SpotlightProps ) => {
-	const { taglineText, illustrationSrc, onClick, url, titleText, ctaText } = props;
+	const { taglineText, illustrationSrc, url, titleText, ctaText } = props;
 
 	return (
-		<a href={ url } onClick={ onClick }>
+		<a href={ url }>
 			<SpotlightContainer>
 				<SpotlightContent>
 					<SpotlightIllustration alt="Spotlight Logo" src={ illustrationSrc } />
@@ -66,7 +65,7 @@ const Spotlight: React.FunctionComponent< SpotlightProps > = ( props: SpotlightP
 					</SpotlightTextContainer>
 				</SpotlightContent>
 				<SpotlightCta>
-					<Button onClick={ onClick }>{ ctaText }</Button>
+					<Button>{ ctaText }</Button>
 				</SpotlightCta>
 			</SpotlightContainer>
 		</a>
