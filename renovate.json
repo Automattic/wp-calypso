@@ -17,7 +17,8 @@
 		{
 			"extends": "monorepo:react",
 			"prPriority": 2,
-			"ignorePaths": [ "packages/interpolate-components" ]
+			"ignorePaths": [ "packages/interpolate-components" ],
+			"packagePatterns": [ "react" ]
 		},
 		{
 			"extends": [ "monorepo:react", ":disablePeerDependencies" ],
@@ -25,7 +26,7 @@
 			"includePaths": [ "packages/interpolate-components" ]
 		},
 		{
-			"packagePatterns": [ "^redux$", "^react-redux$" ],
+			"packagePatterns": [ "redux", "react-redux" ],
 			"prPriority": 2
 		},
 		{
@@ -39,7 +40,8 @@
 		},
 		{
 			"groupName": [ "webpack packages" ],
-			"packagePatterns": [ "webpack" ],
+			"packages": [ "style-loader", "html-loader", "exports-loader", "loader-utils" ],
+			"packagePatterns": [ "webpack", "terser" ],
 			"prPriority": 2
 		},
 		{
