@@ -1,3 +1,4 @@
+import { useDebugValue } from 'react';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -21,9 +22,17 @@ export default function useCartKey(): ReturnType< typeof getCartKey > {
 			currentUrlPath.includes( '/checkout/no-site' ) &&
 			'no-user' === searchParams.get( 'cart' ) );
 	const doesUserHavePermission = useSelector(
-		( state ) =>
-			!! selectedSite?.ID && ! canCurrentUser( state, selectedSite?.ID, 'manage_options' )
+		( state ) => !! selectedSite?.ID && canCurrentUser( state, selectedSite.ID, 'manage_options' )
 	);
 
-	return getCartKey( { selectedSite, isLoggedOutCart, isNoSiteCart, doesUserHavePermission } );
+	const cartKey = getCartKey( {
+		selectedSite,
+		isLoggedOutCart,
+		isNoSiteCart,
+		doesUserHavePermission,
+	} );
+	useDebugValue( `cart key is ${ cartKey }` );
+	useDebugValue( `site ID ${ selectedSite?.ID }` );
+	useDebugValue( `does user have permission? ${ doesUserHavePermission }` );
+	return cartKey;
 }
