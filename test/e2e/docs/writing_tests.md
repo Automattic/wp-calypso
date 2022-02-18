@@ -9,15 +9,15 @@
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-  - [Example test spec](#example-test-spec)
-  - [Quick start](#quick-start)
-  - [Child-level describe blocks](#child-level-describe-blocks)
-  - [Test step](#test-step)
-  - [Hooks](#hooks)
-  - [Block Smoke Testing](#block-smoke-testing)
-    - [Overview](#overview)
-    - [How To](#how-to)
-    - [Examples](#examples)
+    - [Example test spec](#example-test-spec)
+    - [Quick start](#quick-start)
+    - [Child-level describe blocks](#child-level-describe-blocks)
+    - [Test step](#test-step)
+    - [Hooks](#hooks)
+    - [Block Smoke Testing](#block-smoke-testing)
+        - [Overview](#overview)
+        - [How To](#how-to)
+        - [Examples](#examples)
 
 <!-- /TOC -->
 
@@ -118,7 +118,7 @@ import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 ```
 
-3. Assign test group(s). See [What is tested?](./overview.md#what-is-tested).
+3. Assign test group(s). See [Feature/Test groups](./tests_ci.md#featuretest-groups)
 
 ```typescript
 /**
@@ -170,7 +170,7 @@ describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
 		// Invalid string test steps
 	});
 
-	describe( 'Use Feature with a number', funtion() {
+	describe( 'Use Feature with a number', function() {
 		// Number instead of string test steps
 	});
 })
@@ -190,7 +190,7 @@ describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
 		// Interact and test the feature
 	});
 
-	describe( 'Turn off feature', funtion() {
+	describe( 'Turn off feature', function() {
 		// Test deactivating the feature
 	});
 })
