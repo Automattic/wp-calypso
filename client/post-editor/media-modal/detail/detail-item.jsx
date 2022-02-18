@@ -261,6 +261,7 @@ export class EditorMediaModalDetailItem extends Component {
 		}
 
 		return createElement( Item, {
+			key: item.ID,
 			className: 'editor-media-modal-detail__preview',
 			site: site,
 			item: item,
