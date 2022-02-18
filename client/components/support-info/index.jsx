@@ -9,7 +9,7 @@ function SupportInfo( { text, link, position, translate, privacyLink } ) {
 	function makePrivacyLink() {
 		if ( privacyLink ) {
 			if ( typeof privacyLink === 'string' ) {
-				return privacyLink + '#privacy';
+				return privacyLink;
 			}
 
 			return link + '#privacy';
