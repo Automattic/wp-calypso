@@ -77,7 +77,9 @@ class SiteRedirect extends Component {
 					{ translate( 'Redirect a Site' ) }
 				</HeaderCake>
 
-				<SiteRedirectStep products={ productsList } selectedSite={ selectedSite } />
+				{ selectedSite && (
+					<SiteRedirectStep products={ productsList } selectedSite={ selectedSite } />
+				) }
 			</Main>
 		);
 	}
