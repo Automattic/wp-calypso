@@ -48,7 +48,7 @@
 		"duplicate-package-checker-webpack-plugin": "^3.0.0",
 		"mini-css-extract-plugin": "^1.6.2",
 		"postcss-custom-properties": "^11.0.0",
-		"postcss-loader": "^6.2.0",
+		"postcss-loader": "^6.2.1",
 		"recursive-copy": "^2.0.10",
 		"sass": "^1.37.5",
 		"sass-loader": "^12.1.0",

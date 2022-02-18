@@ -160,7 +160,7 @@ __metadata:
     duplicate-package-checker-webpack-plugin: ^3.0.0
     mini-css-extract-plugin: ^1.6.2
     postcss-custom-properties: ^11.0.0
-    postcss-loader: ^6.2.0
+    postcss-loader: ^6.2.1
     recursive-copy: ^2.0.10
     sass: ^1.37.5
     sass-loader: ^12.1.0
@@ -23906,10 +23906,10 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"klona@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "klona@npm:2.0.4"
-  checksum: 3292a3393ed47603b67b54b61d29d1e64677c3436d12e8b14cd8762183f409dc3422dde06734cc23731c38bbb9feae03ffc23b38d399eeeebd6dbd467f58a034
+"klona@npm:^2.0.4, klona@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "klona@npm:2.0.5"
+  checksum: 5b752c11ca8e2996612386699f52cc5aed802aa4116663d26239ac0b054fae25191dacb95587ecf1a167b039daa9fc3fa2da17dfd5d0821f3037de3821d9a9e5
   languageName: node
   linkType: hard
 
@@ -28704,17 +28704,17 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"postcss-loader@npm:^6.1.1, postcss-loader@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "postcss-loader@npm:6.2.0"
+"postcss-loader@npm:^6.1.1, postcss-loader@npm:^6.2.1":
+  version: 6.2.1
+  resolution: "postcss-loader@npm:6.2.1"
   dependencies:
     cosmiconfig: ^7.0.0
-    klona: ^2.0.4
+    klona: ^2.0.5
     semver: ^7.3.5
   peerDependencies:
     postcss: ^7.0.0 || ^8.0.1
     webpack: ^5.0.0
-  checksum: d0cfe5a395e374f182229eb4631fdab1fc67e23b8111dab1cd96d96e28dd5b18a148c01206f54d0d16e75210004e645146f146c7427b8f26db11ae44404b0926
+  checksum: 736a1bf43a3e09e2351b5cc97cc26790a1c3261412c9dee063f3f6f2969a6ff7d8d194d9adcad01cee1afd1de071482318d9699e6157b67d46b3dccf3be1b58b
   languageName: node
   linkType: hard
 
