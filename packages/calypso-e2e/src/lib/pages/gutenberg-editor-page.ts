@@ -3,7 +3,7 @@ import { Page, Frame, ElementHandle, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
-import { NavbarComponent } from '../components';
+import { NavbarComponent, EditorPublishPanelComponent } from '../components';
 
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
 type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
@@ -406,18 +406,15 @@ export class GutenbergEditorPage {
 		const initialPublishButton = `${ selectors.publishButton(
 			selectors.postToolbar
 		) }, ${ selectors.scheduleButton( selectors.postToolbar ) }`;
-		const secondaryPublishButton = `${ selectors.publishButton(
-			selectors.publishPanel
-		) }, ${ selectors.scheduleButton( selectors.publishPanel ) }`;
-
 		await frame.click( initialPublishButton );
-		await frame.click( secondaryPublishButton );
-		const publishedURL = await this.getPublishedURL();
+
+		const editorPublishPanelComponent = new EditorPublishPanelComponent( this.page, frame );
+		const publishedURL = await editorPublishPanelComponent.publish();
 
 		if ( visit ) {
-			await this.visitPublishedPost( publishedURL );
+			await this.visitPublishedPost( publishedURL.href );
 		}
-		return publishedURL;
+		return publishedURL.href;
 	}
 
 	/**
