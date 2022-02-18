@@ -4,42 +4,48 @@
 		{
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
-			"prPriority": 2
+			"prPriority": 3
 		},
 		{
 			"extends": "monorepo:babel",
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"extends": "monorepo:lodash",
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"extends": "monorepo:react",
-			"prPriority": 1,
+			"prPriority": 2,
 			"ignorePaths": [ "packages/interpolate-components" ]
 		},
 		{
 			"extends": [ "monorepo:react", ":disablePeerDependencies" ],
-			"prPriority": 1,
+			"prPriority": 2,
 			"includePaths": [ "packages/interpolate-components" ]
 		},
 		{
-			"packagePatterns": [ "^redux$", "^react-redux$" ],
+			"packagePatterns": [ "react" ],
 			"prPriority": 1
 		},
 		{
+			"packagePatterns": [ "redux", "react-redux" ],
+			"prPriority": 2
+		},
+		{
 			"packageName": "typescript",
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
 			"groupName": "Type definitions",
 			"packagePatterns": [ "^@types/" ],
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
-			"packagePatterns": [ "^webpack" ],
-			"prPriority": 1
+			"groupName": [ "webpack packages" ],
+			"packages": [ "style-loader", "html-loader", "exports-loader", "loader-utils" ],
+			"packagePatterns": [ "webpack", "terser" ],
+			"prPriority": 2
 		},
 		{
 			"packageName": "tinymce",
@@ -47,33 +53,41 @@
 		},
 		{
 			"extends": "monorepo:storybook",
-			"prPriority": 1
+			"prPriority": 2
 		},
 		{
-			"groupName": "eslint packages",
-			"matchPackagePatterns": [ "^eslint" ],
-			"prPriority": 1
+			"extends": "packages:linters",
+			"groupName": "linters",
+			"prPriority": 2
 		},
 		{
-			"groupName": "Testing library",
-			"matchPackagePrefixes": [ "@testing-library" ],
+			"extends": "packages:unitTest",
+			"groupName": "unit test packages",
+			"prPriority": 2
+		},
+		{
+			"matchDepTypes": [ "devDependencies" ],
+			"matchUpdateTypes": [ "patch", "minor" ],
+			"groupName": "devDependencies (non-major)",
+			"excludePackagePatterns": [
+				"babel",
+				"typescript",
+				"@types/",
+				"webpack",
+				"storybook",
+				"eslint"
+			],
 			"prPriority": 1
 		}
 	],
-	"statusCheckVerify": true,
+	"dependencyDashboardTitle": "Renovate Dependency Updates",
 	"rangeStrategy": "bump",
-	"ignoreDeps": [ "jquery", "electron-builder" ],
+	"ignoreDeps": [ "electron-builder" ],
 	"labels": [ "Framework", "[Type] Task" ],
-	"lockFileMaintenance": {
-		"enabled": true,
-		"schedule": "every weekday"
-	},
 	"postUpdateOptions": [ "yarnDedupeHighest" ],
-	"prConcurrentLimit": 10,
-	"prHourlyLimit": 6,
+	"prConcurrentLimit": 20,
+	"prHourlyLimit": 10,
 	"semanticCommits": true,
 	"semanticCommitType": "chore",
-	"masterIssue": true,
-	"masterIssueTitle": "Renovate Dependency Updates",
 	"reviewers": [ "team:team-calypso-platform" ]
 }
