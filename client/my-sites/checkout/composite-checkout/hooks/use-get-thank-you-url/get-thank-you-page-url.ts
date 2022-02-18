@@ -231,8 +231,8 @@ export default function getThankYouPageUrl( {
 			? `${ urlFromCookie }/${ pendingOrReceiptId }`
 			: fallbackUrl;
 		debug( 'new blog created, so returning', newBlogReceiptUrl );
-		// Subflow domain:add-new-site must skip the thankyou page
-		if ( newBlogReceiptUrl.includes( '/thank-you/' ) ) {
+		// Skip composed url if we have to redirect to intent flow
+		if ( ! newBlogReceiptUrl.includes( '/start/setup-site' ) ) {
 			return newBlogReceiptUrl;
 		}
 	}
