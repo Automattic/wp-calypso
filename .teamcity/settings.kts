@@ -16,6 +16,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.project
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.dockerRegistry
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 import jetbrains.buildServer.configs.kotlin.v2019_2.version
 
@@ -53,6 +54,7 @@ project {
 	subProject(_self.projects.MarTech)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
+	buildType(ValidateRenovateConfig)
 	buildType(SmartBuildLauncher)
 
 	params {
@@ -267,6 +269,58 @@ object CheckCodeStyle : BuildType({
 		}
 	}
 })
+
+object ValidateRenovateConfig : BuildType({
+	name = "Validate Renovate Configuration"
+	description = "Validates the renovate configuration file"
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Validate Configuration"
+			scriptContent = """
+				echo "Hello, world"
+			"""
+		}
+	}
+
+	triggers {
+		vcs {
+			// Only trigger on changes to the renovate configuration file.
+			triggerRules = "+:root=${Settings.WpCalypso.id}:renovate.json"
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+		}
+	}
+
+	features {
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+	}
+})
+
 
 object SmartBuildLauncher : BuildType({
 	name = "Smart Build Launcher"
