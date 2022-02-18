@@ -1,6 +1,6 @@
 import { TranslateResult } from 'i18n-calypso';
-import SelectItems from './select-items';
-import SelectItemsAlt from './select-items-alt';
+import SelectItems from './intent-screen-select-items';
+import SelectItemsAlt from './intent-screen-select-items-alt';
 import type { SelectItem, SelectAltItem } from '../types';
 
 interface Props< T > {

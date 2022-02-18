@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.select-items {
+.intent-screen-select-items {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -15,7 +15,7 @@
 	}
 }
 
-.select-items__item {
+.intent-screen-select-items__item {
 	display: flex;
 	align-items: flex-start;
 	position: relative;

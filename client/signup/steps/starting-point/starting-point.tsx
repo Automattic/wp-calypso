@@ -1,8 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { SelectItems, SelectItem } from '@automattic/intent-screen';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
+import { preventWidows } from 'calypso/lib/formatting';
 import { write, play, design } from '../../icons';
-import SelectItems, { SelectItem } from '../../select-items';
 import type { StartingPointFlag } from './types';
 
 type StartingPointConfig = SelectItem< StartingPointFlag >;
@@ -49,6 +50,7 @@ const StartingPoint: React.FC< Props > = ( { onSelect, translate } ) => {
 		<SelectItems
 			items={ startingPoints.filter( ( { hidden } ) => ! hidden ) }
 			onSelect={ onSelect }
+			preventWidows={ preventWidows }
 		/>
 	);
 };
