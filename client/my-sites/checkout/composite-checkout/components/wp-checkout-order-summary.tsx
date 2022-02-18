@@ -7,6 +7,9 @@ import {
 	isDomainTransfer,
 	isWpComPersonalPlan,
 	isWpComPlan,
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	isWpComPremiumPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -27,7 +30,10 @@ import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getPlanFeatures from '../lib/get-plan-features';
 import getRefundText from '../lib/get-refund-text';
@@ -170,6 +176,22 @@ function CheckoutSummaryFeaturesList( props: {
 	}
 	const refundText = getRefundText( refundDays, null, translate );
 
+	const currentPlan = useSelector( ( state ) =>
+		siteId ? getCurrentPlan( state, siteId ) : undefined
+	);
+	const billingPeriod = useSelector( getBillingInterval );
+	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
+
+	const currentPlanSlug = currentPlan?.productSlug;
+
+	const isChatAvailable =
+		! hasPlanInCart &&
+		currentPlanSlug &&
+		( isWpComPremiumPlan( currentPlanSlug ) ||
+			isWpComBusinessPlan( currentPlanSlug ) ||
+			isWpComEcommercePlan( currentPlanSlug ) ) &&
+		isAnnualPeriod;
+
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
@@ -186,6 +208,13 @@ function CheckoutSummaryFeaturesList( props: {
 				<WPCheckoutCheckIcon id="features-list-support-text" />
 				<SupportText hasPlanInCart={ hasPlanInCart } isJetpackNotAtomic={ isJetpackNotAtomic } />
 			</CheckoutSummaryFeaturesListItem>
+			{ isChatAvailable && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id={ 'annual-live-chat' } />
+					{ translate( 'Live chat support' ) }
+				</CheckoutSummaryFeaturesListItem>
+			) }
+
 			{ showRefundText && (
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon id="features-list-refund-text" />
