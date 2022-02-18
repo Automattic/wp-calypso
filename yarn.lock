@@ -19918,7 +19918,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"hash.js@npm:^1.0.0, hash.js@npm:^1.0.3, hash.js@npm:^1.1.5, hash.js@npm:^1.1.7":
+"hash.js@npm:^1.0.0, hash.js@npm:^1.0.3, hash.js@npm:^1.1.7":
   version: 1.1.7
   resolution: "hash.js@npm:1.1.7"
   dependencies:
@@ -20622,7 +20622,7 @@ fsevents@~2.1.2:
     "@wordpress/compose": ^5.0.7
     debug: ^4.3.3
     events: ^3.0.0
-    hash.js: ^1.1.5
+    hash.js: ^1.1.7
     lodash: ^4.17.21
     lru: ^3.1.0
     react: ^17.0.2
