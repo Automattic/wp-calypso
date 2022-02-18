@@ -3,10 +3,6 @@ import { isCurrentUserUploadingGravatar, getUserTempGravatar } from '../selector
 
 describe( 'selectors', () => {
 	describe( '#isCurrentUserUploadingGravatar', () => {
-		test( 'returns false when state is undefined', () => {
-			expect( isCurrentUserUploadingGravatar( undefined ) ).to.equal( false );
-		} );
-
 		test( 'returns state when defined', () => {
 			const uploadingState = {
 				currentUser: {
