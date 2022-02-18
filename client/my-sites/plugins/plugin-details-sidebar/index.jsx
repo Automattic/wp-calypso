@@ -1,11 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
+import { useSelector } from 'react-redux';
 import eye from 'calypso/assets/images/marketplace/eye.svg';
 import support from 'calypso/assets/images/marketplace/support.svg';
 import wooLogo from 'calypso/assets/images/marketplace/woo-logo.svg';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 
 const PluginDetailsSidebar = ( {
 	plugin: {
@@ -15,10 +17,9 @@ const PluginDetailsSidebar = ( {
 		demo_url = null,
 		documentation_url = null,
 	},
-	billingPeriod,
 } ) => {
 	const translate = useTranslate();
-
+	const billingPeriod = useSelector( getBillingInterval );
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 
 	if ( ! isMarketplaceProduct ) {
