@@ -42,7 +42,7 @@ const LocaleSwitcher: React.FC< Props > = ( { isVisible, onClose } ) => {
 		typeof window !== 'undefined'
 			? window.location.href
 					.replace( window.location.origin, '' )
-					.replace( new RegExp( `^(/${ selectedLocale }/)` ), '/' )
+					.replace( new RegExp( `^(/${ defaultLocale }/)` ), '/' )
 			: '/pricing';
 
 	const onMouseOver = useCallback( ( code ) => setSelectedLocale( code ), [ setSelectedLocale ] );
