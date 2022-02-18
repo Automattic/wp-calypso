@@ -4,7 +4,7 @@ import formatCurrency from '@automattic/format-currency';
 import { MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
@@ -175,15 +175,11 @@ const ProfessionalEmailUpsell = ( {
 		setCartItem( cartItem, () => handleClickAccept( 'accept' ) );
 	};
 
-	const threeMonthsFreeBadge = (
-		<span>
-			<Badge type="success">{ translate( '3 months free' ) }</Badge>
-		</span>
-	);
-
 	const pricingComponent = (
 		<div className="professional-email-upsell__pricing">
-			{ threeMonthsFreeBadge }
+			<span>
+				<Badge type="success">{ translate( '3 months free' ) }</Badge>
+			</span>
 			<span
 				className={ classNames( 'professional-email-upsell__standard-price', {
 					'is-discounted': true,
@@ -196,7 +192,7 @@ const ProfessionalEmailUpsell = ( {
 
 	return (
 		<div>
-			<header className="professional-email-upsell__header notouch">
+			<header className="professional-email-upsell__header">
 				<h3 className="professional-email-upsell__small-title">
 					{ translate( "Hold tight, we're getting your site ready." ) }
 				</h3>
@@ -209,7 +205,9 @@ const ProfessionalEmailUpsell = ( {
 					} ) }
 				</h1>
 				<h3 className="professional-email-upsell__small-subtitle">
-					{ translate( 'No setup required. Easy to manage.' ) }
+					{ i18n.hasTranslation( 'No setup required. Easy to manage.' )
+						? translate( 'No setup required. Easy to manage.' )
+						: null }
 				</h3>
 				<BillingIntervalToggle
 					intervalLength={ selectedIntervalLength }

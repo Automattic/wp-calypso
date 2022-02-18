@@ -20,8 +20,8 @@
 		display: flex;
 
 		.segmented-control {
-			background-color: #f2f2f2;
-			border: solid 1px var( --studio-gray-5 );
+			background-color: var( --studio-gray-0 );
+			border: 1px solid var( --studio-gray-5 );
 			border-radius: 6px; /* stylelint-disable-line */
 			color: var( --color-text );
 
@@ -32,7 +32,7 @@
 
 			.segmented-control__item {
 				border-radius: 6px; /* stylelint-disable-line */
-				border: 1px solid #f2f2f2;
+				border: 1px solid var( --studio-gray-0 );
 				padding: 2px;
 
 				&.is-selected {
