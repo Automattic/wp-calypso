@@ -37,6 +37,10 @@ const SpotlightTagline = styled.div`
 `;
 
 const SpotlightCta = styled.div`
+	@media ( max-width: 560px ) {
+		display: none;
+	}
+
 	max-height: 32px;
 `;
 interface SpotlightProps {
