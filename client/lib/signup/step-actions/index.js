@@ -452,6 +452,12 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 			show_on_front: 'page',
 			page_on_front: newPage.id,
 		} )( reduxStore.dispatch );
+
+		// Set footer to the 'store' option
+		await wpcom.req.post( {
+			path: `/sites/${ siteSlug }/seller_footer`,
+			apiNamespace: 'wpcom/v2',
+		} );
 	} catch ( e ) {
 		defer( callback );
 		return;
