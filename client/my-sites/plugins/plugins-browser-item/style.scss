@@ -1,3 +1,4 @@
+@use '../variables';
 @import '@automattic/color-studio/dist/color-variables';
 
 .plugins-browser-item {
@@ -140,6 +141,12 @@
 	color: $studio-black;
 }
 
+.plugins-browser-item__pricing-placeholder {
+	width: 150px;
+
+	@extend %placeholder;
+}
+
 .plugins-browser-item__installed {
 	display: flex;
 	color: var( --studio-green-30 );
@@ -159,7 +166,12 @@
 	justify-content: space-between;
 }
 
-.plugins-browser-item__period {
+.plugins-browser-item__period,
+.plugins-browser-item__requires-plan-upgrade {
 	color: var( --studio-gray-60 );
 	font-size: $font-body-extra-small;
+}
+
+.plugins-browser-item__requires-plan-upgrade {
+	margin-left: 5px;
 }

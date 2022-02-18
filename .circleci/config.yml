@@ -8,7 +8,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:16.11.1
+      - image: cimg/node:16.13.2
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -26,7 +26,6 @@ references:
     command: |
       mkdir -p                                  \
         "$CIRCLE_ARTIFACTS/notifications-panel" \
-        "$CIRCLE_ARTIFACTS/translate"           \
         "$CIRCLE_ARTIFACTS/screenshots"         \
         "$CIRCLE_ARTIFACTS/wpcom-block-editor"  \
         "$CIRCLE_TEST_REPORTS/client"           \
@@ -142,54 +141,6 @@ commands:
           path: /tmp/artifacts
 
 jobs:
-  translate:
-    <<: *defaults
-    steps:
-      - restore_cache: *restore-git-cache
-      - checkout
-      - run: *update-git
-      - save_cache: *save-git-cache
-      - run: *update-node
-      - restore_cache: *restore-yarn-cache
-      - run: *yarn-install
-      - save_cache: *save-yarn-cache
-      - run: *setup-results-and-artifacts
-      - run:
-          name: Extract strings
-          command: |
-            yarn run translate
-            mv public/calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
-      - run:
-          name: Build New Strings .pot
-          when: always
-          command: |
-            git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
-            DEFAULT_BRANCH=trunk bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
-            rm -rf gp-localci-client
-      - store-artifacts-and-test-results
-      - run:
-          name: Notify GlotPress translations are ready
-          when: always
-          command: |
-            curl -X POST https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh \
-              -H 'Cache-Control: no-cache' \
-              -H 'Content-Type: application/json' \
-              -d '{
-                    "payload": {
-                      "branch": "'"$CIRCLE_BRANCH"'",
-                      "build_num": '"$CIRCLE_BUILD_NUM"',
-                      "pull_requests": [
-                        {
-                          "url": "'"$CIRCLE_PULL_REQUEST"'"
-                        }
-                      ],
-                      "reponame": "'"$CIRCLE_PROJECT_REPONAME"'",
-                      "username": "'"$CIRCLE_PROJECT_USERNAME"'",
-                      "vcs_revision": "'"$CIRCLE_SHA1"'",
-                      "vcs_type": "github"
-                    }
-                  }'
-
   wp-desktop-assets:
     docker:
       - image: circleci/node:12.16.2-browsers
@@ -511,9 +462,6 @@ jobs:
 
 workflows:
   version: 2
-  calypso:
-    jobs:
-      - translate
   wp-desktop:
     jobs:
       - wp-desktop-assets:

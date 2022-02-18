@@ -177,11 +177,7 @@ class SectionImport extends Component {
 		return (
 			<>
 				{ importerElements }
-				<CompactCard
-					href={ site.options.admin_url + 'import.php' }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
+				<CompactCard href={ site.options.admin_url + 'import.php' }>
 					{ this.props.translate( 'Choose from full list' ) }
 				</CompactCard>
 			</>

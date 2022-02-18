@@ -19,7 +19,7 @@ const JetpackProductCardFeatures: React.FC< Props > = ( {
 	collapseFeaturesOnMobile,
 } ) => {
 	const translate = useTranslate();
-	const listRef = useRef< HTMLUListElement >();
+	const listRef = useRef< HTMLUListElement >( null );
 	const [ isExpanded, expand ] = useState( ! collapseFeaturesOnMobile );
 	const listId = `${ productSlug }-features-list`;
 

@@ -1,26 +1,38 @@
 import { Circle, SVG } from '@wordpress/components';
 import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
+import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as DomainType } from 'calypso/lib/domains/constants';
-import type { SettingsHeaderProps } from './types';
+import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import type {
+	SettingsHeaderConnectedProps,
+	SettingsHeaderOwnProps,
+	SettingsHeaderProps,
+} from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
 const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	const { __ } = useI18n();
+	let badgeCounter = 0;
 
 	const renderCircle = () => (
-		<SVG viewBox="0 0 24 24">
+		<SVG viewBox="0 0 24 24" height={ 8 } width={ 8 }>
 			<Circle cx="12" cy="12" r="12" />
 		</SVG>
 	);
 
 	const renderSuccessBadge = ( description: TranslateResult, icon?: JSX.Element ) => (
-		<Badge className="settings-header__badge settings-header__badge--success">
+		<Badge
+			className="settings-header__badge settings-header__badge--success"
+			key={ `badge${ badgeCounter++ }` }
+		>
 			{ icon ? (
 				<Icon icon={ icon } size={ 14 } />
 			) : (
@@ -31,26 +43,39 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	);
 
 	const renderWarningBadge = ( description: TranslateResult ) => (
-		<Badge className="settings-header__badge settings-header__badge--warning">
+		<Badge
+			className="settings-header__badge settings-header__badge--warning"
+			key={ `badge${ badgeCounter++ }` }
+		>
 			<div className="settings-header__badge-indicator">{ renderCircle() }</div>
 			{ description }
 		</Badge>
 	);
 
 	const renderPremiumBadge = () => (
-		<Badge className="settings-header__badge settings-header__badge--premium">
+		<Badge
+			className="settings-header__badge settings-header__badge--premium"
+			key={ `badge${ badgeCounter++ }` }
+		>
 			{ __( 'Premium domain' ) }
 			<Icon icon={ info } size={ 17 } />
 		</Badge>
 	);
 
 	const renderNeutralBadge = ( description: TranslateResult ) => (
-		<Badge className="settings-header__badge settings-header__badge--neutral">
+		<Badge
+			className="settings-header__badge settings-header__badge--neutral"
+			key={ `badge${ badgeCounter++ }` }
+		>
 			{ description }
 		</Badge>
 	);
 
-	const renderTransferOrMappingBadge = ( type: string ) => {
+	const renderDomainTypeBadge = ( type: string ) => {
+		if ( type === DomainType.SITE_REDIRECT ) {
+			return renderNeutralBadge( __( 'Site Redirect' ) );
+		}
+
 		if ( type === DomainType.MAPPED ) {
 			return renderNeutralBadge( __( 'Registered with an external provider' ) );
 		}
@@ -69,11 +94,13 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	};
 
 	const renderBadges = () => {
-		const { domain } = props;
+		const { domain, isDomainOnlySite } = props;
 		const badges = [];
 
-		if ( [ DomainType.MAPPED, DomainType.TRANSFER ].includes( domain.type ) ) {
-			badges.push( renderTransferOrMappingBadge( domain.type ) );
+		if (
+			[ DomainType.SITE_REDIRECT, DomainType.MAPPED, DomainType.TRANSFER ].includes( domain.type )
+		) {
+			badges.push( renderDomainTypeBadge( domain.type ) );
 		}
 
 		const statusBadge = renderStatusBadge( domain );
@@ -81,7 +108,7 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 			badges.push( statusBadge );
 		}
 
-		if ( domain.isPrimary ) {
+		if ( domain.isPrimary && ! isDomainOnlySite ) {
 			badges.push( renderSuccessBadge( __( 'Primary site address' ), home ) );
 		}
 
@@ -90,6 +117,35 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 		}
 
 		return <div className="settings-header__container-badges">{ badges }</div>;
+	};
+
+	const renderNotices = () => {
+		const { domain, site } = props;
+		const { noticeText, statusClass } = resolveDomainStatus( domain, null, {
+			siteSlug: site?.slug,
+			getMappingErrors: true,
+		} );
+
+		if ( noticeText && statusClass )
+			return (
+				<div className="settings-header__domain-notice">
+					<Icon
+						icon={ info }
+						size={ 18 }
+						className={ classnames( 'settings-header__domain-notice-icon gridicon', {
+							'gridicon--error settings-header__domain-notice-icon--rotated': [
+								'status-error',
+								'status-warning',
+								'status-alert',
+							].includes( statusClass ),
+						} ) }
+						viewBox="2 2 20 20"
+					/>
+					<div className="settings-header__domain-notice-message">{ noticeText }</div>
+				</div>
+			);
+
+		return null;
 	};
 
 	return (
@@ -104,8 +160,20 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 				/>
 				{ renderBadges() }
 			</div>
+			{ renderNotices() }
+			<TransferConnectedDomainNudge
+				domain={ props.domain }
+				location="domain_settings"
+				siteSlug={ props.site.slug }
+			/>
 		</div>
 	);
 };
 
-export default SettingsHeader;
+export default connect(
+	( state, ownProps: SettingsHeaderOwnProps ): SettingsHeaderConnectedProps => {
+		return {
+			isDomainOnlySite: !! isDomainOnlySite( state, ownProps.site.ID ),
+		};
+	}
+)( SettingsHeader );

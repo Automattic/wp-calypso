@@ -38,7 +38,10 @@ const getFilteredThreatCount = (
 	return threatCounts[ filter ] || 0;
 };
 
-const getNoThreatsMessage = ( translate, filter ) => {
+const getNoThreatsMessage = (
+	translate: ReturnType< typeof useTranslate >,
+	filter: undefined | string
+) => {
 	if ( ! filter || filter === '' ) {
 		return translate( 'So far, there are no archived threats on your site.' );
 	}

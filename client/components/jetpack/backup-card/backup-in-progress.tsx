@@ -20,9 +20,7 @@ const BackupInProgress: React.FC< Props > = ( { percent, lastBackupDate, isFeatu
 	const getDisplayDate = useGetDisplayDate();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteLastBackupDate = useDateWithOffset( lastBackupDate, {
-		shouldExecute: !! lastBackupDate,
-	} );
+	const siteLastBackupDate = useDateWithOffset( lastBackupDate );
 	const lastBackupDisplayDate = lastBackupDate ? getDisplayDate( lastBackupDate ) : undefined;
 
 	return (

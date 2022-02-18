@@ -8,18 +8,22 @@ export type ShoppingCartReducer = (
 	action: ShoppingCartAction
 ) => ShoppingCartState;
 
-export type GetCart = ( cartKey: string ) => Promise< ResponseCart >;
-export type SetCart = ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
+export type CartKey = number | 'no-user' | 'no-site';
+
+export type GetCart = ( cartKey: CartKey ) => Promise< ResponseCart >;
+export type SetCart = ( cartKey: CartKey, requestCart: RequestCart ) => Promise< ResponseCart >;
 
 export interface ShoppingCartManagerOptions {
 	refetchOnWindowFocus?: boolean;
-	defaultCartKey?: string;
+	defaultCartKey?: CartKey;
 }
 
-export type GetManagerForKey = ( cartKey: string | undefined ) => ShoppingCartManager;
+export type GetManagerForKey = ( cartKey: CartKey | undefined ) => ShoppingCartManager;
+export type GetCartKeyForSiteSlug = ( siteSlug: string ) => Promise< CartKey >;
 
 export interface ShoppingCartManagerClient {
 	forCartKey: GetManagerForKey;
+	getCartKeyForSiteSlug: GetCartKeyForSiteSlug;
 }
 
 export type UnsubscribeFunction = () => void;
@@ -62,6 +66,8 @@ export type ReplaceProductInCart = (
 
 export type ReloadCartFromServer = () => Promise< ResponseCart >;
 
+export type ClearCartMessages = () => Promise< ResponseCart >;
+
 export type ReplaceProductsInCart = (
 	products: MinimalRequestCartProduct[]
 ) => Promise< ResponseCart >;
@@ -103,6 +109,7 @@ export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'rejected';
 
 export type ShoppingCartAction =
 	| { type: 'CLEAR_QUEUED_ACTIONS' }
+	| { type: 'CLEAR_MESSAGES' }
 	| { type: 'UPDATE_LAST_VALID_CART' }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'CART_PRODUCTS_ADD'; products: RequestCartProduct[] }
@@ -131,6 +138,7 @@ export interface ShoppingCartManagerActions {
 	replaceProductInCart: ReplaceProductInCart;
 	replaceProductsInCart: ReplaceProductsInCart;
 	reloadFromServer: ReloadCartFromServer;
+	clearMessages: ClearCartMessages;
 }
 
 export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
@@ -185,11 +193,7 @@ export interface RequestCart {
 	products: RequestCartProduct[];
 	tax: RequestCartTaxData;
 	coupon: string;
-	currency: string;
-	locale: string;
-	is_coupon_applied: boolean;
 	temporary: false;
-	extra: string;
 }
 
 export type RequestCartTaxData = null | {
@@ -202,7 +206,7 @@ export type RequestCartTaxData = null | {
 
 export interface RequestCartProduct {
 	product_slug: string;
-	product_id: number;
+	product_id?: number;
 	meta: string;
 	volume: number;
 	quantity: number | null;
@@ -210,12 +214,12 @@ export interface RequestCartProduct {
 }
 
 export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
-	Pick< RequestCartProduct, 'product_slug' | 'product_id' >;
+	Pick< RequestCartProduct, 'product_slug' >;
 
 export interface ResponseCart< P = ResponseCartProduct > {
 	blog_id: number | string;
 	create_new_blog: boolean;
-	cart_key: string;
+	cart_key: CartKey;
 	products: P[];
 	total_tax: string; // Please try not to use this
 	total_tax_integer: number;
@@ -324,6 +328,7 @@ export interface ResponseCartProduct {
 	coupon_savings_display?: string;
 	coupon_savings_integer?: number;
 	price: number;
+	item_tax: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
 	is_renewal?: boolean;
@@ -363,6 +368,7 @@ export interface ResponseCartProductExtra {
 	privacy?: boolean;
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
+	is_marketplace_product?: boolean;
 }
 
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
@@ -371,6 +377,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	auth_code?: string;
+	privacy_available?: boolean;
 }
 
 export interface GSuiteProductUser {

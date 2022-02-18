@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import './inline-help-search-card.scss';
 
 /**
  * Module variables

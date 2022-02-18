@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -11,7 +12,6 @@ import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mod
 import JetpackSiteStats from 'calypso/my-sites/site-settings/jetpack-site-stats';
 import RelatedPosts from 'calypso/my-sites/site-settings/related-posts';
 import SeoSettingsHelpCard from 'calypso/my-sites/site-settings/seo-settings/help';
-import SeoSettingsMain from 'calypso/my-sites/site-settings/seo-settings/main';
 import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-verification';
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
@@ -24,8 +24,8 @@ import './style.scss';
 
 const SiteSettingsTraffic = ( {
 	fields,
-	handleAutosavingToggle,
 	handleAutosavingRadio,
+	handleAutosavingToggle,
 	handleSubmitForm,
 	isAdmin,
 	isJetpack,
@@ -33,6 +33,7 @@ const SiteSettingsTraffic = ( {
 	isRequestingSettings,
 	isSavingSettings,
 	setFieldValue,
+	siteId,
 	translate,
 } ) => (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -47,7 +48,13 @@ const SiteSettingsTraffic = ( {
 		<JetpackDevModeNotice />
 
 		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
-		{ isAdmin && <SeoSettingsMain /> }
+		{ isAdmin && (
+			<AsyncLoad
+				key={ siteId }
+				require="calypso/my-sites/site-settings/seo-settings/form"
+				placeholder={ null }
+			/>
+		) }
 		{ isAdmin && (
 			<RelatedPosts
 				onSubmitForm={ handleSubmitForm }
@@ -99,6 +106,7 @@ const connectComponent = connect( ( state ) => {
 	const isJetpackAdmin = isJetpack && isAdmin;
 
 	return {
+		siteId,
 		isAdmin,
 		isJetpack,
 		isJetpackAdmin,

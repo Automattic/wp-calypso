@@ -1,5 +1,5 @@
 import getRawSite from 'calypso/state/selectors/get-raw-site';
-import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { AppState } from 'calypso/types';
 
 type Site = {
@@ -24,7 +24,7 @@ export default function isJetpackProductSite( state: AppState, siteId: number ):
 		return null;
 	}
 
-	if ( isSiteWpcom( state, siteId ) ) {
+	if ( isAtomicSite( state, siteId ) ) {
 		return false;
 	}
 

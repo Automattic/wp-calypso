@@ -1,7 +1,7 @@
 {
 	"name": "spec-junit-reporter",
 	"version": "0.0.1",
-	"description": "Mocha reporter that combines the default spec output with an junit.xml file in a dynamically allocated directory",
+	"description": "Mocha reporter that combines the default spec output with an junit.xml file in a dynamically allocated directory.",
 	"main": "index.js",
 	"author": "Automattic Inc.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -11,9 +11,7 @@
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/spec-junit-reporter"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"private": true,
 	"peerDependencies": {
 		"mocha": "^8.1.3",

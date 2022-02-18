@@ -29,7 +29,7 @@ class TransferConfirmationDialog extends PureComponent {
 		const targetSiteTitle = get( targetSite, 'title', translate( 'Site Title' ) );
 		if ( isMapping ) {
 			return translate(
-				'Do you want to transfer mapping of {{strong}}%(domainName)s{{/strong}} ' +
+				'Do you want to transfer domain connection of {{strong}}%(domainName)s{{/strong}} ' +
 					'to site {{strong}}%(targetSiteTitle)s{{/strong}}?',
 				{
 					args: { domainName, targetSiteTitle },
@@ -49,34 +49,41 @@ class TransferConfirmationDialog extends PureComponent {
 	}
 
 	renderTargetSiteOnFreePlanWarnings() {
-		if ( this.props.primaryWithPlansOnly ) {
-			return (
+		const { isMapping } = this.props;
+
+		if ( isMapping ) {
+			return this.props.primaryWithPlansOnly ? (
 				<p>
 					{ this.props.translate(
 						"The target site doesn't have a paid plan, so you'll have to pay the full price for a " +
-							'domain mapping subscription when the domain mapping next renews. You will not be able to set it as primary either. ' +
+							'domain connection subscription when the domain connection next renews. You will not be able to set it as primary either. ' +
 							'If you upgrade the target site to a paid plan, these features are included in the plan.'
+					) }
+				</p>
+			) : (
+				<p>
+					{ this.props.translate(
+						"The target site doesn't have a paid plan, so you'll have to pay the full price for a " +
+							'domain connection subscription when the domain connection next renews. ' +
+							'If you upgrade the target site to a paid plan, domain connections (and many more features!) are included in our plans.'
 					) }
 				</p>
 			);
 		}
-
-		return (
+		return this.props.primaryWithPlansOnly ? (
 			<p>
 				{ this.props.translate(
-					"The target site doesn't have a paid plan, so you'll have to pay the full price for a " +
-						'domain mapping subscription when the domain mapping next renews. ' +
-						'If you upgrade the target site to a paid plan, domain mappings (and many more features!) are included in our plans.'
+					"The target site doesn't have a paid plan, so you won't be able to set this domain as primary on the site."
 				) }
 			</p>
-		);
+		) : null;
 	}
 
 	render() {
 		const { isMapping, translate } = this.props;
 		const actionLabel = ! isMapping
 			? translate( 'Confirm Transfer' )
-			: translate( 'Confirm Mapping Transfer' );
+			: translate( 'Confirm Domain Connection Transfer' );
 		const buttons = [
 			{
 				action: 'cancel',

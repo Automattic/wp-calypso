@@ -61,7 +61,6 @@ const ScanVPActiveBody: FunctionComponent = () => {
 					className="scan__wpcom-cta"
 					href="https://dashboard.vaultpress.com"
 					onClick={ onUpgradeClick }
-					selfTarget={ true }
 					primary
 				>
 					{ translate( 'Visit Dashboard' ) }

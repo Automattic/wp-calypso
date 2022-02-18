@@ -1,0 +1,57 @@
+@import '@automattic/onboarding/styles/mixins';
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+
+.dns-card {
+	&__button {
+		margin-top: 16px;
+	}
+}
+
+.dns-record-item {
+	font-size: $font-body-small;
+	line-height: 1.7;
+	&.is-placeholder > div {
+		margin-bottom: 0.75em;
+		@include placeholder();
+	}
+	@include break-mobile {
+		display: flex;
+	}
+	&__type {
+		overflow-wrap: break-word;
+		display: inline-block;
+		vertical-align: middle;
+		margin-right: 16px;
+		@include break-mobile {
+			margin-right: 32px;
+			flex-basis: 90px;
+			flex-grow: 1;
+		}
+	}
+	&__name {
+		margin-right: 16px;
+		display: inline-block;
+		vertical-align: middle;
+		@include break-mobile {
+			margin-right: 32px;
+			flex-basis: 180px;
+			flex-grow: 1;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+	&__value {
+		display: inline-block;
+		max-width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		vertical-align: middle;
+		@include break-mobile {
+			flex-basis: 100%;
+			flex-grow: 1;
+		}
+	}
+}

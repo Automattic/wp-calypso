@@ -13,6 +13,7 @@ import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { isLocaleRtl } from 'calypso/lib/i18n-utils';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
 import { chunkCssLinks } from './utils/chunk';
@@ -28,7 +29,6 @@ class Document extends Component {
 			head,
 			i18nLocaleScript,
 			initialReduxState,
-			isRTL,
 			entrypoint,
 			manifests,
 			lang,
@@ -84,6 +84,8 @@ class Document extends Component {
 		const theme = config( 'theme' );
 
 		const LoadingLogo = chooseLoadingLogo( this.props );
+
+		const isRTL = isLocaleRtl( lang );
 
 		return (
 			<html

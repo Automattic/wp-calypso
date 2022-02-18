@@ -1,3 +1,4 @@
+import { createHigherOrderComponent } from '@wordpress/compose';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -7,15 +8,13 @@ import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import useAddExternalContributorMutation from 'calypso/data/external-contributors/use-add-external-contributor-mutation';
+import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
+import useRemoveExternalContributorMutation from 'calypso/data/external-contributors/use-remove-external-contributor-mutation';
 import ContractorSelect from 'calypso/my-sites/people/contractor-select';
 import RoleSelect from 'calypso/my-sites/people/role-select';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import {
-	requestExternalContributors,
-	requestExternalContributorsAddition,
-	requestExternalContributorsRemoval,
-} from 'calypso/state/data-getters';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -38,6 +37,13 @@ const fieldKeys = {
 
 class EditUserForm extends Component {
 	state = this.getStateObject( this.props );
+
+	static getDerivedStateFromProps( { isExternalContributor }, state ) {
+		if ( isExternalContributor !== undefined && state.isExternalContributor === undefined ) {
+			return { isExternalContributor };
+		}
+		return null;
+	}
 
 	componentDidUpdate() {
 		if ( ! this.hasUnsavedSettings() ) {
@@ -157,12 +163,12 @@ class EditUserForm extends Component {
 		this.props.updateUser( user.ID, changedAttributes );
 
 		if ( true === changedSettings.isExternalContributor ) {
-			requestExternalContributorsAddition(
+			this.props.addExternalContributor(
 				siteId,
 				user?.linked_user_ID ?? user?.ID // On simple sites linked_user_ID is undefined for connected users.
 			);
 		} else if ( false === changedSettings.isExternalContributor ) {
-			requestExternalContributorsRemoval(
+			this.props.removeExternalContributor(
 				siteId,
 				user?.linked_user_ID ?? user?.ID // On simple sites linked_user_ID is undefined for connected users.
 			);
@@ -209,7 +215,7 @@ class EditUserForm extends Component {
 						id={ fieldKeys.isExternalContributor }
 						onChange={ this.handleExternalChange }
 						checked={ this.state.isExternalContributor }
-						disabled={ isDisabled }
+						disabled={ isDisabled || this.state.isExternalContributor === undefined }
 					/>
 				);
 				break;
@@ -315,17 +321,43 @@ class EditUserForm extends Component {
 	}
 }
 
+const withExternalContributors = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const { siteId, user } = props;
+		const {
+			data: externalContributors = [],
+			isLoading,
+			isFetching,
+		} = useExternalContributorsQuery( siteId, { staleTime: 0 } );
+		const isUpdatingContributorStatus = isLoading || isFetching;
+		const { addExternalContributor } = useAddExternalContributorMutation();
+		const { removeExternalContributor } = useRemoveExternalContributorMutation();
+		const userId = user.linked_user_ID || user.ID;
+		const isExternalContributor =
+			userId && ! isUpdatingContributorStatus
+				? externalContributors?.includes( userId )
+				: undefined;
+
+		return (
+			<Wrapped
+				{ ...props }
+				isExternalContributor={ isExternalContributor }
+				addExternalContributor={ addExternalContributor }
+				removeExternalContributor={ removeExternalContributor }
+			/>
+		);
+	},
+	'WithExternalContributors'
+);
+
 export default localize(
 	connect(
 		( state, { siteId, user } ) => {
-			const externalContributors = ( siteId && requestExternalContributors( siteId ).data ) || [];
-			const userId = user.linked_user_ID || user.ID;
 			const site = getSite( state, siteId );
 
 			return {
 				siteOwner: site?.site_owner,
 				currentUser: getCurrentUser( state ),
-				isExternalContributor: userId && externalContributors.includes( userId ),
 				isVip: isVipSite( state, siteId ),
 				isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 				hasWPCOMAccountLinked: false !== user?.linked_user_ID,
@@ -334,5 +366,5 @@ export default localize(
 		{
 			recordGoogleEvent,
 		}
-	)( withUpdateUser( EditUserForm ) )
+	)( withUpdateUser( withExternalContributors( EditUserForm ) ) )
 );

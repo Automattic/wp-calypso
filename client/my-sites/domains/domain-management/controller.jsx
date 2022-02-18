@@ -1,9 +1,8 @@
-import config from '@automattic/calypso-config';
 import page from 'page';
 import DomainManagementData from 'calypso/components/data/domain-management';
+import { isFreeUrlDomainName } from 'calypso/lib/domains/utils';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import {
-	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
 	domainManagementDns,
 	domainManagementDnsAddRecord,
@@ -31,15 +30,11 @@ import DomainManagement from '.';
 
 export default {
 	domainManagementList( pageContext, next ) {
-		let listComponent = DomainManagement.List;
-		if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
-			listComponent = DomainManagement.SiteDomains;
-		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementList( ':site' ) }
 				analyticsTitle="Domain Management"
-				component={ listComponent }
+				component={ DomainManagement.SiteDomains }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
@@ -51,15 +46,11 @@ export default {
 	},
 
 	domainManagementListAllSites( pageContext, next ) {
-		let listAllComponent = DomainManagement.ListAll;
-		if ( config.isEnabled( 'domains/management-list-redesign' ) ) {
-			listAllComponent = DomainManagement.AllDomains;
-		}
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementRoot() }
 				analyticsTitle="Domain Management > All Domains"
-				component={ listAllComponent }
+				component={ DomainManagement.AllDomains }
 				context={ pageContext }
 			/>
 		);
@@ -81,21 +72,24 @@ export default {
 	},
 
 	domainManagementEdit( pageContext, next ) {
-		let component = DomainManagement.Edit;
-		if ( config.isEnabled( 'domains/settings-page-redesign' ) ) {
-			component = DomainManagement.Settings;
+		const selectedDomainName = decodeURIComponentIfValid( pageContext.params.domain );
+		if ( isFreeUrlDomainName( selectedDomainName ) ) {
+			const state = pageContext.store.getState();
+			const siteSlug = getSelectedSiteSlug( state );
+			page.redirect( domainManagementList( siteSlug ) );
 		}
+
 		pageContext.primary = (
 			<DomainManagementData
 				analyticsPath={ domainManagementEdit( ':site', ':domain', pageContext.canonicalPath ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ component }
+				component={ DomainManagement.Settings }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
 				needsPlans
 				needsProductsList
-				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
+				selectedDomainName={ selectedDomainName }
 			/>
 		);
 		next();
@@ -106,7 +100,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementSiteRedirect( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ DomainManagement.SiteRedirect }
+				component={ DomainManagement.Settings }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
@@ -123,7 +117,7 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementTransferIn( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Edit"
-				component={ DomainManagement.TransferIn }
+				component={ DomainManagement.Settings }
 				context={ pageContext }
 				needsContactDetails
 				needsDomains
@@ -339,20 +333,6 @@ export default {
 				analyticsPath={ domainManagementTransferOut( ':site', ':domain' ) }
 				analyticsTitle="Domain Management > Transfer To Another Registrar"
 				component={ DomainManagement.TransferOut }
-				context={ pageContext }
-				needsDomains
-				selectedDomainName={ pageContext.params.domain }
-			/>
-		);
-		next();
-	},
-
-	domainManagementChangeSiteAddress( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementChangeSiteAddress( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Change Site Address"
-				component={ DomainManagement.ChangeSiteAddress }
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ pageContext.params.domain }

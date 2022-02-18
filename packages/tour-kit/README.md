@@ -13,6 +13,8 @@ A tour is made up of the following components:
 - A number of `steps`, made up of:
   - some arbitrary metadata
   - a set of optional reference elements selectors for rendering a step near
+  - a set of options:
+	- classNames: optional custom CSS classes that will be applied to the step
 - Two renderers (used as render props internally):
   - a step renderer (React component/function passed a set of properties)
   - a minimized view renderer (for rendering a minimized view instead of closing)
@@ -108,6 +110,7 @@ The main API for configuring a tour is the config object. See example usage and 
 
 - `referenceElements` (optional): A set of `deskop` & `mobile` selectors to render the step near.
 - `meta`: Arbitrary object that encloses the content we want to render for each step.
+- `classNames` (optional): An array or CSV of CSS classes applied to a step.
 
 `config.closeHandler`: The callback responsible for closing the tour.
 
@@ -128,15 +131,15 @@ The main API for configuring a tour is the config object. See example usage and 
   - `steps`: The steps defined for the tour.
   - `currentStepIndex`
   - `onDismiss`: Handler that dismissed/closes the tour.
-  - `onMiximize`: Handler that expands the tour (passes rendering to `tourStep`).
+  - `onMaximize`: Handler that expands the tour (passes rendering to `tourStep`).
 
 `config.options` (optional):
 
-- `className`: Optional CSS class to enclose the main tour frame with.
+- `classNames` (optional): An array or CSV of CSS classes to enclose the main tour frame with.
 
 - `effects`: An object to enable/disable/combine various tour effects:
 
-  - `__experimental__spotlight`: Adds a semi-transparent overlay and highlights the reference element when provided with a transparent box over it.
+  - `spotlight`: Adds a semi-transparent overlay and highlights the reference element when provided with a transparent box over it. Expects an object with optional styles to override the default highlight/spotlight behavior when provided (default: spotlight wraps the entire reference element).
   - `arrowIndicator`: Adds an arrow tip pointing at the rederence element when provided.
   - `overlay`: Includes the semi-transparent overlay for all the steps (also blocks interactions with the rest of the page)
 

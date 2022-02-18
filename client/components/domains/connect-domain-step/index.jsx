@@ -11,6 +11,7 @@ import DomainTransferRecommendation from 'calypso/components/domains/domain-tran
 import FormattedHeader from 'calypso/components/formatted-header';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-setup-info-link';
 import { isMappingVerificationSuccess } from './connect-domain-step-verification-status-parsing.js';
@@ -85,7 +86,7 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 			setDomainSetupInfoError( {} );
 			setLoadingDomainSetupInfo( true );
 			wpcom
-				.domain()
+				.domain( domain )
 				.mappingSetupInfo( selectedSite.ID, domain )
 				.then( ( data ) => {
 					setDomainSetupInfo( { data } );
@@ -160,11 +161,20 @@ function ConnectDomainStep( { domain, selectedSite, initialSetupInfo, initialSte
 
 ConnectDomainStep.propTypes = {
 	domain: PropTypes.string.isRequired,
+	domains: PropTypes.array,
 	selectedSite: PropTypes.object,
 	initialStep: PropTypes.string,
 	showErrors: PropTypes.bool,
+	hasSiteDomainsLoaded: PropTypes.bool,
 };
 
-export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(
-	ConnectDomainStep
-);
+export default connect( ( state ) => {
+	const selectedSite = getSelectedSite( state );
+	const siteId = selectedSite?.ID;
+
+	return {
+		domains: getDomainsBySiteId( state, siteId ),
+		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
+		selectedSite,
+	};
+} )( ConnectDomainStep );

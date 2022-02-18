@@ -179,7 +179,11 @@ class PluginRemoveButton extends Component {
 
 		if ( this.props.menuItem ) {
 			return (
-				<PopoverMenuItem onClick={ handleClick } className="plugin-remove-button__remove-button">
+				<PopoverMenuItem
+					onClick={ handleClick }
+					icon="trash"
+					className="plugin-remove-button__remove-button"
+				>
 					{ label }
 				</PopoverMenuItem>
 			);
@@ -203,6 +207,11 @@ class PluginRemoveButton extends Component {
 
 	render() {
 		if ( ! this.props.site.jetpack ) {
+			return null;
+		}
+
+		if ( this.props.isMarketplaceProduct ) {
+			// Marketplace products are auto-managed.
 			return null;
 		}
 

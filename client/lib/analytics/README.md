@@ -4,11 +4,25 @@ This module includes functionality for interacting with analytics packages.
 
 Turn on debugging in the JavaScript developer console to view calls being made with the analytics module:
 
-`localStorage.setItem('debug', 'calypso:analytics:*');`
+```
+localStorage.setItem('debug', 'calypso:analytics*');
+```
 
-You can limit to only calls made to Google Analytics, Tracks, or MC by replacing the `*` with an appropriate suffix. `ga` for Google Analytics, `tracks` for Tracks, `mc` for MC, and `ad-tracking` for Ad Tracking.
+You can limit to only calls made to Google Analytics, Tracks, or MC by replacing `calypso:analytics*` with:
 
-`localStorage.setItem('debug', 'calypso:analytics:tracks'); // only show debug for tracks`
+- `calypso:analytics` for Tracks
+- `calypso:analytics:ga` for Google Analytics
+- `calypso:analytics:mc` for MC
+
+For example:
+
+```
+localStorage.setItem('debug', 'calypso:analytics'); // only show debug for Tracks
+```
+
+```
+localStorage.setItem('debug', 'calypso:analytics:ga'); // only show debug for Google Analytics
+```
 
 ## Which analytics tool should I use?
 

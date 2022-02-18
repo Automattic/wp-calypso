@@ -37,6 +37,7 @@ The following items did not change:
   - `global-styles/`: (_deprecated_) A plugin which adds a global font picker to the editor. (Superceeded by global style work in Gutenberg.)
   - `jetpack-timeline/`: A block which lets you create a timeline of events.
   - `newspack-blocks/`: Container for newspack blocks such as the carousel block and the blog post block.
+  - `paragraph-block/`: Customize paragraph block on WP.com.
   - `posts-list-block/`: (_deprecated_) A simple block to show a list of posts on a page. (Superceeded by the blog-posts-block.)
   - `site-editor/`: Gutenberg site-editor integration code for WordPress.com.
   - `starter-page-templates/`: Allows you to select different page layouts made of blocks.

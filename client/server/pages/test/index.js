@@ -427,11 +427,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.sanitize ).toEqual( app.getMocks().sanitize );
 	} );
 
-	it( 'sets the RTL', async () => {
-		const { request } = await app.run();
-		expect( request.context.isRTL ).toEqual( false );
-	} );
-
 	it( 'sets requestFrom', async () => {
 		const { request } = await app.run( { request: { query: { from: 'from' } } } );
 		expect( request.context.requestFrom ).toEqual( 'from' );
@@ -461,16 +456,16 @@ const assertDefaultContext = ( { url, entry } ) => {
 		] );
 	} );
 
-	it( 'sets the preferencesHelper when config is enabled', async () => {
-		app.withConfigEnabled( { 'dev/preferences-helper': true } );
+	it( 'sets the featuresHelper when config is enabled', async () => {
+		app.withConfigEnabled( { 'dev/features-helper': true } );
 		const { request } = await app.run();
-		expect( request.context.preferencesHelper ).toEqual( true );
+		expect( request.context.featuresHelper ).toEqual( true );
 	} );
 
-	it( 'sets the preferencesHelper when config is disabled', async () => {
-		app.withConfigEnabled( { 'dev/preferences-helper': false } );
+	it( 'sets the featuresHelper when config is disabled', async () => {
+		app.withConfigEnabled( { 'dev/features-helper': false } );
 		const { request } = await app.run();
-		expect( request.context.preferencesHelper ).toEqual( false );
+		expect( request.context.featuresHelper ).toEqual( false );
 	} );
 
 	it( 'sets devDocsUrl', async () => {

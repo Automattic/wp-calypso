@@ -1,16 +1,8 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { HorizontalRule } from '@wordpress/components';
-import { MarketplaceThemeProps } from 'calypso/my-sites/marketplace/theme';
-
-export const MobileHiddenHorizontalRule = styled( HorizontalRule )< MarketplaceThemeProps >`
-	@media ( ${ ( { theme } ) => theme?.breakpoints.tabletDown } ) {
-		display: none;
-	}
-`;
 
 export const MarketplaceHeaderTitle = styled.h1`
-	font-size: ${ ( { subtitle = false } ) => ( subtitle ? '1.5em' : '2em' ) };
+	font-size: 2em;
 	margin-bottom: 8px;
 `;
 

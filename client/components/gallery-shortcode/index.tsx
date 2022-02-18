@@ -39,7 +39,10 @@ export default class GalleryShortcode extends Component< Props > {
 			return rendered;
 		}
 
-		const filtered = {
+		const filtered: Record<
+			'scripts' | 'styles',
+			Record< string, { src: string; extra?: string } >
+		> = {
 			...rendered,
 			scripts: {
 				'tiled-gallery': {
@@ -81,7 +84,7 @@ export default class GalleryShortcode extends Component< Props > {
 		let attributes = pick( this.props, 'items', 'type', 'columns', 'orderBy', 'link', 'size' );
 
 		if ( this.props.children ) {
-			attributes = { ...attributes, ...parseShortcode( this.props.children ).attrs.named };
+			attributes = { ...attributes, ...parseShortcode( this.props.children )?.attrs?.named };
 		}
 
 		return attributes;

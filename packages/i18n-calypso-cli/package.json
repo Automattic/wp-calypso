@@ -1,7 +1,7 @@
 {
 	"name": "i18n-calypso-cli",
 	"version": "1.0.0",
-	"description": "i18n-calypso CLI for extracting translation files from JS sources",
+	"description": "I18n-calypso CLI for extracting translation files from JS sources.",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
@@ -13,14 +13,12 @@
 	"bin": {
 		"i18n-calypso": "cli.js"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/i18n-calypso-cli#readme",
 	"dependencies": {
-		"commander": "^5.0.0",
-		"debug": "^4.0.0",
-		"globby": "^10.0.0",
+		"commander": "^5.1.0",
+		"debug": "^4.3.3",
+		"globby": "^10.0.2",
 		"xgettext-js": "^3.0.0"
 	},
 	"devDependencies": {

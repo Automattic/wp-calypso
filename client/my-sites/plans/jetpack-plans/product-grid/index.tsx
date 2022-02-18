@@ -4,17 +4,21 @@ import {
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	JETPACK_SECURITY_CATEGORY,
+	JETPACK_GROWTH_CATEGORY,
 } from '@automattic/calypso-products';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { FootnotesList } from '../footnotes-list';
+import CategoryFilter from '../category-filter';
 import JetpackCrmFreeCard from '../jetpack-crm-free-card';
 import JetpackFreeCard from '../jetpack-free-card';
 import MoreInfoBox from '../more-info-box';
@@ -26,7 +30,11 @@ import useGetPlansGridProducts from '../use-get-plans-grid-products';
 import ProductGridSection from './section';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from './utils';
 import type { ProductsGridProps, SelectorProduct } from '../types';
-import type { JetpackProductSlug, JetpackPlanSlug } from '@automattic/calypso-products';
+import type {
+	JetpackProductSlug,
+	JetpackPlanSlug,
+	JetpackProductCategory,
+} from '@automattic/calypso-products';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
@@ -94,8 +102,14 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	createButtonURL,
 } ) => {
 	const translate = useTranslate();
+	const isDesktop = useDesktopBreakpoint();
+	const showProductCategories = ! isDesktop;
 
 	const showAnnualPlansOnly = config.isEnabled( 'jetpack/pricing-page-annual-only' );
+
+	const [ category, setCategory ] = useState< JetpackProductCategory >();
+	const onCategoryChange = useCallback( setCategory, [ setCategory ] );
+
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
@@ -111,12 +125,12 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 
 		if ( oneUntranslatedPlan?.description ) {
 			// eslint-disable-next-line wpcalypso/i18n-no-variables
-			translate( oneUntranslatedPlan.description );
+			translate( String( oneUntranslatedPlan.description ) );
 		}
 
 		if ( oneUntranslatedPlan?.features?.items?.[ 0 ]?.text ) {
 			// eslint-disable-next-line wpcalypso/i18n-no-variables
-			translate( oneUntranslatedPlan.features.items[ 0 ]?.text );
+			translate( String( oneUntranslatedPlan.features.items[ 0 ]?.text ) );
 		}
 	}, [ duration, currentPlanSlug, translate ] );
 
@@ -137,6 +151,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 
 		return [ allItems.slice( 0, 3 ), allItems.slice( 3 ) ];
 	}, [ duration, availableProducts, purchasedProducts, includedInPlanProducts, currentPlanSlug ] );
+	const filteredItems =
+		showProductCategories && category
+			? otherItems.filter( ( { categories } ) => categories?.includes( category ) )
+			: otherItems;
 
 	const showFreeCard = useSelector( getShowFreeCard );
 
@@ -197,6 +215,9 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			) }
 			<ProductGridSection>
 				{ ! planRecommendation && filterBar }
+				<div className="product-grid__pricing-banner">
+					<IntroPricingBanner />
+				</div>
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {
 						'is-wrapping': shouldWrapGrid,
@@ -242,22 +263,31 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				</div>
 			</ProductGridSection>
 			<ProductGridSection title={ translate( 'More Products' ) }>
-				<ul className="product-grid__product-grid">
-					{ otherItems.map( getOtherItemsProductCard ) }
-
-					<li>
-						<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
-					</li>
-
-					{ showFreeCard && (
-						<li>
-							<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-						</li>
+				<>
+					{ showProductCategories && (
+						<div className="product-grid__category-filter">
+							<CategoryFilter
+								defaultValue={ JETPACK_SECURITY_CATEGORY }
+								onChange={ onCategoryChange }
+							/>
+						</div>
 					) }
-				</ul>
+					<ul className="product-grid__product-grid">
+						{ filteredItems.map( getOtherItemsProductCard ) }
+						{ ( ! showProductCategories || category === JETPACK_GROWTH_CATEGORY ) && (
+							<li>
+								<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
+							</li>
+						) }
+						{ showFreeCard && (
+							<li>
+								<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+							</li>
+						) }
+					</ul>
+				</>
 			</ProductGridSection>
 			<StoreFooter />
-			<FootnotesList />
 		</>
 	);
 };

@@ -15,13 +15,13 @@ const fetchFilters = ( action ) =>
 			method: 'GET',
 			apiVersion: '1.2',
 			path: '/theme-filters',
+			query: action.locale ? { locale: action.locale } : {},
 		},
 		action
 	);
 
 const storeFilters = ( action, data ) => {
-	let filters = action.isFse ? data : omit( data, 'feature.full-site-editing' );
-	filters = action.isCoreFse ? filters : omit( filters, 'feature.block-templates' );
+	const filters = action.isFse ? data : omit( data, 'feature.full-site-editing' );
 	return { type: THEME_FILTERS_ADD, filters };
 };
 

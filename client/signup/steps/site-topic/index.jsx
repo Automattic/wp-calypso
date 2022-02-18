@@ -55,7 +55,6 @@ class SiteTopicStep extends Component {
 					stepContent={
 						<SiteTopicForm submitForm={ this.submitSiteTopic } siteType={ this.props.siteType } />
 					}
-					showSiteMockups={ this.props.showSiteMockups }
 				/>
 			</div>
 		);

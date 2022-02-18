@@ -3,7 +3,6 @@ import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
-	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 } from 'calypso/state/action-types';
 import reducer from '../reducer';
 import { dummyConfiguration, dummyError } from './test-data';
@@ -54,14 +53,6 @@ describe( 'ticket-support/configuration reducer', () => {
 	} );
 
 	const requestErrorState = { requestError: dummyError };
-
-	test( 'should clear reqeustError on receiving the dismiss action', () => {
-		const state = reducer( requestErrorState, {
-			type: HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
-		} );
-
-		assert.isNull( state.requestError );
-	} );
 
 	test( 'should set requestError as false on receiving the new request', () => {
 		const state = reducer( requestErrorState, {

@@ -1,11 +1,12 @@
 /* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
-import { createBlock, parse } from '@wordpress/blocks';
+import { parse } from '@wordpress/blocks';
 import {
 	Button,
 	__experimentalNavigationBackButton as NavigationBackButton,
 } from '@wordpress/components';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
+import domReady from '@wordpress/dom-ready';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
@@ -13,12 +14,17 @@ import { comment, wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
-import $ from 'jquery';
 import { filter, forEach, get, map } from 'lodash';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
-import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
+import {
+	inIframe,
+	isEditorReady,
+	isEditorReadyWithBlocks,
+	sendMessage,
+	getPages,
+} from '../../utils';
 import FeedbackForm from './fse-beta/feedback-form';
 /**
  * Conditional dependency.  We cannot use the standard 'import' since this package is
@@ -28,6 +34,41 @@ import FeedbackForm from './fse-beta/feedback-form';
 const editSitePackage = require( '@wordpress/edit-site' );
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
+
+const clickOverrides = {};
+let addedListener = false;
+// Replicates basic '$( el ).on( selector, cb )'. Includes preventDefault to override
+// the default event handlers.
+function addEditorListener( selector, cb ) {
+	clickOverrides[ selector ] = cb;
+
+	if ( ! addedListener ) {
+		document.querySelector( '#editor' )?.addEventListener( 'click', triggerOverrideHandler );
+		addedListener = true;
+	}
+}
+
+// Calls a callback if the event occured on an element or parent thereof matching
+// the callback's selector. This is needed because elements are added and removed
+// from the DOM dynamically after the listeners are created. We need to handle
+// clicks anyways, so directly accessing the elements and adding listeners to them
+// is not viable.
+function triggerOverrideHandler( e ) {
+	const allSelectors = Object.keys( clickOverrides ).join( ', ' );
+	const matchingElement = e.target.closest( allSelectors );
+
+	if ( ! matchingElement ) {
+		return;
+	}
+
+	// Find the correct callback to use for this clicked element.
+	for ( const [ selector, cb ] of Object.entries( clickOverrides ) ) {
+		if ( matchingElement.matches( selector ) ) {
+			e.preventDefault();
+			cb( e );
+		}
+	}
+}
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
@@ -88,9 +129,7 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
-	$( '#editor' ).on( 'click', '[href*="revision.php"]', ( e ) => {
-		e.preventDefault();
-
+	addEditorListener( '[href*="revision.php"]', () => {
 		calypsoPort.postMessage( { action: 'openRevisions' } );
 
 		calypsoPort.addEventListener( 'message', onLoadRevision, false );
@@ -109,76 +148,6 @@ function overrideRevisions( calypsoPort ) {
 
 			calypsoPort.removeEventListener( 'message', onLoadRevision, false );
 		}
-	}
-}
-
-/**
- * Adds support for Press This/Reblog.
- *
- * @param {MessagePort} calypsoPort port used for communication with parent frame.
- */
-function handlePressThis( calypsoPort ) {
-	calypsoPort.addEventListener( 'message', onPressThis, false );
-	calypsoPort.start();
-
-	function onPressThis( message ) {
-		const action = get( message, 'data.action' );
-		const payload = get( message, 'data.payload' );
-		if ( action !== 'pressThis' || ! payload ) {
-			return;
-		}
-
-		calypsoPort.removeEventListener( 'message', onPressThis, false );
-
-		const unsubscribe = subscribe( () => {
-			// Calypso sends the message as soon as the iframe is loaded, so we
-			// need to be sure that the editor is initialized and the core blocks
-			// registered. There is an unstable selector for that, so we use
-			// `isCleanNewPost` otherwise which is triggered when everything is
-			// initialized if the post is new.
-			const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
-				? select( 'core/editor' ).__unstableIsEditorReady()
-				: select( 'core/editor' ).isCleanNewPost();
-			if ( ! editorIsReady ) {
-				return;
-			}
-
-			unsubscribe();
-
-			const title = get( payload, 'title' );
-			const text = get( payload, 'text' );
-			const url = get( payload, 'url' );
-			const image = get( payload, 'image' );
-			const embed = get( payload, 'embed' );
-			const link = `<a href="${ url }">${ title }</a>`;
-
-			const blocks = [];
-
-			if ( embed ) {
-				blocks.push( createBlock( 'core/embed', { url: embed } ) );
-			}
-
-			if ( image ) {
-				blocks.push(
-					createBlock( 'core/image', {
-						url: image,
-						caption: text ? '' : link,
-					} )
-				);
-			}
-
-			if ( text ) {
-				blocks.push(
-					createBlock( 'core/quote', {
-						value: `<p>${ text }</p>`,
-						citation: link,
-					} )
-				);
-			}
-
-			dispatch( 'core/editor' ).resetEditorBlocks( blocks );
-			dispatch( 'core/editor' ).editPost( { title: title } );
-		} );
 	}
 }
 
@@ -569,13 +538,13 @@ function handleCloseEditor( calypsoPort ) {
 function handleCloseInLegacyEditors( handleClose ) {
 	// Selects close buttons in Gutenberg plugin < v7.7
 	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a';
+	addEditorListener( legacySelector, handleClose );
 
 	// Selects the close button in modern Gutenberg versions, unless it itself is a close button override
 	const wpcomCloseSelector = '.wpcom-block-editor__close-button';
 	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
 	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
-
-	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, handleClose );
+	addEditorListener( selector, handleClose );
 }
 
 /**
@@ -594,19 +563,19 @@ function isNavSidebarPresent() {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 async function openLinksInParentFrame( calypsoPort ) {
-	const viewPostLinkSelectors = [
+	const viewPostLinks = [
 		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
 		'.post-publish-panel__postpublish .components-panel__body.is-opened a', // Post title link in publish panel
 		'.components-panel__body.is-opened .post-publish-panel__postpublish-buttons a.components-button', // View Post button in publish panel
 	].join( ',' );
-	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
+
+	addEditorListener( viewPostLinks, ( e ) => {
 		// Ignore if the click has modifier
 		if ( e.shiftKey || e.ctrlKey || e.metaKey ) {
 			return;
 		}
 
-		e.preventDefault();
 		calypsoPort.postMessage( {
 			action: 'viewPost',
 			payload: { postUrl: e.target.href },
@@ -768,10 +737,7 @@ async function openLinksInParentFrame( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openCustomizer( calypsoPort ) {
-	const customizerLinkSelector = 'a.components-button[href*="customize.php"]';
-	$( '#editor' ).on( 'click', customizerLinkSelector, ( e ) => {
-		e.preventDefault();
-
+	addEditorListener( '[href*="customize.php"]', ( e ) => {
 		calypsoPort.postMessage( {
 			action: 'openCustomizer',
 			payload: {
@@ -789,8 +755,7 @@ function openCustomizer( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function openTemplatePartLinks( calypsoPort ) {
-	$( '#editor' ).on( 'click', '.template__block-container .template-block__overlay a', ( e ) => {
-		e.preventDefault();
+	addEditorListener( '.template__block-container .template-block__overlay a', ( e ) => {
 		e.stopPropagation(); // Otherwise it will port the message twice.
 
 		// Get the template part ID from the current href.
@@ -963,7 +928,7 @@ function getCalypsoUrlInfo( calypsoPort ) {
 }
 
 async function handleEditorLoaded( calypsoPort ) {
-	await isEditorReadyWithBlocks();
+	await isEditorReady();
 	const isNew = select( 'core/editor' ).isCleanNewPost();
 	const blocks = select( 'core/block-editor' ).getBlocks();
 
@@ -1081,6 +1046,39 @@ function handleInlineHelpButton( calypsoPort ) {
 	);
 }
 
+/**
+ * If WelcomeTour is set to show, check if the App Banner is visible.
+ * If App Banner is visible, we set the Welcome Tour to not show.
+ * When the App Banner gets dismissed, we set the Welcome Tour to show.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function handleAppBannerShowing( calypsoPort ) {
+	const isWelcomeGuideShown = select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown();
+	if ( ! isWelcomeGuideShown ) {
+		return;
+	}
+
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getIsAppBannerVisible',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( { data } ) => {
+		const { isAppBannerVisible, hasAppBannerBeenDismissed } = data;
+		if ( hasAppBannerBeenDismissed ) {
+			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true, { onlyLocal: true } );
+		} else if ( isAppBannerVisible ) {
+			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( false, {
+				onlyLocal: true,
+			} );
+		}
+	};
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1148,8 +1146,6 @@ function initPort( message ) {
 
 		overrideRevisions( calypsoPort );
 
-		handlePressThis( calypsoPort );
-
 		// handle post state change to locked (current user not editing)
 		handlePostLocked( calypsoPort );
 
@@ -1185,12 +1181,17 @@ function initPort( message ) {
 		handleInlineHelpButton( calypsoPort );
 
 		handleSiteEditorFeedbackPlugin( calypsoPort );
+
+		handleAppBannerShowing( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
 }
 
-$( () => {
+// Note: domReady is used instead of `(function() { ... })()` because certain
+// things in `initPort` require other scripts to be loaded. (For example, ETK
+// scripts need to be available before some things will work correctly.)
+domReady( () => {
 	window.addEventListener( 'message', initPort, false );
 
 	//signal module loaded

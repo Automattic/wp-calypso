@@ -17,13 +17,17 @@ class SitePicker extends Component {
 	};
 
 	filterSites = ( site ) => {
-		return site.capabilities.manage_options && ! site.jetpack;
+		return site.capabilities.manage_options && ! site.jetpack && ! site.options.is_domain_only;
 	};
 
 	renderScreen() {
 		return (
 			<Card className="site-picker__wrapper">
-				<SiteSelector filter={ this.filterSites } onSiteSelect={ this.handleSiteSelect } />
+				<SiteSelector
+					filter={ this.filterSites }
+					onSiteSelect={ this.handleSiteSelect }
+					isReskinned={ this.props.isReskinned }
+				/>
 			</Card>
 		);
 	}

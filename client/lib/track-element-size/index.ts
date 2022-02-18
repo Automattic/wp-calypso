@@ -13,7 +13,7 @@ function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
 	}
 
 	if ( nextRect === null ) {
-		return prevRect === null;
+		return false;
 	}
 
 	return (

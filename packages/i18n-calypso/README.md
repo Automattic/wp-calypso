@@ -364,13 +364,19 @@ In order to reduce file-size, i18n-calypso allows the usage of hashed keys for l
 Instead of providing the full English text, like here:
 
 ```json
-{"":{"localeSlug":"de"},"Please enter a valid email address.":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
+{
+	"": { "localeSlug": "de" },
+	"Please enter a valid email address.": [ "", "Bitte gib eine gültige E-Mail-Adresse ein." ]
+}
 ```
 
 just the hash is used for lookup, resulting in a shorter file.
 
 ```json
-{"":{"localeSlug":"de","key-hash":"sha1-1"},"d":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
+{
+	"": { "localeSlug": "de", "key-hash": "sha1-1" },
+	"d": [ "", "Bitte gib eine gültige E-Mail-Adresse ein." ]
+}
 ```
 
 The generator of the jed file would usually try to choose the smallest hash length at which no hash collisions occur. In the above example a hash length of 1 (`d` short for `d2306dd8970ff616631a3501791297f31475e416`) is enough because there is only one string.

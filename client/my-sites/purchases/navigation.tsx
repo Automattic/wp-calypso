@@ -43,7 +43,7 @@ export default function PurchasesNavigation( {
 				<Search
 					pinned
 					fitsContainer
-					onSearch={ ( term ) => {
+					onSearch={ ( term: string ) => {
 						dispatch( setQuery( 'past', term ) );
 					} }
 					placeholder={ translate( 'Search all receipts…' ) }

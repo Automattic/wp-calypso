@@ -49,29 +49,7 @@
 		}
 	}
 
-	.design-picker__grid {
-		grid-template-columns: 1fr;
-
-		@include break-medium {
-			grid-template-columns: 1fr 1fr;
-			column-gap: 49px;
-			row-gap: 39px;
-		}
-	}
-
 	.design-picker__has-categories {
-		.design-picker__grid {
-			@include break-medium {
-				grid-template-columns: 1fr;
-				column-gap: 24px;
-				row-gap: 36px;
-			}
-
-			@include break-large {
-				grid-template-columns: 1fr 1fr;
-			}
-		}
-
 		.formatted-header__subtitle {
 			// Overrides some very specific selectors in /client/signup/style.scss
 			margin: 12px 0 48px !important;
@@ -82,12 +60,14 @@
 		@include break-small {
 			background-color: transparent;
 		}
+
+		button.is-primary {
+			border-radius: 4px;
+		}
 	}
 }
 
 .design-picker__preview {
-	padding-bottom: 30px;
-
 	.step-wrapper__content {
 		height: calc( 100vh - 245px );
 
@@ -96,7 +76,11 @@
 		}
 
 		@include break-small {
-			height: calc( 100vh - 128px );
+			height: calc( 100vh - 132px );
+		}
+
+		@include break-medium {
+			height: calc( 100vh - 148px );
 		}
 	}
 

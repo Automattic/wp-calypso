@@ -11,6 +11,7 @@ import RegisterDomainStep from 'calypso/components/domains/register-domain-step'
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
 import {
 	domainRegistration,
@@ -20,13 +21,13 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import { getStepModuleName } from 'calypso/signup/config/step-components';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getStepUrl } from 'calypso/signup/utils';
+import { getStepUrl, isPlanSelectionAvailableLaterInFlow } from 'calypso/signup/utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -42,8 +43,6 @@ import {
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
-import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import {
 	removeStep,
 	saveSignupStep,
@@ -52,7 +51,6 @@ import {
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -125,43 +123,6 @@ class DomainsStep extends Component {
 		};
 	}
 
-	/**
-	 * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
-	 */
-	getIsPlanSelectionAvailableLaterInFlow = () => {
-		const { steps, isPlanStepSkipped } = this.props;
-
-		/**
-		 * Caveat here even though "plans" step maybe available in a flow it might not be active
-		 * i.e. Check flow "domain"
-		 */
-
-		const plansIndex = steps.findIndex( ( stepName ) => getStepModuleName( stepName ) === 'plans' );
-		const domainsIndex = steps.findIndex(
-			( stepName ) => getStepModuleName( stepName ) === 'domains'
-		);
-		const isPlansStepExistsInFutureOfFlow = plansIndex > 0 && plansIndex > domainsIndex;
-
-		return isPlansStepExistsInFutureOfFlow && ! isPlanStepSkipped;
-	};
-
-	componentDidUpdate( prevProps ) {
-		// If the signup site preview is visible and there's a sub step, e.g., mapping, transfer, use-your-domain
-		if ( prevProps.stepSectionName !== this.props.stepSectionName ) {
-			if ( this.props.isSitePreviewVisible && this.props.stepSectionName ) {
-				this.props.hideSitePreview();
-			}
-
-			if ( ! this.props.isSitePreviewVisible && ! this.props.stepSectionName ) {
-				this.props.showSitePreview();
-			}
-		}
-	}
-
-	isEligibleVariantForDomainTest() {
-		return this.showTestCopy;
-	}
-
 	getLocale() {
 		return ! this.props.userLoggedIn ? this.props.locale : '';
 	}
@@ -229,7 +190,7 @@ class DomainsStep extends Component {
 		 */
 		return (
 			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
-			this.getIsPlanSelectionAvailableLaterInFlow()
+			this.props.isPlanSelectionAvailableLaterInFlow
 		);
 	};
 
@@ -411,8 +372,7 @@ class DomainsStep extends Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, isDomainOnly, siteType, siteGoals, signupDependencies } = this.props;
-		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
+		const { flowName, isDomainOnly, siteType, signupDependencies } = this.props;
 
 		// 'subdomain' flow coming from .blog landing pages
 		if ( flowName === 'subdomain' ) {
@@ -431,8 +391,6 @@ class DomainsStep extends Component {
 
 		// If we detect a 'blog' site type from Signup data
 		if (
-			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
-			( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
 			// Users choose `Blog` as their site type
 			'blog' === get( signupDependencies, 'siteType' ) ||
 			'blog' === siteType
@@ -444,26 +402,64 @@ class DomainsStep extends Component {
 		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
+	shouldHideDomainExplainer = () => {
+		const { flowName } = this.props;
+		return [
+			'free',
+			'personal',
+			'personal-monthly',
+			'premium',
+			'premium-monthly',
+			'business',
+			'business-monthly',
+			'ecommerce',
+			'ecommerce-monthly',
+			'domain',
+		].includes( flowName );
+	};
+
+	shouldHideUseYourDomain = () => {
+		const { flowName } = this.props;
+		return [ 'domain' ].includes( flowName );
+	};
+
+	shouldDisplayDomainOnlyExplainer = () => {
+		const { flowName } = this.props;
+		return [ 'domain' ].includes( flowName );
+	};
+
 	getSideContent = () => {
 		return (
 			<div className="domains__domain-side-content-container">
-				<div className="domains__domain-side-content">
-					<ReskinSideExplainer
-						onClick={ this.handleDomainExplainerClick }
-						type={ 'free-domain-explainer' }
-					/>
-				</div>
-				<div className="domains__domain-side-content">
-					<ReskinSideExplainer
-						onClick={ this.handleUseYourDomainClick }
-						type={ 'use-your-domain' }
-					/>
-				</div>
+				{ ! this.shouldHideDomainExplainer() && this.props.isPlanSelectionAvailableLaterInFlow && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={ 'free-domain-explainer' }
+						/>
+					</div>
+				) }
+				{ ! this.shouldHideUseYourDomain() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleUseYourDomainClick }
+							type={ 'use-your-domain' }
+						/>
+					</div>
+				) }
+				{ this.shouldDisplayDomainOnlyExplainer() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={ 'free-domain-only-explainer' }
+						/>
+					</div>
+				) }
 			</div>
 		);
 	};
 
-	domainForm = () => {
+	domainForm = ( isDomainStepCopyTreatment ) => {
 		let initialState = {};
 		if ( this.props.step ) {
 			initialState = this.props.step.domainForm;
@@ -497,8 +493,6 @@ class DomainsStep extends Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		const isPlanSelectionAvailableInFlow = this.getIsPlanSelectionAvailableLaterInFlow();
-
 		const trueNamePromoTlds = TRUENAME_COUPONS.includes( this.props?.queryObject?.coupon )
 			? TRUENAME_TLDS
 			: null;
@@ -527,7 +521,7 @@ class DomainsStep extends Component {
 						trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain()
 					}
 					isSignupStep
-					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
+					isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
 					showExampleSuggestions={ showExampleSuggestions }
 					suggestion={ initialQuery }
 					designType={ this.getDesignType() }
@@ -545,11 +539,20 @@ class DomainsStep extends Component {
 						this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 					}
 					isReskinned={ this.props.isReskinned }
+					isCopyExperiment={ isDomainStepCopyTreatment }
 					reskinSideContent={ this.getSideContent() }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
 	};
+
+	renderLoading() {
+		return (
+			<div className="domains__loading">
+				<LoadingEllipsis active />
+			</div>
+		);
+	}
 
 	onUseMyDomainConnect = ( { domain } ) => {
 		this.handleAddMapping( 'useYourDomainForm', domain );
@@ -600,7 +603,7 @@ class DomainsStep extends Component {
 		);
 	};
 
-	getSubHeaderText() {
+	getSubHeaderText( isDomainStepCopyTreatment ) {
 		const {
 			flowName,
 			isAllDomains,
@@ -615,6 +618,10 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
+			if ( ! stepSectionName && isDomainStepCopyTreatment ) {
+				return 'A domain name is a first step in branding your website, and helps you choose your web address, too.';
+			}
+
 			return (
 				! stepSectionName &&
 				translate( "Enter your site's name or some descriptive keywords to get started" )
@@ -624,7 +631,7 @@ class DomainsStep extends Component {
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
 		const onboardingSubHeaderCopy =
 			siteType &&
-			[ 'onboarding', 'ecommerce-onboarding' ].includes( flowName ) &&
+			flowName === 'onboarding' &&
 			getSiteTypePropertyValue( 'slug', siteType, subHeaderPropertyName );
 
 		if ( onboardingSubHeaderCopy ) {
@@ -636,7 +643,7 @@ class DomainsStep extends Component {
 			: translate( "Enter your site's name or some keywords that describe it to get started." );
 	}
 
-	getHeaderText() {
+	getHeaderText( isDomainStepCopyTreatment ) {
 		const {
 			headerText,
 			isAllDomains,
@@ -651,6 +658,9 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
+			if ( isDomainStepCopyTreatment && ! stepSectionName ) {
+				return 'Find a domain';
+			}
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
@@ -663,7 +673,7 @@ class DomainsStep extends Component {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
-	renderContent() {
+	renderContent( isDomainStepCopyTreatment ) {
 		let content;
 		let sideContent;
 
@@ -672,7 +682,7 @@ class DomainsStep extends Component {
 		}
 
 		if ( ! this.props.stepSectionName || this.props.isDomainOnly ) {
-			content = this.domainForm();
+			content = this.domainForm( isDomainStepCopyTreatment );
 		}
 
 		if ( ! this.props.stepSectionName && this.props.isReskinned ) {
@@ -773,34 +783,62 @@ class DomainsStep extends Component {
 			}
 		}
 
-		const headerText = this.getHeaderText();
-		const fallbackSubHeaderText = this.getSubHeaderText();
+		const domainTestEligibleSignupFlows = [
+			'onboarding',
+			'launch-site',
+			'free',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+		];
 
 		return (
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				backUrl={ backUrl }
-				positionInFlow={ this.props.positionInFlow }
-				headerText={ headerText }
-				subHeaderText={ fallbackSubHeaderText }
-				isExternalBackUrl={ isExternalBackUrl }
-				fallbackHeaderText={ headerText }
-				fallbackSubHeaderText={ fallbackSubHeaderText }
-				stepContent={
-					<div>
-						{ ! this.props.productsLoaded && <QueryProductsList /> }
-						{ this.renderContent() }
-					</div>
-				}
-				showSiteMockups={ this.props.showSiteMockups }
-				allowBackFirstStep={ !! backUrl }
-				backLabelText={ backLabelText }
-				hideSkip={ true }
-				goToNextStep={ this.handleSkip }
-				align={ isReskinned ? 'left' : 'center' }
-				isWideLayout={ isReskinned }
-			/>
+			<ProvideExperimentData
+				name="calypso_signup_domain_step_copy_test_202201_v2"
+				options={ {
+					isEligible: domainTestEligibleSignupFlows.includes( this.props.flowName ),
+				} }
+			>
+				{ ( isLoading, experimentAssignment ) => {
+					if ( isLoading ) {
+						return this.renderLoading();
+					}
+					const isDomainStepCopyTreatment = experimentAssignment?.variationName === 'treatment';
+					const headerText = this.getHeaderText( isDomainStepCopyTreatment );
+					const fallbackSubHeaderText = this.getSubHeaderText( isDomainStepCopyTreatment );
+
+					return (
+						<StepWrapper
+							flowName={ this.props.flowName }
+							stepName={ this.props.stepName }
+							backUrl={ backUrl }
+							positionInFlow={ this.props.positionInFlow }
+							headerText={ headerText }
+							subHeaderText={ fallbackSubHeaderText }
+							isExternalBackUrl={ isExternalBackUrl }
+							fallbackHeaderText={ headerText }
+							fallbackSubHeaderText={ fallbackSubHeaderText }
+							stepContent={
+								<div>
+									{ ! this.props.productsLoaded && <QueryProductsList /> }
+									{ this.renderContent( isDomainStepCopyTreatment ) }
+								</div>
+							}
+							allowBackFirstStep={ !! backUrl }
+							backLabelText={ backLabelText }
+							hideSkip={ true }
+							goToNextStep={ this.handleSkip }
+							align={ isReskinned ? 'left' : 'center' }
+							isWideLayout={ isReskinned }
+						/>
+					);
+				} }
+			</ProvideExperimentData>
 		);
 	}
 }
@@ -838,21 +876,21 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 export default connect(
-	( state ) => {
+	( state, { steps } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
+		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
 
 		return {
 			designType: getDesignType( state ),
 			productsList,
 			productsLoaded,
-			siteGoals: getSiteGoals( state ),
 			siteType: getSiteType( state ),
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSelectedSite( state ),
-			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
-			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
+			isPlanSelectionAvailableLaterInFlow:
+				! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ),
 			userLoggedIn: isUserLoggedIn( state ),
 		};
 	},
@@ -869,7 +907,5 @@ export default connect(
 		submitSignupStep,
 		recordTracksEvent,
 		fetchUsernameSuggestion,
-		hideSitePreview,
-		showSitePreview,
 	}
 )( localize( DomainsStep ) );

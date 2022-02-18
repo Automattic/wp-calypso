@@ -1,8 +1,6 @@
-import { createRequestCartProduct } from '@automattic/shopping-cart';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo, useEffect } from 'react';
-import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
 import { useOnboardingFlow } from '../path';
@@ -11,7 +9,6 @@ import { PLANS_STORE } from '../stores/plans';
 import { SITE_STORE } from '../stores/site';
 import { USER_STORE } from '../stores/user';
 import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * After a new site has been created there are 3 scenarios to cover:
@@ -42,10 +39,11 @@ export default function useOnSiteCreation(): void {
 		() => ( {
 			isNewSite: !! newSite,
 			isNewUser: !! newUser,
+			isBlankCanvas: isBlankCanvasDesign( design ),
 			blogId: newSite?.blogid,
 			hasCartItems: false,
 		} ),
-		[ newSite, newUser ]
+		[ newSite, newUser, design ]
 	);
 
 	useEffect( () => {
@@ -54,52 +52,30 @@ export default function useOnSiteCreation(): void {
 			setIsRedirecting( true );
 
 			if ( selectedPlan && ! selectedPlan?.isFree && planProductSource ) {
-				const planProduct: RequestCartProduct = createRequestCartProduct( {
-					product_id: planProductSource.productId,
-					product_slug: planProductSource.storeSlug,
-					extra: {
-						source: 'gutenboarding',
-					},
-				} );
+				const productSlugsToAddToCart: string[] = [ planProductSource.storeSlug ];
 
-				let domainProduct: RequestCartProduct | null = null;
 				if ( domain?.product_id && domain?.product_slug ) {
-					domainProduct = createRequestCartProduct( {
-						meta: domain.domain_name,
-						product_id: domain.product_id,
-						product_slug: domain.product_slug,
-						extra: {
-							privacy: domain.supports_privacy,
-							source: 'gutenboarding',
-						},
-					} );
+					productSlugsToAddToCart.push( domain.product_slug + ':' + domain.domain_name );
 				}
 
-				const go = async () => {
-					if ( planProduct || domainProduct ) {
-						await cartManagerClient
-							.forCartKey( String( newSite.blogid ) )
-							.actions.addProductsToCart( [ planProduct, domainProduct ].filter( isValueTruthy ) );
-					}
-					resetOnboardStore();
-					clearLastNonEditorRoute();
-					setSelectedSite( newSite.blogid );
-
-					const editorUrl = design?.is_fse
-						? `site-editor%2F${ newSite.site_slug }`
-						: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
-
-					const redirectionUrl = shouldRedirectToEditorAfterCheckout
-						? `/checkout/${ newSite.site_slug }?redirect_to=%2F${ editorUrl }`
-						: `/checkout/${ newSite.site_slug }`;
-					window.location.href = redirectionUrl;
-				};
 				recordOnboardingComplete( {
 					...flowCompleteTrackingParams,
 					hasCartItems: true,
 					flow,
 				} );
-				go();
+				const joinedProducts = productSlugsToAddToCart.join( ',' );
+				resetOnboardStore();
+				clearLastNonEditorRoute();
+				setSelectedSite( newSite.blogid );
+
+				const editorUrl = design?.is_fse
+					? `site-editor%2F${ newSite.site_slug }`
+					: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
+
+				const redirectionUrl = shouldRedirectToEditorAfterCheckout
+					? `/checkout/${ newSite.site_slug }/${ joinedProducts }?source=gutenboarding&redirect_to=%2F${ editorUrl }`
+					: `/checkout/${ newSite.site_slug }/${ joinedProducts }?source=gutenboarding`;
+				window.location.href = redirectionUrl;
 				return;
 			}
 			recordOnboardingComplete( {
@@ -111,8 +87,12 @@ export default function useOnSiteCreation(): void {
 			setSelectedSite( newSite.blogid );
 
 			let destination;
+
 			if ( design?.is_fse ) {
 				destination = `/site-editor/${ newSite.site_slug }/`;
+			} else if ( design?.features?.includes( 'anchorfm' ) ) {
+				//Anchor.fm users should land in the page editor
+				destination = `/page/${ newSite.site_slug }/home/`;
 			} else {
 				destination = `/home/${ newSite.site_slug }/`;
 			}

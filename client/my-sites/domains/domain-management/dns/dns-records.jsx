@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -8,7 +7,6 @@ import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getSelectedDomain, isRegisteredDomain } from 'calypso/lib/domains';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
@@ -65,7 +63,7 @@ class DnsRecords extends Component {
 		const optionsButton = (
 			<DnsMenuOptionsButton
 				key="menu-options-button"
-				domain={ selectedDomainName }
+				domain={ selectedDomain }
 				dns={ dns }
 				pointsToWpcom={ pointsToWpcom }
 			/>
@@ -135,19 +133,6 @@ class DnsRecords extends Component {
 			</Fragment>
 		);
 	}
-
-	goBack = () => {
-		const { domains, selectedSite, selectedDomainName, currentRoute } = this.props;
-		let path;
-
-		if ( isRegisteredDomain( getSelectedDomain( domains ) ) ) {
-			path = domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute );
-		} else {
-			path = domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute );
-		}
-
-		page( path );
-	};
 }
 
 export default connect(

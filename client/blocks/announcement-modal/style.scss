@@ -1,5 +1,5 @@
 // @TODO: remove the ignore rule and replace font sizes accordingly
-/* stylelint-disable scales/font-size */
+/* stylelint-disable declaration-property-unit-allowed-list */
 
 @import '@automattic/typography/styles/fonts';
 @import '@automattic/onboarding/styles/mixins';
@@ -18,8 +18,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 .announcement-modal {
 	&.components-modal__frame {
 		overflow: visible;
-		height: 65vh;
-		top: calc( 17.5vh - #{$modal-footer-height * 0.5} );
+		height: auto;
 
 		@media ( max-width: $modal-breakpoint ) {
 			width: 90vw;
@@ -30,18 +29,20 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 		@media ( min-width: $modal-breakpoint ) {
 			width: 740px;
-			height: $modal-content-min-height;
-			top: calc( 50% - #{$modal-footer-height * 0.5} );
+			max-height: 80vh;
 		}
 
 		@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
-			height: $modal-content-min-height-landscape;
-			top: 50%;
+			max-height: $modal-content-min-height-landscape;
 		}
 	}
 
 	* {
 		box-sizing: border-box;
+	}
+
+	.components-modal__content {
+		position: relative;
 	}
 
 	.components-modal__header {
@@ -50,17 +51,12 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		text-align: right;
 
 		svg {
-			fill: white;
-			filter: drop-shadow( 0px 0px 1px black );
+			fill: currentColor;
+			filter: none;
 		}
 
 		@media ( min-width: $modal-breakpoint ) {
 			position: fixed;
-
-			svg {
-				fill: currentColor;
-				filter: none;
-			}
 		}
 	}
 
@@ -69,16 +65,6 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	}
 	.components-guide__container {
 		margin-top: 0;
-	}
-
-	.components-guide__page {
-		@media ( min-width: $modal-breakpoint ) {
-			height: $modal-content-min-height;
-		}
-
-		@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {
-			height: $modal-content-min-height-landscape;
-		}
 	}
 }
 
@@ -93,10 +79,8 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	@media ( min-width: $modal-breakpoint ) {
 		flex-direction: row;
 		justify-content: flex-start;
-		position: absolute;
 		min-height: $modal-content-min-height;
 		height: 100%;
-		bottom: 0;
 	}
 
 	@media ( min-width: $modal-breakpoint ) and ( max-height: $modal-breakpoint-phone-height ) {

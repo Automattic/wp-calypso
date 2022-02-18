@@ -5,21 +5,19 @@ const mockUseDispatch = () => () => null;
 const mockUseSelector = ( func ) => func();
 const mockUseTranslate = () => ( text ) => text;
 const mockUseCanGoToDate = () => () => true;
-const mockIsEnabled = () => true;
+const mockUseQuery = () => () => ( { isLoading: true, data: null } );
 
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
 	useTranslate: jest.fn(),
 } ) );
+jest.mock( 'react-query', () => ( {
+	useQuery: jest.fn(),
+} ) );
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: jest.fn(),
 	useDispatch: jest.fn(),
-} ) );
-jest.mock( '@automattic/calypso-config', () => ( {
-	__esModule: true,
-	default: jest.requireActual( '@automattic/calypso-config' ),
-	isEnabled: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
 jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
@@ -29,10 +27,10 @@ jest.mock( '../hooks', () => ( {
 	useCanGoToDate: jest.fn(),
 } ) );
 
-import { isEnabled } from '@automattic/calypso-config';
 import { shallow } from 'enzyme';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import { useQuery } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import BackupDatePicker from '..';
 import { useCanGoToDate } from '../hooks';
@@ -46,11 +44,11 @@ describe( 'BackupDatePicker', () => {
 
 		// Re-mock dependencies
 		Date.now = realDateNow;
-		isEnabled.mockImplementation( mockIsEnabled );
 		useDispatch.mockImplementation( mockUseDispatch );
 		useSelector.mockImplementation( mockUseSelector );
 		useTranslate.mockImplementation( mockUseTranslate );
 		useCanGoToDate.mockImplementation( mockUseCanGoToDate );
+		useQuery.mockImplementation( mockUseQuery );
 	} );
 
 	// --- DATE DISPLAY ---
@@ -257,22 +255,5 @@ describe( 'BackupDatePicker', () => {
 			);
 
 			picker.find( '.backup-date-picker__select-date--next' ).simulate( 'click' );
-		} ) );
-
-	test( 'Records a Tracks event when the search icon is clicked', () =>
-		new Promise( ( done ) => {
-			const checkSearchClickTracksEvent = ( event ) => {
-				const name = getTracksEventName( event );
-				expect( name ).toEqual( 'calypso_jetpack_backup_search' );
-				done();
-			};
-
-			useDispatch.mockImplementation( () => checkSearchClickTracksEvent );
-
-			const picker = shallow(
-				<BackupDatePicker selectedDate={ moment() } onDateChange={ () => {} } />
-			);
-
-			picker.find( '.backup-date-picker__search-link' ).simulate( 'click' );
 		} ) );
 } );

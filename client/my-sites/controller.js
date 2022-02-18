@@ -28,12 +28,16 @@ import {
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
 	domainManagementRoot,
+	domainManagementDnsAddRecord,
+	domainManagementDnsEditRecord,
+	domainAddNew,
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 	emailManagementInbox,
+	emailManagementInDepthComparison,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
@@ -57,6 +61,7 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { requestSite } from 'calypso/state/sites/actions';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSite, getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
@@ -169,6 +174,8 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 	const allPaths = [
 		domainManagementContactsPrivacy,
 		domainManagementDns,
+		domainManagementDnsAddRecord,
+		domainManagementDnsEditRecord,
 		domainManagementEdit,
 		domainManagementEditContactInfo,
 		domainManagementList,
@@ -181,6 +188,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		emailManagementAddGSuiteUsers,
 		emailManagementForwarding,
 		emailManagementInbox,
+		emailManagementInDepthComparison,
 		emailManagementManageTitanAccount,
 		emailManagementManageTitanMailboxes,
 		emailManagementNewTitanAccount,
@@ -233,16 +241,22 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
  *
  * @param {string} path The path to be checked
  * @param {string} slug The site slug
- * @param {object} primaryDomain The primary domain if it exists
+ * @param {Array} domains The list of site domains
  * @param {object} contextParams Context parameters
  * @returns {boolean} true if the path is allowed, false otherwise
  */
-function isPathAllowedForDIFMInProgressSite( path, slug, primaryDomain, contextParams ) {
-	const domainAdditionPath = '/domains/add';
+function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams ) {
+	const DIFMLiteInProgressAllowedPaths = [ domainAddNew(), emailManagement( slug ) ];
+
+	const isAllowedForDomainOnlySites = domains.some( ( domain ) =>
+		isPathAllowedForDomainOnlySite( path, slug, domain, contextParams )
+	);
 
 	return (
-		isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParams ) ||
-		path.startsWith( domainAdditionPath )
+		isAllowedForDomainOnlySites ||
+		DIFMLiteInProgressAllowedPaths.some( ( DIFMLiteInProgressAllowedPath ) =>
+			path.startsWith( DIFMLiteInProgressAllowedPath )
+		)
 	);
 }
 
@@ -277,13 +291,14 @@ function onSelectedSiteAvailable( context ) {
 	 * paths except those in the allow-list defined in `isPathAllowedForDIFMInProgressSite`.
 	 * Ignore this check if we are inside a support session.
 	 */
+	const domains = getDomainsBySiteId( state, selectedSite.ID );
 	if (
 		isDIFMLiteInProgress( state, selectedSite.ID ) &&
 		! isSupportSession( state ) &&
 		! isPathAllowedForDIFMInProgressSite(
 			context.pathname,
 			selectedSite.slug,
-			primaryDomain,
+			domains,
 			context.params
 		)
 	) {

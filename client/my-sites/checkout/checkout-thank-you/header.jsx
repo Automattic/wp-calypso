@@ -5,7 +5,6 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
-	isGuidedTransfer,
 	isPlan,
 	isSiteRedirect,
 	isTitanMail,
@@ -23,7 +22,8 @@ import {
 	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from 'calypso/lib/gsuite';
-import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { getTitanEmailUrl, hasTitanMailWithUs } from 'calypso/lib/titan';
+import { getTitanAppsUrlPrefix } from 'calypso/lib/titan/get-titan-urls';
 import {
 	domainManagementEdit,
 	domainManagementTransferInPrecheck,
@@ -33,6 +33,7 @@ import { downloadTrafficGuide } from 'calypso/my-sites/marketing/ultimate-traffi
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getJetpackSearchCustomizeUrl } from 'calypso/state/sites/selectors';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 
@@ -40,20 +41,21 @@ import './style.scss';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
-		isAtomic: PropTypes.bool,
 		displayMode: PropTypes.string,
-		upgradeIntent: PropTypes.string,
-		selectedSite: PropTypes.object,
-		isDataLoaded: PropTypes.bool.isRequired,
-		primaryPurchase: PropTypes.object,
 		hasFailedPurchases: PropTypes.bool,
+		isAtomic: PropTypes.bool,
+		isDataLoaded: PropTypes.bool.isRequired,
 		isSimplified: PropTypes.bool,
-		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
 		primaryCta: PropTypes.func,
+		primaryPurchase: PropTypes.object,
 		purchases: PropTypes.array,
-		translate: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		recordStartTransferClickInThankYou: PropTypes.func.isRequired,
+		selectedSite: PropTypes.object,
+		siteUnlaunchedBeforeUpgrade: PropTypes.bool,
+		titanAppsUrlPrefix: PropTypes.string.isRequired,
+		translate: PropTypes.func.isRequired,
+		upgradeIntent: PropTypes.string,
 	};
 
 	getHeading() {
@@ -229,27 +231,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			);
 		}
 
-		if ( isGuidedTransfer( primaryPurchase ) ) {
-			if ( typeof primaryPurchase.meta === 'string' ) {
-				return translate(
-					'The guided transfer for {{strong}}%(siteName)s{{/strong}} ' +
-						'will begin very soon. We will be in touch with you via email.',
-					{
-						args: { siteName: primaryPurchase.meta },
-						components: { strong: <strong /> },
-					}
-				);
-			}
-
-			return translate(
-				'The guided transfer for your site will ' +
-					'begin very soon. We will be in touch with you via email.',
-				{
-					components: { strong: <strong /> },
-				}
-			);
-		}
-
 		if ( isSiteRedirect( primaryPurchase ) ) {
 			return preventWidows(
 				translate(
@@ -307,6 +288,15 @@ export class CheckoutThankYouHeader extends PureComponent {
 			}
 		);
 	}
+	visitMyHome = ( event ) => {
+		event.preventDefault();
+
+		const { selectedSite } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_thank_you_no_site_receipt_error' );
+
+		page( `/home/${ selectedSite.slug }` );
+	};
 
 	visitDomain = ( event ) => {
 		event.preventDefault();
@@ -361,7 +351,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		this.props.recordTracksEvent( 'calypso_thank_you_titan_webmail_click' );
 
-		window.open( getTitanEmailUrl( '' ) );
+		window.open( getTitanEmailUrl( this.props.titanAppsUrlPrefix, '' ) );
 	};
 
 	downloadTrafficGuideHandler = ( event ) => {
@@ -486,6 +476,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 	getButtons() {
 		const {
 			hasFailedPurchases,
+			isDataLoaded,
 			jetpackSearchCustomizeUrl,
 			translate,
 			primaryPurchase,
@@ -499,6 +490,18 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const isTrafficGuidePurchase = 'traffic-guide' === displayMode;
 		const isSearch = purchases?.length > 0 && purchases[ 0 ].productType === 'search';
 
+		if (
+			isDataLoaded &&
+			( ! primaryPurchase || ! selectedSite || ( selectedSite.jetpack && ! isAtomic ) )
+		) {
+			return (
+				<div className="checkout-thank-you__header-button">
+					<Button className={ headerButtonClassName } primary onClick={ this.visitMyHome }>
+						{ translate( 'Go to My Home' ) }
+					</Button>
+				</div>
+			);
+		}
 		if ( isSearch ) {
 			return (
 				<div className="checkout-thank-you__header-button">
@@ -638,9 +641,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 export default connect(
 	( state, ownProps ) => ( {
-		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
 		isAtomic: isAtomicSite( state, ownProps.selectedSite?.ID ),
 		jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, ownProps.selectedSite?.ID ),
+		titanAppsUrlPrefix: getTitanAppsUrlPrefix(
+			getDomainsBySiteId( state, ownProps.selectedSite?.ID ).find( hasTitanMailWithUs )
+		),
+		upgradeIntent: ownProps.upgradeIntent || getCheckoutUpgradeIntent( state ),
 	} ),
 	{
 		recordStartTransferClickInThankYou,

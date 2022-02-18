@@ -43,13 +43,6 @@ export default class TermTreeSelector extends Component {
 		}
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.taxonomy !== this.props.taxonomy ) {
-			this.setState( { search: '' } );
-		}
-	}
-
 	render() {
 		const {
 			taxonomy,
@@ -75,6 +68,7 @@ export default class TermTreeSelector extends Component {
 			<div>
 				<TermTreeSelectorTerms
 					taxonomy={ taxonomy }
+					key={ taxonomy }
 					onSearch={ this.onSearch }
 					onChange={ onChange }
 					query={ query }

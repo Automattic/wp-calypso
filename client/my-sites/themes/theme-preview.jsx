@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import WebPreview from 'calypso/components/web-preview';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { hideThemePreview } from 'calypso/state/themes/actions';
 import {
@@ -95,9 +96,10 @@ class ThemePreview extends Component {
 	};
 
 	render() {
-		const { themeId, siteId, demoUrl, children } = this.props;
+		const { themeId, siteId, demoUrl, children, isWPForTeamsSite } = this.props;
 		const { showActionIndicator } = this.state;
-		if ( ! themeId ) {
+
+		if ( ! themeId || isWPForTeamsSite ) {
 			return null;
 		}
 
@@ -147,6 +149,7 @@ export default connect(
 			isActive: isThemeActive( state, themeId, siteId ),
 			isActivating: isActivatingTheme( state, siteId ),
 			demoUrl: getThemeDemoUrl( state, themeId, siteId ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			options: [
 				'activate',
 				'preview',

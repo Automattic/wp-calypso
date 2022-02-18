@@ -16,6 +16,14 @@ export interface ProductListItem {
 	price_tier_list: PriceTierEntry[];
 	price_tier_usage_quantity: null | number;
 	price_tier_slug: string;
+	sale_coupon?: {
+		discount?: number;
+		allowed_for_domain_transfers?: boolean;
+		start_date?: string;
+		expires?: string;
+	};
+	sale_cost?: number;
+	is_privacy_protection_product_purchase_allowed?: boolean;
 }
 
 export function getProductsList( state: AppState ): Record< string, ProductListItem > {

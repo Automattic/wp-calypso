@@ -8,7 +8,7 @@ import tracksRecordEvent from './track-record-event';
  */
 export default () => ( {
 	id: 'wpcom-block-editor-list-view-select',
-	selector: '[aria-label="Block navigation structure"] [role="row"]:not(.is-selected) button',
+	selector: '[aria-label="Block navigation structure"] [role="row"]:not(.is-selected) a',
 	type: 'click',
 	capture: true,
 	handler: async () => {

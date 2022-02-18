@@ -1,7 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -15,7 +14,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	getEligibleGSuiteDomain,
 	getGoogleMailServiceFamily,
@@ -32,17 +30,17 @@ import {
 	getItemsForCart,
 	newUsers,
 	validateAgainstExistingUsers,
+	validateUsers,
 } from 'calypso/lib/gsuite/new-users';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 
 import './style.scss';
@@ -50,6 +48,7 @@ import './style.scss';
 class GSuiteAddUsers extends Component {
 	state = {
 		users: [],
+		validatedMailboxUuids: [],
 	};
 
 	isMounted = false;
@@ -62,8 +61,9 @@ class GSuiteAddUsers extends Component {
 			const domainName = getEligibleGSuiteDomain( selectedDomainName, domains );
 
 			if ( '' !== domainName ) {
+				const newUser = newUsers( domainName );
 				return {
-					users: newUsers( domainName ),
+					users: newUser,
 				};
 			}
 		}
@@ -74,17 +74,19 @@ class GSuiteAddUsers extends Component {
 	handleContinue = () => {
 		const { domains, productType, selectedSite } = this.props;
 		const { users } = this.state;
-		const canContinue = areAllUsersValid( users );
+		const validatedUsers = validateUsers( users );
+		const canContinue = areAllUsersValid( validatedUsers );
+
+		this.setState( {
+			validatedMailboxUuids: validatedUsers.map( ( user ) => user.uuid ),
+			users: validatedUsers,
+		} );
 
 		this.recordClickEvent( 'calypso_email_management_gsuite_add_users_continue_button_click' );
 
 		if ( canContinue ) {
 			this.props.shoppingCartManager
-				.addProductsToCart(
-					getItemsForCart( domains, getProductSlug( productType ), users ).map( ( item ) =>
-						fillInSingleCartItemAttributes( item, this.props.productsList )
-					)
-				)
+				.addProductsToCart( getItemsForCart( domains, getProductSlug( productType ), users ) )
 				.then( () => {
 					this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
@@ -187,13 +189,11 @@ class GSuiteAddUsers extends Component {
 			userCanPurchaseGSuite,
 		} = this.props;
 
-		const { users } = this.state;
+		const { users, validatedMailboxUuids } = this.state;
 
 		const selectedDomainInfo = getGSuiteSupportedDomains( domains ).filter(
 			( { domainName } ) => selectedDomainName === domainName
 		);
-
-		const canContinue = areAllUsersValid( users );
 
 		return (
 			<>
@@ -209,15 +209,16 @@ class GSuiteAddUsers extends Component {
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							extraValidation={ ( user ) => validateAgainstExistingUsers( user, gsuiteUsers ) }
 							domains={ selectedDomainInfo }
+							onReturnKeyPress={ this.handleReturnKeyPress }
 							onUsersChange={ this.handleUsersChange }
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
 							users={ users }
-							onReturnKeyPress={ this.handleReturnKeyPress }
+							validatedMailboxUuids={ validatedMailboxUuids }
 						>
 							<div className="gsuite-add-users__buttons">
 								<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>
 
-								<Button primary disabled={ ! canContinue } onClick={ this.handleContinue }>
+								<Button primary onClick={ this.handleContinue }>
 									{ translate( 'Continue' ) }
 								</Button>
 							</div>
@@ -253,7 +254,7 @@ class GSuiteAddUsers extends Component {
 				<Main wideLayout={ true }>
 					<DocumentHead title={ translate( 'Add New Mailboxes' ) } />
 
-					<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+					<EmailHeader />
 
 					<HeaderCake onClick={ this.goToEmail }>
 						{ googleMailServiceFamily + ': ' + selectedDomainName }
@@ -291,15 +292,14 @@ GSuiteAddUsers.propTypes = {
 export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
-		const siteId = get( selectedSite, 'ID', null );
-		const domains = getDomainsBySiteId( state, siteId );
+		const selectedSiteId = getSelectedSiteId( state );
+		const domains = getDomainsBySiteId( state, selectedSiteId );
 
 		return {
 			currentRoute: getCurrentRoute( state ),
 			domains,
-			gsuiteUsers: getGSuiteUsers( state, siteId ),
-			isRequestingDomains: isRequestingSiteDomains( state, siteId ),
-			productsList: getProductsList( state ),
+			gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
+			isRequestingDomains: isRequestingSiteDomains( state, selectedSiteId ),
 			selectedSite,
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 		};

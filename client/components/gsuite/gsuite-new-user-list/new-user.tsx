@@ -10,6 +10,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { GSuiteNewUser as NewUser } from 'calypso/lib/gsuite/new-users';
 import GSuiteDomainsSelect from './domains-select';
+import type { ReactElement } from 'react';
 
 interface LabelWrapperProps {
 	label: TranslateResult;
@@ -24,18 +25,19 @@ const LabelWrapper: FunctionComponent< LabelWrapperProps > = ( { label, children
 	);
 };
 
-interface Props {
+interface GSuiteNewUserProps {
 	autoFocus: boolean;
 	domains: string[];
 	onUserRemove: () => void;
-	onUserValueChange: ( field: string, value: string ) => void;
+	onUserValueChange: ( field: string, value: string, mailBoxFieldTouched?: boolean ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	selectedDomainName: string;
 	showTrashButton: boolean;
+	showAllErrors?: boolean;
 	user: NewUser;
 }
 
-const GSuiteNewUser: FunctionComponent< Props > = ( {
+const GSuiteNewUser = ( {
 	autoFocus,
 	domains,
 	onUserRemove,
@@ -49,8 +51,9 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		password: { value: password, error: passwordError },
 	},
 	selectedDomainName,
+	showAllErrors = false,
 	showTrashButton = true,
-} ) => {
+}: GSuiteNewUserProps ): ReactElement => {
 	const translate = useTranslate();
 	const isRtl = useRtl();
 
@@ -67,10 +70,10 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	const [ mailBoxFieldTouched, setMailBoxFieldTouched ] = useState( false );
 	const [ passwordFieldTouched, setPasswordFieldTouched ] = useState( false );
 
-	const hasMailBoxError = mailBoxFieldTouched && null !== mailBoxError;
-	const hasFirstNameError = firstNameFieldTouched && null !== firstNameError;
-	const hasLastNameError = lastNameFieldTouched && null !== lastNameError;
-	const hasPasswordError = passwordFieldTouched && null !== passwordError;
+	const hasMailBoxError = ( showAllErrors || mailBoxFieldTouched ) && null !== mailBoxError;
+	const hasFirstNameError = ( showAllErrors || firstNameFieldTouched ) && null !== firstNameError;
+	const hasLastNameError = ( showAllErrors || lastNameFieldTouched ) && null !== lastNameError;
+	const hasPasswordError = ( showAllErrors || passwordFieldTouched ) && null !== passwordError;
 
 	const emailAddressLabel = translate( 'Email address' );
 

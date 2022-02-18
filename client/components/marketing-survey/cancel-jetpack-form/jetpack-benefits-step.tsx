@@ -124,7 +124,7 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 			);
 		} else if ( isJetpackBackupSlug( productSlug ) ) {
 			return translate( 'Once you cancel, you will lose access to your site backups.' );
-		} else if ( JETPACK_SEARCH_PRODUCTS.includes( productSlug ) ) {
+		} else if ( ( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( productSlug ) ) {
 			return translate(
 				"Once you cancel, you will no longer have Jetpack's enhanced search experience."
 			);

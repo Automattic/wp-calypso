@@ -33,7 +33,7 @@ const ToolbarExample = () => (
 			<ToolbarButton icon={ link } label="Link" />
 			<ToolbarGroup
 				isCollapsed
-				icon={ false }
+				icon={ undefined }
 				label="More rich text controls"
 				controls={ [
 					{ icon: code, title: 'Inline code' },

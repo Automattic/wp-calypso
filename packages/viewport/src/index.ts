@@ -47,6 +47,7 @@ const isServer = typeof window === 'undefined' || ! window.matchMedia;
 
 const noop = () => null;
 
+export type QueryItem = false | MinimalMediaQueryList | MediaQueryList;
 export type ListenerCallback = ( matches: boolean ) => void;
 export type UnsubcribeCallback = () => void;
 export type MinimalMediaQueryList = {
@@ -65,9 +66,7 @@ function addListenerFunctions(
 	};
 }
 
-function createMediaQueryList(
-	args: undefined | { min?: number; max?: number }
-): false | MinimalMediaQueryList | MediaQueryList {
+function createMediaQueryList( args?: { min?: number; max?: number } ): QueryItem {
 	const { min, max } = args ?? {};
 	if ( min !== undefined && max !== undefined ) {
 		return isServer
@@ -90,7 +89,7 @@ function createMediaQueryList(
 	return false;
 }
 
-const mediaQueryLists: Record< string, false | MinimalMediaQueryList | MediaQueryList > = {
+const mediaQueryLists: Record< string, QueryItem > = {
 	'<480px': createMediaQueryList( { max: 480 } ),
 	'<660px': createMediaQueryList( { max: 660 } ),
 	'<782px': createMediaQueryList( { max: 782 } ),
@@ -112,9 +111,7 @@ const mediaQueryLists: Record< string, false | MinimalMediaQueryList | MediaQuer
 	'480px-960px': createMediaQueryList( { min: 480, max: 960 } ),
 };
 
-export function getMediaQueryList(
-	breakpoint: string
-): undefined | false | MinimalMediaQueryList | MediaQueryList {
+export function getMediaQueryList( breakpoint: string ): undefined | QueryItem {
 	if ( ! mediaQueryLists.hasOwnProperty( breakpoint ) ) {
 		try {
 			// eslint-disable-next-line no-console

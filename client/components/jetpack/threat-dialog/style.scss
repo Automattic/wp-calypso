@@ -18,6 +18,9 @@
 		&__threat-title {
 			font-weight: 600;
 			margin: 8px 0;
+			display: flex;
+			border: 1px solid var( --studio-gray-5 );
+			flex-direction: row;
 		}
 
 		&__threat-description {

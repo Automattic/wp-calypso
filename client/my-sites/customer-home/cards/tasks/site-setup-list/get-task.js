@@ -53,6 +53,8 @@ export const getTask = (
 		siteSlug,
 		taskUrls,
 		userEmail,
+		isBlogger,
+		isFSEActive,
 	} = {}
 ) => {
 	let taskData = {};
@@ -79,19 +81,20 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED:
 			taskData = {
 				timing: 1,
-				title: translate( 'Confirm your email address' ),
-				description: translate(
-					'Please click the link in the email we sent to %(email)s. ' +
-						'Typo in your email address? {{changeButton}}Change it here{{/changeButton}}.',
-					{
-						args: {
-							email: userEmail,
-						},
-						components: {
-							br: <br />,
-							changeButton: <a href="/me/account" />,
-						},
-					}
+				title: (
+					<>
+						{ translate( 'Confirm your email address' ) }
+						<span className="site-setup-list__nav-item-email">{ userEmail }</span>
+					</>
+				),
+				description: (
+					<>
+						{ translate(
+							'We have sent an email to this address to verify your account. Not in inbox or spam folder? Tap the Resend email button! '
+						) }
+						<span className="site-setup-list__task-description-email"> { userEmail } </span>
+						<a href="/me/account">{ translate( 'Change' ) }</a>
+					</>
 				),
 				actionText: translate( 'Resend email' ),
 				actionDispatch: verifyEmail,
@@ -101,11 +104,13 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.BLOGNAME_SET:
 			taskData = {
 				timing: 1,
-				title: translate( 'Give your site a name' ),
-				description: translate(
-					'Give your new site a title to let people know what your site is about.'
-				),
-				actionText: translate( 'Name your site' ),
+				title: isBlogger ? translate( 'Name your blog' ) : translate( 'Give your site a name' ),
+				description: isBlogger
+					? translate(
+							"Choose a name for your blog that reflects your site's personality. Don't worry, you can change it any time you like."
+					  )
+					: translate( 'Give your new site a title to let people know what your site is about.' ),
+				actionText: isBlogger ? translate( 'Name your blog' ) : translate( 'Name your site' ),
 				actionUrl: `/settings/general/${ siteSlug }`,
 				tour: 'checklistSiteTitle',
 			};
@@ -114,10 +119,14 @@ export const getTask = (
 			taskData = {
 				timing: 3,
 				title: translate( 'Try the WordPress app' ),
-				description: translate(
-					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
-				),
-				actionText: translate( 'Download mobile app' ),
+				description: isBlogger
+					? translate( 'Write posts, check stats, and reply to comments on the go!' )
+					: translate(
+							'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
+					  ),
+				actionText: isBlogger
+					? translate( 'Download the app' )
+					: translate( 'Download mobile app' ),
 				actionUrl: '/me/get-apps',
 				...( ! task.isCompleted && {
 					actionDispatch: requestSiteChecklistTaskUpdate,
@@ -144,11 +153,17 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			taskData = {
 				timing: 1,
-				title: translate( 'Launch your site to the world' ),
-				description: translate(
-					"Your site is private and only visible to you. When you're ready, launch your site to make it public."
-				),
-				actionText: translate( 'Launch site' ),
+				title: isBlogger
+					? translate( 'Launch your blog' )
+					: translate( 'Launch your site to the world' ),
+				description: isBlogger
+					? translate(
+							"Ready for the big reveal? Right now, your blog is private and visible only to you. Launch your blog so that it's public for everyone."
+					  )
+					: translate(
+							"Your site is private and only visible to you. When you're ready, launch your site to make it public."
+					  ),
+				actionText: isBlogger ? translate( 'Launch blog' ) : translate( 'Launch site' ),
 				actionDispatch: launchSiteOrRedirectToLaunchSignupFlow,
 				actionDispatchArgs: [ siteId ],
 				actionDisableOnComplete: true,
@@ -157,11 +172,13 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.FRONT_PAGE_UPDATED:
 			taskData = {
 				timing: 20,
-				title: translate( 'Update your homepage' ),
+				title: isFSEActive
+					? translate( "Update your site's design" )
+					: translate( 'Update your homepage' ),
 				description: translate(
 					"We've created the basics, now it's time for you to update the images and text. Make a great first impression. Everything you do can be changed anytime."
 				),
-				actionText: translate( 'Edit homepage' ),
+				actionText: isFSEActive ? translate( 'Edit site' ) : translate( 'Edit homepage' ),
 				actionUrl: taskUrls?.front_page_updated,
 			};
 			break;
@@ -216,12 +233,73 @@ export const getTask = (
 				actionUrl: emailManagementTitanSetUpMailbox( siteSlug, task.domain ),
 			};
 			break;
+		case CHECKLIST_KNOWN_TASKS.BLOG_PREVIEWED:
+			taskData = {
+				timing: 1,
+				title: translate( 'Preview your blog' ),
+				description: translate(
+					"See how your site looks to site visitors. Remember, your blog is a work in progress — you can always choose a new theme or tweak your site's design."
+				),
+				actionText: translate( 'Preview blog' ),
+				actionUrl: `/view/${ siteSlug }`,
+				...( ! task.isCompleted && {
+					actionDispatch: requestSiteChecklistTaskUpdate,
+					actionDispatchArgs: [ siteId, task.id ],
+				} ),
+				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.THEMES_BROWSED:
+			taskData = {
+				timing: 2,
+				title: translate( 'Browse themes' ),
+				description: translate(
+					"Choose the perfect look for your site — one that reflects your site's personality."
+				),
+				actionText: translate( 'Browse themes' ),
+				actionUrl: `/themes/${ siteSlug }`,
+				...( ! task.isCompleted && {
+					actionDispatch: requestSiteChecklistTaskUpdate,
+					actionDispatchArgs: [ siteId, task.id ],
+				} ),
+				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.FIRST_POST_PUBLISHED:
+			taskData = {
+				timing: 10,
+				title: translate( 'Publish your first post' ),
+				description: translate(
+					"See how your site looks to site visitors. Remember, your blog is a work in progress — you can always choose a new theme or tweak your site's design."
+				),
+				actionText: translate( 'Draft a post' ),
+				actionUrl: `/post/${ siteSlug }`,
+				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.POST_SHARING_ENABLED:
+			taskData = {
+				timing: 5,
+				title: translate( 'Enable post sharing' ),
+				description: isBlogger
+					? translate(
+							'Enable post sharing to automatically share your new blog posts to Twitter, Facebook, or LinkedIn to ensure your audience will never miss an update.'
+					  )
+					: translate(
+							'Enable post sharing to automatically share your new posts to Twitter, Facebook, or LinkedIn to ensure your audience will never miss an update.'
+					  ),
+				actionText: translate( 'Enable sharing' ),
+				actionUrl: `/marketing/connections/${ siteSlug }`,
+				isSkippable: true,
+			};
+			break;
 	}
 
 	const enhancedTask = {
 		...task,
 		...taskData,
 	};
+
 	return {
 		...enhancedTask,
 		description: getTaskDescription( enhancedTask, { isDomainUnverified, isEmailUnverified } ),

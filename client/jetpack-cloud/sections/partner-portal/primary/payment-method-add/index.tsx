@@ -11,11 +11,11 @@ export default function PaymentMethodAdd(): ReactElement {
 
 	return (
 		<Main wideLayout className="payment-method-add">
-			<DocumentHead title={ translate( 'Payment Method' ) } />
+			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
 
 			<div className="payment-method-add__header">
-				<CardHeading size={ 36 }>{ translate( 'Payment Method' ) }</CardHeading>
+				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
 			</div>
 
 			<Card className="payment-method-add__body">

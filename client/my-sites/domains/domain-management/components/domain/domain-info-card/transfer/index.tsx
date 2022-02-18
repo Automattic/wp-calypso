@@ -1,5 +1,6 @@
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { isDomainInGracePeriod } from 'calypso/lib/domains';
 import { type as domainType } from 'calypso/lib/domains/constants';
 import { domainManagementTransfer } from 'calypso/my-sites/domains/paths';
 import DomainInfoCard from '..';
@@ -9,9 +10,16 @@ const DomainTransferInfoCard = ( {
 	domain,
 	selectedSite,
 }: DomainInfoCardProps ): JSX.Element | null => {
+	const typesUnableToTransfer = [ domainType.TRANSFER, domainType.SITE_REDIRECT ] as const;
 	const translate = useTranslate();
 
-	if ( domain.type === domainType.TRANSFER ) return null;
+	if (
+		! domain.currentUserIsOwner ||
+		( domain.expired && ! isDomainInGracePeriod( domain ) ) ||
+		typesUnableToTransfer.includes( domain.type )
+	) {
+		return null;
+	}
 
 	const getDescription = () => {
 		switch ( domain.type ) {

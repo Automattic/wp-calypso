@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { getTargetDeviceName } from '../../browser-helper';
+import envVariables from '../../env-variables';
 import type { Plans } from '../../types';
 
 export type Features =
@@ -181,18 +181,15 @@ export class GutenboardingFlow {
 	 * @param {string} name One portion of the name of the font pair.
 	 */
 	async selectFont( name: string ): Promise< void > {
-		// Font selector depends on the viewport name but lumps non-mobile into desktop.
-		const viewportName = getTargetDeviceName() === 'mobile' ? 'mobile' : 'desktop';
-
 		// Mobile viewport puts the buttons behind a dropdown.
-		if ( viewportName === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await this.page.click( selectors.mobileFontPairingDropdown );
 		}
 
 		// Click on the desired font pairing.
-		await this.page.click( selectors.fontPairingButton( viewportName, name ) );
+		await this.page.click( selectors.fontPairingButton( envVariables.VIEWPORT_NAME, name ) );
 
-		if ( viewportName === 'desktop' ) {
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await this.page.waitForSelector( `button.is-selected span:text("${ name }")` );
 		} else {
 			await this.page.waitForSelector(

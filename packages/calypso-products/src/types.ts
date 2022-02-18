@@ -9,6 +9,7 @@ import type {
 	JETPACK_RESET_PLANS,
 	TERMS_LIST,
 	PERIOD_LIST,
+	JETPACK_PRODUCT_CATEGORIES,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -60,6 +61,8 @@ export interface JetpackPlan extends Plan {
 export type IncompleteJetpackPlan = Partial< JetpackPlan > &
 	Pick< JetpackPlan, 'group' | 'type' | 'getTitle' | 'getDescription' >;
 
+export type JetpackProductCategory = typeof JETPACK_PRODUCT_CATEGORIES[ number ];
+
 // All
 export type ProductSlug = WPComProductSlug | JetpackProductSlug;
 export type PlanSlug = WPComPlanSlug | JetpackPlanSlug;
@@ -71,6 +74,7 @@ export interface Product {
 	type: ProductSlug;
 	term: typeof TERMS_LIST[ number ];
 	bill_period: typeof PERIOD_LIST[ number ];
+	categories: JetpackProductCategory[];
 	getFeatures?: () => Feature[];
 	getProductId: () => number;
 	getStoreSlug: () => ProductSlug;
@@ -93,6 +97,7 @@ export type Plan = BillingTerm & {
 	getDescription: () => TranslateResult;
 	getShortDescription?: () => TranslateResult;
 	getTagline?: () => TranslateResult;
+	getPlanCardFeatures?: () => Feature[];
 
 	/**
 	 * Features that are included as part of this plan.

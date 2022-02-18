@@ -246,9 +246,9 @@ class Full_Site_Editing {
 	/**
 	 * Returns the label for the Gutenberg close button.
 	 *
-	 * When we edit a Template from a Post/Page or a Template, we want to replace the close
-	 * icon with a "Back to" button, to clarify that it will take us back to the previous editing
-	 * view, and not the Template CPT list.
+	 * When we edit a Template from a Post/Page or a Template, we want to replace
+	 * the close icon with a "Back to" button, to clarify that it will take us
+	 * back to the previous editing view, and not the Template CPT list.
 	 *
 	 * @return null|string Override label string if it should be inserted, or null otherwise.
 	 */

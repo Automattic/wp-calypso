@@ -14,12 +14,12 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { SiteSlug } from 'calypso/types';
+import type { AppState, SiteSlug } from 'calypso/types';
 
 import './style.scss';
 
 interface ConnectedProps {
-	siteId: number;
+	siteId: number | undefined;
 	selectedSiteSlug: SiteSlug;
 	isJetpack: boolean;
 	isAtomicSite: boolean;
@@ -128,14 +128,14 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 	);
 };
 
-export default connect< ConnectedProps, unknown, unknown >(
-	( state ) => {
+export default connect(
+	( state: AppState ) => {
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
 		return {
-			siteId: site.ID,
-			isJetpack: isJetpackSite( state, site.ID ),
-			isAtomicSite: isSiteAutomatedTransfer( state, site.ID ),
+			siteId: site?.ID,
+			isJetpack: Boolean( isJetpackSite( state, site?.ID ?? null ) ),
+			isAtomicSite: Boolean( isSiteAutomatedTransfer( state, site?.ID ?? null ) ),
 		};
 	},
 	( dispatch ) => ( {

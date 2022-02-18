@@ -38,7 +38,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			uniqueEvents: {},
 		};
 
-		UNSAFE_componentWillMount() {
+		componentDidMount() {
 			this.props.replaceFields( getFormSettings( this.props.settings ) );
 		}
 

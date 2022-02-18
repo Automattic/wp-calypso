@@ -64,7 +64,7 @@ export default function TermsOfServiceConsent(): ReactElement | null {
 		<Main className="terms-of-service-consent">
 			<QueryJetpackPartnerPortalPartner />
 
-			<CardHeading size={ 36 }>{ translate( 'Partner Portal' ) }</CardHeading>
+			<CardHeading size={ 36 }>{ translate( 'Licensing' ) }</CardHeading>
 
 			{ ! fetchedPartner && <Spinner /> }
 

@@ -78,7 +78,7 @@ export function fetchThemeFilters( context, next ) {
 			return next();
 		}
 	} );
-	store.dispatch( requestThemeFilters() );
+	store.dispatch( requestThemeFilters( context.lang ) );
 }
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects
@@ -112,13 +112,4 @@ export function redirectToThemeDetails( { res, params: { site, theme, section } 
 		redirectedSection = 'setup';
 	}
 	res.redirect( '/theme/' + [ theme, redirectedSection, site ].filter( Boolean ).join( '/' ) );
-}
-
-export function redirectTiers( { res, originalUrl }, next ) {
-	const redirectUrl = originalUrl.replace( /\/(free|premium|type)/g, '' );
-	if ( redirectUrl === originalUrl ) {
-		return next();
-	}
-
-	res.redirect( 301, redirectUrl );
 }

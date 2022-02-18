@@ -57,7 +57,6 @@
 	}
 }
 
-
 /* Purchase listing
 ================================================== */
 .purchases-list-header.card {
@@ -132,6 +131,9 @@
 .purchase-item__title {
 	color: var( --color-neutral-80 );
 	overflow: hidden;
+	.owner-info__pop-over {
+		vertical-align: middle;
+	}
 }
 
 .purchase-item__purchase-type {

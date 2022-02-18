@@ -19,6 +19,7 @@
 	.card {
 		color: var( --studio-gray-50 );
 		padding: 16px;
+		margin-bottom: 24px;
 
 		@include break-mobile {
 			padding: 24px;
@@ -53,6 +54,13 @@
 				margin-bottom: 0;
 				font-size: $font-body-small;
 			}
+
+			&:last-child {
+				margin-bottom: 8px;
+				@include break-mobile {
+					margin-bottom: 0;
+				}
+			}
 		}
 	}
 
@@ -81,11 +89,12 @@
 			margin-bottom: 4px;
 			color: var( --studio-gray-80 );
 		}
-		
+
 		&-section-text {
 			color: var( --studio-gray-50 );
 			font-size: $font-body-small;
 			line-height: 20px;
+			margin-bottom: 0;
 
 			br {
 				content: ' ';
@@ -94,7 +103,7 @@
 			}
 		}
 	}
-	
+
 	.transfer-page__transfer-lock {
 		margin: 8px 0 16px;
 	}
@@ -119,6 +128,10 @@
 		.card-heading {
 			margin: 0;
 		}
+
+		.search-card {
+			padding: 0;
+		}
 	}
 
 	.transfer-page__transfer-lock-placeholder {
@@ -132,9 +145,18 @@
 		.layout__column--main {
 			padding-right: 24px;
 		}
-	
+
 		.layout__column--sidebar {
 			padding-left: 24px;
+		}
+	}
+
+	&__loader {
+		display: flex;
+		margin-bottom: 16px;
+		> p {
+			margin-bottom: 0;
+			margin-left: 16px;
 		}
 	}
 }

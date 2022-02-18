@@ -2,8 +2,16 @@
 	display: flex;
 	max-width: 135px;
 	max-height: 40px;
-	overflow: hidden;
 	margin-left: 0.5rem;
+
+	// Set overflow: hidden here instead of the parent node so that its focus outline is not cut-off.
+	> a {
+		overflow: hidden;
+
+		&:focus-visible {
+			box-shadow: 0 0 0 2px var( --color-primary );
+		}
+	}
 
 	&:first-child {
 		margin-left: 0;

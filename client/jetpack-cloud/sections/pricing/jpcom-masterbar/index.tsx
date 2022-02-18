@@ -1,105 +1,104 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
+import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
+import Gravatar from 'calypso/components/gravatar';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banner';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { trailingslashit } from 'calypso/lib/route';
+import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
+import useMobileBtn from './use-mobile-btn';
+import useSubmenuBtn from './use-submenu-btn';
+import useUserMenu from './use-user-menu';
+
 import './style.scss';
-import antiSpamIcon from './assets/icons/anti-spam.svg';
-import backupIcon from './assets/icons/backup.svg';
-import boostIcon from './assets/icons/boost.svg';
-import crmIcon from './assets/icons/crm.svg';
-import growthIcon from './assets/icons/growth.svg';
-import performanceIcon from './assets/icons/performance.svg';
-import scanIcon from './assets/icons/scan.svg';
-import searchIcon from './assets/icons/search.svg';
-import securityIcon from './assets/icons/security.svg';
-import videoIcon from './assets/icons/video.svg';
+
+export const MAIN_CONTENT_ID = 'content';
 
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
-const BP = 960; // Breakpoint defined in stylesheet
 
-const JetpackComMasterbar: React.FC = () => {
+type Props = {
+	pathname?: string;
+};
+
+/**
+ * WARNING: this component is a reflection of the Jetpack.com header, whose markup is located here:
+ * https://opengrok.a8c.com/source/xref/a8c/jetpackme-new/parts/shared/header.php
+ *
+ * Both headers should stay in sync as much as possible.
+ */
+const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 	const translate = useTranslate();
-	const menuItems = useMemo(
+	const locale = useLocale();
+	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const user = useSelector( getCurrentUser );
+	const sections = useMemo(
 		() => [
 			{
 				label: translate( 'Products' ),
+				id: 'products',
 				items: [
 					{
-						category: {
-							label: translate( 'Security' ),
-							description: translate( 'Protect your site' ),
-							href: '/features/security/',
-							icon: securityIcon,
-						},
+						label: translate( 'Security' ),
+						tagline: translate( 'Protect your site' ),
+						href: `${ JETPACK_COM_BASE_URL }/features/security/`,
 						items: [
 							{
 								label: translate( 'Backup' ),
-								description: translate( 'Save every change' ),
-								href: '/upgrade/backup/',
-								icon: backupIcon,
+								tagline: translate( 'Save every change in real-time' ),
+								href: `${ JETPACK_COM_BASE_URL }/upgrade/backup/`,
 							},
 							{
 								label: translate( 'Scan' ),
-								description: translate( 'Stay one step ahead of threats' ),
-								href: '/upgrade/scan/',
-								icon: scanIcon,
+								tagline: translate( 'Stay one step ahead of threats' ),
+								href: `${ JETPACK_COM_BASE_URL }/upgrade/scan/`,
 							},
 							{
 								label: translate( 'Anti-spam' ),
-								description: translate( 'Stop comment and form spam' ),
-								href: '/upgrade/anti-spam/',
-								icon: antiSpamIcon,
+								tagline: translate( 'Stop comment and form spam' ),
+								href: `${ JETPACK_COM_BASE_URL }/upgrade/anti-spam/`,
 							},
 						],
 					},
 					{
-						category: {
-							label: translate( 'Performance' ),
-							description: translate( 'Speed up your site' ),
-							href: '/features/performance/',
-							icon: performanceIcon,
-						},
+						label: translate( 'Performance' ),
+						tagline: translate( 'Speed up your site' ),
+						href: `${ JETPACK_COM_BASE_URL }/features/performance/`,
 						items: [
 							{
 								label: translate( 'Site Search' ),
-								description: translate( 'Help them find what they need' ),
-								href: '/upgrade/search/',
-								icon: searchIcon,
+								tagline: translate( 'Help them find what they need' ),
+								href: `${ JETPACK_COM_BASE_URL }/upgrade/search/`,
 							},
 							{
 								label: translate( 'Boost' ),
-								description: translate( 'Instant speed and SEO' ),
-								href: '/boost/',
-								icon: boostIcon,
+								tagline: translate( 'Instant speed and SEO' ),
+								href: `${ JETPACK_COM_BASE_URL }/boost/`,
 							},
 							{
 								label: translate( 'VideoPress' ),
-								description: translate( 'High-quality, ad-free video' ),
-								href: '/videopress/',
-								icon: videoIcon,
+								tagline: translate( 'High-quality, ad-free video' ),
+								href: `${ JETPACK_COM_BASE_URL }/videopress/`,
 							},
 						],
 					},
 					{
-						category: {
-							label: translate( 'Growth' ),
-							description: translate( 'Grow your audience' ),
-							href: '/features/growth/',
-							icon: growthIcon,
-						},
+						label: translate( 'Growth' ),
+						tagline: translate( 'Grow your audience' ),
+						href: `${ JETPACK_COM_BASE_URL }/features/growth/`,
 						items: [
 							{
 								label: translate( 'CRM' ),
-								description: translate( 'Connect with your people' ),
-								href: 'https://jetpackcrm.com/',
-								icon: crmIcon,
+								tagline: translate( 'Connect with your people' ),
+								href:
+									'https://jetpackcrm.com/?utm_medium=automattic_referred&utm_source=jpcom_header',
 							},
 						],
 					},
@@ -107,172 +106,184 @@ const JetpackComMasterbar: React.FC = () => {
 			},
 			{
 				label: translate( 'Pricing' ),
-				href: '/pricing/',
+				href: `${ JETPACK_COM_BASE_URL }/pricing/`,
+			},
+			{
+				label: translate( 'Agencies' ),
+				href: `${ JETPACK_COM_BASE_URL }/for/agencies/`,
 			},
 			{
 				label: translate( 'Support' ),
-				href: '/support/',
+				href: `${ JETPACK_COM_BASE_URL }/support/`,
 			},
 			{
 				label: translate( 'Blog' ),
-				href: '/blog/',
+				href: `${ JETPACK_COM_BASE_URL }/blog/`,
 			},
 		],
 		[ translate ]
 	);
 
-	const jetpackSaleCoupon = useSelector( getJetpackSaleCoupon );
-	const [ isMenuOpen, setIsMenuOpen ] = useState( false );
-
-	const toggleMenu = () => {
-		setIsMenuOpen( ( currentState ) => ! currentState );
-	};
-	const toggleSubmenu = useCallback( ( item: HTMLElement ) => {
-		item.classList.toggle( 'is-active' );
-
-		const submenu = item.querySelector( '.jpcom-masterbar__submenu' );
-
-		if ( submenu ) {
-			submenu.classList.toggle( 'is-visible' );
-		}
-	}, [] );
-	const onSubmenuClick = useCallback(
-		( e ) => {
-			if ( window.innerWidth <= BP ) {
-				toggleSubmenu( e.currentTarget );
-			}
-		},
-		[ toggleSubmenu ]
-	);
-	const onSubmenuKeyPress = useCallback(
-		( e ) => {
-			const key = e.code || e.key;
-
-			if ( key.indexOf( 'Enter' ) > -1 && window.innerWidth <= BP ) {
-				toggleSubmenu( e.currentTarget );
-			}
-		},
-		[ toggleSubmenu ]
-	);
 	const onLinkClick = useCallback( ( e ) => {
 		recordTracksEvent( 'calypso_jetpack_nav_item_click', {
 			nav_item: e.currentTarget.getAttribute( 'href' )?.replace( JETPACK_COM_BASE_URL, '' ),
 		} );
 	}, [] );
 
+	useSubmenuBtn();
+	useUserMenu();
+	useMobileBtn();
+
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<>
 			{ jetpackSaleCoupon && <JetpackSaleBanner coupon={ jetpackSaleCoupon } /> }
-			<nav className="jpcom-masterbar">
-				<div className="jpcom-masterbar__inner">
-					<ExternalLink
-						className="jpcom-masterbar__logo"
-						href={ JETPACK_COM_BASE_URL }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_jetpack_nav_logo_click' );
-						} }
-					>
-						<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 43 } />
-					</ExternalLink>
 
-					<Button
-						className={ classNames( [ 'jpcom-masterbar__navbutton', 'mobilenav' ], {
-							'is-active': isMenuOpen,
-						} ) }
-						aria-label={ translate( 'Menu' ) as string }
-						aria-controls="navigation"
-						onClick={ toggleMenu }
-					>
-						<span className="jpcom-masterbar__navbox">
-							<span className="jpcom-masterbar__navinner"></span>
-						</span>
-						<span className="jpcom-masterbar__navlabel">{ translate( 'Menu' ) }</span>
-					</Button>
+			<div className="jpcom-masterbar">
+				<header className="header js-header force-opaque">
+					<nav className="header__content">
+						<a className="header__skip" href={ `#${ MAIN_CONTENT_ID }` }>
+							{ translate( 'Skip to main content' ) }
+						</a>
+						<ExternalLink
+							className="header__home-link"
+							href={ localizeUrl( JETPACK_COM_BASE_URL, locale ) }
+							aria-label={ translate( 'Jetpack home' ) }
+							onClick={ () => recordTracksEvent( 'calypso_jetpack_nav_logo_click' ) }
+						>
+							<JetpackLogo full size={ 38 } />
+						</ExternalLink>
+						<a
+							className="header__mobile-btn mobile-btn js-mobile-btn"
+							href="#mobile-menu"
+							aria-expanded="false"
+						>
+							<span className="mobile-btn__icon" aria-hidden="true">
+								<span className="mobile-btn__inner"></span>
+							</span>
+							<span className="mobile-btn__label">{ translate( 'Menu' ) }</span>
+						</a>
+						<div className="header__nav-wrapper js-mobile-menu" id="mobile-menu">
+							<ul className="header__sections-list js-nav-list">
+								{ sections.map( ( { label, id, href, items } ) => {
+									const hasChildren = Array.isArray( items );
+									const Tag = hasChildren ? 'a' : ExternalLink;
 
-					<ul className={ classNames( 'jpcom-masterbar__nav', { 'is-open': isMenuOpen } ) }>
-						{ menuItems.map( ( { label, href, items }, index ) => (
-							<li
-								className={ classNames( 'jpcom-masterbar__nav-item', { 'with-submenu': ! href } ) }
-								key={ index }
-								tabIndex={ href ? undefined : 0 }
-								onClick={ href ? undefined : onSubmenuClick }
-								onKeyPress={ href ? undefined : onSubmenuKeyPress }
-							>
-								{ href ? (
-									<a
-										className={ href.indexOf( 'pricing' ) > -1 ? 'current' : '' }
-										href={ `${ JETPACK_COM_BASE_URL }${ href }` }
-										onClick={ onLinkClick }
-									>
-										{ label }
-									</a>
-								) : (
-									<>
-										<span className="jpcom-masterbar__pri-nav-label">
-											{ label }
-											<Gridicon icon="chevron-down"></Gridicon>
-										</span>
-										<div className="jpcom-masterbar__submenu">
-											<ul className="jpcom-masterbar__submenu-list">
-												{ items?.map( ( { category, items }, index ) => (
-													<li key={ index }>
-														<span className="jpcom-masterbar__submenu-category-wrapper">
-															<span className="jpcom-masterbar__submenu-category">
-																<img src={ category.icon } alt="" />
-																<a
-																	className="jpcom-masterbar__submenu-link"
-																	href={
-																		category.href.indexOf( 'http' ) > -1
-																			? category.href
-																			: ` ${ JETPACK_COM_BASE_URL }${ category.href }`
-																	}
-																	onClick={ onLinkClick }
-																>
-																	<span className="jpcom-masterbar__submenu-label">
-																		{ category.label }
-																	</span>
-																	<span className="jpcom-masterbar__submenu-desc">
-																		{ category.description }
-																	</span>
-																</a>
-															</span>
-														</span>
-														<ul className="jpcom-masterbar__submenu-subcategory">
-															{ items?.map( ( { label, description, icon, href }, index ) => (
-																<li key={ index }>
-																	<img src={ icon } alt="" />
-																	<a
-																		className="jpcom-masterbar__submenu-link"
-																		href={
-																			href.indexOf( 'http' ) > -1
-																				? href
-																				: ` ${ JETPACK_COM_BASE_URL }${ href }`
-																		}
+									return (
+										<li
+											className={ classNames( {
+												'is-active':
+													pathname &&
+													href &&
+													new URL( trailingslashit( href ) ).pathname ===
+														trailingslashit( pathname ),
+											} ) }
+											key={ href || id }
+										>
+											<Tag
+												className={ hasChildren ? 'header__menu-btn js-menu-btn' : '' }
+												href={ href ? localizeUrl( href, locale ) : `#${ id }` }
+												aria-expanded={ hasChildren ? false : undefined }
+												onClick={ href ? onLinkClick : undefined }
+											>
+												{ label }
+												{ hasChildren && <Gridicon icon="chevron-down" size={ 18 } /> }
+											</Tag>
+											{ hasChildren && (
+												<div id={ id } className="header__submenu js-menu" tabIndex={ -1 }>
+													<div className="header__submenu-content">
+														<button className="header__back-btn js-menu-back">
+															<Gridicon icon="chevron-left" size={ 18 } />
+															{ translate( 'Back' ) }
+														</button>
+														<ul className="header__submenu-categories-list">
+															{ items.map( ( { label, tagline, href, items } ) => (
+																<li key={ href }>
+																	<ExternalLink
+																		className="header__submenu-category header__submenu-link"
+																		href={ localizeUrl( href, locale ) }
 																		onClick={ onLinkClick }
 																	>
-																		<span className="jpcom-masterbar__submenu-label">
-																			<span>{ label }</span>
+																		<span className="header__submenu-label">
+																			<span className="header__submenu-chevron">
+																				<Gridicon icon="chevron-right" size={ 18 } />
+																			</span>
+																			{ label }
 																		</span>
-																		<span className="jpcom-masterbar__submenu-desc">
-																			{ description }
-																		</span>
-																	</a>
+																		<span className="header__submenu-tagline">{ tagline } </span>
+																	</ExternalLink>
+																	<ul className="header__submenu-links-list">
+																		{ items.map( ( { label, tagline, href } ) => (
+																			<li key={ href }>
+																				<ExternalLink
+																					className="header__submenu-link"
+																					href={ localizeUrl( href, locale ) }
+																					onClick={ onLinkClick }
+																				>
+																					<span className="header__submenu-label">{ label }</span>
+																					<span className="header__submenu-tagline">
+																						{ tagline }
+																					</span>
+																				</ExternalLink>
+																			</li>
+																		) ) }
+																	</ul>
 																</li>
 															) ) }
 														</ul>
-													</li>
-												) ) }
-											</ul>
-										</div>
-									</>
-								) }
-							</li>
-						) ) }
-					</ul>
-				</div>
-			</nav>
+													</div>
+												</div>
+											) }
+										</li>
+									);
+								} ) }
+							</ul>
+
+							<ul className="header__actions-list">
+								<li
+									className={ classNames( 'header__user-menu user-menu ', {
+										'is-logged-in': isLoggedIn,
+									} ) }
+								>
+									{ isLoggedIn ? (
+										<>
+											<a className="user-menu__btn js-user-menu-btn" href="#profile">
+												<Gravatar user={ user } className="user-menu__avatar" />
+											</a>
+											<div id="profile" className="user-menu__tooltip js-user-menu">
+												<div className="tooltip">
+													<span className="user-menu__greetings">
+														{ translate( 'Hi, %s!', {
+															args: user?.display_name || user?.username,
+														} ) }
+													</span>
+													<ul className="user-menu__list">
+														<li>
+															<a className="js-manage-sites" href={ localizeUrl( '/', locale ) }>
+																{ translate( 'Manage your sites' ) }
+															</a>
+														</li>
+													</ul>
+												</div>
+											</div>
+										</>
+									) : (
+										<a
+											className="header__action-link js-login"
+											href={ localizeUrl( '/login/', locale ) }
+										>
+											{ translate( 'Log in' ) }
+										</a>
+									) }
+								</li>
+							</ul>
+						</div>
+					</nav>
+				</header>
+			</div>
 		</>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default JetpackComMasterbar;

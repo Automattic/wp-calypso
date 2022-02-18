@@ -60,10 +60,7 @@ const ProxiedImage: FC< ProxiedImageProps > = function ProxiedImage( {
 			debug( 'set image from cache', { url } );
 		} else {
 			debug( 'requesting image from API', { requestId, imageObjectUrl } );
-			const options = { query };
-			if ( maxSize !== null ) {
-				options.maxSize = maxSize;
-			}
+			const options = { query, ...( maxSize !== null ? { maxSize } : {} ) };
 			getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, options )
 				.then( ( data: Blob ) => {
 					cacheResponse( requestId, data );

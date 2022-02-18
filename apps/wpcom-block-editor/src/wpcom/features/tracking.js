@@ -461,7 +461,7 @@ const trackDisableComplementaryArea = ( scope ) => {
 const trackSaveEntityRecord = ( kind, name, record ) => {
 	if ( kind === 'postType' && name === 'wp_template_part' ) {
 		const variationSlug = record.area !== 'uncategorized' ? record.area : undefined;
-		if ( document.querySelector( '.edit-site-template-part-converter__modal' ) ) {
+		if ( document.querySelector( '.edit-site-create-template-part-modal' ) ) {
 			ignoreNextReplaceBlocksAction = true;
 			const convertedParentBlocks = select( 'core/block-editor' ).getBlocksByClientId(
 				select( 'core/block-editor' ).getSelectedBlockClientIds()
@@ -604,24 +604,6 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 		return;
 	}
 
-	if ( kind === 'postType' && type === 'wp_global_styles' ) {
-		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
-		const entityContent = JSON.parse( editedEntity?.content );
-		const updatedContent = JSON.parse( updates?.content );
-
-		// Sometimes a second update is triggered corresponding to no changes since the last update.
-		// Therefore we must check if there is a change to avoid debouncing a valid update to a changeless update.
-		if ( ! isEqual( updatedContent, entityContent ) ) {
-			buildGlobalStylesContentEvents(
-				updatedContent,
-				entityContent,
-				'wpcom_block_editor_global_styles_update'
-			);
-		}
-	}
-
-	// Gutenberg v11.9 has changed the global styles object to this format.
-	// Once this is stable we can remove the old postType format above.
 	if ( kind === 'root' && type === 'globalStyles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 		const entityContent = { settings: editedEntity.settings, styles: editedEntity.styles };
@@ -650,39 +632,24 @@ const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 	const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
 	const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 
-	if ( kind === 'postType' && type === 'wp_global_styles' ) {
-		const entityContent = JSON.parse( savedEntity?.content?.raw );
-		const updatedContent = JSON.parse( editedEntity?.content );
+	// If the item saved is a template part, make note of the area variation.
+	const templatePartArea = type === 'wp_template_part' ? savedEntity?.area : undefined;
+	// If the template parts area variation changed, add the new area classification as well.
+	const newTemplatePartArea =
+		type === 'wp_template_part' && savedEntity?.area !== editedEntity?.area
+			? editedEntity.area
+			: undefined;
 
-		buildGlobalStylesContentEvents(
-			updatedContent,
-			entityContent,
-			'wpcom_block_editor_global_styles_save'
-		);
-	} else {
-		// If the item saved is a template part, make note of the area variation.
-		const templatePartArea = type === 'wp_template_part' ? savedEntity?.area : undefined;
-		// If the template parts area variation changed, add the new area classification as well.
-		const newTemplatePartArea =
-			type === 'wp_template_part' && savedEntity?.area !== editedEntity?.area
-				? editedEntity.area
-				: undefined;
+	tracksRecordEvent( 'wpcom_block_editor_edited_entity_saved', {
+		entity_kind: kind,
+		entity_type: type,
+		entity_id: id,
+		saving_source: findSavingSource(),
+		template_part_area: templatePartArea,
+		new_template_part_area: newTemplatePartArea,
+	} );
 
-		tracksRecordEvent( 'wpcom_block_editor_edited_entity_saved', {
-			entity_kind: kind,
-			entity_type: type,
-			entity_id: id,
-			saving_source: findSavingSource(),
-			template_part_area: templatePartArea,
-			new_template_part_area: newTemplatePartArea,
-		} );
-	}
-
-	// Gutenberg v11.9 has changed the global styles object to this format.
-	// Once this is stable we can remove the old postType format above.
 	if ( kind === 'root' && type === 'globalStyles' ) {
-		const savedEntity = select( 'core' ).getEntityRecord( kind, type, id );
-		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
 		const entityContent = { settings: savedEntity.settings, styles: savedEntity.styles };
 		const updatedContent = { settings: editedEntity.settings, styles: editedEntity.styles };
 

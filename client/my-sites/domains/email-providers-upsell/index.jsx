@@ -1,3 +1,4 @@
+import { TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
@@ -36,6 +37,7 @@ export default function EmailProvidersUpsell( { domain } ) {
 				} ) }
 				selectedDomainName={ domain }
 				skipButtonLabel={ translate( 'Skip' ) }
+				titanProductSlug={ TITAN_MAIL_YEARLY_SLUG }
 			/>
 		</CalypsoShoppingCartProvider>
 	);

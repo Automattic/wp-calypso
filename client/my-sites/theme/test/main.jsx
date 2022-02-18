@@ -7,11 +7,6 @@ import { receiveTheme, themeRequestFailure } from 'calypso/state/themes/actions'
 import ThemeSheetComponent from '../main';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/lib/wp', () => ( {
-	undocumented: () => ( {
-		getProducts: () => {},
-	} ),
-} ) );
 jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 	require( 'calypso/components/empty-component' )
 );

@@ -299,6 +299,16 @@ export const JETPACK_PLAN_UPGRADE_MAP: Record< string, string[] > = {
 	],
 };
 
+// Categories
+export const JETPACK_SECURITY_CATEGORY = 'jetpack_security_category';
+export const JETPACK_PERFORMANCE_CATEGORY = 'jetpack_performance_category';
+export const JETPACK_GROWTH_CATEGORY = 'jetpack_growth_category';
+export const JETPACK_PRODUCT_CATEGORIES = <const>[
+	JETPACK_SECURITY_CATEGORY,
+	JETPACK_PERFORMANCE_CATEGORY,
+	JETPACK_GROWTH_CATEGORY,
+];
+
 // URL
 export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';
 export const JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/search/';

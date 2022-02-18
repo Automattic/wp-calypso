@@ -16,17 +16,6 @@ export function isRequestingList( state ) {
 }
 
 /**
- * Returns true if currently requesting Reader lists, or
- * false otherwise.
- *
- * @param  {object}  state  Global state tree
- * @returns {boolean}        Whether lists are being requested
- */
-export function isRequestingSubscribedLists( state ) {
-	return !! state.reader.lists.isRequestingLists;
-}
-
-/**
  * Returns true if currently creating a Reader list.
  *
  * @param  {object}  state  Global state tree
@@ -117,6 +106,10 @@ export function getListItems( state, listId ) {
 	return state.reader.lists.listItems[ listId ];
 }
 
+/**
+ * @param {import('calypso/state/types').AppState} state
+ * @param {{feedUrl?: string|null, feedId?: string|number|null, listId?: string|number, siteId?: string|number|null, tagId?: string|number|null}} args
+ */
 export function getMatchingItem( state, { feedUrl, feedId, listId, siteId, tagId } ) {
 	// Find associated feed ID if feed URL is provided.
 	if ( feedUrl ) {

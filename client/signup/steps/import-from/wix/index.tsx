@@ -1,23 +1,23 @@
-import { ProgressBar } from '@automattic/components';
-import { Progress, Title, SubTitle, Hooray } from '@automattic/onboarding';
-import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import page from 'page';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { calculateProgress } from 'calypso/my-sites/importer/importing-pane';
-import { startImport, resetImport } from 'calypso/state/imports/actions';
+import { getStepUrl } from 'calypso/signup/utils';
+import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
+import { getError } from 'calypso/state/imports/site-importer/selectors';
+import CompleteScreen from '../components/complete-screen';
+import ErrorMessage from '../components/error-message';
 import GettingStartedVideo from '../components/getting-started-video';
-import { Importer, ImportJob, ImportJobParams } from '../types';
+import ProgressScreen from '../components/progress-screen';
+import { Importer, ImportError, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
-import DoneButton from './done-button';
-
-import './style.scss';
 
 interface Props {
 	job?: ImportJob;
+	error?: ImportError;
 	run: boolean;
 	siteId: number;
 	siteSlug: string;
@@ -28,25 +28,54 @@ interface Props {
 }
 export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wix';
-	const { __ } = useI18n();
-	const { job, run, siteId, siteSlug, fromSite, importSite, startImport, resetImport } = props;
+	const {
+		job,
+		error,
+		run,
+		siteId,
+		siteSlug,
+		fromSite,
+		importSite,
+		startImport,
+		resetImport,
+	} = props;
 
 	/**
 	 ↓ Effects
 	 */
-	useEffect( runImport, [ job ] );
+	useEffect( handleImporterReadiness, [] );
+	useEffect( handleRunFlagChange, [ run ] );
+	useEffect( handleJobStateTransition, [ job ] );
 
 	/**
 	 ↓ Methods
 	 */
-	function runImport() {
-		if ( ! run ) return;
+	function handleImporterReadiness() {
+		if ( ! checkIsImporterReady() ) {
+			redirectToImportCapturePage();
+		}
+	}
 
-		// If there is no existing import job, start a new
+	function handleJobStateTransition() {
+		// If there is no existing import job, create a new job
 		if ( job === undefined ) {
 			startImport( siteId, getImporterTypeForEngine( importer ) );
-		} else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
+		}
+		// If the job is in a ready state, start the import process
+		else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
 			importSite( prepareImportParams() );
+		}
+	}
+
+	function handleRunFlagChange() {
+		if ( ! run ) return;
+
+		switch ( job?.importerState ) {
+			case appStates.IMPORT_SUCCESS:
+			case appStates.EXPIRED:
+				// the run flag means to start a new job,
+				// but previously reset existing finished jobs
+				return resetImport( siteId, job?.importerId );
 		}
 	}
 
@@ -64,19 +93,31 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}
 
-	function checkLoading() {
+	function redirectToImportCapturePage() {
+		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
+	}
+
+	function checkIsImporterReady() {
+		return job || run;
+	}
+
+	function checkProgress() {
 		return (
+			job?.importerState === appStates.IMPORTING ||
 			job?.importerState === appStates.READY_FOR_UPLOAD ||
 			job?.importerState === appStates.UPLOAD_SUCCESS
 		);
 	}
 
-	function checkProgress() {
-		return job && job.importerState === appStates.IMPORTING;
-	}
-
 	function checkIsSuccess() {
 		return job && job.importerState === appStates.IMPORT_SUCCESS;
+	}
+
+	function checkIsFailed() {
+		return (
+			( job && job.importerState === appStates.IMPORT_FAILURE ) ||
+			( error?.error && error?.errorType === 'importError' )
+		);
 	}
 
 	function showVideoComponent() {
@@ -87,48 +128,22 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		<>
 			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
 				{ ( () => {
-					if ( checkLoading() ) {
-						/**
-						 * Loading screen
-						 */
-						return <LoadingEllipsis />;
+					if ( checkIsFailed() ) {
+						return <ErrorMessage siteSlug={ siteSlug } />;
 					} else if ( checkProgress() ) {
-						/**
-						 * Progress screen
-						 */
-						const progress = calculateProgress( job?.progress );
-						return (
-							<Progress>
-								<Title>{ __( 'Importing' ) }...</Title>
-								<ProgressBar
-									color={ 'black' }
-									compact={ true }
-									value={ Number.isNaN( progress ) ? 0 : progress }
-								/>
-								<SubTitle>
-									{ __( "This may take a few minutes. We'll notify you by email when it's done." ) }
-								</SubTitle>
-							</Progress>
-						);
+						return <ProgressScreen job={ job } />;
 					} else if ( checkIsSuccess() ) {
-						/**
-						 * Complete screen
-						 */
 						return (
-							<Hooray>
-								<Title>{ __( 'Hooray!' ) }</Title>
-								<SubTitle>
-									{ __( 'Congratulations. Your content was successfully imported.' ) }
-								</SubTitle>
-								<DoneButton
-									siteId={ siteId }
-									siteSlug={ siteSlug }
-									job={ job as ImportJob }
-									resetImport={ resetImport }
-								/>
-							</Hooray>
+							<CompleteScreen
+								siteId={ siteId }
+								siteSlug={ siteSlug }
+								job={ job as ImportJob }
+								resetImport={ resetImport }
+							/>
 						);
 					}
+
+					return <LoadingEllipsis />;
 				} )() }
 
 				{ showVideoComponent() && <GettingStartedVideo /> }
@@ -137,8 +152,13 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default connect( null, {
-	importSite,
-	startImport,
-	resetImport,
-} )( WixImporter );
+export default connect(
+	( state ) => ( {
+		error: getError( state ),
+	} ),
+	{
+		importSite,
+		startImport,
+		resetImport,
+	}
+)( WixImporter );

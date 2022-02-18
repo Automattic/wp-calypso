@@ -5,7 +5,7 @@ export function getEmptyResponseCart(): ResponseCart {
 		blog_id: '',
 		create_new_blog: false,
 		cart_generated_at_timestamp: 0,
-		cart_key: '',
+		cart_key: 'no-site',
 		products: [],
 		total_tax: '0',
 		total_tax_integer: 0,
@@ -69,6 +69,7 @@ export function getEmptyResponseCartProduct(): ResponseCartProduct {
 		uuid: 'product001',
 		cost: 0,
 		price: 0,
+		item_tax: 0,
 		product_type: 'test',
 		included_domain_purchase_amount: 0,
 	};

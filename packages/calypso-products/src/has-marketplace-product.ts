@@ -1,5 +1,5 @@
 const cleanSlug = ( slug: string ) =>
-	slug.replace( /_/g, '-' ).split( /-(monthly|yearly|2y)/ )[ 0 ];
+	slug && slug.replace( /_/g, '-' ).split( /-(monthly|yearly|2y)/ )[ 0 ];
 
 /**
  * Returns true if a list of products contains a marketplace product with the specified product slug.
@@ -15,5 +15,7 @@ export const hasMarketplaceProduct = (
 	Object.entries( productsList ).some(
 		( [ subscriptionSlug, { product_type } ] ) =>
 			cleanSlug( productSlug ) === cleanSlug( subscriptionSlug ) &&
+			// additional type check needed when called from JS context
+			typeof product_type === 'string' &&
 			product_type.startsWith( 'marketplace' )
 	);

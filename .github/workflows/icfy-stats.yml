@@ -12,7 +12,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: '^16.11.1'
+          node-version: '^16.13.2'
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Fetch git history
@@ -20,13 +20,7 @@ jobs:
       - name: Install dependencies
         env:
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
-        run: yarn install
-      - name: Capture yarn logs
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: yarn-logs
-          path: yarn-error.log
+        run: yarn install --inline-builds
       - name: Build ICFY stats
         env:
           NODE_ENV: production

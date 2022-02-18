@@ -1,4 +1,3 @@
-import { filter, map } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import {
@@ -6,7 +5,6 @@ import {
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
 	READER_RELATED_POSTS_RECEIVE,
-	READER_SITE_UPDATE,
 } from 'calypso/state/reader/action-types';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from './utils';
@@ -48,13 +46,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
 					payload: { siteId, postId, scope },
 				} );
-				const sites = filter( map( response && response.posts, 'meta.data.site' ), Boolean );
-				if ( sites && sites.length !== 0 ) {
-					dispatch( {
-						type: READER_SITE_UPDATE,
-						payload: sites,
-					} );
-				}
+
 				// collect posts and dispatch
 				dispatch( receivePosts( response && response.posts ) ).then( () => {
 					dispatch( {

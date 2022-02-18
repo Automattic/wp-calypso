@@ -1,6 +1,6 @@
 import { useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import PlaceholderImage from 'calypso/assets/images/marketplace/plugins-revamp.png';
+import PlaceholderImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import Button from 'calypso/components/forms/form-button';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';

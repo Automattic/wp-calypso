@@ -29,6 +29,7 @@ export function generateSteps( {
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
+	setStoreFeatures = noop,
 	setIntentOnSite = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
@@ -37,6 +38,9 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
+	isNewOrExistingSiteFulfilled = noop,
+	setDesignIfNewSite = noop,
+	excludeStepIfEmailVerified = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -83,7 +87,9 @@ export function generateSteps( {
 			providesDependencies: [ 'themeSlugWithRepo', 'useThemeHeadstart' ],
 			apiRequestFunction: setThemeOnSite,
 			props: {
-				headerText: i18n.translate( 'Choose a theme for your new site.' ),
+				get headerText() {
+					return i18n.translate( 'Choose a theme for your new site.' );
+				},
 			},
 		},
 
@@ -98,8 +104,12 @@ export function generateSteps( {
 				showExampleSuggestions: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
-				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
-				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
+				get headerText() {
+					return i18n.translate( 'Getting ready to launch, pick a domain' );
+				},
+				get subHeaderText() {
+					return i18n.translate( 'Select a domain name for your website' );
+				},
 			},
 			dependencies: [ 'siteSlug' ],
 		},
@@ -115,21 +125,6 @@ export function generateSteps( {
 			stepName: 'site',
 			apiRequestFunction: createSite,
 			providesDependencies: [ 'siteSlug' ],
-		},
-
-		'rebrand-cities-welcome': {
-			stepName: 'rebrand-cities-welcome',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-			props: {
-				isDomainOnly: false,
-			},
-			delayApiRequestUntilComplete: true,
-		},
-
-		about: {
-			stepName: 'about',
-			providesDependencies: [ 'designType', 'themeSlugWithRepo', 'siteTitle', 'surveyQuestion' ],
 		},
 
 		user: {
@@ -185,6 +180,21 @@ export function generateSteps( {
 			providesDependencies: [ 'siteTitle', 'tagline' ],
 			apiRequestFunction: setOptionsOnSite,
 			delayApiRequestUntilComplete: true,
+		},
+
+		'store-options': {
+			stepName: 'store-options',
+			dependencies: [ 'siteSlug', 'siteTitle', 'tagline' ],
+			providesDependencies: [ 'siteTitle', 'tagline' ],
+			apiRequestFunction: setOptionsOnSite,
+		},
+
+		'store-features': {
+			stepName: 'store-features',
+			dependencies: [ 'siteSlug' ],
+			apiRequestFunction: setStoreFeatures,
+			providesDependencies: [ 'isFSEActive', 'storeType' ],
+			optionalDependencies: [ 'isFSEActive', 'storeType' ],
 		},
 
 		'starting-point': {
@@ -286,8 +296,12 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 			props: {
-				headerText: i18n.translate( 'Getting ready to launch your website' ),
-				subHeaderText: i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." ),
+				get headerText() {
+					return i18n.translate( 'Getting ready to launch your website' );
+				},
+				get subHeaderText() {
+					return i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." );
+				},
 				isLaunchPage: true,
 			},
 		},
@@ -371,17 +385,6 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
-		'jetpack-user': {
-			stepName: 'jetpack-user',
-			apiRequestFunction: createAccount,
-			providesToken: true,
-			props: {
-				headerText: i18n.translate( 'Create an account for Jetpack' ),
-				subHeaderText: i18n.translate( "You're moments away from connecting Jetpack." ),
-			},
-			providesDependencies: [ 'bearer_token', 'username' ],
-		},
-
 		'oauth2-user': {
 			stepName: 'oauth2-user',
 			apiRequestFunction: createAccount,
@@ -421,27 +424,17 @@ export function generateSteps( {
 			},
 		},
 
-		displayname: {
-			stepName: 'displayname',
-			apiRequestFunction: createAccount,
-			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username' ],
-			props: {
-				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
-				displayNameInput: true,
-				displayUsernameInput: false,
-			},
-		},
-
 		// Currently, these two steps explicitly submit other steps to skip them, and
 		// should not be used outside of the `domain-first` flow.
 		'site-or-domain': {
 			stepName: 'site-or-domain',
 			props: {
-				headerText: i18n.translate( 'Choose how you want to use your domain.' ),
-				subHeaderText: i18n.translate(
-					"Don't worry you can easily add a site later if you're not ready."
-				),
+				get headerText() {
+					return i18n.translate( 'Choose how to use your domain' );
+				},
+				get subHeaderText() {
+					return i18n.translate( 'Don’t worry, you can easily add a site later' );
+				},
 			},
 			providesDependencies: [
 				'designType',
@@ -456,7 +449,9 @@ export function generateSteps( {
 			stepName: 'site-picker',
 			apiRequestFunction: createSiteOrDomain,
 			props: {
-				headerText: i18n.translate( 'Choose your site?' ),
+				get headerText() {
+					return i18n.translate( 'Choose your site' );
+				},
 			},
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeSlugWithRepo' ],
 			dependencies: [ 'cartItem', 'designType', 'domainItem', 'siteUrl', 'themeSlugWithRepo' ],
@@ -546,13 +541,6 @@ export function generateSteps( {
 			providesDependencies: [],
 		},
 
-		/* Improved Onboarding */
-		'site-type': {
-			stepName: 'site-type',
-			providesDependencies: [ 'siteType', 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTypeFulfilled,
-		},
-
 		'site-type-with-theme': {
 			stepName: 'site-type',
 			providesDependencies: [ 'siteType' ],
@@ -572,69 +560,6 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
-		'site-title-without-domains': {
-			stepName: 'site-title-without-domains',
-			apiRequestFunction: createSiteWithCart,
-			delayApiRequestUntilComplete: true,
-			dependencies: [ 'themeSlugWithRepo' ],
-			providesDependencies: [ 'siteTitle', 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'site-style': {
-			stepName: 'site-style',
-			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
-		},
-
-		// Steps with preview
-		// These can be removed once we make the preview the default
-		'site-topic-with-preview': {
-			stepName: 'site-topic-with-preview',
-			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'site-style-with-preview': {
-			stepName: 'site-style-with-preview',
-			providesDependencies: [ 'siteStyle', 'themeSlugWithRepo' ],
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
-		'domains-with-preview': {
-			stepName: 'domains-with-preview',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
-			props: {
-				showSiteMockups: true,
-				isDomainOnly: false,
-			},
-			dependencies: [ 'themeSlugWithRepo' ],
-			delayApiRequestUntilComplete: true,
-		},
-
-		'site-title-with-preview': {
-			stepName: 'site-title-with-preview',
-			providesDependencies: [ 'siteTitle' ],
-			props: {
-				showSiteMockups: true,
-			},
-		},
-
 		launch: {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
@@ -642,13 +567,6 @@ export function generateSteps( {
 			props: {
 				nonInteractive: true,
 			},
-		},
-
-		passwordless: {
-			stepName: 'passwordless',
-			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'email', 'username' ],
-			unstorableDependencies: [ 'bearer_token' ],
 		},
 
 		'p2-details': {
@@ -663,6 +581,11 @@ export function generateSteps( {
 
 		'p2-get-started': {
 			stepName: 'p2-get-started',
+		},
+
+		'p2-confirm-email': {
+			stepName: 'p2-confirm-email',
+			fulfilledStepCallback: excludeStepIfEmailVerified,
 		},
 
 		'plans-personal-monthly': {
@@ -723,38 +646,62 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
+			providesDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
+			optionalDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
 			},
 		},
+
+		'new-or-existing-site': {
+			stepName: 'new-or-existing-site',
+			fulfilledStepCallback: isNewOrExistingSiteFulfilled,
+			providesDependencies: [ 'newOrExistingSiteChoice' ],
+		},
+
+		'difm-site-picker': {
+			stepName: 'difm-site-picker',
+			props: {
+				headerText: i18n.translate( 'Choose your site?' ),
+			},
+			providesDependencies: [ 'siteId', 'siteSlug' ],
+			optionalDependencies: [ 'siteId', 'siteSlug' ],
+			fulfilledStepCallback: isNewOrExistingSiteFulfilled,
+		},
+
 		'difm-design-setup-site': {
 			stepName: 'difm-design-setup-site',
-			apiRequestFunction: setDesignOnSite,
+			apiRequestFunction: setDesignIfNewSite,
 			delayApiRequestUntilComplete: true,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'selectedDesign' ],
+			dependencies: [ 'siteSlug', 'newOrExistingSiteChoice' ],
+			providesDependencies: [
+				'isFSEActive',
+				'selectedDesign',
+				'selectedSiteCategory',
+				'isLetUsChooseSelected',
+			],
+			optionalDependencies: [ 'isFSEActive', 'selectedDesign', 'isLetUsChooseSelected' ],
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
 				showDesignPickerCategoriesAllFilter: false,
+				showLetUsChoose: true,
+				hideFullScreenPreview: true,
+				hideDesignTitle: true,
 			},
-		},
-		'difm-design': {
-			// TODO: Temporary step to be deleted
-			stepName: 'difm-design',
-			providesDependencies: [ 'selectedDIFMDesign', 'selectedVertical' ],
 		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
-			dependencies: [ 'siteSlug', 'selectedDesign' ],
+			dependencies: [ 'siteSlug', 'selectedDesign', 'newOrExistingSiteChoice' ],
 			providesDependencies: [ 'cartItem', 'typeformResponseId' ],
 			apiRequestFunction: addPlanToCart,
+			delayApiRequestUntilComplete: true,
+		},
+		courses: {
+			stepName: 'courses',
 		},
 
 		// ↓ importer steps
@@ -771,20 +718,24 @@ export function generateSteps( {
 			stepName: 'importing',
 		},
 
-		// Woocommerce Install steps
+		// Woocommerce Install steps.
+		'store-address': {
+			stepName: 'store-address',
+			dependencies: [ 'siteSlug', 'back_to' ],
+			optionalDependencies: [ 'back_to' ],
+		},
+		'business-info': {
+			stepName: 'business-info',
+			dependencies: [ 'siteSlug' ],
+		},
 		confirm: {
 			stepName: 'confirm',
-			props: {
-				headerTitle: i18n.translate( 'One final step' ),
-				headerDescription: i18n.translate(
-					'We’ve highlighted a few important details you should review before we create your store. '
-				),
-			},
-			dependencies: [ 'site' ],
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'siteConfirmed' ],
 		},
 		transfer: {
 			stepName: 'transfer',
-			dependencies: [ 'site' ],
+			dependencies: [ 'siteSlug', 'siteConfirmed' ],
 		},
 	};
 }

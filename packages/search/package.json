@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/search",
 	"version": "1.0.0",
-	"description": "Automattic Search",
+	"description": "Automattic Search.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -20,9 +20,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"files": [
 		"dist",
 		"src"
@@ -30,10 +28,10 @@
 	"types": "dist/types",
 	"dependencies": {
 		"@automattic/typography": "workspace:^",
-		"@babel/runtime": "^7.16.5",
+		"@babel/runtime": "^7.16.7",
 		"@wordpress/base-styles": "^4.0.4",
-		"@wordpress/components": "^19.1.5",
-		"@wordpress/compose": "^5.0.6",
+		"@wordpress/components": "^19.2.0",
+		"@wordpress/compose": "^5.0.7",
 		"@wordpress/icons": "^6.1.1",
 		"@wordpress/react-i18n": "^3.0.4",
 		"classnames": "^2.3.1",
@@ -49,17 +47,17 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/react": "^6.4.9",
-		"@testing-library/dom": "^8.11.1",
+		"@storybook/react": "^6.4.18",
+		"@testing-library/dom": "^8.11.3",
 		"@testing-library/react": "^12.1.2",
 		"@testing-library/user-event": "^13.5.0",
-		"@wordpress/data": "^6.1.4",
+		"@wordpress/data": "^6.1.5",
 		"@wordpress/is-shallow-equal": "^4.2.1",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"reakit-utils": "^0.15.1",
-		"typescript": "^4.5.4",
-		"webpack": "^5.65.0"
+		"typescript": "^4.5.5",
+		"webpack": "^5.68.0"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

@@ -38,3 +38,4 @@ packages/calypso-color-schemes/js
 /client/server/devdocs/proptypes-index.json
 /client/server/bundler/assets.json
 /cached-requests.json
+/yarn-json-output.json

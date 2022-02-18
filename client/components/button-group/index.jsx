@@ -3,7 +3,7 @@ import { memo } from 'react';
 
 import './style.scss';
 
-const ButtonGroup = ( { busy, children, className, primary } ) => {
+const ButtonGroup = ( { busy = false, children, className = '', primary = false } ) => {
 	const buttonGroupClasses = classNames( 'button-group', className, {
 		'is-busy': busy,
 		'is-primary': primary,

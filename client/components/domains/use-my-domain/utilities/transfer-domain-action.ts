@@ -1,6 +1,4 @@
 import page from 'page';
-import { DefaultRootState } from 'react-redux';
-import { Dispatch } from 'redux';
 import {
 	transferDomainError,
 	useMyDomainInputMode as inputMode,
@@ -9,22 +7,19 @@ import {
 	AuthCodeValidationError,
 	AuthCodeValidationHandler,
 } from 'calypso/components/domains/connect-domain-step/types';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { domainTransfer, updatePrivacyForDomain } from 'calypso/lib/cart-values/cart-items';
 import { startInboundTransfer } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 
 const noop = () => null;
 export const transferDomainAction: AuthCodeValidationHandler = (
 	{ selectedSite, verificationData, domain, ...props },
 	onDone = noop
-) => async ( _: Dispatch< never >, getState: () => DefaultRootState ) => {
+) => async () => {
 	const mode = ( props as Record< string, string > ).initialMode;
-	const productsList = getProductsList( getState() );
 	const transferrableStatuses = [
 		domainAvailability.TRANSFERRABLE,
 		domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE,
@@ -73,8 +68,8 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 			}
 
 			await cartManagerClient
-				.forCartKey( selectedSite.ID.toString() )
-				.actions.addProductsToCart( [ fillInSingleCartItemAttributes( transfer, productsList ) ] );
+				.forCartKey( selectedSite.ID )
+				.actions.addProductsToCart( [ transfer ] );
 			return page( '/checkout/' + selectedSite.slug );
 		};
 
@@ -87,7 +82,7 @@ export const transferDomainAction: AuthCodeValidationHandler = (
 			}
 		};
 
-		if ( inputMode.transferDomain === mode ) {
+		if ( inputMode.startPendingTransfer === mode ) {
 			await startInboundTransferAndReload();
 		} else {
 			await addTransferToCartAndCheckout();

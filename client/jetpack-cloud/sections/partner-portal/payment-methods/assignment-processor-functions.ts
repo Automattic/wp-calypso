@@ -13,12 +13,21 @@ interface Props {
 	translate: ReturnType< typeof useTranslate >;
 	stripe: Stripe | null;
 	stripeConfiguration: StripeConfiguration | null;
+	setupIntentId: string | undefined;
 	element: StripeCardNumberElement | undefined;
 	dispatch: CalypsoDispatch;
 }
 
 export async function assignNewCardProcessor(
-	{ useAsPrimaryPaymentMethod, translate, stripe, stripeConfiguration, dispatch, element }: Props,
+	{
+		useAsPrimaryPaymentMethod,
+		translate,
+		stripe,
+		stripeConfiguration,
+		setupIntentId,
+		dispatch,
+		element,
+	}: Props,
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
 	dispatch( recordFormSubmitEvent() );
@@ -27,7 +36,7 @@ export async function assignNewCardProcessor(
 		if ( ! isNewCardDataValid( submitData ) ) {
 			throw new Error( 'Credit Card data is missing your full name.' );
 		}
-		if ( ! stripe || ! stripeConfiguration ) {
+		if ( ! stripe || ! stripeConfiguration || ! setupIntentId ) {
 			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
 		}
 		if ( ! element ) {
@@ -43,7 +52,7 @@ export async function assignNewCardProcessor(
 			formFieldValues,
 			stripe,
 			element,
-			stripeConfiguration
+			setupIntentId
 		);
 		const token = tokenResponse.payment_method;
 
@@ -71,12 +80,12 @@ async function createStripeSetupIntentAsync(
 	},
 	stripe: Stripe,
 	element: StripeCardNumberElement,
-	stripeConfiguration: StripeConfiguration
+	setupIntentId: string
 ): Promise< StripeSetupIntent > {
 	const paymentDetailsForStripe = {
 		name,
 	};
-	return createStripeSetupIntent( stripe, element, stripeConfiguration, paymentDetailsForStripe );
+	return createStripeSetupIntent( stripe, element, setupIntentId, paymentDetailsForStripe );
 }
 
 function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {

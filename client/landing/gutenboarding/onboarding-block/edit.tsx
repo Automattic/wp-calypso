@@ -1,11 +1,10 @@
 import { useSelect, useDispatch } from '@wordpress/data';
+import classnames from 'classnames';
 import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 import { isE2ETest } from 'calypso/lib/e2e';
-import useFseBetaOptInStep from '../hooks/use-fse-beta-opt-in-step';
 import { usePrevious } from '../hooks/use-previous';
 import {
-	GutenLocationStateType,
 	Step,
 	StepType,
 	useIsAnchorFm,
@@ -24,7 +23,6 @@ import CreateSiteError from './create-site-error';
 import Designs from './designs';
 import Domains from './domains';
 import Features from './features';
-import FseBetaOptIn from './fse-beta-opt-in';
 import Language from './language';
 import Plans from './plans';
 import StylePreview from './style-preview';
@@ -34,13 +32,14 @@ import type { BlockEditProps } from '@wordpress/blocks';
 import './colors.scss';
 import './style.scss';
 
+const WIDE_LAYOUT_STEPS: StepType[] = [ Step.DesignSelection ];
+
 const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
 	const {
 		hasSiteTitle,
 		hasSelectedDesign,
 		hasSelectedDesignWithoutFonts,
 		isRedirecting,
-		isEnrollingInFse,
 	} = useSelect(
 		( select ) => {
 			const onboardSelect = select( STORE_KEY );
@@ -50,7 +49,6 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				hasSelectedDesign: onboardSelect.hasSelectedDesign(),
 				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
 				isRedirecting: onboardSelect.getIsRedirecting(),
-				isEnrollingInFse: onboardSelect.isEnrollingInFseBeta(),
 			};
 		},
 		[ STORE_KEY ]
@@ -74,7 +72,9 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const currentStep = useCurrentStep();
 	const previousStep = usePrevious( currentStep );
 
-	const { state: locationState = {} } = useLocation< GutenLocationStateType >();
+	const locationResult = useLocation();
+	const locationState =
+		'state' in locationResult ? ( locationResult.state as Record< string, string > ) : undefined;
 
 	React.useLayoutEffect( () => {
 		// Runs some navigation related side-effects when the step changes
@@ -97,7 +97,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		( path: StepType ) => {
 			return {
 				pathname: makePath( path ),
-				state: locationState,
+				state: locationState ?? {},
 			};
 		},
 		[ makePath, locationState ]
@@ -112,8 +112,8 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	}, [ hasSelectedDesign ] );
 
 	const shouldSkipStyleStep = React.useCallback( (): boolean => {
-		return hasSelectedDesignWithoutFonts || isEnrollingInFse;
-	}, [ hasSelectedDesignWithoutFonts, isEnrollingInFse ] );
+		return hasSelectedDesignWithoutFonts;
+	}, [ hasSelectedDesignWithoutFonts ] );
 
 	const canUseFeatureStep = React.useCallback( (): boolean => {
 		return hasSelectedDesign;
@@ -126,8 +126,6 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const canUseCreateSiteStep = React.useCallback( (): boolean => {
 		return isCreatingSite || isRedirecting;
 	}, [ isCreatingSite, isRedirecting ] );
-
-	const canUseFseBetaOptInStep = useFseBetaOptInStep();
 
 	const getLatestStepPath = () => {
 		if ( hasSelectedDesign && ! isAnchorFmSignup ) {
@@ -194,10 +192,6 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	);
 
 	function initialStep() {
-		// In the FSE Beta flow, the opt-in screen becomes the first step.
-		if ( canUseFseBetaOptInStep ) {
-			return <Redirect to={ Step.FseBetaOptIn } />;
-		}
 		if ( isAnchorFmPodcastIdError ) {
 			return <AnchorError />;
 		}
@@ -205,7 +199,11 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	}
 
 	return (
-		<div className="onboarding-block">
+		<div
+			className={ classnames( 'onboarding-block', {
+				'onboarding-block--is-wide': WIDE_LAYOUT_STEPS.includes( step ),
+			} ) }
+		>
 			{ isCreatingSite && (
 				<Redirect
 					push={ shouldTriggerCreate ? undefined : true }
@@ -216,16 +214,6 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				<Route exact path={ makePath( Step.IntentGathering ) }>
 					{ initialStep() }
 				</Route>
-
-				<Route path={ makePath( Step.FseBetaOptIn ) }>
-					<FseBetaOptIn />
-				</Route>
-
-				{ canUseFseBetaOptInStep && (
-					<Route path={ makePath( Step.FseBetaIntentGathering ) }>
-						<AcquireIntent />
-					</Route>
-				) }
 
 				<Route path={ makePath( Step.DesignSelection ) }>
 					<Designs />

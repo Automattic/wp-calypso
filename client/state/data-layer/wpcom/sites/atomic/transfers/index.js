@@ -1,11 +1,12 @@
-import { translate } from 'i18n-calypso';
 import { ATOMIC_TRANSFER_INITIATE_TRANSFER } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
+import {
+	setLatestAtomicTransfer,
+	setLatestAtomicTransferError,
+} from 'calypso/state/atomic/transfers/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'calypso/state/notices/actions';
 
 const initiateAtomicTransfer = ( action ) =>
 	http(
@@ -24,10 +25,11 @@ const initiateAtomicTransfer = ( action ) =>
 		action
 	);
 
-const receiveResponse = () => [
+const receiveResponse = ( action, transfer ) => [
 	recordTracksEvent( 'calypso_atomic_transfer_inititate_success', {
 		context: 'atomic_transfer',
 	} ),
+	setLatestAtomicTransfer( action.siteId, transfer ),
 ];
 
 const receiveError = ( action, error ) => [
@@ -35,10 +37,7 @@ const receiveError = ( action, error ) => [
 		context: 'atomic_transfer',
 		error: error.error,
 	} ),
-	errorNotice(
-		translate( "Sorry, we've hit a snag. Please contact support so we can help you out." )
-	),
-	setLatestAtomicTransfer( action.siteId, error ),
+	setLatestAtomicTransferError( action.siteId, error ),
 ];
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfers', {

@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import siteOptionsImage from 'calypso/assets/images/onboarding/site-options.svg';
+import storeImageUrl from 'calypso/assets/images/onboarding/store-onboarding.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -20,9 +21,31 @@ interface Props {
 export default function SiteOptionsStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const headerText = translate( "First, let's give your blog a name" );
 	const { stepName, signupDependencies, goToNextStep } = props;
 	const { siteTitle, tagline } = signupDependencies;
+
+	const getStepText = ( stepName: string ) => {
+		switch ( stepName ) {
+			case 'store-options':
+				return {
+					headerText: translate( "First, let's give your store a name" ),
+					headerImage: storeImageUrl,
+					siteTitleLabel: translate( 'Store name' ),
+					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
+				};
+
+			// Regular blog
+			default:
+				return {
+					headerText: translate( "First, let's give your blog a name" ),
+					headerImage: siteOptionsImage,
+					siteTitleLabel: translate( 'Blog name' ),
+					taglineExplanation: translate( 'In a few words, explain what your blog is about.' ),
+				};
+		}
+	};
+
+	const { headerText, headerImage, siteTitleLabel, taglineExplanation } = getStepText( stepName );
 
 	const submitSiteOptions = ( { siteTitle, tagline }: SiteOptionsFormValues ) => {
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
@@ -44,11 +67,13 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 			fallbackHeaderText={ headerText }
 			subHeaderText={ '' }
 			fallbackSubHeaderText={ '' }
-			headerImageUrl={ siteOptionsImage }
+			headerImageUrl={ headerImage }
 			stepContent={
 				<SiteOptions
 					defaultSiteTitle={ siteTitle }
 					defaultTagline={ tagline }
+					siteTitleLabel={ siteTitleLabel }
+					taglineExplanation={ taglineExplanation }
 					onSubmit={ submitSiteOptions }
 				/>
 			}

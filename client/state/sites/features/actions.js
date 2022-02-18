@@ -5,24 +5,10 @@ import {
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
 	SITE_FEATURES_FETCH_FAILED,
-	SITE_FEATURES_REMOVE,
 } from 'calypso/state/action-types';
 import { createSiteFeaturesObject } from './assembler';
 
 const debug = debugFactory( 'calypso:site-features:actions' );
-
-/**
- * Returns an action object to be used in signalling that features for the given site have been cleared.
- *
- * @param {number} siteId identifier of the site
- * @returns {object} the corresponding action object
- */
-export function clearSiteFeatures( siteId ) {
-	return {
-		type: SITE_FEATURES_REMOVE,
-		siteId,
-	};
-}
 
 /**
  * Fetches features for the given site.
@@ -73,18 +59,5 @@ export function fetchSiteFeaturesCompleted( siteId, features ) {
 		type: SITE_FEATURES_FETCH_COMPLETED,
 		siteId,
 		features: createSiteFeaturesObject( features ),
-	};
-}
-
-/**
- * Clears features and fetches them for the given site.
- *
- * @param {number} siteId identifier of the site
- * @returns {Function} the corresponding action thunk
- */
-export function refreshSiteFeatures( siteId ) {
-	return ( dispatch ) => {
-		dispatch( clearSiteFeatures( siteId ) );
-		dispatch( fetchSiteFeatures( siteId ) );
 	};
 }

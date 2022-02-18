@@ -212,6 +212,79 @@ describe( 'metadata:', () => {
 				equal( formatNumber( '60465599', countries.US ), '(604) 655-99' );
 				equal( formatNumber( '604655999', countries.US ), '(604) 655-999' );
 				equal( formatNumber( '6046559999', countries.US ), '(604) 655-9999' );
+
+				equal( formatNumber( '5', countries.FR ), '5' );
+				equal( formatNumber( '54', countries.FR ), '54' );
+				equal( formatNumber( '543', countries.FR ), '05 43' );
+				equal( formatNumber( '5432', countries.FR ), '05 43 2' );
+				equal( formatNumber( '54321', countries.FR ), '05 43 21' );
+				equal( formatNumber( '543212', countries.FR ), '05 43 21 2' );
+				equal( formatNumber( '5432123', countries.FR ), '05 43 21 23' );
+				equal( formatNumber( '54321234', countries.FR ), '05 43 21 23 4' );
+				equal( formatNumber( '543212345', countries.FR ), '05 43 21 23 45' );
+
+				equal( formatNumber( '2', countries.MX ), '2' );
+				equal( formatNumber( '24', countries.MX ), '24' );
+				equal( formatNumber( '243', countries.MX ), '01243' );
+				equal( formatNumber( '2432', countries.MX ), '01243 2' );
+				equal( formatNumber( '24321', countries.MX ), '01243 21' );
+				equal( formatNumber( '243212', countries.MX ), '01243 212' );
+				equal( formatNumber( '2432123', countries.MX ), '01243 212 3' );
+				equal( formatNumber( '24321234', countries.MX ), '01243 212 34' );
+				equal( formatNumber( '243212345', countries.MX ), '01243 212 345' );
+				equal( formatNumber( '2432123456', countries.MX ), '01243 212 3456' );
+			} );
+
+			test( 'should format as you type with the formatting included in the input', () => {
+				equal( formatNumber( '6', countries.US ), '6' );
+				equal( formatNumber( '60', countries.US ), '60' );
+				equal( formatNumber( '604', countries.US ), '604' );
+				equal( formatNumber( '604-6', countries.US ), '604-6' );
+				equal( formatNumber( '604-65', countries.US ), '604-65' );
+				equal( formatNumber( '604-655', countries.US ), '604-655' );
+				equal( formatNumber( '604-6559', countries.US ), '604-6559' );
+				equal( formatNumber( '604-65599', countries.US ), '(604) 655-99' );
+				equal( formatNumber( '604-655-999', countries.US ), '(604) 655-999' );
+				equal( formatNumber( '604-655-9999', countries.US ), '(604) 655-9999' );
+
+				equal( formatNumber( '5', countries.FR ), '5' );
+				equal( formatNumber( '54', countries.FR ), '54' );
+				equal( formatNumber( '543', countries.FR ), '05 43' );
+				equal( formatNumber( '05 432', countries.FR ), '05 43 2' );
+				equal( formatNumber( '05 43 21', countries.FR ), '05 43 21' );
+				equal( formatNumber( '05 43 212', countries.FR ), '05 43 21 2' );
+				equal( formatNumber( '05 43 21 23', countries.FR ), '05 43 21 23' );
+				equal( formatNumber( '05 43 21 234', countries.FR ), '05 43 21 23 4' );
+				equal( formatNumber( '05 43 21 23 45', countries.FR ), '05 43 21 23 45' );
+
+				equal( formatNumber( '2', countries.MX ), '2' );
+				equal( formatNumber( '24', countries.MX ), '24' );
+				equal( formatNumber( '01243', countries.MX ), '01243' );
+				equal( formatNumber( '012432', countries.MX ), '01243 2' );
+				equal( formatNumber( '01243 21', countries.MX ), '01243 21' );
+				equal( formatNumber( '01243 212', countries.MX ), '01243 212' );
+				equal( formatNumber( '01243 2123', countries.MX ), '01243 212 3' );
+				equal( formatNumber( '01243 212 34', countries.MX ), '01243 212 34' );
+				equal( formatNumber( '01243 212 345', countries.MX ), '01243 212 345' );
+				equal( formatNumber( '01243 212 3456', countries.MX ), '01243 212 3456' );
+
+				equal( formatNumber( '2', countries.HU ), '2' );
+				equal( formatNumber( '24', countries.HU ), '24' );
+				equal( formatNumber( '06243', countries.HU ), '0624 3' );
+				equal( formatNumber( '0624 32', countries.HU ), '0624 32' );
+				equal( formatNumber( '0624 321', countries.HU ), '0624 321' );
+				equal( formatNumber( '0624 3212', countries.HU ), '0624 321 2' );
+				equal( formatNumber( '0624 321 23', countries.HU ), '0624 321 23' );
+				equal( formatNumber( '0624 321 234', countries.HU ), '0624 321 234' );
+				equal( formatNumber( '0624 321 2345', countries.HU ), '0624 321 2345' );
+
+				equal( formatNumber( '2', countries.RU ), '2' );
+				equal( formatNumber( '24', countries.RU ), '24' );
+				equal( formatNumber( '8243', countries.RU ), '8243' );
+				equal( formatNumber( '82432', countries.RU ), '8243-2' );
+				equal( formatNumber( '8243-21', countries.RU ), '8243-21' );
+				equal( formatNumber( '8243-212', countries.RU ), '8243-21-2' );
+				equal( formatNumber( '8243-21-23', countries.RU ), '8243-21-23' );
 			} );
 
 			test( 'should not add a prefix when the country does not have national prefix', () => {

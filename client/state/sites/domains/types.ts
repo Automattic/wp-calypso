@@ -3,13 +3,14 @@ export interface SiteDomain {
 	autoRenewing?: boolean;
 	blogId?: number;
 	canSetAsPrimary?: boolean;
+	currentUserCanAddEmail?: boolean;
 	currentUserCanManage?: boolean;
 	domain: string;
 	expired?: boolean;
 	expiry?: string | null;
 	expirySoon?: boolean;
-	googleAppsSubscription?: unknown;
-	titanMailSubscription?: unknown;
+	googleAppsSubscription?: { status?: string };
+	titanMailSubscription?: { status?: string; appsUrl?: string };
 	hasRegistration?: boolean;
 	hasWpcomNameservers?: boolean;
 	hasZone?: boolean;

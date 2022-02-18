@@ -2,15 +2,18 @@
 @import '@wordpress/base-styles/mixins';
 
 .accordion {
-	.foldable-card {
+	.is-placeholder {
+		@include placeholder();
+	}
+	.card.foldable-card {
 		margin: 0;
 		&.is-expanded {
 			margin: 0;
 			.foldable-card__content {
 				border-top: none;
-				padding: 0 24px 16px 16px;
+				padding: 0 16px 16px;
 				@include break-small {
-					padding: 0 30px 24px 24px;
+					padding: 0 24px 24px;
 				}
 			}
 			.foldable-card__header {
@@ -20,13 +23,13 @@
 				}
 			}
 		}
-		&__header {
-			padding: 16px 24px 16px 16px;
+		.foldable-card__header {
+			padding: 16px;
 			@include break-small {
-				padding: 24px 30px 24px 24px;
+				padding: 24px;
 			}
 		}
-		&__expand {
+		.foldable__expand {
 			width: 56px;
 			@include break-small {
 				width: 74px;
@@ -35,8 +38,13 @@
 				fill: var( --color-neutral-80 );
 			}
 		}
-		&__secondary {
+		.foldable__secondary {
 			display: none;
+		}
+		.foldable-card__action {
+			@include break-small {
+				right: 4px;
+			}
 		}
 	}
 	&__title {

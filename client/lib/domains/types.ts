@@ -8,11 +8,12 @@ export type CannotAddEmailReason = {
 export type DomainType = keyof typeof domainType;
 
 interface EmailSubscription {
+	hasExpectedDnsRecords?: boolean | null;
 	ownedByUserId?: number;
 	status: string;
 }
 
-type EmailCost = {
+export type EmailCost = {
 	amount: number;
 	currency: string;
 	text: string;
@@ -22,7 +23,6 @@ export type GDPRConsentStatus = keyof typeof gdprConsentStatus | null;
 
 export type GoogleEmailSubscription = EmailSubscription & {
 	pendingTosAcceptance?: boolean;
-	pendingUsers?: Array< string >;
 	productSlug?: string;
 	subscribedDate?: string;
 	subscriptionId?: string;
@@ -35,6 +35,7 @@ export type TitanEmailSubscription = EmailSubscription & {
 	maximumMailboxCount?: number;
 	numberOfMailboxes?: number;
 	orderId?: number;
+	productSlug?: string;
 	purchaseCostPerMailbox?: EmailCost | null;
 	renewalCostPerMailbox?: EmailCost | null;
 	subscriptionId?: number | null;
@@ -68,11 +69,13 @@ export type ResponseDomain = {
 	expirySoon: boolean;
 	gdprConsentStatus: GDPRConsentStatus;
 	googleAppsSubscription: GoogleEmailSubscription | null;
+	hasEmailForwardsDnsRecords?: boolean | null;
 	hasRegistration: boolean;
 	hasWpcomNameservers: boolean;
 	hasZone: boolean;
 	isAutoRenewing: boolean;
 	isEligibleForInboundTransfer: boolean;
+	isIcannVerificationSuspended: boolean;
 	isLocked: boolean;
 	isPendingIcannVerification: boolean;
 	isPendingRenewal: boolean;
@@ -100,9 +103,10 @@ export type ResponseDomain = {
 	registrar: string;
 	registrationDate: string;
 	renewableUntil: string;
+	registryExpiryDate: string;
 	sslStatus: string | null;
+	subdomainPart?: string;
 	subscriptionId: string | null;
-	subdomainPart: string;
 	supportsDomainConnect: boolean;
 	supportsGdprConsentManagement: boolean;
 	supportsTransferApproval: boolean;
@@ -115,4 +119,28 @@ export type ResponseDomain = {
 	transferStatus: TransferStatus;
 	type: DomainType;
 	whoisUpdateUnmodifiableFields?: Array< string >;
+};
+
+export type DnsRecordType = 'MX' | 'A' | 'SRV' | 'TXT' | 'AAAA' | 'CNAME' | 'NS';
+
+export type DnsRecord = {
+	domain: string;
+	id: string;
+	name: string;
+	protected_field: boolean;
+	type: DnsRecordType;
+	target?: string;
+	data?: string;
+	weight?: number;
+	port?: number;
+	aux?: number;
+	service?: string;
+	protocol?: string;
+};
+
+export type DnsRequest = {
+	hasLoadedFromServer: boolean;
+	isFetching: boolean;
+	isSubmittingForm: boolean;
+	records: Array< DnsRecord >;
 };

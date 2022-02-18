@@ -10,9 +10,9 @@ import {
 	legacyRedirects,
 	manageConnection,
 	redirectIfCantDeleteSite,
+	redirectToGeneral,
 	redirectToTraffic,
 	startOver,
-	themeSetup,
 } from 'calypso/my-sites/site-settings/controller';
 import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
 
@@ -87,15 +87,6 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page(
-		'/settings/theme-setup/:site_id',
-		siteSelection,
-		navigation,
-		setScroll,
-		themeSetup,
-		makeLayout,
-		clientRender
-	);
 
 	page(
 		'/settings/manage-connection/:site_id',
@@ -110,6 +101,7 @@ export default function () {
 	page( '/settings/traffic/:site_id', redirectToTraffic );
 	page( '/settings/analytics/:site_id?', redirectToTraffic );
 	page( '/settings/seo/:site_id?', redirectToTraffic );
+	page( '/settings/theme-setup/:site_id?', redirectToGeneral );
 
 	page( '/settings/:section', legacyRedirects, siteSelection, sites, makeLayout, clientRender );
 }

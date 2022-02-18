@@ -1,98 +1,120 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import { PluginsBrowserListVariant } from './types';
+
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
 
-class PluginsBrowserList extends Component {
-	static displayName = 'PluginsBrowserList';
+const PluginsBrowserList = ( {
+	plugins,
+	variant = PluginsBrowserListVariant.Fixed,
+	title,
+	subtitle,
+	extended,
+	billingPeriod,
+	setBillingPeriod,
+	showPlaceholders,
+	site,
+	currentSites,
+	listName,
+	expandedListLink,
+	size,
+} ) => {
+	const isWide = useBreakpoint( '>1280px' );
+	const { __ } = useI18n();
 
-	static propTypes = {
-		plugins: PropTypes.array.isRequired,
-		variant: PropTypes.oneOf( Object.values( PluginsBrowserListVariant ) ).isRequired,
-		extended: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		variant: PluginsBrowserListVariant.Fixed,
-	};
-
-	renderPluginsViewList() {
-		const pluginsViewsList = this.props.plugins.map( ( plugin, n ) => {
+	const renderPluginsViewList = () => {
+		const pluginsViewsList = plugins.map( ( plugin, n ) => {
 			return (
 				<PluginBrowserItem
-					site={ this.props.site }
+					site={ site }
 					key={ plugin.slug + n }
 					plugin={ plugin }
-					currentSites={ this.props.currentSites }
-					listName={ this.props.listName }
+					currentSites={ currentSites }
+					listName={ listName }
 					variant={
-						this.props.extended
-							? PluginsBrowserElementVariant.Extended
-							: PluginsBrowserElementVariant.Compact
+						extended ? PluginsBrowserElementVariant.Extended : PluginsBrowserElementVariant.Compact
 					}
-					billingPeriod={ this.props.billingPeriod }
+					billingPeriod={ billingPeriod }
 				/>
 			);
 		} );
 
-		if ( this.props.size ) {
-			return pluginsViewsList.slice( 0, this.props.size );
+		if ( size ) {
+			return pluginsViewsList.slice( 0, size );
 		}
 
 		return pluginsViewsList;
-	}
+	};
 
-	renderPlaceholdersViews() {
-		return times( this.props.size || DEFAULT_PLACEHOLDER_NUMBER, ( i ) => (
+	const renderPlaceholdersViews = () => {
+		return times( size || DEFAULT_PLACEHOLDER_NUMBER, ( i ) => (
 			<PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />
 		) );
-	}
+	};
 
-	renderViews() {
-		const { plugins, showPlaceholders, variant } = this.props;
-
+	const renderViews = () => {
 		if ( ! plugins.length ) {
-			return this.renderPlaceholdersViews();
+			return renderPlaceholdersViews();
 		}
 
 		switch ( variant ) {
 			case PluginsBrowserListVariant.InfiniteScroll:
 				if ( showPlaceholders ) {
-					return this.renderPluginsViewList().concat( this.renderPlaceholdersViews() );
+					return renderPluginsViewList().concat( renderPlaceholdersViews() );
 				}
-				return this.renderPluginsViewList();
+				return renderPluginsViewList();
 			case PluginsBrowserListVariant.Paginated:
 				if ( showPlaceholders ) {
-					return this.renderPlaceholdersViews();
+					return renderPlaceholdersViews();
 				}
-				return this.renderPluginsViewList();
+				return renderPluginsViewList();
 			case PluginsBrowserListVariant.Fixed:
 			default:
-				return this.renderPluginsViewList();
+				return renderPluginsViewList();
 		}
-	}
+	};
 
-	render() {
-		return (
-			<div className="plugins-browser-list">
-				<div className="plugins-browser-list__header">
-					<div className={ classnames( 'plugins-browser-list__title', this.props.listName ) }>
-						{ this.props.title }
-					</div>
-					<div className="plugins-browser-list__subtitle">{ this.props.subtitle }</div>
+	return (
+		<div className="plugins-browser-list">
+			<div className="plugins-browser-list__header">
+				<div className="plugins-browser-list__titles">
+					<div className={ classnames( 'plugins-browser-list__title', listName ) }>{ title }</div>
+					<div className="plugins-browser-list__subtitle">{ subtitle }</div>
 				</div>
-				<Card className="plugins-browser-list__elements">{ this.renderViews() }</Card>
+				<div className="plugins-browser-list__actions">
+					{ setBillingPeriod && (
+						<BillingIntervalSwitcher
+							billingPeriod={ billingPeriod }
+							onChange={ setBillingPeriod }
+							compact={ ! isWide }
+						/>
+					) }
+					{ expandedListLink && (
+						<a className="plugins-browser-list__browse-all" href={ expandedListLink }>
+							{ __( 'Browse All' ) }
+							<Gridicon icon="arrow-right" size="18" />
+						</a>
+					) }
+				</div>
 			</div>
-		);
-	}
-}
+			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
+		</div>
+	);
+};
 
-export default localize( PluginsBrowserList );
+PluginsBrowserList.propTypes = {
+	plugins: PropTypes.array.isRequired,
+	variant: PropTypes.oneOf( Object.values( PluginsBrowserListVariant ) ).isRequired,
+	extended: PropTypes.bool,
+};
+
+export default PluginsBrowserList;

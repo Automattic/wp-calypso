@@ -3,7 +3,7 @@ import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite/get-gsuite-subsc
 /**
  * Given a domain object, does that domain have G Suite with another provider.
  *
- * @param {object} domain - domain object
+ * @param {import('../domains/types').ResponseDomain | undefined } domain - domain object
  * @returns {boolean} - true if the domain is with another provider, false otherwise
  */
 export function hasGSuiteWithAnotherProvider( domain ) {

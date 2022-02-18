@@ -1,14 +1,13 @@
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import withBlockEditorNuxStatus from 'calypso/data/block-editor/with-block-editor-nux-status-query';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import versionCompare from 'calypso/lib/version-compare';
 import {
 	bumpStat,
@@ -17,13 +16,13 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
-import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
-import { getSectionName, appBannerIsEnabled } from 'calypso/state/ui/selectors';
+import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
+import { dismissAppBanner } from 'calypso/state/ui/actions';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import {
-	ALLOWED_SECTIONS,
 	GUTENBERG,
 	NOTES,
 	READER,
@@ -31,7 +30,6 @@ import {
 	getAppBannerData,
 	getNewDismissTimes,
 	getCurrentSection,
-	isDismissed,
 	APP_BANNER_DISMISS_TIMES_PREFERENCE,
 } from './utils';
 
@@ -44,23 +42,35 @@ const noop = () => {};
 export class AppBanner extends Component {
 	static propTypes = {
 		saveDismissTime: PropTypes.func,
+		dismissAppBanner: PropTypes.func,
 		translate: PropTypes.func,
 		recordAppBannerOpen: PropTypes.func,
 		userAgent: PropTypes.string,
-		blockEditorNuxStatus: PropTypes.shape( {
-			show_welcome_guide: PropTypes.bool,
-		} ),
 		// connected
 		currentSection: PropTypes.string,
 		dismissedUntil: PropTypes.object,
-		fetchingPreferences: PropTypes.bool,
+		isVisible: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		saveDismissTime: noop,
+		dismissAppBanner: noop,
 		recordAppBannerOpen: noop,
 		userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : '',
 	};
+
+	constructor( props ) {
+		super( props );
+
+		if (
+			typeof window !== 'undefined' &&
+			window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
+		) {
+			this.state = { isDraftPostModalShown: true };
+		} else {
+			this.state = { isDraftPostModalShown: false };
+		}
+	}
 
 	stopBubblingEvents = ( event ) => {
 		event.stopPropagation();
@@ -81,38 +91,6 @@ export class AppBanner extends Component {
 		}
 	};
 
-	isVisible() {
-		const {
-			dismissedUntil,
-			currentSection,
-			isTosBannerVisible,
-			isAppBannerEnabled,
-			blockEditorNuxStatus,
-		} = this.props;
-
-		// The ToS update banner is displayed in the same position as the mobile app banner. Since the ToS update
-		// has higher priority, we repress all other non-essential sticky banners if the ToS update banner needs to
-		// be displayed.
-		if ( isTosBannerVisible ) {
-			return false;
-		}
-
-		// In some cases such as error we want to hide the app banner completely.
-		if ( ! isAppBannerEnabled ) {
-			return false;
-		}
-
-		// Inside page/post editor, hide the banner until we know that welcome tour has been dimissed to avoid overlapping.
-		if (
-			currentSection === GUTENBERG &&
-			( ! blockEditorNuxStatus || blockEditorNuxStatus.show_welcome_guide )
-		) {
-			return false;
-		}
-
-		return this.isMobile() && ! isWpMobileApp() && ! isDismissed( dismissedUntil, currentSection );
-	}
-
 	isiOS() {
 		return IOS_REGEX.test( this.props.userAgent );
 	}
@@ -128,11 +106,12 @@ export class AppBanner extends Component {
 		return this.isiOS() || this.isAndroid();
 	}
 
-	dismiss = ( event ) => {
+	dismiss = ( experimentIsControl, event ) => {
 		event.preventDefault();
-		const { currentSection, dismissedUntil } = this.props;
 
-		this.props.saveDismissTime( currentSection, dismissedUntil );
+		const { currentSection, dismissedUntil } = this.props;
+		this.props.saveDismissTime( currentSection, dismissedUntil, experimentIsControl );
+		this.props.dismissAppBanner();
 	};
 
 	openApp = () => {
@@ -164,62 +143,69 @@ export class AppBanner extends Component {
 	}
 
 	render() {
-		const { translate, currentSection, fetchingPreferences } = this.props;
-
-		if ( fetchingPreferences ) {
-			return null;
-		}
-
-		if ( ! includes( ALLOWED_SECTIONS, currentSection ) ) {
-			return null;
-		}
-
-		if ( ! this.isVisible() ) {
+		const { translate, currentSection } = this.props;
+		if ( ! this.props.shouldDisplayAppBanner || this.state.isDraftPostModalShown ) {
 			return null;
 		}
 
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
 		return (
-			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
-				<Card
-					className={ classNames( 'app-banner', 'is-compact', currentSection ) }
-					ref={ this.preventNotificationsClose }
-				>
-					<TrackComponentView
-						eventName="calypso_mobile_app_banner_impression"
-						eventProperties={ {
-							page: currentSection,
-						} }
-						statGroup="calypso_mobile_app_banner"
-						statName="impression"
-					/>
-					<div className="app-banner__circle is-top-left is-yellow" />
-					<div className="app-banner__circle is-top-right is-blue" />
-					<div className="app-banner__circle is-bottom-right is-red" />
-					<div className="app-banner__text-content">
-						<div className="app-banner__title">
-							<span> { title } </span>
-						</div>
-						<div className="app-banner__copy">
-							<span> { copy } </span>
-						</div>
-					</div>
-					<div className="app-banner__buttons">
-						<Button
-							primary
-							className="app-banner__open-button"
-							onClick={ this.openApp }
-							href={ this.getDeepLink() }
+			<ProvideExperimentData name="calypso_mobileweb_appbanner_frequency_20220128_v2">
+				{ ( isLoading, experimentAssignment ) => {
+					if ( isLoading ) {
+						return null;
+					}
+
+					return (
+						<div
+							className={ classNames( 'app-banner-overlay' ) }
+							ref={ this.preventNotificationsClose }
 						>
-							{ translate( 'Open in app' ) }
-						</Button>
-						<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
-							{ translate( 'No thanks' ) }
-						</Button>
-					</div>
-				</Card>
-			</div>
+							<Card
+								className={ classNames( 'app-banner', 'is-compact', currentSection ) }
+								ref={ this.preventNotificationsClose }
+							>
+								<TrackComponentView
+									eventName="calypso_mobile_app_banner_impression"
+									eventProperties={ {
+										page: currentSection,
+									} }
+									statGroup="calypso_mobile_app_banner"
+									statName="impression"
+								/>
+								<div className="app-banner__circle is-top-left is-yellow" />
+								<div className="app-banner__circle is-top-right is-blue" />
+								<div className="app-banner__circle is-bottom-right is-red" />
+								<div className="app-banner__text-content">
+									<div className="app-banner__title">
+										<span> { title } </span>
+									</div>
+									<div className="app-banner__copy">
+										<span> { copy } </span>
+									</div>
+								</div>
+								<div className="app-banner__buttons">
+									<Button
+										primary
+										className="app-banner__open-button"
+										onClick={ this.openApp }
+										href={ this.getDeepLink() }
+									>
+										{ translate( 'Open in app' ) }
+									</Button>
+									<Button
+										className="app-banner__no-thanks-button"
+										onClick={ this.dismiss.bind( null, ! experimentAssignment?.variationName ) }
+									>
+										{ translate( 'No thanks' ) }
+									</Button>
+								</div>
+							</Card>
+						</div>
+					);
+				} }
+			</ProvideExperimentData>
 		);
 	}
 }
@@ -230,6 +216,24 @@ export function getiOSDeepLink( currentRoute, currentSection ) {
 
 	return fragment.length > 0 ? `${ baseURI }#${ fragment }` : baseURI;
 }
+/**
+ * Returns the universal link that then gets used to send the user to the correct editor.
+ * If the app is installed otherwise they will end up on the new site creaton flow after creating an account.
+ *
+ * @param {string} currentRoute
+ * @returns string
+ */
+function getEditorPath( currentRoute ) {
+	const paths = currentRoute.split( '/' ).filter( ( path ) => path );
+
+	if ( paths[ 0 ] && paths[ 1 ] ) {
+		return '/' + paths[ 0 ] + '/' + paths[ 1 ];
+	}
+	if ( paths[ 0 ] ) {
+		return '/' + paths[ 0 ];
+	}
+	return '/post';
+}
 
 export function buildDeepLinkFragment( currentRoute, currentSection ) {
 	const hasRoute = currentRoute !== null && currentRoute !== '/';
@@ -237,7 +241,7 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 	const getFragment = () => {
 		switch ( currentSection ) {
 			case GUTENBERG:
-				return '/post';
+				return getEditorPath( currentRoute );
 			case NOTES:
 				return '/notifications';
 			case READER:
@@ -258,15 +262,12 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 const mapStateToProps = ( state ) => {
 	const sectionName = getSectionName( state );
 	const isNotesOpen = isNotificationsOpen( state );
-	const currentRoute = getCurrentRoute( state );
 
 	return {
 		dismissedUntil: getPreference( state, APP_BANNER_DISMISS_TIMES_PREFERENCE ),
 		currentSection: getCurrentSection( sectionName, isNotesOpen ),
-		currentRoute,
-		fetchingPreferences: isFetchingPreferences( state ),
-		isTosBannerVisible: shouldDisplayTosUpdateBanner( state ),
-		isAppBannerEnabled: appBannerIsEnabled( state ),
+		currentRoute: getCurrentRoute( state ),
+		shouldDisplayAppBanner: shouldDisplayAppBanner( state ),
 	};
 };
 
@@ -276,7 +277,7 @@ const mapDispatchToProps = {
 			recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
 			bumpStat( 'calypso_mobile_app_banner', 'banner_open' )
 		),
-	saveDismissTime: ( sectionName, currentDimissTimes ) =>
+	saveDismissTime: ( sectionName, currentDimissTimes, isControl ) =>
 		withAnalytics(
 			composeAnalytics(
 				recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { page: sectionName } ),
@@ -284,14 +285,10 @@ const mapDispatchToProps = {
 			),
 			savePreference(
 				APP_BANNER_DISMISS_TIMES_PREFERENCE,
-				getNewDismissTimes( sectionName, currentDimissTimes )
+				getNewDismissTimes( sectionName, currentDimissTimes, isControl )
 			)
 		),
+	dismissAppBanner,
 };
 
-const AppBannerWithEditorNuxStatus = withBlockEditorNuxStatus( AppBanner );
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( localize( AppBannerWithEditorNuxStatus ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );

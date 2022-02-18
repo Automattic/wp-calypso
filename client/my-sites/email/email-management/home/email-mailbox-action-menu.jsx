@@ -36,10 +36,11 @@ import {
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import {
-	getTitanCalendarlUrl,
+	getTitanCalendarUrl,
 	getTitanContactsUrl,
 	getTitanEmailUrl,
 	hasTitanMailWithUs,
+	useTitanAppsUrlPrefix,
 } from 'calypso/lib/titan';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { removeEmailForward } from 'calypso/state/email-forwarding/actions';
@@ -79,17 +80,23 @@ const getTitanClickHandler = ( app ) => {
  * Returns the available menu items for Titan Emails
  *
  * @param {Object} titanMenuParams The argument for this function.
- * @param {Function} titanMenuParams.showRemoveMailboxDialog The function that removes modal dialogs for confirming mailbox removals
  * @param {Object} titanMenuParams.mailbox The mailbox object.
+ * @param {Function} titanMenuParams.showRemoveMailboxDialog The function that removes modal dialogs for confirming mailbox removals
+ * @param {string} titanMenuParams.titanAppsUrlPrefix The URL prefix for Titan Apps
  * @param {Function} titanMenuParams.translate The translate function.
  * @returns Array of menu items
  */
-const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) => {
+const getTitanMenuItems = ( {
+	mailbox,
+	showRemoveMailboxDialog,
+	titanAppsUrlPrefix,
+	translate,
+} ) => {
 	const email = getEmailAddress( mailbox );
 
 	return [
 		{
-			href: getTitanEmailUrl( email ),
+			href: getTitanEmailUrl( titanAppsUrlPrefix, email ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
 			title: translate( 'View Mail', {
@@ -98,7 +105,7 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			onClick: getTitanClickHandler( 'webmail' ),
 		},
 		{
-			href: getTitanCalendarlUrl( email ),
+			href: getTitanCalendarUrl( titanAppsUrlPrefix, email ),
 			image: titanCalendarIcon,
 			imageAltText: translate( 'Titan Calendar icon' ),
 			title: translate( 'View Calendar', {
@@ -107,7 +114,7 @@ const getTitanMenuItems = ( { mailbox, showRemoveMailboxDialog, translate } ) =>
 			onClick: getTitanClickHandler( 'calendar' ),
 		},
 		{
-			href: getTitanContactsUrl( email ),
+			href: getTitanContactsUrl( titanAppsUrlPrefix, email ),
 			image: titanContactsIcon,
 			imageAltText: translate( 'Titan Contacts icon' ),
 			title: translate( 'View Contacts', {
@@ -322,6 +329,7 @@ RemoveTitanMailboxConfirmationDialog.propTypes = {
 const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 
 	const [ removeTitanMailboxDialogVisible, setRemoveTitanMailboxDialogVisible ] = useState( false );
 
@@ -330,8 +338,9 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 	const getMenuItems = () => {
 		if ( domainHasTitanMailWithUs ) {
 			return getTitanMenuItems( {
-				showRemoveMailboxDialog: () => setRemoveTitanMailboxDialogVisible( true ),
 				mailbox,
+				showRemoveMailboxDialog: () => setRemoveTitanMailboxDialogVisible( true ),
+				titanAppsUrlPrefix,
 				translate,
 			} );
 		}

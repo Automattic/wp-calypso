@@ -28,31 +28,26 @@
 	}
 
 	.design-picker__grid {
-		margin: 0 -24px 30px;
+		margin: 0 -12px 30px;
 	}
 
 	.design-picker__grid-minimal {
-		margin: 0 -24px 30px;
+		margin: 0 -12px 30px;
+	}
+
+	.design-button-container {
+		width: calc( 100% - 24px );
+		margin: 0 12px 24px; // only applies in IE
+
+		@include break-medium {
+			width: calc( 50% - 24px );
+			margin-bottom: 40px;
+		}
 	}
 
 	.design-picker__design-option {
 		cursor: pointer;
 		font-family: inherit;
-		float: left;
-		width: 100%;
-		margin: 24px; // only applies in IE
-
-		@include break-mobile {
-			width: calc( 50% - 24px );
-		}
-
-		@include break-xlarge {
-			width: calc( 33.33% - 32px );
-		}
-
-		@include onboarding-break-gigantic {
-			width: calc( 25% - 32px );
-		}
 	}
 
 	.design-picker__design-option-header {
@@ -81,16 +76,13 @@
 		.design-picker__grid {
 			display: grid;
 			grid-template-columns: 1fr;
-			row-gap: 48px;
+			row-gap: 24px;
 			margin: 0 0 30px;
 
-			@include break-mobile {
-				grid-template-columns: repeat( auto-fill, minmax( 295px, auto ) );
+			@include break-medium {
+				grid-template-columns: 1fr 1fr;
 				column-gap: 24px;
-			}
-
-			@include onboarding-break-gigantic {
-				column-gap: 32px;
+				row-gap: 40px;
 			}
 		}
 
@@ -100,7 +92,7 @@
 			row-gap: 48px;
 			margin: 0 0 30px;
 
-			@include break-mobile {
+			@include break-medium {
 				grid-template-columns: 1fr 1fr;
 				column-gap: 24px;
 			}
@@ -111,15 +103,11 @@
 			}
 		}
 
-		.design-picker__design-option {
+		.design-button-container {
 			width: auto;
 			margin: 0;
 
 			@include break-xlarge {
-				width: auto;
-			}
-
-			@include onboarding-break-gigantic {
 				width: auto;
 			}
 		}
@@ -214,16 +202,6 @@
 		font-size: $font-body;
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 		margin-top: -0.1em;
-	}
-
-	.design-picker__premium-container {
-		margin-left: 6px;
-		/* stylelint-disable-next-line */
-		font-size: rem( 10px ); //typography-exception
-
-		.components-popover__content {
-			background-color: var( --studio-gray-80 );
-		}
 	}
 }
 
@@ -362,6 +340,50 @@
 	&:focus-within {
 		.design-button-cover {
 			opacity: 1;
+		}
+	}
+}
+
+// layout with categories
+.design-picker--has-categories {
+	@supports ( display: grid ) {
+		.design-picker__grid {
+			@include break-medium {
+				grid-template-columns: 1fr;
+				column-gap: 24px;
+				row-gap: 40px;
+			}
+
+			@include break-large {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+	}
+
+	@supports not ( display: grid ) {
+		.design-button-container {
+			@include break-medium {
+				width: calc( 100% - 24px );
+			}
+
+			@include break-large {
+				width: calc( 50% - 24px );
+			}
+		}
+	}
+}
+
+// layout without preview
+.design-button-container--without-preview {
+	.design-picker__image-frame::after {
+		pointer-events: none;
+	}
+
+	&:hover,
+	&:focus-within {
+		.design-picker__image-frame::after {
+			// `!important` is used because there is a default `background-color` with high specificity.
+			background-color: transparent !important; // to override 
 		}
 	}
 }

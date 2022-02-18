@@ -30,6 +30,7 @@ export { default as getSiteId } from './get-site-id';
 export { default as getSiteOption } from './get-site-option';
 export { default as getSiteOptions } from './get-site-options';
 export { default as getSitePlan } from './get-site-plan';
+export { default as getSitePlanName } from './get-site-plan-name';
 export { default as getSitePlanSlug } from './get-site-plan-slug';
 export { default as getSitePostsPage } from './get-site-posts-page';
 export { default as getSiteProducts } from './get-site-products';
@@ -63,6 +64,5 @@ export { default as verifyJetpackModulesActive } from './verify-jetpack-modules-
 export { default as getSelectedSiteWithFallback } from './get-site-with-fallback';
 export { default as getSiteWooCommerceUrl } from './get-site-woocommerce-url';
 export { default as getSiteWooCommerceWizardUrl } from './get-site-woocommerce-wizard-url';
-export { default as getSiteWordPressSeoWizardUrl } from './get-site-wordpress-seo-wizard-url';
 export { default as getJetpackSearchCustomizeUrl } from './get-jetpack-search-customize-url';
 export { default as getJetpackVersion } from './get-jetpack-version';

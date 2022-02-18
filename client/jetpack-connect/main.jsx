@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { concat, flowRight, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -22,7 +21,7 @@ export class JetpackConnectMain extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
 		path: PropTypes.string,
-		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
+		type: PropTypes.oneOf( [ ...FLOW_TYPES, false ] ),
 		url: PropTypes.string,
 		processJpSite: PropTypes.func,
 	};
@@ -92,7 +91,7 @@ export class JetpackConnectMain extends Component {
 	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
 
 	isInstall() {
-		return includes( FLOW_TYPES, this.props.type );
+		return FLOW_TYPES.includes( this.props.type );
 	}
 
 	renderSiteInput( status ) {
@@ -137,18 +136,13 @@ export class JetpackConnectMain extends Component {
 }
 
 const connectComponent = connect(
-	( state ) => {
-		return {
-			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-			getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
-			isLoggedIn: isUserLoggedIn( state ),
-			isRequestingSites: isRequestingSites( state ),
-		};
-	},
-	{
-		checkUrl,
-		recordTracksEvent,
-	}
+	( state ) => ( {
+		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+		getJetpackSiteByUrl: ( url ) => getJetpackSiteByUrl( state, url ),
+		isLoggedIn: isUserLoggedIn( state ),
+		isRequestingSites: isRequestingSites( state ),
+	} ),
+	{ checkUrl, recordTracksEvent }
 );
 
-export default flowRight( jetpackConnection, connectComponent, localize )( JetpackConnectMain );
+export default jetpackConnection( connectComponent( localize( JetpackConnectMain ) ) );

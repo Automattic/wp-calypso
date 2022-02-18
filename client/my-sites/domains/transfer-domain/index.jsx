@@ -4,11 +4,9 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import Notice from 'calypso/components/notice';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import {
 	domainRegistration,
 	domainTransfer,
@@ -17,7 +15,6 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import {
 	getSelectedSite,
@@ -33,7 +30,6 @@ export class TransferDomain extends Component {
 		cart: PropTypes.object.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		isSiteUpgradeable: PropTypes.bool,
-		productsList: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
@@ -62,17 +58,14 @@ export class TransferDomain extends Component {
 	};
 
 	addDomainToCart = ( suggestion ) => {
-		const { selectedSiteSlug, shoppingCartManager, productsList } = this.props;
+		const { selectedSiteSlug, shoppingCartManager } = this.props;
 
 		shoppingCartManager
 			.addProductsToCart( [
-				fillInSingleCartItemAttributes(
-					domainRegistration( {
-						productSlug: suggestion.product_slug,
-						domain: suggestion.domain_name,
-					} ),
-					productsList
-				),
+				domainRegistration( {
+					productSlug: suggestion.product_slug,
+					domain: suggestion.domain_name,
+				} ),
 			] )
 			.then( () => {
 				page( '/checkout/' + selectedSiteSlug );
@@ -109,25 +102,21 @@ export class TransferDomain extends Component {
 			transfer = updatePrivacyForDomain( transfer, true );
 		}
 
-		shoppingCartManager
-			.addProductsToCart( [ fillInSingleCartItemAttributes( transfer, this.props.productsList ) ] )
-			.then( () => {
-				page( '/checkout/' + selectedSiteSlug );
-			} );
+		shoppingCartManager.addProductsToCart( [ transfer ] ).then( () => {
+			page( '/checkout/' + selectedSiteSlug );
+		} );
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		this.checkSiteIsUpgradeable( this.props );
+	componentDidMount() {
+		this.checkSiteIsUpgradeable();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.checkSiteIsUpgradeable( nextProps );
+	componentDidUpdate() {
+		this.checkSiteIsUpgradeable();
 	}
 
-	checkSiteIsUpgradeable( props ) {
-		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
+	checkSiteIsUpgradeable() {
+		if ( this.props.selectedSite && ! this.props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add/transfer' );
 		}
 	}
@@ -169,7 +158,6 @@ export class TransferDomain extends Component {
 
 		return (
 			<span>
-				<QueryProductsList />
 				{ errorMessage && <Notice status="is-error" text={ errorMessage } /> }
 
 				<TransferDomainStep
@@ -194,5 +182,4 @@ export default connect( ( state ) => ( {
 	selectedSiteSlug: getSelectedSiteSlug( state ),
 	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 	isSiteUpgradeable: isSiteUpgradeable( state, getSelectedSiteId( state ) ),
-	productsList: getProductsList( state ),
 } ) )( withCartKey( withShoppingCart( TransferDomain ) ) );

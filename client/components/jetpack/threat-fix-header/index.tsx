@@ -1,25 +1,32 @@
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import { FixableThreat } from 'calypso/components/jetpack/threat-item-new/types';
-import { getThreatFix, getThreatMessage } from 'calypso/components/jetpack/threat-item-new/utils';
+import { Threat } from 'calypso/components/jetpack/threat-item/types';
+import { getThreatFix, getThreatMessage } from 'calypso/components/jetpack/threat-item/utils';
 import ThreatSeverityBadge from 'calypso/components/jetpack/threat-severity-badge';
 
 import './style.scss';
 
 interface Props {
-	threat: FixableThreat;
-	fixAllDialog?: bool;
-	onCheckFix?: callable;
+	threat: Threat;
+	fixAllDialog?: boolean;
+	onCheckFix?: ( checked: boolean, threat: Threat ) => void;
+	action: 'fix' | 'ignore';
 }
 
-export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix } ): React.FC< Props > {
+export default function ThreatFixHeader( {
+	threat,
+	fixAllDialog,
+	onCheckFix,
+	action,
+}: Props ): JSX.Element {
 	const [ checkedFix, setCheckedFix ] = useState( true );
 
-	const checkFix = ( event ) => {
+	const checkFix = ( event: { target: { checked: boolean } } ) => {
 		setCheckedFix( event.target.checked );
-		onCheckFix( event.target.checked, threat );
+		onCheckFix?.( event.target.checked, threat );
 	};
 
 	const severityClassNames = ( severity: number ) => {
@@ -42,7 +49,8 @@ export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix } ):
 					) }
 				>
 					<Gridicon className="threat-fix-header__warning-icon" icon="info-outline" size={ 18 } />
-					{ getThreatFix( threat.fixable ) }
+					{ action === 'fix' && threat.fixable && getThreatFix( threat.fixable ) }
+					{ action === 'ignore' && translate( 'Jetpack will ignore the threat.' ) }
 				</span>
 			</div>
 			<div className="threat-fix-header__autofix-checkbox">

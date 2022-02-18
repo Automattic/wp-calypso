@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -10,34 +9,43 @@ import {
 import { Button } from '@automattic/components';
 import Search from '@automattic/search';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
-import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import announcementImage from 'calypso/assets/images/marketplace/plugins-revamp.png';
+import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryWporgPlugins from 'calypso/components/data/query-wporg-plugins';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
-import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import NoResults from 'calypso/my-sites/no-results';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
-import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import {
+	recordTracksEvent,
+	recordGoogleEvent,
+	composeAnalytics,
+} from 'calypso/state/analytics/actions';
+import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
+import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
 	fetchPluginsCategoryNextPage,
 	fetchPluginsList,
@@ -50,6 +58,7 @@ import {
 } from 'calypso/state/plugins/wporg/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -58,8 +67,14 @@ import {
 	isJetpackSite,
 	isRequestingSites,
 	getSiteAdminUrl,
+	getSiteDomain,
 } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+
 import './style.scss';
 
 /**
@@ -67,6 +82,44 @@ import './style.scss';
  */
 const SHORT_LIST_LENGTH = 6;
 const SEARCH_RESULTS_LIST_LENGTH = 12;
+
+const translateCategory = ( { category, translate } ) => {
+	switch ( category ) {
+		case 'new':
+			return translate( 'New', {
+				context: 'Category description for the plugin browser.',
+			} );
+		case 'popular':
+			return translate( 'Popular', {
+				context: 'Category description for the plugin browser.',
+			} );
+		case 'featured':
+			return translate( 'Featured', {
+				context: 'Category description for the plugin browser.',
+			} );
+		case 'paid':
+			return translate( 'Premium', {
+				context: 'Category description for the plugin browser.',
+			} );
+		default:
+			return translate( 'Plugins' );
+	}
+};
+
+const translateCategoryTitle = ( { category, translate } ) => {
+	switch ( category ) {
+		case 'new':
+			return translate( 'All New Plugins' );
+		case 'popular':
+			return translate( 'All Popular Plugins' );
+		case 'featured':
+			return translate( 'All Featured Plugins' );
+		case 'paid':
+			return translate( 'All Premium Plugins' );
+		default:
+			return translate( 'Plugins' );
+	}
+};
 
 const PluginsBrowser = ( {
 	trackPageViews = true,
@@ -76,12 +129,13 @@ const PluginsBrowser = ( {
 	hideHeader,
 	doSearch,
 } ) => {
+	const breadcrumbs = useSelector( getBreadcrumbs );
+
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
 
 	// Billing period switcher.
-	const isWide = useBreakpoint( '>1280px' );
-	const [ billingPeriod, setBillingPeriod ] = useState( IntervalLength.MONTHLY );
+	const billingPeriod = useSelector( getBillingInterval );
 
 	const hasBusinessPlan =
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
@@ -97,6 +151,9 @@ const PluginsBrowser = ( {
 		( state ) =>
 			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
 	);
+	const isSiteConnected = useSelector( ( state ) =>
+		getSiteConnectionStatus( state, selectedSite?.ID )
+	);
 	const isVip = useSelector( ( state ) => isVipSite( state, selectedSite?.ID ) );
 	const hasJetpack = useSelector( hasJetpackSites );
 	const isRequestingSitesData = useSelector( isRequestingSites );
@@ -106,6 +163,7 @@ const PluginsBrowser = ( {
 	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 	const pluginsByCategory = useSelector( ( state ) => getPluginsListByCategory( state, category ) );
 	const pluginsByCategoryNew = useSelector( ( state ) => getPluginsListByCategory( state, 'new' ) );
 	const pluginsByCategoryFeatured = useSelector( ( state ) =>
@@ -113,13 +171,8 @@ const PluginsBrowser = ( {
 	);
 	const pluginsByCategoryPopular = filterPopularPlugins(
 		popularPlugins,
-		pluginsByCategoryFeatured,
-		jetpackNonAtomic
+		pluginsByCategoryFeatured
 	);
-	const pluginsBySearchTerm = useSelector( ( state ) =>
-		getPluginsListBySearchTerm( state, search )
-	);
-	const pluginsPagination = useSelector( ( state ) => getPluginsListPagination( state, search ) );
 	const isFetchingPluginsByCategory = useSelector( ( state ) =>
 		isFetchingPluginsList( state, category )
 	);
@@ -131,9 +184,6 @@ const PluginsBrowser = ( {
 	);
 	const isFetchingPluginsByCategoryFeatured = useSelector( ( state ) =>
 		isFetchingPluginsList( state, 'featured' )
-	);
-	const isFetchingPluginsBySearchTerm = useSelector( ( state ) =>
-		isFetchingPluginsList( state, null, search )
 	);
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite?.ID ) );
 
@@ -149,24 +199,39 @@ const PluginsBrowser = ( {
 		return ! selectedSite?.ID && hasJetpack;
 	}, [ isJetpack, selectedSite, hasJetpack ] );
 
-	const navigationItems = useMemo( () => {
-		const items = [ { label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }` } ];
+	useEffect( () => {
+		const items = [
+			{ label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }`, id: 'plugins' },
+		];
 		if ( search ) {
 			items.push( {
 				label: translate( 'Search Results' ),
 				href: `/plugins/${ siteSlug || '' }?s=${ search }`,
+				id: 'plugins-search',
+			} );
+		}
+		if ( category ) {
+			items.push( {
+				label: translateCategoryTitle( { category, translate } ),
+				href: `/plugins/${ category }/${ siteSlug || '' }`,
+				id: 'category',
 			} );
 		}
 
-		return items;
-	}, [ search, siteSlug ] );
+		dispatch( updateBreadcrumbs( items ) );
+	}, [ siteSlug, search, category, dispatch, translate ] );
 
+	const trackSiteDisconnect = () =>
+		composeAnalytics(
+			recordGoogleEvent( 'Jetpack', 'Clicked in site indicator to start Jetpack Disconnect flow' ),
+			recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
+		);
 	const annoncementPages = [
 		{
-			headline: translate( 'ITS NEW!' ),
-			heading: translate( 'All the plugins and more' ),
+			headline: translate( 'NEW' ),
+			heading: translate( 'Buy the best plugins' ),
 			content: translate(
-				'This page may look different as we’ve made some changes to improve the experience for you. Stay tuned for even more exciting updates to come!'
+				"Now you can purchase plugins right on WordPress.com to extend your website's capabilities."
 			),
 			featureImage: announcementImage,
 		},
@@ -225,7 +290,8 @@ const PluginsBrowser = ( {
 					<QueryWporgPlugins category="featured" />
 				</>
 			) }
-			{ isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic && <QueryProductsList /> }
+			<QueryProductsList persist />
+			<QueryJetpackPlugins siteIds={ siteIds } />
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }
@@ -234,25 +300,15 @@ const PluginsBrowser = ( {
 			<DocumentHead title={ translate( 'Plugins' ) } />
 			<SidebarNavigation />
 
-			<AnnouncementModal
-				announcementId="plugins-page-revamp"
-				pages={ annoncementPages }
-				finishButtonText={ translate( "Let's explore!" ) }
-			/>
+			{ ! jetpackNonAtomic && (
+				<AnnouncementModal
+					announcementId="plugins-page-woo-extensions"
+					pages={ annoncementPages }
+					finishButtonText={ translate( "Let's explore!" ) }
+				/>
+			) }
 			{ ! hideHeader && (
-				<FixedNavigationHeader
-					className="plugins-browser__header"
-					navigationItems={ navigationItems }
-				>
-					{ isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic && (
-						<div className="plugins-browser__billling-interval-switcher">
-							<BillingIntervalSwitcher
-								billingPeriod={ billingPeriod }
-								onChange={ setBillingPeriod }
-								compact={ ! isWide }
-							/>
-						</div>
-					) }
+				<FixedNavigationHeader className="plugins-browser__header" navigationItems={ breadcrumbs }>
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
 							shouldShowManageButton={ shouldShowManageButton }
@@ -263,13 +319,29 @@ const PluginsBrowser = ( {
 
 						<UploadPluginButton isMobile={ isMobile } siteSlug={ siteSlug } />
 					</div>
-
 					<div className="plugins-browser__searchbox">
 						{ <SearchBox isMobile={ isMobile } doSearch={ doSearch } search={ search } /> }
 					</div>
 				</FixedNavigationHeader>
 			) }
-
+			{ isSiteConnected === false && (
+				<Notice
+					icon="notice"
+					showDismiss={ false }
+					status="is-warning"
+					text={ translate( '%(siteName)s cannot be accessed.', {
+						textOnly: true,
+						args: { siteName: selectedSite.title },
+					} ) }
+				>
+					<NoticeAction
+						onClick={ trackSiteDisconnect }
+						href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
+					>
+						{ translate( 'I’d like to fix this now' ) }
+					</NoticeAction>
+				</Notice>
+			) }
 			<UpgradeNudge
 				selectedSite={ selectedSite }
 				sitePlan={ sitePlan }
@@ -287,12 +359,9 @@ const PluginsBrowser = ( {
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 				search={ search }
-				isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
-				pluginsBySearchTerm={ pluginsBySearchTerm }
-				pluginsPagination={ pluginsPagination }
 				category={ category }
-				isFetchingPluginsByCategory={ isFetchingPluginsByCategory }
 				pluginsByCategory={ pluginsByCategory }
+				isFetchingPluginsByCategory={ isFetchingPluginsByCategory }
 				paidPlugins={ paidPlugins }
 				isFetchingPaidPlugins={ isFetchingPaidPlugins }
 				sites={ sites }
@@ -300,6 +369,7 @@ const PluginsBrowser = ( {
 				siteSlug={ siteSlug }
 				jetpackNonAtomic={ jetpackNonAtomic }
 				billingPeriod={ billingPeriod }
+				setBillingPeriod={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
 		</MainComponent>
@@ -310,17 +380,38 @@ const WrappedSearch = ( props ) => <Search { ...props } />;
 
 const SearchListView = ( {
 	search: searchTerm,
-	isFetchingPluginsBySearchTerm,
-	pluginsBySearchTerm,
-	pluginsPagination,
 	searchTitle: searchTitleTerm,
 	siteSlug,
 	sites,
+	billingPeriod,
 } ) => {
+	const pluginsBySearchTerm = useSelector( ( state ) =>
+		getPluginsListBySearchTerm( state, searchTerm )
+	);
+	const isFetchingPluginsBySearchTerm = useSelector( ( state ) =>
+		isFetchingPluginsList( state, null, searchTerm )
+	);
+	const pluginsPagination = useSelector( ( state ) =>
+		getPluginsListPagination( state, searchTerm )
+	);
+	const {
+		data: paidPluginsBySearchTermRaw = [],
+		isFetchingPaidPluginsBySearchTerm,
+	} = useWPCOMPlugins( 'all', searchTerm, {
+		enabled: !! searchTerm,
+	} );
+	const paidPluginsBySearchTerm = useMemo(
+		() => paidPluginsBySearchTermRaw.map( updateWpComRating ),
+		[ paidPluginsBySearchTermRaw ]
+	);
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
+	if (
+		pluginsBySearchTerm.length > 0 ||
+		isFetchingPluginsBySearchTerm ||
+		isFetchingPaidPluginsBySearchTerm
+	) {
 		const searchTitle =
 			searchTitleTerm ||
 			translate( 'Search results for {{b}}%(searchTerm)s{{/b}}', {
@@ -336,34 +427,56 @@ const SearchListView = ( {
 		const subtitle =
 			pluginsPagination &&
 			translate( '%(total)s plugin', '%(total)s plugins', {
-				count: pluginsPagination.results,
+				count: pluginsPagination.results + paidPluginsBySearchTerm?.length,
 				textOnly: true,
 				args: {
-					total: pluginsPagination.results,
+					total: pluginsPagination.results + paidPluginsBySearchTerm?.length,
 				},
 			} );
+
+		let pageSize = SEARCH_RESULTS_LIST_LENGTH;
+		if ( pluginsPagination?.page === 1 ) {
+			// Paid results appear only in the first page.
+			// Since the wporg results will always be an even number and paid results might be odd
+			// append one more wporg result if needed to fill the grid.
+			pageSize =
+				SEARCH_RESULTS_LIST_LENGTH +
+				paidPluginsBySearchTerm?.length +
+				( paidPluginsBySearchTerm?.length % 2 );
+		}
+
+		const pluginItemsFeatch = ( page ) => {
+			return page === 1
+				? SEARCH_RESULTS_LIST_LENGTH + ( paidPluginsBySearchTerm?.length % 2 )
+				: SEARCH_RESULTS_LIST_LENGTH;
+		};
 
 		return (
 			<>
 				<PluginsBrowserList
-					plugins={ pluginsBySearchTerm }
+					plugins={
+						pluginsPagination?.page === 1
+							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
+							: pluginsBySearchTerm
+					}
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					title={ searchTitle }
 					subtitle={ subtitle }
 					site={ siteSlug }
-					showPlaceholders={ isFetchingPluginsBySearchTerm }
-					size={ SEARCH_RESULTS_LIST_LENGTH }
+					showPlaceholders={ isFetchingPluginsBySearchTerm || isFetchingPaidPluginsBySearchTerm }
+					size={ pageSize }
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
+					billingPeriod={ billingPeriod }
 				/>
 				{ pluginsPagination && (
 					<Pagination
 						page={ pluginsPagination.page }
-						perPage={ SEARCH_RESULTS_LIST_LENGTH }
+						perPage={ pluginItemsFeatch( pluginsPagination?.page ) }
 						total={ pluginsPagination.results }
 						pageClick={ ( page ) => {
-							dispatch( fetchPluginsList( null, page, searchTerm, SEARCH_RESULTS_LIST_LENGTH ) );
+							dispatch( fetchPluginsList( null, page, searchTerm, pluginItemsFeatch( page ) ) );
 						} }
 						variant={ PaginationVariant.minimal }
 					/>
@@ -382,50 +495,51 @@ const SearchListView = ( {
 	);
 };
 
-const translateCategory = ( { category, translate } ) => {
-	switch ( category ) {
-		case 'new':
-			return translate( 'New', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'popular':
-			return translate( 'Popular', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'featured':
-			return translate( 'Featured', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'paid':
-			return translate( 'Featured', {
-				context: 'Category description for the plugin browser.',
-			} );
-	}
-};
-
 const FullListView = ( {
 	category,
 	isFetchingPluginsByCategory,
 	pluginsByCategory,
 	siteSlug,
 	sites,
+	paidPlugins,
+	isFetchingPaidPlugins,
+	billingPeriod,
+	setBillingPeriod,
 } ) => {
 	const translate = useTranslate();
 
-	if ( pluginsByCategory.length > 0 || isFetchingPluginsByCategory ) {
+	let plugins = pluginsByCategory;
+	let isFetching = isFetchingPluginsByCategory;
+	if ( category === 'paid' ) {
+		plugins = paidPlugins;
+		isFetching = isFetchingPaidPlugins;
+	}
+
+	if ( plugins.length > 0 || isFetching ) {
 		return (
 			<PluginsBrowserList
-				plugins={ pluginsByCategory }
+				plugins={ plugins }
 				listName={ category }
-				title={ translateCategory( { category, translate } ) }
+				title={ translateCategoryTitle( { category, translate } ) }
 				site={ siteSlug }
-				showPlaceholders={ isFetchingPluginsByCategory }
+				showPlaceholders={ isFetching }
 				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
+				billingPeriod={ billingPeriod }
+				setBillingPeriod={ category === 'paid' && setBillingPeriod }
 				extended
 			/>
 		);
 	}
+
+	// This shouldn't ever render but we can't return void/null here.
+	return (
+		<NoResults
+			text={ translate( 'No plugins available.', {
+				textOnly: true,
+			} ) }
+		/>
+	);
 };
 
 const PluginSingleListView = ( {
@@ -441,8 +555,12 @@ const PluginSingleListView = ( {
 	siteSlug,
 	sites,
 	billingPeriod,
+	setBillingPeriod,
 } ) => {
 	const translate = useTranslate();
+
+	const siteId = useSelector( getSelectedSiteId );
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
 	let plugins;
 	let isFetching;
@@ -462,7 +580,10 @@ const PluginSingleListView = ( {
 		return null;
 	}
 
-	const listLink = '/plugins/' + category + '/';
+	let listLink = '/plugins/' + category;
+	if ( domain ) {
+		listLink = '/plugins/' + category + '/' + domain;
+	}
 	return (
 		<PluginsBrowserList
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
@@ -475,6 +596,7 @@ const PluginSingleListView = ( {
 			currentSites={ sites }
 			variant={ PluginsBrowserListVariant.Fixed }
 			billingPeriod={ billingPeriod }
+			setBillingPeriod={ category === 'paid' && setBillingPeriod }
 			extended
 		/>
 	);
@@ -490,8 +612,11 @@ const PluginBrowserContent = ( props ) => {
 
 	return (
 		<>
-			{ isEnabled( 'marketplace-v1' ) && ! props.jetpackNonAtomic ? (
-				<PluginSingleListView { ...props } category="paid" />
+			{ ! props.jetpackNonAtomic ? (
+				<>
+					<PluginSingleListView { ...props } category="paid" />
+					<PluginSingleListView { ...props } category="featured" />
+				</>
 			) : (
 				<PluginSingleListView { ...props } category="featured" />
 			) }
@@ -597,7 +722,7 @@ const ManageButton = ( { shouldShowManageButton, siteAdminUrl, siteSlug, jetpack
 
 	return (
 		<Button className="plugins-browser__button" href={ managePluginsDestination }>
-			<span className="plugins-browser__button-text">{ translate( 'Manage plugins' ) }</span>
+			<span className="plugins-browser__button-text">{ translate( 'Installed Plugins' ) }</span>
 		</Button>
 	);
 };
@@ -641,14 +766,7 @@ function updateWpComRating( plugin ) {
  * @param {Array} popularPlugins
  * @param {Array} featuredPlugins
  */
-function filterPopularPlugins( popularPlugins = [], featuredPlugins = [], jetpackNonAtomic ) {
-	// when marketplace-v1 is enabled no featured plugins will be showed
-	// since paid plugins will not be available for Jetpack self hosted sites,
-	// continue with filtering the popular plugins.
-	if ( isEnabled( 'marketplace-v1' ) && ! jetpackNonAtomic ) {
-		featuredPlugins = [];
-	}
-
+function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	const displayedFeaturedSlugsMap = new Map(
 		featuredPlugins
 			.slice( 0, SHORT_LIST_LENGTH ) // only displayed plugins

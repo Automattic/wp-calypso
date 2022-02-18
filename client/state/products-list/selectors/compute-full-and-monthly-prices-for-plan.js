@@ -1,6 +1,6 @@
 import { GROUP_WPCOM } from '@automattic/calypso-products';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import { isIntroductoryOfferAppliedToPlanPrice } from 'calypso/state/sites/plans/selectors';
+import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getPlanPrice } from './get-plan-price';
 import { getProductCost } from './get-product-cost';
 
@@ -21,26 +21,25 @@ export const computeFullAndMonthlyPricesForPlan = (
 	credits,
 	couponDiscounts
 ) => {
-	const couponDiscount = couponDiscounts[ planObject.getProductId() ] || 0;
+	const couponDiscount = couponDiscounts[ planObject.getStoreSlug() ] || 1;
 
 	if ( planObject.group === GROUP_WPCOM ) {
-		return computePricesForWpComPlan( state, planObject );
+		return computePricesForWpComPlan( state, siteId, planObject );
 	}
 
 	const planOrProductPrice = ! getPlanPrice( state, siteId, planObject, false )
 		? getProductCost( state, planObject.getStoreSlug() )
 		: getPlanPrice( state, siteId, planObject, false );
 
-	const isIntroductoryOfferApplied = isIntroductoryOfferAppliedToPlanPrice(
-		state,
-		siteId,
-		planObject.getStoreSlug()
-	);
+	const introductoryOfferPrice = getIntroOfferPrice( state, planObject.getProductId(), siteId );
 
 	return {
 		priceFull: planOrProductPrice,
-		priceFinal: Math.max( planOrProductPrice - credits - couponDiscount, 0 ),
-		isIntroductoryOfferApplied,
+		priceFinal: Math.max( planOrProductPrice * couponDiscount - credits, 0 ),
+		introductoryOfferPrice:
+			introductoryOfferPrice !== null
+				? Math.max( introductoryOfferPrice * couponDiscount - credits, 0 )
+				: introductoryOfferPrice,
 	};
 };
 
@@ -48,13 +47,16 @@ export const computeFullAndMonthlyPricesForPlan = (
  * Compute a full and monthly price for a given wpcom plan.
  *
  * @param {object} state Current redux state
+ * @param {number} siteId Site ID to consider
  * @param {object} planObject Plan object returned by getPlan() from @automattic/calypso-products
  */
-function computePricesForWpComPlan( state, planObject ) {
+function computePricesForWpComPlan( state, siteId, planObject ) {
 	const priceFull = getPlanRawPrice( state, planObject.getProductId(), false ) || 0;
+	const introductoryOfferPrice = getIntroOfferPrice( state, planObject.getProductId(), siteId );
 
 	return {
 		priceFull,
 		priceFinal: priceFull,
+		introductoryOfferPrice,
 	};
 }

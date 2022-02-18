@@ -18,6 +18,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { getJetpackCouponDiscountMap } from 'calypso/state/marketing/selectors';
 import { requestPlans } from 'calypso/state/plans/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
@@ -36,7 +37,7 @@ export interface AvailableProductVariant {
 	};
 	priceFull: number;
 	priceFinal: number;
-	isIntroductoryOfferApplied: boolean;
+	introductoryOfferPrice: number | null;
 }
 
 export interface AvailableProductVariantAndCompared extends AvailableProductVariant {
@@ -86,6 +87,8 @@ export function useGetProductVariants(
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
+	const jetpackCouponDiscountMap = useSelector( getJetpackCouponDiscountMap );
+
 	const sitePlans: SitesPlansResult | null = useSelector( ( state ) =>
 		siteId ? getPlansBySiteId( state, siteId ) : null
 	);
@@ -98,7 +101,13 @@ export function useGetProductVariants(
 	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
-		return computeProductsWithPrices( state, siteId, variantProductSlugs, 0, {} );
+		return computeProductsWithPrices(
+			state,
+			siteId,
+			variantProductSlugs,
+			0,
+			jetpackCouponDiscountMap
+		);
 	} );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
@@ -203,8 +212,14 @@ function isVariantAllowed(
 }
 
 function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompared } ) {
-	const currentPrice = variant.priceFinal || variant.priceFull;
-	const isDiscounted = currentPrice !== variant.priceFullBeforeDiscount;
+	const currentPrice =
+		variant.introductoryOfferPrice !== null
+			? variant.introductoryOfferPrice
+			: variant.priceFinal || variant.priceFull;
+	// extremely low "discounts" are possible if the price of the longer term has been rounded
+	// if they cannot be rounded to at least a percentage point we should not show them
+	const isDiscounted =
+		Math.floor( 100 - ( currentPrice / variant.priceFullBeforeDiscount ) * 100 ) > 0;
 	return (
 		<Fragment>
 			{ isDiscounted && <VariantPriceDiscount variant={ variant } /> }
@@ -220,11 +235,13 @@ function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompare
 
 function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAndCompared } ) {
 	const translate = useTranslate();
-	const discountPercentage = Math.round(
-		100 - ( variant.priceFinal / variant.priceFullBeforeDiscount ) * 100
+	const maybeFinalPrice =
+		variant.introductoryOfferPrice !== null ? variant.introductoryOfferPrice : variant.priceFinal;
+	const discountPercentage = Math.floor(
+		100 - ( maybeFinalPrice / variant.priceFullBeforeDiscount ) * 100
 	);
 	let message = '';
-	if ( variant.isIntroductoryOfferApplied ) {
+	if ( variant.introductoryOfferPrice ) {
 		message = String(
 			translate( 'Eligible orders save %(percent)s%%', {
 				args: {

@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React from 'react';
+import { isBlankCanvasDesign } from '../..';
 import type { Design } from '../../types';
 import './style.scss';
 
@@ -28,10 +28,10 @@ const FeaturedPicksButtons: React.FC< Props > = ( { className, designs, onSelect
 					isSecondary
 					onClick={ () => onSelect( design ) }
 				>
-					{
-						/* translators: %s is the title of design */
-						sprintf( __( 'Use %s' ), design.title )
-					}
+					{ isBlankCanvasDesign( design )
+						? __( 'Use a blank theme' )
+						: /* translators: %s is the title of design */
+						  sprintf( __( 'Use %s' ), design.title ) }
 				</Button>
 			) ) }
 		</div>

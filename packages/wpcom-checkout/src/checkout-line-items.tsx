@@ -13,7 +13,14 @@ import {
 	isJetpackProductSlug,
 	isTitanMail,
 } from '@automattic/calypso-products';
-import { CheckoutModal, FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
+import {
+	CheckoutModal,
+	FormStatus,
+	useFormStatus,
+	Button,
+	Theme,
+	LineItem as LineItemType,
+} from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -21,7 +28,8 @@ import { getSublabel, getLabel } from './checkout-labels';
 import { getIntroductoryOfferIntervalDisplay } from './get-introductory-offer-interval-display';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
-import type { Theme, LineItem as LineItemType } from '@automattic/composite-checkout';
+import { getPartnerCoupon } from './partner-coupon';
+import IonosLogo from './partner-logo-ionos';
 import type {
 	GSuiteProductUser,
 	ResponseCart,
@@ -70,6 +78,24 @@ export const LineItem = styled( WPLineItem )< {
 
 	.checkout-line-item__price {
 		position: relative;
+	}
+`;
+
+export const CouponLineItem = styled( WPCouponLineItem )< {
+	theme?: Theme;
+} >`
+	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
+
+	&[data-partner-coupon='true'] ${ NonProductLineItem } {
+		border-bottom: none;
+	}
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	.jetpack-partner-logo {
+		padding-bottom: 20px;
 	}
 `;
 
@@ -232,6 +258,43 @@ function WPNonProductLineItem( {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
+function WPCouponLineItem( {
+	lineItem,
+	className,
+	isSummary,
+	hasDeleteButton,
+	removeProductFromCart,
+	createUserAndSiteBeforeTransaction,
+	isPwpoUser,
+	hasPartnerCoupon,
+}: {
+	lineItem: LineItemType;
+	className?: string | null;
+	isSummary?: boolean;
+	hasDeleteButton?: boolean;
+	removeProductFromCart?: () => void;
+	createUserAndSiteBeforeTransaction?: boolean;
+	isPwpoUser?: boolean;
+	hasPartnerCoupon?: boolean;
+} ): JSX.Element {
+	return (
+		<div
+			className={ joinClasses( [ className, 'coupon-line-item' ] ) }
+			data-partner-coupon={ !! hasPartnerCoupon }
+		>
+			<NonProductLineItem
+				lineItem={ lineItem }
+				isSummary={ isSummary }
+				hasDeleteButton={ hasDeleteButton }
+				removeProductFromCart={ removeProductFromCart }
+				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+				isPwpoUser={ isPwpoUser }
+			/>
+			{ !! hasPartnerCoupon && <PartnerLogo /> }
+		</div>
+	);
+}
+
 function EmailMeta( {
 	product,
 	isRenewal,
@@ -309,28 +372,33 @@ interface ModalCopy {
 function returnModalCopyForProduct(
 	product: ResponseCartProduct,
 	translate: ReturnType< typeof useTranslate >,
-	hasDomainsInCart: boolean,
+	hasBundledDomainInCart: boolean,
+	hasMarketplaceProductsInCart: boolean,
 	createUserAndSiteBeforeTransaction: boolean,
 	isPwpoUser: boolean
 ): ModalCopy {
-	const productType = getProductTypeForModalCopy( product, hasDomainsInCart );
-	const isRenewal = isWpComProductRenewal( product );
-	return returnModalCopy(
-		productType,
-		translate,
-		createUserAndSiteBeforeTransaction,
-		isPwpoUser,
-		isRenewal
+	const productType = getProductTypeForModalCopy(
+		product,
+		hasBundledDomainInCart,
+		hasMarketplaceProductsInCart,
+		isPwpoUser
 	);
+	const isRenewal = isWpComProductRenewal( product );
+	return returnModalCopy( productType, translate, createUserAndSiteBeforeTransaction, isRenewal );
 }
 
 function getProductTypeForModalCopy(
 	product: ResponseCartProduct,
-	hasDomainsInCart: boolean
+	hasBundledDomainInCart: boolean,
+	hasMarketplaceProductsInCart: boolean,
+	isPwpoUser: boolean
 ): string {
-	if ( isPlan( product ) ) {
-		if ( hasDomainsInCart ) {
-			return 'plan with dependencies';
+	if ( isWpComPlan( product.product_slug ) ) {
+		if ( hasMarketplaceProductsInCart ) {
+			return 'plan with marketplace dependencies';
+		}
+		if ( hasBundledDomainInCart && ! isPwpoUser ) {
+			return 'plan with domain dependencies';
 		}
 		return 'plan';
 	}
@@ -346,11 +414,30 @@ function returnModalCopy(
 	productType: string,
 	translate: ReturnType< typeof useTranslate >,
 	createUserAndSiteBeforeTransaction: boolean,
-	isPwpoUser: boolean,
 	isRenewal = false
 ): ModalCopy {
 	switch ( productType ) {
-		case 'plan with dependencies': {
+		case 'plan with marketplace dependencies':
+			if ( isRenewal ) {
+				return {
+					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
+					description: String(
+						translate(
+							"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your plan in the cart, and your plan will keep its current expiry date."
+						)
+					),
+				};
+			}
+
+			return {
+				title: String( translate( 'You are about to remove your plan from the cart' ) ),
+				description: String(
+					translate(
+						"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your new plan in the cart, and your site will continue to run its current plan."
+					)
+				),
+			};
+		case 'plan with domain dependencies': {
 			if ( isRenewal ) {
 				return {
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
@@ -372,13 +459,9 @@ function returnModalCopy(
 				);
 			} else {
 				description = String(
-					isPwpoUser
-						? translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
-						  )
-						: translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. Since your other product(s) depend on your plan to be purchased, they will also be removed from the cart and we will take you back to your site.'
-						  )
+					translate(
+						"Since some of your other product(s) depend on your plan to be purchased, they will also be removed from the cart. When you press Continue, we'll remove them along with your new plan in the cart, and your site will continue to run its current plan."
+					)
 				);
 			}
 			return { title, description };
@@ -389,7 +472,7 @@ function returnModalCopy(
 					title: String( translate( 'You are about to remove your plan renewal from the cart' ) ),
 					description: String(
 						translate(
-							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date. We will then take you back to your site.'
+							'When you press Continue, we will remove your plan renewal from the cart and your plan will keep its current expiry date.'
 						)
 					),
 				};
@@ -401,7 +484,7 @@ function returnModalCopy(
 					createUserAndSiteBeforeTransaction
 						? translate( 'When you press Continue, we will remove your plan from the cart.' )
 						: translate(
-								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan. We will then take you back to your site.'
+								'When you press Continue, we will remove your plan from the cart and your site will continue to run with its current plan.'
 						  )
 				),
 			};
@@ -531,8 +614,8 @@ function LineItemSublabelAndPrice( {
 			return (
 				<>
 					{ translate(
-						'Monthly subscription: %(itemPrice)s x %(members)s active member',
-						'Monthly subscription: %(itemPrice)s x %(members)s active members',
+						'Monthly subscription: %(itemPrice)s x %(members)s member',
+						'Monthly subscription: %(itemPrice)s x %(members)s members',
 						p2Options
 					) }
 				</>
@@ -586,7 +669,7 @@ function LineItemSublabelAndPrice( {
 						billingInterval,
 					},
 					comment:
-						"Product description and billing interval (already translated) separated by a colon (e.g. 'Productivity Tools and Mailboxes: billed annually')",
+						"Product description and billing interval (already translated) separated by a colon (e.g. 'Mailboxes and Productivity Tools: billed annually')",
 				} ) }
 			</>
 		);
@@ -687,6 +770,21 @@ function IntroductoryOfferCallout( {
 	return <DiscountCallout>{ text }</DiscountCallout>;
 }
 
+function PartnerLogo( { className }: { className?: string } ): JSX.Element | null {
+	const translate = useTranslate();
+
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return (
+		<LineItemMeta className={ joinClasses( [ className, 'jetpack-partner-logo' ] ) }>
+			<div>{ translate( 'Included in your IONOS plan' ) }</div>
+			<div className={ 'checkout-line-item__partner-logo-image' }>
+				<IonosLogo />
+			</div>
+		</LineItemMeta>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
 function DomainDiscountCallout( {
 	product,
 }: {
@@ -768,8 +866,13 @@ function WPLineItem( {
 } ): JSX.Element {
 	const id = product.uuid;
 	const translate = useTranslate();
-	const hasDomainsInCart = responseCart.products.some(
-		( product ) => product.is_domain_registration || product.product_slug === 'domain_transfer'
+	const hasBundledDomainsInCart = responseCart.products.some(
+		( product ) =>
+			( product.is_domain_registration || product.product_slug === 'domain_transfer' ) &&
+			product.is_bundled
+	);
+	const hasMarketplaceProductsInCart = responseCart.products.some(
+		( product ) => product.extra.is_marketplace_product === true
 	);
 	const { formStatus } = useFormStatus();
 	const itemSpanId = `checkout-line-item-${ id }`;
@@ -777,7 +880,8 @@ function WPLineItem( {
 	const modalCopy = returnModalCopyForProduct(
 		product,
 		translate,
-		hasDomainsInCart,
+		hasBundledDomainsInCart,
+		hasMarketplaceProductsInCart,
 		createUserAndSiteBeforeTransaction || false,
 		isPwpoUser || false
 	);
@@ -787,7 +891,6 @@ function WPLineItem( {
 
 	const productSlug = product?.product_slug;
 
-	const sublabel = getSublabel( product );
 	const label = getLabel( product );
 
 	const originalAmountDisplay = product.item_original_subtotal_display;
@@ -802,6 +905,11 @@ function WPLineItem( {
 		isGoogleWorkspaceProductSlug( productSlug ) ||
 		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
 		isTitanMail( product );
+
+	const containsPartnerCoupon = getPartnerCoupon( {
+		coupon: responseCart.coupon,
+		products: [ product ],
+	} );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -864,13 +972,20 @@ function WPLineItem( {
 				</>
 			) }
 
-			{ sublabel && (
+			{ product && ! containsPartnerCoupon && (
 				<LineItemMeta>
 					<LineItemSublabelAndPrice product={ product } />
 					<DomainDiscountCallout product={ product } />
 					<FirstTermDiscountCallout product={ product } />
 					<CouponDiscountCallout product={ product } />
 					<IntroductoryOfferCallout product={ product } />
+				</LineItemMeta>
+			) }
+
+			{ product && containsPartnerCoupon && (
+				<LineItemMeta>
+					<LineItemSublabelAndPrice product={ product } />
+					<CouponDiscountCallout product={ product } />
 				</LineItemMeta>
 			) }
 

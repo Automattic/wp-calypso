@@ -38,6 +38,12 @@ export function getSiteSettingsSaveRequestStatus( state, siteId ) {
 /**
  * @typedef {{
  blog_public?: number;
+ woocommerce_store_address?: string;
+ woocommerce_store_address_2?: string;
+ woocommerce_store_city?: string;
+ woocommerce_store_postcode?: string;
+ woocommerce_default_country?: string;
+ woocommerce_onboarding_profile?: array;
  }} SiteSettingsItem
  */
 

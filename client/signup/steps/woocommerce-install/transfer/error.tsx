@@ -1,32 +1,30 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement } from 'react';
-import WarningCard from 'calypso/components/warning-card';
+import { useSelector } from 'react-redux';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SupportCard from '../components/support-card';
 import StepContent from './step-content';
 
 const WarningsOrHoldsSection = styled.div`
-	margin-bottom: 40px;
+	margin-top: 40px;
 `;
 
-export default function Error( { message }: { message: string } ): ReactElement {
+export default function Error(): ReactElement {
 	const { __ } = useI18n();
-	// todo: both messages sort of say the same thing, refer to figma and fix
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+
 	return (
 		<StepContent
 			title={ __( "We've hit a snag" ) }
 			subtitle={ __(
-				'It looks like something went wrong while setting up your store. If this is unexpected, please contact support so that we can help you out.'
+				'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
 			) }
 		>
 			<WarningsOrHoldsSection>
-				<WarningCard
-					message={
-						message ||
-						__(
-							'There is an error that is stopping us from being able to install this product, please contact support.'
-						)
-					}
-				/>
+				<SupportCard backUrl={ `/woocommerce-installation/${ domain }` } />
 			</WarningsOrHoldsSection>
 		</StepContent>
 	);

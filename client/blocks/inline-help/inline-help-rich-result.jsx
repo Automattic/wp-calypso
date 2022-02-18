@@ -1,10 +1,10 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { withUrlSearchQueryState } from 'calypso/lib/url-search-query-state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
@@ -77,6 +77,7 @@ class InlineHelpRichResult extends Component {
 			// the user to the localized support blog, if one exists.
 			event.preventDefault();
 			this.props.openSupportArticleDialog( { postId, postUrl: link } );
+			this.props.updateUrlSearchQuery( postId );
 		}
 		// falls back on href
 	};
@@ -85,11 +86,11 @@ class InlineHelpRichResult extends Component {
 		const { type, title, description, link } = this.props.result;
 		const buttonLabel = this.getButtonLabel( type );
 		const buttonIcon = this.buttonIcons[ type ];
-		const classes = classNames( 'inline-help__richresult__title' );
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				<h2 className={ classes } tabIndex="-1">
+				<h2 className="inline-help__richresult__title" tabIndex="-1">
 					{ preventWidows( decodeEntities( title ) ) }
 				</h2>
 				<p>{ preventWidows( decodeEntities( description ) ) }</p>
@@ -100,6 +101,7 @@ class InlineHelpRichResult extends Component {
 				</Button>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
@@ -109,4 +111,7 @@ const mapDispatchToProps = {
 	openSupportArticleDialog,
 };
 
-export default connect( null, mapDispatchToProps )( localize( InlineHelpRichResult ) );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( withUrlSearchQueryState( InlineHelpRichResult, 'support-article' ) ) );

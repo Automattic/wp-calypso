@@ -140,6 +140,12 @@ function shoppingCartReducer(
 				loadingErrorType: undefined,
 			};
 
+		case 'CLEAR_MESSAGES':
+			return {
+				...state,
+				responseCart: { ...state.responseCart, messages: { errors: [], success: [] } },
+			};
+
 		case 'CLEAR_QUEUED_ACTIONS':
 			return { ...state, queuedActions: [] };
 

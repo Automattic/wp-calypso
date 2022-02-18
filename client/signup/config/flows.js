@@ -85,6 +85,13 @@ function getLaunchDestination( dependencies ) {
 	return `/home/${ dependencies.siteSlug }`;
 }
 
+function getDomainSignupFlowDestination( { domainItem, cartItem, siteId } ) {
+	if ( domainItem && cartItem ) {
+		return addQueryArgs( { siteId }, '/start/setup-site' );
+	}
+	return getThankYouNoSiteDestination();
+}
+
 function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
@@ -98,7 +105,7 @@ function getEditorDestination( dependencies ) {
 }
 
 function getDestinationFromIntent( dependencies ) {
-	const { intent, startingPoint, siteSlug } = dependencies;
+	const { intent, storeType, startingPoint, siteSlug, isFSEActive } = dependencies;
 
 	// If the user skips starting point, redirect them to My Home
 	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
@@ -107,6 +114,24 @@ function getDestinationFromIntent( dependencies ) {
 		}
 
 		return `/post/${ siteSlug }`;
+	}
+
+	if ( intent === 'sell' && storeType === 'woocommerce' ) {
+		return addQueryArgs(
+			{
+				back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
+				siteSlug: siteSlug,
+			},
+			`/start/woocommerce-install`
+		);
+	}
+
+	if ( ! isFSEActive && intent === 'sell' ) {
+		return `/page/${ dependencies.siteSlug }/home`;
+	}
+
+	if ( isFSEActive && intent !== 'write' ) {
+		return `/site-editor/${ dependencies.siteSlug }`;
 	}
 
 	return getChecklistThemeDestination( dependencies );
@@ -122,6 +147,7 @@ const flows = generateFlows( {
 	getSignupDestination,
 	getLaunchDestination,
 	getThankYouNoSiteDestination,
+	getDomainSignupFlowDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
 	getDestinationFromIntent,
@@ -226,6 +252,10 @@ const Flows = {
 	 */
 	excludeStep( step ) {
 		step && Flows.excludedSteps.indexOf( step ) === -1 && Flows.excludedSteps.push( step );
+	},
+
+	excludeSteps( steps ) {
+		steps.forEach( ( step ) => Flows.excludeStep( step ) );
 	},
 
 	filterExcludedSteps( flow ) {

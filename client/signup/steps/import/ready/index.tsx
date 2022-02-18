@@ -3,7 +3,7 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
-import { UrlData, GoToStep, RecordTracksEvent } from '../types';
+import { UrlData, GoToStep, RecordTracksEvent, ImporterPlatform } from '../types';
 import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
@@ -20,7 +20,7 @@ const trackEventParams = {
 interface ReadyPreviewProps {
 	urlData: UrlData;
 	siteSlug: string;
-	goToImporterPage: ( platform: string ) => void;
+	goToImporterPage: ( platform: ImporterPlatform ) => void;
 	recordTracksEvent: RecordTracksEvent;
 }
 
@@ -160,8 +160,8 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 };
 
 interface ReadyProps {
-	platform: string;
-	goToImporterPage: ( platform: string ) => void;
+	platform: ImporterPlatform;
+	goToImporterPage: ( platform: ImporterPlatform ) => void;
 	recordTracksEvent: RecordTracksEvent;
 }
 

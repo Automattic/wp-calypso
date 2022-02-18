@@ -14,7 +14,7 @@ import PluginBrowser from './plugins-browser';
 /**
  * Module variables
  */
-const allowedCategoryNames = [ 'new', 'popular', 'featured' ];
+const allowedCategoryNames = [ 'new', 'popular', 'featured', 'paid' ];
 
 let lastPluginsListVisited;
 let lastPluginsQuerystring;

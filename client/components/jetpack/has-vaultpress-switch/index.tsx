@@ -25,7 +25,7 @@ const productStateImpliesVaultPress = ( productState?: { state?: string; reason?
 	return productState.reason && vaultPressReasons.includes( productState.reason );
 };
 
-const isInitialized = ( productState: { state?: string } | null ) =>
+const isInitialized = ( productState: { state?: string } | null | undefined ) =>
 	productState && productState.state !== 'uninitialized';
 
 const HasVaultPressSwitch: React.FC< Props > = ( {
@@ -35,7 +35,7 @@ const HasVaultPressSwitch: React.FC< Props > = ( {
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) );
-	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
+	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ?? 0 ) );
 
 	const hasVaultPress = useCallback(
 		() => [ rewindState, scanState ].some( productStateImpliesVaultPress ),
@@ -57,7 +57,7 @@ const HasVaultPressSwitch: React.FC< Props > = ( {
 			queryComponent={
 				<>
 					<QueryRewindState siteId={ siteId } />
-					<QueryJetpackScan siteId={ siteId } />
+					<QueryJetpackScan siteId={ siteId ?? 0 } />
 				</>
 			}
 			loadingComponent={ loadingComponent }

@@ -7,6 +7,8 @@ import type {
 	RequestCartProduct,
 	ResponseCart,
 	ResponseCartProduct,
+	GetCart,
+	CartKey,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:cart-functions' );
@@ -29,10 +31,7 @@ function convertResponseCartProductToRequestCartProduct(
 
 export function convertResponseCartToRequestCart( {
 	products,
-	currency,
-	locale,
 	coupon,
-	is_coupon_applied,
 	tax,
 }: TempResponseCart ): RequestCart {
 	let requestCartTax = null;
@@ -47,13 +46,9 @@ export function convertResponseCartToRequestCart( {
 	}
 	return {
 		products: products.map( convertResponseCartProductToRequestCartProduct ),
-		currency,
-		locale,
 		coupon,
-		is_coupon_applied,
 		temporary: false,
 		tax: requestCartTax,
-		extra: '', // This property doesn't appear to be used for anything
 	};
 }
 
@@ -131,7 +126,7 @@ export function doesCartLocationDifferFromResponseCartLocation(
 		country_code: oldCountryCode = '',
 		postal_code: oldPostalCode = '',
 		subdivision_code: oldSubdivisionCode = '',
-	} = cart.tax?.location;
+	} = cart.tax?.location ?? {};
 
 	if ( location.countryCode !== undefined && newCountryCode !== oldCountryCode ) {
 		return true;
@@ -278,4 +273,16 @@ export function doesResponseCartContainProductMatching(
 			} )
 		);
 	} );
+}
+
+export async function findCartKeyFromSiteSlug(
+	slug: string,
+	getCart: GetCart
+): Promise< CartKey > {
+	try {
+		const cart = await getCart( slug as CartKey );
+		return cart.cart_key;
+	} catch {
+		return 'no-site';
+	}
 }

@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/shopping-cart",
 	"version": "2.0.0",
-	"description": "A library to use the WordPress.com shopping cart",
+	"description": "A library to use the WordPress.com shopping cart.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"types": "dist/types/index.d.ts",
@@ -32,12 +32,10 @@
 	},
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/shopping-cart#readme",
 	"dependencies": {
-		"debug": "^4.1.1"
+		"debug": "^4.3.3"
 	},
 	"peerDependencies": {
 		"react": "^17.0.2",
@@ -47,6 +45,6 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^5.16.1",
 		"@testing-library/react": "^12.1.2",
-		"typescript": "^4.5.4"
+		"typescript": "^4.5.5"
 	}
 }

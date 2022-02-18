@@ -2,15 +2,11 @@ import { Card, Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, TranslateResult } from 'i18n-calypso';
 import { map, pickBy } from 'lodash';
-import { Component, MouseEvent } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-settings-query';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
-import { isFullSiteEditingTheme } from 'calypso/my-sites/themes/is-full-site-editing-theme';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { Theme } from 'calypso/types';
 import { trackClick } from '../helpers';
@@ -29,7 +25,6 @@ interface Option {
 }
 
 interface CurrentThemeProps {
-	blockEditorSettings: BlockEditorSettings;
 	currentTheme: Theme | null;
 	currentThemeId: string | null;
 	name: string;
@@ -43,12 +38,15 @@ interface CurrentThemeProps {
  * related actions.
  */
 class CurrentTheme extends Component< CurrentThemeProps > {
-	trackClick = ( event: MouseEvent< HTMLButtonElement > ) => trackClick( 'current theme', event );
+	trackClick = ( eventName: string ) => () => {
+		trackClick( 'current theme', eventName );
+	};
 
 	render() {
-		const { currentTheme, currentThemeId, blockEditorSettings, siteId, translate } = this.props;
+		const { currentTheme, currentThemeId, siteId, translate } = this.props;
 		const placeholderText = <span className="current-theme__placeholder">loading...</span>;
 		const text = currentTheme && currentTheme.name ? currentTheme.name : placeholderText;
+		const description = currentTheme && currentTheme.description ? currentTheme.description : '';
 
 		const options = pickBy(
 			this.props.options,
@@ -59,8 +57,6 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 		const showScreenshot = currentTheme && currentTheme.screenshot;
 		// Some themes have no screenshot, so only show placeholder until details loaded
 		const showScreenshotPlaceholder = ! currentTheme;
-		const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
-		const showBetaBadge = isFullSiteEditingTheme( currentTheme ) && isFSEEligible;
 
 		return (
 			<Card className="current-theme">
@@ -72,7 +68,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 							{ showScreenshotPlaceholder && <div className="current-theme__img-placeholder" /> }
 							{ showScreenshot && (
 								<img
-									src={ currentTheme.screenshot + '?w=150' }
+									src={ currentTheme.screenshot + '&w=420' }
 									className="current-theme__img"
 									alt=""
 								/>
@@ -80,11 +76,6 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 							<div className="current-theme__description">
 								<div className="current-theme__title-wrapper">
 									<div className="current-theme__badge-wrapper">
-										{ showBetaBadge && (
-											<Badge type="warning-clear" className="current-theme__badge-beta">
-												{ translate( 'Beta' ) }
-											</Badge>
-										) }
 										<span className="current-theme__label">
 											{ currentTheme && currentTheme.name && translate( 'Current Theme' ) }
 										</span>
@@ -92,7 +83,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 									<span className="current-theme__name">{ text }</span>
 								</div>
 								<div className="current-theme__content-wrapper">
-									<p>
+									<p className="current-theme__content-learn-more">
 										{ translate( 'This is the active theme on your site.' ) }{ ' ' }
 										<InlineSupportLink supportContext="themes-switch">
 											{ translate( 'Learn more.' ) }
@@ -113,7 +104,7 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 													href={
 														currentThemeId && option.getUrl ? option.getUrl( currentThemeId ) : ''
 													}
-													onClick={ this.trackClick }
+													onClick={ this.trackClick( name ) }
 												>
 													{ option.icon && <Gridicon icon={ option.icon } size={ 18 } /> }
 													{ option.label }
@@ -124,6 +115,34 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 								</div>
 							</div>
 						</div>
+						<div className="current-theme__more-info">
+							<p className="current-theme__theme-description">
+								<span>{ description }</span>
+							</p>
+							{ options?.info && options?.info?.getUrl && (
+								<a
+									className="current-theme__theme-description-link"
+									href={ options.info.getUrl( currentThemeId ) }
+									onClick={ this.trackClick( 'read more link' ) }
+								>
+									{ translate( 'Read more' ) }
+								</a>
+							) }
+
+							{ options?.customize && options?.customize?.getUrl && (
+								<a
+									className="current-theme__theme-customize"
+									href={ options.customize.getUrl( currentThemeId ) }
+									onClick={ this.trackClick( 'customize theme link' ) }
+								>
+									{ options?.customize?.icon && (
+										<Gridicon icon={ options.customize.icon } size={ 24 } />
+									) }
+									<span>{ translate( 'Customize theme' ) }</span>
+									<Gridicon icon="chevron-right" size={ 24 } />
+								</a>
+							) }
+						</div>
 					</div>
 				</div>
 			</Card>
@@ -132,7 +151,6 @@ class CurrentTheme extends Component< CurrentThemeProps > {
 }
 
 const ConnectedCurrentTheme = connectOptions( localize( CurrentTheme ) );
-const CurrentThemeWithEditorSettings = withBlockEditorSettings( ConnectedCurrentTheme );
 
 const CurrentThemeWithOptions = ( {
 	siteId,
@@ -143,7 +161,7 @@ const CurrentThemeWithOptions = ( {
 	currentThemeId: string | null;
 	siteId: number;
 } ) => (
-	<CurrentThemeWithEditorSettings
+	<ConnectedCurrentTheme
 		currentTheme={ currentTheme }
 		currentThemeId={ currentThemeId }
 		siteId={ siteId }

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	isJetpackPlan,
 	isJetpackProduct,
@@ -12,6 +11,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import PurchaseItem from '../purchase-item';
+import { isJetpackTemporarySitePurchase } from '../utils';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
@@ -76,9 +76,7 @@ export default function PurchasesSite(
 						isDisconnectedSite={ ! site }
 						purchase={ purchase }
 						isJetpack={ isJetpackPlan( purchase ) || isJetpackProduct( purchase ) }
-						isJetpackTemporarySite={
-							purchase.domain === 'siteless.jetpack.com' && isEnabled( 'jetpack/siteless-checkout' )
-						}
+						isJetpackTemporarySite={ isJetpackTemporarySitePurchase( purchase.domain ) }
 						site={ site }
 						showSite={ showSite }
 						name={ name }

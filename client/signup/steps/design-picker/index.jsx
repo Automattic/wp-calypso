@@ -1,9 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import DesignPicker, {
 	FeaturedPicksButtons,
+	PremiumBadge,
 	isBlankCanvasDesign,
 	getDesignUrl,
 	useCategorization,
+	useThemeDesignsQuery,
 } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -16,23 +20,40 @@ import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
+import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
+import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getRecommendedThemes as fetchRecommendedThemes } from 'calypso/state/themes/actions';
-import { getRecommendedThemes } from 'calypso/state/themes/selectors';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import DIFMThemes from '../difm-design-picker/themes';
+import LetUsChoose from './let-us-choose';
 import PreviewToolbar from './preview-toolbar';
 import './style.scss';
 
-// Ideally this data should come from the themes API, maybe by a tag that's applied to
-// themes? e.g. `link-in-bio` or `no-fold`
-const STATIC_PREVIEWS = [ 'bantry', 'sigler', 'miller', 'pollard', 'paxton', 'jones', 'baker' ];
-
 export default function DesignPickerStep( props ) {
-	const { flowName, stepName, isReskinned, queryParams, showDesignPickerCategories } = props;
+	const {
+		flowName,
+		stepName,
+		isReskinned,
+		queryParams,
+		showDesignPickerCategories,
+		showLetUsChoose,
+		hideFullScreenPreview,
+		hideDesignTitle,
+		signupDependencies: dependencies,
+		sitePlanSlug,
+	} = props;
+
+	const isPremiumThemeAvailable = useMemo(
+		() => planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
+		[ sitePlanSlug ]
+	);
+
+	const userLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
@@ -43,21 +64,35 @@ export default function DesignPickerStep( props ) {
 
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
+	const tier =
+		isPremiumThemeAvailable || isEnabled( 'signup/design-picker-premium-themes-checkout' )
+			? 'all'
+			: 'free';
 
-	const apiThemes = useSelector( ( state ) =>
-		getRecommendedThemes( state, 'auto-loading-homepage' )
+	// Limit themes to those that support the Site editor, if site is fse eligible
+	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
+	const {
+		isLoading: blockEditorSettingsAreLoading,
+		data: blockEditorSettings,
+	} = useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
+	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
+	const themeFilters = isFSEEligible
+		? 'auto-loading-homepage,block-templates'
+		: 'auto-loading-homepage';
+
+	const { data: apiThemes = [] } = useThemeDesignsQuery(
+		{ filter: themeFilters, tier },
+		// Wait until block editor settings have loaded to load themes
+		{ enabled: ! props.useDIFMThemes && ! blockEditorSettingsAreLoading }
 	);
 
-	const themesToBeTransformed = props.useDIFMThemes ? DIFMThemes : apiThemes;
+	const allThemes = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
 	useEffect(
 		() => {
 			dispatch( saveSignupStep( { stepName: props.stepName } ) );
-			if ( ! themesToBeTransformed.length ) {
-				dispatch( fetchRecommendedThemes( 'auto-loading-homepage' ) );
-			}
 		},
-		// Ignoring dependencies because we only want these actions to run on first mount
+		// Ignoring dependencies because we only want to save the step on first mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[]
 	);
@@ -79,53 +114,51 @@ export default function DesignPickerStep( props ) {
 		};
 	}, [ props.stepSectionName ] );
 
-	const userLoggedIn = useSelector( isUserLoggedIn );
-
 	const { designs, featuredPicksDesigns } = useMemo( () => {
-		// TODO fetching and filtering code should be pulled to a shared place that's usable by both
-		// `/start` and `/new` onboarding flows. Or perhaps fetching should be done within the <DesignPicker>
-		// component itself. The `/new` environment needs helpers for making authenticated requests to
-		// the theme API before we can do this.
-		const allThemes = themesToBeTransformed.map( ( { id, name, taxonomies } ) => {
-			// Designs use a "featured" term in the theme_picks taxonomy. For example: Blank Canvas
-			const isFeaturedPicks = !! taxonomies?.theme_picks?.find(
-				( { slug } ) => slug === 'featured'
-			);
-
-			return {
-				categories: taxonomies?.theme_subject ?? [],
-				// Designs in order to appear prominently in theme galleries.
-				showFirst: isFeaturedPicks,
-				features: [],
-				is_premium: false,
-				// Designs in order to appear at the below of the theme categories.
-				is_featured_picks: isFeaturedPicks,
-				slug: id,
-				template: id,
-				theme: id,
-				title: name,
-				...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
-			};
-		} );
-
 		return {
 			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
 			featuredPicksDesigns: allThemes.filter( ( theme ) => theme.is_featured_picks ),
 		};
-	}, [ themesToBeTransformed ] );
+	}, [ allThemes ] );
+
+	const getEventPropsByDesign = ( design ) => ( {
+		theme: design?.stylesheet ?? `pub/${ design.theme }`,
+		template: design.template,
+		is_premium: design?.is_premium,
+		flow: flowName,
+		intent: dependencies.intent,
+	} );
 
 	// Update the selected design when the section changes
 	useEffect( () => {
 		setSelectedDesign( designs.find( ( { theme } ) => theme === props.stepSectionName ) );
 	}, [ designs, props.stepSectionName, setSelectedDesign ] );
 
-	const categorization = useCategorization( designs, {
-		showAllFilter: props.showDesignPickerCategoriesAllFilter,
-		defaultSelection: props.signupDependencies.intent === 'write' ? 'blog' : null,
-		sort: sortBlogToTop,
-	} );
+	const getCategorizationOptionsForStep = () => {
+		const result = {
+			showAllFilter: props.showDesignPickerCategoriesAllFilter,
+		};
+		const intent = props.signupDependencies.intent;
+		switch ( intent ) {
+			case 'write':
+				result.defaultSelection = 'blog';
+				result.sort = sortBlogToTop;
+				break;
+			case 'sell':
+				// @TODO: This should be 'ecommerce' once we have some themes with that slug.
+				result.defaultSelection = 'business';
+				result.sort = sortEcommerceToTop;
+				break;
+			default:
+				result.defaultSelection = null;
+				result.sort = sortBlogToTop;
+				break;
+		}
+		return result;
+	};
+	const categorization = useCategorization( designs, getCategorizationOptionsForStep() );
 
-	function pickDesign( _selectedDesign ) {
+	function pickDesign( _selectedDesign, additionalDependencies = {} ) {
 		// Design picker preview will submit the defaultDependencies via next button,
 		// So only do this when the user picks the design directly
 		dispatch(
@@ -136,6 +169,7 @@ export default function DesignPickerStep( props ) {
 				{
 					selectedDesign: _selectedDesign,
 					selectedSiteCategory: categorization.selection,
+					...additionalDependencies,
 				}
 			)
 		);
@@ -146,55 +180,78 @@ export default function DesignPickerStep( props ) {
 	function previewDesign( _selectedDesign ) {
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
 
-		recordTracksEvent( 'calypso_signup_design_preview_select', {
-			theme: `pub/${ _selectedDesign.theme }`,
-			template: _selectedDesign.template,
-			flow: props.flowName,
-			intent: props.signupDependencies.intent,
-		} );
+		recordTracksEvent(
+			'calypso_signup_design_preview_select',
+			getEventPropsByDesign( _selectedDesign )
+		);
+
 		page(
 			getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale, queryParams )
 		);
 	}
 
-	function submitDesign( _selectedDesign = selectedDesign ) {
-		recordTracksEvent( 'calypso_signup_select_design', {
-			theme: `pub/${ _selectedDesign?.theme }`,
-			template: _selectedDesign?.template,
-			flow: props.flowName,
-			intent: props.signupDependencies.intent,
-		} );
+	function upgradePlan() {
+		openCheckoutModal( [ PLAN_PREMIUM ] );
+	}
 
+	function submitDesign( _selectedDesign = selectedDesign ) {
+		recordTracksEvent( 'calypso_signup_select_design', getEventPropsByDesign( _selectedDesign ) );
 		props.goToNextStep();
+	}
+
+	function renderCheckoutModal() {
+		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
+			return null;
+		}
+
+		return <AsyncCheckoutModal />;
 	}
 
 	function renderDesignPicker() {
 		return (
-			<DesignPicker
-				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
-				theme={ isReskinned ? 'light' : 'dark' }
-				locale={ translate.localeSlug }
-				onSelect={ pickDesign }
-				onPreview={ previewDesign }
-				className={ classnames( {
-					'design-picker-step__has-categories': showDesignPickerCategories,
-				} ) }
-				highResThumbnails
-				categorization={ showDesignPickerCategories ? categorization : undefined }
-				categoriesHeading={
-					<FormattedHeader
-						id={ 'step-header' }
-						headerText={ headerText() }
-						subHeaderText={ subHeaderText() }
-						align="left"
-					/>
-				}
-				categoriesFooter={
-					useFeaturedPicksButtons && (
-						<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
-					)
-				}
-			/>
+			<>
+				<DesignPicker
+					designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+					theme={ isReskinned ? 'light' : 'dark' }
+					locale={ translate.localeSlug }
+					onSelect={ pickDesign }
+					onPreview={ previewDesign }
+					onUpgrade={ upgradePlan }
+					className={ classnames( {
+						'design-picker-step__has-categories': showDesignPickerCategories,
+					} ) }
+					highResThumbnails
+					premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
+					categorization={ showDesignPickerCategories ? categorization : undefined }
+					recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
+					categoriesHeading={
+						<FormattedHeader
+							id={ 'step-header' }
+							headerText={ headerText() }
+							subHeaderText={ subHeaderText() }
+							align="left"
+						/>
+					}
+					categoriesFooter={ renderCategoriesFooter() }
+					hideFullScreenPreview={ hideFullScreenPreview }
+					hideDesignTitle={ hideDesignTitle }
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				/>
+				{ renderCheckoutModal() }
+			</>
+		);
+	}
+
+	function renderCategoriesFooter() {
+		return (
+			<>
+				{ useFeaturedPicksButtons && (
+					<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
+				) }
+				{ showLetUsChoose && (
+					<LetUsChoose flowName={ props.flowName } designs={ designs } onSelect={ pickDesign } />
+				) }
+			</>
 		);
 	}
 
@@ -212,20 +269,26 @@ export default function DesignPickerStep( props ) {
 		} );
 
 		return (
-			<WebPreview
-				className="design-picker__web-preview"
-				showPreview
-				isContentOnly
-				showClose={ false }
-				showEdit={ false }
-				externalUrl={ siteSlug }
-				showExternal={ ! hideExternalPreview }
-				previewUrl={ previewUrl }
-				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-					components: { strong: <strong /> },
-				} ) }
-				toolbarComponent={ PreviewToolbar }
-			/>
+			<>
+				<WebPreview
+					className="design-picker__web-preview"
+					showPreview
+					isContentOnly
+					showClose={ false }
+					showEdit={ false }
+					externalUrl={ siteSlug }
+					showExternal={ ! hideExternalPreview }
+					previewUrl={ previewUrl }
+					loadingMessage={ translate(
+						'{{strong}}One moment, please…{{/strong}} loading your site.',
+						{
+							components: { strong: <strong /> },
+						}
+					) }
+					toolbarComponent={ PreviewToolbar }
+				/>
+				{ renderCheckoutModal() }
+			</>
 		);
 	}
 
@@ -274,6 +337,7 @@ export default function DesignPickerStep( props ) {
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const defaultDependencies = { selectedDesign };
 		const locale = ! userLoggedIn ? getLocaleSlug() : '';
+		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 
 		return (
 			<StepWrapper
@@ -286,14 +350,19 @@ export default function DesignPickerStep( props ) {
 				stepContent={ renderDesignPreview() }
 				align={ isMobile ? 'left' : 'center' }
 				hideSkip
-				hideNext={ false }
-				nextLabelText={ translate( 'Start with %(designTitle)s', {
-					args: { designTitle },
-				} ) }
+				hideNext={ shouldUpgrade }
+				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
 				defaultDependencies={ defaultDependencies }
 				backUrl={ getStepUrl( flowName, stepName, '', locale, queryParams ) }
 				goToNextStep={ submitDesign }
 				stepSectionName={ designTitle }
+				customizedActionButtons={
+					shouldUpgrade && (
+						<Button primary borderless={ false } onClick={ upgradePlan }>
+							{ translate( 'Upgrade Plan' ) }
+						</Button>
+					)
+				}
 			/>
 		);
 	}
@@ -336,6 +405,19 @@ function sortBlogToTop( a, b ) {
 	} else if ( a.slug === 'blog' ) {
 		return -1;
 	} else if ( b.slug === 'blog' ) {
+		return 1;
+	}
+	return 0;
+}
+// Ensures Ecommerce category appears at the top of the design category list
+// (directly below the All Themes category).
+// @TODO: This should be 'ecommerce' once we have some themes with that slug.
+function sortEcommerceToTop( a, b ) {
+	if ( a.slug === b.slug ) {
+		return 0;
+	} else if ( a.slug === 'business' ) {
+		return -1;
+	} else if ( b.slug === 'business' ) {
 		return 1;
 	}
 	return 0;

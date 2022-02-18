@@ -1,4 +1,8 @@
-import { isDomainRegistration } from '@automattic/calypso-products';
+import {
+	isDomainRegistration,
+	getMonthlyPlanByYearly,
+	getPlan,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { getCurrencyDefaults } from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
@@ -15,7 +19,11 @@ import {
 	isOneTimePurchase,
 	isSubscription,
 } from 'calypso/lib/purchases';
-import { cancelAndRefundPurchase, cancelPurchase } from 'calypso/lib/purchases/actions';
+import {
+	cancelAndRefundPurchase,
+	cancelPurchase,
+	extendPurchaseWithFreeMonth,
+} from 'calypso/lib/purchases/actions';
 import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
@@ -169,9 +177,13 @@ class CancelPurchaseButton extends Component {
 		);
 	};
 
-	downgradeClick = () => {
+	downgradeClick = ( upsell ) => {
 		const { purchase } = this.props;
-		const downgradePlan = getDowngradePlanFromPurchase( purchase );
+		let downgradePlan = getDowngradePlanFromPurchase( purchase );
+		if ( 'downgrade-monthly' === upsell ) {
+			const monthlyProductSlug = getMonthlyPlanByYearly( purchase.productSlug );
+			downgradePlan = getPlan( monthlyProductSlug );
+		}
 
 		this.setDisabled( true );
 
@@ -197,6 +209,26 @@ class CancelPurchaseButton extends Component {
 				page.redirect( this.props.purchaseListUrl );
 			}
 		);
+	};
+
+	freeMonthOfferClick = async () => {
+		const { purchase } = this.props;
+
+		this.setDisabled( true );
+
+		try {
+			const res = await extendPurchaseWithFreeMonth( purchase.id );
+			if ( res.status === 'completed' ) {
+				this.props.refreshSitePlans( purchase.siteId );
+				this.props.successNotice( res.message, { displayOnNextPage: true } );
+				page.redirect( this.props.purchaseListUrl );
+			}
+		} catch ( err ) {
+			this.props.errorNotice( err.message );
+			this.cancellationFailed();
+		} finally {
+			this.setDisabled( false );
+		}
 	};
 
 	submitCancelAndRefundPurchase = () => {
@@ -233,7 +265,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	render() {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
 		let text;
 		let onClick;
 
@@ -284,7 +316,10 @@ class CancelPurchaseButton extends Component {
 					onClose={ this.closeDialog }
 					onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
 					downgradeClick={ this.downgradeClick }
+					freeMonthOfferClick={ this.freeMonthOfferClick }
 					flowType={ this.getCancellationFlowType() }
+					cancelBundledDomain={ cancelBundledDomain }
+					includedDomainPurchase={ includedDomainPurchase }
 				/>
 			</div>
 		);

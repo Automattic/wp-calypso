@@ -12,6 +12,7 @@ import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
+import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
 import { getSiteSlug, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { Activity } from '../types';
 import downloadIcon from './download-icon.svg';
@@ -44,6 +45,10 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 		getDoesRewindNeedCredentials( state, siteId )
 	);
 
+	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
+
+	const isRestoreDisabled = doesRewindNeedCredentials || isRestoreInProgress;
+
 	return (
 		<>
 			<Button
@@ -63,9 +68,9 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 				className="toolbar__actions-popover"
 			>
 				<Button
-					href={ ! doesRewindNeedCredentials && backupRestorePath( siteSlug, rewindId ) }
+					href={ ! isRestoreDisabled && backupRestorePath( siteSlug, rewindId ) }
 					className="toolbar__restore-button"
-					disabled={ doesRewindNeedCredentials }
+					disabled={ isRestoreDisabled }
 				>
 					{ translate( 'Restore to this point' ) }
 				</Button>
@@ -139,14 +144,16 @@ const ActionsButton: React.FC< OwnProps > = ( { siteId, activity } ) => {
 
 	const isMultisite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	if ( isMultisite ) {
-		return <MultisiteActionsButton siteSlug={ siteSlug } rewindId={ actionableRewindId } />;
+		return (
+			<MultisiteActionsButton siteSlug={ siteSlug ?? '' } rewindId={ actionableRewindId ?? '' } />
+		);
 	}
 
 	return (
 		<SingleSiteActionsButton
 			siteId={ siteId }
-			siteSlug={ siteSlug }
-			rewindId={ actionableRewindId }
+			siteSlug={ siteSlug ?? '' }
+			rewindId={ actionableRewindId ?? '' }
 		/>
 	);
 };

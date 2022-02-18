@@ -10,7 +10,6 @@ export default withStorageKey(
 		state = {
 			postId: null,
 			postUrl: null,
-			isVisible: false,
 			blogId: null,
 		},
 		action
@@ -28,7 +27,6 @@ export default withStorageKey(
 				return {
 					postUrl,
 					postId,
-					isVisible: true,
 					actionLabel,
 					actionUrl,
 					blogId,
@@ -37,7 +35,6 @@ export default withStorageKey(
 			case SUPPORT_ARTICLE_DIALOG_CLOSE:
 				return {
 					...state,
-					isVisible: false,
 				};
 		}
 

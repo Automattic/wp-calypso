@@ -1,7 +1,12 @@
-.scan-upsell__content {
-	padding-top: 40px;
-
-
+.scan-upsell {
+	&__content {
+		padding-top: 40px;
+		display: flex;
+		justify-content: center;
+	}
+	.jetpack-product-card {
+		max-width: 420px;
+	}
 }
 
 .scan-upsell__icon {

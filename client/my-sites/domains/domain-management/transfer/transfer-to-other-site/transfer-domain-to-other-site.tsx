@@ -30,7 +30,7 @@ import type {
 	TransferDomainToOtherSiteProps,
 	TransferDomainToOtherSiteStateProps,
 } from './types';
-
+import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 export class TransferDomainToOtherSite extends Component< TransferDomainToOtherSiteProps > {
@@ -90,8 +90,8 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 					this.props.successNotice( successMessage, { duration: 10000, isPersistent: true } );
 					if ( this.props.isDomainOnly ) {
 						this.props.requestSites();
-						const transferedTo = this.props.sites!.find( ( site ) => site!.ID === targetSite.ID );
-						page( domainManagementList( transferedTo!.slug ) );
+						const transferedTo = this.props.sites.find( ( site ) => site.ID === targetSite.ID );
+						page( domainManagementList( transferedTo?.slug ?? '' ) );
 					} else {
 						page( domainManagementList( this.props.selectedSite.slug ) );
 					}
@@ -110,7 +110,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		}
 	};
 
-	getMessage(): i18nCalypso.TranslateResult {
+	getMessage(): TranslateResult {
 		const { selectedDomainName: domainName, translate } = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
 		return translate(
@@ -221,7 +221,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		return {
 			currentRoute: getCurrentRoute( state ),
-			currentUserCanManage: Boolean( domain ) && domain.currentUserCanManage,
+			currentUserCanManage: typeof domain === 'object' && domain.currentUserCanManage,
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),

@@ -4,7 +4,7 @@ import {
 	PLAN_BUSINESS,
 	FEATURE_AUDIO_UPLOADS,
 	FEATURE_ADVANCED_DESIGN,
-	FEATURE_BUSINESS_ONBOARDING,
+	FEATURE_UPLOAD_PLUGINS,
 } from '@automattic/calypso-products';
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
@@ -793,7 +793,7 @@ describe( 'selectors', () => {
 						},
 					},
 					2916284,
-					FEATURE_BUSINESS_ONBOARDING
+					FEATURE_UPLOAD_PLUGINS
 				)
 			).to.be.false;
 		} );

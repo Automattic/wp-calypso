@@ -20,9 +20,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
@@ -38,8 +36,8 @@
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@wordpress/base-styles": "^4.0.4",
-		"@wordpress/components": "^19.1.5",
-		"@wordpress/compose": "^5.0.6",
+		"@wordpress/components": "^19.2.0",
+		"@wordpress/compose": "^5.0.7",
 		"@wordpress/icons": "^6.1.1",
 		"@wordpress/react-i18n": "^3.0.4",
 		"classnames": "^2.3.1",
@@ -54,10 +52,10 @@
 		"@testing-library/react": "^12.1.2",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"typescript": "^4.5.4"
+		"typescript": "^4.5.5"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^6.1.4",
+		"@wordpress/data": "^6.1.5",
 		"@wordpress/element": "^4.0.4",
 		"@wordpress/i18n": "^4.2.4",
 		"react": "^17.0.2",

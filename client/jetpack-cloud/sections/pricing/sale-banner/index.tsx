@@ -53,7 +53,11 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 	return (
 		<>
 			{ ! isClosed && isBeforeExpiry && (
-				<div className="sale-banner" role="banner" aria-label={ translate( 'Discount Banner' ) }>
+				<div
+					className="sale-banner"
+					role="banner"
+					aria-label={ String( translate( 'Discount Banner' ) ) }
+				>
 					<div className="sale-banner__content">
 						<div>
 							<b>{ saleTitle }</b>
@@ -61,7 +65,7 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 							{ translate(
 								'Get %(discount)d%% off your first year on all Jetpack products & plans.',
 								{
-									args: { discount: coupon.discount },
+									args: { discount: coupon.final_discount },
 								}
 							) }
 						</div>

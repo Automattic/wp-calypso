@@ -6,10 +6,8 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { isSubdomain, resolveDomainStatus } from 'calypso/lib/domains';
 import { isExpiringSoon } from 'calypso/lib/domains/utils';
-import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import { MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
-import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import DomainMappingInstructions from 'calypso/my-sites/domains/components/mapping-instructions';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -90,28 +88,6 @@ class MappedDomainType extends Component {
 
 	renderLinkTo( url ) {
 		return <a href={ url } target="_blank" rel="noopener noreferrer" />;
-	}
-
-	renderPendingGSuiteTosNotice() {
-		const { domain, selectedSite } = this.props;
-
-		if (
-			! hasPendingGSuiteUsers( domain ) ||
-			( ( ! this.props.isJetpackSite || this.props.isSiteAutomatedTransfer ) &&
-				! domain.pointsToWpcom ) ||
-			isExpiringSoon( domain, 30 )
-		) {
-			return null;
-		}
-
-		return (
-			<PendingGSuiteTosNotice
-				siteSlug={ selectedSite.slug }
-				domains={ [ domain ] }
-				section="domain-management"
-				showDomainStatusNotice
-			/>
-		);
 	}
 
 	renderDefaultRenewButton() {
@@ -217,7 +193,6 @@ class MappedDomainType extends Component {
 						domain={ domain }
 					/>
 					{ this.renderSettingUpNameserversAndARecords() }
-					{ this.renderPendingGSuiteTosNotice() }
 					<ExpiringSoon
 						selectedSite={ selectedSite }
 						purchase={ purchase }

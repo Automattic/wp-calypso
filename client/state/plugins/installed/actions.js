@@ -241,7 +241,7 @@ export function updatePlugin( siteId, plugin ) {
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } );
 			afterUpdateCallback( undefined );
-			sitePluginUpdated( siteId );
+			dispatch( sitePluginUpdated( siteId ) );
 		};
 
 		const errorCallback = ( error ) => {

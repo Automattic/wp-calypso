@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/wpcom-block-editor",
 	"version": "1.0.0-alpha.0",
-	"description": "Utilities for the block editor in WordPress.com integration",
+	"description": "Utilities for the block editor in WordPress.com integration.",
 	"sideEffects": true,
 	"repository": {
 		"type": "git",
@@ -11,9 +11,7 @@
 	"private": true,
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"build:wpcom-block-editor-no-minify": "NODE_ENV=development calypso-build",
@@ -24,27 +22,26 @@
 	},
 	"dependencies": {
 		"@automattic/typography": "workspace:^",
-		"@babel/runtime": "^7.16.5",
+		"@babel/runtime": "^7.16.7",
 		"@wordpress/base-styles": "^4.0.4",
-		"@wordpress/block-editor": "^8.0.11",
-		"@wordpress/blocks": "^11.1.4",
-		"@wordpress/components": "^19.1.5",
-		"@wordpress/compose": "^5.0.6",
-		"@wordpress/data": "^6.1.4",
+		"@wordpress/block-editor": "^8.0.13",
+		"@wordpress/blocks": "^11.1.5",
+		"@wordpress/components": "^19.2.0",
+		"@wordpress/compose": "^5.0.7",
+		"@wordpress/data": "^6.1.5",
 		"@wordpress/dom-ready": "^3.2.3",
-		"@wordpress/edit-post": "^5.0.17",
-		"@wordpress/edit-site": "^3.0.17",
-		"@wordpress/editor": "^12.0.14",
+		"@wordpress/edit-post": "^5.0.20",
+		"@wordpress/edit-site": "^3.0.20",
+		"@wordpress/editor": "^12.0.16",
 		"@wordpress/element": "^4.0.4",
 		"@wordpress/hooks": "^3.2.2",
 		"@wordpress/i18n": "^4.2.4",
 		"@wordpress/icons": "^6.1.1",
 		"@wordpress/is-shallow-equal": "^4.2.1",
-		"@wordpress/plugins": "^4.0.6",
-		"@wordpress/rich-text": "^5.0.6",
+		"@wordpress/plugins": "^4.0.7",
+		"@wordpress/rich-text": "^5.0.7",
 		"@wordpress/url": "^3.3.1",
-		"debug": "^4.1.1",
-		"jquery": "^1.12.3",
+		"debug": "^4.3.3",
 		"lodash": "^4.17.21",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
@@ -61,6 +58,6 @@
 		"jest": "^27.3.1",
 		"npm-run-all": "^4.1.5",
 		"postcss": "^8.4.5",
-		"webpack": "^5.65.0"
+		"webpack": "^5.68.0"
 	}
 }

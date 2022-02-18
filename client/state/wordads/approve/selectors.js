@@ -15,7 +15,7 @@ export function isRequestingWordAdsApproval( state, siteId ) {
  * Sanitizes site object and returns true if we're currently requesting WordAds approval
  *
  * @param   {object} state  Global State
- * @param   {object} site   Site
+ * @param   {object|null|undefined} site   Site
  * @returns {boolean}       requesting state
  */
 export function isRequestingWordAdsApprovalForSite( state, site ) {

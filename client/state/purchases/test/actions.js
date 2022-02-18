@@ -1,9 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
-import { expect } from 'chai';
-import sinon from 'sinon';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -13,6 +7,7 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
 } from 'calypso/state/action-types';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import useNock from 'calypso/test-helpers/use-nock';
 import { clearPurchases, fetchSitePurchases, fetchUserPurchases, removePurchase } from '../actions';
 
@@ -22,18 +17,22 @@ describe( 'actions', () => {
 	const siteId = 1234;
 	const purchaseId = 31337;
 
-	const spy = sinon.spy();
+	const dispatch = jest.fn();
+	const getState = jest.fn();
 
-	beforeEach( () => {
-		spy.resetHistory();
+	getState.mockReturnValue( {
+		ui: {
+			selectedSiteId: siteId,
+		},
 	} );
 
 	describe( '#clearPurchases', () => {
 		test( 'should dispatch a `PURCHASES_REMOVE` action', () => {
-			clearPurchases()( spy );
-			expect( spy ).to.have.been.calledWith( {
+			clearPurchases()( dispatch, getState );
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: PURCHASES_REMOVE,
 			} );
+			expect( dispatch ).toHaveBeenCalledWith( requestAdminMenu( siteId ) );
 		} );
 	} );
 
@@ -45,15 +44,15 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch/complete actions', () => {
-			const promise = fetchSitePurchases( siteId )( spy );
+			const promise = fetchSitePurchases( siteId )( dispatch );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: PURCHASES_SITE_FETCH,
 				siteId,
 			} );
 
 			return promise.then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: PURCHASES_SITE_FETCH_COMPLETED,
 					siteId,
 					purchases,
@@ -70,14 +69,14 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch/complete actions', () => {
-			const promise = fetchUserPurchases( userId )( spy );
+			const promise = fetchUserPurchases( userId )( dispatch );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( dispatch ).toHaveBeenCalledWith( {
 				type: PURCHASES_USER_FETCH,
 			} );
 
 			return promise.then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: PURCHASES_USER_FETCH_COMPLETED,
 					userId,
 					purchases,
@@ -96,15 +95,13 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch/complete actions', () => {
-			return removePurchase(
-				purchaseId,
-				userId
-			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return removePurchase( purchaseId, userId )( dispatch, getState ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: PURCHASE_REMOVE_COMPLETED,
 					purchases,
 					userId,
 				} );
+				expect( dispatch ).toHaveBeenCalledWith( requestAdminMenu( siteId ) );
 			} );
 		} );
 	} );
@@ -121,11 +118,8 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch/remove actions', () => {
-			return removePurchase(
-				purchaseId,
-				userId
-			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+			return removePurchase( purchaseId, userId )( dispatch, getState ).then( () => {
+				expect( dispatch ).toHaveBeenCalledWith( {
 					type: PURCHASE_REMOVE_FAILED,
 					error: errorMessage,
 				} );

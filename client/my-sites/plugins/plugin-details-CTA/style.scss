@@ -2,6 +2,21 @@
 
 .plugin-details-CTA__container {
 	@extend %plugin-header;
+	padding-bottom: 0;
+}
+
+.plugin-details-CTA__modal-overlay.dialog__backdrop {
+	background-color: rgba( var( --color-neutral-100-rgb ), 0.7 );
+}
+
+.plugin-details-CTA__dialog-content {
+	.eligibility-warnings {
+		margin: 0;
+
+		.card {
+			box-shadow: none;
+		}
+	}
 }
 
 .plugin-details-CTA__price {
@@ -9,6 +24,32 @@
 	font-size: $font-title-large;
 	color: var( --studio-gray-100 );
 	margin: 16px 0;
+	min-height: 48px;
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+
+	&.align-right {
+		text-align: right;
+	}
+}
+
+.plugin-details-CTA__price-placeholder {
+	width: 100%;
+
+	@extend %placeholder;
+}
+
+.plugin-details-CTA__period {
+	font-family: $sans;
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-50 );
+}
+
+.plugin-details-CTA__uprade-required {
+	width: 100%;
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-50 );
 }
 
 .plugin-details-CTA__install {
@@ -17,23 +58,24 @@
 	.plugin-details-CTA__install-button {
 		width: 100%;
 		padding: 12px 16px;
-		background-color: var( --color-accent-50 );
-		color: var( --studio-white );
-
-		&:focus,
-		&:hover {
-			background-color: var( --color-accent-60 );
-		}
 	}
 }
 
 .plugin-details-CTA__t-and-c {
-    font-size: $font-body-extra-small;
-    color: var( --studio-gray-50 );
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-50 );
+}
 
-    @media screen and ( max-width: 1040px ) {
-        padding-bottom: 40px;
-    }
+.plugin-details-CTA__not-available {
+	.plugin-details-CTA__not-available-text {
+		color: var( --studio-gray-60 );
+		margin: 16px 0;
+		font-size: $font-body-small;
+	}
+
+	.plugin-details-CTA__follow-toggle label {
+		color: var( --studio-gray-80 );
+	}
 }
 
 .is-placeholder {
@@ -42,5 +84,4 @@
 	.plugin-details-CTA__t-and-c {
 		@extend %placeholder;
 	}
-
 }

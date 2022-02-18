@@ -65,7 +65,15 @@ export const domainAvailability = {
 	WPCOM_STAGING_DOMAIN: 'wpcom_staging_domain',
 };
 
+/*
+ * Note that GMAIL only sets up email-related records,
+ * while G_SUITE also adds a verification record.
+ */
 export const dnsTemplates = {
+	GMAIL: {
+		PROVIDER: 'g-suite',
+		SERVICE: 'gmail',
+	},
 	G_SUITE: {
 		PROVIDER: 'g-suite',
 		SERVICE: 'G-Suite',
@@ -73,6 +81,10 @@ export const dnsTemplates = {
 	MICROSOFT_OFFICE365: {
 		PROVIDER: 'microsoft-office365',
 		SERVICE: 'O365',
+	},
+	TITAN: {
+		PROVIDER: 'titan-mail',
+		SERVICE: 'titan',
 	},
 	ZOHO_MAIL: {
 		PROVIDER: 'zoho-mail',

@@ -4,23 +4,23 @@ import wp from 'calypso/lib/wp';
 import { fetchHomeLayout, getCacheKey } from './use-home-layout-query';
 import { useHomeLayoutQueryParams } from './use-home-layout-query-params';
 
-type ReminderDuration = '1d' | '1w' | null;
+export type ReminderDuration = '1d' | '1w' | null;
 
 interface Variables {
 	reminder: ReminderDuration;
 	card?: string;
 }
 
-interface Result extends UseMutationResult< void, unknown, Variables > {
+type Result< TData, TError > = UseMutationResult< TData, TError, Variables > & {
 	skipCurrentView: ( reminder: ReminderDuration ) => void;
-	skipCard: ( card: string, reminder: ReminderDuration ) => void;
-}
+	skipCard: ( card: string, reminder?: ReminderDuration ) => void;
+};
 
-function useSkipCurrentViewMutation( siteId: number ): Result {
+function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< TData, TError > {
 	const queryClient = useQueryClient();
 	const query = useHomeLayoutQueryParams();
 
-	const mutation = useMutation< void, unknown, Variables >(
+	const mutation = useMutation< TData, TError, Variables >(
 		async ( { reminder, card } ) => {
 			const data = await queryClient.fetchQuery(
 				getCacheKey( siteId ),
@@ -56,7 +56,7 @@ function useSkipCurrentViewMutation( siteId: number ): Result {
 	] );
 
 	const skipCard = useCallback(
-		( card, reminder: ReminderDuration ) => mutate( { reminder, card } ),
+		( card, reminder?: ReminderDuration ) => mutate( { reminder: reminder ?? null, card } ),
 		[ mutate ]
 	);
 

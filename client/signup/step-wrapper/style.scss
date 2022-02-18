@@ -55,7 +55,7 @@
 
 	@mixin unstick {
 		position: absolute;
-		top: 2px;
+		top: 1px;
 		left: 11px;
 		right: 16px;
 		padding: 0;
@@ -77,11 +77,17 @@
 
 	.step-wrapper__navigation-link {
 		font-size: 0.875rem;
-		font-weight: 500; /* stylelint-disable-line */
+		font-weight: 500;
 
 		&.button.is-primary {
-			border-radius: 4px; /* stylelint-disable-line scales/radii */
+			border-radius: 4px;
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+
+			.signup__step.is-courses & {
+				color: #101517;
+				background-color: #ffffff;
+				border-color: transparent;
+			}
 		}
 
 		&.has-underline {
@@ -118,6 +124,11 @@
 	// width column.
 	&.is-wide-layout {
 		max-width: 1040px;
+	}
+
+	// Some steps (like courses) have their width limitation
+	&.is-full-layout {
+		max-width: unset;
 	}
 
 	// Some steps (intent gathering) use a horizontal layout

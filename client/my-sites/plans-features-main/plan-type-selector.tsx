@@ -18,7 +18,11 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import { Primitive } from 'utility-types';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/url';
-import { getPlanBySlug, getPlanRawPrice } from 'calypso/state/plans/selectors';
+import {
+	getPlanBySlug,
+	getPlanRawPrice,
+	getDiscountedRawPrice,
+} from 'calypso/state/plans/selectors';
 
 type Props = {
 	kind: 'interval' | 'customer';
@@ -33,7 +37,6 @@ type Props = {
 	isInSignup: boolean;
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
-	disableMonthlyExperiment?: boolean;
 };
 
 interface PathArgs {
@@ -66,7 +69,12 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 			...defaultArgs,
 			...omit( additionalArgs, 'intervalType' ),
 		},
-		plansLink( props.basePlansPath || '/plans', props.siteSlug, intervalType, true )
+		plansLink(
+			props.basePlansPath || '/plans',
+			props.siteSlug,
+			intervalType ? String( intervalType ) : '',
+			true
+		)
 	);
 };
 
@@ -88,7 +96,12 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 		<>
 			{ [ 'right', 'bottom' ].map( ( pos ) => (
 				<CSSTransition key={ pos } in={ inProp } timeout={ timeout } classNames="popover">
-					<StyledPopover position={ pos } context={ context } isVisible={ true }>
+					<StyledPopover
+						position={ pos }
+						context={ context }
+						isVisible={ true }
+						autoPosition={ false }
+					>
 						{ children }
 					</StyledPopover>
 				</CSSTransition>
@@ -99,11 +112,7 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 
 type IntervalTypeProps = Pick<
 	Props,
-	| 'intervalType'
-	| 'plans'
-	| 'isInSignup'
-	| 'eligibleForWpcomMonthlyPlans'
-	| 'disableMonthlyExperiment'
+	'intervalType' | 'plans' | 'isInSignup' | 'eligibleForWpcomMonthlyPlans'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
@@ -114,13 +123,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = intervalType === 'monthly' && isInSignup;
-	const maxDiscount = useMaxDiscount(
-		props.plans.filter(
-			( plan ) =>
-				! props.disableMonthlyExperiment ||
-				! [ 'personal-bundle-monthly', 'value_bundle_monthly' ].includes( plan )
-		)
-	);
+	const maxDiscount = useMaxDiscount( props.plans );
 
 	if ( ! eligibleForWpcomMonthlyPlans ) {
 		return null;
@@ -210,7 +213,9 @@ function useMaxDiscount( plans: string[] ): number {
 			}
 
 			const monthlyPlanAnnualCost = getPlanRawPrice( state, monthlyPlan.product_id ) * 12;
-			const yearlyPlanCost = getPlanRawPrice( state, yearlyPlan.product_id );
+			const rawPrice = getPlanRawPrice( state, yearlyPlan.product_id );
+			const discountPrice = getDiscountedRawPrice( state, yearlyPlan.product_id );
+			const yearlyPlanCost = discountPrice || rawPrice;
 
 			return Math.round(
 				( ( monthlyPlanAnnualCost - yearlyPlanCost ) / ( monthlyPlanAnnualCost || 1 ) ) * 100

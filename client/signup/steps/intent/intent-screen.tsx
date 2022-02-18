@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
-import { build, write } from '../../icons';
+import { build, write, tip } from '../../icons';
 import SelectItems, { SelectItem } from '../../select-items';
 import SelectItemsAlt, { SelectAltItem } from '../../select-items-alt';
 import type { IntentFlag } from './types';
@@ -16,11 +16,11 @@ interface Props {
 }
 
 const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
-	return [
+	const intents: Intent[] = [
 		{
 			key: 'write',
 			title: translate( 'Write' ),
-			description: translate( 'Share your ideas with the world' ),
+			description: <p>{ translate( 'Share your ideas with the world' ) }</p>,
 			icon: write,
 			value: 'write',
 			actionText: translate( 'Start writing' ),
@@ -28,12 +28,25 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 		{
 			key: 'build',
 			title: translate( 'Build' ),
-			description: translate( 'Begin creating your website' ),
+			description: <p>{ translate( 'Begin creating your website' ) }</p>,
 			icon: build,
 			value: 'build',
 			actionText: translate( 'Start building' ),
 		},
 	];
+
+	if ( isEnabled( 'seller-experience' ) ) {
+		intents.push( {
+			key: 'sell',
+			title: translate( 'Sell' ),
+			description: <p>{ translate( 'Set up an online store' ) }</p>,
+			icon: tip,
+			value: 'sell',
+			actionText: translate( 'Start selling' ),
+		} );
+	}
+
+	return intents;
 };
 
 const useIntentsAlt = ( {
@@ -42,7 +55,7 @@ const useIntentsAlt = ( {
 }: Pick< Props, 'canImport' | 'translate' > ): IntentAlt[] => {
 	return [
 		{
-			show: isEnabled( 'gutenboarding/import' ),
+			show: isEnabled( 'onboarding/import' ),
 			key: 'import',
 			description: translate( 'Already have an existing website?' ),
 			value: 'import',

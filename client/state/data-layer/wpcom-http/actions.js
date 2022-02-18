@@ -21,7 +21,7 @@ import { WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
  *
  * @param {RequestDescription} HTTP request description
  * @param {?object} action default action to call on HTTP events
- * @returns {object} Redux action describing WordPress.com API HTTP request
+ * @returns {import('redux').Action} Redux action describing WordPress.com API HTTP request
  */
 export const http = (
 	{

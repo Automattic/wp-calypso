@@ -396,7 +396,7 @@ export class PluginsMain extends Component {
 		const navigationItems = [
 			{ label: this.props.translate( 'Plugins' ), href: `/plugins/${ selectedSiteSlug || '' }` },
 			{
-				label: this.props.translate( 'Manage' ),
+				label: this.props.translate( 'Installed Plugins' ),
 				href: `/plugins/manage/${ selectedSiteSlug || '' }`,
 			},
 		];

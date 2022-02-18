@@ -60,7 +60,7 @@ export default async function getBootstrappedUser( request ) {
 		const supportSessionApiKey = getSupportSessionApiKey();
 		if ( typeof supportSessionApiKey !== 'string' ) {
 			throw new Error(
-				'Unable to boostrap user because of invalid SUPPORT SESSION API key in secrets.json'
+				'Unable to bootstrap user because of invalid SUPPORT SESSION API key in secrets.json'
 			);
 		}
 
@@ -74,7 +74,7 @@ export default async function getBootstrappedUser( request ) {
 		const apiKey = getApiKey();
 
 		if ( typeof apiKey !== 'string' ) {
-			throw new Error( 'Unable to boostrap user because of invalid API key in secrets.json' );
+			throw new Error( 'Unable to bootstrap user because of invalid API key in secrets.json' );
 		}
 
 		const hmac = crypto.createHmac( 'md5', apiKey );

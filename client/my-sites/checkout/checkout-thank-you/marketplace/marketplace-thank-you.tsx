@@ -6,11 +6,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
+import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -56,6 +59,7 @@ const ItemStyled = styled( Item )`
 	font-size: 14px;
 	font-weight: 500;
 	padding: 0;
+	justify-content: left;
 
 	&:hover {
 		background: var( --studio-white );
@@ -78,6 +82,8 @@ const ItemStyled = styled( Item )`
 	}
 `;
 
+const AtomicTransferComplete = 'completed';
+
 interface IProps {
 	productSlug: string;
 }
@@ -92,11 +98,18 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const [ pluginIcon, setPluginIcon ] = useState( null );
+	const { transfer } = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
+	const [ pluginIcon, setPluginIcon ] = useState( '' );
 
-	const [ retries, setRetries ] = useState( 0 );
+	// Site is transferring to Atomic.
+	// Poll the transfer status.
+	useEffect( () => {
+		if ( ! siteId || transfer?.status === AtomicTransferComplete ) {
+			return;
+		}
+		waitFor( 2 ).then( () => dispatch( dispatch( requestLatestAtomicTransfer( siteId ) ) ) );
+	}, [ siteId, dispatch, transfer ] );
 
-	// retrieve wporg plugin data if not available
 	useEffect( () => {
 		dispatch(
 			pluginInstallationStateChange(
@@ -104,8 +117,9 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 				'deauthorize plugin installation URL'
 			)
 		);
-	}, [] );
+	}, [ dispatch ] );
 
+	// retrieve wporg plugin data if not available
 	useEffect( () => {
 		if ( ! isWporgPluginFetched ) {
 			dispatch( wporgFetchPluginData( productSlug ) );
@@ -114,7 +128,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 			// wporgPlugin exists in the wporg directory.
 			setPluginIcon( wporgPlugin?.icon || successImage );
 		}
-	}, [ isWporgPluginFetched, productSlug, setPluginIcon, dispatch ] );
+	}, [ isWporgPluginFetched, productSlug, setPluginIcon, dispatch, wporgPlugin?.icon ] );
 
 	useEffect( () => {
 		if ( wporgPlugin?.wporg === false ) {
@@ -123,21 +137,35 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 		}
 	}, [ wporgPlugin ] );
 
+	// retrieve WPCom plugin data
+	const { data: wpComPluginData } = useWPCOMPlugin( productSlug );
+
+	// Site is already Atomic (or just transferred).
+	// Poll the plugin installation status.
 	useEffect( () => {
-		if ( ! isRequestingPlugins && ! pluginOnSite && retries < 10 ) {
-			setRetries( retries + 1 );
+		if ( transfer?.status === AtomicTransferComplete && ! pluginOnSite && ! isRequestingPlugins ) {
 			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
 		// Do not add retries in dependencies to avoid infinite loop.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId ] );
+	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId, transfer ] );
 
 	const thankYouImage = {
 		alt: '',
 		src: pluginIcon,
 	};
 
-	const setupURL = pluginOnSite?.action_links?.Settings || `${ siteAdminUrl }plugins.php`;
+	// Cast pluginOnSite's type because the return type of getPluginOnSite is
+	// wrong and I don't know how to fix it. Remove this cast if the return type
+	// can be made correct.
+	const pluginOnSiteData = pluginOnSite as
+		| undefined
+		| { action_links?: { Settings?: string }; name?: string };
+
+	const fallbackSetupUrl = wpComPluginData?.setup_url && siteAdminUrl + wpComPluginData?.setup_url;
+
+	const setupURL =
+		pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || `${ siteAdminUrl }plugins.php`;
 
 	const setupSection = {
 		sectionKey: 'setup_whats_next',
@@ -150,7 +178,11 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 					'Get to know your plugin and customize it, so you can hit the ground running.'
 				),
 				stepCta: (
-					<FullWidthButton href={ setupURL } primary busy={ ! pluginOnSite && retries < 10 }>
+					<FullWidthButton
+						href={ setupURL }
+						primary
+						busy={ ! pluginOnSite || transfer?.status !== AtomicTransferComplete }
+					>
 						{ translate( 'Manage plugin' ) }
 					</FullWidthButton>
 				),
@@ -176,7 +208,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	};
 
 	const thankYouSubtitle = translate( '%(pluginName)s has been installed.', {
-		args: { pluginName: pluginOnSite?.name },
+		args: { pluginName: pluginOnSiteData?.name },
 	} );
 
 	return (

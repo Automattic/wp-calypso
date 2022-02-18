@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/plans-grid",
 	"version": "1.0.0-alpha.0",
-	"description": "WordPress.com Plans Grid UI component",
+	"description": "WordPress.com Plans Grid UI component.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -20,9 +20,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"types": "dist/types",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
@@ -34,13 +32,13 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
-		"@wordpress/components": "^19.1.5",
-		"@wordpress/compose": "^5.0.6",
+		"@wordpress/components": "^19.2.0",
+		"@wordpress/compose": "^5.0.7",
 		"@wordpress/icons": "^6.1.1",
 		"@wordpress/primitives": "^3.0.4",
 		"@wordpress/react-i18n": "^3.0.4",
 		"classnames": "^2.3.1",
-		"debug": "^4.1.1",
+		"debug": "^4.3.3",
 		"lodash": "^4.17.21",
 		"tslib": "^2.3.0",
 		"uuid": "^8.3.2"
@@ -50,10 +48,10 @@
 		"@automattic/typography": "workspace:^",
 		"@wordpress/base-styles": "^4.0.4",
 		"prop-types": "^15.7.2",
-		"typescript": "^4.5.4"
+		"typescript": "^4.5.5"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^6.1.4",
+		"@wordpress/data": "^6.1.5",
 		"@wordpress/element": "^4.0.4",
 		"@wordpress/i18n": "^4.2.4",
 		"react": "^17.0.2",

@@ -2,6 +2,8 @@ import { hasMarketplaceProduct } from '../src/has-marketplace-product';
 
 describe( 'hasMarketplaceProduct', () => {
 	const productsList = {
+		empty_product: {},
+		product_with_wrong_types: { product_type: 1, slug: 1 },
 		jetpack: { product_type: 'jetpack' },
 		woocommerce_bookings_monthly: { product_type: 'marketplace_plugin' },
 		woocommerce_bookings_yearly: { product_type: 'marketplace_plugin' },
@@ -12,8 +14,17 @@ describe( 'hasMarketplaceProduct', () => {
 		'woocommerce-test-plugin': { product_type: 'plugin' },
 		'woocommerce-test-plugin-advanced': { product_type: 'marketplace_plugin' },
 	};
+
 	test( "should return false when the product isn't in the products list", () => {
 		expect( hasMarketplaceProduct( productsList, 'yoast' ) ).toBe( false );
+	} );
+
+	test( 'should return false when the a product is empty', () => {
+		expect( hasMarketplaceProduct( productsList, 'empty_product' ) ).toBe( false );
+	} );
+
+	test( 'should return false when the a product has different types', () => {
+		expect( hasMarketplaceProduct( productsList, 'product_with_wrong_types' ) ).toBe( false );
 	} );
 
 	test( "should return false when the product isn't a marketplace product", () => {

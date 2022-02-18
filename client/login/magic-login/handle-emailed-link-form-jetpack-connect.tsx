@@ -67,8 +67,8 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 			page(
 				login( {
 					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: twoFactorNotificationSent.replace( 'none', 'authenticator' ),
-					redirectTo: redirectToSanitized,
+					twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ),
+					redirectTo: redirectToSanitized ?? undefined,
 				} )
 			);
 		}

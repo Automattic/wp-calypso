@@ -13,8 +13,8 @@ import {
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
 import nock from 'nock';
-import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
+import { navigate } from 'calypso/lib/navigate';
 import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
@@ -30,7 +30,7 @@ import {
 	planWithBundledDomain,
 	planWithoutDomain,
 	fetchStripeConfiguration,
-	mockSetCartEndpoint,
+	mockSetCartEndpointWith,
 	mockGetCartEndpointWith,
 	getActivePersonalPlanDataForType,
 	createTestReduxStore,
@@ -48,10 +48,7 @@ jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
-
-jest.mock( 'page', () => ( {
-	redirect: jest.fn(),
-} ) );
+jest.mock( 'calypso/lib/navigate' );
 
 describe( 'CompositeCheckout', () => {
 	let container;
@@ -65,6 +62,7 @@ describe( 'CompositeCheckout', () => {
 		hasLoadedSiteDomains.mockImplementation( () => true );
 		getDomainsBySiteId.mockImplementation( () => [] );
 		isMarketplaceProduct.mockImplementation( () => false );
+		isJetpackSite.mockImplementation( () => false );
 
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
@@ -95,6 +93,11 @@ describe( 'CompositeCheckout', () => {
 			coupon_discounts_integer: [],
 		};
 
+		const mockSetCartEndpoint = mockSetCartEndpointWith( {
+			currency: initialCart.currency,
+			locale: initialCart.locale,
+		} );
+
 		const store = createTestReduxStore();
 
 		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
@@ -104,6 +107,20 @@ describe( 'CompositeCheckout', () => {
 			} );
 			const mainCartKey = 'foo.com';
 			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
+			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+			Object.defineProperty( window, 'matchMedia', {
+				writable: true,
+				value: jest.fn().mockImplementation( ( query ) => ( {
+					matches: false,
+					media: query,
+					onchange: null,
+					addListener: jest.fn(), // deprecated
+					removeListener: jest.fn(), // deprecated
+					addEventListener: jest.fn(),
+					removeEventListener: jest.fn(),
+					dispatchEvent: jest.fn(),
+				} ) ),
+			} );
 			return (
 				<ReduxProvider store={ store }>
 					<ShoppingCartProvider
@@ -493,7 +510,6 @@ describe( 'CompositeCheckout', () => {
 						success: email === 'passes',
 					};
 				} );
-			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 
 			render(
 				<MyCheckout
@@ -554,7 +570,7 @@ describe( 'CompositeCheckout', () => {
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'Purchase Details' ) ).toBeInTheDocument();
-			expect( page.redirect ).not.toHaveBeenCalled();
+			expect( navigate ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -604,27 +620,27 @@ describe( 'CompositeCheckout', () => {
 			'Remove WordPress.com Personal from cart'
 		);
 		fireEvent.click( removeProductButton );
-		const confirmButton = await screen.findByText( 'Continue' );
+		const confirmModal = await screen.findByRole( 'dialog' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( () => {
-			expect( page.redirect ).toHaveBeenCalledWith( '/plans/foo.com' );
+			expect( navigate ).toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
 	} );
 
 	it( 'does not redirect to the plans page if the cart is empty after removing a product when it is not the last', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove foo.cash from cart'
 		);
 		fireEvent.click( removeProductButton );
-		const confirmButton = await screen.findByText( 'Continue' );
+		const confirmModal = await screen.findByRole( 'dialog' );
+		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( async () => {
-			expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
+			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
 	} );
 
@@ -632,7 +648,7 @@ describe( 'CompositeCheckout', () => {
 		const cartChanges = { products: [] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( async () => {
-			expect( page.redirect ).not.toHaveBeenCalledWith( '/plans/foo.com' );
+			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
 	} );
 
@@ -644,7 +660,7 @@ describe( 'CompositeCheckout', () => {
 			container
 		);
 		await waitFor( async () => {
-			expect( page.redirect ).not.toHaveBeenCalled();
+			expect( navigate ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -708,7 +724,7 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		expect( page.redirect ).not.toHaveBeenCalled();
+		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a concierge session', async () => {
@@ -737,7 +753,7 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		expect( page.redirect ).not.toHaveBeenCalled();
+		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a theme', async () => {
@@ -766,7 +782,7 @@ describe( 'CompositeCheckout', () => {
 				container
 			);
 		} );
-		expect( page.redirect ).not.toHaveBeenCalled();
+		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'adds the domain mapping product to the cart when the url has a domain map', async () => {

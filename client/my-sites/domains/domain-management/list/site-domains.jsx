@@ -1,9 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import {
-	FEATURE_SET_PRIMARY_CUSTOM_DOMAIN,
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-} from '@automattic/calypso-products';
+import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -12,7 +9,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -20,20 +16,17 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type } from 'calypso/lib/domains/constants';
-import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import GoogleSaleBanner from 'calypso/my-sites/email/google-sale-banner';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -41,11 +34,9 @@ import {
 	showUpdatePrimaryDomainErrorNotice,
 } from 'calypso/state/domains/management/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { getProductBySlug, getProductsList } from 'calypso/state/products-list/selectors';
 import { getPurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import getSites from 'calypso/state/selectors/get-sites';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -75,7 +66,6 @@ export class SiteDomains extends Component {
 		isRequestingDomains: PropTypes.bool,
 		context: PropTypes.object,
 		renderAllSites: PropTypes.bool,
-		hasSingleSite: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -95,7 +85,6 @@ export class SiteDomains extends Component {
 		const {
 			currentRoute,
 			domains,
-			hasProductsList,
 			isAtomicSite,
 			isFetchingPurchases,
 			selectedSite,
@@ -164,10 +153,6 @@ export class SiteDomains extends Component {
 
 		return (
 			<>
-				{ ! hasProductsList && <QueryProductsList /> }
-
-				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
-
 				<div className="domain-management-list__items">
 					<div className="domain-management-list__filter">
 						{ this.renderDomainTableFilterButton() }
@@ -224,27 +209,27 @@ export class SiteDomains extends Component {
 	}
 
 	renderDomainTableFilterButton() {
-		const { selectedSite, domains, context } = this.props;
+		const { selectedSite, domains, context, translate } = this.props;
 
 		const selectedFilter = context?.query?.filter;
 		const nonWpcomDomains = filterOutWpcomDomains( domains );
 
 		const filterOptions = [
 			{
-				label: 'Site domains',
+				label: translate( 'Site domains' ),
 				value: '',
 				path: domainManagementList( selectedSite?.slug ),
 				count: nonWpcomDomains?.length,
 			},
 			{
-				label: 'Owned by me',
+				label: translate( 'Owned by me' ),
 				value: 'owned-by-me',
 				path:
 					domainManagementList( selectedSite?.slug ) + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
-				label: 'Owned by others',
+				label: translate( 'Owned by others' ),
 				value: 'owned-by-others',
 				path:
 					domainManagementList( selectedSite?.slug ) +
@@ -254,7 +239,7 @@ export class SiteDomains extends Component {
 			},
 			null,
 			{
-				label: 'All my domains',
+				label: translate( 'All my domains' ),
 				value: 'all-my-domains',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: null,
@@ -290,21 +275,11 @@ export class SiteDomains extends Component {
 		const buttons = [
 			this.renderDomainTableFilterButton( false ),
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<HeaderCart
-				key="breadcrumb_button_cart"
-				selectedSite={ this.props.selectedSite }
-				currentRoute={ this.props.currentRoute }
-			/>,
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 
 		const mobileButtons = [
 			<OptionsDomainButton key="breadcrumb_button_1" specificSiteActions />,
-			<HeaderCart
-				key="breadcrumb_button_cart"
-				selectedSite={ this.props.selectedSite }
-				currentRoute={ this.props.currentRoute }
-			/>,
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 
@@ -516,21 +491,16 @@ export default connect(
 		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 		const selectedSite = ownProps?.selectedSite || null;
 		const isOnFreePlan = selectedSite?.plan?.is_free || false;
-		const siteCount = getSites( state )?.length || 0;
 		const purchases = getPurchases( state );
 
 		return {
-			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentRoute: getCurrentRoute( state ),
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
-			hasProductsList: 0 < ( getProductsList( state )?.length ?? 0 ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
-			googleWorkspaceProduct: getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY ),
 			hasNonPrimaryDomainsFlag: getCurrentUser( state )
 				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 				: false,
-			hasSingleSite: siteCount === 1,
 			isOnFreePlan,
 			userCanManageOptions,
 			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),

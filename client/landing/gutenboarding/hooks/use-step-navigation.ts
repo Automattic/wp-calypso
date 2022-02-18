@@ -1,7 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useHistory, useLocation } from 'react-router-dom';
-import { GutenLocationStateType, Step, usePath, useCurrentStep, useAnchorFmParams } from '../path';
+import { Step, usePath, useCurrentStep, useAnchorFmParams } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { useNewSiteVisibility } from './use-selected-plan';
@@ -14,7 +14,6 @@ import useSteps from './use-steps';
  * @typedef { object } Navigation
  * @property { string } goBack of the previous step
  * @property { string } goNext of the next step
- *
  * @returns { Navigation } An object with callbacks to navigate to previous and next steps
  */
 export default function useStepNavigation(): { goBack: () => void; goNext: () => void } {
@@ -72,7 +71,17 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const isLastStep = currentStepIndex === steps.length - 1;
 
 	// Transfer anchor podcast ID, episode ID from the query string to the location state, if needed
-	const locationState = useLocation< GutenLocationStateType >().state ?? {};
+	const locationResult = useLocation();
+	const getLocationState = (): Record< string, string > => {
+		if ( ! locationResult ) {
+			return {};
+		}
+		if ( ! locationResult.state ) {
+			return {};
+		}
+		return locationResult.state as Record< string, string >;
+	};
+	const locationState = getLocationState();
 	if ( anchorFmPodcastId ) {
 		locationState.anchorFmPodcastId = anchorFmPodcastId;
 	}

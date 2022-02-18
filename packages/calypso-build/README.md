@@ -19,9 +19,11 @@ yarn add --dev @automattic/calypso-build
 Then, add a `build` script that invokes the `calypso-build` command:
 
 ```json
+{
 	"scripts": {
 		"build": "calypso-build ./src/editor.js"
 	}
+}
 ```
 
 Simple as that -- the only argument you really need to pass to `calypso-build` is an entry point file for your project. By default, this will create a `dist/` subfolder in your current working directory that will contain the built files -- typically one `.js`, one `.css`, and one `.rtl.css` file.
@@ -31,9 +33,11 @@ Simple as that -- the only argument you really need to pass to `calypso-build` i
 If you want your built files to go elsewhere, you can customize the output path as follows:
 
 ```json
+{
 	"scripts": {
 		"build": "calypso-build --output-path='./build' ./src/editor.js"
 	}
+}
 ```
 
 ### Multiple entry points
@@ -41,9 +45,11 @@ If you want your built files to go elsewhere, you can customize the output path 
 It's also possible to define more than one entry point (resulting in one bundle per entry point):
 
 ```json
+{
 	"scripts": {
 		"build": "calypso-build --output-path='./build' editor=./src/editor.js view=./src/view.js"
 	}
+}
 ```
 
 ### Command Line Interface based on Webpack's
@@ -57,9 +63,11 @@ It was our conscious decision to stick to Webpack's interface rather than coveri
 That `webpack.config.js` introduces one rather WordPress/Gutenberg specific "environment" option, `WP`, which you can set as follows:
 
 ```json
+{
 	"scripts": {
 		"build": "calypso-build ./src/editor.js --env WP"
 	}
+}
 ```
 
 The impact of this option is twofold:
@@ -99,9 +107,11 @@ module.exports = getWebpackConfig;
 `calypso-build` will automatically pick up your `webpack.config.js` if it's in the same directory that the command is called from. You can customize that filename and location using the `--config` option:
 
 ```json
+{
 	"scripts": {
 		"build": "calypso-build --config='./config-files/webpack.config.js' ./src/editor.js"
 	}
+}
 ```
 
 ## Advanced Usage: Use own PostCSS Config

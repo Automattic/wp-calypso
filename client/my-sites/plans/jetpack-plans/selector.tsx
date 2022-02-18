@@ -3,16 +3,23 @@ import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
+import QueryJetpackUserLicenses from 'calypso/components/data/query-jetpack-user-licenses';
+import QueryJetpackUserLicensesCounts from 'calypso/components/data/query-jetpack-user-licenses-counts';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
+import LicensingActivationBanner from 'calypso/components/jetpack/licensing-activation-banner';
+import LicensingPromptDialog from 'calypso/components/jetpack/licensing-prompt-dialog';
 import Main from 'calypso/components/main';
+import { MAIN_CONTENT_ID } from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { showMasterbar } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getPurchaseURLCallback } from './get-purchase-url-callback';
 import getViewTrackerPath from './get-view-tracker-path';
@@ -38,6 +45,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	footer,
 	planRecommendation,
 	highlightedProducts = [],
+	enableUserLicensesDialog = false,
 }: SelectorPageProps ) => {
 	const dispatch = useDispatch();
 
@@ -103,6 +111,17 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		[ highlightedProducts ]
 	);
 
+	useEffect(
+		() => () => {
+			// Show masterbar back when pricing page unmounts, to prevent it from disappearing
+			// from the previous page when hitting the browser back button.
+			if ( isJetpackCloud() ) {
+				dispatch( showMasterbar() );
+			}
+		},
+		[]
+	);
+
 	const createProductURL = getPurchaseURLCallback( siteSlug, urlQueryArgs );
 
 	// Sends a user to a page based on whether there are subtypes.
@@ -166,15 +185,26 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	return (
 		<>
 			<QueryJetpackSaleCoupon />
+			{ siteId && enableUserLicensesDialog && <QueryJetpackUserLicenses /> }
+			{ siteId && enableUserLicensesDialog && <QueryJetpackUserLicensesCounts /> }
+
+			{ siteId && enableUserLicensesDialog && <LicensingPromptDialog siteId={ siteId } /> }
+
 			{ nav }
 
-			<Main className={ classNames( 'selector__main', iterationClassName ) } wideLayout>
+			<Main
+				className={ classNames( 'selector__main', iterationClassName, 'fs-unmask' ) }
+				id={ MAIN_CONTENT_ID }
+				wideLayout
+			>
 				<PageViewTracker
 					path={ viewTrackerPath }
 					properties={ viewTrackerProps }
 					title="Plans"
 					options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
 				/>
+
+				{ siteId && enableUserLicensesDialog && <LicensingActivationBanner siteId={ siteId } /> }
 
 				{ header }
 
@@ -189,12 +219,12 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				/>
 
 				<QueryProductsList type="jetpack" />
+				<QueryIntroOffers siteId={ siteId ?? 'none' } />
 				{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 				{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 				{ siteId && <QuerySites siteId={ siteId } /> }
-
-				{ footer }
 			</Main>
+			{ footer }
 		</>
 	);
 };

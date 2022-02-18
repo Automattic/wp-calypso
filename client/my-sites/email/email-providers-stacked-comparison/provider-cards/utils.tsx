@@ -1,29 +1,22 @@
-import {
+import page from 'page';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import type {
 	RequestCartProduct,
 	ResponseCart,
 	ShoppingCartManagerActions,
+	MinimalRequestCartProduct,
 } from '@automattic/shopping-cart';
-import page from 'page';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
-import { IncompleteRequestCartProduct } from 'calypso/lib/cart-values/cart-items';
-
-export enum IntervalLength {
-	ANNUALLY = 'annually',
-	MONTHLY = 'monthly',
-}
 
 export const addToCartAndCheckout = (
 	shoppingCartManager: ShoppingCartManagerActions,
-	cartItem: RequestCartProduct | IncompleteRequestCartProduct,
-	productList: Record< string, { product_id: number } >,
+	cartItem: RequestCartProduct | MinimalRequestCartProduct,
 	setAddingToCart: ( addingToCart: boolean ) => void,
 	selectedSite: string
 ): void => {
 	setAddingToCart( true );
 
 	shoppingCartManager
-		.addProductsToCart( [ fillInSingleCartItemAttributes( cartItem, productList ) ] )
+		.addProductsToCart( [ cartItem ] )
 		.then( ( response: ResponseCart ) => {
 			setAddingToCart( false );
 

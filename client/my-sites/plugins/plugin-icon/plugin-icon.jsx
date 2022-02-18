@@ -19,7 +19,7 @@ const PluginIcon = ( { className, image, isPlaceholder } ) => {
 			{ isPlaceholder || ! image ? (
 				<Gridicon icon="plugins" />
 			) : (
-				<img className="plugin-icon__img" src={ image } />
+				<img className="plugin-icon__img" src={ image } alt="plugin-icon" />
 			) }
 		</div>
 	);
@@ -28,6 +28,7 @@ const PluginIcon = ( { className, image, isPlaceholder } ) => {
 PluginIcon.propTypes = {
 	image: PropTypes.string,
 	isPlaceholder: PropTypes.bool,
+	className: PropTypes.string,
 };
 
 export default PluginIcon;

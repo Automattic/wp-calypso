@@ -1,0 +1,12 @@
+.billing-interval-toggle {
+	align-content: space-between;
+
+	> .segmented-control.is-compact {
+		margin: 25px auto;
+		max-width: 480px;
+
+		.segmented-control__link {
+			padding: 8px 12px;
+		}
+	}
+}

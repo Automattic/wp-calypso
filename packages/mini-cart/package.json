@@ -1,0 +1,62 @@
+{
+	"name": "@automattic/mini-cart",
+	"version": "1.0.0",
+	"description": "A simple wp.com shopping-cart interface.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"types": "dist/types/index.d.ts",
+	"calypso:src": "src/index.ts",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [
+		"checkout",
+		"payments",
+		"cart",
+		"shopping",
+		"payments",
+		"automattic"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/mini-cart"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/mini-cart#readme",
+	"dependencies": {
+		"@automattic/composite-checkout": "workspace:^",
+		"@automattic/shopping-cart": "workspace:^",
+		"@automattic/wpcom-checkout": "workspace:^",
+		"@emotion/styled": "^11.3.0",
+		"@wordpress/i18n": "^4.2.4",
+		"@wordpress/react-i18n": "^3.0.4",
+		"debug": "^4.3.3"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/jest-dom": "^5.16.1",
+		"@testing-library/react": "^12.1.2",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"typescript": "^4.5.5"
+	},
+	"peerDependencies": {
+		"@emotion/react": "^11.4.1",
+		"redux": "^4.1.2"
+	},
+	"private": true
+}

@@ -7,7 +7,6 @@ describe( 'setSiteVertical()', () => {
 			isUserInput: false,
 			name: 'heureux',
 			slug: 'happy',
-			preview: '<!--gutenberg-besties-forever <p>Fist bump!</p>-->',
 		};
 
 		expect( setSiteVertical( siteVertical ) ).toEqual( {

@@ -12,6 +12,7 @@ import type {
 	SubscriptionManager,
 	ActionPromises,
 	ShoppingCartManagerActions,
+	CartKey,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:managers' );
@@ -47,7 +48,7 @@ export function getShoppingCartManagerState( state: ShoppingCartState ): Shoppin
 	};
 }
 
-export function createSubscriptionManager( cartKey: string | undefined ): SubscriptionManager {
+export function createSubscriptionManager( cartKey: CartKey | undefined ): SubscriptionManager {
 	let subscribedClients: SubscribeCallback[] = [];
 	const subscribe = ( callback: SubscribeCallback ): UnsubscribeFunction => {
 		debug( `adding subscriber for cartKey ${ cartKey }` );
@@ -125,6 +126,7 @@ const noopActions: ShoppingCartManagerActions = {
 	replaceProductInCart: noopCartAction,
 	replaceProductsInCart: noopCartAction,
 	reloadFromServer: () => Promise.resolve( emptyCart ),
+	clearMessages: () => Promise.resolve( emptyCart ),
 };
 export const noopManager: ShoppingCartManager = {
 	actions: noopActions,

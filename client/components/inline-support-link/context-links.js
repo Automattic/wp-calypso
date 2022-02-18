@@ -3,6 +3,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
 		post_id: 111349,
 	},
+	backup_payment_methods: {
+		link: 'https://wordpress.com/support/payment/#backup-payment-methods',
+		post_id: 76237,
+	},
 	billing: {
 		link: 'https://wordpress.com/support/billing-history/',
 		post_id: 40792,
@@ -153,6 +157,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/themes/',
 		post_id: 2278,
 	},
+	'themes-retired': {
+		link: 'https://wordpress.com/support/themes/retired-themes/',
+		post_id: 189792,
+	},
 	'themes-switch': {
 		link: 'https://wordpress.com/support/changing-themes/',
 		post_id: 184023,
@@ -168,6 +176,10 @@ const contextLinks = {
 	'webmaster-tools': {
 		link: 'https://wordpress.com/support/webmaster-tools/',
 		post_id: 5022,
+	},
+	'introduction-to-woocommerce': {
+		link: 'https://wordpress.com/support/introduction-to-woocommerce/',
+		post_id: 176336,
 	},
 };
 

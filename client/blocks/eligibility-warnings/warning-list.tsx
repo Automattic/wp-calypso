@@ -1,12 +1,14 @@
 import { Gridicon } from '@automattic/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
+import { Fragment } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import ExternalLink from 'calypso/components/external-link';
+import type { EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
 
 interface ExternalProps {
 	context: string | null;
-	warnings: import('calypso/state/automated-transfer/selectors').EligibilityWarning[];
+	warnings: EligibilityWarning[];
 }
 
 type Props = ExternalProps & LocalizeProps;
@@ -25,8 +27,11 @@ export const WarningList = ( { context, translate, warnings }: Props ) => (
 		{ map( warnings, ( { name, description, supportUrl }, index ) => (
 			<div className="eligibility-warnings__warning" key={ index }>
 				<div className="eligibility-warnings__message">
-					<span className="eligibility-warnings__message-title">{ name }</span>
-					:&nbsp;
+					{ context !== 'plugin-details' && (
+						<Fragment>
+							<span className="eligibility-warnings__message-title">{ name }</span>:&nbsp;
+						</Fragment>
+					) }
 					<span className="eligibility-warnings__message-description">
 						{ description }{ ' ' }
 						{ supportUrl && (
@@ -41,10 +46,8 @@ export const WarningList = ( { context, translate, warnings }: Props ) => (
 
 		<div className="eligibility-warnings__warning">
 			<div className="eligibility-warnings__message">
-				<span className="eligibility-warnings__message-title">{ translate( 'Questions?' ) }</span>
-				:&nbsp;
 				<span className="eligibility-warnings__message-description">
-					{ translate( '{{a}}Contact support{{/a}} for help.', {
+					{ translate( '{{a}}Contact support{{/a}} for help and questions.', {
 						components: {
 							a: <ActionPanelLink href="/help/contact" />,
 						},
@@ -69,6 +72,7 @@ function getWarningDescription(
 		}
 	);
 	switch ( context ) {
+		case 'plugin-details':
 		case 'plugins':
 			return translate(
 				'By installing a plugin the following change will be made to the site:',

@@ -35,7 +35,6 @@ const PlanFeaturesActionsButton = ( {
 	freePlan = false,
 	manageHref,
 	isLandingPage,
-	isDisabled = false,
 	isPlaceholder = false,
 	isPopular,
 	isInSignup,
@@ -75,7 +74,7 @@ const PlanFeaturesActionsButton = ( {
 
 	if ( current && ! isInSignup && planType !== PLAN_P2_FREE ) {
 		return (
-			<Button className={ classes } href={ manageHref } disabled={ ! manageHref || isDisabled }>
+			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
 				{ canPurchase ? translate( 'Manage plan' ) : translate( 'View plan' ) }
 			</Button>
 		);
@@ -87,11 +86,7 @@ const PlanFeaturesActionsButton = ( {
 		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
 	) {
 		return (
-			<Button
-				className={ classes }
-				onClick={ handleUpgradeButtonClick }
-				disabled={ isPlaceholder || isDisabled }
-			>
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
 				{ props.buttonText || translate( 'Upgrade to Yearly' ) }
 			</Button>
 		);
@@ -99,11 +94,7 @@ const PlanFeaturesActionsButton = ( {
 
 	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
 		return (
-			<Button
-				className={ classes }
-				onClick={ handleUpgradeButtonClick }
-				disabled={ isPlaceholder || isDisabled }
-			>
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
 				{ props.buttonText ||
 					translate( 'Start with %(plan)s', {
 						args: {
@@ -186,7 +177,6 @@ PlanFeaturesActions.propTypes = {
 	currentSitePlanSlug: PropTypes.string,
 	forceDisplayButton: PropTypes.bool,
 	freePlan: PropTypes.bool,
-	isDisabeled: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
 	isLaunchPage: PropTypes.bool,

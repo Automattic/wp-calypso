@@ -6,7 +6,6 @@ import { defer } from 'lodash';
 import { Component, CSSProperties, FunctionComponent } from 'react';
 import pathToSection from 'calypso/lib/path-to-section';
 import { ROUTE_SET } from 'calypso/state/action-types';
-import { TimestampMS } from 'calypso/types';
 import { contextTypes } from '../context-types';
 import {
 	posToCss,
@@ -16,18 +15,39 @@ import {
 	targetForSlug,
 } from '../positioning';
 import { ArrowPosition, DialogPosition, Coordinate } from '../types';
+import type { CalypsoDispatch } from 'calypso/state/types';
+import type { TimestampMS } from 'calypso/types';
+import type { AnyAction } from 'redux';
+import type { ThunkAction } from 'redux-thunk';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
-const anyFrom = ( obj ) => {
+const anyFrom = ( obj: Record< string, string > ): string => {
 	const key = Object.keys( obj )[ 0 ];
 	return key && obj[ key ];
 };
+
+interface SectionContext {
+	sectionName?: string;
+	dispatch: CalypsoDispatch;
+	step: string;
+	shouldPause?: boolean;
+	branching: Record< string, { continue: string } >;
+	lastAction: { type: string; path: string };
+	next: ( newCtx: Partial< SectionContext > ) => void;
+	nextStepName?: string;
+	skipping?: boolean;
+	tour: string;
+	tourVersion: string;
+	isValid: ( when: ContextWhen ) => boolean;
+}
 
 interface RequiredProps {
 	name: string;
 	children: FunctionComponent< { translate: typeof translate } >;
 }
+
+type ContextWhen = ( ...args: unknown[] ) => boolean;
 
 interface AcceptedProps {
 	arrow?: ArrowPosition;
@@ -42,9 +62,9 @@ interface AcceptedProps {
 	shouldScrollTo?: boolean;
 	style?: CSSProperties;
 	target?: string;
-	wait?: ( props: Props, context: typeof contextTypes ) => Promise< void >;
+	wait?: () => ThunkAction< Promise< void >, unknown, void, AnyAction >;
 	waitForTarget?: boolean;
-	when?: ( ...args: unknown[] ) => boolean;
+	when?: ContextWhen;
 }
 
 interface DefaultProps {
@@ -52,9 +72,9 @@ interface DefaultProps {
 }
 
 interface State {
-	initialized: boolean;
-	hasScrolled: boolean;
-	seenTarget: boolean;
+	initialized?: boolean;
+	hasScrolled?: boolean;
+	seenTarget?: boolean;
 	stepPos?: Coordinate;
 }
 
@@ -71,7 +91,7 @@ export default class Step extends Component< Props, State > {
 
 	lastTransitionTimestamp: TimestampMS | null = null;
 
-	stepSection: string = null;
+	stepSection: string | null | undefined = null;
 
 	mounted = false;
 
@@ -103,7 +123,7 @@ export default class Step extends Component< Props, State > {
 			this.setStepSection( this.context, { init: true } );
 			debug( 'Step#componentWillMount: stepSection:', this.stepSection );
 			this.skipIfInvalidContext( this.props, this.context );
-			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
+			this.scrollContainer = query( this.props.scrollContainer ?? '' )[ 0 ] || window;
 			// Don't pass `shouldScrollTo` as argument since mounting hasn't occured at this point yet.
 			this.setStepPosition( this.props );
 			this.safeSetState( { initialized: true } );
@@ -119,7 +139,7 @@ export default class Step extends Component< Props, State > {
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext ) {
+	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext: SectionContext ) {
 		// Scrolling must happen only once
 		const shouldScrollTo = nextProps.shouldScrollTo && ! this.state.hasScrolled;
 
@@ -131,7 +151,7 @@ export default class Step extends Component< Props, State > {
 			if ( this.scrollContainer ) {
 				this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 			}
-			this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || window;
+			this.scrollContainer = query( nextProps.scrollContainer ?? '' )[ 0 ] || window;
 			this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
 			this.setStepPosition( nextProps, shouldScrollTo );
 			this.watchTarget();
@@ -157,13 +177,13 @@ export default class Step extends Component< Props, State > {
 		start( { step, tour, tourVersion } );
 	}
 
-	async wait( props: Props, context ) {
+	async wait( props: Props, context: SectionContext ) {
 		if ( typeof props.wait === 'function' ) {
 			await context.dispatch( props.wait() );
 		}
 	}
 
-	safeSetState( state: State ) {
+	safeSetState( state: State | ( ( state: State ) => State ) ) {
 		if ( this.mounted ) {
 			this.setState( state );
 		} else {
@@ -181,7 +201,7 @@ export default class Step extends Component< Props, State > {
 			return;
 		}
 
-		this.safeSetState( { seenTarget: ! target || targetForSlug( target ) } );
+		this.safeSetState( { seenTarget: Boolean( ! target || targetForSlug( target ) ) } );
 
 		if ( ! this.observer ) {
 			this.observer = new window.MutationObserver( () => {
@@ -235,7 +255,7 @@ export default class Step extends Component< Props, State > {
 	 * Below, `shouldPause` tells us that we're waiting for the section to
 	 * change.
 	 */
-	setStepSection( nextContext, { init = false } = {} ) {
+	setStepSection( nextContext: SectionContext, { init = false } = {} ) {
 		if ( init ) {
 			// hard reset on Step instantiation
 			this.stepSection = nextContext.sectionName;
@@ -257,7 +277,7 @@ export default class Step extends Component< Props, State > {
 		}
 	}
 
-	quitIfInvalidRoute( nextProps: Props, nextContext ) {
+	quitIfInvalidRoute( nextProps: Props, nextContext: SectionContext ) {
 		if (
 			nextContext.step !== this.context.step ||
 			nextContext.sectionName === this.context.sectionName ||
@@ -308,11 +328,11 @@ export default class Step extends Component< Props, State > {
 		} );
 	}
 
-	isDifferentSection( path ) {
+	isDifferentSection( path: string ) {
 		return this.stepSection && path && this.stepSection !== pathToSection( path );
 	}
 
-	skipToNext( props: Props, context ) {
+	skipToNext( props: Props, context: SectionContext ) {
 		const { branching, next, step, tour, tourVersion } = context;
 
 		this.setAnalyticsTimestamp( context );
@@ -322,7 +342,7 @@ export default class Step extends Component< Props, State > {
 		next( { tour, tourVersion, step, nextStepName, skipping } );
 	}
 
-	skipIfInvalidContext( props: Props, context ) {
+	skipIfInvalidContext( props: Props, context: SectionContext ) {
 		const { canSkip, when } = props;
 
 		if ( when && ! context.isValid( when ) && canSkip ) {
@@ -330,14 +350,16 @@ export default class Step extends Component< Props, State > {
 		}
 	}
 
-	setAnalyticsTimestamp( { step, shouldPause } ) {
+	setAnalyticsTimestamp( { step, shouldPause }: { step: string; shouldPause?: boolean } ) {
 		if ( this.context.step !== step || ( this.context.shouldPause && ! shouldPause ) ) {
 			this.lastTransitionTimestamp = Date.now();
 		}
 	}
 
 	shouldSkipAnalytics() {
-		return this.lastTransitionTimestamp && Date.now() - this.lastTransitionTimestamp < 500;
+		return Boolean(
+			this.lastTransitionTimestamp && Date.now() - this.lastTransitionTimestamp < 500
+		);
 	}
 
 	onScrollOrResize = () => {
@@ -368,7 +390,7 @@ export default class Step extends Component< Props, State > {
 			shouldScrollTo,
 			scrollContainer: this.scrollContainer,
 		} );
-		this.safeSetState( ( state ) => ( {
+		this.safeSetState( ( state: State ) => ( {
 			stepPos,
 			hasScrolled: ! state.hasScrolled && scrollDiff > 0,
 		} ) );
@@ -399,7 +421,7 @@ export default class Step extends Component< Props, State > {
 		}
 
 		const { arrow, target: targetSlug } = this.props;
-		const { stepPos } = this.state;
+		const { stepPos = { x: 0, y: 0 } } = this.state;
 
 		const classes = [
 			this.props.className,

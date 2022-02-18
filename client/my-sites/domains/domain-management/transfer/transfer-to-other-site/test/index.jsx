@@ -1,6 +1,7 @@
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( '@automattic/search', () => null );
 
 import {
 	PLAN_FREE,
@@ -23,7 +24,7 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
-import { TransferToOtherSite } from '../index';
+import { TransferDomainToOtherSite } from '../transfer-domain-to-other-site';
 
 const site = {
 	options: {
@@ -43,7 +44,7 @@ const props = {
 	},
 };
 
-describe( 'TransferToOtherSite.isSiteEligible()', () => {
+describe( 'TransferDomainToOtherSite.isSiteEligible()', () => {
 	[
 		PLAN_FREE,
 		PLAN_JETPACK_FREE,
@@ -66,7 +67,7 @@ describe( 'TransferToOtherSite.isSiteEligible()', () => {
 		PLAN_ECOMMERCE_2_YEARS,
 	].forEach( ( plan ) => {
 		test( `Should return true for plan ${ plan }`, () => {
-			const instance = new TransferToOtherSite( props );
+			const instance = new TransferDomainToOtherSite( props );
 			expect( instance.isSiteEligible( { ...site, plan: { product_slug: plan } } ) ).toBe( true );
 		} );
 	} );

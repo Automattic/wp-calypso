@@ -233,11 +233,7 @@ class StatsListItem extends Component {
 				if ( this.isFollowersModule && siteId ) {
 					onClickHandler = ( event ) => {
 						const modifierPressed =
-							event.button > 0 ||
-							event.metaKey ||
-							event.controlKey ||
-							event.shiftKey ||
-							event.altKey;
+							event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 						recordTrack( 'calypso_reader_stats_module_site_stream_link_click', {
 							site_id: siteId,
 							module_name: this.props.moduleName,

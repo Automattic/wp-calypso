@@ -9,6 +9,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	isExpired,
 	isExpiring,
@@ -34,7 +35,13 @@ export class PlanBillingPeriod extends Component {
 			current_plan: purchase.productSlug,
 			upgrading_to: yearlyPlanSlug,
 		} );
-		page( '/checkout/' + purchase.domain + '/' + yearlyPlanSlug );
+		page(
+			( isJetpackCloud() ? 'https://wordpress.com' : '' ) +
+				'/checkout/' +
+				purchase.domain +
+				'/' +
+				yearlyPlanSlug
+		);
 	};
 
 	renderYearlyBillingInformation() {

@@ -15,10 +15,6 @@
 		margin-left: 8px;
 		vertical-align: super;
 	}
-
-	@include breakpoint-deprecated( '<960px' ) {
-		font-size: $font-title-medium;
-	}
 }
 
 .plan-price.is-original {

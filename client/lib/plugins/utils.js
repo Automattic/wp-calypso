@@ -30,12 +30,14 @@ function isSamePluginNotice( pluginId, log ) {
  * @returns {boolean} True if the plugin ID and slug match
  */
 export function isSamePluginIdSlug( idOrSlug, slugOrId ) {
+	const firstIdOrSlug = idOrSlug.toString();
+	const secondIdOrSlug = slugOrId.toString();
 	return (
-		idOrSlug === slugOrId ||
-		idOrSlug.startsWith( slugOrId + '/' ) ||
-		idOrSlug.endsWith( '/' + slugOrId ) ||
-		slugOrId.startsWith( idOrSlug + '/' ) ||
-		slugOrId.endsWith( '/' + idOrSlug )
+		firstIdOrSlug === secondIdOrSlug ||
+		firstIdOrSlug.startsWith( secondIdOrSlug + '/' ) ||
+		firstIdOrSlug.endsWith( '/' + secondIdOrSlug ) ||
+		secondIdOrSlug.startsWith( firstIdOrSlug + '/' ) ||
+		secondIdOrSlug.endsWith( '/' + firstIdOrSlug )
 	);
 }
 
@@ -84,9 +86,12 @@ export function getAllowedPluginData( plugin ) {
 		'network',
 		'num_ratings',
 		'plugin_url',
+		'product_video',
 		'rating',
 		'ratings',
+		'requirements',
 		'sections',
+		'setup_url',
 		'slug',
 		'support_URL',
 		'tags',
@@ -210,6 +215,9 @@ export function normalizePluginData( plugin, pluginData ) {
 				break;
 			case 'compatibility':
 				returnData[ key ] = normalizeCompatibilityList( item );
+				break;
+			case 'product_video':
+				returnData.banner_video_src = item;
 				break;
 			default:
 				returnData[ key ] = item;

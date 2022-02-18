@@ -1,6 +1,5 @@
 import { combineReducers } from '@wordpress/data';
 import type { OnboardAction } from './actions';
-import type { SiteVertical } from './types';
 import type { DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
 import type { Design, FontPair } from '@automattic/design-picker';
 import type { Reducer } from 'redux';
@@ -66,20 +65,6 @@ const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action
 	}
 	// This reducer is intentionally not cleared by 'RESET_ONBOARD_STORE' to prevent
 	// a flash of the IntentGathering step after the store is reset.
-	return state;
-};
-
-const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) => {
-	if ( action.type === 'TOGGLE_PAGE_LAYOUT' ) {
-		const layout = action.pageLayout;
-		if ( state.includes( layout.slug ) ) {
-			return state.filter( ( item ) => item !== layout.slug );
-		}
-		return [ ...state, layout.slug ];
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return [];
-	}
 	return state;
 };
 
@@ -189,26 +174,6 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_SITE_VERTICAL' ) {
-		return action.siteVertical;
-	}
-	if ( action.type === 'RESET_SITE_VERTICAL' || action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
-const wasVerticalSkipped: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SKIP_SITE_VERTICAL' ) {
-		return true;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
-	}
-	return state;
-};
-
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -229,13 +194,6 @@ const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	return state;
 };
 
-const isEnrollingInFseBeta: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
-	if ( action.type === 'SET_ENROLL_IN_FSE_BETA' ) {
-		return action.enrollInFseBeta;
-	}
-	return state;
-};
-
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -243,20 +201,16 @@ const reducer = combineReducers( {
 	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
-	pageLayouts,
 	selectedFeatures,
 	selectedFonts,
 	selectedDesign,
 	selectedSite,
 	siteTitle,
-	siteVertical,
 	showSignupDialog,
 	planProductId,
-	wasVerticalSkipped,
 	randomizedDesigns,
 	hasOnboardingStarted,
 	lastLocation,
-	isEnrollingInFseBeta,
 } );
 
 export type State = ReturnType< typeof reducer >;

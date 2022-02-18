@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import {
 	BACKUP_ACTIONS,
 	DELTA_ACTIVITIES,
@@ -8,7 +10,10 @@ import {
 	isActivityBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
-import { useActivityLogs, useFirstMatchingBackupAttempt } from '../hooks';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { useFirstMatchingBackupAttempt, useMatchingBackupAttemptsInRange } from '../hooks';
 
 const useLatestBackupAttempt = ( siteId, { before, after, successOnly = false } = {} ) => {
 	return useFirstMatchingBackupAttempt( siteId, {
@@ -19,7 +24,7 @@ const useLatestBackupAttempt = ( siteId, { before, after, successOnly = false } 
 	} );
 };
 
-const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, shouldExecute = true ) => {
+const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, enabled = true ) => {
 	const filter = {
 		name: DELTA_ACTIVITIES,
 		before: before ? before.toISOString() : undefined,
@@ -30,23 +35,17 @@ const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, shouldE
 
 	const isValidRequest = filter.before && filter.after;
 
-	const { isLoadingActivityLogs, activityLogs } = useActivityLogs(
-		siteId,
-		filter,
-		!! ( isValidRequest && shouldExecute )
-	);
+	const { data, isLoading } = useActivityLogQuery( siteId, filter, {
+		enabled: isValidRequest && enabled,
+	} );
 
 	return {
-		isLoadingDeltas: !! ( shouldExecute && isLoadingActivityLogs ),
-		deltas: getDeltaActivitiesByType( activityLogs ),
+		isLoading,
+		deltas: getDeltaActivitiesByType( data ?? [] ),
 	};
 };
 
-const useRawBackupDeltas = (
-	siteId,
-	{ before, after, number = 1000 } = {},
-	shouldExecute = true
-) => {
+const useRawBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, enabled = true ) => {
 	const filter = {
 		name: DELTA_ACTIVITIES,
 		before: before ? before.toISOString() : undefined,
@@ -57,15 +56,64 @@ const useRawBackupDeltas = (
 
 	const isValidRequest = filter.before && filter.after;
 
-	const { isLoadingActivityLogs, activityLogs } = useActivityLogs(
-		siteId,
-		filter,
-		!! ( isValidRequest && shouldExecute )
-	);
+	const { data, isLoading } = useActivityLogQuery( siteId, filter, {
+		enabled: isValidRequest && enabled,
+	} );
 
 	return {
-		isLoadingDeltas: !! ( shouldExecute && isLoadingActivityLogs ),
-		deltas: getDeltaActivities( activityLogs ),
+		isLoading,
+		deltas: getDeltaActivities( data ?? [] ),
+	};
+};
+
+// Get the dates where there are no successful backups in a range
+export const useDatesWithNoSuccessfulBackups = ( siteId, startDate, endDate ) => {
+	const moment = useLocalizedMoment();
+	const timezone = useSelector( ( state ) =>
+		siteId ? getSiteTimezoneValue( state, siteId ) : null
+	);
+	const gmtOffset = useSelector( ( state ) =>
+		siteId ? getSiteGmtOffset( state, siteId ) : null
+	);
+
+	// Adapted from useDateWithOffsetHook to move dates based on the selected blog's GMT offset.
+	const adjustDate = ( date ) =>
+		date ? applySiteOffset( date, { timezone, gmtOffset, keepLocalTime: false } ) : undefined;
+
+	// This will get a set of activity logs
+	const { isLoading, backups } = useMatchingBackupAttemptsInRange( siteId, {
+		after: moment( startDate ).startOf( 'day' ),
+		before: moment( endDate ).endOf( 'day' ),
+	} );
+
+	const datesWithoutBackups = useMemo( () => {
+		const endMoment = moment( endDate ).endOf( 'day' );
+		const movingDate = moment( startDate ).startOf( 'day' );
+		const dates = [];
+
+		// Collect an array of all the dates in the range
+		while ( movingDate < endMoment ) {
+			dates.push( movingDate.format( 'MM-DD-YYYY' ) );
+			movingDate.add( 1, 'day' );
+		}
+
+		if ( backups ) {
+			backups.forEach( ( item ) => {
+				// Remove dates from the dates array that have backups
+				// This should leave only dates that have no backups in the array
+				const backupDate = adjustDate( item.activityDate ).format( 'MM-DD-YYYY' );
+				if ( dates.indexOf( backupDate ) > -1 ) {
+					dates.splice( dates.indexOf( backupDate ), 1 );
+				}
+			} );
+		}
+
+		return dates;
+	}, [ startDate, endDate, backups ] );
+
+	return {
+		isLoading,
+		dates: datesWithoutBackups,
 	};
 };
 
@@ -135,30 +183,23 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 		successOnly: true,
 	} );
 
-	const { activityLogs, isLoadingActivityLogs } = useActivityLogs( siteId, {
-		before: moment( selectedDate ).endOf( 'day' ).toISOString(),
-		after: moment( selectedDate ).startOf( 'day' ).toISOString(),
-		action: BACKUP_ACTIONS,
-	} );
+	const activityLog = useActivityLogQuery(
+		siteId,
+		{
+			before: moment( selectedDate ).endOf( 'day' ).toISOString(),
+			after: moment( selectedDate ).startOf( 'day' ).toISOString(),
+		},
+		{
+			select: ( data ) =>
+				data.filter( ( a ) => isActivityBackup( a ) || isSuccessfulRealtimeBackup( a ) ),
+		}
+	);
 
-	const {
-		backupAttemptsOnDate,
-		lastBackupAttemptOnDate,
-		lastSuccessfulBackupOnDate,
-		lastAttemptWasSuccessful,
-	} = useMemo( () => {
-		const attemptsOnDate = activityLogs.filter(
-			( a ) => isActivityBackup( a ) || isSuccessfulRealtimeBackup( a )
-		);
-
-		return {
-			backupAttemptsOnDate: attemptsOnDate,
-			lastBackupAttemptOnDate: attemptsOnDate[ 0 ],
-			lastSuccessfulBackupOnDate: attemptsOnDate.find( isSuccessfulRealtimeBackup ),
-			lastAttemptWasSuccessful:
-				attemptsOnDate[ 0 ] && isSuccessfulRealtimeBackup( attemptsOnDate[ 0 ] ),
-		};
-	}, [ activityLogs ] );
+	const backupAttemptsOnDate = activityLog.data ?? [];
+	const lastBackupAttemptOnDate = backupAttemptsOnDate[ 0 ];
+	const lastSuccessfulBackupOnDate = backupAttemptsOnDate.find( isSuccessfulRealtimeBackup );
+	const lastAttemptWasSuccessful =
+		lastBackupAttemptOnDate && isSuccessfulRealtimeBackup( lastBackupAttemptOnDate );
 
 	const hasPreviousBackup = ! lastBackupBeforeDate.isLoading && lastBackupBeforeDate.backupAttempt;
 
@@ -175,7 +216,7 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 		isLoading:
 			mostRecentBackupEver.isLoading ||
 			lastBackupBeforeDate.isLoading ||
-			isLoadingActivityLogs ||
+			activityLog.isLoading ||
 			rawDeltas.isLoading,
 		mostRecentBackupEver: mostRecentBackupEver.backupAttempt,
 		lastBackupBeforeDate: lastBackupBeforeDate.backupAttempt,

@@ -111,7 +111,7 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 					pinnedSidebarBottom = false;
 
 					// Calculate new offset position.
-					sidebarTop = scrollY + masterbarHeight - maxScroll;
+					sidebarTop = Math.max( 0, scrollY + masterbarHeight - maxScroll );
 					if ( contentHeight === secondaryElHeight + masterbarHeight ) {
 						// When content is originally shorter than the sidebar and
 						// we have already made it equal to the sidebar + masterbar

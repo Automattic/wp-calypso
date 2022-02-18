@@ -28,8 +28,11 @@ class StepWrapper extends Component {
 		isLargeSkipLayout: PropTypes.bool,
 		isExternalBackUrl: PropTypes.bool,
 		headerButton: PropTypes.node,
+		isWideLayout: PropTypes.bool,
+		isFullLayout: PropTypes.bool,
 		isHorizontalLayout: PropTypes.bool,
 		queryParams: PropTypes.object,
+		customizedActionButtons: PropTypes.element,
 	};
 
 	static defaultProps = {
@@ -45,6 +48,7 @@ class StepWrapper extends Component {
 		return (
 			<NavigationLink
 				direction="back"
+				goToPreviousStep={ this.props.goToPreviousStep }
 				flowName={ this.props.flowName }
 				positionInFlow={ this.props.positionInFlow }
 				stepName={ this.props.stepName }
@@ -101,6 +105,7 @@ class StepWrapper extends Component {
 			defaultDependencies,
 			flowName,
 			stepName,
+			forwardUrl,
 			goToNextStep,
 			translate,
 		} = this.props;
@@ -113,7 +118,7 @@ class StepWrapper extends Component {
 			<NavigationLink
 				direction="forward"
 				goToNextStep={ goToNextStep }
-				forwardUrl={ this.props.forwardUrl }
+				forwardUrl={ forwardUrl }
 				defaultDependencies={ defaultDependencies }
 				flowName={ flowName }
 				stepName={ stepName }
@@ -122,7 +127,7 @@ class StepWrapper extends Component {
 				borderless={ false }
 				primary
 				forwardIcon={ null }
-				disabledTracks
+				disabledTracksOnClick
 			/>
 		);
 	}
@@ -166,10 +171,12 @@ class StepWrapper extends Component {
 			hideNext,
 			isLargeSkipLayout,
 			isWideLayout,
+			isFullLayout,
 			skipButtonAlign,
 			align,
 			headerImageUrl,
 			isHorizontalLayout,
+			customizedActionButtons,
 		} = this.props;
 
 		const backButton = ! hideBack && this.renderBack();
@@ -178,10 +185,11 @@ class StepWrapper extends Component {
 			skipButtonAlign === 'top' &&
 			this.renderSkip( { borderless: true, forwardIcon: null } );
 		const nextButton = ! hideNext && this.renderNext();
-		const hasNavigation = backButton || skipButton || nextButton;
+		const hasNavigation = backButton || skipButton || nextButton || customizedActionButtons;
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
+			'is-full-layout': isFullLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
 			'has-navigation': hasNavigation,
 		} );
@@ -196,6 +204,7 @@ class StepWrapper extends Component {
 						{ backButton }
 						{ skipButton }
 						{ nextButton }
+						{ customizedActionButtons }
 					</ActionButtons>
 					{ ! hideFormattedHeader && (
 						<div className="step-wrapper__header">

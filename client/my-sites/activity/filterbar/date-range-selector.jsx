@@ -2,8 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight as compose } from 'lodash';
-import { createRef, Component, Fragment } from 'react';
-import { DateUtils } from 'react-day-picker';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import DateRangePicker from 'calypso/components/date-range';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -16,39 +15,6 @@ export class DateRangeSelector extends Component {
 	state = {
 		fromDate: null,
 		toDate: null,
-		enteredToDate: null,
-	};
-
-	constructor( props ) {
-		super( props );
-		this.dateRangeButton = createRef();
-	}
-
-	handleClose = () => {
-		const { moment, siteId, filter, onClose, selectDateRange } = this.props;
-		const fromDate = this.getFromDate( filter );
-		const toDate = this.getToDate( filter );
-
-		this.setState( {
-			toDate: null,
-			fromDate: null,
-			enteredToDate: null,
-		} );
-
-		const formattedFromDate =
-			fromDate && moment( fromDate ).startOf( 'day' ).utc().format( DATE_FORMAT );
-		const formattedToDate = toDate && moment( toDate ).endOf( 'day' ).utc().format( DATE_FORMAT );
-		if ( formattedFromDate && formattedToDate && formattedFromDate !== formattedToDate ) {
-			selectDateRange( siteId, formattedFromDate, formattedToDate );
-			onClose();
-			return;
-		}
-
-		if ( formattedFromDate ) {
-			selectDateRange( siteId, formattedFromDate, null );
-		}
-
-		onClose();
 	};
 
 	handleDateRangeCommit = ( startDate, endDate ) => {
@@ -63,64 +29,9 @@ export class DateRangeSelector extends Component {
 		selectDateRange( this.props.siteId, formattedStartDate, formattedEndDate ); // enough?
 	};
 
-	isSelectingFirstDay = ( from, to, day ) => {
-		const isBeforeFirstDay = from && DateUtils.isDayBefore( day, from );
-		const isRangeSelected = from && to;
-		return ! from || isBeforeFirstDay || isRangeSelected;
-	};
-
-	isSelectingDayInPast = ( day ) => {
-		const today = new Date();
-		return day.getTime() <= today.getTime();
-	};
-
-	handleDayClick = ( date ) => {
-		const { filter } = this.props;
-		const day = date.toDate();
-
-		const fromDate = this.getFromDate( filter );
-		const toDate = this.getToDate( filter );
-
-		if ( fromDate && toDate && day >= toDate ) {
-			this.setState( {
-				enteredToDate: day,
-				toDate: day,
-			} );
-			return;
-		}
-		if ( this.isSelectingFirstDay( fromDate, toDate, day ) ) {
-			this.setState( {
-				fromDate: day,
-				enteredToDate: null,
-			} );
-			return;
-		}
-		this.setState( {
-			enteredToDate: day,
-			toDate: day,
-		} );
-	};
-
-	handleDayMouseEnter = ( day ) => {
-		const { filter } = this.props;
-		const fromDate = this.getFromDate( filter );
-		const toDate = this.getToDate( filter );
-		if ( ! this.isSelectingFirstDay( fromDate, toDate, day ) && this.isSelectingDayInPast( day ) ) {
-			this.setState( {
-				enteredToDate: day,
-			} );
-		}
-		if ( ! this.isSelectingDayInPast( day ) && ! toDate ) {
-			this.setState( {
-				enteredToDate: fromDate,
-			} );
-		}
-	};
-
 	handleResetSelection = () => {
 		const { siteId, selectDateRange } = this.props;
 		this.setState( {
-			enteredToDate: null,
 			fromDate: null,
 			toDate: null,
 		} );
@@ -208,22 +119,6 @@ export class DateRangeSelector extends Component {
 			return toDate;
 		}
 		return filter && filter.before ? moment( filter.before ).toDate() : null;
-	};
-
-	getEnteredToDate = () => {
-		const { filter } = this.props;
-		if ( this.state.enteredToDate ) {
-			return this.state.enteredToDate;
-		}
-		return this.getToDate( filter );
-	};
-
-	handleButtonClick = () => {
-		const { isVisible, onButtonClick } = this.props;
-		if ( isVisible ) {
-			this.handleClose();
-		}
-		onButtonClick();
 	};
 
 	render() {

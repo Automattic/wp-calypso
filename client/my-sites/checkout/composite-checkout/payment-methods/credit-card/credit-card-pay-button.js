@@ -103,7 +103,7 @@ function ButtonContents( { formStatus, total, activeButtonText = undefined } ) {
 }
 
 function isCreditCardFormValid( store, paymentPartner, __ ) {
-	debug( 'validating credit card fields' );
+	debug( 'validating credit card fields for partner', paymentPartner );
 
 	switch ( paymentPartner ) {
 		case 'stripe': {
@@ -112,6 +112,9 @@ function isCreditCardFormValid( store, paymentPartner, __ ) {
 			if ( ! cardholderName?.value.length ) {
 				// Touch the field so it displays a validation error
 				store.dispatch( store.actions.setFieldValue( 'cardholderName', '' ) );
+				store.dispatch(
+					store.actions.setFieldError( 'cardholderName', __( 'This field is required' ) )
+				);
 			}
 			const errors = store.selectors.getCardDataErrors( store.getState() );
 			const incompleteFieldKeys = store.selectors.getIncompleteFieldKeys( store.getState() );

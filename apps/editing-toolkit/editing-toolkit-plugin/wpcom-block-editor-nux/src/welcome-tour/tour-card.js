@@ -5,7 +5,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getMediaQueryList, isMobile, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -19,47 +18,28 @@ import PaginationControl from './pagination';
 
 import './style-tour.scss';
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
-const useEffectOnlyOnce = ( func ) => useEffect( func, [] );
-
 function WelcomeTourCard( {
 	cardContent,
 	currentStepIndex,
-	justMaximized,
 	lastStepIndex,
 	onMinimize,
 	onDismiss,
-	setJustMaximized,
 	setCurrentStepIndex,
 	onNextStepProgression,
 	onPreviousStepProgression,
 	isGutenboarding,
 	setInitialFocusedElement,
 } ) {
-	const { description, heading, imgSrc } = cardContent;
+	const { descriptions, heading, imgSrc } = cardContent;
 	const isLastStep = currentStepIndex === lastStepIndex;
 
-	// Ensure tracking is recorded once per slide view
-	useEffectOnlyOnce( () => {
-		// Don't track slide view if returning from minimized state
-		if ( justMaximized ) {
-			setJustMaximized( false );
-			return;
-		}
-
-		recordTracksEvent( 'calypso_editor_wpcom_tour_slide_view', {
-			slide_number: currentStepIndex + 1,
-			is_last_slide: isLastStep,
-			slide_heading: heading,
-			is_gutenboarding: isGutenboarding,
-		} );
-	} );
+	const description = descriptions[ isMobile() ? 'mobile' : 'desktop' ] ?? descriptions.desktop;
 
 	return (
 		<Card className="welcome-tour-card" isElevated>
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			{ /* TODO: Update selector for images in @wordpress/components/src/card/styles/card-styles.js */ }
-			<CardMedia className="welcome-tour-card__media">
+			<CardMedia className={ 'welcome-tour-card__media' }>
 				<picture>
 					{ imgSrc.mobile && (
 						<source
@@ -155,12 +135,8 @@ function CardNavigation( {
 }
 
 function CardOverlayControls( { onMinimize, onDismiss } ) {
-	const buttonClasses = classNames( 'welcome-tour-card__overlay-controls', {
-		'welcome-tour-card__overlay-controls__absolute': ! isMobile(),
-	} );
-
 	return (
-		<div className={ buttonClasses }>
+		<div className="welcome-tour-card__overlay-controls">
 			<Flex>
 				<Button
 					label={ __( 'Minimize Tour', 'full-site-editing' ) }

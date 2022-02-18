@@ -13,7 +13,10 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
+import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import { filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -92,7 +95,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request, entrypoint = 'entry-main' ) {
+function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	let initialServerState = {};
 	// We don't compare context.query against an allowed list here. Explicit allowance lists are route-specific,
 	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
@@ -116,6 +119,21 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 	const reduxStore = createReduxStore( initialServerState );
 	setStore( reduxStore );
 
+	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
+	const showGdprBanner = shouldSeeGdprBanner(
+		request.cookies.country_code || geoIPCountryCode,
+		request.cookies.sensitive_pixel_option
+	);
+
+	if ( ! request.cookies.country_code && geoIPCountryCode ) {
+		response.cookie( 'country_code', geoIPCountryCode );
+	}
+	const authHelper = config.isEnabled( 'dev/auth-helper' );
+	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
+	const preferencesHelper =
+		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
+	const featuresHelper = config.isEnabled( 'dev/features-helper' );
+
 	const flags = ( request.query.flags || '' ).split( ',' );
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
@@ -123,7 +141,6 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
-		isRTL: false,
 		requestFrom: request.query.from,
 		isWCComConnect,
 		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
@@ -131,9 +148,9 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
 		manifests: request.getAssets().manifests,
-		authHelper: !! config.isEnabled( 'dev/auth-helper' ),
-		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
-		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
+		authHelper,
+		preferencesHelper,
+		featuresHelper,
 		devDocsURL: '/devdocs',
 		store: reduxStore,
 		target: 'evergreen',
@@ -142,6 +159,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 			flags.includes( 'use-translation-chunks' ) ||
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		useLoadingEllipsis: !! request.query.loading_ellipsis,
+		showGdprBanner,
 	} );
 
 	context.app = {
@@ -195,7 +213,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 }
 
 const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
-	req.context = getDefaultContext( req, entrypoint );
+	req.context = getDefaultContext( req, res, entrypoint );
 	next();
 };
 
@@ -293,7 +311,13 @@ function setUpLoggedInRoute( req, res, next ) {
 				// Setting user in the state is safe as long as we don't cache it
 				req.context.store.dispatch( setCurrentUser( data ) );
 
-				if ( data.localeSlug ) {
+				if (
+					data.localeSlug &&
+					! (
+						data.use_fallback_for_incomplete_languages &&
+						isTranslatedIncompletely( data.localeVariant || data.localeSlug )
+					)
+				) {
 					req.context.lang = data.localeSlug;
 					req.context.store.dispatch( {
 						type: LOCALE_SET,
@@ -760,6 +784,7 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/new', 'entry-gutenboarding' );
+	handleSectionPath( STEPPER_SECTION_DEFINITION, '/stepper', 'entry-stepper' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Modifier } from 'react-popper';
 
 export type Step = {
@@ -11,6 +12,18 @@ export type Step = {
 		// | HTMLElement
 		// | string
 		// | ...
+	};
+	options?: {
+		classNames?: {
+			/**
+			 * `desktop` classes are applied when min-width is larger or equal to 480px.
+			 */
+			desktop?: string | string[];
+			/**
+			 * `mobile` classes are applied when max-width is smaller than 480px.
+			 */
+			mobile?: string | string[];
+		};
 	};
 };
 
@@ -47,16 +60,17 @@ export interface Config {
 	};
 	closeHandler: CloseHandler;
 	options?: {
-		className?: string;
+		classNames?: string | string[];
 		callbacks?: {
 			onMinimize?: Callback;
 			onMaximize?: Callback;
 			onGoToStep?: Callback;
 			onNextStep?: Callback;
 			onPreviousStep?: Callback;
+			onStepViewOnce?: Callback;
 		};
 		effects?: {
-			__experimental__spotlight?: boolean;
+			spotlight?: { styles?: React.CSSProperties };
 			arrowIndicator?: boolean; // defaults to true
 			overlay?: boolean;
 		};

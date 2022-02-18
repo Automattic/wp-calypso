@@ -8,8 +8,6 @@ export const billingHistory = purchasesRoot + '/billing';
 
 export const paymentMethods = purchasesRoot + '/payment-methods';
 
-export const pendingPayments = purchasesRoot + '/pending';
-
 export const vatDetails = purchasesRoot + '/vat-details';
 
 export function billingHistoryReceipt( receiptId ) {

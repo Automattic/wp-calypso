@@ -25,8 +25,29 @@ describe( 'ShoppingCartManager', () => {
 			const manager = cartManagerClient.forCartKey( mainCartKey );
 			const { responseCart } = manager.getState();
 			expect( responseCart.products.length ).toBe( 0 );
-			expect( responseCart.cart_key ).toBe( '' );
+			expect( responseCart.cart_key ).toBe( 'no-site' );
 		} );
+	} );
+
+	it( 'clearMessages removes messages from the cart', async () => {
+		const mockGetCart = jest.fn().mockResolvedValue( {
+			...getEmptyResponseCart(),
+			messages: { errors: [ { code: 'test-error', message: 'Test Error' } ] },
+		} );
+		const cartManagerClient = createShoppingCartManagerClient( {
+			getCart: mockGetCart,
+			setCart,
+		} );
+		const manager = cartManagerClient.forCartKey( mainCartKey );
+		try {
+			await manager.fetchInitialCart();
+		} catch {}
+		const { responseCart: initialCart } = manager.getState();
+		expect( initialCart.messages.errors.length ).toBe( 1 );
+		await manager.actions.clearMessages();
+		const { responseCart } = manager.getState();
+		expect( responseCart.messages?.errors ?? [] ).toEqual( [] );
+		expect( responseCart.messages?.success ?? [] ).toEqual( [] );
 	} );
 
 	it( 'addProductsToCart adds the products to the cart if not queued', async () => {

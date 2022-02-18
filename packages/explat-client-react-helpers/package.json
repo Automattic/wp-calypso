@@ -1,7 +1,9 @@
 {
 	"name": "@automattic/explat-client-react-helpers",
-	"version": "0.0.2",
-	"description": "Standalone ExPlat Client: React Helpers",
+	"version": "0.0.3",
+	"description": "Standalone ExPlat Client: React Helpers.",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
 	"main": "dist/cjs/index.js",
@@ -33,6 +35,6 @@
 		"@testing-library/react": "^12.1.2",
 		"@testing-library/react-hooks": "7.0.2",
 		"react-dom": "^17.0.2",
-		"typescript": "^4.5.4"
+		"typescript": "^4.5.5"
 	}
 }

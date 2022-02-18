@@ -56,9 +56,9 @@ export default function useCreatePaymentCompleteCallback( {
 	redirectTo,
 	purchaseId,
 	feature,
-	isInEditor,
+	isInModal,
 	isComingFromUpsell,
-	isFocusedLaunch,
+	disabledThankYouPage,
 	siteSlug,
 	isJetpackCheckout = false,
 	checkoutFlow,
@@ -68,9 +68,9 @@ export default function useCreatePaymentCompleteCallback( {
 	redirectTo?: string | undefined;
 	purchaseId?: number | undefined;
 	feature?: string | undefined;
-	isInEditor?: boolean;
+	isInModal?: boolean;
 	isComingFromUpsell?: boolean;
-	isFocusedLaunch?: boolean;
+	disabledThankYouPage?: boolean;
 	siteSlug: string | undefined;
 	isJetpackCheckout?: boolean;
 	checkoutFlow?: string;
@@ -126,7 +126,7 @@ export default function useCreatePaymentCompleteCallback( {
 				productAliasFromUrl,
 				isEligibleForSignupDestinationResult,
 				hideNudge: isComingFromUpsell,
-				isInEditor,
+				isInModal,
 				isJetpackCheckout,
 				jetpackTemporarySiteId,
 				adminPageRedirect,
@@ -215,9 +215,10 @@ export default function useCreatePaymentCompleteCallback( {
 				}
 			}
 
-			// Focused Launch is showing a success dialog directly in editor instead of a thank you page.
+			// Checkout in the modal might not need thank you page.
+			// For example, Focused Launch is showing a success dialog directly in editor instead of a thank you page.
 			// See https://github.com/Automattic/wp-calypso/pull/47808#issuecomment-755196691
-			if ( isInEditor && isFocusedLaunch && ! hasEcommercePlan( responseCart ) ) {
+			if ( isInModal && disabledThankYouPage && ! hasEcommercePlan( responseCart ) ) {
 				return;
 			}
 
@@ -251,7 +252,7 @@ export default function useCreatePaymentCompleteCallback( {
 			productAliasFromUrl,
 			isEligibleForSignupDestinationResult,
 			isComingFromUpsell,
-			isInEditor,
+			isInModal,
 			reduxStore,
 			isDomainOnly,
 			moment,
@@ -260,7 +261,7 @@ export default function useCreatePaymentCompleteCallback( {
 			translate,
 			responseCart,
 			createUserAndSiteBeforeTransaction,
-			isFocusedLaunch,
+			disabledThankYouPage,
 			isJetpackCheckout,
 			checkoutFlow,
 			adminPageRedirect,
@@ -310,7 +311,9 @@ function displayRenewalSuccessNotice(
 					{
 						args: {
 							productName: renewalItem.product_name,
-							duration: moment.duration( { days: parseInt( renewalItem.bill_period ) } ).humanize(),
+							duration: moment
+								.duration( { days: parseInt( renewalItem.bill_period, 10 ) } )
+								.humanize(),
 							email: product.user_email,
 						},
 						components: {
@@ -332,7 +335,9 @@ function displayRenewalSuccessNotice(
 				{
 					args: {
 						productName: renewalItem.product_name,
-						duration: moment.duration( { days: parseInt( renewalItem.bill_period ) } ).humanize(),
+						duration: moment
+							.duration( { days: parseInt( renewalItem.bill_period, 10 ) } )
+							.humanize(),
 						date: moment( product.expiry ).format( 'LL' ),
 						email: product.user_email,
 					},

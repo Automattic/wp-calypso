@@ -4,7 +4,6 @@
  * @jest-environment jsdom
  */
 
-import config from '@automattic/calypso-config';
 import {
 	JETPACK_REDIRECT_URL,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -26,13 +25,6 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	redirectCheckoutToWpAdmin: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const mock = jest.fn();
-	mock.isEnabled = jest.fn();
-	return mock;
-} );
-const configMock = ( values ) => ( key ) => values[ key ];
-
 const defaultArgs = {
 	getUrlFromCookie: jest.fn( () => null ),
 	saveUrlToCookie: jest.fn(),
@@ -42,7 +34,6 @@ describe( 'getThankYouPageUrl', () => {
 	beforeEach( () => {
 		isJetpackCloud.mockImplementation( () => false );
 		redirectCheckoutToWpAdmin.mockImplementation( () => false );
-		config.isEnabled.mockImplementation( configMock( { 'jetpack/user-licensing': false } ) );
 	} );
 
 	it( 'redirects to the root page when no site is set', () => {
@@ -527,7 +518,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			isInEditor: true,
+			isInModal: true,
 			saveUrlToCookie,
 		} );
 		expect( saveUrlToCookie ).toBeCalledWith( url );
@@ -547,7 +538,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			isInEditor: true,
+			isInModal: true,
 			saveUrlToCookie,
 		} );
 		expect( saveUrlToCookie ).toBeCalledWith( '/checkout/thank-you/foo.bar/:receiptId' );
@@ -827,6 +818,16 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=concierge' );
+	} );
+
+	it( 'redirects to a Jetpack cloud redirectTo', () => {
+		const redirectTo =
+			'http://cloud.jetpack.com/purchases/add-payment-method/fast-hummingbird.jurassic.ninja';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			redirectTo,
+		} );
+		expect( url ).toBe( redirectTo );
 	} );
 
 	describe( 'Professional Email upsell', () => {
@@ -1273,26 +1274,6 @@ describe( 'getThankYouPageUrl', () => {
 				isJetpackCheckout: true,
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=%3AreceiptId'
-			);
-		} );
-
-		it( 'redirects to the "user-licensing" thank-you page when enabled in Calypso config', () => {
-			config.isEnabled.mockImplementation( configMock( { 'jetpack/user-licensing': true } ) );
-			const cart = {
-				products: [
-					{
-						product_slug: 'jetpack_backup_daily',
-					},
-				],
-			};
-			const url = getThankYouPageUrl( {
-				...defaultArgs,
-				siteSlug: undefined,
-				cart,
-				isJetpackCheckout: true,
-			} );
-			expect( url ).toBe(
 				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=%3AreceiptId'
 			);
 		} );
@@ -1313,7 +1294,7 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: 80023,
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023'
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023'
 			);
 		} );
 
@@ -1332,7 +1313,9 @@ describe( 'getThankYouPageUrl', () => {
 				isJetpackCheckout: true,
 				receiptId: 'invalid receipt ID',
 			} );
-			expect( url ).toBe( '/checkout/jetpack/thank-you/no-site/jetpack_backup_daily' );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily'
+			);
 		} );
 
 		it( 'redirects with jetpackTemporarySiteId query param when available', () => {
@@ -1352,7 +1335,7 @@ describe( 'getThankYouPageUrl', () => {
 				jetpackTemporarySiteId: 123456789,
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/no-site/jetpack_backup_daily?receiptId=80023&siteId=123456789'
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&siteId=123456789'
 			);
 		} );
 	} );

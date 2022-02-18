@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -15,20 +16,22 @@ function trackNavigation( url, cardName ) {
 	);
 }
 
-export default function EducationalContent( {
+function EducationalContent( {
 	title,
 	description,
 	links,
 	modalLinks,
 	illustration,
 	cardName,
+	width,
+	height,
 } ) {
 	const dispatch = useDispatch();
 
 	return (
 		<div className="educational-content">
 			<div className="educational-content__wrapper">
-				<h3>{ title }</h3>
+				<h2>{ title }</h2>
 				<p className="educational-content__description customer-home__card-subheader">
 					{ description }
 				</p>
@@ -79,11 +82,38 @@ export default function EducationalContent( {
 						) ) }
 				</div>
 			</div>
-			{ isDesktop() && (
+			{ isDesktop() && illustration && (
 				<div className="educational-content__illustration">
-					<img src={ illustration } alt="" />
+					<img src={ illustration } alt="" width={ width } height={ height } />
 				</div>
 			) }
 		</div>
 	);
 }
+
+// Custom propType function that checks for illustration prop is set and returns an error in case it s not.
+function propTypeHasIllustration( props, propName, componentName ) {
+	let error;
+	if ( ! props.illustration ) {
+		return;
+	}
+
+	const prop = props[ propName ];
+	if ( typeof prop !== 'string' && typeof prop !== 'number' ) {
+		error = new Error(
+			`${ componentName } requires ${ propName } if an illustration is provided.`
+		);
+	}
+	return error;
+}
+EducationalContent.propTypes = {
+	title: PropTypes.string.isRequired,
+	description: PropTypes.node.isRequired,
+	links: PropTypes.array,
+	modalLinks: PropTypes.array,
+	illustration: PropTypes.string,
+	cardName: PropTypes.string,
+	width: propTypeHasIllustration,
+	height: propTypeHasIllustration,
+};
+export default EducationalContent;

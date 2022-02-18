@@ -21,7 +21,7 @@ const connectUserMentions = ( WrappedComponent ) => {
 		render() {
 			return (
 				<Fragment>
-					{ !! this.props.siteId && <QueryUsersSuggestions siteId={ this.props.siteId } /> }
+					<QueryUsersSuggestions siteId={ this.props.siteId } />
 					<WrappedComponent { ...this.props } />
 				</Fragment>
 			);

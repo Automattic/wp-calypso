@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -70,7 +69,7 @@ class HandleEmailedLinkForm extends Component {
 	constructor( props ) {
 		super( props );
 
-		if ( isEmpty( props.emailAddress ) || isEmpty( props.token ) ) {
+		if ( ! props.emailAddress || ! props.token ) {
 			this.props.showMagicLoginLinkExpiredPage();
 		}
 	}

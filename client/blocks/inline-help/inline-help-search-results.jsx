@@ -22,6 +22,7 @@ import {
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
 import PlaceholderLines from './placeholder-lines';
+import './inline-help-search-results.scss';
 
 const noop = () => {};
 

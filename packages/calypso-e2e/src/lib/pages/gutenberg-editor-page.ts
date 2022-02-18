@@ -1,7 +1,8 @@
 import assert from 'assert';
-import { Page, Frame, ElementHandle } from 'playwright';
-import { getTargetDeviceName } from '../../browser-helper';
+import { Page, Frame, ElementHandle, Response } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
+import envVariables from '../../env-variables';
 import { NavbarComponent } from '../components';
 
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
@@ -28,9 +29,14 @@ const selectors = {
 	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
 	closeSettingsButton: 'button[aria-label="Close settings"]:visible',
 	saveDraftButton: '.editor-post-save-draft',
+	saveDraftDisabledButton: 'button.editor-post-saved-state.is-saved[aria-disabled="true"]',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: ( parentSelector: string ) =>
 		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
+	updateButton: 'button:text("Update")',
+	switchToDraftButton: 'button.editor-post-switch-to-draft',
+	scheduleButton: ( parentSelector: string ) =>
+		`${ parentSelector } button:has-text("Schedule")[aria-disabled=false]`,
 
 	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
@@ -42,7 +48,7 @@ const selectors = {
 	// corner. This addresses the bug where the post-publish panel is immediately
 	// closed when publishing with certain blocks on the editor canvas.
 	// See https://github.com/Automattic/wp-calypso/issues/54421.
-	viewButton: 'text=/View (Post|Page)/',
+	viewButton: 'a:text-matches("View (Post|Page)", "i")',
 	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
 	closePublishPanel: 'button[aria-label="Close panel"]',
 
@@ -75,55 +81,59 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Opens the "new post/page" page. By default it will open the "new post" page.
+	 *
+	 * Example "new post": {@link https://wordpress.com/post}
+	 * Example "new page": {@link https://wordpress.com/page}
+	 */
+	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
+		const request = await this.page.goto( getCalypsoURL( type ) );
+		await this.waitUntilLoaded();
+
+		return request;
+	}
+
+	/**
 	 * Initialization steps to ensure the page is fully loaded.
 	 *
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< Frame > {
-		// `page.on` construct is used here instead of the more common `page.waitForResponse`.
-		// Using the latter causes this method to hang until the timeout is reached, since
-		// the `waitForResponse` method begins observing the network requests after the
-		// `nux?_envelope=1` request has been completed.
-		// On the other hand, `page.on` is able to monitor every request, including the
-		// one to the `nux` endpoint.
-		this.page.on( 'requestfinished', async ( request ) => {
-			const response = await request.response();
-			if ( ! response ) {
-				return;
-			}
-
-			if ( ! response.url().includes( 'nux?_envelope=1' ) ) {
-				return;
-			}
-
-			interface NuxPayload {
-				body: {
-					show_welcome_guide: boolean;
-				};
-			}
-
-			const body = ( await response.json() ) as NuxPayload;
-			if ( body?.body?.show_welcome_guide === true ) {
-				await this.dismissWelcomeTour();
-			}
-		} );
-
 		const frame = await this.getEditorFrame();
-		// Traditionally we try to avoid waits not related to the current flow. However, we need a stable way to identify loading being done.
-		// NetworkIdle takes too long here, so the most reliable alternative is the title being visible.
+		// Traditionally we try to avoid waits not related to the current flow.
+		// However, we need a stable way to identify loading being done. NetworkIdle
+		// takes too long here, so the most reliable alternative is the title being
+		// visible.
 		await frame.waitForSelector( selectors.editorTitle );
+		// Once https://github.com/Automattic/wp-calypso/issues/57660 is resolved,
+		// the next line should be removed.
+		await this.forceDismissWelcomeTour();
 
 		return frame;
 	}
 
 	/**
-	 * Dismisses the Welcome Tour (card) if it is present.
+	 * Forcefully dismisses the Welcome Tour via action dispatch.
+	 *
+	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
 	 */
-	async dismissWelcomeTour(): Promise< void > {
+	async forceDismissWelcomeTour(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		const locator = frame.locator( selectors.welcomeTourCloseButton );
 
-		await locator.click( { timeout: 10 * 1000 } );
+		await frame.waitForFunction(
+			async () =>
+				await ( window as any ).wp.data
+					.select( 'automattic/wpcom-welcome-guide' )
+					.isWelcomeGuideStatusLoaded()
+		);
+
+		await frame.waitForFunction( async () => {
+			const actionPayload = await ( window as any ).wp.data
+				.dispatch( 'automattic/wpcom-welcome-guide' )
+				.setShowWelcomeGuide( false );
+
+			return actionPayload.show === false;
+		} );
 	}
 
 	/**
@@ -273,16 +283,20 @@ export class GutenbergEditorPage {
 	 */
 	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
-
-		// Click on the editor title. This has the effect of dismissing the block inserter
-		// if open, and restores focus back to the editor root container, allowing insertion
-		// of blocks.
-		await frame.click( selectors.editorTitle );
 		await this.openBlockInserter();
-		await frame.fill( selectors.blockSearch, blockName );
+		await this.searchBlockInserter( blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
-		return await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
+		const elementHandle = await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
+
+		// Dismiss the block inserter if viewport is larger than mobile to ensure
+		// no interference from the block inserter in subsequent actions on the editor.
+		// In mobile, the block inserter will auto-close.
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+			await frame.click( selectors.blockInserterToggle );
+		}
+
+		return elementHandle;
 	}
 
 	/**
@@ -298,15 +312,47 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Adds a pattern from the block inserter panel.
+	 *
+	 * The name is expected to be formatted in the same manner as it
+	 * appears on the label when visible in the block inserter panel.
+	 *
+	 * Example:
+	 * 		- Two images side by side
+	 *
+	 * @param {string} patternName Name of the pattern to insert.
+	 */
+	async addPattern( patternName: string ): Promise< ElementHandle > {
+		const frame = await this.getEditorFrame();
+		await this.openBlockInserter();
+		await this.searchBlockInserter( patternName );
+		await frame.click( `div[aria-label="${ patternName }"]` );
+		return await frame.waitForSelector( `:text('Block pattern "${ patternName }" inserted.')` );
+	}
+
+	/**
 	 * Open the block inserter panel.
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openBlockInserter(): Promise< void > {
 		const frame = await this.getEditorFrame();
-
+		// Click on the editor title. This has the effect of dismissing the block inserter
+		// if open, and restores focus back to the editor root container, allowing insertion
+		// of blocks.
+		await frame.click( selectors.editorTitle );
 		await frame.click( selectors.blockInserterToggle );
 		await frame.waitForSelector( selectors.blockInserterPanel );
+	}
+
+	/**
+	 * Given a string, enters the said string to the block inserter search bar.
+	 *
+	 * @param {string} text Text to search.
+	 */
+	async searchBlockInserter( text: string ): Promise< void > {
+		const frame = await this.getEditorFrame();
+		await frame.fill( selectors.blockSearch, text );
 	}
 
 	/**
@@ -347,25 +393,93 @@ export class GutenbergEditorPage {
 		const frame = await this.getEditorFrame();
 		await frame.click( selectors.closeSettingsButton );
 	}
+
 	/**
 	 * Publishes the post or page.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
-	 * @returns {Promise<void} No return value.
+	 * @returns {Promise<string>} The published URL.
 	 */
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
 		const frame = await this.getEditorFrame();
 
-		await frame.click( selectors.publishButton( selectors.postToolbar ) );
-		await frame.click( selectors.publishButton( selectors.publishPanel ) );
+		const initialPublishButton = `${ selectors.publishButton(
+			selectors.postToolbar
+		) }, ${ selectors.scheduleButton( selectors.postToolbar ) }`;
+		const secondaryPublishButton = `${ selectors.publishButton(
+			selectors.publishPanel
+		) }, ${ selectors.scheduleButton( selectors.publishPanel ) }`;
 
-		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
-		const publishedURL = ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
+		await frame.click( initialPublishButton );
+		await frame.click( secondaryPublishButton );
+		const publishedURL = await this.getPublishedURL();
 
 		if ( visit ) {
 			await this.visitPublishedPost( publishedURL );
 		}
 		return publishedURL;
+	}
+
+	/**
+	 * Updates the post or page.
+	 *
+	 * @param {boolean} visit Whether to then visit the page.
+	 * @returns {Promise<string>} URL of the update post or page.
+	 */
+	async update( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
+		const frame = await this.getEditorFrame();
+
+		await frame.click( selectors.updateButton );
+		const publishedURL = await this.getPublishedURL();
+
+		if ( visit ) {
+			await this.visitPublishedPost( publishedURL );
+		}
+		return publishedURL;
+	}
+
+	/**
+	 * Unpublishes the post or page by switching to draft.
+	 */
+	async unpublish(): Promise< void > {
+		const frame = await this.getEditorFrame();
+
+		// Add handler to handle dialog that must be accepted for the post
+		// to be unpublished.
+		this.page.once( 'dialog', async ( dialog ) => {
+			await dialog.accept();
+		} );
+
+		await frame.click( selectors.switchToDraftButton );
+		// Similar to Save Draft, the publish button temporarily becomes disabled
+		// while the unpublish process takes place. This waits for the publish button
+		// to again become enabled.
+		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
+	}
+
+	/**
+	 * Obtains the published article's URL from post-publish panels.
+	 *
+	 * This method is only able to obtain the published article's URL if immediately
+	 * preceded by the action of publishing the article *and* the post-publish panel
+	 * being visible.
+	 *
+	 * @returns {Promise<string>} Published article's URL.
+	 */
+	async getPublishedURL(): Promise< string > {
+		const frame = await this.getEditorFrame();
+
+		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
+		return ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
+	}
+
+	/**
+	 * Closes the post-publish panel.
+	 */
+	async closePostPublishPanel(): Promise< void > {
+		const frame = await this.getEditorFrame();
+
+		await frame.click( selectors.closePublishPanel );
 	}
 
 	/**
@@ -386,10 +500,8 @@ export class GutenbergEditorPage {
 		const frame = await this.getEditorFrame();
 
 		await frame.click( selectors.saveDraftButton );
-		// Once the Save draft button is clicked, buttons on the post toolbar
-		// are disabled while the post is saved. Wait for the state of
-		// Publish button to return to 'enabled' before proceeding.
-		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
+		// Wait for the Save Draft button to become disabled.
+		await frame.waitForSelector( selectors.saveDraftDisabledButton );
 	}
 
 	/**
@@ -408,10 +520,24 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	private async visitPublishedPost( url: string ): Promise< void > {
+		// Some blocks, like "Click To Tweet" or "Logos" cause the post-publish
+		// panel to close immediately and leave the post in the unsaved state for
+		// some reason. Since the post state is unsaved, the warning dialog will be
+		// displayed on the published post link click. By default, Playwright will
+		// dismiss the dialog so we need this listener to accept it and open the
+		// published post.
+		//
+		// Once https://github.com/Automattic/wp-calypso/issues/54421 is resolved,
+		// this listener can be removed.
+		this.page.once( 'dialog', async ( dialog ) => {
+			await dialog.accept();
+		} );
+
 		const frame = await this.getEditorFrame();
 
+		console.log( url );
 		await Promise.all( [
-			this.page.waitForNavigation( { waitUntil: 'networkidle', url: url } ),
+			this.page.waitForNavigation( { url: url, waitUntil: 'domcontentloaded' } ),
 			frame.click( selectors.viewButton ),
 		] );
 
@@ -430,7 +556,7 @@ export class GutenbergEditorPage {
 		 * @param page
 		 */
 		async function confirmPostShown( page: Page ): Promise< void > {
-			await page.waitForSelector( '.entry-content', { timeout: 5 * 1000 } );
+			await page.waitForSelector( '.entry-content', { timeout: 15 * 1000 } );
 		}
 	}
 
@@ -444,7 +570,7 @@ export class GutenbergEditorPage {
 	 */
 	async openNavSidebar(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		if ( getTargetDeviceName() === 'desktop' ) {
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
 			await frame.click( selectors.desktopEditorSidebarButton );
 		}
 	}
@@ -462,10 +588,9 @@ export class GutenbergEditorPage {
 	 */
 	async returnToCalypsoDashboard(): Promise< void > {
 		const frame = await this.getEditorFrame();
-		const targetDevice = getTargetDeviceName();
 
 		if (
-			targetDevice !== 'mobile' &&
+			envVariables.VIEWPORT_NAME !== 'mobile' &&
 			( await frame.getAttribute( selectors.desktopEditorSidebarButton, 'aria-expanded' ) ) ===
 				'false'
 		) {
@@ -483,7 +608,7 @@ export class GutenbergEditorPage {
 
 		const actions: Promise< unknown >[] = [ navigationPromise ];
 
-		if ( getTargetDeviceName() !== 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			actions.push( frame.click( selectors.desktopDashboardLink ) );
 		} else {
 			actions.push( navbarComponent.clickMySites() );
@@ -507,7 +632,7 @@ export class GutenbergEditorPage {
 	 * @throws {Error} If environment is not 'mobile'.
 	 */
 	async openPreviewAsMobile(): Promise< Page > {
-		if ( getTargetDeviceName() !== 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			throw new Error( 'This method only works in a mobile environment.' );
 		}
 		const frame = await this.getEditorFrame();
@@ -533,7 +658,7 @@ export class GutenbergEditorPage {
 	 * @throws {Error} If environment is 'mobile'.
 	 */
 	async openPreviewAsDesktop( target: PreviewOptions ): Promise< void > {
-		if ( getTargetDeviceName() === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			throw new Error( 'This method only works in a non-mobile environment.' );
 		}
 		const frame = await this.getEditorFrame();
@@ -556,7 +681,7 @@ export class GutenbergEditorPage {
 	 * @throws {Error} If environment is 'mobile'.
 	 */
 	async closePreview(): Promise< void > {
-		if ( getTargetDeviceName() === 'mobile' ) {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			throw new Error( ' This method only works in a non-mobile environment.' );
 		}
 		const frame = await this.getEditorFrame();

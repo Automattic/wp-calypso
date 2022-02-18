@@ -19,7 +19,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -49,7 +49,7 @@ interface SelectedSite {
 
 interface Props {
 	cart: PartialCart;
-	addItemToCart: ( item: Partial< RequestCartProduct > ) => void;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 }
 
 const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemToCart } ) => {

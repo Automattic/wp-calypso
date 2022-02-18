@@ -629,35 +629,26 @@ class TransferDomainStep extends Component {
 	getInboundTransferStatus = () => {
 		this.setState( { submittingWhois: true } );
 
-		return new Promise( ( resolve ) => {
-			checkInboundTransferStatus(
-				getFixedDomainSearch( this.state.searchQuery ),
-				( error, result ) => {
-					this.setState( { submittingWhois: false } );
-
-					if ( ! isEmpty( error ) ) {
-						resolve();
-						return;
-					}
-
-					const inboundTransferStatus = {
-						creationDate: result.creation_date,
-						email: result.admin_email,
-						loading: false,
-						losingRegistrar: result.registrar,
-						losingRegistrarIanaId: result.registrar_iana_id,
-						privacy: result.privacy,
-						termMaximumInYears: result.term_maximum_in_years,
-						transferEligibleDate: result.transfer_eligible_date,
-						transferRestrictionStatus: result.transfer_restriction_status,
-						unlocked: result.unlocked,
-					};
-
-					this.setState( { inboundTransferStatus } );
-					resolve( { inboundTransferStatus } );
-				}
-			);
-		} );
+		return checkInboundTransferStatus( getFixedDomainSearch( this.state.searchQuery ) )
+			.then( ( result ) => {
+				const inboundTransferStatus = {
+					creationDate: result.creation_date,
+					email: result.admin_email,
+					loading: false,
+					losingRegistrar: result.registrar,
+					losingRegistrarIanaId: result.registrar_iana_id,
+					privacy: result.privacy,
+					termMaximumInYears: result.term_maximum_in_years,
+					transferEligibleDate: result.transfer_eligible_date,
+					transferRestrictionStatus: result.transfer_restriction_status,
+					unlocked: result.unlocked,
+				};
+				this.setState( { submittingWhois: false, inboundTransferStatus } );
+				return { inboundTransferStatus };
+			} )
+			.catch( () => {
+				this.setState( { submittingWhois: false } );
+			} );
 	};
 
 	getAuthCodeStatus = ( domain, authCode ) => {

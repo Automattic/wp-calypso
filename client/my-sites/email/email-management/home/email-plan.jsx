@@ -29,6 +29,7 @@ import {
 } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
+	emailManagementAddEmailForwards,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 	emailManagementManageTitanAccount,
@@ -142,7 +143,7 @@ const EmailPlan = ( props ) => {
 		}
 
 		return {
-			path: emailManagementForwarding( selectedSite.slug, domain.name, currentRoute ),
+			path: emailManagementAddEmailForwards( selectedSite.slug, domain.name, currentRoute ),
 		};
 	}
 

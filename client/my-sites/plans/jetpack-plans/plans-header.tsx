@@ -8,7 +8,6 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import FormattedHeader from 'calypso/components/formatted-header';
-import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 import Notice from 'calypso/components/notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
@@ -67,12 +66,18 @@ const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) =
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 	// Site products from direct purchases
-	const purchasedProducts =
-		useSelector( ( state ) => getSiteProducts( state, siteId ) )
-			?.map( ( { productSlug } ) => productSlug )
+	const purchasedProducts = useSelector( ( state ) => {
+		const products = getSiteProducts( state, siteId );
+		if ( ! products ) {
+			return [];
+		}
+
+		return products
+			.map( ( { productSlug } ) => productSlug )
 			.filter( ( productSlug ) =>
 				( JETPACK_PRODUCTS_LIST as ReadonlyArray< string > ).includes( productSlug )
-			) ?? [];
+			);
+	} );
 
 	// When coming from in-connect flow, the url contains 'source=jetpack-connect-plans' query param.
 	const isInConnectFlow = context.query?.source === 'jetpack-connect-plans';
@@ -107,7 +112,6 @@ export default function setJetpackHeader( context: PageJS.Context ): void {
 				context={ context }
 				shouldShowPlanRecommendation={ shouldShowPlanRecommendation }
 			/>
-			{ ! shouldShowPlanRecommendation && <IntroPricingBanner /> }
 		</>
 	);
 }

@@ -17,6 +17,7 @@ import DesktopListeners from 'calypso/lib/desktop-listeners';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { attachLogmein } from 'calypso/lib/logmein';
 import { getToken } from 'calypso/lib/oauth-token';
 import { checkFormHandler } from 'calypso/lib/protect-form';
@@ -368,37 +369,11 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 		reduxStore.dispatch( initHappychatConnection( getHappychatAuth( state )() ) );
 	}
 
-	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-		asyncRequire( 'calypso/lib/keyboard-shortcuts/global', ( setupGlobalKeyboardShortcuts ) => {
-			setupGlobalKeyboardShortcuts();
-		} );
-	}
-
 	if ( window.electron ) {
 		DesktopListeners.init( reduxStore );
 	}
 
-	if ( config.isEnabled( 'dev/auth-helper' ) && document.querySelector( '.environment.is-auth' ) ) {
-		asyncRequire( 'calypso/lib/auth-helper', ( authHelper ) => {
-			authHelper( document.querySelector( '.environment.is-auth' ), reduxStore );
-		} );
-	}
-	if (
-		config.isEnabled( 'dev/preferences-helper' ) &&
-		document.querySelector( '.environment.is-prefs' )
-	) {
-		asyncRequire( 'calypso/lib/preferences-helper', ( prefHelper ) => {
-			prefHelper( document.querySelector( '.environment.is-prefs' ), reduxStore );
-		} );
-	}
-	if (
-		config.isEnabled( 'dev/features-helper' ) &&
-		document.querySelector( '.environment.is-features' )
-	) {
-		asyncRequire( 'calypso/lib/features-helper', ( featureHelper ) => {
-			featureHelper( document.querySelector( '.environment.is-features' ) );
-		} );
-	}
+	loadDevHelpers( reduxStore );
 
 	if ( config.isEnabled( 'logmein' ) && isUserLoggedIn( reduxStore.getState() ) ) {
 		// Attach logmein handler if we're currently logged in

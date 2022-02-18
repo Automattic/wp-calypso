@@ -32,6 +32,8 @@ const NavItem = ( {
 				trackExpand();
 				onClick();
 			} }
+			role="tab"
+			aria-selected={ isCurrent }
 			data-task={ taskId }
 		>
 			<div className="nav-item__status">
@@ -51,7 +53,7 @@ const NavItem = ( {
 				) }
 			</div>
 			<div className="nav-item__text">
-				<h6>{ text }</h6>
+				<span>{ text }</span>
 			</div>
 			{ useAccordionLayout && (
 				<div className="nav-item__end">

@@ -8,7 +8,7 @@ export type BlockEditorNuxStatus = {
 };
 
 export const useBlockEditorNuxStatusQuery = (
-	siteId: string
+	siteId: number
 ): UseQueryResult< BlockEditorNuxStatus > => {
 	const queryKey = [ 'blockEditorNuxStatus', siteId ];
 	const siteIsJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );

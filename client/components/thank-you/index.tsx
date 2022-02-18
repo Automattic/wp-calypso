@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -73,13 +74,14 @@ const ThankYouNoticeContainer = styled.div`
 `;
 
 const ThankYouNotice = ( props: ThankYouNoticeProps ) => {
-	const { noticeTitle, noticeIcon } = props;
+	const { noticeTitle, noticeIcon, noticeIconCustom } = props;
 
 	return (
 		<ThankYouNoticeContainer className="thank-you__notice">
 			{ noticeIcon && (
 				<Gridicon icon={ noticeIcon } className="thank-you__notice-icon" size={ 24 } />
 			) }
+			{ noticeIconCustom }
 			{ noticeTitle }
 		</ThankYouNoticeContainer>
 	);
@@ -146,6 +148,7 @@ const ThankYouSupportSection = ( props: ThankYouSupportSectionProps ) => {
 
 export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
 
 	const {
 		headerBackgroundColor = 'var( --studio-blue-50 )',
@@ -193,7 +196,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 				title: translate( 'Ask a question' ),
 			},
 			{
-				href: SUPPORT_ROOT,
+				href: localizeUrl( SUPPORT_ROOT ),
 				title: translate( 'View support documentation' ),
 			},
 		],
@@ -206,8 +209,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 	return (
 		<ThankYouContainer className={ classNames( 'thank-you__container', containerClassName ) }>
 			<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
-				{ /* eslint-disable-next-line jsx-a11y/alt-text */ }
-				<img { ...thankYouImage } />
+				<img { ...{ ...thankYouImage, alt: String( thankYouImage.alt ) } } />
 				{ thankYouTitle && (
 					<ThankYouTitleContainer>
 						<h1 className="thank-you__header-title wp-brand-font">{ thankYouTitle }</h1>

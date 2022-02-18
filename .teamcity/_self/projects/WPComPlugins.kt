@@ -13,12 +13,22 @@ object WPComPlugins : Project({
 	params {
 		param("docker_image", "registry.a8c.com/calypso/ci-wpcom:latest")
 		param("build.prefix", "1")
+		checkbox(
+			name = "skip_release_diff",
+			value = "false",
+			label = "Skip release diff",
+			description = "Skips the diff against the previous successful build, uploading the artifact as the latest successful build.",
+			checked = "true",
+			unchecked = "false"
+		)
 	}
 
 	buildType(EditingToolkit)
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
 	buildType(O2Blocks)
+	buildType(Happychat)
+	buildType(InlineHelp)
 
 	cleanup {
 		keepRule {
@@ -150,4 +160,22 @@ private object O2Blocks : WPComPluginBuild(
 			"""
 		}
 	}
+)
+
+private object Happychat : WPComPluginBuild(
+	buildId = "WPComPlugins_Happychat",
+	buildName = "Happychat",
+	pluginSlug = "happychat",
+	archiveDir = "./dist/",
+	docsLink = "TODO",
+	withPRNotify = "false",
+)
+
+private object InlineHelp : WPComPluginBuild(
+	buildId = "WPComPlugins_InlineHelp",
+	buildName = "Inline Help",
+	pluginSlug = "inline-help",
+	archiveDir = "./dist/",
+	docsLink = "TODO",
+	withPRNotify = "false",
 )

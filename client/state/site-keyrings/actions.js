@@ -3,8 +3,6 @@ import {
 	SITE_KEYRINGS_REQUEST,
 	SITE_KEYRINGS_REQUEST_FAILURE,
 	SITE_KEYRINGS_REQUEST_SUCCESS,
-	SITE_KEYRINGS_SAVE,
-	SITE_KEYRINGS_SAVE_FAILURE,
 	SITE_KEYRINGS_SAVE_SUCCESS,
 	SITE_KEYRINGS_DELETE,
 	SITE_KEYRINGS_DELETE_FAILURE,
@@ -54,33 +52,16 @@ export function requestSiteKeyrings( siteId ) {
 }
 
 export function createSiteKeyring( siteId, keyring ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_KEYRINGS_SAVE,
-			siteId,
-		} );
-
-		return wpcom.req
-			.post( `/sites/${ siteId }/keyrings`, {}, keyring )
-			.then( ( body ) => {
-				dispatch( {
-					type: SITE_KEYRINGS_SAVE_SUCCESS,
-					siteId,
-					keyring,
-				} );
-
-				return body;
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: SITE_KEYRINGS_SAVE_FAILURE,
-					siteId,
-					error,
-				} );
-
-				return Promise.reject( error );
+	return ( dispatch ) =>
+		wpcom.req.post( `/sites/${ siteId }/keyrings`, {}, keyring ).then( ( body ) => {
+			dispatch( {
+				type: SITE_KEYRINGS_SAVE_SUCCESS,
+				siteId,
+				keyring,
 			} );
-	};
+
+			return body;
+		} );
 }
 
 export function updateSiteKeyring( siteId, keyringId, externalUserId ) {

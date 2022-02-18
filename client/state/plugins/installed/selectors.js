@@ -36,6 +36,10 @@ const _filters = {
 	},
 };
 
+export function isEqualSlugOrId( pluginSlug, plugin ) {
+	return plugin.slug === pluginSlug || plugin?.id?.split( '/' ).shift() === pluginSlug;
+}
+
 export function isRequesting( state, siteId ) {
 	if ( typeof state.plugins.installed.isRequesting[ siteId ] === 'undefined' ) {
 		return false;
@@ -102,17 +106,18 @@ export function getPluginsOnSites( state, plugins ) {
 }
 
 export function getPluginOnSites( state, siteIds, pluginSlug ) {
-	return getPlugins( state, siteIds ).find( ( plugin ) => plugin.slug === pluginSlug );
+	return getPlugins( state, siteIds ).find( ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
 }
 
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );
-	return find( pluginList, { slug: pluginSlug } );
+	return find( pluginList, ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
 }
 
 export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
 	const pluginList = getPlugins( state, siteIds );
-	const plugin = find( pluginList, { slug: pluginSlug } );
+	const plugin = find( pluginList, ( pluginItem ) => isEqualSlugOrId( pluginSlug, pluginItem ) );
+
 	if ( ! plugin ) {
 		return [];
 	}
@@ -201,19 +206,6 @@ export function isPluginActionStatus( state, siteId, pluginId, action, status ) 
  */
 export function isPluginActionInProgress( state, siteId, pluginId, action ) {
 	return isPluginActionStatus( state, siteId, pluginId, action, 'inProgress' );
-}
-
-/**
- * Whether the plugin's status for one or more recent actions is completed.
- *
- * @param  {object}       state    Global state tree
- * @param  {number}       siteId   ID of the site
- * @param  {string}       pluginId ID of the plugin
- * @param  {string|Array} action   Action, or array of actions of interest
- * @returns {boolean}              True if one or more specified actions are completed, false otherwise.
- */
-export function isPluginActionCompleted( state, siteId, pluginId, action ) {
-	return isPluginActionStatus( state, siteId, pluginId, action, 'completed' );
 }
 
 /**

@@ -10,7 +10,7 @@ import { getUrlParts } from '@automattic/calypso-url';
  *
  * @param {string} mediaUrl Media file URL.
  * @param {string} siteSlug Slug of the site this file belongs to.
- * @returns {object}	Dictionary
+ * @returns {{query: string, filePath: string, isRelativeToSiteRoot: boolean}}	Dictionary
  */
 export function mediaURLToProxyConfig( mediaUrl, siteSlug ) {
 	const { pathname, search: query, protocol, hostname } = getUrlParts( mediaUrl );

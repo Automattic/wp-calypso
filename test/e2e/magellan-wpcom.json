@@ -1,5 +1,5 @@
 {
-	"mocha_tests": [ "specs/specs-wpcom" ],
+	"mocha_tests": [ "specs/wpcom-old" ],
 	"max_test_attempts": 3,
 	"max_workers": 1,
 	"suiteTag": "parallel",

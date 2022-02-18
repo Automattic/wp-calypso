@@ -9,6 +9,7 @@ import JetpackComMasterbar from './jpcom-masterbar';
 export function jetpackPricingContext( context: PageJS.Context, next: () => void ): void {
 	const urlQueryArgs = context.query;
 	const { locale, site } = context.params;
+	const path = context.path;
 
 	if ( locale ) {
 		context.store.dispatch( setLocale( locale ) );
@@ -19,9 +20,6 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 			);
 			return;
 		}
-
-		page.redirect( addQueryArgs( urlQueryArgs, `/pricing` ) );
-		return;
 	}
 
 	if ( context.pathname.endsWith( '/pricing' ) && urlQueryArgs.site ) {
@@ -30,7 +28,9 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 	}
 
 	context.store.dispatch( hideMasterbar() );
-	context.nav = <JetpackComMasterbar />;
+	context.nav = (
+		<JetpackComMasterbar pathname={ locale ? path.replace( `/${ locale }`, '' ) : path } />
+	);
 	context.header = <Header urlQueryArgs={ urlQueryArgs } />;
 	context.footer = <JetpackComFooter />;
 	next();

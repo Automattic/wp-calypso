@@ -20,7 +20,7 @@ const Content = styled.div`
 	}
 `;
 
-const Label = styled.div`
+const Label = styled.div< { type: string } >`
 	font-size: 14px;
 	background-color: ${ ( props ) => ( props.type === 'info' ? '#b8e6bf' : '#eaeaea' ) };
 	height: 20px;

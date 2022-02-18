@@ -71,25 +71,25 @@ const MAILBOX_FIELDS = {
 const getMailboxRequiredBooleanValue = () =>
 	PropTypes.shape( {
 		value: PropTypes.bool.isRequired,
-		error: PropTypes.string,
+		error: PropTypes.node,
 	} );
 
 const getMailboxOptionalStringValueWithTranslatedError = () =>
 	PropTypes.shape( {
 		value: PropTypes.string.isRequired,
-		error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
+		error: PropTypes.node,
 	} );
 
 const getMailboxRequiredStringValue = () =>
 	PropTypes.shape( {
 		value: PropTypes.string.isRequired,
-		error: PropTypes.string,
+		error: PropTypes.node,
 	} ).isRequired;
 
 const getMailboxRequiredStringValueWithTranslatedError = () =>
 	PropTypes.shape( {
 		value: PropTypes.string.isRequired,
-		error: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
+		error: PropTypes.node,
 	} ).isRequired;
 
 const getMailboxPropTypeShape = () =>

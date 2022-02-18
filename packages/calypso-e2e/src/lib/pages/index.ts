@@ -21,5 +21,8 @@ export * from './account-closed-page';
 export * from './domains-page';
 export * from './use-a-domain-i-own-page';
 export * from './p2-page';
+export * from './woocommerce-landing-page';
+export * from './posts-page';
+export * from './pages-page';
 
 export * from './me';

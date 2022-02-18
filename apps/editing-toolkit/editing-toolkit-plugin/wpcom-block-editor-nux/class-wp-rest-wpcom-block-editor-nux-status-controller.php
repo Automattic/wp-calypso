@@ -12,11 +12,6 @@ namespace A8C\FSE;
  */
 class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controller {
 	/**
-	 * Use 30 minutes in case the user isn't taken to the editor immediately. See pbxlJb-Ly-p2#comment-1028.
-	 */
-	const NEW_SITE_AGE_SECONDS = 30 * 60;
-
-	/**
 	 * WP_REST_WPCOM_Block_Editor_NUX_Status_Controller constructor.
 	 */
 	public function __construct() {
@@ -84,13 +79,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 			$variant = 'tour';
 		}
 
-		if ( function_exists( 'get_blog_details' ) ) {
-			$blog_age = time() - strtotime( get_blog_details()->registered );
-		}
-
-		if ( isset( $blog_age ) && $blog_age < self::NEW_SITE_AGE_SECONDS ) {
-			$nux_status = 'enabled';
-		} elseif ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
+		if ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
 		} elseif ( ! metadata_exists( 'user', get_current_user_id(), 'wpcom_block_editor_nux_status' ) ) {
 			$nux_status = 'enabled';

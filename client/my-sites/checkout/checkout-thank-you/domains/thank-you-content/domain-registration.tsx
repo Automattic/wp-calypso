@@ -1,7 +1,8 @@
+import { Icon, info } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import domainRegisteredSuccess from 'calypso/assets/images/domains/domain.svg';
 import { buildDomainStepForProfessionalEmail } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import type {
 	DomainThankYouParams,
@@ -24,33 +25,58 @@ const DomainRegistrationThankYouProps = ( {
 			selectedSiteSlug,
 		},
 		'REGISTRATION',
-		false
+		true
 	);
 
+	const createSiteStep = {
+		stepKey: 'domain_registration_whats_next_create-site',
+		stepTitle: translate( 'Add a site' ),
+		stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
+		stepCta: (
+			<FullWidthButton
+				href={ createSiteFromDomainOnly( domain, null ) }
+				busy={ false }
+				disabled={ false }
+			>
+				{ translate( 'Create a site' ) }
+			</FullWidthButton>
+		),
+	};
+
+	const viewDomainsStep = {
+		stepKey: 'domain_registration_whats_next_view_domains',
+		stepTitle: selectedSiteSlug
+			? translate( 'Organize your domains' )
+			: translate( 'Manage your domains' ),
+		stepDescription: selectedSiteSlug
+			? translate(
+					'Set up a primary domain, connect other domains and make sure people can find your site.'
+			  )
+			: translate(
+					'View domain settings, manage every aspect of your domain and add additional domains.'
+			  ),
+		stepCta: (
+			<FullWidthButton href={ domainManagementList( '' ) } busy={ false } disabled={ false }>
+				{ selectedSiteSlug ? translate( 'Manage domains' ) : translate( 'View your domains' ) }
+			</FullWidthButton>
+		),
+	};
+
 	const returnProps: DomainThankYouProps = {
+		thankYouNotice: {
+			noticeTitle: translate(
+				'It may take up to 30 minutes for your domain to start working properly.'
+			),
+			noticeIconCustom: <Icon icon={ info } size={ 24 } />,
+		},
 		sections: [
 			{
 				sectionKey: 'domain_registration_whats_next',
 				sectionTitle: translate( 'What’s next?' ),
 				nextSteps: [
-					{
-						stepKey: 'domain_registration_whats_next_plugin_setup',
-						stepTitle: translate( 'Organize your domains' ),
-						stepDescription: translate(
-							'Set up a primary domain, connect other domains and make sure people can find your site'
-						),
-						stepCta: (
-							<FullWidthButton
-								href={ domainManagementList( selectedSiteSlug, null ) }
-								primary
-								busy={ false }
-								disabled={ false }
-							>
-								{ translate( 'Manage domains' ) }
-							</FullWidthButton>
-						),
-					},
-					professionalEmail,
+					...( professionalEmail ? [ professionalEmail ] : [] ),
+					...( ! selectedSiteSlug ? [ createSiteStep ] : [] ),
+					viewDomainsStep,
 				],
 			},
 		],
@@ -60,7 +86,7 @@ const DomainRegistrationThankYouProps = ( {
 			width: '150px',
 			height: 'auto',
 		},
-		thankYouTitle: translate( 'Congratulations on your purchase!' ),
+		thankYouTitle: translate( 'All ready to go!' ),
 		thankYouSubtitle: translate(
 			'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.',
 			{

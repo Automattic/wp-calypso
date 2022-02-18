@@ -37,7 +37,7 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 	const bootstrappedLocaleSlug = window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug;
 
 	if ( window.i18nLocaleStrings ) {
-		// Use the locale translation data that were boostrapped by the server
+		// Use the locale translation data that were bootstrapped by the server
 		const localeData = JSON.parse( window.i18nLocaleStrings );
 
 		i18n.setLocale( localeData );
@@ -65,5 +65,5 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
 	}
 
-	// If user is logged out and translations are not boostrapped, we assume default locale
+	// If user is logged out and translations are not bootstrapped, we assume default locale
 };

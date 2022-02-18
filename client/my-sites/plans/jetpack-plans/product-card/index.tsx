@@ -16,7 +16,9 @@ import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
+import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getUserOwnsPurchase } from 'calypso/state/purchases/selectors/get-user-owns-purchase';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -47,7 +49,7 @@ interface ProductCardProps {
 	isFeatured?: boolean;
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
-	scrollCardIntoView: ScrollCardIntoViewCallback;
+	scrollCardIntoView?: ScrollCardIntoViewCallback;
 	collapseFeaturesOnMobile?: boolean;
 }
 
@@ -89,15 +91,17 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		return false;
 	}, [ item.productSlug, sitePlan, siteProducts ] );
 	// Calculate the product price.
-	const { originalPrice, discountedPrice, priceTierList } = useItemPrice(
-		siteId,
-		item,
-		item?.monthlyProductSlug || ''
-	);
+	const {
+		originalPrice,
+		discountedPrice,
+		priceTierList,
+		isFetching: pricesAreFetching,
+	} = useItemPrice( siteId, item, item?.monthlyProductSlug || '' );
 
 	const isItemPlanFeature = !! (
 		sitePlan && planHasFeature( sitePlan.product_slug, item.productSlug )
 	);
+
 	const isDeprecated = Boolean( item.legacy );
 	const isIncludedInPlan = ! isOwned && isItemPlanFeature;
 	const isSuperseded = !! (
@@ -117,6 +121,10 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		isItemPlanFeature || isSuperseded
 			? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
 			: getPurchaseByProductSlug( purchases, item.productSlug );
+
+	const isNotPlanOwner = useSelector(
+		( state ) => ! ( purchase !== undefined ? getUserOwnsPurchase( state, purchase.id ) : false )
+	);
 
 	// Handles expiry.
 	const isExpiring = purchase && isCloseToExpiration( purchase );
@@ -143,18 +151,41 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		] as ReadonlyArray< string > ).includes( item.productSlug );
 	}, [ item.productSlug ] );
 
-	// Disable the product card if it's an incompatible multisite product or CRM monthly product
+	// Disable the product card if it's an incompatible multisite product or CRM monthly product or if the user is not the owner of the plan
 	// (CRM is not offered with "Monthly" billing. Only Yearly.)
-	const isDisabled = ( ( isMultisite && ! isMultisiteCompatible ) || isCrmMonthlyProduct ) ?? false;
+	const isDisabled =
+		( ( isMultisite && ! isMultisiteCompatible ) ||
+			isCrmMonthlyProduct ||
+			( purchase && isNotPlanOwner ) ) ??
+		false;
 
 	let disabledMessage;
-	if ( isDisabled ) {
+	if ( isDisabled && ! isNotPlanOwner ) {
 		if ( ! isMultisiteCompatible && ! isDeprecated ) {
 			disabledMessage = translate( 'Not available for multisite WordPress installs' );
 		} else if ( isCrmMonthlyProduct ) {
 			disabledMessage = translate( 'Only available in yearly billing' );
 		}
 	}
+
+	let buttonLabel = productButtonLabel( {
+		product: item,
+		isOwned,
+		isUpgradeableToYearly,
+		isDeprecated,
+		isSuperseded,
+		currentPlan: sitePlan,
+	} );
+
+	buttonLabel = purchase ? (
+		<>
+			{ buttonLabel }
+			&nbsp;
+			<OwnerInfo purchaseId={ purchase?.id } />
+		</>
+	) : (
+		buttonLabel
+	);
 
 	return (
 		<JetpackProductCard
@@ -163,14 +194,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
-			buttonLabel={ productButtonLabel( {
-				product: item,
-				isOwned,
-				isUpgradeableToYearly,
-				isDeprecated,
-				isSuperseded,
-				currentPlan: sitePlan,
-			} ) }
+			buttonLabel={ buttonLabel }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature || isSuperseded ) }
 			onButtonClick={ () => {
 				onClick( item, isUpgradeableToYearly, purchase );
@@ -193,6 +217,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			hideSavingLabel={ hideSavingLabel }
 			scrollCardIntoView={ scrollCardIntoView }
 			collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
+			pricesAreFetching={ pricesAreFetching }
 		/>
 	);
 };

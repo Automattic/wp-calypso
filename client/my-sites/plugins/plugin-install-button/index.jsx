@@ -18,6 +18,7 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isCompatiblePlugin } from '../plugin-compatibility';
+import { getPeriodVariationValue } from '../plugin-price';
 
 import './style.scss';
 
@@ -147,6 +148,24 @@ export class PluginInstallButton extends Component {
 		return null;
 	}
 
+	renderMarketplaceButton() {
+		const { translate, selectedSite, plugin, billingPeriod } = this.props;
+		const variationPeriod = getPeriodVariationValue( billingPeriod );
+		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
+
+		return (
+			<span className="plugin-install-button__install embed">
+				<Button
+					href={ `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2` }
+				>
+					<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
+					<Gridicon icon="plugins" size={ 18 } />
+					{ translate( 'Purchase and activate' ) }
+				</Button>
+			</span>
+		);
+	}
+
 	renderButton() {
 		const { translate, isInstalling, isEmbed, disabled } = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
@@ -234,7 +253,11 @@ export class PluginInstallButton extends Component {
 			) : null;
 		}
 
-		return this.renderButton();
+		if ( ! plugin.isMarketplaceProduct ) {
+			return this.renderButton();
+		}
+
+		return this.renderMarketplaceButton();
 	}
 
 	render() {

@@ -17,7 +17,11 @@ const ThankYouCta: ThankYouCtaType = ( { siteAdminUrl, recordThankYouClick } ) =
 	);
 };
 
-const AntiSpamProductThankYou = ( { installProgress } ): ReactElement => {
+const AntiSpamProductThankYou = ( {
+	installProgress,
+}: {
+	installProgress: number | null;
+} ): ReactElement => {
 	const translate = useTranslate();
 	const isInstalled = installProgress === 100;
 
@@ -26,7 +30,7 @@ const AntiSpamProductThankYou = ( { installProgress } ): ReactElement => {
 			illustration="/calypso/images/illustrations/thankYou.svg"
 			title={ translate( 'Say goodbye to spam!' ) }
 			showHideMessage={ ! isInstalled }
-			ThankYouCtaComponent={ isInstalled && ThankYouCta }
+			ThankYouCtaComponent={ isInstalled ? ThankYouCta : undefined }
 		>
 			<>
 				<p>{ translate( "We're setting up Jetpack Anti-spam for you right now." ) }</p>
@@ -36,7 +40,11 @@ const AntiSpamProductThankYou = ( { installProgress } ): ReactElement => {
 					) }
 				</p>
 				{ ! isInstalled && (
-					<ProgressBar isPulsing={ true } total={ 100 } value={ Math.max( installProgress, 10 ) } />
+					<ProgressBar
+						isPulsing={ true }
+						total={ 100 }
+						value={ Math.max( installProgress ?? 0, 10 ) }
+					/>
 				) }
 			</>
 		</ThankYou>

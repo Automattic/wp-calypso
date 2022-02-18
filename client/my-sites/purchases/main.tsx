@@ -8,6 +8,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'calypso/me/purchases/confirm-cancel-domain';
@@ -54,20 +55,22 @@ export function Purchases(): JSX.Element {
 		<Main wideLayout className="purchases">
 			<MySitesSidebarNavigation />
 			<DocumentHead title={ titles.sectionTitle } />
-			<FormattedHeader
-				brandFont
-				className="purchases__page-heading"
-				headerText={ titles.sectionTitle }
-				subHeaderText={ translate(
-					'View, manage, or cancel your plan and other purchases for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-					{
-						components: {
-							learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
-						},
-					}
-				) }
-				align="left"
-			/>
+			{ ! isJetpackCloud() && (
+				<FormattedHeader
+					brandFont
+					className="purchases__page-heading"
+					headerText={ titles.sectionTitle }
+					subHeaderText={ translate(
+						'View, manage, or cancel your plan and other purchases for this site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
+							},
+						}
+					) }
+					align="left"
+				/>
+			) }
 			<PurchasesNavigation sectionTitle={ 'Active Upgrades' } siteSlug={ siteSlug } />
 
 			<CheckoutErrorBoundary
@@ -89,16 +92,19 @@ export function PurchaseDetails( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase details load error' );
+	const redirectTo = getManagePurchaseUrlFor( siteSlug, purchaseId );
 
 	return (
 		<Main wideLayout className="purchases manage-purchase">
 			<DocumentHead title={ titles.managePurchase } />
-			<FormattedHeader
-				brandFont
-				className="purchases__page-heading"
-				headerText={ titles.sectionTitle }
-				align="left"
-			/>
+			{ ! isJetpackCloud() && (
+				<FormattedHeader
+					brandFont
+					className="purchases__page-heading"
+					headerText={ titles.sectionTitle }
+					align="left"
+				/>
+			) }
 			<PageViewTracker
 				path="/purchases/subscriptions/:site/:purchaseId"
 				title="Purchases > Manage Purchase"
@@ -114,7 +120,7 @@ export function PurchaseDetails( {
 					siteSlug={ siteSlug }
 					showHeader={ false }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-					redirectTo={ getManagePurchaseUrlFor( siteSlug, purchaseId ) }
+					redirectTo={ isJetpackCloud() ? `https://cloud.jetpack.com${ redirectTo }` : redirectTo }
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 					getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
@@ -138,12 +144,14 @@ export function PurchaseCancel( {
 	return (
 		<Main wideLayout className="purchases">
 			<DocumentHead title={ titles.cancelPurchase } />
-			<FormattedHeader
-				brandFont
-				className="purchases__page-heading"
-				headerText={ titles.sectionTitle }
-				align="left"
-			/>
+			{ ! isJetpackCloud() && (
+				<FormattedHeader
+					brandFont
+					className="purchases__page-heading"
+					headerText={ titles.sectionTitle }
+					align="left"
+				/>
+			) }
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
@@ -176,12 +184,14 @@ export function PurchaseChangePaymentMethod( {
 	return (
 		<Main wideLayout className="purchases">
 			<DocumentHead title={ titles.changePaymentMethod } />
-			<FormattedHeader
-				brandFont
-				className="purchases__page-heading"
-				headerText={ titles.sectionTitle }
-				align="left"
-			/>
+			{ ! isJetpackCloud() && (
+				<FormattedHeader
+					brandFont
+					className="purchases__page-heading"
+					headerText={ titles.sectionTitle }
+					align="left"
+				/>
+			) }
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
@@ -211,12 +221,14 @@ export function PurchaseCancelDomain( {
 	return (
 		<Main wideLayout className="purchases">
 			<DocumentHead title={ titles.confirmCancelDomain } />
-			<FormattedHeader
-				brandFont
-				className="purchases__page-heading"
-				headerText={ titles.sectionTitle }
-				align="left"
-			/>
+			{ ! isJetpackCloud() && (
+				<FormattedHeader
+					brandFont
+					className="purchases__page-heading"
+					headerText={ titles.sectionTitle }
+					align="left"
+				/>
+			) }
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }

@@ -71,6 +71,10 @@
 }
 
 .email-providers-comparison__provider-card.promo-card {
+	.action-panel__body {
+		margin-left: 24px;
+	}
+
 	.action-panel__figure {
 		float: right;
 		max-width: 208px;
@@ -103,7 +107,7 @@
 
 	&.has-star {
 		.action-panel__title,
-		.email-providers-comparison__provider-card-main-details{
+		.email-providers-comparison__provider-card-main-details {
 			margin-right: 70px;
 		}
 	}
@@ -198,6 +202,7 @@
 			.email-providers-comparison__discount-with-renewal span {
 				color: var( --color-text-subtle );
 				font-weight: 400;
+				margin-left: 0.5em;
 			}
 
 			.email-providers-comparison__discount-with-renewal .info-popover {

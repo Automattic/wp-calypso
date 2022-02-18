@@ -18,15 +18,17 @@ const DomainDeleteInfoCard = ( {
 }: DomainDeleteInfoCardProps ): JSX.Element | null => {
 	const translate = useTranslate();
 
-	if ( isLoadingPurchase || ! purchase ) return null;
+	if ( isLoadingPurchase || ! purchase || ! domain.currentUserIsOwner ) return null;
 
-	const removePurchaseClassName = 'is-compact button';
+	const removePurchaseClassName = 'domain-delete-info-card is-compact button';
 
 	const title =
 		domain.type === domainType.TRANSFER ? translate( 'Cancel transfer' ) : translate( 'Delete' );
 
 	const getDescription = () => {
 		switch ( domain.type ) {
+			case domainType.SITE_REDIRECT:
+				return translate( 'Remove this site redirect permanently' );
 			case domainType.MAPPED:
 				return translate( 'Remove this domain connection permanently' );
 			case domainType.TRANSFER:

@@ -1,15 +1,14 @@
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
-import { Fragment, Component } from 'react';
-import { InView } from 'react-intersection-observer';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -32,7 +31,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
@@ -48,12 +47,11 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
-import DomainItem from './domain-item';
+import DomainOnlyUpsellCarousel from './domain-only-upsell-carousel';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
-import { filterDomainsByOwner } from './helpers';
+import { filterDomainsByOwner, filterDomainOnlyDomains } from './helpers';
 import ListItemPlaceholder from './item-placeholder';
-import ListHeader from './list-header';
 import {
 	countDomainsInOrangeStatus,
 	getDomainManagementPath,
@@ -61,8 +59,6 @@ import {
 	getReverseSimpleSortFunctionBy,
 	ListAllActions,
 } from './utils';
-
-import './list-all.scss';
 
 class AllDomains extends Component {
 	static propTypes = {
@@ -72,7 +68,6 @@ class AllDomains extends Component {
 		domainsList: PropTypes.array.isRequired,
 		filteredDomainsList: PropTypes.array.isRequired,
 		sites: PropTypes.object.isRequired,
-		addDomainClick: PropTypes.func.isRequired,
 		requestingSiteDomains: PropTypes.object,
 		isContactEmailEditContext: PropTypes.bool,
 	};
@@ -85,8 +80,6 @@ class AllDomains extends Component {
 		whoisData: {},
 		contactInfoSaveResults: {},
 	};
-
-	renderedQuerySiteDomains = {};
 
 	componentDidUpdate() {
 		if ( this.props.isContactEmailEditContext && ! this.isLoadingDomainDetails() ) {
@@ -148,11 +141,6 @@ class AllDomains extends Component {
 
 	setWhoisData = ( domain, whoisData ) => {
 		this.setState( { whoisData: { ...this.state.whoisData, [ domain ]: whoisData } } );
-	};
-
-	clickAddDomain = () => {
-		this.props.addDomainClick();
-		page( '/start/add-domain' );
 	};
 
 	handleDomainItemClick = ( domain ) => {
@@ -226,21 +214,6 @@ class AllDomains extends Component {
 		return false;
 	}
 
-	shouldRenderDomainItem( domain, domainDetails ) {
-		if ( this.props.isContactEmailEditContext ) {
-			return (
-				Object.keys( domainDetails ?? {} ).length !== 0 &&
-				domainTypes.REGISTERED === domain.type &&
-				domainDetails?.currentUserCanManage &&
-				isDomainUpdateable( domainDetails ) &&
-				isDomainInGracePeriod( domainDetails ) &&
-				! domainDetails?.isPendingWhoisUpdate
-			);
-		}
-
-		return true;
-	}
-
 	findDomainDetails( domainsDetails = [], domain = {} ) {
 		return domainsDetails[ domain?.blogId ]?.find(
 			( element ) => element.type === domain.type && element.domain === domain.domain
@@ -260,75 +233,6 @@ class AllDomains extends Component {
 		} ) );
 	}
 
-	renderQuerySiteDomainsOnce( blogId ) {
-		if ( this.renderedQuerySiteDomains[ blogId ] ) {
-			return null;
-		}
-		this.renderedQuerySiteDomains[ blogId ] = true;
-		return <QuerySiteDomains siteId={ blogId } />;
-	}
-
-	getActionResult( domain ) {
-		if ( this.props.isContactEmailEditContext ) {
-			return this.state.contactInfoSaveResults[ domain ] ?? null;
-		}
-
-		return null;
-	}
-
-	renderDomainItem( domain, index ) {
-		const {
-			currentRoute,
-			domainsDetails,
-			sites,
-			requestingSiteDomains,
-			isContactEmailEditContext,
-		} = this.props;
-		const { selectedDomains, isSavingContactInfo } = this.state;
-		const domainDetails = this.findDomainDetails( domainsDetails, domain );
-		const isLoadingDomainDetails = this.isLoadingDomainDetails();
-		const isChecked = ( selectedDomains[ domain.domain ] ?? false ) || isLoadingDomainDetails;
-		const actionResult = this.getActionResult( domain.name );
-
-		return (
-			<Fragment key={ `domain-item-${ index }-${ domain.name }` }>
-				{ domain?.blogId && ! isContactEmailEditContext ? (
-					<InView triggerOnce>
-						{ ( { inView, ref } ) => (
-							<div ref={ ref }>{ inView && this.renderQuerySiteDomainsOnce( domain.blogId ) }</div>
-						) }
-					</InView>
-				) : (
-					this.renderQuerySiteDomainsOnce( domain.blogId )
-				) }
-				{ this.shouldRenderDomainItem( domain, domainDetails ) && (
-					<DomainItem
-						currentRoute={ currentRoute }
-						domain={ domain }
-						showDomainDetails={ ! isContactEmailEditContext }
-						domainDetails={ domainDetails }
-						showCheckbox={ isContactEmailEditContext }
-						site={ sites[ domain?.blogId ] }
-						isManagingAllSites={ true }
-						isLoadingDomainDetails={
-							! domainDetails && ( requestingSiteDomains[ domain?.blogId ] ?? false )
-						}
-						onClick={ this.handleDomainItemClick }
-						onToggle={ this.handleDomainItemToggle }
-						isChecked={ isChecked }
-						disabled={ isLoadingDomainDetails || isSavingContactInfo }
-						actionResult={ actionResult }
-						isBusy={
-							isContactEmailEditContext &&
-							( ( isChecked && isSavingContactInfo && null === actionResult ) ||
-								isLoadingDomainDetails )
-						}
-					/>
-				) }
-			</Fragment>
-		);
-	}
-
 	handleDomainListHeaderToggle = ( selected ) => {
 		const selectedDomains = Object.keys( this.state.selectedDomains ?? {} ).reduce(
 			( list, domain ) => {
@@ -345,28 +249,6 @@ class AllDomains extends Component {
 			};
 		} );
 	};
-
-	renderDomainListHeader() {
-		const { isContactEmailEditContext } = this.props;
-		const { isSavingContactInfo, selectedDomainListHeader } = this.state;
-		const isLoadingDomainDetails = this.isLoadingDomainDetails();
-		const isChecked = selectedDomainListHeader || isLoadingDomainDetails;
-
-		return (
-			<ListHeader
-				key="list-header"
-				action={ this.props.action }
-				disabled={ isLoadingDomainDetails || isSavingContactInfo }
-				onToggle={ this.handleDomainListHeaderToggle }
-				isChecked={ isChecked }
-				isBusy={
-					isContactEmailEditContext &&
-					( ( isChecked && isSavingContactInfo ) || isLoadingDomainDetails )
-				}
-				isManagingAllSites={ true }
-			/>
-		);
-	}
 
 	renderDomainsList() {
 		if ( this.isLoading() ) {
@@ -389,6 +271,11 @@ class AllDomains extends Component {
 		const { isSavingContactInfo } = this.state;
 
 		const selectedFilter = context?.query?.filter;
+
+		const domains =
+			selectedFilter === 'domain-only'
+				? filterDomainOnlyDomains( this.mergeFilteredDomainsWithDomainsDetails(), sites )
+				: filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter );
 
 		const domainsTableColumns = [
 			{
@@ -455,11 +342,10 @@ class AllDomains extends Component {
 					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
 				bubble: countDomainsInOrangeStatus(
-					filterDomainsByOwner( this.mergeFilteredDomainsWithDomainsDetails(), selectedFilter ).map(
-						( domain ) =>
-							resolveDomainStatus( domain, null, {
-								getMappingErrors: true,
-							} )
+					domains.map( ( domain ) =>
+						resolveDomainStatus( domain, null, {
+							getMappingErrors: true,
+						} )
 					)
 				),
 			},
@@ -483,7 +369,6 @@ class AllDomains extends Component {
 				name: 'select-domain',
 				label: (
 					<FormCheckbox
-						className="list__checkbox"
 						onChange={ this.handleSelectAllDomains }
 						checked={ areAllCheckboxesChecked }
 						disabled={ this.state.isSavingContactInfo }
@@ -497,10 +382,7 @@ class AllDomains extends Component {
 				<div className="all-domains__filter">{ this.renderDomainTableFilterButton() }</div>
 				<DomainsTable
 					currentRoute={ currentRoute }
-					domains={ filterDomainsByOwner(
-						this.mergeFilteredDomainsWithDomainsDetails(),
-						selectedFilter
-					) }
+					domains={ domains }
 					handleDomainItemToggle={ this.handleDomainItemToggle }
 					domainsTableColumns={ domainsTableColumns }
 					isManagingAllSites={ true }
@@ -515,6 +397,25 @@ class AllDomains extends Component {
 				/>
 			</>
 		);
+	}
+
+	renderDomainOnlyUpsellCarousel() {
+		const { sites } = this.props;
+		const domains = filterDomainOnlyDomains(
+			this.mergeFilteredDomainsWithDomainsDetails(),
+			sites
+		).sort( ( a, b ) => {
+			if ( moment( a.registrationDate ).isBefore( b.registrationDate ) ) {
+				return 1;
+			} else if ( moment( a.registrationDate ).isAfter( b.registrationDate ) ) {
+				return -1;
+			}
+			return 0;
+		} );
+		if ( domains.length === 0 ) {
+			return null;
+		}
+		return <DomainOnlyUpsellCarousel domain={ domains[ 0 ] } />;
 	}
 
 	handleContactInfoTransferLockOptOutChange = ( transferLockOptOut ) => {
@@ -669,29 +570,35 @@ class AllDomains extends Component {
 	}
 
 	renderDomainTableFilterButton() {
-		const { context } = this.props;
+		const { context, translate, sites } = this.props;
 
 		const selectedFilter = context?.query?.filter;
 		const nonWpcomDomains = this.mergeFilteredDomainsWithDomainsDetails();
 
 		const filterOptions = [
 			{
-				label: 'All domains',
+				label: translate( 'All domains' ),
 				value: '',
 				path: domainManagementRoot(),
 				count: nonWpcomDomains?.length,
 			},
 			{
-				label: 'Owned by me',
+				label: translate( 'Owned by me' ),
 				value: 'owned-by-me',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
-				label: 'Owned by others',
+				label: translate( 'Owned by others' ),
 				value: 'owned-by-others',
 				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-others' } ),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-others' )?.length,
+			},
+			{
+				label: translate( 'Parked domains' ),
+				value: 'domain-only',
+				path: domainManagementRoot() + '?' + stringify( { filter: 'domain-only' } ),
+				count: filterDomainOnlyDomains( nonWpcomDomains, sites )?.length,
 			},
 		];
 
@@ -763,14 +670,15 @@ class AllDomains extends Component {
 
 		return (
 			<>
-				<div className="all-domains__form">{ this.renderActionForm() }</div>
-				<div className="all-domains__container">
+				<div>{ this.renderActionForm() }</div>
+				<div>
 					<QueryAllDomains />
 					<QueryUserPurchases />
 					<Main wideLayout>
 						<SidebarNavigation />
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
-						<div className="all-domains__items">{ this.renderDomainsList() }</div>
+						<div>{ this.renderDomainsList() }</div>
+						<div>{ this.renderDomainOnlyUpsellCarousel() }</div>
 					</Main>
 				</div>
 			</>
@@ -787,12 +695,6 @@ class AllDomains extends Component {
 		);
 	}
 }
-
-const addDomainClick = () =>
-	composeAnalytics(
-		recordGoogleEvent( 'Domain Management', 'Clicked "Add Domain" Button in ListAll' ),
-		recordTracksEvent( 'calypso_domain_management_list_all_add_domain_click' )
-	);
 
 const saveContactEmailClick = () =>
 	composeAnalytics(
@@ -868,10 +770,7 @@ export default connect(
 		};
 	},
 	{
-		addDomainClick,
 		saveContactEmailClick,
-		successNotice,
-		errorNotice,
 		infoNotice,
 	}
 )( localize( AllDomains ) );

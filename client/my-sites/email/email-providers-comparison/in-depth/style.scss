@@ -1,0 +1,178 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.email-providers-in-depth-comparison__header,
+.email-providers-in-depth-comparison__sub-header {
+	padding-left: 16px;
+	padding-right: 16px;
+	text-align: center;
+
+	@include break-medium {
+		padding: 0;
+	}
+}
+
+.email-providers-in-depth-comparison__header {
+	font-size: $font-title-large;
+	padding-left: 16px;
+	padding-right: 16px;
+	padding-top: 16px;
+
+	@extend .wp-brand-font;
+
+	@include break-medium {
+		padding: 0;
+	}
+}
+
+.email-providers-in-depth-comparison__sub-header {
+	font-size: $font-body-small;
+}
+
+.email-providers-in-depth-comparison-list,
+.email-providers-in-depth-comparison-table {
+	font-size: $font-body-small;
+
+	.google-workspace-logo {
+		height: 48px;
+		width: 48px;
+	}
+
+	.professional-email-logo {
+		color: var( --color-wordpress-com );
+		height: 48px;
+		min-width: 48px;
+		width: 48px;
+	}
+}
+
+.email-providers-in-depth-comparison-list__provider,
+.email-providers-in-depth-comparison-table__provider {
+	display: flex;
+}
+
+.email-providers-in-depth-comparison-list__provider-info,
+.email-providers-in-depth-comparison-table__provider-info {
+	margin-left: 12px;
+
+	h2 {
+		font-size: $font-title-small;
+
+		@extend .wp-brand-font;
+	}
+
+	p {
+		font-size: $font-body;
+		margin-bottom: 0;
+	}
+}
+
+.email-providers-in-depth-comparison-list__button,
+.email-providers-in-depth-comparison-table__button {
+	width: 100%;
+}
+
+.email-providers-in-depth-comparison-list__price {
+	margin-left: 60px;
+	margin-top: 10px;
+}
+
+.email-providers-in-depth-comparison-list__features {
+	margin-top: 40px;
+
+	.email-provider-features__feature {
+		&::before {
+			border-bottom: none;
+		}
+
+		.gridicon {
+			fill: var( --studio-gray-20 );
+		}
+	}
+}
+
+.email-providers-in-depth-comparison-list__support-link,
+.email-providers-in-depth-comparison-list__badge {
+	margin-top: 20px;
+}
+
+.email-providers-in-depth-comparison-list__button {
+	margin-top: 30px;
+}
+
+$table-padding: 15px;
+
+.email-providers-in-depth-comparison-table {
+	border-collapse: collapse;
+	margin-top: 40px;
+	table-layout: fixed;
+
+	td {
+		padding-bottom: $table-padding;
+		padding-top: $table-padding;
+
+		&:first-child {
+			padding-left: $table-padding;
+			white-space: nowrap;
+		}
+
+		&:nth-child( n + 2 ) {
+			padding-left: 60px;
+		}
+
+		&:last-child {
+			padding-right: $table-padding;
+		}
+	}
+
+	tr:first-child {
+		td:first-child {
+			width: 10%;
+		}
+
+		td:nth-child( n + 1 ) {
+			padding-left: 0;
+		}
+	}
+
+	tr:nth-child( 2 ) {
+		td {
+			vertical-align: bottom;
+		}
+	}
+
+	tr:nth-child( n + 3 ) {
+		td {
+			vertical-align: middle;
+		}
+	}
+
+	tr:nth-child( 3 ) {
+		td {
+			padding-top: 30px;
+		}
+	}
+}
+
+.email-providers-in-depth-comparison-table__provider-info {
+	margin-right: $table-padding;
+}
+
+.email-providers-in-depth-comparison-table__feature {
+	color: var( --color-text-subtle );
+	font-weight: 600;
+	text-align: right;
+}
+
+.email-providers-in-depth-comparison-table__separator {
+	td {
+		border-top-color: var( --color-neutral-10 );
+		border-top-width: 1px;
+		border-top-style: solid;
+	}
+}
+
+.email-providers-in-depth-comparison-table__button {
+	max-width: 250px;
+}

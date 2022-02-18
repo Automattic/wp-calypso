@@ -6,6 +6,10 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from 'calypso/lib/gsuite/constants';
 
+/**
+ * @param {string|null} productSlug - optional product slug
+ * @returns {string}
+ */
 export function getGoogleMailServiceFamily( productSlug = null ) {
 	if ( productSlug ) {
 		switch ( productSlug ) {

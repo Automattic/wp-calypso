@@ -1,18 +1,18 @@
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import DomainMappingProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-mapping';
 import DomainRegistrationThankYouProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-registration';
 import DomainTransferProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-transfer';
-import {
-	DomainThankYouParams,
-	DomainThankYouProps,
-	DomainThankYouPropsGetter,
-	DomainThankYouType,
-} from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
+import type { ThankYouNextStepProps } from 'calypso/components/thank-you/types';
+import type {
+	DomainThankYouParams,
+	DomainThankYouPropsGetter,
+	DomainThankYouType,
+} from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 
 const thankYouContentGetter: Record< DomainThankYouType, DomainThankYouPropsGetter > = {
 	MAPPING: DomainMappingProps,
@@ -21,6 +21,34 @@ const thankYouContentGetter: Record< DomainThankYouType, DomainThankYouPropsGett
 };
 
 export default thankYouContentGetter;
+
+interface StepCTAProps {
+	domainType: DomainThankYouType;
+	email?: string;
+	primary: boolean;
+}
+
+const StepCTA = ( { email, primary, domainType }: StepCTAProps ): JSX.Element => {
+	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
+
+	return (
+		<FullWidthButton
+			href={ getTitanEmailUrl( titanAppsUrlPrefix, email, true ) }
+			target="_blank"
+			primary={ primary }
+			onClick={ () => {
+				recordEmailAppLaunchEvent( {
+					provider: 'titan',
+					app: 'webmail',
+					context: 'checkout-thank-you',
+				} );
+			} }
+		>
+			{ translate( 'Go to Inbox' ) }
+			<Gridicon className={ `domain-${ domainType }__icon-external` } icon="external" />
+		</FullWidthButton>
+	);
+};
 
 /**
  * Helper function to reuse Get Inbox/Access your inbox components
@@ -35,7 +63,7 @@ export function buildDomainStepForProfessionalEmail(
 	}: DomainThankYouParams,
 	domainType: DomainThankYouType,
 	primary: boolean
-): DomainThankYouProps {
+): ThankYouNextStepProps | null {
 	if ( hideProfessionalEmailStep ) {
 		return null;
 	}
@@ -54,7 +82,7 @@ export function buildDomainStepForProfessionalEmail(
 			),
 			stepCta: (
 				<FullWidthButton
-					href={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain ) }
+					href={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug ?? domain, domain ) }
 					className={ `domain-${ domainType }__thank-you-button domain-thank-you__button` }
 					primary={ primary }
 					busy={ false }
@@ -70,22 +98,6 @@ export function buildDomainStepForProfessionalEmail(
 		stepKey: `domain_${ domainType }_whats_next_email_setup_view_inbox`,
 		stepTitle: translate( 'Access your inbox' ),
 		stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
-		stepCta: (
-			<FullWidthButton
-				href={ getTitanEmailUrl( email ) }
-				target="_blank"
-				primary={ primary }
-				onClick={ () => {
-					recordEmailAppLaunchEvent( {
-						provider: 'titan',
-						app: 'webmail',
-						context: 'checkout-thank-you',
-					} );
-				} }
-			>
-				{ translate( 'Go to Inbox' ) }
-				<Gridicon className={ `domain-${ domainType }__icon-external` } icon="external" />
-			</FullWidthButton>
-		),
+		stepCta: <StepCTA email={ email } primary={ primary } domainType={ domainType } />,
 	};
 }

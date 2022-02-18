@@ -44,7 +44,7 @@ We support the latest two versions of all major browsers, except IE, where we cu
 
 ## Troubleshooting
 
-If you have any problems running Calypso, [please see most common issues](./docs/troubleshooting.md).
+If you have any problems running Calypso, [please see the most common issues](./docs/troubleshooting.md).
 
 ## License
 

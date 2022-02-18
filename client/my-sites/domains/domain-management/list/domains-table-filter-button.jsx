@@ -14,9 +14,13 @@ class DomainsTableFilterButton extends Component {
 				count: PropTypes.number,
 			} )
 		),
-		compact: PropTypes.bool.isRequired,
+		compact: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		disabled: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		compact: false,
 	};
 
 	getFilterOptions() {

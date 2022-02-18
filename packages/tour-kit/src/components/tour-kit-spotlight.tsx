@@ -1,16 +1,28 @@
-import { useMemo, useRef } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 import classnames from 'classnames';
-import usePopperHandler from '../hooks/use-popper-handler';
+import { usePopper } from 'react-popper';
 import Overlay from './tour-kit-overlay';
 import type { Rect, Placement } from '@popperjs/core';
 
 interface Props {
 	referenceElement: HTMLElement | null;
+	styles?: React.CSSProperties;
 }
 
-const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement } ) => {
-	const popperElementRef = useRef( null );
+const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement, styles } ) => {
+	const [ popperElement, sePopperElement ] = useState< HTMLElement | null >( null );
+	const referenceRect = referenceElement?.getBoundingClientRect();
 	const modifiers = [
+		{
+			name: 'flip',
+			enabled: false,
+		},
+		{
+			name: 'preventOverflow',
+			options: {
+				mainAxis: false, // true by default
+			},
+		},
 		useMemo(
 			() => ( {
 				name: 'offset',
@@ -35,15 +47,30 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement 
 		),
 	];
 
-	const { styles: popperStyles, attributes: popperAttributes } = usePopperHandler(
+	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
 		referenceElement,
-		popperElementRef.current,
-		modifiers
+		popperElement,
+		{
+			strategy: 'fixed',
+			placement: 'bottom',
+			modifiers,
+		}
 	);
+
+	const clipDimensions = referenceRect
+		? {
+				width: `${ referenceRect.width }px`,
+				height: `${ referenceRect.height }px`,
+		  }
+		: null;
 
 	const clipRepositionProps = referenceElement
 		? {
-				style: popperStyles?.popper,
+				style: {
+					...( clipDimensions && clipDimensions ),
+					...popperStyles?.popper,
+					...( styles && styles ),
+				},
 				...popperAttributes?.popper,
 		  }
 		: null;
@@ -53,9 +80,9 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement 
 			<Overlay visible={ ! clipRepositionProps } />
 			<div
 				className={ classnames( 'tour-kit-spotlight', {
-					'--visible': !! clipRepositionProps,
+					'is-visible': !! clipRepositionProps,
 				} ) }
-				ref={ popperElementRef }
+				ref={ sePopperElement }
 				{ ...clipRepositionProps }
 			/>
 		</>

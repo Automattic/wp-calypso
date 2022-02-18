@@ -13,7 +13,9 @@
 	h2 {
 		line-height: inherit;
 	}
-
+	#header {
+		display: none;
+	}
 	.header {
 		margin-bottom: 24px;
 		padding: 0 5%;
@@ -21,8 +23,7 @@
 		color: #4f748e;
 
 		@include break-medium {
-			margin-top: 48px;
-			margin-bottom: 40px;
+			margin-bottom: 32px;
 			padding: 0;
 		}
 
@@ -41,9 +42,8 @@
 		}
 	}
 
-	.main {
-		padding-left: 0;
-		padding-right: 0;
+	.layout__content {
+		padding: 0;	
 	}
 
 	.foldable-card {

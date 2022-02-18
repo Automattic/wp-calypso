@@ -1,1 +1,1 @@
-export type IntentFlag = 'build' | 'write' | 'import';
+export type IntentFlag = 'build' | 'write' | 'import' | 'sell';

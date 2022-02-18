@@ -3,7 +3,7 @@ import { FunctionComponent } from 'react';
 
 import './style.scss';
 
-interface ClickHandler {
+export interface ClickHandler {
 	onClick: () => void;
 	message: TranslateResult;
 	show?: 'always' | 'onComplete' | 'beforeComplete';

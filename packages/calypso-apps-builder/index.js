@@ -124,7 +124,7 @@ function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
 		} );
 
 		if ( shouldWatch ) {
-			chokidar.watch( localPath ).on( 'change', debouncedSync );
+			chokidar.watch( localPath ).on( 'all', debouncedSync );
 		} else {
 			debouncedSync();
 		}

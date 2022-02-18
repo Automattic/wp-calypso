@@ -7,7 +7,7 @@ import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
+import { isDefaultLocale, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
@@ -71,11 +71,11 @@ export function renderJsx( view, props ) {
  * Cache is keyed by stringified element by default.
  *
  * @param {object} element - React element to be rendered to html
- * @param {string} key - (optional) custom key
+ * @param {string} key - cache key
  * @param {object} req - Request object
  * @returns {string} The rendered Layout
  */
-export function render( element, key = JSON.stringify( element ), req ) {
+function render( element, key, req ) {
 	try {
 		const startTime = Date.now();
 		debug( 'cache access for key', key );
@@ -189,9 +189,6 @@ export function attachI18n( context ) {
 
 	if ( context.store ) {
 		context.lang = getCurrentLocaleSlug( context.store.getState() ) || localeSlug;
-
-		const isLocaleRTL = isLocaleRtl( localeSlug );
-		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
 }
 
@@ -223,7 +220,9 @@ export function serverRender( req, res ) {
 	attachI18n( context );
 
 	if ( shouldServerSideRender( context ) ) {
-		cacheKey = getNormalizedPath( context.pathname, context.query );
+		cacheKey = `${ getNormalizedPath( context.pathname, context.query ) }:gdpr=${
+			context.showGdprBanner
+		}`;
 		context.renderedLayout = render(
 			context.layout,
 			req.error ? req.error.message : cacheKey,

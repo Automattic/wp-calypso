@@ -57,14 +57,16 @@
 		button.ellipsis-menu__toggle {
 			padding: 0;
 		}
+
+		.ellipsis-menu {
+			margin-left: auto;
+		}
 	}
 
 	.plugin-site-jetpack__automanage-notice {
-		flex: 1 1 0;
 		color: var( --color-neutral-light );
 		font-size: $font-body-extra-small;
 		line-height: 1;
-		text-align: center;
 	}
 
 	.plugin-site-jetpack__install-button {
@@ -101,13 +103,6 @@
 			.plugin-remove-button__remove-link {
 				display: none;
 			}
-		}
-
-		.plugin-site-jetpack__automanage-notice {
-			order: 2;
-			flex: 90%;
-			text-align: left;
-			padding-bottom: 10px;
 		}
 	}
 }

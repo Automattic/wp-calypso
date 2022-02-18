@@ -19,11 +19,6 @@
 	width: 100%;
 }
 
-.dns__list-remove {
-	text-align: right;
-	width: 100px;
-}
-
 body.dns__body-white {
 	background: var( --studio-white );
 	&.is-nav-unification .sidebar .sidebar__heading::after,
@@ -196,7 +191,11 @@ body.dns__body-white {
 			fill: var( --studio-gray-90 );
 		}
 
-		&:disabled, &:disabled:hover {
+		&:disabled,
+		&:disabled:hover,
+		&.is-selected:disabled,
+		&:focus:disabled {
+			color: var( --studio-gray-20 );
 			svg {
 				fill: var( --color-neutral-20 );
 			}
@@ -206,6 +205,8 @@ body.dns__body-white {
 	.popover__menu-item.is-selected,
 	.popover__menu-item:hover,
 	.popover__menu-item:focus {
+		color: var( --studio-white );
+		background-color: var( --color-primary );
 		svg {
 			fill: var( --studio-white );
 		}

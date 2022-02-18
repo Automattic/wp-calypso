@@ -47,7 +47,7 @@ export default function HelpSearch() {
 		<>
 			<Card className="help-search customer-home__card">
 				<div className="help-search__inner">
-					<CardHeading>{ translate( 'Get help' ) }</CardHeading>
+					<CardHeading tagName="h2">{ translate( 'Get help' ) }</CardHeading>
 					<div className="help-search__content">
 						<div className="help-search__search inline-help__search">
 							<HelpSearchCard

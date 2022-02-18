@@ -25,6 +25,7 @@ import moment from 'moment';
 import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { errorNotice } from 'calypso/state/notices/actions';
 
@@ -163,7 +164,7 @@ function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 	}
 	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
-	page( renewalUrl );
+	page( isJetpackCloud() ? `https://wordpress.com${ renewalUrl }` : renewalUrl );
 }
 
 /**
@@ -672,7 +673,7 @@ function purchaseType( purchase ) {
 	}
 
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
-		return i18n.translate( 'Productivity Tools and Mailboxes at %(domain)s', {
+		return i18n.translate( 'Mailboxes and Productivity Tools at %(domain)s', {
 			args: {
 				domain: purchase.meta,
 			},

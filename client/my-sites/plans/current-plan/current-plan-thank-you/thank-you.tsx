@@ -21,7 +21,7 @@ const mapStateToProps = ( state: DefaultRootState ) => {
 	const currentUser = getCurrentUser( state );
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
-	const isSingleSite = !! selectedSiteId || currentUser.site_count === 1;
+	const isSingleSite = !! selectedSiteId || currentUser?.site_count === 1;
 	const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 	return {
@@ -82,7 +82,7 @@ export const ThankYouCard: FC< Props > = ( {
 
 	const dismissUrl = useMemo(
 		() =>
-			queryArgs && 'install' in queryArgs
+			queryArgs && 'install' in queryArgs && ! Array.isArray( queryArgs.install )
 				? addQueryArgs( { install: queryArgs.install }, currentRoute )
 				: currentRoute,
 		[ currentRoute, queryArgs ]
@@ -151,7 +151,7 @@ export const ThankYouCard: FC< Props > = ( {
 					<p className="current-plan-thank-you__followup">
 						<ThankYouCtaComponent
 							dismissUrl={ dismissUrl }
-							jetpackVersion={ jetpackVersion }
+							jetpackVersion={ String( jetpackVersion ) }
 							recordThankYouClick={ recordThankYouClick }
 							siteAdminUrl={ siteAdminUrl }
 							startChecklistTour={ startChecklistTour }

@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { preventWidows } from 'calypso/lib/formatting';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import './style.scss';
 
@@ -21,7 +22,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 			<div className="plugin-details-header__container">
 				<div className="plugin-details-header__name">{ plugin.name }</div>
 				<div className="plugin-details-header__description">
-					{ plugin.short_description || plugin.description }
+					{ preventWidows( plugin.short_description || plugin.description ) }
 				</div>
 				<div className="plugin-details-header__additional-info">
 					<div className="plugin-details-header__info">

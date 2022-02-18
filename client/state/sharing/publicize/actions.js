@@ -6,9 +6,6 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_RECEIVE,
-	PUBLICIZE_CONNECTION_REQUEST,
-	PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
 	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -110,14 +107,8 @@ export function fetchConnections( siteId ) {
  * @returns {Function}            Action thunk
  */
 export function fetchConnection( siteId, connectionId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: PUBLICIZE_CONNECTION_REQUEST,
-			connectionId,
-			siteId,
-		} );
-
-		return wpcom.req
+	return ( dispatch ) =>
+		wpcom.req
 			.get( `/sites/${ siteId }/publicize-connections/${ connectionId }` )
 			.then( ( connection ) => {
 				dispatch( {
@@ -125,21 +116,8 @@ export function fetchConnection( siteId, connectionId ) {
 					connection,
 					siteId,
 				} );
-				dispatch( {
-					type: PUBLICIZE_CONNECTION_REQUEST_SUCCESS,
-					connectionId,
-					siteId,
-				} );
 			} )
-			.catch( ( error ) =>
-				dispatch( {
-					type: PUBLICIZE_CONNECTION_REQUEST_FAILURE,
-					connectionId,
-					error,
-					siteId,
-				} )
-			);
-	};
+			.catch( () => {} );
 }
 
 /**

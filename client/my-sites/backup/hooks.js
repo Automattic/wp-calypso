@@ -1,15 +1,12 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { getRequestActivityLogsId, requestActivityLogs } from 'calypso/state/data-getters';
-import { getHttpData } from 'calypso/state/data-layer/http-data';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-
-const isLoading = ( response ) => [ 'uninitialized', 'pending' ].includes( response.state );
 
 const byActivityTsDescending = ( a, b ) => ( a.activityTs > b.activityTs ? -1 : 1 );
 
@@ -25,35 +22,6 @@ export const BACKUP_ATTEMPT_ACTIVITIES = [
 	'rewind__backup_error',
 ];
 
-const useMemoizeFilter = ( filter ) => {
-	const filterRef = useRef();
-
-	const refRequestId = filterRef.current && getRequestActivityLogsId( null, filterRef.current );
-	const inputRequestId = filter && getRequestActivityLogsId( null, filter );
-
-	if ( inputRequestId !== refRequestId ) {
-		filterRef.current = filter;
-	}
-
-	return filterRef.current;
-};
-
-export const useActivityLogs = ( siteId, filter, shouldExecute = true ) => {
-	const memoizedFilter = useMemoizeFilter( filter );
-
-	useEffect( () => {
-		shouldExecute && requestActivityLogs( siteId, memoizedFilter );
-	}, [ shouldExecute, siteId, memoizedFilter ] );
-
-	const requestId = getRequestActivityLogsId( siteId, memoizedFilter );
-	const response = useSelector( () => shouldExecute && getHttpData( requestId ) );
-
-	return {
-		isLoadingActivityLogs: !! ( shouldExecute && isLoading( response ) ),
-		activityLogs: ( response?.data || [] ).sort( byActivityTsDescending ),
-	};
-};
-
 const getDailyAttemptFilter = ( { before, after, successOnly, sortOrder } = {} ) => {
 	return {
 		name: successOnly ? SUCCESSFUL_BACKUP_ACTIVITIES : BACKUP_ATTEMPT_ACTIVITIES,
@@ -61,6 +29,18 @@ const getDailyAttemptFilter = ( { before, after, successOnly, sortOrder } = {} )
 		after: after ? after.toISOString() : undefined,
 		aggregate: false,
 		number: 1,
+		sortOrder,
+	};
+};
+
+// Get all successful backups in a range
+const getSuccessfulBackupsFilter = ( { before, after, sortOrder } = {} ) => {
+	return {
+		name: SUCCESSFUL_BACKUP_ACTIVITIES,
+		before: before ? before.toISOString() : undefined,
+		after: after ? after.toISOString() : undefined,
+		aggregate: false,
+		number: 500,
 		sortOrder,
 	};
 };
@@ -77,13 +57,22 @@ const getRealtimeAttemptFilter = ( { before, after, sortOrder } = {} ) => {
 	};
 };
 
+// Find all the backup attempts in a given date range
+export const useMatchingBackupAttemptsInRange = ( siteId, { before, after, sortOrder } = {} ) => {
+	const filter = getSuccessfulBackupsFilter( { before, after, sortOrder } );
+	const { data: backups, isLoading } = useActivityLogQuery( siteId, filter );
+
+	return { isLoading, backups };
+};
+
 export const useFirstMatchingBackupAttempt = (
 	siteId,
-	{ before, after, successOnly, sortOrder } = {},
-	shouldExecute = true
+	{ before, after, successOnly, sortOrder } = {}
 ) => {
+	const dispatch = useDispatch();
+
 	useEffect( () => {
-		requestRewindCapabilities( siteId );
+		dispatch( requestRewindCapabilities( siteId ) );
 	}, [ siteId ] );
 
 	const rewindCapabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
@@ -94,50 +83,29 @@ export const useFirstMatchingBackupAttempt = (
 		? getRealtimeAttemptFilter( { before, after, sortOrder } )
 		: getDailyAttemptFilter( { before, after, successOnly, sortOrder } );
 
-	const { activityLogs, isLoadingActivityLogs } = useActivityLogs(
-		siteId,
-		filter,
-		!! shouldExecute
-	);
+	const { data, isLoading } = useActivityLogQuery( siteId, filter );
 
-	if ( ! shouldExecute ) {
-		return {
-			isLoading: false,
-			backupAttempt: undefined,
-		};
+	let backupAttempt = undefined;
+	if ( data ) {
+		// Daily backups are a much simpler case than real-time;
+		// let's get them out of the way before handling the more
+		// complex stuff
+		if ( ! hasRealtimeBackups ) {
+			backupAttempt = data[ 0 ];
+		} else {
+			// For real-time backups (for now), the most reliable way to find the first
+			// backup event in a list is by getting a large list and filtering by
+			// `activityIsRewindable`. This may change soon, with the introduction of an
+			// API endpoint to fetch all backup points in a given date range.
+			backupAttempt = data
+				// Sort in descending order by default, but flip if sortOrder is
+				// explicitly set to 'asc'
+				.sort( ( a, b ) => byActivityTsDescending( a, b ) * ( sortOrder === 'asc' ? -1 : 1 ) )
+				.find( ( a ) => a.activityIsRewindable );
+		}
 	}
 
-	if ( isLoadingActivityLogs ) {
-		return {
-			isLoading: true,
-			backupAttempt: undefined,
-		};
-	}
-
-	// Daily backups are a much simpler case than real-time;
-	// let's get them out of the way before handling the more
-	// complex stuff
-	if ( ! hasRealtimeBackups ) {
-		return {
-			isLoading: false,
-			backupAttempt: activityLogs[ 0 ] || undefined,
-		};
-	}
-
-	// For real-time backups (for now), the most reliable way to find the first
-	// backup event in a list is by getting a large list and filtering by
-	// `activityIsRewindable`. This may change soon, with the introduction of an
-	// API endpoint to fetch all backup points in a given date range.
-	const matchingAttempt = activityLogs
-		// Sort in descending order by default, but flip if sortOrder is
-		// explicitly set to 'asc'
-		.sort( ( a, b ) => byActivityTsDescending( a, b ) * ( sortOrder === 'asc' ? -1 : 1 ) )
-		.filter( ( { activityIsRewindable } ) => activityIsRewindable )[ 0 ];
-
-	return {
-		isLoading: isLoadingActivityLogs,
-		backupAttempt: matchingAttempt || undefined,
-	};
+	return { isLoading, backupAttempt };
 };
 
 /**

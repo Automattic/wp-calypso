@@ -6,7 +6,7 @@ import { Icon, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import moment from 'moment';
 import { useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import CardHeading from 'calypso/components/card-heading';
 import QueryDomainInfo from 'calypso/components/data/query-domain-info';
@@ -14,11 +14,15 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import Spinner from 'calypso/components/spinner';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+import { getSelectedDomain, getTopLevelOfTld, isMappedDomain } from 'calypso/lib/domains';
 import { DESIGNATED_AGENT, TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import SelectIpsTag from 'calypso/my-sites/domains/domain-management/transfer/transfer-out/select-ips-tag';
 import {
 	domainManagementEdit,
 	domainManagementList,
@@ -37,29 +41,38 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-by-site-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isSupportSession } from 'calypso/state/support/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { TransferPageProps } from './types';
+import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
+// The types for ToggleControl are missing `disabled`, but it is listed in the
+// component's docs, so we add it here. Please remove all this when the types
+// have been fixed.
+type ToggleControlProps = React.ComponentProps< typeof ToggleControl > & { disabled?: boolean };
+const FixedToggleControl = ( props: ToggleControlProps ) => <ToggleControl { ...props } />;
+
 const TransferPage = ( props: TransferPageProps ): JSX.Element => {
+	const dispatch = useDispatch();
 	const {
 		currentRoute,
-		errorNotice,
+		domains,
 		isAtomic,
 		isDomainInfoLoading,
 		isDomainLocked,
 		isDomainOnly,
 		isMapping,
 		isPrimaryDomain,
+		isSupportSession,
 		selectedDomainName,
 		selectedSite,
-		successNotice,
-		updateDomainLock,
 	} = props;
 	const { __ } = useI18n();
 	const [ isRequestingTransferCode, setIsRequestingTransferCode ] = useState( false );
 	const [ isLockingOrUnlockingDomain, setIsLockingOrUnlockingDomain ] = useState( false );
+	const domain = getSelectedDomain( props );
 
 	const renderBreadcrumbs = () => {
 		const items = [
@@ -155,13 +168,15 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 				} ),
 			} );
 
-			updateDomainLock( selectedDomainName, lock );
-			successNotice(
-				lock ? __( 'Domain locked successfully!' ) : __( 'Domain unlocked successfully!' ),
-				getNoticeOptions( selectedDomainName )
+			dispatch( updateDomainLock( selectedDomainName, lock ) );
+			dispatch(
+				successNotice(
+					lock ? __( 'Domain locked successfully!' ) : __( 'Domain unlocked successfully!' ),
+					getNoticeOptions( selectedDomainName )
+				)
 			);
 		} catch {
-			errorNotice( getDomainLockError( lock ), getNoticeOptions( selectedDomainName ) );
+			dispatch( errorNotice( getDomainLockError( lock ), getNoticeOptions( selectedDomainName ) ) );
 		} finally {
 			setIsLockingOrUnlockingDomain( false );
 		}
@@ -177,15 +192,19 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 				} ),
 			} );
 
-			successNotice(
-				__(
-					"We have sent the transfer authorization code to the domain registrant's email address. " +
-						"If you don't receive the email shortly, please check your spam folder."
-				),
-				getNoticeOptions( selectedDomainName )
+			dispatch(
+				successNotice(
+					__(
+						"We have sent the transfer authorization code to the domain registrant's email address. " +
+							"If you don't receive the email shortly, please check your spam folder."
+					),
+					getNoticeOptions( selectedDomainName )
+				)
 			);
 		} catch ( { error } ) {
-			errorNotice( getDomainTransferCodeError( error ), getNoticeOptions( selectedDomainName ) );
+			dispatch(
+				errorNotice( getDomainTransferCodeError( error ), getNoticeOptions( selectedDomainName ) )
+			);
 		} finally {
 			setIsRequestingTransferCode( false );
 		}
@@ -214,26 +233,36 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			</span>
 		);
 
-		const domain = getSelectedDomain( props );
-		const disabled =
+		const disabled = Boolean(
 			! domain?.domainLockingAvailable ||
-			domain?.transferAwayEligibleAt ||
-			isLockingOrUnlockingDomain;
+				domain?.transferAwayEligibleAt ||
+				isLockingOrUnlockingDomain
+		);
 
 		return (
-			<ToggleControl
-				className="transfer-page__transfer-lock"
-				checked={ isDomainLocked }
-				disabled={ disabled }
-				onChange={ toggleDomainLock }
-				label={ label }
-			/>
+			<>
+				<FixedToggleControl
+					className="transfer-page__transfer-lock"
+					checked={ isDomainLocked }
+					disabled={ disabled }
+					onChange={ toggleDomainLock }
+					label={ label }
+				/>
+				{ isLockingOrUnlockingDomain && (
+					<div className="transfer-page__loader">
+						<Spinner size={ 16 } />
+						<p>
+							{ isDomainLocked
+								? __( 'We are unlocking your domain' )
+								: __( 'We are locking your domain' ) }
+						</p>
+					</div>
+				) }
+			</>
 		);
 	};
 
 	const renderTransferMessage = () => {
-		const domain = getSelectedDomain( props );
-
 		const registrationDatePlus60Days = moment.utc( domain?.registrationDate ).add( 60, 'days' );
 		const supportLink = moment.utc().isAfter( registrationDatePlus60Days )
 			? DESIGNATED_AGENT
@@ -261,20 +290,63 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		return __( 'This domain cannot be locked.' );
 	};
 
-	const renderAdvancedTransferOptions = () => {
-		if ( isMapping ) {
-			return null;
-		}
+	const renderUkTransferOptions = () => {
+		return <SelectIpsTag selectedDomainName={ selectedDomainName } redesign />;
+	};
 
+	const renderCommonTldTransferOptions = () => {
 		return (
-			<Card className="transfer-page__advanced-transfer-options">
-				<CardHeading size={ 16 }>Advanced Options</CardHeading>
+			<>
 				<p>{ renderTransferMessage() }</p>
 				{ renderTransferLock() }
 				<Button primary={ false } busy={ isRequestingTransferCode } onClick={ requestTransferCode }>
 					{ __( 'Get authorization code' ) }
 				</Button>
+			</>
+		);
+	};
+
+	const renderAdvancedTransferOptions = () => {
+		if ( isMapping ) {
+			return null;
+		}
+
+		const topLevelOfTld = getTopLevelOfTld( selectedDomainName );
+
+		return (
+			<Card className="transfer-page__advanced-transfer-options">
+				<CardHeading size={ 16 }>{ __( 'Advanced Options' ) }</CardHeading>
+				{ topLevelOfTld !== 'uk' ? renderCommonTldTransferOptions() : renderUkTransferOptions() }
 			</Card>
+		);
+	};
+
+	const renderContent = (): JSX.Element | null => {
+		if ( ! domain ) {
+			return null;
+		}
+
+		if ( isSupportSession ) {
+			return (
+				<Notice
+					text={ __(
+						'Transfers cannot be initiated in a support session - please ask the user to do it instead.'
+					) }
+					status="is-warning"
+					showDismiss={ false }
+				/>
+			);
+		}
+
+		if ( ! domain.currentUserIsOwner ) {
+			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
+		}
+
+		return (
+			<>
+				{ renderTransferOptions() }
+				{ renderAdvancedTransferOptions() }
+			</>
 		);
 	};
 
@@ -285,14 +357,11 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			{ renderBreadcrumbs() }
 			<FormattedHeader brandFont headerText={ __( 'Transfer' ) } align="left" />
 			<Layout>
-				<Column type="main">
-					{ renderTransferOptions() }
-					{ renderAdvancedTransferOptions() }
-				</Column>
+				<Column type="main">{ renderContent() }</Column>
 				<Column type="sidebar">
 					<Card className="transfer-page__help-section-card">
 						<p className="transfer-page__help-section-title">{ __( 'How do transfers work?' ) }</p>
-						<span className="transfer-page__help-section-text">
+						<p className="transfer-page__help-section-text">
 							{ __( 'Transferring a domain within WordPress.com is immediate.' ) }
 							<br />
 							{ createInterpolateElement(
@@ -303,7 +372,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 									a: createElement( 'a', { href: TRANSFER_DOMAIN_REGISTRATION } ),
 								}
 							) }
-						</span>
+						</p>
 					</Card>
 				</Column>
 			</Layout>
@@ -311,26 +380,20 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 	);
 };
 
-const transferPageComponent = connect(
-	( state, ownProps: TransferPageProps ) => {
-		const domain = getSelectedDomain( ownProps );
-		const siteId = getSelectedSiteId( state )!;
-		const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
-		return {
-			currentRoute: getCurrentRoute( state ),
-			isAtomic: isSiteAutomatedTransfer( state, siteId ),
-			isDomainInfoLoading: ! domainInfo.hasLoadedFromServer,
-			isDomainLocked: domainInfo.data?.locked,
-			isDomainOnly: isDomainOnlySite( state, siteId ),
-			isMapping: Boolean( domain ) && isMappedDomain( domain ),
-			isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
-		};
-	},
-	{
-		errorNotice,
-		successNotice,
-		updateDomainLock,
-	}
-)( TransferPage );
+const transferPageComponent = connect( ( state: AppState, ownProps: TransferPageProps ) => {
+	const domain = getSelectedDomain( ownProps );
+	const siteId = getSelectedSiteId( state );
+	const domainInfo = getDomainWapiInfoByDomainName( state, ownProps.selectedDomainName );
+	return {
+		currentRoute: getCurrentRoute( state ),
+		isAtomic: isSiteAutomatedTransfer( state, siteId ) ?? false,
+		isDomainInfoLoading: ! domainInfo.hasLoadedFromServer,
+		isDomainLocked: domainInfo.data?.locked,
+		isDomainOnly: isDomainOnlySite( state, siteId ) ?? false,
+		isMapping: Boolean( domain ) && isMappedDomain( domain ),
+		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
+		isSupportSession: isSupportSession( state ),
+	};
+} )( TransferPage );
 
 export default transferPageComponent;

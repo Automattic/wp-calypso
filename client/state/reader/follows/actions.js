@@ -1,10 +1,7 @@
-import debugModule from 'debug';
 import {
 	READER_FOLLOW,
 	READER_FOLLOW_ERROR,
 	READER_UNFOLLOW,
-	READER_RECORD_FOLLOW,
-	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_COMPLETE,
@@ -29,11 +26,6 @@ import 'calypso/state/data-layer/wpcom/read/sites/notification-subscriptions/del
 import 'calypso/state/data-layer/wpcom/read/sites/notification-subscriptions/new';
 
 import 'calypso/state/reader/init';
-
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:redux:reader-follows' );
 
 /**
  * Extended information about a reader follow
@@ -89,38 +81,6 @@ export function recordFollowError( feedUrl, error ) {
 	};
 
 	return action;
-}
-
-/**
- * Returns an action object to signal that a URL has been followed.
- *
- * @param  {string} url Followed URL
- * @returns {Function} Action thunk
- */
-export function recordFollow( url ) {
-	return ( dispatch ) => {
-		debug( 'User followed ' + url );
-		dispatch( {
-			type: READER_RECORD_FOLLOW,
-			payload: { url },
-		} );
-	};
-}
-
-/**
- * Returns an action object to signal that a URL has been unfollowed.
- *
- * @param  {string} url Unfollowed URL
- * @returns {Function} Action thunk
- */
-export function recordUnfollow( url ) {
-	return ( dispatch ) => {
-		debug( 'User unfollowed ' + url );
-		dispatch( {
-			type: READER_RECORD_UNFOLLOW,
-			payload: { url },
-		} );
-	};
 }
 
 export function receiveFollows( { follows, totalCount } ) {

@@ -225,7 +225,7 @@ class TransferDomainToOtherUser extends Component {
 
 		if ( isMapping ) {
 			return translate(
-				'Do you want to transfer the domain mapping of {{strong}}%(domainName)s{{/strong}} ' +
+				'Do you want to transfer the domain connection of {{strong}}%(domainName)s{{/strong}} ' +
 					'to {{strong}}%(selectedUserDisplay)s{{/strong}}?',
 				{
 					args: { domainName, selectedUserDisplay },
@@ -257,7 +257,7 @@ class TransferDomainToOtherUser extends Component {
 		const { isMapping, translate, users } = this.props;
 		const availableUsers = this.filterAvailableUsers( users );
 		const saveButtonLabel = isMapping
-			? translate( 'Transfer domain mapping' )
+			? translate( 'Transfer domain connection' )
 			: translate( 'Transfer domain' );
 
 		return (
@@ -313,13 +313,13 @@ class TransferDomainToOtherUser extends Component {
 				<>
 					<p>
 						{ translate(
-							'Please choose an administrator to transfer domain mapping of {{strong}}%(domainName)s{{/strong}} to.',
+							'Please choose an administrator to transfer domain connection of {{strong}}%(domainName)s{{/strong}} to.',
 							{ args: { domainName }, components: { strong: <strong /> } }
 						) }
 					</p>
 					<p>
 						{ translate(
-							'You can transfer this domain mapping to any administrator on this site. If the user you want to ' +
+							'You can transfer this domain connection to any administrator on this site. If the user you want to ' +
 								'transfer is not currently an administrator, please {{a}}add them to the site first{{/a}}.',
 							{ components: { a: <a href={ `/people/new/${ selectedSite.slug }` } /> } }
 						) }

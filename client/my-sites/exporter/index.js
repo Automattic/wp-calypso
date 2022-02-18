@@ -1,9 +1,8 @@
-import config from '@automattic/calypso-config';
 import { get } from 'lodash';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, redirectWithoutSite, siteSelection, sites } from 'calypso/my-sites/controller';
-import { exportSite, guidedTransfer } from 'calypso/my-sites/exporter/controller';
+import { exportSite } from 'calypso/my-sites/exporter/controller';
 
 export default function () {
 	page( '/export', siteSelection, navigation, sites, makeLayout, clientRender );
@@ -17,18 +16,6 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
-	if ( config.isEnabled( 'manage/export/guided-transfer' ) ) {
-		page(
-			'/export/guided/:host_slug?/:site_id',
-			siteSelection,
-			navigation,
-			redirectWithoutSite( '/export' ),
-			guidedTransfer,
-			makeLayout,
-			clientRender
-		);
-	}
 
 	// Redirect any other child routes to parent `/export`.
 	page( '/export/*/:site_id', ( context ) => {

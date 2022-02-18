@@ -347,8 +347,8 @@ describe( 'multiPartnerCardProcessor', () => {
 				...basicExpectedStripeRequest,
 				cart: {
 					...basicExpectedStripeRequest.cart,
-					blog_id: 1234567,
-					cart_key: 1234567,
+					blog_id: '1234567',
+					cart_key: '1234567',
 					coupon: '',
 					create_new_blog: false,
 				},
@@ -416,8 +416,8 @@ describe( 'multiPartnerCardProcessor', () => {
 				...basicExpectedStripeRequest,
 				cart: {
 					...basicExpectedStripeRequest.cart,
-					blog_id: 1234567,
-					cart_key: 1234567,
+					blog_id: '1234567',
+					cart_key: '1234567',
 					coupon: '',
 					create_new_blog: false,
 				},

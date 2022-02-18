@@ -101,7 +101,14 @@ class HelpContact extends Component {
 	}
 
 	backToHelp = () => {
+		const searchParams = new URLSearchParams( window.location.search );
+		const redirectPath = searchParams.get( 'redirect_to' ) ?? '';
+		if ( redirectPath.match( /^\/(?!\/)/ ) ) {
+			page( redirectPath );
+			return;
+		}
 		page( '/help' );
+		return;
 	};
 
 	clearSavedContactForm = () => {

@@ -338,19 +338,30 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	.signup-header {
 		.wordpress-logo {
 			position: absolute;
-			left: 24px;
+			left: 20px;
 			top: 20px;
 			fill: var( --color-text );
+			stroke: var( --color-text );
 			transform-origin: 0 0;
 		}
 		.signup-header__right {
 			top: 22px;
-			right: 24px;
+			right: 20px;
 
 			.flow-progress-indicator {
 				font-weight: 500; /* stylelint-disable-line */
 				font-size: 0.875rem;
 				color: var( --studio-gray-30 );
+			}
+		}
+
+		@include break-small {
+			.wordpress-logo {
+				left: 24px;
+			}
+
+			.signup-header__right {
+				right: 24px;
 			}
 		}
 	}
@@ -738,7 +749,8 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	}
 
 	.signup__step.is-domains,
-	.signup__step.is-emails {
+	.signup__step.is-emails,
+	.is-domain-only {
 		@include break-large {
 			margin: 0 0 0 20px;
 		}
@@ -770,7 +782,8 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.signup__step.is-design-setup-site, .signup__step.is-difm-design-setup-site {
+	.signup__step.is-design-setup-site,
+	.signup__step.is-difm-design-setup-site {
 		.step-wrapper__header {
 			@include breakpoint-deprecated( '<660px' ) {
 				margin-left: 0;

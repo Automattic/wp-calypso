@@ -190,13 +190,17 @@ class ActivityCardList extends Component {
 			siteId,
 		} = this.props;
 
-		const visibleLimitCutoffDate = ( applySiteOffset ?? moment )().subtract( visibleDays, 'days' );
-		const visibleLogs = logs.filter( ( log ) =>
-			( applySiteOffset ?? moment )( log.activityDate ).isSameOrAfter(
-				visibleLimitCutoffDate,
-				'day'
-			)
-		);
+		const visibleLimitCutoffDate = Number.isFinite( visibleDays )
+			? ( applySiteOffset ?? moment )().subtract( visibleDays, 'days' )
+			: undefined;
+		const visibleLogs = visibleLimitCutoffDate
+			? logs.filter( ( log ) =>
+					( applySiteOffset ?? moment )( log.activityDate ).isSameOrAfter(
+						visibleLimitCutoffDate,
+						'day'
+					)
+			  )
+			: logs;
 
 		const { page: requestedPage } = filter;
 		const pageCount = Math.ceil( visibleLogs.length / pageSize );
@@ -346,9 +350,9 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => ( {
-	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
-} );
+const mapDispatchToProps = {
+	selectPage: ( siteId, pageNumber ) => updateFilter( siteId, { page: pageNumber } ),
+};
 
 /** @type {typeof ActivityCardList} */
 const connectedComponent = connect(

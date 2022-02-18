@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/browser-data-collector",
 	"version": "3.0.0",
-	"description": "A tool to collect data from different browser APIs",
+	"description": "A tool to collect data from different browser APIs.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
@@ -14,9 +14,7 @@
 		"directory": "packages/browser-data-collector"
 	},
 	"types": "dist/types",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
@@ -29,6 +27,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.5.4"
+		"typescript": "^4.5.5"
 	}
 }

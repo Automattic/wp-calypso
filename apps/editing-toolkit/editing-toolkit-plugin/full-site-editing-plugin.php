@@ -338,6 +338,19 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  * (Core Full Site Editing)
  */
 function load_wpcom_site_editor() {
+	// This is no longer needed after Gutenberg 12.2 due to the Navigation menu no longer being inscrutable.
+	// This should be deleted along with the files that would be loaded after 12.2 is in production.
+	if ( defined( 'GUTENBERG_VERSION' ) && version_compare( GUTENBERG_VERSION, '12.2.0', '>=' ) ) {
+		return;
+	}
 	require_once __DIR__ . '/wpcom-site-editor/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_site_editor', 11 ); // load just after the Gutenberg plugin.
+
+/**
+ * Load paragraph block
+ */
+function load_paragraph_block() {
+	require_once __DIR__ . '/paragraph-block/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_paragraph_block' );

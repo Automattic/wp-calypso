@@ -182,4 +182,34 @@ describe( 'Plugins Utils', () => {
 			assert.deepEqual( log, [ logs[ 0 ] ] );
 		} );
 	} );
+
+	describe( 'isSamePluginIdSlug', () => {
+		test( 'should return false for ID and slug', () => {
+			assert.equal( PluginUtils.isSamePluginIdSlug( 1, 'slug' ), false );
+			assert.equal( PluginUtils.isSamePluginIdSlug( 'slug', 1 ), false );
+		} );
+
+		test( 'should return false for non-matching slugs', () => {
+			assert.equal( PluginUtils.isSamePluginIdSlug( 'slug1', 'slug2' ), false );
+			assert.equal( PluginUtils.isSamePluginIdSlug( 'slug2', 'slug1' ), false );
+		} );
+
+		test( 'should return false for non-matching ids', () => {
+			assert.equal( PluginUtils.isSamePluginIdSlug( 1, 2 ), false );
+			assert.equal( PluginUtils.isSamePluginIdSlug( 2, 1 ), false );
+		} );
+
+		test( 'should return true for number and string', () => {
+			assert.equal( PluginUtils.isSamePluginIdSlug( 1, '1' ), true );
+			assert.equal( PluginUtils.isSamePluginIdSlug( '1', 1 ), true );
+		} );
+
+		test( 'should return true for match before/after slash', () => {
+			assert.equal( PluginUtils.isSamePluginIdSlug( 'vendor/plugin', 'plugin' ), true );
+			assert.equal( PluginUtils.isSamePluginIdSlug( 'plugin', 'vendor/plugin' ), true );
+
+			assert.equal( PluginUtils.isSamePluginIdSlug( 'vendor/plugin', 'vendor' ), true );
+			assert.equal( PluginUtils.isSamePluginIdSlug( 'vendor', 'vendor/plugin' ), true );
+		} );
+	} );
 } );

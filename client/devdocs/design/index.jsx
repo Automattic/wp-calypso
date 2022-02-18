@@ -99,6 +99,7 @@ import SplitButton from 'calypso/components/split-button/docs/example';
 import StepProgress from 'calypso/components/step-progress/docs/example';
 import SuggestionSearchExample from 'calypso/components/suggestion-search/docs/example';
 import SupportInfoExample from 'calypso/components/support-info/docs/example';
+import Swipeable from 'calypso/components/swipeable/docs/example';
 import TextDiff from 'calypso/components/text-diff/docs/example';
 import TextareaAutosize from 'calypso/components/textarea-autosize/docs/example';
 import TileGrid from 'calypso/components/tile-grid/docs/example';
@@ -108,7 +109,6 @@ import Timezone from 'calypso/components/timezone/docs/example';
 import TokenFields from 'calypso/components/token-field/docs/example';
 import Tooltip from 'calypso/components/tooltip/docs/example';
 import UserItem from 'calypso/components/user/docs/example';
-import Version from 'calypso/components/version/docs/example';
 import VerticalMenu from 'calypso/components/vertical-menu/docs/example';
 import VerticalNav from 'calypso/components/vertical-nav/docs/example';
 import WizardProgressBar from 'calypso/components/wizard-progress-bar/docs/example';
@@ -190,6 +190,7 @@ export default class DesignAssets extends Component {
 					<DateRange readmeFilePath="date-range" />
 					<DiffViewerExample readmeFilePath="diff-viewer" />
 					<DotPager readmeFilePath="dot-pager" />
+					<Swipeable readmeFilePath="swipeable" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
 					<EmptyContent readmeFilePath="empty-content" />
@@ -202,7 +203,7 @@ export default class DesignAssets extends Component {
 						readmeFilePath="fixed-navigation-header"
 					/>
 					<FocusableExample readmeFilePath="focusable" />
-					<FoldableCard readmeFilePath="foldable-card" />
+					<FoldableCard readmeFilePath="foldable-card" searchKeywords="accordion" />
 					<FoldableFAQ readmeFilePath="foldable-faq" />
 					<FormattedDate readmeFilePath="formatted-date" />
 					<FormattedHeader readmeFilePath="formatted-header" />
@@ -270,7 +271,6 @@ export default class DesignAssets extends Component {
 					<TokenFields readmeFilePath="token-field" />
 					<Tooltip readmeFilePath="tooltip" />
 					<UserItem readmeFilePath="user" />
-					<Version readmeFilePath="version" />
 					<VerticalMenu readmeFilePath="vertical-menu" />
 					<VerticalNav readmeFilePath="vertical-nav" />
 					<Wizard readmeFilePath="wizard" />

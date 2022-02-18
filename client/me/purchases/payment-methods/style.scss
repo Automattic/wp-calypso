@@ -77,7 +77,6 @@
 	font-size: 0.875rem;
 }
 
-
 .payment-method-delete-dialog {
 	&.dialog {
 		max-width: 440px;
@@ -97,5 +96,13 @@
 		margin: 4px 32px 4px 16px;
 		order: unset;
 		width: auto;
+	}
+}
+
+/* Jetpack cloud overwrites */
+
+.payment-method__wrapper.is-jetpack-cloud {
+	.components-checkbox-control__input[type='checkbox']:checked {
+		background-color: var( --studio-jetpack-green-50 );
 	}
 }

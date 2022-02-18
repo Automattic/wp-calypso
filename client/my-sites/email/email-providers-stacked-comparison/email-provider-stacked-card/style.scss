@@ -1,8 +1,10 @@
+@import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-$width-right-panel-card: calc( 45% - 130px );
-$width-left-panel-card: calc( 55% );
+$width-right-panel-card:  calc( 45% - 110px );
+$width-right-panel-card-expanded:  45%;
+$width-left-panel-card: 55%;
 
 .email-provider-stacked-features__whats-included {
 	color: var( --studio-gray-20 );
@@ -20,26 +22,17 @@ $width-left-panel-card: calc( 55% );
 		margin-top: 0;
 	}
 
-	&::before {
-		content: '';
-		display: block;
-		height: 1px;
-		margin-bottom: 8px;
-	}
-
-	&:first-child::before {
-		display: none;
-	}
-
 	.gridicon {
 		fill: var( --studio-gray-20 );
 		margin-left: -28px;
-		margin-right: 10px;
+		margin-right: 5px;
+		min-width: 24px;
 	}
 }
 
 .email-provider-stacked-card__provider__action-panel.is-primary {
 	flex-direction: column;
+
 	@include break-mobile {
 		flex-direction: row;
 	}
@@ -54,77 +47,6 @@ $width-left-panel-card: calc( 55% );
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-between;
-
-	.promo-card {
-		width: calc( 33% - 0.5em );
-		margin: 8px 0;
-
-		&.no-gsuite {
-			width: calc( 50% - 0.5em );
-		}
-
-		&.no-titan {
-			width: calc( 50% - 0.5em );
-		}
-
-		&.gsuite .action-panel__figure img {
-			max-width: 24px;
-		}
-
-		&.titan {
-			.promo-card__title-badge {
-				background: none;
-				padding: 0;
-
-				img {
-					max-height: 14px;
-				}
-			}
-		}
-
-		@include breakpoint-deprecated( '<1040px' ) {
-			&,
-			&.no-gsuite {
-				width: 100%;
-			}
-		}
-	}
-}
-
-.action-panel__figure {
-	float: right;
-	max-width: 208px;
-	margin-bottom: 0.5em;
-	margin-top: 0;
-
-	&.is-inline-body-text {
-		margin-top: 40px;
-	}
-
-	&.align-left {
-		float: left;
-		margin-left: 0;
-		margin-right: 24px;
-		width: unset;
-	}
-
-	&.align-right {
-		margin: 0 0 24px 24px;
-	}
-}
-
-.is-expanded .promo-card__title-badge {
-	background: none;
-	display: inline-block;
-	padding: 0;
-
-	img {
-		max-height: 18px;
-	}
-}
-
-h2.action-panel__title {
-	margin-top: 8px;
 }
 
 .email-provider-stacked-card__provider__provider-card-main-details {
@@ -143,11 +65,24 @@ h2.action-panel__title {
 	}
 }
 
-.email-provider-stacked-card__provider__provider-price-and-button {
+.email-provider-stacked-card__provider-price-and-button {
 	align-items: center;
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 1em;
+	order: 3;
+
+	.email-provider-stacked-features__toggle-button {
+		display: flex;
+		margin-top: 8px;
+		overflow: visible;
+		text-align: left;
+		width: 100%;
+
+		.gridicon {
+			margin-left: auto;
+			top: 0;
+		}
+	}
 }
 
 .email-provider-stacked-card__provider__provider-expand-cta {
@@ -161,107 +96,207 @@ h2.action-panel__title {
 	}
 }
 
-.email-providers-stacked-comparison__provider-card {
-	padding-top: 36px;
-	.action-panel__title {
-		.promo-card__title-badge {
-			width: $width-right-panel-card;
-			display: flex;
-			background-color: initial;
-			margin: 0;
-		}
-	}
-}
-
 .email-provider-stacked-card__title-price-badge {
-	width: $width-right-panel-card;
+	font-size: $font-body-small;
+	margin-top: 10px;
+	width: 100%;
+
+	@include break-xlarge {
+		margin-left: 20px;
+		margin-top: 0;
+		width: $width-right-panel-card;
+	}
 }
 
 .email-provider-stacked-card__provider-form-and-right-panel {
 	display: none;
 }
 
-.is-expanded {
-	.email-provider-stacked-card__provider-expand-cta {
-		display: none;
+.email-providers-stacked-comparison__provider-card {
+	&.action-panel {
+		padding-bottom: 24px;
 	}
 
-	.email-provider-stacked-card__provider-form-and-right-panel {
-		display: flex;
-		flex-direction: column-reverse;
-		justify-content: start;
-		margin-top: 1em;
-		line-height: 1.5;
-		padding-right: 20px;
+	@include break-medium {
+		padding-top: 36px;
 
-		@include breakpoint-deprecated( '>1040px' ) {
+		&.action-panel {
+			padding-bottom: 36px;
+		}
+	}
+
+	&.card.action-panel.promo-card {
+		display: flex;
+		flex-direction: column;
+
+		@include breakpoint-deprecated( '>660px' ) {
 			flex-direction: row;
 		}
-	}
 
-	.email-provider-stacked-card__provider-form {
-		margin-bottom: 20px;
-		margin-right: 20px;
-		width: $width-left-panel-card;
+		.action-panel__body {
+			color: var( --color-text );
 
-		@include breakpoint-deprecated( '>1040px' ) {
-			margin-top: 0;
+			p {
+				margin-bottom: 0;
+			}
 		}
 
-		> .form-fieldset {
+		.action-panel__figure {
+			display: flex;
+			flex-direction: row;
 			margin-bottom: 0;
-		}
+			margin-top: 0;
+			padding-right: 12px;
+			text-align: left;
 
-		.email-providers-stacked-comparison__titan-mailbox-action-skip {
+			@include breakpoint-deprecated( '<660px' ) {
+				max-width: 100%;
+				padding-right: 0;
+			}
+
 			@include break-mobile {
-				margin-left: 1em;
+				order: 1;
+
+				&.align-left {
+					order: -1;
+				}
 			}
 		}
 	}
 
-	.email-provider-features {
-		margin-bottom: 2.5em;
+	.action-panel__title {
+		.promo-card__title-badge {
+			width: 100%;
+			display: flex;
+			background-color: initial;
+			margin: 0;
+		}
+	}
 
-		@include breakpoint-deprecated( '>1040px' ) {
-			margin-bottom: 14px;
-			margin-left: 64px;
-			margin-top: 0;
+	.email-provider-stacked-card__header {
+		display: flex;
+		flex-direction: column;
+
+		@include break-xlarge {
+			align-items: center;
+			flex-direction: row;
+		}
+
+		.email-provider-stacked-card__provider-card-main-details {
+			margin-top: 12px;
+
+			@include break-xlarge {
+				margin-left: 10px;
+				margin-top: 0;
+			}
+
+			.button {
+				width: 100%;
+			}
+		}
+	}
+
+	&.is-expanded {
+		.email-provider-stacked-card__header .email-provider-stacked-card__title-price-badge {
+			@include break-xlarge {
+				width: $width-right-panel-card-expanded;
+			}
+		}
+
+		.email-provider-stacked-card__provider-expand-cta {
+			display: none;
+		}
+
+		.email-provider-stacked-card__provider-form-and-right-panel {
+			display: flex;
+			flex-direction: column;
+			justify-content: start;
+			margin-top: 1em;
+			line-height: 1.5;
+
+			@include break-xlarge {
+				flex-direction: row;
+			}
+		}
+
+		.email-provider-stacked-card__provider-form {
+			@include break-xlarge {
+				min-width: $width-left-panel-card;
+				max-width: $width-left-panel-card;
+			}
+
+			> .form-fieldset {
+				margin-bottom: 0;
+			}
+
+			.email-providers-stacked-comparison__titan-mailbox-action-skip {
+				@include break-mobile {
+					margin-left: 1em;
+				}
+			}
 		}
 	}
 }
 
 .email-provider-stacked-card__provider-right-panel {
-	width: $width-right-panel-card;
+	@include break-xlarge {
+		margin-left: 30px;
+	}
 
 	img {
-		margin-top: 40px;
+		margin-top: 1em;
 	}
 }
 
-.action-panel__body {
-	margin-left: 24px;
-}
-
 .email-provider-stacked-card__title {
-	margin-top: 4px;
-	font-size: 1.25rem;
-	line-height: 24px;
+	font-size: $font-title-small;
 	color: var( --color-neutral-70 );
-}
 
-.email-provider-stacked-card__header {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: space-between;
-}
-
-.email-provider-stacked-card__provider-card-main-details {
-	width: 120px;
+	@extend .wp-brand-font;
 }
 
 .email-provider-stacked-card__title-container {
-	width: $width-left-panel-card;
-	display:flex;
-	flex-direction: column;
+	@include break-xlarge {
+		margin-right: 10px;
+		min-width: $width-left-panel-card;
+		max-width: $width-left-panel-card;
+	}
+
+	p {
+		margin-bottom: 0;
+		margin-top: 10px;
+	}
 }
+
+.email-provider-stacked-card__provider-form > * .form-text-input-with-affixes {
+	flex-direction: column;
+
+	.form-text-input-with-affixes__suffix {
+		border-top-width: 0;
+		border-left: 1px solid var( --color-neutral-10 );
+		display: inline-block;
+		white-space: normal;
+		word-break: break-all;
+	}
+
+	@include break-wide {
+		flex-direction: row;
+
+		.form-text-input-with-affixes__suffix {
+			border-left-width: 0;
+			border-top-width: 1px;
+		}
+	}
+}
+
+.email-provider-stacked-features__logos {
+	column-gap: 6px;
+	display: flex;
+	flex-wrap: wrap;
+	margin-left: 28px;
+
+	img {
+		width: 32px;
+	}
+}
+

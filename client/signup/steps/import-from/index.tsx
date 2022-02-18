@@ -1,68 +1,91 @@
 import { isEnabled } from '@automattic/calypso-config';
+import classnames from 'classnames';
 import page from 'page';
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { fetchImporterState } from 'calypso/state/imports/actions';
+import { getStepUrl } from 'calypso/signup/utils';
+import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
+import { appStates } from 'calypso/state/imports/constants';
 import {
 	getImporterStatusForSiteId,
 	isImporterStatusHydrated,
 } from 'calypso/state/imports/selectors';
+import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
+import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSiteId } from 'calypso/state/sites/selectors';
-import { GoToStep } from '../import/types';
+import { getSite, getSiteId } from 'calypso/state/sites/selectors';
+import { UrlData } from '../import/types';
+import BloggerImporter from './blogger';
 import NotAuthorized from './components/not-authorized';
-import { Importer, QueryObject, ImportJob } from './types';
+import NotFound from './components/not-found';
+import MediumImporter from './medium';
+import SquarespaceImporter from './squarespace';
+import './style.scss';
+import { Importer, ImportJob, QueryObject } from './types';
 import { getImporterTypeForEngine } from './util';
 import WixImporter from './wix';
-
-import './style.scss';
+import WordpressImporter from './wordpress';
+import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
+	urlData: UrlData;
 	path: string;
 	stepName: string;
 	stepSectionName: string;
 	queryObject: QueryObject;
 	siteId: number;
+	site: SitesItem;
 	siteSlug: string;
 	fromSite: string;
 	canImport: boolean;
 	isImporterStatusHydrated: boolean;
 	siteImports: ImportJob[];
 	fetchImporterState: ( siteId: number ) => void;
-	goToStep: GoToStep;
+	resetImport: ( siteId: number, importerId: string ) => void;
 }
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
+	const IMPORT_ROUTE = '/start/from/importing';
+	const dispatch = useDispatch();
+
+	/**
+	 ↓ Fields
+	 */
 	const {
+		urlData,
+		stepName,
 		stepSectionName,
 		siteId,
+		site,
 		canImport,
 		siteSlug,
 		siteImports,
 		isImporterStatusHydrated,
 		fromSite,
-		goToStep,
+		path,
 	} = props;
-
-	/**
-	 ↓ Fields
-	 */
 	const engine: Importer = stepSectionName.toLowerCase() as Importer;
 	const [ runImportInitially, setRunImportInitially ] = useState( false );
 	const getImportJob = ( engine: Importer ): ImportJob | undefined => {
 		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
 	};
+	const fromSiteData = useSelector( getUrlData );
 
 	/**
 	 ↓ Effects
 	 */
 	useEffect( fetchImporters, [ siteId ] );
 	useEffect( checkInitialRunState, [ siteId ] );
+	useEffect( () => {
+		if ( typeof fromSiteData?.url === 'undefined' ) {
+			dispatch( analyzeUrl( fromSite ) );
+		}
+	}, [ fromSiteData?.url ] );
 
 	/**
 	 ↓ Methods
@@ -72,7 +95,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function isLoading() {
-		return ! isImporterStatusHydrated;
+		return ! isImporterStatusHydrated || ! page.current.startsWith( IMPORT_ROUTE );
 	}
 
 	function hasPermission(): boolean {
@@ -87,8 +110,105 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		// because of the browser's back edge case
 		if ( searchParams.get( 'run' ) === 'true' ) {
 			setRunImportInitially( true );
-			page.replace( props.path.replace( '&run=true', '' ).replace( 'run=true', '' ) );
+			page.replace( path.replace( '&run=true', '' ).replace( 'run=true', '' ) );
 		}
+	}
+
+	function shouldHideBackBtn() {
+		return false;
+	}
+
+	function getBackUrl() {
+		if ( stepName === 'importing' ) {
+			return getStepUrl( 'importer', 'capture', '', '', { siteSlug } );
+		}
+	}
+
+	function goToPreviousStep() {
+		const job = getImportJob( engine );
+
+		if ( ! job ) {
+			return;
+		}
+
+		switch ( job.importerState ) {
+			case appStates.IMPORTING:
+			case appStates.MAP_AUTHORS:
+			case appStates.READY_FOR_UPLOAD:
+			case appStates.UPLOAD_PROCESSING:
+			case appStates.UPLOAD_SUCCESS:
+			case appStates.UPLOADING:
+			case appStates.UPLOAD_FAILURE:
+				return props.resetImport( siteId, job.importerId );
+		}
+	}
+
+	/**
+	 ↓ HTML Renders
+	 */
+	function renderBloggerImporter() {
+		return (
+			<BloggerImporter
+				job={ getImportJob( engine ) }
+				run={ runImportInitially }
+				siteId={ siteId }
+				site={ site }
+				siteSlug={ siteSlug }
+				fromSite={ fromSite }
+				urlData={ urlData }
+			/>
+		);
+	}
+
+	function renderMediumImporter() {
+		return (
+			<MediumImporter
+				job={ getImportJob( engine ) }
+				run={ runImportInitially }
+				siteId={ siteId }
+				site={ site }
+				siteSlug={ siteSlug }
+				fromSite={ fromSite }
+				urlData={ urlData }
+			/>
+		);
+	}
+
+	function renderSquarespaceImporter() {
+		return (
+			<SquarespaceImporter
+				job={ getImportJob( engine ) }
+				run={ runImportInitially }
+				siteId={ siteId }
+				site={ site }
+				siteSlug={ siteSlug }
+				fromSite={ fromSite }
+				urlData={ urlData }
+			/>
+		);
+	}
+
+	function renderWixImporter() {
+		return (
+			<WixImporter
+				job={ getImportJob( engine ) }
+				run={ runImportInitially }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				fromSite={ fromSite }
+			/>
+		);
+	}
+
+	function renderWordpressImporter() {
+		return (
+			<WordpressImporter
+				job={ getImportJob( engine ) }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				fromSite={ fromSite }
+			/>
+		);
 	}
 
 	return (
@@ -96,38 +216,47 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
 			<StepWrapper
-				flowName={ 'import-from' }
+				flowName={ 'importer' }
+				stepName={ stepName }
 				hideSkip={ true }
-				hideBack={ true }
+				hideBack={ shouldHideBackBtn() }
+				backUrl={ getBackUrl() }
+				goToPreviousStep={ goToPreviousStep }
 				hideNext={ true }
 				hideFormattedHeader={ true }
 				stepContent={
-					<div className="import__onboarding-page import-layout__center">
+					<div
+						className={ classnames( 'import__onboarding-page import-layout__center', {
+							[ `importer-wrapper__${ engine }` ]: !! engine,
+						} ) }
+					>
 						<div className="import-layout__center">
 							{ ( () => {
-								/**
-								 * Loading screen
-								 */
 								if ( isLoading() ) {
 									return <LoadingEllipsis />;
+								} else if ( ! siteSlug ) {
+									return <NotFound />;
 								} else if ( ! hasPermission() ) {
-									/**
-									 * Permission screen
-									 */
-									return <NotAuthorized goToStep={ goToStep } siteSlug={ siteSlug } />;
-								} else if ( engine === 'wix' && isEnabled( 'gutenboarding/import-from-wix' ) ) {
-									/**
-									 * Wix importer
-									 */
-									return (
-										<WixImporter
-											job={ getImportJob( engine ) }
-											run={ runImportInitially }
-											siteId={ siteId }
-											siteSlug={ siteSlug }
-											fromSite={ fromSite }
-										/>
-									);
+									return <NotAuthorized siteSlug={ siteSlug } />;
+								} else if (
+									engine === 'blogger' &&
+									isEnabled( 'onboarding/import-from-blogger' )
+								) {
+									return renderBloggerImporter();
+								} else if ( engine === 'medium' && isEnabled( 'onboarding/import-from-medium' ) ) {
+									return renderMediumImporter();
+								} else if (
+									engine === 'squarespace' &&
+									isEnabled( 'onboarding/import-from-squarespace' )
+								) {
+									return renderSquarespaceImporter();
+								} else if ( engine === 'wix' && isEnabled( 'onboarding/import-from-wix' ) ) {
+									return renderWixImporter();
+								} else if (
+									engine === 'wordpress' &&
+									isEnabled( 'onboarding/import-from-wordpress' )
+								) {
+									return renderWordpressImporter();
 								}
 							} )() }
 						</div>
@@ -147,7 +276,9 @@ export default connect(
 		const siteId = getSiteId( state, siteSlug ) as number;
 
 		return {
+			urlData: getUrlData( state ),
 			siteId,
+			site: getSite( state, siteId ) as SitesItem,
 			siteSlug,
 			fromSite,
 			siteImports: getImporterStatusForSiteId( state, siteId ),
@@ -157,5 +288,6 @@ export default connect(
 	},
 	{
 		fetchImporterState,
+		resetImport,
 	}
 )( ImportOnboardingFrom );

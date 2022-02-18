@@ -1,7 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -15,7 +14,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -26,6 +24,16 @@ import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custo
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
+import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
+import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
@@ -46,6 +54,7 @@ import {
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	isJetpackSite,
@@ -57,6 +66,8 @@ import NoPermissionsError from './no-permissions-error';
 function PluginDetails( props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	// Site information.
 	const selectedSite = useSelector( getSelectedSite );
@@ -95,10 +106,20 @@ function PluginDetails( props ) {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isWpcom = selectedSite && ! isJetpack;
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
+	const isSiteConnected = useSelector( ( state ) =>
+		getSiteConnectionStatus( state, selectedSite?.ID )
+	);
+	const trackSiteDisconnect = () =>
+		composeAnalytics(
+			recordGoogleEvent( 'Jetpack', 'Clicked in site indicator to start Jetpack Disconnect flow' ),
+			recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
+		);
 
 	// Header Navigation and billing period switcher.
 	const isWide = useBreakpoint( '>1280px' );
-	const [ billingPeriod, setBillingPeriod ] = useState( IntervalLength.MONTHLY );
+
+	const billingPeriod = useSelector( getBillingInterval );
 
 	// Determine if the plugin is WPcom or WPorg hosted
 	const productsList = useSelector( ( state ) => getProductsList( state ) );
@@ -133,15 +154,16 @@ function PluginDetails( props ) {
 		const wpcomPlugin = {
 			...wpComPluginData,
 			fetched: isWpComPluginFetched,
-			rating: ( wpComPluginData?.rating / 5 ) * 100,
 		};
 
 		return {
-			...plugin,
 			...wpcomPlugin,
 			...wporgPlugin,
+			...plugin,
+			fetched: wpcomPlugin?.fetched || wporgPlugin?.fetched,
+			isMarketplaceProduct,
 		};
-	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched ] );
+	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched, isMarketplaceProduct ] );
 
 	const existingPlugin = useMemo( () => {
 		if (
@@ -175,17 +197,27 @@ function PluginDetails( props ) {
 		requestingPluginsForSites,
 	] );
 
-	const getNavigationItems = () => {
-		// ToDo:
-		// - add "Search Results" breadcrumb if prev page was search results
-		// - change the first breadcrumb if prev page wasn't plugins page (eg activity log)
-		const navigationItems = [
-			{ label: translate( 'Plugins' ), href: `/plugins/${ selectedSite?.slug || '' }` },
-			{ label: fullPlugin.name },
-		];
+	useEffect( () => {
+		if ( breadcrumbs.length === 0 ) {
+			dispatch(
+				appendBreadcrumb( {
+					label: translate( 'Plugins' ),
+					href: `/plugins/${ selectedSite?.slug || '' }`,
+					id: 'plugins',
+				} )
+			);
+		}
 
-		return navigationItems;
-	};
+		if ( fullPlugin.name && fullPlugin.slug ) {
+			dispatch(
+				appendBreadcrumb( {
+					label: fullPlugin.name,
+					href: `/plugins/${ fullPlugin.slug }/${ selectedSite?.slug || '' }`,
+					id: `plugin-${ fullPlugin.slug }`,
+				} )
+			);
+		}
+	}, [ fullPlugin.name, fullPlugin.slug, selectedSite ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
@@ -209,27 +241,45 @@ function PluginDetails( props ) {
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<QueryJetpackPlugins siteIds={ siteIds } />
 			<SidebarNavigation />
+			<QueryJetpackPlugins siteIds={ siteIds } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
-			<QueryProductsList />
-			<FixedNavigationHeader
-				navigationItems={ getNavigationItems() }
-				compactBreadcrumb={ ! isWide }
-			>
-				{ isEnabled( 'marketplace-v1' ) && isMarketplaceProduct && (
-					<BillingIntervalSwitcher
-						billingPeriod={ billingPeriod }
-						onChange={ setBillingPeriod }
-						compact={ ! isWide }
-					/>
-				) }
+			<QueryProductsList persist />
+			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs }>
+				{ ( isMarketplaceProduct || shouldUpgrade ) &&
+					! requestingPluginsForSites &&
+					! isPluginInstalledOnsite && (
+						<BillingIntervalSwitcher
+							billingPeriod={ billingPeriod }
+							onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
+							compact={ ! isWide }
+						/>
+					) }
 			</FixedNavigationHeader>
 			<PluginNotices
 				pluginId={ fullPlugin.id }
 				sites={ sitesWithPlugins }
 				plugins={ [ fullPlugin ] }
 			/>
+
+			{ isSiteConnected === false && (
+				<Notice
+					icon="notice"
+					showDismiss={ false }
+					status="is-warning"
+					text={ translate( '%(siteName)s cannot be accessed.', {
+						textOnly: true,
+						args: { siteName: selectedSite.title },
+					} ) }
+				>
+					<NoticeAction
+						onClick={ trackSiteDisconnect }
+						href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
+					>
+						{ translate( 'I’d like to fix this now' ) }
+					</NoticeAction>
+				</Notice>
+			) }
 
 			<div className="plugin-details__page">
 				<div className="plugin-details__layout plugin-details__top-section">
@@ -239,12 +289,14 @@ function PluginDetails( props ) {
 
 					<div className="plugin-details__layout-col-right">
 						<PluginDetailsCTA
-							pluginSlug={ props.pluginSlug }
+							plugin={ fullPlugin }
 							siteIds={ siteIds }
 							selectedSite={ selectedSite }
 							isPluginInstalledOnsite={ isPluginInstalledOnsite }
 							isPlaceholder={ showPlaceholder }
 							billingPeriod={ billingPeriod }
+							isMarketplaceProduct={ isMarketplaceProduct }
+							isSiteConnected={ isSiteConnected }
 						/>
 					</div>
 				</div>
@@ -268,12 +320,13 @@ function PluginDetails( props ) {
 						<SitesListArea
 							fullPlugin={ fullPlugin }
 							isPluginInstalledOnsite={ isPluginInstalledOnsite }
+							billingPeriod={ billingPeriod }
 							{ ...props }
 						/>
 
 						<div className="plugin-details__layout plugin-details__body">
 							<div className="plugin-details__layout-col-left">
-								{ fullPlugin.wporg ? (
+								{ fullPlugin.wporg || isMarketplaceProduct ? (
 									<PluginSections
 										className="plugin-details__plugins-sections"
 										plugin={ fullPlugin }
@@ -296,7 +349,7 @@ function PluginDetails( props ) {
 	);
 }
 
-function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, ...props } ) {
+function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPeriod, ...props } ) {
 	const translate = useTranslate();
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -337,18 +390,17 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, ...props 
 					titlePrimary
 					showAdditionalHeaders
 				/>
-				{ plugin.wporg && (
-					<PluginSiteList
-						className="plugin-details__not-installed-on"
-						title={ getAvailabeOnTitle( {
-							translate,
-							selectedSite,
-							count: notInstalledSites.length,
-						} ) }
-						sites={ notInstalledSites }
-						plugin={ plugin }
-					/>
-				) }
+
+				<PluginSiteList
+					className="plugin-details__not-installed-on"
+					title={ getAvailabeOnTitle( {
+						translate,
+						selectedSite,
+					} ) }
+					sites={ notInstalledSites }
+					plugin={ plugin }
+					billingPeriod={ billingPeriod }
+				/>
 			</div>
 		</div>
 	);
@@ -368,15 +420,13 @@ function getInstalledOnTitle( { translate, selectedSite, count } ) {
 	return selectedSite ? installedOnSingleSiteTitle : installedOnMultiSiteTitle;
 }
 
-function getAvailabeOnTitle( { translate, selectedSite, count } ) {
+function getAvailabeOnTitle( { translate, selectedSite } ) {
 	const availableOnSingleSiteTitle = translate( 'Available sites', {
 		comment: 'header for list of sites a plugin can be installed on',
 	} );
 
-	const availabeOnMultiSiteTitle = translate( 'Available on %d site', 'Available on %d sites', {
+	const availabeOnMultiSiteTitle = translate( 'Available on', {
 		comment: 'header for list of sites a plugin can be installed on',
-		args: [ count ],
-		count,
 	} );
 
 	return selectedSite ? availableOnSingleSiteTitle : availabeOnMultiSiteTitle;

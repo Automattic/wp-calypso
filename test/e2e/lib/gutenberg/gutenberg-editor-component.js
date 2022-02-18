@@ -690,4 +690,11 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 		await Promise.all( notices.map( ( notice ) => notice.click() ) );
 		await driverHelper.waitUntilElementNotLocated( this.driver, locator );
 	}
+
+	async scrollListViewToEnd() {
+		const listViewContainerSelector = '.edit-post-editor__list-view-panel-content';
+		return await this.driver.executeScript(
+			`document.querySelector( '${ listViewContainerSelector }' ).scrollTo(0,1000000);`
+		);
+	}
 }

@@ -29,7 +29,6 @@ import {
 	domainManagementTransfer,
 	domainManagementDns,
 	domainManagementDomainConnectMapping,
-	domainManagementChangeSiteAddress,
 	domainManagementRedirectSettings,
 	domainTransferIn,
 	domainManagementSecurity,
@@ -200,9 +199,9 @@ class DomainManagementNavigationEnhanced extends Component {
 
 	getTransferDomain() {
 		const { moment, selectedSite, translate, domain, currentRoute } = this.props;
-		const { expired, isLocked, transferAwayEligibleAt } = domain;
+		const { currentUserIsOwner, expired, isLocked, transferAwayEligibleAt } = domain;
 
-		if ( expired && ! isDomainInGracePeriod( domain ) ) {
+		if ( ! currentUserIsOwner || ( expired && ! isDomainInGracePeriod( domain ) ) ) {
 			return null;
 		}
 
@@ -382,7 +381,7 @@ class DomainManagementNavigationEnhanced extends Component {
 	}
 
 	getSiteAddressChange() {
-		const { domain, selectedSite, translate, currentRoute } = this.props;
+		const { domain, translate } = this.props;
 		const { isWpcomStagingDomain } = domain;
 
 		if ( isWpcomStagingDomain ) {
@@ -391,7 +390,6 @@ class DomainManagementNavigationEnhanced extends Component {
 
 		return (
 			<VerticalNavItemEnhanced
-				path={ domainManagementChangeSiteAddress( selectedSite.slug, domain.name, currentRoute ) }
 				onClick={ this.handleChangeSiteAddressClick }
 				materialIcon="create"
 				text={ translate( 'Change site address' ) }

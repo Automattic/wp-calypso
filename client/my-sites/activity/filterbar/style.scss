@@ -8,7 +8,7 @@
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
-.filterbar__wrap {
+.filterbar__wrap.card {
 	position: relative;
 	display: flex;
 	flex: 1 1 auto;
@@ -24,8 +24,8 @@
 
 	.filterbar__icon-reset {
 		width: 48px;
-		margin-left: auto;
-		margin-right: 8px;
+		padding: 0;
+		margin: 0;
 	}
 
 	.filterbar__label {
@@ -62,14 +62,12 @@
 	.filterbar__selection.is-selected,
 	.filterbar__selection.is-selected:focus,
 	.filterbar__selection.is-selected:hover {
-		margin: 8px;
 		border-radius: 2px;
 		border: 1px solid var( --color-neutral-60 );
 		background: var( --color-neutral-60 );
 		color: var( --color-text-inverted );
 
 		@include breakpoint-deprecated( '>660px' ) {
-			margin-right: 0;
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
 		}
@@ -79,7 +77,6 @@
 	.filterbar__selection.is-active:focus,
 	.filterbar__selection.is-active:hover,
 	.date-range.toggle-visible .filterbar__selection.button:not( .is-selected ) {
-		margin: 8px;
 		border-radius: 2px;
 		border: 1px solid var( --color-neutral-60 );
 		background: var( --color-neutral-60 );
@@ -87,7 +84,6 @@
 	}
 
 	.filterbar__selection-close.button {
-		margin: 8px 8px 8px 0;
 		padding: 8px 8px 8px 0;
 		background-color: var( --color-neutral-60 );
 		color: var( --color-text-inverted );

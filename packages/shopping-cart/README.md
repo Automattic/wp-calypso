@@ -6,7 +6,9 @@ An older version of this interface exists in calypso's `lib/cart` directory, but
 
 This package provides the following API, as well as a comprehensive set of TypeScript types for the data passed through the cart. Notably, the whole cart object itself is a `ResponseCart` containing `ResponseCartProduct` objects. If adding a new product, the `RequestCart` and `RequestCartProduct` can be used instead (they have fewer required properties).
 
-Every cart is keyed by a cart key; usually this is the WordPress.com site ID (preferred, because it is always unique) or site slug. It can also be `'no-site'` or `'no-user'`. If `undefined`, the cart will not be loaded and the `isLoading` value will be permanently `true`; this can be used to temporarily disable the cart.
+Every cart is keyed by a cart key; usually this is the numeric WordPress.com site ID. It can also be `'no-site'` or `'no-user'`. If `undefined`, the cart will not be loaded and the `isLoading` value will be permanently `true`; this can be used to temporarily disable the cart.
+
+If the site ID is not available, but the site slug is available, the helper function `getCartKeyForSiteSlug` can be used on the [ShoppingCartManagerClient](#createShoppingCartManagerClient) to transform it into a site ID.
 
 ## ShoppingCartProvider
 
@@ -15,13 +17,13 @@ A React context provider component which should be used near the top level of th
 It requires the following props:
 
 - `managerClient: ShoppingCartManagerClient`. The cart manager system. Create one with [createShoppingCartManagerClient](#createShoppingCartManagerClient).
-- `options?: { refetchOnWindowFocus?: boolean, defaultCartKey?: string | undefined }`. Optional. `refetchOnWindowFocus` can be used to trigger `getCart` when the window or tab is hidden and then refocused. `defaultCartKey` can be used to provide a cart key that will be used instead of `undefined` when no cart key is passed to `useShoppingCart` or `withShoppingCart`.
+- `options?: { refetchOnWindowFocus?: boolean, defaultCartKey?: number | 'no-site' | 'no-user' | undefined }`. Optional. `refetchOnWindowFocus` can be used to trigger `getCart` when the window or tab is hidden and then refocused. `defaultCartKey` can be used to provide a cart key that will be used instead of `undefined` when no cart key is passed to `useShoppingCart` or `withShoppingCart`.
 
 ## useShoppingCart
 
 This is a React hook that can be used in any child component under [ShoppingCartProvider](#ShoppingCartProvider) to return a `UseShoppingCart` object. `useShoppingCart` requires one argument:
 
-- `cartKey: string | undefined`. The current cart key to use. If undefined, the cart will not be loaded, although an empty cart and noop functions will still be provided as a return value.
+- `cartKey: number | 'no-site' | 'no-user' | undefined`. The current cart key to use. If undefined, the cart will not be loaded, although an empty cart and noop functions will still be provided as a return value.
 
 The `UseShoppingCart` object contains the following properties. Note that the action functions in this object are requests only; they do not guarantee that the request will be fulfilled by the shopping cart API.
 
@@ -46,6 +48,7 @@ Regardless, it's a good idea to always check `responseCart.messages.errors` and 
 - `replaceProductInCart: ( uuidToReplace: string, productPropertiesToChange: Partial< RequestCartProduct > ) => Promise<ResponseCart>`. A function that can replace one product in the cart with another, retaining the same UUID; useful for changing product variants.
 - `replaceProductsInCart: ( products: RequestCartProduct[] ) => Promise<ResponseCart>`. A function that replaces all the products in the cart with a new set of products. Can also be used to clear the cart.
 - `reloadFromServer: () => Promise<ResponseCart>`. A function to throw away the current cart cache and fetch it fresh from the shopping cart API.
+- `clearMessages: () => Promise<ResponseCart>`. A function to throw away the current `responseCart.messages`. This can be used to clear messages once they have been displayed.
 
 ## withShoppingCart
 
@@ -59,7 +62,7 @@ A component wrapped by this HOC will receive the following additional props:
 The HOC has the following arguments. In order to set the cart key, you must provide the second argument to the HOC, `mapPropsToCartKey`.
 
 - `Component: React.ComponentType`. The component to wrap; it will receive the additional props above.
-- `mapPropsToCartKey?: ( props ) => string | undefined`. A function that can be used to set the current cart key based on the component's props. If not set, it will try to use `props.cartKey`.
+- `mapPropsToCartKey?: ( props ) => number | 'no-site' | 'no-user' | undefined`. A function that can be used to set the current cart key based on the component's props. If not set, it will try to use `props.cartKey`.
 
 ## createRequestCartProduct
 
@@ -85,12 +88,13 @@ A function to create a `ShoppingCartManagerClient` which is the state management
 
 It requires an object to be passed in with the following properties:
 
-- `getCart: ( cartKey: string ) => Promise< ResponseCart >`. This is an async function that will fetch the cart from the server.
-- `setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >`. This is an async function that will send an updated cart to the server.
+- `getCart: ( cartKey: number | 'no-site' | 'no-user' ) => Promise< ResponseCart >`. This is an async function that will fetch the cart from the server.
+- `setCart: ( cartKey: number | 'no-site' | 'no-user', requestCart: RequestCart ) => Promise< ResponseCart >`. This is an async function that will send an updated cart to the server.
 
-Once created, the `ShoppingCartManagerClient` has two properties:
+Once created, the `ShoppingCartManagerClient` has the properties:
 
-- `forCartKey: (cartKey: string| undefined) => ShoppingCartManager`. A function to return a `ShoppingCartManager` for a given cart key. If provided an `undefined` cart key, a `ShoppingCartManager` will still be returned, but its cart will always be loading and empty and its actions will do nothing.
+- `forCartKey: ( cartKey: number | 'no-site' | 'no-user' | undefined ) => ShoppingCartManager`. A function to return a `ShoppingCartManager` for a given cart key. If provided an `undefined` cart key, a `ShoppingCartManager` will still be returned, but its cart will always be loading and empty and its actions will do nothing.
+- `getCartKeyForSiteSlug: ( siteSlug: string ) => Promise< number | 'no-site' | 'no-user' >`. A function to query the server to transform a site slug into a cart key.
 
 A `ShoppingCartManager` has the following properties:
 

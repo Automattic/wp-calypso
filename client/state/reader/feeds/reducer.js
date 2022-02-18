@@ -1,11 +1,10 @@
-import { keyBy, map, omit, omitBy, reduce, merge, forEach } from 'lodash';
+import { omit, omitBy, merge, forEach } from 'lodash';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { safeLink } from 'calypso/lib/post-normalizer/utils';
 import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
-	READER_FEED_UPDATE,
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
@@ -49,22 +48,12 @@ function handleRequestSuccess( state, action ) {
 	};
 }
 
-function handleFeedUpdate( state, action ) {
-	const feeds = map( action.payload, adaptFeed );
-	return {
-		...state,
-		...keyBy( feeds, 'feed_ID' ),
-	};
-}
-
 const itemsReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_FEED_REQUEST_SUCCESS:
 			return handleRequestSuccess( state, action );
 		case READER_FEED_REQUEST_FAILURE:
 			return handleRequestFailure( state, action );
-		case READER_FEED_UPDATE:
-			return handleFeedUpdate( state, action );
 
 		case READER_SEEN_MARK_AS_SEEN_RECEIVE: {
 			const existingEntry = state[ action.feedId ];
@@ -135,17 +124,6 @@ export const lastFetched = ( state = {}, action ) => {
 				...state,
 				[ action.payload.feed_ID ]: Date.now(),
 			};
-		case READER_FEED_UPDATE: {
-			const updates = reduce(
-				action.payload,
-				( memo, feed ) => {
-					memo[ feed.feed_ID ] = Date.now();
-					return memo;
-				},
-				{}
-			);
-			return { ...state, ...updates };
-		}
 	}
 
 	return state;

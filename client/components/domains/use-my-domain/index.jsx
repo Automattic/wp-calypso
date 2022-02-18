@@ -299,6 +299,7 @@ function UseMyDomain( props ) {
 			case inputMode.ownershipVerification:
 				return renderOwnershipVerificationFlow();
 			case inputMode.transferDomain:
+			case inputMode.startPendingTransfer:
 				return renderTransferDomainFlow();
 		}
 	};

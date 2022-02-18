@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isDesktop } from '@automattic/viewport';
+import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
@@ -12,7 +12,6 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -99,8 +98,6 @@ export class UserStep extends Component {
 
 	state = {
 		recaptchaClientId: null,
-		experiment: null,
-		isDesktop: isDesktop(),
 	};
 
 	componentDidUpdate() {
@@ -126,16 +123,6 @@ export class UserStep extends Component {
 		const clientId = get( this.props.initialContext, 'query.oauth2_client_id', null );
 		if ( this.props.oauth2Signup && clientId ) {
 			this.props.fetchOAuth2ClientData( clientId );
-		}
-
-		if ( this.props.flowName === 'onboarding' ) {
-			const experimentCheck = this.state.isDesktop
-				? 'registration_email_only_desktop_relaunch'
-				: 'registration_email_only_mobile_relaunch';
-
-			loadExperimentAssignment( experimentCheck ).then( ( experimentName ) => {
-				this.setState( { experiment: experimentName } );
-			} );
 		}
 	}
 
@@ -206,32 +193,28 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
 		}
 
-		if ( positionInFlow === 0 && flowName === 'onboarding' ) {
-			subHeaderText = translate( 'First, create your WordPress.com account.' );
+		if ( isReskinned && 0 === positionInFlow ) {
+			const loginUrl = login( {
+				isJetpack: 'jetpack-connect' === sectionName,
+				from,
+				redirectTo: getRedirectToAfterLoginUrl( this.props ),
+				locale,
+				oauth2ClientId: oauth2Client?.id,
+				wccomFrom,
+				isWhiteLogin: isReskinned,
+				signupUrl: window.location.pathname + window.location.search,
+			} );
 
-			if ( isReskinned ) {
-				const loginUrl = login( {
-					isJetpack: 'jetpack-connect' === sectionName,
-					from,
-					redirectTo: getRedirectToAfterLoginUrl( this.props ),
-					locale,
-					oauth2ClientId: oauth2Client?.id,
-					wccomFrom,
-					isWhiteLogin: isReskinned,
-					signupUrl: window.location.pathname + window.location.search,
-				} );
+			subHeaderText = translate(
+				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+				{
+					components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+				}
+			);
+		}
 
-				subHeaderText = translate(
-					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
-					{
-						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-					}
-				);
-			}
-
-			if ( this.props.userLoggedIn ) {
-				subHeaderText = '';
-			}
+		if ( this.props.userLoggedIn ) {
+			subHeaderText = '';
 		}
 
 		return subHeaderText;
@@ -439,10 +422,6 @@ export class UserStep extends Component {
 		return translate( 'Create your account' );
 	}
 
-	isPasswordlessExperiment() {
-		return this.state.experiment?.variationName === 'treatment';
-	}
-
 	renderSignupForm() {
 		const { oauth2Client, wccomFrom, isReskinned } = this.props;
 		let socialService;
@@ -474,8 +453,7 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
-					isPasswordlessExperiment={ this.isPasswordlessExperiment() }
-					experimentName={ this.state.experiment }
+					isPasswordless={ isMobile() }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }

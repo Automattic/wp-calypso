@@ -8,8 +8,9 @@ import 'calypso/state/themes/init';
  *
  * @returns {object} A nested list of theme filters, keyed by filter slug
  */
-export function requestThemeFilters() {
+export function requestThemeFilters( locale = null ) {
 	return {
 		type: THEME_FILTERS_REQUEST,
+		locale,
 	};
 }

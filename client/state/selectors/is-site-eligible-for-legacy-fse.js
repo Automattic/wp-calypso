@@ -4,7 +4,7 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
  * Checks if a site is eligible for the Full Site Editing experience
  *
  * @param {object} state  Global state tree
- * @param {object} siteId Site ID
+ * @param {number} siteId Site ID
  * @returns {boolean} True if the site is eligible for Full Site Editing, otherwise false
  */
 export default function isSiteEligibleForLegacyFSE( state, siteId ) {

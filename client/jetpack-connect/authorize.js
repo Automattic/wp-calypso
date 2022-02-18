@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { PRODUCT_JETPACK_BACKUP_T1_YEARLY } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -6,7 +7,6 @@ import { flowRight, get, includes, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import QueryJetpackUserLicensesCounts from 'calypso/components/data/query-jetpack-user-licenses-counts';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -40,13 +40,13 @@ import {
 import {
 	isFetchingSitePurchases,
 	siteHasJetpackProductPurchase,
+	siteHasBackupProductPurchase,
 } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import { userHasDetachedLicenses } from 'calypso/state/user-licensing/selectors';
 import AuthFormHeader from './auth-form-header';
 import {
 	ALREADY_CONNECTED,
@@ -109,7 +109,6 @@ export class JetpackAuthorize extends Component {
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
 		userAlreadyConnected: PropTypes.bool.isRequired,
-		userHasDetachedLicenses: PropTypes.bool,
 	};
 
 	redirecting = false;
@@ -218,7 +217,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	redirect() {
-		const { isMobileAppFlow, mobileAppRedirect } = this.props;
+		const { isMobileAppFlow, mobileAppRedirect, siteHasJetpackBackupProduct } = this.props;
 		const {
 			from,
 			homeUrl,
@@ -269,8 +268,7 @@ export class JetpackAuthorize extends Component {
 			this.shouldRedirectJetpackStart() ||
 			getRoleFromScope( scope ) === 'subscriber' ||
 			this.isJetpackUpgradeFlow() ||
-			this.isFromJetpackConnectionManager() ||
-			this.isFromJetpackBackupPlugin()
+			this.isFromJetpackConnectionManager()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -280,6 +278,9 @@ export class JetpackAuthorize extends Component {
 				this.isSso()
 			);
 			this.externalRedirectOnce( redirectAfterAuth );
+		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasJetpackBackupProduct ) {
+			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
+			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );
@@ -700,12 +701,7 @@ export class JetpackAuthorize extends Component {
 
 	getRedirectionTarget() {
 		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
-		const {
-			partnerSlug,
-			selectedPlanSlug,
-			siteHasJetpackPaidProduct,
-			userHasUnattachedLicenses,
-		} = this.props;
+		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if ( 'pressable' === partnerSlug ) {
 			return `/start/pressable-nux?blogid=${ clientId }`;
@@ -722,9 +718,8 @@ export class JetpackAuthorize extends Component {
 			return `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
 		}
 
-		// If the site has a Jetpack paid product or the user has an available unattached product
-		// license key, send the user back to wp-admin rather than to the Plans page.
-		if ( siteHasJetpackPaidProduct || userHasUnattachedLicenses ) {
+		// If the site has a Jetpack paid product send the user back to wp-admin rather than to the Plans page.
+		if ( siteHasJetpackPaidProduct ) {
 			return redirectAfterAuth;
 		}
 
@@ -878,7 +873,6 @@ export class JetpackAuthorize extends Component {
 							siteId={ authSiteId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						<QueryJetpackUserLicensesCounts />
 						<AuthFormHeader
 							authQuery={ this.props.authQuery }
 							isWoo={ this.isWooOnboarding() }
@@ -925,9 +919,9 @@ const connectComponent = connect(
 			partnerSlug: getPartnerSlugFromQuery( state ),
 			selectedPlanSlug,
 			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
+			siteHasJetpackBackupProduct: siteHasBackupProductPurchase( state, authQuery.clientId ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
-			userHasUnattachedLicenses: userHasDetachedLicenses( state ),
 		};
 	},
 	{

@@ -1,5 +1,3 @@
-import { createSelector } from '@automattic/state-utils';
-import { includes } from 'lodash';
 import {
 	HAPPYCHAT_CHAT_STATUS_BLOCKED,
 	HAPPYCHAT_CHAT_STATUS_CLOSED,
@@ -9,6 +7,13 @@ import {
 
 import 'calypso/state/happychat/init';
 
+const INACTIVE_CHAT_STATUSES = [
+	HAPPYCHAT_CHAT_STATUS_BLOCKED,
+	HAPPYCHAT_CHAT_STATUS_CLOSED,
+	HAPPYCHAT_CHAT_STATUS_DEFAULT,
+	HAPPYCHAT_CHAT_STATUS_NEW,
+];
+
 /**
  * Returns true if there's an active chat session in-progress. Chat sessions with
  * the status `new`, `default`, or `closed` are considered inactive, as the session
@@ -17,16 +22,6 @@ import 'calypso/state/happychat/init';
  * @param {object} state - global redux state
  * @returns {boolean} Whether there's an active Happychat session happening
  */
-export default createSelector(
-	( state ) =>
-		! includes(
-			[
-				HAPPYCHAT_CHAT_STATUS_BLOCKED,
-				HAPPYCHAT_CHAT_STATUS_CLOSED,
-				HAPPYCHAT_CHAT_STATUS_DEFAULT,
-				HAPPYCHAT_CHAT_STATUS_NEW,
-			],
-			state.happychat.chat.status
-		),
-	( state ) => state.happychat.chat.status
-);
+export default function hasActiveHappychatSession( state ) {
+	return ! INACTIVE_CHAT_STATUSES.includes( state.happychat.chat.status );
+}

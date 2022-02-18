@@ -42,7 +42,7 @@ class ReaderCombinedCardPost extends Component {
 		const selection = window.getSelection && window.getSelection();
 
 		// if the click has modifier or was not primary, ignore it
-		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
+		if ( event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
 			if ( closest( event.target, '.reader-combined-card__post-title-link', rootNode ) ) {
 				recordPermalinkClick( 'card_title_with_modifier', this.props.post );
 			}

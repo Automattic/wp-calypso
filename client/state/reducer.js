@@ -5,11 +5,10 @@
     "patterns": ["./*\/reducer*", "state/*\/reducer*"]
 }]*/
 
-import { reducer as httpData } from 'calypso/state/data-layer/http-data';
 import { combineReducers } from 'calypso/state/utils';
-import currentUser from './current-user/reducer';
+import currentUser from './current-user/reducer'; // eslint-disable-line no-restricted-imports
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
-import sites from './sites/reducer';
+import sites from './sites/reducer'; // eslint-disable-line no-restricted-imports
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
@@ -17,7 +16,6 @@ import sites from './sites/reducer';
 const reducers = {
 	currentUser,
 	dataRequests,
-	httpData,
 	sites,
 };
 

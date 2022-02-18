@@ -12,9 +12,7 @@
 	"private": true,
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"clean": "rm -rf dist",
@@ -26,11 +24,11 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@wordpress/api-fetch": "^5.2.6",
 		"@wordpress/base-styles": "^4.0.4",
-		"@wordpress/block-editor": "^8.0.11",
-		"@wordpress/blocks": "^11.1.4",
-		"@wordpress/components": "^19.1.5",
-		"@wordpress/data": "^6.1.4",
-		"@wordpress/editor": "^12.0.14",
+		"@wordpress/block-editor": "^8.0.13",
+		"@wordpress/blocks": "^11.1.5",
+		"@wordpress/components": "^19.2.0",
+		"@wordpress/data": "^6.1.5",
+		"@wordpress/editor": "^12.0.16",
 		"@wordpress/element": "^4.0.4",
 		"@wordpress/hooks": "^3.2.2",
 		"@wordpress/i18n": "^4.2.4",
@@ -51,6 +49,6 @@
 		"enzyme": "^3.11.0",
 		"jest": "^27.3.1",
 		"postcss": "^8.4.5",
-		"webpack": "^5.65.0"
+		"webpack": "^5.68.0"
 	}
 }

@@ -11,9 +11,9 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import { getSite } from 'calypso/state/sites/selectors';
 import JetpackSearchDetails from './details';
 import JetpackSearchDisconnected from './disconnected';
+import JetpackSearchUpsell from './jetpack-search-upsell';
 import JetpackSearchPlaceholder from './placeholder';
 import { hasJetpackSearchPurchaseOrPlan } from './purchases';
-import JetpackSearchUpsell from './upsell';
 
 interface Props {
 	siteId: number;
@@ -38,7 +38,7 @@ export default function JetpackSearchMainJetpack( { siteId }: Props ): ReactElem
 
 	// On Jetpack sites, we need to check if the search module is active, rather than checking settings.
 	const isJetpackSearchModuleActive = useSelector( ( state ) =>
-		isJetpackModuleActive( state, siteId, 'search' )
+		Boolean( isJetpackModuleActive( state, siteId, 'search' ) )
 	);
 
 	// isRequestingModules is null if a request hasn't been triggered yet

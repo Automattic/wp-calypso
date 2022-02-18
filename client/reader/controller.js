@@ -3,13 +3,12 @@ import page from 'page';
 import { createElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import FeedError from 'calypso/reader/feed-error';
 import StreamComponent from 'calypso/reader/following/main';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getPrettyFeedUrl, getPrettySiteUrl } from 'calypso/reader/route';
 import { recordTrack } from 'calypso/reader/stats';
-import { requestFeedDiscovery } from 'calypso/state/data-getters';
-import { waitForHttpData } from 'calypso/state/data-layer/http-data';
 import { getLastPath } from 'calypso/state/reader-ui/selectors';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -159,9 +158,15 @@ export function following( context, next ) {
 
 export function feedDiscovery( context, next ) {
 	if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
-		waitForHttpData( () => ( { feedId: requestFeedDiscovery( context.params.feed_id ) } ) )
-			.then( ( { feedId } ) => {
-				page.redirect( `/read/feeds/${ feedId.data }` );
+		const url = context.params.feed_id;
+		context.queryClient
+			.fetchQuery(
+				[ 'feed-discovery', url ],
+				() => wpcom.req.get( '/read/feed', { url } ).then( ( res ) => res.feeds[ 0 ].feed_ID ),
+				{ meta: { persist: false } }
+			)
+			.then( ( feedId ) => {
+				page.redirect( `/read/feeds/${ feedId }` );
 			} )
 			.catch( () => {
 				renderFeedError( context, next );

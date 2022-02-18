@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
+import { Fragment, PureComponent } from 'react';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import DomainRow from './domain-row';
@@ -143,7 +143,7 @@ class DomainsTable extends PureComponent {
 
 			// TODO: how can we optimize the data loading? Can we load the daomin data using `InView` component as in list-all.jsx?
 			return (
-				<>
+				<Fragment key={ `${ domain.name }-${ index }` }>
 					{ ! isManagingAllSites &&
 						domain.blogId &&
 						this.renderQuerySitePurchasesOnce( domain.blogId ) }
@@ -151,7 +151,6 @@ class DomainsTable extends PureComponent {
 						domain.blogId &&
 						this.renderQuerySiteDomainsOnce( domain.blogId ) }
 					<DomainRow
-						key={ `${ domain.name }-${ index }` }
 						currentRoute={ currentRoute }
 						showCheckbox={ isContactEmailEditContext }
 						isSavingContactInfo={ isSavingContactInfo }
@@ -175,7 +174,7 @@ class DomainsTable extends PureComponent {
 						hasLoadedPurchases={ hasLoadedPurchases }
 						purchase={ purchase }
 					/>
-				</>
+				</Fragment>
 			);
 		} );
 

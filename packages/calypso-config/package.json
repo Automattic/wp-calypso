@@ -22,9 +22,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"bugs": {
-		"url": "https://github.com/Automattic/wp-calypso/issues"
-	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
@@ -35,12 +33,12 @@
 	"dependencies": {
 		"@automattic/create-calypso-config": "workspace:^",
 		"@types/cookie": "^0.4.1",
-		"@types/node": "^16.11.13",
-		"cookie": "^0.4.0",
+		"@types/node": "^16.11.24",
+		"cookie": "^0.4.1",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.5.4"
+		"typescript": "^4.5.5"
 	}
 }

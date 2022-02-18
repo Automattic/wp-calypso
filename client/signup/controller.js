@@ -1,13 +1,16 @@
 import config from '@automattic/calypso-config';
+import { isMobile } from '@automattic/viewport';
 import { isEmpty } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
@@ -26,6 +29,12 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { getStepComponent } from './config/step-components';
 import SignupComponent from './main';
+import {
+	retrieveSignupDestination,
+	clearSignupDestinationCookie,
+	getSignupCompleteFlowName,
+	wasSignupCheckoutPageUnloaded,
+} from './storageUtils';
 import {
 	getStepUrl,
 	canResumeFlow,
@@ -275,7 +284,20 @@ export default {
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const stepName = getStepName( context.params );
 		const stepSectionName = getStepSectionName( context.params );
-		const { providesDependenciesInQuery } = flows.getFlow( flowName, userLoggedIn );
+		const { providesDependenciesInQuery, excludeFromManageSiteFlows } = flows.getFlow(
+			flowName,
+			userLoggedIn
+		);
+
+		// Update initialContext to help woocommerce-install support site switching.
+		if ( 'woocommerce-install' === flowName ) {
+			if ( context?.query?.back_to ) {
+				// forces back_to update
+				context.store.dispatch( updateDependencies( { back_to: context.query.back_to } ) );
+			}
+
+			initialContext = context;
+		}
 
 		const { query } = initialContext;
 
@@ -289,13 +311,56 @@ export default {
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
+		const searchParams = new URLSearchParams( window.location.search );
+		const isAddNewSiteFlow = searchParams.has( 'ref' );
+
+		if ( isAddNewSiteFlow ) {
+			clearSignupDestinationCookie();
+		}
+
+		// Checks if the user entered the signup flow via browser back from checkout page,
+		// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
+		// check pau2Xa-1Io-p2#comment-6759.
+		const signupDestinationCookieExists = retrieveSignupDestination();
+		const isReEnteringFlow = getSignupCompleteFlowName() === flowName;
+		const isReEnteringSignupViaBrowserBack =
+			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
+		const isManageSiteFlow =
+			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
+
 		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
 		if (
 			! providesDependenciesInQuery?.includes( 'siteId' ) &&
 			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
-			! providesDependenciesInQuery?.includes( 'site' )
+			! isManageSiteFlow
 		) {
 			context.store.dispatch( setSelectedSiteId( null ) );
+		}
+
+		// Pre-fetching the experiment
+		if ( flowName === 'onboarding' || flowName === 'launch-site' ) {
+			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' );
+		}
+
+		if ( isMobile() && 'onboarding' === flowName ) {
+			loadExperimentAssignment( 'calypso_mobile_plans_page_with_billing' );
+		}
+
+		const signupFlows = [
+			'onboarding',
+			'launch-site',
+			'free',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+			'personal-monthly',
+			'premium-monthly',
+			'business-monthly',
+			'ecommerce-monthly',
+		];
+		if ( signupFlows.includes( flowName ) ) {
+			loadExperimentAssignment( 'calypso_signup_domain_step_copy_test_202201_v2' );
 		}
 
 		context.primary = createElement( SignupComponent, {
@@ -310,25 +375,34 @@ export default {
 			stepSectionName,
 			stepComponent,
 			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
+			isManageSiteFlow,
 		} );
 
 		next();
 	},
-	setSelectedSiteForSignup( { store: signupStore, query }, next ) {
-		const { getState, dispatch } = signupStore;
+	setSelectedSiteForSignup( context, next ) {
+		const { getState, dispatch } = context.store;
+		const userLoggedIn = isUserLoggedIn( getState() );
+		const flowName = getFlowName( context.params, userLoggedIn );
 		const signupDependencies = getSignupDependencyStore( getState() );
+		let siteIdOrSlug;
 
-		const siteIdOrSlug =
-			query?.site ||
-			signupDependencies?.site ||
-			signupDependencies?.siteSlug ||
-			query?.siteSlug ||
-			signupDependencies?.siteId ||
-			query?.siteId;
+		if ( 'woocommerce-install' === flowName ) {
+			// forces query precedence on woocommerce-install
+			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
+		} else {
+			siteIdOrSlug =
+				signupDependencies?.siteSlug ||
+				context.query?.siteSlug ||
+				signupDependencies?.siteId ||
+				context.query?.siteId;
+		}
+
 		if ( ! siteIdOrSlug ) {
 			next();
 			return;
 		}
+
 		const siteId = getSiteId( getState(), siteIdOrSlug );
 		if ( siteId ) {
 			dispatch( setSelectedSiteId( siteId ) );

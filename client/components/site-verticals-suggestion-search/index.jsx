@@ -1,5 +1,5 @@
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +16,6 @@ import './style.scss';
 export class SiteVerticalsSuggestionSearch extends Component {
 	static propTypes = {
 		autoFocus: PropTypes.bool,
-		defaultVertical: PropTypes.object,
 		defaultVerticalSearchTerm: PropTypes.string,
 		onChange: PropTypes.func,
 		placeholder: PropTypes.string,
@@ -29,7 +28,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 
 	static defaultProps = {
 		autoFocus: false,
-		defaultVertical: {},
 		defaultVerticalSearchTerm: '',
 		onChange: () => {},
 		placeholder: '',
@@ -124,7 +122,6 @@ export class SiteVerticalsSuggestionSearch extends Component {
 			verticalData || {
 				isUserInputVertical: true,
 				parent: '',
-				preview: get( this.props.defaultVertical, 'preview', '' ),
 				verticalId: '',
 				verticalName: trimmedValue,
 				verticalSlug: trimmedValue,
@@ -230,7 +227,6 @@ export default localize(
 			siteType,
 			defaultVerticalSearchTerm,
 			verticals: getVerticals( state, ownProps.searchValue, siteType ) || [],
-			defaultVertical: get( getVerticals( state, defaultVerticalSearchTerm, siteType ), '0', {} ),
 		};
 	}, null )( SiteVerticalsSuggestionSearch )
 );

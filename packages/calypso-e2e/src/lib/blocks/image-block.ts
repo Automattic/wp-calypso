@@ -1,8 +1,18 @@
-import { Page, ElementHandle } from 'playwright';
+import { Page, ElementHandle, Frame } from 'playwright';
+import { ReactModalComponent } from '../components';
+import { MediaPage } from '../pages';
+
+type Sources = 'Media Library' | 'Google Photos' | 'Pexels';
 
 const selectors = {
 	block: '.wp-block-image',
+
+	// Block when no image is selected
 	fileInput: '.components-form-file-upload input[type="file"]',
+	selectImageSourceButton: 'button.jetpack-external-media-button-menu',
+	imageSource: ( source: Sources ) => `button:has(span:text("${ source }"))`,
+
+	// Published
 	// Use the attribute CSS selector to perform partial match, beginning with the filename.
 	// If a file with the same name already exists in the Media Gallery, WPCOM resolves this clash
 	// by appending a numerical postfix (eg. <original-filename>-2).
@@ -61,6 +71,40 @@ export class ImageBlock {
 		await this.waitUntilUploaded();
 
 		return await this.getImage();
+	}
+
+	/**
+	 * Given path to an image file, uploads the image to an Image block
+	 * using the media modal via `Select Images` > `Media Library`.
+	 *
+	 * @param {string} path Path to the image file.
+	 */
+	async uploadFromModal( path: string ): Promise< ElementHandle > {
+		const frame = ( await this.block.ownerFrame() ) as Frame;
+		const page = frame.page();
+
+		// The resulting react modal embeds the MediaPage with additional
+		// buttons to confirm/cancel action.
+		const reactModalComponent = new ReactModalComponent( page, new MediaPage( page ) );
+		await reactModalComponent.pageObject.upload( path );
+		await reactModalComponent.clickButton( 'Insert' );
+
+		await this.waitUntilUploaded();
+		return await this.getImage();
+	}
+
+	/**
+	 * Click on the `Select Image` button, visible when no image is selected.
+	 *
+	 * @param {Sources} source Source for the image.
+	 */
+	async selectImageSource( source: Sources ): Promise< void > {
+		const buttonHandle = await this.block.waitForSelector( selectors.selectImageSourceButton );
+		await buttonHandle.click();
+
+		const frame = ( await this.block.ownerFrame() ) as Frame;
+		const locator = frame.locator( selectors.imageSource( source ) );
+		await locator.click();
 	}
 
 	/**

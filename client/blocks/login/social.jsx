@@ -4,30 +4,23 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { InfoNotice } from 'calypso/blocks/global-notice';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GoogleLoginButton from 'calypso/components/social-buttons/google';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { login } from 'calypso/lib/paths';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	loginSocialUser,
-	createSocialUser,
-	createSocialUserFailed,
-} from 'calypso/state/login/actions';
+import { loginSocialUser, createSocialUserFailed } from 'calypso/state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
 	getCreatedSocialAccountBearerToken,
 	getRedirectToOriginal,
-	isSocialAccountCreating,
 } from 'calypso/state/login/selectors';
 
 import './social.scss';
 
 class SocialLoginForm extends Component {
 	static propTypes = {
-		createSocialUser: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
 		onSuccess: PropTypes.func.isRequired,
@@ -245,10 +238,6 @@ class SocialLoginForm extends Component {
 					{ this.renderSocialTos() }
 				</div>
 
-				{ this.props.isSocialAccountCreating && (
-					<InfoNotice text={ this.props.translate( 'Creating your account…' ) } />
-				) }
-
 				{ this.props.bearerToken && (
 					<WpcomLoginForm
 						log={ this.props.username }
@@ -264,13 +253,11 @@ class SocialLoginForm extends Component {
 export default connect(
 	( state ) => ( {
 		redirectTo: getRedirectToOriginal( state ),
-		isSocialAccountCreating: isSocialAccountCreating( state ),
 		bearerToken: getCreatedSocialAccountBearerToken( state ),
 		username: getCreatedSocialAccountUsername( state ),
 	} ),
 	{
 		loginSocialUser,
-		createSocialUser,
 		createSocialUserFailed,
 		recordTracksEvent,
 	}

@@ -63,6 +63,9 @@
     font-weight: 600;
     font-size: $font-body-large;
     line-height: 24px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__card-bottom {

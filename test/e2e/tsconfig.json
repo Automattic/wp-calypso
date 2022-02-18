@@ -5,5 +5,6 @@
 		"noEmit": true, // just type checking, no output. The output is handled by babel.
 		"types": [ "jest", "node" ] // no mocha - we are only using TypeScript for the new Playwright scripts
 	},
-	"include": [ "specs/specs-playwright", "specs/specs-p2", "specs/constants.js", "lib/gutenberg/tracking" ]
+	"include": [ "specs", "lib/gutenberg/tracking/playwright-utils.ts" ],
+	"exclude": [ "specs/jetpack", "specs/wpcom-old" ]
 }

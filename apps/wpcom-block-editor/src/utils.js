@@ -29,9 +29,32 @@ export function sendMessage( message ) {
 }
 
 /**
- * Indicates if the block editor has been initialized with blocks.
+ * Indicates if the block editor has been initialized.
  *
  * @returns {Promise} Promise that resolves when the editor has been initialized.
+ */
+export const isEditorReady = async () =>
+	new Promise( ( resolve ) => {
+		const unsubscribe = subscribe( () => {
+			// Calypso sends the message as soon as the iframe is loaded, so we
+			// need to be sure that the editor is initialized and the core blocks
+			// registered. There is an unstable selector for that, so we use
+			// `isCleanNewPost` otherwise which is triggered when everything is
+			// initialized if the post is new.
+			const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
+				? select( 'core/editor' ).__unstableIsEditorReady()
+				: select( 'core/editor' ).isCleanNewPost();
+			if ( editorIsReady ) {
+				unsubscribe();
+				resolve();
+			}
+		} );
+	} );
+
+/**
+ * Indicates if the block editor has been initialized with blocks.
+ *
+ * @returns {Promise} Promise that resolves when the editor has been initialized with blocks.
  */
 export const isEditorReadyWithBlocks = async () =>
 	new Promise( ( resolve ) => {

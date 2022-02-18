@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/calypso-typescript-config",
 	"version": "1.0.0",
-	"description": "Shared configuration files for TypeScript projects",
+	"description": "Shared configuration files for TypeScript projects.",
 	"keywords": [
 		"typescript",
 		"build",

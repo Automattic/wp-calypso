@@ -41,6 +41,7 @@ import {
 	getWpcomParentThemeId,
 	getRecommendedThemes,
 	areRecommendedThemesLoading,
+	shouldShowTryAndCustomize,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -74,6 +75,13 @@ const mood = {
 	stylesheet: 'premium/mood',
 	demo_uri: 'https://mooddemo.wordpress.com/',
 	author_uri: 'https://wordpress.com/themes/',
+};
+
+const quadrat = {
+	id: 'quadrat',
+	taxonomies: {
+		theme_feature: [ { slug: 'auto-loading-homepage' } ],
+	},
 };
 
 const sidekick = {
@@ -1570,7 +1578,7 @@ describe( 'themes selectors', () => {
 				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
 			} );
 
-			test( 'given a premium theme, should return the specific theme forum URL', () => {
+			test( 'given a premium theme, should return the general themes forum URL', () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1587,7 +1595,7 @@ describe( 'themes selectors', () => {
 					'mood'
 				);
 
-				expect( forumUrl ).to.equal( '//premium-themes.forums.wordpress.com/forum/mood' );
+				expect( forumUrl ).to.equal( '//en.forums.wordpress.com/forum/themes' );
 			} );
 		} );
 
@@ -2505,5 +2513,184 @@ describe( '#areRecommendedThemesLoading', () => {
 
 	test( 'should return false when filter request not initiated', () => {
 		expect( areRecommendedThemesLoading( state, 'lolol' ) ).to.be.false;
+	} );
+} );
+
+describe( '#shouldShowTryAndCustomize', () => {
+	test( 'should not show Try & Customize action when user does not have permissions', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						2916284: { edit_theme_options: false },
+					},
+				},
+			},
+			'quadrat',
+			2916284
+		);
+		expect( showTryAndCustomize ).to.be.false;
+	} );
+
+	test( 'should not show Try & Customize when logged out', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					id: null,
+					capabilities: {},
+				},
+				themes: {
+					queries: {},
+				},
+			},
+			'quadrat',
+			2916284
+		);
+		expect( showTryAndCustomize ).to.be.false;
+	} );
+
+	test( 'should not show Try & Customize for the currently active theme', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						2916284: { edit_theme_options: true },
+					},
+				},
+				themes: {
+					queries: {},
+					activeThemes: {
+						2916284: 'quadrat',
+					},
+				},
+				sites: {
+					items: {},
+				},
+			},
+			'quadrat',
+			2916284
+		);
+		expect( showTryAndCustomize ).to.be.false;
+	} );
+
+	//Block-based themes like Quadrat should not show the Try & Customize action
+	test( 'should not show Try & Customize action for new themes', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						2916284: { edit_theme_options: true },
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { quadrat },
+						} ),
+					},
+					activeThemes: {},
+				},
+				sites: {
+					items: {},
+				},
+			},
+			'quadrat',
+			2916284
+		);
+		expect( showTryAndCustomize ).to.be.false;
+	} );
+
+	//Customizer-based themes should still show Try & Customize
+	test( 'should show Try & Customize action for old themes', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						2916284: { edit_theme_options: true },
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { mood },
+						} ),
+					},
+					activeThemes: {},
+				},
+				sites: {
+					items: {},
+				},
+			},
+			'mood',
+			2916284
+		);
+		expect( showTryAndCustomize ).to.be.true;
+	} );
+
+	test( 'should not show Try & Customize action for Jetpack multisite', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						77203074: { edit_theme_options: true },
+					},
+				},
+				themes: {
+					queries: {},
+				},
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true,
+							is_multisite: true,
+						},
+					},
+				},
+			},
+			'twentynineteen',
+			77203074
+		);
+		expect( showTryAndCustomize ).to.be.false;
+	} );
+
+	test( 'should not show Try & Customize action for premium theme unavailable to Jetpack site', () => {
+		const showTryAndCustomize = shouldShowTryAndCustomize(
+			{
+				currentUser: {
+					capabilities: {
+						77203074: { edit_theme_options: true },
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { mood },
+						} ),
+					},
+				},
+				purchases: {
+					data: [],
+				},
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true,
+						},
+					},
+					plans: {
+						77203074: {
+							data: [],
+						},
+					},
+				},
+			},
+			'mood',
+			77203074
+		);
+		expect( showTryAndCustomize ).to.be.false;
 	} );
 } );

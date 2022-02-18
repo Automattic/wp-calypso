@@ -12,15 +12,16 @@ const DomainEligibilityWarning = ( {
 	wpcomDomain,
 	stagingDomain,
 }: DomainEligibilityWarningProps ): ReactElement => (
-	<Card title={ __( 'New Store Domain' ) }>
+	<Card title={ __( 'Domain change required' ) }>
 		<InfoLabel label={ __( 'New' ) }>{ stagingDomain }</InfoLabel>
 		<p>
 			{ sprintf(
 				/* translators: %s: The wordpress domain (ex.: myawesomeblog.wordpress.com) */
 				__(
-					'By installing this product your subdomain will change. Your old subdomain (%s) will no longer work. You can change it to a custom domain at anytime in the future.'
+					'By installing this product your subdomain will change. Your old subdomain (%1$s) will redirect to your new subdomain (%2$s). You can change it to a custom domain at anytime in the future.'
 				),
-				wpcomDomain
+				wpcomDomain,
+				stagingDomain
 			) }
 		</p>
 	</Card>

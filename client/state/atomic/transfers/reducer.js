@@ -5,7 +5,11 @@ import { keyedReducer } from 'calypso/state/utils';
 function transfers( state = {}, action ) {
 	switch ( action.type ) {
 		case ATOMIC_TRANSFER_SET_LATEST:
-			return { ...state, siteId: action.siteId, ...action.transfer };
+			return {
+				siteId: action.siteId,
+				transfer: action?.transfer || null,
+				error: action?.error || null,
+			};
 	}
 	return state;
 }

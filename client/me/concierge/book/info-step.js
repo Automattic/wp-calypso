@@ -25,7 +25,6 @@ import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup
 import getCountries from 'calypso/state/selectors/get-countries';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import PrimaryHeader from '../shared/primary-header';
-import IsRebrandCitiesSite from './is-rebrand-cities-site';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -50,10 +49,6 @@ class InfoStep extends Component {
 			[ name ]: value,
 		} );
 	}
-
-	setRebrandCitiesValue = ( value ) => {
-		this.updateSignupForm( 'isRebrandCitiesSite', value );
-	};
 
 	onChange = ( phoneNumber ) => {
 		if ( phoneNumber.phoneNumber && ! phoneNumber.isValid ) {
@@ -129,7 +124,6 @@ class InfoStep extends Component {
 
 		return (
 			<div>
-				<IsRebrandCitiesSite onChange={ this.setRebrandCitiesValue } siteId={ site.ID } />
 				<PrimaryHeader />
 				{ ! isEnglish && <Notice showDismiss={ false } text={ noticeText } /> }
 				<CompactCard className="book__info-step-site-block">

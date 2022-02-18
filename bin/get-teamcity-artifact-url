@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+// This script will return a url of an artifact generated in the latest project build for the specified branch.
+// eg: node bin/get-teamcity-artifact-url --artifact="translate/calypso-strings.pot"
+
+const yargs = require( 'yargs' );
+
+const args = yargs
+	.default( 'branch', 'trunk' )
+	.default( 'buildType', 'calypso_Translate' )
+	.required( 'artifact', 'Set the artifact file path.' ).argv;
+
+const url = `https://teamcity.a8c.com/repository/download/${ args.buildType }/.lastSuccessful/${ args.artifact }?guest=1&branch=${ args.branch }`;
+console.log( url );

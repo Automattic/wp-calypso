@@ -3,6 +3,7 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
 
 export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-google-workspace-to-your-site/`;
+export const ADDING_TITAN_TO_YOUR_SITE = `${ root }/add-email/adding-professional-email-to-your-site/`;
 export const AUTO_RENEWAL = `${ root }/manage-purchases/#automatic-renewal`;
 export const CHANGE_NAME_SERVERS = `${ root }/domains/custom-dns/#changing-name-servers-to-point-to-wordpress-com`;
 export const CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS = `${ root }/domains/change-name-servers/#finding-out-your-new-name-server`;
@@ -33,8 +34,8 @@ export const EMAIL_FORWARDING = `${ root }/email-forwarding`;
 export const EMAIL_VALIDATION_AND_VERIFICATION = `${ root }/domains/register-domain/#email-validation-and-verification`;
 export const EMPTY_SITE = `${ root }/empty-site/`;
 export const FORMS = `${ root }/forms`;
+export const GDPR_POLICIES = `${ root }/your-site-and-the-gdpr`;
 export const GSUITE_LEARNING_CENTER = 'https://workspace.google.com/learning-center/';
-export const GUIDED_TRANSFER = `${ root }/guided-transfer`;
 export const HTTPS_SSL = `${ root }/https-ssl`;
 export const JETPACK_SUPPORT = 'https://jetpack.com/support/';
 export const JETPACK_CONTACT_SUPPORT = 'https://jetpack.com/contact-support/?rel=support';
@@ -47,6 +48,7 @@ export const MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS = `${ root }/domains/map-exist
 export const MAP_SUBDOMAIN = `${ root }/domains/map-subdomain`;
 export const MAP_SUBDOMAIN_WITH_CNAME_RECORDS = `${ root }/domains/map-subdomain/#adding-cname-records-with-your-registrar`;
 export const MAP_DOMAIN_CHANGE_NAME_SERVERS = `${ root }/domains/map-existing-domain/#change-your-domains-name-servers`;
+export const PRIVACY_PROTECTION = `${ root }/domains/domain-registrations-and-privacy/#privacy-protection`;
 export const PUBLIC_VS_PRIVATE = `${ root }/domains/register-domain/#public-versus-private-registration-and-gdpr`;
 export const REFUNDS = `${ root }/manage-purchases/#refund-policy`;
 export const REGISTER_DOMAIN = `${ root }/domains/register-domain/`;

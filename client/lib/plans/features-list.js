@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
+	FEATURE_SPAM_10K_PER_MONTH,
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
@@ -12,7 +13,6 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 	FEATURE_ADVANCED_SEO_TOOLS,
-	FEATURE_ADVANCED_STATS_V2,
 	FEATURE_AKISMET_V2,
 	FEATURE_ALL_BUSINESS_FEATURES,
 	FEATURE_ALL_FREE_FEATURES,
@@ -33,7 +33,6 @@ import {
 	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
-	FEATURE_BUSINESS_ONBOARDING,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
 	FEATURE_COMMUNITY_SUPPORT,
@@ -275,7 +274,7 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
-					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br}}{{br}}' +
+					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br /}}{{br /}}' +
 					'This offer is redeemable one time only, and does not apply to plan upgrades, renewals, or premium domains.',
 				{
 					components: {
@@ -303,10 +302,10 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
+		getTitle: () => i18n.translate( 'Premium themes' ),
 		getDescription: () =>
 			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
 			),
 	},
 
@@ -603,15 +602,6 @@ export const FEATURES_LIST = {
 				"Keep the focus on your site's brand by removing the WordPress.com footer branding."
 			),
 		getStoreSlug: () => 'no-adverts/no-adverts.php',
-	},
-
-	[ FEATURE_BUSINESS_ONBOARDING ]: {
-		getSlug: () => FEATURE_BUSINESS_ONBOARDING,
-		getTitle: () => i18n.translate( 'Get personalized help' ),
-		getDescription: () =>
-			i18n.translate(
-				"Meet one-on-one with a WordPress.com expert who'll help you set up your site exactly as you need it."
-			),
 	},
 
 	[ FEATURE_ADVANCED_SEO ]: {
@@ -1218,9 +1208,12 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Block spam without CAPTCHAs' ),
 	},
 
-	[ FEATURE_ADVANCED_STATS_V2 ]: {
-		getSlug: () => FEATURE_ADVANCED_STATS_V2,
-		getTitle: () => i18n.translate( 'Advanced stats' ),
+	[ FEATURE_SPAM_10K_PER_MONTH ]: {
+		getSlug: () => FEATURE_SPAM_10K_PER_MONTH,
+		getTitle: () =>
+			i18n.translate( '10K API calls/mo', {
+				comment: '10 thousand API calls per month',
+			} ),
 	},
 
 	[ FEATURE_FILTERING_V2 ]: {

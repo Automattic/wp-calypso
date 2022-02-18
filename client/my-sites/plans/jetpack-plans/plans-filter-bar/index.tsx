@@ -5,10 +5,10 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
+import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
-import useDetectWindowBoundary from '../use-detect-window-boundary';
 import type { Duration, DurationChangeCallback } from '../types';
 
 import './style.scss';
@@ -42,7 +42,7 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { toggleChecked } ) 
 								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
 								comment: 'Discount is a percentage',
 						  } )
-						: translate( 'Get %(discount)s%% off*', {
+						: translate( 'Get %(discount)s%% off', {
 								args: { discount: INTRO_PRICING_DISCOUNT_PERCENTAGE },
 								comment: 'Discount is a percentage. * is a clause describing the price adjustment.',
 						  } ) }
@@ -77,9 +77,11 @@ const PlansFilterBar: React.FC< FilterBarProps > = ( {
 		onDurationChange?.( selectedDuration );
 	}, [ onDurationChange, durationChecked ] );
 
+	const outerDivProps = barRef ? { ref: barRef as React.RefObject< HTMLDivElement > } : {};
+
 	return (
 		<>
-			<div className="plans-filter-bar__viewport-sentinel" ref={ barRef }></div>
+			<div className="plans-filter-bar__viewport-sentinel" { ...outerDivProps }></div>
 			<div
 				className={ classNames( 'plans-filter-bar', {
 					sticky: hasCrossed,

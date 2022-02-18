@@ -65,11 +65,6 @@ export default function () {
 	);
 
 	registerStandardDomainManagementPages(
-		paths.domainManagementChangeSiteAddress,
-		domainManagementController.domainManagementChangeSiteAddress
-	);
-
-	registerStandardDomainManagementPages(
 		paths.domainManagementSecurity,
 		domainManagementController.domainManagementSecurity
 	);

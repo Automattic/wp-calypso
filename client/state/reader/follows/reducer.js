@@ -3,8 +3,6 @@ import {
 	READER_FOLLOW,
 	READER_UNFOLLOW,
 	READER_FOLLOW_ERROR,
-	READER_RECORD_FOLLOW,
-	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_COMPLETE,
 	READER_FOLLOWS_RECEIVE,
@@ -103,20 +101,6 @@ function updateNotificationSubscription( state, { payload, type } ) {
 
 const itemsReducer = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case READER_RECORD_FOLLOW: {
-			const urlKey = prepareComparableUrl( action.payload.url );
-			return {
-				...state,
-				[ urlKey ]: merge( {}, state[ urlKey ], { is_following: true } ),
-			};
-		}
-		case READER_RECORD_UNFOLLOW: {
-			const urlKey = prepareComparableUrl( action.payload.url );
-			return {
-				...state,
-				[ urlKey ]: merge( {}, state[ urlKey ], { is_following: false } ),
-			};
-		}
 		case READER_FOLLOW_ERROR: {
 			const urlKey = prepareComparableUrl( action.payload.feedUrl );
 			return {

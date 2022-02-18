@@ -1,0 +1,56 @@
+@import '../style';
+
+body.is-section-signup .is-woocommerce-install .signup__step.is-store-address {
+	@include woocommerce-install-two-column-layout;
+
+	.step-store-address__instructions-container {
+		.components-combobox-control__suggestions-container {
+			// Remove `width: 100%;` https://github.com/WordPress/gutenberg/blob/0135921bcb72ceec629fa8f9e755891afab747b9/packages/components/src/combobox-control/style.scss#L32
+			width: unset;
+
+			// Remove margin from component to match text controls.
+			margin-bottom: unset;
+		}
+
+		.components-form-token-field__suggestions-list {
+			margin: 12px -16px -12px;
+			width: min-content;
+		}
+
+		.components-combobox-control__reset.components-button {
+			// Height of 18 ensures combobox input matches height of text controls.
+			height: 18px;
+		}
+
+		.form-input-validation.is-error {
+			margin-bottom: $grid-unit-30;
+			padding-bottom: 0;
+			padding-top: 0;
+		}
+
+		// On error, color the border of inputs red & remove the blue box shadow
+		// We have to remove the box shadow here because we can't apply box shadow
+		// to the suggestion dropdown conditionally like we can with the text control.
+		.components-base-control.is-error {
+			margin-bottom: $grid-unit;
+
+			.components-text-control__input {
+				border-color: var( --color-error );
+
+				&:focus {
+					box-shadow: 0 0 0 0 var( --color-error );
+				}
+			}
+
+			.components-combobox-control__suggestions-container {
+				border-color: var( --color-error );
+				box-shadow: 0 0 0 0 var( --color-error );
+			}
+
+			.components-base-control__field {
+				// Remove margin-bottom on error so errors are positioned closer to the corresponding field.
+				margin-bottom: unset;
+			}
+		}
+	}
+}

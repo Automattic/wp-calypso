@@ -1,19 +1,22 @@
-import i18nCalypso, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getCurrentUserTimeSinceSignup from 'calypso/state/selectors/get-current-user-time-since-signup';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteFrontPage,
@@ -32,7 +35,9 @@ export const QuickLinks = ( {
 	canCustomize,
 	canSwitchThemes,
 	canManageSite,
+	canModerateComments,
 	customizeUrl,
+	isAtomic,
 	isStaticHomePage,
 	showCustomizer,
 	canAddEmail,
@@ -42,19 +47,26 @@ export const QuickLinks = ( {
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
+	trackEditSiteAction,
 	trackCustomizeThemeAction,
 	trackChangeThemeAction,
 	trackDesignLogoAction,
 	trackAnchorPodcastAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
+	trackExplorePluginsAction,
 	isExpanded,
 	updateHomeQuickLinksToggleStatus,
 	isUnifiedNavEnabled,
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
+	blockEditorSettings,
+	areBlockEditorSettingsLoading,
+	daysSinceSignup,
 } ) => {
+	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
+
 	const translate = useTranslate();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
@@ -62,58 +74,54 @@ export const QuickLinks = ( {
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
 
+	const customizerLinks =
+		isStaticHomePage && canEditPages ? (
+			<ActionBox
+				href={ editHomePageUrl }
+				hideLinkIndicator
+				onClick={ trackEditHomepageAction }
+				label={ translate( 'Edit homepage' ) }
+				materialIcon="laptop"
+			/>
+		) : null;
+
 	const quickLinks = (
 		<div className="quick-links__boxes">
-			{ isStaticHomePage && canEditPages ? (
-				<>
-					<ActionBox
-						href={ editHomePageUrl }
-						hideLinkIndicator
-						onClick={ trackEditHomepageAction }
-						label={ translate( 'Edit homepage' ) }
-						materialIcon="laptop"
-					/>
-					<ActionBox
-						href={ `/page/${ siteSlug }` }
-						hideLinkIndicator
-						onClick={ trackAddPageAction }
-						label={ translate( 'Add a page' ) }
-						materialIcon="insert_drive_file"
-					/>
-					<ActionBox
-						href={ `/post/${ siteSlug }` }
-						hideLinkIndicator
-						onClick={ trackWritePostAction }
-						label={ translate( 'Write blog post' ) }
-						materialIcon="edit"
-					/>
-				</>
+			{ isFSEActive && canManageSite ? (
+				<ActionBox
+					href={ `/site-editor/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackEditSiteAction }
+					label={ translate( 'Edit site' ) }
+					materialIcon="laptop"
+				/>
 			) : (
-				<>
-					<ActionBox
-						href={ `/post/${ siteSlug }` }
-						hideLinkIndicator
-						onClick={ trackWritePostAction }
-						label={ translate( 'Write blog post' ) }
-						materialIcon="edit"
-					/>
-					<ActionBox
-						href={ `/comments/${ siteSlug }` }
-						hideLinkIndicator
-						onClick={ trackManageCommentsAction }
-						label={ translate( 'Manage comments' ) }
-						materialIcon="mode_comment"
-					/>
-					{ canEditPages && (
-						<ActionBox
-							href={ `/page/${ siteSlug }` }
-							hideLinkIndicator
-							onClick={ trackAddPageAction }
-							label={ translate( 'Add a page' ) }
-							materialIcon="insert_drive_file"
-						/>
-					) }
-				</>
+				customizerLinks
+			) }
+			<ActionBox
+				href={ `/post/${ siteSlug }` }
+				hideLinkIndicator
+				onClick={ trackWritePostAction }
+				label={ translate( 'Write blog post' ) }
+				materialIcon="edit"
+			/>
+			{ ! isStaticHomePage && canModerateComments && (
+				<ActionBox
+					href={ `/comments/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackManageCommentsAction }
+					label={ translate( 'Manage comments' ) }
+					materialIcon="mode_comment"
+				/>
+			) }
+			{ canEditPages && (
+				<ActionBox
+					href={ `/page/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackAddPageAction }
+					label={ translate( 'Add a page' ) }
+					materialIcon="insert_drive_file"
+				/>
 			) }
 			{ showCustomizer && canCustomize && (
 				<>
@@ -174,28 +182,37 @@ export const QuickLinks = ( {
 			{ canManageSite && (
 				<>
 					<ActionBox
-						href="https://wp.me/logo-maker/?utm_campaign=my_home"
+						href={ `/plugins/${ siteSlug }` }
+						hideLinkIndicator
+						onClick={ trackExplorePluginsAction }
+						label={ translate( 'Explore Plugins' ) }
+						gridicon="plugins"
+					/>
+					<ActionBox
+						href={ 'https://wp.me/logo-maker/?utm_campaign=my_home_' + daysSinceSignup + 'd' }
 						onClick={ trackDesignLogoAction }
 						target="_blank"
 						label={
 							getLocaleSlug() === 'en' ||
 							getLocaleSlug() === 'en-gb' ||
-							i18nCalypso.hasTranslation( 'Create a logo with Fiverr' )
+							i18n.hasTranslation( 'Create a logo with Fiverr' )
 								? translate( 'Create a logo with Fiverr' )
 								: translate( 'Create a logo' )
 						}
 						external
 						iconSrc={ fiverrIcon }
 					/>
-					<ActionBox
-						href="https://anchor.fm/wordpressdotcom"
-						onClick={ trackAnchorPodcastAction }
-						target="_blank"
-						label={ translate( 'Create a podcast with Anchor' ) }
-						external
-						iconSrc={ anchorLogoIcon }
-					/>
 				</>
+			) }
+			{ canManageSite && ! isAtomic && (
+				<ActionBox
+					href="https://anchor.fm/wordpressdotcom"
+					onClick={ trackAnchorPodcastAction }
+					target="_blank"
+					label={ translate( 'Create a podcast with Anchor' ) }
+					external
+					iconSrc={ anchorLogoIcon }
+				/>
 			) }
 		</div>
 	);
@@ -206,9 +223,14 @@ export const QuickLinks = ( {
 		};
 	}, [] );
 
+	if ( areBlockEditorSettingsLoading ) {
+		return null;
+	}
+
 	return (
 		<FoldableCard
 			className="quick-links"
+			headerTagName="h2"
 			header={ translate( 'Quick links' ) }
 			clickableHeader
 			expanded={ isExpanded }
@@ -272,6 +294,12 @@ const trackEditMenusAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_edit_menus' )
 	);
 
+const trackEditSiteAction = () =>
+	composeAnalytics(
+		recordTracksEvent( 'calypso_customer_home_my_site_site_editor_link' ),
+		bumpStat( 'calypso_customer_home', 'my_site_site_editor' )
+	);
+
 const trackCustomizeThemeAction = ( isStaticHomePage ) =>
 	composeAnalytics(
 		recordTracksEvent( 'calypso_customer_home_my_site_customize_theme_click', {
@@ -318,6 +346,17 @@ const trackAddEmailAction = ( isStaticHomePage ) => ( dispatch ) => {
 	);
 };
 
+const trackExplorePluginsAction = ( isStaticHomePage ) => ( dispatch ) => {
+	dispatch(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_customer_home_my_site_explore_plugins_click', {
+				is_static_home_page: isStaticHomePage,
+			} ),
+			bumpStat( 'calypso_customer_home', 'my_site_explore_plugins' )
+		)
+	);
+};
+
 const trackAddDomainAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
@@ -357,6 +396,7 @@ const mapStateToProps = ( state ) => {
 		canCustomize: canCurrentUser( state, siteId, 'customize' ),
 		canSwitchThemes: canCurrentUser( state, siteId, 'switch_themes' ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
+		canModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
@@ -365,9 +405,11 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
+		isAtomic: isSiteAtomic( state, siteId ),
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		isUnifiedNavEnabled: isNavUnificationEnabled,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
+		daysSinceSignup: getCurrentUserTimeSinceSignup( state ),
 	};
 };
 
@@ -377,12 +419,14 @@ const mapDispatchToProps = {
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
+	trackEditSiteAction,
 	trackCustomizeThemeAction,
 	trackChangeThemeAction,
 	trackDesignLogoAction,
 	trackAnchorPodcastAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
+	trackExplorePluginsAction,
 	updateHomeQuickLinksToggleStatus: ( status ) =>
 		savePreference( 'homeQuickLinksToggleStatus', status ),
 };
@@ -403,8 +447,15 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		trackAnchorPodcastAction: () => dispatchProps.trackAnchorPodcastAction( isStaticHomePage ),
 		trackAddEmailAction: () => dispatchProps.trackAddEmailAction( isStaticHomePage ),
 		trackAddDomainAction: () => dispatchProps.trackAddDomainAction( isStaticHomePage ),
+		trackExplorePluginsAction: () => dispatchProps.trackExplorePluginsAction( isStaticHomePage ),
 		...ownProps,
 	};
 };
 
-export default connect( mapStateToProps, mapDispatchToProps, mergeProps )( QuickLinks );
+const ConnectedQuickLinks = connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( QuickLinks );
+
+export default withBlockEditorSettings( ConnectedQuickLinks );

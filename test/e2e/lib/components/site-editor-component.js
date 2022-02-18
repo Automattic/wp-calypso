@@ -236,11 +236,12 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 
 	async changeGlobalStylesFontSize( value, blocksLevel ) {
 		if ( ! blocksLevel ) {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.edit-site-global-styles-sidebar button[aria-label="Set custom size"]' )
-			);
+			await this.clickGlobalStylesMenuItem( 'Aa\nText' );
 		}
+		await driverHelper.clickIfPresent(
+			this.driver,
+			By.css( '.edit-site-global-styles-sidebar button[aria-label="Set custom size"]' )
+		);
 		return await driverHelper.setWhenSettable(
 			this.driver,
 			By.css( '.edit-site-global-styles-sidebar .components-font-size-picker input' ),
@@ -305,7 +306,7 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 		// If there were no Global Styles to save, close the panel.
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.entities-saved-states__panel button[aria-label="Close panel"]' )
+			driverHelper.createTextLocator( By.css( '.entities-saved-states__panel button' ), 'Cancel' )
 		);
 	}
 
@@ -343,6 +344,13 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 			'.edit-site-global-styles-sidebar button[aria-label="Navigate to the previous view"]'
 		);
 		return await driverHelper.clickWhenClickable( this.driver, backButtonLocator );
+	}
+
+	async scrollListViewToEnd() {
+		const listViewContainerSelector = '.edit-site-editor__list-view-panel-content';
+		return await this.driver.executeScript(
+			`document.querySelector( '${ listViewContainerSelector }' ).scrollTo(0,1000000);`
+		);
 	}
 
 	/**

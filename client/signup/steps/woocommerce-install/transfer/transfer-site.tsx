@@ -1,3 +1,4 @@
+import page from 'page';
 import { ReactElement, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval/use-interval';
@@ -13,24 +14,42 @@ import { getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Error from './error';
 import Progress from './progress';
-
 import './style.scss';
+import { FailureInfo } from '.';
 
-export default function TransferSite(): ReactElement | null {
+export default function TransferSite( {
+	onFailure,
+	trackRedirect,
+}: {
+	onFailure: ( type: FailureInfo ) => void;
+	trackRedirect: () => void;
+} ): ReactElement | null {
 	const dispatch = useDispatch();
 
 	const [ progress, setProgress ] = useState( 0.1 );
 
+	// Store the transfer failure state.
+	const [ transferFailed, setTransferFailed ] = useState( false );
+
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const transfer = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
+
+	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
+
+	const { transfer, error: transferError } = useSelector( ( state ) =>
+		getLatestAtomicTransfer( state, siteId )
+	);
 	const transferStatus = transfer?.status;
-	const transferFailed = !! transfer?.error;
-	const software = useSelector( ( state ) =>
+
+	const { status: softwareStatus, error: softwareError } = useSelector( ( state ) =>
 		getAtomicSoftwareStatus( state, siteId, 'woo-on-plans' )
 	);
-	const softwareApplied = software?.applied;
-	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
+	const softwareApplied = softwareStatus?.applied;
+
+	// Check for error codes (5xx). 404's are not a failure mode.
+	const isTransferringStatusFailed =
+		( transferError && transferError?.status >= 500 ) ||
+		( softwareError && softwareError?.status >= 500 );
 
 	// Initiate Atomic transfer or software install
 	useEffect( () => {
@@ -45,7 +64,9 @@ export default function TransferSite(): ReactElement | null {
 		() => {
 			dispatch( requestLatestAtomicTransfer( siteId ) );
 		},
-		transferStatus === transferStates.COMPLETED ? null : 3000
+		transferFailed || isTransferringStatusFailed || transferStatus === transferStates.COMPLETED
+			? null
+			: 3000
 	);
 
 	// Poll for software status
@@ -53,7 +74,13 @@ export default function TransferSite(): ReactElement | null {
 		() => {
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
-		softwareApplied ? null : 3000
+		// Only poll if the transfer is completed and not failed
+		transferFailed ||
+			isTransferringStatusFailed ||
+			transferStatus !== transferStates.COMPLETED ||
+			softwareApplied
+			? null
+			: 3000
 	);
 
 	// Watch transfer status
@@ -77,10 +104,25 @@ export default function TransferSite(): ReactElement | null {
 				break;
 		}
 
-		if ( transferFailed || transferStatus === transferStates.ERROR ) {
+		if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
 			setProgress( 1 );
+			setTransferFailed( true );
+
+			onFailure( {
+				type: 'transfer',
+				error: transferError?.message || softwareError?.message || '',
+				code: transferError?.code || softwareError?.code || '',
+			} );
 		}
-	}, [ siteId, transferStatus, transferFailed ] );
+	}, [
+		siteId,
+		transferStatus,
+		isTransferringStatusFailed,
+		onFailure,
+		transferError,
+		softwareError,
+		softwareStatus,
+	] );
 
 	// Redirect to wc-admin once software installation is confirmed.
 	useEffect( () => {
@@ -89,18 +131,38 @@ export default function TransferSite(): ReactElement | null {
 		}
 
 		if ( softwareApplied ) {
+			trackRedirect();
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
-				window.location.href = wcAdmin;
+				page( wcAdmin );
 			}, 500 );
 		}
-	}, [ siteId, softwareApplied, wcAdmin ] );
+	}, [ siteId, softwareApplied, wcAdmin, trackRedirect ] );
 
-	// todo: transferFailed states need testing and if required, pass the message through correctly
+	// Timeout threshold for the install to complete.
+	useEffect( () => {
+		if ( transferFailed ) {
+			return;
+		}
+
+		const timeId = setTimeout( () => {
+			setTransferFailed( true );
+			onFailure( {
+				type: 'transfer_timeout',
+				error: 'transfer took too long.',
+				code: 'transfer_timeout',
+			} );
+		}, 1000 * 180 );
+
+		return () => {
+			window?.clearTimeout( timeId );
+		};
+	}, [ onFailure, transferFailed ] );
+
 	return (
 		<>
-			{ transferFailed && <Error message={ transferStatus || '' } /> }
+			{ transferFailed && <Error /> }
 			{ ! transferFailed && <Progress progress={ progress } /> }
 		</>
 	);

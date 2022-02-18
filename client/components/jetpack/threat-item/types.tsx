@@ -34,6 +34,7 @@ export interface BaseThreat {
 	table?: string;
 	diff?: string;
 	context?: Record< string, unknown >;
+	severity: number;
 }
 
 export interface FixableThreat extends BaseThreat {

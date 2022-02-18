@@ -38,13 +38,15 @@ const SiteLink = ( { subscription }: { subscription: MembershipSubscription } ) 
 			onClick={ ( event ) => {
 				event.stopPropagation();
 				event.preventDefault();
-				window.location = subscription.site_url;
+				window.location.href = subscription.site_url;
 			} }
-			title={ translate( 'Visit %(siteUrl)s', {
-				args: {
-					siteUrl: subscription.site_url,
-				},
-			} ) }
+			title={ String(
+				translate( 'Visit %(siteUrl)s', {
+					args: {
+						siteUrl: subscription.site_url,
+					},
+				} )
+			) }
 		>
 			{ siteUrl }
 		</button>
@@ -79,7 +81,7 @@ const MembershipType = ( { subscription }: { subscription: MembershipSubscriptio
 
 const Icon = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const [ hasError, setErrors ] = useState( false );
-	const [ site, setSite ] = useState( null );
+	const [ site, setSite ] = useState< { icon?: { ico: string } } >();
 	const siteId = subscription.site_id;
 
 	useEffect( () => {

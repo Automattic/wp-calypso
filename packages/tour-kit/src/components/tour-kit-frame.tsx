@@ -4,13 +4,17 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
 import classnames from 'classnames';
+import { usePopper } from 'react-popper';
 /**
  * Internal Dependencies
  */
-import usePopperHandler from '../hooks/use-popper-handler';
+import useStepTracking from '../hooks/use-step-tracking';
+import { classParser } from '../utils';
 import KeyboardNavigation from './keyboard-navigation';
+import TourKitMinimized from './tour-kit-minimized';
 import Overlay from './tour-kit-overlay';
 import Spotlight from './tour-kit-spotlight';
+import TourKitStep from './tour-kit-step';
 import type { Config, Callback } from '../types';
 
 interface Props {
@@ -22,76 +26,38 @@ const handleCallback = ( currentStepIndex: number, callback?: Callback ) => {
 };
 
 const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
-	const tourContainerRef = useRef( null );
-	const popperElementRef = useRef( null );
+	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
 		null
 	);
 	const [ isMinimized, setIsMinimized ] = useState( false );
-	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
-	const lastStepIndex = config.steps.length - 1;
+
+	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );
+	const [ tourReady, setTourReady ] = useState( false );
+	const tourContainerRef = useRef( null );
 	const isMobile = useMobileBreakpoint();
+	const lastStepIndex = config.steps.length - 1;
 	const referenceElementSelector =
 		config.steps[ currentStepIndex ].referenceElements?.[ isMobile ? 'mobile' : 'desktop' ] || null;
 	const referenceElement = referenceElementSelector
 		? document.querySelector< HTMLElement >( referenceElementSelector )
 		: null;
 
-	const showArrowIndicator = () => {
+	const showArrowIndicator = useCallback( () => {
 		if ( config.options?.effects?.arrowIndicator === false ) {
 			return false;
 		}
 
-		return !! ( referenceElement && ! isMinimized );
-	};
-
-	const { styles: popperStyles, attributes: popperAttributes } = usePopperHandler(
-		referenceElement,
-		popperElementRef.current,
-		[
-			{
-				name: 'preventOverflow',
-				options: {
-					rootBoundary: 'document',
-					padding: 16, // same as the left/margin of the tour frame
-				},
-			},
-			{
-				name: 'arrow',
-				options: {
-					padding: 12,
-				},
-			},
-			{
-				name: 'offset',
-				options: {
-					offset: [ 0, showArrowIndicator() ? 12 : 10 ],
-				},
-			},
-			...( config.options?.popperModifiers || [] ),
-		]
-	);
-
-	const stepRepositionProps =
-		! isMinimized && referenceElement
-			? {
-					style: popperStyles?.popper,
-					...popperAttributes?.popper,
-			  }
-			: null;
-
-	const arrowPositionProps = {
-		style: popperStyles?.arrow,
-		...popperAttributes?.arrow,
-	};
+		return !! ( referenceElement && ! isMinimized && tourReady );
+	}, [ config.options?.effects?.arrowIndicator, isMinimized, referenceElement, tourReady ] );
 
 	const showSpotlight = useCallback( () => {
-		if ( ! config.options?.effects?.__experimental__spotlight ) {
+		if ( ! config.options?.effects?.spotlight ) {
 			return false;
 		}
 
 		return ! isMinimized;
-	}, [ config.options?.effects?.__experimental__spotlight, isMinimized ] );
+	}, [ config.options?.effects?.spotlight, isMinimized ] );
 
 	const showOverlay = useCallback( () => {
 		if ( showSpotlight() || ! config.options?.effects?.overlay ) {
@@ -140,12 +106,94 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		handleCallback( currentStepIndex, config.options?.callbacks?.onMaximize );
 	}, [ config.options?.callbacks?.onMaximize, currentStepIndex ] );
 
+	const { styles: popperStyles, attributes: popperAttributes, update: popperUpdate } = usePopper(
+		referenceElement,
+		popperElement,
+		{
+			strategy: 'fixed',
+			placement: 'bottom',
+			modifiers: [
+				{
+					name: 'preventOverflow',
+					options: {
+						rootBoundary: 'document',
+						padding: 16, // same as the left/margin of the tour frame
+					},
+				},
+				{
+					name: 'arrow',
+					options: {
+						padding: 12,
+					},
+				},
+				{
+					name: 'offset',
+					options: {
+						offset: [ 0, showArrowIndicator() ? 12 : 10 ],
+					},
+				},
+				{
+					name: 'flip',
+					options: {
+						fallbackPlacements: [ 'top', 'left', 'right' ],
+					},
+				},
+				...( config.options?.popperModifiers || [] ),
+			],
+		}
+	);
+
+	const stepRepositionProps =
+		! isMinimized && referenceElement && tourReady
+			? {
+					style: popperStyles?.popper,
+					...popperAttributes?.popper,
+			  }
+			: null;
+
+	const arrowPositionProps =
+		! isMinimized && referenceElement && tourReady
+			? {
+					style: popperStyles?.arrow,
+					...popperAttributes?.arrow,
+			  }
+			: null;
+
+	/*
+	 * Focus first interactive element when step renders.
+	 */
 	useEffect( () => {
-		// first interactive element when step renders
 		setTimeout( () => initialFocusedElement?.focus() );
 	}, [ initialFocusedElement ] );
 
-	const classNames = classnames( 'tour-kit-frame', config.options?.className );
+	/*
+	 * Fixes issue with Popper misplacing the instance on mount
+	 * See: https://stackoverflow.com/questions/65585859/react-popper-incorrect-position-on-mount
+	 */
+	useEffect( () => {
+		// If no reference element to position step near
+		if ( ! referenceElement ) {
+			setTourReady( true );
+			return;
+		}
+
+		setTourReady( false );
+
+		if ( popperUpdate ) {
+			popperUpdate()
+				.then( () => setTourReady( true ) )
+				.catch( () => setTourReady( true ) );
+		}
+	}, [ popperUpdate, referenceElement ] );
+
+	const classes = classnames(
+		'tour-kit-frame',
+		isMobile ? 'is-mobile' : 'is-desktop',
+		{ 'is-visible': tourReady },
+		classParser( config.options?.classNames )
+	);
+
+	useStepTracking( currentStepIndex, config.options?.callbacks?.onStepViewOnce );
 
 	return (
 		<>
@@ -157,39 +205,42 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				tourContainerRef={ tourContainerRef }
 				isMinimized={ isMinimized }
 			/>
-			<div className={ classNames } ref={ tourContainerRef }>
+			<div className={ classes } ref={ tourContainerRef }>
 				{ showOverlay() && <Overlay visible={ true } /> }
-				{ showSpotlight() && <Spotlight referenceElement={ referenceElement } /> }
+				{ showSpotlight() && (
+					<Spotlight
+						referenceElement={ referenceElement }
+						styles={ config.options?.effects?.spotlight?.styles }
+					/>
+				) }
 				<div
 					className="tour-kit-frame__container"
-					ref={ popperElementRef }
+					ref={ setPopperElement }
 					{ ...stepRepositionProps }
 				>
 					{ showArrowIndicator() && (
 						<div className="tour-kit-frame__arrow" data-popper-arrow { ...arrowPositionProps } />
 					) }
 					{ ! isMinimized ? (
-						<>
-							{ config.renderers.tourStep( {
-								steps: config.steps,
-								currentStepIndex,
-								onDismiss: handleDismiss,
-								onNext: handleNextStepProgression,
-								onPrevious: handlePreviousStepProgression,
-								onMinimize: handleMinimize,
-								setInitialFocusedElement,
-								onGoToStep: handleGoToStep,
-							} ) }
-						</>
+						<TourKitStep
+							config={ config }
+							steps={ config.steps }
+							currentStepIndex={ currentStepIndex }
+							onMinimize={ handleMinimize }
+							onDismiss={ handleDismiss }
+							onNext={ handleNextStepProgression }
+							onPrevious={ handlePreviousStepProgression }
+							onGoToStep={ handleGoToStep }
+							setInitialFocusedElement={ setInitialFocusedElement }
+						/>
 					) : (
-						<>
-							{ config.renderers.tourMinimized( {
-								steps: config.steps,
-								currentStepIndex,
-								onMaximize: handleMaximize,
-								onDismiss: handleDismiss,
-							} ) }
-						</>
+						<TourKitMinimized
+							config={ config }
+							steps={ config.steps }
+							currentStepIndex={ currentStepIndex }
+							onMaximize={ handleMaximize }
+							onDismiss={ handleDismiss }
+						/>
 					) }
 				</div>
 			</div>

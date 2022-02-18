@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
 import { updateStoredCardIsBackupComplete } from 'calypso/state/stored-cards/actions';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
@@ -80,8 +81,13 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredCard 
 						supportLink: (
 							<InlineSupportLink
 								showText={ false }
-								supportContext="payment_methods_manage"
+								supportContext="backup_payment_methods"
 								iconSize={ 16 }
+								supportLink={
+									isJetpackCloud()
+										? 'https://wordpress.com/support/payment/#backup-payment-methods'
+										: null
+								}
 							/>
 						),
 					},

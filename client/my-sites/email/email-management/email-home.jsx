@@ -13,13 +13,12 @@ import SectionHeader from 'calypso/components/section-header';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
-import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
+import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -83,8 +82,7 @@ class EmailManagementHome extends Component {
 
 			if ( ! domainHasEmail( selectedDomain ) ) {
 				return (
-					<EmailProvidersComparison
-						backPath={ domainManagementList( selectedSite.slug, null ) }
+					<EmailProvidersStackedComparison
 						comparisonContext="email-home-selected-domain"
 						selectedDomainName={ selectedDomainName }
 						source={ source }
@@ -110,10 +108,9 @@ class EmailManagementHome extends Component {
 
 		if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 			return (
-				<EmailProvidersComparison
+				<EmailProvidersStackedComparison
 					comparisonContext="email-home-single-domain"
 					selectedDomainName={ domainsWithNoEmail[ 0 ].name }
-					skipHeaderElement={ true }
 					source={ source }
 				/>
 			);
@@ -157,12 +154,10 @@ class EmailManagementHome extends Component {
 		const { translate } = this.props;
 
 		return this.renderContentWithHeader(
-			<>
-				<EmptyContent
-					title={ translate( 'You are not authorized to view this page' ) }
-					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-				/>
-			</>
+			<EmptyContent
+				title={ translate( 'You are not authorized to view this page' ) }
+				illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+			/>
 		);
 	}
 
@@ -176,7 +171,7 @@ class EmailManagementHome extends Component {
 	}
 
 	renderContentWithHeader( content ) {
-		const { translate, currentRoute, selectedSiteId, selectedSite } = this.props;
+		const { selectedSiteId, translate } = this.props;
 
 		return (
 			<Main wideLayout>
@@ -186,7 +181,7 @@ class EmailManagementHome extends Component {
 
 				<SidebarNavigation />
 
-				<EmailHeader currentRoute={ currentRoute } selectedSite={ selectedSite } />
+				<EmailHeader />
 
 				{ content }
 			</Main>

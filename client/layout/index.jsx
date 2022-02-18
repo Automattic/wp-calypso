@@ -39,7 +39,6 @@ import {
 	masterbarIsVisible,
 	getSidebarIsCollapsed,
 } from 'calypso/state/ui/selectors';
-import SupportUser from 'calypso/support/support-user';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
 import { handleScroll } from './utils';
@@ -209,6 +208,7 @@ class Layout extends Component {
 			<MasterbarComponent
 				section={ this.props.sectionGroup }
 				isCheckout={ this.props.sectionName === 'checkout' }
+				isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
 			/>
 		);
 	}
@@ -270,11 +270,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'keyboard-shortcuts' ) && (
-					<AsyncLoad require="calypso/lib/keyboard-shortcuts/menu" placeholder={ null } />
-				) }
 				{ this.renderMasterbar() }
-				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
@@ -316,10 +312,8 @@ class Layout extends Component {
 						placeholder={ null }
 						allowMobileRedirect
 						borderless={ false }
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						className={ classnames( 'floating-happychat-button', {
-							offset: loadInlineHelp,
-						} ) }
+						floating
+						withOffset={ loadInlineHelp }
 					/>
 				) }
 

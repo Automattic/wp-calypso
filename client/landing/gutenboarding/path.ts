@@ -13,17 +13,9 @@ const plansPaths = Plans.plansSlugs;
  * The first step (IntentGathering), which is found at the root route (/), is set as
  * `undefined`, as that's what matching our `path` pattern against a route with no explicit
  * step fragment will return.
- *
- * In the FSE Beta flow, the opt-in step becomes the first one,
- * and the root route (/) is automatically redirected to it.
- * In order to retain the IntentGathering step (which moves in second position),
- * we add a new FseBetaIntentGathering step, identical to the regular IntentGathering,
- * only used by the FSE Beta flow.
  */
 export const Step = {
 	IntentGathering: undefined,
-	FseBetaOptIn: 'beta',
-	FseBetaIntentGathering: 'title',
 	DesignSelection: 'design',
 	Style: 'style',
 	Features: 'features',
@@ -238,10 +230,13 @@ function useAnchorParameter( {
 	locationStateParamName,
 	sanitize,
 }: UseAnchorParameterType ): string | null {
-	const { state: locationState = {}, search } = useLocation< GutenLocationStateType >();
+	const locationResult = useLocation();
+	const locationState =
+		'state' in locationResult ? ( locationResult.state as Record< string, string > ) : undefined;
+	const search = 'search' in locationResult ? ( locationResult.search as string ) : undefined;
 
 	// Use location state if available
-	const locationStateParamValue = locationState[ locationStateParamName ];
+	const locationStateParamValue = locationState?.[ locationStateParamName ];
 	if ( locationState && locationStateParamValue ) {
 		return sanitize( locationStateParamValue );
 	}
