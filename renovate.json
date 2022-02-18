@@ -38,7 +38,8 @@
 			"prPriority": 1
 		},
 		{
-			"packagePatterns": [ "^webpack" ],
+			"groupName": [ "webpack packages" ],
+			"packagePatterns": [ "webpack" ],
 			"prPriority": 1
 		},
 		{
@@ -50,30 +51,38 @@
 			"prPriority": 1
 		},
 		{
-			"groupName": "eslint packages",
-			"matchPackagePatterns": [ "^eslint" ],
+			"extends": "packages:linters",
+			"groupName": "linters",
 			"prPriority": 1
 		},
 		{
-			"groupName": "Testing library",
-			"matchPackagePrefixes": [ "@testing-library" ],
+			"extends": "packages:unitTest",
+			"groupName": "unit test packages",
 			"prPriority": 1
+		},
+		{
+			"matchDepTypes": [ "devDependencies" ],
+			"matchUpdateTypes": [ "patch", "minor" ],
+			"groupName": "devDependencies (non-major)",
+			"excludePackagePatterns": [
+				"babel",
+				"typescript",
+				"@types/",
+				"webpack",
+				"storybook",
+				"eslint"
+			],
+			"prPriority": 0
 		}
 	],
-	"statusCheckVerify": true,
+	"dependencyDashboardTitle": "Renovate Dependency Updates",
 	"rangeStrategy": "bump",
-	"ignoreDeps": [ "jquery", "electron-builder" ],
+	"ignoreDeps": [ "electron-builder" ],
 	"labels": [ "Framework", "[Type] Task" ],
-	"lockFileMaintenance": {
-		"enabled": true,
-		"schedule": "every weekday"
-	},
 	"postUpdateOptions": [ "yarnDedupeHighest" ],
-	"prConcurrentLimit": 10,
-	"prHourlyLimit": 6,
+	"prConcurrentLimit": 20,
+	"prHourlyLimit": 10,
 	"semanticCommits": true,
 	"semanticCommitType": "chore",
-	"masterIssue": true,
-	"masterIssueTitle": "Renovate Dependency Updates",
 	"reviewers": [ "team:team-calypso-platform" ]
 }
