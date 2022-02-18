@@ -93,8 +93,8 @@ export interface WpcomStep extends Step {
 	meta: {
 		heading: string | null;
 		descriptions: {
-			desktop: string | null;
-			mobile: string | null;
+			desktop: string | React.ReactElement | null;
+			mobile: string | React.ReactElement | null;
 		};
 		imgSrc?: {
 			desktop?: {
@@ -112,12 +112,13 @@ export interface WpcomStep extends Step {
 export interface WpcomTourStepRendererProps extends TourStepRendererProps {
 	steps: WpcomStep[];
 }
-export interface WpcomCallbacks extends Callbacks {
-	onTourRate?: OnTourRateCallback; // called when rating the tour (for the variant that provides tour rating)
-}
 
 export interface WpcomOptions extends Options {
-	callbacks?: WpcomCallbacks;
+	tourRating?: {
+		enabled: boolean;
+		useTourRating?: () => 'thumbs-up' | 'thumbs-down' | undefined;
+		onTourRate?: ( rating: 'thumbs-up' | 'thumbs-down' ) => void;
+	};
 }
 
 export interface WpcomConfig extends Omit< Config, 'renderers' > {

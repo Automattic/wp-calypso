@@ -2,15 +2,25 @@ import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
+import { useTourKitContext } from '../../../index';
 import thumbsDown from '../icons/thumbs_down';
 import thumbsUp from '../icons/thumbs_up';
+import type { WpcomConfig } from '../../../index';
 
 const WpcomTourKitRating: React.FunctionComponent = () => {
+	const [ tempRating, setTempRating ] = useState< 'thumbs-up' | 'thumbs-down' >();
+	const context = useTourKitContext();
+	const config = ( context.config as unknown ) as WpcomConfig;
+	const tourRating = config.options?.tourRating?.useTourRating?.() ?? tempRating;
+
 	let isDisabled = false;
 
-	const [ tourRating, setTourRating ] = useState< 'thumbs-up' | 'thumbs-down' | null >( null );
+	if ( ! config.options?.tourRating?.enabled ) {
+		return null;
+	}
 
-	if ( ! isDisabled && tourRating ) {
+	// check is on tempRating to allow rerating in a restarted tour
+	if ( ! isDisabled && tempRating !== undefined ) {
 		isDisabled = true;
 	}
 
@@ -18,8 +28,14 @@ const WpcomTourKitRating: React.FunctionComponent = () => {
 		if ( isDisabled ) {
 			return;
 		}
-		isDisabled = true;
-		setTourRating( isThumbsUp ? 'thumbs-up' : 'thumbs-down' );
+
+		const rating = isThumbsUp ? 'thumbs-up' : 'thumbs-down';
+
+		if ( rating !== tourRating ) {
+			isDisabled = true;
+			setTempRating( rating );
+			config.options?.tourRating?.onTourRate?.( rating );
+		}
 	};
 
 	return (

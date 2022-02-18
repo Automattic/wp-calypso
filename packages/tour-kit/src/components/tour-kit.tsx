@@ -1,6 +1,7 @@
 // import { TourKitContextProvider } from './tour-kit-context';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import ErrorBoundary from '../error-boundary';
+import TourKitContextProvider from './tour-kit-context';
 import TourKitFrame from './tour-kit-frame';
 import type { Config } from '../types';
 
@@ -27,7 +28,9 @@ const TourKit: React.FunctionComponent< Props > = ( { config, __temp__className 
 
 	return (
 		<ErrorBoundary>
-			<div>{ createPortal( <TourKitFrame config={ config } />, portalParent ) }</div>
+			<TourKitContextProvider config={ config }>
+				<div>{ createPortal( <TourKitFrame config={ config } />, portalParent ) }</div>
+			</TourKitContextProvider>
 		</ErrorBoundary>
 	);
 };

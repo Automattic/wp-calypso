@@ -1,17 +1,12 @@
-/**
- * External Dependencies
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { WpcomTourKit, usePrefetchTourAssets } from '@automattic/tour-kit';
-import { isMobile } from '@automattic/viewport';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
-/**
- * Internal Dependencies
- */
 import getTourSteps from './tour-steps';
 import './style-tour.scss';
+import type { WpcomConfig } from '@automattic/tour-kit';
+import type { Rect, Placement } from '@popperjs/core';
 
 function LaunchWpcomWelcomeTour() {
 	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect( ( select ) => ( {
@@ -25,7 +20,7 @@ function LaunchWpcomWelcomeTour() {
 	const localeSlug = useLocale();
 
 	// Preload first card image (others preloaded after open state confirmed)
-	usePrefetchTourAssets( [ getTourSteps( localeSlug )[ 0 ] ] );
+	usePrefetchTourAssets( [ getTourSteps( localeSlug, false )[ 0 ] ] );
 
 	useEffect( () => {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
@@ -53,13 +48,11 @@ function WelcomeTour() {
 	const isWelcomeTourNext = () => {
 		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
 	};
-	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() ).filter(
-		( step ) => ! ( step.meta.isDesktopOnly && isMobile() )
-	);
+	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() );
 
-	const tourConfig = {
+	const tourConfig: WpcomConfig = {
 		steps: tourSteps,
-		closeHandler: ( steps, currentStepIndex, source ) => {
+		closeHandler: ( _steps, currentStepIndex, source ) => {
 			recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
 				is_gutenboarding: isGutenboarding,
 				slide_number: currentStepIndex + 1,
@@ -68,6 +61,21 @@ function WelcomeTour() {
 			setShowWelcomeGuide( false, { openedManually: false } );
 		},
 		options: {
+			tourRating: {
+				enabled: true,
+				useTourRating: () => {
+					return useSelect( ( select ) =>
+						select( 'automattic/wpcom-welcome-guide' ).getTourRating()
+					);
+				},
+				onTourRate: ( rating ) => {
+					dispatch( 'automattic/wpcom-welcome-guide' ).setTourRating( rating );
+					recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
+						thumbs_up: rating === 'thumbs-up',
+						is_gutenboarding: false,
+					} );
+				},
+			},
 			callbacks: {
 				onMinimize: ( currentStepIndex ) => {
 					recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
@@ -110,9 +118,14 @@ function WelcomeTour() {
 					() => ( {
 						name: 'offset',
 						options: {
-							offset: ( { placement, reference } ) => {
+							offset: ( { placement, reference }: { placement: Placement; reference: Rect } ) => {
 								if ( placement === 'bottom' ) {
 									const boundary = document.querySelector( '.edit-post-header' );
+
+									if ( ! boundary ) {
+										return;
+									}
+
 									const boundaryRect = boundary.getBoundingClientRect();
 									const boundaryBottomY = boundaryRect.height + boundaryRect.y;
 									const referenceBottomY = reference.height + reference.y;
