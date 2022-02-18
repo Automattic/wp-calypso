@@ -29,18 +29,9 @@ To accelerate development by being a force for continuous improvement, and help 
 
 ## What is tested?
 
-Each test file (referred to as `spec`) should be assigned to at least one group.
-This ensures that [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups) is able to locate and run the appropriate set of test specs for the build configuration. **Failure to add a group will result in the spec not running as part of CI.**
+These end-to-end test focus on several key areas:
 
-The following groups are available as of this time:
-
-| Group             | Remarks                                                                                  |
-| ----------------- | ---------------------------------------------------------------------------------------- |
-| `calypso-pr`      | Run for every commit to any feature branch in this repository.                           |
-| `calypso-release` | Run for every PR merged into `trunk` in this repository.                                 |
-| `gutenberg`       | Editor-focused specs run on regular cadence.                                             |
-| `coblocks`        | Block-focused specs for our fork of [CoBlocks](https://wordpress.org/plugins/coblocks/). |
-| `i18n`            | Specs verifying internationalized strings.                                               |
-| `p2`              | Specs for the internal P2 system.                                                        |
-| `quarantined`     | Specs that need additional work.                                                         |
-| `legal`           | Specs for the marketing and legal team.                                                  |
+- Calypso features.
+- interaction between Calypso and Gutenberg editor.
+- internationalization and localization.
+- Gutenberg blocks added by WordPress.com.

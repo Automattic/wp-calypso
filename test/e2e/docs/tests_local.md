@@ -9,15 +9,15 @@
 <!-- TOC -->
 
 - [Running tests on your machine](#running-tests-on-your-machine)
-    - [Prerequisites](#prerequisites)
-    - [Running tests](#running-tests)
-        - [Individual spec files](#individual-spec-files)
-        - [Test Group](#test-group)
-    - [Advanced techniques](#advanced-techniques)
-        - [Save authentication cookies](#save-authentication-cookies)
-        - [Target local webapp](#target-local-webapp)
-        - [Debug mode](#debug-mode)
-            - [Notes on TypeScript](#notes-on-typescript)
+  - [Prerequisites](#prerequisites)
+  - [Running tests](#running-tests)
+    - [Individual spec files](#individual-spec-files)
+    - [Test Group](#test-group)
+  - [Advanced techniques](#advanced-techniques)
+    - [Save authentication cookies](#save-authentication-cookies)
+    - [Target local webapp](#target-local-webapp)
+    - [Debug mode](#debug-mode)
+      - [Notes on TypeScript](#notes-on-typescript)
 
 <!-- /TOC -->
 

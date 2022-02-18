@@ -9,10 +9,10 @@
 <!-- TOC -->
 
 - [Running tests on CI](#running-tests-on-ci)
-    - [Feature/Test groups](#featuretest-groups)
-    - [Feature branch](#feature-branch)
-    - [Trunk](#trunk)
-    - [Scheduled build configurations](#scheduled-build-configurations)
+  - [Feature/Test groups](#featuretest-groups)
+  - [Feature branch](#feature-branch)
+  - [Trunk](#trunk)
+  - [Scheduled build configurations](#scheduled-build-configurations)
 
 <!-- /TOC -->
 
@@ -36,7 +36,7 @@ The following groups are available as of this time:
 | `i18n`            | Specs verifying internationalized strings.                                               |
 | `p2`              | Specs for the internal P2 system.                                                        |
 | `quarantined`     | Specs that need additional work.                                                         |
-| `legal`           | Specs for the marketing and legal team.         
+| `legal`           | Specs for the marketing and legal team.                                                  |
 
 ## Feature branch
 
@@ -47,7 +47,6 @@ Anytime a new branch is pushed to GitHub it also becomes available in TeamCity.
 | E2E Tests (mobile)       | Yes                      |
 | E2E Tests (desktop)      | Yes                      |
 | Pre-Release Tests        | No                       |
-
 
 ## Trunk
 

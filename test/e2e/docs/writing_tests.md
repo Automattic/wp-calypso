@@ -9,15 +9,15 @@
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-    - [Example test spec](#example-test-spec)
-    - [Quick start](#quick-start)
-    - [Child-level describe blocks](#child-level-describe-blocks)
-    - [Test step](#test-step)
-    - [Hooks](#hooks)
-    - [Block Smoke Testing](#block-smoke-testing)
-        - [Overview](#overview)
-        - [How To](#how-to)
-        - [Examples](#examples)
+  - [Example test spec](#example-test-spec)
+  - [Quick start](#quick-start)
+  - [Child-level describe blocks](#child-level-describe-blocks)
+  - [Test step](#test-step)
+  - [Hooks](#hooks)
+  - [Block Smoke Testing](#block-smoke-testing)
+    - [Overview](#overview)
+    - [How To](#how-to)
+    - [Examples](#examples)
 
 <!-- /TOC -->
 
@@ -161,19 +161,19 @@ Using child-level `describe` blocks, group test cases for a feature:
 ```typescript
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
-	describe( 'Use Feature with valid string', function() {
+describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
+	describe( 'Use Feature with valid string', function () {
 		// Valid string test steps
-	});
+	} );
 
-	describe( 'Use Feature with invalid string', function() {
+	describe( 'Use Feature with invalid string', function () {
 		// Invalid string test steps
-	});
+	} );
 
-	describe( 'Use Feature with a number', function() {
+	describe( 'Use Feature with a number', function () {
 		// Number instead of string test steps
-	});
-})
+	} );
+} );
 ```
 
 Another way to use child-level `describe` blocks is to group distinct parts of an overall flow:
@@ -181,19 +181,19 @@ Another way to use child-level `describe` blocks is to group distinct parts of a
 ```typescript
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Feature' ), function() {
-	describe( 'Set up feature', function() {
+describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
+	describe( 'Set up feature', function () {
 		// Steps to set up the feature under test
-	});
+	} );
 
-	describe( 'Test feature', function() {
+	describe( 'Test feature', function () {
 		// Interact and test the feature
-	});
+	} );
 
-	describe( 'Turn off feature', function() {
+	describe( 'Turn off feature', function () {
 		// Test deactivating the feature
-	});
-})
+	} );
+} );
 ```
 
 ## Test step
