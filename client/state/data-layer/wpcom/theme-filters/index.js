@@ -21,7 +21,8 @@ const fetchFilters = ( action ) =>
 	);
 
 const storeFilters = ( action, data ) => {
-	const filters = action.isFse ? data : omit( data, 'feature.full-site-editing' );
+	// Don't show FSE themes to non-FSE sites until switching to a FSE theme activates FSE.
+	const filters = action.isCoreFse ? data : omit( data, 'feature.full-site-editing' );
 	return { type: THEME_FILTERS_ADD, filters };
 };
 

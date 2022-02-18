@@ -77,7 +77,7 @@ export default function DesignPickerStep( props ) {
 	} = useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
 	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
 	const themeFilters = isFSEEligible
-		? 'auto-loading-homepage,block-templates'
+		? 'auto-loading-homepage,full-site-editing'
 		: 'auto-loading-homepage';
 
 	const { data: apiThemes = [] } = useThemeDesignsQuery(

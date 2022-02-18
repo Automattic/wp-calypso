@@ -9,7 +9,7 @@ const FseThemes = localize( ( { translate, ...restProps } ) => {
 		'fse-themes',
 		() =>
 			wpcom.req.get( '/themes', {
-				filter: 'block-templates',
+				filter: 'full-site-editing',
 				number: 50,
 				tier: '',
 				apiVersion: '1.2',

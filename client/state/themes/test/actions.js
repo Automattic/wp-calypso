@@ -421,9 +421,9 @@ describe( 'actions', () => {
 			taxonomies: {
 				theme_feature: [
 					{
-						name: 'Block Templates',
-						slug: 'block-templates',
-						term_id: '230717188',
+						name: 'Full Site Editing',
+						slug: 'full-site-editing',
+						term_id: '686035051',
 					},
 				],
 			},
