@@ -9,15 +9,15 @@
 <!-- TOC -->
 
 - [Running tests on your machine](#running-tests-on-your-machine)
-  - [Prerequisites](#prerequisites)
-  - [Running tests](#running-tests)
-    - [Individual spec files](#individual-spec-files)
-    - [Test Group](#test-group)
-  - [Advanced techniques](#advanced-techniques)
-    - [Save authentication cookies](#save-authentication-cookies)
-    - [Target local webapp](#target-local-webapp)
-    - [Debug mode](#debug-mode)
-      - [Notes on TypeScript](#notes-on-typescript)
+    - [Prerequisites](#prerequisites)
+    - [Running tests](#running-tests)
+        - [Individual spec files](#individual-spec-files)
+        - [Test Group](#test-group)
+    - [Advanced techniques](#advanced-techniques)
+        - [Save authentication cookies](#save-authentication-cookies)
+        - [Target local webapp](#target-local-webapp)
+        - [Debug mode](#debug-mode)
+            - [Notes on TypeScript](#notes-on-typescript)
 
 <!-- /TOC -->
 
@@ -42,7 +42,7 @@ yarn workspace @automattic/calypso-e2e build --watch
 Specify the file(s) directly:
 
 ```
-yarn jest specs/specs-playwright/wp-support__popover.ts specs/specs-playwright/wp-seo__preview-spec.js
+yarn jest <path_to-File_1> <path_to_file_2>
 ```
 
 ### Test Group
@@ -100,7 +100,7 @@ Refer to the [Debugging](debugging.md) page for techniques on running a test in 
 
 #### Notes on TypeScript
 
-Because Jest, the test runner, is already to configured to use Babel as a transpiler before executing scripts, there is no extra pre-build command you need to execute to run TypeScript test scripts. You can simply just have Jest run all the scripts in the `specs/specs-playwright` directory, and it will automatically take care of running both `.js` and `.ts` files.
+Because Jest, the test runner, is already to configured to use Babel as a transpiler before executing scripts, there is no extra pre-build command you need to execute to run TypeScript test scripts. You can simply just have Jest run all the scripts in the `specs` directory, and it will automatically take care of running both `.js` and `.ts` files.
 
 Please note: [Babel does not do type-checking as it runs](https://jestjs.io/docs/getting-started#using-typescript), so if you want to do a specific type-check for your test scripts, you can use the local `tsconfig.json` by running `yarn tsc --project ./tsconfig.json`. We run this as part of the Playwright CI script, so all types will be checked before tests are run on TeamCity.
 
