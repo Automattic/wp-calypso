@@ -46,11 +46,10 @@ const USPS: React.FC< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
+
 	const planDisplayCost = useSelector( ( state ) =>
-		getProductDisplayCost(
-			state,
-			billingPeriod === IntervalLength.ANNUALLY ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY
-		)
+		getProductDisplayCost( state, isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY )
 	);
 
 	const filteredUSPS = [
@@ -113,7 +112,9 @@ const USPS: React.FC< Props > = ( {
 					{
 						id: 'support',
 						image: <Gridicon icon="chat" size={ 16 } />,
-						text: translate( 'Live chat support 24x7' ),
+						text: isAnnualPeriod
+							? translate( 'Live chat support 24x7' )
+							: translate( 'Unlimited Email Support' ),
 						eligibilities: [ 'needs-upgrade', 'marketplace' ],
 					},
 			  ]
