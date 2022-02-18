@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import { useRtl } from 'i18n-calypso';
 import { Children, useState, useLayoutEffect, useRef, useCallback } from 'react';
-import { SwipeableProvider } from './context';
 
 import './style.scss';
 
@@ -294,7 +293,7 @@ export const Swipeable = ( {
 							} ) }
 							key={ `page-${ index }` }
 						>
-							<SwipeableProvider children={ child } isInCurrentPage={ index === currentPage } />
+							{ child }
 						</div>
 					) ) }
 				</div>
