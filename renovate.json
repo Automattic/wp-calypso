@@ -85,7 +85,7 @@
 	"ignoreDeps": [ "electron-builder" ],
 	"labels": [ "Framework", "[Type] Task" ],
 	"postUpdateOptions": [ "yarnDedupeHighest" ],
-	"prConcurrentLimit": 20,
+	"prConcurrentLimit": 18,
 	"prHourlyLimit": 10,
 	"semanticCommits": true,
 	"semanticCommitType": "chore",
