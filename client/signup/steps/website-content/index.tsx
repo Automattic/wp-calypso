@@ -162,7 +162,9 @@ export default function WrapperWebsiteContent(
 		if ( ! isLoadingSiteInformation ) {
 			if ( ! isDifmLitePurchased ) {
 				debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
-				page( `/start/do-it-for-me` );
+				// Due to a bug related to a  race condition this redirection is currently disabled
+				// Read pdh1Xd-xv-p2#comment-869 for more context (Submission loop with existing site)
+				// page( `/start/do-it-for-me` );
 			} else if ( isWebsiteContentSubmitted ) {
 				debug( 'Website content content already submitted, redirecting to home' );
 				page( `/home/${ queryObject.siteSlug }` );
