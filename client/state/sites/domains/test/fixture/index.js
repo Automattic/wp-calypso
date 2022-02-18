@@ -19,6 +19,7 @@ export const DOMAIN_EXPIRED_ERROR_MESSAGE = 'Domain expired message';
 
 // testing primary-domain
 export const DOMAIN_PRIMARY = {
+	aftermarketAuction: false,
 	aRecordsRequiredForMapping: undefined,
 	autoRenewalDate: '2017-02-07T00:00:00+00:00',
 	autoRenewing: true,
@@ -101,6 +102,7 @@ export const DOMAIN_PRIMARY = {
 
 // testing not-primary-domain
 export const DOMAIN_NOT_PRIMARY = {
+	aftermarketAuction: false,
 	aRecordsRequiredForMapping: undefined,
 	autoRenewalDate: '',
 	autoRenewing: false,
@@ -189,6 +191,7 @@ export const ERROR_MESSAGE_RESPONSE =
 	'There was a problem fetching site domains. Please try again later or contact support.';
 
 export const REST_API_SITE_DOMAIN_FIRST = {
+	aftermarket_auction: false,
 	auto_renewal_date: '2017-02-07T00:00:00+00:00',
 	auto_renewing: 1,
 	admin_email: null,
@@ -255,6 +258,7 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 };
 
 export const REST_API_SITE_DOMAIN_SECOND = {
+	aftermarket_auction: false,
 	auto_renewal_date: '',
 	auto_renewing: false,
 	admin_email: null,
