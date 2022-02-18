@@ -281,9 +281,13 @@ object ValidateRenovateConfig : BuildType({
 
 	steps {
 		bashNodeScript {
-			name = "Validate Configuration"
+			name = "Run renovate config validator"
 			scriptContent = """
-				echo "Hello, world"
+				# Run renovate-config-validator from the latest version of renovate
+				# in a temporary environment (to avoid installing every package.)
+				# We use the latest version because the managed renovate service
+				# controls the renovate version we use.
+				yarn dlx -p renovate renovate-config-validator
 			"""
 		}
 	}
