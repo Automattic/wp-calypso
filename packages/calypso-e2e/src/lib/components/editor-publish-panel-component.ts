@@ -1,5 +1,8 @@
 import { Page, Frame } from 'playwright';
 
+// Options for Playwright's Frame.click() method.
+type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
+
 const panel = 'div.editor-post-publish-panel';
 const selectors = {
 	// Pre-publish
@@ -10,6 +13,7 @@ const selectors = {
 	postPublishClosePanelButton: `${ panel } button(type="button"]:has(svg[aria-hidden="true"])`, // aria-label changes depending on the UI language used.
 	viewArticleButton: `${ panel } a:text-matches("View (Post|Page)", "i")`,
 	articleURLField: `${ panel } input[readonly]`,
+	addNewButton: `${ panel } .post-publish-panel__postpublish-buttons > a`,
 };
 
 /**
@@ -31,28 +35,6 @@ export class EditorPublishPanelComponent {
 	}
 
 	/**
-	 * Publish or schedule the article.
-	 *
-	 * @returns {URL} URL to the published article.
-	 */
-	async publish(): Promise< URL > {
-		await this.frame.click( selectors.publishButton );
-
-		return await this.getPublishedURL();
-	}
-
-	/**
-	 * Returns the URL of the published article.
-	 *
-	 * @returns {URL} URL to the published article.
-	 */
-	async getPublishedURL(): Promise< URL > {
-		const locator = this.frame.locator( selectors.articleURLField );
-		const publishedURL = ( await locator.getAttribute( 'value' ) ) as string;
-		return new URL( publishedURL );
-	}
-
-	/**
 	 * Closes the panel regardless of the state of the panel.
 	 *
 	 * There exist two potential states for the panel:
@@ -67,5 +49,36 @@ export class EditorPublishPanelComponent {
 		const selector = `${ selectors.cancelPublishButton }, ${ selectors.postPublishClosePanelButton }`;
 		const locator = this.frame.locator( selector );
 		await locator.click();
+	}
+
+	/* Pre-publish checklist*/
+
+	/**
+	 * Publish or schedule the article.
+	 */
+	async publish(): Promise< void > {
+		await this.frame.click( selectors.publishButton );
+	}
+
+	/* Post-publish state */
+
+	/**
+	 * Returns the URL of the published article.
+	 *
+	 * @returns {string} URL to the published article.
+	 */
+	async getPublishedURL(): Promise< string > {
+		const locator = this.frame.locator( selectors.articleURLField );
+		const publishedURL = ( await locator.getAttribute( 'value' ) ) as string;
+		return publishedURL;
+	}
+
+	/**
+	 * Clicks on the Add New Page/Post button in the post-publish state.
+	 *
+	 * @param {ClickOptions} options Options to be forwarded to Frame.click().
+	 */
+	async addNew( options: ClickOptions = {} ): Promise< void > {
+		await this.frame.click( selectors.addNewButton, options );
 	}
 }

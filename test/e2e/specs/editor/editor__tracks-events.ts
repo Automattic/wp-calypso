@@ -1,8 +1,12 @@
 /**
- * @group gutenberg
  */
 
-import { DataHelper, GutenbergEditorPage, TestAccount } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	GutenbergEditorPage,
+	TestAccount,
+	EditorPublishPanelComponent,
+} from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { getLatestEvent } from '../../lib/gutenberg/tracking/playwright-utils';
 
@@ -31,7 +35,8 @@ describe( DataHelper.createSuiteTitle( `Tracks Events for Post Editor` ), functi
 		await gutenbergEditorPage.publish();
 		// Get the frame before creating the new post because we won't be able to access it once navigation starts
 		const frame = await gutenbergEditorPage.waitUntilLoaded();
-		await gutenbergEditorPage.postPublishAddNewItem( { noWaitAfter: true } );
+		const editorPublishPanelComponent = new EditorPublishPanelComponent( page, frame );
+		await editorPublishPanelComponent.addNew( { noWaitAfter: true } );
 
 		expect( await getLatestEvent( frame ) ).toMatchObject( [
 			'wpcom_block_editor_post_publish_add_new_click',

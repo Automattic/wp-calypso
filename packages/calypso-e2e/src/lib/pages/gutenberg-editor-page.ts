@@ -5,7 +5,6 @@ import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
 import { NavbarComponent, EditorPublishPanelComponent } from '../components';
 
-type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
 type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 
 const selectors = {
@@ -42,15 +41,12 @@ const selectors = {
 	settingsPanel: '.interface-complementary-area',
 
 	// Publish panel (including post-publish)
-	publishPanel: '.editor-post-publish-panel',
 	// With the selector below, we're targeting both "View Post" buttons: the one
 	// in the post-publish pane, and the one that pops up in the bottom-left
 	// corner. This addresses the bug where the post-publish panel is immediately
 	// closed when publishing with certain blocks on the editor canvas.
 	// See https://github.com/Automattic/wp-calypso/issues/54421.
-	viewButton: 'a:text-matches("View (Post|Page)", "i")',
-	addNewButton: '.editor-post-publish-panel a:text-matches("Add a New P(ost|age)")',
-	closePublishPanel: 'button[aria-label="Close panel"]',
+	toastViewPostLink: 'a:text-matches("View (Post|Page)", "i")',
 
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
@@ -409,12 +405,17 @@ export class GutenbergEditorPage {
 		await frame.click( initialPublishButton );
 
 		const editorPublishPanelComponent = new EditorPublishPanelComponent( this.page, frame );
-		const publishedURL = await editorPublishPanelComponent.publish();
+		await editorPublishPanelComponent.publish();
+
+		const publishedURL = await Promise.race( [
+			editorPublishPanelComponent.getPublishedURL(),
+			this.getPublishedURL(),
+		] );
 
 		if ( visit ) {
-			await this.visitPublishedPost( publishedURL.href );
+			await this.visitPublishedPost( publishedURL );
 		}
-		return publishedURL.href;
+		return publishedURL;
 	}
 
 	/**
@@ -466,28 +467,8 @@ export class GutenbergEditorPage {
 	async getPublishedURL(): Promise< string > {
 		const frame = await this.getEditorFrame();
 
-		const viewPublishedArticleButton = await frame.waitForSelector( selectors.viewButton );
+		const viewPublishedArticleButton = await frame.waitForSelector( selectors.toastViewPostLink );
 		return ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
-	}
-
-	/**
-	 * Closes the post-publish panel.
-	 */
-	async closePostPublishPanel(): Promise< void > {
-		const frame = await this.getEditorFrame();
-
-		await frame.click( selectors.closePublishPanel );
-	}
-
-	/**
-	 * Creates a new page/post using the post-publish panel.
-	 *
-	 * @param options will be forwarded to the button click action
-	 */
-	async postPublishAddNewItem( options: ClickOptions = {} ): Promise< void > {
-		const frame = await this.getEditorFrame();
-		await frame.waitForSelector( selectors.publishPanel );
-		await frame.click( selectors.addNewButton, options );
 	}
 
 	/**
@@ -530,13 +511,7 @@ export class GutenbergEditorPage {
 			await dialog.accept();
 		} );
 
-		const frame = await this.getEditorFrame();
-
-		console.log( url );
-		await Promise.all( [
-			this.page.waitForNavigation( { url: url, waitUntil: 'domcontentloaded' } ),
-			frame.click( selectors.viewButton ),
-		] );
+		await this.page.goto( url, { waitUntil: 'domcontentloaded' } );
 
 		await reloadAndRetry( this.page, confirmPostShown );
 

@@ -74,7 +74,6 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 
 		it( 'Publish post', async function () {
 			postURL = await gutenbergEditorPage.publish();
-			await gutenbergEditorPage.closePostPublishPanel();
 		} );
 
 		it( `View post as ${ accountName }`, async function () {

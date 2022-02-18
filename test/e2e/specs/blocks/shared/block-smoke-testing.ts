@@ -62,6 +62,9 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		describe( 'Publishing the post', function () {
 			it( 'Publish and visit post', async function () {
+				// If the post is not saved as draft, some blocks are not rendered and the
+				// post-publish panel may be dismissed.
+				await gutenbergEditorPage.saveDraft();
 				await gutenbergEditorPage.publish( { visit: true } );
 				publishedPostContext = {
 					page: page,
