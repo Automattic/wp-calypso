@@ -17,13 +17,16 @@
 		{
 			"extends": "monorepo:react",
 			"prPriority": 2,
-			"ignorePaths": [ "packages/interpolate-components" ],
-			"packagePatterns": [ "react" ]
+			"ignorePaths": [ "packages/interpolate-components" ]
 		},
 		{
 			"extends": [ "monorepo:react", ":disablePeerDependencies" ],
 			"prPriority": 2,
 			"includePaths": [ "packages/interpolate-components" ]
+		},
+		{
+			"packagePatterns": [ "react" ],
+			"prPriority": 1
 		},
 		{
 			"packagePatterns": [ "redux", "react-redux" ],
