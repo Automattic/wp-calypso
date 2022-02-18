@@ -2,11 +2,12 @@ import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 
 const SpotlightContainer = styled.div`
-	background-color: var( --studio-gray-0 );
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 20px;
+	padding: 30px;
+	border: 1px solid var( --studio-gray-5 );
+	border-radius: var( --radius-2 );
 `;
 
 const SpotlightContent = styled.div`
