@@ -1,6 +1,6 @@
 import { Page } from 'playwright';
 
-export const selectors = {
+const selectors = {
 	start: '.woocommerce .empty-content button:text("Start a new store")',
 	installer: '.is-woocommerce-install',
 	learnMore: '.woocommerce span:text("Learn more")',
