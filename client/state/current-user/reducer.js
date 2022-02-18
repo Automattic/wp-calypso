@@ -48,7 +48,7 @@ export const user = ( state = null, action ) => {
 export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
-			return action.user.meta.data?.flags?.active_flags ?? [];
+			return action.user.meta?.data?.flags?.active_flags ?? [];
 	}
 
 	return state;

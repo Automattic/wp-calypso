@@ -5,7 +5,7 @@
  * @returns {?number}        Current user ID
  */
 export function getCurrentUserId( state ) {
-	return state.currentUser.id;
+	return state.currentUser?.id;
 }
 
 /**
