@@ -19,7 +19,7 @@
 	"bin": "./cli.js",
 	"dependencies": {
 		"debug": "^4.3.3",
-		"object-treeify": "^1.1.23",
+		"object-treeify": "^1.1.33",
 		"yargs": "^17.0.1"
 	},
 	"devDependencies": {

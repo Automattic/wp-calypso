@@ -523,7 +523,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     debug: ^4.3.3
-    object-treeify: ^1.1.23
+    object-treeify: ^1.1.33
     yargs: ^17.0.1
   bin:
     effective-module-tree: ./cli.js
@@ -27122,10 +27122,10 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"object-treeify@npm:^1.1.23":
-  version: 1.1.23
-  resolution: "object-treeify@npm:1.1.23"
-  checksum: d37aadface441443fc39edf4592ccb82ab5e66070c4fbec824c6251faaf2f6ec47b6a7f2d745888a99366e9275be9bd54f1cf4a472874a752bc137b9603e01b5
+"object-treeify@npm:^1.1.33":
+  version: 1.1.33
+  resolution: "object-treeify@npm:1.1.33"
+  checksum: 5b735ac552200bf14f9892ce58295303e8d15a8cc7a0fd4fe6ff99923ab0c196fb70a870ab2a0eefc6820c4acb49e614b88c72d344b9c6bd22584a3efbd386fe
   languageName: node
   linkType: hard
 
