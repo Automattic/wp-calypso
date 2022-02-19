@@ -26594,12 +26594,17 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.2.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.6":
-  version: 2.6.6
-  resolution: "node-fetch@npm:2.6.6"
+"node-fetch@npm:^2.2.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.6, node-fetch@npm:^2.6.7":
+  version: 2.6.7
+  resolution: "node-fetch@npm:2.6.7"
   dependencies:
     whatwg-url: ^5.0.0
-  checksum: f9b5c8789c7bcd393a2fb70d752e36d5b5e84eb52bd5bffceb4fb64ac81dce1a1f55ca023a990e51bbf8594fc502ea9bea3004037e6eab65205cd84e8af94fc9
+  peerDependencies:
+    encoding: ^0.1.0
+  peerDependenciesMeta:
+    encoding:
+      optional: true
+  checksum: fcae80f5ac52fbf5012f5e19df2bd3915e67d3b3ad51cb5942943df2238d32ba15890fecabd0e166876a9f98a581ab50f3f10eb942b09405c49ef8da36b826c7
   languageName: node
   linkType: hard
 
@@ -37928,7 +37933,7 @@ testarmada-magellan@11.0.10:
     mkdirp: ^1.0.4
     ncp: ^2.0.0
     nock: ^12.0.3
-    node-fetch: ^2.6.6
+    node-fetch: ^2.6.7
     npm-run-all: ^4.1.5
     photon: "workspace:^"
     postcss: ^8.4.5
