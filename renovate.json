@@ -78,9 +78,8 @@
 			"prPriority": 2
 		},
 		{
+			"groupName": "dev dependencies",
 			"matchDepTypes": [ "devDependencies" ],
-			"matchUpdateTypes": [ "patch", "minor" ],
-			"groupName": "dev dependencies (non-major)",
 			"excludePackagePatterns": [
 				"babel",
 				"typescript",
@@ -89,6 +88,10 @@
 				"storybook",
 				"eslint"
 			],
+			"prPriority": 1
+		},
+		{
+			"groupName": "dev dependencies",
 			"matchPackageNames": [ "yargs", "commander", "chalk", "colors" ],
 			"prPriority": 1
 		},
