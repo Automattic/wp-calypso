@@ -17794,16 +17794,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"exports-loader@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "exports-loader@npm:0.7.0"
-  dependencies:
-    loader-utils: ^1.1.0
-    source-map: 0.5.0
-  checksum: 364087b572d4370f4032131bebbe18e32ffb31bfcc62a09aa215c58d6c70736245cc335062c10670301852a5268fe18749a69a236ca95612dc8cc64b83eabb41
-  languageName: node
-  linkType: hard
-
 "express-async-handler@npm:^1.1.4":
   version: 1.1.4
   resolution: "express-async-handler@npm:1.1.4"
@@ -33739,13 +33729,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"source-map@npm:0.5.0":
-  version: 0.5.0
-  resolution: "source-map@npm:0.5.0"
-  checksum: f441da53fee065efeb242387867f0be566ee84141adb94cd62690b8e6574fa6bd8fac1b9b9823f00ae4537ebd7df9fb9bca707cef96b572eca48d8b0906bbbc6
-  languageName: node
-  linkType: hard
-
 "source-map@npm:0.5.6":
   version: 0.5.6
   resolution: "source-map@npm:0.5.6"
@@ -35176,7 +35159,7 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"terser@npm:^5.3.4, terser@npm:^5.5.1, terser@npm:^5.7.2":
+"terser@npm:^5.3.4, terser@npm:^5.7.2":
   version: 5.8.0
   resolution: "terser@npm:5.8.0"
   dependencies:
@@ -37892,8 +37875,6 @@ testarmada-magellan@11.0.10:
     "@wordpress/is-shallow-equal": ^4.2.1
     "@wordpress/jest-preset-default": ^7.1.3
     "@wordpress/url": ^3.3.1
-    autoprefixer: ^10.2.5
-    babel-jest: ^27.3.1
     babel-loader: ^8.2.3
     backstopjs: 5.1.0
     browserslist: ^4.16.0
@@ -37907,7 +37888,6 @@ testarmada-magellan@11.0.10:
     chroma-js: ^2.1.2
     concurrently: ^5.1.0
     config: ^3.3.6
-    core-js-bundle: ^3.6.4
     css-loader: ^6.5.1
     debug: ^4.3.3
     doctrine: ^3.0.0
@@ -37926,24 +37906,20 @@ testarmada-magellan@11.0.10:
     eslint-plugin-react-hooks: ^4.3.0
     eslint-plugin-wpcalypso: "workspace:^"
     eslint-plugin-you-dont-need-lodash-underscore: ^6.12.0
-    exports-loader: ^0.7.0
     fsevents: ^2.3.2
     gettext-parser: ^4.0.3
     glob: ^7.1.6
     globby: ^10.0.2
     gzip-size: ^6.0.0
-    html-loader: ^0.5.5
     husky: ^7.0.4
     i18n-calypso: "workspace:^"
     i18n-calypso-cli: "workspace:^"
-    ignore-loader: ^0.1.2
     jest: ^27.3.1
     jest-environment-jsdom: ^27.3.1
     jest-teamcity: ^1.9.0
     loader-utils: ^1.2.3
     lodash: ^4.17.21
     lunr: ^2.3.8
-    mini-css-extract-plugin: ^1.6.2
     mixedindentlint: ^1.2.0
     mkdirp: ^1.0.4
     ncp: ^2.0.0
@@ -37955,7 +37931,6 @@ testarmada-magellan@11.0.10:
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
     prettier: "npm:wp-prettier@2.2.1-beta-1"
-    qs: ^6.9.1
     react: ^17.0.2
     react-dom: ^17.0.2
     readline-sync: ^1.4.10
@@ -37972,10 +37947,7 @@ testarmada-magellan@11.0.10:
     source-map: ^0.7.3
     stackframe: ^1.1.1
     stacktrace-gps: ^3.0.3
-    style-loader: ^1.2.1
     stylelint: ^13.13.1
-    terser: ^5.5.1
-    terser-webpack-plugin: ^5.2.4
     tslib: ^2.3.0
     typescript: ^4.5.5
     webpack: ^5.68.0
