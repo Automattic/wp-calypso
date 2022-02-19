@@ -25,10 +25,12 @@
 			"includePaths": [ "packages/interpolate-components" ]
 		},
 		{
-			"matchPackagePatterns": [ "react" ],
+			"groupName": "react-related packages",
+			":matchPackagePatterns": [ "react" ],
 			"prPriority": 1
 		},
 		{
+			"groupName": "redux-related packages",
 			"matchPackagePatterns": [ "redux" ],
 			"matchPackageNames": [ "react-redux" ],
 			"prPriority": 2
@@ -53,6 +55,7 @@
 				"css-loader"
 			],
 			"matchPackagePatterns": [ "webpack", "terser" ],
+			"excludePackagePatterns": [ "^@storybook" ],
 			"prPriority": 2
 		},
 		{
@@ -71,12 +74,13 @@
 		{
 			"extends": "packages:unitTest",
 			"groupName": "unit test packages",
+			"matchPackagePatterns": [ "jest", "chai", "mocha", "mock-fs" ],
 			"prPriority": 2
 		},
 		{
 			"matchDepTypes": [ "devDependencies" ],
 			"matchUpdateTypes": [ "patch", "minor" ],
-			"groupName": "devDependencies (non-major)",
+			"groupName": "dev dependencies (non-major)",
 			"excludePackagePatterns": [
 				"babel",
 				"typescript",
@@ -85,7 +89,12 @@
 				"storybook",
 				"eslint"
 			],
+			"matchPackageNames": [ "yargs", "commander", "chalk", "colors" ],
 			"prPriority": 1
+		},
+		{
+			"groupName": "d3",
+			"matchPackagePrefixes": [ "d3-" ]
 		}
 	],
 	"dependencyDashboardTitle": "Renovate Dependency Updates",
