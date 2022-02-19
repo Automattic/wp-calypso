@@ -44,7 +44,14 @@
 		},
 		{
 			"groupName": [ "webpack packages" ],
-			"matchPackageNames": [ "style-loader", "html-loader", "exports-loader", "loader-utils" ],
+			"matchPackageNames": [
+				"style-loader",
+				"html-loader",
+				"exports-loader",
+				"loader-utils",
+				"postcss-loader",
+				"css-loader"
+			],
 			"matchPackagePatterns": [ "webpack", "terser" ],
 			"prPriority": 2
 		},
