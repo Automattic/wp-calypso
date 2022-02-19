@@ -120,13 +120,13 @@ export class EditorSettingsSidebarComponent {
 		// will not be actionable until then.
 		const popoverHandle = await this.frame.waitForSelector( selectors.visibilityPopover );
 		await popoverHandle.waitForElementState( 'stable' );
+		await this.page.pause();
 
-		// Private posts display a dialog that when accepted will publish the post.
-		// For non-Private posts, this handler has no effect.
-		await Promise.all( [
-			this.page.once( 'dialog', ( dialog ) => dialog.accept() ),
-			this.frame.click( selectors.visibilityOption( visibility ) ),
-		] );
+		if ( visibility === 'Private' ) {
+			await this.frame.click( selectors.visibilityOption( visibility ) );
+			// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
+			await this.frame.click( `div[role="dialog"] button:has-text("OK")` );
+		}
 
 		// For Password-protected posts, the password field needs to be filled.
 		if ( visibility === 'Password' ) {
