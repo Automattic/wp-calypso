@@ -14405,7 +14405,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^5.0.1, cross-spawn@npm:^5.1.0":
+"cross-spawn@npm:^5.1.0":
   version: 5.1.0
   resolution: "cross-spawn@npm:5.1.0"
   dependencies:
@@ -17618,21 +17618,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"execa@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "execa@npm:0.7.0"
-  dependencies:
-    cross-spawn: ^5.0.1
-    get-stream: ^3.0.0
-    is-stream: ^1.1.0
-    npm-run-path: ^2.0.0
-    p-finally: ^1.0.0
-    signal-exit: ^3.0.0
-    strip-eof: ^1.0.0
-  checksum: 812f1776e2a6b2226532e43c1af87d8a12e26de03a06e7e043f653acf5565e0656f5f6c64d66726fefa17178ac129caaa419a50905934e7c4a846417abb25d4a
-  languageName: node
-  linkType: hard
-
 "execa@npm:^1.0.0":
   version: 1.0.0
   resolution: "execa@npm:1.0.0"
@@ -19158,13 +19143,6 @@ fsevents@~2.1.2:
   version: 9.0.0
   resolution: "get-stdin@npm:9.0.0"
   checksum: 7ef2edc0c81a0644ca9f051aad8a96ae9373d901485abafaabe59fd347a1c378689d8a3d8825fb3067415d1d09dfcaa43cb9b9516ecac6b74b3138b65a8ccc6b
-  languageName: node
-  linkType: hard
-
-"get-stream@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "get-stream@npm:3.0.0"
-  checksum: 003f5f3b8870da59c6aafdf6ed7e7b07b48c2f8629cd461bd3900726548b6b8cfa2e14d6b7814fbb08f07a42f4f738407fa70b989928b2783a76b278505bba22
   languageName: node
   linkType: hard
 
@@ -25184,15 +25162,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"mem@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "mem@npm:1.1.0"
-  dependencies:
-    mimic-fn: ^1.0.0
-  checksum: f5150bb975a7d641375d3c1962426bf338952142a429ce01e9792b03df9b63d5911d3feb7e5e50f406531ace646f3fbe39b7dc716c729d617a28b3bbdc799649
-  languageName: node
-  linkType: hard
-
 "mem@npm:^4.0.0":
   version: 4.3.0
   resolution: "mem@npm:4.3.0"
@@ -26883,18 +26852,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"npm-merge-driver@npm:^2.3.5":
-  version: 2.3.5
-  resolution: "npm-merge-driver@npm:2.3.5"
-  dependencies:
-    mkdirp: ^0.5.1
-    yargs: ^10.0.3
-  bin:
-    npm-merge-driver: index.js
-  checksum: 946b298b25ae1d12a4e4aa81e0fbf0647c295a2f66bc2a9900faa65c565b69ba286e1e3d1a65befd7364c44a85d1b9d44a14536616e41a56eed1f08a59a03ea3
-  languageName: node
-  linkType: hard
-
 "npm-package-json-lint@npm:^5.0.0, npm-package-json-lint@npm:^5.4.2":
   version: 5.4.2
   resolution: "npm-package-json-lint@npm:5.4.2"
@@ -27456,17 +27413,6 @@ fsevents@~2.1.2:
   dependencies:
     lcid: ^1.0.0
   checksum: 302173159d562000ddf982ed75c493a0d861e91372c9e1b13aab21590ff2e1ba264a41995b29be8dc5278a6127ffcd2ad5591779e8164a570fc5fa6c0787b057
-  languageName: node
-  linkType: hard
-
-"os-locale@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "os-locale@npm:2.1.0"
-  dependencies:
-    execa: ^0.7.0
-    lcid: ^1.0.0
-    mem: ^1.1.0
-  checksum: 6f1acc060552a59f477ab541e9149a712f93a4d7b5262d070698dbe98cf047f35c7685d759a86dc56c12b76fdfbab1bf7216a74232263efbe7365de2a5d70834
   languageName: node
   linkType: hard
 
@@ -37983,7 +37929,6 @@ testarmada-magellan@11.0.10:
     ncp: ^2.0.0
     nock: ^12.0.3
     node-fetch: ^2.6.6
-    npm-merge-driver: ^2.3.5
     npm-run-all: ^4.1.5
     photon: "workspace:^"
     postcss: ^8.4.5
@@ -38627,15 +38572,6 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "yargs-parser@npm:8.0.0"
-  dependencies:
-    camelcase: ^4.1.0
-  checksum: 40612163f586da83ddd0634bf72220fca7d0c6a72de537809e9dccce553a5d0356bbe388448cea7d50fada953c1fa85db2bcab01899acfd03d9634a98da87d00
-  languageName: node
-  linkType: hard
-
 "yargs-unparser@npm:1.6.1":
   version: 1.6.1
   resolution: "yargs-unparser@npm:1.6.1"
@@ -38686,26 +38622,6 @@ testarmada-magellan@11.0.10:
     y18n: ^3.2.1
     yargs-parser: ^4.2.0
   checksum: 15731a1448a9727d04d614eceb8126eb289e089c84c14a0b502dc965d891f6997f39293629e161f4db362733cd6467ae8e8245e39702f93df4a3a12f4db7f224
-  languageName: node
-  linkType: hard
-
-"yargs@npm:^10.0.3":
-  version: 10.0.3
-  resolution: "yargs@npm:10.0.3"
-  dependencies:
-    cliui: ^3.2.0
-    decamelize: ^1.1.1
-    find-up: ^2.1.0
-    get-caller-file: ^1.0.1
-    os-locale: ^2.0.0
-    require-directory: ^2.1.1
-    require-main-filename: ^1.0.1
-    set-blocking: ^2.0.0
-    string-width: ^2.0.0
-    which-module: ^2.0.0
-    y18n: ^3.2.1
-    yargs-parser: ^8.0.0
-  checksum: e8f8bcbb2773daf983ca9c1e7be6ecc05d2100e28bf2234d618861a784988097ead4be5cb83c0f9c8ba6b25f9dc7b7010654f20818837ff790c77018d5b8f74e
   languageName: node
   linkType: hard
 
