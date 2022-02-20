@@ -26,7 +26,7 @@ describe( DataHelper.createSuiteTitle( 'WooCommerce Landing Page' ), function ()
 		siteUrl = testAccount.getSiteURL( { protocol: false } );
 
 		pluginsPage = new PluginsPage( page );
-		await pluginsPage.visit( `/plugins/${ siteUrl }` );
+		await pluginsPage.visit( siteUrl );
 		await pluginsPage.onlyHasSections( [ 'Premium', 'Featured', 'Popular', 'New' ] );
 	} );
 
@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'WooCommerce Landing Page' ), function ()
 			.replace( '/wp-admin', '' );
 
 		pluginsPage = new PluginsPage( page );
-		await pluginsPage.visit( `/plugins/${ siteUrl }` );
+		await pluginsPage.visit( siteUrl );
 		await pluginsPage.onlyHasSections( [ 'Featured', 'Popular', 'New' ] );
 	} );
 } );

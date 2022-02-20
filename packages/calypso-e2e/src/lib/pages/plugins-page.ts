@@ -20,10 +20,17 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Visit /plugins/*
+	 * Visit /plugins or /plugins/:site
 	 */
-	async visit( route?: string ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `${ route || '' }` ) );
+	async visit( site = '' ): Promise< void > {
+		await this.page.goto( getCalypsoURL( `plugins/${ site }` ) );
+	}
+
+	/**
+	 * Visit /plugins/:page/ or /plugins/:page/:site
+	 */
+	async visitPage( page: string, site = '' ): Promise< void > {
+		await this.page.goto( getCalypsoURL( `plugins/${ page }/${ site }` ) );
 	}
 
 	/**
