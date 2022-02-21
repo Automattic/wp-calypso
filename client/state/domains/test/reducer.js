@@ -8,7 +8,6 @@ describe( 'reducer', () => {
 			'siteRedirect',
 			'suggestions',
 			'transfer',
-			'notices',
 		] );
 	} );
 } );
