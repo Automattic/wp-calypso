@@ -14,6 +14,7 @@ const selectors = {
 	annualPricing: '.plugins-browser-item__period:text("per year")',
 	search: 'input[placeholder="Try searching ‘ecommerce’"]',
 	searchResult: ( text: string ) => `.plugins-browser-item__title:text("${ text }")`,
+	searchResultTitle: ( text: string ) => `:text("Search results for ${ text }")`,
 };
 
 /**
@@ -114,6 +115,7 @@ export class PluginsPage {
 	async search( query: string, expectedResult: string ): Promise< void > {
 		await this.page.fill( selectors.search, query );
 		await this.page.press( selectors.search, 'Enter' );
+		await this.page.waitForSelector( selectors.searchResultTitle( query ) );
 		await this.page.waitForSelector( selectors.searchResult( expectedResult ) );
 	}
 }
