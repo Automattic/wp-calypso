@@ -1,24 +1,18 @@
 import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
-import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { isDesktop, subscribeIsDesktop, isMobile } from '@automattic/viewport';
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { parse as parseQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
-import { getTld, isSubdomain } from 'calypso/lib/domains';
-import { ProvideExperimentData } from 'calypso/lib/explat';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import PlansComparison from 'calypso/my-sites/plans-comparison';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
@@ -87,49 +81,12 @@ export class PlansStep extends Component {
 		);
 	}
 
-	getCustomerType() {
-		if ( this.props.customerType ) {
-			return this.props.customerType;
-		}
-
-		const customerType =
-			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) || 'personal';
-
-		return customerType;
-	}
-
 	handleFreePlanButtonClick = () => {
 		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
 
-	getIntervalType( isTreatmentMonthlyDefault ) {
-		const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
-		const intervalType = urlParts?.searchParams.get( 'intervalType' );
-
-		if ( [ 'yearly', 'monthly' ].includes( intervalType ) ) {
-			return intervalType;
-		}
-
-		if ( isTreatmentMonthlyDefault ) {
-			return 'monthly';
-		}
-
-		// Default value
-		return 'yearly';
-	}
-
 	plansFeaturesList() {
-		const {
-			disableBloggerPlanWithNonBlogDomain,
-			hideFreePlan,
-			isLaunchPage,
-			selectedSite,
-			planTypes,
-			flowName,
-			showTreatmentPlansReorderTest,
-			isInVerticalScrollingPlansExperiment,
-			isReskinned,
-		} = this.props;
+		const { selectedSite } = this.props;
 
 		let errorDisplay;
 		if ( 'invalid' === this.props.step?.status ) {
@@ -143,107 +100,11 @@ export class PlansStep extends Component {
 		}
 
 		return (
-			<ProvideExperimentData
-				name="calypso_mobile_plans_page_with_billing"
-				options={ { isEligible: isMobile() && 'onboarding' === this.props.flowName } }
-			>
-				{ ( isLoading, experimentAssignment ) => {
-					if ( isLoading ) {
-						return this.renderLoading();
-					}
-
-					// This allows us to continue with the other experiments.
-					if ( ! experimentAssignment?.variationName ) {
-						return this.renderSignUpMonthlyPlansExperiment( errorDisplay );
-					}
-
-					return (
-						<div>
-							{ errorDisplay }
-							<QueryPlans />
-							<PlansFeaturesMain
-								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-								hideFreePlan={ hideFreePlan }
-								isInSignup={ true }
-								isLaunchPage={ isLaunchPage }
-								intervalType={ this.getIntervalType( false ) }
-								isBillingWordingExperiment={ experimentAssignment?.variationName !== null }
-								onUpgradeClick={ this.onSelectPlan }
-								showFAQ={ false }
-								domainName={ this.getDomainName() }
-								customerType={ this.getCustomerType() }
-								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-								plansWithScroll={ this.state.isDesktop }
-								planTypes={ planTypes }
-								flowName={ flowName }
-								showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-								isAllPaidPlansShown={ true }
-								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-								isReskinned={ isReskinned }
-								disableMonthlyExperiment={ false }
-							/>
-						</div>
-					);
-				} }
-			</ProvideExperimentData>
-		);
-	}
-
-	renderSignUpMonthlyPlansExperiment( errorDisplay ) {
-		const {
-			disableBloggerPlanWithNonBlogDomain,
-			hideFreePlan,
-			isLaunchPage,
-			selectedSite,
-			planTypes,
-			flowName,
-			showTreatmentPlansReorderTest,
-			isInVerticalScrollingPlansExperiment,
-			isReskinned,
-		} = this.props;
-		return (
-			<ProvideExperimentData
-				name="calypso_signup_monthly_plans_default_202201_v2"
-				options={ {
-					isEligible: [ 'onboarding', 'launch-site' ].includes( this.props.flowName ),
-				} }
-			>
-				{ ( isLoading, experimentAssignment ) => {
-					if ( isLoading ) {
-						return this.renderLoading();
-					}
-					const isTreatmentMonthlyDefault = experimentAssignment?.variationName !== null;
-
-					return (
-						<div>
-							{ errorDisplay }
-							<QueryPlans />
-							<PlansFeaturesMain
-								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-								hideFreePlan={ hideFreePlan }
-								isInSignup={ true }
-								isLaunchPage={ isLaunchPage }
-								intervalType={ this.getIntervalType( isTreatmentMonthlyDefault ) }
-								isBillingWordingExperiment={ false }
-								onUpgradeClick={ this.onSelectPlan }
-								showFAQ={ false }
-								domainName={ this.getDomainName() }
-								customerType={ this.getCustomerType() }
-								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-								plansWithScroll={ this.state.isDesktop }
-								planTypes={ planTypes }
-								flowName={ flowName }
-								showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-								isAllPaidPlansShown={ true }
-								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-								isReskinned={ isReskinned }
-							/>
-						</div>
-					);
-				} }
-			</ProvideExperimentData>
+			<div>
+				{ errorDisplay }
+				<QueryPlans />
+				<PlansComparison selectedSiteId={ selectedSite?.ID || undefined } isInSignup={ true } />
+			</div>
 		);
 	}
 
@@ -372,9 +233,7 @@ export class PlansStep extends Component {
 
 PlansStep.propTypes = {
 	additionalStepData: PropTypes.object,
-	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
 	goToNextStep: PropTypes.func.isRequired,
-	hideFreePlan: PropTypes.bool,
 	selectedSite: PropTypes.object,
 	stepName: PropTypes.string.isRequired,
 	stepSectionName: PropTypes.string,
@@ -385,44 +244,14 @@ PlansStep.propTypes = {
 	isTreatmentPlansReorderTest: PropTypes.bool,
 };
 
-/**
- * Checks if the domainItem picked in the domain step is a top level .blog domain -
- * we only want to make Blogger plan available if it is.
- *
- * @param {object} domainItem domainItem object stored in the "choose domain" step
- * @returns {boolean} is .blog domain registration
- */
-export const isDotBlogDomainRegistration = ( domainItem ) => {
-	if ( ! domainItem ) {
-		return false;
-	}
-	const { is_domain_registration, meta } = domainItem;
-
-	return is_domain_registration && getTld( meta ) === 'blog';
-};
-
 export default connect(
-	(
-		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
-	) => ( {
-		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
-		disableBloggerPlanWithNonBlogDomain:
-			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
+	( state, { signupDependencies: { siteSlug } } ) => ( {
 		// This step could be used to set up an existing site, in which case
 		// some descendants of this component may display discounted prices if
 		// they apply to the given site.
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
-		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		showTreatmentPlansReorderTest:
-			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
-		isLoadingExperiment: false,
-		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
-		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
-		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
-		isInVerticalScrollingPlansExperiment: true,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );
