@@ -1,10 +1,9 @@
 import { Gridicon } from '@automattic/components';
-import { localize, useTranslate } from 'i18n-calypso';
-import { connect, useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import thankYouEmail from 'calypso/assets/images/illustrations/thank-you-email.svg';
 import { ThankYou } from 'calypso/components/thank-you';
-import { getSelectedDomain } from 'calypso/lib/domains';
-import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
@@ -13,9 +12,7 @@ import {
 } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
-import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
  * Import styles
@@ -29,12 +26,17 @@ type TitanSetUpThankYouProps = {
 	subtitle?: string;
 };
 
-const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
+const TitanSetUpThankYou = ( {
+	domainName,
+	emailAddress,
+	subtitle,
+	title,
+}: TitanSetUpThankYouProps ): JSX.Element => {
 	const currentRoute = useSelector( getCurrentRoute );
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteSlug = selectedSite?.slug ?? null;
+	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 	const translate = useTranslate();
-
-	const { domainName, emailAddress, subtitle, title } = props;
 
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
 
@@ -62,7 +64,7 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 				stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
 				stepCta: (
 					<FullWidthButton
-						href={ getTitanEmailUrl( emailAddress ) }
+						href={ getTitanEmailUrl( titanAppsUrlPrefix, emailAddress, true ) }
 						primary
 						target="_blank"
 						onClick={ () => {
@@ -127,18 +129,4 @@ const TitanSetUpThankYou = ( props: TitanSetUpThankYouProps ): JSX.Element => {
 	);
 };
 
-export default connect( ( state, ownProps: TitanSetUpThankYouProps ) => {
-	const selectedSite = getSelectedSite( state ) as SiteData;
-
-	const domain = getSelectedDomain( {
-		domains: getDomainsBySite( state, selectedSite ),
-		isSiteRedirect: false,
-		selectedDomainName: ownProps.domainName,
-	} );
-
-	return {
-		currentRoute: getCurrentRoute( state ),
-		domain,
-		selectedSite,
-	};
-} )( localize( TitanSetUpThankYou ) );
+export default TitanSetUpThankYou;

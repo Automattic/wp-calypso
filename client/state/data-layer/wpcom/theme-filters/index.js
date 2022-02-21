@@ -1,5 +1,4 @@
 import i18n from 'i18n-calypso';
-import { omit } from 'lodash';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -21,8 +20,7 @@ const fetchFilters = ( action ) =>
 	);
 
 const storeFilters = ( action, data ) => {
-	const filters = action.isFse ? data : omit( data, 'feature.full-site-editing' );
-	return { type: THEME_FILTERS_ADD, filters };
+	return { type: THEME_FILTERS_ADD, filters: data };
 };
 
 const reportError = () => errorNotice( i18n.translate( 'Problem fetching theme filters.' ) );

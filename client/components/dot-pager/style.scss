@@ -1,13 +1,15 @@
 @import '@wordpress/base-styles/mixins';
 
 .dot-pager__page {
-	transition: opacity 0.5s ease-in-out;
+	transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
 	@include reduce-motion( 'transition' );
 	opacity: 1;
+	visibility: visible;
 
 	&.is-prev,
 	&.is-next {
 		opacity: 0;
+		visibility: hidden;
 	}
 }
 

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { debounce, isEqual, find } from 'lodash';
+import { debounce, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -276,7 +276,7 @@ export class HelpContactForm extends PureComponent {
 				},
 			},
 		} ) );
-		const selectedItem = find( options, 'props.selected' );
+		const selectedItem = options.find( ( option ) => option.props.selected );
 
 		return (
 			<div className="help-contact-form__selection">

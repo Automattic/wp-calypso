@@ -182,6 +182,7 @@
 		"do-it-for-me",
 		"desktop",
 		"developer",
+		"site-content-collection",
 		"importer",
 		"from",
 		"main",
@@ -200,7 +201,5 @@
 		"ecommerce-monthly",
 		"domain"
 	],
-	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
-	"difm_typeform_id": "YMiXMYId",
-	"difm_signup_typeform_id": "m3s2pdgI"
+	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

@@ -107,18 +107,16 @@ export class TransferDomain extends Component {
 		} );
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		this.checkSiteIsUpgradeable( this.props );
+	componentDidMount() {
+		this.checkSiteIsUpgradeable();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.checkSiteIsUpgradeable( nextProps );
+	componentDidUpdate() {
+		this.checkSiteIsUpgradeable();
 	}
 
-	checkSiteIsUpgradeable( props ) {
-		if ( props.selectedSite && ! props.isSiteUpgradeable ) {
+	checkSiteIsUpgradeable() {
+		if ( this.props.selectedSite && ! this.props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add/transfer' );
 		}
 	}

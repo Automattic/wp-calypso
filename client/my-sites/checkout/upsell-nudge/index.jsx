@@ -31,6 +31,7 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
 import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
@@ -299,6 +300,7 @@ export class UpsellNudge extends Component {
 		const {
 			receiptId,
 			currencyCode,
+			currentPlanTerm,
 			productCost,
 			planRawPrice,
 			planDiscountedRawPrice,
@@ -310,7 +312,6 @@ export class UpsellNudge extends Component {
 			hasSevenDayRefundPeriod,
 			pricePerMonthForMonthlyPlan,
 			pricePerMonthForAnnualPlan,
-			productSlug,
 			annualPlanSlug,
 		} = this.props;
 
@@ -348,8 +349,10 @@ export class UpsellNudge extends Component {
 						domainName={ upgradeItem }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
+						intervalLength={
+							currentPlanTerm === TERM_MONTHLY ? IntervalLength.MONTHLY : IntervalLength.ANNUALLY
+						}
 						productCost={ productCost }
-						productSlug={ productSlug }
 						/* Use the callback form of setState() to ensure handleClickAccept()
 						 is called after the state update */
 						setCartItem={ ( newCartItem, callback = noop ) =>
@@ -624,6 +627,7 @@ export default connect(
 			isFetchingStoredCards: areStoredCardsLoading,
 			cards,
 			currencyCode: getCurrentUserCurrencyCode( state ),
+			currentPlanTerm,
 			isLoading:
 				isFetchingCards ||
 				isProductsListFetching( state ) ||

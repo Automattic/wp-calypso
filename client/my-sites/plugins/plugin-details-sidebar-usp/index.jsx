@@ -1,5 +1,6 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
+import { Fragment } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import FoldableCard from 'calypso/components/foldable-card';
 
@@ -69,14 +70,14 @@ const PluginDetailsSidebarUSP = ( { id, icon, title, description, links, first }
 			{ ! isNarrow && <Header /> }
 			<Description>{ description }</Description>
 			{ links &&
-				links.map( ( link ) => {
+				links.map( ( link, idx ) => {
 					return (
-						<>
+						<Fragment key={ idx }>
 							<ExternalLink icon href={ link.href }>
 								{ link.label }
 							</ExternalLink>
 							<br />
-						</>
+						</Fragment>
 					);
 				} ) }
 		</Container>

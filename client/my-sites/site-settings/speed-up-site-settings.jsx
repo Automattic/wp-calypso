@@ -51,6 +51,7 @@ class SpeedUpSiteSettings extends Component {
 			selectedSiteId,
 			siteAcceleratorStatus,
 			siteIsJetpack,
+			siteIsAtomic,
 			translate,
 		} = this.props;
 
@@ -66,7 +67,12 @@ class SpeedUpSiteSettings extends Component {
 									'files and images so your visitors enjoy ' +
 									'the fastest experience regardless of device or location.'
 							) }
-							link="http://jetpack.com/support/site-accelerator/"
+							link={
+								siteIsAtomic
+									? 'https://wordpress.com/support/settings/performance-settings/#enable-site-accelerator'
+									: 'https://jetpack.com/support/site-accelerator/'
+							}
+							privacyLink="https://jetpack.com/support/site-accelerator/#privacy"
 						/>
 						<FormSettingExplanation className="site-settings__feature-description">
 							{ translate(
@@ -102,7 +108,12 @@ class SpeedUpSiteSettings extends Component {
 								text={ translate(
 									"Delays the loading of images until they are visible in the visitor's browser."
 								) }
-								link="https://jetpack.com/support/lazy-images/"
+								link={
+									siteIsAtomic
+										? 'https://wordpress.com/support/settings/performance-settings/#lazy-load-images'
+										: 'https://jetpack.com/support/lazy-images/'
+								}
+								privacyLink="https://jetpack.com/support/lazy-images/#privacy"
 							/>
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }

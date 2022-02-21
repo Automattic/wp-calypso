@@ -4,7 +4,7 @@ import { Children, FunctionComponent, LabelHTMLAttributes } from 'react';
 
 import './style.scss';
 
-interface Props {
+export interface Props {
 	optional?: boolean;
 	required?: boolean;
 }

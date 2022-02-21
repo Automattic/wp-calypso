@@ -1,13 +1,14 @@
 import AsyncLoad from 'calypso/components/async-load';
-import { useHasUrlSearchQuery } from 'calypso/lib/url-search-query-state';
+import { useRouteModal } from 'calypso/lib/route-modal';
 
 function SupportArticleDialogLoader() {
-	const hasQueryInUrl = useHasUrlSearchQuery( 'support-article' );
-	return (
-		hasQueryInUrl && (
-			<AsyncLoad require="calypso/blocks/support-article-dialog/dialog" placeholder={ null } />
-		)
-	);
+	const { isModalOpen } = useRouteModal( 'support-article' );
+
+	if ( ! isModalOpen ) {
+		return null;
+	}
+
+	return <AsyncLoad require="calypso/blocks/support-article-dialog/dialog" placeholder={ null } />;
 }
 
 export default SupportArticleDialogLoader;

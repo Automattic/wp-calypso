@@ -15,10 +15,78 @@
 
 .professional-email-upsell__header {
 	text-align: center;
+
+	.billing-interval-toggle {
+		display: flex;
+
+		.segmented-control {
+			background-color: var( --studio-gray-0 );
+			border: 1px solid var( --studio-gray-5 );
+			border-radius: 6px; /* stylelint-disable-line */
+			color: var( --color-text );
+
+			&.is-compact {
+				margin-bottom: 0;
+				max-width: unset;
+			}
+
+			.segmented-control__item {
+				border-radius: 6px; /* stylelint-disable-line */
+				border: 1px solid var( --studio-gray-0 );
+				padding: 2px;
+
+				&.is-selected {
+					padding: 1px 0 0 1px;
+				}
+
+				&:hover:not( .is-selected ) {
+					border-color: var( --studio-gray-30 );
+				}
+
+				&:first-child {
+					margin-right: 5px;
+				}
+
+				& .segmented-control__link {
+					color: var( --color-text );
+					border: 0;
+					line-height: 18px;
+					margin: 1px;
+					padding-bottom: 6px;
+					&:hover {
+						background-color: unset;
+					}
+				}
+
+				&.is-selected .segmented-control__link {
+					border-radius: 5px; /* stylelint-disable-line */
+					background-color: var( --studio-white );
+					border-color: var( --studio-white );
+					box-shadow: 0 4px 4px rgba( 0, 0, 0, 0.25 ), 0 3px 8px rgba( 0, 0, 0, 0.12 ),
+					inset 0 0 0 rgba( 0, 0, 0, 0.2 );
+					color: var( --color-text );
+					padding-top: 6px;
+
+					&:hover {
+						background-color: var( --studio-white );
+					}
+				}
+			}
+		}
+	}
+}
+
+.professional-email-upsell__discounted {
+	text-decoration: line-through;
 }
 
 .professional-email-upsell__small-title {
 	font-size: $font-body-small;
+}
+
+.professional-email-upsell__small-subtitle {
+	font-size: $font-body-small;
+	margin-top: 1em;
 }
 
 .professional-email-upsell__title {
@@ -30,15 +98,22 @@
 .professional-email-upsell__pricing {
 	display: flex;
 	flex-direction: column;
-	margin-top: 10px;
+	margin-bottom: 24px;
 
 	@include break-mobile {
-		flex-direction: row;
 		justify-content: center;
+		margin-bottom: 10px;
 
 		span + span {
 			margin-left: 8px;
 		}
+	}
+}
+
+.professional-email-upsell__standard-price {
+	span {
+		font-size: $font-title-small;
+		font-weight: 600;
 	}
 }
 

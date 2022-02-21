@@ -17,7 +17,7 @@ import {
 } from 'calypso/lib/emails';
 import { getGmailUrl } from 'calypso/lib/gsuite';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
-import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import {
@@ -35,9 +35,9 @@ import ProgressLine from './progress-line';
  */
 import './style.scss';
 
-const getExternalUrl = ( mailbox ) => {
+const getExternalUrl = ( mailbox, titanAppsUrlPrefix ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
-		return getTitanEmailUrl( getEmailAddress( mailbox ), true );
+		return getTitanEmailUrl( titanAppsUrlPrefix, getEmailAddress( mailbox ), true );
 	}
 
 	if ( isGoogleEmailAccount( mailbox ) ) {
@@ -93,6 +93,8 @@ MailboxItemIcon.propType = {
 };
 
 const MailboxItem = ( { mailbox } ) => {
+	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
+
 	if ( isEmailForwardAccount( mailbox ) ) {
 		return null;
 	}
@@ -103,7 +105,7 @@ const MailboxItem = ( { mailbox } ) => {
 				trackAppLaunchEvent( { mailbox, app: 'webmail', context: 'inbox-mailbox-selection' } )
 			}
 			className="mailbox-selection-list__item"
-			href={ getExternalUrl( mailbox ) }
+			href={ getExternalUrl( mailbox, titanAppsUrlPrefix ) }
 			target="external"
 		>
 			<span className="mailbox-selection-list__icon">

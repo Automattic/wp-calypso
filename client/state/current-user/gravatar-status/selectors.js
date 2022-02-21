@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 /**
  * Returns true if we're currently uploading a Gravatar
  *
@@ -7,7 +5,7 @@ import { get } from 'lodash';
  * @returns {boolean} - If uploading a Gravatar
  */
 export function isCurrentUserUploadingGravatar( state ) {
-	return get( state, 'currentUser.gravatarStatus.isUploading', false );
+	return state.currentUser.gravatarStatus.isUploading ?? false;
 }
 
 /**
@@ -20,7 +18,6 @@ export function isCurrentUserUploadingGravatar( state ) {
  */
 export function getUserTempGravatar( state, userId ) {
 	return (
-		state.currentUser.id === userId &&
-		get( state, 'currentUser.gravatarStatus.tempImage.src', false )
+		state.currentUser.id === userId && ( state.currentUser.gravatarStatus.tempImage.src ?? false )
 	);
 }
