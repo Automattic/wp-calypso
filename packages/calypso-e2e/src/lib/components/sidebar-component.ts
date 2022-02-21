@@ -5,6 +5,8 @@ import { NavbarComponent } from './navbar-component';
 
 const selectors = {
 	sidebar: '.sidebar',
+	toggleCollapsedButton: '.collapse-sidebar__toggle > a.sidebar__menu-link',
+	collapsedSidebar: 'body.is-sidebar-collapsed',
 };
 
 /**
@@ -31,7 +33,20 @@ export class SidebarComponent {
 	 */
 	async waitForSidebarInitialization(): Promise< ElementHandle > {
 		await this.page.waitForLoadState( 'load' );
+
+		// wait for active promotions to load because they can push the sidebar down, changing items positions
+		await this.page
+			.waitForResponse( ( r ) => Boolean( r.url().match( /active-promotions/i ) ), {
+				timeout: 5000,
+			} )
+			.then( () => {
+				// let active promotions render
+				return this.page.waitForTimeout( 50 );
+			} )
+			.catch( () => console.log( 'Active promotions were not requested' ) );
+
 		const sidebarElementHandle = await this.page.waitForSelector( selectors.sidebar );
+
 		await sidebarElementHandle.waitForElementState( 'stable' );
 
 		return sidebarElementHandle;
@@ -49,15 +64,26 @@ export class SidebarComponent {
 
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await this.openMobileSidebar();
+		} else if ( await this.isSideBarCollapsed() ) {
+			console.info( 'Sidebar is collapsed, expanding...' );
+			await this.toggleSidebar();
 		}
 
 		// Top level menu item selector.
 		const itemSelector = `${ selectors.sidebar } :text-is("${ item }"):visible`;
-		await this.page.dispatchEvent( itemSelector, 'click' );
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' || ! subitem ) {
+			// when on mobile, or if the main item is the target, click it
+			await this.page.dispatchEvent( itemSelector, 'click' );
+		} else {
+			//  only hover on Desktop when the goal is accessing a subitem
+			await this.page.locator( itemSelector ).scrollIntoViewIfNeeded();
+			await this.page.locator( itemSelector ).hover();
+		}
 
 		// Sub-level menu item selector.
 		if ( subitem ) {
-			const subitemSelector = `.is-toggle-open :text-is("${ subitem }"):visible`;
+			const subitemSelector = `.sidebar__menu-link :text-is("${ subitem }"):visible`;
 			await Promise.all( [
 				this.page.waitForNavigation(),
 				this.page.dispatchEvent( subitemSelector, 'click' ),
@@ -101,6 +127,19 @@ export class SidebarComponent {
 
 		await this.page.click( ':text("Switch Site")' );
 		await this.page.waitForSelector( '.layout.focus-sites' );
+	}
+	/**
+	 * Toggles sidebar between expanded and collapsed
+	 */
+	async toggleSidebar(): Promise< void > {
+		await this.page.click( selectors.toggleCollapsedButton, { force: true } );
+	}
+
+	/**
+	 * Checks whether sidebar is collapsed
+	 */
+	async isSideBarCollapsed(): Promise< boolean > {
+		return ( await this.page.locator( selectors.collapsedSidebar ).count() ) === 1;
 	}
 
 	/**
