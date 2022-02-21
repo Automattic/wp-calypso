@@ -53,7 +53,7 @@ export const useIntentsAlt = ( canImport: boolean ): IntentAlt[] => {
 			description: translate( "Know what you're doing?" ),
 			value: 'wpadmin',
 			disable: false,
-			disableText: null,
+			disableText: '',
 			actionText: translate( 'Start from scratch / wp-admin' ),
 		},
 		{
