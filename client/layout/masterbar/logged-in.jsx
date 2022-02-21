@@ -7,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -301,17 +302,33 @@ class MasterbarLoggedIn extends Component {
 						) }
 					</div>
 					<div className="masterbar__section masterbar__section--center">
-						{ showPlanUpsell && (
-							<Item
-								tipTarget="Upgrade Plan"
-								url={ plansUpsellPath }
-								onClick={ this.clickPlanUpsell }
-								className="masterbar__item masterbar__item-upsell button is-primary"
-								tooltip={ translate( 'Upgrade your plan' ) }
-							>
-								{ translate( 'Upgrade' ) }
-							</Item>
-						) }
+						<ProvideExperimentData
+							name="masterbar_plan_upsell_202202_v1"
+							options={ {
+								isEligible: showPlanUpsell,
+							} }
+						>
+							{ ( isLoading, experimentAssignment ) => {
+								if ( isLoading ) {
+									return null;
+								}
+
+								const variation = experimentAssignment?.variationName;
+								return (
+									'treatment' === variation && (
+										<Item
+											tipTarget={ translate( 'Upgrade your plan' ) }
+											url={ plansUpsellPath }
+											onClick={ this.clickPlanUpsell }
+											className="masterbar__item masterbar__item-upsell button is-primary"
+											tooltip={ translate( 'Upgrade your plan' ) }
+										>
+											{ translate( 'Upgrade' ) }
+										</Item>
+									)
+								);
+							} }
+						</ProvideExperimentData>
 						{ ! domainOnlySite && ! isMigrationInProgress && (
 							<AsyncLoad
 								require="./publish"
