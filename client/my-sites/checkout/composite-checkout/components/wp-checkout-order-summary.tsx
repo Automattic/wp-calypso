@@ -176,22 +176,6 @@ function CheckoutSummaryFeaturesList( props: {
 	}
 	const refundText = getRefundText( refundDays, null, translate );
 
-	const currentPlan = useSelector( ( state ) =>
-		siteId ? getCurrentPlan( state, siteId ) : undefined
-	);
-	const billingPeriod = useSelector( getBillingInterval );
-	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
-
-	const currentPlanSlug = currentPlan?.productSlug;
-
-	const isChatAvailable =
-		! hasPlanInCart &&
-		currentPlanSlug &&
-		( isWpComPremiumPlan( currentPlanSlug ) ||
-			isWpComBusinessPlan( currentPlanSlug ) ||
-			isWpComEcommercePlan( currentPlanSlug ) ) &&
-		isAnnualPeriod;
-
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
@@ -208,12 +192,8 @@ function CheckoutSummaryFeaturesList( props: {
 				<WPCheckoutCheckIcon id="features-list-support-text" />
 				<SupportText hasPlanInCart={ hasPlanInCart } isJetpackNotAtomic={ isJetpackNotAtomic } />
 			</CheckoutSummaryFeaturesListItem>
-			{ isChatAvailable && (
-				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id={ 'annual-live-chat' } />
-					{ translate( 'Live chat support' ) }
-				</CheckoutSummaryFeaturesListItem>
-			) }
+
+			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
 
 			{ showRefundText && (
 				<CheckoutSummaryFeaturesListItem>
@@ -314,6 +294,34 @@ function CheckoutSummaryPlanFeatures( props: {
 				);
 			} ) }
 		</>
+	);
+}
+
+function CheckoutSummaryChatIfAvailable( props: { siteId: number | undefined } ) {
+	const currentPlan = useSelector( ( state ) =>
+		props.siteId ? getCurrentPlan( state, props.siteId ) : undefined
+	);
+	const translate = useTranslate();
+
+	const billingPeriod = useSelector( getBillingInterval );
+	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
+
+	const currentPlanSlug = currentPlan?.productSlug;
+
+	const isChatAvailable =
+		currentPlanSlug &&
+		( isWpComPremiumPlan( currentPlanSlug ) ||
+			isWpComBusinessPlan( currentPlanSlug ) ||
+			isWpComEcommercePlan( currentPlanSlug ) ) &&
+		isAnnualPeriod;
+
+	if ( ! isChatAvailable ) return null;
+
+	return (
+		<CheckoutSummaryFeaturesListItem>
+			<WPCheckoutCheckIcon id={ 'annual-live-chat' } />
+			{ translate( 'Live chat support' ) }
+		</CheckoutSummaryFeaturesListItem>
 	);
 }
 
