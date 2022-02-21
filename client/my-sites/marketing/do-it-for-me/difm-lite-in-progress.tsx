@@ -12,7 +12,7 @@ import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
 
 import './difm-lite-in-progress.scss';
@@ -23,6 +23,9 @@ type DIFMLiteInProgressProps = {
 
 function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactElement {
 	const slug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
+	const isLoadingSite = useSelector(
+		( state: AppState ) => isRequestingSite( state, siteId ) || isRequestingSites( state )
+	);
 	const isWebsiteContentSubmitted = useSelector( ( state ) =>
 		isDIFMLiteWebsiteContentSubmitted( state, siteId )
 	);
@@ -32,7 +35,7 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactE
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	if ( ! primaryDomain ) {
+	if ( ! primaryDomain || isLoadingSite ) {
 		return (
 			<>
 				<QuerySiteDomains siteId={ siteId } />
