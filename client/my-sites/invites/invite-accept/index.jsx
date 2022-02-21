@@ -65,6 +65,15 @@ class InviteAccept extends Component {
 
 			if ( invite?.site?.is_wpforteams_site ) {
 				this.props.hideMasterbar();
+
+				recordTracksEvent( 'calypso_p2_invite_accept_load_page', {
+					site_id: invite?.site?.ID,
+					invited_by: invite?.inviter?.ID,
+					invite_date: invite?.date,
+					role: invite?.role,
+					from_marketing_campaign: !! invite?.site?.p2_signup_campaign,
+					campaign_name: invite?.site?.p2_signup_campaign || null,
+				} );
 			}
 
 			this.handleFetchInvite( false, invite );
