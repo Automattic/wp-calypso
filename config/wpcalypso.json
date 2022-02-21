@@ -91,7 +91,7 @@
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
 		"security/security-checkup": false,
-		"seller-experience": false,
+		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,

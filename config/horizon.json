@@ -72,7 +72,7 @@
 		"reader": true,
 		"reader/list-management": true,
 		"safari-idb-mitigation": true,
-		"seller-experience": false,
+		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": false,
