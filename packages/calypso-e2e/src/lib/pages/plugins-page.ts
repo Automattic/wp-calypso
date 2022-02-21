@@ -3,8 +3,11 @@ import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
+	sectionHeader: '.plugins-browser-list__header',
 	sectionTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
 	sectionTitles: '.plugins-browser-list__title',
+	browseAll: 'a:text("Browse All")',
+	breadcrumb: ( section: string ) => `.plugins-browser__header li a:text("${ section }") `,
 };
 
 /**
@@ -53,5 +56,21 @@ export class PluginsPage {
 			const title = await titles.nth( i ).innerText();
 			assert.notEqual( title, section );
 		}
+	}
+
+	/**
+	 * Click Browse All
+	 */
+	async clickBrowseAll(): Promise< void > {
+		await this.page.click( selectors.browseAll );
+		assert.match( this.page.url(), /.*\/plugins\/(featured|paid|new|popular)$/ );
+	}
+
+	/**
+	 * Click breadcrumb
+	 */
+	async clickBreadcrumb( text: string ): Promise< void > {
+		await this.page.click( selectors.breadcrumb( text ) );
+		assert.match( this.page.url(), /.*\/plugins$/ );
 	}
 }

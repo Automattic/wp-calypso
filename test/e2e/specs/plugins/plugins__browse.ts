@@ -28,6 +28,14 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins' ), function () {
 			await pluginsPage.validateHasSection( section );
 		}
 	);
+
+	it( 'Can browse all plugins', async function () {
+		await pluginsPage.clickBrowseAll();
+	} );
+
+	it( 'Can return via breadcrumb', async function () {
+		await pluginsPage.clickBreadcrumb( 'Plugins' );
+	} );
 } );
 
 describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:wpcom-site' ), function () {
