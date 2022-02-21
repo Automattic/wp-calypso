@@ -77,8 +77,7 @@ export class SidebarComponent {
 			await this.page.dispatchEvent( itemSelector, 'click' );
 		} else {
 			//  only hover on Desktop when the goal is accessing a subitem
-			await this.page.locator( itemSelector ).scrollIntoViewIfNeeded();
-			await this.page.locator( itemSelector ).hover();
+			await this.page.dispatchEvent( itemSelector, 'mouseover' );
 		}
 
 		// Sub-level menu item selector.
