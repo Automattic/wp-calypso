@@ -75,6 +75,13 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:jetpack-site' ), 
 		await pluginsPage.visit( siteUrl );
 	} );
 
+	it.each( [ 'Featured', 'Popular', 'New' ] )(
+		'Plugins page loads %s section',
+		async function ( section: string ) {
+			await pluginsPage.hasSection( section );
+		}
+	);
+
 	it( 'Plugins page does not load premium plugins on Jetpack sites', async function () {
 		await pluginsPage.notHasSection( 'Premium' );
 	} );
