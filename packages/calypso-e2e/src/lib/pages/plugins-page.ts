@@ -7,6 +7,13 @@ const selectors = {
 	sectionTitles: '.plugins-browser-list__title',
 	browseAllPopular: 'a[href^="/plugins/popular"]',
 	breadcrumb: ( section: string ) => `.plugins-browser__header li a:text("${ section }") `,
+	monthlyPricingToggle: 'a:text("Monthly")',
+	annualPricingToggle: 'a:text("Annually")',
+	pricingToggle: '.select-dropdown__container',
+	monthlyPricingSelect: 'li a:text("Monthly price")',
+	annualPricingSelect: 'li a:text("Annual price")',
+	monthlyPricing: '.plugins-browser-item__period:text("monthly")',
+	annualPricing: '.plugins-browser-item__period:text("per year")',
 };
 
 /**
@@ -69,5 +76,49 @@ export class PluginsPage {
 	 */
 	async clickPluginsBreadcrumb(): Promise< void > {
 		await this.page.click( selectors.breadcrumb( 'Plugins' ) );
+	}
+
+	/**
+	 * Click Monthly Pricing
+	 */
+	async clickMonthlyPricing(): Promise< void > {
+		await this.page.click( selectors.monthlyPricingToggle );
+	}
+
+	/**
+	 * Click Annual Pricing
+	 */
+	async clickAnnualPricing(): Promise< void > {
+		await this.page.click( selectors.annualPricingToggle );
+	}
+
+	/**
+	 * Select monthly
+	 */
+	async selectMonthlyPricing(): Promise< void > {
+		await this.page.click( selectors.pricingToggle );
+		await this.page.click( selectors.monthlyPricingSelect );
+	}
+
+	/**
+	 * Select annual
+	 */
+	async selectAnnualPricing(): Promise< void > {
+		await this.page.click( selectors.pricingToggle );
+		await this.page.click( selectors.annualPricingSelect );
+	}
+
+	/**
+	 * Check Is Monthly Pricing
+	 */
+	async checkMonthlyPricing(): Promise< void > {
+		await this.page.waitForSelector( selectors.monthlyPricing );
+	}
+
+	/**
+	 * Check Is Annual Pricing
+	 */
+	async checkAnnualPricing(): Promise< void > {
+		await this.page.waitForSelector( selectors.annualPricing );
 	}
 }
