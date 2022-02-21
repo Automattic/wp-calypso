@@ -10,10 +10,11 @@ import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
 import EmbedContainer from 'calypso/components/embed-container';
 import { isDefaultLocale } from 'calypso/lib/i18n-utils';
-import { useUrlSearchQueryState, getUrlSearchQuery } from 'calypso/lib/url-search-query-state';
+import { useRouteModal } from 'calypso/lib/route-modal';
 import { closeSupportArticleDialog as closeDialog } from 'calypso/state/inline-support-article/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInlineSupportArticleActionIsExternal from 'calypso/state/selectors/get-inline-support-article-action-is-external';
 import getInlineSupportArticleActionLabel from 'calypso/state/selectors/get-inline-support-article-action-label';
 import getInlineSupportArticleActionUrl from 'calypso/state/selectors/get-inline-support-article-action-url';
@@ -47,9 +48,7 @@ export const SupportArticleDialog = ( {
 	const isLoading = ! post || isRequestingAlternates;
 	const siteId = post?.site_ID;
 	const shouldQueryReaderPost = ! post && ! shouldRequestAlternates && ! isRequestingAlternates;
-
-	const [ supportArticleId, updateSupportArticle ] = useUrlSearchQueryState( 'support-article' );
-
+	const { value: supportArticleId, closeModal } = useRouteModal( 'support-article' );
 	const articleUrl = actionUrl ? actionUrl : 'https://support.wordpress.com?p=' + supportArticleId;
 
 	useEffect( () => {
@@ -67,7 +66,7 @@ export const SupportArticleDialog = ( {
 
 	const handleCloseDialog = () => {
 		closeSupportArticleDialog();
-		updateSupportArticle( null );
+		closeModal();
 	};
 
 	return (
@@ -130,7 +129,7 @@ const getPostKey = memoize(
 const mapStateToProps = ( state ) => {
 	let postId = getInlineSupportArticlePostId( state );
 	if ( ! postId ) {
-		postId = parseInt( getUrlSearchQuery( 'support-article' ), 10 );
+		postId = parseInt( getCurrentQueryArguments( state )?.[ 'support-article' ], 10 );
 	}
 	const requestBlogId = getInlineSupportArticleBlogId( state );
 	const blogId = requestBlogId ?? SUPPORT_BLOG_ID;
