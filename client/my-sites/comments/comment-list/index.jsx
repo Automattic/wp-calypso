@@ -42,19 +42,12 @@ export class CommentList extends Component {
 		selectedComments: [],
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { siteId, status, changePage } = this.props;
+	componentDidUpdate() {
+		const { changePage } = this.props;
 		const totalPages = this.getTotalPages();
+
 		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
 			return changePage( totalPages );
-		}
-
-		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
-			this.setState( {
-				isBulkMode: false,
-				selectedComments: [],
-			} );
 		}
 	}
 
