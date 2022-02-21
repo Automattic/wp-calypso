@@ -2612,7 +2612,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			chaiExpect( dashboardUrl ).to.be.null;
+			expect( dashboardUrl ).toBeNull();
 		} );
 		test( 'should return null if we have a Simple site', () => {
 			const dashboardUrl = getJetpackSearchDashboardUrl(
@@ -2629,7 +2629,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			chaiExpect( dashboardUrl ).to.be.null;
+			expect( dashboardUrl ).toBeNull();
 		} );
 		test( "should return null if we can't find the adminUrl", () => {
 			const dashboardUrl = getJetpackSearchDashboardUrl(
@@ -2641,7 +2641,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			chaiExpect( dashboardUrl ).to.be.null;
+			expect( dashboardUrl ).toBeNull();
 		} );
 		test( 'should return default dashboard for old JP versions', () => {
 			const dashboardUrl = getJetpackSearchDashboardUrl(
@@ -2662,7 +2662,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			chaiExpect( dashboardUrl ).to.equal(
+			expect( dashboardUrl ).toEqual(
 				'https://example.wordpress.com/wp-admin/admin.php?page=jetpack'
 			);
 		} );
@@ -2685,7 +2685,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			chaiExpect( dashboardUrl ).to.equal(
+			expect( dashboardUrl ).toEqual(
 				'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-search'
 			);
 		} );
