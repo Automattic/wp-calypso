@@ -1,12 +1,12 @@
 import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
-import wpcom from 'calypso/lib/wp';
+import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { APIProductFamily } from 'calypso/state/partner-portal/types';
 
 function queryProducts(): Promise< APIProductFamily[] > {
-	return wpcom.req
+	return wpcomJpl.req
 		.get( {
 			apiNamespace: 'wpcom/v2',
-			path: '/jetpack-licensing/product-families',
+			path: '/jetpack-licensing/partner/product-families',
 		} )
 		.then( ( data: APIProductFamily[] ) => {
 			const exclude = [ 'free', 'personal', 'premium', 'professional' ];
