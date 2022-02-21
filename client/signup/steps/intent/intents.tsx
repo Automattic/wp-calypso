@@ -48,6 +48,13 @@ export const useIntentsAlt = ( canImport: boolean ): IntentAlt[] => {
 
 	return [
 		{
+			show: true,
+			key: 'wpadmin',
+			description: translate( "Know what you're doing?" ),
+			value: 'wpadmin',
+			actionText: translate( 'Start from scratch / wp-admin' ),
+		},
+		{
 			show: isEnabled( 'onboarding/import' ),
 			key: 'import',
 			description: translate( 'Already have an existing website?' ),
