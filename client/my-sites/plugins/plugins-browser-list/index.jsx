@@ -110,15 +110,18 @@ const PluginsBrowserList = ( {
 					) }
 				</div>
 			</div>
-			{ listName === 'paid' && isEnabled( 'marketplace-spotlight' ) && spotlightPluginFetched &&  spotlightPlugin && (
-				<Spotlight
-					taglineText={ __( 'Drive more traffic with Yoast SEO Premium' ) }
-					titleText={ __( 'Under the Spotlight' ) }
-					ctaText={ __( 'View Details' ) }
-					illustrationSrc={ spotlightPlugin?.icon ?? '' }
-					url={ `/plugins/${ spotlightPlugin.slug }/${ site }` }
-				/>
-			) }
+			{ listName === 'paid' &&
+				isEnabled( 'marketplace-spotlight' ) &&
+				spotlightPluginFetched &&
+				spotlightPlugin && (
+					<Spotlight
+						taglineText={ __( 'Drive more traffic with Yoast SEO Premium' ) }
+						titleText={ __( 'Under the Spotlight' ) }
+						ctaText={ __( 'View Details' ) }
+						illustrationSrc={ spotlightPlugin?.icon ?? '' }
+						url={ `/plugins/${ spotlightPlugin.slug }/${ site }` }
+					/>
+				) }
 			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
 		</div>
 	);
