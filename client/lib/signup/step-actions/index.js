@@ -519,7 +519,7 @@ export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItem
 			apiNamespace: 'wp/v2',
 			body: {
 				content: singleProductPattern.html,
-				title: translate( 'Home' ),
+				title: translate( 'Available now!' ),
 				status: 'publish',
 				template: 'header-footer-only',
 			},
