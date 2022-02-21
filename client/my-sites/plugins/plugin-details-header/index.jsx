@@ -21,7 +21,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 			<div className="plugin-details-header__container">
 				<div className="plugin-details-header__tags">{ tags }</div>
 				<div className="plugin-details-header__main-info">
-					<img className="plugin-details-header__icon" src={ plugin.icon } alt="Plugin Icon" />
+					<img className="plugin-details-header__icon" src={ plugin.icon } alt="" />
 					<div className="plugin-details-header__title-container">
 						<div className="plugin-details-header__name">{ plugin.name }</div>
 						<div className="plugin-details-header__description">
