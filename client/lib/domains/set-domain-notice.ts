@@ -1,25 +1,12 @@
 import wpcom from 'calypso/lib/wp';
-
-interface SetDomainNoticeResponseDataSuccess {
-	success: boolean;
-	states: {
-		[ domainName: string ]: {
-			[ domainNotice: string ]: string;
-		};
-	};
-}
-
-interface SetDomainNoticeResponseDataError {
-	code?: string;
-	message?: string;
-}
+import { DomainsApiError, SetDomainNoticeResponseDataSuccess } from './types';
 
 export function setDomainNotice(
 	domainName: string,
 	noticeType: string,
 	noticeValue: string,
 	onComplete: ( data: SetDomainNoticeResponseDataSuccess ) => void,
-	onError: ( error: SetDomainNoticeResponseDataError ) => void
+	onError: ( error: DomainsApiError ) => void
 ) {
 	wpcom.req
 		.post(
@@ -27,5 +14,5 @@ export function setDomainNotice(
 			{ notice_message: noticeValue }
 		)
 		.then( ( data: SetDomainNoticeResponseDataSuccess ) => onComplete( data ) )
-		.catch( ( error: SetDomainNoticeResponseDataError ) => onError( error ) );
+		.catch( ( error: DomainsApiError ) => onError( error ) );
 }
