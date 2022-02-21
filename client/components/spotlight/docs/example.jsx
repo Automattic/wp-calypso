@@ -1,7 +1,7 @@
 import Spotlight from 'calypso/components/spotlight';
 
-const illustrationSrc = '/illustration.png';
-const url = '/path/to/somewhere';
+const illustrationSrc = 'https://ps.w.org/wordpress-seo/assets/icon-256x256.png?rev=1550389';
+const url = '/';
 const taglineText = 'tagline text';
 const titleText = 'title text';
 const ctaText = 'cta text';
