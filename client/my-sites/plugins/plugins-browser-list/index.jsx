@@ -110,7 +110,7 @@ const PluginsBrowserList = ( {
 					) }
 				</div>
 			</div>
-			{ listName === 'paid' && isEnabled( 'marketplace-spotlight' ) && spotlightPluginFetched && (
+			{ listName === 'paid' && isEnabled( 'marketplace-spotlight' ) && spotlightPluginFetched &&  spotlightPlugin && (
 				<Spotlight
 					taglineText={ __( 'Drive more traffic with Yoast SEO Premium' ) }
 					titleText={ __( 'Under the Spotlight' ) }
