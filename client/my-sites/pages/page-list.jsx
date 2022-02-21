@@ -42,17 +42,6 @@ export default class PageList extends Component {
 		page: 1,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			nextProps.search !== this.props.search ||
-			nextProps.siteId !== this.props.siteId ||
-			nextProps.status !== this.props.status
-		) {
-			this.resetPage();
-		}
-	}
-
 	incrementPage = () => {
 		this.setState( { page: this.state.page + 1 } );
 	};
