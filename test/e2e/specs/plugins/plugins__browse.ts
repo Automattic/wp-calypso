@@ -7,39 +7,75 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'WooCommerce Landing Page' ), function () {
+describe( DataHelper.createSuiteTitle( 'Plugins page /plugins' ), function () {
+	let page: Page;
+	let pluginsPage: PluginsPage;
+
+	beforeAll( async () => {
+		page = await browser.newPage();
+		const testAccount = new TestAccount( 'defaultUser' );
+		await testAccount.authenticate( page );
+	} );
+
+	it( 'Visit plugins page', async function () {
+		pluginsPage = new PluginsPage( page );
+		await pluginsPage.visit();
+	} );
+
+	it.each( [ 'Premium', 'Featured', 'Popular', 'New' ] )(
+		'Plugins page loads %s section',
+		async function ( section: string ) {
+			await pluginsPage.hasSection( section );
+		}
+	);
+} );
+
+describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:wpcom-site' ), function () {
 	let page: Page;
 	let pluginsPage: PluginsPage;
 	let siteUrl: string;
 
-	beforeEach( async () => {
+	beforeAll( async () => {
 		page = await browser.newPage();
-	} );
-
-	afterEach( async () => {
-		await page.close();
-	} );
-
-	it( 'Plugins page loads premium,featured,popular,new sections', async function () {
 		const testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page );
 		siteUrl = testAccount.getSiteURL( { protocol: false } );
-
-		pluginsPage = new PluginsPage( page );
-		await pluginsPage.visit( siteUrl );
-		await pluginsPage.onlyHasSections( [ 'Premium', 'Featured', 'Popular', 'New' ] );
 	} );
 
-	it( 'Plugins page loads featured,popular,new sections on Jetpack sites', async function () {
+	it( 'Visit plugins page', async function () {
+		pluginsPage = new PluginsPage( page );
+		await pluginsPage.visit( siteUrl );
+	} );
+
+	it.each( [ 'Premium', 'Featured', 'Popular', 'New' ] )(
+		'Plugins page loads %s section',
+		async function ( section: string ) {
+			await pluginsPage.hasSection( section );
+		}
+	);
+} );
+
+describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:jetpack-site' ), function () {
+	let page: Page;
+	let pluginsPage: PluginsPage;
+	let siteUrl: string;
+
+	beforeAll( async () => {
+		page = await browser.newPage();
 		const testAccount = new TestAccount( 'jetpackUserPREMIUM' );
 		await testAccount.authenticate( page );
 		siteUrl = testAccount
 			.getSiteURL( { protocol: false } )
 			.replace( 'https://', '' )
 			.replace( '/wp-admin', '' );
+	} );
 
+	it( 'Visit plugins page', async function () {
 		pluginsPage = new PluginsPage( page );
 		await pluginsPage.visit( siteUrl );
-		await pluginsPage.onlyHasSections( [ 'Featured', 'Popular', 'New' ] );
+	} );
+
+	it( 'Plugins page does not load premium plugins on Jetpack sites', async function () {
+		await pluginsPage.notHasSection( 'Premium' );
 	} );
 } );

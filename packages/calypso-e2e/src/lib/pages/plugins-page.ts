@@ -3,7 +3,8 @@ import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
-	sectionTitle: '.plugins-browser-list__title',
+	sectionTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
+	sectionTitles: '.plugins-browser-list__title',
 };
 
 /**
@@ -36,14 +37,19 @@ export class PluginsPage {
 	/**
 	 * Has Section
 	 */
-	async onlyHasSections( sections: Array< string > ): Promise< void > {
-		await this.page.waitForSelector( selectors.sectionTitle );
-		const titles = await this.page.locator( selectors.sectionTitle );
+	async hasSection( section: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.sectionTitle( section ) );
+	}
+
+	/**
+	 * Not Has Section
+	 */
+	async notHasSection( section: string ): Promise< void > {
+		const titles = this.page.locator( selectors.sectionTitles );
 		const count = await titles.count();
-		assert.strictEqual( count, sections.length );
 		for ( let i = 0; i < count; i++ ) {
 			const title = await titles.nth( i ).innerText();
-			assert.strictEqual( title, sections[ i ] );
+			assert.notEqual( title, section );
 		}
 	}
 }
