@@ -1,5 +1,5 @@
 export interface SiteDomain {
-	aftermarketAuction: boolean;
+	aftermarketAuction?: boolean;
 	autoRenewalDate?: string;
 	autoRenewing?: boolean;
 	blogId?: number;
