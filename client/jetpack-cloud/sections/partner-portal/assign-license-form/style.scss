@@ -71,3 +71,12 @@ p.assign-license-form__description {
 	font-weight: 700;
 	text-decoration: underline;
 }
+
+@include breakpoint-deprecated( '<960px' ) {
+	.assign-license-form {
+		&__top {
+			flex-direction: column;
+			margin-top: 0;
+		}
+	}
+}
