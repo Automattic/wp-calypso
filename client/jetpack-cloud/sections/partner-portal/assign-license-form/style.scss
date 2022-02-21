@@ -53,9 +53,12 @@
 
 p.assign-license-form__description {
 	margin-bottom: 0;
-	align-self: flex-end;
 	font-size: 0.875rem;
 	color: #333;
+
+	@include break-large {
+		align-self: flex-end;
+	}
 }
 
 .assign-license-form__site-card {
