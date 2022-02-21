@@ -44,6 +44,7 @@
 		"react-popper": "^2.2.5"
 	},
 	"devDependencies": {
+		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/react": "^6.4.18",
