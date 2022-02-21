@@ -401,42 +401,70 @@ class EmailProvidersComparison extends Component {
 
 		const standardPrice = getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode );
 
-		// Note that when we have a discount, we include all renewal information in the discount content
-		const discount = ! isEligibleForFreeTrial ? null : (
-			<>
-				{ translate( '1 month free' ) }
-				<span className="email-providers-comparison__discount-with-renewal">
-					<span>
+		function getAvailableDiscountForGoogle() {
+			if ( productIsDiscounted ) {
+				return (
+					<span className="email-providers-comparison__discount-with-renewal">
 						{ translate(
-							'%(firstRenewalPrice)s/mailbox billed in 1 month, renews at %(standardPrice)s/mailbox',
+							'%(discount)d%% off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
 							{
 								args: {
-									firstRenewalPrice: formatCurrency(
-										( ( gSuiteProduct?.cost ?? 0 ) * 11 ) / 12,
-										currencyCode
-									),
+									discount: gSuiteProduct.sale_coupon.discount,
+									discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
 									standardPrice,
 								},
 								comment:
-									"%(firstRenewalPrice)s is a formatted, reduced price that the user will pay in three months (e.g. '$3'), " +
+									"%(discount)d is a numeric percentage discount (e.g. '50'), " +
+									"%(discountedPrice)s is a formatted, discounted price that the user will pay today (e.g. '$3'), " +
 									"%(standardPrice)s is a formatted price (e.g. '$5')",
-							}
-						) }
-					</span>
-					<InfoPopover position="right" showOnHover>
-						{ translate(
-							'This discount is only available the first time you purchase a %(googleMailService)s account, any additional mailboxes purchased after that will be at the regular price.',
-							{
-								args: {
-									googleMailService: getGoogleMailServiceFamily(),
+								components: {
+									span: <span />,
 								},
-								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 							}
 						) }
-					</InfoPopover>
-				</span>
-			</>
-		);
+
+						<InfoPopover position="right" showOnHover>
+							{ translate(
+								'This discount is only available the first time you purchase a %(googleMailService)s account, any additional mailboxes purchased after that will be at the regular price.',
+								{
+									args: {
+										googleMailService: getGoogleMailServiceFamily(),
+									},
+									comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+								}
+							) }
+						</InfoPopover>
+					</span>
+				);
+			}
+			return ! isEligibleForFreeTrial ? null : (
+				<>
+					{ translate( '1 month free' ) }
+					<span className="email-providers-comparison__discount-with-renewal">
+						<span>
+							{ translate(
+								'%(firstRenewalPrice)s/mailbox billed in 1 month, renews at %(standardPrice)s/mailbox',
+								{
+									args: {
+										firstRenewalPrice: formatCurrency(
+											( ( gSuiteProduct?.cost ?? 0 ) * 11 ) / 12,
+											currencyCode
+										),
+										standardPrice,
+									},
+									comment:
+										"%(firstRenewalPrice)s is a formatted, reduced price that the user will pay in three months (e.g. '$3'), " +
+										"%(standardPrice)s is a formatted price (e.g. '$5')",
+								}
+							) }
+						</span>
+					</span>
+				</>
+			);
+		}
+
+		// Note that when we have a discount, we include all renewal information in the discount content
+		const discount = getAvailableDiscountForGoogle();
 
 		const starLabel = productIsDiscounted
 			? translate( '%(discount)d%% off!', {
