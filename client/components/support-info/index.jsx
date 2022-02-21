@@ -5,20 +5,20 @@ import InfoPopover from 'calypso/components/info-popover';
 
 import './style.scss';
 
-function SupportInfo( { text, link, position, translate, privacyLink } ) {
-	function makePrivacyLink() {
-		if ( privacyLink ) {
-			if ( typeof privacyLink === 'string' ) {
-				return privacyLink;
-			}
-
-			return link + '#privacy';
+function makePrivacyLink( privacyLink, link ) {
+	if ( privacyLink ) {
+		if ( typeof privacyLink === 'string' ) {
+			return privacyLink;
 		}
 
-		return null;
+		return link + '#privacy';
 	}
 
-	const actualPrivacyLink = makePrivacyLink();
+	return null;
+}
+
+function SupportInfo( { text, link, position, translate, privacyLink } ) {
+	const filteredPrivacyLink = makePrivacyLink( privacyLink, link );
 
 	return (
 		<div className="support-info">
@@ -31,9 +31,9 @@ function SupportInfo( { text, link, position, translate, privacyLink } ) {
 						</ExternalLink>
 					</span>
 				) }
-				{ actualPrivacyLink && (
+				{ filteredPrivacyLink && (
 					<span className="support-info__privacy">
-						<ExternalLink href={ actualPrivacyLink } target="_blank" rel="noopener noreferrer">
+						<ExternalLink href={ filteredPrivacyLink } target="_blank" rel="noopener noreferrer">
 							{ translate( 'Privacy Information' ) }
 						</ExternalLink>
 					</span>
