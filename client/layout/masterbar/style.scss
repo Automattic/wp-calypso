@@ -457,6 +457,20 @@ $autobar-height: 20px;
 	}
 }
 
+.masterbar__item-upsell {
+	height: 24px;
+    margin-top: 4px;
+
+	@media only screen and ( max-width: 782px ) {
+		height: 34px;
+		margin-top: 6px;
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		display: none;
+	}
+}
+
 .masterbar__item-me {
 	.gravatar {
 		position: absolute;
