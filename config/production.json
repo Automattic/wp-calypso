@@ -77,7 +77,7 @@
 		"reader/list-management": true,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
-		"seller-experience": true,
+		"seller-experience": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
