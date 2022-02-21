@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.signup__step.is-site-info-collection {
+.signup__step.is-new-or-existing-site {
 	.step-wrapper {
 		@include break-small {
 			&.is-horizontal-layout {
@@ -13,12 +13,11 @@
 			max-width: 1440px;
 			@include break-small {
 				padding: 0 72px;
+				.step-wrapper__header {
+					padding-right: 140px;
+				}
 			}
-		}
 
-		.step-wrapper__content {
-			flex-basis: 55%;
-			margin-bottom: 64px;
 		}
 	}
 }

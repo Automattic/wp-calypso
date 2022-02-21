@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.signup__step.is-site-info-collection {
+.signup__step.is-website-content {
 	.step-wrapper {
 		@include break-small {
 			&.is-horizontal-layout {

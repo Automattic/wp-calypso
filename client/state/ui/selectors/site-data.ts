@@ -27,6 +27,11 @@ export interface SiteDataPlan {
 	is_free: boolean;
 }
 
+export interface DIFMLiteSiteOptions {
+	site_category?: string;
+	is_website_content_submitted?: boolean;
+}
+
 export interface SiteDataOptions {
 	admin_url: string | undefined;
 	is_mapped_domain: boolean;
@@ -36,5 +41,6 @@ export interface SiteDataOptions {
 	is_wpforteams_site: boolean;
 	is_difm_lite_in_progress: boolean;
 	is_domain_only: boolean;
+	difm_lite_site_options?: DIFMLiteSiteOptions;
 	// TODO: fill out the rest of this
 }

@@ -19,8 +19,9 @@ import {
 	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 	isNewOrExistingSiteFulfilled,
-	setDesignIfNewSite,
+	setDIFMLiteDesign,
 	excludeStepIfEmailVerified,
+	submitWebsiteContent,
 } from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -45,6 +46,7 @@ export default generateSteps( {
 	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 	isNewOrExistingSiteFulfilled,
-	setDesignIfNewSite,
+	setDIFMLiteDesign,
 	excludeStepIfEmailVerified,
+	submitWebsiteContent,
 } );

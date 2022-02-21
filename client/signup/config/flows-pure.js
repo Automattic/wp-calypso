@@ -13,6 +13,7 @@ export function generateFlows( {
 	getChecklistThemeDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
+	getDIFMSiteContentCollectionDestination = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -369,14 +370,23 @@ export function generateFlows( {
 				'user',
 				'new-or-existing-site',
 				'difm-site-picker',
-				'difm-design-setup-site',
 				'site-info-collection',
-				'domains',
+				'difm-design-setup-site',
 			],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
 			lastModified: '2021-09-30',
+		},
+
+		{
+			name: 'site-content-collection',
+			steps: [ 'user', 'website-content' ],
+			destination: getDIFMSiteContentCollectionDestination,
+			description: 'A flow to collect DIFM lite site content',
+			excludeFromManageSiteFlows: true,
+			providesDependenciesInQuery: [ 'siteSlug' ],
+			lastModified: '2022-01-21',
 		},
 		{
 			name: 'woocommerce-install',
