@@ -1,3 +1,4 @@
+import { SelectItems } from '@automattic/intent-screen';
 import { globe, addCard, layout } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
@@ -8,11 +9,11 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getUserSiteCountForPlatform } from 'calypso/components/site-selector/utils';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug } from 'calypso/lib/domains';
+import { preventWidows } from 'calypso/lib/formatting';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import SelectItems from '../../select-items';
 import SiteOrDomainChoice from './choice';
 import DomainImage from './domain-image';
 import ExistingSiteImage from './existing-site-image';
@@ -121,7 +122,11 @@ class SiteOrDomain extends Component {
 				{ isReskinned ? (
 					<>
 						<div>
-							<SelectItems items={ this.getChoices() } onSelect={ this.handleClickChoice } />
+							<SelectItems
+								items={ this.getChoices() }
+								onSelect={ this.handleClickChoice }
+								preventWidows={ preventWidows }
+							/>
 						</div>
 						<div className="site-or-domain__free-domain-note">
 							{ translate( '*A free domain for one year is included with all paid annual plans.' ) }

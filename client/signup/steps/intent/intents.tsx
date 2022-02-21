@@ -1,21 +1,15 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { localize, LocalizeProps } from 'i18n-calypso';
-import React from 'react';
+import { SelectItem, SelectAltItem } from '@automattic/intent-screen';
+import { useTranslate } from 'i18n-calypso';
 import { build, write, tip } from '../../icons';
-import SelectItems, { SelectItem } from '../../select-items';
-import SelectItemsAlt, { SelectAltItem } from '../../select-items-alt';
 import type { IntentFlag } from './types';
 
 type Intent = SelectItem< IntentFlag >;
 type IntentAlt = SelectAltItem< IntentFlag >;
 
-interface Props {
-	canImport: boolean;
-	onSelect: ( value: IntentFlag ) => void;
-	translate: LocalizeProps[ 'translate' ];
-}
+export const useIntents = (): Intent[] => {
+	const translate = useTranslate();
 
-const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 	const intents: Intent[] = [
 		{
 			key: 'write',
@@ -49,10 +43,9 @@ const useIntents = ( { translate }: Pick< Props, 'translate' > ): Intent[] => {
 	return intents;
 };
 
-const useIntentsAlt = ( {
-	canImport,
-	translate,
-}: Pick< Props, 'canImport' | 'translate' > ): IntentAlt[] => {
+export const useIntentsAlt = ( canImport: boolean ): IntentAlt[] => {
+	const translate = useTranslate();
+
 	return [
 		{
 			show: isEnabled( 'onboarding/import' ),
@@ -72,17 +65,3 @@ const useIntentsAlt = ( {
 		},
 	];
 };
-
-const IntentScreen: React.FC< Props > = ( { canImport, onSelect, translate } ) => {
-	const intents = useIntents( { translate } );
-	const intentsAlt = useIntentsAlt( { translate, canImport } );
-
-	return (
-		<>
-			<SelectItems items={ intents } onSelect={ onSelect } />
-			<SelectItemsAlt items={ intentsAlt } onSelect={ onSelect } />
-		</>
-	);
-};
-
-export default localize( IntentScreen );
