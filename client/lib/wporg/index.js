@@ -58,6 +58,7 @@ export function fetchPluginsList( options ) {
 	const pageSize = options.pageSize || DEFAULT_PAGE_SIZE;
 	const category = options.category || DEFAULT_CATEGORY;
 	const search = options.search;
+	const author = options.author;
 
 	const query = {
 		action: 'query_plugins',
@@ -70,7 +71,13 @@ export function fetchPluginsList( options ) {
 
 	if ( search ) {
 		query[ 'request[search]' ] = search;
-	} else {
+	}
+
+	if ( author ) {
+		query[ 'request[author]' ] = author;
+	}
+
+	if ( ! search && ! author ) {
 		query[ 'request[browse]' ] = category;
 	}
 

@@ -1,4 +1,8 @@
-import { normalizePluginData, normalizePluginsList } from 'calypso/lib/plugins/utils';
+import {
+	extractSearchInformation,
+	normalizePluginData,
+	normalizePluginsList,
+} from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
 import {
 	fetchPluginInformation,
@@ -91,7 +95,7 @@ function receivePluginsList( category, page, searchTerm, data, error, pagination
 export function fetchPluginsList(
 	category,
 	page,
-	searchTerm,
+	searchTerm = '',
 	pageSize = PLUGINS_LIST_DEFAULT_SIZE
 ) {
 	return ( dispatch, getState ) => {
@@ -120,11 +124,14 @@ export function fetchPluginsList(
 			return;
 		}
 
+		const [ search, author ] = extractSearchInformation( searchTerm );
+
 		return fetchWporgPluginsList( {
 			pageSize,
 			page,
 			category,
-			search: searchTerm,
+			search,
+			author,
 			locale: getCurrentUserLocale( getState() ),
 		} )
 			.then( ( { info, plugins } ) => {
