@@ -101,7 +101,7 @@ if ( config.isEnabled( 'hello-world' ) ) {
 	sections.push( {
 		name: 'hello-world',
 		paths: [ '/hello-world' ],
-		module: 'my-sites/hello-world',
+		module: 'calypso/my-sites/hello-world',
 	} );
 }
 ```
