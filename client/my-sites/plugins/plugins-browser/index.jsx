@@ -409,6 +409,7 @@ const SearchListView = ( {
 
 	if (
 		pluginsBySearchTerm.length > 0 ||
+		paidPluginsBySearchTerm.length > 0 ||
 		isFetchingPluginsBySearchTerm ||
 		isFetchingPaidPluginsBySearchTerm
 	) {
