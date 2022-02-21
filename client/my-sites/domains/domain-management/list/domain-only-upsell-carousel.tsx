@@ -9,15 +9,11 @@ import DotPager from 'calypso/components/dot-pager';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getDomainNotices } from 'calypso/lib/domains/get-domain-notices';
+import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestDomainsNotices, updateDomainNotice } from 'calypso/state/domains/notices/actions';
-import {
-	getDomainNotice,
-	isRequestingDomainNotices,
-	isUpdatingDomainNotices,
-} from 'calypso/state/domains/notices/selectors';
 import { createSiteFromDomainOnly } from '../../paths';
 import {
 	DomainOnlyUpsellCarouselConnectedProps,
@@ -29,26 +25,51 @@ import {
 
 import './style.scss';
 
+const shouldHideCard = ( date: string | null ): boolean => {
+	if ( ! date ) return false;
+	const reminderEnd = moment( date );
+	return reminderEnd.isValid() && moment().isBefore( reminderEnd );
+};
+
 const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.Element | null => {
 	const translate = useTranslate();
 	const [ areHideSiteCardOptionsVisible, setHideSiteCardOptionsVisible ] = useState( false );
 	const [ areHideEmailCardOptionsVisible, setHideEmailCardOptionsVisible ] = useState( false );
 	const hideCreateSiteCardButtonRef = useRef( null );
 	const hideAddEmailCardButtonRef = useRef( null );
+	const [ isRequestingDomainNotices, setIsRequestingDomainNotices ] = useState( false );
+	const [ isUpdatingDomainNotices, setIsUpdatingDomainNotices ] = useState( false );
+	const [ hideAddEmailCard, setHideEmailCard ] = useState( false );
+	const [ hideCreateSiteCard, setHideCreateSiteCard ] = useState( false );
 
-	const {
-		domain,
-		isRequestingDomainNotices,
-		isUpdatingDomainNotices,
-		hideCreateSiteCard,
-		hideAddEmailCard,
-		dispatchRecordTracksEvent,
-		requestDomainsNotices,
-	} = props;
+	const { domain, dispatchRecordTracksEvent } = props;
+
+	const domainName = domain.domain;
 
 	useEffect( () => {
-		requestDomainsNotices( domain.domain );
-	}, [ requestDomainsNotices, domain.domain ] );
+		setIsRequestingDomainNotices( true );
+		getDomainNotices(
+			domainName,
+			( data ) => {
+				const { states } = data;
+				if ( states ) {
+					const domainNotices = states[ domainName ];
+					setHideEmailCard(
+						shouldHideCard( domainNotices[ UpsellCardNoticeType.HIDE_ADD_EMAIL_CARD ] )
+					);
+					setHideCreateSiteCard(
+						shouldHideCard( domainNotices[ UpsellCardNoticeType.HIDE_CREATE_SITE_CARD ] )
+					);
+				}
+				setIsRequestingDomainNotices( false );
+			},
+			() => {
+				setIsRequestingDomainNotices( false );
+				setHideEmailCard( true );
+				setHideCreateSiteCard( true );
+			}
+		);
+	}, [ domainName ] );
 
 	const getActionClickHandler = ( buttonURL: string, sourceCardType: string ) => () => {
 		dispatchRecordTracksEvent( 'calypso_domain_only_upsell_card_click', {
@@ -73,7 +94,25 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 			source_card_type: sourceCardType,
 			reminder,
 		} );
-		props.updateDomainNotice( domain.domain, noticeType, noticeValue );
+		setIsUpdatingDomainNotices( true );
+		setDomainNotice(
+			domainName,
+			noticeType,
+			noticeValue,
+			( data ) => {
+				if ( data.success ) {
+					setIsUpdatingDomainNotices( false );
+					if ( noticeType === UpsellCardNoticeType.HIDE_ADD_EMAIL_CARD ) {
+						setHideEmailCard( true );
+					} else if ( noticeType === UpsellCardNoticeType.HIDE_CREATE_SITE_CARD ) {
+						setHideCreateSiteCard( true );
+					}
+				}
+			},
+			() => {
+				setIsUpdatingDomainNotices( false );
+			}
+		);
 	};
 
 	const renderCard = ( {
@@ -225,33 +264,10 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 	);
 };
 
-const shouldHideCard = ( date: string | null ): boolean => {
-	if ( ! date ) return false;
-	const reminderEnd = moment( date );
-	return reminderEnd.isValid() && moment().isBefore( reminderEnd );
-};
-
 export default connect<
 	DefaultRootState,
 	DomainOnlyUpsellCarouselConnectedProps,
 	DomainOnlyUpsellCarouselOwnProps
->(
-	( state, ownProps ) => {
-		const domainName = ownProps.domain.domain;
-		return {
-			hideAddEmailCard: shouldHideCard(
-				getDomainNotice( state, domainName, UpsellCardNoticeType.HIDE_ADD_EMAIL_CARD )
-			),
-			hideCreateSiteCard: shouldHideCard(
-				getDomainNotice( state, domainName, UpsellCardNoticeType.HIDE_CREATE_SITE_CARD )
-			),
-			isRequestingDomainNotices: isRequestingDomainNotices( state, domainName ),
-			isUpdatingDomainNotices: isUpdatingDomainNotices( state, domainName ),
-		};
-	},
-	{
-		dispatchRecordTracksEvent: recordTracksEvent,
-		requestDomainsNotices,
-		updateDomainNotice,
-	}
-)( DomainOnlyUpsellCarousel );
+>( null, {
+	dispatchRecordTracksEvent: recordTracksEvent,
+} )( DomainOnlyUpsellCarousel );
