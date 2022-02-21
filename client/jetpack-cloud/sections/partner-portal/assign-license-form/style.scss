@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
 .assign-license-form {
@@ -30,16 +31,19 @@
 .assign-license-form__top {
 	display: flex;
 	justify-content: space-between;
-}
-
-.assign-license-form__top > div {
-	align-self: flex-end;
-	margin-bottom: 0;
-}
-
-.assign-license-form__top {
+	flex-direction: column;
+	margin-top: 0;
 	margin-bottom: 1rem;
-	margin-top: -1.5rem;
+
+	> div {
+		align-self: flex-end;
+		margin-bottom: 0;
+	}
+
+	@include break-large {
+		flex-direction: row;
+		margin-top: -1.5rem;
+	}
 }
 
 .assign-license-form__bottom {
@@ -70,13 +74,4 @@ p.assign-license-form__description {
 	margin-right: 1rem;
 	font-weight: 700;
 	text-decoration: underline;
-}
-
-@include breakpoint-deprecated( '<960px' ) {
-	.assign-license-form {
-		&__top {
-			flex-direction: column;
-			margin-top: 0;
-		}
-	}
 }
