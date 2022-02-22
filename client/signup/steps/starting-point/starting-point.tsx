@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { SelectItems, SelectItem } from '@automattic/intent-screen';
+import { SelectItems, SelectItem } from '@automattic/onboarding-components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
