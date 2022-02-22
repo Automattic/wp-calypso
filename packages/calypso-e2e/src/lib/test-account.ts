@@ -109,7 +109,7 @@ export class TestAccount {
 		try {
 			const { birthtimeMs } = await fs.stat( this.getAuthCookiesPath() );
 			const nowMs = Date.now();
-			const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
+			const threeDaysMs = 2 * 24 * 60 * 60 * 1000;
 
 			return nowMs < birthtimeMs + threeDaysMs;
 		} catch {
