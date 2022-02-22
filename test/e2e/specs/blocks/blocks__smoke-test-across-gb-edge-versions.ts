@@ -15,9 +15,15 @@
  * To avoid any confusion, the tests here will only run if the GUTENBERG_EDGE env
  * var is set.
  */
-import { DataHelper, GutenbergEditorPage, TestAccount } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	GutenbergEditorPage,
+	TestAccount,
+	envVariables,
+} from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
+const test = envVariables.GUTENBERG_EDGE ? it : it.skip;
 const accountName = 'gutenbergUpgradeUser';
 const postURL = 'https://wordpress.com/post/e2egbupgradeheveredge.wordpress.com/42805';
 
@@ -36,13 +42,15 @@ describe(
 			await testAccount.authenticate( page );
 
 			await page.goto( postURL );
+
 			gutenbergEditorPage = new GutenbergEditorPage( page );
 		} );
 
 		// Both block invalidation and crash messages are wrapped by the same `Warning`
 		// component in Gutenberg. If we find at least one warning, then we fail the test.
-		it( 'will not have any block warnings', async () => {
+		test( 'will not have any block warnings', async () => {
 			await gutenbergEditorPage.waitUntilLoaded();
+
 			expect( await gutenbergEditorPage.editorHasBlockWarnings() ).toBe( false );
 		} );
 	}
