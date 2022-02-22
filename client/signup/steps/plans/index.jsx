@@ -103,7 +103,11 @@ export class PlansStep extends Component {
 			<div>
 				{ errorDisplay }
 				<QueryPlans />
-				<PlansComparison selectedSiteId={ selectedSite?.ID || undefined } isInSignup={ true } />
+				<PlansComparison
+					isInSignup={ true }
+					onSelectPlan={ this.onSelectPlan }
+					selectedSiteId={ selectedSite?.ID || undefined }
+				/>
 			</div>
 		);
 	}

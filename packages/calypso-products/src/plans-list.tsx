@@ -1566,11 +1566,12 @@ PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
 	...PLANS_LIST[ PLAN_FREE ],
 	group: GROUP_WPCOM,
 	type: TYPE_FLEXIBLE,
+	getBillingTimeFrame: WPComGetBillingTimeframe,
 	getDescription: () =>
 		i18n.translate(
 			'Start your free WordPress.com website. Limited functionalities, storage and visits.'
 		),
-	getIncludedFeatures: () => [
+	getPlanCompareFeatures: () => [
 		FEATURE_10K_VISITS,
 		FEATURE_UNLIMITED_POSTS_PAGES,
 		FEATURE_500MB_STORAGE,

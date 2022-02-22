@@ -3,7 +3,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import type { TranslateResult } from 'i18n-calypso';
 
 interface Props {
-	title?: TranslateResult;
+	title: TranslateResult;
 	subtitle?: TranslateResult;
 	description?: TranslateResult;
 	scope?: 'row' | 'col';
@@ -11,21 +11,22 @@ interface Props {
 
 const Wrapper = styled.div`
 	display: flex;
-	flex-direction: row;
-	gap: 5px;
-
-	.info-popover .gridicon {
-		color: var( --studio-gray-30 );
-	}
-`;
-
-const TitleContainer = styled.div`
-	display: flex;
 	flex-direction: column;
+	margin-left: 21px;
+	min-height: 100%;
 `;
 
 const Title = styled.div`
+	display: flex;
+	flex-direction: row;
+	gap: 5px;
 	font-weight: 600;
+	margin-left: -21px;
+
+	.gridicon {
+		display: block;
+		color: var( --studio-gray-30 );
+	}
 `;
 
 const Subtitle = styled.div`
@@ -43,13 +44,13 @@ export const PlansComparisonRowHeader: React.FunctionComponent< Props > = ( {
 	return (
 		<th scope={ scope }>
 			<Wrapper>
-				<InfoPopover position="top" iconSize={ 16 } showOnHover={ true }>
-					{ description }
-				</InfoPopover>
-				<TitleContainer>
-					{ title && <Title>{ title }</Title> }
-					{ subtitle && <Subtitle>{ subtitle }</Subtitle> }
-				</TitleContainer>
+				<Title>
+					<InfoPopover position="top" iconSize={ 16 } showOnHover={ true }>
+						{ description }
+					</InfoPopover>
+					{ title }
+				</Title>
+				{ subtitle && <Subtitle>{ subtitle }</Subtitle> }
 			</Wrapper>
 		</th>
 	);

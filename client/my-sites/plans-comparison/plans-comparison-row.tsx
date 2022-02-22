@@ -28,9 +28,30 @@ const MobileContent = styled.div`
 	}
 `;
 
+const Title = styled.div`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.5rem;
+
+	.gridicon {
+		width: 1em;
+		height: 1em;
+	}
+
+	.gridicons-checkmark {
+		fill: var( --studio-green-50 );
+	}
+
+	.gridicons-cross {
+		fill: var( --studio-gray-30 );
+	}
+`;
+
 const Description = styled.p`
 	font-size: 0.75rem;
 	color: var( --studio-gray-30 );
+	margin: 0;
 `;
 
 function renderContent( content: ReturnType< PlanComparisonFeature[ 'getCellText' ] > ) {
@@ -38,7 +59,7 @@ function renderContent( content: ReturnType< PlanComparisonFeature[ 'getCellText
 
 	return (
 		<>
-			<span>{ contentArray[ 0 ] }</span>
+			<Title>{ contentArray[ 0 ] }</Title>
 			{ contentArray[ 1 ] && <Description>{ contentArray[ 1 ] }</Description> }
 		</>
 	);
