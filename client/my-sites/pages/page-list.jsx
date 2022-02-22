@@ -46,10 +46,6 @@ export default class PageList extends Component {
 		this.setState( { page: this.state.page + 1 } );
 	};
 
-	resetPage = () => {
-		this.setState( { page: 1 } );
-	};
-
 	render() {
 		const { search, siteId, query } = this.props;
 		const { page } = this.state;
