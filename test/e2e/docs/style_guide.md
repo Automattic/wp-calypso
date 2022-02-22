@@ -1,6 +1,6 @@
 <div style="width: 45%; float:left" align="left"><a href="./library_objects.md"><-- Library objects</a> </div>
 <div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
-<div style="width: 45%; float:right"align="right"><a href="./patterns_tricks_gotchas.md">Patterns, Tricks, and Gotcha's --></a> </div>
+<div style="width: 45%; float:right"align="right"><a href="./patterns_tricks_gotchas.md">Patterns, Tricks, and Gotchas --></a> </div>
 
 <br><br>
 
