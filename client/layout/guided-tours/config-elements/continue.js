@@ -31,17 +31,10 @@ export default class Continue extends Component {
 		this.removeTargetListener();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps, nextContext ) {
-		nextProps.when && nextContext.isValid( nextProps.when ) && this.onContinue();
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillUpdate() {
-		this.removeTargetListener();
-	}
-
 	componentDidUpdate() {
+		this.props.when && this.context.isValid( this.props.when ) && this.onContinue();
+
+		this.removeTargetListener();
 		this.addTargetListener();
 	}
 
