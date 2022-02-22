@@ -281,6 +281,9 @@ export async function findCartKeyFromSiteSlug(
 ): Promise< CartKey > {
 	try {
 		const cart = await getCart( slug as CartKey );
+		if ( ! cart?.cart_key ) {
+			throw new Error( `Could not find cart key from site slug ${ slug }` );
+		}
 		return cart.cart_key;
 	} catch {
 		return 'no-site';
