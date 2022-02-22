@@ -27,7 +27,7 @@ describe.each`
 	${ 'Simple' } | ${ 'gutenbergUpgradeEdgeUser' }    | ${ 42805 }
 	${ 'Atomic' } | ${ 'gutenbergAtomicSiteEdgeUser' } | ${ 32 }
 `(
-	'Gutenberg Upgrade: Test Most Popular Blocks on ($siteType) edge',
+	'Gutenberg Upgrade: Sanity-Check Most Popular Blocks on ($siteType) edge',
 	function ( { accountName, testPostId } ) {
 		let page: Page;
 		let gutenbergEditorPage: GutenbergEditorPage;
