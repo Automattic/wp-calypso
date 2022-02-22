@@ -1,10 +1,12 @@
-import { PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, isMonthly } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const StyledUl = styled.ul`
 	margin-top: 20px;
@@ -47,6 +49,12 @@ const USPS: React.FC< Props > = ( {
 	const translate = useTranslate();
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
+
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const currentPlan = useSelector( ( state ) =>
+		selectedSiteId ? getCurrentPlan( state, selectedSiteId ) : undefined
+	);
+	const isAnnualPlan = currentPlan && ! isMonthly( currentPlan.productSlug );
 
 	const planDisplayCost = useSelector( ( state ) =>
 		getProductDisplayCost( state, isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY )
@@ -112,7 +120,7 @@ const USPS: React.FC< Props > = ( {
 					{
 						id: 'support',
 						image: <Gridicon icon="chat" size={ 16 } />,
-						text: isAnnualPeriod
+						text: isAnnualPlan
 							? translate( 'Live chat support 24x7' )
 							: translate( 'Unlimited Email Support' ),
 						eligibilities: [ 'needs-upgrade', 'marketplace' ],
