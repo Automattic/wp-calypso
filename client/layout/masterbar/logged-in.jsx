@@ -7,7 +7,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Gravatar from 'calypso/components/gravatar';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -22,9 +21,7 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -118,12 +115,6 @@ class MasterbarLoggedIn extends Component {
 	clickReader = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_reader_clicked' );
 		this.handleLayoutFocus( 'reader' );
-	};
-
-	clickPlanUpsell = () => {
-		this.props.recordTracksEvent( 'calypso_masterbar_click', {
-			clicked: 'plan_upsell_button',
-		} );
 	};
 
 	clickMe = () => {
@@ -222,11 +213,8 @@ class MasterbarLoggedIn extends Component {
 			siteSlug,
 			isJetpackNotAtomic,
 			title,
-			isP2,
-			isJetpack,
 			currentSelectedSiteSlug,
 			currentSelectedSiteId,
-			currentPlan,
 		} = this.props;
 
 		const { isActionSearchVisible } = this.state;
@@ -244,21 +232,6 @@ class MasterbarLoggedIn extends Component {
 				/>
 			);
 		}
-		const planSlug = currentPlan?.productSlug || '';
-
-		const plansUpsells = [
-			'free_plan',
-			'personal-bundle-monthly',
-			'value_bundle_monthly',
-			'business-bundle-monthly',
-			'ecommerce-bundle-monthly',
-
-			'personal-bundle',
-			'value_bundle',
-			'business-bundle',
-		];
-		const showPlanUpsell = ! isP2 && ! isJetpack && plansUpsells.includes( planSlug );
-		const plansUpsellPath = '/plans/' + siteSlug;
 
 		return (
 			<>
@@ -302,43 +275,25 @@ class MasterbarLoggedIn extends Component {
 						) }
 					</div>
 					<div className="masterbar__section masterbar__section--center">
-						<ProvideExperimentData
-							name="masterbar_plan_upsell_202202_v1"
-							options={ {
-								isEligible: showPlanUpsell,
-							} }
-						>
-							{ ( isLoading, experimentAssignment ) => {
-								if ( isLoading ) {
-									return null;
-								}
-
-								const variation = experimentAssignment?.variationName;
-								return (
-									'treatment' === variation && (
-										<Item
-											tipTarget={ translate( 'Upgrade your plan' ) }
-											url={ plansUpsellPath }
-											onClick={ this.clickPlanUpsell }
-											className="masterbar__item masterbar__item-upsell button is-primary"
-											tooltip={ translate( 'Upgrade your plan' ) }
-										>
-											{ translate( 'Upgrade' ) }
-										</Item>
-									)
-								);
-							} }
-						</ProvideExperimentData>
 						{ ! domainOnlySite && ! isMigrationInProgress && (
-							<AsyncLoad
-								require="./publish"
-								placeholder={ null }
-								isActive={ this.isActive( 'post' ) }
-								className="masterbar__item-new"
-								tooltip={ translate( 'Create a New Post' ) }
-							>
-								{ translate( 'Write' ) }
-							</AsyncLoad>
+							<>
+								<AsyncLoad
+									require="./plan-upsell"
+									className="masterbar__item-upsell button is-primary"
+									tooltip={ translate( 'Upgrade your plan' ) }
+								>
+									{ translate( 'Upgrade' ) }
+								</AsyncLoad>
+								<AsyncLoad
+									require="./publish"
+									placeholder={ null }
+									isActive={ this.isActive( 'post' ) }
+									className="masterbar__item-new"
+									tooltip={ translate( 'Create a New Post' ) }
+								>
+									{ translate( 'Write' ) }
+								</AsyncLoad>
+							</>
 						) }
 					</div>
 					<div className="masterbar__section masterbar__section--right">
@@ -406,10 +361,7 @@ export default connect(
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
-			currentPlan: getCurrentPlan( state, siteId ),
 			isMigrationInProgress,
-			isP2: isSiteWPForTeams( state, siteId ),
-			isJetpack: isJetpackSite( state, siteId ),
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
 			currentSelectedSiteSlug: currentSelectedSiteId
