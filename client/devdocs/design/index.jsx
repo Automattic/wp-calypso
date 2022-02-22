@@ -96,6 +96,7 @@ import SpinnerButton from 'calypso/components/spinner-button/docs/example';
 import SpinnerLine from 'calypso/components/spinner-line/docs/example';
 import Spinner from 'calypso/components/spinner/docs/example';
 import SplitButton from 'calypso/components/split-button/docs/example';
+import Spotlight from 'calypso/components/spotlight/docs/example';
 import StepProgress from 'calypso/components/step-progress/docs/example';
 import SuggestionSearchExample from 'calypso/components/suggestion-search/docs/example';
 import SupportInfoExample from 'calypso/components/support-info/docs/example';
@@ -258,6 +259,7 @@ export default class DesignAssets extends Component {
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
 					<SplitButton readmeFilePath="split-button" />
+					<Spotlight />
 					<StepProgress readmeFilePath="step-progress" />
 					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />
