@@ -153,7 +153,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		test( 'Should return the iintroductoryOfferPrice value', () => {
+		test( 'Should return the introductoryOfferPrice value', () => {
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			getIntroOfferPrice.mockImplementation( () => 60 );
 			getIntroOfferIsEligible.mockImplementation( () => true );
