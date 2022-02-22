@@ -96,11 +96,11 @@ const BillingIntervalSwitcher: React.FunctionComponent< Props > = ( {
 							annualSaving.saving ? (
 								<>
 									<PluginAnnualSavingLabelDesktop>
-										(
-										{ sprintf( 'Save %(save)s', {
-											save: annualSaving.saving,
+										&nbsp;
+										{ translate( 'Save %(save)s', {
+											comment: 'Sale price label, ex: Save $51',
+											args: { save: annualSaving.saving },
 										} ) }
-										)
 									</PluginAnnualSavingLabelDesktop>
 								</>
 							) : null
