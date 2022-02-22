@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { Icon, info } from '@wordpress/icons';
+import { Icon, chevronDown, chevronUp, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -56,6 +56,20 @@ export default function ConnectDomainStepSuggestedStart( {
 						{ __( 'Any services connected to this domain?' ) }
 					</div>
 				}
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
+				actionButton={
+					<button className="foldable-card__action foldable-card__expand">
+						<span className="screen-reader-text">More</span>
+						<Icon icon={ chevronDown } viewBox="6 4 12 14" size={ 16 } />
+					</button>
+				}
+				actionButtonExpanded={
+					<button className="foldable-card__action foldable-card__expand">
+						<span className="screen-reader-text">More</span>
+						<Icon icon={ chevronUp } viewBox="6 4 12 14" size={ 16 } />
+					</button>
+				}
+				/* eslint-enable wpcalypso/jsx-classname-namespace */
 				expanded={ false }
 			>
 				<p>
