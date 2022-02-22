@@ -48,6 +48,7 @@ export type ResponseDomain = {
 	aRecordsRequiredForMapping?: Array< string >;
 	autoRenewalDate: string;
 	autoRenewing: boolean;
+	aftermarketAuction: boolean;
 	beginTransferUntilDate: string;
 	blogId: number;
 	bundledPlanSubscriptionId: string | number | null | undefined;
@@ -143,4 +144,27 @@ export type DnsRequest = {
 	isFetching: boolean;
 	isSubmittingForm: boolean;
 	records: Array< DnsRecord >;
+};
+
+export type DomainsApiError = {
+	error?: string;
+	message?: string;
+};
+
+export type GetDomainNoticesResponseDataSuccess = {
+	success: boolean;
+	states: {
+		[ domainName: string ]: {
+			[ domainNotice: string ]: string;
+		};
+	};
+};
+
+export type SetDomainNoticeResponseDataSuccess = {
+	success: boolean;
+	states: {
+		[ domainName: string ]: {
+			[ domainNotice: string ]: string;
+		};
+	};
 };

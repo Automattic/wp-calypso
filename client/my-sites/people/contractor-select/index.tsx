@@ -3,7 +3,7 @@ import { FunctionComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import SupportInfo from 'calypso/components/support-info';
+import InfoPopover from 'calypso/components/info-popover';
 import type { ChangeEventHandler } from 'react';
 
 interface Props {
@@ -29,12 +29,11 @@ const ContractorSelect: FunctionComponent< Props > = ( { id, checked, onChange, 
 				/>
 				<span>
 					{ translate( 'This user is a contractor, freelancer, consultant, or agency.' ) }
-					<SupportInfo
-						position="top right"
-						text={ translate(
+					<InfoPopover position="top right" screenReaderText={ translate( 'Learn more' ) }>
+						{ translate(
 							'Use this checkbox to flag users who are not a part of your organization.'
 						) }
-					/>
+					</InfoPopover>
 				</span>
 			</FormLabel>
 		</FormFieldset>

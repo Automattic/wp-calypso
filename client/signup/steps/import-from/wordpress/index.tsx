@@ -52,7 +52,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 ↓ Methods
 	 */
 	function installJetpack() {
-		page( `https://wordpress.com/jetpack/connect/?url=${ fromSite }` );
+		window.open( `/jetpack/connect/?url=${ fromSite }`, '_blank' );
 	}
 
 	function switchToMigrationScreen() {
