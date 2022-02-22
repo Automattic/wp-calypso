@@ -46,6 +46,7 @@ import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
+import { getPlugins as getInstalledPlugins } from 'calypso/state/plugins/installed/selectors';
 import {
 	fetchPluginsCategoryNextPage,
 	fetchPluginsList,
@@ -133,6 +134,13 @@ const PluginsBrowser = ( {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
+	const installedPlugins = useSelector( ( state ) =>
+		getInstalledPlugins( state, [ selectedSite?.ID ] )
+	);
+
+	const activePlugins = installedPlugins.filter(
+		( activePlugin ) => activePlugin.sites[ selectedSite?.ID ].active
+	);
 
 	// Billing period switcher.
 	const billingPeriod = useSelector( getBillingInterval );
@@ -353,6 +361,7 @@ const PluginsBrowser = ( {
 			/>
 
 			<PluginBrowserContent
+				activePlugins={ activePlugins }
 				pluginsByCategoryNew={ pluginsByCategoryNew }
 				isFetchingPluginsByCategoryNew={ isFetchingPluginsByCategoryNew }
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
@@ -546,6 +555,7 @@ const FullListView = ( {
 
 const PluginSingleListView = ( {
 	category,
+	activePlugins,
 	pluginsByCategoryNew,
 	isFetchingPluginsByCategoryNew,
 	pluginsByCategoryPopular,
@@ -591,6 +601,7 @@ const PluginSingleListView = ( {
 	}
 	return (
 		<PluginsBrowserList
+			activePlugins={ activePlugins }
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
 			listName={ category }
 			title={ translateCategory( { category, translate } ) }

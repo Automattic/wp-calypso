@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
@@ -32,6 +33,7 @@ const PluginsBrowserListElement = ( props ) => {
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
 		billingPeriod,
+		activePlugins,
 	} = props;
 
 	const translate = useTranslate();
@@ -146,6 +148,7 @@ const PluginsBrowserListElement = ( props ) => {
 				<div className="plugins-browser-item__footer">
 					{ variant === PluginsBrowserElementVariant.Extended && (
 						<InstalledInOrPricing
+							activePlugins={ activePlugins }
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
 							plugin={ plugin }
@@ -181,6 +184,7 @@ const PluginsBrowserListElement = ( props ) => {
 };
 
 const InstalledInOrPricing = ( {
+	activePlugins,
 	sitesWithPlugin,
 	isWpcomPreinstalled,
 	plugin,
@@ -191,19 +195,24 @@ const InstalledInOrPricing = ( {
 	const translate = useTranslate();
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
+		/* eslint-disable wpcalypso/jsx-gridicon-size */
+		const isActive = !! activePlugins.find( ( activePlugin ) => activePlugin.slug === plugin.slug );
+
 		return (
-			/* eslint-disable wpcalypso/jsx-gridicon-size */
-			<div className="plugins-browser-item__installed">
-				<Gridicon icon="checkmark" size={ 14 } />
-				{ isWpcomPreinstalled || currentSites.length === 1
-					? translate( 'Installed' )
-					: translate( 'Installed on %d site', 'Installed on %d sites', {
-							args: [ sitesWithPlugin.length ],
-							count: sitesWithPlugin.length,
-					  } ) }
-			</div>
-			/* eslint-enable wpcalypso/jsx-gridicon-size */
+			<>
+				<div className="plugins-browser-item__installed">
+					<Gridicon icon="checkmark" size={ 14 } />
+					{ isWpcomPreinstalled || currentSites.length === 1
+						? translate( 'Installed' )
+						: translate( 'Installed on %d site', 'Installed on %d sites', {
+								args: [ sitesWithPlugin.length ],
+								count: sitesWithPlugin.length,
+						  } ) }
+				</div>
+				<Badge type={ isActive ? 'success' : 'info' }>{ isActive ? 'Active' : 'Inactive' }</Badge>
+			</>
 		);
+		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	}
 
 	return (
