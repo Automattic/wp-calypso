@@ -494,53 +494,60 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	);
 }
 
-export async function setStoreFeatures( callback, { siteSlug }, stepProvidedItems, reduxStore ) {
+export async function setStoreFeatures(
+	callback,
+	{ siteSlug, storeType },
+	stepProvidedItems,
+	reduxStore
+) {
 	if ( ! siteSlug ) {
 		defer( callback );
 		return;
 	}
 
-	try {
-		/*
-		 * Get the block pattern source for use in our new home page.
-		 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
-		 */
-		const patternList = await wpcom.req.get( {
-			path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
-			apiNamespace: 'rest/v1',
-		} );
+	if ( 'payment_block' === storeType ) {
+		try {
+			/*
+			 * Get the block pattern source for use in our new home page.
+			 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
+			 */
+			const patternList = await wpcom.req.get( {
+				path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
+				apiNamespace: 'rest/v1',
+			} );
 
-		//Only item since we filter by id
-		const singleProductPattern = patternList[ 0 ];
+			//Only item since we filter by id
+			const singleProductPattern = patternList[ 0 ];
 
-		// Create a new Home page
-		const newPage = await wpcom.req.post( {
-			path: `/sites/${ siteSlug }/pages`,
-			apiNamespace: 'wp/v2',
-			body: {
-				content: singleProductPattern.html,
-				title: translate( 'Available now!' ),
-				status: 'publish',
-				template: 'header-footer-only',
-			},
-		} );
+			// Create a new Home page
+			const newPage = await wpcom.req.post( {
+				path: `/sites/${ siteSlug }/pages`,
+				apiNamespace: 'wp/v2',
+				body: {
+					content: singleProductPattern.html,
+					title: translate( 'Available now!' ),
+					status: 'publish',
+					template: 'header-footer-only',
+				},
+			} );
 
-		const siteId = getSiteId( reduxStore.getState(), siteSlug );
+			const siteId = getSiteId( reduxStore.getState(), siteSlug );
 
-		//Set the new Home page as the front page.
-		await updateSiteFrontPage( siteId, {
-			show_on_front: 'page',
-			page_on_front: newPage.id,
-		} )( reduxStore.dispatch );
+			//Set the new Home page as the front page.
+			await updateSiteFrontPage( siteId, {
+				show_on_front: 'page',
+				page_on_front: newPage.id,
+			} )( reduxStore.dispatch );
 
-		// Set footer to the 'store' option
-		await wpcom.req.post( {
-			path: `/sites/${ siteSlug }/seller_footer`,
-			apiNamespace: 'wpcom/v2',
-		} );
-	} catch ( e ) {
-		defer( callback );
-		return;
+			// Set footer to the 'store' option
+			await wpcom.req.post( {
+				path: `/sites/${ siteSlug }/seller_footer`,
+				apiNamespace: 'wpcom/v2',
+			} );
+		} catch ( e ) {
+			defer( callback );
+			return;
+		}
 	}
 
 	/*

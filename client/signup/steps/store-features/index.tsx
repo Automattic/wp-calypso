@@ -171,7 +171,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 				break;
 
 			case 'simple': {
-				dispatch( submitSignupStep( { stepName } ) );
+				dispatch( submitSignupStep( { stepName }, { storeType: 'payment_block' } ) );
 			}
 		}
 		goToNextStep();
