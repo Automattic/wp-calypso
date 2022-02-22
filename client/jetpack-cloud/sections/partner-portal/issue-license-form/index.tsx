@@ -9,21 +9,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { APIProductFamily } from 'calypso/state/partner-portal/types';
+import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
-interface ProductOption {
-	value: string;
-	label: string;
-}
-
-function selectProductOptions( families: APIProductFamily[] ): ProductOption[] {
-	return families.flatMap( ( family ) =>
-		family.products.map( ( product ) => ( {
-			value: product.slug,
-			label: product.name,
-		} ) )
-	);
+function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {
+	return families.flatMap( ( family ) => family.products );
 }
 
 export default function IssueLicenseForm(): ReactElement {
@@ -46,26 +36,26 @@ export default function IssueLicenseForm(): ReactElement {
 	const [ product, setProduct ] = useState( '' );
 
 	const onSelectProduct = useCallback(
-		( option ) => {
+		( value ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select', {
-					product: option.value,
+					product: value,
 				} )
 			);
-			setProduct( option.value );
+			setProduct( value );
 		},
 		[ setProduct ]
 	);
 
 	const productCards =
 		products.data &&
-		products.data.map( ( prod, i ) => (
+		products.data.map( ( productOption, i ) => (
 			<LicenseProductCard
-				key={ prod.value }
-				product={ prod }
+				key={ productOption.slug }
+				product={ productOption }
 				onSelectProduct={ onSelectProduct }
-				isSelected={ prod.value === product }
-				orderIndex={ i }
+				isSelected={ productOption.slug === product }
+				tabIndex={ 100 + i }
 			/>
 		) );
 

@@ -29,46 +29,57 @@
 }
 
 .issue-license-form__controls {
-	text-align: right;
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 0.875rem 0.875rem 1.5rem;
+	background: white;
+	box-shadow: 0 -1px 2px rgba( 0, 0, 0, 0.12 );
 
-	@include break-large {
-		text-align: left;
+	.button {
+		width: 100%;
+		padding: 8px 24px;
+		font-size: 1rem;
+		white-space: nowrap;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		position: static;
+		padding: 0;
+		background: transparent;
+		box-shadow: none;
+
+		.button {
+			width: auto;
+		}
 	}
 }
 
 .issue-license-form__top {
-	margin-bottom: 1rem;
-	margin-top: -1.5rem;
-	display: block;
-
-	@include break-large {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	& > div {
-		align-self: flex-end;
-		margin-bottom: 0;
-	}
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 0.5rem;
 }
 
 .issue-license-form__bottom {
 	display: flex;
 	flex-wrap: wrap;
 
-	@include break-wide {
+	@include break-xlarge {
 		margin-left: -0.5rem;
 		margin-right: -0.5rem;
 	}
 }
 
 p.issue-license-form__description {
-	margin: 2rem 0 1rem;
+	flex: 1 1 auto;
 	align-self: flex-end;
+	margin: 0;
 	font-size: 0.875rem;
 	color: #333;
 
-	@include break-large {
-		margin: 0;
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 0 1rem 0 0;
 	}
 }
