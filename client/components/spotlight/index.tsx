@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 
 const SpotlightContainer = styled.div`
+	background: white;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
