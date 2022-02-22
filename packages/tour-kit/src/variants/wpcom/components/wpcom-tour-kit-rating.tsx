@@ -41,11 +41,11 @@ const WpcomTourKitRating: React.FunctionComponent = () => {
 	return (
 		<>
 			<p className="wpcom-tour-kit-rating__end-text">
-				{ __( 'Did you find this guide helpful?', 'full-site-editing' ) }
+				{ __( 'Did you find this guide helpful?' ) }
 			</p>
 			<div>
 				<Button
-					aria-label={ __( 'Rate thumbs up', 'full-site-editing' ) }
+					aria-label={ __( 'Rate thumbs up' ) }
 					className={ classNames( 'wpcom-tour-kit-rating__end-icon', {
 						active: tourRating === 'thumbs-up',
 					} ) }
@@ -55,7 +55,7 @@ const WpcomTourKitRating: React.FunctionComponent = () => {
 					iconSize={ 24 }
 				/>
 				<Button
-					aria-label={ __( 'Rate thumbs down', 'full-site-editing' ) }
+					aria-label={ __( 'Rate thumbs down' ) }
 					className={ classNames( 'wpcom-tour-kit-rating__end-icon', {
 						active: tourRating === 'thumbs-down',
 					} ) }

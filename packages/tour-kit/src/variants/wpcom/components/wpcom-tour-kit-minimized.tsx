@@ -17,13 +17,13 @@ const WpcomTourKitMinimized: React.FunctionComponent< MinimizedTourRendererProps
 
 	return (
 		<Flex gap={ 0 } className="wpcom-tour-kit-minimized">
-			<Button onClick={ onMaximize } aria-label={ __( 'Resume Tour', 'full-site-editing' ) }>
+			<Button onClick={ onMaximize } aria-label={ __( 'Resume Tour' ) }>
 				<Flex gap={ 13 }>
 					<p>
 						{ createInterpolateElement(
 							sprintf(
 								/* translators: 1: current page number, 2: total number of pages */
-								__( 'Resume welcome tour <span>(%1$d/%2$d)</span>', 'full-site-editing' ),
+								__( 'Resume tour <span>(%1$d/%2$d)</span>' ),
 								page,
 								numberOfPages
 							),
@@ -35,10 +35,7 @@ const WpcomTourKitMinimized: React.FunctionComponent< MinimizedTourRendererProps
 					<Icon icon={ maximize } size={ 24 } />
 				</Flex>
 			</Button>
-			<Button
-				onClick={ onDismiss( 'close-btn-minimized' ) }
-				aria-label={ __( 'Close Tour', 'full-site-editing' ) }
-			>
+			<Button onClick={ onDismiss( 'close-btn-minimized' ) } aria-label={ __( 'Close Tour' ) }>
 				<Icon icon={ close } size={ 24 } />
 			</Button>
 		</Flex>

@@ -38,10 +38,7 @@ const WpcomTourKitStepCard: React.FunctionComponent< WpcomTourStepRendererProps 
 								media={ mediaQueryList?.media }
 							/>
 						) }
-						<img
-							alt={ __( 'Editor Welcome Tour', 'full-site-editing' ) }
-							src={ imgSrc.desktop?.src }
-						/>
+						<img alt={ __( 'Tour Media' ) } src={ imgSrc.desktop?.src } />
 					</picture>
 				</CardMedia>
 			) }
@@ -56,7 +53,7 @@ const WpcomTourKitStepCard: React.FunctionComponent< WpcomTourStepRendererProps 
 							onClick={ () => onGoToStep( 0 ) }
 							ref={ setInitialFocusedElement }
 						>
-							{ __( 'Restart tour', 'full-site-editing' ) }
+							{ __( 'Restart tour' ) }
 						</Button>
 					) : null }
 				</p>
