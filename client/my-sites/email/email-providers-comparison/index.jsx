@@ -38,7 +38,7 @@ import {
 	getGoogleMailServiceFamily,
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
-	isDomainEligibleForGoogleFreeTrial,
+	isDomainEligibleForGoogleWorkspaceFreeTrial,
 } from 'calypso/lib/gsuite';
 import {
 	GOOGLE_PROVIDER_NAME,
@@ -371,7 +371,7 @@ class EmailProvidersComparison extends Component {
 
 		const { validatedMailboxUuids } = this.state;
 
-		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForGoogleFreeTrial( domain );
+		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForGoogleWorkspaceFreeTrial( domain );
 
 		// TODO: Improve handling of this case
 		if ( ! isGSuiteSupported ) {
