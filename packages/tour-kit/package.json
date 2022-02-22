@@ -30,6 +30,7 @@
 		"storybook": "start-storybook"
 	},
 	"dependencies": {
+		"@automattic/components": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.10.2",

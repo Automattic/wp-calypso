@@ -68,9 +68,11 @@ const WpcomTourKitStepCard: React.FunctionComponent< WpcomTourStepRendererProps 
 					<WpcomTourKitStepCardNavigation
 						currentStepIndex={ currentStepIndex }
 						onDismiss={ onDismiss }
+						onGoToStep={ onGoToStep }
 						onNextStep={ onNextStep }
 						onPreviousStep={ onPreviousStep }
 						setInitialFocusedElement={ setInitialFocusedElement }
+						steps={ steps }
 					></WpcomTourKitStepCardNavigation>
 				) }
 			</CardFooter>

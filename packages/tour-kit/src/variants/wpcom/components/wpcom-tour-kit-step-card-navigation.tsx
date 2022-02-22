@@ -1,43 +1,59 @@
+import { PaginationControl } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import type { WpcomTourStepRendererProps } from '../../../types';
 
-type Props = Omit< WpcomTourStepRendererProps, 'onMinimize' | 'steps' | 'onGoToStep' >;
+type Props = Omit< WpcomTourStepRendererProps, 'onMinimize' >;
 
 const WpcomTourKitStepCardNavigation: React.FunctionComponent< Props > = ( {
 	currentStepIndex,
 	onDismiss,
+	onGoToStep,
 	onNextStep,
 	onPreviousStep,
 	setInitialFocusedElement,
+	steps,
 } ) => {
-	// These are defined on their own lines because of a minification issue.
-	// __('translations') do not always work correctly when used inside of ternary statements.
-	const startTourLabel = __( 'Try it out!', 'full-site-editing' );
-	const nextLabel = __( 'Next', 'full-site-editing' );
+	const isFirstStep = currentStepIndex === 0;
+	const lastStepIndex = steps.length - 1;
 
 	return (
 		<>
-			<div>
-				{ currentStepIndex === 0 ? (
-					<Button isTertiary={ true } onClick={ onDismiss( 'no-thanks-btn' ) }>
-						{ __( 'Skip', 'full-site-editing' ) }
-					</Button>
+			<PaginationControl
+				activePageIndex={ currentStepIndex }
+				numberOfPages={ lastStepIndex + 1 }
+				onChange={ onGoToStep }
+			>
+				{ isFirstStep ? (
+					<div>
+						<Button isTertiary onClick={ onDismiss( 'no-thanks-btn' ) }>
+							{ __( 'Skip', 'full-site-editing' ) }
+						</Button>
+						<Button
+							className="wpcom-tour-kit-step-card-navigation__next-btn"
+							isPrimary
+							onClick={ onNextStep }
+							ref={ setInitialFocusedElement }
+						>
+							{ __( 'Try it out!', 'full-site-editing' ) }
+						</Button>
+					</div>
 				) : (
-					<Button isTertiary={ true } onClick={ onPreviousStep }>
-						{ __( 'Back', 'full-site-editing' ) }
-					</Button>
+					<div>
+						<Button isTertiary onClick={ onPreviousStep }>
+							{ __( 'Back', 'full-site-editing' ) }
+						</Button>
+						<Button
+							className="wpcom-tour-kit-step-card-navigation__next-btn"
+							isPrimary
+							onClick={ onNextStep }
+							ref={ setInitialFocusedElement }
+						>
+							{ __( 'Next', 'full-site-editing' ) }
+						</Button>
+					</div>
 				) }
-
-				<Button
-					className="wpcom-tour-kit-step-card-navigation__next-btn"
-					isPrimary={ true }
-					onClick={ onNextStep }
-					ref={ setInitialFocusedElement }
-				>
-					{ currentStepIndex === 0 ? startTourLabel : nextLabel }
-				</Button>
-			</div>
+			</PaginationControl>
 		</>
 	);
 };
