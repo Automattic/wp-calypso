@@ -437,30 +437,35 @@ class EmailProvidersComparison extends Component {
 					</span>
 				);
 			}
-			return ! isEligibleForFreeTrial ? null : (
-				<>
-					{ translate( '1 month free' ) }
-					<span className="email-providers-comparison__discount-with-renewal">
-						<span>
-							{ translate(
-								'%(firstRenewalPrice)s/mailbox billed in 1 month, renews at %(standardPrice)s/mailbox',
-								{
-									args: {
-										firstRenewalPrice: formatCurrency(
-											( ( gSuiteProduct?.cost ?? 0 ) * 11 ) / 12,
-											currencyCode
-										),
-										standardPrice,
-									},
-									comment:
-										"%(firstRenewalPrice)s is a formatted, reduced price that the user will pay in three months (e.g. '$3'), " +
-										"%(standardPrice)s is a formatted price (e.g. '$5')",
-								}
-							) }
+
+			if ( isEligibleForFreeTrial ) {
+				return (
+					<>
+						{ translate( '1 month free' ) }
+						<span className="email-providers-comparison__discount-with-renewal">
+							<span>
+								{ translate(
+									'%(firstRenewalPrice)s/mailbox billed in 1 month, renews at %(standardPrice)s/mailbox',
+									{
+										args: {
+											firstRenewalPrice: formatCurrency(
+												( ( gSuiteProduct?.cost ?? 0 ) * 11 ) / 12,
+												currencyCode
+											),
+											standardPrice,
+										},
+										comment:
+											"%(firstRenewalPrice)s is a formatted, reduced price that the user will pay in one month (e.g. '$3'), " +
+											"%(standardPrice)s is a formatted price (e.g. '$5')",
+									}
+								) }
+							</span>
 						</span>
-					</span>
-				</>
-			);
+					</>
+				);
+			}
+
+			return null;
 		}
 
 		// Note that when we have a discount, we include all renewal information in the discount content
