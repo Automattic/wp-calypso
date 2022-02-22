@@ -30,3 +30,7 @@ export { hasGSuiteWithUs } from './has-gsuite-with-us';
 export { getGoogleMailServiceFamily } from './get-google-mail-service-family';
 export { getProductSlug, getProductType } from './gsuite-product-type';
 export { isPendingGSuiteTOSAcceptance } from './is-pending-gsuite-tos-acceptance';
+export { getGoogleExpiryDate } from './get-google-expiry-date';
+export { getGoogleMailboxPurchaseCost } from './get-google-mailbox-purchase-cost';
+export { getGoogleMailboxRenewalCost } from './get-google-mailbox-renewal.cost';
+export { isGoogleMonthlyProduct } from './is-google-monthly-product';

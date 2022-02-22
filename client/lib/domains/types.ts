@@ -22,8 +22,11 @@ export type EmailCost = {
 export type GDPRConsentStatus = keyof typeof gdprConsentStatus | null;
 
 export type GoogleEmailSubscription = EmailSubscription & {
+	expiryDate?: string;
 	pendingTosAcceptance?: boolean;
 	productSlug?: string;
+	purchaseCostPerMailbox?: EmailCost | null;
+	renewalCostPerMailbox?: EmailCost | null;
 	subscribedDate?: string;
 	subscriptionId?: string;
 	totalUserCount?: number;
