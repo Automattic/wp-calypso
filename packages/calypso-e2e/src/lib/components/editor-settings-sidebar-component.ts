@@ -120,7 +120,6 @@ export class EditorSettingsSidebarComponent {
 		// will not be actionable until then.
 		const popoverHandle = await this.frame.waitForSelector( selectors.visibilityPopover );
 		await popoverHandle.waitForElementState( 'stable' );
-		await this.page.pause();
 
 		if ( visibility === 'Private' ) {
 			await this.frame.click( selectors.visibilityOption( visibility ) );

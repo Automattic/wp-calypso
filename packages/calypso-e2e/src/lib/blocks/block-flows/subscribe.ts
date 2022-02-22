@@ -1,6 +1,6 @@
 import { BlockFlow, PublishedPostContext } from '..';
 
-const blockParentSelector = '[aria-label="Block: Subscription Form"]';
+const blockParentSelector = '[aria-label="Block: Subscribe"]';
 const selectors = {
 	emailInput: 'input[name=email]',
 	subscribeButton: 'button:has-text("Subscribe")',
@@ -9,8 +9,8 @@ const selectors = {
 /**
  * Class representing the flow of using a Subscription Form block in the editor.
  */
-export class SubscriptionFormBlockFlow implements BlockFlow {
-	blockSidebarName = 'Subscription Form';
+export class SubscribeFlow implements BlockFlow {
+	blockSidebarName = 'Subscribe';
 	blockEditorSelector = blockParentSelector;
 
 	/**
