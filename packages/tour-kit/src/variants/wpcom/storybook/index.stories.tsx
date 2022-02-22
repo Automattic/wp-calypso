@@ -103,9 +103,11 @@ const StoryTour = ( { options = {} }: { options?: WpcomOptions } ) => {
 	);
 };
 
-export const Default = (): JSX.Element => (
-	<StoryTour options={ { effects: { arrowIndicator: false } } } />
+export const DefaultWithRating = (): JSX.Element => (
+	<StoryTour options={ { effects: { arrowIndicator: false }, tourRating: { enabled: true } } } />
 );
-export const Spotlight = (): JSX.Element => (
-	<StoryTour options={ { effects: { spotlight: {}, arrowIndicator: false } } } />
+export const SpotlightWithRating = (): JSX.Element => (
+	<StoryTour
+		options={ { effects: { spotlight: {}, arrowIndicator: false }, tourRating: { enabled: true } } }
+	/>
 );
