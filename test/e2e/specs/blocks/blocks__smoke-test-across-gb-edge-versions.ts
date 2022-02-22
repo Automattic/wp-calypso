@@ -15,23 +15,20 @@
  * To avoid any confusion, the tests here will only run if the GUTENBERG_EDGE env
  * var is set.
  */
-import {
-	DataHelper,
-	GutenbergEditorPage,
-	TestAccount,
-	envVariables,
-} from '@automattic/calypso-e2e';
+import { GutenbergEditorPage, TestAccount, envVariables } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 const test = envVariables.GUTENBERG_EDGE ? it : it.skip;
-const accountName = 'gutenbergUpgradeUser';
-const postURL = 'https://wordpress.com/post/e2egbupgradeheveredge.wordpress.com/42805';
 
 declare const browser: Browser;
 
-describe(
-	DataHelper.createSuiteTitle( 'Gutenberg edge upgrade: test most popular blocks:' ),
-	() => {
+describe.each`
+	siteType      | accountName                        | testPostId
+	${ 'Simple' } | ${ 'gutenbergUpgradeEdgeUser' }    | ${ 42805 }
+	${ 'Atomic' } | ${ 'gutenbergAtomicSiteEdgeUser' } | ${ 32 }
+`(
+	'Gutenberg Upgrade: Test Most Popular Blocks on ($siteType) edge',
+	function ( { accountName, testPostId } ) {
 		let page: Page;
 		let gutenbergEditorPage: GutenbergEditorPage;
 
@@ -40,6 +37,11 @@ describe(
 
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+
+			//const postURL = 'https://wordpress.com/post/e2egbupgradeheveredge.wordpress.com/42805';
+			const postURL = `https://wordpress.com/post/${ testAccount.getSiteURL( {
+				protocol: false,
+			} ) }/${ testPostId }`;
 
 			await page.goto( postURL );
 
