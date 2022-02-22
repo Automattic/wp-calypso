@@ -10,7 +10,7 @@ import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-s
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function Latex( {
-	siteIsAutomatedTransfer,
+	isAtomic,
 	isRequestingSettings,
 	isSavingSettings,
 	moduleUnavailable,
@@ -25,11 +25,11 @@ function Latex( {
 					'LaTeX is a powerful markup language for writing complex mathematical equations and formulas.'
 				) }
 				link={
-					siteIsAutomatedTransfer
+					isAtomic
 						? 'https://wordpress.com/support/latex/'
 						: 'https://jetpack.com/support/beautiful-math-with-latex/'
 				}
-				privacyLink="https://jetpack.com/support/beautiful-math-with-latex/#privacy"
+				privacyLink={ ! isAtomic }
 			/>
 			<JetpackModuleToggle
 				siteId={ selectedSiteId }
@@ -51,7 +51,7 @@ Latex.defaultProps = {
 Latex.propTypes = {
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
-	siteIsAutomatedTransfer: PropTypes.bool,
+	isAtomic: PropTypes.bool,
 };
 
 export default connect( ( state ) => {

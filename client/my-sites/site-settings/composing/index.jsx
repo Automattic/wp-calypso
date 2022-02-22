@@ -10,7 +10,7 @@ import Shortcodes from './shortcodes';
 
 const Composing = ( {
 	translate,
-	siteIsAutomatedTransfer,
+	isAtomic,
 	siteIsJetpack,
 	eventTracker,
 	fields,
@@ -45,7 +45,7 @@ const Composing = ( {
 			fields={ fields }
 			isRequestingSettings={ isRequestingSettings }
 			isSavingSettings={ isSavingSettings }
-			siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+			isAtomic={ isAtomic }
 			siteIsJetpack={ siteIsJetpack }
 			handleToggle={ handleToggle }
 		/>
@@ -55,12 +55,12 @@ const Composing = ( {
 				<Latex
 					isRequestingSettings={ isRequestingSettings }
 					isSavingSettings={ isSavingSettings }
-					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+					isAtomic={ isAtomic }
 				/>
 				<Shortcodes
 					isRequestingSettings={ isRequestingSettings }
 					isSavingSettings={ isSavingSettings }
-					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+					isAtomic={ isAtomic }
 				/>
 			</>
 		) }
@@ -82,7 +82,7 @@ Composing.defaultProps = {
 };
 
 Composing.propTypes = {
-	siteIsAutomatedTransfer: PropTypes.bool,
+	isAtomic: PropTypes.bool,
 	siteIsJetpack: PropTypes.bool,
 	eventTracker: PropTypes.func.isRequired,
 	translate: PropTypes.func.isRequired,

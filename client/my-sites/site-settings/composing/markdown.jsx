@@ -9,7 +9,7 @@ const Markdown = ( {
 	handleToggle,
 	isRequestingSettings,
 	isSavingSettings,
-	siteIsAutomatedTransfer,
+	isAtomic,
 	siteIsJetpack,
 } ) => {
 	const translate = useTranslate();
@@ -21,11 +21,11 @@ const Markdown = ( {
 					'Use Markdown syntax to compose content with links, lists, and other styles. This setting enables Markdown in the Classic Editor as well as within a Classic Editor block.'
 				) }
 				link={
-					siteIsJetpack && ! siteIsAutomatedTransfer
+					siteIsJetpack && ! isAtomic
 						? 'https://jetpack.com/support/markdown/'
 						: 'https://wordpress.com/support/markdown-quick-reference/'
 				}
-				privacyLink="https://jetpack.com/support/markdown/#privacy"
+				privacyLink={ ! isAtomic }
 			/>
 			<ToggleControl
 				checked={ !! fields.wpcom_publish_posts_with_markdown }
@@ -48,7 +48,7 @@ Markdown.propTypes = {
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 	fields: PropTypes.object,
-	siteIsAutomatedTransfer: PropTypes.bool,
+	isAtomic: PropTypes.bool,
 	siteIsJetpack: PropTypes.bool,
 };
 

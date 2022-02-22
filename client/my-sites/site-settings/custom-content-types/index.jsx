@@ -62,7 +62,7 @@ class CustomContentTypes extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			activatingCustomContentTypesModule,
-			siteIsAutomatedTransfer,
+			isAtomic,
 		} = this.props;
 		const isDisabled =
 			isRequestingSettings || isSavingSettings || activatingCustomContentTypesModule;
@@ -91,7 +91,7 @@ class CustomContentTypes extends Component {
 								onChangeField={ onChangeField }
 								handleAutosavingToggle={ handleAutosavingToggle }
 								isDisabled={ isDisabled }
-								siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+								isAtomic={ isAtomic }
 							/>
 							<Portfolios
 								fields={ fields }
@@ -99,7 +99,7 @@ class CustomContentTypes extends Component {
 								onChangeField={ onChangeField }
 								handleAutosavingToggle={ handleAutosavingToggle }
 								isDisabled={ isDisabled }
-								siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+								isAtomic={ isAtomic }
 							/>
 						</>
 					) }
@@ -116,7 +116,7 @@ CustomContentTypes.defaultProps = {
 };
 
 CustomContentTypes.propTypes = {
-	siteIsAutomatedTransfer: PropTypes.bool,
+	isAtomic: PropTypes.bool,
 	siteIsJetpack: PropTypes.bool,
 	handleAutosavingToggle: PropTypes.func.isRequired,
 	onChangeField: PropTypes.func.isRequired,

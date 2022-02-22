@@ -101,7 +101,7 @@ class PublishingTools extends Component {
 	}
 
 	renderPostByEmailModule() {
-		const { moduleUnavailable, selectedSiteId, translate, siteIsAutomatedTransfer } = this.props;
+		const { moduleUnavailable, selectedSiteId, translate, isAtomic } = this.props;
 		const formPending = this.isFormPending();
 
 		return (
@@ -111,11 +111,11 @@ class PublishingTools extends Component {
 						'Allows you to publish new posts by sending an email to a special address.'
 					) }
 					link={
-						siteIsAutomatedTransfer
+						isAtomic
 							? 'https://wordpress.com/en/support/post-by-email/'
 							: 'https://jetpack.com/support/post-by-email/'
 					}
-					privacyLink="https://jetpack.com/support/post-by-email/#privacy"
+					privacyLink={ ! isAtomic }
 				/>
 				<JetpackModuleToggle
 					siteId={ selectedSiteId }

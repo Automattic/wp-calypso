@@ -15,7 +15,7 @@ import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 function ThemeEnhancements( {
-	siteIsAutomatedTransfer,
+	isAtomic,
 	siteIsJetpack,
 	handleAutosavingToggle,
 	handleAutosavingRadio,
@@ -71,11 +71,11 @@ function ThemeEnhancements( {
 							'Loads the next posts automatically when the reader approaches the bottom of the page.'
 						) }
 						link={
-							siteIsAutomatedTransfer
+							isAtomic
 								? 'https://wordpress.com/en/support/infinite-scroll/'
 								: 'https://jetpack.com/support/infinite-scroll/'
 						}
-						privacyLink="https://jetpack.com/support/infinite-scroll/#privacy"
+						privacyLink={ ! isAtomic }
 					/>
 					<FormSettingExplanation>
 						{ translate(
@@ -89,11 +89,11 @@ function ThemeEnhancements( {
 							"Adds names for CSS preprocessor use, disabling the theme's CSS, or custom image width."
 						) }
 						link={
-							siteIsAutomatedTransfer
+							isAtomic
 								? 'https://wordpress.com/en/support/editing-css/'
 								: 'https://jetpack.com/support/custom-css/'
 						}
-						privacyLink="https://jetpack.com/support/custom-css/#privacy"
+						privacyLink={ ! isAtomic }
 					/>
 					<JetpackModuleToggle
 						siteId={ siteId }
@@ -143,6 +143,8 @@ ThemeEnhancements.defaultProps = {
 };
 
 ThemeEnhancements.propTypes = {
+	isAtomic: PropTypes.bool,
+	siteIsJetpack: PropTypes.bool,
 	onSubmitForm: PropTypes.func.isRequired,
 	handleAutosavingToggle: PropTypes.func.isRequired,
 	handleAutosavingRadio: PropTypes.func.isRequired,

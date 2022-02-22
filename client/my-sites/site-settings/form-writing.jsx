@@ -42,7 +42,7 @@ class SiteSettingsFormWriting extends Component {
 			siteId,
 			siteIsJetpack,
 			translate,
-			siteIsAutomatedTransfer,
+			isAtomic,
 			updateFields,
 		} = this.props;
 
@@ -55,7 +55,7 @@ class SiteSettingsFormWriting extends Component {
 				<Composing
 					handleSubmitForm={ handleSubmitForm }
 					translate={ translate }
-					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+					isAtomic={ isAtomic }
 					siteIsJetpack={ siteIsJetpack }
 					handleSelect={ handleSelect }
 					handleToggle={ handleToggle }
@@ -67,7 +67,7 @@ class SiteSettingsFormWriting extends Component {
 					updateFields={ updateFields }
 				/>
 
-				{ siteIsJetpack && ! siteIsAutomatedTransfer && (
+				{ siteIsJetpack && ! isAtomic && (
 					<MediaSettingsWriting
 						handleSubmitForm={ handleSubmitForm }
 						siteId={ siteId }
@@ -86,7 +86,7 @@ class SiteSettingsFormWriting extends Component {
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
-					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+					isAtomic={ isAtomic }
 					siteIsJetpack={ siteIsJetpack }
 				/>
 
@@ -105,7 +105,7 @@ class SiteSettingsFormWriting extends Component {
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				<ThemeEnhancements
-					siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+					isAtomic={ isAtomic }
 					onSubmitForm={ handleSubmitForm }
 					handleAutosavingToggle={ handleAutosavingToggle }
 					handleAutosavingRadio={ handleAutosavingRadio }
@@ -118,7 +118,7 @@ class SiteSettingsFormWriting extends Component {
 
 				{ siteIsJetpack && (
 					<Widgets
-						siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+						isAtomic={ isAtomic }
 						translate={ translate }
 						isSavingSettings={ isSavingSettings }
 						isRequestingSettings={ isRequestingSettings }
@@ -127,7 +127,7 @@ class SiteSettingsFormWriting extends Component {
 
 				{ siteIsJetpack && config.isEnabled( 'press-this' ) && (
 					<PublishingTools
-						siteIsAutomatedTransfer={ siteIsAutomatedTransfer }
+						isAtomic={ isAtomic }
 						onSubmitForm={ handleSubmitForm }
 						isSavingSettings={ isSavingSettings }
 						isRequestingSettings={ isRequestingSettings }
@@ -157,8 +157,8 @@ const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
-		const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
-		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const isPodcastingSupported = ! siteIsJetpack || isAtomic;
 
 		return {
 			siteIsJetpack,
@@ -166,9 +166,9 @@ const connectComponent = connect(
 			isMasterbarSectionVisible:
 				siteIsJetpack &&
 				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
-				! siteIsAutomatedTransfer,
+				! isAtomic,
 			isPodcastingSupported,
-			siteIsAutomatedTransfer,
+			isAtomic,
 		};
 	},
 	{ requestPostTypes }

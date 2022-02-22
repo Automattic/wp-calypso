@@ -7,7 +7,7 @@ import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-t
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-function Widgets( { isSavingSettings, isRequestingSettings, siteIsAutomatedTransfer, translate } ) {
+function Widgets( { isSavingSettings, isRequestingSettings, isAtomic, translate } ) {
 	const isFormPending = isRequestingSettings || isSavingSettings;
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
@@ -39,11 +39,11 @@ function Widgets( { isSavingSettings, isRequestingSettings, siteIsAutomatedTrans
 							'Widget visibility lets you decide which widgets appear on which pages, so you can finely tailor widget content.'
 						) }
 						link={
-							siteIsAutomatedTransfer
+							isAtomic
 								? 'https://wordpress.com/en/support/widgets/#widget-visibility'
 								: 'https://jetpack.com/support/widget-visibility'
 						}
-						privacyLink="https://jetpack.com/support/widget-visibility#privacy"
+						privacyLink={ ! isAtomic }
 					/>
 					<JetpackModuleToggle
 						siteId={ selectedSiteId }

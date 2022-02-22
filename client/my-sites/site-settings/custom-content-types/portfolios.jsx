@@ -11,7 +11,7 @@ function Portfolios( {
 	fields,
 	onChangeField,
 	isDisabled,
-	siteIsAutomatedTransfer,
+	isAtomic,
 } ) {
 	const name = 'jetpack_portfolio';
 	const numberFieldIdentifier = name + '_posts_per_page';
@@ -23,11 +23,11 @@ function Portfolios( {
 						'manage and showcase projects on your site.'
 				) }
 				link={
-					siteIsAutomatedTransfer
+					isAtomic
 						? 'https://wordpress.com/support/portfolios/'
 						: 'https://jetpack.com/support/custom-content-types/#portfolios'
 				}
-				privacyLink="https://jetpack.com/support/custom-content-types/#privacy"
+				privacyLink={ ! isAtomic }
 			/>
 			<div className="custom-content-types__module-settings">
 				<ToggleControl

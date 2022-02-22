@@ -15,7 +15,7 @@ function Shortcodes( {
 	moduleUnavailable,
 	selectedSiteId,
 	translate,
-	siteIsAutomatedTransfer,
+	isAtomic,
 } ) {
 	return (
 		<Card className="composing__card site-settings__card">
@@ -25,11 +25,11 @@ function Shortcodes( {
 					'Shortcodes are WordPress-specific markup that let you add media from popular sites. This feature is no longer necessary as the editor now handles media embeds rather gracefully.'
 				) }
 				link={
-					siteIsAutomatedTransfer
+					isAtomic
 						? 'https://wordpress.com/support/shortcodes/'
 						: 'https://jetpack.com/support/shortcode-embeds/'
 				}
-				privacyLink="https://jetpack.com/support/shortcode-embeds/#privacy"
+				privacyLink={ ! isAtomic }
 			/>
 			<JetpackModuleToggle
 				siteId={ selectedSiteId }
@@ -47,6 +47,7 @@ Shortcodes.defaultProps = {
 };
 
 Shortcodes.propTypes = {
+	isAtomic: PropTypes.bool,
 	isSavingSettings: PropTypes.bool,
 	isRequestingSettings: PropTypes.bool,
 };
