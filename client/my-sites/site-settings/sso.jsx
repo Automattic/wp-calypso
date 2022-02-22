@@ -38,7 +38,7 @@ const Sso = ( {
 								? 'https://wordpress.com/en/support/wordpress-com-secure-sign-on-sso/'
 								: 'https://jetpack.com/support/sso/'
 						}
-						privacyLink={ isAtomic }
+						privacyLink={ ! isAtomic }
 					/>
 
 					<JetpackModuleToggle
