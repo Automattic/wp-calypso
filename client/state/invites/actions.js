@@ -233,7 +233,7 @@ export function acceptInvite( invite ) {
 				await dispatch( fetchCurrentUser() );
 			}
 
-			if ( ! invite.site.is_vip ) {
+			if ( ! invite.site.is_vip && ! invite.site.is_wpforteams_site ) {
 				dispatch( successNotice( ...acceptedNotice( invite ) ) );
 			}
 
