@@ -31,6 +31,7 @@ export type GoogleEmailSubscription = EmailSubscription & {
 	subscribedDate?: string;
 	subscriptionId?: string;
 	totalUserCount?: number;
+	isEligibleForIntroductoryOffer?: boolean;
 };
 
 export type TitanEmailSubscription = EmailSubscription & {
