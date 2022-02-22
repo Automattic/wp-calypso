@@ -98,6 +98,8 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 										href={ localizeUrl(
 											'https://wordpress.com/support/wordpress-editor/blocks/payments/'
 										) }
+										target="_blank"
+										rel="noopener noreferrer"
 									/>
 								),
 							},
@@ -144,6 +146,8 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 										href={ localizeUrl(
 											'https://wordpress.com/support/introduction-to-woocommerce/'
 										) }
+										target="_blank"
+										rel="noopener noreferrer"
 									/>
 								),
 							},
