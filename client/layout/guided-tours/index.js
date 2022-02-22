@@ -9,7 +9,7 @@ function GuidedTours() {
 	const dispatch = useDispatch();
 	const tourState = useSelector( getGuidedTourState );
 	const shouldShow = tourState && tourState.shouldShow;
-	const requestedTour = useSelector( getInitialQueryArguments ).tour;
+	const requestedTour = useSelector( getInitialQueryArguments )?.tour;
 
 	useEffect( () => {
 		if ( requestedTour === 'reset' ) {
