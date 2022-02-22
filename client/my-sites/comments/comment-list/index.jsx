@@ -54,7 +54,7 @@ export class CommentList extends Component {
 	shouldComponentUpdate = ( nextProps, nextState ) =>
 		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
-	changePage = ( page ) => {
+	handlePageClick = ( page ) => {
 		const { recordChangePage, changePage } = this.props;
 
 		recordChangePage( page, this.getTotalPages() );
@@ -210,7 +210,7 @@ export class CommentList extends Component {
 					<Pagination
 						key="comment-list-pagination"
 						page={ validPage }
-						pageClick={ this.changePage }
+						pageClick={ this.handlePageClick }
 						perPage={ COMMENTS_PER_PAGE }
 						total={ commentsCount }
 					/>
