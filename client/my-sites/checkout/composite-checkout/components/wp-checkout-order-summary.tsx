@@ -30,8 +30,6 @@ import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
-import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -298,13 +296,11 @@ function CheckoutSummaryPlanFeatures( props: {
 }
 
 function CheckoutSummaryChatIfAvailable( props: { siteId: number | undefined } ) {
+	const translate = useTranslate();
+
 	const currentPlan = useSelector( ( state ) =>
 		props.siteId ? getCurrentPlan( state, props.siteId ) : undefined
 	);
-	const translate = useTranslate();
-
-	const billingPeriod = useSelector( getBillingInterval );
-	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 
 	const currentPlanSlug = currentPlan?.productSlug;
 
@@ -313,7 +309,7 @@ function CheckoutSummaryChatIfAvailable( props: { siteId: number | undefined } )
 		( isWpComPremiumPlan( currentPlanSlug ) ||
 			isWpComBusinessPlan( currentPlanSlug ) ||
 			isWpComEcommercePlan( currentPlanSlug ) ) &&
-		isAnnualPeriod;
+		! isMonthly( currentPlanSlug );
 
 	if ( ! isChatAvailable ) return null;
 

@@ -727,11 +727,6 @@ export function createTestReduxStore() {
 			},
 			purchases: {},
 			countries: { payments: countryList, domains: countryList },
-			marketplace: {
-				billingInterval: {
-					interval: 'MONTHLY',
-				},
-			},
 		};
 	} );
 }
