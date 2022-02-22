@@ -38,7 +38,6 @@ describe.each`
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
 
-			//const postURL = 'https://wordpress.com/post/e2egbupgradeheveredge.wordpress.com/42805';
 			const postURL = `https://wordpress.com/post/${ testAccount.getSiteURL( {
 				protocol: false,
 			} ) }/${ testPostId }`;
