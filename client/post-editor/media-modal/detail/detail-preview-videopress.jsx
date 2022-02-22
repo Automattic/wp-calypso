@@ -62,13 +62,25 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	setVideoInstance = ( ref ) => ( this.video = ref );
 
 	receiveMessage = ( event ) => {
-		if ( event.origin && event.origin !== 'https://video.wordpress.com' ) {
-			return;
-		}
-
 		const { data } = event;
 
 		if ( ! data || ! data.event ) {
+			return;
+		}
+
+		// events received from calypso
+		if ( 'videopress_refresh_iframe' === data.event ) {
+			// in a timeout to guard against a race condition with cache not being busted prior to this message being received
+			// and the `privacy_setting` not being accurate as a result.
+			// Potential solution to this is to prevent the `videopress_refresh_iframe` message from being SENT until
+			// the update has completed.
+			setTimeout( () => {
+				this.video.src += ''; // force reload of potentially cross-origin iframe
+			}, 1000 );
+		}
+
+		// events received from player only
+		if ( event.origin && event.origin !== 'https://video.wordpress.com' ) {
 			return;
 		}
 

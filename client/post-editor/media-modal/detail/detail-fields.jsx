@@ -7,6 +7,7 @@ import ReactDom from 'react-dom';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
+import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import TrackInputChanges from 'calypso/components/track-input-changes';
@@ -45,6 +46,12 @@ class EditorMediaModalDetailFields extends Component {
 		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
 			this.updateChange( true );
 			this.setState( { modifiedChanges: null } );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.item && prevProps.item.privacy_setting !== this.props.item?.privacy_setting ) {
+			window.postMessage( { event: 'videopress_refresh_iframe' }, '*' );
 		}
 	}
 
@@ -116,6 +123,10 @@ class EditorMediaModalDetailFields extends Component {
 
 	handleRatingChange = ( { currentTarget } ) => {
 		this.setFieldByName( 'rating', currentTarget.value );
+	};
+
+	handlePrivacySettingChange = ( { currentTarget } ) => {
+		this.setFieldByName( 'privacy_setting', parseInt( currentTarget.value ) );
 	};
 
 	handleDisplayEmbed = () => {
@@ -212,6 +223,25 @@ class EditorMediaModalDetailFields extends Component {
 						</FormLabel>
 					) ) }
 				</div>
+			</EditorMediaModalFieldset>
+		);
+	};
+
+	renderPrivacySetting = () => {
+		const privacySetting = this.getItemValue( 'privacy_setting' );
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Privacy' ) }>
+				<FormSelect value={ privacySetting } onChange={ this.handlePrivacySettingChange }>
+					<option key={ 2 } value={ 2 }>
+						{ this.props.translate( 'Site Default' ) }
+					</option>
+					<option key={ 0 } value={ 0 }>
+						{ this.props.translate( 'Public' ) }
+					</option>
+					<option key={ 1 } value={ 1 }>
+						{ this.props.translate( 'Private' ) }
+					</option>
+				</FormSelect>
 			</EditorMediaModalFieldset>
 		);
 	};
@@ -316,6 +346,7 @@ class EditorMediaModalDetailFields extends Component {
 				{ this.renderShareEmbed() }
 				{ this.renderAllowDownloadOption() }
 				{ this.renderRating() }
+				{ this.renderPrivacySetting() }
 				{ this.renderVideoPressShortcode() }
 			</div>
 		);
