@@ -16,14 +16,15 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 - [Style Guide](docs/style_guide.md)
 - [Debugging](docs/debugging.md)
 - [Troubleshooting](docs/troubleshooting.md)
+- [Environment Variable](docs/environment_variables.md)
 
 ## Prerequisites
 
 Calypso E2E requires the following:
 
-- [NodeJS 16.11](https://nodejs.org/en/blog/release/v16.11.0/) or higher
-- [TypeScript 4.4](https://www.staging-typescript.org/docs/handbook/release-notes/typescript-4-4.html) or higher
-- [Playwright 1.14](https://playwright.dev/docs/release-notes#version-114) or higher
+- [NodeJS 16.13](https://nodejs.org/en/blog/release/v16.13.2/) or higher
+- [TypeScript 4.5](https://www.staging-typescript.org/docs/handbook/release-notes/typescript-4-5.html) or higher
+- [Playwright 1.18](https://playwright.dev/docs/release-notes#version-118) or higher
 - [yarn 3.1](https://github.com/yarnpkg/berry) or higher
 
 ## Quick start

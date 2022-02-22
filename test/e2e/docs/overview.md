@@ -29,13 +29,9 @@ To accelerate development by being a force for continuous improvement, and help 
 
 ## What is tested?
 
-At the high level, each test file (or `spec`) fall under one of the following flows:
+These end-to-end test focus on several key areas:
 
-| Flow                 | Directory                |
-| -------------------- | ------------------------ |
-| Calypso              | `specs/specs-playwright` |
-| Editor               | `specs/specs-wpcom`      |
-| Internationalization | `specs/specs-i18n`       |
-| Jetpack              | `specs/specs-jetpack`    |
-
-Core code for Jetpack, WooCommerce and Gutenberg are hosted in other repositories and they have separate e2e testing infrastructure. Tests within `test/e2e` are meant to test interactions between their respective components and Calypso/WordPress.com.
+- Calypso features.
+- interaction between Calypso and Gutenberg editor.
+- internationalization and localization.
+- Gutenberg blocks added by WordPress.com.

@@ -9,48 +9,63 @@
 <!-- TOC -->
 
 - [Running tests on CI](#running-tests-on-ci)
+  - [Feature/Test groups](#featuretest-groups)
   - [Feature branch](#feature-branch)
   - [Trunk](#trunk)
-  - [Manually trigger a run](#manually-trigger-a-run)
+  - [Scheduled build configurations](#scheduled-build-configurations)
 
 <!-- /TOC -->
 
 <br>
 
-> :lock: Unfortunately, access to TeamCity is available only to Automatticians at this time. OSS Citizens (including Trialmatticians), please request an Automattician to execute the required e2e tests in the PR.
+> :lock: Unfortunately, access to TeamCity is available only to Automatticians at this time. OSS Citizens (including Trialmatticians), please request an Automattician to execute the required e2e tests in the PR prior to merge.
+
+## Feature/Test groups
+
+Each test file (referred to as `spec`) are assigned at least one group.
+This ensures that [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups) is able to locate and run the appropriate set of test specs for the build configuration. **Failure to add a group will result in the spec not running as part of CI.**
+
+The following groups are available as of this time:
+
+| Group             | Remarks                                                                                  |
+| ----------------- | ---------------------------------------------------------------------------------------- |
+| `calypso-pr`      | Run for every commit to any feature branch in this repository.                           |
+| `calypso-release` | Run for every PR merged into `trunk` in this repository.                                 |
+| `gutenberg`       | Editor-focused specs run on regular cadence.                                             |
+| `coblocks`        | Block-focused specs for our fork of [CoBlocks](https://wordpress.org/plugins/coblocks/). |
+| `i18n`            | Specs verifying internationalized strings.                                               |
+| `p2`              | Specs for the internal P2 system.                                                        |
+| `quarantined`     | Specs that need additional work.                                                         |
+| `legal`           | Specs for the marketing and legal team.                                                  |
 
 ## Feature branch
 
-Anytime a new branch is pushed to GitHub it also becomes available in TeamCity. Build are automatically triggered for every commit for the following build configurations:
+Anytime a new branch is pushed to GitHub it also becomes available in TeamCity.
 
-- Unit tests
-- E2E Tests (mobile)
-- E2E Tests (desktop)
-- Code style
-
-Some build configurations are not triggered automatically, but are available to be run if manually triggered:
-
-- Quarantined E2E
-- Pre-Release E2E
-
-![teamcity_branch_view](resources/teamcity_branch_view.png)
+| Build configuration name | Automatically triggered? |
+| ------------------------ | ------------------------ |
+| E2E Tests (mobile)       | Yes                      |
+| E2E Tests (desktop)      | Yes                      |
+| Pre-Release Tests        | No                       |
 
 ## Trunk
 
-The main branch - `trunk` - is treated similarly to feature branches with the notable difference that `Pre-Release E2E` is triggered automatically. This occurs for every merge into `trunk`.
+The main branch - `trunk` - behaves differently from feature branches. Changes to `trunk` can only occur once a PR is approved and merged.
 
-The Pre-Release E2E tests are connected directly to the Calypso Deploy page (internal) and various Slack channels. If the Pre-Release E2E tests pass, the change(s) can then be deployed to production.
+The Pre-Release E2E tests are connected directly to the Calypso Deploy page and various Slack channels. If the Pre-Release E2E tests pass, the change(s) can then be deployed to production.
 
-## Manually trigger a run
+| Build configuration name | Automatically triggered? |
+| ------------------------ | ------------------------ |
+| E2E Tests (mobile)       | No                       |
+| E2E Tests (desktop)      | No                       |
+| Pre-Release Tests        | Yes                      |
 
-Note the `Run` button beside every available build configuration. This is the quickest way to manually trigger a new run.
+## Scheduled build configurations
 
-Some reasons to trigger a manual run:
+In addition to build configurations that are automatically triggered based on branch workflow, there exists build configurations that run on a regular schedule though **only on `trunk`**!
 
-- flakey tests (reminder: report flakey tests using [this form](https://github.com/Automattic/wp-calypso/issues/new?assignees=&labels=Flaky+e2e&template=flaky-e2e-spec-report.yml&title=Flaky+E2E%3A+))
-- additional data point
-- failed auto-trigger.
-
-On manually triggering a build, a build is added to the queue and will execute once its turn arrives.
-
-![](resources/teamcity_build_manually_trigger.png)
+| Build configuration name            | Frequency  |
+| ----------------------------------- | ---------- |
+| WPCOM/Gutenberg E2E Tests (mobile)  | once a day |
+| WPCOM/Gutenberg E2E Tests (desktop) | once a day |
+| Quarantined E2E                     | once a day |
