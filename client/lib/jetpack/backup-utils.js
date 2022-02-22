@@ -40,19 +40,22 @@ export const getDeltaActivitiesByType = ( logs ) => {
 	};
 };
 
+export const REWIND_ACTIVITIES = [
+	'rewind__backup_complete_full',
+	'rewind__backup_complete_initial',
+	'rewind__backup_error',
+	'rewind__backup_only_complete_full',
+	'rewind__backup_only_error',
+	'rewind__backup_only_complete_initial',
+];
+
 /**
  * Check if the activity is the type of backup
  *
  * @param activity {object} Activity to check
  */
 export const isActivityBackup = ( activity ) => {
-	return (
-		'rewind__backup_complete_full' === activity.activityName ||
-		'rewind__backup_complete_initial' === activity.activityName ||
-		'rewind__backup_error' === activity.activityName ||
-		'rewind__backup_only_complete_full' === activity.activityName ||
-		'rewind__backup_only_complete_initial' === activity.activityName
-	);
+	return REWIND_ACTIVITIES.includes( activity.activityName );
 };
 
 /**
