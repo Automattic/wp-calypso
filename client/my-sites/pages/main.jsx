@@ -81,7 +81,7 @@ class PagesMain extends Component {
 			status: search ? POST_STATUSES.join( ',' ) : postStatus,
 			type: queryType,
 		};
-		const listKey = [ siteId, status, search ].join( `-` );
+		const listKey = [ siteId, status, search ].join( '-' );
 
 		return (
 			<Main wideLayout classname="pages">
