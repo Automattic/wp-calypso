@@ -576,6 +576,23 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/cookie/1234abcd' );
 	} );
 
+	it( 'redirects to url from cookie followed by receipt id if create_new_blog is not set but wpcom_signup_complete_flow_name from session storage is equal to "domain"', () => {
+		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		window.sessionStorage.setItem( 'wpcom_signup_complete_flow_name', 'domain' );
+		const cart = {
+			create_new_blog: false,
+			products: [ { id: '123' } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: '1234abcd',
+			getUrlFromCookie,
+		} );
+		expect( url ).toBe( '/cookie/1234abcd' );
+	} );
+
 	it( 'redirects to url from cookie followed by pending order id if create_new_blog is set', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {

@@ -32,3 +32,5 @@ export const getSignupCompleteFlowName = () =>
 	sessionStorage.getItem( 'wpcom_signup_complete_flow_name' );
 export const setSignupCompleteFlowName = ( value ) =>
 	sessionStorage.setItem( 'wpcom_signup_complete_flow_name', value );
+export const clearSignupCompleteFlowName = () =>
+	sessionStorage.removeItem( 'wpcom_signup_complete_flow_name' );
