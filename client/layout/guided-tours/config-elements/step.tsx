@@ -123,7 +123,7 @@ export default class Step extends Component< Props, State > {
 			this.setStepSection( this.context, { init: true } );
 			debug( 'Step#componentWillMount: stepSection:', this.stepSection );
 			this.skipIfInvalidContext( this.props, this.context );
-			this.scrollContainer = query( this.props.scrollContainer ?? '' )[ 0 ] || window;
+			this.scrollContainer = query( this.props.scrollContainer ?? 'body' )[ 0 ];
 			// Don't pass `shouldScrollTo` as argument since mounting hasn't occured at this point yet.
 			this.setStepPosition( this.props );
 			this.safeSetState( { initialized: true } );
@@ -151,7 +151,7 @@ export default class Step extends Component< Props, State > {
 			if ( this.scrollContainer ) {
 				this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 			}
-			this.scrollContainer = query( nextProps.scrollContainer ?? '' )[ 0 ] || window;
+			this.scrollContainer = query( nextProps.scrollContainer ?? 'body' )[ 0 ];
 			this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
 			this.setStepPosition( nextProps, shouldScrollTo );
 			this.watchTarget();
