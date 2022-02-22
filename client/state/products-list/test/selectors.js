@@ -164,7 +164,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		test( 'Should not return the iintroductoryOfferPrice value if ineligible', () => {
+		test( 'Should not return the introductoryOfferPrice value if ineligible', () => {
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			getIntroOfferPrice.mockImplementation( () => 60 );
 			getIntroOfferIsEligible.mockImplementation( () => false );
