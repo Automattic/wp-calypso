@@ -371,7 +371,8 @@ class EmailProvidersComparison extends Component {
 
 		const { validatedMailboxUuids } = this.state;
 
-		const isEligibleForFreeTrial = hasCartDomain || isDomainEligibleForGoogleWorkspaceFreeTrial( domain );
+		const isEligibleForFreeTrial =
+			hasCartDomain || isDomainEligibleForGoogleWorkspaceFreeTrial( domain );
 
 		// TODO: Improve handling of this case
 		if ( ! isGSuiteSupported ) {
