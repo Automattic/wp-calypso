@@ -7,12 +7,11 @@ import {
 	GutenbergEditorPage,
 	EditorSettingsSidebarComponent,
 	PublishedPostPage,
-	ImageBlock,
 	skipItIf,
 	TestAccount,
 	envVariables,
 } from '@automattic/calypso-e2e';
-import { Page, ElementHandle, Browser } from 'playwright';
+import { Page, Browser } from 'playwright';
 
 const quote =
 	'The problem with quotes on the Internet is that it is hard to verify their authenticity. \n— Abraham Lincoln';
@@ -44,8 +43,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Blocks', function () {
-		let blockHandle: ElementHandle;
-
 		it( 'Enter post title', async function () {
 			await gutenbergEditorPage.enterTitle( title );
 		} );
@@ -53,23 +50,12 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		it( 'Enter post text', async function () {
 			await gutenbergEditorPage.enterText( quote );
 		} );
-
-		it( 'Add image block', async function () {
-			blockHandle = await gutenbergEditorPage.addBlock(
-				ImageBlock.blockName,
-				ImageBlock.blockEditorSelector
-			);
-		} );
-
-		it( 'Remove image block', async function () {
-			await gutenbergEditorPage.removeBlock( blockHandle );
-		} );
 	} );
 
 	describe( 'Patterns', function () {
-		const patternName = 'Heading';
+		const patternName = 'About Me';
 
-		it( `Add ${ patternName }`, async function () {
+		it( `Add ${ patternName } pattern`, async function () {
 			await gutenbergEditorPage.addPattern( patternName );
 		} );
 	} );
