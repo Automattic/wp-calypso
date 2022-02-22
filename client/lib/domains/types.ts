@@ -48,6 +48,7 @@ export type ResponseDomain = {
 	aRecordsRequiredForMapping?: Array< string >;
 	autoRenewalDate: string;
 	autoRenewing: boolean;
+	aftermarketAuction: boolean;
 	beginTransferUntilDate: string;
 	blogId: number;
 	bundledPlanSubscriptionId: string | number | null | undefined;

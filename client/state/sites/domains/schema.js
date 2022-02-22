@@ -8,6 +8,7 @@ export const itemsSchema = {
 				type: 'object',
 				required: [ 'domain' ],
 				properties: {
+					aftermarketAuction: { type: 'boolean' },
 					autoRenewalDate: { type: 'string' },
 					autoRenewing: { type: 'boolean' },
 					blogId: { type: 'number' },
