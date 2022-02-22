@@ -13,7 +13,6 @@ const taglineText = 'tagline text';
 const titleText = 'title text';
 const ctaText = 'cta text';
 
-
 function render() {
 	return (
 		<Spotlight
