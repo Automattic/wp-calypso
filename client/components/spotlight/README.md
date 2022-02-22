@@ -17,11 +17,11 @@ const ctaText = 'cta text';
 function render() {
 	return (
 		<Spotlight
-			illustrationSrc={illustrationSrc}
-			url={url}
-			taglineText={taglineText}
-			titleText={titleText}
-			ctaText={ctaText}
+			illustrationSrc={ illustrationSrc }
+			url={ url }
+			taglineText={ taglineText }
+			titleText={ titleText }
+			ctaText={ ctaText }
 		/>
 	);
 }
