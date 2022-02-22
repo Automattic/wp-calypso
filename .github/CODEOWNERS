@@ -118,7 +118,7 @@
 /packages/languages @Automattic/i18n
 
 # E2E specs
-/test/e2e @WunderBart @Automattic/quality-squad
+/test/e2e* @WunderBart @Automattic/quality-squad
 /packages/calypso-e2e @Automattic/quality-squad
 
 # Node updates
