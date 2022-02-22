@@ -35,6 +35,7 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
+import TitanMailboxPricingNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-mailbox-pricing-notice';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -267,6 +268,12 @@ class GSuiteAddUsers extends Component {
 						} ) }
 						noticeStatus="is-info"
 					>
+						{ selectedDomainName && productType && (
+							<TitanMailboxPricingNotice
+								domain={ selectedDomainName }
+								titanMailProduct={ productType }
+							/>
+						) }
 						{ this.renderAddGSuite() }
 					</EmailVerificationGate>
 				</Main>
