@@ -14,6 +14,7 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
 - [Writing tests](docs/writing_tests.md)
 - [Library objects](docs/library_objects.md)
 - [Style Guide](docs/style_guide.md)
+- [Patterns, Tricks, and Gotcha's](docs/patterns_tricks_gotchas.md)
 - [Debugging](docs/debugging.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - [Environment Variable](docs/environment_variables.md)
