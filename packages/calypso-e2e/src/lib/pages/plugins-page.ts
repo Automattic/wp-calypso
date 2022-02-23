@@ -46,6 +46,7 @@ export class PluginsPage {
 	 */
 	async validateNotHasSection( section: string ): Promise< void > {
 		const titles = this.page.locator( selectors.sectionTitles );
+		await titles.waitFor();
 		const count = await titles.count();
 		for ( let i = 0; i < count; i++ ) {
 			const title = await titles.nth( i ).innerText();
