@@ -33,4 +33,4 @@ export { getGSuiteExpiryDate } from './get-gsuite-expiry-date';
 export { getGSuiteMailboxPurchaseCost } from './get-gsuite-mailbox-purchase-cost';
 export { getGSuiteMailboxRenewalCost } from './get-gsuite-mailbox-renewal.cost';
 export { isPendingGSuiteTOSAcceptance } from './is-pending-gsuite-tos-acceptance';
-export { isDomainEligibleForGoogleWorkspaceFreeTrial } from './is-domain-eligible-for-google-free-trial';
+export { isDomainEligibleForGoogleWorkspaceFreeTrial } from './is-domain-eligible-for-google-workspace-free-trial';
