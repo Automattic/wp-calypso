@@ -23,5 +23,5 @@ export default function getJetpackSearchDashboardUrl( state, siteID ) {
 	if ( jetpackVersion && versionCompare( jetpackVersion, '10.1', '>=' ) ) {
 		return adminUrl + 'admin.php?page=jetpack-search';
 	}
-	return adminUrl + 'admin.php?page=jetpack';
+	return adminUrl + 'admin.php?page=jetpack#/performance';
 }

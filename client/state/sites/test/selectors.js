@@ -2663,7 +2663,7 @@ describe( 'selectors', () => {
 			);
 
 			expect( dashboardUrl ).toEqual(
-				'https://example.wordpress.com/wp-admin/admin.php?page=jetpack'
+				'https://example.wordpress.com/wp-admin/admin.php?page=jetpack#/performance'
 			);
 		} );
 		test( 'should return Search dashboard for new JP versions', () => {
