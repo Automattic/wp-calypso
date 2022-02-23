@@ -35,7 +35,7 @@ export class SidebarComponent {
 	async waitForSidebarInitialization(): Promise< void > {
 		await this.page.waitForLoadState( 'load' );
 		const sidebarLocator = this.page.locator( selectors.sidebar );
-		await sidebarLocator.waitFor( { state: 'visible' } );
+		await sidebarLocator.waitFor();
 
 		// If the sidebar is collapsed (via the Collapse Menu toggle),
 		// re-expand the sidebar.
@@ -158,7 +158,7 @@ export class SidebarComponent {
 		const navbarComponent = new NavbarComponent( this.page );
 		await navbarComponent.clickMySites();
 
-		// `focus-sidebar` attribute is added is added to the main screen.
+		// `focus-sidebar` attribute is added to the main layout screen.
 		const layoutElement = await this.page.waitForSelector( selectors.focusedLayout( 'Sidebar' ) );
 		await layoutElement.waitForElementState( 'stable' );
 	}
