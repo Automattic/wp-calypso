@@ -29,12 +29,14 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins' ), function () {
 		}
 	);
 
-	it( 'Can browse all plugins', async function () {
-		await pluginsPage.clickBrowseAll();
+	it( 'Can browse all popular plugins', async function () {
+		await pluginsPage.clickBrowseAllPopular();
+		await pluginsPage.validateHasSection( 'All Popular Plugins' );
 	} );
 
 	it( 'Can return via breadcrumb', async function () {
-		await pluginsPage.clickBreadcrumb( 'Plugins' );
+		await pluginsPage.clickPluginsBreadcrumb();
+		await pluginsPage.validateHasSection( 'Premium' );
 	} );
 } );
 

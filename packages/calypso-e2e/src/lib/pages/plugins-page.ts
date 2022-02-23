@@ -6,7 +6,7 @@ const selectors = {
 	sectionHeader: '.plugins-browser-list__header',
 	sectionTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
 	sectionTitles: '.plugins-browser-list__title',
-	browseAll: 'a:text("Browse All")',
+	browseAllPopular: 'a[href^="/plugins/popular"]',
 	breadcrumb: ( section: string ) => `.plugins-browser__header li a:text("${ section }") `,
 };
 
@@ -61,16 +61,14 @@ export class PluginsPage {
 	/**
 	 * Click Browse All
 	 */
-	async clickBrowseAll(): Promise< void > {
-		await this.page.click( selectors.browseAll );
-		assert.match( this.page.url(), /.*\/plugins\/(featured|paid|new|popular)$/ );
+	async clickBrowseAllPopular(): Promise< void > {
+		await this.page.click( selectors.browseAllPopular );
 	}
 
 	/**
-	 * Click breadcrumb
+	 * Click the Plugins breadcrumb
 	 */
-	async clickBreadcrumb( text: string ): Promise< void > {
-		await this.page.click( selectors.breadcrumb( text ) );
-		assert.match( this.page.url(), /.*\/plugins$/ );
+	async clickPluginsBreadcrumb(): Promise< void > {
+		await this.page.click( selectors.breadcrumb( 'Plugins' ) );
 	}
 }
