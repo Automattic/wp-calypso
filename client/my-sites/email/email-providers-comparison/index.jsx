@@ -380,7 +380,7 @@ class EmailProvidersComparison extends Component {
 								"%(discountedPrice)s is a formatted, discounted price that the user will pay today (e.g. '$3'), " +
 								"%(standardPrice)s is a formatted price (e.g. '$5')",
 							components: {
-								span: <span className={ 'email-providers-comparison__google_discount' }/>,
+								span: <span className={ 'email-providers-comparison__google-discount' } />,
 							},
 						}
 					) }
