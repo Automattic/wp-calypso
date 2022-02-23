@@ -209,9 +209,13 @@ const InstalledInOrPricing = ( {
 								count: sitesWithPlugin.length,
 						  } ) }
 				</div>
-				<div className="plugins-browser-item__active">
-					<Badge type={ isActive ? 'success' : 'info' }>{ isActive ? 'Active' : 'Inactive' }</Badge>
-				</div>
+				{ currentSites.length === 1 && (
+					<div className="plugins-browser-item__active">
+						<Badge type={ isActive ? 'success' : 'info' }>
+							{ isActive ? 'Active' : 'Inactive' }
+						</Badge>
+					</div>
+				) }
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */
