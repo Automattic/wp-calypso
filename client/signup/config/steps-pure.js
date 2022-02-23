@@ -696,7 +696,7 @@ export function generateSteps( {
 				hideExternalPreview: true,
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
-				showDesignPickerCategoriesAllFilter: false,
+				showDesignPickerCategoriesAllFilter: true,
 				showLetUsChoose: true,
 				hideFullScreenPreview: true,
 				hideDesignTitle: true,
