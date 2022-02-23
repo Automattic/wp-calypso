@@ -141,6 +141,15 @@
 	color: $studio-black;
 }
 
+.plugins-browser-item__active {
+	margin-left: 25px;
+
+	.badge {
+		border-radius: 4px;
+		font-size: 0.75rem;
+	}
+}
+
 .plugins-browser-item__pricing-placeholder {
 	width: 150px;
 

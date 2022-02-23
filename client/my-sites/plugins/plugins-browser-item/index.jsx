@@ -199,7 +199,7 @@ const InstalledInOrPricing = ( {
 		const isActive = !! activePlugins.find( ( activePlugin ) => activePlugin.slug === plugin.slug );
 
 		return (
-			<>
+			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed">
 					<Gridicon icon="checkmark" size={ 14 } />
 					{ isWpcomPreinstalled || currentSites.length === 1
@@ -209,8 +209,10 @@ const InstalledInOrPricing = ( {
 								count: sitesWithPlugin.length,
 						  } ) }
 				</div>
-				<Badge type={ isActive ? 'success' : 'info' }>{ isActive ? 'Active' : 'Inactive' }</Badge>
-			</>
+				<div className="plugins-browser-item__active">
+					<Badge type={ isActive ? 'success' : 'info' }>{ isActive ? 'Active' : 'Inactive' }</Badge>
+				</div>
+			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	}
