@@ -2,7 +2,7 @@ import { Page, Frame, FrameLocator } from 'playwright';
 
 // Options for Playwright's Frame.click() method.
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
-type PrePublishButtons = 'Publish' | 'Cancel';
+type PrePublishButtons = 'Publish' | 'Schedule' | 'Cancel';
 
 const panel = 'div.editor-post-publish-panel';
 const selectors = {
@@ -60,7 +60,7 @@ export class EditorPublishPanelComponent {
 	 */
 	async publish(): Promise< void > {
 		const publishButtonLocator = this.frameLocator.locator(
-			selectors.prePublishButton( 'Publish' )
+			`${ selectors.prePublishButton( 'Publish' ) }, ${ selectors.prePublishButton( 'Schedule' ) }`
 		);
 		await publishButtonLocator.click();
 	}
