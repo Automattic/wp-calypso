@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+// import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import NuxModal from '../nux-modal';
 import contentSubmittedImage from './images/post-published.svg';
@@ -67,6 +68,7 @@ const SellerCelebrationModal = () => {
 		};
 	} );
 	const intent = useSiteIntent();
+	// const shouldShowSellerCelebrationModal = useShouldShowSellerCelebrationModal();
 
 	useEffect( () => {
 		if (
