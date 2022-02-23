@@ -28,7 +28,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let postsPage: PostsPage;
 	let paragraphBlock: ParagraphBlock;
-	let postURL: string;
+	let postURL: URL;
 
 	beforeAll( async function () {
 		page = await browser.newPage();
@@ -58,12 +58,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 		it( 'Publish post', async function () {
 			postURL = await gutenbergEditorPage.publish();
-			expect( postURL ).toBeDefined();
+			expect( postURL.href ).toBeDefined();
 		} );
 
 		it( 'Validate post', async function () {
 			const testPage = await browser.newPage();
-			await testPage.goto( postURL );
+			await testPage.goto( postURL.href );
 
 			await ParagraphBlock.validatePublishedContent( testPage, [ originalContent ] );
 			await testPage.close();
@@ -94,12 +94,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Publish post', async function () {
-			postURL = await gutenbergEditorPage.update();
+			postURL = await gutenbergEditorPage.publish( { update: true } );
 		} );
 
 		it( 'Published post contains additional post content', async function () {
 			const testPage = await browser.newPage();
-			await testPage.goto( postURL );
+			await testPage.goto( postURL.href );
 
 			await ParagraphBlock.validatePublishedContent( testPage, [
 				originalContent,
@@ -116,7 +116,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 		it( 'Post is no longer visible', async function () {
 			const testPage = await browser.newPage();
-			await testPage.goto( postURL );
+			await testPage.goto( postURL.href );
 			await testPage.waitForSelector( 'div.error-404.not-found' );
 			await testPage.close();
 		} );

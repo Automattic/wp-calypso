@@ -36,7 +36,7 @@ describe( DataHelper.createSuiteTitle( `Tracks Events for Post Editor` ), functi
 		// Get the frame before creating the new post because we won't be able to access it once navigation starts
 		const frame = await gutenbergEditorPage.waitUntilLoaded();
 		const editorPublishPanelComponent = new EditorPublishPanelComponent( page, frame );
-		await editorPublishPanelComponent.addNew( { noWaitAfter: true } );
+		await editorPublishPanelComponent.addNewArticle( { noWaitAfter: true } );
 
 		expect( await getLatestEvent( frame ) ).toMatchObject( [
 			'wpcom_block_editor_post_publish_add_new_click',

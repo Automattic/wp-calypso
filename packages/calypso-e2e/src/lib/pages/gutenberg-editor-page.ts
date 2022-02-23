@@ -40,13 +40,8 @@ const selectors = {
 	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
 
-	// Publish panel (including post-publish)
-	// With the selector below, we're targeting both "View Post" buttons: the one
-	// in the post-publish pane, and the one that pops up in the bottom-left
-	// corner. This addresses the bug where the post-publish panel is immediately
-	// closed when publishing with certain blocks on the editor canvas.
-	// See https://github.com/Automattic/wp-calypso/issues/54421.
-	toastViewPostLink: 'a:text-matches("View (Post|Page)", "i")',
+	// Toast
+	toastViewPostLink: '.components-snackbar__content a:text-matches("View (Post|Page)", "i")',
 
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
@@ -401,41 +396,39 @@ export class GutenbergEditorPage {
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {Promise<string>} The published URL.
 	 */
-	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
+	async publish( {
+		update = false,
+		visit = false,
+	}: { update?: boolean; visit?: boolean } = {} ): Promise< URL > {
 		const frame = await this.getEditorFrame();
 
-		const initialPublishButton = `${ selectors.publishButton(
-			selectors.postToolbar
-		) }, ${ selectors.scheduleButton( selectors.postToolbar ) }`;
-		await frame.click( initialPublishButton );
+		if ( update ) {
+			await frame.click( selectors.updateButton );
+		} else {
+			// The target button can have either one of the two strings:
+			// 	- Schedule
+			// 	- Publish
+			const initialPublishButton = `${ selectors.publishButton(
+				selectors.postToolbar
+			) }, ${ selectors.scheduleButton( selectors.postToolbar ) }`;
 
-		await this.editorPublishPanelComponent.publish();
+			// Publishing a new article is a two-step process.
+			await frame.click( initialPublishButton );
+			await this.editorPublishPanelComponent.publish();
+		}
 
-		const publishedURL = await Promise.race( [
+		// In some cases the post may be published but the EditorPublishPanelComponent
+		// is either not present or forcibly dismissed due to a bug.
+		// eg. publishing a post with some of the Jetpack Earn blocks.
+		// By racing the two methods of obtaining the published article's URL, we can
+		// guarantee that one or the other works.
+		const publishedURL: URL = await Promise.race( [
 			this.editorPublishPanelComponent.getPublishedURL(),
-			this.getPublishedURL(),
+			this.getPublishedURLFromToast(),
 		] );
 
 		if ( visit ) {
-			await this.visitPublishedPost( publishedURL );
-		}
-		return publishedURL;
-	}
-
-	/**
-	 * Updates the post or page.
-	 *
-	 * @param {boolean} visit Whether to then visit the page.
-	 * @returns {Promise<string>} URL of the update post or page.
-	 */
-	async update( { visit = false }: { visit?: boolean } = {} ): Promise< string > {
-		const frame = await this.getEditorFrame();
-
-		await frame.click( selectors.updateButton );
-		const publishedURL = await this.getPublishedURL();
-
-		if ( visit ) {
-			await this.visitPublishedPost( publishedURL );
+			await this.visitPublishedPost( publishedURL.href );
 		}
 		return publishedURL;
 	}
@@ -468,11 +461,12 @@ export class GutenbergEditorPage {
 	 *
 	 * @returns {Promise<string>} Published article's URL.
 	 */
-	async getPublishedURL(): Promise< string > {
+	async getPublishedURLFromToast(): Promise< URL > {
 		const frame = await this.getEditorFrame();
 
-		const viewPublishedArticleButton = await frame.waitForSelector( selectors.toastViewPostLink );
-		return ( await viewPublishedArticleButton.getAttribute( 'href' ) ) as string;
+		const toastLocator = frame.locator( selectors.toastViewPostLink );
+		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;
+		return new URL( publishedURL );
 	}
 
 	/**
