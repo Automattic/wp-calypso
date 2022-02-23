@@ -4,6 +4,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { times } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import Spotlight from 'calypso/components/spotlight';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
@@ -119,7 +120,7 @@ const PluginsBrowserList = ( {
 						titleText={ __( 'Under the Spotlight' ) }
 						ctaText={ __( 'View Details' ) }
 						illustrationSrc={ spotlightPlugin?.icon ?? '' }
-						url={ `/plugins/${ spotlightPlugin.slug }/${ site }` }
+						onClick={ () => page( `/plugins/${ spotlightPlugin.slug }/${ site }` ) }
 					/>
 				) }
 			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
