@@ -82,6 +82,7 @@ export default function AssignLicenseForm( { sites }: any ): ReactElement {
 					<Button
 						primary
 						className="assign-license-form__assign-now"
+						disabled={ ! selectedSite }
 						busy={ isSubmitting }
 						onClick={ onAssignLicense }
 					>
