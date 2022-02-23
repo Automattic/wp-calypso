@@ -39,7 +39,6 @@ The following items did not change:
   - `newspack-blocks/`: Container for newspack blocks such as the carousel block and the blog post block.
   - `paragraph-block/`: Customize paragraph block on WP.com.
   - `posts-list-block/`: (_deprecated_) A simple block to show a list of posts on a page. (Superceeded by the blog-posts-block.)
-  - `site-editor/`: Gutenberg site-editor integration code for WordPress.com.
   - `starter-page-templates/`: Allows you to select different page layouts made of blocks.
   - `wpcom-block-editor-nux/`: WordPress.com-specific NUX dialogue.
   - `tags-education/`: Additional tags education for Gutenberg
