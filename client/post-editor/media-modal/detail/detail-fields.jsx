@@ -177,7 +177,7 @@ class EditorMediaModalDetailFields extends Component {
 	renderOriginalVideoUrl = () => {
 		const videopressGuid = this.getItemValue( 'videopress_guid' );
 
-		// only render this field if its for a videopress video, and if the provided URL doesn't match the original_url (or it is blank)
+		// only render this field if its for a videopress video, and if the provided URL doesn't match the original_url (or it is not blank)
 		if (
 			! videopressGuid ||
 			this.getItemValue( 'URL' ) === this.getItemValue( 'original_url' ) ||
