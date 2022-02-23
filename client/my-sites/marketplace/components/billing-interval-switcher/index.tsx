@@ -1,7 +1,7 @@
 import { PlansIntervalToggle } from '@automattic/plans-grid/src';
 import styled from '@emotion/styled';
-import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
+import React from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { PluginAnnualSaving } from 'calypso/my-sites/plugins/plugin-saving';
 import { IntervalLength } from './constants';
@@ -65,21 +65,19 @@ const BillingIntervalSwitcher: React.FunctionComponent< Props > = ( {
 						onClick={ () => onChange( IntervalLength.ANNUALLY ) }
 					>
 						{ annualLabel }
-						{ plugin ? (
+						{ plugin && (
 							<PluginAnnualSaving plugin={ plugin }>
-								{ ( annualSaving: { saving: any } ) =>
-									annualSaving.saving ? (
-										<>
-											<PluginAnnualSavingLabelMobile
-												isSelected={ billingPeriod === IntervalLength.ANNUALLY }
-											>
-												-{ annualSaving.saving }
-											</PluginAnnualSavingLabelMobile>
-										</>
-									) : null
+								{ ( annualSaving: { saving: never } ) =>
+									annualSaving.saving && (
+										<PluginAnnualSavingLabelMobile
+											isSelected={ billingPeriod === IntervalLength.ANNUALLY }
+										>
+											&nbsp;-{ annualSaving.saving }
+										</PluginAnnualSavingLabelMobile>
+									)
 								}
 							</PluginAnnualSaving>
-						) : null }
+						) }
 					</SelectDropdown.Item>
 				</SelectDropdown>
 			</Container>
@@ -90,23 +88,21 @@ const BillingIntervalSwitcher: React.FunctionComponent< Props > = ( {
 		<Container>
 			<PlansIntervalToggleLabel>{ translate( 'Price' ) }</PlansIntervalToggleLabel>
 			<PlansIntervalToggle intervalType={ billingPeriod } onChange={ onChange }>
-				{ plugin ? (
+				{ plugin && (
 					<PluginAnnualSaving plugin={ plugin }>
-						{ ( annualSaving: { saving: any } ) =>
-							annualSaving.saving ? (
-								<>
-									<PluginAnnualSavingLabelDesktop>
-										&nbsp;
-										{ translate( 'Save %(save)s', {
-											comment: 'Sale price label, ex: Save $51',
-											args: { save: annualSaving.saving },
-										} ) }
-									</PluginAnnualSavingLabelDesktop>
-								</>
-							) : null
+						{ ( annualSaving: { saving: never } ) =>
+							annualSaving.saving && (
+								<PluginAnnualSavingLabelDesktop>
+									&nbsp;
+									{ translate( 'Save %(save)s', {
+										comment: 'Sale price label, ex: Save $51',
+										args: { save: annualSaving.saving },
+									} ) }
+								</PluginAnnualSavingLabelDesktop>
+							)
 						}
 					</PluginAnnualSaving>
-				) : null }
+				) }
 			</PlansIntervalToggle>
 		</Container>
 	);

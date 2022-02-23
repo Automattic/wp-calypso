@@ -260,3 +260,7 @@ body.is-section-plugins:not( .is-nav-unification ) {
 		padding: 0 24px;
 	}
 }
+
+body.is-section-plugins header .select-dropdown__item {
+	padding: 0 0 0 16px !important;
+}

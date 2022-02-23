@@ -23,22 +23,3 @@ export const PluginAnnualSaving = ( { plugin, children } ) => {
 		saving: getAnnualPriceSavingText(),
 	} );
 };
-
-export const PluginAnnualSavingPercent = ( { plugin, children } ) => {
-	const priceSlugYearly = plugin?.variations?.yearly?.product_slug;
-	const productYearly = useSelector( ( state ) => getProductBySlug( state, priceSlugYearly ) );
-	const priceSlugMonthly = plugin?.variations?.monthly?.product_slug;
-	const productMonthly = useSelector( ( state ) => getProductBySlug( state, priceSlugMonthly ) );
-	const isFetching = useSelector( isProductsListFetching );
-
-	const getAnnualPriceSavingText = () => {
-		return productMonthly && productYearly
-			? Math.floor( 100 - ( productYearly.cost * 100 ) / ( productMonthly.cost * 12 ) )
-			: null;
-	};
-
-	return children( {
-		isFetching,
-		saving: getAnnualPriceSavingText(),
-	} );
-};
