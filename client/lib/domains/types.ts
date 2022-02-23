@@ -8,6 +8,7 @@ export type CannotAddEmailReason = {
 export type DomainType = keyof typeof domainType;
 
 interface EmailSubscription {
+	expiryDate?: string;
 	hasExpectedDnsRecords?: boolean | null;
 	ownedByUserId?: number;
 	purchaseCostPerMailbox?: EmailCost | null;
@@ -33,7 +34,7 @@ export type GoogleEmailSubscription = EmailSubscription & {
 };
 
 export type TitanEmailSubscription = EmailSubscription & {
-	expiryDate?: string;
+	appsUrl?: string;
 	isEligibleForIntroductoryOffer?: boolean;
 	maximumMailboxCount?: number;
 	numberOfMailboxes?: number;

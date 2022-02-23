@@ -1,4 +1,4 @@
-import type { GoogleEmailSubscription } from 'calypso/lib/domains/types';
+import type { GoogleEmailSubscription, TitanEmailSubscription } from 'calypso/lib/domains/types';
 
 export interface SiteDomain {
 	aftermarketAuction?: boolean;
@@ -13,7 +13,7 @@ export interface SiteDomain {
 	expiry?: string | null;
 	expirySoon?: boolean;
 	googleAppsSubscription?: GoogleEmailSubscription | null;
-	titanMailSubscription?: { status?: string; appsUrl?: string };
+	titanMailSubscription?: TitanEmailSubscription | null;
 	hasRegistration?: boolean;
 	hasWpcomNameservers?: boolean;
 	hasZone?: boolean;
