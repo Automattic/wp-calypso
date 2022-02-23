@@ -1,3 +1,5 @@
+import { GoogleEmailSubscription } from "../../../lib/domains/types";
+
 export interface SiteDomain {
 	aftermarketAuction?: boolean;
 	autoRenewalDate?: string;
@@ -10,7 +12,7 @@ export interface SiteDomain {
 	expired?: boolean;
 	expiry?: string | null;
 	expirySoon?: boolean;
-	googleAppsSubscription?: { status?: string };
+	googleAppsSubscription?: GoogleEmailSubscription | null;
 	titanMailSubscription?: { status?: string; appsUrl?: string };
 	hasRegistration?: boolean;
 	hasWpcomNameservers?: boolean;

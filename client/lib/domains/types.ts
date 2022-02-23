@@ -10,7 +10,9 @@ export type DomainType = keyof typeof domainType;
 interface EmailSubscription {
 	hasExpectedDnsRecords?: boolean | null;
 	ownedByUserId?: number;
-	status: string;
+	purchaseCostPerMailbox?: EmailCost | null;
+	renewalCostPerMailbox?: EmailCost | null;
+	status?: string;
 }
 
 export type EmailCost = {
@@ -25,8 +27,6 @@ export type GoogleEmailSubscription = EmailSubscription & {
 	expiryDate?: string;
 	pendingTosAcceptance?: boolean;
 	productSlug?: string;
-	purchaseCostPerMailbox?: EmailCost | null;
-	renewalCostPerMailbox?: EmailCost | null;
 	subscribedDate?: string;
 	subscriptionId?: string;
 	totalUserCount?: number;
@@ -39,8 +39,6 @@ export type TitanEmailSubscription = EmailSubscription & {
 	numberOfMailboxes?: number;
 	orderId?: number;
 	productSlug?: string;
-	purchaseCostPerMailbox?: EmailCost | null;
-	renewalCostPerMailbox?: EmailCost | null;
 	subscriptionId?: number | null;
 };
 
