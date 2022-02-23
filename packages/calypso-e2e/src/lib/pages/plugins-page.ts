@@ -112,10 +112,16 @@ export class PluginsPage {
 	/**
 	 * Search
 	 */
-	async search( query: string, expectedResult: string ): Promise< void > {
+	async search( query: string ): Promise< void > {
 		await this.page.fill( selectors.search, query );
 		await this.page.press( selectors.search, 'Enter' );
 		await this.page.waitForSelector( selectors.searchResultTitle( query ) );
+	}
+
+	/**
+	 * Validate Expected Search Result Found
+	 */
+	async validateExpectedSearchResultFound( expectedResult: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.searchResult( expectedResult ) );
 	}
 }

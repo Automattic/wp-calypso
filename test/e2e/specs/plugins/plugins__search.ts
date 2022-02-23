@@ -23,6 +23,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 	} );
 
 	it( 'Search for ecommerce', async function () {
-		await pluginsPage.search( 'ecommerce', 'WooCommerce' );
+		await pluginsPage.search( 'ecommerce' );
+		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
 	} );
 } );
