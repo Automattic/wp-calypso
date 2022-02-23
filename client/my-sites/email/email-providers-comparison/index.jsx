@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -354,6 +355,81 @@ class EmailProvidersComparison extends Component {
 		);
 	}
 
+	getAvailableDiscountForGoogle(
+		currencyCode,
+		isEligibleForFreeTrial,
+		gSuiteProduct,
+		productIsDiscounted,
+		standardPrice
+	) {
+		const { translate } = this.props;
+
+		if ( productIsDiscounted ) {
+			return (
+				<span className="email-providers-comparison__discount-with-renewal">
+					{ translate(
+						'%(discount)d%% off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
+						{
+							args: {
+								discount: gSuiteProduct.sale_coupon.discount,
+								discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
+								standardPrice,
+							},
+							comment:
+								"%(discount)d is a numeric percentage discount (e.g. '50'), " +
+								"%(discountedPrice)s is a formatted, discounted price that the user will pay today (e.g. '$3'), " +
+								"%(standardPrice)s is a formatted price (e.g. '$5')",
+							components: {
+								span: <span className={ 'email-providers-comparison__google-discount' } />,
+							},
+						}
+					) }
+
+					<InfoPopover position="right" showOnHover>
+						{ translate(
+							'This discount is only available the first time you purchase a %(googleMailService)s account, any additional mailboxes purchased after that will be at the regular price.',
+							{
+								args: {
+									googleMailService: getGoogleMailServiceFamily(),
+								},
+								comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
+							}
+						) }
+					</InfoPopover>
+				</span>
+			);
+		}
+
+		if ( isEligibleForFreeTrial ) {
+			return (
+				<>
+					{ translate( '1 month free' ) }
+					<span className="email-providers-comparison__discount-with-renewal">
+						<span>
+							{ translate(
+								'%(firstRenewalPrice)s/mailbox billed in 1 month, renews at %(standardPrice)s/mailbox',
+								{
+									args: {
+										firstRenewalPrice: formatCurrency(
+											( ( gSuiteProduct?.cost ?? 0 ) * 11 ) / 12,
+											currencyCode
+										),
+										standardPrice,
+									},
+									comment:
+										"%(firstRenewalPrice)s is a formatted, reduced price that the user will pay in one month (e.g. '$3'), " +
+										"%(standardPrice)s is a formatted price (e.g. '$5')",
+								}
+							) }
+						</span>
+					</span>
+				</>
+			);
+		}
+
+		return null;
+	}
+
 	renderGoogleCard() {
 		const {
 			currencyCode,
@@ -374,6 +450,9 @@ class EmailProvidersComparison extends Component {
 		if ( ! isGSuiteSupported ) {
 			return null;
 		}
+
+		const isEligibleForFreeTrial =
+			config.isEnabled( 'emails/google-workspace-1-month-trial' ) && hasCartDomain;
 
 		const productIsDiscounted = hasDiscount( gSuiteProduct );
 		const monthlyPrice = getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode );
@@ -397,42 +476,18 @@ class EmailProvidersComparison extends Component {
 					comment: '{{price/}} is the formatted price, e.g. $20',
 			  } );
 
-		const standardPrice = getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode );
+		const standardPrice =
+			! productIsDiscounted && isEligibleForFreeTrial
+				? formatCurrency( gSuiteProduct?.cost ?? null, currencyCode )
+				: getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode );
 
-		// Note that when we have a discount, we include all renewal information in the discount content
-		const discount = productIsDiscounted ? (
-			<span className="email-providers-comparison__discount-with-renewal">
-				{ translate(
-					'%(discount)d%% off{{span}}, %(discountedPrice)s billed today, renews at %(standardPrice)s{{/span}}',
-					{
-						args: {
-							discount: gSuiteProduct.sale_coupon.discount,
-							discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
-							standardPrice,
-						},
-						comment:
-							"%(discount)d is a numeric percentage discount (e.g. '50'), " +
-							"%(discountedPrice)s is a formatted, discounted price that the user will pay today (e.g. '$3'), " +
-							"%(standardPrice)s is a formatted price (e.g. '$5')",
-						components: {
-							span: <span />,
-						},
-					}
-				) }
-
-				<InfoPopover position="right" showOnHover>
-					{ translate(
-						'This discount is only available the first time you purchase a %(googleMailService)s account, any additional mailboxes purchased after that will be at the regular price.',
-						{
-							args: {
-								googleMailService: getGoogleMailServiceFamily(),
-							},
-							comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-						}
-					) }
-				</InfoPopover>
-			</span>
-		) : null;
+		const discount = this.getAvailableDiscountForGoogle(
+			currencyCode,
+			isEligibleForFreeTrial,
+			gSuiteProduct,
+			productIsDiscounted,
+			standardPrice
+		);
 
 		const starLabel = productIsDiscounted
 			? translate( '%(discount)d%% off!', {
