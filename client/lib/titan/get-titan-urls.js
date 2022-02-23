@@ -10,7 +10,7 @@ const TITAN_APPS = {
 /**
  * Returns the base URL for Titan Apps
  *
- * @param {import('calypso/lib/domains/types').ResponseDomain|undefined} domain - Domain object
+ * @param {import('calypso/lib/domains/types').ResponseDomain|import('calypso/state/sites/domains/types').SiteDomain|undefined} domain - Domain object
  * @returns {string} - The Apps URL prefix
  */
 export function getTitanAppsUrlPrefix( domain ) {
