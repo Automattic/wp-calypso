@@ -1,4 +1,4 @@
-import IntentScreen from '@automattic/intent-screen';
+import IntentScreen from '@automattic/onboarding-components';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useIntents, useIntentsAlt } from './intents';
