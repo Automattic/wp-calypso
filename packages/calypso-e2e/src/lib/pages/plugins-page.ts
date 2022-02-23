@@ -3,7 +3,6 @@ import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
-	sectionHeader: '.plugins-browser-list__header',
 	sectionTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
 	sectionTitles: '.plugins-browser-list__title',
 	browseAllPopular: 'a[href^="/plugins/popular"]',
