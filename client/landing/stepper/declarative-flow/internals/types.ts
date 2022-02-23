@@ -12,6 +12,10 @@ export type NavigationControls = {
 	 * Call this function if you want to go to the proceed down the flow.
 	 */
 	goNext: () => void;
+	/**
+	 * Call this function if you want to jump to a certain step.
+	 */
+	goToPage: ( page: StepPath ) => void;
 };
 
 /**
