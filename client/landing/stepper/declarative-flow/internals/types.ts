@@ -15,7 +15,7 @@ export type NavigationControls = {
 	/**
 	 * Call this function if you want to jump to a certain step.
 	 */
-	goToPage: ( page: StepPath ) => void;
+	goToStep?: ( step: StepPath ) => void;
 };
 
 /**

@@ -9,7 +9,7 @@ import type { Step } from '../../types';
  * The intent capture step
  */
 const IntentStep: Step = function IntentStep( { navigation } ) {
-	const { goToPage } = navigation;
+	const { goToStep } = navigation;
 
 	// const siteId = useSelector( ( state ) => getSiteId( state ) );
 	// const canImport = useSelector( ( state ) =>
@@ -24,7 +24,7 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 		const providedDependencies = { intent };
 		recordTracksEvent( 'calypso_signup_intent_select', providedDependencies );
 
-		goToPage( intent );
+		goToStep?.( intent );
 		// // if ( EXTERNAL_FLOW[ intent ] ) {
 		// // 	dispatch( submitSignupStep( { stepName }, providedDependencies ) );
 		// // 	page( getStepUrl( EXTERNAL_FLOW[ intent ], '', '', '', queryObject ) );
