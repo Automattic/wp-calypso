@@ -1,5 +1,5 @@
-import { GetStripeConfigurationArgs } from '@automattic/calypso-stripe';
 import wp from 'calypso/lib/wp';
+import type { GetStripeConfigurationArgs } from '@automattic/calypso-stripe';
 
 export async function getStripeConfiguration(
 	requestArgs: GetStripeConfigurationArgs & { needs_intent?: boolean }

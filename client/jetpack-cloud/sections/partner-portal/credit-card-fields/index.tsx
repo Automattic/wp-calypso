@@ -1,6 +1,5 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { Field } from '@automattic/wpcom-checkout';
-import { StripeElementChangeEvent, StripeElementStyle } from '@stripe/stripe-js';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -10,6 +9,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import CreditCardElementField from './credit-card-element-field';
 import CreditCardLoading from './credit-card-loading';
 import SetAsPrimaryPaymentMethod from './set-as-primary-payment-method';
+import type { StripeElementChangeEvent, StripeElementStyle } from '@stripe/stripe-js';
 
 import './style.scss';
 

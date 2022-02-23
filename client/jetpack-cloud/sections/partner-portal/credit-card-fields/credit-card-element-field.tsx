@@ -1,9 +1,9 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { CardElement } from '@stripe/react-stripe-js';
-import { StripeElementChangeEvent, StripeElementStyle } from '@stripe/stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import type { StripeElementChangeEvent, StripeElementStyle } from '@stripe/stripe-js';
 
 export default function CreditCardElementField( {
 	setIsStripeFullyLoaded,

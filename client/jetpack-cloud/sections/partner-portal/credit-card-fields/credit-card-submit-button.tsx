@@ -1,12 +1,13 @@
-import { StripeConfiguration } from '@automattic/calypso-stripe';
 import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useElements, CardElement } from '@stripe/react-stripe-js';
-import { Stripe } from '@stripe/stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useMemo } from 'react';
-import { State } from 'calypso/state/partner-portal/payment-methods/reducer';
+import type { StripeConfiguration } from '@automattic/calypso-stripe';
+import type { Stripe } from '@stripe/stripe-js';
+import type { I18n } from '@wordpress/i18n';
+import type { State } from 'calypso/state/partner-portal/payment-methods/reducer';
 
 const debug = debugFactory( 'calypso:partner-portal:credit-card' );
 
@@ -79,7 +80,7 @@ export default function CreditCardSubmitButton( {
 	);
 }
 
-function isCreditCardFormValid( store: State, __: typeof import('@wordpress/i18n').__ ) {
+function isCreditCardFormValid( store: State, __: I18n[ '__' ] ) {
 	debug( 'validating credit card fields' );
 
 	const fields = store.selectors.getFields( store.getState() );
