@@ -7,8 +7,7 @@ const selectors = {
 	sectionTitles: '.plugins-browser-list__title',
 	browseAllPopular: 'a[href^="/plugins/popular"]',
 	breadcrumb: ( section: string ) => `.plugins-browser__header li a:text("${ section }") `,
-	pricingToggle: '.select-dropdown__container',
-	pricingToggleOpen: '.select-dropdown__container[aria-expanded="true"]',
+	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
 	annualPricingSelect: 'a[data-bold-text^="Annual price"]',
 	monthlyPricing: '.plugins-browser-item__period:text("monthly")',
@@ -82,7 +81,6 @@ export class PluginsPage {
 	 */
 	async selectMonthlyPricing(): Promise< void > {
 		await this.page.click( selectors.pricingToggle );
-		await this.page.waitForSelector( selectors.pricingToggleOpen );
 		await this.page.click( selectors.monthlyPricingSelect );
 	}
 
@@ -91,7 +89,6 @@ export class PluginsPage {
 	 */
 	async selectAnnualPricing(): Promise< void > {
 		await this.page.click( selectors.pricingToggle );
-		await this.page.waitForSelector( selectors.pricingToggleOpen );
 		await this.page.click( selectors.annualPricingSelect );
 	}
 
