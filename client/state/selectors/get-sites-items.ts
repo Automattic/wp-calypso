@@ -8,6 +8,7 @@ export interface SitesItem {
 	name?: string;
 	description?: string;
 	URL?: string;
+	slug?: string;
 	capabilities?: Record< string, boolean >;
 	jetpack?: boolean;
 	is_multisite?: boolean;

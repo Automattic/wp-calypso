@@ -85,10 +85,13 @@ function getLaunchDestination( dependencies ) {
 	return `/home/${ dependencies.siteSlug }`;
 }
 
-function getDomainSignupFlowDestination( { domainItem, cartItem, siteId } ) {
-	if ( domainItem && cartItem ) {
+function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designType, siteSlug } ) {
+	if ( domainItem && cartItem && designType !== 'existing-site' ) {
 		return addQueryArgs( { siteId }, '/start/setup-site' );
+	} else if ( designType === 'existing-site' ) {
+		return `/checkout/thank-you/${ siteSlug }`;
 	}
+
 	return getThankYouNoSiteDestination();
 }
 
@@ -114,6 +117,10 @@ function getDestinationFromIntent( dependencies ) {
 		}
 
 		return `/post/${ siteSlug }`;
+	}
+
+	if ( intent === 'wpadmin' ) {
+		return `https://${ siteSlug }/wp-admin`;
 	}
 
 	if ( intent === 'sell' && storeType === 'woocommerce' ) {

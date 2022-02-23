@@ -44,6 +44,7 @@
 		"@automattic/mini-cart": "workspace:^",
 		"@automattic/notifications": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
+		"@automattic/onboarding-components": "workspace:^",
 		"@automattic/plans-grid": "workspace:^",
 		"@automattic/react-virtualized": "^9.22.3",
 		"@automattic/request-external-access": "workspace:^",

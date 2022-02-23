@@ -3,6 +3,7 @@ import { numberFormat, translate } from 'i18n-calypso';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
+import InfoPopover from 'calypso/components/info-popover';
 import FixAllThreatsDialog from 'calypso/components/jetpack/fix-all-threats-dialog';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
@@ -10,7 +11,6 @@ import ThreatItem from 'calypso/components/jetpack/threat-item';
 import { FixableThreat, Threat, ThreatAction } from 'calypso/components/jetpack/threat-item/types';
 import ThreatListHeader from 'calypso/components/jetpack/threat-list-header';
 import ThreatLowRiskItemHeader from 'calypso/components/jetpack/threat-low-risk-item-header';
-import SupportInfo from 'calypso/components/support-info';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
 import { useThreats } from 'calypso/lib/jetpack/use-threats';
@@ -234,12 +234,11 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 				<p className="scan-threats__header-message">
 					{ headerSummary }{ ' ' }
 					{ maxSeverity < 3 && (
-						<SupportInfo
-							position="top"
-							text={ translate(
+						<InfoPopover position="top" screenReaderText={ translate( 'Learn more' ) }>
+							{ translate(
 								"Low risk items don't have a negative impact on your site and can be safely ignored."
 							) }
-						/>
+						</InfoPopover>
 					) }
 				</p>
 				{ hasFixableThreats && (

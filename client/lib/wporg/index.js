@@ -46,7 +46,7 @@ export function fetchPluginInformation( pluginSlug, locale ) {
 		action: 'plugin_information',
 		'request[slug]': pluginSlug.replace( new RegExp( '.php$' ), '' ),
 		'request[locale]': getWporgLocaleCode( locale ),
-		'request[fields]': 'icons,short_description,-contributors,-added,-donate_link,-homepage',
+		'request[fields]': 'icons,short_description,contributors,-added,-donate_link,-homepage',
 	};
 
 	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
@@ -58,6 +58,7 @@ export function fetchPluginsList( options ) {
 	const pageSize = options.pageSize || DEFAULT_PAGE_SIZE;
 	const category = options.category || DEFAULT_CATEGORY;
 	const search = options.search;
+	const author = options.author;
 
 	const query = {
 		action: 'query_plugins',
@@ -70,7 +71,13 @@ export function fetchPluginsList( options ) {
 
 	if ( search ) {
 		query[ 'request[search]' ] = search;
-	} else {
+	}
+
+	if ( author ) {
+		query[ 'request[author]' ] = author;
+	}
+
+	if ( ! search && ! author ) {
 		query[ 'request[browse]' ] = category;
 	}
 

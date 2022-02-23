@@ -7,7 +7,7 @@ import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteBySlug, getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getWpOrgImporterUrl } from '../../import/util';
 import { Importer, ImportJob } from '../types';
 import { ContentChooser } from './content-chooser';
@@ -34,7 +34,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 */
 	const [ option, setOption ] = useState< WPImportOption >();
 	const { job, fromSite, siteSlug, siteId } = props;
-	const siteItem = useSelector( ( state ) => getSiteBySlug( state, siteSlug ) );
+	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 	const fromSiteItem = useSelector( ( state ) =>
 		getSiteBySlug( state, fromSite ? convertToFriendlyWebsiteName( fromSite ) : '' )
 	);
@@ -52,7 +52,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 ↓ Methods
 	 */
 	function installJetpack() {
-		page( `https://wordpress.com/jetpack/connect/?url=${ fromSite }` );
+		window.open( `/jetpack/connect/?url=${ fromSite }`, '_blank' );
 	}
 
 	function switchToMigrationScreen() {
@@ -126,7 +126,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							sourceSiteId={ fromSiteItem?.ID as number }
 							sourceUrlAnalyzedData={ fromSiteAnalyzedData }
 							targetSite={ siteItem as SitesItem }
-							targetSiteId={ siteItem?.ID as number }
+							targetSiteId={ siteId }
 							targetSiteSlug={ siteSlug }
 						/>
 					);
@@ -135,7 +135,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 						<ImportContentOnly
 							job={ job }
 							importer={ importer }
-							siteItem={ siteItem }
+							siteItem={ siteItem as SitesItem }
 							siteSlug={ siteSlug }
 							siteAnalyzedData={ fromSiteAnalyzedData }
 						/>

@@ -7,7 +7,7 @@ import {
 	WhatsAppButtonFlow,
 	ContactFormFlow,
 	PremiumContentBlockFlow,
-	SubscriptionFormBlockFlow,
+	SubscribeFlow,
 	ContactInfoBlockFlow,
 	DataHelper,
 	envVariables,
@@ -18,7 +18,7 @@ const blockFlows: BlockFlow[] = [
 	new BusinessHoursFlow( { day: 'Sat' } ),
 	new WhatsAppButtonFlow( { phoneNumber: 1234567890, buttonText: 'Porpoises swim happily' } ),
 	new ContactFormFlow( { nameLabel: 'Angry dolphins flip swiftly' } ),
-	new SubscriptionFormBlockFlow(),
+	new SubscribeFlow(),
 	new ContactInfoBlockFlow( { email: 'foo@example.com', phoneNumber: '(213) 621-0002' } ),
 ];
 

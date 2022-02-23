@@ -111,6 +111,8 @@ describe( 'useProductsQuery', () => {
 						name: 'Jetpack Scan Daily',
 						product_id: 2106,
 						slug: 'jetpack-scan',
+						currency: 'us',
+						amount: 1,
 					},
 				],
 			},
@@ -122,18 +124,22 @@ describe( 'useProductsQuery', () => {
 						name: 'Jetpack Backup (Daily)',
 						product_id: 2100,
 						slug: 'jetpack-backup-daily',
+						currency: 'us',
+						amount: 1.99,
 					},
 					{
 						name: 'Jetpack Backup (Real-time)',
 						product_id: 2102,
 						slug: 'jetpack-backup-realtime',
+						currency: 'us',
+						amount: 3.49,
 					},
 				],
 			},
 		];
 
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/jetpack-licensing/product-families' )
+			.get( '/wpcom/v2/jetpack-licensing/partner/product-families' )
 			.reply( 200, [ ...unexpected, ...expected ] );
 
 		const { result, waitFor } = renderHook( () => useProductsQuery(), {

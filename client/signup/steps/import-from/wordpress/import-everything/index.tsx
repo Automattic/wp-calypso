@@ -232,6 +232,7 @@ export const connector = connect(
 			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
 			startMigration: !! get( getCurrentQueryArguments( state ), 'start', false ),
 			sourceSiteHasJetpack: false,
+			targetSiteId: ownProps.targetSiteId,
 			targetSiteImportAdminUrl: getSiteAdminUrl(
 				state,
 				ownProps.targetSiteId as number,

@@ -93,6 +93,7 @@ export class CommentsManagement extends Component {
 				) }
 				{ showCommentList && (
 					<CommentList
+						key={ `${ siteId }-${ status }` }
 						changePage={ changePage }
 						order={ order }
 						page={ page }

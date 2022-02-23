@@ -17,6 +17,8 @@ import {
 import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
+	isImageUploadInProgress,
+	WebsiteContentStateModel,
 } from 'calypso/state/signup/steps/website-content/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId, isRequestingSite } from 'calypso/state/sites/selectors';
@@ -52,7 +54,9 @@ function WebsiteContentStep( {
 	const websiteContent = useSelector( getWebsiteContent );
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
 	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
-
+	const isImageUploading = useSelector( ( state ) =>
+		isImageUploadInProgress( state as WebsiteContentStateModel )
+	);
 	useEffect( () => {
 		function getPageFromCategory( category: string | null ) {
 			switch ( category ) {
@@ -119,6 +123,7 @@ function WebsiteContentStep( {
 				dispatch( updateWebsiteContentCurrentIndex( currentIndex ) );
 			} }
 			onSubmit={ onSubmit }
+			blockNavigation={ isImageUploading }
 		/>
 	);
 }

@@ -2,52 +2,40 @@ import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
 import page from 'page';
 import React, { useEffect, useState } from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
-import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getImporterStatusForSiteId,
-	isImporterStatusHydrated,
+	isImporterStatusHydrated as isImporterStatusHydratedSelector,
 } from 'calypso/state/imports/selectors';
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSite, getSiteId } from 'calypso/state/sites/selectors';
-import { UrlData } from '../import/types';
 import BloggerImporter from './blogger';
 import NotAuthorized from './components/not-authorized';
 import NotFound from './components/not-found';
 import MediumImporter from './medium';
 import SquarespaceImporter from './squarespace';
-import './style.scss';
-import { Importer, ImportJob, QueryObject } from './types';
+import { Importer, ImportJob } from './types';
 import { getImporterTypeForEngine } from './util';
 import WixImporter from './wix';
 import WordpressImporter from './wordpress';
 import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
+import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
-	urlData: UrlData;
 	path: string;
 	stepName: string;
 	stepSectionName: string;
-	queryObject: QueryObject;
-	siteId: number;
-	site: SitesItem;
-	siteSlug: string;
-	fromSite: string;
-	canImport: boolean;
-	isImporterStatusHydrated: boolean;
-	siteImports: ImportJob[];
-	fetchImporterState: ( siteId: number ) => void;
-	resetImport: ( siteId: number, importerId: string ) => void;
 }
 const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const IMPORT_ROUTE = '/start/from/importing';
@@ -56,42 +44,38 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Fields
 	 */
-	const {
-		urlData,
-		stepName,
-		stepSectionName,
-		siteId,
-		site,
-		canImport,
-		siteSlug,
-		siteImports,
-		isImporterStatusHydrated,
-		fromSite,
-		path,
-	} = props;
+	const { path, stepName, stepSectionName } = props;
 	const engine: Importer = stepSectionName.toLowerCase() as Importer;
 	const [ runImportInitially, setRunImportInitially ] = useState( false );
+	const urlData = useSelector( getUrlData );
+	const searchParams = useSelector( getCurrentQueryArguments );
+	let siteSlug = searchParams?.to as string;
+	const [ siteId ] = useState( useSelector( ( state ) => getSiteId( state, siteSlug ) as number ) );
+	const site = useSelector( ( state ) => getSite( state, siteId ) as SitesItem );
+	const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
+	const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
+	const fromSite = searchParams?.from as string;
+	const fromSiteData = useSelector( getUrlData );
+	const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 	const getImportJob = ( engine: Importer ): ImportJob | undefined => {
 		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
 	};
-	const fromSiteData = useSelector( getUrlData );
 
 	/**
 	 ↓ Effects
 	 */
 	useEffect( fetchImporters, [ siteId ] );
 	useEffect( checkInitialRunState, [ siteId ] );
+	useEffect( checkSiteSlugUpdate, [ site?.slug ] );
 	useEffect( () => {
-		if ( typeof fromSiteData?.url === 'undefined' ) {
-			dispatch( analyzeUrl( fromSite ) );
-		}
+		fromSiteData?.url && dispatch( analyzeUrl( fromSite as string ) );
 	}, [ fromSiteData?.url ] );
 
 	/**
 	 ↓ Methods
 	 */
 	function fetchImporters() {
-		siteId && props.fetchImporterState( siteId );
+		siteId && dispatch( fetchImporterState( siteId ) );
 	}
 
 	function isLoading() {
@@ -111,6 +95,14 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		if ( searchParams.get( 'run' ) === 'true' ) {
 			setRunImportInitially( true );
 			page.replace( path.replace( '&run=true', '' ).replace( 'run=true', '' ) );
+		}
+	}
+
+	function checkSiteSlugUpdate() {
+		// update site slug when destination site is in transition from simple to atomic
+		if ( site?.slug && siteSlug !== site.slug ) {
+			page.replace( path.replace( `to=${ siteSlug }`, `to=${ site.slug }` ) );
+			siteSlug = site.slug;
 		}
 	}
 
@@ -139,7 +131,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 			case appStates.UPLOAD_SUCCESS:
 			case appStates.UPLOADING:
 			case appStates.UPLOAD_FAILURE:
-				return props.resetImport( siteId, job.importerId );
+				return dispatch( resetImport( siteId, job.importerId ) );
 		}
 	}
 
@@ -267,27 +259,4 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default connect(
-	( state ) => {
-		const searchParams = new URLSearchParams( window.location.search );
-
-		const siteSlug = decodeURIComponentIfValid( searchParams.get( 'to' ) );
-		const fromSite = decodeURIComponentIfValid( searchParams.get( 'from' ) );
-		const siteId = getSiteId( state, siteSlug ) as number;
-
-		return {
-			urlData: getUrlData( state ),
-			siteId,
-			site: getSite( state, siteId ) as SitesItem,
-			siteSlug,
-			fromSite,
-			siteImports: getImporterStatusForSiteId( state, siteId ),
-			isImporterStatusHydrated: isImporterStatusHydrated( state ),
-			canImport: canCurrentUser( state, siteId, 'manage_options' ),
-		};
-	},
-	{
-		fetchImporterState,
-		resetImport,
-	}
-)( ImportOnboardingFrom );
+export default ImportOnboardingFrom;

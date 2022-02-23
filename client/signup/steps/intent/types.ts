@@ -1,1 +1,1 @@
-export type IntentFlag = 'build' | 'write' | 'import' | 'sell';
+export type IntentFlag = 'build' | 'write' | 'import' | 'sell' | 'wpadmin';

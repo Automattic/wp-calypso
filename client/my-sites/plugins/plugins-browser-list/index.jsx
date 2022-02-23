@@ -1,9 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
+import Spotlight from 'calypso/components/spotlight';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
@@ -27,6 +29,8 @@ const PluginsBrowserList = ( {
 	listName,
 	expandedListLink,
 	size,
+	spotlightPlugin,
+	spotlightPluginFetched,
 } ) => {
 	const isWide = useBreakpoint( '>1280px' );
 	const { __ } = useI18n();
@@ -106,6 +110,18 @@ const PluginsBrowserList = ( {
 					) }
 				</div>
 			</div>
+			{ listName === 'paid' &&
+				isEnabled( 'marketplace-spotlight' ) &&
+				spotlightPluginFetched &&
+				spotlightPlugin && (
+					<Spotlight
+						taglineText={ __( 'Drive more traffic with Yoast SEO Premium' ) }
+						titleText={ __( 'Under the Spotlight' ) }
+						ctaText={ __( 'View Details' ) }
+						illustrationSrc={ spotlightPlugin?.icon ?? '' }
+						url={ `/plugins/${ spotlightPlugin.slug }/${ site }` }
+					/>
+				) }
 			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
 		</div>
 	);

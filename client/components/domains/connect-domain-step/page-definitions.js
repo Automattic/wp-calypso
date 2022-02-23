@@ -44,12 +44,14 @@ export const connectADomainStepsDefinition = {
 		step: stepType.CONNECTED,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.SUGGESTED_UPDATE,
+		singleColumnLayout: true,
 	},
 	[ stepSlug.SUGGESTED_VERIFYING ]: {
 		mode: modeType.SUGGESTED,
 		step: stepType.VERIFYING,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.SUGGESTED_UPDATE,
+		singleColumnLayout: true,
 	},
 
 	// Advanced flow
@@ -84,12 +86,14 @@ export const connectADomainStepsDefinition = {
 		step: stepType.CONNECTED,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.ADVANCED_UPDATE,
+		singleColumnLayout: true,
 	},
 	[ stepSlug.ADVANCED_VERIFYING ]: {
 		mode: modeType.ADVANCED,
 		step: stepType.VERIFYING,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.ADVANCED_UPDATE,
+		singleColumnLayout: true,
 	},
 };
 

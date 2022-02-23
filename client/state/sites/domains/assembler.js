@@ -50,6 +50,7 @@ export const createSiteDomainObject = ( domain ) => {
 		aRecordsRequiredForMapping: domain.a_records_required_for_mapping,
 		autoRenewalDate: String( domain.auto_renewal_date ),
 		adminEmail: domain.admin_email,
+		aftermarketAuction: Boolean( domain.aftermarket_auction ),
 		autoRenewing: Boolean( domain.auto_renewing ),
 		beginTransferUntilDate: String( domain.begin_transfer_until_date ),
 		blogId: Number( domain.blog_id ),

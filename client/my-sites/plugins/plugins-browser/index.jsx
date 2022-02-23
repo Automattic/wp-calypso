@@ -27,7 +27,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
-import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { useWPCOMPlugin, useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
@@ -185,6 +185,7 @@ const PluginsBrowser = ( {
 	const isFetchingPluginsByCategoryFeatured = useSelector( ( state ) =>
 		isFetchingPluginsList( state, 'featured' )
 	);
+
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite?.ID ) );
 
 	const dispatch = useDispatch();
@@ -409,6 +410,7 @@ const SearchListView = ( {
 
 	if (
 		pluginsBySearchTerm.length > 0 ||
+		paidPluginsBySearchTerm.length > 0 ||
 		isFetchingPluginsBySearchTerm ||
 		isFetchingPaidPluginsBySearchTerm
 	) {
@@ -561,6 +563,9 @@ const PluginSingleListView = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+	const { data: spotlightPlugin, isFetched: spotlightPluginFetched } = useWPCOMPlugin(
+		'wordpress-seo-premium'
+	);
 
 	let plugins;
 	let isFetching;
@@ -597,6 +602,8 @@ const PluginSingleListView = ( {
 			variant={ PluginsBrowserListVariant.Fixed }
 			billingPeriod={ billingPeriod }
 			setBillingPeriod={ category === 'paid' && setBillingPeriod }
+			spotlightPlugin={ spotlightPlugin }
+			spotlightPluginFetched={ spotlightPluginFetched }
 			extended
 		/>
 	);

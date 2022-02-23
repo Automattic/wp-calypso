@@ -1,5 +1,9 @@
 import { useQuery, UseQueryResult, UseQueryOptions, QueryKey } from 'react-query';
-import { normalizePluginsList, normalizePluginData } from 'calypso/lib/plugins/utils';
+import {
+	extractSearchInformation,
+	normalizePluginsList,
+	normalizePluginData,
+} from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
 
 type Type = 'all' | 'featured';
@@ -10,14 +14,17 @@ const pluginsApiNamespace = 'wpcom/v2';
 const getCacheKey = ( key: string ): QueryKey => [ 'wpcom-plugins', key ];
 
 const fetchWPCOMPlugins = ( type: Type, searchTerm?: string ) => {
+	const [ search, author ] = extractSearchInformation( searchTerm );
+
 	return wpcom.req.get(
 		{
 			path: plugisApiBase,
 			apiNamespace: pluginsApiNamespace,
 		},
 		{
-			q: searchTerm,
 			type: type,
+			...( search && { q: search } ),
+			...( author && { author } ),
 		}
 	);
 };

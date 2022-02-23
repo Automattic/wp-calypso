@@ -1,12 +1,17 @@
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
+import { getPluginAuthorKeyword } from 'calypso/lib/plugins/utils';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
+
+	const selectedSite = useSelector( getSelectedSite );
 
 	const tags = Object.values( plugin?.tags || {} )
 		.slice( 0, 3 )
@@ -18,17 +23,28 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 
 	return (
 		<>
-			<div className="plugin-details-header__tags">{ tags }</div>
 			<div className="plugin-details-header__container">
-				<div className="plugin-details-header__name">{ plugin.name }</div>
-				<div className="plugin-details-header__description">
-					{ preventWidows( plugin.short_description || plugin.description ) }
+				<div className="plugin-details-header__tags">{ tags }</div>
+				<div className="plugin-details-header__main-info">
+					<img className="plugin-details-header__icon" src={ plugin.icon } alt="" />
+					<div className="plugin-details-header__title-container">
+						<div className="plugin-details-header__name">{ plugin.name }</div>
+						<div className="plugin-details-header__description">
+							{ preventWidows( plugin.short_description || plugin.description ) }
+						</div>
+					</div>
 				</div>
 				<div className="plugin-details-header__additional-info">
 					<div className="plugin-details-header__info">
 						<div className="plugin-details-header__info-title">{ translate( 'Developer' ) }</div>
 						<div className="plugin-details-header__info-value">
-							<a href={ plugin.author_url }>{ plugin.author_name }</a>
+							<a
+								href={ `/plugins/${
+									selectedSite?.slug || ''
+								}?s=developer:"${ getPluginAuthorKeyword( plugin ) }"` }
+							>
+								{ plugin.author_name }
+							</a>
 						</div>
 					</div>
 					{ !! plugin.rating && (

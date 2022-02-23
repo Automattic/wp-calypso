@@ -42,26 +42,19 @@ export class CommentList extends Component {
 		selectedComments: [],
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { siteId, status, changePage } = this.props;
+	componentDidUpdate() {
+		const { changePage } = this.props;
 		const totalPages = this.getTotalPages();
+
 		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
 			return changePage( totalPages );
-		}
-
-		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
-			this.setState( {
-				isBulkMode: false,
-				selectedComments: [],
-			} );
 		}
 	}
 
 	shouldComponentUpdate = ( nextProps, nextState ) =>
 		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
-	changePage = ( page ) => {
+	handlePageClick = ( page ) => {
 		const { recordChangePage, changePage } = this.props;
 
 		recordChangePage( page, this.getTotalPages() );
@@ -217,7 +210,7 @@ export class CommentList extends Component {
 					<Pagination
 						key="comment-list-pagination"
 						page={ validPage }
-						pageClick={ this.changePage }
+						pageClick={ this.handlePageClick }
 						perPage={ COMMENTS_PER_PAGE }
 						total={ commentsCount }
 					/>

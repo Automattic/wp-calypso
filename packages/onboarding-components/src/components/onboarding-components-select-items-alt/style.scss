@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.select-items-alt {
+.onboarding-components-select-items-alt {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -12,7 +12,7 @@
 	}
 }
 
-.select-items-alt__item {
+.onboarding-components-select-items-alt__item {
 	display: flex;
 	align-items: flex-start;
 	position: relative;

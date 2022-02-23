@@ -12,16 +12,16 @@
   - [Variable naming](#variable-naming)
   - [Use async/await](#use-asyncawait)
   - [Selectors](#selectors)
-    - [No selectors in class](#no-selectors-in-class)
-    - [Move repetitive selectors out](#move-repetitive-selectors-out)
+    - [No selectors within class definition](#no-selectors-within-class-definition)
+    - [Extract repetitive selectors](#extract-repetitive-selectors)
     - [Prefer user-facing selectors](#prefer-user-facing-selectors)
     - [Naming](#naming)
     - [Involve minimal selectors](#involve-minimal-selectors)
     - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
   - [Test steps](#test-steps)
-    - [Avoid modal verbs](#avoid-modal-verbs)
+    - [Do not use modal verbs](#do-not-use-modal-verbs)
     - [Prefer smaller steps](#prefer-smaller-steps)
-  - [Focused function](#focused-function)
+  - [Single responsibility function](#single-responsibility-function)
   - [Destructure parameters](#destructure-parameters)
 
 <!-- /TOC -->
@@ -86,7 +86,7 @@ Ideally, a selector satisfies all of the following:
 
 The following guidance are in addition to suggestions by the Playwright project.
 
-### No selectors in class
+### No selectors within class definition
 
 Place selectors within the same file, but outside of the class representing the object. Never place a selector within the class definition itself.
 
@@ -112,9 +112,9 @@ class SomeObject() {
 }
 ```
 
-### Move repetitive selectors out
+### Extract repetitive selectors
 
-While defining one-off selectors within a code block is acceptable, if the same selector is used multiple times in different sections of the code, move the selector into the `selectors` object:
+While defining one-off selectors within a code block is acceptable, if the same selector is used more than twice, move the selector into the `selectors` object:
 
 **Avoid**:
 
@@ -165,6 +165,7 @@ await page.click( 'div.someclass .yet-another-class .attribute .very-long-attrib
 ```typescript
 await page.click( 'button:has-text("Submit")' );
 await page.click( 'button[aria-label="Some Class"]' );
+await page.click( 'button[data-e2e="navigation-forward"]' );
 ```
 
 ### Naming
@@ -179,6 +180,7 @@ Do not append the term 'Selector' or similar to the selector name. It is redunda
 const selectors = {
 	contactButtonOnHeaderPane: '.button contact-us',
 	secondButtonOnPopupSelector: '.button send-form',
+	select: 'select.month',
 };
 ```
 
@@ -188,6 +190,7 @@ const selectors = {
 const selectors = {
 	contactUsButton: '.button contact-us',
 	submitFormButton: '.button send-form',
+	monthSelect: 'select.month',
 };
 ```
 
@@ -235,7 +238,7 @@ const selectors = {
 
 ## Test steps
 
-### Avoid modal verbs
+### Do not use modal verbs
 
 Avoid the use of modal verbs such as `can`, `should`, `could` or `must`.
 Instead state the action(s) the step is expected to perform.
@@ -280,9 +283,9 @@ it( 'Search for ${string}', async function () {} );
 
 ---
 
-## Focused function
+## Single responsibility function
 
-Each function should focus on one or two purposes only.
+Each function should focus on one or two key responsibilities.
 Avoid overloading the function to perform increasing number of tasks.
 
 **Avoid**

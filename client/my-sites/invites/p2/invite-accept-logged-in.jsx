@@ -14,17 +14,7 @@ const P2InviteAcceptLoggedIn = ( props ) => {
 				{ P2InviteAcceptHeader( { site: props.invite.site, translate: props.translate } ) }
 				<div className="invite-accept-logged-in__join-as">
 					<Gravatar user={ props.user } size={ 72 } />
-					<div className="invite-accept-logged-in__join-as-text">
-						{ /* { props.translate( "You'll join as {{usernameWrap}}%(username)s{{/usernameWrap}}", {
-							components: {
-								usernameWrap: <span className="invite-accept-logged-in__join-as-username" />,
-							},
-							args: {
-								username: props.user && props.user.display_name,
-							},
-						} ) } */ }
-						{ props.joinAsText }
-					</div>
+					<div className="invite-accept-logged-in__join-as-text">{ props.joinAsText }</div>
 					<LoggedOutFormLinks>
 						<LoggedOutFormLinkItem onClick={ props.signIn } href={ props.signInLink }>
 							{ props.translate( 'Sign in as a different user' ) }

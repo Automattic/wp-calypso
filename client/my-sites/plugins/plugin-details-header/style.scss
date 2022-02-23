@@ -1,22 +1,59 @@
 @use '../variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 $plugin-details-header-padding: 100px;
+$mobile-icon-height: 175px;
 
 .plugin-details-header__container {
+	display: block;
     @extend %plugin-header;
+}
+
+.plugin-details-header__main-info {
+	margin-top: 16px;
+	margin-bottom: 30px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+
+	@include break-mobile {
+		flex-wrap: nowrap;
+		align-items: center;
+		justify-content: flex-start;
+	}
+	
+	.plugin-details-header__icon {
+		@include break-mobile {
+			width: 88px;
+			height: 88px;
+			margin-right: 20px;
+			margin-bottom: 0;
+		}
+		border-radius: 4px;
+		margin-bottom: 15px;
+		width: $mobile-icon-height;
+		height: $mobile-icon-height;
+	}
+}
+
+.plugin-details-header__title-container {
+	margin-top: 30px;
+
+	@include break-mobile {
+		margin-top: 0;
+	}
 }
 
 .plugin-details-header__name {
 	font-family: $brand-serif;
 	font-size: $font-title-large;
 	color: var( --studio-gray-100 );
-	margin: 16px 0;
 }
 
 .plugin-details-header__description {
 	font-size: $font-title-small;
 	color: var( --studio-gray-70 );
-	margin-bottom: 30px;
 }
 
 .plugin-details-header__additional-info {
@@ -48,13 +85,13 @@ $plugin-details-header-padding: 100px;
 
 .plugin-details-header__tags {
 	position: absolute;
+    top: calc( $mobile-icon-height + 25px );
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-60 );
-	top: calc( $plugin-details-header-padding - 15px );
-	left: 0;
 
-	@media screen and ( max-width: 1040px ) {
-		top: -5px;
+	@include break-mobile {
+		position: relative;
+		top: 0;
 	}
 }
 

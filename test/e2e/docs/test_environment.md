@@ -13,7 +13,7 @@
   - [Secrets file](#secrets-file)
   - [Non-secret configuration file](#non-secret-configuration-file)
     - [Default config](#default-config)
-    - [Custom configs](#custom-configs)
+    - [Local configs](#local-configs)
 
 <!-- /TOC -->
 
@@ -56,18 +56,36 @@ Under the `tests/e2e/config` directory are JSON files for predefined environment
 
 The default configuration will suffice for most purposes. To use the default configuration, nothing needs to be changed.
 
-### Custom configs
+### Local configs
 
-> :warning: **ensure username/passwords and other configuration values are not committed by accident!**
+> :warning: **ensure username/passwords and other secret values are not committed by accident!**
 
-Custom config files should be added under `test/e2e/config/` and should follow the naming scheme:
+Local config files are optional and should be added under `test/e2e/config/` using the following naming scheme:
 
 ```
-local-<whatever>.json
+test/e2e/config/local-<whatever_you_want>.json
 ```
 
-The `local-` prefix ensures that custom configurations [will be ignored][https://github.com/automattic/wp-calypso/blob/trunk/test/e2e/.gitignore#l12].
+The `local-` prefix ensure these custom configurations [are ignored by git](https://github.com/automattic/wp-calypso/blob/trunk/test/e2e/.gitignore#l12).
 
-Values found in the local configuration file will override ones found in `default.json`.
+Using local configs, values found in the default configs can be overridden without modifying (and thus accidentally committing) the default config files.
 
-For the full list of possible configuration values, refer to the following page: [config values](config_values.md).
+Example
+
+In `test/e2e/config/default.json`:
+
+```json
+{
+	"calypsoBaseURL": "https://wordpress.com"
+}
+```
+
+In `test/e2e/config/local-custom-base-url.json`:
+
+```json
+{
+	"calypsoBaseURL": "https://some-custom-base-url.com"
+}
+```
+
+For the full list of possible configuration values, refer to the following page: [config values](config_values.md) or the files under `test/e2e/config`.

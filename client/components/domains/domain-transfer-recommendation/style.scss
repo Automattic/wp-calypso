@@ -6,9 +6,10 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	background-color: var( --studio-gray-0 );
+	box-shadow: none;
 
 	@include break-mobile {
-		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
 	}
@@ -42,7 +43,8 @@
 		margin-top: 16px;
 
 		@include break-mobile {
-			margin-top: 0;
+			align-self: flex-start;
+			margin-top: 16px;
 		}
 	}
 }
