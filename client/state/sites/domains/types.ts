@@ -1,4 +1,4 @@
-import { GoogleEmailSubscription } from "../../../lib/domains/types";
+import type { GoogleEmailSubscription } from 'calypso/lib/domains/types';
 
 export interface SiteDomain {
 	aftermarketAuction?: boolean;
