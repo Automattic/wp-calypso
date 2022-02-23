@@ -364,6 +364,7 @@ class EmailProvidersComparison extends Component {
 		standardPrice
 	) {
 		const { translate } = this.props;
+
 		if ( productIsDiscounted ) {
 			return (
 				<span className="email-providers-comparison__discount-with-renewal">
@@ -380,7 +381,7 @@ class EmailProvidersComparison extends Component {
 								"%(discountedPrice)s is a formatted, discounted price that the user will pay today (e.g. '$3'), " +
 								"%(standardPrice)s is a formatted price (e.g. '$5')",
 							components: {
-								span: <span />,
+								span: <span className={ 'email-providers-comparison__google_discount' }/>,
 							},
 						}
 					) }
@@ -452,8 +453,7 @@ class EmailProvidersComparison extends Component {
 		}
 
 		const isEligibleForFreeTrial =
-			config.isEnabled( 'emails/google-workspace-1-month-trial' ) &&
-			( hasCartDomain || isDomainEligibleForGoogleWorkspaceFreeTrial( domain ) );
+			config.isEnabled( 'emails/google-workspace-1-month-trial' ) && hasCartDomain;
 
 		const productIsDiscounted = hasDiscount( gSuiteProduct );
 		const monthlyPrice = getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode );
