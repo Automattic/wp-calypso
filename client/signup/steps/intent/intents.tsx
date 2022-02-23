@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { SelectItem, SelectAltItem } from '@automattic/onboarding-components';
 import { useTranslate } from 'i18n-calypso';
-import { build, write, tip } from '../../icons';
+import { build, write, shoppingCart } from '../../icons';
 import type { IntentFlag } from './types';
 
 type Intent = SelectItem< IntentFlag >;
@@ -34,7 +34,7 @@ export const useIntents = (): Intent[] => {
 			key: 'sell',
 			title: translate( 'Sell' ),
 			description: <p>{ translate( 'Set up an online store' ) }</p>,
-			icon: tip,
+			icon: shoppingCart,
 			value: 'sell',
 			actionText: translate( 'Start selling' ),
 		} );
