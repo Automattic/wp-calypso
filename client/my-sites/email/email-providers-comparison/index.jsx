@@ -39,7 +39,6 @@ import {
 	getGoogleMailServiceFamily,
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
-	isDomainEligibleForGoogleWorkspaceFreeTrial,
 } from 'calypso/lib/gsuite';
 import {
 	GOOGLE_PROVIDER_NAME,
