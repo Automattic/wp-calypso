@@ -33,21 +33,18 @@
 	flex-wrap: nowrap;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 1rem;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		flex-wrap: wrap;
-	}
-
-	@include break-medium {
-		flex-wrap: nowrap;
 	}
 }
 
 .assign-license-form__controls {
 	display: flex;
 	flex-direction: column-reverse;
+	justify-content: stretch;
 	align-items: center;
+	flex-wrap: wrap;
 	flex-grow: 1;
 	position: fixed;
 	left: 0;
@@ -61,14 +58,15 @@
 		width: 100%;
 		padding: 8px 24px;
 		font-size: 1rem;
-		white-space: nowrap;
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row;
-		flex-wrap: nowrap;
+		flex-grow: 1;
+		justify-content: flex-end;
 		position: static;
 		padding: 0;
+		margin-bottom: 1rem;
 		background: transparent;
 		box-shadow: none;
 
@@ -79,18 +77,14 @@
 	}
 
 	@include break-medium {
-		flex-wrap: wrap;
-		flex-direction: column-reverse;
-		flex-grow: 0;
-
 		.button {
 			flex-grow: 0;
 		}
 	}
 
 	@include break-xlarge {
-		flex-wrap: nowrap;
 		flex-direction: row;
+		flex-grow: 0;
 	}
 }
 
@@ -101,21 +95,14 @@
 
 p.assign-license-form__description {
 	flex: 1 0 100%;
-	margin: 0;
+	align-self: flex-end;
+	margin: 0 0 1rem;
 	font-size: 0.875rem;
 	color: #333;
 
-	@include breakpoint-deprecated( '>660px' ) {
-		margin: 0 0 1rem;
-	}
-
 	@include break-medium {
 		flex: 1 1 auto;
-		margin: 0 1rem 0 0;
-	}
-
-	@include break-xlarge {
-		align-self: flex-end;
+		margin-right: 1rem;
 	}
 }
 
@@ -135,32 +122,18 @@ p.assign-license-form__description {
 	margin-right: 0;
 	font-weight: 700;
 	text-decoration: underline;
+	white-space: nowrap;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		margin-right: 1rem;
-	}
-
-	@include break-medium {
-		margin-right: 0;
-	}
-
-	@include break-xlarge {
 		margin-right: 1rem;
 	}
 }
 
 .assign-license-form__assign-now.button {
 	margin-bottom: 0.5rem;
+	white-space: nowrap;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		margin-bottom: 0;
-	}
-
-	@include break-medium {
-		margin-bottom: 0.5rem;
-	}
-
-	@include break-xlarge {
 		margin-bottom: 0;
 	}
 }
