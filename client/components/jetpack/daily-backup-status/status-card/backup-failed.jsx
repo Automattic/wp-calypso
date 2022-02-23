@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
+import { getBackupErrorCode } from 'calypso/lib/jetpack/backup-utils';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
@@ -26,7 +27,7 @@ const BackupFailed = ( { backup } ) => {
 	const displayDate = backupDate.format( 'L' );
 	const displayTime = backupDate.format( 'LT' );
 
-	const mayBeBlockedByHost = 'not_accessible' === backup.activityMeta.errorCode;
+	const mayBeBlockedByHost = getBackupErrorCode( backup ) === 'NOT_ACCESSIBLE';
 
 	return (
 		<>
@@ -40,7 +41,7 @@ const BackupFailed = ( { backup } ) => {
 					: getDisplayDate( backup.activityTs, false ) }
 			</div>
 			<div className="status-card__label">
-				<p>
+				<div>
 					{ mayBeBlockedByHost
 						? translate(
 								'Please {{b}}ask your hosting provider to allow connections{{/b}} from the IP addresses found on this page: {{a}}%(url)s{{/a}}',
@@ -65,7 +66,7 @@ const BackupFailed = ( { backup } ) => {
 									'able to be completed.',
 								{ args: { displayDate, displayTime } }
 						  ) }
-				</p>
+				</div>
 				{ ! mayBeBlockedByHost && (
 					<p>
 						{ translate(

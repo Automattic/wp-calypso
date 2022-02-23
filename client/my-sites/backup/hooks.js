@@ -1,6 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
+import {
+	SUCCESSFUL_BACKUP_ACTIVITIES,
+	BACKUP_ATTEMPT_ACTIVITIES,
+} from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
@@ -9,18 +13,6 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 
 const byActivityTsDescending = ( a, b ) => ( a.activityTs > b.activityTs ? -1 : 1 );
-
-export const SUCCESSFUL_BACKUP_ACTIVITIES = [
-	'rewind__backup_complete_full',
-	'rewind__backup_complete_initial',
-	'rewind__backup_only_complete_full',
-	'rewind__backup_only_complete_initial',
-];
-
-export const BACKUP_ATTEMPT_ACTIVITIES = [
-	...SUCCESSFUL_BACKUP_ACTIVITIES,
-	'rewind__backup_error',
-];
 
 const getDailyAttemptFilter = ( { before, after, successOnly, sortOrder } = {} ) => {
 	return {
@@ -101,7 +93,13 @@ export const useFirstMatchingBackupAttempt = (
 				// Sort in descending order by default, but flip if sortOrder is
 				// explicitly set to 'asc'
 				.sort( ( a, b ) => byActivityTsDescending( a, b ) * ( sortOrder === 'asc' ? -1 : 1 ) )
-				.find( ( a ) => a.activityIsRewindable );
+				.find( ( a ) => {
+					// Only the successful backups should be returned, then activity should be rewindable
+					if ( successOnly ) {
+						return a.activityIsRewindable;
+					}
+					return BACKUP_ATTEMPT_ACTIVITIES.includes( a.activityName );
+				} );
 		}
 	}
 
