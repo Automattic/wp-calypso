@@ -132,9 +132,21 @@ p.assign-license-form__description {
 }
 
 .assign-license-form__assign-later.button {
-	margin-right: 1rem;
+	margin-right: 0;
 	font-weight: 700;
 	text-decoration: underline;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-right: 1rem;
+	}
+
+	@include break-medium {
+		margin-right: 0;
+	}
+
+	@include break-xlarge {
+		margin-right: 1rem;
+	}
 }
 
 .assign-license-form__assign-now.button {
