@@ -7,8 +7,6 @@ const selectors = {
 	sectionTitles: '.plugins-browser-list__title',
 	browseAllPopular: 'a[href^="/plugins/popular"]',
 	breadcrumb: ( section: string ) => `.plugins-browser__header li a:text("${ section }") `,
-	monthlyPricingToggle: 'a:text("Monthly")',
-	annualPricingToggle: 'a:text("Annually")',
 	pricingToggle: '.select-dropdown__container',
 	monthlyPricingSelect: 'li a:text("Monthly price")',
 	annualPricingSelect: 'li a:text("Annual price")',
@@ -76,20 +74,6 @@ export class PluginsPage {
 	 */
 	async clickPluginsBreadcrumb(): Promise< void > {
 		await this.page.click( selectors.breadcrumb( 'Plugins' ) );
-	}
-
-	/**
-	 * Click Monthly Pricing
-	 */
-	async clickMonthlyPricing(): Promise< void > {
-		await this.page.click( selectors.monthlyPricingToggle );
-	}
-
-	/**
-	 * Click Annual Pricing
-	 */
-	async clickAnnualPricing(): Promise< void > {
-		await this.page.click( selectors.annualPricingToggle );
 	}
 
 	/**
