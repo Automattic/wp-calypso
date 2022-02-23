@@ -30,8 +30,12 @@ export function usePlanPrices( plan: WPComPlan, siteId?: number ): PlanPrices {
 		];
 	} );
 
+	if ( ! discountPrice ) {
+		return { price };
+	}
+
 	return {
-		price: discountPrice < price ? discountPrice : price,
-		originalPrice: discountPrice < price ? price : undefined,
+		price: discountPrice,
+		originalPrice: price,
 	};
 }
