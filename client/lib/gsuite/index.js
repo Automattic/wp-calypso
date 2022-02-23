@@ -29,4 +29,7 @@ export { hasGSuiteWithAnotherProvider } from './has-gsuite-with-another-provider
 export { hasGSuiteWithUs } from './has-gsuite-with-us';
 export { getGoogleMailServiceFamily } from './get-google-mail-service-family';
 export { getProductSlug, getProductType } from './gsuite-product-type';
+export { getGSuiteExpiryDate } from './get-gsuite-expiry-date';
+export { getGSuiteMailboxPurchaseCost } from './get-gsuite-mailbox-purchase-cost';
+export { getGSuiteMailboxRenewalCost } from './get-gsuite-mailbox-renewal.cost';
 export { isPendingGSuiteTOSAcceptance } from './is-pending-gsuite-tos-acceptance';

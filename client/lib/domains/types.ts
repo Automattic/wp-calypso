@@ -8,9 +8,12 @@ export type CannotAddEmailReason = {
 export type DomainType = keyof typeof domainType;
 
 interface EmailSubscription {
+	expiryDate?: string;
 	hasExpectedDnsRecords?: boolean | null;
 	ownedByUserId?: number;
-	status: string;
+	purchaseCostPerMailbox?: EmailCost | null;
+	renewalCostPerMailbox?: EmailCost | null;
+	status?: string;
 }
 
 export type EmailCost = {
@@ -22,6 +25,7 @@ export type EmailCost = {
 export type GDPRConsentStatus = keyof typeof gdprConsentStatus | null;
 
 export type GoogleEmailSubscription = EmailSubscription & {
+	expiryDate?: string;
 	pendingTosAcceptance?: boolean;
 	productSlug?: string;
 	subscribedDate?: string;
@@ -30,14 +34,12 @@ export type GoogleEmailSubscription = EmailSubscription & {
 };
 
 export type TitanEmailSubscription = EmailSubscription & {
-	expiryDate?: string;
+	appsUrl?: string;
 	isEligibleForIntroductoryOffer?: boolean;
 	maximumMailboxCount?: number;
 	numberOfMailboxes?: number;
 	orderId?: number;
 	productSlug?: string;
-	purchaseCostPerMailbox?: EmailCost | null;
-	renewalCostPerMailbox?: EmailCost | null;
 	subscriptionId?: number | null;
 };
 
