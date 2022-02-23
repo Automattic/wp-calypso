@@ -1,1 +1,0 @@
-The intent capture screen

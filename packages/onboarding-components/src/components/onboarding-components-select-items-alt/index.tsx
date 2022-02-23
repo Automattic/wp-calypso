@@ -14,20 +14,20 @@ interface Props< T > {
 
 function SelectItemsAlt< T >( { className, items, onSelect }: Props< T > ): React.ReactElement {
 	return (
-		<div className={ classnames( 'intent-screen-select-items-alt', className ) }>
+		<div className={ classnames( 'onboarding-components-select-items-alt', className ) }>
 			{ items.map(
 				( { disable, disableText, show, key, description, actionText, value } ) =>
 					show && (
-						<div key={ key } className="intent-screen-select-items-alt__item">
-							<div className="intent-screen-select-items-alt__item-info-wrapper">
-								<div className="intent-screen-select-items-alt__item-info">
-									<p className="intent-screen-select-items-alt__item-description">
+						<div key={ key } className="onboarding-components-select-items-alt__item">
+							<div className="onboarding-components-select-items-alt__item-info-wrapper">
+								<div className="onboarding-components-select-items-alt__item-info">
+									<p className="onboarding-components-select-items-alt__item-description">
 										{ description }
 									</p>
 								</div>
 								<Button
 									disabled={ disable }
-									className="intent-screen-select-items-alt__item-button"
+									className="onboarding-components-select-items-alt__item-button"
 									onClick={ () => onSelect( value ) }
 								>
 									{ actionText }
@@ -37,7 +37,7 @@ function SelectItemsAlt< T >( { className, items, onSelect }: Props< T > ): Reac
 									<>
 										&nbsp;
 										<Tooltip text={ disableText } position="bottom center">
-											<div className="intent-screen-select-items-alt__item-disabled-info">
+											<div className="onboarding-components-select-items-alt__item-disabled-info">
 												<Icon icon={ info } size={ 20 } />
 											</div>
 										</Tooltip>

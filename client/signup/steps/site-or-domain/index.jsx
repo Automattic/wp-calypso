@@ -1,4 +1,4 @@
-import { SelectItems } from '@automattic/intent-screen';
+import { SelectItems } from '@automattic/onboarding-components';
 import { globe, addCard, layout } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';

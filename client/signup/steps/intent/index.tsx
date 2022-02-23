@@ -1,4 +1,4 @@
-import IntentScreen from '@automattic/intent-screen';
+import IntentScreen from '@automattic/onboarding-components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';

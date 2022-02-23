@@ -19,19 +19,25 @@ function SelectItems< T >( {
 	preventWidows,
 }: Props< T > ): React.ReactElement {
 	return (
-		<div className={ classnames( 'intent-screen-select-items', className ) }>
+		<div className={ classnames( 'onboarding-components-select-items', className ) }>
 			{ items.map( ( { key, title, description, icon, actionText, value } ) => (
-				<div key={ key } className="intent-screen-select-items__item">
-					<Icon className="intent-screen-select-items__item-icon" icon={ icon } size={ 24 } />
-					<div className="intent-screen-select-items__item-info-wrapper">
-						<div className="intent-screen-select-items__item-info">
-							<h2 className="intent-screen-select-items__item-title">{ preventWidows( title ) }</h2>
-							<div className="intent-screen-select-items__item-description">
+				<div key={ key } className="onboarding-components-select-items__item">
+					<Icon
+						className="onboarding-components-select-items__item-icon"
+						icon={ icon }
+						size={ 24 }
+					/>
+					<div className="onboarding-components-select-items__item-info-wrapper">
+						<div className="onboarding-components-select-items__item-info">
+							<h2 className="onboarding-components-select-items__item-title">
+								{ preventWidows( title ) }
+							</h2>
+							<div className="onboarding-components-select-items__item-description">
 								{ preventWidows( description ) }
 							</div>
 						</div>
 						<Button
-							className="intent-screen-select-items__item-button"
+							className="onboarding-components-select-items__item-button"
 							onClick={ () => onSelect( value ) }
 						>
 							{ actionText }

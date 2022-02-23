@@ -1,4 +1,4 @@
-import { SelectItem, SelectItems } from '@automattic/intent-screen';
+import { SelectItem, SelectItems } from '@automattic/onboarding-components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';

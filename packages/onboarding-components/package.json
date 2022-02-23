@@ -1,8 +1,8 @@
 {
-	"name": "@automattic/intent-screen",
+	"name": "@automattic/onboarding-components",
 	"version": "1.0.0",
-	"description": "Intent capture screen",
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/intent-screen#readme",
+	"description": "Components used for onboarding",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/onboarding-components#readme",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
@@ -15,11 +15,11 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
-		"directory": "packages/intent-screen"
+		"directory": "packages/onboarding-components"
 	},
 	"keywords": [
-		"intent",
-		"capture",
+		"onboarding",
+		"components",
 		"flow",
 		"automattic"
 	],

@@ -663,19 +663,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/intent-screen@workspace:^, @automattic/intent-screen@workspace:packages/intent-screen":
-  version: 0.0.0-use.local
-  resolution: "@automattic/intent-screen@workspace:packages/intent-screen"
-  dependencies:
-    css-loader: ^3.6.0
-    react: ^17.0.2
-    sass-loader: ^10.1.1
-    style-loader: ^1.2.1
-    typescript: ^4.4.4
-    webpack: ^5.63.0
-  languageName: unknown
-  linkType: soft
-
 "@automattic/interpolate-components@workspace:^, @automattic/interpolate-components@workspace:packages/interpolate-components":
   version: 0.0.0-use.local
   resolution: "@automattic/interpolate-components@workspace:packages/interpolate-components"
@@ -1011,6 +998,19 @@ __metadata:
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     webpack: ^5.68.0
+  languageName: unknown
+  linkType: soft
+
+"@automattic/onboarding-components@workspace:^, @automattic/onboarding-components@workspace:packages/onboarding-components":
+  version: 0.0.0-use.local
+  resolution: "@automattic/onboarding-components@workspace:packages/onboarding-components"
+  dependencies:
+    css-loader: ^3.6.0
+    react: ^17.0.2
+    sass-loader: ^10.1.1
+    style-loader: ^1.2.1
+    typescript: ^4.4.4
+    webpack: ^5.63.0
   languageName: unknown
   linkType: soft
 
@@ -12382,7 +12382,6 @@ __metadata:
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@automattic/intent-screen": "workspace:^"
     "@automattic/isolated-block-editor": ^2.8.1
     "@automattic/js-utils": "workspace:^"
     "@automattic/language-picker": "workspace:^"
@@ -12393,6 +12392,7 @@ __metadata:
     "@automattic/mini-cart": "workspace:^"
     "@automattic/notifications": "workspace:^"
     "@automattic/onboarding": "workspace:^"
+    "@automattic/onboarding-components": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
     "@automattic/react-virtualized": ^9.22.3
     "@automattic/request-external-access": "workspace:^"
