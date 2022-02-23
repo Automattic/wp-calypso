@@ -23,8 +23,6 @@ class WP_REST_WPCOM_Block_Editor_Seller_Celebration_Modal_Controller extends \WP
 	 * Register available routes.
 	 */
 	public function register_rest_route() {
-		l( '*****************' );
-		l( 'initializing seller celebration route' );
 		register_rest_route(
 			$this->namespace,
 			$this->rest_base,
@@ -53,7 +51,6 @@ class WP_REST_WPCOM_Block_Editor_Seller_Celebration_Modal_Controller extends \WP
 	 * @return WP_REST_Response
 	 */
 	public function should_show_seller_celebration_modal() {
-		l( 'in handler' );
 		// As we has synced the `has_never_published_post` option to part of atomic sites but we cannot
 		// update the value now, always return false to avoid showing the modal at every publishing until
 		// we can update the value on atomic sites. See D69932-code.
