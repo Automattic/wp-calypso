@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
 .assign-license-form {
@@ -29,17 +30,68 @@
 
 .assign-license-form__top {
 	display: flex;
+	flex-wrap: nowrap;
 	justify-content: space-between;
-}
-
-.assign-license-form__top > div {
-	align-self: flex-end;
-	margin-bottom: 0;
-}
-
-.assign-license-form__top {
+	align-items: center;
 	margin-bottom: 1rem;
-	margin-top: -1.5rem;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-wrap: wrap;
+	}
+
+	@include break-medium {
+		flex-wrap: nowrap;
+	}
+}
+
+.assign-license-form__controls {
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: center;
+	flex-grow: 1;
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding: 0.875rem 0.875rem 1.5rem;
+	background: white;
+	box-shadow: 0 -1px 2px rgba( 0, 0, 0, 0.12 );
+
+	.button {
+		width: 100%;
+		padding: 8px 24px;
+		font-size: 1rem;
+		white-space: nowrap;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-direction: row;
+		flex-wrap: nowrap;
+		position: static;
+		padding: 0;
+		background: transparent;
+		box-shadow: none;
+
+		.button {
+			flex-grow: 1;
+			width: auto;
+		}
+	}
+
+	@include break-medium {
+		flex-wrap: wrap;
+		flex-direction: column-reverse;
+		flex-grow: 0;
+
+		.button {
+			flex-grow: 0;
+		}
+	}
+
+	@include break-xlarge {
+		flex-wrap: nowrap;
+		flex-direction: row;
+	}
 }
 
 .assign-license-form__bottom {
@@ -48,10 +100,23 @@
 }
 
 p.assign-license-form__description {
-	margin-bottom: 0;
-	align-self: flex-end;
+	flex: 1 0 100%;
+	margin: 0;
 	font-size: 0.875rem;
 	color: #333;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 0 0 1rem;
+	}
+
+	@include break-medium {
+		flex: 1 1 auto;
+		margin: 0 1rem 0 0;
+	}
+
+	@include break-xlarge {
+		align-self: flex-end;
+	}
 }
 
 .assign-license-form__site-card {
@@ -70,4 +135,20 @@ p.assign-license-form__description {
 	margin-right: 1rem;
 	font-weight: 700;
 	text-decoration: underline;
+}
+
+.assign-license-form__assign-now.button {
+	margin-bottom: 0.5rem;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: 0;
+	}
+
+	@include break-medium {
+		margin-bottom: 0.5rem;
+	}
+
+	@include break-xlarge {
+		margin-bottom: 0;
+	}
 }
