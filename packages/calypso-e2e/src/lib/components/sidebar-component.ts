@@ -7,6 +7,7 @@ type FocusType = 'Sites' | 'Sidebar';
 
 const selectors = {
 	sidebar: '.sidebar',
+	collapsedSidebar: '.is-sidebar-collapsed',
 	focusedLayout: ( focus: FocusType ) => `.layout.focus-${ focus.toLowerCase() }`,
 
 	// Buttons and links within Sidebar
@@ -41,11 +42,11 @@ export class SidebarComponent {
 		// re-expand the sidebar.
 		if ( await this.sidebarIsCollapsed() ) {
 			const sidebarCollapseToggle = this.page.locator( selectors.linkWithText( 'Collapse menu' ) );
-			await sidebarCollapseToggle.dispatchEvent( 'click' );
-
-			if ( await this.sidebarIsCollapsed() ) {
-				throw new Error( 'Unable to expand sidebar.' );
-			}
+			// Wait until the collapsed sidebar CSS is detached from DOM, ie. it is no longer collapsed.
+			await Promise.all( [
+				this.page.waitForSelector( selectors.collapsedSidebar, { state: 'detached' } ),
+				sidebarCollapseToggle.dispatchEvent( 'click' ),
+			] );
 		}
 	}
 
@@ -141,7 +142,7 @@ export class SidebarComponent {
 	 * state.
 	 */
 	private async sidebarIsCollapsed(): Promise< boolean > {
-		const collapsedSidebarLocator = this.page.locator( '.is-sidebar-collapsed' );
+		const collapsedSidebarLocator = this.page.locator( selectors.collapsedSidebar );
 		return ( await collapsedSidebarLocator.count() ) > 0;
 	}
 
