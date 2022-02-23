@@ -137,22 +137,34 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Return the editor iframe.
+	 * Return the editor frame. Could be the top-level frame.
+	 * an iframe (Gutenframe).
 	 *
-	 * @returns {Promise<Frame>} iframe holding the editor.
+	 * @returns {Promise<Frame>} frame holding the editor.
 	 */
 	async getEditorFrame(): Promise< Frame > {
-		const locator = this.page.locator( selectors.editorFrame );
-
-		const elementHandle = await locator.elementHandle( {
-			timeout: 105 * 1000,
-		} );
-
-		if ( ! elementHandle ) {
-			throw new Error( 'Could not locate editor iframe.' );
+		// If we're not in the Gutenframe context (i.e not Calypso), then
+		// just return the top frame, no need to try to locate the iframe.
+		if ( ! this.page.url().startsWith( 'https://wordpress.com' ) ) {
+			return await this.page.mainFrame();
 		}
 
-		return ( await elementHandle.contentFrame() ) as Frame;
+		const locator = this.page.locator( selectors.editorFrame );
+
+		return await locator
+			.elementHandle( {
+				timeout: 105 * 1000,
+			} )
+			.then( async ( elementHandle ) => ( await elementHandle!.contentFrame() ) as Frame )
+			.catch( async () => {
+				// The CalipsoifyIframe component will redirect to the plain WPAdmin page if
+				// there's an error or if the iframe takes too long to completely load. The
+				// goal here is to ge hold of the editor and not test any aspects related to
+				// the Gutenframe, so we return the `mainFrame` to allow the test to access
+				// the editor in the WPAdmin page.
+				console.info( 'Could not locate editor iframe. Returning the top-level frame instead' );
+				return await this.page.mainFrame();
+			} );
 	}
 
 	/**
