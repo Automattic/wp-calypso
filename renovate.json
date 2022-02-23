@@ -100,7 +100,7 @@
 		}
 	],
 	"major": {
-		"schedule": [ "every 3 months on the first day of the month" ]
+		"schedule": [ "on the first day of the month" ]
 	},
 	"schedule": [ "every weekend" ],
 	"dependencyDashboardTitle": "Renovate Dependency Updates",
@@ -114,5 +114,6 @@
 	"semanticCommitType": "chore",
 	"reviewers": [ "team:team-calypso-platform" ],
 	"stabilityDays": 10,
-	"prCreation": "not-pending"
+	"prCreation": "not-pending",
+	"timezone": "America/Los_Angeles"
 }
