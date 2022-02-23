@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { debounce } from 'lodash';
+import { debounce, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
@@ -177,8 +177,12 @@ class EditorMediaModalDetailFields extends Component {
 	renderOriginalVideoUrl = () => {
 		const videopressGuid = this.getItemValue( 'videopress_guid' );
 
-		// only render this field if its for a videopress video, and if the provided URL doesn't match the original_url
-		if ( ! videopressGuid || this.getItemValue( 'URL' ) === this.getItemValue( 'original_url' ) ) {
+		// only render this field if its for a videopress video, and if the provided URL doesn't match the original_url (or it is blank)
+		if (
+			! videopressGuid ||
+			this.getItemValue( 'URL' ) === this.getItemValue( 'original_url' ) ||
+			isEmpty( this.getItemValue( 'original_url' ) )
+		) {
 			return;
 		}
 
