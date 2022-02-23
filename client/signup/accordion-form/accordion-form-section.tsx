@@ -121,7 +121,7 @@ export default function AccordionFormSection< T >( props: AccordionFormSectionPr
 							disabled={ props.blockNavigation }
 						>
 							{ props.showSubmit ? translate( 'Submit' ) : translate( 'Next' ) }
-							<Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } />
+							{ ! props.showSubmit && <Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } /> }
 						</NextButton>
 						{ props.showSkip && ! props.showSubmit && (
 							<SkipLink onClick={ () => ( props.blockNavigation ? null : props.onNext() ) }>
