@@ -2,6 +2,7 @@ import {
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	getPlan,
+	PLAN_FREE,
 	PLAN_WPCOM_MANAGED,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
@@ -26,7 +27,7 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
-import { getPlanSlug, isRequestingPlans } from 'calypso/state/plans/selectors';
+import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
@@ -150,11 +151,11 @@ export class PlansStep extends Component {
 			);
 		}
 
-		if ( this.props.isPlansListFetching ) {
+		if ( ! this.props.plansLoaded ) {
 			return this.renderLoading();
 		}
 
-		if ( ! isE2ETest() && this.props.managedPlanAvailable ) {
+		if ( ! isE2ETest() && this.props.managedPlanExists ) {
 			return (
 				<div>
 					{ errorDisplay }
@@ -242,7 +243,6 @@ export class PlansStep extends Component {
 					return (
 						<div>
 							{ errorDisplay }
-							<QueryPlans />
 							<PlansFeaturesMain
 								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 								hideFreePlan={ hideFreePlan }
@@ -448,8 +448,8 @@ export default connect(
 		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
 		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
 		isInVerticalScrollingPlansExperiment: true,
-		isPlansListFetching: isRequestingPlans( state ),
-		managedPlanAvailable: Boolean(
+		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
+		managedPlanExists: Boolean(
 			getPlanSlug( state, getPlan( PLAN_WPCOM_MANAGED )?.getProductId() || 0 )
 		),
 	} ),
