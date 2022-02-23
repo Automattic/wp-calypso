@@ -45,9 +45,10 @@ export class PluginsPage {
 	 * Validate section is not present on page
 	 */
 	async validateNotHasSection( section: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.sectionTitles );
 		const titles = this.page.locator( selectors.sectionTitles );
-		await titles.waitFor();
 		const count = await titles.count();
+		assert.notEqual( count, 0 ); // ensure at least one is loaded before checking the negative
 		for ( let i = 0; i < count; i++ ) {
 			const title = await titles.nth( i ).innerText();
 			assert.notEqual( title, section );
