@@ -36,15 +36,15 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
 	page(
-		'/checkout/jetpack/:productSlug/:lang',
+		'/checkout/jetpack/:productSlug',
 		setLocaleMiddleware(),
 		noSite,
 		checkoutSiteless,
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/checkout/jetpack/thank-you-completed/no-site/:product',
 		noSite,
@@ -95,14 +95,14 @@ export default function () {
 		clientRender
 	);
 
-	page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
 	page(
-		'/checkout/jetpack/:siteSlug/:productSlug/:lang',
+		'/checkout/jetpack/:siteSlug/:productSlug',
 		setLocaleMiddleware(),
 		checkout,
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/checkout/jetpack/thank-you/:site/:product',
 		loggedInSiteSelection,

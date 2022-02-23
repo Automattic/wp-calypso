@@ -52,11 +52,18 @@ export function setSectionMiddleware( section ) {
 
 export function setLocaleMiddleware( param = 'lang' ) {
 	return ( context, next ) => {
+		const queryParamsLocale = context.query[ param ];
+		if ( queryParamsLocale ) {
+			context.lang = queryParamsLocale;
+			context.store.dispatch( setLocale( queryParamsLocale ) );
+		}
+
 		const paramsLocale = context.params[ param ];
 		if ( paramsLocale ) {
 			context.lang = paramsLocale;
 			context.store.dispatch( setLocale( paramsLocale ) );
 		}
+
 		next();
 	};
 }
