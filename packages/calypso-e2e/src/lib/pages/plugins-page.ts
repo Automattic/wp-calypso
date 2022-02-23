@@ -98,14 +98,14 @@ export class PluginsPage {
 	/**
 	 * Check Is Monthly Pricing
 	 */
-	async checkMonthlyPricing(): Promise< void > {
+	async validateIsMonthlyPricing(): Promise< void > {
 		await this.page.waitForSelector( selectors.monthlyPricing );
 	}
 
 	/**
 	 * Check Is Annual Pricing
 	 */
-	async checkAnnualPricing(): Promise< void > {
+	async validateIsAnnualPricing(): Promise< void > {
 		await this.page.waitForSelector( selectors.annualPricing );
 	}
 }

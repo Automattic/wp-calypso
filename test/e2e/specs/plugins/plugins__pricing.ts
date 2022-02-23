@@ -20,13 +20,15 @@ describe( DataHelper.createSuiteTitle( 'Plugins page pricing toggle' ), function
 	it( 'Visit plugins page', async function () {
 		pluginsPage = new PluginsPage( page );
 		await pluginsPage.visit();
+		await pluginsPage.validateIsMonthlyPricing();
 	} );
 
-	it( 'Pricing toggle', async function () {
-		await pluginsPage.checkMonthlyPricing();
+	it( 'Toggle pricing to annual', async function () {
 		await pluginsPage.selectAnnualPricing();
-		await pluginsPage.checkAnnualPricing();
+		await pluginsPage.validateIsAnnualPricing();
+	} );
+	it( 'Toggle pricing back to monthly', async function () {
 		await pluginsPage.selectMonthlyPricing();
-		await pluginsPage.checkMonthlyPricing();
+		await pluginsPage.validateIsMonthlyPricing();
 	} );
 } );
