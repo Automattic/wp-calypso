@@ -35,16 +35,16 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Has Section
+	 * Validate page has the section
 	 */
-	async hasSection( section: string ): Promise< void > {
+	async validateHasSection( section: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.sectionTitle( section ) );
 	}
 
 	/**
-	 * Not Has Section
+	 * Validate section is not present on page
 	 */
-	async notHasSection( section: string ): Promise< void > {
+	async validateNotHasSection( section: string ): Promise< void > {
 		const titles = this.page.locator( selectors.sectionTitles );
 		const count = await titles.count();
 		for ( let i = 0; i < count; i++ ) {

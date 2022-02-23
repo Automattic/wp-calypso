@@ -25,7 +25,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins' ), function () {
 	it.each( [ 'Premium', 'Featured', 'Popular', 'New' ] )(
 		'Plugins page loads %s section',
 		async function ( section: string ) {
-			await pluginsPage.hasSection( section );
+			await pluginsPage.validateHasSection( section );
 		}
 	);
 } );
@@ -50,7 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:wpcom-site' ), fu
 	it.each( [ 'Premium', 'Featured', 'Popular', 'New' ] )(
 		'Plugins page loads %s section',
 		async function ( section: string ) {
-			await pluginsPage.hasSection( section );
+			await pluginsPage.validateHasSection( section );
 		}
 	);
 } );
@@ -78,12 +78,12 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:jetpack-site' ), 
 	it.each( [ 'Featured', 'Popular', 'New' ] )(
 		'Plugins page loads %s section',
 		async function ( section: string ) {
-			await pluginsPage.hasSection( section );
+			await pluginsPage.validateHasSection( section );
 		}
 	);
 
 	// We don't support marketplace plugin purchases on self hosted sites. (Source code download restrictions)
 	it( 'Plugins page does not load premium plugins on Jetpack sites', async function () {
-		await pluginsPage.notHasSection( 'Premium' );
+		await pluginsPage.validateNotHasSection( 'Premium' );
 	} );
 } );
