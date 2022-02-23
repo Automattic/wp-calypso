@@ -470,7 +470,6 @@ class EmailProvidersComparison extends Component {
 			return null;
 		}
 
-		// Note that when we have a discount, we include all renewal information in the discount content
 		const discount = getAvailableDiscountForGoogle();
 
 		const starLabel = productIsDiscounted
