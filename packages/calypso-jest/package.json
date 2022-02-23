@@ -26,8 +26,8 @@
 		"enhanced-resolve": "^5.8.3",
 		"enzyme": "^3.11.0",
 		"enzyme-to-json": "^3.4.3",
-		"jest": "^27.3.1",
-		"jest-config": "^27.3.1",
+		"jest": "^27.5.1",
+		"jest-config": "^27.5.1",
 		"jest-enzyme": "^7.1.2"
 	},
 	"devDependencies": {
