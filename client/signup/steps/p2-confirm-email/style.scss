@@ -3,7 +3,6 @@
 
 .is-p-2-confirm-email {
 	.p2-step-wrapper {
-
 		@include break-small {
 			padding-left: 20px;
 			padding-right: 20px;
@@ -24,10 +23,8 @@
 		padding: 8px;
 	}
 
-	/* TODO Revisit specificity when p2-new signup flow becomes main flow
-	and p2-new styles for p2-step-wrapper can have their specificity reduced */
-	.p2-step-wrapper button.p2-confirm-email__resend-email ,
-	.p2-step-wrapper button.p2-confirm-email__change-email {
+	button.p2-confirm-email__resend-email,
+	button.p2-confirm-email__change-email {
 		background: none;
 		color: var( --p2-color-link );
 		text-decoration: underline;
