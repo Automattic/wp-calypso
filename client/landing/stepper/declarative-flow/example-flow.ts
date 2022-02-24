@@ -2,24 +2,21 @@ import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
 export const exampleFlow: Flow = {
-	useSteps() {
-		return [ 'intent', 'write', 'build', 'sell', 'import' ];
+	useSteps(): Array< StepPath > {
+		return [ 'domain', 'design' ];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const goBack = () => {
-			if (
-				currentStep === 'write' ||
-				currentStep === 'build' ||
-				currentStep === 'sell' ||
-				currentStep === 'import'
-			) {
-				navigate( 'intent' );
+			if ( currentStep === 'domain' ) {
+				navigate( 'design' );
+			} else {
+				navigate( 'domain' );
 			}
 		};
 		const goNext = goBack;
-		const goToPage = ( page: StepPath ) => {
-			navigate( page );
+		const goToStep = ( slug: StepPath ) => {
+			navigate( slug );
 		};
-		return { goNext, goBack, goToPage };
+		return { goNext, goBack, goToStep };
 	},
 };
