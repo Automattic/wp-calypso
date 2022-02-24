@@ -1,10 +1,10 @@
 import { PlansIntervalToggle } from '@automattic/plans-grid/src';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import type { FunctionComponent } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { PluginAnnualSaving } from 'calypso/my-sites/plugins/plugin-saving';
 import { IntervalLength } from './constants';
+import type { FunctionComponent } from 'react';
 
 type PluginAnnualSavingLabelProps = {
 	isSelected: boolean;
@@ -35,7 +35,9 @@ type Props = {
 	onChange: ( selectedValue: 'MONTHLY' | 'ANNUALLY' ) => void;
 	billingPeriod: IntervalLength;
 	compact: boolean;
-	plugin?: { variations?: { yearly?: { product_slug: string }; monthly?: { product_slug: string } } };
+	plugin?: {
+		variations?: { yearly?: { product_slug: string }; monthly?: { product_slug: string } };
+	};
 };
 
 const BillingIntervalSwitcher: FunctionComponent< Props > = ( {
@@ -90,7 +92,7 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( {
 			<PlansIntervalToggle intervalType={ billingPeriod } onChange={ onChange }>
 				{ plugin && (
 					<PluginAnnualSaving plugin={ plugin }>
-						{ ( annualSaving: { saving: never } ) =>
+						{ ( annualSaving: { saving: string | null } ) =>
 							annualSaving.saving && (
 								<PluginAnnualSavingLabelDesktop>
 									&nbsp;
