@@ -10,7 +10,6 @@ const Dropdown = styled.div`
 
 const Option = styled.div`
 	border: 1px solid #a7aaad;
-	border-radius: 3px;
 	padding: 14px;
 	display: flex;
 	flex-direction: row;
@@ -20,6 +19,20 @@ const Option = styled.div`
 	&.is-selected {
 		background: #055d9c;
 		color: #ffff;
+	}
+
+	&:first-child {
+		border-top-left-radius: 3px;
+		border-top-right-radius: 3px;
+	}
+
+	&:not( :first-child ) {
+		margin-top: -1px;
+	}
+
+	&:last-child {
+		border-bottom-left-radius: 3px;
+		border-bottom-right-radius: 3px;
 	}
 `;
 
