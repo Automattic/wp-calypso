@@ -16,6 +16,11 @@ const Option = styled.div`
 	align-items: center;
 	justify-content: space-between;
 
+	.gridicon {
+		fill: #a7aaad;
+		margin-left: 14px;
+	}
+
 	&.is-selected {
 		background: #055d9c;
 		color: #ffff;
@@ -68,7 +73,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 					>
 						<VariantLabel>{ variantLabel }</VariantLabel>
 						{ variantDetails }
-						<Gridicon icon={ open ? 'chevron-down' : 'chevron-up' } size={ 12 } />
+						<Gridicon icon={ open ? 'chevron-down' : 'chevron-up' } />
 					</Option>
 				) ) }
 			{ open &&
