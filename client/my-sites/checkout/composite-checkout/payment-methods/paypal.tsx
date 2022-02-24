@@ -29,7 +29,8 @@ const debug = debugFactory( 'calypso:paypal-payment-method' );
 // Disabling this rule to make migrating this easier with fewer changes
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type StoreKey = 'paypal';
+const storeKey = 'paypal';
+type StoreKey = typeof storeKey;
 type NounsInStore = 'postalCode' | 'countryCode';
 type PayPalStore = PaymentMethodStore< NounsInStore >;
 
@@ -58,7 +59,7 @@ const selectors: StoreSelectorsWithState< NounsInStore > = {
 
 export function createPayPalStore(): PayPalStore {
 	debug( 'creating a new paypal payment method store' );
-	const store = registerStore( 'paypal', {
+	const store = registerStore( storeKey, {
 		reducer(
 			state: StoreState< NounsInStore > = {
 				postalCode: { value: '', isTouched: false },
@@ -98,7 +99,7 @@ export function createPayPalMethod(
 ): PaymentMethod {
 	debug( 'creating new paypal payment method' );
 	return {
-		id: 'paypal',
+		id: storeKey,
 		label: (
 			<PayPalLabel
 				labelText={ args.labelText }
@@ -139,8 +140,8 @@ function PayPalTaxFields(): JSX.Element {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList( [] );
-	const postalCode = useSelect( ( select ) => select( 'paypal' ).getPostalCode() );
-	const countryCode = useSelect( ( select ) => select( 'paypal' ).getCountryCode() );
+	const postalCode = useSelect( ( select ) => select( storeKey ).getPostalCode() );
+	const countryCode = useSelect( ( select ) => select( storeKey ).getCountryCode() );
 	const fields = useMemo(
 		() => ( {
 			postalCode: { ...postalCode, errors: [] },
@@ -148,7 +149,7 @@ function PayPalTaxFields(): JSX.Element {
 		} ),
 		[ postalCode, countryCode ]
 	);
-	const { changePostalCode, changeCountryCode } = useDispatch( 'paypal' );
+	const { changePostalCode, changeCountryCode } = useDispatch( storeKey );
 	return (
 		<PayPalFieldsWrapper>
 			<TaxFields
@@ -186,8 +187,8 @@ function PayPalLabel( {
 }
 
 function TaxLabel() {
-	const postalCode = useSelect( ( select ) => select( 'paypal' ).getPostalCode() );
-	const countryCode = useSelect( ( select ) => select( 'paypal' ).getCountryCode() );
+	const postalCode = useSelect( ( select ) => select( storeKey ).getPostalCode() );
+	const countryCode = useSelect( ( select ) => select( storeKey ).getCountryCode() );
 	const taxString = [ countryCode.value, postalCode.value ].filter( isValueTruthy ).join( ', ' );
 	return (
 		<div>
@@ -213,7 +214,7 @@ function PayPalSubmitButton( {
 				'Missing onClick prop; PayPalSubmitButton must be used as a payment button in CheckoutSubmitButton'
 			);
 		}
-		onClick( 'paypal', {
+		onClick( storeKey, {
 			items,
 		} );
 	};
