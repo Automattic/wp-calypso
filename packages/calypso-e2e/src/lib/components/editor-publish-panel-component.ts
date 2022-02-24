@@ -13,7 +13,7 @@ const selectors = {
 	// Post-publish
 	postPublishClosePanelButton: `${ panel } button[type="button"]:has(svg[aria-hidden="true"])`, // aria-label changes depending on the UI language used.
 	publishedArticleURL: `${ panel } input[readonly]`,
-	addNewArticleButton: `${ panel } .post-publish-panel__postpublish-buttons > a`,
+	addNewArticleButton: `${ panel } .post-publish-panel__postpublish-buttons a[href="post-new.php?post_type=post"]`,
 };
 
 /**
@@ -70,7 +70,7 @@ export class EditorPublishPanelComponent {
 	/**
 	 * Returns the URL of the published article.
 	 *
-	 * @returns {string} URL to the published article.
+	 * @returns {URL} URL to the published article.
 	 */
 	async getPublishedURL(): Promise< URL > {
 		const locator = this.frameLocator.locator( selectors.publishedArticleURL );
