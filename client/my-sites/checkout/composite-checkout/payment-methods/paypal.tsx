@@ -216,8 +216,8 @@ function PayPalSubmitButton( {
 		}
 		onClick( storeKey, {
 			items,
-			postalCode,
-			countryCode,
+			postalCode: postalCode?.value,
+			countryCode: countryCode?.value,
 		} );
 	};
 	return (
