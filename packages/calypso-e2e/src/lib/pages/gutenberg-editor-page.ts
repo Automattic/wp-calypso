@@ -459,7 +459,7 @@ export class GutenbergEditorPage {
 	 * preceded by the action of publishing the article *and* the post-publish panel
 	 * being visible.
 	 *
-	 * @returns {Promise<string>} Published article's URL.
+	 * @returns {URL} Published article's URL.
 	 */
 	async getPublishedURLFromToast(): Promise< URL > {
 		const frame = await this.getEditorFrame();

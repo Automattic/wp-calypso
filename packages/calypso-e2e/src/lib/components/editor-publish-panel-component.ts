@@ -2,15 +2,14 @@ import { Page, Frame, FrameLocator } from 'playwright';
 
 // Options for Playwright's Frame.click() method.
 type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
-type PrePublishButtons = 'Publish' | 'Schedule' | 'Cancel';
 
 const panel = 'div.editor-post-publish-panel';
 const selectors = {
-	// Pre-publish
-	prePublishButton: ( buttonText: PrePublishButtons ) =>
-		`${ panel } .editor-post-publish-panel__header button:text("${ buttonText }")`,
+	// Before publishing
+	publishButton: `${ panel } .editor-post-publish-panel__header-publish-button > button`,
+	cancelPublishButton: `${ panel } .editor-post-publish-panel__header-cancel-button > button`,
 
-	// Post-publish
+	// After publishing
 	postPublishClosePanelButton: `${ panel } button[type="button"]:has(svg[aria-hidden="true"])`, // aria-label changes depending on the UI language used.
 	publishedArticleURL: `${ panel } input[readonly]`,
 	addNewArticleButton: `${ panel } .post-publish-panel__postpublish-buttons a[href="post-new.php?post_type=post"]`,
@@ -46,9 +45,7 @@ export class EditorPublishPanelComponent {
 	 */
 	async closePanel(): Promise< void > {
 		// Construct a comma-separated list of CSS selectors so that one of them will match.
-		const selector = `${ selectors.prePublishButton( 'Cancel' ) }, ${
-			selectors.postPublishClosePanelButton
-		}`;
+		const selector = `${ selectors.cancelPublishButton }, ${ selectors.postPublishClosePanelButton }`;
 		const locator = this.frameLocator.locator( selector );
 		await locator.click();
 	}
@@ -59,9 +56,7 @@ export class EditorPublishPanelComponent {
 	 * Publish or schedule the article.
 	 */
 	async publish(): Promise< void > {
-		const publishButtonLocator = this.frameLocator.locator(
-			`${ selectors.prePublishButton( 'Publish' ) }, ${ selectors.prePublishButton( 'Schedule' ) }`
-		);
+		const publishButtonLocator = this.frameLocator.locator( selectors.publishButton );
 		await publishButtonLocator.click();
 	}
 
