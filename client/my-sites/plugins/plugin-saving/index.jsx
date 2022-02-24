@@ -10,12 +10,11 @@ export const PluginAnnualSaving = ( { plugin, children } ) => {
 	const isFetching = useSelector( isProductsListFetching );
 
 	const getAnnualPriceSavingText = () => {
-		return productMonthly && productYearly
-			? formatCurrency(
-					Math.round( productMonthly.cost * 12 - productYearly.cost ),
-					productYearly.currency_code
-			  )
-			: null;
+		const totalDiscount =
+			productMonthly && productYearly
+				? Math.round( productMonthly.cost * 12 - productYearly.cost )
+				: null;
+		return totalDiscount > 0 ? formatCurrency( totalDiscount, productYearly.currency_code ) : null;
 	};
 
 	return children( {
