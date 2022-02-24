@@ -6,10 +6,12 @@ import classnames from 'classnames';
 import { times } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import Spotlight from 'calypso/components/spotlight';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PluginsBrowserListVariant } from './types';
 
 import './style.scss';
@@ -35,6 +37,7 @@ const PluginsBrowserList = ( {
 } ) => {
 	const isWide = useBreakpoint( '>1280px' );
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
 
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
@@ -88,6 +91,17 @@ const PluginsBrowserList = ( {
 		}
 	};
 
+	const spotlightOnClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_marketplace_spotlight_click', {
+				type: 'plugin',
+				slug: spotlightPlugin.slug,
+				id: spotlightPlugin.id,
+				site: site,
+			} )
+		);
+		page( `/plugins/${ spotlightPlugin.slug }/${ site }` );
+	};
 	return (
 		<div className="plugins-browser-list">
 			<div className="plugins-browser-list__header">
@@ -120,7 +134,7 @@ const PluginsBrowserList = ( {
 						titleText={ __( 'Under the Spotlight' ) }
 						ctaText={ __( 'View Details' ) }
 						illustrationSrc={ spotlightPlugin?.icon ?? '' }
-						onClick={ () => page( `/plugins/${ spotlightPlugin.slug }/${ site }` ) }
+						onClick={ () => spotlightOnClick() }
 					/>
 				) }
 			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>

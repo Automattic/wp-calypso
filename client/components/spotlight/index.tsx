@@ -56,12 +56,8 @@ interface SpotlightProps {
 const Spotlight: React.FunctionComponent< SpotlightProps > = ( props: SpotlightProps ) => {
 	const { taglineText, illustrationSrc, onClick, titleText, ctaText } = props;
 
-	const handleClick = () => {
-		onClick();
-	};
-
 	return (
-		<SpotlightContainer onClick={ handleClick }>
+		<SpotlightContainer onClick={ onClick }>
 			<SpotlightContent>
 				<SpotlightIllustration alt="Spotlight Logo" src={ illustrationSrc } />
 				<SpotlightTextContainer>
