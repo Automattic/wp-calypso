@@ -35,6 +35,11 @@ export function processItem( item ) {
 				activityMeta.errorCode = 'bad_credentials';
 			}
 			break;
+		case 'rewind__backup_only_error':
+			if ( '3' === get( item.object, 'error_code', '' ) ) {
+				activityMeta.errorCode = 'not_accessible';
+			}
+			break;
 	}
 
 	return Object.assign(

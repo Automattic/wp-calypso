@@ -4,7 +4,10 @@ import { keysAreEqual } from 'calypso/reader/post-key';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
+	READER_STREAMS_SELECT_ITEM,
 	READER_STREAMS_UPDATES_RECEIVE,
+	READER_STREAMS_SELECT_NEXT_ITEM,
+	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_SHOW_UPDATES,
 	READER_DISMISS_POST,
 } from 'calypso/state/reader/action-types';
@@ -169,6 +172,25 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 };
 
 /*
+ * Contains which postKey is currently selected.
+ * This is relevant for keyboard navigation
+ */
+export const selected = ( state = null, action ) => {
+	let idx;
+	switch ( action.type ) {
+		case READER_STREAMS_SELECT_ITEM:
+			return action.payload.postKey;
+		case READER_STREAMS_SELECT_NEXT_ITEM:
+			idx = findIndex( action.payload.items, ( item ) => keysAreEqual( item, state ) );
+			return idx === action.payload.items.length - 1 ? state : action.payload.items[ idx + 1 ];
+		case READER_STREAMS_SELECT_PREV_ITEM:
+			idx = findIndex( action.payload.items, ( item ) => keysAreEqual( item, state ) );
+			return idx === 0 ? state : action.payload.items[ idx - 1 ];
+	}
+	return state;
+};
+
+/*
  * Contains whether or not a request for a new page is in flight.
  * Most parts of Calypso don't need this data, but streams still do since we can't infer the status
  * from current state. Its possible to have a list of post-keys as the state, and yet be fetching another page.
@@ -218,6 +240,7 @@ export const pageHandle = ( state = null, action ) => {
 const streamReducer = combineReducers( {
 	items,
 	pendingItems,
+	selected,
 	lastPage,
 	isRequesting,
 	pageHandle,

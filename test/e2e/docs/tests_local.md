@@ -12,8 +12,9 @@
   - [Prerequisites](#prerequisites)
   - [Running tests](#running-tests)
     - [Individual spec files](#individual-spec-files)
-    - [Group](#group)
+    - [Test Group](#test-group)
   - [Advanced techniques](#advanced-techniques)
+    - [Use the mobile viewport](#use-the-mobile-viewport)
     - [Save authentication cookies](#save-authentication-cookies)
     - [Target local webapp](#target-local-webapp)
     - [Debug mode](#debug-mode)
@@ -29,7 +30,7 @@ Prior to running any tests, transpile TypeScript code:
 yarn workspace @automattic/calypso-e2e build
 ```
 
-Alternatively, open a separate Terminal window and run:
+Alternatively, open a separate Terminal window:
 
 ```
 yarn workspace @automattic/calypso-e2e build --watch
@@ -42,18 +43,20 @@ yarn workspace @automattic/calypso-e2e build --watch
 Specify the file(s) directly:
 
 ```
-yarn jest specs/specs-playwright/wp-support__popover.ts specs/specs-playwright/wp-seo__preview-spec.js
+yarn jest <path_to-File_1> <path_to_file_2>
 ```
 
-### Group
+### Test Group
 
 We use [jest-runner-groups](https://github.com/eugene-manuilov/jest-runner-groups) to group and run suites of specs.
 
-Use the `--group` arg to provide a suite to test `Jest`. For example, to run all the tests that are run for every commit:
+Use the `--group` arg to provide a suite to test `Jest`. For example, to run all specs that are executed on CI for a commit:
 
 ```
 yarn jest --group=calypso-pr
 ```
+
+See the [list of groups](docs/overview.md#what-is-tested).
 
 ## Advanced techniques
 
@@ -67,27 +70,40 @@ Specify accounts to be pre-authenticated by saving authentication cookies and re
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,eCommerceUser,defaultUser
 ```
 
+### Use the mobile viewport
+
+By default, tests run against the `desktop` viewport size, approximately 1920x1080. The following viewports are currently supported:
+- mobile
+- desktop
+
+```
+VIEWPORT_NAME=mobile yarn jest ...
+```
+
 ### Target local webapp
 
-Local development environment refers to a locally served instance of the `wp-calypso` frontend.
+Local webapp refers to a locally served instance of the `wp-calypso` frontend.
 
-1. ensure required [dependencies](setup.md#software-environment#steps) are installed.
+1. override the `calypsoBaseURL` value to point to `http://calypso.localhost:3000` using one of the following methods:
 
-2. change the `calypsoBaseURL` value in `test/e2e/config/default.json` to `http://calypso.localhost:3000`.
+   a. change the `calypsoBaseURL` value in `test/e2e/config/default.json`.
 
-   Alternatively: create a new local-<name>.json under `test/e2e/config` and set the `calypsoBaseURL` value to `http://calypso.localhost:3000`.
+   b. create a new local configuration. See [Test Environment](./test_environment.md#local-configs).
 
-3. start the webapp:
+   c. export `calypsoBaseURL` override as part of environment variable: `export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL/}\"}"`
+
+2. start the webapp:
 
 ```shell
 yarn start
 ```
 
-4. once webapp is started, open `http://calypso.localhost:3000` in your browser.
+3. once webapp is started, open `http://calypso.localhost:3000` in your browser.
 
-5. ensure requests to `http://calypso.localhost:3000` are registering in your local instance.
+![](./resources/calypso-local-webapp-start-screen.png)
+<sup><center>Local webapp start page.</center></sup>
 
-The local environment is now ready for testing. When a test is run, it will hit the local development server instead of the WordPress.com staging environment.
+The local environment is now ready for testing. When a test is run, it will hit the locally run webapp instead of the WordPress.com staging environment.
 
 ### Debug mode
 
@@ -95,7 +111,7 @@ Refer to the [Debugging](debugging.md) page for techniques on running a test in 
 
 #### Notes on TypeScript
 
-Because Jest, the test runner, is already to configured to use Babel as a transpiler before executing scripts, there is no extra pre-build command you need to execute to run TypeScript test scripts. You can simply just have Jest run all the scripts in the `specs/specs-playwright` directory, and it will automatically take care of running both `.js` and `.ts` files.
+Because Jest, the test runner, is already to configured to use Babel as a transpiler before executing scripts, there is no extra pre-build command you need to execute to run TypeScript test scripts. You can simply just have Jest run all the scripts in the `specs` directory, and it will automatically take care of running both `.js` and `.ts` files.
 
 Please note: [Babel does not do type-checking as it runs](https://jestjs.io/docs/getting-started#using-typescript), so if you want to do a specific type-check for your test scripts, you can use the local `tsconfig.json` by running `yarn tsc --project ./tsconfig.json`. We run this as part of the Playwright CI script, so all types will be checked before tests are run on TeamCity.
 

@@ -7,6 +7,9 @@ import {
 	isDomainTransfer,
 	isWpComPersonalPlan,
 	isWpComPlan,
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	isWpComPremiumPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -28,6 +31,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getPlanFeatures from '../lib/get-plan-features';
 import getRefundText from '../lib/get-refund-text';
@@ -186,6 +190,9 @@ function CheckoutSummaryFeaturesList( props: {
 				<WPCheckoutCheckIcon id="features-list-support-text" />
 				<SupportText hasPlanInCart={ hasPlanInCart } isJetpackNotAtomic={ isJetpackNotAtomic } />
 			</CheckoutSummaryFeaturesListItem>
+
+			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
+
 			{ showRefundText && (
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon id="features-list-refund-text" />
@@ -285,6 +292,32 @@ function CheckoutSummaryPlanFeatures( props: {
 				);
 			} ) }
 		</>
+	);
+}
+
+function CheckoutSummaryChatIfAvailable( props: { siteId: number | undefined } ) {
+	const translate = useTranslate();
+
+	const currentPlan = useSelector( ( state ) =>
+		props.siteId ? getCurrentPlan( state, props.siteId ) : undefined
+	);
+
+	const currentPlanSlug = currentPlan?.productSlug;
+
+	const isChatAvailable =
+		currentPlanSlug &&
+		( isWpComPremiumPlan( currentPlanSlug ) ||
+			isWpComBusinessPlan( currentPlanSlug ) ||
+			isWpComEcommercePlan( currentPlanSlug ) ) &&
+		! isMonthly( currentPlanSlug );
+
+	if ( ! isChatAvailable ) return null;
+
+	return (
+		<CheckoutSummaryFeaturesListItem>
+			<WPCheckoutCheckIcon id={ 'annual-live-chat' } />
+			{ translate( 'Live chat support' ) }
+		</CheckoutSummaryFeaturesListItem>
 	);
 }
 

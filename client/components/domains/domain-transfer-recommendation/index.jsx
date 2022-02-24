@@ -11,12 +11,12 @@ export default function DomainTransferRecommendation() {
 		<Card className="domain-transfer-recommendation">
 			<div className="domain-transfer-recommendation__content">
 				<CardHeading size={ 16 }>
-					{ __( 'Transfer your domain' ) }
+					{ __( 'Transfer' ) }
 					<Badge type="info-green">{ __( 'Recommended' ) }</Badge>
 				</CardHeading>
 				<span className="domain-transfer-recommendation__message">
 					{ __(
-						'We recommend transferring your domain to manage your domain and site directly on WordPress.com'
+						'We recommend transferring your domain to manage your domain and site directly on WordPress.com.'
 					) }
 				</span>
 			</div>

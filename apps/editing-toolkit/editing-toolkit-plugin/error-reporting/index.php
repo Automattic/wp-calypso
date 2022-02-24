@@ -52,7 +52,7 @@ function head_error_handler() {
 function add_crossorigin_to_script_els( $tag ) {
 	// phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedScript
 	if ( preg_match( '/<script\s.*src=.*(s0\.wp\.com|stats\.wp\.com|widgets\.wp\.com).*>/', $tag ) ) {
-		return str_replace( ' src', ' crossorigin="anonymous" src', $tag );
+		return str_replace( ' src=', ' crossorigin="anonymous" src=', $tag );
 	};
 	return $tag;
 }

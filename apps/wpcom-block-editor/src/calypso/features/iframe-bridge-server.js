@@ -1,6 +1,6 @@
 /* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
-import { createBlock, parse } from '@wordpress/blocks';
+import { parse } from '@wordpress/blocks';
 import {
 	Button,
 	__experimentalNavigationBackButton as NavigationBackButton,
@@ -148,76 +148,6 @@ function overrideRevisions( calypsoPort ) {
 
 			calypsoPort.removeEventListener( 'message', onLoadRevision, false );
 		}
-	}
-}
-
-/**
- * Adds support for Press This/Reblog.
- *
- * @param {MessagePort} calypsoPort port used for communication with parent frame.
- */
-function handlePressThis( calypsoPort ) {
-	calypsoPort.addEventListener( 'message', onPressThis, false );
-	calypsoPort.start();
-
-	function onPressThis( message ) {
-		const action = get( message, 'data.action' );
-		const payload = get( message, 'data.payload' );
-		if ( action !== 'pressThis' || ! payload ) {
-			return;
-		}
-
-		calypsoPort.removeEventListener( 'message', onPressThis, false );
-
-		const unsubscribe = subscribe( () => {
-			// Calypso sends the message as soon as the iframe is loaded, so we
-			// need to be sure that the editor is initialized and the core blocks
-			// registered. There is an unstable selector for that, so we use
-			// `isCleanNewPost` otherwise which is triggered when everything is
-			// initialized if the post is new.
-			const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
-				? select( 'core/editor' ).__unstableIsEditorReady()
-				: select( 'core/editor' ).isCleanNewPost();
-			if ( ! editorIsReady ) {
-				return;
-			}
-
-			unsubscribe();
-
-			const title = get( payload, 'title' );
-			const text = get( payload, 'text' );
-			const url = get( payload, 'url' );
-			const image = get( payload, 'image' );
-			const embed = get( payload, 'embed' );
-			const link = `<a href="${ url }">${ title }</a>`;
-
-			const blocks = [];
-
-			if ( embed ) {
-				blocks.push( createBlock( 'core/embed', { url: embed } ) );
-			}
-
-			if ( image ) {
-				blocks.push(
-					createBlock( 'core/image', {
-						url: image,
-						caption: text ? '' : link,
-					} )
-				);
-			}
-
-			if ( text ) {
-				blocks.push(
-					createBlock( 'core/quote', {
-						value: `<p>${ text }</p>`,
-						citation: link,
-					} )
-				);
-			}
-
-			dispatch( 'core/editor' ).resetEditorBlocks( blocks );
-			dispatch( 'core/editor' ).editPost( { title: title } );
-		} );
 	}
 }
 
@@ -1215,8 +1145,6 @@ function initPort( message ) {
 		handlePostTrash( calypsoPort );
 
 		overrideRevisions( calypsoPort );
-
-		handlePressThis( calypsoPort );
 
 		// handle post state change to locked (current user not editing)
 		handlePostLocked( calypsoPort );

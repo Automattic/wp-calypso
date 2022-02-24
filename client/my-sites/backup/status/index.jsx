@@ -53,6 +53,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 	const {
 		isLoading,
 		lastBackupBeforeDate,
+		lastBackupAttempt,
 		lastBackupAttemptOnDate,
 		lastSuccessfulBackupOnDate,
 		backupAttemptsOnDate,
@@ -82,6 +83,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 					selectedDate,
 					lastBackupDate,
 					backup: lastSuccessfulBackupOnDate || lastBackupAttemptOnDate,
+					lastBackupAttempt,
 				} }
 			/>
 

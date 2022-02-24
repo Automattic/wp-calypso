@@ -18,6 +18,8 @@ interface Props {
 	onReview: () => void;
 }
 
+const ERROR_CODES_FOR_BLOCKED_REQUEST = [ 'service_unavailable', 'invalid_credentials' ];
+
 const UpdateErrorView: FunctionComponent< UpdateError > = ( {
 	wpcomError,
 	translatedError,
@@ -33,11 +35,32 @@ const UpdateErrorView: FunctionComponent< UpdateError > = ( {
 			<p>{ translatedError }</p>
 			<details>
 				<summary>{ translate( 'More details' ) }</summary>
-				<p>
-					{ wpcomMessage }{ ' ' }
-					<span>{ `[${ wpcomError?.code }, ${ JSON.stringify( wpcomError?.data ) }]` }</span>
-				</p>
-				{ showTransportMessage && <p>{ transportMessage }</p> }
+				{ ERROR_CODES_FOR_BLOCKED_REQUEST.includes( String( wpcomError?.code ) ) ? (
+					<ol>
+						<li>{ wpcomMessage }</li>
+						<li>
+							{ translate(
+								'Please {{b}}ask your hosting provider to allow connections{{/b}} from the IP addresses found on this page: %(url)s',
+								{
+									components: {
+										b: <b />,
+									},
+									args: {
+										url: 'https://jetpack.com/support/how-to-add-jetpack-ips-allowlist/',
+									},
+								}
+							) }
+						</li>
+					</ol>
+				) : (
+					<>
+						<p>
+							{ wpcomMessage }{ ' ' }
+							<span>{ `[${ wpcomError?.code }, ${ JSON.stringify( wpcomError?.data ) }]` }</span>
+						</p>
+						{ showTransportMessage && <p>{ transportMessage }</p> }
+					</>
+				) }
 			</details>
 		</div>
 	);

@@ -38,6 +38,7 @@ class MediaSettingsPerformance extends Component {
 		isSavingSettings: PropTypes.bool,
 		onChangeField: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
+		siteIsAtomic: PropTypes.bool,
 
 		// Connected props
 		isVideoPressActive: PropTypes.bool,
@@ -53,6 +54,7 @@ class MediaSettingsPerformance extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			isVideoPressAvailable,
+			siteIsAtomic,
 			siteId,
 			translate,
 		} = this.props;
@@ -63,7 +65,12 @@ class MediaSettingsPerformance extends Component {
 				<FormFieldset className="site-settings__formfieldset jetpack-video-hosting-settings">
 					<SupportInfo
 						text={ translate( 'Hosts your video files on the global WordPress.com servers.' ) }
-						link="https://jetpack.com/support/videopress/"
+						link={
+							siteIsAtomic
+								? 'https://wordpress.com/support/videopress/'
+								: 'https://jetpack.com/support/videopress/'
+						}
+						privacyLink="https://jetpack.com/support/videopress/#privacy"
 					/>
 					<JetpackModuleToggle
 						siteId={ siteId }

@@ -81,6 +81,7 @@ class PagesMain extends Component {
 			status: search ? POST_STATUSES.join( ',' ) : postStatus,
 			type: queryType,
 		};
+		const listKey = [ siteId, status, search ].join( '-' );
 
 		return (
 			<Main wideLayout classname="pages">
@@ -107,7 +108,13 @@ class PagesMain extends Component {
 					hasScreenOptions
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
-				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />
+				<PageList
+					key={ listKey }
+					siteId={ siteId }
+					status={ status }
+					search={ search }
+					query={ query }
+				/>
 				{ /* ExPlat's Evergreen A/A Test Experiment:
 				 *
 				 * This continually starts a new experiment every week that doesn't render anything and

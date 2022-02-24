@@ -1,10 +1,17 @@
-import { ElementHandle, Page } from 'playwright';
+import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
 import { NavbarComponent } from './navbar-component';
 
+type FocusType = 'Sites' | 'Sidebar';
+
 const selectors = {
 	sidebar: '.sidebar',
+	collapsedSidebar: '.is-sidebar-collapsed',
+	focusedLayout: ( focus: FocusType ) => `.layout.focus-${ focus.toLowerCase() }`,
+
+	// Buttons and links within Sidebar
+	linkWithText: ( text: string ) => `a:has-text("${ text }")`,
 };
 
 /**
@@ -24,18 +31,26 @@ export class SidebarComponent {
 	}
 
 	/**
-	 * Waits for the wrapper of the sidebar to be initialized on the page, then returns the element
-	 * handle for that sidebar.
-	 *
-	 * @returns the ElementHandle for the sidebar
+	 * Waits for the WordPress.com Calypso sidebar to be ready on the page.
 	 */
-	async waitForSidebarInitialization(): Promise< ElementHandle > {
+	async waitForSidebarInitialization(): Promise< void > {
 		await this.page.waitForLoadState( 'load' );
-		const sidebarElementHandle = await this.page.waitForSelector( selectors.sidebar );
-		await sidebarElementHandle.waitForElementState( 'stable' );
+		const sidebarLocator = this.page.locator( selectors.sidebar );
+		await sidebarLocator.waitFor();
 
-		return sidebarElementHandle;
+		// If the sidebar is collapsed (via the Collapse Menu toggle),
+		// re-expand the sidebar.
+		if ( await this.sidebarIsCollapsed() ) {
+			const sidebarCollapseToggle = this.page.locator( selectors.linkWithText( 'Collapse menu' ) );
+			// Wait until the collapsed sidebar CSS is detached from DOM, ie. it is no longer collapsed.
+			await Promise.all( [
+				this.page.waitForSelector( selectors.collapsedSidebar, { state: 'detached' } ),
+				sidebarCollapseToggle.dispatchEvent( 'click' ),
+			] );
+		}
 	}
+
+	/* Main sidebar action */
 
 	/**
 	 * Navigates to given (sub)item of the sidebar menu.
@@ -87,6 +102,8 @@ export class SidebarComponent {
 		await locator.waitFor( { state: 'attached' } );
 	}
 
+	/* Miscellaneous actions on sidebar */
+
 	/**
 	 * Clicks on the switch site menu item in the sidebar.
 	 *
@@ -99,26 +116,8 @@ export class SidebarComponent {
 			await this.openMobileSidebar();
 		}
 
-		await this.page.click( ':text("Switch Site")' );
-		await this.page.waitForSelector( '.layout.focus-sites' );
-	}
-
-	/**
-	 * Performs the underlying click action on a sidebar menu item.
-	 *
-	 * This method ensures the sidebar is in a stable, consistent state prior to executing its actions,
-	 * scrolls the sidebar and main content to expose the target element in the viewport, then
-	 * executes a click.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async openMobileSidebar(): Promise< void > {
-		await this.waitForSidebarInitialization();
-		const navbarComponent = new NavbarComponent( this.page );
-		await navbarComponent.clickMySites();
-		// `focus-sidebar` attribute is added once the sidebar is opened and focused in mobile view.
-		const layoutElement = await this.page.waitForSelector( '.layout.focus-sidebar' );
-		await layoutElement.waitForElementState( 'stable' );
+		await this.page.click( selectors.linkWithText( 'Switch Site' ) );
+		await this.page.waitForSelector( selectors.focusedLayout( 'Sites' ) );
 	}
 
 	/**
@@ -129,7 +128,39 @@ export class SidebarComponent {
 	async addSite(): Promise< void > {
 		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.click( 'a:text("Add New Site")' ),
+			this.page.click( selectors.linkWithText( 'Add New Site' ) ),
 		] );
+	}
+
+	/* Viewport-specific methods */
+
+	/**
+	 * Determines whether the sidebar is in a collapsed state for desktop viewports.
+	 *
+	 * This check is part of the self-healing process for the sidebar-related end-to-end
+	 * tests, as rest of the Sidebar methods rely on the sidebar in a non-collapsed
+	 * state.
+	 */
+	private async sidebarIsCollapsed(): Promise< boolean > {
+		const collapsedSidebarLocator = this.page.locator( selectors.collapsedSidebar );
+		return ( await collapsedSidebarLocator.count() ) > 0;
+	}
+
+	/**
+	 * Opens the mobile variant of the sidebar into view.
+	 *
+	 * For mobile sized viewports, the sidebar is by default hidden off screen.
+	 * In order to interact with the sidebar, My Sites button on top left must first
+	 * be clicked to bring the mobile sidebar into view.
+	 */
+	private async openMobileSidebar(): Promise< void > {
+		await this.waitForSidebarInitialization();
+
+		const navbarComponent = new NavbarComponent( this.page );
+		await navbarComponent.clickMySites();
+
+		// `focus-sidebar` attribute is added to the main layout screen.
+		const layoutElement = await this.page.waitForSelector( selectors.focusedLayout( 'Sidebar' ) );
+		await layoutElement.waitForElementState( 'stable' );
 	}
 }

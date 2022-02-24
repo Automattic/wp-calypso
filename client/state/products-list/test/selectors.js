@@ -1,6 +1,7 @@
 import { getPlan, TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import getIntroOfferIsEligible from 'calypso/state/selectors/get-intro-offer-is-eligible';
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import {
@@ -13,6 +14,7 @@ import {
 } from '../selectors';
 
 jest.mock( 'calypso/state/selectors/get-intro-offer-price', () => jest.fn() );
+jest.mock( 'calypso/state/selectors/get-intro-offer-is-eligible', () => jest.fn() );
 
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
@@ -125,6 +127,8 @@ describe( 'selectors', () => {
 		beforeEach( () => {
 			getIntroOfferPrice.mockReset();
 			getIntroOfferPrice.mockImplementation( () => null );
+			getIntroOfferIsEligible.mockReset();
+			getIntroOfferIsEligible.mockImplementation( () => false );
 		} );
 		test( 'Should return shape { priceFull }', () => {
 			getPlanDiscountedRawPrice.mockImplementation( ( a, b, c, { isMonthly } ) =>
@@ -149,11 +153,23 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		test( 'Should return the isIntroductoryOfferApplied value', () => {
+		test( 'Should return the introductoryOfferPrice value', () => {
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			getIntroOfferPrice.mockImplementation( () => 60 );
+			getIntroOfferIsEligible.mockImplementation( () => true );
 			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, {} ) ).toEqual( {
 				introductoryOfferPrice: 60,
+				priceFull: 120,
+				priceFinal: 120,
+			} );
+		} );
+
+		test( 'Should not return the introductoryOfferPrice value if ineligible', () => {
+			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
+			getIntroOfferPrice.mockImplementation( () => 60 );
+			getIntroOfferIsEligible.mockImplementation( () => false );
+			expect( computeFullAndMonthlyPricesForPlan( {}, 1, plan, 0, {} ) ).toEqual( {
+				introductoryOfferPrice: null,
 				priceFull: 120,
 				priceFinal: 120,
 			} );

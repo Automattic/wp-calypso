@@ -32,6 +32,7 @@ export default function TwoFactorContent( {
 			<div>
 				{ poller }
 				<VerificationCodeForm
+					key={ twoFactorAuthType }
 					onSuccess={ handleValid2FACode }
 					twoFactorAuthType={ twoFactorAuthType }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }

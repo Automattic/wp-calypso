@@ -1,11 +1,5 @@
-/**
- * External dependencies
- */
 import { Button } from '@wordpress/components';
 import { Icon, chevronRight } from '@wordpress/icons';
-/**
- * Internal dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { login } from 'calypso/lib/paths';

@@ -1,10 +1,4 @@
-/**
- * External dependencies
- */
 import config from '@automattic/calypso-config';
-/**
- * Internal dependencies
- */
 import wpcom from 'calypso/lib/wp';
 
 const noop = () => {};

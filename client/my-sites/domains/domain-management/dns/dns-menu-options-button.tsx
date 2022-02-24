@@ -52,14 +52,8 @@ const emailProviderConfig: Record< EmailProviderKey, EmailProviderConfiguration 
 		dnsTemplate: dnsTemplates.TITAN,
 		shouldRestoreOptionBeEnabled: ( domain: ResponseDomain ): boolean =>
 			hasTitanMailWithUs( domain ) &&
-			false === domain?.titanMailSubscription?.hasExpectedDnsRecords &&
-			! domain?.isSubdomain,
+			false === domain?.titanMailSubscription?.hasExpectedDnsRecords,
 		providerSlug: 'titan',
-		templateVariableBuilder: (): object => {
-			return {
-				dmarc_host: '_dmarc',
-			};
-		},
 	},
 };
 

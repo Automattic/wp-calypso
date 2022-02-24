@@ -8,6 +8,9 @@ const unsubscribe = subscribe( () => {
 	if ( select( 'core/edit-post' )?.isFeatureActive( 'welcomeGuide' ) ) {
 		dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
 	}
+	if ( select( 'core/edit-site' )?.isFeatureActive( 'welcomeGuide' ) ) {
+		dispatch( 'core/edit-site' ).toggleFeature( 'welcomeGuide' );
+	}
 	unsubscribe();
 } );
 
@@ -20,6 +23,12 @@ subscribe( () => {
 	}
 	if ( select( 'core/edit-post' )?.isFeatureActive( 'welcomeGuide' ) ) {
 		dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
+		dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true, {
+			openedManually: true,
+		} );
+	}
+	if ( select( 'core/edit-site' )?.isFeatureActive( 'welcomeGuide' ) ) {
+		dispatch( 'core/edit-site' ).toggleFeature( 'welcomeGuide' );
 		dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true, {
 			openedManually: true,
 		} );

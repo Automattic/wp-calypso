@@ -1,6 +1,8 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
+$action-assign: 2;
+
 .license-details {
 	margin: 0;
 
@@ -65,6 +67,13 @@
 	&__actions {
 		margin-top: 42px;
 		display: flex;
-		justify-content: flex-end;
+		flex-direction: row-reverse;
+		justify-content: space-between;
+
+		@include break-large {
+			> *:nth-child(#{$action-assign}) {
+				display: none;
+			}
+		}
 	}
 }

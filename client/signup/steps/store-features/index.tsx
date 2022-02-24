@@ -1,16 +1,17 @@
+import { SelectItem, SelectItems } from '@automattic/onboarding-components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.svg';
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { preventWidows } from 'calypso/lib/formatting';
 import { localizeUrl } from 'calypso/lib/i18n-utils/utils';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { shoppingBag, truck } from '../../icons';
-import SelectItems, { SelectItem } from '../../select-items';
 import { EXCLUDED_STEPS } from '../intent/index';
 import { StoreFeatureSet } from './types';
 import './index.scss';
@@ -97,6 +98,8 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 										href={ localizeUrl(
 											'https://wordpress.com/support/wordpress-editor/blocks/payments/'
 										) }
+										target="_blank"
+										rel="noopener noreferrer"
 									/>
 								),
 							},
@@ -143,6 +146,8 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 										href={ localizeUrl(
 											'https://wordpress.com/support/introduction-to-woocommerce/'
 										) }
+										target="_blank"
+										rel="noopener noreferrer"
 									/>
 								),
 							},
@@ -166,7 +171,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 				break;
 
 			case 'simple': {
-				dispatch( submitSignupStep( { stepName } ) );
+				dispatch( submitSignupStep( { stepName }, { storeType: 'payment_block' } ) );
 			}
 		}
 		goToNextStep();
@@ -179,7 +184,9 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			headerImageUrl={ null }
-			stepContent={ <SelectItems items={ intents } onSelect={ onSelect } /> }
+			stepContent={
+				<SelectItems items={ intents } onSelect={ onSelect } preventWidows={ preventWidows } />
+			}
 			align={ 'left' }
 			hideSkip={ true }
 			isHorizontalLayout={ true }

@@ -1,24 +1,6 @@
 import * as selectors from 'calypso/state/partner-portal/payment-methods/selectors';
 
 describe( 'selectors', () => {
-	describe( '#getBrand()', () => {
-		test( 'should return the name of the brand', () => {
-			const { getBrand } = selectors;
-			const state = {
-				brand: 'visa',
-			};
-
-			expect( getBrand( state ) ).toEqual( state.brand );
-		} );
-
-		test( 'should return an empty string by default', () => {
-			const { getBrand } = selectors;
-			const state = {};
-
-			expect( getBrand( state ) ).toEqual( '' );
-		} );
-	} );
-
 	describe( '#getCardDataErrors()', () => {
 		test( 'should return all the card data errors', () => {
 			const { getCardDataErrors } = selectors;
@@ -46,8 +28,8 @@ describe( 'selectors', () => {
 			const { getFields } = selectors;
 			const state = {
 				fields: {
-					cardCvc: {
-						value: 123,
+					card: {
+						value: '4242424242424242',
 						isTouched: true,
 					},
 				},
@@ -62,13 +44,11 @@ describe( 'selectors', () => {
 			const { getIncompleteFieldKeys } = selectors;
 			const state = {
 				cardDataComplete: {
-					cardCvc: false,
-					cardNumber: true,
-					cardExpiry: true,
+					card: false,
 				},
 			};
 
-			expect( getIncompleteFieldKeys( state ) ).toEqual( [ 'cardCvc' ] );
+			expect( getIncompleteFieldKeys( state ) ).toEqual( [ 'card' ] );
 		} );
 	} );
 } );

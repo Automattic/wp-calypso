@@ -1079,8 +1079,7 @@ export class DomainWarnings extends PureComponent {
 		);
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( ! this.props.domains && ! this.props.domain ) {
 			debug( 'You need provide either "domains" or "domain" property to this component.' );
 		}

@@ -78,8 +78,13 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		) {
 			this.props.onVideoLoaded();
 		} else if ( 'videopress_action_pause_response' === data.event ) {
-			const currentTime = get( data, 'currentTime' );
-			this.props.onPause( currentTime );
+			let currentTime = get( data, 'currentTimeMs', -1 );
+			let isMillisec = true;
+			if ( currentTime < 0 ) {
+				currentTime = get( data, 'currentTime' );
+				isMillisec = false;
+			}
+			this.props.onPause( currentTime, isMillisec );
 		}
 	};
 

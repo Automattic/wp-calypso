@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -27,7 +28,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
-import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { useWPCOMPlugin, useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
@@ -67,8 +68,14 @@ import {
 	isJetpackSite,
 	isRequestingSites,
 	getSiteAdminUrl,
+	getSiteDomain,
 } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+
 import './style.scss';
 
 /**
@@ -76,6 +83,44 @@ import './style.scss';
  */
 const SHORT_LIST_LENGTH = 6;
 const SEARCH_RESULTS_LIST_LENGTH = 12;
+
+const translateCategory = ( { category, translate } ) => {
+	switch ( category ) {
+		case 'new':
+			return translate( 'New', {
+				context: 'Category description for the plugin browser.',
+			} );
+		case 'popular':
+			return translate( 'Popular', {
+				context: 'Category description for the plugin browser.',
+			} );
+		case 'featured':
+			return translate( 'Featured', {
+				context: 'Category description for the plugin browser.',
+			} );
+		case 'paid':
+			return translate( 'Premium', {
+				context: 'Category description for the plugin browser.',
+			} );
+		default:
+			return translate( 'Plugins' );
+	}
+};
+
+const translateCategoryTitle = ( { category, translate } ) => {
+	switch ( category ) {
+		case 'new':
+			return translate( 'All New Plugins' );
+		case 'popular':
+			return translate( 'All Popular Plugins' );
+		case 'featured':
+			return translate( 'All Featured Plugins' );
+		case 'paid':
+			return translate( 'All Premium Plugins' );
+		default:
+			return translate( 'Plugins' );
+	}
+};
 
 const PluginsBrowser = ( {
 	trackPageViews = true,
@@ -141,6 +186,7 @@ const PluginsBrowser = ( {
 	const isFetchingPluginsByCategoryFeatured = useSelector( ( state ) =>
 		isFetchingPluginsList( state, 'featured' )
 	);
+
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite?.ID ) );
 
 	const dispatch = useDispatch();
@@ -166,9 +212,16 @@ const PluginsBrowser = ( {
 				id: 'plugins-search',
 			} );
 		}
+		if ( category ) {
+			items.push( {
+				label: translateCategoryTitle( { category, translate } ),
+				href: `/plugins/${ category }/${ siteSlug || '' }`,
+				id: 'category',
+			} );
+		}
 
 		dispatch( updateBreadcrumbs( items ) );
-	}, [ siteSlug, search ] );
+	}, [ siteSlug, search, category, dispatch, translate ] );
 
 	const trackSiteDisconnect = () =>
 		composeAnalytics(
@@ -309,8 +362,8 @@ const PluginsBrowser = ( {
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 				search={ search }
 				category={ category }
-				isFetchingPluginsByCategory={ isFetchingPluginsByCategory }
 				pluginsByCategory={ pluginsByCategory }
+				isFetchingPluginsByCategory={ isFetchingPluginsByCategory }
 				paidPlugins={ paidPlugins }
 				isFetchingPaidPlugins={ isFetchingPaidPlugins }
 				sites={ sites }
@@ -358,6 +411,7 @@ const SearchListView = ( {
 
 	if (
 		pluginsBySearchTerm.length > 0 ||
+		paidPluginsBySearchTerm.length > 0 ||
 		isFetchingPluginsBySearchTerm ||
 		isFetchingPaidPluginsBySearchTerm
 	) {
@@ -444,50 +498,51 @@ const SearchListView = ( {
 	);
 };
 
-const translateCategory = ( { category, translate } ) => {
-	switch ( category ) {
-		case 'new':
-			return translate( 'New', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'popular':
-			return translate( 'Popular', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'featured':
-			return translate( 'Featured', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'paid':
-			return translate( 'Premium', {
-				context: 'Category description for the plugin browser.',
-			} );
-	}
-};
-
 const FullListView = ( {
 	category,
 	isFetchingPluginsByCategory,
 	pluginsByCategory,
 	siteSlug,
 	sites,
+	paidPlugins,
+	isFetchingPaidPlugins,
+	billingPeriod,
+	setBillingPeriod,
 } ) => {
 	const translate = useTranslate();
 
-	if ( pluginsByCategory.length > 0 || isFetchingPluginsByCategory ) {
+	let plugins = pluginsByCategory;
+	let isFetching = isFetchingPluginsByCategory;
+	if ( category === 'paid' ) {
+		plugins = paidPlugins;
+		isFetching = isFetchingPaidPlugins;
+	}
+
+	if ( plugins.length > 0 || isFetching ) {
 		return (
 			<PluginsBrowserList
-				plugins={ pluginsByCategory }
+				plugins={ plugins }
 				listName={ category }
-				title={ translateCategory( { category, translate } ) }
+				title={ translateCategoryTitle( { category, translate } ) }
 				site={ siteSlug }
-				showPlaceholders={ isFetchingPluginsByCategory }
+				showPlaceholders={ isFetching }
 				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
+				billingPeriod={ billingPeriod }
+				setBillingPeriod={ category === 'paid' && setBillingPeriod }
 				extended
 			/>
 		);
 	}
+
+	// This shouldn't ever render but we can't return void/null here.
+	return (
+		<NoResults
+			text={ translate( 'No plugins available.', {
+				textOnly: true,
+			} ) }
+		/>
+	);
 };
 
 const PluginSingleListView = ( {
@@ -507,6 +562,12 @@ const PluginSingleListView = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const siteId = useSelector( getSelectedSiteId );
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+	const { data: spotlightPlugin, isFetched: spotlightPluginFetched } =
+		useWPCOMPlugin( 'wordpress-seo-premium', { enabled: isEnabled( 'marketplace-spotlight' ) } ) ||
+		{};
+
 	let plugins;
 	let isFetching;
 	if ( category === 'new' ) {
@@ -525,7 +586,10 @@ const PluginSingleListView = ( {
 		return null;
 	}
 
-	const listLink = '/plugins/' + category + '/';
+	let listLink = '/plugins/' + category;
+	if ( domain ) {
+		listLink = '/plugins/' + category + '/' + domain;
+	}
 	return (
 		<PluginsBrowserList
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
@@ -539,6 +603,8 @@ const PluginSingleListView = ( {
 			variant={ PluginsBrowserListVariant.Fixed }
 			billingPeriod={ billingPeriod }
 			setBillingPeriod={ category === 'paid' && setBillingPeriod }
+			spotlightPlugin={ spotlightPlugin }
+			spotlightPluginFetched={ spotlightPluginFetched }
 			extended
 		/>
 	);

@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { getTitanEmailUrl } from 'calypso/lib/titan';
+import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import DomainMappingProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-mapping';
 import DomainRegistrationThankYouProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-registration';
 import DomainTransferProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-transfer';
@@ -21,6 +21,34 @@ const thankYouContentGetter: Record< DomainThankYouType, DomainThankYouPropsGett
 };
 
 export default thankYouContentGetter;
+
+interface StepCTAProps {
+	domainType: DomainThankYouType;
+	email?: string;
+	primary: boolean;
+}
+
+const StepCTA = ( { email, primary, domainType }: StepCTAProps ): JSX.Element => {
+	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
+
+	return (
+		<FullWidthButton
+			href={ getTitanEmailUrl( titanAppsUrlPrefix, email, true ) }
+			target="_blank"
+			primary={ primary }
+			onClick={ () => {
+				recordEmailAppLaunchEvent( {
+					provider: 'titan',
+					app: 'webmail',
+					context: 'checkout-thank-you',
+				} );
+			} }
+		>
+			{ translate( 'Go to Inbox' ) }
+			<Gridicon className={ `domain-${ domainType }__icon-external` } icon="external" />
+		</FullWidthButton>
+	);
+};
 
 /**
  * Helper function to reuse Get Inbox/Access your inbox components
@@ -70,22 +98,6 @@ export function buildDomainStepForProfessionalEmail(
 		stepKey: `domain_${ domainType }_whats_next_email_setup_view_inbox`,
 		stepTitle: translate( 'Access your inbox' ),
 		stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
-		stepCta: (
-			<FullWidthButton
-				href={ getTitanEmailUrl( email ) }
-				target="_blank"
-				primary={ primary }
-				onClick={ () => {
-					recordEmailAppLaunchEvent( {
-						provider: 'titan',
-						app: 'webmail',
-						context: 'checkout-thank-you',
-					} );
-				} }
-			>
-				{ translate( 'Go to Inbox' ) }
-				<Gridicon className={ `domain-${ domainType }__icon-external` } icon="external" />
-			</FullWidthButton>
-		),
+		stepCta: <StepCTA email={ email } primary={ primary } domainType={ domainType } />,
 	};
 }

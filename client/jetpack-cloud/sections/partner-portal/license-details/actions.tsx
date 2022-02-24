@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import RevokeLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/revoke-license-dialog';
 import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 interface Props {
@@ -42,6 +43,12 @@ export default function LicenseDetailsActions( {
 			{ licenseState !== LicenseState.Revoked && (
 				<Button onClick={ openRevokeDialog } scary>
 					{ translate( 'Revoke License' ) }
+				</Button>
+			) }
+
+			{ licenseState === LicenseState.Detached && (
+				<Button href={ addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' ) }>
+					{ translate( 'Assign License' ) }
 				</Button>
 			) }
 

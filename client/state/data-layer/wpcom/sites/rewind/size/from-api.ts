@@ -1,6 +1,3 @@
-/**
- * Internal dependencies
- */
 import type { RewindSizeInfo } from 'calypso/state/rewind/size/types';
 
 type ApiResponse = {

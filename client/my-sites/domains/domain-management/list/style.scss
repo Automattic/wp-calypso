@@ -310,6 +310,11 @@
 	box-shadow: 0 0 0 1px var( --color-border-subtle );
 	padding: 24px;
 	margin-top: 32px;
+	.button.is-borderless .gridicon {
+		width: auto;
+		height: auto;
+		top: 3px;
+	}
 }
 
 .domain-only-upsell-carousel__card.card {

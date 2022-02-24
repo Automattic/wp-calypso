@@ -11,7 +11,6 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	GROUP_WPCOM,
-	JETPACK_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
 import { Dialog, Button } from '@automattic/components';
 import { getCurrencyDefaults } from '@automattic/format-currency';
@@ -47,8 +46,6 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getName, isRefundable } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
-import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
@@ -64,6 +61,7 @@ import getSupportVariation, {
 import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import getSite from 'calypso/state/sites/selectors/get-site';
+import { getCancellationReasons } from './cancellation-reasons';
 import { CANCEL_FLOW_TYPE } from './constants';
 import enrichedSurveyData from './enriched-survey-data';
 import initialSurveyState from './initial-survey-state';
@@ -162,7 +160,7 @@ class CancelPurchaseForm extends Component {
 
 		this.state = {
 			questionOneText: '',
-			questionOneOrder: questionOneOrder,
+			questionOneOrder,
 			questionTwoText: '',
 			questionTwoOrder: questionTwoOrder,
 			questionThreeText: '',
@@ -173,6 +171,62 @@ class CancelPurchaseForm extends Component {
 			atomicRevertCheckTwo: false,
 			purchaseIsAlreadyExtended: false,
 		};
+	}
+
+	/**
+	 * Get a related upsell nudge for the chosen reason.
+	 *
+	 * @param {string} reason Selected cancellation reason
+	 * @returns {string} Upsell type
+	 */
+	getUpsellType( reason ) {
+		const { purchase, downgradeClick, freeMonthOfferClick } = this.props;
+		const productSlug = purchase?.productSlug || '';
+
+		if ( ! this.shouldUseBlankCanvasLayout() || ! productSlug ) {
+			return '';
+		}
+
+		const canRefund = !! parseFloat( this.getRefundAmount() );
+
+		if (
+			[ 'cannotUsePlugin', 'cannotUseTheme' ].includes( reason ) &&
+			isWpComBusinessPlan( productSlug )
+		) {
+			return 'business-atomic';
+		}
+
+		if (
+			[ 'cannotUsePlugin', 'cannotUseTheme' ].includes( reason ) &&
+			( isWpComPremiumPlan( productSlug ) || isWpComPersonalPlan( productSlug ) )
+		) {
+			return 'upgrade-atomic';
+		}
+
+		if ( [ 'tooExpensive', 'wantCheaperPlan' ].includes( reason ) && !! downgradeClick ) {
+			if ( isWpComPremiumPlan( productSlug ) ) {
+				return 'downgrade-personal';
+			}
+
+			if (
+				canRefund &&
+				( planMatches( productSlug, { term: TERM_ANNUALLY, group: GROUP_WPCOM } ) ||
+					planMatches( productSlug, { term: TERM_BIENNIALLY, group: GROUP_WPCOM } ) )
+			) {
+				return 'downgrade-monthly';
+			}
+		}
+
+		if (
+			[ 'noTime', 'siteIsNotReady' ].includes( reason ) &&
+			isWpComMonthlyPlan( productSlug ) &&
+			!! freeMonthOfferClick &&
+			! this.state.purchaseIsAlreadyExtended
+		) {
+			return 'free-month-offer';
+		}
+
+		return '';
 	}
 
 	recordEvent = ( name, properties = {} ) => {
@@ -203,52 +257,6 @@ class CancelPurchaseForm extends Component {
 			questionOneText: '',
 			upsell: '',
 		};
-
-		const canRefund = !! parseFloat( this.getRefundAmount() );
-
-		if ( this.shouldUseBlankCanvasLayout() ) {
-			const { purchase } = this.props;
-			if ( value === 'couldNotInstall' && isWpComBusinessPlan( purchase.productSlug ) ) {
-				newState.upsell = 'business-atomic';
-			}
-
-			if (
-				value === 'couldNotInstall' &&
-				( isWpComPremiumPlan( purchase.productSlug ) ||
-					isWpComPersonalPlan( purchase.productSlug ) )
-			) {
-				newState.upsell = 'upgrade-atomic';
-			}
-
-			if (
-				value === 'onlyNeedFree' &&
-				isWpComPremiumPlan( purchase.productSlug ) &&
-				!! this.props.downgradeClick
-			) {
-				newState.upsell = 'downgrade-personal';
-			}
-
-			if ( value === 'onlyNeedFree' && !! this.props.downgradeClick && canRefund ) {
-				if ( isWpComPremiumPlan( purchase.productSlug ) ) {
-					newState.upsell = 'downgrade-personal';
-				} else if (
-					planMatches( purchase.productSlug, { term: TERM_ANNUALLY, group: GROUP_WPCOM } ) ||
-					planMatches( purchase.productSlug, { term: TERM_BIENNIALLY, group: GROUP_WPCOM } )
-				) {
-					newState.upsell = 'downgrade-monthly';
-				}
-			}
-
-			if (
-				[ 'noTime', 'siteIsNotReady' ].includes( value ) &&
-				isWpComMonthlyPlan( purchase.productSlug ) &&
-				!! this.props.freeMonthOfferClick &&
-				! this.state.purchaseIsAlreadyExtended
-			) {
-				newState.upsell = 'free-month-offer';
-			}
-		}
-
 		this.setState( newState );
 		this.props.onInputChange( newState );
 	};
@@ -268,6 +276,7 @@ class CancelPurchaseForm extends Component {
 		const newState = {
 			...this.state,
 			questionOneText: value,
+			upsell: this.getUpsellType( value ) || '',
 		};
 		this.setState( newState );
 		this.props.onInputChange( newState );
@@ -509,144 +518,34 @@ class CancelPurchaseForm extends Component {
 	};
 
 	renderQuestionOne = () => {
-		const reasons = {};
 		const { translate } = this.props;
-		const { questionOneOrder, questionOneRadio, questionOneText, upsell } = this.state;
-		const { productSlug: productBeingRemoved } = this.props.purchase;
-
-		// get all downgradable plans and products for downgrade question dropdown
-		const downgradablePlans = DOWNGRADEABLE_PLANS_FROM_PLAN[ productBeingRemoved ];
-		const downgradableJetpackPlansAndProducts = [
-			...( downgradablePlans ? downgradablePlans : [] ),
-			...JETPACK_PRODUCTS_LIST,
-		];
-		const selectBoxItems = downgradableJetpackPlansAndProducts
-			.map( slugToSelectorProduct )
-			// filter out any null items
-			.filter( ( product ) => product )
-			// get only annual products/plans (no need for monthly variants in the dropdown)
-			.filter( ( product ) => product.term === TERM_ANNUALLY )
-			.map( ( product ) => ( {
-				value: product.productSlug,
-				label: translate( 'Jetpack %(planName)s', {
-					args: { planName: product.shortName },
-				} ),
-			} ) );
-
-		const dropDownSelectOptions = [
-			{ value: 'select_a_product', label: translate( 'Select a product' ), isLabel: true },
-			...selectBoxItems,
-		];
-
-		const initialSelected = downgradableJetpackPlansAndProducts.includes(
-			this.state.questionOneText
-		)
-			? this.state.questionOneText
-			: 'select_a_product';
-
-		const options = [
-			{
-				value: 'couldNotInstall',
-				label: translate( "I couldn't install a plugin/theme I wanted." ),
-				textPlaceholder: translate( 'What plugin/theme were you trying to install?' ),
-			},
-			{
-				value: 'tooHard',
-				label: translate( 'It was too hard to set up my site.' ),
-				textPlaceholder: translate( 'Where did you run into problems?' ),
-			},
-			{
-				value: 'didNotInclude',
-				label: translate( "This upgrade didn't include what I needed." ),
-				textPlaceholder: translate( 'What are we missing that you need?' ),
-			},
-			{
-				value: 'downgradeToAnotherPlan',
-				label: translate( "I'd like to downgrade to another plan." ),
-				selectInitialValue: initialSelected,
-				selectLabel: translate( 'Mind telling us which one?' ),
-				selectOptions: dropDownSelectOptions,
-			},
-			{
-				value: 'onlyNeedFree',
-				label: translate( 'The plan was too expensive.' ),
-				textPlaceholder: translate( 'How can we improve our upgrades?' ),
-			},
-			{
-				value: 'couldNotActivate',
-				label: translate( 'I was unable to activate or use the product.' ),
-				textPlaceholder: translate( 'Where did you run into problems?' ),
-			},
-			{
-				value: 'noTime',
-				label: translate( "I don't have time." ),
-			},
-			{
-				value: 'siteIsNotReady',
-				label: translate( 'My site is not ready.' ),
-			},
-			{
-				value: 'noLongerWantToTransfer',
-				label: translate( 'I no longer want to transfer my domain.' ),
-			},
-			{
-				value: 'couldNotCompleteTransfer',
-				label: translate( 'Something went wrong and I could not complete the transfer.' ),
-			},
-			{
-				value: 'useDomainWithoutTransferring',
-				label: translate(
-					'I’m going to use my domain with WordPress.com without transferring it.'
-				),
-			},
-			{
-				value: 'anotherReasonOne',
-				label: translate( 'Another reason…' ),
-				textPlaceholder: translate( 'Can you please specify?' ),
-			},
-			{
-				value: '',
-				label: translate( 'Select your reason' ),
-			},
-		];
+		const { questionOneOrder, questionOneRadio, questionOneText } = this.state;
+		const { productSlug } = this.props.purchase; // Product being cancelled
+		const reasons = getCancellationReasons( questionOneOrder, { productSlug } );
 
 		if ( this.shouldUseBlankCanvasLayout() ) {
-			const optionKeys = [ ...questionOneOrder ];
-			optionKeys.unshift( '' ); // Placeholder.
-
-			const selectedOption = options.find( ( option ) => option.value === questionOneRadio );
+			const selectedOption = reasons.find( ( { value } ) => value === questionOneRadio );
 
 			return (
 				<div className="cancel-purchase-form__feedback-question">
 					<SelectControl
 						label={ translate( 'Why are you canceling?' ) }
 						value={ questionOneRadio }
-						options={ optionKeys.map( ( key ) => {
-							const option = options.find( ( { value } ) => value === key );
-							return {
-								label: option.label,
-								value: option.value,
-								disabled: ! option.value,
-							};
-						} ) }
+						options={ reasons }
 						onChange={ this.onRadioOneChange }
 					/>
-					{ ! upsell && selectedOption?.textPlaceholder && (
+					{ selectedOption?.textPlaceholder && (
 						<TextControl
 							placeholder={ selectedOption.textPlaceholder }
 							value={ questionOneText }
 							onChange={ this.onTextOneChange }
 						/>
 					) }
-					{ ! upsell && selectedOption?.selectOptions && (
+					{ selectedOption?.selectOptions && ! selectedOption?.textPlaceholder && (
 						<SelectControl
 							label={ selectedOption.selectLabel }
-							value={ selectedOption.selectInitialValue }
-							options={ selectedOption.selectOptions.map( ( option ) => ( {
-								label: option.label,
-								value: option.value,
-								disabled: option.isLabel,
-							} ) ) }
+							value={ questionOneText || selectedOption.selectInitialValue || '' }
+							options={ selectedOption.selectOptions }
 							onChange={ this.onSelectOneChange }
 						/>
 					) }
@@ -655,59 +554,34 @@ class CancelPurchaseForm extends Component {
 			);
 		}
 
-		const appendRadioOption = ( groupName, key, radioPrompt, textPlaceholder ) =>
-			( reasons[ key ] = radioTextOption(
-				groupName,
-				key,
-				questionOneRadio,
-				questionOneText,
-				this.onRadioOneChange,
-				this.onTextOneChange,
-				radioPrompt,
-				textPlaceholder
-			) );
-
-		const appendRadioOptionWithSelect = (
-			groupName,
-			key,
-			radioPrompt,
-			selectLabel,
-			selectOptions,
-			selected
-		) =>
-			( reasons[ key ] = radioSelectOption(
-				groupName,
-				key,
-				questionOneRadio,
-				this.onRadioOneChange,
-				this.onSelectOneChange,
-				radioPrompt,
-				selectLabel,
-				selectOptions,
-				selected
-			) );
-
-		options.forEach(
-			( { label, selectInitialValue, selectLabel, selectOptions, textPlaceholder, value } ) => {
-				if ( selectOptions ) {
-					appendRadioOptionWithSelect(
-						'questionOne',
-						value,
-						label,
-						selectLabel,
-						selectOptions,
-						selectInitialValue
-					);
-				} else {
-					appendRadioOption( 'questionOne', value, label, textPlaceholder );
-				}
-			}
-		);
-
 		return (
 			<div className="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
-				{ questionOneOrder.map( ( question ) => reasons[ question ] ) }
+				{ reasons.map(
+					( { value, label, selectLabel, selectOptions, selectInitialValue, textPlaceholder } ) =>
+						textPlaceholder
+							? radioTextOption(
+									'questionOne',
+									value,
+									questionOneRadio,
+									questionOneText,
+									this.onRadioOneChange,
+									this.onTextOneChange,
+									label,
+									textPlaceholder
+							  )
+							: radioSelectOption(
+									'questionOne',
+									value,
+									questionOneRadio,
+									this.onRadioOneChange,
+									this.onSelectOneChange,
+									label,
+									selectLabel,
+									selectOptions,
+									selectInitialValue
+							  )
+				) }
 			</div>
 		);
 	};

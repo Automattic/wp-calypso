@@ -267,10 +267,17 @@ export function domainMapping( siteName, domain = '' ) {
  * @param { string } siteName	The slug for the site.
  * @param { string } domainName	The domain name to map.
  * @param { string } step		The step slug to start from (optional)
- * @param { boolean } showErrors Whether to show the mapping setup errors.
+ * @param { boolean } showErrors Whether to show the mapping setup errors (optional).
+ * @param { boolean } firstVisit Whether this is the first time the user is going through the setup (optional).
  * @returns {string} Path to the mapping setup flow.
  */
-export function domainMappingSetup( siteName, domainName, step = '', showErrors = false ) {
+export function domainMappingSetup(
+	siteName,
+	domainName,
+	step = '',
+	showErrors = false,
+	firstVisit = false
+) {
 	let path = `/domains/mapping/${ siteName }/setup/${ domainName }`;
 	const params = {};
 
@@ -280,6 +287,10 @@ export function domainMappingSetup( siteName, domainName, step = '', showErrors 
 
 	if ( showErrors ) {
 		params[ 'show-errors' ] = true;
+	}
+
+	if ( firstVisit ) {
+		params.firstVisit = true;
 	}
 
 	const queryString = stringify( params );

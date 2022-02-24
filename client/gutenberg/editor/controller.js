@@ -233,7 +233,7 @@ export const post = ( context, next ) => {
 
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const pressThis = getPressThisData( context.query );
+	const pressThisData = getPressThisData( context.query );
 	const anchorFmData = getAnchorFmData( context.query );
 	const fseParentPageId = parseInt( context.query.fse_parent_post, 10 ) || null;
 	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
@@ -250,7 +250,7 @@ export const post = ( context, next ) => {
 			postId={ postId }
 			postType={ postType }
 			duplicatePostId={ duplicatePostId }
-			pressThis={ pressThis }
+			pressThisData={ pressThisData }
 			anchorFmData={ anchorFmData }
 			fseParentPageId={ fseParentPageId }
 			parentPostId={ parentPostId }

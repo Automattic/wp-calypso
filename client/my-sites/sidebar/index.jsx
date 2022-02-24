@@ -16,6 +16,7 @@ import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
+import OnboardingUrlProvider from 'calypso/components/site-selector/onboarding-url-provider';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import Sidebar from 'calypso/layout/sidebar';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
@@ -852,12 +853,16 @@ export class MySitesSidebar extends Component {
 		}
 
 		return (
-			<SidebarItem
-				label={ this.props.translate( 'Add new site' ) }
-				link={ `${ this.props.onboardingUrl }?ref=calypso-sidebar` }
-				onNavigate={ this.trackAddNewSiteClick }
-				icon="add-outline"
-			/>
+			<OnboardingUrlProvider>
+				{ ( onboardingUrl ) => (
+					<SidebarItem
+						label={ this.props.translate( 'Add new site' ) }
+						link={ `${ onboardingUrl }?ref=calypso-sidebar` }
+						onNavigate={ this.trackAddNewSiteClick }
+						icon="add-outline"
+					/>
+				) }
+			</OnboardingUrlProvider>
 		);
 	}
 

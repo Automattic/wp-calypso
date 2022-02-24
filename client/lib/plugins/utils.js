@@ -69,10 +69,12 @@ export function getAllowedPluginData( plugin ) {
 		'action_links',
 		'active',
 		'author',
+		'author_profile',
 		'author_url',
 		'autoupdate',
 		'banners',
 		'compatibility',
+		'contributors',
 		'description',
 		'active_installs',
 		'short_description',
@@ -244,4 +246,69 @@ export function normalizePluginsList( pluginsList ) {
  */
 export function filterNotices( logs, siteId, pluginId ) {
 	return filter( logs, filterNoticesBy.bind( this, siteId, pluginId ) );
+}
+
+/**
+ * Regex to extract the author from the search
+ */
+export const DEVELOPER_PATTERN = /developer:(?:\s)*"(.*)"/;
+
+/**
+ * Extract author and search params from the plugin search query
+ *
+ * @param {string} searchTerm The full plugin search query
+ * @returns {Array<string|null>} The first item will be the search and the second will be the author if exists
+ */
+export function extractSearchInformation( searchTerm = '' ) {
+	const author = searchTerm.match( DEVELOPER_PATTERN )?.[ 1 ] || null;
+	const search = searchTerm.replace( DEVELOPER_PATTERN, '' ).trim();
+
+	return [ search, author ];
+}
+
+/**
+ * Returns an author keyword to be used on plugin search by author
+ * The follow actions are taken:
+ * * Try to get the main author from the list of contributors
+ * * Try to extract the author keyword from author_profile
+ * * Try to get the author_name
+ * * Send an empty string if none of the previous actions works
+ *
+ * @param plugin
+ * @returns {string} the author keyword or an empty string
+ */
+export function getPluginAuthorKeyword( plugin ) {
+	const { contributors = {} } = plugin;
+
+	return (
+		Object.keys( contributors ).find( ( contributorKey ) => {
+			const authorName = plugin.author_name;
+			const contributorName = contributors[ contributorKey ].display_name;
+
+			return (
+				authorName &&
+				contributorName &&
+				( authorName.includes( contributorName ) || contributorName.includes( authorName ) )
+			);
+		} ) ||
+		getPluginAuthorProfileKeyword( plugin ) ||
+		plugin.author_name ||
+		''
+	);
+}
+
+export const WPORG_PROFILE_URL = 'https://profiles.wordpress.org/';
+
+/**
+ * Get the author keywrod from author_profile property
+ *
+ * @param plugin
+ * @returns {string|null} the author keyword
+ */
+export function getPluginAuthorProfileKeyword( plugin ) {
+	if ( ! plugin?.author_profile?.includes( WPORG_PROFILE_URL ) ) {
+		return null;
+	}
+
+	return plugin.author_profile.replace( WPORG_PROFILE_URL, '' ).replaceAll( '/', '' );
 }

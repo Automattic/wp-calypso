@@ -6,16 +6,26 @@
 
 # Debugging
 
-The Playwright [project page](https://playwright.dev/docs/debug/) has in-depth coverage of various debugging tools. This page will cover debugging scenarios unique to WordPress.com and Calypso.
-
 <!-- TOC -->
 
 - [Debugging](#debugging)
+  - [Playwright native tools](#playwright-native-tools)
   - [Debug instance](#debug-instance)
   - [Playwright Developer Console and Gutenberg iFrame](#playwright-developer-console-and-gutenberg-iframe)
-  - [Additional notes](#additional-notes)
+  - [VSCode Debugger and Jest](#vscode-debugger-and-jest)
 
 <!-- /TOC -->
+
+## Playwright native tools
+
+The Playwright [project page](https://playwright.dev/docs/debug/) has in-depth coverage of various debugging tools.
+
+Of those tools, there are two that are worth calling out as particularly useful:
+- [The Playwright Inspector](https://playwright.dev/docs/inspector) - A very easy way to quickly see what's going wrong with a spec you are writing.
+- [The Playwright Trace Viewer](https://playwright.dev/docs/trace-viewer#viewing-the-trace) - Any failing test will write a trace to a `.zip` file. These traces are included when running locally, and they are also included as test artifacts in TeamCity builds.
+
+The rest of this page will cover debugging scenarios unique to WordPress.com and Calypso.
+
 
 ## Debug instance
 
@@ -29,7 +39,7 @@ Launch Playwright with the following parameters to:
 - output verbose logs to the command line
 
 ```bash
-PWDEBUG=1 DEBUG=pw:api yarn jest <spec_name><spec>
+PWDEBUG=1 DEBUG=pw:api yarn jest <path_to_spec>
 ```
 
 ## Playwright Developer Console and Gutenberg iFrame
@@ -52,7 +62,7 @@ To be able to interact with elements of the iFramed editor:
 
 ![](resources/playwright_debug_iframe.gif)
 
-## Additional notes
+## VSCode Debugger and Jest
 
 Jest documentation on setting up VSCode debugger can be found [here](https://jestjs.io/docs/troubleshooting#debugging-in-vs-code).
 

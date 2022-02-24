@@ -1,13 +1,14 @@
 import { NextButton } from '@automattic/onboarding';
+import { SelectItems } from '@automattic/onboarding-components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { preventWidows } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { jetpack } from 'calypso/signup/icons';
-import SelectItems from 'calypso/signup/select-items';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 import './style.scss';
@@ -108,6 +109,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 									value: '',
 								},
 							] }
+							preventWidows={ preventWidows }
 						/>
 					) }
 					<hr />

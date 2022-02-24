@@ -33,18 +33,17 @@ class SiteRedirect extends Component {
 	};
 
 	componentDidMount() {
-		this.checkSiteIsUpgradeable( this.props );
+		this.checkSiteIsUpgradeable();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.selectedSiteId !== this.props.selectedSiteId ) {
-			this.checkSiteIsUpgradeable( nextProps );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.selectedSiteId !== this.props.selectedSiteId ) {
+			this.checkSiteIsUpgradeable();
 		}
 	}
 
-	checkSiteIsUpgradeable( props ) {
-		if ( ! props.isSiteUpgradeable ) {
+	checkSiteIsUpgradeable() {
+		if ( ! this.props.isSiteUpgradeable ) {
 			page.redirect( '/domains/add' );
 		}
 	}
@@ -78,7 +77,9 @@ class SiteRedirect extends Component {
 					{ translate( 'Redirect a Site' ) }
 				</HeaderCake>
 
-				<SiteRedirectStep products={ productsList } selectedSite={ selectedSite } />
+				{ selectedSite && (
+					<SiteRedirectStep products={ productsList } selectedSite={ selectedSite } />
+				) }
 			</Main>
 		);
 	}

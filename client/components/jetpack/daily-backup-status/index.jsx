@@ -9,6 +9,7 @@ import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
+	getBackupErrorCode,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
@@ -26,7 +27,13 @@ import VisibleDaysLimit from './status-card/visible-days-limit';
 
 import './style.scss';
 
-const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) => {
+const DailyBackupStatus = ( {
+	selectedDate,
+	lastBackupAttempt,
+	lastBackupDate,
+	backup,
+	deltas,
+} ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
 	const moment = useLocalizedMoment();
@@ -117,6 +124,10 @@ const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) =
 		) : (
 			<NoBackupsOnSelectedDate selectedDate={ selectedDate } />
 		);
+	}
+
+	if ( getBackupErrorCode( lastBackupAttempt ) === 'NOT_ACCESSIBLE' ) {
+		return <BackupFailed backup={ lastBackupAttempt } />;
 	}
 
 	return <NoBackupsYet />;

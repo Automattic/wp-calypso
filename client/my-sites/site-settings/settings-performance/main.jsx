@@ -99,6 +99,7 @@ class SiteSettingsPerformance extends Component {
 									isRequestingSettings={ isRequestingSettings }
 									submitForm={ submitForm }
 									updateFields={ updateFields }
+									siteIsAtomic={ siteIsAtomic }
 								/>
 
 								<SettingsSectionHeader title={ translate( 'Media' ) } />
@@ -110,6 +111,7 @@ class SiteSettingsPerformance extends Component {
 									isSavingSettings={ isSavingSettings }
 									isRequestingSettings={ isRequestingSettings }
 									fields={ fields }
+									siteIsAtomic={ siteIsAtomic }
 								/>
 							</>
 						) }
