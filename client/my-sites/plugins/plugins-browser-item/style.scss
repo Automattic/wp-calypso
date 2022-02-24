@@ -148,6 +148,18 @@
 		border-radius: 4px;
 		font-size: $font-body-extra-small;
 	}
+
+	.badge--success {
+		color: var(--studio-celadon-80);
+		font-weight: 600;
+		background-color: #abe8bc; // TODO: add this color somewhere
+	}
+
+	.badge--info {
+		color: var(--color-neutral-80);
+		font-weight: 600;
+		background-color: var(--color-neutral-10);
+	}
 }
 
 .plugins-browser-item__pricing-placeholder {
@@ -158,14 +170,22 @@
 
 .plugins-browser-item__installed {
 	display: flex;
-	color: var( --studio-green-30 );
 	animation: appear 0.15s ease-in;
 
 	.gridicon {
 		margin-top: 3px;
 		margin-right: 6px;
-		border: 2px solid var( --studio-green-30 );
 		border-radius: 50%; /* stylelint-disable-line */
+	}
+
+	.gridicon.checkmark--active {
+		color: var( --studio-green-30 );
+		border: 2px solid var( --studio-green-30 );
+	}
+
+	.gridicon.checkmark--inactive {
+		color: var( --studio-gray-60 );
+		border: 2px solid  var( --studio-gray-60 );
 	}
 }
 

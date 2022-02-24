@@ -200,15 +200,19 @@ const InstalledInOrPricing = ( {
 		? installedPlugins.filter( ( activePlugin ) => activePlugin.sites[ selectedSiteId ]?.active )
 		: [];
 
+	let checkmarkColorClass = 'checkmark--active';
+
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 
 		const isActive = !! activePlugins.find( ( activePlugin ) => activePlugin.slug === plugin.slug );
-
+		if ( selectedSiteId ) {
+			checkmarkColorClass = isActive ? 'checkmark--active' : 'checkmark--inactive';
+		}
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
-				<div className="plugins-browser-item__installed">
-					<Gridicon icon="checkmark" size={ 14 } />
+				<div className="plugins-browser-item__installed ">
+					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
 					{ isWpcomPreinstalled || currentSites?.length === 1
 						? translate( 'Installed' )
 						: translate( 'Installed on %d site', 'Installed on %d sites', {
