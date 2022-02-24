@@ -37,7 +37,7 @@ const BackupFailed = ( { backup } ) => {
 			</div>
 			<div className="status-card__title">
 				{ mayBeBlockedByHost
-					? translate( `We'are having trouble backing up your site` )
+					? translate( `We're having trouble backing up your site` )
 					: getDisplayDate( backup.activityTs, false ) }
 			</div>
 			<div className="status-card__label">
