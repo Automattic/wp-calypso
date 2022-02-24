@@ -4,7 +4,7 @@ import { NavbarComponent } from '.';
 
 const panel = 'div.wpcom-block-editor-nav-sidebar-nav-sidebar__container';
 const selectors = {
-	sidebarButton: `${ panel } button.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button`,
+	sidebarButton: `button.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button`,
 	exitLink: `${ panel } a.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button`,
 };
 
@@ -67,7 +67,6 @@ export class EditorNavSidebarComponent {
 	 */
 	private async sidebarIsOpen(): Promise< boolean > {
 		const locator = this.frameLocator.locator( selectors.sidebarButton );
-
 		const status = await locator.getAttribute( 'aria-expanded' );
 
 		return status === 'true';
