@@ -432,9 +432,8 @@ function onmessage( e ) {
 		// add statusCode into headers object
 		headers.status = statusCode;
 
-		// FIXME @azabani remove once stream mode processing is implemented
 		if ( shouldProcessInStreamMode( headers[ 'Content-Type' ] ) ) {
-			if ( statusCode == 207 ) {
+			if ( statusCode === 207 ) {
 				onStreamRecord( body );
 				return;
 			}
