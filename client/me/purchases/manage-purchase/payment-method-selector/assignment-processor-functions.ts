@@ -180,9 +180,8 @@ export async function assignExistingCardProcessor(
 		if ( ! purchase ) {
 			throw new Error( 'Cannot assign PayPal payment method without a purchase' );
 		}
-		return wpcomAssignPaymentMethod( String( purchase.id ), storedDetailsId ).then( ( data ) => {
-			return makeSuccessResponse( data );
-		} );
+		const data = await wpcomAssignPaymentMethod( String( purchase.id ), storedDetailsId );
+		return makeSuccessResponse( data );
 	} catch ( error ) {
 		return makeErrorResponse( ( error as Error ).message );
 	}
@@ -220,15 +219,14 @@ export async function assignPayPalProcessor(
 			throw new Error( 'PayPal data is missing tax information' );
 		}
 		reduxDispatch( recordFormSubmitEvent( { purchase } ) );
-		return wpcomCreatePayPalAgreement(
+		const data = await wpcomCreatePayPalAgreement(
 			String( purchase.id ),
 			addQueryArgs( window.location.href, { success: 'true' } ),
 			window.location.href,
 			submitData.countryCode,
 			submitData.postalCode ?? ''
-		).then( ( data ) => {
-			return makeRedirectResponse( data );
-		} );
+		);
+		return makeRedirectResponse( data );
 	} catch ( error ) {
 		return makeErrorResponse( ( error as Error ).message );
 	}
