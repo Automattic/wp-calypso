@@ -2642,6 +2642,49 @@ describe( '#getPremiumThemePrice', () => {
 
 		expect( themePrice ).to.equal( 'Upgrade' );
 	} );
+
+	test( 'should return price as a string for free Atomic sites', () => {
+		const themePrice = getPremiumThemePrice(
+			{
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true,
+							options: {
+								is_automated_transfer: true,
+							},
+						},
+					},
+					plans: {
+						77203074: {
+							data: [
+								{
+									currentPlan: true,
+									productSlug: PLAN_FREE,
+								},
+							],
+						},
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { mood },
+						} ),
+					},
+				},
+				purchases: {
+					data: [],
+				},
+			},
+			'mood',
+			77203074
+		);
+
+		expect( themePrice ).to.equal( '$20' );
+	} );
 } );
 
 describe( '#shouldShowTryAndCustomize', () => {
