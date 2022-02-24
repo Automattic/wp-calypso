@@ -1,43 +1,56 @@
 import { Gridicon } from '@automattic/components';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { FunctionComponent, useState } from 'react';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import type { ItemVariationPickerProps } from './types';
 
-const Dropdown = styled.div`
-	width: 100%;
-`;
+interface OptionProps {
+	selected?: boolean;
+}
 
-const Option = styled.div`
+const Option = styled.div< OptionProps >`
+	align-items: center;
+	background: white;
 	border: 1px solid #a7aaad;
-	padding: 14px;
 	display: flex;
 	flex-direction: row;
-	align-items: center;
 	justify-content: space-between;
+	padding: 14px;
 
 	.gridicon {
 		fill: #a7aaad;
 		margin-left: 14px;
 	}
 
-	&.is-selected {
-		background: #055d9c;
-		color: #ffff;
-	}
+	${ ( props ) =>
+		props.selected &&
+		css`
+			background: #055d9c;
+			color: #ffff;
+		` }
+`;
 
-	&:first-child {
-		border-top-left-radius: 3px;
-		border-top-right-radius: 3px;
+const Dropdown = styled.div`
+	position: relative;
+	width: 100%;
+	> ${ Option } {
+		border-radius: 3px;
 	}
+`;
 
-	&:not( :first-child ) {
+const OptionList = styled.div`
+	position: absolute;
+	width: 100%;
+	z-index: 3;
+
+	${ Option } {
 		margin-top: -1px;
-	}
 
-	&:last-child {
-		border-bottom-left-radius: 3px;
-		border-bottom-right-radius: 3px;
+		&:last-child {
+			border-bottom-left-radius: 3px;
+			border-bottom-right-radius: 3px;
+		}
 	}
 `;
 
@@ -76,19 +89,22 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 						<Gridicon icon={ open ? 'chevron-down' : 'chevron-up' } />
 					</Option>
 				) ) }
-			{ open &&
-				variants.map( ( { variantLabel, variantPrice, productId, productSlug } ) => (
-					<Option
-						role="button"
-						tabIndex={ 0 }
-						key={ productSlug + variantLabel }
-						onClick={ () => onChangeItemVariant( selectedItem.uuid, productSlug, productId ) }
-						className={ productId === selectedItem.product_id ? 'is-selected' : '' }
-					>
-						<span>{ variantLabel }</span>
-						<span>{ variantPrice }</span>
-					</Option>
-				) ) }
+			{ open && (
+				<OptionList>
+					{ variants.map( ( { variantLabel, variantPrice, productId, productSlug } ) => (
+						<Option
+							role="button"
+							tabIndex={ 0 }
+							key={ productSlug + variantLabel }
+							onClick={ () => onChangeItemVariant( selectedItem.uuid, productSlug, productId ) }
+							selected={ productId === selectedItem.product_id }
+						>
+							<span>{ variantLabel }</span>
+							<span>{ variantPrice }</span>
+						</Option>
+					) ) }
+				</OptionList>
+			) }
 		</Dropdown>
 	);
 };
