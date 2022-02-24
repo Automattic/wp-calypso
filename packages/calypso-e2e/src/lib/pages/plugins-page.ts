@@ -12,6 +12,10 @@ const selectors = {
 	annualPricingSelect: 'a[data-bold-text^="Annual price"]',
 	monthlyPricing: '.plugins-browser-item__period:text("monthly")',
 	annualPricing: '.plugins-browser-item__period:text("per year")',
+	searchIcon: '.search-component__open-icon',
+	searchInput: 'input[placeholder="Try searching ‘ecommerce’"]',
+	searchResult: ( text: string ) => `.plugins-browser-item__title:text("${ text }")`,
+	searchResultTitle: ( text: string ) => `:text("Search results for ${ text }")`,
 };
 
 /**
@@ -104,5 +108,22 @@ export class PluginsPage {
 	 */
 	async validateIsAnnualPricing(): Promise< void > {
 		await this.page.waitForSelector( selectors.annualPricing );
+	}
+
+	/**
+	 * Search
+	 */
+	async search( query: string ): Promise< void > {
+		await this.page.click( selectors.searchIcon );
+		await this.page.fill( selectors.searchInput, query );
+		await this.page.press( selectors.searchInput, 'Enter' );
+		await this.page.waitForSelector( selectors.searchResultTitle( query ) );
+	}
+
+	/**
+	 * Validate Expected Search Result Found
+	 */
+	async validateExpectedSearchResultFound( expectedResult: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.searchResult( expectedResult ) );
 	}
 }
