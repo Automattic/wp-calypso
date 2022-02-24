@@ -1,7 +1,7 @@
 import { PlansIntervalToggle } from '@automattic/plans-grid/src';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import type { FunctionComponent } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { PluginAnnualSaving } from 'calypso/my-sites/plugins/plugin-saving';
 import { IntervalLength } from './constants';
