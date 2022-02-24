@@ -465,10 +465,6 @@ $autobar-height: 20px;
 		height: 34px;
 		margin-top: 6px;
 	}
-
-	@include breakpoint-deprecated( '<480px' ) {
-		display: none;
-	}
 }
 
 .masterbar__item-me {

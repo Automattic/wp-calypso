@@ -1,13 +1,21 @@
+import { withMobileBreakpoint } from '@automattic/viewport-react';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { ProvideExperimentData } from 'calypso/lib/explat';
+import { userCan } from 'calypso/lib/site/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	getSite,
+	getSitePlanSlug,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MasterbarItem from './item';
 
@@ -26,7 +34,16 @@ class MasterbarItemPlanUpsell extends Component {
 	};
 
 	render() {
-		const { siteSlug, isP2, className, isJetpack, tooltip, planSlug } = this.props;
+		const {
+			plansPath,
+			currentRoute,
+			isP2,
+			className,
+			isJetpackNotAtomic,
+			tooltip,
+			isMobile,
+			planSlug,
+		} = this.props;
 
 		const plansUpsells = [
 			'free_plan',
@@ -39,8 +56,17 @@ class MasterbarItemPlanUpsell extends Component {
 			'value_bundle',
 			'business-bundle',
 		];
-		const showPlanUpsell = ! isP2 && ! isJetpack && plansUpsells.includes( planSlug );
-		const plansUpsellPath = '/plans/' + siteSlug;
+
+		const restrictedRoutes = [ '/plans', '/checkout' ];
+		const isRestrictedRoute =
+			-1 !== restrictedRoutes.findIndex( ( route ) => currentRoute.startsWith( route ) );
+
+		const showPlanUpsell =
+			! isRestrictedRoute &&
+			! isMobile &&
+			! isP2 &&
+			! isJetpackNotAtomic &&
+			plansUpsells.includes( planSlug );
 
 		if ( ! showPlanUpsell ) {
 			return null;
@@ -63,7 +89,7 @@ class MasterbarItemPlanUpsell extends Component {
 						'treatment' === variation && (
 							<MasterbarItem
 								ref={ this.planUpsellButtonRef }
-								url={ plansUpsellPath }
+								url={ plansPath }
 								onClick={ this.clickPlanUpsell }
 								className={ className }
 								tooltip={ tooltip }
@@ -78,19 +104,33 @@ class MasterbarItemPlanUpsell extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteId = selectedSiteId || getPrimarySiteId( state );
-		const currentPlan = getCurrentPlan( state, siteId );
-		const planSlug = currentPlan?.productSlug || '';
+export default withMobileBreakpoint(
+	connect(
+		( state, ownProps ) => {
+			let siteId = getSelectedSiteId( state );
+			const site = getSite( state, siteId );
 
-		return {
-			siteSlug: getSiteSlug( state, siteId ),
-			isP2: isSiteWPForTeams( state, siteId ),
-			isJetpack: isJetpackSite( state, siteId ),
-			planSlug,
-		};
-	},
-	{ recordTracksEvent }
-)( MasterbarItemPlanUpsell );
+			if ( ! userCan( 'manage_options', site ) ) {
+				siteId = getPrimarySiteId( state );
+			}
+
+			const planSlug = getSitePlanSlug( state, siteId ) || '';
+
+			let plansPath = '/plans/';
+			if ( 'ecommerce-bundle-monthly' === planSlug ) {
+				plansPath += 'yearly/';
+			}
+			plansPath += getSiteSlug( state, siteId );
+
+			return {
+				isP2: isSiteWPForTeams( state, siteId ),
+				isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
+				planSlug,
+				isMobile: ownProps.isBreakpointActive,
+				plansPath,
+				currentRoute: getCurrentRoute( state ),
+			};
+		},
+		{ recordTracksEvent }
+	)( MasterbarItemPlanUpsell )
+);
