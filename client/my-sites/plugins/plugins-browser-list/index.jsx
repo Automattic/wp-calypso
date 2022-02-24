@@ -31,7 +31,6 @@ const PluginsBrowserList = ( {
 	size,
 	spotlightPlugin,
 	spotlightPluginFetched,
-	activePlugins,
 } ) => {
 	const isWide = useBreakpoint( '>1280px' );
 	const { __ } = useI18n();
@@ -40,7 +39,6 @@ const PluginsBrowserList = ( {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
 			return (
 				<PluginBrowserItem
-					activePlugins={ activePlugins }
 					site={ site }
 					key={ plugin.slug + n }
 					plugin={ plugin }

@@ -20,7 +20,7 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
@@ -193,12 +193,12 @@ const InstalledInOrPricing = ( {
 	currentSites,
 } ) => {
 	const translate = useTranslate();
-	const currentSite = currentSites.length === 1 ? currentSites[ 0 ] : null;
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const installedPlugins =
-		useSelector( ( state ) => getInstalledPlugins( state, [ currentSite?.ID ] ) ) || [];
-	const activePlugins = installedPlugins.filter(
-		( activePlugin ) => activePlugin.sites[ currentSite?.ID ]?.active
-	);
+		useSelector( ( state ) => getInstalledPlugins( state, [ selectedSiteId ] ) ) || [];
+	const activePlugins = selectedSiteId
+		? installedPlugins.filter( ( activePlugin ) => activePlugin.sites[ selectedSiteId ]?.active )
+		: [];
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
@@ -216,7 +216,7 @@ const InstalledInOrPricing = ( {
 								count: sitesWithPlugin.length,
 						  } ) }
 				</div>
-				{ currentSites?.length === 1 && (
+				{ selectedSiteId && (
 					<div className="plugins-browser-item__active">
 						<Badge type={ isActive ? 'success' : 'info' }>
 							{ isActive ? translate( 'Active' ) : translate( 'Inactive' ) }
