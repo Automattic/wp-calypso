@@ -209,7 +209,7 @@ const InstalledInOrPricing = ( {
 			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed">
 					<Gridicon icon="checkmark" size={ 14 } />
-					{ isWpcomPreinstalled || currentSites.length === 1
+					{ isWpcomPreinstalled || currentSites?.length === 1
 						? translate( 'Installed' )
 						: translate( 'Installed on %d site', 'Installed on %d sites', {
 								args: [ sitesWithPlugin.length ],
