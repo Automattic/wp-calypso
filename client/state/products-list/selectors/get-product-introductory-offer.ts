@@ -9,7 +9,6 @@ import type { AppState } from 'calypso/types';
  * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
  * @returns {import('./get-products-list').ProductIntroductoryOffer|null} - introductory offer details for the product, or null if no offer exists
  */
-
 export function getProductIntroductoryOffer(
 	state: AppState,
 	productSlug: string
