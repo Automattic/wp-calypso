@@ -79,7 +79,12 @@ export default function AssignLicenseForm( { sites }: any ): ReactElement {
 					>
 						{ translate( 'Assign later' ) }
 					</Button>
-					<Button primary onClick={ onAssignLicense } busy={ isSubmitting }>
+					<Button
+						primary
+						className="assign-license-form__assign-now"
+						busy={ isSubmitting }
+						onClick={ onAssignLicense }
+					>
 						{ translate( 'Assign to website' ) }
 					</Button>
 				</div>
