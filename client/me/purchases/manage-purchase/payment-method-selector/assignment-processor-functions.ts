@@ -204,7 +204,7 @@ interface PayPalSubmitData {
 
 function isValidPayPalData( data: unknown ): data is PayPalSubmitData {
 	const payPalData = data as PayPalSubmitData;
-	return !! payPalData.countryCode;
+	return payPalData.countryCode !== undefined;
 }
 
 export async function assignPayPalProcessor(
