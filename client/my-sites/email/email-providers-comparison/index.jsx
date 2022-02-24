@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -76,7 +75,10 @@ import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import {
+	getProductBySlug,
+	getProductIntroductoryOffer,
+} from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import {
 	getDomainsWithForwards,
@@ -111,6 +113,7 @@ class EmailProvidersComparison extends Component {
 		currencyCode: PropTypes.string,
 		domain: PropTypes.object,
 		domainName: PropTypes.string,
+		gSuiteIntroductoryOffer: PropTypes.object,
 		gSuiteProduct: PropTypes.object,
 		hasCartDomain: PropTypes.bool,
 		isGSuiteSupported: PropTypes.bool.isRequired,
@@ -355,13 +358,13 @@ class EmailProvidersComparison extends Component {
 		);
 	}
 
-	getAvailableDiscountForGoogle(
+	getAvailableDiscountForGoogle( {
 		currencyCode,
 		isEligibleForFreeTrial,
 		gSuiteProduct,
 		productIsDiscounted,
-		standardPrice
-	) {
+		standardPrice,
+	} ) {
 		const { translate } = this.props;
 
 		if ( productIsDiscounted ) {
@@ -434,6 +437,7 @@ class EmailProvidersComparison extends Component {
 		const {
 			currencyCode,
 			domain,
+			gSuiteIntroductoryOffer,
 			gSuiteProduct,
 			hasCartDomain,
 			isGSuiteSupported,
@@ -451,8 +455,7 @@ class EmailProvidersComparison extends Component {
 			return null;
 		}
 
-		const isEligibleForFreeTrial =
-			config.isEnabled( 'emails/google-workspace-1-month-trial' ) && hasCartDomain;
+		const isEligibleForFreeTrial = gSuiteIntroductoryOffer && hasCartDomain;
 
 		const productIsDiscounted = hasDiscount( gSuiteProduct );
 		const monthlyPrice = getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode );
@@ -481,13 +484,13 @@ class EmailProvidersComparison extends Component {
 				? formatCurrency( gSuiteProduct?.cost ?? null, currencyCode )
 				: getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode );
 
-		const discount = this.getAvailableDiscountForGoogle(
+		const discount = this.getAvailableDiscountForGoogle( {
 			currencyCode,
 			isEligibleForFreeTrial,
 			gSuiteProduct,
 			productIsDiscounted,
-			standardPrice
-		);
+			standardPrice,
+		} );
 
 		const starLabel = productIsDiscounted
 			? translate( '%(discount)d%% off!', {
@@ -934,6 +937,10 @@ export default connect(
 			domain,
 			domainName,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
+			gSuiteIntroductoryOffer: getProductIntroductoryOffer(
+				state,
+				GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+			),
 			gSuiteProduct,
 			hasCartDomain,
 			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
