@@ -6,6 +6,7 @@ import { AccordionSectionProps } from './types';
 interface AccordionFormSectionProps< T > extends AccordionSectionProps< T > {
 	isExpanded: boolean;
 	isTouched: boolean;
+	showSubmit: boolean;
 	onOpen: () => void;
 	onNext: () => void;
 	blockNavigation?: boolean;
@@ -114,11 +115,15 @@ export default function AccordionFormSection< T >( props: AccordionFormSectionPr
 				<SectionContent>
 					{ props.component ? props.component : props.children }
 					<ButtonsContainer>
-						<NextButton onClick={ props.onNext } disabled={ props.blockNavigation }>
-							{ translate( 'Next' ) }
-							<Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } />
+						<NextButton
+							primary={ props.showSubmit }
+							onClick={ props.onNext }
+							disabled={ props.blockNavigation }
+						>
+							{ props.showSubmit ? translate( 'Submit' ) : translate( 'Next' ) }
+							{ ! props.showSubmit && <Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } /> }
 						</NextButton>
-						{ props.showSkip && (
+						{ props.showSkip && ! props.showSubmit && (
 							<SkipLink onClick={ () => ( props.blockNavigation ? null : props.onNext() ) }>
 								{ translate( 'Skip' ) }
 							</SkipLink>
