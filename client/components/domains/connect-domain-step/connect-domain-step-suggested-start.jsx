@@ -13,9 +13,9 @@ import {
 } from 'calypso/components/domains/connect-domain-step/constants';
 import FoldableCard from 'calypso/components/foldable-card';
 import MaterialIcon from 'calypso/components/material-icon';
+import { isSubdomain } from 'calypso/lib/domains';
 import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isSubdomain } from 'calypso/lib/domains';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
 
 import './style.scss';
@@ -39,7 +39,7 @@ export default function ConnectDomainStepSuggestedStart( {
 
 	const message = isSubdomain( domain )
 		? __(
-				'This is the easiest way to connect your subdomain, using NS records. If needed you can also use our <a>advanced setup</a>, using CNAME records.'
+				'This is the easiest way to connect your subdomain, using NS records. If needed you can also use our <a>advanced setup</a>, using A & CNAME records.'
 		  )
 		: __(
 				'This is the easiest way to connect your domain, using name servers. If needed you can also use our <a>advanced setup</a>, using root A & CNAME records.'

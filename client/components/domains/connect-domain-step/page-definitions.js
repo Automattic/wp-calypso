@@ -162,7 +162,7 @@ export const connectASubdomainStepsDefinition = {
 		mode: modeType.ADVANCED,
 		step: stepType.UPDATE_CNAME_RECORDS,
 		get name() {
-			return __( 'Update CNAME records' );
+			return __( 'Update A & CNAME records' );
 		},
 		component: ConnectDomainStepAdvancedRecords,
 		prev: stepSlug.SUBDOMAIN_ADVANCED_LOGIN,

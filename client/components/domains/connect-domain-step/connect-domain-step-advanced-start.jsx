@@ -27,7 +27,7 @@ export default function ConnectDomainStepAdvancedStart( {
 
 	const message = isSubdomain( domain )
 		? __(
-				'This is the advanced way to connect your subdomain, using CNAME records. We advise using our <a>suggested setup</a> instead, with NS records.'
+				'This is the advanced way to connect your subdomain, using A & CNAME records. We advise using our <a>suggested setup</a> instead, with NS records.'
 		  )
 		: __(
 				'This is the advanced way to connect your domain, using root A records & CNAME records. We advise using our <a>suggested setup</a> instead, with WordPress.com name servers.'
