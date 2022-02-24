@@ -70,14 +70,32 @@ const selectors = {
  */
 export class GutenbergEditorPage {
 	private page: Page;
+	private throwIfBootedFromGutenframe: boolean;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
+	 * @param {Object} [options] options
+	 * @param {boolean} [options.throwIfBootedFromGutenframe=false] indicates that staying
+	 * on the Gutenframe is strictly required and if the editor is loaded from a WPAdmin
+	 * route or is booted to it, then an error will be thrown and the test will fail
+	 * because the iframe will not be found on the page. Defaults to `false`, which means
+	 * it will try to get the top frame if on WPadmin (non-wordpress.com URL) or if it
+	 * can't get hold of the Gutenframe (i.e it redirected because of an error). This
+	 * should allow the test to finally get hold of the editor even if the Gutenframe
+	 * can't be found.
 	 */
-	constructor( page: Page ) {
+	constructor(
+		page: Page,
+		options: { throwIfBootedFromGutenframe: boolean } = {
+			throwIfBootedFromGutenframe: false,
+		}
+	) {
+		const { throwIfBootedFromGutenframe } = options;
+
 		this.page = page;
+		this.throwIfBootedFromGutenframe = throwIfBootedFromGutenframe;
 	}
 
 	/**
@@ -137,16 +155,18 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Return the editor frame. Could be the top-level frame.
-	 * an iframe (Gutenframe).
+	 * Return the editor frame. Could be the top-level frame (i.e WPAdmin).
+	 * an iframe (Calypso/Gutenframe).
 	 *
 	 * @returns {Promise<Frame>} frame holding the editor.
 	 */
 	async getEditorFrame(): Promise< Frame > {
-		// If we're not in the Gutenframe context (i.e not Calypso), then
-		// just return the top frame, no need to try to locate the iframe.
-		if ( ! this.page.url().startsWith( 'https://wordpress.com' ) ) {
-			return await this.page.mainFrame();
+		if ( ! this.throwIfBootedFromGutenframe ) {
+			// If we're not in the Gutenframe context (i.e not Calypso), then
+			// just return the top frame, no need to try to locate the iframe.
+			if ( ! this.page.url().startsWith( 'https://wordpress.com' ) ) {
+				return await this.page.mainFrame();
+			}
 		}
 
 		const locator = this.page.locator( selectors.editorFrame );
@@ -157,13 +177,17 @@ export class GutenbergEditorPage {
 			} )
 			.then( async ( elementHandle ) => ( await elementHandle!.contentFrame() ) as Frame )
 			.catch( async () => {
-				// The CalipsoifyIframe component will redirect to the plain WPAdmin page if
-				// there's an error or if the iframe takes too long to completely load. The
-				// goal here is to ge hold of the editor and not test any aspects related to
-				// the Gutenframe, so we return the `mainFrame` to allow the test to access
-				// the editor in the WPAdmin page.
-				console.info( 'Could not locate editor iframe. Returning the top-level frame instead' );
-				return await this.page.mainFrame();
+				if ( this.throwIfBootedFromGutenframe ) {
+					throw new Error( 'Could not locate editor iframe' );
+				} else {
+					// The CalipsoifyIframe component will redirect to the plain WPAdmin page if
+					// there's an error or if the iframe takes too long to completely load. The
+					// goal here is to ge hold of the editor and not test any aspects related to
+					// the Gutenframe, so we return the `mainFrame` to allow the test to access
+					// the editor in the WPAdmin page.
+					console.info( 'Could not locate editor iframe. Returning the top-level frame instead' );
+					return await this.page.mainFrame();
+				}
 			} );
 	}
 
