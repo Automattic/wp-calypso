@@ -100,14 +100,14 @@ export function createPayPalMethod(
 	return {
 		id: 'paypal',
 		label: (
-			<PaypalLabel
+			<PayPalLabel
 				labelText={ args.labelText }
 				store={ args.shouldShowTaxFields ? args.store : undefined }
 			/>
 		),
-		submitButton: <PaypalSubmitButton />,
+		submitButton: <PayPalSubmitButton />,
 		activeContent: args.shouldShowTaxFields ? <PayPalTaxFields /> : undefined,
-		inactiveContent: <PaypalSummary />,
+		inactiveContent: <PayPalSummary />,
 		getAriaLabel: ( __ ) => __( 'PayPal' ),
 	};
 }
@@ -135,7 +135,7 @@ const PayPalFieldsWrapper = styled.div`
 	}
 `;
 
-export function PayPalTaxFields(): JSX.Element {
+function PayPalTaxFields(): JSX.Element {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList( [] );
@@ -163,7 +163,7 @@ export function PayPalTaxFields(): JSX.Element {
 	);
 }
 
-export function PaypalLabel( {
+function PayPalLabel( {
 	labelText = null,
 	store,
 }: {
@@ -179,7 +179,7 @@ export function PaypalLabel( {
 				{ store && <TaxLabel /> }
 			</div>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
-				<PaypalLogo />
+				<PayPalLogo />
 			</PaymentMethodLogos>
 		</Fragment>
 	);
@@ -196,7 +196,7 @@ function TaxLabel() {
 	);
 }
 
-export function PaypalSubmitButton( {
+function PayPalSubmitButton( {
 	disabled,
 	onClick,
 }: {
@@ -210,7 +210,7 @@ export function PaypalSubmitButton( {
 	const handleButtonPress = () => {
 		if ( ! onClick ) {
 			throw new Error(
-				'Missing onClick prop; PaypalSubmitButton must be used as a payment button in CheckoutSubmitButton'
+				'Missing onClick prop; PayPalSubmitButton must be used as a payment button in CheckoutSubmitButton'
 			);
 		}
 		onClick( 'paypal', {
@@ -250,16 +250,16 @@ function PayPalButtonContents( {
 	return <span>{ __( 'Please wait…' ) }</span>;
 }
 
-const ButtonPayPalIcon = styled( PaypalLogo )`
+const ButtonPayPalIcon = styled( PayPalLogo )`
 	transform: translateY( 2px );
 `;
 
-function PaypalSummary(): JSX.Element {
+function PayPalSummary(): JSX.Element {
 	const { __ } = useI18n();
 	return <>{ __( 'PayPal' ) }</>;
 }
 
-function PaypalLogo( { className }: { className?: string } ): JSX.Element {
+function PayPalLogo( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			className={ className }
