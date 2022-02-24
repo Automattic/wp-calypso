@@ -40,7 +40,7 @@ const DialogContent = styled.div`
 const DialogButton = styled( Button )`
 	box-shadow: 0px 1px 2px rgba( 0, 0, 0, 0.05 );
 	border-radius: 5px;
-	padding: 10px 64px;
+	padding: ${ ( props ) => ( props.primary ? '10px 64px' : '10px 32px' ) };
 	--color-accent: #117ac9;
 	--color-accent-60: #0e64a5;
 	.gridicon {
@@ -138,7 +138,7 @@ function WebsiteContentStep( {
 	const generatedSections = generatedSectionsCallback();
 
 	const dialogButtons = [
-		<DialogButton borderless onClick={ () => setIsConfirmDialogOpen( false ) }>
+		<DialogButton onClick={ () => setIsConfirmDialogOpen( false ) }>
 			{ translate( 'Cancel' ) }
 		</DialogButton>,
 		<DialogButton primary onClick={ onSubmit }>
