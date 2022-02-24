@@ -14,7 +14,10 @@ import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
-import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import {
+	getSitesWithPlugin,
+	getPlugins as getInstalledPlugins,
+} from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -33,7 +36,6 @@ const PluginsBrowserListElement = ( props ) => {
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
 		billingPeriod,
-		activePlugins,
 	} = props;
 
 	const translate = useTranslate();
@@ -148,7 +150,6 @@ const PluginsBrowserListElement = ( props ) => {
 				<div className="plugins-browser-item__footer">
 					{ variant === PluginsBrowserElementVariant.Extended && (
 						<InstalledInOrPricing
-							activePlugins={ activePlugins }
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
 							plugin={ plugin }
@@ -184,7 +185,6 @@ const PluginsBrowserListElement = ( props ) => {
 };
 
 const InstalledInOrPricing = ( {
-	activePlugins,
 	sitesWithPlugin,
 	isWpcomPreinstalled,
 	plugin,
@@ -193,9 +193,17 @@ const InstalledInOrPricing = ( {
 	currentSites,
 } ) => {
 	const translate = useTranslate();
+	const currentSite = currentSites.length === 1 ? currentSites[ 0 ] : null;
+	const installedPlugins =
+		useSelector( ( state ) => getInstalledPlugins( state, [ currentSite?.ID ] ) ) || [];
+	const activePlugins = installedPlugins.filter(
+		( activePlugin ) => activePlugin.sites[ currentSite?.ID ]?.active
+	);
+
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
+
 		const isActive = !! activePlugins.find( ( activePlugin ) => activePlugin.slug === plugin.slug );
 
 		return (
