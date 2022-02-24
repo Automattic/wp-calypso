@@ -28,6 +28,16 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins' ), function () {
 			await pluginsPage.validateHasSection( section );
 		}
 	);
+
+	it( 'Can browse all popular plugins', async function () {
+		await pluginsPage.clickBrowseAllPopular();
+		await pluginsPage.validateHasSection( 'All Popular Plugins' );
+	} );
+
+	it( 'Can return via breadcrumb', async function () {
+		await pluginsPage.clickPluginsBreadcrumb();
+		await pluginsPage.validateHasSection( 'Premium' );
+	} );
 } );
 
 describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:wpcom-site' ), function () {

@@ -5,6 +5,8 @@ import { getCalypsoURL } from '../../data-helper';
 const selectors = {
 	sectionTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
 	sectionTitles: '.plugins-browser-list__title',
+	browseAllPopular: 'a[href^="/plugins/popular"]',
+	breadcrumb: ( section: string ) => `.plugins-browser__header li a:text("${ section }") `,
 };
 
 /**
@@ -53,5 +55,19 @@ export class PluginsPage {
 			const title = await titles.nth( i ).innerText();
 			assert.notEqual( title, section );
 		}
+	}
+
+	/**
+	 * Click Browse All
+	 */
+	async clickBrowseAllPopular(): Promise< void > {
+		await this.page.click( selectors.browseAllPopular );
+	}
+
+	/**
+	 * Click the Plugins breadcrumb
+	 */
+	async clickPluginsBreadcrumb(): Promise< void > {
+		await this.page.click( selectors.breadcrumb( 'Plugins' ) );
 	}
 }
