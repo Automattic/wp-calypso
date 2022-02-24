@@ -249,13 +249,13 @@ function useVariantPlanProductSlugs(
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
 	switch ( term ) {
 		case TERM_BIENNIALLY:
-			return String( translate( 'Two years' ) );
+			return String( translate( 'Billed Bi-Yearly' ) );
 
 		case TERM_ANNUALLY:
-			return String( translate( 'One year' ) );
+			return String( translate( 'Billed Yearly' ) );
 
 		case TERM_MONTHLY:
-			return String( translate( 'One month' ) );
+			return String( translate( 'Billed Monthly' ) );
 		default:
 			return '';
 	}
