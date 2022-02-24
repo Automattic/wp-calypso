@@ -109,7 +109,7 @@ export function createPayPalMethod(
 		submitButton: <PayPalSubmitButton />,
 		activeContent: args.shouldShowTaxFields ? <PayPalTaxFields /> : undefined,
 		inactiveContent: <PayPalSummary />,
-		getAriaLabel: ( __ ) => __( 'PayPal' ),
+		getAriaLabel: () => 'PayPal',
 	};
 }
 
@@ -171,12 +171,10 @@ function PayPalLabel( {
 	labelText?: string | null;
 	store?: PayPalStore;
 } ): JSX.Element {
-	const { __ } = useI18n();
-
 	return (
 		<Fragment>
 			<div>
-				<span>{ labelText || __( 'PayPal' ) }</span>
+				<span>{ labelText || 'PayPal' }</span>
 				{ store && <TaxLabel /> }
 			</div>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
@@ -256,8 +254,7 @@ const ButtonPayPalIcon = styled( PayPalLogo )`
 `;
 
 function PayPalSummary(): JSX.Element {
-	const { __ } = useI18n();
-	return <>{ __( 'PayPal' ) }</>;
+	return <>PayPal</>;
 }
 
 function PayPalLogo( { className }: { className?: string } ): JSX.Element {
