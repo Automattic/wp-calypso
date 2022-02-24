@@ -205,6 +205,8 @@ function PayPalSubmitButton( {
 	const { formStatus } = useFormStatus();
 	const { transactionStatus } = useTransactionStatus();
 	const [ items ] = useLineItems();
+	const postalCode = useSelect( ( select ) => select( storeKey )?.getPostalCode() );
+	const countryCode = useSelect( ( select ) => select( storeKey )?.getCountryCode() );
 
 	const handleButtonPress = () => {
 		if ( ! onClick ) {
@@ -214,6 +216,8 @@ function PayPalSubmitButton( {
 		}
 		onClick( storeKey, {
 			items,
+			postalCode,
+			countryCode,
 		} );
 	};
 	return (
