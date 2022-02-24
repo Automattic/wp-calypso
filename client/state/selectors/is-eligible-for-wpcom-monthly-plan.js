@@ -21,11 +21,7 @@ export default createSelector(
 			return true;
 		}
 
-		return (
-			( isAtomicSite( state, siteId ) && currentPlanSlug === 'jetpack_free' ) ||
-			isWpComMonthlyPlan( currentPlanSlug ) ||
-			isWpComFreePlan( currentPlanSlug )
-		);
+		return isWpComMonthlyPlan( currentPlanSlug ) || isWpComFreePlan( currentPlanSlug );
 	},
 	( state, siteId = getSelectedSiteId( state ) ) => [
 		isAtomicSite( state, siteId ),

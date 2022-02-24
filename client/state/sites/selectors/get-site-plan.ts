@@ -36,16 +36,6 @@ export default function getSitePlan(
 	}
 
 	if ( site.plan?.expired ) {
-		if ( site.jetpack ) {
-			return {
-				product_id: 2002,
-				product_slug: 'jetpack_free',
-				product_name_short: 'Free',
-				free_trial: false,
-				expired: false,
-			};
-		}
-
 		return {
 			product_id: 1,
 			product_slug: 'free_plan',
