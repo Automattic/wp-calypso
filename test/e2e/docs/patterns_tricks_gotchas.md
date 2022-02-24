@@ -37,7 +37,7 @@ it( 'Active tab is "foo"', async function () {
 } );
 ```
 
-**Be Warned!** This is not always as easy as it seems! Many of Playwright's functions that check state (like `isVisible()`) return _immediately_. This can be really tricky with async React apps like Calypso, which often require some measure of waiting for state to be propogated and components to be rendered.
+Be Warned!!! This is not always as easy as it seems! Many of Playwright's functions that check state (like `isVisible()`) return _immediately_. This can be really tricky with async React apps like Calypso, which often require some measure of waiting for state to be propogated and components to be rendered.
 
 For that reason, a more wait-safe option you will often see is...
 

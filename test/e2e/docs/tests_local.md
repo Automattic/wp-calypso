@@ -72,6 +72,10 @@ export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,eCommerceUser,defaultUse
 
 ### Use the mobile viewport
 
+By default, tests run against the `desktop` viewport size, approximately 1920x1080. The following viewports are currently supported:
+- mobile
+- desktop
+
 ```
 VIEWPORT_NAME=mobile yarn jest ...
 ```
