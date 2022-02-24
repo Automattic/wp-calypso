@@ -18,7 +18,6 @@ export default function ConnectDomainStepAdvancedRecords( {
 	mode,
 	onVerifyConnection,
 	progressStepList,
-	selectedSite,
 	showErrors,
 	verificationInProgress,
 	verificationStatus,
@@ -48,13 +47,8 @@ export default function ConnectDomainStepAdvancedRecords( {
 	const cnameRecordsSubdomains = [
 		{
 			type: 'CNAME',
-			name: domain,
-			value: selectedSite.wpcom_url,
-		},
-		{
-			type: 'CNAME',
 			name: 'www.' + domain,
-			value: selectedSite.wpcom_url,
+			value: domain,
 		},
 	];
 
@@ -126,8 +120,16 @@ export default function ConnectDomainStepAdvancedRecords( {
 		return (
 			<>
 				<p className={ className + '__text' }>
+					{ __( "Find the A records on your subdomain's settings page." ) }
+					<br />
 					{ __(
-						"Find the CNAME records on your subdomain's settings page and replace them with the following values:"
+						'Replace IP addresses (A records) of your subdomain to use the following values:'
+					) }
+				</p>
+				{ renderRecordsList( aRecords ) }
+				<p className={ className + '__text' }>
+					{ __(
+						"Next find the CNAME records on your subdomain's settings page and replace them with the following value:"
 					) }
 				</p>
 				{ renderRecordsList( cnameRecordsSubdomains ) }

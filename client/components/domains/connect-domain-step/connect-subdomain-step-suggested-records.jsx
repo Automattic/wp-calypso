@@ -113,7 +113,7 @@ export default function ConnectSubdomainStepSuggestedRecords( {
 			) }
 			<p className={ className + '__text' }>
 				{ __(
-					"Find the NS records on your domain's settings page and replace them with the following values:"
+					"Find the NS records on your subdomain's settings page and replace them with the following values:"
 				) }
 			</p>
 			{ renderRecordsList( nsRecords ) }
