@@ -216,7 +216,7 @@ const InstalledInOrPricing = ( {
 								count: sitesWithPlugin.length,
 						  } ) }
 				</div>
-				{ currentSites.length === 1 && (
+				{ currentSites?.length === 1 && (
 					<div className="plugins-browser-item__active">
 						<Badge type={ isActive ? 'success' : 'info' }>
 							{ isActive ? translate( 'Active' ) : translate( 'Inactive' ) }
