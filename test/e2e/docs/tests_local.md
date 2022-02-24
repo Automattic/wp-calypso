@@ -14,6 +14,7 @@
     - [Individual spec files](#individual-spec-files)
     - [Test Group](#test-group)
   - [Advanced techniques](#advanced-techniques)
+    - [Use the mobile viewport](#use-the-mobile-viewport)
     - [Save authentication cookies](#save-authentication-cookies)
     - [Target local webapp](#target-local-webapp)
     - [Debug mode](#debug-mode)
@@ -67,6 +68,16 @@ Specify accounts to be pre-authenticated by saving authentication cookies and re
 
 ```
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,eCommerceUser,defaultUser
+```
+
+### Use the mobile viewport
+
+By default, tests run against the `desktop` viewport size, approximately 1920x1080. The following viewports are currently supported:
+- mobile
+- desktop
+
+```
+VIEWPORT_NAME=mobile yarn jest ...
 ```
 
 ### Target local webapp
