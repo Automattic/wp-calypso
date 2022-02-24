@@ -48,6 +48,11 @@ const initialReduxState = {
 			lists: {},
 			fetchingLists: {},
 		},
+		installed: {
+			isRequesting: {},
+			plugins: {},
+			status: {},
+		},
 	},
 	ui: { selectedSiteId: 1 },
 	sites: {
