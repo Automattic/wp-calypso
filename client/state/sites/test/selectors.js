@@ -1901,8 +1901,8 @@ describe( 'selectors', () => {
 			);
 
 			chaiExpect( sitePlan ).to.eql( {
-				product_id: 2002,
-				product_slug: 'jetpack_free',
+				product_id: 1,
+				product_slug: 'free_plan',
 				product_name_short: 'Free',
 				free_trial: false,
 				expired: false,
