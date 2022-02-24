@@ -150,15 +150,15 @@
 	}
 
 	.badge--success {
-		color: var(--studio-celadon-80);
+		color: var( --studio-celadon-80 );
 		font-weight: 600;
 		background-color: #abe8bc; // TODO: add this color somewhere
 	}
 
 	.badge--info {
-		color: var(--color-neutral-80);
+		color: var( --color-neutral-80 );
 		font-weight: 600;
-		background-color: var(--color-neutral-10);
+		background-color: var( --color-neutral-10 );
 	}
 }
 
