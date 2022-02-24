@@ -6,12 +6,31 @@ import { useSelector } from 'react-redux';
 import {
 	useCreateCreditCard,
 	useCreateExistingCards,
-	useCreatePayPal,
 } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import {
+	createPayPalMethod,
+	createPayPalStore,
+} from 'calypso/my-sites/checkout/composite-checkout/payment-methods/paypal';
 import { getStoredCards } from 'calypso/state/stored-cards/selectors';
 import useFetchAvailablePaymentMethods from './use-fetch-available-payment-methods';
 import type { PaymentMethod } from '@automattic/composite-checkout';
+
+// TODO: replace useCreatePayPal with this but for now they use different imports
+export function useCreatePayPalWithTaxFields( {
+	labelText,
+	shouldShowTaxFields,
+}: {
+	labelText?: string | null;
+	shouldShowTaxFields?: boolean;
+} ): PaymentMethod {
+	const store = useMemo( () => createPayPalStore(), [] );
+	const paypalMethod = useMemo(
+		() => createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
+		[ labelText, shouldShowTaxFields, store ]
+	);
+	return paypalMethod;
+}
 
 export default function useCreateAssignablePaymentMethods(
 	currentPaymentMethodId: string
@@ -36,7 +55,8 @@ export default function useCreateAssignablePaymentMethods(
 		allowUseForAllSubscriptions: true,
 	} );
 
-	const payPalMethod = useCreatePayPal( {
+	const payPalMethod = useCreatePayPalWithTaxFields( {
+		shouldShowTaxFields: true,
 		labelText:
 			currentPaymentMethodId === 'paypal-existing'
 				? String( translate( 'New PayPal account' ) )
