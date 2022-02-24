@@ -131,6 +131,10 @@ p.assign-license-form__description {
 	margin-bottom: 0.5rem;
 	white-space: nowrap;
 
+	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
+	border-width: 1.5px !important;
+	border-color: transparent;
+
 	@include breakpoint-deprecated( '>660px' ) {
 		margin-bottom: 0;
 	}

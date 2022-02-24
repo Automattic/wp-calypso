@@ -77,7 +77,13 @@ export default function IssueLicenseForm(): ReactElement {
 							) }
 						</p>
 						<div className="issue-license-form__controls">
-							<Button primary onClick={ onIssueLicense }>
+							<Button
+								primary
+								className="issue-license-form__select-license"
+								disabled={ ! product }
+								busy={ issueLicense.isLoading }
+								onClick={ onIssueLicense }
+							>
 								{ translate( 'Select License' ) }
 							</Button>
 						</div>
