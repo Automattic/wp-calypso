@@ -130,12 +130,14 @@ export const connectASubdomainStepsDefinition = {
 		step: stepType.CONNECTED,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE,
+		singleColumnLayout: true,
 	},
 	[ stepSlug.SUBDOMAIN_SUGGESTED_VERIFYING ]: {
 		mode: modeType.SUGGESTED,
 		step: stepType.VERIFYING,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE,
+		singleColumnLayout: true,
 	},
 
 	// Advanced flow
@@ -170,12 +172,14 @@ export const connectASubdomainStepsDefinition = {
 		step: stepType.CONNECTED,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.SUBDOMAIN_ADVANCED_UPDATE,
+		singleColumnLayout: true,
 	},
 	[ stepSlug.SUBDOMAIN_ADVANCED_VERIFYING ]: {
 		mode: modeType.ADVANCED,
 		step: stepType.VERIFYING,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.SUBDOMAIN_ADVANCED_UPDATE,
+		singleColumnLayout: true,
 	},
 };
 
