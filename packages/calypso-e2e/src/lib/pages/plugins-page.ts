@@ -7,6 +7,11 @@ const selectors = {
 	sectionTitles: '.plugins-browser-list__title',
 	browseAllPopular: 'a[href^="/plugins/popular"]',
 	breadcrumb: ( section: string ) => `.plugins-browser__header li a:text("${ section }") `,
+	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
+	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
+	annualPricingSelect: 'a[data-bold-text^="Annual price"]',
+	monthlyPricing: '.plugins-browser-item__period:text("monthly")',
+	annualPricing: '.plugins-browser-item__period:text("per year")',
 };
 
 /**
@@ -69,5 +74,35 @@ export class PluginsPage {
 	 */
 	async clickPluginsBreadcrumb(): Promise< void > {
 		await this.page.click( selectors.breadcrumb( 'Plugins' ) );
+	}
+
+	/**
+	 * Select monthly
+	 */
+	async selectMonthlyPricing(): Promise< void > {
+		await this.page.click( selectors.pricingToggle );
+		await this.page.click( selectors.monthlyPricingSelect );
+	}
+
+	/**
+	 * Select annual
+	 */
+	async selectAnnualPricing(): Promise< void > {
+		await this.page.click( selectors.pricingToggle );
+		await this.page.click( selectors.annualPricingSelect );
+	}
+
+	/**
+	 * Check Is Monthly Pricing
+	 */
+	async validateIsMonthlyPricing(): Promise< void > {
+		await this.page.waitForSelector( selectors.monthlyPricing );
+	}
+
+	/**
+	 * Check Is Annual Pricing
+	 */
+	async validateIsAnnualPricing(): Promise< void > {
+		await this.page.waitForSelector( selectors.annualPricing );
 	}
 }
