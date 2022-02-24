@@ -200,7 +200,6 @@ const InstalledInOrPricing = ( {
 		( activePlugin ) => activePlugin.sites[ currentSite?.ID ]?.active
 	);
 
-
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 
