@@ -35,7 +35,7 @@ type Props = {
 	onChange: ( selectedValue: 'MONTHLY' | 'ANNUALLY' ) => void;
 	billingPeriod: IntervalLength;
 	compact: boolean;
-	plugin?: object;
+	plugin?: { variations?: { yearly?: { product_slug: string }; monthly?: { product_slug: string } } };
 };
 
 const BillingIntervalSwitcher: FunctionComponent< Props > = ( {
