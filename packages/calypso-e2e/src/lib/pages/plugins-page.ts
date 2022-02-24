@@ -12,7 +12,7 @@ const selectors = {
 	annualPricingSelect: 'a[data-bold-text^="Annual price"]',
 	monthlyPricing: '.plugins-browser-item__period:text("monthly")',
 	annualPricing: '.plugins-browser-item__period:text("per year")',
-	search: 'input[placeholder="Try searching ‘ecommerce’"]',
+	search: 'input[placeholder="Try searching ‘ecommerce’"]:visible',
 	searchResult: ( text: string ) => `.plugins-browser-item__title:text("${ text }")`,
 	searchResultTitle: ( text: string ) => `:text("Search results for ${ text }")`,
 };
