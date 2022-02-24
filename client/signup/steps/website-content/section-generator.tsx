@@ -1,3 +1,4 @@
+import { TranslateResult } from 'i18n-calypso';
 import {
 	AccordionSectionProps,
 	SectionGeneratorReturnType,
@@ -11,6 +12,15 @@ const generateWebsiteContentSections = (
 	elapsedSections = 0
 ) => {
 	const { translate, formValues, formErrors, onChangeField } = params;
+
+	const OPTIONAL_PAGES: Record< string, boolean > = { Contact: true };
+	const PAGE_LABELS: Record< string, TranslateResult > = {
+		Contact: translate(
+			"We'll add a standard contact form on this page, plus a comment box. " +
+				'If you would like text to appear above this form, please enter it below.'
+		),
+	};
+
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {
 		const fieldNumber = elapsedSections + index + 1;
 		const { title: pageTitle } = page;
@@ -24,11 +34,16 @@ const generateWebsiteContentSections = (
 			} ),
 			summary: page.content,
 			component: (
-				<PageDetails page={ page } formErrors={ formErrors } onChangeField={ onChangeField } />
+				<PageDetails
+					page={ page }
+					formErrors={ formErrors }
+					label={ PAGE_LABELS[ page.id ] || undefined }
+					onChangeField={ onChangeField }
+				/>
 			),
-			showSkip: false,
+			showSkip: !! OPTIONAL_PAGES[ page.id ],
 			validate: () => {
-				const isValid = Boolean( page.content?.length );
+				const isValid = OPTIONAL_PAGES[ page.id ] || Boolean( page.content?.length );
 				return {
 					result: isValid,
 					errors: {

@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -24,10 +24,12 @@ export const IMAGE_PREFIX = 'Image';
 export function PageDetails( {
 	page,
 	formErrors,
+	label,
 	onChangeField,
 }: {
 	page: PageData;
 	formErrors: ValidationErrors;
+	label: TranslateResult | undefined;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
 } ) {
 	const translate = useTranslate();
@@ -88,12 +90,12 @@ export function PageDetails( {
 				onChange={ onContentChange }
 				value={ page.content }
 				error={ formErrors[ fieldName ] }
-				label={ translate(
-					'Please provide the text you want to appear on your %(pageTitle)s page.',
-					{
+				label={
+					label ||
+					translate( 'Please provide the text you want to appear on your %(pageTitle)s page.', {
 						args: { pageTitle },
-					}
-				) }
+					} )
+				}
 			/>
 			<Label>
 				{ translate( 'Upload up to 3 images to be used on your %(pageTitle)s page.', {
