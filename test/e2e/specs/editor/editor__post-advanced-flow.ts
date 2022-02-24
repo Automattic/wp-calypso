@@ -94,7 +94,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Publish post', async function () {
-			postURL = await gutenbergEditorPage.publish( { update: true } );
+			postURL = await gutenbergEditorPage.publish();
 		} );
 
 		it( 'Published post contains additional post content', async function () {

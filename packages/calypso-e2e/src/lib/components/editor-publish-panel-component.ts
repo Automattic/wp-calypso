@@ -57,6 +57,11 @@ export class EditorPublishPanelComponent {
 	 */
 	async publish(): Promise< void > {
 		const publishButtonLocator = this.frameLocator.locator( selectors.publishButton );
+		// If the publish button in the before publish panel is not found, then
+		// perform nothing.
+		if ( ( await publishButtonLocator.count() ) === 0 ) {
+			return;
+		}
 		await publishButtonLocator.click();
 	}
 

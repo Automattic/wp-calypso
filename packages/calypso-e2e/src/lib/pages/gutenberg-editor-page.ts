@@ -30,12 +30,12 @@ const selectors = {
 	saveDraftButton: '.editor-post-save-draft',
 	saveDraftDisabledButton: 'button.editor-post-saved-state.is-saved[aria-disabled="true"]',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
-	publishButton: ( parentSelector: string ) =>
-		`${ parentSelector } button:text("Publish")[aria-disabled=false]`,
-	updateButton: 'button:text("Update")',
+	publishButton: `.editor-post-publish-button__button`,
+	// publishButton: ( parentSelector: string ) =>
+	// `${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 	switchToDraftButton: 'button.editor-post-switch-to-draft',
-	scheduleButton: ( parentSelector: string ) =>
-		`${ parentSelector } button:has-text("Schedule")[aria-disabled=false]`,
+	// scheduleButton: ( parentSelector: string ) =>
+	// 	`${ parentSelector } button:has-text("Schedule")[aria-disabled=false]`,
 
 	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
@@ -396,26 +396,14 @@ export class GutenbergEditorPage {
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {Promise<string>} The published URL.
 	 */
-	async publish( {
-		update = false,
-		visit = false,
-	}: { update?: boolean; visit?: boolean } = {} ): Promise< URL > {
+	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< URL > {
 		const frame = await this.getEditorFrame();
 
-		if ( update ) {
-			await frame.click( selectors.updateButton );
-		} else {
-			// The target button can have either one of the two strings:
-			// 	- Schedule
-			// 	- Publish
-			const initialPublishButton = `${ selectors.publishButton(
-				selectors.postToolbar
-			) }, ${ selectors.scheduleButton( selectors.postToolbar ) }`;
-
-			// Publishing a new article is a two-step process.
-			await frame.click( initialPublishButton );
-			await this.editorPublishPanelComponent.publish();
-		}
+		// Click on the main publish action button on the toolbar.
+		await frame.click( selectors.publishButton );
+		// Invoke the second stage of the publish step which handles the
+		// publish checklist panel if it is present.
+		await this.editorPublishPanelComponent.publish();
 
 		// In some cases the post may be published but the EditorPublishPanelComponent
 		// is either not present or forcibly dismissed due to a bug.
@@ -449,7 +437,7 @@ export class GutenbergEditorPage {
 		// Similar to Save Draft, the publish button temporarily becomes disabled
 		// while the unpublish process takes place. This waits for the publish button
 		// to again become enabled.
-		await frame.waitForSelector( selectors.publishButton( selectors.postToolbar ) );
+		await frame.waitForSelector( `${ selectors.publishButton }[aria-disabled=false]` );
 	}
 
 	/**
