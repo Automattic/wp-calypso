@@ -34,6 +34,8 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 		let gutenbergEditorPage: GutenbergEditorPage;
 		let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 
+		console.error( 'ACCOUNT: ', accountName );
+
 		describe( `Create a ${ visibility } page`, function () {
 			beforeAll( async function () {
 				page = await browser.newPage();

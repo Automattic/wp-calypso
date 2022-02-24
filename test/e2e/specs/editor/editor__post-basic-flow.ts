@@ -36,6 +36,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+
+		console.error( 'ACCOUNT: ', accountName );
 	} );
 
 	it( 'Go to the new post page', async function () {
