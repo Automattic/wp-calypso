@@ -498,6 +498,8 @@ export class LoginForm extends Component {
 			return this.renderWooCommerce();
 		}
 
+		const inPartnerCouponFlow = currentQuery?.redirect_after_auth?.includes( 'partnerCoupon' );
+
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
 				{ isCrowdsignalOAuth2Client( oauth2Client ) && (
@@ -651,13 +653,14 @@ export class LoginForm extends Component {
 					</Fragment>
 				) }
 
-				{ ( currentQuery?.skip_user || currentQuery?.allow_site_connection ) && (
-					<JetpackConnectSiteOnly
-						homeUrl={ currentQuery?.site }
-						redirectAfterAuth={ currentQuery?.redirect_after_auth }
-						source="login"
-					/>
-				) }
+				{ ( currentQuery?.skip_user || currentQuery?.allow_site_connection ) &&
+					! inPartnerCouponFlow && (
+						<JetpackConnectSiteOnly
+							homeUrl={ currentQuery?.site }
+							redirectAfterAuth={ currentQuery?.redirect_after_auth }
+							source="login"
+						/>
+					) }
 			</form>
 		);
 	}
