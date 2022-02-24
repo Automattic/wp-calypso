@@ -14,7 +14,7 @@ const PaymentMethodActions: FunctionComponent< Props > = () => {
 	const translate = useTranslate();
 
 	const renderDeleteAction = () => {
-		return <PopoverMenuItem>{ translate( 'Delete' ) }</PopoverMenuItem>;
+		return <PopoverMenuItem key="delete">{ translate( 'Delete' ) }</PopoverMenuItem>;
 	};
 
 	const renderActions = () => {
