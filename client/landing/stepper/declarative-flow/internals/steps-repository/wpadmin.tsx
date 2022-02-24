@@ -2,19 +2,19 @@ import { useI18n } from '@wordpress/react-i18n';
 import type { Step } from '../types';
 
 /**
- * The build step
+ * The wp-admin step
  */
-const BuildStep: Step = function BuildStep( { navigation } ) {
+const WpAdminStep: Step = function WpAdminStep( { navigation } ) {
 	const { __ } = useI18n();
 	const { goNext, goBack } = navigation;
 
 	return (
 		<div>
-			<h1>Build step</h1>
+			<h1>Wp Admin</h1>
 			<button onClick={ goBack }>{ __( 'Previous' ) }</button>
 			<button onClick={ goNext }>{ __( 'Next' ) }</button>
 		</div>
 	);
 };
 
-export default BuildStep;
+export default WpAdminStep;
