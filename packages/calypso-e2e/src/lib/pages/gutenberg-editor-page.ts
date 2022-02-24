@@ -70,14 +70,14 @@ const selectors = {
  */
 export class GutenbergEditorPage {
 	private page: Page;
-	private throwIfBootedFromGutenframe: boolean;
+	private requiresGutenframe: boolean;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 * @param {Object} [options] options
-	 * @param {boolean} [options.throwIfBootedFromGutenframe=false] indicates that staying
+	 * @param {boolean} [options.requiresGutenframe=false] indicates that staying
 	 * on the Gutenframe is strictly required and if the editor is loaded from a WPAdmin
 	 * route or is booted to it, then an error will be thrown and the test will fail
 	 * because the iframe will not be found on the page. Defaults to `false`, which means
@@ -88,14 +88,14 @@ export class GutenbergEditorPage {
 	 */
 	constructor(
 		page: Page,
-		options: { throwIfBootedFromGutenframe: boolean } = {
-			throwIfBootedFromGutenframe: false,
+		options: { requiresGutenframe: boolean } = {
+			requiresGutenframe: false,
 		}
 	) {
-		const { throwIfBootedFromGutenframe } = options;
+		const { requiresGutenframe } = options;
 
 		this.page = page;
-		this.throwIfBootedFromGutenframe = throwIfBootedFromGutenframe;
+		this.requiresGutenframe = requiresGutenframe;
 	}
 
 	/**
@@ -161,7 +161,7 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} frame holding the editor.
 	 */
 	async getEditorFrame(): Promise< Frame > {
-		if ( ! this.throwIfBootedFromGutenframe ) {
+		if ( ! this.requiresGutenframe ) {
 			// If we're not in the Gutenframe context (i.e not Calypso), then
 			// just return the top frame, no need to try to locate the iframe.
 			if ( ! this.page.url().startsWith( 'https://wordpress.com' ) ) {
@@ -177,7 +177,7 @@ export class GutenbergEditorPage {
 			} )
 			.then( async ( elementHandle ) => ( await elementHandle!.contentFrame() ) as Frame )
 			.catch( async () => {
-				if ( this.throwIfBootedFromGutenframe ) {
+				if ( this.requiresGutenframe ) {
 					throw new Error( 'Could not locate editor iframe' );
 				} else {
 					// The CalipsoifyIframe component will redirect to the plain WPAdmin page if
