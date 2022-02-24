@@ -39,13 +39,7 @@ describe( 'I18N: Gutenboarding', function () {
 
 			it( `Display translations on design selector page (${ locale })`, async function () {
 				await validatePageTranslations( page, locale );
-				await gutenboardingFlow.selectDesign( 'Stratford' );
-			} );
-
-			it( `Display translations on style preview page (${ locale })`, async function () {
-				await gutenboardingFlow.selectFont( 'Raleway' );
-				await validatePageTranslations( page, locale );
-				await gutenboardingFlow.clickNextButton();
+				await gutenboardingFlow.selectDesign( '' );
 			} );
 
 			it( `Display translations on domains page (${ locale })`, async function () {
