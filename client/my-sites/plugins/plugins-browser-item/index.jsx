@@ -219,7 +219,7 @@ const InstalledInOrPricing = ( {
 				{ currentSites.length === 1 && (
 					<div className="plugins-browser-item__active">
 						<Badge type={ isActive ? 'success' : 'info' }>
-							{ isActive ? 'Active' : 'Inactive' }
+							{ isActive ? translate( 'Active' ) : translate( 'Inactive' ) }
 						</Badge>
 					</div>
 				) }
