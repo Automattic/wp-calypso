@@ -22,8 +22,8 @@ const PluginDetailsSidebar = ( {
 	const translate = useTranslate();
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const currentPlan = useSelector( ( state ) =>
-		selectedSiteId && getCurrentPlan( state, selectedSiteId )
+	const currentPlan = useSelector(
+		( state ) => selectedSiteId && getCurrentPlan( state, selectedSiteId )
 	);
 	const isAnnualPlan = currentPlan && ! isMonthly( currentPlan.productSlug );
 
