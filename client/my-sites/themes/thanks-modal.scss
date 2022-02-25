@@ -53,6 +53,13 @@
 		}
 	}
 
+	&-fse-notice {
+		margin: 1rem auto;
+		color: var( --color-text-subtle );
+		font-size: 0.875rem;
+		max-width: 300px;
+	}
+
 	.thanks-modal__gutenberg-prompt {
 		color: var( --color-text-subtle );
 		font-size: 14px;
