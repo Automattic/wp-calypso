@@ -1,5 +1,5 @@
 import 'calypso/state/breadcrumb/init';
 
-export const getBreadcrumbs = ( state ) => {
-	return state.breadcrumbs;
+export const getBreadcrumbs = ( state, siteId ) => {
+	return state.breadcrumbs?.[ siteId ] || [];
 };

@@ -3,9 +3,10 @@ import {
 	BREADCRUMB_UPDATE_LIST,
 	BREADCRUMB_APPEND_ITEM,
 } from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
 // Stores the complete list of breadcrumbs in an array,
-export default ( state = [], action ) => {
+const breadcrumbs = ( state = [], action ) => {
 	switch ( action.type ) {
 		case BREADCRUMB_RESET_LIST:
 			return [];
@@ -24,3 +25,5 @@ export default ( state = [], action ) => {
 
 	return state;
 };
+
+export default keyedReducer( 'siteId', breadcrumbs );
