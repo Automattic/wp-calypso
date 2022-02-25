@@ -24,11 +24,8 @@ function dangerously_load_full_site_editing_files() {
 	require_once __DIR__ . '/blocks/site-title/index.php';
 	require_once __DIR__ . '/blocks/template/index.php';
 	require_once __DIR__ . '/class-full-site-editing.php';
-	require_once __DIR__ . '/templates/class-rest-templates-controller.php';
 	require_once __DIR__ . '/templates/class-wp-template.php';
 	require_once __DIR__ . '/templates/class-wp-template-inserter.php';
-	require_once __DIR__ . '/templates/class-template-image-inserter.php';
-	require_once __DIR__ . '/serialize-block-fallback.php';
 }
 
 /**
