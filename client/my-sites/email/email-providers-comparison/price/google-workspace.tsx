@@ -43,8 +43,8 @@ const AdditionalPriceInformation = ( {
 		return null;
 	}
 
-	const standardPriceForIntervalLength = formatPrice( product?.cost ?? 0, currencyCode ?? '' );
-	const salePriceForIntervalLength = formatPrice( product?.sale_cost ?? 0, currencyCode ?? '' );
+	const standardPrice = formatPrice( product?.cost ?? 0, currencyCode ?? '' );
+	const discountedPrice = formatPrice( product?.sale_cost ?? 0, currencyCode ?? '' );
 
 	return (
 		<div className="google-workspace-price__discount">
@@ -53,8 +53,8 @@ const AdditionalPriceInformation = ( {
 				{
 					args: {
 						discount: product?.sale_coupon?.discount,
-						discountedPrice: salePriceForIntervalLength,
-						standardPrice: standardPriceForIntervalLength,
+						discountedPrice,
+						standardPrice,
 					},
 					comment:
 						"%(discount)d is a numeric percentage discount (e.g. '50'), " +
