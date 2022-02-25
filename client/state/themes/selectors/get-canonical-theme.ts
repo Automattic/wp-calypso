@@ -1,6 +1,6 @@
 import { find } from 'lodash';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
-import { CanonicalTheme } from 'calypso/types';
+import { IAppState } from 'calypso/state/types';
 import 'calypso/state/themes/init';
 
 /**
@@ -35,15 +35,10 @@ export const knownConflictingThemes = new Set( [ 'bistro' ] );
  * the one with richest information. Checks WP.com (which has a long description
  * and multiple screenshots, and a preview URL) first, then WP.org (which has a
  * preview URL), then the given JP site.
- *
- * @param  {object}  state   Global state tree
- * @param  {number}  siteId  Jetpack Site ID to fall back to
- * @param  {string | null}  themeId Theme ID
- * @returns {?CanonicalTheme}         Theme object
  */
-export function getCanonicalTheme( state, siteId, themeId ) {
+export function getCanonicalTheme( state: IAppState, siteId: number, themeId: string | null ) {
 	let searchOrder = [ 'wpcom', 'wporg', siteId ];
-	if ( knownConflictingThemes.has( themeId ) ) {
+	if ( themeId && knownConflictingThemes.has( themeId ) ) {
 		searchOrder = [ siteId, 'wpcom', 'wporg' ];
 	}
 
