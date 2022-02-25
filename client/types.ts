@@ -39,7 +39,7 @@ export interface Theme {
 	screenshots: string[];
 	stylesheet: string;
 	taxonomies?: {
-		theme_feature?: ThemeFeature[];
+		theme_feature: ThemeFeature[];
 	};
 	template: string;
 	theme_uri: string;
