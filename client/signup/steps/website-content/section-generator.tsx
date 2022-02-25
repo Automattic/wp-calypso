@@ -1,4 +1,3 @@
-import { TranslateResult, translate } from 'i18n-calypso';
 import {
 	AccordionSectionProps,
 	SectionGeneratorReturnType,
@@ -7,8 +6,6 @@ import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schem
 import { LogoUploadSection } from './logo-upload-section';
 import { CONTENT_SUFFIX, PageDetails } from './page-details';
 
-const PAGE_TITLES: Record< string, TranslateResult > = { Home: translate( 'Home' ) };
-
 const generateWebsiteContentSections = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
 	elapsedSections = 0
@@ -16,7 +13,7 @@ const generateWebsiteContentSections = (
 	const { translate, formValues, formErrors, onChangeField } = params;
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {
 		const fieldNumber = elapsedSections + index + 1;
-		const pageTitle = PAGE_TITLES[ page.id ] ? PAGE_TITLES[ page.id ] : page.title;
+		const { title: pageTitle } = page;
 		return {
 			title: translate( '%(fieldNumber)d. %(pageTitle)s', {
 				args: {
@@ -56,7 +53,7 @@ const generateLogoSection = (
 	const { translate, formValues } = params;
 
 	const fieldNumber = elapsedSections + 1;
-	const pageTitle = 'Site logo';
+	const pageTitle = 'Site Logo';
 	return {
 		title: translate( '%(fieldNumber)d. %(pageTitle)s', {
 			args: {
