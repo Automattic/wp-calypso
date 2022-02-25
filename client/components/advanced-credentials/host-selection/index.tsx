@@ -1,34 +1,34 @@
 import { Gridicon } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useEffect, useMemo } from 'react';
+import { FunctionComponent, useMemo } from 'react';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
+import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getHttpData, requestHttpData, DataState } from 'calypso/state/data-layer/http-data';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getProviderNameFromId, topHosts, otherHosts } from '../host-info';
 import type { SiteId } from 'calypso/types';
-import type { AnyAction } from 'redux';
 import './style.scss';
 
-function getRequestHostingProviderGuessId( siteId: SiteId ) {
-	return `site-hosting-provider-guess-${ siteId }`;
+interface Guess {
+	guess: string;
 }
 
-function requestHostingProviderGuess( siteId: SiteId ) {
-	const requestId = getRequestHostingProviderGuessId( siteId );
-	return requestHttpData(
-		requestId,
-		http( {
-			method: 'GET',
-			path: `/sites/${ siteId }/hosting-provider`,
-			apiNamespace: 'wpcom/v2',
-		} ) as AnyAction,
+function useHostingProviderGuessQuery( siteId: SiteId ) {
+	return useQuery(
+		[ 'site-hosting-provider-guess', siteId ],
+		(): Promise< Guess > =>
+			wpcom.req.get( {
+				path: `/sites/${ siteId }/hosting-provider`,
+				apiNamespace: 'wpcom/v2',
+			} ),
 		{
-			fromApi: () => ( { guess } ) => [ [ requestId, guess ] ],
+			enabled: !! siteId,
+			meta: { persist: false },
+			select: ( data ) => data.guess,
 		}
 	);
 }
@@ -40,16 +40,7 @@ const HostSelection: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const {
-		state: providerGuessState,
-		data: guess = null,
-		// error: providerGuessError,
-	} = useSelector( () => getHttpData( getRequestHostingProviderGuessId( siteId ) ) );
-
-	const loadingProviderGuess = ! [ DataState.Success, DataState.Failure ].includes(
-		providerGuessState
-	);
-
+	const { isLoading, data: guess } = useHostingProviderGuessQuery( siteId );
 	const providerGuessName = getProviderNameFromId( guess );
 
 	const hostsToShow = useMemo( () => {
@@ -68,10 +59,6 @@ const HostSelection: FunctionComponent = () => {
 			} )
 		);
 	};
-
-	useEffect( () => {
-		requestHostingProviderGuess( siteId as SiteId );
-	}, [ siteId ] );
 
 	return (
 		<div className="host-selection">
@@ -103,12 +90,10 @@ const HostSelection: FunctionComponent = () => {
 				{ hostsToShow.map( ( { id, name } ) => (
 					<a
 						className={
-							loadingProviderGuess
-								? 'host-selection__list-item-placeholder'
-								: 'host-selection__list-item'
+							isLoading ? 'host-selection__list-item-placeholder' : 'host-selection__list-item'
 						}
 						key={ id }
-						href={ `${ settingsPath( siteSlug ) }?host=${ id }` }
+						href={ `${ settingsPath( siteSlug ?? undefined ) }?host=${ id }` }
 						onClick={ () => recordHostSelectionEvent( id ) }
 					>
 						<span>{ name }</span>
@@ -126,12 +111,9 @@ const HostSelection: FunctionComponent = () => {
 				) ) }
 				<a
 					className={
-						loadingProviderGuess
-							? 'host-selection__list-item-placeholder'
-							: 'host-selection__list-item'
+						isLoading ? 'host-selection__list-item-placeholder' : 'host-selection__list-item'
 					}
-					key={ 'generic' }
-					href={ `${ settingsPath( siteSlug ) }?host=generic` }
+					href={ `${ settingsPath( siteSlug ?? undefined ) }?host=generic` }
 					onClick={ () => recordHostSelectionEvent( 'generic' ) }
 				>
 					{ isMobile
