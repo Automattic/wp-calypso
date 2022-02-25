@@ -1,0 +1,6 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '../import/style';
+
+.signup__step.is-import-light {
+	border: solid 1px red;
+}
