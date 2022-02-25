@@ -739,6 +739,9 @@ export function generateSteps( {
 		importing: {
 			stepName: 'importing',
 		},
+		'import-light': {
+			stepName: 'import-light',
+		},
 
 		// Woocommerce Install steps.
 		'store-address': {

@@ -283,6 +283,15 @@ export function generateFlows( {
 			enableBranchSteps: true,
 		},
 		{
+			name: 'import-light',
+			steps: [ 'import-light' ],
+			destination: '/',
+			pageTitle: translate( 'Import light' ),
+			description: 'Import light',
+			lastModified: '2022-02-25',
+			enableBranchSteps: true,
+		},
+		{
 			name: 'reader',
 			steps: [ 'reader-landing', 'user' ],
 			destination: '/',
