@@ -232,7 +232,7 @@ export default function WrapperWebsiteContent(
 		queryObject.siteSlug,
 	] );
 
-	return isLoadingSiteInformation ? null : (
+	return isWebsiteContentSubmitted || isLoadingSiteInformation ? null : (
 		<StepWrapper
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
