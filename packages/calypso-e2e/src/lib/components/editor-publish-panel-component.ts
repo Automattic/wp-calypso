@@ -1,7 +1,4 @@
-import { Page, Frame, FrameLocator } from 'playwright';
-
-// Options for Playwright's Frame.click() method.
-type ClickOptions = Parameters< Frame[ 'click' ] >[ 1 ];
+import { Page, FrameLocator } from 'playwright';
 
 const panel = 'div.editor-post-publish-panel';
 const selectors = {
@@ -12,7 +9,6 @@ const selectors = {
 	// After publishing
 	postPublishClosePanelButton: `${ panel } button[type="button"]:has(svg[aria-hidden="true"])`, // aria-label changes depending on the UI language used.
 	publishedArticleURL: `${ panel } input[readonly]`,
-	addNewArticleButton: `${ panel } .post-publish-panel__postpublish-buttons a[href="post-new.php?post_type=post"]`,
 };
 
 /**
@@ -76,15 +72,5 @@ export class EditorPublishPanelComponent {
 		const locator = this.frameLocator.locator( selectors.publishedArticleURL );
 		const publishedURL = ( await locator.getAttribute( 'value' ) ) as string;
 		return new URL( publishedURL );
-	}
-
-	/**
-	 * Clicks on the Add New Page/Post button in the post-publish state.
-	 *
-	 * @param {ClickOptions} options Options to be forwarded to Frame.click().
-	 */
-	async addNewArticle( options: ClickOptions = {} ): Promise< void > {
-		const locator = this.frameLocator.locator( selectors.addNewArticleButton );
-		await locator.click( options );
 	}
 }
