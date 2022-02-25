@@ -159,6 +159,7 @@ function PluginDetails( props ) {
 			...wpcomPlugin,
 			...wporgPlugin,
 			...plugin,
+			slug: wpcomPlugin?.slug || wporgPlugin?.slug,
 			fetched: wpcomPlugin?.fetched || wporgPlugin?.fetched,
 			isMarketplaceProduct,
 		};
