@@ -26,7 +26,7 @@ export default function ConnectDomainStepSwitchSetupInfoLink( {
 		setPage( isSubdomain ? stepSlug.SUBDOMAIN_SUGGESTED_START : stepSlug.SUGGESTED_START );
 
 	const switchToAdvancedSetupMessage = isSubdomain
-		? __( "Can't set NS records on your subdomain? Switch to our <a>advanced setup</a>." )
+		? __( "Can't set NS records for your subdomain? Switch to our <a>advanced setup</a>." )
 		: __( 'Switch to our <a>advanced setup</a>.' );
 
 	const message =
