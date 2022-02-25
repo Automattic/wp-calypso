@@ -50,7 +50,11 @@ const RegisteredDomainDetails = ( {
 	};
 
 	const shouldNotRenderAutoRenewToggle = () => {
-		return ! domain.currentUserCanManage || ( ! isLoadingPurchase && ! purchase );
+		return (
+			! domain.currentUserCanManage ||
+			( ! isLoadingPurchase && ! purchase ) ||
+			domain.aftermarketAuction
+		);
 	};
 
 	const renderAutoRenewToggle = () => {
@@ -104,7 +108,8 @@ const RegisteredDomainDetails = ( {
 			! domain.currentUserCanManage ||
 			domain.expired ||
 			isExpiringSoon( domain, 30 ) || // from `registered-domain-type` and `mapped-domain-type`
-			( ! isLoadingPurchase && ! purchase )
+			( ! isLoadingPurchase && ! purchase ) ||
+			domain.aftermarketAuction
 		);
 	};
 
