@@ -1,4 +1,5 @@
 import { withMobileBreakpoint } from '@automattic/viewport-react';
+import cookie from 'cookie';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -19,6 +20,7 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MasterbarItem from './item';
 
+const THREE_WEEKS = 3 * 7 * 24 * 60 * 60;
 class MasterbarItemPlanUpsell extends Component {
 	static propTypes = {
 		className: PropTypes.string,
@@ -31,20 +33,32 @@ class MasterbarItemPlanUpsell extends Component {
 		this.props.recordTracksEvent( 'calypso_masterbar_click', {
 			clicked: 'plan_upsell_button',
 		} );
+		document.cookie = cookie.serialize(
+			'masterbar_plan_upsell_' + this.props.siteId,
+			'button_clicked',
+			{
+				path: '/',
+				domain: '.wordpress.com',
+			}
+		);
 	};
 
-	render() {
-		const {
-			plansPath,
-			currentRoute,
-			isP2,
-			className,
-			isJetpackNotAtomic,
-			tooltip,
-			isMobile,
-			planSlug,
-		} = this.props;
+	checkIsRestrictedRoute = ( siteSlug, currentRoute ) => {
+		const restrictedRoutes = [
+			`/plans/${ siteSlug }`,
+			'/plans/monthly',
+			'/plans/yearly',
+			'/checkout',
+		];
+		return -1 !== restrictedRoutes.findIndex( ( route ) => currentRoute.startsWith( route ) );
+	};
 
+	checkIsPurchased = ( siteSlug, currentRoute ) => {
+		const thankYouPages = [ '/checkout/thank-you', `/checkout/${ siteSlug }/offer-plan-upgrade` ];
+		return -1 !== thankYouPages.findIndex( ( route ) => currentRoute.startsWith( route ) );
+	};
+
+	checkIsSupportedPlan = ( planSlug ) => {
 		const plansUpsells = [
 			'free_plan',
 			'personal-bundle-monthly',
@@ -57,16 +71,46 @@ class MasterbarItemPlanUpsell extends Component {
 			'business-bundle',
 		];
 
-		const restrictedRoutes = [ '/plans', '/checkout' ];
-		const isRestrictedRoute =
-			-1 !== restrictedRoutes.findIndex( ( route ) => currentRoute.startsWith( route ) );
+		return plansUpsells.includes( planSlug );
+	};
+
+	render() {
+		const {
+			plansPath,
+			currentRoute,
+			isP2,
+			className,
+			isJetpackNotAtomic,
+			tooltip,
+			isMobile,
+			planSlug,
+			siteId,
+			siteSlug,
+		} = this.props;
+
+		const cookies = cookie.parse( document.cookie );
+		const isPurchased = this.checkIsPurchased( siteSlug, currentRoute );
+		const isRestrictedRoute = this.checkIsRestrictedRoute( siteSlug, currentRoute );
+
+		const cookieKey = 'masterbar_plan_upsell_' + siteId;
+		if ( isPurchased && 'button_clicked' === cookies[ cookieKey ] ) {
+			document.cookie = cookie.serialize( cookieKey, 'purchased', {
+				path: '/',
+				domain: '.wordpress.com',
+				maxAge: THREE_WEEKS,
+			} );
+		}
+
+		const isFlowCompleted = 'purchased' === cookies[ cookieKey ];
+		const isSupportedPlan = this.checkIsSupportedPlan( planSlug );
 
 		const showPlanUpsell =
 			! isRestrictedRoute &&
 			! isMobile &&
+			! isFlowCompleted &&
 			! isP2 &&
 			! isJetpackNotAtomic &&
-			plansUpsells.includes( planSlug );
+			isSupportedPlan;
 
 		if ( ! showPlanUpsell ) {
 			return null;
@@ -115,20 +159,24 @@ export default withMobileBreakpoint(
 			}
 
 			const planSlug = getSitePlanSlug( state, siteId ) || '';
+			const siteSlug = getSiteSlug( state, siteId );
+			const currentRoute = getCurrentRoute( state );
 
 			let plansPath = '/plans/';
 			if ( 'ecommerce-bundle-monthly' === planSlug ) {
 				plansPath += 'yearly/';
 			}
-			plansPath += getSiteSlug( state, siteId );
+			plansPath += siteSlug;
 
 			return {
 				isP2: isSiteWPForTeams( state, siteId ),
 				isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 				planSlug,
+				siteSlug,
 				isMobile: ownProps.isBreakpointActive,
 				plansPath,
-				currentRoute: getCurrentRoute( state ),
+				currentRoute,
+				siteId,
 			};
 		},
 		{ recordTracksEvent }
