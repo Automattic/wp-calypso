@@ -2,7 +2,6 @@ import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import { isSubdomain } from 'calypso/lib/domains';
 import ConnectDomainStepClipboardButton from './connect-domain-step-clipboard-button';
 import ConnectDomainStepVerificationNotice from './connect-domain-step-verification-error-notice';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
@@ -10,11 +9,11 @@ import { modeType, stepSlug, stepsHeading } from './constants';
 
 import './style.scss';
 
-export default function ConnectDomainStepAdvancedRecords( {
+export default function ConnectSubdomainStepSuggestedRecords( {
 	className,
-	pageSlug,
 	domain,
 	domainSetupInfo,
+	pageSlug,
 	mode,
 	onVerifyConnection,
 	progressStepList,
@@ -23,34 +22,22 @@ export default function ConnectDomainStepAdvancedRecords( {
 	verificationStatus,
 } ) {
 	const { __ } = useI18n();
+
 	const { data } = domainSetupInfo;
-	const { default_ip_addresses: ipAddresses } = data;
+	const { wpcom_name_servers: nameServers } = data;
+
 	const recordLabels = {
 		type: __( 'Type' ),
 		name: __( 'Name' ),
 		value: __( 'Value' ),
 	};
-	const aRecords = ipAddresses.map( ( ipAddress ) => {
+	const nsRecords = nameServers.map( ( nameServer ) => {
 		return {
-			type: 'A',
+			type: 'NS',
 			name: domain,
-			value: ipAddress,
+			value: nameServer,
 		};
 	} );
-	const cnameRecords = [
-		{
-			type: 'CNAME',
-			name: 'www',
-			value: domain,
-		},
-	];
-	const cnameRecordsSubdomains = [
-		{
-			type: 'CNAME',
-			name: 'www.' + domain,
-			value: domain,
-		},
-	];
 
 	const itemClasses = {
 		type: [ className + '__records-list-record-item', 'type' ],
@@ -116,46 +103,6 @@ export default function ConnectDomainStepAdvancedRecords( {
 		</div>
 	);
 
-	const renderSubdomainInstructions = () => {
-		return (
-			<>
-				<p className={ className + '__text' }>
-					{ __( "Find the A records on your subdomain's settings page." ) }
-					<br />
-					{ __(
-						'Replace IP addresses (A records) of your subdomain to use the following values:'
-					) }
-				</p>
-				{ renderRecordsList( aRecords ) }
-				<p className={ className + '__text' }>
-					{ __(
-						"Next find the CNAME records on your subdomain's settings page and replace them with the following value:"
-					) }
-				</p>
-				{ renderRecordsList( cnameRecordsSubdomains ) }
-			</>
-		);
-	};
-
-	const renderRootDomainInstructions = () => {
-		return (
-			<>
-				<p className={ className + '__text' }>
-					{ __( 'Find the root A records on your domain’s settings page.' ) }
-					<br />
-					{ __( 'Replace IP addresses (A records) of your domain to use the following values:' ) }
-				</p>
-				{ renderRecordsList( aRecords ) }
-				<p className={ className + '__text' }>
-					{ __( 'Next find the CNAME records on your domain’s settings page.' ) }
-					<br />
-					{ __( 'Replace the "www" CNAME record of your domain to use the following values:' ) }
-				</p>
-				{ renderRecordsList( cnameRecords ) }
-			</>
-		);
-	};
-
 	const stepContent = (
 		<div className={ className + '__advanced-records' }>
 			{ showErrors && (
@@ -164,16 +111,21 @@ export default function ConnectDomainStepAdvancedRecords( {
 					verificationStatus={ verificationStatus }
 				/>
 			) }
-			{ isSubdomain( domain ) ? renderSubdomainInstructions() : renderRootDomainInstructions() }
+			<p className={ className + '__text' }>
+				{ __(
+					"Find the NS records on your subdomain's settings page and replace them with the following values:"
+				) }
+			</p>
+			{ renderRecordsList( nsRecords ) }
 			<p className={ className + '__text' }>
 				{ __( 'Once you\'ve updated the records click on "Verify Connection" below.' ) }
 			</p>
 			<div className={ className + '__actions' }>
 				<Button
-					busy={ verificationInProgress }
-					disabled={ verificationInProgress }
-					onClick={ onVerifyConnection }
 					primary
+					onClick={ onVerifyConnection }
+					disabled={ verificationInProgress }
+					busy={ verificationInProgress }
 				>
 					{ __( 'Verify Connection' ) }
 				</Button>
@@ -184,18 +136,18 @@ export default function ConnectDomainStepAdvancedRecords( {
 	return (
 		<ConnectDomainStepWrapper
 			className={ className }
-			heading={ stepsHeading.ADVANCED }
-			pageSlug={ pageSlug }
+			heading={ stepsHeading.SUGGESTED }
+			mode={ mode }
 			progressStepList={ progressStepList }
+			pageSlug={ pageSlug }
 			stepContent={ stepContent }
 		/>
 	);
 }
 
-ConnectDomainStepAdvancedRecords.propTypes = {
+ConnectSubdomainStepSuggestedRecords.propTypes = {
 	className: PropTypes.string.isRequired,
 	pageSlug: PropTypes.oneOf( Object.values( stepSlug ) ).isRequired,
-	domain: PropTypes.string.isRequired,
 	domainSetupInfo: PropTypes.object.isRequired,
 	mode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	onVerifyConnection: PropTypes.func.isRequired,

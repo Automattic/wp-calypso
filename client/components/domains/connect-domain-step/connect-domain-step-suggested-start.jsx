@@ -13,6 +13,7 @@ import {
 } from 'calypso/components/domains/connect-domain-step/constants';
 import FoldableCard from 'calypso/components/foldable-card';
 import MaterialIcon from 'calypso/components/material-icon';
+import { isSubdomain } from 'calypso/lib/domains';
 import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
@@ -31,12 +32,28 @@ export default function ConnectDomainStepSuggestedStart( {
 	const { __ } = useI18n();
 	const selectedSite = useSelector( getSelectedSite );
 	const goToDnsRecordsPage = () => page( domainManagementDns( selectedSite?.slug, domain ) );
-	const switchToAdvancedSetup = () => setPage( stepSlug.ADVANCED_START );
+	const firstStep = isSubdomain( domain )
+		? stepSlug.SUBDOMAIN_ADVANCED_START
+		: stepSlug.ADVANCED_START;
+	const switchToAdvancedSetup = () => setPage( firstStep );
+
+	const message = isSubdomain( domain )
+		? __(
+				"This is the easiest way to connect your subdomain, using NS records. Can't set NS records on your subdomain? Switch to our <a>advanced setup</a>, using A & CNAME records."
+		  )
+		: __(
+				'This is the easiest way to connect your domain, using name servers. If needed you can also use our <a>advanced setup</a>, using root A & CNAME records.'
+		  );
 
 	const stepContent = (
 		<div className={ className + '__suggested-start' }>
 			<p className={ className + '__text' }>
-				{ __( 'This is the easiest way to connect your domain, using name servers.' ) }
+				{ createInterpolateElement( message, {
+					a: createElement( 'a', {
+						className: 'connect-domain-step__change_mode_link',
+						onClick: switchToAdvancedSetup,
+					} ),
+				} ) }
 			</p>
 			<CardHeading tagName="h2" className={ className + '__sub-heading' }>
 				<MaterialIcon className={ className + '__sub-heading-icon' } size={ 24 } icon="timer" />

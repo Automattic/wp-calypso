@@ -13,6 +13,8 @@ export const stepType = {
 	LOG_IN_TO_PROVIDER: 'log_in_to_provider',
 	UPDATE_NAME_SERVERS: 'update_name_servers',
 	UPDATE_A_RECORDS: 'update_a_records',
+	UPDATE_NS_RECORDS: 'update_ns_records',
+	UPDATE_CNAME_RECORDS: 'update_cname_records',
 	CONNECTED: 'connected',
 	VERIFYING: 'verifying',
 	ENTER_AUTH_CODE: 'enter_auth_code',
@@ -37,6 +39,16 @@ export const stepSlug = {
 	TRANSFER_LOGIN: 'transfer_login',
 	TRANSFER_UNLOCK: 'transfer_unlock',
 	TRANSFER_AUTH_CODE: 'transfer_auth_code',
+	SUBDOMAIN_SUGGESTED_START: 'subdomain_suggested_start',
+	SUBDOMAIN_SUGGESTED_LOGIN: 'subdomain_suggested_login',
+	SUBDOMAIN_SUGGESTED_UPDATE: 'subdomain_suggested_update',
+	SUBDOMAIN_SUGGESTED_VERIFYING: 'subdomain_suggested_verifying',
+	SUBDOMAIN_SUGGESTED_CONNECTED: 'subdomain_suggested_connected',
+	SUBDOMAIN_ADVANCED_START: 'subdomain_advanced_start',
+	SUBDOMAIN_ADVANCED_LOGIN: 'subdomain_advanced_login',
+	SUBDOMAIN_ADVANCED_UPDATE: 'subdomain_advanced_update',
+	SUBDOMAIN_ADVANCED_VERIFYING: 'subdomain_advanced_verifying',
+	SUBDOMAIN_ADVANCED_CONNECTED: 'subdomain_advanced_connected',
 } as const;
 
 export const defaultDomainSetupInfo = {
