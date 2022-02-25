@@ -8,6 +8,7 @@ import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { IAppState } from 'calypso/state/types';
 import { CanonicalTheme } from 'calypso/types';
 import { trackClick } from '../helpers';
 import { connectOptions } from '../theme-options';
@@ -169,7 +170,7 @@ const CurrentThemeWithOptions = ( {
 	/>
 );
 
-export default connect( ( state, { siteId }: { siteId: number } ) => {
+export default connect( ( state: IAppState, { siteId }: { siteId: number } ) => {
 	const currentThemeId = getActiveTheme( state, siteId );
 	return {
 		currentThemeId,
