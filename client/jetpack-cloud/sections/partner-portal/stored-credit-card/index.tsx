@@ -10,6 +10,11 @@ export default function StoredCreditCard( props: { card: PaymentMethod } ): Reac
 
 	const [ year, expiryMonth ] = creditCard.expiry.split( '-' );
 	const expiryYear = year.substr( 2, 2 );
+	const primary = ! creditCard.is_default ? (
+		<div className="stored-credit-card__primary">{ translate( 'Primary' ) }</div>
+	) : (
+		''
+	);
 
 	return (
 		<div className="stored-credit-card">
@@ -17,8 +22,7 @@ export default function StoredCreditCard( props: { card: PaymentMethod } ): Reac
 				<div className="stored-credit-card__payment-logo">
 					<PaymentLogo brand={ creditCard.card_type } isSummary={ true } />
 				</div>
-
-				<div className="stored-credit-card__primary">{ translate( 'Primary' ) }</div>
+				{ primary }
 			</div>
 			<div className="stored-credit-card__footer">
 				<div className="stored-credit-card__footer-left">
