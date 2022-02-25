@@ -141,7 +141,9 @@ const PluginsBrowser = ( {
 	const hasBusinessPlan =
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
 
-	const { data: paidPluginsRawList = [], isFetchingPaidPlugins } = useWPCOMPlugins( 'featured' );
+	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } = useWPCOMPlugins(
+		'featured'
+	);
 	const paidPlugins = useMemo( () => paidPluginsRawList.map( updateWpComRating ), [
 		paidPluginsRawList,
 	] );
@@ -398,7 +400,7 @@ const SearchListView = ( {
 	);
 	const {
 		data: paidPluginsBySearchTermRaw = [],
-		isFetchingPaidPluginsBySearchTerm,
+		isLoading: isFetchingPaidPluginsBySearchTerm,
 	} = useWPCOMPlugins( 'all', searchTerm, {
 		enabled: !! searchTerm,
 	} );
