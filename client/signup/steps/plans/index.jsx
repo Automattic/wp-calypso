@@ -290,7 +290,7 @@ export class PlansStep extends Component {
 	getSubHeaderText() {
 		const { hideFreePlan, subHeaderText, translate } = this.props;
 
-		if ( ! hideFreePlan ) {
+		if ( ! hideFreePlan && ! this.props.isEligibleForManagedPlan ) {
 			if ( this.state.isDesktop ) {
 				return translate(
 					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",

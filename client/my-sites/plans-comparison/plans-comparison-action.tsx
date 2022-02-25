@@ -51,9 +51,9 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 	currentSitePlanSlug,
 	manageHref,
 	onClick,
-	plan,
 	...props
 } ) => {
+	const { plan } = props;
 	const translate = useTranslate();
 	const className = classNames( { 'is-primary': props.isPrimary } );
 	const { isCurrentPlan, isInSignup, isPlaceholder } = props;
