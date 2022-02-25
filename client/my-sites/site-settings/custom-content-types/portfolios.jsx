@@ -25,7 +25,7 @@ function Portfolios( {
 				link={
 					isAtomic
 						? 'https://wordpress.com/support/portfolios/'
-						: 'https://jetpack.com/support/custom-content-types/#portfolios'
+						: 'https://jetpack.com/support/custom-content-types/'
 				}
 				privacyLink={ ! isAtomic }
 			/>

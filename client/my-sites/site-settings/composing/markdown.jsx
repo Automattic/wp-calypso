@@ -25,7 +25,7 @@ const Markdown = ( {
 						? 'https://jetpack.com/support/markdown/'
 						: 'https://wordpress.com/support/markdown-quick-reference/'
 				}
-				privacyLink={ ! isAtomic }
+				privacyLink={ siteIsJetpack && ! isAtomic }
 			/>
 			<ToggleControl
 				checked={ !! fields.wpcom_publish_posts_with_markdown }
