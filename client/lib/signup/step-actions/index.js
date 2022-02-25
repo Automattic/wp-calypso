@@ -429,12 +429,13 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		defer( callback );
 		return;
 	}
+	const { pages, siteLogoUrl: site_logo_url } = websiteContent;
 
 	wpcom.req
 		.post( {
 			path: `/sites/${ siteSlug }/do-it-for-me/website-content`,
 			apiNamespace: 'wpcom/v2',
-			body: { pages: websiteContent },
+			body: { pages, site_logo_url },
 		} )
 		.then( () => reduxStore.dispatch( requestSite( siteSlug ) ) )
 		.then( () => callback() )

@@ -57,7 +57,7 @@ export function PageDetails( {
 	const onMediaUploadComplete = ( { title, URL, uploadID, mediaIndex }: MediaUploadData ) => {
 		dispatch(
 			imageUploaded( {
-				id: page.id,
+				pageId: page.id,
 				image: { url: URL as string, caption: title as string, uploadID },
 				mediaIndex,
 			} )
@@ -74,7 +74,7 @@ export function PageDetails( {
 		} = e;
 		dispatch(
 			textChanged( {
-				id: page.id,
+				pageId: page.id,
 				content: value,
 			} )
 		);

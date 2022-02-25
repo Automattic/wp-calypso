@@ -2,50 +2,56 @@ import { expect } from 'chai';
 import { SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 import {
 	updateWebsiteContentCurrentIndex,
-	updateWebsiteContent,
 	imageUploaded,
 	textChanged,
 	initializePages,
 	imageUploadInitiated,
+	imageUploadFailed,
+	logoUploadStarted,
+	logoUploadFailed,
+	logoUploadCompleted,
 } from '../actions';
-import websiteContentCollectionReducer, { IMAGE_UPLOAD_STATES } from '../reducer';
+import websiteContentCollectionReducer, { IMAGE_UPLOAD_STATES, LOGO_SECTION_ID } from '../reducer';
 import { initialState } from '../schema';
 
 const initialTestState = {
 	currentIndex: 0,
 	imageUploadStates: {},
-	websiteContent: [
-		{
-			id: 'Home',
-			title: 'Homepage',
-			content: '',
-			images: [
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-			],
-		},
-		{
-			id: 'About',
-			title: 'Information About You',
-			content: '',
-			images: [
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-			],
-		},
-		{
-			id: 'Contact',
-			title: 'Contact Info',
-			content: '',
-			images: [
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-				{ caption: '', url: '' },
-			],
-		},
-	],
+	websiteContent: {
+		siteLogoUrl: '',
+		pages: [
+			{
+				id: 'Home',
+				title: 'Homepage',
+				content: '',
+				images: [
+					{ caption: '', url: '' },
+					{ caption: '', url: '' },
+					{ caption: '', url: '' },
+				],
+			},
+			{
+				id: 'About',
+				title: 'Information About You',
+				content: '',
+				images: [
+					{ caption: '', url: '' },
+					{ caption: '', url: '' },
+					{ caption: '', url: '' },
+				],
+			},
+			{
+				id: 'Contact',
+				title: 'Contact Info',
+				content: '',
+				images: [
+					{ caption: '', url: '' },
+					{ caption: '', url: '' },
+					{ caption: '', url: '' },
+				],
+			},
+		],
+	},
 };
 
 describe( 'reducer', () => {
@@ -82,76 +88,82 @@ describe( 'reducer', () => {
 			)
 		).to.be.eql( {
 			...initialTestState,
-			websiteContent: [
-				{
-					id: 'page-1',
-					title: 'Page 1',
-					content: '',
-					images: [
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-				{
-					id: 'page-2',
-					title: 'Page 2',
-					content: '',
-					images: [
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-				{
-					id: 'page-3',
-					title: 'Page 3',
-					content: '',
-					images: [
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-			],
+			websiteContent: {
+				...initialTestState.websiteContent,
+				pages: [
+					{
+						id: 'page-1',
+						title: 'Page 1',
+						content: '',
+						images: [
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+					{
+						id: 'page-2',
+						title: 'Page 2',
+						content: '',
+						images: [
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+					{
+						id: 'page-3',
+						title: 'Page 3',
+						content: '',
+						images: [
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+				],
+			},
 		} );
 	} );
 
 	test( 'When initializing page data existing page data should not be overridden', () => {
 		const existingState = {
 			...initialState,
-			websiteContent: [
-				{
-					id: 'page-1',
-					title: 'Page 1',
-					content: 'Some existing Page 1 content',
-					images: [
-						{ caption: 'sample.jpg', url: 'sample.jpg' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-				{
-					id: 'page-2',
-					title: 'Page 2',
-					content: 'Some existing Page 2 content',
-					images: [
-						{ caption: 'sample.jpg', url: 'sample.jpg' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-				{
-					id: 'page-3',
-					title: 'Page 3',
-					content: 'Some existing Page 3 content',
-					images: [
-						{ caption: 'sample.jpg', url: 'sample.jpg' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-			],
+			websiteContent: {
+				...initialTestState.websiteContent,
+				pages: [
+					{
+						id: 'page-1',
+						title: 'Page 1',
+						content: 'Some existing Page 1 content',
+						images: [
+							{ caption: 'sample.jpg', url: 'sample.jpg' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+					{
+						id: 'page-2',
+						title: 'Page 2',
+						content: 'Some existing Page 2 content',
+						images: [
+							{ caption: 'sample.jpg', url: 'sample.jpg' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+					{
+						id: 'page-3',
+						title: 'Page 3',
+						content: 'Some existing Page 3 content',
+						images: [
+							{ caption: 'sample.jpg', url: 'sample.jpg' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+				],
+			},
 		};
 		expect(
 			websiteContentCollectionReducer(
@@ -173,94 +185,47 @@ describe( 'reducer', () => {
 			)
 		).to.be.eql( {
 			...initialTestState,
-			websiteContent: [
-				{
-					id: 'page-2',
-					title: 'Page 2',
-					content: 'Some existing Page 2 content',
-					images: [
-						{ caption: 'sample.jpg', url: 'sample.jpg' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-				{
-					id: 'page-3',
-					title: 'Page 3',
-					content: 'Some existing Page 3 content',
-					images: [
-						{ caption: 'sample.jpg', url: 'sample.jpg' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-				{
-					id: 'page-4',
-					title: 'Page 4',
-					content: '',
-					images: [
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-			],
-		} );
-	} );
-
-	test( 'should update home page content', () => {
-		expect(
-			websiteContentCollectionReducer(
-				{ ...initialTestState },
-				updateWebsiteContent( [
+			websiteContent: {
+				...initialTestState.websiteContent,
+				pages: [
 					{
-						id: 'Home',
-						title: 'Home Page',
-						content: 'Home Page Content',
-						images: [ { caption: 'Screenshot 2', url: '/sp/url', uploadID: 5 } ],
+						id: 'page-2',
+						title: 'Page 2',
+						content: 'Some existing Page 2 content',
+						images: [
+							{ caption: 'sample.jpg', url: 'sample.jpg' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
 					},
 					{
-						id: 'About',
-						title: 'Information About You',
+						id: 'page-3',
+						title: 'Page 3',
+						content: 'Some existing Page 3 content',
+						images: [
+							{ caption: 'sample.jpg', url: 'sample.jpg' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+					{
+						id: 'page-4',
+						title: 'Page 4',
 						content: '',
-						images: [],
+						images: [
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
 					},
-					{
-						id: 'Contact',
-						title: 'Contact Info',
-						content: '',
-						images: [],
-					},
-				] )
-			)
-		).to.be.eql( {
-			...initialTestState,
-			websiteContent: [
-				{
-					id: 'Home',
-					title: 'Home Page',
-					content: 'Home Page Content',
-					images: [ { caption: 'Screenshot 2', url: '/sp/url', uploadID: 5 } ],
-				},
-				{
-					id: 'About',
-					title: 'Information About You',
-					content: '',
-					images: [],
-				},
-				{
-					id: 'Contact',
-					title: 'Contact Info',
-					content: '',
-					images: [],
-				},
-			],
+				],
+			},
 		} );
 	} );
 
 	test( 'image data should be accurately updated', () => {
 		const action = imageUploaded( {
-			id: 'Home',
+			pageId: 'Home',
 			mediaIndex: 1,
 			image: { caption: 'test', url: 'www.test.com/test.test.jpg' },
 		} );
@@ -272,87 +237,48 @@ describe( 'reducer', () => {
 					1: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
 				},
 			},
-			websiteContent: [
-				{
-					id: 'Home',
-					title: 'Homepage',
-					content: '',
-					images: [
-						{ caption: '', url: '' },
-						{
-							caption: 'test',
-							url: 'www.test.com/test.test.jpg',
-						},
-						{ caption: '', url: '' },
-					],
-				},
-				{
-					id: 'About',
-					title: 'Information About You',
-					content: '',
-					images: [
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-				{
-					id: 'Contact',
-					title: 'Contact Info',
-					content: '',
-					images: [
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-			],
+			websiteContent: {
+				...initialTestState.websiteContent,
+				pages: [
+					{
+						id: 'Home',
+						title: 'Homepage',
+						content: '',
+						images: [
+							{ caption: '', url: '' },
+							{
+								caption: 'test',
+								url: 'www.test.com/test.test.jpg',
+							},
+							{ caption: '', url: '' },
+						],
+					},
+					{
+						id: 'About',
+						title: 'Information About You',
+						content: '',
+						images: [
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+					{
+						id: 'Contact',
+						title: 'Contact Info',
+						content: '',
+						images: [
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+				],
+			},
 		} );
 	} );
 
-	test( 'text content should be accurately updated', () => {
-		const action = textChanged( {
-			id: 'About',
-			content: 'Testing Content',
-		} );
-		expect( websiteContentCollectionReducer( { ...initialTestState }, action ) ).to.be.eql( {
-			...initialTestState,
-			websiteContent: [
-				{
-					id: 'Home',
-					title: 'Homepage',
-					content: '',
-					images: [
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-				{
-					id: 'About',
-					title: 'Information About You',
-					content: 'Testing Content',
-					images: [
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-				{
-					id: 'Contact',
-					title: 'Contact Info',
-					content: '',
-					images: [
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-						{ caption: '', url: '' },
-					],
-				},
-			],
-		} );
-	} );
-
-	test( 'should update the image uploading state correctly', () => {
+	test( 'should update the image uploading success/failed state correctly', () => {
 		const action = imageUploadInitiated( {
 			pageId: 'About',
 			mediaIndex: 2,
@@ -362,8 +288,111 @@ describe( 'reducer', () => {
 			...initialTestState,
 			imageUploadStates: {
 				About: {
-					2: 'UPLOAD_STARTED',
+					2: IMAGE_UPLOAD_STATES.UPLOAD_STARTED,
 				},
+			},
+		} );
+
+		const failedAction = imageUploadFailed( { pageId: 'About', mediaIndex: 2 } );
+		const nextAfterFailedState = websiteContentCollectionReducer(
+			{ ...initialTestState },
+			failedAction
+		);
+		expect( nextAfterFailedState ).to.be.eql( {
+			...initialTestState,
+			imageUploadStates: {
+				About: {
+					2: IMAGE_UPLOAD_STATES.UPLOAD_FAILED,
+				},
+			},
+		} );
+	} );
+
+	test( 'should update relevent state when the logo uploading is completed', () => {
+		const action = logoUploadCompleted( 'wp.me/some-random-image.png' );
+		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
+		expect( nextState ).to.be.eql( {
+			...initialTestState,
+			imageUploadStates: {
+				[ LOGO_SECTION_ID ]: {
+					0: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+				},
+			},
+			websiteContent: {
+				...initialTestState.websiteContent,
+				siteLogoUrl: 'wp.me/some-random-image.png',
+			},
+		} );
+	} );
+
+	test( 'should update the logo uploading started/failed state correctly', () => {
+		const action = logoUploadStarted();
+		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
+		expect( nextState ).to.be.eql( {
+			...initialTestState,
+			imageUploadStates: {
+				[ LOGO_SECTION_ID ]: {
+					0: IMAGE_UPLOAD_STATES.UPLOAD_STARTED,
+				},
+			},
+		} );
+
+		const failedAction = logoUploadFailed();
+		const nextAfterFailedState = websiteContentCollectionReducer(
+			{ ...initialTestState },
+			failedAction
+		);
+		expect( nextAfterFailedState ).to.be.eql( {
+			...initialTestState,
+			imageUploadStates: {
+				[ LOGO_SECTION_ID ]: {
+					0: IMAGE_UPLOAD_STATES.UPLOAD_FAILED,
+				},
+			},
+		} );
+	} );
+
+	test( 'text content should be accurately updated', () => {
+		const action = textChanged( {
+			pageId: 'About',
+			content: 'Testing Content',
+		} );
+		expect( websiteContentCollectionReducer( { ...initialTestState }, action ) ).to.be.eql( {
+			...initialTestState,
+			websiteContent: {
+				...initialState.websiteContent,
+				pages: [
+					{
+						id: 'Home',
+						title: 'Homepage',
+						content: '',
+						images: [
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+					{
+						id: 'About',
+						title: 'Information About You',
+						content: 'Testing Content',
+						images: [
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+					{
+						id: 'Contact',
+						title: 'Contact Info',
+						content: '',
+						images: [
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+							{ caption: '', url: '' },
+						],
+					},
+				],
 			},
 		} );
 	} );
