@@ -38,23 +38,12 @@ function dangerously_load_full_site_editing_files() {
  * @returns bool True if FSE is active, false otherwise.
  */
 function is_full_site_editing_active() {
-	/**
-	 * There are times when this function is called from the WordPress.com public
-	 * API context. In this case, we need to switch to the correct blog so that
-	 * the functions reference the correct blog context.
-	 */
-	$multisite_id  = apply_filters( 'a8c_fse_get_multisite_id', false );
-	$should_switch = is_multisite() && $multisite_id;
-	if ( $should_switch ) {
-		switch_to_blog( $multisite_id );
+	// We will always return false in admin and REST API contexts as we work towards getting rid of this.
+	if ( is_admin() || ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST ) ) {
+		return false;
 	}
 
-	$is_active = is_site_eligible_for_full_site_editing() && is_theme_supported() && did_insert_template_parts();
-
-	if ( $should_switch ) {
-		restore_current_blog();
-	}
-	return $is_active;
+	return is_theme_supported() && did_insert_template_parts();
 }
 
 /**
