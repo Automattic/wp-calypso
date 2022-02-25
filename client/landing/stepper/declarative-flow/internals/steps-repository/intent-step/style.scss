@@ -6,94 +6,22 @@ $gray-100: #101517;
 $gray-60: #50575e;
 
 .intent-step {
-    align-items: flex-start;
-    justify-content: space-between;
-    max-width: 1024px;
-    padding: 0 20px;
-	margin: 0 auto;
-    margin-top: 44px;
+	.onboarding-components-select-items__item {
+		.onboarding-components-select-items__item-title {
+			font-weight: 400;
+			margin: 0;
+		}
 
-    @include break-small {
-        display: flex;
-        margin-top: 25vh;
-    }
+		.onboarding-components-select-items__item-button {
+			box-shadow: rgba( 0, 0, 0, 0.05 ) 0 1px 2px 0;
+			border-radius: 4px;
+			border: 1px solid rgb( 195, 196, 199 );
+		}
+	}
 
-    .intent-step__header {
-        display: block;
-        justify-content: space-between;
-        align-items: center;
-		margin-bottom: 40px;
-
-        @include breakpoint-deprecated( '<660px' ) {
-            flex-wrap: wrap;
-            margin-top: 24px;
-        }
-
-        @include break-small {
-            padding-right: 20px;
-        }
-
-    }
-
-    .intent-step__header-image {
-        margin-top: 64px;
-        display: none;
-    
-        @include break-small {
-            display: block;
-        }
-    }
-
-    .formatted-header {
-        margin: 0;
-        flex-grow: 1;
-        text-align: left;
-
-        .formatted-header__title {
-            @include onboarding-font-recoleta;
-			color: $gray-100;
-			letter-spacing: 0.2px;
-			font-size: 2.15rem; /* stylelint-disable-line */
-            font-weight: 400;
-            padding: 0;
-            text-align: left;
-            margin: 0;
-
-			@include break-xlarge {
-				font-size: 2.75rem; /* stylelint-disable-line */
-			}
-        }
-
-        .formatted-header__subtitle {
-            padding: 0;
-            text-align: left;
-            color: $gray-60;
-			font-size: 1rem;
-            margin: 8px 0 0;
-            line-height: 24px;
-
-			@include breakpoint-deprecated( '<660px' ) {
-				margin-top: 16px;
-			}
-        }
-    }
-
-    .onboarding-components-select-items__item {
-        .onboarding-components-select-items__item-title {
-            font-weight: 400;
-            margin: 0;
-        }
-        
-        .onboarding-components-select-items__item-button {
-            box-shadow: rgba( 0, 0, 0, 0.05 ) 0 1px 2px 0;
-            border-radius: 4px;
-            border: 1px solid rgb( 195, 196, 199 );
-        }
-    }
-
-    .onboarding-components-select-items-alt__item {
-        .onboarding-components-select-items-alt__item-description {
-            margin: 0;
-        }
-    }
+	.onboarding-components-select-items-alt__item {
+		.onboarding-components-select-items-alt__item-description {
+			margin: 0;
+		}
+	}
 }

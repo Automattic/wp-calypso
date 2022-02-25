@@ -3,12 +3,12 @@ import type { Flow } from './internals/types';
 
 export const siteSetupFlow: Flow = {
 	useSteps() {
-		return [ 'intent', 'write', 'build', 'sell', 'import' ];
+		return [ 'intent', 'options', 'build', 'sell', 'import' ];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const goBack = () => {
 			if (
-				currentStep === 'write' ||
+				currentStep === 'options' ||
 				currentStep === 'build' ||
 				currentStep === 'sell' ||
 				currentStep === 'import'
