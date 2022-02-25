@@ -3,10 +3,7 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import isSiteEligibleForLegacyFSE from 'calypso/state/selectors/is-site-eligible-for-legacy-fse';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor.js';
 import { THEME_FILTERS_REQUEST, THEME_FILTERS_ADD } from 'calypso/state/themes/action-types';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const fetchFilters = ( action ) =>
 	http(
@@ -34,16 +31,7 @@ const themeFiltersHandlers = dispatchRequest( {
 registerHandlers( 'state/data-layer/wpcom/theme-filters/index.js', {
 	[ THEME_FILTERS_REQUEST ]: [
 		( store, action ) => {
-			const state = store.getState();
-			const selectedSiteId = getSelectedSiteId( state );
-			const isFse = isSiteEligibleForLegacyFSE( state, selectedSiteId );
-			const isCoreFse = isSiteUsingCoreSiteEditor( state, selectedSiteId );
-
-			return themeFiltersHandlers( store, {
-				...action,
-				isFse,
-				isCoreFse,
-			} );
+			return themeFiltersHandlers( store, action );
 		},
 	],
 } );
