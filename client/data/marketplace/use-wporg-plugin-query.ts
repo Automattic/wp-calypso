@@ -40,7 +40,7 @@ export const useWPORGPlugins = (
 				author,
 			} ),
 		{
-			select: ( { plugins = {}, info = {} } ) => ( {
+			select: ( { plugins = [], info = {} } ) => ( {
 				plugins: normalizePluginsList( plugins ),
 				pagination: info,
 			} ),
