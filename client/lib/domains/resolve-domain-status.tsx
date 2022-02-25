@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { Purchase } from '@automattic/wpcom-checkout';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
@@ -18,6 +17,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
 import type { ResponseDomain } from './types';
+import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ReactChild } from 'react';
 
 export type ResolveDomainStatusReturn =

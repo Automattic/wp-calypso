@@ -415,7 +415,7 @@ const Settings = ( {
 			{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 			{ renderBreadcrumbs() }
-			<SettingsHeader domain={ domain } site={ selectedSite } />
+			<SettingsHeader domain={ domain } site={ selectedSite } purchase={ purchase } />
 			<TwoColumnsLayout content={ renderMainContent() } sidebar={ renderSettingsCards() } />
 		</Main>
 	);
