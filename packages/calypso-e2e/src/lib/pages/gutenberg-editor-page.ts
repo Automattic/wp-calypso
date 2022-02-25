@@ -3,7 +3,11 @@ import { Page, Frame, ElementHandle, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
-import { EditorPublishPanelComponent, EditorNavSidebarComponent } from '../components';
+import {
+	EditorPublishPanelComponent,
+	EditorNavSidebarComponent,
+	EditorToolbarComponent,
+} from '../components';
 
 type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 
@@ -54,6 +58,7 @@ export class GutenbergEditorPage {
 	private page: Page;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
+	private editorToolbarComponent: EditorToolbarComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -67,6 +72,10 @@ export class GutenbergEditorPage {
 			page.frameLocator( selectors.editorFrame )
 		);
 		this.editorNavSidebarComponent = new EditorNavSidebarComponent(
+			page,
+			page.frameLocator( selectors.editorFrame )
+		);
+		this.editorToolbarComponent = new EditorToolbarComponent(
 			page,
 			page.frameLocator( selectors.editorFrame )
 		);
@@ -390,13 +399,11 @@ export class GutenbergEditorPage {
 	 * Publishes the post or page.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
-	 * @returns {Promise<string>} The published URL.
+	 * @returns {URL} Published article's URL.
 	 */
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< URL > {
-		const frame = await this.getEditorFrame();
-
 		// Click on the main publish action button on the toolbar.
-		await frame.click( selectors.publishButton );
+		await this.editorToolbarComponent.clickPublish();
 
 		if ( await this.editorPublishPanelComponent.panelIsOpen() ) {
 			// Invoke the second stage of the publish step which handles the
@@ -424,16 +431,7 @@ export class GutenbergEditorPage {
 	 * Unpublishes the post or page by switching to draft.
 	 */
 	async unpublish(): Promise< void > {
-		const frame = await this.getEditorFrame();
-
-		await frame.click( selectors.switchToDraftButton );
-
-		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-		await frame.click( `div[role="dialog"] button:has-text("OK")` );
-		// Similar to Save Draft, the publish button temporarily becomes disabled
-		// while the unpublish process takes place. This waits for the publish button
-		// to again become enabled.
-		await frame.waitForSelector( `${ selectors.publishButton }[aria-disabled=false]` );
+		await this.editorToolbarComponent.switchToDraft();
 	}
 
 	/**
@@ -457,11 +455,7 @@ export class GutenbergEditorPage {
 	 * Saves the currently open post as draft.
 	 */
 	async saveDraft(): Promise< void > {
-		const frame = await this.getEditorFrame();
-
-		await frame.click( selectors.saveDraftButton );
-		// Wait for the Save Draft button to become disabled.
-		await frame.waitForSelector( selectors.saveDraftDisabledButton );
+		await this.editorToolbarComponent.saveDraft();
 	}
 
 	/**

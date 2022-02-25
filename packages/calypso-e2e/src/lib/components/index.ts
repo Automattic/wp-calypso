@@ -18,5 +18,6 @@ export * from './react-modal-component';
 export * from './popover-block-inserter-component';
 export * from './editor-publish-panel-component';
 export * from './editor-nav-sidebar-component';
+export * from './editor-toolbar-component';
 
 export * from './me';

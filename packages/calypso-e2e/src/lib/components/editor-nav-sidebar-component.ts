@@ -68,7 +68,6 @@ export class EditorNavSidebarComponent {
 	private async sidebarIsOpen(): Promise< boolean > {
 		const locator = this.frameLocator.locator( selectors.sidebarButton );
 		const status = await locator.getAttribute( 'aria-expanded' );
-
 		return status === 'true';
 	}
 
