@@ -739,8 +739,8 @@ export function generateSteps( {
 		importing: {
 			stepName: 'importing',
 		},
-		'import-light': {
-			stepName: 'import-light',
+		static: {
+			stepName: 'static',
 		},
 
 		// Woocommerce Install steps.

@@ -284,7 +284,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'import-light',
-			steps: [ 'import-light' ],
+			steps: [ 'static' ],
 			destination: '/',
 			pageTitle: translate( 'Import light' ),
 			description: 'Import light',
