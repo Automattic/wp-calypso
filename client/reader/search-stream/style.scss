@@ -24,10 +24,6 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		padding-top: 30px;
 	}
-
-	.mobile-back-to-sidebar {
-		margin: 0;
-	}
 }
 
 .search-stream__fixed-area .section-nav-tabs.is-dropdown {
