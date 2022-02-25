@@ -39,9 +39,6 @@ export default function StoredCreditCard( props: { card: PaymentMethod } ): Reac
 					<div className="stored-credit-card__expiry">{ `${ expiryMonth }/${ expiryYear }` }</div>
 				</div>
 			</div>
-			<div className="stored-credit-card__actions">
-				<PaymentMethodActions card={ creditCard } />
-			</div>
 		</div>
 	);
 }
