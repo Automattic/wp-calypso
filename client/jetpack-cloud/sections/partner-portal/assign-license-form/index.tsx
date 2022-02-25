@@ -21,33 +21,40 @@ function setPage( pageNumber: number ): void {
 	page( addQueryArgs( queryParams, currentPath ) );
 }
 
+function paginate( arr: Array< any >, currentPage: number ): Array< any > {
+	return (
+		arr
+			// Slices sites list based on pagination settings
+			.slice( SITE_CARDS_PER_PAGE * ( currentPage - 1 ), SITE_CARDS_PER_PAGE * currentPage )
+	);
+}
+
 export default function AssignLicenseForm( { sites, currentPage }: any ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ filter, setFilter ] = useState( false );
+	const [ filter, setFilter ] = useState( null );
 	const [ selectedSite, setSelectedSite ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
 	const onSelectSite = ( site: any ) => setSelectedSite( site );
 
-	const siteCards = sites
-		// Slices sites list based on pagination settings before creating site cards components
-		.slice( SITE_CARDS_PER_PAGE * ( currentPage - 1 ), SITE_CARDS_PER_PAGE * currentPage )
-		.map( ( site: any ) => {
-			if ( -1 !== site.domain.search( filter ) || false === filter ) {
-				return (
-					<Card key={ site.ID } className="assign-license-form__site-card">
-						<FormRadio
-							className="assign-license-form__site-card-radio"
-							label={ site.domain }
-							name="site_select"
-							disabled={ isSubmitting }
-							onClick={ () => onSelectSite( site.ID ) }
-						/>
-					</Card>
-				);
-			}
-		} );
+	const hasFilter = filter === null || '' === filter;
+
+	const siteCards = sites.map( ( site: any ) => {
+		if ( -1 !== site.domain.search( filter ) || null === filter ) {
+			return (
+				<Card key={ site.ID } className="assign-license-form__site-card">
+					<FormRadio
+						className="assign-license-form__site-card-radio"
+						label={ site.domain }
+						name="site_select"
+						disabled={ isSubmitting }
+						onClick={ () => onSelectSite( site.ID ) }
+					/>
+				</Card>
+			);
+		}
+	} );
 
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
@@ -116,15 +123,17 @@ export default function AssignLicenseForm( { sites, currentPage }: any ): ReactE
 				onSearch={ ( query: any ) => setFilter( query ) }
 			/>
 
-			{ siteCards }
+			{ hasFilter ? paginate( siteCards, currentPage ) : siteCards }
 
-			<Pagination
-				className="assign-license-form__pagination"
-				page={ currentPage }
-				perPage={ SITE_CARDS_PER_PAGE }
-				total={ sites.length }
-				pageClick={ onPageClick }
-			/>
+			{ hasFilter && (
+				<Pagination
+					className="assign-license-form__pagination"
+					page={ currentPage }
+					perPage={ SITE_CARDS_PER_PAGE }
+					total={ sites.length }
+					pageClick={ onPageClick }
+				/>
+			) }
 		</div>
 	);
 }
