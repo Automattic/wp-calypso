@@ -10,6 +10,7 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
@@ -20,7 +21,6 @@ import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
