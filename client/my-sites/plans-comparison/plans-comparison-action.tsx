@@ -1,13 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { TYPE_FREE, TYPE_FLEXIBLE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import type { WPComPlan } from '@automattic/calypso-products';
 import type { TranslateResult } from 'i18n-calypso';
 
 interface Props {
-	planName: string;
-	planType: string;
+	plan: WPComPlan;
 	buttonText?: TranslateResult;
 	canPurchase?: boolean;
 	currentSitePlanSlug?: string;
@@ -22,12 +23,12 @@ interface Props {
 type TranslateFunc = ReturnType< typeof useTranslate >;
 
 function getButtonText( props: Partial< Props >, translate: TranslateFunc ): TranslateResult {
-	const { isCurrentPlan, isInSignup, planName } = props;
+	const { isCurrentPlan, isInSignup, plan } = props;
 
 	if ( isInSignup ) {
 		return translate( 'Start with %(plan)s', {
 			args: {
-				plan: planName,
+				plan: plan?.getTitle(),
 			},
 		} );
 	}
@@ -38,7 +39,7 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 
 	return translate( 'Select %(plan)s', {
 		args: {
-			plan: planName,
+			plan: plan?.getTitle(),
 		},
 		context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
 		comment: 'A button to select a new paid plan.',
@@ -50,7 +51,7 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 	currentSitePlanSlug,
 	manageHref,
 	onClick,
-	planType,
+	plan,
 	...props
 } ) => {
 	const translate = useTranslate();
@@ -64,11 +65,11 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 
 		recordTracksEvent( 'calypso_plan_features_upgrade_click', {
 			current_plan: currentSitePlanSlug || null,
-			upgrading_to: planType,
+			upgrading_to: plan.type,
 		} );
 
 		onClick?.();
-	}, [ currentSitePlanSlug, isPlaceholder, onClick, planType ] );
+	}, [ currentSitePlanSlug, isPlaceholder, onClick, plan.type ] );
 
 	if ( ! buttonText ) {
 		buttonText = getButtonText( props, translate );
@@ -76,6 +77,10 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 
 	if ( isInSignup || ! isCurrentPlan ) {
 		manageHref = undefined;
+	}
+
+	if ( ! isInSignup && [ TYPE_FLEXIBLE, TYPE_FREE ].includes( plan.type ) ) {
+		return null;
 	}
 
 	return (

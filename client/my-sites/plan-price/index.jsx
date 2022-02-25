@@ -1,6 +1,7 @@
 import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { isNumber } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Badge from 'calypso/components/badge';
@@ -22,7 +23,7 @@ export class PlanPrice extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! currencyCode ) {
+		if ( ! currencyCode || ! isNumber( rawPrice ) ) {
 			return null;
 		}
 

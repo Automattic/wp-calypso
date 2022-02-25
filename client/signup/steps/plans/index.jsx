@@ -3,7 +3,6 @@ import {
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	getPlan,
 	PLAN_FREE,
-	PLAN_WPCOM_MANAGED,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
@@ -19,10 +18,9 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
-import { isE2ETest } from 'calypso/lib/e2e';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import PlansComparison from 'calypso/my-sites/plans-comparison';
+import PlansComparison, { isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -155,7 +153,7 @@ export class PlansStep extends Component {
 			return this.renderLoading();
 		}
 
-		if ( ! isE2ETest() && this.props.managedPlanExists ) {
+		if ( this.props.isEligibleForManagedPlan ) {
 			return (
 				<div>
 					{ errorDisplay }
@@ -449,8 +447,9 @@ export default connect(
 		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		managedPlanExists: Boolean(
-			getPlanSlug( state, getPlan( PLAN_WPCOM_MANAGED )?.getProductId() || 0 )
+		isEligibleForManagedPlan: isEligibleForManagedPlan(
+			state,
+			getSiteBySlug( state, siteSlug )?.ID
 		),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }

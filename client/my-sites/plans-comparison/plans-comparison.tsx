@@ -6,9 +6,11 @@ import {
 	TYPE_FLEXIBLE,
 	TYPE_MANAGED,
 } from '@automattic/calypso-products';
+import { Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { SCREEN_BREAKPOINT } from './constant';
@@ -19,6 +21,7 @@ import { PlansComparisonRow } from './plans-comparison-row';
 import { usePlanPrices, PlanPrices } from './use-plan-prices';
 import type { WPComPlan } from '@automattic/calypso-products';
 import type { RequestCartProduct as CartItem } from '@automattic/shopping-cart';
+
 interface TableProps {
 	firstColWidth: number;
 	planCount: number;
@@ -36,18 +39,17 @@ const ComparisonTable = styled.table< TableProps >`
 		padding: 1rem;
 		min-height: 2rem;
 		width: ${ ( { firstColWidth, planCount } ) => `${ ( 100 - firstColWidth ) / planCount }%` };
-		vertical-align: middle;
 		font-size: 1rem;
+		vertical-align: top;
 	}
 
-	th:nth-child( odd ),
-	td:nth-child( odd ) {
+	th:nth-of-type( even ),
+	td:nth-of-type( even ) {
 		background: var( --studio-blue-0 );
 	}
 
-	th:first-child,
-	td:first-child {
-		background: var( --studio-white );
+	th.is-first,
+	td.is-first {
 		width: ${ ( { firstColWidth } ) => `${ firstColWidth }%` };
 	}
 
@@ -57,8 +59,8 @@ const ComparisonTable = styled.table< TableProps >`
 	}
 
 	@media screen and ( max-width: ${ SCREEN_BREAKPOINT }px ) {
-		th:first-child,
-		td:first-child {
+		th.is-first,
+		td.is-first {
 			display: none;
 		}
 
@@ -69,14 +71,16 @@ const ComparisonTable = styled.table< TableProps >`
 	}
 `;
 
-const THead = styled.thead`
+const THead = styled.thead< { isInSignup: boolean } >`
 	position: sticky;
-	top: 0;
+	top: ${ ( { isInSignup } ) => ( isInSignup ? '0' : `var( --masterbar-height )` ) };
 `;
 
 interface Props {
 	isInSignup?: boolean;
 	selectedSiteId?: number;
+	selectedSiteSlug?: string;
+	purchaseId?: number | null;
 	onSelectPlan: ( item: Partial< CartItem > | null ) => void;
 }
 
@@ -94,24 +98,34 @@ function planToCartItem( plan: WPComPlan ): Partial< CartItem > | null {
 export const PlansComparison: React.FunctionComponent< Props > = ( {
 	isInSignup = false,
 	selectedSiteId,
+	selectedSiteSlug,
+	purchaseId,
 	onSelectPlan,
 } ) => {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSiteId || null ) );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? '';
 	const plans = [ getPlan( PLAN_WPCOM_FLEXIBLE ), getPlan( PLAN_WPCOM_MANAGED ) ] as WPComPlan[];
 	const prices: PlanPrices[] = [ { price: 0 }, usePlanPrices( plans[ 1 ], selectedSiteId ) ];
-	// const maxPrice = Math.max( ...prices.map( ( { price } ) => price ) );
 	const translate = useTranslate();
+
+	const manageHref =
+		selectedSiteSlug && purchaseId
+			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+			: `/plans/${ selectedSiteSlug || '' }`;
 
 	return (
 		<ComparisonTable firstColWidth={ 30 } planCount={ plans.length }>
-			<THead>
+			{ ! isInSignup && (
+				<Global styles={ { '#content.layout__content': { overflow: 'unset' } } } />
+			) }
+			<THead isInSignup={ isInSignup }>
 				<tr>
-					<th>
+					<td className={ `is-first` }>
 						<br />
-					</th>
+					</td>
 					{ plans.map( ( plan, index ) => (
 						<PlansComparisonColHeader
+							key={ plan.getProductId() }
 							plan={ plan }
 							currencyCode={ currencyCode }
 							price={ prices[ index ].price }
@@ -120,10 +134,11 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 						>
 							<PlansComparisonAction
 								currentSitePlanSlug={ sitePlan?.product_slug }
-								planName={ String( plan.getTitle() ) }
-								planType={ plan.type }
+								plan={ plan }
 								isInSignup={ isInSignup }
 								isPrimary={ plan.type === TYPE_MANAGED }
+								isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
+								manageHref={ manageHref }
 								onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
 							/>
 						</PlansComparisonColHeader>

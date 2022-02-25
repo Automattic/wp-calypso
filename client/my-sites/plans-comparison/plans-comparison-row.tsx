@@ -81,7 +81,7 @@ export const PlansComparisonRow: React.FunctionComponent< Props > = ( { feature,
 				)[ 0 ];
 
 				return (
-					<td>
+					<td key={ plan.getProductId() }>
 						<DesktopContent>
 							{ renderContent( feature.getCellText( includedFeature, false ) ) }
 						</DesktopContent>

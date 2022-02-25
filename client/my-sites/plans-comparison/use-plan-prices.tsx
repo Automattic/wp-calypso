@@ -6,10 +6,13 @@ import {
 	getSitePlanRawPrice,
 } from 'calypso/state/sites/plans/selectors';
 import type { WPComPlan } from '@automattic/calypso-products';
-
 export interface PlanPrices {
 	price: number;
 	originalPrice?: number;
+}
+
+function toMonthlyPrice( yearlyPrice: number ) {
+	return yearlyPrice ? yearlyPrice / 12 : 0;
 }
 
 export function usePlanPrices( plan: WPComPlan, siteId?: number ): PlanPrices {
@@ -27,7 +30,7 @@ export function usePlanPrices( plan: WPComPlan, siteId?: number ): PlanPrices {
 			siteId
 				? getPlanDiscountedRawPrice( state, siteId, productSlug )
 				: getDiscountedRawPrice( state, productId ),
-		];
+		].map( toMonthlyPrice );
 	} );
 
 	if ( ! discountPrice ) {
