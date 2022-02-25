@@ -346,7 +346,7 @@ export default {
 		}
 
 		if ( isMobile() && 'wpcc' !== flowName ) {
-			loadExperimentAssignment( 'registration_social_login_first_on_mobile_v2' );
+			loadExperimentAssignment( 'registration_social_login_first_on_mobile_v3' );
 		}
 
 		const signupFlows = [

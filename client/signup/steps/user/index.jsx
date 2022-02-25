@@ -513,7 +513,7 @@ export class UserStep extends Component {
 
 		return (
 			<ProvideExperimentData
-				name="registration_social_login_first_on_mobile_v2"
+				name="registration_social_login_first_on_mobile_v3"
 				options={ {
 					isEligible: isMobile() && 'wpcc' !== this.props.flowName,
 				} }
