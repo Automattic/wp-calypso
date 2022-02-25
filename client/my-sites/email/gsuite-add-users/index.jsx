@@ -14,6 +14,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getEligibleGSuiteDomain,
 	getGoogleMailServiceFamily,
@@ -34,6 +35,7 @@ import {
 } from 'calypso/lib/gsuite/new-users';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
+import GoogleMailboxPricingNotice from 'calypso/my-sites/email/gsuite-add-users/google-workspace-pricing-notice';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
@@ -232,7 +234,19 @@ class GSuiteAddUsers extends Component {
 	}
 
 	render() {
-		const { currentRoute, productType, translate, selectedDomainName, selectedSite } = this.props;
+		const {
+			currentRoute,
+			domains,
+			productType,
+			translate,
+			selectedDomainName,
+			selectedSite,
+		} = this.props;
+
+		const selectedDomain = getSelectedDomain( {
+			domains,
+			selectedDomainName: selectedDomainName,
+		} );
 
 		const analyticsPath = emailManagementAddGSuiteUsers(
 			':site',
@@ -267,6 +281,12 @@ class GSuiteAddUsers extends Component {
 						} ) }
 						noticeStatus="is-info"
 					>
+						{ selectedDomainName && (
+							<GoogleMailboxPricingNotice
+								domain={ selectedDomain }
+								googleMailProduct={ productType }
+							/>
+						) }
 						{ this.renderAddGSuite() }
 					</EmailVerificationGate>
 				</Main>
