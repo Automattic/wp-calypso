@@ -17,6 +17,7 @@ export const DOMAIN_WAITING = `${ root }/domains/register-domain/#waiting-for-do
 export const DOMAINS = `${ root }/domains`;
 export const DOMAIN_CANCEL = `${ root }/domains/#cancel-a-domain-name`;
 export const DOMAIN_EXPIRATION = `${ root }/domains/domain-expiration/`;
+export const DOMAIN_EXPIRATION_AUCTION = `${ root }/domains/domain-expiration/#expiry-auction`;
 export const DOMAIN_EXPIRATION_REDEMPTION = `${ root }/domains/domain-expiration/#renewing-a-domain-in-the-redemption-period`;
 export const DOMAIN_RECENTLY_REGISTERED = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAIN_PRICING_AND_AVAILABLE_TLDS = `${ root }/domains/domain-pricing-and-available-tlds`;

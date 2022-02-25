@@ -9,6 +9,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER_STATUSES,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	GDPR_POLICIES,
+	DOMAIN_EXPIRATION_AUCTION,
 } from 'calypso/lib/url/support';
 import {
 	domainManagementEditContactInfo,
@@ -208,6 +209,32 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.REGISTERED:
+			if ( domain.aftermarketAuction ) {
+				const statusMessage = translate( 'Expiry auction' );
+				return {
+					statusText: statusMessage,
+					statusClass: 'status-warning',
+					status: statusMessage,
+					icon: 'info',
+					noticeText: translate(
+						'Your domain expired over 30 days ago and has been offered for sale at auction. If it is not sold you may be able to restore the domain to your account by paying a redemption fee starting on {{strong}}%(renewableUntil)s{{/strong}}. Until then, you will not be able to make any changes or transfer the domain. {{a}}Learn more{{/a}}',
+						{
+							components: {
+								strong: <strong />,
+								a: (
+									<a href={ DOMAIN_EXPIRATION_AUCTION } rel="noopener noreferrer" target="_blank" />
+								),
+							},
+							args: {
+								renewableUntil: moment.utc( domain.renewableUntil ).format( 'LL' ),
+							},
+						}
+					),
+					listStatusClass: 'warning',
+					listStatusWeight: 400,
+				};
+			}
+
 			if ( domain.isPendingRenewal ) {
 				const pendingRenewalMessage = translate( 'Renewal in progress' );
 				return {
