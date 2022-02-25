@@ -39,7 +39,7 @@ export default function ConnectDomainStepSuggestedStart( {
 
 	const message = isSubdomain( domain )
 		? __(
-				"This is the easiest way to connect your subdomain, using NS records. Can't set NS records on your subdomain? Switch to our <a>advanced setup</a>, using A & CNAME records."
+				'The easiest way to connect your subdomain is by changing name servers. But if you are unable to do this, then switch to our <a>advanced setup</a>, using A & CNAME records.'
 		  )
 		: __(
 				'This is the easiest way to connect your domain, using name servers. If needed you can also use our <a>advanced setup</a>, using root A & CNAME records.'
