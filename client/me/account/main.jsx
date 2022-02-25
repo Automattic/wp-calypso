@@ -38,7 +38,6 @@ import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUserDate,
@@ -874,7 +873,6 @@ class Account extends Component {
 			<Main wideLayout className="account">
 				<QueryUserSettings />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
-				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<FormattedHeader brandFont headerText={ translate( 'Account settings' ) } align="left" />
 

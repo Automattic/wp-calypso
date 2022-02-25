@@ -19,7 +19,6 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
@@ -43,7 +42,6 @@ class Profile extends Component {
 		return (
 			<Main className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
-				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<FormattedHeader
 					brandFont

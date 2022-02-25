@@ -8,7 +8,6 @@ import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-meth
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
 import { getAddNewPaymentMethodPath } from 'calypso/me/purchases/utils';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 
 import './style.scss';
 
@@ -19,7 +18,6 @@ function PaymentMethods(): JSX.Element {
 		<Main wideLayout className="payment-methods__main">
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/me/purchases/payment-methods" title="Me > Payment Methods" />
-			<MeSidebarNavigation />
 			<FormattedHeader
 				brandFont
 				headerText={ titles.sectionTitle }

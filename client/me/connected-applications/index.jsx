@@ -15,7 +15,6 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ConnectedAppItem from 'calypso/me/connected-application-item';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
 import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 
@@ -114,7 +113,6 @@ class ConnectedApplications extends PureComponent {
 					title="Me > Connected Applications"
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<MeSidebarNavigation />
 
 				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 

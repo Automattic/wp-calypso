@@ -13,7 +13,6 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import AccountPassword from 'calypso/me/account-password';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 
 const debug = debugFactory( 'calypso:me:security:password' );
 
@@ -42,7 +41,6 @@ class Security extends Component {
 			<Main wideLayout className="security">
 				<PageViewTracker path={ path } title="Me > Password" />
 				<DocumentHead title={ translate( 'Password' ) } />
-				<MeSidebarNavigation />
 
 				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
