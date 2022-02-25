@@ -20,9 +20,32 @@
 
 .stored-credit-card__header {
 	display: flex;
-	justify-content: space-between;
-	flex-grow: 1;
-	margin-bottom: auto;
+	align-items: flex-start;
+	flex-basis: 100%;
+}
+
+.stored-credit-card__labels {
+	display: flex;
+
+	> div {
+		&:first-child {
+			margin-left: 0;
+		}
+
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+}
+
+.stored-credit-card__actions {
+	width: 28px;
+	height: 28px;
+
+	margin-left: auto;
+
+	.button.ellipsis-menu__toggle {
+		padding: 0;
+	}
 }
 
 .stored-credit-card__payment-logo svg {

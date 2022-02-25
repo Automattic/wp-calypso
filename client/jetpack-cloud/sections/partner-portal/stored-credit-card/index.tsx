@@ -1,6 +1,7 @@
 import { PaymentLogo } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
+import PaymentMethodActions from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-actions';
 import { PaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import './style.scss';
 
@@ -14,11 +15,17 @@ export default function StoredCreditCard( props: { card: PaymentMethod } ): Reac
 	return (
 		<div className="stored-credit-card">
 			<div className="stored-credit-card__header">
-				<div className="stored-credit-card__payment-logo">
-					<PaymentLogo brand={ creditCard.card_type } isSummary={ true } />
+				<div className="stored-credit-card__labels">
+					<div className="stored-credit-card__payment-logo">
+						<PaymentLogo brand={ creditCard.card_type } isSummary={ true } />
+					</div>
+
+					<div className="stored-credit-card__primary">{ translate( 'Primary' ) }</div>
 				</div>
 
-				<div className="stored-credit-card__primary">{ translate( 'Primary' ) }</div>
+				<div className="stored-credit-card__actions">
+					<PaymentMethodActions card={ creditCard } />
+				</div>
 			</div>
 			<div className="stored-credit-card__footer">
 				<div className="stored-credit-card__footer-left">
