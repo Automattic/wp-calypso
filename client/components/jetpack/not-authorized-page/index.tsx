@@ -2,8 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 
 const NotAuthorizedPage: React.FC = () => {
 	const translate = useTranslate();

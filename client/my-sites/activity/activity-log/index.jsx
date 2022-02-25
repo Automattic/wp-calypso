@@ -23,12 +23,12 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	getRewindRestoreProgress,
 	rewindRequestDismiss,

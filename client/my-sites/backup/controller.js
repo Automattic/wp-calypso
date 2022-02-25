@@ -8,8 +8,8 @@ import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { setFilter } from 'calypso/state/activity-log/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import siteHasSubscription from 'calypso/state/selectors/site-has-subscription';

@@ -11,10 +11,10 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Upsell from 'calypso/components/jetpack/upsell';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	siteHasBackupProductPurchase,

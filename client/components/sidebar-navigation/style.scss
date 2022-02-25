@@ -3,7 +3,7 @@
  */
 .current-section {
 	position: relative;
-	margin: 0 0 8px;
+	margin: 0 -16px;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		display: none;
@@ -14,7 +14,8 @@
 		justify-content: flex-start;
 		align-items: center;
 		cursor: pointer;
-		padding: 8px 0;
+		// 24px from the text, -4 for the overflow from the 32px height icon
+		padding: 20px 8px;
 		color: var( --color-neutral-70 );
 		background: var( --color-surface );
 		border-bottom: 1px solid var( --color-neutral-10 );
@@ -22,19 +23,23 @@
 		line-height: 1.5;
 		text-align: left;
 		width: 100%;
+
+		svg {
+			height: 32px;
+			width: 32px;
+			fill: var( --color-neutral-40 );
+		}
 	}
 
 	.gridicons-menu {
 		color: var( --color-neutral-light );
 		margin: 0 8px;
 	}
-}
 
-.layout__page-title {
-	font-size: $font-title-medium;
-	margin: 16px;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		margin: 0 0 8px;
+	h1.current-section__site-title {
+		color: var( --color-neutral-70 );
+		font-size: $font-body;
+		font-weight: 400;
+		padding-left: 8px;
 	}
 }

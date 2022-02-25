@@ -4,9 +4,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ThreatHistoryList from 'calypso/components/jetpack/threat-history-list';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import ScanNavigation from '../navigation';
 import type { FilterValue } from 'calypso/components/jetpack/threat-history-list/threat-status-filter';
 

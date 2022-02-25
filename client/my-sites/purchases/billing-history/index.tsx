@@ -10,6 +10,7 @@ import QueryBillingTransactions from 'calypso/components/data/query-billing-tran
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -21,7 +22,6 @@ import {
 } from 'calypso/me/purchases/billing-history/receipt';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -61,7 +61,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 
 	return (
 		<Main wideLayout className="purchases billing-history">
-			{ isJetpackCloud() && <MySitesSidebarNavigation /> }
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker path="/purchases/billing-history" title="Billing History" />
 			<QueryBillingTransactions />
