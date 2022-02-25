@@ -35,7 +35,7 @@ const Sso = ( {
 						) }
 						link={
 							isAtomic
-								? 'https://wordpress.com/en/support/wordpress-com-secure-sign-on-sso/'
+								? 'https://wordpress.com/support/wordpress-com-secure-sign-on-sso/'
 								: 'https://jetpack.com/support/sso/'
 						}
 						privacyLink={ ! isAtomic }
