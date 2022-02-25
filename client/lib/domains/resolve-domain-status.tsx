@@ -222,12 +222,7 @@ export function resolveDomainStatus(
 							components: {
 								strong: <strong />,
 								a: (
-									<a
-										href={ DOMAIN_EXPIRATION_AUCTION }
-										rel="noopener noreferrer"
-										target="_blank"
-										onClick={ ( e ) => e.stopPropagation() }
-									/>
+									<a href={ DOMAIN_EXPIRATION_AUCTION } rel="noopener noreferrer" target="_blank" />
 								),
 							},
 							args: {
