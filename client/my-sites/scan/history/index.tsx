@@ -27,7 +27,7 @@ export default function ScanHistoryPage( { filter }: Props ) {
 			} ) }
 		>
 			<DocumentHead title={ translate( 'Scan' ) } />
-			<SidebarNavigation />
+			{ isJetpackPlatform && <SidebarNavigation /> }
 			<PageViewTracker path="/scan/history/:site" title="Scan History" />
 			{ ! isJetpackPlatform && (
 				<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />

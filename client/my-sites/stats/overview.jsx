@@ -10,7 +10,6 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import DatePicker from './stats-date-picker';
@@ -90,7 +89,6 @@ class StatsOverview extends Component {
 					path={ `/stats/${ period }` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
-				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'traffic' } interval={ period } />
 				{ sites.length !== 0 ? sitesList : this.placeholders() }
 				<JetpackColophon />

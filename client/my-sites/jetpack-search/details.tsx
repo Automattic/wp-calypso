@@ -31,7 +31,7 @@ export default function JetpackSearchDetails( { isSearchEnabled }: Props ): Reac
 	return (
 		<Main className="jetpack-search">
 			<DocumentHead title="Jetpack Search" />
-			<SidebarNavigation />
+			{ isCloud && <SidebarNavigation /> }
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
 
 			<JetpackSearchContent

@@ -61,7 +61,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 
 	return (
 		<Main wideLayout className="purchases billing-history">
-			<MySitesSidebarNavigation />
+			{ isJetpackCloud() && <MySitesSidebarNavigation /> }
 			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker path="/purchases/billing-history" title="Billing History" />
 			<QueryBillingTransactions />

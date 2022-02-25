@@ -12,7 +12,7 @@ export default function JetpackSearchDisconnected(): ReactElement {
 	return (
 		<Main className="jetpack-search">
 			<DocumentHead title="Jetpack Search" />
-			<SidebarNavigation />
+			{ isCloud && <SidebarNavigation /> }
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
 			<div className="jetpack-search__disconnected">
 				{ isCloud ? <JetpackDisconnected /> : <JetpackDisconnectedWPCOM /> }

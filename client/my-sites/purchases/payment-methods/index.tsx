@@ -61,7 +61,7 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 
 	return (
 		<Main wideLayout className="purchases">
-			<MySitesSidebarNavigation />
+			{ isJetpackCloud() && <MySitesSidebarNavigation /> }
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
 			{ ! isJetpackCloud() && (

@@ -317,7 +317,7 @@ class ScanPage extends Component< Props > {
 				} ) }
 			>
 				<DocumentHead title="Scan" />
-				<SidebarNavigation />
+				{ isJetpackPlatform && <SidebarNavigation /> }
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackPlatform && (

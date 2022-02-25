@@ -44,7 +44,6 @@ import { globalOverrides, isEligibleForManagedPlan } from 'calypso/my-sites/plan
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -200,7 +199,6 @@ class CurrentPlan extends Component {
 
 		return (
 			<Main className="current-plan" wideLayout>
-				<SidebarNavigation />
 				{ eligibleForManagedPlan && <Global styles={ globalOverrides } /> }
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				<FormattedHeader

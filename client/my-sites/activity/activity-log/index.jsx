@@ -26,6 +26,7 @@ import Pagination from 'calypso/components/pagination';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
@@ -492,7 +493,7 @@ class ActivityLog extends Component {
 				<QuerySitePurchases siteId={ siteId } />
 				<QueryRewindBackups siteId={ siteId } />
 
-				<SidebarNavigation />
+				{ isJetpackCloud() && <SidebarNavigation /> }
 
 				<FormattedHeader
 					brandFont

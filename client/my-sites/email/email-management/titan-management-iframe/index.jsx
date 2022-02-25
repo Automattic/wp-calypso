@@ -13,7 +13,6 @@ import { getTitanProductName } from 'calypso/lib/titan';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import TitanControlPanelLoginCard from 'calypso/my-sites/email/email-management/titan-control-panel-login-card';
 import { emailManagement } from 'calypso/my-sites/email/paths';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -56,7 +55,6 @@ class TitanManagementIframe extends Component {
 		if ( ! canManageSite ) {
 			return (
 				<Main>
-					<SidebarNavigation />
 					<EmptyContent
 						title={ translate( 'You are not authorized to view this page' ) }
 						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
@@ -80,7 +78,6 @@ class TitanManagementIframe extends Component {
 				) }
 				<QuerySiteDomains siteId={ selectedSiteId } />
 				<DocumentHead title={ titleCase( pageTitle ) } />
-				<SidebarNavigation />
 
 				<Header backHref={ emailManagementPath } selectedDomainName={ domainName }>
 					{ pageTitle }

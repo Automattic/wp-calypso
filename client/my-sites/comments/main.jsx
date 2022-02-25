@@ -10,7 +10,6 @@ import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import CommentList from './comment-list';
@@ -62,7 +61,6 @@ export class CommentsManagement extends Component {
 				<ScreenOptionsTab wpAdminPath="edit-comments.php" />
 				<PageViewTracker path={ analyticsPath } title="Comments" />
 				<DocumentHead title={ translate( 'Comments' ) } />
-				<SidebarNavigation />
 				{ ! showPermissionError && (
 					<FormattedHeader
 						brandFont

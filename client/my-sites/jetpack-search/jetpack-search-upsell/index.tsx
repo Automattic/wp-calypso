@@ -30,7 +30,7 @@ export default function JetpackSearchUpsell(): ReactElement {
 	return (
 		<Main className="jetpack-search-upsell">
 			<DocumentHead title="Jetpack Search" />
-			<SidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
 
 			{ isJetpackCloud() ? (

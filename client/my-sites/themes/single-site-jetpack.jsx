@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Main from 'calypso/components/main';
 import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import CurrentTheme from 'calypso/my-sites/themes/current-theme';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -69,7 +68,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 
 	return (
 		<Main fullWidthLayout className="themes">
-			<SidebarNavigation />
 			<ThemesHeader />
 			<CurrentTheme siteId={ siteId } />
 			<ThemeShowcase

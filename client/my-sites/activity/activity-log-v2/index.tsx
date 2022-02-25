@@ -88,7 +88,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			<DocumentHead title={ translate( 'Activity log' ) } />
-			<SidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
 			{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
 			{ isJetpackCloud() ? (

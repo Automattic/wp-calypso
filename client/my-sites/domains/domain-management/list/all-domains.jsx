@@ -25,7 +25,6 @@ import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -675,7 +674,6 @@ class AllDomains extends Component {
 					<QueryAllDomains />
 					<QueryUserPurchases />
 					<Main wideLayout>
-						<SidebarNavigation />
 						<DocumentHead title={ translate( 'Domains', { context: 'A navigation label.' } ) } />
 						<div>{ this.renderDomainsList() }</div>
 						<div>{ this.renderDomainOnlyUpsellCarousel() }</div>

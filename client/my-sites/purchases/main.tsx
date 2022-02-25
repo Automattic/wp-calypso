@@ -53,7 +53,7 @@ export function Purchases(): JSX.Element {
 
 	return (
 		<Main wideLayout className="purchases">
-			<MySitesSidebarNavigation />
+			{ isJetpackCloud() && <MySitesSidebarNavigation /> }
 			<DocumentHead title={ titles.sectionTitle } />
 			{ ! isJetpackCloud() && (
 				<FormattedHeader

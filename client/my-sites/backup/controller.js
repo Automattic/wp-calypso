@@ -38,7 +38,7 @@ export function showUpsellIfNoBackup( context, next ) {
 				display={ context.primary }
 				productSlugTest={ isJetpackBackupSlug }
 			>
-				<SidebarNavigation />
+				{ isJetpackCloud() && <SidebarNavigation /> }
 				{ ! isJetpackCloud() && (
 					<FormattedHeader brandFont headerText="Jetpack Backup" align="left" />
 				) }
