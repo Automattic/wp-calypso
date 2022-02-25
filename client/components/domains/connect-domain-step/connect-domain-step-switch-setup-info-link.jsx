@@ -11,6 +11,7 @@ export default function ConnectDomainStepSwitchSetupInfoLink( {
 	baseClassName,
 	currentStep,
 	currentMode,
+	isSubdomain,
 	setPage,
 } ) {
 	const { __ } = useI18n();
@@ -19,8 +20,10 @@ export default function ConnectDomainStepSwitchSetupInfoLink( {
 		return null;
 	}
 
-	const switchToAdvancedSetup = () => setPage( stepSlug.ADVANCED_START );
-	const switchToSuggestedSetup = () => setPage( stepSlug.SUGGESTED_START );
+	const switchToAdvancedSetup = () =>
+		setPage( isSubdomain ? stepSlug.SUBDOMAIN_ADVANCED_START : stepSlug.ADVANCED_START );
+	const switchToSuggestedSetup = () =>
+		setPage( isSubdomain ? stepSlug.SUBDOMAIN_SUGGESTED_START : stepSlug.SUGGESTED_START );
 
 	const message =
 		modeType.ADVANCED === currentMode ? (

@@ -268,6 +268,7 @@ function ConnectDomainStep( {
 				baseClassName={ baseClassName }
 				currentMode={ mode }
 				currentStep={ step }
+				isSubdomain={ isSubdomain( domain ) }
 				setPage={ setPageSlug }
 			/>
 		</>
