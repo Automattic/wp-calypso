@@ -112,7 +112,7 @@ class PublishingTools extends Component {
 					) }
 					link={
 						isAtomic
-							? 'https://wordpress.com/en/support/post-by-email/'
+							? 'https://wordpress.com/support/post-by-email/'
 							: 'https://jetpack.com/support/post-by-email/'
 					}
 					privacyLink={ ! isAtomic }

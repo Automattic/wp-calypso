@@ -72,7 +72,7 @@ function ThemeEnhancements( {
 						) }
 						link={
 							isAtomic
-								? 'https://wordpress.com/en/support/infinite-scroll/'
+								? 'https://wordpress.com/support/infinite-scroll/'
 								: 'https://jetpack.com/support/infinite-scroll/'
 						}
 						privacyLink={ ! isAtomic }
@@ -90,7 +90,7 @@ function ThemeEnhancements( {
 						) }
 						link={
 							isAtomic
-								? 'https://wordpress.com/en/support/editing-css/'
+								? 'https://wordpress.com/support/editing-css/'
 								: 'https://jetpack.com/support/custom-css/'
 						}
 						privacyLink={ ! isAtomic }

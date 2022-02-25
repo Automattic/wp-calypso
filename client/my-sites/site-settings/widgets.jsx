@@ -40,7 +40,7 @@ function Widgets( { isSavingSettings, isRequestingSettings, isAtomic, translate 
 						) }
 						link={
 							isAtomic
-								? 'https://wordpress.com/en/support/widgets/#widget-visibility'
+								? 'https://wordpress.com/support/widgets/#widget-visibility'
 								: 'https://jetpack.com/support/widget-visibility'
 						}
 						privacyLink={ ! isAtomic }
