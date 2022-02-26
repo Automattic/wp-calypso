@@ -16,7 +16,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'BRL',
 					volume: 1,
 					free_trial: false,
-					orig_cost: null,
 					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
@@ -138,7 +137,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'BRL',
 					volume: 1,
 					free_trial: false,
-					orig_cost: null,
 					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
@@ -170,7 +168,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'BRL',
 					volume: 1,
 					free_trial: false,
-					orig_cost: 0,
 					cost_before_coupon: 88,
 					extra: {
 						privacy: true,
@@ -316,7 +313,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'USD',
 					volume: 1,
 					free_trial: false,
-					orig_cost: null,
 					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
@@ -348,7 +344,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'USD',
 					volume: 1,
 					free_trial: false,
-					orig_cost: 0,
 					cost_before_coupon: 88,
 					extra: {
 						privacy: true,
@@ -384,7 +379,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'USD',
 					volume: 2,
 					free_trial: false,
-					orig_cost: null,
 					cost_before_coupon: null,
 					extra: {
 						context: 'signup',
@@ -516,7 +510,6 @@ describe( 'translateResponseCartToWPCOMCart', function () {
 					currency: 'USD',
 					volume: 1,
 					free_trial: false,
-					orig_cost: null,
 					cost_before_coupon: 144,
 					extra: {
 						context: 'signup',
