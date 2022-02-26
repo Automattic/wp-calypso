@@ -7,9 +7,9 @@ import {
 	EditorPublishPanelComponent,
 	EditorNavSidebarComponent,
 	EditorToolbarComponent,
+	EditorSettingsSidebarComponent,
 } from '../components';
-
-type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
+import type { PreviewOptions } from '../components';
 
 const selectors = {
 	// iframe and editor
@@ -27,28 +27,11 @@ const selectors = {
 	paragraphBlocks: 'p.block-editor-rich-text__editable',
 	blockWarning: '.block-editor-warning',
 
-	// Top bar selectors.
-	postToolbar: '.edit-post-header',
-	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
-	closeSettingsButton: 'button[aria-label="Close settings"]:visible',
-	saveDraftButton: '.editor-post-save-draft',
-	saveDraftDisabledButton: 'button.editor-post-saved-state.is-saved[aria-disabled="true"]',
-	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
-	publishButton: `.editor-post-publish-button__button`,
-	switchToDraftButton: 'button.editor-post-switch-to-draft',
-
-	// Settings panel.
-	settingsPanel: '.interface-complementary-area',
-
 	// Toast
 	toastViewPostLink: '.components-snackbar__content a:text-matches("View (Post|Page)", "i")',
 
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
-
-	// Preview
-	previewMenuItem: ( target: PreviewOptions ) => `button[role="menuitem"] span:text("${ target }")`,
-	previewPane: ( target: PreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,
 };
 
 /**
@@ -284,7 +267,11 @@ export class GutenbergEditorPage {
 	 */
 	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
-		await this.openBlockInserter();
+		// Click on the editor title to work around the following issue:
+		// https://github.com/Automattic/wp-calypso/issues/61508
+		await frame.click( selectors.editorTitle );
+
+		await this.editorToolbarComponent.openBlockInserter();
 		await this.searchBlockInserter( blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
@@ -294,7 +281,7 @@ export class GutenbergEditorPage {
 		// no interference from the block inserter in subsequent actions on the editor.
 		// In mobile, the block inserter will auto-close.
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
-			await frame.click( selectors.blockInserterToggle );
+			await this.editorToolbarComponent.closeBlockInserter();
 		}
 
 		return elementHandle;
@@ -325,25 +312,10 @@ export class GutenbergEditorPage {
 	 */
 	async addPattern( patternName: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
-		await this.openBlockInserter();
+		await this.editorToolbarComponent.openBlockInserter();
 		await this.searchBlockInserter( patternName );
 		await frame.click( `div[aria-label="${ patternName }"]` );
 		return await frame.waitForSelector( `:text('Block pattern "${ patternName }" inserted.')` );
-	}
-
-	/**
-	 * Open the block inserter panel.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async openBlockInserter(): Promise< void > {
-		const frame = await this.getEditorFrame();
-		// Click on the editor title. This has the effect of dismissing the block inserter
-		// if open, and restores focus back to the editor root container, allowing insertion
-		// of blocks.
-		await frame.click( selectors.editorTitle );
-		await frame.click( selectors.blockInserterToggle );
-		await frame.waitForSelector( selectors.blockInserterPanel );
 	}
 
 	/**
@@ -357,42 +329,27 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * @returns Whether the Settings sidebar is open or not.
-	 */
-	async isSettingsSidebarOpen(): Promise< boolean > {
-		const frame = await this.getEditorFrame();
-		return await frame.$eval( selectors.settingsToggle, ( element ) =>
-			element.classList.contains( 'is-pressed' )
-		);
-	}
-
-	/**
 	 * Opens the Settings sidebar.
 	 */
 	async openSettings(): Promise< void > {
-		const frame = await this.getEditorFrame();
-
-		const isSidebarOpen = await this.isSettingsSidebarOpen();
-		if ( ! isSidebarOpen ) {
-			await frame.click( selectors.settingsToggle );
-		}
-		const settingsToggle = await frame.waitForSelector( selectors.settingsToggle );
-		await frame.waitForFunction(
-			( element ) => element.getAttribute( 'aria-pressed' ) === 'true',
-			settingsToggle
-		);
+		await this.editorToolbarComponent.openSettings();
 	}
 
 	/**
 	 * Closes the Settings sidebar.
 	 */
 	async closeSettings(): Promise< void > {
-		const isSidebarOpen = await this.isSettingsSidebarOpen();
-		if ( ! isSidebarOpen ) {
-			return;
+		// On mobile, the settings panel close button is located on the settings panel itself.
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// {@TODO} Temporary measure, to be unified into framelocator based class
+			// once EditorSettingsSidebarComponent is refactored.
+			const editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(
+				await this.getEditorFrame(),
+				this.page
+			);
+			await editorSettingsSidebarComponent.closeSidebar();
 		}
-		const frame = await this.getEditorFrame();
-		await frame.click( selectors.closeSettingsButton );
+		await this.editorToolbarComponent.closeSettings();
 	}
 
 	/**
@@ -520,83 +477,42 @@ export class GutenbergEditorPage {
 	 * will have access to the Calyspo sidebar, allowing navigation around Calypso.
 	 */
 	async exitEditor(): Promise< void > {
+		await this.editorNavSidebarComponent.openSidebar();
 		await this.editorNavSidebarComponent.exitEditor();
 	}
 
 	/* Previews */
 
 	/**
-	 * Click on the `Preview` button on the editor toolbar.
+	 * Launches the Preview.
 	 *
-	 * This method interacts with the mobile implementation of the editor preview,
-	 * which:
-	 * 	1. launch a new tab.
-	 * 	2. load the preview.
+	 * For Desktop viewports, this method will not return any value.
+	 * For Mobile viewports, this method will return a reference to a popup Page.
 	 *
-	 * This method will throw if used in a desktop environment.
-	 *
-	 * @throws {Error} If environment is not 'mobile'.
+	 * @returns {Page|void} Handler for the Page object on mobile. Void otherwise.
 	 */
-	async openPreviewAsMobile(): Promise< Page > {
-		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
-			throw new Error( 'This method only works in a mobile environment.' );
-		}
-		const frame = await this.getEditorFrame();
-		const [ popup ] = await Promise.all( [
-			this.page.waitForEvent( 'popup' ),
-			frame.click( selectors.previewButton ),
-		] );
-		await popup.waitForLoadState( 'load' );
-		return popup;
-	}
-
-	/**
-	 * Click on the `Preview` button on the editor toolbar, then select requested the preview option.
-	 *
-	 * This method interacts with the non-mobile implementation of the editor preview,
-	 * which applies an attribute to the editor to simulate the preview environment.
-	 *
-	 * Additionally, this method only works in the desktop browser environment; in a mobile
-	 * environment, the Preview button will launch a new page. For mobile, use
-	 * `GutenbergEditorPage.openPreviewAsMobile` instead.
-	 *
-	 * @param {PreviewOptions} target Preview option to be selected.
-	 * @throws {Error} If environment is 'mobile'.
-	 */
-	async openPreviewAsDesktop( target: PreviewOptions ): Promise< void > {
+	async preview( target?: PreviewOptions ): Promise< Page | void > {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			throw new Error( 'This method only works in a non-mobile environment.' );
+			return await this.editorToolbarComponent.openMobilePreview();
 		}
-		const frame = await this.getEditorFrame();
-		await frame.click( selectors.previewButton );
-		await frame.click( selectors.previewMenuItem( target ) );
-		const handle = await frame.waitForSelector( selectors.previewPane( target ) );
-		await handle.waitForElementState( 'stable' );
+		if ( ! target ) {
+			throw new Error( 'Preview target must be defined.' );
+		}
+
+		await this.editorToolbarComponent.openDesktopPreview( target );
 	}
 
 	/**
-	 * Terminates the Post Preview mode.
+	 * Closes the preview.
 	 *
-	 * This method will click on the Preview button if required, then select the `Desktop` entry,
-	 * which is the default view setting when the editor is opened initially.
-	 *
-	 * Additionally, this method only works in the desktop browser environment; in a mobile
-	 * environment, the Preview button would have launched a new page. For mobile, close
-	 * the new page instead.
-	 *
-	 * @throws {Error} If environment is 'mobile'.
+	 * For Desktop viewports, this method will return the editor pane to the default
+	 * value of `desktop`.
+	 * For Mobile viewports, this method will do nothing.
 	 */
 	async closePreview(): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			throw new Error( ' This method only works in a non-mobile environment.' );
+			return;
 		}
-		const frame = await this.getEditorFrame();
-
-		// Restore the editor view to Desktop size.
-		await this.openPreviewAsDesktop( 'Desktop' );
-
-		// Ensure the preview menu is closed and that preview settings are back to default (Desktop).
-		await frame.waitForSelector( `${ selectors.previewButton }[aria-expanded=false]` );
-		await frame.waitForSelector( selectors.previewPane( 'Desktop' ) );
+		await this.editorToolbarComponent.openDesktopPreview( 'Desktop' );
 	}
 }

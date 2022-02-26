@@ -28,16 +28,26 @@ export class EditorNavSidebarComponent {
 	}
 
 	/**
+	 * Opens the sidebar if not already open.
+	 */
+	async openSidebar(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			return;
+		}
+
+		if ( ! ( await this.sidebarIsOpen() ) ) {
+			const locator = this.frameLocator.locator( selectors.sidebarButton );
+			await locator.click();
+		}
+	}
+
+	/**
 	 * Exits the editor.
 	 *
 	 * For Desktop viewports, the sidebar is used to exit.
 	 * For Mobile viewports, My Sites button is used to exit.
 	 */
 	async exitEditor(): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
-			await this.openSidebar();
-		}
-
 		// There are three different places to return to,
 		// depending on how the editor was entered.
 		const navigationPromise = Promise.race( [
@@ -69,15 +79,5 @@ export class EditorNavSidebarComponent {
 		const locator = this.frameLocator.locator( selectors.sidebarButton );
 		const status = await locator.getAttribute( 'aria-expanded' );
 		return status === 'true';
-	}
-
-	/**
-	 * Opens the sidebar if not already open.
-	 */
-	async openSidebar(): Promise< void > {
-		if ( ! ( await this.sidebarIsOpen() ) ) {
-			const locator = this.frameLocator.locator( selectors.sidebarButton );
-			await locator.click();
-		}
 	}
 }

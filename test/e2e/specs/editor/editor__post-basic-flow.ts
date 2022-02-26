@@ -80,31 +80,23 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Preview', function () {
-		let previewPage: Page;
+		let previewPage: Page | void;
 
 		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 		it( 'Close settings sidebar', async function () {
 			await editorSettingsSidebarComponent.closeSidebar();
 		} );
 
-		// The following two steps have conditiionals inside them, as how the
-		// Editor Preview behaves depends on the device type.
-		// On desktop and tablet, preview applies CSS attributes to modify the preview in-editor.
-		// On mobile web, preview button opens a new tab.
 		it( 'Launch preview', async function () {
-			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-				previewPage = await gutenbergEditorPage.openPreviewAsMobile();
-			} else {
-				await gutenbergEditorPage.openPreviewAsDesktop( 'Mobile' );
-			}
+			previewPage = await gutenbergEditorPage.preview( 'Mobile' );
 		} );
 
-		skipItIf( envVariables.VIEWPORT_NAME === 'desktop' )( 'Close preview', async function () {
-			// Mobile path.
+		it( 'Close preview', async function () {
 			if ( previewPage ) {
+				// Mobile path - close the new page.
 				await previewPage.close();
-				// Desktop path.
 			} else {
+				// Desktop path - restore the Desktop view.
 				await gutenbergEditorPage.closePreview();
 			}
 		} );
