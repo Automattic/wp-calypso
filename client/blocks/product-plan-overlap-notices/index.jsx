@@ -11,7 +11,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Notice from 'calypso/components/notice';
-import { managePurchase } from 'calypso/me/purchases/paths';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
@@ -109,7 +109,7 @@ class ProductPlanOverlapNotices extends Component {
 		return (
 			<li key={ productSlug }>
 				<a
-					href={ managePurchase( productPurchase.domain, productPurchase.id ) }
+					href={ getManagePurchaseUrlFor( productPurchase.domain, productPurchase.id ) }
 					onClick={ () => this.clickPurchaseHandler( productSlug ) }
 				>
 					{ this.getProductName( productSlug ) }
