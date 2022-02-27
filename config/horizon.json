@@ -65,6 +65,7 @@
 		"p2/p2-plus": true,
 		"p2/preapproved-domains": false,
 		"plans/personal-plan": true,
+		"plans/managed-plan": true,
 		"post-editor/checkout-overlay": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
