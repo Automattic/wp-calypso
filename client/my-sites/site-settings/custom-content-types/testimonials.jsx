@@ -12,6 +12,7 @@ function Testimonials( {
 	onChangeField,
 	isDisabled,
 	isAtomic,
+	siteIsJetpack,
 } ) {
 	const name = 'jetpack_testimonial';
 	const numberFieldIdentifier = name + '_posts_per_page';
@@ -23,11 +24,11 @@ function Testimonials( {
 						'and display testimonials on your site.'
 				) }
 				link={
-					isAtomic
-						? 'https://wordpress.com/support/testimonials/'
-						: 'https://jetpack.com/support/custom-content-types/'
+					siteIsJetpack && ! isAtomic
+						? 'https://jetpack.com/support/custom-content-types/'
+						: 'https://wordpress.com/support/testimonials/'
 				}
-				privacyLink={ ! isAtomic }
+				privacyLink={ siteIsJetpack && ! isAtomic }
 			/>
 			<div className="custom-content-types__module-settings">
 				<ToggleControl

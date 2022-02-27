@@ -63,6 +63,7 @@ class CustomContentTypes extends Component {
 			isSavingSettings,
 			activatingCustomContentTypesModule,
 			isAtomic,
+			siteIsJetpack,
 		} = this.props;
 		const isDisabled =
 			isRequestingSettings || isSavingSettings || activatingCustomContentTypesModule;
@@ -92,6 +93,7 @@ class CustomContentTypes extends Component {
 								handleAutosavingToggle={ handleAutosavingToggle }
 								isDisabled={ isDisabled }
 								isAtomic={ isAtomic }
+								siteIsJetpack={ siteIsJetpack }
 							/>
 							<Portfolios
 								fields={ fields }
@@ -100,6 +102,7 @@ class CustomContentTypes extends Component {
 								handleAutosavingToggle={ handleAutosavingToggle }
 								isDisabled={ isDisabled }
 								isAtomic={ isAtomic }
+								siteIsJetpack={ siteIsJetpack }
 							/>
 						</>
 					) }
