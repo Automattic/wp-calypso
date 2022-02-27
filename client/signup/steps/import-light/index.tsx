@@ -19,6 +19,7 @@ const ImportLight: FunctionComponent< Props > = ( props ) => {
 			hideSkip={ false }
 			hideNext={ false }
 			hideBack={ false }
+			hideFormattedHeader={ true }
 			nextLabelText={ 'Skip this step' }
 			shouldHideNavButtons={ false }
 			stepContent={

@@ -1,6 +1,11 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '../import/style';
 
-.signup__step.is-import-light {
-	border: solid 1px red;
+.signup.is-import-light {
+	.import__onboarding-page {
+		@include break-large {
+			margin-left: 0;
+			margin-right: 0;
+		}
+	}
 }
