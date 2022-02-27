@@ -80,7 +80,10 @@ function defaultGetCellText(
 
 		return feature
 			? translate( '%(featureTitle)s included', { args: { featureTitle } } )
-			: translate( '%(featureTitle)s not included', { args: { featureTitle } } );
+			: translate( '%(featureTitle)s {{strong}}not{{/strong}} included', {
+					args: { featureTitle },
+					components: { strong: <strong /> },
+			  } );
 	};
 }
 
