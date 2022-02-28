@@ -79,7 +79,7 @@ export const DotPager = ( {
 	showControlLabels = false,
 	hasDynamicHeight = false,
 	children,
-	className,
+	className = '',
 	onPageSelected = null,
 	...props
 } ) => {
