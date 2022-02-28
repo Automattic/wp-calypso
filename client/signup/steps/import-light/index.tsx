@@ -2,6 +2,7 @@ import classnames from 'classnames';
 import React from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import Capture from './capture';
+import Scanning from './scanning';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
@@ -24,7 +25,8 @@ const ImportLight: FunctionComponent< Props > = ( props ) => {
 			shouldHideNavButtons={ false }
 			stepContent={
 				<div className={ classnames( 'import__onboarding-page' ) }>
-					<Capture />
+					{ ! props.stepSectionName && <Capture /> }
+					{ props.stepSectionName === 'scanning' && <Scanning /> }
 				</div>
 			}
 		/>
