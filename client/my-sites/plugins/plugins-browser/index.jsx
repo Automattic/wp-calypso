@@ -121,9 +121,8 @@ const PluginsBrowser = ( {
 	hideHeader,
 	doSearch,
 } ) => {
-	const breadcrumbs = useSelector( getBreadcrumbs );
-
 	const selectedSite = useSelector( getSelectedSite );
+	const breadcrumbs = useSelector( ( state ) => getBreadcrumbs( state, selectedSite?.ID ) );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
 
 	// Billing period switcher.
@@ -194,6 +193,10 @@ const PluginsBrowser = ( {
 	}, [ isJetpack, selectedSite, hasJetpack ] );
 
 	useEffect( () => {
+		if ( ! selectedSite?.ID ) {
+			return;
+		}
+
 		const items = [
 			{ label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }`, id: 'plugins' },
 		];
@@ -212,8 +215,8 @@ const PluginsBrowser = ( {
 			} );
 		}
 
-		dispatch( updateBreadcrumbs( items ) );
-	}, [ siteSlug, search, category, dispatch, translate ] );
+		dispatch( updateBreadcrumbs( selectedSite?.ID, items ) );
+	}, [ siteSlug, search, category, dispatch, translate, selectedSite?.ID ] );
 
 	const trackSiteDisconnect = () =>
 		composeAnalytics(
