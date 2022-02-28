@@ -468,6 +468,7 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign, storeType
 			callback( [ errors ] );
 		} );
 
+	// Skip theme-setup on `simple` store sites; this is handled in setStoreFeatures
 	if ( 'simple' !== storeType ) {
 		wpcom.req
 			.post( {
@@ -555,8 +556,7 @@ export async function setStoreFeatures(
 	}
 
 	/*
-	 * Check to see if FSE is active on the site
-	 * and pass to our getDestinationFromIntent callback.
+	 * @TODO: This shouldn't be needed but removing it breaks things
 	 */
 	wpcom.req
 		.get( {
