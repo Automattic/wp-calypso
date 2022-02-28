@@ -41,12 +41,12 @@ const Scanning: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	return (
-		<div className="import-layout__center">
-			<div className="import__header scanning__header">
-				<div className="import__heading import__heading-center">
+		<div className="import-layout__center import-light__colors">
+			<div className="import__header">
+				<div className="import__heading-center">
 					<Title>{ __( 'Importing colors' ) }</Title>
 
-					<div className="import-light__colors">
+					<div className="colors-container">
 						{ displayedColors.map( ( x, i ) => (
 							<ColorIndicator key={ i } colorValue={ x.hex } />
 						) ) }

@@ -11,8 +11,8 @@ const Scanning: React.FunctionComponent = () => {
 
 	return (
 		<div className="import-layout__center import-light__scanning">
-			<div className="import__header scanning__header">
-				<div className="import__heading import__heading-center">
+			<div className="import__header">
+				<div className="import__heading-center">
 					<Title>{ __( 'Scanning your site' ) }</Title>
 					<Progress>
 						<ProgressBar value={ 23 } compact={ true } color={ 'black' } />
