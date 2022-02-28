@@ -25,6 +25,10 @@ export default function ConnectDomainStepSwitchSetupInfoLink( {
 	const switchToSuggestedSetup = () =>
 		setPage( isSubdomain ? stepSlug.SUBDOMAIN_SUGGESTED_START : stepSlug.SUGGESTED_START );
 
+	const switchToAdvancedSetupMessage = isSubdomain
+		? __( "Can't set NS records for your subdomain? Switch to our <a>advanced setup</a>." )
+		: __( 'Switch to our <a>advanced setup</a>.' );
+
 	const message =
 		modeType.ADVANCED === currentMode ? (
 			<span className={ baseClassName + '__text' }>
@@ -34,7 +38,7 @@ export default function ConnectDomainStepSwitchSetupInfoLink( {
 			</span>
 		) : (
 			<span className={ baseClassName + '__text' }>
-				{ createInterpolateElement( __( 'Switch to our <a>advanced setup</a>.' ), {
+				{ createInterpolateElement( switchToAdvancedSetupMessage, {
 					a: createElement( 'a', { onClick: switchToAdvancedSetup } ),
 				} ) }
 			</span>
