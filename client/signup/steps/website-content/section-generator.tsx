@@ -1,17 +1,19 @@
-import { TranslateResult } from 'i18n-calypso';
 import {
 	AccordionSectionProps,
 	SectionGeneratorReturnType,
 } from 'calypso/signup/accordion-form/types';
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
+import { LogoUploadSection } from './logo-upload-section';
 import { CONTENT_SUFFIX, PageDetails } from './page-details';
 
-export const sectionGenerator = ( params: SectionGeneratorReturnType< WebsiteContent > ) => {
+const generateWebsiteContentSections = (
+	params: SectionGeneratorReturnType< WebsiteContent >,
+	elapsedSections = 0
+) => {
 	const { translate, formValues, formErrors, onChangeField } = params;
-	const PAGE_TITLES: Record< string, TranslateResult > = { Home: translate( 'Home' ) };
-	const sections: AccordionSectionProps< WebsiteContent >[] = formValues.map( ( page, index ) => {
-		const fieldNumber = index + 1;
-		const pageTitle = PAGE_TITLES[ page.id ] ? PAGE_TITLES[ page.id ] : page.title;
+	const websiteContentSections = formValues.pages.map( ( page, index ) => {
+		const fieldNumber = elapsedSections + index + 1;
+		const { title: pageTitle } = page;
 		return {
 			title: translate( '%(fieldNumber)d. %(pageTitle)s', {
 				args: {
@@ -42,6 +44,36 @@ export const sectionGenerator = ( params: SectionGeneratorReturnType< WebsiteCon
 			},
 		};
 	} );
+	return { elapsedSections: elapsedSections + formValues.pages.length, websiteContentSections };
+};
+const generateLogoSection = (
+	params: SectionGeneratorReturnType< WebsiteContent >,
+	elapsedSections = 0
+) => {
+	const { translate, formValues } = params;
 
-	return sections;
+	const fieldNumber = elapsedSections + 1;
+	return {
+		title: translate( '%(fieldNumber)d. Site Logo', {
+			args: {
+				fieldNumber,
+			},
+			comment: 'This is the serial number: 1',
+		} ),
+		component: <LogoUploadSection logoUrl={ formValues.siteLogoUrl } />,
+		showSkip: true,
+		elapsedSections: elapsedSections + 1,
+	};
+};
+
+export const sectionGenerator = ( params: SectionGeneratorReturnType< WebsiteContent > ) => {
+	const { elapsedSections, ...logoSection } = generateLogoSection( params );
+
+	const {
+		websiteContentSections,
+	}: {
+		websiteContentSections: AccordionSectionProps< WebsiteContent >[];
+	} = generateWebsiteContentSections( params, elapsedSections );
+
+	return [ logoSection, ...websiteContentSections ];
 };

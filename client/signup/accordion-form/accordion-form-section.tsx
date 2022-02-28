@@ -27,7 +27,6 @@ const Section = styled.div`
 const SectionHeader = styled.div< SectionHeaderProps >`
 	align-items: center;
 	display: flex;
-	cursor: pointer;
 	cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
 	font-weight: 500;
 	font-size: ${ ( props ) => ( props.isExpanded ? '20px' : '16px' ) };
@@ -54,12 +53,13 @@ const ButtonsContainer = styled.div`
 	gap: 24px;
 `;
 
-const SkipLink = styled.a`
-	cursor: pointer;
+const SkipLink = styled.a< { disabled?: boolean } >`
 	font-size: 14px;
 	line-height: 20px;
 	color: var( --studio-gray-60 );
 	text-decoration: none;
+	cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
+	pointer-events: ${ ( props ) => ( props.disabled ? 'none' : 'auto' ) };
 `;
 
 const RequiredLabel = styled.span`
@@ -124,7 +124,10 @@ export default function AccordionFormSection< T >( props: AccordionFormSectionPr
 							{ ! props.showSubmit && <Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } /> }
 						</NextButton>
 						{ props.showSkip && ! props.showSubmit && (
-							<SkipLink onClick={ () => ( props.blockNavigation ? null : props.onNext() ) }>
+							<SkipLink
+								disabled={ props.blockNavigation }
+								onClick={ () => ( props.blockNavigation ? null : props.onNext() ) }
+							>
 								{ translate( 'Skip' ) }
 							</SkipLink>
 						) }
