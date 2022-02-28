@@ -44,22 +44,22 @@ class DocumentHead extends Component {
 			this.props.title !== undefined &&
 			prevProps.title?.toString?.() !== this.props.title?.toString?.()
 		) {
-			prevProps.setTitle( this.props.title );
+			this.props.setTitle( this.props.title );
 		}
 
 		if (
 			this.props.unreadCount !== undefined &&
 			prevProps.unreadCount !== this.props.unreadCount
 		) {
-			prevProps.setUnreadCount( this.props.unreadCount );
+			this.props.setUnreadCount( this.props.unreadCount );
 		}
 
 		if ( this.props.link !== undefined && ! isEqual( prevProps.link, this.props.link ) ) {
-			prevProps.setLink( this.props.link );
+			this.props.setLink( this.props.link );
 		}
 
 		if ( this.props.meta !== undefined && ! isEqual( prevProps.meta, this.props.meta ) ) {
-			prevProps.setMeta( this.props.meta );
+			this.props.setMeta( this.props.meta );
 		}
 
 		if ( this.props.formattedTitle !== prevProps.formattedTitle ) {
