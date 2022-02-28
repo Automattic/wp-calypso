@@ -66,10 +66,9 @@ function PluginDetails( props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const breadcrumbs = useSelector( getBreadcrumbs );
-
 	// Site information.
 	const selectedSite = useSelector( getSelectedSite );
+	const breadcrumbs = useSelector( ( state ) => getBreadcrumbs( state, selectedSite?.ID ) );
 	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
@@ -199,7 +198,7 @@ function PluginDetails( props ) {
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
 			dispatch(
-				appendBreadcrumb( {
+				appendBreadcrumb( selectedSite?.ID, {
 					label: translate( 'Plugins' ),
 					href: `/plugins/${ selectedSite?.slug || '' }`,
 					id: 'plugins',
@@ -209,7 +208,7 @@ function PluginDetails( props ) {
 
 		if ( fullPlugin.name && props.pluginSlug ) {
 			dispatch(
-				appendBreadcrumb( {
+				appendBreadcrumb( selectedSite?.ID, {
 					label: fullPlugin.name,
 					href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
 					id: `plugin-${ props.pluginSlug }`,

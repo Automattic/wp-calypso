@@ -163,7 +163,7 @@ class ActivityLog extends Component {
 	}
 
 	initializeBreadcrumbs() {
-		this.props.updateBreadcrumbs( [
+		this.props.updateBreadcrumbs( this.props.siteId, [
 			{
 				label: this.props.translate( 'Activity Log' ),
 				href: `/activity-log/${ this.props.slug || '' }`,
