@@ -7,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
@@ -14,6 +15,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getEligibleGSuiteDomain,
 	getGoogleMailServiceFamily,
@@ -34,8 +36,10 @@ import {
 } from 'calypso/lib/gsuite/new-users';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
+import GoogleMailboxPricingNotice from 'calypso/my-sites/email/gsuite-add-users/google-workspace-pricing-notice';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
@@ -232,7 +236,20 @@ class GSuiteAddUsers extends Component {
 	}
 
 	render() {
-		const { currentRoute, productType, translate, selectedDomainName, selectedSite } = this.props;
+		const {
+			currentRoute,
+			domains,
+			googleMailProduct,
+			productType,
+			selectedDomainName,
+			selectedSite,
+			translate,
+		} = this.props;
+
+		const selectedDomain = getSelectedDomain( {
+			domains,
+			selectedDomainName: selectedDomainName,
+		} );
 
 		const analyticsPath = emailManagementAddGSuiteUsers(
 			':site',
@@ -246,6 +263,8 @@ class GSuiteAddUsers extends Component {
 		return (
 			<>
 				<PageViewTracker path={ analyticsPath } title="Email Management > Add Google Users" />
+
+				<QueryProductsList />
 
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
@@ -267,6 +286,12 @@ class GSuiteAddUsers extends Component {
 						} ) }
 						noticeStatus="is-info"
 					>
+						{ selectedDomainName && (
+							<GoogleMailboxPricingNotice
+								domain={ selectedDomain }
+								googleMailProduct={ googleMailProduct }
+							/>
+						) }
 						{ this.renderAddGSuite() }
 					</EmailVerificationGate>
 				</Main>
@@ -278,6 +303,7 @@ class GSuiteAddUsers extends Component {
 GSuiteAddUsers.propTypes = {
 	currentRoute: PropTypes.string,
 	domains: PropTypes.array.isRequired,
+	googleMailProduct: PropTypes.object.isRequired,
 	gsuiteUsers: PropTypes.array,
 	isRequestingDomains: PropTypes.bool.isRequired,
 	productType: PropTypes.oneOf( [ GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE ] ),
@@ -290,14 +316,16 @@ GSuiteAddUsers.propTypes = {
 };
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteId = getSelectedSiteId( state );
 		const domains = getDomainsBySiteId( state, selectedSiteId );
+		const productSlug = getProductSlug( ownProps.productType );
 
 		return {
 			currentRoute: getCurrentRoute( state ),
 			domains,
+			googleMailProduct: productSlug ? getProductBySlug( state, productSlug ) : null,
 			gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
 			isRequestingDomains: isRequestingSiteDomains( state, selectedSiteId ),
 			selectedSite,
