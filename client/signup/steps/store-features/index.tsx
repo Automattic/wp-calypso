@@ -168,13 +168,15 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		switch ( selectedOption ) {
 			case 'power':
 				dispatch( submitSignupStep( { stepName }, { storeType: 'woocommerce' } ) );
+				goToNextStep();
 				break;
 
 			case 'simple': {
 				dispatch( submitSignupStep( { stepName }, { storeType: 'payment_block' } ) );
+				goToNextStep();
+				break;
 			}
 		}
-		goToNextStep();
 	};
 
 	return (

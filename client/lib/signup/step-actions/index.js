@@ -550,22 +550,6 @@ export async function setStoreFeatures(
 			return;
 		}
 	}
-
-	/*
-	 * Check to see if FSE is active on the site
-	 * and pass to our getDestinationFromIntent callback.
-	 */
-	wpcom.req
-		.get( {
-			path: `/sites/${ siteSlug }/block-editor`,
-			apiNamespace: 'wpcom/v2',
-		} )
-		.then( ( data ) => {
-			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
-		} )
-		.catch( ( errors ) => {
-			callback( [ errors ] );
-		} );
 }
 
 export function setIntentOnSite( callback, { siteSlug, intent } ) {
