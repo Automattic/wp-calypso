@@ -176,11 +176,12 @@ class DisconnectJetpack extends PureComponent {
 				);
 				this.props.recordGoogleEvent( 'Jetpack', 'Successfully Disconnected' );
 			},
-			() => {
+			( err ) => {
 				removeInfoNotice( notice.noticeId );
-				showErrorNotice(
-					translate( '%(siteName)s failed to disconnect', { args: { siteName: siteTitle } } )
-				);
+				const errorMessage =
+					( err && err.message ) ||
+					translate( '%(siteName)s failed to disconnect', { args: { siteName: siteTitle } } );
+				showErrorNotice( errorMessage );
 				this.props.recordGoogleEvent( 'Jetpack', 'Failed Disconnected Site' );
 			}
 		);
