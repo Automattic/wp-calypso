@@ -5,9 +5,11 @@ import {
 	isJetpackPlanSlug,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
 import {
 	isPlanIncludingSiteBackup,
 	isBackupProductIncludedInSitePlan,
@@ -30,12 +32,19 @@ import './style.scss';
  * from a range of possible options.
  */
 const PrePurchaseNotices = () => {
+	const dispatch = useDispatch();
+
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID;
 
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const cartItemSlugs = responseCart.products.map( ( item ) => item.product_slug );
+
+	useEffect( () => {
+		if ( ! siteId ) return;
+		dispatch( requestRewindCapabilities( siteId ) );
+	}, [ dispatch, siteId ] );
 
 	const currentSitePlan = useSelector( ( state ) => {
 		if ( ! siteId ) {
