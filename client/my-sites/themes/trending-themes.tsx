@@ -23,7 +23,7 @@ class TrendingThemes extends Component< TrendingThemesProps > {
 		}
 	}
 
-	componentDidUpdate( prevProps: { isLoading: boolean; filter: TrendingThemesFilter } ) {
+	componentDidUpdate( prevProps: TrendingThemesProps ) {
 		// Wait until rec themes to be loaded to scroll to search input if its in use.
 		const { isLoading, scrollToSearchInput, filter } = this.props;
 		if ( prevProps.isLoading !== isLoading && isLoading === false ) {
