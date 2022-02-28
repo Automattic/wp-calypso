@@ -172,6 +172,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 				break;
 
 			case 'simple': {
+				//@todo: add selectedSiteCategory pointed to new store category as dependency here.
 				dispatch( submitSignupStep( { stepName }, { storeType: 'payment_block' } ) );
 				goToNextStep();
 				break;
