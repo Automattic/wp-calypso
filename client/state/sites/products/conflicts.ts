@@ -3,6 +3,7 @@ import {
 	planHasSuperiorFeature,
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_DAILY,
+	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PLANS,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_BUSINESS,
@@ -21,6 +22,10 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
 import { hasSiteProduct, getSitePlanSlug } from 'calypso/state/sites/selectors';
@@ -40,16 +45,17 @@ export const isPlanIncludingSiteBackup = createSelector(
 			return null;
 		}
 
-		const hasDailyBackup = hasSiteProduct( state, siteId, [
-			PRODUCT_JETPACK_BACKUP_DAILY,
-			PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
-		] );
+		const hasBackup = hasSiteProduct( state, siteId, [ ...JETPACK_BACKUP_PRODUCTS ] );
 		const hasRealTimeBackup = hasSiteProduct( state, siteId, [
 			PRODUCT_JETPACK_BACKUP_REALTIME,
 			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+			PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+			PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 		] );
 
-		if ( ! hasDailyBackup && ! hasRealTimeBackup ) {
+		if ( ! hasBackup ) {
 			return false;
 		}
 
