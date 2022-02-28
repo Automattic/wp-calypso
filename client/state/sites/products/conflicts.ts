@@ -22,12 +22,10 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
-	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
-	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
+import { useSelector } from 'react-redux';
+import { siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
 import { hasSiteProduct, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -46,14 +44,7 @@ export const isPlanIncludingSiteBackup = createSelector(
 		}
 
 		const hasBackup = hasSiteProduct( state, siteId, [ ...JETPACK_BACKUP_PRODUCTS ] );
-		const hasRealTimeBackup = hasSiteProduct( state, siteId, [
-			PRODUCT_JETPACK_BACKUP_REALTIME,
-			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-			PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
-			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
-			PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
-		] );
+		const hasRealTimeBackup = useSelector( ( state ) => siteHasRealtimeBackups( state, siteId ) );
 
 		if ( ! hasBackup ) {
 			return false;
