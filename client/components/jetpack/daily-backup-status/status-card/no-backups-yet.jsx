@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,6 +11,7 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import BackupTips from './backup-tips';
 import cloudPendingIcon from './icons/cloud-pending.svg';
 
 import './style.scss';
@@ -72,6 +74,7 @@ const NoBackupsYet = () => {
 					<ExternalLink href={ adminUrl }>{ translate( 'Manage your website' ) }</ExternalLink>
 				</li>
 			</ul>
+			{ isEnabled( 'jetpack/backup-messaging-i3' ) && <BackupTips location="NO_BACKUPS" /> }
 		</>
 	);
 };
