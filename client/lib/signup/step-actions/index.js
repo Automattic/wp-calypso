@@ -468,7 +468,7 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign, storeType
 			callback( [ errors ] );
 		} );
 
-	if ( 'payment_block' !== storeType ) {
+	if ( 'simple' !== storeType ) {
 		wpcom.req
 			.post( {
 				path: `/sites/${ siteSlug }/theme-setup`,
@@ -506,54 +506,52 @@ export async function setStoreFeatures(
 	stepProvidedItems,
 	reduxStore
 ) {
-	if ( ! siteSlug ) {
+	if ( ! siteSlug || 'simple' !== storeType ) {
 		defer( callback );
 		return;
 	}
 
-	if ( 'payment_block' === storeType ) {
-		try {
-			/*
-			 * Get the block pattern source for use in our new home page.
-			 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
-			 */
-			const patternList = await wpcom.req.get( {
-				path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
-				apiNamespace: 'rest/v1',
-			} );
+	try {
+		/*
+		 * Get the block pattern source for use in our new home page.
+		 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
+		 */
+		const patternList = await wpcom.req.get( {
+			path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
+			apiNamespace: 'rest/v1',
+		} );
 
-			//Only item since we filter by id
-			const singleProductPattern = patternList[ 0 ];
+		//Only item since we filter by id
+		const singleProductPattern = patternList[ 0 ];
 
-			// Create a new Home page
-			const newPage = await wpcom.req.post( {
-				path: `/sites/${ siteSlug }/pages`,
-				apiNamespace: 'wp/v2',
-				body: {
-					content: singleProductPattern.html,
-					title: translate( 'Available now!' ),
-					status: 'publish',
-					template: 'header-footer-only',
-				},
-			} );
+		// Create a new Home page
+		const newPage = await wpcom.req.post( {
+			path: `/sites/${ siteSlug }/pages`,
+			apiNamespace: 'wp/v2',
+			body: {
+				content: singleProductPattern.html,
+				title: translate( 'Available now!' ),
+				status: 'publish',
+				template: 'header-footer-only',
+			},
+		} );
 
-			const siteId = getSiteId( reduxStore.getState(), siteSlug );
+		const siteId = getSiteId( reduxStore.getState(), siteSlug );
 
-			//Set the new Home page as the front page.
-			await updateSiteFrontPage( siteId, {
-				show_on_front: 'page',
-				page_on_front: newPage.id,
-			} )( reduxStore.dispatch );
+		//Set the new Home page as the front page.
+		await updateSiteFrontPage( siteId, {
+			show_on_front: 'page',
+			page_on_front: newPage.id,
+		} )( reduxStore.dispatch );
 
-			// Set footer to the 'store' option
-			await wpcom.req.post( {
-				path: `/sites/${ siteSlug }/seller_footer`,
-				apiNamespace: 'wpcom/v2',
-			} );
-		} catch ( e ) {
-			defer( callback );
-			return;
-		}
+		// Set footer to the 'store' option
+		await wpcom.req.post( {
+			path: `/sites/${ siteSlug }/seller_footer`,
+			apiNamespace: 'wpcom/v2',
+		} );
+	} catch ( e ) {
+		defer( callback );
+		return;
 	}
 
 	/*
@@ -566,7 +564,7 @@ export async function setStoreFeatures(
 			apiNamespace: 'wpcom/v2',
 		} )
 		.then( ( data ) => {
-			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
+			callback( null, { sending: data } );
 		} )
 		.catch( ( errors ) => {
 			callback( [ errors ] );
