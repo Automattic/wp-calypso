@@ -8,7 +8,7 @@ type BackupTipsProps = {
 };
 
 // locations where the message about the initial backup should be shown
-const LOCATIONS_4_INITIAL_BACKUP_TIP: Array< BackupTipsProps[ 'location' ] > = [
+const LOCATIONS_FOR_INITIAL_BACKUP_TIP: Array< BackupTipsProps[ 'location' ] > = [
 	'IN_PROGRESS',
 	'COMPLETED',
 ];
@@ -21,7 +21,7 @@ const BackupTips: React.FC< BackupTipsProps > = ( { location } ) => {
 			<DotPager>
 				{
 					// Tip about initial backup should be shown only at the given locations
-					LOCATIONS_4_INITIAL_BACKUP_TIP.includes( location ) && (
+					LOCATIONS_FOR_INITIAL_BACKUP_TIP.includes( location ) && (
 						<div>
 							<div>
 								<b>{ translate( 'Did you know' ) }</b>
