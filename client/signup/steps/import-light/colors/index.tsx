@@ -27,6 +27,7 @@ const Scanning: React.FunctionComponent< Props > = ( props ) => {
 			setDisplayedColors( ( displayedColors ) => {
 				if ( displayedColors.length === colors.length ) {
 					clearInterval( interval );
+					onColorsDisplay();
 				}
 				return colors.slice( 0, displayedColors.length + 1 );
 			} );
@@ -34,6 +35,10 @@ const Scanning: React.FunctionComponent< Props > = ( props ) => {
 
 		return () => clearInterval( interval );
 	}, [ colors ] );
+
+	function onColorsDisplay() {
+		// redirect to the next step/screen
+	}
 
 	return (
 		<div className="import-layout__center">
