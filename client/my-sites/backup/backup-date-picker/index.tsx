@@ -9,6 +9,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
+import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useDatesWithNoSuccessfulBackups } from '../status/hooks';
 import DateButton from './date-button';
@@ -48,7 +49,13 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 		? today.clone().subtract( visibleDays, 'days' )
 		: oldestDateAvailable;
 
-	const canGoToDate = useCanGoToDate( siteId, selectedDate, oldestDateAvailable );
+	const hasNoBackups = useSelector( ( state ) => {
+		const backups = getRewindBackups( state, siteId ) || [];
+		// in-progress backups should not be counted as backups, yet.
+		return ! backups.filter( ( backup ) => backup.status !== 'started' ).length;
+	} );
+
+	const canGoToDate = useCanGoToDate( siteId, selectedDate, oldestDateAvailable, hasNoBackups );
 	const datesWithNoBackups = useDatesWithNoSuccessfulBackups(
 		siteId,
 		firstVisibleBackupDate,
@@ -138,7 +145,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 			dispatch( CALENDAR_DATE_CLICK );
 			onDateChange( selectedDate );
 		},
-		[ dispatch, onDateChange ]
+		[ canGoToDate, dispatch, onDateChange ]
 	);
 
 	return (

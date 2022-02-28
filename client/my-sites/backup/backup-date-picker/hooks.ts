@@ -7,10 +7,16 @@ import { useIsDateVisible, useFirstMatchingBackupAttempt } from '../hooks';
 type CanGoToDateHook = (
 	siteId: number,
 	selectedDate: Moment,
-	oldestDateAvailable?: Moment
+	oldestDateAvailable?: Moment,
+	hasNoBackups?: boolean
 ) => ( desiredDate: Moment ) => boolean;
 
-export const useCanGoToDate: CanGoToDateHook = ( siteId, selectedDate, oldestDateAvailable ) => {
+export const useCanGoToDate: CanGoToDateHook = (
+	siteId,
+	selectedDate,
+	oldestDateAvailable,
+	hasNoBackups
+) => {
 	const moment = useLocalizedMoment();
 	const today = useDateWithOffset( moment() );
 	const selectedDateIsVisible = useIsDateVisible( siteId )( selectedDate );
@@ -28,6 +34,11 @@ export const useCanGoToDate: CanGoToDateHook = ( siteId, selectedDate, oldestDat
 				// past the limit of visible days, so we can show eligible
 				// users the opportunity to upgrade
 				if ( ! selectedDateIsVisible ) {
+					return false;
+				}
+
+				// If there are no backups, we won't show the navigation
+				if ( hasNoBackups ) {
 					return false;
 				}
 
@@ -51,7 +62,7 @@ export const useCanGoToDate: CanGoToDateHook = ( siteId, selectedDate, oldestDat
 			// then everything's fine (this should never happen)
 			return true;
 		},
-		[ selectedDateIsVisible, selectedDate, today, oldestDateAvailable ]
+		[ selectedDateIsVisible, selectedDate, today, oldestDateAvailable, hasNoBackups ]
 	);
 };
 
