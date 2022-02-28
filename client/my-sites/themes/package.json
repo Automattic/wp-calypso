@@ -1,4 +1,7 @@
 {
 	"main": "index.node.js",
-	"browser": "index.web.js"
+	"browser": "index.web.js",
+	"devDependencies": {
+		"@types/to-title-case": "^1.0.0"
+	}
 }
