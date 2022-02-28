@@ -14,7 +14,7 @@ export const PluginAnnualSaving = ( { plugin, children } ) => {
 			productMonthly && productYearly
 				? Math.round( productMonthly.cost * 12 - productYearly.cost )
 				: null;
-		return totalDiscount > 0 ? formatCurrency( totalDiscount, productYearly.currency_code ) : null;
+		return totalDiscount > 0 && formatCurrency( totalDiscount, productYearly.currency_code );
 	};
 
 	return children( {
