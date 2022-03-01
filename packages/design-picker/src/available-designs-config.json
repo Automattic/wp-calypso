@@ -173,7 +173,7 @@
 				{ "slug": "store", "name": "Store" }
 			],
 			"is_premium": false,
-			"is_fse": false,
+			"is_fse": true,
 			"preview": "static",
 			"features": []
 		},
@@ -187,7 +187,7 @@
 				{ "slug": "store", "name": "Store" }
 			],
 			"is_premium": false,
-			"is_fse": false,
+			"is_fse": true,
 			"preview": "static",
 			"features": []
 		},
@@ -201,7 +201,7 @@
 				{ "slug": "store", "name": "Store" }
 			],
 			"is_premium": false,
-			"is_fse": false,
+			"is_fse": true,
 			"preview": "static",
 			"features": []
 		},
@@ -215,7 +215,7 @@
 				{ "slug": "store", "name": "Store" }
 			],
 			"is_premium": false,
-			"is_fse": false,
+			"is_fse": true,
 			"preview": "static",
 			"features": []
 		},
@@ -229,7 +229,7 @@
 				{ "slug": "store", "name": "Store" }
 			],
 			"is_premium": false,
-			"is_fse": false,
+			"is_fse": true,
 			"preview": "static",
 			"features": []
 		},
