@@ -63,7 +63,7 @@ export interface PageData {
 	id: string;
 	title: string;
 	content: string;
-	images: Array< ImageData >;
+	images: Array< ImageData | null >;
 }
 
 export type WebsiteContent = { pages: Array< PageData >; siteLogoUrl: string };

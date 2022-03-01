@@ -9,6 +9,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_STARTED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_FAILED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_COMPLETED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED,
 } from 'calypso/state/action-types';
 import { ImageData } from './schema';
 import 'calypso/state/signup/init';
@@ -16,6 +17,13 @@ import 'calypso/state/signup/init';
 export function imageUploaded( data: { pageId: string; mediaIndex: number; image: ImageData } ) {
 	return {
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_COMPLETED,
+		payload: data,
+	};
+}
+
+export function imageRemoved( data: { pageId: string; mediaIndex: number } ) {
+	return {
+		type: SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED,
 		payload: data,
 	};
 }

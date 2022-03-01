@@ -4,6 +4,7 @@ import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Label, HorizontalGrid } from 'calypso/signup/accordion-form/form-components';
 import {
+	imageRemoved,
 	logoUploadCompleted,
 	logoUploadFailed,
 	logoUploadStarted,
@@ -20,9 +21,11 @@ export const LogoUploadSectionContainer = styled.div`
 `;
 
 export function LogoUploadSection( {
+	sectionID,
 	logoUrl,
 	onChangeField,
 }: {
+	sectionID: string;
 	logoUrl: string;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
 } ) {
@@ -38,6 +41,15 @@ export function LogoUploadSection( {
 			} as ChangeEvent< HTMLInputElement > );
 	};
 
+	const onMediaRemoved = ( { mediaIndex }: MediaUploadData ) => {
+		dispatch(
+			imageRemoved( {
+				pageId: sectionID,
+				mediaIndex,
+			} )
+		);
+	};
+
 	return (
 		<LogoUploadSectionContainer>
 			<Label>{ translate( 'Upload your business logo.' ) }</Label>
@@ -49,6 +61,7 @@ export function LogoUploadSection( {
 					onMediaUploadFailed={ () => dispatch( logoUploadFailed() ) }
 					onMediaUploadComplete={ onMediaUploadComplete }
 					initialUrl={ logoUrl }
+					onRemoveImage={ onMediaRemoved }
 				/>
 			</HorizontalGrid>
 		</LogoUploadSectionContainer>

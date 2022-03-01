@@ -8,6 +8,7 @@ import {
 } from 'calypso/signup/accordion-form/form-components';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import {
+	imageRemoved,
 	imageUploaded,
 	imageUploadFailed,
 	imageUploadInitiated,
@@ -71,6 +72,15 @@ export function PageDetails( {
 			} as ChangeEvent< HTMLInputElement > );
 	};
 
+	const onMediaRemoved = ( { mediaIndex }: MediaUploadData ) => {
+		dispatch(
+			imageRemoved( {
+				pageId: page.id,
+				mediaIndex,
+			} )
+		);
+	};
+
 	const onContentChange = ( e: ChangeEvent< HTMLInputElement > ) => {
 		const {
 			target: { value },
@@ -104,18 +114,22 @@ export function PageDetails( {
 				} ) }
 			</Label>
 			<HorizontalGrid>
-				{ page.images.map( ( image, i ) => (
-					<WordpressMediaUpload
-						key={ image.uploadID ?? i }
-						mediaIndex={ i }
-						site={ site as SiteData }
-						onMediaUploadStart={ onMediaUploadStart }
-						onMediaUploadFailed={ onMediaUploadFailed }
-						onMediaUploadComplete={ onMediaUploadComplete }
-						initialCaption={ image.caption }
-						initialUrl={ image.url }
-					/>
-				) ) }
+				{ page.images.map(
+					( image, i ) =>
+						image && (
+							<WordpressMediaUpload
+								key={ image.uploadID ?? i }
+								mediaIndex={ i }
+								site={ site as SiteData }
+								onMediaUploadStart={ onMediaUploadStart }
+								onMediaUploadFailed={ onMediaUploadFailed }
+								onMediaUploadComplete={ onMediaUploadComplete }
+								initialCaption={ image.caption }
+								initialUrl={ image.url }
+								onRemoveImage={ onMediaRemoved }
+							/>
+						)
+				) }
 			</HorizontalGrid>
 		</>
 	);
