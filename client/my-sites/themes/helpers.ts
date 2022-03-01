@@ -1,10 +1,11 @@
+import { Action } from '@wordpress/data';
 import { mapValues } from 'lodash';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { isMagnificentLocale } from 'calypso/lib/i18n-utils';
 
 interface ThemeOption {
-	action?(): void;
+	action?: ( action: Action ) => void;
 	extendedLabel?: string;
 	getUrl?(): string;
 	header?: string;
@@ -40,7 +41,7 @@ function appendActionTracking( option: ThemeOption, name: string ): ThemeOption 
 	const { action } = option;
 
 	return Object.assign( {}, option, {
-		action: ( t ) => {
+		action: ( t: Action ) => {
 			action && action( t );
 			trackClick( 'more button', name );
 		},
