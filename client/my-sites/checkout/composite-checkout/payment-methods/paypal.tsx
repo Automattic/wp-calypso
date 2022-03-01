@@ -6,47 +6,196 @@ import {
 	useFormStatus,
 	Button,
 } from '@automattic/composite-checkout';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment } from 'react';
-import { PaymentMethodLogos } from '../payment-method-logos';
+import { Fragment, useMemo } from 'react';
+import TaxFields from 'calypso/my-sites/checkout/composite-checkout/components/tax-fields';
+import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+import { PaymentMethodLogos } from '../components/payment-method-logos';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
+import type {
+	PaymentMethodStore,
+	StoreSelectors,
+	StoreActions,
+	StoreSelectorsWithState,
+	StoreState,
+} from '@automattic/wpcom-checkout';
 
-const debug = debugFactory( 'wpcom-checkout:paypal' );
+const debug = debugFactory( 'calypso:paypal-payment-method' );
 
 // Disabling this rule to make migrating this easier with fewer changes
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-export function createPayPalMethod( {
-	labelText = null,
-}: {
+const storeKey = 'paypal';
+type StoreKey = typeof storeKey;
+type NounsInStore = 'postalCode' | 'countryCode';
+type PayPalStore = PaymentMethodStore< NounsInStore >;
+
+declare module '@wordpress/data' {
+	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
+	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
+}
+
+const actions: StoreActions< NounsInStore > = {
+	changePostalCode( payload ) {
+		return { type: 'POSTAL_CODE_SET', payload };
+	},
+	changeCountryCode( payload ) {
+		return { type: 'COUNTRY_CODE_SET', payload };
+	},
+};
+
+const selectors: StoreSelectorsWithState< NounsInStore > = {
+	getPostalCode( state ) {
+		return state.postalCode || '';
+	},
+	getCountryCode( state ) {
+		return state.countryCode || '';
+	},
+};
+
+export function createPayPalStore(): PayPalStore {
+	debug( 'creating a new paypal payment method store' );
+	const store = registerStore( storeKey, {
+		reducer(
+			state: StoreState< NounsInStore > = {
+				postalCode: { value: '', isTouched: false },
+				countryCode: { value: '', isTouched: false },
+			},
+			action
+		): StoreState< NounsInStore > {
+			switch ( action.type ) {
+				case 'POSTAL_CODE_SET':
+					return { ...state, postalCode: { value: action.payload, isTouched: true } };
+				case 'COUNTRY_CODE_SET':
+					return { ...state, countryCode: { value: action.payload, isTouched: true } };
+			}
+			return state;
+		},
+		actions,
+		selectors,
+	} );
+
+	return store;
+}
+
+type PayPalMethodArgs = {
 	labelText?: string | null;
-} ): PaymentMethod {
+	store?: PayPalStore;
+	shouldShowTaxFields?: boolean;
+};
+
+type PayPalWithTaxesMethodArgs = PayPalMethodArgs & {
+	// The store is only required if we need to keep state (tax fields).
+	store: PayPalStore;
+	shouldShowTaxFields: true;
+};
+
+export function createPayPalMethod(
+	args: PayPalMethodArgs | PayPalWithTaxesMethodArgs
+): PaymentMethod {
 	debug( 'creating new paypal payment method' );
 	return {
-		id: 'paypal',
-		label: <PaypalLabel labelText={ labelText } />,
-		submitButton: <PaypalSubmitButton />,
-		inactiveContent: <PaypalSummary />,
-		getAriaLabel: ( __ ) => __( 'PayPal' ),
+		id: storeKey,
+		label: (
+			<PayPalLabel
+				labelText={ args.labelText }
+				store={ args.shouldShowTaxFields ? args.store : undefined }
+			/>
+		),
+		submitButton: <PayPalSubmitButton />,
+		activeContent: args.shouldShowTaxFields ? <PayPalTaxFields /> : undefined,
+		inactiveContent: <PayPalSummary />,
+		getAriaLabel: () => 'PayPal',
 	};
 }
 
-export function PaypalLabel( { labelText = null }: { labelText?: string | null } ): JSX.Element {
-	const { __ } = useI18n();
+const PayPalFieldsWrapper = styled.div`
+	padding: 16px;
+	position: relative;
+	display: block;
+	position: relative;
 
+	::after {
+		display: block;
+		width: calc( 100% - 6px );
+		height: 1px;
+		content: '';
+		background: ${ ( props ) => props.theme.colors.borderColorLight };
+		position: absolute;
+		top: 0;
+		left: 3px;
+
+		.rtl & {
+			right: 3px;
+			left: auto;
+		}
+	}
+`;
+
+function PayPalTaxFields(): JSX.Element {
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+	const countriesList = useCountryList( [] );
+	const postalCode = useSelect( ( select ) => select( storeKey ).getPostalCode() );
+	const countryCode = useSelect( ( select ) => select( storeKey ).getCountryCode() );
+	const fields = useMemo(
+		() => ( {
+			postalCode: { ...postalCode, errors: [] },
+			countryCode: { ...countryCode, errors: [] },
+		} ),
+		[ postalCode, countryCode ]
+	);
+	const { changePostalCode, changeCountryCode } = useDispatch( storeKey );
+	return (
+		<PayPalFieldsWrapper>
+			<TaxFields
+				section="paypal-payment-method"
+				taxInfo={ fields }
+				countriesList={ countriesList }
+				isDisabled={ isDisabled }
+				updatePostalCode={ changePostalCode }
+				updateCountryCode={ changeCountryCode }
+			/>
+		</PayPalFieldsWrapper>
+	);
+}
+
+function PayPalLabel( {
+	labelText = null,
+	store,
+}: {
+	labelText?: string | null;
+	store?: PayPalStore;
+} ): JSX.Element {
 	return (
 		<Fragment>
-			<span>{ labelText || __( 'PayPal' ) }</span>
+			<div>
+				<span>{ labelText || 'PayPal' }</span>
+				{ store && <TaxLabel /> }
+			</div>
 			<PaymentMethodLogos className="paypal__logo payment-logos">
-				<PaypalLogo />
+				<PayPalLogo />
 			</PaymentMethodLogos>
 		</Fragment>
 	);
 }
 
-export function PaypalSubmitButton( {
+function TaxLabel() {
+	const postalCode = useSelect( ( select ) => select( storeKey ).getPostalCode() );
+	const countryCode = useSelect( ( select ) => select( storeKey ).getCountryCode() );
+	const taxString = [ countryCode.value, postalCode.value ].filter( isValueTruthy ).join( ', ' );
+	return (
+		<div>
+			<span>{ taxString }</span>
+		</div>
+	);
+}
+
+function PayPalSubmitButton( {
 	disabled,
 	onClick,
 }: {
@@ -56,15 +205,19 @@ export function PaypalSubmitButton( {
 	const { formStatus } = useFormStatus();
 	const { transactionStatus } = useTransactionStatus();
 	const [ items ] = useLineItems();
+	const postalCode = useSelect( ( select ) => select( storeKey )?.getPostalCode() );
+	const countryCode = useSelect( ( select ) => select( storeKey )?.getCountryCode() );
 
 	const handleButtonPress = () => {
 		if ( ! onClick ) {
 			throw new Error(
-				'Missing onClick prop; PaypalSubmitButton must be used as a payment button in CheckoutSubmitButton'
+				'Missing onClick prop; PayPalSubmitButton must be used as a payment button in CheckoutSubmitButton'
 			);
 		}
-		onClick( 'paypal', {
+		onClick( storeKey, {
 			items,
+			postalCode: postalCode?.value,
+			countryCode: countryCode?.value,
 		} );
 	};
 	return (
@@ -100,16 +253,15 @@ function PayPalButtonContents( {
 	return <span>{ __( 'Please wait…' ) }</span>;
 }
 
-const ButtonPayPalIcon = styled( PaypalLogo )`
+const ButtonPayPalIcon = styled( PayPalLogo )`
 	transform: translateY( 2px );
 `;
 
-function PaypalSummary(): JSX.Element {
-	const { __ } = useI18n();
-	return <>{ __( 'PayPal' ) }</>;
+function PayPalSummary(): JSX.Element {
+	return <>PayPal</>;
 }
 
-function PaypalLogo( { className }: { className?: string } ): JSX.Element {
+function PayPalLogo( { className }: { className?: string } ): JSX.Element {
 	return (
 		<svg
 			className={ className }
