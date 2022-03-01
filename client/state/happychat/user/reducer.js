@@ -17,6 +17,7 @@ import {
 export const geoLocation = withSchemaValidation( geoLocationSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_INIT: {
+			const location = action.user.geoLocation;
 			if ( location && location.country_long && location.city ) {
 				return location;
 			}
@@ -30,7 +31,7 @@ export const geoLocation = withSchemaValidation( geoLocationSchema, ( state = nu
 export const isEligible = withSchemaValidation( isEligibleSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_SET_USER_CONFIG:
-			return action.config.isUserEligible ?? state;
+			return action.config.isUserEligible;
 	}
 
 	return state;
@@ -39,7 +40,7 @@ export const isEligible = withSchemaValidation( isEligibleSchema, ( state = null
 export const availability = withSchemaValidation( availabilitySchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_SET_USER_CONFIG:
-			return action.config.availability ?? state;
+			return action.config.availability;
 	}
 
 	return state;
@@ -51,7 +52,7 @@ export const availability = withSchemaValidation( availabilitySchema, ( state = 
 export const supportLevel = withSchemaValidation( supportLevelSchema, ( state = null, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_SET_USER_CONFIG:
-			return action.config.supportLevel ?? state;
+			return action.config.supportLevel;
 		default:
 			return state;
 	}

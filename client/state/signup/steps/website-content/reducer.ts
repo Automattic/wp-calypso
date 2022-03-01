@@ -157,7 +157,7 @@ export default withSchemaValidation(
 
 				const changedPage = state.websiteContent.pages[ pageIndex ];
 				const newImages = [ ...changedPage.images ];
-				newImages.splice( payload.mediaIndex, 1, null );
+				newImages.splice( payload.mediaIndex, 1, { caption: '', url: '' } );
 
 				return {
 					...state,

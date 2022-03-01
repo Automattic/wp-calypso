@@ -21,18 +21,18 @@ const UPLOAD_STATES = {
 
 const StyledGridIcon = styled( Gridicon )`
 	position: absolute;
-	top: 33px;
-	right: 7px;
-	color: var( --color-text-subtle );
+	top: 5px;
+	right: 5px;
+	color: var( --studio-gray-20 );
 	cursor: pointer;
 	background-color: #f5f9fc;
 	border-radius: 13px;
 	width: 15px;
 	height: 15px;
-	border: 2px solid var( --studio-gray-0 );
+	border: 2px solid var( --studio-gray-20 );
 	&:hover {
 		color: var( --studio-gray-80 );
-		border: 2px solid var( --studio-gray-40 );
+		border: 2px solid var( --studio-gray-80 );
 	}
 `;
 
@@ -65,6 +65,7 @@ const CroppedImage = styled.div`
 	align-items: center;
 	justify-content: center;
 	height: 100%;
+	position: relative;
 	img {
 		max-height: 100%;
 		max-width: 100%;
@@ -113,9 +114,11 @@ export function WordpressMediaUpload( {
 		initialUrl ? UPLOAD_STATES.COMPLETED : UPLOAD_STATES.NOT_SELECTED
 	);
 	const [ imageCaption, setImageCaption ] = useState( initialCaption );
+	const [ isImageLoading, setIsImageLoading ] = useState( false );
 	const translate = useTranslate();
 	const addMedia = useAddMedia();
 	const onPick = async function ( file: FileList ) {
+		setIsImageLoading( true );
 		setImageCaption( '' );
 		onMediaUploadStart && onMediaUploadStart( { mediaIndex } );
 		setUploadState( UPLOAD_STATES.IN_PROGRESS );
@@ -146,9 +149,14 @@ export function WordpressMediaUpload( {
 			return (
 				<FilePicker key={ mediaIndex } accept="image/*" onPick={ onPick }>
 					<FileSelectThumbnailContainer>
-						<CrossButton onClick={ onClickRemoveImage } />
 						<CroppedImage>
-							<img src={ uploadedImageUrl } alt={ imageCaption } />
+							{ ! isImageLoading && <CrossButton onClick={ onClickRemoveImage } /> }
+							<img
+								style={ { opacity: isImageLoading ? 0.5 : 1 } }
+								src={ uploadedImageUrl }
+								alt={ imageCaption }
+								onLoad={ () => setIsImageLoading( false ) }
+							/>
 						</CroppedImage>
 						<Label>{ translate( 'Replace' ) }</Label>
 					</FileSelectThumbnailContainer>

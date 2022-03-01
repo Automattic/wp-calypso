@@ -114,22 +114,19 @@ export function PageDetails( {
 				} ) }
 			</Label>
 			<HorizontalGrid>
-				{ page.images.map(
-					( image, i ) =>
-						image && (
-							<WordpressMediaUpload
-								key={ image.uploadID ?? i }
-								mediaIndex={ i }
-								site={ site as SiteData }
-								onMediaUploadStart={ onMediaUploadStart }
-								onMediaUploadFailed={ onMediaUploadFailed }
-								onMediaUploadComplete={ onMediaUploadComplete }
-								initialCaption={ image.caption }
-								initialUrl={ image.url }
-								onRemoveImage={ onMediaRemoved }
-							/>
-						)
-				) }
+				{ page.images.map( ( image, i ) => (
+					<WordpressMediaUpload
+						key={ image.uploadID ?? i }
+						mediaIndex={ i }
+						site={ site as SiteData }
+						onMediaUploadStart={ onMediaUploadStart }
+						onMediaUploadFailed={ onMediaUploadFailed }
+						onMediaUploadComplete={ onMediaUploadComplete }
+						initialCaption={ image.caption }
+						initialUrl={ image.url }
+						onRemoveImage={ onMediaRemoved }
+					/>
+				) ) }
 			</HorizontalGrid>
 		</>
 	);
