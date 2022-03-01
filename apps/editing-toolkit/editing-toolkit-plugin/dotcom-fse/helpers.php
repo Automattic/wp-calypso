@@ -182,8 +182,6 @@ function populate_wp_template_data() {
 	if ( ! is_theme_supported() ) {
 		return;
 	}
-
-	require_once __DIR__ . '/templates/class-template-image-inserter.php';
 	require_once __DIR__ . '/templates/class-wp-template-inserter.php';
 
 	$theme_slug = normalize_theme_slug( get_theme_slug() );
