@@ -4,6 +4,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import Capture from './capture';
 import Colors from './colors';
 import Scanning from './scanning';
+import Summary from './summary';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
@@ -36,6 +37,7 @@ const ImportLight: FunctionComponent< Props > = ( props ) => {
 					{ ! props.stepSectionName && <Capture /> }
 					{ props.stepSectionName === 'scanning' && <Scanning /> }
 					{ props.stepSectionName === 'colors' && <Colors colors={ colors } /> }
+					{ props.stepSectionName === 'summary' && <Summary /> }
 				</div>
 			}
 		/>
