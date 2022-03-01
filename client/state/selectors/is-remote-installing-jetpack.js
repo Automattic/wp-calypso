@@ -1,7 +1,7 @@
 import 'calypso/state/jetpack-remote-install/init';
 
 /**
- * Returns whether remote installation of the jetpack plugin to the .org siteat
+ * Returns whether the remote installation of the jetpack plugin to the .org site
  * is currently in progress at the given url.
  *
  * @param {object} state Global state tree
