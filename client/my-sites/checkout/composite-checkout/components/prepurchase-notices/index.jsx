@@ -5,6 +5,8 @@ import {
 	isJetpackBackup,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
+	isJetpackScanSlug,
+	PRODUCT_JETPACK_SCAN,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useEffect } from 'react';
@@ -17,6 +19,8 @@ import {
 	isBackupProductIncludedInSitePlan,
 	isPlanIncludingSiteAntiSpam,
 	isAntiSpamProductIncludedInSitePlan,
+	isPlanIncludingSiteScan,
+	isScanProductIncludedInSitePlan,
 } from 'calypso/state/sites/products/conflicts';
 import {
 	getSitePlan,
@@ -68,6 +72,7 @@ const PrePurchaseNotices = () => {
 
 	const backupSlugInCart = cartItemSlugs.find( isJetpackBackupSlug );
 	const antiSpamSlugInCart = cartItemSlugs.find( isJetpackAntiSpamSlug );
+	const scanSlugInCart = cartItemSlugs.find( isJetpackScanSlug );
 
 	const cartPlanOverlapsSiteBackupPurchase = useSelector( ( state ) => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
@@ -81,6 +86,12 @@ const PrePurchaseNotices = () => {
 		return planSlugInCart && isPlanIncludingSiteAntiSpam( state, siteId, planSlugInCart );
 	} );
 
+	const cartPlanOverlapsSiteScanPurchase = useSelector( ( state ) => {
+		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
+
+		return planSlugInCart && isPlanIncludingSiteScan( state, siteId, planSlugInCart );
+	} );
+
 	const sitePlanIncludesCartBackupProduct = useSelector(
 		( state ) =>
 			backupSlugInCart && isBackupProductIncludedInSitePlan( state, siteId, backupSlugInCart )
@@ -89,6 +100,10 @@ const PrePurchaseNotices = () => {
 	const sitePlanIncludesCartAntiSpamProduct = useSelector(
 		( state ) =>
 			antiSpamSlugInCart && isAntiSpamProductIncludedInSitePlan( state, siteId, antiSpamSlugInCart )
+	);
+
+	const sitePlanIncludesCartScanProduct = useSelector(
+		( state ) => scanSlugInCart && isScanProductIncludedInSitePlan( state, siteId, scanSlugInCart )
 	);
 
 	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
@@ -139,6 +154,15 @@ const PrePurchaseNotices = () => {
 		);
 	}
 
+	if ( cartPlanOverlapsSiteScanPurchase ) {
+		return (
+			<CartPlanOverlapsOwnedProductNotice
+				product={ getProductFromSlug( PRODUCT_JETPACK_SCAN ) }
+				selectedSite={ selectedSite }
+			/>
+		);
+	}
+
 	const backupProductInCart = backupSlugInCart && getProductFromSlug( backupSlugInCart );
 
 	// We're attempting to buy Jetpack Backup individually,
@@ -162,6 +186,18 @@ const PrePurchaseNotices = () => {
 			<SitePlanIncludesCartProductNotice
 				plan={ currentSitePlan }
 				product={ antiSpamProductInCart }
+				selectedSite={ selectedSite }
+			/>
+		);
+	}
+
+	const scanProductInCart = scanSlugInCart && getProductFromSlug( scanSlugInCart );
+
+	if ( sitePlanIncludesCartScanProduct && currentSitePlan ) {
+		return (
+			<SitePlanIncludesCartProductNotice
+				plan={ currentSitePlan }
+				product={ scanProductInCart }
 				selectedSite={ selectedSite }
 			/>
 		);

@@ -3,6 +3,7 @@ import {
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_DAILY,
 	JETPACK_PLANS,
+	JETPACK_SCAN_PRODUCTS,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_DAILY,
@@ -23,6 +24,8 @@ import {
 	FEATURE_JETPACK_BACKUP_T2_YEARLY,
 	planHasSuperiorFeature,
 	isJetpackAntiSpam,
+	FEATURE_JETPACK_SCAN_DAILY,
+	FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
@@ -252,6 +255,62 @@ export const isAntiSpamProductIncludedInSitePlan = createSelector(
 
 		if ( ANTI_SPAM_PRODUCTS.includes( productSlug ) ) {
 			return planHasAntiSpam( sitePlanSlug, true );
+		}
+
+		return null;
+	},
+	[
+		( state: AppState, siteId: number | null, productSlug: string ) => [
+			siteId,
+			productSlug,
+			getSitePlanSlug( state, siteId ),
+		],
+	]
+);
+
+export const planHasScan = ( planSlug: string ): boolean => {
+	const SCAN_FEATURES = [ FEATURE_JETPACK_SCAN_DAILY, FEATURE_JETPACK_SCAN_DAILY_MONTHLY ];
+
+	return planHasAtLeastOneFeature( planSlug, SCAN_FEATURES );
+};
+
+export const isPlanIncludingSiteScan = createSelector(
+	( state: AppState, siteId: number | null, planSlug: string ): boolean | null => {
+		if ( ! siteId || ! ( JETPACK_PLANS as ReadonlyArray< string > ).includes( planSlug ) ) {
+			return null;
+		}
+
+		const sitePlanSlug = getSitePlanSlug( state, siteId );
+		const siteHasScan = !! sitePlanSlug && planHasScan( sitePlanSlug );
+
+		return siteHasScan && planHasScan( planSlug );
+	},
+	[
+		( state: AppState, siteId: number | null, productSlug: string ) => [
+			siteId,
+			productSlug,
+			getSitePlanSlug( state, siteId ),
+		],
+	]
+);
+
+export const isScanProductIncludedInSitePlan = createSelector(
+	( state: AppState, siteId: number | null, productSlug: string ): boolean | null => {
+		if ( ! siteId ) {
+			return null;
+		}
+
+		const sitePlanSlug = getSitePlanSlug( state, siteId );
+
+		if (
+			! sitePlanSlug ||
+			! ( JETPACK_PLANS as ReadonlyArray< string > ).includes( sitePlanSlug )
+		) {
+			return null;
+		}
+
+		if ( ( JETPACK_SCAN_PRODUCTS as ReadonlyArray< string > ).includes( productSlug ) ) {
+			return planHasScan( sitePlanSlug );
 		}
 
 		return null;
