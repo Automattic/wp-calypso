@@ -296,7 +296,7 @@ class GSuiteAddUsers extends Component {
 								expiryDate={ getGSuiteExpiryDate( selectedDomain ) }
 								mailboxRenewalCost={ getGSuiteMailboxRenewalCost( selectedDomain ) }
 								mailboxPurchaseCost={ getGSuiteMailboxPurchaseCost( selectedDomain ) }
-								mailProduct={ googleMailProduct }
+								product={ googleMailProduct }
 							/>
 						) }
 						{ this.renderAddGSuite() }

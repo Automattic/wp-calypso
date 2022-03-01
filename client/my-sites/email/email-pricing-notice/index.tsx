@@ -58,7 +58,6 @@ function getPriceMessageExplanation( {
 }: {
 	mailboxPurchaseCost: EmailCost | null;
 	mailboxRenewalCost: EmailCost | null;
-	mailProduct: ProductListItem;
 	translate: typeof originalTranslate;
 } ): TranslateResult {
 	if ( mailboxPurchaseCost === null || mailboxRenewalCost === null ) {
@@ -114,22 +113,22 @@ function getPriceMessageRenewal( {
 interface MailboxPricingNoticeProps {
 	domain: ResponseDomain;
 	expiryDate: string | null;
-	mailProduct: ProductListItem;
 	mailboxPurchaseCost: EmailCost | null;
 	mailboxRenewalCost: EmailCost | null;
+	product: ProductListItem;
 }
 
 const MailboxPricingNotice = ( {
 	domain,
 	expiryDate,
-	mailProduct,
 	mailboxPurchaseCost,
 	mailboxRenewalCost,
+	product,
 }: MailboxPricingNoticeProps ): ReactElement | null => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
-	if ( doesAdditionalPriceMatchStandardPrice( domain, mailProduct, mailboxPurchaseCost ) ) {
+	if ( doesAdditionalPriceMatchStandardPrice( domain, product, mailboxPurchaseCost ) ) {
 		const translateArgs = {
 			args: {
 				price: mailboxPurchaseCost?.text,
@@ -155,7 +154,6 @@ const MailboxPricingNotice = ( {
 	const priceMessageExplanation = getPriceMessageExplanation( {
 		mailboxPurchaseCost,
 		mailboxRenewalCost,
-		mailProduct,
 		translate,
 	} );
 	const priceMessageRenewal = getPriceMessageRenewal( {
