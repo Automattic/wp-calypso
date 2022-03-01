@@ -31,11 +31,7 @@ const selectors = {
 	saveDraftDisabledButton: 'button.editor-post-saved-state.is-saved[aria-disabled="true"]',
 	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
 	publishButton: `.editor-post-publish-button__button`,
-	// publishButton: ( parentSelector: string ) =>
-	// `${ parentSelector } button:text("Publish")[aria-disabled=false]`,
 	switchToDraftButton: 'button.editor-post-switch-to-draft',
-	// scheduleButton: ( parentSelector: string ) =>
-	// 	`${ parentSelector } button:has-text("Schedule")[aria-disabled=false]`,
 
 	// Settings panel.
 	settingsPanel: '.interface-complementary-area',
@@ -401,9 +397,12 @@ export class GutenbergEditorPage {
 
 		// Click on the main publish action button on the toolbar.
 		await frame.click( selectors.publishButton );
-		// Invoke the second stage of the publish step which handles the
-		// publish checklist panel if it is present.
-		await this.editorPublishPanelComponent.publish();
+
+		if ( await this.editorPublishPanelComponent.panelIsOpen() ) {
+			// Invoke the second stage of the publish step which handles the
+			// publish checklist panel if it is present.
+			await this.editorPublishPanelComponent.publish();
+		}
 
 		// In some cases the post may be published but the EditorPublishPanelComponent
 		// is either not present or forcibly dismissed due to a bug.

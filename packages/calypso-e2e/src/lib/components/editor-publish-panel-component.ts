@@ -30,6 +30,23 @@ export class EditorPublishPanelComponent {
 	}
 
 	/**
+	 * Checks whether the Editor Publish panel is open.
+	 *
+	 * This method will wait up to 5 seconds for the panel to be visible.
+	 *
+	 * @returns {Promise<boolean>} True if panel is visible. False otherwise.
+	 */
+	async panelIsOpen(): Promise< boolean > {
+		const locator = this.frameLocator.locator( `${ panel }:visible` );
+		try {
+			await locator.waitFor( { timeout: 5 * 1000 } );
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	/**
 	 * Closes the panel regardless of the state of the panel.
 	 *
 	 * There exist two potential states for the panel:
@@ -53,11 +70,6 @@ export class EditorPublishPanelComponent {
 	 */
 	async publish(): Promise< void > {
 		const publishButtonLocator = this.frameLocator.locator( selectors.publishButton );
-		// If the publish button in the before publish panel is not found, then
-		// perform nothing.
-		if ( ( await publishButtonLocator.count() ) === 0 ) {
-			return;
-		}
 		await publishButtonLocator.click();
 	}
 
