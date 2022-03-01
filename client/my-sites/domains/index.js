@@ -59,11 +59,6 @@ export default function () {
 		handlers: [ domainManagementController.domainManagementEmailRedirect ],
 	} );
 
-	page(
-		paths.domainManagementEmailForwarding( ':site', ':domain' ),
-		domainManagementController.domainManagementEmailForwardingRedirect
-	);
-
 	registerStandardDomainManagementPages(
 		paths.domainManagementSecurity,
 		domainManagementController.domainManagementSecurity
