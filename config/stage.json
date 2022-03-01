@@ -40,6 +40,7 @@
 		"inline-help": true,
 		"i18n/empathy-mode": true,
 		"jetpack/api-cache": true,
+		"jetpack/backup-messaging-i3": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/features-section/atomic": true,
