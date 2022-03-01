@@ -203,7 +203,7 @@ export default function CompositeCheckout( {
 		isJetpackSitelessCheckout,
 		productsForCart,
 		areCartProductsPreparing,
-		couponCodeFromUrl: couponCodeFromUrl,
+		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
 		replaceProductsInCart,
