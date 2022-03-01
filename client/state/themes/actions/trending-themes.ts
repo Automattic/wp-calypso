@@ -1,10 +1,11 @@
+import { Dispatch } from 'redux';
 import wpcom from 'calypso/lib/wp';
 import {
 	TRENDING_THEMES_FAIL,
 	TRENDING_THEMES_FETCH,
 	TRENDING_THEMES_SUCCESS,
 } from 'calypso/state/themes/action-types';
-import { TrendingTheme, TrendingThemesFilter } from 'calypso/types';
+import { TrendingTheme } from 'calypso/types';
 
 import 'calypso/state/themes/init';
 
@@ -14,7 +15,7 @@ import 'calypso/state/themes/init';
  * @param {Array} themes array of received theme objects
  * @returns {Function} Action thunk
  */
-export function receiveTrendingThemes( themes: TrendingTheme[] ): ( dispatch: any ) => void {
+export function receiveTrendingThemes( themes: TrendingTheme[] ): ( dispatch: Dispatch ) => void {
 	return ( dispatch ) => {
 		dispatch( { type: TRENDING_THEMES_SUCCESS, payload: themes } );
 	};
@@ -22,14 +23,10 @@ export function receiveTrendingThemes( themes: TrendingTheme[] ): ( dispatch: an
 
 /**
  * Initiates network request for trending themes.
- *
- * @param {TrendingThemesFilter} filter A filter string for a theme query
  */
-export function getTrendingThemes(
-	filter: TrendingThemesFilter
-): ( dispatch: any ) => Promise< void > {
+export function getTrendingThemes(): ( dispatch: any ) => Promise< void > {
 	return async ( dispatch ) => {
-		dispatch( { type: TRENDING_THEMES_FETCH, filter } );
+		dispatch( { type: TRENDING_THEMES_FETCH } );
 		try {
 			const res = await wpcom.req.get( '/themes', {
 				sort: 'trending',

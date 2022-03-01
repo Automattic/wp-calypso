@@ -11,7 +11,7 @@ import { ConnectedThemesSelection } from './themes-selection';
 interface TrendingThemesProps {
 	customizedThemesList: TrendingTheme[];
 	filter: TrendingThemesFilter;
-	getTrendingThemes: ( filter: TrendingThemesFilter ) => Promise< void >;
+	getTrendingThemes: () => Promise< void >;
 	isLoading: boolean;
 	scrollToSearchInput: () => void;
 }
@@ -35,7 +35,7 @@ class TrendingThemes extends Component< TrendingThemesProps > {
 	}
 
 	fetchThemes() {
-		this.props.getTrendingThemes( this.props.filter );
+		this.props.getTrendingThemes();
 	}
 
 	render() {
