@@ -46,6 +46,7 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 	intervalType,
 	maxMonthlyDiscountPercentage,
 	className = '',
+	children,
 } ) => {
 	const { __, _x, hasTranslation } = useI18n();
 	const locale = useLocale();
@@ -88,7 +89,10 @@ const PlansIntervalToggle: React.FunctionComponent< PlansIntervalToggleProps > =
 					selected={ intervalType === 'ANNUALLY' }
 					onClick={ () => onChange( 'ANNUALLY' ) }
 				>
-					<span className="plans-interval-toggle__label">{ annuallyLabel }</span>
+					<span className="plans-interval-toggle__label">
+						{ annuallyLabel } { children }
+					</span>
+
 					{ /*
 					 * Check covers both cases of maxMonthlyDiscountPercentage
 					 * not being undefined and not being 0
