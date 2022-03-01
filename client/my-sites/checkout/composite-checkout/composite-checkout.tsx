@@ -26,6 +26,7 @@ import {
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -199,9 +200,11 @@ export default function CompositeCheckout( {
 
 	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 
+	const saleTitle = useSelector( getJetpackSaleCoupon )?.sale_title || '';
 	const maybeJetpackIntroCouponCode = useMaybeJetpackIntroCouponCode(
 		productsForCart,
-		couponStatus === 'applied'
+		couponStatus === 'applied',
+		saleTitle
 	);
 
 	const isInitialCartLoading = useAddProductsFromUrl( {

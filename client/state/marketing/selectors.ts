@@ -49,13 +49,17 @@ export function getJetpackCouponDiscountMap( state: AppState ): DiscountMap {
 	// discountedPricePercentage is 1 - discountPercentage.
 	const discountedPricePercentage =
 		( 100 - ( getJetpackSaleCoupon( state )?.discount || 0 ) ) / 100;
+	const searchDiscountPricePercentage =
+		( 100 - ( getJetpackSaleCoupon( state )?.final_discount || 0 ) ) / 100;
 	const discountMap: DiscountMap = {};
 
 	//  outside of sales ( when the discountedPricePercentage is 100% or full price ) there is no need to build this object
 	if ( discountedPricePercentage < 1 ) {
 		[ ...JETPACK_RESET_PLANS_BY_TERM, ...JETPACK_PRODUCTS_BY_TERM ].forEach( ( { yearly } ) => {
 			// search requires special discount support since it does not have an introductory offer
-			if ( yearly !== PRODUCT_JETPACK_SEARCH ) {
+			if ( yearly === PRODUCT_JETPACK_SEARCH ) {
+				discountMap[ yearly ] = searchDiscountPricePercentage;
+			} else {
 				discountMap[ yearly ] = discountedPricePercentage;
 			}
 		} );

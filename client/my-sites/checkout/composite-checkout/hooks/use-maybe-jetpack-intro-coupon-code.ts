@@ -13,11 +13,12 @@ const isNewPurchase = ( product: MinimalRequestCartProduct ) =>
 // rely on auto-applied coupons for introductory new purchase pricing.
 const useMaybeJetpackIntroCouponCode = (
 	products: MinimalRequestCartProduct[],
-	isCouponApplied: boolean
+	isCouponApplied: boolean,
+	saleTitle: string
 ): string | undefined => {
 	return useMemo( () => {
 		// If a coupon is already applied to this cart, don't try to apply another one.
-		if ( isCouponApplied ) {
+		if ( isCouponApplied || saleTitle ) {
 			return undefined;
 		}
 
@@ -30,7 +31,7 @@ const useMaybeJetpackIntroCouponCode = (
 		}
 
 		return undefined;
-	}, [ products, isCouponApplied ] );
+	}, [ products, isCouponApplied, saleTitle ] );
 };
 
 export default useMaybeJetpackIntroCouponCode;
