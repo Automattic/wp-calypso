@@ -1,8 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
 //@TODO: Swap this out for the correct illustration
 import earnCardPrompt from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import EducationalContent from '../educational-content';
 
 export const EDUCATION_STORE = 'home-education-store';
@@ -31,10 +29,4 @@ const EducationStore = () => {
 	);
 };
 
-const mapStateToProps = ( state ) => {
-	return {
-		siteSlug: getSelectedSiteSlug( state ),
-	};
-};
-
-export default connect( mapStateToProps )( EducationStore );
+export default EducationStore;
