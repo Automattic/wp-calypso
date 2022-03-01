@@ -9,5 +9,5 @@ import 'calypso/state/jetpack-remote-install/init';
  * @returns {boolean} True if installation is currently in progress
  */
 export default function isRemoteInstallingJetpack( state, url ) {
-	return state.jetpackRemoteInstall.isRemoteInstallingJetpack?.[ url ] ?? false;
+	return state.jetpackRemoteInstall.isRemoteInstallingJetpack[ url ] ?? false;
 }
