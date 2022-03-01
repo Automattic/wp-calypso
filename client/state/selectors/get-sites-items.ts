@@ -21,6 +21,7 @@ export interface SitesItem {
 	is_vip?: boolean;
 	options?: Record< string, unknown >;
 	plan?: SitePlan;
+	is_wpcom_atomic?: boolean;
 }
 
 /**
