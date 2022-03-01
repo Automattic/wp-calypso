@@ -3,6 +3,8 @@ import {
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_DAILY,
 	JETPACK_PLANS,
+	PRODUCT_JETPACK_ANTI_SPAM,
+	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -11,6 +13,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	FEATURE_JETPACK_ANTI_SPAM,
+	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 	FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 	FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 	FEATURE_JETPACK_BACKUP_T1_MONTHLY,
@@ -155,6 +159,64 @@ export const isBackupProductIncludedInSitePlan = createSelector(
 
 		if ( REALTIME_BACKUP_PRODUCTS.includes( productSlug ) ) {
 			return planHasRealTimeBackup( sitePlanSlug, true );
+		}
+
+		return null;
+	},
+	[
+		( state: AppState, siteId: number | null, productSlug: string ) => [
+			siteId,
+			productSlug,
+			getSitePlanSlug( state, siteId ),
+		],
+	]
+);
+
+export const planHasAntiSpam = ( planSlug: string ): boolean => {
+	const ANTI_SPAM_FEATURES = [ FEATURE_JETPACK_ANTI_SPAM, FEATURE_JETPACK_ANTI_SPAM_MONTHLY ];
+
+	return planHasAtLeastOneFeature( planSlug, ANTI_SPAM_FEATURES );
+};
+
+export const isPlanIncludingSiteAntiSpam = createSelector(
+	( state: AppState, siteId: number | null, planSlug: string ): boolean | null => {
+		if ( ! siteId || ! ( JETPACK_PLANS as ReadonlyArray< string > ).includes( planSlug ) ) {
+			return null;
+		}
+
+		const sitePlanSlug = getSitePlanSlug( state, siteId );
+		const siteHasAntiSpam = !! sitePlanSlug && planHasAntiSpam( sitePlanSlug );
+
+		return siteHasAntiSpam && planHasAntiSpam( planSlug );
+	},
+	[
+		( state: AppState, siteId: number | null, productSlug: string ) => [
+			siteId,
+			productSlug,
+			getSitePlanSlug( state, siteId ),
+		],
+	]
+);
+
+export const isAntiSpamProductIncludedInSitePlan = createSelector(
+	( state: AppState, siteId: number | null, productSlug: string ): boolean | null => {
+		if ( ! siteId ) {
+			return null;
+		}
+
+		const sitePlanSlug = getSitePlanSlug( state, siteId );
+
+		if (
+			! sitePlanSlug ||
+			! ( JETPACK_PLANS as ReadonlyArray< string > ).includes( sitePlanSlug )
+		) {
+			return null;
+		}
+
+		const ANTI_SPAM_PRODUCTS = [ PRODUCT_JETPACK_ANTI_SPAM, PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ];
+
+		if ( ANTI_SPAM_PRODUCTS.includes( productSlug ) ) {
+			return planHasAntiSpam( sitePlanSlug );
 		}
 
 		return null;
