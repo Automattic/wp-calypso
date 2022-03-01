@@ -36,7 +36,7 @@ function dangerously_load_full_site_editing_files() {
  */
 function is_full_site_editing_active() {
 	// We will always return false in admin and REST API contexts as we work towards getting rid of this.
-	if ( is_admin() || ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST ) ) {
+	if ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST ) {
 		return false;
 	}
 
