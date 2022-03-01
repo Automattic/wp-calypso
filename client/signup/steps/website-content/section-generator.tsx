@@ -37,7 +37,7 @@ const generateWebsiteContentSections = (
 				<PageDetails
 					page={ page }
 					formErrors={ formErrors }
-					label={ PAGE_LABELS[ page.id ] || undefined }
+					label={ PAGE_LABELS[ page.id ] }
 					onChangeField={ onChangeField }
 				/>
 			),
