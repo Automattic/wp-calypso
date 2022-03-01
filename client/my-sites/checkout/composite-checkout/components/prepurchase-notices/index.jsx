@@ -163,6 +163,15 @@ const PrePurchaseNotices = () => {
 		);
 	}
 
+	if ( cartPlanOverlapsSiteScanPurchase ) {
+		return (
+			<CartPlanOverlapsOwnedProductNotice
+				product={ getProductFromSlug( PRODUCT_JETPACK_SCAN ) }
+				selectedSite={ selectedSite }
+			/>
+		);
+	}
+
 	const backupProductInCart = backupSlugInCart && getProductFromSlug( backupSlugInCart );
 
 	// We're attempting to buy Jetpack Backup individually,
