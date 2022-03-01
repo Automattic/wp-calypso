@@ -16,13 +16,6 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 35px;
 		}
-
-		&.is-wide-layout {
-			width: 100%;
-			padding-bottom: 0;
-			max-width: 100%;
-			margin: 0;
-		}
 	}
 
 	.woocommerce-colophon {
@@ -77,9 +70,6 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 		padding-top: 60px;
 		padding-bottom: 40px;
 
-		padding-left: 10%;
-		padding-right: 5%;
-
 		.formatted-header .formatted-header__title {
 			@include onboarding-font-recoleta;
 			text-align: left;
@@ -103,7 +93,7 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 					@media ( min-width: $break-wide ) {
 						width: calc( 30% );
 						padding-left: 0;
-						padding-right: 20px;
+						padding-right: 10px;
 					}
 					.action-panel__title {
 						justify-content: normal;
