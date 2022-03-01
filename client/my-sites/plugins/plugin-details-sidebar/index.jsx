@@ -6,9 +6,12 @@ import eye from 'calypso/assets/images/marketplace/eye.svg';
 import support from 'calypso/assets/images/marketplace/support.svg';
 import wooLogo from 'calypso/assets/images/marketplace/woo-logo.svg';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 
 const PluginDetailsSidebar = ( {
 	plugin: {
@@ -21,11 +24,21 @@ const PluginDetailsSidebar = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const billingPeriod = useSelector( getBillingInterval );
+	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
+
 	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSite = useSelector( getSelectedSite );
+
 	const currentPlan = useSelector(
 		( state ) => selectedSiteId && getCurrentPlan( state, selectedSiteId )
 	);
-	const isAnnualPlan = currentPlan && ! isMonthly( currentPlan.productSlug );
+
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
+
+	const isAnnualPlan =
+		( ! shouldUpgrade && currentPlan && ! isMonthly( currentPlan.productSlug ) ) ||
+		( shouldUpgrade && isAnnualPeriod );
 
 	if ( ! isMarketplaceProduct ) {
 		return (

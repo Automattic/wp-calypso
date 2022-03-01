@@ -55,7 +55,8 @@ const USPS: React.FC< Props > = ( {
 		( state ) => selectedSiteId && getCurrentPlan( state, selectedSiteId )
 	);
 	const isAnnualPlan =
-		( currentPlan && ! isMonthly( currentPlan.productSlug ) && ! shouldUpgrade ) || isAnnualPeriod;
+		( ! shouldUpgrade && currentPlan && ! isMonthly( currentPlan.productSlug ) ) ||
+		( shouldUpgrade && isAnnualPeriod );
 
 	const planDisplayCost = useSelector( ( state ) =>
 		getProductDisplayCost( state, isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY )
