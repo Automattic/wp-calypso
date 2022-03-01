@@ -28,8 +28,8 @@ export default class Quit extends Component {
 	}
 
 	componentDidUpdate() {
-		this.addTargetListener();
 		this.removeTargetListener();
+		this.addTargetListener();
 	}
 
 	addTargetListener() {
