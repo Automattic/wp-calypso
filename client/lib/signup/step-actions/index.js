@@ -550,25 +550,11 @@ export async function setStoreFeatures(
 			path: `/sites/${ siteSlug }/seller_footer`,
 			apiNamespace: 'wpcom/v2',
 		} );
-	} catch ( e ) {
-		defer( callback );
-		return;
-	}
 
-	/*
-	 * @TODO: This shouldn't be needed but removing it breaks things
-	 */
-	wpcom.req
-		.get( {
-			path: `/sites/${ siteSlug }/block-editor`,
-			apiNamespace: 'wpcom/v2',
-		} )
-		.then( ( data ) => {
-			callback( null, { sending: data } );
-		} )
-		.catch( ( errors ) => {
-			callback( [ errors ] );
-		} );
+		return callback();
+	} catch ( errors ) {
+		return callback( [ errors ] );
+	}
 }
 
 export function setIntentOnSite( callback, { siteSlug, intent } ) {
