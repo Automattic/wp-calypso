@@ -16,6 +16,11 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 35px;
 		}
+
+		@media ( max-width: 660px ) {
+			padding-left: 15px;
+			padding-right: 15px;
+		}
 	}
 
 	.woocommerce-colophon {
@@ -48,8 +53,6 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 		max-width: 540px;
 		margin: 0 auto;
 		padding-top: 3em;
-		padding-left: 15px;
-		padding-right: 15px;
 
 		.empty-content__title {
 			@include onboarding-heading-text;
