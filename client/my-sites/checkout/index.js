@@ -14,7 +14,6 @@ import {
 	licensingThankYouAutoActivation,
 	licensingThankYouAutoActivationCompleted,
 	jetpackCheckoutThankYou,
-	jetpackCheckoutThankYouCompleted,
 	redirectJetpackLegacyPlans,
 	redirectToSupportSession,
 	upsellNudge,
@@ -24,28 +23,8 @@ import {
 export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
-	page(
-		'/checkout/jetpack/schedule-happiness-appointment',
-		noSite,
-		jetpackCheckoutThankYou,
-		makeLayout,
-		clientRender
-	);
 	page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
-	page(
-		'/checkout/jetpack/thank-you-completed/no-site/:product',
-		noSite,
-		jetpackCheckoutThankYouCompleted,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/checkout/jetpack/thank-you/no-site/:product',
-		noSite,
-		jetpackCheckoutThankYou,
-		makeLayout,
-		clientRender
-	);
+
 	page(
 		'/checkout/jetpack/thank-you/licensing-auto-activate/:product',
 		noSite,
@@ -53,6 +32,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/checkout/jetpack/thank-you/licensing-auto-activate-completed/:product',
 		noSite,
@@ -60,6 +40,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/checkout/jetpack/thank-you/licensing-manual-activate/:product',
 		noSite,
@@ -67,6 +48,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/checkout/jetpack/thank-you/licensing-manual-activate-instructions/:product',
 		noSite,
@@ -74,6 +56,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/checkout/jetpack/thank-you/licensing-manual-activate-license-key/:product',
 		noSite,
@@ -83,6 +66,7 @@ export default function () {
 	);
 
 	page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
+
 	page(
 		'/checkout/jetpack/thank-you/:site/:product',
 		loggedInSiteSelection,
