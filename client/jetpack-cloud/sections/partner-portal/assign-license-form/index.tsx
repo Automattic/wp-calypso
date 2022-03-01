@@ -21,6 +21,13 @@ function setPage( pageNumber: number ): void {
 	page( addQueryArgs( queryParams, currentPath ) );
 }
 
+function setSearch( search: string ): void {
+	const queryParams = { search };
+	const currentPath = window.location.pathname + window.location.search;
+
+	page( addQueryArgs( queryParams, currentPath ) );
+}
+
 function paginate( arr: Array< any >, currentPage: number ): Array< any > {
 	return (
 		arr
@@ -29,19 +36,30 @@ function paginate( arr: Array< any >, currentPage: number ): Array< any > {
 	);
 }
 
-export default function AssignLicenseForm( { sites, currentPage }: any ): ReactElement {
+export default function AssignLicenseForm( {
+	sites,
+	currentPage,
+	search,
+}: {
+	sites: Array< any >;
+	currentPage: number;
+	search: string;
+} ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ filter, setFilter ] = useState( null );
 	const [ selectedSite, setSelectedSite ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
 	const onSelectSite = ( site: any ) => setSelectedSite( site );
 
-	const hasFilter = filter === null || '' === filter;
+	let results = sites;
 
-	const siteCards = sites.map( ( site: any ) => {
-		if ( -1 !== site.domain.search( filter ) || null === filter ) {
+	if ( search ) {
+		results = results.filter( ( site: any ) => site.domain.search( search ) !== -1 );
+	}
+
+	const siteCards = paginate( results, currentPage ).map( ( site: any ) => {
+		if ( -1 !== site.domain.search( search ) || null === search ) {
 			return (
 				<Card key={ site.ID } className="assign-license-form__site-card">
 					<FormRadio
@@ -83,13 +101,6 @@ export default function AssignLicenseForm( { sites, currentPage }: any ): ReactE
 	const onAssignLater = () =>
 		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
 
-	const onPageClick = useCallback(
-		( pageNumber: number ) => {
-			setPage( pageNumber );
-		},
-		[ setPage ]
-	);
-
 	return (
 		<div className="assign-license-form">
 			<div className="assign-license-form__top">
@@ -120,20 +131,18 @@ export default function AssignLicenseForm( { sites, currentPage }: any ): ReactE
 			<SearchCard
 				className="assign-license-form__search-field"
 				placeHolder={ translate( 'Search for website URL right here' ) }
-				onSearch={ ( query: any ) => setFilter( query ) }
+				onSearch={ ( query: any ) => setSearch( query ) }
 			/>
 
-			{ hasFilter ? paginate( siteCards, currentPage ) : siteCards }
+			{ siteCards }
 
-			{ hasFilter && (
-				<Pagination
-					className="assign-license-form__pagination"
-					page={ currentPage }
-					perPage={ SITE_CARDS_PER_PAGE }
-					total={ sites.length }
-					pageClick={ onPageClick }
-				/>
-			) }
+			<Pagination
+				className="assign-license-form__pagination"
+				page={ currentPage }
+				perPage={ SITE_CARDS_PER_PAGE }
+				total={ results.length }
+				pageClick={ ( page: number ) => setPage( page ) }
+			/>
 		</div>
 	);
 }
