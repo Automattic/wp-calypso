@@ -15,6 +15,33 @@ const doesAdditionalPriceMatchStandardPrice = (
 	);
 };
 
+function getNoticeMessage(
+	isMonthlyBilling: boolean,
+	mailboxPurchaseCost: EmailCost | null,
+	translate: typeof originalTranslate
+): TranslateResult {
+	const translateArgs = {
+		args: {
+			price: mailboxPurchaseCost?.text,
+		},
+		components: {
+			strong: <strong />,
+		},
+		comment:
+			'%(price)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
+	};
+
+	return isMonthlyBilling
+		? translate(
+				'You can purchase new mailboxes at the regular price of {{strong}}%(price)s{{/strong}} per mailbox per month.',
+				translateArgs
+		  )
+		: translate(
+				'You can purchase new mailboxes at the regular price of {{strong}}%(price)s{{/strong}} per mailbox per year.',
+				translateArgs
+		  );
+}
+
 function getPriceMessage( {
 	mailboxPurchaseCost,
 	translate,
@@ -43,10 +70,12 @@ function getPriceMessage( {
 }
 
 function getPriceMessageExplanation( {
+	isMonthlyBilling,
 	mailboxPurchaseCost,
 	mailboxRenewalCost,
 	translate,
 }: {
+	isMonthlyBilling: boolean;
 	mailboxPurchaseCost: EmailCost | null;
 	mailboxRenewalCost: EmailCost | null;
 	translate: typeof originalTranslate;
@@ -61,14 +90,22 @@ function getPriceMessageExplanation( {
 	}
 
 	if ( mailboxPurchaseCost.amount < mailboxRenewalCost.amount ) {
-		return translate(
-			'This is less than the regular price because you are only charged for the remainder of the current year.'
-		);
+		return isMonthlyBilling
+			? translate(
+					'This is less than the regular price because you are only charged for the remainder of the current month.'
+			  )
+			: translate(
+					'This is less than the regular price because you are only charged for the remainder of the current year.'
+			  );
 	}
 
-	return translate(
-		'This is more than the regular price because you are charged for the remainder of the current year plus any additional year until renewal.'
-	);
+	return isMonthlyBilling
+		? translate(
+				'This is more than the regular price because you are charged for the remainder of the current month plus any additional month until renewal.'
+		  )
+		: translate(
+				'This is more than the regular price because you are charged for the remainder of the current year plus any additional year until renewal.'
+		  );
 }
 
 function getPriceMessageRenewal( {
@@ -104,6 +141,7 @@ function getPriceMessageRenewal( {
 interface MailboxPricingNoticeProps {
 	domain: ResponseDomain | SiteDomain | null;
 	expiryDate: string | null;
+	isMonthlyBilling?: boolean;
 	mailboxPurchaseCost: EmailCost | null;
 	mailboxRenewalCost: EmailCost | null;
 	product: ProductListItem | null;
@@ -112,6 +150,7 @@ interface MailboxPricingNoticeProps {
 const EmailPricingNotice = ( {
 	domain,
 	expiryDate,
+	isMonthlyBilling = false,
 	mailboxPurchaseCost,
 	mailboxRenewalCost,
 	product,
@@ -124,29 +163,16 @@ const EmailPricingNotice = ( {
 	}
 
 	if ( doesAdditionalPriceMatchStandardPrice( product, mailboxPurchaseCost ) ) {
-		const translateArgs = {
-			args: {
-				price: mailboxPurchaseCost?.text,
-			},
-			components: {
-				strong: <strong />,
-			},
-			comment:
-				'%(price)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
-		};
-
 		return (
 			<Notice icon="info-outline" showDismiss={ false } status="is-success">
-				{ translate(
-					'You can purchase new mailboxes at the regular price of {{strong}}%(price)s{{/strong}} per mailbox per year.',
-					translateArgs
-				) }
+				{ getNoticeMessage( isMonthlyBilling, mailboxPurchaseCost, translate ) }
 			</Notice>
 		);
 	}
 
 	const priceMessage = getPriceMessage( { mailboxPurchaseCost, translate } );
 	const priceMessageExplanation = getPriceMessageExplanation( {
+		isMonthlyBilling,
 		mailboxPurchaseCost,
 		mailboxRenewalCost,
 		translate,
