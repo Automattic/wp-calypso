@@ -12,7 +12,6 @@ import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
@@ -37,19 +36,6 @@ import ThemesSelection from './themes-selection';
 import TrendingThemes from './trending-themes';
 
 import './theme-showcase.scss';
-
-const subjectsMeta = {
-	photo: { icon: 'camera', order: 1 },
-	portfolio: { icon: 'custom-post-type', order: 2 },
-	magazine: { icon: 'reader', order: 3 },
-	blog: { icon: 'posts', order: 4 },
-	business: { icon: 'cart', order: 5 },
-	wedding: { icon: 'heart', order: 6 },
-	minimal: { icon: 'minus-small', order: 7 },
-	travel: { icon: 'globe', order: 8 },
-	food: { icon: 'flip-horizontal', order: 9 },
-	music: { icon: 'audio', order: 10 },
-};
 
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
@@ -276,7 +262,6 @@ class ThemeShowcase extends Component {
 			getScreenshotOption,
 			search,
 			filter,
-			translate,
 			isLoggedIn,
 			pathName,
 			title,
@@ -295,27 +280,6 @@ class ThemeShowcase extends Component {
 			{ property: 'og:type', content: 'website' },
 			{ property: 'og:site_name', content: 'WordPress.com' },
 		];
-
-		const headerIcons = [
-			{
-				label: translate( 'New' ),
-				uri: this.constructUrl( { vertical: '' } ),
-				icon: 'star',
-			},
-		].concat(
-			Object.keys( this.props.subjects )
-				.map(
-					( subject ) =>
-						subjectsMeta[ subject ] && {
-							label: this.props.subjects?.[ subject ]?.name || subject,
-							uri: this.constructUrl( { vertical: subject } ),
-							icon: subjectsMeta[ subject ].icon,
-							order: subjectsMeta[ subject ].order,
-						}
-				)
-				.filter( ( icon ) => !! icon )
-				.sort( ( a, b ) => a.order - b.order )
-		);
 
 		const themeProps = {
 			filter: filter,
@@ -364,13 +328,6 @@ class ThemeShowcase extends Component {
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
 				/>
-				{ ! isLoggedIn && (
-					<SubMasterbarNav
-						options={ headerIcons }
-						fallback={ headerIcons[ 0 ] }
-						uri={ this.constructUrl() }
-					/>
-				) }
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
 					<ThemesSearchCard
