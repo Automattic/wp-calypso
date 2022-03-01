@@ -4,7 +4,6 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugFactory from 'debug';
-import { translate } from 'i18n-calypso';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -35,7 +34,7 @@ import {
 } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
-import { requestSite, updateSiteFrontPage } from 'calypso/state/sites/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 
 const Visibility = Site.Visibility;
@@ -445,7 +444,7 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		} );
 }
 
-export function setDesignOnSite( callback, { siteSlug, selectedDesign, storeType } ) {
+export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 	if ( ! selectedDesign ) {
 		defer( callback );
 		return;
@@ -455,6 +454,13 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign, storeType
 
 	wpcom.req
 		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: true } )
+		.then( () =>
+			wpcom.req.post( {
+				path: `/sites/${ siteSlug }/theme-setup`,
+				apiNamespace: 'wpcom/v2',
+				body: { trim_content: true },
+			} )
+		)
 		.then( () =>
 			wpcom.req.get( {
 				path: `/sites/${ siteSlug }/block-editor`,
@@ -467,19 +473,6 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign, storeType
 		.catch( ( errors ) => {
 			callback( [ errors ] );
 		} );
-
-	// Skip theme-setup on `simple` store sites; this is handled in setStoreFeatures
-	if ( 'simple' !== storeType ) {
-		wpcom.req
-			.post( {
-				path: `/sites/${ siteSlug }/theme-setup`,
-				apiNamespace: 'wpcom/v2',
-				body: { trim_content: true },
-			} )
-			.catch( ( errors ) => {
-				callback( [ errors ] );
-			} );
-	}
 }
 
 export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
@@ -501,60 +494,21 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	);
 }
 
-export async function setStoreFeatures(
-	callback,
-	{ siteSlug, storeType },
-	stepProvidedItems,
-	reduxStore
-) {
-	if ( ! siteSlug || 'simple' !== storeType ) {
+export function setStoreFeatures( callback, { siteSlug } ) {
+	if ( ! siteSlug ) {
 		defer( callback );
 		return;
 	}
 
-	try {
-		/*
-		 * Get the block pattern source for use in our new home page.
-		 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
-		 */
-		const patternList = await wpcom.req.get( {
-			path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
-			apiNamespace: 'rest/v1',
-		} );
-
-		//Only item since we filter by id
-		const singleProductPattern = patternList[ 0 ];
-
-		// Create a new Home page
-		const newPage = await wpcom.req.post( {
-			path: `/sites/${ siteSlug }/pages`,
-			apiNamespace: 'wp/v2',
-			body: {
-				content: singleProductPattern.html,
-				title: translate( 'Available now!' ),
-				status: 'publish',
-				template: 'header-footer-only',
-			},
-		} );
-
-		const siteId = getSiteId( reduxStore.getState(), siteSlug );
-
-		//Set the new Home page as the front page.
-		await updateSiteFrontPage( siteId, {
-			show_on_front: 'page',
-			page_on_front: newPage.id,
-		} )( reduxStore.dispatch );
-
-		// Set footer to the 'store' option
-		await wpcom.req.post( {
+	wpcom.req
+		.post( {
 			path: `/sites/${ siteSlug }/seller_footer`,
 			apiNamespace: 'wpcom/v2',
+		} )
+		.then( () => callback() )
+		.catch( ( errors ) => {
+			callback( [ errors ] );
 		} );
-
-		return callback();
-	} catch ( errors ) {
-		return callback( [ errors ] );
-	}
 }
 
 export function setIntentOnSite( callback, { siteSlug, intent } ) {
