@@ -145,8 +145,7 @@ export default function DesignPickerStep( props ) {
 				result.sort = sortBlogToTop;
 				break;
 			case 'sell':
-				// @TODO: This should be 'ecommerce' once we have some themes with that slug.
-				result.defaultSelection = 'business';
+				result.defaultSelection = 'ecommerce';
 				result.sort = sortEcommerceToTop;
 				break;
 			default:
