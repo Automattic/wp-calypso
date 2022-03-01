@@ -32,8 +32,14 @@ class WP_REST_WPCOM_Block_Editor_Seller_Celebration_Modal_Controller extends \WP
 					'callback'            => array( $this, 'should_show_seller_celebration_modal' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
 				),
+				array(
+					'methods'             => \WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'update_nux_status' ),
+					'permission_callback' => array( $this, 'permission_callback' ),
+				),
 			)
 		);
+
 	}
 
 	/**
