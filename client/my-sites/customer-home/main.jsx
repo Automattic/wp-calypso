@@ -23,12 +23,25 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import { canCurrentUserUseCustomerHome, getSiteOption } from 'calypso/state/sites/selectors';
+import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
+import {
+	canCurrentUserUseCustomerHome,
+	getSitePlanSlug,
+	getSiteOption,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noticeType } ) => {
+const Home = ( {
+	canUserUseCustomerHome,
+	site,
+	siteId,
+	trackViewSiteAction,
+	noticeType,
+	sitePlanSlug,
+	isNew7DUser,
+} ) => {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
@@ -63,6 +76,26 @@ const Home = ( { canUserUseCustomerHome, site, siteId, trackViewSiteAction, noti
 			window.hj( 'trigger', 'in_survey_1' );
 		}
 	}, [ detectedCountryCode ] );
+
+	useEffect( () => {
+		if ( 'free_plan' !== sitePlanSlug ) {
+			return;
+		}
+
+		if ( ! [ 'US', 'UK', 'AU', 'JP' ].includes( detectedCountryCode ) ) {
+			return;
+		}
+
+		if ( isNew7DUser ) {
+			return;
+		}
+
+		addHotJarScript();
+
+		if ( window && window.hj ) {
+			window.hj( 'trigger', 'pnp_survey_1' );
+		}
+	}, [ detectedCountryCode, sitePlanSlug, isNew7DUser ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -146,7 +179,9 @@ const mapStateToProps = ( state ) => {
 
 	return {
 		site: getSelectedSite( state ),
+		sitePlanSlug: getSitePlanSlug( state, siteId ),
 		siteId,
+		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		isStaticHomePage:
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
