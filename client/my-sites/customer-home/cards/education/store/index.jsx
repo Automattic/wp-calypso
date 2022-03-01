@@ -16,7 +16,7 @@ const EducationStore = () => {
 			) }
 			links={ [
 				{
-					calypsoLink: false,
+					externalLink: true,
 					url: `https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/`,
 					text: translate( 'Learn how' ),
 				},
