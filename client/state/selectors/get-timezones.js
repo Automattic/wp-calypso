@@ -1,4 +1,3 @@
-import { get, map } from 'lodash';
 import getTimezonesLabel from 'calypso/state/selectors/get-timezones-label';
 
 import 'calypso/state/timezones/init';
@@ -19,14 +18,14 @@ import 'calypso/state/timezones/init';
  * @returns {Array} Timezones arrays
  */
 export default function getTimezones( state ) {
-	const continents = get( state, 'timezones.byContinents', null );
+	const continents = state.timezones?.byContinents ?? null;
 
 	if ( ! continents ) {
 		return null;
 	}
 
-	return map( Object.entries( continents ), ( zones ) => [
+	return Object.entries( continents ).map( ( zones ) => [
 		zones[ 0 ],
-		map( zones[ 1 ], ( value ) => [ value, getTimezonesLabel( state, value ) ] ),
+		zones[ 1 ].map( ( value ) => [ value, getTimezonesLabel( state, value ) ] ),
 	] );
 }
