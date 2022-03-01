@@ -100,7 +100,7 @@ const PluginsBrowserList = ( {
 				site: site,
 			} )
 		);
-		page( `/plugins/${ spotlightPlugin.slug }/${ site }` );
+		page( `/plugins/${ spotlightPlugin.slug }/${ site || '' }` );
 	};
 	return (
 		<div className="plugins-browser-list">
