@@ -1,7 +1,5 @@
 import {
-	planHasFeature,
 	planHasAtLeastOneFeature,
-	planHasSuperiorFeature,
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_DAILY,
 	JETPACK_PLANS,
@@ -9,6 +7,10 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 	FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 	FEATURE_JETPACK_BACKUP_T1_MONTHLY,
@@ -118,25 +120,29 @@ export const isBackupProductIncludedInSitePlan = createSelector(
 			return null;
 		}
 
-		let feature;
+		const DAILY_BACKUP_PRODUCTS = [
+			PRODUCT_JETPACK_BACKUP_DAILY,
+			PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+		];
 
-		if (
-			[ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ].includes( productSlug )
-		) {
-			feature = FEATURE_JETPACK_BACKUP_DAILY;
-		} else if (
-			[ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ].includes(
-				productSlug
-			)
-		) {
-			feature = FEATURE_JETPACK_BACKUP_REALTIME;
-		} else {
-			return null;
+		const REALTIME_BACKUP_PRODUCTS = [
+			PRODUCT_JETPACK_BACKUP_REALTIME,
+			PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+			PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+			PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
+			PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+		];
+
+		if ( DAILY_BACKUP_PRODUCTS.includes( productSlug ) ) {
+			return planHasDailyBackup( sitePlanSlug );
 		}
 
-		return (
-			planHasFeature( sitePlanSlug, feature ) || planHasSuperiorFeature( sitePlanSlug, feature )
-		);
+		if ( REALTIME_BACKUP_PRODUCTS.includes( productSlug ) ) {
+			return planHasRealTimeBackup( sitePlanSlug );
+		}
+
+		return null;
 	},
 	[
 		( state: AppState, siteId: number | null, productSlug: string ) => [
