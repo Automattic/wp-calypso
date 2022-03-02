@@ -36,7 +36,7 @@ export default function getSitePlan(
 	}
 
 	if ( site.plan?.expired ) {
-		if ( site.jetpack ) {
+		if ( site.jetpack && ! site.is_wpcom_atomic ) {
 			return {
 				product_id: 2002,
 				product_slug: 'jetpack_free',
