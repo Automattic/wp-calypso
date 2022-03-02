@@ -33,7 +33,6 @@ describe( 'reducer', () => {
 			'domains',
 			'requestingAll',
 			'items',
-			'mediaStorage',
 			'plans',
 			'products',
 			'requesting',
