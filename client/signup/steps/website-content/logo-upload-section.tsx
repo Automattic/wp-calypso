@@ -7,7 +7,7 @@ import {
 	logoUploadCompleted,
 	logoUploadFailed,
 	logoUploadStarted,
-	removeUploadedLogo,
+	removeUploadedLogoUrl,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/get-selected-site';
@@ -41,7 +41,7 @@ export function LogoUploadSection( {
 	};
 
 	const onMediaRemoved = () => {
-		dispatch( removeUploadedLogo() );
+		dispatch( removeUploadedLogoUrl() );
 	};
 
 	return (

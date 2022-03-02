@@ -10,6 +10,8 @@ import {
 	logoUploadStarted,
 	logoUploadFailed,
 	logoUploadCompleted,
+	imageRemoved,
+	removeUploadedLogoUrl,
 } from '../actions';
 import websiteContentCollectionReducer, { IMAGE_UPLOAD_STATES, LOGO_SECTION_ID } from '../reducer';
 import { initialState } from '../schema';
@@ -308,6 +310,93 @@ describe( 'reducer', () => {
 		} );
 	} );
 
+	test( 'should remove the in memory image state details correctly', () => {
+		// First simulate an image upload completion
+		const actionImageUploaded = imageUploaded( {
+			pageId: 'Home',
+			mediaIndex: 0,
+			image: { caption: 'test', url: 'www.test.com/test.test.jpg' },
+		} );
+		const secondActionImageUploaded = imageUploaded( {
+			pageId: 'Home',
+			mediaIndex: 1,
+			image: { caption: 'secondtest', url: 'www.testwo.com/testwo.testwo.jpg' },
+		} );
+
+		let nextState = websiteContentCollectionReducer( { ...initialTestState }, actionImageUploaded );
+		nextState = websiteContentCollectionReducer( nextState, secondActionImageUploaded );
+
+		expect( nextState ).to.be.eql( {
+			...initialTestState,
+			websiteContent: {
+				...initialTestState.websiteContent,
+				pages: [
+					{
+						id: 'Home',
+						title: 'Homepage',
+						content: '',
+						images: [
+							{
+								caption: 'test',
+								url: 'www.test.com/test.test.jpg',
+							},
+							{
+								caption: 'secondtest',
+								url: 'www.testwo.com/testwo.testwo.jpg',
+							},
+							{ caption: '', url: '' },
+						],
+					},
+					...initialTestState.websiteContent.pages.slice( 1 ),
+				],
+			},
+			imageUploadStates: {
+				Home: {
+					0: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+					1: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+				},
+			},
+		} );
+
+		// Now remove the image and check state
+		const actionRemoveInMemoryImage = imageRemoved( {
+			pageId: 'Home',
+			mediaIndex: 1,
+		} );
+		nextState = websiteContentCollectionReducer( nextState, actionRemoveInMemoryImage );
+		expect( nextState ).to.be.eql( {
+			...initialTestState,
+			websiteContent: {
+				...initialTestState.websiteContent,
+				pages: [
+					{
+						id: 'Home',
+						title: 'Homepage',
+						content: '',
+						images: [
+							{
+								caption: 'test',
+								url: 'www.test.com/test.test.jpg',
+							},
+							{
+								caption: '',
+								url: '',
+							},
+							{ caption: '', url: '' },
+						],
+					},
+					...initialTestState.websiteContent.pages.slice( 1 ),
+				],
+			},
+			imageUploadStates: {
+				Home: {
+					0: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+					1: IMAGE_UPLOAD_STATES.UPLOAD_REMOVED,
+				},
+			},
+		} );
+	} );
+
 	test( 'should update relevent state when the logo uploading is completed', () => {
 		const action = logoUploadCompleted( 'wp.me/some-random-image.png' );
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
@@ -348,6 +437,23 @@ describe( 'reducer', () => {
 				[ LOGO_SECTION_ID ]: {
 					0: IMAGE_UPLOAD_STATES.UPLOAD_FAILED,
 				},
+			},
+		} );
+	} );
+
+	test( 'should update relevent state when in memory logo information is removed', () => {
+		const action = removeUploadedLogoUrl();
+		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
+		expect( nextState ).to.be.eql( {
+			...initialTestState,
+			imageUploadStates: {
+				[ LOGO_SECTION_ID ]: {
+					0: IMAGE_UPLOAD_STATES.UPLOAD_REMOVED,
+				},
+			},
+			websiteContent: {
+				...initialTestState.websiteContent,
+				siteLogoUrl: '',
 			},
 		} );
 	} );
