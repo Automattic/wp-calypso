@@ -82,7 +82,7 @@ const Home = ( {
 			return;
 		}
 
-		if ( ! [ 'US', 'UK', 'AU', 'JP' ].includes( detectedCountryCode ) ) {
+		if ( ! [ 'US', 'GB', 'AU', 'JP' ].includes( detectedCountryCode ) ) {
 			return;
 		}
 
