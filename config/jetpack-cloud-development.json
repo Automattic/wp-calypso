@@ -51,7 +51,6 @@
 		"marketplace-test": false,
 		"marketplace-domain-bundle": false,
 		"oauth": true,
-		"plans/managed-plan": true,
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
