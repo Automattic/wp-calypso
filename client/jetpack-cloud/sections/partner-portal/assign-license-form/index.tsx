@@ -22,7 +22,7 @@ function setPage( pageNumber: number ): void {
 }
 
 function setSearch( search: string ): void {
-	const queryParams = { search };
+	const queryParams = { search, page: 1 };
 	const currentPath = window.location.pathname + window.location.search;
 
 	page( addQueryArgs( queryParams, currentPath ) );
