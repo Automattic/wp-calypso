@@ -6,6 +6,7 @@ import {
 	render as clientRender,
 	setLocaleMiddleware,
 } from 'calypso/controller';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
 import {
@@ -36,8 +37,9 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+	page( `/checkout/jetpack/:productSlug }`, noSite, checkoutSiteless, makeLayout, clientRender );
 	page(
-		'/checkout/jetpack/:productSlug',
+		`/checkout/jetpack/:productSlug/${ getLanguageRouteParam() }`,
 		setLocaleMiddleware(),
 		noSite,
 		checkoutSiteless,
@@ -95,8 +97,10 @@ export default function () {
 		clientRender
 	);
 
+	page( `/checkout/jetpack/:siteSlug/:productSlug }`, checkout, makeLayout, clientRender );
+
 	page(
-		'/checkout/jetpack/:siteSlug/:productSlug',
+		`/checkout/jetpack/:siteSlug/:productSlug/${ getLanguageRouteParam() }`,
 		setLocaleMiddleware(),
 		checkout,
 		makeLayout,
