@@ -474,18 +474,6 @@ function PurchaseMetaExpiration( {
 				>
 					{ subsBillingText }
 				</span>
-				{ site && ! hideAutoRenew && isProductOwner && (
-					<span className="manage-purchase__detail">
-						<AutoRenewToggle
-							planName={ site.plan.product_name_short }
-							siteDomain={ site.domain }
-							siteSlug={ site.slug }
-							purchase={ purchase }
-							toggleSource="manage-purchase"
-							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
-						/>
-					</span>
-				) }
 			</li>
 		);
 	}
