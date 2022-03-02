@@ -308,7 +308,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Free Professional Email for 3 months' ),
 		getDescription: () =>
 			i18n.translate(
-				'All annual WordPress.com plans include 3 months free of Professional Email for a custom domain. Mailboxes registered through this promotion will start getting charged at our standard rate, plus applicable taxes, after the first 3 months.'
+				'Custom email address with mailbox, calendar, templates and more. Register free for 3 months with your custom domain. After 3 months, you have the option to renew or cancel your email subscription.'
 			),
 	},
 
