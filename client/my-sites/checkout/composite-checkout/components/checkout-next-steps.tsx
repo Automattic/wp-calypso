@@ -116,8 +116,8 @@ export default function CheckoutNextSteps( { responseCart, headerText }: Props )
 				{ headerText || translate( "What's Next" ) }
 			</CheckoutNextStepsHeader>
 			<CheckoutNextStepsListWrapper>
-				{ steps.map( ( step ) => (
-					<CheckoutNextStepsListItem>
+				{ steps.map( ( step, index ) => (
+					<CheckoutNextStepsListItem key={ index.toString() }>
 						{ step.icon }
 						{ step.text }
 					</CheckoutNextStepsListItem>
