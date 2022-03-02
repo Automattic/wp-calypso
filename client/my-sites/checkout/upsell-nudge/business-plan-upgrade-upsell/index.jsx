@@ -7,6 +7,9 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 import './style.scss';
 
+// In the next iteration we should create a new upsell component specifically
+// for the Pro plan. We've repurposed it for now to simplify the necessary code change.
+
 export class BusinessPlanUpgradeUpsell extends PureComponent {
 	render() {
 		const { receiptId, translate } = this.props;
@@ -71,7 +74,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 						<p>
 							<b>
 								{ translate(
-									'Did you know that WordPress.com Business plan customers can now upload any WordPress plugins they want?'
+									'Did you know that WordPress.com Pro plan customers can now upload any WordPress plugins they want?'
 								) }
 							</b>
 						</p>
@@ -176,12 +179,12 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 						</ul>
 						<p>
 							{ translate(
-								'And access to the plugin library is just one of many benefits included with the Business plan.'
+								'And access to the plugin library is just one of many benefits included with the Pro plan.'
 							) }
 						</p>
 						<p>
 							{ translate(
-								'With our Business plan you can upload any custom theme you want, have full access to your site with SFTP, and have full control of your data directly with phpMyAdmin.'
+								'With our Pro plan you can upload any custom theme you want, have full access to your site with SFTP, and have full control of your data directly with phpMyAdmin.'
 							) }
 						</p>
 						<p>
@@ -191,7 +194,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								'{{b}}But please note:{{/b}} you don’t currently have access to all these amazing features because they are only available to Business plan customers and you haven’t upgraded yet.',
+								'{{b}}But please note:{{/b}} you don’t currently have access to all these amazing features because they are only available to Pro plan customers and you haven’t upgraded yet.',
 								{
 									components: { b: <b /> },
 								}
@@ -201,8 +204,8 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 							{
 								// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
 								translate(
-									'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
-									'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
+									'The good news is that you can upgrade your plan today and try the Pro plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
+									'The good news is that you can upgrade your plan today and try the Pro plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
 									{
 										count: hasSevenDayRefundPeriod ? 7 : 14,
 										components: { b: <b /> },
@@ -215,8 +218,8 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 							{
 								// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
 								translate(
-									'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have %(days)d day to evaluate the plan and decide if it’s right for you.',
-									'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have %(days)d days to evaluate the plan and decide if it’s right for you.',
+									'Simply click the link below and select the Pro plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have %(days)d day to evaluate the plan and decide if it’s right for you.',
+									'Simply click the link below and select the Pro plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have %(days)d days to evaluate the plan and decide if it’s right for you.',
 									{
 										count: hasSevenDayRefundPeriod ? 7 : 14,
 										components: {

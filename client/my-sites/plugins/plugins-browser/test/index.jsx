@@ -32,7 +32,6 @@ jest.mock( '@automattic/languages', () => [
 
 import {
 	PLAN_FREE,
-	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
@@ -40,6 +39,7 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
+	PLAN_WPCOM_PRO,
 } from '@automattic/calypso-products';
 import { mount } from 'enzyme';
 import { merge } from 'lodash';
@@ -122,7 +122,7 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 			).toBe( 1 );
 			expect(
 				comp.find( 'upsell-nudge[event="calypso_plugins_browser_upgrade_nudge"]' ).props().plan
-			).toBe( PLAN_BUSINESS );
+			).toBe( PLAN_WPCOM_PRO );
 		} );
 	} );
 

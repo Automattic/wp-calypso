@@ -1,7 +1,7 @@
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
-	TYPE_BUSINESS,
+	TYPE_PRO,
 	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
@@ -262,13 +262,13 @@ export class SiteSettingsFormSEO extends Component {
 				  }
 				: {
 						title: translate(
-							'Boost your search engine ranking with the powerful SEO tools in the Business plan'
+							'Boost your search engine ranking with the powerful SEO tools in the Pro plan'
 						),
 						feature: FEATURE_ADVANCED_SEO,
 						plan:
 							selectedSite.plan &&
 							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-								type: TYPE_BUSINESS,
+								type: TYPE_PRO,
 							} ),
 				  };
 
