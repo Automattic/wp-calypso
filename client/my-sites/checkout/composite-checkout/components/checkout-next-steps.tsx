@@ -41,11 +41,7 @@ const CheckoutNextStepsListItem = styled( 'li' )`
 	display: flex;
 	align-items: flex-start;
 	margin-bottom: 12px;
-
-	.rtl & {
-		padding-right: 24px;
-		padding-left: 0;
-	}
+	gap: 8px;
 `;
 
 const BaseIcon = styled.div`
@@ -57,7 +53,6 @@ const BaseIcon = styled.div`
 	width: 18px;
 	text-align: center;
 	flex-shrink: 0;
-	margin-right: 8px;
 
 	.gridicon {
 		fill: ${ ( props ) => props.theme.colors.surface };
