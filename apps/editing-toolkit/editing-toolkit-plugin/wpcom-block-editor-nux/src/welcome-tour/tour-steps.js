@@ -35,8 +35,6 @@ function getTourAssets( key ) {
 }
 
 function getTourSteps( localeSlug, referencePositioning ) {
-	const paymentBlockSupportUrl = `https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/#how-to-use-the-payments-block-video`;
-
 	return [
 		{
 			meta: {
@@ -222,7 +220,10 @@ function getTourSteps( localeSlug, referencePositioning ) {
 							) }
 							<br />
 							<ExternalLink
-								href={ paymentBlockSupportUrl }
+								href={ localizeUrl(
+									'https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/#how-to-use-the-payments-block-video',
+									localeSlug
+								) }
 								target="_blank"
 								rel="noopener noreferrer"
 							>
