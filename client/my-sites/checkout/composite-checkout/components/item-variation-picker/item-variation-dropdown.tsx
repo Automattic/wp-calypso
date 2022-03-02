@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useMemo, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import type { ItemVariationPickerProps } from './types';
 
@@ -96,6 +96,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	const variants = useGetProductVariants( siteId, productSlug );
 
 	const [ open, setOpen ] = useState( false );
+	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
 	const selectedVariantIndex = useMemo( () => {
 		for ( let i = 0; i < variants.length; ++i ) {
@@ -106,25 +107,26 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		return null;
 	}, [ selectedItem.product_id, variants ] );
 
+	useEffect( () => {
+		setHighlightedVariantIndex( selectedVariantIndex );
+	}, [ selectedVariantIndex ] );
+
 	const selectNextVariant = useCallback( () => {
-		if ( selectedVariantIndex !== null && selectedVariantIndex < variants.length - 1 ) {
-			onChangeItemVariant(
-				selectedItem.uuid,
-				variants[ selectedVariantIndex + 1 ].productSlug,
-				variants[ selectedVariantIndex + 1 ].productId
-			);
+		if ( highlightedVariantIndex !== null && highlightedVariantIndex < variants.length - 1 ) {
+			setHighlightedVariantIndex( highlightedVariantIndex + 1 );
 		}
-	}, [ onChangeItemVariant, selectedItem.uuid, selectedVariantIndex, variants ] );
+	}, [ highlightedVariantIndex, variants.length ] );
 
 	const selectPreviousVariant = useCallback( () => {
-		if ( selectedVariantIndex !== null && selectedVariantIndex > 0 ) {
-			onChangeItemVariant(
-				selectedItem.uuid,
-				variants[ selectedVariantIndex - 1 ].productSlug,
-				variants[ selectedVariantIndex - 1 ].productId
-			);
+		if ( highlightedVariantIndex !== null && highlightedVariantIndex > 0 ) {
+			setHighlightedVariantIndex( highlightedVariantIndex - 1 );
 		}
-	}, [ onChangeItemVariant, selectedItem.uuid, selectedVariantIndex, variants ] );
+	}, [ highlightedVariantIndex ] );
+
+	const toggleDropDown = useCallback( () => {
+		setOpen( ! open );
+		setHighlightedVariantIndex( selectedVariantIndex );
+	}, [ open, selectedVariantIndex ] );
 
 	// arrow keys require onKeyDown for some browsers
 	const handleKeyDown: React.KeyboardEventHandler = useCallback(
@@ -140,9 +142,37 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 					event.preventDefault();
 					selectPreviousVariant();
 					break;
+				case 'Enter':
+					event.preventDefault();
+					if (
+						highlightedVariantIndex !== null &&
+						highlightedVariantIndex !== selectedVariantIndex
+					) {
+						onChangeItemVariant(
+							selectedItem.uuid,
+							variants[ highlightedVariantIndex ].productSlug,
+							variants[ highlightedVariantIndex ].productId
+						);
+					} else if ( highlightedVariantIndex === selectedVariantIndex ) {
+						toggleDropDown();
+					}
+					break;
+				case 'Space':
+					event.preventDefault();
+					toggleDropDown();
+					break;
 			}
 		},
-		[ selectNextVariant, selectPreviousVariant ]
+		[
+			highlightedVariantIndex,
+			onChangeItemVariant,
+			selectedItem.uuid,
+			selectedVariantIndex,
+			selectNextVariant,
+			selectPreviousVariant,
+			toggleDropDown,
+			variants,
+		]
 	);
 
 	if ( variants.length < 2 ) {
@@ -169,13 +199,13 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 			</CurrentOption>
 			{ open && (
 				<OptionList role="listbox" tabIndex={ -1 }>
-					{ variants.map( ( { variantLabel, variantPrice, productId, productSlug } ) => (
+					{ variants.map( ( { variantLabel, variantPrice, productId, productSlug }, index ) => (
 						<Option
 							id={ productId.toString() }
 							role="option"
 							key={ productSlug + variantLabel }
 							onClick={ () => onChangeItemVariant( selectedItem.uuid, productSlug, productId ) }
-							selected={ productId === selectedItem.product_id }
+							selected={ index === highlightedVariantIndex }
 						>
 							<VariantLabel>{ variantLabel }</VariantLabel>
 							<span>{ variantPrice }</span>
