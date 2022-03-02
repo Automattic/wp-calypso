@@ -1,10 +1,11 @@
 import { Gridicon } from '@automattic/components';
-import { ResponseCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { ReactChild, useMemo } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
-
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { TranslateResult } from 'i18n-calypso';
+import type { ReactChild } from 'react';
 interface Props {
 	responseCart: ResponseCart;
 	headerText?: TranslateResult;
