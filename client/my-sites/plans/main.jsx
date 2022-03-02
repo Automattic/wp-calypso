@@ -47,7 +47,7 @@ const ProfessionalEmailPromotionWrapper = ( props ) => {
 		return <div>Placeholder...</div>;
 	}
 
-	const isLoggedInProfessionalEmailPromotion = 'treatment' === experimentAssignment?.variationName;
+	const isProfessionalEmailPromotionAvailable = 'treatment' === experimentAssignment?.variationName;
 
 	return (
 		<PlansFeaturesMain
@@ -63,7 +63,7 @@ const ProfessionalEmailPromotionWrapper = ( props ) => {
 			site={ props.site }
 			plansWithScroll={ props.plansWithScroll }
 			showTreatmentPlansReorderTest={ props.showTreatmentPlansReorderTest }
-			isLoggedInProfessionalEmailPromotion={ isLoggedInProfessionalEmailPromotion }
+			isProfessionalEmailPromotionAvailable={ isProfessionalEmailPromotionAvailable }
 		/>
 	);
 };

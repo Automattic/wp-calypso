@@ -327,11 +327,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
 				'Unlock unlimited, expert customer support via email.'
 		),
-	getPlanCompareFeatures: ( _, { isLoggedInProfessionalEmailPromotion } = {} ) =>
+	getPlanCompareFeatures: ( _, { isProfessionalEmailPromotionAvailable } = {} ) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			isLoggedInProfessionalEmailPromotion && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 			FEATURE_HOSTING,
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_SUPPORT,
@@ -398,12 +398,12 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getPlanCompareFeatures: (
 		_,
-		{ isLoggedInMonthlyPricing, isLoggedInProfessionalEmailPromotion } = {}
+		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
 	) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			isLoggedInProfessionalEmailPromotion && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
@@ -506,12 +506,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getPlanCompareFeatures: (
 		_,
-		{ isLoggedInMonthlyPricing, isLoggedInProfessionalEmailPromotion } = {}
+		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
 	) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			isLoggedInProfessionalEmailPromotion && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
@@ -596,12 +596,12 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getPlanCompareFeatures: (
 		_,
-		{ isLoggedInMonthlyPricing, isLoggedInProfessionalEmailPromotion } = {}
+		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
 	) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			isLoggedInProfessionalEmailPromotion && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
