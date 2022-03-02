@@ -26,7 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let editorIframe: Frame;
 	let pagesPage: PagesPage;
 	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
-	let publishedUrl: URL;
+	let publishedUrl: string;
 	const accountName = envVariables.GUTENBERG_EDGE
 		? 'gutenbergSimpleSiteEdgeUser'
 		: 'simpleSitePersonalPlanUser';
@@ -80,7 +80,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Published URL contains the custom URL slug', async function () {
-		expect( publishedUrl.pathname ).toContain( `/${ customUrlSlug }` );
+		expect( publishedUrl ).toContain( `/${ customUrlSlug }` );
 	} );
 
 	it( 'Published page contains template content', async function () {

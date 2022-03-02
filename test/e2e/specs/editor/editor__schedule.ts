@@ -20,7 +20,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 		: 'simpleSitePersonalPlanUser';
 	const postTitle = `Scheduled Post: ${ DataHelper.getTimestamp() }`;
 	const postContent = DataHelper.getRandomPhrase();
-	let postURL: URL;
+	let postURL: string;
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let page: Page;
 
@@ -74,7 +74,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 
 		it( 'Publish post', async function () {
 			postURL = await gutenbergEditorPage.publish();
-			await gutenbergEditorPage.editorPublishPanelComponent.closePanel();
+			await gutenbergEditorPage.closePostPublishPanel();
 		} );
 
 		it( `View post as ${ accountName }`, async function () {
@@ -83,7 +83,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( testPage );
 
-			await testPage.goto( postURL.href );
+			await testPage.goto( postURL );
 			const publishedPostPage = new PublishedPostPage( testPage );
 			await publishedPostPage.validateTextInPost( postContent );
 			await testPage.close();
@@ -92,7 +92,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 		it( 'View post as public', async function () {
 			const testPage = await browser.newPage();
 
-			await testPage.goto( postURL.href );
+			await testPage.goto( postURL );
 			const publishedPostPage = new PublishedPostPage( testPage );
 			await publishedPostPage.validateTextInPost(
 				'It looks like nothing was found at this location. Maybe try a search?'
@@ -142,7 +142,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 					await testAccount.authenticate( testPage );
 				}
 
-				await testPage.goto( postURL.href );
+				await testPage.goto( postURL );
 				const publishedPostPage = new PublishedPostPage( testPage );
 				await publishedPostPage.validateTextInPost( postContent );
 

@@ -22,7 +22,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	const postingUser = new TestAccount( 'simpleSitePersonalPlanUser' );
 	const likeUser = new TestAccount( 'defaultUser' );
 	let page: Page;
-	let publishedURL: URL;
+	let publishedURL: string;
 	let publishedPostPage: PublishedPostPage;
 
 	describe( 'As the posting user', function () {
@@ -67,7 +67,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Go to the published post page', async () => {
-			await page.goto( publishedURL.href );
+			await page.goto( publishedURL );
 		} );
 
 		it( 'Login via popup to like the post', async function () {

@@ -30,7 +30,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			: 'simpleSitePersonalPlanUser';
 
 		let page: Page;
-		let url: URL;
+		let url: string;
 		let gutenbergEditorPage: GutenbergEditorPage;
 		let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 
@@ -78,7 +78,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 				// Private articles are published immediately as the option is selected.
 				// In other words, for Private articles the publish action happened in previous step.
 				if ( visibility === 'Private' ) {
-					url = await gutenbergEditorPage.getPublishedURLFromToast();
+					url = await gutenbergEditorPage.getPublishedURL();
 				} else {
 					url = await gutenbergEditorPage.publish();
 				}
@@ -102,7 +102,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 						// noop - public user, which is state of not logged in, does not
 						// have an entry in the secrets file.
 					}
-					await testPage.goto( url.href );
+					await testPage.goto( url );
 					const publishedPostPage = new PublishedPostPage( testPage );
 
 					// If target article is private, only the posting user can see that it even exists.
@@ -121,7 +121,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			it( `View ${ visibility } page as publishing user`, async function () {
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( testPage );
-				await testPage.goto( url.href );
+				await testPage.goto( url );
 				const publishedPostPage = new PublishedPostPage( testPage );
 
 				// Posting user can see all of their pages, regardless of privacy setting.
