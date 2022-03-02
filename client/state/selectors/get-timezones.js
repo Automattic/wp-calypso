@@ -18,13 +18,7 @@ import 'calypso/state/timezones/init';
  * @returns {Array} Timezones arrays
  */
 export default function getTimezones( state ) {
-	const continents = state.timezones?.byContinents ?? null;
-
-	if ( ! continents ) {
-		return null;
-	}
-
-	return Object.entries( continents ).map( ( zones ) => [
+	return Object.entries( state.timezones.byContinents ).map( ( zones ) => [
 		zones[ 0 ],
 		zones[ 1 ].map( ( value ) => [ value, getTimezonesLabel( state, value ) ] ),
 	] );
