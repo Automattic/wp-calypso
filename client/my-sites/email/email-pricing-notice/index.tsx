@@ -3,11 +3,11 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import type { EmailCost, ResponseDomain } from 'calypso/lib/domains/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
+import type { SiteDomain } from 'calypso/state/sites/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactElement } from 'react';
 
 const doesAdditionalPriceMatchStandardPrice = (
-	domain: ResponseDomain,
+	domain: ResponseDomain | SiteDomain | null,
 	mailProduct: ProductListItem,
 	purchaseCost: EmailCost | null
 ): boolean => {
@@ -111,20 +111,20 @@ function getPriceMessageRenewal( {
 }
 
 interface MailboxPricingNoticeProps {
-	domain: ResponseDomain;
+	domain: ResponseDomain | SiteDomain | null;
 	expiryDate: string | null;
 	mailboxPurchaseCost: EmailCost | null;
 	mailboxRenewalCost: EmailCost | null;
 	product: ProductListItem;
 }
 
-const MailboxPricingNotice = ( {
+const EmailPricingNotice = ( {
 	domain,
 	expiryDate,
 	mailboxPurchaseCost,
 	mailboxRenewalCost,
 	product,
-}: MailboxPricingNoticeProps ): ReactElement | null => {
+}: MailboxPricingNoticeProps ): JSX.Element | null => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
@@ -171,4 +171,4 @@ const MailboxPricingNotice = ( {
 	);
 };
 
-export default MailboxPricingNotice;
+export default EmailPricingNotice;
