@@ -12,10 +12,12 @@ import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 function ThemeEnhancements( {
 	isAtomic,
+	currentTheme,
 	siteIsJetpack,
 	handleAutosavingToggle,
 	handleAutosavingRadio,
@@ -29,6 +31,8 @@ function ThemeEnhancements( {
 	const translate = useTranslate();
 	const blockedByFooter = 'footer' === get( fields, 'infinite_scroll_blocked' );
 	const name = 'infinite_scroll';
+	const themeSupportsInfiniteScroll =
+		currentTheme?.tags && currentTheme.tags.some( ( tag ) => tag === 'infinite-scroll' );
 
 	function RadioOptions() {
 		const options = [
@@ -59,79 +63,94 @@ function ThemeEnhancements( {
 		);
 	}
 
+	let content;
+
+	if ( siteIsJetpack ) {
+		content = (
+			<Card>
+				{ themeSupportsInfiniteScroll ? (
+					<>
+						<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
+						<SupportInfo
+							text={ translate(
+								'Loads the next posts automatically when the reader approaches the bottom of the page.'
+							) }
+							link={
+								isAtomic
+									? 'https://wordpress.com/support/infinite-scroll/'
+									: 'https://jetpack.com/support/infinite-scroll/'
+							}
+							privacyLink={ ! isAtomic }
+						/>
+						<FormSettingExplanation>
+							{ translate(
+								'Create a smooth, uninterrupted reading experience by loading more content as visitors scroll to the bottom of your archive pages.'
+							) }
+						</FormSettingExplanation>
+						<RadioOptions />
+						<hr />{ ' ' }
+					</>
+				) : null }
+				<SupportInfo
+					text={ translate(
+						"Adds names for CSS preprocessor use, disabling the theme's CSS, or custom image width."
+					) }
+					link={
+						isAtomic
+							? 'https://wordpress.com/support/editing-css/'
+							: 'https://jetpack.com/support/custom-css/'
+					}
+					privacyLink={ ! isAtomic }
+				/>
+				<JetpackModuleToggle
+					siteId={ siteId }
+					moduleSlug="custom-css"
+					label={ translate( 'Enhance CSS customization panel' ) }
+					disabled={ isFormPending }
+				/>
+			</Card>
+		);
+	} else {
+		content = (
+			<>
+				{ themeSupportsInfiniteScroll ? (
+					<Card>
+						<FormLegend>{ translate( 'Infinite scroll' ) }</FormLegend>
+						<SupportInfo
+							text={ translate( 'Control how additional posts are loaded.' ) }
+							link="https://wordpress.com/support/infinite-scroll/"
+							privacyLink={ false }
+						/>
+						<ToggleControl
+							checked={ !! fields[ name ] }
+							disabled={ isFormPending || blockedByFooter }
+							onChange={ handleAutosavingToggle( name ) }
+							label={ translate(
+								'Load posts as you scroll. Disable to show a clickable button to load posts.'
+							) }
+						/>
+						{ blockedByFooter && (
+							<FormSettingExplanation isIndented>
+								{ translate(
+									'Your site has a "footer" widget enabled so buttons will always be used. {{link}}Customize your site{{/link}}',
+									{
+										components: {
+											link: <a href={ customizeUrl } />,
+										},
+									}
+								) }
+							</FormSettingExplanation>
+						) }
+					</Card>
+				) : null }
+			</>
+		);
+	}
+
 	return (
 		<div>
 			<SettingsSectionHeader title={ translate( 'Theme enhancements' ) } />
-
-			{ siteIsJetpack ? (
-				<Card>
-					<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
-					<SupportInfo
-						text={ translate(
-							'Loads the next posts automatically when the reader approaches the bottom of the page.'
-						) }
-						link={
-							isAtomic
-								? 'https://wordpress.com/support/infinite-scroll/'
-								: 'https://jetpack.com/support/infinite-scroll/'
-						}
-						privacyLink={ ! isAtomic }
-					/>
-					<FormSettingExplanation>
-						{ translate(
-							'Create a smooth, uninterrupted reading experience by loading more content as visitors scroll to the bottom of your archive pages.'
-						) }
-					</FormSettingExplanation>
-					<RadioOptions />
-					<hr />
-					<SupportInfo
-						text={ translate(
-							"Adds names for CSS preprocessor use, disabling the theme's CSS, or custom image width."
-						) }
-						link={
-							isAtomic
-								? 'https://wordpress.com/support/editing-css/'
-								: 'https://jetpack.com/support/custom-css/'
-						}
-						privacyLink={ ! isAtomic }
-					/>
-					<JetpackModuleToggle
-						siteId={ siteId }
-						moduleSlug="custom-css"
-						label={ translate( 'Enhance CSS customization panel' ) }
-						disabled={ isFormPending }
-					/>
-				</Card>
-			) : (
-				<Card>
-					<FormLegend>{ translate( 'Infinite scroll' ) }</FormLegend>
-					<SupportInfo
-						text={ translate( 'Control how additional posts are loaded.' ) }
-						link="https://wordpress.com/support/infinite-scroll/"
-						privacyLink={ false }
-					/>
-					<ToggleControl
-						checked={ !! fields[ name ] }
-						disabled={ isFormPending || blockedByFooter }
-						onChange={ handleAutosavingToggle( name ) }
-						label={ translate(
-							'Load posts as you scroll. Disable to show a clickable button to load posts.'
-						) }
-					/>
-					{ blockedByFooter && (
-						<FormSettingExplanation isIndented>
-							{ translate(
-								'Your site has a "footer" widget enabled so buttons will always be used. {{link}}Customize your site{{/link}}',
-								{
-									components: {
-										link: <a href={ customizeUrl } />,
-									},
-								}
-							) }
-						</FormSettingExplanation>
-					) }
-				</Card>
-			) }
+			{ content }
 		</div>
 	);
 }
@@ -157,8 +176,11 @@ ThemeEnhancements.propTypes = {
 export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const selectedSiteId = get( site, 'ID' );
+	const currentThemeId = getActiveTheme( state, selectedSiteId );
+	const currentTheme = getCanonicalTheme( state, selectedSiteId, currentThemeId );
 
 	return {
+		currentTheme,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		selectedSiteId,
 	};
