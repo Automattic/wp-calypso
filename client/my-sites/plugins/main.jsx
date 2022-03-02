@@ -88,6 +88,10 @@ export class PluginsMain extends Component {
 		} );
 	}
 
+	componentWillUnmount() {
+		this.unsubscribe();
+	}
+
 	getCurrentPlugins() {
 		const { currentPlugins, currentPluginsOnVisibleSites, search, selectedSiteSlug } = this.props;
 		let plugins = selectedSiteSlug ? currentPlugins : currentPluginsOnVisibleSites;
