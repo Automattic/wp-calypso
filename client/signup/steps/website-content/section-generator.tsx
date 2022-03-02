@@ -1,11 +1,11 @@
-import { TranslateResult } from 'i18n-calypso';
-import {
-	AccordionSectionProps,
-	SectionGeneratorReturnType,
-} from 'calypso/signup/accordion-form/types';
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
 import { LogoUploadSection } from './logo-upload-section';
 import { CONTENT_SUFFIX, PageDetails } from './page-details';
+import type {
+	AccordionSectionProps,
+	SectionGeneratorReturnType,
+} from 'calypso/signup/accordion-form/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 const generateWebsiteContentSections = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
