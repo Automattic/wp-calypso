@@ -17,6 +17,7 @@ import {
 	FEATURE_JETPACK_BACKUP_T1_YEARLY,
 	FEATURE_JETPACK_BACKUP_T2_MONTHLY,
 	FEATURE_JETPACK_BACKUP_T2_YEARLY,
+	planHasSuperiorFeature,
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
@@ -27,24 +28,31 @@ import type { AppState } from 'calypso/types';
  * Check is a Jetpack plan is including a daily backup feature.
  *
  * @param {string} planSlug The plan slug.
+ * @param {boolean} orSuperior When true, also checks plan for superior features.
  * @returns {boolean} True if the plan includes a daily backup feature.
  */
-export const planHasDailyBackup = ( planSlug: string ): boolean => {
+export const planHasDailyBackup = ( planSlug: string, orSuperior = false ): boolean => {
 	const DAILY_BACKUP_FEATURES = [
 		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		FEATURE_JETPACK_BACKUP_DAILY,
 	];
 
-	return planHasAtLeastOneFeature( planSlug, DAILY_BACKUP_FEATURES );
+	const hasFeature = planHasAtLeastOneFeature( planSlug, DAILY_BACKUP_FEATURES );
+	const hasSuperiorFeature = DAILY_BACKUP_FEATURES.some( ( feature ) =>
+		planHasSuperiorFeature( planSlug, feature )
+	);
+
+	return orSuperior ? hasFeature || hasSuperiorFeature : hasFeature;
 };
 
 /**
  * Check is a Jetpack plan is including a real-time backup feature.
  *
  * @param {string} planSlug The plan slug.
+ * @param {boolean} orSuperior When true, also checks plan for superior features.
  * @returns {boolean} True if the plan includes a real-time backup feature.
  */
-export const planHasRealTimeBackup = ( planSlug: string ): boolean => {
+export const planHasRealTimeBackup = ( planSlug: string, orSuperior = false ): boolean => {
 	const REALTIME_BACKUP_FEATURES = [
 		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 		FEATURE_JETPACK_BACKUP_REALTIME,
@@ -54,7 +62,12 @@ export const planHasRealTimeBackup = ( planSlug: string ): boolean => {
 		FEATURE_JETPACK_BACKUP_T2_YEARLY,
 	];
 
-	return planHasAtLeastOneFeature( planSlug, REALTIME_BACKUP_FEATURES );
+	const hasFeature = planHasAtLeastOneFeature( planSlug, REALTIME_BACKUP_FEATURES );
+	const hasSuperiorFeature = REALTIME_BACKUP_FEATURES.some( ( feature ) =>
+		planHasSuperiorFeature( planSlug, feature )
+	);
+
+	return orSuperior ? hasFeature || hasSuperiorFeature : hasFeature;
 };
 
 /**
@@ -137,11 +150,11 @@ export const isBackupProductIncludedInSitePlan = createSelector(
 		];
 
 		if ( DAILY_BACKUP_PRODUCTS.includes( productSlug ) ) {
-			return planHasDailyBackup( sitePlanSlug );
+			return planHasDailyBackup( sitePlanSlug, true );
 		}
 
 		if ( REALTIME_BACKUP_PRODUCTS.includes( productSlug ) ) {
-			return planHasRealTimeBackup( sitePlanSlug );
+			return planHasRealTimeBackup( sitePlanSlug, true );
 		}
 
 		return null;
