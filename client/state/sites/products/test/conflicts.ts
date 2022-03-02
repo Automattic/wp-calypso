@@ -16,7 +16,7 @@ import {
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 } from '@automattic/calypso-products';
-import { planHasAntiSpam, planHasDailyBackup, planHasRealTimeBackup } from '../conflicts';
+import { planHasAntiSpam, planHasDailyBackup, planHasRealTimeBackup, planHasScan } from '../conflicts';
 
 const plansWithDailyBackup = [
 	PLAN_JETPACK_PERSONAL,
@@ -61,6 +61,25 @@ const plansWithAntiSpam = [
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 ];
 
+const plansWithScan = [
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	PLAN_JETPACK_SECURITY_T2_YEARLY,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+];
+
 describe( 'conflicts', () => {
 	test( 'Plans and products that have daily backups return true for plansWithDailyBackup', () => {
 		plansWithDailyBackup.forEach( ( plan ) => {
@@ -77,6 +96,12 @@ describe( 'conflicts', () => {
 	test( 'Plans and products that have anti-spam return true for plansWithAntiSpam', () => {
 		plansWithAntiSpam.forEach( ( plan ) => {
 			expect( planHasAntiSpam( plan ) ).toBe( true );
+		} );
+	} );
+
+	test( 'Plans and products that have anti-spam return true for plansWithScan', () => {
+		plansWithScan.forEach( ( plan ) => {
+			expect( planHasScan( plan ) ).toBe( true );
 		} );
 	} );
 } );
