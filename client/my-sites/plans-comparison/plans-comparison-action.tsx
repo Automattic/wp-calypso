@@ -41,8 +41,7 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 		args: {
 			plan: plan?.getTitle(),
 		},
-		context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
-		comment: 'A button to select a new paid plan.',
+		comment: 'Button to select a paid plan by plan name, e.g., "Select Managed"',
 	} );
 }
 
