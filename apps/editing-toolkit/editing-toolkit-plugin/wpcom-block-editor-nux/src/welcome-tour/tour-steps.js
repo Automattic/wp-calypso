@@ -35,6 +35,8 @@ function getTourAssets( key ) {
 }
 
 function getTourSteps( localeSlug, referencePositioning ) {
+	const paymentBlockSupportUrl = `https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/#how-to-use-the-payments-block-video`;
+
 	return [
 		{
 			meta: {
@@ -205,6 +207,38 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				classNames: {
 					desktop: 'wpcom-editor-welcome-tour__step',
 					mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+				},
+			},
+		},
+		{
+			meta: {
+				heading: __( 'The payment block', 'full-site-editing' ),
+				descriptions: {
+					desktop: (
+						<>
+							{ __(
+								'The Payments block allows you to accept payments for one-time, monthly recurring, or annual payments on your website',
+								'full-site-editing'
+							) }
+							<br />
+							<ExternalLink
+								href={ paymentBlockSupportUrl }
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								{ __( 'Learn more', 'full-site-editing' ) }
+							</ExternalLink>
+						</>
+					),
+					mobile: null,
+				},
+				imgSrc: getTourAssets( 'welcome' ),
+				animation: null,
+			},
+			options: {
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: 'wpcom-editor-welcome-tour__step',
 				},
 			},
 		},
