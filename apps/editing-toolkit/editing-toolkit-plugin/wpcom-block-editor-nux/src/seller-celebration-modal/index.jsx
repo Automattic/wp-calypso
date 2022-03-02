@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
+import useHasSeenSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-has-seen-seller-celebration-modal';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import NuxModal from '../nux-modal';
 import contentSubmittedImage from './images/post-published.svg';
@@ -68,7 +68,10 @@ const SellerCelebrationModal = () => {
 		};
 	} );
 	const intent = useSiteIntent();
-	const shouldShowSellerCelebrationModal = useShouldShowSellerCelebrationModal();
+	const {
+		hasSeenSellerCelebrationModal,
+		updateHasSeenSellerCelebrationModal,
+	} = useHasSeenSellerCelebrationModal();
 
 	useEffect( () => {
 		if (
@@ -77,10 +80,11 @@ const SellerCelebrationModal = () => {
 			! hasDisplayedModal &&
 			intent === 'sell' &&
 			hasPaymentsBlock &&
-			shouldShowSellerCelebrationModal
+			! hasSeenSellerCelebrationModal
 		) {
 			setIsModalOpen( true );
 			setHasDisplayedModal( true );
+			updateHasSeenSellerCelebrationModal( true );
 		}
 		previousIsEditorSaving.current = isEditorSaving;
 	}, [
@@ -88,7 +92,8 @@ const SellerCelebrationModal = () => {
 		hasDisplayedModal,
 		intent,
 		hasPaymentsBlock,
-		shouldShowSellerCelebrationModal,
+		hasSeenSellerCelebrationModal,
+		updateHasSeenSellerCelebrationModal,
 	] );
 
 	// if save state has changed and was saving on last render
