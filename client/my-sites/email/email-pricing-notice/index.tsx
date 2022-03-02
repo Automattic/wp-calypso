@@ -7,7 +7,6 @@ import type { SiteDomain } from 'calypso/state/sites/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 const doesAdditionalPriceMatchStandardPrice = (
-	domain: ResponseDomain | SiteDomain,
 	mailProduct: ProductListItem,
 	purchaseCost: EmailCost
 ): boolean => {
@@ -124,7 +123,7 @@ const EmailPricingNotice = ( {
 		return null;
 	}
 
-	if ( doesAdditionalPriceMatchStandardPrice( domain, product, mailboxPurchaseCost ) ) {
+	if ( doesAdditionalPriceMatchStandardPrice( product, mailboxPurchaseCost ) ) {
 		const translateArgs = {
 			args: {
 				price: mailboxPurchaseCost?.text,
