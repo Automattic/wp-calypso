@@ -130,7 +130,7 @@ echo -n "eslint --fix: "
 npx eslint . --fix > /dev/null 2>&1
 echo "done"
 echo -n "phpcbf: "
-../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF" || PHPCBF_ERRORED=1
+../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF\|No fixable errors were found" || PHPCBF_ERRORED=1
 
 if [ "$PHPCBF_ERRORED" = 1 ] ; then
 	echo '!! There was an error executing phpcbf!'

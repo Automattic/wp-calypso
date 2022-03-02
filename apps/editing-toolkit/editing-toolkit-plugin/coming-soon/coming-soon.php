@@ -92,6 +92,35 @@ function add_public_coming_soon_to_settings_endpoint_post( $input, $unfiltered_i
 add_filter( 'rest_api_update_site_settings', __NAMESPACE__ . '\add_public_coming_soon_to_settings_endpoint_post', 10, 2 );
 
 /**
+ * Replace Yoast SEO notice when `wpcom_public_coming_soon` changes to coming soon.
+ * 
+ * @param $old_value int|NULL The previous value of wpcom_public_coming_soon
+ * @param $value     int|NULL The current value of wpcom_public_coming_soon
+ * @return           bool     Whether the blog option was updated
+ */
+function wpcom_public_coming_soon_handle_seo_notice( $old_value, $value ) {
+	if ( $value === 0 ) {
+		// Do nothing if coming soon is not being enabled
+		return false;
+	}
+
+	$site_id = get_current_blog_id();
+
+	$wpseo_options = get_blog_option( $site_id, 'wpseo', false );
+	if ( ! $wpseo_options ) {
+		// Do nothing if Yoast is not installed
+		return false;
+	}
+
+	// Hide the Yoast SEO notice
+	$wpseo_options['ignore_search_engines_discouraged_notice'] = true;
+	update_blog_option( $site_id, 'wpseo', $wpseo_options );
+
+	return true;
+}
+add_action( 'update_option_wpcom_public_coming_soon', __NAMESPACE__ . '\wpcom_public_coming_soon_handle_seo_notice', 10, 2 );
+
+/**
  * Launch the site when the privacy mode changes from public-not-indexed
  * This can happen due to clicking the launch button from the banner
  * Or due to manually updating the setting in wp-admin or calypso settings page.
