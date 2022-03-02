@@ -7,18 +7,10 @@ import type { SiteDomain } from 'calypso/state/sites/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 const doesAdditionalPriceMatchStandardPrice = (
-	domain: ResponseDomain | SiteDomain | null,
+	domain: ResponseDomain | SiteDomain,
 	mailProduct: ProductListItem,
-	purchaseCost: EmailCost | null
+	purchaseCost: EmailCost
 ): boolean => {
-	if ( ! domain ) {
-		return true;
-	}
-
-	if ( ! purchaseCost ) {
-		return true;
-	}
-
 	return (
 		purchaseCost.amount === mailProduct.cost && purchaseCost.currency === mailProduct.currency_code
 	);
@@ -115,7 +107,7 @@ interface MailboxPricingNoticeProps {
 	expiryDate: string | null;
 	mailboxPurchaseCost: EmailCost | null;
 	mailboxRenewalCost: EmailCost | null;
-	product: ProductListItem;
+	product: ProductListItem | null;
 }
 
 const EmailPricingNotice = ( {
@@ -127,6 +119,10 @@ const EmailPricingNotice = ( {
 }: MailboxPricingNoticeProps ): JSX.Element | null => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
+
+	if ( ! domain || ! mailboxPurchaseCost || ! product ) {
+		return null;
+	}
 
 	if ( doesAdditionalPriceMatchStandardPrice( domain, product, mailboxPurchaseCost ) ) {
 		const translateArgs = {
