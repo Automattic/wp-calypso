@@ -312,7 +312,11 @@ const PluginsBrowser = ( {
 				/>
 			) }
 			{ ! hideHeader && (
-				<FixedNavigationHeader className="plugins-browser__header" navigationItems={ breadcrumbs }>
+				<FixedNavigationHeader
+					className="plugins-browser__header"
+					navigationItems={ breadcrumbs }
+					compactBreadcrumb={ isMobile }
+				>
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
 							shouldShowManageButton={ shouldShowManageButton }
