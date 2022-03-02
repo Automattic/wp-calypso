@@ -119,10 +119,6 @@ function getDestinationFromIntent( dependencies ) {
 		return `/post/${ siteSlug }`;
 	}
 
-	if ( intent === 'wpadmin' ) {
-		return `https://${ siteSlug }/wp-admin`;
-	}
-
 	if ( intent === 'sell' && storeType === 'power' ) {
 		return addQueryArgs(
 			{

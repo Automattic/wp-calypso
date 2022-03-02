@@ -1,4 +1,4 @@
-import * as selectors from 'calypso/state/partner-portal/payment-methods/selectors';
+import * as selectors from 'calypso/state/partner-portal/credit-card-form/selectors';
 
 describe( 'selectors', () => {
 	describe( '#getCardDataErrors()', () => {

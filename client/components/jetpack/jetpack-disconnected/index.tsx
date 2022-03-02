@@ -5,7 +5,7 @@ import JetpackDisconnectedSVG from 'calypso/assets/images/jetpack/disconnected-g
 import ExternalLink from 'calypso/components/external-link';
 import Upsell from 'calypso/components/jetpack/upsell';
 import { preventWidows } from 'calypso/lib/formatting';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { JETPACK_SUPPORT_CONNECTION_ISSUES } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
@@ -50,7 +50,7 @@ const JetpackDisconnected: FunctionComponent = () => {
 			buttonText={ translate( 'Reconnect Jetpack' ) }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_reconnect_click' ) ) }
 			iconComponent={ <JetpackDisconnectedIcon /> }
-			secondaryButtonLink={ JETPACK_SUPPORT }
+			secondaryButtonLink={ JETPACK_SUPPORT_CONNECTION_ISSUES }
 			secondaryButtonText={ translate( 'I need help' ) }
 			secondaryOnClick={ () =>
 				dispatch( recordTracksEvent( 'calypso_jetpack_backup_support_click' ) )

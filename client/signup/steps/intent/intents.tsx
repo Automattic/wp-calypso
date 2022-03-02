@@ -54,7 +54,7 @@ export const useIntentsAlt = ( canImport: boolean ): IntentAlt[] => {
 			value: 'wpadmin',
 			disable: false,
 			disableText: '',
-			actionText: translate( 'Start from scratch / wp-admin' ),
+			actionText: translate( 'Start from scratch' ),
 		},
 		{
 			show: isEnabled( 'onboarding/import' ),

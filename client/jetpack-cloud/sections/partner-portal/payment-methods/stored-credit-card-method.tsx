@@ -3,7 +3,7 @@ import CreditCardSubmitButton from 'calypso/jetpack-cloud/sections/partner-porta
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { Stripe } from '@stripe/stripe-js';
-import type { State } from 'calypso/state/partner-portal/payment-methods/reducer';
+import type { State } from 'calypso/state/partner-portal/credit-card-form/reducer';
 
 export function createStoredCreditCardMethod( {
 	store,

@@ -1,16 +1,26 @@
-import {
-	AccordionSectionProps,
-	SectionGeneratorReturnType,
-} from 'calypso/signup/accordion-form/types';
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
 import { LogoUploadSection } from './logo-upload-section';
 import { CONTENT_SUFFIX, PageDetails } from './page-details';
+import type {
+	AccordionSectionProps,
+	SectionGeneratorReturnType,
+} from 'calypso/signup/accordion-form/types';
+import type { TranslateResult } from 'i18n-calypso';
 
 const generateWebsiteContentSections = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
 	elapsedSections = 0
 ) => {
 	const { translate, formValues, formErrors, onChangeField } = params;
+
+	const OPTIONAL_PAGES: Record< string, boolean > = { Contact: true };
+	const PAGE_LABELS: Record< string, TranslateResult > = {
+		Contact: translate(
+			"We'll add a standard contact form on this page, plus a comment box. " +
+				'If you would like text to appear above this form, please enter it below.'
+		),
+	};
+
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {
 		const fieldNumber = elapsedSections + index + 1;
 		const { title: pageTitle } = page;
@@ -24,11 +34,16 @@ const generateWebsiteContentSections = (
 			} ),
 			summary: page.content,
 			component: (
-				<PageDetails page={ page } formErrors={ formErrors } onChangeField={ onChangeField } />
+				<PageDetails
+					page={ page }
+					formErrors={ formErrors }
+					label={ PAGE_LABELS[ page.id ] }
+					onChangeField={ onChangeField }
+				/>
 			),
-			showSkip: false,
+			showSkip: !! OPTIONAL_PAGES[ page.id ],
 			validate: () => {
-				const isValid = Boolean( page.content?.length );
+				const isValid = OPTIONAL_PAGES[ page.id ] || Boolean( page.content?.length );
 				return {
 					result: isValid,
 					errors: {

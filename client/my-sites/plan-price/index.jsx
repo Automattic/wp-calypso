@@ -1,6 +1,7 @@
 import { getCurrencyObject } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { isNumber } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Badge from 'calypso/components/badge';
@@ -22,13 +23,13 @@ export class PlanPrice extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! currencyCode || ! rawPrice ) {
+		if ( ! currencyCode || ! isNumber( rawPrice ) ) {
 			return null;
 		}
 
 		// "Normalize" the input price or price range.
 		const rawPriceRange = Array.isArray( rawPrice ) ? rawPrice.slice( 0, 2 ) : [ rawPrice ];
-		if ( rawPriceRange.includes( 0 ) ) {
+		if ( rawPrice !== 0 && rawPriceRange.includes( 0 ) ) {
 			return null;
 		}
 
@@ -128,6 +129,7 @@ PlanPrice.propTypes = {
 	taxText: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	displayPerMonthNotation: PropTypes.bool,
+	currencyFormatOptions: PropTypes.object,
 };
 
 PlanPrice.defaultProps = {

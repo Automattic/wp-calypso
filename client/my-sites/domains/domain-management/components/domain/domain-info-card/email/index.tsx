@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import Count from 'calypso/components/count';
 import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { type as domainType } from 'calypso/lib/domains/constants';
 import { getEmailAddress } from 'calypso/lib/emails';
 import { emailManagement } from 'calypso/my-sites/email/paths';
@@ -18,7 +19,9 @@ const DomainEmailInfoCard = ( {
 
 	let emailAddresses: string[] = [];
 
-	if ( typesUnableToAddEmail.includes( domain.type ) ) return null;
+	if ( ! canCurrentUserAddEmail( domain ) || typesUnableToAddEmail.includes( domain.type ) ) {
+		return null;
+	}
 
 	if ( ! isLoading && ! error ) {
 		const emailAccounts: EmailAccount[] = data?.accounts;

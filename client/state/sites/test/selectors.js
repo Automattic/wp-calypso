@@ -1878,7 +1878,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		test( 'it should return jetpack free plan if expired', () => {
+		test( 'it should return free plan if expired and site is atomic', () => {
 			const sitePlan = getSitePlan(
 				{
 					sites: {
@@ -1886,6 +1886,39 @@ describe( 'selectors', () => {
 							77203074: {
 								ID: 77203074,
 								jetpack: true,
+								is_wpcom_atomic: true,
+								plan: {
+									product_id: 1234,
+									product_slug: 'fake-plan',
+									product_name_short: 'Fake Plan',
+									free_trial: false,
+									expired: true,
+								},
+							},
+						},
+					},
+				},
+				77203074
+			);
+
+			chaiExpect( sitePlan ).to.eql( {
+				product_id: 1,
+				product_slug: 'free_plan',
+				product_name_short: 'Free',
+				free_trial: false,
+				expired: false,
+			} );
+		} );
+
+		test( 'it should return jetpack free plan if expired and site is not atomic', () => {
+			const sitePlan = getSitePlan(
+				{
+					sites: {
+						items: {
+							77203074: {
+								ID: 77203074,
+								jetpack: true,
+								is_wpcom_atomic: false,
 								plan: {
 									product_id: 1234,
 									product_slug: 'fake-plan',

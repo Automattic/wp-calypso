@@ -92,6 +92,10 @@ export default function PaymentInfoBlock( {
 		);
 	}
 
+	if ( purchase.isInAppPurchase ) {
+		return <PaymentInfoBlockWrapper>{ translate( 'In-App Purchase' ) }</PaymentInfoBlockWrapper>;
+	}
+
 	return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
 }
 

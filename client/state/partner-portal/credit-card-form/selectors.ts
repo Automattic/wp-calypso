@@ -1,4 +1,4 @@
-import type { State } from 'calypso/state/partner-portal/payment-methods/reducer';
+import type { State } from 'calypso/state/partner-portal/credit-card-form/reducer';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';

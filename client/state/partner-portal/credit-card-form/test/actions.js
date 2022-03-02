@@ -1,4 +1,4 @@
-import * as actions from 'calypso/state/partner-portal/payment-methods/actions';
+import * as actions from 'calypso/state/partner-portal/credit-card-form/actions';
 
 describe( 'actions', () => {
 	describe( '#setCardDataError()', () => {

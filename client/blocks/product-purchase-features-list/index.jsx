@@ -8,6 +8,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_PERSONAL,
 	TYPE_BLOGGER,
+	TYPE_MANAGED,
 	TYPE_FREE,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_ONBOARDING_EXPIRE,
@@ -226,6 +227,28 @@ export class ProductPurchaseFeaturesList extends Component {
 		);
 	}
 
+	getManagedFeatuers() {
+		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
+
+		return (
+			<Fragment>
+				<HappinessSupportCard
+					isPlaceholder={ isPlaceholder }
+					showLiveChatButton
+					liveChatButtonEventName={ 'calypso_livechat_my_plan_managed' }
+				/>
+				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<GoogleMyBusiness selectedSite={ selectedSite } />
+				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<UploadPlugins selectedSite={ selectedSite } />
+				<SiteActivity />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
+				<SellOnlinePaypal isJetpack={ false } />
+			</Fragment>
+		);
+	}
+
 	getJetpackFreeFeatures() {
 		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
 		return (
@@ -362,6 +385,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_PREMIUM ]: () => this.getPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
 				[ TYPE_BLOGGER ]: () => this.getBloggerFeatures(),
+				[ TYPE_MANAGED ]: () => this.getManagedFeatuers(),
 			},
 			[ GROUP_JETPACK ]: {
 				[ TYPE_BUSINESS ]: () => this.getJetpackBusinessFeatures(),

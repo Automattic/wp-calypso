@@ -107,6 +107,17 @@ class PurchaseItem extends Component {
 			);
 		}
 
+		if ( purchase.isInAppPurchase ) {
+			return translate(
+				'This product is an in-app purchase. You can manage it from within {{managePurchase}}the app store{{/managePurchase}}.',
+				{
+					components: {
+						managePurchase: <a href={ purchase.iapPurchaseManagementLink } />,
+					},
+				}
+			);
+		}
+
 		if ( isWithinIntroductoryOfferPeriod( purchase ) && isIntroductoryOfferFreeTrial( purchase ) ) {
 			if (
 				isRenewing( purchase ) &&

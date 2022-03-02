@@ -104,6 +104,7 @@
 		"p2/preapproved-domains": true,
 		"page/export": true,
 		"plans/personal-plan": true,
+		"plans/managed-plan": true,
 		"post-editor/checkout-overlay": true,
 		"press-this": true,
 		"publicize-preview": true,

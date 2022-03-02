@@ -92,7 +92,7 @@ export default function ConnectDomainStepSuggestedStart( {
 				<p>
 					{ createInterpolateElement(
 						__(
-							'If you have any email or services other than web hosting connected to this domain, we recommend you copy over your DNS records before proceeding with this setup to avoid distruptions. You can then start the setup again by going back to <em>Upgrades > Domains</em>.'
+							'If you have any email or services other than web hosting connected to this domain, we recommend you copy over your DNS records before proceeding with this setup to avoid disruptions. You can then start the setup again by going back to <em>Upgrades > Domains</em>.'
 						),
 						{
 							em: createElement( 'em' ),

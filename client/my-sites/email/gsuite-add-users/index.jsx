@@ -19,8 +19,12 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getEligibleGSuiteDomain,
 	getGoogleMailServiceFamily,
+	getGSuiteExpiryDate,
+	getGSuiteMailboxPurchaseCost,
+	getGSuiteMailboxRenewalCost,
 	getGSuiteSupportedDomains,
 	getProductSlug,
+	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import {
 	GOOGLE_PROVIDER_NAME,
@@ -36,7 +40,7 @@ import {
 } from 'calypso/lib/gsuite/new-users';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import GoogleMailboxPricingNotice from 'calypso/my-sites/email/gsuite-add-users/google-workspace-pricing-notice';
+import EmailPricingNotice from 'calypso/my-sites/email/email-pricing-notice';
 import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -286,10 +290,13 @@ class GSuiteAddUsers extends Component {
 						} ) }
 						noticeStatus="is-info"
 					>
-						{ selectedDomainName && (
-							<GoogleMailboxPricingNotice
+						{ selectedDomainName && hasGSuiteWithUs( selectedDomain ) && (
+							<EmailPricingNotice
 								domain={ selectedDomain }
-								googleMailProduct={ googleMailProduct }
+								expiryDate={ getGSuiteExpiryDate( selectedDomain ) }
+								mailboxRenewalCost={ getGSuiteMailboxRenewalCost( selectedDomain ) }
+								mailboxPurchaseCost={ getGSuiteMailboxPurchaseCost( selectedDomain ) }
+								product={ googleMailProduct }
 							/>
 						) }
 						{ this.renderAddGSuite() }

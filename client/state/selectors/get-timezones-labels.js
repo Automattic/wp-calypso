@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/timezones/init';
 
 /**
@@ -12,5 +10,5 @@ import 'calypso/state/timezones/init';
  * @returns {object} An object of timezones labels
  */
 export default function getTimezonesLabels( state ) {
-	return get( state, 'timezones.labels', {} );
+	return state.timezones.labels;
 }
