@@ -210,19 +210,21 @@ export class EditorToolbarComponent {
 	 * Opens the editor settings.
 	 */
 	async openSettings(): Promise< void > {
-		if ( ! ( await this.targetIsOpen( selectors.settingsButton ) ) ) {
-			const locator = this.frameLocator.locator( selectors.settingsButton );
-			await locator.click();
+		if ( await this.targetIsOpen( selectors.settingsButton ) ) {
+			return;
 		}
+		const locator = this.frameLocator.locator( selectors.settingsButton );
+		await locator.click();
 	}
 
 	/**
 	 * Closes the editor settings.
 	 */
 	async closeSettings(): Promise< void > {
-		if ( await this.targetIsOpen( selectors.settingsButton ) ) {
-			const locator = this.frameLocator.locator( selectors.settingsButton );
-			await locator.click();
+		if ( ! ( await this.targetIsOpen( selectors.settingsButton ) ) ) {
+			return;
 		}
+		const locator = this.frameLocator.locator( selectors.settingsButton );
+		await locator.click();
 	}
 }

@@ -35,10 +35,28 @@ export class EditorNavSidebarComponent {
 			return;
 		}
 
-		if ( ! ( await this.sidebarIsOpen() ) ) {
-			const locator = this.frameLocator.locator( selectors.sidebarButton );
-			await locator.click();
+		if ( await this.sidebarIsOpen() ) {
+			return;
 		}
+
+		const locator = this.frameLocator.locator( selectors.sidebarButton );
+		await locator.click();
+	}
+
+	/**
+	 * Closes the sidebar if open.
+	 */
+	async closeSidebar(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			return;
+		}
+
+		if ( ! ( await this.sidebarIsOpen() ) ) {
+			return;
+		}
+
+		const locator = this.frameLocator.locator( selectors.sidebarButton );
+		await locator.click();
 	}
 
 	/**

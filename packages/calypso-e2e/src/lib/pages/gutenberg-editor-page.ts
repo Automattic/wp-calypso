@@ -248,6 +248,32 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Closes all panels that can be opened in the editor.
+	 *
+	 * This method will attempt to close the following panels:
+	 * 	- Publish Panel (including pre-publish checklist)
+	 * 	- Editor Settings Panel
+	 * 	- Editor Navigation Sidebar
+	 */
+	async closeAllPanels(): Promise< void > {
+		try {
+			await this.editorPublishPanelComponent.closePanel();
+		} catch {
+			// noop
+		}
+		try {
+			await this.editorNavSidebarComponent.closeSidebar();
+		} catch {
+			// noop
+		}
+		try {
+			await this.editorToolbarComponent.closeSettings();
+		} catch {
+			// noop
+		}
+	}
+
+	/**
 	 * Adds a Gutenberg block from the block inserter panel.
 	 *
 	 * The name is expected to be formatted in the same manner as it
