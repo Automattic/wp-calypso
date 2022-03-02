@@ -13,10 +13,11 @@ import {
 	imageUploadInitiated,
 	textChanged,
 } from 'calypso/state/signup/steps/website-content/actions';
-import { PageData } from 'calypso/state/signup/steps/website-content/schema';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { SiteData } from 'calypso/state/ui/selectors/get-selected-site';
 import { MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
+import type { PageData } from 'calypso/state/signup/steps/website-content/schema';
+import type { SiteData } from 'calypso/state/ui/selectors/get-selected-site';
+import type { TranslateResult } from 'i18n-calypso';
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';
@@ -24,10 +25,12 @@ export const IMAGE_PREFIX = 'Image';
 export function PageDetails( {
 	page,
 	formErrors,
+	label,
 	onChangeField,
 }: {
 	page: PageData;
 	formErrors: ValidationErrors;
+	label: TranslateResult | undefined;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
 } ) {
 	const translate = useTranslate();
@@ -88,12 +91,12 @@ export function PageDetails( {
 				onChange={ onContentChange }
 				value={ page.content }
 				error={ formErrors[ fieldName ] }
-				label={ translate(
-					'Please provide the text you want to appear on your %(pageTitle)s page.',
-					{
+				label={
+					label ||
+					translate( 'Please provide the text you want to appear on your %(pageTitle)s page.', {
 						args: { pageTitle },
-					}
-				) }
+					} )
+				}
 			/>
 			<Label>
 				{ translate( 'Upload up to 3 images to be used on your %(pageTitle)s page.', {
