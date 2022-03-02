@@ -40,7 +40,7 @@ function is_full_site_editing_active() {
 		return false;
 	}
 
-	return is_theme_supported() && did_insert_template_parts();
+	return is_site_eligible_for_full_site_editing() && is_theme_supported() && did_insert_template_parts();
 }
 
 /**
