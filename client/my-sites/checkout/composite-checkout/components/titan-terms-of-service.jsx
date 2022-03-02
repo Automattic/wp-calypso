@@ -1,7 +1,7 @@
-import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { hasTitanMail } from 'calypso/lib/cart-values/cart-items';
 import { getTitanProductName } from 'calypso/lib/titan';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -45,10 +45,9 @@ function TitanTermsOfService( { cart, translate } ) {
 	);
 
 	return (
-		<div className="checkout__titan-terms-of-service">
-			<Gridicon icon="info-outline" size={ 18 } />
-			<p>{ titanTerms }</p>
-		</div>
+		<CheckoutTermsItem className="checkout__titan-terms-of-service">
+			{ titanTerms }
+		</CheckoutTermsItem>
 	);
 }
 

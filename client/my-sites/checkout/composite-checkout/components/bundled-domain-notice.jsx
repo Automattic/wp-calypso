@@ -1,5 +1,4 @@
 import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
 import { localizeUrl, translationExists } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import {
@@ -10,6 +9,7 @@ import {
 	hasP2PlusPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -84,13 +84,10 @@ export default function BundledDomainNotice( { cart } ) {
 	);
 
 	return (
-		<div className="checkout__bundled-domain-notice">
-			<Gridicon icon="info-outline" size={ 18 } />
-			<p>
-				{ hasBiennialPlan( cart ) ? twoYearCopy : oneYearCopy }{ ' ' }
-				{ hasDomainRegistration( cart ) ? null : registrationLink }{ ' ' }
-				{ hasBiennialPlan( cart ) ? afterFirstYear : null }
-			</p>
-		</div>
+		<CheckoutTermsItem className="checkout__bundled-domain-notice">
+			{ hasBiennialPlan( cart ) ? twoYearCopy : oneYearCopy }{ ' ' }
+			{ hasDomainRegistration( cart ) ? null : registrationLink }{ ' ' }
+			{ hasBiennialPlan( cart ) ? afterFirstYear : null }
+		</CheckoutTermsItem>
 	);
 }
