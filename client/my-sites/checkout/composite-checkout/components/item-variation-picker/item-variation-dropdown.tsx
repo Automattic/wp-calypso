@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useMemo, useState } from 'react';
+import { FunctionComponent, useCallback, useMemo, useState } from 'react';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import type { ItemVariationPickerProps } from './types';
 
@@ -37,7 +37,7 @@ const CurrentOption = styled.button< CurrentOptionProps >`
 		` }
 `;
 
-const Option = styled.button< OptionProps >`
+const Option = styled.li< OptionProps >`
 	align-items: center;
 	background: white;
 	border: 1px solid #a7aaad;
@@ -62,7 +62,7 @@ const Dropdown = styled.div`
 	}
 `;
 
-const OptionList = styled.div`
+const OptionList = styled.ul`
 	position: absolute;
 	width: 100%;
 	z-index: 1;
@@ -97,31 +97,70 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 
 	const [ open, setOpen ] = useState( false );
 
-	const selectedVariant = useMemo( () => {
-		for ( const variant of variants ) {
-			if ( variant.productId === selectedItem.product_id ) {
-				return variant;
+	const selectedVariantIndex = useMemo( () => {
+		for ( let i = 0; i < variants.length; ++i ) {
+			if ( variants[ i ].productId === selectedItem.product_id ) {
+				return i;
 			}
 		}
 		return null;
 	}, [ selectedItem.product_id, variants ] );
+
+	const selectNextVariant = useCallback( () => {
+		if ( selectedVariantIndex !== null && selectedVariantIndex < variants.length - 1 ) {
+			onChangeItemVariant(
+				selectedItem.uuid,
+				variants[ selectedVariantIndex + 1 ].productSlug,
+				variants[ selectedVariantIndex + 1 ].productId
+			);
+		}
+	}, [ onChangeItemVariant, selectedItem.uuid, selectedVariantIndex, variants ] );
+
+	const selectPreviousVariant = useCallback( () => {
+		if ( selectedVariantIndex !== null && selectedVariantIndex > 0 ) {
+			onChangeItemVariant(
+				selectedItem.uuid,
+				variants[ selectedVariantIndex - 1 ].productSlug,
+				variants[ selectedVariantIndex - 1 ].productId
+			);
+		}
+	}, [ onChangeItemVariant, selectedItem.uuid, selectedVariantIndex, variants ] );
+
+	// arrow keys require onKeyDown for some browsers
+	const handleKeyDown: React.KeyboardEventHandler = useCallback(
+		( event ) => {
+			switch ( event.code ) {
+				case 'ArrowDown':
+					// prevent browser window from scrolling
+					event.preventDefault();
+					selectNextVariant();
+					break;
+				case 'ArrowUp':
+					// prevent browser window from scrolling
+					event.preventDefault();
+					selectPreviousVariant();
+					break;
+			}
+		},
+		[ selectNextVariant, selectPreviousVariant ]
+	);
 
 	if ( variants.length < 2 ) {
 		return null;
 	}
 
 	return (
-		<Dropdown aria-expanded={ open } aria-haspopup="listbox">
+		<Dropdown aria-expanded={ open } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
 			<CurrentOption
 				role="button"
 				key="selectedItem"
 				onClick={ () => setOpen( ! open ) }
 				open={ open }
 			>
-				{ selectedVariant !== null ? (
+				{ selectedVariantIndex !== null ? (
 					<>
-						<VariantLabel>{ selectedVariant.variantLabel }</VariantLabel>
-						{ selectedVariant.variantDetails }
+						<VariantLabel>{ variants[ selectedVariantIndex ].variantLabel }</VariantLabel>
+						{ variants[ selectedVariantIndex ].variantDetails }
 					</>
 				) : (
 					<span>{ translate( 'Pick a product term' ) }</span>
