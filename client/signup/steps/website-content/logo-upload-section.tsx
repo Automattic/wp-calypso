@@ -4,12 +4,11 @@ import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Label, HorizontalGrid } from 'calypso/signup/accordion-form/form-components';
 import {
-	imageRemoved,
 	logoUploadCompleted,
 	logoUploadFailed,
 	logoUploadStarted,
+	removeUploadedLogo,
 } from 'calypso/state/signup/steps/website-content/actions';
-import { LOGO_SECTION_ID } from 'calypso/state/signup/steps/website-content/reducer';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/get-selected-site';
 import { MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
@@ -37,17 +36,12 @@ export function LogoUploadSection( {
 		dispatch( logoUploadCompleted( URL as string ) );
 		onChangeField &&
 			onChangeField( {
-				target: { name: LOGO_SECTION_ID, value: URL },
+				target: { name: sectionID, value: URL },
 			} as ChangeEvent< HTMLInputElement > );
 	};
 
-	const onMediaRemoved = ( { mediaIndex }: MediaUploadData ) => {
-		dispatch(
-			imageRemoved( {
-				pageId: sectionID,
-				mediaIndex,
-			} )
-		);
+	const onMediaRemoved = () => {
+		dispatch( removeUploadedLogo() );
 	};
 
 	return (
@@ -55,7 +49,7 @@ export function LogoUploadSection( {
 			<Label>{ translate( 'Upload your business logo.' ) }</Label>
 			<HorizontalGrid>
 				<WordpressMediaUpload
-					mediaIndex={ 1 }
+					mediaIndex={ 0 }
 					site={ site as SiteData }
 					onMediaUploadStart={ () => dispatch( logoUploadStarted() ) }
 					onMediaUploadFailed={ () => dispatch( logoUploadFailed() ) }

@@ -10,6 +10,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_FAILED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_FAILED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
 } from 'calypso/state/action-types';
 import { withSchemaValidation } from 'calypso/state/utils';
 import { schema, initialState, WebsiteContentCollection, PageData } from './schema';
@@ -78,6 +79,23 @@ export default withSchemaValidation(
 						[ LOGO_SECTION_ID ]: {
 							...state.imageUploadStates[ LOGO_SECTION_ID ],
 							[ 0 ]: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+						},
+					},
+				};
+			}
+
+			case SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL: {
+				return {
+					...state,
+					websiteContent: {
+						...state.websiteContent,
+						siteLogoUrl: '',
+					},
+					imageUploadStates: {
+						...state.imageUploadStates,
+						[ LOGO_SECTION_ID ]: {
+							...state.imageUploadStates[ LOGO_SECTION_ID ],
+							[ 0 ]: IMAGE_UPLOAD_STATES.UPLOAD_REMOVED,
 						},
 					},
 				};

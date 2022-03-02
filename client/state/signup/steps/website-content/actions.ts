@@ -10,6 +10,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_FAILED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_COMPLETED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
 } from 'calypso/state/action-types';
 import { ImageData } from './schema';
 import 'calypso/state/signup/init';
@@ -58,6 +59,12 @@ export function logoUploadCompleted( url: string ) {
 export function logoUploadFailed() {
 	return {
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_FAILED,
+	};
+}
+
+export function removeUploadedLogo() {
+	return {
+		type: SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
 	};
 }
 

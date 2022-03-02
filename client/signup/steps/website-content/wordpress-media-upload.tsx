@@ -150,6 +150,7 @@ export function WordpressMediaUpload( {
 				<FilePicker key={ mediaIndex } accept="image/*" onPick={ onPick }>
 					<FileSelectThumbnailContainer>
 						<CroppedImage>
+							{ /* Fixes small UI glitch where cross icon switches on load */ }
 							{ ! isImageLoading && <CrossButton onClick={ onClickRemoveImage } /> }
 							<img
 								style={ { opacity: isImageLoading ? 0.5 : 1 } }
