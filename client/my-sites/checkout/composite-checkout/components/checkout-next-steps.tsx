@@ -100,7 +100,9 @@ export default function CheckoutNextSteps( {
 					icon: <NextStepIcon />,
 				},
 				{
-					text: translate( 'Receive your finished site in under 4 business days!' ),
+					text: translate( 'Receive your finished site in under %d business days!', {
+						args: [ 4 ],
+					} ),
 					icon: <NextStepIcon />,
 				},
 			];
