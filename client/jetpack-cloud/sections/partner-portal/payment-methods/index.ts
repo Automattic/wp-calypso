@@ -1,6 +1,7 @@
 export interface PaymentMethod {
 	id: string;
 	card: PaymentMethodCard;
+	is_default: boolean;
 	name: string;
 	created: string;
 }
