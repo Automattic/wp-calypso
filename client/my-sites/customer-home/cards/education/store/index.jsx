@@ -22,7 +22,7 @@ const EducationStore = () => {
 			] }
 			illustration={ storeCardPrompt }
 			cardName={ EDUCATION_STORE }
-			width="201"
+			width="115"
 			height="114"
 		/>
 	);
