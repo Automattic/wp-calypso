@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-//@TODO: Swap this out for the correct illustration
-import earnCardPrompt from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
+import storeCardPrompt from 'calypso/assets/images/customer-home/home-education-store.svg';
 import EducationalContent from '../educational-content';
 
 export const EDUCATION_STORE = 'home-education-store';
@@ -21,7 +20,7 @@ const EducationStore = () => {
 					text: translate( 'Learn how' ),
 				},
 			] }
-			illustration={ earnCardPrompt }
+			illustration={ storeCardPrompt }
 			cardName={ EDUCATION_STORE }
 			width="201"
 			height="114"
