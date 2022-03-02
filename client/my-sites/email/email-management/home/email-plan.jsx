@@ -31,7 +31,6 @@ import {
 	emailManagement,
 	emailManagementAddEmailForwards,
 	emailManagementAddGSuiteUsers,
-	emailManagementForwarding,
 	emailManagementManageTitanAccount,
 	emailManagementManageTitanMailboxes,
 	emailManagementNewTitanAccount,
@@ -216,19 +215,17 @@ const EmailPlan = ( props ) => {
 			};
 		}
 
-		return {
-			path: emailManagementForwarding( selectedSite.slug, domain.name, currentRoute ),
-		};
+		return null;
 	}
 
 	function renderManageAllMailboxesNavItem() {
-		const { domain, translate } = props;
-
-		if ( ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain ) ) {
-			return null;
-		}
+		const { translate } = props;
 
 		const manageAllNavItemProps = getManageAllNavItemProps();
+
+		if ( manageAllNavItemProps === null ) {
+			return null;
+		}
 
 		return (
 			<VerticalNavItem { ...manageAllNavItemProps }>
