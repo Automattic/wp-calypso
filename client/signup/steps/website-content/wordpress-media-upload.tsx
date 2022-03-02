@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -6,7 +7,6 @@ import placeholder from 'calypso/assets/images/difm/placeholder.svg';
 import FilePicker from 'calypso/components/file-picker';
 import Spinner from 'calypso/components/spinner';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
-import { Gridicon } from 'calypso/devdocs/design/playground-scope';
 import { Label, SubLabel } from 'calypso/signup/accordion-form/form-components';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
 
@@ -153,7 +153,7 @@ export function WordpressMediaUpload( {
 							{ /* Fixes small UI glitch where cross icon switches on load */ }
 							{ ! isImageLoading && <CrossButton onClick={ onClickRemoveImage } /> }
 							<img
-								style={ { opacity: isImageLoading ? 0.5 : 1 } }
+								style={ { opacity: isImageLoading ? 0.2 : 1 } }
 								src={ uploadedImageUrl }
 								alt={ imageCaption }
 								onLoad={ () => setIsImageLoading( false ) }

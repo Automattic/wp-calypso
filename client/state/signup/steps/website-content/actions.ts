@@ -62,7 +62,7 @@ export function logoUploadFailed() {
 	};
 }
 
-export function removeUploadedLogoUrl() {
+export function logoRemoved() {
 	return {
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
 	};

@@ -11,7 +11,7 @@ import {
 	logoUploadFailed,
 	logoUploadCompleted,
 	imageRemoved,
-	removeUploadedLogoUrl,
+	logoRemoved,
 } from '../actions';
 import websiteContentCollectionReducer, { IMAGE_UPLOAD_STATES, LOGO_SECTION_ID } from '../reducer';
 import { initialState } from '../schema';
@@ -442,7 +442,7 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should update relevent state when in memory logo information is removed', () => {
-		const action = removeUploadedLogoUrl();
+		const action = logoRemoved();
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
 		expect( nextState ).to.be.eql( {
 			...initialTestState,
