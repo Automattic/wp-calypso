@@ -42,6 +42,8 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_MANAGED,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
@@ -687,6 +689,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_T1_YEARLY,
 			PLAN_JETPACK_SECURITY_T2_YEARLY,
 			PLAN_P2_FREE,
+			PLAN_WPCOM_FLEXIBLE,
+			PLAN_WPCOM_MANAGED,
 		] );
 		expect( findPlansKeys( { term: TERM_MONTHLY } ) ).to.deep.equal( [
 			PLAN_PERSONAL_MONTHLY,
@@ -757,6 +761,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_ECOMMERCE_2_YEARS,
 			PLAN_P2_PLUS,
 			PLAN_P2_FREE,
+			PLAN_WPCOM_FLEXIBLE,
+			PLAN_WPCOM_MANAGED,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK } ) ).to.deep.equal( [
 			PLAN_JETPACK_FREE,

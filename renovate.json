@@ -99,6 +99,10 @@
 			"matchPackagePrefixes": [ "d3-" ]
 		}
 	],
+	"major": {
+		"schedule": [ "on the first day of the month" ]
+	},
+	"schedule": [ "every weekend" ],
 	"dependencyDashboardTitle": "Renovate Dependency Updates",
 	"rangeStrategy": "bump",
 	"ignoreDeps": [ "electron-builder" ],
@@ -108,5 +112,8 @@
 	"prHourlyLimit": 10,
 	"semanticCommits": true,
 	"semanticCommitType": "chore",
-	"reviewers": [ "team:team-calypso-platform" ]
+	"reviewers": [ "team:team-calypso-platform" ],
+	"stabilityDays": 10,
+	"prCreation": "not-pending",
+	"timezone": "America/Los_Angeles"
 }

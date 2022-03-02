@@ -37,6 +37,7 @@ export default function useCreateAssignablePaymentMethods(
 	} );
 
 	const payPalMethod = useCreatePayPal( {
+		shouldShowTaxFields: true,
 		labelText:
 			currentPaymentMethodId === 'paypal-existing'
 				? String( translate( 'New PayPal account' ) )

@@ -1,0 +1,110 @@
+@import '@automattic/typography/styles/variables';
+
+.credit-card-fields {
+	display: none;
+
+	&--is-loaded,
+	&--placeholder {
+		display: block;
+	}
+
+	&__input-field {
+		margin-top: 16px;
+
+		&:first-of-type {
+			margin-top: 0;
+		}
+
+		input {
+			padding: 11px 16px;
+			line-height: 0.7;
+			font-size: $font-body-small;
+			color: var( --studio-gray-80 );
+		}
+	}
+
+	&__set-as-primary-field {
+		.components-checkbox-control__input {
+			&:checked {
+				background: var( --color-accent );
+				border-color: var( --color-accent );
+			}
+		}
+
+		.components-checkbox-control__label {
+			font-weight: 500;
+		}
+	}
+
+	&__label {
+		display: block;
+
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
+	&__label-text,
+	&__input-field label {
+		display: block;
+		margin-bottom: 0.5rem;
+		font-size: 1.125rem; /* stylelint-disable-line */
+		font-weight: 400;
+		color: var( --studio-gray-80 );
+	}
+
+	&__stripe-error {
+		display: block;
+		margin-top: 0.5rem;
+		color: var( --color-scary-50 );
+		font-size: $font-body-small;
+		font-style: italic;
+		font-weight: 400;
+	}
+
+	&__stripe-element {
+		position: relative;
+		display: block;
+
+		& .StripeElement {
+			display: block;
+			width: 100%;
+			font-size: 0.875rem;
+			box-sizing: border-box;
+			border: 1px solid var( --color-accent-10 );
+			color: var( --studio-gray-80 );
+			padding: 11px 16px;
+			line-height: 0.7;
+		}
+
+		&--has-error .StripeElement {
+			border-color: var( --color-scary-50 );
+		}
+
+		& .StripeElement--focus {
+			outline: var( --studio-blue-30 ) solid 2px;
+		}
+
+		& .StripeElement--focus.StripeElement--invalid {
+			outline: var( --color-scary-50 ) solid 2px;
+		}
+	}
+
+	&--placeholder &__field {
+		margin-top: 1rem;
+		width: 100%;
+		height: 40px;
+		@include placeholder( --color-neutral-10 );
+
+		&:first-child {
+			margin-top: 2rem;
+		}
+
+		&::before {
+			content: '';
+			width: 30%;
+			height: 25px;
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+}

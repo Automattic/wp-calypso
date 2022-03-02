@@ -13,6 +13,7 @@ import {
 } from 'calypso/components/domains/connect-domain-step/constants';
 import FoldableCard from 'calypso/components/foldable-card';
 import MaterialIcon from 'calypso/components/material-icon';
+import { isSubdomain } from 'calypso/lib/domains';
 import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
@@ -31,12 +32,28 @@ export default function ConnectDomainStepSuggestedStart( {
 	const { __ } = useI18n();
 	const selectedSite = useSelector( getSelectedSite );
 	const goToDnsRecordsPage = () => page( domainManagementDns( selectedSite?.slug, domain ) );
-	const switchToAdvancedSetup = () => setPage( stepSlug.ADVANCED_START );
+	const firstStep = isSubdomain( domain )
+		? stepSlug.SUBDOMAIN_ADVANCED_START
+		: stepSlug.ADVANCED_START;
+	const switchToAdvancedSetup = () => setPage( firstStep );
+
+	const message = isSubdomain( domain )
+		? __(
+				'The easiest way to connect your subdomain is by changing NS records. But if you are unable to do this, then switch to our <a>advanced setup</a>, using A & CNAME records.'
+		  )
+		: __(
+				'This is the easiest way to connect your domain, using name servers. If needed you can also use our <a>advanced setup</a>, using root A & CNAME records.'
+		  );
 
 	const stepContent = (
 		<div className={ className + '__suggested-start' }>
 			<p className={ className + '__text' }>
-				{ __( 'This is the easiest way to connect your domain, using name servers.' ) }
+				{ createInterpolateElement( message, {
+					a: createElement( 'a', {
+						className: 'connect-domain-step__change_mode_link',
+						onClick: switchToAdvancedSetup,
+					} ),
+				} ) }
 			</p>
 			<CardHeading tagName="h2" className={ className + '__sub-heading' }>
 				<MaterialIcon className={ className + '__sub-heading-icon' } size={ 24 } icon="timer" />
@@ -53,7 +70,7 @@ export default function ConnectDomainStepSuggestedStart( {
 				header={
 					<div>
 						<Icon icon={ info } size={ 24 } />
-						{ __( 'Any services connected to this domain?' ) }
+						{ __( 'Do you have email or other services connected to this domain?' ) }
 					</div>
 				}
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -75,7 +92,7 @@ export default function ConnectDomainStepSuggestedStart( {
 				<p>
 					{ createInterpolateElement(
 						__(
-							'If you have any email or services other than web hosting connected to this domain, we recommend you copy over your DNS records before proceeding with this setup to avoid distruptions. You can then start the setup again by going back to <em>Upgrades > Domains</em>.'
+							'If you have any email or services other than web hosting connected to this domain, we recommend you copy over your DNS records before proceeding with this setup to avoid disruptions. You can then start the setup again by going back to <em>Upgrades > Domains</em>.'
 						),
 						{
 							em: createElement( 'em' ),

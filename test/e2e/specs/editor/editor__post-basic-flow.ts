@@ -117,8 +117,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	describe( 'Publish', function () {
 		it( 'Publish and visit post', async function () {
-			const publishedURL = await gutenbergEditorPage.publish( { visit: true } );
-			expect( publishedURL ).toBe( page.url() );
+			const publishedURL: URL = await gutenbergEditorPage.publish( { visit: true } );
+			expect( publishedURL.href ).toStrictEqual( page.url() );
 		} );
 
 		it( 'Post content is found in published post', async function () {

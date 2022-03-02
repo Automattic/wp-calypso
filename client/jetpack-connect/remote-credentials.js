@@ -28,6 +28,7 @@ import {
 import getJetpackRemoteInstallErrorCode from 'calypso/state/selectors/get-jetpack-remote-install-error-code';
 import getJetpackRemoteInstallErrorMessage from 'calypso/state/selectors/get-jetpack-remote-install-error-message';
 import isJetpackRemoteInstallComplete from 'calypso/state/selectors/is-jetpack-remote-install-complete';
+import isRemoteInstallingJetpack from 'calypso/state/selectors/is-remote-installing-jetpack';
 import {
 	ACTIVATION_FAILURE,
 	ACTIVATION_RESPONSE_ERROR,
@@ -47,17 +48,15 @@ export class OrgCredentialsForm extends Component {
 	state = {
 		username: '',
 		password: '',
-		isSubmitting: false,
 	};
 
 	handleSubmit = ( event ) => {
 		const { siteToConnect } = this.props;
 		event.preventDefault();
 
-		if ( this.state.isSubmitting ) {
+		if ( this.props.isRemoteInstalling ) {
 			return;
 		}
-		this.setState( { isSubmitting: true } );
 
 		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_submit', {
 			url: siteToConnect,
@@ -65,17 +64,7 @@ export class OrgCredentialsForm extends Component {
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { installError } = nextProps;
-
-		if ( installError ) {
-			this.setState( { isSubmitting: false } );
-		}
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		const { siteToConnect } = this.props;
 
 		if ( ! siteToConnect ) {
@@ -184,8 +173,8 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	formFields() {
-		const { translate } = this.props;
-		const { isSubmitting, password, username } = this.state;
+		const { translate, isRemoteInstalling } = this.props;
+		const { password, username } = this.state;
 
 		const userClassName = classnames( 'jetpack-connect__credentials-form-input', {
 			'is-error': this.isInvalidUsername(),
@@ -212,7 +201,7 @@ export class OrgCredentialsForm extends Component {
 						autoCapitalize="off"
 						autoCorrect="off"
 						className={ userClassName }
-						disabled={ isSubmitting }
+						disabled={ isRemoteInstalling }
 						id="username"
 						name="username"
 						onChange={ this.getChangeHandler( 'username' ) }
@@ -231,7 +220,7 @@ export class OrgCredentialsForm extends Component {
 						<Gridicon size={ 24 } icon="lock" />
 						<FormPasswordInput
 							className={ passwordClassName }
-							disabled={ isSubmitting }
+							disabled={ isRemoteInstalling }
 							id="password"
 							name="password"
 							onChange={ this.getChangeHandler( 'password' ) }
@@ -256,14 +245,13 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	renderButtonLabel() {
-		const { isResponseCompleted, translate } = this.props;
-		const { isSubmitting } = this.state;
+		const { isResponseCompleted, translate, isRemoteInstalling } = this.props;
 
 		if ( isResponseCompleted ) {
 			return translate( 'Jetpack installed' );
 		}
 
-		if ( ! isSubmitting ) {
+		if ( ! isRemoteInstalling ) {
 			return translate( 'Install Jetpack' );
 		}
 
@@ -271,14 +259,13 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	formFooter() {
-		const { isSubmitting } = this.state;
-
+		const { isRemoteInstalling } = this.props;
 		return (
 			<div className="jetpack-connect__creds-form-footer">
-				{ isSubmitting && <Spinner className="jetpack-connect__creds-form-spinner" /> }
+				{ isRemoteInstalling && <Spinner className="jetpack-connect__creds-form-spinner" /> }
 				<FormButton
 					className="jetpack-connect__credentials-submit"
-					disabled={ ! this.state.username || ! this.state.password || isSubmitting }
+					disabled={ ! this.state.username || ! this.state.password || isRemoteInstalling }
 				>
 					{ this.renderButtonLabel() }
 				</FormButton>
@@ -378,6 +365,7 @@ const connectComponent = connect(
 		return {
 			installError: getJetpackRemoteInstallErrorCode( state, siteToConnect ),
 			installErrorMessage: getJetpackRemoteInstallErrorMessage( state, siteToConnect ),
+			isRemoteInstalling: isRemoteInstallingJetpack( state, siteToConnect ),
 			isResponseCompleted: isJetpackRemoteInstallComplete( state, siteToConnect ),
 			siteToConnect,
 		};

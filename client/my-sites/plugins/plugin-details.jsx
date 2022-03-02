@@ -253,6 +253,7 @@ function PluginDetails( props ) {
 							billingPeriod={ billingPeriod }
 							onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
 							compact={ ! isWide }
+							plugin={ fullPlugin }
 						/>
 					) }
 			</FixedNavigationHeader>

@@ -5,7 +5,7 @@ import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import MostRecentStatus from 'calypso/components/jetpack/daily-backup-status';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import isRewindBackupsInitialized from 'calypso/state/rewind/selectors/is-rewind-backups-initialized.ts';
+import isRewindBackupsInitialized from 'calypso/state/rewind/selectors/is-rewind-backups-initialized';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { useIsDateVisible } from '../hooks';
 import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
@@ -53,6 +53,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 	const {
 		isLoading,
 		lastBackupBeforeDate,
+		lastBackupAttempt,
 		lastBackupAttemptOnDate,
 		lastSuccessfulBackupOnDate,
 		backupAttemptsOnDate,
@@ -82,6 +83,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 					selectedDate,
 					lastBackupDate,
 					backup: lastSuccessfulBackupOnDate || lastBackupAttemptOnDate,
+					lastBackupAttempt,
 				} }
 			/>
 

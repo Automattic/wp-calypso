@@ -1,7 +1,8 @@
 import { Button } from '@automattic/components';
-import { Purchase } from '@automattic/wpcom-checkout';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
+import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
+import { isSubdomain } from 'calypso/lib/domains';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
@@ -10,6 +11,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER_STATUSES,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	GDPR_POLICIES,
+	DOMAIN_EXPIRATION_AUCTION,
 } from 'calypso/lib/url/support';
 import {
 	domainManagementEditContactInfo,
@@ -18,6 +20,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
 import type { ResponseDomain } from './types';
+import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ReactChild } from 'react';
 
 export type ResolveDomainStatusReturn =
@@ -75,8 +78,17 @@ export function resolveDomainStatus(
 		},
 	};
 
-	const mappingSetupStep =
-		domain.connectionMode === 'advanced' ? 'advanced_update' : 'suggested_update';
+	let mappingSetupStep: string =
+		domain.connectionMode === modeType.ADVANCED
+			? stepSlug.ADVANCED_UPDATE
+			: stepSlug.SUGGESTED_UPDATE;
+	if ( isSubdomain( domain.domain ) ) {
+		mappingSetupStep =
+			domain.connectionMode === modeType.ADVANCED
+				? stepSlug.SUBDOMAIN_ADVANCED_UPDATE
+				: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE;
+	}
+
 	const mappingSetupComponents = {
 		strong: <strong />,
 		a: (
@@ -208,6 +220,32 @@ export function resolveDomainStatus(
 			};
 
 		case domainTypes.REGISTERED:
+			if ( domain.aftermarketAuction ) {
+				const statusMessage = translate( 'Expiry auction' );
+				return {
+					statusText: statusMessage,
+					statusClass: 'status-warning',
+					status: statusMessage,
+					icon: 'info',
+					noticeText: translate(
+						'Your domain expired over 30 days ago and has been offered for sale at auction. If it is not sold you may be able to restore the domain to your account by paying a redemption fee starting on {{strong}}%(renewableUntil)s{{/strong}}. Until then, you will not be able to make any changes or transfer the domain. {{a}}Learn more{{/a}}',
+						{
+							components: {
+								strong: <strong />,
+								a: (
+									<a href={ DOMAIN_EXPIRATION_AUCTION } rel="noopener noreferrer" target="_blank" />
+								),
+							},
+							args: {
+								renewableUntil: moment.utc( domain.renewableUntil ).format( 'LL' ),
+							},
+						}
+					),
+					listStatusClass: 'warning',
+					listStatusWeight: 400,
+				};
+			}
+
 			if ( domain.isPendingRenewal ) {
 				const pendingRenewalMessage = translate( 'Renewal in progress' );
 				return {

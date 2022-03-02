@@ -808,7 +808,7 @@ class ManagePurchase extends Component {
 							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					) }
-					{ isProductOwner && (
+					{ isProductOwner && ! purchase.isLocked && (
 						<div className="manage-purchase__renew-upgrade-buttons">
 							{ preventRenewal && this.renderSelectNewButton() }
 							{ this.renderUpgradeButton() }
@@ -821,7 +821,7 @@ class ManagePurchase extends Component {
 					isProductOwner={ isProductOwner }
 				/>
 
-				{ isProductOwner && (
+				{ isProductOwner && ! purchase.isLocked && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }

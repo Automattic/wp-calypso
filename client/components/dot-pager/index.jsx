@@ -79,13 +79,16 @@ export const DotPager = ( {
 	showControlLabels = false,
 	hasDynamicHeight = false,
 	children,
-	className,
+	className = '',
 	onPageSelected = null,
 	...props
 } ) => {
+	// Filter out the empty children
+	const normalizedChildren = Children.toArray( children ).filter( Boolean );
+
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 
-	const numPages = Children.count( children );
+	const numPages = Children.count( normalizedChildren );
 
 	useEffect( () => {
 		if ( currentPage >= numPages ) {
@@ -113,7 +116,7 @@ export const DotPager = ( {
 				pageClassName="dot-pager__page"
 				containerClassName="dot-pager__pages"
 			>
-				{ children }
+				{ normalizedChildren }
 			</Swipeable>
 		</div>
 	);

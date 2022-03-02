@@ -203,7 +203,13 @@ class PurchasesListing extends Component {
 			label = translate( 'Manage subscription' );
 		}
 
-		if ( purchase.autoRenew && ! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
+		const isLocked = this.props.purchases.some( ( p ) => p.id === purchase.id && p.isLocked );
+
+		if (
+			purchase.autoRenew &&
+			! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) &&
+			! isLocked
+		) {
 			label = translate( 'Renew now' );
 		}
 

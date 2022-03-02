@@ -79,6 +79,13 @@ module.exports = {
 			filename: 'build.min.css',
 			minify: ! isDevelopment,
 		} ),
+		/*
+		 * ExPlat: Don't import the server logger when we are in the browser
+		 */
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/server\/lib\/logger$/,
+			'calypso/lib/explat/internals/logger-browser-replacement'
+		),
 		new HtmlWebpackPlugin( {
 			filename: path.join( outputPath, 'index.html' ),
 			template: path.join( __dirname, 'src', 'index.ejs' ),

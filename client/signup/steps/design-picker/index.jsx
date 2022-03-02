@@ -154,6 +154,14 @@ export default function DesignPickerStep( props ) {
 				result.sort = sortBlogToTop;
 				break;
 		}
+
+		// This is a temporary change until DIFM Lite switches to the full WPCOM theme catalog.
+		// We'll then use the 'difm' intent here.
+		if ( props.useDIFMThemes ) {
+			result.defaultSelection = null;
+			result.sort = sortLocalServicesToTop;
+		}
+
 		return result;
 	};
 	const categorization = useCategorization( designs, getCategorizationOptionsForStep() );
@@ -418,6 +426,17 @@ function sortEcommerceToTop( a, b ) {
 	} else if ( a.slug === 'business' ) {
 		return -1;
 	} else if ( b.slug === 'business' ) {
+		return 1;
+	}
+	return 0;
+}
+
+function sortLocalServicesToTop( a, b ) {
+	if ( a.slug === b.slug ) {
+		return 0;
+	} else if ( a.slug === 'local-services' ) {
+		return -1;
+	} else if ( b.slug === 'local-services' ) {
 		return 1;
 	}
 	return 0;

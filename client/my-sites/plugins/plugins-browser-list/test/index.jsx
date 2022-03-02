@@ -6,6 +6,10 @@ jest.mock( 'i18n-calypso', () => ( {
 	localize: ( c ) => c,
 	translate: ( s ) => s,
 } ) );
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useDispatch: jest.fn().mockImplementation( () => {} ),
+} ) );
 
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
@@ -20,6 +24,7 @@ const plugins = [
 
 const props = {
 	plugins,
+	variant: PluginsBrowserListVariant.Fixed,
 	listName: 'woocommerce',
 	title: 'woocommerce',
 	subtitle: '100 plugins',

@@ -1,16 +1,14 @@
 # Testing Overview
 
-Software testing helps protect code from incoming bugs and improves general quality of the functionalities exposed to the users. When you look at it from the developer's standpoint the first thing that comes to mind is unit testing. However it turns out tests come in many flavors. Robert C. Martin in his [The Clean Coder book](https://www.amazon.com/Clean-Coder-Conduct-Professional-Programmers/dp/0137081073) shares what kinds of tests a professional team should use to ensure that the application remains intact. The following items create a hierarchy:
+Software testing helps protect code from incoming bugs and improves general quality of the functionalities exposed to the users. When you look at it from the developer's standpoint the first thing that comes to mind is unit testing. However it turns out tests come in many flavors.
 
-- **Unit tests** (coverage nearly 100%, done by developers) – part of CI.
-- **Component tests** (~50%, business analysts & QA) – part of CI.
-- **Integration tests** (~20%, architects) – they should care only about a couple of layers at the time, executed once a night in dev environment.
-- **System tests** (~10%, Business analysts & architects) – run in staging, at that level you can test 3rd parties.
-- **Manual tests** (~5%, people) – exploratory, you never follow a handbook.
+For Calypso, we follow the general principles of the [Testing Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html). We aim to have tests of varying scope, such as small, low-level unit tests, and larger, high-level end-to-end tests. We also aim to have an inverse relationship between test scope and the number of tests. The larger the testing scope, the fewer tests we should need. For example, we should always have more unit tests for a feature than end-to-end tests.
 
 All of this might feel confusing and overwhelming even for seasoned developers. That's why the short talk [What We Can Learn About Testing From The Wheel](https://www.youtube.com/watch?v=Da9wfQ0frGA) by _Kent C. Dodds_ from _Ignite Fluent 2016_ might help understand differences. The author uses a car metaphor to make it easier to distinguish some of the most popular types of testing.
 
-Next paragraphs explain how all those different types of testing are used to keep Calypso healthy.
+The next paragraphs explain how all those different types of testing are used to keep Calypso healthy.
+
+Curious about the new Playwright-based e2e framework? [Check out the e2e docs here](../../test/e2e/README.md).
 
 ## Server side tests
 
@@ -29,7 +27,7 @@ Tests can be run in 3 different modes:
 > yarn run test-client:watch
 ```
 
-Those tests are executed on every push on continuous integration (we use CircleCi). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
+Those tests are executed on every push on continuous integration (we use TeamCity). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
 
 _Check also how to write [unit tests](unit-tests.md)._
 
@@ -50,7 +48,7 @@ Tests can be run in 3 different modes:
 > yarn run test-client:watch
 ```
 
-They are executed on every push on continuous integration (CircleCI). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
+They are executed on every push on continuous integration (TeamCity). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
 
 Often your changes will affect other parts of the application, so it's a good idea to run all the unit tests locally before checking in.
 
@@ -71,11 +69,11 @@ Tests can be run in 2 different modes:
 > yarn run test-integration:ci
 ```
 
-They run daily on continuous integration (CircleCI), because they can use network connection or memory intensive processing and therefore can have longer runtime.
+They run daily on continuous integration (TeamCity), because they can use network connection or memory intensive processing and therefore can have longer runtime.
 
 ## End-to-end tests
 
-All those tests now live in the [test/e2e](https://github.com/Automattic/wp-calypso/blob/HEAD/test/e2e) directory. For details on how to run them, see the [e2e documentation](https://github.com/Automattic/wp-calypso/blob/HEAD/test/e2e/README.md).
+All e2e tests now live in the [test/e2e](https://github.com/Automattic/wp-calypso/blob/HEAD/test/e2e) directory. For details on how to write, run, and debug them, see the [e2e documentation](../../test/e2e/README.md).
 
 ## FAQ
 
@@ -85,7 +83,7 @@ We use [Jest](https://facebook.github.io/jest/) testing tool to execute all test
 
 Historically we have been using [Mocha](https://mochajs.org/) with [Chai assertions](http://chaijs.com/) and [Sinon mocks](http://sinonjs.org/). We still support Chai and Sinon for backward compatibility reasons, but Jest equivalents should be used whenever new tests are added.
 
-End-to-end tests are still using Mocha to run tests.
+End-to-end tests use [Playwright](https://playwright.dev/docs/intro) to interact with the browser, and Jest to write and drive the testing scripts.
 
 ### How to run all tests?
 

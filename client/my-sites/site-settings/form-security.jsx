@@ -84,6 +84,7 @@ class SiteSettingsFormSecurity extends Component {
 
 				<SettingsSectionHeader title={ translate( 'WordPress.com log in' ) } />
 				<Sso
+					isAtomic={ isAtomic }
 					handleAutosavingToggle={ handleAutosavingToggle }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
@@ -96,7 +97,7 @@ class SiteSettingsFormSecurity extends Component {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isAtomic = isSiteAutomatedTransfer( siteId );
+	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
 	const protectIsUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
@@ -111,6 +112,7 @@ const connectComponent = connect( ( state ) => {
 	);
 
 	return {
+		siteId,
 		isAtomic,
 		protectModuleActive,
 		protectModuleUnavailable: siteInDevMode && protectIsUnavailableInDevMode,

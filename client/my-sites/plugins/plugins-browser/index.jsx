@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -140,7 +141,9 @@ const PluginsBrowser = ( {
 	const hasBusinessPlan =
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
 
-	const { data: paidPluginsRawList = [], isFetchingPaidPlugins } = useWPCOMPlugins( 'featured' );
+	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } = useWPCOMPlugins(
+		'featured'
+	);
 	const paidPlugins = useMemo( () => paidPluginsRawList.map( updateWpComRating ), [
 		paidPluginsRawList,
 	] );
@@ -397,7 +400,7 @@ const SearchListView = ( {
 	);
 	const {
 		data: paidPluginsBySearchTermRaw = [],
-		isFetchingPaidPluginsBySearchTerm,
+		isLoading: isFetchingPaidPluginsBySearchTerm,
 	} = useWPCOMPlugins( 'all', searchTerm, {
 		enabled: !! searchTerm,
 	} );
@@ -563,9 +566,9 @@ const PluginSingleListView = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-	const { data: spotlightPlugin, isFetched: spotlightPluginFetched } = useWPCOMPlugin(
-		'wordpress-seo-premium'
-	);
+	const { data: spotlightPlugin, isFetched: spotlightPluginFetched } =
+		useWPCOMPlugin( 'wordpress-seo-premium', { enabled: isEnabled( 'marketplace-spotlight' ) } ) ||
+		{};
 
 	let plugins;
 	let isFetching;

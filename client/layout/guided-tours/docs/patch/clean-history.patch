@@ -6,7 +6,7 @@ index 9dadd4e6a6..d442d108fd 100644
  } from 'state/ui/guided-tours/actions';
  
  class GuidedTours extends Component {
-+	UNSAFE_componentWillMount() {
++	componentDidMount() {
 +		this.quit( {} );
 +	}
 +

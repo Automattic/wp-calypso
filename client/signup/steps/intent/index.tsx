@@ -31,6 +31,14 @@ export const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
 	write: [ 'store-options', 'store-features' ],
 	build: [ 'site-options', 'starting-point', 'courses', 'store-options', 'store-features' ],
 	sell: [ 'site-options', 'starting-point', 'courses', 'design-setup-site' ],
+	wpadmin: [
+		'store-options',
+		'store-features',
+		'site-options',
+		'starting-point',
+		'courses',
+		'design-setup-site',
+	],
 };
 
 const EXTERNAL_FLOW: { [ key: string ]: string } = {
@@ -47,7 +55,6 @@ export default function IntentStep( props: Props ): React.ReactNode {
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
 	const branchSteps = useBranchSteps( stepName, getExcludedSteps );
-	const siteSlug = props.signupDependencies.siteSlug;
 
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 	const canImport = useSelector( ( state ) =>
@@ -65,9 +72,6 @@ export default function IntentStep( props: Props ): React.ReactNode {
 		if ( EXTERNAL_FLOW[ intent ] ) {
 			dispatch( submitSignupStep( { stepName }, providedDependencies ) );
 			page( getStepUrl( EXTERNAL_FLOW[ intent ], '', '', '', queryObject ) );
-		} else if ( 'wpadmin' === intent ) {
-			//Bail from site setup if we're going directly to wp-admin
-			window.location.href = `https://${ siteSlug }/wp-admin/`;
 		} else {
 			branchSteps( providedDependencies );
 			dispatch( submitSignupStep( { stepName }, providedDependencies ) );

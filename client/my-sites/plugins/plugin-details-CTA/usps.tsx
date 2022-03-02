@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { isAnnualPlanOrUpgradeableAnnualPeriod } from 'calypso/state/marketplace/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 
 const StyledUl = styled.ul`
@@ -46,8 +47,9 @@ const USPS: React.FC< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
+	const isAnnualPlan = useSelector( isAnnualPlanOrUpgradeableAnnualPeriod );
 
+	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 	const planDisplayCost = useSelector( ( state ) =>
 		getProductDisplayCost( state, isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY )
 	);
@@ -112,7 +114,7 @@ const USPS: React.FC< Props > = ( {
 					{
 						id: 'support',
 						image: <Gridicon icon="chat" size={ 16 } />,
-						text: isAnnualPeriod
+						text: isAnnualPlan
 							? translate( 'Live chat support 24x7' )
 							: translate( 'Unlimited Email Support' ),
 						eligibilities: [ 'needs-upgrade', 'marketplace' ],
