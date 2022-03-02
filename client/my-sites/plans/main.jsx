@@ -6,6 +6,7 @@ import {
 	PLAN_WPCOM_MANAGED,
 	PLAN_WPCOM_FLEXIBLE,
 } from '@automattic/calypso-products';
+import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -37,14 +38,20 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
+const ProfessionalEmailPromotionPlaceholder = styled.div`
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: var( --color-neutral-10 );
+	color: transparent;
+	min-height: 250px;
+`;
+
 const ProfessionalEmailPromotionWrapper = ( props ) => {
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
 		'calypso_promote_professional_email_as_a_plan_feature_2022_02'
 	);
 
 	if ( isLoadingExperimentAssignment ) {
-		// TODO: return a placeholder
-		return <div>Placeholder...</div>;
+		return <ProfessionalEmailPromotionPlaceholder />;
 	}
 
 	const isProfessionalEmailPromotionAvailable = 'treatment' === experimentAssignment?.variationName;
