@@ -4,6 +4,8 @@ import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
+	FEATURE_500MB_STORAGE,
+	FEATURE_50GB_STORAGE,
 	FEATURE_6GB_STORAGE,
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
@@ -142,6 +144,15 @@ import {
 	FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
 	FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
 	FEATURE_JETPACK_REAL_TIME_CLOUD_BACKUPS,
+	FEATURE_UNLIMITED_USERS,
+	FEATURE_UNLIMITED_POSTS_PAGES,
+	FEATURE_PAYMENT_BLOCKS,
+	FEATURE_TITAN_EMAIL,
+	FEATURE_UNLIMITED_ADMINS,
+	FEATURE_ADDITIONAL_SITES,
+	FEATURE_10K_VISITS,
+	FEATURE_100K_VISITS,
+	FEATURE_WOOCOMMERCE,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
@@ -489,6 +500,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_JETPACK_ADVANCED ]: {
 		getSlug: () => FEATURE_JETPACK_ADVANCED,
 		getTitle: () => i18n.translate( 'Jetpack advanced features' ),
+		getHeader: () => i18n.translate( 'Jetpack advanced' ),
 		getDescription: () =>
 			i18n.translate(
 				'Speed up your site’s performance and protect it from spammers. ' +
@@ -669,6 +681,14 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	[ FEATURE_500MB_STORAGE ]: {
+		getSlug: () => FEATURE_500MB_STORAGE,
+		getTitle: () => i18n.translate( '0.5GB storage space' ),
+		getCompareTitle: () => i18n.translate( '0.5GB' ),
+		getDescription: () =>
+			i18n.translate( 'Storage space for adding images and documents to your website.' ),
+	},
+
 	[ FEATURE_3GB_STORAGE ]: {
 		getSlug: () => FEATURE_3GB_STORAGE,
 		getTitle: () => i18n.translate( '3 GB storage space' ),
@@ -698,6 +718,13 @@ export const FEATURES_LIST = {
 			} ),
 		getDescription: () =>
 			i18n.translate( 'Upload more images, videos, audio, and documents to your website.' ),
+	},
+
+	[ FEATURE_50GB_STORAGE ]: {
+		getSlug: () => FEATURE_50GB_STORAGE,
+		getTitle: () => i18n.translate( '50 GB storage space' ),
+		getDescription: () =>
+			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
 
 	[ FEATURE_200GB_STORAGE ]: {
@@ -1402,6 +1429,45 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Real-time malware scanning' ),
 	},
 	/* END - Jetpack tiered product-specific features */
+
+	/* START - New features Flexible and Managed plans introduced. */
+	[ FEATURE_UNLIMITED_USERS ]: {
+		getSlug: () => FEATURE_UNLIMITED_USERS,
+		getTitle: () => i18n.translate( 'Unlimited users' ),
+	},
+	[ FEATURE_UNLIMITED_POSTS_PAGES ]: {
+		getSlug: () => FEATURE_UNLIMITED_POSTS_PAGES,
+		getTitle: () => i18n.translate( 'Unlimited blog posts and pages' ),
+	},
+	[ FEATURE_PAYMENT_BLOCKS ]: {
+		getSlug: () => FEATURE_PAYMENT_BLOCKS,
+		getTitle: () => i18n.translate( 'Payment blocks' ),
+	},
+	[ FEATURE_TITAN_EMAIL ]: {
+		getSlug: () => FEATURE_TITAN_EMAIL,
+		getTitle: () => i18n.translate( 'Titan e-mail' ),
+	},
+	[ FEATURE_UNLIMITED_ADMINS ]: {
+		getSlug: () => FEATURE_UNLIMITED_ADMINS,
+		getTitle: () => i18n.translate( 'Unlimited admins' ),
+	},
+	[ FEATURE_ADDITIONAL_SITES ]: {
+		getSlug: () => FEATURE_ADDITIONAL_SITES,
+		getTitle: () => i18n.translate( 'Additional websites' ),
+	},
+	[ FEATURE_10K_VISITS ]: {
+		getSlug: () => FEATURE_10K_VISITS,
+		getTitle: () => i18n.translate( '10k visits' ),
+	},
+	[ FEATURE_100K_VISITS ]: {
+		getSlug: () => FEATURE_100K_VISITS,
+		getTitle: () => i18n.translate( '100k visits' ),
+	},
+	[ FEATURE_WOOCOMMERCE ]: {
+		getSlug: () => FEATURE_WOOCOMMERCE,
+		getTitle: () => i18n.translate( 'WooCommerce' ),
+	},
+	/* END - New features Flexible and Managed plans introduced. */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {

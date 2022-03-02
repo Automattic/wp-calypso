@@ -30,6 +30,8 @@ export const PLAN_CHARGEBACK = 'chargeback';
 export const PLAN_VIP = 'vip';
 export const PLAN_P2_PLUS = 'wp_p2_plus_monthly';
 export const PLAN_P2_FREE = 'p2_free_plan'; // Not a real plan; it's a renamed WP.com Free for the P2 project.
+export const PLAN_WPCOM_FLEXIBLE = 'wpcom-flexible'; // Not a real plan; it's a renamed WP.com Free for the plans overhaul.
+export const PLAN_WPCOM_MANAGED = 'managed-bundle';
 
 export const WPCOM_PLANS = <const>[
 	PLAN_BUSINESS_MONTHLY,
@@ -53,6 +55,8 @@ export const WPCOM_PLANS = <const>[
 	PLAN_VIP,
 	PLAN_P2_PLUS,
 	PLAN_P2_FREE,
+	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_MANAGED,
 ];
 
 export const WPCOM_MONTHLY_PLANS = <const>[
