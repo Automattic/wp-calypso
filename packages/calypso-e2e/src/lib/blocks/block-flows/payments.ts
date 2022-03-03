@@ -4,7 +4,7 @@ interface ConfigurationData {
 	buttonText: string;
 }
 
-const blockParentSelector = '[aria-label="Block: Payments"]';
+const blockParentSelector = '[aria-label="Block: Payment Button"]';
 const selectors = {
 	buttonText: `${ blockParentSelector } [role=textbox]`,
 };
@@ -24,7 +24,7 @@ export class PaymentsBlockFlow implements BlockFlow {
 		this.configurationData = configurationData;
 	}
 
-	blockSidebarName = 'Payments';
+	blockSidebarName = 'Payment Button';
 	blockEditorSelector = blockParentSelector;
 
 	/**

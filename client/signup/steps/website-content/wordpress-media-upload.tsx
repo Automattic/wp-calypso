@@ -66,7 +66,7 @@ interface WordpressMediaUploadProps {
 	mediaIndex: number;
 	site: SiteData;
 	initialUrl: string;
-	initialCaption: string;
+	initialCaption?: string;
 }
 
 export function WordpressMediaUpload( {

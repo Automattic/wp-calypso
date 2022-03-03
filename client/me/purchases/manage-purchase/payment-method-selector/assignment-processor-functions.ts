@@ -28,14 +28,17 @@ const wpcomAssignPaymentMethod = (
 		body: { stored_details_id },
 		apiVersion: '1',
 	} );
+
 const wpcomCreatePayPalAgreement = (
 	subscription_id: string,
 	success_url: string,
-	cancel_url: string
+	cancel_url: string,
+	tax_country_code: string,
+	tax_postal_code: string
 ): Promise< string > =>
 	wp.req.post( {
 		path: '/payment-methods/create-paypal-agreement',
-		body: { subscription_id, success_url, cancel_url },
+		body: { subscription_id, success_url, cancel_url, tax_postal_code, tax_country_code },
 		apiVersion: '1',
 	} );
 
@@ -177,9 +180,8 @@ export async function assignExistingCardProcessor(
 		if ( ! purchase ) {
 			throw new Error( 'Cannot assign PayPal payment method without a purchase' );
 		}
-		return wpcomAssignPaymentMethod( String( purchase.id ), storedDetailsId ).then( ( data ) => {
-			return makeSuccessResponse( data );
-		} );
+		const data = await wpcomAssignPaymentMethod( String( purchase.id ), storedDetailsId );
+		return makeSuccessResponse( data );
 	} catch ( error ) {
 		return makeErrorResponse( ( error as Error ).message );
 	}
@@ -194,23 +196,40 @@ interface ExistingCardSubmitData {
 	storedDetailsId: string;
 }
 
+interface PayPalSubmitData {
+	postalCode?: string;
+	countryCode: string;
+}
+
+function isValidPayPalData( data: unknown ): data is PayPalSubmitData {
+	const payPalData = data as PayPalSubmitData;
+	return payPalData.countryCode !== undefined;
+}
+
 export async function assignPayPalProcessor(
 	purchase: Purchase | undefined,
-	reduxDispatch: CalypsoDispatch
+	reduxDispatch: CalypsoDispatch,
+	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
-	if ( ! purchase ) {
-		throw new Error( 'Cannot assign PayPal payment method without a purchase' );
+	try {
+		if ( ! purchase ) {
+			throw new Error( 'Cannot assign PayPal payment method without a purchase' );
+		}
+		if ( ! isValidPayPalData( submitData ) ) {
+			throw new Error( 'PayPal data is missing tax information' );
+		}
+		reduxDispatch( recordFormSubmitEvent( { purchase } ) );
+		const data = await wpcomCreatePayPalAgreement(
+			String( purchase.id ),
+			addQueryArgs( window.location.href, { success: 'true' } ),
+			window.location.href,
+			submitData.countryCode,
+			submitData.postalCode ?? ''
+		);
+		return makeRedirectResponse( data );
+	} catch ( error ) {
+		return makeErrorResponse( ( error as Error ).message );
 	}
-	reduxDispatch( recordFormSubmitEvent( { purchase } ) );
-	return wpcomCreatePayPalAgreement(
-		String( purchase.id ),
-		addQueryArgs( window.location.href, { success: 'true' } ),
-		window.location.href
-	)
-		.then( ( data ) => {
-			return makeRedirectResponse( data );
-		} )
-		.catch( ( error ) => makeErrorResponse( error.message ) );
 }
 
 function recordFormSubmitEvent( {

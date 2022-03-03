@@ -2,6 +2,7 @@ import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from '
 import * as Steps from './steps-repository';
 import type { StepPath } from './steps-repository';
 import type { Flow } from './types';
+import './global.scss';
 
 /**
  * This component accepts a single flow property. It does the following:

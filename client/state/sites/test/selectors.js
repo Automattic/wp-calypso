@@ -38,6 +38,7 @@ import {
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
 	canJetpackSiteAutoUpdateCore,
+	getJetpackSearchDashboardUrl,
 	isJetpackSiteMultiSite,
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
@@ -1877,7 +1878,7 @@ describe( 'selectors', () => {
 			} );
 		} );
 
-		test( 'it should return jetpack free plan if expired', () => {
+		test( 'it should return free plan if expired and site is atomic', () => {
 			const sitePlan = getSitePlan(
 				{
 					sites: {
@@ -1885,6 +1886,39 @@ describe( 'selectors', () => {
 							77203074: {
 								ID: 77203074,
 								jetpack: true,
+								is_wpcom_atomic: true,
+								plan: {
+									product_id: 1234,
+									product_slug: 'fake-plan',
+									product_name_short: 'Fake Plan',
+									free_trial: false,
+									expired: true,
+								},
+							},
+						},
+					},
+				},
+				77203074
+			);
+
+			chaiExpect( sitePlan ).to.eql( {
+				product_id: 1,
+				product_slug: 'free_plan',
+				product_name_short: 'Free',
+				free_trial: false,
+				expired: false,
+			} );
+		} );
+
+		test( 'it should return jetpack free plan if expired and site is not atomic', () => {
+			const sitePlan = getSitePlan(
+				{
+					sites: {
+						items: {
+							77203074: {
+								ID: 77203074,
+								jetpack: true,
+								is_wpcom_atomic: false,
 								plan: {
 									product_id: 1234,
 									product_slug: 'fake-plan',
@@ -2597,6 +2631,96 @@ describe( 'selectors', () => {
 
 			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
 			chaiExpect( canAutoUpdateCore ).to.equal( false );
+		} );
+	} );
+
+	describe( 'getJetpackSearchDashboardUrl()', () => {
+		test( 'should return null if no sites loaded', () => {
+			const dashboardUrl = getJetpackSearchDashboardUrl(
+				{
+					sites: {
+						items: {},
+					},
+				},
+				2916284
+			);
+
+			expect( dashboardUrl ).toBeNull();
+		} );
+		test( 'should return null if we have a Simple site', () => {
+			const dashboardUrl = getJetpackSearchDashboardUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								jetpack: false,
+							},
+						},
+					},
+				},
+				2916284
+			);
+
+			expect( dashboardUrl ).toBeNull();
+		} );
+		test( "should return null if we can't find the adminUrl", () => {
+			const dashboardUrl = getJetpackSearchDashboardUrl(
+				{
+					sites: {
+						items: {},
+					},
+				},
+				2916284
+			);
+
+			expect( dashboardUrl ).toBeNull();
+		} );
+		test( 'should return default dashboard for old JP versions', () => {
+			const dashboardUrl = getJetpackSearchDashboardUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+									jetpack_version: '10.0',
+								},
+							},
+						},
+					},
+				},
+				2916284
+			);
+
+			expect( dashboardUrl ).toEqual(
+				'https://example.wordpress.com/wp-admin/admin.php?page=jetpack#/performance'
+			);
+		} );
+		test( 'should return Search dashboard for new JP versions', () => {
+			const dashboardUrl = getJetpackSearchDashboardUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.wordpress.com/wp-admin/',
+									jetpack_version: '10.1',
+								},
+							},
+						},
+					},
+				},
+				2916284
+			);
+
+			expect( dashboardUrl ).toEqual(
+				'https://example.wordpress.com/wp-admin/admin.php?page=jetpack-search'
+			);
 		} );
 	} );
 

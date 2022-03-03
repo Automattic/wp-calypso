@@ -985,6 +985,25 @@ class PurchaseNotice extends Component {
 		);
 	}
 
+	renderInAppPurchaseNotice() {
+		const { purchase, translate } = this.props;
+
+		return (
+			<Notice
+				showDismiss={ false }
+				status="is-info"
+				text={ translate(
+					'This product is an in-app purchase. You can manage it from within {{managePurchase}}the app store{{/managePurchase}}.',
+					{
+						components: {
+							managePurchase: <a href={ purchase.iapPurchaseManagementLink } />,
+						},
+					}
+				) }
+			/>
+		);
+	}
+
 	render() {
 		if ( this.props.isDataLoading ) {
 			return null;
@@ -992,6 +1011,10 @@ class PurchaseNotice extends Component {
 
 		if ( isDomainTransfer( this.props.purchase ) ) {
 			return null;
+		}
+
+		if ( this.props.purchase.isLocked && this.props.purchase.isInAppPurchase ) {
+			return this.renderInAppPurchaseNotice();
 		}
 
 		if ( ! this.props.isProductOwner ) {

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -8,6 +9,7 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ActionButtons from '../action-buttons';
+import BackupTips from './backup-tips';
 import cloudScheduleIcon from './icons/cloud-schedule.svg';
 
 import './style.scss';
@@ -70,6 +72,7 @@ const BackupScheduled = ( { lastBackupDate } ) => {
 				} ) }
 			</div>
 			<ActionButtons disabled />
+			{ isEnabled( 'jetpack/backup-messaging-i3' ) && <BackupTips location="SCHEDULED" /> }
 		</>
 	);
 };

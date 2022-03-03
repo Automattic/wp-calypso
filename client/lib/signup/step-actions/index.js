@@ -4,7 +4,6 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugFactory from 'debug';
-import { translate } from 'i18n-calypso';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -35,7 +34,7 @@ import {
 } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
-import { requestSite, updateSiteFrontPage } from 'calypso/state/sites/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 
 const Visibility = Site.Visibility;
@@ -429,12 +428,13 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		defer( callback );
 		return;
 	}
+	const { pages, siteLogoUrl: site_logo_url } = websiteContent;
 
 	wpcom.req
 		.post( {
 			path: `/sites/${ siteSlug }/do-it-for-me/website-content`,
 			apiNamespace: 'wpcom/v2',
-			body: { pages: websiteContent },
+			body: { pages, site_logo_url },
 		} )
 		.then( () => reduxStore.dispatch( requestSite( siteSlug ) ) )
 		.then( () => callback() )
@@ -494,74 +494,18 @@ export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
 	);
 }
 
-export async function setStoreFeatures(
-	callback,
-	{ siteSlug, storeType },
-	stepProvidedItems,
-	reduxStore
-) {
+export function setStoreFeatures( callback, { siteSlug } ) {
 	if ( ! siteSlug ) {
 		defer( callback );
 		return;
 	}
 
-	if ( 'payment_block' === storeType ) {
-		try {
-			/*
-			 * Get the block pattern source for use in our new home page.
-			 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
-			 */
-			const patternList = await wpcom.req.get( {
-				path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
-				apiNamespace: 'rest/v1',
-			} );
-
-			//Only item since we filter by id
-			const singleProductPattern = patternList[ 0 ];
-
-			// Create a new Home page
-			const newPage = await wpcom.req.post( {
-				path: `/sites/${ siteSlug }/pages`,
-				apiNamespace: 'wp/v2',
-				body: {
-					content: singleProductPattern.html,
-					title: translate( 'Available now!' ),
-					status: 'publish',
-					template: 'header-footer-only',
-				},
-			} );
-
-			const siteId = getSiteId( reduxStore.getState(), siteSlug );
-
-			//Set the new Home page as the front page.
-			await updateSiteFrontPage( siteId, {
-				show_on_front: 'page',
-				page_on_front: newPage.id,
-			} )( reduxStore.dispatch );
-
-			// Set footer to the 'store' option
-			await wpcom.req.post( {
-				path: `/sites/${ siteSlug }/seller_footer`,
-				apiNamespace: 'wpcom/v2',
-			} );
-		} catch ( e ) {
-			defer( callback );
-			return;
-		}
-	}
-
-	/*
-	 * Check to see if FSE is active on the site
-	 * and pass to our getDestinationFromIntent callback.
-	 */
 	wpcom.req
-		.get( {
-			path: `/sites/${ siteSlug }/block-editor`,
+		.post( {
+			path: `/sites/${ siteSlug }/seller_footer`,
 			apiNamespace: 'wpcom/v2',
 		} )
-		.then( ( data ) => {
-			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
-		} )
+		.then( () => callback() )
 		.catch( ( errors ) => {
 			callback( [ errors ] );
 		} );

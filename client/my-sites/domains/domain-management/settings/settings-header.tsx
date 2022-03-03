@@ -120,8 +120,8 @@ const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
 	};
 
 	const renderNotices = () => {
-		const { domain, site } = props;
-		const { noticeText, statusClass } = resolveDomainStatus( domain, null, {
+		const { domain, site, purchase } = props;
+		const { noticeText, statusClass } = resolveDomainStatus( domain, purchase, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
 		} );

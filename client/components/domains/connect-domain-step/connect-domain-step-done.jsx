@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import domainConnectedIllustration from 'calypso/assets/images/domains/connect.svg';
 import CardHeading from 'calypso/components/card-heading';
+import { isSubdomain } from 'calypso/lib/domains';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { stepType } from './constants';
@@ -27,7 +28,9 @@ const ConnectDomainStepDone = ( { className, domain, step, selectedSiteSlug } ) 
 				icon="checkmark"
 				size={ 24 }
 			/>
-			{ __( 'Your domain is connected' ) }
+			{ isSubdomain( domain )
+				? __( 'Your subdomain is connected' )
+				: __( 'Your domain is connected' ) }
 		</>
 	);
 

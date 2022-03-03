@@ -134,6 +134,7 @@ export default function AccordionForm< T >( {
 					onNext={ () => onNext( section.validate ) }
 					onOpen={ () => onOpen( index ) }
 					blockNavigation={ blockNavigation }
+					showSubmit={ index === sections.length - 1 }
 				/>
 			) ) }
 		</>

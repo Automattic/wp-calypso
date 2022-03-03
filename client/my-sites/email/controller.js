@@ -1,5 +1,5 @@
+import page from 'page';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import EmailForwarding from 'calypso/my-sites/email/email-forwarding';
 import EmailForwardsAdd from 'calypso/my-sites/email/email-forwards-add';
 import EmailManagementHomePage from 'calypso/my-sites/email/email-management/home-page';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
@@ -10,6 +10,7 @@ import { castIntervalLength } from 'calypso/my-sites/email/email-providers-compa
 import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-stacked-comparison/page';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
@@ -144,10 +145,8 @@ export default {
 		next();
 	},
 
-	emailManagementForwarding( pageContext, next ) {
-		pageContext.primary = <EmailForwarding selectedDomainName={ pageContext.params.domain } />;
-
-		next();
+	emailManagementForwardingRedirect( pageContext ) {
+		page.redirect( emailManagement( pageContext.params.site, pageContext.params.domain ) );
 	},
 
 	emailManagement( pageContext, next ) {

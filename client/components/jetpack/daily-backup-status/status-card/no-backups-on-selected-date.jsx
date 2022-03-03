@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
@@ -6,6 +7,7 @@ import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import BackupTips from './backup-tips';
 import cloudWarningIcon from './icons/cloud-warning.svg';
 
 import './style.scss';
@@ -62,6 +64,7 @@ const NoBackupsOnSelectedDate = ( { selectedDate } ) => {
 			>
 				{ translate( 'Contact support' ) }
 			</Button>
+			{ isEnabled( 'jetpack/backup-messaging-i3' ) && <BackupTips location="NO_BACKUPS" /> }
 		</>
 	);
 };

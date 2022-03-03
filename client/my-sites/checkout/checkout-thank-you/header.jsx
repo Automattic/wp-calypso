@@ -34,7 +34,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getJetpackSearchCustomizeUrl } from 'calypso/state/sites/selectors';
+import {
+	getJetpackSearchCustomizeUrl,
+	getJetpackSearchDashboardUrl,
+} from 'calypso/state/sites/selectors';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 
 import './style.scss';
@@ -58,8 +61,13 @@ export class CheckoutThankYouHeader extends PureComponent {
 		upgradeIntent: PropTypes.string,
 	};
 
+	isSearch() {
+		const { purchases } = this.props;
+		return purchases?.length > 0 && purchases[ 0 ].productType === 'search';
+	}
+
 	getHeading() {
-		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, purchases } = this.props;
+		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase } = this.props;
 
 		if ( ! isDataLoaded ) {
 			return this.props.translate( 'Loading…' );
@@ -69,7 +77,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Some items failed.' );
 		}
 
-		if ( purchases?.length > 0 && purchases[ 0 ].productType === 'search' ) {
+		if ( this.isSearch() ) {
 			return translate( 'Welcome to Jetpack Search!' );
 		}
 
@@ -99,14 +107,13 @@ export class CheckoutThankYouHeader extends PureComponent {
 			hasFailedPurchases,
 			primaryPurchase,
 			displayMode,
-			purchases,
 		} = this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
 		}
 
-		if ( purchases?.length > 0 && purchases[ 0 ].productType === 'search' ) {
+		if ( this.isSearch() ) {
 			return (
 				<div>
 					<p>{ translate( 'We are currently indexing your site.' ) }</p>
@@ -114,7 +121,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 						{ translate(
 							'In the meantime, we have configured Jetpack Search on your site' +
 								' ' +
-								'— you should try customizing it in your traditional WordPress dashboard.'
+								'— try customizing it!'
 						) }
 					</p>
 				</div>
@@ -473,14 +480,28 @@ export class CheckoutThankYouHeader extends PureComponent {
 		);
 	}
 
+	getSearchButtonProps() {
+		const {
+			translate,
+			selectedSite,
+			jetpackSearchCustomizeUrl,
+			jetpackSearchDashboardUrl,
+		} = this.props;
+
+		const buttonTitle = selectedSite.jetpack
+			? translate( 'Go to Search Dashboard' )
+			: translate( 'Customize Search' );
+		const targetUrl = selectedSite.jetpack ? jetpackSearchDashboardUrl : jetpackSearchCustomizeUrl;
+
+		return { title: buttonTitle, url: targetUrl };
+	}
+
 	getButtons() {
 		const {
 			hasFailedPurchases,
 			isDataLoaded,
-			jetpackSearchCustomizeUrl,
 			translate,
 			primaryPurchase,
-			purchases,
 			selectedSite,
 			displayMode,
 			isAtomic,
@@ -488,7 +509,22 @@ export class CheckoutThankYouHeader extends PureComponent {
 		const headerButtonClassName = 'button is-primary';
 		const isConciergePurchase = 'concierge' === displayMode;
 		const isTrafficGuidePurchase = 'traffic-guide' === displayMode;
-		const isSearch = purchases?.length > 0 && purchases[ 0 ].productType === 'search';
+
+		if ( this.isSearch() ) {
+			const buttonProps = this.getSearchButtonProps();
+			return (
+				<div className="checkout-thank-you__header-button">
+					<Button
+						className={ headerButtonClassName }
+						primary
+						href={ buttonProps.url }
+						onClick={ this.recordThankYouClick }
+					>
+						{ buttonProps.title }
+					</Button>
+				</div>
+			);
+		}
 
 		if (
 			isDataLoaded &&
@@ -498,20 +534,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 				<div className="checkout-thank-you__header-button">
 					<Button className={ headerButtonClassName } primary onClick={ this.visitMyHome }>
 						{ translate( 'Go to My Home' ) }
-					</Button>
-				</div>
-			);
-		}
-		if ( isSearch ) {
-			return (
-				<div className="checkout-thank-you__header-button">
-					<Button
-						className={ headerButtonClassName }
-						primary
-						href={ jetpackSearchCustomizeUrl }
-						onClick={ this.recordThankYouClick }
-					>
-						{ translate( 'Customize Search' ) }
 					</Button>
 				</div>
 			);
@@ -643,6 +665,7 @@ export default connect(
 	( state, ownProps ) => ( {
 		isAtomic: isAtomicSite( state, ownProps.selectedSite?.ID ),
 		jetpackSearchCustomizeUrl: getJetpackSearchCustomizeUrl( state, ownProps.selectedSite?.ID ),
+		jetpackSearchDashboardUrl: getJetpackSearchDashboardUrl( state, ownProps.selectedSite?.ID ),
 		titanAppsUrlPrefix: getTitanAppsUrlPrefix(
 			getDomainsBySiteId( state, ownProps.selectedSite?.ID ).find( hasTitanMailWithUs )
 		),

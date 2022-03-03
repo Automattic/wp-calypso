@@ -194,8 +194,8 @@ export function generateSteps( {
 			stepName: 'store-features',
 			dependencies: [ 'siteSlug' ],
 			apiRequestFunction: setStoreFeatures,
-			providesDependencies: [ 'isFSEActive', 'storeType' ],
-			optionalDependencies: [ 'isFSEActive', 'storeType' ],
+			providesDependencies: [ 'storeType' ],
+			optionalDependencies: [ 'storeType' ],
 		},
 
 		'starting-point': {
@@ -696,7 +696,7 @@ export function generateSteps( {
 				hideExternalPreview: true,
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
-				showDesignPickerCategoriesAllFilter: false,
+				showDesignPickerCategoriesAllFilter: true,
 				showLetUsChoose: true,
 				hideFullScreenPreview: true,
 				hideDesignTitle: true,

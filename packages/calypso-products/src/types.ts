@@ -28,7 +28,7 @@ export interface WPComPlan extends Plan {
 	getPlanCompareFeatures?: (
 		experiment?: string,
 		options?: Record< string, string | boolean[] >
-	) => TranslateResult[];
+	) => Feature[];
 	getSignupFeatures?: () => Feature[];
 	getBlogSignupFeatures?: () => Feature[];
 	getPortfolioSignupFeatures?: () => Feature[];

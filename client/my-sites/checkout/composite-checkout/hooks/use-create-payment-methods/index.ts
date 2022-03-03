@@ -11,7 +11,6 @@ import {
 	createP24PaymentMethodStore,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
-	createPayPalMethod,
 	createIdealMethod,
 	createIdealPaymentMethodStore,
 	createSofortMethod,
@@ -37,6 +36,7 @@ import {
 	createNetBankingPaymentMethodStore,
 	createNetBankingMethod,
 } from '../../payment-methods/netbanking';
+import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
 import type { StoredCard } from '../../types/stored-cards';
@@ -46,8 +46,18 @@ import type { Stripe } from '@stripe/stripe-js';
 
 export { useCreateExistingCards };
 
-export function useCreatePayPal( { labelText }: { labelText?: string | null } ): PaymentMethod {
-	const paypalMethod = useMemo( () => createPayPalMethod( { labelText } ), [ labelText ] );
+export function useCreatePayPal( {
+	labelText,
+	shouldShowTaxFields,
+}: {
+	labelText?: string | null;
+	shouldShowTaxFields?: boolean;
+} ): PaymentMethod {
+	const store = useMemo( () => createPayPalStore(), [] );
+	const paypalMethod = useMemo(
+		() => createPayPalMethod( { labelText, store, shouldShowTaxFields } ),
+		[ labelText, shouldShowTaxFields, store ]
+	);
 	return paypalMethod;
 }
 

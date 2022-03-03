@@ -16,8 +16,6 @@ export function getEmptyResponseCart(): ResponseCart {
 		total_cost_display: '0',
 		coupon_savings_total_integer: 0,
 		coupon_savings_total_display: '0',
-		savings_total_integer: 0,
-		savings_total_display: '0',
 		sub_total_with_taxes_integer: 0,
 		sub_total_with_taxes_display: '0',
 		sub_total_integer: 0,

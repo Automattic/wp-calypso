@@ -24,6 +24,7 @@ function createPurchaseObject( purchase ) {
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
 		expiryStatus: camelCase( purchase.expiry_status ),
+		iapPurchaseManagementLink: purchase.iap_purchase_management_link,
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
 		introductoryOffer: purchase.introductory_offer
@@ -50,6 +51,8 @@ function createPurchaseObject( purchase ) {
 			: null,
 		isCancelable: Boolean( purchase.is_cancelable ),
 		isDomainRegistration: Boolean( purchase.is_domain_registration ),
+		isLocked: Boolean( purchase.is_locked ),
+		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
 		isRechargeable: Boolean( purchase.is_rechargable ),
 		isRefundable: Boolean( purchase.is_refundable ),
 		isRenewable: Boolean( purchase.is_renewable ),

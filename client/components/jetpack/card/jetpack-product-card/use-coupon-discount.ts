@@ -15,7 +15,7 @@ export default function useCouponDiscount(
 	}
 
 	const finalPrice =
-		Math.floor( ( discountedPrice ?? originalPrice ) * ( 1 - jetpackSaleDiscountRatio ) * 100 ) /
+		Math.ceil( ( discountedPrice ?? originalPrice ) * ( 1 - jetpackSaleDiscountRatio ) * 100 ) /
 		100;
 
 	const finalDiscount = Math.floor( ( ( originalPrice - finalPrice ) / originalPrice ) * 100 );

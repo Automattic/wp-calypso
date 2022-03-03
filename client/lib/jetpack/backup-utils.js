@@ -40,19 +40,37 @@ export const getDeltaActivitiesByType = ( logs ) => {
 	};
 };
 
+export const SUCCESSFUL_BACKUP_ACTIVITIES = [
+	'rewind__backup_complete_full',
+	'rewind__backup_complete_initial',
+	'rewind__backup_only_complete_full',
+	'rewind__backup_only_complete_initial',
+];
+
+export const BACKUP_ATTEMPT_ACTIVITIES = [
+	...SUCCESSFUL_BACKUP_ACTIVITIES,
+	'rewind__backup_error',
+	'rewind__backup_only_error',
+];
+
 /**
  * Check if the activity is the type of backup
  *
  * @param activity {object} Activity to check
  */
 export const isActivityBackup = ( activity ) => {
-	return (
-		'rewind__backup_complete_full' === activity.activityName ||
-		'rewind__backup_complete_initial' === activity.activityName ||
-		'rewind__backup_error' === activity.activityName ||
-		'rewind__backup_only_complete_full' === activity.activityName ||
-		'rewind__backup_only_complete_initial' === activity.activityName
-	);
+	return BACKUP_ATTEMPT_ACTIVITIES.includes( activity.activityName );
+};
+
+/**
+ * Retrieve the backup error code from activity object.
+ *
+ * @typedef {import('calypso/state/data-layer/wpcom/sites/activity/from-api.js').processItem} ProcessItem
+ * @param {object} activity Activity to get the error code from.
+ * @returns {'BAD_CREDENTIALS'|'NOT_ACCESSIBLE'} The error code as set in @see {ProcessItem}
+ */
+export const getBackupErrorCode = ( activity ) => {
+	return activity?.activityMeta?.errorCode?.toUpperCase?.();
 };
 
 /**
@@ -61,12 +79,7 @@ export const isActivityBackup = ( activity ) => {
  * @param backup {object} Backup to check
  */
 export const isSuccessfulDailyBackup = ( backup ) => {
-	return (
-		'rewind__backup_complete_full' === backup.activityName ||
-		'rewind__backup_complete_initial' === backup.activityName ||
-		'rewind__backup_only_complete_full' === backup.activityName ||
-		'rewind__backup_only_complete_initial' === backup.activityName
-	);
+	return SUCCESSFUL_BACKUP_ACTIVITIES.includes( backup.activityName );
 };
 
 /**

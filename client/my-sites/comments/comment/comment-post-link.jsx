@@ -21,7 +21,7 @@ const CommentPostLink = ( {
 	translate,
 } ) => (
 	<div className="comment__post-link">
-		{ ! isPostTitleLoaded && <QueryPosts siteId={ siteId } postId={ postId } /> }
+		{ ! isPostTitleLoaded && postId && <QueryPosts siteId={ siteId } postId={ postId } /> }
 
 		<Gridicon icon={ isBulkMode ? 'chevron-right' : 'posts' } size={ 18 } />
 

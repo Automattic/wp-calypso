@@ -101,13 +101,13 @@ export class PlanBillingPeriod extends Component {
 			<Fragment>
 				<FormSettingExplanation>
 					{ translate( 'Billed monthly' ) }
-					{ site && isProductOwner && (
+					{ site && isProductOwner && ! purchase.isLocked && (
 						<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
 							{ translate( 'Upgrade to yearly billing' ) }
 						</Button>
 					) }
 				</FormSettingExplanation>
-				{ ! site && ! isJetpackTemporarySite && (
+				{ ! site && ! isJetpackTemporarySite && ! purchase.isLocked && (
 					<FormSettingExplanation>
 						{ translate(
 							'To manage your plan, please {{supportPageLink}}reconnect{{/supportPageLink}} your site.',
