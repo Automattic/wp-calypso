@@ -65,6 +65,7 @@ import {
 	isPremiumPlan,
 	isBloggerPlan,
 	isFreePlan,
+	isFlexiblePlan,
 	isJetpackBusinessPlan,
 	isJetpackPersonalPlan,
 	isJetpackPremiumPlan,
@@ -102,6 +103,25 @@ describe( 'isFreePlan', () => {
 		expect( isFreePlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
 		expect( isFreePlan( PLAN_ECOMMERCE ) ).to.equal( false );
 		expect( isFreePlan( 'non-existing plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isFlexiblePlan', () => {
+	test( 'should return true for flexible plans', () => {
+		expect( isFlexiblePlan( PLAN_WPCOM_FLEXIBLE ) ).to.equal( true );
+	} );
+	test( 'should return false for non-flexible plans', () => {
+		expect( isFlexiblePlan( PLAN_FREE ) ).to.equal( false );
+		expect( isFlexiblePlan( PLAN_JETPACK_FREE ) ).to.equal( false );
+		expect( isFlexiblePlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isFlexiblePlan( PLAN_JETPACK_PERSONAL ) ).to.equal( false );
+		expect( isFlexiblePlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isFlexiblePlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isFlexiblePlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isFlexiblePlan( PLAN_WPCOM_MANAGED ) ).to.equal( false );
+		expect( isFlexiblePlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isFlexiblePlan( PLAN_ECOMMERCE ) ).to.equal( false );
+		expect( isFlexiblePlan( 'non-existing plan' ) ).to.equal( false );
 	} );
 } );
 

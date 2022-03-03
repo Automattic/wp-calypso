@@ -6,6 +6,7 @@ import {
 	TYPE_ECOMMERCE,
 	TYPE_MANAGED,
 	TYPE_FREE,
+	TYPE_FLEXIBLE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -73,6 +74,10 @@ export function getPlanPath( plan: string ): string | undefined {
 export function getPlanClass( planKey: string ): string {
 	if ( isFreePlan( planKey ) ) {
 		return 'is-free-plan';
+	}
+
+	if ( isFlexiblePlan( planKey ) ) {
+		return 'is-flexible-plan';
 	}
 
 	if ( isBloggerPlan( planKey ) ) {
@@ -257,6 +262,10 @@ export function isBloggerPlan( planSlug: string ): boolean {
 
 export function isFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE } );
+}
+
+export function isFlexiblePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_FLEXIBLE } );
 }
 
 export function isSecurityDailyPlan( planSlug: string ): boolean {

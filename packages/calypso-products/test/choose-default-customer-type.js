@@ -3,6 +3,7 @@ import {
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_FREE,
+	PLAN_WPCOM_FLEXIBLE,
 	PLAN_PERSONAL,
 	PLAN_WPCOM_MANAGED,
 } from '../src/constants';
@@ -42,10 +43,17 @@ describe( 'chooseDefaultCustomerType', () => {
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'business' );
 	} );
 
-	test( 'chooses "business" either if site on the Managed plan', () => {
+	test( 'chooses "business" if the site is on the Managed plan', () => {
 		const currentPlan = {
 			product_slug: PLAN_WPCOM_MANAGED,
 		};
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'business' );
+	} );
+
+	test( 'chooses "personal" if the site is on the Flexible plan', () => {
+		const currentPlan = {
+			product_slug: PLAN_WPCOM_FLEXIBLE,
+		};
+		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'personal' );
 	} );
 } );
