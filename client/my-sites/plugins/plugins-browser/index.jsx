@@ -398,14 +398,14 @@ const SearchListView = ( {
 	);
 	const translate = useTranslate();
 
-	const pluginItemsFeatch = ( currentPage ) => {
+	const pluginItemsFetch = ( currentPage ) => {
 		return currentPage === 1
 			? SEARCH_RESULTS_LIST_LENGTH + ( paidPluginsBySearchTerm?.length % 2 )
 			: SEARCH_RESULTS_LIST_LENGTH;
 	};
 
 	useEffect( () => {
-		setPageSize( pluginItemsFeatch( page ) );
+		setPageSize( pluginItemsFetch( page ) );
 	}, [ paidPluginsBySearchTerm ] );
 
 	if (
@@ -458,11 +458,11 @@ const SearchListView = ( {
 				{ pluginsPagination && (
 					<Pagination
 						page={ pluginsPagination.page }
-						perPage={ pluginItemsFeatch( pluginsPagination?.page ) }
+						perPage={ pluginItemsFetch( pluginsPagination?.page ) }
 						total={ pluginsPagination.results }
 						pageClick={ ( clickedPage ) => {
 							setPage( clickedPage );
-							setPageSize( pluginItemsFeatch( clickedPage ) );
+							setPageSize( pluginItemsFetch( clickedPage ) );
 						} }
 						variant={ PaginationVariant.minimal }
 					/>
