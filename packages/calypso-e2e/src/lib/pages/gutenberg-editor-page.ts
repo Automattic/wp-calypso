@@ -164,7 +164,7 @@ export class GutenbergEditorPage {
 		if ( ! this.requiresGutenframe ) {
 			// If we're not in the Gutenframe context (i.e not Calypso), then
 			// just return the top frame, no need to try to locate the iframe.
-			if ( ! this.page.url().startsWith( 'https://wordpress.com' ) ) {
+			if ( this.page.url().includes( '/wp-admin' ) ) {
 				return await this.page.mainFrame();
 			}
 		}
