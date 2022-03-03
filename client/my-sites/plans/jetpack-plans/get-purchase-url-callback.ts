@@ -74,7 +74,7 @@ function buildCheckoutURL(
 	// step of the flow. Since purchases of multiple products are allowed, we need
 	// to pass all products separated by comma in the URL.
 	const path = siteSlug
-		? `/checkout/${ siteSlug }/${ productsString }${ lang }`
+		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/jetpack/connect/${ productsString }`;
 
 	return isJetpackCloud()
