@@ -6,8 +6,7 @@ import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getSiteDomain, getSiteTitle } from 'calypso/state/sites/selectors';
 
 const ExclamationIcon = () => (
 	<svg xmlns="http://www.w3.org/2000/svg" width="90" height="89" fill="none" viewBox="0 0 90 89">
@@ -30,8 +29,13 @@ const ExclamationIcon = () => (
 	</svg>
 );
 
+const Row = styled.div`
+	display: flex;
+	justify-content: center;
+`;
+
 const DialogContainer = styled.div`
-	text-align: center;
+	text-align: left;
 	width: 600px;
 	padding: 65px 65px 0 65px;
 `;
@@ -45,22 +49,34 @@ const DialogButton = styled( Button )`
 		margin-left: 10px;
 	}
 `;
+const AnchorButton = styled( Button )`
+	background: none;
+	border: none;
+	color: var( --color-primary-light );
+	padding: 0;
+`;
+const Subtitle = styled.p`
+	color: var( --color-neutral-50 );
+	font-size: 0.875rem;
+`;
 
 function SiteDeleteConfirmationDialog( {
 	onClose,
 	onConfirm,
 	siteId,
+	onRedirectToNewSite,
 }: {
 	onClose: () => void;
 	onConfirm: () => void;
+	onRedirectToNewSite: () => void;
 	siteId: number;
 } ) {
 	const [ confirmText, setConfirmText ] = useState( '' );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ?? 0 ) );
-	const siteTitle = useSelector( ( state ) => getSiteTitle( state ) );
+	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
 
 	const translate = useTranslate();
-	const deleteDisabled = confirmText.toUpperCase().replace( /\s/g, '' ) !== 'DELETE';
+	const deleteDisabled = confirmText !== 'DELETE';
 
 	return (
 		<Dialog
@@ -75,26 +91,57 @@ function SiteDeleteConfirmationDialog( {
 			onClose={ onClose }
 		>
 			<DialogContainer>
-				<ExclamationIcon />
+				<Row>
+					<ExclamationIcon />
+				</Row>
 				<FormattedHeader
 					align="center"
 					brandFont
 					headerText={ translate( 'Site Reset Confirmation' ) }
-					subHeaderText={ translate(
-						'The current content of your website {{strong}}%(siteTitle)s{{/strong}} (%(siteAddress)s) will be deleted. ' +
-							'This includes pages, posts, media, comments, third party plugins and themes. Any WordPress.com subscriptions ' +
-							'on your site such as custom domains and emails will not be affected',
-						{
-							components: {
-								strong: <strong />,
-							},
-							args: {
-								siteTitle,
-								siteAddress: siteDomain,
-							},
-						}
-					) }
 				/>
+				<Subtitle>
+					<ul>
+						<li>
+							{ translate(
+								'The current content of your website {{strong}}%(siteTitle)s{{/strong}} (%(siteAddress)s) will be deleted. ' +
+									'This includes pages, posts, media, comments, third party plugins and themes.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: {
+										siteTitle,
+										siteAddress: siteDomain,
+									},
+								}
+							) }
+						</li>
+						<li>
+							{ translate(
+								'Any WordPress.com subscriptions on your site such as custom domains and emails will not be affected.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: {
+										siteTitle,
+										siteAddress: siteDomain,
+									},
+								}
+							) }
+						</li>
+						<li>
+							{ translate(
+								"If you don't want your site content to be deleted you can create a {{a}}new site{{/a}} instead.",
+								{
+									components: {
+										a: <AnchorButton onClick={ onRedirectToNewSite } />,
+									},
+								}
+							) }
+						</li>
+					</ul>
+				</Subtitle>
 				<FormLabel htmlFor="confirmTextChangeInput">
 					{ translate(
 						'Type DELETE to confirm that your site’s current content will be deleted.'
