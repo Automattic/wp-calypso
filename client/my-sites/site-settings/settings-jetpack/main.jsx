@@ -18,10 +18,9 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, translate } ) => {
+	const { host, action } = useSelector( getCurrentQueryArguments );
+
 	//todo: this check makes sense in Jetpack section?
-	const args = useSelector( getCurrentQueryArguments );
-	const host = args.host;
-	const action = args.action;
 	if ( ! siteIsJetpack ) {
 		return (
 			<EmptyContent
