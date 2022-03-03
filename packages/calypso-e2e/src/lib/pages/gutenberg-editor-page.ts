@@ -410,6 +410,8 @@ export class GutenbergEditorPage {
 		const frame = await this.getEditorFrame();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 		await frame.click( `div[role="dialog"] button:has-text("OK")` );
+		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
+		await frame.waitForSelector( '.components-snackbar__content :text("Post reverted to draft.")' );
 	}
 
 	/**
