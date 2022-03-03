@@ -15,10 +15,8 @@
  * To avoid any confusion, the tests here will only run if the GUTENBERG_EDGE env
  * var is set.
  */
-import { GutenbergEditorPage, TestAccount, envVariables } from '@automattic/calypso-e2e';
+import { GutenbergEditorPage, TestAccount, envVariables, skipItIf } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-
-const test = envVariables.GUTENBERG_EDGE ? it : it.skip;
 
 declare const browser: Browser;
 
@@ -49,7 +47,7 @@ describe.each`
 
 		// Both block invalidation and crash messages are wrapped by the same `Warning`
 		// component in Gutenberg. If we find at least one warning, then we fail the test.
-		test( 'will not have any block warnings', async () => {
+		skipItIf( ! envVariables.GUTENBERG_EDGE )( 'will not have any block warnings', async () => {
 			await gutenbergEditorPage.waitUntilLoaded();
 
 			expect( await gutenbergEditorPage.editorHasBlockWarnings() ).toBe( false );
