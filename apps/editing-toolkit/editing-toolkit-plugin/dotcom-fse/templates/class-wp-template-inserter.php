@@ -431,7 +431,7 @@ class WP_Template_Inserter {
 		register_post_type(
 			'wp_template_part', // phpcs:ignore WordPress.NamingConventions.ValidPostTypeSlug.ReservedPrefix
 			array(
-				'labels'                => array(
+				'labels'          => array(
 					'name'                     => _x( 'Template Parts', 'post type general name', 'full-site-editing' ),
 					'singular_name'            => _x( 'Template Part', 'post type singular name', 'full-site-editing' ),
 					'menu_name'                => _x( 'Template Parts', 'admin menu', 'full-site-editing' ),
@@ -454,16 +454,13 @@ class WP_Template_Inserter {
 					'item_scheduled'           => __( 'Template part scheduled.', 'full-site-editing' ),
 					'item_updated'             => __( 'Template part updated.', 'full-site-editing' ),
 				),
-				'menu_icon'             => 'dashicons-layout',
-				'public'                => false,
-				'show_ui'               => true, // Otherwise we'd get permission error when trying to edit them.
-				'show_in_menu'          => false,
-				'rewrite'               => false,
-				'show_in_rest'          => true, // Otherwise previews won't be generated in full page view.
-				'rest_base'             => 'template_parts',
-				'rest_controller_class' => __NAMESPACE__ . '\REST_Templates_Controller',
-				'capability_type'       => 'template_part',
-				'capabilities'          => array(
+				'menu_icon'       => 'dashicons-layout',
+				'public'          => false,
+				'show_ui'         => true, // Otherwise we'd get permission error when trying to edit them.
+				'show_in_menu'    => false,
+				'rewrite'         => false,
+				'capability_type' => 'template_part',
+				'capabilities'    => array(
 					// You need to be able to edit posts, in order to read templates in their raw form.
 					'read'                   => 'edit_posts',
 					// You need to be able to customize, in order to create templates.
@@ -476,8 +473,8 @@ class WP_Template_Inserter {
 					'delete_others_posts'    => 'edit_theme_options',
 					'publish_posts'          => 'edit_theme_options',
 				),
-				'map_meta_cap'          => true,
-				'supports'              => array(
+				'map_meta_cap'    => true,
+				'supports'        => array(
 					'title',
 					'editor',
 					'revisions',

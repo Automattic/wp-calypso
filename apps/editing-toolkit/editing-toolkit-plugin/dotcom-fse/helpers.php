@@ -24,11 +24,8 @@ function dangerously_load_full_site_editing_files() {
 	require_once __DIR__ . '/blocks/site-title/index.php';
 	require_once __DIR__ . '/blocks/template/index.php';
 	require_once __DIR__ . '/class-full-site-editing.php';
-	require_once __DIR__ . '/templates/class-rest-templates-controller.php';
 	require_once __DIR__ . '/templates/class-wp-template.php';
 	require_once __DIR__ . '/templates/class-wp-template-inserter.php';
-	require_once __DIR__ . '/templates/class-template-image-inserter.php';
-	require_once __DIR__ . '/serialize-block-fallback.php';
 }
 
 /**
@@ -38,23 +35,12 @@ function dangerously_load_full_site_editing_files() {
  * @returns bool True if FSE is active, false otherwise.
  */
 function is_full_site_editing_active() {
-	/**
-	 * There are times when this function is called from the WordPress.com public
-	 * API context. In this case, we need to switch to the correct blog so that
-	 * the functions reference the correct blog context.
-	 */
-	$multisite_id  = apply_filters( 'a8c_fse_get_multisite_id', false );
-	$should_switch = is_multisite() && $multisite_id;
-	if ( $should_switch ) {
-		switch_to_blog( $multisite_id );
+	// We will always return false in admin and REST API contexts as we work towards getting rid of this.
+	if ( defined( 'REST_API_REQUEST' ) && REST_API_REQUEST ) {
+		return false;
 	}
 
-	$is_active = is_site_eligible_for_full_site_editing() && is_theme_supported() && did_insert_template_parts();
-
-	if ( $should_switch ) {
-		restore_current_blog();
-	}
-	return $is_active;
+	return is_site_eligible_for_full_site_editing() && is_theme_supported() && did_insert_template_parts();
 }
 
 /**
@@ -196,8 +182,6 @@ function populate_wp_template_data() {
 	if ( ! is_theme_supported() ) {
 		return;
 	}
-
-	require_once __DIR__ . '/templates/class-template-image-inserter.php';
 	require_once __DIR__ . '/templates/class-wp-template-inserter.php';
 
 	$theme_slug = normalize_theme_slug( get_theme_slug() );
