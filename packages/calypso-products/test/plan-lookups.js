@@ -59,6 +59,7 @@ import {
 	getPlan,
 	getPlans,
 	getPlanClass,
+	isManagedPlan,
 	isBusinessPlan,
 	isPersonalPlan,
 	isPremiumPlan,
@@ -175,6 +176,22 @@ describe( 'isBusinessPlan', () => {
 		expect( isBusinessPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
 		expect( isBusinessPlan( PLAN_ECOMMERCE ) ).to.equal( false );
 		expect( isBusinessPlan( 'non-existing plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isManagedPlan', () => {
+	test( 'should return true for the Managed plan', () => {
+		expect( isManagedPlan( PLAN_WPCOM_MANAGED ) ).to.equal( true );
+	} );
+	test( 'should return false for non-managed plans', () => {
+		expect( isManagedPlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isManagedPlan( PLAN_PERSONAL_2_YEARS ) ).to.equal( false );
+		expect( isManagedPlan( PLAN_JETPACK_PERSONAL ) ).to.equal( false );
+		expect( isManagedPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( false );
+		expect( isManagedPlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isManagedPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isManagedPlan( PLAN_ECOMMERCE ) ).to.equal( false );
+		expect( isManagedPlan( 'non-existing plan' ) ).to.equal( false );
 	} );
 } );
 
