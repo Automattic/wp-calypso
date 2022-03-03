@@ -3,8 +3,8 @@ import envVariables from '../../env-variables';
 
 const panel = 'div.wpcom-block-editor-nav-sidebar-nav-sidebar__container';
 const selectors = {
-	sidebarButton: `button.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button`,
-	exitLink: `${ panel } a.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button`,
+	sidebarButton: `button[aria-label="Block editor sidebar"]`,
+	exitLink: `${ panel } a[aria-description="Returns to the dashboard"]`,
 };
 
 /**

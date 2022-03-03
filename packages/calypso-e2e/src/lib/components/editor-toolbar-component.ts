@@ -5,16 +5,17 @@ export type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 const panel = 'div.interface-interface-skeleton__header';
 const selectors = {
 	// Block Inserter
-	blockInserterButton: `${ panel } button.edit-post-header-toolbar__inserter-toggle`,
+	blockInserterButton: `${ panel } button[aria-label="Toggle block inserter"]`,
 
 	// Draft
-	saveDraftButton: `${ panel } button.editor-post-save-draft[aria-disabled="false"]`,
-	saveDraftDisabledButton: `${ panel } button.editor-post-saved-state.is-saved[aria-disabled="true"]`,
+	saveDraftButton: ( state: 'disabled' | 'enabled' ) => {
+		const buttonState = state === 'disabled' ? 'true' : 'false';
+		return `${ panel } button[aria-label="Save draft"][aria-disabled="${ buttonState }"]`;
+	},
 	switchToDraftButton: `${ panel } button.editor-post-switch-to-draft`,
 
 	// Preview
-	mobilePreviewButton: `${ panel } a.editor-post-preview`,
-	desktopPreviewButton: `${ panel } button.block-editor-post-preview__button-toggle`,
+	previewButton: `${ panel } :text("Preview"):visible`,
 	desktopPreviewMenuItem: ( target: PreviewOptions ) =>
 		`button[role="menuitem"] span:text("${ target }")`,
 	previewPane: ( target: PreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,
@@ -23,7 +24,7 @@ const selectors = {
 	publishButton: `${ panel } button.editor-post-publish-button__button[aria-disabled="false"]`,
 
 	// Editor settings
-	settingsButton: `${ panel } .interface-pinned-items > button:first-child`,
+	settingsButton: `${ panel } button[aria-label="Settings"]`,
 };
 
 /**
@@ -94,7 +95,7 @@ export class EditorToolbarComponent {
 	 * If the button cannot be clicked, the method short-circuits.
 	 */
 	async saveDraft(): Promise< void > {
-		const saveButtonLocator = this.frameLocator.locator( selectors.saveDraftButton );
+		const saveButtonLocator = this.frameLocator.locator( selectors.saveDraftButton( 'enabled' ) );
 
 		try {
 			await saveButtonLocator.waitFor( { timeout: 5 * 1000 } );
@@ -105,7 +106,7 @@ export class EditorToolbarComponent {
 		await saveButtonLocator.click();
 
 		// Ensure the Save Draft button is disabled after successful save.
-		const savedButtonLocator = this.frameLocator.locator( selectors.saveDraftDisabledButton );
+		const savedButtonLocator = this.frameLocator.locator( selectors.saveDraftButton( 'disabled' ) );
 		await savedButtonLocator.waitFor();
 	}
 
@@ -117,7 +118,7 @@ export class EditorToolbarComponent {
 	 * @returns {Page} Handler for the new page object.
 	 */
 	async openMobilePreview(): Promise< Page > {
-		const mobilePreviewButtonLocator = this.frameLocator.locator( selectors.mobilePreviewButton );
+		const mobilePreviewButtonLocator = this.frameLocator.locator( selectors.previewButton );
 
 		const [ popup ] = await Promise.all( [
 			this.page.waitForEvent( 'popup' ),
@@ -154,10 +155,8 @@ export class EditorToolbarComponent {
 	 * Opens the Preview menu for Desktop viewport.
 	 */
 	async openDesktopPreviewMenu(): Promise< void > {
-		if ( ! ( await this.targetIsOpen( selectors.desktopPreviewButton ) ) ) {
-			const desktopPreviewButtonLocator = this.frameLocator.locator(
-				selectors.desktopPreviewButton
-			);
+		if ( ! ( await this.targetIsOpen( selectors.previewButton ) ) ) {
+			const desktopPreviewButtonLocator = this.frameLocator.locator( selectors.previewButton );
 			await desktopPreviewButtonLocator.click();
 		}
 	}
@@ -166,10 +165,8 @@ export class EditorToolbarComponent {
 	 * Closes the Preview menu for the Desktop viewport.
 	 */
 	async closeDesktopPreviewMenu(): Promise< void > {
-		if ( await this.targetIsOpen( selectors.desktopPreviewButton ) ) {
-			const desktopPreviewButtonLocator = this.frameLocator.locator(
-				selectors.desktopPreviewButton
-			);
+		if ( await this.targetIsOpen( selectors.previewButton ) ) {
+			const desktopPreviewButtonLocator = this.frameLocator.locator( selectors.previewButton );
 			await desktopPreviewButtonLocator.click();
 		}
 	}
