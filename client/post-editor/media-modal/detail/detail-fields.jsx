@@ -4,6 +4,7 @@ import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -16,6 +17,8 @@ import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EditorMediaModalFieldset from '../fieldset';
 
 const noop = () => {};
@@ -346,11 +349,23 @@ class EditorMediaModalDetailFields extends Component {
 				{ this.renderShareEmbed() }
 				{ this.renderAllowDownloadOption() }
 				{ this.renderRating() }
-				{ this.renderPrivacySetting() }
+				{ this.props.hasVideoPrivacyFeature && this.renderPrivacySetting() }
 				{ this.renderVideoPressShortcode() }
 			</div>
 		);
 	}
 }
 
-export default localize( withUpdateMedia( EditorMediaModalDetailFields ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const hasVideoPrivacyFeature = hasActiveSiteFeature(
+		state,
+		siteId,
+		'videopress-privacy-setting'
+	);
+
+	return {
+		siteId,
+		hasVideoPrivacyFeature,
+	};
+} )( localize( withUpdateMedia( EditorMediaModalDetailFields ) ) );
