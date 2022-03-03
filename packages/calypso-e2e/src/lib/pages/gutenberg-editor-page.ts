@@ -426,13 +426,10 @@ export class GutenbergEditorPage {
 	async unpublish(): Promise< void > {
 		const frame = await this.getEditorFrame();
 
-		// Add handler to handle dialog that must be accepted for the post
-		// to be unpublished.
-		this.page.once( 'dialog', async ( dialog ) => {
-			await dialog.accept();
-		} );
-
 		await frame.click( selectors.switchToDraftButton );
+
+		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
+		await frame.click( `div[role="dialog"] button:has-text("OK")` );
 		// Similar to Save Draft, the publish button temporarily becomes disabled
 		// while the unpublish process takes place. This waits for the publish button
 		// to again become enabled.
