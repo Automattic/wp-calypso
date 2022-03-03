@@ -56,6 +56,10 @@ const REALTIME_BACKUP_PRODUCTS = [
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 ];
 
+const ANTI_SPAM_FEATURES = [ FEATURE_JETPACK_ANTI_SPAM, FEATURE_JETPACK_ANTI_SPAM_MONTHLY ];
+
+const ANTI_SPAM_PRODUCTS = [ PRODUCT_JETPACK_ANTI_SPAM, PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ];
+
 /**
  * Check is a Jetpack plan is including a daily backup feature.
  *
@@ -82,6 +86,22 @@ export const planHasDailyBackup = ( planSlug: string, orSuperior = false ): bool
 export const planHasRealTimeBackup = ( planSlug: string, orSuperior = false ): boolean => {
 	const hasFeature = planHasAtLeastOneFeature( planSlug, REALTIME_BACKUP_FEATURES );
 	const hasSuperiorFeature = REALTIME_BACKUP_FEATURES.some( ( feature ) =>
+		planHasSuperiorFeature( planSlug, feature )
+	);
+
+	return orSuperior ? hasFeature || hasSuperiorFeature : hasFeature;
+};
+
+/**
+ * Check is a Jetpack plan is including an anti-spam feature.
+ *
+ * @param {string} planSlug The plan slug.
+ * @param {boolean} orSuperior When true, also checks plan for superior features.
+ * @returns {boolean} True if the plan includes an anti-spam feature.
+ */
+export const planHasAntiSpam = ( planSlug: string, orSuperior = false ): boolean => {
+	const hasFeature = planHasAtLeastOneFeature( planSlug, ANTI_SPAM_FEATURES );
+	const hasSuperiorFeature = ANTI_SPAM_FEATURES.some( ( feature ) =>
 		planHasSuperiorFeature( planSlug, feature )
 	);
 
@@ -172,12 +192,6 @@ export const isBackupProductIncludedInSitePlan = createSelector(
 	]
 );
 
-export const planHasAntiSpam = ( planSlug: string ): boolean => {
-	const ANTI_SPAM_FEATURES = [ FEATURE_JETPACK_ANTI_SPAM, FEATURE_JETPACK_ANTI_SPAM_MONTHLY ];
-
-	return planHasAtLeastOneFeature( planSlug, ANTI_SPAM_FEATURES );
-};
-
 export const isPlanIncludingSiteAntiSpam = createSelector(
 	( state: AppState, siteId: number | null, planSlug: string ): boolean | null => {
 		if ( ! siteId || ! ( JETPACK_PLANS as ReadonlyArray< string > ).includes( planSlug ) ) {
@@ -213,10 +227,8 @@ export const isAntiSpamProductIncludedInSitePlan = createSelector(
 			return null;
 		}
 
-		const ANTI_SPAM_PRODUCTS = [ PRODUCT_JETPACK_ANTI_SPAM, PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ];
-
 		if ( ANTI_SPAM_PRODUCTS.includes( productSlug ) ) {
-			return planHasAntiSpam( sitePlanSlug );
+			return planHasAntiSpam( sitePlanSlug, true );
 		}
 
 		return null;
