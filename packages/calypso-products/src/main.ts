@@ -4,7 +4,9 @@ import {
 	TERM_BIENNIALLY,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
+	TYPE_MANAGED,
 	TYPE_FREE,
+	TYPE_FLEXIBLE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -24,6 +26,7 @@ import {
 	isBusiness,
 	isEnterprise,
 	isEcommerce,
+	isManaged,
 	isVipPlan,
 	getProductFromSlug,
 } from '.';
@@ -74,6 +77,10 @@ export function getPlanClass( planKey: string ): string {
 		return 'is-free-plan';
 	}
 
+	if ( isFlexiblePlan( planKey ) ) {
+		return 'is-flexible-plan';
+	}
+
 	if ( isBloggerPlan( planKey ) ) {
 		return 'is-blogger-plan';
 	}
@@ -92,6 +99,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isEcommercePlan( planKey ) ) {
 		return 'is-ecommerce-plan';
+	}
+
+	if ( isManagedPlan( planKey ) ) {
+		return 'is-managed-plan';
 	}
 
 	if ( isSecurityDailyPlan( planKey ) ) {
@@ -230,6 +241,10 @@ export function isEcommercePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_ECOMMERCE } );
 }
 
+export function isManagedPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_MANAGED } );
+}
+
 export function isBusinessPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_BUSINESS } );
 }
@@ -248,6 +263,10 @@ export function isBloggerPlan( planSlug: string ): boolean {
 
 export function isFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE } );
+}
+
+export function isFlexiblePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_FLEXIBLE } );
 }
 
 export function isSecurityDailyPlan( planSlug: string ): boolean {
@@ -272,6 +291,10 @@ export function isWpComBusinessPlan( planSlug: string ): boolean {
 
 export function isWpComEcommercePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_ECOMMERCE, group: GROUP_WPCOM } );
+}
+
+export function isWpComManagedPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_MANAGED, group: GROUP_WPCOM } );
 }
 
 export function isWpComPremiumPlan( planSlug: string ): boolean {
@@ -609,6 +632,8 @@ export const chooseDefaultCustomerType = ( {
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_MANAGED } )[ 0 ],
+		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_MANAGED } )[ 0 ],
 	]
 		.map( ( planKey ) => getPlan( planKey ) )
 		.filter( isValueTruthy )
@@ -644,6 +669,7 @@ export function planHasJetpackClassicSearch(
 			isBusiness( plan ) ||
 			isEnterprise( plan ) ||
 			isEcommerce( plan ) ||
+			isManaged( plan ) ||
 			isVipPlan( plan ) )
 	);
 }
