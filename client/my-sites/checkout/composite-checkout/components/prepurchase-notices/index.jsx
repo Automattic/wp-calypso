@@ -1,10 +1,10 @@
 import {
 	getProductFromSlug,
+	isJetpackAntiSpam,
 	isJetpackAntiSpamSlug,
 	isJetpackBackup,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
-	PRODUCT_JETPACK_ANTI_SPAM,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useEffect } from 'react';
@@ -127,10 +127,11 @@ const PrePurchaseNotices = () => {
 		);
 	}
 
-	if ( cartPlanOverlapsSiteAntiSpamPurchase ) {
+	const siteAntiSpamProduct = currentSiteProducts.find( isJetpackAntiSpam );
+	if ( cartPlanOverlapsSiteAntiSpamPurchase && siteAntiSpamProduct ) {
 		return (
 			<CartPlanOverlapsOwnedProductNotice
-				product={ getProductFromSlug( PRODUCT_JETPACK_ANTI_SPAM ) }
+				product={ siteAntiSpamProduct }
 				selectedSite={ selectedSite }
 			/>
 		);
