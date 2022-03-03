@@ -257,21 +257,11 @@ export class GutenbergEditorPage {
 	 * 	- Editor Navigation Sidebar
 	 */
 	async closeAllPanels(): Promise< void > {
-		try {
-			await this.editorPublishPanelComponent.closePanel();
-		} catch {
-			// noop
-		}
-		try {
-			await this.editorNavSidebarComponent.closeSidebar();
-		} catch {
-			// noop
-		}
-		try {
-			await this.editorToolbarComponent.closeSettings();
-		} catch {
-			// noop
-		}
+		await Promise.allSettled( [
+			this.editorPublishPanelComponent.closePanel(),
+			this.editorNavSidebarComponent.closeSidebar(),
+			this.editorToolbarComponent.closeSettings(),
+		] );
 	}
 
 	/**
@@ -416,6 +406,10 @@ export class GutenbergEditorPage {
 	 */
 	async unpublish(): Promise< void > {
 		await this.editorToolbarComponent.switchToDraft();
+
+		const frame = await this.getEditorFrame();
+		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
+		await frame.click( `div[role="dialog"] button:has-text("OK")` );
 	}
 
 	/**

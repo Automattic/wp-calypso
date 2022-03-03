@@ -191,16 +191,8 @@ export class EditorToolbarComponent {
 	 * the article.
 	 */
 	async switchToDraft(): Promise< void > {
-		this.page.once( 'dialog', async ( dialog ) => {
-			await dialog.accept();
-		} );
-
 		const swithcToDraftLocator = this.frameLocator.locator( selectors.switchToDraftButton );
 		await swithcToDraftLocator.click();
-
-		// Publish button will become enabled upon completion.
-		const publishButtonLocator = this.frameLocator.locator( selectors.publishButton );
-		await publishButtonLocator.waitFor();
 	}
 
 	/* Editor Settings sidebar */
