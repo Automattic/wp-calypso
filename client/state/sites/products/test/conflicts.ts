@@ -74,7 +74,7 @@ describe( 'conflicts', () => {
 		} );
 	} );
 
-	test( 'Plans and products that have real-time backups return true for plansWithAntiSpam', () => {
+	test( 'Plans and products that have anti-spam return true for plansWithAntiSpam', () => {
 		plansWithAntiSpam.forEach( ( plan ) => {
 			expect( planHasAntiSpam( plan ) ).toBe( true );
 		} );
