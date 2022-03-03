@@ -19,8 +19,8 @@ export function currentPlan( context, next ) {
 	}
 
 	if (
-		eligibleForManagedPlan &&
-		( isFreePlanProduct( selectedSite.plan ) || isFlexiblePlanProduct( selectedSite.plan ) )
+		isFreePlanProduct( selectedSite.plan ) ||
+		( eligibleForManagedPlan && isFlexiblePlanProduct( selectedSite.plan ) )
 	) {
 		page.redirect( `/plans/${ selectedSite.slug }` );
 
