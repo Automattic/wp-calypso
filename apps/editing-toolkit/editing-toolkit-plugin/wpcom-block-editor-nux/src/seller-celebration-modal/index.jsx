@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import useHasSeenSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-has-seen-seller-celebration-modal';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import NuxModal from '../nux-modal';
-import contentSubmittedImage from './images/post-published.svg';
+import contentSubmittedImage from './images/product-published.svg';
 import './style.scss';
 
 /**
@@ -40,7 +40,7 @@ const SellerCelebrationModal = () => {
 	const [ hasDisplayedModal, setHasDisplayedModal ] = useState( false );
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
 	const previousIsEditorSaving = useRef( false );
-	const { isEditorSaving, hasPaymentsBlock } = useSelect( ( select ) => {
+	const { isEditorSaving, hasPaymentsBlock, linkUrl } = useSelect( ( select ) => {
 		if ( isSiteEditor ) {
 			const isSavingSite = select( 'core' ).isSavingEntityRecord( 'root', 'site' );
 			const page = select( 'core/edit-site' ).getPage();
@@ -51,6 +51,7 @@ const SellerCelebrationModal = () => {
 			return {
 				isEditorSaving: isSavingSite || isSavingEntity,
 				hasPaymentsBlock: rawContent.includes( '<!-- wp:jetpack/recurring-payments -->' ),
+				linkUrl: pageEntity.link,
 			};
 		}
 		const currentPost = select( 'core/editor' ).getCurrentPost();
@@ -65,6 +66,7 @@ const SellerCelebrationModal = () => {
 		return {
 			isEditorSaving: isSavingEntity,
 			hasPaymentsBlock: globalBlockCount > 0,
+			linkUrl: currentPost.link,
 		};
 	} );
 	const intent = useSiteIntent();
@@ -105,16 +107,19 @@ const SellerCelebrationModal = () => {
 		<NuxModal
 			isOpen={ isModalOpen }
 			className="wpcom-site-editor-seller-celebration-modal"
-			title={ __( 'Your product is live!', 'full-site-editing' ) }
+			title={ __( "You've added your first product!", 'full-site-editing' ) }
 			description={ __(
-				'People can now buy your product online. Start sharing your product with friends and family.',
+				'Preview your product on your site before launching and sharing with others.',
 				'full-site-editing'
 			) }
 			imageSrc={ contentSubmittedImage }
 			actionButtons={
-				<Button isPrimary href={ '' }>
-					{ __( 'View Post', 'full-site-editing' ) }
-				</Button>
+				<>
+					<Button onClick={ closeModal }>{ __( 'Continue Editing', 'full-site-editing' ) }</Button>
+					<Button isPrimary href={ linkUrl } target="__blank" rel="noopener noreferrer">
+						{ __( 'View Post', 'full-site-editing' ) }
+					</Button>
+				</>
 			}
 			onRequestClose={ closeModal }
 			onOpen={ () => recordTracksEvent( 'calypso_editor_wpcom_seller_celebration_modal_show' ) }

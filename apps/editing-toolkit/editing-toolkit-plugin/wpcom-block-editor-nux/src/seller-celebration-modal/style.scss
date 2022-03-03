@@ -18,6 +18,10 @@
 	.wpcom-block-editor-nux-modal__buttons {
 		.components-button {
 			min-width: 113px;
+			&:not( .is-primary ) {
+				border: 1px solid #c3c4c7;
+				border-radius: 4px;
+			}
 		}
 	}
 }
