@@ -119,7 +119,7 @@ function getDestinationFromIntent( dependencies ) {
 		return `/post/${ siteSlug }`;
 	}
 
-	if ( intent === 'sell' && storeType === 'woocommerce' ) {
+	if ( intent === 'sell' && storeType === 'power' ) {
 		return addQueryArgs(
 			{
 				back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
