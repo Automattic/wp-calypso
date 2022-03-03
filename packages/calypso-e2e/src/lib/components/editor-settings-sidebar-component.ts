@@ -1,10 +1,15 @@
-import { Frame, Page } from 'playwright';
+import { FrameLocator, Page } from 'playwright';
 
 export type EditorSidebarTab = 'Post' | 'Block' | 'Page';
-export type EditorSidebarSection = 'Categories' | 'Tags' | 'Status & Visibility' | 'Permalink';
+export type ArticleSections =
+	| 'Status & Visibility'
+	| 'Revisions'
+	| 'Permalink'
+	| 'Categories'
+	| 'Tags';
 export type PrivacyOptions = 'Public' | 'Private' | 'Password';
 
-interface Schedule {
+export interface Schedule {
 	year: number;
 	month: number;
 	date: number;
@@ -13,25 +18,23 @@ interface Schedule {
 	meridian: 'am' | 'pm';
 }
 
-const sidebarParentSelector = '[aria-label="Editor settings"]';
+const panel = '[aria-label="Editor settings"]';
 
 const selectors = {
-	// Tab
-	tabButton: ( tabName: EditorSidebarTab ) =>
-		`${ sidebarParentSelector } button:has-text("${ tabName }")`,
-	activeTabButton: ( tabName: EditorSidebarTab ) =>
-		`${ sidebarParentSelector } button.is-active:has-text("${ tabName }")`,
+	// Close button for mobile
+	mobileCloseSidebarButton: `${ panel } [aria-label="Close settings"]:visible`, // there's a hidden copy in there
 
-	// Sections
-	sectionToggle: ( sectionName: EditorSidebarSection ) =>
-		`${ sidebarParentSelector } .components-panel__body-toggle:has-text("${ sectionName }")`,
-	expandedSection: ( sectionName: EditorSidebarSection ) =>
-		`${ sidebarParentSelector } .is-opened .components-panel__body-toggle:has-text("${ sectionName }")`,
-	revisionsToggle: `${ sidebarParentSelector } .components-panel__body:has-text("Revisions")`,
-	lastSection: `${ sidebarParentSelector } .components-panel__body >> nth=-1`,
+	// Tab
+	tabButton: ( tabName: EditorSidebarTab ) => `${ panel } button:has-text("${ tabName }")`,
+	activeTabButton: ( tabName: EditorSidebarTab ) =>
+		`${ panel } button.is-active:has-text("${ tabName }")`,
+
+	// General section-related
+	section: ( name: ArticleSections ) => `${ panel } button:has-text("${ name }")`,
+	sectionHeader: `${ panel } .components-panel__body`,
 
 	// Status & Visibility
-	visibilityToggle: '.edit-post-post-visibility__toggle',
+	visibilityButton: '.edit-post-post-visibility__toggle',
 	visibilityPopover: 'fieldset.editor-post-visibility__dialog-fieldset',
 	visibilityOption: ( option: PrivacyOptions ) => `input[value="${ option.toLowerCase() }"]`,
 	postPasswordInput: '.editor-post-visibility__dialog-password-input',
@@ -41,38 +44,48 @@ const selectors = {
 	scheduleInput: ( attribute: string ) => `input[name="${ attribute }"]`,
 	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) =>
 		`button.components-datetime__time-${ meridian }-button`,
-	scheduleResetButton: 'button.components-datetime__date-reset-button',
+	scheduleMonthSelect: `select[name="month"]`,
+
+	// Permalink
+	permalinkInput: '.components-base-control__field:has-text("URL Slug") input',
+	permalinkGeneratedURL: 'a.edit-post-post-link__link',
 
 	// Category
 	categoryCheckbox: ( categoryName: string ) =>
-		`${ sidebarParentSelector } [aria-label=Categories] :text("${ categoryName }")`,
-	tagInput: `${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") input`,
+		`${ panel } [aria-label=Categories] :text("${ categoryName }")`,
 
 	// Tag
-	addedTag: ( tagName: string ) =>
-		`${ sidebarParentSelector } .components-form-token-field:has-text("Add New Tag") .components-form-token-field__token:has-text("${ tagName }")`,
-	closeSidebarButton: `${ sidebarParentSelector } [aria-label="Close settings"]:visible`, // there's a hidden copy in there
-
-	// URL Slug
-	urlSlugInput: '.components-base-control__field:has-text("URL Slug") input',
+	tagInput: `${ panel } .components-form-token-field:has-text("Add New Tag") input`,
+	// addedTag: ( tagName: string ) =>
+	// `${ panel } .components-form-token-field:has-text("Add New Tag") .components-form-token-field__token:has-text("${ tagName }")`,
+	addedTag: ( tag: string ) =>
+		`${ panel } .components-form-token-field__token-text:has-text("${ tag }")`,
 };
 
 /**
  * Component representing the settings sidebar in the editor.
  */
 export class EditorSettingsSidebarComponent {
-	private frame: Frame;
 	private page: Page;
+	private frameLocator: FrameLocator;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
-	 * @param {Frame} frame The editor iframe to use as the page for Playwright actions.
-	 * @param page The underlying Playwright page
+	 * @param {Page} page The underlying Playwright page.
+	 * @param {FrameLocator} frameLocator Locator of the editor iframe.
 	 */
-	constructor( frame: Frame, page: Page ) {
-		this.frame = frame;
+	constructor( page: Page, frameLocator: FrameLocator ) {
 		this.page = page;
+		this.frameLocator = frameLocator;
+	}
+
+	/**
+	 *
+	 */
+	async closeSidebarForMobile(): Promise< void > {
+		const locator = this.frameLocator.locator( selectors.mobileCloseSidebarButton );
+		await locator.click();
 	}
 
 	/**
@@ -82,25 +95,100 @@ export class EditorSettingsSidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( tabName: EditorSidebarTab ): Promise< void > {
-		await this.frame.click( selectors.tabButton( tabName ) );
-		await this.frame.waitForSelector( selectors.activeTabButton( tabName ) );
-	}
+		const locator = this.frameLocator.locator( selectors.tabButton( tabName ) );
+		await locator.click();
 
-	/**
-	 * If the provided sidebar section is collapsed, toggles it to be expanded.
-	 *
-	 * @param {EditorSidebarSection} sectionName Name of section.
-	 * @returns {Promise<void>} No return value.
-	 */
-	async expandSection( sectionName: EditorSidebarSection ): Promise< void > {
-		// Avoid the wpcalypso/staging banner
-		await this.scrollToBottomOfSidebar();
-		if ( ! ( await this.frame.isVisible( selectors.expandedSection( sectionName ) ) ) ) {
-			await this.frame.click( selectors.sectionToggle( sectionName ) );
+		const classAttributes = await locator.getAttribute( 'class' );
+		if ( ! classAttributes?.includes( 'is-active' ) ) {
+			throw new Error( `Failed to verify ${ tabName } is active.` );
 		}
 	}
 
-	/* Status & Visibility */
+	/**
+	 * Expands a collapsed section of the sidebar.
+	 *
+	 * If the section is already open, this method will pass.
+	 *
+	 * @param {ArticleSections} name Name of section to be expanded.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async expandSection( name: ArticleSections ): Promise< void > {
+		const sectionLocator = this.frameLocator.locator( selectors.section( name ) );
+		const expanded = await sectionLocator.getAttribute( 'aria-expanded' );
+		if ( expanded === 'true' ) {
+			return;
+		}
+
+		// Avoid the wpcalypso/staging banner.
+		await this.scrollToBottomOfSidebar();
+
+		await sectionLocator.click();
+		const expandedCheck = await sectionLocator.getAttribute( 'aria-expanded' );
+		if ( expandedCheck !== 'true' ) {
+			throw new Error( `Failed to expand requested Editor Sidebar section ${ name }` );
+		}
+	}
+
+	/**
+	 * Given a selector, determines whether the target button/toggle is
+	 * in an expanded state.
+	 *
+	 * If the toggle is in the on state or otherwise in an expanded
+	 * state, this method will return true. Otherwise, false.
+	 *
+	 * @param {string} selector Target selector.
+	 * @returns {Promise<boolean>} True if target is in an expanded state. False otherwise.
+	 */
+	private async targetIsOpen( selector: string ): Promise< boolean > {
+		const locator = this.frameLocator.locator( selector );
+		const state = await locator.getAttribute( 'aria-expanded' );
+
+		return state === 'true';
+	}
+
+	/* Post Privacy/Visibility */
+
+	/**
+	 * Opens the Post Visibility popover.
+	 *
+	 * If the popover is already toggled open, this method will pass.
+	 *
+	 * @throws {Error} If popover failed to open.
+	 */
+	async openVisibilityOptions(): Promise< void > {
+		if ( await this.targetIsOpen( selectors.visibilityButton ) ) {
+			return;
+		}
+
+		const buttonLocator = this.frameLocator.locator( selectors.visibilityButton );
+		await buttonLocator.click();
+
+		const newState = await buttonLocator.getAttribute( 'aria-expanded' );
+		if ( newState !== 'true' ) {
+			throw new Error( 'Failed to open Post Visibility popover.' );
+		}
+	}
+
+	/**
+	 * Closes the Post Visibility popover.
+	 *
+	 * If the popover is already closed, this method will pass.
+	 *
+	 * @throws {Error} If popover failed to be closed.
+	 */
+	async closeVisibilityOptions(): Promise< void > {
+		if ( ! ( await this.targetIsOpen( selectors.visibilityButton ) ) ) {
+			return;
+		}
+
+		const buttonLocator = this.frameLocator.locator( selectors.visibilityButton );
+		await buttonLocator.click();
+
+		const newState = await buttonLocator.getAttribute( 'aria-expanded' );
+		if ( newState !== 'false' ) {
+			throw new Error( 'Failed to close Post Visibility popover.' );
+		}
+	}
 
 	/**
 	 * Sets the post visibility to the provided visibility setting.
@@ -110,21 +198,21 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} param1.password Password for the post. Normally an optinal value, this
 	 * 	must be set if the `visibility` parameter is set to `Password`.
 	 */
-	async setVisibility(
+	async selectVisibility(
 		visibility: PrivacyOptions,
 		{ password }: { password?: string } = {}
 	): Promise< void > {
-		await this.expandSection( 'Status & Visibility' );
-		await this.frame.click( selectors.visibilityToggle );
-		// Important to wait for the popover element to finish its animation, as the radio buttons
-		// will not be actionable until then.
-		const popoverHandle = await this.frame.waitForSelector( selectors.visibilityPopover );
-		await popoverHandle.waitForElementState( 'stable' );
-		await this.frame.click( selectors.visibilityOption( visibility ) );
+		const optionLocator = this.frameLocator.locator( selectors.visibilityOption( visibility ) );
+		await optionLocator.click();
 
 		if ( visibility === 'Private' ) {
+			// Private articles are posted immediately and thus we must break the
+			// single responsibility principle for this case.
 			// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-			await this.frame.click( `div[role="dialog"] button:has-text("OK")` );
+			const dialogConfirmLocator = this.frameLocator.locator(
+				`div[role="dialog"] button:has-text("OK")`
+			);
+			await dialogConfirmLocator.click();
 		}
 
 		// For Password-protected posts, the password field needs to be filled.
@@ -134,9 +222,6 @@ export class EditorSettingsSidebarComponent {
 			}
 			await this.setPostPassword( password );
 		}
-
-		// Close the visibility sub-panel.
-		await this.frame.click( selectors.visibilityToggle );
 	}
 
 	/**
@@ -144,37 +229,40 @@ export class EditorSettingsSidebarComponent {
 	 *
 	 * @param {string} password Password to be used.
 	 */
-	async setPostPassword( password: string ): Promise< void > {
-		await this.frame.fill( selectors.postPasswordInput, password );
+	private async setPostPassword( password: string ): Promise< void > {
+		const inputLocator = this.frameLocator.locator( selectors.postPasswordInput );
+		await inputLocator.fill( password );
 	}
 
+	/* Schedule */
+
 	/**
-	 * Opens the scheduler if required.
+	 * Opens the Schedule picker.
 	 */
 	async openSchedule(): Promise< void > {
-		const expanded = await this.frame.getAttribute( selectors.scheduleButton, 'aria-expanded' );
-		if ( expanded !== 'true' ) {
-			await this.frame.click( selectors.scheduleButton );
+		if ( await this.targetIsOpen( selectors.scheduleButton ) ) {
+			return;
 		}
-		await this.frame.waitForSelector( `${ selectors.scheduleButton }[aria-expanded="true"]` );
+
+		const buttonLocator = this.frameLocator.locator( selectors.scheduleButton );
+		await buttonLocator.click();
 	}
 
 	/**
-	 * Closes the scheduler if required.
-	 *
-	 * Under certain circumstances, the scheduler is auto-dismissed at the end
-	 * of interaction and thus the closure is not required.
-	 *
-	 * For instance, if the current time is in the 'am' and the article is
-	 * scheduled for 'pm', the act of clicking on the 'pm' button dismisses the
-	 * scheduler.
+	 * Closes the Schedule picker.
 	 */
 	async closeSchedule(): Promise< void > {
-		const expanded = await this.frame.getAttribute( selectors.scheduleButton, 'aria-expanded' );
-		if ( expanded !== 'false' ) {
-			await this.frame.click( selectors.scheduleButton );
+		// Under certain circumstances, the scheduler is auto-dismissed at the end
+		// of interaction and thus the closure is not required.
+		// For instance, if the current time is in the 'am' and the article is
+		// scheduled for 'pm', the act of clicking on the 'pm' button dismisses the
+		// scheduler.
+		if ( ! ( await this.targetIsOpen( selectors.scheduleButton ) ) ) {
+			return;
 		}
-		await this.frame.waitForSelector( `${ selectors.scheduleButton }[aria-expanded="false"]` );
+
+		const buttonLocator = this.frameLocator.locator( selectors.scheduleButton );
+		await buttonLocator.click();
 	}
 
 	/**
@@ -182,67 +270,69 @@ export class EditorSettingsSidebarComponent {
 	 *
 	 * @param {Schedule} date Date of the article to be scheduled.
 	 */
-	async schedule( date: Schedule ): Promise< void > {
+	async setScheduleDetails( date: Schedule ): Promise< void > {
 		let key: keyof Schedule;
 
 		for ( key in date ) {
 			if ( key === 'meridian' ) {
 				// am/pm is a button.
-				await this.frame.click( selectors.scheduleMeridianButton( date[ key ] ) );
+				const meridianButtonLocator = this.frameLocator.locator(
+					selectors.scheduleMeridianButton( date[ key ] )
+				);
+				await meridianButtonLocator.click();
 				continue;
 			}
 			if ( key === 'month' ) {
 				// For month numbers less than 10, pad the digit to be
 				// 2 digits as required by the select.
-				await this.frame.selectOption(
-					'select[name="month"]',
-					date[ key ].toString().padStart( 2, '0' )
-				);
+				const monthSelectLocator = this.frameLocator.locator( selectors.scheduleMonthSelect );
+				await monthSelectLocator.selectOption( date[ key ].toString().padStart( 2, '0' ) );
 				continue;
 			}
 
 			// Regular input fields.
-			const targetSelector = selectors.scheduleInput( key );
-			await this.frame.fill( targetSelector, date[ key ].toString() );
+			const inputLocator = this.frameLocator.locator( selectors.scheduleInput( key ) );
+			await inputLocator.fill( date[ key ].toString() );
 		}
 	}
 
-	/**
-	 * Resets previously set schedule.
-	 */
-	async resetSchedule(): Promise< void > {
-		await this.frame.click( selectors.scheduleResetButton );
-	}
+	/* Revisions */
 
 	/**
 	 * Clicks on the Revisions section in the sidebar to show a revisions modal.
 	 */
 	async showRevisions(): Promise< void > {
-		await this.frame.click( selectors.revisionsToggle );
+		const locator = this.frameLocator.locator( selectors.section( 'Revisions' ) );
+		await Promise.all( [ this.page.waitForResponse( /.*diffs\?.*/ ), locator.click() ] );
 	}
 
 	/**
-	 * Check a category checkbox for a post in the sidebar.
+	 * Check a category checkbox for an article.
 	 *
-	 * @param {string} categoryName The category name.
-	 * @returns {Promise<void>} No return value.
+	 * @param {string} name Category name.
 	 */
-	async clickCategory( categoryName: string ): Promise< void > {
+	async checkCategory( name: string ): Promise< void > {
 		//TODO: Categories can be slow because we never do any cleanup. Remove extended timeout once we start doing cleanup.
-		await this.frame.click( selectors.categoryCheckbox( categoryName ), { timeout: 60 * 1000 } );
+		const locator = this.frameLocator.locator( selectors.categoryCheckbox( name ) );
+		await locator.check( { timeout: 60 * 1000 } );
 	}
 
 	/**
-	 * Enters a tag in the tag field, presses enter to submit it, and validates it shows up in field.
-	 * Does no partial matching, if a tag doesn't exist with the provided name, a new one is added.
+	 * Enters a tag in the tag field, presses enter to submit it
+	 * and validates it shows up in field.
 	 *
-	 * @param {string} tagName Tag name to enter.
-	 * @returns {Promise<void>} No return value.
+	 * This method does not partial match; if a tag does not exist with the
+	 * provided name, a new one is added.
+	 *
+	 * @param {string} name Tag name to enter.
 	 */
-	async enterTag( tagName: string ): Promise< void > {
-		await this.frame.fill( selectors.tagInput, tagName );
+	async enterTag( name: string ): Promise< void > {
+		const inputLocator = this.frameLocator.locator( selectors.tagInput );
+		await inputLocator.fill( name );
 		await this.page.keyboard.press( 'Enter' );
-		await this.frame.waitForSelector( selectors.addedTag( tagName ) ); // make sure it got added!
+
+		const addedTagLocator = this.frameLocator.locator( selectors.addedTag( name ) );
+		await addedTagLocator.waitFor();
 	}
 
 	/**
@@ -251,28 +341,30 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} slug URL slug to set.
 	 */
 	async enterUrlSlug( slug: string ) {
-		await this.frame.fill( selectors.urlSlugInput, slug );
-		// Playwright is so fast, let's make sure the post's/page's state actually updates in case we're going to publish or update right after.
-		// By adding the forward slash, we ensure the new route has been appended to the fully qualified URL in the sidebar.
-		await this.frame.waitForSelector( `text=/${ slug }` );
+		const inputLocator = this.frameLocator.locator( selectors.permalinkInput );
+		await inputLocator.fill( slug );
+		// Hit the Tab key to confirm URL slug input and update the Post URL
+		// shown in this section.
+		await this.page.keyboard.press( 'Tab' );
+
+		const generatedURLSlugLocator = this.frameLocator.locator( selectors.permalinkInput );
+		const generatedSlug = await generatedURLSlugLocator.innerText();
+		const expectedSlug = slug.replace( ' ', '-' );
+
+		if ( ! generatedSlug.includes( expectedSlug ) ) {
+			throw new Error(
+				`Generated URL slug ${ generatedSlug } did not match expected URL slug ${ expectedSlug }`
+			);
+		}
 	}
 
 	/**
-	 * Closes this settings sidebar using close button within sidebar.
+	 * Scroll to the bottom of the sidebar.
 	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async closeSidebar(): Promise< void > {
-		await this.frame.click( selectors.closeSidebarButton );
-	}
-
-	/**
-	 *	Scroll to the bottom of the sidebar. Useful if trying to avoid the wpcalypso/staging banner.
+	 * Useful to work around the wpcalypso/staging banner (for proxied users).
 	 */
 	private async scrollToBottomOfSidebar(): Promise< void > {
-		// There are a lot of different ways this could be done (e.g. send `PageDown` or mouse scroll events).
-		// Opting for scrolling the last section into view as it targets an explicit element, and ensures waiting until scrolling is done before moving on.
-		const lastSectionElement = await this.frame.waitForSelector( selectors.lastSection );
-		await lastSectionElement.scrollIntoViewIfNeeded();
+		const locator = this.frameLocator.locator( selectors.sectionHeader );
+		await locator.last().scrollIntoViewIfNeeded();
 	}
 }
