@@ -14,6 +14,8 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	isFreeJetpackPlan,
 	isFreePlanProduct,
+	isFlexiblePlanProduct,
+	isManaged,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
@@ -37,6 +39,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import { isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
@@ -163,6 +166,7 @@ class CurrentPlan extends Component {
 			showJetpackChecklist,
 			showThankYou,
 			translate,
+			eligibleForManagedPlan,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug;
@@ -178,10 +182,19 @@ class CurrentPlan extends Component {
 
 		let showExpiryNotice = false;
 		let purchase = null;
+		let showLegacyPlanNotice = false;
 
 		if ( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
 			purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
+		}
+
+		if (
+			eligibleForManagedPlan &&
+			! isFlexiblePlanProduct( selectedSite.plan ) &&
+			! isManaged( selectedSite.plan )
+		) {
+			showLegacyPlanNotice = true;
 		}
 
 		return (
@@ -243,6 +256,16 @@ class CurrentPlan extends Component {
 					</Notice>
 				) }
 
+				{ showLegacyPlanNotice && (
+					<Notice
+						status="is-info"
+						text={ translate(
+							'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut felis et orci fringilla pretium. Consectura elit et orci fel.'
+						) }
+						showDismiss={ false }
+					></Notice>
+				) }
+
 				<PurchasesListing />
 
 				{ showJetpackChecklist && (
@@ -285,6 +308,7 @@ export default connect( ( state, { requestThankYou } ) => {
 	const isJetpackNotAtomic = false === isAutomatedTransfer && isJetpack;
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
+	const eligibleForManagedPlan = isEligibleForManagedPlan( state, selectedSiteId );
 
 	return {
 		currentPlan,
@@ -299,5 +323,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		showJetpackChecklist: isJetpackNotAtomic,
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 		scheduleId: getConciergeScheduleId( state ),
+		eligibleForManagedPlan,
 	};
 } )( localize( CurrentPlan ) );
