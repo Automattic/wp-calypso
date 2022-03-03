@@ -79,6 +79,42 @@ describe( 'flow-controller', () => {
 
 			expect( getSignupProgress( store.getState() ) ).toEqual( {} );
 		} );
+
+		test( 'should reset stores if a step in signup progress does not exist in the current flow', () => {
+			const store = createSignupStore( {
+				signup: {
+					progress: { stepNotInfLow: { stepName: 'stepNotInfLow', lastKnownFlow: 'simple_flow' } },
+				},
+			} );
+
+			signupFlowController = new SignupFlowController( {
+				flowName: 'simple_flow',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+
+			expect( getSignupProgress( store.getState() ) ).toEqual( {} );
+		} );
+
+		test( 'should not reset stores if a step in signup progress does not exist in the current flow', () => {
+			const store = createSignupStore( {
+				signup: {
+					progress: {
+						stepNotInfLow: { stepName: 'stepNotInfLow', lastKnownFlow: 'some_random_flow' },
+					},
+				},
+			} );
+
+			signupFlowController = new SignupFlowController( {
+				flowName: 'simple_flow',
+				onComplete: () => {},
+				reduxStore: store,
+			} );
+
+			expect( getSignupProgress( store.getState() ) ).toEqual( {
+				stepNotInfLow: { stepName: 'stepNotInfLow', lastKnownFlow: 'some_random_flow' },
+			} );
+		} );
 	} );
 
 	describe( 'controlling a simple flow', () => {
