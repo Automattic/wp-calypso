@@ -57,7 +57,7 @@ export class EditorToolbarComponent {
 	 * @param {string} selector Target selector.
 	 * @returns {Promise<boolean>} True if target is in an expanded state. False otherwise.
 	 */
-	async targetIsOpen( selector: string ): Promise< boolean > {
+	private async targetIsOpen( selector: string ): Promise< boolean > {
 		const locator = this.frameLocator.locator( selector );
 		const pressed = await locator.getAttribute( 'aria-pressed' );
 		const expanded = await locator.getAttribute( 'aria-expanded' );
@@ -96,7 +96,9 @@ export class EditorToolbarComponent {
 	async saveDraft(): Promise< void > {
 		const saveButtonLocator = this.frameLocator.locator( selectors.saveDraftButton );
 
-		if ( ! saveButtonLocator.waitFor( { timeout: 5 * 1000 } ) ) {
+		try {
+			await saveButtonLocator.waitFor( { timeout: 5 * 1000 } );
+		} catch {
 			return;
 		}
 

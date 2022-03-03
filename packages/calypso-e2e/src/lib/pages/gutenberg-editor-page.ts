@@ -8,6 +8,7 @@ import {
 	EditorNavSidebarComponent,
 	EditorToolbarComponent,
 	EditorSettingsSidebarComponent,
+	NavbarComponent,
 } from '../components';
 import type { PreviewOptions } from '../components';
 
@@ -504,7 +505,28 @@ export class GutenbergEditorPage {
 	 */
 	async exitEditor(): Promise< void > {
 		await this.editorNavSidebarComponent.openSidebar();
-		await this.editorNavSidebarComponent.exitEditor();
+
+		// There are three different places to return to,
+		// depending on how the editor was entered.
+		const navigationPromise = Promise.race( [
+			this.page.waitForNavigation( { url: '**/home/**' } ),
+			this.page.waitForNavigation( { url: '**/posts/**' } ),
+			this.page.waitForNavigation( { url: '**/pages/**' } ),
+		] );
+		const actions: Promise< unknown >[] = [ navigationPromise ];
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// Mobile viewports do not use an EditorNavSidebar.
+			// Instead, the regular NavBar is used, and the
+			// `My Sites` button exits the editor.
+			const navbarComponent = new NavbarComponent( this.page );
+			actions.push( navbarComponent.clickMySites() );
+		} else {
+			actions.push( this.editorNavSidebarComponent.exitEditor() );
+		}
+
+		// Perform the actions and resolve promises.
+		await Promise.all( actions );
 	}
 
 	/* Previews */

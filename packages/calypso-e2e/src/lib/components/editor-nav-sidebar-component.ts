@@ -1,6 +1,5 @@
 import { Page, FrameLocator } from 'playwright';
 import envVariables from '../../env-variables';
-import { NavbarComponent } from '.';
 
 const panel = 'div.wpcom-block-editor-nav-sidebar-nav-sidebar__container';
 const selectors = {
@@ -63,29 +62,15 @@ export class EditorNavSidebarComponent {
 	 * Exits the editor.
 	 *
 	 * For Desktop viewports, the sidebar is used to exit.
-	 * For Mobile viewports, My Sites button is used to exit.
+	 * For Mobile viewports, nothing happens.
 	 */
 	async exitEditor(): Promise< void > {
-		// There are three different places to return to,
-		// depending on how the editor was entered.
-		const navigationPromise = Promise.race( [
-			this.page.waitForNavigation( { url: '**/home/**' } ),
-			this.page.waitForNavigation( { url: '**/posts/**' } ),
-			this.page.waitForNavigation( { url: '**/pages/**' } ),
-		] );
-		const actions: Promise< unknown >[] = [ navigationPromise ];
-
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// Mobile viewports do not use a sidebar.
-			const navbarComponent = new NavbarComponent( this.page );
-			actions.push( navbarComponent.clickMySites() );
-		} else {
-			const exitLinkLocator = this.frameLocator.locator( selectors.exitLink );
-			actions.push( exitLinkLocator.click() );
+			return;
 		}
 
-		// Perform the actions and resolve promises.
-		await Promise.all( actions );
+		const exitLinkLocator = this.frameLocator.locator( selectors.exitLink );
+		await exitLinkLocator.click();
 	}
 
 	/**
