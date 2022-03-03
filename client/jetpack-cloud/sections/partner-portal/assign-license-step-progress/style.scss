@@ -1,0 +1,50 @@
+.assign-license-step-progress {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 40px;
+
+    &__step-complete, &__step-current {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    &__step-separator,
+    &__step-current {
+        margin-left: 1.25rem;
+    }
+
+    &__step-circle {
+        background-color: var( --studio-gray-80 );
+        border: 2px solid var( --studio-gray-80 );
+        color: var( --studio-white );
+        width: 20px;
+        height: 20px;
+        display: flex;
+        border-radius: 50%; /* stylelint-disable */
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+    }
+
+    &__step-name {
+        margin-left: 1.125rem;
+    }
+
+    &__step-complete:nth-child( 1 ) > &__step-circle {
+        background-color: var( --studio-jetpack-green-50 );
+        border: 2px solid var( --studio-jetpack-green-50 );
+        color: var( --studio-white );
+    }
+
+    &__step-current > &__step-circle {
+        font-size: 0.75rem;
+    }
+
+    &__step-separator {
+        border: 1px solid var( --studio-gray-80 );
+        width: 40px;
+        height: 0;
+    }
+}
