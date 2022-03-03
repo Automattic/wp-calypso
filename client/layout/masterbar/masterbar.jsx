@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './style.scss';
 
 const Masterbar = ( { children, className } ) => (
-	<header id="header" className={ classNames( 'masterbar', className ) }>
+	<header id="header" className={ classNames( 'masterbar ukraine', className ) }>
 		{ children }
 	</header>
 );

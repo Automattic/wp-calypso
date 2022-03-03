@@ -90,6 +90,34 @@ $autobar-height: 20px;
 	}
 }
 
+.ukraine.masterbar {
+	background: linear-gradient(
+		-180deg,
+		#0057b7 50%,
+		#ffd700 50%
+	);
+
+	> .masterbar__item:not( .masterbar__item-title ),
+	> .masterbar__notifications,
+	> .masterbar__login-links a {
+		&:not( .is-active ) {
+			background: rgba( var( --color-primary-rgb ), 0.85 );
+		}
+
+		&:hover {
+			background: var( --color-primary );
+		}
+
+		&:focus {
+			outline: none;
+
+			.accessible-focus & {
+				box-shadow: inset 0 0 0 2px var( --color-primary-light );
+			}
+		}
+	}
+}
+
 .masterbar__item-bubble {
 	border: solid 2px var( --color-masterbar-background );
 	// stylelint-disable-next-line declaration-property-unit-allowed-list
