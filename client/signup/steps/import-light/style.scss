@@ -3,6 +3,8 @@
 
 .signup.is-import-light {
 	.import__onboarding-page {
+		@include onboarding-block-margin;
+
 		@include break-large {
 			margin-left: 0;
 			margin-right: 0;
