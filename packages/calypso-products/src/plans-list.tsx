@@ -48,6 +48,7 @@ import {
 	FEATURE_EMAIL_SUPPORT_SIGNUP,
 	FEATURE_FREE_BLOG_DOMAIN,
 	FEATURE_FREE_DOMAIN,
+	FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 	FEATURE_FREE_THEMES,
 	FEATURE_FREE_THEMES_SIGNUP,
 	FEATURE_FREE_WORDPRESS_THEMES,
@@ -326,19 +327,21 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
 				'Unlock unlimited, expert customer support via email.'
 		),
-	getPlanCompareFeatures: () => [
-		// pay attention to ordering, shared features should align on /plan page
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_HOSTING,
-		FEATURE_JETPACK_ESSENTIAL,
-		FEATURE_EMAIL_SUPPORT,
-		FEATURE_FREE_THEMES,
-		FEATURE_BASIC_DESIGN,
-		FEATURE_6GB_STORAGE,
-		FEATURE_NO_ADS,
-		FEATURE_MEMBERSHIPS,
-		FEATURE_PREMIUM_CONTENT_BLOCK,
-	],
+	getPlanCompareFeatures: ( _, { isProfessionalEmailPromotionAvailable } = {} ) =>
+		compact( [
+			// pay attention to ordering, shared features should align on /plan page
+			FEATURE_CUSTOM_DOMAIN,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
+			FEATURE_HOSTING,
+			FEATURE_JETPACK_ESSENTIAL,
+			FEATURE_EMAIL_SUPPORT,
+			FEATURE_FREE_THEMES,
+			FEATURE_BASIC_DESIGN,
+			FEATURE_6GB_STORAGE,
+			FEATURE_NO_ADS,
+			FEATURE_MEMBERSHIPS,
+			FEATURE_PREMIUM_CONTENT_BLOCK,
+		] ),
 	getSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
@@ -393,10 +396,14 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Learn more about everything included with eCommerce and take advantage of its powerful marketplace features.'
 		),
-	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
+	getPlanCompareFeatures: (
+		_,
+		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
+	) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
@@ -497,10 +504,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.'
 		),
-	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
+	getPlanCompareFeatures: (
+		_,
+		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
+	) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
@@ -583,10 +594,14 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
 		),
-	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
+	getPlanCompareFeatures: (
+		_,
+		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
+	) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
