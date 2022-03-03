@@ -284,7 +284,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'import-light',
-			steps: [ 'static' ],
+			steps: isEnabled( 'onboarding/import-light' ) ? [ 'static' ] : [],
 			destination: '/',
 			pageTitle: translate( 'Import light' ),
 			description: 'Import light',
