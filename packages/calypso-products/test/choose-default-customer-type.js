@@ -4,7 +4,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_FREE,
 	PLAN_PERSONAL,
-	PLAN_MANAGED,
+	PLAN_WPCOM_MANAGED,
 } from '../src/constants';
 
 describe( 'chooseDefaultCustomerType', () => {
@@ -44,7 +44,7 @@ describe( 'chooseDefaultCustomerType', () => {
 
 	test( 'chooses "business" either if site on the Managed plan', () => {
 		const currentPlan = {
-			product_slug: PLAN_MANAGED,
+			product_slug: PLAN_WPCOM_MANAGED,
 		};
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'business' );
 	} );
