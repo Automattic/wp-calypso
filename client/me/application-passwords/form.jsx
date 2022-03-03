@@ -11,7 +11,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 export default function NewAppPasswordForm( {
-	appPasswords,
+	appPasswords = [],
 	isSubmitting,
 	addingPassword,
 	onSubmit,
