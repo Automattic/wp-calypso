@@ -40,23 +40,32 @@ interface Props {
 
 const Breadcrumb: React.FunctionComponent< Props > = ( { items, compact = false } ) => {
 	const translate = useTranslate();
-	const back = translate( 'Back' ) as string;
-	if ( compact && items.length > 1 ) {
-		// Show only the exactly previous page
-		items = items.slice( -2, -1 );
-		items[ 0 ].label = back;
-	}
+
 	return (
 		<StyledUl>
-			{ items.map( ( item: { href?: string; label: string }, index: Key ) => {
-				return (
-					<StyledLi key={ index }>
-						{ compact && <StyledGridicon icon="chevron-left" size={ 18 } /> }
-						{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 18 } /> }
-						{ item.href ? <a href={ item.href }>{ item.label }</a> : <span>{ item.label }</span> }
-					</StyledLi>
-				);
-			} ) }
+			{ compact && items.length > 1 ? (
+				<StyledLi>
+					<StyledGridicon icon="chevron-left" size={ 18 } />
+					{ /*  Show the exactly previous page with items[ items.length - 2 ] */ }
+					<a href={ items[ items.length - 2 ].href }>{ translate( 'Back' ) }</a>
+				</StyledLi>
+			) : (
+				<>
+					{ items.map( ( item: { href?: string; label: string }, index: Key ) => {
+						return (
+							<StyledLi key={ index }>
+								{ compact && <StyledGridicon icon="chevron-left" size={ 18 } /> }
+								{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 18 } /> }
+								{ item.href ? (
+									<a href={ item.href }>{ item.label }</a>
+								) : (
+									<span>{ item.label }</span>
+								) }
+							</StyledLi>
+						);
+					} ) }
+				</>
+			) }
 		</StyledUl>
 	);
 };
