@@ -167,49 +167,37 @@ export class PlansStep extends Component {
 		}
 
 		return (
-			<ProvideExperimentData
-				name="calypso_mobile_plans_page_with_billing"
-				options={ { isEligible: isMobile() && 'onboarding' === this.props.flowName } }
-			>
-				{ ( isLoading, experimentAssignment ) => {
-					if ( isLoading ) {
-						return this.renderLoading();
-					}
+			// 
+			if ( ! isMobile() ) {
+				return this.renderSignUpMonthlyPlansExperiment( errorDisplay );
+			}
 
-					// This allows us to continue with the other experiments.
-					if ( ! experimentAssignment?.variationName ) {
-						return this.renderSignUpMonthlyPlansExperiment( errorDisplay );
-					}
-
-					return (
-						<div>
-							{ errorDisplay }
-							<PlansFeaturesMain
-								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-								hideFreePlan={ hideFreePlan }
-								isInSignup={ true }
-								isLaunchPage={ isLaunchPage }
-								intervalType={ this.getIntervalType( false ) }
-								isBillingWordingExperiment={ experimentAssignment?.variationName !== null }
-								onUpgradeClick={ this.onSelectPlan }
-								showFAQ={ false }
-								domainName={ this.getDomainName() }
-								customerType={ this.getCustomerType() }
-								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-								plansWithScroll={ this.state.isDesktop }
-								planTypes={ planTypes }
-								flowName={ flowName }
-								showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-								isAllPaidPlansShown={ true }
-								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-								isReskinned={ isReskinned }
-								disableMonthlyExperiment={ false }
-							/>
-						</div>
-					);
-				} }
-			</ProvideExperimentData>
+			return (
+				<div>
+					{ errorDisplay }
+					<PlansFeaturesMain
+						site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+						hideFreePlan={ hideFreePlan }
+						isInSignup={ true }
+						isLaunchPage={ isLaunchPage }
+						intervalType={ this.getIntervalType( false ) }
+						onUpgradeClick={ this.onSelectPlan }
+						showFAQ={ false }
+						domainName={ this.getDomainName() }
+						customerType={ this.getCustomerType() }
+						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+						plansWithScroll={ this.state.isDesktop }
+						planTypes={ planTypes }
+						flowName={ flowName }
+						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+						isAllPaidPlansShown={ true }
+						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
+						shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+						isReskinned={ isReskinned }
+						disableMonthlyExperiment={ false }
+					/>
+				</div>
+			);
 		);
 	}
 
@@ -247,7 +235,6 @@ export class PlansStep extends Component {
 								isInSignup={ true }
 								isLaunchPage={ isLaunchPage }
 								intervalType={ this.getIntervalType( isTreatmentMonthlyDefault ) }
-								isBillingWordingExperiment={ false }
 								onUpgradeClick={ this.onSelectPlan }
 								showFAQ={ false }
 								domainName={ this.getDomainName() }
