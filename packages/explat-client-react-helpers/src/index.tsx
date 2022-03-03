@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import * as React from 'react';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
+export { ExPlatClient, ExperimentAssignment };
 
-interface ExperimentOptions {
+export interface ExperimentOptions {
 	/**
 	 * Determines whether a participant is currenlty eligible for an assignment.
 	 * - Only loads the experimentAssignment if isEligible is true.
@@ -15,7 +16,7 @@ const defaultExperimentOptions = {
 	isEligible: true,
 };
 
-interface ExPlatClientReactHelpers {
+export interface ExPlatClientReactHelpers {
 	/**
 	 * An ExPlat useExperiment hook.
 	 *
