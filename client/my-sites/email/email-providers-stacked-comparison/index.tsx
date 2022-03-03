@@ -11,6 +11,7 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
+import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existing-paid-service-notice';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
@@ -25,7 +26,6 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -43,7 +43,7 @@ const EmailProvidersStackedComparison = ( {
 	selectedEmailProviderSlug,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
 	source,
-}: EmailProvidersStackedComparisonProps ): ReactElement => {
+}: EmailProvidersStackedComparisonProps ): JSX.Element => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -177,6 +177,8 @@ const EmailProvidersStackedComparison = ( {
 					selectedDomainName={ selectedDomainName }
 				/>
 			) }
+
+			{ domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
