@@ -21,7 +21,10 @@ const selectors = {
 	previewPane: ( target: PreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,
 
 	// Publish
-	publishButton: `${ panel } button.editor-post-publish-button__button[aria-disabled="false"]`,
+	publishButton: ( state: 'disabled' | 'enabled' ) => {
+		const buttonState = state === 'disabled' ? 'true' : 'false';
+		return `${ panel } button.editor-post-publish-button__button[aria-disabled="${ buttonState }"]`;
+	},
 
 	// Editor settings
 	settingsButton: `${ panel } button[aria-label="Settings"]`,
@@ -182,7 +185,7 @@ export class EditorToolbarComponent {
 	 * 	- schedule a post (Schedule)
 	 */
 	async clickPublish(): Promise< void > {
-		const publishButtonLocator = this.frameLocator.locator( selectors.publishButton );
+		const publishButtonLocator = this.frameLocator.locator( selectors.publishButton( 'enabled' ) );
 		await publishButtonLocator.click();
 	}
 
