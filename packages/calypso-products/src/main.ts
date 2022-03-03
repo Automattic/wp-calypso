@@ -26,6 +26,7 @@ import {
 	isBusiness,
 	isEnterprise,
 	isEcommerce,
+	isManaged,
 	isVipPlan,
 	getProductFromSlug,
 } from '.';
@@ -668,7 +669,7 @@ export function planHasJetpackClassicSearch(
 			isBusiness( plan ) ||
 			isEnterprise( plan ) ||
 			isEcommerce( plan ) ||
-			isManagedPlan( plan ) ||
+			isManaged( plan ) ||
 			isVipPlan( plan ) )
 	);
 }
