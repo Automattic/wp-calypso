@@ -171,24 +171,25 @@ export class GutenbergEditorPage {
 
 		const locator = this.page.locator( selectors.editorFrame );
 
-		return await locator
-			.elementHandle( {
+		try {
+			const elementHandle = await locator.elementHandle( {
 				timeout: 105 * 1000,
-			} )
-			.then( async ( elementHandle ) => ( await elementHandle!.contentFrame() ) as Frame )
-			.catch( async () => {
-				if ( this.requiresGutenframe ) {
-					throw new Error( 'Could not locate editor iframe' );
-				} else {
-					// The CalipsoifyIframe component will redirect to the plain WPAdmin page if
-					// there's an error or if the iframe takes too long to completely load. The
-					// goal here is to ge hold of the editor and not test any aspects related to
-					// the Gutenframe, so we return the `mainFrame` to allow the test to access
-					// the editor in the WPAdmin page.
-					console.info( 'Could not locate editor iframe. Returning the top-level frame instead' );
-					return await this.page.mainFrame();
-				}
 			} );
+
+			return ( await elementHandle!.contentFrame() ) as Frame;
+		} catch {
+			if ( this.requiresGutenframe ) {
+				throw new Error( 'Could not locate editor iframe' );
+			} else {
+				// The CalipsoifyIframe component will redirect to the plain WPAdmin page if
+				// there's an error or if the iframe takes too long to completely load. The
+				// goal here is to ge hold of the editor and not test any aspects related to
+				// the Gutenframe, so we return the `mainFrame` to allow the test to access
+				// the editor in the WPAdmin page.
+				console.info( 'Could not locate editor iframe. Returning the top-level frame instead' );
+				return await this.page.mainFrame();
+			}
+		}
 	}
 
 	/**
