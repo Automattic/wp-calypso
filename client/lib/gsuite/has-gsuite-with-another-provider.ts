@@ -7,7 +7,9 @@ import type { SiteDomain } from 'calypso/state/sites/domains/types';
  *
  * @returns {boolean} - true if the domain is with another provider, false otherwise
  */
-export function hasGSuiteWithAnotherProvider( domain: ResponseDomain | SiteDomain | undefined ): boolean {
+export function hasGSuiteWithAnotherProvider(
+	domain: ResponseDomain | SiteDomain | undefined
+): boolean {
 	const status = getGSuiteSubscriptionStatus( domain );
 
 	return 'other_provider' === status;
