@@ -22,10 +22,11 @@ import {
 	FEATURE_JETPACK_BACKUP_T2_MONTHLY,
 	FEATURE_JETPACK_BACKUP_T2_YEARLY,
 	planHasSuperiorFeature,
+	isJetpackAntiSpam,
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
-import { getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSiteProducts, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import type { AppState } from 'calypso/types';
 
 const DAILY_BACKUP_FEATURES = [
@@ -198,8 +199,13 @@ export const isPlanIncludingSiteAntiSpam = createSelector(
 			return null;
 		}
 
+		const products = getSiteProducts( state, siteId ) || [];
+		const siteProducts = products.filter( ( p ) => ! p.expired );
+
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
-		const siteHasAntiSpam = !! sitePlanSlug && planHasAntiSpam( sitePlanSlug );
+		const siteHasAntiSpam = Boolean(
+			( sitePlanSlug && planHasAntiSpam( sitePlanSlug ) ) || siteProducts.find( isJetpackAntiSpam )
+		);
 
 		return siteHasAntiSpam && planHasAntiSpam( planSlug );
 	},
@@ -208,6 +214,7 @@ export const isPlanIncludingSiteAntiSpam = createSelector(
 			siteId,
 			productSlug,
 			getSitePlanSlug( state, siteId ),
+			getSiteProducts( state, siteId ),
 		],
 	]
 );
