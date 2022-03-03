@@ -87,14 +87,21 @@ const PluginsBrowserList = ( {
 
 	const eligiblePlugins = [
 		{
-			pluginSlug: 'wordpress-seo-premium',
+			slug: 'wordpress-seo-premium',
 			tagline: __( 'Drive more traffic with Yoast SEO Premium' ),
 			title: __( 'Under the Spotlight' ),
 			cta: __( 'View Details' ),
 		},
+		// delete everything below this and replace with Sensei Pro this is being used as a proof of concept
 		{
-			pluginSlug: 'woocommerce-subscriptions',
-			tagline: __( 'Let your customer subscribe to your plans' ),
+			slug: 'woocommerce-subscriptions',
+			tagline: __( 'Let your customer subscribe with Woocommerce Subscriptions' ),
+			title: __( 'Under the Spotlight' ),
+			cta: __( 'Start now' ),
+		},
+		{
+			slug: 'woocommerce-bookings',
+			tagline: __( 'Let your customer book with WooCommerce Bookings' ),
 			title: __( 'Under the Spotlight' ),
 			cta: __( 'Start now' ),
 		},
@@ -124,7 +131,11 @@ const PluginsBrowserList = ( {
 				</div>
 			</div>
 			{ listName === 'paid' && isEnabled( 'marketplace-spotlight' ) && (
-				<PluginSpotlight site={ site } eligiblePlugins={ eligiblePlugins } />
+				<PluginSpotlight
+					site={ site }
+					eligiblePlugins={ eligiblePlugins }
+					currentSites={ currentSites }
+				/>
 			) }
 			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
 		</div>

@@ -1,62 +1,61 @@
 import page from 'page';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Spotlight from 'calypso/components/spotlight';
-import { useWPCOMPlugin, useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getPlugins, isRequesting } from 'calypso/state/plugins/installed/selectors';
+import { siteObjectsToSiteIds } from '../utils';
 
-const useRandomPlugin = ( eligiblePlugins: any[] ) => {
-	const [ eligiblePlugin, setEligiblePlugin ] = useState();
-
-	useEffect( () => {
-		setEligiblePlugin( eligiblePlugins[ Math.floor( Math.random() * eligiblePlugins.length ) ] );
-	}, [ JSON.stringify( eligiblePlugins ) ] );
-
-	return eligiblePlugin;
-};
-
-const PluginSpotlight = ( { eligiblePlugins, site } ) => {
-	const { data: spotlightPlugin, isFetched: spotlightPluginFetched } = useWPCOMPlugin(
-		'wordpress-seo-premium'
+const PluginSpotlight = ( { eligiblePlugins, site, currentSites } ) => {
+	const sitePlugins = useSelector( ( state ) =>
+		getPlugins( state, siteObjectsToSiteIds( currentSites ) )
 	);
-	const { data: plugins = [], isFetched: pluginsFetched } = useWPCOMPlugins( 'featured' );
 
-	const eligiblePlugin = useRandomPlugin( eligiblePlugins );
+	const isFetchingInstalledPlugins = useSelector( ( state ) =>
+		isRequesting( state, currentSites[ 0 ].ID )
+	);
 
+	const selectedPlugin =
+		currentSites.length === 1
+			? eligiblePlugins.find( ( eligiblePlugin ) => {
+					const pluginFound = !! sitePlugins.find(
+						( sitePlugin ) => sitePlugin.slug === eligiblePlugin.slug
+					);
+					return ! pluginFound;
+			  } )
+			: eligiblePlugins[ 0 ];
+
+	const {
+		data: spotlightPlugin,
+		isFetched: spotlightPluginFetched,
+	} = useWPCOMPlugin( selectedPlugin?.slug, { enabled: !! selectedPlugin } );
 	const dispatch = useDispatch();
 
-	// #TODO: remove this and combinedPlugins when wordpress seo premium is enabled
-	if ( ! spotlightPluginFetched || ! pluginsFetched ) {
+	if ( ! spotlightPluginFetched || isFetchingInstalledPlugins ) {
 		return <></>;
 	}
-
-	const combinedPlugins = [ ...plugins, spotlightPlugin ];
-
-	const selectedPlugin = combinedPlugins.find(
-		( plugin ) => plugin.slug === eligiblePlugin?.pluginSlug
-	);
 
 	const spotlightOnClick = () => {
 		dispatch(
 			recordTracksEvent( 'calypso_marketplace_spotlight_click', {
 				type: 'plugin',
-				slug: selectedPlugin.slug,
-				id: selectedPlugin.id,
+				slug: spotlightPlugin.slug,
+				id: spotlightPlugin.id,
 				site: site,
 			} )
 		);
-		page( `/plugins/${ selectedPlugin.slug }/${ site || '' }` );
+		page( `/plugins/${ spotlightPlugin.slug }/${ site || '' }` );
 	};
 
 	return (
 		<>
-			{ selectedPlugin && eligiblePlugin && (
+			{ spotlightPlugin && (
 				<Spotlight
 					onClick={ spotlightOnClick }
-					taglineText={ eligiblePlugin.tagline }
-					titleText={ eligiblePlugin.title }
-					ctaText={ eligiblePlugin.cta }
-					illustrationSrc={ selectedPlugin?.icon ?? '' }
+					taglineText={ selectedPlugin.tagline }
+					titleText={ selectedPlugin.title }
+					ctaText={ selectedPlugin.cta }
+					illustrationSrc={ spotlightPlugin?.icon ?? '' }
 				/>
 			) }
 		</>
