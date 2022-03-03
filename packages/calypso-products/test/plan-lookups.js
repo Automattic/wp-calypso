@@ -68,6 +68,7 @@ import {
 	isJetpackPersonalPlan,
 	isJetpackPremiumPlan,
 	isJetpackFreePlan,
+	isWpComManagedPlan,
 	isWpComEcommercePlan,
 	isWpComBusinessPlan,
 	isWpComPersonalPlan,
@@ -285,6 +286,25 @@ describe( 'isWpComEcommercePlan', () => {
 		expect( isWpComEcommercePlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isWpComEcommercePlan( PLAN_BUSINESS_2_YEARS ) ).to.equal( false );
 		expect( isWpComEcommercePlan( 'non-exisWpComting plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isWpComManagedPlan', () => {
+	test( 'should return true for the Managed plan', () => {
+		expect( isWpComManagedPlan( PLAN_WPCOM_MANAGED ) ).to.equal( true );
+	} );
+	test( 'should return false for non-business plans', () => {
+		expect( isWpComManagedPlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
+		expect( isWpComManagedPlan( PLAN_JETPACK_BUSINESS_MONTHLY ) ).to.equal( false );
+		expect( isWpComManagedPlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isWpComManagedPlan( PLAN_PERSONAL_2_YEARS ) ).to.equal( false );
+		expect( isWpComManagedPlan( PLAN_JETPACK_PERSONAL ) ).to.equal( false );
+		expect( isWpComManagedPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).to.equal( false );
+		expect( isWpComManagedPlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isWpComManagedPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+		expect( isWpComManagedPlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isWpComManagedPlan( PLAN_BUSINESS_2_YEARS ) ).to.equal( false );
+		expect( isWpComManagedPlan( 'non-exisWpComting plan' ) ).to.equal( false );
 	} );
 } );
 

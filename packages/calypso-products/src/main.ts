@@ -284,7 +284,7 @@ export function isWpComEcommercePlan( planSlug: string ): boolean {
 }
 
 export function isWpComManagedPlan( planSlug: string ): boolean {
-	return planMatches( planSlug, { TYPE: TYPE_MANAGED, group: GROUP_WPCOM } );
+	return planMatches( planSlug, { type: TYPE_MANAGED, group: GROUP_WPCOM } );
 }
 
 export function isWpComPremiumPlan( planSlug: string ): boolean {
