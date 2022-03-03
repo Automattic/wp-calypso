@@ -80,7 +80,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Preview', function () {
-		let previewPage: Page | void;
+		let previewPage: Page;
 
 		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 		it( 'Close settings sidebar', async function () {
@@ -88,7 +88,11 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		} );
 
 		it( 'Launch preview', async function () {
-			previewPage = await gutenbergEditorPage.preview( 'Mobile' );
+			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+				previewPage = await gutenbergEditorPage.previewAsMobile();
+			} else {
+				await gutenbergEditorPage.previewAsDesktop( 'Mobile' );
+			}
 		} );
 
 		it( 'Close preview', async function () {

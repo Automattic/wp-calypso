@@ -532,21 +532,39 @@ export class GutenbergEditorPage {
 	/* Previews */
 
 	/**
-	 * Launches the Preview.
+	 * Launches the Preview as mobile viewport.
 	 *
-	 * For Desktop viewports, this method will not return any value.
 	 * For Mobile viewports, this method will return a reference to a popup Page.
+	 * For Desktop and Tablet viewports, an error is thrown.
 	 *
-	 * @returns {Page|void} Handler for the Page object on mobile. Void otherwise.
+	 * @returns {Promise<Page>} Handler for the popup page.
+	 * @throws {Error} If the current viewport is not of Mobile.
 	 */
-	async preview( target?: PreviewOptions ): Promise< Page | void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			return await this.editorToolbarComponent.openMobilePreview();
+	async previewAsMobile(): Promise< Page > {
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+			throw new Error(
+				`This method only works in mobile viewport, current viewport: ${ envVariables.VIEWPORT_NAME } `
+			);
 		}
-		if ( ! target ) {
-			throw new Error( 'Preview target must be defined.' );
-		}
+		return await this.editorToolbarComponent.openMobilePreview();
+	}
 
+	/**
+	 * Launches the Preview as non-mobile viewport.
+	 *
+	 * For Desktop and Tablet viewports, this method will not return any value.
+	 * For Mobile viewport, an error is thrown.
+	 *
+	 * @param {PreviewOptions} target Target preview size.
+	 * @returns {Page|void} Handler for the Page object on mobile. Void otherwise.
+	 * @throws {Error} If the current viewport is not of Desktop or Tablet.
+	 */
+	async previewAsDesktop( target: PreviewOptions ): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			throw new Error(
+				`This method only works in non-mobile viewport, current viewport: ${ envVariables.VIEWPORT_NAME } `
+			);
+		}
 		await this.editorToolbarComponent.openDesktopPreview( target );
 	}
 
