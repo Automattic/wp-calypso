@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { isDesktop, subscribeIsDesktop, isMobile } from '@automattic/viewport';
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -166,53 +166,6 @@ export class PlansStep extends Component {
 			);
 		}
 
-		return (
-			// 
-			if ( ! isMobile() ) {
-				return this.renderSignUpMonthlyPlansExperiment( errorDisplay );
-			}
-
-			return (
-				<div>
-					{ errorDisplay }
-					<PlansFeaturesMain
-						site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-						hideFreePlan={ hideFreePlan }
-						isInSignup={ true }
-						isLaunchPage={ isLaunchPage }
-						intervalType={ this.getIntervalType( false ) }
-						onUpgradeClick={ this.onSelectPlan }
-						showFAQ={ false }
-						domainName={ this.getDomainName() }
-						customerType={ this.getCustomerType() }
-						disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-						plansWithScroll={ this.state.isDesktop }
-						planTypes={ planTypes }
-						flowName={ flowName }
-						showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
-						isAllPaidPlansShown={ true }
-						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-						shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-						isReskinned={ isReskinned }
-						disableMonthlyExperiment={ false }
-					/>
-				</div>
-			);
-		);
-	}
-
-	renderSignUpMonthlyPlansExperiment( errorDisplay ) {
-		const {
-			disableBloggerPlanWithNonBlogDomain,
-			hideFreePlan,
-			isLaunchPage,
-			selectedSite,
-			planTypes,
-			flowName,
-			showTreatmentPlansReorderTest,
-			isInVerticalScrollingPlansExperiment,
-			isReskinned,
-		} = this.props;
 		return (
 			<ProvideExperimentData
 				name="calypso_signup_monthly_plans_default_202201_v2"
