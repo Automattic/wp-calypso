@@ -127,6 +127,8 @@ const PrePurchaseNotices = () => {
 		);
 	}
 
+	// This site has an active Jetpack Anti-Spam product purchase,
+	// but we're attempting to buy a plan that includes one as well
 	const siteAntiSpamProduct = currentSiteProducts.find( isJetpackAntiSpam );
 	if ( cartPlanOverlapsSiteAntiSpamPurchase && siteAntiSpamProduct ) {
 		return (
@@ -153,6 +155,8 @@ const PrePurchaseNotices = () => {
 
 	const antiSpamProductInCart = antiSpamSlugInCart && getProductFromSlug( antiSpamSlugInCart );
 
+	// We're attempting to buy Jetpack Anti-Spam individually,
+	// but this site already has a plan that includes it
 	if ( sitePlanIncludesCartAntiSpamProduct && currentSitePlan ) {
 		return (
 			<SitePlanIncludesCartProductNotice
