@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -11,20 +11,17 @@ import Main from 'calypso/components/main';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
 import isSiteFailedMigrationSource from 'calypso/state/selectors/is-site-failed-migration-source';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const SiteSettingsJetpack = ( {
-	site,
-	siteId,
-	siteIsJetpack,
-	showCredentials,
-	translate,
-	context,
-} ) => {
+const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, translate } ) => {
 	//todo: this check makes sense in Jetpack section?
+	const args = useSelector( getCurrentQueryArguments );
+	const host = args.host;
+	const action = args.action;
 	if ( ! siteIsJetpack ) {
 		return (
 			<EmptyContent
@@ -38,7 +35,7 @@ const SiteSettingsJetpack = ( {
 			/>
 		);
 	}
-	const { host, action } = context.query;
+
 	return (
 		<Main className="settings-jetpack site-settings">
 			<QueryRewindState siteId={ siteId } />
