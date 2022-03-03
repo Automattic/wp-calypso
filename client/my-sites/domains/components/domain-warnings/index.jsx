@@ -621,11 +621,6 @@ export class DomainWarnings extends PureComponent {
 			( { registrationDate } ) =>
 				registrationDate && moment( registrationDate ).add( 2, 'days' ).isAfter()
 		);
-		if ( this.props.siteIsUnlaunched && isWithinTwoDays ) {
-			// Customer Home nudges this on unlaunched sites.
-			// After two days let's re-display the nudge
-			return;
-		}
 
 		const severity = isWithinTwoDays ? 'is-info' : 'is-error';
 		const action = translate( 'Fix' );
