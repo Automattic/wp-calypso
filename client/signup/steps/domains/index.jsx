@@ -438,9 +438,9 @@ class DomainsStep extends Component {
 
 		return (
 			<ProvideExperimentData
-				name="calypso_mobile_domains_sidebar_explainer"
+				name="calypso_signup_domain_mobile_brower_chrome_added"
 				options={ {
-					isEligible: isMobile() && 'wpcc' !== this.props.flowName,
+					isEligible: isMobile() && 'onboarding' === this.props.flowName,
 				} }
 			>
 				{ ( isLoading, experimentAssignment ) => {

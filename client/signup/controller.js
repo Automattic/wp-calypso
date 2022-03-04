@@ -342,7 +342,7 @@ export default {
 		}
 
 		if ( isMobile() && 'onboarding' === flowName ) {
-			loadExperimentAssignment( 'calypso_mobile_domains_sidebar_explainer' );
+			loadExperimentAssignment( 'calypso_signup_domain_mobile_brower_chrome_added' );
 		}
 
 		context.primary = createElement( SignupComponent, {
