@@ -104,7 +104,7 @@ describe( 'conflicts', () => {
 		} );
 	} );
 
-	test( 'Plans and products that have anti-spam return true for plansWithScan', () => {
+	test( 'Plans and products that have scan return true for plansWithScan', () => {
 		plansWithScan.forEach( ( plan ) => {
 			expect( planHasScan( plan ) ).toBe( true );
 		} );
