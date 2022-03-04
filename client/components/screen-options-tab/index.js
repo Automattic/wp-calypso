@@ -90,7 +90,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 
 	const onSwitchView = ( view ) => {
 		dispatch(
-			recordTracksEvent( 'wpcom_dashboard_quick_switch_link_clicked', {
+			recordTracksEvent( 'calypso_dashboard_quick_switch_link_clicked', {
 				blog_id: siteId,
 				current_page: wpAdminPath,
 				destination: view,
