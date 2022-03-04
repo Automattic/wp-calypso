@@ -313,6 +313,14 @@ export function isWpComFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_WPCOM } );
 }
 
+export function isWpComAnnualPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { term: TERM_ANNUALLY, group: GROUP_WPCOM } );
+}
+
+export function isWpComBiennialPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { term: TERM_BIENNIALLY, group: GROUP_WPCOM } );
+}
+
 export function isWpComMonthlyPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { term: TERM_MONTHLY, group: GROUP_WPCOM } );
 }
