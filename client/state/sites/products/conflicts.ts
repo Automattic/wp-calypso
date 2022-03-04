@@ -3,8 +3,7 @@ import {
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_DAILY,
 	JETPACK_PLANS,
-	PRODUCT_JETPACK_ANTI_SPAM,
-	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	JETPACK_ANTI_SPAM_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -58,8 +57,6 @@ const REALTIME_BACKUP_PRODUCTS = [
 ];
 
 const ANTI_SPAM_FEATURES = [ FEATURE_JETPACK_ANTI_SPAM, FEATURE_JETPACK_ANTI_SPAM_MONTHLY ];
-
-const ANTI_SPAM_PRODUCTS = [ PRODUCT_JETPACK_ANTI_SPAM, PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ];
 
 /**
  * Check is a Jetpack plan is including a daily backup feature.
@@ -250,7 +247,7 @@ export const isAntiSpamProductIncludedInSitePlan = createSelector(
 			return null;
 		}
 
-		if ( ANTI_SPAM_PRODUCTS.includes( productSlug ) ) {
+		if ( ( JETPACK_ANTI_SPAM_PRODUCTS as ReadonlyArray< string > ).includes( productSlug ) ) {
 			return planHasAntiSpam( sitePlanSlug, true );
 		}
 
