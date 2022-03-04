@@ -27,7 +27,6 @@ import { isWordadsInstantActivationEligible } from 'calypso/lib/ads/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import { hasDomainCredit, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AdvertisingRemoved from './advertising-removed';
@@ -63,14 +62,7 @@ export class ProductPurchaseFeaturesList extends Component {
 
 	// TODO: Define feature list.
 	getEcommerceFeatures() {
-		const {
-			isMonthlyPlan,
-			isPlaceholder,
-			plan,
-			planHasDomainCredit,
-			selectedSite,
-			showCustomizerFeature,
-		} = this.props;
+		const { isMonthlyPlan, isPlaceholder, plan, planHasDomainCredit, selectedSite } = this.props;
 		return (
 			<Fragment>
 				<HappinessSupportCard
@@ -84,8 +76,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
-				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
-				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
+				<CustomizeTheme selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<UploadPlugins selectedSite={ selectedSite } />
@@ -103,7 +94,6 @@ export class ProductPurchaseFeaturesList extends Component {
 			currentPlan,
 			planHasDomainCredit,
 			selectedSite,
-			showCustomizerFeature,
 			scheduleId,
 		} = this.props;
 
@@ -148,8 +138,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
-				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
-				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
+				<CustomizeTheme selectedSite={ selectedSite } />
 				<CustomCSS selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
@@ -162,14 +151,7 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getPremiumFeatures() {
-		const {
-			isPlaceholder,
-			isMonthlyPlan,
-			plan,
-			planHasDomainCredit,
-			selectedSite,
-			showCustomizerFeature,
-		} = this.props;
+		const { isPlaceholder, isMonthlyPlan, plan, planHasDomainCredit, selectedSite } = this.props;
 
 		return (
 			<Fragment>
@@ -179,8 +161,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				) }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan={ false } selectedSite={ selectedSite } />
-				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
-				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
+				<CustomizeTheme selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
@@ -426,7 +407,6 @@ export default connect(
 			isAutomatedTransfer,
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
-			showCustomizerFeature: ! isSiteUsingLegacyFSE( state, selectedSiteId ),
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			scheduleId: getConciergeScheduleId( state ),
 			isMonthlyPlan: TERM_MONTHLY === getPlan( ownProps.plan )?.term,

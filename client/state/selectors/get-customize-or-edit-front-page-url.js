@@ -1,6 +1,5 @@
 import getFrontPageEditorUrl from 'calypso/state/selectors/get-front-page-editor-url';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
-import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
 import { getThemeCustomizeUrl, isThemeActive } from 'calypso/state/themes/selectors';
 
@@ -22,8 +21,7 @@ export default function getCustomizeOrEditFrontPageUrl( state, themeId, siteId, 
 		return getSiteEditorUrl( state, siteId );
 	}
 
-	const shouldUseGutenberg =
-		shouldCustomizeHomepageWithGutenberg( state, siteId ) || isSiteUsingLegacyFSE( state, siteId );
+	const shouldUseGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
 	const frontPageEditorUrl = getFrontPageEditorUrl( state, siteId );
 
 	// If the theme is not active or getFrontPageEditorUrl has returned 'false', use the other function to preview customization with the theme.

@@ -25,7 +25,7 @@ export function receiveSiteChecklist( siteId, checklist ) {
  * Action creator function: SITE_CHECKLIST_REQUEST
  *
  * @param {string} siteId for the checklist
- * @param {boolean} isSiteEligibleForFSE whether or not the site is eligible for Full Site Editing
+ * @param {boolean} isSiteEligibleForFSE whether or not the site is eligible for Legacy Full Site Editing
  * @returns {object} action object
  */
 export const requestSiteChecklist = ( siteId, isSiteEligibleForFSE = false ) => ( {

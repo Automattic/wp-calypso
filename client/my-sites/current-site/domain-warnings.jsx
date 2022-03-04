@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteEligibleForLegacyFSE from 'calypso/state/selectors/is-site-eligible-for-legacy-fse';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -29,7 +28,6 @@ const CurrentSiteDomainWarnings = ( {
 	isJetpack,
 	selectedSite,
 	siteIsUnlaunched,
-	isSiteEligibleForFSE,
 } ) => {
 	if ( ! selectedSite || ( isJetpack && ! isAtomic ) ) {
 		// Simple and Atomic sites. Not Jetpack sites.
@@ -45,7 +43,6 @@ const CurrentSiteDomainWarnings = ( {
 				selectedSite={ selectedSite }
 				domains={ domains }
 				allowedRules={ allowedRules }
-				isSiteEligibleForFSE={ isSiteEligibleForFSE }
 				siteIsUnlaunched={ siteIsUnlaunched }
 			/>
 		</div>
@@ -55,7 +52,6 @@ const CurrentSiteDomainWarnings = ( {
 CurrentSiteDomainWarnings.propTypes = {
 	domains: PropTypes.array,
 	isJetpack: PropTypes.bool,
-	isSiteEligibleForFSE: PropTypes.bool,
 	selectedSite: PropTypes.object,
 };
 
@@ -68,6 +64,5 @@ export default connect( ( state ) => {
 		isAtomic: isSiteAutomatedTransfer( state, selectedSiteId ),
 		selectedSite: getSelectedSite( state ),
 		siteIsUnlaunched: isUnlaunchedSite( state, selectedSiteId ),
-		isSiteEligibleForFSE: isSiteEligibleForLegacyFSE( state, selectedSiteId ),
 	};
 } )( CurrentSiteDomainWarnings );
