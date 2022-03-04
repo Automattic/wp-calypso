@@ -341,6 +341,10 @@ export default {
 			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' );
 		}
 
+		if ( isMobile() && 'onboarding' === flowName ) {
+			loadExperimentAssignment( 'calypso_mobile_domains_sidebar_explainer' );
+		}
+
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
