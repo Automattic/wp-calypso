@@ -7,7 +7,6 @@ import {
 	TestAccount,
 	envVariables,
 	GutenbergEditorPage,
-	EditorSettingsSidebarComponent,
 	PublishedPostPage,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
@@ -46,21 +45,15 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	} );
 
 	describe( 'Schedule: future', function () {
-		let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
-
-		it( 'Open scheduler', async function () {
-			const frame = await gutenbergEditorPage.getEditorFrame();
+		it( 'Open settings', async function () {
 			await gutenbergEditorPage.openSettings();
-			editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( frame, page );
-			await editorSettingsSidebarComponent.clickTab( 'Post' );
-			await editorSettingsSidebarComponent.openSchedule();
 		} );
 
 		it( 'Schedule the post for next year', async function () {
 			const date = new Date();
 			date.setUTCFullYear( date.getFullYear() + 1 );
 
-			await editorSettingsSidebarComponent.schedule( {
+			await gutenbergEditorPage.schedule( {
 				year: date.getUTCFullYear(),
 				month: date.getUTCMonth(),
 				date: date.getUTCDate(),
@@ -69,7 +62,8 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 				meridian: 'am',
 			} );
 			// On mobile, the sidebar covers all of the screen.
-			await editorSettingsSidebarComponent.closeSidebar();
+			// Dismiss it so publish buttons are available.
+			await gutenbergEditorPage.closeSettings();
 		} );
 
 		it( 'Publish post', async function () {
@@ -102,22 +96,15 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	} );
 
 	describe( 'Schedule: past', function () {
-		let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
-
-		it( 'Open scheduler', async function () {
-			const frame = await gutenbergEditorPage.getEditorFrame();
+		it( 'Open settings', async function () {
 			await gutenbergEditorPage.openSettings();
-			editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( frame, page );
-
-			await editorSettingsSidebarComponent.clickTab( 'Post' );
-			await editorSettingsSidebarComponent.openSchedule();
 		} );
 
 		it( 'Schedule post to fist of the current month of last year', async function () {
 			const date = new Date();
 			date.setUTCFullYear( date.getUTCFullYear() - 1 );
 
-			await editorSettingsSidebarComponent.schedule( {
+			await gutenbergEditorPage.schedule( {
 				year: date.getUTCFullYear(),
 				date: 1,
 				month: date.getUTCMonth(),
@@ -125,7 +112,9 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 				minutes: 59,
 				meridian: 'pm',
 			} );
-			await editorSettingsSidebarComponent.closeSidebar();
+			// On mobile, the sidebar covers all of the screen.
+			// Dismiss it so publish buttons are available.
+			await gutenbergEditorPage.closeSettings();
 		} );
 
 		it( 'Publish post', async function () {

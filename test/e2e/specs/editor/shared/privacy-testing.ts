@@ -5,7 +5,6 @@ import {
 	envVariables,
 	PrivacyOptions,
 	PublishedPostPage,
-	EditorSettingsSidebarComponent,
 	PageTemplateModalComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
@@ -32,7 +31,6 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 		let page: Page;
 		let url: URL;
 		let gutenbergEditorPage: GutenbergEditorPage;
-		let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 
 		describe( `Create a ${ visibility } page`, function () {
 			beforeAll( async function () {
@@ -62,15 +60,10 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 
 			it( `Set page visibility to ${ visibility }`, async function () {
-				const frame = await gutenbergEditorPage.getEditorFrame();
 				await gutenbergEditorPage.openSettings();
-
-				editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( frame, page );
-				await editorSettingsSidebarComponent.clickTab( 'Page' );
-				await editorSettingsSidebarComponent.setVisibility( visibility as PrivacyOptions, {
+				await gutenbergEditorPage.setArticleVisibility( visibility as PrivacyOptions, {
 					password: pagePassword,
 				} );
-
 				await gutenbergEditorPage.closeSettings();
 			} );
 

@@ -8,7 +8,6 @@ import {
 	TestAccount,
 	envVariables,
 	GutenbergEditorPage,
-	EditorSettingsSidebarComponent,
 	RevisionsComponent,
 	ParagraphBlock,
 } from '@automattic/calypso-e2e';
@@ -21,7 +20,6 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 		? 'gutenbergSimpleSiteEdgeUser'
 		: 'simpleSitePersonalPlanUser';
 	let gutenbergEditorPage: GutenbergEditorPage;
-	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	let revisionsComponent: RevisionsComponent;
 	let page: Page;
 
@@ -51,11 +49,8 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	);
 
 	it( 'View revisions', async function () {
-		const frame = await gutenbergEditorPage.getEditorFrame();
 		await gutenbergEditorPage.openSettings();
-		editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( frame, page );
-		await editorSettingsSidebarComponent.clickTab( 'Post' );
-		await editorSettingsSidebarComponent.showRevisions();
+		await gutenbergEditorPage.viewRevisions();
 	} );
 
 	it( 'Revision 1 displays expected diff', async function () {

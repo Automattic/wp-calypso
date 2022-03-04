@@ -391,12 +391,70 @@ export class GutenbergEditorPage {
 		visibility: PrivacyOptions,
 		{ password }: { password?: string }
 	): Promise< void > {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+
 		await this.editorSettingsSidebarComponent.expandSection( 'Status & Visibility' );
 		await this.editorSettingsSidebarComponent.openVisibilityOptions();
 		await this.editorSettingsSidebarComponent.selectVisibility( visibility, {
 			password: password,
 		} );
 		await this.editorSettingsSidebarComponent.closeVisibilityOptions();
+	}
+
+	/**
+	 * View revisions for the article.
+	 */
+	async viewRevisions(): Promise< void > {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.showRevisions();
+	}
+
+	/**
+	 * Select a category for the article.
+	 *
+	 * @param {string} name Name of the category.
+	 */
+	async selectCategory( name: string ): Promise< void > {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.expandSection( 'Categories' );
+		await this.editorSettingsSidebarComponent.checkCategory( name );
+	}
+
+	/**
+	 * Adds the given tag to the article.
+	 *
+	 * @param {string} tag Tag to be added to article.
+	 */
+	async addTag( tag: string ): Promise< void > {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.expandSection( 'Tags' );
+		await this.editorSettingsSidebarComponent.enterTag( tag );
+	}
+
+	/**
+	 * Sets the URL slug.
+	 *
+	 * @param {string} slug Desired URL slug.
+	 */
+	async setURLSlug( slug: string ): Promise< void > {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.expandSection( 'Permalink' );
+		await this.editorSettingsSidebarComponent.enterUrlSlug( slug );
 	}
 
 	/* Publish, Draft & Schedule */

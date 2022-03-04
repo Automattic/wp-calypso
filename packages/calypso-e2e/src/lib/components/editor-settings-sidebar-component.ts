@@ -25,7 +25,7 @@ const selectors = {
 	mobileCloseSidebarButton: `${ panel } [aria-label="Close settings"]:visible`, // there's a hidden copy in there
 
 	// Tab
-	tabButton: ( tabName: EditorSidebarTab ) => `${ panel } button:has-text("${ tabName }")`,
+	tabButton: ( tabName: EditorSidebarTab ) => `${ panel } button[data-label="${ tabName }"]`,
 	activeTabButton: ( tabName: EditorSidebarTab ) =>
 		`${ panel } button.is-active:has-text("${ tabName }")`,
 
@@ -52,7 +52,7 @@ const selectors = {
 
 	// Category
 	categoryCheckbox: ( categoryName: string ) =>
-		`${ panel } [aria-label=Categories] :text("${ categoryName }")`,
+		`${ panel } div[aria-label=Categories] label:text("${ categoryName }")`,
 
 	// Tag
 	tagInput: `${ panel } .components-form-token-field:has-text("Add New Tag") input`,
@@ -113,19 +113,19 @@ export class EditorSettingsSidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async expandSection( name: ArticleSections ): Promise< void > {
-		const sectionLocator = this.frameLocator.locator( selectors.section( name ) );
-		const expanded = await sectionLocator.getAttribute( 'aria-expanded' );
-		if ( expanded === 'true' ) {
+		if ( await this.targetIsOpen( selectors.section( name ) ) ) {
 			return;
 		}
 
 		// Avoid the wpcalypso/staging banner.
 		await this.scrollToBottomOfSidebar();
 
+		const sectionLocator = this.frameLocator.locator( selectors.section( name ) );
 		await sectionLocator.click();
-		const expandedCheck = await sectionLocator.getAttribute( 'aria-expanded' );
-		if ( expandedCheck !== 'true' ) {
-			throw new Error( `Failed to expand requested Editor Sidebar section ${ name }` );
+
+		const newState = await this.targetIsOpen( selectors.section( name ) );
+		if ( ! newState ) {
+			throw new Error( `Failed to expand Editor Settings sidebar section: ${ name }` );
 		}
 	}
 
@@ -302,7 +302,10 @@ export class EditorSettingsSidebarComponent {
 	 * Clicks on the Revisions section in the sidebar to show a revisions modal.
 	 */
 	async showRevisions(): Promise< void > {
-		const locator = this.frameLocator.locator( selectors.section( 'Revisions' ) );
+		await this.page.pause();
+		const locator = this.frameLocator.locator(
+			`${ selectors.sectionHeader }:has-text("Revisions")`
+		);
 		await Promise.all( [ this.page.waitForResponse( /.*diffs\?.*/ ), locator.click() ] );
 	}
 
@@ -310,11 +313,17 @@ export class EditorSettingsSidebarComponent {
 	 * Check a category checkbox for an article.
 	 *
 	 * @param {string} name Category name.
+	 * @throws {Error} If requested cateogry is not found.
 	 */
 	async checkCategory( name: string ): Promise< void > {
 		//TODO: Categories can be slow because we never do any cleanup. Remove extended timeout once we start doing cleanup.
 		const locator = this.frameLocator.locator( selectors.categoryCheckbox( name ) );
-		await locator.check( { timeout: 60 * 1000 } );
+
+		try {
+			await locator.click( { timeout: 60 * 1000 } );
+		} catch {
+			throw new Error( `No category matching ${ name } found.` );
+		}
 	}
 
 	/**
@@ -347,7 +356,7 @@ export class EditorSettingsSidebarComponent {
 		// shown in this section.
 		await this.page.keyboard.press( 'Tab' );
 
-		const generatedURLSlugLocator = this.frameLocator.locator( selectors.permalinkInput );
+		const generatedURLSlugLocator = this.frameLocator.locator( selectors.permalinkGeneratedURL );
 		const generatedSlug = await generatedURLSlugLocator.innerText();
 		const expectedSlug = slug.replace( ' ', '-' );
 
