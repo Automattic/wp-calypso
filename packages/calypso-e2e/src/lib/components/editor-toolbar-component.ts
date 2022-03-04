@@ -27,7 +27,7 @@ const selectors = {
 	},
 
 	// Editor settings
-	settingsButton: `${ panel } button[aria-label="Settings"]`,
+	settingsButton: `${ panel } .edit-post-header__settings .interface-pinned-items button:first-child`,
 };
 
 /**
