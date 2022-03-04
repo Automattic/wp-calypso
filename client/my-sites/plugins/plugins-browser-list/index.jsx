@@ -131,11 +131,7 @@ const PluginsBrowserList = ( {
 				</div>
 			</div>
 			{ listName === 'paid' && isEnabled( 'marketplace-spotlight' ) && (
-				<PluginSpotlight
-					site={ site }
-					eligiblePlugins={ eligiblePlugins }
-					currentSites={ currentSites }
-				/>
+				<PluginSpotlight eligiblePlugins={ eligiblePlugins } currentSites={ currentSites } />
 			) }
 			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
 		</div>

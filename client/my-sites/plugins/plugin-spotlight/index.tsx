@@ -15,19 +15,17 @@ export interface EligiblePlugins {
 
 export interface PluginSpotlightProps {
 	eligiblePlugins: EligiblePlugins[];
-	site: string;
 	currentSites: any[];
 }
 
-const PluginSpotlight = ( { eligiblePlugins, site, currentSites }: PluginSpotlightProps ) => {
+const PluginSpotlight = ( { eligiblePlugins, currentSites }: PluginSpotlightProps ) => {
+	const site = currentSites[ 0 ];
 	const dispatch = useDispatch();
 	const sitePlugins = useSelector( ( state ) =>
 		getPlugins( state, siteObjectsToSiteIds( currentSites ) )
 	);
 
-	const isFetchingInstalledPlugins = useSelector( ( state ) =>
-		isRequesting( state, currentSites[ 0 ].ID )
-	);
+	const isFetchingInstalledPlugins = useSelector( ( state ) => isRequesting( state, site.ID ) );
 
 	// When we are in plugins/:siteId select the first plugin that is not installed, otherwise always showcase
 	// the first in the list.
@@ -58,10 +56,10 @@ const PluginSpotlight = ( { eligiblePlugins, site, currentSites }: PluginSpotlig
 				type: 'plugin',
 				slug: spotlightPlugin.slug,
 				id: spotlightPlugin.id,
-				site: site,
+				site: site.slug,
 			} )
 		);
-		page( `/plugins/${ spotlightPlugin.slug }/${ site || '' }` );
+		page( `/plugins/${ spotlightPlugin.slug }/${ site.slug }` );
 	};
 
 	return (
