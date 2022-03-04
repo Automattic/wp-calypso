@@ -92,7 +92,8 @@ export function WPOrderReviewLineItems( {
 				const shouldShowVariantSelector =
 					onChangePlanLength &&
 					! isRenewal &&
-					! isPremiumPlanWithDIFMInTheCart( product, responseCart );
+					! isPremiumPlanWithDIFMInTheCart( product, responseCart ) &&
+					! hasPartnerCoupon;
 				return (
 					<WPOrderReviewListItem key={ product.uuid }>
 						<LineItem
