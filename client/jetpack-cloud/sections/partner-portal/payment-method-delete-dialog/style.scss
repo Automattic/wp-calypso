@@ -38,4 +38,14 @@
 			line-height: 36px;
 		}
 	}
+
+	.dialog__action-buttons {
+		button {
+			width: 100%;
+
+			@include break-mobile {
+				width: auto;
+			}
+		}
+	}
 }
