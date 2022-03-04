@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { PaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 
 import './style.scss';
 
