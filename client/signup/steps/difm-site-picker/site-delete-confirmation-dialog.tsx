@@ -42,7 +42,6 @@ const DialogContainer = styled.div`
 
 const DialogButton = styled( Button )`
 	border-radius: 5px;
-	width: 152px;
 	--color-accent: #117ac9;
 	--color-accent-60: #0e64a5;
 	.gridicon {

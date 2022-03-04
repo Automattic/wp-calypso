@@ -1,6 +1,11 @@
 .ReactModalPortal {
 	.difm-site-delete-confirmation {
-		text-align: center;
-		padding: 40px 0 50px;
+		.dialog__action-buttons {
+			text-align: center;
+			padding: 40px 0 50px;
+			.button {
+				min-width: 152px;
+			}
+		}
 	}
 }
