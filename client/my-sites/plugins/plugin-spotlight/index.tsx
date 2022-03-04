@@ -6,7 +6,21 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlugins, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { siteObjectsToSiteIds } from '../utils';
 
-const PluginSpotlight = ( { eligiblePlugins, site, currentSites } ) => {
+export interface EligiblePlugins {
+	slug: string;
+	title: string;
+	tagline: string;
+	cta: string;
+}
+
+export interface PluginSpotlightProps {
+	eligiblePlugins: EligiblePlugins[];
+	site: string;
+	currentSites: any[];
+}
+
+const PluginSpotlight = ( { eligiblePlugins, site, currentSites }: PluginSpotlightProps ) => {
+	const dispatch = useDispatch();
 	const sitePlugins = useSelector( ( state ) =>
 		getPlugins( state, siteObjectsToSiteIds( currentSites ) )
 	);
@@ -15,21 +29,24 @@ const PluginSpotlight = ( { eligiblePlugins, site, currentSites } ) => {
 		isRequesting( state, currentSites[ 0 ].ID )
 	);
 
+	// When we are in plugins/:siteId select the first plugin that is not installed, otherwise always showcase
+	// the first in the list.
 	const selectedPlugin =
 		currentSites.length === 1
 			? eligiblePlugins.find( ( eligiblePlugin ) => {
 					const pluginFound = !! sitePlugins.find(
-						( sitePlugin ) => sitePlugin.slug === eligiblePlugin.slug
+						( sitePlugin: { slug: string } ) => sitePlugin.slug === eligiblePlugin.slug
 					);
 					return ! pluginFound;
 			  } )
 			: eligiblePlugins[ 0 ];
 
+	// Fetch the selected plugin data from wpcom endpoint
 	const {
 		data: spotlightPlugin,
 		isFetched: spotlightPluginFetched,
-	} = useWPCOMPlugin( selectedPlugin?.slug, { enabled: !! selectedPlugin } );
-	const dispatch = useDispatch();
+		// nitpick to fix a typescript issue
+	} = useWPCOMPlugin( selectedPlugin?.slug ?? '', { enabled: !! selectedPlugin } );
 
 	if ( ! spotlightPluginFetched || isFetchingInstalledPlugins ) {
 		return <></>;
@@ -52,9 +69,9 @@ const PluginSpotlight = ( { eligiblePlugins, site, currentSites } ) => {
 			{ spotlightPlugin && (
 				<Spotlight
 					onClick={ spotlightOnClick }
-					taglineText={ selectedPlugin.tagline }
-					titleText={ selectedPlugin.title }
-					ctaText={ selectedPlugin.cta }
+					taglineText={ selectedPlugin?.tagline ?? '' }
+					titleText={ selectedPlugin?.title ?? '' }
+					ctaText={ selectedPlugin?.cta ?? '' }
 					illustrationSrc={ spotlightPlugin?.icon ?? '' }
 				/>
 			) }
