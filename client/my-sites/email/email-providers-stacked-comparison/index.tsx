@@ -43,7 +43,7 @@ const EmailProvidersStackedComparison = ( {
 	selectedEmailProviderSlug,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
 	source,
-}: EmailProvidersStackedComparisonProps ): JSX.Element => {
+}: EmailProvidersStackedComparisonProps ): JSX.Element | null => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -73,7 +73,7 @@ const EmailProvidersStackedComparison = ( {
 	const domainsWithForwards = useSelector( ( state ) => getDomainsWithForwards( state, domains ) );
 
 	if ( ! domain ) {
-		return <></>;
+		return null;
 	}
 
 	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
@@ -178,7 +178,7 @@ const EmailProvidersStackedComparison = ( {
 				/>
 			) }
 
-			{ domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
+			<EmailExistingPaidServiceNotice domain={ domain } />
 
 			<ProfessionalEmailCard
 				comparisonContext={ comparisonContext }
