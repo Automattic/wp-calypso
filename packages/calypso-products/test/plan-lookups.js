@@ -77,6 +77,9 @@ import {
 	isWpComPremiumPlan,
 	isWpComBloggerPlan,
 	isWpComFreePlan,
+	isWpComAnnualPlan,
+	isWpComBiennialPlan,
+	isWpComMonthlyPlan,
 	planMatches,
 	findSimilarPlansKeys,
 	findPlansKeys,
@@ -342,6 +345,86 @@ describe( 'isWpComManagedPlan', () => {
 		expect( isWpComManagedPlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isWpComManagedPlan( PLAN_BUSINESS_2_YEARS ) ).to.equal( false );
 		expect( isWpComManagedPlan( 'non-exisWpComting plan' ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isWpComAnnualPlan', () => {
+	test( 'should return true for annual plans', () => {
+		expect( isWpComAnnualPlan( PLAN_WPCOM_MANAGED ) ).to.equal( true );
+		expect( isWpComAnnualPlan( PLAN_PERSONAL ) ).to.equal( true );
+		expect( isWpComAnnualPlan( PLAN_PREMIUM ) ).to.equal( true );
+		expect( isWpComAnnualPlan( PLAN_BUSINESS ) ).to.equal( true );
+		expect( isWpComAnnualPlan( PLAN_ECOMMERCE ) ).to.equal( true );
+
+		// the Free plan is considered annual even though it costs nothing
+		expect( isWpComAnnualPlan( PLAN_FREE ) ).to.equal( true );
+	} );
+
+	test( 'should return false for non-annual plans', () => {
+		expect( isWpComAnnualPlan( PLAN_PERSONAL_2_YEARS ) ).to.equal( false );
+		expect( isWpComAnnualPlan( PLAN_PREMIUM_2_YEARS ) ).to.equal( false );
+		expect( isWpComAnnualPlan( PLAN_BUSINESS_2_YEARS ) ).to.equal( false );
+		expect( isWpComAnnualPlan( PLAN_ECOMMERCE_2_YEARS ) ).to.equal( false );
+		expect( isWpComAnnualPlan( PLAN_PERSONAL_MONTHLY ) ).to.equal( false );
+		expect( isWpComAnnualPlan( PLAN_PREMIUM_MONTHLY ) ).to.equal( false );
+		expect( isWpComAnnualPlan( PLAN_BUSINESS_MONTHLY ) ).to.equal( false );
+		expect( isWpComAnnualPlan( PLAN_ECOMMERCE_MONTHLY ) ).to.equal( false );
+	} );
+
+	test( 'should return false for non-wpcom plans', () => {
+		expect( isWpComAnnualPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isWpComBiennialPlan', () => {
+	test( 'should return true for biennial plans', () => {
+		expect( isWpComBiennialPlan( PLAN_PERSONAL_2_YEARS ) ).to.equal( true );
+		expect( isWpComBiennialPlan( PLAN_PREMIUM_2_YEARS ) ).to.equal( true );
+		expect( isWpComBiennialPlan( PLAN_BUSINESS_2_YEARS ) ).to.equal( true );
+		expect( isWpComBiennialPlan( PLAN_ECOMMERCE_2_YEARS ) ).to.equal( true );
+	} );
+
+	test( 'should return false for non-biennial plans', () => {
+		expect( isWpComBiennialPlan( PLAN_WPCOM_MANAGED ) ).to.equal( false );
+		expect( isWpComBiennialPlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isWpComBiennialPlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isWpComBiennialPlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isWpComBiennialPlan( PLAN_ECOMMERCE ) ).to.equal( false );
+		expect( isWpComBiennialPlan( PLAN_PERSONAL_MONTHLY ) ).to.equal( false );
+		expect( isWpComBiennialPlan( PLAN_PREMIUM_MONTHLY ) ).to.equal( false );
+		expect( isWpComBiennialPlan( PLAN_BUSINESS_MONTHLY ) ).to.equal( false );
+		expect( isWpComBiennialPlan( PLAN_ECOMMERCE_MONTHLY ) ).to.equal( false );
+		expect( isWpComBiennialPlan( PLAN_FREE ) ).to.equal( false );
+	} );
+
+	test( 'should return false for non-wpcom plans', () => {
+		expect( isWpComBiennialPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
+	} );
+} );
+
+describe( 'isWpComMonthlyPlan', () => {
+	test( 'should return true for monthly plans', () => {
+		expect( isWpComMonthlyPlan( PLAN_PERSONAL_MONTHLY ) ).to.equal( true );
+		expect( isWpComMonthlyPlan( PLAN_PREMIUM_MONTHLY ) ).to.equal( true );
+		expect( isWpComMonthlyPlan( PLAN_BUSINESS_MONTHLY ) ).to.equal( true );
+		expect( isWpComMonthlyPlan( PLAN_ECOMMERCE_MONTHLY ) ).to.equal( true );
+	} );
+
+	test( 'should return false for non-monthly plans', () => {
+		expect( isWpComMonthlyPlan( PLAN_WPCOM_MANAGED ) ).to.equal( false );
+		expect( isWpComMonthlyPlan( PLAN_PERSONAL ) ).to.equal( false );
+		expect( isWpComMonthlyPlan( PLAN_PREMIUM ) ).to.equal( false );
+		expect( isWpComMonthlyPlan( PLAN_BUSINESS ) ).to.equal( false );
+		expect( isWpComMonthlyPlan( PLAN_ECOMMERCE ) ).to.equal( false );
+		expect( isWpComMonthlyPlan( PLAN_FREE ) ).to.equal( false );
+		expect( isWpComMonthlyPlan( PLAN_PERSONAL_2_YEARS ) ).to.equal( false );
+		expect( isWpComMonthlyPlan( PLAN_PREMIUM_2_YEARS ) ).to.equal( false );
+		expect( isWpComMonthlyPlan( PLAN_BUSINESS_2_YEARS ) ).to.equal( false );
+		expect( isWpComMonthlyPlan( PLAN_ECOMMERCE_2_YEARS ) ).to.equal( false );
+	} );
+
+	test( 'should return false for non-wpcom plans', () => {
+		expect( isWpComMonthlyPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
 	} );
 } );
 
