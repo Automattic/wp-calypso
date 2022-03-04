@@ -4,11 +4,11 @@ import type { AppState } from 'calypso/types';
 import 'calypso/state/products-list/init';
 
 /**
- * Returns the discount percentage of a sale coupon, or null if there is none.
+ * Returns the discount percentage of a sale coupon, or null if there is no sale coupon.
  *
  * @param {object} state - global state tree
  * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
- * @returns {number|null} - the discount percentage of a sale coupon, or null if there is none..
+ * @returns {number|null} - the discount percentage of a sale coupon, or null if there is no sale coupon.
  */
 export function getProductSaleCouponDiscount(
 	state: AppState,

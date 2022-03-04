@@ -4,6 +4,7 @@ import getIntroOfferIsEligible from 'calypso/state/selectors/get-intro-offer-is-
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getPlanPrice } from './get-plan-price';
 import { getProductCost } from './get-product-cost';
+import { getProductSaleCouponDiscount } from './get-product-sale-coupon-discount';
 
 /**
  * Computes a full and monthly price for a given plan, based on it's slug/constant
@@ -25,13 +26,14 @@ export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) 
 	const introductoryOfferPrice = introOfferIsEligible
 		? getIntroOfferPrice( state, planObject.getProductId(), siteId )
 		: null;
+	const saleCouponDiscount = getProductSaleCouponDiscount( state, planObject.getStoreSlug() ) || 1;
 
 	return {
 		priceFull: planOrProductPrice,
 		priceFinal: Math.max( planOrProductPrice, 0 ),
 		introductoryOfferPrice:
 			introductoryOfferPrice !== null
-				? Math.max( introductoryOfferPrice, 0 )
+				? Math.max( introductoryOfferPrice * saleCouponDiscount, 0 )
 				: introductoryOfferPrice,
 	};
 };
