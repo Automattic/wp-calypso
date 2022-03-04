@@ -49,12 +49,7 @@ const DialogButton = styled( Button )`
 		margin-left: 10px;
 	}
 `;
-const AnchorButton = styled( Button )`
-	background: none;
-	border: none;
-	color: var( --color-primary-light );
-	padding: 0;
-`;
+
 const Subtitle = styled.p`
 	color: var( --color-neutral-50 );
 	font-size: 0.875rem;
@@ -64,22 +59,21 @@ function SiteDeleteConfirmationDialog( {
 	onClose,
 	onConfirm,
 	siteId,
-	onRedirectToNewSite,
 }: {
 	onClose: () => void;
 	onConfirm: () => void;
-	onRedirectToNewSite: () => void;
 	siteId: number;
 } ) {
 	const [ confirmText, setConfirmText ] = useState( '' );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ?? 0 ) );
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
-
 	const translate = useTranslate();
-	const deleteDisabled = confirmText !== 'DELETE';
+	const TRANSLATED_DELETE_WORD = translate( 'DELETE' );
+	const deleteDisabled = confirmText !== TRANSLATED_DELETE_WORD;
 
 	return (
 		<Dialog
+			additionalClassNames="difm-site-delete-confirmation"
 			isBackdropVisible={ true }
 			isVisible={ true }
 			buttons={ [
@@ -118,16 +112,7 @@ function SiteDeleteConfirmationDialog( {
 						</li>
 						<li>
 							{ translate(
-								'Any WordPress.com subscriptions on your site such as custom domains and emails will not be affected.',
-								{
-									components: {
-										strong: <strong />,
-									},
-									args: {
-										siteTitle,
-										siteAddress: siteDomain,
-									},
-								}
+								'Any WordPress.com subscriptions on your site such as custom domains and emails will not be affected.'
 							) }
 						</li>
 						<li>
@@ -135,7 +120,7 @@ function SiteDeleteConfirmationDialog( {
 								"If you don't want your site content to be deleted you can create a {{a}}new site{{/a}} instead.",
 								{
 									components: {
-										a: <AnchorButton onClick={ onRedirectToNewSite } />,
+										a: <a href="/start/do-it-for-me" />,
 									},
 								}
 							) }
@@ -144,7 +129,15 @@ function SiteDeleteConfirmationDialog( {
 				</Subtitle>
 				<FormLabel htmlFor="confirmTextChangeInput">
 					{ translate(
-						'Type DELETE to confirm that your site’s current content will be deleted.'
+						'Type {{strong}}%(deleteWord)s{{/strong}} to confirm that your site’s current content will be deleted after purchase.',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								deleteWord: TRANSLATED_DELETE_WORD,
+							},
+						}
 					) }
 				</FormLabel>
 

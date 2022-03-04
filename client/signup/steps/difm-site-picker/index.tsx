@@ -1,15 +1,10 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SiteSelector from 'calypso/components/site-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import {
-	removeStep,
-	saveSignupStep,
-	submitSignupStep,
-} from 'calypso/state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/get-selected-site';
 import SiteDeleteConfirmationDialog from './site-delete-confirmation-dialog';
@@ -98,18 +93,6 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 		goToNextStep();
 	};
 
-	const onRedirectToNewSite = () => {
-		dispatch(
-			removeStep( {
-				stepName: 'domains',
-				wasSkipped: true,
-			} )
-		);
-
-		// We do not redirect to the site title step because it might confuse the user
-		page( '/start/do-it-for-me' );
-	};
-
 	return (
 		<StepWrapper
 			headerText={ headerText }
@@ -121,7 +104,6 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 					<DIFMSitePicker filter={ filterSites } onSiteSelect={ handleSiteSelect } />
 					{ siteId && (
 						<SiteDeleteConfirmationDialog
-							onRedirectToNewSite={ onRedirectToNewSite }
 							onClose={ onCloseDialog }
 							onConfirm={ onConfirmDelete }
 							siteId={ siteId }
