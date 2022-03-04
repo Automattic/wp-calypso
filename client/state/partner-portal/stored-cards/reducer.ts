@@ -1,8 +1,19 @@
 import { withStorageKey } from '@automattic/state-utils';
+import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import { combineReducers } from 'calypso/state/utils';
-import type { AnyAction } from 'redux';
+import type { Reducer, Action } from 'redux';
 
-export const items = ( state = [], action: AnyAction ) => {
+type ItemsAction =
+	| {
+			type: 'STORED_CARDS_ADD_COMPLETED';
+			item: PaymentMethod;
+	  }
+	| {
+			type: 'STORED_CARDS_FETCH_COMPLETED';
+			list: PaymentMethod[];
+	  };
+
+export const items: Reducer< PaymentMethod[], ItemsAction > = ( state = [], action ) => {
 	switch ( action.type ) {
 		case 'STORED_CARDS_ADD_COMPLETED': {
 			const { item } = action;
@@ -17,7 +28,11 @@ export const items = ( state = [], action: AnyAction ) => {
 	return state;
 };
 
-export const isFetching = ( state = false, action: AnyAction ) => {
+type IsFetchingAction = Action<
+	'STORED_CARDS_FETCH' | 'STORED_CARDS_FETCH_COMPLETED' | 'STORED_CARDS_FETCH_FAILED'
+>;
+
+export const isFetching: Reducer< boolean, IsFetchingAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'STORED_CARDS_FETCH':
 			return true;
@@ -31,8 +46,8 @@ export const isFetching = ( state = false, action: AnyAction ) => {
 };
 
 const combinedReducer = combineReducers( {
+	items: items as Reducer,
 	isFetching,
-	items,
 } );
 
 export default withStorageKey( 'storedCards', combinedReducer );
