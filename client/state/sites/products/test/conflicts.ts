@@ -16,7 +16,12 @@ import {
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 } from '@automattic/calypso-products';
-import { planHasAntiSpam, planHasDailyBackup, planHasRealTimeBackup, planHasScan } from '../conflicts';
+import {
+	planHasAntiSpam,
+	planHasDailyBackup,
+	planHasRealTimeBackup,
+	planHasScan,
+} from '../conflicts';
 
 const plansWithDailyBackup = [
 	PLAN_JETPACK_PERSONAL,
