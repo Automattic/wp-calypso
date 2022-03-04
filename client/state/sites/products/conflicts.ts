@@ -26,6 +26,7 @@ import {
 	isJetpackAntiSpam,
 	FEATURE_JETPACK_SCAN_DAILY,
 	FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+	isJetpackScan,
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
@@ -63,6 +64,8 @@ const REALTIME_BACKUP_PRODUCTS = [
 const ANTI_SPAM_FEATURES = [ FEATURE_JETPACK_ANTI_SPAM, FEATURE_JETPACK_ANTI_SPAM_MONTHLY ];
 
 const ANTI_SPAM_PRODUCTS = [ PRODUCT_JETPACK_ANTI_SPAM, PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ];
+
+const SCAN_FEATURES = [ FEATURE_JETPACK_SCAN_DAILY, FEATURE_JETPACK_SCAN_DAILY_MONTHLY ];
 
 /**
  * Check is a Jetpack plan is including a daily backup feature.
@@ -106,6 +109,22 @@ export const planHasRealTimeBackup = ( planSlug: string, orSuperior = false ): b
 export const planHasAntiSpam = ( planSlug: string, orSuperior = false ): boolean => {
 	const hasFeature = planHasAtLeastOneFeature( planSlug, ANTI_SPAM_FEATURES );
 	const hasSuperiorFeature = ANTI_SPAM_FEATURES.some( ( feature ) =>
+		planHasSuperiorFeature( planSlug, feature )
+	);
+
+	return orSuperior ? hasFeature || hasSuperiorFeature : hasFeature;
+};
+
+/**
+ * Check is a Jetpack plan is including a scan feature.
+ *
+ * @param {string} planSlug The plan slug.
+ * @param {boolean} orSuperior When true, also checks plan for superior features.
+ * @returns {boolean} True if the plan includes a scan feature.
+ */
+export const planHasScan = ( planSlug: string, orSuperior = false ): boolean => {
+	const hasFeature = planHasAtLeastOneFeature( planSlug, SCAN_FEATURES );
+	const hasSuperiorFeature = SCAN_FEATURES.some( ( feature ) =>
 		planHasSuperiorFeature( planSlug, feature )
 	);
 
@@ -268,32 +287,48 @@ export const isAntiSpamProductIncludedInSitePlan = createSelector(
 	]
 );
 
-export const planHasScan = ( planSlug: string ): boolean => {
-	const SCAN_FEATURES = [ FEATURE_JETPACK_SCAN_DAILY, FEATURE_JETPACK_SCAN_DAILY_MONTHLY ];
-
-	return planHasAtLeastOneFeature( planSlug, SCAN_FEATURES );
-};
-
+/**
+ * Check if a Jetpack plan is including a Scan product a site might already have.
+ *
+ * @param {AppState} state The redux state.
+ * @param {number} siteId The site ID.
+ * @param {string} planSlug The plan slug.
+ * @returns {boolean|null} True if the plan includes the Scan product, or null when it's unable to be determined.
+ */
 export const isPlanIncludingSiteScan = createSelector(
 	( state: AppState, siteId: number | null, planSlug: string ): boolean | null => {
 		if ( ! siteId || ! ( JETPACK_PLANS as ReadonlyArray< string > ).includes( planSlug ) ) {
 			return null;
 		}
 
+		const products = getSiteProducts( state, siteId ) || [];
+		const siteProducts = products.filter( ( p ) => ! p.expired );
+
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
-		const siteHasScan = !! sitePlanSlug && planHasScan( sitePlanSlug );
+		const siteHasScan = Boolean(
+			( !! sitePlanSlug && planHasScan( sitePlanSlug ) ) || siteProducts.find( isJetpackScan )
+		);
 
 		return siteHasScan && planHasScan( planSlug );
 	},
 	[
-		( state: AppState, siteId: number | null, productSlug: string ) => [
+		( state: AppState, siteId: number | null, planSlug: string ) => [
 			siteId,
-			productSlug,
+			planSlug,
 			getSitePlanSlug( state, siteId ),
+			getSiteProducts( state, siteId ),
 		],
 	]
 );
 
+/**
+ * Check if a Scan product is already included in a site plan.
+ *
+ * @param {AppState} state The redux state.
+ * @param {number} siteId The site ID.
+ * @param {string} productSlug The product slug.
+ * @returns {boolean|null} True if the product is already included in a plan, or null when it's unable to be determined.
+ */
 export const isScanProductIncludedInSitePlan = createSelector(
 	( state: AppState, siteId: number | null, productSlug: string ): boolean | null => {
 		if ( ! siteId ) {
@@ -310,7 +345,7 @@ export const isScanProductIncludedInSitePlan = createSelector(
 		}
 
 		if ( ( JETPACK_SCAN_PRODUCTS as ReadonlyArray< string > ).includes( productSlug ) ) {
-			return planHasScan( sitePlanSlug );
+			return planHasScan( sitePlanSlug, true );
 		}
 
 		return null;
