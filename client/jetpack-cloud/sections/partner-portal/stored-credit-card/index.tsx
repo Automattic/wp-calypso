@@ -1,8 +1,12 @@
 import { PaymentLogo } from '@automattic/composite-checkout';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
+import { useSelector } from 'react-redux';
 import PaymentMethodActions from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-actions';
-import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
+import { isDeletingStoredCard } from 'calypso/state/partner-portal/stored-cards/selectors';
+import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
+import type { ReactElement } from 'react';
+
 import './style.scss';
 
 export default function StoredCreditCard( props: { card: PaymentMethod } ): ReactElement {
@@ -12,8 +16,14 @@ export default function StoredCreditCard( props: { card: PaymentMethod } ): Reac
 	const expiryMonth = creditCard?.card.exp_month;
 	const expiryYear = creditCard?.card.exp_year;
 
+	const isDeleting = useSelector( ( state ) => isDeletingStoredCard( state, creditCard.id ) );
+
 	return (
-		<div className="stored-credit-card">
+		<div
+			className={ classNames( 'stored-credit-card', {
+				'delete-in-progress': isDeleting,
+			} ) }
+		>
 			<div className="stored-credit-card__header">
 				<div className="stored-credit-card__labels">
 					<div className="stored-credit-card__payment-logo">
@@ -24,7 +34,13 @@ export default function StoredCreditCard( props: { card: PaymentMethod } ): Reac
 				</div>
 
 				<div className="stored-credit-card__actions">
-					<PaymentMethodActions card={ creditCard } />
+					<div className="stored-credit-card__actions">
+						{ isDeleting ? (
+							<span>{ translate( 'Removing card' ) }</span>
+						) : (
+							<PaymentMethodActions card={ creditCard } />
+						) }
+					</div>
 				</div>
 			</div>
 			<div className="stored-credit-card__footer">

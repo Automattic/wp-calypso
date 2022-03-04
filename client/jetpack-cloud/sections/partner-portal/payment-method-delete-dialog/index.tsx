@@ -1,23 +1,32 @@
 import { Button, Dialog } from '@automattic/components';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { getPaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
+import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
+import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
 interface Props {
-	paymentMethodSummary: TranslateResult;
+	paymentMethod: PaymentMethod;
 	isVisible: boolean;
 	onClose: () => void;
 	onConfirm: () => void;
 }
 
 const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
-	paymentMethodSummary,
+	paymentMethod,
 	isVisible,
 	onClose,
 	onConfirm,
 } ) => {
 	const translate = useTranslate();
+
+	const paymentMethodSummary = getPaymentMethodSummary( {
+		translate,
+		type: paymentMethod?.card.brand,
+		digits: paymentMethod?.card.last4,
+	} );
+
 	return (
 		<Dialog
 			isVisible={ isVisible }
