@@ -35,9 +35,11 @@ const Row = styled.div`
 `;
 
 const DialogContainer = styled.div`
-	text-align: left;
-	width: 600px;
-	padding: 65px 65px 0 65px;
+	max-width: 600px;
+	padding: 50px 50px 0 50px;
+	@media ( max-width: 425px ) {
+		padding: 30px 0 10px 0;
+	}
 `;
 
 const DialogButton = styled( Button )`
