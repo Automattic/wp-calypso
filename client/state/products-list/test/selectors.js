@@ -5,16 +5,23 @@ import getIntroOfferIsEligible from 'calypso/state/selectors/get-intro-offer-is-
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import {
-	getProductDisplayCost,
-	isProductsListFetching,
-	getPlanPrice,
-	planSlugToPlanProduct,
 	computeFullAndMonthlyPricesForPlan,
 	computeProductsWithPrices,
+	getPlanPrice,
+	getProductDisplayCost,
+	getProductSaleCouponCost,
+	getProductSaleCouponDiscount,
+	isProductsListFetching,
+	planSlugToPlanProduct,
 } from '../selectors';
 
 jest.mock( 'calypso/state/selectors/get-intro-offer-price', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/get-intro-offer-is-eligible', () => jest.fn() );
+jest.mock( 'calypso/state/selectors/get-intro-offer-is-eligible', () => jest.fn() );
+jest.mock( 'calypso/state/product-list/selectors/get-product-sale-coupon-cost', () => jest.fn() );
+jest.mock( 'calypso/state/product-list/selectors/get-product-sale-coupon-discount', () =>
+	jest.fn()
+);
 
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
@@ -129,6 +136,10 @@ describe( 'selectors', () => {
 			getIntroOfferPrice.mockImplementation( () => null );
 			getIntroOfferIsEligible.mockReset();
 			getIntroOfferIsEligible.mockImplementation( () => false );
+			getProductSaleCouponCost.mockReset();
+			getProductSaleCouponCost.mockImplementation( () => false );
+			getProductSaleCouponDiscount.mockReset();
+			getProductSaleCouponDiscount.mockImplementation( () => false );
 		} );
 		test( 'Should return shape { priceFull }', () => {
 			getPlanDiscountedRawPrice.mockImplementation( ( a, b, c, { isMonthly } ) =>
