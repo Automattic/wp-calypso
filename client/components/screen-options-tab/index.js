@@ -89,12 +89,14 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	}
 
 	const onSwitchView = ( view ) => {
-		recordTracksEvent( 'wpcom_dashboard_quick_switch_link_clicked', {
-			blog_id: siteId,
-			current_page: wpAdminPath,
-			destination: view,
-			plan,
-		} );
+		dispatch(
+			recordTracksEvent( 'wpcom_dashboard_quick_switch_link_clicked', {
+				blog_id: siteId,
+				current_page: wpAdminPath,
+				destination: view,
+				plan,
+			} )
+		);
 
 		if ( view === DEFAULT_VIEW ) {
 			setIsOpen( false );
