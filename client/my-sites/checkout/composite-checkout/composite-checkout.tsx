@@ -184,7 +184,6 @@ export default function CompositeCheckout( {
 	const cartKey = useCartKey();
 	const {
 		applyCoupon,
-		updateLocation,
 		replaceProductInCart,
 		replaceProductsInCart,
 		isLoading: isLoadingCart,
@@ -249,7 +248,7 @@ export default function CompositeCheckout( {
 	useWpcomStore( emptyManagedContactDetails, updateContactDetailsCache );
 
 	useDetectedCountryCode();
-	useCachedDomainContactDetails( updateLocation, countriesList );
+	useCachedDomainContactDetails( countriesList );
 
 	// Record errors adding products to the cart
 	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
