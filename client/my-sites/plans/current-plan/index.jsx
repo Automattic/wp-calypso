@@ -259,9 +259,9 @@ class CurrentPlan extends Component {
 				{ showLegacyPlanNotice && (
 					<Notice
 						status="is-info"
-						text={ translate(
+						text={
 							'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut felis et orci fringilla pretium. Consectura elit et orci fel.'
-						) }
+						}
 						showDismiss={ false }
 					></Notice>
 				) }
