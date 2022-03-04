@@ -61,7 +61,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	it( 'Open setting sidebar', async function () {
 		await gutenbergEditorPage.openSettings();
-		await gutenbergEditorPage.clickSettingsTab( 'Page' );
 	} );
 
 	it( 'Set custom URL slug', async function () {

@@ -5,7 +5,7 @@ export type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 const panel = 'div.interface-interface-skeleton__header';
 const selectors = {
 	// Block Inserter
-	blockInserterButton: `${ panel } button[aria-label="Toggle block inserter"]`,
+	blockInserterButton: `${ panel } button.edit-post-header-toolbar__inserter-toggle`,
 
 	// Draft
 	saveDraftButton: ( state: 'disabled' | 'enabled' ) => {

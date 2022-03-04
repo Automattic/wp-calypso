@@ -1,4 +1,5 @@
 import { FrameLocator, Page } from 'playwright';
+import envVariables from '../../env-variables';
 
 export type EditorSidebarTab = 'Post' | 'Block' | 'Page';
 export type ArticleSections =
@@ -79,9 +80,13 @@ export class EditorSettingsSidebarComponent {
 	}
 
 	/**
-	 *
+	 * Closes the sidebar only for Mobile viewport.
 	 */
 	async closeSidebarForMobile(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+			return;
+		}
+
 		const locator = this.frameLocator.locator( selectors.mobileCloseSidebarButton );
 		await locator.click();
 	}
