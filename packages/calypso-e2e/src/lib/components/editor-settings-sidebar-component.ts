@@ -302,7 +302,6 @@ export class EditorSettingsSidebarComponent {
 	 * Clicks on the Revisions section in the sidebar to show a revisions modal.
 	 */
 	async showRevisions(): Promise< void > {
-		await this.page.pause();
 		const locator = this.frameLocator.locator(
 			`${ selectors.sectionHeader }:has-text("Revisions")`
 		);
