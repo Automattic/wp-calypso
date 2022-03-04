@@ -103,18 +103,24 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-content: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	> {
+		margin: 2px 0;
+	}
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.success };
 	display: block;
-	margin: 2px 0;
 `;
 
 const NotApplicableCallout = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	display: block;
-	margin: 2px 0;
 	font-size: 12px;
 `;
 
