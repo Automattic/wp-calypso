@@ -8,7 +8,7 @@ const withMediaStorage = createHigherOrderComponent(
 		const siteId = useSelector( getSelectedSiteId );
 		const { data } = useMediaStorageQuery( siteId );
 
-		return <Wrapped { ...props } mediaStorage={ data ?? [] } />;
+		return <Wrapped { ...props } mediaStorage={ data ?? {} } />;
 	},
 	'WithMediaStorage'
 );
