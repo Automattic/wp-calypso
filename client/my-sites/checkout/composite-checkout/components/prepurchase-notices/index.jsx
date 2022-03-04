@@ -196,6 +196,8 @@ const PrePurchaseNotices = () => {
 
 	const scanProductInCart = scanSlugInCart && getProductFromSlug( scanSlugInCart );
 
+	// We're attempting to buy Jetpack Scan individually,
+	// but this site already has a plan that includes it
 	if ( sitePlanIncludesCartScanProduct && currentSitePlan ) {
 		return (
 			<SitePlanIncludesCartProductNotice
