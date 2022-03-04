@@ -193,6 +193,14 @@ export const isBackupProductIncludedInSitePlan = createSelector(
 	]
 );
 
+/**
+ * Check if a Jetpack plan is including an Anti-Spam product a site might already have.
+ *
+ * @param {AppState} state The redux state.
+ * @param {number} siteId The site ID.
+ * @param {string} planSlug The plan slug.
+ * @returns {boolean|null} True if the plan includes the Anti-Spam product, or null when it's unable to be determined.
+ */
 export const isPlanIncludingSiteAntiSpam = createSelector(
 	( state: AppState, siteId: number | null, planSlug: string ): boolean | null => {
 		if ( ! siteId || ! ( JETPACK_PLANS as ReadonlyArray< string > ).includes( planSlug ) ) {
@@ -210,15 +218,23 @@ export const isPlanIncludingSiteAntiSpam = createSelector(
 		return siteHasAntiSpam && planHasAntiSpam( planSlug );
 	},
 	[
-		( state: AppState, siteId: number | null, productSlug: string ) => [
+		( state: AppState, siteId: number | null, planSlug: string ) => [
 			siteId,
-			productSlug,
+			planSlug,
 			getSitePlanSlug( state, siteId ),
 			getSiteProducts( state, siteId ),
 		],
 	]
 );
 
+/**
+ * Check if an Anti-Spam product is already included in a site plan.
+ *
+ * @param {AppState} state The redux state.
+ * @param {number} siteId The site ID.
+ * @param {string} productSlug The product slug.
+ * @returns {boolean|null} True if the product is already included in a plan, or null when it's unable to be determined.
+ */
 export const isAntiSpamProductIncludedInSitePlan = createSelector(
 	( state: AppState, siteId: number | null, productSlug: string ): boolean | null => {
 		if ( ! siteId ) {
