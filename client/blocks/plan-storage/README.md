@@ -21,24 +21,16 @@ media storage limits are fetched.
 
 ```javascript
 import PlanStorageBar from 'calypso/blocks/plan-storage/bar';
-import QueryMediaStorage from 'calypso/components/data/query-media-storage';
-import { getMediaStorage } from 'calypso/state/sites/media-storage/selectors';
+import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 
-function render() {
-	const planName = this.props.site.plan.product_name_short;
-	return (
-		<div>
-			<QueryMediaStorage siteId={ this.props.siteId } />
-			<PlanStorageBar sitePlanName={ planName } mediaStorage={ this.props.mediaStorage } />
-		</div>
-	);
+function MyComponent( { site, siteId } ) {
+	const planName = site.plan.product_name_short;
+	const { data: mediaStorage } = useMediaStorageQuery( siteId );
+
+	return <PlanStorageBar sitePlanName={ planName } mediaStorage={ this.props.mediaStorage } />;
 }
 //...
-export default connect( ( state, ownProps ) => {
-	return {
-		mediaStorage: getMediaStorage( state, ownProps.siteId ),
-	};
-} )( MyComponent );
+export default MyComponent;
 ```
 
 ## Props
