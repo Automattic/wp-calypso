@@ -4,6 +4,7 @@ import getIntroOfferIsEligible from 'calypso/state/selectors/get-intro-offer-is-
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getPlanPrice } from './get-plan-price';
 import { getProductCost } from './get-product-cost';
+import { getProductSaleCouponCost } from './get-product-sale-coupon-cost';
 import { getProductSaleCouponDiscount } from './get-product-sale-coupon-discount';
 
 /**
@@ -23,18 +24,17 @@ export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) 
 		? getProductCost( state, planObject.getStoreSlug() )
 		: getPlanPrice( state, siteId, planObject, false );
 	const introOfferIsEligible = getIntroOfferIsEligible( state, planObject.getProductId(), siteId );
+	const saleCouponDiscount = getProductSaleCouponDiscount( state, planObject.getStoreSlug() ) || 1;
 	const introductoryOfferPrice = introOfferIsEligible
 		? getIntroOfferPrice( state, planObject.getProductId(), siteId )
 		: null;
-	const saleCouponDiscount = getProductSaleCouponDiscount( state, planObject.getStoreSlug() ) || 1;
+	const saleCouponCost = getProductSaleCouponCost( state, planObject.getStoreSlug() );
 
 	return {
 		priceFull: planOrProductPrice,
-		priceFinal: Math.max( planOrProductPrice, 0 ),
+		priceFinal: saleCouponCost || planOrProductPrice,
 		introductoryOfferPrice:
-			introductoryOfferPrice !== null
-				? Math.max( introductoryOfferPrice * saleCouponDiscount, 0 )
-				: introductoryOfferPrice,
+			introductoryOfferPrice !== null ? introductoryOfferPrice * saleCouponDiscount : null,
 	};
 };
 
