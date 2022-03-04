@@ -11,11 +11,9 @@ import { planSlugToPlanProduct } from './plan-slug-to-plan-product';
  * @param {object} state Current redux state
  * @param {number|undefined} siteId Site ID to consider
  * @param {string[]} planSlugs Plans constants
- * @param {number} credits The number of free credits in cart
- * @param {object} couponDiscounts Absolute values of any discounts coming from a discount coupon
  * @returns {Array} A list of objects as described above
  */
-export const computeProductsWithPrices = ( state, siteId, planSlugs, credits, couponDiscounts ) => {
+export const computeProductsWithPrices = ( state, siteId, planSlugs ) => {
 	const products = getProductsList( state );
 
 	return planSlugs
@@ -23,13 +21,7 @@ export const computeProductsWithPrices = ( state, siteId, planSlugs, credits, co
 		.filter( ( planProduct ) => planProduct.plan && get( planProduct, [ 'product', 'available' ] ) )
 		.map( ( availablePlanProduct ) => ( {
 			...availablePlanProduct,
-			...computeFullAndMonthlyPricesForPlan(
-				state,
-				siteId,
-				availablePlanProduct.plan,
-				credits,
-				couponDiscounts
-			),
+			...computeFullAndMonthlyPricesForPlan( state, siteId, availablePlanProduct.plan ),
 		} ) )
 		.filter( ( availablePlanProduct ) => availablePlanProduct.priceFull )
 		.sort( ( a, b ) => getTermDuration( a.plan.term ) - getTermDuration( b.plan.term ) );

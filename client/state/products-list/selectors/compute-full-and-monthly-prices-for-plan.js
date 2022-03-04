@@ -11,19 +11,9 @@ import { getProductCost } from './get-product-cost';
  * @param {object} state Current redux state
  * @param {number} siteId Site ID to consider
  * @param {object} planObject Plan object returned by getPlan() from @automattic/calypso-products
- * @param {number} credits The number of free credits in cart
- * @param {object} couponDiscounts Absolute values of any discounts coming from a discount coupon
  * @returns {object} Object with a full and monthly price
  */
-export const computeFullAndMonthlyPricesForPlan = (
-	state,
-	siteId,
-	planObject,
-	credits,
-	couponDiscounts
-) => {
-	const couponDiscount = couponDiscounts[ planObject.getStoreSlug() ] || 1;
-
+export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) => {
 	if ( planObject.group === GROUP_WPCOM ) {
 		return computePricesForWpComPlan( state, siteId, planObject );
 	}
@@ -38,10 +28,10 @@ export const computeFullAndMonthlyPricesForPlan = (
 
 	return {
 		priceFull: planOrProductPrice,
-		priceFinal: Math.max( planOrProductPrice * couponDiscount - credits, 0 ),
+		priceFinal: Math.max( planOrProductPrice, 0 ),
 		introductoryOfferPrice:
 			introductoryOfferPrice !== null
-				? Math.max( introductoryOfferPrice * couponDiscount - credits, 0 )
+				? Math.max( introductoryOfferPrice, 0 )
 				: introductoryOfferPrice,
 	};
 };
