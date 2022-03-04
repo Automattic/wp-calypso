@@ -42,6 +42,7 @@ import useCreatePaymentMethods from './hooks/use-create-payment-methods';
 import useDetectedCountryCode from './hooks/use-detected-country-code';
 import useGetThankYouUrl from './hooks/use-get-thank-you-url';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
+import { usePurchasePermissionsCheck } from './hooks/use-purchase-permissions-check';
 import useRecordCartLoaded from './hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
@@ -193,6 +194,8 @@ export default function CompositeCheckout( {
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
 	} = useShoppingCart( cartKey );
+
+	usePurchasePermissionsCheck();
 
 	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 
