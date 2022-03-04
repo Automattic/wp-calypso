@@ -35,6 +35,7 @@ module.exports = {
 			rules: {
 				// We use jest-runner-groups to run spec suites, and these involve a custom doc header tag.
 				'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'group' ] } ],
+				'jest/no-standalone-expect': [ 'error', { additionalTestBlockFunctions: [ 'skipItIf' ] } ],
 			},
 		},
 		{
