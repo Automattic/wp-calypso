@@ -24,7 +24,7 @@ export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) 
 		? getProductCost( state, planObject.getStoreSlug() )
 		: getPlanPrice( state, siteId, planObject, false );
 	const introOfferIsEligible = getIntroOfferIsEligible( state, planObject.getProductId(), siteId );
-	const saleCouponDiscount = getProductSaleCouponDiscount( state, planObject.getStoreSlug() ) || 1;
+	const saleCouponDiscount = getProductSaleCouponDiscount( state, planObject.getStoreSlug() ) || 0;
 	const introductoryOfferPrice = introOfferIsEligible
 		? getIntroOfferPrice( state, planObject.getProductId(), siteId )
 		: null;
@@ -34,7 +34,7 @@ export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) 
 		priceFull: planOrProductPrice,
 		priceFinal: saleCouponCost || planOrProductPrice,
 		introductoryOfferPrice:
-			introductoryOfferPrice !== null ? introductoryOfferPrice * saleCouponDiscount : null,
+			introductoryOfferPrice !== null ? introductoryOfferPrice * ( 1 - saleCouponDiscount ) : null,
 	};
 };
 

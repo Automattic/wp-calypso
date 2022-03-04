@@ -23,6 +23,6 @@ export function getProductSaleCouponDiscount(
 	) {
 		return null;
 	}
-
-	return product.sale_coupon.discount;
+	// the sale_coupon is returned in integer form i.e. a 20% discount is `20`
+	return product.sale_coupon.discount / 100;
 }
