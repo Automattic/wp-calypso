@@ -22,7 +22,7 @@ const panel = '[aria-label="Editor settings"]';
 
 const selectors = {
 	// Close button for mobile
-	mobileCloseSidebarButton: `${ panel } [aria-label="Close settings"]:visible`, // there's a hidden copy in there
+	mobileCloseSidebarButton: `${ panel } [aria-label="Close settings"]:visible`,
 
 	// Tab
 	tabButton: ( tabName: EditorSidebarTab ) => `${ panel } button[data-label="${ tabName }"]`,
@@ -56,8 +56,6 @@ const selectors = {
 
 	// Tag
 	tagInput: `${ panel } .components-form-token-field:has-text("Add New Tag") input`,
-	// addedTag: ( tagName: string ) =>
-	// `${ panel } .components-form-token-field:has-text("Add New Tag") .components-form-token-field__token:has-text("${ tagName }")`,
 	addedTag: ( tag: string ) =>
 		`${ panel } .components-form-token-field__token-text:has-text("${ tag }")`,
 };
