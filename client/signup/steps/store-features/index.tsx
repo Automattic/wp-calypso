@@ -18,7 +18,7 @@ import type { Dependencies } from 'calypso/signup/types';
 import './index.scss';
 
 interface Props {
-	goToNextStep: () => void;
+	goToNextStep: ( nextFlow?: string ) => void;
 	isReskinned: boolean;
 	signupDependencies: any;
 	stepName: string;
@@ -60,7 +60,17 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			store_feature: storeType,
 		} );
 		dispatch( submitSignupStep( { stepName }, providedDependencies ) );
-		goToNextStep();
+
+		if ( 'simple' === storeType ) {
+			goToNextStep();
+		} else {
+			/**
+			 * When moving to the WooCommerce flow, we need to explicitly set the next step name.
+			 * This ensures that the currentFlow and previousFlow are set properly in the store
+			 * which is necessary for the "Back" button to work.
+			 */
+			goToNextStep( 'woocommerce-install' );
+		}
 	};
 
 	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );

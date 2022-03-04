@@ -532,10 +532,12 @@ class Signup extends Component {
 		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
-			this.setState( { previousFlowName: this.props.flowName } );
+			this.setState( { previousFlowName: this.props.flowName }, () => {
+				this.goToStep( nextStepName, nextStepSection, nextFlowName );
+			} );
+		} else {
+			this.goToStep( nextStepName, nextStepSection, nextFlowName );
 		}
-
-		this.goToStep( nextStepName, nextStepSection, nextFlowName );
 	};
 
 	goToFirstInvalidStep = ( progress = this.props.progress ) => {
