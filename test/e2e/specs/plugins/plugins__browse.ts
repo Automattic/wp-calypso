@@ -2,7 +2,7 @@
  * @group calypso-pr
  */
 
-import { DataHelper, TestAccount, PluginsPage } from '@automattic/calypso-e2e';
+import { DataHelper, TestAccount, PluginsPage, envVariables } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
@@ -35,7 +35,11 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins' ), function () {
 	} );
 
 	it( 'Can return via breadcrumb', async function () {
-		await pluginsPage.clickPluginsBreadcrumb();
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+			await pluginsPage.clickPluginsBreadcrumb();
+		} else {
+			await pluginsPage.clickBackBreadcrumb();
+		}
 		await pluginsPage.validateHasSection( 'Premium' );
 	} );
 } );

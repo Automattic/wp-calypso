@@ -9,10 +9,10 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import Search from '@automattic/search';
-import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
@@ -184,7 +184,7 @@ const PluginsBrowser = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const [ isMobile, setIsMobile ] = useState();
+	const isMobile = useBreakpoint( '<960px' );
 
 	const shouldShowManageButton = useMemo( () => {
 		if ( isJetpack ) {
@@ -241,21 +241,6 @@ const PluginsBrowser = ( {
 		}
 	}, [] );
 
-	useEffect( () => {
-		if ( isWithinBreakpoint( '<960px' ) ) {
-			setIsMobile( true );
-		}
-		const unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobileLayout ) =>
-			setIsMobile( isMobileLayout )
-		);
-
-		return () => {
-			if ( typeof unsubscribe === 'function' ) {
-				unsubscribe();
-			}
-		};
-	}, [] );
-
 	const fetchNextPagePlugins = useCallback( () => {
 		if ( ! category ) {
 			return;
@@ -293,7 +278,11 @@ const PluginsBrowser = ( {
 				/>
 			) }
 			{ ! hideHeader && (
-				<FixedNavigationHeader className="plugins-browser__header" navigationItems={ breadcrumbs }>
+				<FixedNavigationHeader
+					className="plugins-browser__header"
+					navigationItems={ breadcrumbs }
+					compactBreadcrumb={ isMobile }
+				>
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
 							shouldShowManageButton={ shouldShowManageButton }
