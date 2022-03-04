@@ -5,8 +5,8 @@ import {
 	isJetpackBackup,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
+	isJetpackScan,
 	isJetpackScanSlug,
-	PRODUCT_JETPACK_SCAN,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useEffect } from 'react';
@@ -154,19 +154,13 @@ const PrePurchaseNotices = () => {
 		);
 	}
 
-	if ( cartPlanOverlapsSiteScanPurchase ) {
+	// This site has an active Jetpack Scan product purchase,
+	// but we're attempting to buy a plan that includes one as well
+	const siteScanProduct = currentSiteProducts.find( isJetpackScan );
+	if ( cartPlanOverlapsSiteScanPurchase && siteScanProduct ) {
 		return (
 			<CartPlanOverlapsOwnedProductNotice
-				product={ getProductFromSlug( PRODUCT_JETPACK_SCAN ) }
-				selectedSite={ selectedSite }
-			/>
-		);
-	}
-
-	if ( cartPlanOverlapsSiteScanPurchase ) {
-		return (
-			<CartPlanOverlapsOwnedProductNotice
-				product={ getProductFromSlug( PRODUCT_JETPACK_SCAN ) }
+				product={ siteScanProduct }
 				selectedSite={ selectedSite }
 			/>
 		);
