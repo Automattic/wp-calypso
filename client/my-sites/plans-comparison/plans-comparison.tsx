@@ -6,7 +6,6 @@ import {
 	TYPE_FLEXIBLE,
 	TYPE_MANAGED,
 } from '@automattic/calypso-products';
-import { Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -34,13 +33,13 @@ const ComparisonTable = styled.table< TableProps >`
 
 	th,
 	td {
-		background: var( --studio-white );
-		border-bottom: 1px solid var( --studio-gray-0 );
+		background: #fdfdfd;
+		border-bottom: 1px solid rgba( 220, 220, 222, 0.2 );
 		padding: 1rem;
 		min-height: 2rem;
 		width: ${ ( { firstColWidth, planCount } ) => `${ ( 100 - firstColWidth ) / planCount }%` };
 		font-size: 1rem;
-		vertical-align: top;
+		vertical-align: middle;
 	}
 
 	th:nth-of-type( even ),
@@ -115,9 +114,6 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 
 	return (
 		<ComparisonTable firstColWidth={ 30 } planCount={ plans.length }>
-			{ ! isInSignup && (
-				<Global styles={ { '#content.layout__content': { overflow: 'unset' } } } />
-			) }
 			<THead isInSignup={ isInSignup }>
 				<tr>
 					<td className={ `is-first` }>

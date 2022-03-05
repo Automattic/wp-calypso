@@ -23,20 +23,17 @@ const MobileContent = styled.div`
 	display: none;
 
 	@media screen and ( max-width: ${ SCREEN_BREAKPOINT }px ) {
-		display: flex;
-		flex-direction: column;
+		display: block;
 	}
 `;
 
 const Title = styled.div`
-	display: flex;
-	flex-direction: row;
-	align-items: center;
 	gap: 0.5rem;
 
 	.gridicon {
-		width: 1em;
-		height: 1em;
+		width: 1.1em;
+		height: 1.1em;
+		margin: 0 5px -2px 0;
 	}
 
 	.gridicons-checkmark {
@@ -44,7 +41,7 @@ const Title = styled.div`
 	}
 
 	.gridicons-cross {
-		fill: var( --studio-gray-30 );
+		fill: #d63638;
 	}
 `;
 

@@ -18,6 +18,7 @@ import {
 	isManaged,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
+import { Global } from '@emotion/react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -39,7 +40,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import { isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
+import { globalOverrides, isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
@@ -200,6 +201,7 @@ class CurrentPlan extends Component {
 		return (
 			<Main className="current-plan" wideLayout>
 				<SidebarNavigation />
+				{ eligibleForManagedPlan && <Global styles={ globalOverrides } /> }
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				<FormattedHeader
 					brandFont
@@ -210,87 +212,137 @@ class CurrentPlan extends Component {
 					) }
 					align="left"
 				/>
-				{ selectedSiteId && (
-					// key={ selectedSiteId } ensures data is refetched for changing selectedSiteId
-					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
-				) }
-				<QuerySites siteId={ selectedSiteId } />
-				<QuerySitePlans siteId={ selectedSiteId } />
-				<QuerySitePurchases siteId={ selectedSiteId } />
-				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				<div className="current-plan__content">
+					{ selectedSiteId && (
+						// key={ selectedSiteId } ensures data is refetched for changing selectedSiteId
+						<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
+					) }
+					<QuerySites siteId={ selectedSiteId } />
+					<QuerySitePlans siteId={ selectedSiteId } />
+					<QuerySitePurchases siteId={ selectedSiteId } />
+					{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				{ showThankYou && ! this.state.hideThankYouModal && (
-					<Dialog
-						baseClassName="current-plan__dialog dialog__content dialog__backdrop"
-						isVisible={ showThankYou }
-						onClose={ this.hideThankYouModalOnClose }
+					{ showThankYou && ! this.state.hideThankYouModal && (
+						<Dialog
+							baseClassName="current-plan__dialog dialog__content dialog__backdrop"
+							isVisible={ showThankYou }
+							onClose={ this.hideThankYouModalOnClose }
+						>
+							{ this.renderThankYou() }
+						</Dialog>
+					) }
+
+					<PlansNavigation path={ path } />
+
+					{ showDomainWarnings && (
+						<DomainWarnings
+							domains={ domains }
+							position="current-plan"
+							selectedSite={ selectedSite }
+							allowedRules={ [
+								'newDomainsWithPrimary',
+								'newDomains',
+								'unverifiedDomainsCanManage',
+								'pendingGSuiteTosAcceptanceDomains',
+								'unverifiedDomainsCannotManage',
+								'wrongNSMappedDomains',
+								'newTransfersWrongNS',
+							] }
+						/>
+					) }
+
+					{ showExpiryNotice && (
+						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+							<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
+								{ translate( 'View plans' ) }
+							</NoticeAction>
+						</Notice>
+					) }
+
+					{ showLegacyPlanNotice && (
+						<Notice
+							status="is-info"
+							text={
+								'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut felis et orci fringilla pretium. Consectura elit et orci fel.'
+							}
+							showDismiss={ false }
+						></Notice>
+					) }
+
+					<PurchasesListing />
+
+					{ showJetpackChecklist && (
+						<Fragment>
+							<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+							<JetpackChecklist />
+						</Fragment>
+					) }
+
+					<div
+						className={ classNames( 'current-plan__header-text current-plan__text', {
+							'is-placeholder': { isLoading },
+						} ) }
 					>
-						{ this.renderThankYou() }
-					</Dialog>
-				) }
+						<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+					</div>
 
-				<PlansNavigation path={ path } />
+					<PlansNavigation path={ path } />
 
-				{ showDomainWarnings && (
-					<DomainWarnings
-						domains={ domains }
-						position="current-plan"
-						selectedSite={ selectedSite }
-						allowedRules={ [
-							'newDomainsWithPrimary',
-							'newDomains',
-							'unverifiedDomainsCanManage',
-							'pendingGSuiteTosAcceptanceDomains',
-							'unverifiedDomainsCannotManage',
-							'wrongNSMappedDomains',
-							'newTransfersWrongNS',
-						] }
-					/>
-				) }
+					{ showDomainWarnings && (
+						<DomainWarnings
+							domains={ domains }
+							position="current-plan"
+							selectedSite={ selectedSite }
+							allowedRules={ [
+								'newDomainsWithPrimary',
+								'newDomains',
+								'unverifiedDomainsCanManage',
+								'pendingGSuiteTosAcceptanceDomains',
+								'unverifiedDomainsCannotManage',
+								'wrongNSMappedDomains',
+								'newTransfersWrongNS',
+							] }
+						/>
+					) }
 
-				{ showExpiryNotice && (
-					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-						<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
-							{ translate( 'View plans' ) }
-						</NoticeAction>
-					</Notice>
-				) }
+					{ showExpiryNotice && (
+						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+							<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
+								{ translate( 'View plans' ) }
+							</NoticeAction>
+						</Notice>
+					) }
 
-				{ showLegacyPlanNotice && (
-					<Notice
-						status="is-info"
-						text={
-							'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut felis et orci fringilla pretium. Consectura elit et orci fel.'
-						}
-						showDismiss={ false }
-					></Notice>
-				) }
+					<PurchasesListing />
 
-				<PurchasesListing />
+					{ showJetpackChecklist && (
+						<Fragment>
+							<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
+							<JetpackChecklist />
+						</Fragment>
+					) }
 
-				{ showJetpackChecklist && (
-					<Fragment>
-						<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-						<JetpackChecklist />
-					</Fragment>
-				) }
+					{ ! eligibleForManagedPlan && (
+						<>
+							<div
+								className={ classNames( 'current-plan__header-text current-plan__text', {
+									'is-placeholder': { isLoading },
+								} ) }
+							>
+								<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+							</div>
 
-				<div
-					className={ classNames( 'current-plan__header-text current-plan__text', {
-						'is-placeholder': { isLoading },
-					} ) }
-				>
-					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+							<AsyncLoad
+								require="calypso/blocks/product-purchase-features-list"
+								placeholder={ null }
+								plan={ currentPlanSlug }
+								isPlaceholder={ isLoading }
+							/>
+						</>
+					) }
+
+					<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 				</div>
-
-				<AsyncLoad
-					require="calypso/blocks/product-purchase-features-list"
-					placeholder={ null }
-					plan={ currentPlanSlug }
-					isPlaceholder={ isLoading }
-				/>
-
-				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 			</Main>
 		);
 	}

@@ -13,19 +13,28 @@ interface Props {
 }
 
 const PlanTitle = styled.h2`
-	font-size: 1.25rem;
+	font-size: 2rem;
+	font-family: Recoleta;
+	font-weight: 500;
 `;
 
 const PlanDescription = styled.p`
 	color: var( --studio-gray-50 );
 	font-size: 0.875rem;
-	font-weight: 500;
+	font-weight: 400;
 	margin: 0 0 1rem;
 `;
 
 const PriceContainer = styled.div`
 	display: flex;
 	flex-direction: row;
+	font-family: Recoleta;
+	font-weight: 500;
+
+	.plan-price {
+		font-size: 2.75rem;
+		line-height: 1;
+	}
 `;
 
 const BillingTimeFrame = styled.div`
