@@ -1,6 +1,6 @@
 <div style="width: 45%; float:left" align="left"><a href="./style_guide.md"><-- Style Guide</a> </div>
 <div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
-<div style="width: 45%; float:right"align="right"><a href="./troubleshooting.md">--> Troubleshooting</a> </div>
+<div style="width: 45%; float:right"align="right"><a href="./troubleshooting.md"> Troubleshooting --></a> </div>
 
 <br><br>
 
@@ -9,10 +9,10 @@
 <!-- TOC -->
 
 - [Debugging](#debugging)
-  - [Playwright native tools](#playwright-native-tools)
-  - [Debug instance](#debug-instance)
-  - [Playwright Developer Console and Gutenberg iFrame](#playwright-developer-console-and-gutenberg-iframe)
-  - [VSCode Debugger and Jest](#vscode-debugger-and-jest)
+    - [Playwright native tools](#playwright-native-tools)
+    - [Debug instance](#debug-instance)
+    - [Playwright Developer Console and Gutenberg iFrame](#playwright-developer-console-and-gutenberg-iframe)
+    - [VSCode Debugger and Jest](#vscode-debugger-and-jest)
 
 <!-- /TOC -->
 
@@ -29,7 +29,7 @@ The rest of this page will cover debugging scenarios unique to WordPress.com and
 
 ## Debug instance
 
-![](resources/playwright_debug_inspector.png)
+<img src="https://cldup.com/FURE4BK9FF.png">
 
 While developing tests and/or debugging flakey e2e tests, it is often helpful to have a browser window open with Playwright hooked in order to verify selector behavior.
 
@@ -60,7 +60,7 @@ To be able to interact with elements of the iFramed editor:
 
 5. try selecting an element on page.
 
-![](resources/playwright_debug_iframe.gif)
+<img src="https://cldup.com/cSQEdamVDI.gif"/>
 
 ## VSCode Debugger and Jest
 

@@ -87,7 +87,15 @@ export default class DevdocsSidebar extends PureComponent {
 						link="/devdocs/docs/i18n.md"
 						selected={ this.isItemSelected( '/devdocs/docs/i18n.md' ) }
 					/>
+					<SidebarItem
+						className="devdocs__navigation-item"
+						icon="bug"
+						label="Testing"
+						link="/devdocs/docs/testing/index.md"
+						selected={ this.isItemSelected( '/devdocs/docs/testing', false ) }
+					/>
 
+					<br></br>
 					<SidebarHeading>Live Docs</SidebarHeading>
 
 					<SidebarItem
@@ -119,6 +127,7 @@ export default class DevdocsSidebar extends PureComponent {
 						selected={ this.isItemSelected( '/devdocs/wordpress-components-gallery', false ) }
 					/>
 
+					<br></br>
 					<SidebarHeading>Developer Tools</SidebarHeading>
 					<SidebarItem
 						className="devdocs__navigation-item"

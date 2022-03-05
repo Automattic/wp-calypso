@@ -1,4 +1,4 @@
-<div style="width:454%; float:left" align="left"><a href="./test_environment.md"><-- Test Environment</a> </div>
+<div style="width:45%; float:left" align="left"><a href="./test_environment.md"><-- Test Environment</a> </div>
 <div style="width: 5%; float:left" align="center"><a href="./../README.md">Top</a></div>
 <div style="width: 45%; float:right"align="right"><a href="./tests_ci.md">Running tests on CI --></a> </div>
 
@@ -9,16 +9,16 @@
 <!-- TOC -->
 
 - [Running tests on your machine](#running-tests-on-your-machine)
-  - [Prerequisites](#prerequisites)
-  - [Running tests](#running-tests)
-    - [Individual spec files](#individual-spec-files)
-    - [Test Group](#test-group)
-  - [Advanced techniques](#advanced-techniques)
-    - [Use the mobile viewport](#use-the-mobile-viewport)
-    - [Save authentication cookies](#save-authentication-cookies)
-    - [Target local webapp](#target-local-webapp)
-    - [Debug mode](#debug-mode)
-      - [Notes on TypeScript](#notes-on-typescript)
+    - [Prerequisites](#prerequisites)
+    - [Running tests](#running-tests)
+        - [Individual spec files](#individual-spec-files)
+        - [Test Group](#test-group)
+    - [Advanced techniques](#advanced-techniques)
+        - [Save authentication cookies](#save-authentication-cookies)
+        - [Use the mobile viewport](#use-the-mobile-viewport)
+        - [Target local webapp](#target-local-webapp)
+        - [Debug mode](#debug-mode)
+            - [Notes on TypeScript](#notes-on-typescript)
 
 <!-- /TOC -->
 
@@ -100,7 +100,7 @@ yarn start
 
 3. once webapp is started, open `http://calypso.localhost:3000` in your browser.
 
-![](./resources/calypso-local-webapp-start-screen.png)
+<img alt="Local Calypso Webapp" src="https://cldup.com/1WwDmUXWen.png" />
 <sup><center>Local webapp start page.</center></sup>
 
 The local environment is now ready for testing. When a test is run, it will hit the locally run webapp instead of the WordPress.com staging environment.
