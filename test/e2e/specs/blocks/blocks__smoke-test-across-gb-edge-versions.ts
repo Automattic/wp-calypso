@@ -15,42 +15,25 @@
  * To avoid any confusion, the tests here will only run if the GUTENBERG_EDGE env
  * var is set.
  */
-import { GutenbergEditorPage, TestAccount, envVariables, skipItIf } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { envVariables, skipItIf, testAcrossSimpleAndAtomic } from '@automattic/calypso-e2e';
 
-declare const browser: Browser;
+type AdditionalRecord = { testPostId: number };
 
-describe.each`
-	siteType      | accountName                        | testPostId
-	${ 'Simple' } | ${ 'gutenbergUpgradeEdgeUser' }    | ${ 42805 }
-	${ 'Atomic' } | ${ 'gutenbergAtomicSiteEdgeUser' } | ${ 32 }
-`(
+testAcrossSimpleAndAtomic< AdditionalRecord >( [ { testPostId: 2 }, { testPostId: 3 } ] )(
 	'Gutenberg Upgrade: Sanity-Check Most Popular Blocks on ($siteType) edge',
-	function ( { accountName, testPostId } ) {
-		let page: Page;
-		let gutenbergEditorPage: GutenbergEditorPage;
-
+	( v, t ) => {
 		beforeAll( async () => {
-			page = await browser.newPage();
-
-			const testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
-
-			const postURL = `https://wordpress.com/post/${ testAccount.getSiteURL( {
+			const postURL = `https://wordpress.com/post/${ v.testAccount.getSiteURL( {
 				protocol: false,
-			} ) }/${ testPostId }`;
+			} ) }/${ t.testPostId }`;
 
-			await page.goto( postURL );
-
-			gutenbergEditorPage = new GutenbergEditorPage( page );
+			await v.page.goto( postURL );
 		} );
-
 		// Both block invalidation and crash messages are wrapped by the same `Warning`
 		// component in Gutenberg. If we find at least one warning, then we fail the test.
 		skipItIf( ! envVariables.GUTENBERG_EDGE )( 'will not have any block warnings', async () => {
-			await gutenbergEditorPage.waitUntilLoaded();
-
-			expect( await gutenbergEditorPage.editorHasBlockWarnings() ).toBe( false );
+			await v.gutenbergEditorPage.waitUntilLoaded();
+			expect( await v.gutenbergEditorPage.editorHasBlockWarnings() ).toBe( false );
 		} );
 	}
 );
