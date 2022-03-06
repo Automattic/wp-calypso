@@ -49,6 +49,9 @@ const PrePurchaseNotices = () => {
 	const { responseCart } = useShoppingCart( cartKey );
 	const cartItemSlugs = responseCart.products.map( ( item ) => item.product_slug );
 
+	/**
+	 * Ensure site rewind capabilities are loaded, for use by isPlanIncludingSiteBackup().
+	 */
 	useEffect( () => {
 		if ( ! siteId ) return;
 		dispatch( requestRewindCapabilities( siteId ) );
@@ -61,6 +64,7 @@ const PrePurchaseNotices = () => {
 
 		return getSitePlan( state, siteId );
 	} );
+
 	const currentSiteProducts = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return null;
@@ -70,41 +74,57 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	const backupSlugInCart = cartItemSlugs.find( isJetpackBackupSlug );
-	const antiSpamSlugInCart = cartItemSlugs.find( isJetpackAntiSpamSlug );
-	const scanSlugInCart = cartItemSlugs.find( isJetpackScanSlug );
-
-	const cartPlanOverlapsSiteBackupPurchase = useSelector( ( state ) => {
+	/**
+	 * The active product on the current site that overlaps/conflicts with the plan currently in the cart.
+	 */
+	const siteProductThatOverlapsCartPlan = useSelector( ( state ) => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 
-		return planSlugInCart && isPlanIncludingSiteBackup( state, siteId, planSlugInCart );
+		if ( ! planSlugInCart ) return null;
+
+		if ( isPlanIncludingSiteBackup( state, siteId, planSlugInCart ) ) {
+			return currentSiteProducts.find( isJetpackBackup );
+		}
+
+		if ( isPlanIncludingSiteAntiSpam( state, siteId, planSlugInCart ) ) {
+			return currentSiteProducts.find( isJetpackAntiSpam );
+		}
+
+		if ( isPlanIncludingSiteScan( state, siteId, planSlugInCart ) ) {
+			return currentSiteProducts.find( isJetpackScan );
+		}
+
+		return null;
 	} );
 
-	const cartPlanOverlapsSiteAntiSpamPurchase = useSelector( ( state ) => {
-		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
+	/**
+	 * The product currently in the cart that overlaps/conflicts with the current active site plan.
+	 */
+	const cartProductThatOverlapsSitePlan = useSelector( ( state ) => {
+		const backupSlugInCart = cartItemSlugs.find( isJetpackBackupSlug );
+		const antiSpamSlugInCart = cartItemSlugs.find( isJetpackAntiSpamSlug );
+		const scanSlugInCart = cartItemSlugs.find( isJetpackScanSlug );
 
-		return planSlugInCart && isPlanIncludingSiteAntiSpam( state, siteId, planSlugInCart );
+		if (
+			backupSlugInCart &&
+			isBackupProductIncludedInSitePlan( state, siteId, backupSlugInCart )
+		) {
+			return getProductFromSlug( backupSlugInCart );
+		}
+
+		if (
+			antiSpamSlugInCart &&
+			isAntiSpamProductIncludedInSitePlan( state, siteId, antiSpamSlugInCart )
+		) {
+			return getProductFromSlug( antiSpamSlugInCart );
+		}
+
+		if ( scanSlugInCart && isScanProductIncludedInSitePlan( state, siteId, scanSlugInCart ) ) {
+			return getProductFromSlug( scanSlugInCart );
+		}
+
+		return null;
 	} );
-
-	const cartPlanOverlapsSiteScanPurchase = useSelector( ( state ) => {
-		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
-
-		return planSlugInCart && isPlanIncludingSiteScan( state, siteId, planSlugInCart );
-	} );
-
-	const sitePlanIncludesCartBackupProduct = useSelector(
-		( state ) =>
-			backupSlugInCart && isBackupProductIncludedInSitePlan( state, siteId, backupSlugInCart )
-	);
-
-	const sitePlanIncludesCartAntiSpamProduct = useSelector(
-		( state ) =>
-			antiSpamSlugInCart && isAntiSpamProductIncludedInSitePlan( state, siteId, antiSpamSlugInCart )
-	);
-
-	const sitePlanIncludesCartScanProduct = useSelector(
-		( state ) => scanSlugInCart && isScanProductIncludedInSitePlan( state, siteId, scanSlugInCart )
-	);
 
 	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
 	const siteHasBackupMinimumPluginVersion = useSelector( ( state ) => {
@@ -130,85 +150,36 @@ const PrePurchaseNotices = () => {
 		return null;
 	}
 
-	// This site has an active Jetpack Backup product purchase,
-	// but we're attempting to buy a plan that includes one as well
-	const siteBackupProduct = currentSiteProducts.find( isJetpackBackup );
-	if ( cartPlanOverlapsSiteBackupPurchase && siteBackupProduct ) {
+	// This site has an active Jetpack product purchase, but we're
+	// attempting to buy a plan that includes the same one as well.
+	// i.e. User owns a Jetpack Backup product, and is attempting
+	// to purchase Jetpack Security.
+	if ( siteProductThatOverlapsCartPlan ) {
 		return (
 			<CartPlanOverlapsOwnedProductNotice
-				product={ siteBackupProduct }
+				product={ siteProductThatOverlapsCartPlan }
 				selectedSite={ selectedSite }
 			/>
 		);
 	}
-
-	// This site has an active Jetpack Anti-Spam product purchase,
-	// but we're attempting to buy a plan that includes one as well
-	const siteAntiSpamProduct = currentSiteProducts.find( isJetpackAntiSpam );
-	if ( cartPlanOverlapsSiteAntiSpamPurchase && siteAntiSpamProduct ) {
-		return (
-			<CartPlanOverlapsOwnedProductNotice
-				product={ siteAntiSpamProduct }
-				selectedSite={ selectedSite }
-			/>
-		);
-	}
-
-	// This site has an active Jetpack Scan product purchase,
-	// but we're attempting to buy a plan that includes one as well
-	const siteScanProduct = currentSiteProducts.find( isJetpackScan );
-	if ( cartPlanOverlapsSiteScanPurchase && siteScanProduct ) {
-		return (
-			<CartPlanOverlapsOwnedProductNotice
-				product={ siteScanProduct }
-				selectedSite={ selectedSite }
-			/>
-		);
-	}
-
-	const backupProductInCart = backupSlugInCart && getProductFromSlug( backupSlugInCart );
 
 	// We're attempting to buy Jetpack Backup individually,
 	// but this site already has a plan that includes it
-	if ( sitePlanIncludesCartBackupProduct && currentSitePlan ) {
+	if ( currentSitePlan && cartProductThatOverlapsSitePlan ) {
 		return (
 			<SitePlanIncludesCartProductNotice
 				plan={ currentSitePlan }
-				product={ backupProductInCart }
+				product={ cartProductThatOverlapsSitePlan }
 				selectedSite={ selectedSite }
 			/>
 		);
 	}
 
-	const antiSpamProductInCart = antiSpamSlugInCart && getProductFromSlug( antiSpamSlugInCart );
-
-	// We're attempting to buy Jetpack Anti-Spam individually,
-	// but this site already has a plan that includes it
-	if ( sitePlanIncludesCartAntiSpamProduct && currentSitePlan ) {
-		return (
-			<SitePlanIncludesCartProductNotice
-				plan={ currentSitePlan }
-				product={ antiSpamProductInCart }
-				selectedSite={ selectedSite }
-			/>
-		);
-	}
-
-	const scanProductInCart = scanSlugInCart && getProductFromSlug( scanSlugInCart );
-
-	// We're attempting to buy Jetpack Scan individually,
-	// but this site already has a plan that includes it
-	if ( sitePlanIncludesCartScanProduct && currentSitePlan ) {
-		return (
-			<SitePlanIncludesCartProductNotice
-				plan={ currentSitePlan }
-				product={ scanProductInCart }
-				selectedSite={ selectedSite }
-			/>
-		);
-	}
-
-	if ( ! siteHasBackupMinimumPluginVersion ) {
+	// We're attempting to buy a Jetpack Backup product,
+	// but this site does not have the minimum plugin version.
+	const backupSlugInCart = cartItemSlugs.find( isJetpackBackupSlug );
+	const backupProductInCart = getProductFromSlug( backupSlugInCart );
+	if ( ! siteHasBackupMinimumPluginVersion && backupProductInCart ) {
 		return (
 			<JetpackPluginRequiredVersionNotice
 				product={ backupProductInCart }
