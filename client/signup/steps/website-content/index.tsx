@@ -118,9 +118,12 @@ function WebsiteContentStep( {
 		goToNextStep();
 	};
 
-	const onChangeField = ( { target: { name } }: ChangeEvent< HTMLInputElement > ) => {
-		setFormErrors( { ...formErrors, [ name ]: null } );
-	};
+	const onChangeField = useCallback(
+		( { target: { name } }: ChangeEvent< HTMLInputElement > ) => {
+			setFormErrors( { ...formErrors, [ name ]: null } );
+		},
+		[ formErrors, setFormErrors ]
+	);
 
 	const generatedSectionsCallback = useCallback(
 		() =>
@@ -130,7 +133,7 @@ function WebsiteContentStep( {
 				formErrors: formErrors,
 				onChangeField,
 			} ),
-		[ translate, websiteContent, formErrors ]
+		[ translate, websiteContent, formErrors, onChangeField ]
 	);
 	const generatedSections = generatedSectionsCallback();
 
@@ -229,7 +232,7 @@ export default function WrapperWebsiteContent(
 		queryObject.siteSlug,
 	] );
 
-	return isLoadingSiteInformation ? null : (
+	return isWebsiteContentSubmitted || isLoadingSiteInformation ? null : (
 		<StepWrapper
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }

@@ -2,8 +2,6 @@
 
 Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Automattic/wp-calypso) client and WordPress.com.
 
-![Image from https://www.vecteezy.com/free-vector/web](docs/resources/free-flat-design-linear-vector-icon-set.jpg)
-
 ## Resources
 
 - [Overview](docs/overview.md)

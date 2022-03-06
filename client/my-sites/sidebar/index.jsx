@@ -58,7 +58,6 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteChecklistComplete from 'calypso/state/selectors/is-site-checklist-complete';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import {
@@ -405,11 +404,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	customize() {
-		const { showCustomizerLink, translate, path } = this.props;
-
-		if ( ! showCustomizerLink ) {
-			return null;
-		}
+		const { translate, path } = this.props;
 
 		return (
 			<SidebarItem
@@ -424,14 +419,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	design() {
-		const {
-			path,
-			site,
-			translate,
-			canUserEditThemeOptions,
-			showCustomizerLink,
-			showSiteEditor,
-		} = this.props;
+		const { path, site, translate, canUserEditThemeOptions, showSiteEditor } = this.props;
 		let themesLink;
 
 		if ( site && ! canUserEditThemeOptions ) {
@@ -446,17 +434,15 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<Fragment>
-				{ showCustomizerLink && (
-					<SidebarItem
-						label={ translate( 'Customize' ) }
-						selected={ itemLinkMatches( '/customize', path ) }
-						link={ this.props.customizeUrl }
-						onNavigate={ this.onNavigate }
-						preloadSectionName="customize"
-						forceInternalLink={ ! this.props.isJetpack || this.props.isAtomicSite }
-						expandSection={ this.expandDesignSection }
-					/>
-				) }
+				<SidebarItem
+					label={ translate( 'Customize' ) }
+					selected={ itemLinkMatches( '/customize', path ) }
+					link={ this.props.customizeUrl }
+					onNavigate={ this.onNavigate }
+					preloadSectionName="customize"
+					forceInternalLink={ ! this.props.isJetpack || this.props.isAtomicSite }
+					expandSection={ this.expandDesignSection }
+				/>
 				{ showSiteEditor && (
 					<SidebarItem
 						label={ translate( 'Site Editor (beta)' ) }
@@ -1049,7 +1035,6 @@ function mapStateToProps( state, props ) {
 		isAtomicSite: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		isMigrationInProgress,
 		isVip: isVipSite( state, selectedSiteId ),
-		showCustomizerLink: ! isSiteUsingLegacyFSE( state, selectedSiteId ) && siteId,
 		showSiteEditor: isFSEActive,
 		siteEditorUrl: getSiteEditorUrl( state, selectedSiteId ),
 		siteId,

@@ -208,16 +208,16 @@ function PluginDetails( props ) {
 			);
 		}
 
-		if ( fullPlugin.name && fullPlugin.slug ) {
+		if ( fullPlugin.name && props.pluginSlug ) {
 			dispatch(
 				appendBreadcrumb( {
 					label: fullPlugin.name,
-					href: `/plugins/${ fullPlugin.slug }/${ selectedSite?.slug || '' }`,
-					id: `plugin-${ fullPlugin.slug }`,
+					href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
+					id: `plugin-${ props.pluginSlug }`,
 				} )
 			);
 		}
-	}, [ fullPlugin.name, fullPlugin.slug, selectedSite ] );
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
@@ -253,6 +253,7 @@ function PluginDetails( props ) {
 							billingPeriod={ billingPeriod }
 							onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
 							compact={ ! isWide }
+							plugin={ fullPlugin }
 						/>
 					) }
 			</FixedNavigationHeader>

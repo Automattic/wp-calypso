@@ -9,29 +9,41 @@ export const schema = {
 			description: 'The current position in the form index',
 		},
 		websiteContent: {
-			type: 'array',
-			items: {
-				type: 'object',
-				properties: {
-					id: {
-						type: 'string',
-					},
-					title: {
-						type: 'string',
-					},
-					content: {
-						type: 'string',
-					},
-					images: {
-						type: 'array',
-						items: {
-							type: 'object',
-							properties: {
-								caption: { type: 'string' },
-								url: { type: 'string' },
+			type: 'object',
+			description: 'The content for the website',
+			properties: {
+				pages: {
+					type: 'array',
+					description: 'The individual page content for the website',
+
+					items: {
+						type: 'object',
+						properties: {
+							id: {
+								type: 'string',
+							},
+							title: {
+								type: 'string',
+							},
+							content: {
+								type: 'string',
+							},
+							images: {
+								type: 'array',
+								items: {
+									type: 'object',
+									properties: {
+										caption: { type: 'string' },
+										url: { type: 'string' },
+									},
+								},
 							},
 						},
 					},
+				},
+				siteLogoUrl: {
+					type: 'string',
+					description: 'Uploaded Logot url',
 				},
 			},
 		},
@@ -54,7 +66,7 @@ export interface PageData {
 	images: Array< ImageData >;
 }
 
-export type WebsiteContent = Array< PageData >;
+export type WebsiteContent = { pages: Array< PageData >; siteLogoUrl: string };
 export interface WebsiteContentCollection {
 	currentIndex: number;
 	websiteContent: WebsiteContent;
@@ -63,6 +75,6 @@ export interface WebsiteContentCollection {
 
 export const initialState: WebsiteContentCollection = {
 	currentIndex: 0,
-	websiteContent: [],
+	websiteContent: { pages: [], siteLogoUrl: '' },
 	imageUploadStates: {},
 };

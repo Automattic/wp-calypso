@@ -25,7 +25,6 @@ import connection from './connection/reducer';
 import domains from './domains/reducer';
 import { featuresReducer as features } from './features/reducer';
 import introOffers from './intro-offers/reducer';
-import mediaStorage from './media-storage/reducer';
 import { plans } from './plans/reducer';
 import { products } from './products/reducer';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
@@ -344,7 +343,6 @@ export default combineReducers( {
 	requestingAll,
 	introOffers,
 	items,
-	mediaStorage,
 	plans,
 	products,
 	features,

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
@@ -9,6 +10,7 @@ import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { backupMainPath } from 'calypso/my-sites/backup/paths';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import useGetDisplayDate from '../use-get-display-date';
+import BackupTips from './backup-tips';
 import cloudScheduleIcon from './icons/cloud-schedule.svg';
 
 import './style.scss';
@@ -66,6 +68,7 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 					} ) }
 				</div>
 			) }
+			{ isEnabled( 'jetpack/backup-messaging-i3' ) && <BackupTips location="IN_PROGRESS" /> }
 		</>
 	);
 };

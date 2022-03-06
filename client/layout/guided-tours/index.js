@@ -1,8 +1,22 @@
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import { resetGuidedToursHistory } from 'calypso/state/guided-tours/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
-function GuidedTours( { shouldShow } ) {
+function GuidedTours() {
+	const dispatch = useDispatch();
+	const tourState = useSelector( getGuidedTourState );
+	const shouldShow = tourState && tourState.shouldShow;
+	const requestedTour = useSelector( getInitialQueryArguments )?.tour;
+
+	useEffect( () => {
+		if ( requestedTour === 'reset' ) {
+			dispatch( resetGuidedToursHistory() );
+		}
+	}, [ dispatch, requestedTour ] );
+
 	if ( ! shouldShow ) {
 		return null;
 	}
@@ -10,9 +24,4 @@ function GuidedTours( { shouldShow } ) {
 	return <AsyncLoad require="calypso/layout/guided-tours/component" />;
 }
 
-export default connect( ( state ) => {
-	const tourState = getGuidedTourState( state );
-	return {
-		shouldShow: tourState && tourState.shouldShow,
-	};
-} )( GuidedTours );
+export default GuidedTours;

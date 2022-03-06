@@ -1,5 +1,12 @@
 import { chooseDefaultCustomerType } from '../src';
-import { PLAN_ECOMMERCE_2_YEARS, PLAN_PREMIUM, PLAN_FREE, PLAN_PERSONAL } from '../src/constants';
+import {
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_PREMIUM,
+	PLAN_FREE,
+	PLAN_WPCOM_FLEXIBLE,
+	PLAN_PERSONAL,
+	PLAN_WPCOM_MANAGED,
+} from '../src/constants';
 
 describe( 'chooseDefaultCustomerType', () => {
 	test( 'chooses "personal" if current site type is "personal"', () => {
@@ -34,5 +41,19 @@ describe( 'chooseDefaultCustomerType', () => {
 
 		currentPlan.product_slug = PLAN_ECOMMERCE_2_YEARS;
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'business' );
+	} );
+
+	test( 'chooses "business" if the site is on the Managed plan', () => {
+		const currentPlan = {
+			product_slug: PLAN_WPCOM_MANAGED,
+		};
+		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'business' );
+	} );
+
+	test( 'chooses "personal" if the site is on the Flexible plan', () => {
+		const currentPlan = {
+			product_slug: PLAN_WPCOM_FLEXIBLE,
+		};
+		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'personal' );
 	} );
 } );

@@ -14283,25 +14283,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "concurrently@npm:5.1.0"
-  dependencies:
-    chalk: ^2.4.2
-    date-fns: ^2.0.1
-    lodash: ^4.17.15
-    read-pkg: ^4.0.1
-    rxjs: ^6.5.2
-    spawn-command: ^0.0.2-1
-    supports-color: ^6.1.0
-    tree-kill: ^1.2.2
-    yargs: ^13.3.0
-  bin:
-    concurrently: ./bin/concurrently.js
-  checksum: 639066704d197a919929522abf4372fb8a31bccfa5a8174231c9306b27f430c9994ad5022b26c2deeddd2630ed9e7593f374bb14f0a77e11b10bc7d7a0ab2d4e
-  languageName: node
-  linkType: hard
-
 "config-chain@npm:^1.1.11":
   version: 1.1.13
   resolution: "config-chain@npm:1.1.13"
@@ -15466,13 +15447,6 @@ __metadata:
     whatwg-mimetype: ^2.3.0
     whatwg-url: ^8.0.0
   checksum: 1246442178eb756afb1d99e54669a119eafb3e69c73300d14089687c50c64f9feadd93c973f496224a12f89daa94267a6114aecd70e9b279c09d908c5be44d01
-  languageName: node
-  linkType: hard
-
-"date-fns@npm:^2.0.1":
-  version: 2.9.0
-  resolution: "date-fns@npm:2.9.0"
-  checksum: 885fb2e9e10c27d388aa7dca7d0743cc2c58ece71a21ac8aa5126d8fed17be36705e6aa3c640773c4c2af285442f2a332a00fd6e2f153b5fbbbeff3641b866e0
   languageName: node
   linkType: hard
 
@@ -18213,16 +18187,6 @@ __metadata:
     jest-message-util: ^27.3.1
     jest-regex-util: ^27.0.6
   checksum: 8c10ff875b74c80b4896d5457fce45faa0cca044a6ec6910b51e2c08d29238cad0b013dc46379a34338bf42b05e3566ffae5fa2c10229aced695fae9995eab2e
-  languageName: node
-  linkType: hard
-
-"exports-loader@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "exports-loader@npm:0.7.0"
-  dependencies:
-    loader-utils: ^1.1.0
-    source-map: 0.5.0
-  checksum: 364087b572d4370f4032131bebbe18e32ffb31bfcc62a09aa215c58d6c70736245cc335062c10670301852a5268fe18749a69a236ca95612dc8cc64b83eabb41
   languageName: node
   linkType: hard
 
@@ -31197,17 +31161,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"read-pkg@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "read-pkg@npm:4.0.1"
-  dependencies:
-    normalize-package-data: ^2.3.2
-    parse-json: ^4.0.0
-    pify: ^3.0.0
-  checksum: 70c934969aba7267a229871345fe1714e1416085c3db9cba8f7fcd78fba3bd38cef7f08a9d661880e552a5722baf8feaf792875b3108d251a5b6dd94369c752d
-  languageName: node
-  linkType: hard
-
 "read-pkg@npm:^5.2.0":
   version: 5.2.0
   resolution: "read-pkg@npm:5.2.0"
@@ -33081,7 +33034,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"rxjs@npm:^6.5.2, rxjs@npm:^6.6.0, rxjs@npm:^6.6.3, rxjs@npm:^6.6.6":
+"rxjs@npm:^6.6.0, rxjs@npm:^6.6.3, rxjs@npm:^6.6.6":
   version: 6.6.7
   resolution: "rxjs@npm:6.6.7"
   dependencies:
@@ -34161,13 +34114,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"source-map@npm:0.5.0":
-  version: 0.5.0
-  resolution: "source-map@npm:0.5.0"
-  checksum: f441da53fee065efeb242387867f0be566ee84141adb94cd62690b8e6574fa6bd8fac1b9b9823f00ae4537ebd7df9fb9bca707cef96b572eca48d8b0906bbbc6
-  languageName: node
-  linkType: hard
-
 "source-map@npm:0.5.6":
   version: 0.5.6
   resolution: "source-map@npm:0.5.6"
@@ -34207,13 +34153,6 @@ resolve@^2.0.0-next.3:
   version: 1.1.5
   resolution: "space-separated-tokens@npm:1.1.5"
   checksum: 3ee0a6905f89e1ffdfe474124b1ade9fe97276a377a0b01350bc079b6ec566eb5b219e26064cc5b7f3899c05bde51ffbc9154290b96eaf82916a1e2c2c13ead9
-  languageName: node
-  linkType: hard
-
-"spawn-command@npm:^0.0.2-1":
-  version: 0.0.2-1
-  resolution: "spawn-command@npm:0.0.2-1"
-  checksum: 4e1fae2db43a7e7159b7fc4cd813bab56c0a5c0bc04c152749f7ef68170ccbe9014a35f444e19e5c095afec780bc5bca1ac73ec16eb1ab0f9a2f881c180e6b70
   languageName: node
   linkType: hard
 
@@ -35598,7 +35537,7 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"terser@npm:^5.3.4, terser@npm:^5.5.1, terser@npm:^5.7.2":
+"terser@npm:^5.3.4, terser@npm:^5.7.2":
   version: 5.8.0
   resolution: "terser@npm:5.8.0"
   dependencies:
@@ -38314,8 +38253,6 @@ testarmada-magellan@11.0.10:
     "@wordpress/is-shallow-equal": ^4.2.1
     "@wordpress/jest-preset-default": ^7.1.3
     "@wordpress/url": ^3.3.1
-    autoprefixer: ^10.2.5
-    babel-jest: ^27.3.1
     babel-loader: ^8.2.3
     backstopjs: 5.1.0
     browserslist: ^4.16.0
@@ -38327,9 +38264,7 @@ testarmada-magellan@11.0.10:
     chalk: ^4.1.2
     check-node-version: ^4.0.2
     chroma-js: ^2.1.2
-    concurrently: ^5.1.0
     config: ^3.3.6
-    core-js-bundle: ^3.6.4
     css-loader: ^6.5.1
     debug: ^4.3.3
     doctrine: ^3.0.0
@@ -38348,24 +38283,20 @@ testarmada-magellan@11.0.10:
     eslint-plugin-react-hooks: ^4.3.0
     eslint-plugin-wpcalypso: "workspace:^"
     eslint-plugin-you-dont-need-lodash-underscore: ^6.12.0
-    exports-loader: ^0.7.0
     fsevents: ^2.3.2
     gettext-parser: ^4.0.3
     glob: ^7.1.6
     globby: ^10.0.2
     gzip-size: ^6.0.0
-    html-loader: ^0.5.5
     husky: ^7.0.4
     i18n-calypso: "workspace:^"
     i18n-calypso-cli: "workspace:^"
-    ignore-loader: ^0.1.2
     jest: ^27.3.1
     jest-environment-jsdom: ^27.3.1
     jest-teamcity: ^1.9.0
     loader-utils: ^1.2.3
     lodash: ^4.17.21
     lunr: ^2.3.8
-    mini-css-extract-plugin: ^1.6.2
     mixedindentlint: ^1.2.0
     mkdirp: ^1.0.4
     ncp: ^2.0.0
@@ -38377,7 +38308,6 @@ testarmada-magellan@11.0.10:
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
     prettier: "npm:wp-prettier@2.2.1-beta-1"
-    qs: ^6.9.1
     react: ^17.0.2
     react-dom: ^17.0.2
     readline-sync: ^1.4.10
@@ -38394,10 +38324,7 @@ testarmada-magellan@11.0.10:
     source-map: ^0.7.3
     stackframe: ^1.1.1
     stacktrace-gps: ^3.0.3
-    style-loader: ^1.2.1
     stylelint: ^13.13.1
-    terser: ^5.5.1
-    terser-webpack-plugin: ^5.2.4
     tslib: ^2.3.0
     typescript: ^4.5.5
     webpack: ^5.68.0
@@ -39027,7 +38954,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"yargs@npm:13.3.2, yargs@npm:^13.3.0":
+"yargs@npm:13.3.2":
   version: 13.3.2
   resolution: "yargs@npm:13.3.2"
   dependencies:

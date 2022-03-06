@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { Stripe } from '@stripe/stripe-js';
 import type { I18n } from '@wordpress/i18n';
-import type { State } from 'calypso/state/partner-portal/payment-methods/reducer';
+import type { State } from 'calypso/state/partner-portal/credit-card-form/reducer';
 
 const debug = debugFactory( 'calypso:partner-portal:credit-card' );
 

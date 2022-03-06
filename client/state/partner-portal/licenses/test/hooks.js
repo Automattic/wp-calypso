@@ -150,6 +150,39 @@ describe( 'useProductsQuery', () => {
 
 		expect( result.current.data ).toEqual( expected );
 	} );
+
+	it( 'dispatches an error notice on failure', async () => {
+		const queryClient = new QueryClient();
+		const wrapper = ( { children } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/jetpack-licensing/partner/product-families' )
+			.reply( 500, { code: 'could_not_retrieve_subscription', message: '' } );
+
+		const dispatch = jest.fn();
+		useDispatch.mockReturnValue( dispatch );
+
+		// Prevent console.error from being loud during testing because of the test 500 error.
+		const consoleError = global.console.error;
+		global.console.error = jest.fn();
+		const { result, waitFor } = renderHook( () => useProductsQuery( { retry: false } ), {
+			wrapper,
+		} );
+
+		// Wait for the response.
+		await waitFor( () => result.current.isError );
+		expect( result.current.isError ).toBe( true );
+		global.console.error = consoleError;
+
+		// Test that the correct notification is being triggered.
+		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
+		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
+			'partner-portal-product-families-failure'
+		);
+		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-error' );
+	} );
 } );
 
 describe( 'useIssueLicenseMutation', () => {

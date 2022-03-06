@@ -10,6 +10,7 @@ import ConnectDomainStepLogin from './connect-domain-step-login';
 import ConnectDomainStepOwnershipAuthCode from './connect-domain-step-ownership-auth-code';
 import ConnectDomainStepSuggestedRecords from './connect-domain-step-suggested-records';
 import ConnectDomainStepSuggestedStart from './connect-domain-step-suggested-start';
+import ConnectSubdomainStepSuggestedRecords from './connect-subdomain-step-suggested-records';
 import { modeType, stepSlug, stepType } from './constants';
 
 export const connectADomainStepsDefinition = {
@@ -93,6 +94,91 @@ export const connectADomainStepsDefinition = {
 		step: stepType.VERIFYING,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.ADVANCED_UPDATE,
+		singleColumnLayout: true,
+	},
+};
+
+export const connectASubdomainStepsDefinition = {
+	// Suggested flow
+	[ stepSlug.SUBDOMAIN_SUGGESTED_START ]: {
+		mode: modeType.SUGGESTED,
+		step: stepType.START,
+		component: ConnectDomainStepSuggestedStart,
+		next: stepSlug.SUBDOMAIN_SUGGESTED_LOGIN,
+	},
+	[ stepSlug.SUBDOMAIN_SUGGESTED_LOGIN ]: {
+		mode: modeType.SUGGESTED,
+		step: stepType.LOG_IN_TO_PROVIDER,
+		get name() {
+			return __( 'Log in to provider' );
+		},
+		component: ConnectDomainStepLogin,
+		next: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE,
+		prev: stepSlug.SUBDOMAIN_SUGGESTED_START,
+	},
+	[ stepSlug.SUBDOMAIN_SUGGESTED_UPDATE ]: {
+		mode: modeType.SUGGESTED,
+		step: stepType.UPDATE_NS_RECORDS,
+		get name() {
+			return __( 'Update NS records' );
+		},
+		component: ConnectSubdomainStepSuggestedRecords,
+		prev: stepSlug.SUBDOMAIN_SUGGESTED_LOGIN,
+	},
+	[ stepSlug.SUBDOMAIN_SUGGESTED_CONNECTED ]: {
+		mode: modeType.SUGGESTED,
+		step: stepType.CONNECTED,
+		component: ConnectDomainStepDone,
+		prev: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE,
+		singleColumnLayout: true,
+	},
+	[ stepSlug.SUBDOMAIN_SUGGESTED_VERIFYING ]: {
+		mode: modeType.SUGGESTED,
+		step: stepType.VERIFYING,
+		component: ConnectDomainStepDone,
+		prev: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE,
+		singleColumnLayout: true,
+	},
+
+	// Advanced flow
+	[ stepSlug.SUBDOMAIN_ADVANCED_START ]: {
+		mode: modeType.ADVANCED,
+		step: stepType.START,
+		component: ConnectDomainStepAdvancedStart,
+		next: stepSlug.SUBDOMAIN_ADVANCED_LOGIN,
+		prev: stepSlug.SUBDOMAIN_SUGGESTED_START,
+	},
+	[ stepSlug.SUBDOMAIN_ADVANCED_LOGIN ]: {
+		mode: modeType.ADVANCED,
+		step: stepType.LOG_IN_TO_PROVIDER,
+		get name() {
+			return __( 'Log in to provider' );
+		},
+		component: ConnectDomainStepLogin,
+		next: stepSlug.SUBDOMAIN_ADVANCED_UPDATE,
+		prev: stepSlug.SUBDOMAIN_ADVANCED_START,
+	},
+	[ stepSlug.SUBDOMAIN_ADVANCED_UPDATE ]: {
+		mode: modeType.ADVANCED,
+		step: stepType.UPDATE_CNAME_RECORDS,
+		get name() {
+			return __( 'Update A & CNAME records' );
+		},
+		component: ConnectDomainStepAdvancedRecords,
+		prev: stepSlug.SUBDOMAIN_ADVANCED_LOGIN,
+	},
+	[ stepSlug.SUBDOMAIN_ADVANCED_CONNECTED ]: {
+		mode: modeType.ADVANCED,
+		step: stepType.CONNECTED,
+		component: ConnectDomainStepDone,
+		prev: stepSlug.SUBDOMAIN_ADVANCED_UPDATE,
+		singleColumnLayout: true,
+	},
+	[ stepSlug.SUBDOMAIN_ADVANCED_VERIFYING ]: {
+		mode: modeType.ADVANCED,
+		step: stepType.VERIFYING,
+		component: ConnectDomainStepDone,
+		prev: stepSlug.SUBDOMAIN_ADVANCED_UPDATE,
 		singleColumnLayout: true,
 	},
 };

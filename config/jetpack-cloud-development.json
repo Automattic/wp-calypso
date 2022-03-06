@@ -38,6 +38,7 @@
 		"fullstory": true,
 		"jetpack-cloud": true,
 		"jetpack/activity-log-sharing": true,
+		"jetpack/backup-messaging-i3": true,
 		"jetpack/partner-portal-payment": true,
 		"jetpack/pricing-page": true,
 		"jetpack/pricing-page-annual-only": true,

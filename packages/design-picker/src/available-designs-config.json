@@ -916,6 +916,56 @@
 			"is_premium": false,
 			"is_fse": true,
 			"features": []
+		},
+		{
+			"title": "Attar",
+			"slug": "attar",
+			"template": "attar",
+			"theme": "attar",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Hari",
+			"slug": "hari",
+			"template": "hari",
+			"theme": "hari",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Marl",
+			"slug": "marl",
+			"template": "marl",
+			"theme": "marl",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Winkel",
+			"slug": "winkel",
+			"template": "winkel",
+			"theme": "winkel",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
+		},
+		{
+			"title": "Dorna",
+			"slug": "dorna",
+			"template": "dorna",
+			"theme": "dorna",
+			"categories": [ { "slug": "featured", "name": "Featured" } ],
+			"is_premium": false,
+			"is_fse": true,
+			"features": []
 		}
 	]
 }

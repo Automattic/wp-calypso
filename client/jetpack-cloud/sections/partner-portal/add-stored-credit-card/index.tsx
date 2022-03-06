@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import { useDispatch } from 'react-redux';
@@ -25,10 +25,8 @@ export default function AddStoredCreditCard(): ReactElement {
 			<div className="add-stored-credit-card__content">
 				<CardHeading className="add-stored-credit-card__title" tagName="h3">
 					<Gridicon key="add-card-icon" icon="add-outline" size={ 24 } />
-					<span key="add-card-text">{ translate( 'New Credit Card' ) }</span>
+					<span key="add-card-text">{ translate( 'New credit card' ) }</span>
 				</CardHeading>
-
-				<Button>{ translate( 'Add new credit card' ) }</Button>
 			</div>
 		</a>
 	);

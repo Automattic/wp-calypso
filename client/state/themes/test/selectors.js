@@ -27,6 +27,7 @@ import {
 	getThemeSignupUrl,
 	getThemeDemoUrl,
 	getThemeForumUrl,
+	getPremiumThemePrice,
 	getActiveTheme,
 	isRequestingActiveTheme,
 	isWporgTheme,
@@ -2513,6 +2514,176 @@ describe( '#areRecommendedThemesLoading', () => {
 
 	test( 'should return false when filter request not initiated', () => {
 		expect( areRecommendedThemesLoading( state, 'lolol' ) ).to.be.false;
+	} );
+} );
+
+describe( '#getPremiumThemePrice', () => {
+	test( 'should return an empty string when a theme is not premium', () => {
+		const themePrice = getPremiumThemePrice(
+			{
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { twentysixteen },
+						} ),
+					},
+				},
+			},
+			'twentysixteen',
+			2916284
+		);
+
+		expect( themePrice ).to.equal( '' );
+	} );
+	test( 'should return an empty string when a theme is already available on a given site', () => {
+		const themePrice = getPremiumThemePrice(
+			{
+				sites: {
+					plans: {
+						2916284: {
+							data: [
+								{
+									currentPlan: true,
+									productSlug: PLAN_FREE,
+								},
+							],
+						},
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { mood },
+						} ),
+					},
+				},
+				purchases: {
+					data: [
+						{
+							ID: 1234567,
+							blog_id: 2916284,
+							meta: 'mood',
+							product_slug: 'premium_theme',
+						},
+					],
+				},
+			},
+			'mood',
+			2916284
+		);
+
+		expect( themePrice ).to.equal( '' );
+	} );
+
+	test( 'should return price as string when a theme is not available on a given site', () => {
+		const themePrice = getPremiumThemePrice(
+			{
+				sites: {
+					plans: {
+						2916284: {
+							data: [
+								{
+									currentPlan: true,
+									productSlug: PLAN_FREE,
+								},
+							],
+						},
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { mood },
+						} ),
+					},
+				},
+				purchases: {
+					data: [],
+				},
+			},
+			'mood',
+			2916284
+		);
+
+		expect( themePrice ).to.equal( '$20' );
+	} );
+
+	test( 'should return an "Upgrade" string for non-Atomic Jetpack sites', () => {
+		const themePrice = getPremiumThemePrice(
+			{
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true,
+						},
+					},
+					plans: {
+						77203074: {
+							data: [],
+						},
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { mood },
+						} ),
+					},
+				},
+				purchases: {
+					data: [],
+				},
+			},
+			'mood',
+			77203074
+		);
+
+		expect( themePrice ).to.equal( 'Upgrade' );
+	} );
+
+	test( 'should return price as a string for free Atomic sites', () => {
+		const themePrice = getPremiumThemePrice(
+			{
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							jetpack: true,
+							options: {
+								is_automated_transfer: true,
+							},
+						},
+					},
+					plans: {
+						77203074: {
+							data: [
+								{
+									currentPlan: true,
+									productSlug: PLAN_FREE,
+								},
+							],
+						},
+					},
+				},
+				themes: {
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: { mood },
+						} ),
+					},
+				},
+				purchases: {
+					data: [],
+				},
+			},
+			'mood',
+			77203074
+		);
+
+		expect( themePrice ).to.equal( '$20' );
 	} );
 } );
 

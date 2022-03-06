@@ -89,12 +89,16 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 }
 
 export function assignLicenseContext( context: PageJS.Context, next: () => void ): void {
+	const { page, search } = context.query;
 	const state = context.store.getState();
 	const sites = getSites( state );
+	const currentPage = parseInt( page ) || 1;
 
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <AssignLicense sites={ sites } />;
+	context.primary = (
+		<AssignLicense sites={ sites } currentPage={ currentPage } search={ search || '' } />
+	);
 	next();
 }
 

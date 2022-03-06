@@ -26,9 +26,11 @@ export const FEATURE_SET_PRIMARY_CUSTOM_DOMAIN = 'set-primary-custom-domain';
 export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
 export const FEATURE_JETPACK_ADVANCED = 'jetpack-advanced';
 export const FEATURE_FREE_THEMES = 'free-themes';
+export const FEATURE_500MB_STORAGE = '500mb-storage';
 export const FEATURE_3GB_STORAGE = '3gb-storage';
 export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
+export const FEATURE_50GB_STORAGE = '50gb-storage';
 export const FEATURE_200GB_STORAGE = '200gb-storage';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
@@ -88,6 +90,7 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
+export const FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL = 'free-professional-email-trial';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -192,3 +195,14 @@ export const FEATURE_P2_VIDEO_SHARING = 'p2-video-sharing';
 export const FEATURE_P2_MORE_FILE_TYPES = 'p2-more-file-types';
 export const FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT = 'p2-priority-chat-email-support';
 export const FEATURE_P2_ACTIVITY_OVERVIEW = 'p2-activity-overview';
+
+// New features Flexible and Managed plans introduced.
+export const FEATURE_UNLIMITED_USERS = 'unlimited-users';
+export const FEATURE_UNLIMITED_POSTS_PAGES = 'unlimited-posts-pages';
+export const FEATURE_PAYMENT_BLOCKS = 'payment-blocks';
+export const FEATURE_TITAN_EMAIL = 'titan-email';
+export const FEATURE_UNLIMITED_ADMINS = 'unlimited-admins';
+export const FEATURE_ADDITIONAL_SITES = 'additional-sites';
+export const FEATURE_10K_VISITS = '10k-visits';
+export const FEATURE_100K_VISITS = '100k-visits';
+export const FEATURE_WOOCOMMERCE = 'woocommerce';

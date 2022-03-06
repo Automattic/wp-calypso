@@ -48,6 +48,10 @@ const initialReduxState = {
 	editor: {
 		imageEditor: {},
 	},
+	timezones: {
+		labels: {},
+		byContinents: {},
+	},
 	ui: {},
 };
 

@@ -235,7 +235,6 @@ export const post = ( context, next ) => {
 	const siteId = getSelectedSiteId( state );
 	const pressThisData = getPressThisData( context.query );
 	const anchorFmData = getAnchorFmData( context.query );
-	const fseParentPageId = parseInt( context.query.fse_parent_post, 10 ) || null;
 	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
 
 	// Set postId on state.editor.postId, so components like editor revisions can read from it.
@@ -252,7 +251,6 @@ export const post = ( context, next ) => {
 			duplicatePostId={ duplicatePostId }
 			pressThisData={ pressThisData }
 			anchorFmData={ anchorFmData }
-			fseParentPageId={ fseParentPageId }
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && context.query.hasOwnProperty( 'new-homepage' ) }
 			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }

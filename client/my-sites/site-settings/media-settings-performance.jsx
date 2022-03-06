@@ -17,14 +17,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import PlanStorageBar from 'calypso/blocks/plan-storage/bar';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import QueryMediaStorage from 'calypso/components/data/query-media-storage';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
+import withMediaStorage from 'calypso/data/media-storage/with-media-storage';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
-import getMediaStorageLimit from 'calypso/state/selectors/get-media-storage-limit';
-import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -149,7 +147,7 @@ class MediaSettingsPerformance extends Component {
 	}
 
 	render() {
-		const { isVideoPressAvailable, siteId, sitePlanSlug } = this.props;
+		const { isVideoPressAvailable, sitePlanSlug } = this.props;
 
 		if ( ! sitePlanSlug ) {
 			return null;
@@ -157,7 +155,6 @@ class MediaSettingsPerformance extends Component {
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
-				<QueryMediaStorage siteId={ siteId } />
 				{ isVideoPressAvailable && <Card>{ this.renderVideoSettings() }</Card> }
 				{ this.renderVideoUpgradeNudge() }
 			</div>
@@ -183,31 +180,33 @@ const checkForLegacySecurityDailyPlan = ( purchase ) =>
 const checkForActiveJetpackVideoPressPurchases = ( purchase ) =>
 	checkForJetpackVideoPressProduct( purchase ) || checkForLegacySecurityDailyPlan( purchase );
 
-export default connect( ( state ) => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
-	const isVideoPressAvailable =
-		isJetpackSite( state, selectedSiteId ) ||
-		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) ||
-		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
-		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
+export default withMediaStorage(
+	connect( ( state, { mediaStorage } ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+		const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
+		const isVideoPressAvailable =
+			isJetpackSite( state, selectedSiteId ) ||
+			planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) ||
+			planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
+			planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
 
-	return {
-		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
-		isVideoPressAvailable,
-		isVideoPressFreeTier:
-			isJetpackSite( state, selectedSiteId ) &&
-			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
-			! getSitePurchases( state, selectedSiteId ).find(
-				checkForActiveJetpackVideoPressPurchases
-			) &&
-			// These features are used in current plans that include VP
-			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) &&
-			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) &&
-			! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ),
-		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
-		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
-		sitePlanSlug,
-		siteSlug: getSiteSlug( state, selectedSiteId ),
-	};
-} )( localize( MediaSettingsPerformance ) );
+		return {
+			isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
+			isVideoPressAvailable,
+			isVideoPressFreeTier:
+				isJetpackSite( state, selectedSiteId ) &&
+				! isSiteAutomatedTransfer( state, selectedSiteId ) &&
+				! getSitePurchases( state, selectedSiteId ).find(
+					checkForActiveJetpackVideoPressPurchases
+				) &&
+				// These features are used in current plans that include VP
+				! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) &&
+				! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) &&
+				! planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ),
+			mediaStorageLimit: mediaStorage?.max_storage_bytes ?? null,
+			mediaStorageUsed: mediaStorage?.storage_used_bytes ?? null,
+			sitePlanSlug,
+			siteSlug: getSiteSlug( state, selectedSiteId ),
+		};
+	} )( localize( MediaSettingsPerformance ) )
+);

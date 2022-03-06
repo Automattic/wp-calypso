@@ -48,6 +48,7 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutHelpLink from './checkout-help-link';
+import CheckoutNextSteps from './checkout-next-steps';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import PaymentMethodStep from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
@@ -371,6 +372,7 @@ export default function WPCheckout( {
 							isCartPendingUpdate={ isCartPendingUpdate }
 						/>
 						<CheckoutHelpLink />
+						<CheckoutNextSteps responseCart={ responseCart } />
 					</CheckoutSummaryBody>
 				</CheckoutErrorBoundary>
 			</CheckoutSummaryArea>

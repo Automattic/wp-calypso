@@ -44,7 +44,7 @@ async function getRequest( url, query ) {
 export function fetchPluginInformation( pluginSlug, locale ) {
 	const query = {
 		action: 'plugin_information',
-		'request[slug]': pluginSlug.replace( new RegExp( '.php$' ), '' ),
+		'request[slug]': pluginSlug.replace( new RegExp( '\\.php$' ), '' ),
 		'request[locale]': getWporgLocaleCode( locale ),
 		'request[fields]': 'icons,short_description,contributors,-added,-donate_link,-homepage',
 	};

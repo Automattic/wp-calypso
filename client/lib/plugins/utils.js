@@ -306,7 +306,7 @@ export const WPORG_PROFILE_URL = 'https://profiles.wordpress.org/';
  * @returns {string|null} the author keyword
  */
 export function getPluginAuthorProfileKeyword( plugin ) {
-	if ( ! plugin?.author_profile?.includes( WPORG_PROFILE_URL ) ) {
+	if ( ! plugin?.author_profile?.startsWith( WPORG_PROFILE_URL ) ) {
 		return null;
 	}
 

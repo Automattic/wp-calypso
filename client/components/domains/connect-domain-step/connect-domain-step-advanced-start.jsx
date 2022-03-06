@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import CardHeading from 'calypso/components/card-heading';
 import MaterialIcon from 'calypso/components/material-icon';
+import { isSubdomain } from 'calypso/lib/domains';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
 import { modeType, stepSlug, stepsHeading } from './constants';
 
@@ -11,6 +12,7 @@ import './style.scss';
 
 export default function ConnectDomainStepAdvancedStart( {
 	className,
+	domain,
 	pageSlug,
 	mode,
 	onNextStep,
@@ -18,23 +20,29 @@ export default function ConnectDomainStepAdvancedStart( {
 	setPage,
 } ) {
 	const { __ } = useI18n();
-	const switchToSuggestedSetup = () => setPage( stepSlug.SUGGESTED_START );
+	const firstStep = isSubdomain( domain )
+		? stepSlug.SUBDOMAIN_SUGGESTED_START
+		: stepSlug.SUGGESTED_START;
+	const switchToSuggestedSetup = () => setPage( firstStep );
+
+	const message = isSubdomain( domain )
+		? __(
+				'This is the advanced way to connect your subdomain, using A & CNAME records. We advise using our <a>suggested setup</a> instead, with NS records.'
+		  )
+		: __(
+				'This is the advanced way to connect your domain, using root A records & CNAME records. We advise using our <a>suggested setup</a> instead, with WordPress.com name servers.'
+		  );
 
 	const stepContent = (
 		<>
 			<div className={ className + '__suggested-start' }>
 				<p className={ className + '__text' }>
-					{ createInterpolateElement(
-						__(
-							'This is the advanced way to connect your domain, using root A records & CNAME records. This setup requires manually managing DNS records for any added services such as Professional Email yourself. If you want to connect your domain in the easiest way, switch to our <a>suggested setup</a>.'
-						),
-						{
-							a: createElement( 'a', {
-								className: 'connect-domain-step__change_mode_link',
-								onClick: switchToSuggestedSetup,
-							} ),
-						}
-					) }
+					{ createInterpolateElement( message, {
+						a: createElement( 'a', {
+							className: 'connect-domain-step__change_mode_link',
+							onClick: switchToSuggestedSetup,
+						} ),
+					} ) }
 				</p>
 				<CardHeading className={ className + '__sub-heading' }>
 					<MaterialIcon className={ className + '__sub-heading-icon' } size={ 24 } icon="timer" />

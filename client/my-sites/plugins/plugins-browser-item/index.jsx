@@ -14,10 +14,7 @@ import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
-import {
-	getSitesWithPlugin,
-	getPlugins as getInstalledPlugins,
-} from 'calypso/state/plugins/installed/selectors';
+import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -194,20 +191,16 @@ const InstalledInOrPricing = ( {
 } ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const installedPlugins =
-		useSelector( ( state ) => getInstalledPlugins( state, [ selectedSiteId ] ) ) || [];
-	const activePlugins = selectedSiteId
-		? installedPlugins.filter( ( activePlugin ) => activePlugin.sites[ selectedSiteId ]?.active )
-		: [];
+	const isPluginAtive = useSelector( ( state ) =>
+		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
+	)?.active;
 
 	let checkmarkColorClass = 'checkmark--active';
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
-
-		const isActive = !! activePlugins.find( ( activePlugin ) => activePlugin.slug === plugin.slug );
 		if ( selectedSiteId ) {
-			checkmarkColorClass = isActive ? 'checkmark--active' : 'checkmark--inactive';
+			checkmarkColorClass = isPluginAtive ? 'checkmark--active' : 'checkmark--inactive';
 		}
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
@@ -222,8 +215,8 @@ const InstalledInOrPricing = ( {
 				</div>
 				{ selectedSiteId && (
 					<div className="plugins-browser-item__active">
-						<Badge type={ isActive ? 'success' : 'info' }>
-							{ isActive ? translate( 'Active' ) : translate( 'Inactive' ) }
+						<Badge type={ isPluginAtive ? 'success' : 'info' }>
+							{ isPluginAtive ? translate( 'Active' ) : translate( 'Inactive' ) }
 						</Badge>
 					</div>
 				) }

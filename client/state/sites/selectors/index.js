@@ -65,4 +65,5 @@ export { default as getSelectedSiteWithFallback } from './get-site-with-fallback
 export { default as getSiteWooCommerceUrl } from './get-site-woocommerce-url';
 export { default as getSiteWooCommerceWizardUrl } from './get-site-woocommerce-wizard-url';
 export { default as getJetpackSearchCustomizeUrl } from './get-jetpack-search-customize-url';
+export { default as getJetpackSearchDashboardUrl } from './get-jetpack-search-dashboard-url';
 export { default as getJetpackVersion } from './get-jetpack-version';

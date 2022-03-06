@@ -26,6 +26,7 @@ jest.mock( '../hooks', () => ( {
 	...jest.requireActual( '../hooks' ),
 	useCanGoToDate: jest.fn(),
 } ) );
+jest.mock( 'calypso/state/selectors/get-rewind-backups' );
 
 import { shallow } from 'enzyme';
 import { useTranslate } from 'i18n-calypso';

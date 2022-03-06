@@ -162,7 +162,7 @@ export default function PaymentMethodSelector( {
 			onPageLoadError={ logError }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {
-				paypal: () => assignPayPalProcessor( purchase, reduxDispatch ),
+				paypal: ( data: unknown ) => assignPayPalProcessor( purchase, reduxDispatch, data ),
 				'existing-card': ( data: unknown ) =>
 					assignExistingCardProcessor( purchase, reduxDispatch, data ),
 				card: ( data: unknown ) =>

@@ -1,6 +1,5 @@
 import { ScreenReaderText, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { findIndex } from 'lodash';
 import PropTypes from 'prop-types';
@@ -8,7 +7,6 @@ import { createRef, Children, Component } from 'react';
 import { hasTouch } from 'calypso/lib/touch-detect';
 
 const noop = () => {};
-const debug = debugFactory( 'calypso:forms:sortable-list' );
 
 import './style.scss';
 
@@ -34,11 +32,6 @@ class SortableList extends Component {
 	listRef = createRef();
 	itemsRefs = new Map();
 	itemShadowRefs = new Map();
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
-	}
 
 	componentDidMount() {
 		if ( ! hasTouch() ) {

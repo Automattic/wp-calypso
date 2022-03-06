@@ -61,6 +61,7 @@ function ConnectDomainSteps( {
 			progressStepList={ progressStepList }
 			pageSlug={ pageSlug }
 			setPage={ setPage }
+			selectedSite={ selectedSite }
 			{ ...stepProps }
 		/>
 	);

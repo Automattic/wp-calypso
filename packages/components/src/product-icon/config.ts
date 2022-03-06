@@ -76,6 +76,7 @@ export type SupportedSlugs =
 	| 'business-bundle'
 	| 'business-bundle-2y'
 	| 'business-bundle-monthly'
+	| 'managed-bundle'
 	| 'jetpack_free'
 	| 'jetpack_personal'
 	| 'jetpack_personal_monthly'
@@ -165,6 +166,7 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'value_bundle-2y',
 		'value_bundle-monthly',
 		'value_bundle_monthly',
+		'managed-bundle',
 	],
 	'wpcom-ecommerce': [ 'ecommerce-bundle', 'ecommerce-bundle-2y', 'ecommerce-bundle-monthly' ],
 	'wpcom-business': [ 'business-bundle', 'business-bundle-2y', 'business-bundle-monthly' ],

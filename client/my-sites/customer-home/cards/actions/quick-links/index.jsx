@@ -15,7 +15,6 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentUserTimeSinceSignup from 'calypso/state/selectors/get-current-user-time-since-signup';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
-import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
@@ -39,7 +38,6 @@ export const QuickLinks = ( {
 	customizeUrl,
 	isAtomic,
 	isStaticHomePage,
-	showCustomizer,
 	canAddEmail,
 	menusUrl,
 	trackEditHomepageAction,
@@ -123,7 +121,7 @@ export const QuickLinks = ( {
 					materialIcon="insert_drive_file"
 				/>
 			) }
-			{ showCustomizer && canCustomize && (
+			{ canCustomize && (
 				<>
 					<ActionBox
 						href={ menusUrl }
@@ -400,7 +398,6 @@ const mapStateToProps = ( state ) => {
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
-		showCustomizer: ! isSiteUsingLegacyFSE( state, siteId ),
 		canAddEmail,
 		siteSlug,
 		isStaticHomePage,

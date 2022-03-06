@@ -346,24 +346,7 @@ export default {
 		}
 
 		if ( isMobile() && 'wpcc' !== flowName ) {
-			loadExperimentAssignment( 'registration_social_login_first_on_mobile_v2' );
-		}
-
-		const signupFlows = [
-			'onboarding',
-			'launch-site',
-			'free',
-			'personal',
-			'premium',
-			'business',
-			'ecommerce',
-			'personal-monthly',
-			'premium-monthly',
-			'business-monthly',
-			'ecommerce-monthly',
-		];
-		if ( signupFlows.includes( flowName ) ) {
-			loadExperimentAssignment( 'calypso_signup_domain_step_copy_test_202201_v2' );
+			loadExperimentAssignment( 'registration_social_login_first_on_mobile_v3' );
 		}
 
 		context.primary = createElement( SignupComponent, {

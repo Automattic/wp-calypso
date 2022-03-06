@@ -2,8 +2,13 @@ import { PlansIntervalToggle } from '@automattic/plans-grid/src';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import { PluginAnnualSaving } from 'calypso/my-sites/plugins/plugin-saving';
 import { IntervalLength } from './constants';
+import type { FunctionComponent } from 'react';
 
+type PluginAnnualSavingLabelProps = {
+	isSelected: boolean;
+};
 const Container = styled.div`
 	.plans-interval-toggle {
 		display: inline-flex;
@@ -16,16 +21,30 @@ const PlansIntervalToggleLabel = styled.span`
 	margin-right: 10px;
 `;
 
+const PluginAnnualSavingLabelMobile = styled.span< PluginAnnualSavingLabelProps >`
+	color: ${ ( props ) =>
+		props.isSelected ? 'var( --studio-white-100 )' : 'var( --studio-green-60 )' };
+`;
+
+const PluginAnnualSavingLabelDesktop = styled.span`
+	font-size: 12px;
+	color: var( --studio-green-60 );
+`;
+
 type Props = {
 	onChange: ( selectedValue: 'MONTHLY' | 'ANNUALLY' ) => void;
 	billingPeriod: IntervalLength;
 	compact: boolean;
+	plugin?: {
+		variations?: { yearly?: { product_slug: string }; monthly?: { product_slug: string } };
+	};
 };
 
-const BillingIntervalSwitcher: React.FunctionComponent< Props > = ( {
+const BillingIntervalSwitcher: FunctionComponent< Props > = ( {
 	billingPeriod,
 	onChange,
 	compact,
+	plugin,
 } ) => {
 	const translate = useTranslate();
 	const monthlyLabel = translate( 'Monthly price' );
@@ -48,6 +67,19 @@ const BillingIntervalSwitcher: React.FunctionComponent< Props > = ( {
 						onClick={ () => onChange( IntervalLength.ANNUALLY ) }
 					>
 						{ annualLabel }
+						{ plugin && (
+							<PluginAnnualSaving plugin={ plugin }>
+								{ ( annualSaving: { saving: string | null } ) =>
+									annualSaving.saving && (
+										<PluginAnnualSavingLabelMobile
+											isSelected={ billingPeriod === IntervalLength.ANNUALLY }
+										>
+											&nbsp;-{ annualSaving.saving }
+										</PluginAnnualSavingLabelMobile>
+									)
+								}
+							</PluginAnnualSaving>
+						) }
 					</SelectDropdown.Item>
 				</SelectDropdown>
 			</Container>
@@ -57,7 +89,23 @@ const BillingIntervalSwitcher: React.FunctionComponent< Props > = ( {
 	return (
 		<Container>
 			<PlansIntervalToggleLabel>{ translate( 'Price' ) }</PlansIntervalToggleLabel>
-			<PlansIntervalToggle intervalType={ billingPeriod } onChange={ onChange } />
+			<PlansIntervalToggle intervalType={ billingPeriod } onChange={ onChange }>
+				{ plugin && (
+					<PluginAnnualSaving plugin={ plugin }>
+						{ ( annualSaving: { saving: string | null } ) =>
+							annualSaving.saving && (
+								<PluginAnnualSavingLabelDesktop>
+									&nbsp;
+									{ translate( 'Save %(save)s', {
+										comment: 'Sale price label, ex: Save $51',
+										args: { save: annualSaving.saving },
+									} ) }
+								</PluginAnnualSavingLabelDesktop>
+							)
+						}
+					</PluginAnnualSaving>
+				) }
+			</PlansIntervalToggle>
 		</Container>
 	);
 };

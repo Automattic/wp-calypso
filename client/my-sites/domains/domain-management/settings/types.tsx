@@ -52,6 +52,7 @@ export type SettingsPageConnectedDispatchProps = {
 export type SettingsHeaderOwnProps = {
 	domain: ResponseDomain;
 	site: SiteData;
+	purchase: Purchase | null;
 };
 
 export type SettingsHeaderConnectedProps = {
