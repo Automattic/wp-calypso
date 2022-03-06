@@ -28,6 +28,23 @@ export const items: Reducer< PaymentMethod[], ItemsAction > = ( state = [], acti
 	return state;
 };
 
+type MoreItemsAction = {
+	type: 'STORED_CARDS_HAS_MORE_ITEMS';
+	hasMore: boolean;
+	hasBeenSet: boolean;
+};
+
+export const hasMoreItems: Reducer< boolean, MoreItemsAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'STORED_CARDS_HAS_MORE_ITEMS': {
+			const { hasMore } = action;
+			return Boolean( hasMore );
+		}
+	}
+
+	return state;
+};
+
 type IsFetchingAction = Action<
 	'STORED_CARDS_FETCH' | 'STORED_CARDS_FETCH_COMPLETED' | 'STORED_CARDS_FETCH_FAILED'
 >;
@@ -85,6 +102,7 @@ const combinedReducer = combineReducers( {
 	items: items as Reducer,
 	isDeleting: isDeleting as Reducer,
 	isFetching,
+	hasMoreItems: hasMoreItems as Reducer,
 } );
 
 export default withStorageKey( 'storedCards', combinedReducer );
