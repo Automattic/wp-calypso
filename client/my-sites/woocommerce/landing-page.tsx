@@ -30,6 +30,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce' } ];
 	const ctaRef = useRef( null );
+	const simpleSeller = useIsSimpleSeller();
 
 	const {
 		isTransferringBlocked,
@@ -120,6 +121,28 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 			},
 		],
 	};
+
+	let displayData: DisplayData | null;
+
+	if ( simpleSeller ) {
+		displayData = {
+			title: __( 'Upgrade your store' ),
+			illustration: '/calypso/images/illustrations/illustration-seller.svg',
+			line: __(
+				'Need more out of your store? Unlock the tools needed to manage products, orders, shipping, and more.'
+			),
+			action: __( 'Upgrade your store' ),
+		};
+	} else {
+		displayData = {
+			title: __( 'Set up a store and start selling online' ),
+			illustration: '/calypso/images/illustrations/illustration-shopping-bags.svg',
+			line: __(
+				'Set up a new store in minutes. Get secure payments, configurable shipping options, and more, out of the box.'
+			),
+			action: __( 'Start a new store' ),
+		};
+	}
 
 	return (
 		<div className="landing-page">
