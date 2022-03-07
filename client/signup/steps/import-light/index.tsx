@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import page from 'page';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import Capture from './capture';
 import Colors from './colors';
@@ -21,10 +21,39 @@ const ImportLight: FunctionComponent< Props > = ( props ) => {
 		{ name: 'Color 3', hex: '#EFEBEB' },
 		{ name: 'Color 4', hex: '#94A4B9' },
 	];
+	const [ scanningProgress, setScanningProgress ] = useState( 0 );
 
-	function startScan() {
+	function runScan() {
 		page.redirect( '/start/import-light/static/scanning' );
 	}
+
+	function runImport() {
+		page.redirect( '/start/import-light/static/colors' );
+	}
+
+	useEffect( () => {
+		const interval = setInterval( () => {
+			if ( props.stepSectionName !== 'scanning' ) return;
+
+			if ( scanningProgress === 100 ) {
+				clearInterval( interval );
+				runImport();
+				setScanningProgress( 0 );
+			}
+
+			if ( scanningProgress === 0 ) {
+				setScanningProgress( 14 );
+			} else if ( scanningProgress < 25 ) {
+				setScanningProgress( 25 );
+			} else if ( scanningProgress < 75 ) {
+				setScanningProgress( 75 );
+			} else {
+				setScanningProgress( 100 );
+			}
+		}, 630 );
+
+		return () => clearInterval( interval );
+	} );
 
 	return (
 		<StepWrapper
@@ -39,8 +68,8 @@ const ImportLight: FunctionComponent< Props > = ( props ) => {
 			shouldHideNavButtons={ false }
 			stepContent={
 				<div className={ classnames( 'import__onboarding-page' ) }>
-					{ ! props.stepSectionName && <Capture startScan={ startScan } /> }
-					{ props.stepSectionName === 'scanning' && <Scanning /> }
+					{ ! props.stepSectionName && <Capture startScan={ runScan } /> }
+					{ props.stepSectionName === 'scanning' && <Scanning progress={ scanningProgress } /> }
 					{ props.stepSectionName === 'colors' && <Colors colors={ COLORS } /> }
 					{ props.stepSectionName === 'summary' && <Summary /> }
 				</div>

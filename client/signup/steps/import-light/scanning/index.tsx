@@ -6,15 +6,20 @@ import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const Scanning: React.FunctionComponent = () => {
+interface Props {
+	progress: number;
+}
+
+const Scanning: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
+	const { progress } = props;
 
 	return (
 		<div className="import-layout__center import-light__scanning">
 			<div className="import__heading-center">
 				<Title>{ __( 'Scanning your site' ) }</Title>
 				<Progress>
-					<ProgressBar value={ 23 } compact={ true } color={ 'black' } />
+					<ProgressBar value={ progress } compact={ true } color={ 'black' } />
 				</Progress>
 			</div>
 		</div>
