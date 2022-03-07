@@ -1,0 +1,5 @@
+{
+	"cache_buster": "<%= htmlWebpackPlugin.options.gitDescribe %>",
+	"commit_hash": "<%= htmlWebpackPlugin.options.gitCommit %>",
+	"commit_url": "https://github.com/Automattic/wp-calypso/commit/<%= htmlWebpackPlugin.options.gitCommit %>"
+}
