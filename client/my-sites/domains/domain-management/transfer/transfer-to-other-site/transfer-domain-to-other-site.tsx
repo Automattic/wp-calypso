@@ -10,6 +10,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import {
@@ -182,10 +183,14 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	};
 
 	renderSection(): JSX.Element {
-		const { currentUserCanManage, selectedDomainName } = this.props;
+		const { currentUserCanManage, selectedDomainName, aftermarketAuction } = this.props;
 		const { children, ...propsWithoutChildren } = this.props;
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...propsWithoutChildren } />;
+		}
+
+		if ( aftermarketAuction ) {
+			return <AftermarketAutcionNotice domainName={ selectedDomainName } />;
 		}
 
 		return (
@@ -222,6 +227,7 @@ export default connect(
 		return {
 			currentRoute: getCurrentRoute( state ),
 			currentUserCanManage: typeof domain === 'object' && domain.currentUserCanManage,
+			aftermarketAuction: typeof domain === 'object' && domain.aftermarketAuction,
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
