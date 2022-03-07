@@ -51,6 +51,8 @@ export const fetchStoredCards = () => ( dispatch ) => {
 				type: STORED_CARDS_FETCH_FAILED,
 				error: error.message || i18n.translate( 'There was a problem retrieving stored cards.' ),
 			} );
+			// Re-throw the rejection so whatever uses this Promise can see the failure too.
+			return Promise.reject( error );
 		} );
 };
 
@@ -77,6 +79,8 @@ export const deleteStoredCard = ( card ) => ( dispatch ) => {
 				card,
 				error: error.message || i18n.translate( 'There was a problem deleting the stored card.' ),
 			} );
+			// Re-throw the rejection so whatever uses this Promise can see the failure too.
+			return Promise.reject( error );
 		} );
 };
 

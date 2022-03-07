@@ -83,18 +83,25 @@ describe( 'actions', () => {
 					.reply( 403, error );
 			} );
 
-			test( 'should dispatch fetch/fail actions', () => {
+			test( 'should dispatch fetch/fail actions', async () => {
 				const promise = fetchStoredCards()( spy );
 
 				expect( spy ).to.have.been.calledWith( {
 					type: STORED_CARDS_FETCH,
 				} );
 
-				return promise.then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: STORED_CARDS_FETCH_FAILED,
-						error: error.message,
-					} );
+				let didFail = false;
+				try {
+					await promise;
+				} catch {
+					didFail = true;
+				}
+
+				expect( didFail ).to.be.true;
+
+				expect( spy ).to.have.been.calledWith( {
+					type: STORED_CARDS_FETCH_FAILED,
+					error: error.message,
 				} );
 			} );
 		} );
@@ -147,7 +154,7 @@ describe( 'actions', () => {
 					.reply( 403, error );
 			} );
 
-			test( 'should dispatch fetch/fail actions', () => {
+			test( 'should dispatch fetch/fail actions', async () => {
 				const promise = deleteStoredCard( card )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
@@ -155,12 +162,19 @@ describe( 'actions', () => {
 					card,
 				} );
 
-				return promise.then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: STORED_CARDS_DELETE_FAILED,
-						card,
-						error: error.message,
-					} );
+				let didFail = false;
+				try {
+					await promise;
+				} catch {
+					didFail = true;
+				}
+
+				expect( didFail ).to.be.true;
+
+				expect( spy ).to.have.been.calledWith( {
+					type: STORED_CARDS_DELETE_FAILED,
+					card,
+					error: error.message,
 				} );
 			} );
 		} );
