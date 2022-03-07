@@ -1,4 +1,5 @@
 import classnames from 'classnames';
+import page from 'page';
 import React from 'react';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import Capture from './capture';
@@ -14,12 +15,16 @@ interface Props {
 	stepSectionName: string;
 }
 const ImportLight: FunctionComponent< Props > = ( props ) => {
-	const colors = [
+	const COLORS = [
 		{ name: 'Color 1', hex: '#17273A' },
 		{ name: 'Color 2', hex: '#283A50' },
 		{ name: 'Color 3', hex: '#EFEBEB' },
 		{ name: 'Color 4', hex: '#94A4B9' },
 	];
+
+	function startScan() {
+		page.redirect( '/start/import-light/static/scanning' );
+	}
 
 	return (
 		<StepWrapper
@@ -34,9 +39,9 @@ const ImportLight: FunctionComponent< Props > = ( props ) => {
 			shouldHideNavButtons={ false }
 			stepContent={
 				<div className={ classnames( 'import__onboarding-page' ) }>
-					{ ! props.stepSectionName && <Capture /> }
+					{ ! props.stepSectionName && <Capture startScan={ startScan } /> }
 					{ props.stepSectionName === 'scanning' && <Scanning /> }
-					{ props.stepSectionName === 'colors' && <Colors colors={ colors } /> }
+					{ props.stepSectionName === 'colors' && <Colors colors={ COLORS } /> }
 					{ props.stepSectionName === 'summary' && <Summary /> }
 				</div>
 			}
