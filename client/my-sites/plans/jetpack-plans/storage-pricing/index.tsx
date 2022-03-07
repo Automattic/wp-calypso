@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { ReactNode, useState } from 'react';
 import * as React from 'react';
@@ -31,6 +32,19 @@ export const StoragePricing: React.FC< Props > = ( {
 } ) => {
 	const [ duration, setDuration ] = useState< Duration >( defaultDuration );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const showAnnualPlansOnly = config.isEnabled( 'jetpack/pricing-page-annual-only' );
+
+	const filterBar = React.useMemo(
+		() =>
+			showAnnualPlansOnly ? null : (
+				<PlansFilterBar
+					showDiscountMessage
+					duration={ duration }
+					onDurationChange={ setDuration }
+				/>
+			),
+		[ duration, showAnnualPlansOnly ]
+	);
 
 	return (
 		<>
@@ -40,11 +54,7 @@ export const StoragePricing: React.FC< Props > = ( {
 			{ nav }
 			<Main className="storage-pricing__main" wideLayout>
 				{ header }
-				<PlansFilterBar
-					showDiscountMessage
-					duration={ duration }
-					onDurationChange={ setDuration }
-				/>
+				{ filterBar }
 				<StorageTierUpgrade
 					duration={ duration }
 					urlQueryArgs={ urlQueryArgs }
