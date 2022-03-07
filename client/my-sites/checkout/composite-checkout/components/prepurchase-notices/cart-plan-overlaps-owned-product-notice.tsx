@@ -1,6 +1,6 @@
 import { getJetpackProductDisplayName } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import PrePurchaseNotice from './prepurchase-notice';
@@ -38,7 +38,7 @@ const CartPlanOverlapsOwnedProductNotice: FunctionComponent< Props > = ( {
 			comment: 'The `product` variable refers to the product the customer owns already',
 			components: {
 				link: <a href={ subscriptionUrl } />,
-				product: getJetpackProductDisplayName( product ) as ReactElement,
+				product: <>{ getJetpackProductDisplayName( product ) }</>,
 			},
 		}
 	);
