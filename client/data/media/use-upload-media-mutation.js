@@ -24,6 +24,22 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 				dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
 				dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
 
+				queryClient.setQueriesData( [ 'media', siteId ], ( data ) => {
+					if ( ! data || ! data.pages ) {
+						return data;
+					}
+
+					const [ firstPage, ...otherPages ] = data.pages;
+
+					return {
+						...data,
+						pages: [
+							{ ...firstPage, media: [ uploadedMediaWithTransientId, ...firstPage.media ] },
+							...otherPages,
+						],
+					};
+				} );
+
 				queryClient.invalidateQueries( [ 'media-storage', siteId ] );
 			},
 			onError( error, { siteId, transientMedia } ) {
@@ -47,6 +63,7 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 			const uploadedItems = [];
 
 			const uploads = dispatch( createTransientMediaItems( files, site ) );
+
 			const { ID: siteId } = site;
 
 			for await ( const [ file, transientMedia ] of uploads ) {

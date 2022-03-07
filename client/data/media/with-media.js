@@ -1,5 +1,7 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'calypso/data/media/use-media-query';
+import { getTransientMediaItems } from 'calypso/state/selectors/get-transient-media-items';
 import { getMimeBaseTypeFromFilter } from './utils';
 
 const getQuery = ( { search, source, filter, postId } ) => {
@@ -42,10 +44,17 @@ export const withMedia = createHigherOrderComponent(
 			fetchOptions
 		);
 
+		// @TODO move this to `useMediaQuery.select`
+		const transientMediaItems = useSelector( ( state ) =>
+			getTransientMediaItems( state, site.ID )
+		);
+
+		const media = data?.media ?? [];
+
 		return (
 			<Wrapped
 				{ ...props }
-				media={ data?.media ?? [] }
+				media={ transientMediaItems.length ? transientMediaItems.concat( media ) : media }
 				hasNextPage={ hasNextPage }
 				fetchNextPage={ fetchNextPage }
 				isLoading={ isLoading }
