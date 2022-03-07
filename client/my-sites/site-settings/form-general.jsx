@@ -25,7 +25,6 @@ import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import scrollTo from 'calypso/lib/scroll-to';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import getCurrentUserTimeSinceSignup from 'calypso/state/selectors/get-current-user-time-since-signup';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -94,7 +93,6 @@ export class SiteSettingsFormGeneral extends Component {
 			eventTracker,
 			onChangeField,
 			uniqueEventTracker,
-			daysSinceSignup,
 		} = this.props;
 
 		return (
@@ -152,9 +150,7 @@ export class SiteSettingsFormGeneral extends Component {
 					<div className="site-settings__fiver-cta-button">
 						<Button
 							target="_blank"
-							href={
-								'https://wp.me/logo-maker/?utm_campaign=general_settings_' + daysSinceSignup + 'd'
-							}
+							href="https://wp.me/logo-maker/?utm_campaign=general_settings"
 							onClick={ this.trackFiverrLogoMakerClick }
 						>
 							<Gridicon icon="external" />
@@ -718,7 +714,6 @@ const connectComponent = connect( ( state ) => {
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
-		daysSinceSignup: getCurrentUserTimeSinceSignup( state ),
 	};
 }, mapDispatchToProps );
 
