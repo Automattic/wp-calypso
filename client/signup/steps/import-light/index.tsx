@@ -31,6 +31,10 @@ const ImportLight: FunctionComponent< Props > = ( props ) => {
 		page.redirect( '/start/import-light/static/colors' );
 	}
 
+	function runSummary() {
+		page.redirect( '/start/import-light/static/summary' );
+	}
+
 	useEffect( () => {
 		const interval = setInterval( () => {
 			if ( props.stepSectionName !== 'scanning' ) return;
@@ -70,7 +74,9 @@ const ImportLight: FunctionComponent< Props > = ( props ) => {
 				<div className={ classnames( 'import__onboarding-page' ) }>
 					{ ! props.stepSectionName && <Capture startScan={ runScan } /> }
 					{ props.stepSectionName === 'scanning' && <Scanning progress={ scanningProgress } /> }
-					{ props.stepSectionName === 'colors' && <Colors colors={ COLORS } /> }
+					{ props.stepSectionName === 'colors' && (
+						<Colors colors={ COLORS } onAnimationFinished={ runSummary } />
+					) }
 					{ props.stepSectionName === 'summary' && <Summary /> }
 				</div>
 			}

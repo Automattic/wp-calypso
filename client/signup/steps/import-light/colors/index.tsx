@@ -14,6 +14,7 @@ interface Color {
 
 interface Props {
 	colors: Color[];
+	onAnimationFinished?: () => void;
 }
 const Scanning: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
@@ -37,7 +38,7 @@ const Scanning: React.FunctionComponent< Props > = ( props ) => {
 	}, [ colors ] );
 
 	function onColorsDisplay() {
-		// redirect to the next step/screen
+		props.onAnimationFinished && props.onAnimationFinished();
 	}
 
 	return (
