@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { useDeleteMediaMutation } from 'calypso/data/media/use-delete-media-mutation';
-import { deleteMedia as deleteMediaAction } from 'calypso/state/media/actions';
 import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
@@ -15,7 +14,16 @@ export const withDeleteMedia = createHigherOrderComponent(
 		const translate = useTranslate();
 		const { mutateAsync } = useDeleteMediaMutation( {
 			onSuccess( mediaItem, { siteId } ) {
-				dispatch( deleteMediaAction( siteId, mediaItem.ID ) );
+				queryClient.setQueriesData( [ 'media', siteId ], ( data ) => {
+					if ( ! data || ! data.pages ) {
+						return data;
+					}
+					const pages = data.pages.map( ( { media, ...rest } ) => {
+						const updatedMedia = media.filter( ( item ) => item.ID !== mediaItem.ID );
+						return { media: updatedMedia, ...rest };
+					} );
+					return { ...data, pages };
+				} );
 				dispatch( gutenframeUpdateImageBlocks( mediaItem, 'deleted' ) );
 			},
 		} );
@@ -37,6 +45,7 @@ export const withDeleteMedia = createHigherOrderComponent(
 				}
 
 				if ( promises.some( ( p ) => p.status === 'fulfilled' ) ) {
+					queryClient.invalidateQueries( [ 'media', siteId ] );
 					queryClient.invalidateQueries( [ 'media-storage', siteId ] );
 				}
 			},
