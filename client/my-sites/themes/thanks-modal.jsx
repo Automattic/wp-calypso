@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { addQueryArgs } from 'calypso/lib/route';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
@@ -25,6 +24,7 @@ import {
 import { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { trackClick } from './helpers';
+import { isFullSiteEditingTheme } from './is-full-site-editing-theme';
 
 import './thanks-modal.scss';
 
@@ -49,7 +49,6 @@ class ThanksModal extends Component {
 		isThemeWpcom: PropTypes.bool.isRequired,
 		siteId: PropTypes.number,
 		isFSEActive: PropTypes.bool,
-		areBlockEditorSettingsLoading: PropTypes.bool.isRequired,
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -185,14 +184,9 @@ class ThanksModal extends Component {
 	};
 
 	getEditSiteLabel = () => {
-		const {
-			shouldEditHomepageWithGutenberg,
-			hasActivated,
-			isFSEActive,
-			areBlockEditorSettingsLoading,
-		} = this.props;
+		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive } = this.props;
 
-		if ( ! hasActivated || areBlockEditorSettingsLoading ) {
+		if ( ! hasActivated ) {
 			return this.props.translate( 'Activating theme…' );
 		}
 
@@ -263,9 +257,9 @@ class ThanksModal extends Component {
 	};
 
 	render() {
-		const { currentTheme, hasActivated, isActivating, areBlockEditorSettingsLoading } = this.props;
+		const { currentTheme, hasActivated, isActivating } = this.props;
 
-		const shouldDisplayContent = hasActivated && currentTheme && ! areBlockEditorSettingsLoading;
+		const shouldDisplayContent = hasActivated && currentTheme;
 
 		return (
 			<Dialog
@@ -281,15 +275,12 @@ class ThanksModal extends Component {
 }
 
 const ConnectedThanksModal = connect(
-	( state, props ) => {
-		const { blockEditorSettings } = props;
-
-		const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
-
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteUrl = getSiteUrl( state, siteId );
 		const currentThemeId = getActiveTheme( state, siteId );
 		const currentTheme = currentThemeId && getCanonicalTheme( state, siteId, currentThemeId );
+		const isFSEActive = isFullSiteEditingTheme( currentTheme );
 
 		// Note: Gutenberg buttons will only show if the homepage is a page.
 		const shouldEditHomepageWithGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
@@ -327,4 +318,4 @@ const ConnectedThanksModal = connect(
 	}
 )( localize( ThanksModal ) );
 
-export default withBlockEditorSettings( ConnectedThanksModal );
+export default ConnectedThanksModal;
