@@ -50,7 +50,7 @@ export default function PaymentMethodList(): ReactElement {
 		<StoredCreditCard key={ card.id } card={ card } />
 	) );
 
-	const [ hasMoreItemsInitial, setHasMoreItemsInitial ] = useState( false );
+	const [ showPagination, setShowPagination ] = useState( false );
 	const [ paging, setPaging ] = useState( { startingAfter: '', endingBefore: '' } );
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 	const onPageClick = ( pageNumber: number ) => {
@@ -65,11 +65,9 @@ export default function PaymentMethodList(): ReactElement {
 	// If the initial request has more items, we need to always display the pagination controls.
 	useEffect( () => {
 		if ( hasMoreItems ) {
-			setHasMoreItemsInitial( true );
+			setShowPagination( true );
 		}
 	}, [ hasMoreItems ] );
-
-	const showPagination = hasMoreItemsInitial && !! storedCards;
 
 	return (
 		<Main wideLayout className="payment-method-list">
@@ -92,8 +90,8 @@ export default function PaymentMethodList(): ReactElement {
 			{ showPagination && (
 				<Pagination
 					className={ classNames( 'payment-method-list__pagination', {
-						'is-fetching': isFetching,
-						'no-more-items': ! hasMoreItems,
+						'payment-method-list__pagination--is-fetching': isFetching,
+						'payment-method-list__pagination--no-more-items': ! hasMoreItems,
 					} ) }
 					pageClick={ onPageClick }
 					page={ currentPage }
