@@ -34360,7 +34360,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"stack-utils@npm:2.0.5":
+"stack-utils@npm:2.0.5, stack-utils@npm:^2.0.2, stack-utils@npm:^2.0.3":
   version: 2.0.5
   resolution: "stack-utils@npm:2.0.5"
   dependencies:
@@ -34373,15 +34373,6 @@ resolve@^2.0.0-next.3:
   version: 1.0.2
   resolution: "stack-utils@npm:1.0.2"
   checksum: 41b714acbb8d887ef7801010adf430a60db64e03e37953652ecbd17d5e67d59854691816baa7ad3bf8f1bb1863b8af083762fd1a560da68ee9151e81b122f77e
-  languageName: node
-  linkType: hard
-
-"stack-utils@npm:^2.0.2, stack-utils@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "stack-utils@npm:2.0.3"
-  dependencies:
-    escape-string-regexp: ^2.0.0
-  checksum: b5391171b11024c7a092bbdb818b1784cd77ec9b91ed17fa2cc5f2391457db4aa2186567df097ae1579f75abcdd929bc6f72df57a20d19db4d20f07d9d98bb46
   languageName: node
   linkType: hard
 
@@ -38605,7 +38596,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"ws@npm:8.4.2":
+"ws@npm:8.4.2, ws@npm:^8.1.0, ws@npm:^8.2.3":
   version: 8.4.2
   resolution: "ws@npm:8.4.2"
   peerDependencies:
@@ -38671,21 +38662,6 @@ testarmada-magellan@11.0.10:
     utf-8-validate:
       optional: true
   checksum: ca1674eb90923c1b67a7df99709119c38b39b20db7595255dc146fae6f0cdf513311714a314a30819cf6bbe06bb31378bb4722d0a3025c161ef556281077e5ec
-  languageName: node
-  linkType: hard
-
-"ws@npm:^8.1.0, ws@npm:^8.2.3":
-  version: 8.3.0
-  resolution: "ws@npm:8.3.0"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 3e9d2faf128435f0b8ab272d731d8460c6c23d126503a920f14f81f9ae4a213624bfc2ca79e891b87ae84fe45b187754048df93b46c3ce55f8501528790380ee
   languageName: node
   linkType: hard
 
