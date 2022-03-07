@@ -60,8 +60,8 @@ export const StoragePricing: React.FC< Props > = ( {
 					urlQueryArgs={ urlQueryArgs }
 					siteSlug={ siteSlug }
 				/>
-				{ footer }
 			</Main>
+			{ footer }
 		</>
 	);
 };
