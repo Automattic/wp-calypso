@@ -14,7 +14,7 @@ class MediaModalSecondaryActions extends Component {
 	static propTypes = {
 		user: PropTypes.object,
 		site: PropTypes.object,
-		selectedItems: PropTypes.array,
+		selectedItems: PropTypes.arrayOf( PropTypes.object ),
 		onDelete: PropTypes.func,
 		onViewDetails: PropTypes.func,
 	};
