@@ -1,30 +1,57 @@
 import {
 	planHasFeature,
+	planHasAtLeastOneFeature,
 	planHasSuperiorFeature,
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_DAILY,
 	JETPACK_PLANS,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-	PLAN_JETPACK_SECURITY_REALTIME,
-	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-	PLAN_JETPACK_COMPLETE,
-	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+	FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+	FEATURE_JETPACK_BACKUP_T1_MONTHLY,
+	FEATURE_JETPACK_BACKUP_T1_YEARLY,
+	FEATURE_JETPACK_BACKUP_T2_MONTHLY,
+	FEATURE_JETPACK_BACKUP_T2_YEARLY,
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
-import { hasSiteProduct, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import type { AppState } from 'calypso/types';
+
+const DAILY_BACKUP_FEATURES = [
+	FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+	FEATURE_JETPACK_BACKUP_DAILY,
+];
+
+const REALTIME_BACKUP_FEATURES = [
+	FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+	FEATURE_JETPACK_BACKUP_REALTIME,
+	FEATURE_JETPACK_BACKUP_T1_MONTHLY,
+	FEATURE_JETPACK_BACKUP_T1_YEARLY,
+	FEATURE_JETPACK_BACKUP_T2_MONTHLY,
+	FEATURE_JETPACK_BACKUP_T2_YEARLY,
+];
+
+/**
+ * Check is a Jetpack plan is including a daily backup feature.
+ *
+ * @param {string} planSlug The plan slug.
+ * @returns {boolean} True if the plan includes a daily backup feature.
+ */
+export const planHasDailyBackup = ( planSlug: string ): boolean =>
+	planHasAtLeastOneFeature( planSlug, DAILY_BACKUP_FEATURES );
+
+/**
+ * Check is a Jetpack plan is including a real-time backup feature.
+ *
+ * @param {string} planSlug The plan slug.
+ * @returns {boolean} True if the plan includes a real-time backup feature.
+ */
+export const planHasRealTimeBackup = ( planSlug: string ): boolean =>
+	planHasAtLeastOneFeature( planSlug, REALTIME_BACKUP_FEATURES );
 
 /**
  * Check if a Jetpack plan is including a Backup product a site might already have.
@@ -40,39 +67,21 @@ export const isPlanIncludingSiteBackup = createSelector(
 			return null;
 		}
 
-		const hasDailyBackup = hasSiteProduct( state, siteId, [
-			PRODUCT_JETPACK_BACKUP_DAILY,
-			PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
-		] );
-		const hasRealTimeBackup = hasSiteProduct( state, siteId, [
-			PRODUCT_JETPACK_BACKUP_REALTIME,
-			PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-		] );
+		const capabilities = getRewindCapabilities( state, siteId );
+		const siteHasBackup = Array.isArray( capabilities ) && capabilities.includes( 'backup' );
+		const siteHasRealTimeBackup =
+			Array.isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
 
-		if ( ! hasDailyBackup && ! hasRealTimeBackup ) {
+		if ( ! siteHasBackup && ! siteHasRealTimeBackup ) {
 			return false;
 		}
 
-		switch ( planSlug ) {
-			case PLAN_JETPACK_FREE:
-				return false;
-			case PLAN_JETPACK_PERSONAL:
-			case PLAN_JETPACK_PERSONAL_MONTHLY:
-			case PLAN_JETPACK_PREMIUM:
-			case PLAN_JETPACK_PREMIUM_MONTHLY:
-			case PLAN_JETPACK_SECURITY_DAILY:
-			case PLAN_JETPACK_SECURITY_DAILY_MONTHLY:
-				if ( hasRealTimeBackup ) {
-					return false;
-				}
-				return true;
-			case PLAN_JETPACK_BUSINESS:
-			case PLAN_JETPACK_BUSINESS_MONTHLY:
-			case PLAN_JETPACK_SECURITY_REALTIME:
-			case PLAN_JETPACK_SECURITY_REALTIME_MONTHLY:
-			case PLAN_JETPACK_COMPLETE:
-			case PLAN_JETPACK_COMPLETE_MONTHLY:
-				return true;
+		if ( siteHasRealTimeBackup && planHasRealTimeBackup( planSlug ) ) {
+			return true;
+		}
+
+		if ( siteHasBackup && ! siteHasRealTimeBackup && planHasDailyBackup( planSlug ) ) {
+			return true;
 		}
 
 		return false;
@@ -81,14 +90,7 @@ export const isPlanIncludingSiteBackup = createSelector(
 		( state: AppState, siteId: number | null, planSlug: string ) => [
 			siteId,
 			planSlug,
-			hasSiteProduct( state, siteId, [
-				PRODUCT_JETPACK_BACKUP_DAILY,
-				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
-			] ),
-			hasSiteProduct( state, siteId, [
-				PRODUCT_JETPACK_BACKUP_REALTIME,
-				PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-			] ),
+			getRewindCapabilities( state, siteId ),
 		],
 	]
 );
