@@ -1,36 +1,6 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { useInfiniteQuery } from 'react-query';
-import wp from 'calypso/lib/wp';
-import utils from './utils';
-
-const defaults = {
-	number: 20,
-};
-
-const useMediaQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
-	const { source } = fetchOptions;
-	const path = source ? `/meta/external-media/${ source }` : `/sites/${ siteId }/media`;
-
-	return useInfiniteQuery(
-		[ 'media', siteId, fetchOptions ],
-		( { pageParam } ) =>
-			wp.req.get( path, { ...defaults, ...fetchOptions, page_handle: pageParam } ),
-		{
-			...queryOptions,
-			getNextPageParam( lastPage ) {
-				return lastPage.meta?.next_page;
-			},
-
-			select( data ) {
-				return {
-					media: data.pages.flatMap( ( page ) => page.media ),
-					total: data.pages[ 0 ].found,
-					...data,
-				};
-			},
-		}
-	);
-};
+import { useMediaQuery } from 'calypso/data/media/use-media-query';
+import { getMimeBaseTypeFromFilter } from './utils';
 
 const getQuery = ( { search, source, filter, postId } ) => {
 	const query = {};
@@ -45,7 +15,7 @@ const getQuery = ( { search, source, filter, postId } ) => {
 				query.post_ID = postId;
 			}
 		} else {
-			query.mime_type = utils.getMimeBaseTypeFromFilter( filter );
+			query.mime_type = getMimeBaseTypeFromFilter( filter );
 		}
 	}
 
