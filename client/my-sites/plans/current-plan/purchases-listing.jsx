@@ -174,7 +174,7 @@ class PurchasesListing extends Component {
 	}
 
 	getActionButton( purchase ) {
-		const { selectedSiteSlug, translate, currentUserId } = this.props;
+		const { selectedSiteSlug, translate, currentUserId, eligibleForManagedPlan } = this.props;
 
 		// No action button if there's no site selected.
 		if ( ! selectedSiteSlug || ! purchase ) {
@@ -228,7 +228,7 @@ class PurchasesListing extends Component {
 						: '#'
 				}
 				disabled={ ! userIsPurchaseOwner }
-				compact
+				compact={ ! eligibleForManagedPlan }
 			>
 				{ label }
 				&nbsp;

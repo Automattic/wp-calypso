@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import type { Plan } from '@automattic/calypso-products';
 import type { translate } from 'i18n-calypso';
 
@@ -13,9 +14,23 @@ interface Props {
 }
 
 const PlanTitle = styled.h2`
-	font-size: 2rem;
-	font-family: Recoleta;
+	font-size: 1.125rem;
+	margin-bottom: 10px;
 	font-weight: 500;
+
+	@media screen and ( min-width: ${ SCREEN_BREAKPOINT_SIGNUP + 1 }px ) {
+		.is-section-signup & {
+			font-size: 2rem;
+			font-family: Recoleta;
+		}
+	}
+
+	@media screen and ( min-width: ${ SCREEN_BREAKPOINT_PLANS + 1 }px ) {
+		.is-section-plans & {
+			font-size: 2rem;
+			font-family: Recoleta;
+		}
+	}
 `;
 
 const PlanDescription = styled.p`
@@ -23,6 +38,18 @@ const PlanDescription = styled.p`
 	font-size: 0.875rem;
 	font-weight: 400;
 	margin: 0 0 1rem;
+
+	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
+		.is-section-signup & {
+			display: none;
+		}
+	}
+
+	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
+		.is-section-plans & {
+			display: none;
+		}
+	}
 `;
 
 const PriceContainer = styled.div`

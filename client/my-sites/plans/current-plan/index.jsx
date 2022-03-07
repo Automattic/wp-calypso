@@ -265,52 +265,9 @@ class CurrentPlan extends Component {
 							text={
 								'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut felis et orci fringilla pretium. Consectura elit et orci fel.'
 							}
+							icon="info-outline"
 							showDismiss={ false }
 						></Notice>
-					) }
-
-					<PurchasesListing />
-
-					{ showJetpackChecklist && (
-						<Fragment>
-							<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-							<JetpackChecklist />
-						</Fragment>
-					) }
-
-					<div
-						className={ classNames( 'current-plan__header-text current-plan__text', {
-							'is-placeholder': { isLoading },
-						} ) }
-					>
-						<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
-					</div>
-
-					<PlansNavigation path={ path } />
-
-					{ showDomainWarnings && (
-						<DomainWarnings
-							domains={ domains }
-							position="current-plan"
-							selectedSite={ selectedSite }
-							allowedRules={ [
-								'newDomainsWithPrimary',
-								'newDomains',
-								'unverifiedDomainsCanManage',
-								'pendingGSuiteTosAcceptanceDomains',
-								'unverifiedDomainsCannotManage',
-								'wrongNSMappedDomains',
-								'newTransfersWrongNS',
-							] }
-						/>
-					) }
-
-					{ showExpiryNotice && (
-						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-							<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
-								{ translate( 'View plans' ) }
-							</NoticeAction>
-						</Notice>
 					) }
 
 					<PurchasesListing />
@@ -331,7 +288,6 @@ class CurrentPlan extends Component {
 							>
 								<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
 							</div>
-
 							<AsyncLoad
 								require="calypso/blocks/product-purchase-features-list"
 								placeholder={ null }
@@ -340,7 +296,6 @@ class CurrentPlan extends Component {
 							/>
 						</>
 					) }
-
 					<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 				</div>
 			</Main>

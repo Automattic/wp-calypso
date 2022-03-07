@@ -10,7 +10,12 @@ interface Props {
 }
 
 const Details = styled.div`
-	margin-left: 6px;
+	html[dir='ltr'] & {
+		margin-left: 6px;
+	}
+	html[dir='rtl'] & {
+		margin-right: 6px;
+	}
 `;
 const Wrapper = styled.div`
 	display: flex;
@@ -33,7 +38,7 @@ const Title = styled.div`
 `;
 
 const Subtitle = styled.div`
-	color: var( --studio-gray-30 );
+	color: var( --studio-gray-40 );
 	font-size: 0.75rem;
 	font-weight: 300;
 `;

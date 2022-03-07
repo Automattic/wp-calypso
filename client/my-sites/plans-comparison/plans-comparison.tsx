@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSitePlan } from 'calypso/state/sites/selectors';
-import { SCREEN_BREAKPOINT } from './constant';
+import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import { PlansComparisonAction } from './plans-comparison-action';
 import { PlansComparisonColHeader } from './plans-comparison-col-header';
 import { planComparisonFeatures } from './plans-comparison-features';
@@ -26,10 +26,28 @@ interface TableProps {
 	planCount: number;
 }
 
+const getMobileLayout = ( breakpoint: number, pageClass: string ) => `
+	@media screen and ( max-width: ${ breakpoint }px ) {
+		${ pageClass } & {
+			th.is-first,
+			td.is-first {
+				display: none;
+			}
+
+			th,
+			td {
+				width: ${ ( { planCount }: { planCount: number } ) => `${ 100 / planCount }%` };
+			}
+		}
+	}
+`;
 const ComparisonTable = styled.table< TableProps >`
-	max-width: 100%;
 	border-collapse: collapse;
-	margin: 0 auto;
+
+	.is-section-plans & {
+		max-width: 950px;
+		margin-left: auto;
+	}
 
 	th,
 	td {
@@ -40,11 +58,28 @@ const ComparisonTable = styled.table< TableProps >`
 		width: ${ ( { firstColWidth, planCount } ) => `${ ( 100 - firstColWidth ) / planCount }%` };
 		font-size: 1rem;
 		vertical-align: middle;
+
+		@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
+			.is-section-signup & {
+				font-size: 0.75rem;
+			}
+		}
+
+		@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
+			.is-section-plans & {
+				font-size: 0.75rem;
+			}
+		}
+	}
+
+	thead th,
+	thead td {
+		vertical-align: top;
 	}
 
 	th:nth-of-type( even ),
 	td:nth-of-type( even ) {
-		background: var( --studio-blue-0 );
+		background: #f0f7fc;
 	}
 
 	th.is-first,
@@ -52,27 +87,60 @@ const ComparisonTable = styled.table< TableProps >`
 		width: ${ ( { firstColWidth } ) => `${ firstColWidth }%` };
 	}
 
-	.button {
+	tr:last-child td:last-child {
+		box-shadow: 0 30px #f0f7fc;
+	}
+
+	th .button {
 		width: 100%;
 		border-radius: 4px;
+		font-weight: 500;
 	}
 
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT }px ) {
-		th.is-first,
-		td.is-first {
-			display: none;
-		}
-
-		th,
-		td {
-			width: ${ ( { planCount } ) => `${ 100 / planCount }%` };
-		}
+	th:last-child .button {
+		background: #0675c4;
+		border-color: #0675c4;
 	}
+
+	th:last-child .button .button:hover {
+		background: #055d9c;
+		border-color: #055d9c;
+	}
+
+	${ getMobileLayout( SCREEN_BREAKPOINT_SIGNUP, '.is-section-signup' ) }
+	${ getMobileLayout( SCREEN_BREAKPOINT_PLANS, '.is-section-plans' ) }
 `;
 
 const THead = styled.thead< { isInSignup: boolean } >`
 	position: sticky;
 	top: ${ ( { isInSignup } ) => ( isInSignup ? '0' : `var( --masterbar-height )` ) };
+`;
+
+const MobileComparePlansHeader = styled.td`
+	display: none;
+
+	h3 {
+		font-size: 1.5rem;
+		font-family: Recoleta;
+		line-height: 2;
+		margin-top: 0.5rem;
+	}
+
+	p {
+		font-size: 0.875rem;
+	}
+
+	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
+		.is-section-signup & {
+			display: table-cell;
+		}
+	}
+
+	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
+		.is-section-plans & {
+			display: table-cell;
+		}
+	}
 `;
 
 interface Props {
@@ -142,6 +210,12 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 				</tr>
 			</THead>
 			<tbody>
+				<tr>
+					<MobileComparePlansHeader colSpan={ 3 }>
+						<h3>{ translate( 'Compare plans' ) }</h3>
+						<p>{ 'Lorem ipsum dolor sit amet, consectetur dolor sit amet adipiscing elit.' }</p>
+					</MobileComparePlansHeader>
+				</tr>
 				{ planComparisonFeatures.map( ( feature ) => (
 					<PlansComparisonRow feature={ feature } plans={ plans } key={ feature.features[ 0 ] } />
 				) ) }
