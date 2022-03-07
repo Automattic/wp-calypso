@@ -3,6 +3,7 @@ import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { ReactNode, useState } from 'react';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
@@ -50,6 +51,7 @@ export const StoragePricing: React.FC< Props > = ( {
 		<>
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
+			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 
 			{ nav }
 			<Main className="storage-pricing__main" wideLayout>
