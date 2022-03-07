@@ -18,10 +18,14 @@ import {
 jest.mock( 'calypso/state/selectors/get-intro-offer-price', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/get-intro-offer-is-eligible', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/get-intro-offer-is-eligible', () => jest.fn() );
-jest.mock( 'calypso/state/product-list/selectors/get-product-sale-coupon-cost', () => jest.fn() );
-jest.mock( 'calypso/state/product-list/selectors/get-product-sale-coupon-discount', () =>
-	jest.fn()
-);
+
+jest.mock( 'calypso/state/products-list/selectors/get-product-sale-coupon-cost', () => ( {
+	getProductSaleCouponCost: jest.fn( () => null ),
+} ) );
+
+jest.mock( 'calypso/state/products-list/selectors/get-product-sale-coupon-discount', () => ( {
+	getProductSaleCouponDiscount: jest.fn( () => null ),
+} ) );
 
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
@@ -209,9 +213,15 @@ describe( 'selectors', () => {
 
 			getIntroOfferPrice.mockReset();
 			getIntroOfferPrice.mockImplementation( () => null );
+
+			getProductSaleCouponCost.mockReset();
+			getProductSaleCouponCost.mockImplementation( () => null );
+
+			getProductSaleCouponDiscount.mockReset();
+			getProductSaleCouponDiscount.mockImplementation( () => null );
 		} );
 
-		test( 'Should return list of shapes { isIntroductoryOfferApplied, priceFull, plan, product, planSlug }', () => {
+		test( 'Should return list of shapes { priceFull, priceFinal, plan, product, planSlug, introductoryOfferPrice }', () => {
 			const state = {
 				productsList: {
 					items: {
@@ -241,37 +251,92 @@ describe( 'selectors', () => {
 			] );
 		} );
 
-		// test( 'couponDiscount should discount priceFinal', () => {
-		// 	const state = {
-		// 		productsList: {
-		// 			items: {
-		// 				plan1: { available: true },
-		// 				plan2: { available: true },
-		// 			},
-		// 		},
-		// 	};
+		test( 'sales coupon should discount priceFinal', () => {
+			getProductSaleCouponCost.mockImplementation( ( _, storeSlug ) => {
+				if ( storeSlug === 'abc' ) {
+					return 100;
+				}
+				return null;
+			} );
 
-		// 	expect(
-		// 		computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ], 0, { abc: 0.5, jkl: 0.8 } )
-		// 	).toEqual( [
-		// 		{
-		// 			planSlug: 'plan1',
-		// 			plan: testPlans.plan1,
-		// 			product: state.productsList.items.plan1,
-		// 			priceFull: 120,
-		// 			priceFinal: 60,
-		// 			introductoryOfferPrice: null,
-		// 		},
-		// 		{
-		// 			planSlug: 'plan2',
-		// 			plan: testPlans.plan2,
-		// 			product: state.productsList.items.plan2,
-		// 			priceFull: 240,
-		// 			priceFinal: 192,
-		// 			introductoryOfferPrice: null,
-		// 		},
-		// 	] );
-		// } );
+			const state = {
+				productsList: {
+					items: {
+						plan1: { available: true },
+						plan2: { available: true },
+					},
+				},
+			};
+
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ] ) ).toEqual( [
+				{
+					planSlug: 'plan1',
+					plan: testPlans.plan1,
+					product: state.productsList.items.plan1,
+					priceFull: 120,
+					priceFinal: 100,
+					introductoryOfferPrice: null,
+				},
+				{
+					planSlug: 'plan2',
+					plan: testPlans.plan2,
+					product: state.productsList.items.plan2,
+					priceFull: 240,
+					priceFinal: 240,
+					introductoryOfferPrice: null,
+				},
+			] );
+		} );
+
+		test( 'sales coupon should discount priceFinal with introductoryOffer', () => {
+			getProductSaleCouponDiscount.mockImplementation( ( _, storeSlug ) => {
+				if ( storeSlug === 'jkl' ) {
+					return 0.3;
+				}
+				return null;
+			} );
+			getProductSaleCouponCost.mockImplementation( ( _, storeSlug ) => {
+				if ( storeSlug === 'jkl' ) {
+					return 168;
+				}
+				return null;
+			} );
+			getIntroOfferPrice.mockImplementation( ( _, productId ) => {
+				if ( productId === 'mno' ) {
+					return 120;
+				}
+				return null;
+			} );
+			getIntroOfferIsEligible.mockImplementation( () => true );
+
+			const state = {
+				productsList: {
+					items: {
+						plan1: { available: true },
+						plan2: { available: true },
+					},
+				},
+			};
+
+			expect( computeProductsWithPrices( state, 10, [ 'plan1', 'plan2' ] ) ).toEqual( [
+				{
+					planSlug: 'plan1',
+					plan: testPlans.plan1,
+					product: state.productsList.items.plan1,
+					priceFull: 120,
+					priceFinal: 120,
+					introductoryOfferPrice: null,
+				},
+				{
+					planSlug: 'plan2',
+					plan: testPlans.plan2,
+					product: state.productsList.items.plan2,
+					priceFull: 240,
+					priceFinal: 168,
+					introductoryOfferPrice: 84,
+				},
+			] );
+		} );
 
 		test( 'Should filter out unavailable products', () => {
 			const state = {
