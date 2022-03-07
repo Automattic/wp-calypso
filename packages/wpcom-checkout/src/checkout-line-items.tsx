@@ -108,9 +108,7 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	align-content: center;
 	justify-content: space-between;
 	flex-wrap: wrap;
-	> {
-		margin: 2px 0;
-	}
+	gap: 2px 10px;
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
@@ -121,7 +119,6 @@ const DiscountCallout = styled.div< { theme?: Theme } >`
 const NotApplicableCallout = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	display: block;
-	font-size: 12px;
 `;
 
 const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
