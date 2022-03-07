@@ -590,7 +590,8 @@ class Signup extends Component {
 
 	renderProcessingScreen( isReskinned ) {
 		if ( isP2Flow( this.props.flowName ) ) {
-			return <P2SignupProcessingScreen />;
+			const signupSiteName = this.props.progress?.[ 'p2-site' ]?.form?.siteTitle?.value || '';
+			return <P2SignupProcessingScreen signupSiteName={ signupSiteName } />;
 		}
 
 		if ( isReskinned ) {
