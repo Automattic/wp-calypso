@@ -34,6 +34,7 @@
 		"checkout/google-pay": false,
 		"fullstory": true,
 		"i18n/community-translator": false,
+		"jetpack/backup-messaging-i3": true,
 		"jetpack-cloud": true,
 		"jetpack/pricing-page": true,
 		"jetpack/pricing-page-annual-only": true,
