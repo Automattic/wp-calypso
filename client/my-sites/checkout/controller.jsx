@@ -35,8 +35,6 @@ import {
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutThankYouComponent from './checkout-thank-you';
-import JetpackCheckoutSitelessThankYou from './checkout-thank-you/jetpack-checkout-siteless-thank-you';
-import JetpackCheckoutSitelessThankYouCompleted from './checkout-thank-you/jetpack-checkout-siteless-thank-you-completed';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import UpsellNudge, {
@@ -410,35 +408,12 @@ export function licensingThankYouAutoActivationCompleted( context, next ) {
 
 export function jetpackCheckoutThankYou( context, next ) {
 	const isUserlessCheckoutFlow = context.path.includes( '/checkout/jetpack' );
-	const isSitelessCheckoutFlow = context.path.includes( '/checkout/jetpack/thank-you/no-site' );
 
-	const { receiptId, source, siteId } = context.query;
-
-	context.primary = isSitelessCheckoutFlow ? (
-		<JetpackCheckoutSitelessThankYou
-			productSlug={ context.params.product }
-			receiptId={ receiptId }
-			source={ source }
-			jetpackTemporarySiteId={ siteId }
-		/>
-	) : (
+	context.primary = (
 		<JetpackCheckoutThankYou
 			site={ context.params.site }
 			productSlug={ context.params.product }
 			isUserlessCheckoutFlow={ isUserlessCheckoutFlow }
-		/>
-	);
-
-	next();
-}
-
-export function jetpackCheckoutThankYouCompleted( context, next ) {
-	const { siteId, receiptId } = context.query;
-	context.primary = (
-		<JetpackCheckoutSitelessThankYouCompleted
-			productSlug={ context.params.product }
-			jetpackTemporarySiteId={ siteId }
-			receiptId={ receiptId }
 		/>
 	);
 
