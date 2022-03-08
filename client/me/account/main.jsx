@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import languages from '@automattic/languages';
 import debugFactory from 'debug';
-import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, get, map, size } from 'lodash';
 import { Component } from 'react';
@@ -10,14 +9,12 @@ import { connect } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
-import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormTextValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -28,12 +25,10 @@ import LanguagePicker from 'calypso/components/language-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import SectionHeader from 'calypso/components/section-header';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { getLanguage, isLocaleVariant, canBeTranslated } from 'calypso/lib/i18n-utils';
 import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
@@ -41,6 +36,7 @@ import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
+import AccountEmailFragment from 'calypso/me/account/account-email-fragment';
 import ReauthRequired from 'calypso/me/reauth-required';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
@@ -57,12 +53,8 @@ import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
-import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
-import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
-import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
 import {
-	cancelPendingEmailChange,
 	clearUnsavedUserSettings,
 	removeUnsavedUserSetting,
 	setUserSetting,
@@ -223,20 +215,6 @@ class Account extends Component {
 		} );
 		this.props.recordGoogleEvent( 'Me', 'Saved Color Scheme', 'scheme', colorScheme );
 		this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
-	};
-
-	getEmailAddress() {
-		return this.hasPendingEmailChange()
-			? this.getUserSetting( 'new_user_email' )
-			: this.getUserSetting( 'user_email' );
-	}
-
-	updateEmailAddress = ( event ) => {
-		const { value } = event.target;
-		const emailValidationError =
-			( '' === value && 'empty' ) || ( ! emailValidator.validate( value ) && 'invalid' ) || false;
-		this.setState( { emailValidationError } );
-		this.updateUserSetting( 'user_email', value );
 	};
 
 	updateUserLoginConfirm = ( event ) => {
@@ -515,60 +493,6 @@ class Account extends Component {
 		);
 	}
 
-	hasPendingEmailChange() {
-		return this.props.isPendingEmailChange;
-	}
-
-	renderPendingEmailChange() {
-		const { translate } = this.props;
-		const editContactInfoInBulkUrl = `/domains/manage?site=all&action=edit-contact-email`;
-
-		if ( ! this.hasPendingEmailChange() ) {
-			return null;
-		}
-
-		let text = translate(
-			'Your email change is pending. Please take a moment to check %(email)s for an email with the subject "[WordPress.com] New Email Address" to confirm your change.',
-			{
-				args: {
-					email: this.getUserSetting( 'new_user_email' ),
-				},
-			}
-		);
-
-		if ( this.hasCustomDomains() ) {
-			text = translate(
-				'Your email change is pending. Please take a moment to:{{br/}}1. Check %(email)s for an email with the subject "[WordPress.com] New Email Address" to confirm your change.{{br/}}2. Update contact information on your domain names if necessary {{link}}here{{/link}}.',
-				{
-					args: {
-						email: this.getUserSetting( 'new_user_email' ),
-					},
-					components: {
-						br: <br />,
-						link: <a href={ editContactInfoInBulkUrl } />,
-					},
-				}
-			);
-		}
-
-		return (
-			<Notice showDismiss={ false } status="is-info" text={ text }>
-				<NoticeAction onClick={ () => this.props.cancelPendingEmailChange() }>
-					{ translate( 'Cancel' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
-	hasCustomDomains() {
-		if ( this.props.requestingFlatDomains ) {
-			return false;
-		}
-		return this.props.domainsList.some( ( domain ) => {
-			return domainTypes.REGISTERED === domain.type;
-		} );
-	}
-
 	renderUsernameValidation() {
 		const { translate } = this.props;
 
@@ -638,31 +562,6 @@ class Account extends Component {
 				onSiteSelect={ this.onSiteSelect }
 			/>
 		);
-	}
-
-	renderEmailValidation() {
-		const { translate } = this.props;
-
-		if ( ! this.hasUnsavedUserSetting( 'user_email' ) ) {
-			return null;
-		}
-
-		if ( ! this.state.emailValidationError ) {
-			return null;
-		}
-		let notice;
-		switch ( this.state.emailValidationError ) {
-			case 'invalid':
-				notice = translate( '%(email)s is not a valid email address.', {
-					args: { email: this.getUserSetting( 'user_email' ) },
-				} );
-				break;
-			case 'empty':
-				notice = translate( 'Email address can not be empty.' );
-				break;
-		}
-
-		return <FormTextValidation isError={ true } text={ notice } />;
 	}
 
 	shouldDisableAccountSubmitButton() {
@@ -766,23 +665,17 @@ class Account extends Component {
 
 		return (
 			<div className="account__settings-form" key="settingsForm">
-				<FormFieldset>
-					<FormLabel htmlFor="user_email">{ translate( 'Email address' ) }</FormLabel>
-					<FormTextInput
-						disabled={ this.getDisabledState( ACCOUNT_FORM_NAME ) || this.hasPendingEmailChange() }
-						id="user_email"
-						name="user_email"
-						isError={ !! this.state.emailValidationError }
-						onFocus={ this.getFocusHandler( 'Email Address Field' ) }
-						value={ this.getEmailAddress() || '' }
-						onChange={ this.updateEmailAddress }
-					/>
-					{ this.renderEmailValidation() }
-					<FormSettingExplanation>
-						{ translate( 'Will not be publicly displayed' ) }
-					</FormSettingExplanation>
-					{ this.renderPendingEmailChange() }
-				</FormFieldset>
+				<AccountEmailFragment
+					emailInputId="user_email"
+					emailInputName="user_email"
+					emailValidationHandler={ ( isEmailValid ) =>
+						this.setState( { emailValidationError: ! isEmailValid } )
+					}
+					getFocusHandler={ ( focusName ) => this.getFocusHandler( focusName ) }
+					isEmailControlDisabled={ this.getDisabledState( ACCOUNT_FORM_NAME ) }
+					unsavedUserSettings={ this.props.unsavedUserSettings }
+					userSettings={ this.props.userSettings }
+				/>
 
 				<FormFieldset>
 					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
@@ -979,7 +872,6 @@ class Account extends Component {
 
 		return (
 			<Main wideLayout className="account">
-				<QueryAllDomains />
 				<QueryUserSettings />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
@@ -1090,19 +982,15 @@ export default compose(
 			currentUserDate: getCurrentUserDate( state ),
 			currentUserDisplayName: getCurrentUserDisplayName( state ),
 			currentUserName: getCurrentUserName( state ),
-			isPendingEmailChange: isPendingEmailChange( state ),
 			requestingMissingSites: isRequestingMissingSites( state ),
 			userSettings: getUserSettings( state ),
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			onboardingUrl: getOnboardingUrl( state ),
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
-			requestingFlatDomains: isRequestingAllDomains( state ),
-			domainsList: getFlatDomainsList( state ),
 		} ),
 		{
 			bumpStat,
-			cancelPendingEmailChange,
 			clearUnsavedUserSettings,
 			errorNotice,
 			removeNotice,
