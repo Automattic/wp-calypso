@@ -5,20 +5,28 @@ import { isFetchingStoredCards } from 'calypso/state/partner-portal/stored-cards
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { AppState } from 'calypso/types';
 
-const request = () => ( dispatch: CalypsoDispatch, getState: AppState ) => {
+interface Props {
+	paging: {
+		startingAfter: string;
+		endingBefore: string;
+	};
+}
+
+const request = ( paging: { startingAfter: string; endingBefore: string } ) => (
+	dispatch: CalypsoDispatch,
+	getState: AppState
+) => {
 	if ( ! isFetchingStoredCards( getState() ) ) {
-		dispatch( fetchStoredCards() );
+		dispatch( fetchStoredCards( paging ) );
 	}
 };
 
-function QueryJetpackPartnerPortalStoredCards() {
+export default function QueryJetpackPartnerPortalStoredCards( { paging }: Props ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( request() );
-	}, [ dispatch ] );
+		dispatch( request( paging ) );
+	}, [ dispatch, paging ] );
 
 	return null;
 }
-
-export default QueryJetpackPartnerPortalStoredCards;

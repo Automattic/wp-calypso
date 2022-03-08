@@ -60,7 +60,8 @@ const SetAsPrimary = ( props: SetAsPrimaryProps ): JSX.Element | null => {
 			domain &&
 			domain.canSetAsPrimary &&
 			! domain.isPrimary &&
-			! shouldUpgradeToMakeDomainPrimary()
+			! shouldUpgradeToMakeDomainPrimary() &&
+			! domain.aftermarketAuction
 		);
 	};
 

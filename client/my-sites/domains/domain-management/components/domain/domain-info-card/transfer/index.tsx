@@ -16,7 +16,8 @@ const DomainTransferInfoCard = ( {
 	if (
 		! domain.currentUserIsOwner ||
 		( domain.expired && ! isDomainInGracePeriod( domain ) ) ||
-		typesUnableToTransfer.includes( domain.type )
+		typesUnableToTransfer.includes( domain.type ) ||
+		domain.aftermarketAuction
 	) {
 		return null;
 	}

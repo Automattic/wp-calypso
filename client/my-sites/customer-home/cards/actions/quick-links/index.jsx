@@ -12,7 +12,6 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getCurrentUserTimeSinceSignup from 'calypso/state/selectors/get-current-user-time-since-signup';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -61,7 +60,6 @@ export const QuickLinks = ( {
 	siteSlug,
 	blockEditorSettings,
 	areBlockEditorSettingsLoading,
-	daysSinceSignup,
 } ) => {
 	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
 
@@ -187,7 +185,7 @@ export const QuickLinks = ( {
 						gridicon="plugins"
 					/>
 					<ActionBox
-						href={ 'https://wp.me/logo-maker/?utm_campaign=my_home_' + daysSinceSignup + 'd' }
+						href="https://wp.me/logo-maker/?utm_campaign=my_home"
 						onClick={ trackDesignLogoAction }
 						target="_blank"
 						label={
@@ -406,7 +404,6 @@ const mapStateToProps = ( state ) => {
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		isUnifiedNavEnabled: isNavUnificationEnabled,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		daysSinceSignup: getCurrentUserTimeSinceSignup( state ),
 	};
 };
 

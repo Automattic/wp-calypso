@@ -7,7 +7,6 @@ import {
 	isGSuiteOrExtraLicenseProductSlug,
 	isTitanMail,
 	isP2Plus,
-	isJetpackSearch,
 	isJetpackProductSlug,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
@@ -17,11 +16,6 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 	const isRenewalItem = isRenewal( serverCartItem );
 	const { meta, product_name: productName, product_slug: productSlug } = serverCartItem;
-
-	// Jetpack Search has its own special sublabel
-	if ( ! isRenewalItem && isJetpackSearch( serverCartItem ) ) {
-		return '';
-	}
 
 	if ( isDotComPlan( serverCartItem ) ) {
 		if ( isRenewalItem ) {

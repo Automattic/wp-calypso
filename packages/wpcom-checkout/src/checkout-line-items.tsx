@@ -103,19 +103,22 @@ const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-content: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 2px 10px;
 `;
 
 const DiscountCallout = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.success };
 	display: block;
-	margin: 2px 0;
 `;
 
 const NotApplicableCallout = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	display: block;
-	margin: 2px 0;
-	font-size: 12px;
 `;
 
 const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
@@ -540,12 +543,7 @@ function returnModalCopy(
 }
 
 function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ): JSX.Element {
-	return (
-		<>
-			<ProductTier product={ product } />
-			<RenewalFrequency product={ product } />
-		</>
-	);
+	return <ProductTier product={ product } />;
 }
 
 function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Element | null {
@@ -568,22 +566,6 @@ function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Eleme
 				</LineItemMeta>
 			);
 		}
-	}
-	return null;
-}
-
-function RenewalFrequency( { product }: { product: ResponseCartProduct } ): JSX.Element | null {
-	const translate = useTranslate();
-	if ( isMonthlyProduct( product ) ) {
-		return <LineItemMeta>{ translate( 'Renews monthly' ) }</LineItemMeta>;
-	}
-
-	if ( isYearly( product ) ) {
-		return <LineItemMeta>{ translate( 'Renews annually' ) }</LineItemMeta>;
-	}
-
-	if ( isBiennially( product ) ) {
-		return <LineItemMeta>{ translate( 'Renews every two years' ) }</LineItemMeta>;
 	}
 	return null;
 }
