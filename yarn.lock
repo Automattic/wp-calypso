@@ -12803,7 +12803,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": ^7.17.5
     "@babel/preset-env": ^7.16.11
-    jscodeshift: ^0.13.0
+    jscodeshift: ^0.13.1
     lodash: ^4.17.21
     react-codemod: ^5.0.5
   bin:
@@ -23777,9 +23777,9 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"jscodeshift@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "jscodeshift@npm:0.13.0"
+"jscodeshift@npm:^0.13.1":
+  version: 0.13.1
+  resolution: "jscodeshift@npm:0.13.1"
   dependencies:
     "@babel/core": ^7.13.16
     "@babel/parser": ^7.13.16
@@ -23791,7 +23791,7 @@ fsevents@~2.1.2:
     "@babel/preset-typescript": ^7.13.0
     "@babel/register": ^7.13.16
     babel-core: ^7.0.0-bridge.0
-    colors: ^1.1.2
+    chalk: ^4.1.2
     flow-parser: 0.*
     graceful-fs: ^4.2.4
     micromatch: ^3.1.10
@@ -23804,7 +23804,7 @@ fsevents@~2.1.2:
     "@babel/preset-env": ^7.1.6
   bin:
     jscodeshift: bin/jscodeshift.js
-  checksum: b3d2bb5225d463bf7601125fcc7748f8dd45cbbb4cabfae55d87fa79fbc8017b23f9c8b5c193297ca7be68ef1e8085dd2d34f1bc16492c936f5c9efb6c2bcae3
+  checksum: 0f85ff41855f489e92229ce99a1951b1c265c12847b1bcd84921c37345ea35c876b2d2d362851aa1ec6e50f9716df8d965213133af247eb4a3d13a2f7320c2a4
   languageName: node
   linkType: hard
 
