@@ -208,7 +208,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": ^0.4.1
-    "@types/node": ^16.11.24
+    "@types/node": ^16.11.26
     cookie: ^0.4.1
     tslib: ^2.3.0
     typescript: ^4.5.5
@@ -238,8 +238,8 @@ __metadata:
     "@jest/globals": ^27.3.1
     "@types/config": ^0.0.41
     "@types/jest": ^27.4.0
-    "@types/node": ^16.11.24
-    "@types/node-fetch": ^2.5.12
+    "@types/node": ^16.11.26
+    "@types/node-fetch": ^2.6.1
     "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.2.4
     asana-phrase: ^0.0.8
@@ -7276,10 +7276,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:*, @types/lodash@npm:^4.14.172, @types/lodash@npm:^4.14.178":
-  version: 4.14.178
-  resolution: "@types/lodash@npm:4.14.178"
-  checksum: 820e33578a084aba2ca66fc83728c14d82813b91f3f14f281621b36904533c3d1681992b5e2719579b8beb52e1a77cfa914283a145f66dfa71b5e02a7cec5a37
+"@types/lodash@npm:*, @types/lodash@npm:^4.14.172, @types/lodash@npm:^4.14.179":
+  version: 4.14.179
+  resolution: "@types/lodash@npm:4.14.179"
+  checksum: 653e45c277e405577c1e4f5baeb0040589b805aa8dabea334c93e1ae44949f6071361754dbf933202de3fb73119f3ee12f317d0f0213168bb806d1ee7478b0ce
   languageName: node
   linkType: hard
 
@@ -7350,20 +7350,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.5.12, @types/node-fetch@npm:^2.5.7":
-  version: 2.5.12
-  resolution: "@types/node-fetch@npm:2.5.12"
+"@types/node-fetch@npm:^2.5.7, @types/node-fetch@npm:^2.6.1":
+  version: 2.6.1
+  resolution: "@types/node-fetch@npm:2.6.1"
   dependencies:
     "@types/node": "*"
     form-data: ^3.0.0
-  checksum: aaa69c354e596f9e293136ac43c9e5d91503415fb4eddfae3a9689153f0f033863bbd627e700b3f419ce14d06303e18e1d61b788d9085411f1fc12fc56afe356
+  checksum: 033945215fa6b36d5597b21bbdd7d946a751dcd066f8fa71e5f5ab5698390bc2e76e38932ec6ac709def39b6371dfd61844e6804409c7ba812e24d1c820fbff8
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^16.11.24":
-  version: 16.11.24
-  resolution: "@types/node@npm:16.11.24"
-  checksum: 288fa4870a40bd05816f1c1c1fbb0764fc5a9f2d5909463765aa660064610af537699df611a45f76686d2da5949b3c30311443a63ab0e823c6f193c676367618
+"@types/node@npm:*, @types/node@npm:^16.11.26":
+  version: 16.11.26
+  resolution: "@types/node@npm:16.11.26"
+  checksum: 9e26dc087b32c2f47dcc7cc67db2ce35b44504515953ebc0c7f6c6cb030a273823dcd61e71ab0b0571e358e57315fe5aa5eb46c7aace1969c2e307a0c5b47572
   languageName: node
   linkType: hard
 
@@ -7525,15 +7525,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-redux@npm:^7.1.20, @types/react-redux@npm:^7.1.22":
-  version: 7.1.22
-  resolution: "@types/react-redux@npm:7.1.22"
+"@types/react-redux@npm:^7.1.20, @types/react-redux@npm:^7.1.23":
+  version: 7.1.23
+  resolution: "@types/react-redux@npm:7.1.23"
   dependencies:
     "@types/hoist-non-react-statics": ^3.3.0
     "@types/react": "*"
     hoist-non-react-statics: ^3.3.0
     redux: ^4.0.0
-  checksum: a3928fca5be34385918909abeccfc487db7bc82f08745057aa96e905b942bb49de4b287f0874fdecd1cfac6c604996038e1ead9606a2000f5687b15854f2b15b
+  checksum: db8919f92022fe067c8303aff1a4e0486be69b48cf547b60e41a9cb5c56da0c1e91eae6a34892bf5532e47e1bf58fe02ec995bdecebea3f8e79e52c1357958a1
   languageName: node
   linkType: hard
 
@@ -38254,13 +38254,13 @@ testarmada-magellan@11.0.10:
     "@types/debug": ^4.1.7
     "@types/enzyme": ^3.10.11
     "@types/fast-json-stable-stringify": ^2.0.0
-    "@types/lodash": ^4.14.178
-    "@types/node": ^16.11.24
+    "@types/lodash": ^4.14.179
+    "@types/node": ^16.11.26
     "@types/page": ^1.11.5
     "@types/qs": ^6.9.7
     "@types/react": ^17.0.39
     "@types/react-modal": ^3.13.1
-    "@types/react-redux": ^7.1.22
+    "@types/react-redux": ^7.1.23
     "@types/react-router-dom": ^5.3.3
     "@types/react-transition-group": ^4.4.4
     "@types/store": ^2.0.2
