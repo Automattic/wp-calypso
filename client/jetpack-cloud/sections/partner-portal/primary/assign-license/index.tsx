@@ -31,9 +31,9 @@ export default function AssignLicense( {
 
 	return (
 		<Main wideLayout className="assign-license">
-			<AssignLicenseStepProgress />
 			<DocumentHead title={ translate( 'Assign your License' ) } />
 			<SidebarNavigation />
+			<AssignLicenseStepProgress />
 			<CardHeading size={ 36 }>{ translate( 'Assign your License' ) }</CardHeading>
 
 			<AssignLicenseForm sites={ sites } currentPage={ currentPage } search={ search } />
