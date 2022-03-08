@@ -30,33 +30,10 @@ export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
 	page(
-		'/checkout/jetpack/schedule-happiness-appointment',
-		noSite,
-		jetpackCheckoutThankYou,
-		makeLayout,
-		clientRender
-	);
-
-	page(
 		`/checkout/jetpack/:productSlug/${ getLanguageRouteParam() }`,
 		setLocaleMiddleware(),
 		noSite,
 		checkoutSiteless,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/checkout/jetpack/thank-you-completed/no-site/:product',
-		noSite,
-		jetpackCheckoutThankYouCompleted,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/checkout/jetpack/thank-you/no-site/:product',
-		noSite,
-		jetpackCheckoutThankYou,
 		makeLayout,
 		clientRender
 	);
