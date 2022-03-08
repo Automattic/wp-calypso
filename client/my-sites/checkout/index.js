@@ -258,6 +258,28 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		`/checkout/:domainOrProduct/${ getLanguageRouteParam() }`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		siteSelection,
+		redirectJetpackLegacyPlans,
+		checkout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/:product/:domainOrProduct/${ getLanguageRouteParam() }`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		siteSelection,
+		redirectJetpackLegacyPlans,
+		checkout,
+		makeLayout,
+		clientRender
+	);
+
 	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
 	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );
 

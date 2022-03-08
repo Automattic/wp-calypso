@@ -17,6 +17,7 @@ import { getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import type { UserData } from 'calypso/lib/user/user';
 import type { Context as PageJSContext } from 'page';
+import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 
 /**
  * Parse site slug from path.
@@ -206,7 +207,11 @@ export async function cloudSiteSelection(
 	}
 
 	if ( siteFragment ) {
-		if ( context.path.startsWith( '/pricing' ) ) {
+		const languages = getLanguageSlugs().join( '|' );
+		// Regex defines url starts with /:locale/pricing or /pricing
+		const pricingMatchingPath = new RegExp( `(^/(${ languages })/pricing)|^/pricing` );
+
+		if ( pricingMatchingPath.test( context.path ) ) {
 			const { id } = await fetchSite( context, siteFragment );
 			if ( ! id ) {
 				await siteSelectionWithoutFragment( context, next );

@@ -13,13 +13,6 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 
 	if ( locale ) {
 		context.store.dispatch( setLocale( locale ) );
-
-		if ( context.pathname.includes( '/pricing/storage' ) ) {
-			page.redirect(
-				addQueryArgs( urlQueryArgs, `/pricing/storage/${ site || urlQueryArgs.site }` )
-			);
-			return;
-		}
 	}
 
 	if ( context.pathname.endsWith( '/pricing' ) && urlQueryArgs.site ) {
