@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import FooterSection from 'calypso/components/footer-section';
+import LinkCard from 'calypso/components/link-card'; // should we host this one inside footer-section?
 
 import './style.scss';
 
@@ -25,59 +26,6 @@ const ArticleLinksContainer = styled.div`
 	column-gap: 29px;
 	row-gap: 10px;
 `;
-
-const LinkCardContainer = styled.div`
-	border-radius: 5px;
-	padding: 24px;
-	background: var( --${ ( props ) => props.background } );
-`;
-
-const LinkCardLabel = styled.div`
-	margin-bottom: 8px;
-	font-size: var( --scss-font-body-extra-small );
-	color: var( --color-text-inverted );
-	line-height: 1.25rem;
-	text-transform: capitalize;
-`;
-
-const LinkCardTitle = styled.div`
-	@media ( max-width: 1090px ) {
-		-webkit-line-clamp: 4; // trunk text to 3 lines then ellipsis
-		line-clamp: 4;
-	}
-
-	margin-bottom: 32px;
-	font-size: var( --scss-font-title-small );
-	color: var( --color-text-inverted );
-	text-overflow: ellipsis;
-	word-wrap: break-word;
-	overflow: hidden;
-	display: -webkit-box;
-	-webkit-line-clamp: 3; // trunk text to 3 lines then ellipsis
-	line-clamp: 3;
-	-webkit-box-orient: vertical;
-	line-height: 1.5rem;
-`;
-
-const LinkCardCta = styled.div`
-	font-size: var( --scss-font-body-small );
-	color: var( --color-text-inverted );
-	line-height: 1.25rem;
-`;
-
-const LinkCard = ( props ) => {
-	const { label, title, cta, background, url } = props;
-
-	return (
-		<a href={ url }>
-			<LinkCardContainer background={ background }>
-				<LinkCardLabel>{ label }</LinkCardLabel>
-				<LinkCardTitle>{ title }</LinkCardTitle>
-				<LinkCardCta>{ cta }</LinkCardCta>
-			</LinkCardContainer>
-		</a>
-	);
-};
 
 const EducationFooter = () => {
 	const translate = useTranslate();
