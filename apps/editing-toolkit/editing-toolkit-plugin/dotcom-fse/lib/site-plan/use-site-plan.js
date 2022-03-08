@@ -1,6 +1,6 @@
 import { useState, useEffect } from '@wordpress/element';
 import { useCallback } from 'react';
-import request from '../../../../../../packages/wpcom-proxy-request/src/index';
+import request from 'wpcom-proxy-request';
 
 const useSitePlan = ( siteIdOrSlug ) => {
 	const [ sitePlan, setSitePlan ] = useState();
