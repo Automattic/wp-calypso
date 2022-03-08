@@ -27,6 +27,11 @@ const handleCallback = ( currentStepIndex: number, callback?: Callback ) => {
 
 const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
+
+	if ( config.initialStepIndex && config.initialStepIndex !== currentStepIndex ) {
+		setCurrentStepIndex( config.initialStepIndex );
+	}
+
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
 		null
 	);

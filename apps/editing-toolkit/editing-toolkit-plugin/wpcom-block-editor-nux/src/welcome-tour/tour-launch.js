@@ -10,6 +10,7 @@ import { useEffect, useMemo } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
+import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import { usePrefetchTourAssets } from './hooks';
 import WelcomeTourMinimized from './tour-minimized-renderer';
 import WelcomeTourStep from './tour-step-renderer';
@@ -51,6 +52,7 @@ function LaunchWpcomWelcomeTour() {
 
 function WelcomeTour() {
 	const localeSlug = useLocale();
+	const intent = useSiteIntent();
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
 	const isWelcomeTourNext = () => {
@@ -63,8 +65,15 @@ function WelcomeTour() {
 	// Preload card images
 	usePrefetchTourAssets( tourSteps );
 
+	let initialStepIndex = 0;
+	if ( intent === 'sell' ) {
+		// There is not a good way to identify the steps
+		initialStepIndex = tourSteps.length - 2;
+	}
+
 	const tourConfig = {
 		steps: tourSteps,
+		initialStepIndex,
 		renderers: {
 			tourStep: WelcomeTourStep,
 			tourMinimized: WelcomeTourMinimized,

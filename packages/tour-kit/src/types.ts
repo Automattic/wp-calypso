@@ -54,6 +54,7 @@ export type PopperModifier = Partial< Modifier< unknown, Record< string, unknown
 
 export interface Config {
 	steps: Steps;
+	initialStepIndex?: number;
 	renderers: {
 		tourStep: TourStepRenderer;
 		tourMinimized: MinimizedTourRenderer;
