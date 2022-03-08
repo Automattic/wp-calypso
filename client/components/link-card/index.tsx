@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { ReactChild } from 'react';
 
+import './style.scss';
+
 interface LinkCardContainerProps {
 	background: string;
 }
@@ -29,7 +31,7 @@ const LinkCardLabel = styled.div`
 
 const LinkCardTitle = styled.div`
 	@media ( max-width: 1090px ) {
-		-webkit-line-clamp: 4; // trunk text to 3 lines then ellipsis
+		-webkit-line-clamp: 4; // trunk text to 4 lines then ellipsis
 		line-clamp: 4;
 	}
 

@@ -43,6 +43,7 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header/do
 import FocusableExample from 'calypso/components/focusable/docs/example';
 import FoldableCard from 'calypso/components/foldable-card/docs/example';
 import FoldableFAQ from 'calypso/components/foldable-faq/docs/example';
+import FooterSection from 'calypso/components/footer-section/docs/example';
 import FormattedDate from 'calypso/components/formatted-date/docs/example';
 import FormattedHeader from 'calypso/components/formatted-header/docs/example';
 import ClipboardButtons from 'calypso/components/forms/clipboard-button/docs/example';
@@ -68,6 +69,7 @@ import JetpackLogoExample from 'calypso/components/jetpack-logo/docs/example';
 import LanguagePicker from 'calypso/components/language-picker/docs/example';
 import LayoutExample from 'calypso/components/layout/docs/example';
 import LineChart from 'calypso/components/line-chart/docs/example';
+import LinkCard from 'calypso/components/link-card/docs/example';
 import ListEnd from 'calypso/components/list-end/docs/example';
 import Main from 'calypso/components/main';
 import MarkedLinesExample from 'calypso/components/marked-lines/docs/example';
@@ -206,6 +208,7 @@ export default class DesignAssets extends Component {
 					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" searchKeywords="accordion" />
 					<FoldableFAQ readmeFilePath="foldable-faq" />
+					<FooterSection readmeFilePath="footer-sectio" />
 					<FormattedDate readmeFilePath="formatted-date" />
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
@@ -229,6 +232,7 @@ export default class DesignAssets extends Component {
 					<LanguagePicker readmeFilePath="language-picker" />
 					<LayoutExample readmeFilePath="layout" />
 					<LineChart readmeFilePath="line-chart" />
+					<LinkCard readmeFilePath="link-card" />
 					<ListEnd readmeFilePath="list-end" />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
