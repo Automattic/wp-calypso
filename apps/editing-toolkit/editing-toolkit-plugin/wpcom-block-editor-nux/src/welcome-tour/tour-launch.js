@@ -11,6 +11,7 @@ import { useEffect, useMemo } from '@wordpress/element';
  * Internal Dependencies
  */
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
+import useSitePlan from '../../../dotcom-fse/lib/site-plan/use-site-plan';
 import { usePrefetchTourAssets } from './hooks';
 import WelcomeTourMinimized from './tour-minimized-renderer';
 import WelcomeTourStep from './tour-step-renderer';
@@ -51,6 +52,7 @@ function LaunchWpcomWelcomeTour() {
 }
 
 function WelcomeTour() {
+	const sitePlan = useSitePlan( window._currentSiteId );
 	const localeSlug = useLocale();
 	const intent = useSiteIntent();
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
@@ -66,7 +68,7 @@ function WelcomeTour() {
 	usePrefetchTourAssets( tourSteps );
 
 	let initialStepIndex = 0;
-	if ( intent === 'sell' ) {
+	if ( 'sell' === intent && sitePlan && 'ecommerce-bundle' !== sitePlan.product_slug ) {
 		// There is not a good way to identify the steps
 		initialStepIndex = tourSteps.length - 2;
 	}
