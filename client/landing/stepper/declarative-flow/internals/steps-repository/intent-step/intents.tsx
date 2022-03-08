@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { SelectItem, SelectAltItem } from '@automattic/onboarding-components';
+import { SelectItem, SelectAltItem } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { build, write, tip } from 'calypso/signup/icons';
 import type { IntentFlag } from './types';
