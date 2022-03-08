@@ -13,6 +13,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
+import { useIsSimpleSeller } from 'calypso/state/sites/hooks';
 import WooCommerceColophon from './woocommerce-colophon';
 
 import './style.scss';
@@ -26,10 +27,18 @@ interface Props {
 	siteId: number;
 }
 
+interface DisplayData {
+	title: string;
+	illustration: string;
+	line: string;
+	action: string;
+}
+
 const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce' } ];
 	const ctaRef = useRef( null );
+	const simpleSeller = useIsSimpleSeller();
 
 	const {
 		isTransferringBlocked,
@@ -121,22 +130,42 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 		],
 	};
 
+	let displayData: DisplayData | null;
+
+	if ( simpleSeller ) {
+		displayData = {
+			title: __( 'Upgrade your store' ),
+			illustration: '/calypso/images/illustrations/illustration-seller.svg',
+			line: __(
+				'Need more out of your store? Unlock the tools needed to manage products, orders, shipping, and more.'
+			),
+			action: __( 'Upgrade your store' ),
+		};
+	} else {
+		displayData = {
+			title: __( 'Set up a store and start selling online' ),
+			illustration: '/calypso/images/illustrations/illustration-shopping-bags.svg',
+			line: __(
+				'Set up a new store in minutes. Get secure payments, configurable shipping options, and more, out of the box.'
+			),
+			action: __( 'Start a new store' ),
+		};
+	}
+
 	return (
 		<div className="landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
 				<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
-					{ __( 'Start a new store' ) }
+					{ displayData.action }
 				</Button>
 			</FixedNavigationHeader>
 			{ renderWarningNotice() }
 			<EmptyContent
-				title={ __( 'Set up a store and start selling online' ) }
-				illustration="/calypso/images/illustrations/illustration-shopping-bags.svg"
+				title={ displayData.title }
+				illustration={ displayData.illustration }
 				illustrationWidth={ 150 }
-				line={ __(
-					'Set up a new store in minutes. Get secure payments, configurable shipping options, and more, out of the box.'
-				) }
-				action={ __( 'Start a new store' ) }
+				line={ displayData.line }
+				action={ displayData.action }
 				actionCallback={ onCTAClickHandler }
 				actionDisabled={ isTransferringBlocked || ! isEmailVerified }
 				actionRef={ ctaRef }
