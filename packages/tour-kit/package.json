@@ -34,7 +34,7 @@
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.10.2",
-		"@wordpress/base-styles": "^4.1.0",
+		"@wordpress/base-styles": "^4.0.4",
 		"@wordpress/components": "^19.3.0",
 		"@wordpress/i18n": "^4.3.0",
 		"@wordpress/icons": "^6.2.0",
