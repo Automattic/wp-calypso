@@ -73,9 +73,9 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			await page.waitForURL( /.*\/site-editor\/.*/, { waitUntil: 'networkidle' } );
 
 			// {@TODO} This is temporary while the FSE spec is awaiting migration to Playwright.
-			const gutenbergEditorPage = new GutenbergEditorPage( page );
-			await gutenbergEditorPage.forceDismissWelcomeTour();
-			const outerFrame = await gutenbergEditorPage.getEditorFrame();
+			const editorPage = new GutenbergEditorPage( page );
+			await editorPage.forceDismissWelcomeTour();
+			const outerFrame = await editorPage.getEditorFrame();
 
 			// There's another iframe within the parent iframe.
 			const innerFrame = ( await (

@@ -28,7 +28,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
 	let page: Page;
 	let testAccount: TestAccount;
-	let gutenbergEditorPage: GutenbergEditorPage;
+	let editorPage: GutenbergEditorPage;
 	let imageFile: TestFile;
 	let coverBlock: CoverBlock;
 
@@ -36,17 +36,17 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		testAccount = new TestAccount( accountName );
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+		editorPage = new GutenbergEditorPage( page );
 
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async () => {
-		await gutenbergEditorPage.visit( 'post' );
+		await editorPage.visit( 'post' );
 	} );
 
 	it( 'Insert Cover block', async () => {
-		const blockHandle = await gutenbergEditorPage.addBlock(
+		const blockHandle = await editorPage.addBlock(
 			CoverBlock.blockName,
 			CoverBlock.blockEditorSelector
 		);
@@ -57,16 +57,16 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 		await coverBlock.upload( imageFile.fullpath );
 		// After uploading the image the focus is switched to the inner
 		// paragraph block (Cover title), so we need to switch it back outside.
-		const editorFrame = await gutenbergEditorPage.getEditorFrame();
+		const editorFrame = await editorPage.getEditorFrame();
 		await editorFrame.click( '.wp-block-cover', { position: { x: 1, y: 1 } } );
 	} );
 
 	it( 'Open settings sidebar', async function () {
-		await gutenbergEditorPage.openSettings();
+		await editorPage.openSettings();
 	} );
 
 	it.each( CoverBlock.coverStyles )( 'Verify "%s" style is available', async ( style ) => {
-		const editorFrame = await gutenbergEditorPage.getEditorFrame();
+		const editorFrame = await editorPage.getEditorFrame();
 		await editorFrame.waitForSelector( `button[aria-label="${ style }"]` );
 	} );
 
@@ -75,11 +75,11 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 	} );
 
 	it( 'Close settings sidebar', async () => {
-		await gutenbergEditorPage.closeSettings();
+		await editorPage.closeSettings();
 	} );
 
 	it( 'Publish and visit the post', async () => {
-		await gutenbergEditorPage.publish( { visit: true } );
+		await editorPage.publish( { visit: true } );
 	} );
 
 	it( 'Verify the class for "Bottom Wave" style is present', async () => {

@@ -32,7 +32,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	let page: Page;
 	let testAccount: TestAccount;
-	let gutenbergEditorPage: GutenbergEditorPage;
+	let editorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 	let logoImage: TestFile;
 
@@ -45,17 +45,17 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 		page = await browser.newPage();
 		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		testAccount = new TestAccount( accountName );
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+		editorPage = new GutenbergEditorPage( page );
 
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async () => {
-		await gutenbergEditorPage.visit( 'post' );
+		await editorPage.visit( 'post' );
 	} );
 
 	it( `Insert ${ PricingTableBlock.blockName } block and enter prices`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock(
+		const blockHandle = await editorPage.addBlock(
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);
@@ -65,14 +65,11 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( `Insert ${ DynamicHRBlock.blockName } block`, async function () {
-		await gutenbergEditorPage.addBlock(
-			DynamicHRBlock.blockName,
-			DynamicHRBlock.blockEditorSelector
-		);
+		await editorPage.addBlock( DynamicHRBlock.blockName, DynamicHRBlock.blockEditorSelector );
 	} );
 
 	it( `Insert ${ HeroBlock.blockName } block and enter heading`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock(
+		const blockHandle = await editorPage.addBlock(
 			HeroBlock.blockName,
 			HeroBlock.blockEditorSelector
 		);
@@ -81,7 +78,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( `Insert ${ ClicktoTweetBlock.blockName } block and enter tweet content`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock(
+		const blockHandle = await editorPage.addBlock(
 			ClicktoTweetBlock.blockName,
 			ClicktoTweetBlock.blockEditorSelector
 		);
@@ -90,7 +87,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( `Insert ${ LogosBlock.blockName } block and set image`, async function () {
-		const blockHandle = await gutenbergEditorPage.addBlock(
+		const blockHandle = await editorPage.addBlock(
 			LogosBlock.blockName,
 			LogosBlock.blockEditorSelector
 		);
@@ -99,7 +96,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( 'Publish and visit the post', async function () {
-		await gutenbergEditorPage.publish( { visit: true } );
+		await editorPage.publish( { visit: true } );
 	} );
 
 	// Pass in a 1D array of values or text strings to validate each block.

@@ -19,7 +19,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	const accountName = envVariables.GUTENBERG_EDGE
 		? 'gutenbergSimpleSiteEdgeUser'
 		: 'simpleSitePersonalPlanUser';
-	let gutenbergEditorPage: GutenbergEditorPage;
+	let editorPage: GutenbergEditorPage;
 	let revisionsComponent: RevisionsComponent;
 	let page: Page;
 
@@ -31,26 +31,26 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		gutenbergEditorPage = new GutenbergEditorPage( page );
-		await gutenbergEditorPage.visit( 'post' );
+		editorPage = new GutenbergEditorPage( page );
+		await editorPage.visit( 'post' );
 	} );
 
 	it.each( [ { revision: 1 }, { revision: 2 }, { revision: 3 } ] )(
 		'Create revision $revision',
 		async function ( { revision } ) {
-			const blockHandle = await gutenbergEditorPage.addBlock(
+			const blockHandle = await editorPage.addBlock(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);
 			const paragraphBlock = new ParagraphBlock( blockHandle );
 			await paragraphBlock.enterParagraph( `Revision ${ revision }` );
-			await gutenbergEditorPage.saveDraft();
+			await editorPage.saveDraft();
 		}
 	);
 
 	it( 'View revisions', async function () {
-		await gutenbergEditorPage.openSettings();
-		await gutenbergEditorPage.viewRevisions();
+		await editorPage.openSettings();
+		await editorPage.viewRevisions();
 	} );
 
 	it( 'Revision 1 displays expected diff', async function () {
@@ -63,7 +63,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 		revisionsComponent = new RevisionsComponent( page );
 		await revisionsComponent.clickButton( 'Load' );
 
-		const text = await gutenbergEditorPage.getText();
+		const text = await editorPage.getText();
 		expect( text.join( '\n' ) ).toEqual( 'Revision 1' );
 	} );
 } );

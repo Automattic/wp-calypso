@@ -1,6 +1,6 @@
 import { Page, FrameLocator, ElementHandle } from 'playwright';
 
-const editorPane = 'div.block-editor-block-list__layout';
+const editorPane = 'div.edit-post-visual-editor__content-area';
 const selectors = {
 	// Title
 	title: '.editor-post-title__input',

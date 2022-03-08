@@ -21,7 +21,7 @@ const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRan
 
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
-	let gutenbergEditorPage: GutenbergEditorPage;
+	let editorPage: GutenbergEditorPage;
 	let editorIframe: Frame;
 	let pagesPage: PagesPage;
 	let publishedUrl: URL;
@@ -46,9 +46,9 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Select page template', async function () {
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+		editorPage = new GutenbergEditorPage( page );
 		// @TODO Consider moving this to GutenbergEditorPage.
-		editorIframe = await gutenbergEditorPage.waitUntilLoaded();
+		editorIframe = await editorPage.waitUntilLoaded();
 		const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
 		await pageTemplateModalComponent.selectTemplateCatagory( pageTemplateCategory );
 		await pageTemplateModalComponent.selectTemplate( pageTemplateLable );
@@ -60,20 +60,20 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Open setting sidebar', async function () {
-		await gutenbergEditorPage.openSettings();
+		await editorPage.openSettings();
 	} );
 
 	it( 'Set custom URL slug', async function () {
-		await gutenbergEditorPage.setURLSlug( customUrlSlug );
+		await editorPage.setURLSlug( customUrlSlug );
 	} );
 
 	// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 	it( 'Close settings sidebar', async function () {
-		await gutenbergEditorPage.closeSettings();
+		await editorPage.closeSettings();
 	} );
 
 	it( 'Publish page', async function () {
-		publishedUrl = await gutenbergEditorPage.publish( { visit: true } );
+		publishedUrl = await editorPage.publish( { visit: true } );
 	} );
 
 	it( 'Published URL contains the custom URL slug', async function () {

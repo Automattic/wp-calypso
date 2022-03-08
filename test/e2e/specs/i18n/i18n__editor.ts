@@ -215,7 +215,7 @@ describe( 'I18N: Editor', function () {
 		( envVariables.TEST_LOCALES as ReadonlyArray< string > ).includes( locale )
 	);
 	let page: Page;
-	let gutenbergEditorPage: GutenbergEditorPage;
+	let editorPage: GutenbergEditorPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -229,7 +229,7 @@ describe( 'I18N: Editor', function () {
 		const testAccount = new TestAccount( 'i18nUser' );
 		await testAccount.authenticate( page );
 
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+		editorPage = new GutenbergEditorPage( page );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
@@ -250,7 +250,7 @@ describe( 'I18N: Editor', function () {
 			} );
 
 			it( 'Go to the new post page', async function () {
-				await gutenbergEditorPage.visit( 'post' );
+				await editorPage.visit( 'post' );
 			} );
 		} );
 
@@ -259,17 +259,17 @@ describe( 'I18N: Editor', function () {
 			( ...args ) => {
 				const block = args[ 0 ]; // Makes TS stop complaining about incompatible args type
 				let frame: Frame;
-				let gutenbergEditorPage: GutenbergEditorPage;
+				let editorPage: GutenbergEditorPage;
 
 				const blockTimeout = 10 * 1000;
 
 				it( 'Insert test block', async function () {
-					gutenbergEditorPage = new GutenbergEditorPage( page );
-					await gutenbergEditorPage.addBlock( block.blockName, block.blockEditorSelector );
+					editorPage = new GutenbergEditorPage( page );
+					await editorPage.addBlock( block.blockName, block.blockEditorSelector );
 				} );
 
 				it( 'Render block content translations', async function () {
-					frame = await gutenbergEditorPage.getEditorFrame();
+					frame = await editorPage.getEditorFrame();
 					// Ensure block contents are translated as expected.
 					await Promise.all(
 						block.blockEditorContent.map( ( content: any ) =>
@@ -281,7 +281,7 @@ describe( 'I18N: Editor', function () {
 				} );
 
 				it( 'Render block title translations', async function () {
-					await gutenbergEditorPage.openSettings();
+					await editorPage.openSettings();
 					await frame.click( block.blockEditorSelector );
 
 					// Ensure the block is highlighted.

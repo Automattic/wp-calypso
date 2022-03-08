@@ -26,29 +26,29 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	let publishedPostPage: PublishedPostPage;
 
 	describe( 'As the posting user', function () {
-		let gutenbergEditorPage: GutenbergEditorPage;
+		let editorPage: GutenbergEditorPage;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
-			gutenbergEditorPage = new GutenbergEditorPage( page );
+			editorPage = new GutenbergEditorPage( page );
 			await postingUser.authenticate( page );
 		} );
 
 		it( 'Go to the new post page', async function () {
-			await gutenbergEditorPage.visit( 'post' );
+			await editorPage.visit( 'post' );
 		} );
 
 		it( 'Enter post title', async function () {
 			const title = DataHelper.getRandomPhrase();
-			await gutenbergEditorPage.enterTitle( title );
+			await editorPage.enterTitle( title );
 		} );
 
 		it( 'Enter post text', async function () {
-			await gutenbergEditorPage.enterText( quote );
+			await editorPage.enterText( quote );
 		} );
 
 		it( 'Publish and visit post', async function () {
-			publishedURL = await gutenbergEditorPage.publish( { visit: true } );
+			publishedURL = await editorPage.publish( { visit: true } );
 		} );
 
 		it( 'Like post', async function () {

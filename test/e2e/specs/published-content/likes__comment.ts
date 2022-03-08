@@ -20,32 +20,32 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	let page: Page;
 	let publishedURL: URL;
 	let commentsComponent: CommentsComponent;
-	let gutenbergEditorPage: GutenbergEditorPage;
+	let editorPage: GutenbergEditorPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+		editorPage = new GutenbergEditorPage( page );
 
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		await gutenbergEditorPage.visit( 'post' );
+		await editorPage.visit( 'post' );
 	} );
 
 	it( 'Enter post title', async function () {
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+		editorPage = new GutenbergEditorPage( page );
 		const title = DataHelper.getRandomPhrase();
-		await gutenbergEditorPage.enterTitle( title );
+		await editorPage.enterTitle( title );
 	} );
 
 	it( 'Enter post text', async function () {
-		await gutenbergEditorPage.enterText( quote );
+		await editorPage.enterText( quote );
 	} );
 
 	it( 'Publish and visit post', async function () {
-		publishedURL = await gutenbergEditorPage.publish( { visit: true } );
+		publishedURL = await editorPage.publish( { visit: true } );
 		expect( publishedURL.href ).toStrictEqual( page.url() );
 	} );
 

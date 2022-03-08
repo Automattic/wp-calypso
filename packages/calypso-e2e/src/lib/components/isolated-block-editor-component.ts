@@ -26,7 +26,7 @@ export class IsolatedBlockEditorComponent {
 	/**
 	 * Given a block name, insert a matching block to the editor.
 	 *
-	 * This method is nearly identical to the method also named `addBlock` in `GutenbergEditorPage`.
+	 * This method is nearly identical to the method also named `addBlock` in `EditorPage`.
 	 * However, the major distinction is the use of `Page` vs `Frame`.
 	 *
 	 * This is because a P2 frontend (or inline) editor is not a part of an embedded iframe.

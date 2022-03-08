@@ -1,6 +1,6 @@
 import { Page } from 'playwright';
 import { NavbarComponent, SidebarComponent } from '../components';
-import { GutenbergEditorPage } from '../pages';
+import { EditorPage } from '../pages';
 
 /**
  * Handles all sorts of flows related to starting a new post.
@@ -30,7 +30,7 @@ export class NewPostFlow {
 		await new SidebarComponent( this.page ).waitForSidebarInitialization();
 		const navbarComponent = new NavbarComponent( this.page );
 		await navbarComponent.clickNewPost();
-		const gutenbergEditorPage = new GutenbergEditorPage( this.page );
-		await gutenbergEditorPage.waitUntilLoaded();
+		const editorPage = new EditorPage( this.page );
+		await editorPage.waitUntilLoaded();
 	}
 }
