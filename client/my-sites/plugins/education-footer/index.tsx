@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
 import FooterSection from 'calypso/components/footer-section';
 
 import './style.scss';
@@ -21,7 +22,6 @@ const ArticleLinksContainer = styled.div`
 
 	display: grid;
 	grid-template-columns: repeat( 3, 1fr );
-	grid-auto-rows: 1fr;
 	column-gap: 29px;
 	row-gap: 10px;
 `;
@@ -80,24 +80,41 @@ const LinkCard = ( props ) => {
 };
 
 const EducationFooter = () => {
+	const translate = useTranslate();
+
 	const articles = [
 		{
-			category: 'website-building',
-			title: 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)',
+			category: translate( 'website-building', {
+				comment:
+					'Wordpress.com Go article (https://wordpress.com/go/) category on kebab case, example: Website Building = website-bulding',
+			} ),
+			title: translate( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)', {
+				comment: 'Wordpress.com Go article title (https://wordpress.com/go/)',
+			} ),
 			url:
 				'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/',
 			background: 'studio-celadon-60',
 		},
 		{
-			category: 'customization',
-			title: 'How to Choose WordPress Plugins for Your Website (7 Tips)',
+			category: translate( 'customization', {
+				comment:
+					'Wordpress.com Go article (https://wordpress.com/go/) category on kebab case, example: Website Building = website-bulding',
+			} ),
+			title: translate( 'How to Choose WordPress Plugins for Your Website (7 Tips)', {
+				comment: 'Wordpress.com Go article title (https://wordpress.com/go/)',
+			} ),
 			url:
 				'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/',
 			background: 'studio-purple-80',
 		},
 		{
-			category: 'seo',
-			title: 'Do You Need to Use SEO Plugins on Your WordPress.com Site?',
+			category: translate( 'seo', {
+				comment:
+					'Wordpress.com Go article (https://wordpress.com/go/) category on kebab case, example: Website Building = website-bulding',
+			} ),
+			title: translate( 'Do You Need to Use SEO Plugins on Your WordPress.com Site?', {
+				comment: 'Wordpress.com Go article title (https://wordpress.com/go/)',
+			} ),
 			url:
 				'https://wordpress.com/go/tips/do-you-need-to-use-seo-plugins-on-your-wordpress-com-site/',
 			background: 'studio-wordpress-blue-80',
@@ -105,7 +122,7 @@ const EducationFooter = () => {
 	];
 
 	return (
-		<FooterSection header="Learn More">
+		<FooterSection header={ translate( 'Learn More' ) }>
 			<ArticleLinksContainer>
 				{ articles.map( ( article ) => (
 					<LinkCard
@@ -114,7 +131,7 @@ const EducationFooter = () => {
 						title={ article.title }
 						url={ article.url }
 						background={ article.background }
-						cta="Read More"
+						cta={ translate( 'Read More' ) }
 					/>
 				) ) }
 			</ArticleLinksContainer>
