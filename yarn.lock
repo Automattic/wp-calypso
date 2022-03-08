@@ -1016,13 +1016,17 @@ __metadata:
     "@wordpress/react-i18n": ^3.0.4
     classnames: ^2.3.1
     copyfiles: ^2.3.0
+    css-loader: ^3.6.0
     history: ^5.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
     react-router-dom: ^5.1.2
     redux: ^4.1.2
+    sass-loader: ^10.1.1
+    style-loader: ^1.2.1
     tslib: ^2.3.0
     typescript: ^4.5.5
+    webpack: ^5.63.0
   peerDependencies:
     "@wordpress/i18n": ^4.2.4
     react: ^17.0.2
@@ -33138,6 +33142,31 @@ resolve@^2.0.0-next.3:
   version: 0.1.1
   resolution: "saslmechanisms@npm:0.1.1"
   checksum: 3d53dcb0bc2859b52eedbf44437095d420edad32320db4cc57177d6c451a6f7f91bca6c3e049d5314ae6839ce58da6cd12fdde3c191ae7d9712492c49ee2e00a
+  languageName: node
+  linkType: hard
+
+"sass-loader@npm:^10.1.1":
+  version: 10.2.1
+  resolution: "sass-loader@npm:10.2.1"
+  dependencies:
+    klona: ^2.0.4
+    loader-utils: ^2.0.0
+    neo-async: ^2.6.2
+    schema-utils: ^3.0.0
+    semver: ^7.3.2
+  peerDependencies:
+    fibers: ">= 3.1.0"
+    node-sass: ^4.0.0 || ^5.0.0 || ^6.0.0
+    sass: ^1.3.0
+    webpack: ^4.36.0 || ^5.0.0
+  peerDependenciesMeta:
+    fibers:
+      optional: true
+    node-sass:
+      optional: true
+    sass:
+      optional: true
+  checksum: 03286a3b46c6d1c606c7e382cf9fefc569e45758d7d6e813a20a5b00926336baa8a45e833a7a4e461b4092aac22f6859052437e7d7c0d6f726c71328f8c25173
   languageName: node
   linkType: hard
 
