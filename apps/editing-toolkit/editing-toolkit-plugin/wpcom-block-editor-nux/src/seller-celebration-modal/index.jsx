@@ -115,9 +115,9 @@ const SellerCelebrationModal = () => {
 			imageSrc={ contentSubmittedImage }
 			actionButtons={
 				<>
-					<Button onClick={ closeModal }>{ __( 'Continue Editing', 'full-site-editing' ) }</Button>
+					<Button onClick={ closeModal }>{ __( 'Continue editing', 'full-site-editing' ) }</Button>
 					<Button isPrimary href={ linkUrl } target="__blank" rel="noopener noreferrer">
-						{ __( 'View Post', 'full-site-editing' ) }
+						{ __( 'View your product', 'full-site-editing' ) }
 					</Button>
 				</>
 			}

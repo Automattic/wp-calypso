@@ -79,7 +79,6 @@ class WP_REST_WPCOM_Block_Editor_Seller_Celebration_Modal_Controller extends \WP
 				)
 			);
 		}
-		l( 'seller celebration modal' );
 		$has_seen_seller_celebration_modal = (bool) get_option( 'has_seen_seller_celebration_modal', false );
 
 		return rest_ensure_response(
