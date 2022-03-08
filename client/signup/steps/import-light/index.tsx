@@ -1,7 +1,11 @@
 import classnames from 'classnames';
 import page from 'page';
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import Capture from './capture';
 import Colors from './colors';
 import Scanning from './scanning';
@@ -22,17 +26,24 @@ const ImportLight: FunctionComponent< Props > = ( props ) => {
 		{ name: 'Color 4', hex: '#94A4B9' },
 	];
 	const [ scanningProgress, setScanningProgress ] = useState( 0 );
+	const { siteSlug } = useSelector( getCurrentQueryArguments ) as { siteSlug: string };
+	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
+	const editorUrl = useSelector( ( state ) => getSiteEditorUrl( state, siteId as number ) );
 
 	function runScan() {
-		page.redirect( '/start/import-light/static/scanning' );
+		page.redirect( `/start/import-light/static/scanning?siteSlug=${ siteSlug }` );
 	}
 
 	function runImport() {
-		page.redirect( '/start/import-light/static/colors' );
+		page.redirect( `/start/import-light/static/colors?siteSlug=${ siteSlug }` );
 	}
 
 	function runSummary() {
-		page.redirect( '/start/import-light/static/summary' );
+		page.redirect( `/start/import-light/static/summary?siteSlug=${ siteSlug }` );
+	}
+
+	function runEditor() {
+		page.redirect( editorUrl );
 	}
 
 	useEffect( () => {
@@ -77,7 +88,9 @@ const ImportLight: FunctionComponent< Props > = ( props ) => {
 					{ props.stepSectionName === 'colors' && (
 						<Colors colors={ COLORS } onAnimationFinished={ runSummary } />
 					) }
-					{ props.stepSectionName === 'summary' && <Summary /> }
+					{ props.stepSectionName === 'summary' && (
+						<Summary colorsNumber={ COLORS.length } onSummaryExpired={ runEditor } />
+					) }
 				</div>
 			}
 		/>
