@@ -163,7 +163,7 @@ open class WPComPluginBuild(
 							build_num=`jq -r '.tc_build_number' ./release-archive/build_meta.json
 							rm ./release-archive/build_meta.json
 						fi
-						echo "Diffing against current trunk release build (${'$'}build_num`).";
+						echo "Diffing against current trunk release build (${'$'}build_num).";
 
 						# 2. Change anything from the release build which is "unstable", like the version number and build metadata.
 						# These operations restore idempotence between the two builds.
