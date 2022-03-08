@@ -230,7 +230,7 @@ const Flows = {
 			}
 		}
 
-		if ( flowName === 'p2' && isUserLoggedIn ) {
+		if ( flowName === 'p2v1' && isUserLoggedIn ) {
 			flow = removeP2DetailsStepFromFlow( flow );
 		}
 

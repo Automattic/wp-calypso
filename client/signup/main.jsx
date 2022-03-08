@@ -294,7 +294,7 @@ class Signup extends Component {
 	}
 
 	completeP2FlowAfterLoggingIn() {
-		if ( ! this.props.progress ) {
+		if ( ! this.props.flowName !== 'p2v1' || ! this.props.progress ) {
 			return;
 		}
 
