@@ -207,7 +207,7 @@ open class WPComPluginBuild(
 					cd $archiveDir
 					if [ -f build_meta.json ] ; then
 						# Add the build number to an existing meta JSON file.
-						jq '.tc_build_number = "%build.number%"' build_meta.json > build_meta.json.tmp && mv build_meta.json.tmp build_meta.json
+						jq '.build_number = "%build.number%"' build_meta.json > build_meta.json.tmp && mv build_meta.json.tmp build_meta.json
 					else
 						tee build_meta.txt <<-EOM
 							commit_hash=%build.vcs.number%
