@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useRef } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { sprintf, _x } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import page from 'page';
@@ -134,21 +134,21 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 
 	if ( simpleSeller ) {
 		displayData = {
-			title: __( 'Upgrade your store' ),
+			title: _x( 'Upgrade your store', 'Header text' ),
 			illustration: '/calypso/images/illustrations/illustration-seller.svg',
 			line: __(
 				'Need more out of your store? Unlock the tools needed to manage products, orders, shipping, and more.'
 			),
-			action: __( 'Upgrade your store' ),
+			action: _x( 'Upgrade your store', 'Button text' ),
 		};
 	} else {
 		displayData = {
-			title: __( 'Set up a store and start selling online' ),
+			title: _x( 'Set up a store and start selling online', 'Header text' ),
 			illustration: '/calypso/images/illustrations/illustration-shopping-bags.svg',
 			line: __(
 				'Set up a new store in minutes. Get secure payments, configurable shipping options, and more, out of the box.'
 			),
-			action: __( 'Start a new store' ),
+			action: _x( 'Start a new store', 'Button text' ),
 		};
 	}
 
