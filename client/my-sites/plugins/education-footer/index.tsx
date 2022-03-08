@@ -70,14 +70,14 @@ const EducationFooter = () => {
 			title: 'How to Choose WordPress Plugins for Your Website (7 Tips)',
 			url:
 				'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/',
-			background: 'studio-purple-90',
+			background: 'studio-purple-80',
 		},
 		{
 			category: 'seo',
 			title: 'Do You Need to Use SEO Plugins on Your WordPress.com Site?',
 			url:
 				'https://wordpress.com/go/tips/do-you-need-to-use-seo-plugins-on-your-wordpress-com-site/',
-			background: 'studio-wordpress-blue-90',
+			background: 'studio-wordpress-blue-80',
 		},
 	];
 
