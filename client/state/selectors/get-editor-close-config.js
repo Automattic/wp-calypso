@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -10,21 +9,12 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
  * @param {object} state  Global state tree
  * @param {number|string|undefined|null} siteId Site ID
  * @param {string} postType The type of the current post being edited
- * @param {number|string} fseParentPageId The ID of the parent post for the FSE template part
  * @returns {{url: string; label: string}} The URL that should be used when the block editor close button is clicked
  * @property {string} url The URL that should be used when the block editor close button is clicked
  * @property {string} label The label that should be used for the block editor back button
  */
 
-export default function getEditorCloseConfig( state, siteId, postType, fseParentPageId ) {
-	// Handle returning to parent editor for full site editing template parts.
-	if ( 'wp_template_part' === postType && fseParentPageId ) {
-		// Note: the label is handled correctly by the FSE plugin in this case.
-		return {
-			url: getEditorUrl( state, siteId, fseParentPageId, 'page' ),
-		};
-	}
-
+export default function getEditorCloseConfig( state, siteId, postType ) {
 	// @TODO: See if more generic back navigation would work.
 
 	const lastNonEditorRoute = getLastNonEditorRoute( state );

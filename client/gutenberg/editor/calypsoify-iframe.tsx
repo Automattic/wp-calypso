@@ -32,7 +32,6 @@ import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
 import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
@@ -72,7 +71,6 @@ interface Props {
 		spotify_url: string | undefined;
 	};
 	siteAdminUrl: T.URL | null;
-	fseParentPageId: T.PostId;
 	parentPostId: T.PostId;
 	stripeConnectSuccess: 'gutenberg' | null;
 	showDraftPostModal: boolean;
@@ -113,8 +111,6 @@ enum EditorActions {
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
 	OpenCustomizer = 'openCustomizer',
-	GetTemplateEditorUrl = 'getTemplateEditorUrl',
-	OpenTemplatePart = 'openTemplatePart',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 	GetGutenboardingStatus = 'getGutenboardingStatus',
 	ToggleInlineHelpButton = 'toggleInlineHelpButton',
@@ -402,25 +398,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			this.openCustomizer( autofocus, unsavedChanges );
 		}
 
-		if ( EditorActions.OpenTemplatePart === action ) {
-			const { templatePartId, unsavedChanges } = payload;
-
-			// Prevent navigating to edit the template part if it's already being edited.
-			// Solves an issue where a click event to edit the template part is received twice.
-			// Example URL we're testing for, where the `templatePartId` is 2:
-			// `/edit/wp_template_part/{site}/2?fse_parent_post=42`
-			if (
-				new RegExp( `\\/edit\\/wp_template_part\\/.+\\/${ templatePartId }\\?`, 'i' ).test(
-					window.location.href
-				)
-			) {
-				return;
-			}
-
-			const templatePartUrl = this.getTemplateEditorUrl( templatePartId );
-			this.navigate( templatePartUrl, unsavedChanges );
-		}
-
 		if ( EditorActions.GetCloseButtonUrl === action ) {
 			const { closeUrl, closeLabel } = this.props;
 			ports[ 0 ].postMessage( {
@@ -621,17 +598,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		this.navigate( customizerUrl, unsavedChanges );
 	};
 
-	getTemplateEditorUrl = ( templateId: T.PostId ) => {
-		const { getTemplateEditorUrl, editedPostId } = this.props;
-
-		let templateEditorUrl = getTemplateEditorUrl( templateId );
-		if ( editedPostId ) {
-			templateEditorUrl = addQueryArgs( { fse_parent_post: editedPostId }, templateEditorUrl );
-		}
-
-		return templateEditorUrl;
-	};
-
 	navigate = ( navUrl: string, unsavedChanges: boolean ) => {
 		const { markChanged, markSaved } = this.props;
 		unsavedChanges ? markChanged() : markSaved();
@@ -788,7 +754,6 @@ const mapStateToProps = (
 		postId,
 		postType,
 		duplicatePostId,
-		fseParentPageId,
 		parentPostId,
 		creatingNewHomepage,
 		editorType = 'post',
@@ -809,7 +774,6 @@ const mapStateToProps = (
 		action: postId && 'edit', // If postId is set, open edit view.
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
-		fse_parent_post: fseParentPageId != null && fseParentPageId,
 		parent_post: parentPostId != null && parentPostId,
 		'block-editor': 1,
 		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
@@ -844,12 +808,7 @@ const mapStateToProps = (
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSite( state, siteId ?? 0 );
 
-	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
-		state,
-		siteId,
-		postType,
-		fseParentPageId
-	);
+	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig( state, siteId, postType );
 
 	// 'shouldDisplayAppBanner' does not check if we're in Blogger Flow, because it is a selector reading from the Redux state, and
 	// the Blogger Flow information is not in the Redux state, but in the session storage value wpcom_signup_complete_show_draft_post_modal.
@@ -872,9 +831,6 @@ const mapStateToProps = (
 		siteSlug,
 		siteUrl: getSiteUrl( state, siteId ?? 0 ),
 		customizerUrl: getCustomizerUrl( state, siteId ),
-		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		getTemplateEditorUrl: ( templateId: string ) =>
-			getEditorUrl( state, siteId, templateId, 'wp_template_part' ),
 		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
 		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),

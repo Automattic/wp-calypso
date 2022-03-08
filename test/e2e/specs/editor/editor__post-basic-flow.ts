@@ -87,24 +87,20 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			await editorSettingsSidebarComponent.closeSidebar();
 		} );
 
-		// The following two steps have conditiionals inside them, as how the
-		// Editor Preview behaves depends on the device type.
-		// On desktop and tablet, preview applies CSS attributes to modify the preview in-editor.
-		// On mobile web, preview button opens a new tab.
 		it( 'Launch preview', async function () {
 			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-				previewPage = await gutenbergEditorPage.openPreviewAsMobile();
+				previewPage = await gutenbergEditorPage.previewAsMobile();
 			} else {
-				await gutenbergEditorPage.openPreviewAsDesktop( 'Mobile' );
+				await gutenbergEditorPage.previewAsDesktop( 'Mobile' );
 			}
 		} );
 
-		skipItIf( envVariables.VIEWPORT_NAME === 'desktop' )( 'Close preview', async function () {
-			// Mobile path.
+		it( 'Close preview', async function () {
 			if ( previewPage ) {
+				// Mobile path - close the new page.
 				await previewPage.close();
-				// Desktop path.
 			} else {
+				// Desktop path - restore the Desktop view.
 				await gutenbergEditorPage.closePreview();
 			}
 		} );

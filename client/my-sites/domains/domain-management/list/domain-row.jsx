@@ -213,7 +213,11 @@ class DomainRow extends PureComponent {
 
 	shouldShowAutoRenewStatus = () => {
 		const { domain } = this.props;
-		if ( domain?.type === domainTypes.WPCOM || domain?.type === domainTypes.TRANSFER ) {
+		if (
+			domain?.type === domainTypes.WPCOM ||
+			domain?.type === domainTypes.TRANSFER ||
+			domain?.aftermarketAuction
+		) {
 			return false;
 		}
 		return ! domain?.bundledPlanSubscriptionId && domain.currentUserCanManage;

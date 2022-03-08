@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
@@ -17,10 +18,14 @@ function P2ConfirmEmail( {
 	positionInFlow,
 	stepName,
 	submitSignupStep,
+	refParameter,
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const userEmail = useSelector( getCurrentUserEmail );
+	if ( ! userEmail ) {
+		dispatch( fetchCurrentUser() );
+	}
 
 	const [ emailResendCount, setEmailResendCount ] = useState( 0 );
 	const EMAIL_RESEND_MAX = 3;
@@ -37,9 +42,13 @@ function P2ConfirmEmail( {
 	);
 
 	// Remember that we loaded, not skipped, this step for the user.
+	// We also need to store the original refParameter, as the redirect on email verification
+	// loses it.
 	useEffect( () => {
-		dispatch( saveSignupStep( { stepName } ) );
-	}, [ dispatch, stepName ] );
+		dispatch(
+			saveSignupStep( { stepName, ...( refParameter && { storedRefParameter: refParameter } ) } )
+		);
+	}, [ dispatch, stepName, refParameter ] );
 
 	const handleResendEmailClick = () => {
 		if ( emailResendCount >= EMAIL_RESEND_MAX ) {
@@ -123,19 +132,21 @@ function P2ConfirmEmail( {
 	};
 
 	return (
-		<P2StepWrapper
-			flowName={ flowName }
-			stepName={ stepName }
-			positionInFlow={ positionInFlow }
-			headerIcon={ isEmailVerified ? check : mailIcon }
-			headerText={
-				isEmailVerified ? translate( 'Email confirmed' ) : translate( 'Check your email' )
-			}
-		>
-			<div className="p2-confirm-email">
-				{ isEmailVerified ? renderPostConfirmationNotice() : renderCheckEmailNotice() }
-			</div>
-		</P2StepWrapper>
+		userEmail && (
+			<P2StepWrapper
+				flowName={ flowName }
+				stepName={ stepName }
+				positionInFlow={ positionInFlow }
+				headerIcon={ isEmailVerified ? check : mailIcon }
+				headerText={
+					isEmailVerified ? translate( 'Email confirmed' ) : translate( 'Check your email' )
+				}
+			>
+				<div className="p2-confirm-email">
+					{ isEmailVerified ? renderPostConfirmationNotice() : renderCheckEmailNotice() }
+				</div>
+			</P2StepWrapper>
+		)
 	);
 }
 

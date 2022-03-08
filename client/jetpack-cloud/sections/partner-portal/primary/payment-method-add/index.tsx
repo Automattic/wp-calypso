@@ -25,7 +25,7 @@ import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 
 import './style.scss';
 
@@ -62,7 +62,8 @@ function PaymentMethodAdd(): ReactElement {
 			reduxDispatch(
 				errorNotice(
 					transactionError ||
-						translate( 'There was a problem assigning that payment method. Please try again.' )
+						translate( 'There was a problem assigning that payment method. Please try again.' ),
+					{ id: 'payment-method-failure' }
 				)
 			);
 			// We need to regenerate the setup intent if the form was submitted.
@@ -115,8 +116,9 @@ function PaymentMethodAdd(): ReactElement {
 				onPaymentError={ handleChangeError }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ {
-					card: ( data: unknown ) =>
-						assignNewCardProcessor(
+					card: ( data: unknown ) => {
+						reduxDispatch( removeNotice( 'payment-method-failure' ) );
+						return assignNewCardProcessor(
 							{
 								useAsPrimaryPaymentMethod,
 								translate,
@@ -127,7 +129,8 @@ function PaymentMethodAdd(): ReactElement {
 								reduxDispatch,
 							},
 							data
-						),
+						);
+					},
 				} }
 				initiallySelectedPaymentMethodId="card"
 				isLoading={ isStripeLoading }

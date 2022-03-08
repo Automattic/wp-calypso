@@ -173,7 +173,7 @@ export const isReskinnedFlow = ( flowName ) => {
 };
 
 export const isP2Flow = ( flowName ) => {
-	return flowName === 'p2' || flowName === 'p2-new';
+	return flowName === 'p2' || flowName === 'p2v1';
 };
 
 /**

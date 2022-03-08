@@ -121,7 +121,7 @@ skipDescribeIf( isStagingOrProd )(
 		describe( 'Validate site metadata', function () {
 			it( 'Return to Calypso dashboard', async function () {
 				gutenbergEditorPage = new GutenbergEditorPage( page );
-				await gutenbergEditorPage.returnToCalypsoDashboard();
+				await gutenbergEditorPage.exitEditor();
 			} );
 
 			it( 'Navigate to settings', async function () {

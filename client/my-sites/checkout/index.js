@@ -20,7 +20,6 @@ import {
 	licensingThankYouAutoActivation,
 	licensingThankYouAutoActivationCompleted,
 	jetpackCheckoutThankYou,
-	jetpackCheckoutThankYouCompleted,
 	redirectJetpackLegacyPlans,
 	redirectToSupportSession,
 	upsellNudge,
@@ -61,6 +60,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/checkout/jetpack/thank-you/licensing-auto-activate/:product',
 		noSite,
@@ -68,6 +68,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/checkout/jetpack/thank-you/licensing-auto-activate-completed/:product',
 		noSite,
@@ -75,6 +76,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/checkout/jetpack/thank-you/licensing-manual-activate/:product',
 		noSite,
@@ -82,6 +84,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/checkout/jetpack/thank-you/licensing-manual-activate-instructions/:product',
 		noSite,
@@ -89,6 +92,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/checkout/jetpack/thank-you/licensing-manual-activate-license-key/:product',
 		noSite,

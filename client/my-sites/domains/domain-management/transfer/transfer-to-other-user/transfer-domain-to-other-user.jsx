@@ -16,6 +16,7 @@ import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
+import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import {
@@ -245,13 +246,19 @@ class TransferDomainToOtherUser extends Component {
 	}
 
 	renderSection() {
-		const { currentUserCanManage, domainRegistrationAgreementUrl } = getSelectedDomain(
-			this.props
-		);
+		const {
+			currentUserCanManage,
+			domainRegistrationAgreementUrl,
+			aftermarketAuction,
+		} = getSelectedDomain( this.props );
+		const { domains, selectedDomainName } = this.props;
 
 		if ( ! currentUserCanManage ) {
-			const { domains, selectedDomainName } = this.props;
 			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
+		}
+
+		if ( aftermarketAuction ) {
+			return <AftermarketAutcionNotice domainName={ selectedDomainName } />;
 		}
 
 		const { isMapping, translate, users } = this.props;

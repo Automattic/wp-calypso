@@ -192,15 +192,15 @@
 	.DayPicker-Day.DayPicker-Day--start {
 		background-color: var( --color-primary-light );
 		border-radius: 0;
-		border-top-left-radius: 50%;
-		border-bottom-left-radius: 50%;
+		border-top-left-radius: 50%; /* stylelint-disable-line */
+		border-bottom-left-radius: 50%; /* stylelint-disable-line */
 	}
 
 	.DayPicker-Day.DayPicker-Day--end {
 		background-color: var( --color-primary-light );
 		border-radius: 0;
-		border-top-right-radius: 50%;
-		border-bottom-right-radius: 50%;
+		border-top-right-radius: 50%; /* stylelint-disable-line */
+		border-bottom-right-radius: 50%; /* stylelint-disable-line */
 	}
 
 	.DayPicker-Day.DayPicker-Day--today .date-picker__day {
@@ -220,7 +220,7 @@
 		position: absolute;
 		display: block;
 		background-color: var( --color-neutral-70 );
-		border-radius: 50%;
+		border-radius: 50%; /* stylelint-disable-line */
 		width: 26px;
 		height: 26px;
 		left: 6px;
@@ -240,7 +240,7 @@
 
 	.DayPicker-Day.DayPicker-Day--start .date-picker__day,
 	.DayPicker-Day.DayPicker-Day--end .date-picker__day {
-		border-radius: 50%;
+		border-radius: 50%; /* stylelint-disable-line */
 		color: var( --color-text-inverted );
 		padding: 0;
 		position: relative;
@@ -279,7 +279,7 @@
 		right: auto;
 		z-index: -1;
 		background-color: var( --color-primary );
-		border-radius: 50%;
+		border-radius: 50%; /* stylelint-disable-line */
 	}
 
 	.DayPicker-Day--start:hover .date-picker__day::after,

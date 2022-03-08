@@ -74,6 +74,13 @@ export class PluginsPage {
 	}
 
 	/**
+	 * Click the Back breadcrumb
+	 */
+	async clickBackBreadcrumb(): Promise< void > {
+		await this.page.click( selectors.breadcrumb( 'Back' ) );
+	}
+
+	/**
 	 * Click the Plugins breadcrumb
 	 */
 	async clickPluginsBreadcrumb(): Promise< void > {

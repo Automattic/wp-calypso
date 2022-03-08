@@ -3,9 +3,14 @@ import { Page, Frame, ElementHandle, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
-import { NavbarComponent, EditorPublishPanelComponent } from '../components';
-
-type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
+import {
+	EditorPublishPanelComponent,
+	EditorNavSidebarComponent,
+	EditorToolbarComponent,
+	EditorSettingsSidebarComponent,
+	NavbarComponent,
+} from '../components';
+import type { PreviewOptions } from '../components';
 
 const selectors = {
 	// iframe and editor
@@ -23,33 +28,11 @@ const selectors = {
 	paragraphBlocks: 'p.block-editor-rich-text__editable',
 	blockWarning: '.block-editor-warning',
 
-	// Top bar selectors.
-	postToolbar: '.edit-post-header',
-	settingsToggle: '.edit-post-header__settings .interface-pinned-items button:first-child',
-	closeSettingsButton: 'button[aria-label="Close settings"]:visible',
-	saveDraftButton: '.editor-post-save-draft',
-	saveDraftDisabledButton: 'button.editor-post-saved-state.is-saved[aria-disabled="true"]',
-	previewButton: ':is(button:text("Preview"), a:text("Preview"))',
-	publishButton: `.editor-post-publish-button__button`,
-	switchToDraftButton: 'button.editor-post-switch-to-draft',
-
-	// Settings panel.
-	settingsPanel: '.interface-complementary-area',
-
 	// Toast
 	toastViewPostLink: '.components-snackbar__content a:text-matches("View (Post|Page)", "i")',
 
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
-
-	// Block editor sidebar
-	desktopEditorSidebarButton: 'button[aria-label="Block editor sidebar"]:visible',
-	desktopDashboardLink: 'a[aria-description="Returns to the dashboard"]:visible',
-	mobileDashboardLink: 'a[aria-current="page"]:visible',
-
-	// Preview
-	previewMenuItem: ( target: PreviewOptions ) => `button[role="menuitem"] span:text("${ target }")`,
-	previewPane: ( target: PreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,
 };
 
 /**
@@ -57,16 +40,44 @@ const selectors = {
  */
 export class GutenbergEditorPage {
 	private page: Page;
+	private requiresGutenframe: boolean;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
+	private editorNavSidebarComponent: EditorNavSidebarComponent;
+	private editorToolbarComponent: EditorToolbarComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
+	 * @param {Object} [options] options
+	 * @param {boolean} [options.requiresGutenframe=false] indicates that staying
+	 * on the Gutenframe is strictly required and if the editor is loaded from a WPAdmin
+	 * route or is booted to it, then an error will be thrown and the test will fail
+	 * because the iframe will not be found on the page. Defaults to `false`, which means
+	 * it will try to get the top frame if on WPadmin (non-wordpress.com URL) or if it
+	 * can't get hold of the Gutenframe (i.e it redirected because of an error). This
+	 * should allow the test to finally get hold of the editor even if the Gutenframe
+	 * can't be found.
 	 */
-	constructor( page: Page ) {
+	constructor(
+		page: Page,
+		options: { requiresGutenframe: boolean } = {
+			requiresGutenframe: false,
+		}
+	) {
+		const { requiresGutenframe } = options;
+
 		this.page = page;
+		this.requiresGutenframe = requiresGutenframe;
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent(
+			page,
+			page.frameLocator( selectors.editorFrame )
+		);
+		this.editorNavSidebarComponent = new EditorNavSidebarComponent(
+			page,
+			page.frameLocator( selectors.editorFrame )
+		);
+		this.editorToolbarComponent = new EditorToolbarComponent(
 			page,
 			page.frameLocator( selectors.editorFrame )
 		);
@@ -129,22 +140,41 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Return the editor iframe.
+	 * Return the editor frame. Could be the top-level frame (i.e WPAdmin).
+	 * an iframe (Calypso/Gutenframe).
 	 *
-	 * @returns {Promise<Frame>} iframe holding the editor.
+	 * @returns {Promise<Frame>} frame holding the editor.
 	 */
 	async getEditorFrame(): Promise< Frame > {
-		const locator = this.page.locator( selectors.editorFrame );
-
-		const elementHandle = await locator.elementHandle( {
-			timeout: 105 * 1000,
-		} );
-
-		if ( ! elementHandle ) {
-			throw new Error( 'Could not locate editor iframe.' );
+		if ( ! this.requiresGutenframe ) {
+			// If we're not in the Gutenframe context (i.e not Calypso), then
+			// just return the top frame, no need to try to locate the iframe.
+			if ( this.page.url().includes( '/wp-admin' ) ) {
+				return await this.page.mainFrame();
+			}
 		}
 
-		return ( await elementHandle.contentFrame() ) as Frame;
+		const locator = this.page.locator( selectors.editorFrame );
+
+		try {
+			const elementHandle = await locator.elementHandle( {
+				timeout: 105 * 1000,
+			} );
+
+			return ( await elementHandle!.contentFrame() ) as Frame;
+		} catch {
+			if ( this.requiresGutenframe ) {
+				throw new Error( 'Could not locate editor iframe' );
+			} else {
+				// The CalipsoifyIframe component will redirect to the plain WPAdmin page if
+				// there's an error or if the iframe takes too long to completely load. The
+				// goal here is to ge hold of the editor and not test any aspects related to
+				// the Gutenframe, so we return the `mainFrame` to allow the test to access
+				// the editor in the WPAdmin page.
+				console.info( 'Could not locate editor iframe. Returning the top-level frame instead' );
+				return await this.page.mainFrame();
+			}
+		}
 	}
 
 	/**
@@ -256,6 +286,22 @@ export class GutenbergEditorPage {
 	}
 
 	/**
+	 * Closes all panels that can be opened in the editor.
+	 *
+	 * This method will attempt to close the following panels:
+	 * 	- Publish Panel (including pre-publish checklist)
+	 * 	- Editor Settings Panel
+	 * 	- Editor Navigation Sidebar
+	 */
+	async closeAllPanels(): Promise< void > {
+		await Promise.allSettled( [
+			this.editorPublishPanelComponent.closePanel(),
+			this.editorNavSidebarComponent.closeSidebar(),
+			this.editorToolbarComponent.closeSettings(),
+		] );
+	}
+
+	/**
 	 * Adds a Gutenberg block from the block inserter panel.
 	 *
 	 * The name is expected to be formatted in the same manner as it
@@ -275,7 +321,11 @@ export class GutenbergEditorPage {
 	 */
 	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
-		await this.openBlockInserter();
+		// Click on the editor title to work around the following issue:
+		// https://github.com/Automattic/wp-calypso/issues/61508
+		await frame.click( selectors.editorTitle );
+
+		await this.editorToolbarComponent.openBlockInserter();
 		await this.searchBlockInserter( blockName );
 		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
 		// Confirm the block has been added to the editor body.
@@ -285,7 +335,7 @@ export class GutenbergEditorPage {
 		// no interference from the block inserter in subsequent actions on the editor.
 		// In mobile, the block inserter will auto-close.
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
-			await frame.click( selectors.blockInserterToggle );
+			await this.editorToolbarComponent.closeBlockInserter();
 		}
 
 		return elementHandle;
@@ -316,25 +366,10 @@ export class GutenbergEditorPage {
 	 */
 	async addPattern( patternName: string ): Promise< ElementHandle > {
 		const frame = await this.getEditorFrame();
-		await this.openBlockInserter();
+		await this.editorToolbarComponent.openBlockInserter();
 		await this.searchBlockInserter( patternName );
 		await frame.click( `div[aria-label="${ patternName }"]` );
 		return await frame.waitForSelector( `:text('Block pattern "${ patternName }" inserted.')` );
-	}
-
-	/**
-	 * Open the block inserter panel.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async openBlockInserter(): Promise< void > {
-		const frame = await this.getEditorFrame();
-		// Click on the editor title. This has the effect of dismissing the block inserter
-		// if open, and restores focus back to the editor root container, allowing insertion
-		// of blocks.
-		await frame.click( selectors.editorTitle );
-		await frame.click( selectors.blockInserterToggle );
-		await frame.waitForSelector( selectors.blockInserterPanel );
 	}
 
 	/**
@@ -348,55 +383,38 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * @returns Whether the Settings sidebar is open or not.
-	 */
-	async isSettingsSidebarOpen(): Promise< boolean > {
-		const frame = await this.getEditorFrame();
-		return await frame.$eval( selectors.settingsToggle, ( element ) =>
-			element.classList.contains( 'is-pressed' )
-		);
-	}
-
-	/**
 	 * Opens the Settings sidebar.
 	 */
 	async openSettings(): Promise< void > {
-		const frame = await this.getEditorFrame();
-
-		const isSidebarOpen = await this.isSettingsSidebarOpen();
-		if ( ! isSidebarOpen ) {
-			await frame.click( selectors.settingsToggle );
-		}
-		const settingsToggle = await frame.waitForSelector( selectors.settingsToggle );
-		await frame.waitForFunction(
-			( element ) => element.getAttribute( 'aria-pressed' ) === 'true',
-			settingsToggle
-		);
+		await this.editorToolbarComponent.openSettings();
 	}
 
 	/**
 	 * Closes the Settings sidebar.
 	 */
 	async closeSettings(): Promise< void > {
-		const isSidebarOpen = await this.isSettingsSidebarOpen();
-		if ( ! isSidebarOpen ) {
-			return;
+		// On mobile, the settings panel close button is located on the settings panel itself.
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// {@TODO} Temporary measure, to be unified into framelocator based class
+			// once EditorSettingsSidebarComponent is refactored.
+			const editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(
+				await this.getEditorFrame(),
+				this.page
+			);
+			await editorSettingsSidebarComponent.closeSidebar();
 		}
-		const frame = await this.getEditorFrame();
-		await frame.click( selectors.closeSettingsButton );
+		await this.editorToolbarComponent.closeSettings();
 	}
 
 	/**
 	 * Publishes the post or page.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
-	 * @returns {Promise<string>} The published URL.
+	 * @returns {URL} Published article's URL.
 	 */
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< URL > {
-		const frame = await this.getEditorFrame();
-
 		// Click on the main publish action button on the toolbar.
-		await frame.click( selectors.publishButton );
+		await this.editorToolbarComponent.clickPublish();
 
 		if ( await this.editorPublishPanelComponent.panelIsOpen() ) {
 			// Invoke the second stage of the publish step which handles the
@@ -424,19 +442,15 @@ export class GutenbergEditorPage {
 	 * Unpublishes the post or page by switching to draft.
 	 */
 	async unpublish(): Promise< void > {
+		await this.editorToolbarComponent.switchToDraft();
+
 		const frame = await this.getEditorFrame();
-
-		// Add handler to handle dialog that must be accepted for the post
-		// to be unpublished.
-		this.page.once( 'dialog', async ( dialog ) => {
-			await dialog.accept();
-		} );
-
-		await frame.click( selectors.switchToDraftButton );
-		// Similar to Save Draft, the publish button temporarily becomes disabled
-		// while the unpublish process takes place. This waits for the publish button
-		// to again become enabled.
-		await frame.waitForSelector( `${ selectors.publishButton }[aria-disabled=false]` );
+		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
+		await frame.click( `div[role="dialog"] button:has-text("OK")` );
+		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
+		await frame.waitForSelector(
+			'.components-editor-notices__snackbar :has-text("Post reverted to draft.")'
+		);
 	}
 
 	/**
@@ -460,11 +474,7 @@ export class GutenbergEditorPage {
 	 * Saves the currently open post as draft.
 	 */
 	async saveDraft(): Promise< void > {
-		const frame = await this.getEditorFrame();
-
-		await frame.click( selectors.saveDraftButton );
-		// Wait for the Save Draft button to become disabled.
-		await frame.waitForSelector( selectors.saveDraftDisabledButton );
+		await this.editorToolbarComponent.saveDraft();
 	}
 
 	/**
@@ -518,136 +528,92 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Opens the Nav Sidebar on the left hand side.
-	 *
-	 * On desktop sized viewport, this will open the editor block sidebar listing recently edited posts and drafts.
-	 *
-	 * On mobile sized viewport, this method will pass through.
-	 *
-	 */
-	async openNavSidebar(): Promise< void > {
-		const frame = await this.getEditorFrame();
-		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			await frame.click( selectors.desktopEditorSidebarButton );
-		}
-	}
-
-	/**
 	 * Leave the editor to return to the Calypso dashboard.
 	 *
-	 * On desktop sized viewport, this method clicks on the `< All Posts` link in the block editor sidebar.
-	 * Note, for desktop the editor sidebar must be open. To open the sidebar, call `openNavSidebar` method.
+	 * On desktop sized viewport, this method first opens the editor navigation
+	 * sidebar, then clicks on the `Dashboard` link.
 	 *
 	 * On mobile sized viewport, this method clicks on Navbar > My Sites.
 	 *
 	 * The resulting page can change based on where you come from, and the viewport. Either way, the resulting landing spot
 	 * will have access to the Calyspo sidebar, allowing navigation around Calypso.
 	 */
-	async returnToCalypsoDashboard(): Promise< void > {
-		const frame = await this.getEditorFrame();
+	async exitEditor(): Promise< void > {
+		await this.editorNavSidebarComponent.openSidebar();
 
-		if (
-			envVariables.VIEWPORT_NAME !== 'mobile' &&
-			( await frame.getAttribute( selectors.desktopEditorSidebarButton, 'aria-expanded' ) ) ===
-				'false'
-		) {
-			await this.openNavSidebar();
-		}
-
-		const navbarComponent = new NavbarComponent( this.page );
-
-		// There are three different places you can return to, depending on how you entered the editor.
+		// There are three different places to return to,
+		// depending on how the editor was entered.
 		const navigationPromise = Promise.race( [
 			this.page.waitForNavigation( { url: '**/home/**' } ),
 			this.page.waitForNavigation( { url: '**/posts/**' } ),
 			this.page.waitForNavigation( { url: '**/pages/**' } ),
 		] );
-
 		const actions: Promise< unknown >[] = [ navigationPromise ];
 
-		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
-			actions.push( frame.click( selectors.desktopDashboardLink ) );
-		} else {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// Mobile viewports do not use an EditorNavSidebar.
+			// Instead, the regular NavBar is used, and the
+			// `My Sites` button exits the editor.
+			const navbarComponent = new NavbarComponent( this.page );
 			actions.push( navbarComponent.clickMySites() );
+		} else {
+			actions.push( this.editorNavSidebarComponent.exitEditor() );
 		}
 
+		// Perform the actions and resolve promises.
 		await Promise.all( actions );
 	}
 
 	/* Previews */
 
 	/**
-	 * Click on the `Preview` button on the editor toolbar.
+	 * Launches the Preview as mobile viewport.
 	 *
-	 * This method interacts with the mobile implementation of the editor preview,
-	 * which:
-	 * 	1. launch a new tab.
-	 * 	2. load the preview.
+	 * For Mobile viewports, this method will return a reference to a popup Page.
+	 * For Desktop and Tablet viewports, an error is thrown.
 	 *
-	 * This method will throw if used in a desktop environment.
-	 *
-	 * @throws {Error} If environment is not 'mobile'.
+	 * @returns {Promise<Page>} Handler for the popup page.
+	 * @throws {Error} If the current viewport is not of Mobile.
 	 */
-	async openPreviewAsMobile(): Promise< Page > {
+	async previewAsMobile(): Promise< Page > {
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
-			throw new Error( 'This method only works in a mobile environment.' );
+			throw new Error(
+				`This method only works in mobile viewport, current viewport: ${ envVariables.VIEWPORT_NAME } `
+			);
 		}
-		const frame = await this.getEditorFrame();
-		const [ popup ] = await Promise.all( [
-			this.page.waitForEvent( 'popup' ),
-			frame.click( selectors.previewButton ),
-		] );
-		await popup.waitForLoadState( 'load' );
-		return popup;
+		return await this.editorToolbarComponent.openMobilePreview();
 	}
 
 	/**
-	 * Click on the `Preview` button on the editor toolbar, then select requested the preview option.
+	 * Launches the Preview as non-mobile viewport.
 	 *
-	 * This method interacts with the non-mobile implementation of the editor preview,
-	 * which applies an attribute to the editor to simulate the preview environment.
+	 * For Desktop and Tablet viewports, this method will not return any value.
+	 * For Mobile viewport, an error is thrown.
 	 *
-	 * Additionally, this method only works in the desktop browser environment; in a mobile
-	 * environment, the Preview button will launch a new page. For mobile, use
-	 * `GutenbergEditorPage.openPreviewAsMobile` instead.
-	 *
-	 * @param {PreviewOptions} target Preview option to be selected.
-	 * @throws {Error} If environment is 'mobile'.
+	 * @param {PreviewOptions} target Target preview size.
+	 * @returns {Page|void} Handler for the Page object on mobile. Void otherwise.
+	 * @throws {Error} If the current viewport is not of Desktop or Tablet.
 	 */
-	async openPreviewAsDesktop( target: PreviewOptions ): Promise< void > {
+	async previewAsDesktop( target: PreviewOptions ): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			throw new Error( 'This method only works in a non-mobile environment.' );
+			throw new Error(
+				`This method only works in non-mobile viewport, current viewport: ${ envVariables.VIEWPORT_NAME } `
+			);
 		}
-		const frame = await this.getEditorFrame();
-		await frame.click( selectors.previewButton );
-		await frame.click( selectors.previewMenuItem( target ) );
-		const handle = await frame.waitForSelector( selectors.previewPane( target ) );
-		await handle.waitForElementState( 'stable' );
+		await this.editorToolbarComponent.openDesktopPreview( target );
 	}
 
 	/**
-	 * Terminates the Post Preview mode.
+	 * Closes the preview.
 	 *
-	 * This method will click on the Preview button if required, then select the `Desktop` entry,
-	 * which is the default view setting when the editor is opened initially.
-	 *
-	 * Additionally, this method only works in the desktop browser environment; in a mobile
-	 * environment, the Preview button would have launched a new page. For mobile, close
-	 * the new page instead.
-	 *
-	 * @throws {Error} If environment is 'mobile'.
+	 * For Desktop viewports, this method will return the editor pane to the default
+	 * value of `desktop`.
+	 * For Mobile viewports, this method will do nothing.
 	 */
 	async closePreview(): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			throw new Error( ' This method only works in a non-mobile environment.' );
+			return;
 		}
-		const frame = await this.getEditorFrame();
-
-		// Restore the editor view to Desktop size.
-		await this.openPreviewAsDesktop( 'Desktop' );
-
-		// Ensure the preview menu is closed and that preview settings are back to default (Desktop).
-		await frame.waitForSelector( `${ selectors.previewButton }[aria-expanded=false]` );
-		await frame.waitForSelector( selectors.previewPane( 'Desktop' ) );
+		await this.editorToolbarComponent.openDesktopPreview( 'Desktop' );
 	}
 }

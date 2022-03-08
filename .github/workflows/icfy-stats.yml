@@ -32,6 +32,7 @@ jobs:
         with:
           name: icfy
           path: icfy-stats
+          retention-days: 7
       - name: Upload build artifact
         env:
           ICFY_SECRET: ${{ secrets.ICFY_SECRET }}

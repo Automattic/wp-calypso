@@ -136,7 +136,6 @@ const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean }
 
 const DeleteButtonWrapper = styled.div`
 	width: 100%;
-	order: 1;
 `;
 
 const DeleteButton = styled( Button )< { theme?: Theme } >`
@@ -929,6 +928,30 @@ function WPLineItem( {
 					isSummary={ isSummary }
 				/>
 			</span>
+
+			{ product && ! containsPartnerCoupon && (
+				<LineItemMeta>
+					<LineItemSublabelAndPrice product={ product } />
+					<DomainDiscountCallout product={ product } />
+					<FirstTermDiscountCallout product={ product } />
+					<CouponDiscountCallout product={ product } />
+					<IntroductoryOfferCallout product={ product } />
+				</LineItemMeta>
+			) }
+
+			{ product && containsPartnerCoupon && (
+				<LineItemMeta>
+					<LineItemSublabelAndPrice product={ product } />
+					<CouponDiscountCallout product={ product } />
+				</LineItemMeta>
+			) }
+
+			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
+
+			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
+
+			{ children }
+
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
 					<DeleteButtonWrapper>
@@ -971,29 +994,6 @@ function WPLineItem( {
 					/>
 				</>
 			) }
-
-			{ product && ! containsPartnerCoupon && (
-				<LineItemMeta>
-					<LineItemSublabelAndPrice product={ product } />
-					<DomainDiscountCallout product={ product } />
-					<FirstTermDiscountCallout product={ product } />
-					<CouponDiscountCallout product={ product } />
-					<IntroductoryOfferCallout product={ product } />
-				</LineItemMeta>
-			) }
-
-			{ product && containsPartnerCoupon && (
-				<LineItemMeta>
-					<LineItemSublabelAndPrice product={ product } />
-					<CouponDiscountCallout product={ product } />
-				</LineItemMeta>
-			) }
-
-			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
-
-			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
-
-			{ children }
 		</div>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */

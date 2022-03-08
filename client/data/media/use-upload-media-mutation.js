@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import {
 	failMediaItemRequest,
@@ -8,9 +8,9 @@ import {
 } from 'calypso/state/media/actions';
 import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
 import { isFileList } from 'calypso/state/media/utils/is-file-list';
-import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
 
 export const useUploadMediaMutation = ( queryOptions = {} ) => {
+	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const mutation = useMutation(
 		( { file, siteId, postId, uploader } ) => uploader( file, siteId, postId ),
@@ -24,7 +24,7 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 				dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
 				dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
 
-				dispatch( requestMediaStorage( siteId ) );
+				queryClient.invalidateQueries( [ 'media-storage', siteId ] );
 			},
 			onError( error, { siteId, transientMedia } ) {
 				dispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );

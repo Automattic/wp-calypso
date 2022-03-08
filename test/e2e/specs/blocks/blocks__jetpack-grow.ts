@@ -16,10 +16,10 @@ import { createBlockTests } from './shared/block-smoke-testing';
 
 const blockFlows: BlockFlow[] = [
 	new BusinessHoursFlow( { day: 'Sat' } ),
-	new WhatsAppButtonFlow( { phoneNumber: 1234567890, buttonText: 'Porpoises swim happily' } ),
 	new ContactFormFlow( { nameLabel: 'Angry dolphins flip swiftly' } ),
 	new SubscribeFlow(),
 	new ContactInfoBlockFlow( { email: 'foo@example.com', phoneNumber: '(213) 621-0002' } ),
+	new WhatsAppButtonFlow( { phoneNumber: 1234567890, buttonText: 'Porpoises swim happily' } ),
 ];
 
 // Interacting with the Premium Content toolbar is currently broken on mobile, so only adding for desktop:

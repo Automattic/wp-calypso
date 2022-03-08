@@ -56,6 +56,7 @@ import {
 	FEATURE_FILTERING_V2,
 	FEATURE_FREE_BLOG_DOMAIN,
 	FEATURE_FREE_DOMAIN,
+	FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 	FEATURE_FREE_THEMES,
 	FEATURE_FREE_THEMES_SIGNUP,
 	FEATURE_FREE_WORDPRESS_THEMES,
@@ -299,6 +300,15 @@ export const FEATURES_LIST = {
 						br: <br />,
 					},
 				}
+			),
+	},
+
+	[ FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL ]: {
+		getSlug: () => FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
+		getTitle: () => i18n.translate( 'Free Professional Email for 3 months' ),
+		getDescription: () =>
+			i18n.translate(
+				'Custom email address with mailbox, calendar, templates and more. Register free for 3 months with your custom domain. After 3 months, you have the option to renew or cancel your email subscription.'
 			),
 	},
 

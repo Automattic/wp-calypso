@@ -1,6 +1,4 @@
-import getFrontPageEditorUrl from 'calypso/state/selectors/get-front-page-editor-url';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
-import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import { getThemeCustomizeUrl } from 'calypso/state/themes/selectors';
 /**
  * Returns the URL for clicking on "Customize". The block editor URL is returned for sites with
@@ -16,11 +14,6 @@ export default function getCustomizeUrl( state, themeId, siteId, isFSEActive = f
 	// Core FSE
 	if ( isFSEActive ) {
 		return getSiteEditorUrl( state, siteId );
-	}
-
-	// Legacy dotcom FSE
-	if ( isSiteUsingLegacyFSE( state, siteId ) ) {
-		return getFrontPageEditorUrl( state, siteId );
 	}
 
 	return getThemeCustomizeUrl( state, themeId, siteId );

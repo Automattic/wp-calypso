@@ -12,10 +12,8 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getCurrentUserTimeSinceSignup from 'calypso/state/selectors/get-current-user-time-since-signup';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
-import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
@@ -39,7 +37,6 @@ export const QuickLinks = ( {
 	customizeUrl,
 	isAtomic,
 	isStaticHomePage,
-	showCustomizer,
 	canAddEmail,
 	menusUrl,
 	trackEditHomepageAction,
@@ -63,7 +60,6 @@ export const QuickLinks = ( {
 	siteSlug,
 	blockEditorSettings,
 	areBlockEditorSettingsLoading,
-	daysSinceSignup,
 } ) => {
 	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
 
@@ -123,7 +119,7 @@ export const QuickLinks = ( {
 					materialIcon="insert_drive_file"
 				/>
 			) }
-			{ showCustomizer && canCustomize && (
+			{ canCustomize && (
 				<>
 					<ActionBox
 						href={ menusUrl }
@@ -189,7 +185,7 @@ export const QuickLinks = ( {
 						gridicon="plugins"
 					/>
 					<ActionBox
-						href={ 'https://wp.me/logo-maker/?utm_campaign=my_home_' + daysSinceSignup + 'd' }
+						href="https://wp.me/logo-maker/?utm_campaign=my_home"
 						onClick={ trackDesignLogoAction }
 						target="_blank"
 						label={
@@ -400,7 +396,6 @@ const mapStateToProps = ( state ) => {
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
-		showCustomizer: ! isSiteUsingLegacyFSE( state, siteId ),
 		canAddEmail,
 		siteSlug,
 		isStaticHomePage,
@@ -409,7 +404,6 @@ const mapStateToProps = ( state ) => {
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		isUnifiedNavEnabled: isNavUnificationEnabled,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		daysSinceSignup: getCurrentUserTimeSinceSignup( state ),
 	};
 };
 

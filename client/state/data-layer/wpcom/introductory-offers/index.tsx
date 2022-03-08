@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import {
 	SITE_INTRO_OFFER_RECEIVE,
 	SITE_INTRO_OFFER_REQUEST,
@@ -7,6 +8,7 @@ import {
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 const fetchIntroOffers = ( action: { siteId: number | 'none' } ) => {
 	return http(
@@ -39,11 +41,15 @@ const onUpdateSuccess = ( action: { siteId: number | 'none' }, response: unknown
 	];
 };
 
-const onUpdateError = () => {
+const onUpdateError = ( action: { siteId: number | 'none' } ) => {
 	return [
 		{
 			type: SITE_INTRO_OFFER_REQUEST_FAILURE,
+			siteId: action.siteId,
 		},
+		errorNotice(
+			translate( 'Error loading introductory discounts. Some displayed prices may be incorrect.' )
+		),
 	];
 };
 

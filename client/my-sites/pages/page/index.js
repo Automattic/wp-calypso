@@ -27,7 +27,6 @@ import { getPreviewURL, userCan } from 'calypso/state/posts/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import { shouldLoadGutenframe } from 'calypso/state/selectors/should-load-gutenframe/';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
@@ -251,11 +250,10 @@ class Page extends Component {
 		} );
 
 	getPostsPageItem() {
-		const { canManageOptions, isLegacyFSE, page, translate } = this.props;
+		const { canManageOptions, page, translate } = this.props;
 
 		if (
 			! canManageOptions ||
-			isLegacyFSE ||
 			! this.props.hasStaticFrontPage ||
 			'publish' !== page.status ||
 			this.props.isFrontPage
@@ -765,7 +763,6 @@ const mapState = ( state, props ) => {
 			isJetpackSite( state, pageSiteId ),
 		wpAdminGutenberg: ! shouldLoadGutenframe( state, pageSiteId, 'page' ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
-		isLegacyFSE: isSiteUsingLegacyFSE( state, pageSiteId ),
 		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),
 	};
 };

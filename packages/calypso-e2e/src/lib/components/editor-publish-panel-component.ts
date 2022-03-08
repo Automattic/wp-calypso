@@ -58,6 +58,9 @@ export class EditorPublishPanelComponent {
 	 */
 	async closePanel(): Promise< void > {
 		// Construct a comma-separated list of CSS selectors so that one of them will match.
+		if ( ! ( await this.panelIsOpen() ) ) {
+			return;
+		}
 		const selector = `${ selectors.cancelPublishButton }, ${ selectors.postPublishClosePanelButton }`;
 		const locator = this.frameLocator.locator( selector );
 		await locator.click();

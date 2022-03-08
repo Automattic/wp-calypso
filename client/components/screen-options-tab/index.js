@@ -3,9 +3,11 @@ import classNames from 'classnames';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import versionCompare from 'calypso/lib/version-compare';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ScreenSwitcher, { DEFAULT_VIEW } from './screen-switcher';
@@ -17,7 +19,7 @@ const isBoolean = ( val ) => 'boolean' === typeof val;
 const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	const ref = useRef( null );
 	const [ isOpen, setIsOpen ] = useState( false );
-	const { __ } = useI18n();
+	const { _x } = useI18n();
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId );
@@ -27,6 +29,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 		getSiteOption( state, siteId, 'jetpack_version' )
 	);
 	const isSsoActive = useSelector( ( state ) => isJetpackModuleActive( state, siteId, 'sso' ) );
+	const plan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
 
 	const handleToggle = useCallback(
 		( bool ) => {
@@ -86,6 +89,15 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	}
 
 	const onSwitchView = ( view ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_dashboard_quick_switch_link_clicked', {
+				blog_id: siteId,
+				current_page: wpAdminPath,
+				destination: view,
+				plan,
+			} )
+		);
+
 		if ( view === DEFAULT_VIEW ) {
 			setIsOpen( false );
 		}
@@ -94,7 +106,9 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 	return (
 		<div className="screen-options-tab" ref={ ref } data-testid="screen-options-tab">
 			<button className="screen-options-tab__button" onClick={ handleToggle }>
-				<span className="screen-options-tab__label">{ __( 'Screen Options' ) }</span>
+				<span className="screen-options-tab__label">
+					{ _x( 'View', 'View options to switch between' ) }
+				</span>
 				<span
 					className={ classNames( 'screen-options-tab__icon', {
 						'screen-options-tab__icon--open': isOpen,
