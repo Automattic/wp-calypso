@@ -133,7 +133,7 @@ class Media extends Component {
 		const mimeType = getMimeType( fileName );
 
 		const item = {
-			ID: ID,
+			ID,
 			media: {
 				fileName: fileName,
 				fileContents: blob,
@@ -141,7 +141,9 @@ class Media extends Component {
 			},
 		};
 
-		this.props.editMedia( site.ID, item );
+		const originalItem = this.getSelectedItem( this.state.editedImageItem );
+
+		this.props.editMedia( site.ID, item, originalItem );
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
@@ -188,7 +190,7 @@ class Media extends Component {
 			return;
 		}
 
-		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid } );
+		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid }, item );
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
 	};

@@ -251,7 +251,7 @@ export const selectedItems = ( state = {}, action ) => {
 			const { mediaIds, siteId } = action;
 			return {
 				...state,
-				[ siteId ]: state[ siteId ].filter( ( mediaId ) => ! mediaIds.includes( mediaId ) ),
+				[ siteId ]: state[ siteId ].filter( ( media ) => ! mediaIds.includes( media.ID ) ),
 			};
 		}
 	}

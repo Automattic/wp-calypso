@@ -1,37 +1,26 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { createTransientMedia } from 'calypso/lib/media/utils';
 import wp from 'calypso/lib/wp';
-import { editMediaItem, receiveMedia } from 'calypso/state/media/actions';
 import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import getMediaItem from 'calypso/state/selectors/get-media-item';
 
-const startEditMediaItem = ( siteId, item ) => ( dispatch, getState ) => {
-	const transientMediaItem = createTransientMedia( item.media || item.media_url );
-
-	if ( ! transientMediaItem ) {
-		return;
+const updateMediaItemForPaginatedQuery = ( item ) => ( data ) => {
+	if ( ! data || ! Array.isArray( data.pages ) ) {
+		return data;
 	}
-
-	const originalMediaItem = getMediaItem( getState(), siteId, item.ID );
-	const editedMediaItem = {
-		...originalMediaItem,
-		...transientMediaItem,
-		ID: item.ID,
-		isDirty: true,
-	};
-
-	dispatch( editMediaItem( siteId, editedMediaItem, item ) );
-
-	return originalMediaItem;
+	const pages = data.pages.map( ( { media, ...rest } ) => ( {
+		media: media.map( ( mediaItem ) => ( mediaItem.ID === item.ID ? item : mediaItem ) ),
+		...rest,
+	} ) );
+	return { ...data, pages };
 };
 
 export function useEditMediaMutation( queryOptions ) {
-	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 
 	const mutation = useMutation(
 		( { siteId, mediaId, payload } ) =>
@@ -39,21 +28,59 @@ export function useEditMediaMutation( queryOptions ) {
 				path: `/sites/${ siteId }/media/${ mediaId }/edit`,
 				formData: Object.entries( payload ),
 			} ),
-		queryOptions
+		{
+			...queryOptions,
+			onSuccess( ...args ) {
+				const [ editedMediaItem, { siteId } ] = args;
+
+				queryClient.setQueriesData(
+					[ 'media', siteId ],
+					updateMediaItemForPaginatedQuery( editedMediaItem )
+				);
+
+				queryOptions.onSuccess?.( ...args );
+			},
+			onError( ...args ) {
+				const [ , { originalMediaItem, siteId } ] = args;
+
+				queryClient.setQueriesData(
+					[ 'media', siteId ],
+					updateMediaItemForPaginatedQuery( originalMediaItem )
+				);
+
+				queryOptions.onError?.( ...args );
+			},
+		}
 	);
 
 	const { mutate } = mutation;
 
 	const editMedia = useCallback(
-		( siteId, item ) => {
+		( siteId, item, originalMediaItem ) => {
 			const { ID: mediaId, ...payload } = item;
-			const originalMediaItem = dispatch( startEditMediaItem( siteId, item ) );
+			const transientMediaItem = createTransientMedia( item.media || item.media_url );
+
+			if ( ! transientMediaItem ) {
+				return;
+			}
+
+			const editedMediaItem = {
+				...originalMediaItem,
+				...transientMediaItem,
+				ID: mediaId,
+				isDirty: true,
+			};
+
+			queryClient.setQueriesData(
+				[ 'media', siteId ],
+				updateMediaItemForPaginatedQuery( editedMediaItem )
+			);
 
 			if ( originalMediaItem ) {
 				mutate( { siteId, mediaId, payload, originalMediaItem } );
 			}
 		},
-		[ dispatch, mutate ]
+		[ mutate, queryClient ]
 	);
 
 	return { ...mutation, editMedia };
@@ -67,12 +94,10 @@ export const withEditMedia = createHigherOrderComponent(
 			onMutate( { mediaId } ) {
 				dispatch( removeNotice( `update-media-notice-${ mediaId }` ) );
 			},
-			onSuccess( media, { siteId } ) {
-				dispatch( receiveMedia( siteId, media ) );
-				dispatch( gutenframeUpdateImageBlocks( media, 'updated' ) );
+			onSuccess( editedMediaItem ) {
+				dispatch( gutenframeUpdateImageBlocks( editedMediaItem, 'updated' ) );
 			},
-			onError( error, { siteId, originalMediaItem } ) {
-				dispatch( receiveMedia( siteId, originalMediaItem ) );
+			onError( error, { originalMediaItem } ) {
 				dispatch(
 					errorNotice( translate( 'We were unable to process this media item.' ), {
 						id: `update-media-notice-${ originalMediaItem.ID }`,

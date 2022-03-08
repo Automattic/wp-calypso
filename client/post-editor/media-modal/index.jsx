@@ -263,7 +263,7 @@ export class EditorMediaModal extends Component {
 			return;
 		}
 
-		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid } );
+		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid }, item );
 
 		this.props.onRestoreMediaHook();
 	};
@@ -292,7 +292,9 @@ export class EditorMediaModal extends Component {
 			height && { height }
 		);
 
-		this.props.editMedia( site.ID, item );
+		const originalItem = this.props.selectedItems[ this.getDetailSelectedIndex() ];
+
+		this.props.editMedia( site.ID, item, originalItem );
 
 		resetAllImageEditorState();
 

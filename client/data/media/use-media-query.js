@@ -18,13 +18,15 @@ export const useMediaQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) =>
 			getNextPageParam( lastPage ) {
 				return lastPage.meta?.next_page;
 			},
-
 			select( data ) {
 				return {
 					media: data.pages.flatMap( ( page ) => page.media ),
 					total: data.pages[ 0 ].found,
 					...data,
 				};
+			},
+			meta: {
+				persist: false,
 			},
 		}
 	);
