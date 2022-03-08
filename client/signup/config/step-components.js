@@ -25,6 +25,7 @@ const stepNameToModuleName = {
 	'plans-new': 'plans',
 	'plans-business': 'plans',
 	'plans-ecommerce': 'plans',
+	'plans-managed': 'plans',
 	'plans-import': 'plans',
 	'plans-launch': 'plans',
 	'plans-personal': 'plans',
