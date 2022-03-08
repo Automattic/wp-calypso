@@ -444,35 +444,66 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		} );
 }
 
-export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
+export async function setDesignOnSite(
+	callback,
+	{ siteSlug, selectedDesign, intent, storeType },
+	stepProvidedItems,
+	reduxStore
+) {
 	if ( ! selectedDesign ) {
 		defer( callback );
 		return;
 	}
 
 	const { theme } = selectedDesign;
+	//@TODO: Get this list from a query rather than manually
+	const sellThemes = [ 'marl', 'winkel', 'attar', 'dorna', 'hari' ];
+	const choseSellTheme = sellThemes.includes( theme );
 
+	//Set the theme
 	wpcom.req
 		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: true } )
-		.then( () =>
-			wpcom.req.post( {
+		.then( () => callback() )
+		.catch( ( errors ) => callback( [ errors ] ) );
+
+	//If we don't have sell intent or we're using a seller-oriented theme, run regular theme setup
+	if ( 'sell' !== intent || choseSellTheme ) {
+		wpcom.req
+			.post( {
 				path: `/sites/${ siteSlug }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
 				body: { trim_content: true },
 			} )
-		)
-		.then( () =>
-			wpcom.req.get( {
-				path: `/sites/${ siteSlug }/block-editor`,
+			.then( () => callback() )
+			.catch( ( errors ) => callback( [ errors ] ) );
+	} else {
+		//Do manual setup with payments block pattern
+	}
+
+	//If we have the sell intent, change the store footer
+	if ( 'sell' === intent ) {
+		wpcom.req
+			.post( {
+				path: `/sites/${ siteSlug }/seller_footer`,
 				apiNamespace: 'wpcom/v2',
 			} )
-		)
+			.then( () => callback() )
+			.catch( ( errors ) => callback( [ errors ] ) );
+	}
+
+	//Check for FSE capabilities for getDestinationFromIntent
+	wpcom.req
+		.get( {
+			path: `/sites/${ siteSlug }/block-editor`,
+			apiNamespace: 'wpcom/v2',
+		} )
 		.then( ( data ) => {
+			console.log( data.is_fse_active );
 			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
 		} )
-		.catch( ( errors ) => {
-			callback( [ errors ] );
-		} );
+		.catch( ( errors ) => callback( [ errors ] ) );
+
+	//Determine which type of theme setup to run
 }
 
 export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {

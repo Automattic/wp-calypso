@@ -647,8 +647,20 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
+			providesDependencies: [
+				'isFSEActive',
+				'selectedDesign',
+				'selectedSiteCategory',
+				'intent',
+				'storeType',
+			],
+			optionalDependencies: [
+				'isFSEActive',
+				'selectedDesign',
+				'selectedSiteCategory',
+				'intent',
+				'storeType',
+			],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
