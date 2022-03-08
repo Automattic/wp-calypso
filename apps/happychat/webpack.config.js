@@ -1,5 +1,6 @@
 const path = require( 'path' );
 const process = require( 'process' ); // eslint-disable-line
+const BuildMetaPlugin = require( '@automattic/calypso-apps-builder/build-meta-webpack-plugin.cjs' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
@@ -11,7 +12,6 @@ const autoprefixerPlugin = require( 'autoprefixer' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
-
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const outputPath = path.join( __dirname, 'dist' );
@@ -71,6 +71,7 @@ module.exports = {
 	},
 	node: false,
 	plugins: [
+		BuildMetaPlugin( { outputPath } ),
 		new webpack.DefinePlugin( {
 			global: 'window',
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
