@@ -7,7 +7,7 @@ import DesignPicker, {
 	getDesignUrl,
 	useThemeDesignsQuery,
 } from '@automattic/design-picker';
-import { englishLocales, useLocale } from '@automattic/i18n-utils';
+import { useLocale } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -18,9 +18,9 @@ import WebPreview from 'calypso/components/web-preview';
 import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { getSiteId } from 'calypso/state/sites/selectors';
+// import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+// import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+// import { getSiteId } from 'calypso/state/sites/selectors';
 import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
@@ -29,7 +29,7 @@ import type { Design, Category } from '@automattic/design-picker';
 /**
  * The design picker step
  */
-const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
+const DesignSetupSite: Step = function DesignSetupSite() {
 	const translate = useTranslate();
 	const locale = useLocale();
 	// const signupDependencies = useSelector( ( state ) => getSignupDependencyStore( state ) );
@@ -38,11 +38,8 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 	const flowName = 'builder-flow';
 	const intent = 'builder';
 	const siteSlug = 'site-slug';
-	const siteTitle = 'site title';
+	// const siteTitle = 'site title';
 	const sitePlanSlug = '';
-
-	console.log( 'TRANSLATE.LOCALESLUG', translate.localeSlug );
-	console.log( 'LOCALE', locale );
 
 	const [ selectedDesign, setSelectedDesign ] = useState< Design | undefined >( undefined );
 
@@ -162,7 +159,6 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 
 	function pickDesign( _selectedDesign: Design ) {
 		setSelectedDesign( _selectedDesign );
-		console.log( 'PICKED DESIGN' );
 	}
 
 	function previewDesign( _selectedDesign: Design ) {
@@ -202,7 +198,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 		return (
 			<>
 				<WebPreview
-					className="design-picker__web-preview"
+					className="design-setup-site__web-preview"
 					showPreview
 					isContentOnly
 					showClose={ false }
@@ -231,7 +227,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 			onSelect={ pickDesign }
 			onPreview={ previewDesign }
 			className={ classnames( {
-				'design-picker-step__has-categories': showDesignPickerCategories,
+				'design-setup-site__has-categories': showDesignPickerCategories,
 			} ) }
 			highResThumbnails
 			premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
