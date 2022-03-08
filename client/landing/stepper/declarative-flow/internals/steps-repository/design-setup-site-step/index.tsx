@@ -1,23 +1,24 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
 import DesignPicker, {
 	FeaturedPicksButtons,
 	PremiumBadge,
 	useCategorization,
+	isBlankCanvasDesign,
 	getDesignUrl,
 	useThemeDesignsQuery,
 } from '@automattic/design-picker';
-import { useLocale } from '@automattic/i18n-utils';
+import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 // import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
-import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
+// import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
+import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 // import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 // import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 // import { getSiteId } from 'calypso/state/sites/selectors';
@@ -32,42 +33,48 @@ import type { Design, Category } from '@automattic/design-picker';
 const DesignSetupSite: Step = function DesignSetupSite() {
 	const translate = useTranslate();
 	const locale = useLocale();
-	// const signupDependencies = useSelector( ( state ) => getSignupDependencyStore( state ) );
+	// // const signupDependencies = useSelector( ( state ) => getSignupDependencyStore( state ) );
 
-	// TODO EMN: These values should come from state
+	// // TODO EMN: These values should come from state
 	const flowName = 'builder-flow';
 	const intent = 'builder';
 	const siteSlug = 'site-slug';
-	// const siteTitle = 'site title';
-	const sitePlanSlug = '';
+	const siteTitle = 'site title';
+	const isReskinned = true;
+	const sitePlanSlug = 'free_plan';
 
 	const [ selectedDesign, setSelectedDesign ] = useState< Design | undefined >( undefined );
 
 	const showDesignPickerCategories = isEnabled( 'signup/design-picker-categories' );
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 
-	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
+	// // In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
 		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
-
 	const isPremiumThemeAvailable = useMemo(
 		() => planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
 		[ sitePlanSlug ]
 	);
-
-	const userLoggedIn = false; //useSelector( ( state ) => isUserLoggedIn( state ) );
 
 	const tier =
 		isPremiumThemeAvailable || isEnabled( 'signup/design-picker-premium-themes-checkout' )
 			? 'all'
 			: 'free';
 
-	// Limit themes to those that support the Site editor, if site is fse eligible
-	const siteId = 1424; //useSelector( ( state ) => getSiteId( state, siteSlug ) );
-	const {
-		isLoading: blockEditorSettingsAreLoading,
-		data: blockEditorSettings,
-	} = useBlockEditorSettingsQuery( siteId, userLoggedIn );
+	// // // Limit themes to those that support the Site editor, if site is fse eligible
+	// TODO EMN: This needs redux
+	// const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
+	const blockEditorSettingsAreLoading = false;
+	const blockEditorSettings = {
+		is_fse_eligible: true,
+	};
+
+	const userLoggedIn = false; //useSelector( ( state ) => isUserLoggedIn( state ) );
+	// TODO EMN: This will work when we have a store
+	// // // const {
+	// // // 	isLoading: blockEditorSettingsAreLoading,
+	// // // 	data: blockEditorSettings,
+	// // // } = useBlockEditorSettingsQuery( siteId, userLoggedIn );
 	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
 	const themeFilters = isFSEEligible
 		? 'auto-loading-homepage,full-site-editing'
@@ -105,12 +112,12 @@ const DesignSetupSite: Step = function DesignSetupSite() {
 
 		const text = translate( 'Choose a starting theme. You can change it later.' );
 
-		// if ( englishLocales.includes( locale ) ) {
-		// 	// An English only trick so the line wraps between sentences.
-		// 	return text
-		// 		.replace( /\s/g, '\xa0' ) // Replace all spaces with non-breaking spaces
-		// 		.replace( /\.\s/g, '. ' ); // Replace all spaces at the end of sentences with a regular breaking space
-		// }
+		if ( englishLocales.includes( locale ) ) {
+			// An English only trick so the line wraps between sentences.
+			return text
+				.replace( /\s/g, '\xa0' ) // Replace all spaces with non-breaking spaces
+				.replace( /\.\s/g, '. ' ); // Replace all spaces at the end of sentences with a regular breaking space
+		}
 
 		return text;
 	}
@@ -152,60 +159,67 @@ const DesignSetupSite: Step = function DesignSetupSite() {
 	};
 	const categorization = useCategorization( designs, getCategorizationOptionsForStep() );
 
-	const renderCategoriesFooter = () =>
-		useFeaturedPicksButtons && (
-			<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
+	function renderCategoriesFooter() {
+		return (
+			<>
+				{ useFeaturedPicksButtons && (
+					<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
+				) }
+			</>
 		);
+	}
 
 	function pickDesign( _selectedDesign: Design ) {
 		setSelectedDesign( _selectedDesign );
 	}
 
 	function previewDesign( _selectedDesign: Design ) {
-		// const locale = ! userLoggedIn ? getLocaleSlug() : '';
-
 		recordTracksEvent(
 			'calypso_signup_design_preview_select',
 			getEventPropsByDesign( _selectedDesign )
 		);
 
-		// TODO EMN: What to do when Preview?
+		// TODO EMN: What to do when Preview? For the moment just select the design
+		setSelectedDesign( _selectedDesign );
 		// page(
 		// 	getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale, queryParams )
 		// );
 	}
 
-	function renderCheckoutModal() {
-		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
-			return null;
-		}
+	// function upgradePlan() {
+	// 	openCheckoutModal( [ PLAN_PREMIUM ] );
+	// }
 
-		return <AsyncCheckoutModal />;
-	}
+	// function renderCheckoutModal() {
+	// 	if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
+	// 		return null;
+	// 	}
+
+	// 	return <AsyncCheckoutModal />;
+	// }
 
 	if ( selectedDesign ) {
-		// 	const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
-		// 	const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
-		// 	const defaultDependencies = { selectedDesign };
-		// 	const locale = ! userLoggedIn ? getLocaleSlug() : '';
-		// 	const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
-		const previewUrl = getDesignUrl( selectedDesign, locale, {
+		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
+		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
+		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
+		const previewUrl = getDesignUrl( selectedDesign, translate.localeSlug, {
 			iframe: true,
 			// If the user fills out the site title with write intent, we show it on the design preview
 			// Otherwise, use the title of selected design directly
-			// site_title: intent === 'write' && siteTitle ? siteTitle : selectedDesign?.title,
+			site_title: intent === 'write' && siteTitle ? siteTitle : selectedDesign?.title,
 		} );
 		return (
 			<>
-				<WebPreview
-					className="design-setup-site__web-preview"
+				<div>Selected: { designTitle }</div>
+				{ /* <WebPreview
+					className="design-picker__web-preview"
 					showPreview
 					isContentOnly
 					showClose={ false }
 					showEdit={ false }
 					externalUrl={ siteSlug }
 					showExternal={ true }
-					previewUrl={ previewUrl }
+					previewUrl={ 'url test' }
 					loadingMessage={ translate(
 						'{{strong}}One moment, please…{{/strong}} loading your site.',
 						{
@@ -213,37 +227,40 @@ const DesignSetupSite: Step = function DesignSetupSite() {
 						}
 					) }
 					toolbarComponent={ PreviewToolbar }
-				/>
-				{ renderCheckoutModal() }
+				/> */ }
+				{ /* { renderCheckoutModal() } */ }
 			</>
 		);
 	}
 
 	return (
-		<DesignPicker
-			designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
-			// theme={ isReskinned ? 'light' : 'dark' }
-			locale={ locale }
-			onSelect={ pickDesign }
-			onPreview={ previewDesign }
-			className={ classnames( {
-				'design-setup-site__has-categories': showDesignPickerCategories,
-			} ) }
-			highResThumbnails
-			premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
-			categorization={ showDesignPickerCategories ? categorization : undefined }
-			recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
-			categoriesHeading={
-				<FormattedHeader
-					id={ 'step-header' }
-					headerText={ headerText() }
-					subHeaderText={ subHeaderText() }
-					align="left"
-				/>
-			}
-			categoriesFooter={ renderCategoriesFooter() }
-			isPremiumThemeAvailable={ isPremiumThemeAvailable }
-		/>
+		<div className="design-setup-site-step">
+			<DesignPicker
+				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+				theme={ isReskinned ? 'light' : 'dark' }
+				locale={ locale }
+				onSelect={ pickDesign }
+				onPreview={ previewDesign }
+				// onUpgrade={ upgradePlan }
+				className={ classnames( {
+					'design-setup-site__has-categories': showDesignPickerCategories,
+				} ) }
+				highResThumbnails
+				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
+				categorization={ showDesignPickerCategories ? categorization : undefined }
+				recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
+				categoriesHeading={
+					<FormattedHeader
+						id={ 'step-header' }
+						headerText={ headerText() }
+						subHeaderText={ subHeaderText() }
+						align="left"
+					/>
+				}
+				categoriesFooter={ renderCategoriesFooter() }
+				isPremiumThemeAvailable={ isPremiumThemeAvailable }
+			/>
+		</div>
 	);
 };
 
