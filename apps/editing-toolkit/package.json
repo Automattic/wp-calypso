@@ -60,7 +60,7 @@
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/whats-new": "workspace:^",
-		"@babel/core": "^7.16.7",
+		"@babel/core": "^7.17.5",
 		"@emotion/react": "^11.4.1",
 		"@popperjs/core": "^2.10.2",
 		"@sentry/browser": "^6.16.1",
