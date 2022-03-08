@@ -30,8 +30,8 @@ export type AccountEmailFragmentProps = {
 	emailInputId?: string;
 	emailInputName?: string;
 	emailValidationHandler?: ( isEmailValid: boolean ) => void;
-	getFocusHandler?: ( focusName: string ) => () => void;
 	isEmailControlDisabled?: boolean;
+	onFocus?: () => void;
 	unsavedUserSettings?: UserSettingsType;
 	userSettings?: UserSettingsType;
 };
@@ -55,12 +55,6 @@ const getUserSetting = ( {
 	userSettings: UserSettingsType;
 } ) => {
 	return unsavedUserSettings?.[ settingName ] ?? userSettings?.[ settingName ] ?? '';
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const noopFocusHandler = ( focusName: string ) => {
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	return () => {};
 };
 
 const AccountEmailValidationNotice = ( {
@@ -164,8 +158,8 @@ const AccountEmailFragment = ( {
 	emailInputId = 'user_email',
 	emailInputName = 'user_email',
 	emailValidationHandler,
-	getFocusHandler = noopFocusHandler,
 	isEmailControlDisabled = false,
+	onFocus,
 	unsavedUserSettings = {},
 	userSettings = {},
 }: AccountEmailFragmentProps ): JSX.Element => {
@@ -180,7 +174,7 @@ const AccountEmailFragment = ( {
 	const emailAddress = getUserSetting( {
 		settingName: isEmailChangePending ? 'new_user_email' : 'user_email',
 		unsavedUserSettings,
-		userSettings
+		userSettings,
 	} );
 
 	const onEmailAddressChange = ( event: ChangeEvent< HTMLInputElement > ): void => {
@@ -217,7 +211,7 @@ const AccountEmailFragment = ( {
 					id={ emailInputId }
 					name={ emailInputName }
 					isError={ emailInvalidReason !== EMAIL_VALIDATION_REASON_IS_VALID }
-					onFocus={ getFocusHandler( 'Email Address Field' ) }
+					onFocus={ onFocus }
 					value={ emailAddress }
 					onChange={ onEmailAddressChange }
 				/>
