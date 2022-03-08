@@ -1,4 +1,5 @@
 import page from 'page';
+import { setLocaleMiddleware } from 'calypso/controller/shared';
 import { loggedInSiteSelection } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 import { jetpackStoragePlans } from 'calypso/my-sites/plans/jetpack-plans/jetpack-storage-plans';
@@ -17,8 +18,13 @@ export default function (): void {
 	page( '/plans/:site', ( { params } ) => page.redirect( `/pricing/${ params.site }` ) );
 	page( '/plans', '/pricing' );
 
-	jetpackStoragePlans( '/:locale/pricing', loggedInSiteSelection, jetpackPricingContext );
+	jetpackStoragePlans(
+		'/:lang/pricing',
+		setLocaleMiddleware(),
+		loggedInSiteSelection,
+		jetpackPricingContext
+	);
 	jetpackStoragePlans( '/pricing', loggedInSiteSelection, jetpackPricingContext );
-	jetpackPlans( '/:locale/pricing', jetpackPricingContext );
+	jetpackPlans( '/:lang/pricing', setLocaleMiddleware(), jetpackPricingContext );
 	jetpackPlans( '/pricing', loggedInSiteSelection, jetpackPricingContext );
 }

@@ -51,7 +51,7 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const urlQueryArgs: QueryArgs = context.query;
-	const { locale } = context.params;
+	const { lang } = context.params;
 	const { site: siteParam, duration: durationParam } = getParamsFromContext( context );
 	const duration = siteId && ( getCurrentPlanTerm( state, siteId ) as Duration );
 	const planRecommendation = getPlanRecommendationFromContext( context );
@@ -74,7 +74,7 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 			footer={ context.footer }
 			planRecommendation={ planRecommendation }
 			enableUserLicensesDialog={ enableUserLicensesDialog }
-			locale={ locale }
+			locale={ lang }
 		/>
 	);
 
@@ -89,7 +89,7 @@ export function jetpackFreeWelcome( context: PageJS.Context, next: () => void ):
 export const jetpackStoragePricing = ( context: PageJS.Context, next: () => void ) => {
 	const { site, duration } = getParamsFromContext( context );
 	const urlQueryArgs: QueryArgs = context.query;
-	const { locale } = context.params;
+	const { lang } = context.params;
 	context.header = <StoragePricingHeader />;
 	context.primary = (
 		<StoragePricing
@@ -99,7 +99,7 @@ export const jetpackStoragePricing = ( context: PageJS.Context, next: () => void
 			defaultDuration={ stringToDuration( duration ) || duration || TERM_ANNUALLY }
 			urlQueryArgs={ urlQueryArgs }
 			siteSlug={ site || context.query.site }
-			locale={ locale }
+			locale={ lang }
 		/>
 	);
 	next();

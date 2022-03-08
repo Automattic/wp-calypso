@@ -209,7 +209,7 @@ export async function cloudSiteSelection(
 	if ( siteFragment ) {
 		const languages = getLanguageSlugs().join( '|' );
 		// Regex defines url starts with /:locale/pricing or /pricing
-		const pricingMatchingPath = new RegExp( `(^/(${ languages })/pricing)|^/pricing` );
+		const pricingMatchingPath = new RegExp( `^(/(?:${ languages }))?/pricing` );
 
 		if ( pricingMatchingPath.test( context.path ) ) {
 			const { id } = await fetchSite( context, siteFragment );

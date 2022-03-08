@@ -385,9 +385,9 @@ export function signupForm( context, next ) {
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
-		const { locale } = context.params;
+		const { lang } = context.params;
 		context.primary = (
-			<JetpackSignup path={ context.path } locale={ locale } authQuery={ transformedQuery } />
+			<JetpackSignup path={ context.path } locale={ lang } authQuery={ transformedQuery } />
 		);
 	} else {
 		context.primary = <NoDirectAccessError />;

@@ -37,7 +37,7 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
+
 	page(
 		`/checkout/jetpack/:productSlug/${ getLanguageRouteParam() }`,
 		setLocaleMiddleware(),
@@ -96,8 +96,6 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
-	page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
 
 	page(
 		`/checkout/jetpack/:siteSlug/:productSlug/${ getLanguageRouteParam() }`,
@@ -234,26 +232,6 @@ export default function () {
 		redirectLoggedOut,
 		siteSelection,
 		upsellRedirect,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/checkout/:domainOrProduct',
-		redirectLoggedOut,
-		siteSelection,
-		redirectJetpackLegacyPlans,
-		checkout,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/checkout/:product/:domainOrProduct',
-		redirectLoggedOut,
-		siteSelection,
-		redirectJetpackLegacyPlans,
-		checkout,
 		makeLayout,
 		clientRender
 	);
