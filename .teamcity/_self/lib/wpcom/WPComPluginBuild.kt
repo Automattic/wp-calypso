@@ -199,11 +199,16 @@ open class WPComPluginBuild(
 
 					# 4. Create metadata file with info for the download script.
 					cd $archiveDir
-					tee build_meta.txt <<-EOM
-						commit_hash=%build.vcs.number%
-						commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
-						build_number=%build.number%
-						EOM
+					if [ -f build_meta.json ] ; then
+						# Add the build number to an existing meta JSON file.
+						jq '.tc_build_number = "%build.number%"' build_meta.json > build_meta.json.tmp && mv build_meta.json.tmp build_meta.json
+					else
+						tee build_meta.txt <<-EOM
+							commit_hash=%build.vcs.number%
+							commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
+							build_number=%build.number%
+							EOM
+					fi
 
 					# 5. Create artifact of cwd.
 					echo
