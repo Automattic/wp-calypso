@@ -23,10 +23,9 @@ export const PRODUCT_JETPACK_CRM_FREE_MONTHLY = 'jetpack_crm_free_monthly';
 export const PRODUCT_JETPACK_VIDEOPRESS = 'jetpack_videopress';
 export const PRODUCT_JETPACK_VIDEOPRESS_MONTHLY = 'jetpack_videopress_monthly';
 
-// Legacy Products`;
+// Legacy Products
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
 export const PRODUCT_JETPACK_BACKUP_REALTIME = 'jetpack_backup_realtime';
-
 export const PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY = 'jetpack_backup_daily_monthly';
 export const PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY = 'jetpack_backup_realtime_monthly';
 
