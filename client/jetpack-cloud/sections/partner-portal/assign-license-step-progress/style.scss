@@ -1,8 +1,15 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .assign-license-step-progress {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 40px;
+
+    @include break-medium {
+        justify-content: flex-start;
+    }
 
     &__step-complete, &__step-current {
         display: flex;
@@ -12,7 +19,19 @@
 
     &__step-separator,
     &__step-current {
-        margin-left: 1.25rem;
+        @include break-medium {
+            margin-left: 1.25rem;
+        }
+    }
+
+    &__step-separator {
+        border: 1px solid var( --studio-gray-80 );
+        width: 20px;
+        height: 0;
+
+        @include break-medium {
+            width: 40px;
+        }
     }
 
     &__step-circle {
@@ -42,9 +61,4 @@
         font-size: 0.75rem;
     }
 
-    &__step-separator {
-        border: 1px solid var( --studio-gray-80 );
-        width: 40px;
-        height: 0;
-    }
 }
