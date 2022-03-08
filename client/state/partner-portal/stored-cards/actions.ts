@@ -5,20 +5,30 @@ import type { AnyAction, Dispatch } from 'redux';
 
 import 'calypso/state/partner-portal/stored-cards/init';
 
-export const fetchStoredCards = () => ( dispatch: Dispatch< AnyAction > ) => {
+export const fetchStoredCards = ( paging: { startingAfter: string; endingBefore: string } ) => (
+	dispatch: Dispatch< AnyAction >
+) => {
 	dispatch( {
 		type: 'STORED_CARDS_FETCH',
 	} );
 
 	return wpcomJpl.req
-		.get( {
-			apiNamespace: 'wpcom/v2',
-			path: '/jetpack-licensing/stripe/payment-methods',
-		} )
-		.then( ( data: PaymentMethod[] ) => {
+		.get(
+			{
+				apiNamespace: 'wpcom/v2',
+				path: '/jetpack-licensing/stripe/payment-methods',
+			},
+			{ starting_after: paging.startingAfter, ending_before: paging.endingBefore }
+		)
+		.then( ( data: { items: PaymentMethod[]; has_more: boolean } ) => {
+			dispatch( {
+				type: 'STORED_CARDS_HAS_MORE_ITEMS',
+				hasMore: data.has_more,
+			} );
+
 			dispatch( {
 				type: 'STORED_CARDS_FETCH_COMPLETED',
-				list: data,
+				list: data.items,
 			} );
 		} )
 		.catch( ( error: Error ) => {
@@ -26,6 +36,8 @@ export const fetchStoredCards = () => ( dispatch: Dispatch< AnyAction > ) => {
 				type: 'STORED_CARDS_FETCH_FAILED',
 				error: error.message || i18n.translate( 'There was a problem retrieving stored cards.' ),
 			} );
+
+			return Promise.reject( error );
 		} );
 };
 
