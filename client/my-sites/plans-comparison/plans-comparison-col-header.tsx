@@ -37,7 +37,7 @@ const PlanDescription = styled.p`
 	color: var( --studio-gray-50 );
 	font-size: 0.875rem;
 	font-weight: 400;
-	margin: 0 0 1rem;
+	margin: 0 0 1.5rem;
 
 	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
 		.is-section-signup & {
@@ -68,7 +68,7 @@ const BillingTimeFrame = styled.div`
 	color: var( --studio-gray-40 );
 	font-size: 0.75rem;
 	font-weight: 500;
-	margin: 0.5rem 0;
+	margin: 0.5rem 0 1rem;
 `;
 
 export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {

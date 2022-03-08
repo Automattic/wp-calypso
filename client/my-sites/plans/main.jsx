@@ -207,7 +207,9 @@ class Plans extends Component {
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
 		}
-
+		const description = translate(
+			'See and compare the features available on each WordPress.com plan.'
+		);
 		return (
 			<div>
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -230,9 +232,8 @@ class Plans extends Component {
 							<FormattedHeader
 								brandFont
 								headerText={ translate( 'Plans' ) }
-								subHeaderText={ translate(
-									'See and compare the features available on each WordPress.com plan.'
-								) }
+								subHeaderText={ ! eligibleForManagedPlan && description }
+								tooltipText={ eligibleForManagedPlan && description }
 								align="left"
 							/>
 							<div id="plans" className="plans plans__has-sidebar">
