@@ -10,11 +10,6 @@ const slugify = ( string: string ) =>
 		.toLowerCase()
 		.replaceAll( ' ', '-' );
 
-const CATEGORY_COLORS: { [ key: string ]: string } = {
-	default: '#7c848b',
-	'website-building': '#9273af',
-};
-
 const ArticleLinksContainer = styled.div`
 	display: grid;
 	grid-template-columns: repeat( 3, 1fr );
@@ -23,7 +18,7 @@ const ArticleLinksContainer = styled.div`
 
 const LinkCardContainer = styled.div`
 	padding: 24px;
-	background: ${ ( props ) => props.background };
+	background: var( --${ ( props ) => props.background } );
 `;
 
 const LinkCardLabel = styled.div`
@@ -68,18 +63,21 @@ const EducationFooter = () => {
 			title: 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)',
 			url:
 				'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/',
+			background: 'studio-celadon-60',
 		},
 		{
 			category: 'customization',
 			title: 'How to Choose WordPress Plugins for Your Website (7 Tips)',
 			url:
 				'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/',
+			background: 'studio-purple-90',
 		},
 		{
 			category: 'seo',
 			title: 'Do You Need to Use SEO Plugins on Your WordPress.com Site?',
 			url:
 				'https://wordpress.com/go/tips/do-you-need-to-use-seo-plugins-on-your-wordpress-com-site/',
+			background: 'studio-wordpress-blue-90',
 		},
 	];
 
@@ -92,7 +90,7 @@ const EducationFooter = () => {
 						label={ deslugify( article.category ) } //TODO: find a proper util or add this one
 						title={ article.title }
 						url={ article.url }
-						background={ CATEGORY_COLORS[ article.category ] || CATEGORY_COLORS[ 'default' ] }
+						background={ article.background }
 						cta="Read More"
 					/>
 				) ) }
