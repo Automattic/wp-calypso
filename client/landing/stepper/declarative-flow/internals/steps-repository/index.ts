@@ -7,7 +7,7 @@ export { default as sell } from './sell';
 export { default as write } from './write';
 export { default as import } from './import';
 export { default as wpadmin } from './wpadmin';
-export { default as designSetupSite } from './design-setup-site';
+export { default as designSetupSite } from './design-setup-site-step';
 
 export type StepPath =
 	| 'domain'
