@@ -19,6 +19,10 @@ const FooterContainer = styled.div`
 `;
 
 const FooterHeader = styled.div`
+	@media ( max-width: 660px ) {
+		padding: 0 16px;
+	}
+
 	font-family: Recoleta, 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
 	font-weight: 400;
 	letter-spacing: -0.4px;

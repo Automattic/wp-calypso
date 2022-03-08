@@ -11,9 +11,19 @@ const slugify = ( string: string ) =>
 		.replaceAll( ' ', '-' );
 
 const ArticleLinksContainer = styled.div`
+	@media ( max-width: 960px ) {
+		grid-template-columns: repeat( 1, 1fr );
+	}
+
+	@media ( max-width: 660px ) {
+		padding: 0 16px;
+	}
+
 	display: grid;
 	grid-template-columns: repeat( 3, 1fr );
+	grid-auto-rows: 1fr;
 	column-gap: 29px;
+	row-gap: 10px;
 `;
 
 const LinkCardContainer = styled.div`
@@ -31,9 +41,21 @@ const LinkCardLabel = styled.div`
 `;
 
 const LinkCardTitle = styled.div`
+	@media ( max-width: 1090px ) {
+		-webkit-line-clamp: 4; // trunk text to 3 lines then ellipsis
+		line-clamp: 4;
+	}
+
 	margin-bottom: 32px;
 	font-size: var( --scss-font-title-small );
 	color: var( --color-text-inverted );
+	text-overflow: ellipsis;
+	word-wrap: break-word;
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 3; // trunk text to 3 lines then ellipsis
+	line-clamp: 3;
+	-webkit-box-orient: vertical;
 	line-height: 1.5rem;
 `;
 
