@@ -74,6 +74,9 @@ export class EditorToolbarComponent {
 	 * Opens the block inserter.
 	 */
 	async openBlockInserter(): Promise< void > {
+		// const toolbarLocator = this.frameLocator.locator( panel );
+		// await toolbarLocator.click( { position: { x: 100, y: 0 } } );
+
 		if ( ! ( await this.targetIsOpen( selectors.blockInserterButton ) ) ) {
 			const locator = this.frameLocator.locator( selectors.blockInserterButton );
 			await locator.click();
