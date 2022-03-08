@@ -160,7 +160,7 @@ open class WPComPluginBuild(
 							build_num=`grep build_number ./release-archive/build_meta.txt | sed s/build_number=//`
 							rm ./release-archive/build_meta.txt
 						else
-							build_num=`jq -r '.build_number' ./release-archive/build_meta.json
+							build_num=`jq -r '.build_number' ./release-archive/build_meta.json`
 							rm ./release-archive/build_meta.json
 						fi
 						echo "Diffing against current trunk release build (${'$'}build_num).";
