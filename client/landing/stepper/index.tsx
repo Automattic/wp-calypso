@@ -3,6 +3,7 @@ import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import ReactDom from 'react-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { LocaleContext } from '../gutenboarding/components/locale-context';
@@ -42,12 +43,16 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
+	const queryClient = new QueryClient();
+
 	ReactDom.render(
 		<LocaleContext>
-			<WindowLocaleEffectManager />
-			<BrowserRouter basename="stepper">
-				<FlowRenderer flow={ builderFlow } />
-			</BrowserRouter>
+			<QueryClientProvider client={ queryClient }>
+				<WindowLocaleEffectManager />
+				<BrowserRouter basename="stepper">
+					<FlowRenderer flow={ builderFlow } />
+				</BrowserRouter>
+			</QueryClientProvider>
 		</LocaleContext>,
 		document.getElementById( 'wpcom' )
 	);
