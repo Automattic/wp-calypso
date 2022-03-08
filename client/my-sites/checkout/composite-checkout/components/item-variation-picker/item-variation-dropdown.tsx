@@ -57,6 +57,7 @@ const Option = styled.li< OptionProps >`
 const Dropdown = styled.div`
 	position: relative;
 	width: 100%;
+	margin: 20px 0 0;
 	> ${ Option } {
 		border-radius: 3px;
 	}
@@ -87,10 +88,11 @@ const VariantLabel = styled.span`
 `;
 
 export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps > = ( {
-	selectedItem,
+	isDisabled,
 	onChangeItemVariant,
-	siteId,
 	productSlug,
+	selectedItem,
+	siteId,
 } ) => {
 	const translate = useTranslate();
 	const variants = useGetProductVariants( siteId, productSlug );
@@ -107,9 +109,19 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		return null;
 	}, [ selectedItem.product_id, variants ] );
 
+	// reset the dropdown highlight when the selected product changes
 	useEffect( () => {
 		setHighlightedVariantIndex( selectedVariantIndex );
 	}, [ selectedVariantIndex ] );
+
+	// wrapper around onChangeItemVariant to close up dropdown on change
+	const handleChange = useCallback(
+		( uuid: string, productSlug: string, productId: number ) => {
+			onChangeItemVariant( uuid, productSlug, productId );
+			setOpen( false );
+		},
+		[ onChangeItemVariant ]
+	);
 
 	const selectNextVariant = useCallback( () => {
 		if ( highlightedVariantIndex !== null && highlightedVariantIndex < variants.length - 1 ) {
@@ -123,6 +135,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		}
 	}, [ highlightedVariantIndex ] );
 
+	// reset highlight when dropdown is closed
 	const toggleDropDown = useCallback( () => {
 		setOpen( ! open );
 		setHighlightedVariantIndex( selectedVariantIndex );
@@ -148,7 +161,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 						highlightedVariantIndex !== null &&
 						highlightedVariantIndex !== selectedVariantIndex
 					) {
-						onChangeItemVariant(
+						handleChange(
 							selectedItem.uuid,
 							variants[ highlightedVariantIndex ].productSlug,
 							variants[ highlightedVariantIndex ].productId
@@ -164,8 +177,8 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 			}
 		},
 		[
+			handleChange,
 			highlightedVariantIndex,
-			onChangeItemVariant,
 			selectedItem.uuid,
 			selectedVariantIndex,
 			selectNextVariant,
@@ -182,10 +195,10 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	return (
 		<Dropdown aria-expanded={ open } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
 			<CurrentOption
-				role="button"
-				key="selectedItem"
+				disabled={ isDisabled }
 				onClick={ () => setOpen( ! open ) }
 				open={ open }
+				role="button"
 			>
 				{ selectedVariantIndex !== null ? (
 					<>
@@ -204,7 +217,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 							id={ productId.toString() }
 							role="option"
 							key={ productSlug + variantLabel }
-							onClick={ () => onChangeItemVariant( selectedItem.uuid, productSlug, productId ) }
+							onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
 							selected={ index === highlightedVariantIndex }
 						>
 							<VariantLabel>{ variantLabel }</VariantLabel>
