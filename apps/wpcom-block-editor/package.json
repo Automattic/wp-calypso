@@ -22,7 +22,7 @@
 	},
 	"dependencies": {
 		"@automattic/typography": "workspace:^",
-		"@babel/runtime": "^7.16.7",
+		"@babel/runtime": "^7.17.2",
 		"@wordpress/base-styles": "^4.0.4",
 		"@wordpress/block-editor": "^8.0.13",
 		"@wordpress/blocks": "^11.1.5",
