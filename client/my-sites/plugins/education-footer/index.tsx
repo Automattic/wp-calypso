@@ -17,6 +17,7 @@ const ArticleLinksContainer = styled.div`
 `;
 
 const LinkCardContainer = styled.div`
+	border-radius: 5px;
 	padding: 24px;
 	background: var( --${ ( props ) => props.background } );
 `;
