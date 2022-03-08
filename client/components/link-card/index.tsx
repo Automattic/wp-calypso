@@ -1,6 +1,19 @@
 import styled from '@emotion/styled';
+import { ReactChild } from 'react';
 
-const LinkCardContainer = styled.div`
+interface LinkCardContainerProps {
+	background: string;
+}
+
+interface LinkCardProps {
+	label: ReactChild;
+	title: ReactChild;
+	cta: ReactChild;
+	background: string;
+	url: string;
+}
+
+const LinkCardContainer = styled.div< LinkCardContainerProps >`
 	border-radius: 5px;
 	padding: 24px;
 	background: var( --${ ( props ) => props.background } );
@@ -39,7 +52,7 @@ const LinkCardCta = styled.div`
 	line-height: 1.25rem;
 `;
 
-const LinkCard = ( props ) => {
+const LinkCard = ( props: LinkCardProps ) => {
 	const { label, title, cta, background, url } = props;
 
 	return (

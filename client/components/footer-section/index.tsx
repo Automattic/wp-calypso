@@ -1,4 +1,10 @@
 import styled from '@emotion/styled';
+import { ReactChild } from 'react';
+
+interface FooterSectionProps {
+	header: ReactChild;
+	children: ReactChild | ReactChild[];
+}
 
 const FooterContainer = styled.div`
 	::before {
@@ -35,7 +41,7 @@ const FooterHeader = styled.div`
 
 const FooterContent = styled.div``;
 
-const FooterSection = ( props ) => {
+const FooterSection = ( props: FooterSectionProps ) => {
 	const { children, header } = props;
 
 	return (
