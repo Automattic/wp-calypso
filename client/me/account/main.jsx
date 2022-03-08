@@ -36,7 +36,7 @@ import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
-import AccountEmailFragment from 'calypso/me/account/account-email-fragment';
+import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
@@ -665,7 +665,7 @@ class Account extends Component {
 
 		return (
 			<div className="account__settings-form" key="settingsForm">
-				<AccountEmailFragment
+				<AccountEmailField
 					emailInputId="user_email"
 					emailInputName="user_email"
 					emailValidationHandler={ ( isEmailValid ) =>

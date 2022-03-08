@@ -154,7 +154,7 @@ const AccountEmailPendingEmailChangeNotice = ( {
 	);
 };
 
-const AccountEmailFragment = ( {
+const AccountEmailField = ( {
 	emailInputId = 'user_email',
 	emailInputName = 'user_email',
 	emailValidationHandler,
@@ -170,6 +170,13 @@ const AccountEmailFragment = ( {
 	const [ emailInvalidReason, setEmailInvalidReason ] = useState< AccountEmailValidationReason >(
 		EMAIL_VALIDATION_REASON_IS_VALID
 	);
+
+	useEffect( () => {
+		// Ensure that we remove any unsaved changes to the email address when we unmount
+		return (): void => {
+			dispatch( removeUnsavedUserSetting( 'user_email' ) );
+		};
+	}, [ dispatch ] );
 
 	const emailAddress = getUserSetting( {
 		settingName: isEmailChangePending ? 'new_user_email' : 'user_email',
@@ -193,13 +200,6 @@ const AccountEmailFragment = ( {
 
 		dispatch( setUserSetting( 'user_email', value ) );
 	};
-
-	useEffect( () => {
-		// Ensure that we remove any unsaved changes to the email address when we unmount
-		return (): void => {
-			dispatch( removeUnsavedUserSetting( 'user_email' ) );
-		};
-	}, [ dispatch ] );
 
 	return (
 		<>
@@ -235,4 +235,4 @@ const AccountEmailFragment = ( {
 	);
 };
 
-export default AccountEmailFragment;
+export default AccountEmailField;
