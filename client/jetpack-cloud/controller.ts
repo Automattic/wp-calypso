@@ -3,6 +3,7 @@ import { createElement } from 'react';
 import { NoJetpackSitesMessage } from 'calypso/components/jetpack/no-jetpack-sites-message';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
 import {
 	redirectToPrimary,
@@ -17,7 +18,6 @@ import { getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import type { UserData } from 'calypso/lib/user/user';
 import type { Context as PageJSContext } from 'page';
-import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 
 /**
  * Parse site slug from path.

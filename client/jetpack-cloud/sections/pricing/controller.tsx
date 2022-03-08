@@ -8,7 +8,7 @@ import JetpackComMasterbar from './jpcom-masterbar';
 
 export function jetpackPricingContext( context: PageJS.Context, next: () => void ): void {
 	const urlQueryArgs = context.query;
-	const { locale, site } = context.params;
+	const { locale } = context.params;
 	const path = context.path;
 
 	if ( locale ) {
