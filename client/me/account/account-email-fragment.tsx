@@ -177,9 +177,11 @@ const AccountEmailFragment = ( {
 		EMAIL_VALIDATION_REASON_IS_VALID
 	);
 
-	const emailAddress = isEmailChangePending
-		? getUserSetting( { settingName: 'new_user_email', unsavedUserSettings, userSettings } )
-		: getUserSetting( { settingName: 'user_email', unsavedUserSettings, userSettings } );
+	const emailAddress = getUserSetting( {
+		settingName: isEmailChangePending ? 'new_user_email' : 'user_email',
+		unsavedUserSettings,
+		userSettings
+	} );
 
 	const onEmailAddressChange = ( event: ChangeEvent< HTMLInputElement > ): void => {
 		const { value } = event.target;
