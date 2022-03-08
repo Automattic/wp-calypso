@@ -43,6 +43,7 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header/do
 import FocusableExample from 'calypso/components/focusable/docs/example';
 import FoldableCard from 'calypso/components/foldable-card/docs/example';
 import FoldableFAQ from 'calypso/components/foldable-faq/docs/example';
+import FooterSection from 'calypso/components/footer-section/docs/example';
 import FormattedDate from 'calypso/components/formatted-date/docs/example';
 import FormattedHeader from 'calypso/components/formatted-header/docs/example';
 import ClipboardButtons from 'calypso/components/forms/clipboard-button/docs/example';
@@ -208,6 +209,7 @@ export default class DesignAssets extends Component {
 					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" searchKeywords="accordion" />
 					<FoldableFAQ readmeFilePath="foldable-faq" />
+					<FooterSection readmeFilePath="footer-sectio" />
 					<FormattedDate readmeFilePath="formatted-date" />
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
