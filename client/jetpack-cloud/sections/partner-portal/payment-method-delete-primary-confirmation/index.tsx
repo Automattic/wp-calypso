@@ -33,9 +33,6 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 	);
 
 	useEffect( () => {
-		if ( ! nextPrimaryPaymentMethod ) {
-			return;
-		}
 		setNextPrimaryPaymentMethod( nextPrimaryPaymentMethod );
 	}, [ nextPrimaryPaymentMethod, setNextPrimaryPaymentMethod ] );
 
