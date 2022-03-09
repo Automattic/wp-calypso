@@ -14,7 +14,7 @@ type CustomRecord = {
 	[ key: string ]: any;
 };
 
-type MergedRecord< T extends {} > = Record & T;
+type MergedRecord< T extends CustomRecord > = Record & T;
 
 type WrappedTestCallback< T > = ( varScope: VarScope, target: MergedRecord< T > ) => void;
 
@@ -34,6 +34,8 @@ export function testMultiTarget< T extends CustomRecord >(
 	}
 
 	const activeTargets = records.filter( ( record ) => record.active );
+
+	if ( activeTargets.length === 0 ) throw Error( 'At lest one target must be active!' );
 
 	// TODO Return a wrapper around describe.each instead?
 	return ( description: string, wrappedTestCb: WrappedTestCallback< T > ) => {
