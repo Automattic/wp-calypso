@@ -15,16 +15,26 @@
  * To avoid any confusion, the tests here will only run if the GUTENBERG_EDGE env
  * var is set.
  */
-import { GutenbergEditorPage, TestAccount, envVariables, skipItIf } from '@automattic/calypso-e2e';
+import {
+	GutenbergEditorPage,
+	TestAccount,
+	envVariables,
+	skipItIf,
+	buildDefaultTestTargetsTable,
+} from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe.each`
-	siteType      | accountName                        | testPostId
-	${ 'Simple' } | ${ 'gutenbergUpgradeEdgeUser' }    | ${ 42805 }
-	${ 'Atomic' } | ${ 'gutenbergAtomicSiteEdgeUser' } | ${ 32 }
-`(
+type AdditionalRecord = { testPostId: number };
+
+describe.each(
+	buildDefaultTestTargetsTable< AdditionalRecord >( {
+		edge: true,
+		additionalRecords: [ { testPostId: 42805 }, { testPostId: 32 } ],
+		activationCriteria: { Atomic: false, Simple: true },
+	} )
+)(
 	'Gutenberg Upgrade: Sanity-Check Most Popular Blocks on ($siteType) edge',
 	function ( { accountName, testPostId } ) {
 		let page: Page;
