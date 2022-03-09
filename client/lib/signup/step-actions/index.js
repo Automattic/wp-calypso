@@ -4,6 +4,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import debugFactory from 'debug';
+import { translate } from 'i18n-calypso';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -34,7 +35,7 @@ import {
 } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
-import { requestSite } from 'calypso/state/sites/actions';
+import { requestSite, updateSiteFrontPage } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 
 const Visibility = Site.Visibility;
@@ -446,7 +447,7 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 
 export async function setDesignOnSite(
 	callback,
-	{ siteSlug, selectedDesign, intent, storeType },
+	{ siteSlug, selectedDesign, intent },
 	stepProvidedItems,
 	reduxStore
 ) {
@@ -463,47 +464,64 @@ export async function setDesignOnSite(
 	//Set the theme
 	wpcom.req
 		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: true } )
-		.then( () => callback() )
-		.catch( ( errors ) => callback( [ errors ] ) );
+		.then( () => {
+			//Determine which type of theme setup to run
+			//If we don't have sell intent or we're using a seller-oriented theme, run regular theme setup - this is working
+			if ( 'sell' !== intent || choseSellTheme ) {
+				wpcom.req.post( {
+					path: `/sites/${ siteSlug }/theme-setup`,
+					apiNamespace: 'wpcom/v2',
+					body: { trim_content: true },
+				} );
+			} else {
+				wpcom.req
+					.get( {
+						path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
+						apiNamespace: 'rest/v1',
+					} )
+					.then( ( patternList ) => {
+						wpcom.req.post( {
+							path: `/sites/${ siteSlug }/pages`,
+							apiNamespace: 'wp/v2',
+							body: {
+								content: patternList[ 0 ].html,
+								title: translate( 'Available now!' ),
+								status: 'publish',
+								template: 'header-footer-only',
+							},
+						} );
+					} )
+					.then( ( newPage ) => {
+						const siteId = getSiteId( reduxStore.getState(), siteSlug );
+						updateSiteFrontPage( siteId, {
+							show_on_front: 'page',
+							page_on_front: newPage.id,
+						} )( reduxStore.dispatch );
 
-	//If we don't have sell intent or we're using a seller-oriented theme, run regular theme setup
-	if ( 'sell' !== intent || choseSellTheme ) {
-		wpcom.req
-			.post( {
-				path: `/sites/${ siteSlug }/theme-setup`,
-				apiNamespace: 'wpcom/v2',
-				body: { trim_content: true },
-			} )
-			.then( () => callback() )
-			.catch( ( errors ) => callback( [ errors ] ) );
-	} else {
-		//Do manual setup with payments block pattern
-	}
-
-	//If we have the sell intent, change the store footer
-	if ( 'sell' === intent ) {
-		wpcom.req
-			.post( {
-				path: `/sites/${ siteSlug }/seller_footer`,
-				apiNamespace: 'wpcom/v2',
-			} )
-			.then( () => callback() )
-			.catch( ( errors ) => callback( [ errors ] ) );
-	}
-
-	//Check for FSE capabilities for getDestinationFromIntent
-	wpcom.req
-		.get( {
-			path: `/sites/${ siteSlug }/block-editor`,
-			apiNamespace: 'wpcom/v2',
+						return callback();
+					} )
+					.catch( ( errors ) => callback( [ errors ] ) );
+			}
 		} )
+		.then( () =>
+			wpcom.req.get( {
+				path: `/sites/${ siteSlug }/block-editor`,
+				apiNamespace: 'wpcom/v2',
+			} )
+		)
 		.then( ( data ) => {
-			console.log( data.is_fse_active );
 			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
 		} )
+		.then( () => {
+			//If we have the sell intent, change the store footer - this is working
+			if ( 'sell' === intent ) {
+				wpcom.req.post( {
+					path: `/sites/${ siteSlug }/seller_footer`,
+					apiNamespace: 'wpcom/v2',
+				} );
+			}
+		} )
 		.catch( ( errors ) => callback( [ errors ] ) );
-
-	//Determine which type of theme setup to run
 }
 
 export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
