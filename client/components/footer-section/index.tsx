@@ -10,7 +10,7 @@ const FooterContainer = styled.div`
 	::before {
 		box-sizing: border-box;
 		content: '';
-		background-color: #fafafa;
+		background-color: ${ ( props ) => ( props.dark ? '#1A1E22' : '#fafafa' ) };
 		position: absolute;
 		height: 100%;
 		width: 200vw;
@@ -21,7 +21,7 @@ const FooterContainer = styled.div`
 	margin-top: 100px;
 
 	padding-top: 60px;
-	padding-bottom: 96px;
+	padding-bottom: 60px;
 `;
 
 const FooterHeader = styled.div`
@@ -30,6 +30,7 @@ const FooterHeader = styled.div`
 	}
 
 	font-family: Recoleta, 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+	color: var( --${ ( props ) => ( props.dark ? 'color-text-inverted' : 'color-text' ) } );
 	font-weight: 400;
 	letter-spacing: -0.4px;
 	text-align: left;
@@ -42,11 +43,11 @@ const FooterHeader = styled.div`
 const FooterContent = styled.div``;
 
 const FooterSection = ( props: FooterSectionProps ) => {
-	const { children, header } = props;
+	const { children, header, dark } = props;
 
 	return (
-		<FooterContainer>
-			<FooterHeader>{ header }</FooterHeader>
+		<FooterContainer dark={ dark }>
+			<FooterHeader dark={ dark }>{ header }</FooterHeader>
 			<FooterContent>{ children }</FooterContent>
 		</FooterContainer>
 	);
