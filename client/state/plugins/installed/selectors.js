@@ -47,11 +47,21 @@ export function isRequesting( state, siteId ) {
 	return state.plugins.installed.isRequesting[ siteId ];
 }
 
+export function isRequestingAll( state ) {
+	if ( typeof state.plugins.installed.isRequestingAll.all === 'undefined' ) {
+		return false;
+	}
+	return state.plugins.installed.isRequestingAll.all;
+}
+
 export function isLoaded( state, siteId ) {
 	return false === state.plugins.installed.isRequesting[ siteId ];
 }
 
 export function isRequestingForSites( state, sites ) {
+	if ( isRequestingAll( state ) ) {
+		return true;
+	}
 	// As long as any sites have isRequesting true, we consider this group requesting
 	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
 }

@@ -35,7 +35,18 @@ Get a list of the current user's sites
 
 ```js
 me.sites( function ( err, list ) {
-	// posts list object
+	// sites list object
+} );
+```
+
+
+### Me#sitesPlugins([query, ]fn)
+
+Get a list of the current user's sites plugins.
+
+```js
+me.sitesPlugins( function ( err, list ) {
+	// sites plugins object keyed by sideId
 } );
 ```
 

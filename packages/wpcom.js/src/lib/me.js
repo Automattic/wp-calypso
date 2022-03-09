@@ -71,6 +71,17 @@ Me.prototype.sites = function ( query, fn ) {
 };
 
 /**
+ * A list of the current user's sites plugins
+ *
+ * @param {object} [query] - query object parameter
+ * @param {Function} fn - callback function
+ * @returns {Function} request handler
+ */
+Me.prototype.sitesPlugins = function ( query, fn ) {
+	return this.wpcom.req.get( '/me/sites/plugins', query, fn );
+};
+
+/**
  * List the currently authorized user's likes
  *
  * @param {object} [query] - query object parameter

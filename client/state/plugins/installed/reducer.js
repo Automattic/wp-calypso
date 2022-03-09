@@ -6,6 +6,9 @@ import {
 	PLUGINS_REQUEST,
 	PLUGINS_REQUEST_SUCCESS,
 	PLUGINS_REQUEST_FAILURE,
+	SITES_PLUGINS_REQUEST,
+	SITES_PLUGINS_REQUEST_SUCCESS,
+	SITES_PLUGINS_REQUEST_FAILURE,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_DEACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_UPDATE_REQUEST_SUCCESS,
@@ -28,6 +31,21 @@ export function isRequesting( state = {}, action ) {
 		case PLUGINS_REQUEST_FAILURE:
 		case PLUGINS_REQUEST_SUCCESS:
 			return Object.assign( {}, state, { [ action.siteId ]: false } );
+		default:
+			return state;
+	}
+}
+
+/*
+ * Tracks the requesting state for installed plugins on a per-site index.
+ */
+export function isRequestingAll( state = {}, action ) {
+	switch ( action.type ) {
+		case SITES_PLUGINS_REQUEST:
+			return Object.assign( {}, state, { all: true } );
+		case SITES_PLUGINS_REQUEST_FAILURE:
+		case SITES_PLUGINS_REQUEST_SUCCESS:
+			return Object.assign( {}, state, { all: false } );
 		default:
 			return state;
 	}
@@ -119,6 +137,7 @@ function plugin( state, action ) {
 
 export default combineReducers( {
 	isRequesting,
+	isRequestingAll,
 	plugins,
 	status,
 } );

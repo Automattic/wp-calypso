@@ -26,6 +26,8 @@ A module for managing installed plugins on connected sites.
 
 ### `isRequesting( state: Object, siteId: number|string )`
 
+### `isRequestingAll( state: Object )`
+
 ### `isRequestingForSites( state: Object, sites: Array )`
 
 ### `getPlugins( state: Object, siteIds: Array, pluginFilter: Object )`
@@ -50,6 +52,9 @@ Data from the aforementioned actions is added to the global state tree, under `p
 state.plugins.installed = {
 	isRequesting: {
 		exampleSiteId: false,
+	},
+	isRequestingAll: {
+		all: false,
 	},
 	plugins: {
 		exampleSiteId: [

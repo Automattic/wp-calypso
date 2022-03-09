@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,
@@ -13,6 +14,10 @@ import {
 	PLUGINS_REQUEST,
 	PLUGINS_REQUEST_SUCCESS,
 	PLUGINS_REQUEST_FAILURE,
+	SITES_PLUGINS_RECEIVE,
+	SITES_PLUGINS_REQUEST,
+	SITES_PLUGINS_REQUEST_SUCCESS,
+	SITES_PLUGINS_REQUEST_FAILURE,
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -533,6 +538,72 @@ export function fetchSitePlugins( siteId ) {
 	};
 }
 
+/**
+ * Returns an action object to be used in signalling that site's plugins objects have
+ * been received.
+ *
+ * @param  {object[]} sites Sites received
+ * @returns {object}         Action object
+ */
+export function receiveSitesPlugins( sites ) {
+	return {
+		type: SITES_PLUGINS_RECEIVE,
+		sites,
+	};
+}
+
+/**
+ * Triggers a network request to request all visible sites.
+ *
+ * @param   {Array} siteIds Sites to request
+ * @returns {Function}        Action thunk
+ */
+export function requestSitesPlugins( siteIds ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITES_PLUGINS_REQUEST,
+		} );
+
+		siteIds.map( ( siteId ) => {
+			dispatch( { siteId, type: PLUGINS_REQUEST } );
+		} );
+
+		const siteFilter = config( 'site_filter' );
+
+		return wpcom
+			.me()
+			.sitesPlugins( {
+				apiVersion: '1.1',
+				site_visibility: 'all',
+				site_activity: 'active',
+				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
+			} )
+			.then( ( response ) => {
+				dispatch( receiveSitesPlugins( response.sites ) );
+				dispatch( {
+					type: SITES_PLUGINS_REQUEST_SUCCESS,
+				} );
+				for ( const [ siteId, plugins ] of Object.entries( response.sites ) ) {
+					dispatch( receiveSitePlugins( siteId, plugins ) );
+					dispatch( { siteId, type: PLUGINS_REQUEST_SUCCESS } );
+				}
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: SITES_PLUGINS_REQUEST_FAILURE,
+					error,
+				} );
+
+				siteIds.map( ( siteId ) => {
+					dispatch( { siteId, type: PLUGINS_REQUEST_FAILURE, error } );
+				} );
+			} );
+	};
+}
+
 export function fetchPlugins( siteIds ) {
-	return ( dispatch ) => siteIds.map( ( siteId ) => dispatch( fetchSitePlugins( siteId ) ) );
+	if ( siteIds.length === 1 ) {
+		return fetchSitePlugins( siteIds[ 0 ] );
+	}
+	return requestSitesPlugins( siteIds );
 }
