@@ -52,7 +52,7 @@ const SellerCelebrationModal = () => {
 			return {
 				isEditorSaving: isSavingSite || isSavingEntity,
 				hasPaymentsBlock: paymentsBlock,
-				linkUrl: pageEntity.link,
+				linkUrl: pageEntity?.link,
 			};
 		}
 		const currentPost = select( 'core/editor' ).getCurrentPost();
