@@ -75,7 +75,7 @@ const SecurityAccountEmail = ( { path }: { path: string } ): JSX.Element => {
 
 			<MeSidebarNavigation />
 
-			<FormattedHeader brandFont headerText={ translate( 'Account Email' ) } align="left" />
+			<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
 				{ translate( 'Account Email' ) }
