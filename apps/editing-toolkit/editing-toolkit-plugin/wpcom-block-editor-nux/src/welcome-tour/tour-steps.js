@@ -219,7 +219,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 		{
 			slug: 'payment-block',
 			meta: {
-				heading: __( 'The payment block', 'full-site-editing' ),
+				heading: __( 'The Payments block', 'full-site-editing' ),
 				descriptions: {
 					desktop: (
 						<>
