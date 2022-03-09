@@ -1,5 +1,5 @@
 import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
-import IntentScreen, { SelectItem } from '@automattic/onboarding-components';
+import IntentScreen from '@automattic/onboarding-components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import { removeSiteSlugDependency } from 'calypso/state/signup/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { award, headset } from '../../icons';
 import { ChoiceType } from './types';
+import type { SelectItem } from '@automattic/onboarding-components';
 
 interface Props {
 	goToNextStep: () => void;
