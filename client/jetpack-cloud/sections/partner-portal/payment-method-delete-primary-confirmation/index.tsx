@@ -1,33 +1,47 @@
 import { PaymentLogo } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { QueryKey, useQuery } from 'react-query';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
-import type { FunctionComponent } from 'react';
+import type { Dispatch, FunctionComponent, SetStateAction } from 'react';
 
 import './style.scss';
 
-const getCacheKey = ( key: string ): QueryKey => [ 'jetpack_cloud', 'partner_portal', key ];
+const getCacheKey = ( key: string ): QueryKey => [ 'jetpack-cloud', 'partner-portal', key ];
 
 interface Props {
 	paymentMethod: PaymentMethod;
+	setNextPrimaryPaymentMethod: Dispatch< SetStateAction< PaymentMethod | null > >;
 }
 
 const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 	paymentMethod,
+	setNextPrimaryPaymentMethod,
 } ) => {
 	const translate = useTranslate();
 
-	const { data: recentCards, isFetching } = useQuery( getCacheKey( 'recent_cards' ), () =>
+	const { data: recentCards, isFetching } = useQuery( getCacheKey( 'recent-cards' ), () =>
 		wpcomJpl.req.get( {
 			apiNamespace: 'wpcom/v2',
 			path: '/jetpack-licensing/stripe/payment-methods',
 		} )
 	);
 
-	const nextPrimaryPaymentMethod = ( recentCards || [] ).find(
+	const nextPrimaryPaymentMethod = ( recentCards?.items || [] ).find(
 		( card: PaymentMethod ) => card.id !== paymentMethod.id
 	);
+
+	useEffect( () => {
+		if ( ! nextPrimaryPaymentMethod?.id ) {
+			return;
+		}
+		setNextPrimaryPaymentMethod( nextPrimaryPaymentMethod );
+	}, [ nextPrimaryPaymentMethod, setNextPrimaryPaymentMethod ] );
+
+	if ( ! nextPrimaryPaymentMethod ) {
+		return <></>;
+	}
 
 	return (
 		<div className="payment-method-delete-primary-confirmation">

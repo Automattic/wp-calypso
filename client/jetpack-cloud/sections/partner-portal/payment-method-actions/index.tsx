@@ -24,9 +24,15 @@ const PaymentMethodActions: FunctionComponent< Props > = ( { card } ) => {
 	const [ isDeleteDialogVisible, setIsDeleteDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDeleteDialogVisible( false ), [] );
 
+	// Defines the next primary payment method shown in the confirmation UI.
+	const [
+		nextPrimaryPaymentMethod,
+		setNextPrimaryPaymentMethod,
+	] = useState< PaymentMethod | null >( null );
+
 	const handleDelete = useCallback( () => {
 		closeDialog();
-		reduxDispatch( deleteStoredCard( card ) )
+		reduxDispatch( deleteStoredCard( card, nextPrimaryPaymentMethod?.id ) )
 			.then( () => {
 				reduxDispatch( successNotice( translate( 'Payment method deleted successfully' ) ) );
 
@@ -35,7 +41,7 @@ const PaymentMethodActions: FunctionComponent< Props > = ( { card } ) => {
 			.catch( ( error: Error ) => {
 				reduxDispatch( errorNotice( error.message ) );
 			} );
-	}, [ closeDialog, card, translate, reduxDispatch ] );
+	}, [ closeDialog, card, translate, reduxDispatch, nextPrimaryPaymentMethod ] );
 
 	const renderActions = () => {
 		return [
@@ -52,6 +58,7 @@ const PaymentMethodActions: FunctionComponent< Props > = ( { card } ) => {
 				isVisible={ isDeleteDialogVisible }
 				onClose={ closeDialog }
 				onConfirm={ handleDelete }
+				setNextPrimaryPaymentMethod={ setNextPrimaryPaymentMethod }
 			/>
 
 			<EllipsisMenu

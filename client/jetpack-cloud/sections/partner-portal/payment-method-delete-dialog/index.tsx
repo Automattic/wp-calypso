@@ -1,9 +1,9 @@
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
 import PaymentMethodDeletePrimaryConfirmation from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-delete-primary-confirmation';
 import { getPaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
+import type { Dispatch, FunctionComponent, SetStateAction } from 'react';
 
 import './style.scss';
 
@@ -12,6 +12,7 @@ interface Props {
 	isVisible: boolean;
 	onClose: () => void;
 	onConfirm: () => void;
+	setNextPrimaryPaymentMethod: Dispatch< SetStateAction< PaymentMethod | null > >;
 }
 
 const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
@@ -19,6 +20,7 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 	isVisible,
 	onClose,
 	onConfirm,
+	setNextPrimaryPaymentMethod,
 } ) => {
 	const translate = useTranslate();
 
@@ -58,7 +60,10 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 			</p>
 
 			{ paymentMethod.is_default && (
-				<PaymentMethodDeletePrimaryConfirmation paymentMethod={ paymentMethod } />
+				<PaymentMethodDeletePrimaryConfirmation
+					paymentMethod={ paymentMethod }
+					setNextPrimaryPaymentMethod={ setNextPrimaryPaymentMethod }
+				/>
 			) }
 		</Dialog>
 	);
