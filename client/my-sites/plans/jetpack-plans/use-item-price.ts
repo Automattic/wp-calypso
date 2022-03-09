@@ -149,7 +149,7 @@ const useItemPrice = (
 		if ( item.term !== TERM_MONTHLY ) {
 			originalPrice = monthlyItemCost ?? itemCost / 12;
 			discountedPrice = introductoryOfferPrices.introOfferCost
-				? introductoryOfferPrices.introOfferCost / 12
+				? ( introductoryOfferPrices.introOfferCost * 100 ) / 12 / 100
 				: undefined;
 		}
 	}
