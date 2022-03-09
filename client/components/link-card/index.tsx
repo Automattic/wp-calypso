@@ -24,7 +24,7 @@ const LinkCardContainer = styled.div< LinkCardContainerProps >`
 const LinkCardLabel = styled.div`
 	margin-bottom: 8px;
 	font-size: var( --scss-font-body-extra-small );
-	color: var( --color-text-inverted );
+	color: rgba( var( --studio-white-rgb ), 0.75 );
 	line-height: 1.25rem;
 `;
 
@@ -34,9 +34,9 @@ const LinkCardTitle = styled.div`
 		line-clamp: 4;
 	}
 
+	color: var( --color-text-inverted );
 	margin-bottom: 32px;
 	font-size: var( --scss-font-title-small );
-	color: var( --color-text-inverted );
 	text-overflow: ellipsis;
 	word-wrap: break-word;
 	overflow: hidden;
@@ -49,7 +49,7 @@ const LinkCardTitle = styled.div`
 
 const LinkCardCta = styled.div`
 	font-size: var( --scss-font-body-small );
-	color: var( --color-text-inverted );
+	color: rgba( var( --studio-white-rgb ), 0.75 );
 	line-height: 1.25rem;
 `;
 
