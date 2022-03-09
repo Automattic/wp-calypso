@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
 import DesignPicker, {
 	FeaturedPicksButtons,
@@ -14,7 +14,7 @@ import { ActionButtons } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { ReactChild, useMemo, useState } from 'react';
 // import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
@@ -229,10 +229,9 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 				handleClick={ handleBackButton }
 			/>
 		);
-	}, [ selectedDesign, navigation.goBack ] );
+	}, [ selectedDesign, goBack ] );
 
 	const skipButton = useMemo( () => {
-		console.log( 'SKIP GONEXT', goNext );
 		return (
 			<StepNavigationLink
 				direction="forward"
@@ -243,6 +242,18 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 			/>
 		);
 	}, [ goNext, translate ] );
+
+	const nextButton = function ( designTitle: string | ReactChild ) {
+		return (
+			<StepNavigationLink
+				primary
+				direction="forward"
+				borderless={ true }
+				label={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
+				handleClick={ () => goNext() }
+			/>
+		);
+	};
 
 	if ( selectedDesign ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
@@ -261,6 +272,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 					sticky={ isReskinnedFlow( flowName ) ? null : false }
 				>
 					{ backButton }
+					{ nextButton( designTitle ) }
 				</ActionButtons>
 				<div className="design-setup-site-step__preview-header">
 					<FormattedHeader

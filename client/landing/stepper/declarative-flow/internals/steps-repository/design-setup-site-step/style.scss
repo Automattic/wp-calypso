@@ -157,14 +157,23 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 .design-setup-site-step__preview {
 	.design-setup-site-step__preview-header {
-		margin-top: 40px;
+		// margin-top: 40px;
+		margin: 0;
 
-		@media ( min-width: 480px ) {
-			margin-top: 12px;
+		@media ( min-width: 600px ) {
+			transform: translateY( -48px );
 		}
+		
+		// @media ( min-width: 960px ) {
+		// 	margin: 48px 0 40px;
+		// }
+		
+		// @media ( min-width: 480px ) {
+		// 	margin-top: 12px;
+		// }
 
-		@media ( min-width: 960px ) {
-			margin: 48px 0 40px;
+		.formatted-header {
+			margin-top: 0;
 		}
 
 		.formatted-header__title {
@@ -174,6 +183,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			font-weight: 400;
 			letter-spacing: -0.4px;
 			letter-spacing: 0.2px;
+			margin: 0;
 
 			@media ( min-width: 1080px ) {
 				padding: 0;
@@ -226,14 +236,5 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		left: 72px;
 		right: 24px;
 		background-color: transparent;
-	}
-	
-	.navigation-link.is-borderless {
-		background: none;
-		border: none;
-		color: #101517;
-		padding: 0;
-		font-size: 0.875rem;
-		font-weight: 600;
 	}
 }
