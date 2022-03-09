@@ -49,7 +49,14 @@ class People extends Component {
 		switch ( filter ) {
 			case 'followers':
 				return translate(
-					'People who have subscribed to your site using their WordPress.com account.'
+					'People who have subscribed to your site using their WordPress.com account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink key="learnMore" supportContext="followers" showIcon={ false } />
+							),
+						},
+					}
 				);
 			case 'email-followers':
 				return translate( 'People who have subscribed to your site using their email address.' );

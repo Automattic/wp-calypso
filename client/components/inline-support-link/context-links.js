@@ -47,6 +47,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/export/#exporting-the-media-library',
 		post_id: 2087,
 	},
+	followers: {
+		link: 'https://wordpress.com/support/followers/',
+		post_id: 5444,
+	},
 	'getting-started-video': {
 		link:
 			'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com',
