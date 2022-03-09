@@ -67,14 +67,14 @@ function WelcomeTour() {
 	// Preload card images
 	usePrefetchTourAssets( tourSteps );
 
-	let initialStepIndex = 0;
-	if ( 'sell' === intent && sitePlan && 'ecommerce-bundle' !== sitePlan.product_slug ) {
-		initialStepIndex = tourSteps.findIndex( ( step ) => step.slug === 'payment-block' );
+	// Only keep Payment block step if user comes from seller simple flow
+	if ( ! ( 'sell' === intent && sitePlan && 'ecommerce-bundle' !== sitePlan.product_slug ) ) {
+		const paymentBlockIndex = tourSteps.refindIndex( ( step ) => step.slug === 'payment-block' );
+		tourSteps.splice( paymentBlockIndex, 1 );
 	}
 
 	const tourConfig = {
 		steps: tourSteps,
-		initialStepIndex,
 		renderers: {
 			tourStep: WelcomeTourStep,
 			tourMinimized: WelcomeTourMinimized,
