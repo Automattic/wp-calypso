@@ -5,6 +5,9 @@ import type { AppState } from 'calypso/types';
 export const getAllStoredCards = ( state: AppState ): PaymentMethod[] =>
 	state?.partnerPortal?.storedCards?.items ?? [];
 
+export const getStoredCardsPerPage = ( state: AppState ): number =>
+	state?.partnerPortal?.storedCards?.perPage ?? 8;
+
 export const isFetchingStoredCards = ( state: AppState ) =>
 	Boolean( state?.partnerPortal?.storedCards?.isFetching );
 
