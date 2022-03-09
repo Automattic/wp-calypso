@@ -6,7 +6,7 @@ import {
 	envVariables,
 	DataHelper,
 	MediaHelper,
-	GutenbergEditorPage,
+	EditorPage,
 	TestFile,
 	CoverBlock,
 	TestAccount,
@@ -28,7 +28,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
 	let page: Page;
 	let testAccount: TestAccount;
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 	let imageFile: TestFile;
 	let coverBlock: CoverBlock;
 
@@ -36,7 +36,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		testAccount = new TestAccount( accountName );
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 
 		await testAccount.authenticate( page );
 	} );

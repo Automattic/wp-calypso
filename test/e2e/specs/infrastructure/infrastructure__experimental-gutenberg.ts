@@ -2,12 +2,7 @@
  * @group gutenberg
  */
 
-import {
-	envVariables,
-	TestAccount,
-	DataHelper,
-	GutenbergEditorPage,
-} from '@automattic/calypso-e2e';
+import { envVariables, TestAccount, DataHelper, EditorPage } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
@@ -18,18 +13,18 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 		: 'gutenbergSimpleSiteUser';
 
 	let page: Page;
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 		await editorPage.visit( 'post' );
 	} );
 

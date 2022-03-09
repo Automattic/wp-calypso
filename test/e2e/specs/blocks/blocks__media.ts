@@ -6,7 +6,7 @@
 import {
 	DataHelper,
 	MediaHelper,
-	GutenbergEditorPage,
+	EditorPage,
 	ImageBlock,
 	AudioBlock,
 	FileBlock,
@@ -19,7 +19,7 @@ import { TEST_IMAGE_PATH, TEST_AUDIO_PATH } from '../constants';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 	let page: Page;
 	let testFiles: {
 		image_modal: TestFile;
@@ -40,7 +40,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );
 
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 	} );
 
 	it( 'Go to new post page', async function () {

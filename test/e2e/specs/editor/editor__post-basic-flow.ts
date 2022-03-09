@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	GutenbergEditorPage,
+	EditorPage,
 	PublishedPostPage,
 	skipItIf,
 	TestAccount,
@@ -22,7 +22,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 	let publishedPostPage: PublishedPostPage;
 	const accountName = envVariables.GUTENBERG_EDGE
 		? 'gutenbergSimpleSiteEdgeUser'
@@ -30,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );

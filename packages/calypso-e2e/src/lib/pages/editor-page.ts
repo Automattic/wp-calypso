@@ -267,7 +267,7 @@ export class EditorPage {
 		await this.editorGutenbergComponent.searchBlockInserter( blockName );
 		await this.editorGutenbergComponent.selectBlockInserterResult( blockName );
 
-		const blockHandle = await this.editorGutenbergComponent.getBlockElementHandle(
+		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
 			blockEditorSelector
 		);
 

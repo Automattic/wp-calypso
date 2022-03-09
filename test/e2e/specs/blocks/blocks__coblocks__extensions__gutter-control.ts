@@ -5,7 +5,7 @@
 import {
 	envVariables,
 	DataHelper,
-	GutenbergEditorPage,
+	EditorPage,
 	PricingTableBlock,
 	TestAccount,
 } from '@automattic/calypso-e2e';
@@ -25,13 +25,13 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
 	let page: Page;
 	let testAccount: TestAccount;
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 	let pricingTableBlock: PricingTableBlock;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		testAccount = new TestAccount( accountName );
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 
 		await testAccount.authenticate( page );
 	} );

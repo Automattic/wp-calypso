@@ -7,7 +7,7 @@ import {
 	DataHelper,
 	MediaHelper,
 	ElementHelper,
-	GutenbergEditorPage,
+	EditorPage,
 	TestFile,
 	ImageBlock,
 	TestAccount,
@@ -28,7 +28,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), () => {
 	let page: Page;
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 	let imageBlock: ImageBlock;
 	let imageFile: TestFile;
 	let uploadedImageURL: string;
@@ -37,7 +37,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );

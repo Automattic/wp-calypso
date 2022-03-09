@@ -6,7 +6,7 @@ import {
 	envVariables,
 	DataHelper,
 	MediaHelper,
-	GutenbergEditorPage,
+	EditorPage,
 	TestFile,
 	ClicktoTweetBlock,
 	DynamicHRBlock,
@@ -32,7 +32,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	let page: Page;
 	let testAccount: TestAccount;
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 	let pricingTableBlock: PricingTableBlock;
 	let logoImage: TestFile;
 
@@ -45,7 +45,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 		page = await browser.newPage();
 		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		testAccount = new TestAccount( accountName );
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 
 		await testAccount.authenticate( page );
 	} );

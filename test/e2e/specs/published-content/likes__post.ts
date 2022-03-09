@@ -2,12 +2,7 @@
  * @group gutenberg
  */
 
-import {
-	DataHelper,
-	GutenbergEditorPage,
-	PublishedPostPage,
-	TestAccount,
-} from '@automattic/calypso-e2e';
+import { DataHelper, EditorPage, PublishedPostPage, TestAccount } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
@@ -26,11 +21,11 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 	let publishedPostPage: PublishedPostPage;
 
 	describe( 'As the posting user', function () {
-		let editorPage: GutenbergEditorPage;
+		let editorPage: EditorPage;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
-			editorPage = new GutenbergEditorPage( page );
+			editorPage = new EditorPage( page );
 			await postingUser.authenticate( page );
 		} );
 

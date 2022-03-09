@@ -6,7 +6,7 @@ const selectors = {
 	title: '.editor-post-title__input',
 
 	// Editor body
-	initialBlockAppender: '.block-editor-default-block-appender', // When editor is initially loaded in blank state
+	emptyBlock: 'div.block-editor-default-block-appender', // When editor is in a 'resting' state, without a selected block.
 	paragraphBlock: ( empty: boolean ) => `p[data-title="Paragraph"][data-empty="${ empty }"]`,
 	blockWarning: '.block-editor-warning',
 
@@ -36,6 +36,22 @@ export class EditorGutenbergComponent {
 		this.frameLocator = frameLocator;
 	}
 
+	/**
+	 * Resets the selected block.
+	 *
+	 * The Gutenberg block-based editor 'remembers' what block was last
+	 * selected. This behavior impacts the block options that are shown
+	 * in the block inserter.
+	 *
+	 * For instance, if a Contact Form block is currently selected, the
+	 * block inserter will display a filtered set of blocks that are
+	 * permitted to be inserted within the parent Contact Form block.
+	 */
+	async resetSelectedBlock(): Promise< void > {
+		const locator = this.frameLocator.locator( selectors.title );
+		await locator.click();
+	}
+
 	/* Title block */
 
 	/**
@@ -61,14 +77,6 @@ export class EditorGutenbergComponent {
 	/* Paragraph block shortcuts */
 
 	/**
-	 *
-	 */
-	async resetSelectedBlock(): Promise< void > {
-		const locator = this.frameLocator.locator( selectors.title );
-		await locator.click();
-	}
-
-	/**
 	 * Enters text into the paragraph block(s) and verifies the result.
 	 *
 	 * Note that this method of text entry does not explicitly use the
@@ -79,12 +87,12 @@ export class EditorGutenbergComponent {
 	 * treated as individual Paragraph blocks.
 	 */
 	async enterText( textArray: string[] ): Promise< void > {
-		const initialBlockAppenderLocator = this.frameLocator.locator( selectors.initialBlockAppender );
+		const emptyBlockLocator = this.frameLocator.locator( selectors.emptyBlock );
 		const emptyParagraphLocator = this.frameLocator.locator( selectors.paragraphBlock( true ) );
 		if ( await emptyParagraphLocator.count() ) {
 			await emptyParagraphLocator.click();
 		} else {
-			initialBlockAppenderLocator.click();
+			emptyBlockLocator.click();
 		}
 
 		for await ( const line of textArray ) {
@@ -96,6 +104,8 @@ export class EditorGutenbergComponent {
 
 	/**
 	 * Returns the text as entered in the paragraph blocks.
+	 *
+	 * @returns {Promise<string[]>} Array of strings for all paragraph blocks.
 	 */
 	async getText(): Promise< string[] > {
 		const locator = this.frameLocator.locator( selectors.paragraphBlock( false ) );
@@ -155,9 +165,11 @@ export class EditorGutenbergComponent {
 	}
 
 	/**
+	 * Returns the currently selected block's ElementHandle.
 	 *
+	 * @returns {Promise<ElementHandle>} ElementHandle of the selected block.
 	 */
-	async getBlockElementHandle( blockEditorSelector: string ): Promise< ElementHandle > {
+	async getSelectedBlockElementHandle( blockEditorSelector: string ): Promise< ElementHandle > {
 		const locator = this.frameLocator.locator(
 			`${ editorPane } ${ blockEditorSelector }.is-selected`
 		);

@@ -6,7 +6,7 @@ import {
 	DataHelper,
 	CloseAccountFlow,
 	GutenboardingFlow,
-	GutenbergEditorPage,
+	EditorPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser, Frame } from 'playwright';
 
@@ -73,7 +73,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			await page.waitForURL( /.*\/site-editor\/.*/, { waitUntil: 'networkidle' } );
 
 			// {@TODO} This is temporary while the FSE spec is awaiting migration to Playwright.
-			const editorPage = new GutenbergEditorPage( page );
+			const editorPage = new EditorPage( page );
 			await editorPage.forceDismissWelcomeTour();
 			const outerFrame = await editorPage.getEditorFrame();
 

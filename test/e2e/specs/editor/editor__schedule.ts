@@ -6,7 +6,7 @@ import {
 	DataHelper,
 	TestAccount,
 	envVariables,
-	GutenbergEditorPage,
+	EditorPage,
 	PublishedPostPage,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
@@ -20,7 +20,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	const postTitle = `Scheduled Post: ${ DataHelper.getTimestamp() }`;
 	const postContent = DataHelper.getRandomPhrase();
 	let postURL: URL;
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 	let page: Page;
 
 	beforeAll( async function () {
@@ -31,12 +31,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 		await editorPage.visit( 'post' );
 	} );
 
 	it( 'Enter page title', async function () {
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 		await editorPage.enterTitle( postTitle );
 	} );
 

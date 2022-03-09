@@ -5,7 +5,7 @@
 import {
 	ChangeUILanguageFlow,
 	DataHelper,
-	GutenbergEditorPage,
+	EditorPage,
 	TestAccount,
 	envVariables,
 } from '@automattic/calypso-e2e';
@@ -215,7 +215,7 @@ describe( 'I18N: Editor', function () {
 		( envVariables.TEST_LOCALES as ReadonlyArray< string > ).includes( locale )
 	);
 	let page: Page;
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -229,7 +229,7 @@ describe( 'I18N: Editor', function () {
 		const testAccount = new TestAccount( 'i18nUser' );
 		await testAccount.authenticate( page );
 
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
@@ -259,12 +259,12 @@ describe( 'I18N: Editor', function () {
 			( ...args ) => {
 				const block = args[ 0 ]; // Makes TS stop complaining about incompatible args type
 				let frame: Frame;
-				let editorPage: GutenbergEditorPage;
+				let editorPage: EditorPage;
 
 				const blockTimeout = 10 * 1000;
 
 				it( 'Insert test block', async function () {
-					editorPage = new GutenbergEditorPage( page );
+					editorPage = new EditorPage( page );
 					await editorPage.addBlock( block.blockName, block.blockEditorSelector );
 				} );
 

@@ -7,7 +7,7 @@ import {
 	DataHelper,
 	TestAccount,
 	envVariables,
-	GutenbergEditorPage,
+	EditorPage,
 	RevisionsComponent,
 	ParagraphBlock,
 } from '@automattic/calypso-e2e';
@@ -19,7 +19,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	const accountName = envVariables.GUTENBERG_EDGE
 		? 'gutenbergSimpleSiteEdgeUser'
 		: 'simpleSitePersonalPlanUser';
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 	let revisionsComponent: RevisionsComponent;
 	let page: Page;
 
@@ -31,7 +31,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 		await editorPage.visit( 'post' );
 	} );
 

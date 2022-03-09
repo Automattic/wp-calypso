@@ -2,12 +2,7 @@
  * @group gutenberg
  */
 
-import {
-	DataHelper,
-	CommentsComponent,
-	GutenbergEditorPage,
-	TestAccount,
-} from '@automattic/calypso-e2e';
+import { DataHelper, CommentsComponent, EditorPage, TestAccount } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 const quote =
@@ -20,11 +15,11 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	let page: Page;
 	let publishedURL: URL;
 	let commentsComponent: CommentsComponent;
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );
@@ -35,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	} );
 
 	it( 'Enter post title', async function () {
-		editorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 		const title = DataHelper.getRandomPhrase();
 		await editorPage.enterTitle( title );
 	} );

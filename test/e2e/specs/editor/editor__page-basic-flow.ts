@@ -1,7 +1,7 @@
 import {
 	DataHelper,
 	envVariables,
-	GutenbergEditorPage,
+	EditorPage,
 	PublishedPostPage,
 	TestAccount,
 	PagesPage,
@@ -21,7 +21,7 @@ const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRan
 
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
-	let editorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 	let editorIframe: Frame;
 	let pagesPage: PagesPage;
 	let publishedUrl: URL;
@@ -46,8 +46,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Select page template', async function () {
-		editorPage = new GutenbergEditorPage( page );
-		// @TODO Consider moving this to GutenbergEditorPage.
+		editorPage = new EditorPage( page );
+		// @TODO Consider moving this to EditorPage.
 		editorIframe = await editorPage.waitUntilLoaded();
 		const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
 		await pageTemplateModalComponent.selectTemplateCatagory( pageTemplateCategory );
@@ -55,7 +55,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Template content loads into editor', async function () {
-		// @TODO Consider moving this to GutenbergEditorPage.
+		// @TODO Consider moving this to EditorPage.
 		await editorIframe.waitForSelector( `text=${ expectedTemplateText }` );
 	} );
 
