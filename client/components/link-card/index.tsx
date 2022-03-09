@@ -4,21 +4,21 @@ import { ReactChild } from 'react';
 import './style.scss';
 
 interface LinkCardContainerProps {
-	background: string;
+	background?: string;
 }
 
 interface LinkCardProps {
-	label: ReactChild;
+	label?: ReactChild;
 	title: ReactChild;
-	cta: ReactChild;
-	background: string;
+	cta?: ReactChild;
+	background?: string;
 	url: string;
 }
 
 const LinkCardContainer = styled.div< LinkCardContainerProps >`
 	border-radius: 5px;
 	padding: 24px;
-	background: var( --${ ( props ) => props.background } );
+	background: var( --${ ( props ) => props.background || 'studio-white' } );
 `;
 
 const LinkCardLabel = styled.div`
