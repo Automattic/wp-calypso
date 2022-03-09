@@ -50,6 +50,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'managed',
+			steps: [ 'user', 'domains', 'plans-managed' ],
+			destination: getSignupDestination,
+			description: 'Create an account and a blog and then add the managed plan to the users cart.',
+			lastModified: '2022-03-08',
+			showRecaptcha: true,
+		},
+		{
 			name: 'free',
 			steps: [ 'user', 'domains' ],
 			destination: getSignupDestination,
