@@ -445,7 +445,7 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		} );
 }
 
-export function setDesignOnSite(
+export async function setDesignOnSite(
 	callback,
 	{ siteSlug, selectedDesign, intent },
 	stepProvidedItems,
@@ -460,7 +460,6 @@ export function setDesignOnSite(
 	//@TODO: Get this list from a query rather than manually
 	const sellThemes = [ 'marl', 'winkel', 'attar', 'dorna', 'hari' ];
 	const choseSellTheme = sellThemes.includes( theme );
-	const siteId = getSiteId( reduxStore.getState(), siteSlug );
 
 	//Set the theme
 	wpcom.req
@@ -473,33 +472,6 @@ export function setDesignOnSite(
 					apiNamespace: 'wpcom/v2',
 					body: { trim_content: true },
 				} );
-			} else {
-				//Create a new page and add a payments block pattern and set it as the homepage
-				wpcom.req
-					.get( {
-						path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
-						apiNamespace: 'rest/v1',
-					} )
-					.then( ( patternList ) => {
-						wpcom.req.post( {
-							path: `/sites/${ siteSlug }/pages`,
-							apiNamespace: 'wp/v2',
-							body: {
-								content: patternList[ 0 ].html,
-								title: translate( 'Available now!' ),
-								status: 'publish',
-								template: 'header-footer-only',
-							},
-						} )
-					} )
-					.then( ( newPage ) => {
-						console.log( "Hello!" + newPage );
-						wpcom.req.post( `/sites/${ siteId }/homepage`, {
-							is_page_on_front: 'page',
-							page_on_front_id: newPage.id,
-						} )
-					} )
-					.catch( ( errors ) => callback( [ errors ] ) );
 			}
 		} )
 		.then( () =>
@@ -521,6 +493,45 @@ export function setDesignOnSite(
 			}
 		} )
 		.catch( ( errors ) => callback( [ errors ] ) );
+
+	if ( 'sell' === intent && ! choseSellTheme ) {
+		try {
+			/*
+			 * Get the block pattern source for use in our new home page.
+			 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
+			 */
+			const patternList = await wpcom.req.get( {
+				path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
+				apiNamespace: 'rest/v1',
+			} );
+
+			//Only item since we filter by id
+			const singleProductPattern = patternList[ 0 ];
+
+			// Create a new Home page
+			const newPage = await wpcom.req.post( {
+				path: `/sites/${ siteSlug }/pages`,
+				apiNamespace: 'wp/v2',
+				body: {
+					content: singleProductPattern.html,
+					title: translate( 'Available now!' ),
+					status: 'publish',
+					template: 'header-footer-only',
+				},
+			} );
+
+			const siteId = getSiteId( reduxStore.getState(), siteSlug );
+
+			//Set the new Home page as the front page.
+			await updateSiteFrontPage( siteId, {
+				show_on_front: 'page',
+				page_on_front: newPage.id,
+			} )( reduxStore.dispatch );
+		} catch ( e ) {
+			defer( callback );
+			return;
+		}
+	}
 }
 
 export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
