@@ -474,6 +474,45 @@ export async function setDesignOnSite(
 				} );
 			}
 		} )
+		.then( async () => {
+			if ( 'sell' === intent && ! choseSellTheme ) {
+				try {
+					/*
+					 * Get the block pattern source for use in our new home page.
+					 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
+					 */
+					const patternList = await wpcom.req.get( {
+						path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
+						apiNamespace: 'rest/v1',
+					} );
+
+					//Only item since we filter by id
+					const singleProductPattern = patternList[ 0 ];
+
+					// Create a new Home page
+					const newPage = await wpcom.req.post( {
+						path: `/sites/${ siteSlug }/pages`,
+						apiNamespace: 'wp/v2',
+						body: {
+							content: singleProductPattern.html,
+							title: translate( 'Available now!' ),
+							status: 'publish',
+							template: 'header-footer-only',
+						},
+					} );
+
+					const siteId = getSiteId( reduxStore.getState(), siteSlug );
+
+					//Set the new Home page as the front page.
+					await updateSiteFrontPage( siteId, {
+						show_on_front: 'page',
+						page_on_front: newPage.id,
+					} )( reduxStore.dispatch );
+				} catch ( errors ) {
+					return callback( [ errors ] );
+				}
+			}
+		} )
 		.then( () =>
 			wpcom.req.get( {
 				path: `/sites/${ siteSlug }/block-editor`,
@@ -493,45 +532,6 @@ export async function setDesignOnSite(
 			}
 		} )
 		.catch( ( errors ) => callback( [ errors ] ) );
-
-	if ( 'sell' === intent && ! choseSellTheme ) {
-		try {
-			/*
-			 * Get the block pattern source for use in our new home page.
-			 * Original pattern: https://dotcompatterns.wordpress.com/wp-admin/post.php?post=4348&action=edit
-			 */
-			const patternList = await wpcom.req.get( {
-				path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
-				apiNamespace: 'rest/v1',
-			} );
-
-			//Only item since we filter by id
-			const singleProductPattern = patternList[ 0 ];
-
-			// Create a new Home page
-			const newPage = await wpcom.req.post( {
-				path: `/sites/${ siteSlug }/pages`,
-				apiNamespace: 'wp/v2',
-				body: {
-					content: singleProductPattern.html,
-					title: translate( 'Available now!' ),
-					status: 'publish',
-					template: 'header-footer-only',
-				},
-			} );
-
-			const siteId = getSiteId( reduxStore.getState(), siteSlug );
-
-			//Set the new Home page as the front page.
-			await updateSiteFrontPage( siteId, {
-				show_on_front: 'page',
-				page_on_front: newPage.id,
-			} )( reduxStore.dispatch );
-		} catch ( e ) {
-			defer( callback );
-			return;
-		}
-	}
 }
 
 export function setOptionsOnSite( callback, { siteSlug, siteTitle, tagline } ) {
