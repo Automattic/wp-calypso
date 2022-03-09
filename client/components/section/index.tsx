@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { ReactChild } from 'react';
 
+import './style.scss';
+
 interface SectionProps {
 	header: ReactChild;
 	children: ReactChild | ReactChild[];
@@ -33,7 +35,7 @@ const SectionHeader = styled.div`
 	letter-spacing: -0.4px;
 	text-align: left;
 	margin-bottom: 25px;
-	font-size: 2rem;
+	font-size: var( --scss-font-title-large );
 	max-width: 377px;
 	line-height: 40px;
 `;
