@@ -6,18 +6,28 @@ import {
 	getCurrentUserEmail,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import { getOKIcon, getWarningIcon } from './icons.js';
 import SecurityCheckupNavigationItem from './navigation-item';
 
 class SecurityCheckupAccountEmail extends Component {
 	static propTypes = {
+		emailChangePending: PropTypes.bool,
 		primaryEmail: PropTypes.string,
 		primaryEmailVerified: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
+		userSettings: PropTypes.object,
 	};
 
 	render() {
-		const { primaryEmail, primaryEmailVerified, translate } = this.props;
+		const {
+			emailChangePending,
+			primaryEmail,
+			primaryEmailVerified,
+			translate,
+			userSettings,
+		} = this.props;
 
 		let icon;
 		let description;
@@ -29,6 +39,19 @@ class SecurityCheckupAccountEmail extends Component {
 				{
 					args: {
 						emailAddress: primaryEmail,
+					},
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+		} else if ( emailChangePending ) {
+			icon = getWarningIcon();
+			description = translate(
+				'You are in the process of changing your account email address to {{strong}}%(newEmailAddress)s{{/strong}}, but still need to confirm the change.',
+				{
+					args: {
+						newEmailAddress: userSettings.new_user_email,
 					},
 					components: {
 						strong: <strong />,
@@ -52,7 +75,7 @@ class SecurityCheckupAccountEmail extends Component {
 
 		return (
 			<SecurityCheckupNavigationItem
-				path={ '/me/account' }
+				path={ '/me/security/account-email' }
 				materialIcon={ icon }
 				text={ translate( 'Account Email' ) }
 				description={ description }
@@ -62,6 +85,8 @@ class SecurityCheckupAccountEmail extends Component {
 }
 
 export default connect( ( state ) => ( {
+	emailChangePending: isPendingEmailChange( state ),
 	primaryEmail: getCurrentUserEmail( state ),
 	primaryEmailVerified: isCurrentUserEmailVerified( state ),
+	userSettings: getUserSettings( state ),
 } ) )( localize( SecurityCheckupAccountEmail ) );

@@ -6,6 +6,7 @@ import {
 	accountRecovery,
 	connectedApplications,
 	password,
+	securityAccountEmail,
 	securityCheckup,
 	socialLogin,
 	twoStep,
@@ -18,6 +19,8 @@ export default function () {
 	page( '/me/security', sidebar, mainPageFunction, makeLayout, clientRender );
 
 	if ( useCheckupMenu ) {
+		page( '/me/security/account-email', sidebar, securityAccountEmail, makeLayout, clientRender );
+
 		page( '/me/security/password', sidebar, password, makeLayout, clientRender );
 	}
 
