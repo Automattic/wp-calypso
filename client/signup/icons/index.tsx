@@ -127,16 +127,16 @@ export const check: ReactElement = (
 		<path
 			d="M82.4086 41.9906C82.4086 52.7052 78.1522 62.9811 70.5758 70.5575C62.9995 78.1338 52.7237 82.3903 42.0091 82.3903C31.2944 82.3903 21.0186 78.1338 13.4422 70.5575C5.86583 62.9811 1.60947 52.7052 1.60947 41.9906C1.60392 39.5124 1.83224 37.0391 2.29135 34.6038C4.13398 24.702 9.60875 15.8456 17.6423 9.77087C25.6759 3.69614 35.6889 0.841432 45.7181 1.76611C55.7473 2.69079 65.0695 7.3283 71.8569 14.7695C78.6444 22.2107 82.4075 31.9188 82.4086 41.9906V41.9906Z"
 			stroke="#003A5F"
-			stroke-width="1.68"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeWidth="1.68"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		/>
 		<path
 			d="M28 45.4943L37.8102 54.0742L56.5989 28.4102"
 			stroke="#003A5F"
-			stroke-width="3"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeWidth="3"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		/>
 	</svg>
 );

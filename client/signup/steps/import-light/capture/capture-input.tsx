@@ -3,7 +3,7 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -14,9 +14,10 @@ import type { FunctionComponent } from 'react';
 
 interface Props {
 	translate: typeof translate;
+	onSubmit?: ( value: string ) => void;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
-	const { translate } = props;
+	const { translate, onSubmit } = props;
 
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( true );
@@ -33,8 +34,14 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		setUrlValue( e.target.value );
 	}
 
+	function onFormSubmit( e: FormEvent< HTMLFormElement > ) {
+		e.preventDefault();
+
+		isValid && onSubmit && onSubmit( urlValue );
+	}
+
 	return (
-		<div className={ classnames( 'import-light__capture' ) }>
+		<form className={ classnames( 'import-light__capture' ) } onSubmit={ onFormSubmit }>
 			<FormFieldset>
 				<FormLabel>
 					{ createInterpolateElement(
@@ -71,8 +78,10 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				</FormSettingExplanation>
 			</FormFieldset>
 
-			<NextButton size={ 0 }>{ translate( 'Continue' ) }</NextButton>
-		</div>
+			<NextButton type={ 'submit' } disabled={ ! isValid || ! urlValue }>
+				{ translate( 'Continue' ) }
+			</NextButton>
+		</form>
 	);
 };
 

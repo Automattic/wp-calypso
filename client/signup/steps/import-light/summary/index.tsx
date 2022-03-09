@@ -3,14 +3,26 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { useEffect } from 'react';
 import { check } from 'calypso/signup/icons';
 import type * as React from 'react';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const Scanning: React.FunctionComponent = () => {
+interface Props {
+	colorsNumber: number;
+	onSummaryExpired?: () => void;
+}
+
+const Summary: React.FunctionComponent< Props > = ( props ) => {
+	const SUMMARY_DURATION = 2000;
 	const { __ } = useI18n();
+	const { colorsNumber, onSummaryExpired } = props;
+
+	useEffect( () => {
+		setTimeout( () => onSummaryExpired && onSummaryExpired(), SUMMARY_DURATION );
+	}, [] );
 
 	return (
 		<div className="import-layout__center import-light__summary">
@@ -22,7 +34,7 @@ const Scanning: React.FunctionComponent = () => {
 						sprintf(
 							/* translators: the colorsNum could be any number from 0 to about ~10 */
 							__( 'We imported<br /><span>%(colorsNum)s color swatches.</span>' ),
-							{ colorsNum: 4 }
+							{ colorsNum: colorsNumber }
 						),
 						{
 							br: createElement( 'br' ),
@@ -35,4 +47,4 @@ const Scanning: React.FunctionComponent = () => {
 	);
 };
 
-export default Scanning;
+export default Summary;

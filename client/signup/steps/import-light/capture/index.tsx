@@ -10,9 +10,10 @@ import './style.scss';
 
 interface Props {
 	translate: typeof translate;
+	startScan: ( url: string ) => void;
 }
 const Capture: FunctionComponent< Props > = ( props ) => {
-	const { translate } = props;
+	const { translate, startScan } = props;
 
 	return (
 		<div className={ 'import-layout__center' }>
@@ -32,7 +33,7 @@ const Capture: FunctionComponent< Props > = ( props ) => {
 					</div>
 				</div>
 				<div className={ 'import-layout__column' }>
-					<CaptureInput />
+					<CaptureInput onSubmit={ startScan } />
 				</div>
 			</div>
 		</div>
