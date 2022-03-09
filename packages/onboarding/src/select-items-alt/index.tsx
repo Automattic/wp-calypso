@@ -2,32 +2,40 @@ import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
+import { TranslateResult } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
-import { SelectAltItem } from '../../types';
+
+export interface SelectItemAlt< T > {
+	show: boolean;
+	key: string;
+	description: TranslateResult;
+	value: T;
+	actionText: TranslateResult;
+	disable: boolean;
+	disableText: TranslateResult;
+}
 
 interface Props< T > {
 	className?: string;
-	items: SelectAltItem< T >[];
+	items: SelectItemAlt< T >[];
 	onSelect: ( value: T ) => void;
 }
 
 function SelectItemsAlt< T >( { className, items, onSelect }: Props< T > ): React.ReactElement {
 	return (
-		<div className={ classnames( 'intent-screen-select-items-alt', className ) }>
+		<div className={ classnames( 'select-items-alt', className ) }>
 			{ items.map(
 				( { disable, disableText, show, key, description, actionText, value } ) =>
 					show && (
-						<div key={ key } className="intent-screen-select-items-alt__item">
-							<div className="intent-screen-select-items-alt__item-info-wrapper">
-								<div className="intent-screen-select-items-alt__item-info">
-									<p className="intent-screen-select-items-alt__item-description">
-										{ description }
-									</p>
+						<div key={ key } className="select-items-alt__item">
+							<div className="select-items-alt__item-info-wrapper">
+								<div className="select-items-alt__item-info">
+									<p className="select-items-alt__item-description">{ description }</p>
 								</div>
 								<Button
 									disabled={ disable }
-									className="intent-screen-select-items-alt__item-button"
+									className="select-items-alt__item-button"
 									onClick={ () => onSelect( value ) }
 								>
 									{ actionText }
@@ -37,7 +45,7 @@ function SelectItemsAlt< T >( { className, items, onSelect }: Props< T > ): Reac
 									<>
 										&nbsp;
 										<Tooltip text={ disableText } position="bottom center">
-											<div className="intent-screen-select-items-alt__item-disabled-info">
+											<div className="select-items-alt__item-disabled-info">
 												<Icon icon={ info } size={ 20 } />
 											</div>
 										</Tooltip>
