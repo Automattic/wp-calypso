@@ -7,11 +7,10 @@ export const builderFlow: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const goBack = () => {
-			switch ( currentStep ) {
-				case 'designSetupSite':
-					navigate( 'domain' );
-				case 'domain':
-					navigate( 'designSetupSite' );
+			if ( currentStep === 'designSetupSite' ) {
+				navigate( 'domain' );
+			} else {
+				navigate( 'designSetupSite' );
 			}
 		};
 		const goNext = goBack;
