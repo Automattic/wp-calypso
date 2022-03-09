@@ -197,23 +197,23 @@ export const shoppingCart: ReactElement = (
 		<path
 			d="m9 22c.55228 0 1-.4477 1-1s-.44772-1-1-1-1 .4477-1 1 .44772 1 1 1z"
 			stroke="#8c8f94"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			stroke-width="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth="2"
 		/>
 		<path
 			d="m20 22c.5523 0 1-.4477 1-1s-.4477-1-1-1-1 .4477-1 1 .4477 1 1 1z"
 			stroke="#8c8f94"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			stroke-width="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth="2"
 		/>
 		<path
 			d="m1 1h4l2.68 13.39c.09144.4604.34191.874.70755 1.1683.36563.2943.82315.4507 1.29245.4417h9.72c.4693.009.9268-.1474 1.2925-.4417.3656-.2943.6161-.7079.7075-1.1683l1.6-8.39h-17"
 			stroke="#8c8f94"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			stroke-width="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth="2"
 		/>
 	</svg>
 );
