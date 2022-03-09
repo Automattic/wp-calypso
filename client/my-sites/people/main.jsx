@@ -59,7 +59,16 @@ class People extends Component {
 					}
 				);
 			case 'email-followers':
-				return translate( 'People who have subscribed to your site using their email address.' );
+				return translate(
+					'People who have subscribed to your site using their email address. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink key="learnMore" supportContext="followers" showIcon={ false } />
+							),
+						},
+					}
+				);
 			default:
 				return isWPForTeamsSite
 					? this.getSubheaderTextForP2()
