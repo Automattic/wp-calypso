@@ -217,3 +217,46 @@ export const shoppingCart: ReactElement = (
 		/>
 	</svg>
 );
+
+export const award: ReactElement = (
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			d="M12 15C15.866 15 19 11.866 19 8C19 4.13401 15.866 1 12 1C8.13401 1 5 4.13401 5 8C5 11.866 8.13401 15 12 15Z"
+			stroke="#8C8F94"
+			strokeWidth="1.6"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+		<path
+			d="M8.21 13.8899L7 22.9999L12 19.9999L17 22.9999L15.79 13.8799"
+			stroke="#8C8F94"
+			strokeWidth="1.6"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	</svg>
+);
+
+export const headset: ReactElement = (
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<mask
+			id="mask0_2727_2533"
+			// style="mask-type:alpha"
+			maskUnits="userSpaceOnUse"
+			x="3"
+			y="4"
+			width="18"
+			height="16"
+		>
+			<path
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="M5 4H19C20.11 4 21 4.9 21 6V18C21 19.1 20.1 20 19 20H5C3.89 20 3 19.1 3 18V6C3 4.9 3.89 4 5 4ZM5 18H19V8H5V18Z"
+				fill="white"
+			/>
+		</mask>
+		<g mask="url(#mask0_2727_2533)">
+			<rect width="24" height="24" fill="#8C8F94" />
+		</g>
+	</svg>
+);

@@ -1,14 +1,16 @@
+import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import IntentScreen, { SelectItem } from '@automattic/onboarding-components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import difmImageUrl from 'calypso/assets/images/difm/difm.svg';
+import { useDispatch, useSelector } from 'react-redux';
+import difmImage from 'calypso/assets/images/difm/difm.svg';
+import { preventWidows } from 'calypso/lib/formatting';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { removeSiteSlugDependency } from 'calypso/state/signup/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import NewOrExistingSiteScreen from './new-or-existing-site';
+import { award, headset } from '../../icons';
 import { ChoiceType } from './types';
-
-import './style.scss';
 
 interface Props {
 	goToNextStep: () => void;
@@ -17,14 +19,56 @@ interface Props {
 	stepName: string;
 }
 
+type NewOrExistingSiteIntent = SelectItem< ChoiceType >;
+
 export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
 
-	const headerText = translate( 'Do it For Me' );
+	const headerText = translate( 'Do It For Me' );
 	const subHeaderText = translate(
-		'Get your business up quickly with our experts building your responsive, professional website. Select your best option:'
+		'Get a professionally designed, mobile-optimized website in 4 business days or less for a one-time fee of {{strong}}%(displayCost)s{{/strong}}.',
+		{
+			args: {
+				displayCost,
+			},
+			components: {
+				strong: <strong />,
+			},
+		}
 	);
+
+	const intents: NewOrExistingSiteIntent[] = [
+		{
+			key: 'new-site',
+			title: translate( 'New site' ),
+			description: (
+				<p>
+					{ translate(
+						'Start fresh. We will build your new site from scratch using the content you provide in the following steps.'
+					) }
+				</p>
+			),
+			icon: award,
+			value: 'new-site',
+			actionText: translate( 'Start a new site' ),
+		},
+		{
+			key: 'existing-site',
+			title: translate( 'Existing WordPress.com site' ),
+			description: (
+				<p>
+					{ translate(
+						'Use an existing site. Any existing content will be deleted, but you will be able to submit your content for your new site in later steps.'
+					) }
+				</p>
+			),
+			icon: headset,
+			value: 'existing-site',
+			actionText: translate( 'Select a site' ),
+		},
+	];
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
@@ -55,12 +99,19 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 			fallbackHeaderText={ headerText }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
-			stepContent={ <NewOrExistingSiteScreen onSelect={ newOrExistingSiteSelected } /> }
+			stepContent={
+				<IntentScreen
+					intents={ intents }
+					onSelect={ newOrExistingSiteSelected }
+					preventWidows={ preventWidows }
+					intentsAlt={ [] }
+				/>
+			}
 			align={ 'left' }
 			hideSkip
 			isHorizontalLayout={ true }
 			isWideLayout={ true }
-			headerImageUrl={ difmImageUrl }
+			headerImageUrl={ difmImage }
 			{ ...props }
 		/>
 	);
