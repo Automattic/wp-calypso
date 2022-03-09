@@ -10,6 +10,8 @@ import DesignPicker, {
 } from '@automattic/design-picker';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
+import { ActionButtons } from '@automattic/onboarding';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -31,6 +33,7 @@ import type { Design, Category } from '@automattic/design-picker';
  * The design picker step
  */
 const DesignSetupSite: Step = function DesignSetupSite() {
+	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
 	const locale = useLocale();
 	// // const signupDependencies = useSelector( ( state ) => getSignupDependencyStore( state ) );
@@ -202,34 +205,43 @@ const DesignSetupSite: Step = function DesignSetupSite() {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
-		const previewUrl = getDesignUrl( selectedDesign, translate.localeSlug, {
+		const previewUrl = getDesignUrl( selectedDesign, locale, {
 			iframe: true,
 			// If the user fills out the site title with write intent, we show it on the design preview
 			// Otherwise, use the title of selected design directly
 			site_title: intent === 'write' && siteTitle ? siteTitle : selectedDesign?.title,
 		} );
 		return (
-			<>
-				<div>Selected: { designTitle }</div>
-				{ /* <WebPreview
-					className="design-picker__web-preview"
-					showPreview
-					isContentOnly
-					showClose={ false }
-					showEdit={ false }
-					externalUrl={ siteSlug }
-					showExternal={ true }
-					previewUrl={ 'url test' }
-					loadingMessage={ translate(
-						'{{strong}}One moment, please…{{/strong}} loading your site.',
-						{
-							components: { strong: <strong /> },
-						}
-					) }
-					toolbarComponent={ PreviewToolbar }
-				/> */ }
+			<div className="design-setup-site-step__preview">
+				<div className="design-setup-site-step__preview-header">
+					<FormattedHeader
+						id={ 'step-header' }
+						headerText={ designTitle }
+						align={ isMobile ? 'left' : 'center' }
+					/>
+				</div>
+				<div className="design-setup-site-step__preview-content">
+					{ /* <WebPreview
+						className="design-picker__web-preview"
+						showPreview
+						isContentOnly
+						showClose={ false }
+						showEdit={ false }
+						externalUrl={ siteSlug }
+						showExternal={ true }
+						previewUrl={ 'url test' }
+						loadingMessage={ translate(
+							'{{strong}}One moment, please…{{/strong}} loading your site.',
+							{
+								components: { strong: <strong /> },
+							}
+						) }
+						toolbarComponent={ PreviewToolbar }
+					/> */ }
+				</div>
+				
 				{ /* { renderCheckoutModal() } */ }
-			</>
+			</div>
 		);
 	}
 
