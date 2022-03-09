@@ -44,16 +44,10 @@ const SecurityAccountEmail = ( { path }: { path: string } ): JSX.Element => {
 
 	const [ isSubmittingUpdate, setIsSubmittingUpdate ] = useState( false );
 
-	const maybeMarkFormAsSaved = () => {
-		if ( null === ( unsavedUserSettings.user_email ?? null ) ) {
-			markSaved();
-		}
-	};
-
 	const submitEmailUpdate = (): void => {
 		dispatch( saveUnsavedUserSettings( [ 'user_email' ] ) )
 			.then( () => {
-				maybeMarkFormAsSaved();
+				markSaved();
 
 				dispatch(
 					successNotice(
