@@ -68,6 +68,7 @@ import JetpackLogoExample from 'calypso/components/jetpack-logo/docs/example';
 import LanguagePicker from 'calypso/components/language-picker/docs/example';
 import LayoutExample from 'calypso/components/layout/docs/example';
 import LineChart from 'calypso/components/line-chart/docs/example';
+import LinkCard from 'calypso/components/link-card/docs/example';
 import ListEnd from 'calypso/components/list-end/docs/example';
 import Main from 'calypso/components/main';
 import MarkedLinesExample from 'calypso/components/marked-lines/docs/example';
@@ -88,6 +89,7 @@ import SearchCard from 'calypso/components/search-card';
 import SearchDemo from 'calypso/components/search/docs/example';
 import SectionHeader from 'calypso/components/section-header/docs/example';
 import SectionNav from 'calypso/components/section-nav/docs/example';
+import Section from 'calypso/components/section/docs/example';
 import SegmentedControl from 'calypso/components/segmented-control/docs/example';
 import SelectDropdown from 'calypso/components/select-dropdown/docs/example';
 import ShareButton from 'calypso/components/share-button/docs/example';
@@ -229,6 +231,7 @@ export default class DesignAssets extends Component {
 					<LanguagePicker readmeFilePath="language-picker" />
 					<LayoutExample readmeFilePath="layout" />
 					<LineChart readmeFilePath="line-chart" />
+					<LinkCard readmeFilePath="link-card" />
 					<ListEnd readmeFilePath="list-end" />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
@@ -249,6 +252,7 @@ export default class DesignAssets extends Component {
 					<Ribbon readmeFilePath="/packages/components/src/ribbon" />
 					<ScreenReaderTextExample readmeFilePath="/packages/components/src/screen-reader-text" />
 					<SearchDemo readmeFilePath="search" />
+					<Section readmeFilePath="section" />
 					<SectionHeader readmeFilePath="section-header" />
 					<SectionNav readmeFilePath="section-nav" />
 					<SegmentedControl readmeFilePath="segmented-control" />
