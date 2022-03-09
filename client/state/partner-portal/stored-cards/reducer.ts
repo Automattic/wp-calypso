@@ -44,7 +44,6 @@ export const items: Reducer< PaymentMethod[], ItemsAction > = ( state = [], acti
 type MoreItemsAction = {
 	type: 'STORED_CARDS_HAS_MORE_ITEMS';
 	hasMore: boolean;
-	hasBeenSet: boolean;
 };
 
 export const hasMoreItems: Reducer< boolean, MoreItemsAction > = ( state = false, action ) => {
