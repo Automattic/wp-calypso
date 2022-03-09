@@ -1,7 +1,7 @@
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import LinkCard from 'calypso/components/link-card'; // should we host this one inside footer-section?
+import LinkCard from 'calypso/components/link-card';
 import Section from 'calypso/components/section';
 
 const ArticleLinksContainer = styled.div`
