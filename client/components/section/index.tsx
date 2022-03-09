@@ -29,7 +29,6 @@ const SectionHeader = styled.div`
 		padding: 0 16px;
 	}
 
-	font-family: Recoleta, 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
 	font-weight: 400;
 	letter-spacing: -0.4px;
 	text-align: left;
@@ -43,13 +42,14 @@ const SectionContent = styled.div``;
 
 const Section = ( props: SectionProps ) => {
 	const { children, header } = props;
-
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<SectionContainer>
-			<SectionHeader>{ header }</SectionHeader>
+			<SectionHeader className="wp-brand-font">{ header }</SectionHeader>
 			<SectionContent>{ children }</SectionContent>
 		</SectionContainer>
 	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default Section;

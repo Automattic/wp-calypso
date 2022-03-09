@@ -81,7 +81,7 @@ const EducationFooter = () => {
 	];
 
 	return (
-		<Section header={ translate( 'Learn More' ) }>
+		<Section header={ translate( 'Learn more' ) }>
 			<ArticleLinksContainer>
 				{ articles.map( ( article ) => (
 					<LinkCard
