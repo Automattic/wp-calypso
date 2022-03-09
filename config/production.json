@@ -13,6 +13,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"facebook_app_id": "2373049596",
 	"bilmur_url": "/wp-content/js/bilmur.min.js",
+	"olark_chat_identity": "2503-569-10-2205",
 	"features": {
 		"ad-tracking": true,
 		"bilmur-script": true,
