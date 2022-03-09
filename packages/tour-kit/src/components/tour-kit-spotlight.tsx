@@ -83,7 +83,7 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement,
 					'is-visible': !! clipRepositionProps,
 				} ) }
 				ref={ sePopperElement }
-				{ ...clipRepositionProps }
+				{ ...( clipRepositionProps as React.HTMLAttributes< HTMLDivElement > ) }
 			/>
 		</>
 	);

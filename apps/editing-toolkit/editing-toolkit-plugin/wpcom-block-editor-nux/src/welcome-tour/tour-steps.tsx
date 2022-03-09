@@ -1,9 +1,16 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { isMobile } from '@automattic/viewport';
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import type { WpcomStep } from '@automattic/tour-kit';
 
-function getTourAssets( key ) {
+interface TourAsset {
+	desktop?: { src: string; type: string };
+	mobile?: { src: string; type: string };
+}
+
+function getTourAssets( key: string ): TourAsset | undefined {
 	const CDN_PREFIX = 'https://s0.wp.com/i/editor-welcome-tour';
 	const tourAssets = {
 		addBlock: {
@@ -29,12 +36,12 @@ function getTourAssets( key ) {
 			desktop: { src: `${ CDN_PREFIX }/slide-welcome.png`, type: 'image/png' },
 			mobile: { src: `${ CDN_PREFIX }/slide-welcome_mobile.jpg`, type: 'image/jpeg' },
 		},
-	};
+	} as { [ key: string ]: TourAsset };
 
 	return tourAssets[ key ];
 }
 
-function getTourSteps( localeSlug, referencePositioning ) {
+function getTourSteps( localeSlug: string, referencePositioning = false ): WpcomStep[] {
 	return [
 		{
 			meta: {
@@ -47,7 +54,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 					mobile: null,
 				},
 				imgSrc: getTourAssets( 'welcome' ),
-				animation: null,
 			},
 			options: {
 				classNames: {
@@ -67,7 +73,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 					mobile: null,
 				},
 				imgSrc: getTourAssets( 'allBlocks' ),
-				animation: null,
 			},
 			options: {
 				classNames: {
@@ -77,12 +82,14 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && {
-				mobile:
-					'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
-				desktop:
-					'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
-			},
+			...( referencePositioning && {
+				referenceElements: {
+					mobile:
+						'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
+					desktop:
+						'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
+				},
+			} ),
 			meta: {
 				heading: __( 'Adding a new block', 'full-site-editing' ),
 				descriptions: {
@@ -96,7 +103,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 					),
 				},
 				imgSrc: getTourAssets( 'addBlock' ),
-				animation: 'block-inserter',
 			},
 			options: {
 				classNames: {
@@ -116,7 +122,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 					mobile: null,
 				},
 				imgSrc: getTourAssets( 'makeBold' ),
-				animation: null,
 			},
 			options: {
 				classNames: {
@@ -126,12 +131,14 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
-			referenceElements: referencePositioning && {
-				mobile:
-					'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
-				desktop:
-					'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
-			},
+			...( referencePositioning && {
+				referenceElements: {
+					mobile:
+						'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
+					desktop:
+						'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
+				},
+			} ),
 			meta: {
 				heading: __( 'More Options', 'full-site-editing' ),
 				descriptions: {
@@ -139,7 +146,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 					mobile: __( 'Tap the settings icon to see even more options.', 'full-site-editing' ),
 				},
 				imgSrc: getTourAssets( 'moreOptions' ),
-				animation: null,
 			},
 			options: {
 				classNames: {
@@ -148,49 +154,58 @@ function getTourSteps( localeSlug, referencePositioning ) {
 				},
 			},
 		},
-		{
-			meta: {
-				heading: __( 'Find your way', 'full-site-editing' ),
-				descriptions: {
-					desktop: __(
-						"Use List View to see all the blocks you've added. Click and drag any block to move it around.",
-						'full-site-editing'
-					),
-					mobile: null,
-				},
-				imgSrc: getTourAssets( 'findYourWay' ),
-				animation: null,
-				isDesktopOnly: true,
-			},
-			options: {
-				classNames: {
-					desktop: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
-					mobile: 'wpcom-editor-welcome-tour__step',
-				},
-			},
-		},
-		{
-			referenceElements: referencePositioning && {
-				desktop:
-					'.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
-			},
-			meta: {
-				heading: __( 'Undo any mistake', 'full-site-editing' ),
-				descriptions: {
-					desktop: __( "Click the Undo button if you've made a mistake.", 'full-site-editing' ),
-					mobile: null,
-				},
-				imgSrc: getTourAssets( 'undo' ),
-				animation: 'undo-button',
-				isDesktopOnly: true,
-			},
-			options: {
-				classNames: {
-					desktop: 'wpcom-editor-welcome-tour__step',
-					mobile: 'wpcom-editor-welcome-tour__step',
-				},
-			},
-		},
+		...( ! isMobile()
+			? [
+					{
+						meta: {
+							heading: __( 'Find your way', 'full-site-editing' ),
+							descriptions: {
+								desktop: __(
+									"Use List View to see all the blocks you've added. Click and drag any block to move it around.",
+									'full-site-editing'
+								),
+								mobile: null,
+							},
+							imgSrc: getTourAssets( 'findYourWay' ),
+						},
+						options: {
+							classNames: {
+								desktop: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+								mobile: 'wpcom-editor-welcome-tour__step',
+							},
+						},
+					},
+			  ]
+			: [] ),
+		...( ! isMobile()
+			? [
+					{
+						...( referencePositioning && {
+							referenceElements: {
+								desktop:
+									'.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
+							},
+						} ),
+						meta: {
+							heading: __( 'Undo any mistake', 'full-site-editing' ),
+							descriptions: {
+								desktop: __(
+									"Click the Undo button if you've made a mistake.",
+									'full-site-editing'
+								),
+								mobile: null,
+							},
+							imgSrc: getTourAssets( 'undo' ),
+						},
+						options: {
+							classNames: {
+								desktop: 'wpcom-editor-welcome-tour__step',
+								mobile: 'wpcom-editor-welcome-tour__step',
+							},
+						},
+					},
+			  ]
+			: [] ),
 		{
 			meta: {
 				heading: __( 'Drag & drop', 'full-site-editing' ),
@@ -199,7 +214,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 					mobile: __( 'To move blocks around, tap the up and down arrows.', 'full-site-editing' ),
 				},
 				imgSrc: getTourAssets( 'moveBlock' ),
-				animation: 'undo-button',
 			},
 			options: {
 				classNames: {
@@ -239,7 +253,6 @@ function getTourSteps( localeSlug, referencePositioning ) {
 					mobile: null,
 				},
 				imgSrc: getTourAssets( 'finish' ),
-				animation: 'block-inserter',
 			},
 			options: {
 				classNames: {
