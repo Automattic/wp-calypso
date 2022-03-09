@@ -3,11 +3,16 @@ import type { Flow } from './internals/types';
 
 export const builderFlow: Flow = {
 	useSteps() {
-		return [ 'designSetupSite' ];
+		return [ 'designSetupSite', 'domain' ];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const goBack = () => {
-			navigate( 'designSetupSite' );
+			switch ( currentStep ) {
+				case 'designSetupSite':
+					navigate( 'domain' );
+				case 'domain':
+					navigate( 'designSetupSite' );
+			}
 		};
 		const goNext = goBack;
 		const goToStep = ( step: StepPath ) => {

@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
 import DesignPicker, {
 	FeaturedPicksButtons,
@@ -24,6 +24,7 @@ import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 // import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 // import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 // import { getSiteId } from 'calypso/state/sites/selectors';
+import { StepNavigationLink } from '../../components';
 import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
@@ -32,14 +33,15 @@ import type { Design, Category } from '@automattic/design-picker';
 /**
  * The design picker step
  */
-const DesignSetupSite: Step = function DesignSetupSite() {
+const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 	const isMobile = useMobileBreakpoint();
+	const { goNext, goBack } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
 	// // const signupDependencies = useSelector( ( state ) => getSignupDependencyStore( state ) );
 
 	// // TODO EMN: These values should come from state
-	const flowName = 'builder-flow';
+	const flowName = 'setup-site';
 	const intent = 'builder';
 	const siteSlug = 'site-slug';
 	const siteTitle = 'site title';
@@ -189,9 +191,17 @@ const DesignSetupSite: Step = function DesignSetupSite() {
 		// );
 	}
 
-	// function upgradePlan() {
-	// 	openCheckoutModal( [ PLAN_PREMIUM ] );
-	// }
+	const isReskinnedFlow = ( flowName: string ) => {
+		return true;
+		// return (
+		// 	config.isEnabled( 'signup/reskin' ) &&
+		// 	config< string >( 'reskinned_flows' ).includes( flowName )
+		// );
+	};
+
+	function upgradePlan() {
+		openCheckoutModal( [ PLAN_PREMIUM ] );
+	}
 
 	// function renderCheckoutModal() {
 	// 	if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
@@ -200,6 +210,39 @@ const DesignSetupSite: Step = function DesignSetupSite() {
 
 	// 	return <AsyncCheckoutModal />;
 	// }
+
+	const backButton = useMemo( () => {
+		let handleBackButton;
+
+		if ( selectedDesign ) {
+			handleBackButton = () => {
+				setSelectedDesign( undefined );
+			};
+		} else {
+			handleBackButton = goBack;
+		}
+
+		return (
+			<StepNavigationLink
+				direction="back"
+				backIcon={ isReskinnedFlow( flowName ) ? 'chevron-left' : undefined }
+				handleClick={ handleBackButton }
+			/>
+		);
+	}, [ selectedDesign, navigation.goBack ] );
+
+	const skipButton = useMemo( () => {
+		console.log( 'SKIP GONEXT', goNext );
+		return (
+			<StepNavigationLink
+				direction="forward"
+				borderless={ true }
+				label={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
+				handleClick={ () => goNext() }
+				cssClass={ 'has-underline' }
+			/>
+		);
+	}, [ goNext, translate ] );
 
 	if ( selectedDesign ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
@@ -213,6 +256,12 @@ const DesignSetupSite: Step = function DesignSetupSite() {
 		} );
 		return (
 			<div className="design-setup-site-step__preview">
+				<ActionButtons
+					className="design-setup-site-step__navigation"
+					sticky={ isReskinnedFlow( flowName ) ? null : false }
+				>
+					{ backButton }
+				</ActionButtons>
 				<div className="design-setup-site-step__preview-header">
 					<FormattedHeader
 						id={ 'step-header' }
@@ -239,7 +288,6 @@ const DesignSetupSite: Step = function DesignSetupSite() {
 						toolbarComponent={ PreviewToolbar }
 					/> */ }
 				</div>
-				
 				{ /* { renderCheckoutModal() } */ }
 			</div>
 		);
@@ -247,6 +295,13 @@ const DesignSetupSite: Step = function DesignSetupSite() {
 
 	return (
 		<div className="design-setup-site-step">
+			<ActionButtons
+				className="design-setup-site-step__navigation"
+				sticky={ isReskinnedFlow( flowName ) ? null : false }
+			>
+				{ backButton }
+				{ skipButton }
+			</ActionButtons>
 			<DesignPicker
 				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
 				theme={ isReskinned ? 'light' : 'dark' }
