@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import FooterSection from 'calypso/components/footer-section';
 import LinkCard from 'calypso/components/link-card'; // should we host this one inside footer-section?
+import Section from 'calypso/components/section';
 
 interface Article {
 	title: string;
@@ -81,7 +81,7 @@ const EducationFooter = () => {
 	];
 
 	return (
-		<FooterSection header={ translate( 'Learn More' ) }>
+		<Section header={ translate( 'Learn More' ) }>
 			<ArticleLinksContainer>
 				{ articles.map( ( article ) => (
 					<LinkCard
@@ -94,7 +94,7 @@ const EducationFooter = () => {
 					/>
 				) ) }
 			</ArticleLinksContainer>
-		</FooterSection>
+		</Section>
 	);
 };
 

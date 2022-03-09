@@ -43,7 +43,6 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header/do
 import FocusableExample from 'calypso/components/focusable/docs/example';
 import FoldableCard from 'calypso/components/foldable-card/docs/example';
 import FoldableFAQ from 'calypso/components/foldable-faq/docs/example';
-import FooterSection from 'calypso/components/footer-section/docs/example';
 import FormattedDate from 'calypso/components/formatted-date/docs/example';
 import FormattedHeader from 'calypso/components/formatted-header/docs/example';
 import ClipboardButtons from 'calypso/components/forms/clipboard-button/docs/example';
@@ -90,6 +89,7 @@ import SearchCard from 'calypso/components/search-card';
 import SearchDemo from 'calypso/components/search/docs/example';
 import SectionHeader from 'calypso/components/section-header/docs/example';
 import SectionNav from 'calypso/components/section-nav/docs/example';
+import Section from 'calypso/components/section/docs/example';
 import SegmentedControl from 'calypso/components/segmented-control/docs/example';
 import SelectDropdown from 'calypso/components/select-dropdown/docs/example';
 import ShareButton from 'calypso/components/share-button/docs/example';
@@ -208,7 +208,6 @@ export default class DesignAssets extends Component {
 					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" searchKeywords="accordion" />
 					<FoldableFAQ readmeFilePath="foldable-faq" />
-					<FooterSection readmeFilePath="footer-sectio" />
 					<FormattedDate readmeFilePath="formatted-date" />
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
@@ -253,6 +252,7 @@ export default class DesignAssets extends Component {
 					<Ribbon readmeFilePath="/packages/components/src/ribbon" />
 					<ScreenReaderTextExample readmeFilePath="/packages/components/src/screen-reader-text" />
 					<SearchDemo readmeFilePath="search" />
+					<Section readmeFilePath="section" />
 					<SectionHeader readmeFilePath="section-header" />
 					<SectionNav readmeFilePath="section-nav" />
 					<SegmentedControl readmeFilePath="segmented-control" />

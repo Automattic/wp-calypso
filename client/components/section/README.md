@@ -1,14 +1,14 @@
-# Footer Section (TSX)
+# Section (TSX)
 
-This component displays a footer section with a header and an space for content
+This component displays a section with a header and an space for content
 
 ## How to use
 
 ```js
-import FooterSection from 'calypso/components/footer-section';
+import Section from 'calypso/components/section';
 
 function render() {
-	return <FooterSection header={ header }>{ content }</FooterSection>;
+	return <Section header={ header }>{ content }</Section>;
 }
 ```
 

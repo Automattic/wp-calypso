@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { ReactChild } from 'react';
 
-interface FooterSectionProps {
+interface SectionProps {
 	header: ReactChild;
 	children: ReactChild | ReactChild[];
 }
 
-const FooterContainer = styled.div`
+const SectionContainer = styled.div`
 	::before {
 		box-sizing: border-box;
 		content: '';
@@ -24,7 +24,7 @@ const FooterContainer = styled.div`
 	padding-bottom: 96px;
 `;
 
-const FooterHeader = styled.div`
+const SectionHeader = styled.div`
 	@media ( max-width: 660px ) {
 		padding: 0 16px;
 	}
@@ -39,17 +39,17 @@ const FooterHeader = styled.div`
 	line-height: 40px;
 `;
 
-const FooterContent = styled.div``;
+const SectionContent = styled.div``;
 
-const FooterSection = ( props: FooterSectionProps ) => {
+const Section = ( props: SectionProps ) => {
 	const { children, header } = props;
 
 	return (
-		<FooterContainer>
-			<FooterHeader>{ header }</FooterHeader>
-			<FooterContent>{ children }</FooterContent>
-		</FooterContainer>
+		<SectionContainer>
+			<SectionHeader>{ header }</SectionHeader>
+			<SectionContent>{ children }</SectionContent>
+		</SectionContainer>
 	);
 };
 
-export default FooterSection;
+export default Section;
