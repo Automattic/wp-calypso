@@ -1,5 +1,6 @@
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { useI18n } from '@wordpress/react-i18n';
 import LinkCard from 'calypso/components/link-card'; // should we host this one inside footer-section?
 import Section from 'calypso/components/section';
 
@@ -19,48 +20,37 @@ const ArticleLinksContainer = styled.div`
 `;
 
 const EducationFooter = () => {
-	const translate = useTranslate();
+	const { __ } = useI18n();
+	const localizeUrl = useLocalizeUrl();
 
 	return (
-		<Section header={ translate( 'Learn more' ) }>
+		<Section header={ __( 'Learn more' ) }>
 			<ArticleLinksContainer>
 				<LinkCard
-					label={ translate( 'Website Building', {
-						comment: 'Wordpress.com Go article (https://wordpress.com/go/) category.',
-						textOnly: true,
-					} ) }
-					title={ translate( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)', {
-						comment: 'Wordpress.com Go article title (https://wordpress.com/go/)',
-						textOnly: true,
-					} ) }
-					cta={ translate( 'Read More' ) }
-					url="https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/"
+					label={ __( 'Website Building' ) }
+					title={ __( 'What Are WordPress Plugins and Themes? (A Beginner’s Guide)' ) }
+					cta={ __( 'Read More' ) }
+					url={ localizeUrl(
+						'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
+					) }
 					background="studio-celadon-60"
 				/>
 				<LinkCard
-					label={ translate( 'Customization', {
-						comment: 'Wordpress.com Go article (https://wordpress.com/go/) category.',
-						textOnly: true,
-					} ) }
-					title={ translate( 'How to Choose WordPress Plugins for Your Website (7 Tips)', {
-						comment: 'Wordpress.com Go article title (https://wordpress.com/go/)',
-						textOnly: true,
-					} ) }
-					cta={ translate( 'Read More' ) }
-					url="https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/"
+					label={ __( 'Customization' ) }
+					title={ __( 'How to Choose WordPress Plugins for Your Website (7 Tips)' ) }
+					cta={ __( 'Read More' ) }
+					url={ localizeUrl(
+						'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/'
+					) }
 					background="studio-purple-80"
 				/>
 				<LinkCard
-					label={ translate( 'SEO', {
-						comment: 'Wordpress.com Go article (https://wordpress.com/go/) category.',
-						textOnly: true,
-					} ) }
-					title={ translate( 'Do You Need to Use SEO Plugins on Your WordPress.com Site?', {
-						comment: 'Wordpress.com Go article title (https://wordpress.com/go/)',
-						textOnly: true,
-					} ) }
-					cta={ translate( 'Read More' ) }
-					url="https://wordpress.com/go/tips/do-you-need-to-use-seo-plugins-on-your-wordpress-com-site/"
+					label={ __( 'SEO' ) }
+					title={ __( 'Do You Need to Use SEO Plugins on Your WordPress.com Site?' ) }
+					cta={ __( 'Read More' ) }
+					url={ localizeUrl(
+						'https://wordpress.com/go/tips/do-you-need-to-use-seo-plugins-on-your-wordpress-com-site/'
+					) }
 					background="studio-wordpress-blue-80"
 				/>
 			</ArticleLinksContainer>
