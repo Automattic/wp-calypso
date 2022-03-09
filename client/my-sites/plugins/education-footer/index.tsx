@@ -3,8 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import FooterSection from 'calypso/components/footer-section';
 import LinkCard from 'calypso/components/link-card'; // should we host this one inside footer-section?
 
-import './style.scss';
-
 interface Article {
 	title: string;
 	category: string;
