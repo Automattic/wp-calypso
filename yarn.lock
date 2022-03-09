@@ -1010,19 +1010,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/onboarding-components@workspace:^, @automattic/onboarding-components@workspace:packages/onboarding-components":
-  version: 0.0.0-use.local
-  resolution: "@automattic/onboarding-components@workspace:packages/onboarding-components"
-  dependencies:
-    css-loader: ^3.6.0
-    react: ^17.0.2
-    sass-loader: ^10.1.1
-    style-loader: ^1.2.1
-    typescript: ^4.4.4
-    webpack: ^5.63.0
-  languageName: unknown
-  linkType: soft
-
 "@automattic/onboarding@workspace:^, @automattic/onboarding@workspace:packages/onboarding":
   version: 0.0.0-use.local
   resolution: "@automattic/onboarding@workspace:packages/onboarding"
@@ -1038,13 +1025,17 @@ __metadata:
     "@wordpress/react-i18n": ^3.0.4
     classnames: ^2.3.1
     copyfiles: ^2.3.0
+    css-loader: ^3.6.0
     history: ^5.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
     react-router-dom: ^5.1.2
     redux: ^4.1.2
+    sass-loader: ^10.1.1
+    style-loader: ^1.2.1
     tslib: ^2.3.0
     typescript: ^4.5.5
+    webpack: ^5.63.0
   peerDependencies:
     "@wordpress/i18n": ^4.2.4
     react: ^17.0.2
@@ -12848,7 +12839,6 @@ __metadata:
     "@automattic/mini-cart": "workspace:^"
     "@automattic/notifications": "workspace:^"
     "@automattic/onboarding": "workspace:^"
-    "@automattic/onboarding-components": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
     "@automattic/react-virtualized": ^9.22.3
     "@automattic/request-external-access": "workspace:^"
@@ -36507,7 +36497,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.4.4, typescript@npm:^4.5.5":
+"typescript@npm:^4.5.5":
   version: 4.5.5
   resolution: "typescript@npm:4.5.5"
   bin:
@@ -36517,7 +36507,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.4.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
   version: 4.5.5
   resolution: "typescript@patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"
   bin:

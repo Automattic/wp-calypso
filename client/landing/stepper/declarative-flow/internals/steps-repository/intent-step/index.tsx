@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import IntentScreen from '@automattic/onboarding-components';
+import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import FormattedHeader from 'calypso/components/formatted-header';

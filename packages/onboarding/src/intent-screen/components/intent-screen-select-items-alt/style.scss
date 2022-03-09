@@ -1,7 +1,8 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
+@import '@automattic/typography/styles/fonts';
 
-.onboarding-components-select-items-alt {
+.intent-screen-select-items-alt {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -12,7 +13,7 @@
 	}
 }
 
-.onboarding-components-select-items-alt__item {
+.intent-screen-select-items-alt__item {
 	display: flex;
 	align-items: flex-start;
 	position: relative;

@@ -1,7 +1,8 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
+@import '@automattic/typography/styles/fonts';
 
-.onboarding-components-select-items {
+.intent-screen-select-items {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -15,7 +16,7 @@
 	}
 }
 
-.onboarding-components-select-items__item {
+.intent-screen-select-items__item {
 	display: flex;
 	align-items: flex-start;
 	position: relative;
@@ -70,7 +71,7 @@
 		}
 	}
 
-	button.onboarding-components-select-items__item-button {
+	button.intent-screen-select-items__item-button {
 		margin-top: 24px;
 		border-radius: 4px; /* stylelint-disable-line */
 		min-width: 130px;
