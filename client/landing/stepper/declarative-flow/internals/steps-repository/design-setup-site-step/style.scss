@@ -134,6 +134,25 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			white-space: nowrap;
 		}
 	}
+
+	.design-button-cover__button:not(.is-primary) {
+		border: 1px solid #c3c4c7;
+    	background: #ffffff;
+		color: var(--color-neutral-70);
+	}
+
+	.design-picker-category-filter {
+		.featured-picks-buttons__button.is-secondary {
+			background-color: var(--color-surface);
+			color: var(--color-neutral-70);
+			box-shadow: inset 0 0 0 1px var(--color-neutral-10);
+
+			&:hover {
+				box-shadow: inset 0 0 0 1px var(--color-neutral-20);
+    			color: var(--color-neutral-70);
+			}
+		}
+	}
 }
 
 .design-picker__preview {
