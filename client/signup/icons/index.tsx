@@ -239,15 +239,7 @@ export const award: ReactElement = (
 
 export const headset: ReactElement = (
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<mask
-			id="mask0_2727_2533"
-			// style="mask-type:alpha"
-			maskUnits="userSpaceOnUse"
-			x="3"
-			y="4"
-			width="18"
-			height="16"
-		>
+		<mask id="mask0_2727_2533" maskUnits="userSpaceOnUse" x="3" y="4" width="18" height="16">
 			<path
 				fillRule="evenodd"
 				clipRule="evenodd"
