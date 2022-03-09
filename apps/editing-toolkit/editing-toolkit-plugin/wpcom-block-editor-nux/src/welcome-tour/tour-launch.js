@@ -69,8 +69,7 @@ function WelcomeTour() {
 
 	let initialStepIndex = 0;
 	if ( 'sell' === intent && sitePlan && 'ecommerce-bundle' !== sitePlan.product_slug ) {
-		// There is not a good way to identify the steps
-		initialStepIndex = tourSteps.length - 2;
+		initialStepIndex = tourSteps.findIndex( ( step ) => step.slug === 'payment-block' );
 	}
 
 	const tourConfig = {

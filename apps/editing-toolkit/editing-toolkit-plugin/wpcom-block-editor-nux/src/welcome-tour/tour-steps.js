@@ -37,6 +37,7 @@ function getTourAssets( key ) {
 function getTourSteps( localeSlug, referencePositioning ) {
 	return [
 		{
+			slug: 'welcome',
 			meta: {
 				heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
 				descriptions: {
@@ -57,6 +58,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
+			slug: 'everything-is-a-block',
 			meta: {
 				heading: __( 'Everything is a block', 'full-site-editing' ),
 				descriptions: {
@@ -77,6 +79,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
+			slug: 'adding-blocks',
 			referenceElements: referencePositioning && {
 				mobile:
 					'.edit-post-header .edit-post-header__toolbar .components-button.edit-post-header-toolbar__inserter-toggle',
@@ -106,6 +109,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
+			slug: 'changing-blocks',
 			meta: {
 				heading: __( 'Click a block to change it', 'full-site-editing' ),
 				descriptions: {
@@ -126,6 +130,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
+			slug: 'settings',
 			referenceElements: referencePositioning && {
 				mobile:
 					'.edit-post-header .edit-post-header__settings .interface-pinned-items > button:nth-child(1)',
@@ -149,6 +154,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
+			slug: 'find-your-way',
 			meta: {
 				heading: __( 'Find your way', 'full-site-editing' ),
 				descriptions: {
@@ -170,6 +176,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
+			slug: 'undo',
 			referenceElements: referencePositioning && {
 				desktop:
 					'.edit-post-header .edit-post-header__toolbar .components-button.editor-history__undo',
@@ -192,6 +199,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
+			slug: 'drag-drop',
 			meta: {
 				heading: __( 'Drag & drop', 'full-site-editing' ),
 				descriptions: {
@@ -209,6 +217,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
+			slug: 'payment-block',
 			meta: {
 				heading: __( 'The payment block', 'full-site-editing' ),
 				descriptions: {
@@ -244,6 +253,7 @@ function getTourSteps( localeSlug, referencePositioning ) {
 			},
 		},
 		{
+			slug: 'congratulations',
 			meta: {
 				heading: __( 'Congratulations!', 'full-site-editing' ),
 				descriptions: {
