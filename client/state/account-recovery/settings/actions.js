@@ -57,7 +57,12 @@ export const accountRecoverySettingsFetch = () => ( dispatch ) => {
 		)
 		.catch( ( error ) => {
 			dispatch( accountRecoverySettingsFetchFailed( error ) );
-			dispatch( onAccountRecoverySettingsFetchFailed() );
+
+			// Only trigger the default handling for errors other than reauthorization.
+			// We don't want to show a generic error if we need to reauthorize.
+			if ( error?.statusCode !== 401 || error?.error !== 'reauthorization_required' ) {
+				dispatch( onAccountRecoverySettingsFetchFailed() );
+			}
 		} );
 };
 
