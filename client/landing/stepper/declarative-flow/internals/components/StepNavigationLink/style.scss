@@ -1,0 +1,26 @@
+.button.navigation-link {
+	&.is-borderless {
+		padding: 0;
+		color: var( --color-text-inverted );
+		font-size: $font-body-small;
+		font-weight: 600;
+
+		svg {
+			width: 20px;
+			height: 20px;
+			top: 5px;
+			margin-right: 2px;
+			fill: #101517;
+		}
+	}
+
+	&.has-underline {
+		text-decoration: underline;
+	}
+}
+
+.navigation-link--has-skip-heading {
+	transform: translateY( -3px );
+	//override unessecary super specificity added by another class
+	padding-top: 0 !important;
+}
