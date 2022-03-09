@@ -36,7 +36,7 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 		setNextPrimaryPaymentMethod( nextPrimaryPaymentMethod );
 	}, [ nextPrimaryPaymentMethod, setNextPrimaryPaymentMethod ] );
 
-	if ( ! nextPrimaryPaymentMethod ) {
+	if ( ! isFetching && ! nextPrimaryPaymentMethod ) {
 		return <></>;
 	}
 
