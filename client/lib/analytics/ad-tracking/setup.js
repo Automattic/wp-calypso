@@ -199,7 +199,9 @@ function setupAdRollGlobal() {
 
 function setupWpcomGoogleAdsGtag() {
 	setupGtag();
-	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAdsGtag );
+	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAdsGtag, {
+		allow_enhanced_conversions: true,
+	} );
 }
 
 function setupWpcomFloodlightGtag() {

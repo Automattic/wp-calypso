@@ -444,6 +444,10 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 	// MCC-level event.
 	// @TODO Separate WPCOM from Jetpack events.
 	if ( isWpcomGoogleAdsGtagEnabled ) {
+		window.gtag( 'set', 'user_data', {
+			email: user_email,
+		} );
+
 		const params = [
 			'event',
 			'conversion',
@@ -452,9 +456,6 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 				value: cart.total_cost,
 				currency: cart.currency,
 				transaction_id: orderId,
-				user_data: {
-					email: user_email,
-				},
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record WPCom Purchase', params );
