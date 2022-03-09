@@ -257,7 +257,6 @@ function getTourSteps( localeSlug: string, referencePositioning = false ): Wpcom
 					mobile: null,
 				},
 				imgSrc: getTourAssets( 'welcome' ),
-				animation: null,
 			},
 			options: {
 				classNames: {
