@@ -445,7 +445,7 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		} );
 }
 
-export async function setDesignOnSite(
+export function setDesignOnSite(
 	callback,
 	{ siteSlug, selectedDesign, intent },
 	stepProvidedItems,
@@ -460,13 +460,13 @@ export async function setDesignOnSite(
 	//@TODO: Get this list from a query rather than manually
 	const sellThemes = [ 'marl', 'winkel', 'attar', 'dorna', 'hari' ];
 	const choseSellTheme = sellThemes.includes( theme );
+	const siteId = getSiteId( reduxStore.getState(), siteSlug );
 
 	//Set the theme
 	wpcom.req
 		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: true } )
 		.then( () => {
-			//Determine which type of theme setup to run
-			//If we don't have sell intent or we're using a seller-oriented theme, run regular theme setup - this is working
+			//If we don't have sell intent or we're using a seller-oriented theme, run theme setup
 			if ( 'sell' !== intent || choseSellTheme ) {
 				wpcom.req.post( {
 					path: `/sites/${ siteSlug }/theme-setup`,
@@ -474,6 +474,7 @@ export async function setDesignOnSite(
 					body: { trim_content: true },
 				} );
 			} else {
+				//Create a new page and add a payments block pattern and set it as the homepage
 				wpcom.req
 					.get( {
 						path: `/ptk/patterns/${ getLocaleSlug() }?post_id=4348&http_envelope=1`,
@@ -489,16 +490,14 @@ export async function setDesignOnSite(
 								status: 'publish',
 								template: 'header-footer-only',
 							},
-						} );
+						} )
 					} )
 					.then( ( newPage ) => {
-						const siteId = getSiteId( reduxStore.getState(), siteSlug );
-						updateSiteFrontPage( siteId, {
-							show_on_front: 'page',
-							page_on_front: newPage.id,
-						} )( reduxStore.dispatch );
-
-						return callback();
+						console.log( "Hello!" + newPage );
+						wpcom.req.post( `/sites/${ siteId }/homepage`, {
+							is_page_on_front: 'page',
+							page_on_front_id: newPage.id,
+						} )
 					} )
 					.catch( ( errors ) => callback( [ errors ] ) );
 			}
@@ -513,7 +512,7 @@ export async function setDesignOnSite(
 			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
 		} )
 		.then( () => {
-			//If we have the sell intent, change the store footer - this is working
+			//If we have the sell intent, change the store footer
 			if ( 'sell' === intent ) {
 				wpcom.req.post( {
 					path: `/sites/${ siteSlug }/seller_footer`,
