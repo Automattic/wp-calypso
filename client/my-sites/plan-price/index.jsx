@@ -22,7 +22,7 @@ export class PlanPrice extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! currencyCode || ! typeof rawPrice === 'number' ) {
+		if ( ! currencyCode || ! ( typeof rawPrice === 'number' ) ) {
 			return null;
 		}
 
