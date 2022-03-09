@@ -16,6 +16,10 @@ interface LinkCardProps {
 }
 
 const LinkCardContainer = styled.div< LinkCardContainerProps >`
+	:hover {
+		filter: brightness( 120% );
+	}
+
 	border-radius: 5px;
 	padding: 24px;
 	background: var( --${ ( props ) => props.background || 'studio-white' } );
