@@ -26,7 +26,6 @@ const LinkCardLabel = styled.div`
 	font-size: var( --scss-font-body-extra-small );
 	color: var( --color-text-inverted );
 	line-height: 1.25rem;
-	text-transform: capitalize;
 `;
 
 const LinkCardTitle = styled.div`
