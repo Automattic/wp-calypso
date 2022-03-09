@@ -47,10 +47,11 @@ const SellerCelebrationModal = () => {
 			const pageId = parseInt( page?.context?.postId );
 			const isSavingEntity = select( 'core' ).isSavingEntityRecord( 'postType', 'page', pageId );
 			const pageEntity = select( 'core' ).getEntityRecord( 'postType', 'page', pageId );
-			const rawContent = pageEntity.content.raw;
+			const paymentsBlock =
+				pageEntity?.content?.includes( '<!-- wp:jetpack/recurring-payments -->' ) ?? false;
 			return {
 				isEditorSaving: isSavingSite || isSavingEntity,
-				hasPaymentsBlock: rawContent.includes( '<!-- wp:jetpack/recurring-payments -->' ),
+				hasPaymentsBlock: paymentsBlock,
 				linkUrl: pageEntity.link,
 			};
 		}
