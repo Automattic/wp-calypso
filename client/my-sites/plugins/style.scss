@@ -32,6 +32,14 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 }
 
+.upsell-nudge.is-jetpack {
+	margin-top: 51px;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		margin-top: 86px;
+	}
+}
+
 .upsell-nudge {
 	margin-top: 16px;
 
