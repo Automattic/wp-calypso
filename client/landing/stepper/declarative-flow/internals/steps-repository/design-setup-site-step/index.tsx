@@ -243,7 +243,7 @@ const DesignSetupSite: Step = function DesignSetupSite() {
 				onPreview={ previewDesign }
 				// onUpgrade={ upgradePlan }
 				className={ classnames( {
-					'design-setup-site__has-categories': showDesignPickerCategories,
+					'design-setup-site-step__has-categories': showDesignPickerCategories,
 				} ) }
 				highResThumbnails
 				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
