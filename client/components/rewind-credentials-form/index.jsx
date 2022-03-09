@@ -158,7 +158,7 @@ export class RewindCredentialsForm extends Component {
 				{ showNotices && (
 					<div className="rewind-credentials-form__instructions">
 						{ translate(
-							'Your server credentials can be found with your hosting provider. Their website should explain how to get the credentials you need. {{link}}Check out our handy guide for more info{{/link}}.',
+							'Your server credentials can be found with your hosting provider. Their website should explain how to get the credentials you need. {{link}}Learn how to find and enter your credentials{{/link}}.',
 							{
 								components: {
 									link: <a href="https://jetpack.com/support/activating-jetpack-backups/" />,
