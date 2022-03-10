@@ -153,16 +153,20 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 		}
 	}
+
+	.premium-badge__logo {
+		fill: currentColor;
+	}
 }
 
 .design-setup-site-step__preview {
 	.design-setup-site-step__preview-header {
-		// margin-top: 40px;
 		margin: 0;
+		margin-top: 12px;
 
-		@media ( min-width: 600px ) {
-			transform: translateY( -48px );
-		}
+		// @media ( min-width: 600px ) {
+		// 	transform: translateY( -48px );
+		// }
 		
 		// @media ( min-width: 960px ) {
 		// 	margin: 48px 0 40px;
@@ -231,8 +235,15 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	}
 }
 
-.design-setup-site-step__navigation {
+.design-setup-site-step__navigation.action-buttons {
+	display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+
 	@media ( min-width: 600px ) {
+		position: absolute;
+		top: 1px;
+		padding: 0;
 		left: 72px;
 		right: 24px;
 		background-color: transparent;

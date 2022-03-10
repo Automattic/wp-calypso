@@ -1,10 +1,11 @@
 .button.navigation-link {
 	&.is-borderless {
-		padding: 0;
-		font-size: $font-body-small;
-		font-weight: 600;
 		background: none;
 		border: none;
+		color: #101517;
+		font-size: $font-body-small;
+		font-weight: 600;
+		padding: 0;
 
 		svg {
 			width: 20px;
@@ -30,7 +31,7 @@
 }
 
 .navigation-link--has-skip-heading {
-	transform: translateY( -3px );
 	//override unessecary super specificity added by another class
 	padding-top: 0 !important;
+	transform: translateY( -3px );
 }
