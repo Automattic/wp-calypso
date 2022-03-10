@@ -48,7 +48,7 @@ class SecurityCheckupAccountEmail extends Component {
 		} else if ( emailChangePending ) {
 			icon = getWarningIcon();
 			description = translate(
-				'You are in the process of changing your account email address to {{strong}}%(newEmailAddress)s{{/strong}}, but still need to confirm the change.',
+				'You are in the process of changing your account email address to {{strong}}%(newEmailAddress)s{{/strong}}, but you still need to confirm the change.',
 				{
 					args: {
 						newEmailAddress: userSettings.new_user_email,
