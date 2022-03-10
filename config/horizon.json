@@ -74,6 +74,7 @@
 		"reader": true,
 		"reader/list-management": true,
 		"safari-idb-mitigation": true,
+		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
