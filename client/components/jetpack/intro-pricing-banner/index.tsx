@@ -69,25 +69,27 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 		<>
 			<div className="intro-pricing-banner__viewport-sentinel" { ...outerDivProps }></div>
 			<div className={ className }>
-				<div className="intro-pricing-banner__discount">
-					<img
-						src={ rocket }
-						alt={ translate( 'Rocket representing %(percent)d%% sale', {
-							args: { percent: discountPercentage },
-							textOnly: true,
-						} ) }
-					/>
-					<span>
-						{ preventWidows(
-							translate( 'Get up to %(percent)d%% off your first year.', {
-								args: {
-									percent: discountPercentage,
-								},
-							} )
-						) }
-					</span>
-				</div>
-				{ isNotNarrow && (
+				{ ( discountPercentage > 0 || isLoading ) && (
+					<div className="intro-pricing-banner__discount">
+						<img
+							src={ rocket }
+							alt={ translate( 'Rocket representing %(percent)d%% sale', {
+								args: { percent: discountPercentage },
+								textOnly: true,
+							} ) }
+						/>
+						<span>
+							{ preventWidows(
+								translate( 'Get up to %(percent)d%% off your first year.', {
+									args: {
+										percent: discountPercentage,
+									},
+								} )
+							) }
+						</span>
+					</div>
+				) }
+				{ ( isNotNarrow || ( discountPercentage <= 0 && ! isLoading ) ) && (
 					<div className="intro-pricing-banner__guarantee">
 						<img
 							src={ guaranteeBadge }
