@@ -125,6 +125,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/payment/#using-a-payment-method-for-all-subscriptions',
 		post_id: 76237,
 	},
+	performance: {
+		link: 'https://wordpress.com/support/settings/performance-settings/',
+		post_id: 179952,
+	},
 	plugins: {
 		link: 'https://wordpress.com/support/plugins/',
 		post_id: 2108,

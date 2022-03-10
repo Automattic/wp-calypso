@@ -7,6 +7,7 @@ import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
@@ -57,7 +58,20 @@ class SiteSettingsPerformance extends Component {
 					brandFont
 					className="settings-performance__page-heading"
 					headerText={ translate( 'Performance Settings' ) }
-					subHeaderText={ translate( "Explore settings to improve your site's performance." ) }
+					subHeaderText={ translate(
+						"Explore settings to improve your site's performance. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink
+										key="learnMore"
+										supportContext="performance"
+										showIcon={ false }
+									/>
+								),
+							},
+						}
+					) }
 					align="left"
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
