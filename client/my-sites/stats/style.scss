@@ -130,7 +130,7 @@
 			margin-right: 0;
 			@include breakpoint-deprecated( '>480px' ) {
 				margin-right: 40px;
-
+				margin-top: 0;
 				a {
 					width: 140px;
 					margin-left: 10px;
