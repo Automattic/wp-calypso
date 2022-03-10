@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { isDesktop, subscribeIsDesktop, isMobile } from '@automattic/viewport';
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -169,18 +169,16 @@ export class PlansStep extends Component {
 
 		return (
 			<ProvideExperimentData
-				name="calypso_mobile_plans_page_with_billing"
-				options={ { isEligible: isMobile() && 'onboarding' === this.props.flowName } }
+				name="calypso_signup_monthly_plans_default_202201_v2"
+				options={ {
+					isEligible: [ 'onboarding', 'launch-site' ].includes( this.props.flowName ),
+				} }
 			>
 				{ ( isLoading, experimentAssignment ) => {
 					if ( isLoading ) {
 						return this.renderLoading();
 					}
-
-					// This allows us to continue with the other experiments.
-					if ( ! experimentAssignment?.variationName ) {
-						return this.renderSignUpMonthlyPlansExperiment( errorDisplay );
-					}
+					const isTreatmentMonthlyDefault = experimentAssignment?.variationName !== null;
 
 					return (
 						<div>
@@ -190,8 +188,7 @@ export class PlansStep extends Component {
 								hideFreePlan={ hideFreePlan }
 								isInSignup={ true }
 								isLaunchPage={ isLaunchPage }
-								intervalType={ this.getIntervalType( false ) }
-								isBillingWordingExperiment={ experimentAssignment?.variationName !== null }
+								intervalType={ this.getIntervalType( isTreatmentMonthlyDefault ) }
 								onUpgradeClick={ this.onSelectPlan }
 								showFAQ={ false }
 								domainName={ this.getDomainName() }
@@ -205,7 +202,6 @@ export class PlansStep extends Component {
 								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 								isReskinned={ isReskinned }
-								disableMonthlyExperiment={ false }
 							/>
 						</div>
 					);

@@ -128,7 +128,6 @@ export class PlanFeaturesHeader extends Component {
 			title,
 			audience,
 			translate,
-			isBillingWordingExperiment,
 		} = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
@@ -154,7 +153,6 @@ export class PlanFeaturesHeader extends Component {
 				</header>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
-					{ isBillingWordingExperiment && this.getDiscountInfo() }
 					{ this.getIntervalDiscount() }
 				</div>
 			</span>
@@ -278,7 +276,6 @@ export class PlanFeaturesHeader extends Component {
 			isMonthlyPlan,
 			relatedYearlyPlan,
 			isLoggedInMonthlyPricing,
-			isBillingWordingExperiment,
 		} = this.props;
 
 		if ( ( isInSignup || isLoggedInMonthlyPricing ) && isMonthlyPlan && relatedYearlyPlan ) {
@@ -293,11 +290,6 @@ export class PlanFeaturesHeader extends Component {
 			planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } ) &&
 			relatedYearlyPlan
 		) {
-			if ( isBillingWordingExperiment ) {
-				return translate( 'billed as %(price)s annually', {
-					args: { price: relatedYearlyPlan.formatted_price },
-				} );
-			}
 			return translate( 'billed annually' );
 		}
 
