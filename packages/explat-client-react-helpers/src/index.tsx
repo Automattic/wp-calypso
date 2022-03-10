@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as React from 'react';
 import type { ExPlatClient, ExperimentAssignment } from '@automattic/explat-client';
-export { ExPlatClient, ExperimentAssignment };
 
 export interface ExperimentOptions {
 	/**
