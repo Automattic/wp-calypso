@@ -20,11 +20,8 @@ import {
 	setUserSetting,
 } from 'calypso/state/user-settings/actions';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { UserSettingsType } from 'calypso/state/selectors/get-user-settings';
 import type { ChangeEvent } from 'react';
-
-export type UserSettingValue = boolean | number | string;
-
-export type UserSettingsType = Record< string, UserSettingValue >;
 
 export type AccountEmailFragmentProps = {
 	emailInputId?: string;
