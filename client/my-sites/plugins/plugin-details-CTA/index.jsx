@@ -5,13 +5,14 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
+import { useIsFetching } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
+import { getCacheKey as getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
-import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -39,9 +40,7 @@ const PluginDetailsCTA = ( {
 
 	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
-	const requestingPluginsForSites = useSelector( ( state ) =>
-		isRequestingForSites( state, siteIds )
-	);
+	const requestingPluginsForSites = useIsFetching( getInstalledPluginsCacheKey( siteIds ) );
 
 	// Site type
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );

@@ -1,10 +1,12 @@
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { useIsFetching } from 'react-query';
 import { connect } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import { getCacheKey as getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { isRequesting, getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { getCustomizerUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -13,7 +15,6 @@ import './jetpack.scss';
 const AmpJetpack = ( {
 	ampPluginInstalled,
 	customizerAmpPanelUrl,
-	requestingPlugins,
 	siteId,
 	siteSlug,
 	translate,
@@ -31,6 +32,8 @@ const AmpJetpack = ( {
 			linkText = translate( 'Install the AMP plugin' );
 		}
 	}
+
+	const requestingPlugins = useIsFetching( getInstalledPluginsCacheKey( [ siteId ] ) );
 
 	return (
 		<div className="amp__jetpack">
@@ -71,7 +74,6 @@ export default connect( ( state ) => {
 		siteId,
 		ampPluginInstalled: getPluginOnSite( state, siteId, 'amp' ),
 		customizerAmpPanelUrl,
-		requestingPlugins: isRequesting( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 	};
 } )( localize( AmpJetpack ) );

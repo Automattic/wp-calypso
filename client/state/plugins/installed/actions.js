@@ -10,9 +10,6 @@ import {
 import wpcom from 'calypso/lib/wp';
 import {
 	PLUGINS_RECEIVE,
-	PLUGINS_REQUEST,
-	PLUGINS_REQUEST_SUCCESS,
-	PLUGINS_REQUEST_FAILURE,
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -501,15 +498,8 @@ export function receiveSitePlugins( siteId, plugins ) {
 
 export function fetchSitePlugins( siteId ) {
 	return ( dispatch ) => {
-		const defaultAction = {
-			siteId,
-		};
-		dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
-
 		const receivePluginsDispatchSuccess = ( data ) => {
 			dispatch( receiveSitePlugins( siteId, data.plugins ) );
-			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
-
 			data.plugins.map( ( plugin ) => {
 				if ( plugin.update && plugin.autoupdate ) {
 					updatePlugin( siteId, plugin )( dispatch );
@@ -517,15 +507,7 @@ export function fetchSitePlugins( siteId ) {
 			} );
 		};
 
-		const receivePluginsDispatchFail = ( error ) => {
-			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
-		};
-
-		return wpcom
-			.site( siteId )
-			.pluginsList()
-			.then( receivePluginsDispatchSuccess )
-			.catch( receivePluginsDispatchFail );
+		return wpcom.site( siteId ).pluginsList().then( receivePluginsDispatchSuccess );
 	};
 }
 

@@ -24,8 +24,6 @@ A module for managing installed plugins on connected sites.
 
 ### `isRequesting( state: Object, siteId: number|string )`
 
-### `isRequestingForSites( state: Object, sites: Array )`
-
 ### `getPlugins( state: Object, siteIds: Array, pluginFilter: Object )`
 
 Get plugins installed on a list of sites (can also be just one site, but it should still be an array). Each plugin returned also lists the sites it's installed on in a `sites` property. Can be filtered by `active`, `inactive`, `updates`.

@@ -2,9 +2,6 @@ import deepFreeze from 'deep-freeze';
 import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import {
 	PLUGINS_RECEIVE,
-	PLUGINS_REQUEST,
-	PLUGINS_REQUEST_SUCCESS,
-	PLUGINS_REQUEST_FAILURE,
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -16,37 +13,11 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_NOTICES_REMOVE,
 } from 'calypso/state/action-types';
-import { isRequesting, plugins } from '../reducer';
+import { plugins } from '../reducer';
 import status from '../status/reducer';
 import { akismet, jetpack } from './fixtures/plugins';
 
 describe( 'reducer:', () => {
-	describe( 'isRequesting', () => {
-		test( 'should track when fetches start', () => {
-			const state = isRequesting( undefined, {
-				type: PLUGINS_REQUEST,
-				siteId: 'one.site',
-			} );
-			expect( state ).toEqual( { 'one.site': true } );
-		} );
-
-		test( 'should track when fetches end successfully', () => {
-			const state = isRequesting( undefined, {
-				type: PLUGINS_REQUEST_SUCCESS,
-				siteId: 'one.site',
-			} );
-			expect( state ).toEqual( { 'one.site': false } );
-		} );
-
-		test( 'should track when fetches end unsuccessfully', () => {
-			const state = isRequesting( undefined, {
-				type: PLUGINS_REQUEST_FAILURE,
-				siteId: 'one.site',
-			} );
-			expect( state ).toEqual( { 'one.site': false } );
-		} );
-	} );
-
 	describe( 'plugins', () => {
 		test( 'should load the plugins on this site', () => {
 			const originalState = deepFreeze( { 'one.site': [] } );

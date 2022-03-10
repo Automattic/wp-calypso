@@ -1,7 +1,7 @@
 import { CompactCard, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { filter, get, range } from 'lodash';
+import { filter, get, range, flow } from 'lodash';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -10,6 +10,7 @@ import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import withInstalledPlugins from 'calypso/data/plugins/installed/with-installed-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
@@ -21,10 +22,7 @@ import {
 } from 'calypso/lib/url/support';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
-import {
-	getPluginOnSite,
-	isRequesting as isRequestingInstalledPlugins,
-} from 'calypso/state/plugins/installed/selectors';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { installPlugin } from 'calypso/state/plugins/premium/actions';
 import {
 	getPluginsForSite,
@@ -141,7 +139,7 @@ class PlansSetup extends Component {
 	};
 
 	startNextPlugin = () => {
-		const { nextPlugin, requestingInstalledPlugins, sitePlugin } = this.props;
+		const { nextPlugin, installedPlugins, sitePlugin } = this.props;
 
 		// We're already installing.
 		if ( this.props.isInstalling ) {
@@ -155,7 +153,7 @@ class PlansSetup extends Component {
 		let plugin = { ...nextPlugin, ...this.props.wporgPlugins?.[ nextPlugin.slug ] };
 
 		const getPluginFromStore = function () {
-			if ( ! sitePlugin && requestingInstalledPlugins ) {
+			if ( ! sitePlugin && installedPlugins?.isFetching ) {
 				// if the Plugins are still being fetched, we wait.
 				return setTimeout( getPluginFromStore, 500 );
 			}
@@ -231,7 +229,7 @@ class PlansSetup extends Component {
 	};
 
 	renderPlugins = ( hidden = false ) => {
-		if ( this.props.isRequesting || this.props.requestingInstalledPlugins ) {
+		if ( this.props.isRequesting || this.props.installedPlugins?.isFetching ) {
 			return this.renderPluginsPlaceholders();
 		}
 
@@ -517,7 +515,7 @@ class PlansSetup extends Component {
 			site &&
 			! this.props.isRequestingSites &&
 			! this.props.isRequesting &&
-			! this.props.requestingInstalledPlugins &&
+			! this.props.installedPlugins?.isFetching &&
 			! this.props.plugins.length
 		) {
 			return this.renderNoJetpackPlan();
@@ -543,28 +541,32 @@ class PlansSetup extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const siteId = getSelectedSiteId( state );
-		const selectedSite = getSelectedSite( state );
-		const forSpecificPlugin = ownProps.forSpecificPlugin || false;
+export default flow(
+	localize,
+	withInstalledPlugins,
+	connect(
+		( state, ownProps ) => {
+			const siteId = getSelectedSiteId( state );
+			const selectedSite = getSelectedSite( state );
+			const forSpecificPlugin = ownProps.forSpecificPlugin || false;
 
-		return {
-			sitePlugin: forSpecificPlugin && getPluginOnSite( state, siteId, forSpecificPlugin ),
-			wporgPlugins: getAllWporgPlugins( state ),
-			isRequesting: isRequesting( state, siteId ),
-			requestingInstalledPlugins: isRequestingInstalledPlugins( state, siteId ),
-			hasRequested: hasRequested( state, siteId ),
-			isInstalling: isInstalling( state, siteId, forSpecificPlugin ),
-			isFinished: isFinished( state, siteId, forSpecificPlugin ),
-			plugins: getPluginsForSite( state, siteId, forSpecificPlugin ),
-			activePlugin: getActivePlugin( state, siteId, forSpecificPlugin ),
-			nextPlugin: getNextPlugin( state, siteId, forSpecificPlugin ),
-			selectedSite: selectedSite,
-			isRequestingSites: isRequestingSites( state ),
-			sitesInitialized: hasInitializedSites( state ),
-			siteId,
-		};
-	},
-	{ requestSites, fetchPluginData, installPlugin }
-)( localize( PlansSetup ) );
+			return {
+				sitePlugin: forSpecificPlugin && getPluginOnSite( state, siteId, forSpecificPlugin ),
+				wporgPlugins: getAllWporgPlugins( state ),
+				isRequesting: isRequesting( state, siteId ),
+				hasRequested: hasRequested( state, siteId ),
+				isInstalling: isInstalling( state, siteId, forSpecificPlugin ),
+				isFinished: isFinished( state, siteId, forSpecificPlugin ),
+				plugins: getPluginsForSite( state, siteId, forSpecificPlugin ),
+				activePlugin: getActivePlugin( state, siteId, forSpecificPlugin ),
+				nextPlugin: getNextPlugin( state, siteId, forSpecificPlugin ),
+				selectedSite: selectedSite,
+				isRequestingSites: isRequestingSites( state ),
+				sitesInitialized: hasInitializedSites( state ),
+				siteId,
+				siteIds: [ siteId ],
+			};
+		},
+		{ requestSites, fetchPluginData, installPlugin }
+	)
+)( PlansSetup );

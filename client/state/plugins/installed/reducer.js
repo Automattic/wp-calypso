@@ -3,9 +3,6 @@
 import { findIndex } from 'lodash';
 import {
 	PLUGINS_RECEIVE,
-	PLUGINS_REQUEST,
-	PLUGINS_REQUEST_SUCCESS,
-	PLUGINS_REQUEST_FAILURE,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_DEACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_UPDATE_REQUEST_SUCCESS,
@@ -17,21 +14,6 @@ import {
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { pluginsSchema } from './schema';
 import status from './status/reducer';
-
-/*
- * Tracks the requesting state for installed plugins on a per-site index.
- */
-export function isRequesting( state = {}, action ) {
-	switch ( action.type ) {
-		case PLUGINS_REQUEST:
-			return Object.assign( {}, state, { [ action.siteId ]: true } );
-		case PLUGINS_REQUEST_FAILURE:
-		case PLUGINS_REQUEST_SUCCESS:
-			return Object.assign( {}, state, { [ action.siteId ]: false } );
-		default:
-			return state;
-	}
-}
 
 /*
  * Helper function to update a plugin's state after a successful plugin action
@@ -118,7 +100,6 @@ function plugin( state, action ) {
 }
 
 export default combineReducers( {
-	isRequesting,
 	plugins,
 	status,
 } );

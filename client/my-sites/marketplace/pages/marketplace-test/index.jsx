@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect } from 'react';
+import { useIsFetching } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
@@ -13,6 +14,7 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { getCacheKey as getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import {
@@ -21,11 +23,7 @@ import {
 } from 'calypso/state/automated-transfer/actions';
 import { getAutomatedTransfer, getEligibility } from 'calypso/state/automated-transfer/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
-import {
-	getPluginOnSite,
-	getPlugins,
-	isRequestingForSites,
-} from 'calypso/state/plugins/installed/selectors';
+import { getPluginOnSite, getPlugins } from 'calypso/state/plugins/installed/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import {
 	getSelectedSite,
@@ -69,9 +67,7 @@ export default function MarketplaceTest() {
 
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSiteId ) );
 
-	const isRequestingForSite = useSelector( ( state ) =>
-		isRequestingForSites( state, [ selectedSiteId ] )
-	);
+	const isRequestingForSite = useIsFetching( getInstalledPluginsCacheKey( [ selectedSiteId ] ) );
 	const yoastPremiumPluginOnSite = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSiteId, 'wordpress-seo-premium' )
 	);

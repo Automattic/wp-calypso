@@ -10,9 +10,6 @@ import {
 } from 'calypso/lib/plugins/constants';
 import {
 	PLUGINS_RECEIVE,
-	PLUGINS_REQUEST,
-	PLUGINS_REQUEST_SUCCESS,
-	PLUGINS_REQUEST_FAILURE,
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -93,40 +90,12 @@ describe( 'actions', () => {
 			nock.cleanAll();
 		} );
 
-		test( 'should dispatch fetch action when triggered', () => {
-			fetchSitePlugins( 2916284 )( spy, getState );
-
-			expect( spy ).toHaveBeenCalledWith( {
-				type: PLUGINS_REQUEST,
-				siteId: 2916284,
-			} );
-		} );
-
 		test( 'should dispatch plugins receive action when request completes', async () => {
 			await fetchSitePlugins( 2916284 )( spy, getState );
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGINS_RECEIVE,
 				siteId: 2916284,
 				data: [ akismet, helloDolly, jetpack ],
-			} );
-		} );
-
-		test( 'should dispatch plugin request success action when request completes', async () => {
-			await fetchSitePlugins( 2916284 )( spy, getState );
-			expect( spy ).toHaveBeenCalledWith( {
-				type: PLUGINS_REQUEST_SUCCESS,
-				siteId: 2916284,
-			} );
-		} );
-
-		test( 'should dispatch fail action when request fails', async () => {
-			await fetchSitePlugins( 77203074 )( spy, getState );
-			expect( spy ).toHaveBeenCalledWith( {
-				type: PLUGINS_REQUEST_FAILURE,
-				siteId: 77203074,
-				error: expect.objectContaining( {
-					message: 'This endpoint is only available for Jetpack powered Sites',
-				} ),
 			} );
 		} );
 

@@ -4,10 +4,12 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo } from 'react';
+import { useIsFetching } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { getCacheKey as getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
@@ -24,7 +26,7 @@ import {
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
-import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -55,7 +57,8 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
+	const isRequestingPlugins = useIsFetching( getInstalledPluginsCacheKey( [ siteId ] ) );
+
 	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, siteId, productSlug ) );
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );

@@ -9,7 +9,7 @@ import {
 	Step,
 	Tour,
 } from 'calypso/layout/guided-tours/config-elements';
-import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import meta from './meta';
 import type { AppState } from 'calypso/types';
@@ -30,9 +30,8 @@ export const JetpackPluginUpdatesTour = makeTour(
 		{ ...meta }
 		when={ ( state: AppState ) => {
 			const site = getSelectedSite( state );
-			const isRequestingPlugins = isRequesting( state, site?.ID );
 			const sitePlugin = getPluginOnSite( state, site?.ID, 'jetpack' );
-			const res = ! isRequestingPlugins && !! sitePlugin;
+			const res = !! sitePlugin;
 			return res;
 		} }
 	>

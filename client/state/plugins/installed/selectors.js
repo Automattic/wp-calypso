@@ -40,26 +40,10 @@ export function isEqualSlugOrId( pluginSlug, plugin ) {
 	return plugin.slug === pluginSlug || plugin?.id?.split( '/' ).shift() === pluginSlug;
 }
 
-export function isRequesting( state, siteId ) {
-	if ( typeof state.plugins.installed.isRequesting[ siteId ] === 'undefined' ) {
-		return false;
-	}
-	return state.plugins.installed.isRequesting[ siteId ];
-}
-
-export function isRequestingForSites( state, sites ) {
-	// As long as any sites have isRequesting true, we consider this group requesting
-	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
-}
-
 export function getPlugins( state, siteIds, pluginFilter ) {
 	let pluginList = reduce(
 		siteIds,
 		( memo, siteId ) => {
-			if ( isRequesting( state, siteId ) ) {
-				return memo;
-			}
-
 			const list = state.plugins.installed.plugins[ siteId ] || [];
 			list.forEach( ( item ) => {
 				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );

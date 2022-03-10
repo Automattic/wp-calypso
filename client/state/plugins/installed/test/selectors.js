@@ -70,14 +70,6 @@ const state = deepFreeze( {
 } );
 
 describe( 'Installed plugin selectors', () => {
-	test( 'should contain isRequesting method', () => {
-		expect( selectors.isRequesting ).toBeInstanceOf( Function );
-	} );
-
-	test( 'should contain isRequestingForSites method', () => {
-		expect( selectors.isRequestingForSites ).toBeInstanceOf( Function );
-	} );
-
 	test( 'should contain getPlugins method', () => {
 		expect( selectors.getPlugins ).toBeInstanceOf( Function );
 	} );
@@ -104,38 +96,6 @@ describe( 'Installed plugin selectors', () => {
 
 	test( 'should contain getLogsForPlugin method', () => {
 		expect( selectors.getStatusForPlugin ).toBeInstanceOf( Function );
-	} );
-
-	describe( 'isRequesting', () => {
-		test( 'Should get `false` if this site is not in the current state', () => {
-			expect( selectors.isRequesting( state, 'no.site' ) ).toBe( false );
-		} );
-
-		test( 'Should get `false` if this site is not being fetched', () => {
-			expect( selectors.isRequesting( state, 'site.one' ) ).toBe( false );
-		} );
-
-		test( 'Should get `true` if this site is being fetched', () => {
-			expect( selectors.isRequesting( state, 'site.three' ) ).toBe( true );
-		} );
-	} );
-
-	describe( 'isRequestingForSites', () => {
-		test( 'Should get `false` if no sites are being fetched', () => {
-			expect( selectors.isRequestingForSites( state, [ 'site.one', 'site.two' ] ) ).toBe( false );
-		} );
-
-		test( 'Should get `true` if any site is being fetched', () => {
-			expect( selectors.isRequestingForSites( state, [ 'site.one', 'site.three' ] ) ).toBe( true );
-		} );
-
-		test( 'Should get `true` if any site is being fetched, even if one is not in the current state', () => {
-			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.three' ] ) ).toBe( true );
-		} );
-
-		test( 'Should get `false` if sites are not being fetched, including a site not in the current state', () => {
-			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.two' ] ) ).toBe( false );
-		} );
 	} );
 
 	describe( 'getPlugins', () => {
