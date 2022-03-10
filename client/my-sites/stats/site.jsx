@@ -6,9 +6,11 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import parselyIcon from 'calypso/assets/images/icons/parsely-logo.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
@@ -32,6 +34,7 @@ import {
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ChartTabs from './stats-chart-tabs';
@@ -144,8 +147,29 @@ class StatsSite extends Component {
 		this.props.recordTracksEvent( 'calypso_stats_parsely_banner_click' );
 	};
 
+	buildPrivateSiteBanner() {
+		return (
+			<Banner
+				callToAction={ translate( 'Launch your site' ) }
+				className="stats__private-site-banner"
+				description={ translate(
+					'Changing your site from private to public helps people find you and get more visitors. Don’t worry, you can keep iterating on your site.'
+				) }
+				disableCircle="true"
+				event="calypso_stats_private_site_banner"
+				dismissTemporary="true"
+				dismissPreferenceName="dismiss"
+				href="/settings/general"
+				iconPath={ rocketImage }
+				title={ translate( 'Launch your site public to drive more visitors' ) }
+				tracksClickName="calypso_stats_private_site_banner_click"
+				tracksImpressionName="calypso_stats_private_site_banner_view"
+			/>
+		);
+	}
+
 	renderStats() {
-		const { date, siteId, slug, isJetpack } = this.props;
+		const { date, siteId, slug, isJetpack, isPrivate } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -168,6 +192,8 @@ class StatsSite extends Component {
 				/>
 			);
 		}
+
+		const privateSiteBanner = isPrivate ? this.buildPrivateSiteBanner() : null;
 
 		return (
 			<>
@@ -193,7 +219,7 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
-
+				{ privateSiteBanner }
 				<div id="my-stats-content">
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
@@ -382,6 +408,7 @@ export default connect(
 			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
 			isJetpack,
+			isPrivate: isPrivateSite( state, siteId ),
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 			showEnableStatsModule,
