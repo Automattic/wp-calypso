@@ -7,12 +7,14 @@ import {
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import hasUserSettings from 'calypso/state/selectors/has-user-settings';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 import { getOKIcon, getWarningIcon } from './icons.js';
 import SecurityCheckupNavigationItem from './navigation-item';
 
 class SecurityCheckupAccountEmail extends Component {
 	static propTypes = {
+		areUserSettingsLoaded: PropTypes.bool,
 		emailChangePending: PropTypes.bool,
 		primaryEmail: PropTypes.string,
 		primaryEmailVerified: PropTypes.bool,
@@ -22,12 +24,17 @@ class SecurityCheckupAccountEmail extends Component {
 
 	render() {
 		const {
+			areUserSettingsLoaded,
 			emailChangePending,
 			primaryEmail,
 			primaryEmailVerified,
 			translate,
 			userSettings,
 		} = this.props;
+
+		if ( ! areUserSettingsLoaded ) {
+			return <SecurityCheckupNavigationItem isPlaceholder />;
+		}
 
 		let icon;
 		let description;
@@ -85,6 +92,7 @@ class SecurityCheckupAccountEmail extends Component {
 }
 
 export default connect( ( state ) => ( {
+	areUserSettingsLoaded: hasUserSettings( state ),
 	emailChangePending: isPendingEmailChange( state ),
 	primaryEmail: getCurrentUserEmail( state ),
 	primaryEmailVerified: isCurrentUserEmailVerified( state ),
