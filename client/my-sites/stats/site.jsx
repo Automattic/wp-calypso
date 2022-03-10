@@ -147,21 +147,21 @@ class StatsSite extends Component {
 		this.props.recordTracksEvent( 'calypso_stats_parsely_banner_click' );
 	};
 
-	buildPrivateSiteBanner() {
+	renderPrivateSiteBanner( slug ) {
 		return (
 			<Banner
 				callToAction={ translate( 'Launch your site' ) }
 				className="stats__private-site-banner"
 				description={ translate(
-					'Changing your site from private to public helps people find you and get more visitors. Don’t worry, you can keep iterating on your site.'
+					'Changing your site from private to public helps people find you and get more visitors. Don’t worry, you can keep working on your site.'
 				) }
 				disableCircle="true"
 				event="calypso_stats_private_site_banner"
-				dismissTemporary="true"
-				dismissPreferenceName="dismiss"
-				href="/settings/general"
+				dismissTemporary="false"
+				dismissPreferenceName="stats-launch-private-site"
+				href={ `/settings/general/${ slug }` }
 				iconPath={ rocketImage }
-				title={ translate( 'Launch your site public to drive more visitors' ) }
+				title={ translate( 'Launch your site to drive more visitors' ) }
 				tracksClickName="calypso_stats_private_site_banner_click"
 				tracksDismissName="calypso_stats_private_site_banner_dismiss"
 				tracksImpressionName="calypso_stats_private_site_banner_view"
@@ -170,7 +170,7 @@ class StatsSite extends Component {
 	}
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isPrivate } = this.props;
+		const { date, siteId, slug, isJetpack, isSitePrivate } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -193,8 +193,6 @@ class StatsSite extends Component {
 				/>
 			);
 		}
-
-		const privateSiteBanner = isPrivate ? this.buildPrivateSiteBanner() : null;
 
 		return (
 			<>
@@ -220,7 +218,9 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
-				{ privateSiteBanner }
+
+				{ isSitePrivate ? this.renderPrivateSiteBanner( slug ) : null }
+
 				<div id="my-stats-content">
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
@@ -409,7 +409,7 @@ export default connect(
 			siteId && isJetpack && isJetpackModuleActive( state, siteId, 'stats' ) === false;
 		return {
 			isJetpack,
-			isPrivate: isPrivateSite( state, siteId ),
+			isSitePrivate: isPrivateSite( state, siteId ),
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 			showEnableStatsModule,
