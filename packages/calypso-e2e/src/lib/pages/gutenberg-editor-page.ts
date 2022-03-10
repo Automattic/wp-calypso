@@ -44,8 +44,6 @@ export class GutenbergEditorPage {
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
-	private memoizedEditorFrame: Frame | undefined;
-	private _isGutenframe: boolean = true;
 
 	/**
 	 * Constructs an instance of the component.
@@ -71,9 +69,18 @@ export class GutenbergEditorPage {
 
 		this.page = page;
 		this.requiresGutenframe = requiresGutenframe;
-		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.getEditorFrame );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.getEditorFrame );
-		this.editorToolbarComponent = new EditorToolbarComponent( page, this.getEditorFrame );
+		this.editorPublishPanelComponent = new EditorPublishPanelComponent(
+			page,
+			page.frameLocator( selectors.editorFrame )
+		);
+		this.editorNavSidebarComponent = new EditorNavSidebarComponent(
+			page,
+			page.frameLocator( selectors.editorFrame )
+		);
+		this.editorToolbarComponent = new EditorToolbarComponent(
+			page,
+			page.frameLocator( selectors.editorFrame )
+		);
 	}
 
 	/**
@@ -139,10 +146,6 @@ export class GutenbergEditorPage {
 	 * @returns {Promise<Frame>} frame holding the editor.
 	 */
 	async getEditorFrame(): Promise< Frame > {
-		if ( this.memoizedEditorFrame ) return this.memoizedEditorFrame;
-
-		let frame: Frame;
-
 		if ( ! this.requiresGutenframe ) {
 			// If we're not in the Gutenframe context (i.e not Calypso), then
 			// just return the top frame, no need to try to locate the iframe.
@@ -155,10 +158,10 @@ export class GutenbergEditorPage {
 
 		try {
 			const elementHandle = await locator.elementHandle( {
-				timeout: 10 * 1000,
+				timeout: 105 * 1000,
 			} );
 
-			frame = ( await elementHandle!.contentFrame() ) as Frame;
+			return ( await elementHandle!.contentFrame() ) as Frame;
 		} catch {
 			if ( this.requiresGutenframe ) {
 				throw new Error( 'Could not locate editor iframe' );
@@ -169,14 +172,9 @@ export class GutenbergEditorPage {
 				// the Gutenframe, so we return the `mainFrame` to allow the test to access
 				// the editor in the WPAdmin page.
 				console.info( 'Could not locate editor iframe. Returning the top-level frame instead' );
-				frame = await this.page.mainFrame();
-				this._isGutenframe = false;
+				return await this.page.mainFrame();
 			}
 		}
-
-		this.memoizedEditorFrame = frame;
-
-		return frame;
 	}
 
 	/**
@@ -617,9 +615,5 @@ export class GutenbergEditorPage {
 			return;
 		}
 		await this.editorToolbarComponent.openDesktopPreview( 'Desktop' );
-	}
-
-	get isGutenframe() {
-		return this._isGutenframe;
 	}
 }

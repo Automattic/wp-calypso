@@ -1,4 +1,4 @@
-import { Page, FrameLocator, Frame } from 'playwright';
+import { Page, FrameLocator } from 'playwright';
 
 const panel = 'div.editor-post-publish-panel';
 const selectors = {
@@ -16,7 +16,7 @@ const selectors = {
  */
 export class EditorPublishPanelComponent {
 	private page: Page;
-	private getEditorFrame: () => Promise< Frame >;
+	private frameLocator: FrameLocator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -24,9 +24,9 @@ export class EditorPublishPanelComponent {
 	 * @param {Page} page The underlying page.
 	 * @param {FrameLocator} frameLocator Locator of the editor iframe.
 	 */
-	constructor( page: Page, getEditorFrame: () => Promise< Frame > ) {
+	constructor( page: Page, frameLocator: FrameLocator ) {
 		this.page = page;
-		this.getEditorFrame = getEditorFrame;
+		this.frameLocator = frameLocator;
 	}
 
 	/**
@@ -37,7 +37,7 @@ export class EditorPublishPanelComponent {
 	 * @returns {Promise<boolean>} True if panel is visible. False otherwise.
 	 */
 	async panelIsOpen(): Promise< boolean > {
-		const locator = ( await this.getEditorFrame() ).locator( `${ panel }:visible` );
+		const locator = this.frameLocator.locator( `${ panel }:visible` );
 		try {
 			await locator.waitFor( { timeout: 5 * 1000 } );
 			return true;
@@ -62,7 +62,7 @@ export class EditorPublishPanelComponent {
 			return;
 		}
 		const selector = `${ selectors.cancelPublishButton }, ${ selectors.postPublishClosePanelButton }`;
-		const locator = ( await this.getEditorFrame() ).locator( selector );
+		const locator = this.frameLocator.locator( selector );
 		await locator.click();
 	}
 
@@ -72,7 +72,7 @@ export class EditorPublishPanelComponent {
 	 * Publish or schedule the article.
 	 */
 	async publish(): Promise< void > {
-		const publishButtonLocator = ( await this.getEditorFrame() ).locator( selectors.publishButton );
+		const publishButtonLocator = this.frameLocator.locator( selectors.publishButton );
 		await publishButtonLocator.click();
 	}
 
@@ -84,7 +84,7 @@ export class EditorPublishPanelComponent {
 	 * @returns {URL} URL to the published article.
 	 */
 	async getPublishedURL(): Promise< URL > {
-		const locator = ( await this.getEditorFrame() ).locator( selectors.publishedArticleURL );
+		const locator = this.frameLocator.locator( selectors.publishedArticleURL );
 		const publishedURL = ( await locator.getAttribute( 'value' ) ) as string;
 		return new URL( publishedURL );
 	}

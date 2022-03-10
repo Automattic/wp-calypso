@@ -1,4 +1,4 @@
-import { Page, FrameLocator, Frame } from 'playwright';
+import { Page, FrameLocator } from 'playwright';
 import envVariables from '../../env-variables';
 
 const panel = 'div.wpcom-block-editor-nav-sidebar-nav-sidebar__container';
@@ -13,7 +13,7 @@ const selectors = {
  */
 export class EditorNavSidebarComponent {
 	private page: Page;
-	private getEditorFrame: () => Promise< Frame >;
+	private frameLocator: FrameLocator;
 
 	/**
 	 * Constructs an instance of the component.
@@ -21,9 +21,9 @@ export class EditorNavSidebarComponent {
 	 * @param {Page} page The underlying page.
 	 * @param {FrameLocator} frameLocator Locator of the editor iframe.
 	 */
-	constructor( page: Page, getEditorFrame: () => Promise< Frame > ) {
+	constructor( page: Page, frameLocator: FrameLocator ) {
 		this.page = page;
-		this.getEditorFrame = getEditorFrame;
+		this.frameLocator = frameLocator;
 	}
 
 	/**
@@ -38,7 +38,7 @@ export class EditorNavSidebarComponent {
 			return;
 		}
 
-		const locator = ( await this.getEditorFrame() ).locator( selectors.sidebarButton );
+		const locator = this.frameLocator.locator( selectors.sidebarButton );
 		await locator.click();
 	}
 
@@ -54,7 +54,7 @@ export class EditorNavSidebarComponent {
 			return;
 		}
 
-		const locator = ( await this.getEditorFrame() ).locator( selectors.sidebarButton );
+		const locator = this.frameLocator.locator( selectors.sidebarButton );
 		await locator.click();
 	}
 
@@ -69,7 +69,7 @@ export class EditorNavSidebarComponent {
 			return;
 		}
 
-		const exitLinkLocator = ( await this.getEditorFrame() ).locator( selectors.exitLink );
+		const exitLinkLocator = this.frameLocator.locator( selectors.exitLink );
 		await exitLinkLocator.click();
 	}
 
@@ -79,7 +79,7 @@ export class EditorNavSidebarComponent {
 	 * @returns {boolean} True if the sidebar is open. False otherwise.
 	 */
 	private async sidebarIsOpen(): Promise< boolean > {
-		const locator = ( await this.getEditorFrame() ).locator( selectors.sidebarButton );
+		const locator = this.frameLocator.locator( selectors.sidebarButton );
 		const status = await locator.getAttribute( 'aria-expanded' );
 		return status === 'true';
 	}
