@@ -11,33 +11,25 @@
         justify-content: flex-start;
     }
 
-    &__step-complete, &__step-current {
+    &__step {
         display: flex;
         flex-direction: row;
         align-items: center;
-    }
-
-    &__step-separator,
-    &__step-current {
-        @include break-medium {
-            margin-left: 1.25rem;
-        }
     }
 
     &__step-separator {
         border: 1px solid var( --studio-gray-80 );
         width: 20px;
         height: 0;
+        margin: 0 0.75rem;
 
         @include break-medium {
             width: 40px;
+            margin: 0 1.25rem;
         }
     }
 
     &__step-circle {
-        background-color: var( --studio-gray-80 );
-        border: 2px solid var( --studio-gray-80 );
-        color: var( --studio-white );
         width: 20px;
         height: 20px;
         display: flex;
@@ -45,20 +37,28 @@
         justify-content: center;
         align-content: center;
         align-items: center;
+        font-size: 0.75rem;
     }
 
     &__step-name {
         margin-left: 1.125rem;
+        white-space: nowrap;
     }
 
-    &__step-complete:nth-child( 1 ) > &__step-circle {
+    &__step.step-current > &__step-circle {
+        background-color: var( --studio-gray-80 );
+        border: 2px solid var( --studio-gray-80 );
+        color: var( --studio-white );
+    }
+
+    &__step.step-next > &__step-circle {
+        border: 2px solid var( --studio-gray-80 );
+        color: var( --studio-gray-80 );
+    }
+
+    &__step.step-complete > &__step-circle {
         background-color: var( --studio-jetpack-green-50 );
         border: 2px solid var( --studio-jetpack-green-50 );
         color: var( --studio-white );
     }
-
-    &__step-current > &__step-circle {
-        font-size: 0.75rem;
-    }
-
 }
