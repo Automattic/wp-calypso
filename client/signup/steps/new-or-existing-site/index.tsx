@@ -6,12 +6,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import difmImage from 'calypso/assets/images/difm/difm.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { preventWidows } from 'calypso/lib/formatting';
+import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getProductDisplayCost,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
-import { removeSiteSlugDependency } from 'calypso/state/signup/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { award, headset } from '../../icons';
 import { ChoiceType } from './types';
@@ -102,7 +102,13 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
 	}, [ dispatch, props.stepName ] );
 
+	// If 'new-site' is selected, skip the `difm-site-picker` step.
+	const branchSteps = useBranchSteps( props.stepName, ( dependencies ) =>
+		dependencies?.choiceType === 'new-site' ? [ 'difm-site-picker' ] : []
+	);
+
 	const newOrExistingSiteSelected = ( value: ChoiceType ) => {
+		branchSteps( { choiceType: value } );
 		dispatch(
 			submitSignupStep(
 				{ stepName: props.stepName },
@@ -112,13 +118,7 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 				}
 			)
 		);
-		if ( 'existing-site' === value ) {
-			props.goToNextStep();
-		} else {
-			dispatch( removeSiteSlugDependency() );
-			dispatch( submitSignupStep( { stepName: 'difm-site-picker', wasSkipped: true } ) );
-			props.goToStep( 'site-info-collection' );
-		}
+		props.goToNextStep();
 	};
 
 	return (
