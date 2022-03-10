@@ -2,8 +2,6 @@ import { ActionButtons } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, ReactElement } from 'react';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import StepNavigationLink from '../step-navigation-link';
 import './style.scss';
 
@@ -14,6 +12,7 @@ interface Props {
 	hideBack?: boolean;
 	hideSkip?: boolean;
 	hideNext?: boolean;
+	formattedHeader?: ReactElement;
 	shouldHideNavButtons?: boolean;
 	skipButtonAlign?: 'top' | 'bottom';
 	skipHeadingText?: string;
@@ -38,6 +37,7 @@ interface Props {
 	intent?: string;
 	stepName?: string;
 	stepSectionName?: string;
+	recordTracksEvent: () => void;
 }
 
 const StepContainer: React.FC< Props > = ( {
@@ -47,6 +47,7 @@ const StepContainer: React.FC< Props > = ( {
 	hideBack,
 	hideSkip,
 	hideNext = true,
+	formattedHeader,
 	shouldHideNavButtons,
 	skipButtonAlign = 'bottom',
 	skipHeadingText,
@@ -70,6 +71,7 @@ const StepContainer: React.FC< Props > = ( {
 	intent,
 	stepName,
 	stepSectionName,
+	recordTracksEvent,
 } ) => {
 	const translate = useTranslate();
 
@@ -201,12 +203,7 @@ const StepContainer: React.FC< Props > = ( {
 				</ActionButtons>
 				{ ! hideFormattedHeader && (
 					<div className="step-container__header">
-						<FormattedHeader
-							id={ 'step-header' }
-							headerText={ getHeaderText() }
-							subHeaderText={ getSubHeaderText() }
-							align={ align }
-						/>
+						{ formattedHeader }
 						{ headerImageUrl && (
 							<div className="step-container__header-image">
 								<img src={ headerImageUrl } alt="" />

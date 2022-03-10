@@ -14,6 +14,8 @@ export { default as Confetti } from './confetti';
 export { default as IntentScreen } from './intent-screen';
 export { default as SelectItems } from './select-items';
 export { default as SelectItemsAlt } from './select-items-alt';
+export { default as StepContainer } from './step-container';
+export { default as StepNavigationLink } from './step-navigation-link';
 export { default as MShotsImage } from './mshots-image';
 export { default as Notice } from './notice';
 export type { SelectItem } from './select-items';

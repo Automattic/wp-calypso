@@ -1,10 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { IntentScreen } from '@automattic/onboarding';
+import { IntentScreen, StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import StepContainer from '../../step-container';
 import { useIntents, useIntentsAlt } from './intents';
 import type { StepPath } from '../';
 import type { Step } from '../../types';
@@ -41,6 +41,14 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 			hideBack
 			isHorizontalLayout={ true }
 			className={ 'intent-step' }
+			formattedHeader={
+				<FormattedHeader
+					id={ 'intent-header' }
+					headerText={ headerText }
+					subHeaderText={ subHeaderText }
+					align={ 'left' }
+				/>
+			}
 			stepContent={
 				<IntentScreen
 					intents={ intents }
@@ -49,30 +57,8 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 					preventWidows={ preventWidows }
 				/>
 			}
+			recordTracksEvent={ recordTracksEvent }
 		/>
-		// <div className="step-horizontal-layout intent-step">
-		// 	<div className="step__header">
-		// 		<FormattedHeader
-		// 			id={ 'intent-header' }
-		// 			headerText={ headerText }
-		// 			subHeaderText={ subHeaderText }
-		// 			align={ 'left' }
-		// 		/>
-		// 		{ intentImageUrl && (
-		// 			<div className="step__header-image">
-		// 				<img src={ intentImageUrl } alt="" />
-		// 			</div>
-		// 		) }
-		// 	</div>
-		// 	<div>
-		// 		<IntentScreen
-		// 			intents={ intents }
-		// 			intentsAlt={ intentsAlt }
-		// 			onSelect={ submitIntent }
-		// 			preventWidows={ preventWidows }
-		// 		/>
-		// 	</div>
-		// </div>
 	);
 };
 
