@@ -5,6 +5,10 @@
 }
 
 .security-checkup__nav-item {
+	&.card.is-compact {
+		padding-right: 24px;
+	}
+
 	span {
 		display: flex;
 		align-items: center;
@@ -12,6 +16,7 @@
 			fill: var( --color-neutral-90 );
 			height: 32px;
 			margin-right: 16px;
+			min-width: 32px;
 			width: 32px;
 			&.material-icon-check_circle {
 				fill: var( --color-success );
