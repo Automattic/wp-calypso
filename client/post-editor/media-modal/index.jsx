@@ -292,9 +292,7 @@ export class EditorMediaModal extends Component {
 			height && { height }
 		);
 
-		const originalItem = this.props.selectedItems[ this.getDetailSelectedIndex() ];
-
-		this.props.editMedia( site.ID, item, originalItem );
+		this.props.editMedia( site.ID, item );
 
 		resetAllImageEditorState();
 

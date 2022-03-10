@@ -56,12 +56,35 @@ export function useEditMediaMutation( queryOptions ) {
 	const { mutate } = mutation;
 
 	const editMedia = useCallback(
-		( siteId, item, originalMediaItem ) => {
+		( siteId, item ) => {
 			const { ID: mediaId, ...payload } = item;
 			const transientMediaItem = createTransientMedia( item.media || item.media_url );
 
 			if ( ! transientMediaItem ) {
 				return;
+			}
+
+			let originalMediaItem;
+
+			const queries = queryClient.getQueriesData( {
+				queryKey: [ 'media', siteId ],
+				predicate( query ) {
+					const data = query.state.data;
+					if ( ! data || ! Array.isArray( data.pages ) ) {
+						return false;
+					}
+					const items = data.pages.filter( ( { media } ) =>
+						media.some( ( i ) => i.ID === mediaId )
+					);
+					return items.length > 0;
+				},
+			} );
+
+			if ( queries.length ) {
+				const [ , { pages } ] = queries[ 0 ];
+				originalMediaItem = pages
+					.flatMap( ( page ) => page.media )
+					.find( ( mediaItem ) => mediaItem.ID === mediaId );
 			}
 
 			const editedMediaItem = {

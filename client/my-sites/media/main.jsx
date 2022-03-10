@@ -141,9 +141,7 @@ class Media extends Component {
 			},
 		};
 
-		const originalItem = this.getSelectedItem( this.state.editedImageItem );
-
-		this.props.editMedia( site.ID, item, originalItem );
+		this.props.editMedia( site.ID, item );
 		resetAllImageEditorState();
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
 		this.maybeRedirectToAll();
