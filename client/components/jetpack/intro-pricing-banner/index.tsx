@@ -5,12 +5,13 @@ import { useSelector } from 'react-redux';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import {
 	getFullJetpackSaleCouponDiscountRatio,
 	getHasRequestedJetpackSaleCoupon,
 } from 'calypso/state/marketing/selectors';
+import getBestIntroOfferDiscount from 'calypso/state/selectors/get-best-intro-offer-discount';
+import getIsRequestingIntroOffers from 'calypso/state/selectors/get-is-requesting-into-offers';
 import './style.scss';
 import guaranteeBadge from './14-day-badge.svg';
 import rocket from './rocket.svg';
@@ -18,11 +19,22 @@ import rocket from './rocket.svg';
 // since this amount is backed into the badge above we make it a const
 const GUARANTEE_DAYS = 14;
 
-const IntroPricingBanner: FunctionComponent = () => {
+interface Props {
+	productSlugs: string[];
+	siteId: number | 'none';
+}
+
+const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId = 'none' } ) => {
 	const translate = useTranslate();
 	const isNotNarrow = useViewportMatch( 'medium', '>=' );
 	const fullJetpackSaleDiscount = useSelector( getFullJetpackSaleCouponDiscountRatio ) * 100;
 	const hasRequestedCoupon = useSelector( getHasRequestedJetpackSaleCoupon );
+	const isRequestingIntroOffers = useSelector( ( state ) =>
+		getIsRequestingIntroOffers( state, siteId )
+	);
+	const highestDiscount = useSelector( ( state ) =>
+		getBestIntroOfferDiscount( state, productSlugs, siteId )
+	);
 
 	const CALYPSO_MASTERBAR_HEIGHT = 47;
 	const CLOUD_MASTERBAR_HEIGHT = 0;
@@ -38,10 +50,10 @@ const IntroPricingBanner: FunctionComponent = () => {
 
 	const outerDivProps = barRef ? { ref: barRef as React.RefObject< HTMLDivElement > } : {};
 
-	const isLoading = ! hasRequestedCoupon;
+	const isLoading = ! hasRequestedCoupon || isRequestingIntroOffers;
 
 	const discountPercentage =
-		fullJetpackSaleDiscount > 0 ? fullJetpackSaleDiscount : INTRO_PRICING_DISCOUNT_PERCENTAGE;
+		fullJetpackSaleDiscount > 0 ? fullJetpackSaleDiscount : highestDiscount;
 
 	let className;
 
@@ -67,7 +79,7 @@ const IntroPricingBanner: FunctionComponent = () => {
 					/>
 					<span>
 						{ preventWidows(
-							translate( 'Get %(percent)d%% off your first year.', {
+							translate( 'Get up to %(percent)d%% off your first year.', {
 								args: {
 									percent: discountPercentage,
 								},
