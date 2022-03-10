@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal//hooks';
 import PaymentMethodDeleteDialog from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-delete-dialog';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -24,11 +25,11 @@ const PaymentMethodActions: FunctionComponent< Props > = ( { card } ) => {
 	const [ isDeleteDialogVisible, setIsDeleteDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDeleteDialogVisible( false ), [] );
 
-	// Defines the next primary payment method shown in the confirmation UI.
-	const [
-		nextPrimaryPaymentMethod,
-		setNextPrimaryPaymentMethod,
-	] = useState< PaymentMethod | null >( null );
+	const { data: recentCards } = useRecentPaymentMethodsQuery();
+
+	const nextPrimaryPaymentMethod = ( recentCards?.items || [] ).find(
+		( currCard: PaymentMethod ) => currCard.id !== card.id
+	);
 
 	const handleDelete = useCallback( () => {
 		closeDialog();
@@ -58,7 +59,6 @@ const PaymentMethodActions: FunctionComponent< Props > = ( { card } ) => {
 				isVisible={ isDeleteDialogVisible }
 				onClose={ closeDialog }
 				onConfirm={ handleDelete }
-				setNextPrimaryPaymentMethod={ setNextPrimaryPaymentMethod }
 			/>
 
 			<EllipsisMenu

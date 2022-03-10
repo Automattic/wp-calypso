@@ -1,9 +1,10 @@
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal//hooks';
 import PaymentMethodDeletePrimaryConfirmation from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-delete-primary-confirmation';
 import { getPaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
-import type { Dispatch, FunctionComponent, SetStateAction } from 'react';
+import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
@@ -12,7 +13,6 @@ interface Props {
 	isVisible: boolean;
 	onClose: () => void;
 	onConfirm: () => void;
-	setNextPrimaryPaymentMethod: Dispatch< SetStateAction< PaymentMethod | null > >;
 }
 
 const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
@@ -20,7 +20,6 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 	isVisible,
 	onClose,
 	onConfirm,
-	setNextPrimaryPaymentMethod,
 } ) => {
 	const translate = useTranslate();
 
@@ -29,6 +28,8 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 		type: paymentMethod?.card.brand,
 		digits: paymentMethod?.card.last4,
 	} );
+
+	const { isFetching: isFetchingRecentPaymentMethods } = useRecentPaymentMethodsQuery();
 
 	return (
 		<Dialog
@@ -40,7 +41,7 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 					{ translate( 'Go back' ) }
 				</Button>,
 
-				<Button onClick={ onConfirm } primary scary>
+				<Button disabled={ isFetchingRecentPaymentMethods } onClick={ onConfirm } primary scary>
 					{ translate( 'Delete payment method' ) }
 				</Button>,
 			] }
@@ -60,10 +61,7 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 			</p>
 
 			{ paymentMethod.is_default && (
-				<PaymentMethodDeletePrimaryConfirmation
-					paymentMethod={ paymentMethod }
-					setNextPrimaryPaymentMethod={ setNextPrimaryPaymentMethod }
-				/>
+				<PaymentMethodDeletePrimaryConfirmation paymentMethod={ paymentMethod } />
 			) }
 		</Dialog>
 	);
