@@ -13,13 +13,14 @@ import { shuffle } from '@automattic/js-utils';
 import { ActionButtons } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
-import { useTranslate, getLocaleSlug } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { ReactChild, useMemo, useState } from 'react';
 // import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
 // import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 // import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 // import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -203,13 +204,13 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 		openCheckoutModal( [ PLAN_PREMIUM ] );
 	}
 
-	// function renderCheckoutModal() {
-	// 	if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
-	// 		return null;
-	// 	}
+	function renderCheckoutModal() {
+		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
+			return null;
+		}
 
-	// 	return <AsyncCheckoutModal />;
-	// }
+		return <AsyncCheckoutModal />;
+	}
 
 	const backButton = useMemo( () => {
 		let handleBackButton;
@@ -248,12 +249,24 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 			<StepNavigationLink
 				primary
 				direction="forward"
-				borderless={ true }
+				borderless={ false }
 				label={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
-				handleClick={ () => goNext() }
+				handleClick={ goNext }
 			/>
 		);
 	};
+
+	const upgradeButton = useMemo( () => {
+		return (
+			<StepNavigationLink
+				primary
+				direction="forward"
+				borderless={ false }
+				label={ translate( 'Upgrade Plan' ) }
+				handleClick={ upgradePlan }
+			/>
+		);
+	}, [ translate ] );
 
 	if ( selectedDesign ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
@@ -272,7 +285,8 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 					sticky={ isReskinnedFlow( flowName ) ? null : false }
 				>
 					{ backButton }
-					{ nextButton( designTitle ) }
+					{ ! shouldUpgrade && nextButton( designTitle ) }
+					{ shouldUpgrade && upgradeButton }
 				</ActionButtons>
 				<div className="design-setup-site-step__preview-header">
 					<FormattedHeader
@@ -300,7 +314,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 						toolbarComponent={ PreviewToolbar }
 					/> */ }
 				</div>
-				{ /* { renderCheckoutModal() } */ }
+				{ renderCheckoutModal() }
 			</div>
 		);
 	}
@@ -339,6 +353,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 				categoriesFooter={ renderCategoriesFooter() }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			/>
+			{ renderCheckoutModal() }
 		</div>
 	);
 };
