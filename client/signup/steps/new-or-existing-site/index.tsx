@@ -4,14 +4,20 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import difmImage from 'calypso/assets/images/difm/difm.svg';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import { preventWidows } from 'calypso/lib/formatting';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import {
+	getProductDisplayCost,
+	isProductsListFetching,
+} from 'calypso/state/products-list/selectors';
 import { removeSiteSlugDependency } from 'calypso/state/signup/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { award, headset } from '../../icons';
 import { ChoiceType } from './types';
 import type { SelectItem } from '@automattic/onboarding';
+
+import './style.scss';
 
 interface Props {
 	goToNextStep: () => void;
@@ -22,12 +28,28 @@ interface Props {
 
 type NewOrExistingSiteIntent = SelectItem< ChoiceType >;
 
+const Placeholder = () => <span className="new-or-existing-site__placeholder">&nbsp;</span>;
+
 export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
+	const isLoading = useSelector( isProductsListFetching );
 
 	const headerText = translate( 'Do It For Me' );
+
+	const subHeaderTextWithPlaceHolder = translate(
+		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{Placeholder}}{{/Placeholder}}',
+		{
+			args: {
+				fulfillmentDays: 4,
+			},
+			components: {
+				Placeholder: <Placeholder />,
+			},
+		}
+	);
+
 	const subHeaderText = translate(
 		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{strong}}%(displayCost)s{{/strong}}*.' +
 			'{{br}}{{/br}}{{br}}{{/br}}' +
@@ -100,25 +122,28 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 	};
 
 	return (
-		<StepWrapper
-			headerText={ headerText }
-			fallbackHeaderText={ headerText }
-			subHeaderText={ subHeaderText }
-			fallbackSubHeaderText={ subHeaderText }
-			stepContent={
-				<IntentScreen
-					intents={ intents }
-					onSelect={ newOrExistingSiteSelected }
-					preventWidows={ preventWidows }
-					intentsAlt={ [] }
-				/>
-			}
-			align={ 'left' }
-			hideSkip
-			isHorizontalLayout={ true }
-			isWideLayout={ true }
-			headerImageUrl={ difmImage }
-			{ ...props }
-		/>
+		<>
+			<QueryProductsList />
+			<StepWrapper
+				headerText={ headerText }
+				fallbackHeaderText={ headerText }
+				subHeaderText={ isLoading ? subHeaderTextWithPlaceHolder : subHeaderText }
+				fallbackSubHeaderText={ isLoading ? subHeaderTextWithPlaceHolder : subHeaderText }
+				stepContent={
+					<IntentScreen
+						intents={ intents }
+						onSelect={ newOrExistingSiteSelected }
+						preventWidows={ preventWidows }
+						intentsAlt={ [] }
+					/>
+				}
+				align={ 'left' }
+				hideSkip
+				isHorizontalLayout={ true }
+				isWideLayout={ true }
+				headerImageUrl={ difmImage }
+				{ ...props }
+			/>
+		</>
 	);
 }
