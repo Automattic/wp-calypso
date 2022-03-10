@@ -7,7 +7,8 @@ export type ArticleSections =
 	| 'Revisions'
 	| 'Permalink'
 	| 'Categories'
-	| 'Tags';
+	| 'Tags'
+	| 'Discussion';
 export type PrivacyOptions = 'Public' | 'Private' | 'Password';
 
 export interface Schedule {
@@ -31,8 +32,9 @@ const selectors = {
 		`${ panel } button.is-active:has-text("${ tabName }")`,
 
 	// General section-related
-	section: ( name: ArticleSections ) => `${ panel } button:has-text("${ name }")`,
-	sectionHeader: `${ panel } .components-panel__body`,
+	section: ( name: ArticleSections ) =>
+		`${ panel } .components-panel__body-title button:has-text("${ name }")`,
+	showRevisionButton: '.edit-post-last-revision__panel', // Revision is a link, not a panel.
 
 	// Status & Visibility
 	visibilityButton: '.edit-post-post-visibility__toggle',
@@ -101,10 +103,10 @@ export class EditorSettingsSidebarComponent {
 		const locator = this.frameLocator.locator( selectors.tabButton( tabName ) );
 		await locator.click();
 
-		const classAttributes = await locator.getAttribute( 'class' );
-		if ( ! classAttributes?.includes( 'is-active' ) ) {
-			throw new Error( `Failed to verify ${ tabName } is active.` );
-		}
+		const activeTabLocator = this.frameLocator.locator(
+			`${ selectors.tabButton( tabName ) }.is-active`
+		);
+		await activeTabLocator.waitFor();
 	}
 
 	/**
@@ -126,10 +128,10 @@ export class EditorSettingsSidebarComponent {
 		const sectionLocator = this.frameLocator.locator( selectors.section( name ) );
 		await sectionLocator.click();
 
-		const newState = await this.targetIsOpen( selectors.section( name ) );
-		if ( ! newState ) {
-			throw new Error( `Failed to expand Editor Settings sidebar section: ${ name }` );
-		}
+		const expandedLocator = this.frameLocator.locator(
+			`${ selectors.section( name ) }[aria-expanded="true"]`
+		);
+		await expandedLocator.waitFor();
 	}
 
 	/**
@@ -166,10 +168,10 @@ export class EditorSettingsSidebarComponent {
 		const buttonLocator = this.frameLocator.locator( selectors.visibilityButton );
 		await buttonLocator.click();
 
-		const newState = await buttonLocator.getAttribute( 'aria-expanded' );
-		if ( newState !== 'true' ) {
-			throw new Error( 'Failed to open Post Visibility popover.' );
-		}
+		const expandedLocator = this.frameLocator.locator(
+			`${ selectors.visibilityButton }[aria-expanded="true"]`
+		);
+		await expandedLocator.waitFor();
 	}
 
 	/**
@@ -187,10 +189,10 @@ export class EditorSettingsSidebarComponent {
 		const buttonLocator = this.frameLocator.locator( selectors.visibilityButton );
 		await buttonLocator.click();
 
-		const newState = await buttonLocator.getAttribute( 'aria-expanded' );
-		if ( newState !== 'false' ) {
-			throw new Error( 'Failed to close Post Visibility popover.' );
-		}
+		const closedLocator = this.frameLocator.locator(
+			`${ selectors.visibilityButton }[aria-expanded="false"]`
+		);
+		await closedLocator.waitFor();
 	}
 
 	/**
@@ -305,10 +307,8 @@ export class EditorSettingsSidebarComponent {
 	 * Clicks on the Revisions section in the sidebar to show a revisions modal.
 	 */
 	async showRevisions(): Promise< void > {
-		const locator = this.frameLocator.locator(
-			`${ selectors.sectionHeader }:has-text("Revisions")`
-		);
-		await Promise.all( [ this.page.waitForResponse( /.*diffs\?.*/ ), locator.click() ] );
+		const locator = this.frameLocator.locator( selectors.showRevisionButton );
+		await locator.click();
 	}
 
 	/**
@@ -358,15 +358,10 @@ export class EditorSettingsSidebarComponent {
 		// shown in this section.
 		await this.page.keyboard.press( 'Tab' );
 
-		const generatedURLSlugLocator = this.frameLocator.locator( selectors.permalinkGeneratedURL );
-		const generatedSlug = await generatedURLSlugLocator.innerText();
-		const expectedSlug = slug.replace( ' ', '-' );
-
-		if ( ! generatedSlug.includes( expectedSlug ) ) {
-			throw new Error(
-				`Generated URL slug ${ generatedSlug } did not match expected URL slug ${ expectedSlug }`
-			);
-		}
+		const generatedURL = this.frameLocator.locator(
+			`${ selectors.permalinkGeneratedURL } > text=/${ slug }`
+		);
+		await generatedURL.waitFor();
 	}
 
 	/**
@@ -375,7 +370,7 @@ export class EditorSettingsSidebarComponent {
 	 * Useful to work around the wpcalypso/staging banner (for proxied users).
 	 */
 	private async scrollToBottomOfSidebar(): Promise< void > {
-		const locator = this.frameLocator.locator( selectors.sectionHeader );
-		await locator.last().scrollIntoViewIfNeeded();
+		const locator = this.frameLocator.locator( selectors.section( 'Discussion' ) );
+		await locator.scrollIntoViewIfNeeded();
 	}
 }
