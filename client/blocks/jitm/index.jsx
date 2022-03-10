@@ -34,6 +34,14 @@ function renderTemplate( template, props ) {
 					placeholder={ null }
 				/>
 			);
+		case 'spotlight':
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/spotlight"
+					placeholder={ null }
+				/>
+			);
 		case 'invisible':
 			return <>{ props.trackImpression && props.trackImpression() }</>;
 		case 'modal':
