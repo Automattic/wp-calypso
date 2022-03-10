@@ -23,11 +23,14 @@ import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { UserSettingsType } from 'calypso/state/selectors/get-user-settings';
 import type { ChangeEvent } from 'react';
 
-export type AccountEmailFragmentProps = {
+import './account-email-field.scss';
+
+export type AccountEmailFieldProps = {
 	emailInputId?: string;
 	emailInputName?: string;
 	emailValidationHandler?: ( isEmailValid: boolean ) => void;
 	isEmailControlDisabled?: boolean;
+	onEmailChange?: ( isEmailModified: boolean ) => void;
 	onFocus?: () => void;
 	unsavedUserSettings?: UserSettingsType;
 	userSettings?: UserSettingsType;
@@ -143,7 +146,12 @@ const AccountEmailPendingEmailChangeNotice = ( {
 			  );
 
 	return (
-		<Notice showDismiss={ false } status="is-info" text={ noticeText }>
+		<Notice
+			className="account-email-field__change-pending"
+			showDismiss={ false }
+			status="is-info"
+			text={ noticeText }
+		>
 			<NoticeAction onClick={ () => dispatch( cancelPendingEmailChange() ) }>
 				{ translate( 'Cancel' ) }
 			</NoticeAction>
@@ -156,10 +164,11 @@ const AccountEmailField = ( {
 	emailInputName = 'user_email',
 	emailValidationHandler,
 	isEmailControlDisabled = false,
+	onEmailChange,
 	onFocus,
 	unsavedUserSettings = {},
 	userSettings = {},
-}: AccountEmailFragmentProps ): JSX.Element => {
+}: AccountEmailFieldProps ): JSX.Element => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );
@@ -194,6 +203,8 @@ const AccountEmailField = ( {
 
 		setEmailInvalidReason( emailValidationReason );
 		emailValidationHandler?.( emailValidationReason === EMAIL_VALIDATION_REASON_IS_VALID );
+
+		onEmailChange?.( value !== userSettings.user_email );
 
 		dispatch( setUserSetting( 'user_email', value ) );
 	};
