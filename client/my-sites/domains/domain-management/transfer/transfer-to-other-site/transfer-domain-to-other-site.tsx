@@ -190,12 +190,12 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			return <NonOwnerCard { ...propsWithoutChildren } />;
 		}
 
-		if ( ! domain.isRenewable && ! domain.isRedeemable ) {
-			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
-		}
-
 		if ( aftermarketAuction ) {
 			return <AftermarketAutcionNotice domainName={ selectedDomainName } />;
+		}
+
+		if ( domain.expired && ! domain.isRenewable && ! domain.isRedeemable ) {
+			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
 		return (

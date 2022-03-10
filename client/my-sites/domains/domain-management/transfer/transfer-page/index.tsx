@@ -344,12 +344,12 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
 		}
 
-		if ( ! domain.isRenewable && ! domain.isRedeemable ) {
-			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
-		}
-
 		if ( domain.aftermarketAuction ) {
 			return <AftermarketAutcionNotice domainName={ selectedDomainName } />;
+		}
+
+		if ( domain.expired && ! domain.isRenewable && ! domain.isRedeemable ) {
+			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
 		return (
