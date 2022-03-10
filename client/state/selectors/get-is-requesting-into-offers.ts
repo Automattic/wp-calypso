@@ -9,6 +9,9 @@ import type { AppState } from 'calypso/types';
  * @param  {number?}  siteId    The ID of the site we're querying
  * @returns {string}            true if request is in-progress, false otherwise
  */
-export default function getIsIntroOfferRequesting( state: AppState, siteId?: number ): boolean {
+export default function getIsIntroOfferRequesting(
+	state: AppState,
+	siteId?: number | 'none'
+): boolean {
 	return getIntroOfferRequestStatus( state, siteId ) === RequestStatus.Pending;
 }
