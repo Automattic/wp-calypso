@@ -163,6 +163,7 @@ class StatsSite extends Component {
 				iconPath={ rocketImage }
 				title={ translate( 'Launch your site public to drive more visitors' ) }
 				tracksClickName="calypso_stats_private_site_banner_click"
+				tracksDismissName="calypso_stats_private_site_banner_dismiss"
 				tracksImpressionName="calypso_stats_private_site_banner_view"
 			/>
 		);
