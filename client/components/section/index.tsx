@@ -12,7 +12,7 @@ const SectionContainer = styled.div`
 	::before {
 		box-sizing: border-box;
 		content: '';
-		background-color: #fafafa;
+		background-color: var( --studio-gray-0 );
 		position: absolute;
 		height: 100%;
 		width: 200vw;
