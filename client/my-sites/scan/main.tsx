@@ -22,6 +22,9 @@ import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
 import { Scan, Site } from 'calypso/my-sites/scan/types';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
+import { incrementCounter } from 'calypso/state/persistent-counter/actions';
+import { getCount } from 'calypso/state/persistent-counter/selectors';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import getSiteScanIsInitial from 'calypso/state/selectors/get-site-scan-is-initial';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
@@ -44,6 +47,7 @@ interface Props {
 	scanProgress?: number;
 	isInitialScan?: boolean;
 	isRequestingScan: boolean;
+	scanPageVisitCount: number;
 	timezone: string | null;
 	gmtOffset: number | null;
 	moment: {
@@ -52,11 +56,38 @@ interface Props {
 	applySiteOffset: applySiteOffsetType | null;
 	dispatchRecordTracksEvent: ( arg0: string, arg1: Record< string, unknown > ) => null;
 	dispatchScanRun: ( arg0: number ) => null;
+	dispatchIncrementCounter: (
+		counterName: string,
+		keyedToSiteId?: boolean,
+		countSameDay?: boolean
+	) => null;
+	dispatchSetReviewPromptValid: ( type: string, validFrom: number ) => null;
 	isAdmin: boolean;
 	siteSettingsUrl: string;
 }
 
+const SCAN_VISIT_COUNTER_NAME = 'scan-page-visit';
+
 class ScanPage extends Component< Props > {
+	componentDidMount() {
+		const { scanState, dispatchIncrementCounter } = this.props;
+		if ( ! scanState?.state || scanState?.state === 'unavailable' ) {
+			return;
+		}
+		// Counting visits to the scan page for the Jetpack (Scan) Review Prompt.
+		// Review Prompt should appear after 3 visits (not including same day visits)
+		dispatchIncrementCounter( SCAN_VISIT_COUNTER_NAME, false, false );
+	}
+
+	componentDidUpdate( prevProps: Props ) {
+		if ( prevProps.scanPageVisitCount !== this.props.scanPageVisitCount ) {
+			// After 3 Scan page visits, trigger the Jetpack Review Prompt.
+			if ( this.props.scanPageVisitCount === 3 ) {
+				this.props.dispatchSetReviewPromptValid( 'scan', Date.now() );
+			}
+		}
+	}
+
 	renderProvisioning() {
 		return (
 			<>
@@ -326,7 +357,7 @@ class ScanPage extends Component< Props > {
 
 				<QueryJetpackScan siteId={ siteId } />
 				<ScanNavigation section={ 'scanner' } />
-				{ <div className="scan__content">{ this.renderScanState() }</div> }
+				<div className="scan__content">{ this.renderScanState() }</div>
 				{ this.renderJetpackReviewPrompt() }
 			</Main>
 		);
@@ -349,6 +380,7 @@ export default connect(
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
 		const isRequestingScan = isRequestingJetpackScan( state, siteId );
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
+		const scanPageVisitCount = getCount( state, SCAN_VISIT_COUNTER_NAME, false );
 
 		return {
 			site,
@@ -359,10 +391,13 @@ export default connect(
 			isInitialScan,
 			siteSettingsUrl,
 			isRequestingScan,
+			scanPageVisitCount,
 		};
 	},
 	{
 		dispatchRecordTracksEvent: recordTracksEvent,
 		dispatchScanRun: triggerScanRun,
+		dispatchIncrementCounter: incrementCounter,
+		dispatchSetReviewPromptValid: setValidFrom,
 	}
 )( withLocalizedMoment( withApplySiteOffset( ScanPage ) ) );

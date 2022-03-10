@@ -3,7 +3,6 @@ import { JETPACK_SCAN_THREATS_GET_FIX_STATUS } from 'calypso/state/action-types'
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions.ts';
 import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
 import { requestJetpackScanHistory } from 'calypso/state/jetpack-scan/history/actions';
 import { getFixThreatsStatus } from 'calypso/state/jetpack-scan/threats/actions';
@@ -54,10 +53,6 @@ export const success = ( action, fixer_state ) => {
 					duration: 4000,
 				}
 			),
-			// Make the 'jetpack-review-prompt' (calypso preference) valid, triggering a
-			// user prompt to submit a review of the Jetpack plugin on the /scan/:site page.
-			setValidFrom( 'scan', Date.now() ),
-
 			requestScanStatus( action.siteId ),
 			// Since we can fix threats from the History section, we need to update that
 			// information as well.
