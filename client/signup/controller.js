@@ -342,10 +342,6 @@ export default {
 			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' );
 		}
 
-		if ( isMobile() && 'wpcc' !== flowName ) {
-			loadExperimentAssignment( 'registration_social_login_first_on_mobile_v3' );
-		}
-
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
