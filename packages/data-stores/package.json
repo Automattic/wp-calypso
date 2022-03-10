@@ -35,7 +35,7 @@
 		"@wordpress/api-fetch": "^5.2.6",
 		"@wordpress/data-controls": "^2.2.8",
 		"@wordpress/deprecated": "^3.2.3",
-		"@wordpress/url": "^3.3.2",
+		"@wordpress/url": "3.3.2",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "workspace:^",
 		"qs": "^6.9.1",
