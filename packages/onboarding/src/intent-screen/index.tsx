@@ -1,11 +1,10 @@
 import { TranslateResult } from 'i18n-calypso';
-import SelectItems from './intent-screen-select-items';
-import SelectItemsAlt from './intent-screen-select-items-alt';
-import type { SelectItem, SelectAltItem } from '../types';
+import SelectItems, { SelectItem } from '../select-items';
+import SelectItemsAlt, { SelectItemAlt } from '../select-items-alt';
 
 interface Props< T > {
 	intents: SelectItem< T >[];
-	intentsAlt: SelectAltItem< T >[];
+	intentsAlt: SelectItemAlt< T >[];
 	onSelect: ( value: T ) => void;
 	preventWidows: ( text: TranslateResult, wordsToKeep?: number ) => string;
 }
