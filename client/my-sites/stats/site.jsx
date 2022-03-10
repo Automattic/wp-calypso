@@ -157,7 +157,6 @@ class StatsSite extends Component {
 				) }
 				disableCircle="true"
 				event="calypso_stats_private_site_banner"
-				dismissTemporary="false"
 				dismissPreferenceName="stats-launch-private-site"
 				href={ `/settings/general/${ slug }` }
 				iconPath={ rocketImage }
