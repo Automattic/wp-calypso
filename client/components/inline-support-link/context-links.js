@@ -89,6 +89,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/moving-from-self-hosted-wordpress-to-wordpress-com/',
 		post_id: 102755,
 	},
+	invites: {
+		link: 'https://wordpress.com/support/user-roles/#adding-users-to-your-site',
+		post_id: 1221,
+	},
 	media: {
 		link: 'https://wordpress.com/support/media/',
 		post_id: 853,
