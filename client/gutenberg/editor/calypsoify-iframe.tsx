@@ -818,7 +818,7 @@ const mapStateToProps = (
 
 	const siteAdminUrl =
 		editorType === 'site'
-			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
+			? getSiteAdminUrl( state, siteId, 'themes.php?page=gutenberg-edit-site' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl ?? '' );
