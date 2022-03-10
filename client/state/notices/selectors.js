@@ -2,6 +2,8 @@ import { createSelector } from '@automattic/state-utils';
 
 import 'calypso/state/notices/init';
 
+const EMPTY_ARRAY = [];
+
 /**
  * Returns array value of notice item state
  *
@@ -9,7 +11,13 @@ import 'calypso/state/notices/init';
  * @returns {Array}        Notice objects as array
  */
 export const getNotices = createSelector(
-	( state ) => Object.values( state.notices.items ),
+	( state ) => {
+		const notices = Object.values( state.notices.items );
+		if ( ! notices.length ) {
+			return EMPTY_ARRAY;
+		}
+		return notices;
+	},
 	( state ) => state.notices.items
 );
 

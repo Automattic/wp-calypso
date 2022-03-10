@@ -9,6 +9,19 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
 
+const jetpackGettingStartedLink = () => {
+	return (
+		<a
+			href="https://jetpack.com/support/getting-started-with-jetpack/"
+			target="_blank"
+			rel="noopener noreferrer"
+			onClick={ () => {
+				recordTracksEvent( 'calypso_jetpack_faq_getting_started_click' );
+			} }
+		/>
+	);
+};
+
 const JetpackFAQ: React.FC = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -37,6 +50,18 @@ const JetpackFAQ: React.FC = () => {
 		<>
 			<section className="jetpack-faq">
 				<h2 className="jetpack-faq__heading">{ translate( 'Frequently Asked Questions' ) }</h2>
+				<FoldableFAQ
+					id="priority-support"
+					question={ translate( 'How do I start using Jetpack on my website?' ) }
+					onToggle={ onFaqToggle }
+				>
+					{ translate(
+						'Learn everything you need to know about getting started with Jetpack {{gettingStartedLink}}here{{/gettingStartedLink}}.',
+						{
+							components: { gettingStartedLink: jetpackGettingStartedLink() },
+						}
+					) }
+				</FoldableFAQ>
 				<FoldableFAQ
 					id="priority-support"
 					question={ translate( 'Is priority support included in all plans?' ) }

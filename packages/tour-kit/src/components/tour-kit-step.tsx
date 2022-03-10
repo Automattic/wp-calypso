@@ -19,8 +19,8 @@ const TourKitStep: React.FunctionComponent< Props > = ( {
 	currentStepIndex,
 	onMinimize,
 	onDismiss,
-	onNext,
-	onPrevious,
+	onNextStep,
+	onPreviousStep,
 	setInitialFocusedElement,
 	onGoToStep,
 } ) => {
@@ -35,16 +35,16 @@ const TourKitStep: React.FunctionComponent< Props > = ( {
 
 	return (
 		<div className={ classes }>
-			{ config.renderers.tourStep( {
-				steps,
-				currentStepIndex,
-				onDismiss,
-				onNext,
-				onPrevious,
-				onMinimize,
-				setInitialFocusedElement,
-				onGoToStep,
-			} ) }
+			<config.renderers.tourStep
+				steps={ steps }
+				currentStepIndex={ currentStepIndex }
+				onDismiss={ onDismiss }
+				onNextStep={ onNextStep }
+				onPreviousStep={ onPreviousStep }
+				onMinimize={ onMinimize }
+				setInitialFocusedElement={ setInitialFocusedElement }
+				onGoToStep={ onGoToStep }
+			/>
 		</div>
 	);
 };

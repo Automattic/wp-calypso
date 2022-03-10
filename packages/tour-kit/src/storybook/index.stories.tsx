@@ -69,9 +69,9 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 			tourStep: ( {
 				steps,
 				currentStepIndex,
-				onNext,
+				onNextStep,
 				onDismiss,
-				onPrevious,
+				onPreviousStep,
 				onMinimize,
 				setInitialFocusedElement,
 			} ) => {
@@ -85,10 +85,10 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 							steps[ currentStepIndex ].meta.description as string
 						} (${ currentStepIndex })` }</p>
 						<div className="storybook__tourkit-step-controls">
-							<button onClick={ onNext } ref={ setInitialFocusedElement }>
+							<button onClick={ onNextStep } ref={ setInitialFocusedElement }>
 								Next
 							</button>
-							<button onClick={ onPrevious }>Previous</button>
+							<button onClick={ onPreviousStep }>Previous</button>
 						</div>
 					</div>
 				);

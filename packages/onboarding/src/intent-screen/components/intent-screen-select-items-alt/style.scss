@@ -1,0 +1,71 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+@import '@automattic/typography/styles/fonts';
+
+.intent-screen-select-items-alt {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding-left: 40px;
+
+	@include break-small {
+		padding-left: 60px;
+	}
+}
+
+.intent-screen-select-items-alt__item {
+	display: flex;
+	align-items: flex-start;
+	position: relative;
+	padding: 8px 0;
+
+	@include break-small {
+		width: 342px;
+	}
+
+	@include break-medium {
+		width: 456px;
+	}
+
+	&-info-wrapper {
+		@include break-mobile {
+			display: flex;
+			align-items: flex-start;
+			width: 100%;
+		}
+	}
+
+	&-info {
+		flex: 1;
+		padding-right: 6px;
+	}
+
+	&-description {
+		font-size: $font-body-small;
+		color: #646970;
+		margin-bottom: 0;
+	}
+
+	&-button {
+		margin-top: 8px;
+		padding: 0;
+		min-width: 130px;
+		border: none;
+		background: none;
+		color: #101517;
+		text-decoration: underline;
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+
+		@include break-mobile {
+			margin-top: 0;
+		}
+
+		&:not( [disabled] ):hover {
+			color: var( --color-neutral-70 );
+		}
+	}
+
+	&-disabled-info svg {
+		fill: var( --color-neutral-20 );
+	}
+}

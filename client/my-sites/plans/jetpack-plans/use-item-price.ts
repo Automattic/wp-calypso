@@ -113,6 +113,8 @@ const useIntroductoryOfferPrices = (
 	};
 };
 
+const getMonthlyPrice = ( yearlyPrice: number ): number => ( yearlyPrice * 100 ) / 12 / 100;
+
 const useItemPrice = (
 	siteId: number | null,
 	item: SelectorProduct | null,
@@ -147,9 +149,9 @@ const useItemPrice = (
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( item.term !== TERM_MONTHLY ) {
-			originalPrice = monthlyItemCost ?? itemCost / 12;
+			originalPrice = monthlyItemCost ?? getMonthlyPrice( itemCost );
 			discountedPrice = introductoryOfferPrices.introOfferCost
-				? introductoryOfferPrices.introOfferCost / 12
+				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
 				: undefined;
 		}
 	}

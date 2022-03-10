@@ -16,11 +16,11 @@
 			continue;
 		}
 
-		const dtstr = eventDateElem[ 0 ].innerHTML;
+		const dtstr = eventDateElem[ 0 ].textContent;
 
 		let eventTime;
 		if ( isUnixTimestamp( dtstr ) ) {
-			eventTime = eventDateElem[ 0 ].innerHTML * 1000;
+			eventTime = dtstr * 1000;
 		} else {
 			// backwards compatibility, event date was stored as YYYY-MM-DDTHH:mm:ss
 			// parse date into unix time (but in ms)

@@ -17,19 +17,21 @@ interface IntroOfferItemsState {
 }
 
 const mapResponseObject = ( {
+	currency_code,
+	discount_percentage,
+	formatted_price,
+	ineligible_reason,
 	product_id,
 	product_slug,
-	currency_code,
-	formatted_price,
 	raw_price,
-	ineligible_reason,
 }: ResponseIntroOffer ): IntroOffer => ( {
+	currencyCode: currency_code,
+	discountPercentage: discount_percentage,
+	formattedPrice: formatted_price,
+	ineligibleReason: ineligible_reason,
 	productId: product_id,
 	productSlug: product_slug,
-	currencyCode: currency_code,
-	formattedPrice: formatted_price,
 	rawPrice: raw_price,
-	ineligibleReason: ineligible_reason,
 } );
 
 const createIntroOfferMap = ( payload: ResponseIntroOffer[] ) => {

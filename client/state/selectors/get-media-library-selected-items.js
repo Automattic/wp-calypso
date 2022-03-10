@@ -2,6 +2,8 @@ import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 import 'calypso/state/media/init';
 
+const EMPTY_ARRAY = [];
+
 /**
  * Retrieves the currently selected media library items for a specified site.
  *
@@ -11,13 +13,13 @@ import 'calypso/state/media/init';
  */
 export default ( state, siteId ) => {
 	if ( ! siteId ) {
-		return [];
+		return EMPTY_ARRAY;
 	}
 
 	const selectedMediaIds = state.media.selectedItems[ siteId ];
 
 	if ( ! selectedMediaIds ) {
-		return [];
+		return EMPTY_ARRAY;
 	}
 
 	return selectedMediaIds

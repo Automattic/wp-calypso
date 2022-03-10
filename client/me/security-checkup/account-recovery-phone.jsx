@@ -1,8 +1,7 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import {
 	getAccountRecoveryPhone,
 	isAccountRecoveryPhoneActionInProgress,
@@ -28,12 +27,7 @@ class SecurityCheckupAccountRecoveryPhone extends Component {
 		} = this.props;
 
 		if ( accountRecoveryPhoneActionInProgress ) {
-			return (
-				<Fragment>
-					<QueryAccountRecoverySettings />
-					<SecurityCheckupNavigationItem isPlaceholder={ true } />
-				</Fragment>
-			);
+			return <SecurityCheckupNavigationItem isPlaceholder={ true } />;
 		}
 
 		let icon;

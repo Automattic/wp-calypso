@@ -136,6 +136,7 @@ export class PlansStep extends Component {
 			showTreatmentPlansReorderTest,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
+			eligibleForManagedPlan,
 		} = this.props;
 
 		let errorDisplay;
@@ -153,7 +154,7 @@ export class PlansStep extends Component {
 			return this.renderLoading();
 		}
 
-		if ( this.props.isEligibleForManagedPlan ) {
+		if ( eligibleForManagedPlan ) {
 			return (
 				<div>
 					{ errorDisplay }
@@ -278,7 +279,11 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate } = this.props;
+		const { headerText, translate, eligibleForManagedPlan } = this.props;
+
+		if ( eligibleForManagedPlan ) {
+			return translate( 'Managed WordPress made just for you' );
+		}
 
 		if ( this.state.isDesktop ) {
 			return translate( 'Choose a plan' );
@@ -288,9 +293,13 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, translate } = this.props;
+		const { hideFreePlan, subHeaderText, translate, eligibleForManagedPlan } = this.props;
 
-		if ( ! hideFreePlan && ! this.props.isEligibleForManagedPlan ) {
+		if ( eligibleForManagedPlan ) {
+			return translate( 'Try risk-free with a 14-day money back guarantee' );
+		}
+
+		if ( ! hideFreePlan ) {
 			if ( this.state.isDesktop ) {
 				return translate(
 					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
@@ -447,10 +456,7 @@ export default connect(
 		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		isEligibleForManagedPlan: isEligibleForManagedPlan(
-			state,
-			getSiteBySlug( state, siteSlug )?.ID
-		),
+		eligibleForManagedPlan: isEligibleForManagedPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

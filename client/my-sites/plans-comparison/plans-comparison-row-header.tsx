@@ -9,19 +9,19 @@ interface Props {
 	scope?: 'row' | 'col';
 }
 
+const Details = styled.div`
+	html[dir='ltr'] & {
+		margin-left: 6px;
+	}
+	html[dir='rtl'] & {
+		margin-right: 6px;
+	}
+`;
 const Wrapper = styled.div`
 	display: flex;
-	flex-direction: column;
-	margin-left: 21px;
-	min-height: 100%;
-`;
-
-const Title = styled.div`
-	display: flex;
 	flex-direction: row;
-	gap: 5px;
-	font-weight: 600;
-	margin-left: -21px;
+	min-height: 100%;
+	align-items: center;
 
 	.gridicon {
 		display: block;
@@ -29,8 +29,16 @@ const Title = styled.div`
 	}
 `;
 
+const Title = styled.div`
+	display: flex;
+	flex-direction: row;
+	gap: 5px;
+	font-weight: 500;
+	align-items: center;
+`;
+
 const Subtitle = styled.div`
-	color: var( --studio-gray-30 );
+	color: var( --studio-gray-40 );
 	font-size: 0.75rem;
 	font-weight: 300;
 `;
@@ -44,13 +52,13 @@ export const PlansComparisonRowHeader: React.FunctionComponent< Props > = ( {
 	return (
 		<th scope={ scope } className={ `is-first` }>
 			<Wrapper>
-				<Title>
-					<InfoPopover position="top" iconSize={ 16 } showOnHover={ true }>
-						{ description }
-					</InfoPopover>
-					{ title }
-				</Title>
-				{ subtitle && <Subtitle>{ subtitle }</Subtitle> }
+				<InfoPopover position="top" iconSize={ 18 } showOnHover={ true }>
+					{ description }
+				</InfoPopover>
+				<Details>
+					<Title>{ title }</Title>
+					{ subtitle && <Subtitle>{ subtitle }</Subtitle> }
+				</Details>
 			</Wrapper>
 		</th>
 	);

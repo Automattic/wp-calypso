@@ -15,12 +15,16 @@ const TourKitMinimized: React.FunctionComponent< Props > = ( {
 	onMaximize,
 	onDismiss,
 } ) => {
-	return config.renderers.tourMinimized( {
-		steps,
-		currentStepIndex,
-		onMaximize,
-		onDismiss,
-	} );
+	return (
+		<div className={ 'tour-kit-minimized' }>
+			<config.renderers.tourMinimized
+				steps={ steps }
+				currentStepIndex={ currentStepIndex }
+				onMaximize={ onMaximize }
+				onDismiss={ onDismiss }
+			/>
+		</div>
+	);
 };
 
 export default TourKitMinimized;

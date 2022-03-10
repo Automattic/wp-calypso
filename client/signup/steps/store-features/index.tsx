@@ -1,4 +1,4 @@
-import { SelectItem, SelectItems } from '@automattic/onboarding-components';
+import { SelectItem, SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';

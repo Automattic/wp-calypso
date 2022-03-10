@@ -42,6 +42,7 @@
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
 		"jetpack/api-cache": false,
+		"jetpack/backup-messaging-i3": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/features-section/atomic": true,

@@ -1,6 +1,9 @@
 import { parseWithAttributeSchema } from '@wordpress/blocks';
 import { get, includes, reduce } from 'lodash';
 
+const EMPTY_ARRAY = [];
+const DEFAULT_DISABLED_DATA_SOURCES = [ 'google_photos', 'pexels' ];
+
 /**
  * Convert the Calypso Media Modal output to the format expected by Gutenberg
  *
@@ -48,9 +51,9 @@ export const getDisabledDataSources = ( allowedTypes ) => {
 		( Array.isArray( allowedTypes ) && ! allowedTypes.length ) ||
 		includes( allowedTypes, 'image' )
 	) {
-		return [];
+		return EMPTY_ARRAY;
 	}
-	return [ 'google_photos', 'pexels' ];
+	return DEFAULT_DISABLED_DATA_SOURCES;
 };
 
 const enabledFiltersMap = {

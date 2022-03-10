@@ -197,23 +197,58 @@ export const shoppingCart: ReactElement = (
 		<path
 			d="m9 22c.55228 0 1-.4477 1-1s-.44772-1-1-1-1 .4477-1 1 .44772 1 1 1z"
 			stroke="#8c8f94"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			stroke-width="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth="2"
 		/>
 		<path
 			d="m20 22c.5523 0 1-.4477 1-1s-.4477-1-1-1-1 .4477-1 1 .4477 1 1 1z"
 			stroke="#8c8f94"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			stroke-width="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth="2"
 		/>
 		<path
 			d="m1 1h4l2.68 13.39c.09144.4604.34191.874.70755 1.1683.36563.2943.82315.4507 1.29245.4417h9.72c.4693.009.9268-.1474 1.2925-.4417.3656-.2943.6161-.7079.7075-1.1683l1.6-8.39h-17"
 			stroke="#8c8f94"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			stroke-width="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			strokeWidth="2"
 		/>
+	</svg>
+);
+
+export const award: ReactElement = (
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			d="M12 15C15.866 15 19 11.866 19 8C19 4.13401 15.866 1 12 1C8.13401 1 5 4.13401 5 8C5 11.866 8.13401 15 12 15Z"
+			stroke="#8C8F94"
+			strokeWidth="1.6"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+		<path
+			d="M8.21 13.8899L7 22.9999L12 19.9999L17 22.9999L15.79 13.8799"
+			stroke="#8C8F94"
+			strokeWidth="1.6"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	</svg>
+);
+
+export const headset: ReactElement = (
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<mask id="mask0_2727_2533" maskUnits="userSpaceOnUse" x="3" y="4" width="18" height="16">
+			<path
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="M5 4H19C20.11 4 21 4.9 21 6V18C21 19.1 20.1 20 19 20H5C3.89 20 3 19.1 3 18V6C3 4.9 3.89 4 5 4ZM5 18H19V8H5V18Z"
+				fill="white"
+			/>
+		</mask>
+		<g mask="url(#mask0_2727_2533)">
+			<rect width="24" height="24" fill="#8C8F94" />
+		</g>
 	</svg>
 );

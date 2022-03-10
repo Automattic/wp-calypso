@@ -32,6 +32,7 @@ import { useWPORGPlugins } from 'calypso/data/marketplace/use-wporg-plugin-query
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
+import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
@@ -346,6 +347,7 @@ const PluginsBrowser = ( {
 				setBillingPeriod={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
+			<EducationFooter />
 		</MainComponent>
 	);
 };

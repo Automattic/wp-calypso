@@ -39,7 +39,13 @@ class PlansNavigation extends Component {
 	}
 
 	render() {
-		const { site, shouldShowMyPlan, shouldShowPlans, translate } = this.props;
+		const {
+			site,
+			shouldShowMyPlan,
+			shouldShowPlans,
+			translate,
+			eligibleForManagedPlan,
+		} = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = isMobile() && site;
@@ -63,7 +69,7 @@ class PlansNavigation extends Component {
 									path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
 								}
 							>
-								{ translate( 'Plans' ) }
+								{ eligibleForManagedPlan ? translate( 'New Plans' ) : translate( 'Plans' ) }
 							</NavItem>
 						) }
 					</NavTabs>

@@ -1,5 +1,4 @@
-import { NextButton } from '@automattic/onboarding';
-import { SelectItems } from '@automattic/onboarding-components';
+import { NextButton, SelectItems } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React, { useEffect, useState } from 'react';
