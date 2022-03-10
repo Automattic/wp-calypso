@@ -24,6 +24,7 @@ import { FormMode, FormState, INITIAL_FORM_ERRORS, INITIAL_FORM_STATE, validate 
 import HostSelection from './host-selection';
 import Verification from './verification';
 import './style.scss';
+import type { ClickHandler } from 'calypso/components/step-progress';
 
 enum Step {
 	HostSelection = 0,
@@ -51,7 +52,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			message: translate( 'Host locator' ),
 			onClick: () => page( settingsPath( siteSlug as string ) ),
 			show: 'onComplete',
-		},
+		} as ClickHandler,
 		translate( 'Credentials' ),
 		translate( 'Verification' ),
 		translate( 'Connected' ),

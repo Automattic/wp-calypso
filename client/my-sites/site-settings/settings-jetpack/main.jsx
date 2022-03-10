@@ -1,6 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -17,9 +17,15 @@ import isSiteFailedMigrationSource from 'calypso/state/selectors/is-site-failed-
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, translate } ) => {
-	const { host, action } = useSelector( getCurrentQueryArguments );
-
+const SiteSettingsJetpack = ( {
+	site,
+	siteId,
+	siteIsJetpack,
+	showCredentials,
+	host,
+	action,
+	translate,
+} ) => {
 	//todo: this check makes sense in Jetpack section?
 	if ( ! siteIsJetpack ) {
 		return (
@@ -63,6 +69,7 @@ SiteSettingsJetpack.propTypes = {
 export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
+	const { host, action } = getCurrentQueryArguments( state );
 
 	return {
 		site,
@@ -72,5 +79,7 @@ export default connect( ( state ) => {
 			isSiteFailedMigrationSource( state, siteId ) ||
 			isRewindActive( state, siteId ) ||
 			siteHasScanProductPurchase( state, siteId ),
+		host,
+		action,
 	};
 } )( localize( SiteSettingsJetpack ) );
