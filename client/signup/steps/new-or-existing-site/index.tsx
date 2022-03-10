@@ -29,13 +29,18 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 
 	const headerText = translate( 'Do It For Me' );
 	const subHeaderText = translate(
-		'Get a professionally designed, mobile-optimized website in 4 business days or less for a one-time fee of {{strong}}%(displayCost)s{{/strong}}.',
+		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{strong}}%(displayCost)s{{/strong}}*.' +
+			'{{br}}{{/br}}{{br}}{{/br}}' +
+			'{{small}}* Plus a one year subscription of the Premium plan.{{/small}}',
 		{
 			args: {
 				displayCost,
+				fulfillmentDays: 4,
 			},
 			components: {
 				strong: <strong />,
+				br: <br />,
+				small: <small />,
 			},
 		}
 	);
