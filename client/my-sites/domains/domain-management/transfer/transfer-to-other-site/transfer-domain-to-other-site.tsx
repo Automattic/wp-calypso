@@ -13,6 +13,7 @@ import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/b
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
 import {
 	domainManagementEdit,
 	domainManagementList,
@@ -183,10 +184,14 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	};
 
 	renderSection(): JSX.Element {
-		const { currentUserCanManage, selectedDomainName, aftermarketAuction } = this.props;
+		const { currentUserCanManage, selectedDomainName, aftermarketAuction, domain } = this.props;
 		const { children, ...propsWithoutChildren } = this.props;
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...propsWithoutChildren } />;
+		}
+
+		if ( ! domain.isRenewable && ! domain.isRedeemable ) {
+			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
 		if ( aftermarketAuction ) {
@@ -227,6 +232,7 @@ export default connect(
 		return {
 			currentRoute: getCurrentRoute( state ),
 			currentUserCanManage: typeof domain === 'object' && domain.currentUserCanManage,
+			domain,
 			aftermarketAuction: typeof domain === 'object' && domain.aftermarketAuction,
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),

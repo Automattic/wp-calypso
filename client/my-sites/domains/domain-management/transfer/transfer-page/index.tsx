@@ -23,6 +23,7 @@ import wpcom from 'calypso/lib/wp';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
 import SelectIpsTag from 'calypso/my-sites/domains/domain-management/transfer/transfer-out/select-ips-tag';
 import {
 	domainManagementEdit,
@@ -341,6 +342,10 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 
 		if ( ! domain.currentUserIsOwner ) {
 			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
+		}
+
+		if ( ! domain.isRenewable && ! domain.isRedeemable ) {
+			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
 		if ( domain.aftermarketAuction ) {

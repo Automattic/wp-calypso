@@ -1,6 +1,5 @@
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { isDomainInGracePeriod } from 'calypso/lib/domains';
 import { type as domainType } from 'calypso/lib/domains/constants';
 import { domainManagementTransfer } from 'calypso/my-sites/domains/paths';
 import DomainInfoCard from '..';
@@ -15,7 +14,7 @@ const DomainTransferInfoCard = ( {
 
 	if (
 		! domain.currentUserIsOwner ||
-		( domain.expired && ! isDomainInGracePeriod( domain ) ) ||
+		( ! domain.isRenewable && ! domain.isRedeemable ) ||
 		typesUnableToTransfer.includes( domain.type ) ||
 		domain.aftermarketAuction
 	) {
