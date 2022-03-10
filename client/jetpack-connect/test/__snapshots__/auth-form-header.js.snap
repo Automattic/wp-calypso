@@ -11,6 +11,7 @@ exports[`AuthFormHeader renders as expected 1`] = `
     id=""
     isSecondary={false}
     subHeaderText="You are moments away from a better WordPress."
+    tooltipText=""
   />
   <CompactCard
     className="jetpack-connect__site"

@@ -3,11 +3,9 @@ import {
 	FEATURE_100K_VISITS,
 	FEATURE_500MB_STORAGE,
 	FEATURE_50GB_STORAGE,
-	FEATURE_ADDITIONAL_SITES,
 	FEATURE_UNLIMITED_POSTS_PAGES,
 	FEATURE_UNLIMITED_ADMINS,
 	FEATURE_INSTALL_PLUGINS,
-	FEATURE_COMMUNITY_SUPPORT,
 	FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 	FEATURE_PAYMENT_BLOCKS,
 	FEATURE_WOOCOMMERCE,
@@ -15,10 +13,11 @@ import {
 	FEATURE_NO_ADS,
 	FEATURE_SFTP_DATABASE,
 	FEATURE_SITE_BACKUPS_AND_RESTORE,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { translate, numberFormat } from 'i18n-calypso';
-import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import type { TranslateResult, TranslateOptionsPlural } from 'i18n-calypso';
 
 export interface PlanComparisonFeature {
@@ -89,25 +88,111 @@ function defaultGetCellText(
 
 export const planComparisonFeatures: PlanComparisonFeature[] = [
 	{
-		title: translate( 'Sites' ),
-		description: translate( 'Popup text placeholder' ),
-		features: [ FEATURE_ADDITIONAL_SITES ],
-		getCellText: ( feature ) => {
-			const siteCount = 1;
-			const title = translate( '%(siteCount)s site', '%(siteCount)s sites', {
-				count: siteCount,
-				args: { siteCount },
-			} );
-			const desc = feature
-				? translate( 'You can purchase more sites.' )
-				: translate( 'You can’t purchase more sites.' );
+		title: translate( 'Custom Domain Name' ),
+		description: translate(
+			'Get a personalized online address that’s easy to remember and easy to share.'
+		),
+		features: [ FEATURE_CUSTOM_DOMAIN ],
+		getCellText: ( feature, isMobile = false ) => {
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return (
+						<>
+							<Gridicon icon="checkmark" />
+							{ translate( 'Free for one year!' ) }
+						</>
+					);
+				}
 
-			return [ title, desc ];
+				return (
+					<>
+						<Gridicon icon="cross" />
+						{ translate( 'Not included' ) }
+					</>
+				);
+			}
+
+			return feature
+				? translate( 'Custom Domain Name is free for one year!' )
+				: translate( 'Custom Domain Name is not included' );
 		},
 	},
 	{
-		title: translate( 'Visits' ),
-		description: translate( 'Popup text placeholder' ),
+		title: translate( 'Premium themes' ),
+		description: translate(
+			'Gain access to advanced, professional & beautiful premium design templates including themes specifically tailored for businesses.'
+		),
+		features: [ FEATURE_PREMIUM_THEMES ],
+		getCellText: defaultGetCellText( translate( 'Premium themes' ) ),
+	},
+	{
+		title: translate( 'Unlimited Email and Live Chat Support' ),
+		description: translate(
+			'Customer service isn’t just something we offer. It’s who we are. Over 30% of WordPress.com is dedicated to service. We call it Happiness—real support delivered by real human beings who specialize in launching and fine-tuning WordPress sites. '
+		),
+		features: [ FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS ],
+		getCellText: defaultGetCellText( translate( 'Unlimited Email and Live Chat Support' ) ),
+	},
+	{
+		title: translate( 'WordPress Plugins' ),
+		subtitle: translate( 'Use any WordPress plugins on your site' ),
+		description: translate(
+			'Install WordPress plugins and extend functionality for your site with access to more than 50,000 WordPress plugins'
+		),
+		features: [ FEATURE_INSTALL_PLUGINS ],
+		getCellText: ( feature, isMobile = false ) => {
+			const pluginCount = 0;
+
+			if ( ! isMobile ) {
+				return feature ? translate( 'Unlimited' ) : String( pluginCount );
+			}
+
+			return feature
+				? translate( 'Unlimited WordPress Plugins' )
+				: translate( '%(pluginCount)s WordPress Plugin', '%(pluginCount)s WordPress Plugins', {
+						count: pluginCount,
+						args: { pluginCount: numberFormat( pluginCount, 0 ) },
+				  } );
+		},
+	},
+	{
+		title: translate( 'Storage space' ),
+		description: translate(
+			'The free plan allows a maximum storage of 500MB, which equals to approximately 100 high quality images, whilst with Managed WordPress you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+		),
+		features: [ FEATURE_500MB_STORAGE, FEATURE_50GB_STORAGE ],
+		getCellText: ( feature, isMobile = false ) => {
+			let storageSize = '0.5';
+
+			if ( feature === FEATURE_50GB_STORAGE ) {
+				storageSize = '50';
+			}
+
+			if ( isMobile ) {
+				return translate( '%sGB of storage', {
+					args: [ storageSize ],
+				} );
+			}
+
+			return translate( '%sGB', {
+				args: [ storageSize ],
+				comment: '%s is a number of gigabytes.',
+			} );
+		},
+	},
+	{
+		title: translate( 'Sell products with WooCommerce' ),
+		description: translate(
+			'Includes one-click payments, premium store designs and personalized expert support.'
+		),
+		features: [ FEATURE_WOOCOMMERCE ],
+		getCellText: defaultGetCellText( translate( 'Sell products with WooCommerce' ) ),
+	},
+	{
+		title: translate( 'Visits per month' ),
+		description: translate(
+			"WordPress Managed bundles up to 100,000 visits a month to help you rest assured traffic won't be a concern."
+		),
 		features: [ FEATURE_10K_VISITS, FEATURE_100K_VISITS ],
 		getCellText: ( feature, isMobile = false ) => {
 			let visitCount = 0;
@@ -160,78 +245,10 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		title: translate( 'WordPress plugins' ),
-		subtitle: translate( 'Be able to add forms, calendar, etc.' ),
-		features: [ FEATURE_INSTALL_PLUGINS ],
-		getCellText: ( feature, isMobile = false ) => {
-			const pluginCount = 0;
-
-			if ( ! isMobile ) {
-				return feature ? translate( 'Unlimited' ) : String( pluginCount );
-			}
-
-			return feature
-				? translate( 'Unlimited WordPress plugins' )
-				: translate( '%(pluginCount)s WordPress plugin', '%(pluginCount)s WordPress plugins', {
-						count: pluginCount,
-						args: { pluginCount: numberFormat( pluginCount, 0 ) },
-				  } );
-		},
-	},
-	{
-		title: translate( 'Storage' ),
-		description: translate( 'Upload more images, videos, audio, and documents to your website.' ),
-		features: [ FEATURE_500MB_STORAGE, FEATURE_50GB_STORAGE ],
-		getCellText: ( feature, isMobile = false ) => {
-			let storageSize = '0.5';
-
-			if ( feature === FEATURE_50GB_STORAGE ) {
-				storageSize = '50';
-			}
-
-			if ( isMobile ) {
-				return translate( '%sGB of storage', {
-					args: [ storageSize ],
-				} );
-			}
-
-			return translate( '%sGB', {
-				args: [ storageSize ],
-				comment: '%s is a number of gigabytes.',
-			} );
-		},
-	},
-	{
-		title: translate( 'Support' ),
-		description: translate( 'Popup text placeholder' ),
-		features: [ FEATURE_COMMUNITY_SUPPORT, FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS ],
-		getCellText: ( feature ) => {
-			if ( feature === FEATURE_COMMUNITY_SUPPORT ) {
-				return [
-					getFeatureByKey( FEATURE_COMMUNITY_SUPPORT ).getTitle(),
-					getFeatureByKey( FEATURE_COMMUNITY_SUPPORT ).getDescription(),
-				];
-			}
-
-			return [
-				getFeatureByKey( FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS ).getTitle(),
-				getFeatureByKey( FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS ).getDescription(),
-			];
-		},
-	},
-	{
 		title: translate( 'Payment blocks' ),
 		description: translate( 'Popup text placeholder' ),
 		features: [ FEATURE_PAYMENT_BLOCKS ],
 		getCellText: defaultGetCellText( translate( 'Payment blocks' ) ),
-	},
-	{
-		title: translate( 'WooCommerce' ),
-		description: translate(
-			'WooCommerce is a customizable, open-source eCommerce platform built on WordPress.'
-		),
-		features: [ FEATURE_WOOCOMMERCE ],
-		getCellText: defaultGetCellText( translate( 'WooCommerce' ) ),
 	},
 	{
 		title: translate( 'Jetpack' ),
