@@ -8,7 +8,6 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useIntents, useIntentsAlt } from './intents';
 import type { StepPath } from '../';
 import type { Step } from '../../types';
-import '../step-layouts/horizontal-layout.scss';
 import './style.scss';
 
 /**

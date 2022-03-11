@@ -4,7 +4,6 @@ import siteOptionsURL from 'calypso/assets/images/onboarding/site-options.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import type { Step } from '../../types';
 import './style.scss';
-import '../step-layouts/horizontal-layout.scss';
 
 /**
  * The intent capture step
