@@ -14,7 +14,7 @@ const DomainTransferInfoCard = ( {
 
 	if (
 		! domain.currentUserIsOwner ||
-		( domain.expired && ! domain.isRenewable && ! domain.isRedeemable ) ||
+		( domain.expired && ! domain.isRenewable ) ||
 		typesUnableToTransfer.includes( domain.type ) ||
 		domain.aftermarketAuction
 	) {

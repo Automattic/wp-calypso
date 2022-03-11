@@ -253,7 +253,6 @@ class TransferDomainToOtherUser extends Component {
 			aftermarketAuction,
 			expired,
 			isRenewable,
-			isRedeemable,
 		} = getSelectedDomain( this.props );
 		const { domains, selectedDomainName } = this.props;
 
@@ -265,7 +264,7 @@ class TransferDomainToOtherUser extends Component {
 			return <AftermarketAutcionNotice domainName={ selectedDomainName } />;
 		}
 
-		if ( expired && ! isRenewable && ! isRedeemable ) {
+		if ( expired && ! isRenewable ) {
 			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
