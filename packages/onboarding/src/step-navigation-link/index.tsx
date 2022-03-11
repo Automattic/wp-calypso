@@ -8,8 +8,8 @@ interface Props {
 	direction: 'back' | 'forward';
 	handleClick?: () => void;
 	label?: string | ReactChild;
-	backIcon?: string;
-	forwardIcon?: string;
+	hasBackIcon?: boolean;
+	hasForwardIcon?: boolean;
 	primary?: boolean;
 	borderless?: boolean;
 	cssClass?: string;
@@ -21,8 +21,8 @@ const StepNavigationLink: React.FC< Props > = ( {
 	direction,
 	handleClick,
 	label,
-	backIcon,
-	forwardIcon,
+	hasBackIcon,
+	hasForwardIcon,
 	primary,
 	borderless = true,
 	cssClass,
@@ -36,14 +36,14 @@ const StepNavigationLink: React.FC< Props > = ( {
 	let forwardGridicon;
 
 	if ( direction === 'back' ) {
-		backGridicon = backIcon ? <Gridicon icon={ backIcon } size={ 18 } /> : null;
+		backGridicon = hasBackIcon ? <Gridicon icon={ 'chevron-left' } size={ 18 } /> : null;
 		if ( label ) {
 			text = label;
 		} else {
 			text = translate( 'Back' );
 		}
 	} else if ( direction === 'forward' ) {
-		forwardGridicon = forwardIcon ? <Gridicon icon={ forwardIcon } size={ 18 } /> : null;
+		forwardGridicon = hasForwardIcon ? <Gridicon icon={ 'chevron-right' } size={ 18 } /> : null;
 		text = label ? label : translate( 'Skip for now' );
 	}
 

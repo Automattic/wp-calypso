@@ -1,13 +1,11 @@
 import { ActionButtons } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, ReactElement } from 'react';
+import { ReactElement } from 'react';
 import StepNavigationLink from '../step-navigation-link';
 import './style.scss';
 
 interface Props {
-	headerText: string | ReactChild;
-	subHeaderText: string | ReactChild;
 	stepContent: ReactElement;
 	hideBack?: boolean;
 	hideSkip?: boolean;
@@ -21,7 +19,6 @@ interface Props {
 	backLabelText?: string;
 	skipLabelText?: string;
 	nextLabelText?: string;
-	align: 'left' | 'center';
 	className?: string;
 	// Displays an <hr> above the skip button and adds more white space
 	isLargeSkipLayout?: boolean;
@@ -37,12 +34,10 @@ interface Props {
 	intent?: string;
 	stepName?: string;
 	stepSectionName?: string;
-	recordTracksEvent: () => void;
+	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 }
 
 const StepContainer: React.FC< Props > = ( {
-	headerText,
-	subHeaderText,
 	stepContent,
 	hideBack,
 	hideSkip,
@@ -56,7 +51,6 @@ const StepContainer: React.FC< Props > = ( {
 	backLabelText,
 	skipLabelText,
 	nextLabelText,
-	align,
 	className,
 	isHorizontalLayout,
 	isFullLayout,
@@ -74,17 +68,6 @@ const StepContainer: React.FC< Props > = ( {
 	recordTracksEvent,
 } ) => {
 	const translate = useTranslate();
-
-	const isReskinnedFlow = ( flowName: string | undefined ) => {
-		if ( ! flowName ) {
-			return false;
-		}
-		return true;
-		// return (
-		// 	config.isEnabled( 'signup/reskin' ) &&
-		// 	config< string >( 'reskinned_flows' ).includes( flowName )
-		// );
-	};
 
 	const recordClick = ( direction: 'back' | 'forward', stepSectionName?: string ) => {
 		const tracksProps = {
@@ -112,7 +95,7 @@ const StepContainer: React.FC< Props > = ( {
 				direction="back"
 				handleClick={ goBack }
 				label={ backLabelText }
-				backIcon={ isReskinnedFlow( flowName ) ? 'chevron-left' : undefined }
+				hasBackIcon
 				rel={ isExternalBackUrl ? 'external' : '' }
 				recordClick={ () => recordClick( 'back', stepSectionName ) }
 			/>
@@ -121,10 +104,10 @@ const StepContainer: React.FC< Props > = ( {
 
 	function renderSkip( {
 		borderless,
-		forwardIcon,
+		hasForwardIcon,
 	}: {
 		borderless: boolean;
-		forwardIcon?: string;
+		hasForwardIcon?: boolean;
 	} ) {
 		if ( shouldHideNavButtons || ! goNext ) {
 			return null;
@@ -143,7 +126,7 @@ const StepContainer: React.FC< Props > = ( {
 						'has-skip-heading': skipHeadingText,
 					} ) }
 					borderless={ borderless }
-					forwardIcon={ forwardIcon }
+					hasForwardIcon={ hasForwardIcon }
 					recordClick={ () => recordClick( 'forward' ) }
 				/>
 			</div>
@@ -167,16 +150,6 @@ const StepContainer: React.FC< Props > = ( {
 		);
 	}
 
-	function getHeaderText() {
-		return headerText ? headerText : translate( 'Let’s get started' );
-	}
-
-	function getSubHeaderText() {
-		return subHeaderText
-			? subHeaderText
-			: translate( 'Welcome to the best place for your WordPress website.' );
-	}
-
 	const backButton = ! hideBack && renderBack();
 	const skipButton = ! hideSkip && skipButtonAlign === 'top' && renderSkip( { borderless: true } );
 	const nextButton = ! hideNext && renderNext();
@@ -192,10 +165,7 @@ const StepContainer: React.FC< Props > = ( {
 	return (
 		<>
 			<div className={ classes }>
-				<ActionButtons
-					className="step-container__navigation"
-					sticky={ isReskinnedFlow( flowName ) ? null : false }
-				>
+				<ActionButtons className="step-container__navigation" sticky={ null }>
 					{ backButton }
 					{ skipButton }
 					{ nextButton }

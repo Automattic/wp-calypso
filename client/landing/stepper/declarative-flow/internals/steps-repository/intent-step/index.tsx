@@ -32,9 +32,6 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 
 	return (
 		<StepContainer
-			headerText={ headerText }
-			subHeaderText={ subHeaderText }
-			align={ 'left' }
 			headerImageUrl={ intentImageUrl }
 			hideSkip
 			hideBack
