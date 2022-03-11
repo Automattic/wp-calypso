@@ -375,17 +375,26 @@ export function generateFlows( {
 		},
 		{
 			name: 'do-it-for-me',
-			steps: [
-				'user',
-				'new-or-existing-site',
-				'difm-site-picker',
-				'site-info-collection',
-				'difm-design-setup-site',
-			],
+			steps: isEnabled( 'signup/redesigned-difm-flow' )
+				? [
+						// Add or replace new steps here
+						'user',
+						'new-or-existing-site',
+						'difm-site-picker',
+						'site-info-collection',
+						'difm-design-setup-site',
+				  ]
+				: [
+						'user',
+						'new-or-existing-site',
+						'difm-site-picker',
+						'site-info-collection',
+						'difm-design-setup-site',
+				  ],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2021-09-30',
+			lastModified: '2022-03-10',
 		},
 
 		{
