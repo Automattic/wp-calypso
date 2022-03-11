@@ -1,0 +1,43 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.payment-method-delete-primary-confirmation {
+	&__separator {
+		margin: 24px 0;
+	}
+
+	&__card {
+		font-size: 0.875rem;
+
+		&-title {
+			font-weight: bold;
+		}
+
+		&-details {
+			display: flex;
+			margin-top: 1rem;
+	
+			& > div {
+				margin-right: 32px;
+			}
+
+			&-loader {
+				width: 100%;
+				height: 30px;
+
+				@include placeholder( --color-neutral-10 );
+
+				@include break-mobile {
+					width: 50%;
+				}
+			}
+
+			&-logo {
+				svg {
+					filter: grayscale( 100% );
+				}
+			}
+		}
+	}
+
+}
