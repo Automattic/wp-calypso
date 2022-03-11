@@ -29,7 +29,7 @@ export type TransferDomainToOtherSiteStateProps = {
 	aftermarketAuction: boolean;
 	currentRoute: string;
 	currentUserCanManage: boolean;
-	domain: ResponseDomain;
+	domain?: ResponseDomain;
 	hasSiteDomainsLoaded: boolean;
 	isDomainOnly: Maybe< boolean >;
 	isMapping: boolean;

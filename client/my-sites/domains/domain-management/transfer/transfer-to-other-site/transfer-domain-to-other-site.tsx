@@ -194,7 +194,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			return <AftermarketAutcionNotice domainName={ selectedDomainName } />;
 		}
 
-		if ( domain.expired && ! domain.isRenewable ) {
+		if ( domain && domain.expired && ! domain.isRenewable ) {
 			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
@@ -227,7 +227,10 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 
 export default connect(
 	( state, ownProps: TransferDomainToOtherSitePassedProps ) => {
-		const domain = ! ownProps.isRequestingSiteDomains && getSelectedDomain( ownProps );
+		let domain;
+		if ( ! ownProps.isRequestingSiteDomains ) {
+			domain = getSelectedDomain( ownProps );
+		}
 		const siteId = getSelectedSiteId( state );
 		return {
 			currentRoute: getCurrentRoute( state ),
