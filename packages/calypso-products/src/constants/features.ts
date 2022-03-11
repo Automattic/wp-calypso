@@ -196,7 +196,7 @@ export const FEATURE_P2_MORE_FILE_TYPES = 'p2-more-file-types';
 export const FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT = 'p2-priority-chat-email-support';
 export const FEATURE_P2_ACTIVITY_OVERVIEW = 'p2-activity-overview';
 
-// New features Flexible and Managed plans introduced.
+// New features Flexible and Pro plans introduced.
 export const FEATURE_UNLIMITED_USERS = 'unlimited-users';
 export const FEATURE_UNLIMITED_POSTS_PAGES = 'unlimited-posts-pages';
 export const FEATURE_PAYMENT_BLOCKS = 'payment-blocks';

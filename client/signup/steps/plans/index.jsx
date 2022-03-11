@@ -20,7 +20,7 @@ import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import PlansComparison, { isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
+import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -136,7 +136,7 @@ export class PlansStep extends Component {
 			showTreatmentPlansReorderTest,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
-			eligibleForManagedPlan,
+			eligibleForProPlan,
 		} = this.props;
 
 		let errorDisplay;
@@ -154,7 +154,7 @@ export class PlansStep extends Component {
 			return this.renderLoading();
 		}
 
-		if ( eligibleForManagedPlan ) {
+		if ( eligibleForProPlan ) {
 			return (
 				<div>
 					{ errorDisplay }
@@ -275,9 +275,9 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate, eligibleForManagedPlan } = this.props;
+		const { headerText, translate, eligibleForProPlan } = this.props;
 
-		if ( eligibleForManagedPlan ) {
+		if ( eligibleForProPlan ) {
 			return translate( 'Managed WordPress made just for you' );
 		}
 
@@ -289,9 +289,9 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, translate, eligibleForManagedPlan } = this.props;
+		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan } = this.props;
 
-		if ( eligibleForManagedPlan ) {
+		if ( eligibleForProPlan ) {
 			return translate( 'Try risk-free with a 14-day money back guarantee' );
 		}
 
@@ -452,7 +452,7 @@ export default connect(
 		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		eligibleForManagedPlan: isEligibleForManagedPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
+		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

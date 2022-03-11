@@ -60,7 +60,7 @@
 		"network-connection": true,
 		"p2/preapproved-domains": true,
 		"plans/personal-plan": true,
-		"plans/managed-plan": false,
+		"plans/pro-plan": false,
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,

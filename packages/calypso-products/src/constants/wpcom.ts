@@ -56,7 +56,7 @@ export const WPCOM_PLANS = <const>[
 	PLAN_P2_PLUS,
 	PLAN_P2_FREE,
 	PLAN_WPCOM_FLEXIBLE,
-	PLAN_WPCOM_MANAGED,
+	PLAN_WPCOM_PRO,
 ];
 
 export const WPCOM_MONTHLY_PLANS = <const>[

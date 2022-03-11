@@ -180,7 +180,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_WPCOM_FLEXIBLE,
-	PLAN_WPCOM_MANAGED,
+	PLAN_WPCOM_PRO,
 	PREMIUM_DESIGN_FOR_STORES,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -198,7 +198,7 @@ import {
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
 	TYPE_FLEXIBLE,
-	TYPE_MANAGED,
+	TYPE_PRO,
 } from './constants';
 import type {
 	BillingTerm,
@@ -1594,13 +1594,13 @@ PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
 	],
 };
 
-PLANS_LIST[ PLAN_WPCOM_MANAGED ] = {
+PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 	group: GROUP_WPCOM,
-	type: TYPE_MANAGED,
+	type: TYPE_PRO,
 	term: TERM_ANNUALLY,
 	getTitle: () => i18n.translate( 'Pro' ),
 	getProductId: () => 1032,
-	getStoreSlug: () => PLAN_WPCOM_MANAGED,
+	getStoreSlug: () => PLAN_WPCOM_PRO,
 	getPathSlug: () => 'pro',
 	getDescription: () =>
 		i18n.translate( 'Enjoy the classic WordPress.com experience using plugins and much more.' ),

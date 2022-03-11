@@ -67,7 +67,7 @@
 		"p2/preapproved-domains": true,
 		"page/export": true,
 		"plans/personal-plan": true,
-		"plans/managed-plan": false,
+		"plans/pro-plan": false,
 		"post-editor/checkout-overlay": true,
 		"press-this": true,
 		"publicize-preview": true,

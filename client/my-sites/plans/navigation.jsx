@@ -8,7 +8,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { sectionify } from 'calypso/lib/route';
-import { isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -39,13 +39,7 @@ class PlansNavigation extends Component {
 	}
 
 	render() {
-		const {
-			site,
-			shouldShowMyPlan,
-			shouldShowPlans,
-			translate,
-			eligibleForManagedPlan,
-		} = this.props;
+		const { site, shouldShowMyPlan, shouldShowPlans, translate, eligibleForProPlan } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = isMobile() && site;
@@ -69,7 +63,7 @@ class PlansNavigation extends Component {
 									path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
 								}
 							>
-								{ eligibleForManagedPlan ? translate( 'New Plans' ) : translate( 'Plans' ) }
+								{ eligibleForProPlan ? translate( 'New Plans' ) : translate( 'Plans' ) }
 							</NavItem>
 						) }
 					</NavTabs>
@@ -85,12 +79,12 @@ export default connect( ( state ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isOnFreePlan = isSiteOnFreePlan( state, siteId );
 	const isAtomic = isAtomicSite( state, siteId );
-	const eligibleForManagedPlan = isEligibleForManagedPlan( state, siteId );
+	const eligibleForProPlan = isEligibleForProPlan( state, siteId );
 	const currentPlan = getCurrentPlan( state, siteId );
 	let shouldShowMyPlan = ! isOnFreePlan || ( isJetpack && ! isAtomic );
 	let shouldShowPlans = true;
 
-	if ( eligibleForManagedPlan && currentPlan ) {
+	if ( eligibleForProPlan && currentPlan ) {
 		const isFreeOrFlexible =
 			isFreePlanProduct( currentPlan ) || isFlexiblePlanProduct( currentPlan );
 		shouldShowMyPlan = isFreeOrFlexible ? false : true;
@@ -101,6 +95,6 @@ export default connect( ( state ) => {
 		shouldShowMyPlan,
 		shouldShowPlans,
 		site,
-		eligibleForManagedPlan,
+		eligibleForProPlan,
 	};
 } )( localize( PlansNavigation ) );

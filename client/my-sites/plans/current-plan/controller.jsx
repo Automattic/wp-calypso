@@ -1,6 +1,6 @@
 import { isFreePlanProduct, isFlexiblePlanProduct } from '@automattic/calypso-products';
 import page from 'page';
-import { isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentPlan from './';
@@ -10,7 +10,7 @@ export function currentPlan( context, next ) {
 
 	const siteId = getSelectedSiteId( state );
 	const selectedSite = getSite( state, siteId );
-	const eligibleForManagedPlan = isEligibleForManagedPlan( state, siteId );
+	const eligibleForProPlan = isEligibleForProPlan( state, siteId );
 
 	if ( ! selectedSite ) {
 		page.redirect( '/plans/' );
@@ -20,7 +20,7 @@ export function currentPlan( context, next ) {
 
 	if (
 		isFreePlanProduct( selectedSite.plan ) ||
-		( eligibleForManagedPlan && isFlexiblePlanProduct( selectedSite.plan ) )
+		( eligibleForProPlan && isFlexiblePlanProduct( selectedSite.plan ) )
 	) {
 		page.redirect( `/plans/${ selectedSite.slug }` );
 
