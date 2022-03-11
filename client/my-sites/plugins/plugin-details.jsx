@@ -222,7 +222,7 @@ function PluginDetails( props ) {
 				} )
 			);
 		}
-	}, [ fullPlugin.name, props.pluginSlug, selectedSite ] );
+	}, [ fullPlugin?.name, fullPlugin?.slug, selectedSite?.ID ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
