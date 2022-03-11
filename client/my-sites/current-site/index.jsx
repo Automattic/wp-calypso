@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -12,7 +12,6 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -27,7 +26,6 @@ class CurrentSite extends Component {
 		translate: PropTypes.func.isRequired,
 		anySiteSelected: PropTypes.array,
 		forceAllSitesView: PropTypes.bool,
-		isNavUnificationEnabled: PropTypes.bool.isRequired,
 		isRtl: PropTypes.bool,
 	};
 
@@ -66,14 +64,10 @@ class CurrentSite extends Component {
 					{ this.props.siteCount > 1 && (
 						<span className="current-site__switch-sites">
 							<Button borderless onClick={ this.switchSites }>
-								{ this.props.isNavUnificationEnabled ? (
+								<span
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-									<span
-										className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
-									></span>
-								) : (
-									<Gridicon icon={ `chevron-${ arrowDirection }` } />
-								) }
+									className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
+								></span>
 								<span className="current-site__switch-sites-label">
 									{ translate( 'Switch Site' ) }
 								</span>
@@ -121,7 +115,6 @@ export default connect(
 		anySiteSelected: getSelectedOrAllSites( state ),
 		siteCount: getCurrentUserSiteCount( state ),
 		hasAllSitesList: hasAllSitesList( state ),
-		isNavUnificationEnabled: isNavUnificationEnabled( state ),
 	} ),
 	{
 		recordGoogleEvent,

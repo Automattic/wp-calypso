@@ -51,7 +51,6 @@ import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-c
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
 import {
 	clearUnsavedUserSettings,
@@ -953,9 +952,7 @@ class Account extends Component {
 									<ColorSchemePicker
 										temporarySelection
 										disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
-										defaultSelection={
-											this.props.isNavUnificationEnabled ? 'classic-dark' : 'classic-bright'
-										}
+										defaultSelection="classic-dark"
 										onSelection={ this.updateColorScheme }
 									/>
 								</FormFieldset>
@@ -985,7 +982,6 @@ export default compose(
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			onboardingUrl: getOnboardingUrl( state ),
-			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 		} ),
 		{
 			bumpStat,
