@@ -71,12 +71,11 @@ const SCAN_VISIT_COUNTER_NAME = 'scan-page-visit';
 class ScanPage extends Component< Props > {
 	componentDidMount() {
 		const { scanState, dispatchIncrementCounter } = this.props;
-		if ( ! scanState?.state || scanState?.state === 'unavailable' ) {
-			return;
+		if ( scanState?.state && scanState?.state !== 'unavailable' ) {
+			// Counting visits to the scan page for the Jetpack (Scan) Review Prompt.
+			// Review Prompt should appear after 3 visits (not including same day visits)
+			dispatchIncrementCounter( SCAN_VISIT_COUNTER_NAME, false, false );
 		}
-		// Counting visits to the scan page for the Jetpack (Scan) Review Prompt.
-		// Review Prompt should appear after 3 visits (not including same day visits)
-		dispatchIncrementCounter( SCAN_VISIT_COUNTER_NAME, false, false );
 	}
 
 	componentDidUpdate( prevProps: Props ) {
