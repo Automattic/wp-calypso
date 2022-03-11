@@ -157,12 +157,12 @@ class StatsSite extends Component {
 				) }
 				disableCircle="true"
 				event="calypso_stats_private_site_banner"
-				dismissPreferenceName="stats-launch-private-site"
+				dismissPreferenceName={ `stats-launch-private-site-${ siteId }` }
 				href={ `/settings/general/${ siteSlug }` }
 				iconPath={ rocketImage }
 				title={ translate( 'Launch your site to drive more visitors' ) }
 				tracksClickName="calypso_stats_private_site_banner_click"
-				tracksDismissName={ `stats-launch-private-site-${ siteId }` }
+				tracksDismissName="calypso_stats_private_site_banner_dismiss"
 				tracksImpressionName="calypso_stats_private_site_banner_view"
 			/>
 		);
