@@ -9,12 +9,13 @@ import {
 	TestAccount,
 	BlockWidgetEditorComponent,
 	skipDescribeIf,
-	getTestAccountForGutenberg,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
-const accountName = getTestAccountForGutenberg( {
-	isEdge: envVariables.GUTENBERG_EDGE,
+const accountName = getTestAccountByFeature( {
+	gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+	siteType: 'simple', // add ternary to return val based on TEST_ON_ATOMIC being set
 } );
 
 declare const browser: Browser;
