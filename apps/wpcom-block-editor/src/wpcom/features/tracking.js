@@ -71,7 +71,7 @@ const getTypeForBlockId = ( blockId ) => {
  * Guess which inserter was used to insert/replace blocks.
  *
  * @param {string[]} originalBlockIds ids or blocks that are being replaced
- * @returns {'header-inserter'|'slash-inserter'|'quick-inserter'|'block-switcher'|'payments_intro_block'|undefined} ID representing the insertion method that was used
+ * @returns {'header-inserter'|'slash-inserter'|'quick-inserter'|'block-switcher'|'payments-intro-block'|undefined} ID representing the insertion method that was used
  */
 const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 	// Check if the main inserter (opened using the [+] button in the header) is open.
@@ -129,9 +129,10 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 
 	// This checks validates if we are inserting a block from the Payments Inserter block.
 	if (
+		originalBlockIds.length === 1 &&
 		select( 'core/block-editor' ).getBlockName( originalBlockIds[ 0 ] ) === 'jetpack/payments-intro'
 	) {
-		return 'payments_intro_block';
+		return 'payments-intro-block';
 	}
 
 	return undefined;
