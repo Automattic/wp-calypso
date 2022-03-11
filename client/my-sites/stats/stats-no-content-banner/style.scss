@@ -1,0 +1,39 @@
+.stats-no-content-banner__banner {
+	.banner__content {
+		.banner__action {
+			margin-top: 14px;
+			margin-right: 0;
+			@include breakpoint-deprecated( '>480px' ) {
+				margin-right: 40px;
+				margin-top: 0;
+
+				a {
+					width: 140px;
+					margin-left: 10px;
+				}
+			}
+		}
+	}
+
+	.dismissible-card__close-icon {
+		transform: translateY( -50% );
+		-webkit-transform: translateY( -50% );
+		top: 50%;
+		@include breakpoint-deprecated( '>480px' ) {
+			top: unset;
+			transform: unset;
+			-webkit-transform: unset;
+		}
+	}
+	.banner__icons {
+		.banner__icon {
+			display: none;
+		}
+		.banner__icon-no-circle {
+			max-width: 48px;
+			max-height: 48px;
+			min-width: 48px;
+			min-height: 48px;
+		}
+	}
+}
