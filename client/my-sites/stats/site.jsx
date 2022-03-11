@@ -147,7 +147,7 @@ class StatsSite extends Component {
 		this.props.recordTracksEvent( 'calypso_stats_parsely_banner_click' );
 	};
 
-	renderPrivateSiteBanner( slug ) {
+	renderPrivateSiteBanner( siteId, siteSlug ) {
 		return (
 			<Banner
 				callToAction={ translate( 'Launch your site' ) }
@@ -158,11 +158,11 @@ class StatsSite extends Component {
 				disableCircle="true"
 				event="calypso_stats_private_site_banner"
 				dismissPreferenceName="stats-launch-private-site"
-				href={ `/settings/general/${ slug }` }
+				href={ `/settings/general/${ siteSlug }` }
 				iconPath={ rocketImage }
 				title={ translate( 'Launch your site to drive more visitors' ) }
 				tracksClickName="calypso_stats_private_site_banner_click"
-				tracksDismissName="calypso_stats_private_site_banner_dismiss"
+				tracksDismissName={ `stats-launch-private-site-${ siteId }` }
 				tracksImpressionName="calypso_stats_private_site_banner_view"
 			/>
 		);
@@ -218,7 +218,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 
-				{ isSitePrivate ? this.renderPrivateSiteBanner( slug ) : null }
+				{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
 
 				<div id="my-stats-content">
 					<ChartTabs
