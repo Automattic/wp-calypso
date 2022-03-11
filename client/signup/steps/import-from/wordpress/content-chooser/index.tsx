@@ -2,7 +2,6 @@ import { NextButton, SelectItems } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -128,6 +127,4 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default connect( () => {
-	return {};
-} )( ContentChooser );
+export default ContentChooser;
