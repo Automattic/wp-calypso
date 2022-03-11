@@ -32,7 +32,7 @@ const usePluginsQuery = ( siteIds, queryOptions = {} ) => {
 				dispatch( receiveSitePlugins( siteId, data.plugins ) );
 				data.plugins.map( ( plugin ) => {
 					if ( plugin.update && plugin.autoupdate ) {
-						updatePlugin( siteId, plugin )( dispatch );
+						dispatch( updatePlugin( siteId, plugin ) );
 					}
 				} );
 			}
