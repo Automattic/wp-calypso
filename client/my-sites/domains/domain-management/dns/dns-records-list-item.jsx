@@ -6,6 +6,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
 function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, record } ) {
 	let key = 0;
+	let enabledActions = 0;
 	const menu = actions && (
 		<EllipsisMenu
 			icon={
@@ -19,7 +20,10 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 			position="bottom left"
 		>
 			{ actions.map( ( action ) => {
-				return (
+				if ( ! action.disabled ) {
+					enabledActions++;
+				}
+				return action.disabled ? null : (
 					<PopoverMenuItem
 						disabled={ action.disabled }
 						key={ key++ }
@@ -52,7 +56,7 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 					<span>{ value }</span>
 				</div>
 				<div className="dns-records-list-item__data dns-records-list-item__menu">
-					{ ! isHeader && menu }
+					{ ! isHeader && enabledActions > 0 && menu }
 				</div>
 			</div>
 		</div>
