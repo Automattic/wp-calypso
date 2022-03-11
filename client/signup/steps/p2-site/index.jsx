@@ -14,6 +14,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
+import { getValueFromProgressStore } from 'calypso/signup/utils';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
@@ -290,7 +291,14 @@ class P2Site extends Component {
 				siteTitle,
 			};
 
-			if ( this.props.refParameter === EMAIL_TRUCE_CAMPAIGN_REF ) {
+			const refParameter =
+				this.props.refParameter ||
+				getValueFromProgressStore( {
+					signupProgress: this.props.progress,
+					stepName: 'p2-confirm-email',
+					fieldName: 'storedRefParameter',
+				} );
+			if ( refParameter === EMAIL_TRUCE_CAMPAIGN_REF ) {
 				stepData.campaign = EMAIL_TRUCE_CAMPAIGN_ID;
 			}
 

@@ -23,7 +23,6 @@
 		{ "path": "./explat-client-react-helpers" },
 		{ "path": "./explat-client" },
 		{ "path": "./i18n-utils" },
-		{ "path": "./onboarding-components" },
 		{ "path": "./js-utils" },
 		{ "path": "./language-picker" },
 		{ "path": "./languages" },

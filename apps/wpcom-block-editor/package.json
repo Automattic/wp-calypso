@@ -22,7 +22,7 @@
 	},
 	"dependencies": {
 		"@automattic/typography": "workspace:^",
-		"@babel/runtime": "^7.16.7",
+		"@babel/runtime": "^7.17.2",
 		"@wordpress/base-styles": "^4.0.4",
 		"@wordpress/block-editor": "^8.0.13",
 		"@wordpress/blocks": "^11.1.5",
@@ -40,7 +40,7 @@
 		"@wordpress/is-shallow-equal": "^4.2.1",
 		"@wordpress/plugins": "^4.0.7",
 		"@wordpress/rich-text": "^5.0.7",
-		"@wordpress/url": "^3.3.1",
+		"@wordpress/url": "3.3.2",
 		"debug": "^4.3.3",
 		"lodash": "^4.17.21",
 		"react": "^17.0.2",

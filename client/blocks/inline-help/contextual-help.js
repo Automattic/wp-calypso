@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { RESULT_TOUR, RESULT_VIDEO } from './constants';
+import { RESULT_TOUR, RESULT_VIDEO, SELL_INTENT_ARTICLE } from './constants';
 
 /**
  * Module variables
@@ -1310,6 +1310,23 @@ const contextLinksForSection = {
 			},
 		},
 		{
+			type: SELL_INTENT_ARTICLE,
+			get link() {
+				return localizeUrl(
+					'https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/'
+				);
+			},
+			post_id: 175999,
+			get title() {
+				return translate( 'The Payments Block' );
+			},
+			get description() {
+				return translate(
+					"The Payments block is one of WordPress.com's payment blocks that allows you to accept payments for one-time, monthly recurring, or annual payments on your website."
+				);
+			},
+		},
+		{
 			get link() {
 				return localizeUrl( 'https://wordpress.com/support/xml-rpc/' );
 			},
@@ -2257,12 +2274,19 @@ export function getContextResults( section, siteIntent ) {
 	// `first` is a safe-guard in case that fails
 	const video = videosForSection[ section ]?.[ 0 ];
 	const tour = toursForSection[ section ]?.[ 0 ];
-	const links = contextLinksForSection[ section ] ?? fallbackLinks;
+	let links = contextLinksForSection[ section ] ?? fallbackLinks;
 
 	// If true, still display fallback links in addition (as opposed to instead
 	// of) the other context links.
 	if ( section === 'home' ) {
 		return [ tour, video, ...fallbackLinks, ...links ].filter( Boolean );
+	}
+
+	// Remove sell docs if not on a site with the 'sell' intent.
+	if ( section === 'gutenberg-editor' && siteIntent !== 'sell' ) {
+		links = links.filter( ( link ) => {
+			return link.type !== SELL_INTENT_ARTICLE;
+		} );
 	}
 
 	return [ tour, video, ...links ].filter( Boolean );

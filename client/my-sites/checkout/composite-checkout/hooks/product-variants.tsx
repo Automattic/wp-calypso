@@ -18,7 +18,6 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getJetpackCouponDiscountMap } from 'calypso/state/marketing/selectors';
 import { requestPlans } from 'calypso/state/plans/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
@@ -87,8 +86,6 @@ export function useGetProductVariants(
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
-	const jetpackCouponDiscountMap = useSelector( getJetpackCouponDiscountMap );
-
 	const sitePlans: SitesPlansResult | null = useSelector( ( state ) =>
 		siteId ? getPlansBySiteId( state, siteId ) : null
 	);
@@ -101,13 +98,7 @@ export function useGetProductVariants(
 	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
-		return computeProductsWithPrices(
-			state,
-			siteId,
-			variantProductSlugs,
-			0,
-			jetpackCouponDiscountMap
-		);
+		return computeProductsWithPrices( state, siteId, variantProductSlugs );
 	} );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
@@ -240,25 +231,16 @@ function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAn
 	const discountPercentage = Math.floor(
 		100 - ( maybeFinalPrice / variant.priceFullBeforeDiscount ) * 100
 	);
-	let message = '';
-	if ( variant.introductoryOfferPrice ) {
-		message = String(
-			translate( 'Eligible orders save %(percent)s%%', {
+
+	return (
+		<Discount>
+			{ translate( 'Save %(percent)s%%', {
 				args: {
 					percent: discountPercentage,
 				},
-			} )
-		);
-	} else {
-		message = String(
-			translate( 'Save %(percent)s%%', {
-				args: {
-					percent: discountPercentage,
-				},
-			} )
-		);
-	}
-	return <Discount>{ message }</Discount>;
+			} ) }
+		</Discount>
+	);
 }
 
 function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {

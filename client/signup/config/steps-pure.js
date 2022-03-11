@@ -8,6 +8,7 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_WPCOM_MANAGED,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -276,6 +277,17 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS,
+			},
+		},
+
+		'plans-managed': {
+			stepName: 'plans-managed',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_WPCOM_MANAGED,
 			},
 		},
 

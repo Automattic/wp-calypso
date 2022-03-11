@@ -13,3 +13,5 @@ export { getProductsListType } from './get-products-list-type';
 export { isProductsListFetching } from './is-products-list-fetching';
 export { planSlugToPlanProduct } from './plan-slug-to-plan-product';
 export { isMarketplaceProduct } from './is-marketplace-product';
+export { getProductSaleCouponCost } from './get-product-sale-coupon-cost';
+export { getProductSaleCouponDiscount } from './get-product-sale-coupon-discount';

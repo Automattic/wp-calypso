@@ -1,4 +1,5 @@
-import IntentScreen from '@automattic/onboarding-components';
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -7,6 +8,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useIntents, useIntentsAlt } from './intents';
 import type { StepPath } from '../';
 import type { Step } from '../../types';
+import '../step-layouts/horizontal-layout.scss';
 import './style.scss';
 
 /**
@@ -30,8 +32,8 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 	};
 
 	return (
-		<div className="intent-step">
-			<div className="intent-step__header">
+		<div className="step-horizontal-layout intent-step">
+			<div className="step__header">
 				<FormattedHeader
 					id={ 'intent-header' }
 					headerText={ headerText }
@@ -39,7 +41,7 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 					align={ 'left' }
 				/>
 				{ intentImageUrl && (
-					<div className="intent-step__header-image">
+					<div className="step__header-image">
 						<img src={ intentImageUrl } alt="" />
 					</div>
 				) }

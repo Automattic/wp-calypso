@@ -72,6 +72,7 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"signup/social": true,
+		"signup/redesigned-difm-flow": false,
 		"site-indicator": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,

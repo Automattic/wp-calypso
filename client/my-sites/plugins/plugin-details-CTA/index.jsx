@@ -74,7 +74,7 @@ const PluginDetailsCTA = ( {
 		isEligibleForAutomatedTransfer( state, selectedSite?.ID )
 	);
 	const hasEligibilityMessages =
-		! isJetpack && ( eligibilityHolds || eligibilityWarnings || isEligible );
+		! isAtomic && ! isJetpack && ( eligibilityHolds || eligibilityWarnings || isEligible );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsCTAPlaceholder />;

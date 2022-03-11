@@ -1,22 +1,22 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { SelectItem, SelectAltItem } from '@automattic/onboarding-components';
+import { SelectItem, SelectItemAlt } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { build, write, tip } from 'calypso/signup/icons';
 import type { IntentFlag } from './types';
 
 type Intent = SelectItem< IntentFlag >;
-type IntentAlt = SelectAltItem< IntentFlag >;
+type IntentAlt = SelectItemAlt< IntentFlag >;
 
 export const useIntents = (): Intent[] => {
 	const translate = useTranslate();
 
 	const intents: Intent[] = [
 		{
-			key: 'write',
+			key: 'options',
 			title: translate( 'Write' ),
 			description: <p>{ translate( 'Share your ideas with the world' ) }</p>,
 			icon: write,
-			value: 'write',
+			value: 'options',
 			actionText: translate( 'Start writing' ),
 		},
 		{

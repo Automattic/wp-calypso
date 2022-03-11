@@ -101,7 +101,7 @@ function ProductVariant( {
 
 const TermOptions = styled.ul`
 	flex-basis: 100%;
-	margin: 12px 0 0;
+	margin: 20px 0 0;
 	padding: 0;
 `;
 

@@ -10,3 +10,6 @@ export const isFetchingStoredCards = ( state: AppState ) =>
 
 export const isDeletingStoredCard = ( state: AppState, cardId: string ) =>
 	Boolean( state?.partnerPortal?.storedCards?.isDeleting[ cardId ] );
+
+export const hasMoreStoredCards = ( state: AppState ) =>
+	Boolean( state?.partnerPortal?.storedCards?.hasMoreItems );

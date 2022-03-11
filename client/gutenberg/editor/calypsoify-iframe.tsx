@@ -11,6 +11,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import memoizeLast from 'calypso/lib/memoize-last';
 import { navigate } from 'calypso/lib/navigate';
 import {
 	withStopPerformanceTrackingProp,
@@ -611,8 +612,12 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 	getStatsProps = () => {
 		const { postId, postType } = this.props;
-		return postId ? { post_type: postType, post_id: postId } : { post_type: postType };
+		return this.getStatsPropertiesForProps( postId, postType );
 	};
+
+	getStatsPropertiesForProps = memoizeLast( ( postId, postType ) =>
+		postId ? { post_type: postType, post_id: postId } : { post_type: postType }
+	);
 
 	getStatsTitle = () => {
 		const { postId, postType } = this.props;

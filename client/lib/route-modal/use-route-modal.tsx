@@ -19,10 +19,8 @@ export interface RouteModalData {
  * React hook providing utils to control opening and closing modal via query string.
  */
 const useRouteModal = ( queryKey: string, defaultValue: unknown = '' ): RouteModalData => {
-	const { currentQuery, previousRoute } = useSelector( ( state ) => ( {
-		currentQuery: getCurrentQueryArguments( state ),
-		previousRoute: getPreviousRoute( state ),
-	} ) );
+	const currentQuery = useSelector( getCurrentQueryArguments );
+	const previousRoute = useSelector( getPreviousRoute );
 
 	const value = currentQuery?.[ queryKey ];
 
