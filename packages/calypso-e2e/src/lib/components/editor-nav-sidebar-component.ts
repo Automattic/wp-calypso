@@ -1,4 +1,4 @@
-import { Page, FrameLocator } from 'playwright';
+import { Page, FrameLocator, Locator } from 'playwright';
 import envVariables from '../../env-variables';
 
 const panel = 'div.wpcom-block-editor-nav-sidebar-nav-sidebar__container';
@@ -13,17 +13,17 @@ const selectors = {
  */
 export class EditorNavSidebarComponent {
 	private page: Page;
-	private frameLocator: FrameLocator;
+	private editor: Locator | FrameLocator;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {FrameLocator} frameLocator Locator of the editor iframe.
+	 * @param {FrameLocator|Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, frameLocator: FrameLocator ) {
+	constructor( page: Page, editor: Locator | FrameLocator ) {
 		this.page = page;
-		this.frameLocator = frameLocator;
+		this.editor = editor;
 	}
 
 	/**
@@ -38,7 +38,7 @@ export class EditorNavSidebarComponent {
 			return;
 		}
 
-		const locator = this.frameLocator.locator( selectors.sidebarButton );
+		const locator = this.editor.locator( selectors.sidebarButton );
 		await locator.click();
 	}
 
@@ -54,7 +54,7 @@ export class EditorNavSidebarComponent {
 			return;
 		}
 
-		const locator = this.frameLocator.locator( selectors.sidebarButton );
+		const locator = this.editor.locator( selectors.sidebarButton );
 		await locator.click();
 	}
 
@@ -69,7 +69,7 @@ export class EditorNavSidebarComponent {
 			return;
 		}
 
-		const exitLinkLocator = this.frameLocator.locator( selectors.exitLink );
+		const exitLinkLocator = this.editor.locator( selectors.exitLink );
 		await exitLinkLocator.click();
 	}
 
@@ -79,7 +79,7 @@ export class EditorNavSidebarComponent {
 	 * @returns {boolean} True if the sidebar is open. False otherwise.
 	 */
 	private async sidebarIsOpen(): Promise< boolean > {
-		const locator = this.frameLocator.locator( selectors.sidebarButton );
+		const locator = this.editor.locator( selectors.sidebarButton );
 		const status = await locator.getAttribute( 'aria-expanded' );
 		return status === 'true';
 	}

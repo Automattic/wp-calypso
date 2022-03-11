@@ -48,7 +48,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	it( 'Select page template', async function () {
 		editorPage = new EditorPage( page );
 		// @TODO Consider moving this to EditorPage.
-		editorIframe = await editorPage.waitUntilLoaded();
+		await editorPage.waitUntilLoaded();
+		const editorIframe = await editorPage.getEditorFrame();
 		const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
 		await pageTemplateModalComponent.selectTemplateCatagory( pageTemplateCategory );
 		await pageTemplateModalComponent.selectTemplate( pageTemplateLable );

@@ -1,4 +1,4 @@
-import { Page, FrameLocator, ElementHandle } from 'playwright';
+import { Page, FrameLocator, ElementHandle, Locator } from 'playwright';
 
 const editorPane = 'div.edit-post-visual-editor__content-area';
 const selectors = {
@@ -20,21 +20,22 @@ const selectors = {
 
 /**
  * Represents an instance of the Gutenberg Block Editor as loaded on
- * WordPress.com.
+ * WordPress.com. Supports both Atomic(non-framed) and Simple (framed)
+ * editors.
  */
 export class EditorGutenbergComponent {
 	private page: Page;
-	private frameLocator: FrameLocator;
+	private editor: Locator | FrameLocator;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {FrameLocator} frameLocator Locator of the editor iframe.
+	 * @param {FrameLocator|Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, frameLocator: FrameLocator ) {
+	constructor( page: Page, editor: Locator | FrameLocator ) {
 		this.page = page;
-		this.frameLocator = frameLocator;
+		this.editor = editor;
 	}
 
 	/**
@@ -49,7 +50,7 @@ export class EditorGutenbergComponent {
 	 * permitted to be inserted within the parent Contact Form block.
 	 */
 	async resetSelectedBlock(): Promise< void > {
-		const locator = this.frameLocator.locator( selectors.title );
+		const locator = this.editor.locator( selectors.title );
 		await locator.click();
 	}
 
@@ -62,8 +63,8 @@ export class EditorGutenbergComponent {
 	 */
 	async enterTitle( title: string ): Promise< void > {
 		const sanitizedTitle = title.trim();
-		const locator = this.frameLocator.locator( selectors.title );
-		await locator.fill( sanitizedTitle );
+		const locator = this.editor.locator( selectors.title );
+		await locator.fill( title );
 	}
 
 	/**
@@ -72,7 +73,7 @@ export class EditorGutenbergComponent {
 	 * @returns {Promise<string>} String containing contents of the title.
 	 */
 	async getTitle(): Promise< string > {
-		const locator = this.frameLocator.locator( selectors.title );
+		const locator = this.editor.locator( selectors.title );
 		return await locator.innerText();
 	}
 
@@ -92,8 +93,8 @@ export class EditorGutenbergComponent {
 
 		// Depending on what is focused in the editor, either one of the
 		// following elements can be clicked to initiate text entry.
-		const emptyBlockLocator = this.frameLocator.locator( selectors.emptyBlock );
-		const emptyParagraphLocator = this.frameLocator.locator(
+		const emptyBlockLocator = this.editor.locator( selectors.emptyBlock );
+		const emptyParagraphLocator = this.editor.locator(
 			selectors.paragraphBlock( { empty: true } )
 		);
 
@@ -105,9 +106,7 @@ export class EditorGutenbergComponent {
 
 		for await ( const line of splitText ) {
 			// Select the last Paragraph block which is empty.
-			const locator = this.frameLocator
-				.locator( selectors.paragraphBlock( { empty: true } ) )
-				.last();
+			const locator = this.editor.locator( selectors.paragraphBlock( { empty: true } ) ).last();
 			await locator.fill( line );
 			await this.page.keyboard.press( 'Enter' );
 		}
@@ -120,12 +119,12 @@ export class EditorGutenbergComponent {
 	 */
 	async getText(): Promise< string > {
 		// Locate all non-empty Paragraph blocks.
-		const locator = this.frameLocator.locator( selectors.paragraphBlock( { empty: false } ) );
+		const locator = this.editor.locator( selectors.paragraphBlock( { empty: false } ) );
 		const enteredText = await locator.allInnerTexts();
 
 		// Extract the textContent of each paragraph block into a list.
 		// Note the special condition for an empty paragraph block, noted below.
-		const sanitizedText = enteredText.filter( async function ( line ) {
+		const sanitizedText = enteredText.filter( async function ( line: string ) {
 			// Strip out U+FEFF character that can be present even if
 			// a paragraph block is empty.
 			const sanitized = line.replace( /\ufeff/g, '' );
@@ -148,7 +147,7 @@ export class EditorGutenbergComponent {
 	 * @param {string} text Text to enter into the search input.
 	 */
 	async searchBlockInserter( text: string ): Promise< void > {
-		const locator = this.frameLocator.locator( selectors.blockSearchInput );
+		const locator = this.editor.locator( selectors.blockSearchInput );
 		await locator.fill( text );
 	}
 
@@ -169,9 +168,9 @@ export class EditorGutenbergComponent {
 		let locator;
 
 		if ( type === 'pattern' ) {
-			locator = this.frameLocator.locator( selectors.patternResultItem( name ) );
+			locator = this.editor.locator( selectors.patternResultItem( name ) );
 		} else {
-			locator = this.frameLocator.locator( selectors.blockResultItem( name ) );
+			locator = this.editor.locator( selectors.blockResultItem( name ) );
 		}
 		await locator.first().click();
 	}
@@ -182,9 +181,7 @@ export class EditorGutenbergComponent {
 	 * @returns {Promise<ElementHandle>} ElementHandle of the selected block.
 	 */
 	async getSelectedBlockElementHandle( blockEditorSelector: string ): Promise< ElementHandle > {
-		const locator = this.frameLocator.locator(
-			`${ editorPane } ${ blockEditorSelector }.is-selected`
-		);
+		const locator = this.editor.locator( `${ editorPane } ${ blockEditorSelector }.is-selected` );
 		await locator.waitFor();
 		return ( await locator.elementHandle() ) as ElementHandle;
 	}
@@ -207,7 +204,7 @@ export class EditorGutenbergComponent {
 	 * False otherwise.
 	 */
 	async editorHasBlockWarning(): Promise< boolean > {
-		const locator = this.frameLocator.locator( selectors.blockWarning );
+		const locator = this.editor.locator( selectors.blockWarning );
 		return !! ( await locator.count() );
 	}
 }

@@ -91,6 +91,8 @@ export class PublishedPostPage {
 	 * @param {string} text Text to search for in post page
 	 */
 	async validateTextInPost( text: string ): Promise< void > {
-		await this.page.waitForSelector( `text=${ text }` );
+		// Oddly, if the selector is replaced with :text():visible,
+		// it produces a BADSTRING error.
+		await this.page.waitForSelector( `text=${ text } >> visible=true` );
 	}
 }
