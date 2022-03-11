@@ -61,7 +61,7 @@ interface Props {
 }
 
 const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
-	const { id, className, children, navigationItems, contentRef, compactBreadcrumb = false } = props;
+	const { id, className, children, navigationItems, contentRef } = props;
 	const actionsRef = useRef< HTMLDivElement >( null );
 	const headerRef = useRef< HTMLElement >( null );
 
@@ -96,10 +96,12 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}, [ contentRef ] );
 
+	const [ mobileItem = { label: '' } ] = navigationItems.splice( navigationItems.length - 2 );
+
 	return (
 		<Header id={ id } className={ className } ref={ headerRef }>
 			<Container>
-				<Breadcrumb items={ navigationItems } compact={ compactBreadcrumb } />
+				<Breadcrumb items={ navigationItems } mobileItem={ mobileItem } />
 				<ActionsContainer ref={ actionsRef }>{ children }</ActionsContainer>
 			</Container>
 		</Header>

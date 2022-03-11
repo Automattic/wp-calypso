@@ -1,0 +1,194 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.breadcrumb {
+	> div:first-child {
+		position: fixed;
+		margin: 0;
+		z-index: 10;
+		background-color: white;
+		top: var( --masterbar-height );
+		padding: 0 16px;
+		left: 0;
+		right: 0;
+		border-bottom: 1px solid var( --studio-gray-5 );
+
+		@include breakpoint-deprecated( '>660px' ) {
+			padding: 0 24px;
+		}
+
+		@media screen and ( min-width: #{ ( $break-medium + 1 ) } ) {
+			left: var( --sidebar-width-min );
+		}
+
+		@media screen and ( min-width: #{ ( $break-large + 1 ) } ) {
+			padding: 0 32px;
+		}
+
+		@include break-large {
+			left: var( --sidebar-width-max );
+		}
+	}
+
+	.select-dropdown__separator {
+		border-top: 1px solid var( --color-neutral-10 );
+		display: block;
+		margin: 8px 0 0;
+	}
+}
+
+.breadcrumb__content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 60px;
+	max-width: 1040px;
+	margin: 0 auto;
+
+	@include break-mobile {
+		height: 70px;
+	}
+}
+
+.breadcrumb__items {
+	display: none;
+
+	@include break-mobile {
+		display: flex;
+		align-items: center;
+		font-size: 13px; /* stylelint-disable-line */
+		font-weight: 400;
+
+		& .breadcrumb__item {
+			.breadcrumb__item-label {
+				color: var( --color-neutral-50 );
+
+				&:hover {
+					color: var( --color-neutral-80 );
+				}
+			}
+
+			&.is-last-item {
+				.breadcrumb__item-label {
+					font-weight: 500; /* stylelint-disable-line */
+					color: var( --color-neutral-80 );
+				}
+			}
+
+			&.is-only-item {
+				.breadcrumb__item-label {
+					font-weight: 600;
+					font-size: $font-body;
+					color: var( --color-neutral-80 );
+				}
+			}
+		}
+	}
+}
+
+.breadcrumb__items-mobile {
+	display: flex;
+	align-items: center;
+	font-size: 13px; /* stylelint-disable-line */
+	font-weight: 400;
+
+	& .breadcrumb__item {
+		display: flex;
+		align-items: center;
+
+		.breadcrumb__item-label {
+			color: var( --color-neutral-80 );
+		}
+
+		/* This rule applies when there's no back arrow present */
+		span:first-child {
+			font-weight: 600;
+			font-size: $font-body;
+		}
+	}
+
+	@include break-mobile {
+		display: none;
+	}
+}
+
+.breadcrumb__back-arrow {
+	margin-right: 4px;
+	color: var( --color-neutral-80 );
+}
+
+.breadcrumb__help-bubble {
+	margin-left: 7px;
+
+	&.info-popover .gridicon {
+		color: var( --studio-gray-30 );
+	}
+}
+
+.breadcrumb__separator {
+	margin: 0 12px;
+	color: var( --color-neutral-10 );
+}
+
+.breadcrumb__buttons,
+.breadcrumb__buttons-mobile {
+	align-items: center;
+
+	> * + * {
+		margin-left: 16px;
+	}
+
+	& button,
+	& .select-dropdown {
+		height: 40px;
+
+		.select-dropdown__header {
+			height: 40px;
+		}
+	}
+
+	@include break-mobile {
+		.options-domain-button.ellipsis {
+			padding-right: 0;
+		}
+	}
+}
+
+.breadcrumb__buttons-mobile {
+	display: flex;
+
+	> * + * {
+		margin-left: 8px;
+	}
+
+	@include break-mobile {
+		display: none;
+	}
+}
+
+.breadcrumb__buttons {
+	display: none;
+
+	@include break-mobile {
+		display: flex;
+	}
+}
+
+.breadcrumb__spacer {
+	height: 58px;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		height: 66px;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		height: 76px;
+	}
+}
+
+/* This prevents breadcrumb component from being partially hidden when happychat is open */
+.has-docked-chat .breadcrumb > div:first-child {
+	@include breakpoint-deprecated( '>1040px' ) {
+		right: var( --sidebar-width-max );
+	}
+}
