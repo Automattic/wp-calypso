@@ -197,6 +197,11 @@ function PluginDetails( props ) {
 	] );
 
 	useEffect( () => {
+		if ( ! selectedSite ) {
+			return;
+		}
+
+		// If no breadcrumb set (eg directly loading this page), add the first breadcrumb part.
 		if ( breadcrumbs.length === 0 ) {
 			dispatch(
 				appendBreadcrumb( selectedSite?.ID, {
@@ -207,12 +212,13 @@ function PluginDetails( props ) {
 			);
 		}
 
-		if ( fullPlugin.name && props.pluginSlug ) {
+		// When plugin data are loaded, add the next breadrumb part.
+		if ( fullPlugin.name && fullPlugin.slug ) {
 			dispatch(
 				appendBreadcrumb( selectedSite?.ID, {
 					label: fullPlugin.name,
-					href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
-					id: `plugin-${ props.pluginSlug }`,
+					href: `/plugins/${ fullPlugin.slug }/${ selectedSite?.slug || '' }`,
+					id: 'plugin',
 				} )
 			);
 		}
