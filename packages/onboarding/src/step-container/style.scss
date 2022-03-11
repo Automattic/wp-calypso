@@ -44,7 +44,7 @@ $gray-60: #50575e;
 		}
     }
 
-	@include break-small {
+	@include break-small( '<660px' ) {
 		flex-wrap: wrap;
 	}
 }
