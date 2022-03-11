@@ -150,6 +150,7 @@ class Signup extends Component {
 		shouldShowLoadingScreen: false,
 		resumingStep: undefined,
 		previousFlowName: null,
+		signupSiteName: null,
 	};
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -357,6 +358,13 @@ class Signup extends Component {
 			this.setState( { shouldShowLoadingScreen: true } );
 
 			if ( isP2Flow( this.props.flowName ) ) {
+				// Record submitted site name for displaying it in the loading screen
+				if ( ! this.state.signupSiteName ) {
+					this.setState( {
+						signupSiteName: this.props.progress?.[ 'p2-site' ]?.form?.siteTitle?.value || '',
+					} );
+				}
+
 				addLoadingScreenClassNamesToBody();
 
 				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
@@ -590,8 +598,7 @@ class Signup extends Component {
 
 	renderProcessingScreen( isReskinned ) {
 		if ( isP2Flow( this.props.flowName ) ) {
-			const signupSiteName = this.props.progress?.[ 'p2-site' ]?.form?.siteTitle?.value || '';
-			return <P2SignupProcessingScreen signupSiteName={ signupSiteName } />;
+			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
 		if ( isReskinned ) {
