@@ -55,7 +55,6 @@ class CalendarStep extends Component {
 			this.props.onComplete();
 		} else if ( this.props.signupForm.status === CONCIERGE_STATUS_BOOKING_ERROR ) {
 			// request new available times
-			alert( 'error' );
 			this.props.requestConciergeInitial( this.props.scheduleId );
 		}
 	}
