@@ -975,10 +975,10 @@
 		"isTranslatedIncompletely": true,
 		"territories": [ "154" ]
 	},
-	"no": {
+	"nb": {
 		"value": 51,
 		"langSlug": "nb",
-		"name": "Norwegian (Bokm\u00e5l)",
+		"name": "Norsk bokm\u00e5l",
 		"wpLocale": "nb_NO",
 		"parentLangSlug": null,
 		"calypsoPercentTranslated": 53,
