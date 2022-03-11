@@ -96,7 +96,7 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}, [ contentRef ] );
 
-	const [ mobileItem = { label: '' } ] = navigationItems.splice( navigationItems.length - 2 );
+	const [ mobileItem = { label: 'Back' } ] = navigationItems.splice( navigationItems.length - 2 );
 
 	return (
 		<Header id={ id } className={ className } ref={ headerRef }>
