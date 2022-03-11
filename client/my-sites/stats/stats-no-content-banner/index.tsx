@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
+import writePost from 'calypso/assets/images/onboarding/site-options.svg';
 import Banner from 'calypso/components/banner';
 import { useGetHasEverCreatedContent } from 'calypso/data/stats/use-get-has-ever-created-content';
 import type { HasEverCreatedContent } from 'calypso/data/stats/use-get-has-ever-created-content';
@@ -48,7 +48,7 @@ export const StatsNoContentBanner = ( {
 				event="calypso_stats_no-content_banner"
 				dismissPreferenceName={ `stats-launch-no-content-${ siteSlug }` }
 				href={ `/post/${ siteSlug }` }
-				iconPath={ rocketImage }
+				iconPath={ writePost }
 				title={ translate( 'Start writing your first post to get more views' ) }
 				tracksClickName="calypso_stats_no-content_banner_click"
 				tracksDismissName="calypso_stats_no-content_banner_dismiss"
