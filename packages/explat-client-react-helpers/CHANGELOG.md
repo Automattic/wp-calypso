@@ -1,4 +1,7 @@
 # Changelog
+## 0.0.4
+
+- Added ExperimentOptions and ExPlatClientReactHelpers Typescript interfaces to export
 
 ## 0.0.3
 
