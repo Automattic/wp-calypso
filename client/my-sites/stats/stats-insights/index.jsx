@@ -11,7 +11,6 @@ import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import AllTime from 'calypso/my-sites/stats/all-time/';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import MostPopular from 'calypso/my-sites/stats/most-popular';
@@ -37,7 +36,6 @@ const StatsInsights = ( props ) => {
 		<Main wideLayout>
 			<DocumentHead title={ translate( 'Stats and Insights' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
-			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="stats__section-header"

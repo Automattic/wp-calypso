@@ -12,7 +12,6 @@ import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 
 import './style.scss';
 
@@ -41,7 +40,6 @@ function BillingHistory(): JSX.Element {
 		<Main wideLayout className="billing-history">
 			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
-			<MeSidebarNavigation />
 			<FormattedHeader
 				brandFont
 				headerText={ titles.sectionTitle }

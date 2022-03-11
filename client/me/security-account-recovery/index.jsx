@@ -11,7 +11,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import {
 	updateAccountRecoveryEmail,
 	updateAccountRecoveryPhone,
@@ -46,8 +45,6 @@ const SecurityAccountRecovery = ( props ) => (
 	<Main wideLayout className="security security-account-recovery">
 		<PageViewTracker path="/me/security/account-recovery" title="Me > Account Recovery" />
 		<QueryAccountRecoverySettings />
-
-		<MeSidebarNavigation />
 
 		<FormattedHeader brandFont headerText={ props.translate( 'Security' ) } align="left" />
 

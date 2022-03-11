@@ -16,7 +16,6 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import HelpResult from './help-results/item';
@@ -227,7 +226,6 @@ class Help extends PureComponent {
 
 	getPlaceholders = () => (
 		<Main className="help" wideLayout>
-			<MeSidebarNavigation />
 			<div className="help-search is-placeholder" />
 			<div className="help__help-teaser-button is-placeholder" />
 			<div className="help-results is-placeholder" />
@@ -251,7 +249,6 @@ class Help extends PureComponent {
 		return (
 			<Main className="help" wideLayout>
 				<PageViewTracker path="/help" title="Help" />
-				<MeSidebarNavigation />
 
 				<div className="help__heading">
 					<FormattedHeader

@@ -13,7 +13,6 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -56,7 +55,6 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 	return (
 		<Main className="scan scan__wpcom-upsell">
 			<DocumentHead title="Scanner" />
-			<SidebarNavigation />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 
 			<FormattedHeader

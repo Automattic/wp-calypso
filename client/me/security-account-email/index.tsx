@@ -11,7 +11,6 @@ import { useProtectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
@@ -72,8 +71,6 @@ const SecurityAccountEmail = ( { path }: { path: string } ): JSX.Element => {
 			<PageViewTracker path={ path } title="Me > Security > Account Email " />
 
 			<DocumentHead title={ translate( 'Account Email' ) } />
-
-			<MeSidebarNavigation />
 
 			<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 

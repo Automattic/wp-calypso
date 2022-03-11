@@ -25,7 +25,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -195,7 +194,6 @@ class StatsSite extends Component {
 
 		return (
 			<>
-				<SidebarNavigation />
 				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
 				<FormattedHeader
 					brandFont

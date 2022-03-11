@@ -22,7 +22,6 @@ import SubstackImporter from 'calypso/my-sites/importer/importer-substack';
 import WixImporter from 'calypso/my-sites/importer/importer-wix';
 import WordPressImporter from 'calypso/my-sites/importer/importer-wordpress';
 import JetpackImporter from 'calypso/my-sites/importer/jetpack-importer';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchImporterState, startImport, cancelImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
@@ -271,7 +270,6 @@ class SectionImport extends Component {
 		if ( ! canImport ) {
 			return (
 				<Main>
-					<SidebarNavigation />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
 						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
@@ -289,7 +287,6 @@ class SectionImport extends Component {
 			<Main>
 				<ScreenOptionsTab wpAdminPath="import.php" />
 				<DocumentHead title={ translate( 'Import Content' ) } />
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="importer__page-heading"

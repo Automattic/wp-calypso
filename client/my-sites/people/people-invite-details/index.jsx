@@ -13,7 +13,6 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { deleteInvite } from 'calypso/state/invites/actions';
 import {
 	isRequestingInvitesForSite,
@@ -169,7 +168,6 @@ export class PeopleInviteDetails extends PureComponent {
 			return (
 				<Main>
 					<PageViewTracker path="/people/invites/:site/:invite" title="People > Invite Details" />
-					<SidebarNavigation />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
 						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
@@ -182,7 +180,6 @@ export class PeopleInviteDetails extends PureComponent {
 			<Main className="people-invite-details">
 				<PageViewTracker path="/people/invites/:site/:invite" title="People > Invite Details" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
-				<SidebarNavigation />
 
 				<HeaderCake isCompact onClick={ this.goBack }>
 					{ translate( 'Invite Details' ) }

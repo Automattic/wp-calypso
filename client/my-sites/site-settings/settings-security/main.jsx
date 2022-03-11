@@ -8,7 +8,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import FormSecurity from 'calypso/my-sites/site-settings/form-security';
 import JetpackCredentials from 'calypso/my-sites/site-settings/jetpack-credentials';
@@ -58,7 +57,6 @@ export const SiteSettingsSecurity = ( {
 			<QuerySitePurchases siteId={ siteId } />
 			<DocumentHead title={ translate( 'Security Settings' ) } />
 			<JetpackDevModeNotice />
-			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="settings-security__page-heading"

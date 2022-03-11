@@ -18,7 +18,6 @@ import Security2faDisable from 'calypso/me/security-2fa-disable';
 import Security2faKey from 'calypso/me/security-2fa-key';
 import Security2faSetup from 'calypso/me/security-2fa-setup';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
@@ -98,7 +97,6 @@ class TwoStep extends Component {
 			<Main wideLayout className="security two-step">
 				<QueryUserSettings />
 				<PageViewTracker path="/me/security/two-step" title="Me > Two-Step Authentication" />
-				<MeSidebarNavigation />
 
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 

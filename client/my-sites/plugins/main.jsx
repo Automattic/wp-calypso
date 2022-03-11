@@ -18,7 +18,6 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlugins, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
@@ -437,7 +436,6 @@ export class PluginsMain extends Component {
 				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
 				<QueryJetpackPlugins siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
-				<SidebarNavigation />
 				<FixedNavigationHeader
 					className="plugins__page-heading"
 					navigationItems={ this.getNavigationItems() }

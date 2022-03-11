@@ -20,7 +20,6 @@ import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -178,8 +177,6 @@ class EmailManagementHome extends Component {
 				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 				<DocumentHead title={ titleCase( translate( 'Emails' ) ) } />
-
-				<SidebarNavigation />
 
 				<EmailHeader />
 

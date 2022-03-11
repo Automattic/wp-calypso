@@ -17,7 +17,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getMimeType } from 'calypso/lib/media/utils';
 import searchUrl from 'calypso/lib/search-url';
 import MediaLibrary from 'calypso/my-sites/media-library';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
 import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
@@ -361,7 +360,6 @@ class Media extends Component {
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<DocumentHead title={ translate( 'Media' ) } />
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="media__page-heading"

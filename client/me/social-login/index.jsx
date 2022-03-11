@@ -15,7 +15,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { getRequestError } from 'calypso/state/login/selectors';
 import SocialLoginService from './service';
 
@@ -77,7 +76,6 @@ class SocialLogin extends Component {
 			<Main wideLayout className="security social-login">
 				<PageViewTracker path="/me/security/social-login" title="Me > Social Login" />
 				<DocumentHead title={ title } />
-				<MeSidebarNavigation />
 
 				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 

@@ -17,7 +17,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
 import getGoogleMyBusinessConnectedLocation from 'calypso/state/selectors/get-google-my-business-connected-location';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -201,8 +200,6 @@ class GoogleMyBusinessStats extends Component {
 				/>
 
 				<DocumentHead title={ translate( 'Stats' ) } />
-
-				<SidebarNavigation />
 
 				<StatsNavigation selectedItem={ 'googleMyBusiness' } siteId={ siteId } slug={ siteSlug } />
 

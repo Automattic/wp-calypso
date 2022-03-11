@@ -32,7 +32,6 @@ import PlansComparison, {
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -134,8 +133,6 @@ class Plans extends Component {
 			<div>
 				<DocumentHead title={ this.props.translate( 'Plans', { textOnly: true } ) } />
 				<Main wideLayout>
-					<SidebarNavigation />
-
 					<div id="plans" className="plans plans__has-sidebar" />
 				</Main>
 			</div>
@@ -220,7 +217,6 @@ class Plans extends Component {
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
 				<Main wideLayout>
-					<SidebarNavigation />
 					{ ! canAccessPlans && (
 						<EmptyContent
 							illustration="/calypso/images/illustrations/illustration-404.svg"

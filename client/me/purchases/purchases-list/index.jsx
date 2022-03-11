@@ -23,7 +23,6 @@ import {
 } from 'calypso/me/concierge/constants';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import {
@@ -171,7 +170,6 @@ class PurchasesList extends Component {
 				<QueryStoredCards />
 				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
-				<MeSidebarNavigation />
 
 				<FormattedHeader
 					brandFont

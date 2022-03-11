@@ -16,7 +16,6 @@ import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
@@ -139,7 +138,6 @@ export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ): 
 	return (
 		<Main className="scan scan__wpcom-upsell">
 			<DocumentHead title="Scanner" />
-			<SidebarNavigation />
 			<PageViewTracker path="/scan/:site" title="Scanner" />
 
 			<FormattedHeader

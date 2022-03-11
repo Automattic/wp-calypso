@@ -16,32 +16,6 @@
 	input::placeholder {
 		color: var( --color-neutral-10 ) !important;
 	}
-
-	.current-section {
-		margin: 0 -16px;
-
-		.site-icon {
-			display: none;
-		}
-
-		button {
-			// 24px from the text, -4 for the overflow from the 32px height icon
-			padding: 20px 8px;
-
-			svg {
-				height: 32px;
-				width: 32px;
-				fill: var( --color-neutral-40 );
-			}
-		}
-
-		h1.current-section__site-title {
-			color: var( --color-neutral-70 );
-			font-size: $font-body;
-			font-weight: 400;
-			padding-left: 8px;
-		}
-	}
 }
 
 .button {
