@@ -1,6 +1,7 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
-import { NextButton } from '@automattic/onboarding';
+import { sprintf } from '@wordpress/i18n';
 import { check, Icon } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -17,6 +18,8 @@ interface Props {
 }
 
 export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
+	const { __ } = useI18n();
+
 	const { sourceSite } = props;
 	const plan = getPlan( PLAN_BUSINESS );
 	const planId = plan?.getProductId();
@@ -44,8 +47,13 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 		<div className={ classnames( 'import__upgrade-plan' ) }>
 			<QueryPlans />
 			<p>
-				To import your themes, plugins, users, and settings from { sourceSite?.slug } we need to
-				upgrade your WordPress.com site. Select a plan below:
+				{ sprintf(
+					/* translators: the website could be any domain (eg: "yourname.com") */
+					__(
+						'To import your themes, plugins, users, and settings from %(website)s we need to upgrade your WordPress.com site. Select a plan below:'
+					),
+					{ website: sourceSite?.slug }
+				) }
 			</p>
 
 			<div className={ classnames( 'import__upgrade-plan-container' ) }>
@@ -62,8 +70,6 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 					{ renderFeatureList() }
 				</div>
 			</div>
-
-			<NextButton>Upgrade</NextButton>
 		</div>
 	);
 };
