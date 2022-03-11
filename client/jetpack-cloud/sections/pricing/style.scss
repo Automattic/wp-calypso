@@ -3,8 +3,8 @@
 @import '@automattic/typography/styles/fonts';
 
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
-	--color-accent: var( --studio-jetpack-green-40 );
-	--color-primary: var( --studio-jetpack-green-40 );
+	--color-accent: var( --studio-jetpack-green-50 );
+	--color-primary: var( --studio-jetpack-green-50 );
 
 	background-color: var( --color-surface );
 
@@ -13,7 +13,7 @@
 	h2 {
 		line-height: inherit;
 	}
-	#header {
+	#header { /* stylelint-disable-line selector-max-id */
 		display: none;
 	}
 	.header {
@@ -43,7 +43,7 @@
 	}
 
 	.layout__content {
-		padding: 0;	
+		padding: 0;
 	}
 
 	.foldable-card {
