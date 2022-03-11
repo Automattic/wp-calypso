@@ -38,7 +38,7 @@ $gray-60: #50575e;
 			margin: 8px 0 0;
 			line-height: 24px;
 
-			@include breakpoint-deprecated( '<660px' ) {
+			@include break-small( '<660px' ) {
 				margin-top: 16px;
 			}
 		}
