@@ -7,6 +7,7 @@ import {
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import wp from 'calypso/lib/wp';
+import { getTaxValidationResult } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCreditCard, saveCreditCard } from './stored-payment-method-api';
 import type {
@@ -66,7 +67,7 @@ export async function assignNewCardProcessor(
 ): Promise< PaymentProcessorResponse > {
 	try {
 		if ( ! isNewCardDataValid( submitData ) ) {
-			throw new Error( 'Credit Card data is missing country' );
+			throw new Error( 'Credit Card data is invalid' );
 		}
 		if ( ! stripe || ! stripeConfiguration || ! stripeSetupIntentId ) {
 			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
@@ -76,6 +77,26 @@ export async function assignNewCardProcessor(
 		}
 
 		const { name, countryCode, postalCode, useForAllSubscriptions } = submitData;
+
+		const contactValidationResponse = await getTaxValidationResult( {
+			countryCode: {
+				value: countryCode,
+				isTouched: true,
+				errors: [],
+			},
+			postalCode: {
+				value: postalCode ?? '',
+				isTouched: true,
+				errors: [],
+			},
+		} );
+		if ( ! contactValidationResponse.success ) {
+			throw new Error(
+				contactValidationResponse.messages?.country_code?.[ 0 ] ??
+					contactValidationResponse.messages?.postal_code?.[ 0 ] ??
+					'Unknown validation error'
+			);
+		}
 
 		reduxDispatch( recordFormSubmitEvent( { purchase, useForAllSubscriptions } ) );
 
@@ -156,7 +177,7 @@ async function createStripeSetupIntentAsync(
 
 function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
 	const newCardData = data as NewCardSubmitData;
-	return !! newCardData.countryCode;
+	return newCardData.countryCode === undefined;
 }
 
 interface NewCardSubmitData {
