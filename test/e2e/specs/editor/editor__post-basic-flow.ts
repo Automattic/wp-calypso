@@ -112,13 +112,13 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		it( 'Post content is found in published post', async function () {
 			publishedPostPage = new PublishedPostPage( page );
-			await publishedPostPage.validateTextInPost( title );
+			await publishedPostPage.validateTitle( title );
 			await publishedPostPage.validateTextInPost( quote );
 		} );
 
 		it( 'Post metadata is found in published post', async function () {
-			await publishedPostPage.validateTextInPost( category );
-			await publishedPostPage.validateTextInPost( tag );
+			await publishedPostPage.validateCategory( category );
+			await publishedPostPage.validateTags( tag );
 		} );
 	} );
 } );

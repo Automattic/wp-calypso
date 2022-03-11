@@ -86,13 +86,52 @@ export class PublishedPostPage {
 	}
 
 	/**
+	 * Validates that the title is as expected.
+	 *
+	 * @param {string} title Title text to check.
+	 */
+	async validateTitle( title: string ): Promise< void > {
+		const dash = /-/g;
+		title = title.replace( dash, '–' );
+		await this.page.waitForSelector( `:text("${ title }")` );
+	}
+
+	/**
 	 * Validates that the provided text can be found in the post page. Throws if it isn't.
 	 *
 	 * @param {string} text Text to search for in post page
 	 */
 	async validateTextInPost( text: string ): Promise< void > {
-		// Oddly, if the selector is replaced with :text():visible,
-		// it produces a BADSTRING error.
-		await this.page.waitForSelector( `text=${ text } >> visible=true` );
+		const splitString = text.split( '\n' );
+		const dash = /-/;
+		for await ( let line of splitString ) {
+			// Sanitize the string and replace U+002d (hyphen/dash)
+			// with U+2013 (em dash) if the paragraph starts with a dash.
+			// Note that dashes found outside of leading position are
+			// not impacted.
+			// https://make.wordpress.org/docs/style-guide/punctuation/dashes/
+			if ( line.search( dash ) === 0 ) {
+				line = line.replace( dash, '–' );
+			}
+			await this.page.waitForSelector( `:text("${ line }"):visible` );
+		}
+	}
+
+	/**
+	 * Validates that the category has been added to the article.
+	 *
+	 * @param {string} category Category to validate on page.
+	 */
+	async validateCategory( category: string ): Promise< void > {
+		await this.page.waitForSelector( `.cat-links :text("${ category }")` );
+	}
+
+	/**
+	 * Validates that the tag has been added to the article.
+	 *
+	 * @param {string} tag Tag to validate on page.
+	 */
+	async validateTags( tag: string ): Promise< void > {
+		await this.page.waitForSelector( `.tags-links :text("${ tag }")` );
 	}
 }
