@@ -137,9 +137,13 @@
 		}
 
 		.import__upgrade-plan-feature {
-			flex-basis: 50%;
 			padding-left: 25px;
 			color: var( --studio-gray-40 );
+			flex-basis: 100%;
+
+			@include break-small {
+				flex-basis: 50%;
+			}
 
 			span {
 				margin: 0;
