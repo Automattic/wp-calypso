@@ -10,7 +10,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import EmptyContent from 'calypso/components/empty-content';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
@@ -402,8 +401,12 @@ const MarketplacePluginInstall = ( {
 			/>
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar>
-				<WordPressWordmark className="marketplace-plugin-install__wpcom-wordmark" />
-				<Item>{ translate( 'Plugin Installation' ) }</Item>
+				<div className="marketplace-plugin-install__masterbar">
+					<WordPressWordmark className="marketplace-plugin-install__wpcom-wordmark" />
+					<span className="marketplace-plugin-install__plugin-installation-text">
+						{ translate( 'Plugin installation' ) }
+					</span>
+				</div>
 			</Masterbar>
 			<div className="marketplace-plugin-install__root">
 				{ renderError() || <MarketplaceProgressBar steps={ steps } currentStep={ currentStep } /> }

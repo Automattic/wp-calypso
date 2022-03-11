@@ -17,6 +17,29 @@ body.is-section-marketplace.theme-default.color-scheme {
 	}
 }
 
+.marketplace-plugin-install__masterbar {
+	display: flex;
+	align-items: center;
+
+	.marketplace-plugin-install__wpcom-wordmark {
+		margin-right: 5px;
+	}
+
+	.marketplace-plugin-install__plugin-installation-text {
+		color: var( --color-primary-5 );
+		transform: translateY( 1px );
+		line-height: 1.2em;
+		font-size: 0.75rem;
+		margin-left: 5px;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			// stylelint-disable-next-line declaration-property-unit-allowed-list
+			font-size: 100%;
+			margin-left: 0;
+		}
+	}
+}
+
 .marketplace-plugin-install__wpcom-wordmark {
 	align-self: center;
 	margin-left: 10px;
