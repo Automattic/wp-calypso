@@ -96,7 +96,19 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}, [ contentRef ] );
 
-	const [ mobileItem = { label: 'Back' } ] = navigationItems.splice( navigationItems.length - 2 );
+	let mobileItem: { label: string; href?: string; showBackArrow?: boolean } = {
+		label: 'Back',
+	};
+	if ( navigationItems.length > 1 ) {
+		mobileItem = {
+			href: navigationItems[ navigationItems.length - 2 ].href,
+			label: 'Back',
+			showBackArrow: true,
+		};
+		navigationItems[ navigationItems.length - 1 ].href = undefined;
+	} else if ( navigationItems.length > 0 ) {
+		mobileItem = { ...navigationItems[ 0 ], href: undefined, showBackArrow: false };
+	}
 
 	return (
 		<Header id={ id } className={ className } ref={ headerRef }>
