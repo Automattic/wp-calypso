@@ -36,20 +36,23 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	 */
 	const showJetpackConnectionBlock = !! fromSite;
 	const [ hasOriginSiteJetpackConnected, setHasOriginSiteJetpackConnected ] = useState( false );
-	const [ isFetchingSite, setIsFetchingSite ] = useState( false );
+	const [ initialFetching, setInitialFetching ] = useState( true );
 
 	/**
 	 ↓ Effects
 	 */
-	useEffect( checkOriginSiteJetpackConnection, [ fromSite ] );
+	useEffect( () => {
+		checkOriginSiteJetpackConnection();
+		const interval = setInterval( checkOriginSiteJetpackConnection, 5000 );
+
+		return () => clearInterval( interval );
+	}, [] );
 
 	/**
 	 ↓ Methods
 	 */
 	function checkOriginSiteJetpackConnection() {
 		if ( ! fromSite ) return;
-
-		setIsFetchingSite( true );
 
 		wpcom
 			.site( fromSite )
@@ -58,7 +61,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 				setHasOriginSiteJetpackConnected( !! ( site && site.capabilities ) )
 			)
 			.catch( () => setHasOriginSiteJetpackConnected( false ) )
-			.finally( () => setIsFetchingSite( false ) );
+			.finally( () => setInitialFetching( false ) );
 	}
 
 	return (
@@ -83,13 +86,13 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 						mainText={ __( "All your site's content, themes, plugins, users and settings" ) }
 					>
 						<NextButton
-							disabled={ ! hasOriginSiteJetpackConnected || isFetchingSite }
+							disabled={ ! hasOriginSiteJetpackConnected || initialFetching }
 							onClick={ onContentEverythingSelection }
 						>
 							{ __( 'Continue' ) }
 						</NextButton>
 					</ActionCard>
-					{ showJetpackConnectionBlock && ! hasOriginSiteJetpackConnected && ! isFetchingSite && (
+					{ showJetpackConnectionBlock && ! hasOriginSiteJetpackConnected && ! initialFetching && (
 						<SelectItems
 							onSelect={ onJetpackSelection }
 							items={ [
