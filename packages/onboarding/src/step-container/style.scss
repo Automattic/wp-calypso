@@ -38,13 +38,13 @@ $gray-60: #50575e;
 			margin: 8px 0 0;
 			line-height: 24px;
 
-			@include break-small( '<660px' ) {
+			@include break-small {
 				margin-top: 16px;
 			}
 		}
     }
 
-	@include break-small( '<660px' ) {
+	@include break-small {
 		flex-wrap: wrap;
 	}
 }
