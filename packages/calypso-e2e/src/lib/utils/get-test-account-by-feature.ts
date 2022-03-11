@@ -4,7 +4,7 @@ type SiteType = 'simple' | 'atomic';
 
 type Feature = 'gutenberg' | 'coblocks';
 type FeatureKey = { [ key in Feature ]?: Env | undefined } & { siteType: SiteType };
-type FeatureCriteria = FeatureKey & { accountName: string };
+export type FeatureCriteria = FeatureKey & { accountName: string };
 type FeatureMap = Map< string, string >;
 
 function stringifyKey( o: FeatureKey ) {
@@ -34,12 +34,21 @@ const defaultCriteria: FeatureCriteria[] = [
 		accountName: 'gutenbergSimpleSiteEdgeUser',
 	},
 	{ gutenberg: 'stable', siteType: 'simple', accountName: 'gutenbergSimpleSiteUser' },
+	// The CoBlocks account name take precedence if CoBlocks edge
+	// is present. We have two definitions below to effectivelly
+	// ignore gutenberg in this case:
 	{
 		coblocks: 'edge',
+		gutenberg: 'stable',
 		siteType: 'simple',
 		accountName: 'coBlocksSimpleSiteEdgeUser',
 	},
-	{ coblocks: 'stable', siteType: 'simple', accountName: 'gutenbergSimpleSiteUser' },
+	{
+		coblocks: 'edge',
+		gutenberg: 'edge',
+		siteType: 'simple',
+		accountName: 'coBlocksSimpleSiteEdgeUser',
+	},
 ];
 
 const featuresMap: FeatureMap = new Map();
@@ -54,6 +63,7 @@ export function getTestAccountByFeature(
 		accountsTable = criteriaToMap( overrideFeatures, featuresMap );
 	}
 
+	debugger;
 	const accountName = accountsTable.get( stringifyKey( feature ) );
 
 	if ( ! accountName ) throw Error( 'No account found for this feature' );
