@@ -1,7 +1,7 @@
-import { ActionButtons } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
+import ActionButtons from '../action-buttons';
 import StepNavigationLink from '../step-navigation-link';
 import './style.scss';
 
