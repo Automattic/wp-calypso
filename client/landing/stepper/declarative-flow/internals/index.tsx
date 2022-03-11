@@ -1,3 +1,4 @@
+import { SignupHeader } from '@automattic/onboarding';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import * as Steps from './steps-repository';
 import type { StepPath } from './steps-repository';
@@ -29,6 +30,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				const StepComponent = Steps[ path ];
 				return (
 					<Route key={ path } path={ `/${ path }` }>
+						<SignupHeader
+							shouldShowLoadingScreen={ false }
+							isReskinned={ false }
+							navigation={ stepNavigation }
+						/>
 						<StepComponent navigation={ stepNavigation } />
 					</Route>
 				);

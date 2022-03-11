@@ -1,0 +1,38 @@
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.signup-header {
+	.wordpress-logo {
+		position: absolute;
+		left: 20px;
+		top: 20px;
+		fill: var( --color-text );
+		stroke: var( --color-text );
+		transform-origin: 0 0;
+	}
+	.signup-header__navigation {
+		position: absolute;
+		top: 20px;
+		left: 72px;
+		right: 24px;
+		display: flex;
+
+		.signup-header__left {
+			margin-right: auto;
+		}
+		.signup-header__right {
+			margin-left: auto;
+		}
+	}
+
+	@include break-small {
+		.wordpress-logo {
+			left: 24px;
+		}
+
+		.signup-header__right {
+			right: 24px;
+		}
+	}
+}

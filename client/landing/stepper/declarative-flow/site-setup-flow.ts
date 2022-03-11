@@ -6,6 +6,7 @@ export const siteSetupFlow: Flow = {
 		return [ 'intent', 'options', 'build', 'sell', 'import' ];
 	},
 	useStepNavigation( currentStep, navigate ) {
+		const isHidden = currentStep === 'intent' ? true : false;
 		const goBack = () => {
 			if (
 				currentStep === 'options' ||
@@ -20,6 +21,6 @@ export const siteSetupFlow: Flow = {
 		const goToStep = ( step: StepPath ) => {
 			navigate( step );
 		};
-		return { goNext, goBack, goToStep };
+		return { goNext, goBack, goToStep, isHidden };
 	},
 };
