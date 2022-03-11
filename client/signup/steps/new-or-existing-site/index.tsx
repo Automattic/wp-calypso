@@ -38,31 +38,15 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 
 	const headerText = translate( 'Do It For Me' );
 
-	const subHeaderTextWithPlaceHolder = translate(
-		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{Placeholder}}{{/Placeholder}}',
-		{
-			args: {
-				fulfillmentDays: 4,
-			},
-			components: {
-				Placeholder: <Placeholder />,
-			},
-		}
-	);
-
 	const subHeaderText = translate(
-		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{strong}}%(displayCost)s{{/strong}}*.' +
-			'{{br}}{{/br}}{{br}}{{/br}}' +
-			'{{small}}* Plus a one year subscription of the Premium plan.{{/small}}',
+		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus a one year subscription of the Premium plan.',
 		{
 			args: {
 				displayCost,
 				fulfillmentDays: 4,
 			},
 			components: {
-				strong: <strong />,
-				br: <br />,
-				small: <small />,
+				PriceWrapper: isLoading ? <Placeholder /> : <strong />,
 			},
 		}
 	);
@@ -123,12 +107,12 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 
 	return (
 		<>
-			<QueryProductsList />
+			<QueryProductsList persist />
 			<StepWrapper
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
-				subHeaderText={ isLoading ? subHeaderTextWithPlaceHolder : subHeaderText }
-				fallbackSubHeaderText={ isLoading ? subHeaderTextWithPlaceHolder : subHeaderText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				stepContent={
 					<IntentScreen
 						intents={ intents }
