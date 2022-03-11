@@ -65,19 +65,18 @@ export const getPaymentMethodImageURL = ( type: string ): string => {
 	return `${ imagePath }`;
 };
 
-export const getPaymentMethodSummary = ( {
-	translate,
+export const PaymentMethodSummary = ( {
 	type,
 	digits,
 	email,
 }: {
-	translate: ReturnType< typeof useTranslate >;
 	type: string;
 	digits?: string;
 	email?: string;
-} ): TranslateResult => {
+} ): JSX.Element => {
+	const translate = useTranslate();
 	if ( type === PARTNER_PAYPAL_EXPRESS ) {
-		return email || '';
+		return <>{ email || '' }</>;
 	}
 	let displayType: TranslateResult;
 	switch ( type && type.toLocaleLowerCase() ) {
@@ -115,10 +114,14 @@ export const getPaymentMethodSummary = ( {
 	}
 
 	if ( ! digits ) {
-		return displayType;
+		return <>{ displayType }</>;
 	}
 
-	return translate( '%(displayType)s ****%(digits)s', {
-		args: { displayType, digits },
-	} );
+	return (
+		<>
+			{ translate( '%(displayType)s ****%(digits)s', {
+				args: { displayType, digits },
+			} ) }
+		</>
+	);
 };
