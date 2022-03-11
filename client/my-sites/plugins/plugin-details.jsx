@@ -197,10 +197,6 @@ function PluginDetails( props ) {
 	] );
 
 	useEffect( () => {
-		if ( ! selectedSite ) {
-			return;
-		}
-
 		// If no breadcrumb set (eg directly loading this page), add the first breadcrumb part.
 		if ( breadcrumbs.length === 0 ) {
 			dispatch(

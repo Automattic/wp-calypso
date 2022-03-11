@@ -193,10 +193,6 @@ const PluginsBrowser = ( {
 	}, [ isJetpack, selectedSite, hasJetpack ] );
 
 	useEffect( () => {
-		if ( ! selectedSite?.ID ) {
-			return;
-		}
-
 		const items = [
 			{ label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }`, id: 'plugins' },
 		];
