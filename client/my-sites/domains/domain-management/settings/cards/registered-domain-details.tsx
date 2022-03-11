@@ -51,7 +51,7 @@ const RegisteredDomainDetails = ( {
 
 	const shouldNotRenderAutoRenewToggle = () => {
 		return (
-			! domain.currentUserCanManage ||
+			! domain.currentUserIsOwner ||
 			( ! isLoadingPurchase && ! purchase ) ||
 			domain.aftermarketAuction
 		);
