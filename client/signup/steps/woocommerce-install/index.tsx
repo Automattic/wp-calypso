@@ -36,6 +36,7 @@ export interface WooCommerceStoreAddressProps {
 		siteConfirmed?: number;
 		back_to?: string;
 	};
+	positionInFlow: number;
 }
 
 export const ActionSection = styled.div`

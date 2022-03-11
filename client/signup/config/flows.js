@@ -120,13 +120,7 @@ function getDestinationFromIntent( dependencies ) {
 	}
 
 	if ( intent === 'sell' && storeType === 'power' ) {
-		return addQueryArgs(
-			{
-				back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
-				siteSlug: siteSlug,
-			},
-			`/start/woocommerce-install`
-		);
+		return '/';
 	}
 
 	if ( ! isFSEActive && intent === 'sell' ) {

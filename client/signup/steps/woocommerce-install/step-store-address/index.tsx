@@ -40,7 +40,7 @@ const CityZipRow = styled.div`
 export default function StepStoreAddress(
 	props: WooCommerceStoreAddressProps
 ): ReactElement | null {
-	const { goToNextStep, isReskinned, signupDependencies } = props;
+	const { goToNextStep, isReskinned, signupDependencies, positionInFlow } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -214,7 +214,7 @@ export default function StepStoreAddress(
 			flowName="woocommerce-install"
 			hideSkip={ true }
 			allowBackFirstStep={ true }
-			backUrl={ backUrl }
+			backUrl={ positionInFlow === 0 ? backUrl : undefined }
 			headerText={ __( 'Add an address to accept payments' ) }
 			fallbackHeaderText={ __( 'Add an address to accept payments' ) }
 			subHeaderText={ __(

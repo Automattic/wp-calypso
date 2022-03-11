@@ -27,18 +27,22 @@ interface Props {
 	};
 }
 
+const WRITE_STEPS = [ 'site-options', 'starting-point', 'courses' ];
+
+const SELL_STEPS = [
+	'store-options',
+	'store-features',
+	'store-address',
+	'business-info',
+	'confirm',
+	'transfer',
+];
+
 export const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
-	write: [ 'store-options', 'store-features' ],
-	build: [ 'site-options', 'starting-point', 'courses', 'store-options', 'store-features' ],
-	sell: [ 'site-options', 'starting-point', 'courses' ],
-	wpadmin: [
-		'store-options',
-		'store-features',
-		'site-options',
-		'starting-point',
-		'courses',
-		'design-setup-site',
-	],
+	write: [ ...SELL_STEPS ],
+	build: [ ...WRITE_STEPS, ...SELL_STEPS ],
+	sell: [ ...WRITE_STEPS ],
+	wpadmin: [ ...WRITE_STEPS, ...SELL_STEPS, 'design-setup-site' ],
 };
 
 const EXTERNAL_FLOW: { [ key: string ]: string } = {

@@ -363,6 +363,13 @@ export function generateFlows( {
 				'store-options',
 				'store-features',
 				'design-setup-site',
+				/**
+				 * The steps of woocommerce-install flow
+				 */
+				'store-address',
+				'business-info',
+				'confirm',
+				'transfer',
 			],
 			destination: getDestinationFromIntent,
 			description:

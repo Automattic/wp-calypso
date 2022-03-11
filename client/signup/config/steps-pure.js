@@ -755,7 +755,7 @@ export function generateSteps( {
 		// Woocommerce Install steps.
 		'store-address': {
 			stepName: 'store-address',
-			dependencies: [ 'siteSlug', 'back_to' ],
+			dependencies: [ 'siteSlug' ],
 			optionalDependencies: [ 'back_to' ],
 		},
 		'business-info': {

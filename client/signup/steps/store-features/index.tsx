@@ -12,7 +12,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { shoppingBag, truck } from '../../icons';
-import { EXCLUDED_STEPS } from '../intent/index';
 import { StoreFeatureSet } from './types';
 import type { Dependencies } from 'calypso/signup/types';
 import './index.scss';
@@ -26,6 +25,14 @@ interface Props {
 	siteId: number;
 }
 
+const EXCLUDED_STORE_STEPS: { [ key: string ]: string[] } = {
+	power: [ 'design-setup-site' ],
+	simple: [ 'store-address', 'business-info', 'confirm', 'transfer' ],
+};
+
+const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
+	EXCLUDED_STORE_STEPS[ providedDependencies?.storeType ];
+
 export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -34,28 +41,11 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	const siteSlug = props.signupDependencies.siteSlug;
 	const { stepName, goToNextStep } = props;
 
-	/**
-	 * In the regular flow the "EXCLUDED_STEPS" are already excluded,
-	 * but this information is lost if the user leaves the flow and comes back,
-	 * e.g. they go to "More Power" and then click "Back"
-	 */
-	const branchSteps = useBranchSteps( stepName, () => EXCLUDED_STEPS.sell );
-	branchSteps( EXCLUDED_STEPS.sell );
-
-	/**
-	 * Branch steps to skip design selection for WooCommerce flow
-	 */
-	const EXCLUDED_STORE_STEPS: { [ key: string ]: string[] } = {
-		power: [ 'design-setup-site' ],
-		simple: [],
-	};
-	const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
-		EXCLUDED_STORE_STEPS[ providedDependencies?.storeType ];
-	const branchStoreSteps = useBranchSteps( stepName, getExcludedSteps );
+	const branchSteps = useBranchSteps( stepName, getExcludedSteps );
 
 	const submitStoreFeatures = ( storeType: StoreFeatureSet ) => {
 		const providedDependencies = { storeType };
-		branchStoreSteps( providedDependencies );
+		branchSteps( providedDependencies );
 		recordTracksEvent( 'calypso_signup_store_feature_select', {
 			store_feature: storeType,
 		} );
