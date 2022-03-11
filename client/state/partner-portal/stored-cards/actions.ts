@@ -41,7 +41,7 @@ export const fetchStoredCards = ( paging: { startingAfter: string; endingBefore:
 		} );
 };
 
-export const deleteStoredCard = ( card: PaymentMethod, primary_payment_method_id?: string ) => (
+export const deleteStoredCard = ( card: PaymentMethod, primaryPaymentMethodId?: string ) => (
 	dispatch: Dispatch< AnyAction >
 ) => {
 	dispatch( {
@@ -54,7 +54,7 @@ export const deleteStoredCard = ( card: PaymentMethod, primary_payment_method_id
 			method: 'DELETE',
 			apiNamespace: 'wpcom/v2',
 			path: '/jetpack-licensing/stripe/payment-method',
-			body: { payment_method_id: card.id, primary_payment_method_id: primary_payment_method_id },
+			body: { payment_method_id: card.id, primary_payment_method_id: primaryPaymentMethodId },
 		} )
 		.then( ( response: { success: boolean; primary_payment_method_id: string } ) => {
 			dispatch( {

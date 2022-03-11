@@ -1,7 +1,7 @@
 import { getQueryArg } from '@wordpress/url';
 import page from 'page';
 import { useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { ensurePartnerPortalReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 /**
@@ -25,11 +25,16 @@ export function useReturnUrl( redirect: boolean ): void {
  * Returns the recent payment methods from the Jetpack Stripe account.
  *
  */
-export function useRecentPaymentMethodsQuery() {
-	return useQuery( [ 'jetpack-cloud', 'partner-portal', 'recent-cards' ], () =>
-		wpcomJpl.req.get( {
-			apiNamespace: 'wpcom/v2',
-			path: '/jetpack-licensing/stripe/payment-methods',
-		} )
+export function useRecentPaymentMethodsQuery( { enabled = true }: UseQueryOptions = {} ) {
+	return useQuery(
+		[ 'jetpack-cloud', 'partner-portal', 'recent-cards' ],
+		() =>
+			wpcomJpl.req.get( {
+				apiNamespace: 'wpcom/v2',
+				path: '/jetpack-licensing/stripe/payment-methods',
+			} ),
+		{
+			enabled: enabled,
+		}
 	);
 }

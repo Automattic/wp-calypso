@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal//hooks';
+import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import PaymentMethodDeleteDialog from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-delete-dialog';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -33,7 +33,7 @@ const PaymentMethodActions: FunctionComponent< Props > = ( { card } ) => {
 
 	const handleDelete = useCallback( () => {
 		closeDialog();
-		reduxDispatch( deleteStoredCard( card, nextPrimaryPaymentMethod?.id ) )
+		reduxDispatch( deleteStoredCard( card, nextPrimaryPaymentMethod.id ) )
 			.then( () => {
 				reduxDispatch( successNotice( translate( 'Payment method deleted successfully' ) ) );
 
@@ -42,7 +42,7 @@ const PaymentMethodActions: FunctionComponent< Props > = ( { card } ) => {
 			.catch( ( error: Error ) => {
 				reduxDispatch( errorNotice( error.message ) );
 			} );
-	}, [ closeDialog, card, translate, reduxDispatch, nextPrimaryPaymentMethod ] );
+	}, [ closeDialog, card, translate, reduxDispatch, nextPrimaryPaymentMethod?.id ] );
 
 	const renderActions = () => {
 		return [
