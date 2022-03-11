@@ -53,7 +53,11 @@ class People extends Component {
 					{
 						components: {
 							learnMoreLink: (
-								<InlineSupportLink key="learnMore" supportContext="followers" showIcon={ false } />
+								<InlineSupportLink
+									key="learnMoreFollowers"
+									supportContext="followers"
+									showIcon={ false }
+								/>
 							),
 						},
 					}
@@ -64,7 +68,11 @@ class People extends Component {
 					{
 						components: {
 							learnMoreLink: (
-								<InlineSupportLink key="learnMore" supportContext="followers" showIcon={ false } />
+								<InlineSupportLink
+									key="learnMoreFollowers"
+									supportContext="followers"
+									showIcon={ false }
+								/>
 							),
 						},
 					}
@@ -77,7 +85,11 @@ class People extends Component {
 							{
 								components: {
 									learnMoreLink: (
-										<InlineSupportLink key="learnMore" supportContext="team" showIcon={ false } />
+										<InlineSupportLink
+											key="learnMoreTeam"
+											supportContext="team"
+											showIcon={ false }
+										/>
 									),
 								},
 							}
