@@ -177,7 +177,7 @@ async function createStripeSetupIntentAsync(
 
 function isNewCardDataValid( data: unknown ): data is NewCardSubmitData {
 	const newCardData = data as NewCardSubmitData;
-	return newCardData.countryCode === undefined;
+	return newCardData.countryCode !== undefined;
 }
 
 interface NewCardSubmitData {
