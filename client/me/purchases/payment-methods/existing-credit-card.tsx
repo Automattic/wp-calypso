@@ -1,14 +1,22 @@
-import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import {
+	Button,
+	FormStatus,
+	useLineItems,
+	useFormStatus,
+	PaymentLogo,
+} from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { Fragment } from 'react';
-import { PaymentLogo } from '../payment-method-logos';
-import { SummaryLine, SummaryDetails } from '../summary-details';
+import {
+	SummaryLine,
+	SummaryDetails,
+} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
-const debug = debugFactory( 'wpcom-checkout:existing-card-payment-method' );
+const debug = debugFactory( 'calypso:existing-card-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
