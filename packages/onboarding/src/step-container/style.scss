@@ -182,6 +182,10 @@ $gray-60: #50575e;
 			display: block;
 			margin-top: 0;
 
+			@include breakpoint-deprecated( '<660px' ) {
+				margin-top: 24px;
+			}
+
 			@include break-small {
 				padding-right: 20px;
 			}
