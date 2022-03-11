@@ -11,6 +11,7 @@ import {
 	getTransferSalePriceText,
 	isFreeTransfer,
 	optionInfo,
+	getUnsupportedDomainTransferMessage,
 } from './index';
 
 export const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => {
@@ -24,7 +25,7 @@ export const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => 
 		};
 	}
 
-	const { inRedemption, transferEligibleDate } = domainInboundTransferStatusInfo;
+	const { inRedemption, transferEligibleDate, domain } = domainInboundTransferStatusInfo;
 
 	const result = {
 		transferrable: ! inRedemption && null === transferEligibleDate,
@@ -35,7 +36,7 @@ export const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => 
 			...optionInfo.transferNotSupported,
 			topText:
 				getTransferRestrictionMessage( domainInboundTransferStatusInfo ) ??
-				optionInfo.transferNotSupported.topText,
+				getUnsupportedDomainTransferMessage( domain ),
 		};
 	}
 
