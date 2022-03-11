@@ -46,7 +46,7 @@ type ItemsPerPageAction = {
 	perPage: number;
 };
 
-export const itemsPerPage: Reducer< number, ItemsPerPageAction > = ( state = 8, action ) => {
+export const itemsPerPage: Reducer< number, ItemsPerPageAction > = ( state = 30, action ) => {
 	switch ( action?.type ) {
 		case 'STORED_CARDS_ITEMS_PER_PAGE': {
 			const { perPage } = action;
