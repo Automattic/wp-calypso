@@ -58,9 +58,10 @@ describe( 'getTestAccountByFeature', function () {
 	} );
 
 	test( 'order of attributes in the criteria should not matter', () => {
-		// Objects are rebuilt internall to have their keys sorted. So two objects
+		// Objects are rebuilt internally so as to have their keys sorted. Two objects
 		// with the same attributes but in different order will be considered to
 		// be the exact same criterion.
+		//
 		// This also tests that two identical structures can be passed, but the
 		// last-defined one will prevail.
 		const criteria: FeatureCriteria[] = [
