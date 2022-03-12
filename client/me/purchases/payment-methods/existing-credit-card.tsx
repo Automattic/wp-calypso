@@ -181,7 +181,7 @@ function ExistingCardLabel( {
 
 	const queryKey = [ 'tax-info-is-set', storedDetailsId ];
 
-	const { data: taxInfoFromServer } = useQuery< TaxGetInfo, Error >(
+	const { data: taxInfoFromServer, isLoading: isLoadingTaxInfo } = useQuery< TaxGetInfo, Error >(
 		queryKey,
 		() => fetchTaxInfo( storedDetailsId ),
 		{}
@@ -278,7 +278,9 @@ function ExistingCardLabel( {
 				<CardHolderName>{ cardholderName }</CardHolderName>
 				<CardDetails>{ maskedCardDetails }</CardDetails>
 				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
-				<TaxInfoArea taxInfoFromServer={ taxInfoFromServer } openDialog={ openDialog } />
+				{ ! isLoadingTaxInfo && (
+					<TaxInfoArea taxInfoFromServer={ taxInfoFromServer } openDialog={ openDialog } />
+				) }
 			</div>
 			<div className="existing-credit-card__logo payment-logos">
 				<PaymentLogo brand={ brand } isSummary={ true } />
