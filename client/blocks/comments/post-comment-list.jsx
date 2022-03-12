@@ -152,6 +152,7 @@ class PostCommentList extends Component {
 			// in this case we can't just load the exact comment in question because
 			// we could create a gap in the list.
 			if ( this.props.commentsTree ) {
+				// view earlier...
 				this.viewEarlierCommentsHandler();
 			} else {
 				this.props.requestComment( { siteId, commentId: this.props.startingCommentId } );
@@ -171,7 +172,11 @@ class PostCommentList extends Component {
 		this.resetActiveReplyComment();
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps, prevState ) {
+		// If only the state is changing, do nothing. (Avoids setState loops.)
+		if ( prevState !== this.state && prevProps === this.props ) {
+			return;
+		}
 		this.initialFetches();
 		if (
 			prevProps.siteId !== this.props.siteId ||
