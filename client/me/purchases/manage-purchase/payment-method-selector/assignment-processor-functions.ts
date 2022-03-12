@@ -91,11 +91,11 @@ export async function assignNewCardProcessor(
 			},
 		} );
 		if ( ! contactValidationResponse.success ) {
-			throw new Error(
-				contactValidationResponse.messages?.country_code?.[ 0 ] ??
-					contactValidationResponse.messages?.postal_code?.[ 0 ] ??
-					'Unknown validation error'
-			);
+			const errorMessage =
+				contactValidationResponse.messages_flat.length > 0
+					? contactValidationResponse.messages_flat[ 0 ]
+					: 'Unknown error validating location information';
+			throw new Error( errorMessage );
 		}
 
 		reduxDispatch( recordFormSubmitEvent( { purchase, useForAllSubscriptions } ) );
