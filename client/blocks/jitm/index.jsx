@@ -116,7 +116,6 @@ export function JITM( props ) {
 	}
 
 	debug( `siteId: %d, messagePath: %s, message: `, currentSite.ID, messagePath, jitm );
-
 	// 'jetpack' icon is only allowed to Jetpack sites
 	if ( jitm?.content?.icon === 'jetpack' && ! isJetpack ) {
 		jitm.content.icon = '';

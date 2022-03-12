@@ -113,7 +113,7 @@ const PluginsBrowserList = ( {
 					require="calypso/blocks/jitm"
 					template="spotlight"
 					placeholder={ null }
-					messagePath="calypso:spotlight:sidebar_notice"
+					messagePath="calypso:plugins:spotlight"
 				/>
 			) }
 			<Card className="plugins-browser-list__elements">{ renderViews() }</Card>
