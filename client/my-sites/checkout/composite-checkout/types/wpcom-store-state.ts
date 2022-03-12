@@ -596,6 +596,9 @@ export function getSignupValidationErrorResponse(
 export function formatDomainContactValidationResponse(
 	response: DomainContactValidationResponse
 ): ManagedContactDetailsErrors {
+	if ( response.success ) {
+		return {};
+	}
 	return {
 		firstName: response.messages?.first_name,
 		lastName: response.messages?.last_name,
