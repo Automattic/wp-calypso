@@ -12907,7 +12907,7 @@ __metadata:
     chrono-node: ^2.3.5
     circular-dependency-plugin: ^5.2.2
     classnames: ^2.3.1
-    clipboard: ^2.0.6
+    clipboard: ^2.0.10
     component-closest: ^1.0.1
     component-event: ^0.2.0
     component-file-picker: ^0.2.1
@@ -13682,14 +13682,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipboard@npm:^2.0.0, clipboard@npm:^2.0.1, clipboard@npm:^2.0.6, clipboard@npm:^2.0.8":
-  version: 2.0.8
-  resolution: "clipboard@npm:2.0.8"
+"clipboard@npm:^2.0.0, clipboard@npm:^2.0.1, clipboard@npm:^2.0.10, clipboard@npm:^2.0.8":
+  version: 2.0.10
+  resolution: "clipboard@npm:2.0.10"
   dependencies:
     good-listener: ^1.2.2
     select: ^1.1.2
     tiny-emitter: ^2.0.0
-  checksum: a2c50b28beeb52976cc2e48da30a4a1bc154792b1b08a83e148f741f3fa35141249582ab9ce6b224fbef88c617076557fe9e8fe3078301d625086c88e7fcf4eb
+  checksum: 3670ba44901d87e593376b0ac4097c530c9e28b35179ca2597245a2de377b3e9745e447d8944af079459d681d55d05150382af144ccde8764fe7411fd6726b40
   languageName: node
   linkType: hard
 
