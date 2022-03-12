@@ -272,35 +272,13 @@ function ExistingCardLabel( {
 	/* translators: %s is the last 4 digits of the credit card number */
 	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
 
-	const taxInfoDisplay = joinNonEmptyValues(
-		', ',
-		taxInfoFromServer?.tax_postal_code,
-		taxInfoFromServer?.tax_country_code
-	);
-
 	return (
 		<Fragment>
 			<div>
 				<CardHolderName>{ cardholderName }</CardHolderName>
 				<CardDetails>{ maskedCardDetails }</CardDetails>
 				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
-				{ taxInfoDisplay ? (
-					<span className="existing-credit-card__tax-info-display">
-						<span className="existing-credit-card__tax-info-postal-country">
-							{ taxInfoDisplay }
-						</span>
-					</span>
-				) : (
-					<span className="existing-credit-card__tax-info-display tax-info-incomplete">
-						<PaymentMethodEditButton
-							onClick={ openDialog }
-							buttonTextContent={ __( 'Missing Billing Information' ) }
-							scary={ true }
-							borderless={ false }
-							icon={ <Gridicon icon="notice" /> }
-						/>
-					</span>
-				) }
+				<TaxInfoArea taxInfoFromServer={ taxInfoFromServer } openDialog={ openDialog } />
 			</div>
 			<div className="existing-credit-card__logo payment-logos">
 				<PaymentLogo brand={ brand } isSummary={ true } />
@@ -317,6 +295,40 @@ function ExistingCardLabel( {
 				/>
 			</div>
 		</Fragment>
+	);
+}
+
+function TaxInfoArea( {
+	taxInfoFromServer,
+	openDialog,
+}: {
+	taxInfoFromServer: TaxInfo | undefined;
+	openDialog: () => void;
+} ) {
+	const { __ } = useI18n();
+	const taxInfoDisplay = joinNonEmptyValues(
+		', ',
+		taxInfoFromServer?.tax_postal_code,
+		taxInfoFromServer?.tax_country_code
+	);
+
+	if ( taxInfoDisplay ) {
+		return (
+			<span className="existing-credit-card__tax-info-display">
+				<span className="existing-credit-card__tax-info-postal-country">{ taxInfoDisplay }</span>
+			</span>
+		);
+	}
+	return (
+		<span className="existing-credit-card__tax-info-display tax-info-incomplete">
+			<PaymentMethodEditButton
+				onClick={ openDialog }
+				buttonTextContent={ __( 'Missing Billing Information' ) }
+				scary={ true }
+				borderless={ false }
+				icon={ <Gridicon icon="notice" /> }
+			/>
+		</span>
 	);
 }
 
