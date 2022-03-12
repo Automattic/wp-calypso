@@ -92,8 +92,8 @@ export async function assignNewCardProcessor(
 		} );
 		if ( ! contactValidationResponse.success ) {
 			const errorMessage =
-				contactValidationResponse.messages_flat.length > 0
-					? contactValidationResponse.messages_flat[ 0 ]
+				contactValidationResponse.messages_simple.length > 0
+					? contactValidationResponse.messages_simple[ 0 ]
 					: 'Unknown error validating location information';
 			throw new Error( errorMessage );
 		}

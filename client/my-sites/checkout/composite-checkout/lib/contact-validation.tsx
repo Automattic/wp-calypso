@@ -99,7 +99,7 @@ async function runContactValidationCheck(
 		default:
 			return isCompleteAndValid( contactInfo )
 				? { success: true }
-				: { success: false, messages: {}, messages_flat: [] };
+				: { success: false, messages: {}, messages_simple: [] };
 	}
 }
 
@@ -281,7 +281,7 @@ function convertValidationResponse( rawResponse: unknown ): DomainContactValidat
 	return {
 		success: false,
 		messages: convertValidationMessages( rawResponse.messages ),
-		messages_flat: rawResponse.messages_flat,
+		messages_simple: rawResponse.messages_simple,
 	};
 }
 
