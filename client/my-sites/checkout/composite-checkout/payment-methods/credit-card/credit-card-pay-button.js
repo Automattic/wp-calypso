@@ -44,8 +44,8 @@ export default function CreditCardPayButton( {
 							stripeConfiguration,
 							cardNumberElement,
 							paymentPartner,
-							countryCode: fields?.countryCode?.value,
-							postalCode: fields?.postalCode?.value,
+							countryCode: fields?.countryCode?.value ?? '',
+							postalCode: fields?.postalCode?.value ?? '',
 							useForAllSubscriptions,
 							eventSource: 'checkout',
 						} );
