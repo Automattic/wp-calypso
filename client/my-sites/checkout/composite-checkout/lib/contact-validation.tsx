@@ -281,6 +281,7 @@ function convertValidationResponse( rawResponse: unknown ): DomainContactValidat
 	return {
 		success: false,
 		messages: convertValidationMessages( rawResponse.messages ),
+		messages_flat: rawResponse.messages_flat,
 	};
 }
 
