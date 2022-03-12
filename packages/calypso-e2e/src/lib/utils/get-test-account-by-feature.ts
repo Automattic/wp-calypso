@@ -15,7 +15,6 @@ type FeatureMap = Map< string, string >;
 function stringifyKey( o: FeatureKey ) {
 	const keys = Object.keys( o ) as [ keyof FeatureKey ];
 	const sorted = keys.sort().reduce( ( sorted, key ) => {
-		//sorted[ key ] = o[ key ];
 		sorted[ key ] = o[ key ];
 		return sorted;
 	}, {} as any ) as FeatureKey;
