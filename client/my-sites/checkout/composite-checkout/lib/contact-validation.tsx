@@ -99,7 +99,7 @@ async function runContactValidationCheck(
 		default:
 			return isCompleteAndValid( contactInfo )
 				? { success: true }
-				: { success: false, messages: {} };
+				: { success: false, messages: {}, messages_flat: [] };
 	}
 }
 
