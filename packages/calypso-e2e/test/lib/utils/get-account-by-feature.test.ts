@@ -58,14 +58,11 @@ describe( 'getTestAccountByFeature', function () {
 	} );
 
 	test( 'order of attributes in the criteria should not matter', () => {
-		// The object is sorted so that even if the same criteria is added
-		// but with the keys in different order, it will effectivelly
-		// refer to the same feature. The object defined in the criteria
-		// (minus the `accountName` k,v pair) is used as a key in the internal
-		// map of features -> accounts. Since we sort the keys in the object
-		// if there are multiple objects that have the same combination of
-		// attributes, the last-defined one will prevail (as it will be replaced
-		// in the internal Map).
+		// Objects are rebuilt internall to have their keys sorted. So two objects
+		// with the same attributes but in different order will be considered to
+		// be the exact same criterion.
+		// This also tests that two identical structures can be passed, but the
+		// last-defined one will prevail.
 		const criteria: FeatureCriteria[] = [
 			{
 				siteType: 'simple',
@@ -88,5 +85,40 @@ describe( 'getTestAccountByFeature', function () {
 		);
 
 		expect( accountName ).toBe( 'rightAccount' );
+	} );
+
+	it( 'will throw en error if passed feature does not match an account', () => {
+		expect( () =>
+			getTestAccountByFeature( { gutenberg: 'edge', siteType: 'atomic' } )
+		).toThrowError();
+	} );
+
+	it( 'will keep the existing feature criteria when more are passed to the function', () => {
+		// There's already a default account that would match the criterion below without
+		// a variation. We add the variation so that we can select this specific site
+		const criteriaForSiteEditor: FeatureCriteria[] = [
+			{
+				gutenberg: 'edge',
+				siteType: 'simple',
+				variation: 'siteEditor',
+				accountName: 'siteEditorEdgeAccount',
+			},
+		];
+		const siteEditorAccountName = getTestAccountByFeature(
+			{
+				siteType: 'simple',
+				gutenberg: 'edge',
+				variation: 'siteEditor',
+			},
+			criteriaForSiteEditor
+		);
+
+		const editorAccountName = getTestAccountByFeature( {
+			siteType: 'simple',
+			gutenberg: 'edge',
+		} );
+
+		expect( siteEditorAccountName ).toBe( 'siteEditorEdgeAccount' );
+		expect( editorAccountName ).toBe( 'gutenbergSimpleSiteEdgeUser' );
 	} );
 } );

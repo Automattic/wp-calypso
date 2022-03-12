@@ -2,8 +2,13 @@ type Env = 'edge' | 'stable';
 
 type SiteType = 'simple' | 'atomic';
 
+type Variation = 'siteEditor';
+
 type Feature = 'gutenberg' | 'coblocks';
-type FeatureKey = { [ key in Feature ]?: Env | undefined } & { siteType: SiteType };
+type FeatureKey = { [ key in Feature ]?: Env | undefined } & {
+	siteType: SiteType;
+	variation?: Variation;
+};
 export type FeatureCriteria = FeatureKey & { accountName: string };
 type FeatureMap = Map< string, string >;
 
@@ -51,17 +56,11 @@ const defaultCriteria: FeatureCriteria[] = [
 	},
 ];
 
-const featuresMap: FeatureMap = new Map();
-const defaultFeatures = criteriaToMap( defaultCriteria, featuresMap );
+export function getTestAccountByFeature( feature: FeatureKey, criteria?: FeatureCriteria[] ) {
+	let accountsTable = criteriaToMap( defaultCriteria, new Map() );
 
-export function getTestAccountByFeature(
-	feature: FeatureKey,
-	overrideFeatures?: FeatureCriteria[]
-) {
-	let accountsTable = defaultFeatures;
-
-	if ( overrideFeatures ) {
-		accountsTable = criteriaToMap( overrideFeatures, new Map() );
+	if ( criteria ) {
+		accountsTable = criteriaToMap( criteria, accountsTable );
 	}
 
 	const accountName = accountsTable.get( stringifyKey( feature ) );
