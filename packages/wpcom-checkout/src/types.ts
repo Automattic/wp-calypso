@@ -493,6 +493,7 @@ export type DomainContactValidationResponse =
 	| {
 			success: false;
 			messages: ContactValidationResponseMessages;
+			messages_flat: string[];
 	  };
 
 export type RawDomainContactValidationResponse =
@@ -500,6 +501,7 @@ export type RawDomainContactValidationResponse =
 	| {
 			success: false;
 			messages: RawContactValidationResponseMessages;
+			messages_flat: string[];
 	  };
 
 export interface CountryListItem {
