@@ -15,7 +15,7 @@ import { Browser, Page } from 'playwright';
 
 const accountName = getTestAccountByFeature( {
 	gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-	siteType: 'simple', // add ternary to return val based on TEST_ON_ATOMIC being set
+	siteType: envVariables.TEST_LOCALES ? 'atomic' : 'simple',
 } );
 
 declare const browser: Browser;

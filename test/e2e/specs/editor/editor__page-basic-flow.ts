@@ -7,6 +7,7 @@ import {
 	TestAccount,
 	PagesPage,
 	PageTemplateModalComponent,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { Browser, Page, Frame } from 'playwright';
 
@@ -27,9 +28,17 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let pagesPage: PagesPage;
 	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	let publishedUrl: URL;
-	const accountName = envVariables.GUTENBERG_EDGE
-		? 'gutenbergSimpleSiteEdgeUser'
-		: 'simpleSitePersonalPlanUser';
+
+	const accountName = getTestAccountByFeature(
+		{
+			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+		},
+		[
+			{ gutenberg: 'stable', siteType: 'simple', accountName: 'gutenbergSimpleSiteEdgeUser' },
+			{ gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		]
+	);
 
 	beforeAll( async () => {
 		page = await browser.newPage();

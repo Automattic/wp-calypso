@@ -59,11 +59,11 @@ export function getTestAccountByFeature(
 	overrideFeatures?: FeatureCriteria[]
 ) {
 	let accountsTable = defaultFeatures;
+
 	if ( overrideFeatures ) {
-		accountsTable = criteriaToMap( overrideFeatures, featuresMap );
+		accountsTable = criteriaToMap( overrideFeatures, new Map() );
 	}
 
-	debugger;
 	const accountName = accountsTable.get( stringifyKey( feature ) );
 
 	if ( ! accountName ) throw Error( 'No account found for this feature' );

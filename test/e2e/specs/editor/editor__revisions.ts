@@ -11,15 +11,23 @@ import {
 	EditorSettingsSidebarComponent,
 	RevisionsComponent,
 	ParagraphBlock,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
-	const accountName = envVariables.GUTENBERG_EDGE
-		? 'gutenbergSimpleSiteEdgeUser'
-		: 'simpleSitePersonalPlanUser';
+	const accountName = getTestAccountByFeature(
+		{
+			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+		},
+		[
+			{ gutenberg: 'stable', siteType: 'simple', accountName: 'gutenbergSimpleSiteEdgeUser' },
+			{ gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		]
+	);
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	let revisionsComponent: RevisionsComponent;

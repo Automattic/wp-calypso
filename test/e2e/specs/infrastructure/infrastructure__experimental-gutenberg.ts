@@ -7,15 +7,17 @@ import {
 	TestAccount,
 	DataHelper,
 	GutenbergEditorPage,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), function () {
-	const accountName = envVariables.GUTENBERG_EDGE
-		? 'gutenbergSimpleSiteEdgeUser'
-		: 'gutenbergSimpleSiteUser';
+	const accountName = getTestAccountByFeature( {
+		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+		siteType: envVariables.TEST_LOCALES ? 'atomic' : 'simple',
+	} );
 
 	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;

@@ -3,7 +3,13 @@
  * @group gutenberg
  */
 
-import { DataHelper, envVariables, SidebarComponent, TestAccount } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	envVariables,
+	SidebarComponent,
+	TestAccount,
+	getTestAccountByFeature,
+} from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
@@ -17,10 +23,16 @@ declare const browser: Browser;
  */
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
-	const accountName = envVariables.GUTENBERG_EDGE
-		? 'siteEditorSimpleSiteEdgeUser'
-		: 'siteEditorSimpleSiteUser';
-
+	const accountName = getTestAccountByFeature(
+		{
+			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+		},
+		[
+			{ gutenberg: 'stable', siteType: 'simple', accountName: 'siteEditorSimpleSiteUser' },
+			{ gutenberg: 'edge', siteType: 'simple', accountName: 'siteEditorSimpleSiteEdgeUser' },
+		]
+	);
 	beforeAll( async () => {
 		page = await browser.newPage();
 
