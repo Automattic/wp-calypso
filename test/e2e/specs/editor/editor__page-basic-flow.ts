@@ -35,6 +35,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
 		},
 		[
+			// TODO This could be moved over to the default accounts in calypso-e2e/lib/utils/get-test-account-by-feature.ts provided we add
+			// a variation: 'siteEditor' to it. For now, it just replaces the default ones that match the same criteria when they're passed here.
 			{ gutenberg: 'stable', siteType: 'simple', accountName: 'gutenbergSimpleSiteEdgeUser' },
 			{ gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 		]

@@ -96,7 +96,7 @@ describe( 'getTestAccountByFeature', function () {
 	it( 'will keep the existing feature criteria when more are passed to the function', () => {
 		// There's already a default account that would match the criterion below without
 		// a variation. We add the variation so that we can select this specific site
-		const criteriaForSiteEditor: FeatureCriteria[] = [
+		const customCriteria: FeatureCriteria[] = [
 			{
 				gutenberg: 'edge',
 				siteType: 'simple',
@@ -110,7 +110,7 @@ describe( 'getTestAccountByFeature', function () {
 				gutenberg: 'edge',
 				variation: 'siteEditor',
 			},
-			criteriaForSiteEditor
+			customCriteria
 		);
 
 		const editorAccountName = getTestAccountByFeature( {
@@ -120,5 +120,28 @@ describe( 'getTestAccountByFeature', function () {
 
 		expect( siteEditorAccountName ).toBe( 'siteEditorEdgeAccount' );
 		expect( editorAccountName ).toBe( 'gutenbergSimpleSiteEdgeUser' );
+	} );
+
+	it( 'will replce any existing criteria if a identical one is passed as the 2nd argument', () => {
+		// There's already a default account that would match the criterion below. The default
+		// has an `accoutnName` of `gutenbergSimpleSiteEdgeUser`. By passing this one, the default
+		// one should be replaced.
+		const customCriteria: FeatureCriteria[] = [
+			{
+				gutenberg: 'edge',
+				siteType: 'simple',
+				accountName: 'aNewAccount',
+			},
+		];
+
+		const editorAccountName = getTestAccountByFeature(
+			{
+				siteType: 'simple',
+				gutenberg: 'edge',
+			},
+			customCriteria
+		);
+
+		expect( editorAccountName ).toBe( 'aNewAccount' );
 	} );
 } );
