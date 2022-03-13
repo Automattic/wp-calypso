@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -7,6 +8,7 @@ import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
@@ -127,6 +129,14 @@ class SiteSettingsPerformance extends Component {
 						isRequestingSettings={ isRequestingSettings }
 						fields={ fields }
 					/>
+				) }
+
+				{ ( ! siteIsJetpack || siteIsAtomic ) && (
+					<CompactCard>
+						<InlineSupportLink supportContext="site-speed" showIcon={ false }>
+							Learn more about site speed and performance
+						</InlineSupportLink>
+					</CompactCard>
 				) }
 			</Main>
 		);
