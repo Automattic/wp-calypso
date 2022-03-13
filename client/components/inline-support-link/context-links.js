@@ -1,4 +1,8 @@
 const contextLinks = {
+	'account-settings': {
+		link: 'https://wordpress.com/support/account-settings/',
+		post_id: 80368,
+	},
 	autorenewal: {
 		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
 		post_id: 111349,
@@ -84,6 +88,10 @@ const contextLinks = {
 	media: {
 		link: 'https://wordpress.com/support/media/',
 		post_id: 853,
+	},
+	'manage-profile': {
+		link: 'https://wordpress.com/support/manage-my-profile/',
+		post_id: 19775,
 	},
 	menus: {
 		link: 'https://wordpress.com/support/menus/',

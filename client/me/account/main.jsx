@@ -21,6 +21,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import LanguagePicker from 'calypso/components/language-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -873,7 +874,21 @@ class Account extends Component {
 				<QueryUserSettings />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<FormattedHeader brandFont headerText={ translate( 'Account settings' ) } align="left" />
+				<FormattedHeader
+					brandFont
+					headerText={ translate( 'Account settings' ) }
+					align="left"
+					subHeaderText={ translate(
+						'Adjust your account information and interface settings. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink supportContext="account-settings" showIcon={ false } />
+								),
+							},
+						}
+					) }
+				/>
 
 				<SectionHeader label={ translate( 'Account Information' ) } />
 				<Card className="account__settings">
