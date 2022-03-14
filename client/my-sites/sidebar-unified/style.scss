@@ -317,7 +317,7 @@ $font-size: rem( 14px );
 }
 
 // client/blocks/upsell-nudge/style.scss
-&:not( .is-classic-bright ):not( .is-contrast ) {
+.theme-default:not( .is-classic-bright ):not( .is-contrast ) {
 	.upsell-nudge.banner.card.is-compact {
 		background-color: #fff;
 		color: #000;
