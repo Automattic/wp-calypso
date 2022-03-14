@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
+import { ReactChild, ReactElement } from 'react';
 import ActionButtons from '../action-buttons';
 import StepNavigationLink from '../step-navigation-link';
 import './style.scss';
@@ -16,9 +16,9 @@ interface Props {
 	skipHeadingText?: string;
 	hideFormattedHeader?: boolean;
 	headerImageUrl?: string;
-	backLabelText?: string;
-	skipLabelText?: string;
-	nextLabelText?: string;
+	backLabelText?: string | ReactChild;
+	skipLabelText?: string | ReactChild;
+	nextLabelText?: string | ReactChild;
 	className?: string;
 	// Displays an <hr> above the skip button and adds more white space
 	isLargeSkipLayout?: boolean;
