@@ -10,8 +10,14 @@ div.titan-existing-mailboxes__header.is-expanded.is-compact {
 
 		ul {
 			font-size: $font-body-small;
-			line-height: 1em;
+			line-height: 1.5em;
 		}
+	}
+}
+
+.titan-existing-mailboxes__header {
+	.titan-existing-mailboxes__existing-mailboxes {
+		margin-bottom: 16px;
 	}
 }
 

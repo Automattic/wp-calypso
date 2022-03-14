@@ -58,9 +58,8 @@ export const TitanExistingMailboxes = ( {
 			screenReaderText={ translate( 'See existing mailboxes' ) }
 			summary={ summary }
 		>
-			{ mailboxes?.map( ( mailbox: Mailbox ) => (
-				<ul> { renderMailbox( mailbox ) } </ul>
-			) ) }
+			<h3 className="titan-existing-mailboxes__existing-mailboxes"> { translate( 'Existing mailboxes' ) }</h3>
+			<ul>{ mailboxes?.map( ( mailbox: Mailbox ) => renderMailbox( mailbox ) ) }</ul>
 		</FoldableCard>
 	);
 };
