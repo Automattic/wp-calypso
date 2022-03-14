@@ -4,12 +4,11 @@ import { RadioButton } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import * as React from 'react';
-import { useGetProductVariants } from '../../hooks/product-variants';
+import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import type { ItemVariationPickerProps, WPCOMProductVariant, OnChangeItemVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
-export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerProps > = ( {
+export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > = ( {
 	selectedItem,
 	onChangeItemVariant,
 	isDisabled,
@@ -23,7 +22,7 @@ export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerPr
 	}
 
 	return (
-		<TermOptions className="item-variation-radio-buttons">
+		<TermOptions className="item-variation-picker">
 			{ variants.map( ( productVariant: WPCOMProductVariant ) => (
 				<ProductVariant
 					key={ productVariant.productSlug + productVariant.variantLabel }
@@ -66,10 +65,10 @@ function ProductVariant( {
 				} }
 				ariaLabel={ translate( 'Select a different term length' ) as string }
 				label={
-					<React.Fragment>
+					<>
 						<VariantLabel>{ variantLabel }</VariantLabel>
 						{ variantDetails }
-					</React.Fragment>
+					</>
 				}
 				children={ [] }
 			/>
