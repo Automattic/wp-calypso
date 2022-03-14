@@ -80,11 +80,11 @@ export default function PaymentMethodList(): ReactElement {
 			</div>
 
 			<div className="payment-method-list__body">
+				<AddStoredCreditCard />
+
 				{ isFetching && <StoredCreditCardLoading /> }
 
 				{ ! isFetching && cards }
-
-				<AddStoredCreditCard />
 			</div>
 
 			{ showPagination && (
