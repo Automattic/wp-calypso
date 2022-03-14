@@ -170,7 +170,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		false;
 
 	let disabledMessage;
-	if ( isDisabled && ! isNotPlanOwner ) {
+	if ( isDisabled && isNotPlanOwner ) {
 		if ( ! isMultisiteCompatible && ! isDeprecated ) {
 			disabledMessage = translate( 'Not available for multisite WordPress installs' );
 		} else if ( isCrmMonthlyProduct ) {
