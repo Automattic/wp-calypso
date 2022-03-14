@@ -97,7 +97,9 @@ async function runContactValidationCheck(
 		case 'gsuite':
 			return getGSuiteValidationResult( responseCart.products, contactInfo );
 		default:
-			return isCompleteAndValid( contactInfo ) ? { success: true } : { success: false };
+			return isCompleteAndValid( contactInfo )
+				? { success: true }
+				: { success: false, messages: {} };
 	}
 }
 
@@ -171,12 +173,16 @@ function isSignupValidationResponse( data: unknown ): data is SignupValidationRe
 	return true;
 }
 
+function isRawContactValidationResponse(
+	data: unknown
+): data is RawDomainContactValidationResponse {
+	const dataResponse = data as RawDomainContactValidationResponse;
+	return dataResponse?.success === false || dataResponse?.success === true;
+}
+
 function isContactValidationResponse( data: unknown ): data is DomainContactValidationResponse {
 	const dataResponse = data as DomainContactValidationResponse;
-	if ( dataResponse?.success !== false && dataResponse?.success !== true ) {
-		return false;
-	}
-	return true;
+	return dataResponse?.success === false || dataResponse?.success === true;
 }
 
 export function isContactValidationResponseValid( data: unknown ): boolean {
@@ -265,19 +271,17 @@ function convertValidationMessages(
 	return formattedMessages;
 }
 
-function convertValidationResponse(
-	rawResponse: RawDomainContactValidationResponse
-): DomainContactValidationResponse {
-	if ( ! isContactValidationResponse( rawResponse ) ) {
+function convertValidationResponse( rawResponse: unknown ): DomainContactValidationResponse {
+	if ( ! isRawContactValidationResponse( rawResponse ) ) {
 		throw new Error( 'Contact validation returned unknown response.' );
 	}
-	if ( rawResponse.messages ) {
-		return {
-			success: rawResponse.success,
-			messages: convertValidationMessages( rawResponse.messages ),
-		};
+	if ( rawResponse.success ) {
+		return { success: true };
 	}
-	return rawResponse;
+	return {
+		success: false,
+		messages: convertValidationMessages( rawResponse.messages ),
+	};
 }
 
 async function wpcomValidateTaxContactInformation(
@@ -376,7 +380,7 @@ function handleContactValidationResult( {
 			)
 		);
 	}
-	if ( validationResult && validationResult.messages ) {
+	if ( validationResult && ! validationResult.success && validationResult.messages ) {
 		showErrorMessage(
 			String(
 				translate(
