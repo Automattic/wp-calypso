@@ -3,7 +3,7 @@ import { getSocialProfiles } from '../selectors';
 
 describe( 'selectors', () => {
 	test( 'should return the initial state as a default state', () => {
-		expect( getSocialProfiles( { signup: undefined } ) ).to.be.eql( {
+		expect( getSocialProfiles( { difm: undefined } ) ).to.be.eql( {
 			FACEBOOK: '',
 			INSTAGRAM: '',
 			LINKEDIN: '',
@@ -14,14 +14,12 @@ describe( 'selectors', () => {
 	test( 'should return the site info collection data from the state', () => {
 		expect(
 			getSocialProfiles( {
-				signup: {
-					steps: {
-						socialProfiles: {
-							FACEBOOK: 'test',
-							INSTAGRAM: 'test',
-							LINKEDIN: 'test',
-							TWITTER: 'test',
-						},
+				difm: {
+					socialProfiles: {
+						FACEBOOK: 'test',
+						INSTAGRAM: 'test',
+						LINKEDIN: 'test',
+						TWITTER: 'test',
 					},
 				},
 			} )

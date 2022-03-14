@@ -4,13 +4,13 @@ import {
 	SIGNUP_STEPS_SOCIAL_PROFILES_RESET,
 	SIGNUP_COMPLETE_RESET,
 } from 'calypso/state/action-types';
-import signupSocialProfilesReducer from '../reducer';
+import difmSocialProfilesReducer from '../reducer';
 import { initialState } from '../schema';
 
 describe( 'reducer', () => {
 	test( 'should update social profiles', () => {
 		expect(
-			signupSocialProfilesReducer(
+			difmSocialProfilesReducer(
 				{},
 				{
 					type: SIGNUP_STEPS_SOCIAL_PROFILES_UPDATE,
@@ -32,7 +32,7 @@ describe( 'reducer', () => {
 
 	test( 'should reset the state on reset action', () => {
 		expect(
-			signupSocialProfilesReducer(
+			difmSocialProfilesReducer(
 				{
 					FACEBOOK: 'facebookUrl',
 					TWITTER: 'twitterUrl',
@@ -49,7 +49,7 @@ describe( 'reducer', () => {
 
 	test( 'should reset the state on signup complete', () => {
 		expect(
-			signupSocialProfilesReducer(
+			difmSocialProfilesReducer(
 				{
 					FACEBOOK: 'facebookUrl',
 					TWITTER: 'twitterUrl',
