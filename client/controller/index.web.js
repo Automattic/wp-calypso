@@ -107,7 +107,7 @@ function isEditorPath( path ) {
 		case 'edit':
 			if (
 				splitPath[ 1 ] &&
-				[ 'jetpack-testimonial', 'jetpack-portfolio' ].indexOf( splitPath[ 1 ] )
+				[ 'jetpack-testimonial', 'jetpack-portfolio' ].indexOf( splitPath[ 1 ] ) !== -1
 			) {
 				return true;
 			}
