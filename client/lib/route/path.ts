@@ -41,8 +41,8 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 		}
 	}
 
-	// Check last, second-to-last and third-to-last (in case of locale param)  piece for site slug
-	for ( let i = 3; i > 0; i-- ) {
+	// Check last and second-to-last piece for site slug
+	for ( let i = 2; i > 0; i-- ) {
 		const piece = pieces[ pieces.length - i ];
 		if ( piece && -1 !== piece.indexOf( '.' ) ) {
 			return piece.endsWith( '::' ) ? piece.replace( /::$/, '' ) : piece;
