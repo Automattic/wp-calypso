@@ -101,7 +101,7 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 		} else {
 			dispatch( removeSiteSlugDependency() );
 			dispatch( submitSignupStep( { stepName: 'difm-site-picker', wasSkipped: true } ) );
-			props.goToStep( 'site-info-collection' );
+			props.goToStep( 'difm-options' );
 		}
 	};
 

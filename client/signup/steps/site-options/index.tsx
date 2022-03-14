@@ -33,6 +33,14 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 					siteTitleLabel: translate( 'Store name' ),
 					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
 				};
+			case 'difm-options':
+				return {
+					headerText: translate( "First, let's give your site a name" ),
+					headerImage: siteOptionsImage,
+					siteTitleLabel: translate( 'Site title' ),
+					taglineExplanation: translate( 'In a few words, explain what your site is about.' ),
+					isSiteTitleRequired: true,
+				};
 
 			// Regular blog
 			default:
@@ -45,7 +53,13 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 		}
 	};
 
-	const { headerText, headerImage, siteTitleLabel, taglineExplanation } = getStepText( stepName );
+	const {
+		headerText,
+		headerImage,
+		siteTitleLabel,
+		taglineExplanation,
+		isSiteTitleRequired,
+	} = getStepText( stepName );
 
 	const submitSiteOptions = ( { siteTitle, tagline }: SiteOptionsFormValues ) => {
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
@@ -74,6 +88,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 					defaultTagline={ tagline }
 					siteTitleLabel={ siteTitleLabel }
 					taglineExplanation={ taglineExplanation }
+					isSiteTitleRequired={ isSiteTitleRequired }
 					onSubmit={ submitSiteOptions }
 				/>
 			}

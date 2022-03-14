@@ -390,7 +390,7 @@ export function generateFlows( {
 						'user',
 						'new-or-existing-site',
 						'difm-site-picker',
-						'site-info-collection',
+						'difm-options',
 						'difm-design-setup-site',
 				  ]
 				: [
