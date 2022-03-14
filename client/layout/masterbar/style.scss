@@ -97,12 +97,13 @@ $autobar-height: 20px;
 		#ffd700 50%
 	);
 
-	> .masterbar__item:not( .masterbar__item-title ),
+	> .masterbar__item,
+	> .masterbar__section--center,
+	> .masterbar__section--right,
 	> .masterbar__notifications,
 	> .masterbar__login-links a {
-		&:not( .is-active ) {
-			background: rgba( var( --color-primary-rgb ), 0.85 );
-		}
+		background-color: #0057b7 !important;
+		color: var( --color-masterbar-text ) !important;
 
 		&:hover {
 			background: var( --color-primary );
@@ -115,6 +116,21 @@ $autobar-height: 20px;
 				box-shadow: inset 0 0 0 2px var( --color-primary-light );
 			}
 		}
+	}
+
+	> .masterbar__section--left {
+		> button,
+		> a {
+			background-color: #0057b7;
+
+			&:hover {
+				background: var( --color-masterbar-item-hover-background );
+			}
+		}
+	}
+
+	> .masterbar__item-content {
+		color: var( --color-masterbar-text );
 	}
 }
 
