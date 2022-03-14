@@ -1,16 +1,17 @@
+import 'calypso/state/difm/init';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import startingPointImageUrl from 'calypso/assets/images/onboarding/starting-point.svg';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import {
 	resetSocialProfiles,
 	updateSocialProfiles,
-} from 'calypso/state/signup/steps/social-profiles/actions';
-import { getSocialProfiles } from 'calypso/state/signup/steps/social-profiles/selectors';
+} from 'calypso/state/difm/social-profiles/actions';
+import { getSocialProfiles } from 'calypso/state/difm/social-profiles/selectors';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SocialProfiles from './social-profiles';
-import type { SocialProfilesState } from 'calypso/state/signup/steps/social-profiles/schema';
+import type { SocialProfilesState } from 'calypso/state/difm/social-profiles/schema';
 
 import './style.scss';
 

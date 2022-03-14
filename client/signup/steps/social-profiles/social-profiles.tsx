@@ -1,15 +1,14 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { ReactElement, useState } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import SocialLogo from 'calypso/components/social-logo';
-import {
-	SocialProfile,
-	SocialProfilesState,
-} from 'calypso/state/signup/steps/social-profiles/schema';
+import type { SocialProfile, SocialProfilesState } from 'calypso/state/difm/social-profiles/schema';
+import type { TranslateResult } from 'i18n-calypso';
+import type { ReactElement } from 'react';
 
 type SocialProfileFormOption = {
 	label: TranslateResult;

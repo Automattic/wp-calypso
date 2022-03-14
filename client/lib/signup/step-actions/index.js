@@ -22,6 +22,7 @@ import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSocialProfiles } from 'calypso/state/difm/social-profiles/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -32,7 +33,6 @@ import {
 	getSiteVerticalId,
 	getSiteVerticalName,
 } from 'calypso/state/signup/steps/site-vertical/selectors';
-import { getSocialProfiles } from 'calypso/state/signup/steps/social-profiles/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
