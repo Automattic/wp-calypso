@@ -1,0 +1,37 @@
+.p2-complete-profile__avatar-wrapper {
+	text-align: center;
+}
+
+.edit-gravatar button.info-popover {
+	background: none;
+	display: inline;
+	line-height: 1;
+	margin: 0;
+	padding: 0;
+	width: auto;
+
+	&:hover {
+		background: none;
+	}
+}
+
+.p2-complete-profile .p2-complete-profile__upload-avatar-btn {
+	padding: 6px 16px;
+	width: 150px;
+	height: 30px;
+	font-size: $font-body-extra-small;
+	line-height: 1.5;
+	border: 1px solid var( --p2-color-link );
+	border-radius: 40px; // stylelint-disable-line scales/radii
+	color: var( --p2-color-link );
+	display: block;
+	background: none;
+	margin: auto;
+
+	&:hover {
+		background: none;
+		color: var( --p2-color-link-hover );
+		border-color: var( --p2-color-link-hover );
+		cursor: pointer;
+	}
+}

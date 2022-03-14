@@ -601,6 +601,10 @@ export function generateSteps( {
 			fulfilledStepCallback: excludeStepIfEmailVerified,
 		},
 
+		'p2-complete-profile': {
+			stepName: 'p2-complete-profile',
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
