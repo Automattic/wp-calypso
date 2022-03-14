@@ -45,9 +45,9 @@ import { handleScroll } from './utils';
 import 'calypso/components/environment-badge/style.scss';
 import './style.scss';
 
-function SidebarScrollSynchronizer( { enabled } ) {
+function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
-	const active = enabled && ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
+	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
 
 	useEffect( () => {
 		if ( active ) {
