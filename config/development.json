@@ -64,6 +64,7 @@
 		"onboarding/import-from-squarespace": true,
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
+		"onboarding/import-light": true,
 		"help": true,
 		"home/layout-dev": true,
 		"importers/substack": true,

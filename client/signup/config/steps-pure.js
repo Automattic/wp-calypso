@@ -751,6 +751,9 @@ export function generateSteps( {
 		importing: {
 			stepName: 'importing',
 		},
+		static: {
+			stepName: 'static',
+		},
 
 		// Woocommerce Install steps.
 		'store-address': {
