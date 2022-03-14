@@ -1,19 +1,32 @@
-import { useI18n } from '@wordpress/react-i18n';
+import { StepContainer } from '@automattic/onboarding';
+import { useTranslate } from 'i18n-calypso';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../types';
 
 /**
  * The design step
  */
 const DesignStep: Step = function DesignStep( { navigation } ) {
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const { goNext, goBack } = navigation;
+	const headerText = translate( 'Design step' );
 
 	return (
-		<div>
-			<h1>Design step</h1>
-			<button onClick={ goBack }>{ __( 'Previous' ) }</button>
-			<button onClick={ goNext }>{ __( 'Next' ) }</button>
-		</div>
+		<StepContainer
+			hideSkip
+			goBack={ goBack }
+			goNext={ goNext }
+			hideNext={ false }
+			backLabelText={ translate( 'Previous' ) }
+			nextLabelText={ translate( 'Next' ) }
+			isHorizontalLayout={ true }
+			formattedHeader={
+				<FormattedHeader id={ 'domain-step-header' } headerText={ headerText } align={ 'left' } />
+			}
+			stepContent={ <div>Design step content</div> }
+			recordTracksEvent={ recordTracksEvent }
+		/>
 	);
 };
 
