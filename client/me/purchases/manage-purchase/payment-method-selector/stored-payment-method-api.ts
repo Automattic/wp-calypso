@@ -10,17 +10,23 @@ export async function saveCreditCard( {
 	stripeConfiguration,
 	useForAllSubscriptions,
 	eventSource,
+	postalCode,
+	countryCode,
 }: {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
 	useForAllSubscriptions: boolean;
 	eventSource?: string;
+	postalCode?: string;
+	countryCode: string;
 } ): Promise< StoredCardEndpointResponse > {
 	const additionalData = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
 		useForAllSubscriptions,
 		eventSource,
+		postalCode,
+		countryCode,
 	} );
 	const response = await wp.req.post(
 		{
@@ -46,12 +52,16 @@ export async function updateCreditCard( {
 	stripeConfiguration,
 	useForAllSubscriptions,
 	eventSource,
+	postalCode,
+	countryCode,
 }: {
 	purchase: Purchase;
 	token: string;
 	stripeConfiguration: StripeConfiguration;
 	useForAllSubscriptions: boolean;
 	eventSource?: string;
+	postalCode?: string;
+	countryCode: string;
 } ): Promise< StoredCardEndpointResponse > {
 	const {
 		purchaseId,
@@ -59,18 +69,24 @@ export async function updateCreditCard( {
 		paygate_token,
 		use_for_existing,
 		event_source,
+		postal_code,
+		country_code,
 	} = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
 		purchase,
 		useForAllSubscriptions,
 		eventSource,
+		postalCode,
+		countryCode,
 	} );
 	const response = await wp.req.post( '/upgrades/' + purchaseId + '/update-credit-card', {
 		payment_partner,
 		paygate_token,
 		use_for_existing,
 		event_source,
+		postal_code,
+		country_code,
 	} );
 	if ( response.error ) {
 		recordTracksEvent( 'calypso_purchases_save_new_payment_method_error' );
@@ -86,12 +102,16 @@ function getParamsForApi( {
 	purchase,
 	useForAllSubscriptions,
 	eventSource,
+	postalCode,
+	countryCode,
 }: {
 	cardToken: string;
 	stripeConfiguration: StripeConfiguration;
 	purchase?: Purchase | undefined;
 	useForAllSubscriptions?: boolean;
 	eventSource?: string;
+	postalCode: string | undefined;
+	countryCode: string;
 } ) {
 	return {
 		payment_partner: stripeConfiguration ? stripeConfiguration.processor_id : '',
@@ -100,5 +120,7 @@ function getParamsForApi( {
 		...( useForAllSubscriptions === false ? { use_for_existing: false } : {} ), // if undefined, we do not add this property
 		...( purchase ? { purchaseId: purchase.id } : {} ),
 		...( eventSource ? { event_source: eventSource } : {} ),
+		postal_code: postalCode ?? '',
+		country_code: countryCode,
 	};
 }

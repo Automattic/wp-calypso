@@ -107,6 +107,8 @@ export async function assignNewCardProcessor(
 				stripeConfiguration,
 				useForAllSubscriptions: Boolean( useForAllSubscriptions ),
 				eventSource,
+				postalCode,
+				countryCode,
 			} );
 
 			return makeSuccessResponse( result );
@@ -117,6 +119,8 @@ export async function assignNewCardProcessor(
 			stripeConfiguration,
 			useForAllSubscriptions: Boolean( useForAllSubscriptions ),
 			eventSource,
+			postalCode,
+			countryCode,
 		} );
 
 		return makeSuccessResponse( result );
