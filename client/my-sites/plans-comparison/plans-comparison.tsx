@@ -71,8 +71,8 @@ export const globalOverrides = css`
 			box-shadow: 0 1px 0 1px rgba( 0, 0, 0, 0.1 );
 		}
 
-		.is-nav-unification .sidebar .sidebar__heading::after,
-		.is-nav-unification .sidebar .sidebar__menu-link::after {
+		.sidebar .sidebar__heading::after,
+		.sidebar .sidebar__menu-link::after {
 			html[dir='ltr'] & {
 				margin-right: -1px;
 				border-right-color: #fdfdfd;
