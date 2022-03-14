@@ -163,38 +163,34 @@ const StepContainer: React.FC< Props > = ( {
 	} );
 
 	return (
-		<>
-			<div className={ classes }>
-				<ActionButtons className="step-container__navigation" sticky={ null }>
-					{ backButton }
-					{ skipButton }
-					{ nextButton }
-					{ customizedActionButtons }
-				</ActionButtons>
-				{ ! hideFormattedHeader && (
-					<div className="step-container__header">
-						{ formattedHeader }
-						{ headerImageUrl && (
-							<div className="step-container__header-image">
-								<img src={ headerImageUrl } alt="" />
-							</div>
-						) }
-						{ headerButton && (
-							<div className="step-container__header-button">{ headerButton }</div>
-						) }
-					</div>
-				) }
+		<div className={ classes }>
+			<ActionButtons className="step-container__navigation" sticky={ null }>
+				{ backButton }
+				{ skipButton }
+				{ nextButton }
+				{ customizedActionButtons }
+			</ActionButtons>
+			{ ! hideFormattedHeader && (
+				<div className="step-container__header">
+					{ formattedHeader }
+					{ headerImageUrl && (
+						<div className="step-container__header-image">
+							<img src={ headerImageUrl } alt="" />
+						</div>
+					) }
+					{ headerButton && <div className="step-container__header-button">{ headerButton }</div> }
+				</div>
+			) }
 
-				<div className="step-container__content">{ stepContent }</div>
+			<div className="step-container__content">{ stepContent }</div>
 
-				{ ! hideSkip && skipButtonAlign === 'bottom' && (
-					<div className="step-container__buttons">
-						{ isLargeSkipLayout && <hr className="step-container__skip-hr" /> }
-						{ renderSkip( { borderless: true } ) }
-					</div>
-				) }
-			</div>
-		</>
+			{ ! hideSkip && skipButtonAlign === 'bottom' && (
+				<div className="step-container__buttons">
+					{ isLargeSkipLayout && <hr className="step-container__skip-hr" /> }
+					{ renderSkip( { borderless: true } ) }
+				</div>
+			) }
+		</div>
 	);
 };
 
