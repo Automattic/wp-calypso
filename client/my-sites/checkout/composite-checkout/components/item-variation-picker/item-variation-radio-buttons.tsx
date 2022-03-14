@@ -8,7 +8,7 @@ import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-check
 import type { ItemVariationPickerProps, WPCOMProductVariant, OnChangeItemVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
-export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > = ( {
+export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerProps > = ( {
 	selectedItem,
 	onChangeItemVariant,
 	isDisabled,
