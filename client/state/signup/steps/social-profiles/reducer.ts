@@ -1,6 +1,7 @@
 import {
 	SIGNUP_STEPS_SOCIAL_PROFILES_UPDATE,
 	SIGNUP_COMPLETE_RESET,
+	SIGNUP_STEPS_SOCIAL_PROFILES_RESET,
 } from 'calypso/state/action-types';
 import { withSchemaValidation } from 'calypso/state/utils';
 import { schema, initialState, SUPPORTED_SOCIAL_PROFILES } from './schema';
@@ -19,6 +20,7 @@ export default withSchemaValidation( schema, ( state = initialState, action: Any
 					{}
 				),
 			};
+		case SIGNUP_STEPS_SOCIAL_PROFILES_RESET:
 		case SIGNUP_COMPLETE_RESET: {
 			return initialState;
 		}
