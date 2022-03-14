@@ -1,0 +1,17 @@
+div.titan-existing-mailboxes__header.is-expanded.is-compact {
+	margin-bottom: 0;
+	margin-top: 0;
+
+	.foldable-card__content {
+		max-height: 200px;
+		overflow: scroll;
+		overflow-x: hidden;
+		overflow-y: visible;
+
+		ul {
+			font-size: $font-body-small;
+			line-height: 1em;
+		}
+	}
+}
+

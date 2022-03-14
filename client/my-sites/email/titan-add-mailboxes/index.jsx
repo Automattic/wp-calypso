@@ -10,7 +10,6 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -42,6 +41,7 @@ import {
 	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
 import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
+import { TitanExistingMailboxes } from 'calypso/my-sites/email/titan-existing-mailboxes/titan-existing-mailboxes';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -205,7 +205,13 @@ class TitanAddMailboxes extends Component {
 	};
 
 	renderForm() {
-		const { isLoadingDomains, selectedDomainName, titanMailProduct, translate } = this.props;
+		const {
+			isLoadingDomains,
+			selectedDomainName,
+			selectedSite,
+			titanMailProduct,
+			translate,
+		} = this.props;
 
 		if ( isLoadingDomains || ! titanMailProduct ) {
 			return <AddEmailAddressesCardPlaceholder />;
@@ -213,8 +219,13 @@ class TitanAddMailboxes extends Component {
 
 		return (
 			<>
-				<SectionHeader label={ translate( 'Add New Mailboxes' ) } />
-
+				<TitanExistingMailboxes
+					selectedDomainName={ selectedDomainName }
+					selectedSiteId={ selectedSite.ID }
+					title={ translate( 'Add New Mailboxes', {
+						textOnly: true,
+					} ) }
+				/>
 				<Card>
 					<TitanNewMailboxList
 						selectedDomainName={ selectedDomainName }
