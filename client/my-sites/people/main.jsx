@@ -49,10 +49,34 @@ class People extends Component {
 		switch ( filter ) {
 			case 'followers':
 				return translate(
-					'People who have subscribed to your site using their WordPress.com account.'
+					'People who have subscribed to your site using their WordPress.com account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink
+									key="learnMoreFollowers"
+									supportContext="followers"
+									showIcon={ false }
+								/>
+							),
+						},
+					}
 				);
 			case 'email-followers':
-				return translate( 'People who have subscribed to your site using their email address.' );
+				return translate(
+					'People who have subscribed to your site using their email address. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink
+									key="learnMoreFollowers"
+									supportContext="followers"
+									showIcon={ false }
+								/>
+							),
+						},
+					}
+				);
 			default:
 				return isWPForTeamsSite
 					? this.getSubheaderTextForP2()
@@ -61,7 +85,11 @@ class People extends Component {
 							{
 								components: {
 									learnMoreLink: (
-										<InlineSupportLink key="learnMore" supportContext="team" showIcon={ false } />
+										<InlineSupportLink
+											key="learnMoreTeam"
+											supportContext="team"
+											showIcon={ false }
+										/>
 									),
 								},
 							}

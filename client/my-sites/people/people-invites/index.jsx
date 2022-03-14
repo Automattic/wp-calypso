@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
@@ -81,7 +82,16 @@ class PeopleInvites extends PureComponent {
 					brandFont
 					className="people-invites__page-heading"
 					headerText={ translate( 'Users' ) }
-					subHeaderText={ translate( 'View and manage the invites to your site.' ) }
+					subHeaderText={ translate(
+						'View and Manage the invites to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink key="learnMore" supportContext="invites" showIcon={ false } />
+								),
+							},
+						}
+					) }
 					align="left"
 				/>
 				<PeopleSectionNav
