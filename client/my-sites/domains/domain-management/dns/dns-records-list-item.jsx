@@ -18,18 +18,16 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 			popoverClassName="dns-records-list-item__action-menu-popover"
 			position="bottom left"
 		>
-			{ actions.map( ( action ) => {
-				return (
-					<PopoverMenuItem
-						disabled={ action.disabled }
-						key={ key++ }
-						onClick={ () => action.callback( record ) }
-					>
-						{ action.icon }
-						{ action.title }
-					</PopoverMenuItem>
-				);
-			} ) }
+			{ actions.map( ( action ) => (
+				<PopoverMenuItem
+					disabled={ action.disabled }
+					key={ key++ }
+					onClick={ () => action.callback( record ) }
+				>
+					{ action.icon }
+					{ action.title }
+				</PopoverMenuItem>
+			) ) }
 		</EllipsisMenu>
 	);
 
@@ -52,7 +50,7 @@ function DnsRecordsListItem( { type, name, value, actions, disabled, isHeader, r
 					<span>{ value }</span>
 				</div>
 				<div className="dns-records-list-item__data dns-records-list-item__menu">
-					{ ! isHeader && menu }
+					{ ! isHeader && actions.length > 0 && menu }
 				</div>
 			</div>
 		</div>
