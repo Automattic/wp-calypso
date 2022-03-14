@@ -5,7 +5,7 @@
 	> div:first-child {
 		position: fixed;
 		margin: 0;
-		z-index: 10;
+		z-index: -10;
 		background-color: white;
 		top: var( --masterbar-height );
 		padding: 0 16px;
