@@ -27,7 +27,6 @@ class DnsRecordsList extends Component {
 	};
 
 	disableRecordAction = {
-		disabled: false,
 		icon: (
 			<MaterialIcon
 				icon="do_not_disturb"
@@ -40,7 +39,6 @@ class DnsRecordsList extends Component {
 	};
 
 	enableRecordAction = {
-		disabled: false,
 		icon: (
 			<Icon
 				icon={ redo }
@@ -53,7 +51,6 @@ class DnsRecordsList extends Component {
 	};
 
 	recordInfoAction = {
-		disabled: false,
 		icon: (
 			<Icon
 				icon={ info }
@@ -66,7 +63,6 @@ class DnsRecordsList extends Component {
 	};
 
 	editRecordAction = {
-		disabled: false,
 		icon: (
 			<Icon
 				icon={ edit }
@@ -80,7 +76,6 @@ class DnsRecordsList extends Component {
 	};
 
 	deleteRecordAction = {
-		disabled: false,
 		icon: (
 			<Icon
 				icon={ trash }
@@ -199,10 +194,10 @@ class DnsRecordsList extends Component {
 		const actions = [];
 
 		if ( ! record.protected_field ) {
-			actions.push( { ...this.editRecordAction, disabled: false } );
+			actions.push( { ...this.editRecordAction } );
 		}
 		if ( ! ( record.protected_field && 'MX' !== record.type ) ) {
-			actions.push( { ...this.deleteRecordAction, disabled: false } );
+			actions.push( { ...this.deleteRecordAction } );
 		}
 		return actions;
 	}
