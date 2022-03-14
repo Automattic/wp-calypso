@@ -1598,10 +1598,10 @@ PLANS_LIST[ PLAN_WPCOM_MANAGED ] = {
 	group: GROUP_WPCOM,
 	type: TYPE_MANAGED,
 	term: TERM_ANNUALLY,
-	getTitle: () => i18n.translate( 'Managed' ),
+	getTitle: () => i18n.translate( 'Pro' ),
 	getProductId: () => 1032,
 	getStoreSlug: () => PLAN_WPCOM_MANAGED,
-	getPathSlug: () => 'managed',
+	getPathSlug: () => 'pro',
 	getDescription: () =>
 		i18n.translate( 'Enjoy the classic WordPress.com experience using plugins and much more.' ),
 	getBillingTimeFrame: WPComGetBillingTimeframe,
