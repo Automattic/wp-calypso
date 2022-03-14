@@ -103,8 +103,15 @@ function isEditorPath( path ) {
 	switch ( splitPath[ 0 ] ) {
 		case 'page':
 		case 'post':
-		case 'type':
 			return true;
+		case 'edit':
+			if (
+				splitPath[ 1 ] &&
+				[ 'jetpack-testimonial', 'jetpack-portfolio' ].indexOf( splitPath[ 1 ] )
+			) {
+				return true;
+			}
+			return false;
 	}
 
 	return false;
