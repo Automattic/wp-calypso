@@ -119,14 +119,14 @@ export default function DesignPickerStep( props ) {
 
 	const { designs, featuredPicksDesigns, sellDesigns } = useMemo( () => {
 		/*
-		 * For the sell intent, temporarily filter by theme.slug since we only have a few themes;
-		 * Eventually we'd want to filter by categories.[category].slug === 'store'
+		 * For the sell intent, temporarily return only `store` tagged themes
 		 */
-		const eCommDesigns = [ 'attar', 'dorna', 'hari', 'marl', 'winkel' ];
 		return {
 			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
 			featuredPicksDesigns: allThemes.filter( ( theme ) => theme.is_featured_picks ),
-			sellDesigns: allThemes.filter( ( theme ) => eCommDesigns.includes( theme.slug ) ),
+			sellDesigns: allThemes.filter( ( theme ) =>
+				theme.categories.some( ( category ) => category.slug === 'store' )
+			),
 		};
 	}, [ allThemes ] );
 
