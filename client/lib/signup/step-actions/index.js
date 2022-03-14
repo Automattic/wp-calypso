@@ -32,6 +32,7 @@ import {
 	getSiteVerticalId,
 	getSiteVerticalName,
 } from 'calypso/state/signup/steps/site-vertical/selectors';
+import { getSocialProfiles } from 'calypso/state/signup/steps/social-profiles/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -333,7 +334,7 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 		.catch( ( error ) => callback( [ error ] ) );
 }
 
-function getDIFMLiteCartItemFromDependencies( dependencies ) {
+function buildDIFMLiteCartItem( dependencies, reduxStore ) {
 	const {
 		newOrExistingSiteChoice,
 		selectedDesign,
@@ -349,6 +350,9 @@ function getDIFMLiteCartItemFromDependencies( dependencies ) {
 		displayPhone,
 		displayAddress,
 	} = dependencies;
+
+	const socialProfiles = getSocialProfiles( reduxStore.getState() );
+
 	const extra = {
 		selected_design: selectedDesign?.theme,
 		site_category: selectedSiteCategory,
@@ -356,10 +360,10 @@ function getDIFMLiteCartItemFromDependencies( dependencies ) {
 		let_us_choose_selected: isLetUsChooseSelected,
 		site_title: siteTitle,
 		site_description: siteDescription,
-		twitter_url: twitterUrl,
-		facebook_url: facebookUrl,
-		linkedin_url: linkedinUrl,
-		instagram_url: instagramUrl,
+		twitter_url: twitterUrl || socialProfiles.TWITTER,
+		facebook_url: facebookUrl || socialProfiles.FACEBOOK,
+		linkedin_url: linkedinUrl || socialProfiles.LINKEDIN,
+		instagram_url: instagramUrl || socialProfiles.INSTAGRAM,
 		display_email: displayEmail,
 		display_phone: displayPhone,
 		display_address: displayAddress,
@@ -370,7 +374,7 @@ function getDIFMLiteCartItemFromDependencies( dependencies ) {
 
 function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
 	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug } = dependencies;
-	const cartItem = getDIFMLiteCartItemFromDependencies( dependencies );
+	const cartItem = buildDIFMLiteCartItem( dependencies, reduxStore );
 	const providedDependencies = {
 		selectedDesign,
 		selectedSiteCategory,

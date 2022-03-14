@@ -388,6 +388,7 @@ export function generateFlows( {
 				? [
 						// Add or replace new steps here
 						'user',
+						'social-profiles',
 						'new-or-existing-site',
 						'difm-site-picker',
 						'difm-options',
