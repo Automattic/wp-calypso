@@ -2,8 +2,8 @@ import { RadioButton } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { ItemVariantPrice } from './variant-price';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { ItemVariantPrice } from './variant-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant, OnChangeItemVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -22,34 +22,6 @@ const TermOptionsItem = styled.li`
 		margin-top: 0;
 	}
 `;
-
-export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerProps > = ( {
-	selectedItem,
-	onChangeItemVariant,
-	isDisabled,
-	siteId,
-	productSlug,
-} ) => {
-	const variants = useGetProductVariants( siteId, productSlug );
-
-	if ( variants.length < 2 ) {
-		return null;
-	}
-
-	return (
-		<TermOptions className="item-variation-picker">
-			{ variants.map( ( productVariant: WPCOMProductVariant ) => (
-				<ProductVariant
-					key={ productVariant.productSlug + productVariant.variantLabel }
-					selectedItem={ selectedItem }
-					onChangeItemVariant={ onChangeItemVariant }
-					isDisabled={ isDisabled }
-					productVariant={ productVariant }
-				/>
-			) ) }
-		</TermOptions>
-	);
-};
 
 interface ProductVariantProps {
 	productVariant: WPCOMProductVariant;
@@ -85,5 +57,33 @@ const ProductVariant: FunctionComponent< ProductVariantProps > = ( {
 				children={ [] }
 			/>
 		</TermOptionsItem>
+	);
+};
+
+export const ItemVariationRadioButtons: FunctionComponent< ItemVariationPickerProps > = ( {
+	selectedItem,
+	onChangeItemVariant,
+	isDisabled,
+	siteId,
+	productSlug,
+} ) => {
+	const variants = useGetProductVariants( siteId, productSlug );
+
+	if ( variants.length < 2 ) {
+		return null;
+	}
+
+	return (
+		<TermOptions className="item-variation-picker">
+			{ variants.map( ( productVariant: WPCOMProductVariant ) => (
+				<ProductVariant
+					key={ productVariant.productSlug + productVariant.variantLabel }
+					selectedItem={ selectedItem }
+					onChangeItemVariant={ onChangeItemVariant }
+					isDisabled={ isDisabled }
+					productVariant={ productVariant }
+				/>
+			) ) }
+		</TermOptions>
 	);
 };
