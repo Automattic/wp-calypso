@@ -59,6 +59,9 @@ export default function DesignPickerStep( props ) {
 	const useFeaturedPicksButtons =
 		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
 
+	// Override `showDesignPickerCategories` if we're in the `sell` intent; temporarily hide categories for sell intent
+	const shouldShowCategories = showDesignPickerCategories && 'sell' !== dependencies.intent;
+
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -114,10 +117,16 @@ export default function DesignPickerStep( props ) {
 		};
 	}, [ props.stepSectionName ] );
 
-	const { designs, featuredPicksDesigns } = useMemo( () => {
+	const { designs, featuredPicksDesigns, sellDesigns } = useMemo( () => {
+		/*
+		 * For the sell intent, temporarily filter by theme.slug since we only have a few themes;
+		 * Eventually we'd want to filter by categories.[category].slug === 'store'
+		 */
+		const eCommDesigns = [ 'attar', 'dorna', 'hari', 'marl', 'winkel' ];
 		return {
 			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
 			featuredPicksDesigns: allThemes.filter( ( theme ) => theme.is_featured_picks ),
+			sellDesigns: allThemes.filter( ( theme ) => eCommDesigns.includes( theme.slug ) ),
 		};
 	}, [ allThemes ] );
 
@@ -215,21 +224,26 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function renderDesignPicker() {
+		let showDesigns = useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ];
+		//Temporarily show only e-commerce themes for the sell intent
+		if ( 'sell' === dependencies.intent ) {
+			showDesigns = sellDesigns;
+		}
 		return (
 			<>
 				<DesignPicker
-					designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+					designs={ showDesigns }
 					theme={ isReskinned ? 'light' : 'dark' }
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
 					onPreview={ previewDesign }
 					onUpgrade={ upgradePlan }
 					className={ classnames( {
-						'design-picker-step__has-categories': showDesignPickerCategories,
+						'design-picker-step__has-categories': shouldShowCategories,
 					} ) }
 					highResThumbnails
 					premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
-					categorization={ showDesignPickerCategories ? categorization : undefined }
+					categorization={ shouldShowCategories ? categorization : undefined }
 					recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
 					categoriesHeading={
 						<FormattedHeader
@@ -300,7 +314,7 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function headerText() {
-		if ( showDesignPickerCategories ) {
+		if ( shouldShowCategories ) {
 			return translate( 'Themes' );
 		}
 
@@ -308,7 +322,7 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function subHeaderText() {
-		if ( ! showDesignPickerCategories ) {
+		if ( ! shouldShowCategories ) {
 			return translate(
 				'Pick your favorite homepage layout. You can customize or change it later.'
 			);
@@ -374,7 +388,7 @@ export default function DesignPickerStep( props ) {
 		);
 	}
 
-	const headerProps = showDesignPickerCategories
+	const headerProps = shouldShowCategories
 		? { hideFormattedHeader: true }
 		: {
 				fallbackHeaderText: headerText(),
