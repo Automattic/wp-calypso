@@ -29,7 +29,6 @@ import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-act
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -232,7 +231,7 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const bodyClass = [ 'font-smoothing-antialiased' ];
 
-			if ( this.props.isNavUnificationEnabled && ! config.isEnabled( 'jetpack-cloud' ) ) {
+			if ( ! config.isEnabled( 'jetpack-cloud' ) ) {
 				// Jetpack cloud hasn't yet aligned with WPCOM.
 				bodyClass.push( 'is-nav-unification' );
 			}
@@ -250,7 +249,7 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<SidebarScrollSynchronizer enabled={ this.props.isNavUnificationEnabled } />
+				<SidebarScrollSynchronizer />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
@@ -400,7 +399,6 @@ export default withCurrentRoute(
 			// authorization, it would remove the newly connected site that has been fetched separately.
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
-			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
 		};
 	} )( Layout )
