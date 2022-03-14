@@ -19,6 +19,7 @@ import {
 	getTitanSubscriptionId,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
+import { isSuspendedAccount } from 'calypso/lib/titan/is-suspended-account';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 
 export function getNumberOfMailboxesText( domain ) {
@@ -143,6 +144,15 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 		// Check for unused mailboxes
 		if ( emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
 			return errorStatus;
+		}
+
+		// Check for suspended account
+		if ( isSuspendedAccount( domain ) ) {
+			return {
+				statusClass: 'error',
+				icon: 'info',
+				text: translate( 'Suspended account' ),
+			};
 		}
 
 		// Fallback logic if we don't have an emailAccount - this will initially be the case for the email home page
