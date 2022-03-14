@@ -1,4 +1,4 @@
-import { isBusiness, isEcommerce, isEnterprise } from '@automattic/calypso-products';
+import { isBusiness, isEcommerce, isEnterprise, isManaged } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
@@ -126,7 +126,8 @@ const MarketplacePluginInstall = ( {
 	useEffect( () => {
 		supportsAtomicUpgrade.current =
 			selectedSite?.plan &&
-			( isBusiness( selectedSite.plan ) ||
+			( isManaged( selectedSite.plan ) ||
+				isBusiness( selectedSite.plan ) ||
 				isEnterprise( selectedSite.plan ) ||
 				isEcommerce( selectedSite.plan ) );
 	}, [ selectedSite ] );

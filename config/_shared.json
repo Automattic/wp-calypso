@@ -200,6 +200,7 @@
 		"business-monthly",
 		"ecommerce",
 		"ecommerce-monthly",
+		"managed",
 		"domain"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"

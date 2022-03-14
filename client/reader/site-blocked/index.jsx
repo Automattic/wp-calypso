@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordTrack as recordReaderTrack } from 'calypso/reader/stats';
 import { bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -36,10 +35,6 @@ class SiteBlocked extends Component {
 
 		return (
 			<ReaderMain>
-				<MobileBackToSidebar>
-					<h1>{ translate( 'Streams' ) }</h1>
-				</MobileBackToSidebar>
-
 				<EmptyContent
 					action={ action }
 					title={ translate( 'You have blocked this site.' ) }

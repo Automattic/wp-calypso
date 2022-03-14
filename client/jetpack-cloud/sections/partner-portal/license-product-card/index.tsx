@@ -1,39 +1,61 @@
 import { Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
-import { ReactElement } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { ReactElement, useCallback } from 'react';
+import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import './style.scss';
 
-export default function LicenseProductCard( props: any ): ReactElement {
-	const {
-		product: { label },
-		orderIndex,
-	} = props;
-	const productTitle = label.replace( 'Jetpack ', '' ).replace( '(', '' ).replace( ')', '' );
+interface Props {
+	tabIndex: number;
+	product: APIProductFamilyProduct;
+	isSelected: boolean;
+	onSelectProduct: ( value: string ) => void | null;
+}
 
-	function handleKeyDown( e: any ) {
-		if ( 32 === e.keyCode ) {
-			props.onSelectProduct( props.product );
-		}
-	}
+export default function LicenseProductCard( props: Props ): ReactElement {
+	const { tabIndex, product, isSelected, onSelectProduct } = props;
+	const productTitle = product.name.replace( 'Jetpack ', '' ).replace( '(', '' ).replace( ')', '' );
+	const translate = useTranslate();
+
+	const onSelect = useCallback( () => {
+		onSelectProduct?.( product.slug );
+	}, [ onSelectProduct ] );
+
+	const onKeyDown = useCallback(
+		( e: any ) => {
+			// Spacebar
+			if ( 32 === e.keyCode ) {
+				onSelect();
+			}
+		},
+		[ onSelect ]
+	);
 
 	return (
 		<div
-			onClick={ () => props.onSelectProduct( props.product ) }
-			onKeyDown={ ( e ) => handleKeyDown( e ) }
+			onClick={ onSelect }
+			onKeyDown={ onKeyDown }
 			role="radio"
-			tabIndex={ orderIndex + 100 }
-			aria-checked={ props.isSelected }
+			tabIndex={ tabIndex }
+			aria-checked={ isSelected }
 			className={ classNames( {
 				'license-product-card': true,
-				selected: props.isSelected,
+				selected: isSelected,
 			} ) }
 		>
 			<div className="license-product-card__inner">
 				<div className="license-product-card__details">
-					<div className="license-product-card__top">
-						<h3 className="license-product-card__title">{ productTitle }</h3>
-						<div className="license-product-card__radio">
-							{ props.isSelected && <Gridicon icon="checkmark" /> }
+					<h3 className="license-product-card__title">{ productTitle }</h3>
+					<div className="license-product-card__radio">
+						{ isSelected && <Gridicon icon="checkmark" /> }
+					</div>
+					<div className="license-product-card__pricing">
+						<div className="license-product-card__price">
+							{ formatCurrency( product.amount, product.currency ) }
+						</div>
+						<div className="license-product-card__price-interval">
+							{ translate( '/per site per month' ) }
 						</div>
 					</div>
 				</div>
@@ -41,3 +63,7 @@ export default function LicenseProductCard( props: any ): ReactElement {
 		</div>
 	);
 }
+
+LicenseProductCard.defaultProps = {
+	onSelectProduct: null,
+};

@@ -5,9 +5,8 @@ import eye from 'calypso/assets/images/marketplace/eye.svg';
 import support from 'calypso/assets/images/marketplace/support.svg';
 import wooLogo from 'calypso/assets/images/marketplace/woo-logo.svg';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
-import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
+import { isAnnualPlanOrUpgradeableAnnualPeriod } from 'calypso/state/marketplace/selectors';
 
 const PluginDetailsSidebar = ( {
 	plugin: {
@@ -19,8 +18,8 @@ const PluginDetailsSidebar = ( {
 	},
 } ) => {
 	const translate = useTranslate();
-	const billingPeriod = useSelector( getBillingInterval );
-	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
+
+	const isAnnualPlan = useSelector( isAnnualPlanOrUpgradeableAnnualPeriod );
 
 	if ( ! isMarketplaceProduct ) {
 		return (
@@ -97,7 +96,7 @@ const PluginDetailsSidebar = ( {
 				icon={ { src: support } }
 				title={ translate( 'Support' ) }
 				description={
-					isAnnualPeriod
+					isAnnualPlan
 						? translate( 'Live chat support 24x7' )
 						: translate( 'Unlimited Email Support' )
 				}

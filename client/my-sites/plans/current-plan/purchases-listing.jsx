@@ -34,6 +34,7 @@ import {
 } from 'calypso/lib/purchases';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
+import { isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
@@ -173,7 +174,7 @@ class PurchasesListing extends Component {
 	}
 
 	getActionButton( purchase ) {
-		const { selectedSiteSlug, translate, currentUserId } = this.props;
+		const { selectedSiteSlug, translate, currentUserId, eligibleForManagedPlan } = this.props;
 
 		// No action button if there's no site selected.
 		if ( ! selectedSiteSlug || ! purchase ) {
@@ -203,7 +204,13 @@ class PurchasesListing extends Component {
 			label = translate( 'Manage subscription' );
 		}
 
-		if ( purchase.autoRenew && ! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
+		const isLocked = this.props.purchases.some( ( p ) => p.id === purchase.id && p.isLocked );
+
+		if (
+			purchase.autoRenew &&
+			! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) &&
+			! isLocked
+		) {
 			label = translate( 'Renew now' );
 		}
 
@@ -221,7 +228,7 @@ class PurchasesListing extends Component {
 						: '#'
 				}
 				disabled={ ! userIsPurchaseOwner }
-				compact
+				compact={ ! eligibleForManagedPlan }
 			>
 				{ label }
 				&nbsp;
@@ -327,13 +334,15 @@ class PurchasesListing extends Component {
 	}
 
 	renderPlan() {
-		const { currentPlan, isPlanExpiring, translate } = this.props;
+		const { currentPlan, isPlanExpiring, translate, eligibleForManagedPlan } = this.props;
 
 		return (
 			<Fragment>
-				<Card compact>
-					<strong>{ translate( 'My Plan' ) }</strong>
-				</Card>
+				{ ! eligibleForManagedPlan && (
+					<Card compact>
+						<strong>{ translate( 'My Plan' ) }</strong>
+					</Card>
+				) }
 				{ this.isLoading() ? (
 					<MyPlanCard isPlaceholder />
 				) : (
@@ -417,5 +426,6 @@ export default connect( ( state ) => {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		isCloudEligible: isJetpackCloudEligible( state, selectedSiteId ),
 		currentUserId: getCurrentUserId( state ),
+		eligibleForManagedPlan: isEligibleForManagedPlan( state, selectedSiteId ),
 	};
 } )( localize( withLocalizedMoment( PurchasesListing ) ) );

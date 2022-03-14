@@ -7,7 +7,6 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
-import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -59,7 +58,6 @@ class ReaderStream extends Component {
 		className: PropTypes.string,
 		showDefaultEmptyContentIfMissing: PropTypes.bool,
 		showPrimaryFollowButtonOnCards: PropTypes.bool,
-		showMobileBackToSidebar: PropTypes.bool,
 		placeholderFactory: PropTypes.func,
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
@@ -79,7 +77,6 @@ class ReaderStream extends Component {
 		className: '',
 		showDefaultEmptyContentIfMissing: true,
 		showPrimaryFollowButtonOnCards: true,
-		showMobileBackToSidebar: true,
 		isDiscoverStream: false,
 		shouldCombineCards: true,
 		isMain: true,
@@ -464,11 +461,6 @@ class ReaderStream extends Component {
 		return (
 			<TopLevel className={ classnames( 'following', this.props.className ) }>
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
-				{ this.props.isMain && this.props.showMobileBackToSidebar && (
-					<MobileBackToSidebar>
-						<h1>{ this.props.translate( 'Streams' ) }</h1>
-					</MobileBackToSidebar>
-				) }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
 				{ this.props.children }

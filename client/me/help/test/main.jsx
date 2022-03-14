@@ -26,7 +26,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( '../help-unverified-warning', () => 'HelpUnverifiedWarning' );
 jest.mock( 'calypso/components/main', () => 'Main' );
 jest.mock( 'calypso/components/section-header', () => 'SectionHeader' );
-jest.mock( 'calypso/me/sidebar-navigation', () => 'MeSidebarNavigation' );
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserId: jest.fn( () => 12 ),
 	isCurrentUserEmailVerified: jest.fn( () => true ),

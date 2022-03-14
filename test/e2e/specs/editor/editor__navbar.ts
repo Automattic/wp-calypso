@@ -15,6 +15,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 	beforeAll( async () => {
 		page = await browser.newPage();
 		gutenbergEditorPage = new GutenbergEditorPage( page );
+
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );
 	} );
@@ -24,7 +25,6 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 	} );
 
 	it( 'Return to Calypso dashboard', async function () {
-		const gutenbergEditorPage = new GutenbergEditorPage( page );
-		await gutenbergEditorPage.returnToCalypsoDashboard();
+		await gutenbergEditorPage.exitEditor();
 	} );
 } );

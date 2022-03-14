@@ -4,13 +4,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	nextGuidedTourStep,
-	quitGuidedTour,
-	resetGuidedToursHistory,
-} from 'calypso/state/guided-tours/actions';
+import { nextGuidedTourStep, quitGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
-import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getLastAction } from 'calypso/state/ui/action-log/selectors';
 import { getSectionName, isSectionLoading } from 'calypso/state/ui/selectors';
 import AllTours from './all-tours';
@@ -19,13 +14,6 @@ import './style.scss';
 class GuidedToursComponent extends Component {
 	shouldComponentUpdate( nextProps ) {
 		return this.props.tourState !== nextProps.tourState;
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requestedTour === 'reset' && this.props.requestedTour !== 'reset' ) {
-			this.props.dispatch( resetGuidedToursHistory() );
-		}
 	}
 
 	start = ( { step, tour, tourVersion: tour_version } ) => {
@@ -107,6 +95,5 @@ export default connect( ( state ) => {
 		tourState,
 		isValid: getTourWhenState( state ),
 		lastAction: getLastAction( state ),
-		requestedTour: getInitialQueryArguments( state ).tour,
 	};
 } )( GuidedToursComponent );

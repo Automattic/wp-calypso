@@ -10,10 +10,13 @@
 		transition: all 0.2s ease-in-out;
 	}
 
-	&:hover, &:active {
+	&:hover, &:active, &:focus {
 		background-color: var( --studio-white );
 		border-color: var( --studio-white );
 		box-shadow: 0 0 40px rgba( 0, 0, 0, 0.08 );
+	}
+	&:focus {
+		outline: none;
 	}
 }
 

@@ -82,8 +82,6 @@ describe( 'CompositeCheckout', () => {
 			},
 			temporary: false,
 			allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
-			savings_total_integer: 0,
-			savings_total_display: 'R$0',
 			total_tax_integer: 700,
 			total_tax_display: 'R$7',
 			total_cost_integer: 15600,

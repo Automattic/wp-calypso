@@ -6,4 +6,5 @@ module.exports = {
 		'@testing-library/jest-dom/extend-expect',
 		'@automattic/calypso-build/jest/mocks/match-media',
 	],
+	transformIgnorePatterns: [ 'node_modules/(?!gridicons)(?!.*\\.svg)' ],
 };

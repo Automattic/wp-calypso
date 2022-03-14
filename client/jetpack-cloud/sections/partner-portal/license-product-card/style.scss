@@ -4,6 +4,10 @@
 .license-product-card {
 	width: 100%;
 
+	@include break-xlarge {
+		width: 50%;
+	}
+
 	@include break-wide {
 		width: 33.33%;
 	}
@@ -12,43 +16,79 @@
 .license-product-card__inner {
 	margin: 0.5rem 0;
 	padding: 1.5rem;
-	border: 1px solid #ddd;
-	border-radius: 2px;
+	border: 1px solid var( --studio-gray-10 );
+	border-radius: 4px;
 	cursor: pointer;
 	user-select: none;
 
-	@include break-wide {
+	@include break-xlarge {
 		margin: 0.5rem;
+		padding: 1.75rem;
 	}
 }
 
 .license-product-card.selected .license-product-card__inner {
 	border: 1px solid #fff;
 	background: #fff;
-	box-shadow: 0 0 12px #ddd;
+	box-shadow: 0 0 40px rgba( 0, 0, 0, 0.08 );
+}
+
+.license-product-card__details {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: stretch;
+	align-items: center;
 }
 
 .license-product-card__title {
+	flex: 1 0 auto;
+	white-space: nowrap;
 	font-size: 1.5rem;
-	margin-bottom: 1rem;
-	color: #444;
-	display: inline-block;
+	line-height: 1.5rem;
+	color: var( --studio-gray-80 );
+}
+
+@mixin license-product-card-block__radio {
+	order: initial;
+	margin-right: 0;
+}
+
+@mixin license-product-card-line__radio {
+	order: -1;
+	margin-right: 1rem;
 }
 
 .license-product-card__radio {
-	border: 2px solid #444;
-	width: 16px;
-	height: 16px;
-	display: inline-block;
-	float: right;
-	border-radius: 10px; /* stylelint-disable-line */
+	width: 20px;
+	height: 20px;
+	border: 2px solid var( --studio-black );
+	border-radius: 12px; /* stylelint-disable-line */
+	text-align: center;
+
+	@include license-product-card-block__radio;
+
+	@include break-mobile {
+		@include license-product-card-line__radio;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		@include license-product-card-block__radio;
+	}
+
+	@include break-medium {
+		@include license-product-card-line__radio;
+	}
+
+	@include break-xlarge {
+		@include license-product-card-block__radio;
+	}
 }
 
 .license-product-card__radio .gridicon {
 	color: #fff;
 	position: relative;
-	top: -4px;
-	left: 1px;
+	top: -2px;
+	left: 0;
 	width: 14px;
 }
 
@@ -57,12 +97,58 @@
 	background: var( --studio-jetpack-green-50 );
 }
 
-/*
- * This is currently not being used, but should remain because it will be
- * added back in when we show prices for licenses.
- */
-p.license-product-card__text {
+@mixin license-product-card-block__pricing {
+	flex-basis: 100%;
+	margin: 1rem 0 0;
+	text-align: left;
+}
+
+@mixin license-product-card-line__pricing {
+	flex-basis: auto;
+	margin: 0 0 0 1rem;
+	text-align: right;
+}
+
+.license-product-card__pricing {
+	white-space: nowrap;
+	@include license-product-card-block__pricing;
+
+	@include break-mobile {
+		@include license-product-card-line__pricing;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		@include license-product-card-block__pricing;
+	}
+
+	@include break-medium {
+		@include license-product-card-line__pricing;
+	}
+
+	@include break-xlarge {
+		@include license-product-card-block__pricing;
+	}
+}
+
+.license-product-card__price {
+	margin-bottom: 0.25rem;
+	font-size: 1.25rem;
+	line-height: 1.5rem;
+	font-weight: 600;
+	color: var( --studio-gray-80 );
+
+	@include break-xlarge {
+		margin-bottom: 0.5rem;
+		font-size: 1.5rem;
+		line-height: 1.75rem;
+		font-weight: 700;
+		color: var( --studio-black );
+	}
+}
+
+.license-product-card__price-interval {
 	font-size: 0.75rem;
-	color: #777;
-	margin-bottom: 0;
+	line-height: 0.875rem;
+	font-weight: 400;
+	color: var( --studio-gray-60 );
 }

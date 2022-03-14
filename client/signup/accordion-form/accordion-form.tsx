@@ -19,6 +19,7 @@ interface AccordionFormProps< T > {
 	formValuesInitialState: T;
 	updateFormValues?: ( formValues: T ) => void;
 	onErrorUpdates?: ( errors: ValidationErrors ) => void;
+	blockNavigation?: boolean;
 }
 
 export default function AccordionForm< T >( {
@@ -30,6 +31,7 @@ export default function AccordionForm< T >( {
 	onSubmit,
 	generatedSections,
 	onErrorUpdates,
+	blockNavigation,
 }: AccordionFormProps< T > ) {
 	const translate = useTranslate();
 	// Initialize local state with the values from the redux store
@@ -131,6 +133,8 @@ export default function AccordionForm< T >( {
 					isTouched={ isSectionAtIndexTouched[ `${ index }` ] }
 					onNext={ () => onNext( section.validate ) }
 					onOpen={ () => onOpen( index ) }
+					blockNavigation={ blockNavigation }
+					showSubmit={ index === sections.length - 1 }
 				/>
 			) ) }
 		</>

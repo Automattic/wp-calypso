@@ -6,14 +6,17 @@ import { AccordionSectionProps } from './types';
 interface AccordionFormSectionProps< T > extends AccordionSectionProps< T > {
 	isExpanded: boolean;
 	isTouched: boolean;
+	showSubmit: boolean;
 	onOpen: () => void;
-	onNext: ( arg0: object ) => void;
+	onNext: () => void;
+	blockNavigation?: boolean;
 }
 
 interface SectionHeaderProps {
 	isExpanded: boolean;
 	isTouched: boolean;
 	onClick: () => void;
+	disabled?: boolean;
 }
 
 const Section = styled.div`
@@ -24,7 +27,7 @@ const Section = styled.div`
 const SectionHeader = styled.div< SectionHeaderProps >`
 	align-items: center;
 	display: flex;
-	cursor: pointer;
+	cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
 	font-weight: 500;
 	font-size: ${ ( props ) => ( props.isExpanded ? '20px' : '16px' ) };
 	line-height: 24px;
@@ -50,12 +53,13 @@ const ButtonsContainer = styled.div`
 	gap: 24px;
 `;
 
-const SkipLink = styled.a`
-	cursor: pointer;
+const SkipLink = styled.a< { disabled?: boolean } >`
 	font-size: 14px;
 	line-height: 20px;
 	color: var( --studio-gray-60 );
 	text-decoration: none;
+	cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
+	pointer-events: ${ ( props ) => ( props.disabled ? 'none' : 'auto' ) };
 `;
 
 const RequiredLabel = styled.span`
@@ -98,7 +102,8 @@ export default function AccordionFormSection< T >( props: AccordionFormSectionPr
 			<SectionHeader
 				isExpanded={ props.isExpanded }
 				isTouched={ props.isTouched }
-				onClick={ props.onOpen }
+				onClick={ () => ( props.blockNavigation ? null : props.onOpen() ) }
+				disabled={ props.blockNavigation }
 			>
 				<span>{ props.title }</span>
 				{ props.isExpanded && ! props.showSkip && (
@@ -110,12 +115,21 @@ export default function AccordionFormSection< T >( props: AccordionFormSectionPr
 				<SectionContent>
 					{ props.component ? props.component : props.children }
 					<ButtonsContainer>
-						<NextButton onClick={ props.onNext }>
-							{ translate( 'Next' ) }
-							<Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } />
+						<NextButton
+							primary={ props.showSubmit }
+							onClick={ props.onNext }
+							disabled={ props.blockNavigation }
+						>
+							{ props.showSubmit ? translate( 'Submit' ) : translate( 'Next' ) }
+							{ ! props.showSubmit && <Gridicon icon={ isRTL ? 'arrow-left' : 'arrow-right' } /> }
 						</NextButton>
-						{ props.showSkip && (
-							<SkipLink onClick={ props.onNext }>{ translate( 'Skip' ) }</SkipLink>
+						{ props.showSkip && ! props.showSubmit && (
+							<SkipLink
+								disabled={ props.blockNavigation }
+								onClick={ () => ( props.blockNavigation ? null : props.onNext() ) }
+							>
+								{ translate( 'Skip' ) }
+							</SkipLink>
 						) }
 					</ButtonsContainer>
 				</SectionContent>

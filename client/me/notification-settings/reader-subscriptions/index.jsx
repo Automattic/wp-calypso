@@ -20,7 +20,6 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import Navigation from 'calypso/me/notification-settings/navigation';
 import ReauthRequired from 'calypso/me/reauth-required';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class NotificationSubscriptions extends Component {
@@ -62,7 +61,6 @@ class NotificationSubscriptions extends Component {
 					path="/me/notifications/subscriptions"
 					title="Me > Notifications > Subscriptions Delivery"
 				/>
-				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
 				<FormattedHeader

@@ -8,7 +8,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
 import Cloudflare from 'calypso/my-sites/site-settings/cloudflare';
@@ -54,7 +53,6 @@ class SiteSettingsPerformance extends Component {
 			<Main className="settings-performance site-settings site-settings__performance-settings">
 				<DocumentHead title={ translate( 'Performance Settings' ) } />
 				<JetpackDevModeNotice />
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="settings-performance__page-heading"

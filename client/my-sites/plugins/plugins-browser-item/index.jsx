@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
@@ -13,10 +14,10 @@ import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
-import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
@@ -189,21 +190,39 @@ const InstalledInOrPricing = ( {
 	currentSites,
 } ) => {
 	const translate = useTranslate();
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isPluginAtive = useSelector( ( state ) =>
+		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
+	)?.active;
+
+	let checkmarkColorClass = 'checkmark--active';
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
+		/* eslint-disable wpcalypso/jsx-gridicon-size */
+		if ( selectedSiteId ) {
+			checkmarkColorClass = isPluginAtive ? 'checkmark--active' : 'checkmark--inactive';
+		}
 		return (
-			/* eslint-disable wpcalypso/jsx-gridicon-size */
-			<div className="plugins-browser-item__installed">
-				<Gridicon icon="checkmark" size={ 14 } />
-				{ isWpcomPreinstalled || currentSites.length === 1
-					? translate( 'Installed' )
-					: translate( 'Installed on %d site', 'Installed on %d sites', {
-							args: [ sitesWithPlugin.length ],
-							count: sitesWithPlugin.length,
-					  } ) }
+			<div className="plugins-browser-item__installed-and-active-container">
+				<div className="plugins-browser-item__installed ">
+					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
+					{ isWpcomPreinstalled || currentSites?.length === 1
+						? translate( 'Installed' )
+						: translate( 'Installed on %d site', 'Installed on %d sites', {
+								args: [ sitesWithPlugin.length ],
+								count: sitesWithPlugin.length,
+						  } ) }
+				</div>
+				{ selectedSiteId && (
+					<div className="plugins-browser-item__active">
+						<Badge type={ isPluginAtive ? 'success' : 'info' }>
+							{ isPluginAtive ? translate( 'Active' ) : translate( 'Inactive' ) }
+						</Badge>
+					</div>
+				) }
 			</div>
-			/* eslint-enable wpcalypso/jsx-gridicon-size */
 		);
+		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	}
 
 	return (

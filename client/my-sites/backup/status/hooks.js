@@ -175,6 +175,9 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 		successOnly: true,
 	} );
 
+	// This is the last attempt irrespective of date
+	const lastBackupAttempt = useLatestBackupAttempt( siteId );
+
 	const lastBackupBeforeDate = useLatestBackupAttempt( siteId, {
 		before: moment( selectedDate ).startOf( 'day' ),
 		successOnly: true,
@@ -217,6 +220,7 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 			rawDeltas.isLoading,
 		mostRecentBackupEver: mostRecentBackupEver.backupAttempt,
 		lastBackupBeforeDate: lastBackupBeforeDate.backupAttempt,
+		lastBackupAttempt: lastBackupAttempt.backupAttempt,
 		lastBackupAttemptOnDate,
 		lastSuccessfulBackupOnDate,
 		backupAttemptsOnDate,

@@ -145,15 +145,22 @@ export default function DesignPickerStep( props ) {
 				result.sort = sortBlogToTop;
 				break;
 			case 'sell':
-				// @TODO: This should be 'ecommerce' once we have some themes with that slug.
-				result.defaultSelection = 'business';
-				result.sort = sortEcommerceToTop;
+				result.defaultSelection = 'store';
+				result.sort = sortStoreToTop;
 				break;
 			default:
 				result.defaultSelection = null;
 				result.sort = sortBlogToTop;
 				break;
 		}
+
+		// This is a temporary change until DIFM Lite switches to the full WPCOM theme catalog.
+		// We'll then use the 'difm' intent here.
+		if ( props.useDIFMThemes ) {
+			result.defaultSelection = null;
+			result.sort = sortLocalServicesToTop;
+		}
+
 		return result;
 	};
 	const categorization = useCategorization( designs, getCategorizationOptionsForStep() );
@@ -409,15 +416,25 @@ function sortBlogToTop( a, b ) {
 	}
 	return 0;
 }
-// Ensures Ecommerce category appears at the top of the design category list
+// Ensures store category appears at the top of the design category list
 // (directly below the All Themes category).
-// @TODO: This should be 'ecommerce' once we have some themes with that slug.
-function sortEcommerceToTop( a, b ) {
+function sortStoreToTop( a, b ) {
 	if ( a.slug === b.slug ) {
 		return 0;
-	} else if ( a.slug === 'business' ) {
+	} else if ( a.slug === 'store' ) {
 		return -1;
-	} else if ( b.slug === 'business' ) {
+	} else if ( b.slug === 'store' ) {
+		return 1;
+	}
+	return 0;
+}
+
+function sortLocalServicesToTop( a, b ) {
+	if ( a.slug === b.slug ) {
+		return 0;
+	} else if ( a.slug === 'local-services' ) {
+		return -1;
+	} else if ( b.slug === 'local-services' ) {
 		return 1;
 	}
 	return 0;

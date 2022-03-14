@@ -76,6 +76,8 @@ export interface APIProductFamilyProduct {
 	name: string;
 	slug: string;
 	product_id: number;
+	currency: string;
+	amount: number;
 }
 
 export interface APIProductFamily {

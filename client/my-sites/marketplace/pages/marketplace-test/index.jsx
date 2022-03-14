@@ -14,7 +14,6 @@ import Notice from 'calypso/components/notice';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	fetchAutomatedTransferStatus,
 	requestEligibility,
@@ -116,7 +115,6 @@ export default function MarketplaceTest() {
 	return (
 		<Container>
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
-			<SidebarNavigation />
 			<Card key="wpcom-plugins">
 				<PluginsBrowserList
 					plugins={ data }

@@ -1,4 +1,19 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
+@import '../mixins.scss';
+
+.main.assign-license {
+	// Make sure there's sufficient space for the floating action bar on mobile.
+	padding-bottom: 148px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-bottom: 88px;
+	}
+
+	@include breakpoint-deprecated( '>1400px' ) {
+		padding-bottom: 0;
+	}
+}
 
 .assign-license-form {
 
@@ -25,21 +40,54 @@
 			margin: 0 10px;
 		}
 	}
+
+	&__pagination {
+		margin: 64px 0;
+	}
 }
 
 .assign-license-form__top {
 	display: flex;
+	flex-wrap: nowrap;
 	justify-content: space-between;
+	align-items: center;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-wrap: wrap;
+	}
 }
 
-.assign-license-form__top > div {
-	align-self: flex-end;
-	margin-bottom: 0;
-}
+.assign-license-form__controls {
+	@include licensing-portal-bottom-action-bar;
 
-.assign-license-form__top {
-	margin-bottom: 1rem;
-	margin-top: -1.5rem;
+	display: flex;
+	flex-direction: column-reverse;
+	justify-content: stretch;
+	align-items: center;
+	flex-wrap: wrap;
+	flex-grow: 1;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-direction: row;
+		flex-grow: 1;
+		justify-content: flex-end;
+		margin-bottom: 1rem;
+
+		.button {
+			flex-grow: 1;
+		}
+	}
+
+	@include break-medium {
+		.button {
+			flex-grow: 0;
+		}
+	}
+
+	@include break-xlarge {
+		flex-direction: row;
+		flex-grow: 0;
+	}
 }
 
 .assign-license-form__bottom {
@@ -48,10 +96,16 @@
 }
 
 p.assign-license-form__description {
-	margin-bottom: 0;
+	flex: 1 0 100%;
 	align-self: flex-end;
+	margin: 0 0 1rem;
 	font-size: 0.875rem;
 	color: #333;
+
+	@include break-medium {
+		flex: 1 1 auto;
+		margin-right: 1rem;
+	}
 }
 
 .assign-license-form__site-card {
@@ -67,7 +121,25 @@ p.assign-license-form__description {
 }
 
 .assign-license-form__assign-later.button {
-	margin-right: 1rem;
+	margin-right: 0;
 	font-weight: 700;
 	text-decoration: underline;
+	white-space: nowrap;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-right: 1rem;
+	}
+}
+
+.assign-license-form__assign-now.button {
+	margin-bottom: 0.5rem;
+	white-space: nowrap;
+
+	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
+	border-width: 1.5px !important;
+	border-color: transparent;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: 0;
+	}
 }

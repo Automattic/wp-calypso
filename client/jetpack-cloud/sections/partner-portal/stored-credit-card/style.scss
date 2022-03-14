@@ -1,4 +1,8 @@
 .stored-credit-card {
+	&.delete-in-progress {
+		opacity: 0.6;
+	}
+
 	display: flex;
 	flex-wrap: wrap;
 	width: 270px;
@@ -6,6 +10,28 @@
 	background: var( --studio-white );
 	border-radius: 2px;
 	padding: 1rem;
+}
+
+.stored-credit-card-loading {
+	display: flex;
+	align-content: space-between;
+
+	&__content {
+		width: 100%;
+		height: 27px;
+
+		@include placeholder( --color-neutral-10 );
+	}
+
+	&__bottom {
+		width: 100%;
+
+		> div {
+			&:first-child {
+				margin-bottom: 1rem;
+			}
+		}
+	}
 }
 
 .stored-credit-card__primary {
@@ -20,9 +46,29 @@
 
 .stored-credit-card__header {
 	display: flex;
-	justify-content: space-between;
-	flex-grow: 1;
-	margin-bottom: auto;
+	align-items: flex-start;
+	flex-basis: 100%;
+}
+
+.stored-credit-card__labels {
+	display: flex;
+
+	> div {
+		&:first-child {
+			margin-left: 0;
+		}
+
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+}
+
+.stored-credit-card__actions {
+	margin-left: auto;
+
+	.button.ellipsis-menu__toggle {
+		padding: 0;
+	}
 }
 
 .stored-credit-card__payment-logo svg {

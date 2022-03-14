@@ -32,6 +32,16 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	}
 }
 
+.upsell-nudge.is-jetpack {
+	margin-top: 51px;
+	margin-bottom: -20px;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		margin-top: 86px;
+		margin-bottom: -50px;
+	}
+}
+
 .upsell-nudge {
 	margin-top: 16px;
 
@@ -259,4 +269,8 @@ body.is-section-plugins:not( .is-nav-unification ) {
 	@media screen and ( max-width: 660px ) {
 		padding: 0 24px;
 	}
+}
+
+body.is-section-plugins header .select-dropdown__item {
+	padding: 0 0 0 16px !important;
 }

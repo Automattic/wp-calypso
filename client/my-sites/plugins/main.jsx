@@ -18,7 +18,6 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlugins, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
@@ -52,8 +51,13 @@ export class PluginsMain extends Component {
 		};
 	}
 
-	componentDidUpdate() {
-		const { currentPlugins } = this.props;
+	componentDidUpdate( prevProps ) {
+		const {
+			currentPlugins,
+			hasJetpackSites: hasJpSites,
+			selectedSiteIsJetpack,
+			selectedSiteSlug,
+		} = this.props;
 
 		currentPlugins.map( ( plugin ) => {
 			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
@@ -61,20 +65,8 @@ export class PluginsMain extends Component {
 				this.props.wporgFetchPluginData( plugin.slug );
 			}
 		} );
-	}
 
-	componentDidMount() {
-		// Change the isMobile state when the size of the browser changes.
-		this.unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobile ) => {
-			this.setState( { isMobile } );
-		} );
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { hasJetpackSites: hasJpSites, selectedSiteIsJetpack, selectedSiteSlug } = nextProps;
-
-		if ( this.props.isRequestingSites && ! nextProps.isRequestingSites ) {
+		if ( prevProps.isRequestingSites && ! this.props.isRequestingSites ) {
 			// Selected site is not a Jetpack site
 			if ( selectedSiteSlug && ! selectedSiteIsJetpack ) {
 				page.redirect( `/plugins/${ selectedSiteSlug }` );
@@ -87,6 +79,13 @@ export class PluginsMain extends Component {
 				return;
 			}
 		}
+	}
+
+	componentDidMount() {
+		// Change the isMobile state when the size of the browser changes.
+		this.unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobile ) => {
+			this.setState( { isMobile } );
+		} );
 	}
 
 	getCurrentPlugins() {
@@ -437,7 +436,6 @@ export class PluginsMain extends Component {
 				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
 				<QueryJetpackPlugins siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
-				<SidebarNavigation />
 				<FixedNavigationHeader
 					className="plugins__page-heading"
 					navigationItems={ this.getNavigationItems() }

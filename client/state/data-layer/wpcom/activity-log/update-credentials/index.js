@@ -184,7 +184,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 		case 'invalid_credentials':
 			dispatchFailure(
 				i18n.translate(
-					"We couldn't connect to your site. Please verify your credentials and give it another try."
+					"We couldn't connect to your site. Please verify that your credentials are correct and ensure that your host is not blocking the connection."
 				)
 			);
 			break;

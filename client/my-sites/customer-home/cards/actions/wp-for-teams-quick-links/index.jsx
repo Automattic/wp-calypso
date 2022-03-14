@@ -8,7 +8,6 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
-import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import {
 	getSiteFrontPage,
 	getCustomizerUrl,
@@ -21,7 +20,6 @@ import '../quick-links/style.scss';
 
 export const QuickLinks = ( {
 	customizeUrl,
-	showCustomizer,
 	menusUrl,
 	trackWritePostAction,
 	trackEditMenusAction,
@@ -61,24 +59,20 @@ export const QuickLinks = ( {
 						label={ translate( 'Write a post' ) }
 						materialIcon="edit"
 					/>
-					{ showCustomizer && (
-						<>
-							<ActionBox
-								href={ menusUrl }
-								hideLinkIndicator
-								onClick={ trackEditMenusAction }
-								label={ translate( 'Edit menus' ) }
-								materialIcon="list"
-							/>
-							<ActionBox
-								href={ customizeUrl }
-								hideLinkIndicator
-								onClick={ trackCustomizeThemeAction }
-								label={ translate( 'Customize theme' ) }
-								materialIcon="palette"
-							/>
-						</>
-					) }
+					<ActionBox
+						href={ menusUrl }
+						hideLinkIndicator
+						onClick={ trackEditMenusAction }
+						label={ translate( 'Edit menus' ) }
+						materialIcon="list"
+					/>
+					<ActionBox
+						href={ customizeUrl }
+						hideLinkIndicator
+						onClick={ trackCustomizeThemeAction }
+						label={ translate( 'Customize theme' ) }
+						materialIcon="palette"
+					/>
 				</>
 			) }
 		</div>
@@ -156,7 +150,6 @@ const mapStateToProps = ( state ) => {
 		customizeUrl: getCustomizerUrl( state, siteId ),
 		menusUrl: getCustomizerUrl( state, siteId, 'menus' ),
 		isNewlyCreatedSite: isNewSite( state, siteId ),
-		showCustomizer: ! isSiteUsingLegacyFSE( state, siteId ),
 		isP2Hub,
 		siteSlug,
 		isStaticHomePage,

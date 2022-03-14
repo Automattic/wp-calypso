@@ -11,7 +11,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import wpcom from 'calypso/lib/wp';
 import CustomizerLoadingPanel from 'calypso/my-sites/customize/loading-panel';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { trackClick } from 'calypso/my-sites/themes/helpers';
 import getMenusUrl from 'calypso/state/selectors/get-menus-url';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -312,7 +311,6 @@ class Customize extends Component {
 		return (
 			<div className="main main-column customize customize__main-error" role="main">
 				<PageViewTracker path="/customize/:site" title="Customizer" />
-				<SidebarNavigation />
 				<EmptyContent
 					title={ error.title }
 					line={ error.line }

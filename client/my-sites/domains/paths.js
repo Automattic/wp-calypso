@@ -133,10 +133,6 @@ export function domainManagementEmail( siteName, domainName ) {
 	return path;
 }
 
-export function domainManagementEmailForwarding( siteName, domainName ) {
-	return domainManagementEditBase( siteName, domainName, 'email-forwarding' );
-}
-
 /**
  * @param {string} siteName
  * @param {string} domainName

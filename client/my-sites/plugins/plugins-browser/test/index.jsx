@@ -11,6 +11,11 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/blocks/upsell-nudge', () => 'upsell-nudge' );
 
+let mockPlugins = [];
+jest.mock( 'calypso/data/marketplace/use-wporg-plugin-query', () => ( {
+	useWPORGPlugins: jest.fn( () => ( { data: { plugins: mockPlugins } } ) ),
+} ) );
+
 jest.mock( '@automattic/languages', () => [
 	{
 		value: 1,
@@ -47,6 +52,11 @@ const initialReduxState = {
 		wporg: {
 			lists: {},
 			fetchingLists: {},
+		},
+		installed: {
+			isRequesting: {},
+			plugins: {},
+			status: {},
 		},
 	},
 	ui: { selectedSiteId: 1 },
@@ -92,9 +102,8 @@ describe( 'Search view', () => {
 		expect( comp.find( 'NoResults' ).length ).toBe( 1 );
 	} );
 	test( 'should show plugin list when there are results', () => {
-		const comp = mountWithRedux( <PluginsBrowser { ...myProps } />, {
-			plugins: { wporg: { lists: { search: { searchterm: [ {} ] } } } },
-		} );
+		mockPlugins = [ {} ];
+		const comp = mountWithRedux( <PluginsBrowser { ...myProps } /> );
 		expect( comp.find( 'PluginsBrowserList' ).length ).toBe( 1 );
 	} );
 } );

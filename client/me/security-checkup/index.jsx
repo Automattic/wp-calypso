@@ -2,6 +2,8 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
@@ -9,7 +11,6 @@ import VerticalNav from 'calypso/components/vertical-nav';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import SecurityCheckupAccountEmail from './account-email';
 import SecurityCheckupAccountRecoveryEmail from './account-recovery-email';
 import SecurityCheckupAccountRecoveryPhone from './account-recovery-phone';
@@ -34,7 +35,9 @@ class SecurityCheckupComponent extends Component {
 			<Main wideLayout className="security security-checkup">
 				<PageViewTracker path={ path } title="Me > Security Checkup" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<MeSidebarNavigation />
+
+				<QueryAccountRecoverySettings />
+				<QueryUserSettings />
 
 				<DocumentHead title={ translate( 'Security' ) } />
 

@@ -22,13 +22,13 @@ export class PlanPrice extends Component {
 			translate,
 		} = this.props;
 
-		if ( ! currencyCode || ! rawPrice ) {
+		if ( ! currencyCode || ! ( typeof rawPrice === 'number' ) ) {
 			return null;
 		}
 
 		// "Normalize" the input price or price range.
 		const rawPriceRange = Array.isArray( rawPrice ) ? rawPrice.slice( 0, 2 ) : [ rawPrice ];
-		if ( rawPriceRange.includes( 0 ) ) {
+		if ( rawPrice !== 0 && rawPriceRange.includes( 0 ) ) {
 			return null;
 		}
 
@@ -128,6 +128,7 @@ PlanPrice.propTypes = {
 	taxText: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	displayPerMonthNotation: PropTypes.bool,
+	currencyFormatOptions: PropTypes.object,
 };
 
 PlanPrice.defaultProps = {

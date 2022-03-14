@@ -1,4 +1,3 @@
-import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import { TranslateResult } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import PlanPrice from 'calypso/my-sites/plan-price';
@@ -40,8 +39,6 @@ const Paid: React.FC< OwnProps > = ( {
 		);
 	}
 
-	const couponOriginalPrice = parseFloat( ( discountedPrice ?? originalPrice ).toFixed( 2 ) );
-
 	const renderDiscountedPrice = () => {
 		return (
 			<>
@@ -55,9 +52,7 @@ const Paid: React.FC< OwnProps > = ( {
 					<PlanPrice
 						original
 						className="display-price__original-price"
-						rawPrice={
-							( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
-						}
+						rawPrice={ originalPrice as number }
 						currencyCode={ currencyCode }
 					/>
 				</span>
@@ -70,18 +65,12 @@ const Paid: React.FC< OwnProps > = ( {
 
 	const renderNonDiscountedPrice = () => (
 		<span dir="ltr">
-			<PlanPrice
-				discounted
-				rawPrice={
-					( billingTerm === TERM_ANNUALLY ? originalPrice : couponOriginalPrice ) as number
-				}
-				currencyCode={ currencyCode }
-			/>
+			<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
 		</span>
 	);
 
 	const renderPrice = () =>
-		billingTerm === TERM_ANNUALLY ? renderDiscountedPrice() : renderNonDiscountedPrice();
+		finalPrice && finalPrice < originalPrice ? renderDiscountedPrice() : renderNonDiscountedPrice();
 
 	return (
 		<>

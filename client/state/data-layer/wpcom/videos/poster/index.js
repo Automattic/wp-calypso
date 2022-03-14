@@ -1,4 +1,7 @@
-import { VIDEO_EDITOR_UPDATE_POSTER } from 'calypso/state/action-types';
+import {
+	VIDEO_EDITOR_UPDATE_POSTER,
+	VIDEO_EDITOR_REFRESH_POSTER,
+} from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -11,12 +14,28 @@ import { receiveMedia } from 'calypso/state/media/actions';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
+// Internal action
+const refreshAction = ( videoId, meta ) => ( {
+	type: VIDEO_EDITOR_REFRESH_POSTER,
+	meta: meta,
+	videoId: videoId,
+} );
+
+const refresh = ( action ) => {
+	const params = {
+		apiVersion: '1.1',
+		method: 'GET',
+		path: `/videos/${ action.videoId }/poster`,
+	};
+	return http( params, action );
+};
+
 const fetch = ( action ) => {
 	if ( ! ( 'file' in action.params || 'atTime' in action.params ) ) {
 		return;
 	}
 
-	const { atTime, file } = action.params;
+	const { atTime, file, isMillisec } = action.params;
 	const params = Object.assign(
 		{
 			apiVersion: '1.1',
@@ -24,13 +43,25 @@ const fetch = ( action ) => {
 			path: `/videos/${ action.videoId }/poster`,
 		},
 		file && { formData: [ [ 'poster', file ] ] },
-		atTime !== undefined && { body: { at_time: atTime } }
+		atTime !== undefined && { body: { at_time: atTime, is_millisec: isMillisec } }
 	);
 
 	return http( params, action );
 };
 
-const onSuccess = ( action, { poster: posterUrl } ) => ( dispatch, getState ) => {
+const onSuccess = ( action, data ) => ( dispatch, getState ) => {
+	const { poster: posterUrl } = data;
+	const isGeneratingThumbnail = !! data.generating;
+
+	if ( isGeneratingThumbnail ) {
+		setTimeout( () => {
+			dispatch( refreshAction( action.videoId, { mediaId: action.meta.mediaId } ) );
+		}, 1000 );
+
+		dispatch( showUploadProgress( 100 ) );
+		return;
+	}
+
 	dispatch( setPosterUrl( posterUrl ) );
 
 	const currentState = getState();
@@ -65,7 +96,14 @@ const onProgress = ( action, progress ) => {
 };
 
 const dispatchUpdatePosterRequest = dispatchRequest( { fetch, onSuccess, onError, onProgress } );
+const dispatchRefreshPosterRequest = dispatchRequest( {
+	fetch: refresh,
+	onSuccess,
+	onError,
+	onProgress,
+} );
 
 registerHandlers( 'state/data-layer/wpcom/videos/poster/index.js', {
 	[ VIDEO_EDITOR_UPDATE_POSTER ]: [ dispatchUpdatePosterRequest ],
+	[ VIDEO_EDITOR_REFRESH_POSTER ]: [ dispatchRefreshPosterRequest ],
 } );

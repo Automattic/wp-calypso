@@ -17,6 +17,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
+import { ITEM_TYPE_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getUserOwnsPurchase } from 'calypso/state/purchases/selectors/get-user-owns-purchase';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
@@ -77,6 +78,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	const siteProduct: SiteProduct | undefined = useSelector( ( state ) =>
 		getSiteAvailableProduct( state, siteId, item.productSlug )
 	);
+
+	const jetpackUpgradesLocked = purchases.some( ( purchase ) => purchase.isLocked );
+	const existingPurchaseIsIapPurchase = purchases.some( ( purchase ) => purchase.isInAppPurchase );
 
 	// Determine whether product is owned.
 	const isOwned = useMemo( () => {
@@ -151,11 +155,17 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		] as ReadonlyArray< string > ).includes( item.productSlug );
 	}, [ item.productSlug ] );
 
-	// Disable the product card if it's an incompatible multisite product or CRM monthly product or if the user is not the owner of the plan
-	// (CRM is not offered with "Monthly" billing. Only Yearly.)
+	/**
+	 * Disable the product card if:
+	 * - It is an incompatible multisite product
+	 * - It is a CRM monthly product (CRM is not offered with "Monthly" billing, only "Yearly")
+	 * - The user is not the owner of the plan
+	 * - The item is a plan which is an upgrade of an existing plan that is locked for management (e.g. IAP)
+	 */
 	const isDisabled =
 		( ( isMultisite && ! isMultisiteCompatible ) ||
 			isCrmMonthlyProduct ||
+			( ! purchase && item.type === ITEM_TYPE_PLAN && jetpackUpgradesLocked ) ||
 			( purchase && isNotPlanOwner ) ) ??
 		false;
 
@@ -166,6 +176,14 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		} else if ( isCrmMonthlyProduct ) {
 			disabledMessage = translate( 'Only available in yearly billing' );
 		}
+	}
+
+	if ( isDisabled && existingPurchaseIsIapPurchase ) {
+		disabledMessage = translate( 'You can upgrade to %(planName)s through the Jetpack app', {
+			args: {
+				planName: item.shortName,
+			},
+		} );
 	}
 
 	let buttonLabel = productButtonLabel( {

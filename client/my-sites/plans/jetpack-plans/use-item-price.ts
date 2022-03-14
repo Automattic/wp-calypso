@@ -113,8 +113,7 @@ const useIntroductoryOfferPrices = (
 	};
 };
 
-const getMonthlyPrice = ( yearlyPrice: number ): number =>
-	Math.ceil( ( yearlyPrice / 12 ) * 100 ) / 100;
+const getMonthlyPrice = ( yearlyPrice: number ): number => ( yearlyPrice * 100 ) / 12 / 100;
 
 const useItemPrice = (
 	siteId: number | null,

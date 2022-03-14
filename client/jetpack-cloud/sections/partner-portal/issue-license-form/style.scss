@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
+@import '../mixins.scss';
 
 .issue-license-form {
 
@@ -29,46 +30,39 @@
 }
 
 .issue-license-form__controls {
-	text-align: right;
-
-	@include break-large {
-		text-align: left;
-	}
+	@include licensing-portal-bottom-action-bar;
 }
 
 .issue-license-form__top {
-	margin-bottom: 1rem;
-	margin-top: -1.5rem;
-	display: block;
-
-	@include break-large {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	& > div {
-		align-self: flex-end;
-		margin-bottom: 0;
-	}
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 0.5rem;
 }
 
 .issue-license-form__bottom {
 	display: flex;
 	flex-wrap: wrap;
 
-	@include break-wide {
+	@include break-xlarge {
 		margin-left: -0.5rem;
 		margin-right: -0.5rem;
 	}
 }
 
 p.issue-license-form__description {
-	margin: 2rem 0 1rem;
+	flex: 1 1 auto;
 	align-self: flex-end;
+	margin: 0;
 	font-size: 0.875rem;
 	color: #333;
 
-	@include break-large {
-		margin: 0;
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 0 1rem 0 0;
 	}
+}
+
+.issue-license-form__select-license {
+	// :active introduces a 1px border but :focus introduces a 1.5px border which causes the button to move around.
+	border-width: 1.5px !important;
+	border-color: transparent;
 }

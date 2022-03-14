@@ -4,6 +4,8 @@ import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
+	FEATURE_500MB_STORAGE,
+	FEATURE_50GB_STORAGE,
 	FEATURE_6GB_STORAGE,
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
@@ -46,6 +48,7 @@ import {
 	FEATURE_EMAIL_SUPPORT_SIGNUP,
 	FEATURE_FREE_BLOG_DOMAIN,
 	FEATURE_FREE_DOMAIN,
+	FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 	FEATURE_FREE_THEMES,
 	FEATURE_FREE_THEMES_SIGNUP,
 	FEATURE_FREE_WORDPRESS_THEMES,
@@ -131,6 +134,13 @@ import {
 	FEATURE_WORDADS_INSTANT,
 	FEATURE_WP_SUBDOMAIN,
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
+	FEATURE_10K_VISITS,
+	FEATURE_100K_VISITS,
+	FEATURE_UNLIMITED_POSTS_PAGES,
+	FEATURE_UNLIMITED_ADMINS,
+	FEATURE_ADDITIONAL_SITES,
+	FEATURE_PAYMENT_BLOCKS,
+	FEATURE_WOOCOMMERCE,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 	JETPACK_LEGACY_PLANS,
@@ -169,6 +179,8 @@ import {
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_MONTHLY,
+	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_MANAGED,
 	PREMIUM_DESIGN_FOR_STORES,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -185,6 +197,8 @@ import {
 	TYPE_SECURITY_REALTIME,
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
+	TYPE_FLEXIBLE,
+	TYPE_MANAGED,
 } from './constants';
 import type {
 	BillingTerm,
@@ -313,19 +327,21 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
 				'Unlock unlimited, expert customer support via email.'
 		),
-	getPlanCompareFeatures: () => [
-		// pay attention to ordering, shared features should align on /plan page
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_HOSTING,
-		FEATURE_JETPACK_ESSENTIAL,
-		FEATURE_EMAIL_SUPPORT,
-		FEATURE_FREE_THEMES,
-		FEATURE_BASIC_DESIGN,
-		FEATURE_6GB_STORAGE,
-		FEATURE_NO_ADS,
-		FEATURE_MEMBERSHIPS,
-		FEATURE_PREMIUM_CONTENT_BLOCK,
-	],
+	getPlanCompareFeatures: ( _, { isProfessionalEmailPromotionAvailable } = {} ) =>
+		compact( [
+			// pay attention to ordering, shared features should align on /plan page
+			FEATURE_CUSTOM_DOMAIN,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
+			FEATURE_HOSTING,
+			FEATURE_JETPACK_ESSENTIAL,
+			FEATURE_EMAIL_SUPPORT,
+			FEATURE_FREE_THEMES,
+			FEATURE_BASIC_DESIGN,
+			FEATURE_6GB_STORAGE,
+			FEATURE_NO_ADS,
+			FEATURE_MEMBERSHIPS,
+			FEATURE_PREMIUM_CONTENT_BLOCK,
+		] ),
 	getSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
@@ -380,10 +396,14 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Learn more about everything included with eCommerce and take advantage of its powerful marketplace features.'
 		),
-	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
+	getPlanCompareFeatures: (
+		_,
+		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
+	) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
@@ -484,10 +504,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.'
 		),
-	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
+	getPlanCompareFeatures: (
+		_,
+		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
+	) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
@@ -570,10 +594,14 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
 		),
-	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
+	getPlanCompareFeatures: (
+		_,
+		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
+	) =>
 		compact( [
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
+			isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			FEATURE_HOSTING,
@@ -1544,5 +1572,54 @@ PLANS_LIST[ PLAN_P2_FREE ] = {
 		FEATURE_P2_UNLIMITED_POSTS_PAGES,
 		FEATURE_P2_SIMPLE_SEARCH,
 		FEATURE_P2_CUSTOMIZATION_OPTIONS,
+	],
+};
+
+// Brand new WPCOM plans
+PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
+	// Inherits the free plan
+	...PLANS_LIST[ PLAN_FREE ],
+	group: GROUP_WPCOM,
+	type: TYPE_FLEXIBLE,
+	getBillingTimeFrame: WPComGetBillingTimeframe,
+	getDescription: () =>
+		i18n.translate(
+			'Start your free WordPress.com website. Limited functionalities, storage and visits.'
+		),
+	getPlanCompareFeatures: () => [
+		FEATURE_10K_VISITS,
+		FEATURE_UNLIMITED_POSTS_PAGES,
+		FEATURE_500MB_STORAGE,
+		FEATURE_COMMUNITY_SUPPORT,
+	],
+};
+
+PLANS_LIST[ PLAN_WPCOM_MANAGED ] = {
+	group: GROUP_WPCOM,
+	type: TYPE_MANAGED,
+	term: TERM_ANNUALLY,
+	getTitle: () => i18n.translate( 'Managed' ),
+	getProductId: () => 1032,
+	getStoreSlug: () => PLAN_WPCOM_MANAGED,
+	getPathSlug: () => 'managed',
+	getDescription: () =>
+		i18n.translate( 'Enjoy the classic WordPress.com experience using plugins and much more.' ),
+	getBillingTimeFrame: WPComGetBillingTimeframe,
+	getPlanCompareFeatures: () => [
+		FEATURE_ADDITIONAL_SITES,
+		FEATURE_100K_VISITS,
+		FEATURE_UNLIMITED_POSTS_PAGES,
+		FEATURE_UNLIMITED_ADMINS,
+		FEATURE_INSTALL_PLUGINS,
+		FEATURE_50GB_STORAGE,
+		FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		FEATURE_PAYMENT_BLOCKS,
+		FEATURE_WOOCOMMERCE,
+		FEATURE_JETPACK_ADVANCED,
+		FEATURE_NO_ADS,
+		FEATURE_SFTP_DATABASE,
+		FEATURE_SITE_BACKUPS_AND_RESTORE,
+		FEATURE_PREMIUM_THEMES,
+		FEATURE_CUSTOM_DOMAIN,
 	],
 };

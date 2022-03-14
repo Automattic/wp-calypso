@@ -119,11 +119,7 @@ function getDestinationFromIntent( dependencies ) {
 		return `/post/${ siteSlug }`;
 	}
 
-	if ( intent === 'wpadmin' ) {
-		return `https://${ siteSlug }/wp-admin`;
-	}
-
-	if ( intent === 'sell' && storeType === 'woocommerce' ) {
+	if ( intent === 'sell' && storeType === 'power' ) {
 		return addQueryArgs(
 			{
 				back_to: `/start/setup-site/store-features?siteSlug=${ siteSlug }`,
@@ -234,7 +230,7 @@ const Flows = {
 			}
 		}
 
-		if ( flowName === 'p2' && isUserLoggedIn ) {
+		if ( flowName === 'p2v1' && isUserLoggedIn ) {
 			flow = removeP2DetailsStepFromFlow( flow );
 		}
 

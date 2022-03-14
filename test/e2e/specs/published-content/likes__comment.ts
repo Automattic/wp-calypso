@@ -2,7 +2,6 @@
  * @group gutenberg
  */
 
-import assert from 'assert';
 import {
 	DataHelper,
 	CommentsComponent,
@@ -19,7 +18,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	const comment = DataHelper.getRandomPhrase();
 	let page: Page;
-	let publishedURL;
+	let publishedURL: URL;
 	let commentsComponent: CommentsComponent;
 	let gutenbergEditorPage: GutenbergEditorPage;
 
@@ -47,7 +46,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 	it( 'Publish and visit post', async function () {
 		publishedURL = await gutenbergEditorPage.publish( { visit: true } );
-		assert.strictEqual( publishedURL, await page.url() );
+		expect( publishedURL.href ).toStrictEqual( page.url() );
 	} );
 
 	it( 'Post a comment', async function () {

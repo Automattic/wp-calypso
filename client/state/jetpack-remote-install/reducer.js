@@ -6,6 +6,18 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
+export const isRemoteInstallingJetpack = keyedReducer( 'url', ( state = false, { type } ) => {
+	switch ( type ) {
+		case JETPACK_REMOTE_INSTALL:
+			return true;
+		case JETPACK_REMOTE_INSTALL_SUCCESS:
+		case JETPACK_REMOTE_INSTALL_FAILURE:
+			return false;
+		default:
+			return state;
+	}
+} );
+
 export const isComplete = keyedReducer( 'url', ( state = false, { type } ) => {
 	switch ( type ) {
 		case JETPACK_REMOTE_INSTALL_SUCCESS:
@@ -48,6 +60,7 @@ const combinedReducer = combineReducers( {
 	errorCode: errorCodeReducer,
 	errorMessage: errorMessageReducer,
 	isComplete,
+	isRemoteInstallingJetpack,
 } );
 
 export default withStorageKey( 'jetpackRemoteInstall', combinedReducer );

@@ -5,95 +5,72 @@ import {
 	isEcommercePlan,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import QueryMediaStorage from 'calypso/components/data/query-media-storage';
+import { useSelector } from 'react-redux';
+import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { getMediaStorage } from 'calypso/state/sites/media-storage/selectors';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import PlanStorageBar from './bar';
 import Tooltip from './tooltip';
 
 import './style.scss';
 
-export class PlanStorage extends Component {
-	static propTypes = {
-		className: PropTypes.string,
-		mediaStorage: PropTypes.object,
-		siteId: PropTypes.number,
-		sitePlanSlug: PropTypes.string,
-		siteSlug: PropTypes.string,
-	};
+export function PlanStorage( { children, className, siteId } ) {
+	const jetpackSite = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const atomicSite = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const canUserUpgrade = useSelector( ( state ) =>
+		canCurrentUser( state, siteId, 'manage_options' )
+	);
+	const canViewBar = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
+	const translate = useTranslate();
+	const { data: mediaStorage } = useMediaStorageQuery( siteId );
 
-	render() {
-		const {
-			canUserUpgrade,
-			canViewBar,
-			className,
-			jetpackSite,
-			atomicSite,
-			siteId,
-			sitePlanSlug,
-			siteSlug,
-			translate,
-		} = this.props;
+	if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
+		return null;
+	}
 
-		if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
-			return null;
-		}
+	if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
+		return null;
+	}
 
-		if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
-			return null;
-		}
+	const planHasTopStorageSpace = isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug );
 
-		const planHasTopStorageSpace =
-			isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug );
+	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace;
 
-		const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace;
+	const planStorageComponents = (
+		<>
+			<PlanStorageBar
+				sitePlanSlug={ sitePlanSlug }
+				mediaStorage={ mediaStorage }
+				displayUpgradeLink={ displayUpgradeLink }
+			>
+				{ children }
+			</PlanStorageBar>
+		</>
+	);
 
-		const planStorageComponents = (
-			<>
-				<QueryMediaStorage siteId={ siteId } />
-				<PlanStorageBar
-					sitePlanSlug={ sitePlanSlug }
-					mediaStorage={ this.props.mediaStorage }
-					displayUpgradeLink={ displayUpgradeLink }
-				>
-					{ this.props.children }
-				</PlanStorageBar>
-			</>
-		);
-
-		if ( displayUpgradeLink ) {
-			return (
-				<Tooltip
-					title={ translate( 'Upgrade your plan to increase your storage space.' ) }
-					className="plan-storage__tooltip"
-				>
-					<a className={ classNames( className, 'plan-storage' ) } href={ `/plans/${ siteSlug }` }>
-						{ planStorageComponents }
-					</a>
-				</Tooltip>
-			);
-		}
+	if ( displayUpgradeLink ) {
 		return (
-			<div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>
+			<Tooltip
+				title={ translate( 'Upgrade your plan to increase your storage space.' ) }
+				className="plan-storage__tooltip"
+			>
+				<a className={ classNames( className, 'plan-storage' ) } href={ `/plans/${ siteSlug }` }>
+					{ planStorageComponents }
+				</a>
+			</Tooltip>
 		);
 	}
+	return <div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>;
 }
 
-export default connect( ( state, ownProps ) => {
-	const { siteId } = ownProps;
-	return {
-		mediaStorage: getMediaStorage( state, siteId ),
-		jetpackSite: isJetpackSite( state, siteId ),
-		atomicSite: isAtomicSite( state, siteId ),
-		sitePlanSlug: getSitePlanSlug( state, siteId ),
-		siteSlug: getSiteSlug( state, siteId ),
-		canUserUpgrade: canCurrentUser( state, siteId, 'manage_options' ),
-		canViewBar: canCurrentUser( state, siteId, 'publish_posts' ),
-	};
-} )( localize( PlanStorage ) );
+PlanStorage.propTypes = {
+	className: PropTypes.string,
+	siteId: PropTypes.number,
+};
+
+export default PlanStorage;

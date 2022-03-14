@@ -221,6 +221,11 @@ export default function () {
 			paths.emailManagementForwarding( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
 			paths.emailManagementForwarding( ':site', ':domain' ),
 		],
-		handlers: [ ...commonHandlers, controller.emailManagementForwarding, makeLayout, clientRender ],
+		handlers: [
+			...commonHandlers,
+			controller.emailManagementForwardingRedirect,
+			makeLayout,
+			clientRender,
+		],
 	} );
 }

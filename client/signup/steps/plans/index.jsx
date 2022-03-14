@@ -1,4 +1,9 @@
-import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
+import {
+	planHasFeature,
+	FEATURE_UPLOAD_THEMES_PLUGINS,
+	getPlan,
+	PLAN_FREE,
+} from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import { isDesktop, subscribeIsDesktop, isMobile } from '@automattic/viewport';
@@ -15,10 +20,12 @@ import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import PlansComparison, { isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
+import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
@@ -129,6 +136,7 @@ export class PlansStep extends Component {
 			showTreatmentPlansReorderTest,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
+			eligibleForManagedPlan,
 		} = this.props;
 
 		let errorDisplay;
@@ -138,6 +146,23 @@ export class PlansStep extends Component {
 					<Notice status="is-error" showDismiss={ false }>
 						{ this.props.step.errors.message }
 					</Notice>
+				</div>
+			);
+		}
+
+		if ( ! this.props.plansLoaded ) {
+			return this.renderLoading();
+		}
+
+		if ( eligibleForManagedPlan ) {
+			return (
+				<div>
+					{ errorDisplay }
+					<PlansComparison
+						isInSignup={ true }
+						onSelectPlan={ this.onSelectPlan }
+						selectedSiteId={ selectedSite?.ID || undefined }
+					/>
 				</div>
 			);
 		}
@@ -160,7 +185,6 @@ export class PlansStep extends Component {
 					return (
 						<div>
 							{ errorDisplay }
-							<QueryPlans />
 							<PlansFeaturesMain
 								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 								hideFreePlan={ hideFreePlan }
@@ -218,7 +242,6 @@ export class PlansStep extends Component {
 					return (
 						<div>
 							{ errorDisplay }
-							<QueryPlans />
 							<PlansFeaturesMain
 								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 								hideFreePlan={ hideFreePlan }
@@ -256,7 +279,11 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate } = this.props;
+		const { headerText, translate, eligibleForManagedPlan } = this.props;
+
+		if ( eligibleForManagedPlan ) {
+			return translate( 'Managed WordPress made just for you' );
+		}
 
 		if ( this.state.isDesktop ) {
 			return translate( 'Choose a plan' );
@@ -266,7 +293,11 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, translate } = this.props;
+		const { hideFreePlan, subHeaderText, translate, eligibleForManagedPlan } = this.props;
+
+		if ( eligibleForManagedPlan ) {
+			return translate( 'Try risk-free with a 14-day money back guarantee' );
+		}
 
 		if ( ! hideFreePlan ) {
 			if ( this.state.isDesktop ) {
@@ -363,6 +394,7 @@ export class PlansStep extends Component {
 
 		return (
 			<>
+				<QueryPlans />
 				<MarketingMessage path="signup/plans" />
 				<div className={ classes }>{ this.plansFeaturesSelection() }</div>
 			</>
@@ -423,6 +455,8 @@ export default connect(
 		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
 		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
 		isInVerticalScrollingPlansExperiment: true,
+		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
+		eligibleForManagedPlan: isEligibleForManagedPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

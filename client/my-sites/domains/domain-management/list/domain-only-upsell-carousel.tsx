@@ -222,7 +222,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 				buttonLabel: translate( 'Create site' ),
 				cardName: 'create-site',
 				cardNoticeType: UpsellCardNoticeType.HIDE_CREATE_SITE_CARD,
-				eventTrackViewName: 'calypso_domain_only_upsell_carousel_impression_create_site_card',
+				eventTrackViewName: 'calypso_domain_only_upsell_carousel_card_impression',
 				areHideOptionsVisible: areHideSiteCardOptionsVisible,
 				setHideOptionsVisible: setHideSiteCardOptionsVisible,
 			} )
@@ -244,7 +244,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 				buttonLabel: translate( 'Add professional email' ),
 				cardName: 'add-email',
 				cardNoticeType: UpsellCardNoticeType.HIDE_ADD_EMAIL_CARD,
-				eventTrackViewName: 'calypso_domain_only_upsell_carousel_impression_add_email_card',
+				eventTrackViewName: 'calypso_domain_only_upsell_carousel_card_impression',
 				areHideOptionsVisible: areHideEmailCardOptionsVisible,
 				setHideOptionsVisible: setHideEmailCardOptionsVisible,
 			} )

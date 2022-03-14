@@ -17,6 +17,7 @@ export const DOMAIN_WAITING = `${ root }/domains/register-domain/#waiting-for-do
 export const DOMAINS = `${ root }/domains`;
 export const DOMAIN_CANCEL = `${ root }/domains/#cancel-a-domain-name`;
 export const DOMAIN_EXPIRATION = `${ root }/domains/domain-expiration/`;
+export const DOMAIN_EXPIRATION_AUCTION = `${ root }/domains/domain-expiration/#expiry-auction`;
 export const DOMAIN_EXPIRATION_REDEMPTION = `${ root }/domains/domain-expiration/#renewing-a-domain-in-the-redemption-period`;
 export const DOMAIN_RECENTLY_REGISTERED = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAIN_PRICING_AND_AVAILABLE_TLDS = `${ root }/domains/domain-pricing-and-available-tlds`;
@@ -38,6 +39,8 @@ export const GDPR_POLICIES = `${ root }/your-site-and-the-gdpr`;
 export const GSUITE_LEARNING_CENTER = 'https://workspace.google.com/learning-center/';
 export const HTTPS_SSL = `${ root }/https-ssl`;
 export const JETPACK_SUPPORT = 'https://jetpack.com/support/';
+export const JETPACK_SUPPORT_CONNECTION_ISSUES =
+	'https://jetpack.com/support/getting-started-with-jetpack/fixing-jetpack-connection-issues/';
 export const JETPACK_CONTACT_SUPPORT = 'https://jetpack.com/contact-support/?rel=support';
 export const JETPACK_PRICING_PAGE = 'https://jetpack.com/pricing/';
 export const JETPACK_SERVICE_VAULTPRESS = 'https://help.vaultpress.com/install-vaultpress/';

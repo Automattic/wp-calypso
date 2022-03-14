@@ -10,7 +10,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import SettingsForm from 'calypso/me/notification-settings/settings-form';
 import ReauthRequired from 'calypso/me/reauth-required';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { fetchSettings, toggle, saveSettings } from 'calypso/state/notification-settings/actions';
 import {
 	getNotificationSettings,
@@ -52,7 +51,6 @@ class NotificationCommentsSettings extends Component {
 					title="Me > Notifications > Comments on other sites"
 				/>
 				<QueryUserDevices />
-				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
 				<FormattedHeader

@@ -1,3 +1,5 @@
+import { Button, Dialog } from '@automattic/components';
+import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -17,6 +19,8 @@ import {
 import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
+	isImageUploadInProgress,
+	WebsiteContentStateModel,
 } from 'calypso/state/signup/steps/website-content/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId, isRequestingSite } from 'calypso/state/sites/selectors';
@@ -24,6 +28,25 @@ import { sectionGenerator } from './section-generator';
 import './style.scss';
 
 const debug = debugFactory( 'calypso:difm' );
+
+const DialogContent = styled.div`
+	padding: 16px;
+	p {
+		font-size: 1rem;
+		color: var( --studio-gray-50 );
+	}
+`;
+
+const DialogButton = styled( Button )`
+	box-shadow: 0px 1px 2px rgba( 0, 0, 0, 0.05 );
+	border-radius: 5px;
+	padding: ${ ( props ) => ( props.primary ? '10px 64px' : '10px 32px' ) };
+	--color-accent: #117ac9;
+	--color-accent-60: #0e64a5;
+	.gridicon {
+		margin-left: 10px;
+	}
+`;
 
 interface WebsiteContentStepProps {
 	additionalStepData: object;
@@ -52,20 +75,21 @@ function WebsiteContentStep( {
 	const websiteContent = useSelector( getWebsiteContent );
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
 	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
+	const isImageUploading = useSelector( ( state ) =>
+		isImageUploadInProgress( state as WebsiteContentStateModel )
+	);
+
+	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 
 	useEffect( () => {
 		function getPageFromCategory( category: string | null ) {
 			switch ( category ) {
-				case 'professional-services':
-				case 'local-services':
-					return { id: 'Services', name: translate( 'Services' ) };
 				case 'creative-arts':
 					return { id: 'Portfolio', name: translate( 'Portfolio' ) };
 				case 'restaurant':
 					return { id: 'Menu', name: translate( 'Menu' ) };
 				default:
-					return { id: 'Blog', name: translate( 'Blog' ) };
-					break;
+					return { id: 'Services', name: translate( 'Services' ) };
 			}
 		}
 
@@ -94,9 +118,12 @@ function WebsiteContentStep( {
 		goToNextStep();
 	};
 
-	const onChangeField = ( { target: { name } }: ChangeEvent< HTMLInputElement > ) => {
-		setFormErrors( { ...formErrors, [ name ]: null } );
-	};
+	const onChangeField = useCallback(
+		( { target: { name } }: ChangeEvent< HTMLInputElement > ) => {
+			setFormErrors( { ...formErrors, [ name ]: null } );
+		},
+		[ formErrors, setFormErrors ]
+	);
 
 	const generatedSectionsCallback = useCallback(
 		() =>
@@ -106,20 +133,48 @@ function WebsiteContentStep( {
 				formErrors: formErrors,
 				onChangeField,
 			} ),
-		[ translate, websiteContent, formErrors ]
+		[ translate, websiteContent, formErrors, onChangeField ]
 	);
 	const generatedSections = generatedSectionsCallback();
+
+	const dialogButtons = [
+		<DialogButton onClick={ () => setIsConfirmDialogOpen( false ) }>
+			{ translate( 'Cancel' ) }
+		</DialogButton>,
+		<DialogButton primary onClick={ onSubmit }>
+			{ translate( 'Submit' ) }
+		</DialogButton>,
+	];
+
 	return (
-		<AccordionForm
-			generatedSections={ generatedSections }
-			onErrorUpdates={ ( errors ) => setFormErrors( errors ) }
-			formValuesInitialState={ websiteContent }
-			currentIndex={ currentIndex }
-			updateCurrentIndex={ ( currentIndex ) => {
-				dispatch( updateWebsiteContentCurrentIndex( currentIndex ) );
-			} }
-			onSubmit={ onSubmit }
-		/>
+		<>
+			<Dialog
+				isVisible={ isConfirmDialogOpen }
+				onClose={ () => setIsConfirmDialogOpen( false ) }
+				buttons={ dialogButtons }
+			>
+				<DialogContent>
+					<h1>{ translate( 'Submit Content?' ) }</h1>
+					<p>
+						{ translate(
+							'Click "Submit" to start your site build or "Cancel" to make further edits.'
+						) }
+					</p>
+				</DialogContent>
+			</Dialog>
+
+			<AccordionForm
+				generatedSections={ generatedSections }
+				onErrorUpdates={ ( errors ) => setFormErrors( errors ) }
+				formValuesInitialState={ websiteContent }
+				currentIndex={ currentIndex }
+				updateCurrentIndex={ ( currentIndex ) => {
+					dispatch( updateWebsiteContentCurrentIndex( currentIndex ) );
+				} }
+				onSubmit={ () => setIsConfirmDialogOpen( true ) }
+				blockNavigation={ isImageUploading }
+			/>
+		</>
 	);
 }
 
@@ -156,7 +211,7 @@ export default function WrapperWebsiteContent(
 	//Make sure the most up to date site information is loaded so that we can validate access to this page
 	useEffect( () => {
 		siteId && dispatch( requestSite( siteId ) );
-	}, [ siteId ] );
+	}, [ dispatch, siteId ] );
 
 	useEffect( () => {
 		if ( ! isLoadingSiteInformation ) {
@@ -177,7 +232,7 @@ export default function WrapperWebsiteContent(
 		queryObject.siteSlug,
 	] );
 
-	return isLoadingSiteInformation ? null : (
+	return isWebsiteContentSubmitted || isLoadingSiteInformation ? null : (
 		<StepWrapper
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }

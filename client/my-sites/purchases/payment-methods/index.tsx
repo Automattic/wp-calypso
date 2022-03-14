@@ -18,6 +18,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -29,7 +30,6 @@ import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-meth
 import titles from 'calypso/me/purchases/titles';
 import { useCreateCreditCard } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths';
@@ -61,7 +61,7 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 
 	return (
 		<Main wideLayout className="purchases">
-			<MySitesSidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
 			{ ! isJetpackCloud() && (
@@ -129,7 +129,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 
 	return (
 		<Main wideLayout className="purchases">
-			<MySitesSidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker
 				path={ '/purchases/add-payment-method' }
 				title={ String( titles.addPaymentMethod ) }

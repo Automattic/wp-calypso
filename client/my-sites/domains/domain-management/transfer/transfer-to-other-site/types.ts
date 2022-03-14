@@ -26,6 +26,7 @@ export type TransferDomainToOtherSitePassedProps = {
 
 // state props
 export type TransferDomainToOtherSiteStateProps = {
+	aftermarketAuction: boolean;
 	currentRoute: string;
 	currentUserCanManage: boolean;
 	hasSiteDomainsLoaded: boolean;

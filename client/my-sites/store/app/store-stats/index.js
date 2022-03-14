@@ -11,7 +11,6 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
 import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -49,7 +48,6 @@ class StoreStats extends Component {
 				{ siteId && (
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="store-stats__section-header"

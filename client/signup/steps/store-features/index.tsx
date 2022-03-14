@@ -1,4 +1,4 @@
-import { SelectItem, SelectItems } from '@automattic/onboarding-components';
+import { SelectItem, SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,6 +14,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { shoppingBag, truck } from '../../icons';
 import { EXCLUDED_STEPS } from '../intent/index';
 import { StoreFeatureSet } from './types';
+import type { Dependencies } from 'calypso/signup/types';
 import './index.scss';
 
 interface Props {
@@ -40,6 +41,27 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	 */
 	const branchSteps = useBranchSteps( stepName, () => EXCLUDED_STEPS.sell );
 	branchSteps( EXCLUDED_STEPS.sell );
+
+	/**
+	 * Branch steps to skip design selection for WooCommerce flow
+	 */
+	const EXCLUDED_STORE_STEPS: { [ key: string ]: string[] } = {
+		power: [ 'design-setup-site' ],
+		simple: [],
+	};
+	const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
+		EXCLUDED_STORE_STEPS[ providedDependencies?.storeType ];
+	const branchStoreSteps = useBranchSteps( stepName, getExcludedSteps );
+
+	const submitStoreFeatures = ( storeType: StoreFeatureSet ) => {
+		const providedDependencies = { storeType };
+		branchStoreSteps( providedDependencies );
+		recordTracksEvent( 'calypso_signup_store_feature_select', {
+			store_feature: storeType,
+		} );
+		dispatch( submitSignupStep( { stepName }, providedDependencies ) );
+		goToNextStep();
+	};
 
 	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );
 
@@ -161,22 +183,6 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		},
 	];
 
-	const onSelect = ( selectedOption: StoreFeatureSet ) => {
-		recordTracksEvent( 'calypso_signup_store_feature_select', {
-			store_feature: selectedOption,
-		} );
-		switch ( selectedOption ) {
-			case 'power':
-				dispatch( submitSignupStep( { stepName }, { storeType: 'woocommerce' } ) );
-				break;
-
-			case 'simple': {
-				dispatch( submitSignupStep( { stepName }, { storeType: 'payment_block' } ) );
-			}
-		}
-		goToNextStep();
-	};
-
 	return (
 		<StepWrapper
 			headerText={ headerText }
@@ -185,7 +191,11 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			fallbackSubHeaderText={ subHeaderText }
 			headerImageUrl={ null }
 			stepContent={
-				<SelectItems items={ intents } onSelect={ onSelect } preventWidows={ preventWidows } />
+				<SelectItems
+					items={ intents }
+					onSelect={ submitStoreFeatures }
+					preventWidows={ preventWidows }
+				/>
 			}
 			align={ 'left' }
 			hideSkip={ true }

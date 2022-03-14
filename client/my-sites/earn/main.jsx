@@ -14,7 +14,6 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { canAccessAds } from 'calypso/lib/ads/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
 import {
 	getSelectedSite,
@@ -190,7 +189,6 @@ class EarningsMain extends Component {
 					title={ `${ adsProgramName } ${ capitalize( section ) }` }
 				/>
 				<DocumentHead title={ layoutTitles[ section ] } />
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="earn__page-header"

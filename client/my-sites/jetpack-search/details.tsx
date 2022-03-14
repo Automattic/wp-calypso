@@ -3,10 +3,10 @@ import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackSearchContent from './content';
 import JetpackSearchFooter from './footer';
@@ -31,7 +31,7 @@ export default function JetpackSearchDetails( { isSearchEnabled }: Props ): Reac
 	return (
 		<Main className="jetpack-search">
 			<DocumentHead title="Jetpack Search" />
-			<SidebarNavigation />
+			{ isCloud && <SidebarNavigation /> }
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
 
 			<JetpackSearchContent

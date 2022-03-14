@@ -23,7 +23,6 @@ import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -208,16 +207,16 @@ function PluginDetails( props ) {
 			);
 		}
 
-		if ( fullPlugin.name && fullPlugin.slug ) {
+		if ( fullPlugin.name && props.pluginSlug ) {
 			dispatch(
 				appendBreadcrumb( {
 					label: fullPlugin.name,
-					href: `/plugins/${ fullPlugin.slug }/${ selectedSite?.slug || '' }`,
-					id: `plugin-${ fullPlugin.slug }`,
+					href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
+					id: `plugin-${ props.pluginSlug }`,
 				} )
 			);
 		}
-	}, [ fullPlugin.name, fullPlugin.slug, selectedSite ] );
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
@@ -241,7 +240,6 @@ function PluginDetails( props ) {
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<SidebarNavigation />
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QueryProductsList persist />
@@ -253,6 +251,7 @@ function PluginDetails( props ) {
 							billingPeriod={ billingPeriod }
 							onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
 							compact={ ! isWide }
+							plugin={ fullPlugin }
 						/>
 					) }
 			</FixedNavigationHeader>

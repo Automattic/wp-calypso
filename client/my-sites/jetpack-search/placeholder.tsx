@@ -4,7 +4,8 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import JetpackSearchContent from './content';
 import JetpackSearchLogo from './logo';
 
@@ -23,7 +24,7 @@ export default function JetpackSearchPlaceholder( { siteId, isJetpack }: Props )
 			{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 			<DocumentHead title="Jetpack Search" />
-			<SidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 
 			<JetpackSearchContent
 				headerText={ 'Placeholder header' }

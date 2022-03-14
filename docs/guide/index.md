@@ -8,6 +8,7 @@ Learn Calypso step-by-step. A work in progress…
 - [Information Architecture](information-architecture.md)
 - [Navigation Terminology](navigation-terminology.md)
 - [Design Tutorial](design-tutorial.md)
+- [Writing and Running Tests](../testing/testing-overview.md)
 - More, soon!
 
 Next: [Development Values](0-values.md)

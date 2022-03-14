@@ -294,7 +294,7 @@ class Signup extends Component {
 	}
 
 	completeP2FlowAfterLoggingIn() {
-		if ( ! this.props.progress ) {
+		if ( ! this.props.flowName !== 'p2v1' || ! this.props.progress ) {
 			return;
 		}
 
@@ -309,11 +309,6 @@ class Signup extends Component {
 	}
 
 	handleSignupFlowControllerCompletion = async ( dependencies, destination ) => {
-		// See comment below for `this.bizxSurveyTimerComplete`
-		if ( this.bizxSurveyTimerComplete && window && window.hj ) {
-			await this.bizxSurveyTimerComplete;
-		}
-
 		const filteredDestination = getDestination(
 			destination,
 			dependencies,
@@ -360,12 +355,6 @@ class Signup extends Component {
 			);
 
 			this.setState( { shouldShowLoadingScreen: true } );
-			/* Temporary change to add a 10 second delay to the processing screen.
-			 * This is done to allow the user 10 seconds to answer the bizx survey
-			 */
-			if ( ! this.bizxSurveyTimerComplete ) {
-				this.bizxSurveyTimerComplete = new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
-			}
 
 			if ( isP2Flow( this.props.flowName ) ) {
 				addLoadingScreenClassNamesToBody();
@@ -618,12 +607,7 @@ class Signup extends Component {
 			);
 		}
 
-		return (
-			<SignupProcessingScreen
-				flowName={ this.props.flowName }
-				localeSlug={ this.props.localeSlug }
-			/>
-		);
+		return <SignupProcessingScreen flowName={ this.props.flowName } />;
 	}
 
 	renderCurrentStep( isReskinned ) {

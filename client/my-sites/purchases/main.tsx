@@ -7,6 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -16,7 +17,6 @@ import ManagePurchase from 'calypso/me/purchases/manage-purchase';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getPurchaseListUrlFor,
@@ -53,7 +53,7 @@ export function Purchases(): JSX.Element {
 
 	return (
 		<Main wideLayout className="purchases">
-			<MySitesSidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.sectionTitle } />
 			{ ! isJetpackCloud() && (
 				<FormattedHeader

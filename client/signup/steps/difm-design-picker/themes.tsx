@@ -7,10 +7,6 @@ const difmThemes: Design[] = [
 				name: 'Creative Arts',
 				slug: 'creative-arts',
 			},
-			{
-				name: 'Blog',
-				slug: 'blog',
-			},
 		],
 		features: [ 'difm-lite-default' ],
 		is_premium: false,
@@ -25,10 +21,6 @@ const difmThemes: Design[] = [
 				name: 'Creative Arts',
 				slug: 'creative-arts',
 			},
-			{
-				name: 'Blog',
-				slug: 'blog',
-			},
 		],
 		features: [],
 		is_premium: false,
@@ -38,13 +30,7 @@ const difmThemes: Design[] = [
 		title: 'Zoologist',
 	},
 	{
-		categories: [
-			{ name: 'Professional Services', slug: 'professional-services' },
-			{
-				name: 'Blog',
-				slug: 'blog',
-			},
-		],
+		categories: [ { name: 'Professional Services', slug: 'professional-services' } ],
 		features: [],
 		is_premium: false,
 		slug: 'quadrat',
@@ -53,37 +39,13 @@ const difmThemes: Design[] = [
 		title: 'Quadrat',
 	},
 	{
-		categories: [
-			{ name: 'Creative Arts', slug: 'creative-arts' },
-			{
-				name: 'Blog',
-				slug: 'blog',
-			},
-		],
+		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
 		features: [],
 		is_premium: false,
 		slug: 'geologist',
 		template: 'geologist',
 		theme: 'geologist',
 		title: 'Geologist',
-	},
-	{
-		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
-		features: [],
-		is_premium: false,
-		slug: 'antin',
-		template: 'antin',
-		theme: 'antin',
-		title: 'Antin',
-	},
-	{
-		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
-		features: [],
-		is_premium: false,
-		slug: 'glen',
-		template: 'glen',
-		theme: 'glen',
-		title: 'Glen',
 	},
 	{
 		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
@@ -114,10 +76,6 @@ const difmThemes: Design[] = [
 			{
 				name: 'Creative Arts',
 				slug: 'creative-arts',
-			},
-			{
-				name: 'Blog',
-				slug: 'blog',
 			},
 		],
 		features: [],
@@ -300,10 +258,6 @@ const difmThemes: Design[] = [
 				name: 'Creative Arts',
 				slug: 'creative-arts',
 			},
-			{
-				name: 'Blog',
-				slug: 'blog',
-			},
 		],
 		features: [],
 		is_premium: false,
@@ -317,11 +271,6 @@ const difmThemes: Design[] = [
 			{
 				name: 'Local Services',
 				slug: 'local-services',
-			},
-
-			{
-				name: 'Blog',
-				slug: 'blog',
 			},
 		],
 		features: [],
@@ -337,10 +286,6 @@ const difmThemes: Design[] = [
 				name: 'Creative Arts',
 				slug: 'creative-arts',
 			},
-			{
-				name: 'Blog',
-				slug: 'blog',
-			},
 		],
 		features: [],
 		is_premium: false,
@@ -354,10 +299,6 @@ const difmThemes: Design[] = [
 			{
 				name: 'Creative Arts',
 				slug: 'creative-arts',
-			},
-			{
-				name: 'Blog',
-				slug: 'blog',
 			},
 		],
 		features: [],

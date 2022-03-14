@@ -14,6 +14,7 @@
   - [Child-level describe blocks](#child-level-describe-blocks)
   - [Test step](#test-step)
   - [Hooks](#hooks)
+  - [Viewports](#viewports)
   - [Block Smoke Testing](#block-smoke-testing)
     - [Overview](#overview)
     - [How To](#how-to)
@@ -200,7 +201,7 @@ describe( DataHelper.createSuiteTitle( 'Feature' ), function () {
 
 Test steps are where most of the action happens in a spec.
 
-> :warning Refer to the [Style Guide](style-guide-playwright.md#test-steps) for do's and don'ts of writing a test step.
+> :warning: Refer to the [Style Guide](style_guide.md#test-steps) for do's and don'ts of writing a test step.
 
 Define a test step using the `it` keyword and give it a unique, descriptive name:
 
@@ -233,6 +234,28 @@ Define hooks as follows:
 beforeAll( async () => {
 	logoImage = await MediaHelper.createTestImage();
 } );
+```
+
+## Viewports
+
+For the vast majority of our tests, it is expected that the tests will pass when run against both a mobile and desktop viewport.
+
+The viewports used for mobile and desktop testing are fixed and based on user data and important Calypso breakpoints. Whether the mobile or desktop viewport is used is controlled by an environment variable, `VIEWPORT_NAME`. For more information on supported environment variables, see the [Environment Variables](environment_variables.md) page.
+
+If a page requires different selectors or actions based on the viewport, those differences should be handled in the POM class methods and abstracted away from the test scripts as much as possible.
+
+Example:
+
+```typescript
+// In the POM page or component class...
+async doThing(): Promise< void > {
+	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+		// Actions required to do thing on mobile
+	} else {
+		// Actions required to do thing on desktop
+	}
+}
+
 ```
 
 ## Block Smoke Testing

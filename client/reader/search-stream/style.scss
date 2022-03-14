@@ -20,13 +20,8 @@
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 
-	// Below 660px we show the MobileBackToSidebar header so no padding needed
 	@include breakpoint-deprecated( '>660px' ) {
 		padding-top: 30px;
-	}
-
-	.mobile-back-to-sidebar {
-		margin: 0;
 	}
 }
 

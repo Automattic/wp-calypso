@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isSiteUsingLegacyFSE from 'calypso/state/selectors/is-site-using-legacy-fse';
 import {
 	getSiteFrontPageType,
 	getSitePostsPage,
@@ -46,12 +45,6 @@ class BlogPostsPage extends Component {
 	};
 
 	render() {
-		const { isLegacyFSE } = this.props;
-
-		if ( isLegacyFSE ) {
-			return null;
-		}
-
 		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';
 
 		if ( ! isCurrentlySetAsHomepage ) {
@@ -92,6 +85,5 @@ export default connect( ( state, props ) => {
 		isFrontPage: getSiteFrontPageType( state, props.site.ID ) === 'posts',
 		postsPage: getSitePostsPage( state, props.site.ID ),
 		frontPage: getSiteFrontPage( state, props.site.ID ),
-		isLegacyFSE: isSiteUsingLegacyFSE( state, props.site.ID ),
 	};
 }, mapDispatchToProps )( localize( BlogPostsPage ) );

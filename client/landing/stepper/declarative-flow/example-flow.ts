@@ -1,7 +1,8 @@
+import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
 export const exampleFlow: Flow = {
-	useSteps() {
+	useSteps(): Array< StepPath > {
 		return [ 'domain', 'design' ];
 	},
 	useStepNavigation( currentStep, navigate ) {
@@ -13,6 +14,9 @@ export const exampleFlow: Flow = {
 			}
 		};
 		const goNext = goBack;
-		return { goNext, goBack };
+		const goToStep = ( slug: StepPath ) => {
+			navigate( slug );
+		};
+		return { goNext, goBack, goToStep };
 	},
 };

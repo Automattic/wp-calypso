@@ -50,6 +50,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'managed',
+			steps: [ 'user', 'domains', 'plans-managed' ],
+			destination: getSignupDestination,
+			description: 'Create an account and a blog and then add the managed plan to the users cart.',
+			lastModified: '2022-03-08',
+			showRecaptcha: true,
+		},
+		{
 			name: 'free',
 			steps: [ 'user', 'domains' ],
 			destination: getSignupDestination,
@@ -205,7 +213,7 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'p2',
+			name: 'p2v1',
 			steps: [ 'p2-site', 'p2-details', 'user' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'P2 signup flow',
@@ -213,7 +221,8 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'p2-new',
+			// When adding steps, make sure that signup campaign ref's continue to work.
+			name: 'p2',
 			steps: [ 'user', 'p2-confirm-email', 'p2-site' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'New P2 signup flow',
@@ -360,9 +369,9 @@ export function generateFlows( {
 				'site-options',
 				'starting-point',
 				'courses',
-				'design-setup-site',
 				'store-options',
 				'store-features',
+				'design-setup-site',
 			],
 			destination: getDestinationFromIntent,
 			description:
@@ -375,17 +384,26 @@ export function generateFlows( {
 		},
 		{
 			name: 'do-it-for-me',
-			steps: [
-				'user',
-				'new-or-existing-site',
-				'difm-site-picker',
-				'site-info-collection',
-				'difm-design-setup-site',
-			],
+			steps: isEnabled( 'signup/redesigned-difm-flow' )
+				? [
+						// Add or replace new steps here
+						'user',
+						'new-or-existing-site',
+						'difm-site-picker',
+						'site-info-collection',
+						'difm-design-setup-site',
+				  ]
+				: [
+						'user',
+						'new-or-existing-site',
+						'difm-site-picker',
+						'site-info-collection',
+						'difm-design-setup-site',
+				  ],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2021-09-30',
+			lastModified: '2022-03-10',
 		},
 
 		{

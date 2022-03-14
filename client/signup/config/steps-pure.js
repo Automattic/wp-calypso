@@ -8,6 +8,7 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_WPCOM_MANAGED,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -194,8 +195,8 @@ export function generateSteps( {
 			stepName: 'store-features',
 			dependencies: [ 'siteSlug' ],
 			apiRequestFunction: setStoreFeatures,
-			providesDependencies: [ 'isFSEActive', 'storeType' ],
-			optionalDependencies: [ 'isFSEActive', 'storeType' ],
+			providesDependencies: [ 'storeType' ],
+			optionalDependencies: [ 'storeType' ],
 		},
 
 		'starting-point': {
@@ -276,6 +277,17 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS,
+			},
+		},
+
+		'plans-managed': {
+			stepName: 'plans-managed',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_WPCOM_MANAGED,
 			},
 		},
 
@@ -696,7 +708,7 @@ export function generateSteps( {
 				hideExternalPreview: true,
 				useDIFMThemes: true,
 				showDesignPickerCategories: true,
-				showDesignPickerCategoriesAllFilter: false,
+				showDesignPickerCategoriesAllFilter: true,
 				showLetUsChoose: true,
 				hideFullScreenPreview: true,
 				hideDesignTitle: true,
