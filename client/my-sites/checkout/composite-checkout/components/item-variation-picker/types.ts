@@ -5,7 +5,6 @@ export type WPCOMProductSlug = string;
 export type WPCOMProductVariant = {
 	variantLabel: string;
 	variantDetails: React.ReactNode;
-	variantPrice: string | null;
 	productSlug: WPCOMProductSlug;
 	productId: number;
 };
