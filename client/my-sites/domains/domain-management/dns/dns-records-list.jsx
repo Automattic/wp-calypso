@@ -196,10 +196,15 @@ class DnsRecordsList extends Component {
 			];
 		}
 
-		return [
-			{ ...this.editRecordAction, disabled: record.protected_field },
-			{ ...this.deleteRecordAction, disabled: record.protected_field && 'MX' !== record.type },
-		];
+		const actions = [];
+
+		if ( ! record.protected_field ) {
+			actions.push( { ...this.editRecordAction, disabled: false } );
+		}
+		if ( ! ( record.protected_field && 'MX' !== record.type ) ) {
+			actions.push( { ...this.deleteRecordAction, disabled: false } );
+		}
+		return actions;
 	}
 
 	getDomainConnectDnsRecord( enabled ) {
