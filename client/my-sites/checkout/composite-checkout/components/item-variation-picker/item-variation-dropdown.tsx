@@ -4,11 +4,21 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useGetProductVariants } from '../../hooks/product-variants';
+import { ItemVariantPrice } from './variant-price';
 import type { ItemVariationPickerProps } from './types';
 
-interface OptionProps {
-	selected: boolean;
-}
+const VariantLabel = styled.span`
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 20px;
+`;
+
+const VariantPrice = styled.span`
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 20px;
+	color: #646970;
+`;
 
 interface CurrentOptionProps {
 	open: boolean;
@@ -37,6 +47,10 @@ const CurrentOption = styled.button< CurrentOptionProps >`
 		` }
 `;
 
+interface OptionProps {
+	selected: boolean;
+}
+
 const Option = styled.li< OptionProps >`
 	align-items: center;
 	background: white;
@@ -44,13 +58,16 @@ const Option = styled.li< OptionProps >`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	padding: 10px 16px;
+	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
 
 	${ ( props ) =>
 		props.selected &&
 		css`
 			background: #055d9c;
-			color: #ffff;
+
+			${ VariantLabel }, ${ VariantPrice } {
+				color: #ffffff;
+			}
 		` }
 `;
 
@@ -77,14 +94,6 @@ const OptionList = styled.ul`
 			border-bottom-right-radius: 3px;
 		}
 	}
-`;
-
-const VariantLabel = styled.span`
-	flex: 1;
-	display: flex;
-	font-size: 14px;
-	font-weight: 400;
-	line-height: 20px;
 `;
 
 export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps > = ( {
@@ -201,10 +210,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				role="button"
 			>
 				{ selectedVariantIndex !== null ? (
-					<>
-						<VariantLabel>{ variants[ selectedVariantIndex ].variantLabel }</VariantLabel>
-						{ variants[ selectedVariantIndex ].variantDetails }
-					</>
+					<ItemVariantPrice variant={ variants[ selectedVariantIndex ] } />
 				) : (
 					<span>{ translate( 'Pick a product term' ) }</span>
 				) }
@@ -212,18 +218,20 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 			</CurrentOption>
 			{ open && (
 				<OptionList role="listbox" tabIndex={ -1 }>
-					{ variants.map( ( { variantLabel, variantPrice, productId, productSlug }, index ) => (
-						<Option
-							id={ productId.toString() }
-							role="option"
-							key={ productSlug + variantLabel }
-							onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
-							selected={ index === highlightedVariantIndex }
-						>
-							<VariantLabel>{ variantLabel }</VariantLabel>
-							<span>{ variantPrice }</span>
-						</Option>
-					) ) }
+					{ variants.map(
+						( { variantLabel, formattedCurrentPrice, productId, productSlug }, index ) => (
+							<Option
+								id={ productId.toString() }
+								role="option"
+								key={ productSlug + variantLabel }
+								onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
+								selected={ index === highlightedVariantIndex }
+							>
+								<VariantLabel>{ variantLabel }</VariantLabel>
+								<VariantPrice>{ formattedCurrentPrice }</VariantPrice>
+							</Option>
+						)
+					) }
 				</OptionList>
 			) }
 		</Dropdown>
