@@ -30,7 +30,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
 		null
 	);
-	const [ isMinimized, setIsMinimized ] = useState( false );
+	const [ isMinimized, setIsMinimized ] = useState( config.isMinimized ?? false );
 
 	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );
 	const [ tourReady, setTourReady ] = useState( false );
