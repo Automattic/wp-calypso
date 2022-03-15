@@ -194,7 +194,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			return <AftermarketAutcionNotice domainName={ selectedDomainName } />;
 		}
 
-		if ( domain && domain.expired && ! domain.isRenewable ) {
+		if ( domain && domain.isRedeemable ) {
 			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 

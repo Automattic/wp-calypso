@@ -348,7 +348,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			return <AftermarketAutcionNotice domainName={ selectedDomainName } />;
 		}
 
-		if ( domain.expired && ! domain.isRenewable ) {
+		if ( domain.isRedeemable ) {
 			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
