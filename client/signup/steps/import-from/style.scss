@@ -5,6 +5,11 @@
 		padding: 0 20px;
 	}
 
+	.importer-wrapper:not( .importer-wrapper__wordpress ) {
+		max-width: 700px;
+		margin: auto;
+	}
+
 	.import__onboarding-page {
 		.onboarding-progress {
 			margin: auto;
