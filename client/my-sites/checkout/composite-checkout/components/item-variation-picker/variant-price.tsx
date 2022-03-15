@@ -42,10 +42,6 @@ const Label = styled.span`
 	}
 `;
 
-interface Props {
-	variant: WPCOMProductVariant;
-}
-
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
 	const translate = useTranslate();
 	return (
@@ -59,7 +55,9 @@ const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent
 	);
 };
 
-export const ItemVariantPrice: FunctionComponent< Props > = ( { variant } ) => {
+export const ItemVariantPrice: FunctionComponent< {
+	variant: WPCOMProductVariant;
+} > = ( { variant } ) => {
 	const isMobile = useMobileBreakpoint();
 
 	return (
