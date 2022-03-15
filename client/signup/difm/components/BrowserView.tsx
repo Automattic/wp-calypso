@@ -14,39 +14,60 @@ const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean 
 			} };
 		border-radius: 10px;
 	}
+	width: 222px;
+	position: relative;
 `;
+
 const Header = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: left;
 	position: relative;
-	max-width: 100%;
+	width: 222px;
 	height: 12px;
 	border: 1px solid rgba( 0, 0, 0, 0.12 );
 	border-radius: 6px 6px 0 0;
 	margin: 0 auto;
 	box-sizing: border-box;
-	transition: max-width 0.2s ease-out;
 	padding: 5px;
 `;
+
 const Content = styled.div`
 	border: 1px solid rgba( 0, 0, 0, 0.12 );
 	border-top: none;
-	height: 158px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	height: 170px;
+`;
+
+const SelctedCount = styled.div`
+	color: var( --studio-white );
+	background-color: var( --studio-blue-50 );
+	width: 25px;
+	height: 25px;
+	border-radius: 15px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	right: 14px;
+	top: 140px;
 `;
 
 export function BrowserView( {
 	isSelected,
 	isClickDisabled,
+	selectedCount,
 }: {
 	isSelected?: boolean;
 	isClickDisabled?: boolean;
+	selectedCount: number | undefined;
 } ) {
 	return (
 		<Container isSelected={ isSelected } isClickDisabled={ isClickDisabled }>
+			{ selectedCount ? <SelctedCount>{ selectedCount }</SelctedCount> : null }
+
 			<Header>
 				<svg width={ 16 } height={ 4 } fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path

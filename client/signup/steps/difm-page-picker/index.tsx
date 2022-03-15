@@ -5,51 +5,75 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { BrowserView } from 'calypso/signup/difm/components/BrowserView';
 import usePageSuggestions, { PageSuggestion } from 'calypso/signup/difm/usePageSuggestions';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import './styles.scss';
 
 const PagePickerDetailsContainer = styled.div`
-	width: 400px;
-	padding-right: 2rem;
+	margin: 10px 0 50px 0;
+	width: 100%;
+	@media ( min-width: 600px ) {
+		width: 395px;
+	}
 `;
 
 const PageGrid = styled.div`
 	display: grid;
 	grid-template-columns: 1fr;
-	row-gap: 74px;
-	column-gap: 24px;
+	row-gap: 40px;
+	column-gap: 35px;
 	margin: 0 0 30px;
-	@media ( min-width: 960px ) {
+
+	@media ( min-width: 600px ) and ( max-width: 785px ) {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	@media ( min-width: 785px ) {
 		grid-template-columns: 1fr 1fr 1fr;
 	}
 `;
 
 const Container = styled.div`
-	display: flex;
+	display: block;
 	align-items: flex-start;
 	flex-direction: row;
+	padding: 0 5px;
+	@media ( min-width: 960px ) {
+		display: flex;
+	}
 `;
 
-const GridCellContainer = styled.button< { isClickDisabled: boolean; isSelected: boolean } >`
+const GridCellContainer = styled.div< { isClickDisabled: boolean; isSelected: boolean } >`
 	cursor: ${ ( { isClickDisabled, isSelected } ) =>
 		! isSelected && isClickDisabled ? 'default' : 'pointer' };
 	opacity: ${ ( { isSelected, isClickDisabled } ) =>
 		! isSelected && isClickDisabled ? '0.4' : '1' };
-	width: 223px;
+	min-width: 223px;
 	border-radius: 4px;
 	position: relative;
+	width: 100%;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 `;
 
 const CellLabelContainer = styled.div`
 	margin: 14px 0;
 	text-align: left;
 	display: flex;
+
+	justify-content: center;
 	& > div {
 		margin-right: 8px;
+	}
+	width: 100%;
+	@media ( min-width: 960px ) {
+		justify-content: left;
 	}
 `;
 
 const PopularContainer = styled.div`
-	width: 61px;
-	height: 20px;
+	width: 75px;
+	height: 25px;
 	left: 699px;
 	top: 352px;
 	background: #b8e6bf;
@@ -63,20 +87,6 @@ const PopularContainer = styled.div`
 	}
 `;
 
-const SelctedCount = styled.div`
-	color: var( --studio-white );
-	background-color: var( --studio-blue-50 );
-	width: 25px;
-	height: 25px;
-	border-radius: 15px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: absolute;
-	right: 14px;
-	top: 140px;
-`;
-
 interface PageCellType extends PageSuggestion {
 	selectedCount?: number;
 	onClick: () => void;
@@ -88,7 +98,11 @@ function PageCell( { title, isPopular, selectedCount, onClick, isDisabled }: Pag
 	const isSelected = Boolean( selectedCount && selectedCount > 0 );
 	return (
 		<GridCellContainer onClick={ onClick } isSelected={ isSelected } isClickDisabled={ isDisabled }>
-			<BrowserView isClickDisabled={ isDisabled } isSelected={ isSelected } />
+			<BrowserView
+				isClickDisabled={ isDisabled }
+				isSelected={ isSelected }
+				selectedCount={ selectedCount }
+			/>
 			<CellLabelContainer>
 				<div>{ title }</div>
 				{ isPopular ? (
@@ -97,7 +111,6 @@ function PageCell( { title, isPopular, selectedCount, onClick, isDisabled }: Pag
 					</PopularContainer>
 				) : null }
 			</CellLabelContainer>
-			{ selectedCount ? <SelctedCount>{ selectedCount }</SelctedCount> : null }
 		</GridCellContainer>
 	);
 }
