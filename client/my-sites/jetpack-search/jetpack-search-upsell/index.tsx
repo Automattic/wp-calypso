@@ -1,4 +1,4 @@
-import { PRODUCT_JETPACK_SEARCH } from '@automattic/calypso-products';
+import { PRODUCT_JETPACK_SEARCH, TERM_ANNUALLY } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
