@@ -6,7 +6,7 @@ const selectors = {
 	sectionTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
 	sectionTitles: '.plugins-browser-list__title',
 	browseAllPopular: 'a[href^="/plugins/popular"]',
-	breadcrumb: ( section: string ) => `.plugins-browser__header li a:text("${ section }") `,
+	breadcrumb: ( section: string ) => `.plugins-browser__header span a:text("${ section }") `,
 	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
 	annualPricingSelect: 'a[data-bold-text^="Annual price"]',
