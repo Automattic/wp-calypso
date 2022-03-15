@@ -3,14 +3,7 @@
 
 .breadcrumb {
 	> div:first-child {
-		position: fixed;
-		margin: 0;
-		z-index: -10;
-		background-color: white;
-		top: var( --masterbar-height );
 		padding: 0 16px;
-		left: 0;
-		right: 0;
 		border-bottom: 1px solid var( --studio-gray-5 );
 
 		@include breakpoint-deprecated( '>660px' ) {

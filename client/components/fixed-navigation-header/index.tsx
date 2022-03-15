@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useEffect, useRef } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import Breadcrumb from 'calypso/components/breadcrumb';
 
@@ -64,6 +65,7 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 	const { id, className, children, navigationItems, contentRef } = props;
 	const actionsRef = useRef< HTMLDivElement >( null );
 	const headerRef = useRef< HTMLElement >( null );
+	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( ! contentRef ) {
@@ -96,18 +98,18 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}, [ contentRef ] );
 
-	let mobileItem: { label: string; href?: string; showBackArrow?: boolean } = {
-		label: 'Back',
+	let mobileItem: { label: React.ReactChild; href?: string; showBackArrow?: boolean } = {
+		label: translate( 'Back' ),
 	};
 	if ( navigationItems.length > 1 ) {
 		mobileItem = {
 			href: navigationItems[ navigationItems.length - 2 ].href,
-			label: 'Back',
+			label: translate( 'Back' ),
 			showBackArrow: true,
 		};
 		navigationItems[ navigationItems.length - 1 ].href = undefined;
 	} else if ( navigationItems.length > 0 ) {
-		mobileItem = { ...navigationItems[ 0 ], href: undefined, showBackArrow: false };
+		mobileItem = { ...navigationItems[ 0 ], showBackArrow: false };
 	}
 
 	return (

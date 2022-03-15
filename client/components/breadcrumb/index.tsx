@@ -31,7 +31,7 @@ import './style.scss';
  */
 
 type Item = {
-	label: string;
+	label: React.ReactChild;
 	href?: string;
 	helpBubble?: string | JSX.Element;
 	showBackArrow?: boolean;
@@ -43,15 +43,7 @@ interface Props {
 	buttons?: JSX.Element[];
 	mobileButtons?: JSX.Element[];
 }
-/*
-Breadcrumbs.propTypes = {
-	items: PropTypes.array.isRequired,
-	mobileItem: PropTypes.object.isRequired,
-	buttons: PropTypes.array,
-	mobileButtons: PropTypes.array,
-	className: PropTypes.string,
-};
-*/
+
 const Breadcrumbs: React.FunctionComponent< Props > = ( {
 	items,
 	mobileItem,
@@ -165,7 +157,6 @@ const Breadcrumbs: React.FunctionComponent< Props > = ( {
 					{ renderButtons() }
 				</div>
 			</div>
-			<div className="breadcrumb__spacer"></div>
 		</div>
 	);
 };
