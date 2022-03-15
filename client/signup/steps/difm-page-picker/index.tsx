@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { BrowserView } from 'calypso/signup/difm/components/BrowserVIew';
+import { BrowserView } from 'calypso/signup/difm/components/BrowserView';
 import usePageSuggestions, { PageSuggestion } from 'calypso/signup/difm/usePageSuggestions';
 import StepWrapper from 'calypso/signup/step-wrapper';
 
@@ -28,8 +28,11 @@ const Container = styled.div`
 	flex-direction: row;
 `;
 
-const GridCellContainer = styled.button`
-	cursor: pointer;
+const GridCellContainer = styled.button< { isClickDisabled: boolean; isSelected: boolean } >`
+	cursor: ${ ( { isClickDisabled, isSelected } ) =>
+		! isSelected && isClickDisabled ? 'default' : 'pointer' };
+	opacity: ${ ( { isSelected, isClickDisabled } ) =>
+		! isSelected && isClickDisabled ? '0.4' : '1' };
 	width: 223px;
 	border-radius: 4px;
 	position: relative;
@@ -77,14 +80,15 @@ const SelctedCount = styled.div`
 interface PageCellType extends PageSuggestion {
 	selectedCount?: number;
 	onClick: () => void;
+	isDisabled: boolean;
 }
 
-function PageCell( { title, isPopular, selectedCount, onClick }: PageCellType ) {
+function PageCell( { title, isPopular, selectedCount, onClick, isDisabled }: PageCellType ) {
 	const translate = useTranslate();
-
+	const isSelected = Boolean( selectedCount && selectedCount > 0 );
 	return (
-		<GridCellContainer onClick={ onClick }>
-			<BrowserView isSelected={ selectedCount ? selectedCount > 0 : false } />
+		<GridCellContainer onClick={ onClick } isSelected={ isSelected } isClickDisabled={ isDisabled }>
+			<BrowserView isClickDisabled={ isDisabled } isSelected={ isSelected } />
 			<CellLabelContainer>
 				<div>{ title }</div>
 				{ isPopular ? (
@@ -101,6 +105,7 @@ function PageCell( { title, isPopular, selectedCount, onClick }: PageCellType ) 
 function PageSelector() {
 	const PAGE_LIMIT = 5;
 	const [ selectedPages, setSelectedPages ] = useState< string[] >( [] );
+	const selectedPageCount = selectedPages.length;
 	const translatedPageTitles = usePageSuggestions();
 	const translate = useTranslate();
 
@@ -130,6 +135,7 @@ function PageSelector() {
 					const index = selectedPages.indexOf( page.id );
 					return (
 						<PageCell
+							isDisabled={ selectedPageCount >= PAGE_LIMIT }
 							{ ...page }
 							selectedCount={ index > -1 ? index + 1 : undefined }
 							onClick={ () => onPageClick( page.id ) }

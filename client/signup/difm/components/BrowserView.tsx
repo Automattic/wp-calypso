@@ -1,11 +1,17 @@
 import styled from '@emotion/styled';
 
-const Container = styled.div< { isSelected?: boolean } >`
+const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
 	border: 3px solid
 		${ ( { isSelected } ) => ( isSelected ? 'var( --studio-blue-50 )' : '#ffffff00' ) };
 	border-radius: ${ ( { isSelected } ) => ( isSelected ? '10px' : '0' ) };
 	&:hover {
-		border: 3px solid var( --studio-blue-50 );
+		border: 3px solid
+			${ ( { isClickDisabled, isSelected } ) => {
+				if ( isClickDisabled && ! isSelected ) {
+					return 'var( --studio-white )';
+				}
+				return 'var( --studio-blue-50 )';
+			} };
 		border-radius: 10px;
 	}
 `;
@@ -32,9 +38,15 @@ const Content = styled.div`
 	justify-content: center;
 `;
 
-export function BrowserView( { isSelected }: { isSelected?: boolean } ) {
+export function BrowserView( {
+	isSelected,
+	isClickDisabled,
+}: {
+	isSelected?: boolean;
+	isClickDisabled?: boolean;
+} ) {
 	return (
-		<Container isSelected={ isSelected }>
+		<Container isSelected={ isSelected } isClickDisabled={ isClickDisabled }>
 			<Header>
 				<svg width={ 16 } height={ 4 } fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path
