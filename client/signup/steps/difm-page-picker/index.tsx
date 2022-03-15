@@ -93,12 +93,13 @@ interface PageCellType extends PageSuggestion {
 	isDisabled: boolean;
 }
 
-function PageCell( { title, isPopular, selectedCount, onClick, isDisabled }: PageCellType ) {
+function PageCell( { id, title, isPopular, selectedCount, onClick, isDisabled }: PageCellType ) {
 	const translate = useTranslate();
 	const isSelected = Boolean( selectedCount && selectedCount > 0 );
 	return (
 		<GridCellContainer onClick={ onClick } isSelected={ isSelected } isClickDisabled={ isDisabled }>
 			<BrowserView
+				pageId={ id }
 				isClickDisabled={ isDisabled }
 				isSelected={ isSelected }
 				selectedCount={ selectedCount }
