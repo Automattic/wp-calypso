@@ -1,17 +1,15 @@
 import { Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import './style.scss';
 
 function getStepClassName( currentStep: number, step: number ): any {
-	switch ( true ) {
-		case currentStep === step:
-			return 'step-current';
-		case currentStep < step:
-			return 'step-next';
-		case currentStep > step:
-			return 'step-complete';
-	}
+	return classnames( {
+		'step-current': currentStep === step,
+		'step-next': currentStep < step,
+		'step-complete': currentStep > step,
+	} );
 }
 
 export default function ( { currentStep }: { currentStep: number } ): ReactElement {
