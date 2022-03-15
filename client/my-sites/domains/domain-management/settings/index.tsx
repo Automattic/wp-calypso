@@ -12,6 +12,7 @@ import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'ca
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import CannotManageDnsRecords from 'calypso/my-sites/domains/domain-management/components/domain/cannot-manage-dns-records';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
@@ -243,15 +244,19 @@ const Settings = ( {
 				title={ translate( 'Name servers', { textOnly: true } ) }
 				subtitle={ getNameServerSectionSubtitle() }
 			>
-				<NameServersCard
-					domain={ domain }
-					isLoadingNameservers={ isLoadingNameservers }
-					loadingNameserversError={ loadingNameserversError }
-					nameservers={ nameservers }
-					selectedSite={ selectedSite }
-					selectedDomainName={ selectedDomainName }
-					updateNameservers={ updateNameservers }
-				/>
+				{ domain.canManageDnsRecords ? (
+					<NameServersCard
+						domain={ domain }
+						isLoadingNameservers={ isLoadingNameservers }
+						loadingNameserversError={ loadingNameserversError }
+						nameservers={ nameservers }
+						selectedSite={ selectedSite }
+						selectedDomainName={ selectedDomainName }
+						updateNameservers={ updateNameservers }
+					/>
+				) : (
+					<CannotManageDnsRecords redesigned domain={ domain } />
+				) }
 			</Accordion>
 		);
 	};
@@ -266,12 +271,16 @@ const Settings = ( {
 				title={ translate( 'DNS records', { textOnly: true } ) }
 				subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
 			>
-				<DnsRecords
-					dns={ dns }
-					selectedDomainName={ selectedDomainName }
-					selectedSite={ selectedSite }
-					currentRoute={ currentRoute }
-				/>
+				{ domain.canManageDnsRecords ? (
+					<DnsRecords
+						dns={ dns }
+						selectedDomainName={ selectedDomainName }
+						selectedSite={ selectedSite }
+						currentRoute={ currentRoute }
+					/>
+				) : (
+					<CannotManageDnsRecords redesigned domain={ domain } />
+				) }
 			</Accordion>
 		);
 	};

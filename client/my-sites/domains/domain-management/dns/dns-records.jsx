@@ -8,6 +8,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import CannotManageDnsRecords from 'calypso/my-sites/domains/domain-management/components/domain/cannot-manage-dns-records';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
 import EmailSetup from 'calypso/my-sites/domains/domain-management/email-setup';
@@ -99,7 +100,8 @@ class DnsRecords extends Component {
 	};
 
 	renderMain() {
-		const { dns, selectedDomainName, selectedSite, translate } = this.props;
+		const { dns, selectedDomainName, selectedSite, translate, domains } = this.props;
+		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 		const headerText = translate( 'DNS Records' );
 
 		return (
@@ -108,13 +110,19 @@ class DnsRecords extends Component {
 				<DocumentHead title={ headerText } />
 				{ this.renderBreadcrumbs() }
 				<FormattedHeader brandFont headerText={ headerText } align="left" />
-				<DnsDetails />
-				<DnsRecordsList
-					dns={ dns }
-					selectedSite={ selectedSite }
-					selectedDomainName={ selectedDomainName }
-				/>
-				<EmailSetup selectedDomainName={ selectedDomainName } />
+				{ selectedDomain.canManageDnsRecords ? (
+					<>
+						<DnsDetails />
+						<DnsRecordsList
+							dns={ dns }
+							selectedSite={ selectedSite }
+							selectedDomainName={ selectedDomainName }
+						/>
+						<EmailSetup selectedDomainName={ selectedDomainName } />
+					</>
+				) : (
+					<CannotManageDnsRecords redesigned={ false } domain={ selectedDomain } />
+				) }
 			</Main>
 		);
 	}
