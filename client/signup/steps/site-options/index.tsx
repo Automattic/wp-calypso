@@ -24,7 +24,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 	const { stepName, signupDependencies, goToNextStep } = props;
 	const { siteTitle, tagline } = signupDependencies;
 
-	const getStepText = ( stepName: string ) => {
+	const getSiteOptionsProps = ( stepName: string ) => {
 		switch ( stepName ) {
 			case 'store-options':
 				return {
@@ -59,7 +59,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 		siteTitleLabel,
 		taglineExplanation,
 		isSiteTitleRequired,
-	} = getStepText( stepName );
+	} = getSiteOptionsProps( stepName );
 
 	const submitSiteOptions = ( { siteTitle, tagline }: SiteOptionsFormValues ) => {
 		recordTracksEvent( 'calypso_signup_site_options_submit', {

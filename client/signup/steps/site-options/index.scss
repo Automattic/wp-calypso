@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/_mixins.scss';
 
 .signup__step .is-site-options,
-.is-difm-options {
+.signup__step .is-difm-options {
 	.step-wrapper__header {
 		@include break-small {
 			flex-basis: 34%;
