@@ -4,9 +4,13 @@
 @import '@wordpress/base-styles/_mixins.scss';
 @import './mixins.scss';
 
-.import__onboarding-page {
-	@include onboarding-block-margin;
+.signup.is-importer {
+	.import__onboarding-page {
+		@include onboarding-block-margin;
+	}
+}
 
+.import__onboarding-page {
 	.components-button.action-buttons__next.is-primary {
 		padding: 9px 40px;
 		border-radius: 4px; /* stylelint-disable-line scales/radii */
@@ -34,12 +38,12 @@
 
 		@include break-medium {
 			h1 {
-				width: 500px;
+				max-width: 500px;
 				margin: auto;
 			}
 
 			h2 {
-				width: 560px;
+				max-width: 560px;
 				margin: auto;
 			}
 		}
@@ -67,6 +71,10 @@
 			}
 		}
 
+		.formatted-header__subtitle {
+			margin-bottom: 2.5em !important;
+		}
+
 		.import__buttons-group {
 			margin: 28px 0;
 		}
@@ -89,36 +97,20 @@
 		text-align: center;
 	}
 
-	// Layout
-	.import-layout {
-		@include onboarding-block-margin;
-		@include onboarding-heading-padding;
-		display: flex;
-		flex-direction: column;
+	.scanning__header {
+		.import__heading {
+			.onboarding-title {
+				font-family: var( --font-base, var( --font-base-default ) );
+				font-size: 1.75em; /* stylelint-disable-line */
+				margin-bottom: 0.5em /* stylelint-disable-line */;
+			}
 
-		@include break-small {
-			flex-direction: row;
+			.onboarding-subtitle {
+				font-size: 1rem;
+				line-height: 1.5em;
+				color: var( --studio-gray-50 );
+			}
 		}
-	}
-
-	.import-layout__column {
-		display: flex;
-		flex-direction: column;
-		flex-basis: 100%;
-	}
-
-	.import-layout__center {
-		background-color: var( --contrastColor );
-		tab-size: 4;
-		min-height: calc( 100vh - 2 * #{$onboarding-header-height} );
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-	}
-
-	.import-layout__text-center {
-		text-align: center;
 	}
 }
 
@@ -152,6 +144,38 @@
 		left: 0;
 		fill: var( --studio-gray-20 );
 	}
+}
+
+// Layout
+.import-layout {
+	@include onboarding-block-margin;
+	@include onboarding-heading-padding;
+	display: flex;
+	flex-direction: column;
+
+	@include break-small {
+		flex-direction: row;
+	}
+}
+
+.import-layout__column {
+	display: flex;
+	flex-direction: column;
+	flex-basis: 100%;
+}
+
+.import-layout__center {
+	background-color: var( --contrastColor );
+	tab-size: 4;
+	min-height: calc( 100vh - 2 * #{$header-height} );
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.import-layout__text-center {
+	text-align: center;
 }
 
 // Navigation

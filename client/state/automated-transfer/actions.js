@@ -3,7 +3,6 @@ import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
 	AUTOMATED_TRANSFER_STATUS_REQUEST,
-	AUTOMATED_TRANSFER_STATUS_REQUEST_ONCE,
 	AUTOMATED_TRANSFER_STATUS_SET,
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
@@ -38,11 +37,6 @@ export const initiateAutomatedTransferWithPluginZip = ( siteId, pluginZip ) => (
  */
 export const fetchAutomatedTransferStatus = ( siteId ) => ( {
 	type: AUTOMATED_TRANSFER_STATUS_REQUEST,
-	siteId,
-} );
-
-export const fetchAutomatedTransferStatusOnce = ( siteId ) => ( {
-	type: AUTOMATED_TRANSFER_STATUS_REQUEST_ONCE,
 	siteId,
 } );
 

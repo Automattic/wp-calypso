@@ -24,7 +24,6 @@ import SpinnerButton from 'calypso/components/spinner-button';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
@@ -207,7 +206,6 @@ export default function WPCOMBusinessAT(): ReactElement {
 		<Main className="wpcom-business-at">
 			<QueryAutomatedTransferEligibility siteId={ siteId } />
 			<DocumentHead title={ content.documentHeadTitle } />
-			<SidebarNavigation />
 			<PageViewTracker path={ `/backup/:site` } title="Business Plan Automated Transfer" />
 
 			<FormattedHeader

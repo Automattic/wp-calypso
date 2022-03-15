@@ -1,19 +1,32 @@
-import { useI18n } from '@wordpress/react-i18n';
+import { StepContainer } from '@automattic/onboarding';
+import { useTranslate } from 'i18n-calypso';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../types';
 
 /**
  * The wp-admin step
  */
 const WpAdminStep: Step = function WpAdminStep( { navigation } ) {
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const { goNext, goBack } = navigation;
+	const headerText = translate( 'Wp Admin step' );
 
 	return (
-		<div>
-			<h1>Wp Admin</h1>
-			<button onClick={ goBack }>{ __( 'Previous' ) }</button>
-			<button onClick={ goNext }>{ __( 'Next' ) }</button>
-		</div>
+		<StepContainer
+			hideSkip
+			goBack={ goBack }
+			goNext={ goNext }
+			hideNext={ false }
+			backLabelText={ translate( 'Previous' ) }
+			nextLabelText={ translate( 'Next' ) }
+			isHorizontalLayout={ true }
+			formattedHeader={
+				<FormattedHeader id={ 'wpadmin-step-header' } headerText={ headerText } align={ 'left' } />
+			}
+			stepContent={ <div>WpAdmin step content</div> }
+			recordTracksEvent={ recordTracksEvent }
+		/>
 	);
 };
 

@@ -1,8 +1,7 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import hasUserSettings from 'calypso/state/selectors/has-user-settings';
 import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
@@ -29,12 +28,7 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 		} = this.props;
 
 		if ( ! areUserSettingsLoaded ) {
-			return (
-				<Fragment>
-					<QueryUserSettings />
-					<SecurityCheckupNavigationItem isPlaceholder={ true } />
-				</Fragment>
-			);
+			return <SecurityCheckupNavigationItem isPlaceholder={ true } />;
 		}
 
 		let icon;
@@ -69,15 +63,12 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 		}
 
 		return (
-			<Fragment>
-				<QueryUserSettings />
-				<SecurityCheckupNavigationItem
-					path={ '/me/security/two-step' }
-					materialIcon={ icon }
-					text={ translate( 'Two-Step Authentication' ) }
-					description={ description }
-				/>
-			</Fragment>
+			<SecurityCheckupNavigationItem
+				path={ '/me/security/two-step' }
+				materialIcon={ icon }
+				text={ translate( 'Two-Step Authentication' ) }
+				description={ description }
+			/>
 		);
 	}
 }

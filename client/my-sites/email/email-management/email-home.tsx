@@ -17,7 +17,6 @@ import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
@@ -34,8 +33,6 @@ const ContentWithHeader = ( props: { children: ReactElement } ): ReactElement =>
 	return (
 		<Main wideLayout>
 			<DocumentHead title={ translate( 'Emails', { textOnly: true } ) } />
-
-			<SidebarNavigation />
 
 			<EmailHeader />
 

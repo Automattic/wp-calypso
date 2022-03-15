@@ -1,0 +1,25 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '../import/style';
+
+.signup.is-import-light {
+	.import__onboarding-page {
+		@include onboarding-block-margin;
+
+		@include break-large {
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+		.onboarding-title {
+			font-family: var( --font-base, var( --font-base-default ) );
+			font-size: 1.5em; /* stylelint-disable-line */
+			margin-bottom: 0.5em /* stylelint-disable-line */;
+		}
+
+		.onboarding-subtitle {
+			font-size: 1rem;
+			line-height: 1.5em;
+			color: var( --studio-gray-50 );
+		}
+	}
+}

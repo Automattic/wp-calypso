@@ -11,7 +11,6 @@ import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -102,7 +101,6 @@ export const Sharing = ( {
 		<Main wideLayout className="sharing">
 			<DocumentHead title={ titleHeader } />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
-			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="marketing__page-heading"

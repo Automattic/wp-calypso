@@ -3,6 +3,9 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PressThisLink from './link';
@@ -27,16 +30,16 @@ class PressThis extends Component {
 		return (
 			<div className="press-this">
 				<Card className="press-this__card site-settings">
-					<p>
+					<FormLegend>{ translate( 'Press This' ) }</FormLegend>
+					<FormSettingExplanation>
 						{ translate(
 							'{{strong}}Press This{{/strong}} allows you to copy text, images, and video from any web page and add them to a new post on your site, along with an automatic citation.',
 							{ components: { strong: <strong /> } }
 						) }
-					</p>
-					<p>
-						<strong>{ translate( 'How to use Press This' ) }</strong>
-					</p>
-					<p>
+					</FormSettingExplanation>
+
+					<FormFieldset>
+						<FormLegend>{ translate( 'How to use Press This' ) }</FormLegend>
 						<ul>
 							<li>
 								{ translate(
@@ -48,21 +51,22 @@ class PressThis extends Component {
 							</li>
 							<li>{ translate( 'Click on the "Press This" bookmarklet / favorite.' ) }</li>
 						</ul>
-					</p>
-					{ site && (
-						<p className="press-this__link-container">
-							<PressThisLink
-								site={ site }
-								onClick={ this.recordEvent( 'Clicked Press This Button' ) }
-								onDragStart={ this.recordEvent( 'Dragged Press This Button' ) }
-							>
-								<Gridicon icon="create" />
-								<span>
-									{ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
-								</span>
-							</PressThisLink>
-						</p>
-					) }
+
+						{ site && (
+							<p className="press-this__link-container">
+								<PressThisLink
+									site={ site }
+									onClick={ this.recordEvent( 'Clicked Press This Button' ) }
+									onDragStart={ this.recordEvent( 'Dragged Press This Button' ) }
+								>
+									<Gridicon icon="create" />
+									<span>
+										{ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
+									</span>
+								</PressThisLink>
+							</p>
+						) }
+					</FormFieldset>
 				</Card>
 			</div>
 		);

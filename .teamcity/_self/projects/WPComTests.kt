@@ -253,6 +253,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2E
 				checked = "true",
 				unchecked = "false"
 			)
+			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser")
 			param("env.VIEWPORT_NAME", "$targetDevice")
 		},
 		buildFeatures = {
@@ -309,6 +310,7 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EB
 				checked = "true",
 				unchecked = "false"
 			)
+			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser")
 			param("env.VIEWPORT_NAME", "$targetDevice")
 		},
 		buildFeatures = {

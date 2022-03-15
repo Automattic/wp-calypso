@@ -17,7 +17,6 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
@@ -51,9 +50,7 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	handleLayoutFocus = ( currentSection ) => {
-		if ( ! this.props.isNavUnificationEnabled ) {
-			this.props.setNextLayoutFocus( 'sidebar' );
-		} else if ( currentSection !== this.props.section ) {
+		if ( currentSection !== this.props.section ) {
 			// When current section is not focused then open the sidebar.
 			this.props.setNextLayoutFocus( 'sidebar' );
 		} else {
@@ -184,7 +181,7 @@ class MasterbarLoggedIn extends Component {
 			: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
-		if ( this.props.isNavUnificationEnabled && 'sites' === section ) {
+		if ( 'sites' === section ) {
 			mySitesUrl = '';
 		}
 		return (
@@ -364,7 +361,6 @@ export default connect(
 			previousPath: getPreviousRoute( state ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta, activateNextLayoutFocus }

@@ -13,7 +13,6 @@ import Spinner from 'calypso/components/spinner';
 import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
 import { urlToSlug } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -683,7 +682,6 @@ export class SectionMigrate extends Component {
 		return (
 			<Main>
 				<DocumentHead title={ translate( 'Migrate' ) } />
-				<SidebarNavigation />
 				{ migrationElement }
 			</Main>
 		);

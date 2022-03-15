@@ -446,6 +446,24 @@ export type DomainContactValidationRequestExtraFields = {
 	};
 };
 
+export type ContactValidationResponseMessagesExtra = {
+	ca?: {
+		lang?: string[];
+		legal_type?: string[];
+		cira_agreement_accepted?: string[];
+	};
+	uk?: {
+		registrant_type?: string[];
+		registration_number?: string[];
+		trading_name?: string[];
+	};
+	fr?: {
+		registrant_type?: string[];
+		trademark_number?: string[];
+		siren_siret?: string[];
+	};
+};
+
 /**
  * Response format of the domain contact validation endpoint.
  */
@@ -465,36 +483,24 @@ export type ContactValidationResponseMessages = {
 	country_code?: string[];
 	fax?: string[];
 	vat_id?: string[];
-	extra?: {
-		ca?: {
-			lang?: string[];
-			legal_type?: string[];
-			cira_agreement_accepted?: string[];
-		};
-		uk?: {
-			registrant_type?: string[];
-			registration_number?: string[];
-			trading_name?: string[];
-		};
-		fr?: {
-			registrant_type?: string[];
-			trademark_number?: string[];
-			siren_siret?: string[];
-		};
-	};
+	extra?: ContactValidationResponseMessagesExtra;
 };
 
 export type RawContactValidationResponseMessages = Record< string, string[] >;
 
-export type DomainContactValidationResponse = {
-	success: boolean;
-	messages?: ContactValidationResponseMessages;
-};
+export type DomainContactValidationResponse =
+	| { success: true }
+	| {
+			success: false;
+			messages: ContactValidationResponseMessages;
+	  };
 
-export type RawDomainContactValidationResponse = {
-	success: boolean;
-	messages?: RawContactValidationResponseMessages;
-};
+export type RawDomainContactValidationResponse =
+	| { success: true }
+	| {
+			success: false;
+			messages: RawContactValidationResponseMessages;
+	  };
 
 export interface CountryListItem {
 	code: string;

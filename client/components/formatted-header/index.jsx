@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
@@ -9,6 +10,7 @@ function FormattedHeader( {
 	id,
 	headerText,
 	subHeaderText,
+	tooltipText,
 	className,
 	compactOnMobile,
 	align,
@@ -24,11 +26,24 @@ function FormattedHeader( {
 	} );
 
 	const headerClasses = classNames( 'formatted-header__title', { 'wp-brand-font': brandFont } );
+	const tooltip = tooltipText && (
+		<InfoPopover icon="help-outline" position="right" iconSize={ 18 } showOnHover={ true }>
+			{ tooltipText }
+		</InfoPopover>
+	);
 
 	return (
 		<header id={ id } className={ classes }>
-			{ ! isSecondary && <h1 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h1> }
-			{ isSecondary && <h2 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h2> }
+			{ ! isSecondary && (
+				<h1 className={ headerClasses }>
+					{ preventWidows( headerText, 2 ) } { tooltip }
+				</h1>
+			) }
+			{ isSecondary && (
+				<h2 className={ headerClasses }>
+					{ preventWidows( headerText, 2 ) } { tooltip }
+				</h2>
+			) }
 			{ subHeaderText && (
 				<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
 			) }
@@ -42,6 +57,7 @@ FormattedHeader.propTypes = {
 	brandFont: PropTypes.bool,
 	headerText: PropTypes.node,
 	subHeaderText: PropTypes.node,
+	tooltipText: PropTypes.node,
 	compactOnMobile: PropTypes.bool,
 	isSecondary: PropTypes.bool,
 	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
@@ -53,6 +69,7 @@ FormattedHeader.defaultProps = {
 	className: '',
 	brandFont: false,
 	subHeaderText: '',
+	tooltipText: '',
 	compactOnMobile: false,
 	isSecondary: false,
 	align: 'center',

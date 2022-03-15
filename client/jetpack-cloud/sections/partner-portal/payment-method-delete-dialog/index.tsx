@@ -1,6 +1,8 @@
 import { Button, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { getPaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
+import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import PaymentMethodDeletePrimaryConfirmation from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-delete-primary-confirmation';
+import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import type { FunctionComponent } from 'react';
 
@@ -21,10 +23,12 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const paymentMethodSummary = getPaymentMethodSummary( {
-		translate,
-		type: paymentMethod?.card.brand,
-		digits: paymentMethod?.card.last4,
+	const paymentMethodSummary = (
+		<PaymentMethodSummary type={ paymentMethod?.card.brand } digits={ paymentMethod?.card.last4 } />
+	);
+
+	const { isFetching: isFetchingRecentPaymentMethods } = useRecentPaymentMethodsQuery( {
+		enabled: paymentMethod.is_default,
 	} );
 
 	return (
@@ -37,7 +41,7 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 					{ translate( 'Go back' ) }
 				</Button>,
 
-				<Button onClick={ onConfirm } primary scary>
+				<Button disabled={ isFetchingRecentPaymentMethods } onClick={ onConfirm } primary scary>
 					{ translate( 'Delete payment method' ) }
 				</Button>,
 			] }
@@ -55,6 +59,10 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
+
+			{ paymentMethod.is_default && (
+				<PaymentMethodDeletePrimaryConfirmation paymentMethod={ paymentMethod } />
+			) }
 		</Dialog>
 	);
 };

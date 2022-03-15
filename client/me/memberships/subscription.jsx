@@ -14,7 +14,6 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import titles from 'calypso/me/purchases/titles';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { requestSubscriptionStop } from 'calypso/state/memberships/subscriptions/actions';
 import {
 	getSubscription,
@@ -62,7 +61,6 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 	return (
 		<Main wideLayout className="memberships__subscription">
 			<DocumentHead title={ translate( 'Subscription Details' ) } />
-			<MeSidebarNavigation />
 			<QueryMembershipsSubscriptions />
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<HeaderCake backHref={ purchasesRoot }>{ translate( 'Subscription Details' ) }</HeaderCake>

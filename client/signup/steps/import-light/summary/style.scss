@@ -1,0 +1,17 @@
+.import-light__summary {
+	svg {
+		width: 80px;
+		height: 80px;
+	}
+
+	.onboarding-title {
+		font-size: 1.75em !important; /* stylelint-disable-line */
+		margin-bottom: 0.75em;
+	}
+
+	.onboarding-subtitle {
+		span {
+			color: var( --studio-gray-100 );
+		}
+	}
+}

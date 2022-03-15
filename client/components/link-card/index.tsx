@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { ReactChild } from 'react';
+import ExternalLink from 'calypso/components/external-link';
 
 import './style.scss';
 
@@ -13,9 +14,14 @@ interface LinkCardProps {
 	cta?: ReactChild;
 	background?: string;
 	url: string;
+	external?: boolean;
 }
 
 const LinkCardContainer = styled.div< LinkCardContainerProps >`
+	:hover {
+		filter: brightness( 120% );
+	}
+
 	border-radius: 5px;
 	padding: 24px;
 	background: var( --${ ( props ) => props.background || 'studio-white' } );
@@ -54,16 +60,18 @@ const LinkCardCta = styled.div`
 `;
 
 const LinkCard = ( props: LinkCardProps ) => {
-	const { label, title, cta, background, url } = props;
+	const { label, title, cta, background, url, external } = props;
+
+	const Link = external ? ExternalLink : 'a';
 
 	return (
-		<a href={ url }>
+		<Link href={ url }>
 			<LinkCardContainer background={ background }>
 				<LinkCardLabel>{ label }</LinkCardLabel>
 				<LinkCardTitle>{ title }</LinkCardTitle>
 				<LinkCardCta>{ cta }</LinkCardCta>
 			</LinkCardContainer>
-		</a>
+		</Link>
 	);
 };
 

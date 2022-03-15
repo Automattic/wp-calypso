@@ -9,9 +9,10 @@ import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actio
 import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
 import { GoToStep, UrlData } from '../types';
-import './style.scss';
+import { CAPTURE_URL_RGX } from '../util';
 import type { ChangeEvent, FormEvent } from 'react';
 
+import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 const trackEventName = 'calypso_signup_step_start';
@@ -21,9 +22,7 @@ const trackEventParams = {
 };
 
 const validateUrl = ( url: string ): boolean => {
-	const urlRgx = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i;
-
-	return urlRgx.test( url );
+	return CAPTURE_URL_RGX.test( url );
 };
 
 type Props = ConnectedProps< typeof connector > & {

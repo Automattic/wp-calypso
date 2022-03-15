@@ -21,6 +21,7 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import LanguagePicker from 'calypso/components/language-picker';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -38,7 +39,6 @@ import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUserDate,
@@ -52,7 +52,6 @@ import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-c
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
 import {
 	clearUnsavedUserSettings,
@@ -874,9 +873,22 @@ class Account extends Component {
 			<Main wideLayout className="account">
 				<QueryUserSettings />
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
-				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<FormattedHeader brandFont headerText={ translate( 'Account settings' ) } align="left" />
+				<FormattedHeader
+					brandFont
+					headerText={ translate( 'Account settings' ) }
+					align="left"
+					subHeaderText={ translate(
+						'Adjust your account information and interface settings. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink supportContext="account-settings" showIcon={ false } />
+								),
+							},
+						}
+					) }
+				/>
 
 				<SectionHeader label={ translate( 'Account Information' ) } />
 				<Card className="account__settings">
@@ -955,9 +967,7 @@ class Account extends Component {
 									<ColorSchemePicker
 										temporarySelection
 										disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
-										defaultSelection={
-											this.props.isNavUnificationEnabled ? 'classic-dark' : 'classic-bright'
-										}
+										defaultSelection="classic-dark"
 										onSelection={ this.updateColorScheme }
 									/>
 								</FormFieldset>
@@ -987,7 +997,6 @@ export default compose(
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			onboardingUrl: getOnboardingUrl( state ),
-			isNavUnificationEnabled: isNavUnificationEnabled( state ),
 		} ),
 		{
 			bumpStat,

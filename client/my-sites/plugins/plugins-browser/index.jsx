@@ -38,7 +38,6 @@ import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibilit
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	recordTracksEvent,
 	recordGoogleEvent,
@@ -269,7 +268,6 @@ const PluginsBrowser = ( {
 				trackPageViews={ trackPageViews }
 			/>
 			<DocumentHead title={ translate( 'Plugins' ) } />
-			<SidebarNavigation />
 
 			{ ! jetpackNonAtomic && (
 				<AnnouncementModal

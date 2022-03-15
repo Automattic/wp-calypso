@@ -11,7 +11,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
 import TeamList from 'calypso/my-sites/people/team-list';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -50,10 +49,34 @@ class People extends Component {
 		switch ( filter ) {
 			case 'followers':
 				return translate(
-					'People who have subscribed to your site using their WordPress.com account.'
+					'People who have subscribed to your site using their WordPress.com account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink
+									key="learnMoreFollowers"
+									supportContext="followers"
+									showIcon={ false }
+								/>
+							),
+						},
+					}
 				);
 			case 'email-followers':
-				return translate( 'People who have subscribed to your site using their email address.' );
+				return translate(
+					'People who have subscribed to your site using their email address. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					{
+						components: {
+							learnMoreLink: (
+								<InlineSupportLink
+									key="learnMoreFollowers"
+									supportContext="followers"
+									showIcon={ false }
+								/>
+							),
+						},
+					}
+				);
 			default:
 				return isWPForTeamsSite
 					? this.getSubheaderTextForP2()
@@ -62,7 +85,11 @@ class People extends Component {
 							{
 								components: {
 									learnMoreLink: (
-										<InlineSupportLink key="learnMore" supportContext="team" showIcon={ false } />
+										<InlineSupportLink
+											key="learnMoreTeam"
+											supportContext="team"
+											showIcon={ false }
+										/>
 									),
 								},
 							}
@@ -128,7 +155,6 @@ class People extends Component {
 						path={ `/people/${ filter }/:site` }
 						title={ `People > ${ titlecase( filter ) }` }
 					/>
-					<SidebarNavigation />
 					<EmptyContent
 						title={ translate( 'You are not authorized to view this page' ) }
 						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
@@ -143,7 +169,6 @@ class People extends Component {
 					path={ `/people/${ filter }/:site` }
 					title={ `People > ${ titlecase( filter ) }` }
 				/>
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="people__page-heading"

@@ -7,8 +7,8 @@ import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
 import Cloudflare from 'calypso/my-sites/site-settings/cloudflare';
@@ -54,12 +54,24 @@ class SiteSettingsPerformance extends Component {
 			<Main className="settings-performance site-settings site-settings__performance-settings">
 				<DocumentHead title={ translate( 'Performance Settings' ) } />
 				<JetpackDevModeNotice />
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="settings-performance__page-heading"
 					headerText={ translate( 'Performance Settings' ) }
-					subHeaderText={ translate( "Explore settings to improve your site's performance." ) }
+					subHeaderText={ translate(
+						"Explore settings to improve your site's performance. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
+						{
+							components: {
+								learnMoreLink: (
+									<InlineSupportLink
+										key="learnMore"
+										supportContext="performance"
+										showIcon={ false }
+									/>
+								),
+							},
+						}
+					) }
 					align="left"
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />

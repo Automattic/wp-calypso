@@ -172,7 +172,6 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
-			isBillingWordingExperiment,
 			isProfessionalEmailPromotionAvailable,
 			redirectToAddDomainFlow,
 			translate,
@@ -228,7 +227,6 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
-					isBillingWordingExperiment={ isBillingWordingExperiment }
 					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
 				/>
 			</div>

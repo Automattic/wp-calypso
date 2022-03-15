@@ -109,6 +109,38 @@ export const tip: ReactElement = (
 	</SVG>
 );
 
+export const bulb: ReactElement = (
+	<svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			d="M3.2 14.4H8V16H3.2V14.4ZM9.5248 9.3696C10.3488 8.4048 11.2 7.4072 11.2 5.6C11.2 2.5128 8.6872 0 5.6 0C2.5128 0 0 2.5128 0 5.6C0 7.428 0.8536 8.4224 1.6808 9.384C1.9672 9.7184 2.264 10.0648 2.548 10.4632C2.6632 10.628 2.852 11.26 3.0208 12H2.4V13.6H8.8V12H8.1808C8.3512 11.2584 8.5408 10.6248 8.6552 10.46C8.9368 10.0576 9.236 9.708 9.5248 9.3696ZM7.3456 9.54C6.9984 10.0336 6.7088 11.2 6.5408 12H4.66C4.4928 11.1984 4.2024 10.0296 3.8512 9.536C3.551 9.12347 3.23172 8.72517 2.8944 8.3424C2.1152 7.4352 1.6 6.8352 1.6 5.6C1.6 3.3944 3.3944 1.6 5.6 1.6C7.8056 1.6 9.6 3.3944 9.6 5.6C9.6 6.8168 9.0856 7.4192 8.308 8.3304C8.0096 8.6808 7.6712 9.0768 7.3456 9.54V9.54Z"
+			fill="#A7AAAD"
+		/>
+	</svg>
+);
+
+export const check: ReactElement = (
+	<svg width="84" height="84" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			d="M82.4087 41.9905C82.4087 52.4607 78.2507 62.5023 70.8489 69.9077C63.4471 77.313 53.4074 81.4758 42.9372 81.4809C35.0449 70.4373 30.6458 57.2807 30.3081 43.7111C29.9705 30.1415 33.7099 16.7825 41.0432 5.3601L42.9372 2.50011C53.4074 2.50513 63.4471 6.66792 70.8489 14.0733C78.2507 21.4786 82.4087 31.5202 82.4087 41.9905Z"
+			fill="#EFEFEF"
+		/>
+		<path
+			d="M82.4086 41.9906C82.4086 52.7052 78.1522 62.9811 70.5758 70.5575C62.9995 78.1338 52.7237 82.3903 42.0091 82.3903C31.2944 82.3903 21.0186 78.1338 13.4422 70.5575C5.86583 62.9811 1.60947 52.7052 1.60947 41.9906C1.60392 39.5124 1.83224 37.0391 2.29135 34.6038C4.13398 24.702 9.60875 15.8456 17.6423 9.77087C25.6759 3.69614 35.6889 0.841432 45.7181 1.76611C55.7473 2.69079 65.0695 7.3283 71.8569 14.7695C78.6444 22.2107 82.4075 31.9188 82.4086 41.9906V41.9906Z"
+			stroke="#003A5F"
+			stroke-width="1.68"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M28 45.4943L37.8102 54.0742L56.5989 28.4102"
+			stroke="#003A5F"
+			stroke-width="3"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+	</svg>
+);
+
 export const jetpack: ReactElement = (
 	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
@@ -215,5 +247,40 @@ export const shoppingCart: ReactElement = (
 			strokeLinejoin="round"
 			strokeWidth="2"
 		/>
+	</svg>
+);
+
+export const award: ReactElement = (
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			d="M12 15C15.866 15 19 11.866 19 8C19 4.13401 15.866 1 12 1C8.13401 1 5 4.13401 5 8C5 11.866 8.13401 15 12 15Z"
+			stroke="#8C8F94"
+			strokeWidth="1.6"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+		<path
+			d="M8.21 13.8899L7 22.9999L12 19.9999L17 22.9999L15.79 13.8799"
+			stroke="#8C8F94"
+			strokeWidth="1.6"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	</svg>
+);
+
+export const headset: ReactElement = (
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<mask id="mask0_2727_2533" maskUnits="userSpaceOnUse" x="3" y="4" width="18" height="16">
+			<path
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="M5 4H19C20.11 4 21 4.9 21 6V18C21 19.1 20.1 20 19 20H5C3.89 20 3 19.1 3 18V6C3 4.9 3.89 4 5 4ZM5 18H19V8H5V18Z"
+				fill="white"
+			/>
+		</mask>
+		<g mask="url(#mask0_2727_2533)">
+			<rect width="24" height="24" fill="#8C8F94" />
+		</g>
 	</svg>
 );

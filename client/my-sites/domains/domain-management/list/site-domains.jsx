@@ -21,7 +21,6 @@ import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/lis
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -300,7 +299,6 @@ export class SiteDomains extends Component {
 			}
 			return (
 				<Main>
-					<SidebarNavigation />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
 						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
@@ -322,7 +320,6 @@ export class SiteDomains extends Component {
 				return (
 					<Main>
 						<DocumentHead title={ this.props.translate( 'Settings' ) } />
-						<SidebarNavigation />
 						<DomainOnly
 							hasNotice={ this.isFreshDomainOnlyRegistration() }
 							siteId={ this.props.selectedSite.ID }
@@ -344,7 +341,6 @@ export class SiteDomains extends Component {
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				{ this.renderBreadcrumbs() }
 				<DocumentHead title={ headerText } />
-				<SidebarNavigation />
 				{ this.renderNewDesign() }
 			</Main>
 		);

@@ -8,7 +8,6 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { fetchSettings, toggle, saveSettings } from 'calypso/state/notification-settings/actions';
 import {
 	getNotificationSettings,
@@ -55,7 +54,6 @@ class NotificationSettings extends Component {
 			<Main wideLayout className="notification-settings">
 				<PageViewTracker path="/me/notifications" title="Me > Notifications" />
 				<QueryUserDevices />
-				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<FormattedHeader
 					brandFont
