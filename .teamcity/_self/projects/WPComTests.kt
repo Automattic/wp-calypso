@@ -249,7 +249,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2E
 				name = "env.TEST_ON_ATOMIC",
 				value = "false",
 				label = "Test on Atomic",
-				description = "Use a Atomic blog to test against",
+				description = "Use an Atomic blog to test against",
 				checked = "true",
 				unchecked = "false"
 			)

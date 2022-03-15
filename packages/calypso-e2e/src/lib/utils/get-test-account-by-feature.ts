@@ -30,7 +30,6 @@ function criteriaToMap( criteria: FeatureCriteria[], map: FeatureMap ): FeatureM
 	}, map );
 }
 
-// Rename to accountsTable or something along these lines?
 const defaultCriteria: FeatureCriteria[] = [
 	{
 		gutenberg: 'edge',
@@ -38,7 +37,7 @@ const defaultCriteria: FeatureCriteria[] = [
 		accountName: 'gutenbergSimpleSiteEdgeUser',
 	},
 	{ gutenberg: 'stable', siteType: 'simple', accountName: 'gutenbergSimpleSiteUser' },
-	// The CoBlocks account name take precedence if CoBlocks edge
+	// The CoBlocks account name takes precedence if CoBlocks edge
 	// is present. We have two definitions below to effectivelly
 	// ignore gutenberg in this case:
 	{
