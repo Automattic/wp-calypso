@@ -19,7 +19,7 @@ import {
 	getTitanSubscriptionId,
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
-import { isSubscriptionSuspended } from 'calypso/lib/titan/is-subscription-suspended';
+import { isTitanSubscriptionSuspended } from 'calypso/lib/titan/is-titan-subscription-suspended';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 
 export function getNumberOfMailboxesText( domain ) {
@@ -147,11 +147,11 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 		}
 
 		// Check for suspended account
-		if ( isSubscriptionSuspended( domain ) ) {
+		if ( isTitanSubscriptionSuspended( domain ) ) {
 			return {
 				statusClass: 'error',
 				icon: 'info',
-				text: translate( 'Suspended account' ),
+				text: translate( 'Account suspended' ),
 			};
 		}
 
