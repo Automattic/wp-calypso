@@ -404,7 +404,7 @@ object WpCalypso : GitVcsRoot({
 	name = "wp-calypso"
 	url = "git@github.com:Automattic/wp-calypso.git"
 	pushUrl = "git@github.com:Automattic/wp-calypso.git"
-	branch = "refs/heads/trunk"
+	branch = "trunk"
 	branchSpec = "+:refs/heads/*"
 	useTagsAsBranches = true
 	authMethod = uploadedKey {
