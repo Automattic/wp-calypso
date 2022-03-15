@@ -6,7 +6,13 @@ const BreadcrumbExample = () => {
 		{ label: 'Search', href: `/plugins?s=woo` },
 		{ label: 'Woocommerce' },
 	];
-	return <Breadcrumb items={ navigationItems } />;
+	const mobileItem = {
+		label: 'Back',
+		href: navigationItems[ navigationItems.length - 2 ].href,
+		showBackArrow: true,
+	};
+
+	return <Breadcrumb items={ navigationItems } mobileItem={ mobileItem } />;
 };
 
 BreadcrumbExample.displayName = 'Breadcrumb';

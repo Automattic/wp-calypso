@@ -13,12 +13,19 @@ const navigationItems = [
 	{ label: 'Search', href: `/plugins?s=woo` },
 ];
 
+const mobileItem = {
+	label: 'Back',
+	href: '/plugins'
+	showBackArrow: true,
+};
+
+
 function render() {
-	return <Breadcrumb items={ navigationItems } />;
+	return <Breadcrumb items={ navigationItems } mobileItem={ mobileItem } />;
 }
 ```
 
 ## Props
 
 - `items` (`{ label: string; href?: string }[]`) - The Navigations items to be shown
-- `compact` (`boolean`) - Displays only the previous item URL reading "Back" (optional)
+- `mobileItem` (`{ label: string; href?: string, showBackArrow?: boolean }`) - Displays this value on the mobile view
