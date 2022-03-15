@@ -414,6 +414,7 @@ export default function WPCheckout( {
 								siteUrl={ siteUrl }
 								siteId={ siteId }
 								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+								isJetpackCheckout={ isJetpackCheckout }
 							/>
 						)
 					}
@@ -426,6 +427,7 @@ export default function WPCheckout( {
 								siteUrl={ siteUrl }
 								siteId={ siteId }
 								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+								isJetpackCheckout={ isJetpackCheckout }
 							/>
 						) : (
 							<WPCheckoutOrderReview
@@ -433,6 +435,7 @@ export default function WPCheckout( {
 								removeProductFromCart={ removeProductFromCart }
 								couponFieldStateProps={ couponFieldStateProps }
 								siteUrl={ siteUrl }
+								isJetpackCheckout={ isJetpackCheckout }
 							/>
 						)
 					}
