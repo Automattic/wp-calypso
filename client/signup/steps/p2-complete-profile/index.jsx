@@ -8,6 +8,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Timezone from 'calypso/components/timezone';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
@@ -196,7 +197,19 @@ class P2CompleteProfile extends Component {
 					<div className="p2-complete-profile__skip-wrapper">
 						<span>
 							No time? No problem! You can{ ' ' }
-							<Button className="p2-complete-profile__skip-btn" variant="link">
+							<Button
+								className="p2-complete-profile__skip-btn"
+								variant="link"
+								onClick={ () => {
+									submitSignupStep( {
+										stepName: this.props.stepName,
+									} );
+
+									recordTracksEvent( 'calypso_signup_p2_complete_profile_skip_button_click' );
+
+									this.props.goToNextStep();
+								} }
+							>
 								do this later.
 							</Button>
 						</span>
