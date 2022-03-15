@@ -7,6 +7,7 @@ import EditGravatar from 'calypso/blocks/edit-gravatar';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import Timezone from 'calypso/components/timezone';
 import formState from 'calypso/lib/form-state';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
@@ -46,7 +47,7 @@ class P2CompleteProfile extends Component {
 		}
 
 		this.formStateController = new formState.Controller( {
-			fieldNames: [ 'fullName', 'location' ],
+			fieldNames: [ 'fullName', 'timezone' ],
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: ( state ) => {
@@ -139,22 +140,20 @@ class P2CompleteProfile extends Component {
 					/>
 				</ValidationFieldset>
 				<ValidationFieldset
-					errorMessages={ this.getErrorMessages( 'location' ) }
-					className="p2-complete-profile__validation-location"
+					errorMessages={ this.getErrorMessages( 'timezone' ) }
+					className="p2-complete-profile__validation-timezone"
 				>
-					<FormLabel htmlFor="location-input">{ this.props.translate( 'Location' ) }</FormLabel>
-					<FormTextInput
-						id="location-input"
-						autoCapitalize={ 'off' }
-						className="p2-complete-profile__location"
-						disabled={ fieldDisabled }
-						name="location"
-						value={ formState.getFieldValue( this.state.form, 'location' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'location' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'location' ) }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent }
-					/>
+					<div className="p2-complete-profile__timezone-wrapper">
+						<FormLabel htmlFor="timezone-input">{ this.props.translate( 'Time zone' ) }</FormLabel>
+						<Timezone
+							id="timezone-input"
+							name="timezone"
+							selectedZone={ formState.getFieldValue( this.state.form, 'timezone' ) }
+							onSelect={ ( zone ) =>
+								this.handleChangeEvent( { target: { name: 'timezone', value: zone } } )
+							}
+						/>
+					</div>
 				</ValidationFieldset>
 			</>
 		);
