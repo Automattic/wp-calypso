@@ -64,6 +64,6 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 		await revisionsComponent.clickButton( 'Load' );
 
 		const text = await editorPage.getText();
-		expect( text.join( '\n' ) ).toEqual( 'Revision 1' );
+		expect( text ).toEqual( 'Revision 1' );
 	} );
 } );

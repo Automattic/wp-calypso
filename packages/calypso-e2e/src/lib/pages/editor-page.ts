@@ -209,10 +209,10 @@ export class EditorPage {
 	 * @throws {Error} If entered title does not match.
 	 */
 	async enterTitle( title: string ): Promise< void > {
-		const sanitizedTitle = title.trim();
-
 		await this.editorGutenbergComponent.enterTitle( title );
 		const enteredTitle = await this.editorGutenbergComponent.getTitle();
+
+		const sanitizedTitle = title.trim();
 		if ( enteredTitle !== sanitizedTitle ) {
 			throw new Error(
 				`Failed to verify title: got ${ enteredTitle }, expected ${ sanitizedTitle }`
@@ -226,21 +226,20 @@ export class EditorPage {
 	 * @param {string} text Text to be entered into the paragraph blocks, separated by newline characters.
 	 */
 	async enterText( text: string ): Promise< void > {
-		const splitText = text.split( '\n' );
-		await this.editorGutenbergComponent.enterText( splitText );
+		await this.editorGutenbergComponent.enterText( text );
 		const enteredText = await this.editorGutenbergComponent.getText();
 
-		if ( splitText !== enteredText ) {
-			`Failed to verify entered text: got ${ enteredText }, expected ${ splitText }`;
+		if ( text !== enteredText ) {
+			`Failed to verify entered text: got ${ enteredText }, expected ${ text }`;
 		}
 	}
 
 	/**
 	 * Returns the text found in the editor.
 	 *
-	 * @returns {Promise<string[]>} Array of strings representing text entered in each paragraph block.
+	 * @returns {Promise<string>} String representing text entered in each paragraph block.
 	 */
-	async getText(): Promise< string[] > {
+	async getText(): Promise< string > {
 		return await this.editorGutenbergComponent.getText();
 	}
 

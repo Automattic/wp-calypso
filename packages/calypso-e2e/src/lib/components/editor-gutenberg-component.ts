@@ -7,7 +7,8 @@ const selectors = {
 
 	// Editor body
 	emptyBlock: 'div.block-editor-default-block-appender', // When editor is in a 'resting' state, without a selected block.
-	paragraphBlock: ( empty: boolean ) => `p[data-title="Paragraph"][data-empty="${ empty }"]`,
+	paragraphBlock: ( { empty }: { empty: boolean } ) =>
+		`p[data-title="Paragraph"][data-empty="${ empty }"]`,
 	blockWarning: '.block-editor-warning',
 
 	// Block Search
@@ -60,8 +61,9 @@ export class EditorGutenbergComponent {
 	 * @param {string} title Text to be used as the title.
 	 */
 	async enterTitle( title: string ): Promise< void > {
+		const sanitizedTitle = title.trim();
 		const locator = this.frameLocator.locator( selectors.title );
-		await locator.fill( title );
+		await locator.fill( sanitizedTitle );
 	}
 
 	/**
@@ -83,20 +85,29 @@ export class EditorGutenbergComponent {
 	 * ParagraphBlock construct. This is due to text entry being a high
 	 * frequency use case.
 	 *
-	 * @param {string} textArray Array of text to be entered. Each entry is
-	 * treated as individual Paragraph blocks.
+	 * @param {string} text Text to be entered.
 	 */
-	async enterText( textArray: string[] ): Promise< void > {
+	async enterText( text: string ): Promise< void > {
+		const splitText = text.split( '\n' );
+
+		// Depending on what is focused in the editor, either one of the
+		// following elements can be clicked to initiate text entry.
 		const emptyBlockLocator = this.frameLocator.locator( selectors.emptyBlock );
-		const emptyParagraphLocator = this.frameLocator.locator( selectors.paragraphBlock( true ) );
+		const emptyParagraphLocator = this.frameLocator.locator(
+			selectors.paragraphBlock( { empty: true } )
+		);
+
 		if ( await emptyParagraphLocator.count() ) {
 			await emptyParagraphLocator.click();
 		} else {
 			emptyBlockLocator.click();
 		}
 
-		for await ( const line of textArray ) {
-			const locator = this.frameLocator.locator( selectors.paragraphBlock( true ) ).last();
+		for await ( const line of splitText ) {
+			// Select the last Paragraph block which is empty.
+			const locator = this.frameLocator
+				.locator( selectors.paragraphBlock( { empty: true } ) )
+				.last();
 			await locator.fill( line );
 			await this.page.keyboard.press( 'Enter' );
 		}
@@ -105,10 +116,11 @@ export class EditorGutenbergComponent {
 	/**
 	 * Returns the text as entered in the paragraph blocks.
 	 *
-	 * @returns {Promise<string[]>} Array of strings for all paragraph blocks.
+	 * @returns {Promise<string>} Text for all paragraph blocks, joined with a newline.
 	 */
-	async getText(): Promise< string[] > {
-		const locator = this.frameLocator.locator( selectors.paragraphBlock( false ) );
+	async getText(): Promise< string > {
+		// Locate all non-empty Paragraph blocks.
+		const locator = this.frameLocator.locator( selectors.paragraphBlock( { empty: false } ) );
 		const enteredText = await locator.allInnerTexts();
 
 		// Extract the textContent of each paragraph block into a list.
@@ -125,7 +137,7 @@ export class EditorGutenbergComponent {
 			return sanitized;
 		} );
 
-		return sanitizedText;
+		return sanitizedText.join( '\n' );
 	}
 
 	/* Block actions */
