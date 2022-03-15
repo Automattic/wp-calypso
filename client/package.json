@@ -65,6 +65,7 @@
 		"@github/webauthn-json": "^0.4.1",
 		"@stripe/react-stripe-js": "^1.4.1",
 		"@stripe/stripe-js": "^1.17.1",
+		"@woo/components": "link:/Users/joshua/Local Sites/new/app/public/wp-content/plugins/woo-admin-menu/packages/components",
 		"@wordpress/a11y": "^3.2.4",
 		"@wordpress/api-fetch": "^5.2.6",
 		"@wordpress/base-styles": "^4.0.4",
