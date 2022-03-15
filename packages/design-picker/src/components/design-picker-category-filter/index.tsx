@@ -9,7 +9,7 @@ interface Props {
 	categories: Category[];
 	onSelect: ( selectedSlug: string | null ) => void;
 	selectedCategory: string | null;
-	showCategories: boolean;
+	showCategories?: boolean;
 	recommendedCategorySlug: string | null;
 	heading?: ReactNode;
 	footer?: ReactNode;

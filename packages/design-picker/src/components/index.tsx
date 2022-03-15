@@ -225,7 +225,7 @@ export interface DesignPickerProps {
 	categoriesHeading?: React.ReactNode;
 	categoriesFooter?: React.ReactNode;
 	recommendedCategorySlug: string | null;
-	showCategories: boolean;
+	showCategories?: boolean;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
 	isPremiumThemeAvailable?: boolean;
