@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -101,7 +102,9 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 		} else {
 			dispatch( removeSiteSlugDependency() );
 			dispatch( submitSignupStep( { stepName: 'difm-site-picker', wasSkipped: true } ) );
-			props.goToStep( 'difm-options' );
+			props.goToStep(
+				isEnabled( 'signup/redesigned-difm-flow' ) ? 'difm-options' : 'site-info-collection'
+			);
 		}
 	};
 
