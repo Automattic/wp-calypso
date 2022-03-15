@@ -35,3 +35,18 @@
 		cursor: pointer;
 	}
 }
+
+.p2-complete-profile__avatar-wrapper {
+	margin-top: 20px;
+}
+
+.p2-complete-profile__form-wrapper {
+	margin-top: 35px;
+}
+
+.p2-complete-profile__form {
+	.form-label {
+		color: var( --p2-color-text );
+		font-weight: 500;
+	}
+}
