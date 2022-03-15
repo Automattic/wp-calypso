@@ -19,7 +19,7 @@ export function DesignPickerCategoryFilter( {
 	categories,
 	onSelect,
 	selectedCategory,
-	showCategories,
+	showCategories = true,
 	heading,
 	footer,
 	recommendedCategorySlug,
