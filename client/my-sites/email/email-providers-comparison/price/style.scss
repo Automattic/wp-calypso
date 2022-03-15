@@ -1,12 +1,24 @@
-.google-workspace-price__discount {
+.google-workspace-price__trial,
+.professional-email-price__trial {
 	margin-bottom: 12px;
+}
+
+.google-workspace-price__discount {
+	display: none;
+	margin-bottom: 12px;
+	margin-top: 3px;
+
+	.is-expanded & {
+		display: block;
+	}
+
+	button {
+		margin-left: 3px;
+		vertical-align: top;
+	}
 }
 
 .google-workspace-price__unavailable {
 	font-weight: 600;
 	line-height: 24px;
-}
-
-.professional-email-price__discount {
-	margin-bottom: 12px;
 }

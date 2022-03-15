@@ -34,26 +34,24 @@ const ProfessionalEmailPrice = ( {
 	const productSlug = getTitanProductSlug( intervalLength );
 	const product = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
 
-	const isEligibleForFreeTrial = isDomainEligibleForTitanFreeTrial( domain );
-
 	const priceWithInterval = (
 		<PriceWithInterval
 			cost={ product?.cost ?? 0 }
 			currencyCode={ currencyCode ?? '' }
-			hasDiscount={ isEligibleForFreeTrial }
+			hasDiscount={ false }
 			intervalLength={ intervalLength }
 		/>
 	);
 
 	return (
 		<>
-			{ isEligibleForFreeTrial && (
-				<div className="professional-email-price__discount badge badge--info-green">
+			{ isDomainEligibleForTitanFreeTrial( domain ) && (
+				<div className="professional-email-price__trial badge badge--info-green">
 					{ translate( '3 months free' ) }
 				</div>
 			) }
 
-			<PriceBadge priceComponent={ priceWithInterval } />
+			<PriceBadge price={ priceWithInterval } />
 		</>
 	);
 };

@@ -122,13 +122,13 @@ const GoogleWorkspacePrice = ( {
 		);
 	}
 
-	const isEligibleForFreeTrial = isDomainEligibleForGoogleWorkspaceFreeTrial( domain );
+	const isDiscounted = hasDiscount( product );
 
 	const priceWithInterval = (
 		<PriceWithInterval
 			cost={ product?.cost ?? 0 }
 			currencyCode={ currencyCode ?? '' }
-			hasDiscount={ isEligibleForFreeTrial || hasDiscount( product ) }
+			hasDiscount={ isDiscounted }
 			intervalLength={ intervalLength }
 			sale={ product?.sale_cost ?? null }
 		/>
@@ -140,15 +140,15 @@ const GoogleWorkspacePrice = ( {
 
 	return (
 		<>
-			{ isEligibleForFreeTrial && (
-				<div className="google-workspace-price__discount badge badge--info-green">
+			{ isDomainEligibleForGoogleWorkspaceFreeTrial( domain ) && ! isDiscounted && (
+				<div className="google-workspace-price__trial badge badge--info-green">
 					{ translate( '1 month free' ) }
 				</div>
 			) }
 
 			<PriceBadge
-				additionalPriceInformationComponent={ additionalPriceInformation }
-				priceComponent={ priceWithInterval }
+				additionalPriceInformation={ additionalPriceInformation }
+				price={ priceWithInterval }
 			/>
 		</>
 	);
