@@ -56,7 +56,7 @@
     }
 }
 
-.non-owner-card {
+.non-owner-card, .info-card {
 	flex-basis: 100%;
 	background-color: var( --studio-gray-0 );
 	display: flex;
