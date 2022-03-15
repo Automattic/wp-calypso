@@ -139,7 +139,8 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 				className={ classNames( 'upsell-switch__loading', { is_jetpackcom: isJetpackCloud() } ) }
 			>
 				<QueryComponent siteId={ siteId } />
-				{ children }
+				{ /* render placeholder */ }
+				{ React.isValidElement( children ) && React.cloneElement( children, { reason: reason } ) }
 			</Main>
 		);
 	}
