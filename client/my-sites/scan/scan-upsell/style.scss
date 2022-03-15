@@ -1,11 +1,12 @@
-.scan-upsell {
-	&__content {
-		padding-top: 40px;
-		display: flex;
-		justify-content: center;
+.scan-upsell__content {
+	.jetpack-product-card__description {
+		@include breakpoint-deprecated( '>660px' ) {
+			min-height: 55px;
+		}
 	}
-	.jetpack-product-card {
-		max-width: 420px;
+
+	.jetpack-product-card__features-list {
+		margin-block-end: 1rem;
 	}
 }
 
@@ -13,8 +14,10 @@
 	text-align: center;
 
 	img {
-		height: 72px;
+		height: 48px;
 		width: auto;
+		padding: 5px 0;
+    	box-sizing: border-box;
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {

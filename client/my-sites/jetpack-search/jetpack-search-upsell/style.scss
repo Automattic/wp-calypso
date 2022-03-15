@@ -1,10 +1,13 @@
-.jetpack-search-upsell {
-	&__content {
-		padding-top: 40px;
-		display: flex;
-		justify-content: center;
+.jetpack-search-upsell__content {
+	.jetpack-product-card__description {
+		@include breakpoint-deprecated( '>660px' ) {
+			min-height: 55px;
+		}
 	}
-	.jetpack-product-card {
-		max-width: 420px;
+
+	.jetpack-product-card__features-list {
+		margin-block-end: 1rem;
 	}
 }
+
+
