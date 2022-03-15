@@ -257,7 +257,8 @@ class ThemeShowcase extends Component {
 				return true;
 			case this.tabFilters.MYTHEMES.key:
 				return (
-					this.props.isJetpackSite || ( this.props.isAtomicSite && this.props.canUploadThemes )
+					( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
+					( this.props.isAtomicSite && this.props.canUploadThemes )
 				);
 		}
 	};
