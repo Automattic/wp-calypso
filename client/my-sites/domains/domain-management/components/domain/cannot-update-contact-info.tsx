@@ -1,7 +1,7 @@
 import InfoNotice from './info-notice';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-const CannotUpdateContactInfoNotice = ( {
+const CannotUpdateContactInfo = ( {
 	redesigned,
 	domain,
 }: {
@@ -13,4 +13,4 @@ const CannotUpdateContactInfoNotice = ( {
 	);
 };
 
-export default CannotUpdateContactInfoNotice;
+export default CannotUpdateContactInfo;
