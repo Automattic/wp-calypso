@@ -15,10 +15,9 @@ const navigationItems = [
 
 const mobileItem = {
 	label: 'Back',
-	href: '/plugins'
+	href: '/plugins',
 	showBackArrow: true,
 };
-
 
 function render() {
 	return <Breadcrumb items={ navigationItems } mobileItem={ mobileItem } />;
