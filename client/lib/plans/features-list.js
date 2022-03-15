@@ -1440,7 +1440,7 @@ export const FEATURES_LIST = {
 	},
 	/* END - Jetpack tiered product-specific features */
 
-	/* START - New features Flexible and Managed plans introduced. */
+	/* START - New features Flexible and Pro plans introduced. */
 	[ FEATURE_UNLIMITED_USERS ]: {
 		getSlug: () => FEATURE_UNLIMITED_USERS,
 		getTitle: () => i18n.translate( 'Unlimited users' ),
@@ -1477,7 +1477,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_WOOCOMMERCE,
 		getTitle: () => i18n.translate( 'WooCommerce' ),
 	},
-	/* END - New features Flexible and Managed plans introduced. */
+	/* END - New features Flexible and Pro plans introduced. */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {

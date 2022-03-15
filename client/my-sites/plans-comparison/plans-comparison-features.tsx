@@ -156,9 +156,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		title: translate( 'Storage space' ),
+		title: translate( 'Storage' ),
 		description: translate(
-			'The free plan allows a maximum storage of 500MB, which equals to approximately 100 high quality images, whilst with Managed WordPress you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+			'The free plan allows a maximum storage of 500MB, which equals to approximately 100 high quality images, whilst with Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
 		),
 		features: [ FEATURE_500MB_STORAGE, FEATURE_50GB_STORAGE ],
 		getCellText: ( feature, isMobile = false ) => {
@@ -191,7 +191,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	{
 		title: translate( 'Visits per month' ),
 		description: translate(
-			"WordPress Managed bundles up to 100,000 visits a month to help you rest assured traffic won't be a concern."
+			"WordPress Pro bundles up to 100,000 visits a month to help you rest assured traffic won't be a concern."
 		),
 		features: [ FEATURE_10K_VISITS, FEATURE_100K_VISITS ],
 		getCellText: ( feature, isMobile = false ) => {

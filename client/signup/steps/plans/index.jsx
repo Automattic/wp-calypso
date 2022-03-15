@@ -278,7 +278,7 @@ export class PlansStep extends Component {
 		const { headerText, translate, eligibleForProPlan } = this.props;
 
 		if ( eligibleForProPlan ) {
-			return translate( 'Managed WordPress made just for you' );
+			return translate( 'WordPress Pro made just for you' );
 		}
 
 		if ( this.state.isDesktop ) {
