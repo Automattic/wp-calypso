@@ -3,7 +3,6 @@
 */
 @import '@wordpress/components/build-style/style';
 @import '@automattic/calypso-color-schemes';
-@import '@automattic/calypso-color-schemes';
 @import '@automattic/typography/styles/fonts';
 @import '@automattic/onboarding/styles/mixins';
 
@@ -11,4 +10,9 @@
 body {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
 		'Cantarell', 'Helvetica Neue', sans-serif;
+}
+
+.step-container {
+	--color-accent: #117ac9;
+    --color-accent-60: #0e64a5;
 }
