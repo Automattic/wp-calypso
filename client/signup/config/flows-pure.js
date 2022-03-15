@@ -404,6 +404,7 @@ export function generateFlows( {
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
 			lastModified: '2022-03-10',
+			enableBranchSteps: true,
 		},
 
 		{
