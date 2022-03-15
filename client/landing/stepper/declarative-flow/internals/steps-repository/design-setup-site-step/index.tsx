@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import DesignPicker, {
 	FeaturedPicksButtons,
 	PremiumBadge,
@@ -10,11 +11,11 @@ import DesignPicker, {
 } from '@automattic/design-picker';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
-import { ActionButtons } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 // import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
@@ -25,7 +26,6 @@ import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 // import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 // import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 // import { getSiteId } from 'calypso/state/sites/selectors';
-import { StepNavigationLink } from '../../components';
 import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
@@ -192,14 +192,6 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 		// );
 	}
 
-	const isReskinnedFlow = ( flowName: string ) => {
-		return true;
-		// return (
-		// 	config.isEnabled( 'signup/reskin' ) &&
-		// 	config< string >( 'reskinned_flows' ).includes( flowName )
-		// );
-	};
-
 	function upgradePlan() {
 		openCheckoutModal( [ PLAN_PREMIUM ] );
 	}
@@ -212,61 +204,15 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 		return <AsyncCheckoutModal />;
 	}
 
-	const backButton = useMemo( () => {
-		let handleBackButton;
-
+	const handleBackClick = () => {
 		if ( selectedDesign ) {
-			handleBackButton = () => {
-				setSelectedDesign( undefined );
-			};
+			setSelectedDesign( undefined );
 		} else {
-			handleBackButton = goBack;
+			goBack();
 		}
-
-		return (
-			<StepNavigationLink
-				direction="back"
-				backIcon={ isReskinnedFlow( flowName ) ? 'chevron-left' : undefined }
-				handleClick={ handleBackButton }
-			/>
-		);
-	}, [ selectedDesign, goBack ] );
-
-	const skipButton = useMemo( () => {
-		return (
-			<StepNavigationLink
-				direction="forward"
-				borderless={ true }
-				label={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
-				handleClick={ () => goNext() }
-				cssClass={ 'has-underline' }
-			/>
-		);
-	}, [ goNext, translate ] );
-
-	const nextButton = function ( designTitle: string | ReactChild ) {
-		return (
-			<StepNavigationLink
-				primary
-				direction="forward"
-				borderless={ false }
-				label={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
-				handleClick={ goNext }
-			/>
-		);
 	};
 
-	const upgradeButton = useMemo( () => {
-		return (
-			<StepNavigationLink
-				primary
-				direction="forward"
-				borderless={ false }
-				label={ translate( 'Upgrade Plan' ) }
-				handleClick={ upgradePlan }
-			/>
-		);
-	}, [ translate ] );
+	let stepContent = <div />;
 
 	if ( selectedDesign ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
@@ -278,56 +224,58 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 			// Otherwise, use the title of selected design directly
 			site_title: intent === 'write' && siteTitle ? siteTitle : selectedDesign?.title,
 		} );
+
+		stepContent = (
+			<div>PREVIEW</div>
+			/* <WebPreview
+				className="design-picker__web-preview"
+				showPreview
+				isContentOnly
+				showClose={ false }
+				showEdit={ false }
+				externalUrl={ siteSlug }
+				showExternal={ true }
+				previewUrl={ 'url test' }
+				loadingMessage={ translate(
+					'{{strong}}One moment, please…{{/strong}} loading your site.',
+					{
+						components: { strong: <strong /> },
+					}
+				) }
+				toolbarComponent={ PreviewToolbar }
+			/> */
+		);
+
 		return (
-			<div className="design-setup-site-step__preview">
-				<ActionButtons
-					className="design-setup-site-step__navigation"
-					sticky={ isReskinnedFlow( flowName ) ? null : false }
-				>
-					{ backButton }
-					{ ! shouldUpgrade && nextButton( designTitle ) }
-					{ shouldUpgrade && upgradeButton }
-				</ActionButtons>
-				<div className="design-setup-site-step__preview-header">
+			<StepContainer
+				stepContent={ stepContent }
+				hideSkip
+				hideNext={ shouldUpgrade }
+				className={ 'design-setup-site-step__preview' }
+				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
+				goBack={ handleBackClick }
+				goNext={ goNext }
+				formattedHeader={
 					<FormattedHeader
-						id={ 'step-header' }
+						id={ 'design-setup-header' }
 						headerText={ designTitle }
 						align={ isMobile ? 'left' : 'center' }
 					/>
-				</div>
-				<div className="design-setup-site-step__preview-content">
-					{ /* <WebPreview
-						className="design-picker__web-preview"
-						showPreview
-						isContentOnly
-						showClose={ false }
-						showEdit={ false }
-						externalUrl={ siteSlug }
-						showExternal={ true }
-						previewUrl={ 'url test' }
-						loadingMessage={ translate(
-							'{{strong}}One moment, please…{{/strong}} loading your site.',
-							{
-								components: { strong: <strong /> },
-							}
-						) }
-						toolbarComponent={ PreviewToolbar }
-					/> */ }
-				</div>
-				{ renderCheckoutModal() }
-			</div>
+				}
+				customizedActionButtons={
+					shouldUpgrade && (
+						<Button primary borderless={ false } onClick={ upgradePlan }>
+							{ translate( 'Upgrade Plan' ) }
+						</Button>
+					)
+				}
+				recordTracksEvent={ recordTracksEvent }
+			/>
 		);
 	}
 
-	return (
-		<div className="design-setup-site-step">
-			<ActionButtons
-				className="design-setup-site-step__navigation"
-				sticky={ isReskinnedFlow( flowName ) ? null : false }
-			>
-				{ backButton }
-				{ skipButton }
-			</ActionButtons>
+	stepContent = (
+		<>
 			<DesignPicker
 				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
 				theme={ isReskinned ? 'light' : 'dark' }
@@ -354,7 +302,21 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			/>
 			{ renderCheckoutModal() }
-		</div>
+		</>
+	);
+
+	return (
+		<StepContainer
+			className={ classnames( 'design-setup-site-step', {
+				'design-picker__has-categories': showDesignPickerCategories,
+			} ) }
+			skipButtonAlign={ 'top' }
+			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
+			stepContent={ stepContent }
+			recordTracksEvent={ recordTracksEvent }
+			goNext={ goNext }
+			goBack={ handleBackClick }
+		/>
 	);
 };
 

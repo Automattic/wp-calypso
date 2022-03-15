@@ -11,12 +11,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 .design-setup-site-step {
 	padding-left: 24px;
 	padding-right: 24px;
-
-	// Ugly, but necessary to override the default max-width of the step wrapper
-	// without causing regressions to other parts of `/start`
-	body.is-section-signup .layout:not( .dops ) & {
-		max-width: 1440px;
-	}
+	max-width: 1440px;
 
 	@include break-small {
 		padding-left: 48px;
@@ -160,7 +155,25 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 }
 
 .design-setup-site-step__preview {
-	.design-setup-site-step__preview-header {
+
+	.step-container__content {
+		height: calc( 100vh - 245px );
+
+		@media ( min-width: 480px ) {
+			height: calc( 100vh - 225px );
+		}
+
+		@media ( min-width: 600px ) {
+			max-height: 1080px;
+		}
+
+		@media ( min-width: 782px ) {
+			height: calc( 100vh - 148px );
+		}
+
+	}
+
+	.step-container__header {
 		margin: 0;
 		margin-top: 12px;
 
