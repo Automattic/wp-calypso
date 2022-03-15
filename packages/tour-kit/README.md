@@ -28,6 +28,7 @@ A tour is made up of the following components:
   - a step renderer (React component/function passed a set of properties)
   - a minimized view renderer (for rendering a minimized view instead of closing)
 - A close handler
+- A boolean to minimize the tour
 - Some optional properties
 
 See [types.ts](./src/types.ts) for the full definition of the various entities.
@@ -126,6 +127,8 @@ The main API for configuring a tour is the config object. See example usage and 
 - `classNames` (optional): An array or CSV of CSS classes applied to a step.
 
 `config.closeHandler`: The callback responsible for closing the tour.
+
+`config.isMinimized`: The optional boolean value responsible for minimizing the tour.
 
 `config.renderers` (omitted in the WPCOM Tour Kit variant):
 
