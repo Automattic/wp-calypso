@@ -225,6 +225,7 @@ export interface DesignPickerProps {
 	categoriesHeading?: React.ReactNode;
 	categoriesFooter?: React.ReactNode;
 	recommendedCategorySlug: string | null;
+	showCategories: boolean;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
 	isPremiumThemeAvailable?: boolean;
@@ -246,6 +247,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	categoriesHeading,
 	categoriesFooter,
 	categorization,
+	showCategories,
 	hideFullScreenPreview,
 	hideDesignTitle,
 	recommendedCategorySlug,
@@ -272,6 +274,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					categories={ categorization.categories }
 					selectedCategory={ categorization.selection }
 					recommendedCategorySlug={ recommendedCategorySlug }
+					showCategories={ showCategories }
 					onSelect={ categorization.onSelect }
 					heading={ categoriesHeading }
 					footer={ categoriesFooter }

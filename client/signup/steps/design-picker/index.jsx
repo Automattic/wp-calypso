@@ -114,10 +114,13 @@ export default function DesignPickerStep( props ) {
 		};
 	}, [ props.stepSectionName ] );
 
-	const { designs, featuredPicksDesigns } = useMemo( () => {
+	const { designs, featuredPicksDesigns, sellDesigns } = useMemo( () => {
 		return {
 			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
 			featuredPicksDesigns: allThemes.filter( ( theme ) => theme.is_featured_picks ),
+			sellDesigns: allThemes.filter( ( theme ) =>
+				theme.categories.some( ( category ) => category.slug === 'store' )
+			),
 		};
 	}, [ allThemes ] );
 
@@ -215,10 +218,16 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function renderDesignPicker() {
+		const intent = dependencies.intent;
+		let showDesigns = useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ];
+		//Temporarily show only e-commerce themes for the sell intent
+		if ( 'sell' === intent ) {
+			showDesigns = sellDesigns;
+		}
 		return (
 			<>
 				<DesignPicker
-					designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+					designs={ showDesigns }
 					theme={ isReskinned ? 'light' : 'dark' }
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
@@ -240,6 +249,7 @@ export default function DesignPickerStep( props ) {
 						/>
 					}
 					categoriesFooter={ renderCategoriesFooter() }
+					showCategories={ 'sell' !== intent }
 					hideFullScreenPreview={ hideFullScreenPreview }
 					hideDesignTitle={ hideDesignTitle }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
