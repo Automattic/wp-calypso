@@ -5,7 +5,7 @@ export type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 const panel = 'div.interface-interface-skeleton__header';
 const selectors = {
 	// Block Inserter
-	blockInserterButton: `${ panel } button[aria-label="Toggle block inserter"]`,
+	blockInserterButton: `${ panel } button.edit-post-header-toolbar__inserter-toggle`,
 
 	// Draft
 	saveDraftButton: ( state: 'disabled' | 'enabled' ) => {
@@ -27,7 +27,7 @@ const selectors = {
 	},
 
 	// Editor settings
-	settingsButton: `${ panel } button[aria-label="Settings"]`,
+	settingsButton: `${ panel } .edit-post-header__settings .interface-pinned-items button:first-child`,
 };
 
 /**

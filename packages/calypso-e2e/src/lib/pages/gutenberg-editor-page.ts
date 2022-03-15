@@ -10,7 +10,7 @@ import {
 	EditorSettingsSidebarComponent,
 	NavbarComponent,
 } from '../components';
-import type { PreviewOptions } from '../components';
+import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../components';
 
 const selectors = {
 	// iframe and editor
@@ -44,6 +44,7 @@ export class GutenbergEditorPage {
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
+	private editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -78,6 +79,10 @@ export class GutenbergEditorPage {
 			page.frameLocator( selectors.editorFrame )
 		);
 		this.editorToolbarComponent = new EditorToolbarComponent(
+			page,
+			page.frameLocator( selectors.editorFrame )
+		);
+		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(
 			page,
 			page.frameLocator( selectors.editorFrame )
 		);
@@ -382,6 +387,8 @@ export class GutenbergEditorPage {
 		await frame.fill( selectors.blockSearch, text );
 	}
 
+	/* Settings Sidebar */
+
 	/**
 	 * Opens the Settings sidebar.
 	 */
@@ -395,16 +402,99 @@ export class GutenbergEditorPage {
 	async closeSettings(): Promise< void > {
 		// On mobile, the settings panel close button is located on the settings panel itself.
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// {@TODO} Temporary measure, to be unified into framelocator based class
-			// once EditorSettingsSidebarComponent is refactored.
-			const editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(
-				await this.getEditorFrame(),
-				this.page
-			);
-			await editorSettingsSidebarComponent.closeSidebar();
+			await this.editorSettingsSidebarComponent.closeSidebarForMobile();
+		} else {
+			await this.editorToolbarComponent.closeSettings();
 		}
-		await this.editorToolbarComponent.closeSettings();
 	}
+
+	/**
+	 * Clicks and activates the given tab in the Editor Settings sidebar.
+	 *
+	 * @param {EditorSidebarTab} tab Name of the tab to activate.
+	 */
+	async clickSettingsTab( tab: EditorSidebarTab ): Promise< void > {
+		await this.editorSettingsSidebarComponent.clickTab( tab );
+	}
+
+	/**
+	 * Sets the article's privacy/visibility option.
+	 *
+	 * @param {PrivacyOptions} visibility Visibility option for the article.
+	 * @param param1 Object parameters.
+	 * @param {string} param1.password Password for the post.
+	 */
+	async setArticleVisibility(
+		visibility: PrivacyOptions,
+		{ password }: { password?: string }
+	): Promise< void > {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+
+		await this.editorSettingsSidebarComponent.expandSection( 'Status & Visibility' );
+		await this.editorSettingsSidebarComponent.openVisibilityOptions();
+		await this.editorSettingsSidebarComponent.selectVisibility( visibility, {
+			password: password,
+		} );
+		await this.editorSettingsSidebarComponent.closeVisibilityOptions();
+	}
+
+	/**
+	 * View revisions for the article.
+	 */
+	async viewRevisions(): Promise< void > {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.showRevisions();
+	}
+
+	/**
+	 * Select a category for the article.
+	 *
+	 * @param {string} name Name of the category.
+	 */
+	async selectCategory( name: string ): Promise< void > {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.expandSection( 'Categories' );
+		await this.editorSettingsSidebarComponent.checkCategory( name );
+	}
+
+	/**
+	 * Adds the given tag to the article.
+	 *
+	 * @param {string} tag Tag to be added to article.
+	 */
+	async addTag( tag: string ): Promise< void > {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.expandSection( 'Tags' );
+		await this.editorSettingsSidebarComponent.enterTag( tag );
+	}
+
+	/**
+	 * Sets the URL slug.
+	 *
+	 * @param {string} slug Desired URL slug.
+	 */
+	async setURLSlug( slug: string ): Promise< void > {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+		await this.editorSettingsSidebarComponent.expandSection( 'Permalink' );
+		await this.editorSettingsSidebarComponent.enterUrlSlug( slug );
+	}
+
+	/* Publish, Draft & Schedule */
 
 	/**
 	 * Publishes the post or page.
@@ -436,6 +526,23 @@ export class GutenbergEditorPage {
 			await this.visitPublishedPost( publishedURL.href );
 		}
 		return publishedURL;
+	}
+
+	/**
+	 * Schedules an article.
+	 *
+	 * This method requires the Editor Settings sidebar to be open.
+	 */
+	async schedule( date: Schedule ): Promise< void > {
+		await Promise.race( [
+			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
+			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
+		] );
+
+		await this.editorSettingsSidebarComponent.expandSection( 'Status & Visibility' );
+		await this.editorSettingsSidebarComponent.openSchedule();
+		await this.editorSettingsSidebarComponent.setScheduleDetails( date );
+		await this.editorSettingsSidebarComponent.closeSchedule();
 	}
 
 	/**
@@ -478,16 +585,6 @@ export class GutenbergEditorPage {
 	}
 
 	/**
-	 * Checks whether the editor has any block warnings/errors displaying.
-	 *
-	 * @returns True if there are block warnings/errors, false otherwise.
-	 */
-	async editorHasBlockWarnings(): Promise< boolean > {
-		const frame = await this.getEditorFrame();
-		return await frame.isVisible( selectors.blockWarning );
-	}
-
-	/**
 	 * Visits the published entry from the post-publish sidebar.
 	 *
 	 * @returns {Promise<void>} No return value.
@@ -525,43 +622,6 @@ export class GutenbergEditorPage {
 		async function confirmPostShown( page: Page ): Promise< void > {
 			await page.waitForSelector( '.entry-content', { timeout: 15 * 1000 } );
 		}
-	}
-
-	/**
-	 * Leave the editor to return to the Calypso dashboard.
-	 *
-	 * On desktop sized viewport, this method first opens the editor navigation
-	 * sidebar, then clicks on the `Dashboard` link.
-	 *
-	 * On mobile sized viewport, this method clicks on Navbar > My Sites.
-	 *
-	 * The resulting page can change based on where you come from, and the viewport. Either way, the resulting landing spot
-	 * will have access to the Calyspo sidebar, allowing navigation around Calypso.
-	 */
-	async exitEditor(): Promise< void > {
-		await this.editorNavSidebarComponent.openSidebar();
-
-		// There are three different places to return to,
-		// depending on how the editor was entered.
-		const navigationPromise = Promise.race( [
-			this.page.waitForNavigation( { url: '**/home/**' } ),
-			this.page.waitForNavigation( { url: '**/posts/**' } ),
-			this.page.waitForNavigation( { url: '**/pages/**' } ),
-		] );
-		const actions: Promise< unknown >[] = [ navigationPromise ];
-
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// Mobile viewports do not use an EditorNavSidebar.
-			// Instead, the regular NavBar is used, and the
-			// `My Sites` button exits the editor.
-			const navbarComponent = new NavbarComponent( this.page );
-			actions.push( navbarComponent.clickMySites() );
-		} else {
-			actions.push( this.editorNavSidebarComponent.exitEditor() );
-		}
-
-		// Perform the actions and resolve promises.
-		await Promise.all( actions );
 	}
 
 	/* Previews */
@@ -615,5 +675,54 @@ export class GutenbergEditorPage {
 			return;
 		}
 		await this.editorToolbarComponent.openDesktopPreview( 'Desktop' );
+	}
+
+	/* Misc */
+
+	/**
+	 * Leave the editor to return to the Calypso dashboard.
+	 *
+	 * On desktop sized viewport, this method first opens the editor navigation
+	 * sidebar, then clicks on the `Dashboard` link.
+	 *
+	 * On mobile sized viewport, this method clicks on Navbar > My Sites.
+	 *
+	 * The resulting page can change based on where you come from, and the viewport. Either way, the resulting landing spot
+	 * will have access to the Calyspo sidebar, allowing navigation around Calypso.
+	 */
+	async exitEditor(): Promise< void > {
+		await this.editorNavSidebarComponent.openSidebar();
+
+		// There are three different places to return to,
+		// depending on how the editor was entered.
+		const navigationPromise = Promise.race( [
+			this.page.waitForNavigation( { url: '**/home/**' } ),
+			this.page.waitForNavigation( { url: '**/posts/**' } ),
+			this.page.waitForNavigation( { url: '**/pages/**' } ),
+		] );
+		const actions: Promise< unknown >[] = [ navigationPromise ];
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// Mobile viewports do not use an EditorNavSidebar.
+			// Instead, the regular NavBar is used, and the
+			// `My Sites` button exits the editor.
+			const navbarComponent = new NavbarComponent( this.page );
+			actions.push( navbarComponent.clickMySites() );
+		} else {
+			actions.push( this.editorNavSidebarComponent.exitEditor() );
+		}
+
+		// Perform the actions and resolve promises.
+		await Promise.all( actions );
+	}
+
+	/**
+	 * Checks whether the editor has any block warnings/errors displaying.
+	 *
+	 * @returns True if there are block warnings/errors, false otherwise.
+	 */
+	async editorHasBlockWarnings(): Promise< boolean > {
+		const frame = await this.getEditorFrame();
+		return await frame.isVisible( selectors.blockWarning );
 	}
 }

@@ -1,6 +1,5 @@
 import {
 	DataHelper,
-	EditorSettingsSidebarComponent,
 	envVariables,
 	GutenbergEditorPage,
 	PublishedPostPage,
@@ -25,7 +24,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let gutenbergEditorPage: GutenbergEditorPage;
 	let editorIframe: Frame;
 	let pagesPage: PagesPage;
-	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	let publishedUrl: URL;
 	const accountName = envVariables.GUTENBERG_EDGE
 		? 'gutenbergSimpleSiteEdgeUser'
@@ -49,30 +47,29 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	it( 'Select page template', async function () {
 		gutenbergEditorPage = new GutenbergEditorPage( page );
+		// @TODO Consider moving this to GutenbergEditorPage.
 		editorIframe = await gutenbergEditorPage.waitUntilLoaded();
-		const pageTemplateComponent = new PageTemplateModalComponent( editorIframe, page );
-		await pageTemplateComponent.selectTemplateCatagory( pageTemplateCategory );
-		await pageTemplateComponent.selectTemplate( pageTemplateLable );
+		const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
+		await pageTemplateModalComponent.selectTemplateCatagory( pageTemplateCategory );
+		await pageTemplateModalComponent.selectTemplate( pageTemplateLable );
 	} );
 
 	it( 'Template content loads into editor', async function () {
+		// @TODO Consider moving this to GutenbergEditorPage.
 		await editorIframe.waitForSelector( `text=${ expectedTemplateText }` );
 	} );
 
 	it( 'Open setting sidebar', async function () {
 		await gutenbergEditorPage.openSettings();
-		editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( editorIframe, page );
-		await editorSettingsSidebarComponent.clickTab( 'Page' );
 	} );
 
 	it( 'Set custom URL slug', async function () {
-		await editorSettingsSidebarComponent.expandSection( 'Permalink' );
-		await editorSettingsSidebarComponent.enterUrlSlug( customUrlSlug );
+		await gutenbergEditorPage.setURLSlug( customUrlSlug );
 	} );
 
 	// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 	it( 'Close settings sidebar', async function () {
-		await editorSettingsSidebarComponent.closeSidebar();
+		await gutenbergEditorPage.closeSettings();
 	} );
 
 	it( 'Publish page', async function () {

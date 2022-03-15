@@ -5,7 +5,6 @@
 import {
 	DataHelper,
 	GutenbergEditorPage,
-	EditorSettingsSidebarComponent,
 	PublishedPostPage,
 	skipItIf,
 	TestAccount,
@@ -24,7 +23,6 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
 	let gutenbergEditorPage: GutenbergEditorPage;
-	let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	let publishedPostPage: PublishedPostPage;
 	const accountName = envVariables.GUTENBERG_EDGE
 		? 'gutenbergSimpleSiteEdgeUser'
@@ -61,21 +59,16 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	describe( 'Categories and Tags', function () {
-		it( 'Open editor settings sidebar for post', async function () {
+		it( 'Open settings', async function () {
 			await gutenbergEditorPage.openSettings();
-			const frame = await gutenbergEditorPage.getEditorFrame();
-			editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( frame, page );
-			await editorSettingsSidebarComponent.clickTab( 'Post' );
 		} );
 
 		it( 'Add post category', async function () {
-			await editorSettingsSidebarComponent.expandSection( 'Categories' );
-			await editorSettingsSidebarComponent.clickCategory( category );
+			await gutenbergEditorPage.selectCategory( category );
 		} );
 
 		it( 'Add post tag', async function () {
-			await editorSettingsSidebarComponent.expandSection( 'Tags' );
-			await editorSettingsSidebarComponent.enterTag( tag );
+			await gutenbergEditorPage.addTag( tag );
 		} );
 	} );
 
@@ -84,7 +77,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 		it( 'Close settings sidebar', async function () {
-			await editorSettingsSidebarComponent.closeSidebar();
+			await gutenbergEditorPage.closeSettings();
 		} );
 
 		it( 'Launch preview', async function () {
