@@ -43,6 +43,12 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		? document.querySelector< HTMLElement >( referenceElementSelector )
 		: null;
 
+	useEffect( () => {
+		if ( config.isMinimized ) {
+			setIsMinimized( true );
+		}
+	}, [ config.isMinimized ] );
+
 	const showArrowIndicator = useCallback( () => {
 		if ( config.options?.effects?.arrowIndicator === false ) {
 			return false;

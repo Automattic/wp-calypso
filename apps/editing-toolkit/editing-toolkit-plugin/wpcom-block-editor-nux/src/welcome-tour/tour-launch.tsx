@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { WpcomTourKit, usePrefetchTourAssets } from '@automattic/tour-kit';
+import { isMobile } from '@automattic/viewport';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
@@ -59,6 +60,9 @@ function WelcomeTour() {
 		const paymentBlockIndex = tourSteps.findIndex( ( step ) => step.slug === 'payment-block' );
 		tourSteps.splice( paymentBlockIndex, 1 );
 	}
+	const { isInserterOpened } = useSelect( ( select ) => ( {
+		isInserterOpened: select( 'core/edit-post' ).isInserterOpened(),
+	} ) );
 
 	const tourConfig: WpcomConfig = {
 		steps: tourSteps,
@@ -70,6 +74,7 @@ function WelcomeTour() {
 			} );
 			setShowWelcomeGuide( false, { openedManually: false } );
 		},
+		isMinimized: isMobile() && isInserterOpened,
 		options: {
 			tourRating: {
 				enabled: true,

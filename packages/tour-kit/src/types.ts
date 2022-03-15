@@ -79,6 +79,7 @@ export interface Config {
 		tourMinimized: MinimizedTourRenderer;
 	};
 	closeHandler: CloseHandler;
+	isMinimized?: boolean;
 	options?: Options;
 }
 
