@@ -61,14 +61,14 @@ class CancelPurchase extends Component {
 
 	componentDidMount() {
 		if ( ! this.isDataValid() ) {
-			this.redirect( this.props );
+			this.redirect();
 			return;
 		}
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( this.isDataValid( prevProps ) && ! this.isDataValid() ) {
-			this.redirect( this.props );
+			this.redirect();
 			return;
 		}
 	}
@@ -90,8 +90,8 @@ class CancelPurchase extends Component {
 		return isCancelable( purchase ) && isDomainTransferCancelable;
 	};
 
-	redirect = ( props ) => {
-		const { purchase, siteSlug } = props;
+	redirect = () => {
+		const { purchase, siteSlug } = this.props;
 		let redirectPath = this.props.purchaseListUrl;
 
 		if ( siteSlug && purchase && ( ! isCancelable( purchase ) || isDomainTransfer( purchase ) ) ) {
