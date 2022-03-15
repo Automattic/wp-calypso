@@ -13,9 +13,10 @@ import {
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import formatCurrency, { CURRENCIES } from '@automattic/format-currency';
+import { styled } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { Fragment, useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { requestPlans } from 'calypso/state/plans/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
@@ -25,14 +26,6 @@ import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { Plan, Product } from '@automattic/calypso-products';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
-
-function myFormatCurrency( price: number, code: string, options = {} ) {
-	const precision = CURRENCIES[ code ].precision;
-	const EPSILON = Math.pow( 10, -precision ) - 0.000000001;
-
-	const hasCents = Math.abs( price % 1 ) >= EPSILON;
-	return formatCurrency( price, code, hasCents ? options : { ...options, precision: 0 } );
-}
 
 export interface AvailableProductVariant {
 	planSlug: string;
@@ -59,6 +52,32 @@ export interface SitePlanData {
 interface SitesPlansResult {
 	data: SitePlanData[];
 }
+
+const Discount = styled.span`
+	color: ${ ( props ) => props.theme.colors.discount };
+	margin-right: 8px;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
+	order: unset;
+
+	@media ( max-width: 660px ) {
+		order: 1;
+		width: 100%;
+	}
+`;
+
+const DoNotPayThis = styled.del`
+	text-decoration: line-through;
+	margin-right: 8px;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
+`;
 
 export function useGetProductVariants(
 	siteId: number | undefined,
@@ -96,26 +115,11 @@ export function useGetProductVariants(
 
 	const getProductVariantFromAvailableVariant = useCallback(
 		( variant: AvailableProductVariantAndCompared ): WPCOMProductVariant => {
-			const currentPrice =
-				variant.introductoryOfferPrice !== null
-					? variant.introductoryOfferPrice
-					: variant.priceFinal || variant.priceFull;
-			// extremely low "discounts" are possible if the price of the longer term has been rounded
-			// if they cannot be rounded to at least a percentage point we should not show them
-			const discountPercentage = Math.floor(
-				100 - ( currentPrice / variant.priceFullBeforeDiscount ) * 100
-			);
-
 			return {
 				variantLabel: getTermText( variant.plan.term, translate ),
+				variantDetails: <VariantPrice variant={ variant } />,
 				productSlug: variant.planSlug,
 				productId: variant.product.product_id,
-				discountPercentage,
-				formattedPriceBeforeDiscount: myFormatCurrency(
-					variant.priceFullBeforeDiscount,
-					variant.product.currency_code
-				),
-				formattedCurrentPrice: myFormatCurrency( currentPrice, variant.product.currency_code ),
 			};
 		},
 		[ translate ]
@@ -198,6 +202,47 @@ function isVariantAllowed(
 	return false;
 }
 
+function VariantPrice( { variant }: { variant: AvailableProductVariantAndCompared } ) {
+	const currentPrice =
+		variant.introductoryOfferPrice !== null
+			? variant.introductoryOfferPrice
+			: variant.priceFinal || variant.priceFull;
+	// extremely low "discounts" are possible if the price of the longer term has been rounded
+	// if they cannot be rounded to at least a percentage point we should not show them
+	const isDiscounted =
+		Math.floor( 100 - ( currentPrice / variant.priceFullBeforeDiscount ) * 100 ) > 0;
+	return (
+		<Fragment>
+			{ isDiscounted && <VariantPriceDiscount variant={ variant } /> }
+			{ isDiscounted && (
+				<DoNotPayThis>
+					{ myFormatCurrency( variant.priceFullBeforeDiscount, variant.product.currency_code ) }
+				</DoNotPayThis>
+			) }
+			{ myFormatCurrency( currentPrice, variant.product.currency_code ) }
+		</Fragment>
+	);
+}
+
+function VariantPriceDiscount( { variant }: { variant: AvailableProductVariantAndCompared } ) {
+	const translate = useTranslate();
+	const maybeFinalPrice =
+		variant.introductoryOfferPrice !== null ? variant.introductoryOfferPrice : variant.priceFinal;
+	const discountPercentage = Math.floor(
+		100 - ( maybeFinalPrice / variant.priceFullBeforeDiscount ) * 100
+	);
+
+	return (
+		<Discount>
+			{ translate( 'Save %(percent)s%%', {
+				args: {
+					percent: discountPercentage,
+				},
+			} ) }
+		</Discount>
+	);
+}
+
 function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
 	const chosenPlan = getPlan( productSlug ?? '' )
 		? getPlan( productSlug ?? '' )
@@ -249,14 +294,22 @@ function useVariantPlanProductSlugs(
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
 	switch ( term ) {
 		case TERM_BIENNIALLY:
-			return String( translate( 'Billed Bi-Yearly' ) );
+			return String( translate( 'Two years' ) );
 
 		case TERM_ANNUALLY:
-			return String( translate( 'Billed Yearly' ) );
+			return String( translate( 'One year' ) );
 
 		case TERM_MONTHLY:
-			return String( translate( 'Billed Monthly' ) );
+			return String( translate( 'One month' ) );
 		default:
 			return '';
 	}
+}
+
+function myFormatCurrency( price: number, code: string, options = {} ) {
+	const precision = CURRENCIES[ code ].precision;
+	const EPSILON = Math.pow( 10, -precision ) - 0.000000001;
+
+	const hasCents = Math.abs( price % 1 ) >= EPSILON;
+	return formatCurrency( price, code, hasCents ? options : { ...options, precision: 0 } );
 }
