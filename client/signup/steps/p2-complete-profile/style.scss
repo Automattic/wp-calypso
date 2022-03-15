@@ -50,3 +50,19 @@
 		font-weight: 500;
 	}
 }
+
+.p2-complete-profile__skip-wrapper {
+	margin-top: 28px;
+	text-align: center;
+}
+
+.p2-complete-profile__skip-btn.components-button {
+	display: inline;
+	width: auto;
+	color: var( --p2-color-link );
+
+	&:hover {
+		background: none;
+		color: var( --p2-color-link-hover );
+	}
+}

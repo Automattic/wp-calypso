@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import { Component } from 'react';
@@ -191,6 +192,15 @@ class P2CompleteProfile extends Component {
 								</FormButton>
 							</div>
 						</form>
+					</div>
+
+					<div className="p2-complete-profile__skip-wrapper">
+						<span>
+							No time? No problem! You can{ ' ' }
+							<Button className="p2-complete-profile__skip-btn" variant="link">
+								do this later.
+							</Button>
+						</span>
 					</div>
 				</div>
 			</P2StepWrapper>
