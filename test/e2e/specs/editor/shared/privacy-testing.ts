@@ -1,6 +1,6 @@
 import {
 	DataHelper,
-	GutenbergEditorPage,
+	EditorPage,
 	TestAccount,
 	envVariables,
 	PrivacyOptions,
@@ -30,7 +30,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 
 		let page: Page;
 		let url: URL;
-		let gutenbergEditorPage: GutenbergEditorPage;
+		let editorPage: EditorPage;
 
 		describe( `Create a ${ visibility } page`, function () {
 			beforeAll( async function () {
@@ -41,39 +41,37 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 
 			it( 'Start new page', async function () {
-				gutenbergEditorPage = new GutenbergEditorPage( page );
-				await gutenbergEditorPage.visit( 'page' );
-				const editorIframe = await gutenbergEditorPage.waitUntilLoaded();
+				editorPage = new EditorPage( page );
+				await editorPage.visit( 'page' );
+				const editorIframe = await editorPage.waitUntilLoaded();
 				const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
 				await pageTemplateModalComponent.selectBlankPage();
 			} );
 
 			it( 'Enter page title', async function () {
-				gutenbergEditorPage = new GutenbergEditorPage( page );
-				await gutenbergEditorPage.enterTitle(
-					`Privacy: ${ visibility } - ${ DataHelper.getTimestamp() }`
-				);
+				editorPage = new EditorPage( page );
+				await editorPage.enterTitle( `Privacy: ${ visibility } - ${ DataHelper.getTimestamp() }` );
 			} );
 
 			it( 'Enter page content', async function () {
-				await gutenbergEditorPage.enterText( pageContent );
+				await editorPage.enterText( pageContent );
 			} );
 
 			it( `Set page visibility to ${ visibility }`, async function () {
-				await gutenbergEditorPage.openSettings();
-				await gutenbergEditorPage.setArticleVisibility( visibility as PrivacyOptions, {
+				await editorPage.openSettings();
+				await editorPage.setArticleVisibility( visibility as PrivacyOptions, {
 					password: pagePassword,
 				} );
-				await gutenbergEditorPage.closeSettings();
+				await editorPage.closeSettings();
 			} );
 
 			it( 'Publish page', async function () {
 				// Private articles are published immediately as the option is selected.
 				// In other words, for Private articles the publish action happened in previous step.
 				if ( visibility === 'Private' ) {
-					url = await gutenbergEditorPage.getPublishedURLFromToast();
+					url = await editorPage.getPublishedURLFromToast();
 				} else {
-					url = await gutenbergEditorPage.publish();
+					url = await editorPage.publish();
 				}
 			} );
 		} );

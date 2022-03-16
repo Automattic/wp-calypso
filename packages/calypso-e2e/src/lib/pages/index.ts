@@ -1,6 +1,6 @@
 export * from './published';
 export * from './login-page';
-export * from './gutenberg-editor-page';
+export * from './editor-page';
 export * from './my-home-page';
 export * from './marketing-page';
 export * from './general-settings-page';

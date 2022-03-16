@@ -1,7 +1,7 @@
 import {
 	DataHelper,
 	envVariables,
-	GutenbergEditorPage,
+	EditorPage,
 	PublishedPostPage,
 	TestAccount,
 	PagesPage,
@@ -21,7 +21,7 @@ const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRan
 
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
-	let gutenbergEditorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 	let editorIframe: Frame;
 	let pagesPage: PagesPage;
 	let publishedUrl: URL;
@@ -46,34 +46,34 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Select page template', async function () {
-		gutenbergEditorPage = new GutenbergEditorPage( page );
-		// @TODO Consider moving this to GutenbergEditorPage.
-		editorIframe = await gutenbergEditorPage.waitUntilLoaded();
+		editorPage = new EditorPage( page );
+		// @TODO Consider moving this to EditorPage.
+		editorIframe = await editorPage.waitUntilLoaded();
 		const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
 		await pageTemplateModalComponent.selectTemplateCatagory( pageTemplateCategory );
 		await pageTemplateModalComponent.selectTemplate( pageTemplateLable );
 	} );
 
 	it( 'Template content loads into editor', async function () {
-		// @TODO Consider moving this to GutenbergEditorPage.
+		// @TODO Consider moving this to EditorPage.
 		await editorIframe.waitForSelector( `text=${ expectedTemplateText }` );
 	} );
 
 	it( 'Open setting sidebar', async function () {
-		await gutenbergEditorPage.openSettings();
+		await editorPage.openSettings();
 	} );
 
 	it( 'Set custom URL slug', async function () {
-		await gutenbergEditorPage.setURLSlug( customUrlSlug );
+		await editorPage.setURLSlug( customUrlSlug );
 	} );
 
 	// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 	it( 'Close settings sidebar', async function () {
-		await gutenbergEditorPage.closeSettings();
+		await editorPage.closeSettings();
 	} );
 
 	it( 'Publish page', async function () {
-		publishedUrl = await gutenbergEditorPage.publish( { visit: true } );
+		publishedUrl = await editorPage.publish( { visit: true } );
 	} );
 
 	it( 'Published URL contains the custom URL slug', async function () {
