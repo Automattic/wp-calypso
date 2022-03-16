@@ -260,9 +260,9 @@ class CurrentPlan extends Component {
 					{ showLegacyPlanNotice && (
 						<Notice
 							status="is-info"
-							text={
-								'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut felis et orci fringilla pretium. Consectura elit et orci fel.'
-							}
+							text={ translate(
+								'You’re currently on a legacy plan. If you’d like to learn about your eligibility to switch to a Pro plan please contact support.'
+							) }
 							icon="info-outline"
 							showDismiss={ false }
 						></Notice>
@@ -277,7 +277,7 @@ class CurrentPlan extends Component {
 						</Fragment>
 					) }
 
-					{ ! eligibleForProPlan && (
+					{ ! isPro( selectedSite.plan ) && (
 						<>
 							<div
 								className={ classNames( 'current-plan__header-text current-plan__text', {
