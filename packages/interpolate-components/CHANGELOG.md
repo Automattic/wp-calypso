@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1]
+
+### Changed
+- @types/react peer dependency increased from >=16.2.0 to >=16.14.23
+
 ## [1.2.0]
 
 ### Added
