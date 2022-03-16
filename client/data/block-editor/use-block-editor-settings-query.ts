@@ -3,9 +3,15 @@ import { useSelector } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 
+type HomeTemplateSettings = {
+	postType: string | null;
+	postId: number | null;
+};
+
 export type BlockEditorSettings = {
 	is_fse_eligible: boolean;
 	is_fse_active: boolean;
+	home_template: HomeTemplateSettings;
 };
 
 export const useBlockEditorSettingsQuery = (

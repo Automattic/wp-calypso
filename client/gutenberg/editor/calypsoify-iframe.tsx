@@ -10,6 +10,8 @@ import { Component, Fragment } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-settings-query';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -80,6 +82,7 @@ interface Props {
 	parentPostId: T.PostId;
 	stripeConnectSuccess: 'gutenberg' | null;
 	showDraftPostModal: boolean;
+	blockEditorSettings: BlockEditorSettings;
 }
 
 interface CheckoutModalOptions extends RequestCart {
@@ -779,6 +782,7 @@ const mapStateToProps = (
 		anchorFmData,
 		showDraftPostModal,
 		pressThisData,
+		blockEditorSettings,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -816,9 +820,15 @@ const mapStateToProps = (
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
+	// Add new Site Editor params introduced in https://github.com/WordPress/gutenberg/pull/38817.
+	if ( 'site' === editorType && blockEditorSettings?.home_template?.postType ) {
+		queryArgs.postType = blockEditorSettings.home_template.postType;
+		queryArgs.postId = blockEditorSettings.home_template.postId;
+	}
+
 	const siteAdminUrl =
 		editorType === 'site'
-			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
+			? getSiteAdminUrl( state, siteId, 'themes.php?page=gutenberg-edit-site' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl ?? '' );
@@ -879,6 +889,7 @@ type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchT
 
 export default flowRight(
 	withStopPerformanceTrackingProp,
+	withBlockEditorSettings,
 	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm
