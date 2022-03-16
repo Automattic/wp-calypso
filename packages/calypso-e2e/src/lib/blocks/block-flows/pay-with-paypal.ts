@@ -1,5 +1,5 @@
 import { BlockFlow, EditorContext, PublishedPostContext } from '..';
-import { GutenbergEditorPage } from '../..';
+import { EditorPage } from '../..';
 
 interface ConfigurationData {
 	name: string;
@@ -45,8 +45,8 @@ export class PayWithPaypalBlockFlow implements BlockFlow {
 		await context.editorIframe.fill( selectors.email, this.configurationData.email );
 
 		// If the post is not saved as draft, the Pay with Paypal block is not rendered in the published post.
-		const gutenbergEditorPage = new GutenbergEditorPage( context.page );
-		await gutenbergEditorPage.saveDraft();
+		const editorPage = new EditorPage( context.page );
+		await editorPage.saveDraft();
 		// Leave site? popup cannot be prevented when publishing.
 		// See https://github.com/Automattic/wp-calypso/issues/60014.
 	}

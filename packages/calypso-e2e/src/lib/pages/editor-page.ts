@@ -1,5 +1,4 @@
-import assert from 'assert';
-import { Page, Frame, ElementHandle, Response } from 'playwright';
+import { Page, Frame, ElementHandle, Response, FrameLocator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
@@ -8,6 +7,7 @@ import {
 	EditorNavSidebarComponent,
 	EditorToolbarComponent,
 	EditorSettingsSidebarComponent,
+	EditorGutenbergComponent,
 	NavbarComponent,
 } from '../components';
 import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../components';
@@ -17,15 +17,7 @@ const selectors = {
 	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
 	editorTitle: '.editor-post-title__input',
 
-	// Block inserter
-	blockInserterToggle: 'button.edit-post-header-toolbar__inserter-toggle',
-	blockInserterPanel: '.block-editor-inserter__content',
-	blockSearch: '.block-editor-inserter__search input[type="search"]',
-	blockInserterResultItem: '.block-editor-block-types-list__list-item',
-
 	// Within the editor body.
-	blockAppender: '.block-editor-default-block-appender',
-	paragraphBlocks: 'p.block-editor-rich-text__editable',
 	blockWarning: '.block-editor-warning',
 
 	// Toast
@@ -38,13 +30,15 @@ const selectors = {
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
  */
-export class GutenbergEditorPage {
+export class EditorPage {
 	private page: Page;
 	private requiresGutenframe: boolean;
+	private frameLocator: FrameLocator;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
+	private editorGutenbergComponent: EditorGutenbergComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -70,6 +64,7 @@ export class GutenbergEditorPage {
 
 		this.page = page;
 		this.requiresGutenframe = requiresGutenframe;
+		this.frameLocator = page.frameLocator( selectors.editorFrame );
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent(
 			page,
 			page.frameLocator( selectors.editorFrame )
@@ -86,7 +81,13 @@ export class GutenbergEditorPage {
 			page,
 			page.frameLocator( selectors.editorFrame )
 		);
+		this.editorGutenbergComponent = new EditorGutenbergComponent(
+			page,
+			page.frameLocator( selectors.editorFrame )
+		);
 	}
+
+	/* Generic methods */
 
 	/**
 	 * Opens the "new post/page" page. By default it will open the "new post" page.
@@ -112,7 +113,8 @@ export class GutenbergEditorPage {
 		// However, we need a stable way to identify loading being done. NetworkIdle
 		// takes too long here, so the most reliable alternative is the title being
 		// visible.
-		await frame.waitForSelector( selectors.editorTitle );
+		const titleLocator = this.frameLocator.locator( selectors.editorTitle );
+		await titleLocator.waitFor();
 		// Once https://github.com/Automattic/wp-calypso/issues/57660 is resolved,
 		// the next line should be removed.
 		await this.forceDismissWelcomeTour();
@@ -177,117 +179,9 @@ export class GutenbergEditorPage {
 				// the Gutenframe, so we return the `mainFrame` to allow the test to access
 				// the editor in the WPAdmin page.
 				console.info( 'Could not locate editor iframe. Returning the top-level frame instead' );
-				return await this.page.mainFrame();
+				return this.page.mainFrame();
 			}
 		}
-	}
-
-	/**
-	 * Enters the text into the title block and verifies the result.
-	 *
-	 * @param {string} title Text to be used as the title.
-	 * @returns {Promise<void>} No return value.
-	 * @throws {assert.AssertionError} If text entered and text read back do not match.
-	 */
-	async enterTitle( title: string ): Promise< void > {
-		const sanitizedTitle = title.trim();
-		await this.setTitle( sanitizedTitle );
-		const readBack = await this.getTitle();
-		assert.strictEqual( readBack, sanitizedTitle );
-	}
-
-	/**
-	 * Fills the title block with text.
-	 *
-	 * @param {string} title Text to be used as the title.
-	 * @returns {Promise<void>} No return value.
-	 */
-	async setTitle( title: string ): Promise< void > {
-		const frame = await this.getEditorFrame();
-		await frame.click( selectors.editorTitle );
-		await frame.fill( selectors.editorTitle, title );
-	}
-
-	/**
-	 * Returns the text as entered in the title block, or an empty string if
-	 * not found.
-	 *
-	 * @returns {Promise<string>} Text value of the title block.
-	 */
-	async getTitle(): Promise< string > {
-		const frame = await this.getEditorFrame();
-		await frame.waitForSelector( selectors.editorTitle );
-		return ( await frame.$eval( selectors.editorTitle, ( el ) => el.textContent ) ) || '';
-	}
-
-	/**
-	 * Enters text into the paragraph block(s) and verifies the result.
-	 *
-	 * @param {string} text Text to be entered into the paragraph blocks, separated by newline characters.
-	 * @returns {Promise<void>} No return value.
-	 * @throws {assert.AssertionError} If text entered and text read back do not match.
-	 */
-	async enterText( text: string ): Promise< void > {
-		await this.setText( text );
-		const readBack = await this.getText();
-		assert.strictEqual( readBack, text );
-	}
-
-	/**
-	 * Enters text into the body, splitting newlines into new pragraph blocks as necessary.
-	 *
-	 * @param {string} text Text to be entered into the body.
-	 * @returns {Promise<void>} No return value.
-	 */
-	async setText( text: string ): Promise< void > {
-		const frame = await this.getEditorFrame();
-
-		const lines = text.split( '\n' );
-		await frame.click( selectors.blockAppender );
-
-		// Playwright does not break up newlines in Gutenberg. This causes issues when we expect
-		// text to be broken into new lines/blocks. This presents an unexpected issue when entering
-		// text such as 'First sentence\nSecond sentence', as it is all put in one line.
-		// frame.type() will respect newlines like a human would, but it is slow.
-		// This approach will run faster than using frame.type() while respecting the newline chars.
-		await Promise.all(
-			lines.map( async ( line, index ) => {
-				await frame.fill( `${ selectors.paragraphBlocks }:nth-of-type(${ index + 1 })`, line );
-				await this.page.keyboard.press( 'Enter' );
-			} )
-		);
-	}
-
-	/**
-	 * Returns the text as entered in the paragraph blocks.
-	 *
-	 * @returns {string} Visible text in the paragraph blocks, concatenated into one string.
-	 */
-	async getText(): Promise< string > {
-		const frame = await this.getEditorFrame();
-
-		// Each blocks have the same overall selector. This will obtain a list of
-		// blocks that are paragraph type and return an array of ElementHandles.
-		const paragraphBlocks = await frame.$$( selectors.paragraphBlocks );
-
-		// Extract the textContent of each paragraph block into a list.
-		// Note the special condition for an empty paragraph block, noted below.
-		const lines = await Promise.all(
-			paragraphBlocks.map( async function ( block ) {
-				// This U+FEFF character is present in the textContent of an otherwise
-				// empty paragraph block and will evaluate to truthy.
-				const text = String( await block.textContent() ).replace( /\ufeff/g, '' );
-
-				if ( ! text ) {
-					return;
-				}
-
-				return text;
-			} )
-		);
-
-		// Strip out falsey values.
-		return lines.filter( Boolean ).join( '\n' );
 	}
 
 	/**
@@ -306,6 +200,49 @@ export class GutenbergEditorPage {
 		] );
 	}
 
+	/* Editor */
+
+	/**
+	 * Enters the text into the title block and verifies the result.
+	 *
+	 * @param {string} title Text to be used as the title.
+	 * @throws {Error} If entered title does not match.
+	 */
+	async enterTitle( title: string ): Promise< void > {
+		await this.editorGutenbergComponent.enterTitle( title );
+		const enteredTitle = await this.editorGutenbergComponent.getTitle();
+
+		const sanitizedTitle = title.trim();
+		if ( enteredTitle !== sanitizedTitle ) {
+			throw new Error(
+				`Failed to verify title: got ${ enteredTitle }, expected ${ sanitizedTitle }`
+			);
+		}
+	}
+
+	/**
+	 * Enters text into the body, splitting newlines into new pragraph blocks as necessary. The entered text is then read back and checked.
+	 *
+	 * @param {string} text Text to be entered into the paragraph blocks, separated by newline characters.
+	 */
+	async enterText( text: string ): Promise< void > {
+		await this.editorGutenbergComponent.enterText( text );
+		const enteredText = await this.editorGutenbergComponent.getText();
+
+		if ( text !== enteredText ) {
+			`Failed to verify entered text: got ${ enteredText }, expected ${ text }`;
+		}
+	}
+
+	/**
+	 * Returns the text found in the editor.
+	 *
+	 * @returns {Promise<string>} String representing text entered in each paragraph block.
+	 */
+	async getText(): Promise< string > {
+		return await this.editorGutenbergComponent.getText();
+	}
+
 	/**
 	 * Adds a Gutenberg block from the block inserter panel.
 	 *
@@ -322,40 +259,27 @@ export class GutenbergEditorPage {
 	 * We recommend using the aria-label for the selector, e.g. '[aria-label="Block: Quote"]'.
 	 *
 	 * @param {string} blockName Name of the block to be inserted.
-	 * @param {string} blockEditorSelector Selector to find the parent block element in the editor.
 	 */
 	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
-		const frame = await this.getEditorFrame();
-		// Click on the editor title to work around the following issue:
-		// https://github.com/Automattic/wp-calypso/issues/61508
-		await frame.click( selectors.editorTitle );
-
+		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
-		await this.searchBlockInserter( blockName );
-		await frame.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );
-		// Confirm the block has been added to the editor body.
-		const elementHandle = await frame.waitForSelector( `${ blockEditorSelector }.is-selected` );
+		await this.editorGutenbergComponent.searchBlockInserter( blockName );
+		await this.editorGutenbergComponent.selectBlockInserterResult( blockName );
 
-		// Dismiss the block inserter if viewport is larger than mobile to ensure
-		// no interference from the block inserter in subsequent actions on the editor.
+		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
+			blockEditorSelector
+		);
+
+		// Dismiss the block inserter if viewport is larger than mobile to
+		// ensure no interference from the block inserter in subsequent actions on the editor.
 		// In mobile, the block inserter will auto-close.
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			await this.editorToolbarComponent.closeBlockInserter();
 		}
 
-		return elementHandle;
-	}
-
-	/**
-	 * Remove the block from the editor.
-	 *
-	 * This method requires the handle to the block in question to be passed in as parameter.
-	 *
-	 * @param {ElementHandle} blockHandle ElementHandle of the block to be removed.
-	 */
-	async removeBlock( blockHandle: ElementHandle ): Promise< void > {
-		await blockHandle.click();
-		await this.page.keyboard.press( 'Backspace' );
+		// Return an ElementHandle pointing to the block for compatibility
+		// with existing specs.
+		return blockHandle;
 	}
 
 	/**
@@ -369,22 +293,30 @@ export class GutenbergEditorPage {
 	 *
 	 * @param {string} patternName Name of the pattern to insert.
 	 */
-	async addPattern( patternName: string ): Promise< ElementHandle > {
-		const frame = await this.getEditorFrame();
+	async addPattern( patternName: string ): Promise< void > {
+		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
-		await this.searchBlockInserter( patternName );
-		await frame.click( `div[aria-label="${ patternName }"]` );
-		return await frame.waitForSelector( `:text('Block pattern "${ patternName }" inserted.')` );
+		await this.editorGutenbergComponent.searchBlockInserter( patternName );
+		await this.editorGutenbergComponent.selectBlockInserterResult( patternName, {
+			type: 'pattern',
+		} );
+
+		const insertConfirmationToastLocator = this.frameLocator.locator(
+			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
+		);
+		await insertConfirmationToastLocator.waitFor();
 	}
 
 	/**
-	 * Given a string, enters the said string to the block inserter search bar.
+	 * Remove the block from the editor.
 	 *
-	 * @param {string} text Text to search.
+	 * This method requires the handle to the block in question to be passed in as parameter.
+	 *
+	 * @param {ElementHandle} blockHandle ElementHandle of the block to be removed.
 	 */
-	async searchBlockInserter( text: string ): Promise< void > {
-		const frame = await this.getEditorFrame();
-		await frame.fill( selectors.blockSearch, text );
+	async removeBlock( blockHandle: ElementHandle ): Promise< void > {
+		await blockHandle.click();
+		await this.page.keyboard.press( 'Backspace' );
 	}
 
 	/* Settings Sidebar */
@@ -719,10 +651,10 @@ export class GutenbergEditorPage {
 	/**
 	 * Checks whether the editor has any block warnings/errors displaying.
 	 *
-	 * @returns True if there are block warnings/errors, false otherwise.
+	 * @returns {Promise<boolean>} True if there are block warnings/errors.
+	 * False otherwise.
 	 */
 	async editorHasBlockWarnings(): Promise< boolean > {
-		const frame = await this.getEditorFrame();
-		return await frame.isVisible( selectors.blockWarning );
+		return await this.editorGutenbergComponent.editorHasBlockWarning();
 	}
 }

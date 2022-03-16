@@ -15,7 +15,7 @@
  * To avoid any confusion, the tests here will only run if the GUTENBERG_EDGE env
  * var is set.
  */
-import { GutenbergEditorPage, TestAccount, envVariables, skipItIf } from '@automattic/calypso-e2e';
+import { EditorPage, TestAccount, envVariables, skipItIf } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
@@ -26,9 +26,9 @@ describe.each`
 	${ 'Atomic' } | ${ 'gutenbergAtomicSiteEdgeUser' } | ${ 32 }
 `(
 	'Gutenberg Upgrade: Sanity-Check Most Popular Blocks on ($siteType) edge',
-	function ( { accountName, testPostId } ) {
+	function ( { siteType, accountName, testPostId } ) {
 		let page: Page;
-		let gutenbergEditorPage: GutenbergEditorPage;
+		let editorPage: EditorPage;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
@@ -42,15 +42,18 @@ describe.each`
 
 			await page.goto( postURL );
 
-			gutenbergEditorPage = new GutenbergEditorPage( page );
+			editorPage = new EditorPage( page );
 		} );
 
 		// Both block invalidation and crash messages are wrapped by the same `Warning`
 		// component in Gutenberg. If we find at least one warning, then we fail the test.
-		skipItIf( ! envVariables.GUTENBERG_EDGE )( 'will not have any block warnings', async () => {
-			await gutenbergEditorPage.waitUntilLoaded();
+		skipItIf( ! envVariables.GUTENBERG_EDGE )(
+			`Block warnings are not obeserved for ${ siteType }`,
+			async () => {
+				await editorPage.waitUntilLoaded();
 
-			expect( await gutenbergEditorPage.editorHasBlockWarnings() ).toBe( false );
-		} );
+				expect( await editorPage.editorHasBlockWarnings() ).toBe( false );
+			}
+		);
 	}
 );
