@@ -20,12 +20,16 @@ const ThreeColumnContainer = styled.div`
 	row-gap: 10px;
 `;
 
+const EducationFooterContainer = styled.div`
+	margin-top: 96px;
+`;
+
 const EducationFooter = () => {
 	const { __ } = useI18n();
 	const localizeUrl = useLocalizeUrl();
 
 	return (
-		<>
+		<EducationFooterContainer>
 			<Section header={ __( 'Learn more' ) }>
 				<ThreeColumnContainer>
 					<LinkCard
@@ -79,7 +83,7 @@ const EducationFooter = () => {
 					</FeatureItem>
 				</ThreeColumnContainer>
 			</Section>
-		</>
+		</EducationFooterContainer>
 	);
 };
 
