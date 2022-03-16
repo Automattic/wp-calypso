@@ -25,7 +25,7 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 	const planId = plan?.getProductId();
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
-	const promotedFeatures: string[] = plan?.getPromotedFeatures() ? plan?.getPromotedFeatures() : [];
+	const promotedFeatures: string[] = plan?.getPromotedFeatures() ?? [];
 
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planId as number, true ) );
