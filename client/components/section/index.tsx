@@ -12,7 +12,8 @@ const SectionContainer = styled.div`
 	::before {
 		box-sizing: border-box;
 		content: '';
-		background-color: var( --studio-gray-0 );
+		background-color: ${ ( props ) =>
+			props.dark ? 'var( --studio-gray-90 )' : 'var( --studio-gray-0 )' };
 		position: absolute;
 		height: 100%;
 		width: 200vw;
@@ -31,6 +32,7 @@ const SectionHeader = styled.div`
 		padding: 0 16px;
 	}
 
+	color: var( --${ ( props ) => ( props.dark ? 'color-text-inverted' : 'color-text' ) } );
 	font-weight: 400;
 	letter-spacing: -0.4px;
 	text-align: left;
@@ -43,11 +45,13 @@ const SectionHeader = styled.div`
 const SectionContent = styled.div``;
 
 const Section = ( props: SectionProps ) => {
-	const { children, header } = props;
+	const { children, header, dark } = props;
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<SectionContainer>
-			<SectionHeader className="wp-brand-font">{ header }</SectionHeader>
+		<SectionContainer dark={ dark }>
+			<SectionHeader dark={ dark } className="wp-brand-font">
+				{ header }
+			</SectionHeader>
 			<SectionContent>{ children }</SectionContent>
 		</SectionContainer>
 	);
