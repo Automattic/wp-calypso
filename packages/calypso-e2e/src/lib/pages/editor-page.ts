@@ -179,7 +179,7 @@ export class EditorPage {
 				// the Gutenframe, so we return the `mainFrame` to allow the test to access
 				// the editor in the WPAdmin page.
 				console.info( 'Could not locate editor iframe. Returning the top-level frame instead' );
-				return await this.page.mainFrame();
+				return this.page.mainFrame();
 			}
 		}
 	}
