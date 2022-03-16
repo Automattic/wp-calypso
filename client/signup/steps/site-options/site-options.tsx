@@ -73,6 +73,7 @@ const SiteOptions: React.FC< Props > = ( {
 					name="siteTitle"
 					id="siteTitle"
 					value={ formValues.siteTitle }
+					isError={ siteTitleError }
 					onChange={ onChange }
 				/>
 				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
@@ -81,7 +82,13 @@ const SiteOptions: React.FC< Props > = ( {
 				<FormLabel htmlFor="tagline" optional={ ! isTaglineRequired }>
 					{ translate( 'Tagline' ) }
 				</FormLabel>
-				<FormInput name="tagline" id="tagline" value={ formValues.tagline } onChange={ onChange } />
+				<FormInput
+					name="tagline"
+					id="tagline"
+					value={ formValues.tagline }
+					isError={ taglineError }
+					onChange={ onChange }
+				/>
 				{ taglineError && <FormInputValidation isError text={ taglineError } /> }
 				<FormSettingExplanation>
 					<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
