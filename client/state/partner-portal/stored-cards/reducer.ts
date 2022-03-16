@@ -41,6 +41,21 @@ export const items: Reducer< PaymentMethod[], ItemsAction > = ( state = [], acti
 	return state;
 };
 
+type ItemsPerPageAction = {
+	type: 'STORED_CARDS_ITEMS_PER_PAGE';
+	perPage: number;
+};
+
+export const itemsPerPage: Reducer< number, ItemsPerPageAction > = ( state = 30, action ) => {
+	switch ( action?.type ) {
+		case 'STORED_CARDS_ITEMS_PER_PAGE': {
+			const { perPage } = action;
+			return perPage;
+		}
+	}
+	return state;
+};
+
 type MoreItemsAction = {
 	type: 'STORED_CARDS_HAS_MORE_ITEMS';
 	hasMore: boolean;
@@ -112,6 +127,7 @@ export const isDeleting: Reducer< { [ key: string ]: boolean }, DeletingActionSt
 
 const combinedReducer = combineReducers( {
 	items: items as Reducer,
+	itemsPerPage: itemsPerPage as Reducer,
 	isDeleting: isDeleting as Reducer,
 	isFetching,
 	hasMoreItems: hasMoreItems as Reducer,

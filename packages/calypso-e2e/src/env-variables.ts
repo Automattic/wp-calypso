@@ -122,5 +122,5 @@ supportedEnvVariableNames.forEach( ( name ) => {
 	}
 } );
 
-// TODO: Should we add proxy trap to fallback to process.env values?
+// @{TODO}: Should we add proxy trap to fallback to process.env values?
 export default Object.freeze( currentEnvVariables );

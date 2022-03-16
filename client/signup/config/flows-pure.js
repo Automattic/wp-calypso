@@ -50,10 +50,10 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'managed',
-			steps: [ 'user', 'domains', 'plans-managed' ],
+			name: 'pro',
+			steps: [ 'user', 'domains', 'plans-pro' ],
 			destination: getSignupDestination,
-			description: 'Create an account and a blog and then add the managed plan to the users cart.',
+			description: 'Create an account and a blog and then add the pro plan to the users cart.',
 			lastModified: '2022-03-08',
 			showRecaptcha: true,
 		},
@@ -390,7 +390,7 @@ export function generateFlows( {
 						'user',
 						'new-or-existing-site',
 						'difm-site-picker',
-						'site-info-collection',
+						'difm-options',
 						'difm-design-setup-site',
 				  ]
 				: [

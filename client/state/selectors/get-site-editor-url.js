@@ -12,7 +12,7 @@ export const getSiteEditorUrl = ( state, siteId ) => {
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 
 	if ( ! shouldLoadGutenframe( state, siteId ) ) {
-		return `${ siteAdminUrl }admin.php?page=gutenberg-edit-site`;
+		return `${ siteAdminUrl }themes.php?page=gutenberg-edit-site`;
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );

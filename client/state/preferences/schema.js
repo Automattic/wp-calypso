@@ -72,18 +72,26 @@ export const remoteValuesSchema = {
 		'jetpack-review-prompt': {
 			type: 'object',
 			properties: {
-				scan: {
-					type: 'object',
-					properties: {
-						'/[0-9]+/': { $ref: '#/definitions/dismissiblePrompt' },
-					},
-				},
+				scan: { $ref: '#/definitions/dismissiblePrompt' },
 				restore: { $ref: '#/definitions/dismissiblePrompt' },
 			},
 		},
 		homeQuickLinksToggleStatus: {
 			type: 'string',
 			enum: [ 'collapsed', 'expanded' ],
+		},
+		'persistent-counter': {
+			type: 'object',
+			properties: {
+				// counter-name (possibly suffixed with siteId)
+				'^[a-z0-9-]+$': {
+					type: 'object',
+					properties: {
+						count: { type: 'number', minimum: 0 },
+						lastCountDate: { type: [ 'number', 'null' ] },
+					},
+				},
+			},
 		},
 	},
 	definitions: {

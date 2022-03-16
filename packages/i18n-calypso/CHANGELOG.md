@@ -1,3 +1,10 @@
+## 6.0.0
+
+- Update React peer dependency to v17.
+- Declare TranslateResult as ReactNode, add textOnly overload (#58938)
+- Make i18n.translate return ReactChild (#59095)
+- Update most dependencies.
+
 ## 5.1.0 (next)
 
 - Add `i18n.getLocaleVariant()` method to get a nonstandard locale variant slug.

@@ -13,6 +13,13 @@ import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );
 
+export function bumpTwoStepAuthMCStat( eventAction ) {
+	bumpStat( '2fa', eventAction );
+	recordTracksEvent( 'calypso_login_twostep_authorize', {
+		event_action: eventAction,
+	} );
+}
+
 /*
  * Initialize TwoStepAuthorization with defaults
  */
@@ -24,13 +31,6 @@ function TwoStepAuthorization() {
 	this.data = {};
 	this.initialized = false;
 	this.smsResendThrottled = false;
-
-	this.bumpMCStat = function ( eventAction ) {
-		bumpStat( '2fa', eventAction );
-		recordTracksEvent( 'calypso_login_twostep_authorize', {
-			event_action: eventAction,
-		} );
-	};
 
 	this.fetch();
 }
@@ -44,7 +44,7 @@ TwoStepAuthorization.prototype.fetch = function ( callback ) {
 			this.data = data;
 
 			if ( this.isReauthRequired() && ! this.initialized ) {
-				this.bumpMCStat( 'reauth-required' );
+				bumpTwoStepAuthMCStat( 'reauth-required' );
 			}
 
 			this.initialized = true;
@@ -142,11 +142,11 @@ TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
 		( error, data ) => {
 			if ( ! error && data.success ) {
 				if ( args.action ) {
-					this.bumpMCStat(
+					bumpTwoStepAuthMCStat(
 						'enable-two-step' === args.action ? 'enable-2fa-successful' : 'disable-2fa-successful'
 					);
 				} else {
-					this.bumpMCStat( 'reauth-successful' );
+					bumpTwoStepAuthMCStat( 'reauth-successful' );
 				}
 
 				this.refreshDataOnSuccessfulAuth();
@@ -155,13 +155,13 @@ TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
 				this.invalidCode = true;
 
 				if ( args.action ) {
-					this.bumpMCStat(
+					bumpTwoStepAuthMCStat(
 						'enable-two-step' === args.action
 							? 'enable-2fa-failed-invalid-code'
 							: 'disable-2fa-failed-invalid-code'
 					);
 				} else {
-					this.bumpMCStat( 'reauth-failed-invalid-code' );
+					bumpTwoStepAuthMCStat( 'reauth-failed-invalid-code' );
 				}
 			}
 
@@ -183,76 +183,15 @@ TwoStepAuthorization.prototype.sendSMSCode = function ( callback ) {
 
 			if ( error.error && 'rate_limited' === error.error ) {
 				debug( 'SMS resend throttled.' );
-				this.bumpMCStat( 'sms-code-send-throttled' );
+				bumpTwoStepAuthMCStat( 'sms-code-send-throttled' );
 				this.smsResendThrottled = true;
 			}
 		} else {
 			this.smsResendThrottled = false;
-			this.bumpMCStat( 'sms-code-send-success' );
+			bumpTwoStepAuthMCStat( 'sms-code-send-success' );
 		}
 
 		this.emit( 'change' );
-
-		if ( callback ) {
-			callback( error, data );
-		}
-	} );
-};
-
-/*
- * Fetches a new set of backup codes by calling /me/two-step/backup-codes/new
- */
-TwoStepAuthorization.prototype.backupCodes = function ( callback ) {
-	wp.req.post( '/me/two-step/backup-codes/new', ( error, data ) => {
-		if ( error ) {
-			debug( 'Fetching Backup Codes failed: ' + JSON.stringify( error ) );
-		} else {
-			this.bumpMCStat( 'new-backup-codes-success' );
-		}
-
-		if ( callback ) {
-			callback( error, data );
-		}
-	} );
-};
-
-/*
- * Similar to validateCode, but without the change triggers across the
- * TwoStepAuthorization objects, so that the caller can delay state
- * transition until it is ready
- */
-TwoStepAuthorization.prototype.validateBackupCode = function ( code, callback ) {
-	const args = {
-		code: code.replace( /\s/g, '' ),
-		action: 'create-backup-receipt',
-	};
-
-	wp.req.post( '/me/two-step/validate', args, ( error, data ) => {
-		if ( error ) {
-			debug( 'Validating Two Step Code failed: ' + JSON.stringify( error ) );
-		}
-
-		if ( data ) {
-			this.bumpMCStat(
-				data.success ? 'backup-code-validate-success' : 'backup-code-validate-failure'
-			);
-		}
-
-		if ( callback ) {
-			callback( error, data );
-		}
-	} );
-};
-
-/*
- * Requests the authentication app QR code URL and time code
- * from me/two-step/app-auth-setup
- */
-TwoStepAuthorization.prototype.getAppAuthCodes = function ( callback ) {
-	wp.req.get( '/me/two-step/app-auth-setup/', function ( error, data ) {
-		if ( error ) {
-			debug( 'Getting App Auth Codes failed: ' + JSON.stringify( error ) );
-		}
 
 		if ( callback ) {
 			callback( error, data );

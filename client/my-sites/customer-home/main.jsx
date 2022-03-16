@@ -65,18 +65,6 @@ const Home = ( {
 
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 	useEffect( () => {
-		if ( 'IN' !== detectedCountryCode ) {
-			return;
-		}
-
-		addHotJarScript();
-
-		if ( window && window.hj ) {
-			window.hj( 'trigger', 'in_survey_1' );
-		}
-	}, [ detectedCountryCode ] );
-
-	useEffect( () => {
 		if ( 'free_plan' !== sitePlanSlug ) {
 			return;
 		}

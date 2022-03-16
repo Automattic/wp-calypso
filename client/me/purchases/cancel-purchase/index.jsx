@@ -59,18 +59,16 @@ class CancelPurchase extends Component {
 		purchaseListUrl: purchasesRoot,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		if ( ! this.isDataValid() ) {
-			this.redirect( this.props );
+			this.redirect();
 			return;
 		}
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
-			this.redirect( nextProps );
+	componentDidUpdate( prevProps ) {
+		if ( this.isDataValid( prevProps ) && ! this.isDataValid() ) {
+			this.redirect();
 			return;
 		}
 	}
@@ -92,8 +90,8 @@ class CancelPurchase extends Component {
 		return isCancelable( purchase ) && isDomainTransferCancelable;
 	};
 
-	redirect = ( props ) => {
-		const { purchase, siteSlug } = props;
+	redirect = () => {
+		const { purchase, siteSlug } = this.props;
 		let redirectPath = this.props.purchaseListUrl;
 
 		if ( siteSlug && purchase && ( ! isCancelable( purchase ) || isDomainTransfer( purchase ) ) ) {

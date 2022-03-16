@@ -155,13 +155,20 @@ open class WPComPluginBuild(
 						mkdir ./release-archive
 						wget "%teamcity.serverUrl%/repository/download/%system.teamcity.buildType.id%/$releaseTag.tcbuildtag/$pluginSlug.zip?guest=1&branch=trunk" -O ./tmp-release-archive-download.zip
 						unzip -q ./tmp-release-archive-download.zip -d ./release-archive
-						echo "Diffing against current trunk release build (`grep build_number ./release-archive/build_meta.txt | sed s/build_number=//`).";
 
 						# 2. Change anything from the release build which is "unstable", like the version number and build metadata.
 						# These operations restore idempotence between the two builds.
-						rm -f ./release-archive/build_meta.txt
-
 						$normalizeFiles
+
+						# Finally, remove the build meta files, since those are also a source of difference.
+						if [ -f ./release-archive/build_meta.txt ] ; then
+							build_num=`grep build_number ./release-archive/build_meta.txt | sed s/build_number=//`
+							rm ./release-archive/build_meta.txt
+						else
+							build_num=`jq -r '.build_number' ./release-archive/build_meta.json`
+							rm ./release-archive/build_meta.json
+						fi
+						echo "Diffing against current trunk release build (${'$'}build_num).";
 					fi
 
 					# 3. Check if the current build has changed, and if so, tag it for release.
@@ -199,11 +206,16 @@ open class WPComPluginBuild(
 
 					# 4. Create metadata file with info for the download script.
 					cd $archiveDir
-					tee build_meta.txt <<-EOM
-						commit_hash=%build.vcs.number%
-						commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
-						build_number=%build.number%
-						EOM
+					if [ -f build_meta.json ] ; then
+						# Add the build number to an existing meta JSON file.
+						jq '.build_number = "%build.number%"' build_meta.json > build_meta.json.tmp && mv build_meta.json.tmp build_meta.json
+					else
+						tee build_meta.txt <<-EOM
+							commit_hash=%build.vcs.number%
+							commit_url=https://github.com/Automattic/wp-calypso/commit/%build.vcs.number%
+							build_number=%build.number%
+							EOM
+					fi
 
 					# 5. Create artifact of cwd.
 					echo

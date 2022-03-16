@@ -6,31 +6,39 @@ import './style.scss';
 interface SectionProps {
 	header: ReactChild;
 	children: ReactChild | ReactChild[];
+	dark?: boolean;
 }
 
-const SectionContainer = styled.div`
+interface SectionContainerProps {
+	dark?: boolean;
+}
+
+interface SectionHeaderProps {
+	dark?: boolean;
+}
+
+const SectionContainer = styled.div< SectionContainerProps >`
 	::before {
 		box-sizing: border-box;
 		content: '';
-		background-color: var( --studio-gray-0 );
+		background-color: ${ ( props ) =>
+			props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-gray-0 )' };
 		position: absolute;
 		height: 100%;
 		width: 200vw;
 		left: -100vw;
 		z-index: -1;
-		margin-top: -60px;
+		margin-top: -96px;
 	}
-	margin-top: 100px;
-
-	padding-top: 60px;
-	padding-bottom: 96px;
+	padding: 96px 0;
 `;
 
-const SectionHeader = styled.div`
+const SectionHeader = styled.div< SectionHeaderProps >`
 	@media ( max-width: 660px ) {
 		padding: 0 16px;
 	}
 
+	color: var( --${ ( props ) => ( props.dark ? 'color-text-inverted' : 'color-text' ) } );
 	font-weight: 400;
 	letter-spacing: -0.4px;
 	text-align: left;
@@ -43,11 +51,13 @@ const SectionHeader = styled.div`
 const SectionContent = styled.div``;
 
 const Section = ( props: SectionProps ) => {
-	const { children, header } = props;
+	const { children, header, dark } = props;
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<SectionContainer>
-			<SectionHeader className="wp-brand-font">{ header }</SectionHeader>
+		<SectionContainer dark={ dark }>
+			<SectionHeader dark={ dark } className="wp-brand-font">
+				{ header }
+			</SectionHeader>
 			<SectionContent>{ children }</SectionContent>
 		</SectionContainer>
 	);

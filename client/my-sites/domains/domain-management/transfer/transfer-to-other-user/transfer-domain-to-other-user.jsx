@@ -19,6 +19,7 @@ import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/co
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
 import {
 	domainManagementEdit,
 	domainManagementList,
@@ -250,6 +251,7 @@ class TransferDomainToOtherUser extends Component {
 			currentUserCanManage,
 			domainRegistrationAgreementUrl,
 			aftermarketAuction,
+			isRedeemable,
 		} = getSelectedDomain( this.props );
 		const { domains, selectedDomainName } = this.props;
 
@@ -259,6 +261,10 @@ class TransferDomainToOtherUser extends Component {
 
 		if ( aftermarketAuction ) {
 			return <AftermarketAutcionNotice domainName={ selectedDomainName } />;
+		}
+
+		if ( isRedeemable ) {
+			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
 		const { isMapping, translate, users } = this.props;

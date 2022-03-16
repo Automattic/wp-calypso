@@ -218,9 +218,12 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				hideFormattedHeader={ true }
 				stepContent={
 					<div
-						className={ classnames( 'import__onboarding-page import-layout__center', {
-							[ `importer-wrapper__${ engine }` ]: !! engine,
-						} ) }
+						className={ classnames(
+							'import__onboarding-page import-layout__center importer-wrapper',
+							{
+								[ `importer-wrapper__${ engine }` ]: !! engine,
+							}
+						) }
 					>
 						<div className="import-layout__center">
 							{ ( () => {

@@ -1,10 +1,10 @@
 import {
 	getPlan,
 	PLAN_WPCOM_FLEXIBLE,
-	PLAN_WPCOM_MANAGED,
+	PLAN_WPCOM_PRO,
 	TYPE_FREE,
 	TYPE_FLEXIBLE,
-	TYPE_MANAGED,
+	TYPE_PRO,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -429,7 +429,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSiteId || null ) );
 	const [ showCollapsibleRows, setShowCollapsibleRows ] = useState( false );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? '';
-	const plans = [ getPlan( PLAN_WPCOM_FLEXIBLE ), getPlan( PLAN_WPCOM_MANAGED ) ] as WPComPlan[];
+	const plans = [ getPlan( PLAN_WPCOM_FLEXIBLE ), getPlan( PLAN_WPCOM_PRO ) ] as WPComPlan[];
 	const prices: PlanPrices[] = [ { price: 0 }, usePlanPrices( plans[ 1 ], selectedSiteId ) ];
 	const translate = useTranslate();
 
@@ -467,7 +467,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 								currentSitePlanSlug={ sitePlan?.product_slug }
 								plan={ plan }
 								isInSignup={ isInSignup }
-								isPrimary={ plan.type === TYPE_MANAGED }
+								isPrimary={ plan.type === TYPE_PRO }
 								isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
 								manageHref={ manageHref }
 								onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
