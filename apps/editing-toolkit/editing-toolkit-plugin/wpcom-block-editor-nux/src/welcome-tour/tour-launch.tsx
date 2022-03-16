@@ -60,9 +60,16 @@ function WelcomeTour() {
 		const paymentBlockIndex = tourSteps.findIndex( ( step ) => step.slug === 'payment-block' );
 		tourSteps.splice( paymentBlockIndex, 1 );
 	}
-	const { isInserterOpened } = useSelect( ( select ) => ( {
+	const { isInserterOpened, isSidebarOpened, isSettingsOpened } = useSelect( ( select ) => ( {
 		isInserterOpened: select( 'core/edit-post' ).isInserterOpened(),
+		isSidebarOpened: select( 'automattic/block-editor-nav-sidebar' ).isSidebarOpened(),
+		isSettingsOpened:
+			select( 'core/interface' ).getActiveComplementaryArea( 'core/edit-post' ) ===
+			'edit-post/document',
 	} ) );
+
+	const isTourMinimized =
+		isSidebarOpened || ( isMobile() && ( isInserterOpened || isSettingsOpened ) );
 
 	const tourConfig: WpcomConfig = {
 		steps: tourSteps,
@@ -74,7 +81,7 @@ function WelcomeTour() {
 			} );
 			setShowWelcomeGuide( false, { openedManually: false } );
 		},
-		isMinimized: isMobile() && isInserterOpened,
+		isMinimized: isTourMinimized,
 		options: {
 			tourRating: {
 				enabled: true,
