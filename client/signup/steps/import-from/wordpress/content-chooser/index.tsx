@@ -1,13 +1,15 @@
 import { NextButton, SelectItems } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { jetpack } from 'calypso/signup/icons';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
+import { requestSite } from 'calypso/state/sites/actions';
 
 import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -23,6 +25,7 @@ interface Props {
 
 export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
 	const {
 		fromSite,
 		onJetpackSelection,
@@ -36,6 +39,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	const showJetpackConnectionBlock = !! fromSite;
 	const [ hasOriginSiteJetpackConnected, setHasOriginSiteJetpackConnected ] = useState( false );
 	const [ initialFetching, setInitialFetching ] = useState( true );
+	const firstRun = useRef( true );
 
 	/**
 	 ↓ Effects
@@ -46,6 +50,15 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 
 		return () => clearInterval( interval );
 	}, [] );
+
+	useEffect( () => {
+		if ( firstRun.current ) {
+			firstRun.current = false;
+			return;
+		}
+
+		dispatch( requestSite( fromSite ) );
+	}, [ hasOriginSiteJetpackConnected ] );
 
 	/**
 	 ↓ Methods
