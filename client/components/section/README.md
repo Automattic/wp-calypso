@@ -16,3 +16,4 @@ function render() {
 
 - `header` (`ReactChild`) - The header string or a component to render as the header.
 - `children` (`ReactChild | ReactChild[]`) - The content to be rendered by the footer section.
+- `dark?` (`boolean`) - Makes the background of the section dark.
