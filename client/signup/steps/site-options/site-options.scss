@@ -59,6 +59,14 @@
 			margin-right: 8px;
 		}
 	}
+
+	.form-input-validation {
+		span {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+	}
 }
 
 .button.site-options__submit-button.is-primary {

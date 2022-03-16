@@ -70,6 +70,7 @@ const stepNameToModuleName = {
 	'new-or-existing-site': 'new-or-existing-site',
 	'difm-site-picker': 'difm-site-picker',
 	'difm-design-setup-site': 'design-picker',
+	'difm-options': 'site-options',
 	'site-info-collection': 'site-info-collection',
 	'website-content': 'website-content',
 	intent: 'intent',

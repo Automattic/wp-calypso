@@ -714,6 +714,13 @@ export function generateSteps( {
 				hideDesignTitle: true,
 			},
 		},
+		'difm-options': {
+			stepName: 'site-options',
+			providesDependencies: [ 'siteTitle', 'tagline' ],
+			props: {
+				hideSkip: true,
+			},
+		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
 			dependencies: [ 'newOrExistingSiteChoice' ],
