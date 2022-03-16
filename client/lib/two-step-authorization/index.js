@@ -13,6 +13,13 @@ import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
 const debug = debugFactory( 'calypso:two-step-authorization' );
 
+export function bumpTwoStepAuthMCStat( eventAction ) {
+	bumpStat( '2fa', eventAction );
+	recordTracksEvent( 'calypso_login_twostep_authorize', {
+		event_action: eventAction,
+	} );
+}
+
 /*
  * Initialize TwoStepAuthorization with defaults
  */
@@ -24,13 +31,6 @@ function TwoStepAuthorization() {
 	this.data = {};
 	this.initialized = false;
 	this.smsResendThrottled = false;
-
-	this.bumpMCStat = function ( eventAction ) {
-		bumpStat( '2fa', eventAction );
-		recordTracksEvent( 'calypso_login_twostep_authorize', {
-			event_action: eventAction,
-		} );
-	};
 
 	this.fetch();
 }
@@ -44,7 +44,7 @@ TwoStepAuthorization.prototype.fetch = function ( callback ) {
 			this.data = data;
 
 			if ( this.isReauthRequired() && ! this.initialized ) {
-				this.bumpMCStat( 'reauth-required' );
+				bumpTwoStepAuthMCStat( 'reauth-required' );
 			}
 
 			this.initialized = true;
@@ -142,11 +142,11 @@ TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
 		( error, data ) => {
 			if ( ! error && data.success ) {
 				if ( args.action ) {
-					this.bumpMCStat(
+					bumpTwoStepAuthMCStat(
 						'enable-two-step' === args.action ? 'enable-2fa-successful' : 'disable-2fa-successful'
 					);
 				} else {
-					this.bumpMCStat( 'reauth-successful' );
+					bumpTwoStepAuthMCStat( 'reauth-successful' );
 				}
 
 				this.refreshDataOnSuccessfulAuth();
@@ -155,13 +155,13 @@ TwoStepAuthorization.prototype.validateCode = function ( args, callback ) {
 				this.invalidCode = true;
 
 				if ( args.action ) {
-					this.bumpMCStat(
+					bumpTwoStepAuthMCStat(
 						'enable-two-step' === args.action
 							? 'enable-2fa-failed-invalid-code'
 							: 'disable-2fa-failed-invalid-code'
 					);
 				} else {
-					this.bumpMCStat( 'reauth-failed-invalid-code' );
+					bumpTwoStepAuthMCStat( 'reauth-failed-invalid-code' );
 				}
 			}
 
@@ -183,12 +183,12 @@ TwoStepAuthorization.prototype.sendSMSCode = function ( callback ) {
 
 			if ( error.error && 'rate_limited' === error.error ) {
 				debug( 'SMS resend throttled.' );
-				this.bumpMCStat( 'sms-code-send-throttled' );
+				bumpTwoStepAuthMCStat( 'sms-code-send-throttled' );
 				this.smsResendThrottled = true;
 			}
 		} else {
 			this.smsResendThrottled = false;
-			this.bumpMCStat( 'sms-code-send-success' );
+			bumpTwoStepAuthMCStat( 'sms-code-send-success' );
 		}
 
 		this.emit( 'change' );
@@ -207,7 +207,7 @@ TwoStepAuthorization.prototype.backupCodes = function ( callback ) {
 		if ( error ) {
 			debug( 'Fetching Backup Codes failed: ' + JSON.stringify( error ) );
 		} else {
-			this.bumpMCStat( 'new-backup-codes-success' );
+			bumpTwoStepAuthMCStat( 'new-backup-codes-success' );
 		}
 
 		if ( callback ) {
@@ -233,7 +233,7 @@ TwoStepAuthorization.prototype.validateBackupCode = function ( code, callback ) 
 		}
 
 		if ( data ) {
-			this.bumpMCStat(
+			bumpTwoStepAuthMCStat(
 				data.success ? 'backup-code-validate-success' : 'backup-code-validate-failure'
 			);
 		}
