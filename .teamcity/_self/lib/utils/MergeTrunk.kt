@@ -11,7 +11,7 @@ fun BuildSteps.mergeTrunk(): ScriptBuildStep {
 			set -x
 
 			# Merge the trunk branch first.
-			# - For WPCOM plugins: our builds and tests include the latest merged version of the plugin being built.
+			# - For WPCOM plugins, our builds and tests include the latest merged version of the plugin being built.
 			#   Otherwise, we can get into a situation where the current plugin build appears "different", but that's
 			#   just because it's older.
 			# - For metric tracking: (for example, tracking TypeScript errors). Merging trunk ensures any potential fix
