@@ -8,7 +8,7 @@ This component displays a component with a title and text content.
 import FeatureItem from 'calypso/components/feature-item';
 
 function render() {
-	return <FeatureItem header={header}> Content goes here </FeatureItem>;
+	return <FeatureItem header={ header }> Content goes here </FeatureItem>;
 }
 ```
 
