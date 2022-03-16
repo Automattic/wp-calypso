@@ -220,7 +220,7 @@ export default function DesignPickerStep( props ) {
 	function renderDesignPicker() {
 		const intent = dependencies.intent;
 		let showDesigns = useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ];
-		//Temporarily show only e-commerce themes for the sell intent
+		//Show only e-commerce themes for the sell intent
 		if ( 'sell' === intent ) {
 			showDesigns = sellDesigns;
 		}
@@ -249,7 +249,6 @@ export default function DesignPickerStep( props ) {
 						/>
 					}
 					categoriesFooter={ renderCategoriesFooter() }
-					showCategories={ 'sell' !== intent }
 					hideFullScreenPreview={ hideFullScreenPreview }
 					hideDesignTitle={ hideDesignTitle }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
@@ -384,6 +383,7 @@ export default function DesignPickerStep( props ) {
 		);
 	}
 
+	const intent = props.signupDependencies.intent;
 	const headerProps = showDesignPickerCategories
 		? { hideFormattedHeader: true }
 		: {
@@ -398,6 +398,7 @@ export default function DesignPickerStep( props ) {
 			{ ...props }
 			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
+				'design-picker__sell-intent': 'sell' === intent,
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }
