@@ -200,23 +200,6 @@ TwoStepAuthorization.prototype.sendSMSCode = function ( callback ) {
 };
 
 /*
- * Fetches a new set of backup codes by calling /me/two-step/backup-codes/new
- */
-TwoStepAuthorization.prototype.backupCodes = function ( callback ) {
-	wp.req.post( '/me/two-step/backup-codes/new', ( error, data ) => {
-		if ( error ) {
-			debug( 'Fetching Backup Codes failed: ' + JSON.stringify( error ) );
-		} else {
-			bumpTwoStepAuthMCStat( 'new-backup-codes-success' );
-		}
-
-		if ( callback ) {
-			callback( error, data );
-		}
-	} );
-};
-
-/*
  * Similar to validateCode, but without the change triggers across the
  * TwoStepAuthorization objects, so that the caller can delay state
  * transition until it is ready
