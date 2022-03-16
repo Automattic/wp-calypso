@@ -244,22 +244,6 @@ TwoStepAuthorization.prototype.validateBackupCode = function ( code, callback ) 
 	} );
 };
 
-/*
- * Requests the authentication app QR code URL and time code
- * from me/two-step/app-auth-setup
- */
-TwoStepAuthorization.prototype.getAppAuthCodes = function ( callback ) {
-	wp.req.get( '/me/two-step/app-auth-setup/', function ( error, data ) {
-		if ( error ) {
-			debug( 'Getting App Auth Codes failed: ' + JSON.stringify( error ) );
-		}
-
-		if ( callback ) {
-			callback( error, data );
-		}
-	} );
-};
-
 TwoStepAuthorization.prototype.codeValidationFailed = function () {
 	return this.invalidCode;
 };
