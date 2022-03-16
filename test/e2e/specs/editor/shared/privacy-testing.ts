@@ -44,7 +44,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 				editorPage = new EditorPage( page );
 				await editorPage.visit( 'page' );
 				await editorPage.waitUntilLoaded();
-				const editorIframe = await editorPage.getEditorFrame();
+				const editorIframe = await editorPage.getEditorHandle();
 				const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
 				await pageTemplateModalComponent.selectBlankPage();
 			} );

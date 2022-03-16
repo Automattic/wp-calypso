@@ -1,4 +1,4 @@
-import { Page, FrameLocator, ElementHandle, Locator } from 'playwright';
+import { Page, ElementHandle, Locator } from 'playwright';
 
 const editorPane = 'div.edit-post-visual-editor__content-area';
 const selectors = {
@@ -25,15 +25,15 @@ const selectors = {
  */
 export class EditorGutenbergComponent {
 	private page: Page;
-	private editor: Locator | FrameLocator;
+	private editor: Locator;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {FrameLocator|Locator} editor Locator or FrameLocator to the editor.
+	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, editor: Locator | FrameLocator ) {
+	constructor( page: Page, editor: Locator ) {
 		this.page = page;
 		this.editor = editor;
 	}
@@ -64,7 +64,7 @@ export class EditorGutenbergComponent {
 	async enterTitle( title: string ): Promise< void > {
 		const sanitizedTitle = title.trim();
 		const locator = this.editor.locator( selectors.title );
-		await locator.fill( title );
+		await locator.fill( sanitizedTitle );
 	}
 
 	/**

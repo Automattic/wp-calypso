@@ -59,7 +59,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	} );
 
 	it( `Replace uploaded image`, async () => {
-		const editorFrame = await editorPage.getEditorFrame();
+		const editorFrame = await editorPage.getEditorHandle();
 		await editorFrame.click( 'button:text("Replace")' );
 		await editorFrame.setInputFiles(
 			'.components-form-file-upload input[type="file"]',

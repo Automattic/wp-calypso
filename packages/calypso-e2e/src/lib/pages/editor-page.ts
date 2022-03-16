@@ -1,4 +1,4 @@
-import { Page, Frame, ElementHandle, Response, FrameLocator, Locator } from 'playwright';
+import { Page, Frame, ElementHandle, Response, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
@@ -14,8 +14,8 @@ import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from 
 
 const selectors = {
 	// iframe and editor
-	framedEditor: 'iframe.is-loaded',
-	wpAdminEditor: 'div[id="editor"]',
+	editorFrame: 'iframe.is-loaded',
+	editor: 'div[id="editor"]',
 	editorTitle: '.editor-post-title__input',
 
 	// Within the editor body.
@@ -34,7 +34,7 @@ const EXTENDED_TIMEOUT = 90 * 1000;
  */
 export class EditorPage {
 	private page: Page;
-	private editor: FrameLocator | Locator;
+	private editor: Locator;
 	private target: 'simple' | 'atomic';
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
@@ -47,28 +47,28 @@ export class EditorPage {
 	 *
 	 * @param {Page} page The underlying page.
 	 * @param param0 Keyed object parameter.
-	 * @param param0.target Site type. Defaults to 'simple'.
+	 * @param param0.target Target editor type. Defaults to 'simple'.
 	 */
 	constructor( page: Page, { target = 'simple' }: { target?: 'simple' | 'atomic' } = {} ) {
-		let editor: FrameLocator | Locator;
-
-		// For Atomic editors, there is no frame - the editor is
-		// part of the page DOM and is thus accessible directly.
 		if ( target === 'atomic' ) {
-			editor = page.locator( selectors.wpAdminEditor );
+			// For Atomic editors, there is no iFrame - the editor is
+			// part of the page DOM and is thus accessible directly.
+			this.editor = page.locator( selectors.editor );
 		} else {
-			editor = page.frameLocator( selectors.framedEditor );
+			// For Simple editors, the editor is located within an iFrame
+			// and thus it must first be extracted.
+			this.editor = page.frameLocator( selectors.editorFrame ).locator( selectors.editor );
 		}
 
 		this.page = page;
-		this.editor = editor;
 		this.target = target;
 
-		this.editorGutenbergComponent = new EditorGutenbergComponent( page, editor );
-		this.editorToolbarComponent = new EditorToolbarComponent( page, editor );
-		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, editor );
-		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, editor );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, editor );
+		// Instantiate the subcomponent classes that build up the editor experience.
+		this.editorGutenbergComponent = new EditorGutenbergComponent( page, this.editor );
+		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
+		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
+		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
+		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
 	}
 
 	/* Generic methods */
@@ -94,7 +94,8 @@ export class EditorPage {
 	async waitUntilLoaded(): Promise< void > {
 		// Once https://github.com/Automattic/wp-calypso/issues/57660 is resolved,
 		// the next line should be removed.
-		const editor = await this.getEditorFrame();
+		const editor = await this.getEditorHandle();
+
 		const titleLocator = editor.locator( selectors.editorTitle );
 		await titleLocator.waitFor( { timeout: EXTENDED_TIMEOUT } );
 
@@ -112,7 +113,7 @@ export class EditorPage {
 			return;
 		}
 
-		const frame = await this.getEditorFrame();
+		const frame = await this.getEditorHandle();
 		await frame.waitForFunction(
 			async () =>
 				await ( window as any ).wp.data
@@ -135,7 +136,7 @@ export class EditorPage {
 	 *
 	 * @returns {Promise<Frame>} frame holding the editor.
 	 */
-	async getEditorFrame(): Promise< Frame | Page > {
+	async getEditorHandle(): Promise< Frame | Page > {
 		// Return the page object as Atomic editor permits direct
 		// access.
 		if ( this.target === 'atomic' ) {
@@ -143,10 +144,10 @@ export class EditorPage {
 		}
 
 		// Framed editors need to extract the Frame.
-		const calypsoEditorLocator = this.page.locator( selectors.framedEditor );
+		const calypsoEditorLocator = this.page.locator( selectors.editorFrame );
 		const elementHandle = await calypsoEditorLocator.elementHandle( { timeout: EXTENDED_TIMEOUT } );
 		if ( ! elementHandle ) {
-			throw new Error( 'Could not locate editor iframe.' );
+			throw new Error( 'Could not locate editor iFrame.' );
 		}
 		return ( await elementHandle?.contentFrame() ) as Frame;
 	}
@@ -450,7 +451,7 @@ export class EditorPage {
 	async unpublish(): Promise< void > {
 		await this.editorToolbarComponent.switchToDraft();
 
-		const frame = await this.getEditorFrame();
+		const frame = await this.getEditorHandle();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 		await frame.click( `div[role="dialog"] button:has-text("OK")` );
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
@@ -469,7 +470,7 @@ export class EditorPage {
 	 * @returns {URL} Published article's URL.
 	 */
 	async getPublishedURLFromToast(): Promise< URL > {
-		const frame = await this.getEditorFrame();
+		const frame = await this.getEditorHandle();
 
 		const toastLocator = frame.locator( selectors.toastViewPostLink );
 		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;

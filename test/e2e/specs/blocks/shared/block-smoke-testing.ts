@@ -43,7 +43,7 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 					);
 					editorContext = {
 						page: page,
-						editorIframe: await editorPage.getEditorFrame(),
+						editorIframe: await editorPage.getEditorHandle(),
 						blockHandle: blockHandle,
 					};
 				} );

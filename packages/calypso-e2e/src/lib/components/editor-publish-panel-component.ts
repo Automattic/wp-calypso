@@ -1,4 +1,4 @@
-import { Page, FrameLocator, Locator } from 'playwright';
+import { Page, Locator } from 'playwright';
 
 const panel = 'div.editor-post-publish-panel';
 const selectors = {
@@ -16,15 +16,15 @@ const selectors = {
  */
 export class EditorPublishPanelComponent {
 	private page: Page;
-	private editor: Locator | FrameLocator;
+	private editor: Locator;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {FrameLocator|Locator} editor Locator or FrameLocator to the editor.
+	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, editor: Locator | FrameLocator ) {
+	constructor( page: Page, editor: Locator ) {
 		this.page = page;
 		this.editor = editor;
 	}

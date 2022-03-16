@@ -75,7 +75,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			// {@TODO} This is temporary while the FSE spec is awaiting migration to Playwright.
 			const editorPage = new EditorPage( page );
 			await editorPage.forceDismissWelcomeTour();
-			const outerFrame = await editorPage.getEditorFrame();
+			const outerFrame = await editorPage.getEditorHandle();
 
 			// There's another iframe within the parent iframe.
 			const innerFrame = ( await (
