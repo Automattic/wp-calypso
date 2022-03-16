@@ -1,38 +1,9 @@
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import FeatureItem from 'calypso/components/feature-item';
 import LinkCard from 'calypso/components/link-card';
 import Section from 'calypso/components/section';
-
-const FeatureItemContainer = styled.div`
-	margin-top: calc( 64px - 25px ); // adds the margin needed for 64px
-`;
-
-const FeatureItemHeader = styled.div`
-	margin-bottom: 16px;
-	font-size: var( --scss-font-body );
-	font-weight: 500;
-	line-height: 24px;
-	color: var( --color-text-inverted );
-`;
-
-const FeatureItemContent = styled.p`
-	font-size: var( --scss-font-body-small );
-	font-weight: 400;
-	line-height: 22px;
-	color: var( --color-neutral-20 );
-`;
-
-const FeatureItem = ( props ) => {
-	const { header, children } = props;
-
-	return (
-		<FeatureItemContainer>
-			<FeatureItemHeader>{ header }</FeatureItemHeader>
-			<FeatureItemContent>{ children }</FeatureItemContent>
-		</FeatureItemContainer>
-	);
-};
 
 const ThreeColumnContainer = styled.div`
 	@media ( max-width: 960px ) {
