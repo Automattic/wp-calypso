@@ -25,8 +25,8 @@
 	}
 
 	.action_buttons__button {
-		padding: initial !important;
 		min-width: 120px !important;
+		margin-bottom: 1em;
 	}
 
 	.import__site-mapper {
@@ -72,6 +72,86 @@
 
 		small {
 			color: var( --studio-gray-40 );
+		}
+	}
+}
+
+.import__upgrade-plan {
+	p {
+		color: var( --studio-gray-40 );
+	}
+
+	.import__upgrade-plan-container {
+		border: solid var( --studio-gray-5 ) 1px;
+		border-radius: 4px;
+		padding: 1.75em;
+		margin-bottom: 2em;
+		display: flex;
+		gap: 1.5rem;
+		flex-direction: column;
+
+		@include break-medium {
+			flex-direction: row;
+		}
+	}
+
+	.import__upgrade-plan-price,
+	.import__upgrade-plan-details {
+		display: flex;
+	}
+
+	.import__upgrade-plan-price {
+		min-width: 150px;
+		flex-direction: column;
+
+		.plan-title {
+			font-weight: 500;
+			font-size: 1.25em; /* stylelint-disable-line */
+			line-height: 1.25em;
+			color: var( --studio-gray-60 );
+		}
+
+		.plan-price {
+			font-weight: 500;
+		}
+
+		.plan-price__currency-symbol {
+			font-size: inherit;
+			color: inherit;
+			vertical-align: unset;
+		}
+
+		.plan-price__integer {
+			font-weight: inherit;
+		}
+
+		.plan-time-frame {
+			font-size: 0.75em; /* stylelint-disable-line */
+			color: var( --studio-gray-40 );
+		}
+	}
+
+	.import__upgrade-plan-details {
+		ul {
+			margin: 0;
+		}
+
+		.import__upgrade-plan-feature {
+			padding-left: 25px;
+			color: var( --studio-gray-40 );
+			flex-basis: 100%;
+
+			@include break-small {
+				flex-basis: 50%;
+			}
+
+			span {
+				margin: 0;
+			}
+
+			svg {
+				fill: var( --color-success );
+			}
 		}
 	}
 }

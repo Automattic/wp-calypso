@@ -8,6 +8,7 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import { UrlData } from 'calypso/signup/steps/import/types';
 import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 import ConfirmModal from './confirm-modal';
+import ConfirmUpgradePlan from './confirm-upgrade-plan';
 import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 import './style.scss';
@@ -38,6 +39,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 		startImport,
 	} = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
+	const [ showUpgradePlanScreen, setShowUpgradePlanScreen ] = useState( false );
 
 	return (
 		<>
@@ -78,46 +80,62 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 					</div>
 				</div>
 
-				<Title>
-					{ sprintf(
-						/* translators: the `from` and `to` fields could be any site URL (eg: "yourname.com") */
-						__( 'Import everything from %(from)s and overwrite everything on %(to)s?' ),
-						{
-							from: convertToFriendlyWebsiteName( sourceSiteUrl ),
-							to: convertToFriendlyWebsiteName( targetSiteSlug ),
-						}
-					) }
-				</Title>
-
-				<ul className={ classnames( 'import__details-list' ) }>
-					<li>
-						<Icon size={ 20 } icon={ check } /> { __( 'All posts, pages, comments, and media' ) }
-					</li>
-					<li>
-						<Icon size={ 20 } icon={ check } /> { __( 'Add users and roles' ) }
-					</li>
-					<li>
-						<Icon size={ 20 } icon={ check } /> { __( 'Theme, plugins, and settings' ) }
-					</li>
-				</ul>
-
-				<SubTitle>
-					{ __(
-						'Your site will keep working, but your WordPress.com dashboard will be locked during importing.'
-					) }
-				</SubTitle>
-
-				{ ! isTargetSitePlanCompatible && (
+				{ ! showUpgradePlanScreen && (
 					<>
-						<Notice>{ __( 'You need to upgrade your account to import everything.' ) }</Notice>
-						<NextButton onClick={ startImport }>{ __( 'See plans' ) }</NextButton>
+						<Title>
+							{ sprintf(
+								/* translators: the `from` and `to` fields could be any site URL (eg: "yourname.com") */
+								__( 'Import everything from %(from)s and overwrite everything on %(to)s?' ),
+								{
+									from: convertToFriendlyWebsiteName( sourceSiteUrl ),
+									to: convertToFriendlyWebsiteName( targetSiteSlug ),
+								}
+							) }
+						</Title>
+
+						<ul className={ classnames( 'import__details-list' ) }>
+							<li>
+								<Icon size={ 20 } icon={ check } />{ ' ' }
+								{ __( 'All posts, pages, comments, and media' ) }
+							</li>
+							<li>
+								<Icon size={ 20 } icon={ check } /> { __( 'Add users and roles' ) }
+							</li>
+							<li>
+								<Icon size={ 20 } icon={ check } /> { __( 'Theme, plugins, and settings' ) }
+							</li>
+						</ul>
+
+						<SubTitle>
+							{ __(
+								'Your site will keep working, but your WordPress.com dashboard will be locked during importing.'
+							) }
+						</SubTitle>
+
+						{ ! isTargetSitePlanCompatible && (
+							<>
+								<Notice>{ __( 'You need to upgrade your account to import everything.' ) }</Notice>
+								<NextButton onClick={ () => setShowUpgradePlanScreen( true ) }>
+									{ __( 'See plans' ) }
+								</NextButton>
+							</>
+						) }
+
+						{ isTargetSitePlanCompatible && (
+							<NextButton onClick={ () => setIsModalDetailsOpen( true ) }>
+								{ __( 'Start import' ) }
+							</NextButton>
+						) }
 					</>
 				) }
 
-				{ isTargetSitePlanCompatible && (
-					<NextButton onClick={ () => setIsModalDetailsOpen( true ) }>
-						{ __( 'Start import' ) }
-					</NextButton>
+				{ showUpgradePlanScreen && (
+					<>
+						<ConfirmUpgradePlan sourceSite={ sourceSite } />
+						<NextButton onClick={ () => setIsModalDetailsOpen( true ) }>
+							{ __( 'Upgrade and import' ) }
+						</NextButton>
+					</>
 				) }
 			</div>
 
