@@ -14,6 +14,7 @@ import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import './style.scss';
 
 /**
@@ -83,17 +84,43 @@ class P2CompleteProfile extends Component {
 		this.save();
 	}
 
-	sanitize() {}
+	validate = ( fields, onComplete ) => {
+		onComplete( null, {} );
+	};
 
-	validate() {}
-
-	handleSubmit( event ) {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		this.setState( { isSubmitting: true } );
 
-		// this.formStateController.handleSubmit( ( hasErrors ) => {} );
-	}
+		this.formStateController.handleSubmit( ( hasErrors ) => {
+			const fullName = formState.getFieldValue( this.state.form, 'fullName' );
+			const timezone = formState.getFieldValue( this.state.form, 'timezone' );
+
+			if ( hasErrors ) {
+				this.setState( { isSubmitting: false } );
+
+				return;
+			}
+
+			recordTracksEvent( 'calypso_signup_p2_complete_profile_step_submit' );
+
+			// API calls
+
+			this.props.saveUserSettings( { display_name: fullName } );
+
+			const stepData = {
+				stepName: this.props.stepName,
+				form: this.state.form,
+				fullName,
+				timezone,
+			};
+
+			this.props.submitSignupStep( stepData );
+
+			this.props.goToNextStep();
+		} );
+	};
 
 	handleFormControllerError = ( error ) => {
 		if ( error ) {
@@ -236,6 +263,6 @@ class P2CompleteProfile extends Component {
 	}
 }
 
-export default connect( null, { saveSignupStep, submitSignupStep } )(
+export default connect( null, { saveSignupStep, submitSignupStep, saveUserSettings } )(
 	localize( P2CompleteProfile )
 );
