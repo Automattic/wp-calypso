@@ -4,8 +4,6 @@ import ExternalLink from 'calypso/components/external-link';
 
 import './style.scss';
 
-import './style.scss';
-
 interface LinkCardContainerProps {
 	background?: string;
 }
