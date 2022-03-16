@@ -140,9 +140,20 @@ const GoogleWorkspacePrice = ( {
 
 	return (
 		<>
-			{ isDomainEligibleForGoogleWorkspaceFreeTrial( domain ) && ! isDiscounted && (
-				<div className="google-workspace-price__trial badge badge--info-green">
+			{ isDomainEligibleForGoogleWorkspaceFreeTrial( domain ) && (
+				<div className="google-workspace-price__trial-badge badge badge--info-green">
 					{ translate( '1 month free' ) }
+				</div>
+			) }
+
+			{ isDiscounted && (
+				<div className="google-workspace-price__discount-badge badge badge--info-green">
+					{ translate( 'Limited time: %(discount)d%% off', {
+						args: {
+							discount: product.sale_coupon.discount,
+						},
+						comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
+					} ) }
 				</div>
 			) }
 

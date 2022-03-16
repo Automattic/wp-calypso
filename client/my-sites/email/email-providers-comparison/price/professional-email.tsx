@@ -46,7 +46,7 @@ const ProfessionalEmailPrice = ( {
 	return (
 		<>
 			{ isDomainEligibleForTitanFreeTrial( domain ) && (
-				<div className="professional-email-price__trial badge badge--info-green">
+				<div className="professional-email-price__trial-badge badge badge--info-green">
 					{ translate( '3 months free' ) }
 				</div>
 			) }
