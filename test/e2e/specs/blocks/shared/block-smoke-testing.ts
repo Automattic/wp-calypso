@@ -1,7 +1,7 @@
 import {
 	DataHelper,
 	BlockFlow,
-	EditorPage,
+	GutenbergEditorPage,
 	EditorContext,
 	PublishedPostContext,
 	TestAccount,
@@ -19,31 +19,31 @@ declare const browser: Browser;
 export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): void {
 	describe( DataHelper.createSuiteTitle( specName ), function () {
 		let page: Page;
-		let editorPage: EditorPage;
+		let gutenbergEditorPage: GutenbergEditorPage;
 		let editorContext: EditorContext;
 		let publishedPostContext: PublishedPostContext;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
-			editorPage = new EditorPage( page );
+			gutenbergEditorPage = new GutenbergEditorPage( page );
 			const testAccount = new TestAccount( 'gutenbergSimpleSiteUser' );
 			await testAccount.authenticate( page );
 		} );
 
 		it( 'Go to the new post page', async () => {
-			await editorPage.visit( 'post' );
+			await gutenbergEditorPage.visit( 'post' );
 		} );
 
 		describe( 'Add and configure blocks in the editor', function () {
 			for ( const blockFlow of blockFlows ) {
 				it( `${ blockFlow.blockSidebarName }: Add the block from the sidebar`, async function () {
-					const blockHandle = await editorPage.addBlock(
+					const blockHandle = await gutenbergEditorPage.addBlock(
 						blockFlow.blockSidebarName,
 						blockFlow.blockEditorSelector
 					);
 					editorContext = {
 						page: page,
-						editorIframe: await editorPage.getEditorFrame(),
+						editorIframe: await gutenbergEditorPage.getEditorFrame(),
 						blockHandle: blockHandle,
 					};
 				} );
@@ -55,14 +55,14 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 				} );
 
 				it( `${ blockFlow.blockSidebarName }: There are no block warnings or errors in the editor`, async function () {
-					expect( await editorPage.editorHasBlockWarnings() ).toBe( false );
+					expect( await gutenbergEditorPage.editorHasBlockWarnings() ).toBe( false );
 				} );
 			}
 		} );
 
 		describe( 'Publishing the post', function () {
 			it( 'Publish and visit post', async function () {
-				await editorPage.publish( { visit: true } );
+				await gutenbergEditorPage.publish( { visit: true } );
 				publishedPostContext = {
 					page: page,
 				};

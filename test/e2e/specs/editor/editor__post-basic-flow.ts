@@ -4,7 +4,7 @@
 
 import {
 	DataHelper,
-	EditorPage,
+	GutenbergEditorPage,
 	PublishedPostPage,
 	skipItIf,
 	TestAccount,
@@ -22,7 +22,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
-	let editorPage: EditorPage;
+	let gutenbergEditorPage: GutenbergEditorPage;
 	let publishedPostPage: PublishedPostPage;
 	const accountName = envVariables.GUTENBERG_EDGE
 		? 'gutenbergSimpleSiteEdgeUser'
@@ -30,23 +30,23 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		await editorPage.visit( 'post' );
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	describe( 'Blocks', function () {
 		it( 'Enter post title', async function () {
-			await editorPage.enterTitle( title );
+			await gutenbergEditorPage.enterTitle( title );
 		} );
 
 		it( 'Enter post text', async function () {
-			await editorPage.enterText( quote );
+			await gutenbergEditorPage.enterText( quote );
 		} );
 	} );
 
@@ -54,21 +54,21 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		const patternName = 'About Me';
 
 		it( `Add ${ patternName } pattern`, async function () {
-			await editorPage.addPattern( patternName );
+			await gutenbergEditorPage.addPattern( patternName );
 		} );
 	} );
 
 	describe( 'Categories and Tags', function () {
 		it( 'Open settings', async function () {
-			await editorPage.openSettings();
+			await gutenbergEditorPage.openSettings();
 		} );
 
 		it( 'Add post category', async function () {
-			await editorPage.selectCategory( category );
+			await gutenbergEditorPage.selectCategory( category );
 		} );
 
 		it( 'Add post tag', async function () {
-			await editorPage.addTag( tag );
+			await gutenbergEditorPage.addTag( tag );
 		} );
 	} );
 
@@ -77,14 +77,14 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 		it( 'Close settings sidebar', async function () {
-			await editorPage.closeSettings();
+			await gutenbergEditorPage.closeSettings();
 		} );
 
 		it( 'Launch preview', async function () {
 			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-				previewPage = await editorPage.previewAsMobile();
+				previewPage = await gutenbergEditorPage.previewAsMobile();
 			} else {
-				await editorPage.previewAsDesktop( 'Mobile' );
+				await gutenbergEditorPage.previewAsDesktop( 'Mobile' );
 			}
 		} );
 
@@ -94,19 +94,19 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 				await previewPage.close();
 			} else {
 				// Desktop path - restore the Desktop view.
-				await editorPage.closePreview();
+				await gutenbergEditorPage.closePreview();
 			}
 		} );
 
 		// Step skipped for mobile, since previewing naturally saves the post, rendering this step unnecessary.
 		skipItIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Save draft', async function () {
-			await editorPage.saveDraft();
+			await gutenbergEditorPage.saveDraft();
 		} );
 	} );
 
 	describe( 'Publish', function () {
 		it( 'Publish and visit post', async function () {
-			const publishedURL: URL = await editorPage.publish( { visit: true } );
+			const publishedURL: URL = await gutenbergEditorPage.publish( { visit: true } );
 			expect( publishedURL.href ).toStrictEqual( page.url() );
 		} );
 

@@ -2,7 +2,12 @@
  * @group gutenberg
  */
 
-import { DataHelper, CommentsComponent, EditorPage, TestAccount } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	CommentsComponent,
+	GutenbergEditorPage,
+	TestAccount,
+} from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 const quote =
@@ -15,32 +20,32 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	let page: Page;
 	let publishedURL: URL;
 	let commentsComponent: CommentsComponent;
-	let editorPage: EditorPage;
+	let gutenbergEditorPage: GutenbergEditorPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		await editorPage.visit( 'post' );
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( 'Enter post title', async function () {
-		editorPage = new EditorPage( page );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 		const title = DataHelper.getRandomPhrase();
-		await editorPage.enterTitle( title );
+		await gutenbergEditorPage.enterTitle( title );
 	} );
 
 	it( 'Enter post text', async function () {
-		await editorPage.enterText( quote );
+		await gutenbergEditorPage.enterText( quote );
 	} );
 
 	it( 'Publish and visit post', async function () {
-		publishedURL = await editorPage.publish( { visit: true } );
+		publishedURL = await gutenbergEditorPage.publish( { visit: true } );
 		expect( publishedURL.href ).toStrictEqual( page.url() );
 	} );
 

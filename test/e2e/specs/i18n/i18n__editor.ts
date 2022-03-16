@@ -5,7 +5,7 @@
 import {
 	ChangeUILanguageFlow,
 	DataHelper,
-	EditorPage,
+	GutenbergEditorPage,
 	TestAccount,
 	envVariables,
 } from '@automattic/calypso-e2e';
@@ -215,7 +215,7 @@ describe( 'I18N: Editor', function () {
 		( envVariables.TEST_LOCALES as ReadonlyArray< string > ).includes( locale )
 	);
 	let page: Page;
-	let editorPage: EditorPage;
+	let gutenbergEditorPage: GutenbergEditorPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -229,7 +229,7 @@ describe( 'I18N: Editor', function () {
 		const testAccount = new TestAccount( 'i18nUser' );
 		await testAccount.authenticate( page );
 
-		editorPage = new EditorPage( page );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
@@ -250,7 +250,7 @@ describe( 'I18N: Editor', function () {
 			} );
 
 			it( 'Go to the new post page', async function () {
-				await editorPage.visit( 'post' );
+				await gutenbergEditorPage.visit( 'post' );
 			} );
 		} );
 
@@ -259,17 +259,17 @@ describe( 'I18N: Editor', function () {
 			( ...args ) => {
 				const block = args[ 0 ]; // Makes TS stop complaining about incompatible args type
 				let frame: Frame;
-				let editorPage: EditorPage;
+				let gutenbergEditorPage: GutenbergEditorPage;
 
 				const blockTimeout = 10 * 1000;
 
 				it( 'Insert test block', async function () {
-					editorPage = new EditorPage( page );
-					await editorPage.addBlock( block.blockName, block.blockEditorSelector );
+					gutenbergEditorPage = new GutenbergEditorPage( page );
+					await gutenbergEditorPage.addBlock( block.blockName, block.blockEditorSelector );
 				} );
 
 				it( 'Render block content translations', async function () {
-					frame = await editorPage.getEditorFrame();
+					frame = await gutenbergEditorPage.getEditorFrame();
 					// Ensure block contents are translated as expected.
 					await Promise.all(
 						block.blockEditorContent.map( ( content: any ) =>
@@ -281,7 +281,7 @@ describe( 'I18N: Editor', function () {
 				} );
 
 				it( 'Render block title translations', async function () {
-					await editorPage.openSettings();
+					await gutenbergEditorPage.openSettings();
 					await frame.click( block.blockEditorSelector );
 
 					// Ensure the block is highlighted.
