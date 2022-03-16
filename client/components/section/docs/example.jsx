@@ -1,10 +1,15 @@
 import Section from 'calypso/components/section';
 
-const header = 'The Header';
-const content = 'The content goes here, it can be a list of cards.';
+const content = 'this is an example content and it could be longer or a react node';
 
 const SectionExample = () => {
-	return <Section header={ header }>{ content }</Section>;
+	return (
+		<>
+			<Section header="This is a section">
+				<div>{ content }</div>
+			</Section>
+		</>
+	);
 };
 
 SectionExample.displayName = 'SectionExample';

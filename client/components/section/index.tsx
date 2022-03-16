@@ -6,9 +6,18 @@ import './style.scss';
 interface SectionProps {
 	header: ReactChild;
 	children: ReactChild | ReactChild[];
+	dark?: boolean;
 }
 
-const SectionContainer = styled.div`
+interface SectionContainerProps {
+	dark?: boolean;
+}
+
+interface SectionHeaderProps {
+	dark?: boolean;
+}
+
+const SectionContainer = styled.div< SectionContainerProps >`
 	::before {
 		box-sizing: border-box;
 		content: '';
@@ -27,7 +36,7 @@ const SectionContainer = styled.div`
 	padding-bottom: 96px;
 `;
 
-const SectionHeader = styled.div`
+const SectionHeader = styled.div< SectionHeaderProps >`
 	@media ( max-width: 660px ) {
 		padding: 0 16px;
 	}
