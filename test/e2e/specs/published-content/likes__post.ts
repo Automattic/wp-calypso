@@ -61,7 +61,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 	} );
 
-	describe( 'As the liking user', () => {
+	describe( 'As the liking user', function () {
 		beforeAll( async () => {
 			page = await browser.newPage();
 		} );
