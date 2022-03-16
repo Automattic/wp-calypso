@@ -158,7 +158,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	{
 		title: translate( 'Storage' ),
 		description: translate(
-			'The free plan allows a maximum storage of 500MB, which equals to approximately 100 high quality images, whilst with Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+			'The free plan allows a maximum storage of 500MB, which equals to approximately 100 high quality images, while with Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
 		),
 		features: [ FEATURE_500MB_STORAGE, FEATURE_50GB_STORAGE ],
 		getCellText: ( feature, isMobile = false ) => {
