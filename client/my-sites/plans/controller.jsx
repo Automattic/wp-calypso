@@ -1,4 +1,4 @@
-import { isFreePlanProduct, isFlexiblePlanProduct } from '@automattic/calypso-products';
+import { isPro } from '@automattic/calypso-products';
 import page from 'page';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -32,11 +32,7 @@ export function plans( context, next ) {
 	const selectedSite = getSite( state, siteId );
 	const eligibleForProPlan = isEligibleForProPlan( state, siteId );
 
-	if (
-		eligibleForProPlan &&
-		! isFreePlanProduct( selectedSite.plan ) &&
-		! isFlexiblePlanProduct( selectedSite.plan )
-	) {
+	if ( eligibleForProPlan && isPro( selectedSite.plan ) ) {
 		page.redirect( `/plans/my-plan/${ selectedSite.slug }` );
 
 		return null;

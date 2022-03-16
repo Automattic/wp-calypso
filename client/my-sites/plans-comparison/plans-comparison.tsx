@@ -174,30 +174,28 @@ export const globalOverrides = css`
 		margin-bottom: 0.5rem;
 	}
 
-	.notice.notice {
+	.notice.is-info,
+	.notice.is-success {
 		color: inherit;
-	}
-
-	.notice.is-info {
 		background: #f6f7f7;
-	}
 
-	.notice__content.notice__content {
-		html[dir='ltr'] & {
-			padding: 10px 10px 10px 0;
+		.notice__content.notice__content {
+			html[dir='ltr'] & {
+				padding: 10px 10px 10px 0;
+			}
+			html[dir='rtl'] & {
+				padding: 10px 0 10px 10px;
+			}
 		}
-		html[dir='rtl'] & {
-			padding: 10px 0 10px 10px;
+
+		.notice__icon-wrapper.notice__icon-wrapper {
+			background: none;
+			width: 40px;
 		}
-	}
 
-	.notice.is-info .notice__icon-wrapper.notice__icon-wrapper {
-		background: none;
-		width: 40px;
-	}
-
-	.notice .gridicons-info-outline {
-		fill: #008a20;
+		.gridicons-info-outline {
+			fill: #008a20;
+		}
 	}
 
 	.my-plan-card.my-plan-card.card {
