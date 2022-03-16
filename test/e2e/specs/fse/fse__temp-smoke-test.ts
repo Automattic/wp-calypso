@@ -23,16 +23,12 @@ declare const browser: Browser;
  */
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
-	const accountName = getTestAccountByFeature(
-		{
-			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-		},
-		[
-			{ gutenberg: 'stable', siteType: 'simple', accountName: 'siteEditorSimpleSiteUser' },
-			{ gutenberg: 'edge', siteType: 'simple', accountName: 'siteEditorSimpleSiteEdgeUser' },
-		]
-	);
+	const accountName = getTestAccountByFeature( {
+		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+		variant: 'siteEditor',
+	} );
+
 	beforeAll( async () => {
 		page = await browser.newPage();
 

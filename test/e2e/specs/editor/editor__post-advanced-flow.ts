@@ -23,10 +23,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
 			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
 		},
-		[
-			{ gutenberg: 'stable', siteType: 'simple', accountName: 'gutenbergSimpleSiteEdgeUser' },
-			{ gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
-		]
+		[ { gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
 	);
 
 	const postTitle = `Post Life Cycle: ${ DataHelper.getTimestamp() }`;

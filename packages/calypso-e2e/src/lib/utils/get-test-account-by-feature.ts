@@ -2,12 +2,12 @@ type Env = 'edge' | 'stable';
 
 type SiteType = 'simple' | 'atomic';
 
-type Variation = 'siteEditor';
+type Variant = 'siteEditor';
 
 type Feature = 'gutenberg' | 'coblocks';
 type FeatureKey = { [ key in Feature ]?: Env | undefined } & {
 	siteType: SiteType;
-	variation?: Variation;
+	variant?: Variant;
 };
 export type FeatureCriteria = FeatureKey & { accountName: string };
 type FeatureMap = Map< string, string >;
@@ -30,6 +30,7 @@ function criteriaToMap( criteria: FeatureCriteria[], map: FeatureMap ): FeatureM
 	}, map );
 }
 
+// NOTE If this gets too big, move to its own dedicated module
 const defaultCriteria: FeatureCriteria[] = [
 	{
 		gutenberg: 'edge',
@@ -51,6 +52,18 @@ const defaultCriteria: FeatureCriteria[] = [
 		gutenberg: 'edge',
 		siteType: 'simple',
 		accountName: 'coBlocksSimpleSiteEdgeUser',
+	},
+	{
+		gutenberg: 'stable',
+		siteType: 'simple',
+		variant: 'siteEditor',
+		accountName: 'siteEditorSimpleSiteUser',
+	},
+	{
+		gutenberg: 'edge',
+		siteType: 'simple',
+		variant: 'siteEditor',
+		accountName: 'siteEditorSimpleSiteEdgeUser',
 	},
 ];
 
