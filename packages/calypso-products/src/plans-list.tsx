@@ -180,7 +180,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_WPCOM_FLEXIBLE,
-	PLAN_WPCOM_MANAGED,
+	PLAN_WPCOM_PRO,
 	PREMIUM_DESIGN_FOR_STORES,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -198,7 +198,7 @@ import {
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
 	TYPE_FLEXIBLE,
-	TYPE_MANAGED,
+	TYPE_PRO,
 } from './constants';
 import type {
 	BillingTerm,
@@ -1581,10 +1581,10 @@ PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
 	...PLANS_LIST[ PLAN_FREE ],
 	group: GROUP_WPCOM,
 	type: TYPE_FLEXIBLE,
-	getBillingTimeFrame: WPComGetBillingTimeframe,
+	getBillingTimeFrame: () => i18n.translate( 'upgrade when you need' ),
 	getDescription: () =>
 		i18n.translate(
-			'Start your free WordPress.com website. Limited functionalities, storage and visits.'
+			'Start your free WordPress.com website. Limited functionality, storage and visits.'
 		),
 	getPlanCompareFeatures: () => [
 		FEATURE_10K_VISITS,
@@ -1594,17 +1594,17 @@ PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
 	],
 };
 
-PLANS_LIST[ PLAN_WPCOM_MANAGED ] = {
+PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 	group: GROUP_WPCOM,
-	type: TYPE_MANAGED,
+	type: TYPE_PRO,
 	term: TERM_ANNUALLY,
 	getTitle: () => i18n.translate( 'Pro' ),
 	getProductId: () => 1032,
-	getStoreSlug: () => PLAN_WPCOM_MANAGED,
+	getStoreSlug: () => PLAN_WPCOM_PRO,
 	getPathSlug: () => 'pro',
 	getDescription: () =>
 		i18n.translate( 'Enjoy the classic WordPress.com experience using plugins and much more.' ),
-	getBillingTimeFrame: WPComGetBillingTimeframe,
+	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [
 		FEATURE_ADDITIONAL_SITES,
 		FEATURE_100K_VISITS,

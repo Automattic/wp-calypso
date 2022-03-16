@@ -4,7 +4,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import type { AppState } from 'calypso/types';
 
-export function isEligibleForManagedPlan( state: AppState, siteId?: number ): boolean {
+export function isEligibleForProPlan( state: AppState, siteId?: number ): boolean {
 	if ( isE2ETest() ) {
 		return false;
 	}
@@ -13,5 +13,5 @@ export function isEligibleForManagedPlan( state: AppState, siteId?: number ): bo
 		return false;
 	}
 
-	return isEnabled( 'plans/managed-plan' );
+	return isEnabled( 'plans/pro-plan' );
 }

@@ -8,7 +8,6 @@ import {
 	TYPE_PREMIUM,
 	TYPE_PERSONAL,
 	TYPE_BLOGGER,
-	TYPE_MANAGED,
 	TYPE_FREE,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_ONBOARDING_EXPIRE,
@@ -18,6 +17,7 @@ import {
 	TYPE_ALL,
 	TERM_MONTHLY,
 	getPlans,
+	TYPE_PRO,
 } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -208,7 +208,7 @@ export class ProductPurchaseFeaturesList extends Component {
 		);
 	}
 
-	getManagedFeatuers() {
+	getProFeatuers() {
 		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
 
 		return (
@@ -216,7 +216,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<HappinessSupportCard
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_managed' }
+					liveChatButtonEventName={ 'calypso_livechat_my_plan_pro' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
@@ -366,7 +366,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_PREMIUM ]: () => this.getPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
 				[ TYPE_BLOGGER ]: () => this.getBloggerFeatures(),
-				[ TYPE_MANAGED ]: () => this.getManagedFeatuers(),
+				[ TYPE_PRO ]: () => this.getProFeatuers(),
 			},
 			[ GROUP_JETPACK ]: {
 				[ TYPE_BUSINESS ]: () => this.getJetpackBusinessFeatures(),
