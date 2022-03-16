@@ -4,16 +4,13 @@ import type { ReactElement } from 'react';
 import './style.scss';
 
 type PriceBadgeProps = {
-	additionalPriceInformation?: ReactElement | null;
 	price: ReactElement;
+	priceInformation?: ReactElement;
 };
 
-const PriceBadge = ( { additionalPriceInformation, price }: PriceBadgeProps ): ReactElement => (
+const PriceBadge = ( { price, priceInformation }: PriceBadgeProps ): ReactElement => (
 	<div className="price-badge">
-		<PromoCardPrice
-			formattedPrice={ price }
-			additionalPriceInformation={ <span>{ additionalPriceInformation }</span> }
-		/>
+		<PromoCardPrice formattedPrice={ price } additionalPriceInformation={ priceInformation } />
 	</div>
 );
 

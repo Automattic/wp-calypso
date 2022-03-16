@@ -1,100 +1,114 @@
 import formatCurrency from '@automattic/format-currency';
-import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
+import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import type { ReactElement } from 'react';
 
 import './style.scss';
 
-type PriceWithIntervalProps = {
-	cost: number;
-	currencyCode: string;
-	hasDiscount: boolean;
-	intervalLength: IntervalLength;
-	sale?: number | null;
-};
-
-const PriceWithInterval = ( {
-	cost,
-	currencyCode,
-	hasDiscount,
+const SalePriceWithInterval = ( {
 	intervalLength,
-	sale,
-}: PriceWithIntervalProps ): ReactElement => {
-	const showSale = sale && sale !== 0;
-
-	const priceClassName = classNames( {
-		'price-with-interval__price-discounted': hasDiscount || showSale,
-	} );
-
-	const priceSpan = <span className={ priceClassName } />;
-	const standardPrice = formatCurrency( cost ?? 0, currencyCode );
-
-	if ( showSale ) {
-		const saleTranslateArguments = {
-			salePrice: formatCurrency( sale ?? 0, currencyCode ),
+	salePrice,
+	standardPrice,
+}: {
+	intervalLength: IntervalLength;
+	salePrice: string | null;
+	standardPrice: string | null;
+} ): ReactElement => {
+	const translateArguments = {
+		args: {
+			salePrice,
 			standardPrice,
-		};
-
-		const saleTranslateComponents = {
-			priceSpan,
+		},
+		comment:
+			"%(standardPrice)s and %(salePrice)s are formatted prices with the currency (e.g. '$5'), {{priceSpan}} and {{saleSpan}} are <span> HTML tags",
+		components: {
+			priceSpan: <span className="price-with-interval__price-discounted" />,
 			saleSpan: <span className="price-with-interval__sale-price" />,
-		};
-
-		if ( intervalLength === IntervalLength.ANNUALLY ) {
-			return (
-				<>
-					{ translate(
-						'{{priceSpan}}%(standardPrice)s{{/priceSpan}} {{saleSpan}}%(salePrice)s{{/saleSpan}} /year /mailbox',
-						{
-							args: saleTranslateArguments,
-							comment:
-								'%(standardPrice)s is a formatted standard price, e.g. $3.50; %(salePrice)s is a formatted sale price, e.g. $2.75',
-							components: saleTranslateComponents,
-						}
-					) }
-				</>
-			);
-		}
-
-		return (
-			<>
-				{ translate(
-					'{{priceSpan}}%(standardPrice)s{{/priceSpan}} {{saleSpan}}%(salePrice)s{{/saleSpan}} /month /mailbox',
-					{
-						args: saleTranslateArguments,
-						comment:
-							'%(standardPrice)s is a formatted standard price, e.g. $3.50; %(salePrice)s is a formatted sale price, e.g. $2.75',
-						components: saleTranslateComponents,
-					}
-				) }
-			</>
-		);
-	}
-
-	const standardTranslateArguments = { standardPrice };
-	const standardTranslateComponents = { priceSpan };
+		},
+	};
 
 	if ( intervalLength === IntervalLength.ANNUALLY ) {
 		return (
 			<>
-				{ translate( '{{priceSpan}}%(standardPrice)s{{/priceSpan}} /year /mailbox', {
-					args: standardTranslateArguments,
-					comment: '%(standardPrice)s is a formatted standard price, e.g. $3.50',
-					components: standardTranslateComponents,
-				} ) }
+				{ translate(
+					'{{priceSpan}}%(standardPrice)s{{/priceSpan}} {{saleSpan}}%(salePrice)s{{/saleSpan}} /year /mailbox',
+					translateArguments
+				) }
 			</>
 		);
 	}
 
 	return (
 		<>
-			{ translate( '{{priceSpan}}%(standardPrice)s{{/priceSpan}} /month /mailbox', {
-				args: standardTranslateArguments,
-				comment: '%(standardPrice)s is a formatted standard price, e.g. $3.50',
-				components: standardTranslateComponents,
-			} ) }
+			{ translate(
+				'{{priceSpan}}%(standardPrice)s{{/priceSpan}} {{saleSpan}}%(salePrice)s{{/saleSpan}} /month /mailbox',
+				translateArguments
+			) }
 		</>
+	);
+};
+
+const StandardPriceWithInterval = ( {
+	intervalLength,
+	standardPrice,
+}: {
+	intervalLength: IntervalLength;
+	standardPrice: string | null;
+} ): ReactElement => {
+	const translateArguments = {
+		args: { standardPrice },
+		comment:
+			"%(standardPrice)s is a formatted price with the currency (e.g. '$5'), {{span}} is an <span> HTML tag",
+		components: { span: <span /> },
+	};
+
+	if ( intervalLength === IntervalLength.ANNUALLY ) {
+		return (
+			<>{ translate( '{{span}}%(standardPrice)s{{/span}} /year /mailbox', translateArguments ) }</>
+		);
+	}
+
+	return (
+		<>{ translate( '{{span}}%(standardPrice)s{{/span}} /month /mailbox', translateArguments ) }</>
+	);
+};
+
+const PriceWithInterval = ( {
+	currencyCode,
+	intervalLength,
+	isDiscounted = false,
+	isEligibleForFreeTrial,
+	product,
+}: {
+	currencyCode: string | null;
+	intervalLength: IntervalLength;
+	isDiscounted?: boolean;
+	isEligibleForFreeTrial: boolean;
+	product: ProductListItem | null;
+} ): ReactElement => {
+	const standardPrice = formatCurrency( product?.cost ?? 0, currencyCode ?? '', {
+		stripZeros: true,
+	} );
+
+	if ( isDiscounted || isEligibleForFreeTrial ) {
+		const salePrice = formatCurrency(
+			isEligibleForFreeTrial ? 0 : product?.sale_cost ?? 0,
+			currencyCode ?? '',
+			{ stripZeros: true }
+		);
+
+		return (
+			<SalePriceWithInterval
+				intervalLength={ intervalLength }
+				salePrice={ salePrice }
+				standardPrice={ standardPrice }
+			/>
+		);
+	}
+
+	return (
+		<StandardPriceWithInterval intervalLength={ intervalLength } standardPrice={ standardPrice } />
 	);
 };
 

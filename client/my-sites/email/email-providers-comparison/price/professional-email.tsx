@@ -7,6 +7,7 @@ import { isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
 import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
+import PriceInformation from 'calypso/my-sites/email/email-providers-comparison/price/price-information';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import type { SiteDomain } from 'calypso/state/sites/domains/types';
@@ -34,24 +35,33 @@ const ProfessionalEmailPrice = ( {
 	const productSlug = getTitanProductSlug( intervalLength );
 	const product = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
 
+	if ( ! domain ) {
+		return <></>;
+	}
+
+	const isEligibleForFreeTrial = isDomainEligibleForTitanFreeTrial( domain );
+
 	const priceWithInterval = (
 		<PriceWithInterval
-			cost={ product?.cost ?? 0 }
 			currencyCode={ currencyCode ?? '' }
-			hasDiscount={ false }
 			intervalLength={ intervalLength }
+			isEligibleForFreeTrial={ isEligibleForFreeTrial }
+			product={ product }
 		/>
 	);
 
 	return (
 		<>
-			{ isDomainEligibleForTitanFreeTrial( domain ) && (
+			{ isEligibleForFreeTrial && (
 				<div className="professional-email-price__trial-badge badge badge--info-green">
 					{ translate( '3 months free' ) }
 				</div>
 			) }
 
-			<PriceBadge price={ priceWithInterval } />
+			<PriceBadge
+				priceInformation={ <PriceInformation domain={ domain } product={ product } /> }
+				price={ priceWithInterval }
+			/>
 		</>
 	);
 };

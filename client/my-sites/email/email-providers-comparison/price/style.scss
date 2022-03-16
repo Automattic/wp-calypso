@@ -4,7 +4,9 @@
 	margin-bottom: 12px;
 }
 
-.google-workspace-price__discount {
+.price-information__discount,
+.price-information__free-trial {
+	color: var( --color-text-subtle );
 	display: none;
 	margin-bottom: 12px;
 	margin-top: 3px;
