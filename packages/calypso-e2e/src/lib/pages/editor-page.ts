@@ -15,7 +15,7 @@ import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from 
 const selectors = {
 	// iframe and editor
 	editorFrame: 'iframe.is-loaded',
-	editor: 'div[id="editor"]',
+	editor: 'body.block-editor-page',
 	editorTitle: '.editor-post-title__input',
 
 	// Within the editor body.
