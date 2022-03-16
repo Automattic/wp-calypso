@@ -95,7 +95,6 @@ TwoStepAuthorization.prototype.refreshDataOnSuccessfulAuth = function () {
 		reduxDispatch( requestUserProfileLinks() );
 	}
 	this.data.two_step_reauthorization_required = false;
-	this.data.two_step_authorization_expires_soon = false;
 	this.invalidCode = false;
 
 	this.emit( 'change' );
@@ -270,10 +269,6 @@ TwoStepAuthorization.prototype.isSMSResendThrottled = function () {
 
 TwoStepAuthorization.prototype.isReauthRequired = function () {
 	return this.data.two_step_reauthorization_required ?? false;
-};
-
-TwoStepAuthorization.prototype.authExpiresSoon = function () {
-	return this.data.two_step_authorization_expires_soon ?? false;
 };
 
 TwoStepAuthorization.prototype.isTwoStepSMSEnabled = function () {
