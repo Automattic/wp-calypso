@@ -10,6 +10,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Timezone from 'calypso/components/timezone';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
+import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -45,6 +46,15 @@ class P2CompleteProfile extends Component {
 					true
 				);
 			}
+		} else {
+			initialState = {
+				fullName: {
+					value: '',
+				},
+				timezone: {
+					value: guessTimezone(),
+				},
+			};
 		}
 
 		this.formStateController = new formState.Controller( {
@@ -77,7 +87,13 @@ class P2CompleteProfile extends Component {
 
 	validate() {}
 
-	handleSubmit() {}
+	handleSubmit( event ) {
+		event.preventDefault();
+
+		this.setState( { isSubmitting: true } );
+
+		// this.formStateController.handleSubmit( ( hasErrors ) => {} );
+	}
 
 	handleFormControllerError = ( error ) => {
 		if ( error ) {
