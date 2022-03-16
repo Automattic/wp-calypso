@@ -89,19 +89,22 @@ const EducationFooter = () => {
 					/>
 				</ThreeColumnContainer>
 			</Section>
-			<Section header={ __( 'WordPress.com is the best place to get your plugins.' ) } dark>
+			<Section header={ __( 'Upgrade your WordPress site with confidence' ) } dark>
 				<ThreeColumnContainer>
-					<FeatureItem header="Fully Managed">
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nisl urna, lobortis eu
-						fermentum sed, ultricies ac dui.
+					<FeatureItem header={ __( 'Fully Managed' ) }>
+						{ __(
+							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
+						) }
 					</FeatureItem>
-					<FeatureItem header="One Click Checkout">
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nisl urna, lobortis eu
-						fermentum sed, ultricies ac dui.
+					<FeatureItem header={ __( 'Thousands of plugins' ) }>
+						{ __(
+							'Along with our hand curated collection of premium plugins, you also have thousands of community developed plugins at your disposal.'
+						) }
 					</FeatureItem>
-					<FeatureItem header="Quality Approved">
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nisl urna, lobortis eu
-						fermentum sed, ultricies ac dui.
+					<FeatureItem header={ __( 'Flexible pricing' ) }>
+						{ __(
+							'WordPress.com offers monthly and annual premium plugin pricing for extra flexibility.'
+						) }
 					</FeatureItem>
 				</ThreeColumnContainer>
 			</Section>
