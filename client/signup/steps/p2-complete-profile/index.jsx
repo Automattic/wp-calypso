@@ -203,6 +203,14 @@ class P2CompleteProfile extends Component {
 		);
 	};
 
+	renderUploadAvatarBtn = () => {
+		return (
+			<button className="p2-complete-profile__upload-avatar-btn">
+				{ this.props.translate( 'Upload a new avatar' ) }
+			</button>
+		);
+	};
+
 	render() {
 		return (
 			<P2StepWrapper
@@ -216,11 +224,7 @@ class P2CompleteProfile extends Component {
 			>
 				<div className="p2-complete-profile">
 					<div className="p2-complete-profile__avatar-wrapper">
-						<EditGravatar />
-
-						<button className="p2-complete-profile__upload-avatar-btn">
-							{ this.props.translate( 'Upload a new avatar' ) }
-						</button>
+						<EditGravatar additionalUploadHtml={ this.renderUploadAvatarBtn() } />
 					</div>
 
 					<div className="p2-complete-profile__form-wrapper">
