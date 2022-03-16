@@ -84,7 +84,7 @@ const EditContactInfoPage = ( {
 		}
 
 		if ( ! domain.canUpdateContactInfo ) {
-			return <CannotUpdateContactInfo redesigned={ true } domain={ domain } />;
+			return <CannotUpdateContactInfo redesigned={ false } domain={ domain } />;
 		}
 
 		if ( domain.isPendingWhoisUpdate ) {
