@@ -18,7 +18,8 @@ import {
 const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
 	border: 3px solid
 		${ ( { isSelected } ) => ( isSelected ? 'var( --studio-blue-50 )' : '#ffffff00' ) };
-	border-radius: ${ ( { isSelected } ) => ( isSelected ? '10px' : '0' ) };
+	border-radius: 10px;
+	transition: border 0.2s cubic-bezier( 0.11, 0, 0.5, 0 );
 	&:hover {
 		border: 3px solid
 			${ ( { isClickDisabled, isSelected } ) => {
@@ -54,6 +55,7 @@ const Content = styled.div`
 	align-items: center;
 	justify-content: center;
 	height: 170px;
+	border-radius: 0 0 4px 4px;
 `;
 
 const SelctedCount = styled.div`
@@ -66,8 +68,8 @@ const SelctedCount = styled.div`
 	align-items: center;
 	justify-content: center;
 	position: absolute;
-	right: 14px;
-	top: 140px;
+	right: 7px;
+	bottom: 5px;
 `;
 
 export function BrowserView( {
