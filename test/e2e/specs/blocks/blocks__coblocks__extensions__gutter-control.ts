@@ -5,7 +5,7 @@
 import {
 	envVariables,
 	DataHelper,
-	EditorPage,
+	GutenbergEditorPage,
 	PricingTableBlock,
 	TestAccount,
 } from '@automattic/calypso-e2e';
@@ -25,23 +25,23 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
 	let page: Page;
 	let testAccount: TestAccount;
-	let editorPage: EditorPage;
+	let gutenbergEditorPage: GutenbergEditorPage;
 	let pricingTableBlock: PricingTableBlock;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		testAccount = new TestAccount( accountName );
-		editorPage = new EditorPage( page );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async () => {
-		await editorPage.visit( 'post' );
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( 'Insert Pricing Table block', async () => {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await gutenbergEditorPage.addBlock(
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);
@@ -49,13 +49,13 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	} );
 
 	it( 'Open settings sidebar', async () => {
-		await editorPage.openSettings();
+		await gutenbergEditorPage.openSettings();
 	} );
 
 	it.each( PricingTableBlock.gutterValues )(
 		'Verify "%s" gutter button is present',
 		async ( value ) => {
-			const editorFrame = await editorPage.getEditorFrame();
+			const editorFrame = await gutenbergEditorPage.getEditorFrame();
 			await editorFrame.waitForSelector( `button[aria-label="${ value }"]` );
 		}
 	);
@@ -65,7 +65,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	} );
 
 	it( 'Close settings sidebar', async () => {
-		await editorPage.closeSettings();
+		await gutenbergEditorPage.closeSettings();
 	} );
 
 	it( 'Fill the price fields so the block is visible', async () => {
@@ -74,7 +74,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	} );
 
 	it( 'Publish and visit the post', async () => {
-		await editorPage.publish( { visit: true } );
+		await gutenbergEditorPage.publish( { visit: true } );
 	} );
 
 	it( 'Verify the class for "Huge" gutter is present', async () => {

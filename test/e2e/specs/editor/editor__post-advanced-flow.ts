@@ -5,7 +5,7 @@
 
 import {
 	DataHelper,
-	EditorPage,
+	GutenbergEditorPage,
 	envVariables,
 	TestAccount,
 	PostsPage,
@@ -25,7 +25,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 	const additionalContent = 'Updated post content';
 
 	let page: Page;
-	let editorPage: EditorPage;
+	let gutenbergEditorPage: GutenbergEditorPage;
 	let postsPage: PostsPage;
 	let paragraphBlock: ParagraphBlock;
 	let postURL: URL;
@@ -43,12 +43,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 	describe( 'Publish post', function () {
 		it( 'Enter post title', async function () {
-			editorPage = new EditorPage( page );
-			await editorPage.enterTitle( postTitle );
+			gutenbergEditorPage = new GutenbergEditorPage( page );
+			await gutenbergEditorPage.enterTitle( postTitle );
 		} );
 
 		it( 'Enter post content', async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await gutenbergEditorPage.addBlock(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);
@@ -57,7 +57,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Publish post', async function () {
-			postURL = await editorPage.publish();
+			postURL = await gutenbergEditorPage.publish();
 			expect( postURL.href ).toBeDefined();
 		} );
 
@@ -80,12 +80,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Editor is shown', async function () {
-			editorPage = new EditorPage( page );
-			await editorPage.waitUntilLoaded();
+			gutenbergEditorPage = new GutenbergEditorPage( page );
+			await gutenbergEditorPage.waitUntilLoaded();
 		} );
 
 		it( 'Append additional content', async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await gutenbergEditorPage.addBlock(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);
@@ -94,7 +94,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Publish post', async function () {
-			postURL = await editorPage.publish();
+			postURL = await gutenbergEditorPage.publish();
 		} );
 
 		it( 'Published post contains additional post content', async function () {
@@ -111,7 +111,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 	describe( 'Revert post to draft', function () {
 		it( 'Switch to draft', async function () {
-			await editorPage.unpublish();
+			await gutenbergEditorPage.unpublish();
 		} );
 
 		it( 'Post is no longer visible', async function () {

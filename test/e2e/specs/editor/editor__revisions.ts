@@ -7,7 +7,7 @@ import {
 	DataHelper,
 	TestAccount,
 	envVariables,
-	EditorPage,
+	GutenbergEditorPage,
 	RevisionsComponent,
 	ParagraphBlock,
 } from '@automattic/calypso-e2e';
@@ -19,7 +19,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	const accountName = envVariables.GUTENBERG_EDGE
 		? 'gutenbergSimpleSiteEdgeUser'
 		: 'simpleSitePersonalPlanUser';
-	let editorPage: EditorPage;
+	let gutenbergEditorPage: GutenbergEditorPage;
 	let revisionsComponent: RevisionsComponent;
 	let page: Page;
 
@@ -31,26 +31,26 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page );
-		await editorPage.visit( 'post' );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it.each( [ { revision: 1 }, { revision: 2 }, { revision: 3 } ] )(
 		'Create revision $revision',
 		async function ( { revision } ) {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await gutenbergEditorPage.addBlock(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);
 			const paragraphBlock = new ParagraphBlock( blockHandle );
 			await paragraphBlock.enterParagraph( `Revision ${ revision }` );
-			await editorPage.saveDraft();
+			await gutenbergEditorPage.saveDraft();
 		}
 	);
 
 	it( 'View revisions', async function () {
-		await editorPage.openSettings();
-		await editorPage.viewRevisions();
+		await gutenbergEditorPage.openSettings();
+		await gutenbergEditorPage.viewRevisions();
 	} );
 
 	it( 'Revision 1 displays expected diff', async function () {
@@ -63,7 +63,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 		revisionsComponent = new RevisionsComponent( page );
 		await revisionsComponent.clickButton( 'Load' );
 
-		const text = await editorPage.getText();
+		const text = await gutenbergEditorPage.getText();
 		expect( text ).toEqual( 'Revision 1' );
 	} );
 } );

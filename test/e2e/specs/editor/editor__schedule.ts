@@ -6,7 +6,7 @@ import {
 	DataHelper,
 	TestAccount,
 	envVariables,
-	EditorPage,
+	GutenbergEditorPage,
 	PublishedPostPage,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
@@ -20,7 +20,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	const postTitle = `Scheduled Post: ${ DataHelper.getTimestamp() }`;
 	const postContent = DataHelper.getRandomPhrase();
 	let postURL: URL;
-	let editorPage: EditorPage;
+	let gutenbergEditorPage: GutenbergEditorPage;
 	let page: Page;
 
 	beforeAll( async function () {
@@ -31,29 +31,29 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page );
-		await editorPage.visit( 'post' );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( 'Enter page title', async function () {
-		editorPage = new EditorPage( page );
-		await editorPage.enterTitle( postTitle );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
+		await gutenbergEditorPage.enterTitle( postTitle );
 	} );
 
 	it( 'Enter page content', async function () {
-		await editorPage.enterText( postContent );
+		await gutenbergEditorPage.enterText( postContent );
 	} );
 
 	describe( 'Schedule: future', function () {
 		it( 'Open settings', async function () {
-			await editorPage.openSettings();
+			await gutenbergEditorPage.openSettings();
 		} );
 
 		it( 'Schedule the post for next year', async function () {
 			const date = new Date();
 			date.setUTCFullYear( date.getFullYear() + 1 );
 
-			await editorPage.schedule( {
+			await gutenbergEditorPage.schedule( {
 				year: date.getUTCFullYear(),
 				month: date.getUTCMonth(),
 				date: date.getUTCDate(),
@@ -63,12 +63,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			} );
 			// On mobile, the sidebar covers all of the screen.
 			// Dismiss it so publish buttons are available.
-			await editorPage.closeSettings();
+			await gutenbergEditorPage.closeSettings();
 		} );
 
 		it( 'Publish post', async function () {
-			postURL = await editorPage.publish();
-			await editorPage.closeAllPanels();
+			postURL = await gutenbergEditorPage.publish();
+			await gutenbergEditorPage.closeAllPanels();
 		} );
 
 		it( `View post as ${ accountName }`, async function () {
@@ -97,14 +97,14 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 
 	describe( 'Schedule: past', function () {
 		it( 'Open settings', async function () {
-			await editorPage.openSettings();
+			await gutenbergEditorPage.openSettings();
 		} );
 
 		it( 'Schedule post to fist of the current month of last year', async function () {
 			const date = new Date();
 			date.setUTCFullYear( date.getUTCFullYear() - 1 );
 
-			await editorPage.schedule( {
+			await gutenbergEditorPage.schedule( {
 				year: date.getUTCFullYear(),
 				date: 1,
 				month: date.getUTCMonth(),
@@ -114,11 +114,11 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			} );
 			// On mobile, the sidebar covers all of the screen.
 			// Dismiss it so publish buttons are available.
-			await editorPage.closeSettings();
+			await gutenbergEditorPage.closeSettings();
 		} );
 
 		it( 'Publish post', async function () {
-			postURL = await editorPage.publish();
+			postURL = await gutenbergEditorPage.publish();
 		} );
 
 		it.each( [ 'public', accountName, 'defaultUser' ] )(

@@ -6,7 +6,7 @@ import {
 	DataHelper,
 	CloseAccountFlow,
 	GutenboardingFlow,
-	EditorPage,
+	GutenbergEditorPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser, Frame } from 'playwright';
 
@@ -73,9 +73,9 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			await page.waitForURL( /.*\/site-editor\/.*/, { waitUntil: 'networkidle' } );
 
 			// {@TODO} This is temporary while the FSE spec is awaiting migration to Playwright.
-			const editorPage = new EditorPage( page );
-			await editorPage.forceDismissWelcomeTour();
-			const outerFrame = await editorPage.getEditorFrame();
+			const gutenbergEditorPage = new GutenbergEditorPage( page );
+			await gutenbergEditorPage.forceDismissWelcomeTour();
+			const outerFrame = await gutenbergEditorPage.getEditorFrame();
 
 			// There's another iframe within the parent iframe.
 			const innerFrame = ( await (

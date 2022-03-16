@@ -7,7 +7,7 @@ import {
 	DataHelper,
 	MediaHelper,
 	ElementHelper,
-	EditorPage,
+	GutenbergEditorPage,
 	TestFile,
 	ImageBlock,
 	TestAccount,
@@ -28,7 +28,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), () => {
 	let page: Page;
-	let editorPage: EditorPage;
+	let gutenbergEditorPage: GutenbergEditorPage;
 	let imageBlock: ImageBlock;
 	let imageFile: TestFile;
 	let uploadedImageURL: string;
@@ -37,18 +37,18 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		editorPage = new EditorPage( page );
+		gutenbergEditorPage = new GutenbergEditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async () => {
-		await editorPage.visit( 'post' );
+		await gutenbergEditorPage.visit( 'post' );
 	} );
 
 	it( `Insert ${ ImageBlock.blockName } block and upload image`, async () => {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await gutenbergEditorPage.addBlock(
 			ImageBlock.blockName,
 			ImageBlock.blockEditorSelector
 		);
@@ -59,7 +59,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	} );
 
 	it( `Replace uploaded image`, async () => {
-		const editorFrame = await editorPage.getEditorFrame();
+		const editorFrame = await gutenbergEditorPage.getEditorFrame();
 		await editorFrame.click( 'button:text("Replace")' );
 		await editorFrame.setInputFiles(
 			'.components-form-file-upload input[type="file"]',
@@ -75,7 +75,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	} );
 
 	it( 'Publish the post', async () => {
-		await editorPage.publish( { visit: true } );
+		await gutenbergEditorPage.publish( { visit: true } );
 	} );
 
 	it( 'Verify the new image was published', async () => {
