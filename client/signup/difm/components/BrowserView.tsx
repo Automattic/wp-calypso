@@ -1,10 +1,4 @@
 import styled from '@emotion/styled';
-import aboutPage from 'calypso/signup/difm/images/about-page.svg';
-import blogPage from 'calypso/signup/difm/images/blog-page.svg';
-import contactPage from 'calypso/signup/difm/images/contact-page.svg';
-import homePage from 'calypso/signup/difm/images/home-page.svg';
-import photoGallery from 'calypso/signup/difm/images/photo-gallery.svg';
-import serviceShowcase from 'calypso/signup/difm/images/service-showcase.svg';
 import {
 	ABOUT_PAGE,
 	BLOG_PAGE,
@@ -13,7 +7,13 @@ import {
 	PHOTO_GALLERY_PAGE,
 	SERVICE_SHOWCASE_PAGE,
 	SITEMAP_PAGE,
-} from 'calypso/signup/difm/usePageSuggestions';
+} from 'calypso/signup/difm/constants';
+import aboutPage from 'calypso/signup/difm/images/about-page.svg';
+import blogPage from 'calypso/signup/difm/images/blog-page.svg';
+import contactPage from 'calypso/signup/difm/images/contact-page.svg';
+import homePage from 'calypso/signup/difm/images/home-page.svg';
+import photoGallery from 'calypso/signup/difm/images/photo-gallery.svg';
+import serviceShowcase from 'calypso/signup/difm/images/service-showcase.svg';
 
 const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
 	border: 3px solid
@@ -76,12 +76,12 @@ export function BrowserView( {
 	pageId,
 	isSelected,
 	isClickDisabled,
-	selectedCount,
+	selectedIndex,
 }: {
 	pageId: string;
 	isSelected?: boolean;
 	isClickDisabled?: boolean;
-	selectedCount: number | undefined;
+	selectedIndex: number;
 } ) {
 	const getPageImage = () => {
 		switch ( pageId ) {
@@ -105,7 +105,7 @@ export function BrowserView( {
 
 	return (
 		<Container isSelected={ isSelected } isClickDisabled={ isClickDisabled }>
-			{ selectedCount ? <SelctedCount>{ selectedCount }</SelctedCount> : null }
+			{ selectedIndex > -1 ? <SelctedCount>{ selectedIndex + 1 }</SelctedCount> : null }
 
 			<Header>
 				<svg width={ 16 } height={ 4 } fill="none" xmlns="http://www.w3.org/2000/svg">

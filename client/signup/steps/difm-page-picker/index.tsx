@@ -3,9 +3,23 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { BrowserView } from 'calypso/signup/difm/components/BrowserView';
-import usePageSuggestions, { PageSuggestion } from 'calypso/signup/difm/usePageSuggestions';
+import {
+	HOME_PAGE,
+	BLOG_PAGE,
+	CONTACT_PAGE,
+	ABOUT_PAGE,
+	PHOTO_GALLERY_PAGE,
+	SERVICE_SHOWCASE_PAGE,
+	VIDEO_GALLERY_PAGE,
+	PODCAST_PAGE,
+	PORTFOLIO_PAGE,
+	FAQ_PAGE,
+	SITEMAP_PAGE,
+	PROFILE_PAGE,
+	PAGE_LIMIT,
+} from 'calypso/signup/difm/constants';
+import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import './styles.scss';
 
 const PagePickerDetailsContainer = styled.div`
 	margin: 10px 0 50px 0;
@@ -87,26 +101,36 @@ const PopularContainer = styled.div`
 	}
 `;
 
-interface PageCellType extends PageSuggestion {
-	selectedCount?: number;
-	onClick: () => void;
-	isDisabled: boolean;
+interface PageCellType {
+	pageId: string;
+	selectedPages: string[];
+	onClick: ( pageId: string ) => void;
+	popular?: boolean;
 }
 
-function PageCell( { id, title, isPopular, selectedCount, onClick, isDisabled }: PageCellType ) {
+function PageCell( { pageId, popular, selectedPages, onClick }: PageCellType ) {
 	const translate = useTranslate();
-	const isSelected = Boolean( selectedCount && selectedCount > 0 );
+	const selectedIndex = selectedPages.indexOf( pageId );
+	const totalSelections = selectedPages.length;
+	const isSelected = Boolean( selectedIndex > -1 );
+	const isDisabled = selectedIndex === -1 && totalSelections >= PAGE_LIMIT;
+	const title = useTranslatedPageTitles( pageId );
+
 	return (
-		<GridCellContainer onClick={ onClick } isSelected={ isSelected } isClickDisabled={ isDisabled }>
+		<GridCellContainer
+			onClick={ () => onClick( pageId ) }
+			isSelected={ isSelected }
+			isClickDisabled={ isDisabled }
+		>
 			<BrowserView
-				pageId={ id }
+				pageId={ pageId }
 				isClickDisabled={ isDisabled }
 				isSelected={ isSelected }
-				selectedCount={ selectedCount }
+				selectedIndex={ selectedIndex >= 0 ? selectedIndex : -1 }
 			/>
 			<CellLabelContainer>
 				<div>{ title }</div>
-				{ isPopular ? (
+				{ popular ? (
 					<PopularContainer>
 						<div>{ translate( 'Popular' ) }</div>
 					</PopularContainer>
@@ -117,10 +141,7 @@ function PageCell( { id, title, isPopular, selectedCount, onClick, isDisabled }:
 }
 
 function PageSelector() {
-	const PAGE_LIMIT = 5;
 	const [ selectedPages, setSelectedPages ] = useState< string[] >( [] );
-	const selectedPageCount = selectedPages.length;
-	const translatedPageTitles = usePageSuggestions();
 	const translate = useTranslate();
 
 	const onPageClick = ( pageId: string ) => {
@@ -145,17 +166,54 @@ function PageSelector() {
 				/>
 			</PagePickerDetailsContainer>
 			<PageGrid>
-				{ Object.values( translatedPageTitles ).map( ( page: PageSuggestion ) => {
-					const index = selectedPages.indexOf( page.id );
-					return (
-						<PageCell
-							isDisabled={ selectedPageCount >= PAGE_LIMIT }
-							{ ...page }
-							selectedCount={ index > -1 ? index + 1 : undefined }
-							onClick={ () => onPageClick( page.id ) }
-						/>
-					);
-				} ) }
+				<PageCell
+					popular
+					pageId={ HOME_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+				<PageCell
+					popular
+					pageId={ BLOG_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+				<PageCell
+					popular
+					pageId={ CONTACT_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+				<PageCell
+					popular
+					pageId={ ABOUT_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+				<PageCell
+					pageId={ PHOTO_GALLERY_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+				<PageCell
+					pageId={ SERVICE_SHOWCASE_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+				<PageCell
+					pageId={ VIDEO_GALLERY_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+				<PageCell pageId={ PODCAST_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+				<PageCell
+					pageId={ PORTFOLIO_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+				<PageCell pageId={ FAQ_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+				<PageCell pageId={ SITEMAP_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+				<PageCell pageId={ PROFILE_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
 			</PageGrid>
 		</Container>
 	);
@@ -172,7 +230,6 @@ export default function DIFMPagePicker( props: StepProps ) {
 	return (
 		<StepWrapper
 			hideFormattedHeader
-			skipLabelText={ true }
 			stepContent={ <PageSelector /> }
 			hideSkip
 			align="left"
