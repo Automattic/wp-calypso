@@ -7,7 +7,7 @@ const selectors = {
 	cancelPublishButton: `${ panel } .editor-post-publish-panel__header-cancel-button > button`,
 
 	// After publishing
-	postPublishClosePanelButton: `${ panel } button[type="button"]:has(svg[aria-hidden="true"])`, // aria-label changes depending on the UI language used.
+	postPublishClosePanelButton: `${ panel } div.editor-post-publish-panel__header > button`, // aria-label changes depending on the UI language used.
 	publishedArticleURL: `${ panel } input[readonly]`,
 };
 
@@ -61,7 +61,7 @@ export class EditorPublishPanelComponent {
 		if ( ! ( await this.panelIsOpen() ) ) {
 			return;
 		}
-		const selector = `${ selectors.cancelPublishButton }, ${ selectors.postPublishClosePanelButton }`;
+		const selector = `${ selectors.cancelPublishButton }:visible, ${ selectors.postPublishClosePanelButton }:visible`;
 		const locator = this.frameLocator.locator( selector );
 		await locator.click();
 	}
