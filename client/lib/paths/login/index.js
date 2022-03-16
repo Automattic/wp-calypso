@@ -1,4 +1,4 @@
-import { addLocaleToPath } from 'calypso/lib/i18n-utils';
+import { addLocaleToPath } from '@automattic/i18n-utils';
 import { addQueryArgs } from 'calypso/lib/url';
 
 /**

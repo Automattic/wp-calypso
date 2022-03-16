@@ -3,6 +3,7 @@ import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
@@ -12,8 +13,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';

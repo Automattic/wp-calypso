@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { OFFER_RESET_FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { siteSelection } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';

@@ -37,7 +37,7 @@ The following patterns are correct
 
 ```jsx
 /* eslint-disable import/order */
-import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 export { default as ActionCard } from 'calypso/components/action-card/docs/example';
 export * from 'calypso/components/AppBar';
 const config1 = require( '@automattic/calypso-config' );

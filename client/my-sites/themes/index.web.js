@@ -1,9 +1,9 @@
+import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import {
 	makeLayout,
 	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
 } from 'calypso/controller';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import {
 	navigation,
 	selectSiteIfLoggedIn,

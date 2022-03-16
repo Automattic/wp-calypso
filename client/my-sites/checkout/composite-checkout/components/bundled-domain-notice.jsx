@@ -1,5 +1,6 @@
 import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { translationExists } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import {
 	hasDomainRegistration,
@@ -8,7 +9,6 @@ import {
 	isNextDomainFree,
 	hasP2PlusPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { translationExists } from 'calypso/lib/i18n-utils';
 import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */

@@ -1,13 +1,16 @@
 import { DomainSuggestions, Site, WPCOMFeatures } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { guessTimezone } from '@automattic/i18n-utils';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
-import { getLanguage } from 'calypso/lib/i18n-utils';
-import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
-import { SITE_STORE } from '../site';
-import { STORE_KEY as ONBOARD_STORE } from './constants';
+import { STORE_KEY } from './constants';
+import { siteStoreKey } from './index';
 import type { State } from '.';
 import type { Design, FontPair } from '@automattic/design-picker';
+
+function getLanguage( lang: string ) {
+	return lang;
+}
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -46,7 +49,7 @@ export function* createSite( {
 		selectedFonts,
 		siteTitle,
 		selectedFeatures,
-	}: State = yield select( ONBOARD_STORE, 'getState' );
+	}: State = yield select( STORE_KEY, 'getState' );
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
@@ -88,7 +91,7 @@ export function* createSite( {
 		...( bearerToken && { authToken: bearerToken } ),
 	};
 	const success: Site.NewSiteBlogDetails | undefined = yield dispatch(
-		SITE_STORE,
+		siteStoreKey,
 		'createSite',
 		params
 	);

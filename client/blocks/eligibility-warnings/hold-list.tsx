@@ -1,11 +1,11 @@
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
