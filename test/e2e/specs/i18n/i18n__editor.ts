@@ -269,7 +269,7 @@ describe( 'I18N: Editor', function () {
 				} );
 
 				it( 'Render block content translations', async function () {
-					frame = await editorPage.getEditorFrame();
+					frame = await editorPage.getEditorHandle();
 					// Ensure block contents are translated as expected.
 					await Promise.all(
 						block.blockEditorContent.map( ( content: any ) =>

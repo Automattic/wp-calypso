@@ -13,7 +13,7 @@ import {
 import { Page, Browser } from 'playwright';
 
 const quote =
-	'The problem with quotes on the Internet is that it is hard to verify their authenticity. \n— Abraham Lincoln';
+	'The problem with quotes on the Internet is that it is hard to verify their authenticity.\n- Abraham Lincoln';
 const title = DataHelper.getRandomPhrase();
 const category = 'Uncategorized';
 const tag = 'test-tag';
@@ -112,13 +112,13 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 		it( 'Post content is found in published post', async function () {
 			publishedPostPage = new PublishedPostPage( page );
-			await publishedPostPage.validateTextInPost( title );
+			await publishedPostPage.validateTitle( title );
 			await publishedPostPage.validateTextInPost( quote );
 		} );
 
 		it( 'Post metadata is found in published post', async function () {
-			await publishedPostPage.validateTextInPost( category );
-			await publishedPostPage.validateTextInPost( tag );
+			await publishedPostPage.validateCategory( category );
+			await publishedPostPage.validateTags( tag );
 		} );
 	} );
 } );

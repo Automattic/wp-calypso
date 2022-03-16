@@ -55,7 +55,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	it.each( PricingTableBlock.gutterValues )(
 		'Verify "%s" gutter button is present',
 		async ( value ) => {
-			const editorFrame = await editorPage.getEditorFrame();
+			const editorFrame = await editorPage.getEditorHandle();
 			await editorFrame.waitForSelector( `button[aria-label="${ value }"]` );
 		}
 	);

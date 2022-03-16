@@ -1,4 +1,4 @@
-import { Page, Frame, ElementHandle, Response, FrameLocator } from 'playwright';
+import { Page, Frame, ElementHandle, Response, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
@@ -14,7 +14,8 @@ import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from 
 
 const selectors = {
 	// iframe and editor
-	editorFrame: '.calypsoify.is-iframe iframe.is-loaded',
+	editorFrame: 'iframe.is-loaded',
+	editor: 'body.block-editor-page',
 	editorTitle: '.editor-post-title__input',
 
 	// Within the editor body.
@@ -26,14 +27,15 @@ const selectors = {
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 };
+const EXTENDED_TIMEOUT = 90 * 1000;
 
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
  */
 export class EditorPage {
 	private page: Page;
-	private requiresGutenframe: boolean;
-	private frameLocator: FrameLocator;
+	private editor: Locator;
+	private target: 'simple' | 'atomic';
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
@@ -44,47 +46,29 @@ export class EditorPage {
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Object} [options] options
-	 * @param {boolean} [options.requiresGutenframe=false] indicates that staying
-	 * on the Gutenframe is strictly required and if the editor is loaded from a WPAdmin
-	 * route or is booted to it, then an error will be thrown and the test will fail
-	 * because the iframe will not be found on the page. Defaults to `false`, which means
-	 * it will try to get the top frame if on WPadmin (non-wordpress.com URL) or if it
-	 * can't get hold of the Gutenframe (i.e it redirected because of an error). This
-	 * should allow the test to finally get hold of the editor even if the Gutenframe
-	 * can't be found.
+	 * @param param0 Keyed object parameter.
+	 * @param param0.target Target editor type. Defaults to 'simple'.
 	 */
-	constructor(
-		page: Page,
-		options: { requiresGutenframe: boolean } = {
-			requiresGutenframe: false,
+	constructor( page: Page, { target = 'simple' }: { target?: 'simple' | 'atomic' } = {} ) {
+		if ( target === 'atomic' ) {
+			// For Atomic editors, there is no iFrame - the editor is
+			// part of the page DOM and is thus accessible directly.
+			this.editor = page.locator( selectors.editor );
+		} else {
+			// For Simple editors, the editor is located within an iFrame
+			// and thus it must first be extracted.
+			this.editor = page.frameLocator( selectors.editorFrame ).locator( selectors.editor );
 		}
-	) {
-		const { requiresGutenframe } = options;
 
 		this.page = page;
-		this.requiresGutenframe = requiresGutenframe;
-		this.frameLocator = page.frameLocator( selectors.editorFrame );
-		this.editorPublishPanelComponent = new EditorPublishPanelComponent(
-			page,
-			page.frameLocator( selectors.editorFrame )
-		);
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent(
-			page,
-			page.frameLocator( selectors.editorFrame )
-		);
-		this.editorToolbarComponent = new EditorToolbarComponent(
-			page,
-			page.frameLocator( selectors.editorFrame )
-		);
-		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(
-			page,
-			page.frameLocator( selectors.editorFrame )
-		);
-		this.editorGutenbergComponent = new EditorGutenbergComponent(
-			page,
-			page.frameLocator( selectors.editorFrame )
-		);
+		this.target = target;
+
+		// Instantiate the subcomponent classes that build up the editor experience.
+		this.editorGutenbergComponent = new EditorGutenbergComponent( page, this.editor );
+		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
+		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
+		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
+		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
 	}
 
 	/* Generic methods */
@@ -107,19 +91,15 @@ export class EditorPage {
 	 *
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
-	async waitUntilLoaded(): Promise< Frame > {
-		const frame = await this.getEditorFrame();
-		// Traditionally we try to avoid waits not related to the current flow.
-		// However, we need a stable way to identify loading being done. NetworkIdle
-		// takes too long here, so the most reliable alternative is the title being
-		// visible.
-		const titleLocator = this.frameLocator.locator( selectors.editorTitle );
-		await titleLocator.waitFor();
+	async waitUntilLoaded(): Promise< void > {
 		// Once https://github.com/Automattic/wp-calypso/issues/57660 is resolved,
 		// the next line should be removed.
-		await this.forceDismissWelcomeTour();
+		const editor = await this.getEditorHandle();
 
-		return frame;
+		const titleLocator = editor.locator( selectors.editorTitle );
+		await titleLocator.waitFor( { timeout: EXTENDED_TIMEOUT } );
+
+		await this.forceDismissWelcomeTour();
 	}
 
 	/**
@@ -128,8 +108,12 @@ export class EditorPage {
 	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
 	 */
 	async forceDismissWelcomeTour(): Promise< void > {
-		const frame = await this.getEditorFrame();
+		// Welcome Tour is not observed on Atomic sites.
+		if ( this.target === 'atomic' ) {
+			return;
+		}
 
+		const frame = await this.getEditorHandle();
 		await frame.waitForFunction(
 			async () =>
 				await ( window as any ).wp.data
@@ -152,36 +136,20 @@ export class EditorPage {
 	 *
 	 * @returns {Promise<Frame>} frame holding the editor.
 	 */
-	async getEditorFrame(): Promise< Frame > {
-		if ( ! this.requiresGutenframe ) {
-			// If we're not in the Gutenframe context (i.e not Calypso), then
-			// just return the top frame, no need to try to locate the iframe.
-			if ( this.page.url().includes( '/wp-admin' ) ) {
-				return await this.page.mainFrame();
-			}
+	async getEditorHandle(): Promise< Frame | Page > {
+		// Return the page object as Atomic editor permits direct
+		// access.
+		if ( this.target === 'atomic' ) {
+			return this.page;
 		}
 
-		const locator = this.page.locator( selectors.editorFrame );
-
-		try {
-			const elementHandle = await locator.elementHandle( {
-				timeout: 105 * 1000,
-			} );
-
-			return ( await elementHandle!.contentFrame() ) as Frame;
-		} catch {
-			if ( this.requiresGutenframe ) {
-				throw new Error( 'Could not locate editor iframe' );
-			} else {
-				// The CalipsoifyIframe component will redirect to the plain WPAdmin page if
-				// there's an error or if the iframe takes too long to completely load. The
-				// goal here is to ge hold of the editor and not test any aspects related to
-				// the Gutenframe, so we return the `mainFrame` to allow the test to access
-				// the editor in the WPAdmin page.
-				console.info( 'Could not locate editor iframe. Returning the top-level frame instead' );
-				return this.page.mainFrame();
-			}
+		// Framed editors need to extract the Frame.
+		const calypsoEditorLocator = this.page.locator( selectors.editorFrame );
+		const elementHandle = await calypsoEditorLocator.elementHandle( { timeout: EXTENDED_TIMEOUT } );
+		if ( ! elementHandle ) {
+			throw new Error( 'Could not locate editor iFrame.' );
 		}
+		return ( await elementHandle?.contentFrame() ) as Frame;
 	}
 
 	/**
@@ -301,7 +269,7 @@ export class EditorPage {
 			type: 'pattern',
 		} );
 
-		const insertConfirmationToastLocator = this.frameLocator.locator(
+		const insertConfirmationToastLocator = this.editor.locator(
 			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
 		);
 		await insertConfirmationToastLocator.waitFor();
@@ -483,7 +451,7 @@ export class EditorPage {
 	async unpublish(): Promise< void > {
 		await this.editorToolbarComponent.switchToDraft();
 
-		const frame = await this.getEditorFrame();
+		const frame = await this.getEditorHandle();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 		await frame.click( `div[role="dialog"] button:has-text("OK")` );
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
@@ -502,7 +470,7 @@ export class EditorPage {
 	 * @returns {URL} Published article's URL.
 	 */
 	async getPublishedURLFromToast(): Promise< URL > {
-		const frame = await this.getEditorFrame();
+		const frame = await this.getEditorHandle();
 
 		const toastLocator = frame.locator( selectors.toastViewPostLink );
 		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;

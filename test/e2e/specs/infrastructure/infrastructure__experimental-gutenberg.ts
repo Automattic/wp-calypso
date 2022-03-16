@@ -36,7 +36,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 	] )(
 		'Experimental package %s and feature %s are available',
 		async function ( packageName, feature, featureType ) {
-			const frame = await editorPage.getEditorFrame();
+			const frame = await editorPage.getEditorHandle();
 			const packageAvailable = await frame.evaluate( `typeof window[ "wp" ]["${ packageName }"]` );
 
 			expect( packageAvailable ).not.toStrictEqual( 'undefined' );
@@ -53,7 +53,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 	);
 
 	it( 'Experimental data is available', async function () {
-		const frame = await editorPage.getEditorFrame();
+		const frame = await editorPage.getEditorHandle();
 		const blockPatterns = await frame.evaluate(
 			`Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
 		);
@@ -73,7 +73,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 		// patterns will be added than removed. This also means if we see a dramatic
 		// change in the number to the lower end, then something is probably wrong.
 		const expectedBlockPatternCount = 50;
-		const frame = await editorPage.getEditorFrame();
+		const frame = await editorPage.getEditorHandle();
 		const actualBlockPatternCount = await frame.evaluate(
 			`window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns.length`
 		);

@@ -57,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 		await coverBlock.upload( imageFile.fullpath );
 		// After uploading the image the focus is switched to the inner
 		// paragraph block (Cover title), so we need to switch it back outside.
-		const editorFrame = await editorPage.getEditorFrame();
+		const editorFrame = await editorPage.getEditorHandle();
 		await editorFrame.click( '.wp-block-cover', { position: { x: 1, y: 1 } } );
 	} );
 
@@ -66,7 +66,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 	} );
 
 	it.each( CoverBlock.coverStyles )( 'Verify "%s" style is available', async ( style ) => {
-		const editorFrame = await editorPage.getEditorFrame();
+		const editorFrame = await editorPage.getEditorHandle();
 		await editorFrame.waitForSelector( `button[aria-label="${ style }"]` );
 	} );
 

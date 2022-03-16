@@ -1,4 +1,4 @@
-import { Page, FrameLocator } from 'playwright';
+import { Page, Locator } from 'playwright';
 
 export type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 
@@ -31,22 +31,21 @@ const selectors = {
 };
 
 /**
- * Represents an instance of the WordPress.com Editor's navigation sidebar.
- * The component is available only in the Desktop viewport.
+ * Represents an instance of the WordPress.com Editor's persistent toolbar.
  */
 export class EditorToolbarComponent {
 	private page: Page;
-	private frameLocator: FrameLocator;
+	private editor: Locator;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {FrameLocator} frameLocator Locator of the editor iframe.
+	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, frameLocator: FrameLocator ) {
+	constructor( page: Page, editor: Locator ) {
 		this.page = page;
-		this.frameLocator = frameLocator;
+		this.editor = editor;
 	}
 
 	/* General helper */
@@ -62,7 +61,7 @@ export class EditorToolbarComponent {
 	 * @returns {Promise<boolean>} True if target is in an expanded state. False otherwise.
 	 */
 	private async targetIsOpen( selector: string ): Promise< boolean > {
-		const locator = this.frameLocator.locator( selector );
+		const locator = this.editor.locator( selector );
 		const pressed = await locator.getAttribute( 'aria-pressed' );
 		const expanded = await locator.getAttribute( 'aria-expanded' );
 		return pressed === 'true' || expanded === 'true';
@@ -75,7 +74,7 @@ export class EditorToolbarComponent {
 	 */
 	async openBlockInserter(): Promise< void > {
 		if ( ! ( await this.targetIsOpen( selectors.blockInserterButton ) ) ) {
-			const locator = this.frameLocator.locator( selectors.blockInserterButton );
+			const locator = this.editor.locator( selectors.blockInserterButton );
 			await locator.click();
 		}
 	}
@@ -85,7 +84,7 @@ export class EditorToolbarComponent {
 	 */
 	async closeBlockInserter(): Promise< void > {
 		if ( await this.targetIsOpen( selectors.blockInserterButton ) ) {
-			const locator = this.frameLocator.locator( selectors.blockInserterButton );
+			const locator = this.editor.locator( selectors.blockInserterButton );
 			await locator.click();
 		}
 	}
@@ -98,7 +97,7 @@ export class EditorToolbarComponent {
 	 * If the button cannot be clicked, the method short-circuits.
 	 */
 	async saveDraft(): Promise< void > {
-		const saveButtonLocator = this.frameLocator.locator( selectors.saveDraftButton( 'enabled' ) );
+		const saveButtonLocator = this.editor.locator( selectors.saveDraftButton( 'enabled' ) );
 
 		try {
 			await saveButtonLocator.waitFor( { timeout: 5 * 1000 } );
@@ -109,7 +108,7 @@ export class EditorToolbarComponent {
 		await saveButtonLocator.click();
 
 		// Ensure the Save Draft button is disabled after successful save.
-		const savedButtonLocator = this.frameLocator.locator( selectors.saveDraftButton( 'disabled' ) );
+		const savedButtonLocator = this.editor.locator( selectors.saveDraftButton( 'disabled' ) );
 		await savedButtonLocator.waitFor();
 	}
 
@@ -121,7 +120,7 @@ export class EditorToolbarComponent {
 	 * @returns {Page} Handler for the new page object.
 	 */
 	async openMobilePreview(): Promise< Page > {
-		const mobilePreviewButtonLocator = this.frameLocator.locator( selectors.previewButton );
+		const mobilePreviewButtonLocator = this.editor.locator( selectors.previewButton );
 
 		const [ popup ] = await Promise.all( [
 			this.page.waitForEvent( 'popup' ),
@@ -139,13 +138,13 @@ export class EditorToolbarComponent {
 		await this.openDesktopPreviewMenu();
 
 		// Locate and click on the intended preview target.
-		const desktopPreviewMenuItemLocator = this.frameLocator.locator(
+		const desktopPreviewMenuItemLocator = this.editor.locator(
 			selectors.desktopPreviewMenuItem( target )
 		);
 		await desktopPreviewMenuItemLocator.click();
 
 		// Verify the editor panel is resized and stable.
-		const desktopPreviewPaneLocator = this.frameLocator.locator( selectors.previewPane( target ) );
+		const desktopPreviewPaneLocator = this.editor.locator( selectors.previewPane( target ) );
 		await desktopPreviewPaneLocator.waitFor();
 		const elementHandle = await desktopPreviewPaneLocator.elementHandle();
 		await elementHandle?.waitForElementState( 'stable' );
@@ -159,7 +158,7 @@ export class EditorToolbarComponent {
 	 */
 	async openDesktopPreviewMenu(): Promise< void > {
 		if ( ! ( await this.targetIsOpen( selectors.previewButton ) ) ) {
-			const desktopPreviewButtonLocator = this.frameLocator.locator( selectors.previewButton );
+			const desktopPreviewButtonLocator = this.editor.locator( selectors.previewButton );
 			await desktopPreviewButtonLocator.click();
 		}
 	}
@@ -169,7 +168,7 @@ export class EditorToolbarComponent {
 	 */
 	async closeDesktopPreviewMenu(): Promise< void > {
 		if ( await this.targetIsOpen( selectors.previewButton ) ) {
-			const desktopPreviewButtonLocator = this.frameLocator.locator( selectors.previewButton );
+			const desktopPreviewButtonLocator = this.editor.locator( selectors.previewButton );
 			await desktopPreviewButtonLocator.click();
 		}
 	}
@@ -185,7 +184,7 @@ export class EditorToolbarComponent {
 	 * 	- schedule a post (Schedule)
 	 */
 	async clickPublish(): Promise< void > {
-		const publishButtonLocator = this.frameLocator.locator( selectors.publishButton( 'enabled' ) );
+		const publishButtonLocator = this.editor.locator( selectors.publishButton( 'enabled' ) );
 		await publishButtonLocator.click();
 	}
 
@@ -194,7 +193,7 @@ export class EditorToolbarComponent {
 	 * the article.
 	 */
 	async switchToDraft(): Promise< void > {
-		const swithcToDraftLocator = this.frameLocator.locator( selectors.switchToDraftButton );
+		const swithcToDraftLocator = this.editor.locator( selectors.switchToDraftButton );
 		await swithcToDraftLocator.click();
 	}
 
@@ -207,7 +206,7 @@ export class EditorToolbarComponent {
 		if ( await this.targetIsOpen( selectors.settingsButton ) ) {
 			return;
 		}
-		const locator = this.frameLocator.locator( selectors.settingsButton );
+		const locator = this.editor.locator( selectors.settingsButton );
 		await locator.click();
 	}
 
@@ -218,7 +217,7 @@ export class EditorToolbarComponent {
 		if ( ! ( await this.targetIsOpen( selectors.settingsButton ) ) ) {
 			return;
 		}
-		const locator = this.frameLocator.locator( selectors.settingsButton );
+		const locator = this.editor.locator( selectors.settingsButton );
 		await locator.click();
 	}
 }

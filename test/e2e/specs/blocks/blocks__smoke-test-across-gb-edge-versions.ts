@@ -41,15 +41,14 @@ describe.each`
 			} ) }/${ testPostId }`;
 
 			await page.goto( postURL );
-
-			editorPage = new EditorPage( page );
 		} );
 
 		// Both block invalidation and crash messages are wrapped by the same `Warning`
 		// component in Gutenberg. If we find at least one warning, then we fail the test.
 		skipItIf( ! envVariables.GUTENBERG_EDGE )(
-			`Block warnings are not obeserved for ${ siteType }`,
+			`Block warnings are not obeserved for ${ siteType } editor`,
 			async () => {
+				editorPage = new EditorPage( page, { target: siteType.toLowerCase() } );
 				await editorPage.waitUntilLoaded();
 
 				expect( await editorPage.editorHasBlockWarnings() ).toBe( false );
