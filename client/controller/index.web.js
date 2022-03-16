@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import page from 'page';
+import { StrictMode } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
@@ -46,19 +47,21 @@ export const ProviderWrappedLayout = ( {
 	);
 
 	return (
-		<CalypsoI18nProvider>
-			<RouteProvider
-				currentSection={ currentSection }
-				currentRoute={ currentRoute }
-				currentQuery={ currentQuery }
-			>
-				<QueryClientProvider client={ queryClient }>
-					<ReduxProvider store={ store }>
-						<MomentProvider>{ layout }</MomentProvider>
-					</ReduxProvider>
-				</QueryClientProvider>
-			</RouteProvider>
-		</CalypsoI18nProvider>
+		<StrictMode>
+			<CalypsoI18nProvider>
+				<RouteProvider
+					currentSection={ currentSection }
+					currentRoute={ currentRoute }
+					currentQuery={ currentQuery }
+				>
+					<QueryClientProvider client={ queryClient }>
+						<ReduxProvider store={ store }>
+							<MomentProvider>{ layout }</MomentProvider>
+						</ReduxProvider>
+					</QueryClientProvider>
+				</RouteProvider>
+			</CalypsoI18nProvider>
+		</StrictMode>
 	);
 };
 
