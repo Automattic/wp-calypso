@@ -83,11 +83,13 @@ const AdditionalPriceInformation = ( {
 
 type GoogleWorkspacePriceProps = {
 	domain: SiteDomain | undefined;
+	hasCartDomain?: boolean;
 	intervalLength: IntervalLength;
 };
 
 const GoogleWorkspacePrice = ( {
 	domain,
+	hasCartDomain = false,
 	intervalLength,
 }: GoogleWorkspacePriceProps ): ReactElement => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
@@ -97,11 +99,8 @@ const GoogleWorkspacePrice = ( {
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 
-	if ( ! domain ) {
-		return <></>;
-	}
-
-	const isGSuiteSupported = canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] );
+	const isGSuiteSupported =
+		hasCartDomain || ( canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] ) );
 
 	if ( ! isGSuiteSupported ) {
 		return (

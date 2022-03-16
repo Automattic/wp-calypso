@@ -107,17 +107,22 @@ const GoogleWorkspaceCard = ( {
 	const [ googleUsers, setGoogleUsers ] = useState( newUsers( selectedDomainName ) );
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
-	const isGSuiteSupported = canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] );
+	const hasCartDomain = Boolean( cartDomainName );
+
+	const isGSuiteSupported =
+		hasCartDomain || ( canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] ) );
 	const isGSuiteAvailable = intervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
 
 	const googleWorkspace: ProviderCardProps = { ...googleWorkspaceCardInformation };
 	googleWorkspace.detailsExpanded = isGSuiteAvailable && detailsExpanded;
 	googleWorkspace.showExpandButton = isGSuiteAvailable;
 	googleWorkspace.priceBadge = (
-		<GoogleWorkspacePrice domain={ domain } intervalLength={ intervalLength } />
+		<GoogleWorkspacePrice
+			domain={ domain }
+			hasCartDomain={ hasCartDomain }
+			intervalLength={ intervalLength }
+		/>
 	);
-
-	const hasCartDomain = Boolean( cartDomainName );
 
 	const onGoogleConfirmNewMailboxes = () => {
 		const usersAreValid = areAllUsersValid( googleUsers );

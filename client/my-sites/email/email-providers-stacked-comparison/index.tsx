@@ -30,6 +30,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 export type EmailProvidersStackedComparisonProps = {
+	cartDomainName?: string;
 	comparisonContext: string;
 	selectedDomainName: string;
 	selectedEmailProviderSlug?: string;
@@ -38,6 +39,7 @@ export type EmailProvidersStackedComparisonProps = {
 };
 
 const EmailProvidersStackedComparison = ( {
+	cartDomainName,
 	comparisonContext,
 	selectedDomainName,
 	selectedEmailProviderSlug,
@@ -71,10 +73,6 @@ const EmailProvidersStackedComparison = ( {
 		selectedDomainName: selectedDomainName,
 	} );
 	const domainsWithForwards = useSelector( ( state ) => getDomainsWithForwards( state, domains ) );
-
-	if ( ! domain ) {
-		return null;
-	}
 
 	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
@@ -131,15 +129,16 @@ const EmailProvidersStackedComparison = ( {
 		);
 	};
 
-	const hasExistingEmailForwards = hasEmailForwards( domain );
+	const hasCartDomain = Boolean( cartDomainName );
+	const hasExistingEmailForwards = ! hasCartDomain && hasEmailForwards( domain );
 
 	return (
 		<Main wideLayout>
 			<QueryProductsList />
 
-			<QueryEmailForwards domainName={ selectedDomainName } />
+			{ ! hasCartDomain && <QueryEmailForwards domainName={ selectedDomainName } /> }
 
-			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
+			{ ! hasCartDomain && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 			<h1 className="email-providers-stacked-comparison__header">
 				{ translate( 'Pick an email solution' ) }
@@ -171,16 +170,17 @@ const EmailProvidersStackedComparison = ( {
 				onIntervalChange={ changeIntervalLength }
 			/>
 
-			{ hasExistingEmailForwards && domainsWithForwards !== undefined && (
+			{ ! hasCartDomain && hasExistingEmailForwards && domainsWithForwards !== undefined && (
 				<EmailExistingForwardsNotice
 					domainsWithForwards={ domainsWithForwards }
 					selectedDomainName={ selectedDomainName }
 				/>
 			) }
 
-			<EmailExistingPaidServiceNotice domain={ domain } />
+			{ ! hasCartDomain && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<ProfessionalEmailCard
+				cartDomainName={ cartDomainName }
 				comparisonContext={ comparisonContext }
 				detailsExpanded={ detailsExpanded.titan }
 				intervalLength={ selectedIntervalLength }
@@ -190,6 +190,7 @@ const EmailProvidersStackedComparison = ( {
 			/>
 
 			<GoogleWorkspaceCard
+				cartDomainName={ cartDomainName }
 				comparisonContext={ comparisonContext }
 				detailsExpanded={ detailsExpanded.google }
 				intervalLength={ selectedIntervalLength }
@@ -198,7 +199,7 @@ const EmailProvidersStackedComparison = ( {
 				source={ source }
 			/>
 
-			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
+			{ ! hasCartDomain && <EmailForwardingLink selectedDomainName={ selectedDomainName } /> }
 
 			<TrackComponentView
 				eventName="calypso_email_providers_comparison_page_view"
