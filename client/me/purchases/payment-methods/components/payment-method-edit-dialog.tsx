@@ -39,15 +39,8 @@ const PaymentMethodEditDialog: FunctionComponent< Props > = ( {
 			] }
 		>
 			<CardHeading tagName="h2" size={ 24 }>
-				{ translate( 'Update Your Payment Method' ) }
+				<strong>{ paymentMethodSummary }</strong>
 			</CardHeading>
-			<p>
-				{ translate( 'Please update the following information for {{paymentMethodSummary/}}', {
-					components: {
-						paymentMethodSummary: <strong>{ paymentMethodSummary }</strong>,
-					},
-				} ) }
-			</p>
 			{ error && <Notice status="is-error" isCompact={ true } text={ error } /> }
 			{ form }
 		</Dialog>
