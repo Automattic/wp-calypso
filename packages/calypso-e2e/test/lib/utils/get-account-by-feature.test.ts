@@ -101,7 +101,7 @@ describe( 'getTestAccountByFeature', function () {
 			{
 				gutenberg: 'edge',
 				siteType: 'simple',
-				variation: 'siteEditor',
+				variant: 'siteEditor',
 				accountName: 'siteEditorEdgeAccount',
 			},
 		];
@@ -109,7 +109,7 @@ describe( 'getTestAccountByFeature', function () {
 			{
 				siteType: 'simple',
 				gutenberg: 'edge',
-				variation: 'siteEditor',
+				variant: 'siteEditor',
 			},
 			customCriteria
 		);
