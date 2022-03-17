@@ -47,6 +47,8 @@ const babelScript = path.resolve( babelLocation.split( '@babel' )[ 0 ], '.bin', 
 // in calypso-build's dependencies.
 const baseCommand = `${ babelScript } --presets="${ babelPresetFile }" --ignore "${ testIgnorePattern }" --extensions='.js,.jsx,.ts,.tsx'`;
 
+console.log( 'Building %s', dir );
+
 if ( transpileAll || transpileESM ) {
 	execSync( `${ baseCommand } -d "${ outputDirESM }" "${ inputDir }"` );
 }
