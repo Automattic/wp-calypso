@@ -29,7 +29,7 @@ const DesktopContent = styled.div`
 
 const MobileContent = styled.div`
 	display: none;
-	font-weight: 500;
+	font-weight: 400;
 
 	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
 		.is-section-signup & {
