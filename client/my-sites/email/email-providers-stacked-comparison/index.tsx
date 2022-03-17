@@ -130,6 +130,11 @@ const EmailProvidersStackedComparison = ( {
 	};
 
 	const hasCartDomain = Boolean( cartDomainName );
+
+	if ( ! domain && ! hasCartDomain ) {
+		return null;
+	}
+
 	const hasExistingEmailForwards = ! hasCartDomain && hasEmailForwards( domain );
 
 	return (
