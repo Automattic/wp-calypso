@@ -84,6 +84,8 @@ const defaultCriteria: FeatureCriteria[] = [
 	},
 ];
 
+const defaultAccountsTable = criteriaToMap( defaultCriteria, new Map() );
+
 /**
  * Return a WPCOM account name that can be passed over to build a `TestAccount`
  * instance for a test. The account name returned will depend on the attributes
@@ -94,17 +96,25 @@ const defaultCriteria: FeatureCriteria[] = [
  * @param {FeatureKey} feature represents a certain feature that has an account
  * associated with in the criteria table. It will be used as a key to get the
  * right account name.
- * @param {FeatureCriteria[]} criteria Can be used to pass a custom table that will be merged into the
- * default table. Useful to do one-off criteria->account overrides for specific
- * tests.
+ * @param {FeatureCriteria[]} mergeAndOverride Can be used to pass a custom table that will
+ * be merged into the default one. Useful to do one-off criteria->account overrides for
+ * specifis tests inline. The entries passed here will replace any matched (by key) entries
+ * in the default table.
  * @returns {string} the account name that can be used to build a new `TestAccount` instance.
  */
-export function getTestAccountByFeature( feature: FeatureKey, criteria?: FeatureCriteria[] ) {
-	let accountsTable = criteriaToMap( defaultCriteria, new Map() );
-
-	if ( criteria ) {
-		accountsTable = criteriaToMap( criteria, accountsTable );
-	}
+export function getTestAccountByFeature(
+	feature: FeatureKey,
+	mergeAndOverride?: FeatureCriteria[]
+) {
+	// If no criteria is passed in the `mergeAndOverride` param, then we just fallback
+	// to the `defaultAccountsTable`, which should be read-only and never modified (otherwise
+	// it could affect the return value of other calls). However, if a `mergeAndOverride`
+	// argument is present, then we need to "merge" with the internal table, for that we
+	// create an emphemerous table based on the `defaultCriteria`, so that the one in this
+	// module is never modified.
+	const accountsTable = mergeAndOverride
+		? criteriaToMap( mergeAndOverride, criteriaToMap( defaultCriteria, new Map() ) )
+		: defaultAccountsTable;
 
 	const accountName = accountsTable.get( stringifyKey( feature ) );
 
