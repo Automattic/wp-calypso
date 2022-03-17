@@ -1,4 +1,4 @@
-import { isFreePlanProduct, isFlexiblePlanProduct } from '@automattic/calypso-products';
+import { isFreePlanProduct, isFlexiblePlanProduct, isPro } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -39,7 +39,7 @@ class PlansNavigation extends Component {
 	}
 
 	render() {
-		const { site, shouldShowMyPlan, shouldShowPlans, translate, eligibleForProPlan } = this.props;
+		const { site, shouldShowMyPlan, shouldShowPlans, translate, isFreeOrFlexible } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = isMobile() && site;
@@ -63,7 +63,7 @@ class PlansNavigation extends Component {
 									path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
 								}
 							>
-								{ eligibleForProPlan ? translate( 'New Plans' ) : translate( 'Plans' ) }
+								{ isFreeOrFlexible ? translate( 'New Plans' ) : translate( 'Plans' ) }
 							</NavItem>
 						) }
 					</NavTabs>
@@ -83,12 +83,12 @@ export default connect( ( state ) => {
 	const currentPlan = getCurrentPlan( state, siteId );
 	let shouldShowMyPlan = ! isOnFreePlan || ( isJetpack && ! isAtomic );
 	let shouldShowPlans = true;
+	let isFreeOrFlexible = false;
 
 	if ( eligibleForProPlan && currentPlan ) {
-		const isFreeOrFlexible =
-			isFreePlanProduct( currentPlan ) || isFlexiblePlanProduct( currentPlan );
+		isFreeOrFlexible = isFreePlanProduct( currentPlan ) || isFlexiblePlanProduct( currentPlan );
 		shouldShowMyPlan = isFreeOrFlexible ? false : true;
-		shouldShowPlans = isFreeOrFlexible ? true : false;
+		shouldShowPlans = isFreeOrFlexible || ! isPro( currentPlan ) ? true : false;
 	}
 	return {
 		isJetpack,
@@ -96,5 +96,6 @@ export default connect( ( state ) => {
 		shouldShowPlans,
 		site,
 		eligibleForProPlan,
+		isFreeOrFlexible,
 	};
 } )( localize( PlansNavigation ) );
