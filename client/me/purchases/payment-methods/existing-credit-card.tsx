@@ -355,12 +355,11 @@ function ExistingCardPayButton( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
-	const { data: taxInfoFromServer } = useQuery<
-		{ tax_postal_code: string; tax_country_code: string; is_tax_info_set: boolean },
-		Error
-	>( [ 'tax-info-is-set', storedDetailsId ], () => fetchTaxInfo( storedDetailsId ), {} );
+	const { data: taxInfoFromServer } = useQuery< TaxGetInfo, Error >(
+		[ 'tax-info-is-set', storedDetailsId ],
+		() => fetchTaxInfo( storedDetailsId )
+	);
 
-	const isTaxInfoSet = taxInfoFromServer?.is_tax_info_set;
 	const dispatch = useDispatch();
 
 	// This must be typed as optional because it's injected by cloning the
@@ -377,11 +376,17 @@ function ExistingCardPayButton( {
 			disabled={ disabled }
 			onClick={ () => {
 				debug( 'submitting existing card payment' );
-				if ( ! isTaxInfoSet ) {
+				if ( ! taxInfoFromServer?.is_tax_info_set ) {
+					const description = ! taxInfoFromServer?.tax_country_code
+						? translate( 'Country', { textOnly: true } )
+						: translate( 'Postal code', { textOnly: true } );
 					dispatch(
-						errorNotice( translate( 'Please update the missing billing information.' ), {
-							duration: 5000,
-						} )
+						errorNotice(
+							translate( 'Missing required %(description)s field', { args: { description } } ),
+							{
+								duration: 5000,
+							}
+						)
 					);
 				} else {
 					onClick( 'existing-card', {
