@@ -25,7 +25,7 @@ interface CurrentOptionProps {
 const CurrentOption = styled.button< CurrentOptionProps >`
 	align-items: center;
 	background: white;
-	border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 	border-radius: 3px;
 	display: flex;
 	flex-direction: row;
@@ -52,7 +52,7 @@ interface OptionProps {
 const Option = styled.li< OptionProps >`
 	align-items: center;
 	background: white;
-	border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
