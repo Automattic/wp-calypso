@@ -57,6 +57,7 @@ const Option = styled.li< OptionProps >`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+	/* the calc aligns the price with the price in CurrentOption */
 	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
 	cursor: pointer;
 
@@ -214,7 +215,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				) : (
 					<span>{ translate( 'Pick a product term' ) }</span>
 				) }
-				<Gridicon icon={ open ? 'chevron-down' : 'chevron-up' } />
+				<Gridicon icon={ open ? 'chevron-up' : 'chevron-down' } />
 			</CurrentOption>
 			{ open && (
 				<OptionList role="listbox" tabIndex={ -1 }>
