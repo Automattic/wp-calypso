@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { translate, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import * as React from 'react';
 import Badge from 'calypso/components/badge';
@@ -27,7 +27,10 @@ const formatDate = ( date: Date ) => {
 	return moment( date ).format( 'LL' );
 };
 
-const getThreatSubTitleFromFamily = ( threat: Threat ) => {
+const getThreatSubTitleFromFamily = (
+	translate: ReturnType< typeof useTranslate >,
+	threat: Threat
+) => {
 	const family = getThreatFamily( threat );
 	switch ( family ) {
 		case 'backdoor':
@@ -118,7 +121,7 @@ const getThreatStatusMessage = ( translate: ReturnType< typeof useTranslate >, t
 const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
 	const translate = useTranslate();
 	if ( threat.status === 'current' ) {
-		const threatSubTitleFromFamily = getThreatSubTitleFromFamily( threat );
+		const threatSubTitleFromFamily = getThreatSubTitleFromFamily( translate, threat );
 		if ( threatSubTitleFromFamily ) {
 			return <>{ threatSubTitleFromFamily }</>;
 		}
