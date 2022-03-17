@@ -60,6 +60,7 @@ export const FEATURE_NO_BRANDING = 'no-wp-branding';
 export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 export const FEATURE_INSTALL_PLUGINS = 'install-plugins';
+export const FEATURE_INSTALL_THEMES = 'install-themes';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
 export const FEATURE_PERFORMANCE = 'performance';
 export const FEATURE_REPUBLICIZE = 'republicize';
