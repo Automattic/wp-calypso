@@ -229,7 +229,7 @@ const ComparisonTable = styled.table< TableProps >`
 	border-collapse: collapse;
 
 	.is-section-plans & {
-		max-width: 950px;
+		max-width: 980px;
 		html[dir='ltr'] & {
 			margin-left: auto;
 		}
