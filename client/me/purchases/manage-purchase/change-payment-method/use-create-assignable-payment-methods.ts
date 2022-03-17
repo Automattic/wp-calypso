@@ -50,6 +50,7 @@ export default function useCreateAssignablePaymentMethods(
 		stripeLoadingError,
 		storedCards,
 		activePayButtonText: String( translate( 'Use this card' ) ),
+		allowEditingTaxInfo: true,
 	} );
 
 	const paymentMethods = useMemo(

@@ -74,6 +74,7 @@ export function createExistingCardMethod( {
 	paymentMethodToken,
 	paymentPartnerProcessorId,
 	activePayButtonText = undefined,
+	allowEditingTaxInfo,
 }: {
 	id: string;
 	cardholderName: string;
@@ -84,6 +85,7 @@ export function createExistingCardMethod( {
 	paymentMethodToken: string;
 	paymentPartnerProcessorId: string;
 	activePayButtonText: string | undefined;
+	allowEditingTaxInfo?: boolean;
 } ): PaymentMethod {
 	debug( 'creating a new existing credit card payment method', {
 		id,
@@ -103,6 +105,7 @@ export function createExistingCardMethod( {
 				cardholderName={ cardholderName }
 				brand={ brand }
 				paymentPartnerProcessorId={ paymentPartnerProcessorId }
+				allowEditingTaxInfo={ !! allowEditingTaxInfo }
 			/>
 		),
 		submitButton: (
@@ -157,6 +160,7 @@ function ExistingCardLabel( {
 	brand,
 	storedDetailsId,
 	paymentPartnerProcessorId,
+	allowEditingTaxInfo,
 }: {
 	last4: string;
 	cardExpiry: string;
@@ -164,6 +168,7 @@ function ExistingCardLabel( {
 	brand: string;
 	storedDetailsId: string;
 	paymentPartnerProcessorId: string;
+	allowEditingTaxInfo: boolean;
 } ): JSX.Element {
 	const { __, _x } = useI18n();
 
@@ -279,7 +284,11 @@ function ExistingCardLabel( {
 				<CardDetails>{ maskedCardDetails }</CardDetails>
 				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 				{ ! isLoadingTaxInfo && (
-					<TaxInfoArea taxInfoFromServer={ taxInfoFromServer } openDialog={ openDialog } />
+					<TaxInfoArea
+						taxInfoFromServer={ taxInfoFromServer }
+						openDialog={ openDialog }
+						allowEditing={ allowEditingTaxInfo }
+					/>
 				) }
 			</div>
 			<div className="existing-credit-card__logo payment-logos">
@@ -303,9 +312,11 @@ function ExistingCardLabel( {
 function TaxInfoArea( {
 	taxInfoFromServer,
 	openDialog,
+	allowEditing,
 }: {
 	taxInfoFromServer: TaxInfo | undefined;
 	openDialog: () => void;
+	allowEditing: boolean;
 } ) {
 	const { __ } = useI18n();
 	const taxInfoDisplay = joinNonEmptyValues(
@@ -321,6 +332,9 @@ function TaxInfoArea( {
 				<span className="existing-credit-card__tax-info-postal-country">{ taxInfoDisplay }</span>
 			</span>
 		);
+	}
+	if ( ! allowEditing ) {
+		return null;
 	}
 	return (
 		<span className="existing-credit-card__tax-info-display tax-info-incomplete">
