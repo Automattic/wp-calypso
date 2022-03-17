@@ -82,6 +82,16 @@ const defaultCriteria: FeatureCriteria[] = [
 		variant: 'siteEditor',
 		accountName: 'siteEditorSimpleSiteEdgeUser',
 	},
+	{
+		gutenberg: 'stable',
+		siteType: 'atomic',
+		accountName: 'gutenbergAtomicSiteUser',
+	},
+	{
+		gutenberg: 'edge',
+		siteType: 'atomic',
+		accountName: 'gutenbergAtomicSiteEdgeUser',
+	},
 ];
 
 const defaultAccountsTable = criteriaToMap( defaultCriteria, new Map() );
