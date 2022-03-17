@@ -313,6 +313,7 @@ function TaxInfoArea( {
 		taxInfoFromServer?.tax_postal_code,
 		taxInfoFromServer?.tax_country_code
 	);
+	const { formStatus } = useFormStatus();
 
 	if ( taxInfoDisplay ) {
 		return (
@@ -329,6 +330,7 @@ function TaxInfoArea( {
 				scary={ true }
 				borderless={ false }
 				icon={ <Gridicon icon="notice" /> }
+				disabled={ formStatus !== FormStatus.READY }
 			/>
 		</span>
 	);

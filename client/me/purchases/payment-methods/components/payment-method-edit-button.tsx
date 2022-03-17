@@ -7,6 +7,7 @@ interface Props {
 	scary: boolean;
 	borderless: boolean;
 	icon?: ReactNode;
+	disabled?: boolean;
 }
 
 const PaymentMethodEditButton: FunctionComponent< Props > = ( {
@@ -15,6 +16,7 @@ const PaymentMethodEditButton: FunctionComponent< Props > = ( {
 	scary,
 	borderless,
 	icon,
+	disabled,
 } ) => {
 	return (
 		<Button
@@ -23,6 +25,7 @@ const PaymentMethodEditButton: FunctionComponent< Props > = ( {
 			scary={ scary }
 			className="payment-method-edit-button"
 			onClick={ onClick }
+			disabled={ disabled }
 		>
 			{ icon }
 			{ buttonTextContent }
