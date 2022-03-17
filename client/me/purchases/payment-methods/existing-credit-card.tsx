@@ -314,11 +314,11 @@ function TaxInfoArea( {
 	openDialog,
 	allowEditing,
 }: {
-	taxInfoFromServer: TaxInfo | undefined;
+	taxInfoFromServer: TaxGetInfo | undefined;
 	openDialog: () => void;
 	allowEditing: boolean;
 } ) {
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const taxInfoDisplay = joinNonEmptyValues(
 		', ',
 		taxInfoFromServer?.tax_postal_code,
@@ -340,7 +340,10 @@ function TaxInfoArea( {
 		<span className="existing-credit-card__tax-info-display tax-info-incomplete">
 			<PaymentMethodEditButton
 				onClick={ openDialog }
-				buttonTextContent={ __( 'Missing Billing Information' ) }
+				buttonTextContent={ getMissingTaxLocationInformationMessage(
+					translate,
+					taxInfoFromServer
+				) }
 				scary={ true }
 				borderless={ false }
 				icon={ <Gridicon icon="notice" /> }
@@ -348,6 +351,19 @@ function TaxInfoArea( {
 			/>
 		</span>
 	);
+}
+
+function getMissingTaxLocationInformationMessage(
+	translate: ReturnType< typeof useTranslate >,
+	taxInfoFromServer: TaxGetInfo | undefined
+): string {
+	const description = ! taxInfoFromServer?.tax_country_code
+		? translate( 'Country', { textOnly: true } )
+		: translate( 'Postal code', { textOnly: true } );
+	return translate( 'Missing required %(description)s field', {
+		args: { description },
+		textOnly: true,
+	} );
 }
 
 function ExistingCardPayButton( {
@@ -393,16 +409,8 @@ function ExistingCardPayButton( {
 			onClick={ () => {
 				debug( 'submitting existing card payment' );
 				if ( ! taxInfoFromServer?.is_tax_info_set ) {
-					const description = ! taxInfoFromServer?.tax_country_code
-						? translate( 'Country', { textOnly: true } )
-						: translate( 'Postal code', { textOnly: true } );
 					dispatch(
-						errorNotice(
-							translate( 'Missing required %(description)s field', { args: { description } } ),
-							{
-								duration: 5000,
-							}
-						)
+						errorNotice( getMissingTaxLocationInformationMessage( translate, taxInfoFromServer ) )
 					);
 				} else {
 					onClick( 'existing-card', {
