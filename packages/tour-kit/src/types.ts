@@ -70,6 +70,7 @@ export interface Options {
 		overlay?: boolean;
 	};
 	popperModifiers?: PopperModifier[];
+	portalElementId?: string;
 }
 
 export interface Config {

@@ -167,5 +167,6 @@ The main API for configuring a tour is the config object. See example usage and 
   - `useTourRating`: (optional) A hook to provide the rating from an external source/state (see [types.ts](./src/types.ts)).
   - `onTourRate`: (optional) A callback to fire off when a rating is submitted.
 
+- `portalElementId`: A string that lets you customize under which DOM element the Tour will be appended.
 
 

@@ -41,3 +41,12 @@ $welcome-tour-card-media-extra-padding: 14%; // temporary value, to match the pa
 		}
 	}
 }
+
+// Overriding an existing core WP rule, because the ID selector is necessary
+// stylelint-disable-next-line selector-max-id
+#wpwrap.wp-responsive-open {
+	
+	.tour-kit.wpcom-tour-kit {
+		display: none;
+	}
+}
