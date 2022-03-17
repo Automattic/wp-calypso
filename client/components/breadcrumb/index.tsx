@@ -2,6 +2,7 @@ import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { Key } from 'react';
+import InfoPopover from 'calypso/components/info-popover';
 
 const flexAligned = {
 	display: 'flex',
@@ -28,6 +29,7 @@ const StyledLi = styled.li`
 
 const StyledBackLink = styled.a`
 	${ flexAligned };
+	font-size: 13px;
 	color: var( --studio-gray-80 ) !important; // It uses --studio-gray-50 if not using important
 	> svg {
 		margin-right: 5px;
@@ -41,18 +43,58 @@ const StyledRootLabel = styled.span`
 	color: var( --studio-gray-80 );
 `;
 
+const StyledItem = styled.div`
+	display: flex;
+`;
+
 const StyledGridicon = styled( Gridicon )`
 	margin: 0 12px;
 	color: var( --color-neutral-10 );
 `;
 
+const HelpBuble = styled( InfoPopover )`
+	margin-left: 7px;
+	& .gridicon {
+		color: var( --studio-gray-30 );
+	}
+`;
+
+type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
+
 interface Props {
-	items: { label: string; href?: string }[];
+	items: Item[];
 	compact?: boolean;
 }
 
 const Breadcrumb: React.FunctionComponent< Props > = ( { items, compact = false } ) => {
 	const translate = useTranslate();
+
+	const renderHelpBubble = ( item: Item ) => {
+		if ( ! item.helpBubble ) {
+			return null;
+		}
+
+		return (
+			<HelpBuble
+				id={ 'dude' }
+				icon="help-outline"
+				position={ 'right' }
+				screenReaderText={ 'Learn more' }
+			>
+				{ item.helpBubble }
+			</HelpBuble>
+		);
+	};
+
+	if ( items.length === 1 ) {
+		const [ item ] = items;
+		return (
+			<StyledItem>
+				<StyledRootLabel>{ item.label }</StyledRootLabel>
+				{ renderHelpBubble( item ) }
+			</StyledItem>
+		);
+	}
 
 	if ( compact && items.length > 1 ) {
 		return (
@@ -75,16 +117,13 @@ const Breadcrumb: React.FunctionComponent< Props > = ( { items, compact = false 
 						) : (
 							<span>{ item.label }</span>
 						) }
+						{ renderHelpBubble( item ) }
 					</StyledLi>
 				) ) }
 			</StyledUl>
 		);
 	}
-
-	if ( items.length === 1 ) {
-		return <StyledRootLabel>{ items[ 0 ].label }</StyledRootLabel>;
-	}
-
+	// Default case items: []
 	return null;
 };
 
