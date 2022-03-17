@@ -479,6 +479,8 @@ __metadata:
     typescript: ^4.5.5
     utility-types: ^3.10.0
     webpack: ^5.68.0
+    wpcom: "workspace:^"
+    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^6.1.5
     "@wordpress/element": ^4.0.4

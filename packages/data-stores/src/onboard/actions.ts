@@ -1,15 +1,18 @@
-import { DomainSuggestions, Site, WPCOMFeatures } from '@automattic/data-stores';
-import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { guessTimezone } from '@automattic/i18n-utils';
+import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
+import { DomainSuggestions, Site, WPCOMFeatures } from '..';
+import { STORE_KEY as SITE_STORE } from '../site';
 import { STORE_KEY } from './constants';
-import { siteStoreKey } from './index';
 import type { State } from '.';
-import type { Design, FontPair } from '@automattic/design-picker';
+import type { Design, FontPair } from '../shared-types';
 
-function getLanguage( lang: string ) {
-	return lang;
+// copied from design picker to avoid a circular dependency
+function isBlankCanvasDesign( design: { slug: string } | undefined ): boolean {
+	if ( ! design ) {
+		return false;
+	}
+	return /blank-canvas/i.test( design.slug );
 }
 
 type CreateSiteParams = Site.CreateSiteParams;
@@ -91,7 +94,7 @@ export function* createSite( {
 		...( bearerToken && { authToken: bearerToken } ),
 	};
 	const success: Site.NewSiteBlogDetails | undefined = yield dispatch(
-		siteStoreKey,
+		SITE_STORE,
 		'createSite',
 		params
 	);

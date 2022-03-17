@@ -5,20 +5,14 @@ import { STORE_KEY } from './constants';
 import persistOptions from './persist';
 import reducer, { State } from './reducer';
 import * as selectors from './selectors';
-import type { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
+import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 export type { State };
 
 /**
- * Onboard store depends on site-store. This variable is to keep track of it.
+ * Onboard store depends on site-store. You should register the site before using this store.
  */
-export let siteStoreKey: string;
-
-/**
- * Onboard store depends on site-store. You should register the site store and pass it's key here
- */
-export function register( registeredSiteStoreKey: string ): typeof STORE_KEY {
-	siteStoreKey = registeredSiteStoreKey;
+export function register(): typeof STORE_KEY {
 	use( plugins.persistence, persistOptions );
 
 	registerStore< State >( STORE_KEY, {
