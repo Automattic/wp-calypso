@@ -1,5 +1,12 @@
 import { translate } from 'i18n-calypso';
-import { Threat, ThreatFix, ThreatType } from './types';
+import {
+	SignatureComponents,
+	Threat,
+	threatFamilies,
+	ThreatFamily,
+	ThreatFix,
+	ThreatType,
+} from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 // This should be temporary since this data should be coming from the api
@@ -146,4 +153,41 @@ export const getThreatFix = ( fixable: ThreatFix ): TranslateResult => {
 		default:
 			return translate( 'Jetpack Scan will resolve the threat.' );
 	}
+};
+
+export const getThreatSignatureComponents = ( threat: Threat ): SignatureComponents | null => {
+	// ([signature_id])[language]_[payload]_[family]_[variant]
+	const signatureRegex = new RegExp( '((.*?))(.*?)_(.*?)_(.*?)_(.*?)', 'g' );
+	const signatureComponents = signatureRegex.exec( threat.signature );
+
+	if (
+		! signatureComponents ||
+		signatureComponents.some( ( component ) => ! component ) ||
+		signatureComponents.length !== 5
+	) {
+		return null;
+	}
+
+	return {
+		signature_id: signatureComponents[ 0 ],
+		language: signatureComponents[ 1 ],
+		payload: signatureComponents[ 2 ],
+		family: signatureComponents[ 3 ] as ThreatFamily,
+		variant: signatureComponents[ 4 ],
+	};
+};
+
+export const getThreatFamily = ( threat: Threat ): ThreatFamily | null => {
+	const components = getThreatSignatureComponents( threat );
+	if ( components ) {
+		return components.family;
+	}
+
+	for ( let i = 0; i < threatFamilies.length; i++ ) {
+		if ( threat.signature.toLowerCase().indexOf( `_${ threatFamilies[ i ] }_` ) >= 0 ) {
+			return threatFamilies[ i ];
+		}
+	}
+
+	return null;
 };
