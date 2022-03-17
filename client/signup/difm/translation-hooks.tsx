@@ -16,6 +16,7 @@ import {
 import type { TranslateResult } from 'i18n-calypso';
 
 /**
+ * Provides the universal translated set of page titles available for DIFM
  *
  * @param pageId
  * @returns

@@ -64,9 +64,8 @@ const CellLabelContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	font-size: 14px;
-	& > div {
-		margin-right: 8px;
-	}
+	margin-right: 8px;
+
 	width: 100%;
 	@media ( min-width: 960px ) {
 		justify-content: left;
@@ -130,72 +129,64 @@ function PageSelector() {
 
 	const onPageClick = ( pageId: string ) => {
 		const foundIndex = selectedPages.indexOf( pageId );
+		// The home page cannot be touched
 		if ( pageId !== HOME_PAGE )
 			if ( foundIndex > -1 ) {
-				// The home page cannot be touched
-				const tempArray = [ ...selectedPages ];
-				tempArray.splice( foundIndex, 1 );
-				setSelectedPages( tempArray );
+				setSelectedPages( selectedPages.filter( ( page, index ) => index !== foundIndex ) );
 			} else if ( selectedPages.length !== PAGE_LIMIT ) {
 				setSelectedPages( [ ...selectedPages, pageId ] );
 			}
 	};
 
 	return (
-		<>
-			<PageGrid>
-				<PageCell
-					popular
-					pageId={ HOME_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-				<PageCell
-					popular
-					pageId={ ABOUT_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-				<PageCell
-					popular
-					pageId={ CONTACT_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
+		<PageGrid>
+			<PageCell
+				popular
+				pageId={ HOME_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				popular
+				pageId={ ABOUT_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				popular
+				pageId={ CONTACT_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
 
-				<PageCell
-					popular
-					pageId={ BLOG_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
+			<PageCell
+				popular
+				pageId={ BLOG_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
 
-				<PageCell
-					pageId={ PHOTO_GALLERY_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-				<PageCell
-					pageId={ SERVICE_SHOWCASE_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-				<PageCell
-					pageId={ VIDEO_GALLERY_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-				<PageCell pageId={ PODCAST_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
-				<PageCell
-					pageId={ PORTFOLIO_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
-				<PageCell pageId={ FAQ_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
-				<PageCell pageId={ SITEMAP_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
-				<PageCell pageId={ PROFILE_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
-			</PageGrid>
-		</>
+			<PageCell
+				pageId={ PHOTO_GALLERY_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				pageId={ SERVICE_SHOWCASE_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell
+				pageId={ VIDEO_GALLERY_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
+			<PageCell pageId={ PODCAST_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			<PageCell pageId={ PORTFOLIO_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			<PageCell pageId={ FAQ_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			<PageCell pageId={ SITEMAP_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			<PageCell pageId={ PROFILE_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+		</PageGrid>
 	);
 }
 

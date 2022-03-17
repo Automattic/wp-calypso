@@ -8,7 +8,7 @@
 		.step-wrapper__header {
 			min-width: auto;
 			margin-bottom: 65px;
-			@media ( min-width: 600px ) {
+			@include break-small {
 				min-width: 410px;
 			}
 			.step-wrapper__header-button {
