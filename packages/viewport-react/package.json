@@ -29,7 +29,7 @@
 	},
 	"scripts": {
 		"clean": "rm -rf dist",
-		"build": "transpile",
+		"build": "run -T transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"publishConfig": {
