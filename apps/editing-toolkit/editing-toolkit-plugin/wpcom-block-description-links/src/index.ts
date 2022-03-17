@@ -16,10 +16,10 @@ const addBlockSupportLinks = (
 		'core/social-links',
 		'core/buttons',
 		'jetpack/contact-form',
-	].includes( settings[ 'parent' ] as string );
+	].includes( settings[ 'parent' ]?.toString() );
 
 	if ( applyToChildren ) {
-		name = settings[ 'parent' ] as string;
+		name = settings[ 'parent' ]?.toString();
 	}
 
 	switch ( name ) {
