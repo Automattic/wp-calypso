@@ -16,7 +16,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), function () {
 	const accountName = getTestAccountByFeature( {
 		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-		siteType: envVariables.TEST_LOCALES ? 'atomic' : 'simple',
+		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
 	} );
 
 	let page: Page;
