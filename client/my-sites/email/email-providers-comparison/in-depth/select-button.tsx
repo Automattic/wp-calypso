@@ -29,7 +29,11 @@ const usePlanAvailable = (
 		return true;
 	}
 
-	if ( ! canPurchaseGSuite || ! hasGSuiteSupportedDomain( [ domain ] ) ) {
+	if ( ! canPurchaseGSuite ) {
+		return false;
+	}
+
+	if ( ! domain || ! hasGSuiteSupportedDomain( [ domain ] ) ) {
 		return false;
 	}
 
