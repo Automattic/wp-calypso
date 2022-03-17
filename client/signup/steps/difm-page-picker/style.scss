@@ -1,0 +1,13 @@
+.signup__step.is-difm-page-picker {
+	.step-wrapper.is-horizontal-layout {
+		margin-top: 25px;
+		@media ( min-width: 600px ) {
+			margin-top: 64px;
+		}
+		.step-wrapper__header {
+			.step-wrapper__header-button {
+				margin-top: 34px;
+			}
+		}
+	}
+}

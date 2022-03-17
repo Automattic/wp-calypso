@@ -1,7 +1,7 @@
+import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { BrowserView } from 'calypso/signup/difm/components/BrowserView';
 import {
 	HOME_PAGE,
@@ -20,14 +20,7 @@ import {
 } from 'calypso/signup/difm/constants';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
-
-const PagePickerDetailsContainer = styled.div`
-	margin: 10px 0 50px 0;
-	width: 100%;
-	@media ( min-width: 600px ) {
-		width: 395px;
-	}
-`;
+import './style.scss';
 
 const PageGrid = styled.div`
 	display: grid;
@@ -36,22 +29,12 @@ const PageGrid = styled.div`
 	column-gap: 35px;
 	margin: 0 0 30px;
 
-	@media ( min-width: 600px ) and ( max-width: 785px ) {
+	@media ( min-width: 600px ) and ( max-width: 1024px ) {
 		grid-template-columns: 1fr 1fr;
 	}
 
-	@media ( min-width: 785px ) {
+	@media ( min-width: 1024px ) {
 		grid-template-columns: 1fr 1fr 1fr;
-	}
-`;
-
-const Container = styled.div`
-	display: block;
-	align-items: flex-start;
-	flex-direction: row;
-	padding: 0 5px;
-	@media ( min-width: 960px ) {
-		display: flex;
 	}
 `;
 
@@ -141,34 +124,33 @@ function PageCell( { pageId, popular, selectedPages, onClick }: PageCellType ) {
 }
 
 function PageSelector() {
-	const [ selectedPages, setSelectedPages ] = useState< string[] >( [] );
-	const translate = useTranslate();
+	const [ selectedPages, setSelectedPages ] = useState< string[] >( [ HOME_PAGE, ABOUT_PAGE ] );
 
 	const onPageClick = ( pageId: string ) => {
 		const foundIndex = selectedPages.indexOf( pageId );
-
-		if ( foundIndex > -1 ) {
-			const tempArray = [ ...selectedPages ];
-			tempArray.splice( foundIndex, 1 );
-			setSelectedPages( tempArray );
-		} else if ( selectedPages.length !== PAGE_LIMIT ) {
-			setSelectedPages( [ ...selectedPages, pageId ] );
-		}
+		if ( pageId !== HOME_PAGE )
+			if ( foundIndex > -1 ) {
+				// The home page cannot be touched
+				const tempArray = [ ...selectedPages ];
+				tempArray.splice( foundIndex, 1 );
+				setSelectedPages( tempArray );
+			} else if ( selectedPages.length !== PAGE_LIMIT ) {
+				setSelectedPages( [ ...selectedPages, pageId ] );
+			}
 	};
 
 	return (
-		<Container>
-			<PagePickerDetailsContainer>
-				<FormattedHeader
-					headerText={ translate( 'Add pages to your website' ) }
-					subHeaderText={ translate( 'You can add up to 5 pages' ) }
-					align="left"
-				/>
-			</PagePickerDetailsContainer>
+		<>
 			<PageGrid>
 				<PageCell
 					popular
 					pageId={ HOME_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+				<PageCell
+					popular
+					pageId={ ABOUT_PAGE }
 					selectedPages={ selectedPages }
 					onClick={ onPageClick }
 				/>
@@ -184,12 +166,7 @@ function PageSelector() {
 					selectedPages={ selectedPages }
 					onClick={ onPageClick }
 				/>
-				<PageCell
-					popular
-					pageId={ ABOUT_PAGE }
-					selectedPages={ selectedPages }
-					onClick={ onPageClick }
-				/>
+
 				<PageCell
 					pageId={ PHOTO_GALLERY_PAGE }
 					selectedPages={ selectedPages }
@@ -215,7 +192,7 @@ function PageSelector() {
 				<PageCell pageId={ SITEMAP_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
 				<PageCell pageId={ PROFILE_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
 			</PageGrid>
-		</Container>
+		</>
 	);
 }
 
@@ -227,14 +204,22 @@ interface StepProps {
 }
 
 export default function DIFMPagePicker( props: StepProps ) {
+	const translate = useTranslate();
+
 	return (
 		<StepWrapper
-			hideFormattedHeader
+			headerText={ translate( 'Add pages to your website' ) }
+			subHeaderText={ translate( 'You can add up to 5 pages' ) }
 			stepContent={ <PageSelector /> }
 			hideSkip
 			align="left"
 			isHorizontalLayout={ true }
 			isWideLayout={ false }
+			headerButton={
+				<Button compact primary>
+					{ translate( 'Go to Checkout' ) }
+				</Button>
+			}
 			{ ...props }
 		/>
 	);
