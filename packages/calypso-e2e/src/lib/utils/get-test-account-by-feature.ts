@@ -110,7 +110,7 @@ export function getTestAccountByFeature(
 	// to the `defaultAccountsTable`, which should be read-only and never modified (otherwise
 	// it could affect the return value of other calls). However, if a `mergeAndOverride`
 	// argument is present, then we need to "merge" with the internal table, for that we
-	// create an emphemerous table based on the `defaultCriteria`, so that the one in this
+	// create an emphemeral table based on the `defaultCriteria`, so that the one in this
 	// module is never modified.
 	const accountsTable = mergeAndOverride
 		? criteriaToMap( mergeAndOverride, criteriaToMap( defaultCriteria, new Map() ) )
