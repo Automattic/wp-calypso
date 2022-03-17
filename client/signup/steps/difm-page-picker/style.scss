@@ -1,7 +1,7 @@
 .signup__step.is-difm-page-picker {
 	.step-wrapper.is-horizontal-layout {
 		margin-top: 25px;
-		@media ( min-width: 600px ) {
+		@include break-small {
 			margin-top: 64px;
 			max-width: 1227px;
 		}
