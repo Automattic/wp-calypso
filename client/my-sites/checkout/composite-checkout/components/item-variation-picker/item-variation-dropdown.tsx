@@ -8,15 +8,13 @@ import { ItemVariantPrice } from './variant-price';
 import type { ItemVariationPickerProps } from './types';
 
 const VariantLabel = styled.span`
-	font-size: 14px;
-	font-weight: 400;
-	line-height: 20px;
+	font-size: ${ ( props ) => props.theme.fontSize.small };
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 `;
 
 const VariantPrice = styled.span`
-	font-size: 14px;
-	font-weight: 400;
-	line-height: 20px;
+	font-size: ${ ( props ) => props.theme.fontSize.small };
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 	color: #646970;
 `;
 
@@ -27,7 +25,7 @@ interface CurrentOptionProps {
 const CurrentOption = styled.button< CurrentOptionProps >`
 	align-items: center;
 	background: white;
-	border: 1px solid #a7aaad;
+	border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	border-radius: 3px;
 	display: flex;
 	flex-direction: row;
@@ -54,7 +52,7 @@ interface OptionProps {
 const Option = styled.li< OptionProps >`
 	align-items: center;
 	background: white;
-	border: 1px solid #a7aaad;
+	border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -66,7 +64,7 @@ const Option = styled.li< OptionProps >`
 			background: #055d9c;
 
 			${ VariantLabel }, ${ VariantPrice } {
-				color: #ffffff;
+				color: white;
 			}
 		` }
 `;
