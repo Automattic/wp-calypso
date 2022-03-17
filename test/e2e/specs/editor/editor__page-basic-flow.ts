@@ -32,12 +32,13 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
 			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
 		},
-		[
-			// TODO This could be moved over to the default accounts in calypso-e2e/lib/utils/get-test-account-by-feature.ts provided we add
-			// a variation: 'siteEditor' to it. For now, it just replaces the default ones that match the same criteria when they're passed here.
-			{ gutenberg: 'stable', siteType: 'simple', accountName: 'gutenbergSimpleSiteEdgeUser' },
-			{ gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
-		]
+		// The default accounts for gutenberg+simple are `gutenbergSimpleSiteEdgeUser` for GB edge
+		// and `gutenbergSimpleSiteUser` for stable. The criteria below conflicts with the default
+		// one that would return the `gutenbergSimpleSiteUser`. We also can't define it as part of
+		// the default criteria, and should pass it here, as an override. For this specific function
+		// call, `simpleSitePersonalPlanUser` will be retured when gutenberg is stable, and siteType
+		// is simple.
+		[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
 	);
 
 	beforeAll( async () => {

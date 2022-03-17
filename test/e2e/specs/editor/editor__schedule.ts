@@ -20,7 +20,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
 			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
 		},
-		[ { gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
+		[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
 	);
 	const postTitle = `Scheduled Post: ${ DataHelper.getTimestamp() }`;
 	const postContent = DataHelper.getRandomPhrase();
