@@ -62,10 +62,6 @@
 	@include breakpoint-deprecated( '>480px' ) {
 		text-transform: uppercase;
 	}
-
-	.domain-notice {
-		margin: 0 0 0 8px;
-	}
 }
 
 .domain-management-list-item.is-placeholder {
