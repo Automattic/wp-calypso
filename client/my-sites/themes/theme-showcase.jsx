@@ -1,4 +1,4 @@
-import { FEATURE_UPLOAD_THEMES } from '@automattic/calypso-products';
+import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
@@ -75,7 +75,6 @@ class ThemeShowcase extends Component {
 	}
 
 	static propTypes = {
-		canUploadThemes: PropTypes.bool,
 		currentThemeId: PropTypes.string,
 		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
@@ -86,6 +85,7 @@ class ThemeShowcase extends Component {
 		defaultOption: optionShape,
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
+		siteCanInstallThemes: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
 		trackMoreThemesClick: PropTypes.func,
@@ -258,7 +258,7 @@ class ThemeShowcase extends Component {
 			case this.tabFilters.MYTHEMES.key:
 				return (
 					( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
-					( this.props.isAtomicSite && this.props.canUploadThemes )
+					( this.props.isAtomicSite && this.props.siteCanInstallThemes )
 				);
 		}
 	};
@@ -386,11 +386,11 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 	const currentThemeId = getActiveTheme( state, siteId );
 	const currentTheme = getCanonicalTheme( state, siteId, currentThemeId );
 	return {
-		canUploadThemes: hasActiveSiteFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 		currentThemeId,
 		currentTheme,
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
+		siteCanInstallThemes: hasActiveSiteFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 		siteSlug: getSiteSlug( state, siteId ),
 		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
