@@ -30,7 +30,7 @@ function stringifyKey( o: FeatureKey ) {
 }
 
 /**
- * Turns an array of `FeastureCriteria` into a Map that can be easily queried
+ * Turn an array of `FeastureCriteria` into a Map that can be easily queried
  * with stringified `FeatureKey`s.
  *
  * @param {FeatureCriteria[]} criteria An array of `FeatureCriteria` objects.
@@ -40,14 +40,14 @@ function stringifyKey( o: FeatureKey ) {
  * (stringified) `FeatureKey` object.
  */
 function criteriaToMap( criteria: FeatureCriteria[], map: FeatureMap ): FeatureMap {
-	return criteria.reduce( ( acc, criteria ) => {
+	return criteria.reduce( ( featureMap, criteria ) => {
 		const { accountName, ...rest } = criteria;
-		acc.set( stringifyKey( rest ), accountName );
-		return acc;
+		featureMap.set( stringifyKey( rest ), accountName );
+		return featureMap;
 	}, map );
 }
 
-// NOTE If this gets too big, move to its own dedicated module
+// NOTE If this gets too big, move to its own dedicated module.
 const defaultCriteria: FeatureCriteria[] = [
 	{
 		gutenberg: 'edge',
@@ -88,7 +88,7 @@ const defaultAccountsTable = criteriaToMap( defaultCriteria, new Map() );
 
 /**
  * Return a WPCOM account name that can be passed over to build a `TestAccount`
- * instance for a test. The account name returned will depend on the attributes
+ * instance for an E2E test. The account name returned will depend on the attributes
  * passed as part of the `feature` param. The table of criteria for each account
  * can be found in the `defaultCriteria` const that lives in the same module where
  * this function is defined.
@@ -96,7 +96,7 @@ const defaultAccountsTable = criteriaToMap( defaultCriteria, new Map() );
  * @param {FeatureKey} feature represents a certain feature that has an account
  * associated with in the criteria table. It will be used as a key to get the
  * right account name.
- * @param {FeatureCriteria[]} mergeAndOverride Can be used to pass a custom table that will
+ * @param {FeatureCriteria[]} mergeAndOverrideCriteria Can be used to pass a custom table that will
  * be merged into the default one. Useful to do one-off criteria->account overrides for
  * specifis tests inline. The entries passed here will replace any matched (by key) entries
  * in the default table.
@@ -104,7 +104,7 @@ const defaultAccountsTable = criteriaToMap( defaultCriteria, new Map() );
  */
 export function getTestAccountByFeature(
 	feature: FeatureKey,
-	mergeAndOverride?: FeatureCriteria[]
+	mergeAndOverrideCriteria?: FeatureCriteria[]
 ) {
 	// If no criteria is passed in the `mergeAndOverride` param, then we just fallback
 	// to the `defaultAccountsTable`, which should be read-only and never modified (otherwise
@@ -112,8 +112,8 @@ export function getTestAccountByFeature(
 	// argument is present, then we need to "merge" with the internal table, for that we
 	// create an emphemeral table based on the `defaultCriteria`, so that the one in this
 	// module is never modified.
-	const accountsTable = mergeAndOverride
-		? criteriaToMap( mergeAndOverride, criteriaToMap( defaultCriteria, new Map() ) )
+	const accountsTable = mergeAndOverrideCriteria
+		? criteriaToMap( mergeAndOverrideCriteria, criteriaToMap( defaultCriteria, new Map() ) )
 		: defaultAccountsTable;
 
 	const accountName = accountsTable.get( stringifyKey( feature ) );
