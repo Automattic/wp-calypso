@@ -1,7 +1,13 @@
 import { Icon, info } from '@wordpress/icons';
 import Notice from 'calypso/components/notice';
 
-const InfoNotice = ( { redesigned = false, text }: { redesigned: boolean; text: string } ) => {
+const InfoNotice = ( {
+	redesigned = false,
+	text,
+}: {
+	redesigned: boolean;
+	text: string | null;
+} ) => {
 	return ! redesigned ? (
 		<Notice status="is-warning" showDismiss={ false } text={ text } />
 	) : (

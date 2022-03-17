@@ -8,7 +8,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import CannotManageDnsRecords from 'calypso/my-sites/domains/domain-management/components/domain/cannot-manage-dns-records';
+import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
 import EmailSetup from 'calypso/my-sites/domains/domain-management/email-setup';
@@ -121,7 +121,7 @@ class DnsRecords extends Component {
 						<EmailSetup selectedDomainName={ selectedDomainName } />
 					</>
 				) : (
-					<CannotManageDnsRecords redesigned={ false } domain={ selectedDomain } />
+					<InfoNotice redesigned={ false } text={ selectedDomain.cannotManageDnsRecordsReason } />
 				) }
 			</Main>
 		);

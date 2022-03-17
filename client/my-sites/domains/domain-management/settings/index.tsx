@@ -12,10 +12,10 @@ import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'ca
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import CannotManageDnsRecords from 'calypso/my-sites/domains/domain-management/components/domain/cannot-manage-dns-records';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
+import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
@@ -255,7 +255,7 @@ const Settings = ( {
 						updateNameservers={ updateNameservers }
 					/>
 				) : (
-					<CannotManageDnsRecords redesigned domain={ domain } />
+					<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
 				) }
 			</Accordion>
 		);
@@ -279,7 +279,7 @@ const Settings = ( {
 						currentRoute={ currentRoute }
 					/>
 				) : (
-					<CannotManageDnsRecords redesigned domain={ domain } />
+					<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
 				) }
 			</Accordion>
 		);
