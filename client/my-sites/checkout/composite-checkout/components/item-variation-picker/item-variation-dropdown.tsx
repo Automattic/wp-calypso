@@ -32,6 +32,7 @@ const CurrentOption = styled.button< CurrentOptionProps >`
 	justify-content: space-between;
 	padding: 14px 16px;
 	width: 100%;
+	cursor: pointer;
 
 	.gridicon {
 		fill: #a7aaad;
@@ -57,6 +58,7 @@ const Option = styled.li< OptionProps >`
 	flex-direction: row;
 	justify-content: space-between;
 	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
+	cursor: pointer;
 
 	${ ( props ) =>
 		props.selected &&
