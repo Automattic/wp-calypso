@@ -31,6 +31,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import { getPreference } from 'calypso/state/preferences/selectors';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isWooSiteSelector from 'calypso/state/selectors/is-woo-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -232,7 +233,9 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const bodyClass = [ 'font-smoothing-antialiased' ];
 
-			if ( this.props.isNavUnificationEnabled && ! config.isEnabled( 'jetpack-cloud' ) ) {
+			if ( this.props.isWooSite ) {
+				bodyClass.push( 'is-woo-site' );
+			} else if ( this.props.isNavUnificationEnabled && ! config.isEnabled( 'jetpack-cloud' ) ) {
 				// Jetpack cloud hasn't yet aligned with WPCOM.
 				bodyClass.push( 'is-nav-unification' );
 			}
@@ -401,6 +404,7 @@ export default withCurrentRoute(
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			isNavUnificationEnabled: isNavUnificationEnabled( state ),
+			isWooSite: isWooSiteSelector( state ),
 			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
 		};
 	} )( Layout )

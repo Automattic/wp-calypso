@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
+import isWooSiteSelector from 'calypso/state/selectors/is-woo-site';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 import './style.scss';
@@ -12,8 +13,13 @@ function SidebarNavigation( {
 	sectionTitle,
 	children = undefined,
 	toggleSidebar,
+	isWooSite,
 	isNavUnificationEnabled: isUnifiedNavEnabled,
 } ) {
+	if ( isWooSite ) {
+		return null;
+	}
+
 	if ( isUnifiedNavEnabled && ! config.isEnabled( 'jetpack-cloud' ) ) {
 		return null;
 	}
@@ -39,6 +45,7 @@ SidebarNavigation.propTypes = {
 export default connect(
 	( state ) => ( {
 		isNavUnificationEnabled: isNavUnificationEnabled( state ),
+		isWooSite: isWooSiteSelector( state ),
 	} ),
 	{
 		toggleSidebar: () => setLayoutFocus( 'sidebar' ),

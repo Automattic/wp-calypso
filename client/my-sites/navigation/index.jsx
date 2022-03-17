@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import SitePicker from 'calypso/my-sites/picker';
 import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
-
+import isWooSiteSelector from 'calypso/state/selectors/is-woo-site';
 class MySitesNavigation extends Component {
 	static displayName = 'MySitesNavigation';
 
@@ -23,6 +23,8 @@ class MySitesNavigation extends Component {
 		let asyncSidebar = null;
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			asyncSidebar = <AsyncLoad require="calypso/components/jetpack/sidebar" { ...asyncProps } />;
+		} else if ( this.props.isWooSite ) {
+			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar-woo" { ...asyncProps } />;
 		} else if ( this.props.isNavUnificationEnabled ) {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar-unified" { ...asyncProps } />;
 		} else {
@@ -44,4 +46,5 @@ class MySitesNavigation extends Component {
 
 export default connect( ( state ) => ( {
 	isNavUnificationEnabled: isNavUnificationEnabled( state ),
+	isWooSite: isWooSiteSelector( state ),
 } ) )( MySitesNavigation );

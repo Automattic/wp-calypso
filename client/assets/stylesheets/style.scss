@@ -23,3 +23,6 @@
 
 // Overrides for @wordpress/components
 @import './_wp-components-overrides.scss';
+
+@import './_woo-nav';
+@import '@woo/components/build/index.css';

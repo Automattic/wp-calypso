@@ -1,0 +1,19 @@
+.is-woo-site {
+    --masterbar-height: 0;
+    --sidebar-width-max: 312px;
+
+    .masterbar {
+        display: none;
+    }
+
+    .layout__content {
+        padding-top: 47px;
+    }
+
+    .layout__secondary {
+        border: none;
+        > div {
+            height: 100%;
+        }
+    }
+}
