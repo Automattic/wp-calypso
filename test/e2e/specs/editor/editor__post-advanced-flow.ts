@@ -11,15 +11,21 @@ import {
 	PostsPage,
 	ParagraphBlock,
 	SnackbarNotificationComponent,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function () {
-	const accountName = envVariables.GUTENBERG_EDGE
-		? 'gutenbergSimpleSiteEdgeUser'
-		: 'simpleSitePersonalPlanUser';
+	const accountName = getTestAccountByFeature(
+		{
+			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+		},
+		[ { gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
+	);
+
 	const postTitle = `Post Life Cycle: ${ DataHelper.getTimestamp() }`;
 	const originalContent = DataHelper.getRandomPhrase();
 	const additionalContent = 'Updated post content';

@@ -41,6 +41,7 @@ interface SupportedEnvVariables extends EnvVariables {
 	ARTIFACTS_PATH: string;
 	HEADLESS: boolean;
 	SLOW_MO: number;
+	TEST_ON_ATOMIC: boolean;
 }
 
 const defaultEnvVariables: SupportedEnvVariables = {
@@ -53,6 +54,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	AUTHENTICATE_ACCOUNTS: [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ],
 	COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
+	TEST_ON_ATOMIC: false,
 };
 
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {

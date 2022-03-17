@@ -113,6 +113,7 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 					export NODE_CONFIG_ENV=test
 					export TEST_VIDEO=true
 					export HIGHLIGHT_ELEMENT=true
+					export TEST_ON_ATOMIC=%TEST_ON_ATOMIC%
 					export GUTENBERG_EDGE=%GUTENBERG_EDGE%
 					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
 					export URL=%URL%
@@ -241,6 +242,14 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2E
 				value = "false",
 				label = "Use coblocks-edge",
 				description = "Use a blog with coblocks-edge sticker",
+				checked = "true",
+				unchecked = "false"
+			)
+			checkbox(
+				name = "env.TEST_ON_ATOMIC",
+				value = "false",
+				label = "Test on Atomic",
+				description = "Use an Atomic blog to test against",
 				checked = "true",
 				unchecked = "false"
 			)

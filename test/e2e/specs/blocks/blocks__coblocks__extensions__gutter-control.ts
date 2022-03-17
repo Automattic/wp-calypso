@@ -8,17 +8,15 @@ import {
 	EditorPage,
 	PricingTableBlock,
 	TestAccount,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
-let accountName: string;
-if ( envVariables.COBLOCKS_EDGE ) {
-	accountName = 'coBlocksSimpleSiteEdgeUser';
-} else if ( envVariables.GUTENBERG_EDGE ) {
-	accountName = 'gutenbergSimpleSiteEdgeUser';
-} else {
-	accountName = 'gutenbergSimpleSiteUser';
-}
+const accountName = getTestAccountByFeature( {
+	coblocks: envVariables.COBLOCKS_EDGE ? 'edge' : undefined,
+	gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+	siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+} );
 
 declare const browser: Browser;
 

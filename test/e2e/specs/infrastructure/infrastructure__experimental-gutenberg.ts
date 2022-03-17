@@ -2,15 +2,22 @@
  * @group gutenberg
  */
 
-import { envVariables, TestAccount, DataHelper, EditorPage } from '@automattic/calypso-e2e';
+import {
+	envVariables,
+	TestAccount,
+	DataHelper,
+	EditorPage,
+	getTestAccountByFeature,
+} from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), function () {
-	const accountName = envVariables.GUTENBERG_EDGE
-		? 'gutenbergSimpleSiteEdgeUser'
-		: 'gutenbergSimpleSiteUser';
+	const accountName = getTestAccountByFeature( {
+		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+	} );
 
 	let page: Page;
 	let editorPage: EditorPage;

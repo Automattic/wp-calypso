@@ -6,6 +6,7 @@ import {
 	TestAccount,
 	PagesPage,
 	PageTemplateModalComponent,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { Browser, Page, Frame } from 'playwright';
 
@@ -25,9 +26,20 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let editorIframe: Frame;
 	let pagesPage: PagesPage;
 	let publishedUrl: URL;
-	const accountName = envVariables.GUTENBERG_EDGE
-		? 'gutenbergSimpleSiteEdgeUser'
-		: 'simpleSitePersonalPlanUser';
+
+	const accountName = getTestAccountByFeature(
+		{
+			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+		},
+		// The default accounts for gutenberg+simple are `gutenbergSimpleSiteEdgeUser` for GB edge
+		// and `gutenbergSimpleSiteUser` for stable. The criteria below conflicts with the default
+		// one that would return the `gutenbergSimpleSiteUser`. We also can't define it as part of
+		// the default criteria, and should pass it here, as an override. For this specific function
+		// call, `simpleSitePersonalPlanUser` will be retured when gutenberg is stable, and siteType
+		// is simple.
+		[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
+	);
 
 	beforeAll( async () => {
 		page = await browser.newPage();
