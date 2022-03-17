@@ -3,8 +3,14 @@
 		margin-top: 25px;
 		@media ( min-width: 600px ) {
 			margin-top: 64px;
+			max-width: 1227px;
 		}
 		.step-wrapper__header {
+			min-width: auto;
+			margin-bottom: 65px;
+			@media ( min-width: 600px ) {
+				min-width: 410px;
+			}
 			.step-wrapper__header-button {
 				margin-top: 34px;
 			}

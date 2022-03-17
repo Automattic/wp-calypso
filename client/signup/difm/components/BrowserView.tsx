@@ -16,12 +16,12 @@ import photoGallery from 'calypso/signup/difm/images/photo-gallery.svg';
 import serviceShowcase from 'calypso/signup/difm/images/service-showcase.svg';
 
 const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
-	border: 3px solid
+	border: 2px solid
 		${ ( { isSelected } ) => ( isSelected ? 'var( --studio-blue-50 )' : '#ffffff00' ) };
 	border-radius: 10px;
 	transition: border 0.2s cubic-bezier( 0.11, 0, 0.5, 0 );
 	&:hover {
-		border: 3px solid
+		border: 2px solid
 			${ ( { isClickDisabled, isSelected } ) => {
 				if ( isClickDisabled && ! isSelected ) {
 					return 'var( --studio-white )';

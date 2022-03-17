@@ -25,16 +25,20 @@ import './style.scss';
 const PageGrid = styled.div`
 	display: grid;
 	grid-template-columns: 1fr;
-	row-gap: 40px;
+	row-gap: 20px;
 	column-gap: 35px;
 	margin: 0 0 30px;
 
-	@media ( min-width: 600px ) and ( max-width: 1024px ) {
+	@media ( min-width: 960px ) and ( max-width: 1200px ) {
 		grid-template-columns: 1fr 1fr;
+		column-gap: 15px;
+		row-gap: 25px;
 	}
 
-	@media ( min-width: 1024px ) {
+	@media ( min-width: 1200px ) {
 		grid-template-columns: 1fr 1fr 1fr;
+		row-gap: 40px;
+		column-gap: 35px;
 	}
 `;
 
@@ -43,7 +47,6 @@ const GridCellContainer = styled.div< { isClickDisabled: boolean; isSelected: bo
 		! isSelected && isClickDisabled ? 'default' : 'pointer' };
 	opacity: ${ ( { isSelected, isClickDisabled } ) =>
 		! isSelected && isClickDisabled ? '0.4' : '1' };
-	min-width: 223px;
 	border-radius: 4px;
 	position: relative;
 	width: 100%;
@@ -51,14 +54,16 @@ const GridCellContainer = styled.div< { isClickDisabled: boolean; isSelected: bo
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	font-weight: 500;
 `;
 
 const CellLabelContainer = styled.div`
 	margin: 14px 0;
 	text-align: left;
 	display: flex;
-
 	justify-content: center;
+	align-items: center;
+	font-size: 14px;
 	& > div {
 		margin-right: 8px;
 	}
@@ -69,19 +74,16 @@ const CellLabelContainer = styled.div`
 `;
 
 const PopularContainer = styled.div`
-	width: 75px;
-	height: 25px;
-	left: 699px;
-	top: 352px;
 	background: #b8e6bf;
-	opacity: 0.64;
 	border-radius: 4px;
 	text-align: center;
-	& > div {
-		color: #00450c;
-		font-weight: 500;
-		text-align: center;
-	}
+	font-size: 12px;
+	padding: 0;
+	line-height: 20px;
+	font-weight: 500;
+	color: #00450c;
+	height: 20px;
+	width: 61px;
 `;
 
 interface PageCellType {
@@ -113,18 +115,18 @@ function PageCell( { pageId, popular, selectedPages, onClick }: PageCellType ) {
 			/>
 			<CellLabelContainer>
 				<div>{ title }</div>
-				{ popular ? (
-					<PopularContainer>
-						<div>{ translate( 'Popular' ) }</div>
-					</PopularContainer>
-				) : null }
+				{ popular ? <PopularContainer>{ translate( 'Popular' ) }</PopularContainer> : null }
 			</CellLabelContainer>
 		</GridCellContainer>
 	);
 }
 
 function PageSelector() {
-	const [ selectedPages, setSelectedPages ] = useState< string[] >( [ HOME_PAGE, ABOUT_PAGE ] );
+	const [ selectedPages, setSelectedPages ] = useState< string[] >( [
+		HOME_PAGE,
+		ABOUT_PAGE,
+		CONTACT_PAGE,
+	] );
 
 	const onPageClick = ( pageId: string ) => {
 		const foundIndex = selectedPages.indexOf( pageId );
@@ -156,13 +158,14 @@ function PageSelector() {
 				/>
 				<PageCell
 					popular
-					pageId={ BLOG_PAGE }
+					pageId={ CONTACT_PAGE }
 					selectedPages={ selectedPages }
 					onClick={ onPageClick }
 				/>
+
 				<PageCell
 					popular
-					pageId={ CONTACT_PAGE }
+					pageId={ BLOG_PAGE }
 					selectedPages={ selectedPages }
 					onClick={ onPageClick }
 				/>
@@ -203,12 +206,25 @@ interface StepProps {
 	goToNextStep: () => void;
 }
 
+const StyledButton = styled( Button )`
+	&.button.is-primary {
+		padding: 10px;
+		font-weight: 500;
+		font-size: 14px;
+		line-height: 20px;
+		padding: 10px 27px 10px 28px;
+		border-radius: 4px;
+	}
+`;
+
 export default function DIFMPagePicker( props: StepProps ) {
 	const translate = useTranslate();
 
 	return (
 		<StepWrapper
-			headerText={ translate( 'Add pages to your website' ) }
+			headerText={ translate( 'Add pages to your {{wbr}}{{/wbr}}website', {
+				components: { wbr: <wbr /> },
+			} ) }
 			subHeaderText={ translate( 'You can add up to 5 pages' ) }
 			stepContent={ <PageSelector /> }
 			hideSkip
@@ -216,9 +232,9 @@ export default function DIFMPagePicker( props: StepProps ) {
 			isHorizontalLayout={ true }
 			isWideLayout={ false }
 			headerButton={
-				<Button compact primary>
+				<StyledButton compact primary>
 					{ translate( 'Go to Checkout' ) }
-				</Button>
+				</StyledButton>
 			}
 			{ ...props }
 		/>
