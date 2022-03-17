@@ -720,6 +720,7 @@ export function generateSteps( {
 			props: {
 				hideSkip: true,
 			},
+		},
 		'difm-page-picker': {
 			stepName: 'difm-page-picker',
 			providesDependencies: [],
