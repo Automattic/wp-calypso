@@ -70,7 +70,7 @@ export interface Options {
 		overlay?: boolean;
 	};
 	popperModifiers?: PopperModifier[];
-	portalElementId?: string;
+	portalParentElement?: HTMLElement | null;
 }
 
 export interface Config {

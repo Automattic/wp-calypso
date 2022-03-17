@@ -162,7 +162,7 @@ function WelcomeTour() {
 				),
 			],
 			classNames: 'wpcom-editor-welcome-tour',
-			portalElementId: 'wpwrap',
+			portalParentElement: document.getElementById( 'wpwrap' ),
 		},
 	};
 
