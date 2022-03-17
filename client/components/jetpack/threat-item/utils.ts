@@ -157,23 +157,19 @@ export const getThreatFix = ( fixable: ThreatFix ): TranslateResult => {
 
 export const getThreatSignatureComponents = ( threat: Threat ): SignatureComponents | null => {
 	// ([signature_id])[language]_[payload]_[family]_[variant]
-	const signatureRegex = new RegExp( '((.*?))(.*?)_(.*?)_(.*?)_(.*?)', 'g' );
+	const signatureRegex = /(?:\(([^)]+)\))?([^_]+)_([^_]+)_(.+)_(.+)/g;
 	const signatureComponents = signatureRegex.exec( threat.signature );
 
-	if (
-		! signatureComponents ||
-		signatureComponents.some( ( component ) => ! component ) ||
-		signatureComponents.length !== 5
-	) {
+	if ( ! signatureComponents || signatureComponents.length !== 6 ) {
 		return null;
 	}
 
 	return {
-		signature_id: signatureComponents[ 0 ],
-		language: signatureComponents[ 1 ],
-		payload: signatureComponents[ 2 ],
-		family: signatureComponents[ 3 ] as ThreatFamily,
-		variant: signatureComponents[ 4 ],
+		signature_id: signatureComponents[ 1 ],
+		language: signatureComponents[ 2 ],
+		payload: signatureComponents[ 3 ],
+		family: signatureComponents[ 4 ] as ThreatFamily,
+		variant: signatureComponents[ 5 ],
 	};
 };
 
