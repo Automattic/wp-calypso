@@ -110,7 +110,8 @@ const GoogleWorkspaceCard = ( {
 	const hasCartDomain = Boolean( cartDomainName );
 
 	const isGSuiteSupported =
-		hasCartDomain || ( canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] ) );
+		canPurchaseGSuite && ( hasCartDomain || hasGSuiteSupportedDomain( [ domain ] ) );
+
 	const isGSuiteAvailable = intervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
 
 	const googleWorkspace: ProviderCardProps = { ...googleWorkspaceCardInformation };
