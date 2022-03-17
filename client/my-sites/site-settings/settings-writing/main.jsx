@@ -4,7 +4,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import WritingForm from 'calypso/my-sites/site-settings/form-writing';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
@@ -15,7 +14,6 @@ const SiteSettingsWriting = ( { site, translate } ) => (
 		<ScreenOptionsTab wpAdminPath="options-writing.php" />
 		<DocumentHead title={ translate( 'Writing Settings' ) } />
 		<JetpackDevModeNotice />
-		<SidebarNavigation />
 		<FormattedHeader
 			brandFont
 			className="settings-writing__page-heading"

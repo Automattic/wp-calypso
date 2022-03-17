@@ -5,7 +5,7 @@ import {
 	PLAN_FREE,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_PERSONAL,
-	PLAN_WPCOM_MANAGED,
+	PLAN_WPCOM_PRO,
 } from '../src/constants';
 
 describe( 'chooseDefaultCustomerType', () => {
@@ -43,9 +43,9 @@ describe( 'chooseDefaultCustomerType', () => {
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'business' );
 	} );
 
-	test( 'chooses "business" if the site is on the Managed plan', () => {
+	test( 'chooses "business" if the site is on the Pro plan', () => {
 		const currentPlan = {
-			product_slug: PLAN_WPCOM_MANAGED,
+			product_slug: PLAN_WPCOM_PRO,
 		};
 		expect( chooseDefaultCustomerType( { currentPlan } ) ).toBe( 'business' );
 	} );

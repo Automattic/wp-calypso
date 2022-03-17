@@ -1,6 +1,8 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import ExternalLink from 'calypso/components/external-link';
+import { DNS_RECORDS_EDITING_OR_DELETING } from 'calypso/lib/url/support';
 import DnsRecordsListItem from './dns-records-list-item';
 
 class DnsRecordData extends Component {
@@ -24,10 +26,29 @@ class DnsRecordData extends Component {
 		// TODO: Remove this once we stop displaying the protected records
 		if ( dnsRecord.protected_field ) {
 			if ( 'MX' === type ) {
-				return translate( 'Mail handled by WordPress.com email forwarding' );
+				return translate(
+					'Mail handled by WordPress.com email forwarding. {{supportLink}}Learn more{{/supportLink}}.',
+					{
+						components: {
+							supportLink: (
+								<ExternalLink
+									href={ DNS_RECORDS_EDITING_OR_DELETING }
+									target="_blank"
+									icon={ false }
+								/>
+							),
+						},
+					}
+				);
 			}
 
-			return translate( 'Handled by WordPress.com' );
+			return translate( 'Handled by WordPress.com. {{supportLink}}Learn more{{/supportLink}}.', {
+				components: {
+					supportLink: (
+						<ExternalLink href={ DNS_RECORDS_EDITING_OR_DELETING } target="_blank" icon={ false } />
+					),
+				},
+			} );
 		}
 
 		switch ( type ) {

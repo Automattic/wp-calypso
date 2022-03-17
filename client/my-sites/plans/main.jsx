@@ -3,7 +3,7 @@ import {
 	getPlan,
 	getIntervalTypeForTerm,
 	PLAN_FREE,
-	PLAN_WPCOM_MANAGED,
+	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
 } from '@automattic/calypso-products';
 import { Global } from '@emotion/react';
@@ -27,12 +27,11 @@ import { useExperiment } from 'calypso/lib/explat';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansComparison, {
 	globalOverrides,
-	isEligibleForManagedPlan,
+	isEligibleForProPlan,
 } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -134,8 +133,6 @@ class Plans extends Component {
 			<div>
 				<DocumentHead title={ this.props.translate( 'Plans', { textOnly: true } ) } />
 				<Main wideLayout>
-					<SidebarNavigation />
-
 					<div id="plans" className="plans plans__has-sidebar" />
 				</Main>
 			</div>
@@ -143,7 +140,7 @@ class Plans extends Component {
 	};
 
 	renderPlansMain() {
-		const { currentPlan, selectedSite, isWPForTeamsSite, eligibleForManagedPlan } = this.props;
+		const { currentPlan, selectedSite, isWPForTeamsSite, eligibleForProPlan } = this.props;
 
 		if ( ! this.props.plansLoaded || ! currentPlan ) {
 			// Maybe we should show a loading indicator here?
@@ -163,8 +160,8 @@ class Plans extends Component {
 		}
 
 		if (
-			eligibleForManagedPlan &&
-			[ PLAN_FREE, PLAN_WPCOM_FLEXIBLE, PLAN_WPCOM_MANAGED ].includes( currentPlan?.productSlug )
+			eligibleForProPlan &&
+			[ PLAN_FREE, PLAN_WPCOM_FLEXIBLE, PLAN_WPCOM_PRO ].includes( currentPlan?.productSlug )
 		) {
 			return (
 				<PlansComparison
@@ -196,13 +193,7 @@ class Plans extends Component {
 	}
 
 	render() {
-		const {
-			selectedSite,
-			translate,
-			canAccessPlans,
-			currentPlan,
-			eligibleForManagedPlan,
-		} = this.props;
+		const { selectedSite, translate, canAccessPlans, currentPlan, eligibleForProPlan } = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
@@ -215,12 +206,11 @@ class Plans extends Component {
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
-				{ eligibleForManagedPlan && <Global styles={ globalOverrides } /> }
+				{ eligibleForProPlan && <Global styles={ globalOverrides } /> }
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
 				<Main wideLayout>
-					<SidebarNavigation />
 					{ ! canAccessPlans && (
 						<EmptyContent
 							illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -232,8 +222,8 @@ class Plans extends Component {
 							<FormattedHeader
 								brandFont
 								headerText={ translate( 'Plans' ) }
-								subHeaderText={ ! eligibleForManagedPlan && description }
-								tooltipText={ eligibleForManagedPlan && description }
+								subHeaderText={ ! eligibleForProPlan && description }
+								tooltipText={ eligibleForProPlan && description }
 								align="left"
 							/>
 							<div id="plans" className="plans plans__has-sidebar">
@@ -267,6 +257,6 @@ export default connect( ( state ) => {
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		eligibleForManagedPlan: isEligibleForManagedPlan( state, selectedSiteId ),
+		eligibleForProPlan: isEligibleForProPlan( state, selectedSiteId ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );

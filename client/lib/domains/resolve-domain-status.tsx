@@ -321,11 +321,9 @@ export function resolveDomainStatus(
 			}
 
 			if ( domain.expired ) {
-				const daysSinceExpiration = moment.utc().diff( moment.utc( domain.expiry ), 'days' );
-
 				let renewCta;
 
-				if ( daysSinceExpiration >= 1 && daysSinceExpiration <= 43 ) {
+				if ( domain.isRenewable ) {
 					const renewableUntil = moment.utc( domain.renewableUntil ).format( 'LL' );
 
 					renewCta =
@@ -351,9 +349,7 @@ export function resolveDomainStatus(
 										args: { renewableUntil },
 									}
 							  );
-				}
-
-				if ( daysSinceExpiration > 43 ) {
+				} else if ( domain.isRedeemable ) {
 					const redeemableUntil = moment.utc( domain.redeemableUntil ).format( 'LL' );
 
 					renewCta =

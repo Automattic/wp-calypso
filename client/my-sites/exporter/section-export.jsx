@@ -8,7 +8,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import ExporterContainer from 'calypso/my-sites/exporter/container';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
@@ -67,7 +66,6 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 		<Main>
 			<ScreenOptionsTab wpAdminPath="export.php" />
 			<DocumentHead title={ translate( 'Export' ) } />
-			<SidebarNavigation />
 			{ sectionContent }
 		</Main>
 	);

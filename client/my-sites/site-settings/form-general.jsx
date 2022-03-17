@@ -93,6 +93,7 @@ export class SiteSettingsFormGeneral extends Component {
 			eventTracker,
 			onChangeField,
 			uniqueEventTracker,
+			isWPForTeamsSite,
 		} = this.props;
 
 		return (
@@ -131,33 +132,35 @@ export class SiteSettingsFormGeneral extends Component {
 					</div>
 					<SiteIconSetting />
 				</div>
-				<div className="site-settings__fiverr-logo-maker-cta">
-					<div className="site-settings__fiverr-logo-icon">
-						<img
-							className="site-settings__fiverr-logo-cta"
-							src={ fiverrLogo }
-							alt="fiverr small logo"
-						/>
-					</div>
-					<div className="site-settings__fiverr-logo-maker-cta-text">
-						<div className="site-settings__fiverr-logo-maker-cta-text-title">
-							{ translate( 'Make an incredible logo in minutes' ) }
+				{ ! isWPForTeamsSite && (
+					<div className="site-settings__fiverr-logo-maker-cta">
+						<div className="site-settings__fiverr-logo-icon">
+							<img
+								className="site-settings__fiverr-logo-cta"
+								src={ fiverrLogo }
+								alt="fiverr small logo"
+							/>
 						</div>
-						<div className="site-settings__fiverr-logo-maker-cta-text-subhead">
-							{ translate( 'Pre-designed by top talent. Just add your touch.' ) }
+						<div className="site-settings__fiverr-logo-maker-cta-text">
+							<div className="site-settings__fiverr-logo-maker-cta-text-title">
+								{ translate( 'Make an incredible logo in minutes' ) }
+							</div>
+							<div className="site-settings__fiverr-logo-maker-cta-text-subhead">
+								{ translate( 'Pre-designed by top talent. Just add your touch.' ) }
+							</div>
+						</div>
+						<div className="site-settings__fiver-cta-button">
+							<Button
+								target="_blank"
+								href="https://wp.me/logo-maker/?utm_campaign=general_settings"
+								onClick={ this.trackFiverrLogoMakerClick }
+							>
+								<Gridicon icon="external" />
+								{ translate( 'Try Fiverr Logo Maker' ) }
+							</Button>
 						</div>
 					</div>
-					<div className="site-settings__fiver-cta-button">
-						<Button
-							target="_blank"
-							href="https://wp.me/logo-maker/?utm_campaign=general_settings"
-							onClick={ this.trackFiverrLogoMakerClick }
-						>
-							<Gridicon icon="external" />
-							{ translate( 'Try Fiverr Logo Maker' ) }
-						</Button>
-					</div>
-				</div>
+				) }
 			</>
 		);
 	}

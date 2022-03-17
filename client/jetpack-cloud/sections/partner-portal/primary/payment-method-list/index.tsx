@@ -14,14 +14,13 @@ import StoredCreditCard from 'calypso/jetpack-cloud/sections/partner-portal/stor
 import StoredCreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/stored-credit-card/stored-credit-card-loading';
 import {
 	getAllStoredCards,
+	getStoredCardsPerPage,
 	isFetchingStoredCards,
 	hasMoreStoredCards,
 } from 'calypso/state/partner-portal/stored-cards/selectors';
 import type { ReactElement } from 'react';
 
 import './style.scss';
-
-const ITEMS_PER_PAGE = 8;
 
 const preparePagingCursor = (
 	direction: 'next' | 'prev',
@@ -45,6 +44,7 @@ export default function PaymentMethodList(): ReactElement {
 	const translate = useTranslate();
 	const storedCards = useSelector( getAllStoredCards );
 	const isFetching = useSelector( isFetchingStoredCards );
+	const perPage = useSelector( getStoredCardsPerPage );
 	const hasMoreItems = useSelector( hasMoreStoredCards );
 	const cards = storedCards.map( ( card: PaymentMethod ) => (
 		<StoredCreditCard key={ card.id } card={ card } />
@@ -80,11 +80,11 @@ export default function PaymentMethodList(): ReactElement {
 			</div>
 
 			<div className="payment-method-list__body">
+				<AddStoredCreditCard />
+
 				{ isFetching && <StoredCreditCardLoading /> }
 
 				{ ! isFetching && cards }
-
-				<AddStoredCreditCard />
 			</div>
 
 			{ showPagination && (
@@ -95,7 +95,7 @@ export default function PaymentMethodList(): ReactElement {
 					} ) }
 					pageClick={ onPageClick }
 					page={ currentPage }
-					perPage={ ITEMS_PER_PAGE }
+					perPage={ perPage }
 				/>
 			) }
 		</Main>

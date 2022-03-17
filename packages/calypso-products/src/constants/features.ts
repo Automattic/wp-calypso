@@ -60,6 +60,7 @@ export const FEATURE_NO_BRANDING = 'no-wp-branding';
 export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 export const FEATURE_UPLOAD_PLUGINS = 'upload-plugins';
 export const FEATURE_INSTALL_PLUGINS = 'install-plugins';
+export const FEATURE_INSTALL_THEMES = 'install-themes';
 export const FEATURE_UPLOAD_THEMES = 'upload-themes';
 export const FEATURE_PERFORMANCE = 'performance';
 export const FEATURE_REPUBLICIZE = 'republicize';
@@ -196,7 +197,7 @@ export const FEATURE_P2_MORE_FILE_TYPES = 'p2-more-file-types';
 export const FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT = 'p2-priority-chat-email-support';
 export const FEATURE_P2_ACTIVITY_OVERVIEW = 'p2-activity-overview';
 
-// New features Flexible and Managed plans introduced.
+// New features Flexible and Pro plans introduced.
 export const FEATURE_UNLIMITED_USERS = 'unlimited-users';
 export const FEATURE_UNLIMITED_POSTS_PAGES = 'unlimited-posts-pages';
 export const FEATURE_PAYMENT_BLOCKS = 'payment-blocks';

@@ -27,7 +27,11 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
-import { useWPCOMPlugin, useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import {
+	useWPCOMPlugin,
+	useWPCOMPlugins,
+	useWPCOMFeaturedPlugins,
+} from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { useWPORGPlugins } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
@@ -38,7 +42,6 @@ import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibilit
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	recordTracksEvent,
 	recordGoogleEvent,
@@ -169,7 +172,7 @@ const PluginsBrowser = ( {
 	const {
 		data: pluginsByCategoryFeatured = [],
 		isLoading: isFetchingPluginsByCategoryFeatured,
-	} = useWPCOMPlugins( 'featured' );
+	} = useWPCOMFeaturedPlugins();
 
 	const {
 		data: { plugins: popularPlugins = [] } = {},
@@ -269,7 +272,6 @@ const PluginsBrowser = ( {
 				trackPageViews={ trackPageViews }
 			/>
 			<DocumentHead title={ translate( 'Plugins' ) } />
-			<SidebarNavigation />
 
 			{ ! jetpackNonAtomic && (
 				<AnnouncementModal

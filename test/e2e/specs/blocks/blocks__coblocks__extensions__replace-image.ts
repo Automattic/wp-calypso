@@ -7,28 +7,26 @@ import {
 	DataHelper,
 	MediaHelper,
 	ElementHelper,
-	GutenbergEditorPage,
+	EditorPage,
 	TestFile,
 	ImageBlock,
 	TestAccount,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-let accountName: string;
-if ( envVariables.COBLOCKS_EDGE ) {
-	accountName = 'coBlocksSimpleSiteEdgeUser';
-} else if ( envVariables.GUTENBERG_EDGE ) {
-	accountName = 'gutenbergSimpleSiteEdgeUser';
-} else {
-	accountName = 'gutenbergSimpleSiteUser';
-}
+const accountName = getTestAccountByFeature( {
+	coblocks: envVariables.COBLOCKS_EDGE ? 'edge' : undefined,
+	gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+	siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+} );
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), () => {
 	let page: Page;
-	let gutenbergEditorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 	let imageBlock: ImageBlock;
 	let imageFile: TestFile;
 	let uploadedImageURL: string;
@@ -37,18 +35,18 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async () => {
-		await gutenbergEditorPage.visit( 'post' );
+		await editorPage.visit( 'post' );
 	} );
 
 	it( `Insert ${ ImageBlock.blockName } block and upload image`, async () => {
-		const blockHandle = await gutenbergEditorPage.addBlock(
+		const blockHandle = await editorPage.addBlock(
 			ImageBlock.blockName,
 			ImageBlock.blockEditorSelector
 		);
@@ -59,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	} );
 
 	it( `Replace uploaded image`, async () => {
-		const editorFrame = await gutenbergEditorPage.getEditorFrame();
+		const editorFrame = await editorPage.getEditorHandle();
 		await editorFrame.click( 'button:text("Replace")' );
 		await editorFrame.setInputFiles(
 			'.components-form-file-upload input[type="file"]',
@@ -75,7 +73,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	} );
 
 	it( 'Publish the post', async () => {
-		await gutenbergEditorPage.publish( { visit: true } );
+		await editorPage.publish( { visit: true } );
 	} );
 
 	it( 'Verify the new image was published', async () => {

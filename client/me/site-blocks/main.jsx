@@ -10,7 +10,6 @@ import InfiniteList from 'calypso/components/infinite-list';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { requestSiteBlocks } from 'calypso/state/reader/site-blocks/actions';
 import {
 	getBlockedSites,
@@ -57,7 +56,6 @@ class SiteBlockList extends Component {
 				<QuerySiteBlocks />
 				<PageViewTracker path="/me/site-blocks" title="Me > Blocked Sites" />
 				<DocumentHead title={ translate( 'Blocked Sites' ) } />
-				<MeSidebarNavigation />
 				<FormattedHeader brandFont headerText={ translate( 'Blocked Sites' ) } align="left" />
 
 				<Card className="site-blocks__intro">

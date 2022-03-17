@@ -65,7 +65,7 @@ const BackupPage = ( { queryDate } ) => {
 					is_jetpackcom: isJetpackCloud(),
 				} ) }
 			>
-				<SidebarNavigation />
+				{ isJetpackCloud() && <SidebarNavigation /> }
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackCloud() && (
 					<FormattedHeader headerText="Jetpack Backup" align="left" brandFont />

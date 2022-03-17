@@ -7,7 +7,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import JetpackCredentials from 'calypso/my-sites/site-settings/jetpack-credentials';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
@@ -39,7 +38,6 @@ const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, tr
 			<QuerySitePurchases siteId={ siteId } />
 			<DocumentHead title={ translate( 'Jetpack Settings' ) } />
 			<JetpackDevModeNotice />
-			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="settings-jetpack__page-heading"

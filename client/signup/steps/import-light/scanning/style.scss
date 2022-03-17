@@ -1,0 +1,15 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.import-light__scanning {
+	.scanning__header .import__heading h1.onboarding-title {
+		margin-bottom: 1.25em;
+	}
+
+	.onboarding-progress {
+		@include break-medium {
+			max-width: 500px;
+			margin: auto;
+		}
+	}
+}

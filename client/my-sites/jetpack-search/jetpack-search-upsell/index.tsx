@@ -5,12 +5,12 @@ import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackSearchContent from '../content';
 import JetpackSearchFooter from '../footer';
@@ -30,7 +30,7 @@ export default function JetpackSearchUpsell(): ReactElement {
 	return (
 		<Main className="jetpack-search-upsell">
 			<DocumentHead title="Jetpack Search" />
-			<SidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
 
 			{ isJetpackCloud() ? (

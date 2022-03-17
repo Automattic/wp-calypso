@@ -4,6 +4,8 @@ import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	sectionTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
+	pluginTitleOnSection: ( section: string, plugin: string ) =>
+		`.plugins-browser-list:has(.plugins-browser-list__title.${ section }) :text-is("${ plugin }")`,
 	sectionTitles: '.plugins-browser-list__title',
 	browseAllPopular: 'a[href^="/plugins/popular"]',
 	breadcrumb: ( section: string ) => `.plugins-browser__header li a:text("${ section }") `,
@@ -64,6 +66,13 @@ export class PluginsPage {
 			const title = await titles.nth( i ).innerText();
 			assert.notEqual( title, section );
 		}
+	}
+
+	/**
+	 * Validate page has the section
+	 */
+	async validateHasPluginOnSection( section: string, plugin: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.pluginTitleOnSection( section, plugin ) );
 	}
 
 	/**

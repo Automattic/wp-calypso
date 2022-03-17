@@ -5,7 +5,7 @@ import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getPaymentMethodImageURL,
-	getPaymentMethodSummary,
+	PaymentMethodSummary,
 } from 'calypso/lib/checkout/payment-methods';
 
 import 'calypso/me/purchases/payment-methods/style.scss';
@@ -22,10 +22,10 @@ interface Props {
 }
 
 const PaymentMethodDetails: FunctionComponent< Props > = ( {
-	cardType,
-	expiry,
 	lastDigits,
+	cardType,
 	name,
+	expiry,
 	email,
 	paymentPartner,
 	isExpired,
@@ -48,12 +48,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 			/>
 			<div className="payment-method-details__details">
 				<span className="payment-method-details__number">
-					{ getPaymentMethodSummary( {
-						translate,
-						type,
-						digits: lastDigits,
-						email,
-					} ) }
+					<PaymentMethodSummary type={ type } digits={ lastDigits } email={ email } />
 				</span>
 
 				{ displayExpirationDate && (

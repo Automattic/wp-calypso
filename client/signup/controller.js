@@ -341,9 +341,6 @@ export default {
 		if ( flowName === 'onboarding' || flowName === 'launch-site' ) {
 			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' );
 		}
-		if ( isMobile() && 'onboarding' === flowName ) {
-			loadExperimentAssignment( 'calypso_mobile_plans_page_with_billing' );
-		}
 
 		if ( isMobile() && 'wpcc' !== flowName ) {
 			loadExperimentAssignment( 'registration_social_login_first_on_mobile_v3' );

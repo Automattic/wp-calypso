@@ -29,8 +29,9 @@ export default function StoredCreditCard( props: { card: PaymentMethod } ): Reac
 					<div className="stored-credit-card__payment-logo">
 						<PaymentLogo brand={ creditCard?.card.brand } isSummary={ true } />
 					</div>
-
-					<div className="stored-credit-card__primary">{ translate( 'Primary' ) }</div>
+					{ creditCard?.is_default && (
+						<div className="stored-credit-card__primary">{ translate( 'Primary' ) }</div>
+					) }
 				</div>
 
 				<div className="stored-credit-card__actions">

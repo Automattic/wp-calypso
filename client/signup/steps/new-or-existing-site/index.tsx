@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import difmImage from 'calypso/assets/images/difm/difm.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { preventWidows } from 'calypso/lib/formatting';
+import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getProductDisplayCost,
@@ -38,31 +39,15 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 
 	const headerText = translate( 'Do It For Me' );
 
-	const subHeaderTextWithPlaceHolder = translate(
-		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{Placeholder}}{{/Placeholder}}',
-		{
-			args: {
-				fulfillmentDays: 4,
-			},
-			components: {
-				Placeholder: <Placeholder />,
-			},
-		}
-	);
-
 	const subHeaderText = translate(
-		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{strong}}%(displayCost)s{{/strong}}*.' +
-			'{{br}}{{/br}}{{br}}{{/br}}' +
-			'{{small}}* Plus a one year subscription of the Premium plan.{{/small}}',
+		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus a one year subscription of the Premium plan.',
 		{
 			args: {
 				displayCost,
 				fulfillmentDays: 4,
 			},
 			components: {
-				strong: <strong />,
-				br: <br />,
-				small: <small />,
+				PriceWrapper: isLoading ? <Placeholder /> : <strong />,
 			},
 		}
 	);
@@ -102,7 +87,14 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
 	}, [ dispatch, props.stepName ] );
 
+	const branchSteps = useBranchSteps( props.stepName, () => [ 'difm-site-picker' ] );
+
 	const newOrExistingSiteSelected = ( value: ChoiceType ) => {
+		// If 'new-site' is selected, skip the `difm-site-picker` step.
+		if ( 'new-site' === value ) {
+			branchSteps( {} );
+			dispatch( removeSiteSlugDependency() );
+		}
 		dispatch(
 			submitSignupStep(
 				{ stepName: props.stepName },
@@ -112,23 +104,17 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 				}
 			)
 		);
-		if ( 'existing-site' === value ) {
-			props.goToNextStep();
-		} else {
-			dispatch( removeSiteSlugDependency() );
-			dispatch( submitSignupStep( { stepName: 'difm-site-picker', wasSkipped: true } ) );
-			props.goToStep( 'site-info-collection' );
-		}
+		props.goToNextStep();
 	};
 
 	return (
 		<>
-			<QueryProductsList />
+			<QueryProductsList persist />
 			<StepWrapper
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
-				subHeaderText={ isLoading ? subHeaderTextWithPlaceHolder : subHeaderText }
-				fallbackSubHeaderText={ isLoading ? subHeaderTextWithPlaceHolder : subHeaderText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
 				stepContent={
 					<IntentScreen
 						intents={ intents }

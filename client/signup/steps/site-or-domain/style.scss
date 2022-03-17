@@ -5,12 +5,12 @@
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: flex-start;
-	.intent-screen-select-items__item-description {
+	.select-items__item-description {
 		strong {
 			color: var( --studio-green-60 );
 		}
 	}
-  .intent-screen-select-items__item-info-wrapper {
+  .select-items__item-info-wrapper {
     @include break-mobile {
       align-items: center;
     }

@@ -50,10 +50,10 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'managed',
-			steps: [ 'user', 'domains', 'plans-managed' ],
+			name: 'pro',
+			steps: [ 'user', 'domains', 'plans-pro' ],
 			destination: getSignupDestination,
-			description: 'Create an account and a blog and then add the managed plan to the users cart.',
+			description: 'Create an account and a blog and then add the pro plan to the users cart.',
 			lastModified: '2022-03-08',
 			showRecaptcha: true,
 		},
@@ -292,6 +292,15 @@ export function generateFlows( {
 			enableBranchSteps: true,
 		},
 		{
+			name: 'import-light',
+			steps: isEnabled( 'onboarding/import-light' ) ? [ 'static' ] : [],
+			destination: '/',
+			pageTitle: translate( 'Import light' ),
+			description: 'Import light',
+			lastModified: '2022-02-25',
+			enableBranchSteps: true,
+		},
+		{
 			name: 'reader',
 			steps: [ 'reader-landing', 'user' ],
 			destination: '/',
@@ -375,17 +384,27 @@ export function generateFlows( {
 		},
 		{
 			name: 'do-it-for-me',
-			steps: [
-				'user',
-				'new-or-existing-site',
-				'difm-site-picker',
-				'site-info-collection',
-				'difm-design-setup-site',
-			],
+			steps: isEnabled( 'signup/redesigned-difm-flow' )
+				? [
+						// Add or replace new steps here
+						'user',
+						'new-or-existing-site',
+						'difm-site-picker',
+						'difm-options',
+						'difm-design-setup-site',
+				  ]
+				: [
+						'user',
+						'new-or-existing-site',
+						'difm-site-picker',
+						'site-info-collection',
+						'difm-design-setup-site',
+				  ],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2021-09-30',
+			lastModified: '2022-03-10',
+			enableBranchSteps: true,
 		},
 
 		{

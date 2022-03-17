@@ -2,7 +2,7 @@ import {
 	isBusiness,
 	isEcommerce,
 	isEnterprise,
-	isManaged,
+	isPro,
 	isMonthly,
 } from '@automattic/calypso-products';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
@@ -20,7 +20,7 @@ const shouldUpgradeCheck = (
 ) => {
 	return selectedSite
 		? ! (
-				isManaged( selectedSite?.plan ) ||
+				isPro( selectedSite?.plan ) ||
 				isBusiness( selectedSite?.plan ) ||
 				isEnterprise( selectedSite?.plan ) ||
 				isEcommerce( selectedSite?.plan ) ||

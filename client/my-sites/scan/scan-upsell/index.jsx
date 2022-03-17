@@ -9,9 +9,10 @@ import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import Upsell from 'calypso/components/jetpack/upsell';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -96,7 +97,7 @@ export default function ScanUpsellPage( { reason } ) {
 	return (
 		<Main className="scan-upsell">
 			<DocumentHead title="Scan" />
-			<SidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/scan/:site" title="Scanner Upsell" />
 			<div className="scan-upsell__content">{ renderUpsell( reason ) }</div>
 		</Main>

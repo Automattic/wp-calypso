@@ -9,6 +9,10 @@ type ItemsAction =
 			card: PaymentMethod;
 	  }
 	| {
+			type: 'STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED';
+			payment_method_id: string;
+	  }
+	| {
 			type: 'STORED_CARDS_FETCH_COMPLETED';
 			list: PaymentMethod[];
 	  };
@@ -23,15 +27,38 @@ export const items: Reducer< PaymentMethod[], ItemsAction > = ( state = [], acti
 			const { card } = action;
 			return state.filter( ( item ) => item.id !== card.id );
 		}
+		case 'STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED': {
+			const { payment_method_id } = action;
+			return state.map( ( item ) => {
+				if ( item.id === payment_method_id ) {
+					return { ...item, is_default: true };
+				}
+				return item;
+			} );
+		}
 	}
 
+	return state;
+};
+
+type ItemsPerPageAction = {
+	type: 'STORED_CARDS_ITEMS_PER_PAGE';
+	perPage: number;
+};
+
+export const itemsPerPage: Reducer< number, ItemsPerPageAction > = ( state = 30, action ) => {
+	switch ( action?.type ) {
+		case 'STORED_CARDS_ITEMS_PER_PAGE': {
+			const { perPage } = action;
+			return perPage;
+		}
+	}
 	return state;
 };
 
 type MoreItemsAction = {
 	type: 'STORED_CARDS_HAS_MORE_ITEMS';
 	hasMore: boolean;
-	hasBeenSet: boolean;
 };
 
 export const hasMoreItems: Reducer< boolean, MoreItemsAction > = ( state = false, action ) => {
@@ -45,11 +72,11 @@ export const hasMoreItems: Reducer< boolean, MoreItemsAction > = ( state = false
 	return state;
 };
 
-type IsFetchingAction = Action<
+type FetchingActionStatus = Action<
 	'STORED_CARDS_FETCH' | 'STORED_CARDS_FETCH_COMPLETED' | 'STORED_CARDS_FETCH_FAILED'
 >;
 
-export const isFetching: Reducer< boolean, IsFetchingAction > = ( state = false, action ) => {
+export const isFetching: Reducer< boolean, FetchingActionStatus > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'STORED_CARDS_FETCH':
 			return true;
@@ -62,7 +89,7 @@ export const isFetching: Reducer< boolean, IsFetchingAction > = ( state = false,
 	return state;
 };
 
-type IsDeletingAction =
+type DeletingActionStatus =
 	| {
 			type: 'STORED_CARDS_DELETE';
 			card: PaymentMethod;
@@ -76,7 +103,7 @@ type IsDeletingAction =
 			card: PaymentMethod;
 	  };
 
-export const isDeleting: Reducer< { [ key: string ]: boolean }, IsDeletingAction > = (
+export const isDeleting: Reducer< { [ key: string ]: boolean }, DeletingActionStatus > = (
 	state = {},
 	action
 ) => {
@@ -100,6 +127,7 @@ export const isDeleting: Reducer< { [ key: string ]: boolean }, IsDeletingAction
 
 const combinedReducer = combineReducers( {
 	items: items as Reducer,
+	itemsPerPage: itemsPerPage as Reducer,
 	isDeleting: isDeleting as Reducer,
 	isFetching,
 	hasMoreItems: hasMoreItems as Reducer,

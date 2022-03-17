@@ -247,6 +247,8 @@ object CheckCodeStyle : BuildType({
 		vcs {
 			branchFilter = """
 				+:renovate/eslint-packages
+				+:renovate/major-linters
+				+:renovate/linters
 			""".trimIndent()
 		}
 	}

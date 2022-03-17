@@ -13,7 +13,6 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
@@ -54,7 +53,6 @@ export const QuickLinks = ( {
 	trackExplorePluginsAction,
 	isExpanded,
 	updateHomeQuickLinksToggleStatus,
-	isUnifiedNavEnabled,
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
@@ -167,7 +165,7 @@ export const QuickLinks = ( {
 					) }
 				</>
 			) }
-			{ isUnifiedNavEnabled && siteAdminUrl && (
+			{ siteAdminUrl && (
 				<ActionBox
 					href={ siteAdminUrl }
 					hideLinkIndicator
@@ -402,7 +400,6 @@ const mapStateToProps = ( state ) => {
 		editHomePageUrl,
 		isAtomic: isSiteAtomic( state, siteId ),
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
-		isUnifiedNavEnabled: isNavUnificationEnabled,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 	};
 };

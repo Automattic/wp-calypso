@@ -115,8 +115,10 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     chokidar: ^3.5.2
+    html-webpack-plugin: ^5.0.0-beta.4
     npm-run-all: ^4.1.5
     tree-kill: ^1.2.2
+    webpack: ^5.68.0
     yargs: ^17.0.1
   bin:
     calypso-apps-builder: ./index.js
@@ -431,7 +433,7 @@ __metadata:
     "@wordpress/api-fetch": ^5.2.6
     "@wordpress/data-controls": ^2.2.8
     "@wordpress/deprecated": ^3.2.3
-    "@wordpress/url": ^3.3.1
+    "@wordpress/url": 3.3.2
     fast-json-stable-stringify: ^2.1.0
     i18n-calypso: "workspace:^"
     jest-fetch-mock: ^3.0.3
@@ -464,7 +466,7 @@ __metadata:
     "@testing-library/react": ^12.1.3
     "@wordpress/components": ^19.2.0
     "@wordpress/react-i18n": ^3.0.4
-    "@wordpress/url": ^3.3.1
+    "@wordpress/url": 3.3.2
     classnames: ^2.3.1
     jest: ^27.3.1
     postcss: ^8.4.5
@@ -835,7 +837,7 @@ __metadata:
     "@wordpress/components": ^19.2.0
     "@wordpress/icons": ^6.1.1
     "@wordpress/react-i18n": ^3.0.4
-    "@wordpress/url": ^3.3.1
+    "@wordpress/url": 3.3.2
     classnames: ^2.3.1
     copyfiles: ^2.3.0
     react: ^17.0.2
@@ -1436,7 +1438,7 @@ __metadata:
     "@wordpress/is-shallow-equal": ^4.2.1
     "@wordpress/plugins": ^4.0.7
     "@wordpress/rich-text": ^5.0.7
-    "@wordpress/url": ^3.3.1
+    "@wordpress/url": 3.3.2
     debug: ^4.3.3
     enzyme: ^3.11.0
     jest: ^27.3.1
@@ -1543,7 +1545,7 @@ __metadata:
     "@wordpress/rich-text": ^5.0.7
     "@wordpress/scripts": ^19.2.2
     "@wordpress/server-side-render": ^3.0.17
-    "@wordpress/url": 3.3.1
+    "@wordpress/url": 3.3.2
     babel-jest: ^26.6.3
     classnames: ^2.3.1
     enzyme: ^3.11.0
@@ -10028,13 +10030,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/url@npm:3.3.1, @wordpress/url@npm:^3.3.1":
-  version: 3.3.1
-  resolution: "@wordpress/url@npm:3.3.1"
+"@wordpress/url@npm:3.3.2, @wordpress/url@npm:^3.3.1":
+  version: 3.3.2
+  resolution: "@wordpress/url@npm:3.3.2"
   dependencies:
     "@babel/runtime": ^7.16.0
     lodash: ^4.17.21
-  checksum: 1aa03968d601496e166a0a0fae4b2b7d149e8b867b074a63f4c0d79327ec35d49d289c3f4eab64661ba3d4361da34ae197a21dc9edecfc18943254c88b34939a
+  checksum: 13f9d62922d19b7c8b7a6725cd4eebecbb1ec299d1857ab65ed5edc562cb69b68326802fed3bffa44cb7c6f53fc43383b1471bd820e3918e7f9f4abf3066df07
   languageName: node
   linkType: hard
 
@@ -12893,7 +12895,7 @@ __metadata:
     "@wordpress/keyboard-shortcuts": ^3.0.7
     "@wordpress/keycodes": ^3.2.4
     "@wordpress/react-i18n": ^3.0.4
-    "@wordpress/url": ^3.3.1
+    "@wordpress/url": 3.3.2
     "@wordpress/viewport": ^4.0.7
     "@wordpress/warning": ^2.2.2
     autoprefixer: ^10.2.5
@@ -38287,7 +38289,7 @@ testarmada-magellan@11.0.10:
     "@wordpress/icons": ^6.1.1
     "@wordpress/is-shallow-equal": ^4.2.1
     "@wordpress/jest-preset-default": ^7.1.3
-    "@wordpress/url": ^3.3.1
+    "@wordpress/url": 3.3.2
     babel-loader: ^8.2.3
     backstopjs: 5.1.0
     browserslist: ^4.16.0

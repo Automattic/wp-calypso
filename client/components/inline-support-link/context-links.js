@@ -1,4 +1,8 @@
 const contextLinks = {
+	'account-settings': {
+		link: 'https://wordpress.com/support/account-settings/',
+		post_id: 80368,
+	},
 	autorenewal: {
 		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
 		post_id: 111349,
@@ -43,6 +47,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/export/#exporting-the-media-library',
 		post_id: 2087,
 	},
+	followers: {
+		link: 'https://wordpress.com/support/followers/',
+		post_id: 5444,
+	},
 	'getting-started-video': {
 		link:
 			'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com',
@@ -81,9 +89,17 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/moving-from-self-hosted-wordpress-to-wordpress-com/',
 		post_id: 102755,
 	},
+	invites: {
+		link: 'https://wordpress.com/support/user-roles/#adding-users-to-your-site',
+		post_id: 1221,
+	},
 	media: {
 		link: 'https://wordpress.com/support/media/',
 		post_id: 853,
+	},
+	'manage-profile': {
+		link: 'https://wordpress.com/support/manage-my-profile/',
+		post_id: 19775,
 	},
 	menus: {
 		link: 'https://wordpress.com/support/menus/',
@@ -108,6 +124,10 @@ const contextLinks = {
 	payment_method_all_subscriptions: {
 		link: 'https://wordpress.com/support/payment/#using-a-payment-method-for-all-subscriptions',
 		post_id: 76237,
+	},
+	performance: {
+		link: 'https://wordpress.com/support/settings/performance-settings/',
+		post_id: 179952,
 	},
 	plugins: {
 		link: 'https://wordpress.com/support/plugins/',

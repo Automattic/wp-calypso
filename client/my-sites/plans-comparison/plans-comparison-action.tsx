@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { TYPE_FREE, TYPE_FLEXIBLE } from '@automattic/calypso-products';
+import { TYPE_FREE, TYPE_FLEXIBLE, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -23,12 +23,15 @@ interface Props {
 type TranslateFunc = ReturnType< typeof useTranslate >;
 
 function getButtonText( props: Partial< Props >, translate: TranslateFunc ): TranslateResult {
-	const { isCurrentPlan, isInSignup, plan } = props;
+	const { isCurrentPlan, plan } = props;
 
-	if ( isInSignup ) {
-		return translate( 'Start with %(plan)s', {
+	const planTitle = plan?.getTitle();
+	const planSlug = plan?.getStoreSlug();
+
+	if ( planSlug === PLAN_WPCOM_PRO ) {
+		return translate( 'Try %(plan)s risk-free', {
 			args: {
-				plan: plan?.getTitle(),
+				plan: planTitle,
 			},
 		} );
 	}
@@ -37,11 +40,10 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 		return props.canPurchase ? translate( 'Manage plan' ) : translate( 'View plan' );
 	}
 
-	return translate( 'Select %(plan)s', {
+	return translate( 'Start with %(plan)s', {
 		args: {
-			plan: plan?.getTitle(),
+			plan: planTitle,
 		},
-		comment: 'Button to select a paid plan by plan name, e.g., "Select Managed"',
 	} );
 }
 

@@ -11,7 +11,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { mapPostStatus } from 'calypso/lib/route';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
 import PostTypeList from 'calypso/my-sites/post-type-list';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -74,7 +73,6 @@ class PostsMain extends Component {
 				<ScreenOptionsTab wpAdminPath="edit.php" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Posts' ) } />
-				<SidebarNavigation />
 				<FormattedHeader
 					brandFont
 					className="posts__page-heading"
