@@ -38,11 +38,12 @@ const StyledRootLabel = styled.span`
 	${ flexAligned };
 	font-size: 1rem;
 	font-weight: 600;
-	color: var( --cstudio-gray-80 );
+	color: var( --studio-gray-80 );
 `;
 
 const StyledGridicon = styled( Gridicon )`
 	margin: 0 12px;
+	color: var( --color-neutral-10 );
 `;
 
 interface Props {
