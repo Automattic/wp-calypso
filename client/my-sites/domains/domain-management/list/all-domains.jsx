@@ -344,6 +344,7 @@ class AllDomains extends Component {
 					domains.map( ( domain ) =>
 						resolveDomainStatus( domain, null, {
 							getMappingErrors: true,
+							siteSlug: sites[ domain.blogId ].slug,
 						} )
 					)
 				),
