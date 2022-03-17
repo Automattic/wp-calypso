@@ -194,13 +194,16 @@ git push --tags
 
 ### Publishing a package
 
-Once the above steps (checkout `trunk`, get `@automattic` permissions, and package tagging) are done, you are ready to publish the package. Depending on the name of the package (found in the package's `package.json` file), you'll need to log into a different scope:
+**DO NOT USE `npm publish`**. This will cause a package to be published with `workspace:^` as the version for internal dependencies, which does not work outside of the Calypso monorepo. You must run `yarn npm publish` instead, so that those versions are replaced with correct NPM versions.
 
-- If the package name is prefixed with `@automattic` (e.g. `@automattic/components`), run `yarn npm login --scope automattic`.
-- If the package name is not prefixed (e.g. `eslint-plugin-wpcalypso`), run `yarn npm login`.
+Once the above steps (checkout `trunk`, get `@automattic` permissions and package tagging) are done, you are ready to publish the package:
 
-To verify it worked, use `yarn npm whoami --scope automattic` or `yarn npm whoami`.
+First you need to authenticate with the registry: `yarn npm login --scope automattic`. To verify it worked you can use `yarn npm whoami --scope automattic`. You may also need to run `yarn npm login` (without --scope) to publish packages whose names aren't prefixed with `@automattic/`. (Try this if you get an authentication error publishing a non-prefixed package.)
 
-To publish the package, run: `cd packages/<your-package> && yarn npm publish`.
+You can safely test that the pre-publish steps will pass by using `yarn workspace $package_name run prepack`, and then checking the `$package/dist` directory. If you get build errors, you may need to run `yarn build-packages` first.
+
+When you're ready to publish: `yarn workspace $package_name npm publish`. (e.g. `yarn workspace i18n-calypso npm publish` or `yarn workspace @automattic/calypso-build npm publish`).
+
+Note that **yarn does not ask for permission before publishing.** As a result, be sure that you're really ready to publish before running this command!
 
 Done!
