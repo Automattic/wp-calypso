@@ -14,6 +14,7 @@ import { recordOnboardingError } from '../../lib/analytics';
 import { USER_STORE } from '../../stores/user';
 import type { ErrorParameters } from '../../lib/analytics/types';
 import type { User } from '@automattic/data-stores';
+import type { LanguageSlug } from '@automattic/languages';
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
 const USE_TRANSLATION_CHUNKS: boolean =
@@ -154,7 +155,7 @@ async function setupTranslationChunks( localeSlug: string, translatedChunks: str
 async function getLocale(): Promise< string > {
 	// Explicit locale slug.
 	const pathname = new URL( window.location.href ).pathname;
-	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
+	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 ) as LanguageSlug;
 	if ( getLanguageSlugs().includes( lastPathSegment ) ) {
 		return lastPathSegment;
 	}

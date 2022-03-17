@@ -6,8 +6,9 @@ import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { FeatureId } from '../wpcom-features/types';
 import { STORE_KEY } from './constants';
-import { Design, FontPair } from './types';
 import type { State } from '.';
+// somewhat hacky, but resolves the circular dependency issue
+import type { Design, FontPair } from '@automattic/design-picker/src/types';
 
 // copied from design picker to avoid a circular dependency
 function isBlankCanvasDesign( design: { slug: string } | undefined ): boolean {
