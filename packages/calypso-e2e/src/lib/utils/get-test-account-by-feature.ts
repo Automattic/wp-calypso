@@ -106,7 +106,7 @@ export function getTestAccountByFeature(
 	feature: FeatureKey,
 	mergeAndOverrideCriteria?: FeatureCriteria[]
 ) {
-	// If no criteria is passed in the `mergeAndOverride` param, then we just fallback
+	// If no criteria is passed in the `mergeAndOverrideCriteria` param, then we just fallback
 	// to the `defaultAccountsTable`, which should be read-only and never modified (otherwise
 	// it could affect the return value of other calls). However, if a `mergeAndOverride`
 	// argument is present, then we need to "merge" with the internal table, for that we
