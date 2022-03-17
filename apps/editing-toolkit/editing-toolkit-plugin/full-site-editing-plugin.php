@@ -356,3 +356,11 @@ function load_block_description_links() {
 	require_once __DIR__ . '/wpcom-block-description-links/class-wpcom-block-description-links.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
+
+/*
+ * Block Inspector
+ */
+function load_block_inspector() {
+	require_once __DIR__ . '/block-inspector/class-block-inspector.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_inspector' );

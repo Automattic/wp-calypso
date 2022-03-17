@@ -16,6 +16,7 @@
 	"scripts": {
 		"build": "NODE_ENV=production yarn dev",
 		"build:block-inserter-modifications": "calypso-build --env source='block-inserter-modifications/contextual-tips'",
+		"build:block-inspector": "calypso-build --env source='block-inspector'",
 		"build:common": " calypso-build --env source='common','common/data-stores','common/hide-plugin-buttons-mobile','common/disable-heic-images'",
 		"build:error-reporting": "calypso-build --env source='error-reporting'",
 		"build:event-countdown-block": "calypso-build --env source='event-countdown-block'",
