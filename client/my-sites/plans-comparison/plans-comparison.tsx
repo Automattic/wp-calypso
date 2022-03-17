@@ -109,6 +109,7 @@ export const globalOverrides = css`
 			html[dir='ltr'] &,
 			html[dir='rtl'] & {
 				padding: 24px 16px;
+				margin: 0;
 			}
 		}
 	}
