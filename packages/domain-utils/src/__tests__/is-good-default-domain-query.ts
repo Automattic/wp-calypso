@@ -1,4 +1,4 @@
-import { isGoodDefaultDomainQuery } from '../';
+import { isGoodDefaultDomainQuery } from '../index';
 
 describe( 'isGoodDefaultDomainQuery', () => {
 	it( 'should reject empty queries', () => {

@@ -479,8 +479,6 @@ __metadata:
     typescript: ^4.5.5
     utility-types: ^3.10.0
     webpack: ^5.68.0
-    wpcom: "workspace:^"
-    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^6.1.5
     "@wordpress/element": ^4.0.4
@@ -526,6 +524,14 @@ __metadata:
     react: ^17.0.2
     reakit-utils: ^0.15.1
     redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
+"@automattic/domain-utils@workspace:^, @automattic/domain-utils@workspace:packages/domain-utils":
+  version: 0.0.0-use.local
+  resolution: "@automattic/domain-utils@workspace:packages/domain-utils"
+  dependencies:
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -12840,6 +12846,7 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
+    "@automattic/domain-utils": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/format-currency": "workspace:^"

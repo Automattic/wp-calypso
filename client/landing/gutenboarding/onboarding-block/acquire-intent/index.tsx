@@ -1,4 +1,4 @@
-import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
+import { isGoodDefaultDomainQuery } from '@automattic/domain-utils';
 import { NextButton, SkipButton } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';

@@ -1,8 +1,8 @@
 import { combineReducers } from '@wordpress/data';
 import type { DomainSuggestion } from '../domain-suggestions/types';
-import type { Design, FontPair } from '../shared-types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
+import type { Design, FontPair } from './types';
 import type { Reducer } from 'redux';
 
 const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, action ) => {

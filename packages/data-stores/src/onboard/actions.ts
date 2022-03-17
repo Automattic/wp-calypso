@@ -1,11 +1,13 @@
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
-import { DomainSuggestions, Site, WPCOMFeatures } from '..';
+import { DomainSuggestion } from '../domain-suggestions/types';
 import { STORE_KEY as SITE_STORE } from '../site';
+import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
+import { FeatureId } from '../wpcom-features/types';
 import { STORE_KEY } from './constants';
+import { Design, FontPair } from './types';
 import type { State } from '.';
-import type { Design, FontPair } from '../shared-types';
 
 // copied from design picker to avoid a circular dependency
 function isBlankCanvasDesign( design: { slug: string } | undefined ): boolean {
@@ -15,12 +17,9 @@ function isBlankCanvasDesign( design: { slug: string } | undefined ): boolean {
 	return /blank-canvas/i.test( design.slug );
 }
 
-type CreateSiteParams = Site.CreateSiteParams;
-type DomainSuggestion = DomainSuggestions.DomainSuggestion;
 type Language = {
 	value: number;
 };
-type FeatureId = WPCOMFeatures.FeatureId;
 
 export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
@@ -41,7 +40,7 @@ export function* createSite( {
 	username,
 	languageSlug,
 	bearerToken = undefined,
-	visibility = Site.Visibility.PublicNotIndexed,
+	visibility = Visibility.PublicNotIndexed,
 	anchorFmPodcastId = null,
 	anchorFmEpisodeId = null,
 	anchorFmSpotifyUrl = null,
@@ -93,7 +92,7 @@ export function* createSite( {
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
-	const success: Site.NewSiteBlogDetails | undefined = yield dispatch(
+	const success: NewSiteBlogDetails | undefined = yield dispatch(
 		SITE_STORE,
 		'createSite',
 		params
