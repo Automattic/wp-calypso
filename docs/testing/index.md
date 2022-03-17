@@ -13,4 +13,5 @@ All of this might feel confusing and overwhelming even for seasoned developers. 
 - [Component Tests](./component-tests.md)
 - [Snapshot Tests](./snapshot-testing.md)
 - [End-to-end Tests](../../test/e2e/README.md)
+- [FAQ](./faq.md)
 
