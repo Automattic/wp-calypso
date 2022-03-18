@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
+import { getLanguage, isLocaleVariant, canBeTranslated } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -31,7 +32,6 @@ import SitesDropdown from 'calypso/components/sites-dropdown';
 import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
-import { getLanguage, isLocaleVariant, canBeTranslated } from 'calypso/lib/i18n-utils';
 import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';

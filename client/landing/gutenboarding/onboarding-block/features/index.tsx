@@ -14,7 +14,7 @@ import classnames from 'classnames';
 import * as React from 'react';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { ONBOARD_STORE } from '../../stores/onboard';
 import { WPCOM_FEATURES_STORE } from '../../stores/wpcom-features';
 import type { WPCOMFeatures } from '@automattic/data-stores';
 

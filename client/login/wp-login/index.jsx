@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,7 +13,6 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
 import TranslatorInvite from 'calypso/components/translator-invite';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { isCrowdsignalOAuth2Client } from 'calypso/lib/oauth2-clients';
 import {
 	recordPageViewWithClientId as recordPageView,

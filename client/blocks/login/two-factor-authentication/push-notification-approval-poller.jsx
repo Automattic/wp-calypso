@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { updateNonce } from 'calypso/state/login/actions';
 import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 import {

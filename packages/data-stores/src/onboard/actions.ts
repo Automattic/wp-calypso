@@ -1,20 +1,26 @@
-import { DomainSuggestions, Site, WPCOMFeatures } from '@automattic/data-stores';
-import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
-import { getLanguage } from 'calypso/lib/i18n-utils';
-import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
-import { SITE_STORE } from '../site';
-import { STORE_KEY as ONBOARD_STORE } from './constants';
+import { DomainSuggestion } from '../domain-suggestions/types';
+import { STORE_KEY as SITE_STORE } from '../site';
+import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
+import { FeatureId } from '../wpcom-features/types';
+import { STORE_KEY } from './constants';
 import type { State } from '.';
-import type { Design, FontPair } from '@automattic/design-picker';
+// somewhat hacky, but resolves the circular dependency issue
+import type { Design, FontPair } from '@automattic/design-picker/src/types';
 
-type CreateSiteParams = Site.CreateSiteParams;
-type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+// copied from design picker to avoid a circular dependency
+function isBlankCanvasDesign( design: { slug: string } | undefined ): boolean {
+	if ( ! design ) {
+		return false;
+	}
+	return /blank-canvas/i.test( design.slug );
+}
+
 type Language = {
 	value: number;
 };
-type FeatureId = WPCOMFeatures.FeatureId;
 
 export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
@@ -35,7 +41,7 @@ export function* createSite( {
 	username,
 	languageSlug,
 	bearerToken = undefined,
-	visibility = Site.Visibility.PublicNotIndexed,
+	visibility = Visibility.PublicNotIndexed,
 	anchorFmPodcastId = null,
 	anchorFmEpisodeId = null,
 	anchorFmSpotifyUrl = null,
@@ -46,7 +52,7 @@ export function* createSite( {
 		selectedFonts,
 		siteTitle,
 		selectedFeatures,
-	}: State = yield select( ONBOARD_STORE, 'getState' );
+	}: State = yield select( STORE_KEY, 'getState' );
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
@@ -87,7 +93,7 @@ export function* createSite( {
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
-	const success: Site.NewSiteBlogDetails | undefined = yield dispatch(
+	const success: NewSiteBlogDetails | undefined = yield dispatch(
 		SITE_STORE,
 		'createSite',
 		params

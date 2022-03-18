@@ -8,7 +8,7 @@ import * as React from 'react';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { useIsAnchorFm } from '../../path';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { ONBOARD_STORE } from '../../stores/onboard';
 import type { Design } from '@automattic/design-picker';
 
 import './style.scss';

@@ -1,15 +1,12 @@
 import { combineReducers } from '@wordpress/data';
+import type { DomainSuggestion } from '../domain-suggestions/types';
+import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
-import type { DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
-import type { Design, FontPair } from '@automattic/design-picker';
+// somewhat hacky, but resolves the circular dependency issue
+import type { Design, FontPair } from '@automattic/design-picker/src/types';
 import type { Reducer } from 'redux';
 
-type FeatureId = WPCOMFeatures.FeatureId;
-
-const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, OnboardAction > = (
-	state,
-	action
-) => {
+const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_DOMAIN' ) {
 		return action.domain;
 	}

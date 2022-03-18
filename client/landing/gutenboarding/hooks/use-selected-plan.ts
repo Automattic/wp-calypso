@@ -2,7 +2,7 @@ import { Site } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { usePlanRouteParam } from '../path';
-import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
 import type { Plan } from '../stores/plans';
