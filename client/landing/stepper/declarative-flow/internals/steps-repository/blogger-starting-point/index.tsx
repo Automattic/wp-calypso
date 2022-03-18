@@ -14,7 +14,7 @@ import './style.scss';
  * The starting point step
  */
 const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
-	const { goToStep } = navigation;
+	const { goBack, goToStep } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Nice job! Now it’s{{br}}{{/br}} time to get creative.', {
 		components: { br: <br /> },
@@ -32,6 +32,7 @@ const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
 	return (
 		<StepContainer
 			headerImageUrl={ startingPointImageUrl }
+			goBack={ goBack }
 			skipLabelText={ translate( 'Skip to My Home' ) }
 			isHorizontalLayout={ true }
 			className={ 'blogger-starting-point' }
