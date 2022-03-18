@@ -3,21 +3,38 @@ import type { Flow } from './internals/types';
 
 export const siteSetupFlow: Flow = {
 	useSteps() {
-		return [ 'intent', 'options', 'build', 'sell', 'import', 'wpadmin' ];
+		return [
+			'intent',
+			'options',
+			'build',
+			'sell',
+			'import',
+			'wpadmin',
+			'bloggerStartingPoint',
+			'courses',
+		];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const goBack = () => {
-			if (
-				currentStep === 'options' ||
-				currentStep === 'build' ||
-				currentStep === 'sell' ||
-				currentStep === 'import' ||
-				currentStep === 'wpadmin'
-			) {
-				navigate( 'intent' );
+			switch ( currentStep ) {
+				case 'intent':
+					return navigate( 'domain' );
+				case 'options':
+					return navigate( 'intent' );
+				case 'bloggerStartingPoint':
+					return navigate( 'options' );
+				default:
+					return navigate( 'intent' );
 			}
 		};
-		const goNext = goBack;
+		const goNext = () => {
+			switch ( currentStep ) {
+				case 'options':
+					return navigate( 'bloggerStartingPoint' );
+				default:
+					return navigate( 'intent' );
+			}
+		};
 		const goToStep = ( step: StepPath ) => {
 			navigate( step );
 		};
