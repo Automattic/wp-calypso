@@ -9,10 +9,10 @@
 <!-- TOC -->
 
 - [Debugging](#debugging)
-    - [Playwright native tools](#playwright-native-tools)
-    - [Debug instance](#debug-instance)
-    - [Playwright Developer Console and Gutenberg iFrame](#playwright-developer-console-and-gutenberg-iframe)
-    - [VSCode Debugger and Jest](#vscode-debugger-and-jest)
+  - [Playwright native tools](#playwright-native-tools)
+  - [Debug instance](#debug-instance)
+  - [Playwright Developer Console and Gutenberg iFrame](#playwright-developer-console-and-gutenberg-iframe)
+  - [VSCode Debugger and Jest](#vscode-debugger-and-jest)
 
 <!-- /TOC -->
 
@@ -21,11 +21,11 @@
 The Playwright [project page](https://playwright.dev/docs/debug/) has in-depth coverage of various debugging tools.
 
 Of those tools, there are two that are worth calling out as particularly useful:
+
 - [The Playwright Inspector](https://playwright.dev/docs/inspector) - A very easy way to quickly see what's going wrong with a spec you are writing.
 - [The Playwright Trace Viewer](https://playwright.dev/docs/trace-viewer#viewing-the-trace) - Any failing test will write a trace to a `.zip` file. These traces are included when running locally, and they are also included as test artifacts in TeamCity builds.
 
 The rest of this page will cover debugging scenarios unique to WordPress.com and Calypso.
-
 
 ## Debug instance
 

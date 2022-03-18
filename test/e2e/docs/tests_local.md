@@ -9,16 +9,16 @@
 <!-- TOC -->
 
 - [Running tests on your machine](#running-tests-on-your-machine)
-    - [Prerequisites](#prerequisites)
-    - [Running tests](#running-tests)
-        - [Individual spec files](#individual-spec-files)
-        - [Test Group](#test-group)
-    - [Advanced techniques](#advanced-techniques)
-        - [Save authentication cookies](#save-authentication-cookies)
-        - [Use the mobile viewport](#use-the-mobile-viewport)
-        - [Target local webapp](#target-local-webapp)
-        - [Debug mode](#debug-mode)
-            - [Notes on TypeScript](#notes-on-typescript)
+  - [Prerequisites](#prerequisites)
+  - [Running tests](#running-tests)
+    - [Individual spec files](#individual-spec-files)
+    - [Test Group](#test-group)
+  - [Advanced techniques](#advanced-techniques)
+    - [Save authentication cookies](#save-authentication-cookies)
+    - [Use the mobile viewport](#use-the-mobile-viewport)
+    - [Target local webapp](#target-local-webapp)
+    - [Debug mode](#debug-mode)
+      - [Notes on TypeScript](#notes-on-typescript)
 
 <!-- /TOC -->
 
@@ -73,6 +73,7 @@ export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,eCommerceUser,defaultUse
 ### Use the mobile viewport
 
 By default, tests run against the `desktop` viewport size, approximately 1920x1080. The following viewports are currently supported:
+
 - mobile
 - desktop
 
