@@ -59,32 +59,32 @@ const HelpBuble = styled( InfoPopover )`
 	}
 `;
 
+const renderHelpBubble = ( item: Item ) => {
+	if ( ! item.helpBubble ) {
+		return null;
+	}
+
+	return (
+		<HelpBuble icon="help-outline" position={ 'right' }>
+			{ item.helpBubble }
+		</HelpBuble>
+	);
+};
+
 type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
 
 interface Props {
 	items: Item[];
+	mobileItem?: string;
 	compact?: boolean;
 }
 
-const Breadcrumb: React.FunctionComponent< Props > = ( { items, compact = false } ) => {
+const Breadcrumb: React.FunctionComponent< Props > = ( { items, mobileItem, compact = false } ) => {
 	const translate = useTranslate();
 
-	const renderHelpBubble = ( item: Item ) => {
-		if ( ! item.helpBubble ) {
-			return null;
-		}
-
-		return (
-			<HelpBuble
-				id={ 'dude' }
-				icon="help-outline"
-				position={ 'right' }
-				screenReaderText={ 'Learn more' }
-			>
-				{ item.helpBubble }
-			</HelpBuble>
-		);
-	};
+	if ( items.length === 0 ) {
+		return null;
+	}
 
 	if ( items.length === 1 ) {
 		const [ item ] = items;
@@ -101,7 +101,7 @@ const Breadcrumb: React.FunctionComponent< Props > = ( { items, compact = false 
 			<StyledBackLink href={ items[ items.length - 2 ].href }>
 				<Gridicon icon="chevron-left" size={ 18 } />
 				{ /*  Show the exactly previous page with items[ items.length - 2 ] */ }
-				{ translate( 'Back' ) }
+				{ mobileItem ? mobileItem : translate( 'Back' ) }
 			</StyledBackLink>
 		);
 	}
@@ -123,8 +123,6 @@ const Breadcrumb: React.FunctionComponent< Props > = ( { items, compact = false 
 			</StyledUl>
 		);
 	}
-	// Default case items: []
-	return null;
 };
 
 Breadcrumb.defaultProps = {
