@@ -5,6 +5,7 @@ import {
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
+	isWpComProPlan,
 } from '@automattic/calypso-products';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -73,6 +74,17 @@ export default function getPlanFeatures(
 			String( translate( 'Integrations with top shipping carriers' ) ),
 			String( translate( 'Unlimited products or services for your online store' ) ),
 			String( translate( 'eCommerce marketing tools for emails and social networks' ) ),
+		].filter( isValueTruthy );
+	}
+
+	if ( isWpComProPlan( productSlug ) ) {
+		return [
+			freeOneYearDomain,
+			liveChatSupport,
+			String( translate( 'Install custom plugins and themes' ) ),
+			String( translate( 'Drive traffic to your site with our advanced SEO tools' ) ),
+			String( translate( 'Track your stats with Google Analytics' ) ),
+			String( translate( 'Real-time backups and activity logs' ) ),
 		].filter( isValueTruthy );
 	}
 
