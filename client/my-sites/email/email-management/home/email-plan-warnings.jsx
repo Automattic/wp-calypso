@@ -9,7 +9,8 @@ import {
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
 import { getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
-import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import { isTitanSubscriptionSuspended } from 'calypso/lib/titan/is-titan-subscription-suspended';
+import { emailManagement, emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -35,6 +36,16 @@ class EmailPlanWarnings extends Component {
 		);
 	}
 
+	renderCTAForTitanSuspendedAccount() {
+		const { domain, selectedSiteSlug, translate } = this.props;
+
+		return (
+			<Button compact primary href={ emailManagement( selectedSiteSlug, domain.name ) }>
+				{ translate( 'Manage email' ) }
+			</Button>
+		);
+	}
+
 	renderCTAForGooglePendingTOSAcceptance() {
 		const { domain, translate } = this.props;
 
@@ -47,7 +58,7 @@ class EmailPlanWarnings extends Component {
 	}
 
 	renderCTA() {
-		const { emailAccount } = this.props;
+		const { domain, emailAccount } = this.props;
 
 		if ( hasUnusedMailboxWarning( emailAccount ) && isTitanMailAccount( emailAccount ) ) {
 			return this.renderCTAForTitanUnusedMailboxes();
@@ -55,6 +66,10 @@ class EmailPlanWarnings extends Component {
 
 		if ( hasGoogleAccountTOSWarning( emailAccount ) ) {
 			return this.renderCTAForGooglePendingTOSAcceptance();
+		}
+
+		if ( isTitanSubscriptionSuspended( domain ) ) {
+			return this.renderCTAForTitanSuspendedAccount();
 		}
 
 		return null;

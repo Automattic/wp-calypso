@@ -148,11 +148,7 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 
 		// Check for suspended account
 		if ( isTitanSubscriptionSuspended( domain ) ) {
-			return {
-				statusClass: 'error',
-				icon: 'info',
-				text: translate( 'Account suspended' ),
-			};
+			return errorStatus;
 		}
 
 		// Fallback logic if we don't have an emailAccount - this will initially be the case for the email home page
