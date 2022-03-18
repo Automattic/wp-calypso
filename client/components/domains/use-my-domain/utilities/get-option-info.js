@@ -48,7 +48,6 @@ export function getOptionInfo( {
 	cart,
 	currencyCode,
 	domain,
-	domainInboundTransferStatusInfo,
 	isSignupStep,
 	onConnect,
 	onTransfer,
@@ -107,12 +106,7 @@ export function getOptionInfo( {
 		text: mappingFreeText,
 	};
 
-	const {
-		transferrable: isDomainTransferrable,
-		domainTransferContent,
-	} = getDomainTransferrability( { ...domainInboundTransferStatusInfo, domain } );
-
-	const availabilityNotice = getAvailabilityNotice( domain, availability, null );
+	const availabilityNotice = getAvailabilityNotice( domain, availability );
 
 	let transferContent;
 	switch ( availability.status ) {
