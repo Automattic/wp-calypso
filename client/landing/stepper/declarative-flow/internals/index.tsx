@@ -22,6 +22,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepNavigation = flow.useStepNavigation( currentRoute, ( path: StepPath ) =>
 		history.push( generatePath( path ), stepPaths )
 	);
+	const { search } = useLocation();
 
 	return (
 		<Switch>
@@ -34,7 +35,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				);
 			} ) }
 			<Route>
-				<Redirect to={ stepPaths[ 0 ] } />
+				<Redirect to={ stepPaths[ 0 ] + search } />
 			</Route>
 		</Switch>
 	);
