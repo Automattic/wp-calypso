@@ -196,6 +196,11 @@ export const startOnboarding = () => ( {
 	type: 'ONBOARDING_START' as const,
 } );
 
+export const setIntent = ( intent: string ) => ( {
+	type: 'SET_INTENT' as const,
+	intent,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -216,4 +221,5 @@ export type OnboardAction = ReturnType<
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof startOnboarding
+	| typeof setIntent
 >;
