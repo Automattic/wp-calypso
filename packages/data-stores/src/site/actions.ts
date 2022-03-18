@@ -1,3 +1,4 @@
+import { Design } from '@automattic/design-picker/src/types';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { SiteLaunchError } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
@@ -163,6 +164,30 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} catch ( e ) {}
 	}
 
+	function* setDesignOnSite( siteSlug: string, selectedDesign: Design ) {
+		yield wpcomRequest( {
+			path: `/sites/${ siteSlug }/themes/mine`,
+			apiVersion: '1.1',
+			body: { theme: selectedDesign.theme, dont_change_homepage: true },
+			method: 'POST',
+		} );
+
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
+			apiNamespace: 'wpcom/v2',
+			body: { trim_content: true },
+			method: 'POST',
+		} );
+
+		const data: { is_fse_active: boolean } = yield wpcomRequest( {
+			path: `/sites/${ siteSlug }/block-editor`,
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+		} );
+
+		return data?.is_fse_active ?? false;
+	}
+
 	return {
 		receiveSiteDomains,
 		saveSiteTitle,
@@ -172,6 +197,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveNewSite,
 		receiveNewSiteFailed,
 		resetNewSiteFailed,
+		setDesignOnSite,
 		createSite,
 		receiveSite,
 		receiveSiteFailed,
@@ -195,6 +221,7 @@ export type Action =
 			| ActionCreators[ 'receiveNewSite' ]
 			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]
+			| ActionCreators[ 'setDesignOnSite' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]
