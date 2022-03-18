@@ -6,7 +6,6 @@ import _self.lib.customBuildType.E2EBuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
-import jetbrains.buildServer.configs.kotlin.v2019_2.Parametrized
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
@@ -262,7 +261,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			)
 			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser")
 			param("env.VIEWPORT_NAME", "$targetDevice")
-			if (atomic) Parametrized().param("env.TEST_ON_ATOMIC", "true")
+			if (atomic) param("env.TEST_ON_ATOMIC", "true")
 		},
 		buildFeatures = {
 			notifications {
