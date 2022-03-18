@@ -7,10 +7,8 @@ import EditGravatar from 'calypso/blocks/edit-gravatar';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Timezone from 'calypso/components/timezone';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -21,6 +19,7 @@ import './style.scss';
  * Constants
  */
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
+const ERROR_CODE_MISSING_FULL_NAME = 123; // Random number, we don't need it.
 const ERROR_CODE_FROM_LOCAL_STORAGE = 7331; // Random number, we don't need it.
 
 class P2CompleteProfile extends Component {
@@ -52,14 +51,11 @@ class P2CompleteProfile extends Component {
 				fullName: {
 					value: '',
 				},
-				timezone: {
-					value: guessTimezone(),
-				},
 			};
 		}
 
 		this.formStateController = new formState.Controller( {
-			fieldNames: [ 'fullName', 'timezone' ],
+			fieldNames: [ 'fullName' ],
 			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: ( state ) => {
@@ -85,7 +81,17 @@ class P2CompleteProfile extends Component {
 	}
 
 	validate = ( fields, onComplete ) => {
-		onComplete( null, {} );
+		const messages = {};
+
+		if ( isEmpty( fields.fullName ) || fields.fullName.length < 3 ) {
+			messages.fullName = {
+				[ ERROR_CODE_MISSING_FULL_NAME ]: this.props.translate(
+					'Please enter your full name (3 characters or more).'
+				),
+			};
+		}
+
+		onComplete( null, messages );
 	};
 
 	handleSubmit = ( event ) => {
@@ -95,7 +101,6 @@ class P2CompleteProfile extends Component {
 
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			const fullName = formState.getFieldValue( this.state.form, 'fullName' );
-			const timezone = formState.getFieldValue( this.state.form, 'timezone' );
 
 			if ( hasErrors ) {
 				this.setState( { isSubmitting: false } );
@@ -113,7 +118,6 @@ class P2CompleteProfile extends Component {
 				stepName: this.props.stepName,
 				form: this.state.form,
 				fullName,
-				timezone,
 			};
 
 			this.props.submitSignupStep( stepData );
@@ -182,22 +186,6 @@ class P2CompleteProfile extends Component {
 						onBlur={ this.handleBlur }
 						onChange={ this.handleChangeEvent }
 					/>
-				</ValidationFieldset>
-				<ValidationFieldset
-					errorMessages={ this.getErrorMessages( 'timezone' ) }
-					className="p2-complete-profile__validation-timezone"
-				>
-					<div className="p2-complete-profile__timezone-wrapper">
-						<FormLabel htmlFor="timezone-input">{ this.props.translate( 'Time zone' ) }</FormLabel>
-						<Timezone
-							id="timezone-input"
-							name="timezone"
-							selectedZone={ formState.getFieldValue( this.state.form, 'timezone' ) }
-							onSelect={ ( zone ) =>
-								this.handleChangeEvent( { target: { name: 'timezone', value: zone } } )
-							}
-						/>
-					</div>
 				</ValidationFieldset>
 			</>
 		);

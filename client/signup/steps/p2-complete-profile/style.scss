@@ -49,6 +49,10 @@
 		color: var( --p2-color-text );
 		font-weight: 500;
 	}
+
+	.validation-fieldset__validation-message {
+		min-height: 0;
+	}
 }
 
 .p2-complete-profile__skip-wrapper {
@@ -72,10 +76,6 @@
 	padding: 14px 16px;
 }
 
-.p2-complete-profile__timezone-wrapper {
-	select {
-		width: 100%;
-		height: 52px;
-		padding: 14px 16px;
-	}
+.p2-complete-profile__form-footer {
+	margin-top: 40px;
 }
