@@ -199,7 +199,14 @@ const PluginsBrowser = ( {
 
 	useEffect( () => {
 		const items = [
-			{ label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }`, id: 'plugins' },
+			{
+				label: translate( 'Plugins' ),
+				href: `/plugins/${ siteSlug || '' }`,
+				id: 'plugins',
+				helpBubble: translate(
+					'Add new functionality and integrations to your site with plugins.'
+				),
+			},
 		];
 		if ( search ) {
 			items.push( {
