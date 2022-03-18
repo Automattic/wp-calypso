@@ -318,7 +318,7 @@ function setUpLoggedInRoute( req, res, next ) {
 						isTranslatedIncompletely( data.localeVariant || data.localeSlug )
 					)
 				) {
-					req.context.lang = data.localeSlug;
+					req.context.lang = data.localeVariant || data.localeSlug;
 					req.context.store.dispatch( {
 						type: LOCALE_SET,
 						localeSlug: data.localeSlug,

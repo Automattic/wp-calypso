@@ -25,15 +25,6 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		initLanguageEmpathyMode();
 	}
 
-	let userLocaleSlug = currentUser.localeVariant || currentUser.localeSlug;
-	const shouldUseFallbackLocale =
-		currentUser?.use_fallback_for_incomplete_languages &&
-		isTranslatedIncompletely( userLocaleSlug );
-
-	if ( shouldUseFallbackLocale ) {
-		userLocaleSlug = config( 'i18n_default_locale_slug' );
-	}
-
 	const bootstrappedLocaleSlug = window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug;
 
 	if ( window.i18nLocaleStrings ) {
@@ -49,11 +40,14 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 			loadUserUndeployedTranslations( localeSlug );
 		}
 	} else if ( currentUser && currentUser.localeSlug ) {
-		if ( shouldUseFallbackLocale ) {
+		if (
+			currentUser.use_fallback_for_incomplete_languages &&
+			isTranslatedIncompletely( currentUser.localeVariant || currentUser.localeSlug )
+		) {
 			// Use user locale fallback slug
-			reduxStore.dispatch( setLocale( userLocaleSlug ) );
+			reduxStore.dispatch( setLocale( config( 'i18n_default_locale_slug' ) ) );
 		} else {
-			// Use the current user's and load traslation data with a fetch request
+			// Use the current user's and load translation data with a fetch request
 			reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
 		}
 	} else if ( bootstrappedLocaleSlug ) {

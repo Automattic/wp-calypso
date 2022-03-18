@@ -1,3 +1,4 @@
+import { getLanguage } from 'calypso/lib/i18n-utils/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setSection } from 'calypso/state/ui/actions';
 import { setLocale } from 'calypso/state/ui/language/actions';
@@ -50,13 +51,41 @@ export function setSectionMiddleware( section ) {
 	};
 }
 
+function browserLocaleSuggestion() {
+	if ( typeof window === 'object' && 'languages' in window.navigator ) {
+		for ( const langSlug of window.navigator.languages ) {
+			const language = getLanguage( langSlug.toLowerCase() );
+			if ( language ) {
+				return language.langSlug;
+			}
+		}
+	}
+
+	return null;
+}
+
+function setContextLanguage( context, localeSlug, localeVariant ) {
+	context.lang = localeVariant || localeSlug;
+	context.store.dispatch( setLocale( localeSlug, localeVariant ) );
+}
+
 export function setLocaleMiddleware( param = 'lang' ) {
 	return ( context, next ) => {
 		const paramsLocale = context.params[ param ];
 		if ( paramsLocale ) {
-			context.lang = paramsLocale;
-			context.store.dispatch( setLocale( paramsLocale ) );
+			const language = getLanguage( paramsLocale );
+			if ( language.parentLangSlug ) {
+				setContextLanguage( context, language.parentLangSlug, language.langSlug );
+			} else {
+				setContextLanguage( context, language.langSlug );
+			}
+		} else {
+			const browserLang = browserLocaleSuggestion();
+			if ( browserLang ) {
+				setContextLanguage( context, browserLang );
+			}
 		}
+
 		next();
 	};
 }

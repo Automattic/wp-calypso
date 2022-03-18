@@ -253,12 +253,6 @@ export class JetpackSignup extends Component {
 		);
 	}
 
-	renderLocaleSuggestions() {
-		return this.props.locale ? (
-			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
-		) : null;
-	}
-
 	renderFooterLink() {
 		const { authQuery } = this.props;
 
@@ -436,7 +430,7 @@ export class JetpackSignup extends Component {
 				pageTitle={ wooDna.getServiceName() + ' — ' + pageTitle }
 			>
 				<div className="jetpack-connect__authorize-form">
-					{ this.renderLocaleSuggestions() }
+					{ this.props.locale && <LocaleSuggestions path={ this.props.path } /> }
 					<FormattedHeader headerText={ header } subHeaderText={ subHeader } />
 					{ content }
 					{ this.renderLoginUser() }
@@ -453,7 +447,7 @@ export class JetpackSignup extends Component {
 		return (
 			<MainWrapper isWoo={ this.isWoo() }>
 				<div className="jetpack-connect__authorize-form">
-					{ this.renderLocaleSuggestions() }
+					{ this.props.locale && <LocaleSuggestions path={ this.props.path } /> }
 					<AuthFormHeader authQuery={ this.props.authQuery } isWoo={ this.isWoo() } />
 					<SignupForm
 						disabled={ isCreatingAccount }

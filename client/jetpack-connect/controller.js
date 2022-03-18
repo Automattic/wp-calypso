@@ -240,12 +240,8 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 };
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
-	debug( 'controller: redirectWithoutLocaleIfLoggedIn', context.params );
-	const isLoggedIn = isUserLoggedIn( context.store.getState() );
-	if ( isLoggedIn && getLocaleFromPath( context.path ) ) {
-		const urlWithoutLocale = removeLocaleFromPath( context.path );
-		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
-		return page.redirect( urlWithoutLocale );
+	if ( isUserLoggedIn( context.store.getState() ) && getLocaleFromPath( context.path ) ) {
+		return page.redirect( removeLocaleFromPath( context.path ) );
 	}
 
 	next();
@@ -332,7 +328,6 @@ export function connect( context, next ) {
 			<JetpackConnect
 				ctaFrom={ query.cta_from /* origin tracking params */ }
 				ctaId={ query.cta_id /* origin tracking params */ }
-				locale={ params.locale }
 				path={ path }
 				type={ type }
 				url={ query.url }
@@ -363,7 +358,7 @@ export function instructions( context, next ) {
 	next();
 }
 
-export function signupForm( context, next ) {
+function signupForm( context, next ) {
 	recordPageView(
 		'jetpack/connect/authorize',
 		'Jetpack Authorize',
@@ -400,7 +395,7 @@ export function credsForm( context, next ) {
 	next();
 }
 
-export function authorizeForm( context, next ) {
+function authorizeForm( context, next ) {
 	recordPageView(
 		'jetpack/connect/authorize',
 		'Jetpack Authorize',

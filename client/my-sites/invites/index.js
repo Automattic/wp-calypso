@@ -1,7 +1,7 @@
 import page from 'page';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import { makeLayout, render as clientRender, setLocaleMiddleware } from 'calypso/controller';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
-import { acceptInvite, redirectWithoutLocaleifLoggedIn } from './controller';
+import { acceptInvite, redirectWithoutLocaleIfLoggedIn } from './controller';
 
 export default () => {
 	const locale = getLanguageRouteParam( 'locale' );
@@ -12,7 +12,8 @@ export default () => {
 			`/accept-invite/:site_id/:invitation_key/:activation_key/${ locale }`,
 			`/accept-invite/:site_id/:invitation_key/:activation_key/:auth_key/${ locale }`,
 		],
-		redirectWithoutLocaleifLoggedIn,
+		redirectWithoutLocaleIfLoggedIn,
+		setLocaleMiddleware( 'locale' ),
 		acceptInvite,
 		makeLayout,
 		clientRender
