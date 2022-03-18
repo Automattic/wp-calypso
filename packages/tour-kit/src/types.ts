@@ -2,6 +2,7 @@ import React from 'react';
 import type { Modifier } from 'react-popper';
 
 export interface Step {
+	slug?: string;
 	referenceElements?: {
 		desktop?: string;
 		mobile?: string;

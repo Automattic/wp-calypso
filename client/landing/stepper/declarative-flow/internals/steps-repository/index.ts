@@ -9,6 +9,7 @@ export { default as write } from './write';
 export { default as import } from './import';
 export { default as wpadmin } from './wpadmin';
 export { default as bloggerStartingPoint } from './blogger-starting-point';
+export { default as designSetupSite } from './design-setup-site-step';
 
 export type StepPath =
 	| 'courses'
@@ -23,3 +24,4 @@ export type StepPath =
 	| 'import'
 	| 'wpadmin'
 	| 'bloggerStartingPoint';
+	| 'designSetupSite';

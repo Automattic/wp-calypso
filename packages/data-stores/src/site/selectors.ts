@@ -19,7 +19,7 @@ export const isNewSite = ( state: State ) => !! state.newSite.data;
  * @param state {State}		state object
  * @param siteId {number}	id of the site to look up
  */
-export const getSite = ( state: State, siteId: number ) => {
+export const getSite = ( state: State, siteId: number | string ) => {
 	return state.sites[ siteId ];
 };
 

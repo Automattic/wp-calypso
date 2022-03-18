@@ -3,14 +3,16 @@ import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import ReactDom from 'react-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { LocaleContext } from '../gutenboarding/components/locale-context';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 // import { exampleFlow } from './declarative-flow/example-flow';
+import { builderFlow } from './declarative-flow/builder-flow';
 import { FlowRenderer } from './declarative-flow/internals';
-import { siteSetupFlow } from './declarative-flow/site-setup-flow';
+// import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
 
 function generateGetSuperProps() {
@@ -41,12 +43,16 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
+	const queryClient = new QueryClient();
+
 	ReactDom.render(
 		<LocaleContext>
-			<WindowLocaleEffectManager />
-			<BrowserRouter basename="stepper">
-				<FlowRenderer flow={ siteSetupFlow } />
-			</BrowserRouter>
+			<QueryClientProvider client={ queryClient }>
+				<WindowLocaleEffectManager />
+				<BrowserRouter basename="stepper">
+					<FlowRenderer flow={ builderFlow } />
+				</BrowserRouter>
+			</QueryClientProvider>
 		</LocaleContext>,
 		document.getElementById( 'wpcom' )
 	);

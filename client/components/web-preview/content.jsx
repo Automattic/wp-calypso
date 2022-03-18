@@ -1,27 +1,20 @@
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import debugModule from 'debug';
-import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import SeoPreviewPane from 'calypso/components/seo-preview-pane';
 import SpinnerLine from 'calypso/components/spinner-line';
 import { addQueryArgs } from 'calypso/lib/route';
 import { hasTouch } from 'calypso/lib/touch-detect';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import Toolbar from './toolbar';
 
 const debug = debugModule( 'calypso:web-preview' );
 const noop = () => {};
 
-export class WebPreviewContent extends Component {
+export default class WebPreviewContent extends Component {
 	previewId = uuid();
 
 	state = {
@@ -408,13 +401,3 @@ WebPreviewContent.defaultProps = {
 	overridePost: null,
 	toolbarComponent: Toolbar,
 };
-
-const mapState = ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		isPrivateAtomic: isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId ),
-		url: getSelectedSite( state )?.URL,
-	};
-};
-
-export default connect( mapState, { recordTracksEvent } )( localize( WebPreviewContent ) );
