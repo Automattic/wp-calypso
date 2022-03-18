@@ -94,7 +94,7 @@ export type LanguageSlug =
 	| 'ne'
 	| 'nl'
 	| 'nn'
-	| 'no'
+	| 'nb'
 	| 'non'
 	| 'nv'
 	| 'oci'
