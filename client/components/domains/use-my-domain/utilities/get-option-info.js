@@ -2,6 +2,7 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import {
 	getMappingFreeText,
 	getMappingPriceText,
@@ -11,7 +12,6 @@ import {
 	getTransferSalePriceText,
 	isFreeTransfer,
 	optionInfo,
-	getUnsupportedDomainTransferMessage,
 } from './index';
 
 export const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => {
@@ -25,7 +25,7 @@ export const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => 
 		};
 	}
 
-	const { inRedemption, transferEligibleDate, domain } = domainInboundTransferStatusInfo;
+	const { inRedemption, transferEligibleDate } = domainInboundTransferStatusInfo;
 
 	const result = {
 		transferrable: ! inRedemption && null === transferEligibleDate,
@@ -36,7 +36,7 @@ export const getDomainTransferrability = ( domainInboundTransferStatusInfo ) => 
 			...optionInfo.transferNotSupported,
 			topText:
 				getTransferRestrictionMessage( domainInboundTransferStatusInfo ) ??
-				getUnsupportedDomainTransferMessage( domain ),
+				optionInfo.transferNotSupported.topText,
 		};
 	}
 
@@ -112,6 +112,8 @@ export function getOptionInfo( {
 		domainTransferContent,
 	} = getDomainTransferrability( { ...domainInboundTransferStatusInfo, domain } );
 
+	const availabilityNotice = getAvailabilityNotice( domain, availability, null );
+
 	let transferContent;
 	switch ( availability.status ) {
 		case domainAvailability.TRANSFERRABLE:
@@ -139,11 +141,10 @@ export function getOptionInfo( {
 			};
 			break;
 		default:
-			transferContent = optionInfo.transferNotSupported;
-	}
-
-	if ( ! isDomainTransferrable ) {
-		transferContent = domainTransferContent;
+			transferContent = {
+				...optionInfo.transferNotSupported,
+				topText: availabilityNotice.message,
+			};
 	}
 
 	let connectContent;

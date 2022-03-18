@@ -12,4 +12,3 @@ export { getTransferSalePriceText } from './get-transfer-sale-price-text';
 export { isFreeTransfer } from './is-free-transfer';
 export { optionInfo } from './option-info';
 export { transferDomainAction } from './transfer-domain-action';
-export { getUnsupportedDomainTransferMessage } from './get-unsupported-domain-transfer-message';
