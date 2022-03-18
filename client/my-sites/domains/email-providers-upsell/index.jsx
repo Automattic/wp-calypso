@@ -44,8 +44,8 @@ export default function EmailProvidersUpsell( { domain } ) {
 				/>
 			) : (
 				<EmailProvidersStackedComparison
-					cartDomainName={ domain }
 					comparisonContext="domain-upsell"
+					isDomainInCart="true"
 					selectedDomainName={ domain }
 					source="domain-upsell"
 				></EmailProvidersStackedComparison>

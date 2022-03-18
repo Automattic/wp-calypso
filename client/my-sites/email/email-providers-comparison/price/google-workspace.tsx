@@ -22,6 +22,7 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -37,7 +38,7 @@ const AdditionalPriceInformation = ( {
 }: {
 	currencyCode: string | null;
 	product: ProductListItem | null;
-} ): JSX.Element | null => {
+} ): ReactElement | null => {
 	if ( ! hasDiscount( product ) ) {
 		return null;
 	}
@@ -82,14 +83,14 @@ const AdditionalPriceInformation = ( {
 
 type GoogleWorkspacePriceProps = {
 	domain: SiteDomain | undefined;
-	hasCartDomain?: boolean;
+	isDomainInCart?: boolean;
 	intervalLength: IntervalLength;
 };
 
 const GoogleWorkspacePrice = ( {
 	domain,
-	hasCartDomain = false,
 	intervalLength,
+	isDomainInCart = false,
 }: GoogleWorkspacePriceProps ): JSX.Element | null => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
@@ -98,12 +99,12 @@ const GoogleWorkspacePrice = ( {
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 
-	if ( ! domain && ! hasCartDomain ) {
+	if ( ! domain && ! isDomainInCart ) {
 		return null;
 	}
 
 	const isGSuiteSupported =
-		canPurchaseGSuite && ( hasCartDomain || hasGSuiteSupportedDomain( [ domain ] ) );
+		canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
 
 	if ( ! isGSuiteSupported ) {
 		return (
