@@ -262,7 +262,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			)
 			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser")
 			param("env.VIEWPORT_NAME", "$targetDevice")
-			if (atomic) Parametrized().param("TEST_ON_ATOMIC", "true")
+			if (atomic) Parametrized().param("env.TEST_ON_ATOMIC", "true")
 		},
 		buildFeatures = {
 			notifications {
