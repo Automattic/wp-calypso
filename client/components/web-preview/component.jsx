@@ -3,8 +3,8 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { hasTouch } from 'calypso/lib/touch-detect';
-import WebPreviewContent from './content';
 
 import './style.scss';
 
@@ -57,6 +57,8 @@ export class WebPreviewModal extends Component {
 		frontPageMetaDescription: PropTypes.string,
 		// A post object used to override the selected post in the SEO preview
 		overridePost: PropTypes.object,
+		// Whether WebPreviewContent should be connected to the Calypso Redux store.
+		shouldConnectContent: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -73,6 +75,7 @@ export class WebPreviewModal extends Component {
 		onEdit: noop,
 		hasSidebar: false,
 		overridePost: null,
+		shouldConnectContent: true,
 	};
 
 	constructor( props ) {
@@ -142,12 +145,25 @@ export class WebPreviewModal extends Component {
 					<div className="web-preview__backdrop" onClick={ this.props.onClose } />
 					{ /* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
 					<div className="web-preview__content">
-						<WebPreviewContent
-							{ ...this.props }
-							onDeviceUpdate={ this.setDeviceViewport }
-							isModalWindow={ true }
-							frontPageMetaDescription={ this.props.frontPageMetaDescription || null }
-						/>
+						{ this.props.shouldConnectContent ? (
+							<AsyncLoad
+								{ ...this.props }
+								onDeviceUpdate={ this.setDeviceViewport }
+								isModalWindow={ true }
+								frontPageMetaDescription={ this.props.frontPageMetaDescription || null }
+								require="calypso/components/web-preview/connectedContent"
+								placeholder={ null }
+							></AsyncLoad>
+						) : (
+							<AsyncLoad
+								{ ...this.props }
+								onDeviceUpdate={ this.setDeviceViewport }
+								isModalWindow={ true }
+								frontPageMetaDescription={ this.props.frontPageMetaDescription || null }
+								require="calypso/components/web-preview/content"
+								placeholder={ null }
+							></AsyncLoad>
+						) }
 					</div>
 				</div>
 			</RootChild>
@@ -158,6 +174,21 @@ export class WebPreviewModal extends Component {
 const LocalizedWebPreviewModal = localize( WebPreviewModal );
 
 const WebPreviewInner = ( { isContentOnly, ...restProps } ) => {
+	const WebPreviewContent = ( props ) =>
+		restProps.shouldConnectContent ? (
+			<AsyncLoad
+				{ ...props }
+				placeholder={ null }
+				require="calypso/components/web-preview/connectedContent"
+			></AsyncLoad>
+		) : (
+			<AsyncLoad
+				{ ...props }
+				placeholder={ null }
+				require="calypso/components/web-preview/content"
+			></AsyncLoad>
+		);
+
 	const WebPreviewComponent = isContentOnly ? WebPreviewContent : LocalizedWebPreviewModal;
 
 	return <WebPreviewComponent { ...restProps } />;
