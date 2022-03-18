@@ -84,14 +84,14 @@ const ThreatItemHeader: React.FC< Props > = ( { threat } ) => {
 			<ThreatSeverityBadge severity={ threat.severity } />
 			<div className="threat-item-header__card-container">
 				<div className="threat-item-header__card-top">{ getThreatMessage( threat ) }</div>
-				<span
+				<div
 					className={ classnames(
 						'threat-item-header__card-bottom',
 						severityClassNames( threat.severity )
 					) }
 				>
 					<ThreatItemSubheader threat={ threat } />
-				</span>
+				</div>
 			</div>
 			{ threat.fixable && (
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
