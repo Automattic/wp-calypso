@@ -3,12 +3,12 @@ import type { Flow } from './internals/types';
 
 export const bloggerFlow: Flow = {
 	useSteps() {
-		return [ 'options', 'domain' ];
+		return [ 'options', 'bloggerStartingPoint' ];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const goBack = () => {
 			if ( currentStep === 'options' ) {
-				navigate( 'intent' );
+				navigate( 'bloggerStartingPoint' );
 			} else {
 				navigate( 'intent' );
 			}

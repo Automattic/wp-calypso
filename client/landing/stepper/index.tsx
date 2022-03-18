@@ -9,8 +9,9 @@ import { LocaleContext } from '../gutenboarding/components/locale-context';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 // import { exampleFlow } from './declarative-flow/example-flow';
+import { bloggerFlow } from './declarative-flow/blogger-flow';
 import { FlowRenderer } from './declarative-flow/internals';
-import { siteSetupFlow } from './declarative-flow/site-setup-flow';
+// import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
 
 function generateGetSuperProps() {
@@ -45,7 +46,7 @@ window.AppBoot = async () => {
 		<LocaleContext>
 			<WindowLocaleEffectManager />
 			<BrowserRouter basename="stepper">
-				<FlowRenderer flow={ siteSetupFlow } />
+				<FlowRenderer flow={ bloggerFlow } />
 			</BrowserRouter>
 		</LocaleContext>,
 		document.getElementById( 'wpcom' )
