@@ -30,7 +30,13 @@ const StyledLi = styled.li`
 const StyledBackLink = styled.a`
 	${ flexAligned };
 	font-size: 13px;
-	color: var( --studio-gray-80 ) !important; // It uses --studio-gray-50 if not using important
+	&,
+	&:link,
+	&:visited,
+	&:hover,
+	&:active {
+		color: var( --studio-gray-80 );
+	}
 	> svg {
 		margin-right: 5px;
 	}
