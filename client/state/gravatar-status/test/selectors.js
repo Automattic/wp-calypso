@@ -5,19 +5,15 @@ describe( 'selectors', () => {
 	describe( '#isCurrentUserUploadingGravatar', () => {
 		test( 'returns state when defined', () => {
 			const uploadingState = {
-				currentUser: {
-					gravatarStatus: {
-						isUploading: true,
-					},
+				gravatarStatus: {
+					isUploading: true,
 				},
 			};
 			expect( isCurrentUserUploadingGravatar( uploadingState ) ).to.equal( true );
 
 			const notUploadingState = {
-				currentUser: {
-					gravatarStatus: {
-						isUploading: false,
-					},
+				gravatarStatus: {
+					isUploading: false,
 				},
 			};
 			expect( isCurrentUserUploadingGravatar( notUploadingState ) ).to.equal( false );
@@ -32,12 +28,12 @@ describe( 'selectors', () => {
 		test( 'returns false if user ID is not passed in, or is false', () => {
 			const state = {
 				currentUser: {
-					gravatarStatus: {
-						tempImage: {
-							src: imageSrc,
-						},
-					},
 					id: currentUserId,
+				},
+				gravatarStatus: {
+					tempImage: {
+						src: imageSrc,
+					},
 				},
 			};
 			expect( getUserTempGravatar( state ) ).to.equal( false );
@@ -47,12 +43,12 @@ describe( 'selectors', () => {
 		test( 'returns false if the user ID passed is not the current user ID', () => {
 			const state = {
 				currentUser: {
-					gravatarStatus: {
-						tempImage: {
-							src: imageSrc,
-						},
-					},
 					id: currentUserId,
+				},
+				gravatarStatus: {
+					tempImage: {
+						src: imageSrc,
+					},
 				},
 			};
 			expect( getUserTempGravatar( state, anotherUserId ) ).to.equal( false );
@@ -61,10 +57,10 @@ describe( 'selectors', () => {
 		test( 'returns false if the current user does not have temp image set', () => {
 			const emptyTempImage = {
 				currentUser: {
-					gravatarStatus: {
-						tempImage: {},
-					},
 					id: currentUserId,
+				},
+				gravatarStatus: {
+					tempImage: {},
 				},
 			};
 			expect( getUserTempGravatar( emptyTempImage, currentUserId ) ).to.equal( false );
@@ -73,12 +69,12 @@ describe( 'selectors', () => {
 		test( 'returns image src if given the current user ID, and the current user has a temp image set', () => {
 			const state = {
 				currentUser: {
-					gravatarStatus: {
-						tempImage: {
-							src: imageSrc,
-						},
-					},
 					id: currentUserId,
+				},
+				gravatarStatus: {
+					tempImage: {
+						src: imageSrc,
+					},
 				},
 			};
 			expect( getUserTempGravatar( state, currentUserId ) ).to.equal( imageSrc );

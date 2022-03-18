@@ -18,14 +18,11 @@ import {
 	recordGoogleEvent,
 	composeAnalytics,
 } from 'calypso/state/analytics/actions';
-import {
-	receiveGravatarImageFailed,
-	uploadGravatar,
-} from 'calypso/state/current-user/gravatar-status/actions';
-import { isCurrentUserUploadingGravatar } from 'calypso/state/current-user/gravatar-status/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import { receiveGravatarImageFailed, uploadGravatar } from 'calypso/state/gravatar-status/actions';
+import { isCurrentUserUploadingGravatar } from 'calypso/state/gravatar-status/selectors';
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
 
 import './style.scss';
