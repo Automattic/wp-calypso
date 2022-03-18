@@ -54,7 +54,7 @@ const HostSelection: FunctionComponent = () => {
 
 	const recordHostSelectionEvent = ( host: string ) => {
 		dispatch(
-			recordTracksEvent( 'jetpack_advanced_credentials_flow_host_select', {
+			recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_host_select', {
 				host,
 			} )
 		);

@@ -202,7 +202,7 @@ export const topHosts: Host[] = [
 					},
 					{
 						type: InfoTypes.Link,
-						text: translate( 'Vist my Bluehost cPanel' ),
+						text: translate( 'Visit my Bluehost cPanel' ),
 						link: 'https://my.bluehost.com/cgi-bin/cplogin',
 					},
 				],
@@ -241,7 +241,7 @@ export const topHosts: Host[] = [
 					},
 					{
 						type: InfoTypes.Link,
-						text: translate( 'Vist my Bluehost cPanel' ),
+						text: translate( 'Visit my Bluehost cPanel' ),
 						link: 'https://my.bluehost.com/cgi-bin/cplogin',
 					},
 				],
@@ -257,7 +257,7 @@ export const topHosts: Host[] = [
 					},
 					{
 						type: InfoTypes.Link,
-						text: translate( 'Vist my Bluehost cPanel' ),
+						text: translate( 'Visit my Bluehost cPanel' ),
 						link: 'https://my.bluehost.com/cgi-bin/cplogin',
 					},
 				],
@@ -294,7 +294,7 @@ export const topHosts: Host[] = [
 				},
 				{
 					type: InfoTypes.Link,
-					text: translate( 'Vist my Bluehost cPanel' ),
+					text: translate( 'Visit my Bluehost cPanel' ),
 					link: 'https://my.bluehost.com/cgi-bin/cplogin',
 				},
 			],
