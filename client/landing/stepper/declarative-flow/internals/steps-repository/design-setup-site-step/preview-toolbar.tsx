@@ -7,15 +7,23 @@ import React from 'react';
 import { computer, tablet, phone } from 'calypso/signup/icons';
 import './preview-toolbar.scss';
 
-const possibleDevices = [ 'computer', 'tablet', 'phone' ];
+const possibleDevices = [ 'computer', 'tablet', 'phone' ] as const;
 
+type Device = typeof possibleDevices[ number ];
+type PreviewToolbarProps = {
+	device: Device;
+	externalUrl: string;
+	showDeviceSwitcher: boolean;
+	setDeviceViewport: ( device: Device ) => void;
+	translate: ( word: string ) => string;
+};
 const DesignPickerPreviewToolbar = ( {
 	device: currentDevice,
 	externalUrl,
 	showDeviceSwitcher,
 	setDeviceViewport,
 	translate,
-} ) => {
+}: PreviewToolbarProps ) => {
 	const devices = React.useRef( {
 		computer: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
 		tablet: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
