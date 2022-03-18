@@ -220,19 +220,10 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 }
 
 fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false ): E2EBuildType {
-	var buildId = if (atomic) {
-		"WPComTests_gutenberg_Playwright_atomic_$targetDevice"
-	} else {
-		// buildId should stay the same for non-atomic or TC will not find the entry
-		// and will create a new one. We want to keep all the data/history for it, so
-		// we keep the id as is.
-		"WPComTests_gutenberg_Playwright_$targetDevice"
-	}
-
 	var siteType = if (atomic) "atomic" else "simple";
 
     return E2EBuildType (
-		buildId = buildId,
+		buildId = "WPComTests_gutenberg_Playwright_${siteType}_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "Playwright Gutenberg $siteType E2E tests ($targetDevice)",
 		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
