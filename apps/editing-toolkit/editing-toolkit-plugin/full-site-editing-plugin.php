@@ -340,3 +340,11 @@ function load_paragraph_block() {
 	require_once __DIR__ . '/paragraph-block/index.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_paragraph_block' );
+
+/**
+ * Override org documentation links
+ */
+function load_wpcom_documentation_links() {
+	require_once __DIR__ . '/wpcom-documentation-links/class-wpcom-documentation-links.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_documentation_links' );
