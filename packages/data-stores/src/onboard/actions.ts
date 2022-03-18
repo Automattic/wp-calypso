@@ -201,6 +201,11 @@ export const setIntent = ( intent: string ) => ( {
 	intent,
 } );
 
+export const setStartingPoint = ( startingPoint: string ) => ( {
+	type: 'SET_STARTING_POINT' as const,
+	startingPoint,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -222,4 +227,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteTitle
 	| typeof startOnboarding
 	| typeof setIntent
+	| typeof setStartingPoint
 >;
