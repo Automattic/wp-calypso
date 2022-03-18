@@ -18,14 +18,14 @@
 		display: flex;
 		flex-wrap: wrap;
 		flex-direction: column;
-		height: 121px;
+		min-height: 121px;
 		flex-grow: 1;
 		line-height: 16px;
 
 		@include breakpoint-deprecated( '>960px' ) {
 			flex-wrap: nowrap;
 			flex-direction: row;
-			height: 65px;
+			min-height: 65px;
 		}
 	}
 
