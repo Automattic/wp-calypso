@@ -296,9 +296,6 @@ const PluginsBrowser = ( {
 
 						<UploadPluginButton isMobile={ isMobile } siteSlug={ siteSlug } />
 					</div>
-					<div className="plugins-browser__searchbox">
-						{ <SearchBox isMobile={ isMobile } doSearch={ doSearch } search={ search } /> }
-					</div>
 				</FixedNavigationHeader>
 			) }
 			{ isSiteConnected === false && (
@@ -327,7 +324,14 @@ const PluginsBrowser = ( {
 				hasBusinessPlan={ hasBusinessPlan }
 				siteSlug={ siteSlug }
 			/>
-
+			<div className="plugins-browser__searchbox-container">
+				<div className="plugins-browser__searchbox-header">
+					{ translate( 'Plugins you need to get your projects done' ) }
+				</div>
+				<div className="plugins-browser__searchbox">
+					<SearchBox doSearch={ doSearch } search={ search } />
+				</div>
+			</div>
 			<PluginBrowserContent
 				pluginsByCategoryNew={ pluginsByCategoryNew }
 				isFetchingPluginsByCategoryNew={ isFetchingPluginsByCategoryNew }
