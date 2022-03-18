@@ -3,7 +3,16 @@ import type { Flow } from './internals/types';
 
 export const siteSetupFlow: Flow = {
 	useSteps() {
-		return [ 'intent', 'options', 'build', 'sell', 'import', 'wpadmin', 'bloggerStartingPoint' ];
+		return [
+			'intent',
+			'options',
+			'build',
+			'sell',
+			'import',
+			'wpadmin',
+			'bloggerStartingPoint',
+			'courses',
+		];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const goBack = () => {
@@ -22,8 +31,6 @@ export const siteSetupFlow: Flow = {
 			switch ( currentStep ) {
 				case 'options':
 					return navigate( 'bloggerStartingPoint' );
-				case 'bloggerStartingPoint':
-					return navigate( 'intent' );
 				default:
 					return navigate( 'intent' );
 			}
