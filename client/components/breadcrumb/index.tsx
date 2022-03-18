@@ -72,19 +72,15 @@ const renderHelpBubble = ( item: Item ) => {
 };
 
 type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
-
 interface Props {
 	items: Item[];
 	mobileItem?: string;
 	compact?: boolean;
 }
 
-const Breadcrumb: React.FunctionComponent< Props > = ( { items, mobileItem, compact = false } ) => {
+const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
-
-	if ( items.length === 0 ) {
-		return null;
-	}
+	const { items, mobileItem, compact = false } = props;
 
 	if ( items.length === 1 ) {
 		const [ item ] = items;
@@ -123,6 +119,8 @@ const Breadcrumb: React.FunctionComponent< Props > = ( { items, mobileItem, comp
 			</StyledUl>
 		);
 	}
+	// Default case -> items: []
+	return null;
 };
 
 Breadcrumb.defaultProps = {
