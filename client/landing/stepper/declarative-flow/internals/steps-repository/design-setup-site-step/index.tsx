@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import DesignPicker, {
 	FeaturedPicksButtons,
@@ -13,19 +13,18 @@ import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
-// import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
-// import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
-import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
-// import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-// import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-// import { getSiteId } from 'calypso/state/sites/selectors';
+import { useIsFSEEligible } from '../../../../hooks/use-is-fse-eligible';
+import { useSite } from '../../../../hooks/use-site';
+import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { ONBOARD_STORE } from '../../../../stores';
 import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
@@ -39,15 +38,17 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 	const { goNext, goBack } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
+	const site = useSite();
+
 	// // const signupDependencies = useSelector( ( state ) => getSignupDependencyStore( state ) );
 
 	// // TODO EMN: These values should come from state
 	const flowName = 'setup-site';
-	const intent = 'builder';
-	const siteSlug = 'site-slug';
-	const siteTitle = 'site title';
+	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const siteSlug = useSiteSlugParam();
+	const siteTitle = site?.name;
 	const isReskinned = true;
-	const sitePlanSlug = 'free_plan';
+	const sitePlanSlug = site?.plan?.product_slug;
 
 	const [ selectedDesign, setSelectedDesign ] = useState< Design | undefined >( undefined );
 
@@ -58,7 +59,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 	const useFeaturedPicksButtons =
 		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
 	const isPremiumThemeAvailable = useMemo(
-		() => planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
+		() => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
 		[ sitePlanSlug ]
 	);
 
@@ -67,29 +68,15 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 			? 'all'
 			: 'free';
 
-	// // // Limit themes to those that support the Site editor, if site is fse eligible
-	// TODO EMN: This needs redux
-	// const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) );
-	const blockEditorSettingsAreLoading = false;
-	const blockEditorSettings = {
-		is_fse_eligible: true,
-	};
-
-	const userLoggedIn = false; //useSelector( ( state ) => isUserLoggedIn( state ) );
-	// TODO EMN: This will work when we have a store
-	// // // const {
-	// // // 	isLoading: blockEditorSettingsAreLoading,
-	// // // 	data: blockEditorSettings,
-	// // // } = useBlockEditorSettingsQuery( siteId, userLoggedIn );
-	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
-	const themeFilters = isFSEEligible
+	const { FSEEligible, isLoading } = useIsFSEEligible();
+	const themeFilters = FSEEligible
 		? 'auto-loading-homepage,full-site-editing'
 		: 'auto-loading-homepage';
 
 	const { data: apiThemes = [] } = useThemeDesignsQuery(
 		{ filter: themeFilters, tier },
 		// Wait until block editor settings have loaded to load themes
-		{ enabled: ! blockEditorSettingsAreLoading }
+		{ enabled: ! isLoading }
 	);
 
 	const allThemes = apiThemes;
@@ -120,7 +107,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 
 		if ( englishLocales.includes( locale ) ) {
 			// An English only trick so the line wraps between sentences.
-			return text
+			return ( text as string )
 				.replace( /\s/g, '\xa0' ) // Replace all spaces with non-breaking spaces
 				.replace( /\.\s/g, '. ' ); // Replace all spaces at the end of sentences with a regular breaking space
 		}
@@ -193,7 +180,12 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 	}
 
 	function upgradePlan() {
-		openCheckoutModal( [ PLAN_PREMIUM ] );
+		// disable for now
+		/*
+		const params = new URLSearchParams( window.location.search );
+		params.append( 'products', PLAN_PREMIUM );
+		history.replace( { search: params.toString() } );
+		*/
 	}
 
 	function renderCheckoutModal() {
@@ -226,24 +218,26 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 		} );
 
 		stepContent = (
-			<div>PREVIEW</div>
-			/* <WebPreview
-				className="design-picker__web-preview"
+			<WebPreview
 				showPreview
 				isContentOnly
 				showClose={ false }
 				showEdit={ false }
 				externalUrl={ siteSlug }
 				showExternal={ true }
-				previewUrl={ 'url test' }
-				loadingMessage={ translate(
-					'{{strong}}One moment, please…{{/strong}} loading your site.',
-					{
-						components: { strong: <strong /> },
-					}
-				) }
+				previewUrl={ previewUrl }
+				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
+					components: { strong: <strong /> },
+				} ) }
 				toolbarComponent={ PreviewToolbar }
-			/> */
+				siteId={ site?.ID }
+				// TODO: figure out how to get this info
+				isPrivateAtomic={ false }
+				url={ site?.URL }
+				shouldConnectContent={ false }
+				translate={ translate }
+				recordTracksEvent={ recordTracksEvent }
+			/>
 		);
 
 		return (
@@ -263,11 +257,11 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 					/>
 				}
 				customizedActionButtons={
-					shouldUpgrade && (
+					shouldUpgrade ? (
 						<Button primary borderless={ false } onClick={ upgradePlan }>
 							{ translate( 'Upgrade Plan' ) }
 						</Button>
-					)
+					) : undefined
 				}
 				recordTracksEvent={ recordTracksEvent }
 			/>
@@ -282,12 +276,12 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 				locale={ locale }
 				onSelect={ pickDesign }
 				onPreview={ previewDesign }
-				// onUpgrade={ upgradePlan }
+				onUpgrade={ upgradePlan }
 				className={ classnames( {
 					'design-setup-site-step__has-categories': showDesignPickerCategories,
 				} ) }
 				highResThumbnails
-				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
+				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
 				categorization={ showDesignPickerCategories ? categorization : undefined }
 				recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
 				categoriesHeading={
@@ -299,7 +293,8 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 					/>
 				}
 				categoriesFooter={ renderCategoriesFooter() }
-				isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				// disable premium themes for now, because we can't access checkout
+				isPremiumThemeAvailable={ false }
 			/>
 			{ renderCheckoutModal() }
 		</>
