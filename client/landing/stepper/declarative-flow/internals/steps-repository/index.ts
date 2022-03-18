@@ -19,9 +19,8 @@ export type StepPath =
 	| 'build'
 	| 'options'
 	| 'sell'
-	| 'skip-to-my-home'
 	| 'write'
 	| 'import'
 	| 'wpadmin'
-	| 'bloggerStartingPoint';
+	| 'bloggerStartingPoint'
 	| 'designSetupSite';
