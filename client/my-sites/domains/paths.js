@@ -61,8 +61,19 @@ export function domainAddNew( siteName, searchTerm ) {
 	return path;
 }
 
-export function domainAddEmailUpsell( siteName, domainName ) {
-	return `/domains/add/${ domainName }/email/${ siteName }`;
+/**
+ * Builds a URL query string from an object. Handles null values.
+ *
+ * @param {Object} parameters - optional path prefix
+ * @returns {string} the corresponding query string
+ */
+const buildQueryString = ( parameters = {} ) =>
+	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
+
+export function domainAddEmailUpsell( siteName, domainName, interval ) {
+	return `/domains/add/${ domainName }/email/${ siteName }${ buildQueryString( {
+		interval,
+	} ) }`;
 }
 
 export function domainManagementAllRoot() {

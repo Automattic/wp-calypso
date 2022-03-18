@@ -23,6 +23,7 @@ import {
 	domainUseYourDomain,
 } from 'calypso/my-sites/domains/paths';
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
+import { castIntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -258,7 +259,10 @@ const emailUpsellForDomainRegistration = ( context, next ) => {
 					args: { domain: context.params.domain },
 				} ) }
 			/>
-			<EmailProvidersUpsell domain={ context.params.domain } />
+			<EmailProvidersUpsell
+				domain={ context.params.domain }
+				selectedIntervalLength={ castIntervalLength( context.query.interval ) }
+			/>
 		</Main>
 	);
 

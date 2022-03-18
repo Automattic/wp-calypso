@@ -10,6 +10,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import { domainAddEmailUpsell } from 'calypso/my-sites/domains/paths';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existing-paid-service-notice';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
@@ -97,6 +98,29 @@ const EmailProvidersStackedComparison = ( {
 		setDetailsExpanded( Object.fromEntries( expandedEntries ) );
 	};
 
+	const onIntervalLengthPathHandlerResolver = ( newIntervalLength: IntervalLength ) => {
+		const selectedSiteSlug = selectedSite?.slug ?? '';
+
+		if (
+			[ 'email-purchase', 'email-home-single-domain', 'email-home-selected-domain' ].some(
+				( context ) => context === comparisonContext
+			)
+		) {
+			page(
+				emailManagementPurchaseNewEmailAccount(
+					selectedSiteSlug,
+					selectedDomainName,
+					currentRoute,
+					null,
+					selectedEmailProviderSlug,
+					newIntervalLength
+				)
+			);
+		} else if ( comparisonContext === 'domain-upsell' ) {
+			page( domainAddEmailUpsell( selectedSiteSlug, selectedDomainName, newIntervalLength ) );
+		}
+	};
+
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
 		if ( ! selectedSite?.slug ) {
 			return;
@@ -109,16 +133,7 @@ const EmailProvidersStackedComparison = ( {
 			} )
 		);
 
-		page(
-			emailManagementPurchaseNewEmailAccount(
-				selectedSite.slug,
-				selectedDomainName,
-				currentRoute,
-				null,
-				selectedEmailProviderSlug,
-				newIntervalLength
-			)
-		);
+		onIntervalLengthPathHandlerResolver( newIntervalLength );
 	};
 
 	const handleCompareClick = () => {
