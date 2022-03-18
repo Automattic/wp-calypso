@@ -16,6 +16,10 @@ export type NavigationControls = {
 	 * Call this function if you want to jump to a certain step.
 	 */
 	goToStep?: ( step: StepPath ) => void;
+	/**
+	 * Submits the answers provided in the flow
+	 */
+	submit?: () => void;
 };
 
 /**

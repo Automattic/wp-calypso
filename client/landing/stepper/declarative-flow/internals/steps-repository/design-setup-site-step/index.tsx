@@ -13,7 +13,7 @@ import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -21,36 +21,37 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
-import { useIsFSEEligible } from '../../../../hooks/use-is-fse-eligible';
+import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { ONBOARD_STORE } from '../../../../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design, Category } from '@automattic/design-picker';
-
 /**
  * The design picker step
  */
 const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
+	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	const isMobile = useMobileBreakpoint();
-	const { goNext, goBack } = navigation;
+	const { goNext, goBack, submit } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
+	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+	const { setDesignOnSite } = useDispatch( SITE_STORE );
 
 	// // const signupDependencies = useSelector( ( state ) => getSignupDependencyStore( state ) );
 
 	// // TODO EMN: These values should come from state
 	const flowName = 'setup-site';
+	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const siteSlug = useSiteSlugParam();
 	const siteTitle = site?.name;
 	const isReskinned = true;
 	const sitePlanSlug = site?.plan?.product_slug;
-
-	const [ selectedDesign, setSelectedDesign ] = useState< Design | undefined >( undefined );
 
 	const showDesignPickerCategories = isEnabled( 'signup/design-picker-categories' );
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
@@ -68,7 +69,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 			? 'all'
 			: 'free';
 
-	const { FSEEligible, isLoading } = useIsFSEEligible();
+	const { FSEEligible, isLoading } = useFSEStatus();
 	const themeFilters = FSEEligible
 		? 'auto-loading-homepage,full-site-editing'
 		: 'auto-loading-homepage';
@@ -162,8 +163,11 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 		);
 	}
 
-	function pickDesign( _selectedDesign: Design ) {
+	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
+		if ( siteSlug && _selectedDesign ) {
+			setDesignOnSite( siteSlug, _selectedDesign ).then( () => submit?.() );
+		}
 	}
 
 	function previewDesign( _selectedDesign: Design ) {
@@ -172,11 +176,8 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 			getEventPropsByDesign( _selectedDesign )
 		);
 
-		// TODO EMN: What to do when Preview? For the moment just select the design
 		setSelectedDesign( _selectedDesign );
-		// page(
-		// 	getStepUrl( props.flowName, props.stepName, _selectedDesign.theme, locale, queryParams )
-		// );
+		setIsPreviewingDesign( true );
 	}
 
 	function upgradePlan() {
@@ -199,6 +200,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 	const handleBackClick = () => {
 		if ( selectedDesign ) {
 			setSelectedDesign( undefined );
+			setIsPreviewingDesign( false );
 		} else {
 			goBack();
 		}
@@ -206,7 +208,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 
 	let stepContent = <div />;
 
-	if ( selectedDesign ) {
+	if ( selectedDesign && isPreviewingDesign ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
@@ -248,7 +250,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 				className={ 'design-setup-site-step__preview' }
 				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
 				goBack={ handleBackClick }
-				goNext={ goNext }
+				goNext={ () => pickDesign() }
 				formattedHeader={
 					<FormattedHeader
 						id={ 'design-setup-header' }
