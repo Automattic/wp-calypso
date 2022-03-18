@@ -9,7 +9,7 @@
 - [Patterns, Tricks, and Gotchas](#patterns-tricks-and-gotchas)
   - [Asserting against page content](#asserting-against-page-content)
     - [Returned values and Jest expect()](#returned-values-and-jest-expect)
-	- [Using waitForSelector, text selectors, and 'validate*' methods](#using-waitforselector-text-selectors-and-validate-methods)
+  - [Using waitForSelector, text selectors, and 'validate\*' methods](#using-waitforselector-text-selectors-and-validate-methods)
   - [Race conditions with handler registration](#race-conditions-with-handler-registration)
   - [Handling Calypso navigation](#handling-calypso-navigation)
 
@@ -41,7 +41,7 @@ Be Warned!!! This is not always as easy as it seems! Many of Playwright's functi
 
 For that reason, a more wait-safe option you will often see is...
 
-### Using waitForSelector, text selectors, and 'validate*' methods
+### Using waitForSelector, text selectors, and 'validate\*' methods
 
 You can validate something about a given page under test by leveraging Playwright's [waitForSelector](https://playwright.dev/docs/api/class-page#page-wait-for-selector) function (or the comparable [locator.waitFor](https://playwright.dev/docs/api/class-locator#locator-wait-for) function).
 

@@ -9,16 +9,16 @@
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-  - [Example test spec](#example-test-spec)
-  - [Quick start](#quick-start)
-  - [Child-level describe blocks](#child-level-describe-blocks)
-  - [Test step](#test-step)
-  - [Hooks](#hooks)
-  - [Viewports](#viewports)
-  - [Block Smoke Testing](#block-smoke-testing)
-    - [Overview](#overview)
-    - [How To](#how-to)
-    - [Examples](#examples)
+    - [Example test spec](#example-test-spec)
+    - [Quick start](#quick-start)
+    - [Child-level describe blocks](#child-level-describe-blocks)
+    - [Test step](#test-step)
+    - [Hooks](#hooks)
+    - [Viewports](#viewports)
+    - [Block Smoke Testing](#block-smoke-testing)
+        - [Overview](#overview)
+        - [How To](#how-to)
+        - [Examples](#examples)
 
 <!-- /TOC -->
 
@@ -131,7 +131,7 @@ import { Page, Browser } from 'playwright';
 
 4. Define a top-level `describe` block.
 
-As per the [Style Guide](style-guide-playwright.md#Tests), there should only be one top-level `describe` block in a spec file.
+As per the [Style Guide](./style_guide.md#only-one-top-level-describe-block), there should only be one top-level `describe` block in a spec file.
 
 Using the `DataHelper.createSuiteTitle()` function, define a short, descriptive name for the overall suite:
 
@@ -151,7 +151,7 @@ For guide on how writing page objects, components and flows please refer to the 
 
 ## Child-level describe blocks
 
-Do not use `DataHelper.createSuiteTitle` for child-level blocks:
+Do not use `DataHelper.createSuiteTitle` for child-level blocks.
 
 Unlike top-level blocks, there are no restrictions on the number of child-level `describe` blocks.
 
