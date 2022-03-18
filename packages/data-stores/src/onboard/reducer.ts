@@ -201,6 +201,16 @@ const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const startingPoint: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_STARTING_POINT' ) {
+		return action.startingPoint;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -219,6 +229,7 @@ const reducer = combineReducers( {
 	hasOnboardingStarted,
 	lastLocation,
 	intent,
+	startingPoint,
 } );
 
 export type State = ReturnType< typeof reducer >;
