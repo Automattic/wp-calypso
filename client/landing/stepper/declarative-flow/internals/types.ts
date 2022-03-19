@@ -34,6 +34,8 @@ export type UseStepNavigationHook = (
 ) => NavigationControls;
 
 export type Flow = {
+	name: string;
+	classnames?: string | [ string ];
 	useSteps: UseStepHook;
 	useStepNavigation: UseStepNavigationHook;
 };

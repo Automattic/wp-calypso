@@ -10,6 +10,7 @@ function redirect( to: string ) {
 }
 
 export const siteSetupFlow: Flow = {
+	name: 'site-setup',
 	useSteps() {
 		return [
 			'intent',
@@ -34,6 +35,7 @@ export const siteSetupFlow: Flow = {
 					}
 					return navigate( 'bloggerStartingPoint' );
 				}
+
 				case 'designSetup': {
 					// If the user skips starting point, redirect them to My Home
 					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
@@ -50,6 +52,7 @@ export const siteSetupFlow: Flow = {
 
 					return redirect( `/home/${ siteSlug }` );
 				}
+
 				case 'bloggerStartingPoint': {
 					const intent = params[ 0 ];
 					switch ( intent ) {
@@ -64,6 +67,7 @@ export const siteSetupFlow: Flow = {
 						}
 					}
 				}
+
 				case 'intent': {
 					const submittedIntent = params[ 0 ];
 					switch ( submittedIntent ) {
@@ -87,6 +91,7 @@ export const siteSetupFlow: Flow = {
 						}
 					}
 				}
+
 				case 'storeFeatures': {
 					const storeType = params[ 0 ];
 					if ( storeType === 'power' ) {
@@ -106,10 +111,13 @@ export const siteSetupFlow: Flow = {
 			switch ( currentStep ) {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
+
 				case 'storeFeatures':
 					return navigate( 'options' );
+
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
+
 				case 'designSetup':
 					if ( intent === 'sell' ) {
 						// this means we came from sell => store-features => start simple, we go back to store features
@@ -119,21 +127,26 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'bloggerStartingPoint' );
 					}
 					return navigate( 'intent' );
+
 				default:
 					return navigate( 'intent' );
 			}
 		};
+
 		const goNext = () => {
 			switch ( currentStep ) {
 				case 'options':
 					return navigate( 'bloggerStartingPoint' );
+
 				default:
 					return navigate( 'intent' );
 			}
 		};
+
 		const goToStep = ( step: StepPath ) => {
 			navigate( step );
 		};
+
 		return { goNext, goBack, goToStep, submit };
 	},
 };

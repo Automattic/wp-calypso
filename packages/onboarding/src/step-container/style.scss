@@ -176,7 +176,8 @@ $gray-60: #50575e;
 			margin-top: 25vh;
 		}
 
-		.step-container__header {
+		.step-container__header,
+		.step-container__content {
 			display: block;
 			margin-top: 0;
 			flex-basis: 50%;
@@ -225,22 +226,4 @@ $gray-60: #50575e;
 			padding-bottom: 60px;
 		}
 	}
-
-	.step-container__content {
-		flex-basis: 50%;
-	}
-	/*
-	.step-container__content {
-		margin-top: 24px;
-		flex-basis: 50%;
-
-		@media ( min-width: 480px ) {
-			margin-top: 32px;
-		}
-
-		@media ( min-width: 782px ) {
-			margin-top: 48px;
-		}
-	}
-	*/
 }

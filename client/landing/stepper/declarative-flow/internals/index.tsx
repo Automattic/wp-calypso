@@ -1,4 +1,6 @@
+import classnames from 'classnames';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
+import SignupHeader from 'calypso/signup/signup-header';
 import * as Steps from './steps-repository';
 import type { StepPath } from './steps-repository';
 import type { Flow } from './types';
@@ -24,6 +26,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepNavigation = flow.useStepNavigation( currentRoute, ( path: StepPath ) =>
 		history.push( generatePath( path + search ), stepPaths )
 	);
+	const pathToClass = ( path: string ) =>
+		path.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
 
 	return (
 		<Switch>
@@ -31,7 +35,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				const StepComponent = Steps[ path ];
 				return (
 					<Route key={ path } path={ `/${ path }` }>
-						<StepComponent navigation={ stepNavigation } />
+						<div className={ classnames( flow.name, flow.classnames, pathToClass( path ) ) }>
+							<SignupHeader />
+							<StepComponent navigation={ stepNavigation } />
+						</div>
 					</Route>
 				);
 			} ) }

@@ -28,11 +28,11 @@ const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
 
 	return (
 		<StepContainer
+			stepName={ 'blogger-starting-point' }
 			headerImageUrl={ startingPointImageUrl }
 			goBack={ goBack }
 			skipLabelText={ translate( 'Skip to My Home' ) }
 			isHorizontalLayout={ true }
-			className={ 'blogger-starting-point' }
 			formattedHeader={
 				<FormattedHeader
 					id={ 'intent-header' }

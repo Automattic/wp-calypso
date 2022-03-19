@@ -304,7 +304,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 
 	return (
 		<StepContainer
-			className={ classnames( 'design-setup', {
+			stepName={ 'design-step' }
+			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
 			} ) }
 			skipButtonAlign={ 'top' }

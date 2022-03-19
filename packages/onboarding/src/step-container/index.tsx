@@ -6,6 +6,8 @@ import StepNavigationLink from '../step-navigation-link';
 import './style.scss';
 
 interface Props {
+	stepName: string;
+	stepSectionName?: string;
 	stepContent: ReactElement;
 	hideBack?: boolean;
 	hideSkip?: boolean;
@@ -32,13 +34,12 @@ interface Props {
 	goNext?: () => void;
 	flowName?: string;
 	intent?: string;
-	stepName?: string;
-	stepSectionName?: string;
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 }
 
 const StepContainer: React.FC< Props > = ( {
 	stepContent,
+	stepName,
 	hideBack,
 	hideSkip,
 	hideNext = true,
@@ -63,7 +64,6 @@ const StepContainer: React.FC< Props > = ( {
 	goNext,
 	flowName,
 	intent,
-	stepName,
 	stepSectionName,
 	recordTracksEvent,
 } ) => {
@@ -154,7 +154,7 @@ const StepContainer: React.FC< Props > = ( {
 	const skipButton = ! hideSkip && skipButtonAlign === 'top' && renderSkip( { borderless: true } );
 	const nextButton = ! hideNext && renderNext();
 	const hasNavigation = backButton || skipButton || nextButton || customizedActionButtons;
-	const classes = classNames( 'step-container', className, {
+	const classes = classNames( 'step-container', className, flowName, stepName, {
 		'is-horizontal-layout': isHorizontalLayout,
 		'is-wide-layout': isWideLayout,
 		'is-full-layout': isFullLayout,
