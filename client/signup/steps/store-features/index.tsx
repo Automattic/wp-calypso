@@ -1,18 +1,15 @@
-import { localizeUrl } from '@automattic/i18n-utils';
-import { SelectItem, SelectItems } from '@automattic/onboarding';
+import { SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.svg';
-import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSite } from 'calypso/state/sites/selectors';
-import { shoppingBag, truck } from '../../icons';
 import { EXCLUDED_STEPS } from '../intent/index';
+import { useIntents } from './intents';
 import { StoreFeatureSet } from './types';
 import type { Dependencies } from 'calypso/signup/types';
 import './index.scss';
@@ -71,125 +68,12 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 
 	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );
 
-	const isPaidPlan = sitePlanSlug !== 'free_plan';
-
-	let isBusinessOrEcommercePlan;
-
-	switch ( sitePlanSlug ) {
-		case 'business-bundle':
-		case 'ecommerce-bundle':
-			isBusinessOrEcommercePlan = true;
-			break;
-
-		default:
-			isBusinessOrEcommercePlan = false;
-	}
-
 	// Only do following things when mounted
 	React.useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [] );
 
-	const intents: SelectItem< StoreFeatureSet >[] = [
-		{
-			key: 'simple',
-			title: translate( 'Start simple' ),
-			description: (
-				<>
-					<span className="store-features__requirements">
-						{ isPaidPlan
-							? translate( 'Included in your plan' )
-							: translate( 'Requires a {{a}}paid plan{{/a}}', {
-									components: {
-										a: <a href={ `/plans/${ siteSlug }` } />,
-									},
-							  } ) }
-					</span>
-
-					<p>
-						{ translate(
-							'Ideal if you’re looking to accept donations or sell one or two products without needing to manage shipping.'
-						) }
-					</p>
-
-					<footer className="store-features__powered-by">
-						<img
-							src={ paymentBlocksImage }
-							alt="Payment Blocks"
-							className="store-features__feature-icon"
-						/>
-
-						{ translate( 'Powered by {{a}}Payment Blocks{{/a}}', {
-							components: {
-								a: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/wordpress-editor/blocks/payments/'
-										) }
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={ () => trackSupportLinkClick( 'simple' ) }
-									/>
-								),
-							},
-						} ) }
-					</footer>
-				</>
-			),
-			icon: shoppingBag,
-			value: 'simple',
-			actionText: translate( 'Continue' ),
-		},
-		{
-			key: 'power',
-			title: translate( 'More power' ),
-			description: (
-				<>
-					<span className="store-features__requirements">
-						{ isBusinessOrEcommercePlan
-							? translate( 'Included in your plan' )
-							: translate( 'Requires a {{a}}Business plan{{/a}}', {
-									components: {
-										a: <a href={ `/plans/${ siteSlug }` } />,
-									},
-							  } ) }
-					</span>
-
-					<p>
-						{ translate(
-							'If you have multiple products or require extensive order and shipping management then this might suit your needs better.'
-						) }
-					</p>
-
-					<footer className="store-features__powered-by">
-						<img
-							src={ wooCommerceImage }
-							alt="WooCommerce"
-							className="store-features__feature-icon"
-						/>
-
-						{ translate( 'Powered by {{a}}WooCommerce{{/a}}', {
-							components: {
-								a: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/introduction-to-woocommerce/'
-										) }
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={ () => trackSupportLinkClick( 'power' ) }
-									/>
-								),
-							},
-						} ) }
-					</footer>
-				</>
-			),
-			icon: truck,
-			value: 'power',
-			actionText: translate( 'Upgrade' ),
-		},
-	];
+	const intents = useIntents( siteSlug, sitePlanSlug );
 
 	return (
 		<StepWrapper

@@ -11,7 +11,14 @@ function redirect( to: string ) {
 
 export const siteSetupFlow: Flow = {
 	useSteps() {
-		return [ 'intent', 'options', 'designSetup', 'sell', 'bloggerStartingPoint', 'courses' ];
+		return [
+			'intent',
+			'options',
+			'designSetup',
+			'bloggerStartingPoint',
+			'courses',
+			'storeFeatures',
+		];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
@@ -21,8 +28,12 @@ export const siteSetupFlow: Flow = {
 
 		function submit( ...params: string[] ) {
 			switch ( currentStep ) {
-				case 'options':
+				case 'options': {
+					if ( intent === 'sell' ) {
+						return navigate( 'storeFeatures' );
+					}
 					return navigate( 'bloggerStartingPoint' );
+				}
 				case 'designSetup': {
 					// If the user skips starting point, redirect them to My Home
 					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
@@ -32,12 +43,6 @@ export const siteSetupFlow: Flow = {
 
 						return redirect( `/post/${ siteSlug }` );
 					}
-
-					/*
-					if ( ! FSEActive && intent === 'sell' ) {
-						return `/page/${ siteSlug }/home`;
-					}
-					*/
 
 					if ( FSEActive && intent !== 'write' ) {
 						return redirect( `/site-editor/${ siteSlug }` );
@@ -60,21 +65,39 @@ export const siteSetupFlow: Flow = {
 					}
 				}
 				case 'intent': {
-					const intent = params[ 0 ];
-					switch ( intent ) {
+					const submittedIntent = params[ 0 ];
+					switch ( submittedIntent ) {
 						case 'wpadmin': {
 							return redirect( `https://wordpress.com/home/${ siteSlug }` );
 						}
 						case 'build': {
 							return navigate( 'designSetup' );
 						}
+						case 'sell': {
+							return navigate( 'options' );
+						}
 						case 'import': {
 							return redirect( `/start/importer/capture?siteSlug=${ siteSlug }` );
 						}
+						case 'write': {
+							return navigate( 'options' );
+						}
 						default: {
-							return navigate( intent as StepPath );
+							return navigate( submittedIntent as StepPath );
 						}
 					}
+				}
+				case 'storeFeatures': {
+					const storeType = params[ 0 ];
+					if ( storeType === 'power' ) {
+						const args = new URLSearchParams();
+						args.append( 'back_to', `/start/setup-site/store-features?siteSlug=${ siteSlug }` );
+						args.append( 'siteSlug', siteSlug as string );
+						return redirect( `/start/woocommerce-install?${ args.toString() }` );
+					} else if ( storeType === 'simple' ) {
+						return navigate( 'designSetup' );
+					}
+					return navigate( 'bloggerStartingPoint' );
 				}
 			}
 		}
@@ -83,6 +106,19 @@ export const siteSetupFlow: Flow = {
 			switch ( currentStep ) {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
+				case 'storeFeatures':
+					return navigate( 'options' );
+				case 'courses':
+					return navigate( 'bloggerStartingPoint' );
+				case 'designSetup':
+					if ( intent === 'sell' ) {
+						// this means we came from sell => store-features => start simple, we go back to store features
+						return navigate( 'storeFeatures' );
+					} else if ( intent === 'write' ) {
+						// this means we came from write => blogger staring point => choose a design
+						return navigate( 'bloggerStartingPoint' );
+					}
+					return navigate( 'intent' );
 				default:
 					return navigate( 'intent' );
 			}

@@ -11,11 +11,11 @@ export const useIntents = (): Intent[] => {
 
 	const intents: Intent[] = [
 		{
-			key: 'options',
+			key: 'write',
 			title: translate( 'Write' ),
 			description: <p>{ translate( 'Share your ideas with the world' ) }</p>,
 			icon: write,
-			value: 'options',
+			value: 'write',
 			actionText: translate( 'Start writing' ),
 		},
 		{

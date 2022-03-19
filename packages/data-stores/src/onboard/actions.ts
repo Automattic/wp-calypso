@@ -206,11 +206,17 @@ export const setStartingPoint = ( startingPoint: string ) => ( {
 	startingPoint,
 } );
 
+export const setStoreType = ( storeType: string ) => ( {
+	type: 'SET_STORE_TYPE' as const,
+	storeType,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
 	| typeof resetFonts
 	| typeof resetOnboardStore
+	| typeof setStoreType
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch
