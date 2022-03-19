@@ -1,21 +1,17 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { SelectItem } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { write, play, design } from 'calypso/signup/icons';
-import type { StartingPointFlag } from './types';
 
-type StartingPoint = SelectItem< StartingPointFlag >;
-
-const useStartingPoints = (): StartingPoint[] => {
+const useStartingPoints = () => {
 	const translate = useTranslate();
 
 	return [
 		{
-			key: 'write',
+			key: 'firstPost',
 			title: translate( 'Draft your first post' ),
 			description: <p>{ translate( 'Start writing and build an audience' ) }</p>,
 			icon: write,
-			value: 'write',
+			value: 'firstPost',
 			actionText: translate( 'Start writing' ),
 		},
 		{
@@ -28,11 +24,11 @@ const useStartingPoints = (): StartingPoint[] => {
 			hidden: ! isEnabled( 'signup/starting-point-courses' ),
 		},
 		{
-			key: 'design',
+			key: 'design-setup',
 			title: translate( 'Choose a design' ),
 			description: <p>{ translate( 'Make your blog feel like home' ) }</p>,
 			icon: design,
-			value: 'design',
+			value: 'designSetup',
 			actionText: translate( 'View designs' ),
 		},
 	];

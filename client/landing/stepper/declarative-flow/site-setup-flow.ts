@@ -11,18 +11,7 @@ function redirect( to: string ) {
 
 export const siteSetupFlow: Flow = {
 	useSteps() {
-		return [
-			'intent',
-			'options',
-			'build',
-			'designSetupSite',
-			'domain',
-			'sell',
-			'import',
-			'wpadmin',
-			'bloggerStartingPoint',
-			'courses',
-		];
+		return [ 'intent', 'options', 'designSetup', 'sell', 'bloggerStartingPoint', 'courses' ];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
@@ -30,39 +19,70 @@ export const siteSetupFlow: Flow = {
 		const siteSlug = useSiteSlugParam();
 		const { FSEActive } = useFSEStatus();
 
-		function submit() {
-			// If the user skips starting point, redirect them to My Home
-			if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
-				if ( startingPoint !== 'write' ) {
-					window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
+		function submit( ...params: string[] ) {
+			switch ( currentStep ) {
+				case 'options':
+					return navigate( 'bloggerStartingPoint' );
+				case 'designSetup': {
+					// If the user skips starting point, redirect them to My Home
+					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
+						if ( startingPoint !== 'write' ) {
+							window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
+						}
+
+						return redirect( `/post/${ siteSlug }` );
+					}
+
+					/*
+					if ( ! FSEActive && intent === 'sell' ) {
+						return `/page/${ siteSlug }/home`;
+					}
+					*/
+
+					if ( FSEActive && intent !== 'write' ) {
+						return redirect( `/site-editor/${ siteSlug }` );
+					}
+
+					return redirect( `/home/${ siteSlug }` );
 				}
-
-				return redirect( `/post/${ siteSlug }` );
+				case 'bloggerStartingPoint': {
+					const intent = params[ 0 ];
+					switch ( intent ) {
+						case 'firstPost': {
+							return redirect( `https://wordpress.com/post/${ siteSlug }` );
+						}
+						case 'courses': {
+							return navigate( 'courses' );
+						}
+						default: {
+							return navigate( intent as StepPath );
+						}
+					}
+				}
+				case 'intent': {
+					const intent = params[ 0 ];
+					switch ( intent ) {
+						case 'wpadmin': {
+							return redirect( `https://wordpress.com/home/${ siteSlug }` );
+						}
+						case 'build': {
+							return navigate( 'designSetup' );
+						}
+						case 'import': {
+							return redirect( `/start/importer/capture?siteSlug=${ siteSlug }` );
+						}
+						default: {
+							return navigate( intent as StepPath );
+						}
+					}
+				}
 			}
-
-			/*
-			if ( ! FSEActive && intent === 'sell' ) {
-				return `/page/${ siteSlug }/home`;
-			}
-			*/
-
-			if ( FSEActive && intent !== 'write' ) {
-				return redirect( `/site-editor/${ siteSlug }` );
-			}
-
-			return redirect( `/home/${ siteSlug }` );
 		}
 
 		const goBack = () => {
 			switch ( currentStep ) {
-				case 'intent':
-					return;
-				case 'options':
-					return navigate( 'intent' );
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
-				case 'designSetupSite':
-					return navigate( 'intent' );
 				default:
 					return navigate( 'intent' );
 			}

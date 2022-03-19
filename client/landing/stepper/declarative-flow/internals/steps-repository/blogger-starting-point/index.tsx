@@ -6,7 +6,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useStartingPoints from './starting-points';
-import type { StepPath } from '../';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -14,19 +13,17 @@ import './style.scss';
  * The starting point step
  */
 const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
-	const { goBack, goToStep } = navigation;
+	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Nice job! Now it’s{{br}}{{/br}} time to get creative.', {
 		components: { br: <br /> },
 	} );
 	const subHeaderText = translate( "Don't worry. You can come back to these steps!" );
-
 	const intents = useStartingPoints();
 
-	const submitIntent = ( startingPoint: StepPath ) => {
+	const submitIntent = ( startingPoint: string ) => {
 		recordTracksEvent( 'calypso_signup_starting_point_select', { starting_point: startingPoint } );
-
-		goToStep?.( startingPoint );
+		submit?.( startingPoint );
 	};
 
 	return (

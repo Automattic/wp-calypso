@@ -11,7 +11,7 @@ function redirect( to: string ) {
 
 export const builderFlow: Flow = {
 	useSteps() {
-		return [ 'designSetupSite', 'domain' ];
+		return [ 'designSetup', 'domain' ];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
@@ -43,10 +43,10 @@ export const builderFlow: Flow = {
 		}
 
 		const goBack = () => {
-			if ( currentStep === 'designSetupSite' ) {
+			if ( currentStep === 'designSetup' ) {
 				navigate( 'domain' );
 			} else {
-				navigate( 'designSetupSite' );
+				navigate( 'designSetup' );
 			}
 		};
 		const goNext = goBack;
