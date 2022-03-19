@@ -1,6 +1,10 @@
 import assert from 'assert';
-import { Page } from 'playwright';
+import { Page, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
+import envVariables from '../../env-variables';
+
+type PluginAttributes = 'Active' | 'Autoupdate';
+type PluginState = 'on' | 'off';
 
 const selectors = {
 	// React modal buttons
@@ -19,12 +23,14 @@ const selectors = {
 	annualPricing: '.plugins-browser-item__period:text("per year")',
 
 	// Search
+	searchIcon: '.search-component__open-icon',
 	searchInput: 'input.search-component__input',
 	searchResult: ( text: string ) => `.plugins-browser-item__title:text("${ text }")`,
 	searchResultTitle: ( text: string ) => `:text("Search results for ${ text }")`,
 
 	// Plugin view
-	activateToggle: '.plugin-activate-toggle span.components-form-toggle',
+	pluginHamburgerMenu: `.plugin-site-jetpack__action`,
+	pluginToggle: ( target: string ) => `.plugin-site-jetpack__container span:text("${ target }")`,
 	installButton: 'button:text("Install and activate")',
 	removeButton: 'button.plugin-remove-button__remove-button',
 };
@@ -152,6 +158,11 @@ export class PluginsPage {
 	 * @param {string} query String to search for.
 	 */
 	async search( query: string ): Promise< void > {
+		// On mobile viewports the Loupe icon must be
+		// clicked to activate the search field.
+		const searchInputIconLocator = this.page.locator( selectors.searchIcon );
+		await searchInputIconLocator.click();
+
 		await this.page.fill( selectors.searchInput, query );
 		await this.page.press( selectors.searchInput, 'Enter' );
 	}
@@ -197,6 +208,37 @@ export class PluginsPage {
 	}
 
 	/**
+	 * Returns whether the toggle at `locator` is toggled
+	 * in the On state.
+	 *
+	 * @returns {Promise<boolean>} True if toggle is on. False otherwise.
+	 */
+	private async isToggled( locator: Locator ): Promise< boolean > {
+		await locator.waitFor();
+
+		const classes = await locator.getAttribute( 'class' );
+		return !! classes?.includes( 'is-checked' );
+	}
+
+	/**
+	 * Toggles the plugin attribute.
+	 *
+	 * @param {PluginAttributes} target Target attribute to toggle.
+	 * @param {PluginState} state Desired end state of the attribute.
+	 */
+	async togglePluginAttribute( target: PluginAttributes, state: PluginState ): Promise< void > {
+		const toggleLocator = this.page.locator( selectors.pluginToggle( target ) );
+
+		const currentState = await this.isToggled( toggleLocator );
+
+		// Only perform action if  the current state and
+		// target state differ.
+		if ( ( state === 'on' && ! currentState ) || ( state === 'off' && currentState ) ) {
+			await toggleLocator.click();
+		}
+	}
+
+	/**
 	 * Clicks on the Install Plugin button.
 	 */
 	async clickInstallPlugin(): Promise< void > {
@@ -208,6 +250,11 @@ export class PluginsPage {
 	 * Clicks on the `Remove Plugin` button.
 	 */
 	async clickRemovePlugin(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			const pluginActionsLocator = this.page.locator( selectors.pluginHamburgerMenu );
+			await pluginActionsLocator.click();
+		}
+
 		const locator = this.page.locator( selectors.removeButton );
 		await locator.click();
 		const confirmDialogButton = this.page.locator( selectors.modalButtonWithText( 'Remove' ) );

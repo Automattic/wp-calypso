@@ -60,11 +60,22 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 		} );
 	} );
 
-	describe( 'Plugin: Remove', function () {
+	describe( 'Plugin: Deactivate', function () {
 		it( `Visit ${ pluginName } page`, async function () {
 			await page.goBack();
 		} );
 
+		it( 'Deactivate plugin', async function () {
+			await pluginsPage.togglePluginAttribute( 'Active', 'off' );
+			const snackbarNotificationComponent = new SnackbarNotificationComponent( page );
+			await snackbarNotificationComponent.noticeShown(
+				`Successfully deactivated ${ pluginName } on ${ siteURL }`,
+				{ type: 'Success' }
+			);
+		} );
+	} );
+
+	describe( 'Plugin: Remove', function () {
 		it( 'Remove plugin', async function () {
 			await pluginsPage.clickRemovePlugin();
 			const snackbarNotificationComponent = new SnackbarNotificationComponent( page );
