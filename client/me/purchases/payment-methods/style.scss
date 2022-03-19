@@ -71,34 +71,10 @@
 	}
 }
 
-.existing-credit-card__tax-info-display {
-	display: block;
-}
-
-.payment-method-details__name, .payment-method-details__postal-code, .payment-method-details__country-code {
+.payment-method-details__name {
 	color: var( --color-neutral-50 );
 	display: block;
 	font-size: 0.875rem;
-}
-
-.existing-credit-card__tax-info-display {
-    display: table;
-}
-
-.existing-credit-card__tax-info-postal-country {
-    vertical-align: middle;
-	margin-right: 5px;
-}
-
-.existing-credit-card__tax-info-display button.payment-method-edit-button {
-    vertical-align: middle;
-	text-decoration: underline;
-}
-
-.existing-credit-card__tax-info-display.tax-info-incomplete button.payment-method-edit-button svg {
-	filter: grayscale( 0% );
-	color: var( --color-error );
-	margin-right: 3px;
 }
 
 .payment-method-delete-dialog {
@@ -109,10 +85,6 @@
 	.card-heading {
 		margin-top: 0;
 	}
-}
-
-.payment-method-edit-dialog .dialog__content .notice.is-error.is-compact {
-    margin-bottom: 10px;
 }
 
 .payment-method-backup-toggle {
@@ -133,8 +105,4 @@
 	.components-checkbox-control__input[type='checkbox']:checked {
 		background-color: var( --studio-jetpack-green-50 );
 	}
-}
-
-.payment-method-edit__button {
-	margin-right: 5px;
 }

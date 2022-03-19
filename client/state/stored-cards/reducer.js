@@ -28,7 +28,6 @@ export const items = withSchemaValidation( storedCardsSchema, ( state = [], acti
 			const { item } = action;
 			return [ ...state, item ];
 		}
-
 		case STORED_CARDS_FETCH_COMPLETED: {
 			const { list } = action;
 			return list;
@@ -46,7 +45,7 @@ export const items = withSchemaValidation( storedCardsSchema, ( state = [], acti
 					return {
 						...item,
 						meta: [
-							...( item.meta?.filter( ( meta ) => meta.meta_key !== 'is_backup' ) ?? {} ),
+							...item.meta?.filter( ( meta ) => meta.meta_key !== 'is_backup' ),
 							{ meta_key: 'is_backup', meta_value: is_backup ? 'backup' : null },
 						],
 					};
