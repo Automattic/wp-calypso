@@ -23,15 +23,16 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { errorNotice } from 'calypso/state/notices/actions';
-import PaymentMethodEditButton from './components/payment-method-edit-button';
-import PaymentMethodEditDialog from './components/payment-method-edit-dialog';
-import RenderEditFormFields from './components/payment-method-edit-form-fields';
+import PaymentMethodEditButton from './payment-method-edit-button';
+import PaymentMethodEditDialog from './payment-method-edit-dialog';
+import RenderEditFormFields from './payment-method-edit-form-fields';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'calypso:existing-card-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface TaxInfo {
 	tax_postal_code: string;
