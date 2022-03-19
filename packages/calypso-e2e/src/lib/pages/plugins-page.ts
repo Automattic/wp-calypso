@@ -30,7 +30,8 @@ const selectors = {
 
 	// Plugin view
 	pluginHamburgerMenu: `.plugin-site-jetpack__action`,
-	pluginToggle: ( target: string ) => `.plugin-site-jetpack__container span:text("${ target }")`,
+	pluginToggle: ( target: PluginAttributes ) =>
+		`.plugin-site-jetpack__container .components-toggle-control:has(span:text("${ target }")) span.components-form-toggle`,
 	installButton: 'button:text("Install and activate")',
 	removeButton: 'button.plugin-remove-button__remove-button',
 };
@@ -200,7 +201,7 @@ export class PluginsPage {
 	 */
 	async pluginIsInstalled(): Promise< boolean > {
 		await this.page.waitForLoadState( 'networkidle' );
-		const locator = this.page.locator( selectors.removeButton );
+		const locator = this.page.locator( selectors.pluginToggle( 'Active' ) );
 		if ( ( await locator.count() ) > 0 ) {
 			return true;
 		}

@@ -16,6 +16,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 	const pluginName = 'Hello Dolly';
 	let page: Page;
 	let pluginsPage: PluginsPage;
+	let snackbarNotificationComponent: SnackbarNotificationComponent;
 	let siteURL: string;
 
 	beforeAll( async function () {
@@ -29,60 +30,47 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 		// to somehow extract the user's site.
 		await page.waitForLoadState( 'networkidle' );
 		siteURL = page.url().split( 'stats/day/' ).slice( -1 )[ 0 ];
-	} );
 
-	it( 'Navigate to Plugins', async function () {
 		pluginsPage = new PluginsPage( page );
 		await pluginsPage.visit( siteURL );
+		// Ensure known good state by removing the plugin
+		// if already installed.
+		await pluginsPage.visitPage( 'hello-dolly', siteURL );
+		if ( await pluginsPage.pluginIsInstalled() ) {
+			await pluginsPage.clickRemovePlugin();
+		}
 	} );
 
 	describe( 'Plugin: Install', function () {
-		beforeAll( async function () {
-			// Ensure known good state by removing the plugin
-			// if already installed.
-			await pluginsPage.visitPage( 'hello-dolly', siteURL );
-			if ( await pluginsPage.pluginIsInstalled() ) {
-				await pluginsPage.clickRemovePlugin();
-			}
-			await pluginsPage.visit( siteURL );
-		} );
-
-		it( `Search for ${ pluginName }`, async function () {
-			await pluginsPage.search( 'Hello Dolly' );
-		} );
-
-		it( `Click on result for ${ pluginName }`, async function () {
-			await pluginsPage.clickSearchResult( pluginName );
-		} );
-
 		it( 'Install plugin', async function () {
 			await pluginsPage.clickInstallPlugin();
+		} );
+
+		it( `Return to ${ pluginName } page`, async function () {
+			await page.goBack();
+			snackbarNotificationComponent = new SnackbarNotificationComponent( page );
+			await snackbarNotificationComponent.noticeShown(
+				`Successfully installed and activated ${ pluginName } on ${ siteURL }`,
+				{ type: 'Success' }
+			);
+			await snackbarNotificationComponent.dismiss();
 		} );
 	} );
 
 	describe( 'Plugin: Deactivate', function () {
-		it( `Visit ${ pluginName } page`, async function () {
-			await page.goBack();
-		} );
-
 		it( 'Deactivate plugin', async function () {
 			await pluginsPage.togglePluginAttribute( 'Active', 'off' );
-			const snackbarNotificationComponent = new SnackbarNotificationComponent( page );
-			await snackbarNotificationComponent.noticeShown(
-				`Successfully deactivated ${ pluginName } on ${ siteURL }`,
-				{ type: 'Success' }
-			);
 		} );
 	} );
 
 	describe( 'Plugin: Remove', function () {
 		it( 'Remove plugin', async function () {
 			await pluginsPage.clickRemovePlugin();
-			const snackbarNotificationComponent = new SnackbarNotificationComponent( page );
 			await snackbarNotificationComponent.noticeShown(
 				`Successfully removed ${ pluginName } on ${ siteURL }.`,
 				{ type: 'Success' }
 			);
+			await snackbarNotificationComponent.dismiss();
 		} );
 	} );
 } );
