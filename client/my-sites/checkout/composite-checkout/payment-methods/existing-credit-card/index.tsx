@@ -248,7 +248,7 @@ function ExistingCardLabel( {
 		} );
 	}, [ taxInfoFromServer?.tax_country_code, taxInfoFromServer?.tax_postal_code ] );
 
-	const countriesList = useCountryList( [] );
+	const countriesList = useCountryList();
 	const updateTaxInfo = useCallback( () => {
 		mutation.mutate( inputValues );
 	}, [ mutation, inputValues ] );
