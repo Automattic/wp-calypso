@@ -12,7 +12,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
@@ -21,11 +21,11 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+import TaxFields from 'calypso/my-sites/checkout/composite-checkout/components/tax-fields';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { errorNotice } from 'calypso/state/notices/actions';
 import PaymentMethodEditButton from './payment-method-edit-button';
 import PaymentMethodEditDialog from './payment-method-edit-dialog';
-import RenderEditFormFields from './payment-method-edit-form-fields';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'calypso:existing-card-payment-method' );
@@ -253,29 +253,32 @@ function ExistingCardLabel( {
 		mutation.mutate( inputValues );
 	}, [ mutation, inputValues ] );
 
-	const onChangeCountryCode = ( e: { target: { value: string } } ) => {
-		const arePostalCodesSupported = getCountryPostalCodeSupport( countriesList, e.target.value );
+	const onChangeCountryCode = ( value: string ) => {
+		const arePostalCodesSupported = getCountryPostalCodeSupport( countriesList, value );
 		setInputValues( {
-			tax_country_code: e.target.value,
+			tax_country_code: value,
 			tax_postal_code: arePostalCodesSupported ? inputValues.tax_postal_code : '',
 		} );
 	};
 
-	const onChangePostalCode = ( e: { target: { value: string } } ) => {
-		setInputValues( { ...inputValues, tax_postal_code: e.target.value } );
+	const onChangePostalCode = ( value: string ) => {
+		setInputValues( { ...inputValues, tax_postal_code: value } );
 	};
 
-	const formRender = (
-		<form>
-			<div className="contact-fields payment-methods__tax-fields">
-				<RenderEditFormFields
-					postalCodeValue={ inputValues.tax_postal_code }
-					countryCodeValue={ inputValues.tax_country_code }
-					onChangePostalCode={ onChangePostalCode }
-					onChangeCountryCode={ onChangeCountryCode }
-				/>
-			</div>
-		</form>
+	const taxInfoForForm = useMemo(
+		() => ( {
+			postalCode: {
+				value: inputValues.tax_postal_code,
+				errors: [],
+				isTouched: true,
+			},
+			countryCode: {
+				value: inputValues.tax_country_code,
+				errors: [],
+				isTouched: true,
+			},
+		} ),
+		[ inputValues ]
 	);
 
 	/* translators: %s is the last 4 digits of the credit card number */
@@ -305,7 +308,15 @@ function ExistingCardLabel( {
 					isVisible={ isDialogVisible }
 					onClose={ closeDialog }
 					onConfirm={ updateTaxInfo }
-					form={ formRender }
+					form={
+						<TaxFields
+							section="existing-card-payment-method"
+							taxInfo={ taxInfoForForm }
+							countriesList={ countriesList }
+							updateCountryCode={ onChangeCountryCode }
+							updatePostalCode={ onChangePostalCode }
+						/>
+					}
 					error={ updateError }
 				/>
 			</div>
