@@ -75,6 +75,7 @@ export function createExistingCardMethod( {
 	paymentPartnerProcessorId,
 	activePayButtonText = undefined,
 	allowEditingTaxInfo,
+	isTaxInfoRequired,
 }: {
 	id: string;
 	cardholderName: string;
@@ -86,6 +87,7 @@ export function createExistingCardMethod( {
 	paymentPartnerProcessorId: string;
 	activePayButtonText: string | undefined;
 	allowEditingTaxInfo?: boolean;
+	isTaxInfoRequired?: boolean;
 } ): PaymentMethod {
 	debug( 'creating a new existing credit card payment method', {
 		id,
@@ -115,6 +117,7 @@ export function createExistingCardMethod( {
 				paymentMethodToken={ paymentMethodToken }
 				paymentPartnerProcessorId={ paymentPartnerProcessorId }
 				activeButtonText={ activePayButtonText }
+				isTaxInfoRequired={ isTaxInfoRequired }
 			/>
 		),
 		inactiveContent: (
@@ -374,6 +377,7 @@ function ExistingCardPayButton( {
 	paymentMethodToken,
 	paymentPartnerProcessorId,
 	activeButtonText = undefined,
+	isTaxInfoRequired,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
@@ -382,6 +386,7 @@ function ExistingCardPayButton( {
 	paymentMethodToken: string;
 	paymentPartnerProcessorId: string;
 	activeButtonText: string | undefined;
+	isTaxInfoRequired: boolean;
 } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
@@ -408,7 +413,7 @@ function ExistingCardPayButton( {
 			disabled={ disabled }
 			onClick={ () => {
 				debug( 'submitting existing card payment' );
-				if ( ! taxInfoFromServer?.is_tax_info_set ) {
+				if ( isTaxInfoRequired && ! taxInfoFromServer?.is_tax_info_set ) {
 					dispatch(
 						errorNotice( getMissingTaxLocationInformationMessage( translate, taxInfoFromServer ) )
 					);

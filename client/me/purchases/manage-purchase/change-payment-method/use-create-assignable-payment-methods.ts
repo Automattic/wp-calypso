@@ -51,6 +51,7 @@ export default function useCreateAssignablePaymentMethods(
 		storedCards,
 		activePayButtonText: String( translate( 'Use this card' ) ),
 		allowEditingTaxInfo: true,
+		isTaxInfoRequired: true,
 	} );
 
 	const paymentMethods = useMemo(
