@@ -108,6 +108,7 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ true }
+			skipButtonAlign="top"
 			formattedHeader={
 				<FormattedHeader id={ 'site-options-header' } headerText={ headerText } align={ 'left' } />
 			}
