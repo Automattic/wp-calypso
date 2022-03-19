@@ -6,7 +6,6 @@ import {
 	useFormStatus,
 	PaymentLogo,
 } from '@automattic/composite-checkout';
-import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -27,6 +26,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import PaymentMethodEditButton from './payment-method-edit-button';
 import PaymentMethodEditDialog from './payment-method-edit-dialog';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:existing-card-payment-method' );
 
@@ -253,16 +253,11 @@ function ExistingCardLabel( {
 		mutation.mutate( inputValues );
 	}, [ mutation, inputValues ] );
 
-	const onChangeCountryCode = ( value: string ) => {
-		const arePostalCodesSupported = getCountryPostalCodeSupport( countriesList, value );
+	const onChangeTaxInfo = ( { postalCode, countryCode }: ManagedContactDetails ) => {
 		setInputValues( {
-			tax_country_code: value,
-			tax_postal_code: arePostalCodesSupported ? inputValues.tax_postal_code : '',
+			tax_country_code: countryCode?.value ?? '',
+			tax_postal_code: postalCode?.value ?? '',
 		} );
-	};
-
-	const onChangePostalCode = ( value: string ) => {
-		setInputValues( { ...inputValues, tax_postal_code: value } );
 	};
 
 	const taxInfoForForm = useMemo(
@@ -310,11 +305,10 @@ function ExistingCardLabel( {
 					onConfirm={ updateTaxInfo }
 					form={
 						<TaxFields
-							section="existing-card-payment-method"
+							section={ `existing-card-payment-method-${ storedDetailsId }` }
 							taxInfo={ taxInfoForForm }
 							countriesList={ countriesList }
-							updateCountryCode={ onChangeCountryCode }
-							updatePostalCode={ onChangePostalCode }
+							onChange={ onChangeTaxInfo }
 						/>
 					}
 					error={ updateError }
