@@ -76,7 +76,10 @@ export const sites: Reducer< { [ key: number | string ]: SiteDetails | undefined
 	action
 ) => {
 	if ( action.type === 'RECEIVE_SITE' ) {
-		return { ...state, [ action.siteId ]: action.response };
+		if ( action.response ) {
+			return { ...state, [ action.response.ID ]: action.response };
+		}
+		return state;
 	} else if ( action.type === 'RECEIVE_SITE_FAILED' ) {
 		const { [ action.siteId ]: idToBeRemoved, ...remainingState } = state;
 		return { ...remainingState };
@@ -85,7 +88,15 @@ export const sites: Reducer< { [ key: number | string ]: SiteDetails | undefined
 	} else if ( action.type === 'RECEIVE_SITE_TITLE' ) {
 		return {
 			...state,
-			[ action.siteId ]: { ...( state[ action.siteId ] as SiteDetails ), name: action.title },
+			[ action.siteId ]: { ...( state[ action.siteId ] as SiteDetails ), name: action.name },
+		};
+	} else if ( action.type === 'RECEIVE_SITE_TAGLINE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				...( state[ action.siteId ] as SiteDetails ),
+				description: action.tagline ?? '',
+			},
 		};
 	}
 	return state;

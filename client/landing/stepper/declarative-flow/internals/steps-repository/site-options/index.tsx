@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
+import { useDispatch } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -13,23 +14,52 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
+import { useSite } from '../../../../hooks/use-site';
+import { SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteOptions: Step = function IntentStep( { navigation } ) {
-	const { goBack, goNext } = navigation;
+const SiteOptions: Step = function SiteOptions( { navigation } ) {
+	const { goBack, goNext, submit } = navigation;
+	const [ siteTitle, setSiteTitle ] = React.useState( '' );
+	const [ tagline, setTagline ] = React.useState( '' );
+	const site = useSite();
 
 	const translate = useTranslate();
 	const headerText = translate( "First, let's give your blog a name" );
 
-	const handleSubmit = ( event: React.FormEvent ) => console.log( event );
-	const onChange = ( event: React.FormEvent ) => console.log( event );
+	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	// Need to set this up...
-	const isSiteTitleRequired = false;
+	React.useEffect( () => {
+		if ( site ) {
+			setSiteTitle( site.name ?? '' );
+			setTagline( site.description );
+		}
+	}, [ site ] );
+
+	const handleSubmit = async ( event: React.FormEvent ) => {
+		event.preventDefault();
+		if ( site ) {
+			await saveSiteSettings( site.ID, {
+				blogname: siteTitle,
+				blogdescription: tagline,
+			} );
+			submit?.();
+		}
+	};
+	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
+		if ( site ) {
+			switch ( event.currentTarget.name ) {
+				case 'siteTitle':
+					return setSiteTitle( event.currentTarget.value );
+				case 'tagline':
+					return setTagline( event.currentTarget.value );
+			}
+		}
+	};
+
+	const isSiteTitleRequired = true;
 	const isTaglineRequired = false;
-	const siteTitle = '';
-	const tagline = '';
 	const taglineExplanation = 'In a few words, explain what your blog is about.';
 	const siteTitleError = null;
 	const taglineError = null;

@@ -8,7 +8,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { ONBOARD_STORE } from '../../../../stores';
 import { useIntents, useIntentsAlt } from './intents';
-import type { StepPath } from '../';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -16,7 +15,7 @@ import './style.scss';
  * The intent capture step
  */
 const IntentStep: Step = function IntentStep( { navigation } ) {
-	const { goToStep } = navigation;
+	const { submit } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
@@ -26,12 +25,12 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 	// TODO: I need to get the site slug to get the siteId to get the canImport
 	const intentsAlt = useIntentsAlt( true );
 
-	const submitIntent = ( intent: StepPath ) => {
+	const submitIntent = ( intent: string ) => {
 		const providedDependencies = { intent };
 		recordTracksEvent( 'calypso_signup_intent_select', providedDependencies );
 
 		setIntent( intent );
-		goToStep?.( intent );
+		submit?.( intent );
 	};
 
 	return (

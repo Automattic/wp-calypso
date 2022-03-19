@@ -2,10 +2,9 @@ import { isEnabled } from '@automattic/calypso-config';
 import { SelectItem, SelectItemAlt } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { build, write, tip } from 'calypso/signup/icons';
-import type { IntentFlag } from './types';
 
-type Intent = SelectItem< IntentFlag >;
-type IntentAlt = SelectItemAlt< IntentFlag >;
+type Intent = SelectItem< string >;
+type IntentAlt = SelectItemAlt< string >;
 
 export const useIntents = (): Intent[] => {
 	const translate = useTranslate();

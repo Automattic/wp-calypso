@@ -75,10 +75,16 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		response,
 	} );
 
-	const receiveSiteTitle = ( siteId: number, title: string | undefined ) => ( {
+	const receiveSiteTitle = ( siteId: number, name: string | undefined ) => ( {
 		type: 'RECEIVE_SITE_TITLE' as const,
 		siteId,
-		title,
+		name,
+	} );
+
+	const receiveSiteTagline = ( siteId: number, tagline: string | undefined ) => ( {
+		type: 'RECEIVE_SITE_TAGLINE' as const,
+		siteId,
+		tagline,
 	} );
 
 	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
@@ -151,17 +157,33 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return success;
 	}
 
-	function* saveSiteTitle( siteId: number, title: string | undefined ) {
+	function* saveSiteSettings(
+		siteId: number,
+		settings: { blogname?: string; blogdescription?: string }
+	) {
 		try {
 			// extract this into its own function as a generic settings setter
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/settings`,
 				apiVersion: '1.4',
-				body: { blogname: title },
+				body: settings,
 				method: 'POST',
 			} );
-			yield receiveSiteTitle( siteId, title );
+			if ( 'blogname' in settings ) {
+				yield receiveSiteTitle( siteId, settings.blogname );
+			}
+			if ( 'blogdescription' in settings ) {
+				yield receiveSiteTagline( siteId, settings.blogdescription );
+			}
 		} catch ( e ) {}
+	}
+
+	function* saveSiteTitle( siteId: number, blogname: string | undefined ) {
+		yield saveSiteSettings( siteId, { blogname } );
+	}
+
+	function* saveSiteTagline( siteId: number, blogdescription: string | undefined ) {
+		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
 	function* setDesignOnSite( siteSlug: string, selectedDesign: Design ) {
@@ -191,6 +213,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	return {
 		receiveSiteDomains,
 		saveSiteTitle,
+		saveSiteSettings,
 		receiveSiteTitle,
 		fetchNewSite,
 		fetchSite,
@@ -201,6 +224,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		createSite,
 		receiveSite,
 		receiveSiteFailed,
+		receiveSiteTagline,
+		saveSiteTagline,
 		reset,
 		launchSite,
 		launchSiteStart,
@@ -221,6 +246,7 @@ export type Action =
 			| ActionCreators[ 'receiveNewSite' ]
 			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]
+			| ActionCreators[ 'receiveSiteTagline' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]

@@ -32,7 +32,7 @@ import type { Design, Category } from '@automattic/design-picker';
 /**
  * The design picker step
  */
-const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
+const designSetup: Step = function DesignSetup( { navigation } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	const isMobile = useMobileBreakpoint();
 	const { goNext, goBack, submit } = navigation;
@@ -247,7 +247,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 				stepContent={ stepContent }
 				hideSkip
 				hideNext={ shouldUpgrade }
-				className={ 'design-setup-site-step__preview' }
+				className={ 'design-setup__preview' }
 				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
 				goBack={ handleBackClick }
 				goNext={ () => pickDesign() }
@@ -280,7 +280,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 				onPreview={ previewDesign }
 				onUpgrade={ upgradePlan }
 				className={ classnames( {
-					'design-setup-site-step__has-categories': showDesignPickerCategories,
+					'design-setup__has-categories': showDesignPickerCategories,
 				} ) }
 				highResThumbnails
 				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
@@ -304,7 +304,7 @@ const DesignSetupSite: Step = function DesignSetupSite( { navigation } ) {
 
 	return (
 		<StepContainer
-			className={ classnames( 'design-setup-site-step', {
+			className={ classnames( 'design-setup', {
 				'design-picker__has-categories': showDesignPickerCategories,
 			} ) }
 			skipButtonAlign={ 'top' }
@@ -342,4 +342,4 @@ function sortStoreToTop( a: Category, b: Category ) {
 	return 0;
 }
 
-export default DesignSetupSite;
+export default designSetup;
