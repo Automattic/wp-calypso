@@ -4,6 +4,7 @@
 
 import {
 	DataHelper,
+	envVariables,
 	TestAccount,
 	PluginsPage,
 	SnackbarNotificationComponent,
@@ -13,7 +14,9 @@ import { Page, Browser } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
-	const pluginName = 'Hello Dolly';
+	// Use a different plugin name to avoid clash between mobile and desktop
+	// build configurations.
+	const pluginName = envVariables.VIEWPORT_NAME === 'desktop' ? 'Hello Dolly' : 'Developer';
 	let page: Page;
 	let pluginsPage: PluginsPage;
 	let snackbarNotificationComponent: SnackbarNotificationComponent;
@@ -35,7 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 		await pluginsPage.visit( siteURL );
 		// Ensure known good state by removing the plugin
 		// if already installed.
-		await pluginsPage.visitPage( 'hello-dolly', siteURL );
+		await pluginsPage.visitPage( pluginName.replace( ' ', '-' ).toLowerCase(), siteURL );
 		if ( await pluginsPage.pluginIsInstalled() ) {
 			await pluginsPage.clickRemovePlugin();
 		}
