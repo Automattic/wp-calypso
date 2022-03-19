@@ -117,7 +117,7 @@ export function createExistingCardMethod( {
 				paymentMethodToken={ paymentMethodToken }
 				paymentPartnerProcessorId={ paymentPartnerProcessorId }
 				activeButtonText={ activePayButtonText }
-				isTaxInfoRequired={ isTaxInfoRequired }
+				isTaxInfoRequired={ !! isTaxInfoRequired }
 			/>
 		),
 		inactiveContent: (
