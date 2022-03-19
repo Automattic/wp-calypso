@@ -136,7 +136,7 @@ function NetBankingFields() {
 	const { changeCustomerName } = useDispatch( 'netbanking' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const countriesList = useCountryList( [] );
+	const countriesList = useCountryList();
 
 	return (
 		<NetBankingFormWrapper>

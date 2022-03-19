@@ -139,7 +139,7 @@ const PayPalFieldsWrapper = styled.div`
 function PayPalTaxFields(): JSX.Element {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const countriesList = useCountryList( [] );
+	const countriesList = useCountryList();
 	const postalCode = useSelect( ( select ) => select( storeKey ).getPostalCode() );
 	const countryCode = useSelect( ( select ) => select( storeKey ).getCountryCode() );
 	const fields = useMemo(

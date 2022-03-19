@@ -146,7 +146,7 @@ function EbanxTefFields() {
 	const { changeCustomerName, changeCustomerBank } = useDispatch( 'ebanx-tef' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const countriesList = useCountryList( [] );
+	const countriesList = useCountryList();
 
 	return (
 		<EbanxTefFormWrapper>

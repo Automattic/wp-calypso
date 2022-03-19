@@ -13,7 +13,7 @@ export default function ContactFields( {
 } ) {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const countriesList = useCountryList( [] );
+	const countriesList = useCountryList();
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 
 	return (
