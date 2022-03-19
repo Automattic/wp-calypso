@@ -244,6 +244,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 
 		return (
 			<StepContainer
+				stepName={ 'design-setup' }
 				stepContent={ stepContent }
 				hideSkip
 				hideNext={ shouldUpgrade }
