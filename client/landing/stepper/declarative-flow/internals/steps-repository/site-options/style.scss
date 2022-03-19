@@ -83,3 +83,18 @@
 		background-color: #dcdcde;
 	}
 }
+
+.site-setup .site-options,
+.site-setup .is-difm-options {
+	.step-container__header {
+		@include break-small {
+			flex-basis: 34%;
+		}
+	}
+
+	.step-container__content {
+		@include break-small {
+			flex-basis: 50%;
+		}
+	}
+}

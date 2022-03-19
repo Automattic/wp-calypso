@@ -19,28 +19,17 @@ const StepNavigationLink: React.FC< Props > = ( {
 	direction,
 	handleClick,
 	label,
-	backIcon,
-	forwardIcon,
 	primary,
 	borderless = true,
 	cssClass,
 } ) => {
 	const translate = useTranslate();
 
-	let backGridicon;
-	let text;
-	let forwardGridicon;
-
+	let text = label;
 	if ( direction === 'back' ) {
-		backGridicon = backIcon ? <Gridicon icon={ backIcon } size={ 18 } /> : null;
-		if ( label ) {
-			text = label;
-		} else {
-			text = translate( 'Back' );
-		}
+		text = translate( 'Back' );
 	} else if ( direction === 'forward' ) {
-		forwardGridicon = forwardIcon ? <Gridicon icon={ forwardIcon } size={ 18 } /> : null;
-		text = label ? label : translate( 'Skip for now' );
+		text = translate( 'Skip for now' );
 	}
 
 	const buttonClasses = classnames( 'navigation-link', cssClass );
@@ -52,9 +41,9 @@ const StepNavigationLink: React.FC< Props > = ( {
 			className={ buttonClasses }
 			onClick={ handleClick }
 		>
-			{ backGridicon }
+			{ direction === 'back' && <Gridicon icon={ 'chevron-left' } size={ 18 } /> }
 			{ text }
-			{ forwardGridicon }
+			{ direction === 'forward' && <Gridicon icon={ 'chevron-right' } size={ 18 } /> }
 		</Button>
 	);
 };

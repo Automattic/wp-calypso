@@ -104,7 +104,9 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 
 	return (
 		<StepContainer
+			stepName={ 'site-options' }
 			headerImageUrl={ siteOptionsUrl }
+			skipButtonAlign={ 'top' }
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ true }

@@ -22,7 +22,7 @@ const CoursesStep: Step = function CoursesStep( { navigation } ) {
 
 	return (
 		<StepContainer
-			className="courses"
+			stepName={ 'courses' }
 			goBack={ goBack }
 			isFullLayout
 			hideFormattedHeader

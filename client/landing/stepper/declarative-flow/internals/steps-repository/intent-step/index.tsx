@@ -34,11 +34,11 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 
 	return (
 		<StepContainer
+			stepName={ 'intent-step' }
 			headerImageUrl={ intentImageUrl }
 			hideSkip
 			hideBack
 			isHorizontalLayout={ true }
-			className={ 'intent-step' }
 			formattedHeader={
 				<FormattedHeader
 					id={ 'intent-header' }
