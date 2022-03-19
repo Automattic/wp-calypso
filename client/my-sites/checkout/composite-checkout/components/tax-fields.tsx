@@ -8,7 +8,11 @@ import { useTranslate } from 'i18n-calypso';
 import { isValid } from '../types/wpcom-store-state';
 import CountrySelectMenu from './country-select-menu';
 import { LeftColumn, RightColumn } from './ie-fallback';
-import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type {
+	CountryListItem,
+	ManagedContactDetails,
+	ManagedValue,
+} from '@automattic/wpcom-checkout';
 import type { ChangeEvent } from 'react';
 
 const GridRow = styled.div`
@@ -33,16 +37,14 @@ export default function TaxFields( {
 	section,
 	taxInfo,
 	countriesList,
-	updatePostalCode,
-	updateCountryCode,
+	onChange,
 	isDisabled,
 }: {
 	section: string;
 	taxInfo: ManagedContactDetails;
 	countriesList: CountryListItem[];
-	updatePostalCode: ( code: string ) => void;
-	updateCountryCode: ( code: string ) => void;
-	isDisabled: boolean;
+	onChange: ( taxInfo: ManagedContactDetails ) => void;
+	isDisabled?: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const { postalCode, countryCode } = taxInfo;
@@ -57,15 +59,10 @@ export default function TaxFields( {
 				<CountrySelectMenu
 					translate={ translate }
 					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-						updateCountryCode( event.target.value );
-						// Reformat the postal code if the country changes
-						if ( postalCode ) {
-							updatePostalCode(
-								getCountryPostalCodeSupport( countriesList, event.target.value )
-									? tryToGuessPostalCodeFormat( postalCode?.value, event.target.value )
-									: ''
-							);
-						}
+						onChange( {
+							countryCode: { value: event.target.value, errors: [], isTouched: true },
+							postalCode: updatePostalCodeForCountry( postalCode, countryCode, countriesList ),
+						} );
 					} }
 					isError={ countryCode?.isTouched && ! isValid( countryCode ) }
 					isDisabled={ isDisabled }
@@ -83,11 +80,16 @@ export default function TaxFields( {
 						label={ String( translate( 'Postal code' ) ) }
 						value={ postalCode?.value ?? '' }
 						disabled={ isDisabled }
-						onChange={ ( newValue ) =>
-							updatePostalCode(
-								tryToGuessPostalCodeFormat( newValue.toUpperCase(), countryCode?.value )
-							)
-						}
+						onChange={ ( newValue: string ) => {
+							onChange( {
+								countryCode,
+								postalCode: updatePostalCodeForCountry(
+									{ value: newValue.toUpperCase(), errors: [], isTouched: true },
+									countryCode,
+									countriesList
+								),
+							} );
+						} }
 						autoComplete={ section + ' postal-code' }
 						isError={ postalCode?.isTouched && ! isValid( postalCode ) }
 						errorMessage={
@@ -98,4 +100,27 @@ export default function TaxFields( {
 			) }
 		</FieldRow>
 	);
+}
+
+function updatePostalCodeForCountry(
+	postalCode: ManagedValue | undefined,
+	countryCode: ManagedValue | undefined,
+	countriesList: CountryListItem[]
+): ManagedValue | undefined {
+	const arePostalCodesSupported = getCountryPostalCodeSupport(
+		countriesList,
+		countryCode?.value ?? ''
+	);
+	if ( ! arePostalCodesSupported ) {
+		return { value: '', errors: [], isTouched: true };
+	}
+	// Reformat the postal code if the country changes
+	if ( postalCode?.value ) {
+		const formattedPostalCodeValue = tryToGuessPostalCodeFormat(
+			postalCode.value,
+			countryCode?.value
+		);
+		return { value: formattedPostalCodeValue, errors: [], isTouched: true };
+	}
+	return postalCode;
 }
