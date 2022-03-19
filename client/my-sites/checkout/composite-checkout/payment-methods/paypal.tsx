@@ -22,6 +22,7 @@ import type {
 	StoreActions,
 	StoreSelectorsWithState,
 	StoreState,
+	ManagedContactDetails,
 } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:paypal-payment-method' );
@@ -150,15 +151,18 @@ function PayPalTaxFields(): JSX.Element {
 		[ postalCode, countryCode ]
 	);
 	const { changePostalCode, changeCountryCode } = useDispatch( storeKey );
+	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
+		changeCountryCode( newInfo.countryCode?.value ?? '' );
+		changePostalCode( newInfo.postalCode?.value ?? '' );
+	};
 	return (
 		<PayPalFieldsWrapper>
 			<TaxFields
 				section="paypal-payment-method"
 				taxInfo={ fields }
+				onChange={ onChangeContactInfo }
 				countriesList={ countriesList }
 				isDisabled={ isDisabled }
-				updatePostalCode={ changePostalCode }
-				updateCountryCode={ changeCountryCode }
 			/>
 		</PayPalFieldsWrapper>
 	);
