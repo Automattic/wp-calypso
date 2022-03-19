@@ -11,6 +11,7 @@ function redirect( to: string ) {
 
 export const siteSetupFlow: Flow = {
 	name: 'site-setup',
+
 	useSteps() {
 		return [
 			'intent',
@@ -21,6 +22,7 @@ export const siteSetupFlow: Flow = {
 			'storeFeatures',
 		];
 	},
+
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );

@@ -104,6 +104,8 @@ $gray-60: #50575e;
 	&:not( .is-sticky ) {
 		@include break-small {
 			@include unstick;
+			left: 72px;
+			right: 24px;
 		}
 	}
 
