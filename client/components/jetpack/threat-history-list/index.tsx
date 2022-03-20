@@ -159,7 +159,9 @@ const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( { filter } ) => 
 								/>
 							) }
 
-							<ListItems items={ currentPageThreats } />
+							<div className="threat-history-list__threats">
+								<ListItems items={ currentPageThreats } />
+							</div>
 
 							{ showPagination && (
 								<Pagination
