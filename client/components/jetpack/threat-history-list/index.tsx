@@ -6,6 +6,7 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
 import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
+import ThreatListHeader from 'calypso/components/jetpack/threat-list-header';
 import Pagination from 'calypso/components/pagination';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSiteScanHistory from 'calypso/state/selectors/get-site-scan-history';
@@ -140,44 +141,47 @@ const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( { filter } ) => 
 			) }
 
 			{ ! isRequestingThreatCounts && filteredThreatCount > 0 && (
-				<div className="threat-history-list__entries">
-					{ isRequestingThreatHistory && (
-						<ListItemsPlaceholder count={ filteredThreatCount } perPage={ THREATS_PER_PAGE } />
-					) }
-					{ ! isRequestingThreatHistory && (
-						<>
-							{ showPagination && (
-								<Pagination
-									compact={ isMobile }
-									className="threat-history-list__pagination--top"
-									total={ threats.length }
-									perPage={ THREATS_PER_PAGE }
-									page={ currentPage }
-									pageClick={ setCurrentPage }
-									nextLabel={ translate( 'Older' ) }
-									prevLabel={ translate( 'Newer' ) }
-								/>
-							) }
+				<>
+					<ThreatListHeader />
+					<div className="threat-history-list__entries">
+						{ isRequestingThreatHistory && (
+							<ListItemsPlaceholder count={ filteredThreatCount } perPage={ THREATS_PER_PAGE } />
+						) }
+						{ ! isRequestingThreatHistory && (
+							<>
+								{ showPagination && (
+									<Pagination
+										compact={ isMobile }
+										className="threat-history-list__pagination--top"
+										total={ threats.length }
+										perPage={ THREATS_PER_PAGE }
+										page={ currentPage }
+										pageClick={ setCurrentPage }
+										nextLabel={ translate( 'Older' ) }
+										prevLabel={ translate( 'Newer' ) }
+									/>
+								) }
 
-							<div className="threat-history-list__threats">
-								<ListItems items={ currentPageThreats } />
-							</div>
+								<div className="threat-history-list__threats">
+									<ListItems items={ currentPageThreats } />
+								</div>
 
-							{ showPagination && (
-								<Pagination
-									compact={ isMobile }
-									className="threat-history-list__pagination--bottom"
-									total={ threats.length }
-									perPage={ THREATS_PER_PAGE }
-									page={ currentPage }
-									pageClick={ setCurrentPage }
-									nextLabel={ translate( 'Older' ) }
-									prevLabel={ translate( 'Newer' ) }
-								/>
-							) }
-						</>
-					) }
-				</div>
+								{ showPagination && (
+									<Pagination
+										compact={ isMobile }
+										className="threat-history-list__pagination--bottom"
+										total={ threats.length }
+										perPage={ THREATS_PER_PAGE }
+										page={ currentPage }
+										pageClick={ setCurrentPage }
+										nextLabel={ translate( 'Older' ) }
+										prevLabel={ translate( 'Newer' ) }
+									/>
+								) }
+							</>
+						) }
+					</div>
+				</>
 			) }
 		</div>
 	);
