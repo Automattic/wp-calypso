@@ -13,12 +13,8 @@
 		}
 	}
 
-	&__status {
-		white-space: nowrap;
-
-		&.is-fixed {
-			color: var( --color-success-50 );
-		}
+	&__status.is-fixed {
+		color: var( --color-success-50 );
 	}
 
 	&__status-separator {
