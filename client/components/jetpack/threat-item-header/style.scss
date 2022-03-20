@@ -1,18 +1,32 @@
 .threat-item-header {
   &__card-container {
-    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
     margin-bottom: auto;
     margin-top: auto;
     margin-right: auto;
+    padding-right: 24px;
     width: 100%;
+    overflow: hidden;
+
+    @include breakpoint-deprecated( '>960px' ) {
+      flex-wrap: nowrap;
+    }
+  }
+
+  &__titles {
     overflow: hidden;
   }
 
-  &__autofix_badge {
+  &__autofix-container {
+    min-width: 18px;
     margin-top: auto;
     margin-bottom: auto;
-    margin-right: 72px;
+    margin-right: 36px;
     margin-left: auto;
+  }
+
+  &__autofix_badge {
     fill: #008710;
   }
 
