@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getPlanTermLabel } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import { isDefaultLocale, localizeUrl } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -17,7 +18,6 @@ import Notice from 'calypso/components/notice';
 import withActiveSupportTickets from 'calypso/data/help/with-active-support-tickets';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
 import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
 import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';

@@ -190,7 +190,7 @@ function UseMyDomain( props ) {
 	}, [ domainName, selectedSite, setDomainTransferData, validateDomainName, onNextStep ] );
 
 	const onDomainNameChange = ( event ) => {
-		setDomainName( event.target.value );
+		setDomainName( event.target.value.trim() );
 		domainNameValidationError && setDomainNameValidationError();
 	};
 

@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { SelectItem, SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -6,7 +7,6 @@ import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils/utils';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';

@@ -1,9 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { CompactCard, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Component } from 'react';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export default class HelpResult extends Component {
 	onClick = ( event ) => {

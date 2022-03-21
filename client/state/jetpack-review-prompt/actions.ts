@@ -14,28 +14,15 @@ const combineDismissPreference = (
 	const fullPref = getPreference( state, PREFERENCE_NAME ) ?? {};
 	const previousPref = getExistingPreference( state, type );
 
-	return type === 'scan'
-		? {
-				...fullPref,
-				scan: {
-					...fullPref.scan,
-					[ state.ui.selectedSiteId ]: {
-						...previousPref,
-						dismissCount: previousPref.dismissCount + ( reviewed ? 0 : 1 ),
-						dismissedAt,
-						reviewed,
-					},
-				},
-		  }
-		: {
-				...fullPref,
-				[ type ]: {
-					...previousPref,
-					dismissCount: previousPref.dismissCount + ( reviewed ? 0 : 1 ),
-					dismissedAt,
-					reviewed,
-				},
-		  };
+	return {
+		...fullPref,
+		[ type ]: {
+			...previousPref,
+			dismissCount: previousPref.dismissCount + ( reviewed ? 0 : 1 ),
+			dismissedAt,
+			reviewed,
+		},
+	};
 };
 
 const dismiss = (
@@ -58,24 +45,13 @@ const combineValidPreference = (
 	const fullPref = getPreference( state, PREFERENCE_NAME ) ?? {};
 	const previousPref = getExistingPreference( state, type );
 
-	return type === 'scan'
-		? {
-				...fullPref,
-				scan: {
-					...fullPref.scan,
-					[ state.ui.selectedSiteId ]: {
-						...previousPref,
-						validFrom: validFrom ?? Date.now(),
-					},
-				},
-		  }
-		: {
-				...fullPref,
-				[ type ]: {
-					...previousPref,
-					validFrom: validFrom ?? Date.now(),
-				},
-		  };
+	return {
+		...fullPref,
+		[ type ]: {
+			...previousPref,
+			validFrom: validFrom ?? Date.now(),
+		},
+	};
 };
 
 const setValidFrom = ( type: 'restore' | 'scan', validFrom: number | null = null ) => (

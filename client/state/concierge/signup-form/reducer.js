@@ -1,4 +1,4 @@
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import { guessTimezone } from '@automattic/i18n-utils';
 import {
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,

@@ -6,31 +6,33 @@ import {
 	envVariables,
 	TestAccount,
 	DataHelper,
-	GutenbergEditorPage,
+	EditorPage,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), function () {
-	const accountName = envVariables.GUTENBERG_EDGE
-		? 'gutenbergSimpleSiteEdgeUser'
-		: 'gutenbergSimpleSiteUser';
+	const accountName = getTestAccountByFeature( {
+		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+	} );
 
 	let page: Page;
-	let gutenbergEditorPage: GutenbergEditorPage;
+	let editorPage: EditorPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		gutenbergEditorPage = new GutenbergEditorPage( page );
+		editorPage = new EditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		gutenbergEditorPage = new GutenbergEditorPage( page );
-		await gutenbergEditorPage.visit( 'post' );
+		editorPage = new EditorPage( page );
+		await editorPage.visit( 'post' );
 	} );
 
 	it.each( [
@@ -41,7 +43,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 	] )(
 		'Experimental package %s and feature %s are available',
 		async function ( packageName, feature, featureType ) {
-			const frame = await gutenbergEditorPage.getEditorFrame();
+			const frame = await editorPage.getEditorHandle();
 			const packageAvailable = await frame.evaluate( `typeof window[ "wp" ]["${ packageName }"]` );
 
 			expect( packageAvailable ).not.toStrictEqual( 'undefined' );
@@ -58,7 +60,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 	);
 
 	it( 'Experimental data is available', async function () {
-		const frame = await gutenbergEditorPage.getEditorFrame();
+		const frame = await editorPage.getEditorHandle();
 		const blockPatterns = await frame.evaluate(
 			`Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
 		);
@@ -78,7 +80,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 		// patterns will be added than removed. This also means if we see a dramatic
 		// change in the number to the lower end, then something is probably wrong.
 		const expectedBlockPatternCount = 50;
-		const frame = await gutenbergEditorPage.getEditorFrame();
+		const frame = await editorPage.getEditorHandle();
 		const actualBlockPatternCount = await frame.evaluate(
 			`window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns.length`
 		);

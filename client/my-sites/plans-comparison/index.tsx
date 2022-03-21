@@ -1,2 +1,2 @@
 export { PlansComparison as default, globalOverrides } from './plans-comparison';
-export { isEligibleForManagedPlan } from './is-eligible-for-managed-plan';
+export { isEligibleForProPlan } from './is-eligible-for-pro-plan';

@@ -487,6 +487,7 @@ class ThemeSheet extends Component {
 
 	renderSupportTab = () => {
 		const {
+			author,
 			isCurrentUserPaid,
 			isStandaloneJetpack,
 			forumUrl,
@@ -501,6 +502,7 @@ class ThemeSheet extends Component {
 			renderedTab = (
 				<div>
 					{ isCurrentUserPaid &&
+						( isWpcomTheme || author === 'Automattic' ) &&
 						! isStandaloneJetpack &&
 						this.renderSupportContactUsCard( buttonCount++ ) }
 					{ forumUrl && this.renderSupportThemeForumCard( buttonCount++ ) }

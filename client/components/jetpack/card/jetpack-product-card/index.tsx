@@ -6,7 +6,6 @@ import { preventWidows } from 'calypso/lib/formatting';
 import starIcon from './assets/star.svg';
 import DisplayPrice from './display-price';
 import JetpackProductCardFeatures from './features';
-import useCouponDiscount from './use-coupon-discount';
 import type {
 	ScrollCardIntoViewCallback,
 	SelectorProduct,
@@ -89,7 +88,10 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 
 	const translate = useTranslate();
 	const anchorRef = useRef< HTMLDivElement >( null );
-	const { discount } = useCouponDiscount( originalPrice, discountedPrice );
+	const discount =
+		originalPrice !== undefined && discountedPrice !== undefined
+			? Math.floor( ( ( originalPrice - discountedPrice ) / originalPrice ) * 100 )
+			: 0;
 	const showDiscountLabel =
 		! hideSavingLabel &&
 		discount &&

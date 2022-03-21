@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { dismiss } from 'calypso/state/jetpack-review-prompt/actions';
@@ -20,7 +19,6 @@ interface Props {
 const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', type } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const moment = useLocalizedMoment();
 
 	// dismiss count is stored in a preference, make sure we have that before rendering
 	const hasReceivedRemotePreferences = useSelector( ( state ) =>
@@ -76,15 +74,6 @@ const JetpackReviewPrompt: FunctionComponent< Props > = ( { align = 'center', ty
 			default:
 				return (
 					<p>
-						{ translate( 'Scan fixed all threats {{strong}}%s{{/strong}}. Your site looks great!', {
-							args: [ moment.utc( validFrom ).fromNow() ],
-							components: {
-								strong: <strong />,
-							},
-						} ) }
-
-						<br />
-
 						{ preventWidows(
 							translate(
 								'Are you happy with Jetpack Scan? Leave us a review and help spread the word.'

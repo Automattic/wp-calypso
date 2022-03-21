@@ -1,4 +1,5 @@
 import { CompactCard } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -6,7 +7,6 @@ import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

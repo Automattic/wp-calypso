@@ -83,13 +83,15 @@ const AdditionalPriceInformation = ( {
 
 type GoogleWorkspacePriceProps = {
 	domain: SiteDomain | undefined;
+	isDomainInCart?: boolean;
 	intervalLength: IntervalLength;
 };
 
 const GoogleWorkspacePrice = ( {
 	domain,
 	intervalLength,
-}: GoogleWorkspacePriceProps ): ReactElement => {
+	isDomainInCart = false,
+}: GoogleWorkspacePriceProps ): JSX.Element | null => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const productSlug = getGoogleWorkspaceProductSlug( intervalLength );
@@ -97,11 +99,12 @@ const GoogleWorkspacePrice = ( {
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 
-	if ( ! domain ) {
-		return <></>;
+	if ( ! domain && ! isDomainInCart ) {
+		return null;
 	}
 
-	const isGSuiteSupported = canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] );
+	const isGSuiteSupported =
+		canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
 
 	if ( ! isGSuiteSupported ) {
 		return (

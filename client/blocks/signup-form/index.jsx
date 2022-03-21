@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -39,7 +40,7 @@ import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
-import { getLocaleSlug, localizeUrl } from 'calypso/lib/i18n-utils';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';

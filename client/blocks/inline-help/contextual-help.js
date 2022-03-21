@@ -1,6 +1,6 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { RESULT_TOUR, RESULT_VIDEO, SELL_INTENT_ARTICLE } from './constants';
+import { RESULT_TOUR, RESULT_VIDEO, SELL_INTENT } from './constants';
 
 /**
  * Module variables
@@ -1310,7 +1310,7 @@ const contextLinksForSection = {
 			},
 		},
 		{
-			type: SELL_INTENT_ARTICLE,
+			intent: SELL_INTENT,
 			get link() {
 				return localizeUrl(
 					'https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/'
@@ -2285,7 +2285,7 @@ export function getContextResults( section, siteIntent ) {
 	// Remove sell docs if not on a site with the 'sell' intent.
 	if ( section === 'gutenberg-editor' && siteIntent !== 'sell' ) {
 		links = links.filter( ( link ) => {
-			return link.type !== SELL_INTENT_ARTICLE;
+			return link.intent !== SELL_INTENT;
 		} );
 	}
 

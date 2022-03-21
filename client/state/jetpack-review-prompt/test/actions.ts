@@ -1,9 +1,5 @@
 import { expect } from 'chai';
-// import { getIsDismissed, getIsValid } from '../selectors';
-// import { TIME_BETWEEN_PROMPTS } from '../constants';
 import { combineDismissPreference, combineValidPreference } from '../actions';
-
-const TEST_SITE_ID = 123456789;
 
 describe( 'actions', () => {
 	describe( 'Scan Review Prompt:', () => {
@@ -14,15 +10,12 @@ describe( 'actions', () => {
 				expect(
 					combineDismissPreference(
 						{
-							ui: {
-								selectedSiteId: TEST_SITE_ID,
-							},
 							preferences: {},
 						},
 						'scan',
 						dismissDate,
 						false
-					).scan[ TEST_SITE_ID ]
+					).scan
 				).to.have.property( 'dismissedAt', dismissDate );
 			} );
 
@@ -30,15 +23,12 @@ describe( 'actions', () => {
 				expect(
 					combineDismissPreference(
 						{
-							ui: {
-								selectedSiteId: TEST_SITE_ID,
-							},
 							preferences: {},
 						},
 						'scan',
 						Date.now(),
 						false
-					).scan[ TEST_SITE_ID ]
+					).scan
 				).to.have.property( 'dismissCount', 1 );
 			} );
 
@@ -46,19 +36,14 @@ describe( 'actions', () => {
 				expect(
 					combineDismissPreference(
 						{
-							ui: {
-								selectedSiteId: TEST_SITE_ID,
-							},
 							preferences: {
 								localValues: {
 									'jetpack-review-prompt': {
 										scan: {
-											[ TEST_SITE_ID ]: {
-												dismissCount: 1,
-												dismissedAt: Date.now(),
-												validFrom: null,
-												reviewed: false,
-											},
+											dismissCount: 1,
+											dismissedAt: Date.now(),
+											validFrom: null,
+											reviewed: false,
 										},
 									},
 								},
@@ -67,7 +52,7 @@ describe( 'actions', () => {
 						'scan',
 						Date.now(),
 						false
-					).scan[ TEST_SITE_ID ]
+					).scan
 				).to.have.property( 'dismissCount', 2 );
 			} );
 
@@ -75,15 +60,12 @@ describe( 'actions', () => {
 				expect(
 					combineDismissPreference(
 						{
-							ui: {
-								selectedSiteId: TEST_SITE_ID,
-							},
 							preferences: {},
 						},
 						'scan',
 						Date.now(),
 						true
-					).scan[ TEST_SITE_ID ]
+					).scan
 				).to.have.property( 'reviewed', true );
 			} );
 
@@ -94,14 +76,11 @@ describe( 'actions', () => {
 					expect(
 						combineValidPreference(
 							{
-								ui: {
-									selectedSiteId: TEST_SITE_ID,
-								},
 								preferences: {},
 							},
 							'scan',
 							validFrom
-						).scan[ TEST_SITE_ID ]
+						).scan
 					).to.have.property( 'validFrom', validFrom );
 				} );
 			} );

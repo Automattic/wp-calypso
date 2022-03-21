@@ -75,10 +75,10 @@ const googleWorkspaceCardInformation: ProviderCardProps = {
 };
 
 const GoogleWorkspaceCard = ( {
-	cartDomainName,
 	comparisonContext,
 	detailsExpanded,
 	intervalLength,
+	isDomainInCart = false,
 	onExpandedChange,
 	selectedDomainName,
 	source,
@@ -107,21 +107,25 @@ const GoogleWorkspaceCard = ( {
 	const [ googleUsers, setGoogleUsers ] = useState( newUsers( selectedDomainName ) );
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
-	const isGSuiteSupported = canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] );
+	const isGSuiteSupported =
+		canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
+
 	const isGSuiteAvailable = intervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
 
 	const googleWorkspace: ProviderCardProps = { ...googleWorkspaceCardInformation };
 	googleWorkspace.detailsExpanded = isGSuiteAvailable && detailsExpanded;
 	googleWorkspace.showExpandButton = isGSuiteAvailable;
 	googleWorkspace.priceBadge = (
-		<GoogleWorkspacePrice domain={ domain } intervalLength={ intervalLength } />
+		<GoogleWorkspacePrice
+			domain={ domain }
+			isDomainInCart={ isDomainInCart }
+			intervalLength={ intervalLength }
+		/>
 	);
-
-	const hasCartDomain = Boolean( cartDomainName );
 
 	const onGoogleConfirmNewMailboxes = () => {
 		const usersAreValid = areAllUsersValid( googleUsers );
-		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
+		const userCanAddEmail = isDomainInCart || canCurrentUserAddEmail( domain );
 
 		recordTracksEventAddToCartClick(
 			comparisonContext,

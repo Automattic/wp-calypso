@@ -42,6 +42,17 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins' ), function () {
 		}
 		await pluginsPage.validateHasSection( 'Premium' );
 	} );
+
+	it.each( [
+		'WooCommerce',
+		'Yoast SEO',
+		'MailPoet – emails and newsletters in WordPress',
+		'Jetpack CRM – Clients, Invoices, Leads, & Billing for WordPress',
+		'Contact Form 7',
+		'Site Kit by Google – Analytics, Search Console, AdSense, Speed',
+	] )( 'Featured Plugins section should show the %s plugin', async function ( plugin: string ) {
+		await pluginsPage.validateHasPluginOnSection( 'featured', plugin );
+	} );
 } );
 
 describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:wpcom-site' ), function () {

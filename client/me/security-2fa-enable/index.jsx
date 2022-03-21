@@ -11,6 +11,7 @@ import FormVerificationCodeInput from 'calypso/components/forms/form-verificatio
 import Notice from 'calypso/components/notice';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import wp from 'calypso/lib/wp';
 import Security2faProgress from 'calypso/me/security-2fa-progress';
 
 import './style.scss';
@@ -46,7 +47,24 @@ class Security2faEnable extends Component {
 
 	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
-		twoStepAuthorization.getAppAuthCodes( this.onAppAuthCodesRequestResponse );
+
+		wp.req.get( '/me/two-step/app-auth-setup/', ( error, data ) => {
+			if ( error ) {
+				this.setState( {
+					lastError: this.props.translate(
+						'Unable to obtain authorization application setup information. Please try again later.'
+					),
+					lastErrorType: 'is-error',
+				} );
+				return;
+			}
+
+			this.setState( {
+				otpAuthUri: data.otpauth_uri,
+				timeCode: data.time_code,
+			} );
+		} );
+
 		if ( this.props.isSmsFlow ) {
 			this.requestSMS();
 		}
@@ -108,23 +126,6 @@ class Security2faEnable extends Component {
 			this.requestSMS();
 		}
 		this.setState( { method: 'sms' } );
-	};
-
-	onAppAuthCodesRequestResponse = ( error, data ) => {
-		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate(
-					'Unable to obtain authorization application setup information. Please try again later.'
-				),
-				lastErrorType: 'is-error',
-			} );
-			return;
-		}
-
-		this.setState( {
-			otpAuthUri: data.otpauth_uri,
-			timeCode: data.time_code,
-		} );
 	};
 
 	getFormDisabled = () => {

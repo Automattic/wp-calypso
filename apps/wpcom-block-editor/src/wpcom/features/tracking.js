@@ -70,10 +70,11 @@ const getTypeForBlockId = ( blockId ) => {
 /**
  * Guess which inserter was used to insert/replace blocks.
  *
- * @param {string[]} originalBlockIds ids or blocks that are being replaced
- * @returns {'header-inserter'|'slash-inserter'|'quick-inserter'|'block-switcher'|undefined} ID representing the insertion method that was used
+ * @param {string[]|string} originalBlockIds ids or blocks that are being replaced
+ * @returns {'header-inserter'|'slash-inserter'|'quick-inserter'|'block-switcher'|'payments-intro-block'|undefined} ID representing the insertion method that was used
  */
 const getBlockInserterUsed = ( originalBlockIds = [] ) => {
+	const clientIds = Array.isArray( originalBlockIds ) ? originalBlockIds : [ originalBlockIds ];
 	// Check if the main inserter (opened using the [+] button in the header) is open.
 	// If it is then the block was inserted using this menu. This inserter closes
 	// automatically when the user tries to use another form of block insertion
@@ -92,10 +93,7 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 	// The block switcher open state is not stored in Redux, it's component state
 	// inside a <Dropdown>, so we can't access it. Work around this by checking if
 	// the DOM elements are present on the page while the block is being replaced.
-	if (
-		originalBlockIds.length &&
-		document.querySelector( '.block-editor-block-switcher__container' )
-	) {
+	if ( clientIds.length && document.querySelector( '.block-editor-block-switcher__container' ) ) {
 		return 'block-switcher';
 	}
 
@@ -106,11 +104,9 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 	// then use the block switcher, and the following tests would incorrectly capture
 	// that case too.
 	if (
-		originalBlockIds.length === 1 &&
-		select( 'core/block-editor' ).getBlockName( originalBlockIds[ 0 ] ) === 'core/paragraph' &&
-		select( 'core/block-editor' )
-			.getBlockAttributes( originalBlockIds[ 0 ] )
-			.content.startsWith( '/' )
+		clientIds.length === 1 &&
+		select( 'core/block-editor' ).getBlockName( clientIds[ 0 ] ) === 'core/paragraph' &&
+		select( 'core/block-editor' ).getBlockAttributes( clientIds[ 0 ] ).content.startsWith( '/' )
 	) {
 		return 'slash-inserter';
 	}
@@ -125,6 +121,14 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 		document.querySelector( '.block-editor-inserter__block-list' )
 	) {
 		return 'quick-inserter';
+	}
+
+	// This checks validates if we are inserting a block from the Payments Inserter block.
+	if (
+		clientIds.length === 1 &&
+		select( 'core/block-editor' ).getBlockName( clientIds[ 0 ] ) === 'jetpack/payments-intro'
+	) {
+		return 'payments-intro-block';
 	}
 
 	return undefined;
