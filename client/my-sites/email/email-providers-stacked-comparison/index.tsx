@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
@@ -10,7 +9,6 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
-import { domainAddEmailUpsell } from 'calypso/my-sites/domains/paths';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existing-paid-service-notice';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
@@ -18,10 +16,7 @@ import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparis
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
-import {
-	emailManagementInDepthComparison,
-	emailManagementPurchaseNewEmailAccount,
-} from 'calypso/my-sites/email/paths';
+import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
