@@ -42,7 +42,8 @@
 	},
 	"dependencies": {
 		"debug": "^4.3.3",
-		"qs": "^6.5.2"
+		"qs": "^6.5.2",
+		"tus-js-client": "2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
