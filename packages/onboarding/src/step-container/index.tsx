@@ -9,18 +9,18 @@ interface Props {
 	stepName: string;
 	stepSectionName?: string;
 	stepContent: ReactElement;
+	shouldHideNavButtons?: boolean;
 	hideBack?: boolean;
 	hideSkip?: boolean;
 	hideNext?: boolean;
-	formattedHeader?: ReactElement;
-	shouldHideNavButtons?: boolean;
 	skipButtonAlign?: 'top' | 'bottom';
 	skipHeadingText?: string;
-	hideFormattedHeader?: boolean;
-	headerImageUrl?: string;
 	backLabelText?: string | ReactChild;
 	skipLabelText?: string | ReactChild;
 	nextLabelText?: string | ReactChild;
+	formattedHeader?: ReactElement;
+	hideFormattedHeader?: boolean;
+	headerImageUrl?: string;
 	className?: string;
 	// Displays an <hr> above the skip button and adds more white space
 	isLargeSkipLayout?: boolean;
@@ -40,23 +40,23 @@ interface Props {
 const StepContainer: React.FC< Props > = ( {
 	stepContent,
 	stepName,
-	hideBack,
-	hideSkip,
-	hideNext = true,
-	formattedHeader,
 	shouldHideNavButtons,
+	hideBack,
+	backLabelText,
+	hideSkip,
+	skipLabelText,
 	skipButtonAlign = 'bottom',
 	skipHeadingText,
-	headerImageUrl,
-	hideFormattedHeader,
-	backLabelText,
-	skipLabelText,
+	hideNext = true,
 	nextLabelText,
+	formattedHeader,
+	headerImageUrl,
+	headerButton,
+	hideFormattedHeader,
 	className,
 	isHorizontalLayout,
 	isFullLayout,
 	isWideLayout,
-	headerButton,
 	isExternalBackUrl,
 	isLargeSkipLayout,
 	customizedActionButtons,
@@ -86,7 +86,7 @@ const StepContainer: React.FC< Props > = ( {
 		}
 	};
 
-	function renderBack() {
+	function BackButton() {
 		if ( shouldHideNavButtons ) {
 			return null;
 		}
@@ -102,13 +102,7 @@ const StepContainer: React.FC< Props > = ( {
 		);
 	}
 
-	function renderSkip( {
-		borderless,
-		hasForwardIcon,
-	}: {
-		borderless: boolean;
-		hasForwardIcon?: boolean;
-	} ) {
+	function SkipButton() {
 		if ( shouldHideNavButtons || ! goNext ) {
 			return null;
 		}
@@ -125,15 +119,14 @@ const StepContainer: React.FC< Props > = ( {
 					cssClass={ classNames( 'step-container__navigation-link', 'has-underline', {
 						'has-skip-heading': skipHeadingText,
 					} ) }
-					borderless={ borderless }
-					hasForwardIcon={ hasForwardIcon }
+					borderless={ true }
 					recordClick={ () => recordClick( 'forward' ) }
 				/>
 			</div>
 		);
 	}
 
-	function renderNext() {
+	function NextButton() {
 		if ( shouldHideNavButtons || ! goNext ) {
 			return null;
 		}
@@ -150,24 +143,20 @@ const StepContainer: React.FC< Props > = ( {
 		);
 	}
 
-	const backButton = ! hideBack && renderBack();
-	const skipButton = ! hideSkip && skipButtonAlign === 'top' && renderSkip( { borderless: true } );
-	const nextButton = ! hideNext && renderNext();
-	const hasNavigation = backButton || skipButton || nextButton || customizedActionButtons;
 	const classes = classNames( 'step-container', className, flowName, stepName, {
 		'is-horizontal-layout': isHorizontalLayout,
 		'is-wide-layout': isWideLayout,
 		'is-full-layout': isFullLayout,
 		'is-large-skip-layout': isLargeSkipLayout,
-		'has-navigation': hasNavigation,
+		'has-navigation': ! shouldHideNavButtons,
 	} );
 
 	return (
 		<div className={ classes }>
-			<ActionButtons className="step-container__navigation" sticky={ null }>
-				{ backButton }
-				{ skipButton }
-				{ nextButton }
+			<ActionButtons className="step-container__navigation">
+				{ ! hideBack && <BackButton /> }
+				{ ! hideSkip && skipButtonAlign === 'top' && <SkipButton /> }
+				{ ! hideNext && <NextButton /> }
 				{ customizedActionButtons }
 			</ActionButtons>
 			{ ! hideFormattedHeader && (
@@ -187,7 +176,7 @@ const StepContainer: React.FC< Props > = ( {
 			{ ! hideSkip && skipButtonAlign === 'bottom' && (
 				<div className="step-container__buttons">
 					{ isLargeSkipLayout && <hr className="step-container__skip-hr" /> }
-					{ renderSkip( { borderless: true } ) }
+					{ <SkipButton /> }
 				</div>
 			) }
 		</div>

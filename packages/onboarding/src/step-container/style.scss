@@ -5,151 +5,9 @@
 $gray-100: #101517;
 $gray-60: #50575e;
 
-.step-container__header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-
-	.formatted-header {
-		margin: 0;
-		flex-grow: 1;
-
-		.formatted-header__title {
-			@include onboarding-font-recoleta;
-			color: $gray-100;
-			letter-spacing: 0.2px;
-			font-size: 2.15rem; /* stylelint-disable-line */
-			font-weight: 400;
-			padding: 0;
-			margin: 0;
-
-			@include break-xlarge {
-				font-size: 2.75rem; /* stylelint-disable-line */
-			}
-		}
-
-		.formatted-header__subtitle {
-			padding: 0;
-			text-align: left;
-			color: $gray-60;
-			font-size: 1rem;
-			margin: 8px 0 0;
-			line-height: 24px;
-
-			@include break-small {
-				margin-top: 16px;
-			}
-		}
-	}
-
-	@include break-small {
-		flex-wrap: wrap;
-	}
-}
-
-.step-container__skip-hr {
-	background: var( --color-primary-light );
-	max-width: 270px;
-	margin-bottom: 50px;
-	margin-top: -20px;
-
-	@include break-small {
-		margin: 30px auto;
-	}
-}
-
-.step-container__skip-heading {
-	color: var( --color-text-inverted );
-}
-
-.is-large-skip-layout .step-container__buttons {
-	margin-bottom: 34px;
-
-	@include break-small {
-		margin-bottom: 14px;
-	}
-}
-
-.step-container__header-button {
-	@include break-small {
-		flex-basis: 100%;
-	}
-}
-
-.step-container__navigation.action-buttons {
-	display: flex;
-	align-items: center;
-	font-size: 0.875rem;
-
-	&:empty {
-		display: none;
-	}
-
-	@mixin unstick {
-		position: absolute;
-		top: 1px;
-		left: 11px;
-		right: 16px;
-		padding: 0;
-		border: none;
-		margin: 0;
-		background-color: transparent;
-	}
-
-	&.no-sticky {
-		@include unstick;
-		height: 36px;
-	}
-
-	&:not( .is-sticky ) {
-		@include break-small {
-			@include unstick;
-			left: 72px;
-			right: 24px;
-		}
-	}
-
-	.step-container__navigation-link {
-		font-size: 0.875rem;
-		font-weight: 500;
-
-		&.button.is-primary {
-			border-radius: 4px;
-			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
-
-			.signup__step.is-courses & {
-				color: #101517;
-				background-color: #ffffff;
-				border-color: transparent;
-			}
-		}
-
-		&.has-underline {
-			text-decoration: underline;
-		}
-
-		&.has-skip-heading {
-			transform: translateY( -3px );
-			// override unessecary super specificity added by another class
-			padding-top: 0 !important;
-		}
-	}
-
-	.step-container__navigation-link.forward,
-	.step-container__skip-wrapper {
-		margin-left: auto;
-	}
-}
-
-.step-container__header-image {
-	margin-top: 64px;
-	display: none;
-
-	@include break-small {
-		display: block;
-	}
-}
-
+/**
+ *	General
+ */
 .step-container {
 	max-width: 960px;
 	margin: 0 auto;
@@ -170,51 +28,24 @@ $gray-60: #50575e;
 		align-items: flex-start;
 		justify-content: space-between;
 		max-width: 1024px;
-		padding: 0 20px;
-		margin-top: 44px;
-
+		padding: 0 12px;
+		padding-bottom: 60px;
+		margin-top: 90px;
+		
 		@include break-small {
-			display: flex;
+			padding: 0 20px;
 			margin-top: 25vh;
-		}
+			display: flex;
 
-		.step-container__header,
-		.step-container__content {
-			display: block;
-			margin-top: 0;
-			flex-basis: 50%;
-
-			@include break-small {
-				padding-right: 20px;
-			}
-		}
-
-		@media ( min-width: 600px ) {
 			.step-container__header {
-				flex-basis: 34%;
+				margin-top: 0;
 			}
 		}
 	}
 
-	// Skip button
 	.step-container__buttons {
 		text-align: center;
 		margin-bottom: 20px;
-	}
-
-	.step-container__header {
-		margin-top: 48px;
-		margin-bottom: 40px;
-
-		@include break-small {
-			margin-top: 24px;
-		}
-	}
-
-	// pressable-nux has no title or subtitle so
-	// needs to not hide the (W) logo
-	.is-pressable-nux & {
-		margin-top: 30px;
 	}
 
 	// On small screens remove the margin from the
@@ -228,4 +59,157 @@ $gray-60: #50575e;
 			padding-bottom: 60px;
 		}
 	}
+
+	.step-container__skip-hr {
+		background: var( --color-primary-light );
+		max-width: 270px;
+		margin-bottom: 50px;
+		margin-top: -20px;
+
+		@include break-small {
+			margin: 30px auto;
+		}
+	}
+
+	.is-large-skip-layout .step-container__buttons {
+		margin-bottom: 34px;
+
+		@include break-small {
+			margin-bottom: 14px;
+		}
+	}
+
+	/**
+	 *	Header
+	 */
+	.step-container__header {
+		margin-bottom: 40px;
+		margin-top: 0;
+		display: block;
+		justify-content: space-between;
+		align-items: center;
+		flex-basis: 50%;
+
+		.formatted-header {
+			margin: 0;
+			flex-grow: 1;
+
+			.formatted-header__title {
+				@include onboarding-font-recoleta;
+				color: $gray-100;
+				letter-spacing: 0.2px;
+				font-size: 2.15rem; /* stylelint-disable-line */
+				font-weight: 400;
+				padding: 0;
+				margin: 0;
+
+				@include break-xlarge {
+					font-size: 2.75rem; /* stylelint-disable-line */
+				}
+			}
+
+			.formatted-header__subtitle {
+				padding: 0;
+				text-align: left;
+				color: $gray-60;
+				font-size: 1rem;
+				margin-top: 16px;
+				line-height: 24px;
+
+				@include break-small {
+					margin: 8px 0 0;
+				}
+			}
+		}
+
+		.step-container__header-button {
+			@include break-small {
+				flex-basis: 100%;
+			}
+		}
+
+		.step-container__header-image {
+			margin-top: 64px;
+			display: none;
+
+			@include break-small {
+				display: block;
+			}
+		}
+
+		@include break-small {
+			flex-wrap: wrap;
+			margin-top: 24px;
+		}
+	}
+
+	/**
+	 *	Navigation
+	 */
+	.step-container__navigation.action-buttons {
+		border-top: 1px solid $gray-200;
+		background-color: $white;
+		height: 60px;
+		align-items: center;
+		justify-content: space-between;
+		display: flex;
+		font-size: 0.875rem;
+		position: fixed;
+		z-index: 30;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		padding: 0 20px;
+		margin: 0;
+
+		&:empty {
+			display: none;
+		}
+
+		.step-container__navigation-link {
+			font-size: 0.875rem;
+			font-weight: 500;
+
+			&.button.is-primary {
+				border-radius: 4px;
+				box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+			}
+
+			&.has-underline {
+				text-decoration: underline;
+			}
+
+			&.has-skip-heading {
+				transform: translateY( -3px );
+				// override unessecary super specificity added by another class
+				padding-top: 0 !important;
+			}
+		}
+
+		.step-container__navigation-link.forward,
+		.step-container__skip-wrapper {
+			margin-left: auto;
+		}
+
+		.step-container__skip-heading {
+			color: var( --color-text-inverted );
+		}
+
+		@include break-small {
+			top: 1px;
+			left: 72px;
+			right: 24px;
+			position: absolute;
+			background-color: transparent;
+		}
+	}
+
+	/**
+	 *	Content
+	 */
+	 .step-container__content {
+		margin-top: 0;
+		display: block;
+		flex-basis: 50%;
+	 }
 }
