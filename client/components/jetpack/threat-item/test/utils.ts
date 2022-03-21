@@ -55,4 +55,12 @@ describe( 'getThreatSignatureComponents', () => {
 			variant: '001',
 		} );
 	} );
+
+	test( 'returns null when the provided signature cannot be parsed', () => {
+		expect(
+			getThreatSignatureComponents( {
+				signature: '(123)php_generic_001',
+			} as Threat )
+		).toBe( null );
+	} );
 } );
