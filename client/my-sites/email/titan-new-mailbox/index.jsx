@@ -8,6 +8,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { getMailboxPropTypeShape } from 'calypso/lib/titan/new-mailbox';
@@ -139,6 +140,26 @@ const TitanNewMailbox = ( {
 						/>
 					</FormLabel>
 					{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
+					{ hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD ) && ! showAlternateEmail && (
+						<FormSettingExplanation>
+							{ translate( 'Your password reset email is {{strong}}%(primaryEmail)s{{/strong}}.', {
+								args: {
+									primaryEmail,
+								},
+								components: {
+									strong: <strong />,
+								},
+							} ) }
+							<Button
+								primary
+								className="titan-new-mailbox__show-alternate-email"
+								borderless
+								onClick={ showAlternativeEmailField }
+							>
+								{ translate( 'Change it' ) }
+							</Button>
+						</FormSettingExplanation>
+					) }
 				</FormFieldset>
 				{ showIsAdminToggle && (
 					<FormFieldset>
@@ -174,26 +195,6 @@ const TitanNewMailbox = ( {
 							<FormInputValidation text={ alternativeEmailError } isError />
 						) }
 					</FormFieldset>
-				) }
-				{ hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD ) && ! showAlternateEmail && (
-					<>
-						{ translate( '*Your password reset email is {{strong}}%(primaryEmail)s{{/strong}}.', {
-							args: {
-								primaryEmail,
-							},
-							components: {
-								strong: <strong />,
-							},
-						} ) }
-						<Button
-							primary
-							className="titan-new-mailbox__show-alternate-email"
-							borderless
-							onClick={ showAlternativeEmailField }
-						>
-							{ translate( 'Change it' ) }
-						</Button>
-					</>
 				) }
 			</div>
 		</>
