@@ -156,9 +156,9 @@ export class SiteDomains extends Component {
 
 		return (
 			<>
-				{ hasProductsList || <QueryProductsList /> }
+				{ ! hasProductsList && <QueryProductsList /> }
 
-				{ this.isLoading() || <GoogleSaleBanner domains={ domains } /> }
+				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
 
 				<div className="domain-management-list__items">
 					<div className="domain-management-list__filter">
