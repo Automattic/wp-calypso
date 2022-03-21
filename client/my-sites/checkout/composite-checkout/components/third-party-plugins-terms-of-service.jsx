@@ -1,12 +1,11 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
+import { hasMarketplaceProduct } from 'calypso/lib/cart-values/cart-items';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const hasThirdPartyToS = () => true;
-
 function ThirdPartyPluginsTermsOfService( { cart, translate } ) {
-	if ( ! hasThirdPartyToS( cart ) ) {
+	if ( ! hasMarketplaceProduct( cart ) ) {
 		return null;
 	}
 

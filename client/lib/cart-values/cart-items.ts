@@ -146,6 +146,17 @@ export function hasDomainRenewal( cart: ResponseCart ): boolean {
 	return getAllCartItems( cart ).some( isDomainRenewal );
 }
 
+export function hasMarketplaceProduct( cart: ResponseCart ): boolean {
+	return getAllCartItems( cart ).some( isMarketplaceProduct );
+}
+
+/**
+ * @todo Confirm the condition below
+ */
+function isMarketplaceProduct( cartItem: ResponseCartProduct ): boolean {
+	return cartItem.cost > 0;
+}
+
 /**
  * Determines whether the supplied cart item is a new domain registration (i.e. not a renewal).
  */
