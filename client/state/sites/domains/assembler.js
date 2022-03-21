@@ -56,14 +56,6 @@ export const createSiteDomainObject = ( domain ) => {
 		blogId: Number( domain.blog_id ),
 		bundledPlanSubscriptionId: domain.bundled_plan_subscription_id,
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
-		canManageDnsRecords: Boolean( domain.can_manage_dns_records ),
-		canUpdateContactInfo: Boolean( domain.can_update_contact_info ),
-		cannotManageDnsRecordsReason: domain.cannot_manage_dns_records_reason
-			? String( domain.cannot_manage_dns_records_reason )
-			: null,
-		cannotUpdateContactInfoReason: domain.cannot_update_contact_info_reason
-			? String( domain.cannot_update_contact_info_reason )
-			: null,
 		connectionMode: String( domain.connection_mode ),
 		contactInfoDisclosureAvailable: Boolean( domain.contact_info_disclosure_available ),
 		contactInfoDisclosed: Boolean( domain.contact_info_disclosed ),

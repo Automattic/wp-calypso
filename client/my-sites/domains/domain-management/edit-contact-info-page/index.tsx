@@ -8,7 +8,6 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
-import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import {
@@ -81,10 +80,6 @@ const EditContactInfoPage = ( {
 
 		if ( ! domain?.currentUserCanManage ) {
 			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
-		}
-
-		if ( ! domain.canUpdateContactInfo ) {
-			return <InfoNotice redesigned={ false } text={ domain.cannotUpdateContactInfoReason } />;
 		}
 
 		if ( domain.isPendingWhoisUpdate ) {

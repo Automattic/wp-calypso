@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { memo } from 'react';
 import { connect } from 'react-redux';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
@@ -49,9 +48,6 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 	};
 
 	const domain = getSelectedDomain( props );
-	if ( domain && ! domain.canUpdateContactInfo ) {
-		return <InfoNotice redesigned={ true } text={ domain.cannotUpdateContactInfoReason } />;
-	}
 	return domain?.currentUserCanManage ? renderForOwner() : renderForOthers();
 };
 
