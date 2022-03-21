@@ -1,3 +1,5 @@
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+
 import 'calypso/state/gravatar-status/init';
 
 /**
@@ -19,5 +21,5 @@ export function isCurrentUserUploadingGravatar( state ) {
  * @returns {string|boolean} - The temp Gravatar string, or false
  */
 export function getUserTempGravatar( state, userId ) {
-	return state.currentUser.id === userId && ( state.gravatarStatus.tempImage.src ?? false );
+	return getCurrentUserId( state ) === userId && ( state.gravatarStatus.tempImage.src ?? false );
 }
