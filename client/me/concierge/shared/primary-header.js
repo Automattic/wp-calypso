@@ -13,20 +13,20 @@ class PrimaryHeader extends Component {
 		return (
 			<Fragment>
 				<ClosureNotice
-					displayAt="2022-04-10 00:01Z"
-					closesAt="2022-04-17 00:01Z"
+					displayAt="2022-04-10 00:00Z"
+					closesAt="2022-04-17 00:00Z"
 					reopensAt="2022-04-18 07:00Z"
 					holidayName="Easter"
 				/>
 				<ClosureNotice
-					displayAt="2022-12-17 00:01Z"
-					closesAt="2022-12-24 00:01Z"
+					displayAt="2022-12-17 00:00Z"
+					closesAt="2022-12-24 00:00Z"
 					reopensAt="2022-12-26 07:00Z"
 					holidayName="Christmas"
 				/>
 				<ClosureNotice
 					displayAt="2022-12-26 07:00Z"
-					closesAt="2022-12-31 00:01Z"
+					closesAt="2022-12-31 00:00Z"
 					reopensAt="2023-01-02 07:00Z"
 					holidayName="New Year's Day"
 				/>
