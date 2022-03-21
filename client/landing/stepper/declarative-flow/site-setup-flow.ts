@@ -138,6 +138,9 @@ export const siteSetupFlow: Flow = {
 		const goNext = () => {
 			switch ( currentStep ) {
 				case 'options':
+					if ( intent === 'sell' ) {
+						return navigate( 'storeFeatures' );
+					}
 					return navigate( 'bloggerStartingPoint' );
 
 				default:
