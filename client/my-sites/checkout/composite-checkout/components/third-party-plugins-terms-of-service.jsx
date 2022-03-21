@@ -1,11 +1,16 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { hasMarketplaceProduct } from 'calypso/lib/cart-values/cart-items';
+import { useSelector } from 'react-redux';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 function ThirdPartyPluginsTermsOfService( { cart, translate } ) {
-	if ( ! hasMarketplaceProduct( cart ) ) {
+	const hasMarketplaceProduct = useSelector( ( state ) => {
+		return cart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
+	} );
+
+	if ( ! hasMarketplaceProduct ) {
 		return null;
 	}
 
