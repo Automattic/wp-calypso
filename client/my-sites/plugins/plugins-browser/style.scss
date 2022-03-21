@@ -5,6 +5,30 @@
 	align-items: center;
 	width: 100%;
 
+
+.plugins-browser__searchbox {
+	width: 504px;
+	margin-top: 24px;
+	.search-component {
+		height: 52px;
+		z-index: 0;
+		&.is-expanded-to-container {
+			height: 100%;
+		}
+
+		box-shadow: 0 0 0 1px var( --studio-gray-10 );
+
+		.search-component__open-icon,
+		.search-component__close-icon {
+			color: var( --studio-black );
+		}
+
+		&.is-open input.search-component__input[type='search'] {
+			font-size: $font-body-small;
+		}
+	}
+}
+
 	.plugins-browser__searchbox-header {
 		text-align: center;
 		@extend .wp-brand-font;
@@ -51,28 +75,6 @@
 				line-height: 22px;
 				text-align: center;
 			}
-		}
-	}
-}
-
-.plugins-browser__searchbox {
-	width: 504px;
-	margin-top: 24px;
-	.search-component {
-		height: 52px;
-		&.is-expanded-to-container {
-			height: 100%;
-		}
-
-		box-shadow: 0 0 0 1px var( --studio-gray-10 );
-
-		.search-component__open-icon,
-		.search-component__close-icon {
-			color: var( --studio-black );
-		}
-
-		&.is-open input.search-component__input[type='search'] {
-			font-size: $font-body-small;
 		}
 	}
 }
