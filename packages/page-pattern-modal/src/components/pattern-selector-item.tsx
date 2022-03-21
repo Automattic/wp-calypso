@@ -19,12 +19,15 @@ const PatternSelectorItem = ( props: PatternSelectorItemProps ): JSX.Element | n
 
 	const designsEndpoint = 'https://public-api.wordpress.com/rest/v1/template/demo/';
 	const sourceSiteUrl = 'dotcompatterns.wordpress.com';
+	const params = new URLSearchParams();
+
+	params.set( 'post_id', String( patternPostID ) );
+	params.set( 'language', locale );
+	params.set( 'vertical_id', 'p27v2' );
 
 	const previewUrl = `${ designsEndpoint }${ encodeURIComponent( theme ) }/${ encodeURIComponent(
 		sourceSiteUrl
-	) }/?post_id=${ encodeURIComponent( patternPostID ?? '' ) }&language=${ encodeURIComponent(
-		locale
-	) }`;
+	) }/?${ params }`;
 
 	const mShotsOptions = {
 		vpw: 1024,

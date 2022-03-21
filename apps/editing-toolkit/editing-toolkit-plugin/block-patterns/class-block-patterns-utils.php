@@ -71,6 +71,7 @@ class Block_Patterns_Utils {
 					$patterns_slug,
 					A8C_ETK_PLUGIN_VERSION,
 					$this->get_block_patterns_locale(),
+					$this->get_block_patterns_vertical_id(),
 				)
 			)
 		);
@@ -85,6 +86,13 @@ class Block_Patterns_Utils {
 		// Block patterns display in the user locale.
 		$language = get_user_locale();
 		return \A8C\FSE\Common\get_iso_639_locale( $language );
+	}
+
+	/**
+	 * Get the vertical id
+	 */
+	public function get_block_patterns_vertical_id() {
+		return 'p27v2';
 	}
 
 	/**

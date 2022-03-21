@@ -179,6 +179,7 @@ class Block_Patterns_From_API {
 						'site'         => $override_source_site,
 						'tags'         => 'pattern',
 						'pattern_meta' => 'is_web',
+						'vertical_id'  => $this->utils->get_block_patterns_vertical_id(),
 					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->utils->get_block_patterns_locale()
 				)
@@ -197,6 +198,7 @@ class Block_Patterns_From_API {
 						'tags'            => 'pattern',
 						'pattern_meta'    => 'is_web',
 						'patterns_source' => $patterns_source,
+						'vertical_id'     => $this->utils->get_block_patterns_vertical_id(),
 					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->utils->get_block_patterns_locale()
 				)

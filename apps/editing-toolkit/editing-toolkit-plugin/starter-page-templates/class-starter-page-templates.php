@@ -35,7 +35,7 @@ class Starter_Page_Templates {
 			array(
 				'starter_page_templates',
 				A8C_ETK_PLUGIN_VERSION,
-				get_option( 'site_vertical', 'default' ),
+				$this->get_vertical_id(),
 				$this->get_verticals_locale(),
 			)
 		);
@@ -213,6 +213,7 @@ class Starter_Page_Templates {
 						'site'         => $override_source_site,
 						'tags'         => 'layout',
 						'pattern_meta' => 'is_web',
+						'vertical_id'  => $this->get_vertical_id(),
 					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_verticals_locale()
 				)
@@ -269,5 +270,12 @@ class Starter_Page_Templates {
 		// Make sure to get blog locale, not user locale.
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
 		return \A8C\FSE\Common\get_iso_639_locale( $language );
+	}
+
+	/**
+	 * Gets the vertical id
+	 */
+	private function get_vertical_id() {
+		return 'p27v2';
 	}
 }
