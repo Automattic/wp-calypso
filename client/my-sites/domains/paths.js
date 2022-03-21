@@ -2,6 +2,15 @@ import { filter } from 'lodash';
 import { stringify } from 'qs';
 import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 
+/**
+ * Builds a URL query string with the specified parameters.
+ *
+ * @param {Object} parameters - set of parameters, any null one will be skipped
+ * @returns {string} the corresponding query string prepended with a question mark
+ */
+const buildQueryString = ( parameters = {} ) =>
+	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
+
 function resolveRootPath( relativeTo = null ) {
 	if ( relativeTo ) {
 		if ( relativeTo === domainManagementRoot() ) {
@@ -60,15 +69,6 @@ export function domainAddNew( siteName, searchTerm ) {
 
 	return path;
 }
-
-/**
- * Builds a URL query string from an object. Handles null values.
- *
- * @param {Object} parameters - optional path prefix
- * @returns {string} the corresponding query string
- */
-const buildQueryString = ( parameters = {} ) =>
-	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
 
 export function domainAddEmailUpsell( siteName, domainName, interval ) {
 	return `/domains/add/${ domainName }/email/${ siteName }${ buildQueryString( {

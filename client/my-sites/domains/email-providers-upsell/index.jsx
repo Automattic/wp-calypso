@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { domainAddNew } from 'calypso/my-sites/domains/paths';
+import { domainAddEmailUpsell, domainAddNew } from 'calypso/my-sites/domains/paths';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -14,6 +14,10 @@ export default function EmailProvidersUpsell( { domain, selectedIntervalLength }
 	const translate = useTranslate();
 
 	const comment = '%(domainName)s is the domain name, e.g example.com';
+
+	const changeIntervalLength = ( props, intervalLength ) => {
+		page( domainAddEmailUpsell( selectedSiteSlug, props.selectedDomainName, intervalLength ) );
+	};
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -46,6 +50,7 @@ export default function EmailProvidersUpsell( { domain, selectedIntervalLength }
 				<EmailProvidersStackedComparison
 					comparisonContext="domain-upsell"
 					isDomainInCart={ true }
+					onIntervalLengthChange={ changeIntervalLength }
 					selectedDomainName={ domain }
 					selectedIntervalLength={ selectedIntervalLength }
 					source="domain-upsell"

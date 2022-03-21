@@ -30,24 +30,35 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
 export type EmailProvidersStackedComparisonProps = {
 	cartDomainName?: string;
 	comparisonContext: string;
 	isDomainInCart?: boolean;
+	onIntervalLengthChange?: (
+		props: EmailProvidersStackedComparisonProps,
+		newIntervalLength: IntervalLength
+	) => void;
 	selectedDomainName: string;
 	selectedEmailProviderSlug?: string;
 	selectedIntervalLength?: IntervalLength;
 	source: string;
 };
 
-const EmailProvidersStackedComparison = ( {
-	comparisonContext,
-	isDomainInCart = false,
-	selectedDomainName,
-	selectedEmailProviderSlug,
-	selectedIntervalLength = IntervalLength.ANNUALLY,
-	source,
-}: EmailProvidersStackedComparisonProps ): JSX.Element | null => {
+const EmailProvidersStackedComparison = (
+	props: EmailProvidersStackedComparisonProps
+): JSX.Element | null => {
+	const {
+		comparisonContext,
+		isDomainInCart = false,
+		onIntervalLengthChange = noop,
+		selectedDomainName,
+		selectedEmailProviderSlug,
+		selectedIntervalLength = IntervalLength.ANNUALLY,
+		source,
+	} = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -98,29 +109,6 @@ const EmailProvidersStackedComparison = ( {
 		setDetailsExpanded( Object.fromEntries( expandedEntries ) );
 	};
 
-	const onIntervalLengthPathHandlerResolver = ( newIntervalLength: IntervalLength ) => {
-		const selectedSiteSlug = selectedSite?.slug ?? '';
-
-		if (
-			[ 'email-purchase', 'email-home-single-domain', 'email-home-selected-domain' ].some(
-				( context ) => context === comparisonContext
-			)
-		) {
-			page(
-				emailManagementPurchaseNewEmailAccount(
-					selectedSiteSlug,
-					selectedDomainName,
-					currentRoute,
-					null,
-					selectedEmailProviderSlug,
-					newIntervalLength
-				)
-			);
-		} else if ( comparisonContext === 'domain-upsell' ) {
-			page( domainAddEmailUpsell( selectedSiteSlug, selectedDomainName, newIntervalLength ) );
-		}
-	};
-
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
 		if ( ! selectedSite?.slug ) {
 			return;
@@ -133,7 +121,7 @@ const EmailProvidersStackedComparison = ( {
 			} )
 		);
 
-		onIntervalLengthPathHandlerResolver( newIntervalLength );
+		onIntervalLengthChange( props, newIntervalLength );
 	};
 
 	const handleCompareClick = () => {
