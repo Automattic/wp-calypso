@@ -1,5 +1,5 @@
 .plugins-browser__searchbox-container {
-	margin-top: 32px;
+	margin: 32px 0;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -12,6 +12,46 @@
 		font-weight: 400;
 		line-height: 40px;
 
+	}
+
+	.plugins-browser__recommended-searches {
+		margin-top: 24px;
+
+		.plugins-browser__recommended-searches-title {
+			color: var( --studio-gray-50 );
+			font-size: $font-body-small;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 22px;
+			text-align: center;
+
+		}
+
+		.plugins-browser__recommended-searches-list {
+			margin-top: 12px;
+			text-align: center;
+
+			.plugins-browser__recommended-searches-list-item {
+				&:hover {
+					color: var( --color-link );
+				}
+
+				&:focus {
+					outline: none;
+				}
+
+				&:not(:last-child):after {
+					display: inline-block;
+					content: "\00a0,\00a0"; // comma and spaces
+				}
+
+				color: var( --studio-gray-100 );
+				font-size: $font-body-small;
+				text-decoration: underline;
+				line-height: 22px;
+				text-align: center;
+			}
+		}
 	}
 }
 

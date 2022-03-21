@@ -324,14 +324,12 @@ const PluginsBrowser = ( {
 				hasBusinessPlan={ hasBusinessPlan }
 				siteSlug={ siteSlug }
 			/>
-			<div className="plugins-browser__searchbox-container">
-				<div className="plugins-browser__searchbox-header">
-					{ translate( 'Plugins you need to get your projects done' ) }
-				</div>
-				<div className="plugins-browser__searchbox">
-					<SearchBox doSearch={ doSearch } search={ search } />
-				</div>
-			</div>
+			<SearchHeader
+				doSearch={ doSearch }
+				search={ search }
+				siteSlug={ siteSlug }
+				title={ translate( 'Plugins you need to get your projects done' ) }
+			/>
 			<PluginBrowserContent
 				pluginsByCategoryNew={ pluginsByCategoryNew }
 				isFetchingPluginsByCategoryNew={ isFetchingPluginsByCategoryNew }
@@ -355,6 +353,47 @@ const PluginsBrowser = ( {
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
 			<EducationFooter />
 		</MainComponent>
+	);
+};
+
+const SearchHeader = ( props ) => {
+	const { doSearch, search, siteSlug, title } = props;
+
+	return (
+		<div className="plugins-browser__searchbox-container">
+			<div className="plugins-browser__searchbox-header">{ title }</div>
+			<div className="plugins-browser__searchbox">
+				<SearchBox doSearch={ doSearch } search={ search } />
+			</div>
+			<PopularSearches
+				siteSlug={ siteSlug }
+				searchTerms={ [ 'shipping', 'seo', 'portfolio', 'chat', 'mailchimp' ] }
+			/>
+		</div>
+	);
+};
+
+const PopularSearches = ( props ) => {
+	const { searchTerms, siteSlug } = props;
+	const translate = useTranslate();
+
+	return (
+		<div className="plugins-browser__recommended-searches">
+			<div className="plugins-browser__recommended-searches-title">
+				{ translate( 'Most popular searches' ) }
+			</div>
+
+			<div className="plugins-browser__recommended-searches-list">
+				{ searchTerms.map( ( searchTerm ) => (
+					<a
+						href={ `/plugins/${ siteSlug || '' }?s=${ searchTerm }` }
+						className="plugins-browser__recommended-searches-list-item"
+					>
+						{ searchTerm }
+					</a>
+				) ) }
+			</div>
+		</div>
 	);
 };
 
@@ -684,7 +723,7 @@ const SearchBox = ( { isMobile, doSearch, search } ) => {
 			fitsContainer={ isMobile }
 			onSearch={ doSearch }
 			initialValue={ search }
-			placeholder={ translate( 'Try searching ‘ecommerce’' ) }
+			placeholder={ translate( 'Try searching "ecommerce"' ) }
 			delaySearch={ true }
 			recordEvent={ recordSearchEvent }
 		/>
