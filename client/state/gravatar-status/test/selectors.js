@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { isCurrentUserUploadingGravatar, getUserTempGravatar } from '../selectors';
 
 describe( 'selectors', () => {
@@ -9,14 +8,14 @@ describe( 'selectors', () => {
 					isUploading: true,
 				},
 			};
-			expect( isCurrentUserUploadingGravatar( uploadingState ) ).to.equal( true );
+			expect( isCurrentUserUploadingGravatar( uploadingState ) ).toBe( true );
 
 			const notUploadingState = {
 				gravatarStatus: {
 					isUploading: false,
 				},
 			};
-			expect( isCurrentUserUploadingGravatar( notUploadingState ) ).to.equal( false );
+			expect( isCurrentUserUploadingGravatar( notUploadingState ) ).toBe( false );
 		} );
 	} );
 
@@ -34,8 +33,8 @@ describe( 'selectors', () => {
 					tempImage,
 				},
 			};
-			expect( getUserTempGravatar( state ) ).to.equal( false );
-			expect( getUserTempGravatar( state, false ) ).to.equal( false );
+			expect( getUserTempGravatar( state ) ).toBe( false );
+			expect( getUserTempGravatar( state, false ) ).toBe( false );
 		} );
 
 		test( 'returns false if the user ID passed is not the current user ID', () => {
@@ -47,7 +46,7 @@ describe( 'selectors', () => {
 					tempImage,
 				},
 			};
-			expect( getUserTempGravatar( state, anotherUserId ) ).to.equal( false );
+			expect( getUserTempGravatar( state, anotherUserId ) ).toBe( false );
 		} );
 
 		test( 'returns false if the current user does not have temp image set', () => {
@@ -59,7 +58,7 @@ describe( 'selectors', () => {
 					tempImage: null,
 				},
 			};
-			expect( getUserTempGravatar( emptyTempImage, currentUserId ) ).to.equal( false );
+			expect( getUserTempGravatar( emptyTempImage, currentUserId ) ).toBe( false );
 		} );
 
 		test( 'returns image src if given the current user ID, and the current user has a temp image set', () => {
@@ -71,7 +70,7 @@ describe( 'selectors', () => {
 					tempImage,
 				},
 			};
-			expect( getUserTempGravatar( state, currentUserId ) ).to.equal( tempImage );
+			expect( getUserTempGravatar( state, currentUserId ) ).toBe( tempImage );
 		} );
 	} );
 } );
