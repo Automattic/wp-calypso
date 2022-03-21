@@ -12,7 +12,7 @@ import DesignPicker, {
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -34,7 +34,8 @@ import type { Design, Category } from '@automattic/design-picker';
  */
 const designSetup: Step = function DesignSetup( { navigation } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
-	const isMobile = useMobileBreakpoint();
+	// CSS breakpoints are set at 600px for mobile
+	const isMobile = ! useViewportMatch( 'small' );
 	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
