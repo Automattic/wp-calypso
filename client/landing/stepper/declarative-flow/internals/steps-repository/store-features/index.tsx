@@ -35,10 +35,10 @@ const StoreFeatures: Step = function StartingPointStep( { navigation } ) {
 
 	return (
 		<StepContainer
+			stepName={ 'store-features' }
 			goBack={ goBack }
 			skipLabelText={ translate( 'Skip to My Home' ) }
 			isHorizontalLayout={ true }
-			className={ 'store-features' }
 			formattedHeader={
 				<FormattedHeader
 					id={ 'intent-header' }
