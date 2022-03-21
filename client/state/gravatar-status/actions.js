@@ -10,6 +10,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 
+import 'calypso/state/gravatar-status/init';
 import 'calypso/state/data-layer/wpcom/gravatar-upload';
 
 export function uploadGravatar( file, email ) {

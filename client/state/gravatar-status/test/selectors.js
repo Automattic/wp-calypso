@@ -1,87 +1,76 @@
-import { expect } from 'chai';
 import { isCurrentUserUploadingGravatar, getUserTempGravatar } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isCurrentUserUploadingGravatar', () => {
 		test( 'returns state when defined', () => {
 			const uploadingState = {
-				currentUser: {
-					gravatarStatus: {
-						isUploading: true,
-					},
+				gravatarStatus: {
+					isUploading: true,
 				},
 			};
-			expect( isCurrentUserUploadingGravatar( uploadingState ) ).to.equal( true );
+			expect( isCurrentUserUploadingGravatar( uploadingState ) ).toBe( true );
 
 			const notUploadingState = {
-				currentUser: {
-					gravatarStatus: {
-						isUploading: false,
-					},
+				gravatarStatus: {
+					isUploading: false,
 				},
 			};
-			expect( isCurrentUserUploadingGravatar( notUploadingState ) ).to.equal( false );
+			expect( isCurrentUserUploadingGravatar( notUploadingState ) ).toBe( false );
 		} );
 	} );
 
 	describe( '#getUserTempGravatar', () => {
-		const imageSrc = 'image';
+		const tempImage = 'image';
 		const currentUserId = 1;
 		const anotherUserId = 2;
 
 		test( 'returns false if user ID is not passed in, or is false', () => {
 			const state = {
 				currentUser: {
-					gravatarStatus: {
-						tempImage: {
-							src: imageSrc,
-						},
-					},
 					id: currentUserId,
 				},
+				gravatarStatus: {
+					tempImage,
+				},
 			};
-			expect( getUserTempGravatar( state ) ).to.equal( false );
-			expect( getUserTempGravatar( state, false ) ).to.equal( false );
+			expect( getUserTempGravatar( state ) ).toBe( false );
+			expect( getUserTempGravatar( state, false ) ).toBe( false );
 		} );
 
 		test( 'returns false if the user ID passed is not the current user ID', () => {
 			const state = {
 				currentUser: {
-					gravatarStatus: {
-						tempImage: {
-							src: imageSrc,
-						},
-					},
 					id: currentUserId,
 				},
+				gravatarStatus: {
+					tempImage,
+				},
 			};
-			expect( getUserTempGravatar( state, anotherUserId ) ).to.equal( false );
+			expect( getUserTempGravatar( state, anotherUserId ) ).toBe( false );
 		} );
 
 		test( 'returns false if the current user does not have temp image set', () => {
 			const emptyTempImage = {
 				currentUser: {
-					gravatarStatus: {
-						tempImage: {},
-					},
 					id: currentUserId,
 				},
+				gravatarStatus: {
+					tempImage: null,
+				},
 			};
-			expect( getUserTempGravatar( emptyTempImage, currentUserId ) ).to.equal( false );
+			expect( getUserTempGravatar( emptyTempImage, currentUserId ) ).toBe( false );
 		} );
 
 		test( 'returns image src if given the current user ID, and the current user has a temp image set', () => {
 			const state = {
 				currentUser: {
-					gravatarStatus: {
-						tempImage: {
-							src: imageSrc,
-						},
-					},
 					id: currentUserId,
 				},
+				gravatarStatus: {
+					tempImage,
+				},
 			};
-			expect( getUserTempGravatar( state, currentUserId ) ).to.equal( imageSrc );
+			expect( getUserTempGravatar( state, currentUserId ) ).toBe( tempImage );
 		} );
 	} );
 } );

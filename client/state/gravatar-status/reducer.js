@@ -19,12 +19,10 @@ export const isUploading = ( state = false, action ) => {
 	return state;
 };
 
-export const tempImage = ( state = {}, action ) => {
+export const tempImage = ( state = null, action ) => {
 	switch ( action.type ) {
 		case GRAVATAR_UPLOAD_RECEIVE: {
-			return {
-				src: action.src,
-			};
+			return action.src;
 		}
 	}
 

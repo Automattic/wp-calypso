@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	GRAVATAR_UPLOAD_RECEIVE,
 	GRAVATAR_UPLOAD_REQUEST,
@@ -9,13 +8,15 @@ import reducer, { isUploading, tempImage } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'exports expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'isUploading', 'tempImage' ] );
+		const state = reducer( undefined, {} );
+		expect( state ).toHaveProperty( 'isUploading' );
+		expect( state ).toHaveProperty( 'tempImage' );
 	} );
 
 	describe( '#isUploading', () => {
 		test( 'returns false by default', () => {
 			const state = isUploading( undefined, {} );
-			expect( state ).to.equal( false );
+			expect( state ).toBe( false );
 		} );
 
 		test( 'returns true when request is made', () => {
@@ -23,7 +24,7 @@ describe( 'reducer', () => {
 				isUploading( false, {
 					type: GRAVATAR_UPLOAD_REQUEST,
 				} )
-			).to.equal( true );
+			).toBe( true );
 		} );
 
 		test( 'returns false when request succeeds', () => {
@@ -31,7 +32,7 @@ describe( 'reducer', () => {
 				isUploading( true, {
 					type: GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 				} )
-			).to.equal( false );
+			).toBe( false );
 		} );
 
 		test( 'returns false when request fails', () => {
@@ -39,7 +40,7 @@ describe( 'reducer', () => {
 				isUploading( true, {
 					type: GRAVATAR_UPLOAD_REQUEST_FAILURE,
 				} )
-			).to.equal( false );
+			).toBe( false );
 		} );
 	} );
 
@@ -48,7 +49,7 @@ describe( 'reducer', () => {
 
 		test( 'returns empty object by default', () => {
 			const state = tempImage( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toBe( null );
 		} );
 
 		test( 'returns object with image src when response is received', () => {
@@ -56,9 +57,7 @@ describe( 'reducer', () => {
 				type: GRAVATAR_UPLOAD_RECEIVE,
 				src: imageSrc,
 			} );
-			expect( state ).to.eql( {
-				src: imageSrc,
-			} );
+			expect( state ).toBe( imageSrc );
 		} );
 	} );
 } );

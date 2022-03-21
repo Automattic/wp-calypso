@@ -6,7 +6,6 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import emailVerification from './email-verification/reducer';
-import gravatarStatus from './gravatar-status/reducer';
 import { capabilitiesSchema, flagsSchema, idSchema, lasagnaSchema } from './schema';
 
 /**
@@ -120,7 +119,6 @@ export default combineReducers( {
 	user,
 	capabilities,
 	flags,
-	gravatarStatus,
 	emailVerification,
 	lasagnaJwt,
 } );
