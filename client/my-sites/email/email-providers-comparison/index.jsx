@@ -865,7 +865,6 @@ class EmailProvidersComparison extends Component {
 			isSubmittingEmailForward,
 			selectedDomainName,
 			selectedSite,
-			shouldPromoteGoogleWorkspace,
 			source,
 		} = this.props;
 
@@ -895,11 +894,9 @@ class EmailProvidersComparison extends Component {
 					/>
 				) }
 
-				{ shouldPromoteGoogleWorkspace && this.renderGoogleCard() }
-
 				{ this.renderTitanCard() }
 
-				{ ! shouldPromoteGoogleWorkspace && this.renderGoogleCard() }
+				{ this.renderGoogleCard() }
 
 				{ ! hideEmailForwardingCard && this.renderEmailForwardingCard() }
 
