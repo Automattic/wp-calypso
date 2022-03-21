@@ -35,7 +35,7 @@ import type { Design, Category } from '@automattic/design-picker';
 const designSetup: Step = function DesignSetup( { navigation } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	const isMobile = useMobileBreakpoint();
-	const { goNext, goBack, submit } = navigation;
+	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
@@ -313,7 +313,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
-			goNext={ goNext }
+			goNext={ () => submit?.() }
 			goBack={ handleBackClick }
 		/>
 	);
