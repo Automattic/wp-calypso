@@ -74,7 +74,7 @@ export function createExistingCardMethod( {
 	storedDetailsId,
 	paymentMethodToken,
 	paymentPartnerProcessorId,
-	activePayButtonText = undefined,
+	activePayButtonText,
 	allowEditingTaxInfo,
 	isTaxInfoRequired,
 }: {
@@ -86,7 +86,7 @@ export function createExistingCardMethod( {
 	storedDetailsId: string;
 	paymentMethodToken: string;
 	paymentPartnerProcessorId: string;
-	activePayButtonText: string | undefined;
+	activePayButtonText?: string;
 	allowEditingTaxInfo?: boolean;
 	isTaxInfoRequired?: boolean;
 } ): PaymentMethod {
@@ -108,7 +108,7 @@ export function createExistingCardMethod( {
 				cardholderName={ cardholderName }
 				brand={ brand }
 				paymentPartnerProcessorId={ paymentPartnerProcessorId }
-				allowEditingTaxInfo={ !! allowEditingTaxInfo }
+				allowEditingTaxInfo={ allowEditingTaxInfo }
 			/>
 		),
 		submitButton: (
@@ -118,7 +118,7 @@ export function createExistingCardMethod( {
 				paymentMethodToken={ paymentMethodToken }
 				paymentPartnerProcessorId={ paymentPartnerProcessorId }
 				activeButtonText={ activePayButtonText }
-				isTaxInfoRequired={ !! isTaxInfoRequired }
+				isTaxInfoRequired={ isTaxInfoRequired }
 			/>
 		),
 		inactiveContent: (
@@ -172,7 +172,7 @@ function ExistingCardLabel( {
 	brand: string;
 	storedDetailsId: string;
 	paymentPartnerProcessorId: string;
-	allowEditingTaxInfo: boolean;
+	allowEditingTaxInfo?: boolean;
 } ): JSX.Element {
 	const { __, _x } = useI18n();
 
@@ -289,7 +289,7 @@ function ExistingCardLabel( {
 					<TaxInfoArea
 						taxInfoFromServer={ taxInfoFromServer }
 						openDialog={ openDialog }
-						allowEditing={ allowEditingTaxInfo }
+						allowEditing={ !! allowEditingTaxInfo }
 					/>
 				) }
 			</div>
@@ -382,7 +382,7 @@ function ExistingCardPayButton( {
 	storedDetailsId,
 	paymentMethodToken,
 	paymentPartnerProcessorId,
-	activeButtonText = undefined,
+	activeButtonText,
 	isTaxInfoRequired,
 }: {
 	disabled?: boolean;
@@ -391,8 +391,8 @@ function ExistingCardPayButton( {
 	storedDetailsId: string;
 	paymentMethodToken: string;
 	paymentPartnerProcessorId: string;
-	activeButtonText: string | undefined;
-	isTaxInfoRequired: boolean;
+	activeButtonText?: string;
+	isTaxInfoRequired?: boolean;
 } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
@@ -449,11 +449,11 @@ function ExistingCardPayButton( {
 function ButtonContents( {
 	formStatus,
 	total,
-	activeButtonText = undefined,
+	activeButtonText,
 }: {
 	formStatus: string;
 	total: LineItem;
-	activeButtonText: string | undefined;
+	activeButtonText?: string;
 } ): JSX.Element {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
