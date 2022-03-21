@@ -5,7 +5,7 @@ import * as React from 'react';
 import Badge from 'calypso/components/badge';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import {
-	getThreatFamily,
+	getThreatSignatureComponents,
 	getThreatType,
 	getThreatVulnerability,
 } from 'calypso/components/jetpack/threat-item/utils';
@@ -31,8 +31,12 @@ const getThreatSubTitleFromFamily = (
 	translate: ReturnType< typeof useTranslate >,
 	threat: Threat
 ) => {
-	const family = getThreatFamily( threat );
-	switch ( family ) {
+	const threatComponents = getThreatSignatureComponents( threat );
+	if ( ! threatComponents ) {
+		return;
+	}
+
+	switch ( threatComponents.family ) {
 		case 'backdoor':
 			return translate( 'Backdoor found on your site. Please take immediate action.' );
 		case 'ccskimmers':
@@ -82,7 +86,7 @@ const getThreatSubTitleFromFamily = (
 		case 'webshell':
 			return translate( 'A webshell was found on your site. Please take immediate action.' );
 		default:
-			return null;
+			return;
 	}
 };
 

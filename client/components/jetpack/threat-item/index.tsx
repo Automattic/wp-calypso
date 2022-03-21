@@ -5,7 +5,10 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
-import { getThreatFamily, getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
+import {
+	getThreatFix,
+	getThreatSignatureComponents,
+} from 'calypso/components/jetpack/threat-item/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import LogItem from '../log-item';
@@ -45,8 +48,12 @@ const ThreatItem: React.FC< Props > = ( {
 			return threat.description;
 		}
 
-		const family = getThreatFamily( threat );
-		switch ( family ) {
+		const threatComponents = getThreatSignatureComponents( threat );
+		if ( ! threatComponents ) {
+			return;
+		}
+
+		switch ( threatComponents.family ) {
 			case 'backdoor':
 				return translate(
 					'Backdoors are pieces of code that allows unauthorized users to run arbitrary code on a website. It has fewer functions than a webshell, usually just one at a time.'

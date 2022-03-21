@@ -1,12 +1,5 @@
 import { translate } from 'i18n-calypso';
-import {
-	SignatureComponents,
-	Threat,
-	threatFamilies,
-	ThreatFamily,
-	ThreatFix,
-	ThreatType,
-} from './types';
+import { SignatureComponents, Threat, ThreatFamily, ThreatFix, ThreatType } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 // This should be temporary since this data should be coming from the api
@@ -171,19 +164,4 @@ export const getThreatSignatureComponents = ( threat: Threat ): SignatureCompone
 		family: signatureComponents[ 4 ] as ThreatFamily,
 		variant: signatureComponents[ 5 ],
 	};
-};
-
-export const getThreatFamily = ( threat: Threat ): ThreatFamily | null => {
-	const components = getThreatSignatureComponents( threat );
-	if ( components ) {
-		return components.family;
-	}
-
-	for ( let i = 0; i < threatFamilies.length; i++ ) {
-		if ( threat.signature.toLowerCase().indexOf( `_${ threatFamilies[ i ] }_` ) >= 0 ) {
-			return threatFamilies[ i ];
-		}
-	}
-
-	return null;
 };

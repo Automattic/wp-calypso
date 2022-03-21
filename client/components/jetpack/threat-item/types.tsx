@@ -47,25 +47,22 @@ export interface IgnorableThreat extends BaseThreat {
 
 export type Threat = IgnorableThreat | FixableThreat;
 
-export const threatFamilies = [
-	'backdoor',
-	'ccskimmers',
-	'cryptominer',
-	'dropper',
-	'generic',
-	'hacktool',
-	'hardening',
-	'malware',
-	'malvertising',
-	'phishing',
-	'redirect',
-	'seospam',
-	'suspicious',
-	'uploader',
-	'webshell',
-] as const;
-
-export type ThreatFamily = typeof threatFamilies[ number ];
+export type ThreatFamily =
+	| 'backdoor'
+	| 'ccskimmers'
+	| 'cryptominer'
+	| 'dropper'
+	| 'generic'
+	| 'hacktool'
+	| 'hardening'
+	| 'malware'
+	| 'malvertising'
+	| 'phishing'
+	| 'redirect'
+	| 'seospam'
+	| 'suspicious'
+	| 'uploader'
+	| 'webshell';
 
 export type SignatureComponents = {
 	signature_id: string;
