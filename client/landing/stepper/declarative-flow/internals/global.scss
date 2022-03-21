@@ -6,16 +6,16 @@
 @import '@automattic/typography/styles/fonts';
 @import '@automattic/onboarding/styles/mixins';
 
-
-/*
-	General onboarding styling
-*/
+/**
+ * General onboarding styling
+ */
 body {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
 		'Cantarell', 'Helvetica Neue', sans-serif;
 	text-rendering: optimizeLegibility;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
+	margin: 0;
 }
 
 .step-container {
@@ -54,4 +54,11 @@ body {
 			right: 24px;
 		}
 	}
+}
+
+/**
+ * Site Setup
+ */
+.site-setup {
+	padding: 48px 0 0;
 }

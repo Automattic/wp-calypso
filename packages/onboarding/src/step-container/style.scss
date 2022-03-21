@@ -27,11 +27,14 @@ $gray-60: #50575e;
 	&.is-horizontal-layout {
 		align-items: flex-start;
 		justify-content: space-between;
+		margin-top: 44px;
 		max-width: 1024px;
-		padding: 0 12px;
-		padding-bottom: 60px;
-		margin-top: 90px;
-		
+		padding: 0 20px 60px;
+
+		.step-container__header {
+			padding-right: 20px;
+		}
+
 		@include break-small {
 			padding: 0 20px;
 			margin-top: 25vh;
@@ -196,10 +199,11 @@ $gray-60: #50575e;
 		}
 
 		@include break-small {
+			position: absolute;
 			top: 1px;
 			left: 72px;
 			right: 24px;
-			position: absolute;
+			padding: 0;
 			background-color: transparent;
 		}
 	}
@@ -207,9 +211,9 @@ $gray-60: #50575e;
 	/**
 	 *	Content
 	 */
-	 .step-container__content {
+	.step-container__content {
 		margin-top: 0;
 		display: block;
 		flex-basis: 50%;
-	 }
+	}
 }
