@@ -15,8 +15,8 @@ export default function EmailProvidersUpsell( { domain, selectedIntervalLength }
 
 	const comment = '%(domainName)s is the domain name, e.g example.com';
 
-	const changeIntervalLength = ( props, intervalLength ) => {
-		page( domainAddEmailUpsell( selectedSiteSlug, props.selectedDomainName, intervalLength ) );
+	const changeIntervalLength = ( newIntervalLength ) => {
+		page( domainAddEmailUpsell( selectedSiteSlug, domain, newIntervalLength ) );
 	};
 
 	return (
@@ -49,12 +49,12 @@ export default function EmailProvidersUpsell( { domain, selectedIntervalLength }
 			) : (
 				<EmailProvidersStackedComparison
 					comparisonContext="domain-upsell"
-					isDomainInCart={ true }
+					isDomainInCart
 					onIntervalLengthChange={ changeIntervalLength }
 					selectedDomainName={ domain }
 					selectedIntervalLength={ selectedIntervalLength }
 					source="domain-upsell"
-				></EmailProvidersStackedComparison>
+				/>
 			) }
 		</CalypsoShoppingCartProvider>
 	);

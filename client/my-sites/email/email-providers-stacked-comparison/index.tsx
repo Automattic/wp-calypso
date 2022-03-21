@@ -22,39 +22,25 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { EmailProvidersStackedComparisonPageProps } from 'calypso/my-sites/email/email-providers-stacked-comparison/page';
 
 import './style.scss';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-
-export type EmailProvidersStackedComparisonProps = {
+type EmailProvidersStackedComparisonProps = {
 	cartDomainName?: string;
-	comparisonContext: string;
 	isDomainInCart?: boolean;
-	onIntervalLengthChange?: (
-		props: EmailProvidersStackedComparisonProps,
-		newIntervalLength: IntervalLength
-	) => void;
-	selectedDomainName: string;
-	selectedEmailProviderSlug?: string;
-	selectedIntervalLength?: IntervalLength;
-	source: string;
-};
+	onIntervalLengthChange: ( newIntervalLength: IntervalLength ) => void;
+} & EmailProvidersStackedComparisonPageProps;
 
-const EmailProvidersStackedComparison = (
-	props: EmailProvidersStackedComparisonProps
-): JSX.Element | null => {
-	const {
-		comparisonContext,
-		isDomainInCart = false,
-		onIntervalLengthChange = noop,
-		selectedDomainName,
-		selectedEmailProviderSlug,
-		selectedIntervalLength = IntervalLength.ANNUALLY,
-		source,
-	} = props;
-
+const EmailProvidersStackedComparison = ( {
+	comparisonContext,
+	isDomainInCart = false,
+	onIntervalLengthChange,
+	selectedDomainName,
+	selectedEmailProviderSlug,
+	selectedIntervalLength = IntervalLength.ANNUALLY,
+	source,
+}: EmailProvidersStackedComparisonProps ): JSX.Element | null => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -117,7 +103,7 @@ const EmailProvidersStackedComparison = (
 			} )
 		);
 
-		onIntervalLengthChange( props, newIntervalLength );
+		onIntervalLengthChange( newIntervalLength );
 	};
 
 	const handleCompareClick = () => {

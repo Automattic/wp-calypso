@@ -15,8 +15,9 @@ import EmailListActive from 'calypso/my-sites/email/email-management/home/email-
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
-import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-stacked-comparison';
-import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
+import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import { emailManagement, emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
@@ -68,6 +69,7 @@ interface EmailManagementHomeProps {
 	emailListInactiveHeader?: ReactElement;
 	sectionHeaderLabel?: TranslateResult;
 	selectedDomainName: string;
+	selectedIntervalLength?: IntervalLength;
 	showActiveDomainList?: boolean;
 	source: string;
 }
@@ -77,6 +79,7 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 		emailListInactiveHeader,
 		showActiveDomainList = true,
 		selectedDomainName,
+		selectedIntervalLength,
 		sectionHeaderLabel,
 		source,
 	} = props;
@@ -109,6 +112,14 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 		return <NoAccess />;
 	}
 
+	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
+		page(
+			emailManagement( selectedSite.slug ?? '', selectedDomainName, null, {
+				interval: newIntervalLength,
+			} )
+		);
+	};
+
 	const domainHasEmail = ( domain: ResponseDomain ) =>
 		hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) || hasEmailForwards( domain );
 
@@ -120,9 +131,11 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 
 		if ( ! domainHasEmail( selectedDomain ) ) {
 			return (
-				<EmailProvidersStackedComparisonPage
+				<EmailProvidersStackedComparison
 					comparisonContext="email-home-selected-domain"
+					onIntervalLengthChange={ changeIntervalLength }
 					selectedDomainName={ selectedDomainName }
+					selectedIntervalLength={ selectedIntervalLength }
 					source={ source }
 				/>
 			);
@@ -152,9 +165,11 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 
 	if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 		return (
-			<EmailProvidersStackedComparisonPage
+			<EmailProvidersStackedComparison
 				comparisonContext="email-home-single-domain"
+				onIntervalLengthChange={ changeIntervalLength }
 				selectedDomainName={ domainsWithNoEmail[ 0 ].name }
+				selectedIntervalLength={ selectedIntervalLength }
 				source={ source }
 			/>
 		);

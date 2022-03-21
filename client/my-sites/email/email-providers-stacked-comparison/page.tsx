@@ -6,19 +6,24 @@ import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-provid
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { EmailProvidersStackedComparisonProps } from 'calypso/my-sites/email/email-providers-stacked-comparison';
+
+export type EmailProvidersStackedComparisonPageProps = {
+	comparisonContext: string;
+	selectedDomainName: string;
+	selectedEmailProviderSlug?: string;
+	selectedIntervalLength?: IntervalLength;
+	source: string;
+};
 
 const EmailProvidersStackedComparisonPage = (
-	props: EmailProvidersStackedComparisonProps
+	props: EmailProvidersStackedComparisonPageProps
 ): JSX.Element => {
+	const { comparisonContext, selectedDomainName, selectedEmailProviderSlug, source } = props;
+
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
 
-	const changeIntervalLength = (
-		props: EmailProvidersStackedComparisonProps,
-		newIntervalLength: IntervalLength
-	) => {
-		const { selectedDomainName, selectedEmailProviderSlug } = props;
+	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
 		page(
 			emailManagementPurchaseNewEmailAccount(
 				selectedSite?.slug ?? '',
@@ -37,11 +42,12 @@ const EmailProvidersStackedComparisonPage = (
 				path={ emailManagementPurchaseNewEmailAccount( ':site', ':domain' ) }
 				title="Email Comparison"
 				properties={ {
-					source: props.source,
-					context: props.comparisonContext,
-					provider: props.selectedEmailProviderSlug,
+					source: source,
+					context: comparisonContext,
+					provider: selectedEmailProviderSlug,
 				} }
 			/>
+
 			<EmailProvidersStackedComparison
 				{ ...props }
 				onIntervalLengthChange={ changeIntervalLength }
