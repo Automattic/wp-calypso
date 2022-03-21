@@ -20,7 +20,7 @@ function ThirdPartyPluginsTermsOfService( { cart, translate } ) {
 			components: {
 				thirdPartyToS: (
 					<a
-						href="https://wordpress.com/marketplace-third-party-plugins-terms"
+						href="https://wordpress.com/third-party-plugins-terms/"
 						target="_blank"
 						rel="noopener noreferrer"
 					/>

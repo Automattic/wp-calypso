@@ -177,7 +177,7 @@ const PluginDetailsCTA = ( {
 									<a
 										target="_blank"
 										rel="noopener noreferrer"
-										href="https://wordpress.com/marketplace-third-party-plugins-terms/"
+										href="https://wordpress.com/third-party-plugins-terms/"
 									/>
 								),
 							},
