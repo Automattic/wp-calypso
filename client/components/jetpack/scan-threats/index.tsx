@@ -217,7 +217,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 	let securityIcon = 'error';
 
 	if ( maxSeverity < 3 ) {
-		headerMessage = translate( 'Your site it not at risk' );
+		headerMessage = translate( 'Your site is not at risk' );
 		securityIcon = 'okay';
 	}
 
