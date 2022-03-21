@@ -131,12 +131,12 @@ class EmailProvidersComparison extends Component {
 	constructor( props ) {
 		super( props );
 
-		const { selectedDomainName, shouldPromoteGoogleWorkspace } = props;
+		const { selectedDomainName } = props;
 
 		this.state = {
 			googleUsers: newUsers( selectedDomainName ),
 			titanMailboxes: [ buildNewTitanMailbox( selectedDomainName, false ) ],
-			expanded: this.getDefaultExpandedState( shouldPromoteGoogleWorkspace ),
+			expanded: this.getDefaultExpandedState(),
 			addingToCart: false,
 			emailForwardAdded: false,
 			validatedTitanMailboxUuids: [],
@@ -151,7 +151,9 @@ class EmailProvidersComparison extends Component {
 		this.isMounted = false;
 	}
 
-	getDefaultExpandedState( shouldPromoteGoogleWorkspace ) {
+	getDefaultExpandedState() {
+		const { shouldPromoteGoogleWorkspace } = this.props;
+
 		if ( shouldPromoteGoogleWorkspace ) {
 			return {
 				forwarding: false,
@@ -863,7 +865,6 @@ class EmailProvidersComparison extends Component {
 			isSubmittingEmailForward,
 			selectedDomainName,
 			selectedSite,
-			shouldPromoteGoogleWorkspace,
 			source,
 		} = this.props;
 
@@ -895,7 +896,7 @@ class EmailProvidersComparison extends Component {
 
 				{ this.renderTitanCard() }
 
-				{ ! shouldPromoteGoogleWorkspace && this.renderGoogleCard() }
+				{ this.renderGoogleCard() }
 
 				{ ! hideEmailForwardingCard && this.renderEmailForwardingCard() }
 

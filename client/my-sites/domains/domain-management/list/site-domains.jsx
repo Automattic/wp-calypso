@@ -156,9 +156,9 @@ export class SiteDomains extends Component {
 
 		return (
 			<>
-				{ ! hasProductsList && <QueryProductsList /> }
+				{ hasProductsList || <QueryProductsList /> }
 
-				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
+				{ this.isLoading() || <GoogleSaleBanner domains={ domains } /> }
 
 				<div className="domain-management-list__items">
 					<div className="domain-management-list__filter">
@@ -496,11 +496,12 @@ export default connect(
 		const selectedSite = ownProps?.selectedSite || null;
 		const isOnFreePlan = selectedSite?.plan?.is_free || false;
 		const purchases = getPurchases( state );
+		const productsList = getProductsList( state );
 
 		return {
 			currentRoute: getCurrentRoute( state ),
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
-			hasProductsList: 0 < ( getProductsList( state )?.length ?? 0 ),
+			hasProductsList: 0 < ( Object.getOwnPropertyNames( productsList )?.length ?? 0 ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 			hasNonPrimaryDomainsFlag: getCurrentUser( state )
