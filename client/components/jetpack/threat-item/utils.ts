@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { SignatureComponents, Threat, ThreatFamily, ThreatFix, ThreatType } from './types';
+import { SignatureComponents, Threat, ThreatFix, ThreatType } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 export const getThreatSignatureComponents = ( threat: Threat ): SignatureComponents | null => {
@@ -15,7 +15,7 @@ export const getThreatSignatureComponents = ( threat: Threat ): SignatureCompone
 		signature_id: signatureComponents[ 1 ],
 		language: signatureComponents[ 2 ],
 		payload: signatureComponents[ 3 ],
-		family: signatureComponents[ 4 ] as ThreatFamily,
+		family: signatureComponents[ 4 ],
 		variant: signatureComponents[ 5 ],
 	};
 };
