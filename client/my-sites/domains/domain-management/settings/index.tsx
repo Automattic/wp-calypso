@@ -15,6 +15,7 @@ import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/b
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
+import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
@@ -243,15 +244,19 @@ const Settings = ( {
 				title={ translate( 'Name servers', { textOnly: true } ) }
 				subtitle={ getNameServerSectionSubtitle() }
 			>
-				<NameServersCard
-					domain={ domain }
-					isLoadingNameservers={ isLoadingNameservers }
-					loadingNameserversError={ loadingNameserversError }
-					nameservers={ nameservers }
-					selectedSite={ selectedSite }
-					selectedDomainName={ selectedDomainName }
-					updateNameservers={ updateNameservers }
-				/>
+				{ domain.canManageDnsRecords ? (
+					<NameServersCard
+						domain={ domain }
+						isLoadingNameservers={ isLoadingNameservers }
+						loadingNameserversError={ loadingNameserversError }
+						nameservers={ nameservers }
+						selectedSite={ selectedSite }
+						selectedDomainName={ selectedDomainName }
+						updateNameservers={ updateNameservers }
+					/>
+				) : (
+					<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
+				) }
 			</Accordion>
 		);
 	};
@@ -266,12 +271,16 @@ const Settings = ( {
 				title={ translate( 'DNS records', { textOnly: true } ) }
 				subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
 			>
-				<DnsRecords
-					dns={ dns }
-					selectedDomainName={ selectedDomainName }
-					selectedSite={ selectedSite }
-					currentRoute={ currentRoute }
-				/>
+				{ domain.canManageDnsRecords ? (
+					<DnsRecords
+						dns={ dns }
+						selectedDomainName={ selectedDomainName }
+						selectedSite={ selectedSite }
+						currentRoute={ currentRoute }
+					/>
+				) : (
+					<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
+				) }
 			</Accordion>
 		);
 	};
