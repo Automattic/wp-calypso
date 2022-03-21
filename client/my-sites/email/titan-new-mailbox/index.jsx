@@ -1,7 +1,9 @@
+import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -9,6 +11,7 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { getMailboxPropTypeShape } from 'calypso/lib/titan/new-mailbox';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
@@ -50,6 +53,8 @@ const TitanNewMailbox = ( {
 	const [ mailboxFieldTouched, setMailboxFieldTouched ] = useState( false );
 	const [ nameFieldTouched, setNameFieldTouched ] = useState( false );
 	const [ passwordFieldTouched, setPasswordFieldTouched ] = useState( false );
+	const [ showAlternateEmail, setShowAlternateEmail ] = useState( false );
+	const primaryEmail = useSelector( getCurrentUserEmail );
 
 	const hasAlternativeEmailError =
 		( alternativeEmailFieldTouched || showAllErrors ) &&
@@ -63,6 +68,13 @@ const TitanNewMailbox = ( {
 	const hasPasswordError = ( passwordFieldTouched || showAllErrors ) && null !== passwordError;
 
 	const showIsAdminToggle = false;
+
+	const showAlternativeEmailField = () => {
+		hiddenFieldNames = hiddenFieldNames.filter( ( field ) => field === TITAN_PASSWORD_RESET_FIELD );
+		setShowAlternateEmail( true );
+		onMailboxValueChange( 'alternativeEmail', primaryEmail );
+		setAlternativeEmailFieldTouched( true );
+	};
 
 	return (
 		<>
@@ -140,7 +152,7 @@ const TitanNewMailbox = ( {
 						/>
 					</FormFieldset>
 				) }
-				{ ! hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD ) && (
+				{ ( ! hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD ) || showAlternateEmail ) && (
 					<FormFieldset>
 						<FormLabel>
 							{ translate( 'Password reset email address', {
@@ -162,6 +174,26 @@ const TitanNewMailbox = ( {
 							<FormInputValidation text={ alternativeEmailError } isError />
 						) }
 					</FormFieldset>
+				) }
+				{ hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD ) && ! showAlternateEmail && (
+					<>
+						{ translate( '*Your password reset email is {{strong}}%(primaryEmail)s{{/strong}}.', {
+							args: {
+								primaryEmail,
+							},
+							components: {
+								strong: <strong />,
+							},
+						} ) }
+						<Button
+							primary
+							className="titan-new-mailbox__show-alternate-email"
+							borderless
+							onClick={ showAlternativeEmailField }
+						>
+							{ translate( 'Change it' ) }
+						</Button>
+					</>
 				) }
 			</div>
 		</>
