@@ -398,7 +398,7 @@ function ExistingCardPayButton( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
-	const { data: taxInfoFromServer } = useQuery< TaxGetInfo, Error >(
+	const { data: taxInfoFromServer, isLoading: isLoadingTaxInfo } = useQuery< TaxGetInfo, Error >(
 		[ 'tax-info-is-set', storedDetailsId ],
 		() => fetchTaxInfo( storedDetailsId )
 	);
@@ -416,7 +416,7 @@ function ExistingCardPayButton( {
 
 	return (
 		<Button
-			disabled={ disabled }
+			disabled={ disabled || isLoadingTaxInfo }
 			onClick={ () => {
 				debug( 'submitting existing card payment' );
 				if ( isTaxInfoRequired && ! taxInfoFromServer?.is_tax_info_set ) {
