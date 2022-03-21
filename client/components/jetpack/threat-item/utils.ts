@@ -166,13 +166,13 @@ export const getThreatFix = ( fixable: ThreatFix ): TranslateResult => {
 	}
 };
 
-export const getThreatFamilySubtitle = ( threat: Threat ): TranslateResult | undefined => {
+export const getThreatPayloadSubtitle = ( threat: Threat ): TranslateResult | undefined => {
 	const threatComponents = getThreatSignatureComponents( threat );
 	if ( ! threatComponents ) {
 		return;
 	}
 
-	switch ( threatComponents.family ) {
+	switch ( threatComponents.payload ) {
 		case 'backdoor':
 			return translate( 'Backdoor found on your site. Please take immediate action.' );
 		case 'ccskimmers':
@@ -226,14 +226,14 @@ export const getThreatFamilySubtitle = ( threat: Threat ): TranslateResult | und
 	}
 };
 
-export const getThreatFamilyDescription = ( threat: Threat ): TranslateResult | undefined => {
+export const getThreatPayloadDescription = ( threat: Threat ): TranslateResult | undefined => {
 	const threatComponents = getThreatSignatureComponents( threat );
 
 	if ( ! threatComponents ) {
 		return;
 	}
 
-	switch ( threatComponents.family ) {
+	switch ( threatComponents.payload ) {
 		case 'backdoor':
 			return translate(
 				'Backdoors are pieces of code that allows unauthorized users to run arbitrary code on a website. It has fewer functions than a webshell, usually just one at a time.'

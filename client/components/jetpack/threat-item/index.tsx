@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
 import {
-	getThreatFamilyDescription,
+	getThreatPayloadDescription,
 	getThreatFix,
 } from 'calypso/components/jetpack/threat-item/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -171,7 +171,7 @@ const ThreatItem: React.FC< Props > = ( {
 				status={ threat.status }
 				fix={ getFix() }
 				problem={ threat.description }
-				type={ getThreatFamilyDescription( threat ) }
+				type={ getThreatPayloadDescription( threat ) }
 				context={ threat.context }
 				diff={ threat.diff }
 				rows={ threat.rows }

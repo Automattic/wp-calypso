@@ -47,7 +47,7 @@ export interface IgnorableThreat extends BaseThreat {
 
 export type Threat = IgnorableThreat | FixableThreat;
 
-export type ThreatFamily =
+export type ThreatPayload =
 	| 'backdoor'
 	| 'ccskimmers'
 	| 'cryptominer'
@@ -67,7 +67,7 @@ export type ThreatFamily =
 export type SignatureComponents = {
 	signature_id: string;
 	language: string;
-	payload: string;
-	family: ThreatFamily;
+	payload: ThreatPayload | string;
+	family: string;
 	variant: string;
 };
