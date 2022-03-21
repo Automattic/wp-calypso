@@ -133,6 +133,7 @@ export class SiteDomains extends Component {
 					nonWpcomDomains.map( ( domain ) =>
 						resolveDomainStatus( domain, null, {
 							getMappingErrors: true,
+							siteSlug: selectedSite.slug,
 						} )
 					)
 				),
