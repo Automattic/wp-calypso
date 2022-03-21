@@ -149,7 +149,7 @@ export const getThreatFix = ( fixable: ThreatFix ): TranslateResult => {
 };
 
 export const getThreatSignatureComponents = ( threat: Threat ): SignatureComponents | null => {
-	// ([signature_id])[language]_[payload]_[family]_[variant]
+	// (signatureid)?(language)_(payload)_(family[^_]+)_[variant]
 	const signatureRegex = /(?:\(([^)]+)\))?([^_]+)_([^_]+)_(.+)_(.+)/g;
 	const signatureComponents = signatureRegex.exec( threat.signature );
 
