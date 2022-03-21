@@ -43,11 +43,7 @@ const ThreatItem: React.FC< Props > = ( {
 } ) => {
 	const dispatch = useDispatch();
 
-	const getProblem = React.useCallback( () => {
-		if ( threat.description ) {
-			return threat.description;
-		}
-
+	const getTypeDescription = React.useCallback( () => {
 		const threatComponents = getThreatSignatureComponents( threat );
 		if ( ! threatComponents ) {
 			return;
@@ -246,7 +242,8 @@ const ThreatItem: React.FC< Props > = ( {
 			<ThreatDescription
 				status={ threat.status }
 				fix={ getFix() }
-				problem={ getProblem() }
+				problem={ threat.description }
+				type={ getTypeDescription() }
 				context={ threat.context }
 				diff={ threat.diff }
 				rows={ threat.rows }
