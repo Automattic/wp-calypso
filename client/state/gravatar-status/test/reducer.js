@@ -48,7 +48,7 @@ describe( 'reducer', () => {
 
 		test( 'returns empty object by default', () => {
 			const state = tempImage( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).to.eql( null );
 		} );
 
 		test( 'returns object with image src when response is received', () => {
@@ -56,9 +56,7 @@ describe( 'reducer', () => {
 				type: GRAVATAR_UPLOAD_RECEIVE,
 				src: imageSrc,
 			} );
-			expect( state ).to.eql( {
-				src: imageSrc,
-			} );
+			expect( state ).to.eql( imageSrc );
 		} );
 	} );
 } );

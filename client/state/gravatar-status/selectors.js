@@ -21,5 +21,5 @@ export function isCurrentUserUploadingGravatar( state ) {
  * @returns {string|boolean} - The temp Gravatar string, or false
  */
 export function getUserTempGravatar( state, userId ) {
-	return getCurrentUserId( state ) === userId && ( state.gravatarStatus.tempImage.src ?? false );
+	return getCurrentUserId( state ) === userId && ( state.gravatarStatus.tempImage ?? false );
 }

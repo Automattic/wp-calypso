@@ -21,7 +21,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getUserTempGravatar', () => {
-		const imageSrc = 'image';
+		const tempImage = 'image';
 		const currentUserId = 1;
 		const anotherUserId = 2;
 
@@ -31,9 +31,7 @@ describe( 'selectors', () => {
 					id: currentUserId,
 				},
 				gravatarStatus: {
-					tempImage: {
-						src: imageSrc,
-					},
+					tempImage,
 				},
 			};
 			expect( getUserTempGravatar( state ) ).to.equal( false );
@@ -46,9 +44,7 @@ describe( 'selectors', () => {
 					id: currentUserId,
 				},
 				gravatarStatus: {
-					tempImage: {
-						src: imageSrc,
-					},
+					tempImage,
 				},
 			};
 			expect( getUserTempGravatar( state, anotherUserId ) ).to.equal( false );
@@ -60,7 +56,7 @@ describe( 'selectors', () => {
 					id: currentUserId,
 				},
 				gravatarStatus: {
-					tempImage: {},
+					tempImage: null,
 				},
 			};
 			expect( getUserTempGravatar( emptyTempImage, currentUserId ) ).to.equal( false );
@@ -72,12 +68,10 @@ describe( 'selectors', () => {
 					id: currentUserId,
 				},
 				gravatarStatus: {
-					tempImage: {
-						src: imageSrc,
-					},
+					tempImage,
 				},
 			};
-			expect( getUserTempGravatar( state, currentUserId ) ).to.equal( imageSrc );
+			expect( getUserTempGravatar( state, currentUserId ) ).to.equal( tempImage );
 		} );
 	} );
 } );
