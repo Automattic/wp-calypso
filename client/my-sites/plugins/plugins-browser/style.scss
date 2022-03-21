@@ -40,9 +40,9 @@
 					outline: none;
 				}
 
-				&:not(:last-child):after {
+				&:not( :last-child )::after {
 					display: inline-block;
-					content: "\00a0,\00a0"; // comma and spaces
+					content: '\00a0,\00a0'; // comma and spaces
 				}
 
 				color: var( --studio-gray-100 );
