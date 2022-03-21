@@ -54,6 +54,7 @@ const EmailProvidersStackedComparison = (
 		selectedIntervalLength = IntervalLength.ANNUALLY,
 		source,
 	} = props;
+
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
