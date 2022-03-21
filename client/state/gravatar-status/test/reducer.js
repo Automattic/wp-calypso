@@ -8,8 +8,9 @@ import reducer, { isUploading, tempImage } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'exports expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).toHaveProperty( 'isUploading' );
-		expect( reducer( undefined, {} ) ).toHaveProperty( 'tempImage' );
+		const state = reducer( undefined, {} );
+		expect( state ).toHaveProperty( 'isUploading' );
+		expect( state ).toHaveProperty( 'tempImage' );
 	} );
 
 	describe( '#isUploading', () => {
