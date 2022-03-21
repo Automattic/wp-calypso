@@ -67,92 +67,89 @@ function ThemeEnhancements( {
 
 	if ( siteIsJetpack ) {
 		content = (
-			<Card>
-				{ themeSupportsInfiniteScroll ? (
-					<>
-						<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
-						<SupportInfo
-							text={ translate(
-								'Loads the next posts automatically when the reader approaches the bottom of the page.'
-							) }
-							link={
-								isAtomic
-									? 'https://wordpress.com/support/infinite-scroll/'
-									: 'https://jetpack.com/support/infinite-scroll/'
-							}
-							privacyLink={ ! isAtomic }
-						/>
-						<FormSettingExplanation>
-							{ translate(
-								'Create a smooth, uninterrupted reading experience by loading more content as visitors scroll to the bottom of your archive pages.'
-							) }
-						</FormSettingExplanation>
-						<RadioOptions />
-						<hr />{ ' ' }
-					</>
-				) : null }
-				<SupportInfo
-					text={ translate(
-						"Adds names for CSS preprocessor use, disabling the theme's CSS, or custom image width."
-					) }
-					link={
-						isAtomic
-							? 'https://wordpress.com/support/editing-css/'
-							: 'https://jetpack.com/support/custom-css/'
-					}
-					privacyLink={ ! isAtomic }
-				/>
-				<JetpackModuleToggle
-					siteId={ siteId }
-					moduleSlug="custom-css"
-					label={ translate( 'Enhance CSS customization panel' ) }
-					disabled={ isFormPending }
-				/>
-			</Card>
-		);
-	} else {
-		content = (
 			<>
-				{ themeSupportsInfiniteScroll ? (
-					<Card>
-						<FormLegend>{ translate( 'Infinite scroll' ) }</FormLegend>
-						<SupportInfo
-							text={ translate( 'Control how additional posts are loaded.' ) }
-							link="https://wordpress.com/support/infinite-scroll/"
-							privacyLink={ false }
-						/>
-						<ToggleControl
-							checked={ !! fields[ name ] }
-							disabled={ isFormPending || blockedByFooter }
-							onChange={ handleAutosavingToggle( name ) }
-							label={ translate(
-								'Load posts as you scroll. Disable to show a clickable button to load posts.'
-							) }
-						/>
-						{ blockedByFooter && (
-							<FormSettingExplanation isIndented>
+				<SettingsSectionHeader title={ translate( 'Theme enhancements' ) } />
+				<Card>
+					{ themeSupportsInfiniteScroll ? (
+						<>
+							<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
+							<SupportInfo
+								text={ translate(
+									'Loads the next posts automatically when the reader approaches the bottom of the page.'
+								) }
+								link={
+									isAtomic
+										? 'https://wordpress.com/support/infinite-scroll/'
+										: 'https://jetpack.com/support/infinite-scroll/'
+								}
+								privacyLink={ ! isAtomic }
+							/>
+							<FormSettingExplanation>
 								{ translate(
-									'Your site has a "footer" widget enabled so buttons will always be used. {{link}}Customize your site{{/link}}',
-									{
-										components: {
-											link: <a href={ customizeUrl } />,
-										},
-									}
+									'Create a smooth, uninterrupted reading experience by loading more content as visitors scroll to the bottom of your archive pages.'
 								) }
 							</FormSettingExplanation>
+							<RadioOptions />
+							<hr />{ ' ' }
+						</>
+					) : null }
+					<SupportInfo
+						text={ translate(
+							"Adds names for CSS preprocessor use, disabling the theme's CSS, or custom image width."
 						) }
-					</Card>
-				) : null }
+						link={
+							isAtomic
+								? 'https://wordpress.com/support/editing-css/'
+								: 'https://jetpack.com/support/custom-css/'
+						}
+						privacyLink={ ! isAtomic }
+					/>
+					<JetpackModuleToggle
+						siteId={ siteId }
+						moduleSlug="custom-css"
+						label={ translate( 'Enhance CSS customization panel' ) }
+						disabled={ isFormPending }
+					/>
+				</Card>
 			</>
 		);
+	} else {
+		content = themeSupportsInfiniteScroll ? (
+			<>
+				<SettingsSectionHeader title={ translate( 'Theme enhancements' ) } />
+				<Card>
+					<FormLegend>{ translate( 'Infinite scroll' ) }</FormLegend>
+					<SupportInfo
+						text={ translate( 'Control how additional posts are loaded.' ) }
+						link="https://wordpress.com/support/infinite-scroll/"
+						privacyLink={ false }
+					/>
+					<ToggleControl
+						checked={ !! fields[ name ] }
+						disabled={ isFormPending || blockedByFooter }
+						onChange={ handleAutosavingToggle( name ) }
+						label={ translate(
+							'Load posts as you scroll. Disable to show a clickable button to load posts.'
+						) }
+					/>
+					{ blockedByFooter && (
+						<FormSettingExplanation isIndented>
+							{ translate(
+								'Your site has a "footer" widget enabled so buttons will always be used. {{link}}Customize your site{{/link}}',
+								{
+									components: {
+										link: <a href={ customizeUrl } />,
+									},
+								}
+							) }
+						</FormSettingExplanation>
+					) }
+				</Card>
+			</>
+		) : null;
 	}
 
-	return (
-		<div>
-			<SettingsSectionHeader title={ translate( 'Theme enhancements' ) } />
-			{ content }
-		</div>
-	);
+	return { content };
 }
 
 ThemeEnhancements.defaultProps = {
