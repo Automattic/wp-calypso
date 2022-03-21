@@ -29,7 +29,7 @@ const StoreFeatures: Step = function StartingPointStep( { navigation } ) {
 
 	const submitIntent = ( storeType: string ) => {
 		setStoreType( storeType );
-		recordTracksEvent( 'calypso_signup_store_feature_select', { starting_point: storeType } );
+		recordTracksEvent( 'calypso_signup_store_feature_select', { store_feature: storeType } );
 		submit?.( storeType );
 	};
 
