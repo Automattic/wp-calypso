@@ -71,6 +71,7 @@ const stepNameToModuleName = {
 	'difm-site-picker': 'difm-site-picker',
 	'difm-design-setup-site': 'design-picker',
 	'difm-options': 'site-options',
+	'difm-page-picker': 'page-picker',
 	'site-info-collection': 'site-info-collection',
 	'website-content': 'website-content',
 	intent: 'intent',
@@ -84,7 +85,6 @@ const stepNameToModuleName = {
 	'business-info': 'woocommerce-install/step-business-info',
 	confirm: 'woocommerce-install/confirm',
 	transfer: 'woocommerce-install/transfer',
-	'difm-page-picker': 'difm-page-picker',
 };
 
 export function getStepModuleName( stepName ) {

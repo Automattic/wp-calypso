@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .signup__step.is-difm-page-picker {
 	.step-wrapper.is-horizontal-layout {
 		margin-top: 25px;
