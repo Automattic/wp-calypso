@@ -9,7 +9,7 @@ import 'calypso/state/gravatar-status/init';
  * @returns {boolean} - If uploading a Gravatar
  */
 export function isCurrentUserUploadingGravatar( state ) {
-	return state.gravatarStatus.isUploading ?? false;
+	return state.gravatarStatus.isUploading;
 }
 
 /**
