@@ -1,8 +1,15 @@
 import assert from 'assert';
-import { Page } from 'playwright';
+import { Page, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
+import envVariables from '../../env-variables';
+
+type PluginAttributes = 'Active' | 'Autoupdate';
+type PluginState = 'on' | 'off';
 
 const selectors = {
+	// React modal buttons
+	modalButtonWithText: ( text: string ) => `.dialog__action-buttons button:has-text("${ text }")`,
+
 	sectionTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
 	pluginTitleOnSection: ( section: string, plugin: string ) =>
 		`.plugins-browser-list:has(.plugins-browser-list__title.${ section }) :text-is("${ plugin }")`,
@@ -14,10 +21,19 @@ const selectors = {
 	annualPricingSelect: 'a[data-bold-text^="Annual price"]',
 	monthlyPricing: '.plugins-browser-item__period:text("monthly")',
 	annualPricing: '.plugins-browser-item__period:text("per year")',
+
+	// Search
 	searchIcon: '.search-component__open-icon',
-	searchInput: 'input[placeholder="Try searching ‘ecommerce’"]',
+	searchInput: 'input.search-component__input',
 	searchResult: ( text: string ) => `.plugins-browser-item__title:text("${ text }")`,
 	searchResultTitle: ( text: string ) => `:text("Search results for ${ text }")`,
+
+	// Plugin view
+	pluginHamburgerMenu: `.plugin-site-jetpack__action`,
+	pluginToggle: ( target: PluginAttributes ) =>
+		`.plugin-site-jetpack__container .components-toggle-control:has(span:text("${ target }")) span.components-form-toggle`,
+	installButton: 'button:text("Install and activate")',
+	removeButton: 'button.plugin-remove-button__remove-button',
 };
 
 /**
@@ -34,14 +50,25 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Visit /plugins or /plugins/:site
+	 * Visit the Plugins page in Calypso at `/plugins`.
+	 *
+	 * If optional parameter `site` is specified, this method will
+	 * attempt to load `/plugins/<site>` endpoint.
+	 *
+	 * @param {string} site Optional site URL.
 	 */
 	async visit( site = '' ): Promise< void > {
 		await this.page.goto( getCalypsoURL( `plugins/${ site }` ) );
 	}
 
 	/**
-	 * Visit /plugins/:page/ or /plugins/:page/:site
+	 * Visit a specific page within the Plugins feature at `/plugins/page`.
+	 *
+	 * If optional paramter `site` is specified, this method will
+	 * attempt to load `/plugins/<page>/<site>` endpoint.
+	 *
+	 * @param {string} page Sub-page to visit.
+	 * @param {string} site Optional site URL.
 	 */
 	async visitPage( page: string, site = '' ): Promise< void > {
 		await this.page.goto( getCalypsoURL( `plugins/${ page }/${ site }` ) );
@@ -127,13 +154,28 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Search
+	 * Performs a search for the provided string.
+	 *
+	 * @param {string} query String to search for.
 	 */
 	async search( query: string ): Promise< void > {
-		await this.page.click( selectors.searchIcon );
+		// On mobile viewports the Loupe icon must be
+		// clicked to activate the search field.
+		const searchInputIconLocator = this.page.locator( selectors.searchIcon );
+		await searchInputIconLocator.click();
+
 		await this.page.fill( selectors.searchInput, query );
 		await this.page.press( selectors.searchInput, 'Enter' );
 		await this.page.waitForSelector( selectors.searchResultTitle( query ) );
+	}
+
+	/**
+	 * Click on the search result.
+	 *
+	 * @param {string} name Name of the plugin to click.
+	 */
+	async clickSearchResult( name: string ): Promise< void > {
+		await this.page.click( selectors.searchResult( name ) );
 	}
 
 	/**
@@ -141,5 +183,86 @@ export class PluginsPage {
 	 */
 	async validateExpectedSearchResultFound( expectedResult: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.searchResult( expectedResult ) );
+	}
+
+	/* Plugin View */
+
+	/**
+	 * Determines whether the plugin is installed on the page.
+	 *
+	 * This method determines if a plugin is installed by
+	 * navigating to the `/plugins/<name>/site` endpoint, then
+	 * counting for the instances of `removeButton`.
+	 *
+	 * If the `removeButton` count is greater than 0, then the plugin
+	 * is deemed to be active on a site and thus this method returns
+	 * true. False otherwise.
+	 *
+	 * @returns {Promise<boolean>} True if plugin is active on any site. False otherwise.
+	 */
+	async pluginIsInstalled(): Promise< boolean > {
+		await this.page.waitForLoadState( 'networkidle' );
+		const locator = this.page.locator( selectors.pluginToggle( 'Active' ) );
+		if ( ( await locator.count() ) > 0 ) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns whether the toggle at `locator` is toggled
+	 * in the On state.
+	 *
+	 * @returns {Promise<boolean>} True if toggle is on. False otherwise.
+	 */
+	private async isToggled( locator: Locator ): Promise< boolean > {
+		await locator.waitFor();
+
+		const classes = await locator.getAttribute( 'class' );
+		return !! classes?.includes( 'is-checked' );
+	}
+
+	/**
+	 * Toggles the plugin attribute.
+	 *
+	 * @param {PluginAttributes} target Target attribute to toggle.
+	 * @param {PluginState} state Desired end state of the attribute.
+	 */
+	async togglePluginAttribute( target: PluginAttributes, state: PluginState ): Promise< void > {
+		const toggleLocator = this.page.locator( selectors.pluginToggle( target ) );
+
+		const isToggled = await this.isToggled( toggleLocator );
+
+		// Only perform action if  the current state and
+		// target state differ.
+		if ( ( state === 'on' && ! isToggled ) || ( state === 'off' && isToggled ) ) {
+			await toggleLocator.click();
+		}
+	}
+
+	/**
+	 * Clicks on the Install Plugin button.
+	 */
+	async clickInstallPlugin(): Promise< void > {
+		const locator = this.page.locator( selectors.installButton );
+		await Promise.all( [ this.page.waitForResponse( /.*install\?.*/ ), locator.click() ] );
+	}
+
+	/**
+	 * Clicks on the `Remove Plugin` button.
+	 */
+	async clickRemovePlugin(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			const pluginActionsLocator = this.page.locator( selectors.pluginHamburgerMenu );
+			await pluginActionsLocator.click();
+		}
+
+		const locator = this.page.locator( selectors.removeButton );
+		await locator.click();
+		const confirmDialogButton = this.page.locator( selectors.modalButtonWithText( 'Remove' ) );
+		await Promise.all( [
+			this.page.waitForResponse( /.*delete\?.*/ ),
+			confirmDialogButton.click(),
+		] );
 	}
 }
