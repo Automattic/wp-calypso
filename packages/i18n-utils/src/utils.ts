@@ -91,6 +91,21 @@ export function getLanguageSlugs() {
 }
 
 /**
+ * Map provided language slug to supported slug if applicable.
+ *
+ * @param {string} langSlug Locale slug for the language
+ * @returns {string} Mapped language slug
+ */
+export function getMappedLanguageSlug( langSlug: string ) {
+	// See pxLjZ-6UQ-p2 for details.
+	if ( langSlug === 'no' ) {
+		return 'nb';
+	}
+
+	return langSlug;
+}
+
+/**
  * Return a specifier for page.js/Express route param that enumerates all supported languages.
  *
  * @param {string} name of the parameter. By default it's `lang`, some routes use `locale`.
@@ -108,6 +123,7 @@ export function getLanguageRouteParam( name = 'lang', optional = true ) {
  * @returns {object|undefined} An object containing the locale data or undefined.
  */
 export function getLanguage( langSlug: string | undefined ): Language | undefined {
+	langSlug = getMappedLanguageSlug( langSlug );
 	if ( langSlug && localeRegex.test( langSlug ) ) {
 		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
 		// Please see the comment above `localeRegex` to see why we can split by - or _ and find the parent slug.
