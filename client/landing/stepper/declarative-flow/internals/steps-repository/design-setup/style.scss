@@ -229,6 +229,8 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 
 			.web-preview__frame-wrapper.is-resizable {
+				margin: 0;
+				padding: 0;
 				background-color: transparent;
 			}
 
