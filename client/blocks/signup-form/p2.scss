@@ -43,6 +43,7 @@
 
 	button {
 		&.social-buttons__button {
+			@extend %p2-form-button;
 			box-shadow: none;
 		}
 	}
