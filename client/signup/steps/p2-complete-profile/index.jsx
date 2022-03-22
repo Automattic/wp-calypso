@@ -1,260 +1,113 @@
-import { Button } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
-import FormButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import formState from 'calypso/lib/form-state';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
-import ValidationFieldset from 'calypso/signup/validation-fieldset';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
+
 import './style.scss';
 
-/**
- * Constants
- */
-const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
-const ERROR_CODE_MISSING_FULL_NAME = 123; // Random number, we don't need it.
-const ERROR_CODE_FROM_LOCAL_STORAGE = 7331; // Random number, we don't need it.
+function P2CompleteProfile( {
+	flowName,
+	stepName,
+	positionInFlow,
+	submitSignupStep,
+	goToNextStep,
+} ) {
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const [ formFullName, setFormFullName ] = useState( '' );
+	const [ formErrors, setFormErrors ] = useState( {} );
 
-class P2CompleteProfile extends Component {
-	constructor( props ) {
-		super( props );
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 
-		let initialState;
-
-		if ( props?.step?.form ) {
-			initialState = props.step.form;
-
-			if ( ! isEmpty( props.step.errors ) ) {
-				const errorMessage = props.step.errors[ 0 ].message;
-
-				this.logValidationErrorToLogstash( ERROR_CODE_FROM_LOCAL_STORAGE, errorMessage );
-
-				initialState = formState.setFieldErrors(
-					formState.setFieldsValidating( initialState ),
-					{
-						site: {
-							[ ERROR_CODE_FROM_LOCAL_STORAGE ]: errorMessage,
-						},
-					},
-					true
-				);
-			}
-		} else {
-			initialState = {
-				fullName: {
-					value: '',
-				},
-			};
-		}
-
-		this.formStateController = new formState.Controller( {
-			fieldNames: [ 'fullName' ],
-			sanitizerFunction: this.sanitize,
-			validatorFunction: this.validate,
-			onNewState: ( state ) => {
-				this.setState( { form: state } );
-			},
-			onError: this.handleFormControllerError,
-			debounceWait: VALIDATION_DELAY_AFTER_FIELD_CHANGES,
-			hideFieldErrorsOnChange: true,
-			initialState: initialState,
-			skipSanitizeAndValidateOnFieldChange: true,
-		} );
-
-		this.state = {
-			form: this.formStateController.getInitialState(),
-			isSubmitting: false,
-			suggestedSubdomains: [],
-			lastInvalidSite: '',
-		};
-	}
-
-	componentWillUnmount() {
-		this.save();
-	}
-
-	validate = ( fields, onComplete ) => {
-		const messages = {};
-
-		if ( isEmpty( fields.fullName ) || fields.fullName.length < 3 ) {
-			messages.fullName = {
-				[ ERROR_CODE_MISSING_FULL_NAME ]: this.props.translate(
-					'Please enter your full name (3 characters or more).'
-				),
-			};
-		}
-
-		onComplete( null, messages );
-	};
-
-	handleSubmit = ( event ) => {
-		event.preventDefault();
-
-		this.setState( { isSubmitting: true } );
-
-		this.formStateController.handleSubmit( ( hasErrors ) => {
-			const fullName = formState.getFieldValue( this.state.form, 'fullName' );
-
-			if ( hasErrors ) {
-				this.setState( { isSubmitting: false } );
-
-				return;
-			}
-
-			recordTracksEvent( 'calypso_signup_p2_complete_profile_step_submit' );
-
-			// API calls
-
-			this.props.saveUserSettings( { display_name: fullName } );
-
-			const stepData = {
-				stepName: this.props.stepName,
-				form: this.state.form,
-				fullName,
-			};
-
-			this.props.submitSignupStep( stepData );
-
-			this.props.goToNextStep();
-		} );
-	};
-
-	handleFormControllerError = ( error ) => {
-		if ( error ) {
-			throw error;
-		}
-	};
-
-	save = () => {
-		this.props.saveSignupStep( {
-			stepName: 'p2-complete-profile',
-			form: this.state.form,
-		} );
-	};
-
-	handleBlur = () => {
-		this.formStateController.sanitize();
-		this.save();
-	};
-
-	handleChangeEvent = ( event ) => {
-		this.formStateController.handleFieldChange( {
-			name: event.target.name,
-			value: event.target.value,
-		} );
-	};
-
-	getErrorMessages = ( fieldName ) => {
-		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
-
-		if ( ! messages ) {
-			return;
-		}
-
-		return messages;
-	};
-
-	formFields = () => {
-		const fieldDisabled = this.state.isSubmitting;
-
-		return (
-			<>
-				<ValidationFieldset
-					errorMessages={ this.getErrorMessages( 'fullName' ) }
-					className="p2-complete-profile__validation-full-name"
-				>
-					<FormLabel htmlFor="full-name-input">
-						{ this.props.translate( 'Your Full Name' ) }
-					</FormLabel>
-					<FormTextInput
-						id="full-name-input"
-						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-						autoCapitalize={ 'off' }
-						className="p2-complete-profile__full-name"
-						disabled={ fieldDisabled }
-						name="full-name"
-						value={ formState.getFieldValue( this.state.form, 'fullName' ) }
-						isError={ formState.isFieldInvalid( this.state.form, 'fullName' ) }
-						isValid={ formState.isFieldValid( this.state.form, 'fullName' ) }
-						onBlur={ this.handleBlur }
-						onChange={ this.handleChangeEvent }
-					/>
-				</ValidationFieldset>
-			</>
-		);
-	};
-
-	renderUploadAvatarBtn = () => {
+	const renderUploadAvatarBtn = () => {
 		return (
 			<button className="p2-complete-profile__upload-avatar-btn">
-				{ this.props.translate( 'Upload a new avatar' ) }
+				{ translate( 'Upload a new avatar' ) }
 			</button>
 		);
 	};
 
-	render() {
-		return (
-			<P2StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.translate( 'Complete your profile' ) }
-				subHeaderText={ this.props.translate(
-					'Using a recognizable photo and name will help your team to identify you more easily.'
-				) }
-			>
-				<div className="p2-complete-profile">
-					<div className="p2-complete-profile__avatar-wrapper">
-						<EditGravatar additionalUploadHtml={ this.renderUploadAvatarBtn() } />
-					</div>
+	const handleFormSubmit = ( event ) => {
+		event.preventDefault();
 
-					<div className="p2-complete-profile__form-wrapper">
-						<form className="p2-complete-profile__form" onSubmit={ this.handleSubmit } noValidate>
-							{ this.formFields() }
-							<div className="p2-complete-profile__form-footer">
-								<FormButton
-									disabled={ this.state.isSubmitting }
-									className="p2-complete-profile__form-submit-btn"
-								>
-									{ this.props.translate( 'Continue' ) }
-								</FormButton>
-							</div>
-						</form>
-					</div>
+		setIsSubmitting( true );
 
-					<div className="p2-complete-profile__skip-wrapper">
-						<span>
-							No time? No problem! You can{ ' ' }
-							<Button
-								className="p2-complete-profile__skip-btn"
-								variant="link"
-								onClick={ () => {
-									submitSignupStep( {
-										stepName: this.props.stepName,
-									} );
+		if ( formFullName.length < 3 ) {
+			setFormErrors( {
+				fullName: translate( 'Please enter your full name (3 characters or more).' ),
+			} );
 
-									recordTracksEvent( 'calypso_signup_p2_complete_profile_skip_button_click' );
+			setIsSubmitting( false );
 
-									this.props.goToNextStep();
-								} }
-							>
-								do this later.
-							</Button>
-						</span>
-					</div>
+			return;
+		}
+
+		recordTracksEvent( 'calypso_signup_p2_complete_profile_step_submit' );
+
+		// API call to update user profile.
+		dispatch( saveUserSettings( { display_name: formFullName } ) );
+
+		const stepData = {
+			stepName: stepName,
+			formFullName,
+		};
+
+		submitSignupStep( stepData );
+
+		goToNextStep();
+	};
+
+	return (
+		<P2StepWrapper
+			flowName={ flowName }
+			stepName={ stepName }
+			positionInFlow={ positionInFlow }
+			headerText={ translate( 'Complete your profile' ) }
+			subHeaderText={ translate(
+				'Using a recognizable photo and name will help your team to identify you more easily.'
+			) }
+		>
+			<div className="p2-complete-profile">
+				<div className="p2-complete-profile__avatar-wrapper">
+					<EditGravatar additionalUploadHtml={ renderUploadAvatarBtn() } />
 				</div>
-			</P2StepWrapper>
-		);
-	}
+
+				<div className="p2-complete-profile__form-wrapper">
+					<form className="p2-complete-profile__form" onSubmit={ handleFormSubmit } noValidate>
+						<label htmlFor="full-name-input">{ translate( 'Your Full Name' ) }</label>
+						<input
+							type="text"
+							id="full-name-input"
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+							name="full-name"
+							className="p2-complete-profile__full-name"
+							disabled={ isSubmitting }
+							value={ formFullName }
+							onChange={ ( event ) => setFormFullName( event.target.value ) }
+						/>
+						{ formErrors?.fullName && (
+							<div className="p2-complete-profile__full-name-errors">{ formErrors.fullName }</div>
+						) }
+						<div className="p2-complete-profile__form-footer">
+							<button className="p2-complete-profile__form-submit-btn" disabled={ isSubmitting }>
+								{ translate( 'Continue' ) }
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</P2StepWrapper>
+	);
 }
 
-export default connect( null, { saveSignupStep, submitSignupStep, saveUserSettings } )(
-	localize( P2CompleteProfile )
-);
+P2CompleteProfile.propTypes = {
+	flowName: PropTypes.string.isRequired,
+	stepName: PropTypes.string.isRequired,
+	positionInFlow: PropTypes.number.isRequired,
+};
+
+export default P2CompleteProfile;
