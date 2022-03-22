@@ -10,7 +10,6 @@ import {
 	CheckoutStepGroup,
 	CheckoutStepBody,
 	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
-	getDefaultPaymentMethodStep,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
@@ -18,6 +17,7 @@ import {
 	useTotal,
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
+	PaymentMethodStep,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
@@ -49,7 +49,7 @@ import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutHelpLink from './checkout-help-link';
 import CheckoutNextSteps from './checkout-next-steps';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
-import PaymentMethodStep from './payment-method-step';
+import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
@@ -120,8 +120,6 @@ const OrderReviewTitle = () => {
 	const translate = useTranslate();
 	return <>{ String( translate( 'Your order' ) ) }</>;
 };
-
-const paymentMethodStep = getDefaultPaymentMethodStep();
 
 export default function WPCheckout( {
 	addItemToCart,
@@ -514,13 +512,8 @@ export default function WPCheckout( {
 					validatingButtonAriaLabel={ validatingButtonText }
 				/>
 			) }
-			<CheckoutStep
-				stepId="payment-method-step"
-				activeStepContent={
-					<PaymentMethodStep activeStepContent={ paymentMethodStep.activeStepContent } />
-				}
-				completeStepContent={ paymentMethodStep.completeStepContent }
-				titleContent={ paymentMethodStep.titleContent }
+			<PaymentMethodStep
+				activeStepFooter={ <PaymentMethodStepContent /> }
 				editButtonText={ String( translate( 'Edit' ) ) }
 				editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
 				nextStepButtonText={ String( translate( 'Continue' ) ) }
