@@ -10,7 +10,7 @@ import { getWordAdsPayments } from 'calypso/state/wordads/payments/selectors';
 class WordAdsPayments extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
-		payments: PropTypes.object,
+		payments: PropTypes.array,
 	};
 
 	state = {};
@@ -23,11 +23,16 @@ class WordAdsPayments extends Component {
 		return Object.keys( obj ).length;
 	}
 
+	swapYearMonth( date ) {
+		const splits = date.split( '-' );
+		return splits[ 1 ] + '-' + splits[ 0 ];
+	}
+
 	paymentsTable( payments, type ) {
 		const { numberFormat, translate } = this.props;
 		const rows = [];
 
-		for ( const payment in payments ) {
+		payments.forEach( ( payment ) => {
 			rows.push(
 				<tr key={ type + '-' + payment.id }>
 					<td className="wordads__payments-history-value">
@@ -41,7 +46,7 @@ class WordAdsPayments extends Component {
 					<td className="wordads__payments-history-value">{ payment.description }</td>
 				</tr>
 			);
-		}
+		} );
 
 		return (
 			<Card>
