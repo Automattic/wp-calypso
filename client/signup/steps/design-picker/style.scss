@@ -109,3 +109,12 @@
 		box-sizing: border-box;
 	}
 }
+
+/* Hide categories from the sell intent */
+.design-picker__sell-intent {
+	.design-picker-category-filter__sidebar,
+	.design-picker-category-filter__dropdown,
+	.design-picker__category-heading-0 {
+		display: none;
+	}
+}
