@@ -2,9 +2,6 @@
 @import '@wordpress/base-styles/_mixins.scss';
 @import '../../styles/mixins.scss';
 
-$gray-100: #101517;
-$gray-60: #50575e;
-
 /**
  *	General
  */
@@ -86,7 +83,7 @@ $gray-60: #50575e;
 
 			.formatted-header__title {
 				@include onboarding-font-recoleta;
-				color: $gray-100;
+				color: var( --studio-gray-100 );
 				letter-spacing: 0.2px;
 				font-size: 2.15rem; /* stylelint-disable-line */
 				font-weight: 400;
@@ -101,14 +98,10 @@ $gray-60: #50575e;
 			.formatted-header__subtitle {
 				padding: 0;
 				text-align: left;
-				color: $gray-60;
+				color: var( --studio-gray-60 );
 				font-size: 1rem;
 				margin-top: 16px;
 				line-height: 24px;
-
-				@include break-small {
-					margin: 16px 0 0;
-				}
 			}
 		}
 
@@ -143,7 +136,7 @@ $gray-60: #50575e;
 	 *	Navigation
 	 */
 	.step-container__navigation.action-buttons {
-		border-top: 1px solid $gray-200;
+		border-top: 1px solid var( --studio-gray-100 );
 		background-color: $white;
 		height: 60px;
 		align-items: center;
@@ -198,6 +191,7 @@ $gray-60: #50575e;
 			right: 24px;
 			padding: 0;
 			background-color: transparent;
+			border: none;
 		}
 	}
 
