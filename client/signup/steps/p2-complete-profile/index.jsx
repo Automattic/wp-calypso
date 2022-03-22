@@ -94,7 +94,6 @@ function P2CompleteProfile( {
 						<input
 							type="text"
 							id="full-name-input"
-							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							name="full-name"
 							className="p2-complete-profile__full-name form-text-input"
 							disabled={ isSubmitting }
