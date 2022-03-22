@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
@@ -78,22 +79,26 @@ function P2CompleteProfile( {
 
 				<div className="p2-complete-profile__form-wrapper">
 					<form className="p2-complete-profile__form" onSubmit={ handleFormSubmit } noValidate>
-						<label htmlFor="full-name-input">{ translate( 'Your Full Name' ) }</label>
+						<label htmlFor="full-name-input" className="p2-complete-profile__form-label form-label">
+							{ translate( 'Your Full Name' ) }
+						</label>
 						<input
 							type="text"
 							id="full-name-input"
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							name="full-name"
-							className="p2-complete-profile__full-name"
+							className="p2-complete-profile__full-name form-text-input"
 							disabled={ isSubmitting }
 							value={ formFullName }
 							onChange={ ( event ) => setFormFullName( event.target.value ) }
 						/>
-						{ formErrors?.fullName && (
-							<div className="p2-complete-profile__full-name-errors">{ formErrors.fullName }</div>
-						) }
+						{ formErrors?.fullName && <FormInputValidation text={ formErrors.fullName } isError /> }
 						<div className="p2-complete-profile__form-footer">
-							<button className="p2-complete-profile__form-submit-btn" disabled={ isSubmitting }>
+							<button
+								type="submit"
+								className="p2-complete-profile__form-submit-btn button is-primary"
+								disabled={ isSubmitting }
+							>
 								{ translate( 'Continue' ) }
 							</button>
 						</div>
