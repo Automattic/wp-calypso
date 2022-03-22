@@ -10,12 +10,6 @@ import type { SocialProfile, SocialProfilesState } from 'calypso/state/difm/soci
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
 
-type SocialProfileFormOption = {
-	label: TranslateResult;
-	logo: ReactElement;
-	placeholder: string;
-};
-
 const TextInputWrapper = styled.div`
 	display: flex;
 	align-items: center;
@@ -51,6 +45,36 @@ const ActionButton = styled( Button )`
 	font-weight: 500;
 `;
 
+const SocialProfilesFormField = ( {
+	socialProfileId,
+	label,
+	logo,
+	value,
+	placeholder,
+	onChange,
+}: {
+	socialProfileId: SocialProfile;
+	label: TranslateResult;
+	logo: ReactElement;
+	value: string;
+	placeholder: string;
+	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+} ) => (
+	<FormFieldset>
+		<FormLabel htmlFor={ socialProfileId }>{ label }</FormLabel>
+		<TextInputWrapper>
+			{ logo }
+			<FormInput
+				name={ socialProfileId }
+				id={ socialProfileId }
+				value={ value }
+				placeholder={ placeholder }
+				onChange={ onChange }
+			/>
+		</TextInputWrapper>
+	</FormFieldset>
+);
+
 export default function SocialProfiles( {
 	initialSocialProfiles,
 	onSubmit,
@@ -61,29 +85,6 @@ export default function SocialProfiles( {
 	onSkip: () => void;
 } ) {
 	const translate = useTranslate();
-
-	const socialProfileFormOptions: Record< SocialProfile, SocialProfileFormOption > = {
-		FACEBOOK: {
-			label: translate( 'Facebook' ),
-			logo: <SocialLogo size={ 22 } icon="facebook" />,
-			placeholder: 'https://facebook.com/yourprofile',
-		},
-		TWITTER: {
-			label: translate( 'Twitter' ),
-			logo: <SocialLogo size={ 22 } icon="twitter" />,
-			placeholder: 'https://twitter.com/yourprofile',
-		},
-		INSTAGRAM: {
-			label: translate( 'Instagram' ),
-			logo: <SocialLogo size={ 22 } icon="instagram" />,
-			placeholder: 'https://instagram.com/yourprofile',
-		},
-		LINKEDIN: {
-			label: translate( 'Linkedin' ),
-			logo: <SocialLogo size={ 22 } icon="linkedin" />,
-			placeholder: 'https://linkedin.com/yourprofile',
-		},
-	};
 
 	const [ formValues, setFormValues ] = useState( initialSocialProfiles );
 
@@ -101,21 +102,38 @@ export default function SocialProfiles( {
 
 	return (
 		<form onSubmit={ handleSubmit }>
-			{ Object.entries( socialProfileFormOptions ).map( ( [ key, socialProfileOption ] ) => (
-				<FormFieldset key={ key }>
-					<FormLabel htmlFor={ key }>{ socialProfileOption.label }</FormLabel>
-					<TextInputWrapper>
-						{ socialProfileOption.logo }
-						<FormInput
-							name={ key }
-							id={ key }
-							value={ formValues[ key as SocialProfile ] }
-							placeholder={ socialProfileOption.placeholder }
-							onChange={ onChange }
-						/>
-					</TextInputWrapper>
-				</FormFieldset>
-			) ) }
+			<SocialProfilesFormField
+				socialProfileId="FACEBOOK"
+				label={ translate( 'Facebook' ) }
+				logo={ <SocialLogo size={ 22 } icon="facebook" /> }
+				placeholder="https://facebook.com/yourprofile"
+				value={ formValues[ 'FACEBOOK' ] }
+				onChange={ onChange }
+			/>
+			<SocialProfilesFormField
+				socialProfileId="TWITTER"
+				label={ translate( 'Twitter' ) }
+				logo={ <SocialLogo size={ 22 } icon="twitter" /> }
+				placeholder="https://twitter.com/yourprofile"
+				value={ formValues[ 'TWITTER' ] }
+				onChange={ onChange }
+			/>
+			<SocialProfilesFormField
+				socialProfileId="INSTAGRAM"
+				label={ translate( 'Instagram' ) }
+				logo={ <SocialLogo size={ 22 } icon="instagram" /> }
+				placeholder="https://instagram.com/yourprofile"
+				value={ formValues[ 'INSTAGRAM' ] }
+				onChange={ onChange }
+			/>
+			<SocialProfilesFormField
+				socialProfileId="LINKEDIN"
+				label={ translate( 'Linkedin' ) }
+				logo={ <SocialLogo size={ 22 } icon="linkedin" /> }
+				placeholder="https://linkedin.com/yourprofile"
+				value={ formValues[ 'LINKEDIN' ] }
+				onChange={ onChange }
+			/>
 			<ButtonWrapper>
 				<ActionButton type="submit" primary>
 					{ translate( 'Continue' ) }
