@@ -5,7 +5,7 @@ import { emailManagement } from 'calypso/my-sites/email/paths';
 
 type EmailManagementHomePageProps = {
 	selectedDomainName: string;
-	selectedIntervalLength: IntervalLength;
+	selectedIntervalLength?: IntervalLength;
 	source: string;
 };
 

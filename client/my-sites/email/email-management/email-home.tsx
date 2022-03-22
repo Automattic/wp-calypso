@@ -69,7 +69,7 @@ interface EmailManagementHomeProps {
 	emailListInactiveHeader?: ReactElement;
 	sectionHeaderLabel?: TranslateResult;
 	selectedDomainName: string;
-	selectedIntervalLength: IntervalLength;
+	selectedIntervalLength?: IntervalLength;
 	showActiveDomainList?: boolean;
 	source: string;
 }

@@ -102,12 +102,17 @@ const EmailProvidersStackedComparison = ( {
 
 		dispatch(
 			recordTracksEvent( 'calypso_email_providers_billing_interval_toggle_click', {
+				current_route: currentRoute,
 				domain_name: selectedDomainName,
 				new_interval: newIntervalLength,
 			} )
 		);
 
-		const queryString = stringify( { interval: newIntervalLength } );
+		const queryString = stringify( {
+			interval: newIntervalLength,
+			provider: selectedEmailProviderSlug,
+			source,
+		} );
 		page( `${ currentRoute }?${ queryString }` );
 	};
 
