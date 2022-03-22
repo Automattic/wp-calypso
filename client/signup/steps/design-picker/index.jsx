@@ -201,6 +201,22 @@ export default function DesignPickerStep( props ) {
 		openCheckoutModal( [ PLAN_PREMIUM ] );
 	}
 
+	function upgradePlanFromDesignPicker( design ) {
+		recordTracksEvent( 'calypso_design_picker_grid_upgrade_button', {
+			theme: design?.theme,
+		} );
+
+		upgradePlan();
+	}
+
+	function upgradePlanFromPreview( design ) {
+		recordTracksEvent( 'calypso_design_picker_preview_upgrade_button', {
+			theme: design?.theme,
+		} );
+
+		upgradePlan();
+	}
+
 	function submitDesign( _selectedDesign = selectedDesign ) {
 		recordTracksEvent( 'calypso_signup_select_design', getEventPropsByDesign( _selectedDesign ) );
 		props.goToNextStep();
@@ -223,7 +239,7 @@ export default function DesignPickerStep( props ) {
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
 					onPreview={ previewDesign }
-					onUpgrade={ upgradePlan }
+					onUpgrade={ upgradePlanFromDesignPicker }
 					className={ classnames( {
 						'design-picker-step__has-categories': showDesignPickerCategories,
 					} ) }
@@ -365,7 +381,11 @@ export default function DesignPickerStep( props ) {
 				stepSectionName={ designTitle }
 				customizedActionButtons={
 					shouldUpgrade && (
-						<Button primary borderless={ false } onClick={ upgradePlan }>
+						<Button
+							primary
+							borderless={ false }
+							onClick={ () => upgradePlanFromPreview( selectedDesign ) }
+						>
 							{ translate( 'Upgrade Plan' ) }
 						</Button>
 					)
