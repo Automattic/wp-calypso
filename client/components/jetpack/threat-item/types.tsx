@@ -65,7 +65,7 @@ export type ThreatPayload =
 	| 'webshell';
 
 export type SignatureComponents = {
-	signature_id: string;
+	signatureId: string | undefined;
 	language: string;
 	payload: ThreatPayload | string;
 	family: string;

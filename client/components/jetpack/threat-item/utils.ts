@@ -5,18 +5,20 @@ import type { TranslateResult } from 'i18n-calypso';
 export const getThreatSignatureComponents = ( threat: Threat ): SignatureComponents | null => {
 	// (signatureid)?(language)_(payload)_(family[^_]+)_[variant]
 	const signatureRegex = /(?:\(([^)]+)\))?([^_]+)_([^_]+)_(.+)_(.+)/g;
-	const signatureComponents = signatureRegex.exec( threat.signature );
+	const signatureRegexResult = signatureRegex.exec( threat.signature );
 
-	if ( ! signatureComponents || signatureComponents.length !== 6 ) {
+	if ( ! signatureRegexResult || signatureRegexResult.length !== 6 ) {
 		return null;
 	}
 
+	const [ signatureId, language, payload, family, variant ] = signatureRegexResult.slice( 1 );
+
 	return {
-		signature_id: signatureComponents[ 1 ],
-		language: signatureComponents[ 2 ],
-		payload: signatureComponents[ 3 ],
-		family: signatureComponents[ 4 ],
-		variant: signatureComponents[ 5 ],
+		signatureId,
+		language,
+		payload,
+		family,
+		variant,
 	};
 };
 

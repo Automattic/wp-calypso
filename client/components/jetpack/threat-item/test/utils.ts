@@ -8,7 +8,7 @@ describe( 'getThreatSignatureComponents', () => {
 				signature: '(123)php_generic_backdoor_001',
 			} as Threat )
 		).toMatchObject( {
-			signature_id: '123',
+			signatureId: '123',
 			language: 'php',
 			payload: 'generic',
 			family: 'backdoor',
@@ -22,7 +22,7 @@ describe( 'getThreatSignatureComponents', () => {
 				signature: 'php_generic_backdoor_001',
 			} as Threat )
 		).toMatchObject( {
-			signature_id: undefined,
+			signatureId: undefined,
 			language: 'php',
 			payload: 'generic',
 			family: 'backdoor',
@@ -36,7 +36,7 @@ describe( 'getThreatSignatureComponents', () => {
 				signature: '(123)php_generic_obfuscated_fopo_001',
 			} as Threat )
 		).toMatchObject( {
-			signature_id: '123',
+			signatureId: '123',
 			language: 'php',
 			payload: 'generic',
 			family: 'obfuscated_fopo',
@@ -48,7 +48,7 @@ describe( 'getThreatSignatureComponents', () => {
 				signature: '(123)php_generic_foo_bar_baz_001',
 			} as Threat )
 		).toMatchObject( {
-			signature_id: '123',
+			signatureId: '123',
 			language: 'php',
 			payload: 'generic',
 			family: 'foo_bar_baz',
