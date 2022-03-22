@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { stringify } from 'qs';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
@@ -17,10 +18,7 @@ import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparis
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
-import {
-	emailManagementInDepthComparison,
-	emailManagementPurchaseNewEmailAccount,
-} from 'calypso/my-sites/email/paths';
+import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
@@ -109,16 +107,8 @@ const EmailProvidersStackedComparison = ( {
 			} )
 		);
 
-		page(
-			emailManagementPurchaseNewEmailAccount(
-				selectedSite.slug,
-				selectedDomainName,
-				currentRoute,
-				null,
-				selectedEmailProviderSlug,
-				newIntervalLength
-			)
-		);
+		const queryString = stringify( { interval: newIntervalLength } );
+		page( `${ currentRoute }?${ queryString }` );
 	};
 
 	const handleCompareClick = () => {
