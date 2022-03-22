@@ -651,6 +651,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/import@workspace:packages/import":
+  version: 0.0.0-use.local
+  resolution: "@automattic/import@workspace:packages/import"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@testing-library/jest-dom": ^5.16.2
+    "@testing-library/react": ^12.1.3
+    "@testing-library/react-hooks": 7.0.2
+    "@types/react": ^17.0.39
+    "@wordpress/compose": ^5.0.7
+    "@wordpress/i18n": ^4.2.4
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-test-renderer: ^17.0.2
+    tslib: ^2.3.0
+    typescript: ^4.5.5
+  languageName: unknown
+  linkType: soft
+
 "@automattic/inline-help@workspace:apps/inline-help":
   version: 0.0.0-use.local
   resolution: "@automattic/inline-help@workspace:apps/inline-help"
