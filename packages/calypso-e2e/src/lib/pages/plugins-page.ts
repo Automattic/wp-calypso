@@ -166,6 +166,7 @@ export class PluginsPage {
 
 		await this.page.fill( selectors.searchInput, query );
 		await this.page.press( selectors.searchInput, 'Enter' );
+		await this.page.waitForSelector( selectors.searchResultTitle( query ) );
 	}
 
 	/**
@@ -230,11 +231,11 @@ export class PluginsPage {
 	async togglePluginAttribute( target: PluginAttributes, state: PluginState ): Promise< void > {
 		const toggleLocator = this.page.locator( selectors.pluginToggle( target ) );
 
-		const currentState = await this.isToggled( toggleLocator );
+		const isToggled = await this.isToggled( toggleLocator );
 
 		// Only perform action if  the current state and
 		// target state differ.
-		if ( ( state === 'on' && ! currentState ) || ( state === 'off' && currentState ) ) {
+		if ( ( state === 'on' && ! isToggled ) || ( state === 'off' && isToggled ) ) {
 			await toggleLocator.click();
 		}
 	}
