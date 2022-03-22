@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
