@@ -96,7 +96,7 @@ export function getLanguageSlugs() {
  * @param {string} langSlug Locale slug for the language
  * @returns {string} Mapped language slug
  */
-export function getMappedLanguageSlug( langSlug: string ) {
+export function getMappedLanguageSlug( langSlug: string | undefined ) {
 	// See pxLjZ-6UQ-p2 for details.
 	if ( langSlug === 'no' ) {
 		return 'nb';
