@@ -3,7 +3,7 @@ import { SignatureComponents, Threat, ThreatFix, ThreatType } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 export const getThreatSignatureComponents = ( threat: Threat ): SignatureComponents | null => {
-	// (signatureid)?(language)_(payload)_(family[^_]+)_[variant]
+	// ([signatureId])?[language]_[payload]_[family]_[variant]
 	const signatureRegex = /(?:\(([^)]+)\))?([^_]+)_([^_]+)_(.+)_(.+)/g;
 	const signatureRegexResult = signatureRegex.exec( threat.signature );
 
