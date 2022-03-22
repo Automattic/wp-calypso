@@ -135,6 +135,7 @@ export function getOptionInfo( {
 			};
 			break;
 		default:
+			const availabilityNotice = getAvailabilityNotice( domain, availability );
 			transferContent = {
 				...optionInfo.transferNotSupported,
 				topText: availabilityNotice.message,
