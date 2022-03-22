@@ -3,11 +3,10 @@
  */
 import {
 	CheckoutProvider,
-	Checkout,
-	CheckoutStepArea,
-	getDefaultPaymentMethodStep,
-	CheckoutStep,
+	CheckoutStepGroup,
+	PaymentMethodStep,
 	makeSuccessResponse,
+	CheckoutFormSubmit,
 } from '@automattic/composite-checkout';
 import '@testing-library/jest-dom/extend-expect';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
@@ -20,7 +19,6 @@ import { createReduxStore } from 'calypso/state';
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 	const store = createReduxStore();
 	const queryClient = new QueryClient();
-	const paymentMethodStepProps = getDefaultPaymentMethodStep();
 	return (
 		<ReduxProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
@@ -29,11 +27,10 @@ function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 					initiallySelectedPaymentMethodId={ paymentMethods[ 0 ].id }
 					paymentProcessors={ paymentProcessors ?? {} }
 				>
-					<Checkout>
-						<CheckoutStepArea>
-							<CheckoutStep { ...paymentMethodStepProps } />
-						</CheckoutStepArea>
-					</Checkout>
+					<CheckoutStepGroup>
+						<PaymentMethodStep />
+						<CheckoutFormSubmit />
+					</CheckoutStepGroup>
 				</CheckoutProvider>
 			</QueryClientProvider>
 		</ReduxProvider>
