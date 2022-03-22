@@ -726,6 +726,8 @@ class Signup extends Component {
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const olarkIdentity = config( 'olark_chat_identity' );
+		const isEligibleForOlarkChat =
+			'onboarding' === this.props.flowName && 'en' === this.props.localeSlug;
 
 		return (
 			<>
@@ -755,7 +757,7 @@ class Signup extends Component {
 						/>
 					) }
 				</div>
-				{ 'onboarding' === this.props.flowName && <OlarkChat identity={ olarkIdentity } /> }
+				{ isEligibleForOlarkChat && <OlarkChat identity={ olarkIdentity } /> }
 			</>
 		);
 	}
