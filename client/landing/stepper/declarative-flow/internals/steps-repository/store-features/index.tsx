@@ -28,9 +28,10 @@ const StoreFeatures: Step = function StartingPointStep( { navigation } ) {
 	const { setStoreType } = useDispatch( ONBOARD_STORE );
 
 	const submitIntent = ( storeType: string ) => {
+		const providedDependencies = { storeType };
 		setStoreType( storeType );
 		recordTracksEvent( 'calypso_signup_store_feature_select', { store_feature: storeType } );
-		submit?.( storeType );
+		submit?.( providedDependencies, storeType );
 	};
 
 	return (

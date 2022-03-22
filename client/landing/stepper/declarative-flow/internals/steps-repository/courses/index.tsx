@@ -13,12 +13,17 @@ import './style.scss';
  * The courses step
  */
 const CoursesStep: Step = function CoursesStep( { navigation } ) {
-	const { goBack, goNext } = navigation;
+	const { goBack, goNext, submit } = navigation;
 	const translate = useTranslate();
 	const isMobile = useViewportMatch( 'small', '<' );
 	const courseSlug = COURSE_SLUGS.BLOGGING_QUICK_START;
 	const { isCourseComplete } = useCourseData( courseSlug );
 	const hideSkip = isMobile && isCourseComplete;
+
+	const onStartWriting = () => {
+		submit?.();
+		goNext();
+	};
 
 	return (
 		<StepContainer
@@ -37,7 +42,10 @@ const CoursesStep: Step = function CoursesStep( { navigation } ) {
 					areVideosTranslated={ false }
 					HeaderBar={ CoursesHeader }
 					FooterBar={ () => (
-						<CoursesFooter isCourseComplete={ isCourseComplete } onStartWriting={ goNext } />
+						<CoursesFooter
+							isCourseComplete={ isCourseComplete }
+							onStartWriting={ onStartWriting }
+						/>
 					) }
 				/>
 			}

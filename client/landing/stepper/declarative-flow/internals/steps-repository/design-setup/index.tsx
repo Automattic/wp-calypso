@@ -166,7 +166,13 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
-			setDesignOnSite( siteSlug, _selectedDesign ).then( () => submit?.() );
+			setDesignOnSite( siteSlug, _selectedDesign ).then( () => {
+				const providedDependencies = {
+					selectedDesign: _selectedDesign,
+					selectedSiteCategory: categorization.selection,
+				};
+				submit?.( providedDependencies );
+			} );
 		}
 	}
 

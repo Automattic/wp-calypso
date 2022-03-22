@@ -1,4 +1,7 @@
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useSelect } from '@wordpress/data';
+import { reduce, snakeCase } from 'lodash';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE } from '../stores';
@@ -29,7 +32,9 @@ export const siteSetupFlow: Flow = {
 		const siteSlug = useSiteSlugParam();
 		const { FSEActive } = useFSEStatus();
 
-		function submit( ...params: string[] ) {
+		function submit( providedDependencies: Record< string, unknown > = {}, ...params: string[] ) {
+			recordSubmitStep( providedDependencies );
+
 			switch ( currentStep ) {
 				case 'options': {
 					if ( intent === 'sell' ) {
@@ -151,6 +156,64 @@ export const siteSetupFlow: Flow = {
 		const goToStep = ( step: StepPath ) => {
 			navigate( step );
 		};
+
+		function recordSubmitStep( providedDependencies: Record< string, unknown > = {} ) {
+			const device = resolveDeviceTypeByViewPort();
+			const inputs = reduce(
+				providedDependencies,
+				( props, propValue, propName ) => {
+					propName = snakeCase( propName );
+
+					if ( currentStep === 'from-url' && propName === 'site_preview_image_blob' ) {
+						/**
+						 * There's no need to include a resource ID in our event.
+						 * Just record that a preview was fetched
+						 *
+						 * @see the `sitePreviewImageBlob` dependency
+						 */
+						propName = 'site_preview_image_fetched';
+						propValue = !! propValue;
+					}
+
+					// Ensure we don't capture identifiable user data we don't need.
+					if ( propName === 'email' ) {
+						propName = `user_entered_${ propName }`;
+						propValue = !! propValue;
+					}
+
+					if ( propName === 'cart_item' && propValue?.product_slug === WPCOM_DIFM_LITE ) {
+						const { extra, ...otherProps } = propValue;
+						propValue = otherProps;
+					}
+
+					if (
+						[ 'cart_item', 'domain_item' ].includes( propName ) &&
+						typeof propValue !== 'string'
+					) {
+						propValue = Object.entries( propValue || {} )
+							.map( ( pair ) => pair.join( ':' ) )
+							.join( ',' );
+					}
+
+					if ( propName === 'selected_design' ) {
+						propValue = propValue.slug;
+					}
+
+					return {
+						...props,
+						[ propName ]: propValue,
+					};
+				},
+				{}
+			);
+
+			recordTracksEvent( 'calypso_signup_actions_submit_step', {
+				device,
+				step: currentStep,
+				intent,
+				...inputs,
+			} );
+		}
 
 		return { goNext, goBack, goToStep, submit };
 	},

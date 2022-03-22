@@ -45,7 +45,12 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 				blogname: siteTitle,
 				blogdescription: tagline,
 			} );
-			submit?.();
+			recordTracksEvent( 'calypso_signup_site_options_submit', {
+				has_site_title: !! siteTitle,
+				has_tagline: !! tagline,
+			} );
+
+			submit?.( { siteTitle, tagline } );
 		}
 	};
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {

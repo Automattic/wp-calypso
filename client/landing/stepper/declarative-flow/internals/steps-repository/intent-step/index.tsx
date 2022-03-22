@@ -29,7 +29,7 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 		const providedDependencies = { intent };
 		recordTracksEvent( 'calypso_signup_intent_select', providedDependencies );
 		setIntent( intent );
-		submit?.( intent );
+		submit?.( providedDependencies, intent );
 	};
 
 	return (
