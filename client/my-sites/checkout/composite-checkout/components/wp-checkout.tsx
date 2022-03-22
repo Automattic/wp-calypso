@@ -343,38 +343,42 @@ export default function WPCheckout( {
 	}
 
 	return (
-		<CheckoutStepGroup areStepsActive={ ! isOrderReviewActive }>
-			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
-				<CheckoutErrorBoundary
-					errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
-					onError={ onSummaryError }
-				>
-					<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
-						<CheckoutSummaryTitle>
-							<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-							{ translate( 'Purchase Details' ) }
-							<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-						</CheckoutSummaryTitle>
-						<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-							{ total.amount.displayValue }
-						</CheckoutSummaryTitlePrice>
-					</CheckoutSummaryTitleLink>
-					<CheckoutSummaryBody>
-						<WPCheckoutOrderSummary
-							siteId={ siteId }
-							onChangePlanLength={ changePlanLength }
-							nextDomainIsFree={ responseCart?.next_domain_is_free }
-						/>
-						<SecondaryCartPromotions
-							responseCart={ responseCart }
-							addItemToCart={ addItemToCart }
-							isCartPendingUpdate={ isCartPendingUpdate }
-						/>
-						<CheckoutHelpLink />
-						<CheckoutNextSteps responseCart={ responseCart } />
-					</CheckoutSummaryBody>
-				</CheckoutErrorBoundary>
-			</CheckoutSummaryArea>
+		<CheckoutStepGroup
+			areStepsActive={ ! isOrderReviewActive }
+			stepAreaHeader={
+				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+					<CheckoutErrorBoundary
+						errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
+						onError={ onSummaryError }
+					>
+						<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
+							<CheckoutSummaryTitle>
+								<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+								{ translate( 'Purchase Details' ) }
+								<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+							</CheckoutSummaryTitle>
+							<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
+								{ total.amount.displayValue }
+							</CheckoutSummaryTitlePrice>
+						</CheckoutSummaryTitleLink>
+						<CheckoutSummaryBody>
+							<WPCheckoutOrderSummary
+								siteId={ siteId }
+								onChangePlanLength={ changePlanLength }
+								nextDomainIsFree={ responseCart?.next_domain_is_free }
+							/>
+							<SecondaryCartPromotions
+								responseCart={ responseCart }
+								addItemToCart={ addItemToCart }
+								isCartPendingUpdate={ isCartPendingUpdate }
+							/>
+							<CheckoutHelpLink />
+							<CheckoutNextSteps responseCart={ responseCart } />
+						</CheckoutSummaryBody>
+					</CheckoutErrorBoundary>
+				</CheckoutSummaryArea>
+			}
+		>
 			{ infoMessage }
 			<CheckoutStepBody
 				onError={ onReviewError }
