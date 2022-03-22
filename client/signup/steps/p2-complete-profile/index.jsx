@@ -57,6 +57,16 @@ function P2CompleteProfile( {
 		goToNextStep();
 	};
 
+	const handleSkipBtnClick = () => {
+		submitSignupStep( {
+			stepName: stepName,
+		} );
+
+		recordTracksEvent( 'calypso_signup_p2_complete_profile_skip_button_click' );
+
+		goToNextStep();
+	};
+
 	return (
 		<P2StepWrapper
 			flowName={ flowName }
@@ -112,15 +122,7 @@ function P2CompleteProfile( {
 								<Button
 									className="p2-complete-profile__skip-btn"
 									variant="link"
-									onClick={ () => {
-										submitSignupStep( {
-											stepName: stepName,
-										} );
-
-										recordTracksEvent( 'calypso_signup_p2_complete_profile_skip_button_click' );
-
-										goToNextStep();
-									} }
+									onClick={ handleSkipBtnClick }
 								/>
 							),
 						}
