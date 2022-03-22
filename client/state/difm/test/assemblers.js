@@ -1,0 +1,69 @@
+import { expect } from 'chai';
+import { createDIFMCartExtrasObject } from '../assemblers';
+
+describe( 'assembler', () => {
+	test( 'should convert dependencies and difm state to the extras object when difm state is empty', () => {
+		const difmState = {};
+		const dependencies = {
+			newOrExistingSiteChoice: false,
+			siteTitle: 'test title',
+			siteDescription: 'test tagline',
+			selectedDesign: { theme: 'test theme' },
+			selectedSiteCategory: 'test category',
+			isLetUsChooseSelected: false,
+			twitterUrl: 'test twitterUrl',
+			facebookUrl: 'test facebookUrl',
+			linkedinUrl: 'test linkedinUrl',
+			instagramUrl: 'test instagramUrl',
+			displayEmail: 'test displayEmail',
+			displayPhone: 'test displayPhone',
+			displayAddress: 'test displayAddress',
+		};
+		expect( createDIFMCartExtrasObject( difmState, dependencies ) ).to.be.eql( {
+			twitter_url: 'test twitterUrl',
+			facebook_url: 'test facebookUrl',
+			linkedin_url: 'test linkedinUrl',
+			instagram_url: 'test instagramUrl',
+			display_email: 'test displayEmail',
+			display_phone: 'test displayPhone',
+			display_address: 'test displayAddress',
+			let_us_choose_selected: false,
+			new_or_existing_site_choice: false,
+			selected_design: 'test theme',
+			site_category: 'test category',
+			site_description: 'test tagline',
+			site_title: 'test title',
+		} );
+	} );
+
+	test( 'should convert dependencies and difm state to the extras object when difm state is not empty', () => {
+		const difmState = {
+			socialProfiles: {
+				TWITTER: 'test twitterUrl',
+				FACEBOOK: 'test facebookUrl',
+				LINKEDIN: 'test linkedinUrl',
+				INSTAGRAM: 'test instagramUrl',
+			},
+		};
+		const dependencies = {
+			newOrExistingSiteChoice: false,
+			siteTitle: 'test title',
+			tagline: 'test tagline',
+			selectedDesign: { theme: 'test theme' },
+			selectedSiteCategory: 'test category',
+			isLetUsChooseSelected: false,
+		};
+		expect( createDIFMCartExtrasObject( difmState, dependencies ) ).to.be.eql( {
+			twitter_url: 'test twitterUrl',
+			facebook_url: 'test facebookUrl',
+			linkedin_url: 'test linkedinUrl',
+			instagram_url: 'test instagramUrl',
+			let_us_choose_selected: false,
+			new_or_existing_site_choice: false,
+			selected_design: 'test theme',
+			site_category: 'test category',
+			site_description: 'test tagline',
+			site_title: 'test title',
+		} );
+	} );
+} );
