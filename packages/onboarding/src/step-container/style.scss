@@ -29,19 +29,19 @@ $gray-60: #50575e;
 		justify-content: space-between;
 		margin-top: 44px;
 		max-width: 1024px;
-		padding: 0 20px 60px;
-
-		.step-container__header {
-			padding-right: 20px;
-		}
+		padding: 0 20px;
 
 		@include break-small {
-			padding: 0 20px;
 			margin-top: 25vh;
 			display: flex;
 
+			&.has-navigation {
+				padding-bottom: 60px;
+			}
+
 			.step-container__header {
 				margin-top: 0;
+				padding-right: 20px;
 			}
 		}
 	}
@@ -49,18 +49,6 @@ $gray-60: #50575e;
 	.step-container__buttons {
 		text-align: center;
 		margin-bottom: 20px;
-	}
-
-	// On small screens remove the margin from the
-	// bottom of the cards.
-	@include break-small {
-		.card {
-			margin-bottom: 0;
-		}
-
-		&.has-navigation {
-			padding-bottom: 60px;
-		}
 	}
 
 	.step-container__skip-hr {
@@ -91,7 +79,6 @@ $gray-60: #50575e;
 		display: block;
 		justify-content: space-between;
 		align-items: center;
-		flex-basis: 50%;
 
 		.formatted-header {
 			margin: 0;
@@ -120,7 +107,7 @@ $gray-60: #50575e;
 				line-height: 24px;
 
 				@include break-small {
-					margin: 8px 0 0;
+					margin: 16px 0 0;
 				}
 			}
 		}
@@ -137,6 +124,12 @@ $gray-60: #50575e;
 
 			@include break-small {
 				display: block;
+
+				// Fix overflow caused by header_image
+				img {
+					height: auto;
+					max-width: 100%;
+				}
 			}
 		}
 
@@ -214,6 +207,5 @@ $gray-60: #50575e;
 	.step-container__content {
 		margin-top: 0;
 		display: block;
-		flex-basis: 50%;
 	}
 }

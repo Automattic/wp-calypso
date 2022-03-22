@@ -15,50 +15,61 @@ body {
 	text-rendering: optimizeLegibility;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
+
+	// Basic stylings
 	margin: 0;
-}
-
-.step-container {
-	--color-accent: #117ac9;
-	--color-accent-60: #0e64a5;
-}
-
-.signup-header {
-	.wordpress-logo {
-		position: absolute;
-		left: 20px;
-		top: 20px;
-		fill: var( --color-text );
-		stroke: var( --color-text );
-		transform-origin: 0 0;
-	}
-
-	.signup-header__right {
-		top: 22px;
-		right: 20px;
-
-		.flow-progress-indicator {
-			font-weight: 500;
-			/* stylelint-disable-line */
-			font-size: 0.875rem;
-			color: var( --studio-gray-30 );
-		}
-	}
-
-	@include break-small {
-		.wordpress-logo {
-			left: 24px;
-		}
-
-		.signup-header__right {
-			right: 24px;
-		}
-	}
+	line-height: 1.5;
 }
 
 /**
  * Site Setup
  */
 .site-setup {
+	position: relative;
 	padding: 48px 0 0;
+	box-sizing: border-box;
+
+	/**
+ 	 * Signup Header
+ 	 */
+	.signup-header {
+		.wordpress-logo {
+			position: absolute;
+			left: 20px;
+			top: 20px;
+			fill: var( --color-text );
+			stroke: var( --color-text );
+			transform-origin: 0 0;
+		}
+
+		.signup-header__right {
+			top: 22px;
+			right: 20px;
+
+			.flow-progress-indicator {
+				font-weight: 500;
+				/* stylelint-disable-line */
+				font-size: 0.875rem;
+				color: var( --studio-gray-30 );
+			}
+		}
+
+		@include break-small {
+			.wordpress-logo {
+				left: 24px;
+			}
+
+			.signup-header__right {
+				right: 24px;
+			}
+		}
+	}
+
+	/**
+ 	 * Step Container
+ 	 */
+	.step-container {
+		--color-accent: #117ac9;
+		--color-accent-60: #0e64a5;
+	}
 }

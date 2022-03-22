@@ -22,6 +22,10 @@
 	position: relative;
 	padding: 24px 0;
 
+	p {
+		margin: 0;
+	}
+
 	@include break-small {
 		width: 342px;
 	}
