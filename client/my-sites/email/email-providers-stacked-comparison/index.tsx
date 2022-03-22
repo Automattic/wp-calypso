@@ -35,7 +35,7 @@ export type EmailProvidersStackedComparisonProps = {
 	isDomainInCart?: boolean;
 	selectedDomainName: string;
 	selectedEmailProviderSlug?: string;
-	selectedIntervalLength?: IntervalLength | undefined;
+	selectedIntervalLength?: IntervalLength;
 	source: string;
 };
 
