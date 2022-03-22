@@ -9,7 +9,8 @@
 /**
  * General onboarding styling
  */
-body {
+body,
+button {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
 		'Cantarell', 'Helvetica Neue', sans-serif;
 	text-rendering: optimizeLegibility;
@@ -20,13 +21,29 @@ body {
 	margin: 0;
 	line-height: 1.5;
 
-	h1, h2, p {
+	h1,
+	h2,
+	h3,
+	p {
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
+			'Cantarell', 'Helvetica Neue', sans-serif;
+		font-weight: 400;
 		margin: 0;
 	}
 
-	a, a:visited {
+	a,
+	a:visited {
 		text-decoration: none;
 		color: var( --color-link );
+	}
+
+	button {
+		background-color: transparent;
+		border: none;
+	}
+
+	ul {
+		padding: 0;
 	}
 }
 
@@ -37,6 +54,20 @@ body {
 	position: relative;
 	padding: 48px 0 0;
 	box-sizing: border-box;
+
+	&.courses {
+		padding: 0;
+
+		.signup-header {
+			z-index: 1;
+			color: #fff;
+
+			svg path {
+				fill: #fff;
+				stroke: #fff;
+			}
+		}
+	}
 
 	/**
  	 * Signup Header

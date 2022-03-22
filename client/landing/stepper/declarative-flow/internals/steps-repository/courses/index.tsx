@@ -5,7 +5,6 @@ import VideosUi from 'calypso/components/videos-ui';
 import { COURSE_SLUGS, useCourseData } from 'calypso/data/courses';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CoursesFooter from './footer';
-import CoursesHeader from './header';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -36,7 +35,7 @@ const CoursesStep: Step = function CoursesStep( { navigation } ) {
 				<VideosUi
 					courseSlug={ courseSlug }
 					areVideosTranslated={ false }
-					HeaderBar={ CoursesHeader }
+					HeaderBar={ () => null }
 					FooterBar={ () => (
 						<CoursesFooter
 							isCourseComplete={ isCourseComplete }
