@@ -55,7 +55,7 @@ const TitanNewMailbox = ( {
 	const [ nameFieldTouched, setNameFieldTouched ] = useState( false );
 	const [ passwordFieldTouched, setPasswordFieldTouched ] = useState( false );
 	const [ showAlternateEmail, setShowAlternateEmail ] = useState( false );
-	const primaryEmail = useSelector( getCurrentUserEmail );
+	const userEmail = useSelector( getCurrentUserEmail );
 
 	const hasAlternativeEmailError =
 		( alternativeEmailFieldTouched || showAllErrors ) &&
@@ -70,10 +70,9 @@ const TitanNewMailbox = ( {
 
 	const showIsAdminToggle = false;
 
-	const showAlternativeEmailField = () => {
-		hiddenFieldNames = hiddenFieldNames.filter( ( field ) => field === TITAN_PASSWORD_RESET_FIELD );
+	const showAlternateEmailField = () => {
 		setShowAlternateEmail( true );
-		onMailboxValueChange( 'alternativeEmail', primaryEmail );
+		onMailboxValueChange( 'alternativeEmail', userEmail );
 		setAlternativeEmailFieldTouched( true );
 	};
 
@@ -140,26 +139,29 @@ const TitanNewMailbox = ( {
 						/>
 					</FormLabel>
 					{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
-					{ hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD ) && ! showAlternateEmail && (
-						<FormSettingExplanation>
-							{ translate( 'Your password reset email is {{strong}}%(primaryEmail)s{{/strong}}.', {
-								args: {
-									primaryEmail,
-								},
-								components: {
-									strong: <strong />,
-								},
-							} ) }
-							<Button
-								primary
-								className="titan-new-mailbox__show-alternate-email"
-								borderless
-								onClick={ showAlternativeEmailField }
-							>
-								{ translate( 'Change it' ) }
-							</Button>
-						</FormSettingExplanation>
-					) }
+					{ ( showAlternateEmail || hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD ) ) &&
+						! showAlternateEmail && (
+							<FormSettingExplanation>
+								{ translate( 'Your password reset email is {{strong}}%(userEmail)s{{/strong}}.', {
+									args: {
+										userEmail,
+									},
+									components: {
+										strong: <strong />,
+									},
+								} ) }
+								<a
+									className="titan-new-mailbox__show-alternate-email"
+									href
+									onClick={ showAlternateEmailField }
+								>
+									{ ' ' }
+									{ translate( 'Change it', {
+										context: 'Button to show an input field to change an email',
+									} ) }
+								</a>
+							</FormSettingExplanation>
+						) }
 				</FormFieldset>
 				{ showIsAdminToggle && (
 					<FormFieldset>
