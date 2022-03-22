@@ -273,6 +273,7 @@ export function Checkout( {
 
 export const CheckoutStep = ( {
 	activeStepContent,
+	activeStepFooter,
 	completeStepContent,
 	titleContent,
 	stepId,
@@ -350,7 +351,12 @@ export const CheckoutStep = ( {
 			titleContent={ titleContent }
 			goToThisStep={ areStepsActive ? goToThisStep : undefined }
 			goToNextStep={ nextStepNumber && nextStepNumber > 0 ? goToNextStep : undefined }
-			activeStepContent={ activeStepContent }
+			activeStepContent={
+				<>
+					{ activeStepContent }
+					{ activeStepFooter }
+				</>
+			}
 			formStatus={ formStatus }
 			completeStepContent={ completeStepContent }
 			className={ joinClasses( classNames ) }
