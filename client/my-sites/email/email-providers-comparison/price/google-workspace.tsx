@@ -19,7 +19,6 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import type { SiteDomain } from 'calypso/state/sites/domains/types';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -30,7 +29,7 @@ const getGoogleWorkspaceProductSlug = ( intervalLength: IntervalLength ): string
 };
 
 type GoogleWorkspacePriceProps = {
-	domain: SiteDomain | undefined;
+	domain?: SiteDomain;
 	isDomainInCart?: boolean;
 	intervalLength: IntervalLength;
 };

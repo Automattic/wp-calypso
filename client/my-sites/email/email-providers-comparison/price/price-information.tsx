@@ -82,33 +82,22 @@ const FreeTrialPriceInformation = ( {
 			"%(firstRenewalPrice)s and %(standardPrice)s are formatted prices with the currency (e.g. '$5')",
 	};
 
-	if ( isGoogleWorkspace( product ) ) {
+	if ( isGoogleWorkspace( product ) || ! isTitanMonthlyProduct( product ) ) {
 		return (
 			<div className="price-information__free-trial">
 				{ translate(
-					'Try it for free today - renews at %(firstRenewalPrice)s in one month, and then at %(standardPrice)s every year',
+					'Try free today - first renewal at %(firstRenewalPrice)s after trial, regular price %(standardPrice)s per year',
 					translateArguments
 				) }
 			</div>
 		);
 	}
 
-	if ( isTitanMail( product ) ) {
-		if ( isTitanMonthlyProduct( product ) ) {
-			return (
-				<div className="price-information__free-trial">
-					{ translate(
-						'Try it for free today - renews at %(standardPrice)s in three months',
-						translateArguments
-					) }
-				</div>
-			);
-		}
-
+	if ( isTitanMonthlyProduct( product ) ) {
 		return (
 			<div className="price-information__free-trial">
 				{ translate(
-					'Try it for free today - renews at %(firstRenewalPrice)s in three months, and then at %(standardPrice)s every year',
+					'Try free today - renews at %(standardPrice)s after trial',
 					translateArguments
 				) }
 			</div>
@@ -122,7 +111,7 @@ const PriceInformation = ( {
 	domain,
 	product,
 }: {
-	domain: SiteDomain;
+	domain?: SiteDomain;
 	product: ProductListItem | null;
 } ): ReactElement | null => {
 	if ( ! product ) {
