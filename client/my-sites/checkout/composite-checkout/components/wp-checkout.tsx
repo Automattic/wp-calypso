@@ -6,10 +6,8 @@ import {
 	Button,
 	useTransactionStatus,
 	TransactionStatus,
-	Checkout,
 	CheckoutStep,
-	CheckoutStepArea,
-	CheckoutSteps,
+	CheckoutStepGroup,
 	CheckoutStepBody,
 	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	getDefaultPaymentMethodStep,
@@ -345,7 +343,7 @@ export default function WPCheckout( {
 	}
 
 	return (
-		<Checkout>
+		<CheckoutStepGroup areStepsActive={ ! isOrderReviewActive }>
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 				<CheckoutErrorBoundary
 					errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
@@ -377,87 +375,108 @@ export default function WPCheckout( {
 					</CheckoutSummaryBody>
 				</CheckoutErrorBoundary>
 			</CheckoutSummaryArea>
-			<CheckoutStepArea
-				submitButtonHeader={ <SubmitButtonHeader /> }
-				submitButtonFooter={ <SubmitButtonFooter /> }
-				disableSubmitButton={ isOrderReviewActive }
-			>
-				{ infoMessage }
-				<CheckoutStepBody
-					onError={ onReviewError }
-					className="wp-checkout__review-order-step"
-					stepId="review-order-step"
-					isStepActive={ isOrderReviewActive }
-					isStepComplete={ true }
-					goToThisStep={
-						isJetpackCheckout ? undefined : () => setIsOrderReviewActive( ! isOrderReviewActive )
-					}
-					goToNextStep={
-						isJetpackCheckout
-							? undefined
-							: () => {
-									setIsOrderReviewActive( ! isOrderReviewActive );
-									reduxDispatch(
-										recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-											step: 0,
-											step_name: 'review-order-step',
-										} )
-									);
-							  }
-					}
-					titleContent={ <OrderReviewTitle /> }
+			{ infoMessage }
+			<CheckoutStepBody
+				onError={ onReviewError }
+				className="wp-checkout__review-order-step"
+				stepId="review-order-step"
+				isStepActive={ isOrderReviewActive }
+				isStepComplete={ true }
+				goToThisStep={
+					isJetpackCheckout ? undefined : () => setIsOrderReviewActive( ! isOrderReviewActive )
+				}
+				goToNextStep={
+					isJetpackCheckout
+						? undefined
+						: () => {
+								setIsOrderReviewActive( ! isOrderReviewActive );
+								reduxDispatch(
+									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+										step: 0,
+										step_name: 'review-order-step',
+									} )
+								);
+						  }
+				}
+				titleContent={ <OrderReviewTitle /> }
+				activeStepContent={
+					isJetpackCheckout ? null : (
+						<WPCheckoutOrderReview
+							removeProductFromCart={ removeProductFromCart }
+							couponFieldStateProps={ couponFieldStateProps }
+							onChangePlanLength={ changePlanLength }
+							siteUrl={ siteUrl }
+							siteId={ siteId }
+							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							isJetpackCheckout={ isJetpackCheckout }
+						/>
+					)
+				}
+				completeStepContent={
+					isJetpackCheckout ? (
+						<WPCheckoutOrderReview
+							removeProductFromCart={ removeProductFromCart }
+							couponFieldStateProps={ couponFieldStateProps }
+							onChangePlanLength={ changePlanLength }
+							siteUrl={ siteUrl }
+							siteId={ siteId }
+							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							isJetpackCheckout={ isJetpackCheckout }
+						/>
+					) : (
+						<WPCheckoutOrderReview
+							isSummary
+							removeProductFromCart={ removeProductFromCart }
+							couponFieldStateProps={ couponFieldStateProps }
+							siteUrl={ siteUrl }
+							isJetpackCheckout={ isJetpackCheckout }
+						/>
+					)
+				}
+				editButtonText={ String( translate( 'Edit' ) ) }
+				editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
+				nextStepButtonText={ String( translate( 'Save order' ) ) }
+				nextStepButtonAriaLabel={ String( translate( 'Save your order' ) ) }
+				validatingButtonText={ validatingButtonText }
+				validatingButtonAriaLabel={ validatingButtonText }
+				formStatus={ formStatus }
+			/>
+			{ contactDetailsType !== 'none' && (
+				<CheckoutStep
+					stepId={ 'contact-form' }
+					isCompleteCallback={ async () => {
+						setShouldShowContactDetailsValidationErrors( true );
+						// Touch the fields so they display validation errors
+						touchContactFields();
+						updateCartContactDetails();
+						return validateContactDetails(
+							contactInfo,
+							isLoggedOutCart,
+							responseCart,
+							showErrorMessageBriefly,
+							applyDomainContactValidationResults,
+							clearDomainContactErrorMessages,
+							reduxDispatch,
+							translate,
+							true
+						).then( ( response ) => {
+							if ( response ) {
+								reduxDispatch(
+									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+										step: 1,
+										step_name: 'contact-form',
+									} )
+								);
+							}
+							return response;
+						} );
+					} }
 					activeStepContent={
-						isJetpackCheckout ? null : (
-							<WPCheckoutOrderReview
-								removeProductFromCart={ removeProductFromCart }
-								couponFieldStateProps={ couponFieldStateProps }
-								onChangePlanLength={ changePlanLength }
-								siteUrl={ siteUrl }
-								siteId={ siteId }
-								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-								isJetpackCheckout={ isJetpackCheckout }
-							/>
-						)
-					}
-					completeStepContent={
-						isJetpackCheckout ? (
-							<WPCheckoutOrderReview
-								removeProductFromCart={ removeProductFromCart }
-								couponFieldStateProps={ couponFieldStateProps }
-								onChangePlanLength={ changePlanLength }
-								siteUrl={ siteUrl }
-								siteId={ siteId }
-								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-								isJetpackCheckout={ isJetpackCheckout }
-							/>
-						) : (
-							<WPCheckoutOrderReview
-								isSummary
-								removeProductFromCart={ removeProductFromCart }
-								couponFieldStateProps={ couponFieldStateProps }
-								siteUrl={ siteUrl }
-								isJetpackCheckout={ isJetpackCheckout }
-							/>
-						)
-					}
-					editButtonText={ String( translate( 'Edit' ) ) }
-					editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
-					nextStepButtonText={ String( translate( 'Save order' ) ) }
-					nextStepButtonAriaLabel={ String( translate( 'Save your order' ) ) }
-					validatingButtonText={ validatingButtonText }
-					validatingButtonAriaLabel={ validatingButtonText }
-					formStatus={ formStatus }
-				/>
-				<CheckoutSteps areStepsActive={ ! isOrderReviewActive }>
-					{ contactDetailsType !== 'none' && (
-						<CheckoutStep
-							stepId={ 'contact-form' }
-							isCompleteCallback={ async () => {
-								setShouldShowContactDetailsValidationErrors( true );
-								// Touch the fields so they display validation errors
-								touchContactFields();
-								updateCartContactDetails();
-								return validateContactDetails(
+						<WPContactForm
+							countriesList={ countriesList }
+							shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
+							contactValidationCallback={ () =>
+								validateContactDetails(
 									contactInfo,
 									isLoggedOutCart,
 									responseCart,
@@ -466,81 +485,54 @@ export default function WPCheckout( {
 									clearDomainContactErrorMessages,
 									reduxDispatch,
 									translate,
-									true
-								).then( ( response ) => {
-									if ( response ) {
-										reduxDispatch(
-											recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-												step: 1,
-												step_name: 'contact-form',
-											} )
-										);
-									}
-									return response;
-								} );
-							} }
-							activeStepContent={
-								<WPContactForm
-									countriesList={ countriesList }
-									shouldShowContactDetailsValidationErrors={
-										shouldShowContactDetailsValidationErrors
-									}
-									contactValidationCallback={ () =>
-										validateContactDetails(
-											contactInfo,
-											isLoggedOutCart,
-											responseCart,
-											showErrorMessageBriefly,
-											applyDomainContactValidationResults,
-											clearDomainContactErrorMessages,
-											reduxDispatch,
-											translate,
-											false
-										)
-									}
-									contactDetailsType={ contactDetailsType }
-									isLoggedOutCart={ isLoggedOutCart }
-								/>
+									false
+								)
 							}
-							completeStepContent={
-								<WPContactFormSummary
-									areThereDomainProductsInCart={ areThereDomainProductsInCart }
-									isGSuiteInCart={ isGSuiteInCart }
-									isLoggedOutCart={ isLoggedOutCart }
-								/>
-							}
-							titleContent={ <ContactFormTitle /> }
-							editButtonText={ String( translate( 'Edit' ) ) }
-							editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
-							nextStepButtonText={ String( translate( 'Continue' ) ) }
-							nextStepButtonAriaLabel={ String(
-								translate( 'Continue with the entered contact details' )
-							) }
-							validatingButtonText={ validatingButtonText }
-							validatingButtonAriaLabel={ validatingButtonText }
+							contactDetailsType={ contactDetailsType }
+							isLoggedOutCart={ isLoggedOutCart }
 						/>
+					}
+					completeStepContent={
+						<WPContactFormSummary
+							areThereDomainProductsInCart={ areThereDomainProductsInCart }
+							isGSuiteInCart={ isGSuiteInCart }
+							isLoggedOutCart={ isLoggedOutCart }
+						/>
+					}
+					titleContent={ <ContactFormTitle /> }
+					editButtonText={ String( translate( 'Edit' ) ) }
+					editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
+					nextStepButtonText={ String( translate( 'Continue' ) ) }
+					nextStepButtonAriaLabel={ String(
+						translate( 'Continue with the entered contact details' )
 					) }
-					<CheckoutStep
-						stepId="payment-method-step"
-						activeStepContent={
-							<PaymentMethodStep activeStepContent={ paymentMethodStep.activeStepContent } />
-						}
-						completeStepContent={ paymentMethodStep.completeStepContent }
-						titleContent={ paymentMethodStep.titleContent }
-						editButtonText={ String( translate( 'Edit' ) ) }
-						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
-						nextStepButtonText={ String( translate( 'Continue' ) ) }
-						nextStepButtonAriaLabel={ String(
-							translate( 'Continue with the selected payment method' )
-						) }
-						validatingButtonText={ validatingButtonText }
-						validatingButtonAriaLabel={ validatingButtonText }
-						isCompleteCallback={ () => false }
-					/>
-					<CheckoutFormSubmit />
-				</CheckoutSteps>
-			</CheckoutStepArea>
-		</Checkout>
+					validatingButtonText={ validatingButtonText }
+					validatingButtonAriaLabel={ validatingButtonText }
+				/>
+			) }
+			<CheckoutStep
+				stepId="payment-method-step"
+				activeStepContent={
+					<PaymentMethodStep activeStepContent={ paymentMethodStep.activeStepContent } />
+				}
+				completeStepContent={ paymentMethodStep.completeStepContent }
+				titleContent={ paymentMethodStep.titleContent }
+				editButtonText={ String( translate( 'Edit' ) ) }
+				editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
+				nextStepButtonText={ String( translate( 'Continue' ) ) }
+				nextStepButtonAriaLabel={ String(
+					translate( 'Continue with the selected payment method' )
+				) }
+				validatingButtonText={ validatingButtonText }
+				validatingButtonAriaLabel={ validatingButtonText }
+				isCompleteCallback={ () => false }
+			/>
+			<CheckoutFormSubmit
+				submitButtonHeader={ <SubmitButtonHeader /> }
+				submitButtonFooter={ <SubmitButtonFooter /> }
+				disableSubmitButton={ isOrderReviewActive }
+			/>
+		</CheckoutStepGroup>
 	);
 }
 
