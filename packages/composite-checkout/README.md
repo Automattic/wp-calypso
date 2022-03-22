@@ -16,30 +16,30 @@ Or with npm:
 
 This package has four pieces that can be used together or separately:
 
-- A data provider.
-- A multi-step form.
-- A list of payment methods options.
-- A transaction system.
+- [A data provider.](#the-data-provider)
+- [A multi-step form.](#the-multi-step-form)
+- [A list of payment method options.](#the-list-of-payment-method-options)
+- [A transaction system.](#the-transaction-system)
 
-The primary use is to combine all three piece to create a checkout flow with a payment method selection step that can submit a transaction and handle the result, but it is possible to heavily customize this behavior or to use these pieces in other ways.
+The primary use is to combine all these pieces to create a checkout flow with a payment method selection step that can submit a transaction and handle the result, but it is possible to heavily customize this behavior or to use these pieces in other ways.
 
-### The provider
+### The data provider
 
-All this package's React components require being inside of [CheckoutProvider](#CheckoutProvider).
+All this package's React components require being inside of a [CheckoutProvider](#CheckoutProvider).
 
 It has many optional props, but the main ones you need to know are `paymentMethods` and `paymentProcessors`.
 
-`paymentMethods` is an array of [payment method objects](#payment-methods); a special object containing a UI label element for that payment method, an optional form for data that payment method may need, and a submit button for that payment method. The payment method object is purely UI and state; the actual submission of its data will be handled by the payment processor function.
+`paymentMethods` is an array of [payment method objects](#payment-methods). These are a special type of object containing a UI label element for that payment method, an optional form for data that payment method may need, and a submit button for that payment method. The payment method object is purely UI and state; the actual submission of its data will be handled by the payment processor function.
 
-`paymentProcessors` is an object keyed by a special string; the string is defined by payment method objects to select the payment processor function they intend to use. The object's value is an async function which will be called when the submit button in a payment method object is pressed. The payment processor function will return a special value to notify the transaction system about the status of the transaction.
+`paymentProcessors` is an object map of payment processor functions keyed by their id. The key is defined by payment method objects that wish to use the processor. The object's value is an async function which will be called when the submit button in a payment method object is pressed. This function will return a special value to notify the transaction system about the status of the transaction.
 
 ### The multi-step form
 
-The [CheckoutStepGroup](#CheckoutStepGroup) wraps [CheckoutStep](#CheckoutStep) components which can be used to construct a form with multiple steps. Each step contains a UI element (typically with form elements) and an async function that decides if the step is complete (for example, a validation function).
+A [CheckoutStepGroup](#CheckoutStepGroup) can be used to wrap [CheckoutStep](#CheckoutStep) components, creating a form with multiple steps. Each step contains a UI element and an async function that decides if the step is complete.
 
-The steps can contain any sort of data, but one of the steps should be a list of payment method options.
+When the final step is complete, the active payment method's submit button (rendered by [CheckoutFormSubmit](#CheckoutFormSubmit)) will be enabled.
 
-When the final step is complete, the active payment method's submit button will be enabled.
+The steps can contain any sort of data, but one of the steps should typically be a list of payment method options.
 
 ### The list of payment method options
 
