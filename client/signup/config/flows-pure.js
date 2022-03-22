@@ -405,6 +405,7 @@ export function generateFlows( {
 						'new-or-existing-site',
 						'difm-site-picker',
 						'difm-options',
+						'social-profiles',
 						'difm-design-setup-site',
 				  ]
 				: [
