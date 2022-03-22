@@ -18,6 +18,7 @@ import {
 	useIsStepComplete,
 	useTransactionStatus,
 	usePaymentProcessor,
+	CheckoutFormSubmit,
 } from '../src/public-api';
 
 const myContext = createContext();
@@ -549,7 +550,10 @@ function createStepsFromStepObjects( stepObjects, paymentData ) {
 		<Fragment>
 			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 			<CheckoutStepArea>
-				<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
+				<CheckoutSteps>
+					{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+					<CheckoutFormSubmit />
+				</CheckoutSteps>
 			</CheckoutStepArea>
 		</Fragment>
 	);

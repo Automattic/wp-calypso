@@ -9,18 +9,21 @@ import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import { CheckoutProvider } from './components/checkout-provider';
 import {
 	Checkout,
+	CheckoutFormSubmit,
 	CheckoutStep,
 	CheckoutStepArea,
+	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
+	CheckoutStepGroup,
 	CheckoutSteps,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
+	MainContentWrapper,
+	PaymentMethodStep,
+	SubmitButtonWrapper,
 	useIsStepActive,
 	useIsStepComplete,
 	useSetStepComplete,
-	MainContentWrapper,
-	CheckoutStepAreaWrapper,
-	SubmitButtonWrapper,
 } from './components/checkout-steps';
 import CheckoutSubmitButton from './components/checkout-submit-button';
 import {
@@ -62,6 +65,7 @@ export {
 	Checkout,
 	CheckoutCheckIcon,
 	CheckoutErrorBoundary,
+	CheckoutFormSubmit,
 	CheckoutModal,
 	CheckoutOrderSummary,
 	CheckoutOrderSummaryStep,
@@ -72,6 +76,7 @@ export {
 	CheckoutStepArea,
 	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
+	CheckoutStepGroup,
 	CheckoutSteps,
 	CheckoutSubmitButton,
 	CheckoutSummaryArea,
@@ -82,6 +87,7 @@ export {
 	OrderReviewSection,
 	OrderReviewTotal,
 	PaymentLogo,
+	PaymentMethodStep,
 	RadioButton,
 	SubmitButtonWrapper,
 	checkoutTheme,
