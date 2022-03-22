@@ -99,6 +99,7 @@ function P2CompleteProfile( {
 						<div className="p2-complete-profile__form-footer">
 							<Button
 								type="submit"
+								variant="primary"
 								className="p2-complete-profile__form-submit-btn"
 								disabled={ isSubmitting }
 							>
