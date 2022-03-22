@@ -149,23 +149,25 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 					vertical-align: baseline;
 				}
 
-				&__button {
-					margin: 0;
-					border: 0;
-					cursor: pointer;
-					-webkit-appearance: none;
-					transition: box-shadow 0.1s linear;
-					height: 36px;
-					align-items: center;
-					box-sizing: border-box;
-					padding: 6px 12px;
+				&__button-groups {
+					.design-button-cover__button {
+						margin: 6px 0 0;
+						border: 0;
+						cursor: pointer;
+						-webkit-appearance: none;
+						transition: box-shadow 0.1s linear;
+						height: 36px;
+						align-items: center;
+						box-sizing: border-box;
+						padding: 6px 12px;
 
-					&.is-primary {
-						// color: rgb( 255, 255, 255 );
-						white-space: nowrap;
-						text-decoration: none;
-						text-shadow: none;
-						outline: 1px solid transparent;
+						&.is-primary {
+							margin: 0;
+							white-space: nowrap;
+							text-decoration: none;
+							text-shadow: none;
+							outline: 1px solid transparent;
+						}
 					}
 				}
 			}
