@@ -20,6 +20,10 @@
 .signup__step.is-p-2-site {
 	display: flex;
 	flex-direction: column;
+
+	.p2-step-wrapper {
+		padding: 10px 20px;
+	}
 }
 
 .p2-site__wordpress-domain-suffix {

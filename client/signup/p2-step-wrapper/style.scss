@@ -11,7 +11,7 @@
 	flex-direction: column;
 	font-family: var( --p2-font-inter );
 	line-height: 1.8;
-	padding: 10px 20px;
+	padding: 96px 1.5em 24px;
 
 	@include break-mobile {
 		max-width: 440px;
@@ -44,6 +44,10 @@
 	svg path {
 		fill: inherit;
 	}
+}
+
+.p2-step-wrapper button.is-primary {
+	@extend %p2-form-button;
 }
 
 .p2-step-wrapper__header-text {
