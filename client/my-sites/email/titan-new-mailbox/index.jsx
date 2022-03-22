@@ -138,26 +138,24 @@ const TitanNewMailbox = ( {
 						/>
 					</FormLabel>
 					{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
-					{ ( showAlternateEmail || hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD ) ) &&
-						! showAlternateEmail && (
-							<FormSettingExplanation>
-								{ translate( 'Your password reset email is {{strong}}%(userEmail)s{{/strong}}.', {
-									args: {
-										userEmail,
-									},
-									components: {
-										strong: <strong />,
-									},
+					{ hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD ) && ! showAlternateEmail && (
+						<FormSettingExplanation>
+							{ translate( 'Your password reset email is {{strong}}%(userEmail)s{{/strong}}.', {
+								args: {
+									userEmail,
+								},
+								components: {
+									strong: <strong />,
+								},
+							} ) }{ ' ' }
+							{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+							<a href="#" onClick={ showAlternateEmailField }>
+								{ translate( 'Change it', {
+									context: "'It' refers to an email address that can be used to reset a password.",
 								} ) }
-								{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-								<a href="#" onClick={ showAlternateEmailField }>
-									{ ' ' }
-									{ translate( 'Change it', {
-										context: 'Button to show an input field to change an email',
-									} ) }
-								</a>
-							</FormSettingExplanation>
-						) }
+							</a>
+						</FormSettingExplanation>
+					) }
 				</FormFieldset>
 				{ showIsAdminToggle && (
 					<FormFieldset>
