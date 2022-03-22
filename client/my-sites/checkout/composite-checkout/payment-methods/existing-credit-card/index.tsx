@@ -335,15 +335,15 @@ function TaxInfoArea( {
 	);
 	const { formStatus } = useFormStatus();
 
+	if ( ! allowEditing ) {
+		return null;
+	}
 	if ( taxInfoDisplay ) {
 		return (
 			<span className="existing-credit-card__tax-info-display">
 				<span className="existing-credit-card__tax-info-postal-country">{ taxInfoDisplay }</span>
 			</span>
 		);
-	}
-	if ( ! allowEditing ) {
-		return null;
 	}
 	return (
 		<span className="existing-credit-card__tax-info-display tax-info-incomplete">
