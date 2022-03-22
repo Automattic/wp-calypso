@@ -180,6 +180,11 @@ describe( 'Checkout', () => {
 		beforeEach( () => {
 			MyCheckout = ( props ) => {
 				const [ paymentData, setPaymentData ] = useState( {} );
+				const {
+					stepObjectsWithStepNumber,
+					stepObjectsWithoutStepNumber,
+				} = createStepsFromStepObjects( props.steps || steps );
+				const createStepFromStepObject = createStepObjectConverter( paymentData );
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
 						<CheckoutProvider
@@ -190,7 +195,8 @@ describe( 'Checkout', () => {
 							initiallySelectedPaymentMethodId={ mockMethod.id }
 						>
 							<CheckoutStepGroup>
-								{ createStepsFromStepObjects( props.steps || steps, paymentData ) }
+								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
 								<CheckoutFormSubmit />
 							</CheckoutStepGroup>
 						</CheckoutProvider>
@@ -543,20 +549,17 @@ function createMockItems() {
 	return { items, total };
 }
 
-function createStepsFromStepObjects( stepObjects, paymentData ) {
-	const createStepFromStepObject = createStepObjectConverter( paymentData );
+function createStepsFromStepObjects( stepObjects ) {
 	const stepObjectsWithoutStepNumber = stepObjects.filter(
 		( stepObject ) => ! stepObject.hasStepNumber
 	);
 	const stepObjectsWithStepNumber = stepObjects.filter(
 		( stepObject ) => stepObject.hasStepNumber
 	);
-	return (
-		<>
-			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
-			{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
-		</>
-	);
+	return {
+		stepObjectsWithStepNumber,
+		stepObjectsWithoutStepNumber,
+	};
 }
 
 function createStepObjectConverter( paymentData ) {
