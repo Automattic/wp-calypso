@@ -149,11 +149,8 @@ const TitanNewMailbox = ( {
 										strong: <strong />,
 									},
 								} ) }
-								<a
-									className="titan-new-mailbox__show-alternate-email"
-									href
-									onClick={ showAlternateEmailField }
-								>
+								{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+								<a href="#" onClick={ showAlternateEmailField }>
 									{ ' ' }
 									{ translate( 'Change it', {
 										context: 'Button to show an input field to change an email',
