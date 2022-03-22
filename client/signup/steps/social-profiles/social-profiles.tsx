@@ -23,6 +23,7 @@ const TextInputWrapper = styled.div`
 	}
 	input[type='text'].form-text-input {
 		border: none;
+		padding-left: 10px;
 		&:focus {
 			box-shadow: none;
 		}
