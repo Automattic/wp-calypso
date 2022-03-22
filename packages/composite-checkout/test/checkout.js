@@ -6,14 +6,12 @@ import {
 	fireEvent,
 	act,
 } from '@testing-library/react';
-import { createContext, Fragment, useState, useContext } from 'react';
+import { createContext, useState, useContext } from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import {
 	CheckoutProvider,
 	CheckoutStep,
-	CheckoutStepArea,
 	CheckoutStepBody,
-	CheckoutSteps,
 	useIsStepComplete,
 	useTransactionStatus,
 	usePaymentProcessor,
@@ -554,15 +552,10 @@ function createStepsFromStepObjects( stepObjects, paymentData ) {
 		( stepObject ) => stepObject.hasStepNumber
 	);
 	return (
-		<Fragment>
+		<>
 			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
-			<CheckoutStepArea>
-				<CheckoutSteps>
-					{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
-					<CheckoutFormSubmit />
-				</CheckoutSteps>
-			</CheckoutStepArea>
-		</Fragment>
+			{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+		</>
 	);
 }
 
