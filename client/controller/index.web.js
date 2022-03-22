@@ -26,15 +26,37 @@ import { render, hydrate } from './web-util.js';
 export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 export { render, hydrate } from './web-util.js';
 
-export const ProviderWrappedLayout = ( {
+export const ClientProviders = ( {
 	store,
 	queryClient,
 	currentSection,
 	currentRoute,
 	currentQuery,
+	children,
+} ) => {
+	return (
+		<CalypsoI18nProvider>
+			<RouteProvider
+				currentSection={ currentSection }
+				currentRoute={ currentRoute }
+				currentQuery={ currentQuery }
+			>
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<MomentProvider>{ children }</MomentProvider>
+					</ReduxProvider>
+				</QueryClientProvider>
+			</RouteProvider>
+		</CalypsoI18nProvider>
+	);
+};
+
+export const ProviderWrappedLayout = ( {
+	store,
 	primary,
 	secondary,
 	redirectUri,
+	...otherProviderProps
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
@@ -46,19 +68,9 @@ export const ProviderWrappedLayout = ( {
 	);
 
 	return (
-		<CalypsoI18nProvider>
-			<RouteProvider
-				currentSection={ currentSection }
-				currentRoute={ currentRoute }
-				currentQuery={ currentQuery }
-			>
-				<QueryClientProvider client={ queryClient }>
-					<ReduxProvider store={ store }>
-						<MomentProvider>{ layout }</MomentProvider>
-					</ReduxProvider>
-				</QueryClientProvider>
-			</RouteProvider>
-		</CalypsoI18nProvider>
+		<ClientProviders store={ store } { ...otherProviderProps }>
+			{ layout }
+		</ClientProviders>
 	);
 };
 

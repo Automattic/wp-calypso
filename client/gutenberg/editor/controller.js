@@ -1,5 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { SaveElements } from '@automattic/components';
 import { makeLayout, render } from 'calypso/controller';
+import { ClientProviders } from 'calypso/controller/index.web';
 import { addQueryArgs } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
@@ -266,12 +268,22 @@ export const siteEditor = ( context, next ) => {
 	const siteId = getSelectedSiteId( state );
 
 	context.primary = (
-		<CalypsoifyIframe
-			// This key is added as a precaution due to it's oberserved necessity in the above post editor.
-			// It will force the component to remount completely when the Id changes.
-			key={ siteId }
-			editorType={ 'site' }
-		/>
+		<SaveElements storageKey={ `saved-iframe-${ siteId }` }>
+			<ClientProviders
+				store={ context.store }
+				queryClient={ context.queryClient }
+				currentSection={ context.section }
+				currentRoute={ context.pathname }
+				currentQuery={ context.query }
+			>
+				<CalypsoifyIframe
+					// This key is added as a precaution due to it's oberserved necessity in the above post editor.
+					// It will force the component to remount completely when the Id changes.
+					key={ siteId }
+					editorType={ 'site' }
+				/>
+			</ClientProviders>
+		</SaveElements>
 	);
 
 	return next();
