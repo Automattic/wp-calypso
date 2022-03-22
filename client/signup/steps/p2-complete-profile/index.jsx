@@ -32,7 +32,7 @@ function P2CompleteProfile( {
 
 		setIsSubmitting( true );
 
-		if ( formFullName.length < 3 ) {
+		if ( formFullName.length < 2 ) {
 			setFormErrors( {
 				fullName: translate( 'Please enter your full name (3 characters or more).' ),
 			} );
