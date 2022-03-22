@@ -1,0 +1,43 @@
+{
+	"name": "@automattic/import",
+	"version": "1.0.0",
+	"description": "WordPress.com importers.",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"types": "dist/types/index.d.ts",
+	"sideEffects": false,
+	"license": "GPL-2.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/import"
+	},
+	"author": "Automattic Inc.",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"download": "node bin/download.js",
+		"test": "yarn jest"
+	},
+	"dependencies": {
+		"@wordpress/compose": "^5.0.7",
+		"@wordpress/i18n": "^4.2.4",
+		"react": "^17.0.2",
+		"tslib": "^2.3.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/jest-dom": "^5.16.2",
+		"@testing-library/react": "^12.1.3",
+		"@testing-library/react-hooks": "7.0.2",
+		"@types/react": "^17.0.39",
+		"react-dom": "^17.0.2",
+		"react-test-renderer": "^17.0.2",
+		"typescript": "^4.5.5"
+	}
+}
