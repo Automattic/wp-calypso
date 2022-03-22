@@ -109,6 +109,11 @@ describe( 'Checkout', () => {
 				container = renderResult.container;
 			} );
 
+			it( 'renders steps', () => {
+				const activeSteps = container.querySelectorAll( '.checkout-step' );
+				expect( activeSteps ).toHaveLength( 2 );
+			} );
+
 			it( 'makes the review step active', () => {
 				const activeSteps = container.querySelectorAll( '.checkout-step.is-active' );
 				expect( activeSteps ).toHaveLength( 1 );
