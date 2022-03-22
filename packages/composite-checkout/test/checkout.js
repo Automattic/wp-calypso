@@ -119,7 +119,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the payment method step invisible', () => {
-				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
+				const firstStep = container.querySelector( '.checkout__payment-method-step' );
 				const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 				expect( firstStepContent ).toHaveStyle( 'display: none' );
 			} );
@@ -164,7 +164,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the next step visible', () => {
-				const reviewStep = container.querySelector( '.checkout__payment-methods-step' );
+				const reviewStep = container.querySelector( '.checkout__payment-method-step' );
 				const reviewStepContent = reviewStep.querySelector( '.checkout-steps__step-content' );
 				expect( reviewStepContent ).toHaveStyle( 'display: block' );
 			} );
