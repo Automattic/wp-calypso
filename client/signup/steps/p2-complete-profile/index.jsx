@@ -1,3 +1,6 @@
+import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -94,15 +97,37 @@ function P2CompleteProfile( {
 						/>
 						{ formErrors?.fullName && <FormInputValidation text={ formErrors.fullName } isError /> }
 						<div className="p2-complete-profile__form-footer">
-							<button
+							<Button
 								type="submit"
-								className="p2-complete-profile__form-submit-btn button is-primary"
+								className="p2-complete-profile__form-submit-btn"
 								disabled={ isSubmitting }
 							>
 								{ translate( 'Continue' ) }
-							</button>
+							</Button>
 						</div>
 					</form>
+				</div>
+				<div className="p2-complete-profile__skip-wrapper">
+					{ createInterpolateElement(
+						__( 'No time? No problem! You can <Button>do this later</Button>.' ),
+						{
+							Button: (
+								<Button
+									className="p2-complete-profile__skip-btn"
+									variant="link"
+									onClick={ () => {
+										submitSignupStep( {
+											stepName: stepName,
+										} );
+
+										recordTracksEvent( 'calypso_signup_p2_complete_profile_skip_button_click' );
+
+										goToNextStep();
+									} }
+								/>
+							),
+						}
+					) }
 				</div>
 			</div>
 		</P2StepWrapper>
