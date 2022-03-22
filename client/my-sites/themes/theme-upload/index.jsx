@@ -1,4 +1,8 @@
-import { PLAN_BUSINESS, FEATURE_UPLOAD_THEMES } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	FEATURE_UPLOAD_THEMES,
+	FEATURE_UPLOAD_PLUGINS,
+} from '@automattic/calypso-products';
 import { Card, ProgressBar, Button } from '@automattic/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -36,15 +40,14 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import siteCanUploadThemesOrPlugins from 'calypso/state/sites/selectors/can-upload-themes-or-plugins';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -93,7 +96,7 @@ class Upload extends Component {
 	componentDidMount() {
 		const { siteId, inProgress, noticeType } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
-		if ( this.props.canUploadThemesOrPlugins ) {
+		if ( this.props.isAutomatedTransfer && this.props.canUploadThemesOrPlugins ) {
 			this.redirectToWpAdmin();
 		}
 
@@ -119,7 +122,7 @@ class Upload extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.canUploadThemesOrPlugins ) {
+		if ( this.props.isAutomatedTransfer && this.props.canUploadThemesOrPlugins ) {
 			this.redirectToWpAdmin();
 		}
 		if ( this.props.complete && ! prevProps.complete ) {
@@ -250,10 +253,10 @@ class Upload extends Component {
 
 	renderUploadCard() {
 		const {
+			canUploadThemesOrPlugins,
 			complete,
 			failed,
 			inProgress,
-			isOnAtomicPlan,
 			isJetpack,
 			isAutomatedTransfer,
 			selectedSite,
@@ -263,7 +266,7 @@ class Upload extends Component {
 		const { showEligibility } = this.state;
 
 		const uploadAction = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer;
-		const isDisabled = showEligibility || ( ! isOnAtomicPlan && ! isJetpack );
+		const isDisabled = showEligibility || ( ! canUploadThemesOrPlugins && ! isJetpack );
 
 		const WrapperComponent = isDisabled ? FeatureExample : Fragment;
 
@@ -296,17 +299,17 @@ class Upload extends Component {
 	render() {
 		const {
 			backPath,
+			canUploadThemesOrPlugins,
 			complete,
 			isFetchingPurchases,
 			isJetpack,
 			isMultisite,
-			isOnAtomicPlan,
 			siteId,
 			themeId,
 			translate,
 		} = this.props;
 
-		const showUpgradeBanner = ! isFetchingPurchases && ! isOnAtomicPlan && ! isJetpack;
+		const showUpgradeBanner = ! isFetchingPurchases && ! canUploadThemesOrPlugins && ! isJetpack;
 		const { showEligibility } = this.state;
 
 		if ( isMultisite ) {
@@ -372,12 +375,16 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
-	const canUploadThemesOrPlugins = siteCanUploadThemesOrPlugins( state, siteId );
+
+	const canUploadThemesOrPlugins =
+		hasActiveSiteFeature( state, siteId, FEATURE_UPLOAD_THEMES ) ||
+		hasActiveSiteFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
+
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
-	const isOnAtomicPlan = isSiteOnAtomicPlan( state, siteId );
+
 	const showEligibility =
-		( isAtomic || ( isOnAtomicPlan && ! isJetpack ) ) &&
-		( hasEligibilityMessages || ! isEligible || ! canUploadThemesOrPlugins );
+		( isAtomic || ( canUploadThemesOrPlugins && ! isJetpack ) ) &&
+		( hasEligibilityMessages || ! isEligible );
 
 	return {
 		siteId,
@@ -399,7 +406,6 @@ const mapStateToProps = ( state ) => {
 		isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		canUploadThemesOrPlugins,
-		isOnAtomicPlan,
 		isFetchingPurchases:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 	};
