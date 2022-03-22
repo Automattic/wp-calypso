@@ -62,13 +62,14 @@
 	&-title {
 		margin-bottom: 8px;
 		font-size: $font-title-small;
+		font-weight: 400;
 		line-height: 1.2;
 		color: #101517;
 	}
 
 	&-description {
 		font-size: $font-body-small;
-		color: #646970;
+		color: var( --studio-gray-50 );
 
 		> p:last-child {
 			margin-bottom: 0;
@@ -80,6 +81,7 @@
 		border-radius: 4px; /* stylelint-disable-line */
 		min-width: 130px;
 		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+		border: 1px solid rgb( 195, 196, 199 );
 		color: #101517;
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 

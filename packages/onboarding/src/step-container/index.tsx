@@ -45,7 +45,7 @@ const StepContainer: React.FC< Props > = ( {
 	backLabelText,
 	hideSkip,
 	skipLabelText,
-	skipButtonAlign = 'bottom',
+	skipButtonAlign = 'top',
 	skipHeadingText,
 	hideNext = true,
 	nextLabelText,

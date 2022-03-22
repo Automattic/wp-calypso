@@ -1,45 +1,20 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
-
 .store-features {
-	// TODO EMN: Search why the margin in the step container
-	.step-container__header {
-		margin-top: 0 !important;
-	}
-
-	.select-items__item {
-		.select-items__item-title {
-			color: rgb( 16, 21, 23 );
-			font-size: 1.25rem;
-			line-height: 1.2;
-			margin: 0;
-			margin-bottom: 8px;
-			font-weight: 400;
+	.select-items__item-description {
+		> * {
+			display: block;
 		}
 
-		button.select-items__item-button {
-			box-shadow: rgba( 0, 0, 0, 0.05 ) 0 1px 2px 0;
-			border-radius: 4px;
-			border: 1px solid rgb( 195, 196, 199 );
+		p {
+			margin-bottom: 21px;
+		}
+
+		span {
+			margin-bottom: 15px;
 		}
 	}
 
-	.select-items-alt__item {
-		.select-items-alt__item-description {
-			margin: 0;
-		}
-	}
-
-	.store-features__powered-by {
-		.store-features__feature-icon {
-			vertical-align: middle;
-			margin-right: 15px;
-		}
-	}
-
-	.store-features__requirements {
-		display: block;
-		margin-bottom: 15px;
+	img.store-features__feature-icon {
+		vertical-align: middle;
+		margin-right: 15px;
 	}
 }
