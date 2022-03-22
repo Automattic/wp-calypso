@@ -27,14 +27,6 @@ function P2CompleteProfile( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const renderUploadAvatarBtn = () => {
-		return (
-			<button className="p2-complete-profile__upload-avatar-btn">
-				{ translate( 'Upload a new avatar' ) }
-			</button>
-		);
-	};
-
 	const handleFormSubmit = ( event ) => {
 		event.preventDefault();
 
@@ -77,7 +69,11 @@ function P2CompleteProfile( {
 		>
 			<div className="p2-complete-profile">
 				<div className="p2-complete-profile__avatar-wrapper">
-					<EditGravatar additionalUploadHtml={ renderUploadAvatarBtn() } />
+					<EditGravatar>
+						<button className="p2-complete-profile__upload-avatar-btn">
+							{ translate( 'Upload a new avatar' ) }
+						</button>
+					</EditGravatar>
 				</div>
 
 				<div className="p2-complete-profile__form-wrapper">
