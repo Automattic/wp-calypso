@@ -69,6 +69,9 @@ export const siteSetupFlow: Flow = {
 						case 'courses': {
 							return navigate( 'courses' );
 						}
+						case 'skip-to-my-home': {
+							return redirect( `/home/${ siteSlug }` );
+						}
 						default: {
 							return navigate( intent as StepPath );
 						}

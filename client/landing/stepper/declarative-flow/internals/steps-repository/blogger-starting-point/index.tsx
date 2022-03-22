@@ -33,6 +33,8 @@ const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
 			headerImageUrl={ startingPointImageUrl }
 			goBack={ goBack }
 			skipLabelText={ translate( 'Skip to My Home' ) }
+			goNext={ () => submitIntent( 'skip-to-my-home' ) }
+			skipButtonAlign={ 'top' }
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader
