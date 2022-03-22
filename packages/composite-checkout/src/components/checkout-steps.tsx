@@ -5,19 +5,13 @@ import PropTypes from 'prop-types';
 import {
 	cloneElement,
 	Children,
-	Fragment,
 	useCallback,
 	useContext,
 	useEffect,
 	useState,
 	createContext,
 } from 'react';
-import {
-	getDefaultOrderReviewStep,
-	getDefaultOrderSummary,
-	getDefaultOrderSummaryStep,
-	getDefaultPaymentMethodStep,
-} from '../components/default-steps';
+import { getDefaultPaymentMethodStep } from '../components/default-steps';
 import CheckoutContext from '../lib/checkout-context';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
@@ -238,8 +232,6 @@ export function Checkout( {
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( setActiveStepNumber );
 
-	const getDefaultCheckoutSteps = () => <DefaultCheckoutSteps />;
-
 	// Note: the composite-checkout class name is also used by FullStory to avoid recording
 	// WordPress.com checkout session activity. If this class name is changed or removed, we
 	// will also need to adjust this FullStory configuration.
@@ -272,7 +264,7 @@ export function Checkout( {
 						setTotalSteps,
 					} }
 				>
-					{ children || getDefaultCheckoutSteps() }
+					{ children }
 				</CheckoutStepDataContext.Provider>
 			</MainContentWrapper>
 		</CheckoutWrapper>
@@ -366,51 +358,6 @@ export const CheckoutStep = ( {
 	);
 };
 CheckoutStep.isCheckoutStep = true;
-
-function DefaultCheckoutSteps() {
-	const orderSummary = getDefaultOrderSummary();
-	const orderSummaryStep = getDefaultOrderSummaryStep();
-	const paymentMethodStep = getDefaultPaymentMethodStep();
-	const reviewOrderStep = getDefaultOrderReviewStep();
-	return (
-		<Fragment>
-			<CheckoutSummaryArea className={ orderSummary.className }>
-				<CheckoutSummaryCard>{ orderSummary.summaryContent }</CheckoutSummaryCard>
-			</CheckoutSummaryArea>
-			<CheckoutStepArea>
-				<CheckoutStepBody
-					activeStepContent={ orderSummaryStep.activeStepContent }
-					completeStepContent={ orderSummaryStep.completeStepContent }
-					titleContent={ orderSummaryStep.titleContent }
-					isStepActive={ false }
-					isStepComplete={ true }
-					stepNumber={ 1 }
-					stepId={ 'order-summary-step' }
-					className={ orderSummaryStep.className }
-				/>
-				<CheckoutSteps>
-					<CheckoutStep
-						stepId="review-order-step"
-						isCompleteCallback={ () => true }
-						activeStepContent={ reviewOrderStep.activeStepContent }
-						completeStepContent={ reviewOrderStep.completeStepContent }
-						titleContent={ reviewOrderStep.titleContent }
-						className={ reviewOrderStep.className }
-					/>
-					<CheckoutStep
-						stepId="payment-method-step"
-						isCompleteCallback={ () => true }
-						activeStepContent={ paymentMethodStep.activeStepContent }
-						completeStepContent={ paymentMethodStep.completeStepContent }
-						titleContent={ paymentMethodStep.titleContent }
-						className={ paymentMethodStep.className }
-					/>
-					<CheckoutFormSubmit />
-				</CheckoutSteps>
-			</CheckoutStepArea>
-		</Fragment>
-	);
-}
 
 export const CheckoutStepAreaWrapper = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
