@@ -6,7 +6,7 @@ import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE } from '../stores';
 import type { StepPath } from './internals/steps-repository';
-import type { Flow } from './internals/types';
+import type { Flow, ProvidedDependencies } from './internals/types';
 
 function redirect( to: string ) {
 	window.location.href = to;
@@ -32,7 +32,7 @@ export const siteSetupFlow: Flow = {
 		const siteSlug = useSiteSlugParam();
 		const { FSEActive } = useFSEStatus();
 
-		function submit( providedDependencies: Record< string, unknown > = {}, ...params: string[] ) {
+		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies );
 
 			switch ( currentStep ) {
@@ -111,6 +111,10 @@ export const siteSetupFlow: Flow = {
 					}
 					return navigate( 'bloggerStartingPoint' );
 				}
+
+				case 'courses': {
+					return redirect( `/post/${ siteSlug }` );
+				}
 			}
 		}
 
@@ -157,23 +161,12 @@ export const siteSetupFlow: Flow = {
 			navigate( step );
 		};
 
-		function recordSubmitStep( providedDependencies: Record< string, unknown > = {} ) {
+		function recordSubmitStep( providedDependencies: ProvidedDependencies = {} ) {
 			const device = resolveDeviceTypeByViewPort();
 			const inputs = reduce(
 				providedDependencies,
-				( props, propValue, propName ) => {
+				( props, propValue, propName: string ) => {
 					propName = snakeCase( propName );
-
-					if ( currentStep === 'from-url' && propName === 'site_preview_image_blob' ) {
-						/**
-						 * There's no need to include a resource ID in our event.
-						 * Just record that a preview was fetched
-						 *
-						 * @see the `sitePreviewImageBlob` dependency
-						 */
-						propName = 'site_preview_image_fetched';
-						propValue = !! propValue;
-					}
 
 					// Ensure we don't capture identifiable user data we don't need.
 					if ( propName === 'email' ) {
@@ -181,22 +174,8 @@ export const siteSetupFlow: Flow = {
 						propValue = !! propValue;
 					}
 
-					if ( propName === 'cart_item' && propValue?.product_slug === WPCOM_DIFM_LITE ) {
-						const { extra, ...otherProps } = propValue;
-						propValue = otherProps;
-					}
-
-					if (
-						[ 'cart_item', 'domain_item' ].includes( propName ) &&
-						typeof propValue !== 'string'
-					) {
-						propValue = Object.entries( propValue || {} )
-							.map( ( pair ) => pair.join( ':' ) )
-							.join( ',' );
-					}
-
 					if ( propName === 'selected_design' ) {
-						propValue = propValue.slug;
+						propValue = ( propValue as { slug: string } ).slug;
 					}
 
 					return {

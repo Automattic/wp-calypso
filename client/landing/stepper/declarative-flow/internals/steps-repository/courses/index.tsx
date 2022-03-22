@@ -13,22 +13,18 @@ import './style.scss';
  * The courses step
  */
 const CoursesStep: Step = function CoursesStep( { navigation } ) {
-	const { goBack, goNext, submit } = navigation;
+	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const isMobile = useViewportMatch( 'small', '<' );
 	const courseSlug = COURSE_SLUGS.BLOGGING_QUICK_START;
 	const { isCourseComplete } = useCourseData( courseSlug );
 	const hideSkip = isMobile && isCourseComplete;
 
-	const onStartWriting = () => {
-		submit?.();
-		goNext();
-	};
-
 	return (
 		<StepContainer
 			stepName={ 'courses' }
 			goBack={ goBack }
+			goNext={ () => submit?.() }
 			isFullLayout
 			hideFormattedHeader
 			skipLabelText={ translate( 'Draft your first post' ) }
@@ -44,7 +40,7 @@ const CoursesStep: Step = function CoursesStep( { navigation } ) {
 					FooterBar={ () => (
 						<CoursesFooter
 							isCourseComplete={ isCourseComplete }
-							onStartWriting={ onStartWriting }
+							onStartWriting={ () => submit?.() }
 						/>
 					) }
 				/>
