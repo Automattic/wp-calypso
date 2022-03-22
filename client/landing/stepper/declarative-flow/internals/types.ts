@@ -45,3 +45,5 @@ export type StepProps = {
 };
 
 export type Step = React.FC< StepProps >;
+
+export type ProvidedDependencies = Record< string, { slug: string } | boolean | string >;
