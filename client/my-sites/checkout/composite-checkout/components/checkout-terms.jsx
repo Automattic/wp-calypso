@@ -8,6 +8,7 @@ import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import DomainRegistrationHsts from './domain-registration-hsts';
 import TermsOfService from './terms-of-service';
+import ThirdPartyPluginsTermsOfService from './third-party-plugins-terms-of-service';
 import TitanTermsOfService from './titan-terms-of-service';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -32,6 +33,7 @@ class CheckoutTerms extends Component {
 				<ConciergeRefundPolicy cart={ cart } />
 				<BundledDomainNotice cart={ cart } />
 				<TitanTermsOfService cart={ cart } />
+				<ThirdPartyPluginsTermsOfService cart={ cart } />
 				<AdditionalTermsOfServiceInCart />
 			</Fragment>
 		);
