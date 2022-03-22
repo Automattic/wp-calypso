@@ -19,7 +19,7 @@ export type NavigationControls = {
 	/**
 	 * Submits the answers provided in the flow
 	 */
-	submit?: ( ...params: string[] ) => void;
+	submit?: ( providedDependencies?: Record< string, unknown >, ...params: string[] ) => void;
 };
 
 /**
