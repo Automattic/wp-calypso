@@ -19,6 +19,7 @@ import {
 	usePaymentMethod,
 	useTotal,
 	CheckoutErrorBoundary,
+	CheckoutFormSubmit,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
@@ -536,6 +537,7 @@ export default function WPCheckout( {
 						validatingButtonAriaLabel={ validatingButtonText }
 						isCompleteCallback={ () => false }
 					/>
+					<CheckoutFormSubmit />
 				</CheckoutSteps>
 			</CheckoutStepArea>
 		</Checkout>
