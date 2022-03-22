@@ -26,7 +26,6 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 	const [ tagline, setTagline ] = React.useState( '' );
 	const site = useSite();
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
-
 	const translate = useTranslate();
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
@@ -84,7 +83,7 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 		}
 	};
 
-	const isSiteTitleRequired = true;
+	const isSiteTitleRequired = false;
 	const isTaglineRequired = false;
 	const siteTitleError = null;
 	const taglineError = null;
@@ -134,6 +133,7 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 	return (
 		<StepContainer
 			stepName={ 'site-options' }
+			className={ `is-step-${ intent }` }
 			headerImageUrl={ headerImage }
 			skipButtonAlign={ 'top' }
 			goBack={ goBack }

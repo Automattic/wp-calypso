@@ -317,6 +317,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				'design-picker__has-categories': showDesignPickerCategories,
 			} ) }
 			skipButtonAlign={ 'top' }
+			hideFormattedHeader
 			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
