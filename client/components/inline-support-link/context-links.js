@@ -157,6 +157,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/',
 		post_id: 111349,
 	},
+	'site-speed': {
+		link: 'https://wordpress.com/support/site-speed/',
+		post_id: 150474,
+	},
 	'site-verification': {
 		link: 'https://wordpress.com/support/site-verification-services/',
 		post_id: 5022,
