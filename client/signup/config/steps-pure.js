@@ -721,21 +721,6 @@ export function generateSteps( {
 				hideSkip: true,
 			},
 		},
-		'site-info-collection': {
-			stepName: 'site-info-collection',
-			dependencies: [ 'newOrExistingSiteChoice' ],
-			providesDependencies: [
-				'siteTitle',
-				'siteDescription',
-				'twitterUrl',
-				'facebookUrl',
-				'linkedinUrl',
-				'instagramUrl',
-				'displayEmail',
-				'displayPhone',
-				'displayAddress',
-			],
-		},
 		'social-profiles': {
 			stepName: 'social-profiles',
 		},
