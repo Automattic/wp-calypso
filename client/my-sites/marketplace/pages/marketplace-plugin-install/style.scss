@@ -19,30 +19,20 @@ body.is-section-marketplace.theme-default.color-scheme {
 
 .marketplace-plugin-install__masterbar {
 	display: flex;
-	align-items: center;
+	align-items: baseline;
+	justify-content: flex-start;
 
 	.marketplace-plugin-install__wpcom-wordmark {
-		margin-right: 5px;
+		align-self: center;
+		margin-left: 10px;
 	}
 
-	.marketplace-plugin-install__plugin-installation-text {
+	.masterbar__item,
+	.masterbar__item:hover {
 		color: var( --color-primary-5 );
-		transform: translateY( 1px );
-		line-height: 1.2em;
-		font-size: 0.75rem;
-		margin-left: 5px;
-
-		@include breakpoint-deprecated( '>480px' ) {
-			// stylelint-disable-next-line declaration-property-unit-allowed-list
-			font-size: 100%;
-			margin-left: 0;
-		}
+		flex-grow: 0;
+		background: var( --color-masterbar-background );
 	}
-}
-
-.marketplace-plugin-install__wpcom-wordmark {
-	align-self: center;
-	margin-left: 10px;
 }
 
 .marketplace-plugin-install__root {
