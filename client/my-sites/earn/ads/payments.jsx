@@ -6,6 +6,10 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import QueryWordadsPayments from 'calypso/components/data/query-wordads-payments';
+import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
+import Notice from 'calypso/components/notice';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordAdsPayments } from 'calypso/state/wordads/payments/selectors';
 
@@ -92,11 +96,49 @@ class WordAdsPayments extends Component {
 		);
 	}
 
+	notices( payments, wordAdsSettings ) {
+		const { translate } = this.props;
+
+		if ( ! payments || ! wordAdsSettings ) {
+			return null;
+		}
+
+		if ( ! wordAdsSettings.paypal ) {
+			return null;
+		}
+
+		let hasMismatch = false;
+
+		payments.forEach( ( payment ) => {
+			if ( payment.status === 'pending' && payment.paypal_email !== wordAdsSettings.paypal ) {
+				hasMismatch = true;
+			}
+		} );
+
+		return hasMismatch ? (
+			<Notice
+				classname="ads__activate-notice"
+				status="is-warning"
+				showDismiss={ false }
+				text={ translate(
+					'Your pending payment will be sent to a PayPal address different from your current address. Please {{contactSupportLink}}contact support{{/contactSupportLink}} if you need to change the PayPal address of your pending payment.',
+					{
+						components: {
+							contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+						},
+					}
+				) }
+			/>
+		) : null;
+	}
+
 	render() {
-		const { siteId, payments } = this.props;
+		const { siteId, payments, wordAdsSettings } = this.props;
 		return (
 			<div>
+				<QueryWordadsSettings siteId={ siteId } />
 				<QueryWordadsPayments siteId={ siteId } />
+				{ this.notices( payments, wordAdsSettings ) }
 				{ payments && this.checkSize( payments )
 					? this.paymentsTable( payments, 'wordads' )
 					: null }
@@ -112,5 +154,6 @@ export default connect( ( state ) => {
 	return {
 		siteId,
 		payments: getWordAdsPayments( state, siteId ),
+		wordAdsSettings: getWordadsSettings( state, siteId ),
 	};
 } )( localize( WordAdsPayments ) );
