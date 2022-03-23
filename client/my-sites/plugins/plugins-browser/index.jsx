@@ -137,7 +137,7 @@ const PluginsBrowser = ( {
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
 
 	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } = useWPCOMPlugins(
-		'featured'
+		'all'
 	);
 	const paidPlugins = useMemo( () => paidPluginsRawList.map( updateWpComRating ), [
 		paidPluginsRawList,
