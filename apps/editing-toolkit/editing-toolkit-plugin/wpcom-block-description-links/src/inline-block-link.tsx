@@ -20,7 +20,7 @@ const BlockDescriptionLink = ( { url }: Props ) => {
 		<ExternalLink
 			ref={ ( reference ) => ref !== reference && setRef( reference ) }
 			style={ { paddingLeft: 5 } }
-			className="inline-support-link"
+			className="fse-inline-support-link"
 			href={ url }
 		>
 			{ __( 'Learn more', 'full-site-editing' ) }{ ' ' }

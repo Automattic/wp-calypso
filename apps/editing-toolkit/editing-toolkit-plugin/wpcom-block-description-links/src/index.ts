@@ -118,6 +118,7 @@ const addBlockSupportLinks = (
 				'https://wordpress.com/support/wordpress-editor/blocks/subscription-form-block/'
 			);
 			break;
+
 		case 'jetpack/contact-form':
 			settings[ 'description' ] = inlineBlockDescriptionLink(
 				settings[ 'description' ],
