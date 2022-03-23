@@ -8,7 +8,6 @@ import {
 	TYPE_BUSINESS,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import Search from '@automattic/search';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -41,6 +40,7 @@ import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import {
 	recordTracksEvent,
@@ -324,7 +324,7 @@ const PluginsBrowser = ( {
 				hasBusinessPlan={ hasBusinessPlan }
 				siteSlug={ siteSlug }
 			/>
-			<SearchHeader
+			<SearchBoxHeader
 				doSearch={ doSearch }
 				search={ search }
 				siteSlug={ siteSlug }
@@ -355,49 +355,6 @@ const PluginsBrowser = ( {
 		</MainComponent>
 	);
 };
-
-const SearchHeader = ( props ) => {
-	const { doSearch, search, siteSlug, title } = props;
-
-	return (
-		<div className="plugins-browser__searchbox-container">
-			<div className="plugins-browser__searchbox-header">{ title }</div>
-			<div className="plugins-browser__searchbox">
-				<SearchBox doSearch={ doSearch } search={ search } />
-			</div>
-			<PopularSearches
-				siteSlug={ siteSlug }
-				searchTerms={ [ 'shipping', 'seo', 'portfolio', 'chat', 'mailchimp' ] }
-			/>
-		</div>
-	);
-};
-
-const PopularSearches = ( props ) => {
-	const { searchTerms, siteSlug } = props;
-	const translate = useTranslate();
-
-	return (
-		<div className="plugins-browser__recommended-searches">
-			<div className="plugins-browser__recommended-searches-title">
-				{ translate( 'Most popular searches' ) }
-			</div>
-
-			<div className="plugins-browser__recommended-searches-list">
-				{ searchTerms.map( ( searchTerm ) => (
-					<a
-						href={ `/plugins/${ siteSlug || '' }?s=${ searchTerm }` }
-						className="plugins-browser__recommended-searches-list-item"
-					>
-						{ searchTerm }
-					</a>
-				) ) }
-			</div>
-		</div>
-	);
-};
-
-const WrappedSearch = ( props ) => <Search { ...props } />;
 
 const SearchListView = ( {
 	search: searchTerm,
@@ -707,26 +664,6 @@ const UploadPluginButton = ( { isMobile, siteSlug } ) => {
 				<span className="plugins-browser__button-text">{ translate( 'Upload' ) }</span>
 			) }
 		</Button>
-	);
-};
-
-const SearchBox = ( { isMobile, doSearch, search } ) => {
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-
-	const recordSearchEvent = ( eventName ) =>
-		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
-
-	return (
-		<WrappedSearch
-			pinned={ isMobile }
-			fitsContainer={ isMobile }
-			onSearch={ doSearch }
-			initialValue={ search }
-			placeholder={ translate( 'Try searching "ecommerce"' ) }
-			delaySearch={ true }
-			recordEvent={ recordSearchEvent }
-		/>
 	);
 };
 
