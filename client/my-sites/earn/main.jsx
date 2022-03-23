@@ -14,8 +14,8 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { canAccessAds } from 'calypso/lib/ads/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
+import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
-import WordAdsPayments from 'calypso/my-sites/stats/wordads/payments';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -134,6 +134,7 @@ class EarningsMain extends Component {
 			case 'payments':
 				return translate( 'Payments' );
 			case 'ads-earnings':
+			case 'ads-payments':
 			case 'ads-settings':
 				return translate( 'Ads' );
 

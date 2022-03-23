@@ -104,7 +104,7 @@
 	text-align: left;
 }
 
-.ads__earnings-history-header {
+.ads__payments-history-header, ads__earnings-history-header {
 	color: var( --color-neutral-light );
 	border: 1px solid var( --color-neutral-0 );
 	border-left: none;
@@ -116,7 +116,7 @@
 	text-align: center;
 }
 
-.ads__earnings-history-value {
+.ads__payments-history-value, .ads__earnings-history-value {
 	line-height: 40px;
 	text-align: center;
 
@@ -127,6 +127,11 @@
 		}
 	}
 }
+
+.ads__payments-history-badge {
+	text-transform: uppercase;
+}
+
 @include breakpoint-deprecated( '<480px' ) {
 	.ads__settings-state {
 		max-width: 75%;
