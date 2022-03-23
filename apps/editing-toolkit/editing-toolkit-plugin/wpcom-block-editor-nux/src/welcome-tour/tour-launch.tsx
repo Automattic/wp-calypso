@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { WpcomTourKit, usePrefetchTourAssets } from '@automattic/tour-kit';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
@@ -59,6 +60,17 @@ function WelcomeTour() {
 		const paymentBlockIndex = tourSteps.findIndex( ( step ) => step.slug === 'payment-block' );
 		tourSteps.splice( paymentBlockIndex, 1 );
 	}
+	const { isInserterOpened, isSidebarOpened, isSettingsOpened } = useSelect( ( select ) => ( {
+		isInserterOpened: select( 'core/edit-post' ).isInserterOpened(),
+		isSidebarOpened: select( 'automattic/block-editor-nav-sidebar' ).isSidebarOpened(),
+		isSettingsOpened:
+			select( 'core/interface' ).getActiveComplementaryArea( 'core/edit-post' ) ===
+			'edit-post/document',
+	} ) );
+
+	const isTourMinimized =
+		isSidebarOpened ||
+		( isWithinBreakpoint( '<782px' ) && ( isInserterOpened || isSettingsOpened ) );
 
 	const tourConfig: WpcomConfig = {
 		steps: tourSteps,
@@ -70,6 +82,7 @@ function WelcomeTour() {
 			} );
 			setShowWelcomeGuide( false, { openedManually: false } );
 		},
+		isMinimized: isTourMinimized,
 		options: {
 			tourRating: {
 				enabled: true,
@@ -150,6 +163,7 @@ function WelcomeTour() {
 				),
 			],
 			classNames: 'wpcom-editor-welcome-tour',
+			portalParentElement: document.getElementById( 'wpwrap' ),
 		},
 	};
 
