@@ -16,6 +16,7 @@ import {
 	isBlogger,
 	isPersonal,
 	isPremium,
+	isPro,
 	isBusiness,
 	isSiteRedirect,
 	isSpaceUpgrade,
@@ -107,6 +108,10 @@ export function hasPersonalPlan( cart: ResponseCart ): boolean {
 
 export function hasPremiumPlan( cart: ResponseCart ): boolean {
 	return getAllCartItems( cart ).some( isPremium );
+}
+
+export function hasProPlan( cart: ResponseCart ): boolean {
+	return getAllCartItems( cart ).some( isPro );
 }
 
 export function hasBusinessPlan( cart: ResponseCart ): boolean {
