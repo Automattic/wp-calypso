@@ -439,10 +439,6 @@ export function installPlugin( siteId, plugin, shouldActivatePlugin = true ) {
 	return installPluginHelper( siteId, plugin, false, shouldActivatePlugin );
 }
 
-export function installPluginOnMultisite( siteId, plugin ) {
-	return installPluginHelper( siteId, plugin, true );
-}
-
 export function removePlugin( siteId, plugin ) {
 	return ( dispatch ) => {
 		const pluginId = plugin.id || plugin.slug;

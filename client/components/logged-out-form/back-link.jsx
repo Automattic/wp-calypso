@@ -1,8 +1,8 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 
 import './link-item.scss';

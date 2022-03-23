@@ -1,6 +1,6 @@
+import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import { acceptInvite, redirectWithoutLocaleifLoggedIn } from './controller';
 
 export default () => {

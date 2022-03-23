@@ -325,6 +325,7 @@ class ThemesMagicSearchCard extends Component {
 						terms={ this.props.filters }
 						input={ this.state.editedSearchElement }
 						suggest={ this.suggest }
+						exclusions={ [ /twenty.*?two/ ] }
 					/>
 				) }
 				{ this.state.searchInput !== '' && (

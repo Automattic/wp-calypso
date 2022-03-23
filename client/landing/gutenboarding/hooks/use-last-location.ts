@@ -1,6 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import { useHistory } from 'react-router-dom';
-import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { ONBOARD_STORE } from '../stores/onboard';
 
 export default function useLastLocation(): { goLastLocation: () => void } {
 	const history = useHistory();

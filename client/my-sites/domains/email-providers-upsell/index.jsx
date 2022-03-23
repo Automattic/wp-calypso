@@ -6,9 +6,10 @@ import { useSelector } from 'react-redux';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-comparison';
+import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-export default function EmailProvidersUpsell( { domain } ) {
+export default function EmailProvidersUpsell( { domain, interval } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
@@ -41,7 +42,15 @@ export default function EmailProvidersUpsell( { domain } ) {
 					skipButtonLabel={ translate( 'Skip' ) }
 					titanProductSlug={ TITAN_MAIL_YEARLY_SLUG }
 				/>
-			) : null }
+			) : (
+				<EmailProvidersStackedComparison
+					comparisonContext="domain-upsell"
+					isDomainInCart={ true }
+					selectedDomainName={ domain }
+					selectedIntervalLength={ interval }
+					source="domain-upsell"
+				></EmailProvidersStackedComparison>
+			) }
 		</CalypsoShoppingCartProvider>
 	);
 }

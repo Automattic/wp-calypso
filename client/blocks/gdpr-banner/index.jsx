@@ -1,4 +1,5 @@
 import { Button, Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
@@ -6,7 +7,6 @@ import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { refreshCountryCodeCookieGdpr, shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';

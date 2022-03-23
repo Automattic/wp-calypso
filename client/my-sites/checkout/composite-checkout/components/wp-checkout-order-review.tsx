@@ -74,6 +74,7 @@ export default function WPCheckoutOrderReview( {
 	siteId,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
+	isJetpackCheckout,
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
@@ -83,6 +84,7 @@ export default function WPCheckoutOrderReview( {
 	siteId?: number | undefined;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
+	isJetpackCheckout: boolean;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
@@ -170,6 +172,7 @@ export default function WPCheckoutOrderReview( {
 					onRemoveProduct={ onRemoveProduct }
 					onRemoveProductClick={ onRemoveProductClick }
 					onRemoveProductCancel={ onRemoveProductCancel }
+					isJetpackCheckout={ isJetpackCheckout }
 				/>
 			</WPOrderReviewSection>
 

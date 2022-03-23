@@ -2,6 +2,7 @@ import React from 'react';
 import type { Modifier } from 'react-popper';
 
 export interface Step {
+	slug?: string;
 	referenceElements?: {
 		desktop?: string;
 		mobile?: string;
@@ -69,6 +70,7 @@ export interface Options {
 		overlay?: boolean;
 	};
 	popperModifiers?: PopperModifier[];
+	portalParentElement?: HTMLElement | null;
 }
 
 export interface Config {
@@ -78,6 +80,7 @@ export interface Config {
 		tourMinimized: MinimizedTourRenderer;
 	};
 	closeHandler: CloseHandler;
+	isMinimized?: boolean;
 	options?: Options;
 }
 

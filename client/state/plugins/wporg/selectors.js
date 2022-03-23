@@ -18,14 +18,6 @@ export function isFetched( state, pluginSlug ) {
 	return plugin ? !! plugin.fetched : false;
 }
 
-export function getPluginsListByCategory( state, category ) {
-	return state.plugins.wporg.lists.category?.[ category ] ?? [];
-}
-
-export function getPluginsListBySearchTerm( state, searchTerm ) {
-	return state.plugins.wporg.lists.search?.[ searchTerm ] ?? [];
-}
-
 /**
  * WP.org plugins can be filtered either by category or search term.
  * So we can either be fetching by category or by search term.
@@ -60,15 +52,4 @@ export function getNextPluginsListPage( state, category ) {
 	}
 
 	return null;
-}
-
-/**
- * Retrieve the current state of pagination.
- *
- * @param {object} state                   State object
- * @param {string} searchTerm              Plugin search term
- * @returns {import('./types').Pagination} Pagination object, including current page, total pages, and total results
- */
-export function getPluginsListPagination( state, searchTerm ) {
-	return state.plugins.wporg.listsPagination?.search?.[ searchTerm ];
 }

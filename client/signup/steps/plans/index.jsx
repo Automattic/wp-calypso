@@ -278,7 +278,7 @@ export class PlansStep extends Component {
 		const { headerText, translate, eligibleForProPlan } = this.props;
 
 		if ( eligibleForProPlan ) {
-			return translate( 'WordPress Pro made just for you' );
+			return translate( 'Choose the plan that’s right for you' );
 		}
 
 		if ( this.state.isDesktop ) {
@@ -292,7 +292,7 @@ export class PlansStep extends Component {
 		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan } = this.props;
 
 		if ( eligibleForProPlan ) {
-			return translate( 'Try risk-free with a 14-day money back guarantee' );
+			return translate( 'The WordPress Pro plan comes with a 14-day full money back guarantee' );
 		}
 
 		if ( ! hideFreePlan ) {

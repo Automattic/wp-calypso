@@ -137,7 +137,7 @@ const PluginsBrowser = ( {
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
 
 	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } = useWPCOMPlugins(
-		'featured'
+		'all'
 	);
 	const paidPlugins = useMemo( () => paidPluginsRawList.map( updateWpComRating ), [
 		paidPluginsRawList,
@@ -199,7 +199,14 @@ const PluginsBrowser = ( {
 
 	useEffect( () => {
 		const items = [
-			{ label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }`, id: 'plugins' },
+			{
+				label: translate( 'Plugins' ),
+				href: `/plugins/${ siteSlug || '' }`,
+				id: 'plugins',
+				helpBubble: translate(
+					'Add new functionality and integrations to your site with plugins.'
+				),
+			},
 		];
 		if ( search ) {
 			items.push( {
@@ -435,8 +442,10 @@ const SearchListView = ( {
 				<PluginsBrowserList
 					plugins={
 						pluginsPagination?.page === 1
-							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
-							: pluginsBySearchTerm
+							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ].filter(
+									filterOutPluginsFromBlockList
+							  )
+							: pluginsBySearchTerm.filter( filterOutPluginsFromBlockList )
 					}
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					title={ searchTitle }
@@ -562,6 +571,8 @@ const PluginSingleListView = ( {
 	} else {
 		return null;
 	}
+
+	plugins = plugins.filter( filterOutPluginsFromBlockList );
 
 	let listLink = '/plugins/' + category;
 	if ( domain ) {
@@ -742,6 +753,12 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 		( plugin ) =>
 			! displayedFeaturedSlugsMap.has( plugin.slug ) && isCompatiblePlugin( plugin.slug )
 	);
+}
+
+const PLUGIN_SLUGS_BLOCKLIST = [ 'zamir' ];
+
+function filterOutPluginsFromBlockList( plugin ) {
+	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 
 export default UrlSearch( PluginsBrowser );

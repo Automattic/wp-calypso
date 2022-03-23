@@ -69,6 +69,7 @@ const MarketplacePluginInstall = ( {
 	const pluginUploadError = useSelector( ( state ) => getPluginUploadError( state, siteId ) );
 	const pluginExists = pluginUploadError?.error === 'folder_exists';
 	const pluginMalicious = pluginUploadError?.error === 'plugin_malicious';
+	const pluginTooBig = pluginUploadError?.statusCode === 413;
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const uploadedPluginSlug = useSelector( ( state ) =>
@@ -350,14 +351,20 @@ const MarketplacePluginInstall = ( {
 				/>
 			);
 		}
-		if ( pluginMalicious ) {
+		if ( pluginMalicious || pluginTooBig ) {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
-					line={ translate(
-						'This plugin is identified as malicious. If you still insist to install the plugin, please continue by uploading the plugin again from WP Admin.'
-					) }
+					line={
+						pluginMalicious
+							? translate(
+									'This plugin is identified as malicious. If you still insist to install the plugin, please continue by uploading the plugin again from WP Admin.'
+							  )
+							: translate(
+									'This plugin is too big to be installed via this page. If you still want to install the plugin, please continue by uploading the plugin again from WP Admin.'
+							  )
+					}
 					secondaryAction={ translate( 'Back' ) }
 					secondaryActionURL={ `/plugins/upload/${ selectedSiteSlug }` }
 					action={ translate( 'Continue' ) }
@@ -394,9 +401,9 @@ const MarketplacePluginInstall = ( {
 				title="Plugins > Installing"
 			/>
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
-			<Masterbar>
+			<Masterbar className="marketplace-plugin-install__masterbar">
 				<WordPressWordmark className="marketplace-plugin-install__wpcom-wordmark" />
-				<Item>{ translate( 'Plugin Installation' ) }</Item>
+				<Item>{ translate( 'Plugin installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-install__root">
 				{ renderError() || <MarketplaceProgressBar steps={ steps } currentStep={ currentStep } /> }

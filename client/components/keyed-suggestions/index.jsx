@@ -39,12 +39,14 @@ class KeyedSuggestions extends Component {
 		suggest: PropTypes.func,
 		terms: PropTypes.object,
 		input: PropTypes.string,
+		exclusions: PropTypes.array,
 	};
 
 	static defaultProps = {
 		suggest: noop,
 		terms: {},
 		input: '',
+		exclusions: [],
 	};
 
 	state = {
@@ -222,10 +224,25 @@ class KeyedSuggestions extends Component {
 
 			// Try a full match first and try substring matches
 			const cleanFilterTerm = this.sanitizeInput( filterTerm );
+
+			let onlyFullMatch = false;
+
+			/**
+			 * Check the filter term against any exclusions. If it matches any exclusions, then we only match against the full term instead of splitting it up or matching based on similarity.
+			 */
+			for ( const exc of this.props.exclusions ) {
+				if ( cleanFilterTerm.match( exc ) ) {
+					onlyFullMatch = true;
+					break;
+				}
+			}
+
 			let multiRegex = cleanFilterTerm;
-			for ( let i = cleanFilterTerm.length - 1; i > 1; i-- ) {
-				multiRegex +=
-					'|' + cleanFilterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1\\w+' );
+			if ( ! onlyFullMatch ) {
+				for ( let i = cleanFilterTerm.length - 1; i > 1; i-- ) {
+					multiRegex +=
+						'|' + cleanFilterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1\\w+' );
+				}
 			}
 			const regex = new RegExp( multiRegex, 'iu' );
 
@@ -254,6 +271,11 @@ class KeyedSuggestions extends Component {
 				// Arg 1 can be multiple words. "flexible header" or "accepts header images of any size"
 				// Arg 2 will only be one word; even if the user types multiple words we search on each one individually.
 				const matcher = ( term1, term2_single ) => {
+					// Our term matched an exclusion so we never match on similarity.
+					if ( onlyFullMatch ) {
+						return false;
+					}
+
 					let max_seen = 0;
 					for ( const term1_single of term1.split( /\s+/ ) ) {
 						const sim = cosineSimilarity( term1_single, term2_single );

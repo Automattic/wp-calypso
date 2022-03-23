@@ -393,7 +393,13 @@ export class PluginsMain extends Component {
 	getNavigationItems() {
 		const { search, selectedSiteSlug } = this.props;
 		const navigationItems = [
-			{ label: this.props.translate( 'Plugins' ), href: `/plugins/${ selectedSiteSlug || '' }` },
+			{
+				label: this.props.translate( 'Plugins' ),
+				href: `/plugins/${ selectedSiteSlug || '' }`,
+				helpBubble: this.props.translate(
+					'Add new functionality and integrations to your site with plugins.'
+				),
+			},
 			{
 				label: this.props.translate( 'Installed Plugins' ),
 				href: `/plugins/manage/${ selectedSiteSlug || '' }`,

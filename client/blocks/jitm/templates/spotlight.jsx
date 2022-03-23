@@ -2,7 +2,7 @@ import page from 'page';
 import Spotlight from 'calypso/components/spotlight';
 
 export default function SpotlightTemplate( props ) {
-	const { trackImpression, message, CTA, description, icon, onClick } = props;
+	const { trackImpression, message, CTA, description, iconPath, onClick } = props;
 
 	const spotlightOnClick = () => {
 		onClick();
@@ -15,7 +15,7 @@ export default function SpotlightTemplate( props ) {
 			{ trackImpression && trackImpression() }
 			<Spotlight
 				taglineText={ message }
-				illustrationSrc={ icon }
+				illustrationSrc={ iconPath }
 				onClick={ spotlightOnClick }
 				titleText={ description }
 				ctaText={ CTA.message }

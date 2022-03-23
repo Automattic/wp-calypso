@@ -68,6 +68,7 @@
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"rum-tracking/logstash": false,
+		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,

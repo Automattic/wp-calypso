@@ -11,7 +11,7 @@
 
 // Turn off number spinners
 .registrant-extra-info__form {
-	input[type=number].form-text-input {
+	input[type='number'].form-text-input {
 		-moz-appearance: textfield;
 
 		&::-webkit-inner-spin-button,
@@ -21,8 +21,16 @@
 		}
 	}
 
+	.form-fieldset {
+		min-width: 0;
+	}
+
+	.form-select {
+		max-width: 100%;
+	}
+
 	.form-label .form-label__optional {
-		font-size: 100%;
+		font-size: 100%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		margin-left: 5px;
 	}
 
@@ -50,7 +58,6 @@
 		width: 28px;
 	}
 }
-
 
 .registrant-extra-info__dob-column {
 	display: flex;

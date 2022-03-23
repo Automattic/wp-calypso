@@ -1,5 +1,6 @@
 import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
+import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import classNames from 'classnames';
 import { flowRight, get } from 'lodash';
@@ -21,7 +22,6 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Timezone from 'calypso/components/timezone';
 import { preventWidows } from 'calypso/lib/formatting';
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import scrollTo from 'calypso/lib/scroll-to';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
