@@ -122,8 +122,8 @@ export default function DesignPickerStep( props ) {
 	}, [ allThemes ] );
 
 	const getEventPropsByDesign = ( design ) => ( {
-		theme: design?.stylesheet ?? `pub/${ design.theme }`,
-		template: design.template,
+		theme: design?.stylesheet ?? `pub/${ design?.theme }`,
+		template: design?.template,
 		is_premium: design?.is_premium,
 		flow: flowName,
 		intent: dependencies.intent,
@@ -202,18 +202,18 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function upgradePlanFromDesignPicker( design ) {
-		recordTracksEvent( 'calypso_design_picker_grid_upgrade_button', {
-			theme: design?.theme,
-		} );
-
+		recordTracksEvent(
+			'calypso_signup_design_upgrade_button_click',
+			getEventPropsByDesign( design )
+		);
 		upgradePlan();
 	}
 
 	function upgradePlanFromPreview( design ) {
-		recordTracksEvent( 'calypso_design_picker_preview_upgrade_button', {
-			theme: design?.theme,
-		} );
-
+		recordTracksEvent(
+			'calypso_signup_design_preview_upgrade_button_click',
+			getEventPropsByDesign( design )
+		);
 		upgradePlan();
 	}
 
