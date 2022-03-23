@@ -106,8 +106,6 @@ export function getOptionInfo( {
 		text: mappingFreeText,
 	};
 
-	const availabilityNotice = getAvailabilityNotice( domain, availability );
-
 	let transferContent;
 	switch ( availability.status ) {
 		case domainAvailability.TRANSFERRABLE:
@@ -134,12 +132,13 @@ export function getOptionInfo( {
 				),
 			};
 			break;
-		default:
+		default: {
 			const availabilityNotice = getAvailabilityNotice( domain, availability );
 			transferContent = {
 				...optionInfo.transferNotSupported,
 				topText: availabilityNotice.message,
 			};
+		}
 	}
 
 	let connectContent;
