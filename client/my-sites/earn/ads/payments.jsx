@@ -28,8 +28,6 @@ class WordAdsPayments extends Component {
 		).isRequired,
 	};
 
-	state = {};
-
 	checkSize( obj ) {
 		if ( ! obj ) {
 			return 0;
@@ -140,6 +138,18 @@ class WordAdsPayments extends Component {
 		) : null;
 	}
 
+	empty() {
+		const { translate } = this.props;
+
+		return (
+			<Card>
+				{ translate(
+					'You have no payment history. Payment will be made as soon as the total outstanding amount has reached $100.'
+				) }
+			</Card>
+		);
+	}
+
 	render() {
 		const { siteId, payments, wordAdsSettings } = this.props;
 		return (
@@ -147,9 +157,9 @@ class WordAdsPayments extends Component {
 				<QueryWordadsSettings siteId={ siteId } />
 				<QueryWordadsPayments siteId={ siteId } />
 				{ this.notices( payments, wordAdsSettings ) }
-				{ payments && this.checkSize( payments )
+				{ payments && payments.length > 0
 					? this.paymentsTable( payments, 'wordads' )
-					: null }
+					: this.empty() }
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
