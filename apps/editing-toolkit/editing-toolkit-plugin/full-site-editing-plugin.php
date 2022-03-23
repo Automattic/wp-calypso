@@ -348,3 +348,11 @@ function load_wpcom_documentation_links() {
 	require_once __DIR__ . '/wpcom-documentation-links/class-wpcom-documentation-links.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_documentation_links' );
+
+/**
+ * Add support links to block description
+ */
+function load_block_description_links() {
+	require_once __DIR__ . '/wpcom-block-description-links/class-wpcom-block-description-links.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
