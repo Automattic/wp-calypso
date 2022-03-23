@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import {
 	getTestAccountByFeature,
 	envToFeatureKey,
@@ -64,7 +64,7 @@ describe( 'getTestAccountByFeature', function () {
 		expect( accountName ).toBe( 'multipleFeaturesUndefinedRightAccountName' );
 	} );
 
-	test( 'order of attributes in the criteria should not matter', () => {
+	it( 'order of attributes in the criteria should not matter', () => {
 		// Objects are rebuilt internally so as to have their keys sorted. Two objects
 		// with the same attributes but in different order will be considered to
 		// be the exact same criterion.
@@ -96,6 +96,9 @@ describe( 'getTestAccountByFeature', function () {
 	} );
 
 	it( 'will throw en error if passed feature does not match an account', () => {
+		// Trying to maintain this test over time will be tedious if we stick to allowed values.
+		// We might not support a combination now, but may in the future, which would cause this test to fail.
+		// So, we use a bad value and override the typing to check the error throwing.
 		expect( () =>
 			/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 			getTestAccountByFeature( { coblocks: 'foo', siteType: 'bar' } as any )
