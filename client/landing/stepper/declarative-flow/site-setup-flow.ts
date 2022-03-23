@@ -16,6 +16,7 @@ export const siteSetupFlow: Flow = {
 
 	useSteps() {
 		return [
+			...( isEnabled( 'signup/site-vertical-step' ) ? [ 'vertical' ] : [] ),
 			'intent',
 			'options',
 			'designSetup',
@@ -23,7 +24,7 @@ export const siteSetupFlow: Flow = {
 			'courses',
 			'storeFeatures',
 			'storeAddress',
-		];
+		] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -121,6 +122,10 @@ export const siteSetupFlow: Flow = {
 
 				case 'courses': {
 					return redirect( `/post/${ siteSlug }` );
+				}
+
+				case 'vertical': {
+					return navigate( 'intent' );
 				}
 			}
 		}
