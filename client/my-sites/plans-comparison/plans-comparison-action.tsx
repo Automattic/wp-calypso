@@ -60,9 +60,11 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { plan } = props;
 	const translate = useTranslate();
-	const className = classNames( { 'is-primary': props.isPrimary } );
+	const className = classNames( {
+		'is-primary': props.isPrimary,
+		'is-pro-plan': plan.getStoreSlug() === PLAN_WPCOM_PRO,
+	} );
 	const { isCurrentPlan, isInSignup, isPlaceholder } = props;
-
 	const handleClick = useCallback( () => {
 		if ( isPlaceholder ) {
 			return;
