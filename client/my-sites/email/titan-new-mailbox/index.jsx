@@ -140,20 +140,19 @@ const TitanNewMailbox = ( {
 					{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
 					{ hiddenFieldNames.includes( TITAN_PASSWORD_RESET_FIELD ) && ! showAlternateEmail && (
 						<FormSettingExplanation>
-							{ translate( 'Your password reset email is {{strong}}%(userEmail)s{{/strong}}.', {
-								args: {
-									userEmail,
-								},
-								components: {
-									strong: <strong />,
-								},
-							} ) }{ ' ' }
-							{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-							<a href="#" onClick={ showAlternateEmailField }>
-								{ translate( 'Change it', {
-									context: "'It' refers to an email address that can be used to reset a password.",
-								} ) }
-							</a>
+							{ translate(
+								'Your password reset email is {{strong}}%(userEmail)s{{/strong}}. {{a}}Change it{{/a}}.',
+								{
+									args: {
+										userEmail,
+									},
+									components: {
+										strong: <strong />,
+										// eslint-disable-next-line jsx-a11y/anchor-is-valid
+										a: <a href="#" onClick={ showAlternateEmailField } />,
+									},
+								}
+							) }
 						</FormSettingExplanation>
 					) }
 				</FormFieldset>
