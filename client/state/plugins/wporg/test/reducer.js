@@ -6,7 +6,7 @@ import {
 	PLUGINS_WPORG_PLUGIN_RECEIVE,
 	PLUGINS_WPORG_PLUGIN_REQUEST,
 } from 'calypso/state/action-types';
-import { fetchingItems, fetchingLists, items, lists, listsPagination } from '../reducer';
+import { fetchingItems, fetchingLists, items, listsPagination } from '../reducer';
 
 describe( 'wporg reducer', () => {
 	describe( 'items', () => {
@@ -122,121 +122,6 @@ describe( 'wporg reducer', () => {
 		} );
 	} );
 
-	describe( 'lists', () => {
-		test( 'should store plugin lists by category', () => {
-			const state = lists( undefined, {
-				type: PLUGINS_WPORG_LIST_RECEIVE,
-				category: 'popular',
-				data: [ { name: 'Akismet', slug: 'akismet' } ],
-			} );
-			expect( state ).to.deep.equal( {
-				category: { popular: [ { name: 'Akismet', slug: 'akismet' } ] },
-			} );
-		} );
-		test( 'should store plugin lists by search term', () => {
-			const state = lists( undefined, {
-				type: PLUGINS_WPORG_LIST_RECEIVE,
-				searchTerm: 'security',
-				data: [ { name: 'Jetpack', slug: 'jetpack' } ],
-			} );
-			expect( state ).to.deep.equal( {
-				search: { security: [ { name: 'Jetpack', slug: 'jetpack' } ] },
-			} );
-		} );
-		test( 'should store plugin lists by multiple categories', () => {
-			const state = lists(
-				{
-					category: { popular: [ { name: 'Akismet', slug: 'akismet' } ] },
-				},
-				{
-					type: PLUGINS_WPORG_LIST_RECEIVE,
-					category: 'new',
-					data: [ { name: 'Jetpack', slug: 'jetpack' } ],
-				}
-			);
-			expect( state ).to.deep.equal( {
-				category: {
-					popular: [ { name: 'Akismet', slug: 'akismet' } ],
-					new: [ { name: 'Jetpack', slug: 'jetpack' } ],
-				},
-			} );
-		} );
-		test( 'should store plugin lists by multiple search terms', () => {
-			const state = lists(
-				{
-					search: { security: [ { name: 'Akismet', slug: 'akismet' } ] },
-				},
-				{
-					type: PLUGINS_WPORG_LIST_RECEIVE,
-					searchTerm: 'enhancement',
-					data: [ { name: 'Jetpack', slug: 'jetpack' } ],
-				}
-			);
-			expect( state ).to.deep.equal( {
-				search: {
-					security: [ { name: 'Akismet', slug: 'akismet' } ],
-					enhancement: [ { name: 'Jetpack', slug: 'jetpack' } ],
-				},
-			} );
-		} );
-		test( 'should paginate plugin lists for categories', () => {
-			const state = lists(
-				{
-					category: { popular: [ { name: 'Akismet', slug: 'akismet' } ] },
-				},
-				{
-					type: PLUGINS_WPORG_LIST_RECEIVE,
-					category: 'popular',
-					page: 2,
-					data: [ { name: 'Jetpack', slug: 'jetpack' } ],
-				}
-			);
-			expect( state ).to.deep.equal( {
-				category: {
-					popular: [
-						{ name: 'Akismet', slug: 'akismet' },
-						{ name: 'Jetpack', slug: 'jetpack' },
-					],
-				},
-			} );
-		} );
-		test( 'should overwrite plugin lists for categories if first page', () => {
-			const state = lists(
-				{
-					category: { popular: [ { name: 'Akismet', slug: 'akismet' } ] },
-				},
-				{
-					type: PLUGINS_WPORG_LIST_RECEIVE,
-					category: 'popular',
-					page: 1,
-					data: [ { name: 'Jetpack', slug: 'jetpack' } ],
-				}
-			);
-			expect( state ).to.deep.equal( {
-				category: {
-					popular: [ { name: 'Jetpack', slug: 'jetpack' } ],
-				},
-			} );
-		} );
-		test( 'should overwrite plugin lists for search terms', () => {
-			const state = lists(
-				{
-					search: { security: [ { name: 'Akismet', slug: 'akismet' } ] },
-				},
-				{
-					type: PLUGINS_WPORG_LIST_RECEIVE,
-					searchTerm: 'security',
-					data: [ { name: 'Jetpack', slug: 'jetpack' } ],
-				}
-			);
-			expect( state ).to.deep.equal( {
-				search: {
-					security: [ { name: 'Jetpack', slug: 'jetpack' } ],
-				},
-			} );
-		} );
-	} );
-
 	describe( 'listsPagination', () => {
 		const pagination = {
 			page: 1,
@@ -296,58 +181,6 @@ describe( 'wporg reducer', () => {
 				category: {
 					popular: pagination2,
 					new: pagination,
-				},
-			} );
-		} );
-
-		test( 'should store plugin list pagination by search term', () => {
-			const state = listsPagination( undefined, {
-				type: PLUGINS_WPORG_LIST_RECEIVE,
-				searchTerm: 'woocommerce',
-				pagination,
-			} );
-			expect( state ).to.deep.equal( {
-				search: { woocommerce: pagination },
-			} );
-		} );
-
-		test( 'should store plugin list pagination by multiple search terms', () => {
-			const state = listsPagination(
-				{
-					search: { woocommerce: pagination },
-				},
-				{
-					type: PLUGINS_WPORG_LIST_RECEIVE,
-					searchTerm: 'jetpack',
-					pagination: pagination2,
-				}
-			);
-			expect( state ).to.deep.equal( {
-				search: {
-					woocommerce: pagination,
-					jetpack: pagination2,
-				},
-			} );
-		} );
-
-		test( 'should overwrite existing search term paginations', () => {
-			const state = listsPagination(
-				{
-					search: {
-						woocommerce: pagination,
-						jetpack: pagination,
-					},
-				},
-				{
-					type: PLUGINS_WPORG_LIST_RECEIVE,
-					searchTerm: 'woocommerce',
-					pagination: pagination2,
-				}
-			);
-			expect( state ).to.deep.equal( {
-				search: {
-					woocommerce: pagination2,
-					jetpack: pagination,
 				},
 			} );
 		} );

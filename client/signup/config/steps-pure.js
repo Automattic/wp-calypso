@@ -736,6 +736,9 @@ export function generateSteps( {
 				'displayAddress',
 			],
 		},
+		'social-profiles': {
+			stepName: 'social-profiles',
+		},
 		'website-content': {
 			stepName: 'website-content',
 			dependencies: [ 'siteSlug' ],

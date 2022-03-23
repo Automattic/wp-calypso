@@ -527,6 +527,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/domain-utils@workspace:^, @automattic/domain-utils@workspace:packages/domain-utils":
+  version: 0.0.0-use.local
+  resolution: "@automattic/domain-utils@workspace:packages/domain-utils"
+  dependencies:
+    typescript: ^4.5.5
+  languageName: unknown
+  linkType: soft
+
 "@automattic/effective-module-tree@workspace:packages/effective-module-tree":
   version: 0.0.0-use.local
   resolution: "@automattic/effective-module-tree@workspace:packages/effective-module-tree"
@@ -12838,6 +12846,7 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/design-picker": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
+    "@automattic/domain-utils": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/format-currency": "workspace:^"

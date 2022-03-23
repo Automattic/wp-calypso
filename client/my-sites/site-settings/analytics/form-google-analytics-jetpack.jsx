@@ -3,6 +3,7 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { find } from 'lodash';
 import { useEffect } from 'react';
@@ -17,7 +18,6 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SupportInfo from 'calypso/components/support-info';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';

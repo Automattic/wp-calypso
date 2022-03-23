@@ -7,7 +7,7 @@ import { useWindowResizeCallback } from 'calypso/lib/track-element-size';
 import useTyper from '../../hooks/use-typer';
 import { recordSiteTitleSelection } from '../../lib/analytics';
 import { useIsAnchorFm } from '../../path';
-import { STORE_KEY } from '../../stores/onboard';
+import { ONBOARD_STORE } from '../../stores/onboard';
 import AcquireIntentTextInput from './acquire-intent-text-input';
 import getTextWidth from './get-text-width';
 import tip from './tip';
@@ -19,9 +19,9 @@ interface Props {
 
 const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) => {
 	const { __, _x } = useI18n();
-	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const isAnchorFmSignup = useIsAnchorFm();
-	const { setSiteTitle } = useDispatch( STORE_KEY );
+	const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 	const [ isTouched, setIsTouched ] = React.useState( false );
 	const siteTitleExamples = React.useMemo(
 		() => [

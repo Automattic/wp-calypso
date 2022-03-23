@@ -2,11 +2,11 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import HelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import './style.scss';
 
 export default function PopUpSearch( { onClose } ) {

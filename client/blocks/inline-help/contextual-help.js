@@ -1,5 +1,5 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { RESULT_TOUR, RESULT_VIDEO, SELL_INTENT } from './constants';
 
 /**

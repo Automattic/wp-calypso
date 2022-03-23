@@ -1,10 +1,6 @@
 @import '@automattic/onboarding/styles/mixins';
 
 .jetpack-product-card .display-price {
-	.is-disabled & {
-		opacity: 0.4;
-	}
-
 	&.is-free {
 		margin-block-start: -4px;
 		padding-block-start: 24px;
@@ -82,7 +78,7 @@
 		@include placeholder( --color-neutral-10 );
 
 		width: 80px;
-		height: 40px;
+		height: 54px;
 		margin-bottom: 16px;
 		margin-top: 24px;
 	}
@@ -220,5 +216,13 @@
 		top: -0.5em;
 
 		font-size: 0.75em;
+	}
+}
+
+.jetpack-product-card {
+	&.is-disabled {
+		.display-price {
+			opacity: 0.4;
+		}
 	}
 }

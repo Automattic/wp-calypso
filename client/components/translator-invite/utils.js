@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
+import { getLanguage, getLocaleFromPath } from '@automattic/i18n-utils';
 import { startsWith } from 'lodash';
-import { getLanguage, getLocaleFromPath } from 'calypso/lib/i18n-utils';
 
 /**
  * Module variables

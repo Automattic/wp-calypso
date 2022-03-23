@@ -21,6 +21,7 @@ const Discount = styled.span`
 const DoNotPayThis = styled.del`
 	text-decoration: line-through;
 	margin-right: 8px;
+	color: #646970;
 
 	.rtl & {
 		margin-right: 0;
@@ -28,10 +29,18 @@ const DoNotPayThis = styled.del`
 	}
 `;
 
+const Price = styled.span`
+	color: #646970;
+`;
+
 const Variant = styled.div`
+	align-items: center;
 	display: flex;
-	width: 100%;
+	font-size: 14px;
+	font-weight: 400;
 	justify-content: space-between;
+	line-height: 20px;
+	width: 100%;
 `;
 
 const Label = styled.span`
@@ -75,7 +84,7 @@ export const ItemVariantPrice: FunctionComponent< {
 				{ variant.discountPercentage > 0 && (
 					<DoNotPayThis>{ variant.formattedPriceBeforeDiscount }</DoNotPayThis>
 				) }
-				{ variant.formattedCurrentPrice }
+				<Price>{ variant.formattedCurrentPrice }</Price>
 			</span>
 		</Variant>
 	);

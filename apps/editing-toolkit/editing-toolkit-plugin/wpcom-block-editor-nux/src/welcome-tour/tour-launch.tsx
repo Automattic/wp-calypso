@@ -3,6 +3,8 @@ import { useLocale } from '@automattic/i18n-utils';
 import { WpcomTourKit, usePrefetchTourAssets } from '@automattic/tour-kit';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
+import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
+import useSitePlan from '../../../dotcom-fse/lib/site-plan/use-site-plan';
 import getTourSteps from './tour-steps';
 import './style-tour.scss';
 import type { WpcomConfig } from '@automattic/tour-kit';
@@ -42,6 +44,8 @@ function LaunchWpcomWelcomeTour() {
 }
 
 function WelcomeTour() {
+	const sitePlan = useSitePlan( window._currentSiteId );
+	const intent = useSiteIntent();
 	const localeSlug = useLocale();
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
@@ -49,6 +53,12 @@ function WelcomeTour() {
 		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
 	};
 	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() );
+
+	// Only keep Payment block step if user comes from seller simple flow
+	if ( ! ( 'sell' === intent && sitePlan && 'ecommerce-bundle' !== sitePlan.product_slug ) ) {
+		const paymentBlockIndex = tourSteps.findIndex( ( step ) => step.slug === 'payment-block' );
+		tourSteps.splice( paymentBlockIndex, 1 );
+	}
 
 	const tourConfig: WpcomConfig = {
 		steps: tourSteps,

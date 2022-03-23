@@ -1,13 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import config from '@automattic/calypso-config';
+import { isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { get, pick } from 'lodash';
 import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import { isDefaultLocale, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
