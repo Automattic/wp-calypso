@@ -118,7 +118,7 @@ interface DesignButtonCoverProps {
 	isPremiumThemeAvailable?: boolean;
 	onSelect: ( design: Design ) => void;
 	onPreview: ( design: Design ) => void;
-	onUpgrade?: () => void;
+	onUpgrade?: ( design: Design ) => void;
 }
 
 const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
@@ -143,7 +143,7 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 				<Button
 					className="design-button-cover__button"
 					isPrimary
-					onClick={ () => ( shouldUpgrade ? onUpgrade?.() : onSelect( design ) ) }
+					onClick={ () => ( shouldUpgrade ? onUpgrade?.( design ) : onSelect( design ) ) }
 				>
 					{ shouldUpgrade
 						? __( 'Upgrade Plan', __i18n_text_domain__ )
