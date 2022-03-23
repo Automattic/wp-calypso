@@ -55,7 +55,15 @@ class WordAdsPayments extends Component {
 		payments.forEach( ( payment ) => {
 			rows.push(
 				<tr key={ type + '-' + payment.id }>
-					<td className="ads__payments-history-value">{ payment.paymentDate }</td>
+					<td className="ads__payments-history-value">
+						{ payment.status === 'pending' ? (
+							<small>
+								{ translate( 'Estimated' ) }: { payment.paymentDate }
+							</small>
+						) : (
+							payment.paymentDate
+						) }
+					</td>
 					<td className="ads__payments-history-value">${ numberFormat( payment.amount, 2 ) }</td>
 					<td className="ads__payments-history-value">
 						<Badge
@@ -85,7 +93,7 @@ class WordAdsPayments extends Component {
 								<th className="ads__payments-history-header">{ translate( 'Payment Date' ) }</th>
 								<th className="ads__payments-history-header">{ translate( 'Amount' ) }</th>
 								<th className="ads__payments-history-header">{ translate( 'Status' ) }</th>
-								<th className="ads__payments-history-header">{ translate( 'PayPal email ' ) }</th>
+								<th className="ads__payments-history-header">{ translate( 'PayPal' ) }</th>
 								<th className="ads__payments-history-header">{ translate( 'Description' ) }</th>
 							</tr>
 						</thead>
