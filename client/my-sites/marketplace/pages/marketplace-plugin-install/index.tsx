@@ -401,9 +401,9 @@ const MarketplacePluginInstall = ( {
 				title="Plugins > Installing"
 			/>
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
-			<Masterbar>
+			<Masterbar className="marketplace-plugin-install__masterbar">
 				<WordPressWordmark className="marketplace-plugin-install__wpcom-wordmark" />
-				<Item>{ translate( 'Plugin Installation' ) }</Item>
+				<Item>{ translate( 'Plugin installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-install__root">
 				{ renderError() || <MarketplaceProgressBar steps={ steps } currentStep={ currentStep } /> }
