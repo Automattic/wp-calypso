@@ -125,7 +125,7 @@ export class PlanFeatures extends Component {
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
-					<div ref={ this.contentRef } className="plan-features__content">
+					<div className="plan-features__content">
 						{ mobileView }
 						<PlanFeaturesScroller
 							withScroll={ withScroll }

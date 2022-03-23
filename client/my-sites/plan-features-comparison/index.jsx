@@ -66,7 +66,7 @@ export class PlanFeaturesComparison extends Component {
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
 				<div className={ planClasses }>
-					<div ref={ this.contentRef } className="plan-features-comparison__content">
+					<div className="plan-features-comparison__content">
 						<div>
 							<table className={ tableClasses }>
 								<caption className="plan-features-comparison__screen-reader-text screen-reader-text">
