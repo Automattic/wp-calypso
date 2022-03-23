@@ -2,72 +2,131 @@ import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { Key } from 'react';
+import InfoPopover from 'calypso/components/info-popover';
+
+const flexAligned = {
+	display: 'flex',
+	alignItems: 'center',
+};
 
 const StyledUl = styled.ul`
-	display: flex;
-	align-items: center;
+	${ flexAligned };
 	list-style-type: none;
 	margin: 0;
 `;
 
 const StyledLi = styled.li`
-	display: flex;
-	align-items: center;
+	${ flexAligned };
 	font-size: 13px;
-	font-weight: 500;
-	--color-link: var( --studio-gray-100 );
-
-	:first-of-type {
-		font-size: 16px;
-		font-weight: 600;
-		--color-link: var( --studio-gray-80 );
-	}
+	font-weight: 400;
+	--color-link: var( --studio-gray-50 );
 
 	:last-of-type:not( :first-of-type ) {
-		--color-link: var( --studio-gray-50 );
+		--color-link: var( --studio-gray-80 );
+		font-weight: 500;
 	}
+`;
+
+const StyledBackLink = styled.a`
+	${ flexAligned };
+	font-size: 13px;
+	&,
+	&:link,
+	&:visited,
+	&:hover,
+	&:active {
+		color: var( --studio-gray-80 );
+	}
+	> svg {
+		margin-right: 5px;
+	}
+`;
+
+const StyledRootLabel = styled.span`
+	${ flexAligned };
+	font-size: 1rem;
+	font-weight: 600;
+	color: var( --studio-gray-80 );
+`;
+
+const StyledItem = styled.div`
+	display: flex;
 `;
 
 const StyledGridicon = styled( Gridicon )`
-	margin: 0 7px;
-	fill: var( --studio-gray-50 );
+	margin: 0 12px;
+	color: var( --color-neutral-10 );
 `;
 
+const HelpBuble = styled( InfoPopover )`
+	margin-left: 7px;
+	& .gridicon {
+		color: var( --studio-gray-30 );
+	}
+`;
+
+const renderHelpBubble = ( item: Item ) => {
+	if ( ! item.helpBubble ) {
+		return null;
+	}
+
+	return (
+		<HelpBuble icon="help-outline" position={ 'right' }>
+			{ item.helpBubble }
+		</HelpBuble>
+	);
+};
+
+type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
 interface Props {
-	items: { label: string; href?: string }[];
+	items: Item[];
+	mobileItem?: string;
 	compact?: boolean;
 }
 
-const Breadcrumb: React.FunctionComponent< Props > = ( { items, compact = false } ) => {
+const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
+	const { items, mobileItem, compact = false } = props;
 
-	return (
-		<StyledUl>
-			{ compact && items.length > 1 ? (
-				<StyledLi>
-					<StyledGridicon icon="chevron-left" size={ 18 } />
-					{ /*  Show the exactly previous page with items[ items.length - 2 ] */ }
-					<a href={ items[ items.length - 2 ].href }>{ translate( 'Back' ) }</a>
-				</StyledLi>
-			) : (
-				<>
-					{ items.map( ( item: { href?: string; label: string }, index: Key ) => {
-						return (
-							<StyledLi key={ index }>
-								{ compact && <StyledGridicon icon="chevron-left" size={ 18 } /> }
-								{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 18 } /> }
-								{ item.href ? (
-									<a href={ item.href }>{ item.label }</a>
-								) : (
-									<span>{ item.label }</span>
-								) }
-							</StyledLi>
-						);
-					} ) }
-				</>
-			) }
-		</StyledUl>
-	);
+	if ( items.length === 1 ) {
+		const [ item ] = items;
+		return (
+			<StyledItem>
+				<StyledRootLabel>{ item.label }</StyledRootLabel>
+				{ renderHelpBubble( item ) }
+			</StyledItem>
+		);
+	}
+
+	if ( compact && items.length > 1 ) {
+		return (
+			<StyledBackLink href={ items[ items.length - 2 ].href }>
+				<Gridicon icon="chevron-left" size={ 18 } />
+				{ /*  Show the exactly previous page with items[ items.length - 2 ] */ }
+				{ mobileItem ? mobileItem : translate( 'Back' ) }
+			</StyledBackLink>
+		);
+	}
+
+	if ( items.length > 1 ) {
+		return (
+			<StyledUl>
+				{ items.map( ( item: { href?: string; label: string }, index: Key ) => (
+					<StyledLi key={ index }>
+						{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 14 } /> }
+						{ item.href && index !== items.length - 1 ? (
+							<a href={ item.href }>{ item.label }</a>
+						) : (
+							<span>{ item.label }</span>
+						) }
+						{ renderHelpBubble( item ) }
+					</StyledLi>
+				) ) }
+			</StyledUl>
+		);
+	}
+	// Default case -> items: []
+	return null;
 };
 
 Breadcrumb.defaultProps = {

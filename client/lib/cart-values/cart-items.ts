@@ -28,6 +28,7 @@ import {
 	isP2Plus,
 	isMonthlyProduct,
 	isBiennially,
+	isRenewable,
 	getTermDuration,
 	getPlan,
 	isBloggerPlan,
@@ -494,6 +495,15 @@ export function jetpackProductItem( slug: string ): MinimalRequestCartProduct {
 }
 
 /**
+ * Creates a new shopping cart item for a renewable product.
+ */
+export function renewableProductItem( slug: string ): MinimalRequestCartProduct {
+	return {
+		product_slug: slug,
+	};
+}
+
+/**
  * Retrieves all the domain registration items in the specified shopping cart.
  */
 export function getDomainRegistrations( cart: ResponseCart ): ResponseCartProduct[] {
@@ -515,6 +525,7 @@ export function getRenewalItemFromProduct(
 		is_domain_registration?: boolean;
 		isDomainRegistration?: boolean;
 		id: string | number;
+		isRenewable?: boolean;
 	} & Partial< RequestCartProduct > & {
 			domain?: string;
 			users?: GSuiteProductUser[];
@@ -570,6 +581,10 @@ export function getRenewalItemFromProduct(
 
 	if ( isSpaceUpgrade( product ) ) {
 		cartItem = spaceUpgradeItem( slug );
+	}
+
+	if ( isRenewable( product ) ) {
+		cartItem = renewableProductItem( slug );
 	}
 
 	if ( ! cartItem ) {

@@ -374,6 +374,7 @@ export default function DesignPickerStep( props ) {
 		);
 	}
 
+	const intent = props.signupDependencies.intent;
 	const headerProps = showDesignPickerCategories
 		? { hideFormattedHeader: true }
 		: {
@@ -388,6 +389,7 @@ export default function DesignPickerStep( props ) {
 			{ ...props }
 			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
+				'design-picker__sell-intent': 'sell' === intent,
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }

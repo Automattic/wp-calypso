@@ -34,7 +34,7 @@ import {
 } from 'calypso/lib/purchases';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
-import { isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
@@ -174,7 +174,7 @@ class PurchasesListing extends Component {
 	}
 
 	getActionButton( purchase ) {
-		const { selectedSiteSlug, translate, currentUserId, eligibleForManagedPlan } = this.props;
+		const { selectedSiteSlug, translate, currentUserId, eligibleForProPlan } = this.props;
 
 		// No action button if there's no site selected.
 		if ( ! selectedSiteSlug || ! purchase ) {
@@ -228,7 +228,7 @@ class PurchasesListing extends Component {
 						: '#'
 				}
 				disabled={ ! userIsPurchaseOwner }
-				compact={ ! eligibleForManagedPlan }
+				compact={ ! eligibleForProPlan }
 			>
 				{ label }
 				&nbsp;
@@ -334,11 +334,11 @@ class PurchasesListing extends Component {
 	}
 
 	renderPlan() {
-		const { currentPlan, isPlanExpiring, translate, eligibleForManagedPlan } = this.props;
+		const { currentPlan, isPlanExpiring, translate, eligibleForProPlan } = this.props;
 
 		return (
 			<Fragment>
-				{ ! eligibleForManagedPlan && (
+				{ ! eligibleForProPlan && (
 					<Card compact>
 						<strong>{ translate( 'My Plan' ) }</strong>
 					</Card>
@@ -426,6 +426,6 @@ export default connect( ( state ) => {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		isCloudEligible: isJetpackCloudEligible( state, selectedSiteId ),
 		currentUserId: getCurrentUserId( state ),
-		eligibleForManagedPlan: isEligibleForManagedPlan( state, selectedSiteId ),
+		eligibleForProPlan: isEligibleForProPlan( state, selectedSiteId ),
 	};
 } )( localize( withLocalizedMoment( PurchasesListing ) ) );

@@ -6,7 +6,6 @@ import {
 	PreferenceType,
 	TIME_BETWEEN_PROMPTS,
 	SinglePreferenceType,
-	ScanPreferenceType,
 } from './constants';
 import type { AppState } from 'calypso/types';
 
@@ -15,11 +14,8 @@ const getExistingPreference = (
 	type: 'scan' | 'restore'
 ): SinglePreferenceType => {
 	const pref = ( getPreference( state, PREFERENCE_NAME ) as PreferenceType ) || {};
-	if ( type === 'scan' && pref?.scan ) {
-		const scanKey = state.ui.selectedSiteId as keyof ScanPreferenceType;
-		return pref.scan[ scanKey ] ?? emptyPreference;
-	}
-	return pref.restore ?? emptyPreference;
+
+	return pref[ type ] ?? emptyPreference;
 };
 
 const getIsDismissed = ( state: AppState, type: 'scan' | 'restore' ): boolean => {

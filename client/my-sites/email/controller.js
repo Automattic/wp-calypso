@@ -155,6 +155,7 @@ export default {
 				<EmailManagementHomePage
 					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
+					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

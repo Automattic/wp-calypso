@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
@@ -6,7 +7,6 @@ import QueryMailchimpSettings from 'calypso/components/data/query-mailchimp-sett
 import FormSelect from 'calypso/components/forms/form-select';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getAllLists } from 'calypso/state/mailchimp/lists/selectors';
 import { requestSettingsUpdate } from 'calypso/state/mailchimp/settings/actions';
 import { getListId } from 'calypso/state/mailchimp/settings/selectors';

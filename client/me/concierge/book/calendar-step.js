@@ -49,12 +49,11 @@ class CalendarStep extends Component {
 		this.props.recordTracksEvent( 'calypso_concierge_book_calendar_step' );
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillUpdate( nextProps ) {
-		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
-			// go to confirmation page if booking was successfull
+	componentDidUpdate() {
+		if ( this.props.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
+			// go to confirmation page if booking was successful
 			this.props.onComplete();
-		} else if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKING_ERROR ) {
+		} else if ( this.props.signupForm.status === CONCIERGE_STATUS_BOOKING_ERROR ) {
 			// request new available times
 			this.props.requestConciergeInitial( this.props.scheduleId );
 		}

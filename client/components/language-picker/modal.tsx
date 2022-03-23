@@ -1,4 +1,5 @@
 import { Dialog } from '@automattic/components';
+import { isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
 import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
 import { Button, Tooltip } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
@@ -10,7 +11,6 @@ import { connect } from 'react-redux';
 import QueryLanguageNames from 'calypso/components/data/query-language-names';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
-import { isDefaultLocale, isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
 import type { Language, LocalizedLanguageNames } from '@automattic/language-picker';
 import type { I18n } from '@wordpress/i18n';

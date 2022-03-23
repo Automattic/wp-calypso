@@ -30,7 +30,6 @@ export const itemsSchema = {
 					isSubdomain: { type: 'boolean' },
 					isWPCOMDomain: { type: 'boolean' },
 					manualTransferRequired: { type: 'boolean' },
-					newRegistration: { type: 'boolean' },
 					name: { type: 'string' },
 					owner: { type: 'string', optional: true },
 					partnerDomain: { type: 'boolean' },

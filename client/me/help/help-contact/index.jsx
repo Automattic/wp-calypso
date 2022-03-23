@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getPlanTermLabel } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import { isDefaultLocale, localizeUrl } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -17,7 +18,6 @@ import Notice from 'calypso/components/notice';
 import withActiveSupportTickets from 'calypso/data/help/with-active-support-tickets';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
 import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
 import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
@@ -659,27 +659,27 @@ class HelpContact extends Component {
 								context: 'Holiday name',
 							} ) }
 							compact={ compact }
-							displayAt="2021-03-28 00:00Z"
-							closesAt="2021-04-04 00:00Z"
-							reopensAt="2021-04-05 06:00Z"
+							displayAt="2022-04-10 00:00Z"
+							closesAt="2022-04-17 00:00Z"
+							reopensAt="2022-04-18 07:00Z"
 						/>
 						<ChatHolidayClosureNotice
 							holidayName={ translate( 'Christmas', {
 								context: 'Holiday name',
 							} ) }
 							compact={ compact }
-							displayAt="2021-12-17 00:00Z"
-							closesAt="2021-12-24 00:00Z"
-							reopensAt="2021-12-26 07:00Z"
+							displayAt="2022-12-17 00:00Z"
+							closesAt="2022-12-24 00:00Z"
+							reopensAt="2022-12-26 07:00Z"
 						/>
 						<ChatHolidayClosureNotice
 							holidayName={ translate( "New Year's Day", {
 								context: 'Holiday name',
 							} ) }
 							compact={ compact }
-							displayAt="2021-12-26 07:00Z"
-							closesAt="2021-12-31 00:00Z"
-							reopensAt="2022-01-02 07:00Z"
+							displayAt="2022-12-26 07:00Z"
+							closesAt="2022-12-31 00:00Z"
+							reopensAt="2023-01-02 07:00Z"
 						/>
 					</>
 				) }

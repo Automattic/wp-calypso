@@ -44,6 +44,7 @@ function getTourAssets( key: string ): TourAsset | undefined {
 function getTourSteps( localeSlug: string, referencePositioning = false ): WpcomStep[] {
 	return [
 		{
+			slug: 'welcome',
 			meta: {
 				heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
 				descriptions: {
@@ -63,6 +64,7 @@ function getTourSteps( localeSlug: string, referencePositioning = false ): Wpcom
 			},
 		},
 		{
+			slug: 'everything-is-a-block',
 			meta: {
 				heading: __( 'Everything is a block', 'full-site-editing' ),
 				descriptions: {
@@ -82,6 +84,7 @@ function getTourSteps( localeSlug: string, referencePositioning = false ): Wpcom
 			},
 		},
 		{
+			slug: 'add-block',
 			...( referencePositioning && {
 				referenceElements: {
 					mobile:
@@ -112,6 +115,7 @@ function getTourSteps( localeSlug: string, referencePositioning = false ): Wpcom
 			},
 		},
 		{
+			slug: 'edit-block',
 			meta: {
 				heading: __( 'Click a block to change it', 'full-site-editing' ),
 				descriptions: {
@@ -131,6 +135,7 @@ function getTourSteps( localeSlug: string, referencePositioning = false ): Wpcom
 			},
 		},
 		{
+			slug: 'settings',
 			...( referencePositioning && {
 				referenceElements: {
 					mobile:
@@ -157,6 +162,7 @@ function getTourSteps( localeSlug: string, referencePositioning = false ): Wpcom
 		...( ! isMobile()
 			? [
 					{
+						slug: 'find-your-way',
 						meta: {
 							heading: __( 'Find your way', 'full-site-editing' ),
 							descriptions: {
@@ -180,6 +186,7 @@ function getTourSteps( localeSlug: string, referencePositioning = false ): Wpcom
 		...( ! isMobile()
 			? [
 					{
+						slug: 'undo',
 						...( referencePositioning && {
 							referenceElements: {
 								desktop:
@@ -207,6 +214,7 @@ function getTourSteps( localeSlug: string, referencePositioning = false ): Wpcom
 			  ]
 			: [] ),
 		{
+			slug: 'drag-drop',
 			meta: {
 				heading: __( 'Drag & drop', 'full-site-editing' ),
 				descriptions: {
@@ -223,6 +231,42 @@ function getTourSteps( localeSlug: string, referencePositioning = false ): Wpcom
 			},
 		},
 		{
+			slug: 'payment-block',
+			meta: {
+				heading: __( 'The Payments block', 'full-site-editing' ),
+				descriptions: {
+					desktop: (
+						<>
+							{ __(
+								'The Payments block allows you to accept payments for one-time, monthly recurring, or annual payments on your website',
+								'full-site-editing'
+							) }
+							<br />
+							<ExternalLink
+								href={ localizeUrl(
+									'https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/#how-to-use-the-payments-block-video',
+									localeSlug
+								) }
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								{ __( 'Learn more', 'full-site-editing' ) }
+							</ExternalLink>
+						</>
+					),
+					mobile: null,
+				},
+				imgSrc: getTourAssets( 'welcome' ),
+			},
+			options: {
+				classNames: {
+					desktop: 'wpcom-editor-welcome-tour__step',
+					mobile: 'wpcom-editor-welcome-tour__step',
+				},
+			},
+		},
+		{
+			slug: 'congratulations',
 			meta: {
 				heading: __( 'Congratulations!', 'full-site-editing' ),
 				descriptions: {

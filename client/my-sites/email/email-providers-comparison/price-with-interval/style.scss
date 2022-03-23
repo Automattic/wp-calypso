@@ -2,6 +2,12 @@
 	text-decoration: line-through;
 }
 
-.price-with-interval__sale-price {
-	color: var( --studio-green-50 );
+.promo-card {
+	.promo-card__price {
+		.price__cost {
+			span.price-with-interval__sale-price {
+				color: var( --studio-green-50 );
+			}
+		}
+	}
 }

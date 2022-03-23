@@ -1,13 +1,11 @@
 import { BlockFlow, EditorContext, PublishedPostContext } from '..';
+import envVariables from '../../../env-variables';
 
 interface ConfigurationData {
 	phoneNumber: number | string;
 	buttonText?: string;
 }
 
-// The parent selector for the block changes between mobile and desktop viewport.
-const blockParentSelector =
-	'div[aria-label="Block: Send A Message"], div[aria-label="Block: WhatsApp Button"]';
 const selectors = {
 	// Editor
 	settings: 'button[aria-label="WhatsApp Button Settings"]',
@@ -23,6 +21,7 @@ const selectors = {
  */
 export class WhatsAppButtonFlow implements BlockFlow {
 	private configurationData: ConfigurationData;
+	blockEditorSelector: string;
 
 	/**
 	 * Constructs an instance of this block flow with data to be used when configuring and validating the block.
@@ -31,10 +30,14 @@ export class WhatsAppButtonFlow implements BlockFlow {
 	 */
 	constructor( configurationData: ConfigurationData ) {
 		this.configurationData = configurationData;
+		// The parent selector for the block changes between mobile and desktop viewport.
+		this.blockEditorSelector =
+			envVariables.VIEWPORT_NAME === 'desktop'
+				? 'div[aria-label="Block: WhatsApp Button"]'
+				: 'div[aria-label="Block: Send A Message"]';
 	}
 
 	blockSidebarName = 'WhatsApp Button';
-	blockEditorSelector = blockParentSelector;
 
 	/**
 	 * Configure the block in the editor with the configuration data from the constructor

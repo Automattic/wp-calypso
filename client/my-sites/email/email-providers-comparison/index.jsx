@@ -136,11 +136,7 @@ class EmailProvidersComparison extends Component {
 		this.state = {
 			googleUsers: newUsers( selectedDomainName ),
 			titanMailboxes: [ buildNewTitanMailbox( selectedDomainName, false ) ],
-			expanded: {
-				forwarding: false,
-				google: false,
-				titan: true,
-			},
+			expanded: this.getDefaultExpandedState(),
 			addingToCart: false,
 			emailForwardAdded: false,
 			validatedTitanMailboxUuids: [],
@@ -153,6 +149,24 @@ class EmailProvidersComparison extends Component {
 
 	componentWillUnmount() {
 		this.isMounted = false;
+	}
+
+	getDefaultExpandedState() {
+		const { shouldPromoteGoogleWorkspace } = this.props;
+
+		if ( shouldPromoteGoogleWorkspace ) {
+			return {
+				forwarding: false,
+				google: true,
+				titan: false,
+			};
+		}
+
+		return {
+			forwarding: false,
+			google: false,
+			titan: true,
+		};
 	}
 
 	onExpandedStateChange = ( providerKey, isExpanded ) => {
@@ -362,12 +376,11 @@ class EmailProvidersComparison extends Component {
 		currencyCode,
 		isEligibleForFreeTrial,
 		gSuiteProduct,
-		productIsDiscounted,
 		standardPrice,
 	} ) {
-		const { translate } = this.props;
+		const { hasDiscountForGSuite, translate } = this.props;
 
-		if ( productIsDiscounted ) {
+		if ( hasDiscountForGSuite ) {
 			return (
 				<span className="email-providers-comparison__discount-with-renewal">
 					{ translate(
@@ -440,6 +453,7 @@ class EmailProvidersComparison extends Component {
 			gSuiteIntroductoryOffer,
 			gSuiteProduct,
 			hasCartDomain,
+			hasDiscountForGSuite,
 			isGSuiteSupported,
 			onSkipClick,
 			selectedDomainName,
@@ -457,9 +471,8 @@ class EmailProvidersComparison extends Component {
 
 		const isEligibleForFreeTrial = gSuiteIntroductoryOffer && hasCartDomain;
 
-		const productIsDiscounted = hasDiscount( gSuiteProduct );
 		const monthlyPrice = getMonthlyPrice( gSuiteProduct?.cost ?? null, currencyCode );
-		const formattedPrice = productIsDiscounted
+		const formattedPrice = hasDiscountForGSuite
 			? translate( '{{fullPrice/}} {{discountedPrice/}} /mailbox /month (billed annually)', {
 					components: {
 						fullPrice: <span>{ monthlyPrice }</span>,
@@ -480,7 +493,7 @@ class EmailProvidersComparison extends Component {
 			  } );
 
 		const standardPrice =
-			! productIsDiscounted && isEligibleForFreeTrial
+			! hasDiscountForGSuite && isEligibleForFreeTrial
 				? formatCurrency( gSuiteProduct?.cost ?? null, currencyCode )
 				: getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode );
 
@@ -488,18 +501,8 @@ class EmailProvidersComparison extends Component {
 			currencyCode,
 			isEligibleForFreeTrial,
 			gSuiteProduct,
-			productIsDiscounted,
 			standardPrice,
 		} );
-
-		const starLabel = productIsDiscounted
-			? translate( '%(discount)d%% off!', {
-					args: {
-						discount: gSuiteProduct.sale_coupon.discount,
-					},
-					comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
-			  } )
-			: null;
 
 		// If we don't have any users, initialize the list to have 1 empty user
 		const googleUsers =
@@ -561,7 +564,6 @@ class EmailProvidersComparison extends Component {
 				providerKey="google"
 				logo={ { path: googleWorkspaceIcon } }
 				title={ getGoogleMailServiceFamily() }
-				starLabel={ starLabel }
 				description={ translate(
 					'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
 				) }
@@ -930,6 +932,8 @@ export default connect(
 			( hasCartDomain || ( domain && hasGSuiteSupportedDomain( [ domain ] ) ) );
 		const gSuiteProduct = getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY );
 
+		const hasDiscountForGSuite = hasDiscount( gSuiteProduct );
+
 		const titanProductSlug = ownProps.titanProductSlug ?? TITAN_MAIL_MONTHLY_SLUG;
 
 		return {
@@ -943,10 +947,13 @@ export default connect(
 			),
 			gSuiteProduct,
 			hasCartDomain,
+			hasDiscountForGSuite,
 			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
 			isGSuiteSupported,
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,
+			shouldPromoteGoogleWorkspace:
+				isGSuiteSupported && ( ownProps.source === 'google-sale' || hasDiscountForGSuite ),
 			titanMailProduct: getProductBySlug( state, titanProductSlug ),
 		};
 	},

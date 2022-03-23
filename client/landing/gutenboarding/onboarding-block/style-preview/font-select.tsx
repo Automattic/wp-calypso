@@ -7,7 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import * as React from 'react';
 import { useFontPairings } from '../../fonts';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { ONBOARD_STORE } from '../../stores/onboard';
 
 const FontSelect: React.FunctionComponent = () => {
 	const { __ } = useI18n();

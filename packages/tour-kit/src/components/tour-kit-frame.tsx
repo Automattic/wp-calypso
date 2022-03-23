@@ -30,7 +30,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
 		null
 	);
-	const [ isMinimized, setIsMinimized ] = useState( false );
+	const [ isMinimized, setIsMinimized ] = useState( config.isMinimized ?? false );
 
 	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );
 	const [ tourReady, setTourReady ] = useState( false );
@@ -42,6 +42,12 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const referenceElement = referenceElementSelector
 		? document.querySelector< HTMLElement >( referenceElementSelector )
 		: null;
+
+	useEffect( () => {
+		if ( config.isMinimized ) {
+			setIsMinimized( true );
+		}
+	}, [ config.isMinimized ] );
 
 	const showArrowIndicator = useCallback( () => {
 		if ( config.options?.effects?.arrowIndicator === false ) {

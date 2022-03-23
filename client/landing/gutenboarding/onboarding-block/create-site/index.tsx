@@ -7,7 +7,7 @@ import { FLOW_ID } from '../../constants';
 import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { trackEventWithFlow } from '../../lib/analytics';
-import { STORE_KEY } from '../../stores/onboard';
+import { ONBOARD_STORE } from '../../stores/onboard';
 
 import './style.scss';
 
@@ -17,7 +17,7 @@ const DURATION_IN_MS = 6000;
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const hasPaidDomain = useSelect( ( select ) => select( STORE_KEY ).hasPaidDomain() );
+	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 	const plan = useSelectedPlan();
 
 	const steps = React.useRef< string[] >(

@@ -102,7 +102,6 @@ export const createSiteDomainObject = ( domain ) => {
 		mustRemovePrivacyBeforeContactUpdate: Boolean(
 			domain.must_remove_privacy_before_contact_update
 		),
-		newRegistration: Boolean( domain.new_registration ),
 		name: String( domain.domain ),
 		owner: String( domain.owner ),
 		partnerDomain: Boolean( domain.partner_domain ),

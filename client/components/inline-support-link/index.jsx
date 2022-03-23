@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { isDefaultLocale, localizeUrl } from '@automattic/i18n-utils';
 import { compose } from '@wordpress/compose';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -7,7 +8,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
 import ExternalLink from 'calypso/components/external-link';
-import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 import { withRouteModal } from 'calypso/lib/route-modal';
 import {
 	bumpStat,

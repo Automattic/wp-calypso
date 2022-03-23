@@ -1,10 +1,10 @@
 import {
 	getPlan,
 	PLAN_WPCOM_FLEXIBLE,
-	PLAN_WPCOM_MANAGED,
+	PLAN_WPCOM_PRO,
 	TYPE_FREE,
 	TYPE_FLEXIBLE,
-	TYPE_MANAGED,
+	TYPE_PRO,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -109,6 +109,7 @@ export const globalOverrides = css`
 			html[dir='ltr'] &,
 			html[dir='rtl'] & {
 				padding: 24px 16px;
+				margin: 0;
 			}
 		}
 	}
@@ -174,30 +175,28 @@ export const globalOverrides = css`
 		margin-bottom: 0.5rem;
 	}
 
-	.notice.notice {
+	.notice.is-info,
+	.notice.is-success {
 		color: inherit;
-	}
-
-	.notice.is-info {
 		background: #f6f7f7;
-	}
 
-	.notice__content.notice__content {
-		html[dir='ltr'] & {
-			padding: 10px 10px 10px 0;
+		.notice__content.notice__content {
+			html[dir='ltr'] & {
+				padding: 10px 10px 10px 0;
+			}
+			html[dir='rtl'] & {
+				padding: 10px 0 10px 10px;
+			}
 		}
-		html[dir='rtl'] & {
-			padding: 10px 0 10px 10px;
+
+		.notice__icon-wrapper.notice__icon-wrapper {
+			background: none;
+			width: 40px;
 		}
-	}
 
-	.notice.is-info .notice__icon-wrapper.notice__icon-wrapper {
-		background: none;
-		width: 40px;
-	}
-
-	.notice .gridicons-info-outline {
-		fill: #008a20;
+		.gridicons-info-outline {
+			fill: #008a20;
+		}
 	}
 
 	.my-plan-card.my-plan-card.card {
@@ -230,7 +229,7 @@ const ComparisonTable = styled.table< TableProps >`
 	border-collapse: collapse;
 
 	.is-section-plans & {
-		max-width: 950px;
+		max-width: 980px;
 		html[dir='ltr'] & {
 			margin-left: auto;
 		}
@@ -244,7 +243,8 @@ const ComparisonTable = styled.table< TableProps >`
 		background: #fdfdfd;
 		border-bottom: 1px solid rgba( 220, 220, 222, 0.2 );
 		padding: 1.25rem;
-		min-height: 2rem;
+		height: 4.5rem;
+		box-sizing: border-box;
 		width: ${ ( { firstColWidth, planCount } ) => `${ ( 100 - firstColWidth ) / planCount }%` };
 		font-size: 0.875rem;
 		vertical-align: middle;
@@ -252,14 +252,12 @@ const ComparisonTable = styled.table< TableProps >`
 		@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
 			.is-section-signup & {
 				width: 50%;
-				font-size: 0.75rem;
 			}
 		}
 
 		@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
 			.is-section-plans & {
 				width: 50%;
-				font-size: 0.75rem;
 			}
 		}
 	}
@@ -372,34 +370,6 @@ const PlanComparisonToggle = styled.tr`
 		}
 	}
 `;
-
-const MobileComparePlansHeader = styled.td`
-	display: none;
-
-	h3 {
-		font-size: 1.5rem;
-		font-family: Recoleta;
-		line-height: 2;
-		margin-top: 0.5rem;
-	}
-
-	p {
-		font-size: 0.875rem;
-	}
-
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
-		.is-section-signup & {
-			display: table-cell;
-		}
-	}
-
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
-		.is-section-plans & {
-			display: table-cell;
-		}
-	}
-`;
-
 interface Props {
 	isInSignup?: boolean;
 	selectedSiteId?: number;
@@ -429,7 +399,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSiteId || null ) );
 	const [ showCollapsibleRows, setShowCollapsibleRows ] = useState( false );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? '';
-	const plans = [ getPlan( PLAN_WPCOM_FLEXIBLE ), getPlan( PLAN_WPCOM_MANAGED ) ] as WPComPlan[];
+	const plans = [ getPlan( PLAN_WPCOM_FLEXIBLE ), getPlan( PLAN_WPCOM_PRO ) ] as WPComPlan[];
 	const prices: PlanPrices[] = [ { price: 0 }, usePlanPrices( plans[ 1 ], selectedSiteId ) ];
 	const translate = useTranslate();
 
@@ -448,7 +418,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	);
 
 	return (
-		<ComparisonTable firstColWidth={ 30 } planCount={ plans.length }>
+		<ComparisonTable firstColWidth={ 32 } planCount={ plans.length }>
 			<THead isInSignup={ isInSignup }>
 				<tr>
 					<td className={ `is-first` }>
@@ -467,7 +437,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 								currentSitePlanSlug={ sitePlan?.product_slug }
 								plan={ plan }
 								isInSignup={ isInSignup }
-								isPrimary={ plan.type === TYPE_MANAGED }
+								isPrimary={ plan.type === TYPE_PRO }
 								isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
 								manageHref={ manageHref }
 								onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
@@ -477,18 +447,12 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 				</tr>
 			</THead>
 			<tbody className="plans-comparison__rows">
-				<tr>
-					<MobileComparePlansHeader colSpan={ 2 }>
-						<h3>{ translate( 'Compare plans' ) }</h3>
-						<p>{ 'Lorem ipsum dolor sit amet, consectetur dolor sit amet adipiscing elit.' }</p>
-					</MobileComparePlansHeader>
-				</tr>
-				{ planComparisonFeatures.slice( 0, 6 ).map( ( feature ) => (
+				{ planComparisonFeatures.slice( 0, 7 ).map( ( feature ) => (
 					<PlansComparisonRow feature={ feature } plans={ plans } key={ feature.features[ 0 ] } />
 				) ) }
 			</tbody>
 			<tbody className={ collapsibleRowsclassName }>
-				{ planComparisonFeatures.slice( 6 ).map( ( feature ) => (
+				{ planComparisonFeatures.slice( 7 ).map( ( feature ) => (
 					<PlansComparisonRow feature={ feature } plans={ plans } key={ feature.features[ 0 ] } />
 				) ) }
 			</tbody>

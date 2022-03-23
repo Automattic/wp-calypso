@@ -2,6 +2,10 @@ import { Page } from 'playwright';
 
 type NoticeType = 'Success' | 'Error' | 'Info';
 
+const selectors = {
+	dismissButton: 'button[aria-label="Dismiss"]',
+};
+
 /**
  * Represents the Snackbar Notice compoonent.
  *
@@ -45,5 +49,13 @@ export class SnackbarNotificationComponent {
 		await locator.waitFor( { state: 'visible' } );
 
 		return Boolean( await locator.count() );
+	}
+
+	/**
+	 * Dismiss a Snackbar Notification.
+	 */
+	async dismiss(): Promise< void > {
+		const locator = this.page.locator( selectors.dismissButton );
+		await locator.click();
 	}
 }

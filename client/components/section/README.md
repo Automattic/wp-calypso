@@ -1,6 +1,6 @@
 # Section (TSX)
 
-This component displays a section with a header and an space for content
+This component displays a section with a header and children elements as content.
 
 ## How to use
 
@@ -15,4 +15,5 @@ function render() {
 ## Props
 
 - `header` (`ReactChild`) - The header string or a component to render as the header.
-- `children` (`ReactChild | ReactChild[]`) - The content to be rendered by the footer section.
+- `children` (`ReactChild | ReactChild[]`) - The content to be rendered inside the section.
+- `dark?` (`boolean`) - Makes the background of the section dark.

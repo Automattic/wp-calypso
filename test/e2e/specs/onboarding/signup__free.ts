@@ -5,7 +5,7 @@
 import {
 	DataHelper,
 	DomainSearchComponent,
-	GutenbergEditorPage,
+	EditorPage,
 	LoginPage,
 	UserSignupPage,
 	SignupPickPlanPage,
@@ -41,7 +41,7 @@ skipDescribeIf( isStagingOrProd )(
 
 		let page: Page;
 		let domainSearchComponent: DomainSearchComponent;
-		let gutenbergEditorPage: GutenbergEditorPage;
+		let editorPage: EditorPage;
 		let startSiteFlow: StartSiteFlow;
 		let generalSettingsPage: GeneralSettingsPage;
 
@@ -120,8 +120,8 @@ skipDescribeIf( isStagingOrProd )(
 
 		describe( 'Validate site metadata', function () {
 			it( 'Return to Calypso dashboard', async function () {
-				gutenbergEditorPage = new GutenbergEditorPage( page );
-				await gutenbergEditorPage.exitEditor();
+				editorPage = new EditorPage( page );
+				await editorPage.exitEditor();
 			} );
 
 			it( 'Navigate to settings', async function () {

@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import { getUrlFromParts, getUrlParts } from '@automattic/calypso-url';
+import { isDefaultLocale, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
 import { forEach, throttle } from 'lodash';
-import { isDefaultLocale, getLanguage } from './utils';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -215,10 +215,13 @@ export function getTranslationChunkFileUrl( {
  * @returns {boolean}           Whether the chunk translations are preloaded
  */
 function getIsTranslationChunkPreloaded( chunkId, localeSlug ) {
-	return (
-		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug &&
-		chunkId in window?.i18nTranslationChunks
-	);
+	if ( typeof window !== 'undefined' ) {
+		return (
+			window.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug &&
+			chunkId in window.i18nTranslationChunks
+		);
+	}
+	return false;
 }
 
 /**

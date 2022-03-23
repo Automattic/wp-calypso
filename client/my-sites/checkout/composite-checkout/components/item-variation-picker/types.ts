@@ -3,10 +3,12 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 export type WPCOMProductSlug = string;
 
 export type WPCOMProductVariant = {
-	variantLabel: string;
-	variantDetails: React.ReactNode;
-	productSlug: WPCOMProductSlug;
+	discountPercentage: number;
+	formattedCurrentPrice: string | null;
+	formattedPriceBeforeDiscount: string | null;
 	productId: number;
+	productSlug: WPCOMProductSlug;
+	variantLabel: string;
 };
 
 export type ItemVariationPickerProps = {
@@ -15,6 +17,8 @@ export type ItemVariationPickerProps = {
 	isDisabled: boolean;
 	siteId: number | undefined;
 	productSlug: string;
+	type?: 'buttons' | 'dropdown';
+	isLoading?: boolean;
 };
 
 export type OnChangeItemVariant = (

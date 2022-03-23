@@ -20,10 +20,15 @@ export const fetchStoredCards = ( paging: { startingAfter: string; endingBefore:
 			},
 			{ starting_after: paging.startingAfter, ending_before: paging.endingBefore }
 		)
-		.then( ( data: { items: PaymentMethod[]; has_more: boolean } ) => {
+		.then( ( data: { items: PaymentMethod[]; has_more: boolean; per_page: number } ) => {
 			dispatch( {
 				type: 'STORED_CARDS_HAS_MORE_ITEMS',
 				hasMore: data.has_more,
+			} );
+
+			dispatch( {
+				type: 'STORED_CARDS_ITEMS_PER_PAGE',
+				perPage: data.per_page,
 			} );
 
 			dispatch( {
