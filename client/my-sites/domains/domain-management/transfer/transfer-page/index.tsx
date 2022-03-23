@@ -131,30 +131,35 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			);
 		}
 
-		if ( ! ( isPrimaryDomain && isAtomic ) ) {
-			if ( options.length > 0 ) {
-				options.push( <div key="separator" className="transfer-page__item-separator"></div> );
-			}
-			const mainText = isMapping
-				? __( 'Transfer this domain connection to any site you are an administrator on' )
-				: __( 'Transfer this domain to any site you are an administrator on' );
+		const canTransferToAnotherSite = ! ( isPrimaryDomain && isAtomic );
 
-			options.push(
-				<ActionCard
-					key="transfer-to-another-site"
-					buttonHref={ domainManagementTransferToOtherSite(
-						selectedSite.slug,
-						selectedDomainName,
-						currentRoute
-					) }
-					// translators: Continue is a verb
-					buttonText={ __( 'Continue' ) }
-					// translators: Transfer a domain to another WordPress.com site
-					headerText={ __( 'To another WordPress.com site' ) }
-					mainText={ mainText }
-				/>
-			);
+		if ( options.length > 0 ) {
+			options.push( <div key="separator" className="transfer-page__item-separator"></div> );
 		}
+		const mainText = isMapping
+			? __( 'Transfer this domain connection to any site you are an administrator on' )
+			: __( 'Transfer this domain to any site you are an administrator on' );
+
+		const buttonHref = canTransferToAnotherSite
+			? domainManagementTransferToOtherSite( selectedSite.slug, selectedDomainName, currentRoute )
+			: domainManagementList( selectedSite.slug, selectedDomainName );
+		options.push(
+			<ActionCard
+				key="transfer-to-another-site"
+				buttonHref={ buttonHref }
+				// translators: Continue is a verb
+				buttonText={ canTransferToAnotherSite ? __( 'Continue' ) : __( 'Change primary domain' ) }
+				// translators: Transfer a domain to another WordPress.com site
+				headerText={ __( 'To another WordPress.com site' ) }
+				mainText={
+					canTransferToAnotherSite
+						? mainText
+						: __(
+								'This domain is currently set as primary and cannot be transferred. Before transfer it, you need to set another primary domain for this site.'
+						  )
+				}
+			/>
+		);
 
 		return options.length > 0 ? <Card>{ options }</Card> : null;
 	};
