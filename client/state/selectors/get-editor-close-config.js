@@ -9,12 +9,13 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
  * @param {object} state  Global state tree
  * @param {number|string|undefined|null} siteId Site ID
  * @param {string} postType The type of the current post being edited
+ * @param {string|undefined} editorType The type of editor (ex 'site' used to denote the site editor)
  * @returns {{url: string; label: string}} The URL that should be used when the block editor close button is clicked
  * @property {string} url The URL that should be used when the block editor close button is clicked
  * @property {string} label The label that should be used for the block editor back button
  */
 
-export default function getEditorCloseConfig( state, siteId, postType ) {
+export default function getEditorCloseConfig( state, siteId, postType, editorType ) {
 	// @TODO: See if more generic back navigation would work.
 
 	const lastNonEditorRoute = getLastNonEditorRoute( state );
@@ -29,10 +30,15 @@ export default function getEditorCloseConfig( state, siteId, postType ) {
 		};
 	}
 
-	// If a user comes from Home or from a fresh page load (i.e. Signup),
+	// If a user comes from Home, from a fresh page load (i.e. Signup), or is using the site editor,
 	// redirect to Customer Home.
 	// If no postType, assume site editor and land on home.
-	if ( ! lastNonEditorRoute || ! postType || doesRouteMatch( /^\/home\/?/ ) ) {
+	if (
+		! lastNonEditorRoute ||
+		doesRouteMatch( /^\/home\/?/ ) ||
+		editorType === 'site' ||
+		! postType
+	) {
 		return {
 			url: `/home/${ getSiteSlug( state, siteId ) }`,
 			label: translate( 'Dashboard' ),

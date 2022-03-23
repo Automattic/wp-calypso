@@ -836,7 +836,12 @@ const mapStateToProps = (
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSite( state, siteId ?? 0 );
 
-	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig( state, siteId, postType );
+	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
+		state,
+		siteId,
+		postType,
+		editorType
+	);
 
 	// 'shouldDisplayAppBanner' does not check if we're in Blogger Flow, because it is a selector reading from the Redux state, and
 	// the Blogger Flow information is not in the Redux state, but in the session storage value wpcom_signup_complete_show_draft_post_modal.
