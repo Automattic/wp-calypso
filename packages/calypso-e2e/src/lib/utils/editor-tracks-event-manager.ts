@@ -1,13 +1,6 @@
 import { Locator, Page } from 'playwright';
 import { TracksEvent, TracksEventProperties } from '../../types';
 
-export interface TracksEventSearchOptions {
-	/**
-	 *
-	 */
-	waitForEventMs?: number;
-}
-
 // Exporting just for unit testing
 export const createEventMatchingPredicate = (
 	expectedName: string,
