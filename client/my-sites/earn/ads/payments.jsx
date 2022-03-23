@@ -19,10 +19,10 @@ class WordAdsPayments extends Component {
 		payments: PropTypes.arrayOf(
 			PropTypes.shape( {
 				id: PropTypes.number.isRequired,
-				payment_date: PropTypes.string,
+				paymentDate: PropTypes.string,
 				amount: PropTypes.string,
 				status: PropTypes.string,
-				paypal_email: PropTypes.string.isRequired,
+				paypalEmail: PropTypes.string.isRequired,
 				description: PropTypes.string,
 			} )
 		).isRequired,
@@ -42,9 +42,9 @@ class WordAdsPayments extends Component {
 		const map = {
 			paid: 'success',
 			pending: 'info',
-			failed: 'warning',
+			failed: 'error',
 		};
-		return map[ status ] || 'error';
+		return map[ status ] || 'warning';
 	}
 
 	paymentsTable( payments, type ) {
@@ -55,7 +55,7 @@ class WordAdsPayments extends Component {
 		payments.forEach( ( payment ) => {
 			rows.push(
 				<tr key={ type + '-' + payment.id }>
-					<td className="ads__payments-history-value">{ payment.payment_date }</td>
+					<td className="ads__payments-history-value">{ payment.paymentDate }</td>
 					<td className="ads__payments-history-value">${ numberFormat( payment.amount, 2 ) }</td>
 					<td className="ads__payments-history-value">
 						<Badge
@@ -65,7 +65,7 @@ class WordAdsPayments extends Component {
 							{ payment.status }
 						</Badge>
 					</td>
-					<td className="ads__payments-history-value">{ payment.paypal_email }</td>
+					<td className="ads__payments-history-value">{ payment.paypalEmail }</td>
 					<td className="ads__payments-history-value">{ payment.description }</td>
 				</tr>
 			);
