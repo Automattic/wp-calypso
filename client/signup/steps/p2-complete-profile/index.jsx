@@ -3,13 +3,17 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
+import {
+	hasUserSettingsRequestFailed,
+	isUpdatingUserSettings,
+} from 'calypso/state/user-settings/selectors';
 
 import './style.scss';
 
@@ -27,6 +31,29 @@ function P2CompleteProfile( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const updatingUserSettings = useSelector( isUpdatingUserSettings );
+	const userSettingsRequestFailed = useSelector( hasUserSettingsRequestFailed );
+
+	useEffect( () => {
+		if ( isSubmitting && ! updatingUserSettings ) {
+			setIsSubmitting( false );
+
+			if ( ! userSettingsRequestFailed ) {
+				recordTracksEvent( 'calypso_signup_p2_complete_profile_step_submit' );
+
+				const stepData = {
+					stepName: stepName,
+					formFullName,
+				};
+
+				submitSignupStep( stepData );
+
+				goToNextStep();
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isSubmitting, updatingUserSettings, userSettingsRequestFailed ] );
+
 	const renderUploadAvatarBtn = () => {
 		return (
 			<button className="p2-complete-profile__upload-avatar-btn">
@@ -40,6 +67,8 @@ function P2CompleteProfile( {
 
 		setIsSubmitting( true );
 
+		setFormErrors( {} );
+
 		if ( formFullName.length < 2 ) {
 			setFormErrors( {
 				fullName: translate( 'Please enter your full name (3 characters or more).' ),
@@ -50,19 +79,8 @@ function P2CompleteProfile( {
 			return;
 		}
 
-		recordTracksEvent( 'calypso_signup_p2_complete_profile_step_submit' );
-
 		// API call to update user profile.
 		dispatch( saveUserSettings( { display_name: formFullName } ) );
-
-		const stepData = {
-			stepName: stepName,
-			formFullName,
-		};
-
-		submitSignupStep( stepData );
-
-		goToNextStep();
 	};
 
 	const handleSkipBtnClick = () => {
