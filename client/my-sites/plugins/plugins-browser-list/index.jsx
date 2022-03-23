@@ -35,10 +35,6 @@ const PluginsBrowserList = ( {
 
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
-			if ( 'zamir' === plugin.slug && 'new' === listName ) {
-				return null;
-			}
-
 			return (
 				<PluginBrowserItem
 					site={ site }
