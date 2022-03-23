@@ -14,13 +14,13 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	isFreeJetpackPlan,
 	isFreePlanProduct,
-	isFlexiblePlanProduct,
 	isPro,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import { Global } from '@emotion/react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -191,10 +191,17 @@ class CurrentPlan extends Component {
 
 		if (
 			eligibleForProPlan &&
-			! isFlexiblePlanProduct( selectedSite.plan ) &&
+			! isFreePlanProduct( selectedSite.plan ) &&
 			! isPro( selectedSite.plan )
 		) {
 			showLegacyPlanNotice = true;
+		}
+
+		// Ensures the Plan tab is shown in case the plan changes after the controller redirect.
+		if ( eligibleForProPlan && isFreePlanProduct( selectedSite.plan ) ) {
+			page.redirect( `/plans/${ selectedSite.slug }` );
+
+			return null;
 		}
 
 		return (
