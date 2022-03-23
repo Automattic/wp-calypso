@@ -144,10 +144,13 @@
 			// line-height: 24px;
 
 			@include breakpoint-deprecated( '>660px' ) {
-				flex-grow: 1;
-				margin: 0 !important;
 				width: auto;
 				text-align: left;
+			}
+
+			@include breakpoint-deprecated( '>800px' ) {
+				flex-grow: 1;
+				margin: 0 !important;
 			}
 		}
 	}
