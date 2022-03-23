@@ -441,8 +441,10 @@ const SearchListView = ( {
 				<PluginsBrowserList
 					plugins={
 						pluginsPagination?.page === 1
-							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
-							: pluginsBySearchTerm
+							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ].filter(
+									filterOutPluginsFromBlockList
+							  )
+							: pluginsBySearchTerm.filter( filterOutPluginsFromBlockList )
 					}
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					title={ searchTitle }
@@ -568,6 +570,8 @@ const PluginSingleListView = ( {
 	} else {
 		return null;
 	}
+
+	plugins = plugins.filter( filterOutPluginsFromBlockList );
 
 	let listLink = '/plugins/' + category;
 	if ( domain ) {
@@ -768,6 +772,12 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 		( plugin ) =>
 			! displayedFeaturedSlugsMap.has( plugin.slug ) && isCompatiblePlugin( plugin.slug )
 	);
+}
+
+const PLUGIN_SLUGS_BLOCKLIST = [ 'zamir' ];
+
+function filterOutPluginsFromBlockList( plugin ) {
+	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 
 export default UrlSearch( PluginsBrowser );
