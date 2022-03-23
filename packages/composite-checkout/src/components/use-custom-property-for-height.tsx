@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 
-export const customPropertyForSubmitButtonHeight = '--submit-button-height';
-
 function setCustomPropertyForElement< T extends HTMLElement >(
 	customProperty: `--${ string }`,
 	element: T | null

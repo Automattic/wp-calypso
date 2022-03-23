@@ -23,14 +23,13 @@ import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutSubmitButton from './checkout-submit-button';
 import LoadingContent from './loading-content';
 import { CheckIcon } from './shared-icons';
-import {
-	customPropertyForSubmitButtonHeight,
-	useResizeStepAreaForFixedFooter,
-} from './use-resize-step-area-for-fixed-footer';
+import { useCustomPropertyForHeight } from './use-custom-property-for-height';
 import type { Theme } from '../lib/theme';
 import type { Dispatch, ReactNode, HTMLAttributes, SetStateAction, ReactElement } from 'react';
 
 const debug = debugFactory( 'composite-checkout:checkout-steps' );
+
+const customPropertyForSubmitButtonHeight = '--submit-button-height';
 
 interface StepCompleteStatus {
 	[ key: string ]: boolean;
@@ -483,7 +482,9 @@ export function CheckoutFormSubmit( {
 		[ onPageLoadError ]
 	);
 
-	const submitWrapperRef = useResizeStepAreaForFixedFooter();
+	const submitWrapperRef = useCustomPropertyForHeight< HTMLDivElement >(
+		customPropertyForSubmitButtonHeight
+	);
 
 	return (
 		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
