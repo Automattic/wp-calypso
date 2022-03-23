@@ -23,6 +23,10 @@ import CheckoutNextStepButton from './checkout-next-step-button';
 import CheckoutSubmitButton from './checkout-submit-button';
 import LoadingContent from './loading-content';
 import { CheckIcon } from './shared-icons';
+import {
+	customPropertyForSubmitButtonHeight,
+	useResizeStepAreaForFixedFooter,
+} from './use-resize-step-area-for-fixed-footer';
 import type { Theme } from '../lib/theme';
 import type { Dispatch, ReactNode, HTMLAttributes, SetStateAction, ReactElement } from 'react';
 
@@ -372,7 +376,7 @@ export const CheckoutStepAreaWrapper = styled.div`
 	width: 100%;
 
 	&.checkout__step-wrapper--last-step {
-		margin-bottom: 100px;
+		margin-bottom: var( ${ customPropertyForSubmitButtonHeight }, 100px );
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
@@ -381,6 +385,7 @@ export const CheckoutStepAreaWrapper = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		max-width: 556px;
+		margin-bottom: 0;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -477,8 +482,11 @@ export function CheckoutFormSubmit( {
 		( error ) => onPageLoadError?.( 'submit_button_load', error ),
 		[ onPageLoadError ]
 	);
+
+	const submitWrapperRef = useResizeStepAreaForFixedFooter();
+
 	return (
-		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper">
+		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
 			<CheckoutSubmitButton
 				disabled={ isThereAnotherNumberedStep || disableSubmitButton }
