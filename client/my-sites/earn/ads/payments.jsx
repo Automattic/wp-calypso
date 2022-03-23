@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -45,6 +46,7 @@ class WordAdsPayments extends Component {
 	paymentsTable( payments, type ) {
 		const { numberFormat, translate } = this.props;
 		const rows = [];
+		const classes = classNames( 'payments_history' );
 
 		payments.forEach( ( payment ) => {
 			rows.push(
@@ -66,7 +68,12 @@ class WordAdsPayments extends Component {
 		} );
 
 		return (
-			<Card>
+			<Card className={ classes }>
+				<div className="ads__module-header module-header">
+					<h1 className="ads__module-header-title module-header-title">
+						{ translate( 'Payment history' ) }
+					</h1>
+				</div>
 				<div className="ads__module-content module-content">
 					<table>
 						<thead>
