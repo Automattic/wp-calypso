@@ -1,4 +1,10 @@
-import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	getPlan,
+	PLAN_PREMIUM,
+	PLAN_WPCOM_PRO,
+	WPCOM_DIFM_LITE,
+} from '@automattic/calypso-products';
 import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -40,11 +46,14 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 	const headerText = translate( 'Do It For Me' );
 
 	const subHeaderText = translate(
-		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus a one year subscription of the Premium plan.',
+		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus a one year subscription of the %(plan)s plan.',
 		{
 			args: {
 				displayCost,
 				fulfillmentDays: 4,
+				plan: isEnabled( 'plans/pro-plan' )
+					? getPlan( PLAN_WPCOM_PRO )?.getTitle()
+					: getPlan( PLAN_PREMIUM )?.getTitle(),
 			},
 			components: {
 				PriceWrapper: isLoading ? <Placeholder /> : <strong />,
