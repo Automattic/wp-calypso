@@ -1,5 +1,10 @@
 .scan-threats {
 	display: flex;
+	justify-content: center;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		justify-content: start;
+	}
 
 	&__threats {
 		margin: 0;
@@ -17,6 +22,11 @@
 	&__header-message {
 		display: flex;
 		padding-bottom: 8px;
+		justify-content: center;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			justify-content: start;
+		}
 	}
 
 	&__low-risk {
@@ -129,11 +139,15 @@
 		> p {
 			font-size: $font-body;
 			font-weight: normal;
+			width: 100%;
+			text-align: center;
 			// line-height: 24px;
 
-			@include breakpoint-deprecated( '>800px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				flex-grow: 1;
 				margin: 0 !important;
+				width: auto;
+				text-align: left;
 			}
 		}
 	}
