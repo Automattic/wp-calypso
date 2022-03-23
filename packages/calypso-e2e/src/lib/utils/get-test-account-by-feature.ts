@@ -1,3 +1,11 @@
+import type { SupportedEnvVariables } from '../../env-variables';
+import defaultCriteria from './criteria-for-test-accounts';
+
+export type TestAccountEnvVariables = Pick<
+	SupportedEnvVariables,
+	'GUTENBERG_EDGE' | 'COBLOCKS_EDGE' | 'TEST_ON_ATOMIC'
+>;
+
 type Env = 'edge' | 'stable';
 
 type SiteType = 'simple' | 'atomic';
@@ -5,7 +13,7 @@ type SiteType = 'simple' | 'atomic';
 type Variant = 'siteEditor';
 
 type Feature = 'gutenberg' | 'coblocks';
-type FeatureKey = { [ key in Feature ]?: Env | undefined } & {
+export type FeatureKey = { [ key in Feature ]?: Env | undefined } & {
 	siteType: SiteType;
 	variant?: Variant;
 };
@@ -47,53 +55,6 @@ function criteriaToMap( criteria: FeatureCriteria[], map: FeatureMap ): FeatureM
 	}, map );
 }
 
-// NOTE If this gets too big, move to its own dedicated module.
-const defaultCriteria: FeatureCriteria[] = [
-	{
-		gutenberg: 'edge',
-		siteType: 'simple',
-		accountName: 'gutenbergSimpleSiteEdgeUser',
-	},
-	{ gutenberg: 'stable', siteType: 'simple', accountName: 'gutenbergSimpleSiteUser' },
-	// The CoBlocks account name takes precedence if CoBlocks edge
-	// is present. We have two definitions below to effectivelly
-	// ignore gutenberg in this case:
-	{
-		coblocks: 'edge',
-		gutenberg: 'stable',
-		siteType: 'simple',
-		accountName: 'coBlocksSimpleSiteEdgeUser',
-	},
-	{
-		coblocks: 'edge',
-		gutenberg: 'edge',
-		siteType: 'simple',
-		accountName: 'coBlocksSimpleSiteEdgeUser',
-	},
-	{
-		gutenberg: 'stable',
-		siteType: 'simple',
-		variant: 'siteEditor',
-		accountName: 'siteEditorSimpleSiteUser',
-	},
-	{
-		gutenberg: 'edge',
-		siteType: 'simple',
-		variant: 'siteEditor',
-		accountName: 'siteEditorSimpleSiteEdgeUser',
-	},
-	{
-		gutenberg: 'stable',
-		siteType: 'atomic',
-		accountName: 'gutenbergAtomicSiteUser',
-	},
-	{
-		gutenberg: 'edge',
-		siteType: 'atomic',
-		accountName: 'gutenbergAtomicSiteEdgeUser',
-	},
-];
-
 const defaultAccountsTable = criteriaToMap( defaultCriteria, new Map() );
 
 /**
@@ -131,4 +92,31 @@ export function getTestAccountByFeature(
 	if ( ! accountName ) throw Error( 'No account found for this feature' );
 
 	return accountName;
+}
+
+/**
+ * Ad-hoc helper to convert the env object to a `FeatureKey` object that can
+ * then be passed over to `getTestAccountByFeature`. Most data passed to that
+ * function will come from env variables, so it makes sense to provide a helper
+ * to DRY things up.
+ *
+ * This helper doesn't attempt to be generic and is very dependant on the current
+ * feature "layout" (types and criteria definition). Though it shouldn't happen
+ * often, changes to the former might require the logic here to be updated, so
+ * beware :)
+ *
+ * @param {SupportedEnvVariables} envVars
+ * @returns {FeaureKey}
+ */
+export function envToFeatureKey( envVariables: TestAccountEnvVariables ): FeatureKey {
+	return {
+		// CoBlocks doesn't have any rule for "stable" as it re-uses the regular
+		// Gutenberg stable test site, so we just pass `undefined` if the env
+		// var value is `false`. This has the nice-side effect of keeping the
+		// `defaultCriteria` table smaller (as we don't need to declare the
+		// criteria for CoBlocks stable)
+		coblocks: envVariables.COBLOCKS_EDGE ? 'edge' : undefined,
+		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+	};
 }

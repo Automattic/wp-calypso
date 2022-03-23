@@ -31,7 +31,7 @@ type EnvVariables = {
 export type ViewportName = typeof VIEWPORT_NAMES[ number ];
 export type TestLocales = string[] & typeof TEST_LOCALES;
 
-interface SupportedEnvVariables extends EnvVariables {
+export interface SupportedEnvVariables extends EnvVariables {
 	VIEWPORT_NAME: ViewportName;
 	GUTENBERG_EDGE: boolean;
 	COBLOCKS_EDGE: boolean;
@@ -56,6 +56,11 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 	TEST_ON_ATOMIC: false,
 };
+
+type TestAccountEnvVariables = Pick<
+	SupportedEnvVariables,
+	'GUTENBERG_EDGE' | 'COBLOCKS_EDGE' | 'TEST_ON_ATOMIC'
+>;
 
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {
 	let output: EnvVariableValue = value;
