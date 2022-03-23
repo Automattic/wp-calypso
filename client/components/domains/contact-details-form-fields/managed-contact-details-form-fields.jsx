@@ -294,7 +294,9 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 		const countryCode = form.countryCode?.value ?? '';
 		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
-		const isOrganizationFieldRequired = form.extra?.value?.ca?.legalType === 'CCO';
+		const isOrganizationFieldRequired = ! [ 'ABO', 'CCT', 'LGR', 'RES' ].includes(
+			form.extra?.value?.ca?.legalType
+		);
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
