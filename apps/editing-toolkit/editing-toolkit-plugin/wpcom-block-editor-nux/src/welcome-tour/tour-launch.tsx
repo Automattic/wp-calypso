@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
 import { WpcomTourKit, usePrefetchTourAssets } from '@automattic/tour-kit';
-import { isMobile } from '@automattic/viewport';
+import { isWithinBreakpoint } from '@automattic/viewport';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
@@ -69,7 +69,8 @@ function WelcomeTour() {
 	} ) );
 
 	const isTourMinimized =
-		isSidebarOpened || ( isMobile() && ( isInserterOpened || isSettingsOpened ) );
+		isSidebarOpened ||
+		( isWithinBreakpoint( '<782px' ) && ( isInserterOpened || isSettingsOpened ) );
 
 	const tourConfig: WpcomConfig = {
 		steps: tourSteps,
