@@ -20,5 +20,6 @@ export * from './editor-publish-panel-component';
 export * from './editor-nav-sidebar-component';
 export * from './editor-toolbar-component';
 export * from './editor-gutenberg-component';
+export * from './editor-list-view-component';
 
 export * from './me';
