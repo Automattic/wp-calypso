@@ -5,9 +5,11 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { QueryClient } from 'react-query';
 import { connect } from 'react-redux';
-import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
+import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 import ExternalLink from 'calypso/components/external-link';
+import { fetchSupportArticleAlternates } from 'calypso/data/support-article-alternates/use-support-article-alternates-query';
 import { withRouteModal } from 'calypso/lib/route-modal';
 import {
 	bumpStat,
@@ -22,7 +24,6 @@ import './style.scss';
 
 class InlineSupportLink extends Component {
 	state = {
-		shouldLazyLoadAlternates: false,
 		supportDataFromContext: undefined,
 	};
 
@@ -50,10 +51,6 @@ class InlineSupportLink extends Component {
 		iconSize: 14,
 	};
 
-	loadAlternates = () => {
-		this.setState( { shouldLazyLoadAlternates: true } );
-	};
-
 	componentDidMount() {
 		if ( this.props.supportContext && ! this.props.supportPostId && ! this.props.supportLink ) {
 			// Lazy load the supportPostId and supportLink by key if not provided.
@@ -68,6 +65,15 @@ class InlineSupportLink extends Component {
 		}
 	}
 
+	prefetchAlternates = () => {
+		const { supportPostId } = this.props;
+		const queryClient = new QueryClient();
+		queryClient.prefetchQuery(
+			[ 'support-article-alternates', SUPPORT_BLOG_ID, supportPostId ],
+			() => fetchSupportArticleAlternates( SUPPORT_BLOG_ID, supportPostId )
+		);
+	};
+
 	render() {
 		const {
 			className,
@@ -79,7 +85,6 @@ class InlineSupportLink extends Component {
 			children,
 			localeSlug,
 		} = this.props;
-		const { shouldLazyLoadAlternates } = this.state;
 
 		let { supportPostId, supportLink } = this.props;
 		if ( this.state.supportDataFromContext ) {
@@ -124,16 +129,11 @@ class InlineSupportLink extends Component {
 					this.props.routeModalData.openModal( supportPostId );
 					return openDialogReturn;
 				} }
-				onMouseEnter={
-					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates
-						? this.loadAlternates
-						: undefined
-				}
+				onMouseEnter={ ! isDefaultLocale( localeSlug ) ? this.prefetchAlternates : undefined }
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
 			>
-				{ shouldLazyLoadAlternates && <QuerySupportArticleAlternates postId={ supportPostId } /> }
 				{ content }
 			</LinkComponent>
 		);
