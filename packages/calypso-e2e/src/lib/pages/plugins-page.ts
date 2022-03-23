@@ -15,7 +15,7 @@ const selectors = {
 	monthlyPricing: '.plugins-browser-item__period:text("monthly")',
 	annualPricing: '.plugins-browser-item__period:text("per year")',
 	searchIcon: '.search-component__open-icon',
-	searchInput: 'input[placeholder="Try searching ‘ecommerce’"]',
+	searchInput: 'input[placeholder="Try searching "ecommerce""]',
 	searchResult: ( text: string ) => `.plugins-browser-item__title:text("${ text }")`,
 	searchResultTitle: ( text: string ) => `:text("Search results for ${ text }")`,
 };
