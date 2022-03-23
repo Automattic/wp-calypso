@@ -5,7 +5,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
-const SearchBox = ( { isMobile, doSearch, search } ) => {
+const SearchBox = ( { isMobile, doSearch, searchTerm } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -18,7 +18,7 @@ const SearchBox = ( { isMobile, doSearch, search } ) => {
 				pinned={ isMobile }
 				fitsContainer={ isMobile }
 				onSearch={ doSearch }
-				initialValue={ search }
+				initialValue={ searchTerm }
 				placeholder={ translate( 'Try searching "ecommerce"' ) }
 				delaySearch={ true }
 				recordEvent={ recordSearchEvent }
@@ -52,7 +52,7 @@ const PopularSearches = ( props ) => {
 };
 
 const SearchHeader = ( props ) => {
-	const { doSearch, search, siteSlug, title } = props;
+	const { doSearch, search, siteSlug, title, searchTerms } = props;
 
 	return (
 		<div className="search-box-header">
@@ -60,10 +60,7 @@ const SearchHeader = ( props ) => {
 			<div className="search-box-header__search">
 				<SearchBox doSearch={ doSearch } search={ search } />
 			</div>
-			<PopularSearches
-				siteSlug={ siteSlug }
-				searchTerms={ [ 'shipping', 'seo', 'portfolio', 'chat', 'mailchimp' ] } // hardcoded terms
-			/>
+			<PopularSearches siteSlug={ siteSlug } searchTerms={ searchTerms } />
 		</div>
 	);
 };
