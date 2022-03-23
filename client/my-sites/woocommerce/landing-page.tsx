@@ -37,7 +37,7 @@ interface DisplayData {
 const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce' } ];
-	const ctaRef = useRef( null );
+	const ctaRef = useRef();
 	const simpleSeller = useIsSimpleSeller();
 
 	const {
@@ -154,7 +154,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 
 	return (
 		<div className="landing-page">
-			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
+			<FixedNavigationHeader navigationItems={ navigationItems } contentEl={ ctaRef.current }>
 				<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
 					{ displayData.action }
 				</Button>

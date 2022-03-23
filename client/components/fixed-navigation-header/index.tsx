@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useEffect, useRef } from '@wordpress/element';
-import { ReactNode } from 'react';
 import Breadcrumb from 'calypso/components/breadcrumb';
+import type { ReactNode } from 'react';
 
 const Header = styled.header`
 	position: fixed;
@@ -56,26 +56,32 @@ interface Props {
 	className?: string;
 	children?: ReactNode;
 	navigationItems: { label: string; href?: string }[];
-	contentRef?: React.RefObject< HTMLElement >;
+	contentEl?: HTMLElement;
 	compactBreadcrumb?: boolean;
 }
 
 const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
-	const { id, className, children, navigationItems, contentRef, compactBreadcrumb = false } = props;
+	const {
+		id,
+		className,
+		children,
+		navigationItems = [],
+		contentEl,
+		compactBreadcrumb = false,
+	} = props;
 	const actionsRef = useRef< HTMLDivElement >( null );
 	const headerRef = useRef< HTMLElement >( null );
 
 	useEffect( () => {
-		if ( ! contentRef ) {
+		if ( ! contentEl ) {
 			return;
 		}
 
 		const handleScroll = () => {
-			const headerHeight = headerRef?.current?.getBoundingClientRect().height;
-			const offset =
-				contentRef.current && headerHeight ? contentRef.current.offsetTop - headerHeight : 0;
+			const headerHeight = headerRef.current?.getBoundingClientRect().height;
+			const offset = headerHeight ? contentEl.offsetTop - headerHeight : 0;
 			const scrollPosition = window.scrollY;
-			const actionElement = actionsRef?.current;
+			const actionElement = actionsRef.current;
 
 			if ( ! actionElement ) {
 				return;
@@ -94,7 +100,7 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 		return () => {
 			window.removeEventListener( 'scroll', handleScroll );
 		};
-	}, [ contentRef ] );
+	}, [ contentEl ] );
 
 	return (
 		<Header id={ id } className={ className } ref={ headerRef }>
@@ -104,12 +110,6 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 			</Container>
 		</Header>
 	);
-};
-
-FixedNavigationHeader.defaultProps = {
-	id: '',
-	className: '',
-	navigationItems: [],
 };
 
 export default FixedNavigationHeader;
