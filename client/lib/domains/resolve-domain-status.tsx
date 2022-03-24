@@ -4,7 +4,6 @@ import moment from 'moment';
 import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 import { isSubdomain } from 'calypso/lib/domains';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
-import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
 import {
 	SETTING_PRIMARY_DOMAIN,
@@ -461,7 +460,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( isRecentlyRegistered( domain.registrationDate ) ) {
+			if ( domain.pendingRegistration ) {
 				let noticeText;
 				if ( domain.isPrimary ) {
 					noticeText = translate(
@@ -552,10 +551,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if (
-				gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus ||
-				domain.pendingRegistration
-			) {
+			if ( gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus ) {
 				const detailCta = domain.currentUserIsOwner
 					? translate( 'Please check the email sent to you for further details' )
 					: translate( 'Please check the email sent to the domain owner for further details' );
