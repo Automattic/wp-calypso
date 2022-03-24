@@ -116,6 +116,14 @@
 	}
 }
 
+[dir='rtl'] {
+	.import__details-list {
+		svg {
+			left: auto;
+			right: 0;
+		}
+	}
+}
 .import__details-list {
 	display: flex;
 	flex-wrap: wrap;
