@@ -7,6 +7,7 @@ import {
 	PublishedPostPage,
 	PageTemplateModalComponent,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -25,13 +26,9 @@ const pagePassword = 'cat';
  */
 export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions } ): void {
 	describe( DataHelper.createSuiteTitle( `Editor: Privacy (${ visibility })` ), function () {
-		const accountName = getTestAccountByFeature(
-			{
-				gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-				siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-			},
-			[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
-		);
+		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+			{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		] );
 
 		let page: Page;
 		let url: URL;

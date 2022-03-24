@@ -8,16 +8,14 @@ import {
 	DataHelper,
 	EditorPage,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), function () {
-	const accountName = getTestAccountByFeature( {
-		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-	} );
+	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 
 	let page: Page;
 	let editorPage: EditorPage;

@@ -7,6 +7,7 @@ import {
 	PagesPage,
 	PageTemplateModalComponent,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Browser, Page, Frame } from 'playwright';
 
@@ -28,10 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let publishedUrl: URL;
 
 	const accountName = getTestAccountByFeature(
-		{
-			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-		},
+		envToFeatureKey( envVariables ),
 		// The default accounts for gutenberg+simple are `gutenbergSimpleSiteEdgeUser` for GB edge
 		// and `gutenbergSimpleSiteUser` for stable. The criteria below conflicts with the default
 		// one that would return the `gutenbergSimpleSiteUser`. We also can't define it as part of

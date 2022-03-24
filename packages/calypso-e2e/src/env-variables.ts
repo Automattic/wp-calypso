@@ -57,11 +57,6 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	TEST_ON_ATOMIC: false,
 };
 
-type TestAccountEnvVariables = Pick<
-	SupportedEnvVariables,
-	'GUTENBERG_EDGE' | 'COBLOCKS_EDGE' | 'TEST_ON_ATOMIC'
->;
-
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {
 	let output: EnvVariableValue = value;
 
