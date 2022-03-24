@@ -10,6 +10,7 @@ import {
 	TestAccount,
 	envVariables,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -25,17 +26,15 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	let page: Page;
 	let editorPage: EditorPage;
 	let publishedPostPage: PublishedPostPage;
-	const accountName = getTestAccountByFeature(
-		{
-			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-		},
-		[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
-	);
+
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features, [
+		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+	] );
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );

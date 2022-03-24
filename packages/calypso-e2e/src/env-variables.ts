@@ -31,7 +31,7 @@ type EnvVariables = {
 export type ViewportName = typeof VIEWPORT_NAMES[ number ];
 export type TestLocales = string[] & typeof TEST_LOCALES;
 
-interface SupportedEnvVariables extends EnvVariables {
+export interface SupportedEnvVariables extends EnvVariables {
 	VIEWPORT_NAME: ViewportName;
 	GUTENBERG_EDGE: boolean;
 	COBLOCKS_EDGE: boolean;
