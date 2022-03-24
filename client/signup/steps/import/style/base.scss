@@ -107,6 +107,13 @@
 			}
 		}
 	}
+
+	.formatted-header {
+		.formatted-header__title,
+		.formatted-header__subtitle {
+			text-align: start !important;
+		}
+	}
 }
 
 .import__details-list {
