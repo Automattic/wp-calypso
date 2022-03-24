@@ -1,5 +1,5 @@
-import type { SupportedEnvVariables } from '../../env-variables';
 import defaultCriteria from './criteria-for-test-accounts';
+import type { SupportedEnvVariables } from '../../env-variables';
 
 export type TestAccountEnvVariables = Pick<
 	SupportedEnvVariables,
@@ -105,8 +105,8 @@ export function getTestAccountByFeature(
  * often, changes to the former might require the logic here to be updated, so
  * beware :)
  *
- * @param {SupportedEnvVariables} envVars
- * @returns {FeaureKey}
+ * @param {SupportedEnvVariables} envVariables
+ * @returns {FeatureKey}
  */
 export function envToFeatureKey( envVariables: TestAccountEnvVariables ): FeatureKey {
 	return {

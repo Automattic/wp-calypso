@@ -97,6 +97,7 @@ describe( 'getTestAccountByFeature', function () {
 
 	it( 'will throw en error if passed feature does not match an account', () => {
 		expect( () =>
+			/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 			getTestAccountByFeature( { coblocks: 'foo', siteType: 'bar' } as any )
 		).toThrowError();
 	} );
