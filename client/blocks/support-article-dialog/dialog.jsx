@@ -1,6 +1,5 @@
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { memoize } from 'lodash';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
@@ -24,10 +23,7 @@ import './style.scss';
 import './content.scss';
 
 const noop = () => {};
-const getPostKey = memoize(
-	( blogId, postId ) => ( { blogId, postId } ),
-	( ...args ) => JSON.stringify( args )
-);
+const getPostKey = ( blogId, postId ) => ( { blogId, postId } );
 
 export const SupportArticleDialog = () => {
 	const translate = useTranslate();
