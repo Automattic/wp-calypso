@@ -122,7 +122,7 @@
 		display: flex;
 		flex: 100%;
 		margin-bottom: 12px;
-		padding-left: 34px;
+		padding-inline-start: 34px;
 
 		@include break-small {
 			flex: 50%;
