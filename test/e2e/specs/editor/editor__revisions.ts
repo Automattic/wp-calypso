@@ -18,9 +18,11 @@ import { Browser, Page } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
-	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features, [
 		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
+
 	let editorPage: EditorPage;
 	let revisionsComponent: RevisionsComponent;
 	let page: Page;
@@ -33,7 +35,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 		await editorPage.visit( 'post' );
 	} );
 

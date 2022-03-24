@@ -10,6 +10,7 @@ import {
 	EditorGutenbergComponent,
 	NavbarComponent,
 } from '../components';
+import type { SiteType } from '../../lib/utils';
 import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../components';
 
 const selectors = {
@@ -35,7 +36,7 @@ const EXTENDED_TIMEOUT = 90 * 1000;
 export class EditorPage {
 	private page: Page;
 	private editor: Locator;
-	private target: 'simple' | 'atomic';
+	private target: SiteType;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;

@@ -19,7 +19,8 @@ import { Browser, Page } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function () {
-	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features, [
 		{ gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
 
@@ -46,7 +47,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 	describe( 'Publish post', function () {
 		it( 'Enter post title', async function () {
-			editorPage = new EditorPage( page );
+			editorPage = new EditorPage( page, { target: features.siteType } );
 			await editorPage.enterTitle( postTitle );
 		} );
 

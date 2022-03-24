@@ -26,7 +26,8 @@ const pagePassword = 'cat';
  */
 export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions } ): void {
 	describe( DataHelper.createSuiteTitle( `Editor: Privacy (${ visibility })` ), function () {
-		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+		const features = envToFeatureKey( envVariables );
+		const accountName = getTestAccountByFeature( features, [
 			{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 		] );
 
@@ -43,7 +44,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 
 			it( 'Start new page', async function () {
-				editorPage = new EditorPage( page );
+				editorPage = new EditorPage( page, { target: features.siteType } );
 				await editorPage.visit( 'page' );
 				await editorPage.waitUntilLoaded();
 				const editorIframe = await editorPage.getEditorHandle();

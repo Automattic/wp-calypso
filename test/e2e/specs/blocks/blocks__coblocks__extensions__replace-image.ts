@@ -17,7 +17,8 @@ import {
 import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
+const features = envToFeatureKey( envVariables );
+const accountName = getTestAccountByFeature( features );
 
 declare const browser: Browser;
 
@@ -32,7 +33,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );

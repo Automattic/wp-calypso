@@ -16,7 +16,8 @@ import { Browser, Page } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
-	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features, [
 		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
 	const postTitle = `Scheduled Post: ${ DataHelper.getTimestamp() }`;
@@ -33,7 +34,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 		await editorPage.visit( 'post' );
 	} );
 

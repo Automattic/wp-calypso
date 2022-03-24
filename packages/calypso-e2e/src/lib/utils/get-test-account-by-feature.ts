@@ -8,7 +8,7 @@ export type TestAccountEnvVariables = Pick<
 
 type Env = 'edge' | 'stable';
 
-type SiteType = 'simple' | 'atomic';
+export type SiteType = 'simple' | 'atomic';
 
 type Variant = 'siteEditor';
 
