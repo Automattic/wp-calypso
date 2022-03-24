@@ -14,6 +14,8 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const Taxonomies = ( { translate, labels, postType, taxonomy } ) => {
+	const taxonomyName = labels.name?.toLowerCase();
+
 	return (
 		<Main wideLayout className={ classnames( 'taxonomies', taxonomy ) }>
 			<ScreenOptionsTab wpAdminPath={ `edit-tags.php?taxonomy=${ taxonomy }` } />
@@ -26,9 +28,15 @@ const Taxonomies = ( { translate, labels, postType, taxonomy } ) => {
 				subHeaderText={ translate(
 					'Create, edit, and manage the %(taxonomy)s on your site. {{learnMoreLink/}}',
 					{
-						args: { taxonomy: taxonomy },
+						args: { taxonomy: taxonomyName },
 						components: {
-							learnMoreLink: <InlineSupportLink supportContext="publicize" showIcon={ false } />,
+							learnMoreLink: (
+								<InlineSupportLink
+									key={ taxonomyName }
+									supportContext={ taxonomyName }
+									showIcon={ false }
+								/>
+							),
 						},
 					}
 				) }

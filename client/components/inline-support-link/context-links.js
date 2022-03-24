@@ -19,6 +19,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/#cancel-a-purchase',
 		post_id: 111349,
 	},
+	categories: {
+		link: 'https://wordpress.com/support/posts/categories/',
+		post_id: 8480,
+	},
 	comments: {
 		link: 'https://wordpress.com/support/comments/',
 		post_id: 113,
@@ -172,6 +176,10 @@ const contextLinks = {
 	stats: {
 		link: 'https://wordpress.com/support/stats/',
 		post_id: 4454,
+	},
+	tags: {
+		link: 'https://wordpress.com/support/posts/tags/',
+		post_id: 8586,
 	},
 	team: {
 		link: 'https://wordpress.com/support/user-roles/',

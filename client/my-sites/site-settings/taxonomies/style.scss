@@ -1,32 +1,3 @@
-.taxonomies__card-title {
-	font-size: $font-body;
-	line-height: 24px;
-	color: var( --color-neutral-70 );
-	padding-bottom: 10px;
-
-	&.is-loading {
-		@include placeholder();
-		width: 80px;
-		display: inline-block;
-	}
-}
-
-.taxonomies__card-content {
-	color: var( --color-text-subtle );
-	font-size: $font-body-small;
-	white-space: nowrap;
-	overflow: hidden;
-
-	&::after {
-		@include long-content-fade( $size: 40% );
-	}
-
-	.gridicon {
-		padding-right: 5px;
-		vertical-align: top;
-	}
-}
-
-.site-settings__taxonomies .card__link-indicator {
-	z-index: z-index( '.site-settings__taxonomies', '.card__link-indicator' );
+.taxonomy-manager__label {
+	font-weight: 500;
 }
