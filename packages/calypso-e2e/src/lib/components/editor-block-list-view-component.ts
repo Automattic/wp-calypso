@@ -8,7 +8,7 @@ const selectors = {
  * Represents an instance of the WordPress.com Editor's sidebar list view.
  * The component is available only in the Desktop viewport.
  */
-export class EditorListViewComponent {
+export class EditorBlockListViewComponent {
 	private page: Page;
 	private editor: Locator;
 

@@ -9,7 +9,7 @@ import {
 	EditorSettingsSidebarComponent,
 	EditorGutenbergComponent,
 	NavbarComponent,
-	EditorListViewComponent,
+	EditorBlockListViewComponent,
 } from '../components';
 import type { SiteType } from '../../lib/utils';
 import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../components';
@@ -43,7 +43,7 @@ export class EditorPage {
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	private editorGutenbergComponent: EditorGutenbergComponent;
-	private editorListViewComponent: EditorListViewComponent;
+	private editorBlockListViewComponent: EditorBlockListViewComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -72,7 +72,7 @@ export class EditorPage {
 		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
 		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
-		this.editorListViewComponent = new EditorListViewComponent( page, this.editor );
+		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
 	}
 
 	//#region Generic and Shell Methods
@@ -430,7 +430,7 @@ export class EditorPage {
 	 * @param blockName Name of the block type to find and click (e.g. "Heading").
 	 */
 	async clickFirstListViewEntryByType( blockName: string ): Promise< void > {
-		await this.editorListViewComponent.clickFirstBlockOfType( blockName );
+		await this.editorBlockListViewComponent.clickFirstBlockOfType( blockName );
 	}
 
 	//#endregion

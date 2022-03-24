@@ -33,7 +33,6 @@ const sleep = async ( ms: number ) => new Promise( ( resolve ) => setTimeout( re
  */
 export class EditorTracksEventManager {
 	private page: Page;
-	private editor: Locator;
 
 	/**
 	 * Construct an instance of the editor Tracks event manager
@@ -42,16 +41,18 @@ export class EditorTracksEventManager {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
 
+	/**
+	 * A locator within the correct iframe for the editor, to correctly grab values off of window.
+	 */
+	private get editor(): Locator {
 		// The Tracks events are stashed on "window" in whatever iframe is the actual editor (whether post, page, or site).
 		// We need to consolidate down to a single locator that works across all editors, and handles if we have the Gutenframe wrapper.
 		// It just matters that we're in the right iframe, so we use a very generic selector ("body") to get something safe and top-level.
-		if ( this.page.url().includes( '/wp-admin' ) ) {
-			this.editor = this.page.locator( 'body' );
-		} else {
-			// We're in some kind of Gutenframe!
-			this.editor = this.page.frameLocator( '[src*="wp-admin/post"]' ).locator( 'body' );
-		}
+		return this.page.url().includes( '/wp-admin' )
+			? this.page.locator( 'body' ) // No Gutenframe
+			: this.page.frameLocator( '[src*="wp-admin/post"]' ).locator( 'body' ); // Gutenframe
 	}
 
 	/**
