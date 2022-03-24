@@ -8,7 +8,6 @@ import {
 	TYPE_BUSINESS,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import Search from '@automattic/search';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -41,6 +40,7 @@ import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import {
 	recordTracksEvent,
@@ -303,9 +303,6 @@ const PluginsBrowser = ( {
 
 						<UploadPluginButton isMobile={ isMobile } siteSlug={ siteSlug } />
 					</div>
-					<div className="plugins-browser__searchbox">
-						{ <SearchBox isMobile={ isMobile } doSearch={ doSearch } search={ search } /> }
-					</div>
 				</FixedNavigationHeader>
 			) }
 			{ isSiteConnected === false && (
@@ -334,7 +331,13 @@ const PluginsBrowser = ( {
 				hasBusinessPlan={ hasBusinessPlan }
 				siteSlug={ siteSlug }
 			/>
-
+			<SearchBoxHeader
+				doSearch={ doSearch }
+				searchTerm={ search }
+				siteSlug={ siteSlug }
+				title={ translate( 'Plugins you need to get your projects done' ) }
+				searchTerms={ [ 'shipping', 'seo', 'portfolio', 'chat', 'mailchimp' ] }
+			/>
 			<PluginBrowserContent
 				pluginsByCategoryNew={ pluginsByCategoryNew }
 				isFetchingPluginsByCategoryNew={ isFetchingPluginsByCategoryNew }
@@ -360,8 +363,6 @@ const PluginsBrowser = ( {
 		</MainComponent>
 	);
 };
-
-const WrappedSearch = ( props ) => <Search { ...props } />;
 
 const SearchListView = ( {
 	search: searchTerm,
@@ -675,26 +676,6 @@ const UploadPluginButton = ( { isMobile, siteSlug } ) => {
 				<span className="plugins-browser__button-text">{ translate( 'Upload' ) }</span>
 			) }
 		</Button>
-	);
-};
-
-const SearchBox = ( { isMobile, doSearch, search } ) => {
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-
-	const recordSearchEvent = ( eventName ) =>
-		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
-
-	return (
-		<WrappedSearch
-			pinned={ isMobile }
-			fitsContainer={ isMobile }
-			onSearch={ doSearch }
-			initialValue={ search }
-			placeholder={ translate( 'Try searching ‘ecommerce’' ) }
-			delaySearch={ true }
-			recordEvent={ recordSearchEvent }
-		/>
 	);
 };
 
