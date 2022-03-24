@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { isDefaultLocale, localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { compose } from '@wordpress/compose';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -15,7 +15,6 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 
 import './style.scss';
 
@@ -36,7 +35,6 @@ class InlineSupportLink extends Component {
 		tracksOptions: PropTypes.object,
 		statsGroup: PropTypes.string,
 		statsName: PropTypes.string,
-		localeSlug: PropTypes.string,
 		routeModalData: PropTypes.object,
 	};
 
@@ -63,16 +61,7 @@ class InlineSupportLink extends Component {
 	}
 
 	render() {
-		const {
-			className,
-			showText,
-			showIcon,
-			iconSize,
-			translate,
-			openDialog,
-			children,
-			localeSlug,
-		} = this.props;
+		const { className, showText, showIcon, iconSize, translate, openDialog, children } = this.props;
 
 		let { supportPostId, supportLink } = this.props;
 		if ( this.state.supportDataFromContext ) {
@@ -117,7 +106,6 @@ class InlineSupportLink extends Component {
 					this.props.routeModalData.openModal( supportPostId );
 					return openDialogReturn;
 				} }
-				onMouseEnter={ ! isDefaultLocale( localeSlug ) ? this.prefetchAlternates : undefined }
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
@@ -127,10 +115,6 @@ class InlineSupportLink extends Component {
 		);
 	}
 }
-
-const mapStateToProps = ( state ) => ( {
-	localeSlug: getCurrentLocaleSlug( state ),
-} );
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
 	const { tracksEvent, tracksOptions, statsGroup, statsName, supportContext } = ownProps;
@@ -169,7 +153,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 };
 
 export default compose(
-	connect( mapStateToProps, mapDispatchToProps ),
+	connect( null, mapDispatchToProps ),
 	localize,
 	withRouteModal( 'support-article' )
 )( InlineSupportLink );
