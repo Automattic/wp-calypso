@@ -407,6 +407,7 @@ export function generateFlows( {
 						'difm-options',
 						'social-profiles',
 						'difm-design-setup-site',
+						'difm-page-picker',
 				  ]
 				: [
 						'user',
