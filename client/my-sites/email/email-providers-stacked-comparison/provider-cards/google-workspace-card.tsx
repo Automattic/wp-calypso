@@ -1,6 +1,6 @@
 import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';

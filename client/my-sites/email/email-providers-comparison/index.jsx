@@ -1,3 +1,4 @@
+import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -39,10 +40,7 @@ import {
 	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
 } from 'calypso/lib/gsuite';
-import {
-	GOOGLE_PROVIDER_NAME,
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-} from 'calypso/lib/gsuite/constants';
+import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import {
 	areAllUsersValid,
 	getItemsForCart,
