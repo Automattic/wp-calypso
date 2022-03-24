@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import page from 'page';
 import {
 	makeLayout,
@@ -6,7 +7,6 @@ import {
 	render as clientRender,
 	setLocaleMiddleware,
 } from 'calypso/controller';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
 import {
