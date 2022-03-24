@@ -13,6 +13,7 @@ function useSupportArticleAlternatesQuery( blogId, postId, queryOptions = {} ) {
 		{
 			...queryOptions,
 			enabled: ! isDefaultLocale( locale ) && !! ( blogId && postId ),
+			refetchOnMount: false,
 			refetchOnWindowFocus: false,
 			select: ( data ) => {
 				return data[ locale ];
