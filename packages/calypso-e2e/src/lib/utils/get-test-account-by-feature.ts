@@ -6,11 +6,11 @@ export type TestAccountEnvVariables = Pick<
 	'GUTENBERG_EDGE' | 'COBLOCKS_EDGE' | 'TEST_ON_ATOMIC'
 >;
 
-type Env = 'edge' | 'stable';
+type Env = 'edge' | 'stable' | '*';
 
-export type SiteType = 'simple' | 'atomic';
+export type SiteType = 'simple' | 'atomic' | '*';
 
-type Variant = 'siteEditor';
+type Variant = 'siteEditor' | 'i18n' | '*';
 
 type Feature = 'gutenberg' | 'coblocks';
 export type FeatureKey = { [ key in Feature ]?: Env | undefined } & {
@@ -38,7 +38,7 @@ function stringifyKey( o: FeatureKey ) {
 }
 
 /**
- * Turn an array of `FeastureCriteria` into a Map that can be easily queried
+ * Turn an array of `FeatureCriteria` into a Map that can be easily queried
  * with stringified `FeatureKey`s.
  *
  * @param {FeatureCriteria[]} criteria An array of `FeatureCriteria` objects.
@@ -50,9 +50,96 @@ function stringifyKey( o: FeatureKey ) {
 function criteriaToMap( criteria: FeatureCriteria[], map: FeatureMap ): FeatureMap {
 	return criteria.reduce( ( featureMap, criteria ) => {
 		const { accountName, ...rest } = criteria;
-		featureMap.set( stringifyKey( rest ), accountName );
+
+		expandIfWildcard( rest ).forEach( ( featureKey ) =>
+			featureMap.set( stringifyKey( featureKey ), accountName )
+		);
+
 		return featureMap;
 	}, map );
+}
+
+// Unfortunately, there's no way to derive this data from the types at
+// runtime nor a way to generate this from the types at compile-type, so
+// we're forced to repeat ourselves here :/
+const envs = [ undefined, 'stable', 'edge' ];
+const expandableValues = {
+	gutenberg: envs,
+	coblocks: envs,
+	siteType: [ undefined, 'simple', 'atomic' ],
+	variant: [ undefined, 'siteEditor', 'i18n' ],
+};
+
+const combineObjects = ( [ head, ...[ headTail, ...tailTail ] ] ) => {
+	debugger;
+	if ( ! headTail ) return head;
+
+	const combined = headTail.reduce( ( acc, x ) => {
+		debugger;
+		return acc.concat( head.map( ( h ) => ( { ...h, ...x } ) ) );
+	}, [] );
+
+	return combineObjects( [ combined, ...tailTail ] );
+};
+/**
+ * Expand wildcards (`*`) in `FeatureKey`s attributes if they're present. If not, just
+ * returns the same featureKey wrapped by an array.
+ *
+ * Example:
+ * `{ gutenberg: '*', siteType: '*', variant: 'siteEditor', accountName: 'foobar' }` will be expanded to:
+ * - { gutenberg: 'edge', siteType' simple', variant: 'siteEditor', accountName: 'foobar' }
+ * - { gutenberg: 'stable', siteType' simple', variant: 'siteEditor', accountName: 'foobar' }
+ * - { gutenberg: 'edge', siteType' atomic', variant: 'siteEditor', accountName: 'foobar' }
+ * - { gutenberg: 'stable', siteType' atomic', variant: 'siteEditor', accountName: 'foobar' }
+ *
+ * This makes it trivial to ignore some of the attributes for certain criteria
+ * without the need to pollute the table with a lot of new entires (for all
+ * possible combinations) manually to do so.
+ *
+ * @param {FeatureKey} featureKey
+ * @returns {Array<FeatureKey>}
+ */
+
+export function expandIfWildcard( featureKey: FeatureKey ) {
+	const hasWilcards = Object.values( featureKey ).includes( '*' );
+	if ( hasWilcards ) {
+		const withoutWildcards = ( Object.keys( featureKey ) as Array< keyof FeatureKey > )
+			.filter( ( key ) => featureKey[ key ] !== '*' )
+			.reduce( ( acc: any, key: keyof FeatureKey ) => {
+				const obj = { [ key ]: featureKey[ key ] } as any;
+				const arr = Array( 3 ).fill( obj );
+				acc.push( arr );
+				return acc;
+			}, [] );
+
+		debugger;
+		let matrix = ( Object.keys( featureKey ) as Array< keyof FeatureKey > ).reduce< FeatureKey[] >(
+			( expandable, key: keyof FeatureKey ) => {
+				// Unfortunately, there's no way to derive this data from the types at
+				// runtime nor a way to generate this from the types at compile-type, so
+				// we're forced to repeat ourselves here :/
+
+				if ( featureKey[ key ] === '*' ) {
+					const attrs = expandableValues[ key ];
+
+					let sub = [ attrs.map( ( v ) => ( { [ key ]: v } ) ) as any ];
+
+					return expandable.concat( sub );
+				}
+
+				return expandable;
+			},
+			[]
+		);
+		debugger;
+
+		if ( withoutWildcards ) {
+			matrix = matrix.concat( withoutWildcards );
+		}
+
+		return combineObjects( matrix );
+	}
+	return [ featureKey ];
 }
 
 const defaultAccountsTable = criteriaToMap( defaultCriteria, new Map() );
@@ -114,7 +201,7 @@ export function envToFeatureKey( envVariables: TestAccountEnvVariables ): Featur
 		// Gutenberg stable test site, so we just pass `undefined` if the env
 		// var value is `false`. This has the nice-side effect of keeping the
 		// `defaultCriteria` table smaller (as we don't need to declare the
-		// criteria for CoBlocks stable)
+		// criteria for CoBlocks stable).
 		coblocks: envVariables.COBLOCKS_EDGE ? 'edge' : undefined,
 		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
 		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',

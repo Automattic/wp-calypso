@@ -2,6 +2,7 @@ import { describe, expect, it, test } from '@jest/globals';
 import {
 	getTestAccountByFeature,
 	envToFeatureKey,
+	expandIfWildcard,
 } from '../../../src/lib/utils/get-test-account-by-feature';
 import type {
 	FeatureCriteria,
@@ -152,6 +153,38 @@ describe( 'getTestAccountByFeature', function () {
 		);
 
 		expect( editorAccountName ).toBe( 'aNewAccount' );
+	} );
+
+	test.only( 'w', () => {
+		const foo = expandIfWildcard( {
+			gutenberg: '*',
+			coblocks: '*',
+			siteType: 'simple',
+			variant: '*',
+		} );
+
+		debugger;
+		/*const customCriteria: FeatureCriteria[] = [
+			{
+				gutenberg: '*',
+				coblocks: '*',
+				siteType: '*',
+				variant: '*',
+				accountName: 'accountFromWildCardCriteria',
+			},
+		];
+
+		expect(
+			getTestAccountByFeature(
+				{
+					gutenberg: 'edge',
+					coblocks: 'edge',
+					siteType: 'simple',
+				},
+				customCriteria
+			)
+		).toBe( 'accountFromWildCardCriteria' );
+		*/
 	} );
 } );
 
