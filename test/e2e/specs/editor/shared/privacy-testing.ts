@@ -53,7 +53,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 
 			it( 'Enter page title', async function () {
-				editorPage = new EditorPage( page );
+				editorPage = new EditorPage( page, { target: features.siteType } );
 				await editorPage.enterTitle( `Privacy: ${ visibility } - ${ DataHelper.getTimestamp() }` );
 			} );
 
