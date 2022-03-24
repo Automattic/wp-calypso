@@ -164,7 +164,11 @@ export default {
 	},
 
 	emailManagementInbox( pageContext, next ) {
-		pageContext.primary = <InboxManagement />;
+		pageContext.primary = (
+			<InboxManagement
+				selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
+			/>
+		);
 		next();
 	},
 };
