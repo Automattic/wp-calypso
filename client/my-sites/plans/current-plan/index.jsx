@@ -18,7 +18,6 @@ import {
 	isPro,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
-import { Global } from '@emotion/react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -40,7 +39,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import { globalOverrides, isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
@@ -199,7 +198,6 @@ class CurrentPlan extends Component {
 
 		return (
 			<Main className="current-plan" wideLayout>
-				{ eligibleForProPlan && <Global styles={ globalOverrides } /> }
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				<FormattedHeader
 					brandFont

@@ -7,7 +7,7 @@ import {
 	TYPE_PRO,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { css } from '@emotion/react';
+import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -20,7 +20,7 @@ import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import { PlansComparisonAction } from './plans-comparison-action';
 import { PlansComparisonColHeader } from './plans-comparison-col-header';
 import { planComparisonFeatures } from './plans-comparison-features';
-import { PlansComparisonRow } from './plans-comparison-row';
+import { PlansComparisonRow, DesktopContent, MobileContent } from './plans-comparison-row';
 import { usePlanPrices, PlanPrices } from './use-plan-prices';
 import type { WPComPlan } from '@automattic/calypso-products';
 import type { RequestCartProduct as CartItem } from '@automattic/shopping-cart';
@@ -36,6 +36,14 @@ const getRowMobileLayout = ( breakpoint: number, pageClass: string ) => `
 			th.is-first,
 			td.is-first {
 				display: none;
+			}
+
+			${ DesktopContent } {
+				display: none;
+			}
+
+			${ MobileContent } {
+				display: block;
 			}
 
 			th,
