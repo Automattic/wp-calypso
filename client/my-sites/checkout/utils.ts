@@ -2,14 +2,14 @@ import { untrailingslashit } from 'calypso/lib/route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export function getDomainOrProductFromContext( { params, store }: PageJS.Context ): string {
-	const { site, product } = params;
+	const { domainOrProduct, product } = params;
 	const state = store.getState();
 	const selectedSite = getSelectedSite( state );
 
 	let result;
 
-	if ( selectedSite?.slug !== site && site ) {
-		result = site;
+	if ( selectedSite?.slug !== domainOrProduct && domainOrProduct ) {
+		result = domainOrProduct;
 	} else {
 		result = product;
 	}

@@ -43,7 +43,6 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	nav,
 	header,
 	footer,
-	locale,
 	planRecommendation,
 	highlightedProducts = [],
 	enableUserLicensesDialog = false,
@@ -123,7 +122,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		[]
 	);
 
-	const createProductURL = getPurchaseURLCallback( siteSlug, urlQueryArgs, locale );
+	const createProductURL = getPurchaseURLCallback( siteSlug, urlQueryArgs );
 
 	// Sends a user to a page based on whether there are subtypes.
 	const selectProduct: PurchaseCallback = (
