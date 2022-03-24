@@ -52,12 +52,11 @@ export const SupportArticleDialog = () => {
 	if ( ! postId ) {
 		postId = parseInt( currentQueryArgs?.[ 'support-article' ], 10 );
 	}
-	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId );
 	const postKey = useSupportArticleAlternatePostKey( blogId, postId );
 	const post = useSelector( ( state ) => getPostByKey( state, postKey ) );
-	const isLoading = ! post || supportArticleAlternates.isLoading;
+	const isLoading = ! post || ! postKey;
 	const siteId = post?.site_ID;
-	const shouldQueryReaderPost = ! post && ! supportArticleAlternates.isLoading;
+	const shouldQueryReaderPost = ! post && ! postKey;
 
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
