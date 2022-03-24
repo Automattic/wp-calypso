@@ -17,16 +17,28 @@ import serviceShowcase from 'calypso/signup/difm/images/service-showcase.svg';
 
 const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
 	border: 2px solid
-		${ ( { isSelected } ) => ( isSelected ? 'var( --studio-blue-50 )' : '#ffffff00' ) };
+		${ ( { isSelected } ) => ( isSelected ? 'var( --studio-blue-50 )' : 'var( --studio-white )' ) };
 	border-radius: 10px;
-	transition: border 0.2s cubic-bezier( 0.11, 0, 0.5, 0 );
+	transition: border 0.2s cubic-bezier( 0.11, 0, 0.5, 0 ),
+		border-color 0.2s cubic-bezier( 0.11, 0, 0.5, 0 ),
+		border-box 0.2s cubic-bezier( 0.11, 0, 0.5, 0 );
 	&:hover {
 		border: 2px solid
 			${ ( { isClickDisabled, isSelected } ) => {
-				if ( isClickDisabled && ! isSelected ) {
+				if ( isClickDisabled ) {
+					return 'var( --studio-white )';
+				} else if ( isSelected ) {
+					return 'var( --studio-blue-50 )';
+				}
+				return 'var( --studio-gray-50 )';
+			} };
+
+		box-shadow: 0 0 0 2px
+			${ ( { isClickDisabled, isSelected } ) => {
+				if ( isClickDisabled || isSelected ) {
 					return 'var( --studio-white )';
 				}
-				return 'var( --studio-blue-50 )';
+				return '#e2eaf1';
 			} };
 		border-radius: 10px;
 	}
@@ -41,24 +53,24 @@ const Header = styled.div`
 	position: relative;
 	width: 222px;
 	height: 12px;
-	border: 1px solid rgba( 0, 0, 0, 0.12 );
-	border-radius: 6px 6px 0 0;
+	border: 1px solid var( --studio-gray-5 );
+	border-radius: 7px 7px 0 0;
 	margin: 0 auto;
 	box-sizing: border-box;
 	padding: 5px;
 `;
 
 const Content = styled.div`
-	border: 1px solid rgba( 0, 0, 0, 0.12 );
+	border: 1px solid var( --studio-gray-5 );
 	border-top: none;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	height: 170px;
-	border-radius: 0 0 4px 4px;
+	border-radius: 0 0 7px 7px;
 `;
 
-const SelctedCount = styled.div`
+const SelectedCount = styled.div`
 	color: var( --studio-white );
 	background-color: var( --studio-blue-50 );
 	width: 25px;
@@ -105,7 +117,7 @@ export function BrowserView( {
 
 	return (
 		<Container isSelected={ isSelected } isClickDisabled={ isClickDisabled }>
-			{ selectedIndex > -1 ? <SelctedCount>{ selectedIndex + 1 }</SelctedCount> : null }
+			{ selectedIndex > -1 ? <SelectedCount>{ selectedIndex + 1 }</SelectedCount> : null }
 
 			<Header>
 				<svg width={ 16 } height={ 4 } fill="none" xmlns="http://www.w3.org/2000/svg">

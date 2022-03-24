@@ -64,7 +64,7 @@ const CellLabelContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	font-size: 14px;
-	margin-right: 8px;
+	gap: 8px;
 
 	width: 100%;
 	@media ( min-width: 960px ) {
@@ -73,14 +73,14 @@ const CellLabelContainer = styled.div`
 `;
 
 const PopularContainer = styled.div`
-	background: #b8e6bf;
+	background: var( --studio-green-5 );
 	border-radius: 4px;
 	text-align: center;
 	font-size: 12px;
 	padding: 0;
 	line-height: 20px;
 	font-weight: 500;
-	color: #00450c;
+	color: var( --studio-green-80 );
 	height: 20px;
 	width: 61px;
 `;
@@ -130,12 +130,13 @@ function PageSelector() {
 	const onPageClick = ( pageId: string ) => {
 		const foundIndex = selectedPages.indexOf( pageId );
 		// The home page cannot be touched
-		if ( pageId !== HOME_PAGE )
+		if ( pageId !== HOME_PAGE ) {
 			if ( foundIndex > -1 ) {
 				setSelectedPages( selectedPages.filter( ( page, index ) => index !== foundIndex ) );
 			} else if ( selectedPages.length !== PAGE_LIMIT ) {
 				setSelectedPages( [ ...selectedPages, pageId ] );
 			}
+		}
 	};
 
 	return (
@@ -199,12 +200,7 @@ interface StepProps {
 
 const StyledButton = styled( Button )`
 	&.button.is-primary {
-		padding: 10px;
-		font-weight: 500;
-		font-size: 14px;
-		line-height: 20px;
 		padding: 10px 27px 10px 28px;
-		border-radius: 4px;
 	}
 `;
 
@@ -222,11 +218,7 @@ export default function DIFMPagePicker( props: StepProps ) {
 			align="left"
 			isHorizontalLayout={ true }
 			isWideLayout={ false }
-			headerButton={
-				<StyledButton compact primary>
-					{ translate( 'Go to Checkout' ) }
-				</StyledButton>
-			}
+			headerButton={ <StyledButton primary>{ translate( 'Go to Checkout' ) }</StyledButton> }
 			{ ...props }
 		/>
 	);
