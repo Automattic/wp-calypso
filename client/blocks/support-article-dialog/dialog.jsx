@@ -25,6 +25,19 @@ import './content.scss';
 const noop = () => {};
 const getPostKey = ( blogId, postId ) => ( { blogId, postId } );
 
+const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
+	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId );
+	if ( supportArticleAlternates.isLoading ) {
+		return null;
+	}
+
+	if ( ! supportArticleAlternates.data ) {
+		return getPostKey( blogId, postId );
+	}
+
+	return getPostKey( supportArticleAlternates.data.blog_id, supportArticleAlternates.data.page_id );
+};
+
 export const SupportArticleDialog = () => {
 	const translate = useTranslate();
 	const { value: supportArticleId, closeModal } = useRouteModal( 'support-article' );
@@ -39,18 +52,12 @@ export const SupportArticleDialog = () => {
 	if ( ! postId ) {
 		postId = parseInt( currentQueryArgs?.[ 'support-article' ], 10 );
 	}
-	let postKey = getPostKey( blogId, postId );
 	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId );
-	if ( supportArticleAlternates.data ) {
-		postKey = getPostKey(
-			supportArticleAlternates.data.blog_id,
-			supportArticleAlternates.data.page_id
-		);
-	}
+	const postKey = useSupportArticleAlternatePostKey( blogId, postId );
 	const post = useSelector( ( state ) => getPostByKey( state, postKey ) );
-	const isLoading = ! post || supportArticleAlternates.isFetching;
+	const isLoading = ! post || supportArticleAlternates.isLoading;
 	const siteId = post?.site_ID;
-	const shouldQueryReaderPost = ! post && ! supportArticleAlternates.isFetching;
+	const shouldQueryReaderPost = ! post && ! supportArticleAlternates.isLoading;
 
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
