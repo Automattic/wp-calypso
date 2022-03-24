@@ -5,6 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { orderBy } from 'lodash';
@@ -25,8 +26,8 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { userCan } from 'calypso/lib/site/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
 import { requestDisconnectStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
@@ -587,7 +588,13 @@ class MembershipsSection extends Component {
 					/>
 				) }
 				{ this.renderOnboarding(
-					<Button primary={ true } href={ this.props.connectUrl }>
+					<Button
+						primary={ true }
+						href={ this.props.connectUrl }
+						onClick={ () =>
+							this.props.recordTracksEvent( 'calypso_memberships_stripe_connect_click' )
+						}
+					>
 						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
 						<Gridicon size={ 18 } icon={ 'external' } />
 					</Button>
@@ -657,6 +664,7 @@ const mapStateToProps = ( state ) => {
 };
 
 export default connect( mapStateToProps, {
+	recordTracksEvent,
 	requestSubscribers,
 	requestDisconnectStripeAccount,
 	requestSubscriptionStop,

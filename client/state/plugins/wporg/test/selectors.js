@@ -5,7 +5,6 @@ import {
 	isFetched,
 	isFetching,
 	isFetchingPluginsList,
-	getPluginsListPagination,
 } from '../selectors';
 
 const items = deepFreeze( {
@@ -149,26 +148,6 @@ describe( 'WPorg Selectors', () => {
 		} );
 		test( 'Should return next page number when there is one', () => {
 			expect( getNextPluginsListPage( state, 'popular' ) ).toBe( 2 );
-		} );
-	} );
-
-	describe( 'getPluginsListPagination', () => {
-		test( 'Should return undefined by default', () => {
-			const emptyState = { plugins: { wporg: { listsPagination: {} } } };
-			expect( getPluginsListPagination( emptyState, 'woocommerce' ) ).toBe( undefined );
-		} );
-
-		test( 'Should return the pagination data by search term', () => {
-			const currentState = {
-				plugins: {
-					wporg: {
-						listsPagination,
-					},
-				},
-			};
-			expect( getPluginsListPagination( currentState, 'woocommerce' ) ).toBe(
-				listsPagination.search.woocommerce
-			);
 		} );
 	} );
 } );

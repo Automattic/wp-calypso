@@ -18,6 +18,8 @@ const proxyOrigin = 'https://public-api.wordpress.com';
  */
 const origin = window.location.protocol + '//' + window.location.host;
 
+let onStreamRecord = null;
+
 /**
  * Detecting support for the structured clone algorithm. IE8 and 9, and Firefox
  * 6.0 and below only support strings as postMessage's message. This browsers
@@ -159,6 +161,7 @@ const makeRequest = ( originalParams, fn ) => {
 
 	if ( 'function' === typeof params.onStreamRecord ) {
 		// remove onStreamRecord param, which can’t be cloned
+		onStreamRecord = params.onStreamRecord;
 		delete params.onStreamRecord;
 
 		// FIXME @azabani implement stream mode processing
@@ -409,6 +412,7 @@ function onmessage( e ) {
 	let statusCode = data[ 1 ];
 	const headers = data[ 2 ];
 
+	// We don't want to delete requests while we're processing stream messages
 	if ( statusCode === 207 ) {
 		// 207 is a signal from rest-proxy. It means, "this isn't the final
 		// response to the query." The proxy supports WebSocket connections
@@ -428,13 +432,11 @@ function onmessage( e ) {
 		// add statusCode into headers object
 		headers.status = statusCode;
 
-		// FIXME @azabani remove once stream mode processing is implemented
 		if ( shouldProcessInStreamMode( headers[ 'Content-Type' ] ) ) {
-			const error = new Error(
-				'stream mode processing is not yet implemented for wpcom-proxy-request'
-			);
-			reject( xhr, error, headers );
-			return;
+			if ( statusCode === 207 ) {
+				onStreamRecord( body );
+				return;
+			}
 		}
 	}
 

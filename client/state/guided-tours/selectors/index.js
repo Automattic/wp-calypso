@@ -170,9 +170,10 @@ export const findEligibleTour = createSelector(
  */
 const getRawGuidedTourState = ( state ) => state.guidedTours;
 
+const EMPTY_STATE = { shouldShow: false };
+
 export const getGuidedTourState = createSelector(
 	( state ) => {
-		const emptyState = { shouldShow: false };
 		const tourState = getRawGuidedTourState( state );
 		const tour = findEligibleTour( state );
 		const isGutenberg = getSectionGroup( state ) === 'gutenberg';
@@ -189,7 +190,7 @@ export const getGuidedTourState = createSelector(
 		);
 
 		if ( ! tour ) {
-			return { ...tourState, ...emptyState };
+			return EMPTY_STATE;
 		}
 
 		return {

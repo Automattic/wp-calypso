@@ -14,7 +14,6 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -134,7 +133,6 @@ export default function WPCOMUpsellPage( { reason }: { reason: string } ): React
 	return (
 		<Main className="backup__main backup__wpcom-upsell">
 			<DocumentHead title="Jetpack Backup" />
-			<SidebarNavigation />
 			<PageViewTracker path="/backup/:site" title="Backup" />
 
 			<FormattedHeader

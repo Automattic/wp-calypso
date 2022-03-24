@@ -16,6 +16,7 @@ import {
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
+	isPro,
 	applyTestFiltersToPlansList,
 	isWpComMonthlyPlan,
 	JETPACK_BACKUP_T1_PRODUCTS,
@@ -234,6 +235,7 @@ class ManagePurchase extends Component {
 		const isUpgradeablePlan =
 			isPlan( purchase ) &&
 			! isEcommerce( purchase ) &&
+			! isPro( purchase ) &&
 			! isComplete( purchase ) &&
 			! isP2Plus( purchase );
 		const isUpgradeableProduct =
@@ -344,6 +346,7 @@ class ManagePurchase extends Component {
 			purchase &&
 			isPlan( purchase ) &&
 			! isEcommerce( purchase ) &&
+			! isPro( purchase ) &&
 			! isComplete( purchase ) &&
 			! isP2Plus( purchase );
 

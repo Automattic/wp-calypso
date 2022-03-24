@@ -38,6 +38,7 @@
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
+	"olark_chat_identity": false,
 	"upwork_support_locales": [
 		"de",
 		"de-at",
@@ -184,6 +185,7 @@
 		"developer",
 		"site-content-collection",
 		"importer",
+		"import-light",
 		"from",
 		"main",
 		"reader",
@@ -199,6 +201,7 @@
 		"business-monthly",
 		"ecommerce",
 		"ecommerce-monthly",
+		"pro",
 		"domain"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"

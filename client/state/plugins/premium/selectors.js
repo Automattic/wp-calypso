@@ -1,5 +1,4 @@
-import { createSelector } from '@automattic/state-utils';
-import { filter, find, get, some } from 'lodash';
+import { filter, find, some } from 'lodash';
 
 import 'calypso/state/plugins/init';
 
@@ -48,13 +47,6 @@ export const getPluginsForSite = function ( state, siteId, forPlugin = false ) {
 	} );
 };
 
-export const isStarted = function ( state, siteId, forPlugin = false ) {
-	const pluginList = getPluginsForSite( state, siteId, forPlugin );
-	return ! pluginList.every( ( item ) => {
-		return 'wait' === item.status;
-	} );
-};
-
 export const isFinished = function ( state, siteId, forPlugin = false ) {
 	const pluginList = getPluginsForSite( state, siteId, forPlugin );
 	if ( pluginList.length === 0 ) {
@@ -99,20 +91,3 @@ export const getNextPlugin = function ( state, siteId, forPlugin = false ) {
 	}
 	return plugin;
 };
-
-export const getPluginKeys = createSelector(
-	( state, siteId, forPlugin = false ) => {
-		const pluginList = getPluginsForSite( state, siteId, forPlugin );
-
-		return pluginList.reduce( ( keys, plugin ) => {
-			const key = get( plugin, 'key' );
-			const slug = get( plugin, 'slug' );
-
-			return {
-				...keys,
-				[ slug ]: key,
-			};
-		}, {} );
-	},
-	( state, siteId ) => [ state.plugins.premium.plugins[ siteId ] ]
-);

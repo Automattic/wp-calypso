@@ -9,7 +9,6 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import {
 	fetchSettings,
 	toggleWPcomEmailSetting,
@@ -190,7 +189,6 @@ class WPCOMNotifications extends Component {
 					path="/me/notifications/updates"
 					title="Me > Notifications > Updates from WordPress.com"
 				/>
-				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<FormattedHeader
 					brandFont

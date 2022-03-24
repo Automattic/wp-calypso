@@ -142,7 +142,6 @@ export interface Domain {
 	expiry: boolean;
 	expiry_soon: boolean;
 	expired: boolean;
-	new_registration: boolean;
 	auto_renewing: boolean;
 	pending_registration: boolean;
 	pending_registration_time: string;

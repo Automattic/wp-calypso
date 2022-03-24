@@ -89,21 +89,27 @@ class PostCommentList extends Component {
 		amountOfCommentsToTake: this.props.initialSize,
 	};
 
-	shouldFetchInitialComment = ( { startingCommentId, initialComment } ) => {
+	shouldFetchInitialComment = () => {
+		const { startingCommentId, initialComment } = this.props;
 		return !! ( startingCommentId && ! initialComment );
 	};
 
-	shouldFetchInitialPages = ( { startingCommentId, commentsTree } ) =>
-		startingCommentId &&
-		commentsTree[ startingCommentId ] &&
-		this.props.commentsTree[ startingCommentId ] &&
-		! this.alreadyLoadedInitialSet;
+	shouldFetchInitialPages = () => {
+		const { startingCommentId, commentsTree } = this.props;
 
-	shouldNormalFetchAfterPropsChange = ( nextProps ) => {
+		return (
+			startingCommentId &&
+			commentsTree[ startingCommentId ] &&
+			this.props.commentsTree[ startingCommentId ] &&
+			! this.alreadyLoadedInitialSet
+		);
+	};
+
+	shouldNormalFetchAfterPropsChange = () => {
 		// this next check essentially looks out for whether we've ever requested comments for the post
 		if (
-			nextProps.commentsFetchingStatus.haveEarlierCommentsToFetch &&
-			nextProps.commentsFetchingStatus.haveLaterCommentsToFetch
+			this.props.commentsFetchingStatus.haveEarlierCommentsToFetch &&
+			this.props.commentsFetchingStatus.haveLaterCommentsToFetch
 		) {
 			return true;
 		}
@@ -113,10 +119,10 @@ class PostCommentList extends Component {
 		const currentCommentsFilter = this.props.commentsFilter;
 		const currentInitialComment = this.props.initialComment;
 
-		const nextSiteId = get( nextProps, 'post.site_ID' );
-		const nextPostId = get( nextProps, 'post.ID' );
-		const nextCommentsFilter = nextProps.commentsFilter;
-		const nextInitialComment = nextProps.initialComment;
+		const nextSiteId = get( this.props, 'post.site_ID' );
+		const nextPostId = get( this.props, 'post.ID' );
+		const nextCommentsFilter = this.props.commentsFilter;
+		const nextInitialComment = this.props.initialComment;
 
 		const propsExist = nextSiteId && nextPostId && nextCommentsFilter;
 		const propChanged =
@@ -138,44 +144,44 @@ class PostCommentList extends Component {
 		return ( propsExist && propChanged ) || commentIdBail;
 	};
 
-	initialFetches = ( props = this.props ) => {
-		const { postId, siteId, commentsFilter: status } = props;
+	initialFetches = () => {
+		const { postId, siteId, commentsFilter: status } = this.props;
 
-		if ( this.shouldFetchInitialComment( props ) ) {
+		if ( this.shouldFetchInitialComment() ) {
 			// there is an edgecase the initialComment can change while on the same post
 			// in this case we can't just load the exact comment in question because
 			// we could create a gap in the list.
 			if ( this.props.commentsTree ) {
+				// view earlier...
 				this.viewEarlierCommentsHandler();
 			} else {
-				props.requestComment( { siteId, commentId: props.startingCommentId } );
+				this.props.requestComment( { siteId, commentId: this.props.startingCommentId } );
 			}
-		} else if ( this.shouldFetchInitialPages( props ) ) {
+		} else if ( this.shouldFetchInitialPages() ) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
-		} else if ( this.shouldNormalFetchAfterPropsChange( props ) ) {
-			props.requestPostComments( { siteId, postId, status } );
+		} else if ( this.shouldNormalFetchAfterPropsChange() ) {
+			this.props.requestPostComments( { siteId, postId, status } );
 		}
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.initialFetches();
 		this.scrollWhenDOMReady();
-	}
-
-	componentDidMount() {
 		this.resetActiveReplyComment();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.initialFetches( nextProps );
+	componentDidUpdate( prevProps, prevState ) {
+		// If only the state is changing, do nothing. (Avoids setState loops.)
+		if ( prevState !== this.state && prevProps === this.props ) {
+			return;
+		}
+		this.initialFetches();
 		if (
-			this.props.siteId !== nextProps.siteId ||
-			this.props.postId !== nextProps.postId ||
-			this.props.startingCommentId !== nextProps.startingCommentId
+			prevProps.siteId !== this.props.siteId ||
+			prevProps.postId !== this.props.postId ||
+			prevProps.startingCommentId !== this.props.startingCommentId
 		) {
 			this.hasScrolledToComment = false;
 			this.scrollWhenDOMReady();

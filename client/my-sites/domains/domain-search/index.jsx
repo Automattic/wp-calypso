@@ -30,7 +30,6 @@ import {
 	domainMapping,
 	domainManagementList,
 } from 'calypso/my-sites/domains/paths';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import {
@@ -259,7 +258,6 @@ class DomainSearch extends Component {
 			<Main className={ classes } wideLayout>
 				<QueryProductsList />
 				<QuerySiteDomains siteId={ this.props.selectedSiteId } />
-				<SidebarNavigation />
 				{ content }
 			</Main>
 		);

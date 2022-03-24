@@ -21,6 +21,7 @@
     font-size: $font-body-extra-small;
 
     @include breakpoint-deprecated( '<960px' ) {
+      margin-bottom: 16px;
   		margin-left: 0;
   	}
   }

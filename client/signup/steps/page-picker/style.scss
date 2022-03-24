@@ -1,0 +1,22 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.signup__step.is-difm-page-picker {
+	.step-wrapper.is-horizontal-layout {
+		margin-top: 25px;
+		@include break-small {
+			margin-top: 64px;
+			max-width: 1227px;
+		}
+		.step-wrapper__header {
+			min-width: auto;
+			margin-bottom: 65px;
+			@include break-small {
+				min-width: 410px;
+			}
+			.step-wrapper__header-button {
+				margin-top: 34px;
+			}
+		}
+	}
+}

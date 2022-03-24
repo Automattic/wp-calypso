@@ -74,7 +74,7 @@ const PluginDetailsCTA = ( {
 		isEligibleForAutomatedTransfer( state, selectedSite?.ID )
 	);
 	const hasEligibilityMessages =
-		! isJetpack && ( eligibilityHolds || eligibilityWarnings || isEligible );
+		! isAtomic && ! isJetpack && ( eligibilityHolds || eligibilityWarnings || isEligible );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsCTAPlaceholder />;
@@ -164,14 +164,21 @@ const PluginDetailsCTA = ( {
 					isSiteConnected={ isSiteConnected }
 				/>
 			</div>
-			{ ( ! isJetpackSelfHosted || ! isMarketplaceProduct ) && (
+			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 				<div className="plugin-details-CTA__t-and-c">
 					{ translate(
-						'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the Third-Party plugin Terms.',
+						'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the {{thirdPartyTos}}Third-Party plugin Terms{{/thirdPartyTos}}.',
 						{
 							components: {
 								a: (
 									<a target="_blank" rel="noopener noreferrer" href="https://wordpress.com/tos/" />
+								),
+								thirdPartyTos: (
+									<a
+										target="_blank"
+										rel="noopener noreferrer"
+										href="https://wordpress.com/third-party-plugins-terms/"
+									/>
 								),
 							},
 						}

@@ -34,7 +34,6 @@ import wpcom from 'calypso/lib/wp';
 import ContractorSelect from 'calypso/my-sites/people/contractor-select';
 import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 import RoleSelect from 'calypso/my-sites/people/role-select';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { generateInviteLinks, disableInviteLinks } from 'calypso/state/invites/actions';
@@ -703,7 +702,6 @@ class InvitePeople extends Component {
 			return (
 				<Main>
 					<PageViewTracker path="/people/new/:site" title="People > Invite People" />
-					<SidebarNavigation />
 					<EmptyContent
 						title={ translate( 'Oops, only administrators can invite other people' ) }
 						illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
@@ -718,7 +716,6 @@ class InvitePeople extends Component {
 				{ site.ID && <QuerySiteInvites siteId={ site.ID } /> }
 				{ site.ID && isJetpack && <QueryJetpackModules siteId={ site.ID } /> }
 
-				<SidebarNavigation />
 				<HeaderCake isCompact onClick={ this.goBack }>
 					{ translate( 'Invite People to %(sitename)s', {
 						args: {

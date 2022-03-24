@@ -1,12 +1,12 @@
 import {
 	DataHelper,
-	GutenbergEditorPage,
+	EditorPage,
 	TestAccount,
 	envVariables,
 	PrivacyOptions,
 	PublishedPostPage,
-	EditorSettingsSidebarComponent,
 	PageTemplateModalComponent,
+	getTestAccountByFeature,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -25,14 +25,17 @@ const pagePassword = 'cat';
  */
 export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions } ): void {
 	describe( DataHelper.createSuiteTitle( `Editor: Privacy (${ visibility })` ), function () {
-		const accountName = envVariables.GUTENBERG_EDGE
-			? 'gutenbergSimpleSiteEdgeUser'
-			: 'simpleSitePersonalPlanUser';
+		const accountName = getTestAccountByFeature(
+			{
+				gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+				siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+			},
+			[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
+		);
 
 		let page: Page;
 		let url: URL;
-		let gutenbergEditorPage: GutenbergEditorPage;
-		let editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
+		let editorPage: EditorPage;
 
 		describe( `Create a ${ visibility } page`, function () {
 			beforeAll( async function () {
@@ -43,44 +46,38 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 
 			it( 'Start new page', async function () {
-				gutenbergEditorPage = new GutenbergEditorPage( page );
-				await gutenbergEditorPage.visit( 'page' );
-				const editorIframe = await gutenbergEditorPage.waitUntilLoaded();
+				editorPage = new EditorPage( page );
+				await editorPage.visit( 'page' );
+				await editorPage.waitUntilLoaded();
+				const editorIframe = await editorPage.getEditorHandle();
 				const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
 				await pageTemplateModalComponent.selectBlankPage();
 			} );
 
 			it( 'Enter page title', async function () {
-				gutenbergEditorPage = new GutenbergEditorPage( page );
-				await gutenbergEditorPage.enterTitle(
-					`Privacy: ${ visibility } - ${ DataHelper.getTimestamp() }`
-				);
+				editorPage = new EditorPage( page );
+				await editorPage.enterTitle( `Privacy: ${ visibility } - ${ DataHelper.getTimestamp() }` );
 			} );
 
 			it( 'Enter page content', async function () {
-				await gutenbergEditorPage.enterText( pageContent );
+				await editorPage.enterText( pageContent );
 			} );
 
 			it( `Set page visibility to ${ visibility }`, async function () {
-				const frame = await gutenbergEditorPage.getEditorFrame();
-				await gutenbergEditorPage.openSettings();
-
-				editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( frame, page );
-				await editorSettingsSidebarComponent.clickTab( 'Page' );
-				await editorSettingsSidebarComponent.setVisibility( visibility as PrivacyOptions, {
+				await editorPage.openSettings();
+				await editorPage.setArticleVisibility( visibility as PrivacyOptions, {
 					password: pagePassword,
 				} );
-
-				await gutenbergEditorPage.closeSettings();
+				await editorPage.closeSettings();
 			} );
 
 			it( 'Publish page', async function () {
 				// Private articles are published immediately as the option is selected.
 				// In other words, for Private articles the publish action happened in previous step.
 				if ( visibility === 'Private' ) {
-					url = await gutenbergEditorPage.getPublishedURLFromToast();
+					url = await editorPage.getPublishedURLFromToast();
 				} else {
-					url = await gutenbergEditorPage.publish();
+					url = await editorPage.publish();
 				}
 			} );
 		} );

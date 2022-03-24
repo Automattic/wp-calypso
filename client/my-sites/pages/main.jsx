@@ -15,7 +15,6 @@ import { Experiment } from 'calypso/lib/explat';
 import { mapPostStatus } from 'calypso/lib/route';
 import urlSearch from 'calypso/lib/url-search';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -88,7 +87,6 @@ class PagesMain extends Component {
 				<ScreenOptionsTab wpAdminPath="edit.php?post_type=page" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Pages' ) } />
-				<SidebarNavigation />
 				<SitePreview />
 				<FormattedHeader
 					brandFont

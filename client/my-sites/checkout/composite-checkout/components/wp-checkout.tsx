@@ -56,7 +56,7 @@ import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
-import type { OnChangeItemVariant } from '../components/item-variation-picker';
+import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
@@ -414,6 +414,7 @@ export default function WPCheckout( {
 								siteUrl={ siteUrl }
 								siteId={ siteId }
 								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+								isJetpackCheckout={ isJetpackCheckout }
 							/>
 						)
 					}
@@ -426,6 +427,7 @@ export default function WPCheckout( {
 								siteUrl={ siteUrl }
 								siteId={ siteId }
 								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+								isJetpackCheckout={ isJetpackCheckout }
 							/>
 						) : (
 							<WPCheckoutOrderReview
@@ -433,6 +435,7 @@ export default function WPCheckout( {
 								removeProductFromCart={ removeProductFromCart }
 								couponFieldStateProps={ couponFieldStateProps }
 								siteUrl={ siteUrl }
+								isJetpackCheckout={ isJetpackCheckout }
 							/>
 						)
 					}

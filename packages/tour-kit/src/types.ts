@@ -1,7 +1,8 @@
 import React from 'react';
 import type { Modifier } from 'react-popper';
 
-export type Step = {
+export interface Step {
+	slug?: string;
 	referenceElements?: {
 		desktop?: string;
 		mobile?: string;
@@ -25,57 +26,107 @@ export type Step = {
 			mobile?: string | string[];
 		};
 	};
-};
+}
 
-export type TourStepRendererProps = {
-	steps: Steps;
+export interface TourStepRendererProps {
+	steps: Step[];
 	currentStepIndex: number;
 	onDismiss: ( source: string ) => () => void;
-	onNext: () => void;
-	onPrevious: () => void;
+	onNextStep: () => void;
+	onPreviousStep: () => void;
 	onMinimize: () => void;
 	setInitialFocusedElement: React.Dispatch< React.SetStateAction< HTMLElement | null > >;
 	onGoToStep: ( stepIndex: number ) => void;
-};
+}
 
-export type MinimizedTourRendererProps = {
-	steps: Steps;
+export interface MinimizedTourRendererProps {
+	steps: Step[];
 	currentStepIndex: number;
 	onMaximize: () => void;
 	onDismiss: ( source: string ) => () => void;
-};
+}
 
-export type Steps = Step[];
 export type TourStepRenderer = React.FunctionComponent< TourStepRendererProps >;
 export type MinimizedTourRenderer = React.FunctionComponent< MinimizedTourRendererProps >;
 export type Callback = ( currentStepIndex: number ) => void;
-export type CloseHandler = ( steps: Steps, currentStepIndex: number, source: string ) => void;
+export type CloseHandler = ( steps: Step[], currentStepIndex: number, source: string ) => void;
 export type PopperModifier = Partial< Modifier< unknown, Record< string, unknown > > >;
 
+export interface Callbacks {
+	onMinimize?: Callback;
+	onMaximize?: Callback;
+	onGoToStep?: Callback;
+	onNextStep?: Callback;
+	onPreviousStep?: Callback;
+	onStepViewOnce?: Callback;
+}
+
+export interface Options {
+	classNames?: string | string[];
+	callbacks?: Callbacks;
+	effects?: {
+		spotlight?: { styles?: React.CSSProperties };
+		arrowIndicator?: boolean; // defaults to true
+		overlay?: boolean;
+	};
+	popperModifiers?: PopperModifier[];
+	portalParentElement?: HTMLElement | null;
+}
+
 export interface Config {
-	steps: Steps;
+	steps: Step[];
 	renderers: {
 		tourStep: TourStepRenderer;
 		tourMinimized: MinimizedTourRenderer;
 	};
 	closeHandler: CloseHandler;
-	options?: {
-		classNames?: string | string[];
-		callbacks?: {
-			onMinimize?: Callback;
-			onMaximize?: Callback;
-			onGoToStep?: Callback;
-			onNextStep?: Callback;
-			onPreviousStep?: Callback;
-			onStepViewOnce?: Callback;
-		};
-		effects?: {
-			spotlight?: { styles?: React.CSSProperties };
-			arrowIndicator?: boolean; // defaults to true
-			overlay?: boolean;
-		};
-		popperModifiers?: PopperModifier[];
-	};
+	isMinimized?: boolean;
+	options?: Options;
 }
 
 export type Tour = React.FunctionComponent< { config: Config } >;
+
+/************************
+ * WPCOM variant types: *
+ ************************/
+
+export type OnTourRateCallback = ( currentStepIndex: number, liked: boolean ) => void;
+
+export interface WpcomStep extends Step {
+	meta: {
+		heading: string | null;
+		descriptions: {
+			desktop: string | React.ReactElement | null;
+			mobile: string | React.ReactElement | null;
+		};
+		imgSrc?: {
+			desktop?: {
+				src: string;
+				type: string;
+			};
+			mobile?: {
+				src: string;
+				type: string;
+			};
+		};
+	};
+}
+
+export interface WpcomTourStepRendererProps extends TourStepRendererProps {
+	steps: WpcomStep[];
+}
+
+export interface WpcomOptions extends Options {
+	tourRating?: {
+		enabled: boolean;
+		useTourRating?: () => 'thumbs-up' | 'thumbs-down' | undefined;
+		onTourRate?: ( rating: 'thumbs-up' | 'thumbs-down' ) => void;
+	};
+}
+
+export interface WpcomConfig extends Omit< Config, 'renderers' > {
+	steps: WpcomStep[];
+	options?: WpcomOptions;
+}
+
+export type WpcomTour = React.FunctionComponent< { config: WpcomConfig } >;

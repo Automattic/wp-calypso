@@ -2,12 +2,10 @@ import deepFreeze from 'deep-freeze';
 import {
 	getActivePlugin,
 	getNextPlugin,
-	getPluginKeys,
 	getPluginsForSite,
 	isFinished,
 	isInstalling,
 	isRequesting,
-	isStarted,
 } from '../selectors';
 import { initSite, installingSite, finishedSite, configuringSite } from './examples';
 
@@ -40,24 +38,6 @@ describe( 'Premium Plugin Selectors', () => {
 
 		test( 'Should get `true` if the requested site is being fetched', () => {
 			expect( isRequesting( state, 'wait.site' ) ).toBe( true );
-		} );
-	} );
-
-	describe( 'isStarted', () => {
-		test( 'Should get `false` if the requested site is not in the current state', () => {
-			expect( isStarted( state, 'no.site' ) ).toBe( false );
-		} );
-
-		test( 'Should get `false` if there are no plugins installing on the requested site', () => {
-			expect( isStarted( state, 'start.site' ) ).toBe( false );
-		} );
-
-		test( 'Should get `true` if there is a plugin installing on the requested site', () => {
-			expect( isStarted( state, 'installing.site' ) ).toBe( true );
-		} );
-
-		test( 'Should get `true` if all plugins on the requested site are either done or have errors', () => {
-			expect( isStarted( state, 'finished.site' ) ).toBe( true );
 		} );
 	} );
 
@@ -143,26 +123,6 @@ describe( 'Premium Plugin Selectors', () => {
 
 		test( 'Should get `false`, if the requested site is finished installing all plugins', () => {
 			expect( getNextPlugin( state, 'finished.site' ) ).toBe( false );
-		} );
-	} );
-
-	describe( 'getPluginKeys', () => {
-		test( 'Should get an empty object if there are no plugins for this site', () => {
-			expect( getPluginKeys( state, 'no.site' ) ).toEqual( {} );
-		} );
-
-		test( 'Should get plugin keys if there are plugins for this site', () => {
-			expect( getPluginKeys( state, 'start.site' ) ).toEqual( {
-				akismet: 'ak-api-key',
-				polldaddy: 'pd-api-key',
-				vaultpress: 'vp-api-key',
-			} );
-		} );
-
-		test( 'Should get the same object for the identical calls', () => {
-			const keys1 = getPluginKeys( state, 'start.site' );
-			const keys2 = getPluginKeys( state, 'start.site' );
-			expect( keys1 ).toBe( keys2 );
 		} );
 	} );
 } );

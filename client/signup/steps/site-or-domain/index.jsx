@@ -1,4 +1,4 @@
-import { SelectItems } from '@automattic/onboarding-components';
+import { SelectItems } from '@automattic/onboarding';
 import { globe, addCard, layout } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';

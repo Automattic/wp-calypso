@@ -35,7 +35,7 @@ export default function useGetDisplayDate() {
 
 		if ( withLatest ) {
 			return isToday
-				? translate( 'Latest: Today %s', {
+				? translate( 'Latest: Today, %s', {
 						args: [ formattedDateTime ],
 						comment: '',
 				  } )
@@ -46,7 +46,7 @@ export default function useGetDisplayDate() {
 		}
 
 		return isToday
-			? translate( 'Today %s', {
+			? translate( 'Today, %s', {
 					args: [ formattedDateTime ],
 					comment: '',
 			  } )

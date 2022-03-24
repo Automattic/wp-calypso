@@ -10,6 +10,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -22,6 +23,7 @@ class MediaSettingsWriting extends Component {
 		isSavingSettings: PropTypes.bool,
 		onChangeField: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
+		handleSubmitForm: PropTypes.func.isRequired,
 
 		// Connected props
 		carouselActive: PropTypes.bool.isRequired,
@@ -31,6 +33,7 @@ class MediaSettingsWriting extends Component {
 
 	render() {
 		const {
+			handleSubmitForm,
 			carouselActive,
 			fields,
 			handleAutosavingToggle,
@@ -46,6 +49,13 @@ class MediaSettingsWriting extends Component {
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Media' ) }
+				/>
 				<Card>
 					<QueryJetpackConnection siteId={ selectedSiteId } />
 

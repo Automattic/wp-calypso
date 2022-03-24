@@ -105,13 +105,6 @@
 		display: none;
 	}
 
-	&.has-star {
-		.action-panel__title,
-		.email-providers-comparison__provider-card-main-details {
-			margin-right: 70px;
-		}
-	}
-
 	&.is-expanded .promo-card__title-badge {
 		background: none;
 		display: inline-block;
@@ -336,31 +329,5 @@
 			margin-top: 0;
 			margin-left: $child-left-margin;
 		}
-	}
-}
-
-.email-providers-comparison__provider-card-star,
-.email-providers-comparison__provider-card-star span {
-	background-color: var( --color-error-40 );
-	height: 70px;
-	width: 70px;
-}
-
-.email-providers-comparison__provider-card-star {
-	color: #FFFFFF;
-	font-size: $font-body-large;
-	font-weight: bold;
-	position: absolute;
-	right: 8px;
-	text-align: center;
-	top: 8px;
-	transform: rotate( -45deg );
-
-	span {
-		align-items: center;
-		display: flex;
-		justify-content: center;
-		text-shadow: 0 0 30px var( --color-error-10 ), 0 0 5px var( --color-error-90 );
-		transform: rotate( 22.5deg );
 	}
 }

@@ -1,4 +1,5 @@
-import { isGoodDefaultDomainQuery, DOMAIN_QUERY_MINIMUM_LENGTH } from '@automattic/domain-picker';
+import { DOMAIN_QUERY_MINIMUM_LENGTH } from '@automattic/domain-picker';
+import { isGoodDefaultDomainQuery } from '@automattic/domain-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { LAUNCH_STORE } from '../stores';
 import { useSiteDomains } from './use-site-domains';

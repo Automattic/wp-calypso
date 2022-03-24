@@ -229,3 +229,15 @@
 	padding-top: 1.5rem;
 	margin-top: 1.5rem;
 }
+
+.backup-support-links__wrapper {
+	border-top: 1px solid var( --color-neutral-5 );
+	margin-top: 1.5rem;
+	padding-top: 1.5rem;
+}
+
+.backup-support-links__links {
+	margin-top: 1rem;
+	display: grid;
+	grid-auto-flow: column;
+}

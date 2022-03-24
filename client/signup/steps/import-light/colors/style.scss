@@ -1,0 +1,19 @@
+$indicatorCircleSize: 28px;
+
+.import-light__colors {
+
+	.colors-container {
+		min-height: 2.25em;
+	}
+
+	.component-color-indicator {
+		width: $indicatorCircleSize;
+		height: $indicatorCircleSize;
+		border-radius: $indicatorCircleSize;
+		border: solid 1px rgba( 69, 70, 72, 0.4 );
+
+		&:first-child {
+			margin: 0;
+		}
+	}
+}

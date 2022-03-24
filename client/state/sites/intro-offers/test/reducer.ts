@@ -23,6 +23,7 @@ describe( 'reducer', () => {
 							formatted_price: '$149',
 							raw_price: 149,
 							ineligible_reason: null,
+							discount_percentage: 50,
 						},
 					],
 				} as IntroOfferReceiveAction );
@@ -36,6 +37,7 @@ describe( 'reducer', () => {
 							formattedPrice: '$149',
 							rawPrice: 149,
 							ineligibleReason: null,
+							discountPercentage: 50,
 						},
 					},
 				} );
@@ -53,6 +55,7 @@ describe( 'reducer', () => {
 							formatted_price: '$149',
 							raw_price: 149,
 							ineligible_reason: null,
+							discount_percentage: 50,
 						},
 					],
 				} as IntroOfferReceiveAction );
@@ -66,6 +69,7 @@ describe( 'reducer', () => {
 							formattedPrice: '$149',
 							rawPrice: 149,
 							ineligibleReason: null,
+							discountPercentage: 50,
 						},
 					},
 				} );

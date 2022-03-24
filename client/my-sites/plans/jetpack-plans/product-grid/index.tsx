@@ -216,7 +216,13 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 			<ProductGridSection>
 				{ ! planRecommendation && filterBar }
 				<div className="product-grid__pricing-banner">
-					<IntroPricingBanner />
+					<IntroPricingBanner
+						productSlugs={ [
+							...popularItems.map( ( { productSlug } ) => productSlug ),
+							...otherItems.map( ( { productSlug } ) => productSlug ),
+						] }
+						siteId={ siteId ?? 'none' }
+					/>
 				</div>
 				<ul
 					className={ classNames( 'product-grid__plan-grid', {

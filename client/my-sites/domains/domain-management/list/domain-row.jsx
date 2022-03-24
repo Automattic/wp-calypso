@@ -220,7 +220,7 @@ class DomainRow extends PureComponent {
 		) {
 			return false;
 		}
-		return ! domain?.bundledPlanSubscriptionId && domain.currentUserCanManage;
+		return ! domain?.bundledPlanSubscriptionId && domain.currentUserIsOwner;
 	};
 
 	renderEmail() {

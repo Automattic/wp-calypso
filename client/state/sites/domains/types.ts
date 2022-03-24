@@ -25,7 +25,6 @@ export interface SiteDomain {
 	isSubdomain?: boolean;
 	isWPCOMDomain?: boolean;
 	manualTransferRequired?: boolean;
-	newRegistration?: boolean;
 	name?: string;
 	owner?: string;
 	partnerDomain?: boolean;

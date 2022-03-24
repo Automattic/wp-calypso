@@ -5,7 +5,6 @@ import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
@@ -51,7 +50,7 @@ const RegisteredDomainDetails = ( {
 
 	const shouldNotRenderAutoRenewToggle = () => {
 		return (
-			! domain.currentUserCanManage ||
+			! domain.currentUserIsOwner ||
 			( ! isLoadingPurchase && ! purchase ) ||
 			domain.aftermarketAuction
 		);
@@ -106,8 +105,7 @@ const RegisteredDomainDetails = ( {
 			! domain.subscriptionId ||
 			domain.isPendingRenewal ||
 			! domain.currentUserCanManage ||
-			domain.expired ||
-			isExpiringSoon( domain, 30 ) || // from `registered-domain-type` and `mapped-domain-type`
+			( domain.expired && ! domain.isRenewable && ! domain.isRedeemable ) ||
 			( ! isLoadingPurchase && ! purchase ) ||
 			domain.aftermarketAuction
 		);
@@ -124,7 +122,11 @@ const RegisteredDomainDetails = ( {
 				selectedSite={ selectedSite }
 				subscriptionId={ parseInt( domain.subscriptionId!, 10 ) }
 				tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
-				customLabel={ translate( 'Renew now' ) }
+				customLabel={
+					! domain.expired || domain.isRenewable
+						? translate( 'Renew now' )
+						: translate( 'Redeem now' )
+				}
 				disabled={ isLoadingPurchase }
 			/>
 		);

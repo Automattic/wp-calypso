@@ -10,12 +10,12 @@ const debug = debugFactory( 'calypso:composite-checkout:use-country-list' );
 const emptyList: CountryListItem[] = [];
 
 export default function useCountryList(
-	overrideCountryList: CountryListItem[]
+	overrideCountryList?: CountryListItem[]
 ): CountryListItem[] {
 	// Should we fetch the country list from global state?
-	const shouldFetchList = overrideCountryList?.length <= 0;
+	const shouldFetchList = ( overrideCountryList?.length ?? 0 ) <= 0;
 
-	const [ countriesList, setCountriesList ] = useState( overrideCountryList );
+	const [ countriesList, setCountriesList ] = useState( overrideCountryList ?? [] );
 
 	const reduxDispatch = useDispatch();
 	const globalCountryList =

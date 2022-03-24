@@ -17,7 +17,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
-import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import hasUnsavedUserSettings from 'calypso/state/selectors/has-unsaved-user-settings';
 import { setUserSetting, saveUserSettings } from 'calypso/state/user-settings/actions';
@@ -68,7 +67,6 @@ class Privacy extends Component {
 				<QueryUserSettings />
 				<PageViewTracker path="/me/privacy" title="Me > Privacy" />
 				<DocumentHead title={ translate( 'Privacy Settings' ) } />
-				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<FormattedHeader brandFont headerText={ translate( 'Privacy' ) } align="left" />
 

@@ -8,7 +8,8 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { bumpTwoStepAuthMCStat } from 'calypso/lib/two-step-authorization';
+import wp from 'calypso/lib/wp';
 
 import './style.scss';
 
@@ -39,28 +40,39 @@ class Security2faBackupCodesPrompt extends Component {
 	onVerify = ( event ) => {
 		event.preventDefault();
 		this.setState( { submittingCode: true } );
-		twoStepAuthorization.validateBackupCode( this.state.backupCodeEntry, this.onRequestComplete );
-	};
+		wp.req.post(
+			'/me/two-step/validate',
+			{
+				code: this.state.backupCodeEntry.replace( /\s/g, '' ),
+				action: 'create-backup-receipt',
+			},
+			( error, data ) => {
+				if ( data ) {
+					bumpTwoStepAuthMCStat(
+						data.success ? 'backup-code-validate-success' : 'backup-code-validate-failure'
+					);
+				}
 
-	onRequestComplete = ( error, data ) => {
-		this.setState( { submittingCode: false } );
-		if ( error ) {
-			this.setState( {
-				lastError: this.props.translate(
-					'Unable to validate codes right now. Please try again later.'
-				),
-			} );
-			return;
-		}
+				this.setState( { submittingCode: false } );
+				if ( error ) {
+					this.setState( {
+						lastError: this.props.translate(
+							'Unable to validate codes right now. Please try again later.'
+						),
+					} );
+					return;
+				}
 
-		if ( ! data.success ) {
-			this.setState( {
-				lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
-			} );
-			return;
-		}
+				if ( ! data.success ) {
+					this.setState( {
+						lastError: this.props.translate( 'You entered an invalid code. Please try again.' ),
+					} );
+					return;
+				}
 
-		this.props.onSuccess();
+				this.props.onSuccess();
+			}
+		);
 	};
 
 	onPrintAgain = ( event ) => {

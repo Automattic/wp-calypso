@@ -28,7 +28,6 @@ class SiteSettingsFormWriting extends Component {
 	render() {
 		const {
 			eventTracker,
-			uniqueEventTracker,
 			fields,
 			handleSelect,
 			handleToggle,
@@ -40,11 +39,10 @@ class SiteSettingsFormWriting extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
-			setFieldValue,
 			siteId,
 			siteIsJetpack,
 			translate,
-			siteIsAutomatedTransfer,
+			isAtomic,
 			updateFields,
 		} = this.props;
 
@@ -54,59 +52,42 @@ class SiteSettingsFormWriting extends Component {
 				onSubmit={ handleSubmitForm }
 				className="site-settings__writing-settings"
 			>
-				<SettingsSectionHeader
-					disabled={ isRequestingSettings || isSavingSettings }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Composing' ) }
-				/>
 				<Composing
+					handleSubmitForm={ handleSubmitForm }
+					translate={ translate }
+					isAtomic={ isAtomic }
+					siteIsJetpack={ siteIsJetpack }
 					handleSelect={ handleSelect }
 					handleToggle={ handleToggle }
 					onChangeField={ onChangeField }
-					setFieldValue={ setFieldValue }
 					eventTracker={ eventTracker }
-					uniqueEventTracker={ uniqueEventTracker }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 					updateFields={ updateFields }
 				/>
 
-				{ siteIsJetpack && ! siteIsAutomatedTransfer && (
-					<div>
-						<SettingsSectionHeader
-							disabled={ isRequestingSettings || isSavingSettings }
-							isSaving={ isSavingSettings }
-							onButtonClick={ handleSubmitForm }
-							showButton
-							title={ translate( 'Media' ) }
-						/>
-						<MediaSettingsWriting
-							siteId={ siteId }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							onChangeField={ onChangeField }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-						/>
-					</div>
+				{ siteIsJetpack && ! isAtomic && (
+					<MediaSettingsWriting
+						handleSubmitForm={ handleSubmitForm }
+						siteId={ siteId }
+						handleAutosavingToggle={ handleAutosavingToggle }
+						onChangeField={ onChangeField }
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+						fields={ fields }
+					/>
 				) }
 
-				<SettingsSectionHeader
-					disabled={ isRequestingSettings || isSavingSettings }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Content types' ) }
-				/>
 				<CustomContentTypes
+					handleSubmitForm={ handleSubmitForm }
 					handleAutosavingToggle={ handleAutosavingToggle }
 					onChangeField={ onChangeField }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
+					isAtomic={ isAtomic }
+					siteIsJetpack={ siteIsJetpack }
 				/>
 
 				<FeedSettings
@@ -116,6 +97,7 @@ class SiteSettingsFormWriting extends Component {
 					handleSubmitForm={ handleSubmitForm }
 					handleToggle={ handleToggle }
 					onChangeField={ onChangeField }
+					translate={ translate }
 				/>
 
 				{ isPodcastingSupported && <PodcastingLink fields={ fields } /> }
@@ -123,25 +105,29 @@ class SiteSettingsFormWriting extends Component {
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				<ThemeEnhancements
+					isAtomic={ isAtomic }
 					onSubmitForm={ handleSubmitForm }
 					handleAutosavingToggle={ handleAutosavingToggle }
 					handleAutosavingRadio={ handleAutosavingRadio }
 					isSavingSettings={ isSavingSettings }
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
+					siteId={ siteId }
+					siteIsJetpack={ siteIsJetpack }
 				/>
 
 				{ siteIsJetpack && (
 					<Widgets
-						onSubmitForm={ handleSubmitForm }
+						isAtomic={ isAtomic }
+						translate={ translate }
 						isSavingSettings={ isSavingSettings }
 						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
 					/>
 				) }
 
 				{ siteIsJetpack && config.isEnabled( 'press-this' ) && (
 					<PublishingTools
+						isAtomic={ isAtomic }
 						onSubmitForm={ handleSubmitForm }
 						isSavingSettings={ isSavingSettings }
 						isRequestingSettings={ isRequestingSettings }
@@ -151,21 +137,16 @@ class SiteSettingsFormWriting extends Component {
 
 				{ config.isEnabled( 'press-this' ) && ! this.isMobile() && ! siteIsJetpack && (
 					<div>
-						<SettingsSectionHeader
-							title={ translate( 'Press This', { context: 'name of browser bookmarklet tool' } ) }
-						/>
+						<SettingsSectionHeader title={ translate( 'Publishing Tools' ) } />
 						<PressThis />
 					</div>
 				) }
 
 				{ isMasterbarSectionVisible && (
-					<div>
-						<SettingsSectionHeader title={ translate( 'WordPress.com toolbar' ) } />
-						<Masterbar
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-						/>
-					</div>
+					<Masterbar
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+					/>
 				) }
 			</form>
 		);
@@ -176,8 +157,8 @@ const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
-		const siteIsAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
-		const isPodcastingSupported = ! siteIsJetpack || siteIsAutomatedTransfer;
+		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const isPodcastingSupported = ! siteIsJetpack || isAtomic;
 
 		return {
 			siteIsJetpack,
@@ -185,9 +166,9 @@ const connectComponent = connect(
 			isMasterbarSectionVisible:
 				siteIsJetpack &&
 				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
-				! siteIsAutomatedTransfer,
+				! isAtomic,
 			isPodcastingSupported,
-			siteIsAutomatedTransfer,
+			isAtomic,
 		};
 	},
 	{ requestPostTypes }

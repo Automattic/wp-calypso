@@ -11,10 +11,10 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Upsell from 'calypso/components/jetpack/upsell';
 import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	siteHasBackupProductPurchase,
@@ -88,7 +88,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			{ siteId && <QuerySitePlans siteId={ siteId } /> }
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			<DocumentHead title={ translate( 'Activity log' ) } />
-			<SidebarNavigation />
+			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
 			{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
 			{ isJetpackCloud() ? (

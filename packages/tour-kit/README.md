@@ -1,11 +1,20 @@
 # tour-kit
 
-A React tour library for generating configurable guided tours. Carries a minimalist setup for basic usage, but extensible/configurable enough to accomodate more complex use cases.
+A React tour library for configurable guided tours. Carries a minimalist setup for basic usage, but extensible/configurable enough to accomodate more complex use cases.
 
-We've kept the initial setup minimal with little in the way of styling (not much outside of a box-shadow for the steps and arrow indicator). Contains some optional effects (like spotlight and overlay) that can be enabled/disabled depending on desired use.
+We've kept the initial setup minimal with little in the way of styling (not much outside of a box-shadow for the steps and arrow indicator). Contains some optional effects (like spotlight and overlay) that can be enabled/disabled depending on desired use. Variant implementations are also included, which provide more styled versions of the main views.
 
 Uses [Popper.js](https://popper.js.org/) underneath (also customizable via tour configuration).
 
+## Variants
+
+Variants are ready implementations of Tour Kit providing styled variations of the two main views (expanded and minimized).
+
+### WPCOM Tour Kit
+
+This is a variant extracted from the guided tours in WordPress.com. It provides the two main renderers (step and minimized views) with controls for navigating, minimizing, and closing. Comes with optional rating in the last step and pagination controls.
+
+(see usage and examples below)
 ## Usage
 
 A tour is made up of the following components:
@@ -19,6 +28,7 @@ A tour is made up of the following components:
   - a step renderer (React component/function passed a set of properties)
   - a minimized view renderer (for rendering a minimized view instead of closing)
 - A close handler
+- A boolean to minimize the tour
 - Some optional properties
 
 See [types.ts](./src/types.ts) for the full definition of the various entities.
@@ -28,6 +38,8 @@ A typical expected workflow builds around:
 1. Define the criteria for showing a tour.
 2. Define a configuration for the tour, passing along a handler for closing.
 3. Render it (or not).
+
+**Note:** For the WPCOM Tour Kit variant, the two renderers are omitted.
 
 ### Sample
 
@@ -86,9 +98,11 @@ function FooBar() {
 }
 ```
 
+**Note:** If using the `WpcomTourKit` component, please note that it uses generic [@wordpress/components](https://www.npmjs.com/package/@wordpress/components) to render the controls, which require a stylesheet to be imported in the app (either as a dependency or imported directly in non-WordPress projects). See the Storybook demos below for example use.
+
 ### Examples Using [Storybook](https://storybook.js.org/)
 
-See it in action with some basic configurations:
+See it in action with some basic configurations (includes both the plain Tour Kit and the WPCOM Tour Kit variant):
 
 `yarn run tour-kit:storybook:start`
 
@@ -108,13 +122,15 @@ The main API for configuring a tour is the config object. See example usage and 
 
 `config.steps`: An array of objects that define the content we wish to render on the page. Each step defined by:
 
-- `referenceElements` (optional): A set of `deskop` & `mobile` selectors to render the step near.
+- `referenceElements` (optional): A set of `desktop` & `mobile` selectors to render the step near.
 - `meta`: Arbitrary object that encloses the content we want to render for each step.
 - `classNames` (optional): An array or CSV of CSS classes applied to a step.
 
 `config.closeHandler`: The callback responsible for closing the tour.
 
-`config.renderers`:
+`config.isMinimized`: The optional boolean value responsible for minimizing the tour.
+
+`config.renderers` (omitted in the WPCOM Tour Kit variant):
 
 - `tourStep`: A React component that will be called to render each step. Receives the following properties:
 
@@ -140,9 +156,17 @@ The main API for configuring a tour is the config object. See example usage and 
 - `effects`: An object to enable/disable/combine various tour effects:
 
   - `spotlight`: Adds a semi-transparent overlay and highlights the reference element when provided with a transparent box over it. Expects an object with optional styles to override the default highlight/spotlight behavior when provided (default: spotlight wraps the entire reference element).
-  - `arrowIndicator`: Adds an arrow tip pointing at the rederence element when provided.
+  - `arrowIndicator`: Adds an arrow tip pointing at the reference element when provided.
   - `overlay`: Includes the semi-transparent overlay for all the steps (also blocks interactions with the rest of the page)
 
 - `callbacks`: An object of callbacks to handle side effects from various interactions (see [types.ts](./src/types.ts)).
 
 - `popperModifiers`: The tour uses Popper to position steps near reference elements (and for other effects). An implementation can pass its own modifiers to tailor the functionality further e.g. more offset or padding from the reference element.
+- `tourRating` (optional - only in WPCOM Tour Kit variant):
+  - `enabled`: Whether to show rating in last step.
+  - `useTourRating`: (optional) A hook to provide the rating from an external source/state (see [types.ts](./src/types.ts)).
+  - `onTourRate`: (optional) A callback to fire off when a rating is submitted.
+
+- `portalElementId`: A string that lets you customize under which DOM element the Tour will be appended.
+
+

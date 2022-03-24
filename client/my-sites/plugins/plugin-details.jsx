@@ -23,7 +23,6 @@ import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -204,6 +203,9 @@ function PluginDetails( props ) {
 					label: translate( 'Plugins' ),
 					href: `/plugins/${ selectedSite?.slug || '' }`,
 					id: 'plugins',
+					helpBubble: translate(
+						'Add new functionality and integrations to your site with plugins.'
+					),
 				} )
 			);
 		}
@@ -241,7 +243,6 @@ function PluginDetails( props ) {
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<SidebarNavigation />
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QueryProductsList persist />

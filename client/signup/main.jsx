@@ -27,6 +27,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import OlarkChat from 'calypso/components/olark-chat';
 import {
 	recordSignupStart,
 	recordSignupComplete,
@@ -150,6 +151,7 @@ class Signup extends Component {
 		shouldShowLoadingScreen: false,
 		resumingStep: undefined,
 		previousFlowName: null,
+		signupSiteName: null,
 	};
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -357,6 +359,13 @@ class Signup extends Component {
 			this.setState( { shouldShowLoadingScreen: true } );
 
 			if ( isP2Flow( this.props.flowName ) ) {
+				// Record submitted site name for displaying it in the loading screen
+				if ( ! this.state.signupSiteName ) {
+					this.setState( {
+						signupSiteName: this.props.progress?.[ 'p2-site' ]?.form?.siteTitle?.value || '',
+					} );
+				}
+
 				addLoadingScreenClassNamesToBody();
 
 				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
@@ -590,7 +599,7 @@ class Signup extends Component {
 
 	renderProcessingScreen( isReskinned ) {
 		if ( isP2Flow( this.props.flowName ) ) {
-			return <P2SignupProcessingScreen />;
+			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
 		if ( isReskinned ) {
@@ -716,34 +725,40 @@ class Signup extends Component {
 		}
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
+		const olarkIdentity = config( 'olark_chat_identity' );
+		const isEligibleForOlarkChat =
+			'onboarding' === this.props.flowName && 'en' === this.props.localeSlug;
 
 		return (
-			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-				<DocumentHead title={ this.props.pageTitle } />
-				{ ! isP2Flow( this.props.flowName ) && (
-					<SignupHeader
-						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-						isReskinned={ isReskinned }
-						rightComponent={
-							showProgressIndicator( this.props.flowName ) && (
-								<FlowProgressIndicator
-									positionInFlow={ this.getPositionInFlow() }
-									flowLength={ this.getInteractiveStepsCount() }
-									flowName={ this.props.flowName }
-								/>
-							)
-						}
-					/>
-				) }
-				<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>
-				{ this.state.bearerToken && (
-					<WpcomLoginForm
-						authorization={ 'Bearer ' + this.state.bearerToken }
-						log={ this.state.username }
-						redirectTo={ this.state.redirectTo }
-					/>
-				) }
-			</div>
+			<>
+				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+					<DocumentHead title={ this.props.pageTitle } />
+					{ ! isP2Flow( this.props.flowName ) && (
+						<SignupHeader
+							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+							isReskinned={ isReskinned }
+							rightComponent={
+								showProgressIndicator( this.props.flowName ) && (
+									<FlowProgressIndicator
+										positionInFlow={ this.getPositionInFlow() }
+										flowLength={ this.getInteractiveStepsCount() }
+										flowName={ this.props.flowName }
+									/>
+								)
+							}
+						/>
+					) }
+					<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>
+					{ this.state.bearerToken && (
+						<WpcomLoginForm
+							authorization={ 'Bearer ' + this.state.bearerToken }
+							log={ this.state.username }
+							redirectTo={ this.state.redirectTo }
+						/>
+					) }
+				</div>
+				{ isEligibleForOlarkChat && <OlarkChat identity={ olarkIdentity } /> }
+			</>
 		);
 	}
 }

@@ -244,6 +244,13 @@ object CheckCodeStyle : BuildType({
 			triggerBuild = always()
 			withPendingChangesOnly = false
 		}
+		vcs {
+			branchFilter = """
+				+:renovate/eslint-packages
+				+:renovate/major-linters
+				+:renovate/linters
+			""".trimIndent()
+		}
 	}
 
 	failureConditions {
@@ -267,6 +274,24 @@ object CheckCodeStyle : BuildType({
 			param("xmlReportParsing.verboseOutput", "true")
 		}
 		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
 		}
 	}
 })

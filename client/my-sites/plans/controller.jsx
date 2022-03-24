@@ -1,7 +1,7 @@
-import { isFreePlanProduct, isFlexiblePlanProduct } from '@automattic/calypso-products';
+import { isPro } from '@automattic/calypso-products';
 import page from 'page';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
-import { isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
@@ -30,13 +30,9 @@ export function plans( context, next ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const selectedSite = getSite( state, siteId );
-	const eligibleForManagedPlan = isEligibleForManagedPlan( state, siteId );
+	const eligibleForProPlan = isEligibleForProPlan( state, siteId );
 
-	if (
-		eligibleForManagedPlan &&
-		! isFreePlanProduct( selectedSite.plan ) &&
-		! isFlexiblePlanProduct( selectedSite.plan )
-	) {
+	if ( eligibleForProPlan && isPro( selectedSite.plan ) ) {
 		page.redirect( `/plans/my-plan/${ selectedSite.slug }` );
 
 		return null;

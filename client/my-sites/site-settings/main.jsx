@@ -8,7 +8,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import JetpackDevModeNotice from './jetpack-dev-mode-notice';
 import SiteSettingsNavigation from './navigation';
@@ -24,7 +23,6 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 			<QueryProductsList />
 			<QuerySitePurchases siteId={ siteId } />
 			<JetpackDevModeNotice />
-			<SidebarNavigation />
 			<JetpackBackupCredsBanner event={ 'settings-backup-credentials' } />
 			<FormattedHeader
 				brandFont

@@ -27,17 +27,21 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
-import { useWPCOMPlugin, useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import {
+	useWPCOMPlugin,
+	useWPCOMPlugins,
+	useWPCOMFeaturedPlugins,
+} from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { useWPORGPlugins } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
+import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	recordTracksEvent,
 	recordGoogleEvent,
@@ -133,7 +137,7 @@ const PluginsBrowser = ( {
 		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
 
 	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } = useWPCOMPlugins(
-		'featured'
+		'all'
 	);
 	const paidPlugins = useMemo( () => paidPluginsRawList.map( updateWpComRating ), [
 		paidPluginsRawList,
@@ -168,7 +172,7 @@ const PluginsBrowser = ( {
 	const {
 		data: pluginsByCategoryFeatured = [],
 		isLoading: isFetchingPluginsByCategoryFeatured,
-	} = useWPCOMPlugins( 'featured' );
+	} = useWPCOMFeaturedPlugins();
 
 	const {
 		data: { plugins: popularPlugins = [] } = {},
@@ -195,7 +199,14 @@ const PluginsBrowser = ( {
 
 	useEffect( () => {
 		const items = [
-			{ label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }`, id: 'plugins' },
+			{
+				label: translate( 'Plugins' ),
+				href: `/plugins/${ siteSlug || '' }`,
+				id: 'plugins',
+				helpBubble: translate(
+					'Add new functionality and integrations to your site with plugins.'
+				),
+			},
 		];
 		if ( search ) {
 			items.push( {
@@ -268,7 +279,6 @@ const PluginsBrowser = ( {
 				trackPageViews={ trackPageViews }
 			/>
 			<DocumentHead title={ translate( 'Plugins' ) } />
-			<SidebarNavigation />
 
 			{ ! jetpackNonAtomic && (
 				<AnnouncementModal
@@ -346,6 +356,7 @@ const PluginsBrowser = ( {
 				setBillingPeriod={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
+			<EducationFooter />
 		</MainComponent>
 	);
 };
@@ -430,8 +441,10 @@ const SearchListView = ( {
 				<PluginsBrowserList
 					plugins={
 						pluginsPagination?.page === 1
-							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
-							: pluginsBySearchTerm
+							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ].filter(
+									filterOutPluginsFromBlockList
+							  )
+							: pluginsBySearchTerm.filter( filterOutPluginsFromBlockList )
 					}
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					title={ searchTitle }
@@ -557,6 +570,8 @@ const PluginSingleListView = ( {
 	} else {
 		return null;
 	}
+
+	plugins = plugins.filter( filterOutPluginsFromBlockList );
 
 	let listLink = '/plugins/' + category;
 	if ( domain ) {
@@ -757,6 +772,12 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 		( plugin ) =>
 			! displayedFeaturedSlugsMap.has( plugin.slug ) && isCompatiblePlugin( plugin.slug )
 	);
+}
+
+const PLUGIN_SLUGS_BLOCKLIST = [ 'zamir' ];
+
+function filterOutPluginsFromBlockList( plugin ) {
+	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 
 export default UrlSearch( PluginsBrowser );

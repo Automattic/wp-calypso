@@ -1,4 +1,4 @@
-import { isEcommercePlan, isBusinessPlan } from '@automattic/calypso-products';
+import { isEcommercePlan, isBusinessPlan, isProPlan } from '@automattic/calypso-products';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 
 /**
@@ -16,7 +16,11 @@ const isSiteOnAtomicPlan = ( state, siteId ) => {
 		return false;
 	}
 
-	return isEcommercePlan( currentPlan.productSlug ) || isBusinessPlan( currentPlan.productSlug );
+	return (
+		isEcommercePlan( currentPlan.productSlug ) ||
+		isBusinessPlan( currentPlan.productSlug ) ||
+		isProPlan( currentPlan.productSlug )
+	);
 };
 
 export default isSiteOnAtomicPlan;

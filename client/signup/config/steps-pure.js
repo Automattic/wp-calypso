@@ -8,6 +8,7 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_WPCOM_PRO,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -276,6 +277,17 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			defaultDependencies: {
 				cartItem: PLAN_BUSINESS,
+			},
+		},
+
+		'plans-pro': {
+			stepName: 'plans-pro',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_WPCOM_PRO,
 			},
 		},
 
@@ -702,6 +714,17 @@ export function generateSteps( {
 				hideDesignTitle: true,
 			},
 		},
+		'difm-options': {
+			stepName: 'site-options',
+			providesDependencies: [ 'siteTitle', 'tagline' ],
+			props: {
+				hideSkip: true,
+			},
+		},
+		'difm-page-picker': {
+			stepName: 'difm-page-picker',
+			providesDependencies: [],
+		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
 			dependencies: [ 'newOrExistingSiteChoice' ],
@@ -716,6 +739,9 @@ export function generateSteps( {
 				'displayPhone',
 				'displayAddress',
 			],
+		},
+		'social-profiles': {
+			stepName: 'social-profiles',
 		},
 		'website-content': {
 			stepName: 'website-content',
@@ -738,6 +764,9 @@ export function generateSteps( {
 		},
 		importing: {
 			stepName: 'importing',
+		},
+		static: {
+			stepName: 'static',
 		},
 
 		// Woocommerce Install steps.

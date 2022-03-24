@@ -9,6 +9,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -21,7 +22,7 @@ import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/lis
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import GoogleSaleBanner from 'calypso/my-sites/email/google-sale-banner';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -34,6 +35,7 @@ import {
 	showUpdatePrimaryDomainErrorNotice,
 } from 'calypso/state/domains/management/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getPurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
@@ -85,6 +87,7 @@ export class SiteDomains extends Component {
 		const {
 			currentRoute,
 			domains,
+			hasProductsList,
 			isAtomicSite,
 			isFetchingPurchases,
 			selectedSite,
@@ -134,6 +137,7 @@ export class SiteDomains extends Component {
 					nonWpcomDomains.map( ( domain ) =>
 						resolveDomainStatus( domain, null, {
 							getMappingErrors: true,
+							siteSlug: selectedSite.slug,
 						} )
 					)
 				),
@@ -153,6 +157,10 @@ export class SiteDomains extends Component {
 
 		return (
 			<>
+				{ ! hasProductsList && <QueryProductsList /> }
+
+				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
+
 				<div className="domain-management-list__items">
 					<div className="domain-management-list__filter">
 						{ this.renderDomainTableFilterButton() }
@@ -300,7 +308,6 @@ export class SiteDomains extends Component {
 			}
 			return (
 				<Main>
-					<SidebarNavigation />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
 						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
@@ -322,7 +329,6 @@ export class SiteDomains extends Component {
 				return (
 					<Main>
 						<DocumentHead title={ this.props.translate( 'Settings' ) } />
-						<SidebarNavigation />
 						<DomainOnly
 							hasNotice={ this.isFreshDomainOnlyRegistration() }
 							siteId={ this.props.selectedSite.ID }
@@ -344,7 +350,6 @@ export class SiteDomains extends Component {
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
 				{ this.renderBreadcrumbs() }
 				<DocumentHead title={ headerText } />
-				<SidebarNavigation />
 				{ this.renderNewDesign() }
 			</Main>
 		);
@@ -492,10 +497,12 @@ export default connect(
 		const selectedSite = ownProps?.selectedSite || null;
 		const isOnFreePlan = selectedSite?.plan?.is_free || false;
 		const purchases = getPurchases( state );
+		const productsList = getProductsList( state );
 
 		return {
 			currentRoute: getCurrentRoute( state ),
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
+			hasProductsList: 0 < ( Object.getOwnPropertyNames( productsList )?.length ?? 0 ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 			hasNonPrimaryDomainsFlag: getCurrentUser( state )

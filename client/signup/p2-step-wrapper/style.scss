@@ -9,14 +9,24 @@
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
-	padding: 96px 1.5em 24px;
 	font-family: var( --p2-font-inter );
 	line-height: 1.8;
+	padding: 96px 1.5em 24px;
 
 	@include break-mobile {
-		padding-left: 20px;
-		padding-right: 20px;
 		max-width: 440px;
+	}
+
+	input {
+		font-family: var( --p2-font-inter );
+	}
+
+	a {
+		@extend %p2-link;
+	}
+
+	.p2-step-wrapper__header-text {
+		margin-bottom: 0.5em;
 	}
 }
 
@@ -36,6 +46,10 @@
 	}
 }
 
+.p2-step-wrapper button.is-primary {
+	@extend %p2-form-button;
+}
+
 .p2-step-wrapper__header-text {
 	font-size: var( --p2-font-size-form-xxl );
 	font-weight: 900; /* stylelint-disable-line */
@@ -45,6 +59,7 @@
 
 .p2-step-wrapper__subheader-text {
 	text-align: center;
+	margin-bottom: 48px;
 }
 
 .p2-step-wrapper__header-logo {
@@ -72,10 +87,6 @@
 
 .p2-step-wrapper__footer-text {
 	font-size: var( --p2-font-size-form-xxs );
-}
-
-.p2-step-wrapper button {
-	@extend %p2-form-button;
 }
 
 /* Step-specific overrides */

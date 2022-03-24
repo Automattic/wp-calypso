@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
-function P2SignupProcessingScreen() {
+function P2SignupProcessingScreen( { signupSiteName = '' } ) {
 	const translate = useTranslate();
 
 	return (
@@ -10,17 +10,29 @@ function P2SignupProcessingScreen() {
 				<img src="/calypso/images/p2/logo-white.png" width="67" height="32" alt="P2 logo" />
 			</div>
 
-			<div className="p2-processing-screen__text">
-				{ translate( '{{h2}}Hooray!{{/h2}} {{p}}Your new P2 workspace is almost ready.{{/p}}', {
-					components: {
-						// eslint-disable-next-line jsx-a11y/heading-has-content
-						h2: <h2 />,
-						p: <p />,
-					},
-				} ) }
-			</div>
+			<div className="p2-processing-screen__container">
+				<div className="p2-processing-screen__spinner"></div>
 
-			<div className="p2-processing-screen__spinner"></div>
+				<div className="p2-processing-screen__text">
+					{ translate( '{{h2}}Hooray!{{/h2}}', {
+						components: {
+							// eslint-disable-next-line jsx-a11y/heading-has-content
+							h2: <h2 />,
+						},
+					} ) }
+				</div>
+				<div className="p2-processing-screen__text">
+					{ translate( '{{p}}Your workspace "%(signupSiteName)s" is almost ready.{{/p}}', {
+						components: {
+							// eslint-disable-next-line jsx-a11y/heading-has-content
+							p: <p />,
+						},
+						args: {
+							signupSiteName,
+						},
+					} ) }
+				</div>
+			</div>
 
 			<div className="p2-processing-screen__footer">
 				<img

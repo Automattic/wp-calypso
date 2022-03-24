@@ -1,4 +1,5 @@
 import { Button, Dialog, Gridicon } from '@automattic/components';
+import { isDefaultLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { memoize } from 'lodash';
 import PropTypes from 'prop-types';
@@ -9,7 +10,6 @@ import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
 import EmbedContainer from 'calypso/components/embed-container';
-import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { closeSupportArticleDialog as closeDialog } from 'calypso/state/inline-support-article/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';

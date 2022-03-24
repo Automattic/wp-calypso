@@ -4,7 +4,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { bumpTwoStepAuthMCStat } from 'calypso/lib/two-step-authorization';
+import wp from 'calypso/lib/wp';
 import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-list';
 import Security2faBackupCodesPrompt from 'calypso/me/security-2fa-backup-codes-prompt';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -36,17 +37,15 @@ class Security2faBackupCodes extends Component {
 			showPrompt: true,
 		} );
 
-		twoStepAuthorization.backupCodes( this.onRequestComplete );
-	};
+		wp.req.post( '/me/two-step/backup-codes/new', ( error, data ) => {
+			if ( ! error ) {
+				bumpTwoStepAuthMCStat( 'new-backup-codes-success' );
 
-	onRequestComplete = ( error, data ) => {
-		if ( error ) {
-			return;
-		}
-
-		this.setState( {
-			backupCodes: data.codes,
-			generatingCodes: false,
+				this.setState( {
+					backupCodes: data.codes,
+					generatingCodes: false,
+				} );
+			}
 		} );
 	};
 

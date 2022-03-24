@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	isPaymentAgreement,
-	getPaymentMethodSummary,
+	PaymentMethodSummary,
 	PaymentMethod,
 } from 'calypso/lib/checkout/payment-methods';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -57,12 +57,13 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	return (
 		<>
 			<PaymentMethodDeleteDialog
-				paymentMethodSummary={ getPaymentMethodSummary( {
-					translate,
-					type: card.card_type || card.payment_partner,
-					digits: card.card,
-					email: card.email,
-				} ) }
+				paymentMethodSummary={
+					<PaymentMethodSummary
+						type={ card.card_type || card.payment_partner }
+						digits={ card.card }
+						email={ card.email }
+					/>
+				}
 				isVisible={ isDialogVisible }
 				onClose={ closeDialog }
 				onConfirm={ handleDelete }

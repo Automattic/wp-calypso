@@ -5,12 +5,12 @@
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: flex-start;
-	.onboarding-components-select-items__item-description {
+	.select-items__item-description {
 		strong {
 			color: var( --studio-green-60 );
 		}
 	}
-  .onboarding-components-select-items__item-info-wrapper {
+  .select-items__item-info-wrapper {
     @include break-mobile {
       align-items: center;
     }
@@ -111,7 +111,7 @@
 
 body.is-white-signup {
 	.site-or-domain__choices {
-		svg.onboarding-components-select-items__item-icon {
+		svg.intent-screen-select-items__item-icon {
 			fill: var( --studio-gray-30 );
 		}
 	}

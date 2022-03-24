@@ -8,7 +8,7 @@ const SpotlightContainer = styled.div`
 	align-items: center;
 	padding: 30px;
 	border: 1px solid var( --studio-gray-5 );
-	border-radius: var( --radius-2 );
+	border-radius: 5px;
 `;
 
 const SpotlightContent = styled.div`

@@ -1,19 +1,21 @@
 export interface IntroOffer {
+	currencyCode: string;
+	discountPercentage: number;
+	formattedPrice: string;
+	ineligibleReason: string[] | null;
 	productId: number;
 	productSlug: string;
-	currencyCode: string;
-	formattedPrice: string;
 	rawPrice: number;
-	ineligibleReason: string[] | null;
 }
 
 export interface ResponseIntroOffer {
+	currency_code: string;
+	discount_percentage: number;
+	formatted_price: string;
+	ineligible_reason: string[] | null;
 	product_id: number;
 	product_slug: string;
-	currency_code: string;
-	formatted_price: string;
 	raw_price: number;
-	ineligible_reason: string[] | null;
 }
 
 export enum RequestStatus {

@@ -1,10 +1,10 @@
+import { canBeTranslated } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import { isMobile } from '@automattic/viewport';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 import { find } from 'lodash';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { canBeTranslated } from 'calypso/lib/i18n-utils';
 import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 
 const debug = debugModule( 'calypso:community-translator' );

@@ -10,10 +10,6 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'calypso/state/selectors/is-nav-unification-enabled', () => ( {
-	__esModule: true,
-	default: () => true,
-} ) );
 
 const themeData = {
 	name: 'Twenty Sixteen',

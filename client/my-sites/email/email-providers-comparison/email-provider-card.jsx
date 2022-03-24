@@ -16,7 +16,6 @@ function EmailProviderCard( {
 	logo,
 	title,
 	badge,
-	starLabel,
 	description,
 	formattedPrice,
 	discount,
@@ -44,12 +43,9 @@ function EmailProviderCard( {
 
 	const labelForExpandButton = expandButtonLabel ? expandButtonLabel : buttonLabel;
 
-	const showStar = detailsExpanded && starLabel;
-
 	return (
 		<PromoCard
 			className={ classnames( 'email-providers-comparison__provider-card', {
-				'has-star': showStar,
 				'is-expanded': detailsExpanded,
 				'is-forwarding': providerKey === 'forwarding',
 			} ) }
@@ -57,16 +53,6 @@ function EmailProviderCard( {
 			title={ title }
 			badge={ badge }
 		>
-			{ showStar && (
-				<div className="email-providers-comparison__provider-card-star">
-					<span>
-						<span>
-							<span>{ starLabel }</span>
-						</span>
-					</span>
-				</div>
-			) }
-
 			<div className="email-providers-comparison__provider-card-main-details">
 				<p>{ description }</p>
 
@@ -120,7 +106,6 @@ EmailProviderCard.propTypes = {
 	logo: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	badge: PropTypes.object,
-	starLabel: PropTypes.string,
 	description: PropTypes.string,
 	formattedPrice: PropTypes.node,
 	discount: PropTypes.node,

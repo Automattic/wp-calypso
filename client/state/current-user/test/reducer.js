@@ -16,7 +16,6 @@ describe( 'reducer', () => {
 			'user',
 			'capabilities',
 			'flags',
-			'gravatarStatus',
 			'emailVerification',
 			'lasagnaJwt',
 		] );

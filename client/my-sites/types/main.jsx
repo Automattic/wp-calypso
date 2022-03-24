@@ -11,7 +11,6 @@ import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
 import PostTypeList from 'calypso/my-sites/post-type-list';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import { getPostType, isPostTypeSupported } from 'calypso/state/post-types/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -29,24 +28,41 @@ function Types( {
 	translate,
 } ) {
 	let subHeaderText = '';
-	if ( 'Testimonials' === get( postType, 'label', '' ) ) {
-		subHeaderText = translate(
-			'Create and manage all the testimonials on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-			{
-				components: {
-					learnMoreLink: <InlineSupportLink supportContext="testimonials" showIcon={ false } />,
-				},
-			}
-		);
-	} else if ( 'Projects' === get( postType, 'label', '' ) ) {
-		subHeaderText = translate(
-			'Create, edit, and manage the portfolio projects on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-			{
-				components: {
-					learnMoreLink: <InlineSupportLink supportContext="portfolios" showIcon={ false } />,
-				},
-			}
-		);
+	switch ( get( postType, 'label', '' ) ) {
+		case 'Testimonials':
+			subHeaderText = translate(
+				'Create and manage all the testimonials on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="testimonials" showIcon={ false } />,
+					},
+				}
+			);
+			break;
+
+		case 'Projects':
+			subHeaderText = translate(
+				'Create, edit, and manage the portfolio projects on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink supportContext="portfolios" showIcon={ false } />,
+					},
+				}
+			);
+			break;
+
+		case 'Reusable blocks':
+			subHeaderText = translate(
+				'Create, edit, and manage the reusable blocks on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: (
+							<InlineSupportLink supportContext="reusable-blocks" showIcon={ false } />
+						),
+					},
+				}
+			);
+			break;
 	}
 
 	return (
@@ -54,7 +70,6 @@ function Types( {
 			<ScreenOptionsTab wpAdminPath={ `edit.php?post_type=${ query.type }` } />
 			<DocumentHead title={ get( postType, 'label', '' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
-			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="types__page-heading"

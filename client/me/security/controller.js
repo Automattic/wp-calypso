@@ -3,6 +3,7 @@ import page from 'page';
 import { createElement } from 'react';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import ConnectedAppsComponent from 'calypso/me/connected-applications';
+import SecurityAccountEmail from 'calypso/me/security-account-email';
 import AccountRecoveryComponent from 'calypso/me/security-account-recovery';
 import SecurityCheckupComponent from 'calypso/me/security-checkup';
 import PasswordComponent from 'calypso/me/security/main';
@@ -46,6 +47,12 @@ export function accountRecovery( context, next ) {
 	context.primary = createElement( AccountRecoveryComponent, {
 		path: context.path,
 	} );
+	next();
+}
+
+export function securityAccountEmail( context, next ) {
+	context.primary = <SecurityAccountEmail path={ context.path } />;
+
 	next();
 }
 

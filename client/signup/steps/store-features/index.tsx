@@ -1,4 +1,5 @@
-import { SelectItem, SelectItems } from '@automattic/onboarding-components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { SelectItem, SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,7 +7,6 @@ import paymentBlocksImage from 'calypso/assets/images/onboarding/payment-blocks.
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils/utils';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -61,6 +61,12 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		} );
 		dispatch( submitSignupStep( { stepName }, providedDependencies ) );
 		goToNextStep();
+	};
+
+	const trackSupportLinkClick = ( storeType: StoreFeatureSet ) => {
+		recordTracksEvent( 'calypso_signup_store_feature_support_link_click', {
+			store_feature: storeType,
+		} );
 	};
 
 	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );
@@ -122,6 +128,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 										) }
 										target="_blank"
 										rel="noopener noreferrer"
+										onClick={ () => trackSupportLinkClick( 'simple' ) }
 									/>
 								),
 							},
@@ -170,6 +177,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 										) }
 										target="_blank"
 										rel="noopener noreferrer"
+										onClick={ () => trackSupportLinkClick( 'power' ) }
 									/>
 								),
 							},

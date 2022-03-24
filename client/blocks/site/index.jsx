@@ -8,9 +8,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import isNavUnificationEnabled from 'calypso/state/selectors/is-nav-unification-enabled';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -104,14 +104,12 @@ class Site extends Component {
 		const { site, homeLink, translate } = this.props;
 		return (
 			<div className="site__domain">
-				{ /* eslint-disable-next-line no-nested-ternary */ }
-				{ this.props.isNavUnificationEnabled && ! isEnabled( 'jetpack-cloud' )
-					? site.domain
-					: homeLink
-					? translate( 'View %(domain)s', {
-							args: { domain: site.domain },
-					  } )
-					: site.domain }
+				{ isJetpackCloud() &&
+					homeLink &&
+					translate( 'View %(domain)s', {
+						args: { domain: site.domain },
+					} ) }
+				{ ( ! isJetpackCloud() || ! homeLink ) && site.domain }
 			</div>
 		);
 	};
@@ -238,7 +236,6 @@ function mapStateToProps( state, ownProps ) {
 		isPreviewable: isSitePreviewable( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
-		isNavUnificationEnabled: isNavUnificationEnabled( state ),
 		isSiteP2: isSiteWPForTeams( state, siteId ),
 		isP2Hub: isSiteP2Hub( state, siteId ),
 	};

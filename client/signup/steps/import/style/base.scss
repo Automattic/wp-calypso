@@ -1,0 +1,174 @@
+@import '@automattic/onboarding/styles/base-styles.scss';
+@import '@automattic/onboarding/styles/mixins.scss';
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+@import './mixins.scss';
+@import './components.scss';
+
+.import__onboarding-page {
+	.components-button.action-buttons__next.is-primary {
+		padding: 9px 40px;
+		border-radius: 4px; /* stylelint-disable-line scales/radii */
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		line-height: 20px;
+
+		// override unnecessary super specificity added by another class
+		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+
+		&:disabled {
+			color: #fff;
+			background-color: #dcdcde;
+		}
+	}
+
+	.import__header {
+		@include onboarding-heading-padding;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.import__heading {
+		flex-grow: 1;
+
+		@include break-medium {
+			h1 {
+				max-width: 500px;
+				margin: auto;
+			}
+
+			h2 {
+				max-width: 560px;
+				margin: auto;
+			}
+		}
+
+		&.center {
+			text-align: center;
+		}
+
+		strong {
+			font-weight: 500; /* stylelint-disable-line */
+			color: var( --studio-gray-100 );
+		}
+
+		.onboarding-title {
+			@include onboarding-import-heading-text;
+			margin-bottom: 20px;
+		}
+
+		.onboarding-subtitle {
+			font-size: 1.125rem; /* stylelint-disable-line */
+			line-height: 1.4444em;
+
+			@include break-small {
+				width: 600px;
+			}
+		}
+
+		.formatted-header__subtitle {
+			margin-bottom: 2.5em !important;
+		}
+
+		.import__buttons-group {
+			margin: 28px 0;
+		}
+
+		.action-buttons__next {
+			margin-bottom: 20px;
+		}
+
+		.components-button.action-buttons__back {
+			color: var( --studio-gray-100 );
+			font-weight: 500; /* stylelint-disable-line */
+
+			&:hover {
+				color: var( --color-neutral-70 );
+			}
+		}
+	}
+
+	.import__heading-center {
+		text-align: center;
+	}
+
+	.scanning__header {
+		.import__heading {
+			.onboarding-title {
+				font-family: var( --font-base, var( --font-base-default ) );
+				font-size: 1.75em; /* stylelint-disable-line */
+				margin-bottom: 0.5em /* stylelint-disable-line */;
+			}
+
+			.onboarding-subtitle {
+				font-size: 1rem;
+				line-height: 1.5em;
+				color: var( --studio-gray-50 );
+			}
+		}
+	}
+}
+
+.import__details-list {
+	display: flex;
+	flex-wrap: wrap;
+	color: var( --studio-gray-70 );
+	font-size: $font-body-small;
+	margin: 1em 0;
+
+	li {
+		position: relative;
+		box-sizing: border-box;
+		display: flex;
+		flex: 100%;
+		margin-bottom: 12px;
+		padding-left: 34px;
+
+		@include break-small {
+			flex: 50%;
+		}
+	}
+
+	span {
+		margin-right: 0.5em;
+	}
+
+	svg {
+		position: absolute;
+		top: 1px;
+		left: 0;
+		fill: var( --studio-gray-20 );
+	}
+}
+
+// Layout
+.import-layout {
+	@include onboarding-block-margin;
+	@include onboarding-heading-padding;
+	display: flex;
+	flex-direction: column;
+
+	@include break-small {
+		flex-direction: row;
+	}
+}
+
+.import-layout__column {
+	display: flex;
+	flex-direction: column;
+	flex-basis: 100%;
+}
+
+.import-layout__center {
+	background-color: var( --contrastColor );
+	tab-size: 4;
+	min-height: calc( 100vh - 2 * #{$header-height} );
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.import-layout__text-center {
+	text-align: center;
+}

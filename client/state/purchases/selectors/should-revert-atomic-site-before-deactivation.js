@@ -1,4 +1,8 @@
-import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
+import {
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	isWpComProPlan,
+} from '@automattic/calypso-products';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getByPurchaseId } from './get-by-purchase-id';
@@ -21,6 +25,7 @@ export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) =>
 	const purchase = getByPurchaseId( state, purchaseId );
 
 	const isAtomicSupportedProduct = ( productSlug ) =>
+		isWpComProPlan( productSlug ) ||
 		isWpComBusinessPlan( productSlug ) ||
 		isWpComEcommercePlan( productSlug ) ||
 		isMarketplaceProduct( state, productSlug );

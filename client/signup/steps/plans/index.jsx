@@ -6,7 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { isDesktop, subscribeIsDesktop, isMobile } from '@automattic/viewport';
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -20,7 +20,7 @@ import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import PlansComparison, { isEligibleForManagedPlan } from 'calypso/my-sites/plans-comparison';
+import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -136,6 +136,7 @@ export class PlansStep extends Component {
 			showTreatmentPlansReorderTest,
 			isInVerticalScrollingPlansExperiment,
 			isReskinned,
+			eligibleForProPlan,
 		} = this.props;
 
 		let errorDisplay;
@@ -153,7 +154,7 @@ export class PlansStep extends Component {
 			return this.renderLoading();
 		}
 
-		if ( this.props.isEligibleForManagedPlan ) {
+		if ( eligibleForProPlan ) {
 			return (
 				<div>
 					{ errorDisplay }
@@ -168,18 +169,16 @@ export class PlansStep extends Component {
 
 		return (
 			<ProvideExperimentData
-				name="calypso_mobile_plans_page_with_billing"
-				options={ { isEligible: isMobile() && 'onboarding' === this.props.flowName } }
+				name="calypso_signup_monthly_plans_default_202201_v2"
+				options={ {
+					isEligible: [ 'onboarding', 'launch-site' ].includes( this.props.flowName ),
+				} }
 			>
 				{ ( isLoading, experimentAssignment ) => {
 					if ( isLoading ) {
 						return this.renderLoading();
 					}
-
-					// This allows us to continue with the other experiments.
-					if ( ! experimentAssignment?.variationName ) {
-						return this.renderSignUpMonthlyPlansExperiment( errorDisplay );
-					}
+					const isTreatmentMonthlyDefault = experimentAssignment?.variationName !== null;
 
 					return (
 						<div>
@@ -189,8 +188,7 @@ export class PlansStep extends Component {
 								hideFreePlan={ hideFreePlan }
 								isInSignup={ true }
 								isLaunchPage={ isLaunchPage }
-								intervalType={ this.getIntervalType( false ) }
-								isBillingWordingExperiment={ experimentAssignment?.variationName !== null }
+								intervalType={ this.getIntervalType( isTreatmentMonthlyDefault ) }
 								onUpgradeClick={ this.onSelectPlan }
 								showFAQ={ false }
 								domainName={ this.getDomainName() }
@@ -204,7 +202,6 @@ export class PlansStep extends Component {
 								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 								isReskinned={ isReskinned }
-								disableMonthlyExperiment={ false }
 							/>
 						</div>
 					);
@@ -278,7 +275,11 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate } = this.props;
+		const { headerText, translate, eligibleForProPlan } = this.props;
+
+		if ( eligibleForProPlan ) {
+			return translate( 'Choose the plan that’s right for you' );
+		}
 
 		if ( this.state.isDesktop ) {
 			return translate( 'Choose a plan' );
@@ -288,9 +289,13 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, translate } = this.props;
+		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan } = this.props;
 
-		if ( ! hideFreePlan && ! this.props.isEligibleForManagedPlan ) {
+		if ( eligibleForProPlan ) {
+			return translate( 'The WordPress Pro plan comes with a 14-day full money back guarantee' );
+		}
+
+		if ( ! hideFreePlan ) {
 			if ( this.state.isDesktop ) {
 				return translate(
 					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
@@ -447,10 +452,7 @@ export default connect(
 		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		isEligibleForManagedPlan: isEligibleForManagedPlan(
-			state,
-			getSiteBySlug( state, siteSlug )?.ID
-		),
+		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

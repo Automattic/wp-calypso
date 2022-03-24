@@ -1,7 +1,6 @@
 import { TranslateResult } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import PlanPrice from 'calypso/my-sites/plan-price';
-import useCouponDiscount from '../use-coupon-discount';
 import TimeFrame from './time-frame';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { Moment } from 'moment';
@@ -28,7 +27,7 @@ const Paid: React.FC< OwnProps > = ( {
 	tooltipText,
 	expiryDate,
 } ) => {
-	const { price: finalPrice } = useCouponDiscount( originalPrice, discountedPrice );
+	const finalPrice = discountedPrice ?? originalPrice;
 
 	if ( ! currencyCode || ! originalPrice || pricesAreFetching ) {
 		return (

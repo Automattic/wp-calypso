@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { intersection } from 'lodash';
-import { SCREEN_BREAKPOINT } from './constant';
+import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import { PlansComparisonRowHeader } from './plans-comparison-row-header';
 import type { PlanComparisonFeature } from './plans-comparison-features';
 import type { WPComPlan } from '@automattic/calypso-products';
@@ -14,29 +14,49 @@ const DesktopContent = styled.div`
 	display: flex;
 	flex-direction: column;
 
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT }px ) {
-		display: none;
+	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
+		.is-section-signup & {
+			display: none;
+		}
+	}
+
+	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
+		.is-section-plans & {
+			display: none;
+		}
 	}
 `;
 
 const MobileContent = styled.div`
 	display: none;
+	font-weight: 400;
 
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT }px ) {
-		display: flex;
-		flex-direction: column;
+	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
+		.is-section-signup & {
+			display: block;
+		}
+	}
+
+	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
+		.is-section-plans & {
+			display: block;
+		}
 	}
 `;
 
 const Title = styled.div`
-	display: flex;
-	flex-direction: row;
-	align-items: center;
 	gap: 0.5rem;
 
-	.gridicon {
-		width: 1em;
-		height: 1em;
+	.gridicon.gridicon {
+		width: 1.1em;
+		height: 1.1em;
+
+		html[dir='ltr'] & {
+			margin: 0 5px -2px 0;
+		}
+		html[dir='rtl'] & {
+			margin: 0 0 -2px 5px;
+		}
 	}
 
 	.gridicons-checkmark {
@@ -44,14 +64,15 @@ const Title = styled.div`
 	}
 
 	.gridicons-cross {
-		fill: var( --studio-gray-30 );
+		fill: #d63638;
 	}
 `;
 
 const Description = styled.p`
 	font-size: 0.75rem;
-	color: var( --studio-gray-30 );
+	color: var( --studio-gray-40 );
 	margin: 0;
+	font-weight: 400;
 `;
 
 function renderContent( content: ReturnType< PlanComparisonFeature[ 'getCellText' ] > ) {

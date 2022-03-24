@@ -9,3 +9,23 @@
 		height: 194px;
 	}
 }
+
+.payment-method-list__pagination {
+	margin: 64px 0;
+
+	&--is-fetching {
+		button {
+			/* Disable the pointer events during fetching. */
+			pointer-events: none;
+		}
+	}
+
+	&--no-more-items {
+		.is-right {
+			button {
+				/* Disable the next button when there are no more items. */
+				pointer-events: none;
+			}
+		}
+	}
+}

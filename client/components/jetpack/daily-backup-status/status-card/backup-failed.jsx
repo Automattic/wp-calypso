@@ -9,6 +9,7 @@ import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-valu
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import useGetDisplayDate from '../use-get-display-date';
+import BackupSupportLinks from './backup-support-links';
 import cloudErrorIcon from './icons/cloud-error.svg';
 
 import './style.scss';
@@ -96,6 +97,7 @@ const BackupFailed = ( { backup } ) => {
 					{ translate( 'Contact support' ) }
 				</Button>
 			</div>
+			<BackupSupportLinks siteUrl={ siteUrl } />
 		</>
 	);
 };

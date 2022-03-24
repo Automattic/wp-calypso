@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -33,10 +32,6 @@ class FeedError extends Component {
 
 		return (
 			<ReaderMain>
-				<MobileBackToSidebar>
-					<h1>{ this.props.sidebarTitle }</h1>
-				</MobileBackToSidebar>
-
 				<EmptyContent
 					action={ action }
 					title={ this.props.message }

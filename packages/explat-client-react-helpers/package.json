@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/explat-client-react-helpers",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "Standalone ExPlat Client: React Helpers.",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",

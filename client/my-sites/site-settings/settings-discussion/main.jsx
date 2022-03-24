@@ -5,7 +5,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import DiscussionForm from 'calypso/my-sites/site-settings/form-discussion';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
@@ -16,7 +15,6 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 		<ScreenOptionsTab wpAdminPath="options-discussion.php" />
 		<DocumentHead title={ translate( 'Discussion Settings' ) } />
 		<JetpackDevModeNotice />
-		<SidebarNavigation />
 		<FormattedHeader
 			brandFont
 			className="settings-discussion__page-heading"

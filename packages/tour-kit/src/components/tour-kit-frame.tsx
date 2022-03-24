@@ -15,22 +15,22 @@ import TourKitMinimized from './tour-kit-minimized';
 import Overlay from './tour-kit-overlay';
 import Spotlight from './tour-kit-spotlight';
 import TourKitStep from './tour-kit-step';
-import type { Config, Callback } from '../types';
-
-interface Props {
-	config: Config;
-}
+import type { Callback, Config } from '../types';
 
 const handleCallback = ( currentStepIndex: number, callback?: Callback ) => {
 	typeof callback === 'function' && callback( currentStepIndex );
 };
+
+interface Props {
+	config: Config;
+}
 
 const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
 		null
 	);
-	const [ isMinimized, setIsMinimized ] = useState( false );
+	const [ isMinimized, setIsMinimized ] = useState( config.isMinimized ?? false );
 
 	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );
 	const [ tourReady, setTourReady ] = useState( false );
@@ -42,6 +42,12 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const referenceElement = referenceElementSelector
 		? document.querySelector< HTMLElement >( referenceElementSelector )
 		: null;
+
+	useEffect( () => {
+		if ( config.isMinimized ) {
+			setIsMinimized( true );
+		}
+	}, [ config.isMinimized ] );
 
 	const showArrowIndicator = useCallback( () => {
 		if ( config.options?.effects?.arrowIndicator === false ) {
@@ -216,10 +222,14 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				<div
 					className="tour-kit-frame__container"
 					ref={ setPopperElement }
-					{ ...stepRepositionProps }
+					{ ...( stepRepositionProps as React.HTMLAttributes< HTMLDivElement > ) }
 				>
 					{ showArrowIndicator() && (
-						<div className="tour-kit-frame__arrow" data-popper-arrow { ...arrowPositionProps } />
+						<div
+							className="tour-kit-frame__arrow"
+							data-popper-arrow
+							{ ...( arrowPositionProps as React.HTMLAttributes< HTMLDivElement > ) }
+						/>
 					) }
 					{ ! isMinimized ? (
 						<TourKitStep
@@ -228,8 +238,8 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 							currentStepIndex={ currentStepIndex }
 							onMinimize={ handleMinimize }
 							onDismiss={ handleDismiss }
-							onNext={ handleNextStepProgression }
-							onPrevious={ handlePreviousStepProgression }
+							onNextStep={ handleNextStepProgression }
+							onPreviousStep={ handlePreviousStepProgression }
 							onGoToStep={ handleGoToStep }
 							setInitialFocusedElement={ setInitialFocusedElement }
 						/>

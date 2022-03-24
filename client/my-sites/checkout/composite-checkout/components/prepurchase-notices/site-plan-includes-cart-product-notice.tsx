@@ -1,6 +1,6 @@
 import { getJetpackProductDisplayName } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import PrePurchaseNotice from './prepurchase-notice';
@@ -40,7 +40,7 @@ const SitePlanIncludesCartProductNotice: FunctionComponent< Props > = ( {
 				plan: plan.product_name_short,
 			},
 			components: {
-				product: getJetpackProductDisplayName( product ) as ReactElement,
+				product: <>{ getJetpackProductDisplayName( product ) }</>,
 			},
 			comment:
 				'The `plan` variable refers to the short name of the plan the customer owns already. `product` refers to the product in the cart that is already included in the plan.',

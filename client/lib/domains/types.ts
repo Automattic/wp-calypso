@@ -93,7 +93,6 @@ export type ResponseDomain = {
 	manualTransferRequired: boolean;
 	mustRemovePrivacyBeforeContactUpdate: boolean;
 	name: string;
-	newRegistration: boolean;
 	owner: string;
 	partnerDomain: boolean;
 	pendingRegistration: boolean;
