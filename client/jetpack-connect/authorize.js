@@ -1,5 +1,8 @@
 import config from '@automattic/calypso-config';
-import { PRODUCT_JETPACK_BACKUP_T1_YEARLY } from '@automattic/calypso-products';
+import {
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	PRODUCT_JETPACK_SEARCH,
+} from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -41,6 +44,7 @@ import {
 	isFetchingSitePurchases,
 	siteHasJetpackProductPurchase,
 	siteHasBackupProductPurchase,
+	siteHasSearchProductPurchase,
 } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
@@ -217,7 +221,12 @@ export class JetpackAuthorize extends Component {
 	}
 
 	redirect() {
-		const { isMobileAppFlow, mobileAppRedirect, siteHasJetpackBackupProduct } = this.props;
+		const {
+			isMobileAppFlow,
+			mobileAppRedirect,
+			siteHasJetpackBackupProduct,
+			siteHasJetpackSearchProduct,
+		} = this.props;
 		const {
 			from,
 			homeUrl,
@@ -281,6 +290,9 @@ export class JetpackAuthorize extends Component {
 		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasJetpackBackupProduct ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
+		} else if ( this.isFromJetpackSearchPlugin() && ! siteHasJetpackSearchProduct ) {
+			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_SEARCH } in cart.` );
+			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_SEARCH }` );
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );
@@ -359,6 +371,11 @@ export class JetpackAuthorize extends Component {
 	isFromJetpackBackupPlugin( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'jetpack-backup' );
+	}
+
+	isFromJetpackSearchPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-search' );
 	}
 
 	isWooRedirect = ( props = this.props ) => {
@@ -920,6 +937,7 @@ const connectComponent = connect(
 			selectedPlanSlug,
 			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
 			siteHasJetpackBackupProduct: siteHasBackupProductPurchase( state, authQuery.clientId ),
+			siteHasJetpackSearchProduct: siteHasSearchProductPurchase( state, authQuery.clientId ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};
