@@ -81,7 +81,7 @@ class WordAdsPayments extends Component {
 			<Card className={ classes }>
 				<div className="ads__module-header module-header">
 					<h1 className="ads__module-header-title module-header-title">
-						{ translate( 'Payment history' ) }
+						{ translate( 'Payments history' ) }
 					</h1>
 				</div>
 				<div className="ads__module-content module-content">
@@ -144,7 +144,7 @@ class WordAdsPayments extends Component {
 		return (
 			<Card>
 				{ translate(
-					'You have no payment history. Payment will be made as soon as the total outstanding amount has reached $100.'
+					'You have no payments history. Payment will be made as soon as the total outstanding amount has reached $100.'
 				) }
 			</Card>
 		);
