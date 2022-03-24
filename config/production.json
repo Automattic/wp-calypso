@@ -13,6 +13,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"facebook_app_id": "2373049596",
 	"bilmur_url": "/wp-content/js/bilmur.min.js",
+	"olark_chat_identity": "7089-503-10-5123",
 	"features": {
 		"ad-tracking": true,
 		"bilmur-script": true,
@@ -30,8 +31,9 @@
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
 		"external-media": true,
-		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
+		"external-media/google-photos": true,
+		"external-media/openverse": false,
 		"fullstory": true,
 		"gdpr-banner": true,
 		"google-my-business": true,

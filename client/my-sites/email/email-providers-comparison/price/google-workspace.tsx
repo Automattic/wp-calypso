@@ -1,8 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';

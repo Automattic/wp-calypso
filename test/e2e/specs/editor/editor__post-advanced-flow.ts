@@ -12,19 +12,17 @@ import {
 	ParagraphBlock,
 	SnackbarNotificationComponent,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function () {
-	const accountName = getTestAccountByFeature(
-		{
-			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-		},
-		[ { gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
-	);
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features, [
+		{ gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+	] );
 
 	const postTitle = `Post Life Cycle: ${ DataHelper.getTimestamp() }`;
 	const originalContent = DataHelper.getRandomPhrase();
@@ -49,7 +47,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 	describe( 'Publish post', function () {
 		it( 'Enter post title', async function () {
-			editorPage = new EditorPage( page );
+			editorPage = new EditorPage( page, { target: features.siteType } );
 			await editorPage.enterTitle( postTitle );
 		} );
 

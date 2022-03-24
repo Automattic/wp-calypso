@@ -13,6 +13,7 @@
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
+	"olark_chat_identity": "7089-503-10-5123",
 	"features": {
 		"ad-tracking": false,
 		"calypsoify/plugins": true,
@@ -35,8 +36,9 @@
 		"domains/premium-domain-purchases": true,
 		"email-accounts/enabled": true,
 		"external-media": true,
-		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
+		"external-media/google-photos": true,
+		"external-media/openverse": false,
 		"fullstory": true,
 		"gdpr-banner": true,
 		"google-my-business": true,

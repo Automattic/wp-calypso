@@ -19,12 +19,14 @@ const TourKit: React.FunctionComponent< Props > = ( { config, __temp__className 
 		const classes = [ 'tour-kit', ...( __temp__className ? [ __temp__className ] : [] ) ];
 
 		portalParent.classList.add( ...classes );
-		document.body.appendChild( portalParent );
+
+		const portalParentElement = config.options?.portalParentElement || document.body;
+		portalParentElement.appendChild( portalParent );
 
 		return () => {
-			document.body.removeChild( portalParent );
+			portalParentElement.removeChild( portalParent );
 		};
-	}, [ __temp__className, portalParent ] );
+	}, [ __temp__className, portalParent, config.options?.portalParentElement ] );
 
 	return (
 		<ErrorBoundary>

@@ -1,6 +1,13 @@
 import { describe, expect, it, test } from '@jest/globals';
-import { getTestAccountByFeature } from '../../../src/lib/utils/get-test-account-by-feature';
-import type { FeatureCriteria } from '../../../src/lib/utils/get-test-account-by-feature';
+import {
+	getTestAccountByFeature,
+	envToFeatureKey,
+} from '../../../src/lib/utils/get-test-account-by-feature';
+import type {
+	FeatureCriteria,
+	TestAccountEnvVariables,
+	FeatureKey,
+} from '../../../src/lib/utils/get-test-account-by-feature';
 
 describe( 'getTestAccountByFeature', function () {
 	const customCriteria: FeatureCriteria[] = [
@@ -90,7 +97,8 @@ describe( 'getTestAccountByFeature', function () {
 
 	it( 'will throw en error if passed feature does not match an account', () => {
 		expect( () =>
-			getTestAccountByFeature( { gutenberg: 'edge', siteType: 'atomic' } )
+			/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+			getTestAccountByFeature( { coblocks: 'foo', siteType: 'bar' } as any )
 		).toThrowError();
 	} );
 
@@ -123,7 +131,7 @@ describe( 'getTestAccountByFeature', function () {
 		expect( editorAccountName ).toBe( 'gutenbergSimpleSiteEdgeUser' );
 	} );
 
-	it( 'will replce any existing criteria if a identical one is passed as the 2nd argument', () => {
+	it( 'will replace any existing criteria if a identical one is passed as the 2nd argument', () => {
 		// There's already a default account that would match the criterion below. The default
 		// has an `accoutnName` of `gutenbergSimpleSiteEdgeUser`. By passing this one, the default
 		// one should be replaced.
@@ -144,5 +152,55 @@ describe( 'getTestAccountByFeature', function () {
 		);
 
 		expect( editorAccountName ).toBe( 'aNewAccount' );
+	} );
+} );
+
+describe( 'envToFeatureKey', () => {
+	const envVariables: TestAccountEnvVariables = {
+		COBLOCKS_EDGE: true,
+		GUTENBERG_EDGE: false,
+		TEST_ON_ATOMIC: false,
+	};
+
+	it( 'will return a proper `FeatureKey` object', () => {
+		expect( envToFeatureKey( envVariables ) ).toEqual( {
+			coblocks: 'edge',
+			gutenberg: 'stable',
+			siteType: 'simple',
+		} as FeatureKey );
+	} );
+
+	it( 'will return a `FeatureKey` object without coblocks (=== `undefined`) if env.COBLOCKS_EDGE is `false`', () => {
+		expect( envToFeatureKey( { ...envVariables, COBLOCKS_EDGE: false } )[ 'coblocks' ] ).toBe(
+			undefined
+		);
+	} );
+
+	it( 'will return a `FeatureKey` object with `coblocks: "edge"` if env.COBLOCKS_EDGE is `true`', () => {
+		expect( envToFeatureKey( envVariables ) ).toMatchObject( {
+			coblocks: 'edge',
+		} );
+	} );
+
+	it( 'will return a `FeatureKey` object with `gutenberg: "stable"` if env.GUTENBERG_EDGE is `false`', () => {
+		expect( envToFeatureKey( envVariables ) ).toMatchObject( { gutenberg: 'stable' } );
+	} );
+
+	it( 'will return a `FeatureKey` object with `gutenberg: "edge"` if env.GUTENBERG_EDGE is `true`', () => {
+		expect( envToFeatureKey( { ...envVariables, GUTENBERG_EDGE: true } ) ).toMatchObject( {
+			gutenberg: 'edge',
+		} );
+	} );
+
+	it( 'will return a `FeatureKey` object with `siteType: "simple"` if env.TEST_ON_ATOMIC is `false`', () => {
+		expect( envToFeatureKey( envVariables ) ).toMatchObject( {
+			siteType: 'simple',
+		} );
+	} );
+
+	it( 'will return a `FeatureKey` object with `siteType: "atomic"` if env.TEST_ON_ATOMIC is `true`', () => {
+		expect( envToFeatureKey( { ...envVariables, TEST_ON_ATOMIC: true } ) ).toMatchObject( {
+			siteType: 'atomic',
+		} );
 	} );
 } );
