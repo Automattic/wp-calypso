@@ -15,14 +15,15 @@ import { Page, Browser } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), function () {
-	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features );
 
 	let page: Page;
 	let editorPage: EditorPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
