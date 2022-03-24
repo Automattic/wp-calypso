@@ -1,3 +1,4 @@
+import { CONTACT_PAGE } from 'calypso/signup/difm/constants';
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
 import { LogoUploadSection } from './logo-upload-section';
 import { CONTENT_SUFFIX, PageDetails } from './page-details';
@@ -13,9 +14,9 @@ const generateWebsiteContentSections = (
 ) => {
 	const { translate, formValues, formErrors, onChangeField } = params;
 
-	const OPTIONAL_PAGES: Record< string, boolean > = { Contact: true };
+	const OPTIONAL_PAGES: Record< string, boolean > = { [ CONTACT_PAGE ]: true };
 	const PAGE_LABELS: Record< string, TranslateResult > = {
-		Contact: translate(
+		[ CONTACT_PAGE ]: translate(
 			"We'll add a standard contact form on this page, plus a comment box. " +
 				'If you would like text to appear above this form, please enter it below.'
 		),
