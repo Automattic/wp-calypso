@@ -1,7 +1,6 @@
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,7 +27,6 @@ function P2CompleteProfile( {
 	const [ formFullName, setFormFullName ] = useState( '' );
 	const [ formErrors, setFormErrors ] = useState( {} );
 
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const updatingUserSettings = useSelector( isUpdatingUserSettings );
@@ -51,13 +49,21 @@ function P2CompleteProfile( {
 				goToNextStep();
 			}
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isSubmitting, updatingUserSettings, userSettingsRequestFailed ] );
+	}, [
+		isSubmitting,
+		updatingUserSettings,
+		userSettingsRequestFailed,
+		setIsSubmitting,
+		formFullName,
+		stepName,
+		submitSignupStep,
+		goToNextStep,
+	] );
 
 	const renderUploadAvatarBtn = () => {
 		return (
 			<button className="p2-complete-profile__upload-avatar-btn">
-				{ translate( 'Upload a new avatar' ) }
+				{ __( 'Upload a new avatar' ) }
 			</button>
 		);
 	};
@@ -71,7 +77,7 @@ function P2CompleteProfile( {
 
 		if ( formFullName.length < 2 ) {
 			setFormErrors( {
-				fullName: translate( 'Please enter your full name (3 characters or more).' ),
+				fullName: __( 'Please enter your full name (2 characters or more).' ),
 			} );
 
 			setIsSubmitting( false );
@@ -98,8 +104,8 @@ function P2CompleteProfile( {
 			flowName={ flowName }
 			stepName={ stepName }
 			positionInFlow={ positionInFlow }
-			headerText={ translate( 'Complete your profile' ) }
-			subHeaderText={ translate(
+			headerText={ __( 'Complete your profile' ) }
+			subHeaderText={ __(
 				'Using a recognizable photo and name will help your team to identify you more easily.'
 			) }
 		>
@@ -111,7 +117,7 @@ function P2CompleteProfile( {
 				<div className="p2-complete-profile__form-wrapper">
 					<form className="p2-complete-profile__form" onSubmit={ handleFormSubmit } noValidate>
 						<label htmlFor="full-name-input" className="p2-complete-profile__form-label form-label">
-							{ translate( 'Your Full Name' ) }
+							{ __( 'Your Full Name' ) }
 						</label>
 						<input
 							type="text"
@@ -130,7 +136,7 @@ function P2CompleteProfile( {
 								className="p2-complete-profile__form-submit-btn"
 								disabled={ isSubmitting }
 							>
-								{ translate( 'Continue' ) }
+								{ __( 'Continue' ) }
 							</Button>
 						</div>
 					</form>

@@ -1,5 +1,6 @@
 .p2-complete-profile__avatar-wrapper {
 	text-align: center;
+	margin-top: 20px;
 }
 
 .edit-gravatar button.info-popover {
@@ -34,10 +35,6 @@
 		border-color: var( --p2-color-link-hover );
 		cursor: pointer;
 	}
-}
-
-.p2-complete-profile__avatar-wrapper {
-	margin-top: 20px;
 }
 
 .p2-complete-profile__form-wrapper {
