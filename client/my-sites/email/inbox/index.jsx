@@ -89,7 +89,7 @@ const hasAtLeastOneMailbox = ( domains ) =>
 const showActiveDomainList = ( domains ) =>
 	domains.some( ( domain ) => hasPaidEmailWithUs( domain ) || hasEmailForwards( domain ) );
 
-const InboxManagement = ( { selectedIntervalLength, source } ) => {
+const InboxManagement = ( { selectedIntervalLength } ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const canManageSite = useSelector( ( state ) =>
 		canCurrentUser( state, selectedSiteId, 'manage_options' )
@@ -129,7 +129,7 @@ const InboxManagement = ( { selectedIntervalLength, source } ) => {
 					sectionHeaderLabel={ translate( 'Domains' ) }
 					selectedIntervalLength={ selectedIntervalLength }
 					showActiveDomainList={ showActiveDomainList( nonWPCOMDomains ) }
-					source={ source }
+					source={ INBOX_SOURCE }
 				/>
 			</>
 		</CalypsoShoppingCartProvider>

@@ -10,7 +10,6 @@ import { castIntervalLength } from 'calypso/my-sites/email/email-providers-compa
 import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-stacked-comparison/page';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';
-import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
@@ -168,7 +167,6 @@ export default {
 		pageContext.primary = (
 			<InboxManagement
 				selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
-				source={ INBOX_SOURCE }
 			/>
 		);
 		next();
