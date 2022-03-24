@@ -1,9 +1,9 @@
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import page from 'page';
 import { createElement } from 'react';
 import { NoJetpackSitesMessage } from 'calypso/components/jetpack/no-jetpack-sites-message';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
 import {
 	redirectToPrimary,
