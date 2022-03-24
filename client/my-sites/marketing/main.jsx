@@ -7,6 +7,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -50,6 +51,16 @@ export const Sharing = ( {
 			id: 'traffic',
 			route: '/marketing/traffic' + pathSuffix,
 			title: translate( 'Traffic' ),
+			description: translate(
+				'Manage settings and tools related to the traffic your website receives. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+				{
+					components: {
+						learnMoreLink: (
+							<InlineSupportLink key="traffic" supportContext="traffic" showIcon={ false } />
+						),
+					},
+				}
+			),
 		} );
 	}
 
@@ -59,6 +70,16 @@ export const Sharing = ( {
 		id: 'sharing-connections',
 		route: '/marketing/connections' + pathSuffix,
 		title: translate( 'Connections' ),
+		description: translate(
+			'Connect your site to social networks and other services. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+			{
+				components: {
+					learnMoreLink: (
+						<InlineSupportLink key="publicize" supportContext="publicize" showIcon={ false } />
+					),
+				},
+			}
+		),
 	};
 	if ( showConnections ) {
 		filters.push( connectionsFilter );
@@ -71,6 +92,14 @@ export const Sharing = ( {
 			id: 'sharing-buttons',
 			route: '/marketing/sharing-buttons' + pathSuffix,
 			title: translate( 'Sharing Buttons' ),
+			description: translate(
+				'Make it easy for your readers to share your content online. {{learnMoreLink/}}',
+				{
+					components: {
+						learnMoreLink: <InlineSupportLink key="sharing" supportContext="sharing" />,
+					},
+				}
+			),
 		} );
 	}
 
@@ -86,13 +115,10 @@ export const Sharing = ( {
 
 	// For p2 hub sites show only connections tab
 	let titleHeader = translate( 'Marketing and Integrations' );
-	let description = translate(
-		'Explore tools to build your audience, market your site, and engage your visitors.'
-	);
+
 	if ( isP2Hub ) {
 		filters = [ connectionsFilter ];
 		titleHeader = translate( 'Integrations' );
-		description = translate( 'Explore tools to connect to your P2.' );
 	}
 
 	const selected = find( filters, { route: pathname } );
@@ -105,7 +131,13 @@ export const Sharing = ( {
 				brandFont
 				className="marketing__page-heading"
 				headerText={ titleHeader }
-				subHeaderText={ description }
+				subHeaderText={ get(
+					selected,
+					'description',
+					translate(
+						'Explore tools to build your audience, market your site, and engage your visitors.'
+					)
+				) }
 				align="left"
 			/>
 			{ filters.length > 0 && (
