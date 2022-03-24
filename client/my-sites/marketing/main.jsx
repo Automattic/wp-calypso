@@ -52,7 +52,7 @@ export const Sharing = ( {
 			route: '/marketing/traffic' + pathSuffix,
 			title: translate( 'Traffic' ),
 			description: translate(
-				'Manage settings and tools related to the traffic your website receives. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+				'Manage settings and tools related to the traffic your website receives. {{learnMoreLink/}}',
 				{
 					components: {
 						learnMoreLink: (
@@ -71,7 +71,7 @@ export const Sharing = ( {
 		route: '/marketing/connections' + pathSuffix,
 		title: translate( 'Connections' ),
 		description: translate(
-			'Connect your site to social networks and other services. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+			'Connect your site to social networks and other services. {{learnMoreLink/}}',
 			{
 				components: {
 					learnMoreLink: (
@@ -96,7 +96,9 @@ export const Sharing = ( {
 				'Make it easy for your readers to share your content online. {{learnMoreLink/}}',
 				{
 					components: {
-						learnMoreLink: <InlineSupportLink key="sharing" supportContext="sharing" />,
+						learnMoreLink: (
+							<InlineSupportLink key="sharing" supportContext="sharing" showIcon={ false } />
+						),
 					},
 				}
 			),
