@@ -105,7 +105,7 @@ export function getTestAccountByFeature(
  * often, changes to the former might require the logic here to be updated, so
  * beware :)
  *
- * @param {SupportedEnvVariables} envVariables
+ * @param {TestAccountEnvVariables} envVariables
  * @returns {FeatureKey}
  */
 export function envToFeatureKey( envVariables: TestAccountEnvVariables ): FeatureKey {
