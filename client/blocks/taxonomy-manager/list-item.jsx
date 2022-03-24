@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import { Dialog, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -140,9 +138,21 @@ class TaxonomyManagerListItem extends Component {
 			{ action: 'delete', label: translate( 'OK' ), isPrimary: true },
 		];
 
+		const onKeyUp = ( event ) => {
+			if ( event.key === 'Enter' ) {
+				onClick();
+			}
+		};
+
 		return (
 			<div className={ className }>
-				<span role="img" className="taxonomy-manager__icon" onClick={ onClick }>
+				<span
+					className="taxonomy-manager__icon"
+					role="button"
+					tabIndex={ 0 }
+					onKeyUp={ onKeyUp }
+					onClick={ onClick }
+				>
 					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
 				</span>
 				{ /* FIXME: jsx-a11y issues */ }
