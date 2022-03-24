@@ -5,11 +5,8 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { QueryClient } from 'react-query';
 import { connect } from 'react-redux';
-import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 import ExternalLink from 'calypso/components/external-link';
-import { fetchSupportArticleAlternates } from 'calypso/data/support-article-alternates/use-support-article-alternates-query';
 import { withRouteModal } from 'calypso/lib/route-modal';
 import {
 	bumpStat,
@@ -64,15 +61,6 @@ class InlineSupportLink extends Component {
 			} );
 		}
 	}
-
-	prefetchAlternates = () => {
-		const { supportPostId } = this.props;
-		const queryClient = new QueryClient();
-		queryClient.prefetchQuery(
-			[ 'support-article-alternates', SUPPORT_BLOG_ID, supportPostId ],
-			() => fetchSupportArticleAlternates( SUPPORT_BLOG_ID, supportPostId )
-		);
-	};
 
 	render() {
 		const {
