@@ -47,11 +47,11 @@ import {
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
+import getOnboardingUrl from 'calypso/signup/config/get-onboarding-url';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -119,7 +119,6 @@ export function renderNoVisibleSites( context ) {
 	const state = getState();
 	const currentUser = getCurrentUser( state );
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
-	const onboardingUrl = getOnboardingUrl( state );
 
 	setSectionMiddleware( { group: 'sites' } )( context );
 
@@ -144,7 +143,7 @@ export function renderNoVisibleSites( context ) {
 		action: i18n.translate( 'Change Visibility' ),
 		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
 		secondaryAction: i18n.translate( 'Create New Site' ),
-		secondaryActionURL: `${ onboardingUrl }?ref=calypso-nosites`,
+		secondaryActionURL: `${ getOnboardingUrl() }?ref=calypso-nosites`,
 		className: 'no-visible-sites-message',
 	} );
 

@@ -39,6 +39,7 @@ import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
+import getOnboardingUrl from 'calypso/signup/config/get-onboarding-url';
 import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUserDate,
@@ -49,7 +50,6 @@ import {
 import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
@@ -538,12 +538,12 @@ class Account extends Component {
 	}
 
 	renderPrimarySite() {
-		const { onboardingUrl, requestingMissingSites, translate, visibleSiteCount } = this.props;
+		const { requestingMissingSites, translate, visibleSiteCount } = this.props;
 
 		if ( ! visibleSiteCount ) {
 			return (
 				<Button
-					href={ onboardingUrl + '?ref=me-account-settings' }
+					href={ getOnboardingUrl() + '?ref=me-account-settings' }
 					onClick={ this.getClickHandler( 'Primary Site Add New WordPress Button' ) }
 				>
 					{ translate( 'Add New Site' ) }
@@ -996,7 +996,6 @@ export default compose(
 			userSettings: getUserSettings( state ),
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
-			onboardingUrl: getOnboardingUrl( state ),
 		} ),
 		{
 			bumpStat,
