@@ -21,7 +21,11 @@ import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
-import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserName,
+	isUserLoggedIn,
+	getCurrentUser,
+} from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -1043,6 +1047,26 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 
 	nextProps.submitSignupStep( { stepName, wasSkipped: true } );
 	flows.excludeStep( stepName );
+}
+
+export function excludeStepIfUserHasDetailsFilledIn( stepName, defaultDependencies, nextProps ) {
+	if ( includes( flows.excludedSteps, stepName ) ) {
+		return;
+	}
+
+	const state = nextProps?.store?.getState();
+
+	if ( ! state ) {
+		return;
+	}
+
+	const currentUser = getCurrentUser( state );
+
+	if ( currentUser?.display_name !== currentUser?.username ) {
+		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+
+		flows.excludeStep( stepName );
+	}
 }
 
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
