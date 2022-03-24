@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { Dialog, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -140,7 +141,7 @@ class TaxonomyManagerListItem extends Component {
 
 		return (
 			<div className={ className }>
-				<span className="taxonomy-manager__icon" onClick={ onClick }>
+				<span role="img" className="taxonomy-manager__icon" onClick={ onClick }>
 					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
 				</span>
 				{ /* FIXME: jsx-a11y issues */ }
@@ -159,7 +160,7 @@ class TaxonomyManagerListItem extends Component {
 				{ typeof term.post_count !== 'undefined' && (
 					<div className="taxonomy-manager__count">
 						<Count
-							ref={ this.countRef }
+							forwardRef={ this.countRef }
 							count={ term.post_count }
 							onMouseEnter={ this.showTooltip }
 							onMouseLeave={ this.hideTooltip }
