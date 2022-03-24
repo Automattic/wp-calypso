@@ -49,7 +49,7 @@ export default function EmailProvidersUpsell( { domain, interval } ) {
 					selectedDomainName={ domain }
 					selectedIntervalLength={ interval }
 					source="domain-upsell"
-				></EmailProvidersStackedComparison>
+				/>
 			) }
 		</CalypsoShoppingCartProvider>
 	);

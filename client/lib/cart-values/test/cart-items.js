@@ -1,5 +1,5 @@
-import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
 import {
+	GSUITE_BASIC_SLUG,
 	PLAN_FREE,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
