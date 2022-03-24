@@ -36,6 +36,7 @@ export { isFlexiblePlanProduct } from './is-flexible-plan';
 export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
 export {
 	isGoogleWorkspace,
+	isGoogleWorkspaceMonthly,
 	isGoogleWorkspaceExtraLicence,
 	isGSuite,
 	isGSuiteOrExtraLicense,
@@ -72,7 +73,7 @@ export { isSecurityDaily } from './is-security-daily';
 export { isSecurityRealTime } from './is-security-realtime';
 export { isJetpackSecuritySlug } from './is-jetpack-security-slug';
 export { isTheme } from './is-theme';
-export { isTitanMail } from './is-titan-mail';
+export { isTitanMail, isTitanMailMonthly } from './is-titan-mail';
 export { isUnlimitedSpace } from './is-unlimited-space';
 export { isUnlimitedThemes } from './is-unlimited-themes';
 export { isVideoPress } from './is-video-press';

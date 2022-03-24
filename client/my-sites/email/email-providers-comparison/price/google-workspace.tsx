@@ -61,14 +61,6 @@ const GoogleWorkspacePrice = ( {
 		);
 	}
 
-	if ( intervalLength === IntervalLength.MONTHLY ) {
-		return (
-			<div className="google-workspace-price__unavailable">
-				{ translate( 'Only available with annual billing' ) }
-			</div>
-		);
-	}
-
 	const isDiscounted = hasDiscount( product );
 	const isEligibleForFreeTrial = isDomainEligibleForGoogleWorkspaceFreeTrial( domain );
 
