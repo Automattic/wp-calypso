@@ -17,7 +17,7 @@ export type NavigationControls = {
 	 */
 	goToStep?: ( step: StepPath ) => void;
 	/**
-	 * Submits the answers provided in the flow
+	 * Submits the answers provided in the step.
 	 */
 	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
 };
