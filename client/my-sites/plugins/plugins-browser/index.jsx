@@ -81,10 +81,6 @@ const SEARCH_RESULTS_LIST_LENGTH = 12;
 
 const translateCategory = ( { category, translate } ) => {
 	switch ( category ) {
-		case 'new':
-			return translate( 'New', {
-				context: 'Category description for the plugin browser.',
-			} );
 		case 'popular':
 			return translate( 'Popular', {
 				context: 'Category description for the plugin browser.',
@@ -104,8 +100,6 @@ const translateCategory = ( { category, translate } ) => {
 
 const translateCategoryTitle = ( { category, translate } ) => {
 	switch ( category ) {
-		case 'new':
-			return translate( 'All New Plugins' );
 		case 'popular':
 			return translate( 'All Popular Plugins' );
 		case 'featured':
@@ -165,10 +159,6 @@ const PluginsBrowser = ( {
 		data: { plugins: pluginsByCategory = [] } = {},
 		isLoading: isFetchingPluginsByCategory,
 	} = useWPORGPlugins( { category } );
-	const {
-		data: { plugins: pluginsByCategoryNew = [] } = {},
-		isLoading: isFetchingPluginsByCategoryNew,
-	} = useWPORGPlugins( { category: 'new' } );
 	const {
 		data: pluginsByCategoryFeatured = [],
 		isLoading: isFetchingPluginsByCategoryFeatured,
@@ -339,8 +329,6 @@ const PluginsBrowser = ( {
 				searchTerms={ [ 'shipping', 'seo', 'portfolio', 'chat', 'mailchimp' ] }
 			/>
 			<PluginBrowserContent
-				pluginsByCategoryNew={ pluginsByCategoryNew }
-				isFetchingPluginsByCategoryNew={ isFetchingPluginsByCategoryNew }
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
@@ -533,8 +521,6 @@ const FullListView = ( {
 
 const PluginSingleListView = ( {
 	category,
-	pluginsByCategoryNew,
-	isFetchingPluginsByCategoryNew,
 	pluginsByCategoryPopular,
 	isFetchingPluginsByCategoryPopular,
 	pluginsByCategoryFeatured,
@@ -556,10 +542,7 @@ const PluginSingleListView = ( {
 
 	let plugins;
 	let isFetching;
-	if ( category === 'new' ) {
-		plugins = pluginsByCategoryNew;
-		isFetching = isFetchingPluginsByCategoryNew;
-	} else if ( category === 'popular' ) {
+	if ( category === 'popular' ) {
 		plugins = pluginsByCategoryPopular;
 		isFetching = isFetchingPluginsByCategoryPopular;
 	} else if ( category === 'featured' ) {
@@ -618,7 +601,6 @@ const PluginBrowserContent = ( props ) => {
 			) }
 
 			<PluginSingleListView { ...props } category="popular" />
-			<PluginSingleListView { ...props } category="new" />
 		</>
 	);
 };
