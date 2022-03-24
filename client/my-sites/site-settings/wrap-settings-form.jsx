@@ -18,8 +18,10 @@ import getRequest from 'calypso/state/selectors/get-request';
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
 import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isUpdatingJetpackSettings from 'calypso/state/selectors/is-updating-jetpack-settings';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { saveP2SiteSettings } from 'calypso/state/site-settings/p2/actions';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
@@ -173,6 +175,10 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				this.props.saveJetpackSettings( siteId, jetpackFieldsToUpdate );
 			}
 
+			if ( typeof fields?.p2_preapproved_domains !== 'undefined' ) {
+				return this.props.saveP2SiteSettings( siteId, fields );
+			}
+
 			const siteFields = pick( fields, settingsFields.site );
 			this.props.saveSiteSettings( siteId, siteFields );
 		};
@@ -271,6 +277,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				<div>
 					<QuerySiteSettings siteId={ this.props.siteId } />
 					{ this.props.siteIsJetpack && <QueryJetpackSettings siteId={ this.props.siteId } /> }
+					{ /*this.props.isWPForTeamsSite && <QueryP2SiteSettings siteId={ this.props.siteId } />*/ }
 					<SettingsForm { ...this.props } { ...utils } />
 				</div>
 			);
@@ -330,6 +337,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				path,
 				siteIsJetpack: isJetpack,
 				siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
+				siteIsP2Hub: isSiteP2Hub( state, siteId ),
 				siteSettingsSaveError,
 				settings,
 				settingsFields,
@@ -346,6 +354,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					saveSiteSettings,
 					successNotice,
 					saveJetpackSettings,
+					saveP2SiteSettings,
 					activateModule,
 				},
 				dispatch
