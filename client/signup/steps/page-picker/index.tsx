@@ -98,7 +98,7 @@ function PageCell( { pageId, popular, selectedPages, onClick }: PageCellType ) {
 	const totalSelections = selectedPages.length;
 	const isSelected = Boolean( selectedIndex > -1 );
 	const isDisabled = selectedIndex === -1 && totalSelections >= PAGE_LIMIT;
-	const title = useTranslatedPageTitles( pageId );
+	const title = useTranslatedPageTitles()[ pageId ];
 
 	return (
 		<GridCellContainer
