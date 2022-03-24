@@ -1,33 +1,42 @@
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import page from 'page';
 import { connect } from 'react-redux';
 import TaxonomyManager from 'calypso/blocks/taxonomy-manager';
 import DocumentHead from 'calypso/components/data/document-head';
-import HeaderCake from 'calypso/components/header-cake';
+import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Main from 'calypso/components/main';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const Taxonomies = ( { translate, labels, postType, site, taxonomy } ) => {
-	const goBack = () => {
-		page( '/settings/writing/' + site.slug );
-	};
-
+const Taxonomies = ( { translate, labels, postType, taxonomy } ) => {
 	return (
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className="main main-column" role="main">
+		<Main wideLayout className={ classnames( 'taxonomies', taxonomy ) }>
 			<ScreenOptionsTab wpAdminPath={ `edit-tags.php?taxonomy=${ taxonomy }` } />
 			<DocumentHead
 				title={ translate( 'Manage %(taxonomy)s', { args: { taxonomy: labels.name } } ) }
 			/>
-			<HeaderCake onClick={ goBack } className="header-cake--has-screen-options">
-				<h1>{ labels.name }</h1>
-			</HeaderCake>
+			<FormattedHeader
+				brandFont
+				headerText={ labels.name }
+				subHeaderText={ translate(
+					'Create, edit, and manage the %(taxonomy)s on your site. {{learnMoreLink/}}',
+					{
+						args: { taxonomy: taxonomy },
+						components: {
+							learnMoreLink: <InlineSupportLink supportContext="publicize" showIcon={ false } />,
+						},
+					}
+				) }
+				align="left"
+				hasScreenOptions
+			/>
 			<TaxonomyManager taxonomy={ taxonomy } postType={ postType } />
-		</div>
+		</Main>
 	);
 };
 
