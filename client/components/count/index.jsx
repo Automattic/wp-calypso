@@ -24,10 +24,7 @@ Count.propTypes = {
 	numberFormat: PropTypes.func,
 	primary: PropTypes.bool,
 	compact: PropTypes.bool,
-	refProp: PropTypes.oneOfType( [
-		PropTypes.func,
-		PropTypes.shape( { current: PropTypes.instanceOf( Element ) } ),
-	] ),
+	refProp: PropTypes.oneOfType( [ PropTypes.func, PropTypes.shape( { current: PropTypes.any } ) ] ),
 };
 
 Count.defaultProps = {
