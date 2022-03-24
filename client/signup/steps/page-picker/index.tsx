@@ -207,12 +207,16 @@ const StyledButton = styled( Button )`
 export default function DIFMPagePicker( props: StepProps ) {
 	const translate = useTranslate();
 
+	const headerText = translate( 'Add pages to your {{wbr}}{{/wbr}}website', {
+		components: { wbr: <wbr /> },
+	} );
+	const subHeaderText = translate( 'You can add up to 5 pages' );
 	return (
 		<StepWrapper
-			headerText={ translate( 'Add pages to your {{wbr}}{{/wbr}}website', {
-				components: { wbr: <wbr /> },
-			} ) }
-			subHeaderText={ translate( 'You can add up to 5 pages' ) }
+			headerText={ headerText }
+			fallbackHeaderText={ headerText }
+			subHeaderText={ subHeaderText }
+			fallbackSubHeaderText={ subHeaderText }
 			stepContent={ <PageSelector /> }
 			hideSkip
 			align="left"
