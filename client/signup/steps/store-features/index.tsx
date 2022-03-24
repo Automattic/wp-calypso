@@ -60,11 +60,13 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		goToNextStep();
 	};
 
+	/*
 	const trackSupportLinkClick = ( storeType: StoreFeatureSet ) => {
 		recordTracksEvent( 'calypso_signup_store_feature_support_link_click', {
 			store_feature: storeType,
 		} );
 	};
+	*/
 
 	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );
 

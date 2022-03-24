@@ -1,10 +1,8 @@
-import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useSelect } from '@wordpress/data';
-import { reduce, snakeCase } from 'lodash';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE } from '../stores';
+import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
@@ -33,7 +31,7 @@ export const siteSetupFlow: Flow = {
 		const { FSEActive } = useFSEStatus();
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies );
+			recordSubmitStep( providedDependencies, intent, currentStep );
 
 			switch ( currentStep ) {
 				case 'options': {
@@ -163,39 +161,6 @@ export const siteSetupFlow: Flow = {
 		const goToStep = ( step: StepPath ) => {
 			navigate( step );
 		};
-
-		function recordSubmitStep( providedDependencies: ProvidedDependencies = {} ) {
-			const device = resolveDeviceTypeByViewPort();
-			const inputs = reduce(
-				providedDependencies,
-				( props, propValue, propName: string ) => {
-					propName = snakeCase( propName );
-
-					// Ensure we don't capture identifiable user data we don't need.
-					if ( propName === 'email' ) {
-						propName = `user_entered_${ propName }`;
-						propValue = !! propValue;
-					}
-
-					if ( propName === 'selected_design' ) {
-						propValue = ( propValue as { slug: string } ).slug;
-					}
-
-					return {
-						...props,
-						[ propName ]: propValue,
-					};
-				},
-				{}
-			);
-
-			recordTracksEvent( 'calypso_signup_actions_submit_step', {
-				device,
-				step: currentStep,
-				intent,
-				...inputs,
-			} );
-		}
 
 		return { goNext, goBack, goToStep, submit };
 	},
