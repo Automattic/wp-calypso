@@ -37,6 +37,18 @@ const defaultCriteria: FeatureCriteria[] = [
 	{
 		gutenberg: 'stable',
 		siteType: 'atomic',
+		variant: 'siteEditor',
+		accountName: 'gutenbergAtomicSiteUser',
+	},
+	{
+		gutenberg: 'edge',
+		siteType: 'atomic',
+		variant: 'siteEditor',
+		accountName: 'gutenbergAtomicSiteEdgeUser',
+	},
+	{
+		gutenberg: 'stable',
+		siteType: 'atomic',
 		accountName: 'gutenbergAtomicSiteUser',
 	},
 	{
