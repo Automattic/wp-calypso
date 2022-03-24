@@ -26,6 +26,7 @@ export const membershipProductFromApi = ( product ) => ( {
 	multiple_per_user: product.multiple_per_user,
 	subscribe_as_site_subscriber: product.subscribe_as_site_subscriber,
 	welcome_email_content: product.welcome_email_content,
+	type: product.type,
 } );
 
 export const handleMembershipProductsList = dispatchRequest( {
@@ -33,7 +34,7 @@ export const handleMembershipProductsList = dispatchRequest( {
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ action.siteId }/memberships/products`,
+				path: `/sites/${ action.siteId }/memberships/products?type=all`,
 			},
 			action
 		),

@@ -110,6 +110,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const [ editedMultiplePerUser, setEditedMultiplePerUser ] = useState(
 		product?.multiple_per_user ?? false
 	);
+
+	const [ editedMarkAsDonation, setEditedMarkAsDonation ] = useState( product?.type ?? null );
+
 	const [ editedPayWhatYouWant, setEditedPayWhatYouWant ] = useState(
 		product?.buyer_can_change_amount ?? false
 	);
@@ -166,6 +169,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 	const handlePayWhatYouWant = ( newValue ) => setEditedPayWhatYouWant( newValue );
 	const handleMultiplePerUser = ( newValue ) => setEditedMultiplePerUser( newValue );
+	const handleMarkAsDonation = ( newValue ) =>
+		setEditedMarkAsDonation( true === newValue ? 'donation' : null );
 	const onNameChange = ( event ) => setEditedProductName( event.target.value );
 	const onSelectSchedule = ( event ) => setEditedSchedule( event.target.value );
 
@@ -182,6 +187,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					multiple_per_user: editedMultiplePerUser,
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
+					type: editedMarkAsDonation,
+					public: true,
 				},
 				translate( 'Added "%s" payment plan.', { args: editedProductName } )
 			);
@@ -198,6 +205,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					multiple_per_user: editedMultiplePerUser,
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
+					type: editedMarkAsDonation,
+					public: true,
 				},
 				translate( 'Updated "%s" payment plan.', { args: editedProductName } )
 			);
@@ -287,6 +296,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						label={ translate(
 							'Allow the same customer to purchase or sign up to this plan multiple times.'
 						) }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<ToggleControl
+						onChange={ handleMarkAsDonation }
+						checked={ 'donation' === editedMarkAsDonation }
+						label={ translate( 'Mark payment plan as a donation.' ) }
 					/>
 				</FormFieldset>
 			</>
