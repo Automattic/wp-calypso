@@ -56,7 +56,7 @@ export const SupportArticleDialog = () => {
 	const post = useSelector( ( state ) => getPostByKey( state, postKey ) );
 	const isLoading = ! post || ! postKey;
 	const siteId = post?.site_ID;
-	const shouldQueryReaderPost = ! post && ! postKey;
+	const shouldQueryReaderPost = ! post && postKey;
 
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
