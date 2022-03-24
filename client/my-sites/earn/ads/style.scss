@@ -86,12 +86,6 @@
 		}
 	}
 
-	tbody tr:hover {
-		background-color: var( --color-neutral-5 );
-	}
-}
-
-.payments_history {
 	table {
 		@include breakpoint-deprecated( '<480px' ) {
 			overflow: scroll;
@@ -99,6 +93,10 @@
 			max-width: fit-content;
 			display: block;
 		}
+	}
+
+	tbody tr:hover {
+		background-color: var( --color-neutral-5 );
 	}
 }
 
@@ -125,21 +123,16 @@
 	justify-content: center;
 	text-transform: uppercase;
 	text-align: center;
+
+	@include breakpoint-deprecated( '<480px' ) {
+		padding: 0 15px;
+	}
 }
 
 .ads__payments-history-value, .ads__earnings-history-value {
 	line-height: 40px;
 	text-align: center;
 
-	@include breakpoint-deprecated( '<480px' ) {
-		&:first-child,
-		&:last-child {
-			font-size: $font-body-extra-small;
-		}
-	}
-}
-
-.ads__payments-history-value {
 	@include breakpoint-deprecated( '<480px' ) {
 		padding: 0 15px;
 		font-size: $font-body-extra-small;
