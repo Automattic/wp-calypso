@@ -18,7 +18,7 @@ const SearchBox = ( { isMobile, doSearch, searchTerm } ) => {
 				pinned={ isMobile }
 				fitsContainer={ isMobile }
 				onSearch={ doSearch }
-				initialValue={ searchTerm }
+				defaultValue={ searchTerm }
 				placeholder={ translate( 'Try searching "ecommerce"' ) }
 				delaySearch={ true }
 				recordEvent={ recordSearchEvent }
@@ -38,10 +38,11 @@ const PopularSearches = ( props ) => {
 			</div>
 
 			<div className="search-box-header__recommended-searches-list">
-				{ searchTerms.map( ( searchTerm ) => (
+				{ searchTerms.map( ( searchTerm, n ) => (
 					<a
 						href={ `/plugins/${ siteSlug || '' }?s=${ searchTerm }` }
 						className="search-box-header__recommended-searches-list-item"
+						key={ 'recommended-search-item-' + n }
 					>
 						{ searchTerm }
 					</a>
@@ -52,13 +53,13 @@ const PopularSearches = ( props ) => {
 };
 
 const SearchHeader = ( props ) => {
-	const { doSearch, search, siteSlug, title, searchTerms } = props;
+	const { doSearch, searchTerm, siteSlug, title, searchTerms } = props;
 
 	return (
 		<div className="search-box-header">
 			<div className="search-box-header__header">{ title }</div>
 			<div className="search-box-header__search">
-				<SearchBox doSearch={ doSearch } search={ search } />
+				<SearchBox doSearch={ doSearch } searchTerm={ searchTerm } />
 			</div>
 			<PopularSearches siteSlug={ siteSlug } searchTerms={ searchTerms } />
 		</div>
