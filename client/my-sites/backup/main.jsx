@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { ExternalLink } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -58,6 +59,12 @@ const BackupPage = ( { queryDate } ) => {
 		keepLocalTime: !! queryDate,
 	} );
 
+	const supportLink = isAtomic ? (
+		<InlineSupportLink supportContext={ 'backups' } showIcon={ false } />
+	) : (
+		<ExternalLink href={ 'https://jetpack.com/support/backup/' }>{ 'Learn more' }</ExternalLink>
+	);
+
 	return (
 		<div
 			className={ classNames( 'backup__page', {
@@ -78,12 +85,7 @@ const BackupPage = ( { queryDate } ) => {
 							'Restore or download a backup of your site from a specific moment in time. {{learnMoreLink/}}',
 							{
 								components: {
-									learnMoreLink: (
-										<InlineSupportLink
-											supportContext={ isAtomic ? 'backups' : 'backups-jetpack' }
-											showIcon={ false }
-										/>
-									),
+									learnMoreLink: supportLink,
 								},
 							}
 						) }

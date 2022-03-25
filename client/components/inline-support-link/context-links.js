@@ -11,9 +11,6 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/restore/',
 		post_id: 159843,
 	},
-	'backups-jetpack': {
-		link: 'https://jetpack.com/support/backup/',
-	},
 	backup_payment_methods: {
 		link: 'https://wordpress.com/support/payment/#backup-payment-methods',
 		post_id: 76237,
