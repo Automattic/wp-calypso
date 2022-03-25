@@ -1,4 +1,5 @@
 import { Page, Locator } from 'playwright';
+import envVariables from '../../env-variables';
 
 export type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 
@@ -25,6 +26,12 @@ const selectors = {
 		const buttonState = state === 'disabled' ? 'true' : 'false';
 		return `${ panel } button.editor-post-publish-button__button[aria-disabled="${ buttonState }"]`;
 	},
+
+	// List view
+	listViewButton: `${ panel } button[aria-label="List View"]`,
+
+	// Details popover
+	detailsButton: `${ panel } button[aria-label="Details"]`,
 
 	// Editor settings
 	settingsButton: `${ panel } .edit-post-header__settings .interface-pinned-items button:first-child`,
@@ -218,6 +225,61 @@ export class EditorToolbarComponent {
 			return;
 		}
 		const locator = this.editor.locator( selectors.settingsButton );
+		await locator.click();
+	}
+
+	/* List view */
+
+	/**
+	 * Opens the list view.
+	 */
+	async openListView(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// List view is not available on mobile!
+			return;
+		}
+
+		if ( await this.targetIsOpen( selectors.listViewButton ) ) {
+			return;
+		}
+
+		const locator = this.editor.locator( selectors.listViewButton );
+		await locator.click();
+	}
+
+	/**
+	 * Closes the list view.
+	 */
+	async closeListView(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// List view is not available on mobile!
+			return;
+		}
+
+		if ( ! ( await this.targetIsOpen( selectors.listViewButton ) ) ) {
+			return;
+		}
+
+		const locator = this.editor.locator( selectors.listViewButton );
+		await locator.click();
+	}
+
+	/* Details popover */
+
+	/**
+	 * Opens the post details popover (i.e. number of character, words, etc.).
+	 */
+	async openDetailsPopover(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			// Details are not available on mobile!
+			return;
+		}
+
+		if ( await this.targetIsOpen( selectors.detailsButton ) ) {
+			return;
+		}
+
+		const locator = this.editor.locator( selectors.detailsButton );
 		await locator.click();
 	}
 }
