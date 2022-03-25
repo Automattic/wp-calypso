@@ -28,19 +28,6 @@ export class EditorInlineBlockInserterComponent {
 	}
 
 	/**
-	 * Add a block from the popover inserter. Assumes the inserter is open.
-	 *
-	 * @param blockName Name of the block as it appears in the list of blocks in the inserter.
-	 */
-	async addBlock( blockName: string ): Promise< void > {
-		const searchLocator = this.editor.locator( selectors.searchInput );
-		await searchLocator.fill( blockName );
-
-		const blockButtonLocator = this.editor.locator( selectors.blockResultItem( blockName ) );
-		await blockButtonLocator.click();
-	}
-
-	/**
 	 * Searches the Block Inserter for the provided string.
 	 *
 	 * @param {string} text Text to enter into the search input.
