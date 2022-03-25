@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import getOnboardingUrl from 'calypso/signup/config/get-onboarding-url';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const SiteSelectorAddSite: FunctionComponent = () => {
@@ -22,7 +22,7 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 		<span className="site-selector__add-new-site">
 			<Button
 				borderless
-				href={ `${ getOnboardingUrl() }?ref=calypso-selector` }
+				href={ `${ onboardingUrl() }?ref=calypso-selector` }
 				onClick={ recordAddNewSite }
 			>
 				<Gridicon icon="add-outline" /> { translate( 'Add new site' ) }

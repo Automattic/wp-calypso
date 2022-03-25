@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import getOnboardingUrl from 'calypso/signup/config/get-onboarding-url';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { closeAccount } from 'calypso/state/account/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
@@ -68,7 +68,7 @@ class AccountCloseConfirmDialog extends Component {
 			{
 				englishText: 'Start a new site',
 				text: translate( 'Start a new site' ),
-				href: getOnboardingUrl() + '?ref=me-account-close',
+				href: onboardingUrl() + '?ref=me-account-close',
 				supportLink:
 					'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account',
 				supportPostId: 3991,

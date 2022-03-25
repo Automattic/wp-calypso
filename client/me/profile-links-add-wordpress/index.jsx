@@ -3,7 +3,7 @@ import { find, map, pickBy } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
-import getOnboardingUrl from 'calypso/signup/config/get-onboarding-url';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { addUserProfileLinks } from 'calypso/state/profile-links/actions';
 import getPublicSites from 'calypso/state/selectors/get-public-sites';
@@ -95,7 +95,7 @@ class ProfileLinksAddWordPress extends Component {
 
 	onCreateSite = ( event ) => {
 		event.preventDefault();
-		window.open( getOnboardingUrl() + '?ref=me-profile-links' );
+		window.open( onboardingUrl() + '?ref=me-profile-links' );
 		this.props.onCancel();
 	};
 

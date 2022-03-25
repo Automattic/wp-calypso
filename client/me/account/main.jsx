@@ -33,13 +33,13 @@ import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
-import getOnboardingUrl from 'calypso/signup/config/get-onboarding-url';
 import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUserDate,
@@ -543,7 +543,7 @@ class Account extends Component {
 		if ( ! visibleSiteCount ) {
 			return (
 				<Button
-					href={ getOnboardingUrl() + '?ref=me-account-settings' }
+					href={ onboardingUrl() + '?ref=me-account-settings' }
 					onClick={ this.getClickHandler( 'Primary Site Add New WordPress Button' ) }
 				>
 					{ translate( 'Add New Site' ) }

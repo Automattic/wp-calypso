@@ -14,6 +14,7 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
 import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
 import {
@@ -47,7 +48,6 @@ import {
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
-import getOnboardingUrl from 'calypso/signup/config/get-onboarding-url';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -143,7 +143,7 @@ export function renderNoVisibleSites( context ) {
 		action: i18n.translate( 'Change Visibility' ),
 		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
 		secondaryAction: i18n.translate( 'Create New Site' ),
-		secondaryActionURL: `${ getOnboardingUrl() }?ref=calypso-nosites`,
+		secondaryActionURL: `${ onboardingUrl() }?ref=calypso-nosites`,
 		className: 'no-visible-sites-message',
 	} );
 

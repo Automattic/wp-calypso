@@ -5,7 +5,7 @@ import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
-import getOnboardingUrl from 'calypso/signup/config/get-onboarding-url';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -27,7 +27,7 @@ export const AddNewSite = ( { title, icon } ) => {
 			<SidebarSeparator key={ 'add-new-site-separator' } />
 			<SidebarItem
 				label={ title }
-				link={ `${ getOnboardingUrl() }?ref=calypso-sidebar` }
+				link={ `${ onboardingUrl() }?ref=calypso-sidebar` }
 				customIcon={ <SidebarCustomIcon icon={ icon } /> }
 				onNavigate={ onNavigate }
 			/>
