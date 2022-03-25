@@ -13,16 +13,19 @@ export function getInstalledPluginsCacheKey( siteIds ) {
 }
 
 const usePluginsQuery = ( siteIds, queryOptions = {} ) => {
+	// By default fetch plugins list from the cache site.
 	let fetch = () => wpcom.req.get( '/me/sites/plugins' );
 	const siteId = siteIds[ 0 ];
 
 	if ( siteIds.length === 1 ) {
+		// fetch the plugins list for only one site directly from the site.
 		fetch = () => wpcom.site( siteId ).pluginsList();
 	}
 
 	const dispatch = useDispatch();
 	return useQuery( getInstalledPluginsCacheKey( siteIds ), fetch, {
 		...queryOptions,
+		enabled: !! siteIds.length,
 		onSuccess: ( data ) => {
 			if ( data.sites ) {
 				for ( const [ siteIdKey, plugins ] of Object.entries( data.sites ) ) {
