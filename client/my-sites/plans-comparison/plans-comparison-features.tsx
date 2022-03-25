@@ -204,7 +204,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	{
 		title: translate( 'Storage' ),
 		description: translate(
-			'The free plan allows a maximum storage of 500MB, which equals to approximately 100 high quality images, whilst with WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+			'The free plan allows a maximum storage of 500MB, which equals to approximately 100 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
 		),
 		features: [ FEATURE_500MB_STORAGE, FEATURE_50GB_STORAGE ],
 		getCellText: ( feature, isMobile = false ) => {
@@ -254,7 +254,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	{
 		title: translate( 'Remove ads' ),
 		description: translate(
-			'Free sites include ads whilst the WordPress Pro plan allows you to remove these to keep your website clean of ads.'
+			'Free sites include ads. The WordPress Pro plan allows you to remove these to keep your website clean of ads.'
 		),
 		features: [ FEATURE_NO_ADS ],
 		getCellText: ( feature, isMobile = false ) => {
