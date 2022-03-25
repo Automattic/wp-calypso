@@ -8,21 +8,11 @@ const addBlockSupportLinks = (
 	},
 	name: string
 ) => {
-	/**
-	 * Adjust the block name to apply link to InnerBlocks. This gets reset at the end
-	 */
-	const applyToChildren = [
-		'core/columns',
-		'core/social-links',
-		'core/buttons',
-		'jetpack/contact-form',
-	].includes( settings[ 'parent' ]?.toString() );
+	// If block has a parent, use the parents name in the switch. This will apply the link to all nested blocks.
+	const isChild = settings[ 'parent' ];
+	const blockName = isChild ? settings[ 'parent' ].toString() : name;
 
-	if ( applyToChildren ) {
-		name = settings[ 'parent' ]?.toString();
-	}
-
-	switch ( name ) {
+	switch ( blockName ) {
 		/**
 		 * Core Blocks
 		 */
@@ -140,10 +130,6 @@ const addBlockSupportLinks = (
 				'https://wordpress.com/support/wordpress-editor/blocks/mailchimp-block/'
 			);
 			break;
-	}
-
-	if ( applyToChildren ) {
-		name = settings[ 'name' ] as string;
 	}
 
 	return settings;
