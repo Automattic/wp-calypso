@@ -1,6 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import page from 'page';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	redirectLoggedOut,
+	render as clientRender,
+	setLocaleMiddleware,
+} from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
 import {
@@ -23,7 +29,14 @@ import {
 export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
-	page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
+	page(
+		`/checkout/jetpack/:product/${ getLanguageRouteParam() }`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutSiteless,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/jetpack/thank-you/licensing-auto-activate/:product',
@@ -65,7 +78,13 @@ export default function () {
 		clientRender
 	);
 
-	page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
+	page(
+		`/checkout/jetpack/:site/:product/${ getLanguageRouteParam() }`,
+		setLocaleMiddleware(),
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/jetpack/thank-you/:site/:product',
@@ -199,7 +218,8 @@ export default function () {
 	);
 
 	page(
-		'/checkout/:domainOrProduct',
+		`/checkout/:site/${ getLanguageRouteParam() }`,
+		setLocaleMiddleware(),
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,
@@ -209,7 +229,8 @@ export default function () {
 	);
 
 	page(
-		'/checkout/:product/:domainOrProduct',
+		`/checkout/:site/:product/${ getLanguageRouteParam() }`,
+		setLocaleMiddleware(),
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,

@@ -51,7 +51,7 @@ const debug = debugFactory( 'calypso:checkout-controller' );
 export function checkoutSiteless( context, next ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
-	const { productSlug: product } = context.params;
+	const { product } = context.params;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 
 	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
@@ -100,10 +100,10 @@ export function checkout( context, next ) {
 		context.pathname.includes( '/checkout/jetpack' ) &&
 		( isLoggedOut || isUserComingFromLoginForm || isUserComingFromPlansPage ) &&
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
-	const jetpackSiteSlug = context.params.siteSlug;
+	const jetpackSiteSlug = context.params.site;
 
 	// Do not use Jetpack checkout for Jetpack Anti Spam
-	if ( 'jetpack_anti_spam' === context.params.productSlug ) {
+	if ( 'jetpack_anti_spam' === context.params.product ) {
 		page( context.path.replace( '/checkout/jetpack', '/checkout' ) );
 		return;
 	}
@@ -114,7 +114,7 @@ export function checkout( context, next ) {
 	}
 
 	const product = isJetpackCheckout
-		? context.params.productSlug
+		? context.params.product
 		: getDomainOrProductFromContext( context );
 
 	if ( 'thank-you' === product ) {

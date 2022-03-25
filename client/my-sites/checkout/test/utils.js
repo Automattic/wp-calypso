@@ -25,7 +25,7 @@ describe( 'getDomainOrProductFromContext', () => {
 		const product = getDomainOrProductFromContext( {
 			store,
 			params: {
-				domainOrProduct: newDomain,
+				site: newDomain,
 			},
 		} );
 
@@ -36,7 +36,7 @@ describe( 'getDomainOrProductFromContext', () => {
 		const product = getDomainOrProductFromContext( {
 			store,
 			params: {
-				domainOrProduct: siteSlug,
+				site: siteSlug,
 				product: newProduct,
 			},
 		} );
