@@ -50,7 +50,7 @@ export class EditorPage {
 	 * @param param0 Keyed object parameter.
 	 * @param param0.target Target editor type. Defaults to 'simple'.
 	 */
-	constructor( page: Page, { target = 'simple' }: { target?: 'simple' | 'atomic' } = {} ) {
+	constructor( page: Page, { target = 'simple' }: { target?: SiteType } = {} ) {
 		if ( target === 'atomic' ) {
 			// For Atomic editors, there is no iFrame - the editor is
 			// part of the page DOM and is thus accessible directly.
