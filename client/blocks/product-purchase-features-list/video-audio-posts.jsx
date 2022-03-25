@@ -1,4 +1,5 @@
 import {
+	isProPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPremiumPlan,
@@ -13,6 +14,12 @@ function getDescription( plan, translate ) {
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
 				'directly to your site — the Business Plan has 200 GB storage.'
+		);
+	}
+	if ( isProPlan( plan ) ) {
+		return translate(
+			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
+				'directly to your site — the Pro Plan has 50 GB storage.'
 		);
 	}
 	if ( isWpComEcommercePlan( plan ) ) {

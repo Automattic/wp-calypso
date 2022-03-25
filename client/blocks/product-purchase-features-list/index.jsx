@@ -209,7 +209,7 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getProFeatuers() {
-		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
+		const { isPlaceholder, selectedSite, plan, planHasDomainCredit } = this.props;
 
 		return (
 			<Fragment>
@@ -219,9 +219,16 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_pro' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				{ isWordadsInstantActivationEligible( selectedSite ) && (
+					<MonetizeSite selectedSite={ selectedSite } />
+				) }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<CustomizeTheme selectedSite={ selectedSite } />
+				<CustomCSS selectedSite={ selectedSite } />
+				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
+				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<UploadPlugins selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
