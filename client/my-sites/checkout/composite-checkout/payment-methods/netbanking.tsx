@@ -18,35 +18,67 @@ import {
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { errorNotice } from 'calypso/state/notices/actions';
 import CountrySpecificPaymentFields from '../components/country-specific-payment-fields';
+import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type {
+	StoreSelectors,
+	StoreSelectorsWithState,
+	StoreStateValue,
+} from '@automattic/wpcom-checkout';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'composite-checkout:netbanking-payment-method' );
 
-export function createNetBankingPaymentMethodStore() {
+// Disabling this to make migration easier
+/* eslint-disable @typescript-eslint/no-use-before-define */
+
+type StoreKey = 'netbanking';
+type NounsInStore = 'customerName';
+type FieldsType = Record< string, StoreStateValue >;
+type NetBankingStoreState< N extends string > = Record< N, StoreStateValue > & {
+	fields: FieldsType;
+};
+
+interface NetBankingPaymentMethodStore< N extends string >
+	extends ReturnType< typeof registerStore > {
+	getState: () => NetBankingStoreState< N >;
+}
+type NetBankingStore = NetBankingPaymentMethodStore< NounsInStore >;
+
+declare module '@wordpress/data' {
+	function select(
+		key: StoreKey
+	): StoreSelectors< NounsInStore > & { getFields: () => FieldsType };
+	function dispatch( key: StoreKey ): typeof actions;
+}
+
+const actions = {
+	changeCustomerName( payload: string ) {
+		return { type: 'CUSTOMER_NAME_SET', payload };
+	},
+	setFieldValue( key: string, value: string ) {
+		return { type: 'FIELD_VALUE_SET', payload: { key, value } };
+	},
+	setFieldError( key: string, message: string ) {
+		return { type: 'FIELD_ERROR_SET', payload: { key, message } };
+	},
+	touchAllFields() {
+		return { type: 'TOUCH_ALL_FIELDS' };
+	},
+};
+
+const selectors: StoreSelectorsWithState< NounsInStore > & {
+	getFields: ( state: NetBankingStoreState< NounsInStore > ) => FieldsType;
+} = {
+	getCustomerName( state ) {
+		return state.customerName;
+	},
+	getFields( state ) {
+		return state.fields;
+	},
+};
+
+export function createNetBankingPaymentMethodStore(): NetBankingStore {
 	debug( 'creating a new netbanking payment method store' );
-	const actions = {
-		changeCustomerName( payload ) {
-			return { type: 'CUSTOMER_NAME_SET', payload };
-		},
-		setFieldValue( key, value ) {
-			return { type: 'FIELD_VALUE_SET', payload: { key, value } };
-		},
-		setFieldError( key, message ) {
-			return { type: 'FIELD_ERROR_SET', payload: { key, message } };
-		},
-		touchAllFields() {
-			return { type: 'TOUCH_ALL_FIELDS' };
-		},
-	};
-
-	const selectors = {
-		getCustomerName( state ) {
-			return state.customerName;
-		},
-		getFields( state ) {
-			return state.fields;
-		},
-	};
-
 	const store = registerStore( 'netbanking', {
 		reducer(
 			state = {
@@ -66,7 +98,7 @@ export function createNetBankingPaymentMethodStore() {
 							[ action.payload.key ]: {
 								value: maskField(
 									action.payload.key,
-									state.fields[ action.payload.key ],
+									state.fields[ action.payload.key ]?.value,
 									action.payload.value
 								),
 								isTouched: true,
@@ -105,11 +137,10 @@ export function createNetBankingPaymentMethodStore() {
 		actions,
 		selectors,
 	} );
-
-	return { ...store, actions, selectors };
+	return store;
 }
 
-export function createNetBankingMethod( { store } ) {
+export function createNetBankingMethod( { store }: { store: NetBankingStore } ): PaymentMethod {
 	return {
 		id: 'netbanking',
 		paymentProcessorId: 'netbanking',
@@ -125,9 +156,9 @@ function NetBankingFields() {
 	const { __ } = useI18n();
 
 	const fields = useSelect( ( select ) => select( 'netbanking' ).getFields() );
-	const getField = ( key ) => fields[ key ] || {};
-	const getFieldValue = ( key ) => getField( key ).value ?? '';
-	const getErrorMessagesForField = ( key ) => {
+	const getField = ( key: string ) => fields[ key ] || {};
+	const getFieldValue = ( key: string ) => getField( key ).value ?? '';
+	const getErrorMessagesForField = ( key: string ) => {
 		const managedValue = getField( key );
 		return managedValue.errors ?? [];
 	};
@@ -195,20 +226,39 @@ const NetBankingField = styled( Field )`
 	}
 `;
 
-function NetBankingPayButton( { disabled, onClick, store } ) {
+function NetBankingPayButton( {
+	disabled,
+	onClick,
+	store,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+	store: NetBankingStore;
+} ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
 	const fields = useSelect( ( select ) => select( 'netbanking' ).getFields() );
-	const massagedFields = Object.entries( fields ).reduce(
+	const massagedFields: typeof fields = Object.entries( fields ).reduce(
 		( accum, [ key, managedValue ] ) => ( { ...accum, [ camelCase( key ) ]: managedValue.value } ),
 		{}
 	);
 	const contactCountryCode = useSelect(
-		( select ) => select( 'wpcom-checkout' )?.getContactInfo().countryCode?.value
+		( select ) =>
+			( select( 'wpcom-checkout' )?.getContactInfo() as Record< string, StoreStateValue > )
+				.countryCode?.value
 	);
 	const reduxDispatch = useReduxDispatch();
+
+	// This must be typed as optional because it's injected by cloning the
+	// element in CheckoutSubmitButton, but the uncloned element does not have
+	// this prop yet.
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; NetBankingPayButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
 
 	return (
 		<Button
@@ -234,16 +284,16 @@ function NetBankingPayButton( { disabled, onClick, store } ) {
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return __( 'Processing…' );
+		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
 		/* translators: %s is the total to be paid in localized currency */
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
 	}
-	return __( 'Please wait…' );
+	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function NetBankingSummary() {
@@ -256,27 +306,32 @@ function NetBankingSummary() {
 	);
 }
 
-function isFormValid( store, contactCountryCode, __, reduxDispatch ) {
+function isFormValid(
+	store: NetBankingStore,
+	contactCountryCode: string,
+	__: ( text: string ) => string,
+	reduxDispatch: CalypsoDispatch
+) {
 	// Touch fields so that we show errors
-	store.dispatch( store.actions.touchAllFields() );
+	store.dispatch( actions.touchAllFields() );
 	let isValid = true;
 
-	const customerName = store.selectors.getCustomerName( store.getState() );
+	const customerName = selectors.getCustomerName( store.getState() );
 
 	if ( ! customerName?.value.length ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCustomerName( '' ) );
+		store.dispatch( actions.changeCustomerName( '' ) );
 		isValid = false;
 	}
 
-	const rawState = store.selectors.getFields( store.getState() );
+	const rawState = selectors.getFields( store.getState() );
 
 	const validationResults = validatePaymentDetails(
 		Object.entries( {
 			...rawState,
 			country: { value: contactCountryCode },
 			name: customerName,
-		} ).reduce( ( accum, [ key, managedValue ] ) => {
+		} ).reduce( ( accum: Record< string, string >, [ key, managedValue ] ) => {
 			accum[ key ] = managedValue.value;
 			return accum;
 		}, {} ),
@@ -286,7 +341,7 @@ function isFormValid( store, contactCountryCode, __, reduxDispatch ) {
 	Object.entries( validationResults.errors ).map( ( [ key, errors ] ) => {
 		errors.map( ( error ) => {
 			isValid = false;
-			store.dispatch( store.actions.setFieldError( key, error ) );
+			store.dispatch( actions.setFieldError( key, error ) );
 		} );
 	} );
 	debug( 'netbanking card details validation results: ', validationResults );
@@ -305,17 +360,17 @@ function NetBankingLabel() {
 		<Fragment>
 			<span>Net Banking</span>
 			<PaymentMethodLogos className="netbanking__logo payment-logos">
-				<NetbankingLogo />
+				<NetBankingLogo />
 			</PaymentMethodLogos>
 		</Fragment>
 	);
 }
 
-const NetbankingLogo = styled( NetbankingLogoImg )`
+const NetBankingLogo = styled( NetBankingLogoImg )`
 	width: 76px;
 `;
 
-function NetbankingLogoImg( { className } ) {
+function NetBankingLogoImg( { className }: { className?: string } ) {
 	return (
 		<img src="/calypso/images/upgrades/netbanking.svg" alt="NetBanking" className={ className } />
 	);
