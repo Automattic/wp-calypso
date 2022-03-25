@@ -742,6 +742,7 @@ export function generateSteps( {
 		},
 		'social-profiles': {
 			stepName: 'social-profiles',
+			providesDependencies: [ 'twitterUrl', 'facebookUrl', 'linkedinUrl', 'instagramUrl' ],
 		},
 		'website-content': {
 			stepName: 'website-content',
