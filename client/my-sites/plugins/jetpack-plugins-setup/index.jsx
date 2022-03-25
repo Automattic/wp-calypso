@@ -1,7 +1,7 @@
 import { CompactCard, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { filter, get, range, flow } from 'lodash';
+import { filter, get, range } from 'lodash';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -541,32 +541,28 @@ class PlansSetup extends Component {
 	}
 }
 
-export default flow(
-	localize,
-	withInstalledPlugins,
-	connect(
-		( state, ownProps ) => {
-			const siteId = getSelectedSiteId( state );
-			const selectedSite = getSelectedSite( state );
-			const forSpecificPlugin = ownProps.forSpecificPlugin || false;
+export default connect(
+	( state, ownProps ) => {
+		const siteId = getSelectedSiteId( state );
+		const selectedSite = getSelectedSite( state );
+		const forSpecificPlugin = ownProps.forSpecificPlugin || false;
 
-			return {
-				sitePlugin: forSpecificPlugin && getPluginOnSite( state, siteId, forSpecificPlugin ),
-				wporgPlugins: getAllWporgPlugins( state ),
-				isRequesting: isRequesting( state, siteId ),
-				hasRequested: hasRequested( state, siteId ),
-				isInstalling: isInstalling( state, siteId, forSpecificPlugin ),
-				isFinished: isFinished( state, siteId, forSpecificPlugin ),
-				plugins: getPluginsForSite( state, siteId, forSpecificPlugin ),
-				activePlugin: getActivePlugin( state, siteId, forSpecificPlugin ),
-				nextPlugin: getNextPlugin( state, siteId, forSpecificPlugin ),
-				selectedSite: selectedSite,
-				isRequestingSites: isRequestingSites( state ),
-				sitesInitialized: hasInitializedSites( state ),
-				siteId,
-				siteIds: [ siteId ],
-			};
-		},
-		{ requestSites, fetchPluginData, installPlugin }
-	)
-)( PlansSetup );
+		return {
+			sitePlugin: forSpecificPlugin && getPluginOnSite( state, siteId, forSpecificPlugin ),
+			wporgPlugins: getAllWporgPlugins( state ),
+			isRequesting: isRequesting( state, siteId ),
+			hasRequested: hasRequested( state, siteId ),
+			isInstalling: isInstalling( state, siteId, forSpecificPlugin ),
+			isFinished: isFinished( state, siteId, forSpecificPlugin ),
+			plugins: getPluginsForSite( state, siteId, forSpecificPlugin ),
+			activePlugin: getActivePlugin( state, siteId, forSpecificPlugin ),
+			nextPlugin: getNextPlugin( state, siteId, forSpecificPlugin ),
+			selectedSite: selectedSite,
+			isRequestingSites: isRequestingSites( state ),
+			sitesInitialized: hasInitializedSites( state ),
+			siteId,
+			siteIds: [ siteId ],
+		};
+	},
+	{ requestSites, fetchPluginData, installPlugin }
+)( withInstalledPlugins( localize( PlansSetup ) ) );
