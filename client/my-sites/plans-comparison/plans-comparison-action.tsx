@@ -62,6 +62,7 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 	const className = classNames( {
 		'is-primary': props.isPrimary,
+		'plan-features__actions-button': true,
 		'is-pro-plan': plan.getStoreSlug() === PLAN_WPCOM_PRO,
 	} );
 	const { isCurrentPlan, isInSignup, isPlaceholder } = props;
