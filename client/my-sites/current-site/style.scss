@@ -60,18 +60,18 @@
 		display: block;
 		width: 100%;
 		text-align: left;
-		padding: 6px 8px 6px 36px;
+		padding: 12px 8px 12px 44px;
 		position: relative;
 		font-weight: normal;
-		color: var( --color-sidebar-text-alternative );
+		color: var( --color-sidebar-text );
 
 		.gridicon {
-			height: 20px;
-			width: 20px;
+			height: 24px;
+			width: 24px;
 			fill: var( --color-sidebar-gridicon-fill );
 			position: absolute;
-			top: 9px;
-			left: 8px;
+			top: 12px;
+			left: 14px;
 		}
 	}
 

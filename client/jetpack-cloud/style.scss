@@ -7,10 +7,6 @@
 
 .theme-jetpack-cloud,
 .color-scheme.is-jetpack-cloud {
-	.layout__content {
-		min-height: inherit;
-	}
-
 	.main {
 		box-sizing: border-box;
 		padding-left: 16px;
@@ -19,13 +15,6 @@
 
 	input::placeholder {
 		color: var( --color-neutral-10 ) !important;
-	}
-
-	.layout__secondary .site-selector {
-		.site__content,
-		.all-sites .all-sites__content {
-			padding: 13px 4px 13px 16px;
-		}
 	}
 }
 

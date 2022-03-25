@@ -19,7 +19,7 @@ import { logoutUser } from 'calypso/state/logout/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 import './style.scss';
-import 'calypso/my-sites/sidebar/style.scss'; // nav-unification overrides. Should be removed once launched.
+import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 
 class MeSidebar extends Component {
 	onNavigate = () => {

@@ -35,7 +35,7 @@ import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarTags from './reader-sidebar-tags';
-import 'calypso/my-sites/sidebar/style.scss'; // Mimics the My Sites sidebar style.
+import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
 
 const A8CConversationsIcon = () => (

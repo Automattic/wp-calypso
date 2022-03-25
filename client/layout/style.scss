@@ -27,7 +27,6 @@
 	padding: 79px 32px 32px calc( var( --sidebar-width-max ) + 32px + 1px );
 	box-sizing: border-box;
 	overflow: hidden;
-	min-height: 101vh; // Hack to give JS the chance to trigger the scroll event when the content is short. JS code: client/layout/utils.ts:36.
 
 	// Various screens dont use a sidebar.
 	.has-no-sidebar & {
@@ -207,11 +206,6 @@
 
 		.all-sites {
 			border-color: var( --color-sidebar-border );
-		}
-
-		.site__content,
-		.all-sites .all-sites__content {
-			padding: 10px 0 10px 8px;
 		}
 	}
 
