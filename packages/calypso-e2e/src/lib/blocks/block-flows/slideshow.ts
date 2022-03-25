@@ -47,9 +47,9 @@ export class SlideshowBlockFlow implements BlockFlow {
 			const fileInputLocator = context.editorLocator.locator( selectors.fileInput );
 			await fileInputLocator.setInputFiles( testFile.fullpath );
 
-			const uploadingIndicatorLocator = context.editorLocator.locator(
-				selectors.uploadingIndicator
-			);
+			const uploadingIndicatorLocator = context.editorLocator
+				.locator( selectors.uploadingIndicator )
+				.last();
 			await uploadingIndicatorLocator.waitFor( { state: 'detached' } );
 		}
 	}

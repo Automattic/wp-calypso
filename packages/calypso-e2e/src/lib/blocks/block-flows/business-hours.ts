@@ -10,7 +10,7 @@ const blockParentSelector = 'div[aria-label="Block: Business Hours"]';
 const selectors = {
 	// Editor
 	dayToggle: ( day: DaysOfWeek ) => `div.${ day } input`,
-	dayBusinessHours: ( day: DaysOfWeek ) => `div.${ day }.business-hours__hours`,
+	dayMarkedAsOpen: ( day: DaysOfWeek ) => `div.${ day } :text("Open")`,
 
 	// Published
 	hoursForDay: ( day: DaysOfWeek ) => `div.jetpack-business-hours__item:has(dd.${ day })`,
@@ -44,10 +44,10 @@ export class BusinessHoursFlow implements BlockFlow {
 		const dayToggleLocator = context.editorLocator.locator( selectors.dayToggle( day ) );
 		await dayToggleLocator.click();
 
-		const dayBusinessHoursLocator = context.editorLocator.locator(
-			selectors.dayBusinessHours( day )
+		const dayMarkedAsOpenLocator = context.editorLocator.locator(
+			selectors.dayMarkedAsOpen( day )
 		);
-		await dayBusinessHoursLocator.waitFor();
+		await dayMarkedAsOpenLocator.waitFor();
 	}
 
 	/**

@@ -56,7 +56,8 @@ export class TwitterBlockFlow implements BlockFlow {
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		const expectedTweetLocator = context.page
 			.frameLocator( selectors.publishedTwitterIframe )
-			.locator( `text=${ this.configurationData.expectedTweetText }` );
+			.locator( `text=${ this.configurationData.expectedTweetText }` )
+			.first();
 		await expectedTweetLocator.waitFor();
 	}
 }

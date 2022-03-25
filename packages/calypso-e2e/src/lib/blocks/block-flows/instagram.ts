@@ -56,7 +56,8 @@ export class InstagramBlockFlow implements BlockFlow {
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		const expectedPostTextLocator = context.page
 			.frameLocator( selectors.publishedInstagramIframe )
-			.locator( `text=${ this.configurationData.expectedPostText }` );
+			.locator( `text=${ this.configurationData.expectedPostText }` )
+			.first();
 		await expectedPostTextLocator.waitFor();
 	}
 }
