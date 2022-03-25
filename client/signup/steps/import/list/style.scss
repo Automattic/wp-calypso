@@ -1,6 +1,27 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
+/**
+ * Right to Left support
+ */
+html[dir='rtl'] {
+	.import__onboarding-page {
+		.list__importer-action .action-card__button-container {
+			button, a {
+				text-align: left;
+
+				svg {
+					transform: rotate( 180deg );
+				}
+			}
+		}
+
+		.importer__service-icon {
+			float: right;
+		}
+	}
+}
+
 .import__onboarding-page {
 	.list__wrapper {
 		margin-left: auto !important;
@@ -56,6 +77,8 @@
 			width: 48px;
 			height: 48px;
 			margin-top: 10px;
+			margin-right: 0;
+			margin-inline-end: 1.5em;
 			border-radius: 4px; /* stylelint-disable-line */
 		}
 
@@ -64,10 +87,10 @@
 		}
 
 		.list__importers-secondary {
-			padding-left: 0;
+			padding: 0;
 
 			@include break-small {
-				padding-left: 72px;
+				padding-inline-start: 72px;
 			}
 		}
 
