@@ -93,7 +93,7 @@ export default connect(
 		return {
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
-			isJetpack: isJetpack,
+			isJetpack,
 			isMultisite,
 			previousRoute: getPreviousRoute( state ),
 		};
