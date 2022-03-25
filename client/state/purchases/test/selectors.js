@@ -70,6 +70,7 @@ describe( 'selectors', () => {
 				active: false,
 				amount: NaN,
 				attachedToPurchaseId: NaN,
+				billPeriodDays: NaN,
 				blogCreatedDate: undefined,
 				canExplicitRenew: false,
 				canDisableAutoRenew: false,
