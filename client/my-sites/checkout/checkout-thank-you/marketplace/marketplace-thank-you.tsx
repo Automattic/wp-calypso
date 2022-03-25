@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { getCacheKey as getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
+import { getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';

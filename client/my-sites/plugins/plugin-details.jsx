@@ -16,7 +16,7 @@ import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { getCacheKey as getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
+import { getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginNotices from 'calypso/my-sites/plugins/notices';

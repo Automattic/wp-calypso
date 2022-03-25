@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { receiveSitePlugins, updatePlugin } from 'calypso/state/plugins/installed/actions';
 
-export function getCacheKey( siteIds ) {
+export function getInstalledPluginsCacheKey( siteIds ) {
 	if ( siteIds.length === 1 ) {
 		return [ 'plugins', siteIds[ 0 ] ];
 	}
@@ -21,7 +21,7 @@ const usePluginsQuery = ( siteIds, queryOptions = {} ) => {
 	}
 
 	const dispatch = useDispatch();
-	return useQuery( getCacheKey( siteIds ), fetch, {
+	return useQuery( getInstalledPluginsCacheKey( siteIds ), fetch, {
 		...queryOptions,
 		onSuccess: ( data ) => {
 			if ( data.sites ) {

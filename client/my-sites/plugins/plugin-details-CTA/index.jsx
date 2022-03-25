@@ -7,7 +7,7 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useIsFetching } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
-import { getCacheKey as getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
+import { getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';

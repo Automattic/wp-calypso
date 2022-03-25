@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { useIsFetching } from 'react-query';
 import { connect } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import { getCacheKey as getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
+import { getInstalledPluginsCacheKey } from 'calypso/data/plugins/installed/use-plugins-query';
 import { addQueryArgs } from 'calypso/lib/url';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
