@@ -1,4 +1,3 @@
-import 'calypso/state/difm/init';
 import type { Design } from '@automattic/design-picker';
 
 interface Dependencies {
@@ -18,10 +17,7 @@ interface Dependencies {
 	displayAddress: string;
 }
 
-export function createDIFMCartExtrasObject(
-	difmState: any,
-	dependencies: Partial< Dependencies >
-) {
+export function buildDIFMCartExtrasObject( dependencies: Partial< Dependencies > ) {
 	const {
 		newOrExistingSiteChoice,
 		siteTitle,
@@ -46,10 +42,10 @@ export function createDIFMCartExtrasObject(
 		selected_design: selectedDesign?.theme,
 		site_category: selectedSiteCategory,
 		let_us_choose_selected: isLetUsChooseSelected,
-		twitter_url: twitterUrl || difmState.socialProfiles.TWITTER,
-		facebook_url: facebookUrl || difmState.socialProfiles.FACEBOOK,
-		linkedin_url: linkedinUrl || difmState.socialProfiles.LINKEDIN,
-		instagram_url: instagramUrl || difmState.socialProfiles.INSTAGRAM,
+		twitter_url: twitterUrl,
+		facebook_url: facebookUrl,
+		linkedin_url: linkedinUrl,
+		instagram_url: instagramUrl,
 		display_email: displayEmail,
 		display_phone: displayPhone,
 		display_address: displayAddress,
