@@ -25,7 +25,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await pluginsPage.visit();
 		} );
 
-		it.each( [ 'Premium', 'Featured', 'Popular', 'New' ] )(
+		it.each( [ 'Premium', 'Featured', 'Popular' ] )(
 			'Plugins page loads %s section',
 			async function ( section: string ) {
 				await pluginsPage.validateHasSection( section );
@@ -64,7 +64,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await pluginsPage.visit( siteUrl );
 		} );
 
-		it.each( [ 'Premium', 'Featured', 'Popular', 'New' ] )(
+		it.each( [ 'Premium', 'Featured', 'Popular' ] )(
 			'Plugins page loads %s section',
 			async function ( section: string ) {
 				await pluginsPage.validateHasSection( section );
