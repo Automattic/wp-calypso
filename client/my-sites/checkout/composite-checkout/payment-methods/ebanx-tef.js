@@ -121,7 +121,7 @@ export function createEbanxTefPaymentMethodStore() {
 export function createEbanxTefMethod( { store } ) {
 	return {
 		id: 'brazil-tef',
-		paymentProcessorId: 'brazil-tef',
+		paymentProcessorId: 'ebanx-tef',
 		label: <EbanxTefLabel />,
 		activeContent: <EbanxTefFields />,
 		submitButton: <EbanxTefPayButton store={ store } />,
