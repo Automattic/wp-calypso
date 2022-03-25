@@ -30,7 +30,7 @@ export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
 	page(
-		`/checkout/jetpack/:product/${ getLanguageRouteParam() }`,
+		`/checkout/jetpack/:productSlug/${ getLanguageRouteParam() }`,
 		setLocaleMiddleware(),
 		noSite,
 		checkoutSiteless,
@@ -79,7 +79,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/jetpack/:site/:product/${ getLanguageRouteParam() }`,
+		`/checkout/jetpack/:siteSlug/:productSlug/${ getLanguageRouteParam() }`,
 		setLocaleMiddleware(),
 		checkout,
 		makeLayout,
@@ -218,7 +218,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/:site/${ getLanguageRouteParam() }`,
+		`/checkout/:domainOrProduct/${ getLanguageRouteParam() }`,
 		setLocaleMiddleware(),
 		redirectLoggedOut,
 		siteSelection,
@@ -229,7 +229,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/:site/:product/${ getLanguageRouteParam() }`,
+		`/checkout/:product/:domainOrProduct/${ getLanguageRouteParam() }`,
 		setLocaleMiddleware(),
 		redirectLoggedOut,
 		siteSelection,
