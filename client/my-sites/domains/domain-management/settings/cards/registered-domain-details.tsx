@@ -104,6 +104,7 @@ const RegisteredDomainDetails = ( {
 		return (
 			! domain.subscriptionId ||
 			domain.isPendingRenewal ||
+			domain.pendingRegistration ||
 			! domain.currentUserCanManage ||
 			( domain.expired && ! domain.isRenewable && ! domain.isRedeemable ) ||
 			( ! isLoadingPurchase && ! purchase ) ||
