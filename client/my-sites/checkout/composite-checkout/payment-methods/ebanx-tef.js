@@ -121,6 +121,7 @@ export function createEbanxTefPaymentMethodStore() {
 export function createEbanxTefMethod( { store } ) {
 	return {
 		id: 'brazil-tef',
+		paymentProcessorId: 'brazil-tef',
 		label: <EbanxTefLabel />,
 		activeContent: <EbanxTefFields />,
 		submitButton: <EbanxTefPayButton store={ store } />,
@@ -285,7 +286,7 @@ function EbanxTefPayButton( { disabled, onClick, store } ) {
 			onClick={ () => {
 				if ( isFormValid( store, contactCountryCode, __, reduxDispatch ) ) {
 					debug( 'submitting ebanx-tef payment' );
-					onClick( 'ebanx-tef', {
+					onClick( {
 						...massagedFields,
 						name: customerName?.value, // this needs to come after massagedFields to prevent it from being overridden
 						address: massagedFields?.address1,

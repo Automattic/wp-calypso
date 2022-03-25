@@ -9,6 +9,7 @@ import WordPressLogo from '../components/wordpress-logo';
 export function createFullCreditsMethod() {
 	return {
 		id: 'full-credits',
+		paymentProcessorId: 'full-credits',
 		label: <WordPressCreditsLabel />,
 		submitButton: <FullCreditsSubmitButton />,
 		inactiveContent: <WordPressCreditsSummary />,
@@ -23,7 +24,7 @@ function FullCreditsSubmitButton( { disabled, onClick } ) {
 	const { formStatus } = useFormStatus();
 
 	const handleButtonPress = () => {
-		onClick( 'full-credits', {
+		onClick( {
 			items,
 		} );
 	};

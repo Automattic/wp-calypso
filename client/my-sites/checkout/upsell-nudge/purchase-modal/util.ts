@@ -27,7 +27,7 @@ export function useSubmitTransaction( {
 	setStep: SetStep;
 	onClose: OnClose;
 } ): SubmitTransactionFunction {
-	const callPaymentProcessor = useProcessPayment();
+	const callPaymentProcessor = useProcessPayment( 'existing-card' );
 	const reduxDispatch = useDispatch();
 
 	return useCallback( () => {
@@ -36,7 +36,7 @@ export function useSubmitTransaction( {
 		}
 		const wpcomCart = translateResponseCartToWPCOMCart( cart );
 		setStep( 'processing' );
-		callPaymentProcessor( 'existing-card', {
+		callPaymentProcessor( {
 			items: wpcomCart.items,
 			name: storedCard.name,
 			storedDetailsId: storedCard.stored_details_id,

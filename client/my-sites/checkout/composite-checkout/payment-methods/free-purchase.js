@@ -6,6 +6,7 @@ import WordPressLogo from '../components/wordpress-logo';
 export function createFreePaymentMethod() {
 	return {
 		id: 'free-purchase',
+		paymentProcessorId: 'free-purchase',
 		label: <WordPressFreePurchaseLabel />,
 		submitButton: <FreePurchaseSubmitButton />,
 		inactiveContent: <WordPressFreePurchaseSummary />,
@@ -18,7 +19,7 @@ function FreePurchaseSubmitButton( { disabled, onClick } ) {
 	const { formStatus } = useFormStatus();
 
 	const handleButtonPress = () => {
-		onClick( 'free-purchase', {
+		onClick( {
 			items,
 		} );
 	};

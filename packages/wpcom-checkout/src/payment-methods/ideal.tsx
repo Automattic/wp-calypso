@@ -77,6 +77,7 @@ export function createIdealPaymentMethodStore(): IdealStore {
 export function createIdealMethod( { store }: { store: IdealStore } ): PaymentMethod {
 	return {
 		id: 'ideal',
+		paymentProcessorId: 'ideal',
 		label: <IdealLabel />,
 		activeContent: <IdealFields />,
 		submitButton: <IdealPayButton store={ store } />,
@@ -288,7 +289,7 @@ function IdealPayButton( {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting ideal payment' );
-					onClick( 'ideal', {
+					onClick( {
 						name: customerName?.value,
 						idealBank: customerBank?.value,
 						items,
