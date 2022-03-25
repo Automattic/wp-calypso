@@ -13,6 +13,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import {
 	getDisplayName,
+	getPurchaseBillingTermLabel,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -194,6 +195,19 @@ class PurchaseItem extends Component {
 						{ this.trackImpression( 'credit-card-expiring' ) }
 					</span>
 				);
+			}
+
+			if ( getPurchaseBillingTermLabel( purchase ) ) {
+				return translate( 'Renews %(interval)s at %(amount)s on {{span}}%(date)s{{/span}}', {
+					args: {
+						interval: getPurchaseBillingTermLabel( purchase ),
+						amount: purchase.priceText,
+						date: renewDate.format( 'LL' ),
+					},
+					components: {
+						span: <span className="purchase-item__date" />,
+					},
+				} );
 			}
 
 			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
