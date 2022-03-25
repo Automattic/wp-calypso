@@ -29,9 +29,15 @@ const usePluginsQuery = ( siteIds, queryOptions = {} ) => {
 		onSuccess: ( data ) => {
 			if ( data.sites ) {
 				for ( const [ siteIdKey, plugins ] of Object.entries( data.sites ) ) {
+					if ( ! Array.isArray( plugins ) ) {
+						continue;
+					}
 					dispatch( receiveSitePlugins( siteIdKey, plugins ) );
 				}
 			} else {
+				if ( ! Array.isArray( data.plugins ) ) {
+					return null;
+				}
 				dispatch( receiveSitePlugins( siteId, data.plugins ) );
 				data.plugins.map( ( plugin ) => {
 					if ( plugin.update && plugin.autoupdate ) {
