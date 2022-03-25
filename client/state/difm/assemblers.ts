@@ -50,8 +50,8 @@ export function createDIFMCartExtrasObject(
 		facebook_url: facebookUrl || difmState.socialProfiles.FACEBOOK,
 		linkedin_url: linkedinUrl || difmState.socialProfiles.LINKEDIN,
 		instagram_url: instagramUrl || difmState.socialProfiles.INSTAGRAM,
-		...( displayEmail && { display_email: displayEmail } ),
-		...( displayPhone && { display_phone: displayPhone } ),
-		...( displayAddress && { display_address: displayAddress } ),
+		display_email: displayEmail,
+		display_phone: displayPhone,
+		display_address: displayAddress,
 	};
 }
