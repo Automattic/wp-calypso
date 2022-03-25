@@ -294,8 +294,16 @@ export function upsellRedirect( context, next ) {
 	let upsellExperimentAssignmentName;
 	let upsellUrl;
 
-	// When next we need a redirect based on A/B test, add any logic based on upsellType here
-	// While this code block is empty, this function is effectively a no-op.
+	/*
+	 * When next we need a redirect based on A/B test, add any logic based on upsellType here
+	 * While this code block is empty, this function is effectively a no-op.
+
+	if ( PROFESSIONAL_EMAIL_OFFER === upsellType ) {
+		upsellExperimentName = 'calypso_promote_professional_email_post_checkout_2022_02';
+		upsellExperimentAssignmentName = 'treatment';
+		upsellUrl = `/checkout/offer-professional-email/${ upsellMeta }/${ receiptId }/${ site }`;
+	}
+	*/
 
 	if ( upsellExperimentName && upsellExperimentAssignmentName && upsellUrl ) {
 		context.primary = (
