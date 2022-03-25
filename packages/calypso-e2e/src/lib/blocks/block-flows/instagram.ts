@@ -1,4 +1,3 @@
-import { Frame } from 'playwright';
 import { BlockFlow, EditorContext, PublishedPostContext } from '..';
 
 interface ConfigurationData {
@@ -38,10 +37,15 @@ export class InstagramBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		await context.editorIframe.fill( selectors.embedUrlInput, this.configurationData.embedUrl );
-		await context.editorIframe.click( selectors.embedButton );
+		const embedUrlLocator = context.editorLocator.locator( selectors.embedUrlInput );
+		await embedUrlLocator.fill( this.configurationData.embedUrl );
+
+		const embedButtonLocator = context.editorLocator.locator( selectors.embedButton );
+		await embedButtonLocator.click();
+
 		// We should make sure the actual Iframe loads, because it takes a second.
-		await context.editorIframe.waitForSelector( selectors.editorInstagramIframe );
+		const instagramIframeLocator = context.editorLocator.locator( selectors.editorInstagramIframe );
+		await instagramIframeLocator.waitFor();
 	}
 
 	/**
@@ -50,12 +54,9 @@ export class InstagramBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const instagramIframeElement = await context.page.waitForSelector(
-			selectors.publishedInstagramIframe
-		);
-		const instagramIframeHandle = ( await instagramIframeElement.contentFrame() ) as Frame;
-		await instagramIframeHandle.waitForSelector(
-			`text=${ this.configurationData.expectedPostText }`
-		);
+		const expectedPostTextLocator = context.page
+			.frameLocator( selectors.publishedInstagramIframe )
+			.locator( `text=${ this.configurationData.expectedPostText }` );
+		await expectedPostTextLocator.waitFor();
 	}
 }

@@ -20,8 +20,10 @@ export class SubscribeFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		// Is there an interactive email field?
-		await context.page.fill( selectors.emailInput, 'foo@example.com' );
+		const emailInputLocator = context.page.locator( selectors.emailInput );
+		await emailInputLocator.fill( 'foo@example.com' );
 		// And a subscribe button?
-		await context.page.waitForSelector( selectors.subscribeButton );
+		const subscribeButtonLocator = context.page.locator( selectors.subscribeButton );
+		await subscribeButtonLocator.waitFor(); // Don't click - we don't want a real subscription!
 	}
 }

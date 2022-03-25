@@ -43,10 +43,14 @@ export class SlideshowBlockFlow implements BlockFlow {
 			const testFile = await createTestFile( imagePath );
 			// We keep track of the names for later validation in the published post.
 			this.preparedImageFileNames.push( testFile.basename );
-			await context.editorIframe.setInputFiles( selectors.fileInput, testFile.fullpath );
-			await context.editorIframe.waitForSelector( selectors.uploadingIndicator, {
-				state: 'detached',
-			} );
+
+			const fileInputLocator = context.editorLocator.locator( selectors.fileInput );
+			await fileInputLocator.setInputFiles( testFile.fullpath );
+
+			const uploadingIndicatorLocator = context.editorLocator.locator(
+				selectors.uploadingIndicator
+			);
+			await uploadingIndicatorLocator.waitFor( { state: 'detached' } );
 		}
 	}
 
@@ -57,9 +61,11 @@ export class SlideshowBlockFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		for ( const imageFileName of this.preparedImageFileNames ) {
-			await context.page.waitForSelector( selectors.publishedImage( imageFileName ), {
-				state: 'attached', // The image not be visible if it's not the current slide.
-			} );
+			const expectedImageLocator = context.page.locator(
+				selectors.publishedImage( imageFileName )
+			);
+			// The image not be visible if it's not the current slide, so we just want 'attached' state.
+			await expectedImageLocator.waitFor( { state: 'attached' } );
 		}
 	}
 }

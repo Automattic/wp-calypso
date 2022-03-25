@@ -5,6 +5,7 @@ import {
 	EditorContext,
 	PublishedPostContext,
 	TestAccount,
+	envVariables,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -25,7 +26,9 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		beforeAll( async () => {
 			page = await browser.newPage();
-			editorPage = new EditorPage( page );
+			editorPage = new EditorPage( page, {
+				target: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+			} );
 			const testAccount = new TestAccount( 'gutenbergSimpleSiteUser' );
 			await testAccount.authenticate( page );
 		} );
@@ -37,14 +40,14 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		describe( 'Add and configure blocks in the editor', function () {
 			for ( const blockFlow of blockFlows ) {
 				it( `${ blockFlow.blockSidebarName }: Add the block from the sidebar`, async function () {
-					const blockHandle = await editorPage.addBlock(
+					await editorPage.addBlockFromSidebar(
 						blockFlow.blockSidebarName,
 						blockFlow.blockEditorSelector
 					);
 					editorContext = {
 						page: page,
-						editorIframe: await editorPage.getEditorHandle(),
-						blockHandle: blockHandle,
+						editorPage: editorPage,
+						editorLocator: editorPage.getEditorLocator(),
 					};
 				} );
 

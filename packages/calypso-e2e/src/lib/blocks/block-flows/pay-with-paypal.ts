@@ -1,5 +1,4 @@
 import { BlockFlow, EditorContext, PublishedPostContext } from '..';
-import { EditorPage } from '../..';
 
 interface ConfigurationData {
 	name: string;
@@ -40,13 +39,17 @@ export class PayWithPaypalBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		await context.editorIframe.fill( selectors.name, this.configurationData.name );
-		await context.editorIframe.fill( selectors.price, this.configurationData.price.toString() );
-		await context.editorIframe.fill( selectors.email, this.configurationData.email );
+		const nameLocator = context.editorLocator.locator( selectors.name );
+		await nameLocator.fill( this.configurationData.name );
+
+		const priceLocator = context.editorLocator.locator( selectors.price );
+		await priceLocator.fill( this.configurationData.price.toString() );
+
+		const emailLocator = context.editorLocator.locator( selectors.email );
+		await emailLocator.fill( this.configurationData.email );
 
 		// If the post is not saved as draft, the Pay with Paypal block is not rendered in the published post.
-		const editorPage = new EditorPage( context.page );
-		await editorPage.saveDraft();
+		await context.editorPage.saveDraft();
 		// Leave site? popup cannot be prevented when publishing.
 		// See https://github.com/Automattic/wp-calypso/issues/60014.
 	}
@@ -57,9 +60,12 @@ export class PayWithPaypalBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		await context.page.waitForSelector( `:text("${ this.configurationData.name }")` );
-		await context.page.waitForSelector(
+		const expectedNameLocator = context.page.locator( `:text("${ this.configurationData.name }")` );
+		expectedNameLocator.waitFor();
+
+		const expectedPriceLocator = context.page.locator(
 			`:has-text("${ this.configurationData.price.toString() }")`
 		);
+		expectedPriceLocator.waitFor();
 	}
 }

@@ -58,7 +58,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		const patternName = 'About Me';
 
 		it( `Add ${ patternName } pattern`, async function () {
-			await editorPage.addPattern( patternName );
+			await editorPage.addPatternFromSidebar( patternName );
 		} );
 	} );
 

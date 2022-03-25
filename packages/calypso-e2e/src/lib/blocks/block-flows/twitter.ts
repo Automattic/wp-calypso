@@ -1,4 +1,3 @@
-import { Frame } from 'playwright';
 import { BlockFlow, EditorContext, PublishedPostContext } from '..';
 
 interface ConfigurationData {
@@ -38,10 +37,15 @@ export class TwitterBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		await context.editorIframe.fill( selectors.embedUrlInput, this.configurationData.embedUrl );
-		await context.editorIframe.click( selectors.embedButton );
+		const urlInputLocator = context.editorLocator.locator( selectors.embedUrlInput );
+		await urlInputLocator.fill( this.configurationData.embedUrl );
+
+		const embedButtonLocator = context.editorLocator.locator( selectors.embedButton );
+		await embedButtonLocator.click();
+
 		// We should make sure the actual Iframe loads, because it takes a second.
-		await context.editorIframe.waitForSelector( selectors.editorTwitterIframe );
+		const twitterIframeLocator = context.editorLocator.locator( selectors.editorTwitterIframe );
+		await twitterIframeLocator.waitFor();
 	}
 
 	/**
@@ -50,12 +54,9 @@ export class TwitterBlockFlow implements BlockFlow {
 	 * @param context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const twitterIframeElement = await context.page.waitForSelector(
-			selectors.publishedTwitterIframe
-		);
-		const twitterIframeHandle = ( await twitterIframeElement.contentFrame() ) as Frame;
-		await twitterIframeHandle.waitForSelector(
-			`text=${ this.configurationData.expectedTweetText }`
-		);
+		const expectedTweetLocator = context.page
+			.frameLocator( selectors.publishedTwitterIframe )
+			.locator( `text=${ this.configurationData.expectedTweetText }` );
+		await expectedTweetLocator.waitFor();
 	}
 }

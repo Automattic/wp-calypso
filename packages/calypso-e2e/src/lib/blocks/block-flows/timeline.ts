@@ -38,15 +38,14 @@ export class TimelineBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		await context.editorIframe.fill(
-			selectors.entryParagraph( 1 ),
-			this.configurationData.firstEntry
-		);
-		await context.editorIframe.click( selectors.addEntryButton );
-		await context.editorIframe.fill(
-			selectors.entryParagraph( 2 ),
-			this.configurationData.secondEntry
-		);
+		const firstParagraphLocator = context.editorLocator.locator( selectors.entryParagraph( 1 ) );
+		await firstParagraphLocator.fill( this.configurationData.firstEntry );
+
+		const addEntryButtonLocator = context.editorLocator.locator( selectors.addEntryButton );
+		await addEntryButtonLocator.click();
+
+		const secondParagraphLocator = context.editorLocator.locator( selectors.entryParagraph( 2 ) );
+		await secondParagraphLocator.fill( this.configurationData.secondEntry );
 	}
 
 	/**
@@ -55,7 +54,14 @@ export class TimelineBlockFlow implements BlockFlow {
 	 * @param context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		await context.page.waitForSelector( `text=${ this.configurationData.firstEntry }` );
-		await context.page.waitForSelector( `text=${ this.configurationData.secondEntry }` );
+		const expectedFirstTextLocator = context.page.locator(
+			`text=${ this.configurationData.firstEntry }`
+		);
+		await expectedFirstTextLocator.waitFor();
+
+		const expectedSecondTextLocator = context.page.locator(
+			`text=${ this.configurationData.secondEntry }`
+		);
+		expectedSecondTextLocator.waitFor();
 	}
 }

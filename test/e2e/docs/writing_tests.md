@@ -307,7 +307,7 @@ export class ExampleBlockFlow implements BlockFlow {
 	blockEditorSelector = '[aria-label="Block: Example"]';
 
 	async configure( context: EditorContext ): Promise< void > {
-		// use the editor context (things like the editor iframe and Playwrihgt Page) and the configuration data to configure the block in the editor.
+		// use the editor context (things like the editor Locator and Playwright Page) and the configuration data to configure the block in the editor.
 	}
 
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {

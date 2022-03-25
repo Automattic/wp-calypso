@@ -37,10 +37,15 @@ export class YouTubeBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution.
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		await context.editorIframe.fill( selectors.embedUrlInput, this.configurationData.embedUrl );
-		await context.editorIframe.click( selectors.embedButton );
+		const urlInputLocator = context.editorLocator.locator( selectors.embedUrlInput );
+		await urlInputLocator.fill( this.configurationData.embedUrl );
+
+		const embedButtonLocator = context.editorLocator.locator( selectors.embedButton );
+		await embedButtonLocator.click();
+
 		// We should make sure the actual Iframe loads, because it takes a second.
-		await context.editorIframe.waitForSelector( selectors.editorYouTubeIframe );
+		const youTubeIframeLocator = context.editorLocator.locator( selectors.editorYouTubeIframe );
+		await youTubeIframeLocator.waitFor();
 	}
 
 	/**
@@ -49,10 +54,10 @@ export class YouTubeBlockFlow implements BlockFlow {
 	 * @param context The current context for the published post at the point of test execution.
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const locator = context.page
+		const expectedVideoTitleLocator = context.page
 			.frameLocator( selectors.publishedYouTubeIframe )
 			.locator( `text=${ this.configurationData.expectedVideoTitle }` );
 
-		await locator.waitFor();
+		await expectedVideoTitleLocator.waitFor();
 	}
 }

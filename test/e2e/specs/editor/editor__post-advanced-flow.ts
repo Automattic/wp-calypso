@@ -52,7 +52,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Enter post content', async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);
@@ -89,7 +89,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Append additional content', async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);

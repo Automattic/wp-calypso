@@ -53,7 +53,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 
 	describe( 'Populate post with media blocks', function () {
 		it( `${ ImageBlock.blockName } block: upload image file with reserved URL characters`, async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				ImageBlock.blockName,
 				ImageBlock.blockEditorSelector
 			);
@@ -62,7 +62,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		} );
 
 		it( `${ ImageBlock.blockName } block: upload image file using Calypso media modal `, async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				ImageBlock.blockName,
 				ImageBlock.blockEditorSelector
 			);
@@ -73,7 +73,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		} );
 
 		it( `${ AudioBlock.blockName } block: upload audio file`, async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				AudioBlock.blockName,
 				AudioBlock.blockEditorSelector
 			);
@@ -82,7 +82,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		} );
 
 		it( `${ FileBlock.blockName } block: upload audio file`, async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				FileBlock.blockName,
 				FileBlock.blockEditorSelector
 			);

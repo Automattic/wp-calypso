@@ -44,7 +44,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	} );
 
 	it( `Insert ${ ImageBlock.blockName } block and upload image`, async () => {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			ImageBlock.blockName,
 			ImageBlock.blockEditorSelector
 		);

@@ -1,5 +1,6 @@
+import { Locator } from 'playwright';
 import { BlockFlow, EditorContext, PublishedPostContext } from '..';
-import { PopoverBlockInserterComponent } from '../..';
+import { OpenInlineInserterDelegate } from '../../pages';
 
 // As a layout block, there's pretty massive amounts of potential variability in configuration.
 // To keep things simple and maintainable, I think it's best to just lock in a simple, singular case (two columns of text) for the smoke test.
@@ -46,7 +47,9 @@ export class LayoutGridBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution.
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		await context.editorIframe.click( selectors.twoColumnButton );
+		const twoColumnButtonLocator = context.editorLocator.locator( selectors.twoColumnButton );
+		await twoColumnButtonLocator.click();
+
 		await this.addTextToColumn(
 			{
 				columnNumber: 1,
@@ -73,23 +76,26 @@ export class LayoutGridBlockFlow implements BlockFlow {
 		columnDetails: ColumnDetails,
 		context: EditorContext
 	): Promise< void > {
-		const popoverBlockInserter = new PopoverBlockInserterComponent(
-			context.editorIframe,
-			context.page
+		const openInlineInserter: OpenInlineInserterDelegate = async ( editor: Locator ) => {
+			const addBlockButtonLocator = editor.locator(
+				selectors.addBlockButton( columnDetails.columnNumber )
+			);
+			// On mobile, a lot of clicks are eaten en route to the button. This doesn't play well with Playwright and can cause fragility.
+			// A more stable, viewport-safe approach is to focus and press enter (which is also a real workflow for keyboard users).
+			await addBlockButtonLocator.focus();
+			await addBlockButtonLocator.press( 'Enter' );
+		};
+
+		await context.editorPage.addBlockInline(
+			'Paragraph',
+			selectors.paragraphBlock( columnDetails.columnNumber ),
+			openInlineInserter
 		);
 
-		// On mobile, a lot of clicks are eaten en route to the button. This doesn't play well with Playwright and can cause fragility.
-		// A more stable, viewport-safe approach is to focus and press enter (which is also a real workflow for keyboard users).
-		await context.editorIframe.focus( selectors.addBlockButton( columnDetails.columnNumber ) );
-		await context.editorIframe.press(
-			selectors.addBlockButton( columnDetails.columnNumber ),
-			'Enter'
+		const addedParagraphLocator = context.editorLocator.locator(
+			selectors.paragraphBlock( columnDetails.columnNumber )
 		);
-		await popoverBlockInserter.addBlock( 'Paragraph' );
-		await context.editorIframe.fill(
-			selectors.paragraphBlock( columnDetails.columnNumber ),
-			columnDetails.textToAdd
-		);
+		await addedParagraphLocator.fill( columnDetails.textToAdd );
 	}
 
 	/**
@@ -98,7 +104,14 @@ export class LayoutGridBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution.
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		await context.page.waitForSelector( `text=${ this.configurationData.leftColumnText }` );
-		await context.page.waitForSelector( `text=${ this.configurationData.rightColumnText }` );
+		const expectedLeftColumnTextLocator = context.page.locator(
+			`text=${ this.configurationData.leftColumnText }`
+		);
+		await expectedLeftColumnTextLocator.waitFor();
+
+		const expectedRightColumnTextLocator = context.page.locator(
+			`text=${ this.configurationData.rightColumnText }`
+		);
+		await expectedRightColumnTextLocator.waitFor();
 	}
 }

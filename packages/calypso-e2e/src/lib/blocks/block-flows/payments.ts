@@ -33,7 +33,8 @@ export class PaymentsBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		await context.editorIframe.fill( selectors.buttonText, this.configurationData.buttonText );
+		const buttonTextLocator = context.editorLocator.locator( selectors.buttonText );
+		await buttonTextLocator.fill( this.configurationData.buttonText );
 	}
 
 	/**
@@ -42,10 +43,11 @@ export class PaymentsBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
+		const buttonLocator = context.page.locator(
+			`button:has-text("${ this.configurationData.buttonText }")`
+		);
 		// Because Stripe isn't connected to this WordPress.com account, we shouldn't see this block published.
-		if (
-			await context.page.isVisible( `button:has-text("${ this.configurationData.buttonText }")` )
-		) {
+		if ( await buttonLocator.isVisible() ) {
 			throw new Error(
 				'Payments button should not be visible on published post without Stripe connection'
 			);
