@@ -11,8 +11,8 @@ import {
 	NavbarComponent,
 	EditorBlockListViewComponent,
 	EditorInlineBlockInserterComponent,
+	EditorSidebarBlockInserterComponent,
 } from '../components';
-import { EditorSidebarBlockInserterComponent } from '../components/editor-sidebar-block-inserter-component';
 import type { SiteType } from '../../lib/utils';
 import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../components';
 

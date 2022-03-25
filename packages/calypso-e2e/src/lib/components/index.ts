@@ -21,5 +21,6 @@ export * from './editor-nav-sidebar-component';
 export * from './editor-toolbar-component';
 export * from './editor-gutenberg-component';
 export * from './editor-block-list-view-component';
+export * from './editor-sidebar-block-inserter-component';
 
 export * from './me';
