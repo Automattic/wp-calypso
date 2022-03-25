@@ -32,6 +32,7 @@ export interface OrderSummaryData {
 
 export interface PaymentMethod {
 	id: string;
+	paymentProcessorId: string;
 	label?: React.ReactNode;
 	activeContent?: React.ReactNode;
 	inactiveContent?: React.ReactNode;
@@ -251,7 +252,6 @@ export interface TransactionStatusManager extends TransactionStatusState {
 }
 
 export type ProcessPayment = (
-	paymentProcessorId: string,
 	processorData: PaymentProcessorSubmitData
 ) => Promise< PaymentProcessorResponse >;
 
