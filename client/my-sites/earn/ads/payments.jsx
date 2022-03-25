@@ -116,7 +116,7 @@ class WordAdsPayments extends Component {
 		let hasMismatch = false;
 
 		payments.forEach( ( payment ) => {
-			if ( payment.status === 'pending' && payment.paypal_email !== wordAdsSettings.paypal ) {
+			if ( payment.status === 'pending' && payment.paypalEmail !== wordAdsSettings.paypal ) {
 				hasMismatch = true;
 			}
 		} );
