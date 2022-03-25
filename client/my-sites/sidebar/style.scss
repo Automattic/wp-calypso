@@ -1,12 +1,7 @@
-// The following changes should be merged in their respective files before nav unification goes to production
 @import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
 
 // Override Global Vars
 :root {
-	// client/assets/stylesheets/shared/_variables.scss
-	--sidebar-width-max: 272px;
-	--sidebar-width-min: 272px;
-
 	--color-sidebar-background: #23282d;
 	--color-sidebar-background-rgb: 35, 40, 45;
 	--color-sidebar-menu-hover-background: #1a1e23;
@@ -33,20 +28,6 @@
 $sidebar-item-padding: 8px 0;
 $font-size: rem( 14px );
 
-.clear-secondary-layout-transitions {
-	// client/layout/style.scss | Workaround to avoid site-selector being transitioning while expanding the sidebar (client/my-sites/sidebar-unified/index.jsx).
-	.layout__secondary .site-selector {
-		transition: none;
-		overflow: hidden;
-	}
-}
-
-// client/layout/style.scss
-.layout__content {
-	min-height: 101vh; // Hack to give JS the chance to trigger the scroll event when the content is short. JS code: client/layout/utils.ts:36.
-}
-
-// client/layout/sidebar/style.scss
 .sidebar {
 	position: relative;
 	background-color: var( --color-sidebar-background );
@@ -304,66 +285,32 @@ $font-size: rem( 14px );
 			padding-right: 12px;
 		}
 	}
-}
 
-//client/components/site-selector/style.scss
-.site-selector .site.is-highlighted {
-	background-color: var( --color-sidebar-submenu-background );
-}
-
-.site-selector .site.is-highlighted .site__domain,
-.site-selector .site.is-highlighted .site__title {
-	color: var( --color-sidebar-text );
-}
-
-// client/blocks/upsell-nudge/style.scss
-.theme-default:not( .is-classic-bright ):not( .is-contrast ) {
 	.upsell-nudge.banner.card.is-compact {
-		background-color: #fff;
-		color: #000;
+		padding: 7px 12px 7px 4px;
+		line-height: 26px;
+		margin-top: 8px;
 	}
 
-	.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
-		color: #000;
+	.upsell-nudge.banner.card.is-compact .banner__action {
+		top: 0;
+		margin-left: 0;
 	}
-}
 
-.upsell-nudge.banner.card.is-compact {
-	padding: 7px 12px 7px 4px;
-	line-height: 26px;
-	margin-top: 8px;
-}
+	.upsell-nudge.banner.card.is-compact .dismissible-card__close-icon {
+		fill: var( --color-text );
+	}
 
-.upsell-nudge.banner.card.is-compact .banner__action {
-	top: 0;
-	margin-left: 0;
-}
+	.theme-default:not( .is-classic-bright ):not( .is-contrast ) & {
+		.upsell-nudge.banner.card.is-compact {
+			background-color: #fff;
+			color: #000;
+		}
 
-.upsell-nudge.banner.card.is-compact .dismissible-card__close-icon {
-	fill: var( --color-text );
-}
-
-// client/my-sites/current-site/style.scss
-.current-site__switch-sites:hover .button.is-borderless:hover {
-	background-color: var( --color-sidebar-menu-hover-background );
-}
-
-.current-site__switch-sites .button.is-borderless {
-	color: var( --color-sidebar-text-alternative );
-	padding: 6px 8px 6px 36px;
-}
-
-.current-site__switch-sites .button.is-borderless .gridicon {
-	height: 20px;
-	width: 20px;
-	top: 9px;
-	left: 8px;
-}
-
-// client/blocks/site/style.scss
-.site__content,
-.all-sites .all-sites__content {
-	padding: 10px 0 10px 8px;
+		.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
+			color: #000;
+		}
+	}
 }
 
 .is-sidebar-collapsed {
@@ -378,7 +325,6 @@ $font-size: rem( 14px );
 		transform: rotate( 180deg );
 	}
 
-	// client/my-sites/current-site/style.scss
 	.current-site__switch-sites .button.is-borderless {
 		height: 34px;
 		padding: 0;
@@ -416,7 +362,6 @@ $font-size: rem( 14px );
 		margin-bottom: 4px;
 	}
 
-	// client/blocks/upsell-nudge/style.scss
 	.upsell-nudge.banner.card.is-compact {
 		margin: 8px 3px 7px;
 		padding: 2px 12px 2px 4px;
@@ -493,7 +438,7 @@ $font-size: rem( 14px );
 	.sidebar__menu-link {
 		cursor: pointer;
 		color: var( --color-sidebar-text-alternative );
-		/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
+		// stylelint-disable-next-line  declaration-property-unit-allowed-list
 		font-size: rem( 13px );
 
 		&:hover,
@@ -507,7 +452,7 @@ $font-size: rem( 14px );
 	}
 }
 
-.sidebar-unified__menu-loading {
+.sidebar__menu-loading {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -515,43 +460,8 @@ $font-size: rem( 14px );
 	bottom: 0;
 }
 
-.sidebar-unified__sparkline {
+.sidebar__sparkline {
 	margin-right: 8px;
-}
-
-// Reader specific styles
-// client/reader/sidebar/style.scss
-.is-section-reader {
-	.sidebar__menu .count {
-		background: transparent;
-		color: var( --color-sidebar-menu-text );
-		border-color: var( --color-sidebar-menu-text );
-	}
-
-	.sidebar__menu-link:hover .count {
-		color: var( --color-sidebar-submenu-hover-text );
-		border-color: var( --color-sidebar-submenu-hover-text );
-	}
-
-	.selected .sidebar__menu-link .count {
-		color: var( --color-sidebar-submenu-selected-text );
-		border-color: var( --color-sidebar-submenu-selected-text );
-	}
-
-	.sidebar__menu.sidebar__menu--selected {
-		.sidebar__heading {
-			background: var( --color-sidebar-menu-selected-background );
-			color: var( --color-sidebar-menu-selected-text );
-
-			&::after {
-				display: block;
-			}
-
-			.sidebar__menu-icon {
-				fill: var( --color-sidebar-menu-selected-text );
-			}
-		}
-	}
 }
 
 // Flyout menu (showing from >782px)
@@ -564,9 +474,6 @@ $font-size: rem( 14px );
 		}
 	}
 
-	// client/layout/style.scss
-	// layout/sidebar/style.scss
-	// TODO: For prototype only, this prevents the sidebar from being scrollable.
 	// In wp-admin there's custom JS to a) position the sidebar based on the scroll
 	// position and b) position the flyout menu based on available screen space.
 	.is-sidebar-overflow {
@@ -625,14 +532,12 @@ $font-size: rem( 14px );
 }
 
 @media screen and ( max-width: 782px ) {
-	// client/layout/sidebar/style.scss
 	.focus-content .layout__content {
 		padding: 71px 24px 24px;
 		transition: padding 0.15s ease-in-out;
 	}
 
 	.sidebar {
-		// client/my-sites/current-site/style.scss
 		.site__content {
 			padding: 18px 0 18px 12px;
 		}
@@ -695,7 +600,6 @@ $font-size: rem( 14px );
 }
 
 @media screen and ( max-width: 660px ) {
-	// client/layout/style.scss
 	.layout__content {
 		min-height: initial;
 	}
@@ -704,7 +608,6 @@ $font-size: rem( 14px );
 		padding: 47px 0 0;
 	}
 
-	// client/layout/sidebar/style.scss
 	.sidebar {
 		position: absolute;
 		padding-bottom: 120px;
@@ -723,3 +626,19 @@ $font-size: rem( 14px );
 		-webkit-mask-position: center center;
 	}
 }
+
+/*
+//client/components/site-selector/style.scss
+.site-selector .site.is-highlighted {
+	background-color: var( --color-sidebar-submenu-background );
+}
+
+.site-selector .site.is-highlighted .site__domain,
+.site-selector .site.is-highlighted .site__title {
+	color: var( --color-sidebar-text );
+}
+
+
+
+
+*/

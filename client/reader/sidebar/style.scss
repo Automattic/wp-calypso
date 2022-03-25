@@ -4,7 +4,6 @@
 		margin-bottom: 8px;
 	}
 
-
 	// Apply custom style to the `Add new tag` mini form.
 	.reader-sidebar-tags__text-input:hover,
 	.reader-sidebar-tags__text-input:focus,
@@ -47,7 +46,8 @@
 		padding-bottom: 5px;
 	}
 
-	.sidebar__menu .count {
+	.sidebar__menu .count,
+	.sidebar__menu.is-togglable.is-toggle-open .count {
 		position: relative;
 		flex-shrink: 0;
 		top: 0;
@@ -56,23 +56,22 @@
 		padding: 4px 6px;
 		line-height: 1;
 		min-width: 22px;
-		background-color: var( --color-sidebar-menu-hover-background );
-		border-color: var( --color-sidebar-menu-hover-background );
+		background: transparent;
+		border-color: var( --color-sidebar-menu-text );
 		outline-color: var( --color-sidebar-menu-hover-background );
-		color: var( --color-sidebar-text-alternative );
-
+		color: var( --color-sidebar-menu-text );
 	}
 
 	.sidebar__menu-link:hover .count {
-		border-color: var( --color-sidebar-menu-hover-text );
+		border-color: var( --color-sidebar-submenu-hover-text );
 		outline-color: red;
-		color: var( --color-sidebar-menu-hover-text );
+		color: var( --color-sidebar-submenu-hover-text );
 	}
 
 	.selected .sidebar__menu-link .count {
 		background: transparent;
-		color: var( --color-sidebar-menu-selected-text );
-		border-color: var( --color-sidebar-menu-selected-text );
+		color: var( --color-sidebar-submenu-selected-text );
+		border-color: var( --color-sidebar-submenu-selected-text );
 	}
 
 	.sidebar__menu-item-siteicon {
@@ -111,6 +110,21 @@
 
 		&:hover {
 			color: var( --color-sidebar-menu-hover-text );
+		}
+	}
+
+	.sidebar__menu.sidebar__menu--selected {
+		.sidebar__heading {
+			background: var( --color-sidebar-menu-selected-background );
+			color: var( --color-sidebar-menu-selected-text );
+
+			&::after {
+				display: block;
+			}
+
+			.sidebar__menu-icon {
+				fill: var( --color-sidebar-menu-selected-text );
+			}
 		}
 	}
 }

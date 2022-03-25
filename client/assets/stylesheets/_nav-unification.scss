@@ -115,7 +115,6 @@
 	}
 
 	.masterbar__toggle-drafts.button.is-borderless {
-		margin-left: -8px;
 		color: $nav-unification-primary;
 		font-size: $nav-unification-masterbar-font-size;
 		.gridicon {
@@ -147,7 +146,7 @@
 			margin-right: 9px;
 		}
 
-		.masterbar__toggle-drafts.button.is-borderless {
+		.masterbar__publish .masterbar__toggle-drafts.button.is-borderless {
 			margin-left: -9px;
 		}
 	}
@@ -177,10 +176,6 @@
 			height: 36px;
 			margin-top: 5px;
 			width: auto;
-		}
-
-		.masterbar__toggle-drafts.button.is-borderless {
-			margin-left: -9px;
 		}
 	}
 
