@@ -30,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:jetpack-site' ), 
 		await pluginsPage.visit( siteUrl );
 	} );
 
-	it.each( [ 'Featured', 'Popular', 'New' ] )(
+	it.each( [ 'Premium', 'Featured', 'Popular' ] )(
 		'Plugins page loads %s section',
 		async function ( section: string ) {
 			await pluginsPage.validateHasSection( section );
