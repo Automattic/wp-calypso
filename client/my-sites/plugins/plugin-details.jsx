@@ -60,6 +60,7 @@ import {
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isEligibleForProPlan } from '../plans-comparison';
 import NoPermissionsError from './no-permissions-error';
 
 function PluginDetails( props ) {
@@ -78,6 +79,9 @@ function PluginDetails( props ) {
 		isRequestingForSites( state, siteIds )
 	);
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
+	const eligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, selectedSite?.ID )
+	);
 
 	// Plugin information.
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
@@ -249,7 +253,8 @@ function PluginDetails( props ) {
 			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs }>
 				{ ( isMarketplaceProduct || shouldUpgrade ) &&
 					! requestingPluginsForSites &&
-					! isPluginInstalledOnsite && (
+					! isPluginInstalledOnsite &&
+					! eligibleForProPlan && (
 						<BillingIntervalSwitcher
 							billingPeriod={ billingPeriod }
 							onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
