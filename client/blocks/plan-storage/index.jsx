@@ -3,9 +3,7 @@ import {
 	planHasFeature,
 	isBusinessPlan,
 	isEcommercePlan,
-	PLAN_FREE,
 	PLAN_WPCOM_PRO,
-	PLAN_WPCOM_FLEXIBLE,
 	isProPlan,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
@@ -44,9 +42,6 @@ export function PlanStorage( { children, className, siteId } ) {
 	}
 
 	if ( eligibleForProPlan && mediaStorage ) {
-		if ( sitePlanSlug === PLAN_FREE || sitePlanSlug === PLAN_WPCOM_FLEXIBLE ) {
-			mediaStorage.max_storage_bytes = 500 * 1024 * 1024;
-		}
 		if ( sitePlanSlug === PLAN_WPCOM_PRO ) {
 			mediaStorage.max_storage_bytes = 50 * 1024 * 1024 * 1024;
 		}
