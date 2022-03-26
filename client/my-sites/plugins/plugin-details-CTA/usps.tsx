@@ -1,4 +1,4 @@
-import { PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -52,14 +52,16 @@ const USPS: React.FC< Props > = ( {
 	const isAnnualPlan = useSelector( isAnnualPlanOrUpgradeableAnnualPeriod );
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
-	const planDisplayCost = useSelector( ( state ) =>
-		getProductDisplayCost( state, isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY )
-	);
 
 	const selectedSite = useSelector( getSelectedSite );
 	const eligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, selectedSite?.ID )
 	);
+
+	const planDisplayCost = useSelector( ( state ) => {
+		const productSlug = isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
+		return getProductDisplayCost( state, eligibleForProPlan ? PLAN_WPCOM_PRO : productSlug );
+	} );
 
 	const filteredUSPS = [
 		...( isMarketplaceProduct
