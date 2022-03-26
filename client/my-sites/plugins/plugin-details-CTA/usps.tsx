@@ -63,6 +63,10 @@ const USPS: React.FC< Props > = ( {
 		return getProductDisplayCost( state, eligibleForProPlan ? PLAN_WPCOM_PRO : productSlug );
 	} );
 
+	const supportText = isAnnualPlan
+		? translate( 'Live chat support 24x7' )
+		: translate( 'Unlimited Email Support' );
+
 	const filteredUSPS = [
 		...( isMarketplaceProduct
 			? [
@@ -127,9 +131,7 @@ const USPS: React.FC< Props > = ( {
 					{
 						id: 'support',
 						image: <Gridicon icon="chat" size={ 16 } />,
-						text: isAnnualPlan
-							? translate( 'Live chat support 24x7' )
-							: translate( 'Unlimited Email Support' ),
+						text: eligibleForProPlan ? translate( 'Premium support' ) : supportText,
 						eligibilities: [ 'needs-upgrade', 'marketplace' ],
 					},
 			  ]
