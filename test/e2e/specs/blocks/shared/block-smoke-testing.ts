@@ -5,6 +5,9 @@ import {
 	EditorContext,
 	PublishedPostContext,
 	TestAccount,
+	envVariables,
+	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -18,6 +21,17 @@ declare const browser: Browser;
  */
 export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): void {
 	describe( DataHelper.createSuiteTitle( specName ), function () {
+		const features = envToFeatureKey( envVariables );
+		// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
+		// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.
+		const accountName = getTestAccountByFeature( features, [
+			{
+				gutenberg: 'stable',
+				siteType: 'simple',
+				accountName: 'simpleSitePersonalPlanUser',
+			},
+		] );
+
 		let page: Page;
 		let editorPage: EditorPage;
 		let editorContext: EditorContext;
@@ -25,8 +39,8 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		beforeAll( async () => {
 			page = await browser.newPage();
-			editorPage = new EditorPage( page );
-			const testAccount = new TestAccount( 'gutenbergSimpleSiteUser' );
+			editorPage = new EditorPage( page, { target: features.siteType } );
+			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
 		} );
 

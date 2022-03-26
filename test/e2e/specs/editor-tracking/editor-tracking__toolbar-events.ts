@@ -7,6 +7,7 @@ import {
 	EditorPage,
 	envVariables,
 	getTestAccountByFeature,
+	envToFeatureKey,
 	TestAccount,
 	EditorTracksEventManager,
 	skipDescribeIf,
@@ -19,11 +20,8 @@ declare const browser: Browser;
 skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 	DataHelper.createSuiteTitle( 'Editor tracking: Toolbar-related events' ),
 	function () {
-		const siteType = envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple';
-		const accountName = getTestAccountByFeature( {
-			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-			siteType: siteType,
-		} );
+		const features = envToFeatureKey( envVariables );
+		const accountName = getTestAccountByFeature( features );
 
 		describe( 'wpcom_block_editor_list_view_toggle/select', function () {
 			let page: Page;
@@ -36,7 +34,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				await testAccount.authenticate( page );
 
 				eventManager = new EditorTracksEventManager( page );
-				editorPage = new EditorPage( page, { target: siteType } );
+				editorPage = new EditorPage( page, { target: features.siteType } );
 			} );
 
 			it( 'Start a new post', async function () {
@@ -108,7 +106,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				await testAccount.authenticate( page );
 
 				eventManager = new EditorTracksEventManager( page );
-				editorPage = new EditorPage( page, { target: siteType } );
+				editorPage = new EditorPage( page, { target: features.siteType } );
 			} );
 
 			it( 'Start a new post', async function () {
