@@ -1,4 +1,4 @@
-import { PRODUCT_JETPACK_SEARCH, TERM_ANNUALLY } from '@automattic/calypso-products';
+import { PRODUCT_JETPACK_SEARCH } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,16 +7,13 @@ import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
-import Upsell from 'calypso/components/jetpack/upsell';
+import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
-import ProductCard from 'calypso/my-sites/plans/jetpack-plans/product-card';
-import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
-import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -43,10 +40,9 @@ export default function JetpackSearchUpsell(): ReactElement {
 		() => dispatch( recordTracksEvent( 'calypso_jetpack_search_upsell' ) ),
 		[ dispatch ]
 	);
-	const item = slugToSelectorProduct( PRODUCT_JETPACK_SEARCH ) as SelectorProduct;
 
 	return (
-		<Main className="jetpack-search-upsell">
+		<Main className="jetpack-search-upsell" wideLayout={ isJetpackCloud() }>
 			<DocumentHead title="Jetpack Search" />
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/jetpack-search/:site" title="Jetpack Search" />
@@ -57,21 +53,12 @@ export default function JetpackSearchUpsell(): ReactElement {
 					<QueryProductsList type="jetpack" />
 					{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 					{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-					<Upsell
-						headerText={ translate( 'Your site does not have Search' ) }
-						bodyText={ translate(
-							'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
-						) }
-						iconComponent={ <JetpackSearchLogo /> }
-					/>
-					<ProductCard
-						item={ item }
-						onClick={ onClick }
-						createButtonURL={ createProductURL }
+					<UpsellProductCard
+						productSlug={ PRODUCT_JETPACK_SEARCH }
 						siteId={ siteId }
 						currencyCode={ currencyCode }
-						selectedTerm={ TERM_ANNUALLY }
-						hideSavingLabel={ false }
+						ctaButtonURL={ createProductURL }
+						onCtaButtonClick={ onClick }
 					/>
 				</div>
 			) : (

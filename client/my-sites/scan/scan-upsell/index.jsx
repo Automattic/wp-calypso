@@ -1,4 +1,4 @@
-import { PRODUCT_JETPACK_SCAN, TERM_ANNUALLY } from '@automattic/calypso-products';
+import { PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,13 +11,12 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import Upsell from 'calypso/components/jetpack/upsell';
+import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
-import ProductCard from 'calypso/my-sites/plans/jetpack-plans/product-card';
-import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -65,13 +64,11 @@ function ScanVPActiveBody() {
 }
 
 function ScanUpsellBody() {
-	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug ) || '';
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const createProductURL = getPurchaseURLCallback( selectedSiteSlug, {} );
 	const dispatch = useDispatch();
-	const item = slugToSelectorProduct( PRODUCT_JETPACK_SCAN );
 
 	const onClick = useCallback(
 		() => dispatch( recordTracksEvent( 'calypso_jetpack_scan_upsell_click' ) ),
@@ -84,25 +81,12 @@ function ScanUpsellBody() {
 			<QueryProductsList type="jetpack" />
 			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-			<Upsell
-				headerText={ translate( 'Your site does not have Scan' ) }
-				bodyText={ translate(
-					'Scan gives you automated scanning and one-click fixes to keep your site ahead of security threats.'
-				) }
-				iconComponent={
-					<div className="scan-upsell__icon">
-						<SecurityIcon icon="info" />
-					</div>
-				}
-			/>
-			<ProductCard
-				item={ item }
-				onClick={ onClick }
-				createButtonURL={ createProductURL }
+			<UpsellProductCard
+				productSlug={ PRODUCT_JETPACK_SCAN }
 				siteId={ siteId }
 				currencyCode={ currencyCode }
-				selectedTerm={ TERM_ANNUALLY }
-				hideSavingLabel={ false }
+				ctaButtonURL={ createProductURL }
+				onCtaButtonClick={ onClick }
 			/>
 		</>
 	);
@@ -122,7 +106,7 @@ function renderUpsell( reason ) {
 
 export default function ScanUpsellPage( { reason } ) {
 	return (
-		<Main className="scan-upsell">
+		<Main className="scan-upsell" wideLayout>
 			<DocumentHead title="Scan" />
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<PageViewTracker path="/scan/:site" title="Scanner Upsell" />
