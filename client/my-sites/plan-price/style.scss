@@ -4,13 +4,6 @@
 	line-height: 1.5;
 	color: var( --color-neutral-70 );
 
-	&.is-placeholder {
-		@include placeholder( --color-neutral-10 );
-		width: 60px;
-		margin: 10px 0;
-		height: 21px;
-	}
-
 	.badge {
 		margin-left: 8px;
 		vertical-align: super;
