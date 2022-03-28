@@ -101,7 +101,13 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 							? translate( 'Included in your plan' )
 							: translate( 'Requires a {{a}}paid plan{{/a}}', {
 									components: {
-										a: <a href={ `/plans/${ siteSlug }` } />,
+										a: (
+											<a
+												href={ `/plans/${ siteSlug }` }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
 									},
 							  } ) }
 					</span>
@@ -150,7 +156,13 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 							? translate( 'Included in your plan' )
 							: translate( 'Requires a {{a}}Business plan{{/a}}', {
 									components: {
-										a: <a href={ `/plans/${ siteSlug }` } />,
+										a: (
+											<a
+												href={ `/plans/${ siteSlug }` }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
 									},
 							  } ) }
 					</span>
