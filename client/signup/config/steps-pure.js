@@ -42,6 +42,7 @@ export function generateSteps( {
 	isNewOrExistingSiteFulfilled = noop,
 	setDIFMLiteDesign = noop,
 	excludeStepIfEmailVerified = noop,
+	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
@@ -599,6 +600,11 @@ export function generateSteps( {
 		'p2-confirm-email': {
 			stepName: 'p2-confirm-email',
 			fulfilledStepCallback: excludeStepIfEmailVerified,
+		},
+
+		'p2-complete-profile': {
+			stepName: 'p2-complete-profile',
+			fulfilledStepCallback: excludeStepIfProfileComplete,
 		},
 
 		'plans-personal-monthly': {
