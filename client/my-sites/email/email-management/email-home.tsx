@@ -15,6 +15,7 @@ import EmailListActive from 'calypso/my-sites/email/email-management/home/email-
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -68,6 +69,7 @@ interface EmailManagementHomeProps {
 	emailListInactiveHeader?: ReactElement;
 	sectionHeaderLabel?: TranslateResult;
 	selectedDomainName: string;
+	selectedIntervalLength?: IntervalLength;
 	showActiveDomainList?: boolean;
 	source: string;
 }
@@ -77,6 +79,7 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 		emailListInactiveHeader,
 		showActiveDomainList = true,
 		selectedDomainName,
+		selectedIntervalLength,
 		sectionHeaderLabel,
 		source,
 	} = props;
@@ -156,6 +159,7 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 				comparisonContext="email-home-single-domain"
 				selectedDomainName={ domainsWithNoEmail[ 0 ].name }
 				source={ source }
+				selectedIntervalLength={ selectedIntervalLength }
 			/>
 		);
 	}

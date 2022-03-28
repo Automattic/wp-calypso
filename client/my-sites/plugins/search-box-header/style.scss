@@ -1,0 +1,92 @@
+.search-box-header {
+	margin: 32px 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	@media ( max-width: 660px ) {
+		padding: 0 16px;
+	}
+
+	.search-box-header__search {
+		margin-top: 24px;
+		display: flex;
+		flex-direction: row;
+		width: 100%;
+		justify-content: center;
+
+		.search-box-header__searchbox {
+			max-width: 504px;
+			width: 100%;
+
+			.search-component {
+				height: 52px;
+				z-index: 0;
+				&.is-expanded-to-container {
+					height: 100%;
+				}
+		
+				box-shadow: 0 0 0 1px var( --studio-gray-10 );
+		
+				.search-component__open-icon,
+				.search-component__close-icon {
+					color: var( --studio-black );
+				}
+		
+				&.is-open input.search-component__input[type='search'] {
+					font-size: $font-body-small;
+				}
+			}
+		}
+		
+	}
+
+	.search-box-header__header {
+		text-align: center;
+		@extend .wp-brand-font;
+		font-size: $font-title-large;
+		font-weight: 400;
+		line-height: 40px;
+
+	}
+
+	.search-box-header__recommended-searches {
+		margin-top: 24px;
+
+		.search-box-header__recommended-searches-title {
+			color: var( --studio-gray-50 );
+			font-size: $font-body-small;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 22px;
+			text-align: center;
+
+		}
+
+		.search-box-header__recommended-searches-list {
+			margin-top: 12px;
+			text-align: center;
+
+			.search-box-header__recommended-searches-list-item {
+				&:hover {
+					color: var( --color-link );
+				}
+
+				&:focus {
+					outline: none;
+				}
+
+				&:not( :last-child )::after {
+					display: inline-block;
+					content: '\00a0,\00a0'; // comma and spaces
+				}
+
+				color: var( --studio-gray-100 );
+				font-size: $font-body-small;
+				text-decoration: underline;
+				line-height: 22px;
+				text-align: center;
+			}
+		}
+	}
+}

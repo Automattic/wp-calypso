@@ -9,7 +9,9 @@ import {
 	EditorSettingsSidebarComponent,
 	EditorGutenbergComponent,
 	NavbarComponent,
+	EditorBlockListViewComponent,
 } from '../components';
+import type { SiteType } from '../../lib/utils';
 import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../components';
 
 const selectors = {
@@ -35,12 +37,13 @@ const EXTENDED_TIMEOUT = 90 * 1000;
 export class EditorPage {
 	private page: Page;
 	private editor: Locator;
-	private target: 'simple' | 'atomic';
+	private target: SiteType;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	private editorGutenbergComponent: EditorGutenbergComponent;
+	private editorBlockListViewComponent: EditorBlockListViewComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -49,7 +52,7 @@ export class EditorPage {
 	 * @param param0 Keyed object parameter.
 	 * @param param0.target Target editor type. Defaults to 'simple'.
 	 */
-	constructor( page: Page, { target = 'simple' }: { target?: 'simple' | 'atomic' } = {} ) {
+	constructor( page: Page, { target = 'simple' }: { target?: SiteType } = {} ) {
 		if ( target === 'atomic' ) {
 			// For Atomic editors, there is no iFrame - the editor is
 			// part of the page DOM and is thus accessible directly.
@@ -69,9 +72,10 @@ export class EditorPage {
 		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
 		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
+		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
 	}
 
-	/* Generic methods */
+	//#region Generic and Shell Methods
 
 	/**
 	 * Opens the "new post/page" page. By default it will open the "new post" page.
@@ -168,7 +172,9 @@ export class EditorPage {
 		] );
 	}
 
-	/* Editor */
+	//#endregion
+
+	//#region Basic Entry
 
 	/**
 	 * Enters the text into the title block and verifies the result.
@@ -210,6 +216,10 @@ export class EditorPage {
 	async getText(): Promise< string > {
 		return await this.editorGutenbergComponent.getText();
 	}
+
+	//#endregion
+
+	//#region Block and Pattern Insertion
 
 	/**
 	 * Adds a Gutenberg block from the block inserter panel.
@@ -287,7 +297,9 @@ export class EditorPage {
 		await this.page.keyboard.press( 'Backspace' );
 	}
 
-	/* Settings Sidebar */
+	//#endregion
+
+	//#region Settings Sidebar
 
 	/**
 	 * Opens the Settings sidebar.
@@ -394,7 +406,36 @@ export class EditorPage {
 		await this.editorSettingsSidebarComponent.enterUrlSlug( slug );
 	}
 
-	/* Publish, Draft & Schedule */
+	//#endregion
+
+	//#region List View
+
+	/**
+	 * Opens the list view.
+	 */
+	async openListView(): Promise< void > {
+		await this.editorToolbarComponent.openListView();
+	}
+
+	/**
+	 * Closes the list view.
+	 */
+	async closeListView(): Promise< void > {
+		await this.editorToolbarComponent.closeListView();
+	}
+
+	/**
+	 * In the list view, click on the first block of a given type (e.g. "Heading").
+	 *
+	 * @param blockName Name of the block type to find and click (e.g. "Heading").
+	 */
+	async clickFirstListViewEntryByType( blockName: string ): Promise< void > {
+		await this.editorBlockListViewComponent.clickFirstBlockOfType( blockName );
+	}
+
+	//#endregion
+
+	//#region Publish, Draft & Schedule
 
 	/**
 	 * Publishes the post or page.
@@ -524,7 +565,9 @@ export class EditorPage {
 		}
 	}
 
-	/* Previews */
+	//#endregion
+
+	//#region Previews
 
 	/**
 	 * Launches the Preview as mobile viewport.
@@ -577,7 +620,9 @@ export class EditorPage {
 		await this.editorToolbarComponent.openDesktopPreview( 'Desktop' );
 	}
 
-	/* Misc */
+	//#endregion
+
+	//#region Misc
 
 	/**
 	 * Leave the editor to return to the Calypso dashboard.
@@ -617,6 +662,13 @@ export class EditorPage {
 	}
 
 	/**
+	 * Opens the post details popover (i.e. number of character, words, etc.).
+	 */
+	async openDetailsPopover(): Promise< void > {
+		await this.editorToolbarComponent.openDetailsPopover();
+	}
+
+	/**
 	 * Checks whether the editor has any block warnings/errors displaying.
 	 *
 	 * @returns {Promise<boolean>} True if there are block warnings/errors.
@@ -625,4 +677,6 @@ export class EditorPage {
 	async editorHasBlockWarnings(): Promise< boolean > {
 		return await this.editorGutenbergComponent.editorHasBlockWarning();
 	}
+
+	//#endregion
 }

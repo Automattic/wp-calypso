@@ -28,6 +28,7 @@ A tour is made up of the following components:
   - a step renderer (React component/function passed a set of properties)
   - a minimized view renderer (for rendering a minimized view instead of closing)
 - A close handler
+- A boolean to minimize the tour
 - Some optional properties
 
 See [types.ts](./src/types.ts) for the full definition of the various entities.
@@ -127,6 +128,8 @@ The main API for configuring a tour is the config object. See example usage and 
 
 `config.closeHandler`: The callback responsible for closing the tour.
 
+`config.isMinimized`: The optional boolean value responsible for minimizing the tour.
+
 `config.renderers` (omitted in the WPCOM Tour Kit variant):
 
 - `tourStep`: A React component that will be called to render each step. Receives the following properties:
@@ -164,5 +167,6 @@ The main API for configuring a tour is the config object. See example usage and 
   - `useTourRating`: (optional) A hook to provide the rating from an external source/state (see [types.ts](./src/types.ts)).
   - `onTourRate`: (optional) A callback to fire off when a rating is submitted.
 
+- `portalElementId`: A string that lets you customize under which DOM element the Tour will be appended.
 
 

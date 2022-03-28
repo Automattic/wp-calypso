@@ -276,6 +276,10 @@ export class MediaLibraryContent extends Component {
 			);
 		}
 
+		if ( source === 'openverse' ) {
+			return translate( 'We were unable to connect to Openverse. Please try again later.' );
+		}
+
 		return translate(
 			'We were unable to connect to the external service. Please try again later.'
 		);
@@ -449,7 +453,7 @@ export class MediaLibraryContent extends Component {
 					selectedItems={ this.props.selectedItems }
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }
-					hasRefreshButton={ 'pexels' !== this.props.source }
+					hasRefreshButton={ 'pexels' !== this.props.source && 'openverse' !== this.props.source }
 					mediaScale={ this.props.mediaScale }
 				/>
 			);

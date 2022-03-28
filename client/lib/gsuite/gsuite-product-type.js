@@ -1,9 +1,8 @@
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GOOGLE_WORKSPACE_PRODUCT_TYPE,
 	GSUITE_BASIC_SLUG,
-	GSUITE_PRODUCT_TYPE,
-} from 'calypso/lib/gsuite/constants';
+} from '@automattic/calypso-products';
+import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 
 /**
  * Retrieves the product slug from the specified product type.

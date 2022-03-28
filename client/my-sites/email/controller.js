@@ -155,6 +155,7 @@ export default {
 				<EmailManagementHomePage
 					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
+					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -163,7 +164,11 @@ export default {
 	},
 
 	emailManagementInbox( pageContext, next ) {
-		pageContext.primary = <InboxManagement />;
+		pageContext.primary = (
+			<InboxManagement
+				selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
+			/>
+		);
 		next();
 	},
 };

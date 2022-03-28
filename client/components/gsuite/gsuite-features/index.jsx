@@ -1,14 +1,14 @@
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+	GSUITE_BUSINESS_SLUG,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspace/services/docs.svg';
 import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/drive.svg';
 import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';
 import googleMeetIcon from 'calypso/assets/images/email-providers/google-workspace/services/meet.svg';
-import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_BASIC_SLUG,
-	GSUITE_BUSINESS_SLUG,
-} from 'calypso/lib/gsuite/constants';
 import GSuiteSingleFeature from './single-feature';
 
 import './style.scss';

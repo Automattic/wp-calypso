@@ -727,6 +727,13 @@ export function generateSteps( {
 				hideSkip: true,
 			},
 		},
+		'difm-page-picker': {
+			stepName: 'difm-page-picker',
+			providesDependencies: [ 'selectedPageTitles' ],
+			props: {
+				hideSkip: true,
+			},
+		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
 			dependencies: [ 'newOrExistingSiteChoice' ],
@@ -744,6 +751,7 @@ export function generateSteps( {
 		},
 		'social-profiles': {
 			stepName: 'social-profiles',
+			providesDependencies: [ 'twitterUrl', 'facebookUrl', 'linkedinUrl', 'instagramUrl' ],
 		},
 		'website-content': {
 			stepName: 'website-content',
