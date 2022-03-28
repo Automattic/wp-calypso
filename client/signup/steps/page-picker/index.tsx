@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BrowserView } from 'calypso/signup/difm/components/BrowserView';
 import {
@@ -21,7 +21,7 @@ import {
 } from 'calypso/signup/difm/constants';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 import './style.scss';
 
@@ -218,15 +218,19 @@ export default function DIFMPagePicker( props: StepProps ) {
 		CONTACT_PAGE,
 	] );
 
+	useEffect( () => {
+		dispatch( saveSignupStep( { stepName } ) );
+	}, [] );
+
+	const submitPickedPages = () => {
+		dispatch( submitSignupStep( { stepName }, { selectedPageTitles: selectedPages } ) );
+		goToNextStep();
+	};
+
 	const headerText = translate( 'Add pages to your {{wbr}}{{/wbr}}website', {
 		components: { wbr: <wbr /> },
 	} );
 	const subHeaderText = translate( 'You can add up to 5 pages' );
-
-	const submitPickedPages = () => {
-		dispatch( submitSignupStep( { stepName }, { contentPages: selectedPages } ) );
-		goToNextStep();
-	};
 	return (
 		<StepWrapper
 			headerText={ headerText }

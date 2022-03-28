@@ -723,7 +723,7 @@ export function generateSteps( {
 		},
 		'difm-page-picker': {
 			stepName: 'difm-page-picker',
-			providesDependencies: [ 'contentPages' ],
+			providesDependencies: [ 'selectedPageTitles' ],
 			props: {
 				hideSkip: true,
 			},
