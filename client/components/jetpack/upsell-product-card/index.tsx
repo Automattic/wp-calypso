@@ -166,3 +166,52 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 };
 
 export default UpsellProductCard;
+
+export const UpsellProductCardPlaceholder: React.FC = () => {
+	return (
+		<Card className="upsell-product-card is-placeholder">
+			<div className="upsell-product-card__body">
+				<div className="upsell-product-card__content">
+					<h2 className="upsell-product-card__header">Placeholder Name</h2>
+
+					<p className="upsell-product-card__description">
+						<span>
+							This is placeholder text for the product description. The description text is
+							approximately 18 words and 126 characters.
+						</span>
+					</p>
+
+					<ul className="upsell-product-card__features">
+						<li className="upsell-product-card__features-item" key={ 1 }>
+							<span>Placeholder feature text 1</span>
+						</li>
+						<li className="upsell-product-card__features-item" key={ 2 }>
+							<span>Placeholder feature text 2</span>
+						</li>
+						<li className="upsell-product-card__features-item" key={ 3 }>
+							<span>Placeholder feature text 3</span>
+						</li>
+					</ul>
+
+					<div className="upsell-product-card__price-container">
+						<DisplayPrice
+							pricesAreFetching={ true }
+							billingTerm={ TERM_ANNUALLY }
+							productName={ 'Placeholder product' }
+						/>
+					</div>
+				</div>
+				<div className="upsell-product-card__action">
+					<Button className="upsell-product-card__button" href={ '#' } disabled={ true }>
+						{ 'Placeholder button' }
+					</Button>
+				</div>
+			</div>
+			<div className="upsell-product-card__footer">
+				<div className="upsell-product-card__footer-image">
+					<div className="upsell-product-card__placeholder-image"></div>
+				</div>
+			</div>
+		</Card>
+	);
+};

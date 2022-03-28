@@ -10,7 +10,7 @@
 	}
 }
 
-.jetpack-search__placeholder {
+.is-placeholder {
 	.jetpack-search__header,
 	.jetpack-search__content p,
 	.jetpack-search__button,
@@ -32,10 +32,6 @@
 	.jetpack-search__disconnected {
 		padding-top: 40px;
 	}
-
-	// .jetpack-search__logo {
-	// 	padding-top: 40px; // to match Backup and Scan
-	// }
 }
 
 .jetpack-search__logo {
