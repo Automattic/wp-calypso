@@ -397,6 +397,15 @@ const SearchListView = ( {
 		setPageSize( pluginItemsFetch( page ) );
 	}, [ paidPluginsBySearchTerm ] );
 
+	useEffect( () => {
+		if ( searchTerm && pluginsPagination?.page === 1 ) {
+			recordTracksEvent( 'calypso_plugins_search_results_show', {
+				search_term: searchTerm,
+				results_count: pluginsPagination?.results,
+			} );
+		}
+	}, [ searchTerm ] );
+
 	if (
 		pluginsBySearchTerm.length > 0 ||
 		paidPluginsBySearchTerm.length > 0 ||
