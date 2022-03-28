@@ -1,7 +1,6 @@
 import { Button } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { TranslateResult } from 'i18n-calypso';
-import * as React from 'react';
+import type { ReactNode } from 'react';
 
 // Disabling this to make migrating files easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -32,13 +31,13 @@ export default function Field( {
 	onChange: ( value: string ) => void;
 	label?: string;
 	value: string;
-	icon?: React.ReactNode;
+	icon?: ReactNode;
 	iconAction?: () => void;
 	isIconVisible?: boolean;
 	placeholder?: string;
 	tabIndex?: number;
 	description?: string;
-	errorMessage?: TranslateResult;
+	errorMessage?: ReactNode;
 	autoComplete?: string;
 	disabled?: boolean;
 } ): JSX.Element {
@@ -100,7 +99,7 @@ const Label = styled.label< { disabled?: boolean } >`
 	}
 `;
 
-const Input = styled.input< { isError?: boolean; icon?: React.ReactNode } >`
+const Input = styled.input< { isError?: boolean; icon?: ReactNode } >`
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
@@ -194,7 +193,7 @@ function RenderedIcon( {
 	iconAction,
 	isIconVisible,
 }: {
-	icon?: React.ReactNode;
+	icon?: ReactNode;
 	iconAction?: () => void;
 	isIconVisible?: boolean;
 } ) {
@@ -224,7 +223,7 @@ function RenderedDescription( {
 }: {
 	description?: string;
 	isError?: boolean;
-	errorMessage?: TranslateResult;
+	errorMessage?: ReactNode;
 } ) {
 	if ( description || isError ) {
 		return <Description isError={ isError }>{ isError ? errorMessage : description }</Description>;
