@@ -359,6 +359,7 @@ const SearchListView = ( {
 	sites,
 	billingPeriod,
 } ) => {
+	const dispatch = useDispatch();
 	const [ page, setPage ] = useState( 1 );
 	const [ pageSize, setPageSize ] = useState( SEARCH_RESULTS_LIST_LENGTH );
 
@@ -399,12 +400,14 @@ const SearchListView = ( {
 
 	useEffect( () => {
 		if ( searchTerm && pluginsPagination?.page === 1 ) {
-			recordTracksEvent( 'calypso_plugins_search_results_show', {
-				search_term: searchTerm,
-				results_count: pluginsPagination?.results,
-			} );
+			dispatch(
+				recordTracksEvent( 'calypso_plugins_search_results_show', {
+					search_term: searchTerm,
+					results_count: pluginsPagination?.results,
+				} )
+			);
 		}
-	}, [ searchTerm ] );
+	}, [ searchTerm, pluginsPagination?.page ] );
 
 	if (
 		pluginsBySearchTerm.length > 0 ||
