@@ -1,10 +1,10 @@
 <img src="https://user-images.githubusercontent.com/17054134/159939643-4a3a7893-ab38-4223-ba5d-5dfe64282f07.png" alt="Stepper logo" width="400">
 
 # Stepper Signup and Onboarding Framework
-The stepper framework is a new framework for quickly spinning up sign up flows. It's meant to make non-linearly easy without sacrificing agility ✨. 
+The stepper framework is a new framework for quickly spinning up sign-up flows. This is a non-linear solution that doesn't sacrifice agility ✨.
 
 ## Non-linearity
-It has been tricky for us to create flows that input-driven steps. Stepper makes it easy by allowing flows to create their own two hooks `useSteps`, and `useStepNavigation`. These hooks have access to the state of of the flow so they can make decisions based on that.
+It has been tricky for us to create flows with input-driven steps configuration. Stepper makes it easy by allowing flows to create their own two hooks `useSteps`, and `useStepNavigation`. These hooks have access to the state of the flow so they can make decisions based on that.
 
 ### Example flow
 
@@ -25,7 +25,7 @@ export const exampleFlow: Flow = {
 			}
 		};
 		const goNext = goBack;
-		return { goNext, goBack, goToStep };
+		return { goNext, goBack };
 	},
 };
 ```
@@ -79,20 +79,23 @@ Stepper aims to create a big `steps-repository` that contains the steps and allo
 
 This creates a couple of restrictions.
 
+To maintain the reusability and simplicity of this framework it is important that flow-specific styling changes be made to a `flow` stylesheet or in `global.scss`. Each step should have the basic styling necessary to operate on its own just like a package.
+
+And each step should only get flow-level state from a store (not props).
 ## State management
-Steps shouldn't have any props other than `navigation` prop which contains the return value of `useStepNavigation`. This object (`navigation`) allows the step to `submit` when done or to move to other steps or to `goNext`, `goBack`, etc..
+Steps shouldn't have any props other than the `navigation` prop which contains the return value of `useStepNavigation`. This object (`navigation`) allows the step to `submit` when done or to move to other steps or to `goNext`, `goBack`, etc..
 
 The rationale behind this is the following:
 
-1. **Small API**: when steps have such little API surface area. They can be reused easily.
+1. **Small API**: when steps have such small API surface area, they can be reused easily.
 2. **Centralized state**: the `useStepNavigation` hook makes decisions based on the entire flow's state, so the state has to be centralized, i.e: lives entirely in the `onboard` store (or any store inside `packages/data-stores`).
 
-All the state should be either the onboarding store, or in the internal state of the step. This creates a flat data tree that is exactly one level deep. This allows the steps to be easy to make and to reuse without any added effort.
+All the state should be either in the onboarding store or the internal state of the step. This creates a flat data tree that is exactly one level deep and allows steps to be easily created and re-used.
 
-It takes five minutes to add a new field to the onboarding store. Such as `intent` or `storeType`. 
+It takes five minutes to add a new field to the `onboard` store. Such as [`intent`](../../../packages/data-stores/src/onboard/reducer.ts) or [`storeType`](../../../packages/data-stores/src/onboard/reducer.ts). 
 
 ## Preferring packages
-When creating new code, it's highly-encouraged to put it packages, whether existing like `onboarding` or new packages that you create. This allows us to create flows in the future that live in wp-admin or wherever.
+When creating new code, it's highly-encouraged to put it into packages, whether existing like `onboarding` or new packages that you create. This allows us to create flows in the future that live in wp-admin or wherever.
 
 ## Help and feedback
 Please feel free to reach out to Team Vertex for any feedback or if you need help.
