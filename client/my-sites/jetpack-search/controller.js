@@ -12,6 +12,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import { isRequestingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import JetpackSearchDetails from './details';
 import JetpackSearchDisconnected from './disconnected';
 import JetpackSearchUpsell from './jetpack-search-upsell';
 import SearchMain from './main';
