@@ -14,6 +14,8 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -60,7 +62,6 @@ import {
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isEligibleForProPlan } from '../plans-comparison';
 import NoPermissionsError from './no-permissions-error';
 
 function PluginDetails( props ) {
@@ -144,6 +145,12 @@ function PluginDetails( props ) {
 		props.pluginSlug,
 		dispatch,
 	] );
+
+	useEffect( () => {
+		if ( eligibleForProPlan && setBillingInterval ) {
+			dispatch( setBillingInterval( IntervalLength.ANNUALLY ) );
+		}
+	}, [ eligibleForProPlan, dispatch ] );
 
 	// Fetch WPcom plugin data if needed
 	const {
