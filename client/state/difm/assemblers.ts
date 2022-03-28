@@ -15,6 +15,7 @@ interface Dependencies {
 	displayEmail: string;
 	displayPhone: string;
 	displayAddress: string;
+	selectedPageTitles: string[];
 }
 
 export function buildDIFMCartExtrasObject( dependencies: Partial< Dependencies > ) {
@@ -33,6 +34,7 @@ export function buildDIFMCartExtrasObject( dependencies: Partial< Dependencies >
 		displayEmail,
 		displayPhone,
 		displayAddress,
+		selectedPageTitles,
 	} = dependencies;
 
 	return {
@@ -49,5 +51,6 @@ export function buildDIFMCartExtrasObject( dependencies: Partial< Dependencies >
 		display_email: displayEmail,
 		display_phone: displayPhone,
 		display_address: displayAddress,
+		selected_page_titles: selectedPageTitles,
 	};
 }
