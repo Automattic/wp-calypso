@@ -16,9 +16,6 @@ import {
 	isWpComPlan,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
-	PLAN_MONTHLY_PERIOD,
-	PLAN_ANNUAL_PERIOD,
-	PLAN_BIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
@@ -127,23 +124,6 @@ function getPartnerName( purchase ) {
 function getSubscriptionEndDate( purchase ) {
 	const localeSlug = i18n.getLocaleSlug();
 	return moment( purchase.expiryDate ).locale( localeSlug ).format( 'LL' );
-}
-
-/**
- * Returns a purchase term label (i.e. "every month", "every year", "every two years").
- *
- * @param {object} purchase The purchase
- * @returns {string|undefined} The purchase's term label
- */
-function getPurchaseBillingTermLabel( purchase ) {
-	switch ( purchase.billPeriodDays ) {
-		case PLAN_MONTHLY_PERIOD:
-			return String( i18n.translate( 'monthly' ) );
-		case PLAN_ANNUAL_PERIOD:
-			return String( i18n.translate( 'yearly' ) );
-		case PLAN_BIENNIAL_PERIOD:
-			return String( i18n.translate( 'every two years' ) );
-	}
 }
 
 /**
@@ -768,7 +748,6 @@ export {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
-	getPurchaseBillingTermLabel,
 	getDomainRegistrationAgreementUrl,
 	getIncludedDomain,
 	getName,
