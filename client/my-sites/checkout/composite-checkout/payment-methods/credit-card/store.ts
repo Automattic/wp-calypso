@@ -22,7 +22,7 @@ export const actions = {
 	changeBrand( payload: string ): CardStoreAction {
 		return { type: 'BRAND_SET', payload };
 	},
-	setCardDataError( type: string, message: string ): CardStoreAction {
+	setCardDataError( type: string, message: string | null ): CardStoreAction {
 		return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
 	},
 	setCardDataComplete( type: string, complete: boolean ): CardStoreAction {

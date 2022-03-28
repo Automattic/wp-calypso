@@ -10,12 +10,21 @@ export default function ContactFields( {
 	getErrorMessagesForField,
 	shouldUseEbanx,
 	shouldShowTaxFields,
+}: {
+	getFieldValue: ( key: string ) => string | undefined;
+	setFieldValue: ( key: string, value: string ) => void;
+	getErrorMessagesForField: ( key: string ) => string[];
+	shouldUseEbanx?: boolean;
+	shouldShowTaxFields?: boolean;
 } ) {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList();
 	const fields = useSelect( ( select ) => select( 'wpcom-credit-card' ).getFields() );
-	const onChangeContactInfo = ( newInfo ) => {
+	const onChangeContactInfo = ( newInfo: {
+		countryCode?: { value?: string };
+		postalCode?: { value?: string };
+	} ) => {
 		setFieldValue( 'countryCode', newInfo.countryCode?.value ?? '' );
 		setFieldValue( 'postalCode', newInfo.postalCode?.value ?? '' );
 	};

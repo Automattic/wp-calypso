@@ -12,7 +12,7 @@ export interface CardDataCompleteState {
 export interface CardStoreState {
 	brand: string | null | undefined;
 	fields: CardFieldState;
-	cardDataErrors: Record< string, string >;
+	cardDataErrors: Record< string, string | null >;
 	cardDataComplete: CardDataCompleteState;
 	useForAllSubscriptions: boolean;
 }
@@ -21,7 +21,7 @@ export type CardStoreType = Store< CardStoreState, CardStoreAction >;
 
 export type CardStoreAction =
 	| { type: 'BRAND_SET'; payload: string }
-	| { type: 'CARD_DATA_ERROR_SET'; payload: { type: string; message: string } }
+	| { type: 'CARD_DATA_ERROR_SET'; payload: { type: string; message: string | null } }
 	| { type: 'CARD_DATA_COMPLETE_SET'; payload: { type: string; complete: boolean } }
 	| { type: 'FIELD_VALUE_SET'; payload: { key: string; value: string } }
 	| { type: 'FIELD_ERROR_SET'; payload: { key: string; message: string } }

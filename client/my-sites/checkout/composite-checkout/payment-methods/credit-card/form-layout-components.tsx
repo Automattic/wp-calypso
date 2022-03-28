@@ -1,7 +1,7 @@
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 
-export const GridRow = styled.div`
+export const GridRow = styled.div< { columnWidths?: string; gap?: string } >`
 	display: -ms-grid;
 	display: grid;
 	width: 100%;
@@ -32,7 +32,7 @@ export const LabelText = styled.span`
 	color: ${ ( props ) => props.theme.colors.textColor };
 `;
 
-export const StripeFieldWrapper = styled.span`
+export const StripeFieldWrapper = styled.span< { hasError?: boolean } >`
 	position: relative;
 	display: block;
 
@@ -66,7 +66,7 @@ export const StripeErrorMessage = styled.span`
 	font-weight: ${ ( props ) => props.theme.weights.normal };
 `;
 
-export const CreditCardFieldsWrapper = styled.div`
+export const CreditCardFieldsWrapper = styled.div< { isLoaded?: boolean } >`
 	padding: 16px;
 	position: relative;
 	display: ${ ( props ) => ( props.isLoaded ? 'block' : 'none' ) };

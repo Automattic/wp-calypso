@@ -43,8 +43,6 @@ export function createCreditCardMethod( {
 		label: <CreditCardLabel />,
 		activeContent: (
 			<CreditCardFields
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
 				shouldUseEbanx={ shouldUseEbanx }
 				shouldShowTaxFields={ shouldShowTaxFields }
 				allowUseForAllSubscriptions={ allowUseForAllSubscriptions }
@@ -60,7 +58,7 @@ export function createCreditCardMethod( {
 			/>
 		),
 		inactiveContent: <CreditCardSummary />,
-		getAriaLabel: ( __ ) => __( 'Credit Card' ),
+		getAriaLabel: ( __: ( text: string ) => string ) => __( 'Credit Card' ),
 	};
 }
 

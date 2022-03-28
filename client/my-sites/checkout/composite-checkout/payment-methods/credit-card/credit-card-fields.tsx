@@ -19,10 +19,29 @@ import CreditCardLoading from './credit-card-loading';
 import CreditCardNumberField from './credit-card-number-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 
+const StripeFields = styled.div`
+	position: relative;
+`;
+
+const LoadingIndicator = styled( Spinner )`
+	position: absolute;
+	right: 15px;
+	top: 10px;
+
+	.rtl & {
+		right: auto;
+		left: 15px;
+	}
+`;
+
 export default function CreditCardFields( {
 	shouldUseEbanx,
 	shouldShowTaxFields,
 	allowUseForAllSubscriptions,
+}: {
+	shouldUseEbanx?: boolean;
+	shouldShowTaxFields?: boolean;
+	allowUseForAllSubscriptions?: boolean;
 } ) {
 	const { __ } = useI18n();
 	const theme = useTheme();
@@ -31,9 +50,9 @@ export default function CreditCardFields( {
 	const useForAllSubscriptions = useSelect( ( select ) =>
 		select( 'wpcom-credit-card' ).useForAllSubscriptions()
 	);
-	const getField = ( key ) => fields[ key ] || {};
-	const getFieldValue = ( key ) => getField( key ).value ?? '';
-	const getErrorMessagesForField = ( key ) => {
+	const getField = ( key: string ) => fields[ key ] || {};
+	const getFieldValue = ( key: string ) => getField( key ).value ?? '';
+	const getErrorMessagesForField = ( key: string ) => {
 		const managedValue = getField( key );
 		return managedValue.errors ?? [];
 	};
@@ -62,7 +81,12 @@ export default function CreditCardFields( {
 		? cardholderNameErrorMessages[ 0 ]
 		: null;
 
-	const handleStripeFieldChange = ( input ) => {
+	const handleStripeFieldChange = ( input: {
+		elementType: string;
+		brand: string;
+		complete: boolean;
+		error?: { message: string };
+	} ) => {
 		setCardDataComplete( input.elementType, input.complete );
 		if ( input.elementType === 'cardNumber' ) {
 			changeBrand( input.brand );
@@ -160,7 +184,6 @@ export default function CreditCardFields( {
 
 					{ shouldShowContactFields && (
 						<ContactFields
-							getField={ getField }
 							getFieldValue={ getFieldValue }
 							setFieldValue={ setFieldValue }
 							getErrorMessagesForField={ getErrorMessagesForField }
@@ -182,10 +205,6 @@ export default function CreditCardFields( {
 	);
 }
 
-const StripeFields = styled.div`
-	position: relative;
-`;
-
 function LoadingFields() {
 	return (
 		<Fragment>
@@ -194,14 +213,3 @@ function LoadingFields() {
 		</Fragment>
 	);
 }
-
-const LoadingIndicator = styled( Spinner )`
-	position: absolute;
-	right: 15px;
-	top: 10px;
-
-	.rtl & {
-		right: auto;
-		left: 15px;
-	}
-`;
