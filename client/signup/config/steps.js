@@ -22,7 +22,7 @@ import {
 	setDIFMLiteDesign,
 	excludeStepIfEmailVerified,
 	submitWebsiteContent,
-	excludeStepIfUserHasDetailsFilledIn,
+	excludeStepIfProfileComplete,
 } from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -49,6 +49,6 @@ export default generateSteps( {
 	isNewOrExistingSiteFulfilled,
 	setDIFMLiteDesign,
 	excludeStepIfEmailVerified,
-	excludeStepIfUserHasDetailsFilledIn,
+	excludeStepIfProfileComplete,
 	submitWebsiteContent,
 } );

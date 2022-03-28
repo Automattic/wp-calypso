@@ -1016,7 +1016,7 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 	flows.excludeStep( stepName );
 }
 
-export function excludeStepIfUserHasDetailsFilledIn( stepName, defaultDependencies, nextProps ) {
+export function excludeStepIfProfileComplete( stepName, defaultDependencies, nextProps ) {
 	if ( includes( flows.excludedSteps, stepName ) ) {
 		return;
 	}
