@@ -244,11 +244,7 @@ function NetBankingPayButton( {
 		( accum, [ key, managedValue ] ) => ( { ...accum, [ camelCase( key ) ]: managedValue.value } ),
 		{}
 	);
-	const contactCountryCode = useSelect(
-		( select ) =>
-			( select( 'wpcom-checkout' )?.getContactInfo() as Record< string, StoreStateValue > )
-				.countryCode?.value
-	);
+	const contactCountryCode = 'IN'; // If this payment method is available and the country is not India, we have other problems
 	const reduxDispatch = useReduxDispatch();
 
 	// This must be typed as optional because it's injected by cloning the
