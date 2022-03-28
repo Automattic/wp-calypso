@@ -12,6 +12,12 @@ import { ONBOARD_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
 
+const trackSupportLinkClick = ( storeType: 'power' | 'simple' ) => {
+	recordTracksEvent( 'calypso_signup_store_feature_support_link_click', {
+		store_feature: storeType,
+	} );
+};
+
 /**
  * The store features
  */
@@ -24,7 +30,7 @@ const StoreFeatures: Step = function StartingPointStep( { navigation } ) {
 	const subHeaderText = translate( 'Let’s create a website that suits your needs.' );
 	const siteSlug = useSiteSlugParam();
 	const site = useSite();
-	const intents = useIntents( siteSlug, site?.plan?.product_slug );
+	const intents = useIntents( siteSlug, site?.plan?.product_slug, trackSupportLinkClick );
 	const { setStoreType } = useDispatch( ONBOARD_STORE );
 
 	const submitIntent = ( storeType: string ) => {
