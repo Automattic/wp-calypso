@@ -3,9 +3,9 @@ import { clickNavTab } from '../../element-helper';
 import envVariables from '../../env-variables';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
-export type Plan = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
-export type PlansPageTab = 'My Plan' | 'Plans';
-export type PlanActionButton = 'Manage plan' | 'Upgrade';
+export type Plan = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce' | 'Pro';
+export type PlansPageTab = 'My Plan' | 'Plans' | 'New Plans';
+export type PlanActionButton = 'Manage plan' | 'Upgrade' | 'Try Pro risk-free';
 
 const selectors = {
 	myPlanTitle: ( planName: Plan ) => `.my-plan-card__title:has-text("${ planName }")`,
