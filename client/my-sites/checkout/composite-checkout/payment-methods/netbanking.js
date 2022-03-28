@@ -112,6 +112,7 @@ export function createNetBankingPaymentMethodStore() {
 export function createNetBankingMethod( { store } ) {
 	return {
 		id: 'netbanking',
+		paymentProcessorId: 'netbanking',
 		label: <NetBankingLabel />,
 		activeContent: <NetBankingFields />,
 		submitButton: <NetBankingPayButton store={ store } />,
@@ -215,7 +216,7 @@ function NetBankingPayButton( { disabled, onClick, store } ) {
 			onClick={ () => {
 				if ( isFormValid( store, contactCountryCode, __, reduxDispatch ) ) {
 					debug( 'submitting netbanking payment' );
-					onClick( 'netbanking', {
+					onClick( {
 						...massagedFields,
 						name: customerName?.value,
 						address: massagedFields?.address1,

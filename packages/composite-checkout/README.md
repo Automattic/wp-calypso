@@ -63,7 +63,8 @@ Each component will be styled using [@emotion/styled](https://emotion.sh/docs/st
 
 Each payment method is an object with the following properties:
 
-- `id: string`. A unique id.
+- `id: string`. A unique id for this instance of this payment method.
+- `paymentProcessorId: string`. The id that will be used to map this payment method to a payment processor function. Unlike the `id`, this does not have to be unique.
 - `label?: React.ReactNode`. A component that displays that payment method selection button which can be as simple as the name and an icon.
 - `activeContent?: React.ReactNode`. A component that displays that payment method (this can return null or something like a credit card form).
 - `inactiveContent?: React.ReactNode`. A component that renders a summary of the selected payment method when the step is inactive.
@@ -72,7 +73,7 @@ Each payment method is an object with the following properties:
 
 Within the components inside [CheckoutProvider](#CheckoutProvider), [usePaymentMethod](#usePaymentMethod) will return the currently selected payment method object if one is selected.
 
-When a payment method is ready to submit its data, it can use an appropriate "payment processor" function. These are functions passed to [CheckoutProvider](#CheckoutProvider) with the `paymentProcessors` prop and each one has a unique key. For convenience, the `submitButton` will be provided with an `onClick` function prop that will begin the transaction. The `onClick` function takes two arguments, a string which is the key of the payment processor function to be used, and an object that contains the data needed by the payment processor function.
+When a payment method is ready to submit its data, it can use an appropriate "payment processor" function. These are functions passed to [CheckoutProvider](#CheckoutProvider) with the `paymentProcessors` prop and each one has a unique key. For convenience, the `submitButton` will be provided with an `onClick` function prop that will begin the transaction. The `onClick` function takes one argument, an object that contains the data needed by the payment processor function.
 
 The payment processor function's response will control what happens next. Each payment processor function must return a Promise that resolves to one of four results: [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), [makeSuccessResponse](#makeSuccessResponse), or [makeErrorResponse](#makeErrorResponse).
 
@@ -403,7 +404,7 @@ A React Hook that returns all the payment processor functions in a Record.
 
 ### useProcessPayment
 
-A React Hook that will return the function passed to each [payment method's submitButton component](#payment-methods). Call it with a payment method ID and data for the payment processor and it will handle the transaction.
+A React Hook that will return the `onClick` function passed to each [payment method's submitButton component](#payment-methods). The hook requires a payment processor ID. Call the returned function with data for the payment processor and it will begin the transaction.
 
 ### useSetStepComplete
 

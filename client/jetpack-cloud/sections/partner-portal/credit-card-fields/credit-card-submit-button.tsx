@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useMemo } from 'react';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
+import type { ProcessPayment } from '@automattic/composite-checkout';
 import type { Stripe } from '@stripe/stripe-js';
 import type { I18n } from '@wordpress/i18n';
 import type { State } from 'calypso/state/partner-portal/credit-card-form/reducer';
@@ -20,7 +21,7 @@ export default function CreditCardSubmitButton( {
 	activeButtonText,
 }: {
 	disabled?: boolean;
-	onClick?: ( element: string, submitData: unknown ) => void;
+	onClick?: ProcessPayment;
 	store: State;
 	stripe: Stripe | null;
 	stripeConfiguration: StripeConfiguration | null;
@@ -61,7 +62,7 @@ export default function CreditCardSubmitButton( {
 						);
 					}
 
-					onClick( 'card', {
+					onClick( {
 						stripe,
 						name: cardholderName?.value,
 						stripeConfiguration,

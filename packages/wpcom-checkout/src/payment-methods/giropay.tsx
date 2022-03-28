@@ -69,6 +69,7 @@ export function createGiropayPaymentMethodStore(): GiropayStore {
 export function createGiropayMethod( { store }: { store: GiropayStore } ): PaymentMethod {
 	return {
 		id: 'giropay',
+		paymentProcessorId: 'giropay',
 		label: <GiropayLabel />,
 		activeContent: <GiropayFields />,
 		inactiveContent: <GiropaySummary />,
@@ -159,7 +160,7 @@ function GiropayPayButton( {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting giropay payment' );
-					onClick( 'giropay', {
+					onClick( {
 						name: customerName.value,
 					} );
 				}
