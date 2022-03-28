@@ -1,6 +1,9 @@
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useSelector } from 'react-redux';
+import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import GoogleWorkspacePrice from 'calypso/my-sites/email/email-providers-comparison/price/google-workspace';
 import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-comparison/price/professional-email';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -14,6 +17,9 @@ const EmailProviderPrice = ( {
 	selectedDomainName,
 }: EmailProviderPriceProps ): ReactElement => {
 	const selectedSite = useSelector( getSelectedSite );
+	const cartKey = useCartKey();
+	const shoppingCartManager = useShoppingCart( cartKey );
+	const isDomainAdded = hasDomainInCart( shoppingCartManager.responseCart, selectedDomainName );
 
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const domain = getSelectedDomain( {
@@ -22,10 +28,22 @@ const EmailProviderPrice = ( {
 	} );
 
 	if ( emailProviderSlug === GOOGLE_WORKSPACE_PRODUCT_TYPE ) {
-		return <GoogleWorkspacePrice domain={ domain } intervalLength={ intervalLength } />;
+		return (
+			<GoogleWorkspacePrice
+				domain={ domain }
+				isDomainInCart={ isDomainAdded }
+				intervalLength={ intervalLength }
+			/>
+		);
 	}
 
-	return <ProfessionalEmailPrice domain={ domain } intervalLength={ intervalLength } />;
+	return (
+		<ProfessionalEmailPrice
+			domain={ domain }
+			isDomainInCart={ isDomainAdded }
+			intervalLength={ intervalLength }
+		/>
+	);
 };
 
 export default EmailProviderPrice;

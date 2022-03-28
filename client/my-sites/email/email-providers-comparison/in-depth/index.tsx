@@ -3,6 +3,7 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { stringify } from 'qs';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import Main from 'calypso/components/main';
@@ -16,29 +17,24 @@ import {
 	googleWorkspaceFeatures,
 } from 'calypso/my-sites/email/email-providers-comparison/in-depth/data';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import {
-	emailManagementInDepthComparison,
-	emailManagementPurchaseNewEmailAccount,
-} from 'calypso/my-sites/email/paths';
+import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
 const EmailProvidersInDepthComparison = ( {
+	callbackPath,
 	selectedDomainName,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
-}: EmailProvidersInDepthComparisonProps ): ReactElement => {
+}: EmailProvidersInDepthComparisonProps ): JSX.Element => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const isMobile = useMobileBreakpoint();
 
 	const selectedSite = useSelector( getSelectedSite );
-	const currentRoute = useSelector( getCurrentRoute );
 
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
 		if ( selectedSite === null ) {
@@ -56,7 +52,7 @@ const EmailProvidersInDepthComparison = ( {
 			emailManagementInDepthComparison(
 				selectedSite.slug,
 				selectedDomainName,
-				currentRoute,
+				callbackPath,
 				null,
 				newIntervalLength
 			)
@@ -74,17 +70,12 @@ const EmailProvidersInDepthComparison = ( {
 				provider: emailProviderSlug,
 			} )
 		);
+		const callbackWithQueryParams = `${ callbackPath }?${ stringify( {
+			interval: selectedIntervalLength,
+			provider: emailProviderSlug,
+		} ) }`;
 
-		page(
-			emailManagementPurchaseNewEmailAccount(
-				selectedSite.slug,
-				selectedDomainName,
-				currentRoute,
-				null,
-				emailProviderSlug,
-				selectedIntervalLength
-			)
-		);
+		page( callbackWithQueryParams );
 	};
 
 	const ComparisonComponent = isMobile ? ComparisonList : ComparisonTable;

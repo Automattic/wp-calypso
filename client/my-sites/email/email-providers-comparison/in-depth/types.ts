@@ -37,6 +37,7 @@ export type EmailProviderFeatures = {
 };
 
 export type EmailProvidersInDepthComparisonProps = {
+	callbackPath: string;
 	selectedDomainName: string;
 	selectedIntervalLength?: IntervalLength;
 };

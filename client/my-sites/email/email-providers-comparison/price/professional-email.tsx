@@ -23,22 +23,24 @@ const getTitanProductSlug = ( intervalLength: IntervalLength ): string => {
 type ProfessionalEmailPriceProps = {
 	domain?: SiteDomain;
 	intervalLength: IntervalLength;
+	isDomainInCart?: boolean;
 };
 
 const ProfessionalEmailPrice = ( {
 	domain,
 	intervalLength,
+	isDomainInCart = false,
 }: ProfessionalEmailPriceProps ): JSX.Element | null => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const productSlug = getTitanProductSlug( intervalLength );
 	const product = useSelector( ( state ) => getProductBySlug( state, productSlug ) );
 
-	if ( ! domain ) {
+	if ( ! domain && ! isDomainInCart ) {
 		return null;
 	}
 
-	const isEligibleForFreeTrial = isDomainEligibleForTitanFreeTrial( domain );
+	const isEligibleForFreeTrial = isDomainInCart || isDomainEligibleForTitanFreeTrial( domain );
 
 	const priceWithInterval = (
 		<PriceWithInterval
