@@ -12,6 +12,7 @@ export interface CheckoutStepProps {
 	titleContent: React.ReactNode;
 	isCompleteCallback: IsCompleteCallback;
 	activeStepContent?: React.ReactNode;
+	activeStepFooter?: React.ReactNode;
 	completeStepContent?: React.ReactNode;
 	className?: string;
 	editButtonText?: string;

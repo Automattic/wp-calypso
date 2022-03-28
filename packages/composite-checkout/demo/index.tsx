@@ -1,20 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import {
-	Checkout,
-	CheckoutStepArea,
-	CheckoutStep,
-	CheckoutStepBody,
-	CheckoutSteps,
-	CheckoutSummaryArea,
+	CheckoutFormSubmit,
 	CheckoutProvider,
+	CheckoutStep,
+	CheckoutStepGroup,
 	FormStatus,
-	getDefaultOrderSummary,
+	PaymentMethodStep,
 	getDefaultOrderReviewStep,
-	getDefaultOrderSummaryStep,
-	getDefaultPaymentMethodStep,
-	useIsStepActive,
-	useFormStatus,
 	makeSuccessResponse,
+	useFormStatus,
+	useIsStepActive,
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useState, useEffect, useMemo } from 'react';
@@ -40,17 +35,19 @@ const onPaymentComplete = () => {
 	window.alert( 'Your payment is complete!' );
 };
 
-async function payPalProcessor( data ) {
+async function payPalProcessor( data: unknown ) {
 	window.console.log( 'Processing PayPal transaction with data', data );
 	// This simulates the transaction and provisioning time
 	await asyncTimeout( 2000 );
 	return makeSuccessResponse( { success: true } );
 }
 
-const getTotal = ( items ) => {
+const getTotal = ( items: typeof initialItems ) => {
 	const lineItemTotal = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
 	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
 	return {
+		id: 'total',
+		type: 'total',
 		label: 'Total',
 		amount: {
 			currency,
@@ -62,19 +59,15 @@ const getTotal = ( items ) => {
 
 const ContactFormTitle = () => {
 	const isActive = useIsStepActive();
-	return isActive ? 'Enter your contact details' : 'Contact details';
+	return isActive ? <>Enter your contact details</> : <>Contact details</>;
 };
 
 const Label = styled.label`
 	display: block;
-	color: ${ ( props ) => props.theme.colors.textColor };
-	font-weight: ${ ( props ) => props.theme.weights.bold };
+	color: black;
+	font-weight: 400;
 	font-size: 14px;
 	margin-bottom: 8px;
-
-	:hover {
-		cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
-	}
 `;
 
 const Input = styled.input`
@@ -82,46 +75,70 @@ const Input = styled.input`
 	width: 100%;
 	box-sizing: border-box;
 	font-size: 16px;
-	border: 1px solid
-		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
+	border: 1px solid black;
 	padding: 13px 10px 12px 10px;
-
-	:focus {
-		outline: ${ ( props ) =>
-				props.isError ? props.theme.colors.error : props.theme.colors.outline }
-			solid 2px !important;
-	}
 `;
 
 const Form = styled.div`
 	margin-bottom: 0.5em;
 `;
 
-const contactFormData = {
-	country: '',
+const contactStore = {
+	subscibers: [],
+	data: {
+		country: {
+			value: '',
+			error: '',
+		},
+	},
+	getData() {
+		return contactStore.data;
+	},
+	subscribe( callback: () => void ): () => void {
+		contactStore.subscibers.push( callback );
+		return () => void contactStore.subscibers.filter( ( client ) => client !== callback );
+	},
+	notify() {
+		setTimeout( () => contactStore.subscibers.forEach( ( callback ) => callback() ) );
+	},
 };
 
-function setCountry( value ) {
-	contactFormData.country = value;
+function setCountry( value: string ) {
+	contactStore.data.country.value = value;
+	contactStore.notify();
 }
 
-function getCountry() {
-	return contactFormData.country;
+function setCountryError( error: string ) {
+	contactStore.data.country.error = error;
+	contactStore.notify();
 }
 
-function ContactForm( { summary } ) {
-	const country = getCountry();
+function useCountry() {
+	const [ state, setState ] = useState( { value: '', error: '' } );
+	useEffect( () => {
+		return contactStore.subscribe( () => {
+			const { value, error } = contactStore.getData().country;
+			setState( { value, error } );
+		} );
+	}, [] );
+	return state;
+}
+
+function ContactFormSummary() {
+	const { value } = useCountry();
+
+	return (
+		<div>
+			<div>Country</div>
+			<span>{ value }</span>
+		</div>
+	);
+}
+
+function ContactForm() {
 	const onChangeCountry = ( event ) => setCountry( event.target.value );
 	const { formStatus } = useFormStatus();
-
-	if ( summary ) {
-		return (
-			<div>
-				<div>Country</div>
-				<span>{ country }</span>
-			</div>
-		);
-	}
+	const { value, error } = useCountry();
 
 	return (
 		<Form>
@@ -129,24 +146,22 @@ function ContactForm( { summary } ) {
 			<Input
 				id="country"
 				type="text"
-				value={ country }
+				value={ value }
 				onChange={ onChangeCountry }
 				disabled={ formStatus !== FormStatus.READY }
 			/>
+			{ error && <p>{ error }</p> }
 		</Form>
 	);
 }
 
-const orderSummary = getDefaultOrderSummary();
-const orderSummaryStep = getDefaultOrderSummaryStep();
-const paymentMethodStep = getDefaultPaymentMethodStep();
 const reviewOrderStep = getDefaultOrderReviewStep();
 const contactFormStep = {
 	id: 'contact-form',
 	className: 'checkout__billing-details-step',
 	titleContent: <ContactFormTitle />,
 	activeStepContent: <ContactForm />,
-	completeStepContent: <ContactForm summary />,
+	completeStepContent: <ContactFormSummary />,
 };
 
 export function CheckoutDemo() {
@@ -171,7 +186,7 @@ export function CheckoutDemo() {
 			isLoading={ isLoading }
 			paymentMethods={ [ payPalMethod ] }
 			paymentProcessors={ { paypal: payPalProcessor } }
-			initiallySelectedPaymentMethodId={ payPalMethod }
+			initiallySelectedPaymentMethodId={ payPalMethod.id }
 		>
 			<MyCheckoutBody />
 		</CheckoutProvider>
@@ -179,61 +194,44 @@ export function CheckoutDemo() {
 }
 
 function MyCheckoutBody() {
-	const country = getCountry();
+	const { value } = useCountry();
 
 	return (
-		<Checkout>
-			<CheckoutSummaryArea className={ orderSummary.className }>
-				{ orderSummary.summaryContent }
-			</CheckoutSummaryArea>
-			<CheckoutStepArea>
-				<CheckoutStepBody
-					activeStepContent={ orderSummaryStep.activeStepContent }
-					completeStepContent={ orderSummaryStep.completeStepContent }
-					titleContent={ orderSummaryStep.titleContent }
-					isStepActive={ false }
-					isStepComplete={ true }
-					stepNumber={ 1 }
-					stepId={ 'order-summary' }
-				/>
-				<CheckoutSteps>
-					<CheckoutStep
-						stepId="review-order-step"
-						isCompleteCallback={ () => true }
-						activeStepContent={ reviewOrderStep.activeStepContent }
-						completeStepContent={ reviewOrderStep.completeStepContent }
-						titleContent={ reviewOrderStep.titleContent }
-					/>
-					<CheckoutStep
-						stepId={ contactFormStep.id }
-						isCompleteCallback={ () =>
-							new Promise( ( resolve ) =>
-								setTimeout( () => {
-									if ( country.length === 0 ) {
-										resolve( false );
-										return;
-									}
-									resolve( true );
-								}, 1500 )
-							)
-						}
-						activeStepContent={ contactFormStep.activeStepContent }
-						completeStepContent={ contactFormStep.completeStepContent }
-						titleContent={ contactFormStep.titleContent }
-					/>
-					<CheckoutStep
-						stepId="payment-method-step"
-						activeStepContent={ paymentMethodStep.activeStepContent }
-						completeStepContent={ paymentMethodStep.completeStepContent }
-						titleContent={ paymentMethodStep.titleContent }
-					/>
-				</CheckoutSteps>
-			</CheckoutStepArea>
-		</Checkout>
+		<CheckoutStepGroup>
+			<CheckoutStep
+				stepId="review-order-step"
+				isCompleteCallback={ () => true }
+				activeStepContent={ reviewOrderStep.activeStepContent }
+				completeStepContent={ reviewOrderStep.completeStepContent }
+				titleContent={ reviewOrderStep.titleContent }
+			/>
+			<CheckoutStep
+				stepId={ contactFormStep.id }
+				isCompleteCallback={ () =>
+					new Promise( ( resolve ) =>
+						// Simulate async validation
+						setTimeout( () => {
+							if ( value.length === 0 ) {
+								setCountryError( 'Invalid country' );
+								resolve( false );
+								return;
+							}
+							setCountryError( '' );
+							resolve( true );
+						}, 1500 )
+					)
+				}
+				activeStepContent={ contactFormStep.activeStepContent }
+				completeStepContent={ contactFormStep.completeStepContent }
+				titleContent={ contactFormStep.titleContent }
+			/>
+			<PaymentMethodStep />
+			<CheckoutFormSubmit />
+		</CheckoutStepGroup>
 	);
 }
 
-function formatValueForCurrency( currency, value ) {
+function formatValueForCurrency( currency: string, value: number ): string {
 	if ( currency !== 'USD' ) {
 		throw new Error( `Unsupported currency ${ currency }'` );
 	}
@@ -242,7 +240,7 @@ function formatValueForCurrency( currency, value ) {
 }
 
 // Simulate network request time
-async function asyncTimeout( timeout ) {
+async function asyncTimeout( timeout: number ) {
 	return new Promise( ( resolve ) => setTimeout( resolve, timeout ) );
 }
 
