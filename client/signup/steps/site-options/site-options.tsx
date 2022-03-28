@@ -73,7 +73,7 @@ const SiteOptions: React.FC< Props > = ( {
 					name="siteTitle"
 					id="siteTitle"
 					value={ formValues.siteTitle }
-					isError={ siteTitleError }
+					isError={ Boolean( siteTitleError ) }
 					onChange={ onChange }
 				/>
 				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
@@ -86,7 +86,7 @@ const SiteOptions: React.FC< Props > = ( {
 					name="tagline"
 					id="tagline"
 					value={ formValues.tagline }
-					isError={ taglineError }
+					isError={ Boolean( taglineError ) }
 					onChange={ onChange }
 				/>
 				{ taglineError && <FormInputValidation isError text={ taglineError } /> }
