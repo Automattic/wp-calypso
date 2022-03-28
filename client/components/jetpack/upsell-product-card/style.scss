@@ -20,6 +20,10 @@
 		flex-direction: row;
 		padding: 64px;
 	}
+	&.is-placeholder {
+		background-color: #fdfdfd;
+		border: none;
+	}
 
 	&__body {
 		display: flex;
@@ -44,6 +48,9 @@
 			@include break-medium {
 				width: auto;
 			}
+			.is-placeholder & {
+				@include placeholder( --studio-gray-5 );
+			}
 		}
 	}
 
@@ -59,6 +66,10 @@
 		font-size: $font-headline-small;
 		font-weight: 700;
 		margin-bottom: 24px;
+		.is-placeholder & {
+			display: inline-block;
+			@include placeholder( --studio-gray-5 );
+		}
 	}
 
 	&__description {
@@ -66,6 +77,11 @@
 		line-height: 30px;
 		font-weight: 500;
 		margin-bottom: 24px;
+		span {
+			.is-placeholder & {
+				@include placeholder( --studio-gray-5 );
+			}
+		}
 	}
 
 	&__features {
@@ -75,6 +91,12 @@
 
 	&__features-item {
 		margin-bottom: 12px;
+		span {
+			.is-placeholder & {
+				@include placeholder( --studio-gray-5 );
+			}
+		}
+
 		.gridicon {
 			fill: var( --studio-jetpack-green-50 );
 			margin-right: 8px;
@@ -112,4 +134,23 @@
 		font-size: 0.875rem;
 		line-height: 1.2;
 	}
+
+	&__placeholder-image {
+		width: calc( 100% - 25px );
+		margin: 25px 0 25px 25px;
+		padding-bottom: 100%;
+		@include placeholder( --studio-gray-5 );
+	}
+}
+
+main.main.upsell-switch__loading.is_jetpackcom {
+	max-width: 1040px;
+}
+
+.display-price.is-placeholder .plan-price {
+	background: var( --studio-gray-5 );
+}
+
+.display-price.is-placeholder .display-price__billing-time-frame {
+	background: var( --studio-gray-5 );
 }

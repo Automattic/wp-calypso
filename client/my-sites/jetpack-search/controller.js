@@ -3,17 +3,19 @@ import Debug from 'debug';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
-import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
+import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card';
 import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { isRequestingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import JetpackSearchDetails from './details';
 import JetpackSearchDisconnected from './disconnected';
 import JetpackSearchUpsell from './jetpack-search-upsell';
+import SearchMain from './main';
+import WPComSearchPlaceholder from './placeholder';
 
 const debug = new Debug( 'calypso:my-sites:search:controller' );
 
@@ -29,6 +31,9 @@ export function showUpsellIfNoSearch( context, next ) {
 	const QueryComponent = isJetpack ? QueryJetpackModules : QuerySiteSettings;
 	const getSearchState = isJetpack ? getJetpackSearchState : getWPComSearchState;
 	const isRequestingForSite = isJetpack ? isFetchingJetpackModules : isRequestingSiteSettings;
+	const UpsellPlaceholder = isJetpackCloud()
+		? UpsellProductCardPlaceholder
+		: WPComSearchPlaceholder;
 
 	context.primary = (
 		<>
@@ -40,7 +45,7 @@ export function showUpsellIfNoSearch( context, next ) {
 				display={ context.primary }
 				productSlugTest={ isJetpackSearchSlug }
 			>
-				<ScanPlaceholder />
+				<UpsellPlaceholder />
 			</UpsellSwitch>
 		</>
 	);
@@ -63,10 +68,11 @@ export function showJetpackIsDisconnected( context, next ) {
 export function jetpackSearchMain( context, next ) {
 	debug( 'controller: jetpackSearchMain', context.params );
 
-	context.primary = <JetpackSearchDetails />;
+	context.primary = <SearchMain />;
 	next();
 }
 
+// Selectors used for the Search UpsellSwitch (above)
 function getJetpackSearchState( state, siteId ) {
 	const isSearchModuleActive = isJetpackModuleActive( state, siteId, 'search' );
 	return {
