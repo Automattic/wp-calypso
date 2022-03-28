@@ -340,9 +340,9 @@ validators.validStreetNumber = {
  * with keys that are the field names of those errors.  The value of each
  * property of that object is an array of error strings.
  *
- * @param {object} paymentDetails object containing fieldname/value keypairs
+ * @param {Object.<string, string>} paymentDetails object containing fieldname/value keypairs
  * @param {string} paymentType credit-card|paypal|p24|brazil-tef|netbanking|token|stripe|ebanx
- * @returns {object} validation errors, if any
+ * @returns {{errors:Object.<string, string[]>}} validation errors, if any
  */
 export function validatePaymentDetails( paymentDetails, paymentType ) {
 	const rules = paymentFieldRules( paymentDetails, paymentType ) || {};

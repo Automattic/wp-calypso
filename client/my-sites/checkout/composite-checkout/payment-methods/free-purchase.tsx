@@ -2,8 +2,9 @@ import { Button, useFormStatus, FormStatus, useLineItems } from '@automattic/com
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import WordPressLogo from '../components/wordpress-logo';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
-export function createFreePaymentMethod() {
+export function createFreePaymentMethod(): PaymentMethod {
 	return {
 		id: 'free-purchase',
 		paymentProcessorId: 'free-purchase',
@@ -14,9 +15,24 @@ export function createFreePaymentMethod() {
 	};
 }
 
-function FreePurchaseSubmitButton( { disabled, onClick } ) {
+function FreePurchaseSubmitButton( {
+	disabled,
+	onClick,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+} ) {
 	const [ items ] = useLineItems();
 	const { formStatus } = useFormStatus();
+
+	// This must be typed as optional because it's injected by cloning the
+	// element in CheckoutSubmitButton, but the uncloned element does not have
+	// this prop yet.
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; FreePurchaseSubmitButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
 
 	const handleButtonPress = () => {
 		onClick( {
@@ -37,15 +53,15 @@ function FreePurchaseSubmitButton( { disabled, onClick } ) {
 	);
 }
 
-function ButtonContents( { formStatus } ) {
+function ButtonContents( { formStatus }: { formStatus: FormStatus } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return __( 'Processing…' );
+		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
-		return __( 'Complete Checkout' );
+		return <>{ __( 'Complete Checkout' ) }</>;
 	}
-	return __( 'Please wait…' );
+	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function WordPressFreePurchaseLabel() {
