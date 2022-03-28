@@ -30,9 +30,9 @@ export const useHasNeverPublishedPost = (
 function fetchHasNeverPublishedPost(
 	siteId: number | null,
 	includePages: boolean
-): Promise< unknown > {
+): Promise< boolean > {
 	return wpcom.req.get( {
-		path: `/sites/${ siteId }/site-has-never-published-post?include-pages${ includePages }`,
+		path: `/sites/${ siteId }/site-has-never-published-post?include-pages=${ includePages }`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }

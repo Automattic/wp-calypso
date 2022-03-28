@@ -1,9 +1,13 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .stats-no-content-banner__banner {
 	.banner__content {
 		.banner__action {
 			margin-top: 14px;
 			margin-right: 0;
-			@include breakpoint-deprecated( '>480px' ) {
+
+			@include break-mobile {
 				margin-right: 40px;
 				margin-top: 0;
 
@@ -16,19 +20,18 @@
 	}
 
 	.dismissible-card__close-icon {
-		transform: translateY( -50% );
-		-webkit-transform: translateY( -50% );
-		top: 50%;
-		@include breakpoint-deprecated( '>480px' ) {
-			top: unset;
-			transform: unset;
-			-webkit-transform: unset;
+
+		@include break-mobile {
+			transform: translateY( -50% );
+			top: 50%;
 		}
 	}
+
 	.banner__icons {
 		.banner__icon {
 			display: none;
 		}
+
 		.banner__icon-no-circle {
 			max-width: 48px;
 			max-height: 48px;

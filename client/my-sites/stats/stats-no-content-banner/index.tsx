@@ -32,15 +32,15 @@ export const StatsNoContentBanner = ( {
 			description={ translate(
 				'Sites with content get more visitors. We’ve found that adding some personality and introducing yourself is a great start to click with your audience.'
 			) }
-			disableCircle="true"
+			disableCircle={ true }
 			event="calypso_stats_no-content_banner"
 			dismissPreferenceName={ `stats-launch-no-content-${ siteSlug }` }
 			href={ `/post/${ siteSlug }` }
 			iconPath={ writePost }
 			title={ translate( 'Start writing your first post to get more views' ) }
-			tracksClickName="calypso_stats_no-content_banner_click"
-			tracksDismissName="calypso_stats_no-content_banner_dismiss"
-			tracksImpressionName="calypso_stats_no-content_banner_view"
+			tracksClickName="calypso_stats_no_content_banner_click"
+			tracksDismissName="calypso_stats_no_content_banner_dismiss"
+			tracksImpressionName="calypso_stats_no_content_banner_view"
 		/>
 	);
 };
