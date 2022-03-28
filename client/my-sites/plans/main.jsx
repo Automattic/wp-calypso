@@ -6,7 +6,6 @@ import {
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
 } from '@automattic/calypso-products';
-import { Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -25,10 +24,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { useExperiment } from 'calypso/lib/explat';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import PlansComparison, {
-	globalOverrides,
-	isEligibleForProPlan,
-} from 'calypso/my-sites/plans-comparison';
+import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
@@ -206,7 +202,6 @@ class Plans extends Component {
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
-				{ eligibleForProPlan && <Global styles={ globalOverrides } /> }
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
