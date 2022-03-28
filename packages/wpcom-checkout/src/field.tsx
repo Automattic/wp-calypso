@@ -28,7 +28,7 @@ export default function Field( {
 	className?: string;
 	inputClassName?: string;
 	isError?: boolean;
-	onChange: ( value: string ) => void;
+	onChange?: ( value: string ) => void;
 	label?: string;
 	value: string;
 	icon?: ReactNode;
