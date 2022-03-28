@@ -20,7 +20,7 @@ import JetpackSearchLogo from './logo';
 
 import './style.scss';
 
-export default function JetpackSearchDetails(): ReactElement {
+export default function SearchMain(): ReactElement {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const site = useSelector( getSelectedSite );
 	const siteSlug = useSelector( getSelectedSiteSlug );
