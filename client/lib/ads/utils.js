@@ -5,6 +5,7 @@ import {
 	isSecurityDaily,
 	isSecurityRealTime,
 	isComplete,
+	isPro,
 } from '@automattic/calypso-products';
 import { userCan } from 'calypso/lib/site/utils';
 
@@ -15,7 +16,8 @@ export function hasWordAdsPlan( site ) {
 		isEcommerce( site.plan ) ||
 		isSecurityDaily( site.plan ) ||
 		isSecurityRealTime( site.plan ) ||
-		isComplete( site.plan )
+		isComplete( site.plan ) ||
+		isPro( site.plan )
 	);
 }
 

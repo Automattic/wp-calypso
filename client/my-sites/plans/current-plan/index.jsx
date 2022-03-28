@@ -282,23 +282,20 @@ class CurrentPlan extends Component {
 						</Fragment>
 					) }
 
-					{ ! isPro( selectedSite.plan ) && (
-						<>
-							<div
-								className={ classNames( 'current-plan__header-text current-plan__text', {
-									'is-placeholder': { isLoading },
-								} ) }
-							>
-								<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
-							</div>
-							<AsyncLoad
-								require="calypso/blocks/product-purchase-features-list"
-								placeholder={ null }
-								plan={ currentPlanSlug }
-								isPlaceholder={ isLoading }
-							/>
-						</>
-					) }
+					<div
+						className={ classNames( 'current-plan__header-text current-plan__text', {
+							'is-placeholder': { isLoading },
+						} ) }
+					>
+						<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+					</div>
+					<AsyncLoad
+						require="calypso/blocks/product-purchase-features-list"
+						placeholder={ null }
+						plan={ currentPlanSlug }
+						isPlaceholder={ isLoading }
+					/>
+
 					<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 				</div>
 			</Main>
