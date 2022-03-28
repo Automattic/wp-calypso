@@ -75,7 +75,6 @@ export interface TransactionRequest {
 	successUrl?: string | undefined;
 	cancelUrl?: string | undefined;
 	idealBank?: string | undefined;
-	tefBank?: string | undefined;
 	pan?: string | undefined;
 	gstin?: string | undefined;
 	nik?: string | undefined;
@@ -116,7 +115,6 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
-	tefBank?: string;
 	pan?: string;
 	gstin?: string;
 	nik?: string;
