@@ -16,62 +16,90 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
+import type { StripeConfiguration } from '@automattic/calypso-stripe';
+import type { StoreState, StoreStateValue } from '@automattic/wpcom-checkout';
+import type { Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
+
+type CardFieldState = StoreState< string >;
+interface CardDataCompleteState {
+	cardNumber: boolean;
+	cardCvc: boolean;
+	cardExpiry: boolean;
+}
+interface CardStoreState {
+	brand: string | null | undefined;
+	fields: CardFieldState;
+	cardDataErrors: Record< string, string >;
+	cardDataComplete: CardDataCompleteState;
+	useForAllSubscriptions: boolean;
+}
+type CardStoreType = ReturnType< typeof registerStore >;
+
+type CardStoreAction =
+	| { type: 'BRAND_SET'; payload: string }
+	| { type: 'CARD_DATA_ERROR_SET'; payload: { type: string; message: string } }
+	| { type: 'CARD_DATA_COMPLETE_SET'; payload: { type: string; complete: boolean } }
+	| { type: 'FIELD_VALUE_SET'; payload: { key: string; value: string } }
+	| { type: 'FIELD_ERROR_SET'; payload: { key: string; message: string } }
+	| { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET'; payload: boolean }
+	| { type: 'TOUCH_ALL_FIELDS' };
+
+const actions = {
+	changeBrand( payload: string ) {
+		return { type: 'BRAND_SET', payload };
+	},
+	setCardDataError( type: string, message: string ) {
+		return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
+	},
+	setCardDataComplete( type: string, complete: boolean ) {
+		return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
+	},
+	setFieldValue( key: string, value: string ) {
+		return { type: 'FIELD_VALUE_SET', payload: { key, value } };
+	},
+	setFieldError( key: string, message: string ) {
+		return { type: 'FIELD_ERROR_SET', payload: { key, message } };
+	},
+	setUseForAllSubscriptions( payload: boolean ) {
+		return { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET', payload };
+	},
+	touchAllFields() {
+		return { type: 'TOUCH_ALL_FIELDS' };
+	},
+};
+
+const selectors = {
+	getBrand( state: CardStoreState ) {
+		return state.brand || '';
+	},
+	getCardDataErrors( state: CardStoreState ) {
+		return state.cardDataErrors;
+	},
+	getIncompleteFieldKeys( state: CardStoreState ): string[] {
+		return Object.keys( state.cardDataComplete ).filter(
+			( key ) => ! state.cardDataComplete[ key as keyof CardDataCompleteState ]
+		);
+	},
+	getFields( state: CardStoreState ) {
+		return state.fields;
+	},
+	useForAllSubscriptions( state: CardStoreState ) {
+		return state.useForAllSubscriptions;
+	},
+};
 
 export function createCreditCardPaymentMethodStore( {
 	initialUseForAllSubscriptions,
 	allowUseForAllSubscriptions,
-} ) {
+}: {
+	initialUseForAllSubscriptions?: boolean;
+	allowUseForAllSubscriptions?: boolean;
+} ): CardStoreType {
 	debug( 'creating a new credit card payment method store' );
-	const actions = {
-		changeBrand( payload ) {
-			return { type: 'BRAND_SET', payload };
-		},
-		setCardDataError( type, message ) {
-			return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
-		},
-		setCardDataComplete( type, complete ) {
-			return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
-		},
-		setFieldValue( key, value ) {
-			return { type: 'FIELD_VALUE_SET', payload: { key, value } };
-		},
-		setFieldError( key, message ) {
-			return { type: 'FIELD_ERROR_SET', payload: { key, message } };
-		},
-		setUseForAllSubscriptions( payload ) {
-			return { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET', payload };
-		},
-		touchAllFields() {
-			return { type: 'TOUCH_ALL_FIELDS' };
-		},
-	};
 
-	const selectors = {
-		getBrand( state ) {
-			return state.brand || '';
-		},
-		getCardDataErrors( state ) {
-			return state.cardDataErrors;
-		},
-		getIncompleteFieldKeys( state ) {
-			return Object.keys( state.cardDataComplete ).filter(
-				( key ) => ! state.cardDataComplete[ key ]
-			);
-		},
-		getFields( state ) {
-			return state.fields;
-		},
-		getPaymentPartner( state ) {
-			return state.paymentPartner;
-		},
-		useForAllSubscriptions( state ) {
-			return state.useForAllSubscriptions;
-		},
-	};
-
-	function fieldReducer( state = {}, action ) {
+	function fieldReducer( state: CardFieldState = {}, action?: CardStoreAction ) {
 		switch ( action?.type ) {
 			case 'FIELD_VALUE_SET':
 				return {
@@ -79,7 +107,7 @@ export function createCreditCardPaymentMethodStore( {
 					[ action.payload.key ]: {
 						value: maskField(
 							action.payload.key,
-							state[ action.payload.key ],
+							state[ action.payload.key ].value,
 							action.payload.value
 						),
 						isTouched: true,
@@ -96,13 +124,16 @@ export function createCreditCardPaymentMethodStore( {
 				};
 			}
 			case 'TOUCH_ALL_FIELDS': {
-				return Object.entries( state ).reduce( ( obj, [ key, value ] ) => {
-					obj[ key ] = {
-						value: value.value,
-						isTouched: true,
-					};
-					return obj;
-				}, {} );
+				return Object.keys( state ).reduce(
+					( obj: Record< string, StoreStateValue >, key: string ) => {
+						obj[ key ] = {
+							value: state[ key ].value,
+							isTouched: true,
+						};
+						return obj;
+					},
+					{}
+				);
 			}
 			default:
 				return state;
@@ -115,7 +146,7 @@ export function createCreditCardPaymentMethodStore( {
 			cardCvc: false,
 			cardExpiry: false,
 		},
-		action
+		action?: CardStoreAction
 	) {
 		switch ( action?.type ) {
 			case 'CARD_DATA_COMPLETE_SET':
@@ -125,7 +156,7 @@ export function createCreditCardPaymentMethodStore( {
 		}
 	}
 
-	function cardDataErrorsReducer( state = {}, action ) {
+	function cardDataErrorsReducer( state = {}, action?: CardStoreAction ) {
 		switch ( action?.type ) {
 			case 'CARD_DATA_ERROR_SET':
 				return { ...state, [ action.payload.type ]: action.payload.message };
@@ -134,7 +165,7 @@ export function createCreditCardPaymentMethodStore( {
 		}
 	}
 
-	function brandReducer( state = null, action ) {
+	function brandReducer( state: string | null | undefined = null, action?: CardStoreAction ) {
 		switch ( action?.type ) {
 			case 'BRAND_SET':
 				return action.payload;
@@ -143,7 +174,7 @@ export function createCreditCardPaymentMethodStore( {
 		}
 	}
 
-	function allSubscriptionsReducer( state, action ) {
+	function allSubscriptionsReducer( state: boolean, action?: CardStoreAction ) {
 		switch ( action?.type ) {
 			case 'USE_FOR_ALL_SUBSCRIPTIONS_SET':
 				return action.payload;
@@ -162,7 +193,7 @@ export function createCreditCardPaymentMethodStore( {
 		return false;
 	}
 
-	const store = registerStore( 'credit-card', {
+	return registerStore( 'credit-card', {
 		reducer(
 			state = {
 				fields: fieldReducer(),
@@ -186,8 +217,6 @@ export function createCreditCardPaymentMethodStore( {
 		actions,
 		selectors,
 	} );
-
-	return { ...store, actions, selectors };
 }
 
 export function createCreditCardMethod( {
@@ -198,6 +227,14 @@ export function createCreditCardMethod( {
 	shouldShowTaxFields,
 	activePayButtonText,
 	allowUseForAllSubscriptions,
+}: {
+	store: CardStoreType;
+	stripe: Stripe;
+	stripeConfiguration: StripeConfiguration;
+	shouldUseEbanx?: boolean;
+	shouldShowTaxFields?: boolean;
+	activePayButtonText?: string;
+	allowUseForAllSubscriptions?: boolean;
 } ) {
 	return {
 		id: 'card',
