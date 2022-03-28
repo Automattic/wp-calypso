@@ -4,8 +4,10 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useState } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
+import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
+import QueryJetpackPartnerPortalStoredCards from 'calypso/components/data/query-jetpack-partner-portal-stored-cards';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getAllStoredCards } from 'calypso/state/partner-portal/stored-cards/selectors';
 import CreditCardElementField from './credit-card-element-field';
 import CreditCardLoading from './credit-card-loading';
 import SetAsPrimaryPaymentMethod from './set-as-primary-payment-method';
@@ -65,11 +67,15 @@ export default function CreditCardFields() {
 		},
 	};
 
+	const storedCards = useSelector( getAllStoredCards );
+
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<>
+			<QueryJetpackPartnerPortalStoredCards paging={ { startingAfter: '', endingBefore: '' } } />
+
 			{ ! isStripeFullyLoaded && <CreditCardLoading /> }
 
 			<div
@@ -97,8 +103,8 @@ export default function CreditCardFields() {
 				/>
 
 				<SetAsPrimaryPaymentMethod
-					isChecked={ useAsPrimaryPaymentMethod }
-					isDisabled={ isDisabled }
+					isChecked={ useAsPrimaryPaymentMethod || storedCards.length === 0 }
+					isDisabled={ isDisabled || storedCards.length === 0 }
 					onChange={ setUseAsPrimaryPaymentMethod }
 				/>
 			</div>
