@@ -5,15 +5,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginsBrowserListVariant } from './types';
 
 import './style.scss';
@@ -34,20 +29,10 @@ const PluginsBrowserList = ( {
 	listName,
 	expandedListLink,
 	size,
+	eligibleForProPlan,
 } ) => {
 	const isWide = useBreakpoint( '>1280px' );
 	const { __ } = useI18n();
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
-
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
-
-	useEffect( () => {
-		if ( eligibleForProPlan && setBillingPeriod ) {
-			setBillingPeriod( IntervalLength.ANNUALLY );
-		}
-	}, [ eligibleForProPlan, setBillingPeriod ] );
 
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
