@@ -165,7 +165,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 
 			return feature
 				? translate( 'Unlimited WordPress plugins' )
-				: translate( 'WordPress plugins are not incldued' );
+				: translate( 'WordPress plugins are not included' );
 		},
 	},
 	{
