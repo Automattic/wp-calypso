@@ -26,10 +26,6 @@ import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
 } from '../../payment-methods/credit-card';
-import {
-	createEbanxTefPaymentMethodStore,
-	createEbanxTefMethod,
-} from '../../payment-methods/ebanx-tef';
 import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
 import { createFullCreditsMethod } from '../../payment-methods/full-credits';
 import {
