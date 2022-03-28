@@ -228,9 +228,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		title: translate( 'Visits per month' ),
-		description: translate(
-			'The WordPress Pro plan bundles up to 100,000 visits a month to help you rest assured traffic won’t be a concern.'
-		),
+		description: translate( 'Max visits per month.' ),
 		features: [ FEATURE_10K_VISITS, FEATURE_100K_VISITS ],
 		getCellText: ( feature, isMobile = false ) => {
 			let visitCount = 0;
