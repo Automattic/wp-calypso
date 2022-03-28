@@ -15,6 +15,7 @@ const DomainTransferInfoCard = ( {
 	if (
 		! domain.currentUserIsOwner ||
 		domain.isRedeemable ||
+		domain.pendingRegistration ||
 		typesUnableToTransfer.includes( domain.type ) ||
 		domain.aftermarketAuction
 	) {

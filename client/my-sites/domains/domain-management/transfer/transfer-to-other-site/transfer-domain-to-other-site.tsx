@@ -26,6 +26,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { requestSites } from 'calypso/state/sites/actions';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import TransferUnavailableNotice from '../transfer-unavailable-notice';
 import TransferConfirmationDialog from './confirmation-dialog';
 import type {
 	TransferDomainToOtherSitePassedProps,
@@ -184,7 +185,13 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	};
 
 	renderSection(): JSX.Element {
-		const { currentUserCanManage, selectedDomainName, aftermarketAuction, domain } = this.props;
+		const {
+			currentUserCanManage,
+			selectedDomainName,
+			aftermarketAuction,
+			translate,
+			domain,
+		} = this.props;
 		const { children, ...propsWithoutChildren } = this.props;
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...propsWithoutChildren } />;
@@ -196,6 +203,18 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 
 		if ( domain && domain.isRedeemable ) {
 			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
+		}
+
+		if ( domain?.pendingRegistration ) {
+			if ( domain?.pendingRegistration ) {
+				return (
+					<TransferUnavailableNotice
+						message={ translate(
+							'We are still setting up your domain. You will not be available to transfer it until the registration setup is done.'
+						) }
+					></TransferUnavailableNotice>
+				);
+			}
 		}
 
 		return (

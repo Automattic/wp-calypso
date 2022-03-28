@@ -30,6 +30,7 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import TransferUnavailableNotice from '../transfer-unavailable-notice';
 
 import './style.scss';
 
@@ -253,7 +254,8 @@ class TransferDomainToOtherUser extends Component {
 			aftermarketAuction,
 			isRedeemable,
 		} = getSelectedDomain( this.props );
-		const { domains, selectedDomainName } = this.props;
+		const { domains, selectedDomainName, translate } = this.props;
+		const selectedDomain = domains.find( ( domain ) => selectedDomainName === domain.name );
 
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
@@ -267,7 +269,17 @@ class TransferDomainToOtherUser extends Component {
 			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
 		}
 
-		const { isMapping, translate, users } = this.props;
+		if ( selectedDomain?.pendingRegistration ) {
+			return (
+				<TransferUnavailableNotice
+					message={ translate(
+						'We are still setting up your domain. You will not be available to transfer it until the registration setup is done.'
+					) }
+				></TransferUnavailableNotice>
+			);
+		}
+
+		const { isMapping, users } = this.props;
 		const availableUsers = this.filterAvailableUsers( users );
 		const saveButtonLabel = isMapping
 			? translate( 'Transfer domain connection' )

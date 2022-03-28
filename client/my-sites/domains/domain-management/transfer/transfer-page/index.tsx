@@ -1,4 +1,4 @@
-import { Card, Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -45,6 +45,7 @@ import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-b
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import TransferUnavailableNotice from '../transfer-unavailable-notice';
 import type { TransferPageProps } from './types';
 import type { AppState } from 'calypso/types';
 
@@ -128,6 +129,16 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					headerText={ __( 'To another user' ) }
 					mainText={ mainText }
 				/>
+			);
+		}
+
+		if ( domain?.pendingRegistration ) {
+			return (
+				<TransferUnavailableNotice
+					message={ __(
+						'We are still setting up your domain. You will not be available to transfer it until the registration setup is done.'
+					) }
+				></TransferUnavailableNotice>
 			);
 		}
 
