@@ -57,9 +57,13 @@ export const createSiteDomainObject = ( domain ) => {
 		bundledPlanSubscriptionId: domain.bundled_plan_subscription_id,
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
 		canManageDnsRecords: Boolean( domain.can_manage_dns_records ),
+		canManageNameServers: Boolean( domain.can_manage_name_servers ),
 		canUpdateContactInfo: Boolean( domain.can_update_contact_info ),
 		cannotManageDnsRecordsReason: domain.cannot_manage_dns_records_reason
 			? String( domain.cannot_manage_dns_records_reason )
+			: null,
+		cannotManageNameServersReason: domain.can_manage_name_servers
+			? String( domain.can_manage_name_servers )
 			: null,
 		cannotUpdateContactInfoReason: domain.cannot_update_contact_info_reason
 			? String( domain.cannot_update_contact_info_reason )

@@ -7,7 +7,6 @@ import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { type as domainTypes } from 'calypso/lib/domains/constants';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
@@ -111,7 +110,7 @@ class DnsRecords extends Component {
 				<DocumentHead title={ headerText } />
 				{ this.renderBreadcrumbs() }
 				<FormattedHeader brandFont headerText={ headerText } align="left" />
-				{ selectedDomain.canManageDnsRecords || selectedDomain.type === domainTypes.MAPPED ? (
+				{ selectedDomain?.canManageDnsRecords ? (
 					<>
 						<DnsDetails />
 						<DnsRecordsList
@@ -122,7 +121,7 @@ class DnsRecords extends Component {
 						<EmailSetup selectedDomainName={ selectedDomainName } />
 					</>
 				) : (
-					<InfoNotice redesigned={ false } text={ selectedDomain.cannotManageDnsRecordsReason } />
+					<InfoNotice redesigned={ false } text={ selectedDomain?.cannotManageDnsRecordsReason } />
 				) }
 			</Main>
 		);
