@@ -14,6 +14,13 @@ import {
 	CreditCardField,
 } from './form-layout-components';
 
+const LockIconGraphic = styled.svg`
+	width: 20px;
+	height: 20px;
+	display: block;
+	transform: translateY( 1px );
+`;
+
 export default function CreditCardLoading() {
 	const { __ } = useI18n();
 
@@ -74,7 +81,7 @@ export default function CreditCardLoading() {
 	);
 }
 
-function LockIcon( { className } ) {
+function LockIcon( { className }: { className?: string } ) {
 	return (
 		<LockIconGraphic
 			className={ className }
@@ -96,10 +103,3 @@ function LockIcon( { className } ) {
 		</LockIconGraphic>
 	);
 }
-
-const LockIconGraphic = styled.svg`
-	width: 20px;
-	height: 20px;
-	display: block;
-	transform: translateY( 1px );
-`;

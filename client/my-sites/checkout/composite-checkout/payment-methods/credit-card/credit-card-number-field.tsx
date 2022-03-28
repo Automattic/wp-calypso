@@ -4,6 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
+import type { StripeElementStyle } from '@stripe/stripe-js';
 
 export default function CreditCardNumberField( {
 	setIsStripeFullyLoaded,
@@ -13,6 +14,19 @@ export default function CreditCardNumberField( {
 	getErrorMessagesForField,
 	setFieldValue,
 	getFieldValue,
+}: {
+	setIsStripeFullyLoaded: ( isLoaded: boolean ) => void;
+	handleStripeFieldChange: ( change: {
+		elementType: string;
+		brand: string;
+		complete: boolean;
+		error?: { message: string };
+	} ) => void;
+	stripeElementStyle: StripeElementStyle;
+	shouldUseEbanx?: boolean;
+	getErrorMessagesForField: ( key: string ) => string[];
+	setFieldValue: ( key: string, value: string ) => void;
+	getFieldValue: ( key: string ) => string | undefined;
 } ) {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
@@ -34,8 +48,12 @@ export default function CreditCardNumberField( {
 				placeholder={ '•••• •••• •••• ••••' }
 				disabled={ isDisabled }
 				name="number"
-				onChange={ ( event ) => setFieldValue( 'number', event.target.value ) }
-				onBlur={ ( event ) => setFieldValue( 'number', event.target.value ) }
+				onChange={ ( event: { target: { value: string } } ) =>
+					setFieldValue( 'number', event.target.value )
+				}
+				onBlur={ ( event: { target: { value: string } } ) =>
+					setFieldValue( 'number', event.target.value )
+				}
 				value={ getFieldValue( 'number' ) }
 				autoComplete="off"
 			/>
@@ -46,7 +64,7 @@ export default function CreditCardNumberField( {
 	return (
 		<Label>
 			<LabelText>{ __( 'Card number' ) }</LabelText>
-			<StripeFieldWrapper className="number" hasError={ cardNumberError }>
+			<StripeFieldWrapper className="number" hasError={ !! cardNumberError }>
 				<CardNumberElement
 					options={ {
 						style: stripeElementStyle,
@@ -58,7 +76,6 @@ export default function CreditCardNumberField( {
 					onChange={ ( input ) => {
 						handleStripeFieldChange( input );
 					} }
-					disabled={ isDisabled }
 				/>
 				<PaymentLogo brand={ brand } />
 
