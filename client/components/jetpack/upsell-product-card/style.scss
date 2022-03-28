@@ -53,6 +53,25 @@
 		font-size: 0.875rem;
 		line-height: 1.2;
 	}
+
+	&__placeholder-image {
+		width: calc( 100% - 25px );
+		margin: 25px 0 25px 25px;
+		padding-bottom: 100%;
+		@include placeholder( --studio-gray-5 );
+	}
+}
+
+main.main.upsell-switch__loading.is_jetpackcom {
+	max-width: 1040px;
+}
+
+.display-price.is-placeholder .plan-price {
+	background: var( --studio-gray-5 );
+}
+
+.display-price.is-placeholder .display-price__billing-time-frame {
+	background: var( --studio-gray-5 );
 }
 
 main.main.upsell-switch__loading.is_jetpackcom {
