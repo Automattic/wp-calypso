@@ -31,7 +31,7 @@
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
-		"external-media/openverse": false,
+		"external-media/openverse": true,
 		"fullstory": true,
 		"gdpr-banner": false,
 		"google-my-business": true,
