@@ -17,6 +17,7 @@ describe( 'assembler', () => {
 			displayEmail: 'test displayEmail',
 			displayPhone: 'test displayPhone',
 			displayAddress: 'test displayAddress',
+			selectedPageTitles: [ 'test1', 'test2' ],
 		};
 		expect( buildDIFMCartExtrasObject( dependencies ) ).to.be.eql( {
 			twitter_url: 'test twitterUrl',
@@ -32,6 +33,7 @@ describe( 'assembler', () => {
 			site_category: 'test category',
 			site_description: 'test tagline',
 			site_title: 'test title',
+			selected_page_titles: [ 'test1', 'test2' ],
 		} );
 	} );
 } );
