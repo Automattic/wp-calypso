@@ -19,9 +19,9 @@ export default function CreditCardPayButton( {
 } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
-	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const fields = useSelect( ( select ) => select( 'wpcom-credit-card' ).getFields() );
 	const useForAllSubscriptions = useSelect( ( select ) =>
-		select( 'credit-card' ).useForAllSubscriptions()
+		select( 'wpcom-credit-card' ).useForAllSubscriptions()
 	);
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();

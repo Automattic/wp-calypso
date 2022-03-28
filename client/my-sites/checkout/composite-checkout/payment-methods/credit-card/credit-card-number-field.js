@@ -17,9 +17,9 @@ export default function CreditCardNumberField( {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const brand = useSelect( ( select ) => select( 'credit-card' ).getBrand() );
+	const brand = useSelect( ( select ) => select( 'wpcom-credit-card' ).getBrand() );
 	const { cardNumber: cardNumberError } = useSelect( ( select ) =>
-		select( 'credit-card' ).getCardDataErrors()
+		select( 'wpcom-credit-card' ).getCardDataErrors()
 	);
 	const errorMessages = getErrorMessagesForField( 'number' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;

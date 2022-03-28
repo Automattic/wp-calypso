@@ -17,10 +17,16 @@ import {
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
+import type { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
 import type { StoreState, StoreStateValue } from '@automattic/wpcom-checkout';
 import type { Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
+
+declare module '@wordpress/data' {
+	function dispatch( key: 'wpcom-credit-card' ): DispatchFromMap< typeof actions >;
+	function select( key: 'wpcom-credit-card' ): SelectFromMap< typeof selectors >;
+}
 
 type CardFieldState = StoreState< string >;
 interface CardDataCompleteState {
@@ -71,7 +77,7 @@ const actions = {
 };
 
 const selectors = {
-	getBrand( state: CardStoreState ) {
+	getBrand( state: CardStoreState ): string {
 		return state.brand || '';
 	},
 	getCardDataErrors( state: CardStoreState ) {
@@ -193,7 +199,7 @@ export function createCreditCardPaymentMethodStore( {
 		return false;
 	}
 
-	return registerStore( 'credit-card', {
+	return registerStore( 'wpcom-credit-card', {
 		reducer(
 			state = {
 				fields: fieldReducer(),
@@ -264,9 +270,9 @@ export function createCreditCardMethod( {
 }
 
 function CreditCardSummary() {
-	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const fields = useSelect( ( select ) => select( 'wpcom-credit-card' ).getFields() );
 	const cardholderName = fields.cardholderName;
-	const brand = useSelect( ( select ) => select( 'credit-card' ).getBrand() );
+	const brand = useSelect( ( select ) => select( 'wpcom-credit-card' ).getBrand() );
 
 	return (
 		<SummaryDetails>

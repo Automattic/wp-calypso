@@ -28,7 +28,7 @@ export default function CreditCardCvvField( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const { cardCvc: cardCvcError } = useSelect( ( select ) =>
-		select( 'credit-card' ).getCardDataErrors()
+		select( 'wpcom-credit-card' ).getCardDataErrors()
 	);
 	const errorMessages = getErrorMessagesForField( 'cvv' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;

@@ -17,7 +17,7 @@ export default function CreditCardExpiryField( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const { cardExpiry: cardExpiryError } = useSelect( ( select ) =>
-		select( 'credit-card' ).getCardDataErrors()
+		select( 'wpcom-credit-card' ).getCardDataErrors()
 	);
 	const errorMessages = getErrorMessagesForField( 'expiration-date' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;

@@ -27,9 +27,9 @@ export default function CreditCardFields( {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
-	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const fields = useSelect( ( select ) => select( 'wpcom-credit-card' ).getFields() );
 	const useForAllSubscriptions = useSelect( ( select ) =>
-		select( 'credit-card' ).useForAllSubscriptions()
+		select( 'wpcom-credit-card' ).useForAllSubscriptions()
 	);
 	const getField = ( key ) => fields[ key ] || {};
 	const getFieldValue = ( key ) => getField( key ).value ?? '';
@@ -43,7 +43,7 @@ export default function CreditCardFields( {
 		setCardDataError,
 		setCardDataComplete,
 		setUseForAllSubscriptions,
-	} = useDispatch( 'credit-card' );
+	} = useDispatch( 'wpcom-credit-card' );
 	const reduxDispatch = useReduxDispatch();
 
 	// We need the countryCode for the country specific payment fields which have

@@ -14,7 +14,7 @@ export default function ContactFields( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList();
-	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
+	const fields = useSelect( ( select ) => select( 'wpcom-credit-card' ).getFields() );
 	const onChangeContactInfo = ( newInfo ) => {
 		setFieldValue( 'countryCode', newInfo.countryCode?.value ?? '' );
 		setFieldValue( 'postalCode', newInfo.postalCode?.value ?? '' );
