@@ -244,7 +244,7 @@ const Settings = ( {
 				title={ translate( 'Name servers', { textOnly: true } ) }
 				subtitle={ getNameServerSectionSubtitle() }
 			>
-				{ domain.canManageDnsRecords ? (
+				{ domain.canManageNameServers ? (
 					<NameServersCard
 						domain={ domain }
 						isLoadingNameservers={ isLoadingNameservers }
@@ -255,7 +255,7 @@ const Settings = ( {
 						updateNameservers={ updateNameservers }
 					/>
 				) : (
-					<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
+					<InfoNotice redesigned text={ domain.cannotManageNameServersReason } />
 				) }
 			</Accordion>
 		);
@@ -271,7 +271,7 @@ const Settings = ( {
 				title={ translate( 'DNS records', { textOnly: true } ) }
 				subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
 			>
-				{ domain.canManageDnsRecords || domainTypes.MAPPED ? (
+				{ domain.canManageDnsRecords ? (
 					<DnsRecords
 						dns={ dns }
 						selectedDomainName={ selectedDomainName }

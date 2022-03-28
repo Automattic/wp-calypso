@@ -62,8 +62,8 @@ export const createSiteDomainObject = ( domain ) => {
 		cannotManageDnsRecordsReason: domain.cannot_manage_dns_records_reason
 			? String( domain.cannot_manage_dns_records_reason )
 			: null,
-		cannotManageNameServersReason: domain.can_manage_name_servers
-			? String( domain.can_manage_name_servers )
+		cannotManageNameServersReason: domain.cannot_manage_name_servers_reason
+			? String( domain.cannot_manage_name_servers_reason )
 			: null,
 		cannotUpdateContactInfoReason: domain.cannot_update_contact_info_reason
 			? String( domain.cannot_update_contact_info_reason )
