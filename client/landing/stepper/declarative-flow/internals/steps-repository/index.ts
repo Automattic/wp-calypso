@@ -4,6 +4,7 @@ export { default as options } from './site-options';
 export { default as bloggerStartingPoint } from './blogger-starting-point';
 export { default as storeFeatures } from './store-features';
 export { default as designSetup } from './design-setup';
+export { default as storeAddress } from './store-address';
 
 export type StepPath =
 	| 'courses'
@@ -11,4 +12,5 @@ export type StepPath =
 	| 'options'
 	| 'bloggerStartingPoint'
 	| 'storeFeatures'
-	| 'designSetup';
+	| 'designSetup'
+	| 'storeAddress';
