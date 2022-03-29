@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -8,6 +9,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import ComparisonList from 'calypso/my-sites/email/email-providers-comparison/in-depth/comparison-list';
@@ -19,13 +22,13 @@ import {
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 
 import './style.scss';
 
 const EmailProvidersInDepthComparison = ( {
-	callbackPath,
 	selectedDomainName,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
 }: EmailProvidersInDepthComparisonProps ): JSX.Element => {
@@ -35,6 +38,11 @@ const EmailProvidersInDepthComparison = ( {
 	const isMobile = useMobileBreakpoint();
 
 	const selectedSite = useSelector( getSelectedSite );
+	const cartKey = useCartKey();
+	const shoppingCartManager = useShoppingCart( cartKey );
+	const isDomainInCart = hasDomainInCart( shoppingCartManager.responseCart, selectedDomainName );
+
+	const previousRoute = useSelector( getPreviousRoute );
 
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
 		if ( selectedSite === null ) {
@@ -52,7 +60,7 @@ const EmailProvidersInDepthComparison = ( {
 			emailManagementInDepthComparison(
 				selectedSite.slug,
 				selectedDomainName,
-				callbackPath,
+				previousRoute,
 				null,
 				newIntervalLength
 			)
@@ -70,7 +78,7 @@ const EmailProvidersInDepthComparison = ( {
 				provider: emailProviderSlug,
 			} )
 		);
-		const callbackWithQueryParams = `${ callbackPath }?${ stringify( {
+		const callbackWithQueryParams = `${ previousRoute }?${ stringify( {
 			interval: selectedIntervalLength,
 			provider: emailProviderSlug,
 		} ) }`;
@@ -107,6 +115,7 @@ const EmailProvidersInDepthComparison = ( {
 				intervalLength={ selectedIntervalLength }
 				onSelectEmailProvider={ selectEmailProvider }
 				selectedDomainName={ selectedDomainName }
+				isDomainInCart={ isDomainInCart }
 			/>
 
 			<EmailForwardingLink selectedDomainName={ selectedDomainName } />

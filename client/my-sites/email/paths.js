@@ -228,7 +228,6 @@ export function emailManagementInDepthComparison(
 	intervalLength = null
 ) {
 	return emailManagementEdit( siteName, domainName, 'compare', relativeTo, {
-		callbackPath: relativeTo,
 		interval: intervalLength,
 		source,
 	} );

@@ -112,7 +112,6 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<EmailProvidersInDepthComparison
-					callbackPath={ pageContext.query.callbackPath }
 					selectedDomainName={ pageContext.params.domain }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 				/>

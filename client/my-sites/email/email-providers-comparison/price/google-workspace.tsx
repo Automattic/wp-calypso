@@ -31,14 +31,14 @@ const getGoogleWorkspaceProductSlug = ( intervalLength: IntervalLength ): string
 
 type GoogleWorkspacePriceProps = {
 	domain?: SiteDomain;
-	isDomainInCart?: boolean;
+	isDomainInCart: boolean;
 	intervalLength: IntervalLength;
 };
 
 const GoogleWorkspacePrice = ( {
 	domain,
 	intervalLength,
-	isDomainInCart = false,
+	isDomainInCart,
 }: GoogleWorkspacePriceProps ): JSX.Element | null => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 

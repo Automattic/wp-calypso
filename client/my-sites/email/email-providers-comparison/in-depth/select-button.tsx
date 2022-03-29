@@ -15,6 +15,7 @@ import type { ReactElement } from 'react';
 const usePlanAvailable = (
 	emailProviderSlug: string,
 	intervalLength: IntervalLength,
+	isDomainInCart: boolean,
 	selectedDomainName: string
 ) => {
 	const selectedSite = useSelector( getSelectedSite );
@@ -34,7 +35,7 @@ const usePlanAvailable = (
 		return false;
 	}
 
-	if ( ! domain || ! hasGSuiteSupportedDomain( [ domain ] ) ) {
+	if ( isDomainInCart || ( domain && hasGSuiteSupportedDomain( [ domain ] ) ) ) {
 		return false;
 	}
 
@@ -45,12 +46,18 @@ const SelectButton = ( {
 	className,
 	emailProviderSlug,
 	intervalLength,
+	isDomainInCart,
 	onSelectEmailProvider,
 	selectedDomainName,
 }: SelectButtonProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const isPlanAvailable = usePlanAvailable( emailProviderSlug, intervalLength, selectedDomainName );
+	const isPlanAvailable = usePlanAvailable(
+		emailProviderSlug,
+		intervalLength,
+		isDomainInCart,
+		selectedDomainName
+	);
 
 	return (
 		<Button

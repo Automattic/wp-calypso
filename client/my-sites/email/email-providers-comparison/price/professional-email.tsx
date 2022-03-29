@@ -23,13 +23,13 @@ const getTitanProductSlug = ( intervalLength: IntervalLength ): string => {
 type ProfessionalEmailPriceProps = {
 	domain?: SiteDomain;
 	intervalLength: IntervalLength;
-	isDomainInCart?: boolean;
+	isDomainInCart: boolean;
 };
 
 const ProfessionalEmailPrice = ( {
 	domain,
 	intervalLength,
-	isDomainInCart = false,
+	isDomainInCart,
 }: ProfessionalEmailPriceProps ): JSX.Element | null => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 

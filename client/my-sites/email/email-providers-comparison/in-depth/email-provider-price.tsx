@@ -19,7 +19,7 @@ const EmailProviderPrice = ( {
 	const selectedSite = useSelector( getSelectedSite );
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
-	const isDomainAdded = hasDomainInCart( shoppingCartManager.responseCart, selectedDomainName );
+	const isDomainInCart = hasDomainInCart( shoppingCartManager.responseCart, selectedDomainName );
 
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const domain = getSelectedDomain( {
@@ -31,7 +31,7 @@ const EmailProviderPrice = ( {
 		return (
 			<GoogleWorkspacePrice
 				domain={ domain }
-				isDomainInCart={ isDomainAdded }
+				isDomainInCart={ isDomainInCart }
 				intervalLength={ intervalLength }
 			/>
 		);
@@ -40,7 +40,7 @@ const EmailProviderPrice = ( {
 	return (
 		<ProfessionalEmailPrice
 			domain={ domain }
-			isDomainInCart={ isDomainAdded }
+			isDomainInCart={ isDomainInCart }
 			intervalLength={ intervalLength }
 		/>
 	);
