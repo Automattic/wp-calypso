@@ -79,7 +79,7 @@ export function createCreditCardPaymentMethodStore( {
 					[ action.payload.key ]: {
 						value: maskField(
 							action.payload.key,
-							state[ action.payload.key ].value,
+							state[ action.payload.key ]?.value,
 							action.payload.value
 						),
 						isTouched: true,
