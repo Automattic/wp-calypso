@@ -1,5 +1,22 @@
+import {
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
+	PLAN_BLOGGER,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BLOGGER_2_YEARS,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_WPCOM_PRO,
+	isPro,
+	isBusiness,
+	isEnterprise,
+	isEcommerce,
+} from '@automattic/calypso-products';
 import { filter, map, pick, sortBy } from 'lodash';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { sanitizeSectionContent } from './sanitize-section-content';
 
 /**
@@ -311,4 +328,43 @@ export function getPluginAuthorProfileKeyword( plugin ) {
 	}
 
 	return plugin.author_profile.replace( WPORG_PROFILE_URL, '' ).replaceAll( '/', '' );
+}
+
+/**
+ * @param site
+ * @returns if a given site can install Marketplace products
+ */
+export function isMarketplaceInstallationEligibleSite( site ) {
+	return (
+		isPro( site?.plan ) ||
+		isBusiness( site?.plan ) ||
+		isEnterprise( site?.plan ) ||
+		isEcommerce( site?.plan )
+	);
+}
+
+/**
+ * @param currentPlan
+ * @param pluginBillingPeriod
+ * @returns the correct business plan slug depending on current plan and pluginBillingPeriod
+ */
+export function businessPlanToAdd( currentPlan, pluginBillingPeriod, eligibleForProPlan ) {
+	if ( eligibleForProPlan ) {
+		return PLAN_WPCOM_PRO;
+	}
+	switch ( currentPlan.product_slug ) {
+		case PLAN_PERSONAL_2_YEARS:
+		case PLAN_PREMIUM_2_YEARS:
+		case PLAN_BLOGGER_2_YEARS:
+			return PLAN_BUSINESS_2_YEARS;
+		case PLAN_PERSONAL:
+		case PLAN_PREMIUM:
+		case PLAN_BLOGGER:
+			return PLAN_BUSINESS;
+		default:
+			// Return annual plan if selected, monthly otherwise.
+			return pluginBillingPeriod === IntervalLength.ANNUALLY
+				? PLAN_BUSINESS
+				: PLAN_BUSINESS_MONTHLY;
+	}
 }

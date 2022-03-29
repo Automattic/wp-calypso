@@ -11,6 +11,10 @@ import { connect } from 'react-redux';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
+import {
+	isMarketplaceInstallationEligibleSite,
+	businessPlanToAdd,
+} from 'calypso/lib/plugins/utils';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
@@ -152,15 +156,24 @@ export class PluginInstallButton extends Component {
 		const { translate, selectedSite, plugin, billingPeriod } = this.props;
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
 		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
+		const pluginInstallEligibleSite = isMarketplaceInstallationEligibleSite( selectedSite );
+		const buttonLink = pluginInstallEligibleSite
+			? `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2`
+			: `/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
+					selectedSite?.plan,
+					billingPeriod
+			  ) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
+					selectedSite.slug
+			  }#step2`;
 
 		return (
 			<span className="plugin-install-button__install embed">
-				<Button
-					href={ `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2` }
-				>
+				<Button href={ buttonLink }>
 					<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
 					<Gridicon icon="plugins" size={ 18 } />
-					{ translate( 'Purchase and activate' ) }
+					{ pluginInstallEligibleSite
+						? translate( 'Purchase and activate' )
+						: translate( 'Upgrade and activate' ) }
 				</Button>
 			</span>
 		);

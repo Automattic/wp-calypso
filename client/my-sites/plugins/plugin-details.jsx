@@ -1,4 +1,3 @@
-import { isBusiness, isEcommerce, isEnterprise, isPro } from '@automattic/calypso-products';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -15,6 +14,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { isMarketplaceInstallationEligibleSite } from 'calypso/lib/plugins/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -374,12 +374,22 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPe
 		getSiteObjectsWithoutPlugin( state, siteIds, props.pluginSlug )
 	);
 
+	const availableOnSites = useSelector( ( state ) =>
+		sitesWithoutPlugin.filter(
+			( site ) =>
+				isMarketplaceInstallationEligibleSite( site ) && isSiteAutomatedTransfer( state, site.ID )
+		)
+	);
+	const upgradeNeededSites = useSelector( ( state ) =>
+		sitesWithoutPlugin.filter(
+			( site ) =>
+				! isMarketplaceInstallationEligibleSite( site ) && isSiteAutomatedTransfer( state, site.ID )
+		)
+	);
+
 	if ( isFetching || ( props.siteUrl && ! isPluginInstalledOnsite ) ) {
 		return null;
 	}
-
-	const availableOnSites = sitesWithoutPlugin.filter( hasEligiblePlan );
-	// const needsUpgradeSites = sitesWithoutPlugin.filter( ( site ) => ! hasEligiblePlan( site ) );
 
 	return (
 		<div className="plugin-details__sites-list-background">
@@ -407,17 +417,16 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPe
 					plugin={ plugin }
 					billingPeriod={ billingPeriod }
 				/>
+
+				<PluginSiteList
+					className="plugin-details__not-installed-on"
+					title={ translate( 'Upgrade needed' ) }
+					sites={ upgradeNeededSites }
+					plugin={ plugin }
+					billingPeriod={ billingPeriod }
+				/>
 			</div>
 		</div>
-	);
-}
-
-function hasEligiblePlan( selectedSite ) {
-	return (
-		isPro( selectedSite.plan ) ||
-		isBusiness( selectedSite.plan ) ||
-		isEnterprise( selectedSite.plan ) ||
-		isEcommerce( selectedSite.plan )
 	);
 }
 
