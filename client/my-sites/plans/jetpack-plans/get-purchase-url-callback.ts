@@ -24,8 +24,7 @@ import type {
 function buildCheckoutURL(
 	siteSlug: string,
 	products: string | string[],
-	urlQueryArgs: QueryArgs = {},
-	locale?: string
+	urlQueryArgs: QueryArgs = {}
 ): string {
 	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
@@ -44,7 +43,6 @@ function buildCheckoutURL(
 			urlQueryArgs.checkoutBackUrl = window.location.href;
 		}
 	}
-	const lang = locale ? `/${ locale }` : '';
 	// host maybe needed in either siteless or userless checkout below
 	const host =
 		'development' === urlQueryArgs.calypso_env
@@ -56,7 +54,7 @@ function buildCheckoutURL(
 		! siteSlug &&
 		! [ PRODUCT_JETPACK_SEARCH, PRODUCT_JETPACK_SEARCH_MONTHLY ].includes( productsString )
 	) {
-		return addQueryArgs( urlQueryArgs, host + `/checkout/jetpack/${ productsString }${ lang }` );
+		return addQueryArgs( urlQueryArgs, host + `/checkout/jetpack/${ productsString }` );
 	}
 
 	// Enter userless checkout if unlinked, purchasetoken or purchaseNonce, and site are all set
@@ -66,7 +64,7 @@ function buildCheckoutURL(
 	if ( isJetpackCloud() && canDoUnlinkedCheckout ) {
 		return addQueryArgs(
 			urlQueryArgs,
-			host + `/checkout/jetpack/${ siteSlug }/${ productsString }${ lang }`
+			host + `/checkout/jetpack/${ siteSlug }/${ productsString }`
 		);
 	}
 
@@ -74,7 +72,7 @@ function buildCheckoutURL(
 	// step of the flow. Since purchases of multiple products are allowed, we need
 	// to pass all products separated by comma in the URL.
 	const path = siteSlug
-		? `/checkout/${ siteSlug }/${ productsString }${ lang }`
+		? `/checkout/${ siteSlug }/${ productsString }`
 		: `/jetpack/connect/${ productsString }`;
 
 	return isJetpackCloud()
@@ -97,18 +95,21 @@ export const getPurchaseURLCallback = (
 	isUpgradeableToYearly?,
 	purchase?: Purchase
 ) => {
+	if ( locale ) {
+		urlQueryArgs.lang = locale;
+	}
 	if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
 		return product.externalUrl || '';
 	}
 	if ( purchase && isUpgradeableToYearly ) {
 		const { productSlug: slug } = product;
 		const yearlySlug = getYearlySlugFromMonthly( slug );
-		return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs, locale ) : undefined;
+		return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
 	}
 	if ( purchase ) {
 		const relativePath = managePurchase( siteSlug, purchase.id );
 		return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
 	}
 
-	return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs, locale );
+	return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs );
 };

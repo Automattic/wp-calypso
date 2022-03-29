@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import page from 'page';
 import {
 	makeLayout,
@@ -30,7 +29,7 @@ export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
 	page(
-		`/checkout/jetpack/:productSlug/${ getLanguageRouteParam() }`,
+		`/checkout/jetpack/:productSlug`,
 		setLocaleMiddleware(),
 		noSite,
 		checkoutSiteless,
@@ -79,7 +78,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/jetpack/:siteSlug/:productSlug/${ getLanguageRouteParam() }`,
+		`/checkout/jetpack/:siteSlug/:productSlug`,
 		setLocaleMiddleware(),
 		checkout,
 		makeLayout,
@@ -218,7 +217,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/:domainOrProduct/${ getLanguageRouteParam() }`,
+		`/checkout/:domainOrProduct`,
 		setLocaleMiddleware(),
 		redirectLoggedOut,
 		siteSelection,
@@ -229,7 +228,7 @@ export default function () {
 	);
 
 	page(
-		`/checkout/:product/:domainOrProduct/${ getLanguageRouteParam() }`,
+		`/checkout/:product/:domainOrProduct`,
 		setLocaleMiddleware(),
 		redirectLoggedOut,
 		siteSelection,

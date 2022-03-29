@@ -21,7 +21,7 @@ describe( 'getPurchaseURLCallback', () => {
 	it( 'Adds lang query param if specified', () => {
 		const urlCallback = getPurchaseURLCallback( '', args, 'fr' );
 		expect( urlCallback( product ) ).toEqual(
-			'https://wordpress.com/checkout/jetpack/jetpack_backup_t1_yearly/fr'
+			'https://wordpress.com/checkout/jetpack/jetpack_backup_t1_yearly?lang=fr'
 		);
 	} );
 } );

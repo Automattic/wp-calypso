@@ -28,4 +28,13 @@ describe( 'setLocaleMiddleware', () => {
 		expect( context.store.dispatch ).toBeCalledWith( setLocale( 'fr' ) );
 		expect( context.lang ).toEqual( 'fr' );
 	} );
+
+	it( 'Dispatch locale event if language param is query param', () => {
+		context.query.lang = 'fr';
+		middleware( context, next );
+		expect( next ).toBeCalledTimes( 1 );
+		expect( context.store.dispatch ).toBeCalledTimes( 1 );
+		expect( context.store.dispatch ).toBeCalledWith( setLocale( 'fr' ) );
+		expect( context.lang ).toEqual( 'fr' );
+	} );
 } );
