@@ -326,7 +326,7 @@ const PluginsBrowser = ( {
 				searchTerm={ search }
 				siteSlug={ siteSlug }
 				title={ translate( 'Plugins you need to get your projects done' ) }
-				searchTerms={ [ 'shipping', 'seo', 'portfolio', 'chat', 'mailchimp' ] }
+				searchTerms={ [ 'shipping', 'seo', 'portfolio', 'chat', 'newsletter' ] }
 			/>
 			<PluginBrowserContent
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
