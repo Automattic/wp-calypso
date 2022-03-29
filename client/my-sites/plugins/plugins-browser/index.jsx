@@ -749,7 +749,7 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	);
 }
 
-const PLUGIN_SLUGS_BLOCKLIST = [ 'zamir' ];
+const PLUGIN_SLUGS_BLOCKLIST = [];
 
 function filterOutPluginsFromBlockList( plugin ) {
 	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
