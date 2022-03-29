@@ -173,9 +173,9 @@ export class WebPreviewModal extends Component {
 
 const LocalizedWebPreviewModal = localize( WebPreviewModal );
 
-const WebPreviewInner = ( { isContentOnly, ...restProps } ) => {
+const WebPreviewInner = ( { isContentOnly, shouldConnectContent = true, ...restProps } ) => {
 	const WebPreviewContent = ( props ) =>
-		restProps.shouldConnectContent ? (
+		shouldConnectContent ? (
 			<AsyncLoad
 				{ ...props }
 				placeholder={ null }
