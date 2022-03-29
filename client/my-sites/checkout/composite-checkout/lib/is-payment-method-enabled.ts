@@ -22,9 +22,6 @@ export default function isPaymentMethodEnabled(
 	if ( slug === 'netbanking' && countryCode !== 'IN' ) {
 		return false;
 	}
-	if ( slug === 'brazil-tef' && countryCode !== 'BR' ) {
-		return false;
-	}
 
 	// Redirect payments might not be possible in some cases - for example in the desktop app
 	if ( isRedirectPaymentMethod( slug ) && ! config.isEnabled( 'upgrades/redirect-payments' ) ) {

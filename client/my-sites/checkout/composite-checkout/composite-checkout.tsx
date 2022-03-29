@@ -468,8 +468,6 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'sofort', transactionData, dataForProcessor ),
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
-			'ebanx-tef': ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'brazil-tef', transactionData, dataForProcessor ),
 			'full-credits': () => fullCreditsProcessor( dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
