@@ -1,3 +1,4 @@
+import { ExternalLink } from '@wordpress/components';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { PureComponent, ReactNode } from 'react';
 import DiffViewer from 'calypso/components/diff-viewer';
@@ -10,6 +11,7 @@ export interface Props {
 	children?: ReactNode;
 	status: ThreatStatus;
 	problem: string | ReactNode;
+	source?: string;
 	fix?: string | ReactNode;
 	context?: Record< string, unknown >;
 	diff?: string;
@@ -87,7 +89,7 @@ class ThreatDescription extends PureComponent< Props > {
 	}
 
 	render() {
-		const { children, problem, fix, diff, rows, context, filename } = this.props;
+		const { children, problem, source, fix, diff, rows, context, filename } = this.props;
 
 		return (
 			<div className="threat-description">
@@ -95,6 +97,14 @@ class ThreatDescription extends PureComponent< Props > {
 					<strong>{ translate( 'What did Jetpack find?' ) }</strong>
 				</p>
 				{ this.renderTextOrNode( <p className="threat-description__section-text">{ problem }</p> ) }
+				{ source &&
+					this.renderTextOrNode(
+						<p className="threat-description__section-text">
+							<ExternalLink href={ source } rel="noopener noreferrer" target="_blank">
+								{ translate( 'Learn more about this vulnerability' ) }
+							</ExternalLink>
+						</p>
+					) }
 				{ ( filename || context || diff || rows ) && (
 					<p className="threat-description__section-title">
 						<strong>{ translate( 'The technical details' ) }</strong>
