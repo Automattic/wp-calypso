@@ -135,9 +135,10 @@
 	bottom: 10px;
 	left: 50%;
 	transform: translateX( -50% );
-	border-radius: 8px;
-	padding-left: 2em;
-	padding-right: 2em;
+	border-radius: 4px;
+	padding: 0.5em;
+	max-width: 100%;
+	width: max-content;
 	> .gridicon {
 		margin-left: 0.5em;
 	}
