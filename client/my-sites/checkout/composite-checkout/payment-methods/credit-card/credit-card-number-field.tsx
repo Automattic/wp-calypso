@@ -4,6 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
+import type { StripeFieldChangeInput } from './types';
 import type { StripeElementStyle } from '@stripe/stripe-js';
 
 export default function CreditCardNumberField( {
@@ -16,12 +17,7 @@ export default function CreditCardNumberField( {
 	getFieldValue,
 }: {
 	setIsStripeFullyLoaded: ( isLoaded: boolean ) => void;
-	handleStripeFieldChange: ( change: {
-		elementType: string;
-		brand: string;
-		complete: boolean;
-		error?: { message: string };
-	} ) => void;
+	handleStripeFieldChange: ( input: StripeFieldChangeInput ) => void;
 	stripeElementStyle: StripeElementStyle;
 	shouldUseEbanx?: boolean;
 	getErrorMessagesForField: ( key: string ) => string[];

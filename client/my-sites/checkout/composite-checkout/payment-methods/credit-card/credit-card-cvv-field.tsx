@@ -15,6 +15,8 @@ import {
 	StripeFieldWrapper,
 	StripeErrorMessage,
 } from './form-layout-components';
+import type { StripeFieldChangeInput } from './types';
+import type { StripeElementStyle } from '@stripe/stripe-js';
 
 export default function CreditCardCvvField( {
 	handleStripeFieldChange,
@@ -23,6 +25,13 @@ export default function CreditCardCvvField( {
 	getErrorMessagesForField,
 	setFieldValue,
 	getFieldValue,
+}: {
+	handleStripeFieldChange: ( change: StripeFieldChangeInput ) => void;
+	stripeElementStyle: StripeElementStyle;
+	shouldUseEbanx?: boolean;
+	getErrorMessagesForField: ( key: string ) => string[];
+	setFieldValue: ( key: string, value: string ) => void;
+	getFieldValue: ( key: string ) => string | undefined;
 } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
@@ -43,8 +52,12 @@ export default function CreditCardCvvField( {
 				isError={ !! errorMessage }
 				errorMessage={ errorMessage }
 				name="cvv"
-				onChange={ ( event ) => setFieldValue( 'cvv', event.target.value ) }
-				onBlur={ ( event ) => setFieldValue( 'cvv', event.target.value ) }
+				onChange={ ( event: { target: { value: string } } ) =>
+					setFieldValue( 'cvv', event.target.value )
+				}
+				onBlur={ ( event: { target: { value: string } } ) =>
+					setFieldValue( 'cvv', event.target.value )
+				}
 				value={ getFieldValue( 'cvv' ) }
 				autoComplete="off"
 			/>
@@ -57,7 +70,7 @@ export default function CreditCardCvvField( {
 			<LabelText>{ translate( 'Security code' ) }</LabelText>
 			<GridRow gap="4%" columnWidths="67% 29%">
 				<LeftColumn>
-					<StripeFieldWrapper className="cvv" hasError={ cardCvcError }>
+					<StripeFieldWrapper className="cvv" hasError={ !! cardCvcError }>
 						<CardCvcElement
 							options={ {
 								style: stripeElementStyle,
@@ -66,7 +79,6 @@ export default function CreditCardCvvField( {
 							onChange={ ( input ) => {
 								handleStripeFieldChange( input );
 							} }
-							disabled={ isDisabled }
 						/>
 					</StripeFieldWrapper>
 				</LeftColumn>

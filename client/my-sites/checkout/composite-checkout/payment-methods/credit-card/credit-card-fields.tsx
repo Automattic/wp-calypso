@@ -18,6 +18,7 @@ import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardLoading from './credit-card-loading';
 import CreditCardNumberField from './credit-card-number-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
+import type { StripeFieldChangeInput } from './types';
 
 const StripeFields = styled.div`
 	position: relative;
@@ -81,12 +82,7 @@ export default function CreditCardFields( {
 		? cardholderNameErrorMessages[ 0 ]
 		: null;
 
-	const handleStripeFieldChange = ( input: {
-		elementType: string;
-		brand: string;
-		complete: boolean;
-		error?: { message: string };
-	} ) => {
+	const handleStripeFieldChange = ( input: StripeFieldChangeInput ) => {
 		setCardDataComplete( input.elementType, input.complete );
 		if ( input.elementType === 'cardNumber' ) {
 			changeBrand( input.brand );

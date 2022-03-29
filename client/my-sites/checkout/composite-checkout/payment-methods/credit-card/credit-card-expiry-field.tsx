@@ -4,6 +4,8 @@ import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
+import type { StripeFieldChangeInput } from './types';
+import type { StripeElementStyle } from '@stripe/stripe-js';
 
 export default function CreditCardExpiryField( {
 	handleStripeFieldChange,
@@ -12,6 +14,13 @@ export default function CreditCardExpiryField( {
 	getErrorMessagesForField,
 	setFieldValue,
 	getFieldValue,
+}: {
+	handleStripeFieldChange: ( change: StripeFieldChangeInput ) => void;
+	stripeElementStyle: StripeElementStyle;
+	shouldUseEbanx?: boolean;
+	getErrorMessagesForField: ( key: string ) => string[];
+	setFieldValue: ( key: string, value: string ) => void;
+	getFieldValue: ( key: string ) => string | undefined;
 } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
@@ -34,8 +43,12 @@ export default function CreditCardExpiryField( {
 				isError={ !! errorMessage }
 				errorMessage={ errorMessage }
 				name="expiration-date"
-				onChange={ ( event ) => setFieldValue( 'expiration-date', event.target.value ) }
-				onBlur={ ( event ) => setFieldValue( 'expiration-date', event.target.value ) }
+				onChange={ ( event: { target: { value: string } } ) =>
+					setFieldValue( 'expiration-date', event.target.value )
+				}
+				onBlur={ ( event: { target: { value: string } } ) =>
+					setFieldValue( 'expiration-date', event.target.value )
+				}
 				value={ getFieldValue( 'expiration-date' ) }
 				autoComplete="off"
 			/>
@@ -46,7 +59,7 @@ export default function CreditCardExpiryField( {
 	return (
 		<Label>
 			<LabelText>{ translate( 'Expiry date' ) }</LabelText>
-			<StripeFieldWrapper className="expiration-date" hasError={ cardExpiryError }>
+			<StripeFieldWrapper className="expiration-date" hasError={ !! cardExpiryError }>
 				<CardExpiryElement
 					options={ {
 						style: stripeElementStyle,
@@ -55,7 +68,6 @@ export default function CreditCardExpiryField( {
 					onChange={ ( input ) => {
 						handleStripeFieldChange( input );
 					} }
-					disabled={ isDisabled }
 				/>
 			</StripeFieldWrapper>
 			{ cardExpiryError && <StripeErrorMessage>{ cardExpiryError }</StripeErrorMessage> }

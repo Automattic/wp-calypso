@@ -27,3 +27,21 @@ export type CardStoreAction =
 	| { type: 'FIELD_ERROR_SET'; payload: { key: string; message: string } }
 	| { type: 'USE_FOR_ALL_SUBSCRIPTIONS_SET'; payload: boolean }
 	| { type: 'TOUCH_ALL_FIELDS' };
+
+export type StripeFieldChangeInput =
+	| {
+			elementType: 'cardNumber';
+			brand: string;
+			complete: boolean;
+			error?: { message: string };
+	  }
+	| {
+			elementType: 'cardCvc';
+			complete: boolean;
+			error?: { message: string };
+	  }
+	| {
+			elementType: 'cardExpiry';
+			complete: boolean;
+			error?: { message: string };
+	  };
