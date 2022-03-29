@@ -1,6 +1,7 @@
 import { isWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import debugModule from 'debug';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -14,7 +15,7 @@ import Toolbar from './toolbar';
 const debug = debugModule( 'calypso:web-preview' );
 const noop = () => {};
 
-export default class WebPreviewContent extends Component {
+class WebPreviewContent extends Component {
 	previewId = uuid();
 
 	state = {
@@ -319,6 +320,7 @@ export default class WebPreviewContent extends Component {
 		);
 	}
 }
+export default localize( WebPreviewContent );
 
 WebPreviewContent.propTypes = {
 	// Additional elements to display below the toolbar
