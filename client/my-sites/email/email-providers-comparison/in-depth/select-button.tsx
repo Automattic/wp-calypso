@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -29,11 +30,15 @@ const usePlanAvailable = (
 		return true;
 	}
 
-	if ( ! canPurchaseGSuite || ! domain ) {
+	if ( ! canPurchaseGSuite ) {
 		return false;
 	}
 
-	return hasGSuiteSupportedDomain( [ domain ] );
+	if ( ! domain || ! hasGSuiteSupportedDomain( [ domain ] ) ) {
+		return false;
+	}
+
+	return isEnabled( 'google-workspace-monthly' ) || intervalLength === IntervalLength.ANNUALLY;
 };
 
 const SelectButton = ( {
