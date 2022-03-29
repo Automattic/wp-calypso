@@ -17,8 +17,9 @@ import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
 } from 'calypso/my-sites/checkout/composite-checkout/payment-methods/credit-card';
+import { actions } from 'calypso/my-sites/checkout/composite-checkout/payment-methods/credit-card/store';
 import { createReduxStore } from 'calypso/state';
-import { fetchStripeConfiguration } from './util';
+import { fetchStripeConfiguration, stripeConfiguration } from './util';
 
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 	const store = createReduxStore();
@@ -44,11 +45,14 @@ function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 }
 
 const customerName = 'Human Person';
+const cardNumber = '4242424242424242';
+const cardExpiry = '05/99';
+const cardCvv = '123';
 const activePayButtonText = 'Pay 0';
+const paymentMethodStore = createCreditCardPaymentMethodStore( {} );
 function getPaymentMethod( additionalArgs = {} ) {
-	const store = createCreditCardPaymentMethodStore( {} );
 	return createCreditCardMethod( {
-		store,
+		store: paymentMethodStore,
 		...additionalArgs,
 	} );
 }
@@ -70,7 +74,7 @@ describe( 'Credit card payment method', () => {
 		} );
 	} );
 
-	it.todo( 'submits the data to the processor when the submit button is pressed', async () => {
+	it( 'submits the data to the processor when the submit button is pressed', async () => {
 		const paymentMethod = getPaymentMethod();
 		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		render(
@@ -81,15 +85,36 @@ describe( 'Credit card payment method', () => {
 		);
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
 
-		fireEvent.change( screen.getAllByLabelText( /Cardholder name/i )[ 0 ], {
+		fireEvent.change( screen.getAllByLabelText( /Cardholder name/i )[ 1 ], {
 			target: { value: customerName },
 		} );
-		// TODO: fill in remaining fields
+		fireEvent.change( screen.getByLabelText( /Card number/i ), {
+			target: { value: cardNumber },
+		} );
+		fireEvent.change( screen.getByLabelText( /Expiry date/i ), {
+			target: { value: cardExpiry },
+		} );
+		fireEvent.change( screen.getAllByLabelText( /Security code/i )[ 0 ], {
+			target: { value: cardCvv },
+		} );
+
+		// Stripe fields will not actually operate in this test so we have to pretend they are complete.
+		paymentMethodStore.dispatch( actions.setCardDataComplete( 'cardNumber', true ) );
+		paymentMethodStore.dispatch( actions.setCardDataComplete( 'cardExpiry', true ) );
+		paymentMethodStore.dispatch( actions.setCardDataComplete( 'cardCvc', true ) );
 
 		fireEvent.click( await screen.findByText( activePayButtonText ) );
 		await waitFor( () => {
 			expect( processorFunction ).toHaveBeenCalledWith( {
 				name: customerName,
+				eventSource: 'checkout',
+				paymentPartner: 'stripe',
+				countryCode: '',
+				postalCode: '',
+				stripe: null,
+				cardNumberElement: undefined,
+				stripeConfiguration,
+				useForAllSubscriptions: false,
 			} );
 		} );
 	} );
