@@ -29,15 +29,11 @@ const usePlanAvailable = (
 		return true;
 	}
 
-	if ( ! canPurchaseGSuite ) {
+	if ( ! canPurchaseGSuite || ! domain ) {
 		return false;
 	}
 
-	if ( ! domain || ! hasGSuiteSupportedDomain( [ domain ] ) ) {
-		return false;
-	}
-
-	return intervalLength === IntervalLength.ANNUALLY;
+	return hasGSuiteSupportedDomain( [ domain ] );
 };
 
 const SelectButton = ( {
