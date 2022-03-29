@@ -28,6 +28,7 @@ export { isDomainRedemption } from './is-domain-redemption';
 export { isDomainRegistration } from './is-domain-registration';
 export { isDomainTransfer } from './is-domain-transfer';
 export { isDotComPlan } from './is-dot-com-plan';
+export { isEmailMonthly } from './is-email-monthly';
 export { isEcommerce } from './is-ecommerce';
 export { isEnterprise } from './is-enterprise';
 export { isFreeJetpackPlan } from './is-free-jetpack-plan';

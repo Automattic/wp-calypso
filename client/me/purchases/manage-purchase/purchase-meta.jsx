@@ -4,10 +4,9 @@ import {
 	isConciergeSession,
 	isDomainRegistration,
 	isDomainTransfer,
-	isGoogleWorkspaceMonthly,
+	isEmailMonthly,
 	isJetpackPlan,
 	isJetpackProduct,
-	isTitanMailMonthly,
 	JETPACK_LEGACY_PLANS,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
@@ -252,7 +251,7 @@ function PurchaseMetaPrice( { purchase } ) {
 		}
 	}
 
-	if ( isGoogleWorkspaceMonthly( purchase ) || isTitanMailMonthly( purchase ) ) {
+	if ( isEmailMonthly( purchase ) ) {
 		period = translate( 'month' );
 	}
 
