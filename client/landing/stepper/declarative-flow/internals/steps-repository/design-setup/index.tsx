@@ -18,7 +18,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import WebPreview from 'calypso/components/web-preview';
+import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useFSEStatus } from '../../../../hooks/use-fse-status';
@@ -229,7 +229,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		stepContent = (
 			<WebPreview
 				showPreview
-				isContentOnly
 				showClose={ false }
 				showEdit={ false }
 				externalUrl={ siteSlug }
