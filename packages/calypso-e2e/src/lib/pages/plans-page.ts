@@ -8,7 +8,8 @@ export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
 
 const selectors = {
-	myPlanTitle: ( planName: Plan ) => `.my-plan-card__title:has-text("${ planName }")`,
+	// Generic
+	placeholder: `.is-placeholder`,
 
 	// Navigation
 	mobileNavTabsToggle: `button.section-nav__mobile-header`,
@@ -20,6 +21,12 @@ const selectors = {
 		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
+
+	// Plans view
+	plansView: '.plans-features-main',
+
+	// My Plans view
+	myPlanTitle: ( planName: Plan ) => `.my-plan-card__title:has-text("${ planName }")`,
 };
 
 /**
@@ -51,8 +58,8 @@ export class PlansPage {
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlanInMyPlanTab( expectedPlan: Plan ): Promise< void > {
-		await this.waitUntilLoaded();
-		await this.page.waitForSelector( selectors.myPlanTitle( expectedPlan ) );
+		const expectedPlanLocator = this.page.locator( selectors.myPlanTitle( expectedPlan ) );
+		await expectedPlanLocator.waitFor();
 	}
 
 	/**
@@ -81,8 +88,18 @@ export class PlansPage {
 	 * @param {PlansPageTab} targetTab Name of the navigation tab to click on
 	 */
 	async clickTab( targetTab: PlansPageTab ): Promise< void > {
+		if ( targetTab === 'My Plan' ) {
+			// Current view is Plans, going to My Plans.
+			// Wait for the plans overview to render fully.
+			const locator = this.page.locator( selectors.plansView );
+			await locator.waitFor();
+		}
 		if ( targetTab === 'Plans' ) {
-			await this.page.waitForResponse( /.*plans\?/ );
+			// Current view is My Plans, going to Plans.
+			// Wait for the details of current plan to
+			// render fully.
+			const placeholderLocator = this.page.locator( `.my-plan-card${ selectors.placeholder }` );
+			await placeholderLocator.waitFor( { state: 'hidden' } );
 		}
 		await clickNavTab( this.page, targetTab );
 	}
