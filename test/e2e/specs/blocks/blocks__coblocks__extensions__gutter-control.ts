@@ -13,12 +13,12 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
-const features = envToFeatureKey( envVariables );
-const accountName = getTestAccountByFeature( features );
-
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features );
+
 	let page: Page;
 	let testAccount: TestAccount;
 	let editorPage: EditorPage;
