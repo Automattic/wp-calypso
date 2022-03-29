@@ -19,6 +19,7 @@ export class NewPostFlow {
 		this.isLoggedIn = false;
 	}
 
+	// @todo there should be a way to pass a target: SiteType option as it wraps the `EditorPage` below
 	/**
 	 * Starts a new post from the navbar/masterbar button.
 	 *

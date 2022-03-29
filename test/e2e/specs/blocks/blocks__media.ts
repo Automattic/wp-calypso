@@ -12,9 +12,15 @@ import {
 	FileBlock,
 	TestFile,
 	TestAccount,
+	getTestAccountByFeature,
+	envToFeatureKey,
+	envVariables,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH, TEST_AUDIO_PATH } from '../constants';
+
+//const features = envToFeatureKey( envVariables );
+//const accountName = getTestAccountByFeature( features, [{gutenberg: '*', }] );
 
 declare const browser: Browser;
 

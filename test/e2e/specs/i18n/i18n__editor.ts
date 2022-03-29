@@ -8,6 +8,8 @@ import {
 	EditorPage,
 	TestAccount,
 	envVariables,
+	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Frame, Browser } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
@@ -210,6 +212,9 @@ const translations: Translations = {
 declare const browser: Browser;
 
 describe( 'I18N: Editor', function () {
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( { ...features, variant: 'i18n' } );
+
 	// Filter out the locales that do not have valid translation content defined above.
 	const locales = Object.keys( translations ).filter( ( locale ) =>
 		( envVariables.TEST_LOCALES as ReadonlyArray< string > ).includes( locale )
@@ -226,7 +231,7 @@ describe( 'I18N: Editor', function () {
 			}
 		} );
 
-		const testAccount = new TestAccount( 'i18nUser' );
+		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 
 		editorPage = new EditorPage( page );
