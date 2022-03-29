@@ -34,7 +34,6 @@ export default {
 			<CalypsoShoppingCartProvider>
 				<GSuiteAddUsers
 					source={ pageContext.query.source }
-					productType={ pageContext.params.productType }
 					selectedDomainName={ pageContext.params.domain }
 				/>
 			</CalypsoShoppingCartProvider>

@@ -27,11 +27,7 @@ import {
 	getGSuiteSupportedDomains,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
-import {
-	GOOGLE_PROVIDER_NAME,
-	GOOGLE_WORKSPACE_PRODUCT_TYPE,
-	GSUITE_PRODUCT_TYPE,
-} from 'calypso/lib/gsuite/constants';
+import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import {
 	areAllUsersValid,
 	getItemsForCart,
@@ -314,7 +310,6 @@ GSuiteAddUsers.propTypes = {
 	googleMailProduct: PropTypes.object,
 	gsuiteUsers: PropTypes.array,
 	isRequestingDomains: PropTypes.bool.isRequired,
-	productType: PropTypes.oneOf( [ GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE ] ),
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
