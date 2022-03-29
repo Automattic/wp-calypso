@@ -98,7 +98,6 @@ class P2Site extends Component {
 			form: this.formStateController.getInitialState(),
 			submitting: false,
 			lastSuggestionSuffixIndex: 0,
-			lastInvalidSite: '',
 			isFetchingDefaultSuggestion: false,
 			showCustomSiteAddressInput: false,
 		};
@@ -222,8 +221,6 @@ class P2Site extends Component {
 				},
 				( error, response ) => {
 					debug( error, response );
-
-					this.setState( { lastInvalidSite: fields.site } );
 
 					if ( error && error.message ) {
 						if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
