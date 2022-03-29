@@ -20,6 +20,7 @@ import {
 import { actions } from 'calypso/my-sites/checkout/composite-checkout/payment-methods/credit-card/store';
 import { createReduxStore } from 'calypso/state';
 import { fetchStripeConfiguration, stripeConfiguration } from './util';
+import type { CardStoreType } from 'calypso/my-sites/checkout/composite-checkout/payment-methods/credit-card/types';
 
 function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 	const store = createReduxStore();
@@ -49,17 +50,17 @@ const cardNumber = '4242424242424242';
 const cardExpiry = '05/99';
 const cardCvv = '123';
 const activePayButtonText = 'Pay 0';
-const paymentMethodStore = createCreditCardPaymentMethodStore( {} );
-function getPaymentMethod( additionalArgs = {} ) {
+function getPaymentMethod( store: CardStoreType, additionalArgs = {} ) {
 	return createCreditCardMethod( {
-		store: paymentMethodStore,
+		store,
 		...additionalArgs,
 	} );
 }
 
 describe( 'Credit card payment method', () => {
 	it( 'renders a credit card option', async () => {
-		const paymentMethod = getPaymentMethod();
+		const store = createCreditCardPaymentMethodStore( {} );
+		const paymentMethod = getPaymentMethod( store );
 		render( <TestWrapper paymentMethods={ [ paymentMethod ] }></TestWrapper> );
 		await waitFor( () => {
 			expect( screen.queryByText( 'Credit or debit card' ) ).toBeInTheDocument();
@@ -67,7 +68,8 @@ describe( 'Credit card payment method', () => {
 	} );
 
 	it( 'renders submit button when credit card is selected', async () => {
-		const paymentMethod = getPaymentMethod();
+		const store = createCreditCardPaymentMethodStore( {} );
+		const paymentMethod = getPaymentMethod( store );
 		render( <TestWrapper paymentMethods={ [ paymentMethod ] }></TestWrapper> );
 		await waitFor( () => {
 			expect( screen.queryByText( activePayButtonText ) ).toBeInTheDocument();
@@ -75,7 +77,8 @@ describe( 'Credit card payment method', () => {
 	} );
 
 	it( 'submits the data to the processor when the submit button is pressed', async () => {
-		const paymentMethod = getPaymentMethod();
+		const store = createCreditCardPaymentMethodStore( {} );
+		const paymentMethod = getPaymentMethod( store );
 		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		render(
 			<TestWrapper
@@ -99,9 +102,9 @@ describe( 'Credit card payment method', () => {
 		} );
 
 		// Stripe fields will not actually operate in this test so we have to pretend they are complete.
-		paymentMethodStore.dispatch( actions.setCardDataComplete( 'cardNumber', true ) );
-		paymentMethodStore.dispatch( actions.setCardDataComplete( 'cardExpiry', true ) );
-		paymentMethodStore.dispatch( actions.setCardDataComplete( 'cardCvc', true ) );
+		store.dispatch( actions.setCardDataComplete( 'cardNumber', true ) );
+		store.dispatch( actions.setCardDataComplete( 'cardExpiry', true ) );
+		store.dispatch( actions.setCardDataComplete( 'cardCvc', true ) );
 
 		fireEvent.click( await screen.findByText( activePayButtonText ) );
 		await waitFor( () => {
@@ -120,7 +123,8 @@ describe( 'Credit card payment method', () => {
 	} );
 
 	it( 'does not submit the data to the processor when the submit button is pressed if fields are missing', async () => {
-		const paymentMethod = getPaymentMethod();
+		const store = createCreditCardPaymentMethodStore( {} );
+		const paymentMethod = getPaymentMethod( store );
 		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		render(
 			<TestWrapper
