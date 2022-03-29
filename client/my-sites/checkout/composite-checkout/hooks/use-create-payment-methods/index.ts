@@ -93,7 +93,7 @@ export function useCreateCreditCard( {
 	);
 	const stripeMethod = useMemo(
 		() =>
-			shouldLoadStripeMethod
+			shouldLoadStripeMethod && stripe && stripeConfiguration
 				? createCreditCardMethod( {
 						store: stripePaymentMethodStore,
 						stripe,
