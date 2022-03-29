@@ -1,3 +1,4 @@
+import { isBusiness, isEcommerce, isEnterprise, isPro } from '@automattic/calypso-products';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -38,7 +39,7 @@ import {
 	getPluginOnSite,
 	getPluginOnSites,
 	getSiteObjectsWithPlugin,
-	getSitesWithoutPlugin,
+	getSiteObjectsWithoutPlugin,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
@@ -370,16 +371,15 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPe
 		getSiteObjectsWithPlugin( state, siteIds, props.pluginSlug )
 	);
 	const sitesWithoutPlugin = useSelector( ( state ) =>
-		getSitesWithoutPlugin( state, siteIds, props.pluginSlug )
+		getSiteObjectsWithoutPlugin( state, siteIds, props.pluginSlug )
 	);
 
 	if ( isFetching || ( props.siteUrl && ! isPluginInstalledOnsite ) ) {
 		return null;
 	}
 
-	const notInstalledSites = sitesWithoutPlugin.map( ( siteId ) =>
-		sitesWithPlugins.find( ( site ) => site.ID === siteId )
-	);
+	const availableOnSites = sitesWithoutPlugin.filter( hasEligiblePlan );
+	// const needsUpgradeSites = sitesWithoutPlugin.filter( ( site ) => ! hasEligiblePlan( site ) );
 
 	return (
 		<div className="plugin-details__sites-list-background">
@@ -403,12 +403,21 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPe
 						translate,
 						selectedSite,
 					} ) }
-					sites={ notInstalledSites }
+					sites={ availableOnSites }
 					plugin={ plugin }
 					billingPeriod={ billingPeriod }
 				/>
 			</div>
 		</div>
+	);
+}
+
+function hasEligiblePlan( selectedSite ) {
+	return (
+		isPro( selectedSite.plan ) ||
+		isBusiness( selectedSite.plan ) ||
+		isEnterprise( selectedSite.plan ) ||
+		isEcommerce( selectedSite.plan )
 	);
 }
 
