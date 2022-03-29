@@ -418,7 +418,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	);
 
 	return (
-		<ComparisonTable firstColWidth={ 32 } planCount={ plans.length }>
+		<ComparisonTable firstColWidth={ 32 } planCount={ plans.length } className="plans-comparison">
 			<THead isInSignup={ isInSignup }>
 				<tr>
 					<td className={ `is-first` }>

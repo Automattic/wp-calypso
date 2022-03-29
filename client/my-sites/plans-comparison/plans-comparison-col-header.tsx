@@ -81,9 +81,11 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 	const isDiscounted = typeof originalPrice === 'number';
 
 	return (
-		<th scope="col">
-			<PlanTitle>{ plan.getTitle() }</PlanTitle>
-			<PlanDescription>{ plan.getDescription() }</PlanDescription>
+		<th scope="col" className="plans-comparison__plan">
+			<PlanTitle className="plans-comparison__plan-title">{ plan.getTitle() }</PlanTitle>
+			<PlanDescription className="plans-comparison__plan-description">
+				{ plan.getDescription() }
+			</PlanDescription>
 			<PriceContainer>
 				{ isDiscounted && (
 					<>
