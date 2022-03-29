@@ -319,6 +319,13 @@ export default function () {
 	);
 
 	page(
+		'/domains/domain/:domain',
+		domainsController.redirectDomainToSite,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/domains/:site',
 		siteSelection,
 		navigation,

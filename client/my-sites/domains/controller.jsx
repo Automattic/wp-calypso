@@ -32,6 +32,7 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import RedirectComponent from './domain-redirect-to-site';
 import DomainSearch from './domain-search';
 import SiteRedirect from './domain-search/site-redirect';
 import EmailProvidersUpsell from './email-providers-upsell';
@@ -328,6 +329,28 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	}
 };
 
+const redirectDomainToSite = ( context, next ) => {
+	context.primary = <RedirectComponent domainName={ context.params.domain } />;
+
+	// context.primary = (
+	// 	<Main>
+	// 		{/* <PageViewTracker
+	// 			path={ domainUseYourDomain( ':site' ) }
+	// 			title="Domain Search > Use Your Own Domain"
+	// 		/> */}
+	// 		{/* <DocumentHead title={ translate( 'Use Your Own Domain' ) } /> */}
+	// 		<CalypsoShoppingCartProvider>
+	// 			<UseYourDomainStep
+	// 				basePath={ sectionify( context.path ) }
+	// 				initialQuery={ context.query.initialQuery }
+	// 				goBack={ handleGoBack }
+	// 			/>
+	// 		</CalypsoShoppingCartProvider>
+	// 	</Main>
+	// );
+	next();
+};
+
 export default {
 	domainsAddHeader,
 	domainsAddRedirectHeader,
@@ -344,4 +367,5 @@ export default {
 	transferDomainPrecheck,
 	useMyDomain,
 	useYourDomain,
+	redirectDomainToSite,
 };
