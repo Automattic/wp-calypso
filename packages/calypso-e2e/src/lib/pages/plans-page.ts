@@ -81,7 +81,9 @@ export class PlansPage {
 	 * @param {PlansPageTab} targetTab Name of the navigation tab to click on
 	 */
 	async clickTab( targetTab: PlansPageTab ): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
+		if ( targetTab === 'Plans' ) {
+			await this.page.waitForResponse( /.*plans\?/ );
+		}
 		await clickNavTab( this.page, targetTab );
 	}
 
