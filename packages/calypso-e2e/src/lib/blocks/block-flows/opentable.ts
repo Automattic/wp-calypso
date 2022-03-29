@@ -64,6 +64,6 @@ export class OpenTableFlow implements BlockFlow {
 				`iframe[title="Online Reservations | OpenTable, ${ this.configurationData.restaurant.toString() }"]`
 			)
 			.locator( ':text("Make a Reservation")' );
-		expectedTextLocator.waitFor();
+		await expectedTextLocator.waitFor();
 	}
 }

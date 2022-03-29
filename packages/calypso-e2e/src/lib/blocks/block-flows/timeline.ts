@@ -62,6 +62,6 @@ export class TimelineBlockFlow implements BlockFlow {
 		const expectedSecondTextLocator = context.page.locator(
 			`text=${ this.configurationData.secondEntry }`
 		);
-		expectedSecondTextLocator.waitFor();
+		await expectedSecondTextLocator.waitFor();
 	}
 }

@@ -10,7 +10,7 @@ const blockParentSelector = 'div[aria-label="Block: Business Hours"]';
 const selectors = {
 	// Editor
 	dayToggle: ( day: DaysOfWeek ) => `div.${ day } input`,
-	dayMarkedAsOpen: ( day: DaysOfWeek ) => `div.${ day } :text("Open")`,
+	dayMarkedAsOpen: ( day: DaysOfWeek ) => `div.${ day } .components-toggle-control :text("Open")`,
 
 	// Published
 	hoursForDay: ( day: DaysOfWeek ) => `div.jetpack-business-hours__item:has(dd.${ day })`,

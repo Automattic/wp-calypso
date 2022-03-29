@@ -9,7 +9,8 @@ const blockParentSelector = '[aria-label="Block: Slideshow"]';
 const selectors = {
 	fileInput: `${ blockParentSelector } input[type=file]`,
 	uploadingIndicator: `${ blockParentSelector } .swiper-slide-active .components-spinner`,
-	publishedImage: ( fileName: string ) => `.wp-block-jetpack-slideshow img[src*="${ fileName }"]`,
+	publishedImage: ( fileName: string ) =>
+		`.wp-block-jetpack-slideshow .swiper-slide-active img[src*="${ fileName }"]`,
 };
 
 /**
