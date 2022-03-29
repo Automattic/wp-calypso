@@ -22,12 +22,6 @@ const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRan
 ) }`;
 
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
-	let page: Page;
-	let editorPage: EditorPage;
-	let editorIframe: Frame;
-	let pagesPage: PagesPage;
-	let publishedUrl: URL;
-
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature(
 		features,
@@ -39,6 +33,12 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		// is simple.
 		[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
 	);
+
+	let page: Page;
+	let editorPage: EditorPage;
+	let editorIframe: Frame;
+	let pagesPage: PagesPage;
+	let publishedUrl: URL;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
