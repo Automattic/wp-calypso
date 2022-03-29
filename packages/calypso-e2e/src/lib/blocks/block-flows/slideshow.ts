@@ -8,7 +8,7 @@ interface ConfigurationData {
 const blockParentSelector = '[aria-label="Block: Slideshow"]';
 const selectors = {
 	fileInput: `${ blockParentSelector } input[type=file]`,
-	uploadingIndicator: `${ blockParentSelector } .components-spinner`,
+	uploadingIndicator: `${ blockParentSelector } .swiper-slide-active .components-spinner`,
 	publishedImage: ( fileName: string ) => `.wp-block-jetpack-slideshow img[src*="${ fileName }"]`,
 };
 

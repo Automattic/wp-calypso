@@ -56,7 +56,8 @@ export class YouTubeBlockFlow implements BlockFlow {
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		const expectedVideoTitleLocator = context.page
 			.frameLocator( selectors.publishedYouTubeIframe )
-			.locator( `text=${ this.configurationData.expectedVideoTitle }` );
+			.locator( `text=${ this.configurationData.expectedVideoTitle }` )
+			.first(); // The video title may be multiple places in the frame.
 
 		await expectedVideoTitleLocator.waitFor();
 	}

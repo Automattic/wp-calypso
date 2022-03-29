@@ -57,7 +57,7 @@ export class InstagramBlockFlow implements BlockFlow {
 		const expectedPostTextLocator = context.page
 			.frameLocator( selectors.publishedInstagramIframe )
 			.locator( `text=${ this.configurationData.expectedPostText }` )
-			.first();
+			.first(); // In case the post text isn't particularly specific, just resolve to the first one!
 		await expectedPostTextLocator.waitFor();
 	}
 }

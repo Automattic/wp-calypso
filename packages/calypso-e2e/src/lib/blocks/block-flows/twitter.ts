@@ -57,7 +57,7 @@ export class TwitterBlockFlow implements BlockFlow {
 		const expectedTweetLocator = context.page
 			.frameLocator( selectors.publishedTwitterIframe )
 			.locator( `text=${ this.configurationData.expectedTweetText }` )
-			.first();
+			.first(); // May not be specific enough to match only one (and that's okay).
 		await expectedTweetLocator.waitFor();
 	}
 }

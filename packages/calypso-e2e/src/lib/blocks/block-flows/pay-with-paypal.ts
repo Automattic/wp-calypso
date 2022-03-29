@@ -13,6 +13,9 @@ const selectors = {
 	currency: `${ blockParentSelector } .simple-payments__field-currency .components-select-control__input`,
 	price: `${ blockParentSelector } .simple-payments__field-price .components-text-control__input`,
 	email: `${ blockParentSelector } input[placeholder="Email"]`,
+
+	// Published
+	publishedPrice: ( price: number ) => `.jetpack-simple-payments-price :text("${ price }")`,
 };
 
 /**
@@ -64,7 +67,7 @@ export class PayWithPaypalBlockFlow implements BlockFlow {
 		expectedNameLocator.waitFor();
 
 		const expectedPriceLocator = context.page.locator(
-			`:has-text("${ this.configurationData.price.toString() }")`
+			selectors.publishedPrice( this.configurationData.price )
 		);
 		expectedPriceLocator.waitFor();
 	}

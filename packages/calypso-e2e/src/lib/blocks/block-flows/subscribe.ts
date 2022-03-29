@@ -1,9 +1,10 @@
 import { BlockFlow, PublishedPostContext } from '..';
 
-const blockParentSelector = '[aria-label="Block: Subscribe"]';
+const editorBlockParentSelector = '[aria-label="Block: Subscribe"]';
+const publishedBlockParentSelector = '.wp-block-jetpack-subscriptions';
 const selectors = {
-	emailInput: 'input[name=email]',
-	subscribeButton: 'button:has-text("Subscribe")',
+	emailInput: `${ publishedBlockParentSelector } input[name=email]`,
+	subscribeButton: `${ publishedBlockParentSelector } button:has-text("Subscribe")`,
 };
 
 /**
@@ -11,7 +12,7 @@ const selectors = {
  */
 export class SubscribeFlow implements BlockFlow {
 	blockSidebarName = 'Subscribe';
-	blockEditorSelector = blockParentSelector;
+	blockEditorSelector = editorBlockParentSelector;
 
 	/**
 	 * Validate the block in the published post

@@ -9,7 +9,8 @@ const blockParentSelector = 'div[aria-label="Block: OpenTable"]';
 const selectors = {
 	// Search
 	searchInput: `${ blockParentSelector } input`,
-	suggestion: ( name: string ) => `${ blockParentSelector } strong:has-text("${ name }")`,
+	suggestion: ( name: string ) =>
+		`${ blockParentSelector } .components-form-token-field__suggestion-match:has-text("${ name }")`,
 
 	// Button
 	embedButton: `${ blockParentSelector } button[type="submit"]`,
@@ -43,7 +44,9 @@ export class OpenTableFlow implements BlockFlow {
 		const searchLocator = context.editorLocator.locator( selectors.searchInput );
 		await searchLocator.fill( restaurant );
 
-		const suggestionLocator = context.editorLocator.locator( selectors.suggestion( restaurant ) );
+		const suggestionLocator = context.editorLocator
+			.locator( selectors.suggestion( restaurant ) )
+			.first(); // There are many restaurants out there, let's grab the first if the name wasn't specific enough.
 		await suggestionLocator.click();
 
 		const embedButtonLocator = context.editorLocator.locator( selectors.embedButton );
