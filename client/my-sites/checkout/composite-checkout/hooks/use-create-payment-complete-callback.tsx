@@ -34,6 +34,7 @@ import {
 	isJetpackSite,
 	getJetpackCheckoutRedirectUrl,
 	isBackupPluginActive,
+	isSearchPluginActive,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
@@ -91,7 +92,9 @@ export default function useCreatePaymentCompleteCallback( {
 		useSelector(
 			( state ) =>
 				siteId &&
-				( isJetpackSite( state, siteId ) || isBackupPluginActive( state, siteId ) ) &&
+				( isJetpackSite( state, siteId ) ||
+					isBackupPluginActive( state, siteId ) ||
+					isSearchPluginActive( state, siteId ) ) &&
 				! isAtomicSite( state, siteId )
 		) || false;
 	const adminPageRedirect = useSelector( ( state ) =>
