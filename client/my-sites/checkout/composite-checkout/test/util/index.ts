@@ -259,14 +259,7 @@ export const planLevel2Biannual = {
 	item_subtotal_display: 'R$144',
 };
 
-export const fetchStripeConfiguration = async () => {
-	return {
-		public_key: 'abc123',
-		js_url: 'https://js.stripe.com/v3/',
-		processor_id: 'test',
-		setup_intent_id: '',
-	};
-};
+export const fetchStripeConfiguration = async () => stripeConfiguration;
 
 export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 	return async ( _: number, requestCart: RequestCart ) => {
