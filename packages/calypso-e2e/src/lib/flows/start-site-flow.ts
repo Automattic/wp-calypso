@@ -17,6 +17,7 @@ const selectors = {
 	previewThemeButtonMobile: ( name: string ) =>
 		`button.design-picker__design-option:has-text("${ name }")`,
 	themePreviewIframe: 'iframe[title=Preview]',
+	categoryItem: `.design-picker-category-filter__menu-item`,
 };
 
 /**
@@ -97,5 +98,15 @@ export class StartSiteFlow {
 	async getThemePreviewIframe(): Promise< Frame > {
 		const elementHandle = await this.page.waitForSelector( selectors.themePreviewIframe );
 		return ( await elementHandle.contentFrame() ) as Frame;
+	}
+
+	/**
+	 *  Get the current category from theme selection screen.
+	 *
+	 *  @returns Current category name
+	 */
+	async getCurrentCategory(): Promise< string > {
+		const locator = this.page.locator( `${ selectors.categoryItem }[aria-pressed=true]` );
+		return await locator.innerText();
 	}
 }
