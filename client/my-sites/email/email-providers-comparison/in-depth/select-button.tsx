@@ -35,7 +35,7 @@ const usePlanAvailable = (
 		return false;
 	}
 
-	if ( isDomainInCart || ( domain && hasGSuiteSupportedDomain( [ domain ] ) ) ) {
+	if ( ! isDomainInCart && ( ! domain || ! hasGSuiteSupportedDomain( [ domain ] ) ) ) {
 		return false;
 	}
 
