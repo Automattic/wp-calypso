@@ -632,6 +632,38 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/help-center@workspace:packages/help-center":
+  version: 0.0.0-use.local
+  resolution: "@automattic/help-center@workspace:packages/help-center"
+  dependencies:
+    "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
+    "@automattic/viewport": "workspace:^"
+    "@automattic/viewport-react": "workspace:^"
+    "@popperjs/core": ^2.10.2
+    "@storybook/react": ^6.4.19
+    "@wordpress/base-styles": ^4.0.4
+    "@wordpress/components": ^19.2.0
+    "@wordpress/i18n": ^4.3.0
+    "@wordpress/icons": ^6.2.0
+    "@wordpress/primitives": ^3.0.4
+    classnames: ^2.3.1
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-draggable: ^4.4.4
+    react-popper: ^2.2.5
+    typescript: ^4.5.5
+  peerDependencies:
+    "@wordpress/element": ^4.0.4
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/i18n-utils@workspace:^, @automattic/i18n-utils@workspace:packages/i18n-utils":
   version: 0.0.0-use.local
   resolution: "@automattic/i18n-utils@workspace:packages/i18n-utils"
@@ -5435,6 +5467,89 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/builder-webpack4@npm:6.4.19":
+  version: 6.4.19
+  resolution: "@storybook/builder-webpack4@npm:6.4.19"
+  dependencies:
+    "@babel/core": ^7.12.10
+    "@babel/plugin-proposal-class-properties": ^7.12.1
+    "@babel/plugin-proposal-decorators": ^7.12.12
+    "@babel/plugin-proposal-export-default-from": ^7.12.1
+    "@babel/plugin-proposal-nullish-coalescing-operator": ^7.12.1
+    "@babel/plugin-proposal-object-rest-spread": ^7.12.1
+    "@babel/plugin-proposal-optional-chaining": ^7.12.7
+    "@babel/plugin-proposal-private-methods": ^7.12.1
+    "@babel/plugin-syntax-dynamic-import": ^7.8.3
+    "@babel/plugin-transform-arrow-functions": ^7.12.1
+    "@babel/plugin-transform-block-scoping": ^7.12.12
+    "@babel/plugin-transform-classes": ^7.12.1
+    "@babel/plugin-transform-destructuring": ^7.12.1
+    "@babel/plugin-transform-for-of": ^7.12.1
+    "@babel/plugin-transform-parameters": ^7.12.1
+    "@babel/plugin-transform-shorthand-properties": ^7.12.1
+    "@babel/plugin-transform-spread": ^7.12.1
+    "@babel/plugin-transform-template-literals": ^7.12.1
+    "@babel/preset-env": ^7.12.11
+    "@babel/preset-react": ^7.12.10
+    "@babel/preset-typescript": ^7.12.7
+    "@storybook/addons": 6.4.19
+    "@storybook/api": 6.4.19
+    "@storybook/channel-postmessage": 6.4.19
+    "@storybook/channels": 6.4.19
+    "@storybook/client-api": 6.4.19
+    "@storybook/client-logger": 6.4.19
+    "@storybook/components": 6.4.19
+    "@storybook/core-common": 6.4.19
+    "@storybook/core-events": 6.4.19
+    "@storybook/node-logger": 6.4.19
+    "@storybook/preview-web": 6.4.19
+    "@storybook/router": 6.4.19
+    "@storybook/semver": ^7.3.2
+    "@storybook/store": 6.4.19
+    "@storybook/theming": 6.4.19
+    "@storybook/ui": 6.4.19
+    "@types/node": ^14.0.10
+    "@types/webpack": ^4.41.26
+    autoprefixer: ^9.8.6
+    babel-loader: ^8.0.0
+    babel-plugin-macros: ^2.8.0
+    babel-plugin-polyfill-corejs3: ^0.1.0
+    case-sensitive-paths-webpack-plugin: ^2.3.0
+    core-js: ^3.8.2
+    css-loader: ^3.6.0
+    file-loader: ^6.2.0
+    find-up: ^5.0.0
+    fork-ts-checker-webpack-plugin: ^4.1.6
+    glob: ^7.1.6
+    glob-promise: ^3.4.0
+    global: ^4.4.0
+    html-webpack-plugin: ^4.0.0
+    pnp-webpack-plugin: 1.6.4
+    postcss: ^7.0.36
+    postcss-flexbugs-fixes: ^4.2.1
+    postcss-loader: ^4.2.0
+    raw-loader: ^4.0.2
+    stable: ^0.1.8
+    style-loader: ^1.3.0
+    terser-webpack-plugin: ^4.2.3
+    ts-dedent: ^2.0.0
+    url-loader: ^4.1.1
+    util-deprecate: ^1.0.2
+    webpack: 4
+    webpack-dev-middleware: ^3.7.3
+    webpack-filter-warnings-plugin: ^1.2.1
+    webpack-hot-middleware: ^2.25.1
+    webpack-virtual-modules: ^0.2.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0
+    react-dom: ^16.8.0 || ^17.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: d36e9967e1268fbed444f3f74a1b62e1d0fb5b387cae22ccff81d78213dcbdea50c7ef7314be3ba51f574c02c961c2c424567ead21fceb22214ebeced025b60a
+  languageName: node
+  linkType: hard
+
 "@storybook/builder-webpack5@npm:^6.4.19":
   version: 6.4.19
   resolution: "@storybook/builder-webpack5@npm:6.4.19"
@@ -6012,6 +6127,68 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/core-server@npm:6.4.19":
+  version: 6.4.19
+  resolution: "@storybook/core-server@npm:6.4.19"
+  dependencies:
+    "@discoveryjs/json-ext": ^0.5.3
+    "@storybook/builder-webpack4": 6.4.19
+    "@storybook/core-client": 6.4.19
+    "@storybook/core-common": 6.4.19
+    "@storybook/core-events": 6.4.19
+    "@storybook/csf": 0.0.2--canary.87bc651.0
+    "@storybook/csf-tools": 6.4.19
+    "@storybook/manager-webpack4": 6.4.19
+    "@storybook/node-logger": 6.4.19
+    "@storybook/semver": ^7.3.2
+    "@storybook/store": 6.4.19
+    "@types/node": ^14.0.10
+    "@types/node-fetch": ^2.5.7
+    "@types/pretty-hrtime": ^1.0.0
+    "@types/webpack": ^4.41.26
+    better-opn: ^2.1.1
+    boxen: ^5.1.2
+    chalk: ^4.1.0
+    cli-table3: ^0.6.1
+    commander: ^6.2.1
+    compression: ^1.7.4
+    core-js: ^3.8.2
+    cpy: ^8.1.2
+    detect-port: ^1.3.0
+    express: ^4.17.1
+    file-system-cache: ^1.0.5
+    fs-extra: ^9.0.1
+    globby: ^11.0.2
+    ip: ^1.1.5
+    lodash: ^4.17.21
+    node-fetch: ^2.6.1
+    pretty-hrtime: ^1.0.3
+    prompts: ^2.4.0
+    regenerator-runtime: ^0.13.7
+    serve-favicon: ^2.5.0
+    slash: ^3.0.0
+    telejson: ^5.3.3
+    ts-dedent: ^2.0.0
+    util-deprecate: ^1.0.2
+    watchpack: ^2.2.0
+    webpack: 4
+    ws: ^8.2.3
+  peerDependencies:
+    "@storybook/builder-webpack5": 6.4.19
+    "@storybook/manager-webpack5": 6.4.19
+    react: ^16.8.0 || ^17.0.0
+    react-dom: ^16.8.0 || ^17.0.0
+  peerDependenciesMeta:
+    "@storybook/builder-webpack5":
+      optional: true
+    "@storybook/manager-webpack5":
+      optional: true
+    typescript:
+      optional: true
+  checksum: 3791b79546d24a5425a29bbbf8ab94cf263dfd6b9031e9bcc77db2e4bc829ea152a0cd1136d609e4206398f4b7bef4f4534d42783ae7aae4be2726e5b6bc0452
+  languageName: node
+  linkType: hard
+
 "@storybook/core@npm:6.4.18":
   version: 6.4.18
   resolution: "@storybook/core@npm:6.4.18"
@@ -6029,6 +6206,26 @@ __metadata:
     typescript:
       optional: true
   checksum: 5ca475f61e2bf21e4cfb9729759fbc281cd3f0f3ae7628339f303c5371b4bdb7caf07c32b7d8e9d9054e0e6ed4fc39ae8fed557e226241ce99edb65c7dc5512c
+  languageName: node
+  linkType: hard
+
+"@storybook/core@npm:6.4.19":
+  version: 6.4.19
+  resolution: "@storybook/core@npm:6.4.19"
+  dependencies:
+    "@storybook/core-client": 6.4.19
+    "@storybook/core-server": 6.4.19
+  peerDependencies:
+    "@storybook/builder-webpack5": 6.4.19
+    react: ^16.8.0 || ^17.0.0
+    react-dom: ^16.8.0 || ^17.0.0
+    webpack: "*"
+  peerDependenciesMeta:
+    "@storybook/builder-webpack5":
+      optional: true
+    typescript:
+      optional: true
+  checksum: 0429640642bce2ec8de6804c5a2f0b406699f3651ffd0aba4b8526960988bfbe409c2e8b09e892d67183b2b57a6e43926fcb3e1064a8fd26d5cb32f1fbefda5f
   languageName: node
   linkType: hard
 
@@ -6054,6 +6251,31 @@ __metadata:
     regenerator-runtime: ^0.13.7
     ts-dedent: ^2.0.0
   checksum: a549da44dad0721e725a70915046fbc0dcee4702fe3bf37925e2ad6da92bedc626c5d0d2fd993f12d436be9ed6480eb8ebdcf999c8eb8bdded00bac8eebb06a0
+  languageName: node
+  linkType: hard
+
+"@storybook/csf-tools@npm:6.4.19":
+  version: 6.4.19
+  resolution: "@storybook/csf-tools@npm:6.4.19"
+  dependencies:
+    "@babel/core": ^7.12.10
+    "@babel/generator": ^7.12.11
+    "@babel/parser": ^7.12.11
+    "@babel/plugin-transform-react-jsx": ^7.12.12
+    "@babel/preset-env": ^7.12.11
+    "@babel/traverse": ^7.12.11
+    "@babel/types": ^7.12.11
+    "@mdx-js/mdx": ^1.6.22
+    "@storybook/csf": 0.0.2--canary.87bc651.0
+    core-js: ^3.8.2
+    fs-extra: ^9.0.1
+    global: ^4.4.0
+    js-string-escape: ^1.0.1
+    lodash: ^4.17.21
+    prettier: ">=2.2.1 <=2.3.0"
+    regenerator-runtime: ^0.13.7
+    ts-dedent: ^2.0.0
+  checksum: 836a0e06ef4144d947fde75cb3b2166c4a3131f659fab4c99678e55ead9a0b538ee634b3b3599c08b596f41b3ee206ff691167e4af77844690d7d24b8a670315
   languageName: node
   linkType: hard
 
@@ -6113,6 +6335,56 @@ __metadata:
     typescript:
       optional: true
   checksum: 1b1a53cefbeb2eb25bc48e7150129651673754364373bbd75a3e4ced6d1cc4f16d76a82add93865f5158f2ee0fc36ecd845291b76bd528273db45759332cd8b0
+  languageName: node
+  linkType: hard
+
+"@storybook/manager-webpack4@npm:6.4.19":
+  version: 6.4.19
+  resolution: "@storybook/manager-webpack4@npm:6.4.19"
+  dependencies:
+    "@babel/core": ^7.12.10
+    "@babel/plugin-transform-template-literals": ^7.12.1
+    "@babel/preset-react": ^7.12.10
+    "@storybook/addons": 6.4.19
+    "@storybook/core-client": 6.4.19
+    "@storybook/core-common": 6.4.19
+    "@storybook/node-logger": 6.4.19
+    "@storybook/theming": 6.4.19
+    "@storybook/ui": 6.4.19
+    "@types/node": ^14.0.10
+    "@types/webpack": ^4.41.26
+    babel-loader: ^8.0.0
+    case-sensitive-paths-webpack-plugin: ^2.3.0
+    chalk: ^4.1.0
+    core-js: ^3.8.2
+    css-loader: ^3.6.0
+    express: ^4.17.1
+    file-loader: ^6.2.0
+    file-system-cache: ^1.0.5
+    find-up: ^5.0.0
+    fs-extra: ^9.0.1
+    html-webpack-plugin: ^4.0.0
+    node-fetch: ^2.6.1
+    pnp-webpack-plugin: 1.6.4
+    read-pkg-up: ^7.0.1
+    regenerator-runtime: ^0.13.7
+    resolve-from: ^5.0.0
+    style-loader: ^1.3.0
+    telejson: ^5.3.2
+    terser-webpack-plugin: ^4.2.3
+    ts-dedent: ^2.0.0
+    url-loader: ^4.1.1
+    util-deprecate: ^1.0.2
+    webpack: 4
+    webpack-dev-middleware: ^3.7.3
+    webpack-virtual-modules: ^0.2.2
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0
+    react-dom: ^16.8.0 || ^17.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 38db116fe1d54f0137dd5f6873ec4612f8c2038c2d2d0e285af2a67c9bb67b4a5444dee281356f24b2ada7ed48945aad7b14c05e93ca03415e8e067d72c5a970
   languageName: node
   linkType: hard
 
@@ -6314,6 +6586,51 @@ __metadata:
     start-storybook: bin/index.js
     storybook-server: bin/index.js
   checksum: 1b39e2ee1538d7a42647b2fdf60d12a425935eebb207e9dfcad0052bbd923342047d0bdb470fa1a0cb9922c1f2a03a294dd125f15d58252ddb459f12c5183c13
+  languageName: node
+  linkType: hard
+
+"@storybook/react@npm:^6.4.19":
+  version: 6.4.19
+  resolution: "@storybook/react@npm:6.4.19"
+  dependencies:
+    "@babel/preset-flow": ^7.12.1
+    "@babel/preset-react": ^7.12.10
+    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.1
+    "@storybook/addons": 6.4.19
+    "@storybook/core": 6.4.19
+    "@storybook/core-common": 6.4.19
+    "@storybook/csf": 0.0.2--canary.87bc651.0
+    "@storybook/node-logger": 6.4.19
+    "@storybook/react-docgen-typescript-plugin": 1.0.2-canary.253f8c1.0
+    "@storybook/semver": ^7.3.2
+    "@storybook/store": 6.4.19
+    "@types/webpack-env": ^1.16.0
+    babel-plugin-add-react-displayname: ^0.0.5
+    babel-plugin-named-asset-import: ^0.3.1
+    babel-plugin-react-docgen: ^4.2.1
+    core-js: ^3.8.2
+    global: ^4.4.0
+    lodash: ^4.17.21
+    prop-types: ^15.7.2
+    react-refresh: ^0.11.0
+    read-pkg-up: ^7.0.1
+    regenerator-runtime: ^0.13.7
+    ts-dedent: ^2.0.0
+    webpack: 4
+  peerDependencies:
+    "@babel/core": ^7.11.5
+    react: ^16.8.0 || ^17.0.0
+    react-dom: ^16.8.0 || ^17.0.0
+  peerDependenciesMeta:
+    "@babel/core":
+      optional: true
+    typescript:
+      optional: true
+  bin:
+    build-storybook: bin/build.js
+    start-storybook: bin/index.js
+    storybook-server: bin/index.js
+  checksum: f8155ea789e4cc12758229d3fd6ba0022505f66ede956db9db91be6319cf9fe870b6818d783ce849714136125348a8488e9c719db25304d1fe0eb84561c520f5
   languageName: node
   linkType: hard
 
@@ -30520,7 +30837,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-draggable@npm:^4.4.3":
+"react-draggable@npm:^4.4.3, react-draggable@npm:^4.4.4":
   version: 4.4.4
   resolution: "react-draggable@npm:4.4.4"
   dependencies:

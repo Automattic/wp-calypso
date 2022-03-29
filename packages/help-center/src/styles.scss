@@ -1,0 +1,25 @@
+.help-center__container {
+    background: white !important;
+
+    &.is-desktop {
+        border-radius: 2px;
+        top: 44px;
+        display: inline;
+        right: 16px;
+        position: fixed;
+        min-width: 300px;
+        z-index: 9999;
+        // Avoid the text cursor when the text is not selectable
+        cursor: default;
+        box-shadow: 0 0 3px 0 rgba( 0, 0, 0, 0.25 );
+        background: white;
+        
+        .help-center__container-header {
+            cursor: pointer;
+        }
+        
+        .help-center__container-content {
+            min-height: 300px;
+        }
+    }
+}
