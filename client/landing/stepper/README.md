@@ -36,7 +36,7 @@ export const exampleFlow: Flow = {
 
 To create a flow, you only have to define `useSteps` and `useStepNavigation`. `useSteps` just returns an array of step keys, `useStepNavigation` is the engine where you make navigation decisions. This hook returns an object of type [`NavigationControls`](./declarative-flow/internals/types.ts):
 
-```ts
+```tsx
 /**
  * This is the return type of useStepNavigation hook
  */
