@@ -62,7 +62,7 @@ const GoogleWorkspacePrice = ( {
 		);
 	}
 
-	if ( intervalLength === IntervalLength.MONTHLY && ! isEnabled( 'google-workspace-monthly' ) ) {
+	if ( ! isEnabled( 'google-workspace-monthly' ) && intervalLength === IntervalLength.MONTHLY ) {
 		return (
 			<div className="google-workspace-price__unavailable">
 				{ translate( 'Only available with annual billing' ) }
