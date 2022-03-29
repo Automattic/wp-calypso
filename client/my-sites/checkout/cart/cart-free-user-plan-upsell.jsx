@@ -60,18 +60,16 @@ class CartFreeUserPlanUpsell extends Component {
 	getUpgradeText() {
 		const { cart, planPrice, translate, eligibleForProPlan } = this.props;
 		const firstDomain = find( getAllCartItems( cart ), this.isRegistrationOrTransfer );
-		const planName = eligibleForProPlan ? 'Pro' : 'Personal';
 
 		if ( planPrice > firstDomain.cost ) {
 			const extraToPay = planPrice - firstDomain.cost;
 			return eligibleForProPlan
 				? translate(
-						'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our %(planName)s plan, and get access to all its ' +
+						'Pay an {{strong}}extra %(extraToPay)s{{/strong}} for our Pro plan, and get access to all its ' +
 							'features, plus the first year of your domain for free.',
 						{
 							args: {
 								extraToPay: formatCurrency( extraToPay, firstDomain.currency ),
-								planName,
 							},
 							components: {
 								strong: <strong />,
@@ -94,12 +92,11 @@ class CartFreeUserPlanUpsell extends Component {
 			const savings = firstDomain.cost - planPrice;
 			return eligibleForProPlan
 				? translate(
-						'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com %(planName)s plan ' +
+						'{{strong}}Save %(savings)s{{/strong}} when you purchase a WordPress.com Pro plan ' +
 							'instead — your domain comes free for a year.',
 						{
 							args: {
 								savings: formatCurrency( savings, firstDomain.currency ),
-								planName,
 							},
 							components: {
 								strong: <strong />,
@@ -122,12 +119,9 @@ class CartFreeUserPlanUpsell extends Component {
 
 		return eligibleForProPlan
 			? translate(
-					'Purchase our %(planName)s plan at {{strong}}no extra cost{{/strong}}, and get access to all its ' +
+					'Purchase our Pro plan at {{strong}}no extra cost{{/strong}}, and get access to all its ' +
 						'features, plus the first year of your domain for free.',
 					{
-						args: {
-							planName,
-						},
 						components: {
 							strong: <strong />,
 						},
