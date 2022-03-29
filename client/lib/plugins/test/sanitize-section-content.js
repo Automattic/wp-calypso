@@ -76,7 +76,7 @@ test( 'should add referrer query parameter', () => {
 	const link = cleanNode( '<a href="https://example.com?other-query">' );
 
 	expect( link.getAttribute( 'href' ) ).toBe(
-		'https://example.com?other-query&referrer=wordpress.com'
+		'https://example.com?other-query=&referrer=wordpress.com'
 	);
 } );
 
