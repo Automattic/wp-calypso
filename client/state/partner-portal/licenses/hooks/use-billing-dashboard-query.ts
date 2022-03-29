@@ -21,6 +21,7 @@ interface APIBillingCosts {
 interface APIBillingProduct {
 	product_slug: string;
 	product_name: string;
+	product_quantity: number;
 	product_cost: number;
 	product_total_cost: number;
 	counts: APIBillingCounts;
@@ -31,6 +32,7 @@ interface APIBilling {
 	products: APIBillingProduct[];
 	licenses: APIBillingCounts;
 	costs: APIBillingCosts;
+	cost_interval: string;
 }
 
 // Calypso interfaces.
@@ -49,6 +51,7 @@ interface BillingCosts {
 interface BillingProduct {
 	productSlug: string;
 	productName: string;
+	productQuantity: number;
 	productCost: number;
 	productTotalCost: number;
 	counts: BillingCounts;
@@ -59,6 +62,7 @@ interface Billing {
 	products: BillingProduct[];
 	licenses: BillingCounts;
 	costs: BillingCosts;
+	costInterval: string;
 }
 
 interface BillingDashboardQueryError {
@@ -79,6 +83,7 @@ function selectBillingDashboard( api: APIBilling ): Billing {
 			( product ): BillingProduct => ( {
 				productSlug: product.product_slug,
 				productName: product.product_name,
+				productQuantity: product.product_quantity,
 				productCost: product.product_cost,
 				productTotalCost: product.product_total_cost,
 				counts: product.counts,
@@ -86,6 +91,7 @@ function selectBillingDashboard( api: APIBilling ): Billing {
 		),
 		licenses: api.licenses,
 		costs: api.costs,
+		costInterval: api.cost_interval,
 	};
 }
 

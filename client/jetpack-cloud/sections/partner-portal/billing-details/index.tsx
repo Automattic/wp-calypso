@@ -17,8 +17,8 @@ export default function BillingDetails(): ReactElement {
 			<Card compact className="billing-details__header">
 				<div className="billing-details__row">
 					<div>{ translate( 'Products' ) }</div>
-					<div>{ translate( 'Assigned' ) }</div>
-					<div>{ translate( 'Unassigned' ) }</div>
+					<div>{ translate( 'Assigned licenses' ) }</div>
+					<div>{ translate( 'Unassigned licenses' ) }</div>
 					<div></div>
 				</div>
 			</Card>
@@ -30,9 +30,15 @@ export default function BillingDetails(): ReactElement {
 							<div className="billing-details__product">
 								{ product.productName }
 								<span className="billing-details__line-item-meta">
-									{ translate( 'Price per license per month: %(price)s', {
-										args: { price: formatCurrency( product.productCost, 'USD' ) },
-									} ) }
+									{ billing.data.costInterval === 'day' &&
+										translate( 'Price per license per day: %(price)s', {
+											args: { price: formatCurrency( product.productCost, 'USD' ) },
+										} ) }
+
+									{ billing.data.costInterval === 'month' &&
+										translate( 'Price per license per month: %(price)s', {
+											args: { price: formatCurrency( product.productCost, 'USD' ) },
+										} ) }
 								</span>
 							</div>
 
@@ -51,10 +57,18 @@ export default function BillingDetails(): ReactElement {
 							</div>
 
 							<div className="billing-details__subtotal">
-								{ translate( '%(count)d License', '%(count)d Licenses', {
-									count: product.counts.total,
-									args: { count: product.counts.total },
-								} ) }
+								{ billing.data.costInterval === 'day' &&
+									translate( '%(count)d Day Usage', '%(count)d Days Usage', {
+										count: product.productQuantity,
+										args: { count: product.productQuantity },
+									} ) }
+
+								{ billing.data.costInterval === 'month' &&
+									translate( '%(count)d License', '%(count)d Licenses', {
+										count: product.counts.total,
+										args: { count: product.counts.total },
+									} ) }
+
 								<span className="billing-details__line-item-meta">
 									{ translate( 'Subtotal: %(subtotal)s', {
 										args: { subtotal: formatCurrency( product.productTotalCost, 'USD' ) },
@@ -114,27 +128,27 @@ export default function BillingDetails(): ReactElement {
 						{ billing.isError && <Gridicon icon="minus" /> }
 					</strong>
 
-					<span className="billing-details__total-label billing-details__line-item-meta">
-						{ translate( 'Assigned licenses:' ) }
-					</span>
-					<span className="billing-details__line-item-meta">
-						{ billing.isSuccess && formatCurrency( billing.data.costs.assigned, 'USD' ) }
+					{ billing.isSuccess && billing.data.costInterval === 'month' && (
+						<>
+							<span className="billing-details__total-label billing-details__line-item-meta">
+								{ translate( 'Assigned licenses:' ) }
+							</span>
+							<span className="billing-details__line-item-meta">
+								{ formatCurrency( billing.data.costs.assigned, 'USD' ) }
+							</span>
+						</>
+					) }
 
-						{ billing.isLoading && <TextPlaceholder /> }
-
-						{ billing.isError && <Gridicon icon="minus" /> }
-					</span>
-
-					<span className="billing-details__total-label billing-details__line-item-meta">
-						{ translate( 'Unassigned licenses:' ) }
-					</span>
-					<span className="billing-details__line-item-meta">
-						{ billing.isSuccess && formatCurrency( billing.data.costs.unassigned, 'USD' ) }
-
-						{ billing.isLoading && <TextPlaceholder /> }
-
-						{ billing.isError && <Gridicon icon="minus" /> }
-					</span>
+					{ billing.isSuccess && billing.data.costInterval === 'month' && (
+						<>
+							<span className="billing-details__total-label billing-details__line-item-meta">
+								{ translate( 'Unassigned licenses:' ) }
+							</span>
+							<span className="billing-details__line-item-meta">
+								{ formatCurrency( billing.data.costs.unassigned, 'USD' ) }
+							</span>
+						</>
+					) }
 				</div>
 			</Card>
 		</div>

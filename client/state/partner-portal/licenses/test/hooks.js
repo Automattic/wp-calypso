@@ -291,6 +291,7 @@ describe( 'useBillingDashboardQuery', () => {
 				{
 					product_slug: 'foo',
 					product_name: 'Foo',
+					product_quantity: 6,
 					product_cost: 3,
 					product_total_cost: 18,
 					counts: {
@@ -310,6 +311,7 @@ describe( 'useBillingDashboardQuery', () => {
 				assigned: 200,
 				unassigned: 100,
 			},
+			cost_interval: 'month',
 		};
 
 		const formattedStub = {
@@ -318,6 +320,7 @@ describe( 'useBillingDashboardQuery', () => {
 				{
 					productSlug: 'foo',
 					productName: 'Foo',
+					productQuantity: 6,
 					productCost: 3,
 					productTotalCost: 18,
 					counts: {
@@ -337,6 +340,7 @@ describe( 'useBillingDashboardQuery', () => {
 				assigned: 200,
 				unassigned: 100,
 			},
+			costInterval: 'month',
 		};
 
 		nock( 'https://public-api.wordpress.com' )
