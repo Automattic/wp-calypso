@@ -25,7 +25,6 @@ import {
 	isEditorReadyWithBlocks,
 	sendMessage,
 } from '../../utils';
-
 /**
  * Conditional dependency.  We cannot use the standard 'import' since this package is
  * not available in the post editor and causes WSOD in that case.  Instead, we can
