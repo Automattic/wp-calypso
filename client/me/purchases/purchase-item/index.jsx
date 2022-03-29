@@ -1,4 +1,10 @@
-import { isDomainTransfer, isConciergeSession } from '@automattic/calypso-products';
+import {
+	isDomainTransfer,
+	isConciergeSession,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+} from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import i18n, { localize, useTranslate } from 'i18n-calypso';
@@ -194,6 +200,52 @@ class PurchaseItem extends Component {
 						{ this.trackImpression( 'credit-card-expiring' ) }
 					</span>
 				);
+			}
+
+			if ( purchase.billPeriodDays ) {
+				const translateOptions = {
+					args: {
+						amount: purchase.priceText,
+						date: renewDate.format( 'LL' ),
+					},
+					components: {
+						span: <span className="purchase-item__date" />,
+					},
+				};
+				switch ( purchase.billPeriodDays ) {
+					case PLAN_MONTHLY_PERIOD:
+						if (
+							locale === 'en' ||
+							i18n.hasTranslation( 'Renews monthly at %(amount)s on {{span}}%(date)s{{/span}}' )
+						) {
+							return translate(
+								'Renews monthly at %(amount)s on {{span}}%(date)s{{/span}}',
+								translateOptions
+							);
+						}
+					case PLAN_ANNUAL_PERIOD:
+						if (
+							locale === 'en' ||
+							i18n.hasTranslation( 'Renews yearly at %(amount)s on {{span}}%(date)s{{/span}}' )
+						) {
+							return translate(
+								'Renews yearly at %(amount)s on {{span}}%(date)s{{/span}}',
+								translateOptions
+							);
+						}
+					case PLAN_BIENNIAL_PERIOD:
+						if (
+							locale === 'en' ||
+							i18n.hasTranslation(
+								'Renews every two years at %(amount)s on {{span}}%(date)s{{/span}}'
+							)
+						) {
+							return translate(
+								'Renews every two years at %(amount)s on {{span}}%(date)s{{/span}}',
+								translateOptions
+							);
+						}
+				}
 			}
 
 			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
