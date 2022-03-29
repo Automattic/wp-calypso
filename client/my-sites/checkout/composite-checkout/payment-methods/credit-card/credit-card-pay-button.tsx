@@ -181,10 +181,13 @@ function isCreditCardFormValid(
 				number: numberWithoutSpaces,
 			};
 			const validationResults = validatePaymentDetails(
-				Object.keys( paymentDetailsData ).reduce( ( accum: Record< string, string >, key ) => {
-					accum[ key ] = paymentDetailsData[ key ]?.value;
-					return accum;
-				}, {} ),
+				Object.entries( paymentDetailsData ).reduce< Record< string, string > >(
+					( accum, [ key, managedValue ] ) => {
+						accum[ key ] = managedValue?.value;
+						return accum;
+					},
+					{}
+				),
 				'ebanx'
 			);
 			Object.entries( validationResults.errors ).map( ( [ key, errors ] ) => {
