@@ -322,6 +322,7 @@ export class EditorPage {
 		blockEditorSelector: string,
 		openInserter: OpenInlineInserterDelegate
 	): Promise< ElementHandle > {
+		// First, launch the inline inserter in the way expected by the script.
 		await openInserter( this.editor );
 		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
 
@@ -383,6 +384,7 @@ export class EditorPage {
 		patternName: string,
 		openInserter: OpenInlineInserterDelegate
 	): Promise< void > {
+		// First, launch the inline inserter in the way expected by the script.
 		await openInserter( this.editor );
 		await this.addPatternFromInserter( patternName, this.editorInlineBlockInserterComponent );
 	}

@@ -47,7 +47,7 @@ export class PaymentsBlockFlow implements BlockFlow {
 			`button:has-text("${ this.configurationData.buttonText }")`
 		);
 		// Because Stripe isn't connected to this WordPress.com account, we shouldn't see this block published.
-		if ( await buttonLocator.isVisible() ) {
+		if ( ( await buttonLocator.count() ) > 0 ) {
 			throw new Error(
 				'Payments button should not be visible on published post without Stripe connection'
 			);
