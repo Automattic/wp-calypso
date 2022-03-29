@@ -26,7 +26,7 @@ export default function CreditCardPayButton( {
 	activeButtonText?: string;
 } ) {
 	const { __ } = useI18n();
-	const [ items, total ] = useLineItems();
+	const [ , total ] = useLineItems();
 	const { stripeConfiguration, stripe } = useStripe();
 	const fields = useSelect( ( select ) => select( 'wpcom-credit-card' ).getFields() );
 	const useForAllSubscriptions = useSelect( ( select ) =>
@@ -57,8 +57,6 @@ export default function CreditCardPayButton( {
 						onClick( {
 							stripe,
 							name: cardholderName?.value,
-							items,
-							total,
 							stripeConfiguration,
 							cardNumberElement,
 							paymentPartner,
@@ -84,8 +82,6 @@ export default function CreditCardPayButton( {
 							streetNumber: fields[ 'street-number' ]?.value || '',
 							phoneNumber: fields[ 'phone-number' ]?.value || '',
 							document: fields?.document?.value || '', // Taxpayer Identification Number
-							items,
-							total,
 							paymentPartner,
 						} );
 						return;
@@ -155,6 +151,7 @@ function isCreditCardFormValid(
 				);
 			}
 			if ( areThereErrors || ! cardholderName?.value.length || incompleteFieldKeys.length > 0 ) {
+				debug( 'card info is not valid', { errors, incompleteFieldKeys, cardholderName } );
 				return false;
 			}
 			return true;

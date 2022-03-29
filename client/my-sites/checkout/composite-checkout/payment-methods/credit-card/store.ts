@@ -3,10 +3,10 @@ import debugFactory from 'debug';
 import { maskField } from 'calypso/lib/checkout';
 import type {
 	CardFieldState,
-	CardDataCompleteState,
 	CardStoreState,
 	CardStoreType,
 	CardStoreAction,
+	CardElementType,
 } from './types';
 import type { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
 import type { StoreStateValue } from '@automattic/wpcom-checkout';
@@ -22,10 +22,10 @@ export const actions = {
 	changeBrand( payload: string ): CardStoreAction {
 		return { type: 'BRAND_SET', payload };
 	},
-	setCardDataError( type: string, message: string | null ): CardStoreAction {
+	setCardDataError( type: CardElementType, message: string | null ): CardStoreAction {
 		return { type: 'CARD_DATA_ERROR_SET', payload: { type, message } };
 	},
-	setCardDataComplete( type: string, complete: boolean ): CardStoreAction {
+	setCardDataComplete( type: CardElementType, complete: boolean ): CardStoreAction {
 		return { type: 'CARD_DATA_COMPLETE_SET', payload: { type, complete } };
 	},
 	setFieldValue( key: string, value: string ): CardStoreAction {
@@ -49,10 +49,10 @@ export const selectors = {
 	getCardDataErrors( state: CardStoreState ) {
 		return state.cardDataErrors;
 	},
-	getIncompleteFieldKeys( state: CardStoreState ): string[] {
+	getIncompleteFieldKeys( state: CardStoreState ): CardElementType[] {
 		return Object.keys( state.cardDataComplete ).filter(
-			( key ) => ! state.cardDataComplete[ key as keyof CardDataCompleteState ]
-		);
+			( key ) => ! state.cardDataComplete[ key as CardElementType ]
+		) as CardElementType[];
 	},
 	getFields( state: CardStoreState ) {
 		return state.fields;
