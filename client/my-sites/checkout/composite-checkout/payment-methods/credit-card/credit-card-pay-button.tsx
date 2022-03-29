@@ -1,3 +1,4 @@
+import { useStripe } from '@automattic/calypso-stripe';
 import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
@@ -7,9 +8,7 @@ import debugFactory from 'debug';
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import { actions, selectors } from './store';
 import type { CardStoreType } from './types';
-import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { ProcessPayment, LineItem } from '@automattic/composite-checkout';
-import type { Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -17,21 +16,18 @@ export default function CreditCardPayButton( {
 	disabled,
 	onClick,
 	store,
-	stripe,
-	stripeConfiguration,
 	shouldUseEbanx,
 	activeButtonText = undefined,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: CardStoreType;
-	stripe: Stripe;
-	stripeConfiguration: StripeConfiguration;
 	shouldUseEbanx?: boolean;
 	activeButtonText?: string;
 } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
+	const { stripeConfiguration, stripe } = useStripe();
 	const fields = useSelect( ( select ) => select( 'wpcom-credit-card' ).getFields() );
 	const useForAllSubscriptions = useSelect( ( select ) =>
 		select( 'wpcom-credit-card' ).useForAllSubscriptions()

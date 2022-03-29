@@ -101,12 +101,10 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 		'site level add new payment method load error'
 	);
 
-	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
+	const { isStripeLoading, stripeLoadingError } = useStripe();
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
 		activePayButtonText: String( translate( 'Save card' ) ),

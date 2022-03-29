@@ -15,23 +15,17 @@ import {
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
 import type { CardStoreType } from './types';
-import type { StripeConfiguration } from '@automattic/calypso-stripe';
-import type { Stripe } from '@stripe/stripe-js';
 
 export { createCreditCardPaymentMethodStore } from './store';
 
 export function createCreditCardMethod( {
 	store,
-	stripe,
-	stripeConfiguration,
 	shouldUseEbanx,
 	shouldShowTaxFields,
 	activePayButtonText,
 	allowUseForAllSubscriptions,
 }: {
 	store: CardStoreType;
-	stripe: Stripe;
-	stripeConfiguration: StripeConfiguration;
 	shouldUseEbanx?: boolean;
 	shouldShowTaxFields?: boolean;
 	activePayButtonText?: string;
@@ -51,8 +45,6 @@ export function createCreditCardMethod( {
 		submitButton: (
 			<CreditCardPayButton
 				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
 				shouldUseEbanx={ shouldUseEbanx }
 				activeButtonText={ activePayButtonText }
 			/>
