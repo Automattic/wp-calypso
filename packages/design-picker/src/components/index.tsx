@@ -227,6 +227,7 @@ export interface DesignPickerProps {
 	recommendedCategorySlug: string | null;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
+	hideCategoryList?: boolean;
 	isPremiumThemeAvailable?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -248,6 +249,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	categorization,
 	hideFullScreenPreview,
 	hideDesignTitle,
+	hideCategoryList,
 	recommendedCategorySlug,
 	isPremiumThemeAvailable,
 } ) => {
@@ -275,6 +277,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					onSelect={ categorization.onSelect }
 					heading={ categoriesHeading }
 					footer={ categoriesFooter }
+					hideCategoryList={ hideCategoryList }
 				/>
 			) }
 			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
