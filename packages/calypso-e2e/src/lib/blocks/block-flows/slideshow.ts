@@ -9,8 +9,7 @@ const blockParentSelector = '[aria-label="Block: Slideshow"]';
 const selectors = {
 	fileInput: `${ blockParentSelector } input[type=file]`,
 	uploadingIndicator: `${ blockParentSelector } .swiper-slide-active .components-spinner`,
-	publishedImage: ( fileName: string ) =>
-		`.wp-block-jetpack-slideshow .swiper-slide-active img[src*="${ fileName }"]`,
+	publishedImage: ( fileName: string ) => `.wp-block-jetpack-slideshow img[src*="${ fileName }"]`,
 };
 
 /**
@@ -62,9 +61,11 @@ export class SlideshowBlockFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		for ( const imageFileName of this.preparedImageFileNames ) {
-			const expectedImageLocator = context.page.locator(
-				selectors.publishedImage( imageFileName )
-			);
+			const expectedImageLocator = context.page
+				.locator( selectors.publishedImage( imageFileName ) )
+				// To complete the slideshow experience, there can be multiple copies of one image. We just need to know one is there!
+				.first();
+
 			// The image not be visible if it's not the current slide, so we just want 'attached' state.
 			await expectedImageLocator.waitFor( { state: 'attached' } );
 		}
