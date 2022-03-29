@@ -304,6 +304,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				categoriesFooter={ renderCategoriesFooter() }
 				// disable premium themes for now, because we can't access checkout
 				isPremiumThemeAvailable={ false }
+				hideCategoryList={ intent === 'sell' }
 			/>
 			{ renderCheckoutModal() }
 		</>
