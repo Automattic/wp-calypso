@@ -277,7 +277,6 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				<div>
 					<QuerySiteSettings siteId={ this.props.siteId } />
 					{ this.props.siteIsJetpack && <QueryJetpackSettings siteId={ this.props.siteId } /> }
-					{ /*this.props.isWPForTeamsSite && <QueryP2SiteSettings siteId={ this.props.siteId } />*/ }
 					<SettingsForm { ...this.props } { ...utils } />
 				</div>
 			);
