@@ -33,7 +33,7 @@ const selectors = {
 };
 const EXTENDED_TIMEOUT = 90 * 1000;
 
-export type OpenInlineInserterDelegate = ( editor: Locator ) => Promise< void >;
+export type OpenInlineInserter = ( editor: Locator ) => Promise< void >;
 interface BlockInserter {
 	searchBlockInserter( blockName: string ): Promise< void >;
 	selectBlockInserterResult(
@@ -297,7 +297,7 @@ export class EditorPage {
 	/**
 	 * Adds a Gutenberg block from the inline block inserter.
 	 *
-	 * Because there are so many different ways to open the inline inserter, this function accepts a delegate to run first
+	 * Because there are so many different ways to open the inline inserter, this function accepts a function to run first
 	 * that should open the inserter. This allows specs to get to the inserter in the way they need.
 	 *
 	 * The block name is expected to be formatted in the same manner as it
@@ -314,16 +314,16 @@ export class EditorPage {
 	 *
 	 * @param {string} blockName Name of the block as in inserter results.
 	 * @param {string} blockEditorSelector Selector to find the block once added.
-	 * @param {OpenInlineInserterDelegate} openInserter Delegate to open the inline inserter.
+	 * @param {OpenInlineInserter} openInlineInserter Function to open the inline inserter.
 	 * @returns An element handle to the added block.
 	 */
 	async addBlockInline(
 		blockName: string,
 		blockEditorSelector: string,
-		openInserter: OpenInlineInserterDelegate
+		openInlineInserter: OpenInlineInserter
 	): Promise< ElementHandle > {
 		// First, launch the inline inserter in the way expected by the script.
-		await openInserter( this.editor );
+		await openInlineInserter( this.editor );
 		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
 
 		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
@@ -368,7 +368,7 @@ export class EditorPage {
 	/**
 	 * Adds a pattern from the inline block inserter panel.
 	 *
-	 * Because there are so many different ways to open the inline inserter, this function accepts a delegate to run first
+	 * Because there are so many different ways to open the inline inserter, this function accepts a function to run first
 	 * that should open the inserter. This allows specs to get to the inserter in the way they need.
 	 *
 	 * The name is expected to be formatted in the same manner as it
@@ -378,14 +378,14 @@ export class EditorPage {
 	 * 		- Two images side by side
 	 *
 	 * @param {string} patternName Name of the pattern to insert as it matches the label in the inserter.
-	 * @param {OpenInlineInserterDelegate} openInserter Delegate to open the inline inserter.
+	 * @param {OpenInlineInserter} openInlineInserter Function to open the inline inserter.
 	 */
 	async addPatternInline(
 		patternName: string,
-		openInserter: OpenInlineInserterDelegate
+		openInlineInserter: OpenInlineInserter
 	): Promise< void > {
 		// First, launch the inline inserter in the way expected by the script.
-		await openInserter( this.editor );
+		await openInlineInserter( this.editor );
 		await this.addPatternFromInserter( patternName, this.editorInlineBlockInserterComponent );
 	}
 

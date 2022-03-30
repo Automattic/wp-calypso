@@ -1,6 +1,6 @@
 import { Locator } from 'playwright';
 import { BlockFlow, EditorContext, PublishedPostContext } from '..';
-import { OpenInlineInserterDelegate } from '../../pages';
+import { OpenInlineInserter } from '../../pages';
 
 // As a layout block, there's pretty massive amounts of potential variability in configuration.
 // To keep things simple and maintainable, I think it's best to just lock in a simple, singular case (two columns of text) for the smoke test.
@@ -77,8 +77,8 @@ export class LayoutGridBlockFlow implements BlockFlow {
 		context: EditorContext
 	): Promise< void > {
 		// The inline inserter can be opened in a lot of ways.
-		// We have to define our own delegate to do so, and make sure we're clicking the right button.
-		const openInlineInserter: OpenInlineInserterDelegate = async ( editor: Locator ) => {
+		// We have to define our own function to do so, and make sure we're clicking the right button.
+		const openInlineInserter: OpenInlineInserter = async ( editor: Locator ) => {
 			const addBlockButtonLocator = editor.locator(
 				selectors.addBlockButton( columnDetails.columnNumber )
 			);
