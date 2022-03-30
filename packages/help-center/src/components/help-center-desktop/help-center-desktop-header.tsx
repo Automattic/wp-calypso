@@ -1,8 +1,7 @@
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { close } from '@wordpress/icons';
+import { close, chevronUp, lineSolid } from '@wordpress/icons';
 import classnames from 'classnames';
-import { maximize, minimize } from '../../icons';
 
 interface Props {
 	isMinimized: boolean;
@@ -27,16 +26,14 @@ const HelpCenterDesktopHeader: React.FC< Props > = ( {
 					{ isMinimized ? (
 						<Button
 							label={ __( 'Maximize Help Center' ) }
-							isPrimary
-							icon={ maximize }
+							icon={ chevronUp }
 							iconSize={ 24 }
 							onClick={ onMaximize }
 						></Button>
 					) : (
 						<Button
 							label={ __( 'Minimize Help Center' ) }
-							isPrimary
-							icon={ minimize }
+							icon={ lineSolid }
 							iconSize={ 24 }
 							onClick={ onMinimize }
 						></Button>
@@ -44,7 +41,6 @@ const HelpCenterDesktopHeader: React.FC< Props > = ( {
 
 					<Button
 						label={ __( 'Close Help Center' ) }
-						isPrimary
 						icon={ close }
 						iconSize={ 24 }
 						onClick={ onDismiss }

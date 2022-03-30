@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { ReactElement, useState } from 'react';
 import Draggable from 'react-draggable';
 import HelpCenterDesktopContent from './help-center-desktop-content';
+import HelpCenterDesktopFooter from './help-center-desktop-footer';
 import HelpCenterDesktopHeader from './help-center-desktop-header';
 
 interface Props {
@@ -22,7 +23,12 @@ const HelpCenterDeskopContainer: React.FC< Props > = ( { content, handleClose } 
 					onMaximize={ () => setIsMinimized( false ) }
 					onDismiss={ handleClose }
 				/>
-				{ ! isMinimized && <HelpCenterDesktopContent content={ content } /> }
+				{ ! isMinimized && (
+					<>
+						<HelpCenterDesktopContent content={ content } />
+						<HelpCenterDesktopFooter />
+					</>
+				) }
 			</Card>
 		</Draggable>
 	);

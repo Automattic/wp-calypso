@@ -8,7 +8,7 @@ export const parameters = {
 		values: [
 			{
 				name: 'default',
-				value: '#ecc',
+				value: 'silver',
 			},
 		],
 	},
