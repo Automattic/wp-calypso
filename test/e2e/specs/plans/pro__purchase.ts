@@ -21,7 +21,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( 'myTestUser' );
+		const testAccount = new TestAccount( 'testUser' );
 		await testAccount.authenticate( page );
 	} );
 
