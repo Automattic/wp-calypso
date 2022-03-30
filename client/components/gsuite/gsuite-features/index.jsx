@@ -5,7 +5,7 @@ import googleDocsIcon from 'calypso/assets/images/email-providers/google-workspa
 import googleDriveIcon from 'calypso/assets/images/email-providers/google-workspace/services/drive.svg';
 import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/gmail.svg';
 import googleMeetIcon from 'calypso/assets/images/email-providers/google-workspace/services/meet.svg';
-import GSuiteSingleFeature from './single-feature';
+import GSuiteSingleFeature from 'calypso/components/gsuite/gsuite-features/single-feature';
 
 import './style.scss';
 
