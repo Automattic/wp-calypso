@@ -63,7 +63,8 @@ export class PayWithPaypalBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const expectedNameLocator = context.page.locator( `:text("${ this.configurationData.name }")` );
+		// Use quotes in selector to narrow down to an exact text node match for specificity.
+		const expectedNameLocator = context.page.locator( `text="${ this.configurationData.name }"` );
 		expectedNameLocator.waitFor();
 
 		const expectedPriceLocator = context.page.locator(
