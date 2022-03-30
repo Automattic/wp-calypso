@@ -2,15 +2,9 @@ import { CardHeader, Button, Flex } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { close, chevronUp, lineSolid } from '@wordpress/icons';
 import classnames from 'classnames';
+import { Header } from '../types';
 
-interface Props {
-	isMinimized: boolean;
-	onMinimize: () => void;
-	onMaximize: () => void;
-	onDismiss: () => void;
-}
-
-const HelpCenterDesktopHeader: React.FC< Props > = ( {
+const HelpCenterDesktopHeader: React.FC< Header > = ( {
 	isMinimized,
 	onMinimize,
 	onMaximize,

@@ -654,6 +654,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-draggable: ^4.4.4
+    react-transition-group: ^4.4.2
     typescript: ^4.5.5
   peerDependencies:
     "@wordpress/element": ^4.0.4
@@ -31382,6 +31383,21 @@ fsevents@~2.1.2:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 1ece0f3c86bfaa42b8f44b8bf8e809bc618ad5dc0ea037cedbf55a49b0e48e49a30c4dccbb0743b9bf4ab24b7a7d12b68bbe399ed4541428e2d40b999e4d2cd6
+  languageName: node
+  linkType: hard
+
+"react-transition-group@npm:^4.4.2":
+  version: 4.4.2
+  resolution: "react-transition-group@npm:4.4.2"
+  dependencies:
+    "@babel/runtime": ^7.5.5
+    dom-helpers: ^5.0.1
+    loose-envify: ^1.4.0
+    prop-types: ^15.6.2
+  peerDependencies:
+    react: ">=16.6.0"
+    react-dom: ">=16.6.0"
+  checksum: afaf835854526065d246532714a3833a7c5fbcf21303e1479008ff6f1ec1ae44ecd151f74f357c60511a1e49de65cb9b81bf4d7858b9ee19e636b9a62a6daaa4
   languageName: node
   linkType: hard
 

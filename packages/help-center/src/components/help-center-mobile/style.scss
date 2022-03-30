@@ -1,0 +1,32 @@
+.help-center-mobile__overlay {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: #fff;
+	z-index: 2;
+}
+
+@keyframes slideIn {
+	0% {
+		transform: translateX( -100% );
+	}
+
+	100% {
+		transform: translateX( 0% );
+
+	}
+}
+
+@keyframes slideOut {
+	0% {
+		transform: translateX( 0% );
+
+	}
+
+	100% {
+		transform: translateX( -100% );
+
+	}
+}

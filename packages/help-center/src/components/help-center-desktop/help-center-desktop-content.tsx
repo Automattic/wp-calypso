@@ -1,12 +1,8 @@
 import { CardBody } from '@wordpress/components';
 import classnames from 'classnames';
-import { ReactElement } from 'react';
+import { Content } from '../types';
 
-interface Props {
-	content: ReactElement;
-}
-
-const HelpCenterDesktopContent: React.FC< Props > = ( { content } ) => {
+const HelpCenterDesktopContent: React.FC< Content > = ( { content } ) => {
 	const className = classnames( 'help-center__container-content' );
 
 	return (
