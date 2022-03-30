@@ -726,6 +726,7 @@ class Signup extends Component {
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const olarkIdentity = config( 'olark_chat_identity' );
+		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
 		const isEligibleForOlarkChat =
 			'onboarding' === this.props.flowName && 'en' === this.props.localeSlug;
 
@@ -758,7 +759,11 @@ class Signup extends Component {
 					) }
 				</div>
 				{ isEligibleForOlarkChat && (
-					<OlarkChat identity={ olarkIdentity } shouldDisablePreChatSurvey={ true } />
+					<OlarkChat
+						identity={ olarkIdentity }
+						shouldDisablePreChatSurvey={ true }
+						systemsGroupId={ olarkSystemsGroupId }
+					/>
 				) }
 			</>
 		);

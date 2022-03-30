@@ -2,7 +2,7 @@ import { Component } from 'react';
 
 class OlarkChat extends Component {
 	componentDidMount() {
-		const { identity, shouldDisablePreChatSurvey } = this.props;
+		const { identity, shouldDisablePreChatSurvey, systemsGroupId } = this.props;
 		const script = document.createElement( 'script' );
 		script.setAttribute( 'id', 'olark-chat' );
 		script.setAttribute( 'type', 'text/javascript' );
@@ -15,6 +15,12 @@ class OlarkChat extends Component {
 		if ( shouldDisablePreChatSurvey ) {
 			script.innerHTML += `
 				olark.configure("features.prechat_survey", false);
+			`;
+		}
+
+		if ( systemsGroupId ) {
+			script.innerHTML += `
+				olark.configure('system.group', ${ systemsGroupId }); 
 			`;
 		}
 

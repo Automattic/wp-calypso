@@ -331,6 +331,7 @@ class ThemeShowcase extends Component {
 		};
 
 		const olarkIdentity = config( 'olark_chat_identity' );
+		const olarkSystemsGroupId = '239c0f99c53692d81539f76e86910d52';
 		const isEligibleForOlarkChat = ! isLoggedIn && 'en' === locale;
 
 		// FIXME: Logged-in title should only be 'Themes'
@@ -381,7 +382,9 @@ class ThemeShowcase extends Component {
 					<ThanksModal source={ 'list' } />
 					<AutoLoadingHomepageModal source={ 'list' } />
 					<ThemePreview />
-					{ isEligibleForOlarkChat && <OlarkChat identity={ olarkIdentity } /> }
+					{ isEligibleForOlarkChat && (
+						<OlarkChat identity={ olarkIdentity } systemsGroupId={ olarkSystemsGroupId } />
+					) }
 				</div>
 			</div>
 		);
