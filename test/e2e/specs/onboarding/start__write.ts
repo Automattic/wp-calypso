@@ -25,7 +25,7 @@ describe( DataHelper.createSuiteTitle( 'Hero Flow' ), () => {
 		page = await browser.newPage();
 		startSiteFlow = new StartSiteFlow( page );
 
-		const testAccount = new TestAccount( 'defaultUser' );
+		const testAccount = new TestAccount( 'calypsoPreReleaseUser' );
 		await testAccount.authenticate( page );
 	} );
 
@@ -34,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Hero Flow' ), () => {
 	 *
 	 * @param siteSlug The site slug URL.
 	 */
-	const startWriteFlow = ( siteSlug = 'e2eflowtesting4.wordpress.com' ) => {
+	const startWriteFlow = ( siteSlug = 'e2eflowtestingprereleaseuser2.wordpress.com' ) => {
 		it( 'Navigate to /start/intent', async function () {
 			await page.goto( DataHelper.getCalypsoURL( '/start/setup-site/intent', { siteSlug } ) );
 		} );
@@ -62,9 +62,7 @@ describe( DataHelper.createSuiteTitle( 'Hero Flow' ), () => {
 
 		it( 'Select "Draft your first post" path and land in editor', async function () {
 			await Promise.all( [
-				page.waitForResponse(
-					( res ) => res.url().includes( '/wp-admin/post-new.php' ) && res.status() === 200
-				),
+				page.waitForNavigation( { url: /(\/post\/|\/wp-admin\/post-new.php)/ } ),
 				startSiteFlow.clickButton( 'Start writing' ),
 			] );
 		} );
@@ -104,17 +102,14 @@ describe( DataHelper.createSuiteTitle( 'Hero Flow' ), () => {
 		} );
 
 		it( 'Preview the selected theme', async function () {
-			await startSiteFlow.getThemePreviewIframe();
-			await page.waitForResponse(
-				( res ) => res.url().includes( '/template/demo/pub' ) && res.status() === 200
-			);
+			const themePreviewIframe = await startSiteFlow.getThemePreviewIframe();
+			const locator = themePreviewIframe.locator( `text=${ theme }` );
+			await locator.waitFor();
 		} );
 
-		it( `Select "Start with ${ theme } and land in editor`, async function () {
+		it( `Select "Start with ${ theme }" and land in editor`, async function () {
 			await Promise.all( [
-				page.waitForResponse(
-					( res ) => res.url().includes( '/wp-admin/post-new.php' ) && res.status() === 200
-				),
+				page.waitForNavigation( { url: /(\/post\/|\/wp-admin\/post-new.php)/ } ),
 				startSiteFlow.clickButton( `Start with ${ theme }` ),
 			] );
 		} );
@@ -127,11 +122,9 @@ describe( DataHelper.createSuiteTitle( 'Hero Flow' ), () => {
 			await startSiteFlow.clickButton( 'View designs' );
 		} );
 
-		it( 'Click "Skip and draft first post', async function () {
+		it( 'Click "Skip and draft first post"', async function () {
 			await Promise.all( [
-				page.waitForResponse(
-					( res ) => res.url().includes( '/wp-admin/post-new.php' ) && res.status() === 200
-				),
+				page.waitForNavigation( { url: /(\/post\/|\/wp-admin\/post-new.php)/ } ),
 				startSiteFlow.clickButton( 'Skip and draft first post' ),
 			] );
 		} );

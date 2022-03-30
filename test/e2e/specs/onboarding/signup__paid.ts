@@ -143,7 +143,8 @@ skipDescribeIf( isStagingOrProd )(
 				// Make sure the content actually fills in the iframe.
 				// For the Zoologist theme, the word "Zoologist" is right at the top of the site content.
 				// Also, that preview render can be slow, let's give it a minute to be safe.
-				await previewFrame.waitForSelector( `text=${ theme }`, { timeout: 60 * 1000 } );
+				const locator = previewFrame.locator( `text=${ theme }` );
+				await locator.waitFor( { timeout: 60 * 1000 } );
 			} );
 
 			it( 'Start with the selected theme and land on home dashboard', async function () {

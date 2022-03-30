@@ -9,6 +9,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Hero Flow' ), () => {
 	const theme = 'Quadrat Green';
+	const siteSlug = 'e2eflowtestingprereleaseuser2.wordpress.com';
 
 	let page: Page;
 	let startSiteFlow: StartSiteFlow;
@@ -17,16 +18,15 @@ describe( DataHelper.createSuiteTitle( 'Hero Flow' ), () => {
 		page = await browser.newPage();
 		startSiteFlow = new StartSiteFlow( page );
 
-		const testAccount = new TestAccount( 'defaultUser' );
+		const testAccount = new TestAccount( 'calypsoPreReleaseUser' );
 		await testAccount.authenticate( page );
 	} );
 
 	/**
 	 * Start the build flow from the intent screen
 	 *
-	 * @param siteSlug The site slug URL.
 	 */
-	const startBuildFlow = ( siteSlug = 'e2eflowtesting4.wordpress.com' ) => {
+	const startBuildFlow = () => {
 		it( 'Navigate to /start/intent', async function () {
 			await page.goto( DataHelper.getCalypsoURL( '/start/setup-site/intent', { siteSlug } ) );
 		} );
@@ -49,17 +49,14 @@ describe( DataHelper.createSuiteTitle( 'Hero Flow' ), () => {
 		} );
 
 		it( 'Preview the selected theme', async function () {
-			await startSiteFlow.getThemePreviewIframe();
-			await page.waitForResponse(
-				( res ) => res.url().includes( '/template/demo/pub' ) && res.status() === 200
-			);
+			const themePreviewIframe = await startSiteFlow.getThemePreviewIframe();
+			const locator = themePreviewIframe.locator( `text=${ theme }` );
+			await locator.waitFor();
 		} );
 
-		it( `Select "Start with ${ theme } and land in site editor`, async function () {
+		it( `Select "Start with ${ theme }" and land in site editor`, async function () {
 			await Promise.all( [
-				page.waitForResponse(
-					( res ) => res.url().includes( '/wp-admin/themes.php' ) && res.status() === 200
-				),
+				page.waitForNavigation( { url: `**/site-editor/${ siteSlug }**` } ),
 				startSiteFlow.clickButton( `Start with ${ theme }` ),
 			] );
 		} );
@@ -72,7 +69,7 @@ describe( DataHelper.createSuiteTitle( 'Hero Flow' ), () => {
 			await startSiteFlow.validateOnDesignPickerScreen();
 		} );
 
-		it( 'Click "Skip for now', async function () {
+		it( 'Click "Skip for now"', async function () {
 			await startSiteFlow.clickButton( 'Skip for now' );
 		} );
 

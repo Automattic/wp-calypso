@@ -1,4 +1,4 @@
-import { Frame, Page } from 'playwright';
+import { FrameLocator, Page } from 'playwright';
 import envVariables from '../../env-variables';
 
 const selectors = {
@@ -17,7 +17,7 @@ const selectors = {
 	previewThemeButtonMobile: ( name: string ) =>
 		`button.design-picker__design-option:has-text("${ name }")`,
 	themePreviewIframe: 'iframe[title=Preview]',
-	categoryItem: `.design-picker-category-filter__menu-item`,
+	selectedCategoryItem: '.design-picker-category-filter__menu-item[aria-pressed=true]',
 };
 
 /**
@@ -95,9 +95,8 @@ export class StartSiteFlow {
 	 *
 	 * @returns The Frame handle for the theme preview iframe.
 	 */
-	async getThemePreviewIframe(): Promise< Frame > {
-		const elementHandle = await this.page.waitForSelector( selectors.themePreviewIframe );
-		return ( await elementHandle.contentFrame() ) as Frame;
+	async getThemePreviewIframe(): Promise< FrameLocator > {
+		return this.page.frameLocator( selectors.themePreviewIframe );
 	}
 
 	/**
@@ -106,7 +105,7 @@ export class StartSiteFlow {
 	 *  @returns Current category name
 	 */
 	async getCurrentCategory(): Promise< string > {
-		const locator = this.page.locator( `${ selectors.categoryItem }[aria-pressed=true]` );
+		const locator = this.page.locator( selectors.selectedCategoryItem );
 		return await locator.innerText();
 	}
 }
