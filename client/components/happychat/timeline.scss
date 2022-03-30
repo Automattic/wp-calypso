@@ -86,7 +86,7 @@
 
 .happychat__message-edited-flag {
 	color: var( --color-neutral-40 );
-	font-size: 0.75rem;
+	font-size: $font-body-extra-small;
 	vertical-align: text-bottom;
 	white-space: nowrap;
 	&::before {
