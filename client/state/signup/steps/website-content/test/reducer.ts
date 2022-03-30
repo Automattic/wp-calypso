@@ -3,7 +3,7 @@ import { SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 import {
 	updateWebsiteContentCurrentIndex,
 	imageUploaded,
-	textChanged,
+	websiteContentFieldChanged,
 	initializePages,
 	imageUploadInitiated,
 	imageUploadFailed,
@@ -459,9 +459,10 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'text content should be accurately updated', () => {
-		const action = textChanged( {
+		const action = websiteContentFieldChanged( {
 			pageId: 'About',
-			content: 'Testing Content',
+			fieldValue: 'Testing Content',
+			fieldName: 'content',
 		} );
 		expect( websiteContentCollectionReducer( { ...initialTestState }, action ) ).to.be.eql( {
 			...initialTestState,
