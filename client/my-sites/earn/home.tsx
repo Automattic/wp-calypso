@@ -11,6 +11,7 @@ import {
 	isSecurityDailyPlan,
 	isSecurityRealTimePlan,
 	isCompletePlan,
+	isProPlan,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
@@ -577,7 +578,8 @@ export default connect(
 					isJetpackBusinessPlan,
 					isSecurityDailyPlan,
 					isSecurityRealTimePlan,
-					isCompletePlan
+					isCompletePlan,
+					isProPlan
 				)( sitePlanSlug )
 		);
 		return {
