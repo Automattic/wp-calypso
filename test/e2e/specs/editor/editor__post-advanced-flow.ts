@@ -23,6 +23,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 	const accountName = getTestAccountByFeature( features, [
 		{ gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
+	console.log( accountName );
 
 	const postTitle = `Post Life Cycle: ${ DataHelper.getTimestamp() }`;
 	const originalContent = DataHelper.getRandomPhrase();
@@ -39,10 +40,17 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+	} );
 
-		postsPage = new PostsPage( page );
-		await postsPage.visit();
-		await postsPage.newPost();
+	describe( 'Start post', function () {
+		it( 'Visit /posts page', async function () {
+			postsPage = new PostsPage( page );
+			await postsPage.visit();
+		} );
+
+		it( 'Start new post', async function () {
+			await postsPage.newPost();
+		} );
 	} );
 
 	describe( 'Publish post', function () {
