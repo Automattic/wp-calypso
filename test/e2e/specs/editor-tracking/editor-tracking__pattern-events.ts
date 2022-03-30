@@ -7,6 +7,7 @@ import {
 	EditorPage,
 	envVariables,
 	getTestAccountByFeature,
+	envToFeatureKey,
 	PageTemplateModalComponent,
 	TestAccount,
 	EditorTracksEventManager,
@@ -16,11 +17,8 @@ import { Browser, Page } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events' ), function () {
-	const siteType = envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple';
-	const accountName = getTestAccountByFeature( {
-		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-		siteType: siteType,
-	} );
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features );
 
 	const patternName = 'Two columns of text and title'; // This is distinct and returns one result.
 	const patternNameInEventProperty = 'core/two-columns-of-text-and-title';
@@ -37,7 +35,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 			await testAccount.authenticate( page );
 
 			eventManager = new EditorTracksEventManager( page );
-			editorPage = new EditorPage( page, { target: siteType } );
+			editorPage = new EditorPage( page, { target: features.siteType } );
 		} );
 
 		it( 'Start a new page', async function () {

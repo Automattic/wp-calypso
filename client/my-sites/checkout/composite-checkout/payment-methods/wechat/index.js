@@ -61,6 +61,7 @@ export function createWeChatPaymentMethodStore() {
 export function createWeChatMethod( { store, stripe, stripeConfiguration, siteSlug } ) {
 	return {
 		id: 'wechat',
+		paymentProcessorId: 'wechat',
 		label: <WeChatLabel />,
 		activeContent: <WeChatFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
 		submitButton: (
@@ -162,7 +163,7 @@ function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting wechat payment' );
-					onClick( 'wechat', {
+					onClick( {
 						stripe,
 						name: customerName?.value,
 						items,

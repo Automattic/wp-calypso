@@ -82,32 +82,6 @@ export function getStripeElementsRules() {
 }
 
 /**
- * Returns the tef payment validation rule set
- *
- * @returns {object} the ruleset
- */
-export function tefPaymentFieldRules() {
-	return Object.assign(
-		{
-			name: {
-				description: i18n.translate( 'Your Name' ),
-				rules: [ 'required' ],
-			},
-
-			'tef-bank': {
-				description: i18n.translate( 'Bank' ),
-				rules: [ 'required' ],
-			},
-
-			country: {
-				rules: [ 'isBrazil' ],
-			},
-		},
-		countrySpecificFieldRules( 'BR' )
-	);
-}
-
-/**
  * Returns the token validation rule set
  *
  * @returns {object} the ruleset
@@ -134,7 +108,7 @@ export function tokenFieldRules() {
  * Returns a validation ruleset to use for the given payment type
  *
  * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card|paypal|p24|brazil-tef|netbanking|token|stripe|ebanx
+ * @param {string} paymentType credit-card|paypal|p24|netbanking|token|stripe|ebanx
  * @returns {object|null} the ruleset
  */
 export function paymentFieldRules( paymentDetails, paymentType ) {
@@ -150,8 +124,6 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 				getCreditCardFieldRules(),
 				getConditionalCreditCardRules( paymentDetails )
 			);
-		case 'brazil-tef':
-			return tefPaymentFieldRules();
 		case 'netbanking':
 			return countrySpecificFieldRules( 'IN' );
 		case 'token':
@@ -340,9 +312,9 @@ validators.validStreetNumber = {
  * with keys that are the field names of those errors.  The value of each
  * property of that object is an array of error strings.
  *
- * @param {object} paymentDetails object containing fieldname/value keypairs
- * @param {string} paymentType credit-card|paypal|p24|brazil-tef|netbanking|token|stripe|ebanx
- * @returns {object} validation errors, if any
+ * @param {Object.<string, string>} paymentDetails object containing fieldname/value keypairs
+ * @param {string} paymentType credit-card|paypal|p24|netbanking|token|stripe|ebanx
+ * @returns {{errors:Object.<string, string[]>}} validation errors, if any
  */
 export function validatePaymentDetails( paymentDetails, paymentType ) {
 	const rules = paymentFieldRules( paymentDetails, paymentType ) || {};

@@ -12,6 +12,7 @@ export interface CheckoutStepProps {
 	titleContent: React.ReactNode;
 	isCompleteCallback: IsCompleteCallback;
 	activeStepContent?: React.ReactNode;
+	activeStepFooter?: React.ReactNode;
 	completeStepContent?: React.ReactNode;
 	className?: string;
 	editButtonText?: string;
@@ -31,6 +32,7 @@ export interface OrderSummaryData {
 
 export interface PaymentMethod {
 	id: string;
+	paymentProcessorId: string;
 	label?: React.ReactNode;
 	activeContent?: React.ReactNode;
 	inactiveContent?: React.ReactNode;
@@ -250,7 +252,6 @@ export interface TransactionStatusManager extends TransactionStatusState {
 }
 
 export type ProcessPayment = (
-	paymentProcessorId: string,
 	processorData: PaymentProcessorSubmitData
 ) => Promise< PaymentProcessorResponse >;
 

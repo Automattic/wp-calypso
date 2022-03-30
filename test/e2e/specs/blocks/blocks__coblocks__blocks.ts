@@ -20,12 +20,12 @@ import {
 import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-const features = envToFeatureKey( envVariables );
-const accountName = getTestAccountByFeature( features );
-
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features );
+
 	let page: Page;
 	let testAccount: TestAccount;
 	let editorPage: EditorPage;

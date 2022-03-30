@@ -18,6 +18,7 @@ Thanks for updating Gutenberg! Please be sure to update the title above with the
 - Release notes for the version(s) you're implementing should be linked directly to the WordPress/gutenberg repo tag
 (for example, linking the text 'v11.0.0-rc.1' to https://github.com/WordPress/gutenberg/releases/tag/v11.0.0-rc.1)
 -->
+
 Previous upgrade:  
 Release notes:
 
@@ -26,34 +27,36 @@ As you complete the tasks in this list, please update the relevant lines with di
 -->
 
 **Install and activate**
-- [ ] Copy & install [v#.#.#]-rc.1 (######-code, ######-code)
-- [ ] Activate [v#.#.#]-rc.1 on edge (######-code)
-- [ ] Copy & install [v#.#.#] (######-code, ######-code)
-- [ ] Activate [v#.#.#] on edge (######-code)
+
+- [ ] Install & activate [v#.#.#]-rc.1 on edge (######-code)
+- [ ] Install & activate [v#.#.#] on edge (######-code)
 - [ ] Activate [v#.#.#] on production (######-code)
 - [ ] Request [v#.#.#] AT upgrade (######-p2)
 
 **Testing**
+
 - [ ] [v#.#.#] Desktop viewport E2E
 - [ ] [v#.#.#] Mobile viewport E2E
 - [ ] [v#.#.#] WPCOM core (######-code)
 
 **Publish internal announcements**
+
 - [ ] Slack: #team-calypso
 - [ ] Slack: #wpcom-happy-announce
 - [ ] P2: wpcomhappy
 
 **Wrap-up**
+
 - [ ] Clean up unused releases
 - [ ] Add log entry to the Gutenberg Upgrade Log (pcoGjb-g-p2)
 - [ ] [Open a new issue](https://github.com/Automattic/wp-calypso/issues/new?assignees=&labels=gutenberg-upgrade%2C+%5BType%5D+Task&template=gutenberg-plugin-upgrade.md&title=Gutenberg%3A+%5Bv%23.%23.%23%5D+plugin+upgrade) for the next upgrade, transfer remaining tasks, close this issue.
 
+### Blockers 🤷‍♀️
 
- ### Blockers 🤷‍♀️
+### Other Issues 🐛
 
- ### Other Issues 🐛
+**Issues transferred from previous release(s)**
 
- **Issues transferred from previous release(s)**
+---
 
- ---
- cc @Automattic/gutenberg-upgrades @Automattic/cylon @simison
+cc @Automattic/gutenberg-upgrades @Automattic/cylon

@@ -3,6 +3,7 @@ import { registerStore } from '@wordpress/data';
 export interface StoreStateValue {
 	value: string;
 	isTouched: boolean;
+	errors?: string[];
 }
 
 type AddStateArg< F, S > = F extends ( ...args: infer P ) => infer R

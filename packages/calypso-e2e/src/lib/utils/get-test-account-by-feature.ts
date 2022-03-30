@@ -10,7 +10,7 @@ type Env = 'edge' | 'stable';
 
 export type SiteType = 'simple' | 'atomic';
 
-type Variant = 'siteEditor';
+type Variant = 'siteEditor' | 'i18n';
 
 type Feature = 'gutenberg' | 'coblocks';
 export type FeatureKey = { [ key in Feature ]?: Env | undefined } & {
