@@ -2,13 +2,13 @@
 @import '@automattic/onboarding/styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
 
-.jetpack-rna-action-card {
-	box-sizing: content-box;
+.jetpack-RNA-action-card {
 	background-color: var( --studio-white );
 	background-repeat: no-repeat;
 	background-position: top right;
 	width: 100%;
 	max-width: 1010px;
+	padding: 26px;
 	margin-top: 15px;
 	border: 1px solid var( --studio-gray-5 );
 	border-radius: 4px;
@@ -18,6 +18,7 @@
 	justify-content: space-between;
 	@include break-large {
 		flex-direction: row;
+		padding: 64px;
 	}
 	&.is-placeholder {
 		background-color: #fdfdfd;
@@ -29,11 +30,8 @@
 		flex-direction: column;
 		justify-content: space-between;
 		min-width: 238px;
-		padding: 16px 26px 46px;
-		box-sizing: border-box;
 		@include break-large {
-			flex: 0 55 550px;
-			padding: 64px;
+			flex: 0 27 486px;
 		}
 	}
 
@@ -60,18 +58,15 @@
 	}
 
 	&__footer {
-		box-sizing: border-box;
 		order: -1;
 		@include break-large {
 			order: initial;
-			flex: 0 46 460px;
-			display: flex;
-			align-items: center;
+			flex: 0 22 396px;
 		}
 	}
 
 	&__footer-image {
-		padding-left: 15px;
+		padding-left: 12px;
 		@include break-large {
 			padding-left: 0;
 		}
@@ -84,7 +79,6 @@
 		font-size: $font-headline-small;
 		font-weight: 700;
 		margin-bottom: 24px;
-		line-height: 40px;
 		.is-placeholder & {
 			display: inline-block;
 			@include placeholder( --studio-gray-5 );
