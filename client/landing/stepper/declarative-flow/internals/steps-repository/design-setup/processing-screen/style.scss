@@ -1,0 +1,31 @@
+@import '@automattic/onboarding/styles/mixins';
+
+$progress-duration: 800ms;
+
+.processing-screen {
+	padding: 1em;
+	max-width: 540px;
+	text-align: center;
+	margin: 32vh auto;
+
+	&.is-force-centered {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&__progress-step {
+		@include onboarding-font-recoleta;
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 1.625rem;
+		line-height: 40px;
+		text-align: center;
+		vertical-align: middle;
+		margin: 0;
+	}
+}

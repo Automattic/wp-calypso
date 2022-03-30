@@ -21,12 +21,12 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
-import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import PreviewToolbar from './preview-toolbar';
+import ProcessingScreen from './processing-screen';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design, Category } from '@automattic/design-picker';
@@ -313,8 +313,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	);
 
 	return isProcessing ? (
-		// Using existing `/start` component with hard-coded props as poc
-		<ReskinnedProcessingScreen flowName="setup-site" isDestinationSetupSiteFlow={ true } />
+		<ProcessingScreen />
 	) : (
 		<StepContainer
 			stepName={ 'design-step' }
