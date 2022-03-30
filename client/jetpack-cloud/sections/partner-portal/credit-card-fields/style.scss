@@ -29,6 +29,11 @@
 				background: var( --color-accent );
 				border-color: var( --color-accent );
 			}
+
+			&:disabled {
+				opacity: 0.3;
+				cursor: default;
+			}
 		}
 
 		.components-checkbox-control__label {
