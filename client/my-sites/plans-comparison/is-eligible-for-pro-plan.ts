@@ -7,7 +7,7 @@ import type { AppState } from 'calypso/types';
 
 export function isEligibleForProPlan( state: AppState, siteId?: number ): boolean {
 	if ( isE2ETest() ) {
-		return false;
+		// return false;
 	}
 
 	if (
