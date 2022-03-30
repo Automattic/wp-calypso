@@ -343,7 +343,7 @@ const PluginsBrowser = ( {
 				searchTerm={ search }
 				siteSlug={ siteSlug }
 				title={ translate( 'Plugins you need to get your projects done' ) }
-				searchTerms={ [ 'shipping', 'seo', 'portfolio', 'chat', 'newsletter' ] }
+				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
 			<PluginBrowserContent
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
