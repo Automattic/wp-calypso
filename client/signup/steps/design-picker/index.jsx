@@ -29,7 +29,6 @@ import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
-import DIFMThemes from '../difm-design-picker/themes';
 import LetUsChoose from './let-us-choose';
 import PreviewToolbar from './preview-toolbar';
 import './style.scss';
@@ -74,19 +73,22 @@ export default function DesignPickerStep( props ) {
 	const {
 		isLoading: blockEditorSettingsAreLoading,
 		data: blockEditorSettings,
-	} = useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
+	} = useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.hideFSEThemes );
 	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
-	const themeFilters = isFSEEligible
-		? 'auto-loading-homepage,full-site-editing'
-		: 'auto-loading-homepage';
+
+	const getThemeFilters = () => {
+		if ( props.themeFilters ) return props.themeFilters;
+
+		if ( isFSEEligible ) return 'auto-loading-homepage,full-site-editing';
+
+		return 'auto-loading-homepage';
+	};
 
 	const { data: apiThemes = [] } = useThemeDesignsQuery(
-		{ filter: themeFilters, tier },
+		{ filter: getThemeFilters(), tier },
 		// Wait until block editor settings have loaded to load themes
-		{ enabled: ! props.useDIFMThemes && ! blockEditorSettingsAreLoading }
+		{ enabled: props.hideFSEThemes || ! blockEditorSettingsAreLoading }
 	);
-
-	const allThemes = props.useDIFMThemes ? DIFMThemes : apiThemes;
 
 	useEffect(
 		() => {
@@ -116,12 +118,12 @@ export default function DesignPickerStep( props ) {
 
 	const { designs, featuredPicksDesigns } = useMemo( () => {
 		return {
-			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
-			featuredPicksDesigns: allThemes.filter(
+			designs: shuffle( apiThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
+			featuredPicksDesigns: apiThemes.filter(
 				( theme ) => theme.is_featured_picks && ! isBlankCanvasDesign( theme )
 			),
 		};
-	}, [ allThemes ] );
+	}, [ apiThemes ] );
 
 	const getEventPropsByDesign = ( design ) => ( {
 		theme: design?.stylesheet ?? `pub/${ design?.theme }`,
