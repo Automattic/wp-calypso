@@ -828,11 +828,12 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 export default connect(
-	( state, { steps } ) => {
+	( state, { steps, flowName } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
 		const selectedSite = getSelectedSite( state );
+		const eligibleForProPlan = isEligibleForProPlan( state, selectedSite?.ID );
 
 		return {
 			designType: getDesignType( state ),
@@ -843,9 +844,10 @@ export default connect(
 			selectedSite,
 			sites: getSitesItems( state ),
 			isPlanSelectionAvailableLaterInFlow:
-				! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ),
+				( ! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ) ) ||
+				( eligibleForProPlan && 'pro' === flowName ),
 			userLoggedIn: isUserLoggedIn( state ),
-			eligibleForProPlan: isEligibleForProPlan( state, selectedSite?.ID ),
+			eligibleForProPlan,
 		};
 	},
 	{
