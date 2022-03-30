@@ -7,6 +7,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
 		post_id: 111349,
 	},
+	backups: {
+		link: 'https://wordpress.com/support/restore/',
+		post_id: 159843,
+	},
 	backup_payment_methods: {
 		link: 'https://wordpress.com/support/payment/#backup-payment-methods',
 		post_id: 76237,
