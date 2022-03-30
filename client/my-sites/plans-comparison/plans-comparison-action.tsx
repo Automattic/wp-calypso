@@ -35,7 +35,7 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 	const planSlug = plan?.getStoreSlug();
 
 	if ( planSlug === PLAN_WPCOM_PRO ) {
-		return translate( 'Try Pro risk-free' );
+		return translate( 'Start with Pro' );
 	} else if ( planSlug === PLAN_FREE || planSlug === PLAN_WPCOM_FLEXIBLE ) {
 		return translate( 'Start with Free' );
 	}
