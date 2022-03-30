@@ -2,6 +2,7 @@ import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
+	PLAN_WPCOM_PRO,
 	PLAN_PERSONAL,
 	PLAN_BLOGGER,
 	PLAN_PREMIUM_2_YEARS,
@@ -19,6 +20,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { userCan } from 'calypso/lib/site/utils';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -235,6 +237,10 @@ const CTAButton = ( {
 		getPrimaryDomainBySiteId( state, selectedSite?.ID )
 	);
 
+	const eligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, selectedSite?.ID )
+	);
+
 	const pluginRequiresCustomPrimaryDomain =
 		( primaryDomain?.isWPCOMDomain || primaryDomain?.isWpcomStagingDomain ) &&
 		plugin?.requirements?.required_primary_domain;
@@ -267,6 +273,7 @@ const CTAButton = ( {
 						upgradeAndInstall: shouldUpgrade,
 						isMarketplaceProduct,
 						billingPeriod,
+						eligibleForProPlan,
 					} );
 				} }
 				isDialogVisible={ showAddCustomDomain }
@@ -292,6 +299,7 @@ const CTAButton = ( {
 							upgradeAndInstall: shouldUpgrade,
 							isMarketplaceProduct,
 							billingPeriod,
+							eligibleForProPlan,
 						} )
 					}
 				/>
@@ -313,6 +321,7 @@ const CTAButton = ( {
 						upgradeAndInstall: shouldUpgrade,
 						isMarketplaceProduct,
 						billingPeriod,
+						eligibleForProPlan,
 					} );
 				} }
 				disabled={ ( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false }
@@ -355,6 +364,7 @@ function onClickInstallPlugin( {
 	upgradeAndInstall,
 	isMarketplaceProduct,
 	billingPeriod,
+	eligibleForProPlan,
 } ) {
 	dispatch( removePluginStatuses( 'completed', 'error' ) );
 
@@ -383,7 +393,8 @@ function onClickInstallPlugin( {
 					billingPeriod
 				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
-				}#step2`
+				}#step2`,
+				eligibleForProPlan
 			);
 		}
 
@@ -399,7 +410,8 @@ function onClickInstallPlugin( {
 		return page(
 			`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
 				selectedSite?.plan,
-				billingPeriod
+				billingPeriod,
+				eligibleForProPlan
 			) }?redirect_to=${ installPluginURL }#step2`
 		);
 	}
@@ -409,7 +421,10 @@ function onClickInstallPlugin( {
 }
 
 // Return the correct business plan slug depending on current plan and pluginBillingPeriod
-function businessPlanToAdd( currentPlan, pluginBillingPeriod ) {
+function businessPlanToAdd( currentPlan, pluginBillingPeriod, eligibleForProPlan ) {
+	if ( eligibleForProPlan ) {
+		return PLAN_WPCOM_PRO;
+	}
 	switch ( currentPlan.product_slug ) {
 		case PLAN_PERSONAL_2_YEARS:
 		case PLAN_PREMIUM_2_YEARS:
