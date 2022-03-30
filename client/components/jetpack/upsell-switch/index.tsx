@@ -140,7 +140,7 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 			>
 				<QueryComponent siteId={ siteId } />
 				{ /* render placeholder */ }
-				{ React.isValidElement( children ) && React.cloneElement( children, { reason: reason } ) }
+				{ children }
 			</Main>
 		);
 	}

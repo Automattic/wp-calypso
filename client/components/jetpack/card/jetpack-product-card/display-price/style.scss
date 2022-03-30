@@ -196,7 +196,7 @@
 			transform: scaleY( 0.6 );
 		}
 		.plan-price::before {
-			border-color: var( --color-neutral-10 );
+			border-color: transparent;
 		}
 		.display-price__billing-time-frame {
 			@include placeholder( --color-neutral-10 );
