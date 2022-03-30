@@ -87,7 +87,7 @@ const BackupsUpsellBody: FunctionComponent = () => {
 				productSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
 				siteId={ siteId }
 				currencyCode={ currencyCode }
-				ctaButtonURL={ createProductURL }
+				getButtonURL={ createProductURL }
 				onCtaButtonClick={ onClick }
 			/>
 		</>

@@ -3,87 +3,6 @@
 @import '@wordpress/base-styles/breakpoints';
 
 .upsell-product-card {
-	background-color: var( --studio-white );
-	background-repeat: no-repeat;
-	background-position: top right;
-	width: 100%;
-	max-width: 1010px;
-	padding: 26px;
-	margin-top: 15px;
-	border: 1px solid var( --studio-gray-5 );
-	border-radius: 4px;
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	justify-content: space-between;
-	@include break-large {
-		flex-direction: row;
-		padding: 64px;
-	}
-	&.is-placeholder {
-		background-color: #fdfdfd;
-		border: none;
-	}
-
-	&__body {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		> div {
-			flex: 1;
-		}
-	}
-
-	&__action {
-		display: flex;
-		align-items: flex-end;
-		margin-top: 24px;
-	}
-
-	&__button {
-		&.button {
-			font-size: $font-body;
-			padding: 8px 32px;
-			width: 100%;
-			@include break-medium {
-				width: auto;
-			}
-			.is-placeholder & {
-				@include placeholder( --studio-gray-5 );
-			}
-		}
-	}
-
-	&__footer {
-		order: -1;
-		@include break-large {
-			flex: 1 1 552px;
-			order: initial;
-		}
-	}
-
-	&__header {
-		font-size: $font-headline-small;
-		font-weight: 700;
-		margin-bottom: 24px;
-		.is-placeholder & {
-			display: inline-block;
-			@include placeholder( --studio-gray-5 );
-		}
-	}
-
-	&__description {
-		font-size: $font-title-small;
-		line-height: 30px;
-		font-weight: 500;
-		margin-bottom: 24px;
-		span {
-			.is-placeholder & {
-				@include placeholder( --studio-gray-5 );
-			}
-		}
-	}
-
 	&__features {
 		list-style: none;
 		margin: 0 0 24px;
@@ -133,13 +52,6 @@
 		color: var( --studio-gray-40 );
 		font-size: 0.875rem;
 		line-height: 1.2;
-	}
-
-	&__placeholder-image {
-		width: calc( 100% - 25px );
-		margin: 25px 0 25px 25px;
-		padding-bottom: 100%;
-		@include placeholder( --studio-gray-5 );
 	}
 }
 
