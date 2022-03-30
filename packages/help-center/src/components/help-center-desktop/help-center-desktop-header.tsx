@@ -8,9 +8,15 @@ interface Props {
 	isMinimized: boolean;
 	onMinimize: () => void;
 	onMaximize: () => void;
+	onDismiss: () => void;
 }
 
-const HelpCenterDesktopHeader: React.FC< Props > = ( { isMinimized, onMinimize, onMaximize } ) => {
+const HelpCenterDesktopHeader: React.FC< Props > = ( {
+	isMinimized,
+	onMinimize,
+	onMaximize,
+	onDismiss,
+} ) => {
 	const classNames = classnames( 'help-center__container-header' );
 
 	return (
@@ -41,7 +47,7 @@ const HelpCenterDesktopHeader: React.FC< Props > = ( { isMinimized, onMinimize, 
 						isPrimary
 						icon={ close }
 						iconSize={ 24 }
-						// onClick={ onDismiss( 'close-btn' ) }
+						onClick={ onDismiss }
 					></Button>
 				</div>
 			</Flex>

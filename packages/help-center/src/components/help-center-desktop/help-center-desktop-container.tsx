@@ -1,11 +1,16 @@
 import { Card } from '@wordpress/components';
 import classnames from 'classnames';
-import { useState } from 'react';
+import { ReactElement, useState } from 'react';
 import Draggable from 'react-draggable';
 import HelpCenterDesktopContent from './help-center-desktop-content';
 import HelpCenterDesktopHeader from './help-center-desktop-header';
 
-const HelpCenterDeskopContainer: React.FC = () => {
+interface Props {
+	content: ReactElement;
+	handleClose: () => void;
+}
+
+const HelpCenterDeskopContainer: React.FC< Props > = ( { content, handleClose } ) => {
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const classNames = classnames( 'help-center__container', 'is-desktop' );
 	return (
@@ -15,8 +20,9 @@ const HelpCenterDeskopContainer: React.FC = () => {
 					isMinimized={ isMinimized }
 					onMinimize={ () => setIsMinimized( true ) }
 					onMaximize={ () => setIsMinimized( false ) }
+					onDismiss={ handleClose }
 				/>
-				{ ! isMinimized && <HelpCenterDesktopContent /> }
+				{ ! isMinimized && <HelpCenterDesktopContent content={ content } /> }
 			</Card>
 		</Draggable>
 	);

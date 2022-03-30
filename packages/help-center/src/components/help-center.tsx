@@ -3,6 +3,7 @@
  */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
+import { ReactElement } from 'react';
 /**
  * Internal Dependencies
  */
@@ -10,7 +11,12 @@ import HelpCenterDesktop from './help-center-desktop';
 
 import '../styles.scss';
 
-const HelpCenter: React.FC = () => {
+interface Props {
+	content: ReactElement;
+	handleClose: () => void;
+}
+
+const HelpCenter: React.FC< Props > = ( { content, handleClose } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const isMobile = useMobileBreakpoint();
 
@@ -25,7 +31,14 @@ const HelpCenter: React.FC = () => {
 		};
 	}, [ portalParent ] );
 
-	return <div>{ createPortal( isMobile ? null : <HelpCenterDesktop />, portalParent ) }</div>;
+	return (
+		<div>
+			{ createPortal(
+				isMobile ? null : <HelpCenterDesktop handleClose={ handleClose } content={ content } />,
+				portalParent
+			) }
+		</div>
+	);
 };
 
 export default HelpCenter;

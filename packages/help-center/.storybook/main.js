@@ -1,3 +1,5 @@
 const path = require( 'path' );
 const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
-module.exports = storybookDefaultConfig();
+const config = storybookDefaultConfig();
+config.addons.push( '@storybook/addon-backgrounds' );
+module.exports = config;
