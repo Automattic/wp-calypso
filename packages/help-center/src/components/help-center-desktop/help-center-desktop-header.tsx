@@ -21,7 +21,7 @@ const HelpCenterDesktopHeader: React.FC< Props > = ( {
 	return (
 		<CardHeader className={ classNames }>
 			<Flex>
-				<div>Help Center</div>
+				<h2>Help Center</h2>
 				<div>
 					{ isMinimized ? (
 						<Button

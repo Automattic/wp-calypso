@@ -13,25 +13,28 @@ interface Props {
 
 const HelpCenterDeskopContainer: React.FC< Props > = ( { content, handleClose } ) => {
 	const [ isMinimized, setIsMinimized ] = useState( false );
-	const classNames = classnames( 'help-center__container', 'is-desktop' );
-	return (
-		<Draggable handle={ '.help-center__container-header' }>
-			<Card className={ classNames }>
-				<HelpCenterDesktopHeader
-					isMinimized={ isMinimized }
-					onMinimize={ () => setIsMinimized( true ) }
-					onMaximize={ () => setIsMinimized( false ) }
-					onDismiss={ handleClose }
-				/>
-				{ ! isMinimized && (
-					<>
-						<HelpCenterDesktopContent content={ content } />
-						<HelpCenterDesktopFooter />
-					</>
-				) }
-			</Card>
-		</Draggable>
+	const classNames = classnames( 'help-center__container', 'is-desktop', {
+		'is-minimized': isMinimized,
+	} );
+
+	const container = (
+		<Card className={ classNames }>
+			<HelpCenterDesktopHeader
+				isMinimized={ isMinimized }
+				onMinimize={ () => setIsMinimized( true ) }
+				onMaximize={ () => setIsMinimized( false ) }
+				onDismiss={ handleClose }
+			/>
+			{ ! isMinimized && (
+				<>
+					<HelpCenterDesktopContent content={ content } />
+					<HelpCenterDesktopFooter />
+				</>
+			) }
+		</Card>
 	);
+
+	return isMinimized ? container : <Draggable>{ container }</Draggable>;
 };
 
 export default HelpCenterDeskopContainer;
