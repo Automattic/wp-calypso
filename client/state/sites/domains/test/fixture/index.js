@@ -121,7 +121,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	canManageNameServers: true,
 	cannotManageDnsRecordsReason: null,
 	cannotUpdateContactInfoReason: null,
-	cannotManageNamerServersReason: null,
+	cannotManageNameServersReason: null,
 	connectionMode: typeof undefined,
 	contactInfoDisclosed: false,
 	contactInfoDisclosureAvailable: false,
