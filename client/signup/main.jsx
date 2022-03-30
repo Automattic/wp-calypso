@@ -757,7 +757,9 @@ class Signup extends Component {
 						/>
 					) }
 				</div>
-				{ isEligibleForOlarkChat && <OlarkChat identity={ olarkIdentity } /> }
+				{ isEligibleForOlarkChat && (
+					<OlarkChat identity={ olarkIdentity } shouldDisablePreChatSurvey={ true } />
+				) }
 			</>
 		);
 	}
