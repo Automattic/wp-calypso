@@ -25,7 +25,7 @@ class WordAdsPayments extends Component {
 				paypalEmail: PropTypes.string.isRequired,
 				description: PropTypes.string,
 			} )
-		).isRequired,
+		),
 	};
 
 	checkSize( obj ) {
