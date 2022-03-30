@@ -5,7 +5,19 @@
 	left: 0;
 	right: 0;
 	background-color: #fff;
-	z-index: 2;
+	z-index: 9999;
+	transition: 0.5s ease;
+	max-height: 100vh;
+
+	&.minimized {
+		top: calc( 100vh - 50px );
+		max-height: 50px;
+		transition: max-height ease 0.25s, top 0.5s ease 100ms;
+	}
+
+	.help-center__container-header {
+		height: 50px;
+	}
 
 	.help-center-mobile__content {
 		padding: 10px;
@@ -16,20 +28,20 @@
 
 @keyframes slideIn {
 	0% {
-		transform: translateX( -100% );
+		transform: translateY( 100vh );
 	}
 
 	100% {
-		transform: translateX( 0% );
+		transform: translateY( 0 );
 	}
 }
 
 @keyframes slideOut {
 	0% {
-		transform: translateX( 0% );
+		transform: translateY( 0 );
 	}
 
 	100% {
-		transform: translateX( -100% );
+		transform: translateY( 100vh );
 	}
 }
