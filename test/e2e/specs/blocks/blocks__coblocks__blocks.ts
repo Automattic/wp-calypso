@@ -51,7 +51,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( `Insert ${ PricingTableBlock.blockName } block and enter prices`, async function () {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);
@@ -61,11 +61,14 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( `Insert ${ DynamicHRBlock.blockName } block`, async function () {
-		await editorPage.addBlock( DynamicHRBlock.blockName, DynamicHRBlock.blockEditorSelector );
+		await editorPage.addBlockFromSidebar(
+			DynamicHRBlock.blockName,
+			DynamicHRBlock.blockEditorSelector
+		);
 	} );
 
 	it( `Insert ${ HeroBlock.blockName } block and enter heading`, async function () {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			HeroBlock.blockName,
 			HeroBlock.blockEditorSelector
 		);
@@ -74,7 +77,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( `Insert ${ ClicktoTweetBlock.blockName } block and enter tweet content`, async function () {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			ClicktoTweetBlock.blockName,
 			ClicktoTweetBlock.blockEditorSelector
 		);
@@ -83,7 +86,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( `Insert ${ LogosBlock.blockName } block and set image`, async function () {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			LogosBlock.blockName,
 			LogosBlock.blockEditorSelector
 		);

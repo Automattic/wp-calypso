@@ -270,7 +270,7 @@ describe( 'I18N: Editor', function () {
 
 				it( 'Insert test block', async function () {
 					editorPage = new EditorPage( page, { target: features.siteType } );
-					await editorPage.addBlock( block.blockName, block.blockEditorSelector );
+					await editorPage.addBlockFromSidebar( block.blockName, block.blockEditorSelector );
 				} );
 
 				it( 'Render block content translations', async function () {
