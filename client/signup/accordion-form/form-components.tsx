@@ -53,7 +53,7 @@ const FlexContainer = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	row-gap: 16px;
-	column-gap: 32px;
+	justify-content: space-between;
 
 	.form-fieldset {
 		flex-basis: 100%;
@@ -77,9 +77,9 @@ const SocialMediaLabel = styled.span`
 
 const AddressField = styled.div`
 	flex-basis: 100%;
-	@media ( min-width: 600px ) {
+	/* @media ( min-width: 600px ) {
 		flex-basis: 85%;
-	}
+	} */
 `;
 
 interface TextInputFieldProps {

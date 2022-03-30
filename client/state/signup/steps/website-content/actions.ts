@@ -3,7 +3,6 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_COMPLETED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_STARTED,
-	SIGNUP_STEPS_WEBSITE_CONTENT_TEXT_CHANGED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_FAILED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_STARTED,
@@ -11,6 +10,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_COMPLETED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
+	SIGNUP_STEPS_WEBSITE_FIELD_CHANGED,
 } from 'calypso/state/action-types';
 import { ImageData } from './schema';
 import 'calypso/state/signup/init';
@@ -68,9 +68,13 @@ export function logoRemoved() {
 	};
 }
 
-export function textChanged( data: { pageId: string; content: string } ) {
+export function websiteContentFieldChanged( data: {
+	pageId: string;
+	fieldName: string;
+	fieldValue: string;
+} ) {
 	return {
-		type: SIGNUP_STEPS_WEBSITE_CONTENT_TEXT_CHANGED,
+		type: SIGNUP_STEPS_WEBSITE_FIELD_CHANGED,
 		payload: data,
 	};
 }

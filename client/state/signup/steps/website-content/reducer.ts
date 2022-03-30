@@ -2,7 +2,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX,
 	SIGNUP_COMPLETE_RESET,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_COMPLETED,
-	SIGNUP_STEPS_WEBSITE_CONTENT_TEXT_CHANGED,
+	SIGNUP_STEPS_WEBSITE_FIELD_CHANGED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_STARTED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_COMPLETED,
@@ -200,27 +200,22 @@ export default withSchemaValidation(
 				};
 			}
 
-			case SIGNUP_STEPS_WEBSITE_CONTENT_TEXT_CHANGED: {
+			case SIGNUP_STEPS_WEBSITE_FIELD_CHANGED: {
 				const { payload } = action;
-
-				const pageIndex = state.websiteContent.pages.findIndex(
-					( page ) => page.id === payload.pageId
-				);
-
-				const changedPage = state.websiteContent.pages[ pageIndex ];
 
 				return {
 					...state,
 					websiteContent: {
 						...state.websiteContent,
-						pages: [
-							...state.websiteContent.pages.slice( 0, pageIndex ),
-							{
-								...changedPage,
-								content: payload.content,
-							},
-							...state.websiteContent.pages.slice( pageIndex + 1 ),
-						],
+						pages: state.websiteContent.pages.map( ( page ) => {
+							if ( payload.pageId === page.id ) {
+								return {
+									...page,
+									[ payload.fieldName ]: payload.fieldValue,
+								};
+							}
+							return page;
+						} ),
 					},
 				};
 			}
