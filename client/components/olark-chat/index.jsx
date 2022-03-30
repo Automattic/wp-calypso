@@ -20,7 +20,7 @@ class OlarkChat extends Component {
 
 		if ( systemsGroupId ) {
 			script.innerHTML += `
-				olark.configure('system.group', ${ systemsGroupId }); 
+				olark.configure('system.group', '${ systemsGroupId }'); 
 			`;
 		}
 
