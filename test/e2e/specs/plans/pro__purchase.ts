@@ -6,7 +6,6 @@ import {
 	DataHelper,
 	SidebarComponent,
 	PlansPage,
-	IndividualPurchasePage,
 	CartCheckoutPage,
 	TestAccount,
 } from '@automattic/calypso-e2e';
@@ -16,14 +15,13 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 	let page: Page;
-	let plansPage: plansPage;
-	let purchasesPage: IndividualPurchasePage;
+	let plansPage: PlansPage;
 	let cartCheckoutPage: CartCheckoutPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( 'defaultUser' );
+		const testAccount = new TestAccount( 'myTestUser' );
 		await testAccount.authenticate( page );
 	} );
 
@@ -33,22 +31,20 @@ describe( DataHelper.createSuiteTitle( 'Plans: Purchases' ), function () {
 			await sidebarComponent.navigate( 'Upgrades', 'Plans' );
 		} );
 
-		it( 'Click on the "My Plan" tab', async function () {
-			plansPage = new PlansPage( page );
-			await plansPage.clickTab( 'New Plans' );
-		} );
-
 		it( 'Click on the "New Plans" navigation tab', async function () {
+			plansPage = new PlansPage( page );
 			await plansPage.clickTab( 'New Plans' );
 		} );
 	} );
 
-	describe( 'Manage current plan (WordPress.com Pro)', function () {
+	describe( 'Add and WordPress.com Pro from cart', function () {
 		const cartItemForProPlan = 'WordPress.com Pro';
 
 		it( 'Click on "Try Pro" button for WordPress.com Pro plan', async function () {
-			await purchasesPage.clickUpgradeButton();
-			await plansPage.clickPlanActionButton( { plan: 'Pro', buttonText: 'Try Pro risk-free' } );
+			await plansPage.clickPlanActionButton( {
+				plan: 'WordPress Pro',
+				buttonText: 'Try Pro risk-free',
+			} );
 		} );
 
 		it( 'WordPress.com Pro is added to cart', async function () {
