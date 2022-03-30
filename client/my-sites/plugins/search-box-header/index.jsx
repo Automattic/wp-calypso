@@ -33,9 +33,9 @@ const PopularSearches = ( props ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const trackImpresion = ( searchTerm ) => {
+	const trackImpression = ( searchTerm ) => {
 		dispatch(
-			recordTracksEvent( 'calypso_plugins_popular_searches_impresion', {
+			recordTracksEvent( 'calypso_plugins_popular_searches_impression', {
 				search_term: searchTerm,
 			} )
 		);
@@ -51,7 +51,7 @@ const PopularSearches = ( props ) => {
 		page( `/plugins/${ siteSlug || '' }?s=${ searchTerm }` );
 	};
 
-	searchTerms.forEach( trackImpresion );
+	searchTerms.forEach( trackImpression );
 
 	return (
 		<div className="search-box-header__recommended-searches">
