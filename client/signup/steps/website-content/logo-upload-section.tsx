@@ -7,8 +7,8 @@ import {
 	logoUploadCompleted,
 	logoUploadFailed,
 	logoUploadStarted,
+	logoRemoved,
 } from 'calypso/state/signup/steps/website-content/actions';
-import { LOGO_SECTION_ID } from 'calypso/state/signup/steps/website-content/reducer';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/get-selected-site';
 import { MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
@@ -20,9 +20,11 @@ export const LogoUploadSectionContainer = styled.div`
 `;
 
 export function LogoUploadSection( {
+	sectionID,
 	logoUrl,
 	onChangeField,
 }: {
+	sectionID: string;
 	logoUrl: string;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
 } ) {
@@ -34,8 +36,12 @@ export function LogoUploadSection( {
 		dispatch( logoUploadCompleted( URL as string ) );
 		onChangeField &&
 			onChangeField( {
-				target: { name: LOGO_SECTION_ID, value: URL },
+				target: { name: sectionID, value: URL },
 			} as ChangeEvent< HTMLInputElement > );
+	};
+
+	const onMediaRemoved = () => {
+		dispatch( logoRemoved() );
 	};
 
 	return (
@@ -43,12 +49,13 @@ export function LogoUploadSection( {
 			<Label>{ translate( 'Upload your business logo.' ) }</Label>
 			<HorizontalGrid>
 				<WordpressMediaUpload
-					mediaIndex={ 1 }
+					mediaIndex={ 0 }
 					site={ site as SiteData }
 					onMediaUploadStart={ () => dispatch( logoUploadStarted() ) }
 					onMediaUploadFailed={ () => dispatch( logoUploadFailed() ) }
 					onMediaUploadComplete={ onMediaUploadComplete }
 					initialUrl={ logoUrl }
+					onRemoveImage={ onMediaRemoved }
 				/>
 			</HorizontalGrid>
 		</LogoUploadSectionContainer>
