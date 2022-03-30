@@ -21,6 +21,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
+import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -34,6 +35,7 @@ import type { Design, Category } from '@automattic/design-picker';
  */
 const designSetup: Step = function DesignSetup( { navigation } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
+	const [ isProcessing, setIsProcessing ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
 	const { goBack, submit } = navigation;
@@ -165,6 +167,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
+		setIsProcessing( true );
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
 			setDesignOnSite( siteSlug, _selectedDesign ).then( () => {
@@ -309,7 +312,10 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		</>
 	);
 
-	return (
+	return isProcessing ? (
+		// Using existing `/start` component with hard-coded props as poc
+		<ReskinnedProcessingScreen flowName="setup-site" isDestinationSetupSiteFlow={ true } />
+	) : (
 		<StepContainer
 			stepName={ 'design-step' }
 			className={ classnames( {
