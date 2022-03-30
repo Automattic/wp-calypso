@@ -6,6 +6,12 @@
 	right: 0;
 	background-color: #fff;
 	z-index: 2;
+
+	.help-center-mobile__content {
+		padding: 10px;
+		max-height: 90vh;
+		overflow-y: auto;
+	}
 }
 
 @keyframes slideIn {
@@ -15,18 +21,15 @@
 
 	100% {
 		transform: translateX( 0% );
-
 	}
 }
 
 @keyframes slideOut {
 	0% {
 		transform: translateX( 0% );
-
 	}
 
 	100% {
 		transform: translateX( -100% );
-
 	}
 }

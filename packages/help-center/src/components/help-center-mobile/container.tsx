@@ -20,12 +20,12 @@ const HelpCenterMobileContainer: React.FC< Container > = ( { content, handleClos
 
 	return (
 		<div
-			style={ { animation: `${ isVisible ? 'slideIn' : 'slideOut' } 1s` } }
+			style={ { animation: `${ isVisible ? 'slideIn' : 'slideOut' } .5s` } }
 			onAnimationEnd={ toggle }
 			className={ 'help-center-mobile__overlay' }
 		>
 			<HelpCenterMobileHeader onDismiss={ () => setIsVisible( false ) } />
-			{ content }
+			<div className={ 'help-center-mobile__content' }>{ content }</div>
 		</div>
 	);
 };

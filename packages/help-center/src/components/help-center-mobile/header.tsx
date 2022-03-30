@@ -10,11 +10,10 @@ const HelpCenterMobileHeader: React.FC< Header > = ( { onDismiss } ) => {
 	return (
 		<CardHeader className={ classNames }>
 			<Flex>
-				<div>Help Center</div>
+				<h2>{ __( 'Help Center' ) }</h2>
 				<div>
 					<Button
 						label={ __( 'Close Help Center' ) }
-						isPrimary
 						icon={ close }
 						iconSize={ 24 }
 						onClick={ onDismiss }
