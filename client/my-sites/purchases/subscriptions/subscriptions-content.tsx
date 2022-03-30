@@ -3,6 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
+import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-RNA-action-card';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
@@ -104,7 +106,16 @@ export default function SubscriptionsContentWrapper(): JSX.Element {
 function NoPurchasesMessage() {
 	const selectedSite = useSelector( getSelectedSite );
 	const translate = useTranslate();
-	return (
+	return isJetpackCloud() ? (
+		<JetpackRnaActionCard
+			headerText={ translate( 'You don’t have any active subscriptions for this site.' ) }
+			subHeaderText={ translate(
+				'Check out how Jetpack’s security, performance, and growth tools can improve your site.'
+			) }
+			ctaButtonLabel={ translate( 'Compare plans' ) }
+			ctaButtonURL={ selectedSite ? `/pricing/${ selectedSite.slug }` : '/pricing' }
+		/>
+	) : (
 		<CompactCard className="subscriptions__list">
 			<EmptyContent
 				title={ translate( 'Looking to upgrade?' ) }

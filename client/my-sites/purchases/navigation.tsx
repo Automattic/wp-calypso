@@ -4,6 +4,7 @@ import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 
 export default function PurchasesNavigation( {
@@ -23,7 +24,7 @@ export default function PurchasesNavigation( {
 					path={ `/purchases/subscriptions/${ siteSlug }` }
 					selected={ sectionTitle === 'Active Upgrades' }
 				>
-					{ translate( 'Active Upgrades' ) }
+					{ isJetpackCloud() ? translate( 'My Plan' ) : translate( 'Active Upgrades' ) }
 				</NavItem>
 				<NavItem
 					path={ `/purchases/billing-history/${ siteSlug }` }
