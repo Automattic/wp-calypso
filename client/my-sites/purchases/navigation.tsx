@@ -22,7 +22,9 @@ export default function PurchasesNavigation( {
 			<NavTabs label="Section" selectedText={ sectionTitle }>
 				<NavItem
 					path={ `/purchases/subscriptions/${ siteSlug }` }
-					selected={ sectionTitle === 'Active Upgrades' }
+					selected={
+						isJetpackCloud() ? sectionTitle === 'Purchases' : sectionTitle === 'Active Upgrades'
+					}
 				>
 					{ isJetpackCloud() ? translate( 'My Plan' ) : translate( 'Active Upgrades' ) }
 				</NavItem>

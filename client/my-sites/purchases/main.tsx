@@ -71,7 +71,10 @@ export function Purchases(): JSX.Element {
 					align="left"
 				/>
 			) }
-			<PurchasesNavigation sectionTitle={ 'Active Upgrades' } siteSlug={ siteSlug } />
+			<PurchasesNavigation
+				sectionTitle={ isJetpackCloud() ? 'Purchases' : 'Active Upgrades' }
+				siteSlug={ siteSlug }
+			/>
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
