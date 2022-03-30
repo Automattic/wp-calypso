@@ -6,6 +6,7 @@ import {
 	getAccountSiteURL,
 	toTitleCase,
 	createSuiteTitle,
+	parseSiteHostFromUrl,
 } from '../src/data-helper';
 
 describe( 'DataHelper Tests', function () {
@@ -111,5 +112,32 @@ describe( 'DataHelper Tests', function () {
 				expect( createSuiteTitle( suite ) ).toStrictEqual( expected );
 			}
 		);
+	} );
+
+	describe( `Test: parseSiteHostFromUrl`, function () {
+		test.each`
+			url                                                                         | expected
+			${ 'https://testsite.wordpress.com/wp-admin/post' }                         | ${ 'testsite.wordpress.com' }
+			${ 'https://testsite.we1r-d/wp-admin/comments' }                            | ${ 'testsite.we1r-d' }
+			${ 'https://wordpress.com/post/scheduled/testsite.wordpress.com' }          | ${ 'testsite.wordpress.com' }
+			${ 'https://wordpress.com/comments/testsite.wordpress.com?s=query-search' } | ${ 'testsite.wordpress.com' }
+			${ 'https://wordpress.com/post/testsite.we1r-d' }                           | ${ 'testsite.we1r-d' }
+			${ 'https://fake-calypso-live-name.live/post/testsite.wordpress.com' }      | ${ 'testsite.wordpress.com' }
+		`(
+			'Returns $expected when passed $url as the URL',
+			function ( { url, expected }: { url: string; expected: string } ) {
+				expect( parseSiteHostFromUrl( url ) ).toStrictEqual( expected );
+			}
+		);
+
+		test.each`
+			url
+			${ '' }
+			${ 'https://wordpress.com/me' }
+			${ 'https://noadmin.wordpress.com' }
+			${ 'https://wordpress.com/post/invalid$.subdomain.' }
+		`( 'Throws when given $url as the URL', function ( { url }: { url: string } ) {
+			expect( () => parseSiteHostFromUrl( url ) ).toThrowError();
+		} );
 	} );
 } );

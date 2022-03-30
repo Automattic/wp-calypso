@@ -289,3 +289,29 @@ export function createSuiteTitle( title: string ): string {
 
 	return parts.join( ' ' );
 }
+
+/**
+ * Parses a WPCOM site host name (without the scheme) from a given site-specific page URL.
+ * For example:
+ *  - testsite.wordpress.com/wp-admin/post --> testsite.wordpress.com
+ *  - wordpress.com/post/testsite.blog --> testsite.blog
+ *
+ * @param {string} url URL of a site-specific page.
+ * @returns Host name without scheme (e.g. 'testsite.wordpress.com').
+ * @throws If no host name can be parsed.
+ */
+export function parseSiteHostFromUrl( url: string ): string {
+	if ( url.includes( '/wp-admin' ) ) {
+		return new URL( url ).host;
+	}
+
+	const pathSuffix = new URL( url ).pathname.split( '/' ).pop();
+	const hostRegex = /([a-zA-Z0-9-]+\.)+[a-zA-Z0-9-]+/;
+	if ( pathSuffix?.match( hostRegex ) ) {
+		return pathSuffix;
+	}
+
+	throw new Error(
+		`Could not parse WPCOM site host from url (${ url }). Are you sure you're on a site-specific page?`
+	);
+}
