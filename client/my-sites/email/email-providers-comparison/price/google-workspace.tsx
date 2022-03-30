@@ -31,8 +31,8 @@ const getGoogleWorkspaceProductSlug = ( intervalLength: IntervalLength ): string
 
 type GoogleWorkspacePriceProps = {
 	domain?: SiteDomain;
-	isDomainInCart: boolean;
 	intervalLength: IntervalLength;
+	isDomainInCart: boolean;
 };
 
 const GoogleWorkspacePrice = ( {

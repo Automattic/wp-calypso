@@ -25,6 +25,9 @@ const usePlanAvailable = (
 		selectedDomainName: selectedDomainName,
 	} );
 
+	const isMonthlyBillingSupported =
+		isEnabled( 'google-workspace-monthly' ) || intervalLength === IntervalLength.ANNUALLY;
+
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 
 	if ( emailProviderSlug !== GOOGLE_WORKSPACE_PRODUCT_TYPE ) {
@@ -35,11 +38,15 @@ const usePlanAvailable = (
 		return false;
 	}
 
-	if ( ! isDomainInCart && ( ! domain || ! hasGSuiteSupportedDomain( [ domain ] ) ) ) {
+	if ( isDomainInCart ) {
+		return true && isMonthlyBillingSupported;
+	}
+
+	if ( ! domain || ! hasGSuiteSupportedDomain( [ domain ] ) ) {
 		return false;
 	}
 
-	return isEnabled( 'google-workspace-monthly' ) || intervalLength === IntervalLength.ANNUALLY;
+	return isMonthlyBillingSupported;
 };
 
 const SelectButton = ( {

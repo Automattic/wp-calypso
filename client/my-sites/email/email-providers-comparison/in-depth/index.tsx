@@ -22,13 +22,13 @@ import {
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
 
 import './style.scss';
 
 const EmailProvidersInDepthComparison = ( {
+	referrer,
 	selectedDomainName,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
 }: EmailProvidersInDepthComparisonProps ): JSX.Element => {
@@ -41,8 +41,6 @@ const EmailProvidersInDepthComparison = ( {
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
 	const isDomainInCart = hasDomainInCart( shoppingCartManager.responseCart, selectedDomainName );
-
-	const previousRoute = useSelector( getPreviousRoute );
 
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
 		if ( selectedSite === null ) {
@@ -60,7 +58,7 @@ const EmailProvidersInDepthComparison = ( {
 			emailManagementInDepthComparison(
 				selectedSite.slug,
 				selectedDomainName,
-				previousRoute,
+				referrer,
 				null,
 				newIntervalLength
 			)
@@ -78,12 +76,12 @@ const EmailProvidersInDepthComparison = ( {
 				provider: emailProviderSlug,
 			} )
 		);
-		const callbackWithQueryParams = `${ previousRoute }?${ stringify( {
+		const path = `${ referrer }?${ stringify( {
 			interval: selectedIntervalLength,
 			provider: emailProviderSlug,
 		} ) }`;
 
-		page( callbackWithQueryParams );
+		page( path );
 	};
 
 	const ComparisonComponent = isMobile ? ComparisonList : ComparisonTable;
