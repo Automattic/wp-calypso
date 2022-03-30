@@ -108,9 +108,9 @@ function WebsiteContentStep( {
 
 		if ( calypsoConfig.isEnabled( 'signup/redesigned-difm-flow' ) ) {
 			if ( pageTitles && pageTitles.length > 0 ) {
-				const pages = pageTitles.map( ( pT ) => ( {
-					id: pT,
-					name: translatedPageTitles[ pT ],
+				const pages = pageTitles.map( ( pageTitle ) => ( {
+					id: pageTitle,
+					name: translatedPageTitles[ pageTitle ],
 				} ) );
 				dispatch( initializePages( pages ) );
 			}
