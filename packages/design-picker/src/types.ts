@@ -45,4 +45,5 @@ export interface Design {
 
 export interface DesignUrlOptions {
 	iframe?: boolean;
+	site_title?: string;
 }

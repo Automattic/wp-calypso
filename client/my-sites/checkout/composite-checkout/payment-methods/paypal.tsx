@@ -101,6 +101,7 @@ export function createPayPalMethod(
 	debug( 'creating new paypal payment method' );
 	return {
 		id: storeKey,
+		paymentProcessorId: storeKey,
 		label: (
 			<PayPalLabel
 				labelText={ args.labelText }
@@ -218,7 +219,7 @@ function PayPalSubmitButton( {
 				'Missing onClick prop; PayPalSubmitButton must be used as a payment button in CheckoutSubmitButton'
 			);
 		}
-		onClick( storeKey, {
+		onClick( {
 			items,
 			postalCode: postalCode?.value,
 			countryCode: countryCode?.value,

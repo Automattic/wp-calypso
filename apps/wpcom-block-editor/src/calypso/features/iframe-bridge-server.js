@@ -464,7 +464,23 @@ function handleCloseEditor( calypsoPort ) {
 	// Add back to dashboard fill for Site Editor when edit-site package is available.
 	if ( editSitePackage ) {
 		registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
-			render: () => {
+			render: function SiteEditorCloseFill() {
+				const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
+
+				useEffect( () => {
+					addAction(
+						'updateCloseButtonOverrides',
+						'a8c/wpcom-block-editor/SiteEditorCloseFill',
+						( data ) => {
+							setCloseUrl( data.closeUrl );
+						}
+					);
+					return () =>
+						removeAction(
+							'updateCloseButtonOverrides',
+							'a8c/wpcom-block-editor/SiteEditorCloseFill'
+						);
+				} );
 				const SiteEditorDashboardFill = editSitePackage?.__experimentalMainDashboardButton;
 				if ( ! SiteEditorDashboardFill || ! NavigationBackButton ) {
 					return null;
@@ -476,7 +492,7 @@ function handleCloseEditor( calypsoPort ) {
 							backButtonLabel={ __( 'Dashboard' ) }
 							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 							className="edit-site-navigation-panel__back-to-dashboard"
-							href={ calypsoifyGutenberg.closeUrl }
+							href={ closeUrl }
 							onClick={ dispatchAction }
 						/>
 					</SiteEditorDashboardFill>

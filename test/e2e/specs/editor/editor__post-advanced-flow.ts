@@ -84,7 +84,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Editor is shown', async function () {
-			editorPage = new EditorPage( page );
+			editorPage = new EditorPage( page, { target: features.siteType } );
 			await editorPage.waitUntilLoaded();
 		} );
 

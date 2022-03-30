@@ -3,11 +3,10 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import useOnboardingUrl from './use-onboarding-url';
 
 const SiteSelectorAddSite: FunctionComponent = () => {
-	const onboardingUrl = useOnboardingUrl();
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -23,8 +22,7 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 		<span className="site-selector__add-new-site">
 			<Button
 				borderless
-				busy={ ! onboardingUrl }
-				href={ `${ onboardingUrl }?ref=calypso-selector` }
+				href={ `${ onboardingUrl() }?ref=calypso-selector` }
 				onClick={ recordAddNewSite }
 			>
 				<Gridicon icon="add-outline" /> { translate( 'Add new site' ) }

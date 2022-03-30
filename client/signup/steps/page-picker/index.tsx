@@ -1,7 +1,8 @@
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { BrowserView } from 'calypso/signup/difm/components/BrowserView';
 import {
 	HOME_PAGE,
@@ -20,6 +21,8 @@ import {
 } from 'calypso/signup/difm/constants';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+
 import './style.scss';
 
 const PageGrid = styled.div`
@@ -120,13 +123,13 @@ function PageCell( { pageId, popular, selectedPages, onClick }: PageCellType ) {
 	);
 }
 
-function PageSelector() {
-	const [ selectedPages, setSelectedPages ] = useState< string[] >( [
-		HOME_PAGE,
-		ABOUT_PAGE,
-		CONTACT_PAGE,
-	] );
-
+function PageSelector( {
+	selectedPages,
+	setSelectedPages,
+}: {
+	selectedPages: string[];
+	setSelectedPages: ( pages: string[] ) => void;
+} ) {
 	const onPageClick = ( pageId: string ) => {
 		const foundIndex = selectedPages.indexOf( pageId );
 		// The home page cannot be touched
@@ -205,7 +208,24 @@ const StyledButton = styled( Button )`
 `;
 
 export default function DIFMPagePicker( props: StepProps ) {
+	const { stepName, goToNextStep } = props;
+
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const [ selectedPages, setSelectedPages ] = useState< string[] >( [
+		HOME_PAGE,
+		ABOUT_PAGE,
+		CONTACT_PAGE,
+	] );
+
+	useEffect( () => {
+		dispatch( saveSignupStep( { stepName } ) );
+	}, [] );
+
+	const submitPickedPages = () => {
+		dispatch( submitSignupStep( { stepName }, { selectedPageTitles: selectedPages } ) );
+		goToNextStep();
+	};
 
 	const headerText = translate( 'Add pages to your {{wbr}}{{/wbr}}website', {
 		components: { wbr: <wbr /> },
@@ -217,12 +237,18 @@ export default function DIFMPagePicker( props: StepProps ) {
 			fallbackHeaderText={ headerText }
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
-			stepContent={ <PageSelector /> }
+			stepContent={
+				<PageSelector selectedPages={ selectedPages } setSelectedPages={ setSelectedPages } />
+			}
 			hideSkip
 			align="left"
 			isHorizontalLayout={ true }
 			isWideLayout={ false }
-			headerButton={ <StyledButton primary>{ translate( 'Go to Checkout' ) }</StyledButton> }
+			headerButton={
+				<StyledButton primary onClick={ submitPickedPages }>
+					{ translate( 'Go to Checkout' ) }
+				</StyledButton>
+			}
 			{ ...props }
 		/>
 	);

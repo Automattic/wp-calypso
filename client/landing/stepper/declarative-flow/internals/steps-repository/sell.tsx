@@ -14,6 +14,7 @@ const SellStep: Step = function SellStep( { navigation } ) {
 
 	return (
 		<StepContainer
+			stepName={ 'sell' }
 			hideSkip
 			goBack={ goBack }
 			isHorizontalLayout={ true }

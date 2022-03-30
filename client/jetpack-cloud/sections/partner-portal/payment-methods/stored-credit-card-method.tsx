@@ -18,6 +18,7 @@ export function createStoredCreditCardMethod( {
 } ): PaymentMethod {
 	return {
 		id: 'card',
+		paymentProcessorId: 'card',
 		label: <></>,
 		activeContent: <CreditCardFields />,
 		submitButton: (

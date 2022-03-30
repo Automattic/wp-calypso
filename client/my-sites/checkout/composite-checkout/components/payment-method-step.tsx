@@ -61,19 +61,13 @@ const CheckoutTermsWrapper = styled.div`
 	}
 `;
 
-export default function PaymentMethodStep( {
-	activeStepContent,
-}: {
-	activeStepContent: React.ReactNode;
-} ): JSX.Element {
+export default function PaymentMethodStep(): JSX.Element {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	return (
 		<>
-			{ activeStepContent }
-
 			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>

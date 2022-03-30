@@ -49,7 +49,9 @@ test( 'should allow http(s) links', () => {
 	expect( img.getAttribute( 'src' ) ).toBe( 'http://example.com/images/1f39.png?v=25' );
 
 	const link = cleanNode( '<a id="test" href="https://github.com/README.md">docs</a>' );
-	expect( link.getAttribute( 'href' ) ).toBe( 'https://github.com/README.md' );
+	expect( link.getAttribute( 'href' ) ).toBe(
+		'https://github.com/README.md?referrer=wordpress.com'
+	);
 } );
 
 test( 'should omit non http(s) links', () => {
@@ -68,6 +70,14 @@ test( 'should set link params', () => {
 	expect( rel ).toContain( 'external' );
 	expect( rel ).toContain( 'noopener' );
 	expect( rel ).toContain( 'noreferrer' );
+} );
+
+test( 'should add referrer query parameter', () => {
+	const link = cleanNode( '<a href="https://example.com?other-query">' );
+
+	expect( link.getAttribute( 'href' ) ).toBe(
+		'https://example.com?other-query=&referrer=wordpress.com'
+	);
 } );
 
 test( 'should only set link params if href set', () => {
@@ -160,5 +170,5 @@ test( 'should prevent backspace-based XSS attacks', () => {
 		'<a href="http://example.com">' + '\u0008'.repeat( 71 ) + 'javascript:alert(1)\u0022>xss</a>'
 	);
 
-	expect( link.getAttribute( 'href' ) ).toBe( 'http://example.com' );
+	expect( link.getAttribute( 'href' ) ).toBe( 'http://example.com?referrer=wordpress.com' );
 } );

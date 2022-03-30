@@ -26,10 +26,6 @@ import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
 } from '../../payment-methods/credit-card';
-import {
-	createEbanxTefPaymentMethodStore,
-	createEbanxTefMethod,
-} from '../../payment-methods/ebanx-tef';
 import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
 import { createFullCreditsMethod } from '../../payment-methods/full-credits';
 import {
@@ -298,17 +294,6 @@ function useCreateNetbanking(): PaymentMethod {
 	);
 }
 
-function useCreateEbanxTef() {
-	const paymentMethodStore = useMemo( () => createEbanxTefPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			createEbanxTefMethod( {
-				store: paymentMethodStore,
-			} ),
-		[ paymentMethodStore ]
-	);
-}
-
 function useCreateFullCredits() {
 	return useMemo( () => createFullCreditsMethod(), [] );
 }
@@ -432,8 +417,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
-	const ebanxTefMethod = useCreateEbanxTef();
-
 	const netbankingMethod = useCreateNetbanking();
 
 	const sofortMethod = useCreateSofort( {
@@ -501,7 +484,6 @@ export default function useCreatePaymentMethods( {
 		idealMethod,
 		giropayMethod,
 		sofortMethod,
-		ebanxTefMethod,
 		netbankingMethod,
 		alipayMethod,
 		p24Method,

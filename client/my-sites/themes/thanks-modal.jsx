@@ -1,4 +1,4 @@
-import { Dialog, Gridicon } from '@automattic/components';
+import { Button, Dialog, Gridicon, ScreenReaderText } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -151,6 +151,10 @@ class ThanksModal extends Component {
 
 		return (
 			<div>
+				<Button className="thanks-modal__button-close" onClick={ this.onCloseModal } borderless>
+					<Gridicon icon="cross-small" />
+					<ScreenReaderText>{ this.props.translate( 'Close' ) }</ScreenReaderText>
+				</Button>
 				<h1>
 					{ this.props.translate( 'Thanks for choosing {{br/}} %(themeName)s', {
 						args: { themeName },

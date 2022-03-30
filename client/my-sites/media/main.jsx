@@ -125,8 +125,6 @@ class Media extends Component {
 
 	onImageEditorDone = ( error, blob, imageEditorProps ) => {
 		if ( error ) {
-			this.onEditImageCancel( imageEditorProps );
-
 			return;
 		}
 
