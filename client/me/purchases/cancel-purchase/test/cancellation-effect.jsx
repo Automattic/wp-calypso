@@ -63,6 +63,7 @@ describe( 'cancellation-effect', () => {
 			test( 'should return translation of g suite message when product is g suite', () => {
 				productsValues.isTheme = () => false;
 				productsValues.isGSuiteOrGoogleWorkspace = () => true;
+				productsValues.isGSuiteProductSlug = () => true;
 				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).to.equal(
 					'You will be refunded %(cost)s, and your %(googleMailService)s account will continue working without interruption. You will be able to set up billing for your account directly with Google.'

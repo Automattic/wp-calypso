@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -61,7 +62,7 @@ const GoogleWorkspacePrice = ( {
 		);
 	}
 
-	if ( intervalLength === IntervalLength.MONTHLY ) {
+	if ( ! isEnabled( 'google-workspace-monthly' ) && intervalLength === IntervalLength.MONTHLY ) {
 		return (
 			<div className="google-workspace-price__unavailable">
 				{ translate( 'Only available with annual billing' ) }
