@@ -284,9 +284,12 @@ export class EditorPage {
 
 		// Dismiss the block inserter if viewport is larger than mobile to
 		// ensure no interference from the block inserter in subsequent actions on the editor.
-		// In mobile, the block inserter will auto-close.
+		// In mobile, the block inserter will typically auto-close, but sometimes there can
+		// be issues with auto-close.
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			await this.editorToolbarComponent.closeBlockInserter();
+		} else {
+			await this.editorSidebarBlockInserterComponent.closeBlockInserter();
 		}
 
 		// Return an ElementHandle pointing to the block for compatibility
