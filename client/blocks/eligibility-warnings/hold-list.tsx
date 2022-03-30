@@ -3,16 +3,25 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
+import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
-function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
+function getHoldMessages(
+	context: string | null,
+	translate: LocalizeProps[ 'translate' ],
+	eligibleForProPlan: boolean
+) {
 	return {
 		NO_BUSINESS_PLAN: {
-			title: translate( 'Upgrade to a Business plan' ),
+			title: eligibleForProPlan
+				? translate( 'Upgrade to a Pro plan' )
+				: translate( 'Upgrade to a Business plan' ),
 			description: ( function () {
 				if ( context === 'themes' ) {
 					return translate(
@@ -184,7 +193,11 @@ export const HardBlockingNotice = ( {
 };
 
 export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
-	const holdMessages = getHoldMessages( context, translate );
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const eligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, selectedSite?.ID )
+	);
+	const holdMessages = getHoldMessages( context, translate, eligibleForProPlan );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );

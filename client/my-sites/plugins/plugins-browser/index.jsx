@@ -3,6 +3,7 @@ import {
 	isBusiness,
 	isEcommerce,
 	isEnterprise,
+	isPro,
 	findFirstSimilarPlanKey,
 	FEATURE_UPLOAD_PLUGINS,
 	TYPE_BUSINESS,
@@ -35,6 +36,7 @@ import { useWPORGPlugins } from 'calypso/data/marketplace/use-wporg-plugin-query
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -128,7 +130,11 @@ const PluginsBrowser = ( {
 	const billingPeriod = useSelector( getBillingInterval );
 
 	const hasBusinessPlan =
-		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
+		sitePlan &&
+		( isBusiness( sitePlan ) ||
+			isEnterprise( sitePlan ) ||
+			isEcommerce( sitePlan ) ||
+			isPro( sitePlan ) );
 
 	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } = useWPCOMPlugins(
 		'all'
@@ -626,16 +632,23 @@ const UpgradeNudge = ( {
 	siteSlug,
 } ) => {
 	const translate = useTranslate();
+	const eligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, selectedSite?.ID )
+	);
 
 	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic || hasBusinessPlan ) {
 		return null;
 	}
 
-	const bannerURL = `/checkout/${ siteSlug }/business`;
+	const checkoutPlan = eligibleForProPlan ? 'pro' : 'business';
+	const bannerURL = `/checkout/${ siteSlug }/${ checkoutPlan }`;
 	const plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
 		type: TYPE_BUSINESS,
 	} );
-	const title = translate( 'Upgrade to the Business plan to install plugins.' );
+
+	const title = eligibleForProPlan
+		? translate( 'Upgrade to the Pro plan to install plugins.' )
+		: translate( 'Upgrade to the Business plan to install plugins.' );
 
 	return (
 		<UpsellNudge
