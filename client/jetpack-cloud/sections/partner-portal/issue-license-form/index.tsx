@@ -9,7 +9,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import {
+	APIError,
+	APIProductFamily,
+	APIProductFamilyProduct,
+} from 'calypso/state/partner-portal/types';
 import './style.scss';
 
 function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {
@@ -29,8 +33,29 @@ export default function IssueLicenseForm(): ReactElement {
 				addQueryArgs( { key: license.license_key }, '/partner-portal/assign-license' )
 			);
 		},
-		onError: ( error: Error ) => {
-			dispatch( errorNotice( error.message ) );
+		onError: ( error: APIError ) => {
+			let errorMessage;
+
+			switch ( error.code ) {
+				case 'missing_valid_payment_method':
+					errorMessage = translate(
+						'We could not find a valid payment method.{{br/}} ' +
+							'{{a}}Try adding a new payment method{{/a}} or contact support.',
+						{
+							components: {
+								a: <a href={ '/partner-portal/payment-methods/add' } />,
+								br: <br />,
+							},
+						}
+					);
+					break;
+
+				default:
+					errorMessage = error.message;
+					break;
+			}
+
+			dispatch( errorNotice( errorMessage ) );
 		},
 	} );
 	const [ product, setProduct ] = useState( '' );
