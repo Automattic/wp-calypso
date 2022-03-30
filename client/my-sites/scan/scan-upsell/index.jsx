@@ -85,7 +85,7 @@ function ScanUpsellBody() {
 				productSlug={ PRODUCT_JETPACK_SCAN }
 				siteId={ siteId }
 				currencyCode={ currencyCode }
-				ctaButtonURL={ createProductURL }
+				getButtonURL={ createProductURL }
 				onCtaButtonClick={ onClick }
 			/>
 		</>

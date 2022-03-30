@@ -57,7 +57,7 @@ export default function JetpackSearchUpsell(): ReactElement {
 						productSlug={ PRODUCT_JETPACK_SEARCH }
 						siteId={ siteId }
 						currencyCode={ currencyCode }
-						ctaButtonURL={ createProductURL }
+						getButtonURL={ createProductURL }
 						onCtaButtonClick={ onClick }
 					/>
 				</div>
