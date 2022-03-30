@@ -12,7 +12,7 @@ import type { AppState, SiteId } from 'calypso/types';
  */
 export default function getDIFMLiteSitePageTitles(
 	state: AppState,
-	siteId?: SiteId
+	siteId: SiteId | null
 ): string[] | null {
 	if ( ! siteId ) {
 		return null;
