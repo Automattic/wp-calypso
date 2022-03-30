@@ -13,11 +13,7 @@ import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
 import AutoDirection from 'calypso/components/auto-direction';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import TimeSince from 'calypso/components/time-since';
-import {
-	canBeMarkedAsSeen,
-	getDefaultSeenValue,
-	isEligibleForUnseen,
-} from 'calypso/reader/get-helpers';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 
@@ -25,7 +21,7 @@ class ReaderCombinedCardPost extends Component {
 	static propTypes = {
 		currentRoute: PropTypes.string,
 		isWPForTeamsItem: PropTypes.bool,
-		teams: PropTypes.array,
+		hasOrganization: PropTypes.bool,
 		post: PropTypes.object,
 		streamUrl: PropTypes.string,
 		onClick: PropTypes.func,
@@ -33,7 +29,7 @@ class ReaderCombinedCardPost extends Component {
 	};
 
 	static defaultProps = {
-		teams: [],
+		hasOrganization: false,
 		showFeaturedAsset: true,
 	};
 
@@ -83,7 +79,7 @@ class ReaderCombinedCardPost extends Component {
 			isDiscover,
 			isSelected,
 			postKey,
-			teams,
+			hasOrganization,
 			isWPForTeamsItem,
 		} = this.props;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
@@ -122,9 +118,9 @@ class ReaderCombinedCardPost extends Component {
 			recordPermalinkClick( 'timestamp_combined_card', post );
 		};
 
-		let isSeen = getDefaultSeenValue( currentRoute );
-		if ( canBeMarkedAsSeen( { post, currentRoute } ) ) {
-			isSeen = isEligibleForUnseen( { teams, isWPForTeamsItem } ) && post.is_seen;
+		let isSeen = false;
+		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
+			isSeen = post?.is_seen;
 		}
 		const classes = classnames( {
 			'reader-combined-card__post': true,

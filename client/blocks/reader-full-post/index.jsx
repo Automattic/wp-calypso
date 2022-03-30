@@ -23,7 +23,6 @@ import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import EmbedContainer from 'calypso/components/embed-container';
 import ExternalLink from 'calypso/components/external-link';
 import PostExcerpt from 'calypso/components/post-excerpt';
@@ -59,6 +58,7 @@ import { showSelectedPost } from 'calypso/reader/utils';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import {
@@ -77,7 +77,6 @@ import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream'
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
@@ -94,7 +93,7 @@ export class FullPostView extends Component {
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
 		isWPForTeamsItem: PropTypes.bool,
-		teams: PropTypes.array,
+		hasOrganization: PropTypes.bool,
 	};
 
 	hasScrolledToCommentAnchor = false;
@@ -304,7 +303,7 @@ export class FullPostView extends Component {
 	};
 
 	attemptToSendPageView = () => {
-		const { post, site, teams, isWPForTeamsItem } = this.props;
+		const { post, site, isWPForTeamsItem, hasOrganization } = this.props;
 
 		if (
 			post &&
@@ -322,7 +321,10 @@ export class FullPostView extends Component {
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
-			if ( isEligibleForUnseen( { teams, isWPForTeamsItem } ) && canBeMarkedAsSeen( { post } ) ) {
+			if (
+				isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
+				canBeMarkedAsSeen( { post } )
+			) {
 				this.markAsSeen();
 			}
 
@@ -433,7 +435,7 @@ export class FullPostView extends Component {
 			blogId,
 			feedId,
 			postId,
-			teams,
+			hasOrganization,
 			isWPForTeamsItem,
 		} = this.props;
 
@@ -485,7 +487,6 @@ export class FullPostView extends Component {
 				) }
 				{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 				{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
-				<QueryReaderTeams />
 				<BackButton onClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink
@@ -536,7 +537,7 @@ export class FullPostView extends Component {
 								/>
 							) }
 
-							{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
+							{ isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } ) &&
 								canBeMarkedAsSeen( { post } ) &&
 								this.renderMarkAsSenButton() }
 						</div>
@@ -652,7 +653,7 @@ export default connect(
 		const props = {
 			isWPForTeamsItem: isSiteWPForTeams( state, blogId ) || isFeedWPForTeams( state, feedId ),
 			notificationsOpen: isNotificationsOpen( state ),
-			teams: getReaderTeams( state ),
+			hasOrganization: hasReaderFollowOrganization( state, feedId, blogId ),
 			post,
 			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,
