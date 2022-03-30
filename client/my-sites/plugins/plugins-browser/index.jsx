@@ -459,13 +459,10 @@ const SearchListView = ( {
 		return (
 			<>
 				<PluginsBrowserList
-					plugins={
-						pluginsPagination?.page === 1
-							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ].filter(
-									filterOutPluginsFromBlockList
-							  )
-							: pluginsBySearchTerm.filter( filterOutPluginsFromBlockList )
-					}
+					plugins={ ( pluginsPagination?.page === 1
+						? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
+						: pluginsBySearchTerm
+					).filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					title={ searchTitle }
 					subtitle={ subtitle }
@@ -590,7 +587,7 @@ const PluginSingleListView = ( {
 		return null;
 	}
 
-	plugins = plugins.filter( filterOutPluginsFromBlockList );
+	plugins = plugins.filter( isNotBlocked );
 
 	let listLink = '/plugins/' + category;
 	if ( domain ) {
@@ -780,9 +777,9 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	);
 }
 
-const PLUGIN_SLUGS_BLOCKLIST = [ 'zamir' ];
+const PLUGIN_SLUGS_BLOCKLIST = [];
 
-function filterOutPluginsFromBlockList( plugin ) {
+function isNotBlocked( plugin ) {
 	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 
