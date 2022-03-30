@@ -3,7 +3,7 @@ import { clickNavTab } from '../../element-helper';
 import envVariables from '../../env-variables';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
-export type Plan = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce' | 'Pro';
+export type Plan = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce' | 'WordPress Pro';
 export type PlansPageTab = 'My Plan' | 'Plans' | 'New Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade' | 'Try Pro risk-free';
 
@@ -17,6 +17,9 @@ const selectors = {
 		`.is-selected.section-nav-tab:has-text("${ tabName }")`,
 
 	actionButton: ( { plan, buttonText }: { plan: Plan; buttonText: PlanActionButton } ) => {
+		// if ( isEnabled( 'plans/pro-plan' ) ) {
+		return `.plans-comparison__plan .plan-features__actions-button.is-pro-plan:has-text("${ buttonText }")`;
+		// }
 		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
