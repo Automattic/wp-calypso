@@ -1,7 +1,8 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useDispatch } from 'react-redux';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
@@ -29,7 +30,28 @@ const SearchBox = ( { isMobile, doSearch, searchTerm } ) => {
 
 const PopularSearches = ( props ) => {
 	const { searchTerms, siteSlug } = props;
+	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const trackImpresion = ( searchTerm ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_plugins_popular_searches_impresion', {
+				search_term: searchTerm,
+			} )
+		);
+	};
+
+	const onClick = ( searchTerm ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_plugins_popular_searches_click', {
+				search_term: searchTerm,
+			} )
+		);
+
+		page( `/plugins/${ siteSlug || '' }?s=${ searchTerm }` );
+	};
+
+	searchTerms.forEach( trackImpresion );
 
 	return (
 		<div className="search-box-header__recommended-searches">
@@ -39,13 +61,16 @@ const PopularSearches = ( props ) => {
 
 			<div className="search-box-header__recommended-searches-list">
 				{ searchTerms.map( ( searchTerm, n ) => (
-					<a
-						href={ `/plugins/${ siteSlug || '' }?s=${ searchTerm }` }
+					<span
+						onClick={ () => onClick( searchTerm ) }
+						onKeyPress={ () => onClick( searchTerm ) }
+						role="link"
+						tabIndex={ 0 }
 						className="search-box-header__recommended-searches-list-item"
 						key={ 'recommended-search-item-' + n }
 					>
 						{ searchTerm }
-					</a>
+					</span>
 				) ) }
 			</div>
 		</div>

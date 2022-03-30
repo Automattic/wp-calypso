@@ -70,6 +70,7 @@
 			.search-box-header__recommended-searches-list-item {
 				&:hover {
 					color: var( --color-link );
+					cursor: pointer;
 				}
 
 				&:focus {
