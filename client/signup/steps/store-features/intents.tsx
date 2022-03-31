@@ -86,7 +86,7 @@ export function useIntents(
 					<span className="store-features__requirements">
 						{ isBusinessOrEcommercePlan || isProPlan
 							? translate( 'Included in your plan' )
-							: translate( 'Requires {{a}}Pro plan{{/a}}', {
+							: translate( 'Requires a {{a}}Pro plan{{/a}}', {
 									components: {
 										a: (
 											<a
