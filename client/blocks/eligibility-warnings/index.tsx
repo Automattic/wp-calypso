@@ -4,6 +4,8 @@ import {
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_SFTP,
 	FEATURE_INSTALL_PLUGINS,
+	PLAN_BUSINESS,
+	PLAN_WPCOM_PRO,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -92,7 +94,7 @@ export const EligibilityWarnings = ( {
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
-			const planSlug = eligibleForProPlan ? 'pro' : 'business';
+			const planSlug = eligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
 			page.redirect( `/checkout/${ siteSlug }/${ planSlug }` );
 			return;
 		}
