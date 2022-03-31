@@ -136,7 +136,7 @@
 		"signup/design-picker-premium-themes-checkout": true,
 		"signup/hero-flow-non-en": true,
 		"signup/starting-point-courses": true,
-		"signup/redesigned-difm-flow": true,
+		"signup/redesigned-difm-flow": false,
 		"site-indicator": true,
 		"themes/premium": true,
 		"titan/iframe-control-panel": false,

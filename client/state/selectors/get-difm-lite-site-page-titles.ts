@@ -23,5 +23,5 @@ export default function getDIFMLiteSitePageTitles(
 		return null;
 	}
 
-	return site.options?.difm_lite_site_options?.selected_page_titles ?? [];
+	return site.options?.difm_lite_site_options?.selected_page_titles ?? null;
 }
