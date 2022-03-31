@@ -40,7 +40,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 			<FAQItem
 				question={ translate( 'Do you sell domains?' ) }
 				answer={ translate(
-					'Yes! Annual and biennial Pro plan include a free custom domain for one year. ' +
+					'Yes! The Pro plan include a free custom domain for one year. ' +
 						'That includes new domains purchased through WordPress.com or your own existing domain that you can map' +
 						' to your WordPress.com site. Does not apply to premium domains. Domain name should be' +
 						' registered within one year of the purchase of the plan to use this promotion. Registered' +
