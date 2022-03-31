@@ -56,4 +56,17 @@ class Block_Inspector {
 		wp_set_script_translations( 'block-inspector-script', 'full-site-editing' );
 	}
 }
-add_action( 'init', array( __NAMESPACE__ . '\Block_Inspector', 'init' ) );
+
+/**
+ * Return whether block inspector should be activated for a given user and site.
+ *
+ * @param int $user_id The user id.
+ * @param int $blog_id The blog ID.
+ */
+function is_site_eligible_for_block_inspector( $user_id, $blog_id ) {
+	return is_automattician( $user_id ) && ( has_blog_sticker( 'block-patterns-source-site', $blog_id ) || has_blog_sticker( 'theme-demo-site', $blog_id ) );
+}
+
+if ( is_site_eligible_for_block_inspector( get_current_user_id(), get_current_blog_id() ) ) {
+	add_action( 'init', array( __NAMESPACE__ . '\Block_Inspector', 'init' ) );
+}
