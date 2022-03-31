@@ -1,6 +1,6 @@
 import { FEATURE_NO_ADS } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { find, get } from 'lodash';
+import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -133,17 +133,16 @@ export const Sharing = ( {
 				brandFont
 				className="marketing__page-heading"
 				headerText={ titleHeader }
-				subHeaderText={ get(
-					selected,
-					'description',
+				subHeaderText={
+					selected?.description ??
 					translate(
 						'Explore tools to build your audience, market your site, and engage your visitors.'
 					)
-				) }
+				}
 				align="left"
 			/>
 			{ filters.length > 0 && (
-				<SectionNav selectedText={ get( selected, 'title', '' ) }>
+				<SectionNav selectedText={ selected?.title ?? '' }>
 					<NavTabs>
 						{ filters.map( ( { id, route, title } ) => (
 							<NavItem key={ id } path={ route } selected={ pathname === route }>
