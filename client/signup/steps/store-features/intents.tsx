@@ -1,3 +1,4 @@
+import { isWpComProPlan } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SelectItem } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -19,7 +20,7 @@ export function useIntents(
 	const isBusinessOrEcommercePlan = [ 'business-bundle', 'ecommerce-bundle' ].includes(
 		sitePlanSlug ?? ''
 	);
-	const isProPlan = 'pro-plan' === sitePlanSlug;
+	const isProPlan = sitePlanSlug ? isWpComProPlan( sitePlanSlug ) : false;
 
 	return [
 		{
