@@ -132,6 +132,19 @@ export function getOptionInfo( {
 				),
 			};
 			break;
+		case domainAvailability.MAPPABLE:
+			transferContent = {
+				...optionInfo.transferNotSupported,
+				topText: createInterpolateElement(
+					sprintf(
+						/* translators: %s - the domain the user wanted to transfer */
+						__( "<strong>%s</strong> can't be transferred, but you can connect it instead." ),
+						domain
+					),
+					{ strong: createElement( 'strong' ) }
+				),
+			};
+			break;
 		default: {
 			const availabilityNotice = getAvailabilityNotice( domain, availability.status );
 			transferContent = {
