@@ -129,7 +129,8 @@ class EditorMediaModalDetailFields extends Component {
 	};
 
 	handlePrivacySettingChange = ( { currentTarget } ) => {
-		this.setFieldByName( 'privacy_setting', parseInt( currentTarget.value ) );
+		const clippedValue = Math.max( 0, Math.min( 2, parseInt( currentTarget.value, 10 ) ) );
+		this.setFieldByName( 'privacy_setting', clippedValue );
 	};
 
 	handleDisplayEmbed = () => {
