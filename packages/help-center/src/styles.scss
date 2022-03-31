@@ -14,9 +14,11 @@
 		top: 74px;
 		width: 20vw;
 		z-index: 9999;
+		transition: 0.5s ease;
 
 		.help-center__container-header {
 			cursor: pointer;
+			height: 50px;
 		}
 
 		.help-center__container-content {
@@ -26,9 +28,8 @@
 		}
 
 		&.is-minimized {
-			bottom: 30px;
-			top: auto;
-	
+			top: calc( 100vh - 65px );
+
 			.help-center__container-header {
 				cursor: default;
 			}
@@ -48,14 +49,12 @@
 
 		&.is-minimized {
 			top: calc( 100vh - 50px );
-			max-height: 50px;
-			transition: max-height ease 0.25s, top 0.5s ease 100ms;
 		}
-	
+
 		.help-center__container-header {
 			height: 50px;
 		}
-	
+
 		.help-center__container-content {
 			padding: 10px;
 			max-height: 90vh;
@@ -69,25 +68,49 @@
 			color: inherit;
 		}
 	}
-	
-}
 
-@keyframes slideIn {
-	0% {
-		transform: translateY( 100vh );
+	&.is-mobile.is-minimized,
+	&.is-desktop.is-minimized {
+		max-height: 50px;
+		transition: max-height ease 0.25s, top 0.5s ease 100ms;
 	}
 
-	100% {
-		transform: translateY( 0 );
-	}
-}
+	@keyframes slideIn {
+		0% {
+			transform: translateX( 100vh );
+		}
 
-@keyframes slideOut {
-	0% {
-		transform: translateY( 0 );
+		100% {
+			transform: translateX( 0 );
+		}
 	}
 
-	100% {
-		transform: translateY( 100vh );
+	@keyframes slideOut {
+		0% {
+			transform: translateX( 0 );
+		}
+
+		100% {
+			transform: translateX( 100vh );
+		}
+	}
+	@keyframes pullup {
+		0% {
+			transform: translateY( 100vh );
+		}
+
+		100% {
+			transform: translateY( 0 );
+		}
+	}
+
+	@keyframes pullDown {
+		0% {
+			transform: translateY( 0 );
+		}
+
+		100% {
+			transform: translateY( 100vh );
+		}
 	}
 }

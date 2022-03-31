@@ -23,17 +23,22 @@ const HelpCenterContainer: React.FC< Container > = ( { content, handleClose } ) 
 	} );
 
 	const onDismiss = () => {
-		if ( isMobile ) {
-			setIsVisible( false );
-		} else {
-			handleClose();
-		}
+		setIsVisible( false );
 	};
 
 	const toggleVisible = () => {
 		if ( ! isVisible ) {
 			handleClose();
 		}
+	};
+
+	const animationProps = {
+		style: {
+			animation: isMobile
+				? `${ isVisible ? 'pullUp' : 'pullDown' } .5s`
+				: `${ isVisible ? 'slideIn' : 'slideOut' } .5s`,
+		},
+		onAnimationEnd: toggleVisible,
 	};
 
 	const containerContent = (
@@ -53,23 +58,11 @@ const HelpCenterContainer: React.FC< Container > = ( { content, handleClose } ) 
 		</>
 	);
 
-	if ( isMobile ) {
-		return (
-			<Card
-				style={ { animation: `${ isVisible ? 'slideIn' : 'slideOut' } .4s` } }
-				onAnimationEnd={ toggleVisible }
-				className={ classNames }
-			>
+	return (
+		<Draggable disabled={ isMinimized }>
+			<Card className={ classNames } { ...animationProps }>
 				{ containerContent }
 			</Card>
-		);
-	}
-
-	return isMinimized ? (
-		<Card className={ classNames }>{ containerContent }</Card>
-	) : (
-		<Draggable>
-			<Card className={ classNames }>{ containerContent }</Card>
 		</Draggable>
 	);
 };
