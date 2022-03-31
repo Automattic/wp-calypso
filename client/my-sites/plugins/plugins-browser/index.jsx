@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -28,7 +27,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
 import {
-	useWPCOMPlugin,
 	useWPCOMPlugins,
 	useWPCOMFeaturedPlugins,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
@@ -568,9 +566,6 @@ const PluginSingleListView = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-	const { data: spotlightPlugin, isFetched: spotlightPluginFetched } =
-		useWPCOMPlugin( 'wordpress-seo-premium', { enabled: isEnabled( 'marketplace-spotlight' ) } ) ||
-		{};
 
 	let plugins;
 	let isFetching;
@@ -606,8 +601,6 @@ const PluginSingleListView = ( {
 			variant={ PluginsBrowserListVariant.Fixed }
 			billingPeriod={ billingPeriod }
 			setBillingPeriod={ category === 'paid' && setBillingPeriod }
-			spotlightPlugin={ spotlightPlugin }
-			spotlightPluginFetched={ spotlightPluginFetched }
 			extended
 			eligibleForProPlan={ eligibleForProPlan }
 		/>
