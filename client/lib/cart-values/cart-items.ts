@@ -519,6 +519,71 @@ export function getDomainMappings( cart: ResponseCart ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter( ( product ) => product.product_slug === 'domain_map' );
 }
 
+function createRenewalCartItemFromProduct(
+	product: ( WithCamelCaseSlug | WithSnakeCaseSlug ) & {
+		is_domain_registration?: boolean;
+		isDomainRegistration?: boolean;
+		id: string | number;
+		isRenewable?: boolean;
+	} & Partial< RequestCartProduct > & {
+			domain?: string;
+			users?: GSuiteProductUser[];
+		},
+	properties: { domain?: string }
+) {
+	const slug = camelOrSnakeSlug( product );
+
+	if ( isDomainProduct( product ) ) {
+		return domainItem( slug, properties.domain ?? '' );
+	}
+
+	if ( isPlan( product ) ) {
+		return planItem( slug );
+	}
+
+	if ( isGSuiteOrGoogleWorkspace( product ) ) {
+		return googleApps( product );
+	}
+
+	if ( isTitanMail( product ) ) {
+		return titanMailProduct( product, slug );
+	}
+
+	if ( isSiteRedirect( product ) ) {
+		return siteRedirect( properties );
+	}
+
+	if ( isNoAds( product ) ) {
+		return noAdsItem();
+	}
+
+	if ( isCustomDesign( product ) ) {
+		return customDesignItem();
+	}
+
+	if ( isVideoPress( product ) ) {
+		return videoPressItem();
+	}
+
+	if ( isUnlimitedSpace( product ) ) {
+		return unlimitedSpaceItem();
+	}
+
+	if ( isUnlimitedThemes( product ) ) {
+		return unlimitedThemesItem();
+	}
+
+	if ( isJetpackProduct( product ) ) {
+		return jetpackProductItem( slug );
+	}
+
+	if ( isSpaceUpgrade( product ) ) {
+		return spaceUpgradeItem( slug );
+	}
+
+	return undefined;
+}
+
 /**
  * Returns a renewal CartItem object with the given properties and product slug.
  */
@@ -534,61 +599,10 @@ export function getRenewalItemFromProduct(
 		},
 	properties: { domain?: string }
 ): MinimalRequestCartProduct {
-	const slug = camelOrSnakeSlug( product );
-	let cartItem;
-
-	if ( isDomainProduct( product ) ) {
-		cartItem = domainItem( slug, properties.domain ?? '' );
-	}
-
-	if ( isPlan( product ) ) {
-		cartItem = planItem( slug );
-	}
-
-	if ( isGSuiteOrGoogleWorkspace( product ) ) {
-		cartItem = googleApps( product );
-	}
-
-	if ( isTitanMail( product ) ) {
-		cartItem = titanMailProduct( product, slug );
-	}
-
-	if ( isSiteRedirect( product ) ) {
-		cartItem = siteRedirect( properties );
-	}
-
-	if ( isNoAds( product ) ) {
-		cartItem = noAdsItem();
-	}
-
-	if ( isCustomDesign( product ) ) {
-		cartItem = customDesignItem();
-	}
-
-	if ( isVideoPress( product ) ) {
-		cartItem = videoPressItem();
-	}
-
-	if ( isUnlimitedSpace( product ) ) {
-		cartItem = unlimitedSpaceItem();
-	}
-
-	if ( isUnlimitedThemes( product ) ) {
-		cartItem = unlimitedThemesItem();
-	}
-
-	if ( isJetpackProduct( product ) ) {
-		cartItem = jetpackProductItem( slug );
-	}
-
-	if ( isSpaceUpgrade( product ) ) {
-		cartItem = spaceUpgradeItem( slug );
-	}
-
+	const cartItem = createRenewalCartItemFromProduct( product, properties );
 	if ( ! cartItem ) {
 		throw new Error( 'This product cannot be renewed.' );
 	}
-
 	return getRenewalItemFromCartItem( cartItem, product );
 }
 
