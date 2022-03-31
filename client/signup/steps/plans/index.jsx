@@ -160,7 +160,6 @@ export class PlansStep extends Component {
 					{ errorDisplay }
 					<PlansComparison
 						isInSignup={ true }
-						hideFreePlan={ !! this.getDomainName() }
 						onSelectPlan={ this.onSelectPlan }
 						selectedSiteId={ selectedSite?.ID || undefined }
 					/>
