@@ -395,7 +395,7 @@ function onClickInstallPlugin( {
 					eligibleForProPlan
 				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
-				}#step2`
+				}`
 			);
 		}
 
