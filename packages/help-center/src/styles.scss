@@ -3,17 +3,17 @@
 	color: #000;
 
 	&.is-desktop {
+		background: white;
 		border-radius: 2px;
-		top: 74px;
+		box-shadow: 0 0 3px 0 rgba( 0, 0, 0, 0.25 );
+		cursor: default;
 		display: inline;
-		right: 16px;
+		min-width: 300px;
 		position: fixed;
+		right: 16px;
+		top: 74px;
 		width: 20vw;
 		z-index: 9999;
-		// Avoid the text cursor when the text is not selectable
-		cursor: default;
-		box-shadow: 0 0 3px 0 rgba( 0, 0, 0, 0.25 );
-		background: white;
 
 		.help-center__container-header {
 			cursor: pointer;
@@ -24,14 +24,70 @@
 			min-height: 300px;
 			overflow-y: auto;
 		}
+
+		&.is-minimized {
+			bottom: 30px;
+			top: auto;
+	
+			.help-center__container-header {
+				cursor: default;
+			}
+		}
 	}
 
-	&.is-minimized {
-		bottom: 30px;
-		top: auto;
+	&.is-mobile {
+		position: fixed !important;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background-color: #fff;
+		z-index: 9999;
+		transition: 0.5s ease;
+		max-height: 100vh;
 
-		.help-center__container-header {
-			cursor: default;
+		&.is-minimized {
+			top: calc( 100vh - 50px );
+			max-height: 50px;
+			transition: max-height ease 0.25s, top 0.5s ease 100ms;
 		}
+	
+		.help-center__container-header {
+			height: 50px;
+		}
+	
+		.help-center__container-content {
+			padding: 10px;
+			max-height: 90vh;
+			overflow-y: auto;
+		}
+	}
+
+	.components-button {
+		&:hover {
+			box-shadow: none;
+			color: inherit;
+		}
+	}
+	
+}
+
+@keyframes slideIn {
+	0% {
+		transform: translateY( 100vh );
+	}
+
+	100% {
+		transform: translateY( 0 );
+	}
+}
+
+@keyframes slideOut {
+	0% {
+		transform: translateY( 0 );
+	}
+
+	100% {
+		transform: translateY( 100vh );
 	}
 }

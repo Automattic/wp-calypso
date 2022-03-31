@@ -1,8 +1,8 @@
 import { CardBody } from '@wordpress/components';
 import classnames from 'classnames';
-import { Content } from '../types';
+import { Content } from './types';
 
-const HelpCenterDesktopContent: React.FC< Content > = ( { content } ) => {
+const HelpCenterContent: React.FC< Content > = ( { content } ) => {
 	const className = classnames( 'help-center__container-content' );
 
 	return (
@@ -12,4 +12,4 @@ const HelpCenterDesktopContent: React.FC< Content > = ( { content } ) => {
 	);
 };
 
-export default HelpCenterDesktopContent;
+export default HelpCenterContent;

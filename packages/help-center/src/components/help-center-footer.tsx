@@ -1,7 +1,7 @@
 import { CardFooter } from '@wordpress/components';
 import classnames from 'classnames';
 
-const HelpCenterDesktopFooter: React.FC = () => {
+const HelpCenterFooter: React.FC = () => {
 	const className = classnames( 'help-center__container-footer' );
 
 	return (
@@ -11,4 +11,4 @@ const HelpCenterDesktopFooter: React.FC = () => {
 	);
 };
 
-export default HelpCenterDesktopFooter;
+export default HelpCenterFooter;
