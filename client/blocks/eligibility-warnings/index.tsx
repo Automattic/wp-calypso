@@ -4,15 +4,18 @@ import {
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_SFTP,
 	FEATURE_INSTALL_PLUGINS,
+	PLAN_BUSINESS,
+	PLAN_WPCOM_PRO,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import page from 'page';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getEligibility,
@@ -67,6 +70,10 @@ export const EligibilityWarnings = ( {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
 
+	const eligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, siteId || undefined )
+	);
+
 	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
 	const classes = classNames(
 		'eligibility-warnings',
@@ -87,7 +94,8 @@ export const EligibilityWarnings = ( {
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
-			page.redirect( `/checkout/${ siteSlug }/business` );
+			const planSlug = eligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
+			page.redirect( `/checkout/${ siteSlug }/${ planSlug }` );
 			return;
 		}
 		if ( siteRequiresLaunch( listHolds ) ) {
