@@ -33,7 +33,7 @@ const PaymentMethodActions: FunctionComponent< Props > = ( { card } ) => {
 
 	const handleDelete = useCallback( () => {
 		closeDialog();
-		reduxDispatch( deleteStoredCard( card, nextPrimaryPaymentMethod.id ) )
+		reduxDispatch( deleteStoredCard( card, nextPrimaryPaymentMethod?.id ) )
 			.then( () => {
 				reduxDispatch( successNotice( translate( 'Payment method deleted successfully' ) ) );
 

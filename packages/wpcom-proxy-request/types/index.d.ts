@@ -17,6 +17,7 @@ export interface WpcomRequestParams {
 	metaAPI?: {
 		accessAllUsersBlogs?: boolean;
 	};
+	apiNamespace?: string;
 }
 
 export function reloadProxy(): void;

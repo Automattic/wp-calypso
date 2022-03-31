@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@emotion/react';
+import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -44,7 +44,6 @@ const ThankYouContainer = styled.div`
 const MasterbarStyled = styled( Masterbar )`
 	--color-masterbar-background: var( --studio-white );
 	--color-masterbar-text: var( --studio-gray-60 );
-	--masterbar-height: 72px;
 	border-bottom: 0;
 `;
 
@@ -213,6 +212,14 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 
 	return (
 		<ThemeProvider theme={ theme }>
+			{ /* Using Global to override Global masterbar height */ }
+			<Global
+				styles={ css`
+					body.is-section-marketplace.is-nav-unification {
+						--masterbar-height: 72px;
+					}
+				` }
+			/>
 			<MasterbarStyled>
 				<WordPressLogoStyled />
 				<ItemStyled

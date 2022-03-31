@@ -27,6 +27,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import OlarkChat from 'calypso/components/olark-chat';
 import {
 	recordSignupStart,
 	recordSignupComplete,
@@ -724,34 +725,47 @@ class Signup extends Component {
 		}
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
+		const olarkIdentity = config( 'olark_chat_identity' );
+		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
+		const isEligibleForOlarkChat =
+			'onboarding' === this.props.flowName && 'en' === this.props.localeSlug;
 
 		return (
-			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-				<DocumentHead title={ this.props.pageTitle } />
-				{ ! isP2Flow( this.props.flowName ) && (
-					<SignupHeader
-						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-						isReskinned={ isReskinned }
-						rightComponent={
-							showProgressIndicator( this.props.flowName ) && (
-								<FlowProgressIndicator
-									positionInFlow={ this.getPositionInFlow() }
-									flowLength={ this.getInteractiveStepsCount() }
-									flowName={ this.props.flowName }
-								/>
-							)
-						}
+			<>
+				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+					<DocumentHead title={ this.props.pageTitle } />
+					{ ! isP2Flow( this.props.flowName ) && (
+						<SignupHeader
+							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+							isReskinned={ isReskinned }
+							rightComponent={
+								showProgressIndicator( this.props.flowName ) && (
+									<FlowProgressIndicator
+										positionInFlow={ this.getPositionInFlow() }
+										flowLength={ this.getInteractiveStepsCount() }
+										flowName={ this.props.flowName }
+									/>
+								)
+							}
+						/>
+					) }
+					<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>
+					{ this.state.bearerToken && (
+						<WpcomLoginForm
+							authorization={ 'Bearer ' + this.state.bearerToken }
+							log={ this.state.username }
+							redirectTo={ this.state.redirectTo }
+						/>
+					) }
+				</div>
+				{ isEligibleForOlarkChat && (
+					<OlarkChat
+						identity={ olarkIdentity }
+						shouldDisablePreChatSurvey={ true }
+						systemsGroupId={ olarkSystemsGroupId }
 					/>
 				) }
-				<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>
-				{ this.state.bearerToken && (
-					<WpcomLoginForm
-						authorization={ 'Bearer ' + this.state.bearerToken }
-						log={ this.state.username }
-						redirectTo={ this.state.redirectTo }
-					/>
-				) }
-			</div>
+			</>
 		);
 	}
 }

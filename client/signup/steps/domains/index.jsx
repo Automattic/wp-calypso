@@ -24,6 +24,7 @@ import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl, isPlanSelectionAvailableLaterInFlow } from 'calypso/signup/utils';
 import {
@@ -219,7 +220,8 @@ class DomainsStep extends Component {
 	};
 
 	handleDomainExplainerClick = () => {
-		const hideFreePlan = true;
+		const { eligibleForProPlan } = this.props;
+		const hideFreePlan = eligibleForProPlan ? false : true;
 		this.handleSkip( undefined, hideFreePlan );
 	};
 
@@ -826,10 +828,12 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 export default connect(
-	( state, { steps } ) => {
+	( state, { steps, flowName } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
+		const selectedSite = getSelectedSite( state );
+		const eligibleForProPlan = isEligibleForProPlan( state, selectedSite?.ID );
 
 		return {
 			designType: getDesignType( state ),
@@ -837,11 +841,13 @@ export default connect(
 			productsLoaded,
 			siteType: getSiteType( state ),
 			vertical: getVerticalForDomainSuggestions( state ),
-			selectedSite: getSelectedSite( state ),
+			selectedSite,
 			sites: getSitesItems( state ),
 			isPlanSelectionAvailableLaterInFlow:
-				! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ),
+				( ! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ) ) ||
+				( eligibleForProPlan && 'pro' === flowName ),
 			userLoggedIn: isUserLoggedIn( state ),
+			eligibleForProPlan,
 		};
 	},
 	{

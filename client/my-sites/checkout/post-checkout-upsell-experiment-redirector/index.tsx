@@ -4,8 +4,13 @@ import { useExperiment } from 'calypso/lib/explat';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 
+/* When adding future upsells, you can use the following approach:
+
 export const PROFESSIONAL_EMAIL_OFFER = 'professional-email-offer';
 export type SupportedUpsellType = typeof PROFESSIONAL_EMAIL_OFFER;
+
+*/
+
 export interface PostCheckoutUpsellRedirectorProps {
 	receiptId: string | undefined;
 	siteSlug: string | undefined;

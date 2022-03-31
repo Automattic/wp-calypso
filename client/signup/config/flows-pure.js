@@ -225,7 +225,7 @@ export function generateFlows( {
 		{
 			// When adding steps, make sure that signup campaign ref's continue to work.
 			name: 'p2',
-			steps: [ 'user', 'p2-confirm-email', 'p2-site' ],
+			steps: [ 'user', 'p2-confirm-email', 'p2-complete-profile', 'p2-site' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'New P2 signup flow',
 			lastModified: '2021-12-27',
@@ -407,6 +407,7 @@ export function generateFlows( {
 						'difm-options',
 						'social-profiles',
 						'difm-design-setup-site',
+						'difm-page-picker',
 				  ]
 				: [
 						'user',

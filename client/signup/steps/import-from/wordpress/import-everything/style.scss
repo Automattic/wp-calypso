@@ -1,6 +1,14 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
+[dir='rtl'] {
+	.import__import-everything {
+		.import_site-mapper-name .site-icon {
+			left: auto;
+			right: 0;
+		}
+	}
+}
 .import__import-everything {
 	max-width: 700px;
 	margin: auto;
@@ -53,7 +61,7 @@
 		position: relative;
 
 		&.with-favicon {
-			padding-left: 56px;
+			padding-inline-start: 56px;
 		}
 
 		.site-icon {

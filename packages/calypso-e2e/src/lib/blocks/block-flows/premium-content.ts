@@ -36,15 +36,18 @@ export class PremiumContentBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		await context.editorIframe.click( selectors.subscriberViewButton );
-		await context.editorIframe.fill(
-			selectors.subscriberHeader,
-			this.configurationData.subscriberTitle
+		const subscriberViewButtonLocator = context.editorLocator.locator(
+			selectors.subscriberViewButton
 		);
-		await context.editorIframe.fill(
-			selectors.subscriberParagraph,
-			this.configurationData.subscriberText
+		await subscriberViewButtonLocator.click();
+
+		const subscriberHeaderLocator = context.editorLocator.locator( selectors.subscriberHeader );
+		await subscriberHeaderLocator.fill( this.configurationData.subscriberTitle );
+
+		const subscriberParagraphLocator = context.editorLocator.locator(
+			selectors.subscriberParagraph
 		);
+		await subscriberParagraphLocator.fill( this.configurationData.subscriberText );
 	}
 
 	/**
@@ -54,7 +57,14 @@ export class PremiumContentBlockFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		// Since we're viewing as the publishing user, we should see the subscriber version of the content.
-		await context.page.waitForSelector( `text="${ this.configurationData.subscriberTitle }"` );
-		await context.page.waitForSelector( `text="${ this.configurationData.subscriberText }"` );
+		const expectedTitle = context.page.locator(
+			`text="${ this.configurationData.subscriberTitle }"`
+		);
+		await expectedTitle.waitFor();
+
+		const expectedText = context.page.locator(
+			`text="${ this.configurationData.subscriberText }"`
+		);
+		await expectedText.waitFor();
 	}
 }

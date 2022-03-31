@@ -15,10 +15,12 @@ export * from './revisions-component';
 export * from './snackbar-notification-component';
 export * from './page-template-modal-component';
 export * from './react-modal-component';
-export * from './popover-block-inserter-component';
+export * from './editor-inline-block-inserter-component';
 export * from './editor-publish-panel-component';
 export * from './editor-nav-sidebar-component';
 export * from './editor-toolbar-component';
 export * from './editor-gutenberg-component';
+export * from './editor-block-list-view-component';
+export * from './editor-sidebar-block-inserter-component';
 
 export * from './me';

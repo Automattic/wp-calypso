@@ -14,6 +14,7 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
 import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
 import {
@@ -51,7 +52,6 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -119,7 +119,6 @@ export function renderNoVisibleSites( context ) {
 	const state = getState();
 	const currentUser = getCurrentUser( state );
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
-	const onboardingUrl = getOnboardingUrl( state );
 
 	setSectionMiddleware( { group: 'sites' } )( context );
 
@@ -144,7 +143,7 @@ export function renderNoVisibleSites( context ) {
 		action: i18n.translate( 'Change Visibility' ),
 		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
 		secondaryAction: i18n.translate( 'Create New Site' ),
-		secondaryActionURL: `${ onboardingUrl }?ref=calypso-nosites`,
+		secondaryActionURL: `${ onboardingUrl() }?ref=calypso-nosites`,
 		className: 'no-visible-sites-message',
 	} );
 

@@ -1,6 +1,16 @@
 import {
 	camelOrSnakeSlug,
+	getPlan,
+	getTermDuration,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_EXTRA_LICENSE_SLUG,
+	isBiennially,
+	isBlogger,
+	isBloggerPlan,
+	isBusiness,
+	isConciergeSession,
 	isCustomDesign,
+	isDIFMProduct,
 	isDomainMapping,
 	isDomainProduct,
 	isDomainRegistration,
@@ -11,39 +21,29 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isJetpackProduct,
+	isMonthlyProduct,
 	isNoAds,
-	isPlan,
-	isBlogger,
+	isP2Plus,
 	isPersonal,
+	isPlan,
 	isPremium,
-	isBusiness,
+	isPro,
+	isRenewable,
 	isSiteRedirect,
 	isSpaceUpgrade,
+	isTitanMail,
+	isTrafficGuide,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
-	isConciergeSession,
-	isTrafficGuide,
-	isTitanMail,
-	isP2Plus,
-	isMonthlyProduct,
-	isBiennially,
-	getTermDuration,
-	getPlan,
-	isBloggerPlan,
-	isWpComFreePlan,
 	isWpComBloggerPlan,
-	isDIFMProduct,
+	isWpComFreePlan,
 	TITAN_MAIL_MONTHLY_SLUG,
 	TITAN_MAIL_YEARLY_SLUG,
 } from '@automattic/calypso-products';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
-import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_EXTRA_LICENSE_SLUG,
-} from 'calypso/lib/gsuite/constants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type {
 	ResponseCart,
@@ -107,6 +107,10 @@ export function hasPersonalPlan( cart: ResponseCart ): boolean {
 
 export function hasPremiumPlan( cart: ResponseCart ): boolean {
 	return getAllCartItems( cart ).some( isPremium );
+}
+
+export function hasProPlan( cart: ResponseCart ): boolean {
+	return getAllCartItems( cart ).some( isPro );
 }
 
 export function hasBusinessPlan( cart: ResponseCart ): boolean {
@@ -494,6 +498,15 @@ export function jetpackProductItem( slug: string ): MinimalRequestCartProduct {
 }
 
 /**
+ * Creates a new shopping cart item for a renewable product.
+ */
+export function renewableProductItem( slug: string ): MinimalRequestCartProduct {
+	return {
+		product_slug: slug,
+	};
+}
+
+/**
  * Retrieves all the domain registration items in the specified shopping cart.
  */
 export function getDomainRegistrations( cart: ResponseCart ): ResponseCartProduct[] {
@@ -515,6 +528,7 @@ export function getRenewalItemFromProduct(
 		is_domain_registration?: boolean;
 		isDomainRegistration?: boolean;
 		id: string | number;
+		isRenewable?: boolean;
 	} & Partial< RequestCartProduct > & {
 			domain?: string;
 			users?: GSuiteProductUser[];
@@ -570,6 +584,10 @@ export function getRenewalItemFromProduct(
 
 	if ( isSpaceUpgrade( product ) ) {
 		cartItem = spaceUpgradeItem( slug );
+	}
+
+	if ( isRenewable( product ) ) {
+		cartItem = renewableProductItem( slug );
 	}
 
 	if ( ! cartItem ) {

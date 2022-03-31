@@ -44,7 +44,7 @@ const getRowMobileLayout = ( breakpoint: number, pageClass: string ) => `
 			}
 
 			${ MobileContent } {
-				display: none;
+				display: block;
 			}
 
 			th,
@@ -415,6 +415,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	selectedSiteId,
 	selectedSiteSlug,
 	purchaseId,
+	hideFreePlan,
 	onSelectPlan,
 } ) => {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSiteId || null ) );
@@ -447,7 +448,12 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	return (
 		<>
 			<Global styles={ globalOverrides } />
-			<ComparisonTable firstColWidth={ 32 } planCount={ plans.length } className="plans-comparison">
+			<ComparisonTable
+				firstColWidth={ 32 }
+				planCount={ plans.length }
+				hideFreePlan={ hideFreePlan }
+        className="plans-comparison"
+			>
 				<THead isInSignup={ isInSignup }>
 					<tr>
 						<td className={ `is-first` }>

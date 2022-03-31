@@ -10,12 +10,6 @@ const selectors = {
 	paragraphBlock: ( { empty }: { empty: boolean } ) =>
 		`p[data-title="Paragraph"][data-empty="${ empty }"]`,
 	blockWarning: '.block-editor-warning',
-
-	// Block Search
-	blockSearchInput: '.block-editor-inserter__search input[type="search"]',
-	blockResultItem: ( name: string ) =>
-		`.block-editor-block-types-list__list-item span:text("${ name }")`,
-	patternResultItem: ( name: string ) => `div[aria-label="${ name }"]`,
 };
 
 /**
@@ -140,40 +134,6 @@ export class EditorGutenbergComponent {
 	}
 
 	/* Block actions */
-
-	/**
-	 * Searches the Block Inserter for the provided string.
-	 *
-	 * @param {string} text Text to enter into the search input.
-	 */
-	async searchBlockInserter( text: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.blockSearchInput );
-		await locator.fill( text );
-	}
-
-	/**
-	 * Selects the maching result from the block inserter.
-	 *
-	 * By default, this method considers only the Block-type results
-	 * (including Resuable blocks).
-	 * In order to select from Pattern-type results, set the `type`
-	 * optional flag in the parameter to `'pattern'`.
-	 *
-	 * Where mulltiple matches exist (eg. due to partial matching), the first result will be chosen.
-	 */
-	async selectBlockInserterResult(
-		name: string,
-		{ type = 'block' }: { type?: 'block' | 'pattern' } = {}
-	): Promise< void > {
-		let locator;
-
-		if ( type === 'pattern' ) {
-			locator = this.editor.locator( selectors.patternResultItem( name ) );
-		} else {
-			locator = this.editor.locator( selectors.blockResultItem( name ) );
-		}
-		await locator.first().click();
-	}
 
 	/**
 	 * Returns the currently selected block's ElementHandle.

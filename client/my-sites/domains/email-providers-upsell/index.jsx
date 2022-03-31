@@ -9,7 +9,7 @@ import EmailProvidersComparison from 'calypso/my-sites/email/email-providers-com
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-export default function EmailProvidersUpsell( { domain } ) {
+export default function EmailProvidersUpsell( { domain, interval } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
@@ -47,8 +47,9 @@ export default function EmailProvidersUpsell( { domain } ) {
 					comparisonContext="domain-upsell"
 					isDomainInCart={ true }
 					selectedDomainName={ domain }
+					selectedIntervalLength={ interval }
 					source="domain-upsell"
-				></EmailProvidersStackedComparison>
+				/>
 			) }
 		</CalypsoShoppingCartProvider>
 	);

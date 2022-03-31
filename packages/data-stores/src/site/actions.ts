@@ -1,3 +1,4 @@
+import { Design } from '@automattic/design-picker/src/types';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { SiteLaunchError } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
@@ -74,10 +75,16 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		response,
 	} );
 
-	const receiveSiteTitle = ( siteId: number, title: string | undefined ) => ( {
+	const receiveSiteTitle = ( siteId: number, name: string | undefined ) => ( {
 		type: 'RECEIVE_SITE_TITLE' as const,
 		siteId,
-		title,
+		name,
+	} );
+
+	const receiveSiteTagline = ( siteId: number, tagline: string | undefined ) => ( {
+		type: 'RECEIVE_SITE_TAGLINE' as const,
+		siteId,
+		tagline,
 	} );
 
 	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
@@ -150,31 +157,75 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return success;
 	}
 
-	function* saveSiteTitle( siteId: number, title: string | undefined ) {
+	function* saveSiteSettings(
+		siteId: number,
+		settings: { blogname?: string; blogdescription?: string }
+	) {
 		try {
 			// extract this into its own function as a generic settings setter
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/settings`,
 				apiVersion: '1.4',
-				body: { blogname: title },
+				body: settings,
 				method: 'POST',
 			} );
-			yield receiveSiteTitle( siteId, title );
+			if ( 'blogname' in settings ) {
+				yield receiveSiteTitle( siteId, settings.blogname );
+			}
+			if ( 'blogdescription' in settings ) {
+				yield receiveSiteTagline( siteId, settings.blogdescription );
+			}
 		} catch ( e ) {}
+	}
+
+	function* saveSiteTitle( siteId: number, blogname: string | undefined ) {
+		yield saveSiteSettings( siteId, { blogname } );
+	}
+
+	function* saveSiteTagline( siteId: number, blogdescription: string | undefined ) {
+		yield saveSiteSettings( siteId, { blogdescription } );
+	}
+
+	function* setDesignOnSite( siteSlug: string, selectedDesign: Design ) {
+		yield wpcomRequest( {
+			path: `/sites/${ siteSlug }/themes/mine`,
+			apiVersion: '1.1',
+			body: { theme: selectedDesign.theme, dont_change_homepage: true },
+			method: 'POST',
+		} );
+
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
+			apiNamespace: 'wpcom/v2',
+			body: { trim_content: true },
+			method: 'POST',
+		} );
+
+		const data: { is_fse_active: boolean } = yield wpcomRequest( {
+			path: `/sites/${ siteSlug }/block-editor`,
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+		} );
+
+		return data?.is_fse_active ?? false;
 	}
 
 	return {
 		receiveSiteDomains,
 		saveSiteTitle,
+		saveSiteSettings,
 		receiveSiteTitle,
 		fetchNewSite,
 		fetchSite,
 		receiveNewSite,
 		receiveNewSiteFailed,
 		resetNewSiteFailed,
+		setDesignOnSite,
 		createSite,
 		receiveSite,
 		receiveSiteFailed,
+		receiveSiteTagline,
+		saveSiteTagline,
 		reset,
 		launchSite,
 		launchSiteStart,
@@ -195,6 +246,7 @@ export type Action =
 			| ActionCreators[ 'receiveNewSite' ]
 			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]
+			| ActionCreators[ 'receiveSiteTagline' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]

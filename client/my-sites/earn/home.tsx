@@ -11,6 +11,7 @@ import {
 	isSecurityDailyPlan,
 	isSecurityRealTimePlan,
 	isCompletePlan,
+	isProPlan,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
@@ -27,6 +28,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -55,6 +57,7 @@ interface ConnectedProps {
 	trackCtaButton: ( feature: string ) => void;
 	isPremiumOrBetterPlan?: boolean;
 	isUserAdmin?: boolean;
+	eligibleForProPlan?: boolean;
 }
 
 type BoolFunction = ( arg: string ) => boolean;
@@ -76,6 +79,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	hasWordAds,
 	hasConnectedAccount,
 	hasSetupAds,
+	eligibleForProPlan,
 	trackUpgrade,
 	trackLearnLink,
 	trackCtaButton,
@@ -111,10 +115,12 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	};
 
 	const getPremiumPlanNames = () => {
+		const nonAtomicJetpackText = eligibleForProPlan
+			? translate( 'Available only with a Pro plan.' )
+			: translate( 'Available only with a Premium, Business, or eCommerce plan.' );
+
 		// Space isn't included in the translatable string to prevent it being easily missed.
-		return isNonAtomicJetpack
-			? getAnyPlanNames()
-			: ' ' + translate( 'Available only with a Premium, Business, or eCommerce plan.' );
+		return isNonAtomicJetpack ? getAnyPlanNames() : ' ' + nonAtomicJetpackText;
 	};
 
 	/**
@@ -572,7 +578,8 @@ export default connect(
 					isJetpackBusinessPlan,
 					isSecurityDailyPlan,
 					isSecurityRealTimePlan,
-					isCompletePlan
+					isCompletePlan,
+					isProPlan
 				)( sitePlanSlug )
 		);
 		return {
@@ -587,6 +594,7 @@ export default connect(
 			hasWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			hasSimplePayments: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
+			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 			isLoading,
 			hasSetupAds: Boolean(
 				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )

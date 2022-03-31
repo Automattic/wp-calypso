@@ -32,7 +32,7 @@ class MediaLibraryListNoContent extends Component {
 			} );
 		}
 
-		if ( 'pexels' === source ) {
+		if ( 'pexels' === source || 'openverse' === source ) {
 			return translate( 'Use the search above to find free photos!', {
 				comment: 'Media no results',
 			} );
@@ -74,7 +74,7 @@ class MediaLibraryListNoContent extends Component {
 	render() {
 		let line = '';
 		let action = '';
-		const showPexelsButton =
+		const showFreeLibraryButton =
 			config.isEnabled( 'external-media/free-photo-library' ) &&
 			userCan( 'upload_files', this.props.site ) &&
 			! this.props.source;
@@ -98,7 +98,7 @@ class MediaLibraryListNoContent extends Component {
 				title={ this.getLabel() }
 				line={ line }
 				action={ action }
-				secondaryAction={ showPexelsButton && this.props.translate( 'Browse free images' ) }
+				secondaryAction={ showFreeLibraryButton && this.props.translate( 'Browse free images' ) }
 				secondaryActionCallback={ this.changeSource }
 				illustration={ mediaImage }
 				illustrationWidth={ 150 }

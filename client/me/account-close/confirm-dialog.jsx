@@ -7,9 +7,9 @@ import { connect } from 'react-redux';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { closeAccount } from 'calypso/state/account/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 
 import './confirm-dialog.scss';
 
@@ -61,14 +61,14 @@ class AccountCloseConfirmDialog extends Component {
 	};
 
 	render() {
-		const { currentUsername, isVisible, onboardingUrl, translate } = this.props;
+		const { currentUsername, isVisible, translate } = this.props;
 		const isDeleteButtonDisabled = currentUsername && this.state.inputValue !== currentUsername;
 
 		const alternativeOptions = [
 			{
 				englishText: 'Start a new site',
 				text: translate( 'Start a new site' ),
-				href: onboardingUrl + '?ref=me-account-close',
+				href: onboardingUrl() + '?ref=me-account-close',
 				supportLink:
 					'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account',
 				supportPostId: 3991,
@@ -209,7 +209,6 @@ export default connect(
 
 		return {
 			currentUsername: user && user.username,
-			onboardingUrl: getOnboardingUrl( state ),
 		};
 	},
 	{

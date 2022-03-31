@@ -7,6 +7,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
 		post_id: 111349,
 	},
+	backups: {
+		link: 'https://wordpress.com/support/restore/',
+		post_id: 159843,
+	},
 	backup_payment_methods: {
 		link: 'https://wordpress.com/support/payment/#backup-payment-methods',
 		post_id: 76237,
@@ -18,6 +22,10 @@ const contextLinks = {
 	cancel_purchase: {
 		link: 'https://wordpress.com/support/manage-purchases/#cancel-a-purchase',
 		post_id: 111349,
+	},
+	categories: {
+		link: 'https://wordpress.com/support/posts/categories/',
+		post_id: 8480,
 	},
 	comments: {
 		link: 'https://wordpress.com/support/comments/',
@@ -157,6 +165,14 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/',
 		post_id: 111349,
 	},
+	'reusable-blocks': {
+		link: 'https://wordpress.com/support/wordpress-editor/blocks/reusable-block/',
+		post_id: 157539,
+	},
+	'site-speed': {
+		link: 'https://wordpress.com/support/site-speed/',
+		post_id: 150474,
+	},
 	'site-verification': {
 		link: 'https://wordpress.com/support/site-verification-services/',
 		post_id: 5022,
@@ -164,6 +180,10 @@ const contextLinks = {
 	stats: {
 		link: 'https://wordpress.com/support/stats/',
 		post_id: 4454,
+	},
+	tags: {
+		link: 'https://wordpress.com/support/posts/tags/',
+		post_id: 8586,
 	},
 	team: {
 		link: 'https://wordpress.com/support/user-roles/',

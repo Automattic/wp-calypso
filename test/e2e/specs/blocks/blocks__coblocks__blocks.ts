@@ -15,19 +15,17 @@ import {
 	PricingTableBlock,
 	TestAccount,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-const accountName = getTestAccountByFeature( {
-	coblocks: envVariables.COBLOCKS_EDGE ? 'edge' : undefined,
-	gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-	siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-} );
-
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features );
+
 	let page: Page;
 	let testAccount: TestAccount;
 	let editorPage: EditorPage;
@@ -43,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 		page = await browser.newPage();
 		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		testAccount = new TestAccount( accountName );
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 
 		await testAccount.authenticate( page );
 	} );
@@ -53,7 +51,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( `Insert ${ PricingTableBlock.blockName } block and enter prices`, async function () {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);
@@ -63,11 +61,14 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( `Insert ${ DynamicHRBlock.blockName } block`, async function () {
-		await editorPage.addBlock( DynamicHRBlock.blockName, DynamicHRBlock.blockEditorSelector );
+		await editorPage.addBlockFromSidebar(
+			DynamicHRBlock.blockName,
+			DynamicHRBlock.blockEditorSelector
+		);
 	} );
 
 	it( `Insert ${ HeroBlock.blockName } block and enter heading`, async function () {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			HeroBlock.blockName,
 			HeroBlock.blockEditorSelector
 		);
@@ -76,7 +77,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( `Insert ${ ClicktoTweetBlock.blockName } block and enter tweet content`, async function () {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			ClicktoTweetBlock.blockName,
 			ClicktoTweetBlock.blockEditorSelector
 		);
@@ -85,7 +86,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 	} );
 
 	it( `Insert ${ LogosBlock.blockName } block and set image`, async function () {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			LogosBlock.blockName,
 			LogosBlock.blockEditorSelector
 		);

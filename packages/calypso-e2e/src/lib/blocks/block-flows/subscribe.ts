@@ -1,9 +1,10 @@
 import { BlockFlow, PublishedPostContext } from '..';
 
-const blockParentSelector = '[aria-label="Block: Subscribe"]';
+const editorBlockParentSelector = '[aria-label="Block: Subscribe"]';
+const publishedBlockParentSelector = '.wp-block-jetpack-subscriptions';
 const selectors = {
-	emailInput: 'input[name=email]',
-	subscribeButton: 'button:has-text("Subscribe")',
+	emailInput: `${ publishedBlockParentSelector } input[name=email]`,
+	subscribeButton: `${ publishedBlockParentSelector } button:has-text("Subscribe")`,
 };
 
 /**
@@ -11,7 +12,7 @@ const selectors = {
  */
 export class SubscribeFlow implements BlockFlow {
 	blockSidebarName = 'Subscribe';
-	blockEditorSelector = blockParentSelector;
+	blockEditorSelector = editorBlockParentSelector;
 
 	/**
 	 * Validate the block in the published post
@@ -20,8 +21,10 @@ export class SubscribeFlow implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		// Is there an interactive email field?
-		await context.page.fill( selectors.emailInput, 'foo@example.com' );
+		const emailInputLocator = context.page.locator( selectors.emailInput );
+		await emailInputLocator.fill( 'foo@example.com' );
 		// And a subscribe button?
-		await context.page.waitForSelector( selectors.subscribeButton );
+		const subscribeButtonLocator = context.page.locator( selectors.subscribeButton );
+		await subscribeButtonLocator.waitFor(); // Don't click - we don't want a real subscription!
 	}
 }

@@ -9,18 +9,16 @@ import {
 	PricingTableBlock,
 	TestAccount,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-
-const accountName = getTestAccountByFeature( {
-	coblocks: envVariables.COBLOCKS_EDGE ? 'edge' : undefined,
-	gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-	siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-} );
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features );
+
 	let page: Page;
 	let testAccount: TestAccount;
 	let editorPage: EditorPage;
@@ -29,7 +27,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	beforeAll( async () => {
 		page = await browser.newPage();
 		testAccount = new TestAccount( accountName );
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 
 		await testAccount.authenticate( page );
 	} );
@@ -39,7 +37,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	} );
 
 	it( 'Insert Pricing Table block', async () => {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);

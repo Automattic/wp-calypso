@@ -50,7 +50,6 @@ export class SiteAddressChanger extends Component {
 
 	state = {
 		step: 0,
-		showDialog: false,
 		domainFieldValue: '',
 		newDomainSuffix: this.props.currentDomainSuffix,
 	};

@@ -11,19 +11,17 @@ import {
 	CoverBlock,
 	TestAccount,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
-const accountName = getTestAccountByFeature( {
-	coblocks: envVariables.COBLOCKS_EDGE ? 'edge' : undefined,
-	gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-	siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-} );
-
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features );
+
 	let page: Page;
 	let testAccount: TestAccount;
 	let editorPage: EditorPage;
@@ -34,7 +32,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		testAccount = new TestAccount( accountName );
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 
 		await testAccount.authenticate( page );
 	} );
@@ -44,7 +42,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 	} );
 
 	it( 'Insert Cover block', async () => {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			CoverBlock.blockName,
 			CoverBlock.blockEditorSelector
 		);

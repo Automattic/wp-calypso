@@ -1,8 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { isEnabled } from '@automattic/calypso-config';
 import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -61,7 +62,7 @@ const GoogleWorkspacePrice = ( {
 		);
 	}
 
-	if ( intervalLength === IntervalLength.MONTHLY ) {
+	if ( ! isEnabled( 'google-workspace-monthly' ) && intervalLength === IntervalLength.MONTHLY ) {
 		return (
 			<div className="google-workspace-price__unavailable">
 				{ translate( 'Only available with annual billing' ) }

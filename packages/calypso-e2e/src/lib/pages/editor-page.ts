@@ -9,7 +9,11 @@ import {
 	EditorSettingsSidebarComponent,
 	EditorGutenbergComponent,
 	NavbarComponent,
+	EditorBlockListViewComponent,
+	EditorInlineBlockInserterComponent,
+	EditorSidebarBlockInserterComponent,
 } from '../components';
+import type { SiteType } from '../../lib/utils';
 import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../components';
 
 const selectors = {
@@ -29,18 +33,30 @@ const selectors = {
 };
 const EXTENDED_TIMEOUT = 90 * 1000;
 
+export type OpenInlineInserter = ( editor: Locator ) => Promise< void >;
+interface BlockInserter {
+	searchBlockInserter( blockName: string ): Promise< void >;
+	selectBlockInserterResult(
+		name: string,
+		options?: { type?: 'block' | 'pattern' }
+	): Promise< void >;
+}
+
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
  */
 export class EditorPage {
 	private page: Page;
 	private editor: Locator;
-	private target: 'simple' | 'atomic';
+	private target: SiteType;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSettingsSidebarComponent: EditorSettingsSidebarComponent;
 	private editorGutenbergComponent: EditorGutenbergComponent;
+	private editorBlockListViewComponent: EditorBlockListViewComponent;
+	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
+	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -49,7 +65,7 @@ export class EditorPage {
 	 * @param param0 Keyed object parameter.
 	 * @param param0.target Target editor type. Defaults to 'simple'.
 	 */
-	constructor( page: Page, { target = 'simple' }: { target?: 'simple' | 'atomic' } = {} ) {
+	constructor( page: Page, { target = 'simple' }: { target?: SiteType } = {} ) {
 		if ( target === 'atomic' ) {
 			// For Atomic editors, there is no iFrame - the editor is
 			// part of the page DOM and is thus accessible directly.
@@ -69,9 +85,18 @@ export class EditorPage {
 		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
 		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
+		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
+		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
+			page,
+			this.editor
+		);
+		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent(
+			page,
+			this.editor
+		);
 	}
 
-	/* Generic methods */
+	//#region Generic and Shell Methods
 
 	/**
 	 * Opens the "new post/page" page. By default it will open the "new post" page.
@@ -152,6 +177,17 @@ export class EditorPage {
 		return ( await elementHandle?.contentFrame() ) as Frame;
 	}
 
+	// TODO: in the future, this should replace the handle method above, as everything should be based on locators.
+	/**
+	 * Get a pointer to the top-level editor locator.
+	 * This allows you a frame-safe way to start creating locators for other actions with the editor.
+	 *
+	 * @returns A pointer to frame-safe, top-level locator within the editor.
+	 */
+	getEditorLocator(): Locator {
+		return this.editor;
+	}
+
 	/**
 	 * Closes all panels that can be opened in the editor.
 	 *
@@ -168,7 +204,9 @@ export class EditorPage {
 		] );
 	}
 
-	/* Editor */
+	//#endregion
+
+	//#region Basic Entry
 
 	/**
 	 * Enters the text into the title block and verifies the result.
@@ -211,8 +249,12 @@ export class EditorPage {
 		return await this.editorGutenbergComponent.getText();
 	}
 
+	//#endregion
+
+	//#region Block and Pattern Insertion
+
 	/**
-	 * Adds a Gutenberg block from the block inserter panel.
+	 * Adds a Gutenberg block from the sidebar block inserter panel.
 	 *
 	 * The name is expected to be formatted in the same manner as it
 	 * appears on the label when visible in the block inserter panel.
@@ -228,11 +270,13 @@ export class EditorPage {
 	 *
 	 * @param {string} blockName Name of the block to be inserted.
 	 */
-	async addBlock( blockName: string, blockEditorSelector: string ): Promise< ElementHandle > {
+	async addBlockFromSidebar(
+		blockName: string,
+		blockEditorSelector: string
+	): Promise< ElementHandle > {
 		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
-		await this.editorGutenbergComponent.searchBlockInserter( blockName );
-		await this.editorGutenbergComponent.selectBlockInserterResult( blockName );
+		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent );
 
 		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
 			blockEditorSelector
@@ -251,7 +295,61 @@ export class EditorPage {
 	}
 
 	/**
-	 * Adds a pattern from the block inserter panel.
+	 * Adds a Gutenberg block from the inline block inserter.
+	 *
+	 * Because there are so many different ways to open the inline inserter, this function accepts a function to run first
+	 * that should open the inserter. This allows specs to get to the inserter in the way they need.
+	 *
+	 * The block name is expected to be formatted in the same manner as it
+	 * appears on the label when visible in the block inserter panel.
+	 *
+	 * Example:
+	 * 		- Click to Tweet
+	 * 		- Pay with Paypal
+	 * 		- SyntaxHighlighter Code
+	 *
+	 * The block editor selector should select the top level element of a block in the editor.
+	 * For reference, this element will almost always have the ".wp-block" class.
+	 * We recommend using the aria-label for the selector, e.g. '[aria-label="Block: Quote"]'.
+	 *
+	 * @param {string} blockName Name of the block as in inserter results.
+	 * @param {string} blockEditorSelector Selector to find the block once added.
+	 * @param {OpenInlineInserter} openInlineInserter Function to open the inline inserter.
+	 * @returns An element handle to the added block.
+	 */
+	async addBlockInline(
+		blockName: string,
+		blockEditorSelector: string,
+		openInlineInserter: OpenInlineInserter
+	): Promise< ElementHandle > {
+		// First, launch the inline inserter in the way expected by the script.
+		await openInlineInserter( this.editor );
+		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
+
+		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
+			blockEditorSelector
+		);
+		// Return an ElementHandle pointing to the block for compatibility
+		// with existing specs.
+		return blockHandle;
+	}
+
+	/**
+	 * Shared submethod to insert a block from a block inserter.
+	 *
+	 * @param {string} blockName Name of the block.
+	 * @param {BlockInserter} inserter A block inserter component.
+	 */
+	private async addBlockFromInserter(
+		blockName: string,
+		inserter: BlockInserter
+	): Promise< void > {
+		await inserter.searchBlockInserter( blockName );
+		await inserter.selectBlockInserterResult( blockName );
+	}
+
+	/**
+	 * Adds a pattern from the sidebar block inserter panel.
 	 *
 	 * The name is expected to be formatted in the same manner as it
 	 * appears on the label when visible in the block inserter panel.
@@ -261,13 +359,48 @@ export class EditorPage {
 	 *
 	 * @param {string} patternName Name of the pattern to insert.
 	 */
-	async addPattern( patternName: string ): Promise< void > {
+	async addPatternFromSidebar( patternName: string ): Promise< void > {
 		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
-		await this.editorGutenbergComponent.searchBlockInserter( patternName );
-		await this.editorGutenbergComponent.selectBlockInserterResult( patternName, {
-			type: 'pattern',
-		} );
+		await this.addPatternFromInserter( patternName, this.editorSidebarBlockInserterComponent );
+	}
+
+	/**
+	 * Adds a pattern from the inline block inserter panel.
+	 *
+	 * Because there are so many different ways to open the inline inserter, this function accepts a function to run first
+	 * that should open the inserter. This allows specs to get to the inserter in the way they need.
+	 *
+	 * The name is expected to be formatted in the same manner as it
+	 * appears on the label when visible in the block inserter panel.
+	 *
+	 * Example:
+	 * 		- Two images side by side
+	 *
+	 * @param {string} patternName Name of the pattern to insert as it matches the label in the inserter.
+	 * @param {OpenInlineInserter} openInlineInserter Function to open the inline inserter.
+	 */
+	async addPatternInline(
+		patternName: string,
+		openInlineInserter: OpenInlineInserter
+	): Promise< void > {
+		// First, launch the inline inserter in the way expected by the script.
+		await openInlineInserter( this.editor );
+		await this.addPatternFromInserter( patternName, this.editorInlineBlockInserterComponent );
+	}
+
+	/**
+	 * Shared submethod to insert a pattern from a block inserter (sidebar or inline).
+	 *
+	 * @param {string} patternName Name of the pattern.
+	 * @param {BlockInserter} inserter Block inserter component.
+	 */
+	private async addPatternFromInserter(
+		patternName: string,
+		inserter: BlockInserter
+	): Promise< void > {
+		await inserter.searchBlockInserter( patternName );
+		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
 
 		const insertConfirmationToastLocator = this.editor.locator(
 			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
@@ -287,7 +420,9 @@ export class EditorPage {
 		await this.page.keyboard.press( 'Backspace' );
 	}
 
-	/* Settings Sidebar */
+	//#endregion
+
+	//#region Settings Sidebar
 
 	/**
 	 * Opens the Settings sidebar.
@@ -394,7 +529,36 @@ export class EditorPage {
 		await this.editorSettingsSidebarComponent.enterUrlSlug( slug );
 	}
 
-	/* Publish, Draft & Schedule */
+	//#endregion
+
+	//#region List View
+
+	/**
+	 * Opens the list view.
+	 */
+	async openListView(): Promise< void > {
+		await this.editorToolbarComponent.openListView();
+	}
+
+	/**
+	 * Closes the list view.
+	 */
+	async closeListView(): Promise< void > {
+		await this.editorToolbarComponent.closeListView();
+	}
+
+	/**
+	 * In the list view, click on the first block of a given type (e.g. "Heading").
+	 *
+	 * @param blockName Name of the block type to find and click (e.g. "Heading").
+	 */
+	async clickFirstListViewEntryByType( blockName: string ): Promise< void > {
+		await this.editorBlockListViewComponent.clickFirstBlockOfType( blockName );
+	}
+
+	//#endregion
+
+	//#region Publish, Draft & Schedule
 
 	/**
 	 * Publishes the post or page.
@@ -524,7 +688,9 @@ export class EditorPage {
 		}
 	}
 
-	/* Previews */
+	//#endregion
+
+	//#region Previews
 
 	/**
 	 * Launches the Preview as mobile viewport.
@@ -577,7 +743,9 @@ export class EditorPage {
 		await this.editorToolbarComponent.openDesktopPreview( 'Desktop' );
 	}
 
-	/* Misc */
+	//#endregion
+
+	//#region Misc
 
 	/**
 	 * Leave the editor to return to the Calypso dashboard.
@@ -617,6 +785,13 @@ export class EditorPage {
 	}
 
 	/**
+	 * Opens the post details popover (i.e. number of character, words, etc.).
+	 */
+	async openDetailsPopover(): Promise< void > {
+		await this.editorToolbarComponent.openDetailsPopover();
+	}
+
+	/**
 	 * Checks whether the editor has any block warnings/errors displaying.
 	 *
 	 * @returns {Promise<boolean>} True if there are block warnings/errors.
@@ -625,4 +800,6 @@ export class EditorPage {
 	async editorHasBlockWarnings(): Promise< boolean > {
 		return await this.editorGutenbergComponent.editorHasBlockWarning();
 	}
+
+	//#endregion
 }

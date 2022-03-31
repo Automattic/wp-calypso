@@ -6,6 +6,7 @@ import { sprintf, _x } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import page from 'page';
+import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -13,7 +14,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import WarningCard from 'calypso/components/warning-card';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
-import { useIsSimpleSeller } from 'calypso/state/sites/hooks';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import WooCommerceColophon from './woocommerce-colophon';
 
 import './style.scss';
@@ -38,7 +39,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce' } ];
 	const ctaRef = useRef( null );
-	const simpleSeller = useIsSimpleSeller();
+	const currentIntent = useSelector( ( state ) => getSiteOption( state, siteId, 'site_intent' ) );
 
 	const {
 		isTransferringBlocked,
@@ -132,7 +133,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 
 	let displayData: DisplayData | null;
 
-	if ( simpleSeller ) {
+	if ( currentIntent === 'sell' ) {
 		displayData = {
 			title: _x( 'Upgrade your store', 'Header text' ),
 			illustration: '/calypso/images/illustrations/illustration-seller.svg',

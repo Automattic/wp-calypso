@@ -68,6 +68,7 @@ export function createSofortPaymentMethodStore(): SofortStore {
 export function createSofortMethod( { store }: { store: SofortStore } ): PaymentMethod {
 	return {
 		id: 'sofort',
+		paymentProcessorId: 'sofort',
 		label: <SofortLabel />,
 		activeContent: <SofortFields />,
 		submitButton: <SofortPayButton store={ store } />,
@@ -158,7 +159,7 @@ function SofortPayButton( {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting sofort payment' );
-					onClick( 'sofort', {
+					onClick( {
 						name: customerName?.value,
 						items,
 						total,
