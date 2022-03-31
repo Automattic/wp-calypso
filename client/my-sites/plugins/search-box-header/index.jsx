@@ -1,9 +1,9 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-
 import './style.scss';
 
 const SearchBox = ( { isMobile, doSearch, searchTerm } ) => {
@@ -33,13 +33,15 @@ const PopularSearches = ( props ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const trackImpression = ( searchTerm ) => {
-		dispatch(
-			recordTracksEvent( 'calypso_plugins_popular_searches_impression', {
-				search_term: searchTerm,
-			} )
+	useEffect( () => {
+		searchTerms.forEach( ( searchTerm ) =>
+			dispatch(
+				recordTracksEvent( 'calypso_plugins_popular_searches_impression', {
+					search_term: searchTerm,
+				} )
+			)
 		);
-	};
+	}, searchTerms );
 
 	const onClick = ( searchTerm ) => {
 		dispatch(
@@ -50,8 +52,6 @@ const PopularSearches = ( props ) => {
 
 		page( `/plugins/${ siteSlug || '' }?s=${ searchTerm }` );
 	};
-
-	searchTerms.forEach( trackImpression );
 
 	return (
 		<div className="search-box-header__recommended-searches">
