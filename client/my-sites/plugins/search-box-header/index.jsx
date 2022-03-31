@@ -1,7 +1,6 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
@@ -32,16 +31,6 @@ const PopularSearches = ( props ) => {
 	const { searchTerms, siteSlug } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-
-	useEffect( () => {
-		searchTerms.forEach( ( searchTerm ) =>
-			dispatch(
-				recordTracksEvent( 'calypso_plugins_popular_searches_impression', {
-					search_term: searchTerm,
-				} )
-			)
-		);
-	}, [ JSON.stringify( searchTerms ) ] );
 
 	const onClick = ( searchTerm ) => {
 		dispatch(
