@@ -28,7 +28,6 @@ const PluginsBrowserList = ( {
 	listName,
 	expandedListLink,
 	size,
-	eligibleForProPlan,
 } ) => {
 	const isWide = useBreakpoint( '>1280px' );
 	const { __ } = useI18n();
@@ -93,7 +92,7 @@ const PluginsBrowserList = ( {
 					<div className="plugins-browser-list__subtitle">{ subtitle }</div>
 				</div>
 				<div className="plugins-browser-list__actions">
-					{ setBillingPeriod && ! eligibleForProPlan && (
+					{ setBillingPeriod && (
 						<BillingIntervalSwitcher
 							billingPeriod={ billingPeriod }
 							onChange={ setBillingPeriod }

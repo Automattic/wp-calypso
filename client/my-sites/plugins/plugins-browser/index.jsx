@@ -33,7 +33,6 @@ import {
 import { useWPORGPlugins } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import NoResults from 'calypso/my-sites/no-results';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
@@ -191,16 +190,6 @@ const PluginsBrowser = ( {
 		}
 		return ! selectedSite?.ID && hasJetpack;
 	}, [ isJetpack, selectedSite, hasJetpack ] );
-
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
-
-	useEffect( () => {
-		if ( eligibleForProPlan && setBillingInterval ) {
-			dispatch( setBillingInterval( IntervalLength.ANNUALLY ) );
-		}
-	}, [ eligibleForProPlan, dispatch ] );
 
 	useEffect( () => {
 		const items = [
@@ -360,7 +349,6 @@ const PluginsBrowser = ( {
 				jetpackNonAtomic={ jetpackNonAtomic }
 				billingPeriod={ billingPeriod }
 				setBillingPeriod={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
-				eligibleForProPlan={ eligibleForProPlan }
 			/>
 			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
 			<EducationFooter />
@@ -374,7 +362,6 @@ const SearchListView = ( {
 	siteSlug,
 	sites,
 	billingPeriod,
-	eligibleForProPlan,
 } ) => {
 	const dispatch = useDispatch();
 	const [ page, setPage ] = useState( 1 );
@@ -471,7 +458,6 @@ const SearchListView = ( {
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
 					billingPeriod={ billingPeriod }
-					eligibleForProPlan={ eligibleForProPlan }
 				/>
 				{ pluginsPagination && (
 					<Pagination
@@ -509,7 +495,6 @@ const FullListView = ( {
 	isFetchingPaidPlugins,
 	billingPeriod,
 	setBillingPeriod,
-	eligibleForProPlan,
 } ) => {
 	const translate = useTranslate();
 
@@ -533,7 +518,6 @@ const FullListView = ( {
 				billingPeriod={ billingPeriod }
 				setBillingPeriod={ category === 'paid' && setBillingPeriod }
 				extended
-				eligibleForProPlan={ eligibleForProPlan }
 			/>
 		);
 	}
@@ -560,7 +544,6 @@ const PluginSingleListView = ( {
 	sites,
 	billingPeriod,
 	setBillingPeriod,
-	eligibleForProPlan,
 } ) => {
 	const translate = useTranslate();
 
@@ -602,7 +585,6 @@ const PluginSingleListView = ( {
 			billingPeriod={ billingPeriod }
 			setBillingPeriod={ category === 'paid' && setBillingPeriod }
 			extended
-			eligibleForProPlan={ eligibleForProPlan }
 		/>
 	);
 };
