@@ -8,7 +8,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
 import { Component } from 'react';
@@ -275,10 +275,12 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate, eligibleForProPlan } = this.props;
+		const { headerText, translate, eligibleForProPlan, locale } = this.props;
 
 		if ( eligibleForProPlan ) {
-			return translate( 'Choose your hosting plan' );
+			return 'en' === locale || i18n.hasTranslation( 'Choose your hosting plan' )
+				? translate( 'Choose your hosting plan' )
+				: translate( 'Choose the plan that’s right for you' );
 		}
 
 		if ( this.state.isDesktop ) {
@@ -289,10 +291,13 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan } = this.props;
+		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan, locale } = this.props;
 
 		if ( eligibleForProPlan ) {
-			return translate( 'The WordPress Pro plan comes with a 14-day money back guarantee' );
+			return 'en' === locale ||
+				i18n.hasTranslation( 'he WordPress Pro plan comes with a 14-day money back guarantee' )
+				? translate( 'The WordPress Pro plan comes with a 14-day money back guarantee' )
+				: translate( 'The WordPress Pro plan comes with a 14-day full money back guarantee' );
 		}
 
 		if ( ! hideFreePlan ) {
