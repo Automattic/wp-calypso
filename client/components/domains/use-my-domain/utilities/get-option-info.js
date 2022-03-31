@@ -71,6 +71,7 @@ export function getOptionInfo( {
 		domain,
 		productsList,
 		selectedSite,
+		primaryWithPlansOnly,
 	} );
 
 	const transferFreeText = getTransferFreeText( {

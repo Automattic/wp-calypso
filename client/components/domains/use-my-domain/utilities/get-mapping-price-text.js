@@ -6,7 +6,14 @@ import {
 	isNextDomainFree,
 } from 'calypso/lib/cart-values/cart-items';
 
-export function getMappingPriceText( { cart, currencyCode, domain, productsList, selectedSite } ) {
+export function getMappingPriceText( {
+	cart,
+	currencyCode,
+	domain,
+	productsList,
+	selectedSite,
+	primaryWithPlansOnly,
+} ) {
 	let mappingProductPrice;
 
 	if (
@@ -18,7 +25,7 @@ export function getMappingPriceText( { cart, currencyCode, domain, productsList,
 	}
 
 	const price = productsList?.domain_map?.cost;
-	if ( price ) {
+	if ( price && ! primaryWithPlansOnly ) {
 		mappingProductPrice = formatCurrency( price, currencyCode );
 		/* translators: %s - the cost of the domain mapping formatted in the user's currency */
 		mappingProductPrice = sprintf( __( '%s/year' ), mappingProductPrice );
