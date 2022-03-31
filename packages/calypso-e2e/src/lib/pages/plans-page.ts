@@ -23,7 +23,7 @@ const selectors = {
 	},
 
 	// Plans view
-	plansView: '.plans-features-main',
+	plansGrid: '.plans-features-main',
 
 	// My Plans view
 	myPlanTitle: ( planName: Plan ) => `.my-plan-card__title:has-text("${ planName }")`,
@@ -49,6 +49,34 @@ export class PlansPage {
 	 */
 	private async waitUntilLoaded(): Promise< void > {
 		await this.page.waitForLoadState( 'load' );
+	}
+
+	/**
+	 * Clicks on the navigation tab (desktop) or dropdown (mobile).
+	 *
+	 * @param {PlansPageTab} targetTab Name of the tab.
+	 */
+	async clickTab( targetTab: PlansPageTab ): Promise< void > {
+		const currentSelectedLocator = this.page.locator( selectors.activeNavigationTab( targetTab ) );
+		// If the target tab is already active, short circuit.
+		if ( ( await currentSelectedLocator.count() ) > 0 ) {
+			return;
+		}
+
+		if ( targetTab === 'My Plan' ) {
+			// User is currently on the Plans tab and going to My Plans.
+			// Wait for the Plans grid to fully render.
+			const plansGridLocator = this.page.locator( selectors.plansGrid );
+			await plansGridLocator.waitFor();
+		}
+		if ( targetTab === 'Plans' ) {
+			// User is currently on the My Plans tab and going to Plans.
+			// Wait for the detais of the current plan to complete rendering
+			// asynchronously.
+			const placeholderLocator = this.page.locator( `.my-plan-card${ selectors.placeholder }` );
+			await placeholderLocator.waitFor( { state: 'hidden' } );
+		}
+		await clickNavTab( this.page, targetTab );
 	}
 
 	/**
@@ -80,28 +108,6 @@ export class PlansPage {
 		} else {
 			await this.page.waitForSelector( selectors.activeNavigationTab( expectedTab ) );
 		}
-	}
-
-	/**
-	 * Click on the provided tab name in the navigation tab at the top of the Plans activity
-	 *
-	 * @param {PlansPageTab} targetTab Name of the navigation tab to click on
-	 */
-	async clickTab( targetTab: PlansPageTab ): Promise< void > {
-		if ( targetTab === 'My Plan' ) {
-			// Current view is Plans, going to My Plans.
-			// Wait for the plans overview to render fully.
-			const locator = this.page.locator( selectors.plansView );
-			await locator.waitFor();
-		}
-		if ( targetTab === 'Plans' ) {
-			// Current view is My Plans, going to Plans.
-			// Wait for the details of current plan to
-			// render fully.
-			const placeholderLocator = this.page.locator( `.my-plan-card${ selectors.placeholder }` );
-			await placeholderLocator.waitFor( { state: 'hidden' } );
-		}
-		await clickNavTab( this.page, targetTab );
 	}
 
 	/**
