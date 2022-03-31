@@ -39,7 +39,7 @@ const usePlanAvailable = (
 	}
 
 	if ( isDomainInCart ) {
-		return true && isMonthlyBillingSupported;
+		return isMonthlyBillingSupported;
 	}
 
 	if ( ! domain || ! hasGSuiteSupportedDomain( [ domain ] ) ) {
