@@ -153,7 +153,11 @@ const StepContainer: React.FC< Props > = ( {
 
 	return (
 		<div className={ classes }>
-			<ActionButtons className="step-container__navigation">
+			<ActionButtons
+				className={ classNames( 'step-container__navigation', {
+					'should-hide-nav-buttons': shouldHideNavButtons,
+				} ) }
+			>
 				{ ! hideBack && <BackButton /> }
 				{ ! hideSkip && skipButtonAlign === 'top' && <SkipButton /> }
 				{ ! hideNext && <NextButton /> }
