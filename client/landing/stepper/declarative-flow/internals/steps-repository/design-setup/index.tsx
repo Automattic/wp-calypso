@@ -12,6 +12,7 @@ import DesignPicker, {
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import { StepContainer } from '@automattic/onboarding';
+import { Spinner } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
@@ -34,6 +35,7 @@ import type { Design, Category } from '@automattic/design-picker';
  */
 const designSetup: Step = function DesignSetup( { navigation } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
+	const [ loading, setIsLoading ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
 	const { goBack, submit } = navigation;
@@ -165,6 +167,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
+		setIsLoading( true );
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
 			setDesignOnSite( siteSlug, _selectedDesign ).then( () => {
@@ -265,12 +268,16 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 						align={ isMobile ? 'left' : 'center' }
 					/>
 				}
+				shouldHideNavButtons={ loading }
 				customizedActionButtons={
-					shouldUpgrade ? (
-						<Button primary borderless={ false } onClick={ upgradePlan }>
-							{ translate( 'Upgrade Plan' ) }
-						</Button>
-					) : undefined
+					<>
+						{ shouldUpgrade ? (
+							<Button primary borderless={ false } onClick={ upgradePlan }>
+								{ translate( 'Upgrade Plan' ) }
+							</Button>
+						) : undefined }
+						{ loading ? <Spinner /> : '' }
+					</>
 				}
 				recordTracksEvent={ recordTracksEvent }
 			/>
