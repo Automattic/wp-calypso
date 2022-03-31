@@ -14,6 +14,9 @@ const difmThemes: Design[] = [
 		template: 'russell',
 		theme: 'russell',
 		title: 'Russell',
+		recipe: {
+			theme: 'pub/russell',
+		},
 	},
 	{
 		categories: [
@@ -28,6 +31,9 @@ const difmThemes: Design[] = [
 		template: 'zoologist',
 		theme: 'zoologist',
 		title: 'Zoologist',
+		recipe: {
+			theme: 'pub/zoologist',
+		},
 	},
 	{
 		categories: [ { name: 'Professional Services', slug: 'professional-services' } ],
@@ -37,6 +43,9 @@ const difmThemes: Design[] = [
 		template: 'quadrat',
 		theme: 'quadrat',
 		title: 'Quadrat',
+		recipe: {
+			theme: 'pub/quadrat',
+		},
 	},
 	{
 		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
@@ -46,6 +55,9 @@ const difmThemes: Design[] = [
 		template: 'geologist',
 		theme: 'geologist',
 		title: 'Geologist',
+		recipe: {
+			theme: 'pub/geologist',
+		},
 	},
 	{
 		categories: [ { name: 'Creative Arts', slug: 'creative-arts' } ],
@@ -55,6 +67,9 @@ const difmThemes: Design[] = [
 		template: 'bradford',
 		theme: 'bradford',
 		title: 'Bradford',
+		recipe: {
+			theme: 'pub/bradford',
+		},
 	},
 	{
 		categories: [
@@ -70,6 +85,9 @@ const difmThemes: Design[] = [
 		template: 'twentytwentyone',
 		theme: 'twentytwentyone',
 		title: 'Twenty Twenty-One',
+		recipe: {
+			theme: 'pub/twentytwentyone',
+		},
 	},
 	{
 		categories: [
@@ -84,6 +102,9 @@ const difmThemes: Design[] = [
 		template: 'spearhead',
 		theme: 'spearhead',
 		title: 'Spearhead',
+		recipe: {
+			theme: 'pub/spearhead',
+		},
 	},
 	{
 		categories: [
@@ -98,6 +119,9 @@ const difmThemes: Design[] = [
 		template: 'seedlet',
 		theme: 'seedlet',
 		title: 'Seedlet',
+		recipe: {
+			theme: 'pub/seedlet',
+		},
 	},
 	{
 		categories: [
@@ -112,6 +136,9 @@ const difmThemes: Design[] = [
 		template: 'twentytwenty',
 		theme: 'twentytwenty',
 		title: 'Twenty Twenty',
+		recipe: {
+			theme: 'pub/twentytwenty',
+		},
 	},
 	{
 		categories: [
@@ -126,6 +153,9 @@ const difmThemes: Design[] = [
 		template: 'barnsbury',
 		theme: 'barnsbury',
 		title: 'Barnsbury',
+		recipe: {
+			theme: 'pub/barnsbury',
+		},
 	},
 	{
 		categories: [
@@ -140,6 +170,9 @@ const difmThemes: Design[] = [
 		template: 'rivington',
 		theme: 'rivington',
 		title: 'Rivington',
+		recipe: {
+			theme: 'pub/rivington',
+		},
 	},
 	{
 		categories: [ { name: 'Restaurant', slug: 'restaurant' } ],
@@ -149,6 +182,9 @@ const difmThemes: Design[] = [
 		template: 'maywood',
 		theme: 'maywood',
 		title: 'Maywood',
+		recipe: {
+			theme: 'pub/maywood',
+		},
 	},
 	{
 		categories: [
@@ -163,6 +199,9 @@ const difmThemes: Design[] = [
 		template: 'shawburn',
 		theme: 'shawburn',
 		title: 'Shawburn',
+		recipe: {
+			theme: 'pub/shawburn',
+		},
 	},
 	{
 		categories: [ { name: 'Local Services', slug: 'local-services' } ],
@@ -172,6 +211,9 @@ const difmThemes: Design[] = [
 		template: 'alves',
 		theme: 'alves',
 		title: 'Alves',
+		recipe: {
+			theme: 'pub/alves',
+		},
 	},
 	{
 		categories: [
@@ -186,6 +228,9 @@ const difmThemes: Design[] = [
 		template: 'exford',
 		theme: 'exford',
 		title: 'Exford',
+		recipe: {
+			theme: 'pub/exford',
+		},
 	},
 	{
 		categories: [ { name: 'Restaurant', slug: 'restaurant' } ],
@@ -195,6 +240,9 @@ const difmThemes: Design[] = [
 		template: 'rockfield',
 		theme: 'rockfield',
 		title: 'Rockfield',
+		recipe: {
+			theme: 'pub/rockfield',
+		},
 	},
 	{
 		categories: [
@@ -209,6 +257,9 @@ const difmThemes: Design[] = [
 		template: 'coutoire',
 		theme: 'coutoire',
 		title: 'Coutoire',
+		recipe: {
+			theme: 'pub/coutoire',
+		},
 	},
 	{
 		categories: [
@@ -223,6 +274,9 @@ const difmThemes: Design[] = [
 		template: 'morden',
 		theme: 'morden',
 		title: 'Morden',
+		recipe: {
+			theme: 'pub/morden',
+		},
 	},
 	{
 		categories: [
@@ -237,6 +291,9 @@ const difmThemes: Design[] = [
 		template: 'stow',
 		theme: 'stow',
 		title: 'Stow',
+		recipe: {
+			theme: 'pub/stow',
+		},
 	},
 	{
 		categories: [
@@ -251,6 +308,9 @@ const difmThemes: Design[] = [
 		template: 'hever',
 		theme: 'hever',
 		title: 'Hever',
+		recipe: {
+			theme: 'pub/hever',
+		},
 	},
 	{
 		categories: [
@@ -265,6 +325,9 @@ const difmThemes: Design[] = [
 		template: 'independent-publisher-2',
 		theme: 'independent-publisher-2',
 		title: 'Independent Publisher 2',
+		recipe: {
+			theme: 'pub/independent-publisher-2',
+		},
 	},
 	{
 		categories: [
@@ -279,6 +342,9 @@ const difmThemes: Design[] = [
 		template: 'twentysixteen',
 		theme: 'twentysixteen',
 		title: 'Twenty Sixteen',
+		recipe: {
+			theme: 'pub/twentysixteen',
+		},
 	},
 	{
 		categories: [
@@ -293,6 +359,9 @@ const difmThemes: Design[] = [
 		template: 'twentyfifteen',
 		theme: 'twentyfifteen',
 		title: 'Twenty Fifteen',
+		recipe: {
+			theme: 'pub/twentyfifteen',
+		},
 	},
 	{
 		categories: [
@@ -307,6 +376,9 @@ const difmThemes: Design[] = [
 		template: 'hemingway-rewritten',
 		theme: 'hemingway-rewritten',
 		title: 'Hemingway Rewritten',
+		recipe: {
+			theme: 'pub/hemingway-rewritten',
+		},
 	},
 ];
 

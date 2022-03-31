@@ -122,7 +122,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	const getEventPropsByDesign = ( design: Design ) => ( {
-		theme: design?.stylesheet ?? `pub/${ design.theme }`,
+		theme: design.recipe?.theme,
 		template: design.template,
 		is_premium: design?.is_premium,
 		flow: flowName,

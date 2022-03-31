@@ -59,17 +59,21 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet }: any ): Design {
 	);
 
 	return {
-		categories: taxonomies?.theme_subject ?? [],
-		// Design appears prominently in theme galleries.
-		showFirst: isFeaturedPicks,
-		features: [],
-		is_premium: stylesheet && stylesheet.startsWith( 'premium/' ),
-		is_featured_picks: isFeaturedPicks,
-		stylesheet,
 		slug: id,
+		title: name,
+		recipe: {
+			theme: stylesheet,
+		},
+		is_premium: stylesheet && stylesheet.startsWith( 'premium/' ),
+		categories: taxonomies?.theme_subject ?? [],
+		features: [],
+		is_featured_picks: isFeaturedPicks,
+		showFirst: isFeaturedPicks,
+		...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
+
+		// Deprecated; used for /start flow
+		stylesheet,
 		template: id,
 		theme: id,
-		title: name,
-		...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
 	};
 }

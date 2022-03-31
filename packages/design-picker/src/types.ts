@@ -3,6 +3,7 @@ import type { ValuesType } from 'utility-types';
 
 export type Font = ValuesType< ValuesType< typeof FONT_PAIRINGS > >;
 
+/** @deprecated used for Gutenboarding (/new flow) */
 export interface FontPair {
 	headings: Font;
 	base: Font;
@@ -13,34 +14,38 @@ export interface Category {
 	name: string;
 }
 
+export interface DesignRecipe {
+	theme?: string;
+	patternIds?: number[];
+}
+
 export type DesignFeatures = 'anchorfm' | 'difm-lite-default'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
 export interface Design {
-	categories: Array< Category >;
-	fonts?: FontPair;
-	is_alpha?: boolean;
-	is_fse?: boolean;
-	is_premium: boolean;
-	stylesheet?: string;
 	slug: string;
-	template: string;
-	theme: string;
-	preview?: 'static';
 	title: string;
-	features: Array< DesignFeatures >;
+	recipe?: DesignRecipe;
+	is_premium: boolean;
+	categories: Category[];
+	features: DesignFeatures[];
+	is_featured_picks?: boolean; // Whether this design will be featured in the sidebar. Example: Blank Canvas
+	showFirst?: boolean; // Whether this design will appear at the top, regardless of category
+	preview?: 'static';
 
-	// This design will appear at the top, regardless of category
-	showFirst?: boolean;
-
-	/**
-	 * Quickly hide a design from the picker without having to remove
-	 * it from the list of available design configs (stored in the
-	 * `@automattic/design-picker` package)
-	 */
+	/** @deprecated used for Gutenboarding (/new flow) */
+	stylesheet?: string;
+	/** @deprecated used for Gutenboarding (/new flow) */
+	template: string;
+	/** @deprecated used for Gutenboarding (/new flow) */
+	theme: string;
+	/** @deprecated used for Gutenboarding (/new flow) */
+	fonts?: FontPair;
+	/** @deprecated used for Gutenboarding (/new flow) */
+	is_alpha?: boolean;
+	/** @deprecated used for Gutenboarding (/new flow) */
+	is_fse?: boolean;
+	/** @deprecated used for Gutenboarding (/new flow) */
 	hide?: boolean;
-
-	// designs with a "featured" term in the theme_picks taxonomy
-	is_featured_picks?: boolean;
 }
 
 export interface DesignUrlOptions {
