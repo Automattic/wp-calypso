@@ -124,7 +124,10 @@ function WebsiteContentStep( {
 				] )
 			);
 		}
-	}, [ dispatch, siteCategory, pageTitles, translatedPageTitles ] );
+		/**
+		 * Adding pageTitles results in an infinite loop most probably due the empty array created each time in the selector
+		 */
+	}, [ dispatch, siteCategory /* pageTitles*/, translatedPageTitles ] );
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
