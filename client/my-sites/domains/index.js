@@ -319,7 +319,7 @@ export default function () {
 	);
 
 	page(
-		'/domains/domain/:domain',
+		paths.domainManagementRoot() + '/:domain/edit',
 		domainsController.redirectDomainToSite,
 		makeLayout,
 		clientRender
