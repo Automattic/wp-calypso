@@ -28,6 +28,7 @@ import {
 	isPlan,
 	isPremium,
 	isPro,
+	isRenewable,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isTitanMail,
@@ -579,6 +580,10 @@ function createRenewalCartItemFromProduct(
 
 	if ( isSpaceUpgrade( product ) ) {
 		return spaceUpgradeItem( slug );
+	}
+
+	if ( isRenewable( product ) ) {
+		return renewableProductItem( slug );
 	}
 
 	return undefined;
