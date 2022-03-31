@@ -2,10 +2,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-body.is-section-home.theme-default.color-scheme {
-	--color-surface-backdrop: var( --studio-white );
-}
-
 .customer-home__heading {
 	display: block;
 
@@ -85,7 +81,7 @@ body.is-section-home.theme-default.color-scheme {
 	@include break-medium {
 		display: flex;
 		flex: 0 0 auto;
-	
+
 		.customer-home__site-content {
 			display: none;
 		}
@@ -95,7 +91,7 @@ body.is-section-home.theme-default.color-scheme {
 			display: block;
 		}
 	}
-	
+
 }
 
 .customer-home__heading + .customer-home__layout {
