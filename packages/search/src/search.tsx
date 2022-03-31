@@ -141,12 +141,11 @@ const InnerSearch = (
 		maxLength,
 		hideClose = false,
 		isReskinned = false,
-		value,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
 	const { __ } = useI18n();
-	const [ keyword, setKeyword ] = React.useState( value || defaultValue );
+	const [ keyword, setKeyword ] = React.useState( defaultValue );
 	const [ isOpen, setIsOpen ] = React.useState( defaultIsOpen );
 	const [ hasFocus, setHasFocus ] = React.useState( autoFocus );
 
