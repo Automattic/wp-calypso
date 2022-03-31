@@ -1,6 +1,5 @@
 import {
 	PLAN_BUSINESS,
-	PLAN_WPCOM_PRO,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_PLUGINS,
 } from '@automattic/calypso-products';
@@ -28,7 +27,6 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 // Necessary for ThanksModal
@@ -215,21 +213,15 @@ class Upload extends Component {
 	};
 
 	renderUpgradeBanner() {
-		const { siteId, eligibleForProPlan, translate } = this.props;
+		const { siteId, translate } = this.props;
 		const redirectTo = encodeURIComponent( `/themes/upload/${ siteId }?notice=purchase-success` );
-
-		const upsellPlan = eligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
-		const title = eligibleForProPlan
-			? translate( 'Upgrade to the Pro plan to access the theme install features' )
-			: translate( 'Upgrade to the Business plan to access the theme install features' );
-		const planSlug = eligibleForProPlan ? 'pro' : 'business';
 
 		return (
 			<UpsellNudge
-				title={ title }
+				title={ translate( 'Upgrade to the Business plan to access the theme install features' ) }
 				event="calypso_theme_install_upgrade_click"
-				href={ `/checkout/${ siteId }/${ planSlug }?redirect_to=${ redirectTo }` }
-				plan={ upsellPlan }
+				href={ `/checkout/${ siteId }/business?redirect_to=${ redirectTo }` }
+				plan={ PLAN_BUSINESS }
 				feature={ FEATURE_UPLOAD_THEMES }
 				showIcon={ true }
 			/>
@@ -383,7 +375,6 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
-	const eligibleForProPlan = isEligibleForProPlan( state, siteId );
 
 	const canUploadThemesOrPlugins =
 		hasActiveSiteFeature( state, siteId, FEATURE_UPLOAD_THEMES ) ||
@@ -417,7 +408,6 @@ const mapStateToProps = ( state ) => {
 		canUploadThemesOrPlugins,
 		isFetchingPurchases:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-		eligibleForProPlan,
 	};
 };
 
