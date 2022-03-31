@@ -32,7 +32,7 @@ interface APIBilling {
 	products: APIBillingProduct[];
 	licenses: APIBillingCounts;
 	costs: APIBillingCosts;
-	cost_interval: string;
+	price_interval: string;
 }
 
 // Calypso interfaces.
@@ -62,7 +62,7 @@ interface Billing {
 	products: BillingProduct[];
 	licenses: BillingCounts;
 	costs: BillingCosts;
-	costInterval: string;
+	priceInterval: string;
 }
 
 interface BillingDashboardQueryError {
@@ -91,7 +91,7 @@ function selectBillingDashboard( api: APIBilling ): Billing {
 		),
 		licenses: api.licenses,
 		costs: api.costs,
-		costInterval: api.cost_interval,
+		priceInterval: api.price_interval,
 	};
 }
 

@@ -30,12 +30,12 @@ export default function BillingDetails(): ReactElement {
 							<div className="billing-details__product">
 								{ product.productName }
 								<span className="billing-details__line-item-meta">
-									{ billing.data.costInterval === 'day' &&
+									{ billing.data.priceInterval === 'day' &&
 										translate( 'Price per license per day: %(price)s', {
 											args: { price: formatCurrency( product.productCost, 'USD' ) },
 										} ) }
 
-									{ billing.data.costInterval === 'month' &&
+									{ billing.data.priceInterval === 'month' &&
 										translate( 'Price per license per month: %(price)s', {
 											args: { price: formatCurrency( product.productCost, 'USD' ) },
 										} ) }
@@ -57,13 +57,13 @@ export default function BillingDetails(): ReactElement {
 							</div>
 
 							<div className="billing-details__subtotal">
-								{ billing.data.costInterval === 'day' &&
-									translate( '%(count)d Day Usage', '%(count)d Days Usage', {
+								{ billing.data.priceInterval === 'day' &&
+									translate( '%(count)d Total Day', '%(count)d Total Days', {
 										count: product.productQuantity,
 										args: { count: product.productQuantity },
 									} ) }
 
-								{ billing.data.costInterval === 'month' &&
+								{ billing.data.priceInterval === 'month' &&
 									translate( '%(count)d License', '%(count)d Licenses', {
 										count: product.counts.total,
 										args: { count: product.counts.total },
@@ -128,7 +128,7 @@ export default function BillingDetails(): ReactElement {
 						{ billing.isError && <Gridicon icon="minus" /> }
 					</strong>
 
-					{ billing.isSuccess && billing.data.costInterval === 'month' && (
+					{ billing.isSuccess && billing.data.priceInterval === 'month' && (
 						<>
 							<span className="billing-details__total-label billing-details__line-item-meta">
 								{ translate( 'Assigned licenses:' ) }
@@ -139,7 +139,7 @@ export default function BillingDetails(): ReactElement {
 						</>
 					) }
 
-					{ billing.isSuccess && billing.data.costInterval === 'month' && (
+					{ billing.isSuccess && billing.data.priceInterval === 'month' && (
 						<>
 							<span className="billing-details__total-label billing-details__line-item-meta">
 								{ translate( 'Unassigned licenses:' ) }

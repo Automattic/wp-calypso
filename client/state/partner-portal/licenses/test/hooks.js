@@ -311,7 +311,7 @@ describe( 'useBillingDashboardQuery', () => {
 				assigned: 200,
 				unassigned: 100,
 			},
-			cost_interval: 'month',
+			price_interval: 'month',
 		};
 
 		const formattedStub = {
@@ -340,7 +340,7 @@ describe( 'useBillingDashboardQuery', () => {
 				assigned: 200,
 				unassigned: 100,
 			},
-			costInterval: 'month',
+			priceInterval: 'month',
 		};
 
 		nock( 'https://public-api.wordpress.com' )
