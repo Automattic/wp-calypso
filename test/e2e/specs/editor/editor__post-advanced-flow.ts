@@ -129,7 +129,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		it( 'Post is no longer visible', async function () {
 			const testPage = await browser.newPage();
 			await testPage.goto( postURL.href );
-			await testPage.waitForSelector( 'div.error-404.not-found' );
+			await testPage.waitForSelector( 'body.error404' );
 			await testPage.close();
 		} );
 	} );
