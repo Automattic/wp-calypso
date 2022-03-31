@@ -6,9 +6,9 @@ import { connect } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
 import searchUrl from 'calypso/lib/search-url';
+import { withSelectedItems } from 'calypso/my-sites/media/context';
 import { selectMediaItems } from 'calypso/state/media/actions';
 import getMediaErrors from 'calypso/state/selectors/get-media-errors';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
@@ -184,23 +184,24 @@ class MediaLibrary extends Component {
 					disabledDataSources={ this.props.disabledDataSources }
 				/>
 				<Content
-					site={ this.props.site }
+					containerWidth={ this.props.containerWidth }
 					filter={ this.props.filter }
 					filterRequiresUpgrade={ this.filterRequiresUpgrade() }
-					search={ this.props.search }
-					source={ this.props.source }
 					isConnected={ this.props.isConnected }
-					containerWidth={ this.props.containerWidth }
-					single={ this.props.single }
-					scrollable={ this.props.scrollable }
-					onAddMedia={ this.onAddMedia }
+					mediaValidationErrors={ this.props.site ? this.props.mediaValidationErrors : undefined }
 					onAddAndEditImage={ this.props.onAddAndEditImage }
+					onAddMedia={ this.onAddMedia }
+					onDeleteItem={ this.props.onDeleteItem }
 					onMediaScaleChange={ this.props.onScaleChange }
 					onSourceChange={ this.props.onSourceChange }
-					onDeleteItem={ this.props.onDeleteItem }
 					onViewDetails={ this.props.onViewDetails }
 					postId={ this.props.postId }
-					mediaValidationErrors={ this.props.site ? this.props.mediaValidationErrors : undefined }
+					scrollable={ this.props.scrollable }
+					search={ this.props.search }
+					selectedItems={ this.props.selectedItems }
+					single={ this.props.single }
+					site={ this.props.site }
+					source={ this.props.source }
 				/>
 			</div>
 		);
@@ -212,7 +213,6 @@ export default connect(
 		isConnected: isConnected( state, source ),
 		mediaValidationErrors: getMediaErrors( state, site?.ID ),
 		needsKeyring: needsKeyring( state, source ),
-		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isJetpack: isJetpackSite( state, site?.ID ),
 		hasVideoUploadFeature: hasActiveSiteFeature( state, site?.ID, 'upload-video-files' ),
 		hasVideoUploadAvailableFeature: hasAvailableSiteFeature(
@@ -225,4 +225,4 @@ export default connect(
 		requestKeyringConnections,
 		selectMediaItems,
 	}
-)( MediaLibrary );
+)( withSelectedItems( MediaLibrary ) );

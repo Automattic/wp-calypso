@@ -1,3 +1,4 @@
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import { flow, get, isEmpty, some, values } from 'lodash';
 import PropTypes from 'prop-types';
@@ -13,12 +14,16 @@ import accept from 'calypso/lib/accept';
 import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
 import * as MediaUtils from 'calypso/lib/media/utils';
 import MediaLibrary from 'calypso/my-sites/media-library';
+import {
+	useMediaContext,
+	withMediaContextProvider,
+	withSelectedItems,
+} from 'calypso/my-sites/media/context';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
-import { changeMediaSource, selectMediaItems, setQuery } from 'calypso/state/media/actions';
+import { changeMediaSource } from 'calypso/state/media/actions';
 import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import { getSite } from 'calypso/state/sites/selectors';
 import { resetMediaModalView } from 'calypso/state/ui/media-modal/actions';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
@@ -49,7 +54,6 @@ function areMediaActionsDisabled( modalView, mediaItems, isParentReady ) {
 export class EditorMediaModal extends Component {
 	static propTypes = {
 		visible: PropTypes.bool,
-		selectedItems: PropTypes.arrayOf( PropTypes.object ),
 		onClose: PropTypes.func,
 		isBackdropVisible: PropTypes.bool,
 		isParentReady: PropTypes.func,
@@ -96,7 +100,7 @@ export class EditorMediaModal extends Component {
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( nextProps.site && this.props.visible && ! nextProps.visible ) {
-			this.props.selectMediaItems( nextProps.site.ID, [] );
+			this.props.selectMediaItems( [] );
 		}
 
 		if ( this.props.visible === nextProps.visible ) {
@@ -116,20 +120,18 @@ export class EditorMediaModal extends Component {
 	}
 
 	componentDidMount() {
-		this.statsTracking = {};
-	}
+		const { view, selectedItems, single } = this.props;
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		const { view, selectedItems, site, single } = this.props;
-		if ( ! isEmpty( selectedItems ) && ( view === ModalViews.LIST || single ) ) {
-			this.props.selectMediaItems( site.ID, [] );
+		if ( selectedItems.length && ( view === ModalViews.LIST || single ) ) {
+			this.props.selectMediaItems( [] );
 		}
+
+		this.statsTracking = {};
 	}
 
 	componentWillUnmount() {
 		this.props.resetView();
-		this.props.selectMediaItems( this.props.site.ID, [] );
+		this.props.selectMediaItems( [] );
 	}
 
 	getDefaultState( props ) {
@@ -141,6 +143,13 @@ export class EditorMediaModal extends Component {
 			updatedItems: [],
 		};
 	}
+
+	updateMediaQuery = () => {
+		const { search, filter, source } = this.state;
+		const { postId, setMediaQuery } = this.props;
+
+		setMediaQuery( { search, filter, source, postId } );
+	};
 
 	copyExternalAfterLoadingWordPressLibrary( selectedMedia, originalSource ) {
 		const { postId, site } = this.props;
@@ -157,7 +166,7 @@ export class EditorMediaModal extends Component {
 			() => {
 				// Reset the query so that we're adding the new media items to the correct
 				// list, with no external source.
-				this.props.setQuery( site.ID, {} );
+				this.props.setMediaQuery( {} );
 				this.props.addExternalMedia( selectedMedia, site, postId, originalSource );
 			}
 		);
@@ -253,7 +262,7 @@ export class EditorMediaModal extends Component {
 	};
 
 	onAddAndEditImage = () => {
-		this.props.selectMediaItems( this.props.site.ID, [] );
+		this.props.selectMediaItems( [] );
 
 		this.props.setView( ModalViews.IMAGE_EDITOR );
 	};
@@ -327,9 +336,11 @@ export class EditorMediaModal extends Component {
 	getDetailSelectedIndex() {
 		const { selectedItems } = this.props;
 		const { detailSelectedIndex } = this.state;
+
 		if ( detailSelectedIndex >= selectedItems.length ) {
 			return 0;
 		}
+
 		return detailSelectedIndex;
 	}
 
@@ -338,7 +349,7 @@ export class EditorMediaModal extends Component {
 			mcBumpStat( 'editor_media_actions', 'filter_' + ( filter || 'all' ) );
 		}
 
-		this.setState( { filter } );
+		this.setState( { filter }, this.updateMediaQuery );
 	};
 
 	onScaleChange = () => {
@@ -349,9 +360,12 @@ export class EditorMediaModal extends Component {
 	};
 
 	onSearch = ( search ) => {
-		this.setState( {
-			search: search || undefined,
-		} );
+		this.setState(
+			{
+				search: search || undefined,
+			},
+			this.updateMediaQuery
+		);
 
 		if ( ! this.statsTracking.search ) {
 			mcBumpStat( 'editor_media_actions', 'search' );
@@ -361,11 +375,14 @@ export class EditorMediaModal extends Component {
 
 	onSourceChange = ( source ) => {
 		this.props.changeMediaSource( this.props.site.ID );
-		this.setState( {
-			source,
-			search: undefined,
-			filter: '',
-		} );
+		this.setState(
+			{
+				source,
+				search: undefined,
+				filter: '',
+			},
+			this.updateMediaQuery
+		);
 	};
 
 	onClose = () => {
@@ -496,12 +513,12 @@ export class EditorMediaModal extends Component {
 			case ModalViews.IMAGE_EDITOR: {
 				const { site, imageEditorProps, selectedItems: items } = this.props;
 				const selectedIndex = this.getDetailSelectedIndex();
-				const media = get( items, selectedIndex, null );
+				const media = items[ selectedIndex ] ?? null;
 
 				content = (
 					<ImageEditor
 						siteId={ get( site, 'ID' ) }
-						media={ media }
+						mediaId={ media.ID }
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.onImageEditorCancel }
 						{ ...imageEditorProps }
@@ -574,6 +591,11 @@ export class EditorMediaModal extends Component {
 	}
 }
 
+export const withMediaQuery = createHigherOrderComponent( ( Wrapped ) => ( props ) => {
+	const { query, setQuery } = useMediaContext();
+	return <Wrapped { ...props } mediaQuery={ query } setMediaQuery={ setQuery } />;
+} );
+
 export default connect(
 	( state, { site, siteId } ) => ( {
 		view: getMediaModalView( state ),
@@ -581,7 +603,6 @@ export default connect(
 		// siteId and forcing descendant components to access via state
 		site: site || getSite( state, siteId ),
 		postId: getEditorPostId( state ),
-		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ?? siteId ),
 	} ),
 	{
 		setView: setEditorMediaModalView,
@@ -593,8 +614,16 @@ export default connect(
 		),
 		recordEditorEvent,
 		recordEditorStat,
-		selectMediaItems,
-		setQuery,
 		changeMediaSource,
 	}
-)( localize( withDeleteMedia( withEditMedia( withAddExternalMedia( EditorMediaModal ) ) ) ) );
+)(
+	localize(
+		withDeleteMedia(
+			withEditMedia(
+				withAddExternalMedia(
+					withMediaContextProvider( withSelectedItems( withMediaQuery( EditorMediaModal ) ) )
+				)
+			)
+		)
+	)
+);

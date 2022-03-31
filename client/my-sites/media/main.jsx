@@ -1,3 +1,4 @@
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -19,12 +20,12 @@ import searchUrl from 'calypso/lib/search-url';
 import MediaLibrary from 'calypso/my-sites/media-library';
 import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
-import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
+import { changeMediaSource, clearSite } from 'calypso/state/media/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useMediaContext, withMediaContextProvider, withSelectedItems } from './context';
 
 import './style.scss';
 
@@ -41,7 +42,6 @@ class Media extends Component {
 		currentDetail: null,
 		editedImageItem: null,
 		editedVideoItem: null,
-		selectedItems: [],
 		source: '',
 	};
 
@@ -56,6 +56,17 @@ class Media extends Component {
 		} );
 	}
 
+	componentDidUpdate( prevProps, prevState ) {
+		const { filter, search } = this.props;
+		if (
+			prevProps.filter !== filter ||
+			prevProps.search !== search ||
+			prevState.source !== this.state.source
+		) {
+			this.props.setMediaQuery( { filter, search, source: this.state.source } );
+		}
+	}
+
 	onFilterChange = ( filter ) => {
 		let redirect = '/media';
 
@@ -68,7 +79,7 @@ class Media extends Component {
 		}
 
 		if ( this.props.selectedSite ) {
-			this.props.selectMediaItems( this.props.selectedSite.ID, [] );
+			this.props.selectMediaItems( [] );
 		}
 
 		if ( this.props.currentRoute !== redirect ) {
@@ -79,12 +90,7 @@ class Media extends Component {
 	};
 
 	openDetailsModalForAllSelected = () => {
-		const { selectedItems } = this.props;
-
-		this.setState( {
-			currentDetail: 0,
-			selectedItems,
-		} );
+		this.setState( { currentDetail: 0 } );
 	};
 
 	closeDetailsModal = () => {
@@ -92,7 +98,6 @@ class Media extends Component {
 			editedImageItem: null,
 			editedVideoItem: null,
 			currentDetail: null,
-			selectedItems: [],
 		} );
 		this.maybeRedirectToAll();
 	};
@@ -143,7 +148,7 @@ class Media extends Component {
 
 		this.props.editMedia( site.ID, item );
 		resetAllImageEditorState();
-		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
+		this.setState( { currentDetail: null, editedImageItem: null } );
 		this.maybeRedirectToAll();
 	};
 
@@ -179,7 +184,7 @@ class Media extends Component {
 	};
 
 	onVideoEditorUpdatePoster = () => {
-		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
+		this.setState( { currentDetail: null, editedVideoItem: null } );
 		this.maybeRedirectToAll();
 	};
 
@@ -189,27 +194,24 @@ class Media extends Component {
 		}
 
 		this.props.editMedia( siteId, { ID: item.ID, media_url: item.guid }, item );
-		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
+		this.setState( { currentDetail: null, editedImageItem: null } );
 		this.maybeRedirectToAll();
 	};
 
 	updateItem = ( itemId, detail ) => {
-		const { selectedItems } = this.state;
+		const { selectedItems } = this.props;
 		const index = selectedItems.findIndex( ( item ) => item.ID === itemId );
 
 		if ( index === -1 ) {
 			return;
 		}
 
-		selectedItems.splice( index, 1, {
-			...selectedItems[ index ],
-			...detail,
-		} );
-
-		this.setState( {
-			...this.state,
-			selectedItems,
-		} );
+		this.props.selectMediaItems(
+			[ ...selectedItems ].splice( index, 1, {
+				...selectedItems[ index ],
+				...detail,
+			} )
+		);
 	};
 
 	setDetailSelectedIndex = ( index ) => {
@@ -224,8 +226,8 @@ class Media extends Component {
 	 * @param  {Function} [callback] - callback function
 	 */
 	deleteMedia( callback ) {
-		const { translate } = this.props;
-		const selectedCount = this.props.selectedItems.length;
+		const { translate, selectedItems } = this.props;
+		const selectedCount = selectedItems.length;
 		const confirmMessage = translate(
 			'Are you sure you want to delete this item? ' +
 				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
@@ -272,6 +274,7 @@ class Media extends Component {
 		}
 
 		this.props.changeMediaSource( this.props.selectedSite.ID );
+		this.props.selectMediaItems( [] );
 		this.setState( { source }, cb );
 	};
 
@@ -280,19 +283,16 @@ class Media extends Component {
 	};
 
 	confirmDeleteMedia = () => {
-		const site = this.props.selectedSite;
+		const { selectedSite, selectedItems } = this.props;
 
-		if ( ! site ) {
+		if ( ! selectedSite ) {
 			return;
 		}
-		const selectedItems = this.getSelectedItems();
 
-		const selected =
-			selectedItems && selectedItems.length ? selectedItems : this.props.selectedItems;
-		const selectedIds = selected.map( ( { ID } ) => ID );
+		const toDelete = selectedItems.map( ( { ID } ) => ID );
 
-		this.props.selectMediaItems( site.ID, [] );
-		this.props.deleteMedia( site.ID, selectedIds );
+		this.props.selectMediaItems( [] );
+		this.props.deleteMedia( selectedSite.ID, toDelete );
 	};
 
 	getAnalyticsPath = () => {
@@ -310,7 +310,7 @@ class Media extends Component {
 		if ( media ) {
 			return [ media ];
 		}
-		return this.state.selectedItems;
+		return this.props.selectedItems;
 	};
 
 	getSelectedItem = ( defaultMediaItem ) => {
@@ -318,14 +318,11 @@ class Media extends Component {
 		if ( media ) {
 			return media;
 		}
-		return this.state.selectedItems[ defaultMediaItem ];
+		return this.props.selectedItems[ defaultMediaItem ];
 	};
 
 	getSelectedIndex = () => {
-		if ( this.props.media ) {
-			return 0;
-		}
-		return this.state.currentDetail;
+		return this.props.media ? 0 : this.state.currentDetail;
 	};
 
 	showDialog = ( typeOfDialog = null ) => {
@@ -400,7 +397,7 @@ class Media extends Component {
 						{ this.state.editedImageItem !== null && (
 							<ImageEditor
 								siteId={ site && site.ID }
-								media={ this.getSelectedItem( this.state.editedImageItem ) }
+								mediaId={ this.getSelectedItem( this.state.editedImageItem ) }
 								onDone={ this.onImageEditorDone }
 								onCancel={ this.onImageEditorCancel }
 							/>
@@ -418,22 +415,27 @@ class Media extends Component {
 					<MediaLibrary
 						{ ...this.props }
 						className="media__main-section"
-						onFilterChange={ this.onFilterChange }
-						site={ site }
-						single={ false }
-						filter={ this.props.filter }
-						source={ this.state.source }
-						onViewDetails={ this.openDetailsModalForAllSelected }
-						onDeleteItem={ this.handleDeleteMediaEvent }
-						onSourceChange={ this.handleSourceChange }
-						modal={ false }
 						containerWidth={ this.state.containerWidth }
+						filter={ this.props.filter }
+						modal={ false }
+						onDeleteItem={ this.handleDeleteMediaEvent }
+						onFilterChange={ this.onFilterChange }
+						onSourceChange={ this.handleSourceChange }
+						onViewDetails={ this.openDetailsModalForAllSelected }
+						single={ false }
+						site={ site }
+						source={ this.state.source }
 					/>
 				) }
 			</div>
 		);
 	}
 }
+
+export const withMediaQuery = createHigherOrderComponent( ( Wrapped ) => ( props ) => {
+	const { query, setQuery } = useMediaContext();
+	return <Wrapped { ...props } mediaQuery={ query } setMediaQuery={ setQuery } />;
+} );
 
 const mapStateToProps = ( state, { mediaId } ) => {
 	const siteId = getSelectedSiteId( state );
@@ -443,10 +445,13 @@ const mapStateToProps = ( state, { mediaId } ) => {
 		previousRoute: getPreviousRoute( state ),
 		currentRoute: getCurrentRoute( state ),
 		media: getMediaItem( state, siteId, mediaId ),
-		selectedItems: getMediaLibrarySelectedItems( state, siteId ),
 	};
 };
 
-export default connect( mapStateToProps, { selectMediaItems, changeMediaSource, clearSite } )(
-	localize( withDeleteMedia( withEditMedia( Media ) ) )
+export default connect( mapStateToProps, { changeMediaSource, clearSite } )(
+	localize(
+		withDeleteMedia(
+			withEditMedia( withMediaContextProvider( withSelectedItems( withMediaQuery( Media ) ) ) )
+		)
+	)
 );

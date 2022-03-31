@@ -3,9 +3,7 @@ import { localize } from 'i18n-calypso';
 import { reject } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import { selectMediaItems } from 'calypso/state/media/actions';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { withSelectedItems } from 'calypso/my-sites/media/context';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -23,7 +21,7 @@ class RemoveButton extends PureComponent {
 
 		const items = reject( selectedItems, ( item ) => item.ID === itemId );
 
-		this.props.selectMediaItems( siteId, items );
+		this.props.selectMediaItems( items );
 	};
 
 	render() {
@@ -44,9 +42,4 @@ class RemoveButton extends PureComponent {
 
 RemoveButton.displayName = 'RemoveButton';
 
-export default connect(
-	( state, { siteId } ) => ( {
-		selectedItems: getMediaLibrarySelectedItems( state, siteId ),
-	} ),
-	{ selectMediaItems }
-)( localize( RemoveButton ) );
+export default localize( withSelectedItems( RemoveButton ) );

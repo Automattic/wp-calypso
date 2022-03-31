@@ -25,7 +25,6 @@ import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
 import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import { deleteKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import {
 	isKeyringConnectionsFetching,
@@ -413,21 +412,22 @@ export class MediaLibraryContent extends Component {
 		return (
 			<MediaLibraryList
 				key={ listKey }
-				site={ this.props.site }
+				containerWidth={ this.props.containerWidth }
 				filter={ this.props.filter }
 				filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
-				search={ this.props.search }
-				containerWidth={ this.props.containerWidth }
-				thumbnailType={ this.getThumbnailType() }
-				single={ this.props.single }
-				scrollable={ this.props.scrollable }
-				onSourceChange={ this.props.onSourceChange }
-				mediaScale={ this.props.mediaScale }
+				isFetchingNextPage={ this.props.isFetchingNextPage }
+				isLoading={ this.props.isLoading }
+				media={ this.props.media }
 				mediaHasNextPage={ this.props.hasNextPage }
 				mediaOnFetchNextPage={ this.props.fetchNextPage }
-				isLoading={ this.props.isLoading }
-				isFetchingNextPage={ this.props.isFetchingNextPage }
-				media={ this.props.media }
+				mediaScale={ this.props.mediaScale }
+				onSourceChange={ this.props.onSourceChange }
+				scrollable={ this.props.scrollable }
+				search={ this.props.search }
+				selectedItems={ this.props.selectedItems }
+				single={ this.props.single }
+				site={ this.props.site }
+				thumbnailType={ this.getThumbnailType() }
 			/>
 		);
 	}
@@ -509,7 +509,6 @@ export default withMobileBreakpoint(
 				mediaValidationErrorTypes,
 				shouldPauseGuidedTour,
 				googleConnection: googleConnection.length === 1 ? googleConnection[ 0 ] : null, // There can be only one
-				selectedItems: getMediaLibrarySelectedItems( state, ownProps.site?.ID ),
 				mediaScale: getMediaScalePreference( state, ownProps.isBreakpointActive ),
 			};
 		},

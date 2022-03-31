@@ -192,7 +192,7 @@ export const selectedItems = ( state = {}, action ) => {
 			const { media, siteId } = action;
 			return {
 				...state,
-				[ siteId ]: media,
+				[ siteId ]: media.map( ( mediaItem ) => mediaItem.ID ),
 			};
 		}
 		case MEDIA_ITEM_CREATE: {
@@ -204,7 +204,7 @@ export const selectedItems = ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ site.ID ]: [ ...( state[ site.ID ] ?? [] ), transientMedia ],
+				[ site.ID ]: [ ...( state[ site.ID ] ?? [] ), transientMedia.ID ],
 			};
 		}
 		case MEDIA_RECEIVE: {
@@ -215,21 +215,20 @@ export const selectedItems = ( state = {}, action ) => {
 				return state;
 			}
 
-			const { [ siteId ]: existingMedia = [] } = state;
-			const existingMediaIds = existingMedia.map( ( item ) => item.ID );
+			const { [ siteId ]: existingMediaIds = [] } = state;
 
-			const nextMedia = media.reduce(
-				( aggregatedMedia, mediaItem ) =>
+			const nextMediaIds = media.reduce(
+				( aggregatedMediaIds, mediaItem ) =>
 					// avoid duplicating IDs
 					existingMediaIds.includes( mediaItem.ID )
-						? aggregatedMedia
-						: [ ...aggregatedMedia, mediaItem ],
-				[ ...existingMedia ]
+						? aggregatedMediaIds
+						: [ ...aggregatedMediaIds, mediaItem.ID ],
+				[ ...existingMediaIds ]
 			);
 
 			return {
 				...state,
-				[ siteId ]: nextMedia,
+				[ siteId ]: nextMediaIds,
 			};
 		}
 		case MEDIA_ITEM_REQUEST_SUCCESS: {
@@ -244,14 +243,14 @@ export const selectedItems = ( state = {}, action ) => {
 
 			return {
 				...state,
-				[ siteId ]: media.filter( ( item ) => transientMediaId !== item.ID ),
+				[ siteId ]: media.filter( ( mediaId ) => transientMediaId !== mediaId ),
 			};
 		}
 		case MEDIA_DELETE: {
 			const { mediaIds, siteId } = action;
 			return {
 				...state,
-				[ siteId ]: state[ siteId ].filter( ( media ) => ! mediaIds.includes( media.ID ) ),
+				[ siteId ]: state[ siteId ].filter( ( mediaId ) => ! mediaIds.includes( mediaId ) ),
 			};
 		}
 	}

@@ -1,11 +1,9 @@
 import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
 import MediaLibraryDropZone from 'calypso/my-sites/media-library/drop-zone';
-import { selectMediaItems } from 'calypso/state/media/actions';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { withSelectedItems } from 'calypso/my-sites/media/context';
 
 class EditorMediaModalGalleryDropZone extends Component {
 	static propTypes = {
@@ -42,9 +40,4 @@ class EditorMediaModalGalleryDropZone extends Component {
 	}
 }
 
-export default connect(
-	( state, { site } ) => ( {
-		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
-	} ),
-	{ selectMediaItems }
-)( EditorMediaModalGalleryDropZone );
+export default withSelectedItems( EditorMediaModalGalleryDropZone );

@@ -2,11 +2,9 @@ import { withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createElement, Component } from 'react';
 import ReactDom from 'react-dom';
-import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SortedGrid from 'calypso/components/sorted-grid';
-import { selectMediaItems } from 'calypso/state/media/actions';
-import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { withSelectedItems } from 'calypso/my-sites/media/context';
 import ListItem from './list-item';
 import ListNoContent from './list-no-content';
 import ListNoResults from './list-no-results';
@@ -130,7 +128,7 @@ export class MediaLibraryList extends Component {
 		} );
 
 		if ( this.props.site ) {
-			this.props.selectMediaItems( this.props.site.ID, selectedItems );
+			this.props.selectMediaItems( selectedItems );
 		}
 	};
 
@@ -250,9 +248,4 @@ export class MediaLibraryList extends Component {
 	}
 }
 
-export default connect(
-	( state, { site } ) => ( {
-		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
-	} ),
-	{ selectMediaItems }
-)( withRtl( withLocalizedMoment( MediaLibraryList ) ) );
+export default withRtl( withLocalizedMoment( withSelectedItems( MediaLibraryList ) ) );

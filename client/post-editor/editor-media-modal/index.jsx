@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { generateGalleryShortcode } from 'calypso/lib/media/utils';
+import { withMediaContextProvider } from 'calypso/my-sites/media/context';
 import MediaModal from 'calypso/post-editor/media-modal';
 import markup from 'calypso/post-editor/media-modal/markup';
 import { bumpStat } from 'calypso/state/analytics/actions';

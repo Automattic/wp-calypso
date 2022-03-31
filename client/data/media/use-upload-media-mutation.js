@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
+import { useSelectedItems } from 'calypso/my-sites/media/context';
 import {
 	failMediaItemRequest,
 	receiveMedia,
@@ -10,6 +11,7 @@ import { createTransientMediaItems } from 'calypso/state/media/thunks/create-tra
 import { isFileList } from 'calypso/state/media/utils/is-file-list';
 
 export const useUploadMediaMutation = ( queryOptions = {} ) => {
+	const { addToSelectedItems, replaceSelectedMediaItem } = useSelectedItems();
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const mutation = useMutation(
@@ -23,6 +25,11 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 
 				dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
 				dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
+
+				// selectMediaItems(
+				// 	selectedItems.map( ( item ) => ( item.ID === transientMedia.ID ? uploadedMedia : item ) )
+				// );
+				replaceSelectedMediaItem( transientMedia.ID, uploadedMedia );
 
 				queryClient.setQueriesData( [ 'media', siteId ], ( data ) => {
 					if ( ! data || ! data.pages ) {
@@ -64,6 +71,8 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 
 			const uploads = dispatch( createTransientMediaItems( files, site ) );
 
+			addToSelectedItems( uploads.map( ( [ , transientMedia ] ) => transientMedia ) );
+
 			const { ID: siteId } = site;
 
 			for await ( const [ file, transientMedia ] of uploads ) {
@@ -79,7 +88,7 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 
 			return uploadedItems;
 		},
-		[ mutateAsync, dispatch ]
+		[ mutateAsync, dispatch, addToSelectedItems ]
 	);
 
 	return { ...mutation, uploadMediaAsync };

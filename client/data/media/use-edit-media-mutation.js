@@ -2,7 +2,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createTransientMedia } from 'calypso/lib/media/utils';
 import wp from 'calypso/lib/wp';
 import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';

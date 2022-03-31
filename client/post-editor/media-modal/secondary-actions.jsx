@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { canUserDeleteItem } from 'calypso/lib/media/utils';
+import { withSelectedItems } from 'calypso/my-sites/media/context';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
@@ -14,7 +15,7 @@ class MediaModalSecondaryActions extends Component {
 	static propTypes = {
 		user: PropTypes.object,
 		site: PropTypes.object,
-		selectedItems: PropTypes.arrayOf( PropTypes.object ),
+		selectedItems: PropTypes.array,
 		onDelete: PropTypes.func,
 		onViewDetails: PropTypes.func,
 	};
@@ -40,6 +41,7 @@ class MediaModalSecondaryActions extends Component {
 		const canDeleteItems =
 			selectedItems.length &&
 			selectedItems.every( ( item ) => canUserDeleteItem( item, user, site ) );
+
 		if ( canDeleteItems ) {
 			const isButtonDisabled = selectedItems.some( ( item ) => item.transient );
 			buttons.push( {
@@ -82,4 +84,4 @@ class MediaModalSecondaryActions extends Component {
 export default connect( ( state, { site } ) => ( {
 	user: getCurrentUser( state ),
 	hideButton: ! canCurrentUser( state, site.ID, 'publish_posts' ),
-} ) )( localize( MediaModalSecondaryActions ) );
+} ) )( localize( withSelectedItems( MediaModalSecondaryActions ) ) );

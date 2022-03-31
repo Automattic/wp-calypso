@@ -4,6 +4,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
 import { getMimePrefix, filterItemsByMimePrefix, url } from 'calypso/lib/media/utils';
+import { withSelectedItems } from 'calypso/my-sites/media/context';
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import preloadImage from '../preload-image';
@@ -23,6 +24,7 @@ class EditorMediaModalDetailBase extends Component {
 		onEdit: PropTypes.func,
 		onRestoreItem: PropTypes.func,
 		onUpdateItem: PropTypes.func,
+		mediaItem: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -65,10 +67,11 @@ class EditorMediaModalDetailBase extends Component {
 			onUpdateItem,
 			onReturnToList,
 			translate,
+			selectedItems,
 		} = this.props;
 
-		const item = items[ selectedIndex ];
-		const mimePrefix = getMimePrefix( item );
+		const mediaItem = selectedItems[ selectedIndex ] ?? items[ selectedIndex ];
+		const mimePrefix = getMimePrefix( mediaItem );
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -79,7 +82,7 @@ class EditorMediaModalDetailBase extends Component {
 				/>
 				<DetailItem
 					site={ site }
-					item={ item }
+					item={ mediaItem }
 					hasPreviousItem={ selectedIndex - 1 >= 0 }
 					hasNextItem={ selectedIndex + 1 < items.length }
 					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
@@ -95,7 +98,7 @@ class EditorMediaModalDetailBase extends Component {
 }
 
 // Don't move `localize()` to the default export (below)! See comment there.
-export const EditorMediaModalDetail = localize( EditorMediaModalDetailBase );
+export const EditorMediaModalDetail = localize( withSelectedItems( EditorMediaModalDetailBase ) );
 
 // The default export is only used by the post editor, which displays the image or
 // video editor depending on Redux state, which is set by the actions below.
