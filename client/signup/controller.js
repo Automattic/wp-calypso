@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { isMobile } from '@automattic/viewport';
 import { isEmpty } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
