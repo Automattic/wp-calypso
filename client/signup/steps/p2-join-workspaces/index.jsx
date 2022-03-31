@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import request from 'wpcom-proxy-request';
@@ -16,7 +16,6 @@ function P2JoinWorkspaces( {
 	stepName,
 	submitSignupStep,
 } ) {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const userEmail = useSelector( getCurrentUserEmail );
 	if ( ! userEmail ) {
@@ -57,16 +56,36 @@ function P2JoinWorkspaces( {
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ translate( 'Welcome to P2!' ) }
-				subHeaderText={ translate( 'A better way of working' ) }
+				headerText={ __( 'Welcome to P2!' ) }
+				subHeaderText={ __( 'A better way of working' ) }
 			>
 				<div className="p2-join-workspaces">
 					{ eligibleWorkspaces.map( ( workspace ) => (
-						<div>{ workspace.name }</div>
+						<div>
+							<div>{ workspace.name }</div>
+							<div>
+								{ sprintf(
+									/* translators: %(userCount)d is a number */
+									_n( '%(userCount)d user', '%(userCount)d users', workspace.user_count ),
+									{
+										userCount: workspace.user_count,
+									}
+								) }
+							</div>
+							<div>
+								{ sprintf(
+									/* translators: %(siteCount)d is a number */
+									_n( '%(siteCount)d P2', '%(siteCount)d P2s', workspace.site_count ),
+									{
+										siteCount: workspace.site_count,
+									}
+								) }
+							</div>
+						</div>
 					) ) }
 				</div>
 				<Button onClick={ handleCreateWorkspaceClick } isPrimary={ true }>
-					{ translate( 'Create a new workspace' ) }
+					{ __( 'Create a new workspace' ) }
 				</Button>
 			</P2StepWrapper>
 		)
