@@ -27,7 +27,6 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import OlarkChat from 'calypso/components/olark-chat';
 import {
 	recordSignupStart,
 	recordSignupComplete,
@@ -725,10 +724,6 @@ class Signup extends Component {
 		}
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
-		const olarkIdentity = config( 'olark_chat_identity' );
-		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
-		const isEligibleForOlarkChat =
-			'onboarding' === this.props.flowName && 'en' === this.props.localeSlug;
 
 		return (
 			<>
@@ -758,13 +753,6 @@ class Signup extends Component {
 						/>
 					) }
 				</div>
-				{ isEligibleForOlarkChat && (
-					<OlarkChat
-						identity={ olarkIdentity }
-						shouldDisablePreChatSurvey={ true }
-						systemsGroupId={ olarkSystemsGroupId }
-					/>
-				) }
 			</>
 		);
 	}
