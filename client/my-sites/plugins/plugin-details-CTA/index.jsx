@@ -390,11 +390,11 @@ function onClickInstallPlugin( {
 			return page(
 				`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
 					selectedSite?.plan,
-					billingPeriod
+					billingPeriod,
+					eligibleForProPlan
 				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
-				}#step2`,
-				eligibleForProPlan
+				}#step2`
 			);
 		}
 
