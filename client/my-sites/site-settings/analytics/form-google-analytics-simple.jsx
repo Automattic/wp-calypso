@@ -40,7 +40,7 @@ const GoogleAnalyticsSimpleForm = ( {
 } ) => {
 	const analyticsSupportUrl = localizeUrl( 'https://wordpress.com/support/google-analytics/' );
 	const nudgeTitle = translate(
-		'Connect your site to Google Analytics in seconds with the Premium plan'
+		'Connect your site to Google Analytics in seconds with the Pro plan'
 	);
 
 	useEffect( () => {

@@ -186,7 +186,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 								) ) }
 						</ul>
 						<div className={ 'import__details-footer' }>
-							<i>*{ __( 'Requires a Business plan.' ) }</i>
+							<i>*{ __( 'Requires a Pro plan.' ) }</i>
 						</div>
 					</div>
 				) }

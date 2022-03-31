@@ -153,7 +153,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 							sprintf(
 								/* translators: pressing <Link> will redirect user to plan selection step; %1$d is the number of days */
 								__(
-									'<Link>Upgrade to Premium</Link> to get access to 13GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer %1$d-day full-refunds, guaranteed.',
+									'<Link>Upgrade to Pro</Link> to get access to plugins, premium themes, 50GB storage space, payment collection options, 24/7 Live Chat support, and more. Not sure? Give it a spin—we offer %1$d-day full-refunds, guaranteed.',
 									'full-site-editing'
 								),
 								14

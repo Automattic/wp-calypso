@@ -75,7 +75,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				) }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
-				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
 				<CustomizeTheme selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
@@ -137,7 +137,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				) }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
-				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
 				<CustomizeTheme selectedSite={ selectedSite } />
 				<CustomCSS selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
@@ -160,7 +160,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				) }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<AdvertisingRemoved isBusinessPlan={ false } selectedSite={ selectedSite } />
+				<AdvertisingRemoved isEligiblePlan={ false } selectedSite={ selectedSite } />
 				<CustomizeTheme selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
@@ -183,7 +183,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				{ ! isMonthlyPlan && (
 					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				) }
-				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 			</Fragment>
@@ -201,7 +201,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					hasDomainCredit={ planHasDomainCredit }
 					onlyBlogDomain={ true }
 				/>
-				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 			</Fragment>
@@ -224,7 +224,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				) }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
-				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
 				<CustomizeTheme selectedSite={ selectedSite } />
 				<CustomCSS selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />

@@ -1,3 +1,4 @@
+import { isWpComProPlan } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SelectItem } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -19,6 +20,7 @@ export function useIntents(
 	const isBusinessOrEcommercePlan = [ 'business-bundle', 'ecommerce-bundle' ].includes(
 		sitePlanSlug ?? ''
 	);
+	const isProPlan = sitePlanSlug ? isWpComProPlan( sitePlanSlug ) : false;
 
 	return [
 		{
@@ -82,9 +84,9 @@ export function useIntents(
 			description: (
 				<>
 					<span className="store-features__requirements">
-						{ isBusinessOrEcommercePlan
+						{ isBusinessOrEcommercePlan || isProPlan
 							? translate( 'Included in your plan' )
-							: translate( 'Requires a {{a}}Business plan{{/a}}', {
+							: translate( 'Requires a {{a}}Pro plan{{/a}}', {
 									components: {
 										a: (
 											<a
