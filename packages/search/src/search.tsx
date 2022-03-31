@@ -104,6 +104,7 @@ type ImperativeHandle = {
 	focus: () => void;
 	blur: () => void;
 	clear: () => void;
+	updateKeyword?: ( value: string ) => void;
 };
 
 const InnerSearch = (
@@ -140,11 +141,12 @@ const InnerSearch = (
 		maxLength,
 		hideClose = false,
 		isReskinned = false,
+		value,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
 	const { __ } = useI18n();
-	const [ keyword, setKeyword ] = React.useState( defaultValue );
+	const [ keyword, setKeyword ] = React.useState( value || defaultValue );
 	const [ isOpen, setIsOpen ] = React.useState( defaultIsOpen );
 	const [ hasFocus, setHasFocus ] = React.useState( autoFocus );
 
@@ -162,6 +164,9 @@ const InnerSearch = (
 			},
 			blur() {
 				searchInput.current?.blur();
+			},
+			updateKeyword( value: string ) {
+				setKeyword( value );
 			},
 			clear() {
 				setKeyword( '' );
