@@ -15,15 +15,37 @@ import homePage from 'calypso/signup/difm/images/home-page.svg';
 import photoGallery from 'calypso/signup/difm/images/photo-gallery.svg';
 import serviceShowcase from 'calypso/signup/difm/images/service-showcase.svg';
 
-const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
-	border: 2px solid
+const ContainerBoarder = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
+	border: 1px solid
 		${ ( { isSelected } ) => ( isSelected ? 'var( --studio-blue-50 )' : 'var( --studio-white )' ) };
 	border-radius: 10px;
-	transition: border 0.2s cubic-bezier( 0.11, 0, 0.5, 0 ),
-		border-color 0.2s cubic-bezier( 0.11, 0, 0.5, 0 ),
-		border-box 0.2s cubic-bezier( 0.11, 0, 0.5, 0 );
+	transition: border-color 500ms ease-in-out, border-box 500ms ease-in-out;
 	&:hover {
-		border: 2px solid
+		border: 1px solid
+			${ ( { isClickDisabled, isSelected } ) => {
+				if ( isClickDisabled ) {
+					return 'var( --studio-white )';
+				} else if ( isSelected ) {
+					return 'var( --studio-blue-50 )';
+				}
+				return 'var( --studio-white )';
+			} };
+		box-shadow: 0px 0px 1px 4px
+			${ ( { isClickDisabled, isSelected } ) => {
+				if ( isClickDisabled || isSelected ) {
+					return 'var( --studio-white )';
+				}
+				return '#E3EAF0';
+			} };
+	}
+`;
+const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
+	border: 1px solid
+		${ ( { isSelected } ) => ( isSelected ? 'var( --studio-blue-50 )' : 'var( --studio-white )' ) };
+	border-radius: 10px;
+	transition: border-color 400ms ease-in-out, border-box 400ms ease-in-out;
+	&:hover {
+		border: 1px solid
 			${ ( { isClickDisabled, isSelected } ) => {
 				if ( isClickDisabled ) {
 					return 'var( --studio-white )';
@@ -33,13 +55,6 @@ const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean 
 				return 'var( --studio-gray-50 )';
 			} };
 
-		box-shadow: 0 0 0 2px
-			${ ( { isClickDisabled, isSelected } ) => {
-				if ( isClickDisabled || isSelected ) {
-					return 'var( --studio-white )';
-				}
-				return '#e2eaf1';
-			} };
 		border-radius: 10px;
 	}
 	width: 222px;
@@ -116,21 +131,23 @@ export function BrowserView( {
 	};
 
 	return (
-		<Container isSelected={ isSelected } isClickDisabled={ isClickDisabled }>
-			{ selectedIndex > -1 ? <SelectedCount>{ selectedIndex + 1 }</SelectedCount> : null }
+		<ContainerBoarder isSelected={ isSelected } isClickDisabled={ isClickDisabled }>
+			<Container isSelected={ isSelected } isClickDisabled={ isClickDisabled }>
+				{ selectedIndex > -1 ? <SelectedCount>{ selectedIndex + 1 }</SelectedCount> : null }
 
-			<Header>
-				<svg width={ 16 } height={ 4 } fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path
-						d="M3.771 1.645c0 .909-.729 1.645-1.628 1.645-.9 0-1.629-.736-1.629-1.645C.514.737 1.244 0 2.143 0c.9 0 1.628.737 1.628 1.645ZM9.743 1.645c0 .909-.73 1.645-1.629 1.645-.9 0-1.628-.736-1.628-1.645C6.486.737 7.215 0 8.114 0c.9 0 1.629.737 1.629 1.645ZM15.714 1.645c0 .909-.729 1.645-1.628 1.645-.9 0-1.629-.736-1.629-1.645 0-.908.73-1.645 1.629-1.645s1.628.737 1.628 1.645Z"
-						fill="#000"
-						fillOpacity={ 0.12 }
-					/>
-				</svg>
-			</Header>
-			<Content>
-				<img src={ getPageImage() } alt="page preview" />
-			</Content>
-		</Container>
+				<Header>
+					<svg width={ 16 } height={ 4 } fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path
+							d="M3.771 1.645c0 .909-.729 1.645-1.628 1.645-.9 0-1.629-.736-1.629-1.645C.514.737 1.244 0 2.143 0c.9 0 1.628.737 1.628 1.645ZM9.743 1.645c0 .909-.73 1.645-1.629 1.645-.9 0-1.628-.736-1.628-1.645C6.486.737 7.215 0 8.114 0c.9 0 1.629.737 1.629 1.645ZM15.714 1.645c0 .909-.729 1.645-1.628 1.645-.9 0-1.629-.736-1.629-1.645 0-.908.73-1.645 1.629-1.645s1.628.737 1.628 1.645Z"
+							fill="#000"
+							fillOpacity={ 0.12 }
+						/>
+					</svg>
+				</Header>
+				<Content>
+					<img src={ getPageImage() } alt="page preview" />
+				</Content>
+			</Container>
+		</ContainerBoarder>
 	);
 }
