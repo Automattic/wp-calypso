@@ -17,14 +17,17 @@ const BlockDescriptionLink = ( { url }: Props ) => {
 	}
 
 	return (
-		<ExternalLink
-			ref={ ( reference ) => ref !== reference && setRef( reference ) }
-			style={ { paddingLeft: 5 } }
-			className="fse-inline-support-link"
-			href={ url }
-		>
-			{ __( 'Learn more', 'full-site-editing' ) }{ ' ' }
-		</ExternalLink>
+		<>
+			<br />
+			<ExternalLink
+				ref={ ( reference ) => ref !== reference && setRef( reference ) }
+				style={ { display: 'block', paddingTop: 10 } }
+				className={ 'fse-inline-support-link' }
+				href={ url }
+			>
+				{ __( 'Learn more', 'full-site-editing' ) }
+			</ExternalLink>
+		</>
 	);
 };
 
