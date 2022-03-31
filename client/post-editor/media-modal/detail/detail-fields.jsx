@@ -349,7 +349,10 @@ class EditorMediaModalDetailFields extends Component {
 				{ this.renderShareEmbed() }
 				{ this.renderAllowDownloadOption() }
 				{ this.renderRating() }
-				{ this.props.hasVideoPrivacyFeature && this.renderPrivacySetting() }
+				{
+					false && this.props.hasVideoPrivacyFeature && this.renderPrivacySetting()
+					/* TODO: Remove false when VP Privacy Setting PR lands */
+				}
 				{ this.renderVideoPressShortcode() }
 			</div>
 		);
