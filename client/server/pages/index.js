@@ -783,7 +783,7 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/new', 'entry-gutenboarding' );
-	handleSectionPath( STEPPER_SECTION_DEFINITION, '/stepper', 'entry-stepper' );
+	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(
