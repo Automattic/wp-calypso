@@ -86,7 +86,9 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const { designs, featuredPicksDesigns } = useMemo( () => {
 		return {
 			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
-			featuredPicksDesigns: allThemes.filter( ( theme ) => theme.is_featured_picks ),
+			featuredPicksDesigns: allThemes.filter(
+				( theme ) => theme.is_featured_picks && ! isBlankCanvasDesign( theme )
+			),
 		};
 	}, [ allThemes ] );
 
