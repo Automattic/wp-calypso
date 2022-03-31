@@ -14,11 +14,13 @@
 		top: 74px;
 		width: 20vw;
 		z-index: 9999;
-		transition: 0.5s ease;
 
 		.help-center__container-header {
 			cursor: pointer;
 			height: 50px;
+			padding-left: 10px;
+			// the x button has some white space on the right side, this compensates for that
+			padding-right: 5px;
 		}
 
 		.help-center__container-content {
@@ -44,7 +46,6 @@
 		right: 0;
 		background-color: #fff;
 		z-index: 9999;
-		transition: 0.5s ease;
 		max-height: 100vh;
 
 		&.is-minimized {
@@ -72,45 +73,25 @@
 	&.is-mobile.is-minimized,
 	&.is-desktop.is-minimized {
 		max-height: 50px;
-		transition: max-height ease 0.25s, top 0.5s ease 100ms;
+	}
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
 	}
 
-	@keyframes slideIn {
-		0% {
-			transform: translateX( 100vh );
-		}
+	100% {
+		opacity: 1;
+	}
+}
 
-		100% {
-			transform: translateX( 0 );
-		}
+@keyframes fadeOut {
+	0% {
+		opacity: 1;
 	}
 
-	@keyframes slideOut {
-		0% {
-			transform: translateX( 0 );
-		}
-
-		100% {
-			transform: translateX( 100vh );
-		}
-	}
-	@keyframes pullup {
-		0% {
-			transform: translateY( 100vh );
-		}
-
-		100% {
-			transform: translateY( 0 );
-		}
-	}
-
-	@keyframes pullDown {
-		0% {
-			transform: translateY( 0 );
-		}
-
-		100% {
-			transform: translateY( 100vh );
-		}
+	100% {
+		opacity: 0;
 	}
 }

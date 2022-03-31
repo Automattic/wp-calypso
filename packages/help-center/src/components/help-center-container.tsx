@@ -34,9 +34,7 @@ const HelpCenterContainer: React.FC< Container > = ( { content, handleClose } ) 
 
 	const animationProps = {
 		style: {
-			animation: isMobile
-				? `${ isVisible ? 'pullUp' : 'pullDown' } .5s`
-				: `${ isVisible ? 'slideIn' : 'slideOut' } .5s`,
+			animation: `${ isVisible ? 'fadeIn' : 'fadeOut' } .5s`,
 		},
 		onAnimationEnd: toggleVisible,
 	};
@@ -58,8 +56,20 @@ const HelpCenterContainer: React.FC< Container > = ( { content, handleClose } ) 
 		</>
 	);
 
-	return (
-		<Draggable disabled={ isMinimized }>
+	if ( isMobile ) {
+		return (
+			<Card { ...animationProps } className={ classNames }>
+				{ containerContent }
+			</Card>
+		);
+	}
+
+	return isMinimized ? (
+		<Card className={ classNames } { ...animationProps }>
+			{ containerContent }
+		</Card>
+	) : (
+		<Draggable>
 			<Card className={ classNames } { ...animationProps }>
 				{ containerContent }
 			</Card>
