@@ -36,12 +36,26 @@ function getTourAssets( key: string ): TourAsset | undefined {
 			desktop: { src: `${ CDN_PREFIX }/slide-welcome.png`, type: 'image/png' },
 			mobile: { src: `${ CDN_PREFIX }/slide-welcome_mobile.jpg`, type: 'image/jpeg' },
 		},
+		editYourSite: {
+			desktop: {
+				src: `https://s.w.org/images/block-editor/edit-your-site.gif?1`,
+				type: 'image/gif',
+			},
+			mobile: {
+				src: `https://s.w.org/images/block-editor/edit-your-site.gif?1`,
+				type: 'image/gif',
+			},
+		},
 	} as { [ key: string ]: TourAsset };
 
 	return tourAssets[ key ];
 }
 
-function getTourSteps( localeSlug: string, referencePositioning = false ): WpcomStep[] {
+function getTourSteps(
+	localeSlug: string,
+	referencePositioning = false,
+	isSiteEditor: boolean
+): WpcomStep[] {
 	return [
 		{
 			slug: 'welcome',
@@ -265,6 +279,34 @@ function getTourSteps( localeSlug: string, referencePositioning = false ): Wpcom
 				},
 			},
 		},
+		...( isSiteEditor
+			? [
+					{
+						slug: 'edit-your-site',
+						meta: {
+							heading: __( 'Edit your site', 'full-site-editing' ),
+							descriptions: {
+								desktop: __(
+									'Design everything on your site - from the header right down to the footer - using blocks.',
+									'full-site-editing'
+								),
+								mobile: __(
+									'Design everything on your site - from the header right down to the footer - using blocks.',
+									'full-site-editing'
+								),
+							},
+							imgSrc: getTourAssets( 'editYourSite' ),
+							animation: 'undo-button',
+						},
+						options: {
+							classNames: {
+								desktop: 'wpcom-editor-welcome-tour__step',
+								mobile: [ 'is-with-extra-padding', 'wpcom-editor-welcome-tour__step' ],
+							},
+						},
+					},
+			  ]
+			: [] ),
 		{
 			slug: 'congratulations',
 			meta: {
