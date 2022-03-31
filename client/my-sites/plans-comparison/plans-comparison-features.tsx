@@ -28,17 +28,17 @@ export interface PlanComparisonFeature {
 	/**
 	 * Row header
 	 */
-	readonly title: TranslateResult;
+	title: TranslateResult;
 
 	/**
 	 * Additional text displayed below the row header
 	 */
-	readonly subtitle?: TranslateResult;
+	subtitle?: TranslateResult;
 
 	/**
 	 * Popup text describing what the feature is.
 	 */
-	readonly description?: TranslateResult;
+	description?: TranslateResult;
 
 	/**
 	 * Features that belong to this row.
@@ -92,14 +92,10 @@ function defaultGetCellText(
 
 export const planComparisonFeatures: PlanComparisonFeature[] = [
 	{
-		get title() {
-			return translate( 'Custom domain name' );
-		},
-		get description() {
-			return translate(
-				'Get a personalized online address that’s easy to remember and easy to share. First year comes for free with your paid annual subscription.'
-			);
-		},
+		title: translate( 'Custom domain name' ),
+		description: translate(
+			'Get a personalized online address that’s easy to remember and easy to share. First year comes for free with your paid annual subscription.'
+		),
 		features: [ FEATURE_CUSTOM_DOMAIN ],
 		getCellText: ( feature, isMobile = false ) => {
 			if ( ! isMobile ) {
@@ -126,14 +122,10 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Premium themes' );
-		},
-		get description() {
-			return translate(
-				'Gain access to advanced, professional & beautiful premium design templates including themes specifically tailored for businesses.'
-			);
-		},
+		title: translate( 'Premium themes' ),
+		description: translate(
+			'Gain access to advanced, professional & beautiful premium design templates including themes specifically tailored for businesses.'
+		),
 		features: [ FEATURE_PREMIUM_THEMES ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'Premium themes' ) )( feature, isMobile );
@@ -146,17 +138,11 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'WordPress plugins' );
-		},
-		get subtitle() {
-			return translate( 'Be able to add forms, calendar, and more.' );
-		},
-		get description() {
-			return translate(
-				'Install WordPress plugins and extend functionality for your site with access to more than 50,000 WordPress plugins.'
-			);
-		},
+		title: translate( 'WordPress plugins' ),
+		subtitle: translate( 'Be able to add forms, calendar, and more.' ),
+		description: translate(
+			'Install WordPress plugins and extend functionality for your site with access to more than 50,000 WordPress plugins.'
+		),
 		features: [ FEATURE_INSTALL_PLUGINS ],
 		getCellText: ( feature, isMobile = false ) => {
 			if ( ! isMobile ) {
@@ -183,17 +169,11 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Premium support' );
-		},
-		get subtitle() {
-			return translate( 'Get expert help to build your site.' );
-		},
-		get description() {
-			return translate(
-				'Customer service isn’t just something we offer. It’s who we are. Over 30% of WordPress.com is dedicated to service. We call it Happiness—real support delivered by real human beings who specialize in launching and fine-tuning WordPress sites.'
-			);
-		},
+		title: translate( 'Premium support' ),
+		subtitle: translate( 'Get expert help to build your site.' ),
+		description: translate(
+			'Customer service isn’t just something we offer. It’s who we are. Over 30% of WordPress.com is dedicated to service. We call it Happiness—real support delivered by real human beings who specialize in launching and fine-tuning WordPress sites.'
+		),
 		features: [ FEATURE_PREMIUM_SUPPORT ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'Premium support' ) )( feature, isMobile );
@@ -206,14 +186,10 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Sell products with WooCommerce' );
-		},
-		get description() {
-			return translate(
-				'Includes one-click payments, premium store designs and personalized expert support.'
-			);
-		},
+		title: translate( 'Sell products with WooCommerce' ),
+		description: translate(
+			'Includes one-click payments, premium store designs and personalized expert support.'
+		),
 		features: [ FEATURE_WOOCOMMERCE ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'WooCommerce' ) )( feature, isMobile );
@@ -226,14 +202,10 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Storage' );
-		},
-		get description() {
-			return translate(
-				'The free plan allows a maximum storage of 500MB, which equals to approximately 100 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
-			);
-		},
+		title: translate( 'Storage' ),
+		description: translate(
+			'The free plan allows a maximum storage of 500MB, which equals to approximately 100 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+		),
 		features: [ FEATURE_500MB_STORAGE, FEATURE_50GB_STORAGE ],
 		getCellText: ( feature, isMobile = false ) => {
 			let storageSize = '0.5';
@@ -255,12 +227,8 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Visits per month' );
-		},
-		get description() {
-			return translate( 'Max visits per month.' );
-		},
+		title: translate( 'Visits per month' ),
+		description: translate( 'Max visits per month.' ),
 		features: [ FEATURE_10K_VISITS, FEATURE_100K_VISITS ],
 		getCellText: ( feature, isMobile = false ) => {
 			let visitCount = 0;
@@ -282,14 +250,10 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Remove ads' );
-		},
-		get description() {
-			return translate(
-				'Free sites include ads. The WordPress Pro plan allows you to remove these to keep your website clean of ads.'
-			);
-		},
+		title: translate( 'Remove ads' ),
+		description: translate(
+			'Free sites include ads. The WordPress Pro plan allows you to remove these to keep your website clean of ads.'
+		),
 		features: [ FEATURE_NO_ADS ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'Remove ads' ) )( feature, isMobile );
@@ -302,15 +266,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Advanced SEO tools' );
-		},
-		get subtitle() {
-			return translate( 'Get found on search engines.' );
-		},
-		get description() {
-			return translate( 'Get found faster with built-in SEO tools.' );
-		},
+		title: translate( 'Advanced SEO tools' ),
+		subtitle: translate( 'Get found on search engines.' ),
+		description: translate( 'Get found faster with built-in SEO tools.' ),
 		features: [ FEATURE_ADVANCED_SEO ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'Advanced SEO tools' ) )( feature, isMobile );
@@ -323,14 +281,10 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Website Administrator' );
-		},
-		get description() {
-			return translate(
-				'Pro WordPress lets you have unlimited users editing your site. This is ideal for having multiple collaborators help you have your website built and maintained.'
-			);
-		},
+		title: translate( 'Website Administrator' ),
+		description: translate(
+			'Pro WordPress lets you have unlimited users editing your site. This is ideal for having multiple collaborators help you have your website built and maintained.'
+		),
 		features: [ FEATURE_UNLIMITED_ADMINS ],
 		getCellText: ( feature, isMobile ) => {
 			const adminCount = 1;
@@ -352,14 +306,10 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Upload videos' );
-		},
-		get description() {
-			return translate(
-				'Upload videos to your website and display them using a fast player on the WordPress Pro plan.'
-			);
-		},
+		title: translate( 'Upload videos' ),
+		description: translate(
+			'Upload videos to your website and display them using a fast player on the WordPress Pro plan.'
+		),
 		features: [ FEATURE_VIDEO_UPLOADS ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'Upload videos' ) )( feature, isMobile );
@@ -372,17 +322,11 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Collect payments' );
-		},
-		get subtitle() {
-			return translate( 'Accept donations, subscriptions and more.' );
-		},
-		get description() {
-			return translate(
-				'One simple, flexible way to collect any type of payment. Accept payments for just about anything from goods and services to memberships and donations.'
-			);
-		},
+		title: translate( 'Collect payments' ),
+		subtitle: translate( 'Accept donations, subscriptions and more.' ),
+		description: translate(
+			'One simple, flexible way to collect any type of payment. Accept payments for just about anything from goods and services to memberships and donations.'
+		),
 		features: [ FEATURE_PAYMENT_BLOCKS ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'Collect payments' ) )( feature, isMobile );
@@ -395,12 +339,8 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Built in social media tools' );
-		},
-		get description() {
-			return translate( 'Amplify your voice with our built-in social tools.' );
-		},
+		title: translate( 'Built in social media tools' ),
+		description: translate( 'Amplify your voice with our built-in social tools.' ),
 		features: [ FEATURE_SOCIAL_MEDIA_TOOLS ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'Built in social media tools' ) )(
@@ -416,17 +356,11 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Professional Email' );
-		},
-		get subtitle() {
-			return translate( 'Custom email address with your own domain.' );
-		},
-		get description() {
-			return translate(
-				'Custom email address with mailbox, calendar, templates and more. Register free for 3 months with your custom domain. After 3 months, you have the option to renew or cancel your email subscription.'
-			);
-		},
+		title: translate( 'Professional Email' ),
+		subtitle: translate( 'Custom email address with your own domain.' ),
+		description: translate(
+			'Custom email address with mailbox, calendar, templates and more. Register free for 3 months with your custom domain. After 3 months, you have the option to renew or cancel your email subscription.'
+		),
 		features: [ FEATURE_TITAN_EMAIL ],
 		getCellText: ( feature, isMobile = false ) => {
 			if ( ! isMobile ) {
@@ -453,17 +387,11 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Earn money from ads' );
-		},
-		get subtitle() {
-			return translate( 'Monetize your website with ads.' );
-		},
-		get description() {
-			return translate(
-				'WordAds connects your site with some of the biggest ad publishers, including Google AdSense, Facebook Audience Network, Amazon A9, and others!'
-			);
-		},
+		title: translate( 'Earn money from ads' ),
+		subtitle: translate( 'Monetize your website with ads.' ),
+		description: translate(
+			'WordAds connects your site with some of the biggest ad publishers, including Google AdSense, Facebook Audience Network, Amazon A9, and others!'
+		),
 		features: [ FEATURE_MONETISE ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'Earn money from ads' ) )( feature, isMobile );
@@ -476,14 +404,10 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'SFTP, Database access' );
-		},
-		get description() {
-			return translate(
-				'Upload and remove files to your website using secure FTP data transfer with your WordPress Pro plan.'
-			);
-		},
+		title: translate( 'SFTP, Database access' ),
+		description: translate(
+			'Upload and remove files to your website using secure FTP data transfer with your WordPress Pro plan.'
+		),
 		features: [ FEATURE_SFTP_DATABASE ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'SFTP, Database access' ) )(
@@ -499,14 +423,10 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Automated website backups' );
-		},
-		get description() {
-			return translate(
-				'Daily backups give you granular control over your site, with the ability to restore it to any previous state in a snap, and export it at any time.'
-			);
-		},
+		title: translate( 'Automated website backups' ),
+		description: translate(
+			'Daily backups give you granular control over your site, with the ability to restore it to any previous state in a snap, and export it at any time.'
+		),
 		features: [ FEATURE_SITE_BACKUPS_AND_RESTORE ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'Automated website backups' ) )(
@@ -522,14 +442,10 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 	},
 	{
-		get title() {
-			return translate( 'Jetpack essentials' );
-		},
-		get description() {
-			return translate(
-				'Optimize your site for better SEO, faster-loading pages, and protection from spam with essential Jetpack features.'
-			);
-		},
+		title: translate( 'Jetpack essentials' ),
+		description: translate(
+			'Optimize your site for better SEO, faster-loading pages, and protection from spam with essential Jetpack features.'
+		),
 		features: [ FEATURE_JETPACK_ESSENTIAL ],
 		getCellText: ( feature, isMobile = false ) => {
 			let cellText = defaultGetCellText( translate( 'Jetpack essentials' ) )( feature, isMobile );
