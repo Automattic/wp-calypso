@@ -19,6 +19,7 @@ export function useIntents(
 	const isBusinessOrEcommercePlan = [ 'business-bundle', 'ecommerce-bundle' ].includes(
 		sitePlanSlug ?? ''
 	);
+	const isProPlan = 'pro-plan' === sitePlanSlug;
 
 	return [
 		{
@@ -82,9 +83,9 @@ export function useIntents(
 			description: (
 				<>
 					<span className="store-features__requirements">
-						{ isBusinessOrEcommercePlan
+						{ isBusinessOrEcommercePlan || isProPlan
 							? translate( 'Included in your plan' )
-							: translate( 'Requires a {{a}}Business plan{{/a}}', {
+							: translate( 'Requires {{a}}Pro plan{{/a}}', {
 									components: {
 										a: (
 											<a
