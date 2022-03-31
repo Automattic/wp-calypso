@@ -43,7 +43,7 @@ const Cloudflare = () => {
 								<p className="site-settings__cloudflare-title">
 									{ translate( 'Jetpack Site Accelerator' ) }
 								</p>
-								<p>{ translate( 'Comes built-in with WordPress.com Pro plan.' ) }</p>
+								<p>{ translate( 'Comes built-in with the WordPress.com Pro plan.' ) }</p>
 								<p>
 									<a
 										onClick={ recordClick }
