@@ -124,6 +124,6 @@ test( 'Payments table should show as expected', () => {
 	);
 } );
 
-function normalizeOutput( input ) {
-	return input.replace( /\s/g, '' );
+function normalizeOutput( output ) {
+	return output.replace( /\s/g, '' );
 }
