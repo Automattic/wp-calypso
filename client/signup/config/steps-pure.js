@@ -607,6 +607,10 @@ export function generateSteps( {
 			fulfilledStepCallback: excludeStepIfProfileComplete,
 		},
 
+		'p2-join-workspaces': {
+			stepName: 'p2-join-workspaces',
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
