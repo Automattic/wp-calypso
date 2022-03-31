@@ -48,6 +48,12 @@ export interface Design {
 	hide?: boolean;
 }
 
+export interface DesignPreviewOptions {
+	language?: string;
+	siteTitle?: string;
+}
+
+/** @deprecated used for Gutenboarding (/new flow) */
 export interface DesignUrlOptions {
 	iframe?: boolean;
 	site_title?: string;
