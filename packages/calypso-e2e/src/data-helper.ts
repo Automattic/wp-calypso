@@ -305,10 +305,10 @@ export function parseSiteHostFromUrl( url: string ): string {
 		return new URL( url ).host;
 	}
 
-	const pathSuffix = new URL( url ).pathname.split( '/' ).pop();
 	const hostRegex = /([a-zA-Z0-9-]+\.)+[a-zA-Z0-9-]+/;
-	if ( pathSuffix?.match( hostRegex ) ) {
-		return pathSuffix;
+	const hostMatch = hostRegex.exec( new URL( url ).pathname );
+	if ( hostMatch ) {
+		return hostMatch[ 0 ];
 	}
 
 	throw new Error(
