@@ -1,3 +1,4 @@
+import { URL } from 'url';
 import { Page, Response } from 'playwright';
 import { getCalypsoURL, parseSiteHostFromUrl } from '../../data-helper';
 import { reloadAndRetry, clickNavTab } from '../../element-helper';
@@ -114,10 +115,14 @@ export class PostsPage {
 		// to the wp-admin version of the editor.
 		if ( envVariables.TEST_ON_ATOMIC ) {
 			const siteHostName = parseSiteHostFromUrl( this.page.url() );
-			const wpAdminEditorUrl = `https://${ siteHostName }/wp-admin/post-new.php`;
+			const wpAdminEditorUrl = new URL( `https://${ siteHostName }` );
+			wpAdminEditorUrl.pathname = '/wp-admin/post-new.php';
+			wpAdminEditorUrl.searchParams.append( 'post_type', 'post' );
+			wpAdminEditorUrl.searchParams.append( 'calypsoify', '1' );
+
 			await newPostLocator.evaluate(
 				( node, newHref ) => node.setAttribute( 'href', newHref ),
-				wpAdminEditorUrl
+				wpAdminEditorUrl.href
 			);
 		}
 		await newPostLocator.click();
