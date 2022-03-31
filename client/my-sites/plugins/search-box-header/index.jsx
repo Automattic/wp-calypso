@@ -41,7 +41,7 @@ const PopularSearches = ( props ) => {
 				} )
 			)
 		);
-	}, searchTerms );
+	}, [ JSON.stringify( searchTerms ) ] );
 
 	const onClick = ( searchTerm ) => {
 		dispatch(
