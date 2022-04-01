@@ -138,6 +138,7 @@ function getSubscriptionEndDate( purchase ) {
 function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 	const renewItem = getRenewalItemFromProduct( purchase, {
 		domain: purchase.meta,
+		isMarketplaceProduct: options.isMarketplaceProduct,
 	} );
 
 	// Track the renew now submit.

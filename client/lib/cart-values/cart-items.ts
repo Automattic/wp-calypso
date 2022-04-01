@@ -530,7 +530,7 @@ function createRenewalCartItemFromProduct(
 			domain?: string;
 			users?: GSuiteProductUser[];
 		},
-	properties: { domain?: string }
+	properties: { domain?: string; isMarketplaceProduct?: boolean }
 ) {
 	const slug = camelOrSnakeSlug( product );
 
@@ -582,7 +582,7 @@ function createRenewalCartItemFromProduct(
 		return spaceUpgradeItem( slug );
 	}
 
-	if ( isRenewable( product ) ) {
+	if ( properties.isMarketplaceProduct && isRenewable( product ) ) {
 		return renewableProductItem( slug );
 	}
 
@@ -602,7 +602,7 @@ export function getRenewalItemFromProduct(
 			domain?: string;
 			users?: GSuiteProductUser[];
 		},
-	properties: { domain?: string }
+	properties: { domain?: string; isMarketplaceProduct?: boolean }
 ): MinimalRequestCartProduct {
 	const cartItem = createRenewalCartItemFromProduct( product, properties );
 	if ( ! cartItem ) {
