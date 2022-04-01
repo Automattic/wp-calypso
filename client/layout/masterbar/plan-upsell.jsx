@@ -33,6 +33,11 @@ class MasterbarItemPlanUpsell extends Component {
 		} );
 	};
 
+	checkIsRestrictedRoute = ( currentRoute ) => {
+		const restrictedRoutes = [ `/plans`, '/checkout' ];
+		return -1 !== restrictedRoutes.findIndex( ( route ) => currentRoute.startsWith( route ) );
+	};
+
 	render() {
 		const {
 			plansPath,
@@ -45,32 +50,14 @@ class MasterbarItemPlanUpsell extends Component {
 			planSlug,
 		} = this.props;
 
-		const plansUpsells = [
-			'free_plan',
-			'personal-bundle-monthly',
-			'value_bundle_monthly',
-			'business-bundle-monthly',
-			'ecommerce-bundle-monthly',
-
-			'personal-bundle',
-			'value_bundle',
-			'business-bundle',
-		];
-
-		const restrictedRoutes = [ '/plans', '/checkout' ];
-		const isRestrictedRoute =
-			-1 !== restrictedRoutes.findIndex( ( route ) => currentRoute.startsWith( route ) );
+		const isRestrictedRoute = this.checkIsRestrictedRoute( currentRoute );
 
 		const showPlanUpsell =
 			! isRestrictedRoute &&
 			! isMobile &&
 			! isP2 &&
 			! isJetpackNotAtomic &&
-			plansUpsells.includes( planSlug );
-
-		if ( ! showPlanUpsell ) {
-			return null;
-		}
+			'free_plan' === planSlug;
 
 		return (
 			<ProvideExperimentData
@@ -113,14 +100,9 @@ export default withMobileBreakpoint(
 			if ( ! userCan( 'manage_options', site ) ) {
 				siteId = getPrimarySiteId( state );
 			}
-
+			const siteSlug = getSiteSlug( state, siteId );
 			const planSlug = getSitePlanSlug( state, siteId ) || '';
-
-			let plansPath = '/plans/';
-			if ( 'ecommerce-bundle-monthly' === planSlug ) {
-				plansPath += 'yearly/';
-			}
-			plansPath += getSiteSlug( state, siteId );
+			const plansPath = '/plans/' + siteSlug;
 
 			return {
 				isP2: isSiteWPForTeams( state, siteId ),
