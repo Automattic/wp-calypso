@@ -73,7 +73,7 @@ const SearchBoxHeader = ( props ) => {
 
 	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
 	const updateSearchBox = ( keyword ) => {
-		searchBoxRef.current.updateKeyword( keyword );
+		searchBoxRef.current.setKeyword( keyword );
 	};
 
 	return (
