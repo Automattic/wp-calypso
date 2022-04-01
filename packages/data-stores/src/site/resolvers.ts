@@ -1,7 +1,7 @@
 import { dispatch } from '@wordpress/data';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
-import type { SiteDetails, Domain } from './types';
+import type { SiteDetails, Domain, WooCountries } from './types';
 
 /**
  * Attempt to find a site based on its id, and if not return undefined.
@@ -37,4 +37,22 @@ export function* getSiteDomains( siteId: number ) {
 		} );
 		yield dispatch( STORE_KEY ).receiveSiteDomains( siteId, result?.domains );
 	} catch ( e ) {}
+}
+
+/**
+ * Get all WooCommerce countries.
+ */
+export function* getCountries() {
+	yield dispatch( STORE_KEY ).fetchCountries();
+
+	try {
+		const countries: WooCountries = yield wpcomRequest( {
+			path: '/woocommerce/countries/regions/',
+			apiNamespace: 'wpcom/v2',
+		} );
+
+		yield dispatch( STORE_KEY ).receiveCountries( countries );
+	} catch ( err ) {
+		yield dispatch( STORE_KEY ).receiveCountriesFailed( err as any );
+	}
 }

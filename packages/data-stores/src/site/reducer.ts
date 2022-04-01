@@ -6,6 +6,8 @@ import {
 	Domain,
 	SiteLaunchState,
 	SiteLaunchStatus,
+	NewSiteErrorResponse as ReceiveCountriesErrorResponse,
+	WooCountries,
 } from './types';
 import type { Action } from './actions';
 import type { Reducer } from 'redux';
@@ -140,6 +142,58 @@ export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action
 	return state;
 };
 
+export const isFetchingCountries: Reducer< boolean | undefined, Action > = (
+	state = false,
+	action
+) => {
+	switch ( action.type ) {
+		case 'FETCH_COUNTRIES':
+			return true;
+		case 'RECEIVE_COUNTRIES':
+			return false;
+	}
+
+	return state;
+};
+
+export const receiveCountries: Reducer< WooCountries | undefined, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_COUNTRIES' && action.countries ) {
+		return action.countries;
+	}
+
+	return state;
+};
+
+export const receiveCountriesError: Reducer< ReceiveCountriesErrorResponse | undefined, Action > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'FETCH_COUNTRIES':
+		case 'RECEIVE_COUNTRIES':
+			return undefined;
+		case 'RECEIVE_COUNTRIES_FAILED':
+			return {
+				error: action.error.name,
+				status: action.error.status,
+				statusCode: action.error.statusCode,
+				name: action.error.name,
+				message: action.error.message,
+			};
+	}
+
+	return state;
+};
+
+const countries = combineReducers( {
+	countries: receiveCountries,
+	error: receiveCountriesError,
+	isFetching: isFetchingCountries,
+} );
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
@@ -152,6 +206,7 @@ const reducer = combineReducers( {
 	sites,
 	launchStatus,
 	sitesDomains,
+	countries,
 } );
 
 export type State = ReturnType< typeof reducer >;

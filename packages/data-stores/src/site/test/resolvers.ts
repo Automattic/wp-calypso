@@ -7,7 +7,7 @@
  */
 
 import { register } from '../';
-import { getSite } from '../resolvers';
+import { getSite, getCountries } from '../resolvers';
 
 beforeAll( () => {
 	register( { client_id: '', client_secret: '' } );
@@ -72,6 +72,34 @@ describe( 'getSite', () => {
 			type: 'RECEIVE_SITE_FAILED',
 			siteId,
 			response: undefined,
+		} );
+
+		expect( generator.next().done ).toBe( true );
+	} );
+} );
+
+describe( 'getCountries', () => {
+	it( 'should dispatch a fetchCountries action object on boot and shoudl return a receiveCountries action object on success', async () => {
+		const countries = {
+			'AL:AL-01': 'Albania — Berat',
+		};
+
+		const generator = getCountries();
+
+		expect( await generator.next().value ).toEqual( {
+			type: 'FETCH_COUNTRIES',
+		} );
+
+		expect( await generator.next().value ).toEqual( {
+			type: 'WPCOM_REQUEST',
+			request: expect.objectContaining( {
+				path: '/woocommerce/countries/regions/',
+			} ),
+		} );
+
+		expect( await generator.next( countries ).value ).toEqual( {
+			type: 'RECEIVE_COUNTRIES',
+			countries,
 		} );
 
 		expect( generator.next().done ).toBe( true );

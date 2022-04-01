@@ -27,6 +27,8 @@ export interface NewSiteErrorCreateBlog {
 	blog_id?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
+export type WooCountries = Record< string, string >;
+
 export type NewSiteResponse =
 	| NewSiteSuccessResponse
 	| NewSiteErrorResponse

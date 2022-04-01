@@ -7,7 +7,13 @@
  */
 
 import { createActions } from '../actions';
-import { sites, launchStatus } from '../reducer';
+import {
+	sites,
+	launchStatus,
+	isFetchingCountries,
+	receiveCountries as receiveCountriesReducer,
+	receiveCountriesError,
+} from '../reducer';
 import {
 	SiteLaunchError,
 	SiteLaunchState,
@@ -123,6 +129,63 @@ describe( 'Site', () => {
 			};
 
 			expect( launchStatus( originalState, action ) ).toEqual( expected );
+		} );
+	} );
+
+	describe( 'Countries', () => {
+		type ClientCredentials = { client_id: string; client_secret: string };
+		type WooCountries = Record< string, string >;
+
+		let client_id: string;
+		let client_secret: string;
+		let mockedClientCredentials: ClientCredentials;
+		let originalState: WooCountries;
+
+		beforeEach( () => {
+			client_id = 'magic_client_id';
+			client_secret = 'magic_client_secret';
+			mockedClientCredentials = { client_id, client_secret };
+			originalState = {
+				countries: {
+					countries: {},
+					isFetching: false,
+				},
+			};
+		} );
+
+		it( 'should default to the initial state when an unknown action is dispatched', () => {
+			const state = isFetchingCountries( undefined, { type: 'TEST_ACTION' } );
+			expect( state ).toStrictEqual( false );
+		} );
+
+		it( 'should receive an error response when a RECEIVE_COUNTRIES_FAILED action is dispatched', () => {
+			const { receiveCountriesFailed } = createActions( mockedClientCredentials );
+			const error = {
+				error: 'test',
+				status: 500,
+				statusCode: 500,
+				name: 'test',
+				message: 'This is a test error',
+			};
+			const action = receiveCountriesFailed( error );
+			const expected = {
+				...error,
+			};
+
+			expect( receiveCountriesError( originalState, action ) ).toEqual( expected );
+		} );
+
+		it( 'should receive a list of countries when a RECEIVE_COUNTRIES action is dispatched', () => {
+			const { receiveCountries } = createActions( mockedClientCredentials );
+			const countries = {
+				'AL:AL-01': 'Albania — Berat',
+			};
+			const action = receiveCountries( countries );
+			const expected = {
+				...countries,
+			};
+
+			expect( receiveCountriesReducer( originalState, action ) ).toEqual( expected );
 		} );
 	} );
 } );

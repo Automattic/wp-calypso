@@ -55,3 +55,7 @@ export const getSiteSubdomain = ( _: State, siteId: number ) =>
 	select( STORE_KEY )
 		.getSiteDomains( siteId )
 		?.find( ( domain ) => domain.is_subdomain );
+
+export const getCountries = ( state: State ) => {
+	return state.countries;
+};

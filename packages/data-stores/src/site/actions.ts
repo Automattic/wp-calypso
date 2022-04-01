@@ -11,6 +11,8 @@ import type {
 	Cart,
 	Domain,
 	SiteLaunchError as SiteLaunchErrorType,
+	NewSiteErrorResponse as ReceiveCountriesErrorResponse,
+	WooCountries,
 } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
@@ -210,6 +212,20 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return data?.is_fse_active ?? false;
 	}
 
+	const fetchCountries = () => ( {
+		type: 'FETCH_COUNTRIES' as const,
+	} );
+
+	const receiveCountries = ( countries: WooCountries ) => ( {
+		type: 'RECEIVE_COUNTRIES' as const,
+		countries,
+	} );
+
+	const receiveCountriesFailed = ( error: ReceiveCountriesErrorResponse ) => ( {
+		type: 'RECEIVE_COUNTRIES_FAILED' as const,
+		error,
+	} );
+
 	return {
 		receiveSiteDomains,
 		saveSiteTitle,
@@ -233,6 +249,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		launchSiteFailure,
 		getCart,
 		setCart,
+		fetchCountries,
+		receiveCountries,
+		receiveCountriesFailed,
 	};
 }
 
@@ -254,6 +273,9 @@ export type Action =
 			| ActionCreators[ 'launchSiteStart' ]
 			| ActionCreators[ 'launchSiteSuccess' ]
 			| ActionCreators[ 'launchSiteFailure' ]
+			| ActionCreators[ 'fetchCountries' ]
+			| ActionCreators[ 'receiveCountries' ]
+			| ActionCreators[ 'receiveCountriesFailed' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };
