@@ -812,6 +812,22 @@ describe( 'getRenewalItemFromProduct()', () => {
 			} );
 		} );
 	} );
+	describe( 'isRenewable', () => {
+		test( 'should return the corresponding renewal item', () => {
+			expect(
+				getRenewalItemFromProduct(
+					buildPurchase( { product_slug: 'woocommerce_subscriptions_monthly', isRenewable: true } ),
+					properties
+				)
+			).toEqual( {
+				extra: {
+					purchaseId: 123,
+					purchaseType: 'renewal',
+				},
+				product_slug: 'woocommerce_subscriptions_monthly',
+			} );
+		} );
+	} );
 
 	describe( 'renewal not supported', () => {
 		test( 'should return the corresponding renewal item', () => {
