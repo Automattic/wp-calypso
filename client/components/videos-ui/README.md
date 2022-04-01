@@ -46,4 +46,4 @@ this case `onClose` and `onBackClick`).
     - `course` the course information.
     - `isCourseComplete` wheter the course was viewed completely by the user.
 - `areVideosTranslated` a boolean flag indicating wheter the videos are translated from English. If they
-are not a banner displaying this situation is showed to the user.
+are not, a banner displaying this situation is shown to the user.
