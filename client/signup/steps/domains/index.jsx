@@ -334,8 +334,6 @@ class DomainsStep extends Component {
 
 		this.props.recordAddDomainButtonClickInTransferDomain( domain, this.getAnalyticsSection() );
 
-		excludePlansStep( this.props.submitSignupStep );
-
 		this.props.submitSignupStep(
 			Object.assign(
 				{
