@@ -21,6 +21,7 @@ interface Props {
 	footer: ReactNode;
 	urlQueryArgs: QueryArgs;
 	siteSlug?: string;
+	locale?: string;
 }
 
 export const StoragePricing: React.FC< Props > = ( {
@@ -30,6 +31,7 @@ export const StoragePricing: React.FC< Props > = ( {
 	footer,
 	urlQueryArgs,
 	siteSlug,
+	locale,
 } ) => {
 	const [ duration, setDuration ] = useState< Duration >( defaultDuration );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -61,6 +63,7 @@ export const StoragePricing: React.FC< Props > = ( {
 					duration={ duration }
 					urlQueryArgs={ urlQueryArgs }
 					siteSlug={ siteSlug }
+					locale={ locale }
 				/>
 			</Main>
 			{ footer }

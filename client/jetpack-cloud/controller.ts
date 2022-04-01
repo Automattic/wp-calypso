@@ -1,3 +1,4 @@
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import page from 'page';
 import { createElement } from 'react';
 import { NoJetpackSitesMessage } from 'calypso/components/jetpack/no-jetpack-sites-message';
@@ -206,7 +207,11 @@ export async function cloudSiteSelection(
 	}
 
 	if ( siteFragment ) {
-		if ( context.path.startsWith( '/pricing' ) ) {
+		const languages = getLanguageSlugs().join( '|' );
+		// Regex defines url starts with /:locale/pricing or /pricing
+		const pricingMatchingPath = new RegExp( `^(/(?:${ languages }))?/pricing` );
+
+		if ( pricingMatchingPath.test( context.path ) ) {
 			const { id } = await fetchSite( context, siteFragment );
 			if ( ! id ) {
 				await siteSelectionWithoutFragment( context, next );
