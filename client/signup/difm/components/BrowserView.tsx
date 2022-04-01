@@ -85,7 +85,7 @@ const Line = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
 function Header( props: { isSelected?: boolean; isClickDisabled?: boolean } ) {
 	return (
 		<HeaderContainer { ...props }>
-			<img src={ threeDots } alt="page preview" />
+			<img src={ threeDots } alt="three dots" />
 			<Line { ...props } />
 		</HeaderContainer>
 	);
