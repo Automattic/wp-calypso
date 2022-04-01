@@ -1,9 +1,9 @@
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import UpsellBackgroundImage from 'calypso/assets/images/jetpack/rna-card-bg.png';
-import DefaultImage from 'calypso/assets/images/jetpack/rna-image-Default.png';
+import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
 
 import './style.scss';
 
@@ -31,7 +31,7 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 	isPlaceholder,
 } ) => {
 	return (
-		<Card
+		<div
 			className={ classNames( 'jetpack-rna-action-card', {
 				'is-placeholder': isPlaceholder,
 			} ) }
@@ -72,7 +72,7 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 					) }
 				</div>
 			</div>
-		</Card>
+		</div>
 	);
 };
 
