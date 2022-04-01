@@ -16,12 +16,6 @@ import photoGallery from 'calypso/signup/difm/images/page-descriptions/photo-gal
 import serviceShowcase from 'calypso/signup/difm/images/page-descriptions/service-showcase.svg';
 import threeDots from 'calypso/signup/difm/images/three-dots.svg';
 
-const ContainerShadow = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
-	transition: box-shadow 400ms ease-in-out, border-box 400ms ease-in-out;
-	&:hover {
-	}
-`;
-
 const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
 	border: 1px solid
 		${ ( { isSelected } ) => ( isSelected ? 'var( --studio-white )' : 'var( --studio-gray-10 )' ) };
@@ -147,14 +141,12 @@ export function BrowserView( {
 
 	const selectionProps = { isSelected, isClickDisabled };
 	return (
-		<ContainerShadow { ...selectionProps } onClick={ onClick }>
-			<Container { ...selectionProps }>
-				{ selectedIndex > -1 ? <SelectedCount>{ selectedIndex + 1 }</SelectedCount> : null }
-				<Header { ...selectionProps } />
-				<Content>
-					<img src={ getPageImage() } alt="page preview" />
-				</Content>
-			</Container>
-		</ContainerShadow>
+		<Container { ...selectionProps } onClick={ onClick }>
+			{ selectedIndex > -1 ? <SelectedCount>{ selectedIndex + 1 }</SelectedCount> : null }
+			<Header { ...selectionProps } />
+			<Content>
+				<img src={ getPageImage() } alt="page preview" />
+			</Content>
+		</Container>
 	);
 }
