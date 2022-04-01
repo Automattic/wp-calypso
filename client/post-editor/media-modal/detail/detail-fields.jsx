@@ -18,6 +18,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EditorMediaModalFieldset from '../fieldset';
 
@@ -362,11 +363,9 @@ class EditorMediaModalDetailFields extends Component {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const hasVideoPrivacyFeature = hasActiveSiteFeature(
-		state,
-		siteId,
-		'videopress-privacy-setting'
-	);
+	const isWpcom = ! isJetpackSite( state, siteId );
+	const hasVideoPrivacyFeature =
+		isWpcom && hasActiveSiteFeature( state, siteId, 'videopress-privacy-setting' );
 
 	return {
 		siteId,
