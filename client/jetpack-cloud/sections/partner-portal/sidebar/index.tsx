@@ -69,6 +69,18 @@ class PartnerPortalSidebar extends Component< Props > {
 								selected={ itemLinkMatches( [ '/partner-portal/payment-methods' ], path ) }
 							/>
 						) }
+
+						{ config.isEnabled( 'jetpack/partner-portal-payment' ) && (
+							<SidebarItem
+								customIcon={ <JetpackIcons icon="money" /> }
+								label={ translate( 'Past Invoices', {
+									comment: 'Jeptack sidebar navigation item',
+								} ) }
+								link="/partner-portal/invoices"
+								onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Past Invoices' ) }
+								selected={ itemLinkMatches( [ '/partner-portal/invoices' ], path ) }
+							/>
+						) }
 					</SidebarMenu>
 				</SidebarRegion>
 			</Sidebar>
