@@ -8,81 +8,91 @@ import {
 	SERVICE_SHOWCASE_PAGE,
 	SITEMAP_PAGE,
 } from 'calypso/signup/difm/constants';
-import aboutPage from 'calypso/signup/difm/images/about-page.svg';
-import blogPage from 'calypso/signup/difm/images/blog-page.svg';
-import contactPage from 'calypso/signup/difm/images/contact-page.svg';
-import homePage from 'calypso/signup/difm/images/home-page.svg';
-import photoGallery from 'calypso/signup/difm/images/photo-gallery.svg';
-import serviceShowcase from 'calypso/signup/difm/images/service-showcase.svg';
+import aboutPage from 'calypso/signup/difm/images/page-descriptions/about-page.svg';
+import blogPage from 'calypso/signup/difm/images/page-descriptions/blog-page.svg';
+import contactPage from 'calypso/signup/difm/images/page-descriptions/contact-page.svg';
+import homePage from 'calypso/signup/difm/images/page-descriptions/home-page.svg';
+import photoGallery from 'calypso/signup/difm/images/page-descriptions/photo-gallery.svg';
+import serviceShowcase from 'calypso/signup/difm/images/page-descriptions/service-showcase.svg';
+import threeDots from 'calypso/signup/difm/images/three-dots.svg';
 
-const ContainerBoarder = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
-	border: 1px solid
-		${ ( { isSelected } ) => ( isSelected ? 'var( --studio-blue-50 )' : 'var( --studio-white )' ) };
-	border-radius: 10px;
-	transition: border-color 500ms ease-in-out, border-box 500ms ease-in-out;
+const ContainerShadow = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
+	transition: box-shadow 400ms ease-in-out, border-box 400ms ease-in-out;
 	&:hover {
-		border: 1px solid
-			${ ( { isClickDisabled, isSelected } ) => {
-				if ( isClickDisabled ) {
-					return 'var( --studio-white )';
-				} else if ( isSelected ) {
-					return 'var( --studio-blue-50 )';
-				}
-				return 'var( --studio-white )';
-			} };
-		box-shadow: 0px 0px 1px 4px
-			${ ( { isClickDisabled, isSelected } ) => {
-				if ( isClickDisabled || isSelected ) {
-					return 'var( --studio-white )';
-				}
-				return '#E3EAF0';
-			} };
 	}
 `;
+
 const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
 	border: 1px solid
-		${ ( { isSelected } ) => ( isSelected ? 'var( --studio-blue-50 )' : 'var( --studio-white )' ) };
-	border-radius: 10px;
-	transition: border-color 400ms ease-in-out, border-box 400ms ease-in-out;
+		${ ( { isSelected } ) => ( isSelected ? 'var( --studio-white )' : 'var( --studio-gray-10 )' ) };
+	box-shadow: 0px 0px 0px
+		${ ( { isSelected } ) => {
+			if ( isSelected ) {
+				return '2px var( --studio-blue-50 )';
+			}
+			return '1px var( --studio-white )';
+		} };
+	border-radius: 7px;
+	transition: box-shadow 400ms ease-in-out;
 	&:hover {
 		border: 1px solid
 			${ ( { isClickDisabled, isSelected } ) => {
 				if ( isClickDisabled ) {
-					return 'var( --studio-white )';
+					return 'var( --studio-gray-10 )';
 				} else if ( isSelected ) {
-					return 'var( --studio-blue-50 )';
+					return 'var( --studio-white )';
 				}
 				return 'var( --studio-gray-50 )';
 			} };
 
-		border-radius: 10px;
+		box-shadow: ${ ( { isClickDisabled, isSelected } ) => {
+			if ( isSelected ) {
+				return '0px 0px 0px 2px var( --studio-blue-50 )';
+			} else if ( isClickDisabled ) {
+				return 'none';
+			}
+			return '0px 0px 0px 3px #E3EAF0';
+		} };
 	}
 	width: 222px;
+	height: 170px;
 	position: relative;
+	cursor: ${ ( { isClickDisabled } ) => ( isClickDisabled ? 'default' : 'pointer' ) }; ;
 `;
 
-const Header = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: left;
-	position: relative;
-	width: 222px;
-	height: 12px;
-	border: 1px solid var( --studio-gray-5 );
-	border-radius: 7px 7px 0 0;
-	margin: 0 auto;
-	box-sizing: border-box;
-	padding: 5px;
-`;
+const HeaderContainer = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
+    height: 7px;
+    position: relative;
+    border-radius: 6px;
+    padding: 5px 0 0px 6.5px;
+	img {
+    	position: absolute;
+	}
+}`;
+
+const Line = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
+	height: 0.75px;
+    background-color: var( --studio-gray-10 );
+    position: absolute;
+	width: ${ ( { isSelected } ) => ( isSelected ? '224px' : '222.5px' ) };
+	left: ${ ( { isSelected } ) => ( isSelected ? '-1px' : '0' ) };
+    top: 12px;
+}`;
+
+function Header( props: { isSelected?: boolean; isClickDisabled?: boolean } ) {
+	return (
+		<HeaderContainer { ...props }>
+			<img src={ threeDots } alt="page preview" />
+			<Line { ...props } />
+		</HeaderContainer>
+	);
+}
 
 const Content = styled.div`
-	border: 1px solid var( --studio-gray-5 );
-	border-top: none;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 170px;
-	border-radius: 0 0 7px 7px;
+	height: 157px;
 `;
 
 const SelectedCount = styled.div`
@@ -130,24 +140,16 @@ export function BrowserView( {
 		}
 	};
 
+	const selectionProps = { isSelected, isClickDisabled };
 	return (
-		<ContainerBoarder isSelected={ isSelected } isClickDisabled={ isClickDisabled }>
-			<Container isSelected={ isSelected } isClickDisabled={ isClickDisabled }>
+		<ContainerShadow { ...selectionProps }>
+			<Container { ...selectionProps }>
 				{ selectedIndex > -1 ? <SelectedCount>{ selectedIndex + 1 }</SelectedCount> : null }
-
-				<Header>
-					<svg width={ 16 } height={ 4 } fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path
-							d="M3.771 1.645c0 .909-.729 1.645-1.628 1.645-.9 0-1.629-.736-1.629-1.645C.514.737 1.244 0 2.143 0c.9 0 1.628.737 1.628 1.645ZM9.743 1.645c0 .909-.73 1.645-1.629 1.645-.9 0-1.628-.736-1.628-1.645C6.486.737 7.215 0 8.114 0c.9 0 1.629.737 1.629 1.645ZM15.714 1.645c0 .909-.729 1.645-1.628 1.645-.9 0-1.629-.736-1.629-1.645 0-.908.73-1.645 1.629-1.645s1.628.737 1.628 1.645Z"
-							fill="#000"
-							fillOpacity={ 0.12 }
-						/>
-					</svg>
-				</Header>
+				<Header { ...selectionProps } />
 				<Content>
 					<img src={ getPageImage() } alt="page preview" />
 				</Content>
 			</Container>
-		</ContainerBoarder>
+		</ContainerShadow>
 	);
 }
