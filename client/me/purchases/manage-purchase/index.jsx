@@ -180,10 +180,8 @@ class ManagePurchase extends Component {
 	}
 
 	handleRenew = () => {
-		const { purchase, siteSlug, redirectTo, productsList } = this.props;
-
-		const options = { redirectTo };
-		options.isMarketplaceProduct = hasMarketplaceProduct( productsList, purchase.productSlug );
+		const { purchase, siteSlug, redirectTo } = this.props;
+		const options = redirectTo ? { redirectTo } : undefined;
 
 		handleRenewNowClick( purchase, siteSlug, options );
 	};

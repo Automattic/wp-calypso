@@ -530,7 +530,7 @@ function createRenewalCartItemFromProduct(
 			domain?: string;
 			users?: GSuiteProductUser[];
 		},
-	properties: { domain?: string; isMarketplaceProduct?: boolean }
+	properties: { domain?: string }
 ) {
 	const slug = camelOrSnakeSlug( product );
 
@@ -582,7 +582,7 @@ function createRenewalCartItemFromProduct(
 		return domainItem( slug, properties.domain ?? '' );
 	}
 
-	if ( properties.isMarketplaceProduct && isRenewable( product ) ) {
+	if ( isRenewable( product ) ) {
 		return renewableProductItem( slug );
 	}
 
