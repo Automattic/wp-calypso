@@ -37,13 +37,13 @@ this case `onClose` and `onBackClick`).
 
 ## Props
 
-* `courseSlug` a string identifying the course metadata. This is used to fetch course information from
+- `courseSlug` a string identifying the course metadata. This is used to fetch course information from
 the data endpoint.
 
-* `HeaderBar` a component representing the top bar of the Video UI. Props received:
-    * `course` the course information.
-* `FooterBar` a component representing the fotter of the Video UI. Props received:
-    * `course` the course information.
-    * `isCourseComplete` wheter the course was viewed completely by the user.
-* `areVideosTranslated` a boolean flag indicating wheter the videos are translated from English. If they
+- `HeaderBar` a component representing the top bar of the Video UI. Props received:
+    - `course` the course information.
+- `FooterBar` a component representing the fotter of the Video UI. Props received:
+    - `course` the course information.
+    - `isCourseComplete` wheter the course was viewed completely by the user.
+- `areVideosTranslated` a boolean flag indicating wheter the videos are translated from English. If they
 are not a banner displaying this situation is showed to the user.
