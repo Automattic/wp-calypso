@@ -1,6 +1,6 @@
 # Videos UI
 
-The Videos UI is ment to show a video showcase fullscreen. The UI can be adapted to different
+The Videos UI is meant to show a full screen video showcase. The UI can be adapted to different
 contexts by customizing the header and footer components.
 
 When the component is loaded it will make a request to the API using the `useCourseData` selector
