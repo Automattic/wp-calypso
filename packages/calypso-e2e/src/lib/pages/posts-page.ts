@@ -1,8 +1,6 @@
-import { URL } from 'url';
 import { Page, Response } from 'playwright';
-import { getCalypsoURL, parseSiteHostFromUrl } from '../../data-helper';
+import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry, clickNavTab } from '../../element-helper';
-import envVariables from '../../env-variables';
 
 type TrashedMenuItems = 'Restore' | 'Copy link' | 'Delete Permanently';
 type GenericMenuItems = 'Trash';
@@ -44,11 +42,7 @@ export class PostsPage {
 	 * Example {@link https://wordpress.com/posts}
 	 */
 	async visit(): Promise< Response | null > {
-		const [ , response ] = await Promise.all( [
-			// We need to wait until the site-specific redirect happens.
-			this.page.waitForNavigation( { url: '**/posts/**' } ),
-			this.page.goto( getCalypsoURL( 'posts' ) ),
-		] );
+		const response = await this.page.goto( getCalypsoURL( 'posts' ) );
 		await this.waitUntilLoaded();
 		return response;
 	}
@@ -108,23 +102,6 @@ export class PostsPage {
 	 */
 	async newPost(): Promise< void > {
 		const newPostLocator = this.page.locator( selectors.addNewPostButton );
-
-		// Get ready for some temporary yuckiness!
-		// On atomic sites, the Gutenframe does not play well with our E2E tests.
-		// For the time being, we need to make redirect any click navigations from this Calypso page
-		// to the wp-admin version of the editor.
-		if ( envVariables.TEST_ON_ATOMIC ) {
-			const siteHostName = parseSiteHostFromUrl( this.page.url() );
-			const wpAdminEditorUrl = new URL( `https://${ siteHostName }` );
-			wpAdminEditorUrl.pathname = '/wp-admin/post-new.php';
-			wpAdminEditorUrl.searchParams.append( 'post_type', 'post' );
-			wpAdminEditorUrl.searchParams.append( 'calypsoify', '1' );
-
-			await newPostLocator.evaluate(
-				( node, newHref ) => node.setAttribute( 'href', newHref ),
-				wpAdminEditorUrl.href
-			);
-		}
 		await newPostLocator.click();
 	}
 

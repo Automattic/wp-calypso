@@ -1,7 +1,6 @@
 import { URL } from 'url';
 import { Page } from 'playwright';
 import { getCalypsoURL, parseSiteHostFromUrl } from '../../data-helper';
-import envVariables from '../../env-variables';
 
 type IsUrlMatch = ( url: string ) => boolean;
 type TransformUrl = ( url: string ) => string;
@@ -105,12 +104,12 @@ export const transformEditorRelatedUrls = ( url: string ) => {
  * @param page Playwright page
  */
 export async function hardCodeAtomicEditorRouting( page: Page ): Promise< void > {
-	if ( ! envVariables.TEST_ON_ATOMIC ) {
-		return;
-	}
+	// if ( ! envVariables.TEST_ON_ATOMIC ) {
+	// 	return;
+	// }
 
-	page.route( '**/*', ( route, request ) => {
-		const url = transformEditorRelatedUrls( request.url() );
+	page.route( /\/wp-admin\/edit\.php.*/, ( route, request ) => {
+		const url = transformToCalypsoPostCollection( request.url() );
 		route.continue( { url } );
 	} );
 }
