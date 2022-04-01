@@ -78,7 +78,7 @@ describe( 'Welcome Tour', () => {
 			expect( getTourSteps( 'en', true, true ) ).toEqual(
 				expect.arrayContaining( [
 					expect.objectContaining( {
-						meta: expect.objectContaining( { heading: 'Edit your site!' } ),
+						meta: expect.objectContaining( { heading: 'Edit your site' } ),
 					} ),
 				] )
 			);
@@ -87,7 +87,7 @@ describe( 'Welcome Tour', () => {
 			expect( getTourSteps( 'en', true, false ) ).not.toEqual(
 				expect.arrayContaining( [
 					expect.objectContaining( {
-						meta: expect.objectContaining( { heading: 'Edit your site!' } ),
+						meta: expect.objectContaining( { heading: 'Edit your site' } ),
 					} ),
 				] )
 			);
