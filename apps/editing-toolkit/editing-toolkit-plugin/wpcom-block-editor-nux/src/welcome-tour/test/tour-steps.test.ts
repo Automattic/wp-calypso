@@ -74,6 +74,24 @@ describe( 'Welcome Tour', () => {
 				] )
 			);
 		} );
+		it( 'should retrieve the "Edit your site" slide, when in site editor', () => {
+			expect( getTourSteps( 'en', true, true ) ).toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						meta: expect.objectContaining( { heading: 'Edit your site!' } ),
+					} ),
+				] )
+			);
+		} );
+		it( 'should not retrieve the "Edit your site" slide, when not in site editor', () => {
+			expect( getTourSteps( 'en', true, false ) ).not.toEqual(
+				expect.arrayContaining( [
+					expect.objectContaining( {
+						meta: expect.objectContaining( { heading: 'Edit your site!' } ),
+					} ),
+				] )
+			);
+		} );
 		it( 'should retrieve the "Congratulations!" slide, with correct url', () => {
 			expect( getTourSteps( 'en', true ) ).toEqual(
 				expect.arrayContaining( [

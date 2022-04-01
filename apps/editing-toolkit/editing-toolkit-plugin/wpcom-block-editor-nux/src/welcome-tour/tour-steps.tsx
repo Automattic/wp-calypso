@@ -54,7 +54,7 @@ function getTourAssets( key: string ): TourAsset | undefined {
 function getTourSteps(
 	localeSlug: string,
 	referencePositioning = false,
-	isSiteEditor: boolean
+	isSiteEditor = false
 ): WpcomStep[] {
 	return [
 		{
@@ -296,7 +296,6 @@ function getTourSteps(
 								),
 							},
 							imgSrc: getTourAssets( 'editYourSite' ),
-							animation: 'undo-button',
 						},
 						options: {
 							classNames: {
