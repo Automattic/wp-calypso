@@ -9,10 +9,6 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_WPCOM_PRO,
-	isPro,
-	isBusiness,
-	isEnterprise,
-	isEcommerce,
 } from '@automattic/calypso-products';
 import { filter, map, pick, sortBy } from 'lodash';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
@@ -328,19 +324,6 @@ export function getPluginAuthorProfileKeyword( plugin ) {
 	}
 
 	return plugin.author_profile.replace( WPORG_PROFILE_URL, '' ).replaceAll( '/', '' );
-}
-
-/**
- * @param site
- * @returns if a given site can install Marketplace products
- */
-export function isMarketplaceInstallationEligibleSite( site ) {
-	return (
-		isPro( site?.plan ) ||
-		isBusiness( site?.plan ) ||
-		isEnterprise( site?.plan ) ||
-		isEcommerce( site?.plan )
-	);
 }
 
 /**

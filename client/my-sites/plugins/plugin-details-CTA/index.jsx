@@ -1,4 +1,4 @@
-import { isFreePlanProduct } from '@automattic/calypso-products';
+import { isFreePlanProduct, FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -17,12 +17,12 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
-import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -54,7 +54,9 @@ const PluginDetailsCTA = ( {
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 	const isFreePlan = selectedSite && isFreePlanProduct( selectedSite.plan );
 
-	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
+	const shouldUpgrade = useSelector(
+		( state ) => ! hasActiveSiteFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
+	);
 
 	// Eligibilities for Simple Sites.
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>

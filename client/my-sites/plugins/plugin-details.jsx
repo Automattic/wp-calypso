@@ -1,3 +1,4 @@
+import { FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -14,7 +15,6 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isMarketplaceInstallationEligibleSite } from 'calypso/lib/plugins/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -57,6 +57,7 @@ import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-use
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	isJetpackSite,
@@ -375,15 +376,13 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPe
 	);
 
 	const availableOnSites = useSelector( ( state ) =>
-		sitesWithoutPlugin.filter(
-			( site ) =>
-				isMarketplaceInstallationEligibleSite( site ) && isSiteAutomatedTransfer( state, site.ID )
+		sitesWithoutPlugin.filter( ( site ) =>
+			hasActiveSiteFeature( state, site.ID, FEATURE_INSTALL_PLUGINS )
 		)
 	);
 	const upgradeNeededSites = useSelector( ( state ) =>
 		sitesWithoutPlugin.filter(
-			( site ) =>
-				! isMarketplaceInstallationEligibleSite( site ) && isSiteAutomatedTransfer( state, site.ID )
+			( site ) => ! hasActiveSiteFeature( state, site.ID, FEATURE_INSTALL_PLUGINS )
 		)
 	);
 
