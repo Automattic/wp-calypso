@@ -104,6 +104,7 @@ type ImperativeHandle = {
 	focus: () => void;
 	blur: () => void;
 	clear: () => void;
+	setKeyword: ( value: string ) => void;
 };
 
 const InnerSearch = (
@@ -162,6 +163,9 @@ const InnerSearch = (
 			},
 			blur() {
 				searchInput.current?.blur();
+			},
+			setKeyword( value: string ) {
+				setKeyword( value );
 			},
 			clear() {
 				setKeyword( '' );
