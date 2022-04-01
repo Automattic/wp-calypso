@@ -10,14 +10,18 @@ const request = ( siteId ) => ( dispatch, getState ) => {
 	}
 };
 
-export default function QuerySiteFeatures( { siteId } ) {
+const siteIdsHash = ( siteIds ) => {
+	siteIds.sort();
+	return siteIds.join( '_' );
+};
+export default function QuerySiteFeatures( { siteIds } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( request( siteId ) );
-	}, [ dispatch, siteId ] );
+		siteIds.forEach( ( siteId ) => dispatch( request( siteId ) ) );
+	}, [ dispatch, siteIdsHash( siteIds ) ] );
 
 	return null;
 }
 
-QuerySiteFeatures.propTypes = { siteId: PropTypes.number };
+QuerySiteFeatures.propTypes = { siteIds: PropTypes.arrayOf( PropTypes.number ) };
