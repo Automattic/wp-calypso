@@ -77,6 +77,7 @@ const Line = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
 	width: ${ ( { isSelected } ) => ( isSelected ? '224px' : '222.5px' ) };
 	left: ${ ( { isSelected } ) => ( isSelected ? '-1px' : '0' ) };
     top: 12px;
+    z-index: -1;
 }`;
 
 function Header( props: { isSelected?: boolean; isClickDisabled?: boolean } ) {
@@ -114,11 +115,13 @@ export function BrowserView( {
 	isSelected,
 	isClickDisabled,
 	selectedIndex,
+	onClick,
 }: {
 	pageId: string;
 	isSelected?: boolean;
 	isClickDisabled?: boolean;
 	selectedIndex: number;
+	onClick: () => void;
 } ) {
 	const getPageImage = () => {
 		switch ( pageId ) {
@@ -142,7 +145,7 @@ export function BrowserView( {
 
 	const selectionProps = { isSelected, isClickDisabled };
 	return (
-		<ContainerShadow { ...selectionProps }>
+		<ContainerShadow { ...selectionProps } onClick={ onClick }>
 			<Container { ...selectionProps }>
 				{ selectedIndex > -1 ? <SelectedCount>{ selectedIndex + 1 }</SelectedCount> : null }
 				<Header { ...selectionProps } />
