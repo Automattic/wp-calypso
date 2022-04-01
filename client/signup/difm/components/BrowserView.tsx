@@ -74,10 +74,12 @@ const Line = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
 	height: 0.75px;
     background-color: var( --studio-gray-10 );
     position: absolute;
-	width: ${ ( { isSelected } ) => ( isSelected ? '224px' : '222.5px' ) };
+	width: ${ ( { isSelected } ) => ( isSelected ? '224px' : '222px' ) };
 	left: ${ ( { isSelected } ) => ( isSelected ? '-1px' : '0' ) };
     top: 12px;
-    z-index: -1;
+	&:hover{
+		width: ${ ( { isSelected } ) => ( isSelected ? '224px' : '221px' ) };
+	}
 }`;
 
 function Header( props: { isSelected?: boolean; isClickDisabled?: boolean } ) {
