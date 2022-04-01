@@ -2,7 +2,15 @@ import { Locator, Page } from 'playwright';
 
 const selectors = {
 	blockLink: ( blockName: string ) => `.block-editor-list-view-leaf a:has-text("${ blockName }")`,
+	moreOptionsButton: 'button[aria-label^="Options for"]',
+	blockByLocation: ( { level, position }: BlockListLocation ) =>
+		`.block-editor-list-view-leaf[aria-level=${ level }][aria-posinset=${ position }]`,
 };
+
+interface BlockListLocation {
+	level: number;
+	position: number;
+}
 
 /**
  * Represents an instance of the WordPress.com Editor's sidebar list view.
@@ -30,6 +38,40 @@ export class EditorBlockListViewComponent {
 	 */
 	async clickFirstBlockOfType( blockName: string ): Promise< void > {
 		const locator = this.editor.locator( selectors.blockLink( blockName ) ).first();
+		await locator.click();
+	}
+
+	/**
+	 * Selects and highlights all blocks in the list view.
+	 */
+	async selectAllBlocks(): Promise< void > {
+		const firstBlockLocator = this.editor.locator(
+			selectors.blockByLocation( { level: 1, position: 1 } )
+		);
+		const numberOfBlocksInParentLevel = Number(
+			await firstBlockLocator.getAttribute( 'aria-setsize' )
+		);
+		if ( ! numberOfBlocksInParentLevel ) {
+			throw new Error( "Couldn't determine number of parent level blocks in the list view." );
+		}
+
+		const lastBlockLocator = this.editor.locator(
+			selectors.blockByLocation( { level: 1, position: numberOfBlocksInParentLevel } )
+		);
+
+		await firstBlockLocator.click();
+		await lastBlockLocator.click( { modifiers: [ 'Shift' ] } );
+	}
+
+	/**
+	 * Opens the "more options" (three dots) menu for a given block in the list view.
+	 *
+	 * @param {BlockListLocation} location Location of block in the block list tree.
+	 */
+	async openOptionsForBlock( location: BlockListLocation ): Promise< void > {
+		const locator = this.editor.locator(
+			`${ selectors.blockByLocation( location ) } >> ${ selectors.moreOptionsButton }`
+		);
 		await locator.click();
 	}
 }
