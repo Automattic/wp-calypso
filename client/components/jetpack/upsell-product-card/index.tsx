@@ -85,6 +85,13 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 		  } )
 		: null;
 
+	const upsellImageAlt = translate( 'Buy Jetpack %(productName)s', {
+		args: {
+			productName: item.displayName,
+			context: 'The Jetpack product name, ie- Backup, Scan, Search, etc.',
+		},
+		textOnly: true,
+	} );
 	const upsellImageUrl = useMemo( () => {
 		if ( isJetpackBackupSlug( productSlug ) ) {
 			return BackupImage;
@@ -144,7 +151,7 @@ const UpsellProductCard: React.FC< UpsellProductCardProps > = ( {
 			ctaButtonURL={ ctaButtonURL }
 			ctaButtonLabel={ ctaButtonLabel }
 			cardImage={ upsellImageUrl }
-			cardImageAlt={ `Buy Jetpack ${ displayName }` }
+			cardImageAlt={ upsellImageAlt }
 		>
 			{ renderProductCardBody() }
 		</JetpackRnaActionCard>
