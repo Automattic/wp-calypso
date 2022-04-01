@@ -23,7 +23,7 @@ export default function isLegacySiteWithHigherLimits( state: AppState, siteId: n
 		return false;
 	}
 
-	const siteOptions = getSiteOptions( state, siteId );
+	const siteOptions = getSiteOptions( state, siteId ) as undefined | { created_at: string };
 	const createdAt = siteOptions?.created_at ?? '';
 
 	if ( ! createdAt ) {
