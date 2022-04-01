@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import UpsellBackgroundImage from 'calypso/assets/images/jetpack/rna-card-bg.png';
-import DefaultImage from 'calypso/assets/images/jetpack/rna-image-Default.png';
+import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
 
 import './style.scss';
 
