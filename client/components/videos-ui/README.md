@@ -16,16 +16,18 @@ import ModalHeaderBar from 'calypso/components/videos-ui/modal-header-bar';
 import { COURSE_SLUGS } from 'calypso/data/courses';
 
 const Component = ( ) => {
-    <VideosUi
-        courseSlug={ COURSE_SLUGS.BLOGGING_QUICK_START }
-        HeaderBar={ ( headerProps ) => (
-            <ModalHeaderBar onClose={ onClose } { ...headerProps } />
-        ) }
-        FooterBar={ ( footerProps ) => (
-            <ModalFooterBar onBackClick={ onClose } { ...footerProps } />
-        ) }
-        areVideosTranslated={ false }
-    />
+    return (
+        <VideosUi
+            courseSlug={ COURSE_SLUGS.BLOGGING_QUICK_START }
+            HeaderBar={ ( headerProps ) => (
+                <ModalHeaderBar onClose={ onClose } { ...headerProps } />
+            ) }
+            FooterBar={ ( footerProps ) => (
+                <ModalFooterBar onBackClick={ onClose } { ...footerProps } />
+            ) }
+            areVideosTranslated={ false }
+        />
+    );
 }
 ```
 It is helpful to notice how the `HeaderBar` and `FooterBar` props are prepared. By using
