@@ -82,10 +82,25 @@ export class SiteEditorPage {
 
 	/**
 	 * Does all waiting and initial actions to prepare the site editor for interaction.
+	 *
+	 * @param {object} param0 Keyed object of options.
+	 * @param {boolean} param0.leaveWithoutSaving Set if we should auto-except dialog about unsaved changes when leaving.
 	 */
-	async prepareForInteraction(): Promise< void > {
+	async prepareForInteraction( {
+		leaveWithoutSaving = true,
+	}: {
+		leaveWithoutSaving: boolean;
+	} ): Promise< void > {
 		await this.waitUntilLoaded();
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
+
+		if ( leaveWithoutSaving ) {
+			this.page.on( 'dialog', async ( dialog ) => {
+				if ( dialog.type() === 'beforeunload' ) {
+					await dialog.accept();
+				}
+			} );
+		}
 	}
 
 	/**
