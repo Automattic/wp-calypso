@@ -32,26 +32,26 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 } ) => {
 	return (
 		<Card
-			className={ classNames( 'jetpack-RNA-action-card', {
+			className={ classNames( 'jetpack-rna-action-card', {
 				'is-placeholder': isPlaceholder,
 			} ) }
 			{ ...( ! isPlaceholder && {
 				style: { backgroundImage: `url(${ UpsellBackgroundImage })` },
 			} ) }
 		>
-			<div className="jetpack-RNA-action-card__body">
-				<div className="jetpack-RNA-action-card__content">
-					<h2 className="jetpack-RNA-action-card__header">{ headerText }</h2>
+			<div className="jetpack-rna-action-card__body">
+				<div className="jetpack-rna-action-card__content">
+					<h2 className="jetpack-rna-action-card__header">{ headerText }</h2>
 					{ subHeaderText && (
-						<p className="jetpack-RNA-action-card__description">{ subHeaderText }</p>
+						<p className="jetpack-rna-action-card__description">{ subHeaderText }</p>
 					) }
 
 					{ children && children }
 				</div>
-				<div className="jetpack-RNA-action-card__action">
+				<div className="jetpack-rna-action-card__action">
 					<Button
 						primary
-						className="jetpack-RNA-action-card__button"
+						className="jetpack-rna-action-card__button"
 						onClick={ onCtaButtonClick && onCtaButtonClick }
 						href={ ctaButtonURL ? ctaButtonURL : '#' }
 						disabled={ ! ctaButtonURL }
@@ -60,10 +60,10 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 					</Button>
 				</div>
 			</div>
-			<div className="jetpack-RNA-action-card__footer">
-				<div className="jetpack-RNA-action-card__footer-image">
+			<div className="jetpack-rna-action-card__footer">
+				<div className="jetpack-rna-action-card__footer-image">
 					{ isPlaceholder ? (
-						<div className="jetpack-RNA-action-card__placeholder-image"></div>
+						<div className="jetpack-rna-action-card__placeholder-image"></div>
 					) : (
 						<img
 							src={ cardImage }
