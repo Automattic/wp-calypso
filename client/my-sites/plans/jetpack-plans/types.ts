@@ -40,6 +40,7 @@ export interface SelectorPageProps extends BasePageProps {
 	planRecommendation?: PlanRecommendation;
 	highlightedProducts?: string[];
 	enableUserLicensesDialog?: boolean;
+	locale?: string;
 }
 
 export interface ProductsGridProps {

@@ -1,6 +1,8 @@
 import {
+	isWpComAnnualPlan,
 	findFirstSimilarPlanKey,
 	TERM_ANNUALLY,
+	TYPE_PRO,
 	TYPE_BUSINESS,
 	TYPE_SECURITY_DAILY,
 	FEATURE_SEO_PREVIEW_TOOLS,
@@ -27,6 +29,10 @@ export const SeoPreviewNudge = ( {
 	site,
 	isJetpack = false,
 } ) => {
+	const upsellType = site && isWpComAnnualPlan( site.plan.product_slug ) ? TYPE_PRO : TYPE_BUSINESS;
+	const planName =
+		upsellType === TYPE_PRO ? translate( 'a Pro plan' ) : translate( 'a Business plan' );
+
 	return (
 		<div className="preview-upgrade-nudge">
 			<QueryPlans />
@@ -38,14 +44,17 @@ export const SeoPreviewNudge = ( {
 					site &&
 					findFirstSimilarPlanKey(
 						site.plan.product_slug,
-						isJetpack ? { type: TYPE_SECURITY_DAILY, term: TERM_ANNUALLY } : { type: TYPE_BUSINESS }
+						isJetpack ? { type: TYPE_SECURITY_DAILY, term: TERM_ANNUALLY } : { type: upsellType }
 					)
 				}
 				title={
 					canCurrentUserUpgrade
-						? translate( 'Upgrade to a Business plan to unlock the power of our SEO tools!' )
+						? translate( 'Upgrade to %(planName)s to unlock the power of our SEO tools!', {
+								args: { planName },
+						  } )
 						: translate(
-								"Unlock powerful SEO tools! Contact your site's administrator to upgrade to a Business plan."
+								"Unlock powerful SEO tools! Contact your site's administrator to upgrade to %(planName)s.",
+								{ args: { planName } }
 						  )
 				}
 				forceDisplay

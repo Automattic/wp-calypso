@@ -55,6 +55,12 @@ export type ResponseDomain = {
 	blogId: number;
 	bundledPlanSubscriptionId: string | number | null | undefined;
 	canSetAsPrimary: boolean;
+	canManageDnsRecords: boolean;
+	canManageNameServers: boolean;
+	canUpdateContactInfo: boolean;
+	cannotManageDnsRecordsReason: string | null;
+	cannotManageNameServersReason: string | null;
+	cannotUpdateContactInfoReason: string | null;
 	connectionMode: string;
 	contactInfoDisclosed: boolean;
 	contactInfoDisclosureAvailable: boolean;

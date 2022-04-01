@@ -52,7 +52,7 @@ class MediaLibraryListPlanPromo extends Component {
 						: this.props.translate( 'Uploading video requires a paid plan.' ) +
 								' ' +
 								this.props.translate(
-									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
+									'Contact your site administrator and ask them to upgrade this site to WordPress.com Pro.'
 								),
 					2
 				);
@@ -67,7 +67,7 @@ class MediaLibraryListPlanPromo extends Component {
 						: this.props.translate( 'Uploading audio requires a paid plan.' ) +
 								' ' +
 								this.props.translate(
-									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
+									'Contact your site administrator and ask them to upgrade this site to WordPress.com Pro.'
 								),
 					2
 				);

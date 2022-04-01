@@ -1,4 +1,4 @@
-import { PLAN_BUSINESS, FEATURE_SFTP } from '@automattic/calypso-products';
+import { PLAN_WPCOM_PRO, FEATURE_SFTP } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
@@ -72,10 +72,10 @@ class Hosting extends Component {
 
 		const getUpgradeBanner = () => (
 			<UpsellNudge
-				title={ translate( 'Upgrade to the Business plan to access all hosting features' ) }
+				title={ translate( 'Upgrade to the Pro plan to access all hosting features' ) }
 				event="calypso_hosting_configuration_upgrade_click"
-				href={ `/checkout/${ siteId }/business` }
-				plan={ PLAN_BUSINESS }
+				href={ `/checkout/${ siteId }/pro` }
+				plan={ PLAN_WPCOM_PRO }
 				feature={ FEATURE_SFTP }
 				showIcon={ true }
 			/>

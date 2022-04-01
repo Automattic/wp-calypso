@@ -51,7 +51,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 
 		describe( 'From the sidebar inserter', function () {
 			it( 'Add pattern from sidebar inserter', async function () {
-				await editorPage.addPattern( patternName );
+				await editorPage.addPatternFromSidebar( patternName );
 			} );
 
 			it( '"wpcom_pattern_inserted" event is added with correct "pattern_name" property', async function () {

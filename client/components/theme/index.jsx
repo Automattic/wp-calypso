@@ -197,7 +197,7 @@ export class Theme extends Component {
 					/>
 					<div className="theme__upsell-popover">
 						<h2 className="theme__upsell-heading">
-							{ translate( 'Use this theme at no extra cost on our Premium or Business Plan' ) }
+							{ translate( 'Use this theme at no extra cost on our Pro Plan' ) }
 						</h2>
 						<Button
 							onClick={ this.onUpsellClick }

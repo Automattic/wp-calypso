@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -28,7 +27,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
 import {
-	useWPCOMPlugin,
 	useWPCOMPlugins,
 	useWPCOMFeaturedPlugins,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
@@ -330,9 +328,8 @@ const PluginsBrowser = ( {
 			<SearchBoxHeader
 				doSearch={ doSearch }
 				searchTerm={ search }
-				siteSlug={ siteSlug }
 				title={ translate( 'Plugins you need to get your projects done' ) }
-				searchTerms={ [ 'shipping', 'seo', 'portfolio', 'chat', 'newsletter' ] }
+				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
 			<PluginBrowserContent
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
@@ -446,13 +443,10 @@ const SearchListView = ( {
 		return (
 			<>
 				<PluginsBrowserList
-					plugins={
-						pluginsPagination?.page === 1
-							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ].filter(
-									filterOutPluginsFromBlockList
-							  )
-							: pluginsBySearchTerm.filter( filterOutPluginsFromBlockList )
-					}
+					plugins={ ( pluginsPagination?.page === 1
+						? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
+						: pluginsBySearchTerm
+					).filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					title={ searchTitle }
 					subtitle={ subtitle }
@@ -554,9 +548,6 @@ const PluginSingleListView = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-	const { data: spotlightPlugin, isFetched: spotlightPluginFetched } =
-		useWPCOMPlugin( 'wordpress-seo-premium', { enabled: isEnabled( 'marketplace-spotlight' ) } ) ||
-		{};
 
 	let plugins;
 	let isFetching;
@@ -573,7 +564,7 @@ const PluginSingleListView = ( {
 		return null;
 	}
 
-	plugins = plugins.filter( filterOutPluginsFromBlockList );
+	plugins = plugins.filter( isNotBlocked );
 
 	let listLink = '/plugins/' + category;
 	if ( domain ) {
@@ -592,8 +583,6 @@ const PluginSingleListView = ( {
 			variant={ PluginsBrowserListVariant.Fixed }
 			billingPeriod={ billingPeriod }
 			setBillingPeriod={ category === 'paid' && setBillingPeriod }
-			spotlightPlugin={ spotlightPlugin }
-			spotlightPluginFetched={ spotlightPluginFetched }
 			extended
 		/>
 	);
@@ -762,9 +751,9 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	);
 }
 
-const PLUGIN_SLUGS_BLOCKLIST = [ 'zamir' ];
+const PLUGIN_SLUGS_BLOCKLIST = [];
 
-function filterOutPluginsFromBlockList( plugin ) {
+function isNotBlocked( plugin ) {
 	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 

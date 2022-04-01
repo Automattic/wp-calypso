@@ -385,16 +385,17 @@ function onClickInstallPlugin( {
 		// Plugin install is handled on the backend by activating the subscription.
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
 		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
+
 		if ( upgradeAndInstall ) {
 			// We also need to add a business plan to the cart.
 			return page(
 				`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
 					selectedSite?.plan,
-					billingPeriod
+					billingPeriod,
+					eligibleForProPlan
 				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
-				}#step2`,
-				eligibleForProPlan
+				}`
 			);
 		}
 

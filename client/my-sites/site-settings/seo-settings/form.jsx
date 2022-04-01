@@ -1,7 +1,9 @@
 import {
+	isWpComAnnualPlan,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
+	TYPE_PRO,
 	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
@@ -253,6 +255,20 @@ export class SiteSettingsFormSEO extends Component {
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 
+		// the Pro plan only has an annual term for now.
+		const upsellType =
+			selectedSite.plan && isWpComAnnualPlan( selectedSite.plan.product_slug )
+				? TYPE_PRO
+				: TYPE_BUSINESS;
+		const upsellTitle =
+			upsellType === TYPE_PRO
+				? translate(
+						'Boost your search engine ranking with the powerful SEO tools in the Pro plan'
+				  )
+				: translate(
+						'Boost your search engine ranking with the powerful SEO tools in the Business plan'
+				  );
+
 		const upsellProps =
 			siteIsJetpack && ! isAtomic
 				? {
@@ -261,14 +277,12 @@ export class SiteSettingsFormSEO extends Component {
 						href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
 				  }
 				: {
-						title: translate(
-							'Boost your search engine ranking with the powerful SEO tools in the Business plan'
-						),
+						title: upsellTitle,
 						feature: FEATURE_ADVANCED_SEO,
 						plan:
 							selectedSite.plan &&
 							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-								type: TYPE_BUSINESS,
+								type: upsellType,
 							} ),
 				  };
 

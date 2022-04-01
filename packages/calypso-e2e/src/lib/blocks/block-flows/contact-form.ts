@@ -37,8 +37,8 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		await context.editorIframe.click( selectors.nameLabel );
-		await context.editorIframe.fill( selectors.nameLabel, this.configurationData.nameLabel );
+		const nameLabelSelector = context.editorLocator.locator( selectors.nameLabel );
+		await nameLabelSelector.fill( this.configurationData.nameLabel );
 	}
 
 	/**
@@ -47,9 +47,9 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		await context.page.waitForSelector( selectors.publishedBlock );
-		await context.page.waitForSelector(
+		const expectedNameLabelLocator = context.page.locator(
 			`${ selectors.publishedBlock } :text("${ this.configurationData.nameLabel }")`
 		);
+		await expectedNameLabelLocator.waitFor();
 	}
 }

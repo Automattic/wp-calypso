@@ -37,7 +37,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	} );
 
 	it( 'Insert Pricing Table block', async () => {
-		const blockHandle = await editorPage.addBlock(
+		const blockHandle = await editorPage.addBlockFromSidebar(
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);

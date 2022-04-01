@@ -1,4 +1,11 @@
-import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	isBusiness,
+	isPro,
+	isWpComAnnualPlan,
+	FEATURE_NO_BRANDING,
+	PLAN_BUSINESS,
+	PLAN_WPCOM_PRO,
+} from '@automattic/calypso-products';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -626,6 +633,14 @@ export class SiteSettingsFormGeneral extends Component {
 			'is-loading': isRequestingSettings,
 		} );
 
+		// We currently don't have a monthly or a biennial pro plan, hence keeping the business plan upsell for those cases.
+		const upsellPlan =
+			site &&
+			! isBusiness( site.plan ) &&
+			! isPro( site.plan ) &&
+			! siteIsVip &&
+			( isWpComAnnualPlan( site.plan.product_slug ) ? PLAN_WPCOM_PRO : PLAN_BUSINESS );
+
 		return (
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
@@ -671,13 +686,11 @@ export class SiteSettingsFormGeneral extends Component {
 								</Button>
 							</div>
 						</CompactCard>
-						{ site && ! isBusiness( site.plan ) && ! siteIsVip && (
+						{ upsellPlan && (
 							<UpsellNudge
 								feature={ FEATURE_NO_BRANDING }
-								plan={ PLAN_BUSINESS }
-								title={ translate(
-									'Remove the footer credit entirely with WordPress.com Business'
-								) }
+								plan={ upsellPlan }
+								title={ translate( 'Remove the footer credit entirely with WordPress.com Pro' ) }
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }

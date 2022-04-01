@@ -8,13 +8,16 @@ import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isBackupPluginActive from 'calypso/state/sites/selectors/is-backup-plugin-active';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import isSearchPluginActive from 'calypso/state/sites/selectors/is-search-plugin-active';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import { AppState } from 'calypso/types';
 
 const siteIsEligible = ( state: AppState, siteId: number | null ) =>
 	siteId
-		? ( isJetpackSite( state, siteId ) || isBackupPluginActive( state, siteId ) ) &&
+		? ( isJetpackSite( state, siteId ) ||
+				isBackupPluginActive( state, siteId ) ||
+				isSearchPluginActive( state, siteId ) ) &&
 		  ! isSiteAtomic( state, siteId ) &&
 		  ! isJetpackSiteMultiSite( state, siteId )
 		: null;

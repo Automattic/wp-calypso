@@ -204,7 +204,7 @@ class DnsAddNew extends React.Component {
 		const { selectedSite, selectedDomainName } = this.props;
 
 		page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
-		this.props.successNotice( message, { duration: 5000 } );
+		this.props.successNotice( message, { duration: 3000 } );
 	};
 
 	handleError = ( error, message ) => {
