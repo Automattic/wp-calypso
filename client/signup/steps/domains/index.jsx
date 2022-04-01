@@ -21,7 +21,7 @@ import {
 import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
+import { excludePlansStep, maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -298,6 +298,8 @@ class DomainsStep extends Component {
 
 		this.props.recordAddDomainButtonClickInMapDomain( domain, this.getAnalyticsSection() );
 
+		excludePlansStep( this.props.submitSignupStep );
+
 		this.props.submitSignupStep(
 			Object.assign(
 				{
@@ -331,6 +333,8 @@ class DomainsStep extends Component {
 			: {};
 
 		this.props.recordAddDomainButtonClickInTransferDomain( domain, this.getAnalyticsSection() );
+
+		excludePlansStep( this.props.submitSignupStep );
 
 		this.props.submitSignupStep(
 			Object.assign(

@@ -929,6 +929,14 @@ export function isDomainFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
+export function excludePlansStep( submitSignupStep ) {
+	submitSignupStep(
+		{ stepName: 'plans', cartItem: undefined, wasSkipped: true },
+		{ cartItem: undefined }
+	);
+	flows.excludeStep( 'plans' );
+}
+
 export function maybeExcludeEmailsStep( {
 	domainItem,
 	resetSignupStep,
