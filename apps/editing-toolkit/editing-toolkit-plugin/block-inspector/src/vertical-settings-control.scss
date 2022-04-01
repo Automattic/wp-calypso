@@ -1,0 +1,29 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.vertical-settings-control__form-token-field {
+	position: relative;
+
+	.components-form-token-field__suggestions-list {
+		position: absolute;
+		top: 100%;
+		width: calc( 100% + 2px );
+		border: 1px solid;
+		border-top: 0;
+		border-bottom-left-radius: inherit;
+		border-bottom-right-radius: inherit;
+		margin: 0 -5px;
+		background-color: #fff;
+		z-index: 1;
+		@include input-style__focus();
+
+		&:empty {
+			display: none;
+		}
+	}
+
+	.components-form-token-field__suggestion {
+		padding: 2px 8px;
+		line-height: 26px;
+	}
+}

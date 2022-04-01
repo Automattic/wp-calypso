@@ -53,7 +53,35 @@ class Block_Inspector {
 			true
 		);
 
+		wp_localize_script( 'block-inspector-script', 'blockInspectorSiteVerticalsTerms', $this->get_site_verticals_terms() );
+
 		wp_set_script_translations( 'block-inspector-script', 'full-site-editing' );
+
+		// Enqueue styles.
+		$style_file = is_rtl() ? 'block-inspector.rtl.css' : 'block-inspector.css';
+
+		wp_enqueue_style(
+			'block-inspector-style',
+			plugins_url( 'dist/' . $style_file, __FILE__ ),
+			array(),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/' . $style_file )
+		);
+	}
+
+	/**
+	 * Get vertical terms from the site verticals API
+	 *
+	 * @return array Containing vertical terms or nothing if an error occurred.
+	 */
+	public function get_site_verticals_terms() {
+		$request_url = 'https://public-api.wordpress.com/wpcom/v2/site-verticals/terms';
+		$response    = wp_remote_get( $request_url );
+
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return array();
+		}
+
+		return json_decode( wp_remote_retrieve_body( $response ), true );
 	}
 }
 
