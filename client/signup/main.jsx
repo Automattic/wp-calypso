@@ -728,7 +728,9 @@ class Signup extends Component {
 		const olarkIdentity = config( 'olark_chat_identity' );
 		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
 		const isEligibleForOlarkChat =
-			'onboarding' === this.props.flowName && 'en' === this.props.localeSlug;
+			'onboarding' === this.props.flowName &&
+			[ 'en', 'en-gb' ].includes( this.props.localeSlug ) &&
+			this.props.existingSiteCount < 1;
 
 		return (
 			<>
