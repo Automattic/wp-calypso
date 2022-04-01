@@ -42,8 +42,12 @@ const ConnectedDomainDetails = ( {
 			return translate( 'Domain connection expired on %(expirationDate)s', args );
 		}
 
+		const expireWithBundledMessage = domain.isAutoRenewing
+			? translate( 'Domain connection will be renewed with your plan on %(expirationDate)s', args )
+			: translate( 'Domain connection expires with your plan on %(expirationDate)s', args );
+
 		return domain.bundledPlanSubscriptionId
-			? translate( 'Domain connection expires with your plan on %(expirationDate)s', args )
+			? expireWithBundledMessage
 			: translate( 'Domain connection expires on %(expirationDate)s', args );
 	};
 
