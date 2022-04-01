@@ -297,7 +297,7 @@ class ThemesSelectionWithPage extends React.Component {
 function KeyedThemesSelectionWithPage( { search, tier, filter, vertical, ...restProps } ) {
 	return (
 		<ThemesSelectionWithPage
-			key={ `${ search }-${ tier }-${ filter }-${ vertical }` }
+			key={ `themes-selection-${ search }-${ tier }-${ filter }-${ vertical }` }
 			search={ search }
 			tier={ tier }
 			filter={ filter }
