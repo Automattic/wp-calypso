@@ -620,9 +620,12 @@ async function openLinksInParentFrame( calypsoPort ) {
 
 	// Manage reusable blocks link in the global block inserter's Reusable tab
 	// Post editor only
-	const inserterManageReusableBlocksObserver = new window.MutationObserver( ( mutations ) => {
-		const node = mutations[ 0 ].target;
-		if ( node.attributes.getNamedItem( 'aria-selected' )?.nodeValue === 'true' ) {
+	const reusableTabSelectionObserver = new window.MutationObserver( ( mutations ) => {
+		const reusableTabElem = mutations[ 0 ].target;
+		const isReusableTabSelected =
+			reusableTabElem.attributes.getNamedItem( 'aria-selected' )?.nodeValue === 'true';
+
+		if ( isReusableTabSelected ) {
 			const hyperlink = document.querySelector( 'a.block-editor-inserter__manage-reusable-blocks' );
 			if ( hyperlink ) {
 				hyperlink.href = manageReusableBlocksUrl;
@@ -638,7 +641,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 		manageReusableBlocksUrl &&
 		node.classList.contains( 'interface-interface-skeleton__secondary-sidebar' );
 
-	const observeSidebarMutations = ( node ) => {
+	const handleSidebarNodeAdded = ( node ) => {
 		if (
 			// Block settings sidebar for Query block.
 			shouldReplaceCreateNewPostLinksFor( node )
@@ -653,14 +656,14 @@ async function openLinksInParentFrame( calypsoPort ) {
 		) {
 			const reusableTab = node.querySelector( '.components-tab-panel__tabs-item[id*="reusable"]' );
 			if ( reusableTab ) {
-				inserterManageReusableBlocksObserver.observe( reusableTab, {
+				reusableTabSelectionObserver.observe( reusableTab, {
 					attributeFilter: [ 'aria-selected' ],
 				} );
 			}
 		}
 	};
 
-	const unobserveSidebarMutations = ( node ) => {
+	const handleSidebarNodeRemoved = ( node ) => {
 		if (
 			// Block settings sidebar for Query block.
 			shouldReplaceCreateNewPostLinksFor( node )
@@ -670,7 +673,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 			// Block inserter sidebar, Reusable tab
 			shouldReplaceManageReusableBlockLinksFor( node )
 		) {
-			inserterManageReusableBlocksObserver.disconnect();
+			reusableTabSelectionObserver.disconnect();
 		}
 	};
 
@@ -680,13 +683,13 @@ async function openLinksInParentFrame( calypsoPort ) {
 		for ( const record of mutations ) {
 			// We are checking for added nodes here to start observing for more specific changes.
 			for ( const node of record.addedNodes ) {
-				observeSidebarMutations( node );
+				handleSidebarNodeAdded( node );
 			}
 
 			// We are checking the removed nodes here to disconect
 			// the correct observer when a node is removed.
 			for ( const node of record.removedNodes ) {
-				unobserveSidebarMutations( node );
+				handleSidebarNodeRemoved( node );
 			}
 		}
 	} );
@@ -697,13 +700,36 @@ async function openLinksInParentFrame( calypsoPort ) {
 		'.interface-interface-skeleton__sidebar, .interface-interface-skeleton__secondary-sidebar'
 	);
 	for ( const sidebar of sidebars ) {
-		observeSidebarMutations( sidebar );
+		handleSidebarNodeAdded( sidebar );
 	}
 
 	// Add and remove the sidebar observers as the sidebar elements appear and disappear.
 	// They are always direct children of the body element.
-	const body = document.querySelector( '.interface-interface-skeleton__body' );
-	sidebarsObserver.observe( body, { childList: true } );
+	const sidebarBodyElem = document.querySelector( '.interface-interface-skeleton__body' );
+	sidebarsObserver.observe( sidebarBodyElem, { childList: true } );
+
+	const popoverSlotObserver = new window.MutationObserver( ( mutations ) => {
+		const isComponentsPopover = ( node ) => node.classList.contains( 'components-popover' );
+
+		const replaceWithManageReusableBlocksHref = ( anchorElem ) => {
+			anchorElem.ref = manageReusableBlocksUrl;
+			anchorElem.target = '_top';
+		};
+
+		for ( const record of mutations ) {
+			for ( const node of record.addedNodes ) {
+				if ( isComponentsPopover( node ) ) {
+					const manageReusableBlocksAnchorElem = node.querySelector(
+						'a[href$="edit.php?post_type=wp_block"]'
+					);
+					manageReusableBlocksAnchorElem &&
+						replaceWithManageReusableBlocksHref( manageReusableBlocksAnchorElem );
+				}
+			}
+		}
+	} );
+	const popoverSlotElem = document.querySelector( '.interface-interface-skeleton ~ .popover-slot' );
+	popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
 
 	// Manage reusable blocks link in the 3 dots more menu, post and site editors
 	if ( manageReusableBlocksUrl ) {
