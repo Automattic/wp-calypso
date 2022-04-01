@@ -4,6 +4,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
+import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
@@ -400,12 +401,13 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		return;
 	}
 	const { pages, siteLogoUrl: site_logo_url } = websiteContent;
+	const pagesDTO = pages.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
 
 	wpcom.req
 		.post( {
 			path: `/sites/${ siteSlug }/do-it-for-me/website-content`,
 			apiNamespace: 'wpcom/v2',
-			body: { pages, site_logo_url },
+			body: { pages: pagesDTO, site_logo_url },
 		} )
 		.then( () => reduxStore.dispatch( requestSite( siteSlug ) ) )
 		.then( () => callback() )
