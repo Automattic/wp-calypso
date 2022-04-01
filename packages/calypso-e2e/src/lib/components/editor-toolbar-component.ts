@@ -35,6 +35,10 @@ const selectors = {
 
 	// Editor settings
 	settingsButton: `${ panel } .edit-post-header__settings .interface-pinned-items button:first-child`,
+
+	// Undo/Redo
+	undoButton: 'button[aria-disabled=false][aria-label=Undo]',
+	redoButton: 'button[aria-disabled=false][aria-label=Redo]',
 };
 
 /**
@@ -280,6 +284,26 @@ export class EditorToolbarComponent {
 		}
 
 		const locator = this.editor.locator( selectors.detailsButton );
+		await locator.click();
+	}
+
+	/**
+	 * Click the editor undo button. Throws an error if the button is not enabled.
+	 *
+	 * @throws If the undo button is not enabled.
+	 */
+	async undo(): Promise< void > {
+		const locator = this.page.locator( selectors.undoButton );
+		await locator.click();
+	}
+
+	/**
+	 * Click the editor redo button. Throws an error if the button is not enabled.
+	 *
+	 * @throws If the redo button is not enabled.
+	 */
+	async redo(): Promise< void > {
+		const locator = this.page.locator( selectors.redoButton );
 		await locator.click();
 	}
 }
