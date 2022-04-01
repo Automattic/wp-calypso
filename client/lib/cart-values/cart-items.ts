@@ -534,52 +534,52 @@ function createRenewalCartItemFromProduct(
 ) {
 	const slug = camelOrSnakeSlug( product );
 
-	if ( isDomainProduct( product ) ) {
-		return domainItem( slug, properties.domain ?? '' );
-	}
-
-	if ( isPlan( product ) ) {
-		return planItem( slug );
-	}
-
-	if ( isGSuiteOrGoogleWorkspace( product ) ) {
-		return googleApps( product );
-	}
-
-	if ( isTitanMail( product ) ) {
-		return titanMailProduct( product, slug );
-	}
-
-	if ( isSiteRedirect( product ) ) {
-		return siteRedirect( properties );
-	}
-
-	if ( isNoAds( product ) ) {
-		return noAdsItem();
-	}
-
-	if ( isCustomDesign( product ) ) {
-		return customDesignItem();
-	}
-
-	if ( isVideoPress( product ) ) {
-		return videoPressItem();
-	}
-
-	if ( isUnlimitedSpace( product ) ) {
-		return unlimitedSpaceItem();
-	}
-
-	if ( isUnlimitedThemes( product ) ) {
-		return unlimitedThemesItem();
+	if ( isSpaceUpgrade( product ) ) {
+		return spaceUpgradeItem( slug );
 	}
 
 	if ( isJetpackProduct( product ) ) {
 		return jetpackProductItem( slug );
 	}
 
-	if ( isSpaceUpgrade( product ) ) {
-		return spaceUpgradeItem( slug );
+	if ( isUnlimitedThemes( product ) ) {
+		return unlimitedThemesItem();
+	}
+
+	if ( isUnlimitedSpace( product ) ) {
+		return unlimitedSpaceItem();
+	}
+
+	if ( isVideoPress( product ) ) {
+		return videoPressItem();
+	}
+
+	if ( isCustomDesign( product ) ) {
+		return customDesignItem();
+	}
+
+	if ( isNoAds( product ) ) {
+		return noAdsItem();
+	}
+
+	if ( isSiteRedirect( product ) ) {
+		return siteRedirect( properties );
+	}
+
+	if ( isTitanMail( product ) ) {
+		return titanMailProduct( product, slug );
+	}
+
+	if ( isGSuiteOrGoogleWorkspace( product ) ) {
+		return googleApps( product );
+	}
+
+	if ( isPlan( product ) ) {
+		return planItem( slug );
+	}
+
+	if ( isDomainProduct( product ) ) {
+		return domainItem( slug, properties.domain ?? '' );
 	}
 
 	if ( properties.isMarketplaceProduct && isRenewable( product ) ) {
