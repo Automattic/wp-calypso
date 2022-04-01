@@ -34,7 +34,7 @@ export const handleMembershipProductsList = dispatchRequest( {
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ action.siteId }/memberships/products?type=all&public=true`,
+				path: `/sites/${ action.siteId }/memberships/products?type=all&is_editable=true`,
 			},
 			action
 		),

@@ -188,7 +188,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
 					type: editedMarkAsDonation,
-					public: true,
+					is_editable: true,
 				},
 				translate( 'Added "%s" payment plan.', { args: editedProductName } )
 			);
@@ -206,7 +206,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
 					type: editedMarkAsDonation,
-					public: true,
+					is_editable: true,
 				},
 				translate( 'Updated "%s" payment plan.', { args: editedProductName } )
 			);
@@ -302,7 +302,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					<ToggleControl
 						onChange={ handleMarkAsDonation }
 						checked={ 'donation' === editedMarkAsDonation }
-						label={ translate( 'Mark payment plan as a donation.' ) }
+						label={ translate( 'Mark this plan as a donation.' ) }
+						disabled={ !! product }
 					/>
 				</FormFieldset>
 			</>
