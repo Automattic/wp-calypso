@@ -1,9 +1,6 @@
 import page from 'page';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
-import { getSiteFragment } from 'calypso/lib/route';
 import { siteSelection, sites } from 'calypso/my-sites/controller';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getImmediateLoginLocale } from 'calypso/state/immediate-login/selectors';
 import {
 	authenticate,
 	post,
@@ -11,20 +8,8 @@ import {
 	siteEditor,
 	exitPost,
 	redirectSiteEditor,
+	redirectToPermalinkIfLoggedOut,
 } from './controller';
-
-function redirectToPermalinkIfLoggedOut( context, next ) {
-	if ( isUserLoggedIn( context.store.getState() ) ) {
-		return next();
-	}
-	const state = context.store.getState();
-	const siteFragment = context.params.site || getSiteFragment( context.path );
-	const login_locale = getImmediateLoginLocale( state );
-
-	// force full page reload to avoid SSR hydration issues.
-	window.location = `https://public-api.wordpress.com/wpcom/v2/redirect?path=${ context.path }&site=${ siteFragment }&locale=${ login_locale }&redirect=true`;
-	return;
-}
 
 export default function () {
 	page(

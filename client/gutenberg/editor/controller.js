@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
-import { addQueryArgs } from 'calypso/lib/route';
+import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getAdminMenu, getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { stopEditingPost } from 'calypso/state/editor/actions';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -291,3 +292,14 @@ export const redirectSiteEditor = async ( context ) => {
 	// Calling replace to avoid adding an entry to the browser history upon redirect.
 	return location.replace( siteEditorUrl );
 };
+
+export function redirectToPermalinkIfLoggedOut( context, next ) {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		return next();
+	}
+	const siteFragment = context.params.site || getSiteFragment( context.path );
+	// Redirect the user to the permalink of the post,page, custom post type if the post is published.
+	// else the endpoint will send the user to the login page.
+	window.location = `https://public-api.wordpress.com/wpcom/v2/redirect?path=${ context.path }&site=${ siteFragment }`;
+	return;
+}
