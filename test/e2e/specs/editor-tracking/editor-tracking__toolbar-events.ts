@@ -11,6 +11,7 @@ import {
 	TestAccount,
 	EditorTracksEventManager,
 	skipDescribeIf,
+	SiteEditorPage,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -21,7 +22,6 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 	DataHelper.createSuiteTitle( 'Editor tracking: Toolbar-related events' ),
 	function () {
 		const features = envToFeatureKey( envVariables );
-		const accountName = getTestAccountByFeature( features );
 
 		describe( 'wpcom_block_editor_list_view_toggle/select', function () {
 			let page: Page;
@@ -30,6 +30,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			beforeAll( async () => {
 				page = await browser.newPage();
 
+				const accountName = getTestAccountByFeature( features );
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 
@@ -102,6 +103,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			beforeAll( async () => {
 				page = await browser.newPage();
 
+				const accountName = getTestAccountByFeature( features );
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 
@@ -126,6 +128,45 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			it( '"wpcom_block_editor_details_open" event fires', async function () {
 				const eventDidFire = await eventManager.didEventFire( 'wpcom_block_editor_details_open' );
 				expect( eventDidFire ).toBe( true );
+			} );
+		} );
+
+		describe( 'wpcom_block_editor_undo/redo_performed', function () {
+			let page: Page;
+			let siteEditorPage: SiteEditorPage;
+			let eventManager: EditorTracksEventManager;
+			let testAccount: TestAccount;
+			beforeAll( async () => {
+				page = await browser.newPage();
+
+				const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+				testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+
+				eventManager = new EditorTracksEventManager( page );
+				siteEditorPage = new SiteEditorPage( page );
+			} );
+
+			it( 'Go to site editor', async function () {
+				await siteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await siteEditorPage.prepareForInteraction();
+			} );
+
+			it( 'Add a Header block', async function () {
+				await siteEditorPage.addBlockFromSidebar( 'Header' );
+			} );
+
+			it( 'Undo action', async function () {
+				await page.pause();
+				await siteEditorPage.undo();
+			} );
+
+			it( 'redo action', async function () {
+				await siteEditorPage.redo();
+			} );
+
+			it( '"wpcom_block_editor_details_open" event fires', async function () {
+				console.log( await eventManager.getAllEvents() );
 			} );
 		} );
 	}

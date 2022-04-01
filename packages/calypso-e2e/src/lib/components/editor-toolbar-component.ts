@@ -6,7 +6,8 @@ export type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 const panel = 'div.interface-interface-skeleton__header';
 const selectors = {
 	// Block Inserter
-	blockInserterButton: `${ panel } button.edit-post-header-toolbar__inserter-toggle`,
+	// Note the partial class match. This is to support site and post editor. We can't use aria-label because of i18n. :(
+	blockInserterButton: `${ panel } button[class*="header-toolbar__inserter-toggle"]`,
 
 	// Draft
 	saveDraftButton: ( state: 'disabled' | 'enabled' ) => {
@@ -37,8 +38,8 @@ const selectors = {
 	settingsButton: `${ panel } .edit-post-header__settings .interface-pinned-items button:first-child`,
 
 	// Undo/Redo
-	undoButton: 'button[aria-disabled=false][aria-label=Undo]',
-	redoButton: 'button[aria-disabled=false][aria-label=Redo]',
+	undoButton: 'button[aria-disabled=false][aria-label="Undo"]',
+	redoButton: 'button[aria-disabled=false][aria-label="Redo"]',
 };
 
 /**

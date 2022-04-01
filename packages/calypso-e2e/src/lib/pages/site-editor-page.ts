@@ -6,6 +6,7 @@ import {
 	EditorToolbarComponent,
 	EditorWelcomeTourComponent,
 } from '..';
+import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
 
 const wpAdminPath = 'wp-admin/themes.php';
@@ -15,7 +16,7 @@ const selectors = {
 	editorRoot: 'body.block-editor-page',
 	editorCanvasIframe: 'iframe[name="editor-canvas"]',
 	editorCanvasRoot: '.wp-site-blocks',
-	templateLoadingSpinner: '[aria-label=“Block: Template Part”] .components-spinner',
+	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
 };
 
 /**
@@ -68,6 +69,15 @@ export class SiteEditorPage {
 	}
 
 	/**
+	 * Visit the site editor by URL directly.
+	 *
+	 * @param siteHostName Host name of the site, without scheme. (e.g. testsite.wordpress.com)
+	 */
+	async visit( siteHostName: string ): Promise< void > {
+		await this.page.goto( getCalypsoURL( `site-editor/${ siteHostName }` ) );
+	}
+
+	/**
 	 * Waits until the site editor is fully loaded.
 	 */
 	async waitUntilLoaded(): Promise< void > {
@@ -86,11 +96,13 @@ export class SiteEditorPage {
 	 * @param {object} param0 Keyed object of options.
 	 * @param {boolean} param0.leaveWithoutSaving Set if we should auto-except dialog about unsaved changes when leaving.
 	 */
-	async prepareForInteraction( {
-		leaveWithoutSaving = true,
-	}: {
-		leaveWithoutSaving: boolean;
-	} ): Promise< void > {
+	async prepareForInteraction(
+		{
+			leaveWithoutSaving,
+		}: {
+			leaveWithoutSaving?: boolean;
+		} = { leaveWithoutSaving: true }
+	): Promise< void > {
 		await this.waitUntilLoaded();
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 
@@ -117,7 +129,6 @@ export class SiteEditorPage {
 	 * @param {string} blockName Name of the block to be inserted.
 	 */
 	async addBlockFromSidebar( blockName: string ): Promise< void > {
-		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
 		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent );
 
