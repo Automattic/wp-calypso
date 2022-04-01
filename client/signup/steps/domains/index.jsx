@@ -455,7 +455,11 @@ class DomainsStep extends Component {
 									<span></span>
 									<span></span>
 									<span className="domains__domain-side-content-container-browser-chrome-url">
-										https://{ this.props.translate( 'yoursitename.com' ) }
+										https://
+										{ this.props.translate( 'yoursitename', {
+											comment: 'xample url used to explain what a domain is.',
+										} ) }
+										.com
 									</span>
 									<span></span>
 								</div>
