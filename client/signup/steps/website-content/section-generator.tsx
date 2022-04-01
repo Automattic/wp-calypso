@@ -12,7 +12,7 @@ import type {
 import type { TranslateResult } from 'i18n-calypso';
 
 const getPageDetailsComponentFromPageId = ( pageId: string ) => {
-	if ( ! calypsoConfig.isEnabled( 'signup/difm-redesigned-flow' ) ) {
+	if ( ! calypsoConfig.isEnabled( 'signup/redesigned-difm-flow' ) ) {
 		return PageDetails;
 	}
 	switch ( pageId ) {

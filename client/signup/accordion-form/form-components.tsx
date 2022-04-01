@@ -53,14 +53,13 @@ const FlexContainer = styled.div`
 	display: flex;
 	flex-wrap: wrap;
 	row-gap: 16px;
-	justify-content: space-between;
-
+	column-gap: 32px;
 	.form-fieldset {
 		flex-basis: 100%;
 	}
 	@media ( min-width: 600px ) {
 		.form-fieldset {
-			flex-basis: 40%;
+			flex-basis: calc( 50% - 16px );
 		}
 	}
 	.form-label {
