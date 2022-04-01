@@ -1,0 +1,43 @@
+.is-p-2-join-workspaces .p2-step-wrapper {
+    max-width: 550px;
+}
+
+.p2-join-workspaces__workspace {
+    display: grid;
+    grid-template-columns: auto min-content;
+    padding: 0.5rem 1.5rem;
+    border-top: 1px solid var( --p2-color-border-medium );
+
+    &:last-of-type {
+        border-bottom: 1px solid var( --p2-color-border-medium );
+    }
+}
+
+.p2-join-workspaces__workspace-description {
+    > span::after {
+        content: '·';
+        padding: 0 0.5rem;
+    }
+
+    > span:last-of-type::after {
+        content: '';
+        padding: 0;
+    }
+}
+
+.p2-join-workspaces__action {
+    grid-area: 1 / 2 / span 2;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.p2-join-workspaces__action-join {
+    background: var( --p2-color-background-light );
+    border-radius: 18px; /* stylelint-disable-line scales/radii */
+    padding: 0 1.5rem;
+
+    &:hover {
+        background: var( --p2-color-background-medium );
+    }
+}
