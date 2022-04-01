@@ -12,7 +12,6 @@ import DesignPicker, {
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { Spinner } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
@@ -36,7 +35,6 @@ import type { Design, Category } from '@automattic/design-picker';
  */
 const designSetup: Step = function DesignSetup( { navigation } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
-	const [ isProcessing, setIsProcessing ] = useState( false );
 	const [ loading, setIsLoading ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
@@ -169,7 +167,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
-		setIsProcessing( true );
 		setIsLoading( true );
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
@@ -254,7 +251,9 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			/>
 		);
 
-		return (
+		return loading ? (
+			<ProcessingScreen />
+		) : (
 			<StepContainer
 				stepName={ 'design-setup' }
 				stepContent={ stepContent }
@@ -271,7 +270,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 						align={ isMobile ? 'left' : 'center' }
 					/>
 				}
-				shouldHideNavButtons={ loading }
 				customizedActionButtons={
 					<>
 						{ shouldUpgrade ? (
@@ -279,7 +277,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 								{ translate( 'Upgrade Plan' ) }
 							</Button>
 						) : undefined }
-						{ loading ? <Spinner /> : '' }
 					</>
 				}
 				recordTracksEvent={ recordTracksEvent }
@@ -319,7 +316,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		</>
 	);
 
-	return isProcessing ? (
+	return loading ? (
 		<ProcessingScreen />
 	) : (
 		<StepContainer
