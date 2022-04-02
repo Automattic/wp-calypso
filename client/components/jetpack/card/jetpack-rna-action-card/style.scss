@@ -84,6 +84,7 @@
 		font-size: $font-headline-small;
 		font-weight: 700;
 		margin-bottom: 24px;
+		line-height: 40px;
 		.is-placeholder & {
 			display: inline-block;
 			@include placeholder( --studio-gray-5 );
