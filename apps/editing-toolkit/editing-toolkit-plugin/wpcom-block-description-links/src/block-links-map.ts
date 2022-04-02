@@ -3,6 +3,9 @@ type BlockProps = {
 };
 
 const blockLinks: Record< string, BlockProps > = {
+	/**
+	 * Core Blocks
+	 */
 	'core/template-part': {
 		url: 'https://wordpress.com/support/full-site-editing/theme-blocks/template-part-block/',
 	},
@@ -45,8 +48,6 @@ const blockLinks: Record< string, BlockProps > = {
 	'core/rss': { url: 'https://wordpress.com/support/wordpress-editor/blocks/rss-block/' },
 
 	'core/group': { url: 'https://wordpress.com/support/wordpress-editor/blocks/row-block/' },
-
-	'core/block': { url: 'https://wordpress.com/support/wordpress-editor/blocks/reusable-block/' },
 
 	'core/tag-cloud': {
 		url: 'https://wordpress.com/support/wordpress-editor/blocks/tag-cloud-block/',
@@ -124,6 +125,9 @@ const blockLinks: Record< string, BlockProps > = {
 
 	'core/gallery': { url: 'https://wordpress.com/support/wordpress-editor/blocks/gallery-block/' },
 
+	/**
+	 * A8C and CO Blocks
+	 */
 	'syntaxhighlighter/code': {
 		url: 'https://wordpress.com/support/wordpress-editor/blocks/syntax-highlighter-code-block/',
 	},
@@ -160,6 +164,9 @@ const blockLinks: Record< string, BlockProps > = {
 		url: 'https://wordpress.com/support/wordpress-editor/blocks/whatsapp-button-block/',
 	},
 
+	/**
+	 * Jetpack Blocks
+	 */
 	'jetpack/timeline': {
 		url: 'https://wordpress.com/support/wordpress-editor/blocks/timeline-block/',
 	},
