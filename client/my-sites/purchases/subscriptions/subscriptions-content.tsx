@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
-import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-RNA-action-card';
+import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
