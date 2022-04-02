@@ -1,6 +1,5 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
@@ -13,7 +12,7 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef } ) => {
 		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
 
 	return (
-		<div className="search-box-header__searchbox">
+		<div className="search-box-header__searchbox" ref={ searchBoxRef }>
 			<Search
 				ref={ searchBoxRef }
 				pinned={ isMobile }
