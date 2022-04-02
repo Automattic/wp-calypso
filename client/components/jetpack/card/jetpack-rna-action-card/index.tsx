@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import { translate, TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import UpsellBackgroundImage from 'calypso/assets/images/jetpack/rna-card-bg.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
@@ -30,6 +30,7 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 	cardImageAlt,
 	isPlaceholder,
 } ) => {
+	const translate = useTranslate();
 	return (
 		<div
 			className={ classNames( 'jetpack-rna-action-card', {
