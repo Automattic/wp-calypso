@@ -259,7 +259,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			return translate( 'Visits per month' );
 		},
 		get description() {
-			return translate( 'Max visits per month.' );
+			return translate(
+				'WordPress Pro includes a generous 100,000 visits per month, which is 4x the limit for similarly priced plans at other popular managed WordPress hosts. Additional traffic can be purchased in 100,000 increments.'
+			);
 		},
 		features: [ FEATURE_10K_VISITS, FEATURE_100K_VISITS ],
 		getCellText: ( feature, isMobile = false ) => {
