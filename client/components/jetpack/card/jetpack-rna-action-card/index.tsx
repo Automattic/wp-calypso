@@ -1,6 +1,6 @@
-import { Button, Card } from '@automattic/components';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import { TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import UpsellBackgroundImage from 'calypso/assets/images/jetpack/rna-card-bg.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
@@ -15,7 +15,7 @@ interface RnaActionCardProps {
 	ctaButtonURL?: string;
 	ctaButtonLabel: TranslateResult;
 	cardImage?: string;
-	cardImageAlt?: string | TranslateResult;
+	cardImageAlt?: string;
 	isPlaceholder?: boolean;
 }
 
@@ -30,8 +30,9 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 	cardImageAlt,
 	isPlaceholder,
 } ) => {
+	const translate = useTranslate();
 	return (
-		<Card
+		<div
 			className={ classNames( 'jetpack-rna-action-card', {
 				'is-placeholder': isPlaceholder,
 			} ) }
@@ -65,11 +66,14 @@ const JetpackRnaActionCard: React.FC< RnaActionCardProps > = ( {
 					{ isPlaceholder ? (
 						<div className="jetpack-rna-action-card__placeholder-image"></div>
 					) : (
-						<img src={ cardImage } alt={ ( cardImageAlt ? cardImageAlt : 'Jetpack ' ) as string } />
+						<img
+							src={ cardImage }
+							alt={ cardImageAlt ? cardImageAlt : translate( 'Jetpack', { textOnly: true } ) }
+						/>
 					) }
 				</div>
 			</div>
-		</Card>
+		</div>
 	);
 };
 
