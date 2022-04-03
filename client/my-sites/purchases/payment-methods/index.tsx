@@ -82,7 +82,7 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 					align="left"
 				/>
 			) }
-			<PurchasesNavigation sectionTitle={ 'Payment Methods' } siteSlug={ siteSlug } />
+			<PurchasesNavigation section={ 'paymentMethods' } siteSlug={ siteSlug } />
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }

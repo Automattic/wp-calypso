@@ -1,48 +1,49 @@
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import titles from 'calypso/me/purchases/titles.js';
 import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 
+type Titles = Record< keyof typeof titles, TranslateResult >;
+
 export default function PurchasesNavigation( {
-	sectionTitle,
+	section,
 	siteSlug,
 }: {
-	sectionTitle: string;
+	section: keyof Titles;
 	siteSlug: string | null;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	return (
-		<SectionNav selectedText={ sectionTitle }>
-			<NavTabs label="Section" selectedText={ sectionTitle }>
+		<SectionNav selectedText={ titles[ section ] }>
+			<NavTabs label="Section" selectedText={ titles[ section ] }>
 				<NavItem
 					path={ `/purchases/subscriptions/${ siteSlug }` }
-					selected={
-						isJetpackCloud() ? sectionTitle === 'Purchases' : sectionTitle === 'Active Upgrades'
-					}
+					selected={ isJetpackCloud() ? section === 'myPlan' : section === 'activeUpgrades' }
 				>
-					{ isJetpackCloud() ? translate( 'My Plan' ) : translate( 'Active Upgrades' ) }
+					{ isJetpackCloud() ? titles.myPlan : titles.activeUpgrades }
 				</NavItem>
 				<NavItem
 					path={ `/purchases/billing-history/${ siteSlug }` }
-					selected={ sectionTitle === 'Billing History' }
+					selected={ section === 'billingHistory' }
 				>
-					{ translate( 'Billing History' ) }
+					{ titles.billingHistory }
 				</NavItem>
 				<NavItem
 					path={ `/purchases/payment-methods/${ siteSlug }` }
-					selected={ sectionTitle === 'Payment Methods' }
+					selected={ section === 'paymentMethods' }
 				>
-					{ translate( 'Payment Methods' ) }
+					{ titles.paymentMethods }
 				</NavItem>
 			</NavTabs>
 
-			{ sectionTitle === 'Billing History' && (
+			{ section === 'billingHistory' && (
 				<Search
 					pinned
 					fitsContainer

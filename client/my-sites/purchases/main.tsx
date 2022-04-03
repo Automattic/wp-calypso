@@ -72,7 +72,7 @@ export function Purchases(): JSX.Element {
 				/>
 			) }
 			<PurchasesNavigation
-				sectionTitle={ isJetpackCloud() ? 'Purchases' : 'Active Upgrades' }
+				section={ isJetpackCloud() ? 'myPlan' : 'activeUpgrades' }
 				siteSlug={ siteSlug }
 			/>
 
