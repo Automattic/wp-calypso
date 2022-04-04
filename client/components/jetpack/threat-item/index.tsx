@@ -168,6 +168,7 @@ const ThreatItem: React.FC< Props > = ( {
 				status={ threat.status }
 				fix={ getFix() }
 				problem={ threat.description }
+				source={ threat.source }
 				context={ threat.context }
 				diff={ threat.diff }
 				rows={ threat.rows }
