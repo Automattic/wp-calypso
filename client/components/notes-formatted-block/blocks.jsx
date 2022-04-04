@@ -134,7 +134,7 @@ export const Theme = ( { content, onClick, meta, children } ) => {
 
 	return (
 		<a
-			href={ themeUri }
+			href={ `/theme/${ themeSlug }/${ siteSlug }` }
 			target="_blank"
 			rel="noopener noreferrer"
 			onClick={ onClick }
