@@ -25,20 +25,20 @@
 				&.is-expanded-to-container {
 					height: 100%;
 				}
-		
+
 				box-shadow: 0 0 0 1px var( --studio-gray-10 );
-		
+
 				.search-component__open-icon,
 				.search-component__close-icon {
 					color: var( --studio-black );
 				}
-		
+
 				&.is-open input.search-component__input[type='search'] {
 					font-size: $font-body-small;
 				}
 			}
 		}
-		
+
 	}
 
 	.search-box-header__header {
@@ -84,10 +84,6 @@
 
 				&:not( .search-box-header__recommended-searches-list-item-selected ) {
 					text-decoration: underline;
-				}
-
-				&.search-box-header__recommended-searches-list-item-selected {
-					font-weight: bold;
 				}
 
 				color: var( --studio-gray-100 );
