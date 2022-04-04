@@ -2,6 +2,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useRef, useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useInterval } from 'calypso/lib/interval/use-interval';
+import 'calypso/assets/stylesheets/shared/_loading.scss';
 import './style.scss';
 
 const useSteps = () => {
