@@ -765,8 +765,7 @@ class Signup extends Component {
 					<OlarkErrorBoundary>
 						<OlarkChat
 							identity={ olarkIdentity }
-							shouldDisablePre
-							ChatSurvey={ true }
+							shouldDisablePreChatSurvey={ true }
 							systemsGroupId={ olarkSystemsGroupId }
 						/>
 					</OlarkErrorBoundary>
