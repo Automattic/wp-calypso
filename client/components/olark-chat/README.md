@@ -23,11 +23,11 @@ function olarkChatWidget() {
 	const olarkSystemsGroupId = 'YOUR_SYSTEM_ID';
 
 	return (
-			<OlarkChat
-				identity={ olarkIdentity }
-				shouldDisablePreChatSurvey
-				systemsGroupId={ olarkSystemsGroupId }
-			/>
+		<OlarkChat
+			identity={ olarkIdentity }
+			shouldDisablePreChatSurvey
+			systemsGroupId={ olarkSystemsGroupId }
+		/>
 	);
 }
 ```
@@ -39,7 +39,7 @@ function olarkChatWidget() {
 - **Type:** `String`
 - **Required:** `yes`
 
-Your olark site ID retrieved from the embed code. 
+Your olark site ID retrieved from the embed code.
 
 ### `systemsGroupId`
 
