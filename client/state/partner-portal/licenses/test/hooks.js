@@ -269,7 +269,7 @@ describe( 'useTOSConsentMutation', () => {
 
 describe( 'useBillingDashboardQuery', () => {
 	beforeEach( () => {
-		// Prevent react-query from loggging an error due to the failing requests.
+		// Prevent react-query from logging an error due to the failing requests.
 		setLogger( {
 			error: jest.fn(),
 		} );
