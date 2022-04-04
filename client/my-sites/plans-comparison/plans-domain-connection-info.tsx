@@ -46,7 +46,7 @@ export const PlansDomainConnectionInfo: React.FunctionComponent< Props > = ( { p
 			<InfoPopover position="top" iconSize={ 18 } showOnHover={ true }>
 				{ translate( 'Only paid annual subscriptions allow you to connect domains.' ) }
 			</InfoPopover>
-			<Span>{ translate( 'Connecting a domain requires a paid plan' ) }</Span>
+			<Span>{ translate( 'Connecting a domain requires a Pro plan' ) }</Span>
 		</P>
 	);
 };
