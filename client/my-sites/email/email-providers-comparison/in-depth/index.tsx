@@ -111,9 +111,9 @@ const EmailProvidersInDepthComparison = ( {
 			<ComparisonComponent
 				emailProviders={ [ professionalEmailFeatures, googleWorkspaceFeatures ] }
 				intervalLength={ selectedIntervalLength }
+				isDomainInCart={ isDomainInCart }
 				onSelectEmailProvider={ selectEmailProvider }
 				selectedDomainName={ selectedDomainName }
-				isDomainInCart={ isDomainInCart }
 			/>
 
 			<EmailForwardingLink selectedDomainName={ selectedDomainName } />
