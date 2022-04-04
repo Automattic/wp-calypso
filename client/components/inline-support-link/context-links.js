@@ -93,7 +93,7 @@ const contextLinks = {
 		post_id: 147777,
 	},
 	'importers-wordpress': {
-		link: 'https://wordpress.com/support/moving-from-self-hosted-wordpress-to-wordpress-com/',
+		link: 'https://wordpress.com/support/export/',
 		post_id: 102755,
 	},
 	'introduction-to-woocommerce': {
