@@ -12488,6 +12488,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"buffer-from@npm:^0.1.1":
+  version: 0.1.2
+  resolution: "buffer-from@npm:0.1.2"
+  checksum: 5cadb80f26484d547c6ad26372b4f8a34d3784a1a3df15dc11b8414ad2a1670764586aeffdcfc8277f63023b209de7f7300f3fa1bf80c3a526e6f1dd338c613c
+  languageName: node
+  linkType: hard
+
 "buffer-from@npm:^1.0.0":
   version: 1.1.1
   resolution: "buffer-from@npm:1.1.1"
@@ -23698,14 +23705,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"js-base64@npm:^2.1.9":
-  version: 2.5.2
-  resolution: "js-base64@npm:2.5.2"
-  checksum: 7a2402c60938379545b77550b27c10f299249e4954317913b24bbb640a6f49ce2d5d4d45028101e809c23c0434d582806de09255f34ecdb077ea55babe0e7b25
-  languageName: node
-  linkType: hard
-
-"js-base64@npm:^2.6.1":
+"js-base64@npm:^2.1.9, js-base64@npm:^2.6.1":
   version: 2.6.4
   resolution: "js-base64@npm:2.6.4"
   checksum: 95d93c4eca0bbe0f2d5ffe8682d9acd23051e5c0ad71873ff5a48dd46a5f19025de9f7b36e63fa3f02f342ae4a8ca4c56e7b590d7300ebb6639ce09675e0fd02
@@ -36465,7 +36465,7 @@ testarmada-magellan@11.0.10:
   version: 2.3.0
   resolution: "tus-js-client@npm:2.3.0"
   dependencies:
-    buffer-from: ^1.0.0
+    buffer-from: ^0.1.1
     combine-errors: ^3.0.3
     is-stream: ^2.0.0
     js-base64: ^2.6.1
