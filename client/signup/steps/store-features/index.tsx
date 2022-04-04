@@ -1,4 +1,4 @@
-import { FEATURE_SIMPLE_PAYMENTS, FEATURE_WOOCOMMERCE } from '@automattic/calypso-products';
+import { FEATURE_SIMPLE_PAYMENTS, FEATURE_WOOP } from '@automattic/calypso-products';
 import { SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
@@ -76,7 +76,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		hasActiveSiteFeature( state, props.siteId, FEATURE_SIMPLE_PAYMENTS )
 	);
 	const hasWooFeature = useSelector( ( state ) =>
-		hasActiveSiteFeature( state, props.siteId, FEATURE_WOOCOMMERCE )
+		hasActiveSiteFeature( state, props.siteId, FEATURE_WOOP )
 	);
 	const intents = useIntents( siteSlug, hasPaymentsFeature, hasWooFeature, trackSupportLinkClick );
 
