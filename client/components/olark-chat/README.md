@@ -7,10 +7,10 @@ Integrate olark chat widget.
 First, grab yor Olark embed code from your Olark account. As of writing this, it's in the following line of the embed code:
 
 ```js
-olark.identify('YOUR_SITE_ID');
+olark.identify( 'YOUR_SITE_ID' );
 ```
 
-Next, add this ID to the config file's `olark_chat_identity` prop. 
+Next, add this ID to the config file's `olark_chat_identity` prop.
 
 You'd then use this component as follows, wrapping in a react error boundary component:
 
@@ -19,16 +19,20 @@ import config from '@automattic/calypso-config';
 import OlarkChat from 'calypso/components/olark-chat';
 import OlarkErrorBoundary from 'calypso/components/olark-chat/olarkErrorBoundary';
 
-const olarkIdentity = config( 'olark_chat_identity' );
-const olarkSystemsGroupId = 'YOUR_SYSTEM_ID';
+function olarkChatWidget() {
+    const olarkIdentity = config( 'olark_chat_identity' );
+    const olarkSystemsGroupId = 'YOUR_SYSTEM_ID';
 
-<OlarkErrorBoundary>
-    <OlarkChat
-        identity={ olarkIdentity }
-		shouldDisablePreChatSurvey={ true }
-		systemsGroupId={ olarkSystemsGroupId }
-	/>
-</OlarkErrorBoundary>
+    return (
+        <OlarkErrorBoundary>
+            <OlarkChat
+                identity={ olarkIdentity }
+                shouldDisablePreChatSurvey={ true }
+                systemsGroupId={ olarkSystemsGroupId }
+            />
+        </OlarkErrorBoundary>
+    );
+}
 ```
 
 ## Props
