@@ -1,7 +1,9 @@
 import { Page, Locator } from 'playwright';
+import envVariables from '../../env-variables';
 
 const sidebarParentSelector = '.block-editor-inserter__content';
 const selectors = {
+	closeBlockInserterButton: 'button[aria-label="Close block inserter"]',
 	blockSearchInput: `${ sidebarParentSelector } input[type="search"]`,
 	blockResultItem: ( name: string ) =>
 		`${ sidebarParentSelector } .block-editor-block-types-list__list-item span:text("${ name }")`,
@@ -24,6 +26,23 @@ export class EditorSidebarBlockInserterComponent {
 	constructor( page: Page, editor: Locator ) {
 		this.page = page;
 		this.editor = editor;
+	}
+
+	/**
+	 * Closes the Block Inserter from the panel.
+	 *
+	 * This operation is only available for Mobile viewports where the
+	 * Block Inserter panel is treated as an overlay.
+	 */
+	async closeBlockInserter(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+			return;
+		}
+
+		const blockInserterPanelLocator = this.editor.locator( selectors.closeBlockInserterButton );
+		if ( ( await blockInserterPanelLocator.count() ) > 0 ) {
+			await blockInserterPanelLocator.click();
+		}
 	}
 
 	/**
