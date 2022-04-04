@@ -26,11 +26,12 @@ const Component = () => {
 			areVideosTranslated={ false }
 		/>
 	);
-}
+};
 ```
+
 It is helpful to notice how the `HeaderBar` and `FooterBar` props are prepared. By using
 a function wrapper we can guarantee that the props sent by `VideosUi` are being passed
-down to the specific header and footer in addition to the custom properties this components might take (in 
+down to the specific header and footer in addition to the custom properties this components might take (in
 this case `onClose` and `onBackClick`).
 
 ## Props
