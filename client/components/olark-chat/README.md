@@ -4,7 +4,7 @@ Integrate olark chat widget.
 
 ## How to use
 
-First, grab yor Olark embed code from your Olark account. Note down the unique ID of your olark site, as of writing this it's in the following line of th embed code:
+First, grab yor Olark embed code from your Olark account. As of writing this, it's in the following line of the embed code:
 
 ```js
 olark.identify('YOUR_SITE_ID');
