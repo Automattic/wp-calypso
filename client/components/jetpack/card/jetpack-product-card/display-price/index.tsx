@@ -91,6 +91,7 @@ const Wrapper: React.FC< OwnProps > = ( props ) => {
 		'is-owned': Boolean( props.isOwned ),
 		'is-included-in-plan': Boolean( props.isIncludedInPlan ),
 		'is-free': Boolean( props.isFree ),
+		'is-placeholder': Boolean( props.pricesAreFetching ),
 	};
 
 	return (

@@ -4,16 +4,22 @@ import { FunctionComponent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
+import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
+import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import Upsell from 'calypso/components/jetpack/upsell';
+import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
-import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
-import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+
 import './style.scss';
 
 const BackupsUpsellIcon: FunctionComponent = () => (
@@ -60,27 +66,31 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 };
 
 const BackupsUpsellBody: FunctionComponent = () => {
-	const translate = useTranslate();
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId ) || -1;
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug ) || '';
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const createProductURL = getPurchaseURLCallback( selectedSiteSlug, {} );
 	const dispatch = useDispatch();
 
 	const onClick = useCallback(
 		() => dispatch( recordTracksEvent( 'calypso_jetpack_backup_upsell_click' ) ),
 		[ dispatch ]
 	);
-	const item = slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_T1_YEARLY ) as SelectorProduct;
 
 	return (
-		<JetpackProductCard
-			buttonLabel={ translate( 'Upgrade now' ) }
-			buttonPrimary
-			buttonURL={ `https://jetpack.com/upgrade/backup/?site=${ selectedSiteSlug }` }
-			description={ item.description }
-			headerLevel={ 3 }
-			hidePrice
-			item={ item }
-			onButtonClick={ onClick }
-		/>
+		<>
+			<QueryJetpackSaleCoupon />
+			<QueryProductsList type="jetpack" />
+			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
+			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
+			<UpsellProductCard
+				productSlug={ PRODUCT_JETPACK_BACKUP_T1_YEARLY }
+				siteId={ siteId }
+				currencyCode={ currencyCode }
+				getButtonURL={ createProductURL }
+				onCtaButtonClick={ onClick }
+			/>
+		</>
 	);
 };
 
@@ -101,7 +111,7 @@ const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason 
 			break;
 	}
 	return (
-		<Main className="backup-upsell">
+		<Main className="backup-upsell" wideLayout>
 			<DocumentHead title="Backup" />
 			<SidebarNavigation />
 			<div className="backup-upsell__content">{ body }</div>
