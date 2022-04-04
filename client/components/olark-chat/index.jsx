@@ -1,39 +1,33 @@
+import PropTypes from 'prop-types';
 import { Component } from 'react';
+import OlarkChatMain from './main';
+import OlarkErrorBoundary from './olark-error-boundary';
 
 class OlarkChat extends Component {
-	componentDidMount() {
-		const { identity, shouldDisablePreChatSurvey, systemsGroupId } = this.props;
-		const script = document.createElement( 'script' );
-		script.setAttribute( 'id', 'olark-chat' );
-		script.setAttribute( 'type', 'text/javascript' );
-		script.setAttribute( 'async', true );
-		script.innerHTML = `
-			;(function(o,l,a,r,k,y){if(o.olark)return; r="script";y=l.createElement(r);r=l.getElementsByTagName(r)[0]; y.async=1;y.src="//"+a;r.parentNode.insertBefore(y,r); y=o.olark=function(){k.s.push(arguments);k.t.push(+new Date)}; y.extend=function(i,j){y("extend",i,j)}; y.identify=function(i){y("identify",k.i=i)}; y.configure=function(i,j){y("configure",i,j);k.c[i]=j}; k=y._={s:[],t:[+new Date],c:{},l:a}; })(window,document,"static.olark.com/jsclient/loader.js");
-			olark.identify('${ identity }');
-		`;
-
-		if ( shouldDisablePreChatSurvey ) {
-			script.innerHTML += `
-				olark.configure("features.prechat_survey", false);
-			`;
-		}
-
-		if ( systemsGroupId ) {
-			script.innerHTML += `
-				olark.configure('system.group', '${ systemsGroupId }'); 
-			`;
-		}
-
-		document.getElementById( 'olark-chat-container' ).appendChild( script );
-	}
-
-	shouldComponentUpdate() {
-		return false;
-	}
-
 	render() {
-		return <div id="olark-chat-container" />;
+		const { identity, shouldDisablePreChatSurvey, systemsGroupId } = this.props;
+
+		return (
+			<OlarkErrorBoundary>
+				<OlarkChatMain
+					identity={ identity }
+					shouldDisablePreChatSurvey={ shouldDisablePreChatSurvey }
+					systemsGroupId={ systemsGroupId }
+				/>
+			</OlarkErrorBoundary>
+		);
 	}
 }
+
+OlarkChat.propTypes = {
+	identity: PropTypes.string.isRequired,
+	shouldDisablePreChatSurvey: PropTypes.bool,
+	systemsGroupId: PropTypes.string,
+};
+
+OlarkChat.defaultProps = {
+	shouldDisablePreChatSurvey: false,
+	systemsGroupId: null,
+};
 
 export default OlarkChat;

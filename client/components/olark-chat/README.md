@@ -17,20 +17,17 @@ You'd then use this component as follows, wrapping in a react error boundary com
 ```js
 import config from '@automattic/calypso-config';
 import OlarkChat from 'calypso/components/olark-chat';
-import OlarkErrorBoundary from 'calypso/components/olark-chat/olarkErrorBoundary';
 
 function olarkChatWidget() {
 	const olarkIdentity = config( 'olark_chat_identity' );
 	const olarkSystemsGroupId = 'YOUR_SYSTEM_ID';
 
 	return (
-		<OlarkErrorBoundary>
 			<OlarkChat
 				identity={ olarkIdentity }
 				shouldDisablePreChatSurvey={ true }
 				systemsGroupId={ olarkSystemsGroupId }
 			/>
-		</OlarkErrorBoundary>
 	);
 }
 ```
@@ -48,8 +45,9 @@ Your olark site ID retrieved from the embed code.
 
 - **Type:** `String`
 - **Required:** `no`
+- **Default:** `null`
 
-Use this if you have user groups defined in the olark dashboard, and would like chats on the page to be routed to a specific user group.
+Use this if you have user groups defined in the olark dashboard, and would like chats on the current page to be routed to a specific user group.
 
 ### `shouldDisablePreChatSurvey`
 
