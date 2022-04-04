@@ -21,8 +21,8 @@ const Component = () => {
 	return (
 		<VideosUi
 			courseSlug={ COURSE_SLUGS.BLOGGING_QUICK_START }
-			HeaderBar={ ( headerProps ) => ( <ModalHeaderBar onClose={ onClose } { ...headerProps } />) }
-			FooterBar={ ( footerProps ) => ( <ModalFooterBar onBackClick={ onClose } { ...footerProps } />) }
+			HeaderBar={ ( headerProps ) => <ModalHeaderBar onClose={ onClose } { ...headerProps } /> }
+			FooterBar={ ( footerProps ) => <ModalFooterBar onBackClick={ onClose } { ...footerProps } /> }
 			areVideosTranslated={ false }
 		/>
 	);
