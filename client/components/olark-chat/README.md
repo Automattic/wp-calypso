@@ -12,7 +12,7 @@ olark.identify( 'YOUR_SITE_ID' );
 
 Next, add this ID to the config file's `olark_chat_identity` prop.
 
-You'd then use this component as follows, wrapping in a react error boundary component:
+Here's an example of how to use this component:
 
 ```js
 import config from '@automattic/calypso-config';
