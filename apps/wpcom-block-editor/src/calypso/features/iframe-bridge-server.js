@@ -767,7 +767,7 @@ function openCustomizer( calypsoPort ) {
  */
 function openTemplatePartLinks( calypsoPort ) {
 	addEditorListener( '.template__block-container .template-block__overlay a', ( e ) => {
-		e.preventDefault(); // TODO: link?
+		e.preventDefault();
 		e.stopPropagation(); // Otherwise it will port the message twice.
 
 		// Get the template part ID from the current href.
