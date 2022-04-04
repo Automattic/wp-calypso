@@ -19,7 +19,11 @@ export default function BillingDetails(): ReactElement {
 					<div>{ translate( 'Products' ) }</div>
 					<div>{ translate( 'Assigned licenses' ) }</div>
 					<div>{ translate( 'Unassigned licenses' ) }</div>
-					<div></div>
+					<div>
+						{ billing.isSuccess &&
+							billing.data.priceInterval === 'day' &&
+							translate( 'Days in Total' ) }
+					</div>
 				</div>
 			</Card>
 
@@ -58,7 +62,7 @@ export default function BillingDetails(): ReactElement {
 
 							<div className="billing-details__subtotal">
 								{ billing.data.priceInterval === 'day' &&
-									translate( '%(count)d Total Day', '%(count)d Total Days', {
+									translate( '%(count)d Day', '%(count)d Days', {
 										count: product.productQuantity,
 										args: { count: product.productQuantity },
 									} ) }
