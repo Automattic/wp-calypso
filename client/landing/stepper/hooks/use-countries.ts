@@ -1,12 +1,22 @@
-import { useSelect } from '@wordpress/data';
-import { SITE_STORE } from '../stores';
+import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
+import wpcom from 'calypso/lib/wp';
 
-export function useCountries() {
-	const countries = useSelect( ( select ) => select( SITE_STORE ).getCountries() );
+type WooCountries = Record< string, string >;
 
-	if ( ! countries ) {
-		return null;
-	}
-
-	return countries.countries;
+export function useCountries(
+	queryOptions: UseQueryOptions< any, unknown, WooCountries > = {}
+): UseQueryResult< WooCountries > {
+	return useQuery< any, unknown, WooCountries >(
+		[],
+		() => wpcom.req.get( '/woocommerce/countries/regions/', { apiNamespace: 'wpcom/v2' } ),
+		{
+			staleTime: Infinity,
+			refetchOnWindowFocus: false,
+			refetchOnReconnect: false,
+			...queryOptions,
+			meta: {
+				...queryOptions.meta,
+			},
+		}
+	);
 }
