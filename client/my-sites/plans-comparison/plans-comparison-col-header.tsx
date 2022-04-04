@@ -34,8 +34,7 @@ const PlanTitle = styled.h2`
 `;
 
 const PlanDescription = styled.p`
-	color: var( --studio-gray-50 );
-	font-size: 0.875rem;
+	font-size: 1rem;
 	font-weight: 400;
 	margin: 0 0 1.5rem;
 

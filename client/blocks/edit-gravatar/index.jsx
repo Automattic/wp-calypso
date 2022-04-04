@@ -18,14 +18,11 @@ import {
 	recordGoogleEvent,
 	composeAnalytics,
 } from 'calypso/state/analytics/actions';
-import {
-	receiveGravatarImageFailed,
-	uploadGravatar,
-} from 'calypso/state/current-user/gravatar-status/actions';
-import { isCurrentUserUploadingGravatar } from 'calypso/state/current-user/gravatar-status/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import { receiveGravatarImageFailed, uploadGravatar } from 'calypso/state/gravatar-status/actions';
+import { isCurrentUserUploadingGravatar } from 'calypso/state/gravatar-status/selectors';
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
 
 import './style.scss';
@@ -157,7 +154,7 @@ export class EditGravatar extends Component {
 	};
 
 	render() {
-		const { isUploading, translate, user } = this.props;
+		const { isUploading, translate, user, additionalUploadHtml } = this.props;
 		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
@@ -234,6 +231,11 @@ export class EditGravatar extends Component {
 							}
 						) }
 					</InfoPopover>
+					{ additionalUploadHtml && (
+						<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
+							{ additionalUploadHtml }
+						</FilePicker>
+					) }
 				</div>
 			</div>
 		);

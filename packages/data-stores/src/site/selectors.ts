@@ -4,7 +4,6 @@ import { SiteLaunchStatus } from './types';
 import type { State } from './reducer';
 
 export const getState = ( state: State ) => state;
-
 export const getNewSite = ( state: State ) => state.newSite.data;
 export const getNewSiteError = ( state: State ) => state.newSite.error;
 export const isFetchingSite = ( state: State ) => state.newSite.isFetching;
@@ -19,8 +18,15 @@ export const isNewSite = ( state: State ) => !! state.newSite.data;
  * @param state {State}		state object
  * @param siteId {number}	id of the site to look up
  */
-export const getSite = ( state: State, siteId: number ) => {
-	return state.sites[ siteId ];
+export const getSite = ( state: State, siteId: number | string ) => {
+	return (
+		state.sites[ siteId ] ||
+		Object.values( state.sites ).find( ( site ) => site && new URL( site.URL ).host === siteId )
+	);
+};
+
+export const getSiteIdBySlug = ( _: State, slug: string ) => {
+	return select( STORE_KEY ).getSite( slug )?.ID;
 };
 
 export const getSiteTitle = ( _: State, siteId: number ) =>

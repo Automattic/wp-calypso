@@ -50,7 +50,9 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const urlData = useSelector( getUrlData );
 	const searchParams = useSelector( getCurrentQueryArguments );
 	let siteSlug = searchParams?.to as string;
-	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) as number );
+	const _siteId = useSelector( ( state ) => getSiteId( state, siteSlug ) as number );
+	const [ siteId, setSiteId ] = useState( _siteId );
+	! siteId && setSiteId( _siteId );
 	const site = useSelector( ( state ) => getSite( state, siteId ) as SitesItem );
 	const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 	const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );

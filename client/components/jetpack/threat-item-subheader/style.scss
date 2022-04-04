@@ -6,7 +6,6 @@
 		flex-direction: column;
 		align-items: flex-start;
 		margin-top: 4px;
-		margin-left: 52px;
 
 		@include breakpoint-deprecated( '>1040px' ) {
 			flex-direction: row;
@@ -14,12 +13,8 @@
 		}
 	}
 
-	&__status {
-		white-space: nowrap;
-
-		&.is-fixed {
-			color: var( --color-success-50 );
-		}
+	&__status.is-fixed {
+		color: var( --color-success-50 );
 	}
 
 	&__status-separator {

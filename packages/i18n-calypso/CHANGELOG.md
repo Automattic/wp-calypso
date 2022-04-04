@@ -1,3 +1,7 @@
+## 6.0.1
+
+- Fix an issue in the published build of i18n-calypso which prevented it from installing correctly.
+
 ## 6.0.0
 
 - Update React peer dependency to v17.

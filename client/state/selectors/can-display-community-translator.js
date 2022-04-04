@@ -1,5 +1,5 @@
+import { canBeTranslated } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
-import { canBeTranslated } from 'calypso/lib/i18n-utils';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 /**

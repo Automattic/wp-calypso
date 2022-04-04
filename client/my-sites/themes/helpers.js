@@ -1,7 +1,7 @@
+import { isMagnificentLocale } from '@automattic/i18n-utils';
 import { mapValues } from 'lodash';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { isMagnificentLocale } from 'calypso/lib/i18n-utils';
 
 export function trackClick( componentName, eventName, verb = 'click' ) {
 	const stat = `${ componentName } ${ eventName } ${ verb }`;

@@ -21,11 +21,11 @@ import {
 	getProductFromSlug,
 	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
+import { getLocaleFromPath, removeLocaleFromPath } from '@automattic/i18n-utils';
 import Debug from 'debug';
 import { get, some } from 'lodash';
 import page from 'page';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -385,9 +385,9 @@ export function signupForm( context, next ) {
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
-		const { locale } = context.params;
+		const { lang } = context.params;
 		context.primary = (
-			<JetpackSignup path={ context.path } locale={ locale } authQuery={ transformedQuery } />
+			<JetpackSignup path={ context.path } locale={ lang } authQuery={ transformedQuery } />
 		);
 	} else {
 		context.primary = <NoDirectAccessError />;

@@ -12,9 +12,10 @@ type BaseLanguage = {
 	territories: string[];
 	value: number;
 	wpLocale: WPLocale | '';
+	isTranslatedIncompletely?: boolean;
 };
 
-type SubLanguage = BaseLanguage & { parentLangSlug: string };
+export type SubLanguage = BaseLanguage & { parentLangSlug: string };
 
 export type Language = BaseLanguage | SubLanguage;
 

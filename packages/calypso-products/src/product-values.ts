@@ -28,6 +28,7 @@ export { isDomainRedemption } from './is-domain-redemption';
 export { isDomainRegistration } from './is-domain-registration';
 export { isDomainTransfer } from './is-domain-transfer';
 export { isDotComPlan } from './is-dot-com-plan';
+export { isEmailMonthly } from './is-email-monthly';
 export { isEcommerce } from './is-ecommerce';
 export { isEnterprise } from './is-enterprise';
 export { isFreeJetpackPlan } from './is-free-jetpack-plan';
@@ -42,6 +43,7 @@ export {
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
 } from './is-gsuite';
+export { isGoogleWorkspaceMonthly } from './is-google-workspace-monthly';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackBackup } from './is-jetpack-backup';
@@ -73,6 +75,7 @@ export { isSecurityRealTime } from './is-security-realtime';
 export { isJetpackSecuritySlug } from './is-jetpack-security-slug';
 export { isTheme } from './is-theme';
 export { isTitanMail } from './is-titan-mail';
+export { isTitanMailMonthly } from './is-titan-mail-monthly';
 export { isUnlimitedSpace } from './is-unlimited-space';
 export { isUnlimitedThemes } from './is-unlimited-themes';
 export { isVideoPress } from './is-video-press';
@@ -84,3 +87,4 @@ export * from './is-p2-plus';
 export * from './products-list';
 export * from './translations';
 export { findProductKeys } from './find-product-keys';
+export { isRenewable } from './is-renewable';

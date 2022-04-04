@@ -127,7 +127,7 @@ class SharingButtonsPreviewButtons extends Component {
 		if ( 'official' === this.props.style ) {
 			// To show the more preview when rendering official style buttons,
 			// we request that the frame emit a show message with the offset
-			this.previewIframeRef.current.contentWindow.postMessage( 'more-show', '*' );
+			this.previewIframeRef.current.iframeRef.current.contentWindow.postMessage( 'more-show', '*' );
 		} else {
 			// For custom styles, we can calculate the offset using the
 			// position of the rendered button

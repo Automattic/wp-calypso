@@ -1,8 +1,8 @@
+import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import HasSitePurchasesSwitch from 'calypso/components/has-site-purchases-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import AdvancedCredentials from './advanced-credentials';
 import NoSitesPurchasesMessage from './empty-content';
 import HasSiteCredentialsSwitch from './has-site-credentials-switch';
 import AdvancedCredentialsLoadingPlaceholder from './loading';

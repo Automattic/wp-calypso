@@ -229,6 +229,7 @@ export function emailManagementInDepthComparison(
 ) {
 	return emailManagementEdit( siteName, domainName, 'compare', relativeTo, {
 		interval: intervalLength,
+		referrer: relativeTo,
 		source,
 	} );
 }

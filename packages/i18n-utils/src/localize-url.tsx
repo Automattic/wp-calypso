@@ -1,4 +1,5 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { getLocaleSlug } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useLocale } from './locale-context';
 import {
@@ -14,6 +15,10 @@ import {
 } from './locales';
 
 const INVALID_URL = `http://__domain__.invalid`;
+
+function getDefaultLocale(): Locale {
+	return getLocaleSlug?.() ?? 'en';
+}
 
 const setLocalizedUrlHost = ( hostname: string, validLocales: Locale[] = [] ) => (
 	url: URL,
@@ -150,7 +155,11 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	},
 };
 
-export function localizeUrl( fullUrl: string, locale: Locale, isLoggedIn = true ): string {
+export function localizeUrl(
+	fullUrl: string,
+	locale: Locale = getDefaultLocale(),
+	isLoggedIn = true
+): string {
 	let url;
 	try {
 		url = new URL( String( fullUrl ), INVALID_URL );

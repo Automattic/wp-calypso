@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -12,7 +13,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	ValidationErrors as MediaValidationErrors,
 	MEDIA_IMAGE_RESIZER,
@@ -162,8 +162,8 @@ export class MediaLibraryContent extends Component {
 					upgradeNudgeName = 'plan-media-storage-error-video';
 					upgradeNudgeFeature = 'video-upload';
 					message = translate(
-						'%d file could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
-						'%d files could not be uploaded because your site does not support video files. Upgrade to a premium plan for video support.',
+						'%d file could not be uploaded because your site does not support video files. Upgrade to a Pro plan for video support.',
+						'%d files could not be uploaded because your site does not support video files. Upgrade to a Pro plan for video support.',
 						i18nOptions
 					);
 					break;
@@ -274,6 +274,10 @@ export class MediaLibraryContent extends Component {
 			return translate(
 				'We were unable to connect to the Pexels service. Please try again later.'
 			);
+		}
+
+		if ( source === 'openverse' ) {
+			return translate( 'We were unable to connect to Openverse. Please try again later.' );
 		}
 
 		return translate(
@@ -449,7 +453,7 @@ export class MediaLibraryContent extends Component {
 					selectedItems={ this.props.selectedItems }
 					sticky={ ! this.props.scrollable }
 					hasAttribution={ 'pexels' === this.props.source }
-					hasRefreshButton={ 'pexels' !== this.props.source }
+					hasRefreshButton={ 'pexels' !== this.props.source && 'openverse' !== this.props.source }
 					mediaScale={ this.props.mediaScale }
 				/>
 			);

@@ -1,5 +1,5 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 function SocialSignupToS( props ) {
 	return (

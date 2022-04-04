@@ -1,3 +1,5 @@
+<img alt="Abstract concept" src="https://cldup.com/gBB3Y0iOWl.jpg" />
+
 # WordPress.com End to End Tests
 
 Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Automattic/wp-calypso) client and WordPress.com.

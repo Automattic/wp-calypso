@@ -1,9 +1,9 @@
+import { getLocaleFromPath, removeLocaleFromPath } from '@automattic/i18n-utils';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
-import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { navigate } from 'calypso/lib/navigate';
 import InviteAccept from 'calypso/my-sites/invites/invite-accept';
 import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';

@@ -2,7 +2,7 @@ import { parseWithAttributeSchema } from '@wordpress/blocks';
 import { get, includes, reduce } from 'lodash';
 
 const EMPTY_ARRAY = [];
-const DEFAULT_DISABLED_DATA_SOURCES = [ 'google_photos', 'pexels' ];
+const DEFAULT_DISABLED_DATA_SOURCES = [ 'google_photos', 'openverse', 'pexels' ];
 
 /**
  * Convert the Calypso Media Modal output to the format expected by Gutenberg

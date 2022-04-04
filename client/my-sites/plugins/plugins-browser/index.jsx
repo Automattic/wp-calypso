@@ -1,14 +1,13 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
 	isEnterprise,
+	isPro,
 	findFirstSimilarPlanKey,
 	FEATURE_UPLOAD_PLUGINS,
 	TYPE_BUSINESS,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import Search from '@automattic/search';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -28,7 +27,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import Pagination from 'calypso/components/pagination';
 import { PaginationVariant } from 'calypso/components/pagination/constants';
 import {
-	useWPCOMPlugin,
 	useWPCOMPlugins,
 	useWPCOMFeaturedPlugins,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
@@ -36,11 +34,13 @@ import { useWPORGPlugins } from 'calypso/data/marketplace/use-wporg-plugin-query
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import NoResults from 'calypso/my-sites/no-results';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import {
 	recordTracksEvent,
@@ -81,10 +81,6 @@ const SEARCH_RESULTS_LIST_LENGTH = 12;
 
 const translateCategory = ( { category, translate } ) => {
 	switch ( category ) {
-		case 'new':
-			return translate( 'New', {
-				context: 'Category description for the plugin browser.',
-			} );
 		case 'popular':
 			return translate( 'Popular', {
 				context: 'Category description for the plugin browser.',
@@ -104,8 +100,6 @@ const translateCategory = ( { category, translate } ) => {
 
 const translateCategoryTitle = ( { category, translate } ) => {
 	switch ( category ) {
-		case 'new':
-			return translate( 'All New Plugins' );
 		case 'popular':
 			return translate( 'All Popular Plugins' );
 		case 'featured':
@@ -134,10 +128,14 @@ const PluginsBrowser = ( {
 	const billingPeriod = useSelector( getBillingInterval );
 
 	const hasBusinessPlan =
-		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
+		sitePlan &&
+		( isBusiness( sitePlan ) ||
+			isEnterprise( sitePlan ) ||
+			isEcommerce( sitePlan ) ||
+			isPro( sitePlan ) );
 
 	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } = useWPCOMPlugins(
-		'featured'
+		'all'
 	);
 	const paidPlugins = useMemo( () => paidPluginsRawList.map( updateWpComRating ), [
 		paidPluginsRawList,
@@ -165,10 +163,6 @@ const PluginsBrowser = ( {
 		data: { plugins: pluginsByCategory = [] } = {},
 		isLoading: isFetchingPluginsByCategory,
 	} = useWPORGPlugins( { category } );
-	const {
-		data: { plugins: pluginsByCategoryNew = [] } = {},
-		isLoading: isFetchingPluginsByCategoryNew,
-	} = useWPORGPlugins( { category: 'new' } );
 	const {
 		data: pluginsByCategoryFeatured = [],
 		isLoading: isFetchingPluginsByCategoryFeatured,
@@ -199,7 +193,14 @@ const PluginsBrowser = ( {
 
 	useEffect( () => {
 		const items = [
-			{ label: translate( 'Plugins' ), href: `/plugins/${ siteSlug || '' }`, id: 'plugins' },
+			{
+				label: translate( 'Plugins' ),
+				href: `/plugins/${ siteSlug || '' }`,
+				id: 'plugins',
+				helpBubble: translate(
+					'Add new functionality and integrations to your site with plugins.'
+				),
+			},
 		];
 		if ( search ) {
 			items.push( {
@@ -296,9 +297,6 @@ const PluginsBrowser = ( {
 
 						<UploadPluginButton isMobile={ isMobile } siteSlug={ siteSlug } />
 					</div>
-					<div className="plugins-browser__searchbox">
-						{ <SearchBox isMobile={ isMobile } doSearch={ doSearch } search={ search } /> }
-					</div>
 				</FixedNavigationHeader>
 			) }
 			{ isSiteConnected === false && (
@@ -327,10 +325,13 @@ const PluginsBrowser = ( {
 				hasBusinessPlan={ hasBusinessPlan }
 				siteSlug={ siteSlug }
 			/>
-
+			<SearchBoxHeader
+				doSearch={ doSearch }
+				searchTerm={ search }
+				title={ translate( 'Plugins you need to get your projects done' ) }
+				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
+			/>
 			<PluginBrowserContent
-				pluginsByCategoryNew={ pluginsByCategoryNew }
-				isFetchingPluginsByCategoryNew={ isFetchingPluginsByCategoryNew }
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
@@ -354,8 +355,6 @@ const PluginsBrowser = ( {
 	);
 };
 
-const WrappedSearch = ( props ) => <Search { ...props } />;
-
 const SearchListView = ( {
 	search: searchTerm,
 	searchTitle: searchTitleTerm,
@@ -363,6 +362,7 @@ const SearchListView = ( {
 	sites,
 	billingPeriod,
 } ) => {
+	const dispatch = useDispatch();
 	const [ page, setPage ] = useState( 1 );
 	const [ pageSize, setPageSize ] = useState( SEARCH_RESULTS_LIST_LENGTH );
 
@@ -401,6 +401,17 @@ const SearchListView = ( {
 		setPageSize( pluginItemsFetch( page ) );
 	}, [ paidPluginsBySearchTerm ] );
 
+	useEffect( () => {
+		if ( searchTerm && pluginsPagination?.page === 1 ) {
+			dispatch(
+				recordTracksEvent( 'calypso_plugins_search_results_show', {
+					search_term: searchTerm,
+					results_count: pluginsPagination?.results,
+				} )
+			);
+		}
+	}, [ searchTerm, pluginsPagination?.page ] );
+
 	if (
 		pluginsBySearchTerm.length > 0 ||
 		paidPluginsBySearchTerm.length > 0 ||
@@ -432,11 +443,10 @@ const SearchListView = ( {
 		return (
 			<>
 				<PluginsBrowserList
-					plugins={
-						pluginsPagination?.page === 1
-							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
-							: pluginsBySearchTerm
-					}
+					plugins={ ( pluginsPagination?.page === 1
+						? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
+						: pluginsBySearchTerm
+					).filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					title={ searchTitle }
 					subtitle={ subtitle }
@@ -523,8 +533,6 @@ const FullListView = ( {
 
 const PluginSingleListView = ( {
 	category,
-	pluginsByCategoryNew,
-	isFetchingPluginsByCategoryNew,
 	pluginsByCategoryPopular,
 	isFetchingPluginsByCategoryPopular,
 	pluginsByCategoryFeatured,
@@ -540,16 +548,10 @@ const PluginSingleListView = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-	const { data: spotlightPlugin, isFetched: spotlightPluginFetched } =
-		useWPCOMPlugin( 'wordpress-seo-premium', { enabled: isEnabled( 'marketplace-spotlight' ) } ) ||
-		{};
 
 	let plugins;
 	let isFetching;
-	if ( category === 'new' ) {
-		plugins = pluginsByCategoryNew;
-		isFetching = isFetchingPluginsByCategoryNew;
-	} else if ( category === 'popular' ) {
+	if ( category === 'popular' ) {
 		plugins = pluginsByCategoryPopular;
 		isFetching = isFetchingPluginsByCategoryPopular;
 	} else if ( category === 'featured' ) {
@@ -561,6 +563,8 @@ const PluginSingleListView = ( {
 	} else {
 		return null;
 	}
+
+	plugins = plugins.filter( isNotBlocked );
 
 	let listLink = '/plugins/' + category;
 	if ( domain ) {
@@ -579,8 +583,6 @@ const PluginSingleListView = ( {
 			variant={ PluginsBrowserListVariant.Fixed }
 			billingPeriod={ billingPeriod }
 			setBillingPeriod={ category === 'paid' && setBillingPeriod }
-			spotlightPlugin={ spotlightPlugin }
-			spotlightPluginFetched={ spotlightPluginFetched }
 			extended
 		/>
 	);
@@ -606,7 +608,6 @@ const PluginBrowserContent = ( props ) => {
 			) }
 
 			<PluginSingleListView { ...props } category="popular" />
-			<PluginSingleListView { ...props } category="new" />
 		</>
 	);
 };
@@ -620,16 +621,23 @@ const UpgradeNudge = ( {
 	siteSlug,
 } ) => {
 	const translate = useTranslate();
+	const eligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, selectedSite?.ID )
+	);
 
 	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic || hasBusinessPlan ) {
 		return null;
 	}
 
-	const bannerURL = `/checkout/${ siteSlug }/business`;
+	const checkoutPlan = eligibleForProPlan ? 'pro' : 'business';
+	const bannerURL = `/checkout/${ siteSlug }/${ checkoutPlan }`;
 	const plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
 		type: TYPE_BUSINESS,
 	} );
-	const title = translate( 'Upgrade to the Business plan to install plugins.' );
+
+	const title = eligibleForProPlan
+		? translate( 'Upgrade to the Pro plan to install plugins.' )
+		: translate( 'Upgrade to the Business plan to install plugins.' );
 
 	return (
 		<UpsellNudge
@@ -664,26 +672,6 @@ const UploadPluginButton = ( { isMobile, siteSlug } ) => {
 				<span className="plugins-browser__button-text">{ translate( 'Upload' ) }</span>
 			) }
 		</Button>
-	);
-};
-
-const SearchBox = ( { isMobile, doSearch, search } ) => {
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-
-	const recordSearchEvent = ( eventName ) =>
-		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
-
-	return (
-		<WrappedSearch
-			pinned={ isMobile }
-			fitsContainer={ isMobile }
-			onSearch={ doSearch }
-			initialValue={ search }
-			placeholder={ translate( 'Try searching ‘ecommerce’' ) }
-			delaySearch={ true }
-			recordEvent={ recordSearchEvent }
-		/>
 	);
 };
 
@@ -761,6 +749,12 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 		( plugin ) =>
 			! displayedFeaturedSlugsMap.has( plugin.slug ) && isCompatiblePlugin( plugin.slug )
 	);
+}
+
+const PLUGIN_SLUGS_BLOCKLIST = [];
+
+function isNotBlocked( plugin ) {
+	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 
 export default UrlSearch( PluginsBrowser );

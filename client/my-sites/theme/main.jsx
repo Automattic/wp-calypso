@@ -2,8 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	FEATURE_PREMIUM_THEMES,
 	FEATURE_UPLOAD_THEMES,
-	PLAN_BUSINESS,
-	PLAN_PREMIUM,
+	PLAN_WPCOM_PRO,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -728,9 +727,9 @@ class ThemeSheet extends Component {
 		if ( hasWpComThemeUpsellBanner ) {
 			pageUpsellBanner = (
 				<UpsellNudge
-					plan={ PLAN_PREMIUM }
+					plan={ PLAN_WPCOM_PRO }
 					className="theme__page-upsell-banner"
-					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
+					title={ translate( 'Access this theme for FREE with a Pro plan!' ) }
 					description={ preventWidows(
 						translate(
 							'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
@@ -748,9 +747,9 @@ class ThemeSheet extends Component {
 		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
 			pageUpsellBanner = (
 				<UpsellNudge
-					plan={ PLAN_BUSINESS }
+					plan={ PLAN_WPCOM_PRO }
 					className="theme__page-upsell-banner"
-					title={ translate( 'Access this theme for FREE with a Business plan!' ) }
+					title={ translate( 'Access this theme for FREE with a Pro plan!' ) }
 					description={ preventWidows(
 						translate(
 							'Instantly unlock thousands of different themes and install your own when you upgrade.'

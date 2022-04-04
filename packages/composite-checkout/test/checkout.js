@@ -6,19 +6,19 @@ import {
 	fireEvent,
 	act,
 } from '@testing-library/react';
-import { createContext, Fragment, useState, useContext } from 'react';
+import { createContext, useState, useContext } from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import {
-	Checkout,
 	CheckoutProvider,
 	CheckoutStep,
-	CheckoutStepArea,
 	CheckoutStepBody,
-	CheckoutSteps,
 	useIsStepComplete,
 	useTransactionStatus,
 	usePaymentProcessor,
+	CheckoutFormSubmit,
+	CheckoutStepGroup,
 } from '../src/public-api';
+import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
 
 const myContext = createContext();
 const usePaymentData = () => useContext( myContext );
@@ -39,7 +39,7 @@ describe( 'Checkout', () => {
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
-						<Checkout />
+						<DefaultCheckoutSteps />
 					</CheckoutProvider>
 				);
 			} );
@@ -100,11 +100,16 @@ describe( 'Checkout', () => {
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
-						<Checkout />
+						<DefaultCheckoutSteps />
 					</CheckoutProvider>
 				);
 				const renderResult = render( <MyCheckout /> );
 				container = renderResult.container;
+			} );
+
+			it( 'renders steps', () => {
+				const activeSteps = container.querySelectorAll( '.checkout-step' );
+				expect( activeSteps ).toHaveLength( 2 );
 			} );
 
 			it( 'makes the review step active', () => {
@@ -114,7 +119,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the payment method step invisible', () => {
-				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
+				const firstStep = container.querySelector( '.checkout__payment-method-step' );
 				const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 				expect( firstStepContent ).toHaveStyle( 'display: none' );
 			} );
@@ -141,7 +146,7 @@ describe( 'Checkout', () => {
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
-						<Checkout />
+						<DefaultCheckoutSteps />
 					</CheckoutProvider>
 				);
 				const renderResult = render( <MyCheckout /> );
@@ -159,7 +164,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the next step visible', () => {
-				const reviewStep = container.querySelector( '.checkout__payment-methods-step' );
+				const reviewStep = container.querySelector( '.checkout__payment-method-step' );
 				const reviewStepContent = reviewStep.querySelector( '.checkout-steps__step-content' );
 				expect( reviewStepContent ).toHaveStyle( 'display: block' );
 			} );
@@ -175,6 +180,11 @@ describe( 'Checkout', () => {
 		beforeEach( () => {
 			MyCheckout = ( props ) => {
 				const [ paymentData, setPaymentData ] = useState( {} );
+				const {
+					stepObjectsWithStepNumber,
+					stepObjectsWithoutStepNumber,
+				} = createStepsFromStepObjects( props.steps || steps );
+				const createStepFromStepObject = createStepObjectConverter( paymentData );
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
 						<CheckoutProvider
@@ -184,9 +194,11 @@ describe( 'Checkout', () => {
 							paymentProcessors={ getMockPaymentProcessors() }
 							initiallySelectedPaymentMethodId={ mockMethod.id }
 						>
-							<Checkout>
-								{ createStepsFromStepObjects( props.steps || steps, paymentData ) }
-							</Checkout>
+							<CheckoutStepGroup>
+								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+								<CheckoutFormSubmit />
+							</CheckoutStepGroup>
 						</CheckoutProvider>
 					</myContext.Provider>
 				);
@@ -537,22 +549,17 @@ function createMockItems() {
 	return { items, total };
 }
 
-function createStepsFromStepObjects( stepObjects, paymentData ) {
-	const createStepFromStepObject = createStepObjectConverter( paymentData );
+function createStepsFromStepObjects( stepObjects ) {
 	const stepObjectsWithoutStepNumber = stepObjects.filter(
 		( stepObject ) => ! stepObject.hasStepNumber
 	);
 	const stepObjectsWithStepNumber = stepObjects.filter(
 		( stepObject ) => stepObject.hasStepNumber
 	);
-	return (
-		<Fragment>
-			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
-			<CheckoutStepArea>
-				<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
-			</CheckoutStepArea>
-		</Fragment>
-	);
+	return {
+		stepObjectsWithStepNumber,
+		stepObjectsWithoutStepNumber,
+	};
 }
 
 function createStepObjectConverter( paymentData ) {

@@ -7,6 +7,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
 		post_id: 111349,
 	},
+	backups: {
+		link: 'https://wordpress.com/support/restore/',
+		post_id: 159843,
+	},
 	backup_payment_methods: {
 		link: 'https://wordpress.com/support/payment/#backup-payment-methods',
 		post_id: 76237,
@@ -18,6 +22,10 @@ const contextLinks = {
 	cancel_purchase: {
 		link: 'https://wordpress.com/support/manage-purchases/#cancel-a-purchase',
 		post_id: 111349,
+	},
+	categories: {
+		link: 'https://wordpress.com/support/posts/categories/',
+		post_id: 8480,
 	},
 	comments: {
 		link: 'https://wordpress.com/support/comments/',
@@ -76,7 +84,6 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/import/import-from-squarespace/',
 		post_id: 87696,
 	},
-	// @TODO: This isn't a real page and the post_id is Squarespace
 	'importers-substack': {
 		link: 'https://wordpress.com/support/import/import-from-substack/',
 		post_id: 87696,
@@ -86,20 +93,24 @@ const contextLinks = {
 		post_id: 147777,
 	},
 	'importers-wordpress': {
-		link: 'https://wordpress.com/support/moving-from-self-hosted-wordpress-to-wordpress-com/',
+		link: 'https://wordpress.com/support/export/',
 		post_id: 102755,
+	},
+	'introduction-to-woocommerce': {
+		link: 'https://wordpress.com/support/introduction-to-woocommerce/',
+		post_id: 176336,
 	},
 	invites: {
 		link: 'https://wordpress.com/support/user-roles/#adding-users-to-your-site',
 		post_id: 1221,
 	},
-	media: {
-		link: 'https://wordpress.com/support/media/',
-		post_id: 853,
-	},
 	'manage-profile': {
 		link: 'https://wordpress.com/support/manage-my-profile/',
 		post_id: 19775,
+	},
+	media: {
+		link: 'https://wordpress.com/support/media/',
+		post_id: 853,
 	},
 	menus: {
 		link: 'https://wordpress.com/support/menus/',
@@ -113,16 +124,16 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/paid-newsletters/',
 		post_id: 168381,
 	},
+	payment_method_all_subscriptions: {
+		link: 'https://wordpress.com/support/payment/#using-a-payment-method-for-all-subscriptions',
+		post_id: 76237,
+	},
 	payment_methods: {
 		link: 'https://wordpress.com/support/payment/',
 		post_id: 76237,
 	},
 	payment_methods_manage: {
 		link: 'https://wordpress.com/support/payment/#manage-payment-methods',
-		post_id: 76237,
-	},
-	payment_method_all_subscriptions: {
-		link: 'https://wordpress.com/support/payment/#using-a-payment-method-for-all-subscriptions',
 		post_id: 76237,
 	},
 	performance: {
@@ -157,6 +168,18 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/',
 		post_id: 111349,
 	},
+	'reusable-blocks': {
+		link: 'https://wordpress.com/support/wordpress-editor/blocks/reusable-block/',
+		post_id: 157539,
+	},
+	sharing: {
+		link: 'https://wordpress.com/support/sharing/',
+		post_id: 7499,
+	},
+	'site-speed': {
+		link: 'https://wordpress.com/support/site-speed/',
+		post_id: 150474,
+	},
 	'site-verification': {
 		link: 'https://wordpress.com/support/site-verification-services/',
 		post_id: 5022,
@@ -164,6 +187,10 @@ const contextLinks = {
 	stats: {
 		link: 'https://wordpress.com/support/stats/',
 		post_id: 4454,
+	},
+	tags: {
+		link: 'https://wordpress.com/support/posts/tags/',
+		post_id: 8586,
 	},
 	team: {
 		link: 'https://wordpress.com/support/user-roles/',
@@ -185,21 +212,21 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/changing-themes/',
 		post_id: 184023,
 	},
-	'themes-upload': {
-		link: 'https://wordpress.com/support/themes/uploading-setting-up-custom-themes/',
-		post_id: 134784,
-	},
 	'themes-unsupported': {
 		link: 'https://wordpress.com/support/plugins/third-party-plugins-and-themes-support/',
 		post_id: 174865,
 	},
+	'themes-upload': {
+		link: 'https://wordpress.com/support/themes/uploading-setting-up-custom-themes/',
+		post_id: 134784,
+	},
+	traffic: {
+		link: 'https://wordpress.com/support/traffic/',
+		post_id: 155209,
+	},
 	'webmaster-tools': {
 		link: 'https://wordpress.com/support/webmaster-tools/',
 		post_id: 5022,
-	},
-	'introduction-to-woocommerce': {
-		link: 'https://wordpress.com/support/introduction-to-woocommerce/',
-		post_id: 176336,
 	},
 };
 

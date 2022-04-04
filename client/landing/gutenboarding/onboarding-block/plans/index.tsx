@@ -11,7 +11,7 @@ import useLastLocation from '../../hooks/use-last-location';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { Step, usePath } from '../../path';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
 import type { Plans } from '@automattic/data-stores';
 

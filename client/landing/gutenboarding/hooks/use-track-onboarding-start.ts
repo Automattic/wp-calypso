@@ -2,7 +2,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordOnboardingStart } from '../lib/analytics';
 import { useOnboardingFlow } from '../path';
-import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 
 /**

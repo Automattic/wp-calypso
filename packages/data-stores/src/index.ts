@@ -2,6 +2,7 @@ import * as Auth from './auth';
 import * as DomainSuggestions from './domain-suggestions';
 import * as I18n from './i18n';
 import * as Launch from './launch';
+import * as Onboard from './onboard';
 import persistenceConfigFactory from './persistence-config-factory';
 import * as Plans from './plans';
 import * as Reader from './reader';
@@ -23,6 +24,7 @@ export {
 	Launch,
 	WPCOMFeatures,
 	Reader,
+	Onboard,
 	persistenceConfigFactory,
 };
 

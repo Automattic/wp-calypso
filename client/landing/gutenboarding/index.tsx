@@ -14,7 +14,7 @@ import { WindowLocaleEffectManager } from './components/window-locale-effect-man
 import { setupWpDataDebug } from './devtools';
 import Gutenboard from './gutenboard';
 import { Step, path } from './path';
-import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
+import { ONBOARD_STORE } from './stores/onboard';
 import { SITE_STORE } from './stores/site';
 import type { Site as SiteStore } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker';

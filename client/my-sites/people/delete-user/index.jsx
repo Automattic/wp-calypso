@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
 import { Card, Button, CompactCard, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -19,7 +20,6 @@ import User from 'calypso/components/user';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';
 import useRemoveExternalContributorMutation from 'calypso/data/external-contributors/use-remove-external-contributor-mutation';
 import accept from 'calypso/lib/accept';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';

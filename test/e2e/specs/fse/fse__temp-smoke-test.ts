@@ -9,6 +9,7 @@ import {
 	SidebarComponent,
 	TestAccount,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -24,8 +25,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
 	const accountName = getTestAccountByFeature( {
-		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+		...envToFeatureKey( envVariables ),
 		variant: 'siteEditor',
 	} );
 

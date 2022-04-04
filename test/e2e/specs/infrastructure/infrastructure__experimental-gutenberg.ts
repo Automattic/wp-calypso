@@ -8,30 +8,29 @@ import {
 	DataHelper,
 	EditorPage,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), function () {
-	const accountName = getTestAccountByFeature( {
-		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-	} );
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features );
 
 	let page: Page;
 	let editorPage: EditorPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 		await editorPage.visit( 'post' );
 	} );
 

@@ -2,7 +2,15 @@
  * @group gutenberg
  */
 
-import { DataHelper, CommentsComponent, EditorPage, TestAccount } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	CommentsComponent,
+	EditorPage,
+	TestAccount,
+	envVariables,
+	getTestAccountByFeature,
+	envToFeatureKey,
+} from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 const quote =
@@ -11,6 +19,17 @@ const quote =
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
+	const features = envToFeatureKey( envVariables );
+	// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
+	// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.
+	const accountName = getTestAccountByFeature( features, [
+		{
+			gutenberg: 'stable',
+			siteType: 'simple',
+			accountName: 'simpleSitePersonalPlanUser',
+		},
+	] );
+
 	const comment = DataHelper.getRandomPhrase();
 	let page: Page;
 	let publishedURL: URL;
@@ -19,9 +38,9 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 
-		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
+		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
@@ -30,7 +49,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	} );
 
 	it( 'Enter post title', async function () {
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 		const title = DataHelper.getRandomPhrase();
 		await editorPage.enterTitle( title );
 	} );

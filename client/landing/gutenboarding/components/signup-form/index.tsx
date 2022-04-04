@@ -20,7 +20,7 @@ import {
 	useAnchorFmParams,
 	useIsAnchorFm,
 } from '../../path';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import './style.scss';
 import SignupAnchorLayout from './signup-anchor-layout';

@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -11,7 +12,6 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import Spinner from 'calypso/components/spinner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import {
 	acceptAutoLoadingHomepageWarning,

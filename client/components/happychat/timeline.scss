@@ -29,7 +29,7 @@
 	font-size: $font-body-small;
 	flex: 1;
 	padding: 8px 12px;
-	border-radius: 8px 8px 8px 0;
+	border-radius: 8px 8px 8px 0; /* stylelint-disable-line */
 	color: var( --color-neutral-70 );
 	background: var( --color-surface );
 	position: relative;
@@ -68,7 +68,7 @@
 	.is-user-message & {
 		color: var( --color-primary-dark );
 		background: var( --color-primary-5 );
-		border-radius: 8px 8px 0;
+		border-radius: 8px 8px 0;  /* stylelint-disable-line */
 
 		&::after {
 			left: auto;
@@ -86,10 +86,10 @@
 
 .happychat__message-edited-flag {
 	color: var( --color-neutral-40 );
-	font-size: 0.8em;
+	font-size: $font-body-extra-small;
 	vertical-align: text-bottom;
 	white-space: nowrap;
-	&:before {
+	&::before {
 		content: '  ';
 	}
 }
@@ -135,9 +135,10 @@
 	bottom: 10px;
 	left: 50%;
 	transform: translateX( -50% );
-	border-radius: 8px;
-	padding-left: 2em;
-	padding-right: 2em;
+	border-radius: 4px;
+	padding: 0.5em;
+	max-width: 100%;
+	width: max-content;
 	> .gridicon {
 		margin-left: 0.5em;
 	}

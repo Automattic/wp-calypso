@@ -75,10 +75,10 @@ const professionalEmailCardInformation: ProviderCardProps = {
 };
 
 const ProfessionalEmailCard = ( {
-	cartDomainName,
 	comparisonContext,
 	detailsExpanded,
 	intervalLength,
+	isDomainInCart = false,
 	onExpandedChange,
 	selectedDomainName,
 	source,
@@ -103,13 +103,11 @@ const ProfessionalEmailCard = ( {
 	const professionalEmail: ProviderCardProps = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
 
-	const hasCartDomain = Boolean( cartDomainName );
-
 	const onTitanConfirmNewMailboxes = () => {
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
 
 		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes, optionalFields );
-		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
+		const userCanAddEmail = isDomainInCart || canCurrentUserAddEmail( domain );
 		const userCannotAddEmailReason = userCanAddEmail
 			? null
 			: getCurrentUserCannotAddEmailReason( domain );
@@ -158,7 +156,7 @@ const ProfessionalEmailCard = ( {
 
 	professionalEmail.onExpandedChange = onExpandedChange;
 	professionalEmail.priceBadge = (
-		<ProfessionalEmailPrice domain={ domain } intervalLength={ intervalLength } />
+		<ProfessionalEmailPrice { ...{ domain, intervalLength, isDomainInCart } } />
 	);
 
 	professionalEmail.formFields = (

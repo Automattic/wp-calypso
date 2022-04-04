@@ -2,12 +2,13 @@ import {
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	TERM_MONTHLY,
-	isJetpackSearch,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import {
+	getProductBySlug,
+	getProductSaleCouponDiscount,
+} from 'calypso/state/products-list/selectors';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getProductPriceTierList } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors/is-products-list-fetching';
@@ -123,6 +124,9 @@ const useItemPrice = (
 	const listPrices = useProductListItemPrices( item, monthlyItemSlug );
 	const sitePrices = useSiteAvailableProductPrices( siteId, item, monthlyItemSlug );
 	const introductoryOfferPrices = useIntroductoryOfferPrices( siteId, item );
+	const saleCouponDiscount = useSelector( ( state ) =>
+		item?.productSlug ? getProductSaleCouponDiscount( state, item.productSlug ) : null
+	);
 
 	const isFetching = siteId
 		? sitePrices.isFetching
@@ -156,9 +160,8 @@ const useItemPrice = (
 		}
 	}
 
-	// Introductory offer pricing is not yet supported for tiered plans, so we need to hard-code it for now.
-	if ( item && item.term !== TERM_MONTHLY && isJetpackSearch( item ) ) {
-		discountedPrice = originalPrice * ( 1 - INTRO_PRICING_DISCOUNT_PERCENTAGE / 100 );
+	if ( item && saleCouponDiscount !== null ) {
+		discountedPrice = ( discountedPrice ?? originalPrice ) * ( 1 - saleCouponDiscount );
 	}
 
 	// Jetpack CRM price won't come from the API, so we need to hard-code it for now.

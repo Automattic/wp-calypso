@@ -81,7 +81,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 					align="left"
 				/>
 			) }
-			<PurchasesNavigation sectionTitle={ 'Billing History' } siteSlug={ siteSlug } />
+			<PurchasesNavigation section={ 'billingHistory' } siteSlug={ siteSlug } />
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }

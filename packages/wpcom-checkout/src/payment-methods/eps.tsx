@@ -67,6 +67,7 @@ export function createEpsPaymentMethodStore(): EpsStore {
 export function createEpsMethod( { store }: { store: EpsStore } ): PaymentMethod {
 	return {
 		id: 'eps',
+		paymentProcessorId: 'eps',
 		label: <EpsLabel />,
 		activeContent: <EpsFields />,
 		submitButton: <EpsPayButton store={ store } />,
@@ -157,7 +158,7 @@ function EpsPayButton( {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting eps payment' );
-					onClick( 'eps', {
+					onClick( {
 						name: customerName?.value,
 					} );
 				}

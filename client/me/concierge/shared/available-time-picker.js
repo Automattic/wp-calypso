@@ -1,7 +1,7 @@
+import { isDefaultLocale } from '@automattic/i18n-utils';
 import moment from 'moment-timezone';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 import AvailableTimeCard from './available-time-card';
 
 const groupAvailableTimesByDate = ( availableTimes, timezone ) => {

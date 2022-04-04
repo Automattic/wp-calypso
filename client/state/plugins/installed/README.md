@@ -8,8 +8,6 @@ A module for managing installed plugins on connected sites.
 
 ### `installPlugin( siteId: Number, plugin: Object )`
 
-### `installPluginOnMultisite( siteId: Number, plugin: Object )`
-
 ### `updatePlugin( siteId: Number, plugin: Object )`
 
 ### `removePlugin( siteId: Number, plugin: Object )`
@@ -37,10 +35,6 @@ Get plugins installed on a list of sites (can also be just one site, but it shou
 ### `getStatusForPlugin( state: Object, siteId: number|string, pluginId: String )`
 
 Get the most recent status for a plugin action (including "inProgress" for currently-running actions).
-
-### `isPluginDoingAction( state: Object, siteId: number|string, pluginId: String )`
-
-Checks if this site/plugin is busy doing an action.
 
 ## Reducer
 

@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { isDesktop } from '@automattic/viewport';
 import { Fragment } from 'react';
 import {
@@ -12,7 +13,6 @@ import {
 	Link,
 } from 'calypso/layout/guided-tours/config-elements';
 import { and } from 'calypso/layout/guided-tours/utils';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { hasSelectedSitePremiumOrBusinessPlan } from '../selectors/has-selected-site-premium-or-business-plan';
 
 export const SimplePaymentsEndOfYearGuide = makeTour(

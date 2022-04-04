@@ -62,6 +62,7 @@ const stepNameToModuleName = {
 	'p2-site': 'p2-site',
 	'p2-get-started': 'p2-get-started',
 	'p2-confirm-email': 'p2-confirm-email',
+	'p2-complete-profile': 'p2-complete-profile',
 	'plans-business-monthly': 'plans',
 	'plans-ecommerce-monthly': 'plans',
 	'plans-personal-monthly': 'plans',
@@ -71,6 +72,7 @@ const stepNameToModuleName = {
 	'difm-site-picker': 'difm-site-picker',
 	'difm-design-setup-site': 'design-picker',
 	'difm-options': 'site-options',
+	'difm-page-picker': 'page-picker',
 	'site-info-collection': 'site-info-collection',
 	'website-content': 'website-content',
 	intent: 'intent',
@@ -84,6 +86,7 @@ const stepNameToModuleName = {
 	'business-info': 'woocommerce-install/step-business-info',
 	confirm: 'woocommerce-install/confirm',
 	transfer: 'woocommerce-install/transfer',
+	'social-profiles': 'social-profiles',
 };
 
 export function getStepModuleName( stepName ) {

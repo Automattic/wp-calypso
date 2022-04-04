@@ -1,4 +1,5 @@
 import { Dialog } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import page from 'page';
@@ -22,7 +23,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import SpinnerButton from 'calypso/components/spinner-button';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';

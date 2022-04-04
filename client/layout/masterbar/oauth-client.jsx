@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import PropTypes from 'prop-types';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,

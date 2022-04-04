@@ -75,14 +75,15 @@ const RegisteredDomainDetails = ( {
 			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } )!;
 		}
 
-		const autoRenewAdditionalText = ! isExpiring( purchase )
-			? translate( 'We will attempt to renew on %(renewalDate)s for %(price)s', {
-					args: {
-						renewalDate: moment( domain.autoRenewalDate ).format( 'LL' ),
-						price: formattedPrice,
-					},
-			  } )
-			: null;
+		const autoRenewAdditionalText =
+			! isExpiring( purchase ) && ! domain.expired
+				? translate( 'We will attempt to renew on %(renewalDate)s for %(price)s', {
+						args: {
+							renewalDate: moment( domain.autoRenewalDate ).format( 'LL' ),
+							price: formattedPrice,
+						},
+				  } )
+				: null;
 
 		return (
 			<>

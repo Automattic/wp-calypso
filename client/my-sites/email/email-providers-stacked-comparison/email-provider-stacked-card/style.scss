@@ -256,6 +256,8 @@ $width-left-panel-card: 55%;
 }
 
 .email-provider-stacked-card__title-container {
+	align-self: flex-start;
+
 	@include break-xlarge {
 		margin-right: 10px;
 		min-width: $width-left-panel-card;

@@ -32,6 +32,7 @@ const transformApiRequest = ( { data: jitms } ) =>
 		description: unescapeDecimalEntities( jitm.content.description || '' ),
 		classes: unescapeDecimalEntities( jitm.content.classes || '' ),
 		icon: unescapeDecimalEntities( jitm.content.icon || '' ),
+		iconPath: unescapeDecimalEntities( jitm.content.iconPath || '' ),
 		featureClass: jitm.feature_class,
 		CTA: {
 			message: unescapeDecimalEntities( jitm.CTA.message ),

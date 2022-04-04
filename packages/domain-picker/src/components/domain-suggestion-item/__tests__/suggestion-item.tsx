@@ -5,6 +5,10 @@ import type { RenderResult } from '@testing-library/react';
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 import '../../../__mocks__/matchMedia.mock';
 
+jest.mock( '@automattic/calypso-config', () => ( {
+	config: () => '',
+} ) );
+
 const renderComponent = ( props = {} ): RenderResult =>
 	render( <SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } { ...props } /> );
 

@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { hasTouch } from 'calypso/lib/touch-detect';
-import WebPreviewContent from './content';
+import WebPreviewContent from './connectedContent';
 
 import './style.scss';
 

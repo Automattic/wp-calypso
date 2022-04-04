@@ -3,6 +3,7 @@ import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
@@ -12,8 +13,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
@@ -21,7 +21,12 @@ import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
-import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserName,
+	isUserLoggedIn,
+	getCurrentUser,
+} from 'calypso/state/current-user/selectors';
+import { buildDIFMCartExtrasObject } from 'calypso/state/difm/assemblers';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -333,44 +338,10 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 		.catch( ( error ) => callback( [ error ] ) );
 }
 
-function getDIFMLiteCartItemFromDependencies( dependencies ) {
-	const {
-		newOrExistingSiteChoice,
-		selectedDesign,
-		selectedSiteCategory,
-		isLetUsChooseSelected,
-		siteTitle,
-		siteDescription,
-		twitterUrl,
-		facebookUrl,
-		linkedinUrl,
-		instagramUrl,
-		displayEmail,
-		displayPhone,
-		displayAddress,
-	} = dependencies;
-	const extra = {
-		selected_design: selectedDesign?.theme,
-		site_category: selectedSiteCategory,
-		new_or_existing_site_choice: newOrExistingSiteChoice,
-		let_us_choose_selected: isLetUsChooseSelected,
-		site_title: siteTitle,
-		site_description: siteDescription,
-		twitter_url: twitterUrl,
-		facebook_url: facebookUrl,
-		linkedin_url: linkedinUrl,
-		instagram_url: instagramUrl,
-		display_email: displayEmail,
-		display_phone: displayPhone,
-		display_address: displayAddress,
-	};
-	const cartItem = { product_slug: WPCOM_DIFM_LITE, extra };
-	return cartItem;
-}
-
 function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
 	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug } = dependencies;
-	const cartItem = getDIFMLiteCartItemFromDependencies( dependencies );
+	const extra = buildDIFMCartExtrasObject( dependencies );
+	const cartItem = { product_slug: WPCOM_DIFM_LITE, extra };
 	const providedDependencies = {
 		selectedDesign,
 		selectedSiteCategory,
@@ -1043,6 +1014,26 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 
 	nextProps.submitSignupStep( { stepName, wasSkipped: true } );
 	flows.excludeStep( stepName );
+}
+
+export function excludeStepIfProfileComplete( stepName, defaultDependencies, nextProps ) {
+	if ( includes( flows.excludedSteps, stepName ) ) {
+		return;
+	}
+
+	const state = nextProps?.store?.getState();
+
+	if ( ! state ) {
+		return;
+	}
+
+	const currentUser = getCurrentUser( state );
+
+	if ( currentUser?.display_name !== currentUser?.username ) {
+		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+
+		flows.excludeStep( stepName );
+	}
 }
 
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {

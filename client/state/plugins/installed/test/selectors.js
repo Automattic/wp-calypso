@@ -107,10 +107,6 @@ describe( 'Installed plugin selectors', () => {
 		expect( selectors.getStatusForPlugin ).to.be.a( 'function' );
 	} );
 
-	test( 'should contain isPluginDoingAction method', () => {
-		expect( selectors.isPluginDoingAction ).to.be.a( 'function' );
-	} );
-
 	describe( 'isRequesting', () => {
 		test( 'Should get `false` if this site is not in the current state', () => {
 			expect( selectors.isRequesting( state, 'no.site' ) ).to.be.false;
@@ -122,20 +118,6 @@ describe( 'Installed plugin selectors', () => {
 
 		test( 'Should get `true` if this site is being fetched', () => {
 			expect( selectors.isRequesting( state, 'site.three' ) ).to.be.true;
-		} );
-	} );
-
-	describe( 'isLoaded', () => {
-		test( 'Should get `false` if this site is not in the current state', () => {
-			expect( selectors.isLoaded( state, 'no.site' ) ).to.be.false;
-		} );
-
-		test( 'Should get `true` if this site is done being fetched', () => {
-			expect( selectors.isLoaded( state, 'site.one' ) ).to.be.true;
-		} );
-
-		test( 'Should get `false` if this site is currently being fetched', () => {
-			expect( selectors.isLoaded( state, 'site.three' ) ).to.be.false;
 		} );
 	} );
 
@@ -335,24 +317,6 @@ describe( 'Installed plugin selectors', () => {
 				pluginId: 'akismet/akismet',
 				action: ENABLE_AUTOUPDATE_PLUGIN,
 			} );
-		} );
-	} );
-
-	describe( 'isPluginDoingAction', () => {
-		test( 'Should get `false` if the requested site is not in the current state', () => {
-			expect( selectors.isPluginDoingAction( state, 'no.site', 'akismet/akismet' ) ).to.be.false;
-		} );
-
-		test( 'Should get `false` if the requested site is finished with an action', () => {
-			expect( selectors.isPluginDoingAction( state, 'site.one', 'jetpack/jetpack' ) ).to.be.false;
-		} );
-
-		test( 'Should get `true` if the requested site is doing an action', () => {
-			expect( selectors.isPluginDoingAction( state, 'site.one', 'akismet/akismet' ) ).to.be.true;
-		} );
-
-		test( 'Should get `false` if the requested site had an error', () => {
-			expect( selectors.isPluginDoingAction( state, 'site.two', 'akismet/akismet' ) ).to.be.false;
 		} );
 	} );
 

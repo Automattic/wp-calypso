@@ -1,37 +1,3 @@
-.plugins-browser__searchbox {
-	width: 250px;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-	align-items: stretch;
-
-	.search-component {
-		height: 30px;
-		&.is-expanded-to-container {
-			height: 100%;
-		}
-
-		box-shadow: 0 0 0 1px var( --studio-gray-10 );
-
-		.search-component__open-icon,
-		.search-component__close-icon {
-			color: var( --studio-black );
-		}
-
-		&.is-open input.search-component__input[type='search'] {
-			font-size: $font-body-small;
-		}
-	}
-
-	@media screen and ( max-width: 960px ) {
-		width: 30px;
-
-		.search-component {
-			box-shadow: none;
-		}
-	}
-}
-
 .plugins-browser__billling-interval-switcher {
 	margin-right: 15px;
 }
@@ -39,7 +5,6 @@
 .plugins-browser__main-buttons {
 	display: flex;
 	align-items: center;
-	margin-right: 15px;
 
 	@media screen and ( max-width: 960px ) {
 		.plugins-browser__button {

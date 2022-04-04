@@ -1,7 +1,115 @@
 /*
     Global styles for Stepper framework
 */
-body {
+@import '@wordpress/components/build-style/style';
+@import '@automattic/calypso-color-schemes';
+@import '@automattic/typography/styles/fonts';
+@import '@automattic/onboarding/styles/mixins';
+
+/**
+ * General onboarding styling
+ */
+body,
+button {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
 		'Cantarell', 'Helvetica Neue', sans-serif;
+	text-rendering: optimizeLegibility;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+
+	// Basic stylings
+	margin: 0;
+	line-height: 1.5;
+
+	h1,
+	h2,
+	h3,
+	p {
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
+			'Cantarell', 'Helvetica Neue', sans-serif;
+		font-weight: 400;
+		margin: 0;
+	}
+
+	a,
+	a:visited {
+		text-decoration: none;
+		color: var( --color-link );
+	}
+
+	button {
+		background-color: transparent;
+		border: none;
+	}
+
+	ul {
+		padding: 0;
+	}
+}
+
+/**
+ * Site Setup
+ */
+.site-setup {
+	position: relative;
+	padding: 48px 0 0;
+	box-sizing: border-box;
+
+	&.courses {
+		padding: 0;
+
+		.signup-header {
+			z-index: 1;
+			color: #fff;
+
+			svg path {
+				fill: #fff;
+				stroke: #fff;
+			}
+		}
+	}
+
+	/**
+ 	 * Signup Header
+ 	 */
+	.signup-header {
+		.wordpress-logo {
+			position: absolute;
+			left: 20px;
+			top: 20px;
+			fill: var( --color-text );
+			stroke: var( --color-text );
+			transform-origin: 0 0;
+		}
+
+		.signup-header__right {
+			top: 22px;
+			right: 20px;
+
+			.flow-progress-indicator {
+				font-weight: 500;
+				/* stylelint-disable-line */
+				font-size: 0.875rem;
+				color: var( --studio-gray-30 );
+			}
+		}
+
+		@include break-small {
+			.wordpress-logo {
+				left: 24px;
+			}
+
+			.signup-header__right {
+				right: 24px;
+			}
+		}
+	}
+
+	/**
+ 	 * Step Container
+ 	 */
+	.step-container {
+		--color-accent: #117ac9;
+		--color-accent-60: #0e64a5;
+	}
 }

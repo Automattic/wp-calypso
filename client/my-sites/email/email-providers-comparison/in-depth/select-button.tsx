@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -14,6 +15,7 @@ import type { ReactElement } from 'react';
 const usePlanAvailable = (
 	emailProviderSlug: string,
 	intervalLength: IntervalLength,
+	isDomainInCart: boolean,
 	selectedDomainName: string
 ) => {
 	const selectedSite = useSelector( getSelectedSite );
@@ -23,29 +25,46 @@ const usePlanAvailable = (
 		selectedDomainName: selectedDomainName,
 	} );
 
+	const isMonthlyBillingSupported =
+		isEnabled( 'google-workspace-monthly' ) || intervalLength === IntervalLength.ANNUALLY;
+
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 
 	if ( emailProviderSlug !== GOOGLE_WORKSPACE_PRODUCT_TYPE ) {
 		return true;
 	}
 
-	if ( ! canPurchaseGSuite || ! hasGSuiteSupportedDomain( [ domain ] ) ) {
+	if ( ! canPurchaseGSuite ) {
 		return false;
 	}
 
-	return intervalLength === IntervalLength.ANNUALLY;
+	if ( isDomainInCart ) {
+		return isMonthlyBillingSupported;
+	}
+
+	if ( ! domain || ! hasGSuiteSupportedDomain( [ domain ] ) ) {
+		return false;
+	}
+
+	return isMonthlyBillingSupported;
 };
 
 const SelectButton = ( {
 	className,
 	emailProviderSlug,
 	intervalLength,
+	isDomainInCart,
 	onSelectEmailProvider,
 	selectedDomainName,
 }: SelectButtonProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const isPlanAvailable = usePlanAvailable( emailProviderSlug, intervalLength, selectedDomainName );
+	const isPlanAvailable = usePlanAvailable(
+		emailProviderSlug,
+		intervalLength,
+		isDomainInCart,
+		selectedDomainName
+	);
 
 	return (
 		<Button

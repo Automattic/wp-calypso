@@ -1,4 +1,4 @@
-import { getLanguage, getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import { getLanguage, getLanguageRouteParam } from '@automattic/i18n-utils';
 
 export default function ( router ) {
 	const lang = getLanguageRouteParam();

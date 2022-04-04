@@ -19,6 +19,7 @@
     - [Involve minimal selectors](#involve-minimal-selectors)
     - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
   - [Test steps](#test-steps)
+    - [Only one top-level describe block](#only-one-top-level-describe-block)
     - [Do not use modal verbs](#do-not-use-modal-verbs)
     - [Prefer smaller steps](#prefer-smaller-steps)
   - [Single responsibility function](#single-responsibility-function)
@@ -237,6 +238,30 @@ const selectors = {
 ---
 
 ## Test steps
+
+### Only one top-level `describe` block
+
+Only place one top-level or root-level `describe` block.
+
+**Avoid**:
+
+```typescript
+describe('Feature 1', function ()) {}
+
+describe('Feature 2', function()) {}
+
+describe('Feature 3', function()) {}
+```
+
+**Instead**:
+
+```typescript
+describe( 'Feature', function () {
+	describe( 'Feature 1', function () {} );
+	describe( 'Feature 2', function () {} );
+	describe( 'Feature 3', function () {} );
+} );
+```
 
 ### Do not use modal verbs
 

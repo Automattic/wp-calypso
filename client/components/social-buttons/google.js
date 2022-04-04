@@ -1,4 +1,5 @@
 import { Popover } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { loadScript } from '@automattic/load-script';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -7,7 +8,6 @@ import { cloneElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import GoogleIcon from 'calypso/components/social-icons/google';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 

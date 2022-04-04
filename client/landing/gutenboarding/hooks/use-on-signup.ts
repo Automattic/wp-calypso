@@ -2,7 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect } from 'react';
 import { useIsAnchorFm, useAnchorFmParams } from '../path';
-import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { ONBOARD_STORE } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
 import { USER_STORE } from '../stores/user';
 import { useNewSiteVisibility } from './use-selected-plan';

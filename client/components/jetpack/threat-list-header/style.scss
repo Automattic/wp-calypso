@@ -21,6 +21,10 @@
 
 	&.title__autofix {
 		margin-left: auto;
-		margin-right: 52px;
+		margin-right: 56px;
+
+		@include breakpoint-deprecated( '>480px') {
+			margin-right: 48px;
+		}
 	}
 }

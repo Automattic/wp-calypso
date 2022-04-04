@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useIsAnchorFm } from '../../../gutenboarding/path';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { ONBOARD_STORE } from '../../stores/onboard';
 import FontSelect from './font-select';
 import Preview from './preview';
 import ViewportSelect from './viewport-select';

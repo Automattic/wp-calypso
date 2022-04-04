@@ -122,8 +122,8 @@ export default function DesignPickerStep( props ) {
 	}, [ allThemes ] );
 
 	const getEventPropsByDesign = ( design ) => ( {
-		theme: design?.stylesheet ?? `pub/${ design.theme }`,
-		template: design.template,
+		theme: design?.stylesheet ?? `pub/${ design?.theme }`,
+		template: design?.template,
 		is_premium: design?.is_premium,
 		flow: flowName,
 		intent: dependencies.intent,
@@ -201,6 +201,22 @@ export default function DesignPickerStep( props ) {
 		openCheckoutModal( [ PLAN_PREMIUM ] );
 	}
 
+	function upgradePlanFromDesignPicker( design ) {
+		recordTracksEvent(
+			'calypso_signup_design_upgrade_button_click',
+			getEventPropsByDesign( design )
+		);
+		upgradePlan();
+	}
+
+	function upgradePlanFromPreview( design ) {
+		recordTracksEvent(
+			'calypso_signup_design_preview_upgrade_button_click',
+			getEventPropsByDesign( design )
+		);
+		upgradePlan();
+	}
+
 	function submitDesign( _selectedDesign = selectedDesign ) {
 		recordTracksEvent( 'calypso_signup_select_design', getEventPropsByDesign( _selectedDesign ) );
 		props.goToNextStep();
@@ -223,7 +239,7 @@ export default function DesignPickerStep( props ) {
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
 					onPreview={ previewDesign }
-					onUpgrade={ upgradePlan }
+					onUpgrade={ upgradePlanFromDesignPicker }
 					className={ classnames( {
 						'design-picker-step__has-categories': showDesignPickerCategories,
 					} ) }
@@ -365,7 +381,11 @@ export default function DesignPickerStep( props ) {
 				stepSectionName={ designTitle }
 				customizedActionButtons={
 					shouldUpgrade && (
-						<Button primary borderless={ false } onClick={ upgradePlan }>
+						<Button
+							primary
+							borderless={ false }
+							onClick={ () => upgradePlanFromPreview( selectedDesign ) }
+						>
 							{ translate( 'Upgrade Plan' ) }
 						</Button>
 					)
@@ -374,6 +394,7 @@ export default function DesignPickerStep( props ) {
 		);
 	}
 
+	const intent = props.signupDependencies.intent;
 	const headerProps = showDesignPickerCategories
 		? { hideFormattedHeader: true }
 		: {
@@ -388,6 +409,7 @@ export default function DesignPickerStep( props ) {
 			{ ...props }
 			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
+				'design-picker__sell-intent': 'sell' === intent,
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }

@@ -38,6 +38,7 @@
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
+	"olark_chat_identity": false,
 	"upwork_support_locales": [
 		"de",
 		"de-at",
@@ -146,7 +147,6 @@
 	"readerFollowingSource": "calypso",
 	"siftscience_key": false,
 	"signup_url": false,
-	"gutenboarding_url": false,
 	"woocommerce_blog_id": 113771570,
 	"wpcom_concierge_schedule_id": 1,
 	"wpcom_signup_id": false,

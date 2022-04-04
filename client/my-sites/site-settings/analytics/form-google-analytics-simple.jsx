@@ -4,6 +4,7 @@ import {
 	TYPE_PREMIUM,
 } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useEffect } from 'react';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
@@ -13,7 +14,6 @@ import FormTextValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 
 import './style.scss';
@@ -40,7 +40,7 @@ const GoogleAnalyticsSimpleForm = ( {
 } ) => {
 	const analyticsSupportUrl = localizeUrl( 'https://wordpress.com/support/google-analytics/' );
 	const nudgeTitle = translate(
-		'Connect your site to Google Analytics in seconds with the Premium plan'
+		'Connect your site to Google Analytics in seconds with the Pro plan'
 	);
 
 	useEffect( () => {

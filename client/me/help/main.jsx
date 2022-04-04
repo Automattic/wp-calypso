@@ -1,5 +1,6 @@
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
@@ -15,7 +16,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import HelpResult from './help-results/item';

@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
@@ -9,6 +11,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
+import OlarkChat from 'calypso/components/olark-chat';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -17,6 +20,8 @@ import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getActiveTheme,
@@ -82,10 +87,12 @@ class ThemeShowcase extends Component {
 		defaultOption: optionShape,
 		secondaryOption: optionShape,
 		getScreenshotOption: PropTypes.func,
+		siteCanInstallThemes: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		upsellBanner: PropTypes.any,
 		trackMoreThemesClick: PropTypes.func,
 		loggedOutComponent: PropTypes.bool,
+		isAtomicSite: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
 	};
 
@@ -251,7 +258,10 @@ class ThemeShowcase extends Component {
 			case this.tabFilters.ALL.key:
 				return true;
 			case this.tabFilters.MYTHEMES.key:
-				return this.props.isJetpackSite;
+				return (
+					( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
+					( this.props.isAtomicSite && this.props.siteCanInstallThemes )
+				);
 		}
 	};
 
@@ -320,6 +330,10 @@ class ThemeShowcase extends Component {
 				),
 		};
 
+		const olarkIdentity = config( 'olark_chat_identity' );
+		const olarkSystemsGroupId = '239c0f99c53692d81539f76e86910d52';
+		const isEligibleForOlarkChat = ! isLoggedIn && 'en' === locale;
+
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -368,6 +382,9 @@ class ThemeShowcase extends Component {
 					<ThanksModal source={ 'list' } />
 					<AutoLoadingHomepageModal source={ 'list' } />
 					<ThemePreview />
+					{ isEligibleForOlarkChat && (
+						<OlarkChat identity={ olarkIdentity } systemsGroupId={ olarkSystemsGroupId } />
+					) }
 				</div>
 			</div>
 		);
@@ -381,6 +398,8 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		currentThemeId,
 		currentTheme,
 		isLoggedIn: isUserLoggedIn( state ),
+		isAtomicSite: isAtomicSite( state, siteId ),
+		siteCanInstallThemes: hasActiveSiteFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 		siteSlug: getSiteSlug( state, siteId ),
 		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),

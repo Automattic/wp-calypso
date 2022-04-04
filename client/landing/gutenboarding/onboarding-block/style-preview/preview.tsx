@@ -4,7 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import * as React from 'react';
 import { useAnchorFmParams } from '../../../gutenboarding/path';
 import { useFontPairings } from '../../fonts';
-import { STORE_KEY } from '../../stores/onboard';
+import { ONBOARD_STORE } from '../../stores/onboard';
 import type { Viewport } from './types';
 import type { FontPair } from '@automattic/design-picker';
 
@@ -53,7 +53,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 	const language = useLocale();
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
 	const { selectedDesign, selectedFonts, siteTitle } = useSelect( ( select ) =>
-		select( STORE_KEY ).getState()
+		select( ONBOARD_STORE ).getState()
 	);
 	const { anchorFmPodcastId } = useAnchorFmParams();
 

@@ -15,12 +15,12 @@ export default function getSiteAdminPage( state, siteId ) {
 	);
 
 	let pluginPage = 'jetpack';
-	if (
-		Array.isArray( activeConnectedPlugins ) &&
-		! activeConnectedPlugins.includes( 'jetpack' ) &&
-		activeConnectedPlugins.includes( 'jetpack-backup' )
-	) {
-		pluginPage = 'jetpack-backup';
+	if ( Array.isArray( activeConnectedPlugins ) && ! activeConnectedPlugins.includes( 'jetpack' ) ) {
+		if ( activeConnectedPlugins.includes( 'jetpack-backup' ) ) {
+			pluginPage = 'jetpack-backup';
+		} else if ( activeConnectedPlugins.includes( 'jetpack-search' ) ) {
+			pluginPage = 'jetpack-search';
+		}
 	}
 	return pluginPage;
 }

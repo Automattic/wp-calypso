@@ -2,7 +2,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useIsAnchorFm } from '../path';
-import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 
 /**

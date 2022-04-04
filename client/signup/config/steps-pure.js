@@ -42,6 +42,7 @@ export function generateSteps( {
 	isNewOrExistingSiteFulfilled = noop,
 	setDIFMLiteDesign = noop,
 	excludeStepIfEmailVerified = noop,
+	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
@@ -601,6 +602,11 @@ export function generateSteps( {
 			fulfilledStepCallback: excludeStepIfEmailVerified,
 		},
 
+		'p2-complete-profile': {
+			stepName: 'p2-complete-profile',
+			fulfilledStepCallback: excludeStepIfProfileComplete,
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
@@ -721,6 +727,13 @@ export function generateSteps( {
 				hideSkip: true,
 			},
 		},
+		'difm-page-picker': {
+			stepName: 'difm-page-picker',
+			providesDependencies: [ 'selectedPageTitles' ],
+			props: {
+				hideSkip: true,
+			},
+		},
 		'site-info-collection': {
 			stepName: 'site-info-collection',
 			dependencies: [ 'newOrExistingSiteChoice' ],
@@ -735,6 +748,10 @@ export function generateSteps( {
 				'displayPhone',
 				'displayAddress',
 			],
+		},
+		'social-profiles': {
+			stepName: 'social-profiles',
+			providesDependencies: [ 'twitterUrl', 'facebookUrl', 'linkedinUrl', 'instagramUrl' ],
 		},
 		'website-content': {
 			stepName: 'website-content',

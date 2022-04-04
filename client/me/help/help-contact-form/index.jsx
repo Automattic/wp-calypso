@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { debounce, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
@@ -18,7 +19,6 @@ import SelectDropdown from 'calypso/components/select-dropdown';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { resemblesUrl } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import HelpResults from 'calypso/me/help/help-results';

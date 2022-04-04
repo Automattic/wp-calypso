@@ -1,6 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import UseYourDomainItem from '../use-your-domain-item';
 
+jest.mock( '@automattic/calypso-config', () => ( {
+	config: () => '',
+} ) );
+
 describe( '<UseYourDomainItem />', () => {
 	it( 'should render with correct messaging', () => {
 		render( <UseYourDomainItem onClick={ jest.fn() } /> );

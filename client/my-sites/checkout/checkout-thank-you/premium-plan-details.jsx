@@ -58,7 +58,7 @@ const PremiumPlanDetails = ( {
 					isPremiumPlan
 						? translate(
 								'With your plan, all WordPress.com advertising has been removed from your site.' +
-									' You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
+									' You can upgrade to a Pro plan to also remove the WordPress.com footer credit.'
 						  )
 						: translate(
 								'With your plan, all WordPress.com advertising has been removed from your site.'

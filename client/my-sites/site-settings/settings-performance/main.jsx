@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -141,6 +142,14 @@ class SiteSettingsPerformance extends Component {
 						isRequestingSettings={ isRequestingSettings }
 						fields={ fields }
 					/>
+				) }
+
+				{ ( ! siteIsJetpack || siteIsAtomic ) && (
+					<CompactCard>
+						<InlineSupportLink supportContext="site-speed" showIcon={ false }>
+							Learn more about site speed and performance
+						</InlineSupportLink>
+					</CompactCard>
 				) }
 			</Main>
 		);

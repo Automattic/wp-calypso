@@ -1,6 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import { DOMAIN_SUGGESTIONS_STORE } from '../stores/domain-suggestions';
-import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { ONBOARD_STORE } from '../stores/onboard';
 
 export function useFreeDomainSuggestion() {
 	const domainSearch = useSelect( ( select ) => select( ONBOARD_STORE ).getDomainSearch() );

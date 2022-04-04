@@ -1,8 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { TYPE_FREE, TYPE_FLEXIBLE, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
+import {
+	TYPE_FREE,
+	TYPE_FLEXIBLE,
+	PLAN_WPCOM_PRO,
+	PLAN_FREE,
+	PLAN_WPCOM_FLEXIBLE,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import type { WPComPlan } from '@automattic/calypso-products';
 import type { TranslateResult } from 'i18n-calypso';
@@ -29,11 +35,11 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 	const planSlug = plan?.getStoreSlug();
 
 	if ( planSlug === PLAN_WPCOM_PRO ) {
-		return translate( 'Try %(plan)s risk-free', {
-			args: {
-				plan: planTitle,
-			},
-		} );
+		return 'en' === i18n.getLocaleSlug() || i18n.hasTranslation( 'Start with Pro' )
+			? translate( 'Start with Pro' )
+			: translate( 'Try Pro risk-free' );
+	} else if ( planSlug === PLAN_FREE || planSlug === PLAN_WPCOM_FLEXIBLE ) {
+		return translate( 'Start with Free' );
 	}
 
 	if ( isCurrentPlan ) {

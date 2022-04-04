@@ -2,6 +2,10 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter as Router } from 'react-router-dom';
 import DomainStep from '../';
 
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: () => false,
+} ) );
+
 describe( 'DomainStep', () => {
 	test( 'Has title and sub-title', () => {
 		render(

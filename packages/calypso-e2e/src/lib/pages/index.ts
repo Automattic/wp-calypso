@@ -25,5 +25,6 @@ export * from './woocommerce-landing-page';
 export * from './posts-page';
 export * from './pages-page';
 export * from './plugins-page';
+export * from './writing-settings-page';
 
 export * from './me';

@@ -22,6 +22,7 @@ import type {
 	StoreActions,
 	StoreSelectorsWithState,
 	StoreState,
+	ManagedContactDetails,
 } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:paypal-payment-method' );
@@ -100,6 +101,7 @@ export function createPayPalMethod(
 	debug( 'creating new paypal payment method' );
 	return {
 		id: storeKey,
+		paymentProcessorId: storeKey,
 		label: (
 			<PayPalLabel
 				labelText={ args.labelText }
@@ -139,7 +141,7 @@ const PayPalFieldsWrapper = styled.div`
 function PayPalTaxFields(): JSX.Element {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const countriesList = useCountryList( [] );
+	const countriesList = useCountryList();
 	const postalCode = useSelect( ( select ) => select( storeKey ).getPostalCode() );
 	const countryCode = useSelect( ( select ) => select( storeKey ).getCountryCode() );
 	const fields = useMemo(
@@ -150,15 +152,18 @@ function PayPalTaxFields(): JSX.Element {
 		[ postalCode, countryCode ]
 	);
 	const { changePostalCode, changeCountryCode } = useDispatch( storeKey );
+	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
+		changeCountryCode( newInfo.countryCode?.value ?? '' );
+		changePostalCode( newInfo.postalCode?.value ?? '' );
+	};
 	return (
 		<PayPalFieldsWrapper>
 			<TaxFields
 				section="paypal-payment-method"
 				taxInfo={ fields }
+				onChange={ onChangeContactInfo }
 				countriesList={ countriesList }
 				isDisabled={ isDisabled }
-				updatePostalCode={ changePostalCode }
-				updateCountryCode={ changeCountryCode }
 			/>
 		</PayPalFieldsWrapper>
 	);
@@ -214,7 +219,7 @@ function PayPalSubmitButton( {
 				'Missing onClick prop; PayPalSubmitButton must be used as a payment button in CheckoutSubmitButton'
 			);
 		}
-		onClick( storeKey, {
+		onClick( {
 			items,
 			postalCode: postalCode?.value,
 			countryCode: countryCode?.value,

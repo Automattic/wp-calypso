@@ -1,10 +1,6 @@
 @import '@automattic/onboarding/styles/mixins';
 
-.jetpack-product-card .display-price {
-	.is-disabled & {
-		opacity: 0.4;
-	}
-
+.display-price {
 	&.is-free {
 		margin-block-start: -4px;
 		padding-block-start: 24px;
@@ -82,7 +78,7 @@
 		@include placeholder( --color-neutral-10 );
 
 		width: 80px;
-		height: 40px;
+		height: 54px;
 		margin-bottom: 16px;
 		margin-top: 24px;
 	}
@@ -183,7 +179,7 @@
 
 	&__billing-time-frame,
 	&__expiration-date {
-		display: block;
+		display: inline-block;
 		color: var( --studio-gray-40 );
 
 		font-size: 0.875rem;
@@ -192,6 +188,19 @@
 
 	&__expiration-date {
 		color: var( --studio-pink-50 );
+	}
+
+	&.is-placeholder {
+		.plan-price {
+			@include placeholder( --color-neutral-10 );
+			transform: scaleY( 0.6 );
+		}
+		.plan-price::before {
+			border-color: transparent;
+		}
+		.display-price__billing-time-frame {
+			@include placeholder( --color-neutral-10 );
+		}
 	}
 }
 
@@ -220,5 +229,13 @@
 		top: -0.5em;
 
 		font-size: 0.75em;
+	}
+}
+
+.jetpack-product-card {
+	&.is-disabled {
+		.display-price {
+			opacity: 0.4;
+		}
 	}
 }

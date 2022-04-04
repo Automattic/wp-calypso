@@ -6,19 +6,29 @@ Each item should have at least a label.
 ## How to use
 
 ```js
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import Breadcrumb from 'calypso/components/breadcrumb';
 
-const navigationItems = [
-	{ label: 'Plugins', href: `/plugins` },
-	{ label: 'Search', href: `/plugins?s=woo` },
-];
+const BreadcrumbExamples = () => {
+	const navigationItems = [
+		{ label: 'Plugins', href: `/plugins` },
+		{ label: 'Search', href: `/plugins?s=woo` },
+		{ label: 'Woocommerce' },
+	];
 
-function render() {
-	return <Breadcrumb items={ navigationItems } />;
-}
+	return (
+		<>
+			<Breadcrumb items={ [ { label: 'Plugins' } ] } />
+			<br />
+			<Breadcrumb items={ navigationItems } />
+			<br />
+			<Breadcrumb items={ navigationItems } mobileItem="Go Back" compact={ true } />
+		</>
+	);
+};
 ```
 
 ## Props
 
 - `items` (`{ label: string; href?: string }[]`) - The Navigations items to be shown
-- `compact` (`boolean`) - Displays only the previous item URL reading "Back" (optional)
+- `compact` (`boolean`) - Displays only the previous item URL (optional)
+- `mobileItem` (`string`) - In compact version, displays this value. If not passed defaults to "Back" (optional)

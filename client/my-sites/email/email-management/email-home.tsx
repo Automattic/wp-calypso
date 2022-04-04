@@ -15,6 +15,7 @@ import EmailListActive from 'calypso/my-sites/email/email-management/home/email-
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -68,6 +69,8 @@ interface EmailManagementHomeProps {
 	emailListInactiveHeader?: ReactElement;
 	sectionHeaderLabel?: TranslateResult;
 	selectedDomainName: string;
+	selectedEmailProviderSlug: string;
+	selectedIntervalLength?: IntervalLength;
 	showActiveDomainList?: boolean;
 	source: string;
 }
@@ -75,8 +78,10 @@ interface EmailManagementHomeProps {
 const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 	const {
 		emailListInactiveHeader,
+		selectedEmailProviderSlug,
 		showActiveDomainList = true,
 		selectedDomainName,
+		selectedIntervalLength,
 		sectionHeaderLabel,
 		source,
 	} = props;
@@ -123,6 +128,8 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 				<EmailProvidersStackedComparisonPage
 					comparisonContext="email-home-selected-domain"
 					selectedDomainName={ selectedDomainName }
+					selectedEmailProviderSlug={ selectedEmailProviderSlug }
+					selectedIntervalLength={ selectedIntervalLength }
 					source={ source }
 				/>
 			);
@@ -155,6 +162,8 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 			<EmailProvidersStackedComparisonPage
 				comparisonContext="email-home-single-domain"
 				selectedDomainName={ domainsWithNoEmail[ 0 ].name }
+				selectedEmailProviderSlug={ selectedEmailProviderSlug }
+				selectedIntervalLength={ selectedIntervalLength }
 				source={ source }
 			/>
 		);

@@ -16,9 +16,9 @@ export default function CheckoutSubmitButton( {
 	const { formStatus } = useFormStatus();
 	const { __ } = useI18n();
 	const isDisabled = disabled || formStatus !== FormStatus.READY;
-	const onClick = useProcessPayment();
-
 	const paymentMethod = usePaymentMethod();
+	const onClick = useProcessPayment( paymentMethod?.paymentProcessorId ?? '' );
+
 	if ( ! paymentMethod ) {
 		return null;
 	}

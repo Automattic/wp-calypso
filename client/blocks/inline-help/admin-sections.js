@@ -2,7 +2,7 @@ import { createSelector } from '@automattic/state-utils';
 import { translate } from 'i18n-calypso';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { getCustomizerUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
@@ -150,10 +150,10 @@ export const getAdminSections = createSelector(
 			{
 				title: translate( 'Earn money from my site' ),
 				description: translate(
-					"By upgrading to the Premium plan, you'll be able to monetize your site through the WordAds program."
+					"By upgrading to the Pro plan, you'll be able to monetize your site through the WordAds program."
 				),
 				link: `/earn/${ siteSlug }`,
-				synonyms: [ 'monetize', 'wordads', 'premium' ],
+				synonyms: [ 'monetize', 'wordads', 'pro' ],
 				icon: 'money',
 			},
 			{
@@ -380,7 +380,7 @@ export const getAdminSections = createSelector(
 			},
 			{
 				title: translate( 'Create a new site' ),
-				link: `${ getOnboardingUrl( state ) }?ref=calypso-inline-help`,
+				link: `${ onboardingUrl() }?ref=calypso-inline-help`,
 				synonyms: [ 'site' ],
 				icon: 'cog',
 			},

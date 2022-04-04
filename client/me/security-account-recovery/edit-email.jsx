@@ -113,23 +113,11 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 			return;
 		}
 
-		if ( this.props.primaryEmail && email === this.props.primaryEmail ) {
-			this.setState( {
-				validation: this.props.translate(
-					'You have entered your primary email address. Please enter a different email address.'
-				),
-			} );
+		const isEmailValid = this.validateEmail( email );
+		if ( ! isEmailValid ) {
 			return;
 		}
 
-		if ( ! emailValidator.validate( email ) ) {
-			this.setState( {
-				validation: this.props.translate( 'Please enter a valid email address.' ),
-			} );
-			return;
-		}
-
-		this.setState( { validation: null } );
 		this.props.onSave( email );
 	};
 
@@ -141,8 +129,37 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends Component {
 		this.props.onDelete();
 	};
 
+	validateEmail = ( newEmail ) => {
+		const { primaryEmail, translate } = this.props;
+
+		if ( primaryEmail && newEmail === primaryEmail ) {
+			this.setState( {
+				validation: translate(
+					'You have entered your primary email address. Please enter a different email address.'
+				),
+			} );
+			return false;
+		}
+
+		if ( ! emailValidator.validate( newEmail ) ) {
+			this.setState( {
+				validation: translate( 'Please enter a valid email address.' ),
+			} );
+			return false;
+		}
+
+		this.setState( { validation: null } );
+
+		return true;
+	};
+
 	handleChange = ( e ) => {
 		const { name, value } = e.currentTarget;
+
+		if ( 'email' === name ) {
+			this.validateEmail( value );
+		}
+
 		this.setState( { [ name ]: value } );
 	};
 }

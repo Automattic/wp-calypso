@@ -1,6 +1,6 @@
+import { isLocaleRtl } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import Head from 'calypso/components/head';
-import { isLocaleRtl } from 'calypso/lib/i18n-utils';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { chunkCssLinks } from './utils';
 

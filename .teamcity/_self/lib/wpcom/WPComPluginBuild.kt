@@ -173,7 +173,7 @@ open class WPComPluginBuild(
 
 					# 3. Check if the current build has changed, and if so, tag it for release.
 					# Note: we exclude asset changes because we only really care if the build files (JS/CSS) change. That file is basically just metadata.
-					if [ "%skip_release_diff%" = "true" ] || ! diff -rq --exclude="*.asset.php" --exclude="cache-buster.txt" --exclude="README.md" $archiveDir ./release-archive/ ; then
+					if [ "%skip_release_diff%" = "true" ] || ! diff -rq --exclude="*.asset.php" --exclude="build_meta.json" --exclude="README.md" $archiveDir ./release-archive/ ; then
 						echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
 						tag_response=`curl -s -X POST -H "Content-Type: text/plain" --data "$releaseTag" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/`
 						echo -e "Build tagging status: ${'$'}tag_response\n"

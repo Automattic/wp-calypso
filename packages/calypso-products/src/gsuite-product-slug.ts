@@ -1,4 +1,5 @@
 import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,
 	GSUITE_BUSINESS_SLUG,
@@ -12,7 +13,10 @@ import {
  * @returns {boolean} true if the slug refers to Google Workspace Business Starter, false otherwise
  */
 export function isGoogleWorkspaceProductSlug( productSlug: string ): boolean {
-	return productSlug === GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
+	return [
+		GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
+		GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	].includes( productSlug );
 }
 
 /**

@@ -16,17 +16,17 @@ const selectors = {
  */
 export class PageTemplateModalComponent {
 	private page: Page;
-	private editorIframe: Frame;
+	private editorFrame: Page | Frame;
 
 	/**
 	 * Creates an instance of the page.
 	 *
-	 * @param {Frame} editorIframe Iframe from the gutenberg editor.
+	 * @param {Page | Frame} editorFrame Frame for the gutenberg editor.
 	 * @param {Page} page Object representing the base page.
 	 */
-	constructor( editorIframe: Frame, page: Page ) {
+	constructor( editorFrame: Page | Frame, page: Page ) {
 		this.page = page;
-		this.editorIframe = editorIframe;
+		this.editorFrame = editorFrame;
 	}
 
 	/**
@@ -36,12 +36,12 @@ export class PageTemplateModalComponent {
 	 */
 	async selectTemplateCatagory( category: TemplateCategory ): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await this.editorIframe.selectOption(
+			await this.editorFrame.selectOption(
 				selectors.mobileTemplateCategorySelectBox,
 				category.toLowerCase()
 			);
 		} else {
-			const locator = this.editorIframe.locator( selectors.templateCategoryButton( category ) );
+			const locator = this.editorFrame.locator( selectors.templateCategoryButton( category ) );
 			await locator.click();
 		}
 	}
@@ -52,7 +52,7 @@ export class PageTemplateModalComponent {
 	 * @param {string} label Label for the template (the string underneath the preview).
 	 */
 	async selectTemplate( label: string ): Promise< void > {
-		const locator = this.editorIframe.locator( selectors.template( label ) );
+		const locator = this.editorFrame.locator( selectors.template( label ) );
 		await locator.click();
 	}
 
@@ -60,7 +60,7 @@ export class PageTemplateModalComponent {
 	 * Select a blank page as your template.
 	 */
 	async selectBlankPage(): Promise< void > {
-		const locator = this.editorIframe.locator( selectors.blankPageButton );
+		const locator = this.editorFrame.locator( selectors.blankPageButton );
 		await locator.click();
 	}
 }

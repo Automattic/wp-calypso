@@ -10,6 +10,7 @@ import type { WpcomClientCredentials } from '../shared-types';
 
 export * from './types';
 export type { State };
+export { STORE_KEY };
 
 let isRegistered = false;
 export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KEY {

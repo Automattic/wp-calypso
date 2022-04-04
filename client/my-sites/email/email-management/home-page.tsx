@@ -1,9 +1,12 @@
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import EmailHome from 'calypso/my-sites/email/email-management/email-home';
+import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 
 type EmailManagementHomePageProps = {
 	selectedDomainName: string;
+	selectedEmailProviderSlug: string;
+	selectedIntervalLength?: IntervalLength;
 	source: string;
 };
 

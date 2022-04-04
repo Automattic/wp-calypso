@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	isMonthly,
+	isWpComProPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
@@ -53,7 +54,7 @@ export default function getPlanFeatures(
 		].filter( isValueTruthy );
 	}
 
-	if ( isWpComBusinessPlan( productSlug ) ) {
+	if ( isWpComBusinessPlan( productSlug ) || isWpComProPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
 			! isMonthlyPlan && liveChatSupport,

@@ -14,13 +14,12 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	isFreeJetpackPlan,
 	isFreePlanProduct,
-	isFlexiblePlanProduct,
 	isPro,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
-import { Global } from '@emotion/react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -40,7 +39,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import { globalOverrides, isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
@@ -191,15 +190,21 @@ class CurrentPlan extends Component {
 
 		if (
 			eligibleForProPlan &&
-			! isFlexiblePlanProduct( selectedSite.plan ) &&
+			! isFreePlanProduct( selectedSite.plan ) &&
 			! isPro( selectedSite.plan )
 		) {
 			showLegacyPlanNotice = true;
 		}
 
+		// Ensures the Plan tab is shown in case the plan changes after the controller redirect.
+		if ( eligibleForProPlan && isFreePlanProduct( selectedSite.plan ) ) {
+			page.redirect( `/plans/${ selectedSite.slug }` );
+
+			return null;
+		}
+
 		return (
 			<Main className="current-plan" wideLayout>
-				{ eligibleForProPlan && <Global styles={ globalOverrides } /> }
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				<FormattedHeader
 					brandFont
@@ -277,23 +282,20 @@ class CurrentPlan extends Component {
 						</Fragment>
 					) }
 
-					{ ! isPro( selectedSite.plan ) && (
-						<>
-							<div
-								className={ classNames( 'current-plan__header-text current-plan__text', {
-									'is-placeholder': { isLoading },
-								} ) }
-							>
-								<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
-							</div>
-							<AsyncLoad
-								require="calypso/blocks/product-purchase-features-list"
-								placeholder={ null }
-								plan={ currentPlanSlug }
-								isPlaceholder={ isLoading }
-							/>
-						</>
-					) }
+					<div
+						className={ classNames( 'current-plan__header-text current-plan__text', {
+							'is-placeholder': { isLoading },
+						} ) }
+					>
+						<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+					</div>
+					<AsyncLoad
+						require="calypso/blocks/product-purchase-features-list"
+						placeholder={ null }
+						plan={ currentPlanSlug }
+						isPlaceholder={ isLoading }
+					/>
+
 					<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 				</div>
 			</Main>

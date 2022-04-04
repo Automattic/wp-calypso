@@ -7,6 +7,7 @@ import {
 	PublishedPostPage,
 	PageTemplateModalComponent,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -25,13 +26,10 @@ const pagePassword = 'cat';
  */
 export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions } ): void {
 	describe( DataHelper.createSuiteTitle( `Editor: Privacy (${ visibility })` ), function () {
-		const accountName = getTestAccountByFeature(
-			{
-				gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-				siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-			},
-			[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
-		);
+		const features = envToFeatureKey( envVariables );
+		const accountName = getTestAccountByFeature( features, [
+			{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		] );
 
 		let page: Page;
 		let url: URL;
@@ -46,7 +44,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 
 			it( 'Start new page', async function () {
-				editorPage = new EditorPage( page );
+				editorPage = new EditorPage( page, { target: features.siteType } );
 				await editorPage.visit( 'page' );
 				await editorPage.waitUntilLoaded();
 				const editorIframe = await editorPage.getEditorHandle();
@@ -55,7 +53,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 
 			it( 'Enter page title', async function () {
-				editorPage = new EditorPage( page );
+				editorPage = new EditorPage( page, { target: features.siteType } );
 				await editorPage.enterTitle( `Privacy: ${ visibility } - ${ DataHelper.getTimestamp() }` );
 			} );
 

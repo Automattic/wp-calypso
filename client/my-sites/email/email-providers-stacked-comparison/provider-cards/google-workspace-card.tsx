@@ -1,6 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
@@ -75,10 +76,10 @@ const googleWorkspaceCardInformation: ProviderCardProps = {
 };
 
 const GoogleWorkspaceCard = ( {
-	cartDomainName,
 	comparisonContext,
 	detailsExpanded,
 	intervalLength,
+	isDomainInCart = false,
 	onExpandedChange,
 	selectedDomainName,
 	source,
@@ -107,21 +108,25 @@ const GoogleWorkspaceCard = ( {
 	const [ googleUsers, setGoogleUsers ] = useState( newUsers( selectedDomainName ) );
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
-	const isGSuiteSupported = canPurchaseGSuite && hasGSuiteSupportedDomain( [ domain ] );
-	const isGSuiteAvailable = intervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
+	const isGSuiteSupported =
+		canPurchaseGSuite &&
+		( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) ) &&
+		( isEnabled( 'google-workspace-monthly' ) || intervalLength === IntervalLength.ANNUALLY );
 
 	const googleWorkspace: ProviderCardProps = { ...googleWorkspaceCardInformation };
-	googleWorkspace.detailsExpanded = isGSuiteAvailable && detailsExpanded;
-	googleWorkspace.showExpandButton = isGSuiteAvailable;
+	googleWorkspace.detailsExpanded = isGSuiteSupported && detailsExpanded;
+	googleWorkspace.showExpandButton = isGSuiteSupported;
 	googleWorkspace.priceBadge = (
-		<GoogleWorkspacePrice domain={ domain } intervalLength={ intervalLength } />
+		<GoogleWorkspacePrice
+			domain={ domain }
+			isDomainInCart={ isDomainInCart }
+			intervalLength={ intervalLength }
+		/>
 	);
-
-	const hasCartDomain = Boolean( cartDomainName );
 
 	const onGoogleConfirmNewMailboxes = () => {
 		const usersAreValid = areAllUsersValid( googleUsers );
-		const userCanAddEmail = hasCartDomain || canCurrentUserAddEmail( domain );
+		const userCanAddEmail = isDomainInCart || canCurrentUserAddEmail( domain );
 
 		recordTracksEventAddToCartClick(
 			comparisonContext,

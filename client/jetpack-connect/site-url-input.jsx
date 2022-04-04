@@ -1,4 +1,5 @@
 import { Card, Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -6,7 +7,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Spinner from 'calypso/components/spinner';
 import SuggestionSearch from 'calypso/components/suggestion-search';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const noop = () => {};
 

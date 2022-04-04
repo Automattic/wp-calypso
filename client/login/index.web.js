@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { Provider as ReduxProvider } from 'react-redux';
 import { RouteProvider } from 'calypso/components/route';
 import { setHrefLangLinks } from 'calypso/controller/localized-links';
@@ -8,7 +9,6 @@ import {
 	makeLayoutMiddleware,
 } from 'calypso/controller/shared';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import {
 	login,
 	magicLogin,

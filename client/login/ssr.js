@@ -1,4 +1,4 @@
-import { isDefaultLocale } from 'calypso/lib/i18n-utils';
+import { isDefaultLocale } from '@automattic/i18n-utils';
 
 const VALID_QUERY_KEYS = [ 'client_id', 'signup_flow', 'redirect_to' ];
 

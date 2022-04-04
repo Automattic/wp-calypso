@@ -17,7 +17,7 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { trackEventWithFlow } from '../../lib/analytics';
 import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import waitForDomainAvailability from './wait-for-domain-availability';
 import type { DomainSuggestions } from '@automattic/data-stores';

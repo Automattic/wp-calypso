@@ -2,7 +2,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isAnchorPodcastIdValid } from '../path';
-import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { ONBOARD_STORE } from '../stores/onboard';
 import usePodcastTitle from './use-podcast-title';
 
 export default function useSiteTitle(): void {

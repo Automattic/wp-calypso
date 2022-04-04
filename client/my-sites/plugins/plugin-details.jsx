@@ -203,6 +203,9 @@ function PluginDetails( props ) {
 					label: translate( 'Plugins' ),
 					href: `/plugins/${ selectedSite?.slug || '' }`,
 					id: 'plugins',
+					helpBubble: translate(
+						'Add new functionality and integrations to your site with plugins.'
+					),
 				} )
 			);
 		}

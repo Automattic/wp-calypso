@@ -25,7 +25,7 @@ const Wrapper = styled.div`
 
 	.gridicon {
 		display: block;
-		color: var( --studio-gray-30 );
+		color: var( --studio-gray-20 );
 	}
 `;
 
@@ -38,9 +38,10 @@ const Title = styled.div`
 `;
 
 const Subtitle = styled.div`
-	color: var( --studio-gray-40 );
+	color: var( --studio-gray-50 );
 	font-size: 0.75rem;
 	font-weight: 300;
+	line-height: 1.4;
 `;
 
 export const PlansComparisonRowHeader: React.FunctionComponent< Props > = ( {

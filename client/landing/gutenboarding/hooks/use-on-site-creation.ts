@@ -4,7 +4,7 @@ import { useMemo, useEffect } from 'react';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
 import { useOnboardingFlow } from '../path';
-import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { SITE_STORE } from '../stores/site';
 import { USER_STORE } from '../stores/user';

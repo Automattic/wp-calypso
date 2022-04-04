@@ -21,6 +21,7 @@ import {
 	isJetpackBusinessPlan,
 	shouldFetchSitePlans,
 	isDIFMProduct,
+	isPro,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -82,6 +83,7 @@ import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
+import ProPlanDetails from './pro-plan-details';
 import SiteRedirectDetails from './site-redirect-details';
 import TransferPending from './transfer-pending';
 
@@ -580,6 +582,8 @@ export class CheckoutThankYou extends Component {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
 				return [ BusinessPlanDetails, find( purchases, isBusiness ) ];
+			} else if ( purchases.some( isPro ) ) {
+				return [ ProPlanDetails, find( purchases, isPro ) ];
 			} else if ( purchases.some( isEcommerce ) ) {
 				return [ EcommercePlanDetails, find( purchases, isEcommerce ) ];
 			} else if ( purchases.some( isDomainRegistration ) ) {

@@ -5,6 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { orderBy } from 'lodash';
@@ -25,7 +26,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { userCan } from 'calypso/lib/site/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
@@ -610,7 +610,7 @@ class MembershipsSection extends Component {
 					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
 					shouldDisplay={ () => true }
 					feature={ FEATURE_MEMBERSHIPS }
-					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
+					title={ this.props.translate( 'Upgrade to the Pro plan' ) }
 					description={ this.props.translate( 'Upgrade to start selling.' ) }
 					showIcon={ true }
 					event="calypso_memberships_upsell_nudge"

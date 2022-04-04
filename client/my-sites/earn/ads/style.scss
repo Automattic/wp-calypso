@@ -72,7 +72,7 @@
 	}
 }
 
-.earnings_history {
+.payments_history, .earnings_history {
 	padding: 0;
 
 	ul.module-header-actions .toggle-info {
@@ -83,6 +83,15 @@
 		ul.module-header-actions .toggle-info::after,
 		.module-content-text-info {
 			display: inline-block;
+		}
+	}
+
+	table {
+		@include breakpoint-deprecated( '<480px' ) {
+			overflow: scroll;
+			white-space: nowrap;
+			max-width: fit-content;
+			display: block;
 		}
 	}
 
@@ -104,7 +113,7 @@
 	text-align: left;
 }
 
-.ads__earnings-history-header {
+.ads__payments-history-header, .ads__earnings-history-header {
 	color: var( --color-neutral-light );
 	border: 1px solid var( --color-neutral-0 );
 	border-left: none;
@@ -114,19 +123,34 @@
 	justify-content: center;
 	text-transform: uppercase;
 	text-align: center;
+
+	@include breakpoint-deprecated( '<480px' ) {
+		padding: 0 15px;
+	}
 }
 
-.ads__earnings-history-value {
+.ads__payments-history-value, .ads__earnings-history-value {
 	line-height: 40px;
 	text-align: center;
 
 	@include breakpoint-deprecated( '<480px' ) {
-		&:first-child,
-		&:last-child {
+		padding: 0 15px;
+		font-size: $font-body-extra-small;
+
+		.badge {
+			font-size: $font-body-extra-small;
+		}
+
+		small {
 			font-size: $font-body-extra-small;
 		}
 	}
 }
+
+.ads__payments-history-badge {
+	text-transform: uppercase;
+}
+
 @include breakpoint-deprecated( '<480px' ) {
 	.ads__settings-state {
 		max-width: 75%;

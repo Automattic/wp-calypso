@@ -190,7 +190,7 @@ export class MediaLibraryList extends Component {
 	};
 
 	sourceIsUngrouped( source ) {
-		const ungroupedSources = [ 'pexels' ];
+		const ungroupedSources = [ 'openverse', 'pexels' ];
 		return -1 !== ungroupedSources.indexOf( source );
 	}
 

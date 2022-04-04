@@ -14,7 +14,7 @@ import {
 	useAnchorFmParams,
 	useStepRouteParam,
 } from '../path';
-import { STORE_KEY } from '../stores/onboard';
+import { ONBOARD_STORE } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
 import AcquireIntent from './acquire-intent';
 import AnchorError from './anchor-error';
@@ -42,7 +42,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		isRedirecting,
 	} = useSelect(
 		( select ) => {
-			const onboardSelect = select( STORE_KEY );
+			const onboardSelect = select( ONBOARD_STORE );
 
 			return {
 				hasSiteTitle: onboardSelect.hasSiteTitle(),
@@ -51,7 +51,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				isRedirecting: onboardSelect.getIsRedirecting(),
 			};
 		},
-		[ STORE_KEY ]
+		[ ONBOARD_STORE ]
 	);
 	const { isCreatingSite, newSiteError } = useSelect(
 		( select ) => {
@@ -169,7 +169,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	// Remember the last accessed route path
 	const location = useLocation();
 	const step = useStepRouteParam();
-	const { setLastLocation } = useDispatch( STORE_KEY );
+	const { setLastLocation } = useDispatch( ONBOARD_STORE );
 
 	React.useEffect( () => {
 		const modalSteps: StepType[] = [ Step.DomainsModal, Step.PlansModal, Step.LanguageModal ];

@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 import { Component } from 'react';
@@ -9,7 +10,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InfiniteList from 'calypso/components/infinite-list';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { requestSiteBlocks } from 'calypso/state/reader/site-blocks/actions';
 import {
 	getBlockedSites,

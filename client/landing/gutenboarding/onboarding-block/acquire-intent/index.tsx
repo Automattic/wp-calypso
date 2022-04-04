@@ -1,4 +1,4 @@
-import { isGoodDefaultDomainQuery } from '@automattic/domain-picker';
+import { isGoodDefaultDomainQuery } from '@automattic/domain-utils';
 import { NextButton, SkipButton } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -8,18 +8,18 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { recordSiteTitleSkip } from '../../lib/analytics';
 import { useIsAnchorFm } from '../../path';
-import { STORE_KEY } from '../../stores/onboard';
+import { ONBOARD_STORE } from '../../stores/onboard';
 import SiteTitle from './site-title';
 
 import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { getSelectedSiteTitle, hasSiteTitle } = useSelect( ( select ) => select( STORE_KEY ) );
+	const { getSelectedSiteTitle, hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 	const siteTitleRef = React.useRef< HTMLInputElement >();
 
-	const { setDomainSearch, setSiteTitle } = useDispatch( STORE_KEY );
+	const { setDomainSearch, setSiteTitle } = useDispatch( ONBOARD_STORE );
 
 	const { goNext } = useStepNavigation();
 

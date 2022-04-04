@@ -31,6 +31,7 @@ export async function saveCreditCard( {
 	const response = await wp.req.post(
 		{
 			path: '/me/stored-cards',
+			apiVersion: '1.1',
 		},
 		{
 			payment_key: token,
@@ -80,14 +81,20 @@ export async function updateCreditCard( {
 		postalCode,
 		countryCode,
 	} );
-	const response = await wp.req.post( '/upgrades/' + purchaseId + '/update-credit-card', {
-		payment_partner,
-		paygate_token,
-		use_for_existing,
-		event_source,
-		postal_code,
-		country_code,
-	} );
+	const response = await wp.req.post(
+		{
+			path: '/upgrades/' + purchaseId + '/update-credit-card',
+			apiVersion: '1.1',
+		},
+		{
+			payment_partner,
+			paygate_token,
+			use_for_existing,
+			event_source,
+			postal_code,
+			country_code,
+		}
+	);
 	if ( response.error ) {
 		recordTracksEvent( 'calypso_purchases_save_new_payment_method_error' );
 		throw new Error( response );

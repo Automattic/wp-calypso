@@ -11,19 +11,18 @@ import {
 	RevisionsComponent,
 	ParagraphBlock,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
-	const accountName = getTestAccountByFeature(
-		{
-			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-		},
-		[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
-	);
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features, [
+		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+	] );
+
 	let editorPage: EditorPage;
 	let revisionsComponent: RevisionsComponent;
 	let page: Page;
@@ -36,14 +35,14 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 		await editorPage.visit( 'post' );
 	} );
 
 	it.each( [ { revision: 1 }, { revision: 2 }, { revision: 3 } ] )(
 		'Create revision $revision',
 		async function ( { revision } ) {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);

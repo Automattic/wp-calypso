@@ -7,6 +7,9 @@ jest.mock( 'calypso/lib/wporg', () => ( {
 	getWporgLocaleCode: () => 'it_US',
 	fetchPluginsList: () => Promise.resolve( [] ),
 } ) );
+jest.mock( 'calypso/lib/url-search', () => ( Component ) => ( props ) => (
+	<Component { ...props } doSearch={ jest.fn() } />
+) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/blocks/upsell-nudge', () => 'upsell-nudge' );

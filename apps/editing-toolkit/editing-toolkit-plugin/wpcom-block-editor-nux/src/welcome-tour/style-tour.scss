@@ -41,3 +41,12 @@ $welcome-tour-card-media-extra-padding: 14%; // temporary value, to match the pa
 		}
 	}
 }
+
+// Adding it to hide the WelcomeTour when the W-icon is pressed on mobile
+// stylelint-disable-next-line selector-max-id
+#wpwrap.wp-responsive-open {
+	
+	.tour-kit.wpcom-tour-kit {
+		display: none;
+	}
+}

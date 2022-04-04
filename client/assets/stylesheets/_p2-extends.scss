@@ -101,8 +101,8 @@
 		background-color: var( --p2-color-link );
 		color: var( --p2-color-white );
 
-		&:hover,
-		&:focus {
+		&:hover:not( :disabled ),
+		&:focus:not( :disabled ) {
 			background-color: var( --p2-color-link-dark );
 		}
 

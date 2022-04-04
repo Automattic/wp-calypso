@@ -5,7 +5,6 @@ import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
-import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
@@ -35,12 +34,20 @@ object WPComTests : Project({
 	// Keep the previous ID in order to preserve the historical data
 	buildType(gutenbergBuildType("desktop", "aee94c18-ee11-4c80-b6aa-245b967a97db"));
 	buildType(gutenbergBuildType("mobile","2af2eaed-87d5-41f4-ab1d-4ed589d5ae82"));
+
 	buildType(gutenbergPlaywrightBuildType("desktop", "fab2e82e-d27b-4ba2-bbd7-232df944e75c"));
 	buildType(gutenbergPlaywrightBuildType("mobile", "77a5a0f1-9644-4c04-9d27-0066cd2d4ada"));
+	buildType(gutenbergPlaywrightBuildType("desktop", "c341e9b9-1118-48e9-a569-325100f5fd9" , true));
+	buildType(gutenbergPlaywrightBuildType("mobile", "e0f7e412-ae6c-41d3-9eec-c57c94dd8385", true));
+
 	buildType(coblocksPlaywrightBuildType("desktop", "08f88b93-993e-4de8-8d80-4a94981d9af4"));
 	buildType(coblocksPlaywrightBuildType("mobile", "cbcd44d5-4d31-4adc-b1b5-97f1225c6a7c"));
+
+	buildType(jetpackPlaywrightBuildType("desktop", "68fe6336-5869-4244-b236-cca23ba03487"));
+	buildType(jetpackPlaywrightBuildType("mobile", "a80b5c10-1fef-4c7f-9e2c-5c5c30d637c8"));
 	buildType(jetpackBuildType("desktop"));
 	buildType(jetpackBuildType("mobile"));
+
 	buildType(VisualRegressionTests);
 	buildType(I18NTests);
 	buildType(P2E2ETests)
@@ -113,7 +120,6 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 					export NODE_CONFIG_ENV=test
 					export TEST_VIDEO=true
 					export HIGHLIGHT_ELEMENT=true
-					export TEST_ON_ATOMIC=%TEST_ON_ATOMIC%
 					export GUTENBERG_EDGE=%GUTENBERG_EDGE%
 					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
 					export URL=%URL%
@@ -214,12 +220,14 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 	}
 }
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false ): E2EBuildType {
+	var siteType = if (atomic) "atomic" else "simple";
+
     return E2EBuildType (
-		buildId = "WPComTests_gutenberg_Playwright_$targetDevice",
+		buildId = "WPComTests_gutenberg_Playwright_${siteType}_$targetDevice",
 		buildUuid = buildUuid,
-		buildName = "Playwright Gutenberg E2E tests ($targetDevice)",
-		buildDescription = "Runs Gutenberg e2e tests on $targetDevice size",
+		buildName = "Playwright Gutenberg $siteType E2E tests ($targetDevice)",
+		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
 		testGroup = "gutenberg",
 		buildParams = {
 			text(
@@ -255,6 +263,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2E
 			)
 			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser")
 			param("env.VIEWPORT_NAME", "$targetDevice")
+			if (atomic) param("env.TEST_ON_ATOMIC", "true")
 		},
 		buildFeatures = {
 			notifications {
@@ -329,6 +338,27 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EB
 				buildFinishedSuccessfully = true
 			}
 		},
+	)
+}
+
+fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String): E2EBuildType {
+	return E2EBuildType (
+		buildId = "WPComTests_jetpack_Playwright_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "Playwright Jetpack E2E Tests ($targetDevice)",
+		buildDescription = "Runs Jetpack E2E tests as $targetDevice",
+		testGroup = "jetpack",
+		buildParams = {
+			text(
+				name = "env.URL",
+				value = "https://wordpress.com",
+				label = "Test URL",
+				description = "URL to test against",
+				allowEmpty = false
+			)
+			param("env.VIEWPORT_NAME", "$targetDevice")
+		},
+		buildFeatures = {},
 	)
 }
 
