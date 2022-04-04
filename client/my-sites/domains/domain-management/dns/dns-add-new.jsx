@@ -159,6 +159,11 @@ class DnsAddNew extends React.Component {
 			return recordToEdit[ field ].replace( /\.$/, '' );
 		}
 
+		// Make sure we can handle protocols with and without a leading underscore
+		if ( 'SRV' === recordToEdit.type && 'protocol' === field ) {
+			return recordToEdit[ field ].replace( /^_+/, '' );
+		}
+
 		return recordToEdit[ field ];
 	}
 
