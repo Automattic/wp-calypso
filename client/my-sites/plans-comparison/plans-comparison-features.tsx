@@ -21,7 +21,7 @@ import {
 	FEATURE_JETPACK_ESSENTIAL,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { translate, numberFormat } from 'i18n-calypso';
+import i18n, { translate, numberFormat, getLocaleSlug } from 'i18n-calypso';
 import type { TranslateResult, TranslateOptionsPlural } from 'i18n-calypso';
 
 export interface PlanComparisonFeature {
@@ -259,9 +259,17 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			return translate( 'Visits per month' );
 		},
 		get description() {
-			return translate(
+			const isStringTranslated = i18n.hasTranslation(
 				'WordPress Pro includes a generous 100,000 visits per month, which is 4x the limit for similarly priced plans at other popular managed WordPress hosts. Additional traffic can be purchased in 100,000 increments.'
 			);
+
+			if ( 'en' === getLocaleSlug() || isStringTranslated ) {
+				return translate(
+					'WordPress Pro includes a generous 100,000 visits per month, which is 4x the limit for similarly priced plans at other popular managed WordPress hosts. Additional traffic can be purchased in 100,000 increments.'
+				);
+			}
+
+			return translate( 'Max visits per month.' );
 		},
 		features: [ FEATURE_10K_VISITS, FEATURE_100K_VISITS ],
 		getCellText: ( feature, isMobile = false ) => {
