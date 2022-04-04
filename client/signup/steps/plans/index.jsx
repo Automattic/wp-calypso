@@ -155,6 +155,8 @@ export class PlansStep extends Component {
 		}
 
 		if ( eligibleForProPlan ) {
+			const selectedDomainConnection =
+				this.props.progress?.domains?.domainItem?.product_slug === 'domain_map';
 			return (
 				<div>
 					{ errorDisplay }
@@ -162,6 +164,7 @@ export class PlansStep extends Component {
 						isInSignup={ true }
 						onSelectPlan={ this.onSelectPlan }
 						selectedSiteId={ selectedSite?.ID || undefined }
+						selectedDomainConnection={ selectedDomainConnection }
 					/>
 				</div>
 			);
