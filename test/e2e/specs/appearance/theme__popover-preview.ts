@@ -10,6 +10,9 @@ import {
 	PreviewComponent,
 	SiteSelectComponent,
 	TestAccount,
+	envVariables,
+	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -18,8 +21,10 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), function () {
 	// This test will use this specific theme as it will never be active.
 	const themeName = 'Twenty Seventeen';
-	const user = process.env.TARGET_JETPACK === '1' ? 'jetpackUser' : 'defaultUser';
-	const testAccount = new TestAccount( user );
+	const accountName = envVariables.TEST_ON_JETPACK
+		? 'jetpackUser'
+		: getTestAccountByFeature( envToFeatureKey( envVariables ) );
+	const testAccount = new TestAccount( accountName );
 	const testAccountSiteDomain = testAccount.getSiteURL( { protocol: false } );
 
 	let sidebarComponent: SidebarComponent;
