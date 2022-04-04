@@ -20,18 +20,18 @@ import OlarkChat from 'calypso/components/olark-chat';
 import OlarkErrorBoundary from 'calypso/components/olark-chat/olarkErrorBoundary';
 
 function olarkChatWidget() {
-    const olarkIdentity = config( 'olark_chat_identity' );
-    const olarkSystemsGroupId = 'YOUR_SYSTEM_ID';
+	const olarkIdentity = config( 'olark_chat_identity' );
+	const olarkSystemsGroupId = 'YOUR_SYSTEM_ID';
 
-    return (
-        <OlarkErrorBoundary>
-            <OlarkChat
-                identity={ olarkIdentity }
-                shouldDisablePreChatSurvey={ true }
-                systemsGroupId={ olarkSystemsGroupId }
-            />
-        </OlarkErrorBoundary>
-    );
+	return (
+		<OlarkErrorBoundary>
+			<OlarkChat
+				identity={ olarkIdentity }
+				shouldDisablePreChatSurvey={ true }
+				systemsGroupId={ olarkSystemsGroupId }
+			/>
+		</OlarkErrorBoundary>
+	);
 }
 ```
 
