@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import OlarkErrorBoundary from './olarkErrorBoundary';
 
 class OlarkChat extends Component {
 	componentDidMount() {
@@ -25,7 +24,7 @@ class OlarkChat extends Component {
 			`;
 		}
 
-		document.getElementById( 'olark-chat' ).appendChild( script );
+		document.getElementById( 'olark-chat-container' ).appendChild( script );
 	}
 
 	shouldComponentUpdate() {
@@ -33,11 +32,7 @@ class OlarkChat extends Component {
 	}
 
 	render() {
-		return (
-			<OlarkErrorBoundary>
-				<div id="olark-chat" />
-			</OlarkErrorBoundary>
-		);
+		return <div id="olark-chat-container" />;
 	}
 }
 

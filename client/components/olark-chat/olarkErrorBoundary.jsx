@@ -1,11 +1,22 @@
 import { Component } from 'react';
 
 class OlarkErrorBoundary extends Component {
+	constructor( props ) {
+		super( props );
+		this.state = { error: null, errorInfo: null };
+	}
+
 	componentDidCatch( error, errorInfo ) {
-		// TODO: Catch error
+		this.setState( {
+			error: error,
+			errorInfo: errorInfo,
+		} );
 	}
 
 	render() {
+		if ( this.state.errorInfo ) {
+			return null;
+		}
 		return this.props.children;
 	}
 }

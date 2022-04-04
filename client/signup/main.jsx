@@ -28,6 +28,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import OlarkChat from 'calypso/components/olark-chat';
+import OlarkErrorBoundary from 'calypso/components/olark-chat/olarkErrorBoundary';
 import {
 	recordSignupStart,
 	recordSignupComplete,
@@ -761,11 +762,14 @@ class Signup extends Component {
 					) }
 				</div>
 				{ isEligibleForOlarkChat && (
-					<OlarkChat
-						identity={ olarkIdentity }
-						shouldDisablePreChatSurvey={ true }
-						systemsGroupId={ olarkSystemsGroupId }
-					/>
+					<OlarkErrorBoundary>
+						<OlarkChat
+							identity={ olarkIdentity }
+							shouldDisablePre
+							ChatSurvey={ true }
+							systemsGroupId={ olarkSystemsGroupId }
+						/>
+					</OlarkErrorBoundary>
 				) }
 			</>
 		);
