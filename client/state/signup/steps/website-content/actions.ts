@@ -68,14 +68,14 @@ export function logoRemoved() {
 	};
 }
 
-export function websiteContentFieldChanged( data: {
+export function websiteContentFieldChanged( payload: {
 	pageId: string;
 	fieldName: string;
 	fieldValue: string;
 } ) {
 	return {
 		type: SIGNUP_STEPS_WEBSITE_FIELD_CHANGED,
-		payload: data,
+		payload,
 	};
 }
 
