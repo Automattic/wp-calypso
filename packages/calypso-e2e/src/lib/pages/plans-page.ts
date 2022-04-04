@@ -8,7 +8,8 @@ export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
 
 const selectors = {
-	myPlanTitle: ( planName: Plan ) => `.my-plan-card__title:has-text("${ planName }")`,
+	// Generic
+	placeholder: `.is-placeholder`,
 
 	// Navigation
 	mobileNavTabsToggle: `button.section-nav__mobile-header`,
@@ -20,6 +21,12 @@ const selectors = {
 		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
+
+	// Plans view
+	plansGrid: '.plans-features-main',
+
+	// My Plans view
+	myPlanTitle: ( planName: Plan ) => `.my-plan-card__title:has-text("${ planName }")`,
 };
 
 /**
@@ -45,14 +52,42 @@ export class PlansPage {
 	}
 
 	/**
+	 * Clicks on the navigation tab (desktop) or dropdown (mobile).
+	 *
+	 * @param {PlansPageTab} targetTab Name of the tab.
+	 */
+	async clickTab( targetTab: PlansPageTab ): Promise< void > {
+		const currentSelectedLocator = this.page.locator( selectors.activeNavigationTab( targetTab ) );
+		// If the target tab is already active, short circuit.
+		if ( ( await currentSelectedLocator.count() ) > 0 ) {
+			return;
+		}
+
+		if ( targetTab === 'My Plan' ) {
+			// User is currently on the Plans tab and going to My Plans.
+			// Wait for the Plans grid to fully render.
+			const plansGridLocator = this.page.locator( selectors.plansGrid );
+			await plansGridLocator.waitFor();
+		}
+		if ( targetTab === 'Plans' ) {
+			// User is currently on the My Plans tab and going to Plans.
+			// Wait for the detais of the current plan to complete rendering
+			// asynchronously.
+			const placeholderLocator = this.page.locator( `.my-plan-card${ selectors.placeholder }` );
+			await placeholderLocator.waitFor( { state: 'hidden' } );
+		}
+		await clickNavTab( this.page, targetTab );
+	}
+
+	/**
 	 * Validates that the provided plan name is the title of the active plan in the My Plan tab of the Plans page. Throws if it isn't.
 	 *
 	 * @param {Plan} expectedPlan Name of the expected plan.
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlanInMyPlanTab( expectedPlan: Plan ): Promise< void > {
-		await this.waitUntilLoaded();
-		await this.page.waitForSelector( selectors.myPlanTitle( expectedPlan ) );
+		const expectedPlanLocator = this.page.locator( selectors.myPlanTitle( expectedPlan ) );
+		await expectedPlanLocator.waitFor();
 	}
 
 	/**
@@ -73,16 +108,6 @@ export class PlansPage {
 		} else {
 			await this.page.waitForSelector( selectors.activeNavigationTab( expectedTab ) );
 		}
-	}
-
-	/**
-	 * Click on the provided tab name in the navigation tab at the top of the Plans activity
-	 *
-	 * @param {PlansPageTab} targetTab Name of the navigation tab to click on
-	 */
-	async clickTab( targetTab: PlansPageTab ): Promise< void > {
-		await this.page.waitForLoadState( 'networkidle' );
-		await clickNavTab( this.page, targetTab );
 	}
 
 	/**
