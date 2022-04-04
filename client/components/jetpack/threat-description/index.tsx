@@ -11,6 +11,7 @@ export interface Props {
 	children?: ReactNode;
 	status: ThreatStatus;
 	problem: string | ReactNode;
+	type?: string | ReactNode;
 	source?: string;
 	fix?: string | ReactNode;
 	context?: Record< string, unknown >;
@@ -89,7 +90,7 @@ class ThreatDescription extends PureComponent< Props > {
 	}
 
 	render() {
-		const { children, problem, source, fix, diff, rows, context, filename } = this.props;
+		const { children, problem, type, source, fix, diff, rows, context, filename } = this.props;
 
 		return (
 			<div className="threat-description">
@@ -97,6 +98,8 @@ class ThreatDescription extends PureComponent< Props > {
 					<strong>{ translate( 'What did Jetpack find?' ) }</strong>
 				</p>
 				{ this.renderTextOrNode( <p className="threat-description__section-text">{ problem }</p> ) }
+				{ type &&
+					this.renderTextOrNode( <p className="threat-description__section-text">{ type }</p> ) }
 				{ source &&
 					this.renderTextOrNode(
 						<p className="threat-description__section-text">

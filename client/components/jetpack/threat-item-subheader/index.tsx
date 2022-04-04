@@ -5,6 +5,7 @@ import * as React from 'react';
 import Badge from 'calypso/components/badge';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
 import {
+	getThreatPayloadSubtitle,
 	getThreatType,
 	getThreatVulnerability,
 } from 'calypso/components/jetpack/threat-item/utils';
@@ -61,6 +62,11 @@ const getThreatStatusMessage = ( translate: ReturnType< typeof useTranslate >, t
 const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
 	const translate = useTranslate();
 	if ( threat.status === 'current' ) {
+		const threatPayloadSubtitle = getThreatPayloadSubtitle( threat );
+		if ( threatPayloadSubtitle ) {
+			return <>{ threatPayloadSubtitle }</>;
+		}
+
 		switch ( getThreatType( threat ) ) {
 			case 'file':
 				return (
