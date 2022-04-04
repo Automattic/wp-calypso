@@ -10,6 +10,8 @@ import useInvoicesQuery from 'calypso/state/partner-portal/invoices/hooks/use-in
 import type { Invoice } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
+// Component extracted for readability and not meant to be reusable as the header and card grid (.invoice-list__row)
+// have to be identical for the faux table columns to align visually.
 function InvoiceCard( { dueDate, status, total, pdfUrl }: Invoice ): ReactElement {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -24,7 +26,7 @@ function InvoiceCard( { dueDate, status, total, pdfUrl }: Invoice ): ReactElemen
 			badgeLabel = translate( 'Open' );
 
 			if ( dueDateMoment.isBefore( moment() ) ) {
-				badgeType = '';
+				badgeType = 'warning';
 				badgeLabel = translate( 'Past due' );
 			}
 			break;
@@ -49,7 +51,7 @@ function InvoiceCard( { dueDate, status, total, pdfUrl }: Invoice ): ReactElemen
 		<Card compact>
 			<div className="invoices-list__row">
 				<div className="invoices-list__due-date">
-					<FormattedDate date={ moment( dueDate * 1000 ) } format="ll" />
+					<FormattedDate date={ moment( dueDate ) } format="ll" />
 				</div>
 
 				<div className="invoices-list__status">

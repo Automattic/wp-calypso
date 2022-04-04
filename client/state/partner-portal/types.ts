@@ -96,7 +96,7 @@ export interface APIError {
 
 export interface APIInvoice {
 	id: string;
-	due_date: number;
+	due_date: string;
 	status: InvoiceStatus;
 	total: number;
 	invoice_pdf: string;
@@ -108,7 +108,7 @@ export interface APIInvoice {
 
 export interface Invoice {
 	id: string;
-	dueDate: number;
+	dueDate: string;
 	status: InvoiceStatus;
 	total: number;
 	pdfUrl: string;
