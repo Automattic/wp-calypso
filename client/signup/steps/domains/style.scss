@@ -125,19 +125,23 @@ body.is-section-signup.is-white-signup {
 
 		.register-domain-step .domains__domain-side-content-container-mobile-experiment {
 			display: flex;
-			height: 100%;
+			
 			justify-content: space-between;
 			flex-direction: column;
 			
 			.domains__domain-side-content {
 				border-top: 1px solid var( --studio-gray-5 );
 				border-bottom: 0;
-				padding: 16px 0 0;
+				padding: 16px 0;
 				margin: 0;
 
 				@include break-large {
 					display: none;
 				}
+			}
+
+			.domains__free-domain .reskin-side-explainer__subtitle {
+				display: none;
 			}
 		}
 
@@ -327,6 +331,7 @@ body.is-section-signup:not( .is-white-signup ) {
 	display: flex;
 	padding: 10px 5px 30px;
 	justify-content: space-between;
+	margin-bottom: 20px;
 
 	@include break-large {
 		display: none;
