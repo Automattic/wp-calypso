@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { Component } from 'react';
+import { logToLogstash } from 'calypso/lib/logstash';
 
 class OlarkErrorBoundary extends Component {
 	constructor( props ) {
@@ -10,6 +12,18 @@ class OlarkErrorBoundary extends Component {
 		this.setState( {
 			error: error,
 			errorInfo: errorInfo,
+		} );
+
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'Olark widget in signup flow error',
+			severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+			extra: {
+				env: config( 'env_id' ),
+				type: 'olark_signup_flow_error',
+				message: String( error ),
+				stackTrace: errorInfo.componentStack,
+			},
 		} );
 	}
 
