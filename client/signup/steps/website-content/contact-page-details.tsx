@@ -11,6 +11,7 @@ import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import {
 	websiteContentFieldChanged,
 	imageUploaded,
+	imageRemoved,
 	imageUploadFailed,
 	imageUploadInitiated,
 } from 'calypso/state/signup/steps/website-content/actions';
@@ -72,6 +73,15 @@ export function ContactPageDetails( {
 			} as ChangeEvent< HTMLInputElement > );
 	};
 
+	const onMediaRemoved = ( { mediaIndex }: MediaUploadData ) => {
+		dispatch(
+			imageRemoved( {
+				pageId: page.id,
+				mediaIndex,
+			} )
+		);
+	};
+
 	const onFieldChanged = ( e: ChangeEvent< HTMLInputElement > ) => {
 		const {
 			target: { name, value },
@@ -131,6 +141,7 @@ export function ContactPageDetails( {
 						onMediaUploadComplete={ onMediaUploadComplete }
 						initialCaption={ image.caption }
 						initialUrl={ image.url }
+						onRemoveImage={ onMediaRemoved }
 					/>
 				) ) }
 			</HorizontalGrid>
