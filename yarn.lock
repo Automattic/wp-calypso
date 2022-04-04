@@ -12488,13 +12488,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffer-from@npm:^0.1.1":
-  version: 0.1.2
-  resolution: "buffer-from@npm:0.1.2"
-  checksum: 5cadb80f26484d547c6ad26372b4f8a34d3784a1a3df15dc11b8414ad2a1670764586aeffdcfc8277f63023b209de7f7300f3fa1bf80c3a526e6f1dd338c613c
-  languageName: node
-  linkType: hard
-
 "buffer-from@npm:^1.0.0":
   version: 1.1.1
   resolution: "buffer-from@npm:1.1.1"
@@ -36472,7 +36465,7 @@ testarmada-magellan@11.0.10:
   version: 2.3.0
   resolution: "tus-js-client@npm:2.3.0"
   dependencies:
-    buffer-from: ^0.1.1
+    buffer-from: ^1.0.0
     combine-errors: ^3.0.3
     is-stream: ^2.0.0
     js-base64: ^2.6.1
