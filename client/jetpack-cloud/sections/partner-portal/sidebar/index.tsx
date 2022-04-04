@@ -72,7 +72,7 @@ class PartnerPortalSidebar extends Component< Props > {
 
 						{ config.isEnabled( 'jetpack/partner-portal-payment' ) && (
 							<SidebarItem
-								customIcon={ <JetpackIcons icon="money" /> }
+								customIcon={ <JetpackIcons icon="page" /> }
 								label={ translate( 'Past Invoices', {
 									comment: 'Jeptack sidebar navigation item',
 								} ) }
