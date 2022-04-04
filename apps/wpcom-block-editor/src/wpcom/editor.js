@@ -4,6 +4,7 @@ import './features/fix-block-invalidation-errors';
 import './features/reorder-block-categories';
 import './features/tracking';
 import './features/use-classic-block-guide';
+import './features/use-help-center';
 import InserterMenuTrackingEvent from './features/tracking/wpcom-inserter-menu-search-term';
 import './editor.scss';
 
