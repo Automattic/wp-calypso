@@ -25,7 +25,7 @@ function olarkChatWidget() {
 	return (
 			<OlarkChat
 				identity={ olarkIdentity }
-				shouldDisablePreChatSurvey={ true }
+				shouldDisablePreChatSurvey
 				systemsGroupId={ olarkSystemsGroupId }
 			/>
 	);
