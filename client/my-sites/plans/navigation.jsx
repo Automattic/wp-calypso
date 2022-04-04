@@ -42,7 +42,7 @@ class PlansNavigation extends Component {
 		const { site, shouldShowMyPlan, shouldShowPlans, translate, isFreeOrFlexible } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
-		const hasPinnedItems = isMobile() && site;
+		const hasPinnedItems = Boolean( site ) && isMobile();
 
 		return (
 			site && (
