@@ -712,13 +712,12 @@ export function generateSteps( {
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,
+				useDIFMThemes: true,
 				showDesignPickerCategories: true,
 				showDesignPickerCategoriesAllFilter: true,
 				showLetUsChoose: true,
 				hideFullScreenPreview: true,
 				hideDesignTitle: true,
-				hideFSEThemes: true,
-				themeFilters: 'do-it-for-me',
 			},
 		},
 		'difm-options': {

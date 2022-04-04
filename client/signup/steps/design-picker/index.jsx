@@ -73,11 +73,11 @@ export default function DesignPickerStep( props ) {
 	const {
 		isLoading: blockEditorSettingsAreLoading,
 		data: blockEditorSettings,
-	} = useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.hideFSEThemes );
+	} = useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
 	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
 
 	const getThemeFilters = () => {
-		if ( props.themeFilters ) return props.themeFilters;
+		if ( props.useDIFMThemes ) return 'do-it-for-me';
 
 		if ( isFSEEligible ) return 'auto-loading-homepage,full-site-editing';
 
@@ -87,7 +87,7 @@ export default function DesignPickerStep( props ) {
 	const { data: apiThemes = [] } = useThemeDesignsQuery(
 		{ filter: getThemeFilters(), tier },
 		// Wait until block editor settings have loaded to load themes
-		{ enabled: props.hideFSEThemes || ! blockEditorSettingsAreLoading }
+		{ enabled: ! blockEditorSettingsAreLoading }
 	);
 
 	useEffect(
