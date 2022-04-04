@@ -37,7 +37,10 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 				return {
 					headerText: translate( "First, let's give your site a name" ),
 					headerImage: siteOptionsImage,
-					siteTitleLabel: translate( 'Site title' ),
+					siteTitleLabel: translate( 'Site name' ),
+					siteTitleExplanation: translate(
+						'Enter the name of your business or project as it should appear on your site.'
+					),
 					taglineExplanation: translate( 'In a few words, explain what your site is about.' ),
 					isSiteTitleRequired: true,
 				};
@@ -57,6 +60,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 		headerText,
 		headerImage,
 		siteTitleLabel,
+		siteTitleExplanation,
 		taglineExplanation,
 		isSiteTitleRequired,
 	} = getSiteOptionsProps( stepName );
@@ -87,6 +91,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 					defaultSiteTitle={ siteTitle }
 					defaultTagline={ tagline }
 					siteTitleLabel={ siteTitleLabel }
+					siteTitleExplanation={ siteTitleExplanation }
 					taglineExplanation={ taglineExplanation }
 					isSiteTitleRequired={ isSiteTitleRequired }
 					onSubmit={ submitSiteOptions }
