@@ -9,7 +9,6 @@ interface Props {
 	plan: Plan;
 	price?: number;
 	originalPrice?: number;
-	showDomainConnectionExplanation?: boolean;
 	onClick?: ( productSlug: string ) => void;
 	translate: typeof translate;
 }
@@ -77,7 +76,6 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 	price,
 	originalPrice,
 	children,
-	showDomainConnectionExplanation,
 	translate,
 } ) => {
 	const isDiscounted = typeof originalPrice === 'number';
@@ -86,7 +84,6 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 		<th scope="col">
 			<PlanTitle>{ plan.getTitle() }</PlanTitle>
 			<PlanDescription>{ plan.getDescription() }</PlanDescription>
-			{ showDomainConnectionExplanation && <p>Connecting your domain requires the Pro plan</p> }
 			<PriceContainer>
 				{ isDiscounted && (
 					<>
