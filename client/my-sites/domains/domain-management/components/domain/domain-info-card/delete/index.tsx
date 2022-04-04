@@ -18,7 +18,13 @@ const DomainDeleteInfoCard = ( {
 }: DomainDeleteInfoCardProps ): JSX.Element | null => {
 	const translate = useTranslate();
 
-	if ( isLoadingPurchase || ! purchase || ! domain.currentUserIsOwner ) return null;
+	if (
+		isLoadingPurchase ||
+		! purchase ||
+		! domain.currentUserIsOwner ||
+		domain.pendingRegistration
+	)
+		return null;
 
 	const removePurchaseClassName = 'domain-delete-info-card is-compact button';
 
