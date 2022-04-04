@@ -29,7 +29,7 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef } ) => {
 };
 
 const PopularSearches = ( props ) => {
-	const { searchTerms, doSearch } = props;
+	const { searchTerms, doSearch, searchedTerm } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -50,18 +50,27 @@ const PopularSearches = ( props ) => {
 			</div>
 
 			<div className="search-box-header__recommended-searches-list">
-				{ searchTerms.map( ( searchTerm, n ) => (
-					<span
-						onClick={ () => onClick( searchTerm ) }
-						onKeyPress={ () => onClick( searchTerm ) }
-						role="link"
-						tabIndex={ 0 }
-						className="search-box-header__recommended-searches-list-item"
-						key={ 'recommended-search-item-' + n }
-					>
-						{ searchTerm }
-					</span>
-				) ) }
+				{ searchTerms.map( ( searchTerm, n ) =>
+					searchTerm === searchedTerm ? (
+						<span
+							className="search-box-header__recommended-searches-list-item search-box-header__recommended-searches-list-item-selected"
+							key={ 'recommended-search-item-' + n }
+						>
+							{ searchTerm }
+						</span>
+					) : (
+						<span
+							onClick={ () => onClick( searchTerm ) }
+							onKeyPress={ () => onClick( searchTerm ) }
+							role="link"
+							tabIndex={ 0 }
+							className="search-box-header__recommended-searches-list-item"
+							key={ 'recommended-search-item-' + n }
+						>
+							{ searchTerm }
+						</span>
+					)
+				) }
 			</div>
 		</div>
 	);
@@ -82,7 +91,11 @@ const SearchBoxHeader = ( props ) => {
 			<div className="search-box-header__search">
 				<SearchBox doSearch={ doSearch } searchTerm={ searchTerm } searchBoxRef={ searchBoxRef } />
 			</div>
-			<PopularSearches doSearch={ updateSearchBox } searchTerms={ searchTerms } />
+			<PopularSearches
+				doSearch={ updateSearchBox }
+				searchedTerm={ searchTerm }
+				searchTerms={ searchTerms }
+			/>
 		</div>
 	);
 };

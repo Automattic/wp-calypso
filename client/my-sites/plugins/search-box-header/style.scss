@@ -68,7 +68,7 @@
 			text-align: center;
 
 			.search-box-header__recommended-searches-list-item {
-				&:hover {
+				&:hover:not( .search-box-header__recommended-searches-list-item-selected ) {
 					color: var( --color-link );
 					cursor: pointer;
 				}
@@ -82,9 +82,16 @@
 					content: '\00a0,\00a0'; // comma and spaces
 				}
 
+				&:not( .search-box-header__recommended-searches-list-item-selected ) {
+					text-decoration: underline;
+				}
+
+				&.search-box-header__recommended-searches-list-item-selected {
+					font-weight: bold;
+				}
+
 				color: var( --studio-gray-100 );
 				font-size: $font-body-small;
-				text-decoration: underline;
 				line-height: 22px;
 				text-align: center;
 			}
