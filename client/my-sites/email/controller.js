@@ -112,6 +112,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<EmailProvidersInDepthComparison
+					referrer={ pageContext.query.referrer }
 					selectedDomainName={ pageContext.params.domain }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 				/>
@@ -154,6 +155,7 @@ export default {
 				<EmailManagementHomePage
 					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
+					selectedEmailProviderSlug={ pageContext.query.provider }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 				/>
 			</CalypsoShoppingCartProvider>

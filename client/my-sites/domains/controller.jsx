@@ -258,7 +258,11 @@ const emailUpsellForDomainRegistration = ( context, next ) => {
 					args: { domain: context.params.domain },
 				} ) }
 			/>
-			<EmailProvidersUpsell domain={ context.params.domain } interval={ context.query.interval } />
+			<EmailProvidersUpsell
+				domain={ context.params.domain }
+				interval={ context.query.interval }
+				provider={ context.query.provider }
+			/>
 		</Main>
 	);
 
