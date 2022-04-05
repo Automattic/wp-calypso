@@ -23,6 +23,7 @@ export const siteSetupFlow: Flow = {
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
+			'import',
 			'businessInfo',
 			'storeAddress',
 			'processing',
@@ -97,7 +98,7 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'options' );
 						}
 						case 'import': {
-							return redirect( `/start/importer/capture?siteSlug=${ siteSlug }` );
+							return navigate( 'import' );
 						}
 						case 'write': {
 							return navigate( 'options' );
