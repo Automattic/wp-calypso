@@ -1,5 +1,6 @@
 export * from './available-designs-config';
 export * from './available-designs';
+export * from './categorization-options';
 export * from './fonts';
 import { SHOW_ALL_SLUG } from '../constants';
 import type { Category, Design } from '../types';
@@ -43,4 +44,40 @@ export function sortDesigns( a: Design, b: Design ): number {
 		return -1;
 	}
 	return 1;
+}
+
+// Ensures Blog category appears at the top of the design category list
+// (directly below the All Themes category).
+export function sortBlogCategoryToTop( a: Category, b: Category ) {
+	if ( a.slug === b.slug ) {
+		return 0;
+	} else if ( a.slug === 'blog' ) {
+		return -1;
+	} else if ( b.slug === 'blog' ) {
+		return 1;
+	}
+	return 0;
+}
+// Ensures store category appears at the top of the design category list
+// (directly below the All Themes category).
+export function sortStoreCategoryToTop( a: Category, b: Category ) {
+	if ( a.slug === b.slug ) {
+		return 0;
+	} else if ( a.slug === 'store' ) {
+		return -1;
+	} else if ( b.slug === 'store' ) {
+		return 1;
+	}
+	return 0;
+}
+
+export function sortLocalServicesToTop( a: Category, b: Category ) {
+	if ( a.slug === b.slug ) {
+		return 0;
+	} else if ( a.slug === 'local-services' ) {
+		return -1;
+	} else if ( b.slug === 'local-services' ) {
+		return 1;
+	}
+	return 0;
 }

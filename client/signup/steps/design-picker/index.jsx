@@ -8,6 +8,7 @@ import DesignPicker, {
 	getDesignUrl,
 	useCategorization,
 	useThemeDesignsQuery,
+	getCategorizationOptionsForStep,
 } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -134,36 +135,11 @@ export default function DesignPickerStep( props ) {
 		setSelectedDesign( designs.find( ( { theme } ) => theme === props.stepSectionName ) );
 	}, [ designs, props.stepSectionName, setSelectedDesign ] );
 
-	const getCategorizationOptionsForStep = () => {
-		const result = {
-			showAllFilter: props.showDesignPickerCategoriesAllFilter,
-		};
-		const intent = props.signupDependencies.intent;
-		switch ( intent ) {
-			case 'write':
-				result.defaultSelection = 'blog';
-				result.sort = sortBlogToTop;
-				break;
-			case 'sell':
-				result.defaultSelection = 'store';
-				result.sort = sortStoreToTop;
-				break;
-			default:
-				result.defaultSelection = null;
-				result.sort = sortBlogToTop;
-				break;
-		}
-
-		// This is a temporary change until DIFM Lite switches to the full WPCOM theme catalog.
-		// We'll then use the 'difm' intent here.
-		if ( props.useDIFMThemes ) {
-			result.defaultSelection = null;
-			result.sort = sortLocalServicesToTop;
-		}
-
-		return result;
-	};
-	const categorization = useCategorization( designs, getCategorizationOptionsForStep() );
+	const categorizationOptions = useMemo(
+		() => getCategorizationOptionsForStep( props.signupDependencies.intent, props.useDIFMTheme ),
+		[ props.signupDependencies.intent, props.useDIFMTheme ]
+	);
+	const categorization = useCategorization( designs, categorizationOptions );
 
 	function pickDesign( _selectedDesign, additionalDependencies = {} ) {
 		// Design picker preview will submit the defaultDependencies via next button,
@@ -246,7 +222,7 @@ export default function DesignPickerStep( props ) {
 					highResThumbnails
 					premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
 					categorization={ showDesignPickerCategories ? categorization : undefined }
-					recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
+					recommendedCategorySlug={ categorizationOptions.defaultSelection }
 					categoriesHeading={
 						<FormattedHeader
 							id={ 'step-header' }
@@ -425,39 +401,3 @@ DesignPickerStep.propTypes = {
 	signupDependencies: PropTypes.object.isRequired,
 	stepName: PropTypes.string.isRequired,
 };
-
-// Ensures Blog category appears at the top of the design category list
-// (directly below the All Themes category).
-function sortBlogToTop( a, b ) {
-	if ( a.slug === b.slug ) {
-		return 0;
-	} else if ( a.slug === 'blog' ) {
-		return -1;
-	} else if ( b.slug === 'blog' ) {
-		return 1;
-	}
-	return 0;
-}
-// Ensures store category appears at the top of the design category list
-// (directly below the All Themes category).
-function sortStoreToTop( a, b ) {
-	if ( a.slug === b.slug ) {
-		return 0;
-	} else if ( a.slug === 'store' ) {
-		return -1;
-	} else if ( b.slug === 'store' ) {
-		return 1;
-	}
-	return 0;
-}
-
-function sortLocalServicesToTop( a, b ) {
-	if ( a.slug === b.slug ) {
-		return 0;
-	} else if ( a.slug === 'local-services' ) {
-		return -1;
-	} else if ( b.slug === 'local-services' ) {
-		return 1;
-	}
-	return 0;
-}
