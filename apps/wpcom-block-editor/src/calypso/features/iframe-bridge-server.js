@@ -709,7 +709,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 		const isComponentsPopover = ( node ) => node.classList.contains( 'components-popover' );
 
 		const replaceWithManageReusableBlocksHref = ( anchorElem ) => {
-			anchorElem.ref = manageReusableBlocksUrl;
+			anchorElem.href = manageReusableBlocksUrl;
 			anchorElem.target = '_top';
 		};
 
