@@ -36,8 +36,7 @@ const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
 const clickOverrides = {};
 let addedListener = false;
-// Replicates basic '$( el ).on( selector, cb )'. Includes preventDefault to override
-// the default event handlers.
+// Replicates basic '$( el ).on( selector, cb )'.
 function addEditorListener( selector, cb ) {
 	clickOverrides[ selector ] = cb;
 
@@ -62,10 +61,7 @@ function triggerOverrideHandler( e ) {
 
 	// Find the correct callback to use for this clicked element.
 	for ( const [ selector, cb ] of Object.entries( clickOverrides ) ) {
-		if ( matchingElement.matches( selector ) ) {
-			e.preventDefault();
-			cb( e );
-		}
+		matchingElement.matches( selector ) && cb( e );
 	}
 }
 
@@ -128,7 +124,8 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
-	addEditorListener( '[href*="revision.php"]', () => {
+	addEditorListener( '[href*="revision.php"]', ( e ) => {
+		e.preventDefault();
 		calypsoPort.postMessage( { action: 'openRevisions' } );
 
 		calypsoPort.addEventListener( 'message', onLoadRevision, false );
@@ -586,11 +583,11 @@ async function openLinksInParentFrame( calypsoPort ) {
 	].join( ',' );
 
 	addEditorListener( viewPostLinks, ( e ) => {
-		// Ignore if the click has modifier
+		// Allows modifiers to open links outside of the current tab using the default behavior.
 		if ( e.shiftKey || e.ctrlKey || e.metaKey ) {
 			return;
 		}
-
+		e.preventDefault();
 		calypsoPort.postMessage( {
 			action: 'viewPost',
 			payload: { postUrl: e.target.href },
@@ -751,6 +748,7 @@ async function openLinksInParentFrame( calypsoPort ) {
  */
 function openCustomizer( calypsoPort ) {
 	addEditorListener( '[href*="customize.php"]', ( e ) => {
+		e.preventDefault();
 		calypsoPort.postMessage( {
 			action: 'openCustomizer',
 			payload: {
@@ -769,6 +767,7 @@ function openCustomizer( calypsoPort ) {
  */
 function openTemplatePartLinks( calypsoPort ) {
 	addEditorListener( '.template__block-container .template-block__overlay a', ( e ) => {
+		e.preventDefault();
 		e.stopPropagation(); // Otherwise it will port the message twice.
 
 		// Get the template part ID from the current href.
