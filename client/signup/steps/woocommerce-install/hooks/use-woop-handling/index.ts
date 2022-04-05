@@ -141,7 +141,9 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	);
 
 	// The site requires upgrading when the feature is not active and available.
-	const requiresUpgrade = Boolean( ! isWoopFeatureActive && hasWoopFeatureAvailable.length );
+	const requiresUpgrade = Boolean(
+		! isWoopFeatureActive && Object.keys( hasWoopFeatureAvailable ).length > 0
+	);
 
 	/*
 	 * We pick the first plan from the available plans list.
