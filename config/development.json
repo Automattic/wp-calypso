@@ -138,6 +138,7 @@
 		"signup/starting-point-courses": true,
 		"signup/redesigned-difm-flow": false,
 		"site-indicator": true,
+		"stepper-woocommerce-poc": true,
 		"themes/premium": true,
 		"titan/iframe-control-panel": false,
 		"upgrades/redirect-payments": true,
