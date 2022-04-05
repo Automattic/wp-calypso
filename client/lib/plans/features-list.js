@@ -4,7 +4,7 @@ import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
-	FEATURE_500MB_STORAGE,
+	FEATURE_1GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_6GB_STORAGE,
 	FEATURE_ACCEPT_PAYMENTS,
@@ -151,8 +151,6 @@ import {
 	FEATURE_TITAN_EMAIL,
 	FEATURE_UNLIMITED_ADMINS,
 	FEATURE_ADDITIONAL_SITES,
-	FEATURE_10K_VISITS,
-	FEATURE_100K_VISITS,
 	FEATURE_WOOCOMMERCE,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
@@ -691,10 +689,10 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ FEATURE_500MB_STORAGE ]: {
-		getSlug: () => FEATURE_500MB_STORAGE,
-		getTitle: () => i18n.translate( '0.5GB storage space' ),
-		getCompareTitle: () => i18n.translate( '0.5GB' ),
+	[ FEATURE_1GB_STORAGE ]: {
+		getSlug: () => FEATURE_1GB_STORAGE,
+		getTitle: () => i18n.translate( '1GB storage space' ),
+		getCompareTitle: () => i18n.translate( '1GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
@@ -1464,14 +1462,6 @@ export const FEATURES_LIST = {
 	[ FEATURE_ADDITIONAL_SITES ]: {
 		getSlug: () => FEATURE_ADDITIONAL_SITES,
 		getTitle: () => i18n.translate( 'Additional websites' ),
-	},
-	[ FEATURE_10K_VISITS ]: {
-		getSlug: () => FEATURE_10K_VISITS,
-		getTitle: () => i18n.translate( '10k visits' ),
-	},
-	[ FEATURE_100K_VISITS ]: {
-		getSlug: () => FEATURE_100K_VISITS,
-		getTitle: () => i18n.translate( '100k visits' ),
 	},
 	[ FEATURE_WOOCOMMERCE ]: {
 		getSlug: () => FEATURE_WOOCOMMERCE,
