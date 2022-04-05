@@ -764,7 +764,7 @@ if (
 } else {
 	debug( 'registering tracking handlers.' );
 	// Intercept dispatch function and add tracking for actions that need it.
-	use( ( registry ) => ( {
+	use( async ( registry ) => ( {
 		dispatch: ( namespace ) => {
 			const namespaceName = typeof namespace === 'object' ? namespace.name : namespace;
 			const actions = { ...registry.dispatch( namespaceName ) };
@@ -774,7 +774,7 @@ if (
 				Object.keys( trackers ).forEach( ( actionName ) => {
 					const originalAction = actions[ actionName ];
 					const tracker = trackers[ actionName ];
-					actions[ actionName ] = ( ...args ) => {
+					actions[ actionName ] = async ( ...args ) => {
 						debug( 'action "%s" called with %o arguments', actionName, [ ...args ] );
 						// We use a try-catch here to make sure the `originalAction`
 						// is always called. We don't want to break the original
@@ -791,7 +791,7 @@ if (
 							// eslint-disable-next-line no-console
 							console.error( err );
 						}
-						return originalAction( ...args );
+						return await originalAction( ...args );
 					};
 				} );
 			}
