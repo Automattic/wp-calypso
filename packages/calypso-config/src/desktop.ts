@@ -10,6 +10,7 @@ const config = {
 	readerFollowingSource: 'desktop',
 	boom_analytics_key: 'desktop',
 	google_recaptcha_site_key: '6LdoXcAUAAAAAM61KvdgP8xwnC19YuzAiOWn5Wtn',
+	bilmur_url: '',
 };
 
 const features = {
@@ -20,6 +21,7 @@ const features = {
 	// that may/may not be relevant to override for the Desktop app.
 	'signup/social': false,
 	'login/magic-login': false,
+	'bilmur-script': false,
 };
 
 export default ( data: ConfigData ): ConfigData => {
