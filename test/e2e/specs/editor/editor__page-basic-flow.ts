@@ -31,7 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		// the default criteria, and should pass it here, as an override. For this specific function
 		// call, `simpleSitePersonalPlanUser` will be retured when gutenberg is stable, and siteType
 		// is simple.
-		[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
+		[ { gutenberg: 'stable', target: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
 	);
 
 	let page: Page;
@@ -57,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Select page template', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page, { target: features.target } );
 		// @TODO Consider moving this to EditorPage.
 		await editorPage.waitUntilLoaded();
 		const editorIframe = await editorPage.getEditorHandle();

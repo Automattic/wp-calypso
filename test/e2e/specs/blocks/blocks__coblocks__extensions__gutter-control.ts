@@ -18,7 +18,7 @@ declare const browser: Browser;
 
 const features = envToFeatureKey( envVariables );
 
-skipDescribeIf( features.siteType === 'atomic' )(
+skipDescribeIf( features.target === 'atomic' )(
 	DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	() => {
 		const accountName = getTestAccountByFeature( features );
@@ -31,7 +31,7 @@ skipDescribeIf( features.siteType === 'atomic' )(
 		beforeAll( async () => {
 			page = await browser.newPage();
 			testAccount = new TestAccount( accountName );
-			editorPage = new EditorPage( page, { target: features.siteType } );
+			editorPage = new EditorPage( page, { target: features.target } );
 
 			await testAccount.authenticate( page );
 		} );

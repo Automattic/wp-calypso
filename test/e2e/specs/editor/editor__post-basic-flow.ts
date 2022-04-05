@@ -25,7 +25,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
-		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		{ gutenberg: 'stable', target: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
 
 	let page: Page;
@@ -34,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page, { target: features.target } );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );

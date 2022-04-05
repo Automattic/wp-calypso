@@ -18,7 +18,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
-		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		{ gutenberg: 'stable', target: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
 
 	const postTitle = `Scheduled Post: ${ DataHelper.getTimestamp() }`;
@@ -35,12 +35,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page, { target: features.target } );
 		await editorPage.visit( 'post' );
 	} );
 
 	it( 'Enter page title', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page, { target: features.target } );
 		await editorPage.enterTitle( postTitle );
 	} );
 

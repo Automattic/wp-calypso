@@ -3,18 +3,19 @@ import type { SupportedEnvVariables } from '../../env-variables';
 
 export type TestAccountEnvVariables = Pick<
 	SupportedEnvVariables,
-	'GUTENBERG_EDGE' | 'COBLOCKS_EDGE' | 'TEST_ON_ATOMIC'
+	'GUTENBERG' | 'COBLOCKS' | 'TARGET'
 >;
 
+// @todo Would it be better to call this type `ReleasType` or `ReleaseTag`?
 type Env = 'edge' | 'stable';
 
-export type SiteType = 'simple' | 'atomic';
+export type Target = 'simple' | 'atomic';
 
 type Variant = 'siteEditor' | 'i18n';
 
 type Feature = 'gutenberg' | 'coblocks';
 export type FeatureKey = { [ key in Feature ]?: Env | undefined } & {
-	siteType: SiteType;
+	target: Target;
 	variant?: Variant;
 };
 export type FeatureCriteria = FeatureKey & { accountName: string };
@@ -95,28 +96,16 @@ export function getTestAccountByFeature(
 }
 
 /**
- * Ad-hoc helper to convert the env object to a `FeatureKey` object that can
- * then be passed over to `getTestAccountByFeature`. Most data passed to that
- * function will come from env variables, so it makes sense to provide a helper
- * to DRY things up.
- *
- * This helper doesn't attempt to be generic and is very dependant on the current
- * feature "layout" (types and criteria definition). Though it shouldn't happen
- * often, changes to the former might require the logic here to be updated, so
- * beware :)
+ * Ad-hoc helper to convert the env(ish) object to a `FeatureKey` by lowcasing its
+ * keys and keeping the same values. This assumes the `envVariables` of type
  *
  * @param {TestAccountEnvVariables} envVariables
  * @returns {FeatureKey}
  */
 export function envToFeatureKey( envVariables: TestAccountEnvVariables ): FeatureKey {
-	return {
-		// CoBlocks doesn't have any rule for "stable" as it re-uses the regular
-		// Gutenberg stable test site, so we just pass `undefined` if the env
-		// var value is `false`. This has the nice-side effect of keeping the
-		// `defaultCriteria` table smaller (as we don't need to declare the
-		// criteria for CoBlocks stable)
-		coblocks: envVariables.COBLOCKS_EDGE ? 'edge' : undefined,
-		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-	};
+	const keys = Object.keys( envVariables ) as [ keyof TestAccountEnvVariables ];
+	return keys.reduce( ( feature, key ) => {
+		feature[ key.toLowerCase() ] = envVariables[ key ];
+		return feature;
+	}, {} as any ) as FeatureKey;
 }

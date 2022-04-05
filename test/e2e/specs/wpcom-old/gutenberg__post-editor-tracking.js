@@ -13,7 +13,7 @@ const host = dataHelper.getJetpackHost();
 // We need to trigger test runs against Gutenberg Edge (the "next" version of Gutenberg that
 // will be deployed to Dotcom) as well as the current version of Gutenberg.
 const gutenbergUser =
-	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
+	process.env.GUTENBERG === 'edge' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
 describe( `[${ host }] Calypso Gutenberg Post Editor Tracking: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );

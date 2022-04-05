@@ -23,14 +23,14 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page, { target: features.target } );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page, { target: features.target } );
 		await editorPage.visit( 'post' );
 	} );
 

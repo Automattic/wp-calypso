@@ -21,7 +21,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
-		{ gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		{ gutenberg: 'edge', target: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
 
 	const postTitle = `Post Life Cycle: ${ DataHelper.getTimestamp() }`;
@@ -47,7 +47,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 	describe( 'Publish post', function () {
 		it( 'Enter post title', async function () {
-			editorPage = new EditorPage( page, { target: features.siteType } );
+			editorPage = new EditorPage( page, { target: features.target } );
 			await editorPage.enterTitle( postTitle );
 		} );
 
@@ -84,7 +84,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Editor is shown', async function () {
-			editorPage = new EditorPage( page, { target: features.siteType } );
+			editorPage = new EditorPage( page, { target: features.target } );
 			await editorPage.waitUntilLoaded();
 		} );
 

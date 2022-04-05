@@ -35,7 +35,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 			await testAccount.authenticate( page );
 
 			eventManager = new EditorTracksEventManager( page );
-			editorPage = new EditorPage( page, { target: features.siteType } );
+			editorPage = new EditorPage( page, { target: features.target } );
 		} );
 
 		it( 'Start a new page', async function () {

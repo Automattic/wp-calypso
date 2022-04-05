@@ -25,7 +25,7 @@ declare const browser: Browser;
 
 const features = envToFeatureKey( envVariables );
 
-skipDescribeIf( features.siteType === 'atomic' )(
+skipDescribeIf( features.target === 'atomic' )(
 	DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ),
 	() => {
 		const accountName = getTestAccountByFeature( features );
@@ -45,7 +45,7 @@ skipDescribeIf( features.siteType === 'atomic' )(
 			page = await browser.newPage();
 			logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 			testAccount = new TestAccount( accountName );
-			editorPage = new EditorPage( page, { target: features.siteType } );
+			editorPage = new EditorPage( page, { target: features.target } );
 
 			await testAccount.authenticate( page );
 		} );
