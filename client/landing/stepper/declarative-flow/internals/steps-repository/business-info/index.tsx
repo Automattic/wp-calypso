@@ -4,10 +4,12 @@ import { CheckboxControl, SelectControl, TextControl } from '@wordpress/componen
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { without } from 'lodash';
-import { FormEvent, ReactElement } from 'react';
+import { FormEvent, ReactElement, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteSettings } from 'calypso/landing/stepper/hooks/use-site-settings';
+import useUpdateSiteSettingsMutation from 'calypso/landing/stepper/hooks/use-update-site-settings-mutation';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
@@ -39,14 +41,18 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 
-	// const dispatch = useDispatch();
-	const site = useSite();
-	const siteId = site?.ID;
+	const siteSlug = useQuery().get( 'siteSlug' );
+	const settings = useSiteSettings( siteSlug );
+	const onboardingProfile = settings?.woocommerce_onboarding_profile || {};
 
-	// const { get, save, update } = useSiteSettings( siteId );
+	const [ profileChanges, setProfileChanges ] = useState< {
+		[ key: string ]: string | boolean | Array< string > | undefined;
+	} >( {} );
+
+	const { updateSiteSettings } = useUpdateSiteSettingsMutation();
 
 	function updateProductTypes( type: string ) {
-		const productTypes = [ getProfileValue( 'product_types' ) ] || [];
+		const productTypes = getProfileValue( 'product_types' ) || [];
 
 		const newTypes = productTypes.includes( type )
 			? without( productTypes, type )
@@ -75,25 +81,25 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 		updateOnboardingProfile( 'other_platform_name', name );
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function updateOnboardingProfile( key: string, value: string | boolean | Array< string > ) {
-		// const onboardingProfile = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
-		// const updatedOnboardingProfile = {
-		// 	...onboardingProfile,
-		// 	[ key ]: value,
-		// };
-		// update( WOOCOMMERCE_ONBOARDING_PROFILE, updatedOnboardingProfile );
+		setProfileChanges( {
+			...profileChanges,
+			[ key ]: value,
+		} );
 	}
 
 	function getProfileValue( key: string ) {
-		// const onboardingProfile = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
-
-		// return onboardingProfile[ key ] || '';
-		return key;
+		return profileChanges[ key ] || onboardingProfile?.[ key ] || '';
 	}
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
+		updateSiteSettings( siteSlug, {
+			woocommerce_onboarding_profile: {
+				...onboardingProfile,
+				...profileChanges,
+			},
+		} );
 		submit?.();
 	};
 
@@ -241,7 +247,7 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 		);
 	}
 
-	if ( ! siteId ) {
+	if ( ! settings ) {
 		return (
 			<div className="business-info__info-section">
 				<LoadingEllipsis />
