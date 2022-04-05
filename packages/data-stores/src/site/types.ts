@@ -75,6 +75,10 @@ export interface SiteDetailsPlan {
 	billing_period: string;
 	user_is_owner: boolean;
 	is_free: boolean;
+	features: {
+		active: string[];
+		available: Record< string, string[] >;
+	};
 }
 
 export interface SiteDetails {

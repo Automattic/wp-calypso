@@ -21,6 +21,13 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 	const subHeaderText = translate( 'You can change your mind at any time.' );
 
 	const { setIntent } = useDispatch( ONBOARD_STORE );
+
+	// example usage
+	// const site = useSite();
+	// const hasSimplePayments = useSelect(
+	//	( select ) => site && select( SITE_STORE ).hasActiveSiteFeature( site?.ID, 'simple-payments' )
+	//);
+
 	const intents = useIntents();
 	// TODO: I need to get the site slug to get the siteId to get the canImport
 	const intentsAlt = useIntentsAlt( true );
