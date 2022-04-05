@@ -146,6 +146,7 @@ export interface SiteDetails {
 		site_intent?: string;
 		site_segment?: string;
 		software_version?: string;
+		selected_features?: FeatureId[];
 		theme_slug?: string;
 		timezone?: string;
 		unmapped_url?: string;
