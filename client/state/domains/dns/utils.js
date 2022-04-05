@@ -22,7 +22,7 @@ function validateField( { name, value, type, domainName } ) {
 		case 'data':
 			return isValidData( value, type );
 		case 'protocol':
-			return [ 'tcp', 'udp', 'tls' ].includes( value );
+			return [ '_tcp', '_udp', '_tls' ].includes( value );
 		case 'weight':
 		case 'aux':
 		case 'port': {

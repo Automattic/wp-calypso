@@ -98,7 +98,7 @@ class DnsAddNew extends React.Component {
 					weight: 10,
 					target: '',
 					port: '',
-					protocol: 'tcp',
+					protocol: '_tcp',
 				},
 			},
 		];
@@ -161,7 +161,7 @@ class DnsAddNew extends React.Component {
 
 		// Make sure we can handle protocols with and without a leading underscore
 		if ( 'SRV' === recordToEdit.type && 'protocol' === field ) {
-			return recordToEdit[ field ].replace( /^_+/, '' );
+			return recordToEdit[ field ].replace( /^_*/, '_' );
 		}
 
 		return recordToEdit[ field ];
