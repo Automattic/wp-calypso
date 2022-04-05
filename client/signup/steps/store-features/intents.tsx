@@ -8,8 +8,8 @@ import { StoreFeatureSet } from './types';
 
 export function useIntents(
 	siteSlug: string | null,
-	hasPaymentsFeature: bool | false,
-	hasWooFeature: bool | false,
+	hasPaymentsFeature: boolean | false,
+	hasWooFeature: boolean | false,
 	trackSupportLinkClick: ( url: StoreFeatureSet ) => void
 ): SelectItem< StoreFeatureSet >[] {
 	const translate = useTranslate();
