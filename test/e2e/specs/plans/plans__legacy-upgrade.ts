@@ -13,7 +13,7 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Plans: Upgrade' ), function () {
+describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () {
 	const planName = 'Business';
 	let page: Page;
 	let plansPage: PlansPage;
