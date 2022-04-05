@@ -1,6 +1,8 @@
+import calypsoConfig from '@automattic/calypso-config';
 import { CONTACT_PAGE } from 'calypso/signup/difm/constants';
 import { LOGO_SECTION_ID } from 'calypso/state/signup/steps/website-content/reducer';
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
+import { ContactPageDetails } from './contact-page-details';
 import { LogoUploadSection } from './logo-upload-section';
 import { CONTENT_SUFFIX, PageDetails } from './page-details';
 import type {
@@ -8,6 +10,18 @@ import type {
 	SectionGeneratorReturnType,
 } from 'calypso/signup/accordion-form/types';
 import type { TranslateResult } from 'i18n-calypso';
+
+const getPageDetailsComponentFromPageId = ( pageId: string ) => {
+	if ( ! calypsoConfig.isEnabled( 'signup/redesigned-difm-flow' ) ) {
+		return PageDetails;
+	}
+	switch ( pageId ) {
+		case CONTACT_PAGE:
+			return ContactPageDetails;
+		default:
+			return PageDetails;
+	}
+};
 
 const generateWebsiteContentSections = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
@@ -26,6 +40,7 @@ const generateWebsiteContentSections = (
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {
 		const fieldNumber = elapsedSections + index + 1;
 		const { title: pageTitle } = page;
+		const PageComponent = getPageDetailsComponentFromPageId( page.id );
 		return {
 			title: translate( '%(fieldNumber)d. %(pageTitle)s', {
 				args: {
@@ -36,7 +51,7 @@ const generateWebsiteContentSections = (
 			} ),
 			summary: page.content,
 			component: (
-				<PageDetails
+				<PageComponent
 					page={ page }
 					formErrors={ formErrors }
 					label={ PAGE_LABELS[ page.id ] }
