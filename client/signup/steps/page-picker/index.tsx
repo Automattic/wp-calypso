@@ -46,8 +46,7 @@ const PageGrid = styled.div`
 `;
 
 const GridCellContainer = styled.div< { isClickDisabled: boolean; isSelected: boolean } >`
-	cursor: ${ ( { isClickDisabled, isSelected } ) =>
-		! isSelected && isClickDisabled ? 'default' : 'pointer' };
+	cursor: default;
 	opacity: ${ ( { isSelected, isClickDisabled } ) =>
 		! isSelected && isClickDisabled ? '0.4' : '1' };
 	border-radius: 4px;
@@ -104,12 +103,9 @@ function PageCell( { pageId, popular, selectedPages, onClick }: PageCellType ) {
 	const title = useTranslatedPageTitles()[ pageId ];
 
 	return (
-		<GridCellContainer
-			onClick={ () => onClick( pageId ) }
-			isSelected={ isSelected }
-			isClickDisabled={ isDisabled }
-		>
+		<GridCellContainer isSelected={ isSelected } isClickDisabled={ isDisabled }>
 			<BrowserView
+				onClick={ () => onClick( pageId ) }
 				pageId={ pageId }
 				isClickDisabled={ isDisabled }
 				isSelected={ isSelected }
