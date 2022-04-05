@@ -21,6 +21,7 @@ export const siteSetupFlow: Flow = {
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
+			'businessInfo',
 		];
 	},
 
@@ -103,15 +104,15 @@ export const siteSetupFlow: Flow = {
 				case 'storeFeatures': {
 					const storeType = params[ 0 ];
 					if ( storeType === 'power' ) {
-						const args = new URLSearchParams();
-						args.append( 'back_to', `/start/setup-site/store-features?siteSlug=${ siteSlug }` );
-						args.append( 'siteSlug', siteSlug as string );
-						return redirect( `/start/woocommerce-install?${ args.toString() }` );
+						return navigate( 'businessInfo' );
 					} else if ( storeType === 'simple' ) {
 						return navigate( 'designSetup' );
 					}
 					return navigate( 'bloggerStartingPoint' );
 				}
+
+				case 'businessInfo':
+					return navigate( 'storeFeatures' );
 
 				case 'courses': {
 					return redirect( `/post/${ siteSlug }` );
