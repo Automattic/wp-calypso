@@ -55,3 +55,7 @@ export const getSiteSubdomain = ( _: State, siteId: number ) =>
 	select( STORE_KEY )
 		.getSiteDomains( siteId )
 		?.find( ( domain ) => domain.is_subdomain );
+
+export const hasActiveSiteFeature = ( _: State, siteId: number, featureKey: string ) => {
+	return select( STORE_KEY ).getSite( siteId )?.plan?.features.active.includes( featureKey );
+};
