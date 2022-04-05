@@ -4,7 +4,7 @@ import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
-	FEATURE_500MB_STORAGE,
+	FEATURE_1GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_6GB_STORAGE,
 	FEATURE_ACCEPT_PAYMENTS,
@@ -1582,10 +1582,8 @@ PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
 	getTitle: () => i18n.translate( 'WordPress Free' ),
 	getBillingTimeFrame: () => i18n.translate( 'upgrade when you need' ),
 	getDescription: () =>
-		i18n.translate(
-			'Start your free WordPress.com website. Limited functionality, storage and visits.'
-		),
-	getPlanCompareFeatures: () => [ FEATURE_500MB_STORAGE ],
+		i18n.translate( 'Start your free WordPress.com website. Limited functionality and storage.' ),
+	getPlanCompareFeatures: () => [ FEATURE_1GB_STORAGE ],
 };
 
 PLANS_LIST[ PLAN_WPCOM_PRO ] = {

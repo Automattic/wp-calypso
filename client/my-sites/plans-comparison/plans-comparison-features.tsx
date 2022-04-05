@@ -1,5 +1,5 @@
 import {
-	FEATURE_500MB_STORAGE,
+	FEATURE_1GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_UNLIMITED_ADMINS,
 	FEATURE_INSTALL_PLUGINS,
@@ -229,12 +229,12 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 		get description() {
 			return translate(
-				'The free plan allows a maximum storage of 500MB, which equals to approximately 100 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+				'The free plan allows a maximum storage of 1GB, which equals to approximately 200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
 			);
 		},
-		features: [ FEATURE_500MB_STORAGE, FEATURE_50GB_STORAGE ],
+		features: [ FEATURE_1GB_STORAGE, FEATURE_50GB_STORAGE ],
 		getCellText: ( feature, isMobile = false ) => {
-			let storageSize = '0.5';
+			let storageSize = '1';
 
 			if ( feature === FEATURE_50GB_STORAGE ) {
 				storageSize = '50';

@@ -4,7 +4,7 @@ import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_3GB_STORAGE,
-	FEATURE_500MB_STORAGE,
+	FEATURE_1GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_6GB_STORAGE,
 	FEATURE_ACCEPT_PAYMENTS,
@@ -689,10 +689,10 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ FEATURE_500MB_STORAGE ]: {
-		getSlug: () => FEATURE_500MB_STORAGE,
-		getTitle: () => i18n.translate( '0.5GB storage space' ),
-		getCompareTitle: () => i18n.translate( '0.5GB' ),
+	[ FEATURE_1GB_STORAGE ]: {
+		getSlug: () => FEATURE_1GB_STORAGE,
+		getTitle: () => i18n.translate( '1GB storage space' ),
+		getCompareTitle: () => i18n.translate( '1GB' ),
 		getDescription: () =>
 			i18n.translate( 'Storage space for adding images and documents to your website.' ),
 	},
