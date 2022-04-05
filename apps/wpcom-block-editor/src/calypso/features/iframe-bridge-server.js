@@ -728,31 +728,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 	const popoverSlotElem = document.querySelector( '.interface-interface-skeleton ~ .popover-slot' );
 	popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
 
-	// Manage reusable blocks link in the 3 dots more menu, post and site editors
-	if ( manageReusableBlocksUrl ) {
-		const toggleButton = document.querySelector(
-			'.edit-post-more-menu button, .edit-site-more-menu button'
-		);
-		const moreMenuManageReusableBlocksObserver = new window.MutationObserver( () => {
-			const isExpanded =
-				toggleButton.attributes.getNamedItem( 'aria-expanded' )?.nodeValue === 'true';
-			if ( isExpanded ) {
-				// The menu has not expanded at this point in Safari, so modify the link
-				// after the call stack has cleared and the menu has rendered.
-				setTimeout( () => {
-					const hyperlink = document.querySelector(
-						'a.components-menu-item__button[href*="post_type=wp_block"]'
-					);
-					hyperlink.href = manageReusableBlocksUrl;
-					hyperlink.target = '_top';
-				} );
-			}
-		} );
-		moreMenuManageReusableBlocksObserver.observe( toggleButton, {
-			attributeFilter: [ 'aria-expanded' ],
-		} );
-	}
-
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
 	if ( createNewPostUrl ) {
