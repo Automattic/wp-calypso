@@ -12,10 +12,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useEffect, useState, useMemo } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
-import wpcom from 'calypso/lib/wp';
 import {
 	SummaryLine,
 	SummaryDetails,
@@ -25,41 +23,12 @@ import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/u
 import { errorNotice } from 'calypso/state/notices/actions';
 import PaymentMethodEditButton from './payment-method-edit-button';
 import PaymentMethodEditDialog from './payment-method-edit-dialog';
+import { usePaymentMethodTaxInfo } from './use-payment-method-tax-info';
+import type { TaxInfo, TaxGetInfo } from './types';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:existing-card-payment-method' );
-
-// Disabling this to make migration easier
-/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
-interface TaxInfo {
-	tax_postal_code: string;
-	tax_country_code: string;
-}
-
-interface TaxGetInfo extends TaxInfo {
-	is_tax_info_set: boolean;
-}
-
-async function fetchTaxInfo( storedDetailsId: string ): Promise< TaxGetInfo > {
-	return await wpcom.req.get( `/me/payment-methods/${ storedDetailsId }/tax-location` );
-}
-
-async function setTaxInfo(
-	storedDetailsId: string,
-	taxPostalCode: string,
-	taxCountryCode: string
-): Promise< TaxInfo > {
-	return await wpcom.req.post( {
-		path: `/me/payment-methods/${ storedDetailsId }/tax-location`,
-		body: {
-			tax_country_code: taxCountryCode,
-			tax_postal_code: taxPostalCode,
-		},
-	} );
-}
 
 function joinNonEmptyValues( joinString: string, ...values: ( string | undefined )[] ) {
 	return values.filter( ( value ) => value && value?.length > 0 ).join( joinString );
@@ -187,52 +156,16 @@ function ExistingCardLabel( {
 		setUpdateError( '' );
 		setIsDialogVisible( false );
 	}, [] );
-	const queryClient = useQueryClient();
 
-	const queryKey = [ 'tax-info-is-set', storedDetailsId ];
-
-	const { data: taxInfoFromServer, isLoading: isLoadingTaxInfo } = useQuery< TaxGetInfo, Error >(
-		queryKey,
-		() => fetchTaxInfo( storedDetailsId ),
-		{}
-	);
-
-	const mutation = useMutation(
-		( mutationInputValues: TaxInfo ) =>
-			setTaxInfo(
-				storedDetailsId,
-				mutationInputValues.tax_postal_code,
-				mutationInputValues.tax_country_code
-			),
-		{
-			onMutate: async ( onMutateInputValues: TaxInfo ) => {
-				// Stop any active fetches
-				await queryClient.cancelQueries( queryKey );
-				// Store previous fields so they can be restored if the data is invalid
-				const previousData = queryClient.getQueryData( queryKey );
-				// Optimistically update the fields
-				queryClient.setQueryData( queryKey, {
-					tax_postal_code: onMutateInputValues.tax_postal_code,
-					tax_country_code: onMutateInputValues.tax_country_code,
-					is_tax_info_set: true,
-				} );
-				return { previousData };
-			},
-			onError: ( error, _, context ) => {
-				// Restore previous fields
-				queryClient.setQueryData( queryKey, context?.previousData );
-				setUpdateError( ( error as Error ).message );
-			},
-			onSuccess: ( onSuccessInputValues: TaxInfo ) => {
-				queryClient.setQueryData( queryKey, {
-					tax_postal_code: onSuccessInputValues.tax_postal_code,
-					tax_country_code: onSuccessInputValues.tax_country_code,
-					is_tax_info_set: true,
-				} );
-				closeDialog();
-			},
-		}
-	);
+	const {
+		taxInfo: taxInfoFromServer,
+		isLoading: isLoadingTaxInfo,
+		setTaxInfo,
+	} = usePaymentMethodTaxInfo( {
+		storedDetailsId,
+		onSuccess: closeDialog,
+		onError: setUpdateError,
+	} );
 
 	const openDialog = useCallback( () => {
 		taxInfoFromServer && setInputValues( taxInfoFromServer );
@@ -251,8 +184,8 @@ function ExistingCardLabel( {
 
 	const countriesList = useCountryList();
 	const updateTaxInfo = useCallback( () => {
-		mutation.mutate( inputValues );
-	}, [ mutation, inputValues ] );
+		setTaxInfo( inputValues );
+	}, [ setTaxInfo, inputValues ] );
 
 	const onChangeTaxInfo = ( { postalCode, countryCode }: ManagedContactDetails ) => {
 		setInputValues( {
@@ -399,10 +332,9 @@ function ExistingCardPayButton( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
-	const { data: taxInfoFromServer, isLoading: isLoadingTaxInfo } = useQuery< TaxGetInfo, Error >(
-		[ 'tax-info-is-set', storedDetailsId ],
-		() => fetchTaxInfo( storedDetailsId )
-	);
+	const { taxInfo: taxInfoFromServer, isLoading: isLoadingTaxInfo } = usePaymentMethodTaxInfo( {
+		storedDetailsId,
+	} );
 
 	const dispatch = useDispatch();
 
