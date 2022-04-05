@@ -136,20 +136,19 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * Feature available means although the site doesn't have the feature active,
 	 * it's available to be activated via buying a plan.
 	 */
-	const hasWoopFeatureAvailable: Record< number, string > | false = useSelector( ( state ) =>
-		hasAvailableSiteFeature( state, siteId, FEATURE_WOOP )
+	const hasWoopFeatureAvailable = useSelector(
+		( state ) => hasAvailableSiteFeature( state, siteId, FEATURE_WOOP ) || []
 	);
 
 	// The site requires upgrading when the feature is not active and available.
-	const requiresUpgrade = Boolean( ! isWoopFeatureActive && hasWoopFeatureAvailable );
+	const requiresUpgrade = Boolean( ! isWoopFeatureActive && hasWoopFeatureAvailable.length );
 
 	/*
 	 * We pick the first plan from the available plans list.
 	 * The priority is defined by the store products list.
 	 */
-	const firstAvailablePlan = hasWoopFeatureAvailable ? hasWoopFeatureAvailable[ 0 ] : undefined;
 	const upgradingPlan = useSelector( ( state ) =>
-		firstAvailablePlan ? getProductBySlug( state, firstAvailablePlan ) : undefined
+		getProductBySlug( state, hasWoopFeatureAvailable[ 0 ] )
 	);
 
 	const productName = upgradingPlan?.product_name ?? '';
