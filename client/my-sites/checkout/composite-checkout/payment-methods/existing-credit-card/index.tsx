@@ -161,11 +161,7 @@ function ExistingCardLabel( {
 		taxInfo: taxInfoFromServer,
 		isLoading: isLoadingTaxInfo,
 		setTaxInfo,
-	} = usePaymentMethodTaxInfo( {
-		storedDetailsId,
-		onSuccess: closeDialog,
-		onError: setUpdateError,
-	} );
+	} = usePaymentMethodTaxInfo( storedDetailsId );
 
 	const openDialog = useCallback( () => {
 		taxInfoFromServer && setInputValues( taxInfoFromServer );
@@ -184,8 +180,8 @@ function ExistingCardLabel( {
 
 	const countriesList = useCountryList();
 	const updateTaxInfo = useCallback( () => {
-		setTaxInfo( inputValues );
-	}, [ setTaxInfo, inputValues ] );
+		setTaxInfo( inputValues ).then( closeDialog ).catch( setUpdateError );
+	}, [ setTaxInfo, inputValues, closeDialog ] );
 
 	const onChangeTaxInfo = ( { postalCode, countryCode }: ManagedContactDetails ) => {
 		setInputValues( {
@@ -332,9 +328,9 @@ function ExistingCardPayButton( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
-	const { taxInfo: taxInfoFromServer, isLoading: isLoadingTaxInfo } = usePaymentMethodTaxInfo( {
-		storedDetailsId,
-	} );
+	const { taxInfo: taxInfoFromServer, isLoading: isLoadingTaxInfo } = usePaymentMethodTaxInfo(
+		storedDetailsId
+	);
 
 	const dispatch = useDispatch();
 

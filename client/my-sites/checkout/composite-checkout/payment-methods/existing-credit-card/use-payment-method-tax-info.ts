@@ -21,15 +21,13 @@ async function setTaxInfoOnServer(
 	} );
 }
 
-export function usePaymentMethodTaxInfo( {
-	storedDetailsId,
-	onError,
-	onSuccess,
-}: {
-	storedDetailsId: string;
-	onError?: ( error: string ) => void;
-	onSuccess?: () => void;
-} ) {
+export function usePaymentMethodTaxInfo(
+	storedDetailsId: string
+): {
+	taxInfo: TaxGetInfo | undefined;
+	isLoading: boolean;
+	setTaxInfo: ( newInfo: TaxInfo ) => Promise< void >;
+} {
 	const queryClient = useQueryClient();
 
 	const queryKey = [ 'tax-info-is-set', storedDetailsId ];
@@ -64,7 +62,6 @@ export function usePaymentMethodTaxInfo( {
 			onError: ( error, _, context ) => {
 				// Restore previous fields
 				queryClient.setQueryData( queryKey, context?.previousData );
-				onError?.( ( error as Error ).message );
 			},
 			onSuccess: ( onSuccessInputValues: TaxInfo ) => {
 				queryClient.setQueryData( queryKey, {
@@ -72,14 +69,18 @@ export function usePaymentMethodTaxInfo( {
 					tax_country_code: onSuccessInputValues.tax_country_code,
 					is_tax_info_set: true,
 				} );
-				onSuccess?.();
 			},
 		}
 	);
 
 	const setTaxInfo = useCallback(
-		( newInfo: TaxInfo ) => {
-			mutation.mutate( newInfo );
+		( newInfo: TaxInfo ): Promise< void > => {
+			return new Promise( ( resolve, reject ) => {
+				mutation.mutate( newInfo, {
+					onSuccess: () => resolve(),
+					onError: ( error ) => reject( ( error as Error ).message ),
+				} );
+			} );
 		},
 		[ mutation ]
 	);
