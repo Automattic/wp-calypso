@@ -151,8 +151,6 @@ import {
 	FEATURE_TITAN_EMAIL,
 	FEATURE_UNLIMITED_ADMINS,
 	FEATURE_ADDITIONAL_SITES,
-	FEATURE_10K_VISITS,
-	FEATURE_100K_VISITS,
 	FEATURE_WOOCOMMERCE,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
@@ -1464,14 +1462,6 @@ export const FEATURES_LIST = {
 	[ FEATURE_ADDITIONAL_SITES ]: {
 		getSlug: () => FEATURE_ADDITIONAL_SITES,
 		getTitle: () => i18n.translate( 'Additional websites' ),
-	},
-	[ FEATURE_10K_VISITS ]: {
-		getSlug: () => FEATURE_10K_VISITS,
-		getTitle: () => i18n.translate( '10k visits' ),
-	},
-	[ FEATURE_100K_VISITS ]: {
-		getSlug: () => FEATURE_100K_VISITS,
-		getTitle: () => i18n.translate( '100k visits' ),
 	},
 	[ FEATURE_WOOCOMMERCE ]: {
 		getSlug: () => FEATURE_WOOCOMMERCE,

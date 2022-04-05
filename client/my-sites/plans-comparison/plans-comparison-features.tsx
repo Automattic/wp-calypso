@@ -1,6 +1,4 @@
 import {
-	FEATURE_10K_VISITS,
-	FEATURE_100K_VISITS,
 	FEATURE_500MB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_UNLIMITED_ADMINS,
@@ -21,8 +19,8 @@ import {
 	FEATURE_JETPACK_ESSENTIAL,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import i18n, { translate, numberFormat, getLocaleSlug } from 'i18n-calypso';
-import type { TranslateResult, TranslateOptionsPlural } from 'i18n-calypso';
+import { translate, numberFormat } from 'i18n-calypso';
+import type { TranslateResult } from 'i18n-calypso';
 
 export interface PlanComparisonFeature {
 	/**
@@ -252,43 +250,6 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 				args: [ storageSize ],
 				comment: '%s is a number of gigabytes.',
 			} );
-		},
-	},
-	{
-		get title() {
-			return translate( 'Visits per month' );
-		},
-		get description() {
-			const isStringTranslated = i18n.hasTranslation(
-				'WordPress Pro includes a generous 100,000 visits per month, which is 4x the limit for similarly priced plans at other popular managed WordPress hosts. Additional traffic can be purchased in 100,000 increments.'
-			);
-
-			if ( 'en' === getLocaleSlug() || isStringTranslated ) {
-				return translate(
-					'WordPress Pro includes a generous 100,000 visits per month, which is 4x the limit for similarly priced plans at other popular managed WordPress hosts. Additional traffic can be purchased in 100,000 increments.'
-				);
-			}
-
-			return translate( 'Max visits per month.' );
-		},
-		features: [ FEATURE_10K_VISITS, FEATURE_100K_VISITS ],
-		getCellText: ( feature, isMobile = false ) => {
-			let visitCount = 0;
-
-			if ( feature === FEATURE_10K_VISITS ) {
-				visitCount = 10_000;
-			} else if ( feature === FEATURE_100K_VISITS ) {
-				visitCount = 100_000;
-			}
-
-			const opts: TranslateOptionsPlural = {
-				count: visitCount,
-				args: { visitCount: numberFormat( visitCount, 0 ) },
-			};
-
-			return isMobile
-				? translate( '%(visitCount)s visit per month', '%(visitCount)s visits per month', opts )
-				: translate( '%(visitCount)s visit', '%(visitCount)s visits', opts );
 		},
 	},
 	{

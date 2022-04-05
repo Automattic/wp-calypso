@@ -204,7 +204,5 @@ export const FEATURE_PAYMENT_BLOCKS = 'payment-blocks';
 export const FEATURE_TITAN_EMAIL = 'titan-email';
 export const FEATURE_UNLIMITED_ADMINS = 'unlimited-admins';
 export const FEATURE_ADDITIONAL_SITES = 'additional-sites';
-export const FEATURE_10K_VISITS = '10k-visits';
-export const FEATURE_100K_VISITS = '100k-visits';
 export const FEATURE_WOOCOMMERCE = 'woocommerce';
 export const FEATURE_SOCIAL_MEDIA_TOOLS = 'social-media-tools';
