@@ -209,7 +209,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			return (
 				<TransferUnavailableNotice
 					message={ translate(
-						'We are still setting up your domain. You will not be available to transfer it until the registration setup is done.'
+						'We are still setting up your domain. You will not be able to transfer it until the registration setup is done.'
 					) }
 				></TransferUnavailableNotice>
 			);
