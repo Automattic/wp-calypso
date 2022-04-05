@@ -6,8 +6,8 @@
 	}
 
 	.components-base-control__field .components-input-control__label {
-		font-size: 16px;
-		margin-bottom: 8px;
+		font-size: $editor-font-size;
+		margin-bottom: $grid-unit;
 		padding: 0;
 	}
 

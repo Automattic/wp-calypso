@@ -75,6 +75,7 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 		updateOnboardingProfile( 'other_platform_name', name );
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function updateOnboardingProfile( key: string, value: string | boolean | Array< string > ) {
 		// const onboardingProfile = get( WOOCOMMERCE_ONBOARDING_PROFILE ) || {};
 		// const updatedOnboardingProfile = {
@@ -82,7 +83,6 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 		// 	[ key ]: value,
 		// };
 		// update( WOOCOMMERCE_ONBOARDING_PROFILE, updatedOnboardingProfile );
-		console.log( { key, value } );
 	}
 
 	function getProfileValue( key: string ) {
