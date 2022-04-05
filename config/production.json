@@ -96,6 +96,7 @@
 		"signup/redesigned-difm-flow": false,
 		"signup/starting-point-courses": true,
 		"site-indicator": true,
+		"stepper-woocommerce-poc": false,
 		"ssr/sample-log-cache-misses": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,

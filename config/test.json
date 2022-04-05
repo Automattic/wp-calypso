@@ -74,6 +74,7 @@
 		"signup/social": true,
 		"signup/redesigned-difm-flow": false,
 		"site-indicator": true,
+		"stepper-woocommerce-poc": false,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
