@@ -20,11 +20,13 @@ import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import wp from 'calypso/lib/wp';
 import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -82,10 +84,27 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step, {
-			cartItem,
-		} );
-		this.props.goToNextStep();
+		if ( flowName === 'site-selected' && ! cartItem ) {
+			wp.req
+				.post( {
+					path: `/domains/${ this.props.selectedSite.ID }/${ this.props.selectedSite.name }/convert-domain-only-to-site`,
+					apiVersion: '1.1',
+				} )
+				.catch( ( error ) => {
+					this.props.errorNotice( error.message );
+				} )
+				.finally( () => {
+					this.props.submitSignupStep( step, {
+						cartItem,
+					} );
+					this.props.goToNextStep();
+				} );
+		} else {
+			this.props.submitSignupStep( step, {
+				cartItem,
+			} );
+			this.props.goToNextStep();
+		}
 	};
 
 	getDomainName() {
@@ -459,5 +478,5 @@ export default connect(
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
 	} ),
-	{ recordTracksEvent, saveSignupStep, submitSignupStep }
+	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );
