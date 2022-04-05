@@ -17,7 +17,7 @@ export default function InvoicesDashboard(): ReactElement {
 			<SidebarNavigation />
 
 			<div className="invoices-dashboard__header">
-				<CardHeading size={ 36 }>{ translate( 'Past Invoices' ) }</CardHeading>
+				<CardHeading size={ 36 }>{ translate( 'Invoices' ) }</CardHeading>
 
 				<SelectPartnerKeyDropdown />
 			</div>
