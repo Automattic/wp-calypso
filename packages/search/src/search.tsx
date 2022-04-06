@@ -157,6 +157,25 @@ const InnerSearch = (
 	const overlay = React.useRef< HTMLDivElement >( null );
 	const firstRender = React.useRef< boolean >( true );
 
+	React.useImperativeHandle(
+		forwardedRef,
+		() => ( {
+			focus() {
+				searchInput.current?.focus();
+			},
+			blur() {
+				searchInput.current?.blur();
+			},
+			setKeyword( value: string ) {
+				setKeyword( value );
+			},
+			clear() {
+				setKeyword( '' );
+			},
+		} ),
+		[]
+	);
+
 	const doSearch: ( ( search: string ) => void ) & { cancel?: () => void } = React.useMemo( () => {
 		if ( ! onSearch ) {
 			return () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
@@ -181,25 +200,6 @@ const InnerSearch = (
 			onSearch?.( value );
 		},
 		[ delaySearch, doSearch, onSearch ]
-	);
-
-	React.useImperativeHandle(
-		forwardedRef,
-		() => ( {
-			focus() {
-				searchInput.current?.focus();
-			},
-			blur() {
-				searchInput.current?.blur();
-			},
-			setKeyword( value: string ) {
-				setKeyword( value );
-			},
-			clear() {
-				setKeyword( '' );
-			},
-		} ),
-		[]
 	);
 
 	useEffect( () => {
