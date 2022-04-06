@@ -357,7 +357,14 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String): E2EBui
 				allowEmpty = false
 			)
 			param("env.VIEWPORT_NAME", "$targetDevice")
-			param("env.TARGET_JETPACK", "1")
+			checkbox(
+				name = "env.TEST_ON_JETPACK",
+				value = "true",
+				label = "Test on Jetpack",
+				description = "Use a Jetpack blog to test against",
+				checked = "true",
+				unchecked = "false"
+			)
 		},
 		buildFeatures = {},
 		buildTriggers = {
