@@ -57,11 +57,20 @@ interface Props {
 	children?: ReactNode;
 	navigationItems: { label: string; href?: string }[];
 	contentRef?: React.RefObject< HTMLElement >;
+	componentRef?: React.RefObject< HTMLElement >;
 	compactBreadcrumb?: boolean;
 }
 
 const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
-	const { id, className, children, navigationItems, contentRef, compactBreadcrumb = false } = props;
+	const {
+		id,
+		componentRef,
+		className,
+		children,
+		navigationItems,
+		contentRef,
+		compactBreadcrumb = false,
+	} = props;
 	const actionsRef = useRef< HTMLDivElement >( null );
 	const headerRef = useRef< HTMLElement >( null );
 
@@ -97,7 +106,7 @@ const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
 	}, [ contentRef ] );
 
 	return (
-		<Header id={ id } className={ className } ref={ headerRef }>
+		<Header id={ id } className={ className } ref={ componentRef || headerRef }>
 			<Container>
 				<Breadcrumb items={ navigationItems } compact={ compactBreadcrumb } />
 				<ActionsContainer ref={ actionsRef }>{ children }</ActionsContainer>

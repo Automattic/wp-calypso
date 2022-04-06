@@ -15,6 +15,7 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef } ) => {
 	return (
 		<div className="search-box-header__searchbox">
 			<Search
+				ref={ searchBoxRef }
 				pinned={ isMobile }
 				fitsContainer={ isMobile }
 				onSearch={ doSearch }
@@ -22,14 +23,13 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef } ) => {
 				placeholder={ translate( 'Try searching "ecommerce"' ) }
 				delaySearch={ true }
 				recordEvent={ recordSearchEvent }
-				ref={ searchBoxRef }
 			/>
 		</div>
 	);
 };
 
 const PopularSearches = ( props ) => {
-	const { searchTerms, doSearch, searchedTerm } = props;
+	const { searchTerms, doSearch, searchedTerm, popularSearchesRef } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -44,7 +44,7 @@ const PopularSearches = ( props ) => {
 	};
 
 	return (
-		<div className="search-box-header__recommended-searches">
+		<div className="search-box-header__recommended-searches" ref={ popularSearchesRef }>
 			<div className="search-box-header__recommended-searches-title">
 				{ translate( 'Most popular searches' ) }
 			</div>
@@ -77,7 +77,7 @@ const PopularSearches = ( props ) => {
 };
 
 const SearchBoxHeader = ( props ) => {
-	const { doSearch, searchTerm, title, searchTerms } = props;
+	const { doSearch, searchTerm, title, searchTerms, isSticky, popularSearchesRef } = props;
 	const searchBoxRef = useRef( null );
 
 	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
@@ -86,15 +86,21 @@ const SearchBoxHeader = ( props ) => {
 	};
 
 	return (
-		<div className="search-box-header">
+		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
 			<div className="search-box-header__header">{ title }</div>
 			<div className="search-box-header__search">
-				<SearchBox doSearch={ doSearch } searchTerm={ searchTerm } searchBoxRef={ searchBoxRef } />
+				<SearchBox
+					doSearch={ doSearch }
+					searchTerm={ searchTerm }
+					delayTimeout={ 1000 }
+					searchBoxRef={ searchBoxRef }
+				/>
 			</div>
 			<PopularSearches
 				doSearch={ updateSearchBox }
 				searchedTerm={ searchTerm }
 				searchTerms={ searchTerms }
+				popularSearchesRef={ popularSearchesRef }
 			/>
 		</div>
 	);

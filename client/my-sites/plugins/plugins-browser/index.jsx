@@ -34,6 +34,7 @@ import {
 } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
+import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import NoResults from 'calypso/my-sites/no-results';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
@@ -118,6 +119,12 @@ const PluginsBrowser = ( {
 	hideHeader,
 	doSearch,
 } ) => {
+	const {
+		isAboveElement,
+		targetRef: searchHeaderRef,
+		referenceRef: navigationHeaderRef,
+	} = useScrollAboveElement();
+
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -268,6 +275,7 @@ const PluginsBrowser = ( {
 					className="plugins-browser__header"
 					navigationItems={ breadcrumbs }
 					compactBreadcrumb={ isMobile }
+					componentRef={ navigationHeaderRef }
 				>
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
@@ -308,6 +316,8 @@ const PluginsBrowser = ( {
 				siteSlug={ siteSlug }
 			/>
 			<SearchBoxHeader
+				popularSearchesRef={ searchHeaderRef }
+				isSticky={ isAboveElement }
 				doSearch={ doSearch }
 				searchTerm={ search }
 				title={ translate( 'Plugins you need to get your projects done' ) }
