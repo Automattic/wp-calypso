@@ -1,23 +1,18 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 import OlarkChatMain from './main';
 import OlarkErrorBoundary from './olark-error-boundary';
 
-class OlarkChat extends Component {
-	render() {
-		const { identity, shouldDisablePreChatSurvey, systemsGroupId } = this.props;
-
-		return (
-			<OlarkErrorBoundary>
-				<OlarkChatMain
-					identity={ identity }
-					shouldDisablePreChatSurvey={ shouldDisablePreChatSurvey }
-					systemsGroupId={ systemsGroupId }
-				/>
-			</OlarkErrorBoundary>
-		);
-	}
-}
+const OlarkChat = ( { identity, shouldDisablePreChatSurvey, systemsGroupId } ) => {
+	return (
+		<OlarkErrorBoundary>
+			<OlarkChatMain
+				identity={ identity }
+				shouldDisablePreChatSurvey={ shouldDisablePreChatSurvey }
+				systemsGroupId={ systemsGroupId }
+			/>
+		</OlarkErrorBoundary>
+	);
+};
 
 OlarkChat.propTypes = {
 	identity: PropTypes.string.isRequired,
