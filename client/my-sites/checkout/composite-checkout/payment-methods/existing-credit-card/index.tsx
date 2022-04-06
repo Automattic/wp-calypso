@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import {
 	Button,
 	FormStatus,
@@ -11,28 +10,21 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
-import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
+import {
+	TaxInfoArea,
+	usePaymentMethodTaxInfo,
+} from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-tax-info';
 import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
-import TaxFields from 'calypso/my-sites/checkout/composite-checkout/components/tax-fields';
-import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { errorNotice } from 'calypso/state/notices/actions';
-import PaymentMethodEditButton from './payment-method-edit-button';
-import PaymentMethodEditDialog from './payment-method-edit-dialog';
-import { usePaymentMethodTaxInfo } from './use-payment-method-tax-info';
-import type { TaxGetInfo, TaxInfo } from './types';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type { TaxGetInfo } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-tax-info';
 
 const debug = debugFactory( 'calypso:existing-card-payment-method' );
-
-function joinNonEmptyValues( joinString: string, ...values: ( string | undefined )[] ) {
-	return values.filter( ( value ) => value && value?.length > 0 ).join( joinString );
-}
 
 export function createExistingCardMethod( {
 	id,
@@ -127,21 +119,6 @@ const CardHolderName = styled.span`
 	display: block;
 `;
 
-function contactDetailsToTaxInfo( info?: TaxInfo ): ManagedContactDetails {
-	return {
-		countryCode: {
-			value: info?.tax_country_code ?? '',
-			isTouched: true,
-			errors: [],
-		},
-		postalCode: {
-			value: info?.tax_postal_code ?? '',
-			isTouched: true,
-			errors: [],
-		},
-	};
-}
-
 function ExistingCardLabel( {
 	last4,
 	cardExpiry,
@@ -183,112 +160,6 @@ function ExistingCardLabel( {
 				<PaymentLogo brand={ brand } isSummary={ true } />
 			</div>
 		</Fragment>
-	);
-}
-
-function TaxInfoArea( {
-	last4,
-	brand,
-	storedDetailsId,
-	paymentPartnerProcessorId,
-}: {
-	last4: string;
-	brand: string;
-	storedDetailsId: string;
-	paymentPartnerProcessorId: string;
-} ) {
-	const translate = useTranslate();
-	const { formStatus } = useFormStatus();
-
-	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
-	const [ inputValues, setInputValues ] = useState< ManagedContactDetails >( {
-		countryCode: { value: '', isTouched: false, errors: [] },
-		postalCode: { value: '', isTouched: false, errors: [] },
-	} );
-	const [ updateError, setUpdateError ] = useState( '' );
-	const closeDialog = useCallback( () => {
-		setUpdateError( '' );
-		setIsDialogVisible( false );
-	}, [] );
-
-	const { isLoading, taxInfo: taxInfoFromServer, setTaxInfo } = usePaymentMethodTaxInfo(
-		storedDetailsId
-	);
-
-	const openDialog = useCallback( () => {
-		setInputValues( contactDetailsToTaxInfo( taxInfoFromServer ) );
-		setIsDialogVisible( true );
-	}, [ taxInfoFromServer ] );
-
-	// Any time the server data changes, update the form data.
-	useEffect( () => {
-		if ( ! taxInfoFromServer?.tax_country_code ) {
-			return;
-		}
-		setInputValues( contactDetailsToTaxInfo( taxInfoFromServer ) );
-	}, [ taxInfoFromServer ] );
-
-	const countriesList = useCountryList();
-	const updateTaxInfo = useCallback( () => {
-		setTaxInfo( {
-			tax_country_code: inputValues?.countryCode?.value ?? '',
-			tax_postal_code: inputValues?.postalCode?.value ?? '',
-		} )
-			.then( closeDialog )
-			.catch( setUpdateError );
-	}, [ setTaxInfo, inputValues, closeDialog ] );
-
-	const onChangeTaxInfo = ( info: ManagedContactDetails ) => {
-		setInputValues( info );
-	};
-
-	const taxInfoDisplay = joinNonEmptyValues(
-		', ',
-		taxInfoFromServer?.tax_postal_code,
-		taxInfoFromServer?.tax_country_code
-	);
-
-	if ( isLoading ) {
-		return null;
-	}
-	if ( taxInfoDisplay ) {
-		return (
-			<span className="existing-credit-card__tax-info-display">
-				<span className="existing-credit-card__tax-info-postal-country">{ taxInfoDisplay }</span>
-			</span>
-		);
-	}
-	return (
-		<span className="existing-credit-card__tax-info-display tax-info-incomplete">
-			<PaymentMethodEditButton
-				onClick={ openDialog }
-				buttonTextContent={ getMissingTaxLocationInformationMessage(
-					translate,
-					taxInfoFromServer
-				) }
-				scary={ true }
-				borderless={ false }
-				icon={ <Gridicon icon="notice" /> }
-				disabled={ formStatus !== FormStatus.READY }
-			/>
-			<PaymentMethodEditDialog
-				paymentMethodSummary={
-					<PaymentMethodSummary type={ brand || paymentPartnerProcessorId } digits={ last4 } />
-				}
-				isVisible={ isDialogVisible }
-				onClose={ closeDialog }
-				onConfirm={ updateTaxInfo }
-				form={
-					<TaxFields
-						section={ `existing-card-payment-method-${ storedDetailsId }` }
-						taxInfo={ inputValues }
-						countriesList={ countriesList }
-						onChange={ onChangeTaxInfo }
-					/>
-				}
-				error={ updateError }
-			/>
-		</span>
 	);
 }
 
