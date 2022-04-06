@@ -226,7 +226,12 @@ export default function DIFMPagePicker( props: StepProps ) {
 	const headerText = translate( 'Add pages to your {{wbr}}{{/wbr}}website', {
 		components: { wbr: <wbr /> },
 	} );
-	const subHeaderText = translate( 'You can add up to 5 pages' );
+	const subHeaderText = translate(
+		'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}You can select up to 5 pages.',
+		{
+			components: { br: <br /> },
+		}
+	);
 	return (
 		<StepWrapper
 			headerText={ headerText }
